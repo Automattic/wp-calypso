@@ -21,21 +21,21 @@ class PostExcerpt extends React.Component {
 	static defaultProps = { maxLength: 80 };
 
 	render() {
-		if ( ! this.props.content ) {
+		if (!this.props.content) {
 			return null;
 		}
 
-		const classes = classnames( {
+		const classes = classnames({
 			'post-excerpt': true,
 			'is-long': this.props.content.length > this.props.maxLength,
-		} );
+		});
 
 		return (
 			<AutoDirection>
 				<Emojify>
 					<div
-						className={ classes }
-						dangerouslySetInnerHTML={ { __html: this.props.content } } // eslint-disable-line react/no-danger
+						className={classes}
+						dangerouslySetInnerHTML={{ __html: this.props.content }} // eslint-disable-line react/no-danger
 					/>
 				</Emojify>
 			</AutoDirection>

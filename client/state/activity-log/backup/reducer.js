@@ -11,8 +11,8 @@ import {
 } from 'state/action-types';
 import { keyedReducer } from 'state/utils';
 
-export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type, rewindId } ) => {
-	switch ( type ) {
+export const backupRequest = keyedReducer('siteId', (state = undefined, { type, rewindId }) => {
+	switch (type) {
 		// Show confirmation dialog
 		case REWIND_BACKUP_REQUEST:
 			return rewindId;
@@ -26,10 +26,10 @@ export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type
 		default:
 			return state;
 	}
-} );
+});
 
-export const backupProgress = keyedReducer( 'siteId', ( state = undefined, action ) => {
-	switch ( action.type ) {
+export const backupProgress = keyedReducer('siteId', (state = undefined, action) => {
+	switch (action.type) {
 		case REWIND_BACKUP:
 			return {
 				backupPoint: '',
@@ -70,4 +70,4 @@ export const backupProgress = keyedReducer( 'siteId', ( state = undefined, actio
 		default:
 			return state;
 	}
-} );
+});

@@ -48,7 +48,7 @@ class SiteMenu extends PureComponent {
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
 		siteAdminUrl: PropTypes.string,
-		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		site: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 		siteSlug: PropTypes.string,
 		isSiteWPForTeams: PropTypes.bool,
 	};
@@ -57,7 +57,7 @@ class SiteMenu extends PureComponent {
 	getMyParameter() {
 		const { allSingleSites, isJetpack, isSingleUser, siteId } = this.props;
 
-		if ( siteId ) {
+		if (siteId) {
 			return isSingleUser || isJetpack ? '' : '/my';
 		}
 
@@ -77,7 +77,7 @@ class SiteMenu extends PureComponent {
 		return [
 			{
 				name: 'page',
-				label: translate( 'Pages' ),
+				label: translate('Pages'),
 				capability: 'edit_pages',
 				queryable: true,
 				link: '/pages',
@@ -86,18 +86,18 @@ class SiteMenu extends PureComponent {
 			},
 			{
 				name: 'post',
-				label: translate( 'Posts' ),
+				label: translate('Posts'),
 				capability: 'edit_posts',
 				config: 'manage/posts',
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
-				paths: [ '/posts', '/posts/my' ],
+				paths: ['/posts', '/posts/my'],
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
 			{
 				name: 'media',
-				label: translate( 'Media' ),
+				label: translate('Media'),
 				capability: 'edit_posts',
 				queryable: true,
 				link: '/media',
@@ -106,67 +106,67 @@ class SiteMenu extends PureComponent {
 			},
 			{
 				name: 'comments',
-				label: translate( 'Comments' ),
+				label: translate('Comments'),
 				capability: 'edit_posts',
 				queryable: true,
 				config: 'manage/comments',
 				link: '/comments',
-				paths: [ '/comment', '/comments' ],
+				paths: ['/comment', '/comments'],
 				wpAdminLink: 'edit-comments.php',
 				showOnAllMySites: false,
 			},
 		];
 	}
 
-	onNavigate = postType => () => {
-		if ( ! includes( [ 'post', 'page' ], postType ) ) {
-			bumpStat( 'calypso_publish_menu_click', postType );
+	onNavigate = (postType) => () => {
+		if (!includes(['post', 'page'], postType)) {
+			bumpStat('calypso_publish_menu_click', postType);
 		}
-		this.props.recordTracksEvent( 'calypso_mysites_site_sidebar_item_clicked', {
+		this.props.recordTracksEvent('calypso_mysites_site_sidebar_item_clicked', {
 			menu_item: postType,
-		} );
+		});
 		this.props.onNavigate();
 	};
 
-	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
+	expandSiteSection = () => this.props.expandSection(SIDEBAR_SECTION_SITE);
 
-	renderMenuItem( menuItem ) {
+	renderMenuItem(menuItem) {
 		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
 
-		if ( siteId && ! canCurrentUser( menuItem.capability ) ) {
+		if (siteId && !canCurrentUser(menuItem.capability)) {
 			return null;
 		}
 
 		// Hide the sidebar link for media
-		if ( 'attachment' === menuItem.name ) {
+		if ('attachment' === menuItem.name) {
 			return null;
 		}
 
 		// Hide Full Site Editing templates CPT. This shouldn't be editable directly.
-		if ( 'wp_template_part' === menuItem.name ) {
+		if ('wp_template_part' === menuItem.name) {
 			return null;
 		}
 
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
-		const isEnabled = ! menuItem.config || config.isEnabled( menuItem.config );
-		if ( ! siteId && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
+		const isEnabled = !menuItem.config || config.isEnabled(menuItem.config);
+		if (!siteId && (!isEnabled || !menuItem.showOnAllMySites)) {
 			return null;
 		}
 
 		let link;
-		if ( ( ! isEnabled || ! menuItem.queryable ) && siteAdminUrl ) {
+		if ((!isEnabled || !menuItem.queryable) && siteAdminUrl) {
 			link = siteAdminUrl + menuItem.wpAdminLink;
 		} else {
-			link = compact( [ menuItem.link, this.props.siteSlug ] ).join( '/' );
+			link = compact([menuItem.link, this.props.siteSlug]).join('/');
 		}
 
 		let preload;
-		if ( 'post' === menuItem.name ) {
+		if ('post' === menuItem.name) {
 			preload = 'posts';
-		} else if ( 'page' === menuItem.name ) {
+		} else if ('page' === menuItem.name) {
 			preload = 'pages';
-		} else if ( 'comments' === menuItem.name ) {
+		} else if ('comments' === menuItem.name) {
 			preload = 'comments';
 		} else {
 			preload = 'posts-custom';
@@ -174,16 +174,16 @@ class SiteMenu extends PureComponent {
 
 		return (
 			<SidebarItem
-				key={ menuItem.name }
-				label={ menuItem.label }
-				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
-				link={ link }
-				onNavigate={ this.onNavigate( menuItem.name ) }
-				preloadSectionName={ preload }
-				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
-				tipTarget={ `side-menu-${ menuItem.name }` }
-				forceInternalLink={ menuItem.forceInternalLink }
-				expandSection={ this.expandSiteSection }
+				key={menuItem.name}
+				label={menuItem.label}
+				selected={itemLinkMatches(menuItem.paths || menuItem.link, this.props.path)}
+				link={link}
+				onNavigate={this.onNavigate(menuItem.name)}
+				preloadSectionName={preload}
+				postType={menuItem.name === 'plugins' ? null : menuItem.name}
+				tipTarget={`side-menu-${menuItem.name}`}
+				forceInternalLink={menuItem.forceInternalLink}
+				expandSection={this.expandSiteSection}
 			/>
 		);
 	}
@@ -191,99 +191,99 @@ class SiteMenu extends PureComponent {
 	getCustomMenuItems() {
 		const { isVip, isJetpack, isSiteAtomic } = this.props;
 		//reusable blocks are not shown in the sidebar on wp-admin either
-		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page', 'wp_block' ] );
+		const customPostTypes = omit(this.props.postTypes, ['post', 'page', 'wp_block']);
 		return reduce(
 			customPostTypes,
-			( memo, postType, postTypeSlug ) => {
+			(memo, postType, postTypeSlug) => {
 				// `show_ui` was added in Jetpack 4.5, so explicitly check false
 				// value in case site on earlier version where property is omitted
-				if ( false === postType.show_ui ) {
+				if (false === postType.show_ui) {
 					return memo;
 				}
 
 				// Hide "Feedback" for WP for Teams sites.
 				if (
-					config.isEnabled( 'signup/wpforteams' ) &&
+					config.isEnabled('signup/wpforteams') &&
 					this.props.isSiteWPForTeams &&
 					postTypeSlug === 'feedback'
 				) {
 					return memo;
-				} else if ( postTypeSlug === 'feedback' ) {
+				} else if (postTypeSlug === 'feedback') {
 					//Special handling for feedback (contact form entries), let's calypsoify except for VIP
 					//It doesn't make sense for the author to use the generic CPT handling in Calypso
 
-					return memo.concat( {
+					return memo.concat({
 						name: postType.name,
-						label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
+						label: decodeEntities(get(postType.labels, 'menu_name', postType.label)),
 						config: 'manage/custom-post-types',
 						//controls if we show the wp-admin link. It feels like this is coupling two different meanings (api_queryable)
 						queryable: false,
 
 						//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
 						//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
-						capability: get( postType.capabilities, 'edit_posts' ),
+						capability: get(postType.capabilities, 'edit_posts'),
 
 						// Required to build the menu item class name. Must be discernible from other
 						// items' paths in the same section for item highlighting to work properly.
 						link: '/types/' + postType.name,
 						// don't calypsoify for VIP or Jetpack
 						wpAdminLink:
-							isVip || ( isJetpack && ! isSiteAtomic )
+							isVip || (isJetpack && !isSiteAtomic)
 								? 'edit.php?post_type=feedback&calypsoify=0'
 								: 'edit.php?post_type=feedback&calypsoify=1',
 						showOnAllMySites: false,
-					} );
+					});
 				}
 
-				return memo.concat( {
+				return memo.concat({
 					name: postType.name,
-					label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
+					label: decodeEntities(get(postType.labels, 'menu_name', postType.label)),
 					config: 'manage/custom-post-types',
 					queryable: postType.api_queryable,
 
 					//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
 					//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
-					capability: get( postType.capabilities, 'edit_posts' ),
+					capability: get(postType.capabilities, 'edit_posts'),
 
 					// Required to build the menu item class name. Must be discernible from other
 					// items' paths in the same section for item highlighting to work properly.
 					link: '/types/' + postType.name,
 					wpAdminLink: 'edit.php?post_type=' + postType.name,
 					showOnAllMySites: false,
-				} );
+				});
 			},
 			[]
 		);
 	}
 
 	render() {
-		const menuItems = [ ...this.getDefaultMenuItems(), ...this.getCustomMenuItems() ];
+		const menuItems = [...this.getDefaultMenuItems(), ...this.getCustomMenuItems()];
 
 		return (
 			<ul>
-				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
-				{ menuItems.map( this.renderMenuItem, this ) }
+				{this.props.siteId && <QueryPostTypes siteId={this.props.siteId} />}
+				{menuItems.map(this.renderMenuItem, this)}
 			</ul>
 		);
 	}
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		allSingleSites: areAllSitesSingleUser( state ),
+	(state, { siteId }) => ({
+		allSingleSites: areAllSitesSingleUser(state),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
-		isJetpack: isJetpackSite( state, siteId ),
-		isSiteAtomic: isSiteWpcomAtomic( state, siteId ),
-		isSingleUser: isSingleUserSite( state, siteId ),
-		postTypes: getPostTypes( state, siteId ),
-		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		site: getSite( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-		isVip: isVipSite( state, siteId ),
-		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
-	} ),
+		canCurrentUser: partial(canCurrentUserStateSelector, state, siteId),
+		isJetpack: isJetpackSite(state, siteId),
+		isSiteAtomic: isSiteWpcomAtomic(state, siteId),
+		isSingleUser: isSingleUserSite(state, siteId),
+		postTypes: getPostTypes(state, siteId),
+		siteAdminUrl: getSiteAdminUrl(state, siteId),
+		site: getSite(state, siteId),
+		siteSlug: getSiteSlug(state, siteId),
+		isVip: isVipSite(state, siteId),
+		isSiteWPForTeams: isSiteWPForTeams(state, siteId),
+	}),
 	{ expandSection, recordTracksEvent },
 	null,
-	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
-)( localize( SiteMenu ) );
+	{ areStatePropsEqual: compareProps({ ignore: ['canCurrentUser'] }) }
+)(localize(SiteMenu));

@@ -30,12 +30,12 @@ import { combineReducers } from 'state/utils';
  * @param  {object} action Action payload
  * @returns {Array}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
+export function items(state = {}, action) {
+	switch (action.type) {
 		case READER_THUMBNAIL_RECEIVE:
 			return {
 				...state,
-				[ action.embedUrl ]: action.thumbnailUrl,
+				[action.embedUrl]: action.thumbnailUrl,
 			};
 	}
 
@@ -50,20 +50,20 @@ export function items( state = {}, action ) {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
+export function requesting(state = {}, action) {
+	switch (action.type) {
 		case READER_THUMBNAIL_REQUEST:
 		case READER_THUMBNAIL_REQUEST_SUCCESS:
 		case READER_THUMBNAIL_REQUEST_FAILURE:
 			return {
 				...state,
-				[ action.embedUrl ]: action.type === READER_THUMBNAIL_REQUEST,
+				[action.embedUrl]: action.type === READER_THUMBNAIL_REQUEST,
 			};
 	}
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
-} );
+});

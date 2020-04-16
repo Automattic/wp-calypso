@@ -5,8 +5,8 @@
 import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 
-export const isNpsSurveyDialogShowing = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isNpsSurveyDialogShowing = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case NPS_SURVEY_DIALOG_IS_SHOWING: {
 			const { isShowing } = action;
 			return isShowing !== undefined ? isShowing : state;
@@ -14,8 +14,8 @@ export const isNpsSurveyDialogShowing = withoutPersistence( ( state = false, act
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	isNpsSurveyDialogShowing,
-} );
+});

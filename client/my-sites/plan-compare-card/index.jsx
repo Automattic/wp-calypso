@@ -38,37 +38,37 @@ class PlanCompareCard extends React.Component {
 	};
 
 	buttonClick = () => {
-		if ( ! this.props.currentPlan ) {
+		if (!this.props.currentPlan) {
 			this.props.onClick();
 		}
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'plan-compare-card' );
-		const buttonClasses = classNames( 'plan-compare-card__button', {
+		const classes = classNames(this.props.className, 'plan-compare-card');
+		const buttonClasses = classNames('plan-compare-card__button', {
 			'is-current': this.props.currentPlan,
-		} );
+		});
 		return (
-			<div className={ classes }>
-				{ this.props.popularRibbon && <Ribbon>{ this.props.translate( 'popular' ) }</Ribbon> }
+			<div className={classes}>
+				{this.props.popularRibbon && <Ribbon>{this.props.translate('popular')}</Ribbon>}
 				<Card className="plan-compare-card__header">
-					<div className="plan-compare-card__title">{ this.props.title }</div>
-					<div className="plan-compare-card__line">{ this.props.line }</div>
+					<div className="plan-compare-card__title">{this.props.title}</div>
+					<div className="plan-compare-card__line">{this.props.line}</div>
 				</Card>
 				<Card className="plan-compare-card__features">
-					<ul className="plan-compare-card__features-list">{ this.props.children }</ul>
+					<ul className="plan-compare-card__features-list">{this.props.children}</ul>
 				</Card>
 				<Card className="plan-compare-card__actions">
 					<Button
-						className={ buttonClasses }
-						disabled={ this.props.currentPlan }
-						primary={ ! this.props.currentPlan }
-						onClick={ this.buttonClick }
+						className={buttonClasses}
+						disabled={this.props.currentPlan}
+						primary={!this.props.currentPlan}
+						onClick={this.buttonClick}
 					>
-						{ this.props.currentPlan && (
+						{this.props.currentPlan && (
 							<Gridicon className="plan-compare-card__button-checkmark" icon="checkmark" />
-						) }
-						{ this.props.buttonName }
+						)}
+						{this.props.buttonName}
 					</Button>
 				</Card>
 			</div>
@@ -76,4 +76,4 @@ class PlanCompareCard extends React.Component {
 	}
 }
 
-export default localize( PlanCompareCard );
+export default localize(PlanCompareCard);

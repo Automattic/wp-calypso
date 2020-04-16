@@ -21,13 +21,13 @@ export class ReaderPreview extends PureComponent {
 			post,
 			{ better_excerpt: postExcerpt },
 			postImage && { canonical_media: { src: postImage } },
-			postImage && ! postExcerpt && { display_type: DisplayTypes.PHOTO_ONLY },
+			postImage && !postExcerpt && { display_type: DisplayTypes.PHOTO_ONLY },
 			{
-				author: Object.assign( {}, post.author, { has_avatar: true } ),
+				author: Object.assign({}, post.author, { has_avatar: true }),
 			}
 		);
 
-		return <ReaderPostCard site={ site } post={ readerPost } />;
+		return <ReaderPostCard site={site} post={readerPost} />;
 	}
 }
 

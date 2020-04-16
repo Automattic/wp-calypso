@@ -48,10 +48,10 @@ import {
 	unary,
 } from 'lodash';
 
-const mergeStringPieces = ( a, b ) => ( {
+const mergeStringPieces = (a, b) => ({
 	type: 'string',
 	value: a.value + b.value,
-} );
+});
 
 /**
  * Converts an individual title format
@@ -62,10 +62,10 @@ const mergeStringPieces = ( a, b ) => ( {
  * @returns {Array} List of native format pieces
  */
 export const rawToNative = unary(
-	partialRight( map, p =>
+	partialRight(map, (p) =>
 		Object.assign(
 			{},
-			{ type: 'string' === p.type ? 'string' : camelCase( p.value ) },
+			{ type: 'string' === p.type ? 'string' : camelCase(p.value) },
 			'string' === p.type && { value: p.value }
 		)
 	)
@@ -84,21 +84,21 @@ export const nativeToRaw = unary(
 		// combine adjacent strings
 		partialRight(
 			reduce,
-			( format, piece ) => {
-				const lastPiece = last( format );
+			(format, piece) => {
+				const lastPiece = last(format);
 
-				if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
-					return [ ...initial( format ), mergeStringPieces( lastPiece, piece ) ];
+				if (lastPiece && 'string' === lastPiece.type && 'string' === piece.type) {
+					return [...initial(format), mergeStringPieces(lastPiece, piece)];
 				}
 
-				return [ ...format, piece ];
+				return [...format, piece];
 			},
 			[]
 		),
-		partialRight( map, p => ( {
+		partialRight(map, (p) => ({
 			type: p.type === 'string' ? 'string' : 'token',
-			value: get( p, 'value', snakeCase( p.type ) ),
-		} ) )
+			value: get(p, 'value', snakeCase(p.type)),
+		}))
 	)
 );
 
@@ -113,11 +113,11 @@ export const nativeToRaw = unary(
 //  - Translate formats: see above
 
 export const toApi = compose(
-	partialRight( mapKeys, rearg( snakeCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( mapValues, nativeToRaw ) // native objects to raw objects
+	partialRight(mapKeys, rearg(snakeCase, 1)), // 1 -> key from ( value, key )
+	partialRight(mapValues, nativeToRaw) // native objects to raw objects
 );
 
 export const fromApi = compose(
-	partialRight( mapKeys, rearg( camelCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( mapValues, rawToNative ) // raw objects to native objects
+	partialRight(mapKeys, rearg(camelCase, 1)), // 1 -> key from ( value, key )
+	partialRight(mapValues, rawToNative) // raw objects to native objects
 );

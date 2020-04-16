@@ -17,16 +17,16 @@ import SectionHeader from 'components/section-header';
  */
 import './style.scss';
 
-const ThemesSelectionHeader = ( { label, count } ) => {
+const ThemesSelectionHeader = ({ label, count }) => {
 	const translate = useTranslate();
 
-	const selectionHeaderClassName = classNames( 'themes-selection-header', {
+	const selectionHeaderClassName = classNames('themes-selection-header', {
 		'is-placeholder': count === null,
-	} );
+	});
 
 	return (
-		<div className={ selectionHeaderClassName }>
-			<SectionHeader label={ label || translate( 'WordPress.com themes' ) } count={ count } />
+		<div className={selectionHeaderClassName}>
+			<SectionHeader label={label || translate('WordPress.com themes')} count={count} />
 		</div>
 	);
 };

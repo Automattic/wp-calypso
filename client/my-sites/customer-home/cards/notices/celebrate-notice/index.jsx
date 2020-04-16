@@ -26,7 +26,7 @@ import './style.scss';
  */
 import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
 
-const CelebrateNotice = ( {
+const CelebrateNotice = ({
 	checklistMode,
 	currentTheme,
 	currentThemeId,
@@ -35,17 +35,17 @@ const CelebrateNotice = ( {
 	message,
 	siteId,
 	user,
-} ) => {
+}) => {
 	const translate = useTranslate();
 
 	const getSecondaryText = () => {
-		if ( ! displayChecklist ) {
+		if (!displayChecklist) {
 			return translate(
 				'Next, use these quick links to continue maintaining and growing your site.'
 			);
 		}
 
-		switch ( checklistMode ) {
+		switch (checklistMode) {
 			case 'concierge':
 				return translate(
 					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +
@@ -68,11 +68,11 @@ const CelebrateNotice = ( {
 					}
 				);
 			case 'launched':
-				return translate( 'Make sure you share it with everyone and show it off.' );
+				return translate('Make sure you share it with everyone and show it off.');
 			case 'migrated':
-				return translate( 'Next, make sure everything looks the way you expected.' );
+				return translate('Next, make sure everything looks the way you expected.');
 			default:
-				return translate( 'Next, finish the following setup tasks before you share your site.' );
+				return translate('Next, finish the following setup tasks before you share your site.');
 		}
 	};
 
@@ -80,37 +80,37 @@ const CelebrateNotice = ( {
 		<DismissibleCard
 			className="celebrate-notice"
 			highlight="info"
-			preferenceName={ `${ dismissalPreferenceName }-${ siteId }` } // Makes cards dismissable per site.
+			preferenceName={`${dismissalPreferenceName}-${siteId}`} // Makes cards dismissable per site.
 		>
-			{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
-			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
+			{siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={siteId} />}
+			{currentThemeId && <QueryCanonicalTheme themeId={currentThemeId} siteId={siteId} />}
 			<img
-				src={ fireworksIllustration }
+				src={fireworksIllustration}
 				aria-hidden="true"
 				className="celebrate-notice__fireworks"
 				alt=""
 			/>
 			<div className="celebrate-notice__text">
-				<CardHeading>{ message }</CardHeading>
-				<p className="celebrate-notice__secondary-text">{ getSecondaryText() }</p>
+				<CardHeading>{message}</CardHeading>
+				<p className="celebrate-notice__secondary-text">{getSecondaryText()}</p>
 			</div>
 		</DismissibleCard>
 	);
 };
 
-const mapStateToProps = ( state, { checklistMode } ) => {
-	const siteId = getSelectedSiteId( state );
+const mapStateToProps = (state, { checklistMode }) => {
+	const siteId = getSelectedSiteId(state);
 	let theme = {};
-	if ( 'theme' === checklistMode ) {
-		const currentThemeId = getActiveTheme( state, siteId );
-		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
+	if ('theme' === checklistMode) {
+		const currentThemeId = getActiveTheme(state, siteId);
+		const currentTheme = currentThemeId && getCanonicalTheme(state, siteId, currentThemeId);
 		theme = { currentTheme, currentThemeId };
 	}
 	return {
 		siteId,
-		user: getCurrentUser( state ),
+		user: getCurrentUser(state),
 		...theme,
 	};
 };
 
-export default connect( mapStateToProps )( CelebrateNotice );
+export default connect(mapStateToProps)(CelebrateNotice);

@@ -18,24 +18,24 @@ import 'state/jetpack-connect/init';
 /**
  * Module constants
  */
-const calypsoEnv = config( 'env_id' );
-const debug = debugFactory( 'calypso:jetpack-connect:actions' );
+const calypsoEnv = config('env_id');
+const debug = debugFactory('calypso:jetpack-connect:actions');
 
-export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
-	return dispatch => {
-		debug( 'retrying auth', url, attemptNumber );
-		dispatch( {
+export function retryAuth(url, attemptNumber, fromParam, redirectAfterAuth) {
+	return (dispatch) => {
+		debug('retrying auth', url, attemptNumber);
+		dispatch({
 			type: JETPACK_CONNECT_RETRY_AUTH,
 			attemptNumber: attemptNumber,
-			slug: urlToSlug( url ),
-		} );
+			slug: urlToSlug(url),
+		});
 		dispatch(
-			recordTracksEvent( 'calypso_jpc_retry_auth', {
+			recordTracksEvent('calypso_jpc_retry_auth', {
 				url: url,
 				attempt: attemptNumber,
-			} )
+			})
 		);
-		debug( 'retryAuth', url );
+		debug('retryAuth', url);
 		externalRedirect(
 			addQueryArgs(
 				{

@@ -17,15 +17,15 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 
-export const isSaveAvailableFn = ( {
+export const isSaveAvailableFn = ({
 	isSaving = false,
 	isSaveBlocked = false,
 	isDirty = false,
 	hasContent = false,
 	post = null,
-} ) => ! isSaving && ! isSaveBlocked && isDirty && hasContent && !! post && ! isPublished( post );
+}) => !isSaving && !isSaveBlocked && isDirty && hasContent && !!post && !isPublished(post);
 
-const QuickSaveButtons = ( {
+const QuickSaveButtons = ({
 	isSaving,
 	isSaveBlocked,
 	isDirty,
@@ -34,54 +34,54 @@ const QuickSaveButtons = ( {
 	translate,
 	onSave,
 	...props
-} ) => {
+}) => {
 	const onSaveButtonClick = () => {
 		onSave();
-		const eventLabel = isPage( post ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
-		props.recordEditorEvent( eventLabel );
-		props.recordEditorStat( 'save_draft_clicked' );
+		const eventLabel = isPage(post) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
+		props.recordEditorEvent(eventLabel);
+		props.recordEditorStat('save_draft_clicked');
 	};
 
-	const isSaveAvailable = isSaveAvailableFn( {
+	const isSaveAvailable = isSaveAvailableFn({
 		isSaving,
 		isSaveBlocked,
 		isDirty,
 		hasContent,
 		post,
-	} );
+	});
 
-	const showingStatusLabel = isSaving || ( post && post.ID && ! isPublished( post ) );
+	const showingStatusLabel = isSaving || (post && post.ID && !isPublished(post));
 	const showingSaveStatus = isSaveAvailable || showingStatusLabel;
-	const hasRevisions = post && ! isEmpty( post.revisions );
+	const hasRevisions = post && !isEmpty(post.revisions);
 
-	if ( ! ( showingSaveStatus || hasRevisions ) ) {
+	if (!(showingSaveStatus || hasRevisions)) {
 		return null;
 	}
 
 	return (
 		<div className="editor-ground-control__quick-save">
-			{ hasRevisions && <HistoryButton /> }
-			{ showingSaveStatus && (
+			{hasRevisions && <HistoryButton />}
+			{showingSaveStatus && (
 				<div className="editor-ground-control__status">
-					{ isSaveAvailable && (
+					{isSaveAvailable && (
 						<button
 							className="editor-ground-control__save button is-link"
-							onClick={ onSaveButtonClick }
-							tabIndex={ 3 }
+							onClick={onSaveButtonClick}
+							tabIndex={3}
 						>
-							{ translate( 'Save' ) }
+							{translate('Save')}
 						</button>
-					) }
-					{ ! isSaveAvailable && showingStatusLabel && (
+					)}
+					{!isSaveAvailable && showingStatusLabel && (
 						<span
 							className="editor-ground-control__save-status"
-							data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
+							data-e2e-status={isSaving ? 'Saving…' : 'Saved'}
 						>
-							{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
+							{isSaving ? translate('Saving…') : translate('Saved')}
 						</span>
-					) }
+					)}
 				</div>
-			) }
+			)}
 		</div>
 	);
 };
@@ -113,12 +113,12 @@ QuickSaveButtons.defaultProps = {
 };
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, postId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const post = getEditedPost(state, siteId, postId);
 
 		return { post };
 	},
 	{ recordEditorEvent, recordEditorStat }
-)( localize( QuickSaveButtons ) );
+)(localize(QuickSaveButtons));

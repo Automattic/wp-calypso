@@ -24,7 +24,7 @@ import { localize } from 'i18n-calypso';
 import 'draft-js/dist/Draft.css';
 import './style.scss';
 
-const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
+const Chip = (onClick) => (props) => <Token {...props} onClick={onClick} />;
 
 export class TitleFormatEditor extends Component {
 	static propTypes = {
@@ -40,43 +40,43 @@ export class TitleFormatEditor extends Component {
 		placeholder: '',
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		this.storeEditorReference = r => ( this.editor = r );
+		this.storeEditorReference = (r) => (this.editor = r);
 		this.focusEditor = () => this.editor.focus();
 
-		this.updateEditor = this.updateEditor.bind( this );
-		this.addToken = this.addToken.bind( this );
-		this.removeToken = this.removeToken.bind( this );
-		this.renderTokens = this.renderTokens.bind( this );
-		this.editorStateFrom = this.editorStateFrom.bind( this );
-		this.skipOverTokens = this.skipOverTokens.bind( this );
+		this.updateEditor = this.updateEditor.bind(this);
+		this.addToken = this.addToken.bind(this);
+		this.removeToken = this.removeToken.bind(this);
+		this.renderTokens = this.renderTokens.bind(this);
+		this.editorStateFrom = this.editorStateFrom.bind(this);
+		this.skipOverTokens = this.skipOverTokens.bind(this);
 
 		this.state = {
-			editorState: EditorState.moveSelectionToEnd( this.editorStateFrom( props ) ),
+			editorState: EditorState.moveSelectionToEnd(this.editorStateFrom(props)),
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.disabled && ! nextProps.disabled ) {
-			this.setState( {
-				editorState: EditorState.moveSelectionToEnd( this.editorStateFrom( nextProps ) ),
-			} );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.disabled && !nextProps.disabled) {
+			this.setState({
+				editorState: EditorState.moveSelectionToEnd(this.editorStateFrom(nextProps)),
+			});
 		}
 	}
 
-	editorStateFrom( props ) {
+	editorStateFrom(props) {
 		const { disabled } = props;
 
 		return EditorState.createWithContent(
-			toEditor( props.titleFormats, props.tokens ),
-			new CompositeDecorator( [
+			toEditor(props.titleFormats, props.tokens),
+			new CompositeDecorator([
 				{
 					strategy: this.renderTokens,
-					component: Chip( disabled ? noop : this.removeToken ),
+					component: Chip(disabled ? noop : this.removeToken),
 				},
-			] )
+			])
 		);
 	}
 
@@ -88,7 +88,7 @@ export class TitleFormatEditor extends Component {
 	 * @param {EditorState} editorState new state of editor after changes
 	 * @returns {EditorState} maybe filtered state for editor
 	 */
-	skipOverTokens( editorState ) {
+	skipOverTokens(editorState) {
 		const content = editorState.getCurrentContent();
 		const selection = editorState.getSelection();
 
@@ -96,127 +96,125 @@ export class TitleFormatEditor extends Component {
 		const before = this.state.editorState.getSelection();
 		const offset = selection.getFocusOffset();
 
-		if ( before.getFocusKey() === selection.getFocusKey() && before.getFocusOffset() === offset ) {
+		if (before.getFocusKey() === selection.getFocusKey() && before.getFocusOffset() === offset) {
 			return editorState;
 		}
 
-		const block = content.getBlockForKey( selection.getFocusKey() );
-		const direction = Math.sign( offset - before.getFocusOffset() );
-		const entityKey = block.getEntityAt( offset );
+		const block = content.getBlockForKey(selection.getFocusKey());
+		const direction = Math.sign(offset - before.getFocusOffset());
+		const entityKey = block.getEntityAt(offset);
 
 		// okay if we are at the edges of the block
-		if ( 0 === offset || block.getLength() === offset ) {
+		if (0 === offset || block.getLength() === offset) {
 			return editorState;
 		}
 
 		// okay if we aren't in a token
-		if ( ! entityKey ) {
+		if (!entityKey) {
 			return editorState;
 		}
 
 		// get characters in entity
-		const indices = block.getCharacterList().reduce( ( ids, value, key ) => {
-			return entityKey === value.entity ? [ ...ids, key ] : ids;
-		}, [] );
+		const indices = block.getCharacterList().reduce((ids, value, key) => {
+			return entityKey === value.entity ? [...ids, key] : ids;
+		}, []);
 
 		// okay if cursor is at the spot
 		// right before the token
-		if ( offset === head( indices ) ) {
+		if (offset === head(indices)) {
 			return editorState;
 		}
 
 		const outside =
-			direction > 0
-				? Math.min( max( indices ) + 1, block.getLength() )
-				: Math.max( min( indices ), 0 );
+			direction > 0 ? Math.min(max(indices) + 1, block.getLength()) : Math.max(min(indices), 0);
 
 		return EditorState.forceSelection(
 			editorState,
-			selection.set( 'anchorOffset', outside ).set( 'focusOffset', outside )
+			selection.set('anchorOffset', outside).set('focusOffset', outside)
 		);
 	}
 
-	updateEditor( rawEditorState, { doFocus = false } = {} ) {
+	updateEditor(rawEditorState, { doFocus = false } = {}) {
 		const { onChange, type } = this.props;
 		const currentContent = rawEditorState.getCurrentContent();
 
 		// limit to one line
-		if ( currentContent.getBlockMap().size > 1 ) {
+		if (currentContent.getBlockMap().size > 1) {
 			return;
 		}
 
-		const editorState = this.skipOverTokens( rawEditorState );
+		const editorState = this.skipOverTokens(rawEditorState);
 
-		this.setState( { editorState }, () => {
+		this.setState({ editorState }, () => {
 			doFocus && this.focusEditor();
-			onChange( type.value, fromEditor( currentContent ) );
-		} );
+			onChange(type.value, fromEditor(currentContent));
+		});
 	}
 
-	addToken( title, name ) {
+	addToken(title, name) {
 		return () => {
 			const { editorState } = this.state;
 			const currentSelection = editorState.getSelection();
 			const currentContent = editorState.getCurrentContent();
 
-			currentContent.createEntity( 'TOKEN', 'IMMUTABLE', { name } );
+			currentContent.createEntity('TOKEN', 'IMMUTABLE', { name });
 			const tokenEntity = currentContent.getLastCreatedEntityKey();
 
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
 				currentSelection,
-				mapTokenTitleForEditor( title ),
+				mapTokenTitleForEditor(title),
 				null,
 				tokenEntity
 			);
 
-			this.updateEditor( EditorState.push( editorState, contentState, 'add-token' ), {
+			this.updateEditor(EditorState.push(editorState, contentState, 'add-token'), {
 				doFocus: true,
-			} );
+			});
 		};
 	}
 
-	removeToken( entityKey ) {
+	removeToken(entityKey) {
 		return () => {
 			const { editorState } = this.state;
 			const currentContent = editorState.getCurrentContent();
 			const currentSelection = editorState.getSelection();
 
-			const block = currentContent.getBlockForKey( currentSelection.focusKey );
+			const block = currentContent.getBlockForKey(currentSelection.focusKey);
 
 			// get characters in entity
-			const indices = block.getCharacterList().reduce( ( ids, value, key ) => {
-				return entityKey === value.entity ? [ ...ids, key ] : ids;
-			}, [] );
+			const indices = block.getCharacterList().reduce((ids, value, key) => {
+				return entityKey === value.entity ? [...ids, key] : ids;
+			}, []);
 
-			const range = SelectionState.createEmpty( block.key )
-				.set( 'anchorOffset', min( indices ) )
-				.set( 'focusOffset', max( indices ) );
+			const range = SelectionState.createEmpty(block.key)
+				.set('anchorOffset', min(indices))
+				.set('focusOffset', max(indices));
 
 			const withoutToken = EditorState.push(
 				editorState,
-				Modifier.removeRange( currentContent, range, 'forward' ),
+				Modifier.removeRange(currentContent, range, 'forward'),
 				'remove-range'
 			);
 
 			const selectionBeforeToken = EditorState.forceSelection(
 				withoutToken,
-				range.set( 'anchorOffset', min( indices ) ).set( 'focusOffset', min( indices ) )
+				range.set('anchorOffset', min(indices)).set('focusOffset', min(indices))
 			);
 
-			this.updateEditor( selectionBeforeToken );
+			this.updateEditor(selectionBeforeToken);
 		};
 	}
 
-	renderTokens( contentBlock, callback, contentState ) {
-		contentBlock.findEntityRanges( character => {
+	renderTokens(contentBlock, callback, contentState) {
+		contentBlock.findEntityRanges((character) => {
 			const entity = character.getEntity();
 
-			if ( null === entity ) {
+			if (null === entity) {
 				return false;
 			}
-			return 'TOKEN' === contentState.getEntity( entity ).getType();
-		}, callback );
+			return 'TOKEN' === contentState.getEntity(entity).getType();
+		}, callback);
 	}
 
 	render() {
@@ -226,65 +224,63 @@ export class TitleFormatEditor extends Component {
 		const previewText =
 			type.value && editorState.getCurrentContent().hasText()
 				? buildSeoTitle(
-						{ [ type.value ]: fromEditor( editorState.getCurrentContent() ) },
+						{ [type.value]: fromEditor(editorState.getCurrentContent()) },
 						type.value,
 						titleData
 				  )
 				: '';
 
-		const formattedPreview = previewText ? `${ translate( 'Preview' ) }: ${ previewText }` : '';
+		const formattedPreview = previewText ? `${translate('Preview')}: ${previewText}` : '';
 
-		const editorClassNames = classNames( 'title-format-editor', {
+		const editorClassNames = classNames('title-format-editor', {
 			disabled,
-		} );
+		});
 
 		return (
-			<div className={ editorClassNames }>
+			<div className={editorClassNames}>
 				<div className="title-format-editor__header">
-					<span className="title-format-editor__title">{ type.label }</span>
-					{ map( tokens, ( title, name ) => (
+					<span className="title-format-editor__title">{type.label}</span>
+					{map(tokens, (title, name) => (
 						/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 						<span
-							key={ name }
+							key={name}
 							className="title-format-editor__button"
-							onClick={ disabled ? noop : this.addToken( title, name ) }
+							onClick={disabled ? noop : this.addToken(title, name)}
 						>
-							{ title }
+							{title}
 						</span>
 						/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-					) ) }
+					))}
 				</div>
 				<div className="title-format-editor__editor-wrapper">
 					<Editor
-						readOnly={ disabled }
-						editorState={ editorState }
-						onChange={ disabled ? noop : this.updateEditor }
-						placeholder={ placeholder }
-						ref={ this.storeEditorReference }
+						readOnly={disabled}
+						editorState={editorState}
+						onChange={disabled ? noop : this.updateEditor}
+						placeholder={placeholder}
+						ref={this.storeEditorReference}
 					/>
 				</div>
-				<div className="title-format-editor__preview">{ formattedPreview }</div>
+				<div className="title-format-editor__preview">{formattedPreview}</div>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	const site = getSelectedSite( state );
+const mapStateToProps = (state, ownProps) => {
+	const site = getSelectedSite(state);
 	const { translate } = ownProps;
-	const formattedDate = moment()
-		.locale( get( site, 'lang', '' ) )
-		.format( 'MMMM YYYY' );
+	const formattedDate = moment().locale(get(site, 'lang', '')).format('MMMM YYYY');
 
 	// Add example content for post/page title, tag name and archive dates
 	return {
 		titleData: {
 			site,
-			post: { title: translate( 'Example Title' ) },
-			tag: translate( 'Example Tag' ),
+			post: { title: translate('Example Title') },
+			tag: translate('Example Tag'),
 			date: formattedDate,
 		},
 	};
 };
 
-export default localize( connect( mapStateToProps )( TitleFormatEditor ) );
+export default localize(connect(mapStateToProps)(TitleFormatEditor));

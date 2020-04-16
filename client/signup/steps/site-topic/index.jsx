@@ -34,35 +34,35 @@ class SiteTopicStep extends Component {
 	};
 
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep({ stepName: this.props.stepName });
 	}
 
-	submitSiteTopic = ( { isUserInput, name, slug, suggestedTheme } ) => {
+	submitSiteTopic = ({ isUserInput, name, slug, suggestedTheme }) => {
 		const { flowName, stepName } = this.props;
-		this.props.submitSiteVertical( { isUserInput, name, slug }, stepName, suggestedTheme );
-		this.props.goToNextStep( flowName );
+		this.props.submitSiteVertical({ isUserInput, name, slug }, stepName, suggestedTheme);
+		this.props.goToNextStep(flowName);
 	};
 
 	render() {
 		const headerText =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '';
+			getSiteTypePropertyValue('slug', this.props.siteType, 'siteTopicHeader') || '';
 		const subHeaderText =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicSubheader' ) || '';
+			getSiteTypePropertyValue('slug', this.props.siteType, 'siteTopicSubheader') || '';
 
 		return (
 			<div>
 				<StepWrapper
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					positionInFlow={ this.props.positionInFlow }
-					headerText={ headerText }
-					fallbackHeaderText={ headerText }
-					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ subHeaderText }
+					flowName={this.props.flowName}
+					stepName={this.props.stepName}
+					positionInFlow={this.props.positionInFlow}
+					headerText={headerText}
+					fallbackHeaderText={headerText}
+					subHeaderText={subHeaderText}
+					fallbackSubHeaderText={subHeaderText}
 					stepContent={
-						<SiteTopicForm submitForm={ this.submitSiteTopic } siteType={ this.props.siteType } />
+						<SiteTopicForm submitForm={this.submitSiteTopic} siteType={this.props.siteType} />
 					}
-					showSiteMockups={ this.props.showSiteMockups }
+					showSiteMockups={this.props.showSiteMockups}
 				/>
 			</div>
 		);
@@ -70,9 +70,9 @@ class SiteTopicStep extends Component {
 }
 
 export default connect(
-	state => ( {
-		siteType: getSiteType( state ),
-		isUserInput: getSiteVerticalIsUserInput( state ),
-	} ),
+	(state) => ({
+		siteType: getSiteType(state),
+		isUserInput: getSiteVerticalIsUserInput(state),
+	}),
 	{ saveSignupStep, submitSiteVertical }
-)( localize( SiteTopicStep ) );
+)(localize(SiteTopicStep));

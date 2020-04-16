@@ -17,10 +17,6 @@ import isRequestingBillingTransactions from 'state/selectors/is-requesting-billi
  * @param  {number}   transactionId ID of the requested transaction
  * @returns {boolean}                Whether a billing transaction is being requested
  */
-export default ( state, transactionId ) =>
-	isRequestingBillingTransactions( state ) ||
-	get(
-		state,
-		[ 'billingTransactions', 'individualTransactions', transactionId, 'requesting' ],
-		false
-	);
+export default (state, transactionId) =>
+	isRequestingBillingTransactions(state) ||
+	get(state, ['billingTransactions', 'individualTransactions', transactionId, 'requesting'], false);

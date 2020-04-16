@@ -4,7 +4,7 @@
 
 import { compact, get, head, isEqual, sortBy, toPairs, unionWith } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
+const debug = debugFactory('calypso:data-layer:remove-duplicate-gets');
 
 /**
  * Prevent sending multiple identical GET requests
@@ -26,8 +26,8 @@ const requestQueue = new Map();
  * FOR TESTING ONLY!
  */
 export const clearQueue = () => {
-	if ( 'undefined' !== typeof window ) {
-		throw new Error( '`clearQueue()` is not for use in production - only in testing!' );
+	if ('undefined' !== typeof window) {
+		throw new Error('`clearQueue()` is not for use in production - only in testing!');
 	}
 
 	requestQueue.clear();
@@ -39,7 +39,7 @@ export const clearQueue = () => {
  * @param {object} request the HTTP request action
  * @returns {boolean} whether or not the method is GET
  */
-const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
+const isGetRequest = (request) => 'GET' === get(request, 'method', '').toUpperCase();
 
 /**
  * Generate a deterministic key for comparing request descriptions
@@ -50,8 +50,8 @@ const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCa
  * @param {object<string, *>} query GET query string
  * @returns {string} unique key up to duplicate request descriptions
  */
-export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
-	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( toPairs( query ), head ) ] );
+export const buildKey = ({ path, apiNamespace, apiVersion, query }) =>
+	JSON.stringify([path, apiNamespace, apiVersion, sortBy(toPairs(query), head)]);
 
 /**
  * Joins a responder action into a unique list of responder actions
@@ -60,10 +60,10 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
  * @param {object} item new responder action to add
  * @returns {object<string, object[]>} union of existing list and new item
  */
-export const addResponder = ( list, item ) => ( {
-	failures: unionWith( list.failures, compact( [ item.onFailure ] ), isEqual ),
-	successes: unionWith( list.successes, compact( [ item.onSuccess ] ), isEqual ),
-} );
+export const addResponder = (list, item) => ({
+	failures: unionWith(list.failures, compact([item.onFailure]), isEqual),
+	successes: unionWith(list.successes, compact([item.onSuccess]), isEqual),
+});
 
 /**
  * Prevents sending duplicate requests when one is
@@ -74,23 +74,23 @@ export const addResponder = ( list, item ) => ( {
  * @param {OutboundData} outboundData request info
  * @returns {OutboundData} filtered request info
  */
-export const removeDuplicateGets = outboundData => {
+export const removeDuplicateGets = (outboundData) => {
 	const { nextRequest } = outboundData;
 
-	if ( ! isGetRequest( nextRequest ) ) {
+	if (!isGetRequest(nextRequest)) {
 		return outboundData;
 	}
 
 	// don't block automatic retries
-	if ( get( nextRequest, 'meta.dataLayer.retryCount', 0 ) > 0 ) {
+	if (get(nextRequest, 'meta.dataLayer.retryCount', 0) > 0) {
 		return outboundData;
 	}
 
-	const key = buildKey( nextRequest );
-	const queued = requestQueue.get( key );
-	const request = addResponder( queued || { failures: [], successes: [] }, nextRequest );
+	const key = buildKey(nextRequest);
+	const queued = requestQueue.get(key);
+	const request = addResponder(queued || { failures: [], successes: [] }, nextRequest);
 
-	requestQueue.set( key, request );
+	requestQueue.set(key, request);
 
 	return queued ? { ...outboundData, nextRequest: null } : outboundData;
 };
@@ -105,17 +105,17 @@ export const removeDuplicateGets = outboundData => {
  * @param {InboundData} inboundData request info
  * @returns {InboundData} processed request info
  */
-export const applyDuplicatesHandlers = inboundData => {
+export const applyDuplicatesHandlers = (inboundData) => {
 	const { originalRequest } = inboundData;
 
-	if ( ! isGetRequest( originalRequest ) ) {
+	if (!isGetRequest(originalRequest)) {
 		return inboundData;
 	}
 
-	const key = buildKey( originalRequest );
-	const queued = requestQueue.get( key );
+	const key = buildKey(originalRequest);
+	const queued = requestQueue.get(key);
 
-	if ( ! queued ) {
+	if (!queued) {
 		debug(
 			'applyDuplicatesHandler has entered an impossible state! ' +
 				'A HTTP request is exiting the http pipeline without having entered it. ' +
@@ -124,11 +124,11 @@ export const applyDuplicatesHandlers = inboundData => {
 		return inboundData;
 	}
 
-	requestQueue.delete( key );
+	requestQueue.delete(key);
 
 	const responders = {
-		failures: unionWith( inboundData.failures || [], queued.failures, isEqual ),
-		successes: unionWith( inboundData.successes || [], queued.successes, isEqual ),
+		failures: unionWith(inboundData.failures || [], queued.failures, isEqual),
+		successes: unionWith(inboundData.successes || [], queued.successes, isEqual),
 	};
 
 	return { ...inboundData, ...responders };

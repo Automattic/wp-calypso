@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import canCurrentUser from 'state/selectors/can-current-user';
 
-describe( 'canCurrentUser()', () => {
-	test( 'should return null if the site is not known', () => {
+describe('canCurrentUser()', () => {
+	test('should return null if the site is not known', () => {
 		const isCapable = canCurrentUser(
 			{
 				currentUser: {
@@ -20,10 +20,10 @@ describe( 'canCurrentUser()', () => {
 			'manage_options'
 		);
 
-		expect( isCapable ).to.be.null;
-	} );
+		expect(isCapable).to.be.null;
+	});
 
-	test( 'should return the value for the specified capability', () => {
+	test('should return the value for the specified capability', () => {
 		const isCapable = canCurrentUser(
 			{
 				currentUser: {
@@ -38,10 +38,10 @@ describe( 'canCurrentUser()', () => {
 			'manage_options'
 		);
 
-		expect( isCapable ).to.be.false;
-	} );
+		expect(isCapable).to.be.false;
+	});
 
-	test( 'should return null if the capability is invalid', () => {
+	test('should return null if the capability is invalid', () => {
 		const isCapable = canCurrentUser(
 			{
 				currentUser: {
@@ -56,6 +56,6 @@ describe( 'canCurrentUser()', () => {
 			'manage_foo'
 		);
 
-		expect( isCapable ).to.be.null;
-	} );
-} );
+		expect(isCapable).to.be.null;
+	});
+});

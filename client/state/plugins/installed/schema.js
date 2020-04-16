@@ -5,7 +5,7 @@ export const pluginsSchema = {
 		'^[0-9]+$': {
 			type: 'array',
 			items: {
-				required: [ 'id', 'slug', 'name', 'active', 'autoupdate' ],
+				required: ['id', 'slug', 'name', 'active', 'autoupdate'],
 				properties: {
 					id: { type: 'string' },
 					slug: { type: 'string' },

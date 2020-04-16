@@ -12,10 +12,10 @@ import { head, includes, isEmpty, split } from 'lodash';
  */
 import { addQueryArgs, untrailingslashit } from 'lib/route';
 
-export function authQueryTransformer( queryObject ) {
+export function authQueryTransformer(queryObject) {
 	return {
 		// Required
-		clientId: parseInt( queryObject.client_id, 10 ),
+		clientId: parseInt(queryObject.client_id, 10),
 		closeWindowAfterLogin: '1' === queryObject.close_window_after_login,
 		homeUrl: queryObject.home_url,
 		isPopup: '1' === queryObject.is_popup,
@@ -28,8 +28,8 @@ export function authQueryTransformer( queryObject ) {
 
 		// Optional
 		// TODO: verify
-		authApproved: !! queryObject.auth_approved,
-		alreadyAuthorized: !! queryObject.already_authorized,
+		authApproved: !!queryObject.auth_approved,
+		alreadyAuthorized: !!queryObject.already_authorized,
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
@@ -40,7 +40,7 @@ export function authQueryTransformer( queryObject ) {
 	};
 }
 
-export const authQueryPropTypes = PropTypes.shape( {
+export const authQueryPropTypes = PropTypes.shape({
 	authApproved: PropTypes.bool,
 	alreadyAuthorized: PropTypes.bool,
 	blogname: PropTypes.string,
@@ -58,14 +58,14 @@ export const authQueryPropTypes = PropTypes.shape( {
 	siteUrl: PropTypes.string,
 	state: PropTypes.string.isRequired,
 	userEmail: PropTypes.string,
-} );
+});
 
-export function addCalypsoEnvQueryArg( url ) {
-	let calypsoEnv = config( 'env_id' );
-	if ( 'object' === typeof window && window.COMMIT_SHA && isCalypsoLive() ) {
-		calypsoEnv = `live-${ COMMIT_SHA }`;
+export function addCalypsoEnvQueryArg(url) {
+	let calypsoEnv = config('env_id');
+	if ('object' === typeof window && window.COMMIT_SHA && isCalypsoLive()) {
+		calypsoEnv = `live-${COMMIT_SHA}`;
 	}
-	return addQueryArgs( { calypso_env: calypsoEnv }, url );
+	return addQueryArgs({ calypso_env: calypsoEnv }, url);
 }
 
 /**
@@ -74,13 +74,13 @@ export function addCalypsoEnvQueryArg( url ) {
  * @param {string} inputUrl User-supplied URL
  * @returns {string} Sanitized URL
  */
-export function cleanUrl( inputUrl ) {
+export function cleanUrl(inputUrl) {
 	let url = inputUrl.trim().toLowerCase();
-	if ( url && url.substr( 0, 4 ) !== 'http' ) {
+	if (url && url.substr(0, 4) !== 'http') {
 		url = 'http://' + url;
 	}
-	url = url.replace( /wp-admin\/?$/, '' );
-	return untrailingslashit( url );
+	url = url.replace(/wp-admin\/?$/, '');
+	return untrailingslashit(url);
 }
 
 /**
@@ -92,12 +92,12 @@ export function cleanUrl( inputUrl ) {
  * @param  {string}  scope From authorization query
  * @returns {?string}       Role parsed from scope if found
  */
-export function getRoleFromScope( scope ) {
-	if ( ! includes( scope, ':' ) ) {
+export function getRoleFromScope(scope) {
+	if (!includes(scope, ':')) {
 		return null;
 	}
-	const role = head( split( scope, ':', 1 ) );
-	if ( ! isEmpty( role ) ) {
+	const role = head(split(scope, ':', 1));
+	if (!isEmpty(role)) {
 		return role;
 	}
 	return null;
@@ -110,16 +110,16 @@ export function getRoleFromScope( scope ) {
  * @param  {object}     query  Authorization query
  * @returns {?object}           Query after transformation. Null if invalid or errored during transform.
  */
-export function parseAuthorizationQuery( query ) {
-	if ( ! parseAuthorizationQuery.parser ) {
+export function parseAuthorizationQuery(query) {
+	if (!parseAuthorizationQuery.parser) {
 		parseAuthorizationQuery.parser = makeJsonSchemaParser(
 			authorizeQueryDataSchema,
 			authQueryTransformer
 		);
 	}
 	try {
-		return parseAuthorizationQuery.parser( query );
-	} catch ( error ) {
+		return parseAuthorizationQuery.parser(query);
+	} catch (error) {
 		// The parser is expected to throw SchemaError or TransformerError on bad input.
 	}
 	return null;

@@ -18,40 +18,40 @@ import {
 import { combineReducers } from 'state/utils';
 import { States } from './constants';
 
-export function selectedPostType( state = null, action ) {
-	switch ( action.type ) {
+export function selectedPostType(state = null, action) {
+	switch (action.type) {
 		case EXPORT_POST_TYPE_SET:
 			return action.postType;
 	}
 	return state;
 }
 
-const postTypeField = ( state = '', action ) => {
-	switch ( action.type ) {
+const postTypeField = (state = '', action) => {
+	switch (action.type) {
 		case EXPORT_POST_TYPE_FIELD_SET:
-			return Object.assign( {}, state, {
-				[ action.fieldName ]: action.value,
-			} );
+			return Object.assign({}, state, {
+				[action.fieldName]: action.value,
+			});
 	}
 	return state;
 };
 
-const postTypes = ( state = { post: {}, page: {} }, action ) => {
-	switch ( action.type ) {
+const postTypes = (state = { post: {}, page: {} }, action) => {
+	switch (action.type) {
 		case EXPORT_POST_TYPE_FIELD_SET:
-			return Object.assign( {}, state, {
-				[ action.postType ]: postTypeField( state[ action.postType ], action ),
-			} );
+			return Object.assign({}, state, {
+				[action.postType]: postTypeField(state[action.postType], action),
+			});
 	}
 	return state;
 };
 
-export function selectedAdvancedSettings( state = {}, action ) {
-	switch ( action.type ) {
+export function selectedAdvancedSettings(state = {}, action) {
+	switch (action.type) {
 		case EXPORT_POST_TYPE_FIELD_SET:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: postTypes( state[ action.siteId ], action ),
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: postTypes(state[action.siteId], action),
+			});
 	}
 	return state;
 }
@@ -63,28 +63,28 @@ export function selectedAdvancedSettings( state = {}, action ) {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export function exportingState( state = {}, { type, siteId } ) {
-	switch ( type ) {
+export function exportingState(state = {}, { type, siteId }) {
+	switch (type) {
 		case EXPORT_START_REQUEST:
-			return Object.assign( {}, state, {
-				[ siteId ]: States.STARTING,
-			} );
+			return Object.assign({}, state, {
+				[siteId]: States.STARTING,
+			});
 		case EXPORT_STARTED:
-			return Object.assign( {}, state, {
-				[ siteId ]: States.EXPORTING,
-			} );
+			return Object.assign({}, state, {
+				[siteId]: States.EXPORTING,
+			});
 		case EXPORT_COMPLETE:
-			return Object.assign( {}, state, {
-				[ siteId ]: States.COMPLETE,
-			} );
+			return Object.assign({}, state, {
+				[siteId]: States.COMPLETE,
+			});
 		case EXPORT_FAILURE:
-			return Object.assign( {}, state, {
-				[ siteId ]: States.FAILED,
-			} );
+			return Object.assign({}, state, {
+				[siteId]: States.FAILED,
+			});
 		case EXPORT_CLEAR:
-			return Object.assign( {}, state, {
-				[ siteId ]: States.READY,
-			} );
+			return Object.assign({}, state, {
+				[siteId]: States.READY,
+			});
 	}
 	return state;
 }
@@ -96,17 +96,17 @@ export function exportingState( state = {}, { type, siteId } ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function fetchingAdvancedSettings( state = {}, action ) {
-	switch ( action.type ) {
+export function fetchingAdvancedSettings(state = {}, action) {
+	switch (action.type) {
 		case EXPORT_ADVANCED_SETTINGS_FETCH:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: true,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: true,
+			});
 		case EXPORT_ADVANCED_SETTINGS_FETCH_FAIL:
 		case EXPORT_ADVANCED_SETTINGS_RECEIVE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: false,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: false,
+			});
 	}
 	return state;
 }
@@ -118,18 +118,18 @@ export function fetchingAdvancedSettings( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function advancedSettings( state = {}, action ) {
-	switch ( action.type ) {
+export function advancedSettings(state = {}, action) {
+	switch (action.type) {
 		case EXPORT_ADVANCED_SETTINGS_RECEIVE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.advancedSettings,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: action.advancedSettings,
+			});
 	}
 	return state;
 }
 
-export function downloadURL( state = null, action ) {
-	switch ( action.type ) {
+export function downloadURL(state = null, action) {
+	switch (action.type) {
 		case EXPORT_COMPLETE:
 			return action.downloadURL;
 		case EXPORT_CLEAR:
@@ -139,15 +139,15 @@ export function downloadURL( state = null, action ) {
 	return state;
 }
 
-export function mediaExportUrl( state = null, action ) {
-	if ( action.type === SET_MEDIA_EXPORT_DATA ) {
+export function mediaExportUrl(state = null, action) {
+	if (action.type === SET_MEDIA_EXPORT_DATA) {
 		return action.mediaExportUrl;
 	}
 
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	selectedPostType,
 	selectedAdvancedSettings,
 	exportingState,
@@ -155,4 +155,4 @@ export default combineReducers( {
 	advancedSettings,
 	downloadURL,
 	mediaExportUrl,
-} );
+});

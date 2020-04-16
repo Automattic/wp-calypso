@@ -17,14 +17,14 @@ const initialState = {
 	result: false,
 };
 
-export const themeSetup = ( state = initialState, action ) => {
-	switch ( action.type ) {
+export const themeSetup = (state = initialState, action) => {
+	switch (action.type) {
 		case THEME_SETUP_RESULT:
 			return { ...state, active: false, result: action.data };
 		case THEME_SETUP_REQUEST:
 			return { ...state, active: true, result: false };
 		case THEME_SETUP_TOGGLE_DIALOG:
-			return { ...state, isDialogVisible: ! state.isDialogVisible, result: false };
+			return { ...state, isDialogVisible: !state.isDialogVisible, result: false };
 	}
 
 	return state;

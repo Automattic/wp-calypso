@@ -28,26 +28,26 @@ class SecurityAccountRecoveryManageContactButtons extends React.Component {
 	render() {
 		return (
 			<FormButtonsBar>
-				<FormButton disabled={ ! this.props.isSavable } onClick={ this.props.onSave }>
-					{ this.props.saveText ? this.props.saveText : this.props.translate( 'Save' ) }
+				<FormButton disabled={!this.props.isSavable} onClick={this.props.onSave}>
+					{this.props.saveText ? this.props.saveText : this.props.translate('Save')}
 				</FormButton>
 
-				<FormButton isPrimary={ false } onClick={ this.props.onCancel }>
-					{ this.props.translate( 'Cancel' ) }
+				<FormButton isPrimary={false} onClick={this.props.onCancel}>
+					{this.props.translate('Cancel')}
 				</FormButton>
 
-				{ this.props.isDeletable ? (
+				{this.props.isDeletable ? (
 					<button
-						className={ 'security-account-recovery-contact__remove' }
-						onClick={ this.props.onDelete }
+						className={'security-account-recovery-contact__remove'}
+						onClick={this.props.onDelete}
 					>
-						<Gridicon icon="trash" size={ 24 } />
-						<span>{ this.props.translate( 'Remove' ) }</span>
+						<Gridicon icon="trash" size={24} />
+						<span>{this.props.translate('Remove')}</span>
 					</button>
-				) : null }
+				) : null}
 			</FormButtonsBar>
 		);
 	}
 }
 
-export default localize( SecurityAccountRecoveryManageContactButtons );
+export default localize(SecurityAccountRecoveryManageContactButtons);

@@ -20,7 +20,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const removeConnectedApplication = action =>
+export const removeConnectedApplication = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -36,15 +36,12 @@ export const removeConnectedApplication = action =>
  * @param   {object} action Redux action
  * @returns {object} Dispatched user connected applications add action
  */
-export const handleRemoveSuccess = ( { appId } ) => [
-	deleteConnectedApplicationSuccess( appId ),
-	successNotice(
-		translate( 'This application no longer has access to your WordPress.com account.' ),
-		{
-			duration: 8000,
-			id: `connected-app-notice-success-${ appId }`,
-		}
-	),
+export const handleRemoveSuccess = ({ appId }) => [
+	deleteConnectedApplicationSuccess(appId),
+	successNotice(translate('This application no longer has access to your WordPress.com account.'), {
+		duration: 8000,
+		id: `connected-app-notice-success-${appId}`,
+	}),
 ];
 
 /**
@@ -53,17 +50,17 @@ export const handleRemoveSuccess = ( { appId } ) => [
  * @returns {object} Dispatched error notice action
  */
 export const handleRemoveError = () =>
-	errorNotice( translate( 'The connected application was not disconnected. Please try again.' ), {
+	errorNotice(translate('The connected application was not disconnected. Please try again.'), {
 		duration: 8000,
 		id: 'connected-app-notice-error',
-	} );
+	});
 
-registerHandlers( 'state/data-layer/wpcom/me/connected-applications/delete/index.js', {
-	[ CONNECTED_APPLICATION_DELETE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/connected-applications/delete/index.js', {
+	[CONNECTED_APPLICATION_DELETE]: [
+		dispatchRequest({
 			fetch: removeConnectedApplication,
 			onSuccess: handleRemoveSuccess,
 			onError: handleRemoveError,
-		} ),
+		}),
 	],
-} );
+});

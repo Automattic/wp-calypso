@@ -5,23 +5,23 @@ import { startsWith } from 'lodash';
 
 const schemeRegex = /^\w+:\/\//;
 
-export const addSchemeIfMissing = ( url, scheme ) => {
-	if ( false === schemeRegex.test( url ) ) {
+export const addSchemeIfMissing = (url, scheme) => {
+	if (false === schemeRegex.test(url)) {
 		return scheme + '://' + url;
 	}
 	return url;
 };
 
-export const setUrlScheme = ( url, scheme ) => {
+export const setUrlScheme = (url, scheme) => {
 	const schemeWithSlashes = scheme + '://';
-	if ( startsWith( url, schemeWithSlashes ) ) {
+	if (startsWith(url, schemeWithSlashes)) {
 		return url;
 	}
 
-	const newUrl = addSchemeIfMissing( url, scheme );
-	if ( newUrl !== url ) {
+	const newUrl = addSchemeIfMissing(url, scheme);
+	if (newUrl !== url) {
 		return newUrl;
 	}
 
-	return url.replace( schemeRegex, schemeWithSlashes );
+	return url.replace(schemeRegex, schemeWithSlashes);
 };

@@ -22,14 +22,14 @@ import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR } from
 class Unlocked extends React.Component {
 	state = {
 		submitting: false,
-		sent: ! this.isDomainAlwaysTransferrable(),
+		sent: !this.isDomainAlwaysTransferrable(),
 	};
 
 	componentWillUnmount() {
 		this.setStateIfMounted = noop;
 	}
 
-	setStateIfMounted( ...args ) {
+	setStateIfMounted(...args) {
 		/**
 		 * Wrap setState calls that might occur after unmounting.
 		 *
@@ -40,7 +40,7 @@ class Unlocked extends React.Component {
 		 * The recommended solution is cancellable promises, but we don't want to
 		 * cancel these requests if we navigate away, so that won't work for us here.
 		 */
-		this.setState( ...args );
+		this.setState(...args);
 	}
 
 	handleCancelTransferClick = () => {
@@ -49,9 +49,9 @@ class Unlocked extends React.Component {
 			this.props
 		);
 
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
-		const enablePrivacy = ! privateDomain;
+		const enablePrivacy = !privateDomain;
 		const lockDomain = domainLockingAvailable;
 
 		cancelTransferRequest(
@@ -62,16 +62,16 @@ class Unlocked extends React.Component {
 				enablePrivacy,
 				lockDomain,
 			},
-			error => {
-				this.setStateIfMounted( { submitting: false } );
+			(error) => {
+				this.setStateIfMounted({ submitting: false });
 
-				if ( error ) {
+				if (error) {
 					const contactLink = (
-						<a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
+						<a href={CALYPSO_CONTACT} target="_blank" rel="noopener noreferrer" />
 					);
 					let errorMessage;
 
-					switch ( error.error ) {
+					switch (error.error) {
 						case 'enable_private_reg_failed':
 							errorMessage = translate(
 								'We were unable to enable Privacy Protection for your domain. ' +
@@ -102,77 +102,75 @@ class Unlocked extends React.Component {
 							);
 							break;
 					}
-					notices.error( errorMessage );
+					notices.error(errorMessage);
 				} else {
 					// Success.
-					this.setStateIfMounted( { sent: false } );
+					this.setStateIfMounted({ sent: false });
 
 					let successMessage;
-					if ( enablePrivacy && lockDomain ) {
+					if (enablePrivacy && lockDomain) {
 						successMessage = translate(
 							"We've canceled your domain transfer. Your domain is now re-locked and " +
 								'Privacy Protection has been enabled.'
 						);
-					} else if ( enablePrivacy ) {
+					} else if (enablePrivacy) {
 						successMessage = translate(
 							"We've canceled your domain transfer and " + 'Privacy Protection has been re-enabled.'
 						);
-					} else if ( lockDomain ) {
+					} else if (lockDomain) {
 						successMessage = translate(
 							"We've canceled your domain transfer and " + 're-locked your domain.'
 						);
 					} else {
-						successMessage = translate( "We've canceled your domain transfer. " );
+						successMessage = translate("We've canceled your domain transfer. ");
 					}
 
-					notices.success( successMessage );
+					notices.success(successMessage);
 				}
 			}
 		);
 	};
 
 	isDomainAlwaysTransferrable() {
-		const { domainLockingAvailable, privateDomain } = getSelectedDomain( this.props );
-		return ! domainLockingAvailable && ! privateDomain;
+		const { domainLockingAvailable, privateDomain } = getSelectedDomain(this.props);
+		return !domainLockingAvailable && !privateDomain;
 	}
 
-	renderCancelButton( domain ) {
+	renderCancelButton(domain) {
 		const { pendingTransfer } = domain;
 
-		const showCancelButton = pendingTransfer || ! this.isDomainAlwaysTransferrable();
-		if ( ! showCancelButton ) {
+		const showCancelButton = pendingTransfer || !this.isDomainAlwaysTransferrable();
+		if (!showCancelButton) {
 			return null;
 		}
 
 		return (
 			<Button
 				className="transfer-out__action-button"
-				onClick={ this.handleCancelTransferClick }
-				disabled={ this.state.submitting || ! this.state.sent }
+				onClick={this.handleCancelTransferClick}
+				disabled={this.state.submitting || !this.state.sent}
 			>
-				{ this.props.translate( 'Cancel Transfer' ) }
+				{this.props.translate('Cancel Transfer')}
 			</Button>
 		);
 	}
 
-	renderSendButton( domain ) {
+	renderSendButton(domain) {
 		const { translate } = this.props;
 		const { manualTransferRequired } = domain;
 
-		if ( manualTransferRequired && this.state.sent ) {
+		if (manualTransferRequired && this.state.sent) {
 			return null;
 		}
 
 		return (
 			<Button
 				className="transfer-out__action-button"
-				onClick={ this.handleSendConfirmationCodeClick }
-				disabled={ this.state.submitting }
+				onClick={this.handleSendConfirmationCodeClick}
+				disabled={this.state.submitting}
 				primary
 			>
-				{ this.state.sent
-					? translate( 'Resend Transfer Code' )
-					: translate( 'Send Transfer Code' ) }
+				{this.state.sent ? translate('Resend Transfer Code') : translate('Send Transfer Code')}
 			</Button>
 		);
 	}
@@ -185,23 +183,23 @@ class Unlocked extends React.Component {
 			disablePrivacy: false,
 		};
 
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
-		requestTransferCode( options, error => {
-			this.setState( { submitting: false } );
-			if ( ! error ) {
-				this.setState( { sent: true } );
+		requestTransferCode(options, (error) => {
+			this.setState({ submitting: false });
+			if (!error) {
+				this.setState({ sent: true });
 			}
-			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-			fetchWapiDomainInfo( this.props.selectedDomainName );
-		} );
+			displayRequestTransferCodeResponseNotice(error, getSelectedDomain(this.props));
+			fetchWapiDomainInfo(this.props.selectedDomainName);
+		});
 	};
 
 	renderPendingTransferBody() {
 		const { translate } = this.props;
 		return (
 			<div>
-				<p>{ translate( 'Your domain is pending transfer.' ) }</p>
+				<p>{translate('Your domain is pending transfer.')}</p>
 			</div>
 		);
 	}
@@ -212,8 +210,8 @@ class Unlocked extends React.Component {
 
 		return (
 			<p>
-				{ translate( 'The registry for your domain requires a special process for transfers. ' ) }{ ' ' }
-				{ sent
+				{translate('The registry for your domain requires a special process for transfers. ')}{' '}
+				{sent
 					? translate(
 							'Our Happiness Engineers have been notified about ' +
 								'your transfer request and will be in touch shortly to help ' +
@@ -222,7 +220,7 @@ class Unlocked extends React.Component {
 					: translate(
 							'Please request an authorization code to notify our ' +
 								'Happiness Engineers of your intention.'
-					  ) }
+					  )}
 			</p>
 		);
 	}
@@ -239,17 +237,15 @@ class Unlocked extends React.Component {
 			) + ' ';
 		return (
 			<div>
-				{ ! ( submitting || sent ) && (
-					<p>
-						{ translate( 'Please press the button to request a transfer authorization code.' ) }
-					</p>
-				) }
+				{!(submitting || sent) && (
+					<p>{translate('Please press the button to request a transfer authorization code.')}</p>
+				)}
 				<p>
-					{ sentStatement }
-					{ translate(
+					{sentStatement}
+					{translate(
 						'You must provide your new registrar with your ' +
 							'domain name and transfer code to complete the transfer process.'
-					) }
+					)}
 				</p>
 			</div>
 		);
@@ -258,54 +254,54 @@ class Unlocked extends React.Component {
 	render() {
 		const { translate } = this.props;
 		const { submitting } = this.state;
-		const domain = getSelectedDomain( this.props );
+		const domain = getSelectedDomain(this.props);
 		const { privateDomain, domainLockingAvailable } = domain;
-		const privacyDisabled = ! privateDomain;
+		const privacyDisabled = !privateDomain;
 
 		let domainStateMessage;
-		if ( domainLockingAvailable && privacyDisabled ) {
+		if (domainLockingAvailable && privacyDisabled) {
 			domainStateMessage = translate(
 				'Your domain is unlocked and ' +
 					'Privacy Protection has been disabled to prepare for transfer.'
 			);
-		} else if ( privacyDisabled ) {
+		} else if (privacyDisabled) {
 			domainStateMessage = translate(
 				'Privacy Protection for your ' + 'domain has been disabled to prepare for transfer.'
 			);
-		} else if ( domainLockingAvailable ) {
-			domainStateMessage = translate( 'Your domain is unlocked to prepare for transfer.' );
+		} else if (domainLockingAvailable) {
+			domainStateMessage = translate('Your domain is unlocked to prepare for transfer.');
 		}
 
 		return (
 			<div>
 				<Card className="transfer-out__card">
 					<div>
-						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
-						{ domainStateMessage && <p>{ domainStateMessage }</p> }
-						{ this.renderBody( domain ) }
+						{submitting && <p>{translate('Sending request…')}</p>}
+						{domainStateMessage && <p>{domainStateMessage}</p>}
+						{this.renderBody(domain)}
 						<a
-							href={ TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR }
+							href={TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							{ translate( 'Learn More.' ) }
+							{translate('Learn More.')}
 						</a>
 					</div>
-					{ this.renderSendButton( domain ) }
-					{ this.renderCancelButton( domain ) }
+					{this.renderSendButton(domain)}
+					{this.renderCancelButton(domain)}
 				</Card>
 			</div>
 		);
 	}
 
-	renderBody( domain ) {
+	renderBody(domain) {
 		const { manualTransferRequired, pendingTransfer } = domain;
 
-		if ( pendingTransfer ) {
+		if (pendingTransfer) {
 			return this.renderPendingTransferBody();
 		}
 
-		if ( manualTransferRequired ) {
+		if (manualTransferRequired) {
 			return this.renderManualTransferBody();
 		}
 
@@ -313,4 +309,4 @@ class Unlocked extends React.Component {
 	}
 }
 
-export default localize( Unlocked );
+export default localize(Unlocked);

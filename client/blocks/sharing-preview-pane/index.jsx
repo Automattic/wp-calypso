@@ -52,22 +52,22 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	static defaultProps = {
-		services: Object.keys( serviceNames ),
+		services: Object.keys(serviceNames),
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		const connectedServices = map( props.connections, 'service' );
-		const firstConnectedService = find( props.services, service => {
-			return find( connectedServices, connectedService => service === connectedService );
-		} );
+		const connectedServices = map(props.connections, 'service');
+		const firstConnectedService = find(props.services, (service) => {
+			return find(connectedServices, (connectedService) => service === connectedService);
+		});
 		const selectedService = props.selectedService || firstConnectedService;
 		this.state = { selectedService };
 	}
 
-	selectPreview = selectedService => {
-		this.setState( { selectedService } );
+	selectPreview = (selectedService) => {
+		this.setState({ selectedService });
 	};
 
 	renderPreview() {
@@ -82,29 +82,29 @@ class SharingPreviewPane extends PureComponent {
 			siteIcon,
 		} = this.props;
 		const { selectedService } = this.state;
-		const connection = find( connections, { service: selectedService } );
-		if ( ! connection ) {
+		const connection = find(connections, { service: selectedService });
+		if (!connection) {
 			return (
 				<Notice
-					text={ translate( 'Connect to %s to see the preview', {
-						args: serviceNames[ selectedService ],
-					} ) }
+					text={translate('Connect to %s to see the preview', {
+						args: serviceNames[selectedService],
+					})}
 					status="is-info"
-					showDismiss={ false }
+					showDismiss={false}
 				>
-					<NoticeAction href={ '/marketing/connections/' + siteSlug }>
-						{ translate( 'Settings' ) }
+					<NoticeAction href={'/marketing/connections/' + siteSlug}>
+						{translate('Settings')}
 					</NoticeAction>
 				</Notice>
 			);
 		}
 
-		const articleUrl = get( post, 'URL', '' );
-		const articleTitle = get( post, 'title', '' );
-		const articleContent = getExcerptForPost( post );
-		const articleSummary = getSummaryForPost( post, translate );
-		const siteDomain = get( site, 'domain', '' );
-		const imageUrl = getPostImage( post );
+		const articleUrl = get(post, 'URL', '');
+		const articleTitle = get(post, 'title', '');
+		const articleContent = getExcerptForPost(post);
+		const articleSummary = getSummaryForPost(post, translate);
+		const siteDomain = get(site, 'domain', '');
+		const imageUrl = getPostImage(post);
 		const {
 			external_name: externalName,
 			external_profile_url: externalProfileURL,
@@ -128,15 +128,15 @@ class SharingPreviewPane extends PureComponent {
 			siteIcon,
 		};
 
-		switch ( selectedService ) {
+		switch (selectedService) {
 			case 'facebook':
-				return <FacebookSharePreview { ...previewProps } />;
+				return <FacebookSharePreview {...previewProps} />;
 			case 'tumblr':
-				return <TumblrSharePreview { ...previewProps } />;
+				return <TumblrSharePreview {...previewProps} />;
 			case 'linkedin':
-				return <LinkedinSharePreview { ...previewProps } />;
+				return <LinkedinSharePreview {...previewProps} />;
 			case 'twitter':
-				return <TwitterSharePreview { ...previewProps } externalDisplay={ externalDisplay } />;
+				return <TwitterSharePreview {...previewProps} externalDisplay={externalDisplay} />;
 			default:
 				return null;
 		}
@@ -144,44 +144,44 @@ class SharingPreviewPane extends PureComponent {
 
 	render() {
 		const { translate, services } = this.props;
-		const initialMenuItemIndex = services.indexOf( this.state.selectedService );
+		const initialMenuItemIndex = services.indexOf(this.state.selectedService);
 
 		return (
 			<div className="sharing-preview-pane">
 				<div className="sharing-preview-pane__sidebar">
 					<div className="sharing-preview-pane__explanation">
-						<h1 className="sharing-preview-pane__title">{ translate( 'Social Previews' ) }</h1>
+						<h1 className="sharing-preview-pane__title">{translate('Social Previews')}</h1>
 						<p className="sharing-preview-pane__description">
-							{ translate(
+							{translate(
 								'This is how your post will appear ' +
 									'when people view or share it on any of ' +
 									'the networks below'
-							) }
+							)}
 						</p>
 					</div>
-					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex }>
-						{ services.map( service => (
-							<SocialItem { ...{ key: service, service } } />
-						) ) }
+					<VerticalMenu onClick={this.selectPreview} initialItemIndex={initialMenuItemIndex}>
+						{services.map((service) => (
+							<SocialItem {...{ key: service, service }} />
+						))}
 					</VerticalMenu>
 				</div>
 				<div className="sharing-preview-pane__preview-area">
-					<div className="sharing-preview-pane__preview">{ this.renderPreview() }</div>
+					<div className="sharing-preview-pane__preview">{this.renderPreview()}</div>
 				</div>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = (state, ownProps) => {
 	const { siteId, postId } = ownProps;
-	const site = getSite( state, siteId );
-	const post = getSitePost( state, siteId, postId );
-	const seoTitle = getSeoTitle( state, 'posts', { site, post } );
-	const currentUserId = getCurrentUserId( state );
-	const connections = getSiteUserConnections( state, siteId, currentUserId );
-	const siteSlug = getSiteSlug( state, siteId );
-	const siteIcon = getSiteIconUrl( state, siteId );
+	const site = getSite(state, siteId);
+	const post = getSitePost(state, siteId, postId);
+	const seoTitle = getSeoTitle(state, 'posts', { site, post });
+	const currentUserId = getCurrentUserId(state);
+	const connections = getSiteUserConnections(state, siteId, currentUserId);
+	const siteSlug = getSiteSlug(state, siteId);
+	const siteIcon = getSiteIconUrl(state, siteId);
 
 	return {
 		site,
@@ -193,4 +193,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( SharingPreviewPane ) );
+export default connect(mapStateToProps)(localize(SharingPreviewPane));

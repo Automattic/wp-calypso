@@ -35,11 +35,11 @@ import {
  */
 const couponCodeField = (
 	<TextField
-		labelText={ translate( 'Coupon code' ) }
-		explanationText={ translate(
+		labelText={translate('Coupon code')}
+		explanationText={translate(
 			'Only apply this promotion when the customer supplies the coupon code'
-		) }
-		placeholderText={ translate( 'Enter coupon code' ) }
+		)}
+		placeholderText={translate('Enter coupon code')}
 		isRequired
 	/>
 );
@@ -49,8 +49,8 @@ const couponCodeField = (
  */
 const freeShippingField = (
 	<CheckboxField
-		labelText={ translate( 'Free shipping' ) }
-		explanationText={ translate( 'This coupon also provides free shipping' ) }
+		labelText={translate('Free shipping')}
+		explanationText={translate('This coupon also provides free shipping')}
 	/>
 );
 
@@ -58,17 +58,17 @@ const freeShippingField = (
  * Coupon "Applies to" card.
  */
 const appliesToCoupon = {
-	labelText: translate( 'Applies to' ),
+	labelText: translate('Applies to'),
 	cssClass: 'promotions__promotion-form-card-applies-to',
 	fields: {
 		appliesTo: {
 			component: (
 				<PromotionAppliesToField
-					selectionTypes={ [
-						{ labelText: translate( 'All products' ), type: 'all' },
-						{ labelText: translate( 'Specific products' ), type: 'productIds' },
-						{ labelText: translate( 'Product categories' ), type: 'productCategoryIds' },
-					] }
+					selectionTypes={[
+						{ labelText: translate('All products'), type: 'all' },
+						{ labelText: translate('Specific products'), type: 'productIds' },
+						{ labelText: translate('Product categories'), type: 'productCategoryIds' },
+					]}
 				/>
 			),
 			validate: validateCouponAppliesTo,
@@ -80,26 +80,26 @@ const appliesToCoupon = {
  * Coupon "Applies when" card.
  */
 const appliesWhenCoupon = {
-	labelText: translate( 'Applies when' ),
+	labelText: translate('Applies when'),
 	cssClass: 'promotions__promotion-form-card-applies-to',
 	fields: {
 		appliesTo: {
 			component: (
 				<PromotionAppliesToField
-					selectionTypes={ [
+					selectionTypes={[
 						{
-							labelText: translate( 'Any product is in the cart' ),
+							labelText: translate('Any product is in the cart'),
 							type: 'all',
 						},
 						{
-							labelText: translate( 'A specific product is in the cart' ),
+							labelText: translate('A specific product is in the cart'),
 							type: 'productIds',
 						},
 						{
-							labelText: translate( 'A product from a specific category is in the cart' ),
+							labelText: translate('A product from a specific category is in the cart'),
 							type: 'productCategoryIds',
 						},
-					] }
+					]}
 				/>
 			),
 		},
@@ -110,11 +110,11 @@ const appliesWhenCoupon = {
  * Product sale "Applies to" card.
  */
 const appliesToProductSale = {
-	labelText: translate( 'Applies to product' ),
+	labelText: translate('Applies to product'),
 	cssClass: 'promotions__promotion-form-card-applies-to',
 	fields: {
 		appliesTo: {
-			component: <PromotionAppliesToField selectionTypes={ [ { type: 'productIds' } ] } singular />,
+			component: <PromotionAppliesToField selectionTypes={[{ type: 'productIds' }]} singular />,
 			validate: validateAppliesToSingleProduct,
 		},
 	},
@@ -128,13 +128,13 @@ const appliesToProductSale = {
  * @param { string } props.value Current value for end date.
  * @returns {object} React component instance.
  */
-const StartDateField = props => {
+const StartDateField = (props) => {
 	return (
 		<DateField
-			labelText={ translate( 'Start Date' ) }
+			labelText={translate('Start Date')}
 			isEnableable
-			disabledDays={ [ { before: new Date() } ] }
-			{ ...props }
+			disabledDays={[{ before: new Date() }]}
+			{...props}
 		/>
 	);
 };
@@ -147,16 +147,16 @@ const StartDateField = props => {
  * @param { string } props.value Current value for end date.
  * @returns {object} React component instance.
  */
-const EndDateField = props => {
+const EndDateField = (props) => {
 	const { promotion } = props;
-	const startDate = promotion.startDate ? new Date( promotion.startDate ) : new Date();
+	const startDate = promotion.startDate ? new Date(promotion.startDate) : new Date();
 
 	return (
 		<DateField
-			labelText={ translate( 'End date' ) }
+			labelText={translate('End date')}
 			isEnableable
-			disabledDays={ [ { before: new Date( startDate ) } ] }
-			{ ...props }
+			disabledDays={[{ before: new Date(startDate) }]}
+			{...props}
 		/>
 	);
 };
@@ -167,17 +167,17 @@ const EndDateField = props => {
 const productSaleModel = {
 	appliesToProductSale,
 	productAndSalePrice: {
-		labelText: translate( 'Product & sale price' ),
+		labelText: translate('Product & sale price'),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			salePrice: {
-				component: <CurrencyField labelText={ translate( 'Product sale price' ) } isRequired />,
+				component: <CurrencyField labelText={translate('Product sale price')} isRequired />,
 				validate: validateSalePrice,
 			},
 		},
 	},
 	conditions: {
-		labelText: translate( 'Conditions', { comment: 'must be met to use coupon' } ),
+		labelText: translate('Conditions', { comment: 'must be met to use coupon' }),
 		cssClass: 'promotions__promotion-form-card-conditions',
 		fields: {
 			startDate: {
@@ -196,7 +196,7 @@ const productSaleModel = {
  * Conditions for all coupon types.
  */
 const couponConditions = {
-	labelText: translate( 'Conditions', { comment: 'must be met to use coupon' } ),
+	labelText: translate('Conditions', { comment: 'must be met to use coupon' }),
 	cssClass: 'promotions__promotion-form-card-conditions',
 	fields: {
 		endDate: {
@@ -206,7 +206,7 @@ const couponConditions = {
 		minimumAmount: {
 			component: (
 				<CurrencyField
-					labelText={ translate( 'This promotion requires a minimum purchase' ) }
+					labelText={translate('This promotion requires a minimum purchase')}
 					isEnableable
 				/>
 			),
@@ -215,9 +215,9 @@ const couponConditions = {
 		maximumAmount: {
 			component: (
 				<CurrencyField
-					labelText={ translate(
+					labelText={translate(
 						"Don't apply this promotion if the order value exceeds a specific amount"
-					) }
+					)}
 					isEnableable
 				/>
 			),
@@ -226,9 +226,9 @@ const couponConditions = {
 		usageLimit: {
 			component: (
 				<NumberField
-					labelText={ translate( 'Limit number of times this promotion can be used in total' ) }
+					labelText={translate('Limit number of times this promotion can be used in total')}
 					isEnableable
-					minValue={ 0 }
+					minValue={0}
 				/>
 			),
 			validate: validateUsageLimit,
@@ -236,9 +236,9 @@ const couponConditions = {
 		usageLimitPerUser: {
 			component: (
 				<NumberField
-					labelText={ translate( 'Limit total times each customer can use this promotion' ) }
+					labelText={translate('Limit total times each customer can use this promotion')}
 					isEnableable
-					minValue={ 0 }
+					minValue={0}
 				/>
 			),
 			validate: validateUsageLimitPerUser,
@@ -246,9 +246,9 @@ const couponConditions = {
 		individualUse: {
 			component: (
 				<FormField
-					labelText={ translate( 'Cannot be combined with any other coupon' ) }
+					labelText={translate('Cannot be combined with any other coupon')}
 					isEnableable
-					defaultValue={ true }
+					defaultValue={true}
 				/>
 			),
 		},
@@ -261,7 +261,7 @@ const couponConditions = {
 const fixedProductModel = {
 	appliesToCoupon,
 	couponCodeAndDiscount: {
-		labelText: translate( 'Coupon code & discount' ),
+		labelText: translate('Coupon code & discount'),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: {
@@ -271,7 +271,7 @@ const fixedProductModel = {
 			fixedDiscount: {
 				component: (
 					<CurrencyField
-						labelText={ translate( 'Product discount', { comment: 'for coupon' } ) }
+						labelText={translate('Product discount', { comment: 'for coupon' })}
 						isRequired
 					/>
 				),
@@ -291,7 +291,7 @@ const fixedProductModel = {
 const fixedCartModel = {
 	appliesWhenCoupon,
 	couponCodeAndDiscount: {
-		labelText: translate( 'Coupon code & discount' ),
+		labelText: translate('Coupon code & discount'),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: {
@@ -301,7 +301,7 @@ const fixedCartModel = {
 			fixedDiscount: {
 				component: (
 					<CurrencyField
-						labelText={ translate( 'Cart discount', { comment: 'for coupon' } ) }
+						labelText={translate('Cart discount', { comment: 'for coupon' })}
 						isRequired
 					/>
 				),
@@ -321,7 +321,7 @@ const fixedCartModel = {
 const percentCartModel = {
 	appliesWhenCoupon,
 	couponCodeAndDiscount: {
-		labelText: translate( 'Coupon code & discount' ),
+		labelText: translate('Coupon code & discount'),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: {
@@ -331,7 +331,7 @@ const percentCartModel = {
 			percentDiscount: {
 				component: (
 					<PercentField
-						labelText={ translate( 'Percent cart discount', { comment: 'for coupon' } ) }
+						labelText={translate('Percent cart discount', { comment: 'for coupon' })}
 						isRequired
 					/>
 				),
@@ -348,7 +348,7 @@ const percentCartModel = {
 const freeShippingModel = {
 	appliesWhenCoupon,
 	couponCode: {
-		labelText: translate( 'Coupon' ),
+		labelText: translate('Coupon'),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: {
@@ -382,23 +382,22 @@ export default allModels;
  * @param { bool } showEmptyValidationErrors True if empty required fields should be errors.
  * @returns {object} Validation error strings keyed by their field names.
  */
-export function validateAll( promotion, currency, showEmptyValidationErrors ) {
-	const promotionModel = allModels[ promotion.type ];
+export function validateAll(promotion, currency, showEmptyValidationErrors) {
+	const promotionModel = allModels[promotion.type];
 	const errors = {};
 
 	// Iterate all fields in the model and validate them.
 	// Adding any errors by field name.
-	for ( const cardName in promotionModel ) {
-		const { fields } = promotionModel[ cardName ];
-		for ( const fieldName in fields ) {
-			const { validate } = fields[ fieldName ];
-			const error =
-				validate && validate( fieldName, promotion, currency, showEmptyValidationErrors );
-			if ( error ) {
-				errors[ fieldName ] = error;
+	for (const cardName in promotionModel) {
+		const { fields } = promotionModel[cardName];
+		for (const fieldName in fields) {
+			const { validate } = fields[fieldName];
+			const error = validate && validate(fieldName, promotion, currency, showEmptyValidationErrors);
+			if (error) {
+				errors[fieldName] = error;
 			}
 		}
 	}
 
-	return ! isEmpty( errors ) ? errors : null;
+	return !isEmpty(errors) ? errors : null;
 }

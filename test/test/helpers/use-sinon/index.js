@@ -18,25 +18,25 @@ import { isFunction, noop } from 'lodash';
  * @param  {Function} clockCallback  A function invoked with the clock created by sinon
  * @deprecated Use Jest's timer mocks instead (https://facebook.github.io/jest/docs/timer-mocks.html)
  */
-export function useFakeTimers( now = 0, clockCallback = noop ) {
+export function useFakeTimers(now = 0, clockCallback = noop) {
 	let clock;
 
-	if ( isFunction( now ) && clockCallback === noop ) {
+	if (isFunction(now) && clockCallback === noop) {
 		clockCallback = now;
 		now = 0;
 	}
 
-	beforeAll( function turnOnSinonFakeTimers() {
-		clock = sinon.useFakeTimers( now );
-		clockCallback( clock );
-	} );
+	beforeAll(function turnOnSinonFakeTimers() {
+		clock = sinon.useFakeTimers(now);
+		clockCallback(clock);
+	});
 
-	afterAll( function turnOffSinonFakeTimers() {
-		if ( clock ) {
+	afterAll(function turnOffSinonFakeTimers() {
+		if (clock) {
 			clock.restore();
 			clock = null;
 		}
-	} );
+	});
 }
 
 /**
@@ -48,29 +48,29 @@ export function useFakeTimers( now = 0, clockCallback = noop ) {
  * @param  {Function} sandboxCallback A callback function that is invoked with the sandbox instance
  * @deprecated Use Jest's mock functions instead (https://facebook.github.io/jest/docs/mock-functions.html)
  */
-export function useSandbox( config, sandboxCallback = noop ) {
+export function useSandbox(config, sandboxCallback = noop) {
 	let sandbox;
 
-	if ( isFunction( config ) && sandboxCallback === noop ) {
+	if (isFunction(config) && sandboxCallback === noop) {
 		sandboxCallback = config;
 		config = undefined;
 	}
 
-	beforeAll( () => {
-		sandbox = sinon.createSandbox( config );
-		sandboxCallback( sandbox );
-	} );
+	beforeAll(() => {
+		sandbox = sinon.createSandbox(config);
+		sandboxCallback(sandbox);
+	});
 
-	beforeEach( () => {
-		if ( sandbox ) {
+	beforeEach(() => {
+		if (sandbox) {
 			sandbox.resetHistory();
 		}
-	} );
+	});
 
-	afterAll( () => {
-		if ( sandbox ) {
+	afterAll(() => {
+		if (sandbox) {
 			sandbox.restore();
 			sandbox = null;
 		}
-	} );
+	});
 }

@@ -41,55 +41,55 @@ class AdsFormSettings extends Component {
 
 	state = {};
 
-	UNSAFE_componentWillReceiveProps( { wordadsSettings } ) {
-		if ( isEmpty( this.state ) && wordadsSettings ) {
-			this.setState( {
+	UNSAFE_componentWillReceiveProps({ wordadsSettings }) {
+		if (isEmpty(this.state) && wordadsSettings) {
+			this.setState({
 				...this.defaultSettings(),
 				...wordadsSettings,
-			} );
+			});
 		}
 	}
 
-	handleChange = event => {
+	handleChange = (event) => {
 		const name = event.currentTarget.name;
 		const value = event.currentTarget.value;
 
-		this.setState( {
-			[ name ]: value,
-		} );
+		this.setState({
+			[name]: value,
+		});
 	};
 
-	handleToggle = event => {
+	handleToggle = (event) => {
 		const name = event.currentTarget.name;
 
-		this.setState( {
-			[ name ]: ! this.state[ name ],
-		} );
+		this.setState({
+			[name]: !this.state[name],
+		});
 	};
 
-	handleDisplayToggle = name => () => {
-		this.setState( prevState => ( {
+	handleDisplayToggle = (name) => () => {
+		this.setState((prevState) => ({
 			display_options: {
 				...prevState.display_options,
-				[ name ]: ! this.state.display_options[ name ],
+				[name]: !this.state.display_options[name],
 			},
-		} ) );
+		}));
 	};
 
 	handleResidentCheckbox = () => {
-		const isResident = ! this.state.us_checked;
+		const isResident = !this.state.us_checked;
 
-		this.setState( {
+		this.setState({
 			us_checked: isResident,
 			us_resident: isResident ? 'yes' : 'no',
-		} );
+		});
 	};
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		const { site } = this.props;
 		event.preventDefault();
 
-		this.props.saveWordadsSettings( site.ID, this.packageState() );
+		this.props.saveWordadsSettings(site.ID, this.packageState());
 
 		this.props.markSaved();
 	};
@@ -137,7 +137,7 @@ class AdsFormSettings extends Component {
 		const { translate, site } = this.props;
 		const linkHref = '/marketing/traffic/' + site?.slug;
 
-		return <Card href={ linkHref }>{ translate( 'Manage ad placements' ) }</Card>;
+		return <Card href={linkHref}>{translate('Manage ad placements')}</Card>;
 	}
 
 	showAdsToOptions() {
@@ -145,38 +145,38 @@ class AdsFormSettings extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
+				<FormLegend>{translate('Ads Visibility')}</FormLegend>
 				<FormLabel>
 					<FormRadio
 						name="show_to_logged_in"
 						value="yes"
-						checked={ 'yes' === this.state.show_to_logged_in }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						checked={'yes' === this.state.show_to_logged_in}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
-					<span>{ translate( 'Run ads for all users' ) }</span>
+					<span>{translate('Run ads for all users')}</span>
 				</FormLabel>
 
 				<FormLabel>
 					<FormRadio
 						name="show_to_logged_in"
 						value="no"
-						checked={ 'no' === this.state.show_to_logged_in }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						checked={'no' === this.state.show_to_logged_in}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
-					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
+					<span>{translate('Run ads only for logged-out users (less revenue)')}</span>
 				</FormLabel>
 
 				<FormLabel>
 					<FormRadio
 						name="show_to_logged_in"
 						value="pause"
-						checked={ 'pause' === this.state.show_to_logged_in }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						checked={'pause' === this.state.show_to_logged_in}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
-					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
+					<span>{translate('Pause ads (no revenue)')}</span>
 				</FormLabel>
 			</FormFieldset>
 		);
@@ -187,18 +187,18 @@ class AdsFormSettings extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Additional Ads' ) }</FormLegend>
+				<FormLegend>{translate('Additional Ads')}</FormLegend>
 				<FormLabel>
 					<FormCheckbox
 						name="optimized_ads"
-						checked={ !! this.state.optimized_ads }
-						onChange={ this.handleToggle }
-						disabled={ this.props.isLoading }
+						checked={!!this.state.optimized_ads}
+						onChange={this.handleToggle}
+						disabled={this.props.isLoading}
 					/>
 					<span>
-						{ translate( 'Show optimized ads. ' ) }
+						{translate('Show optimized ads. ')}
 						<a target="_blank" rel="noopener noreferrer" href="https://wordads.co/optimized-ads/">
-							{ translate( 'Learn More' ) }
+							{translate('Learn More')}
 						</a>
 					</span>
 				</FormLabel>
@@ -212,58 +212,58 @@ class AdsFormSettings extends Component {
 		return (
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
-					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
+					<FormLegend>{translate('Display ads below posts on')}</FormLegend>
 					<CompactFormToggle
-						checked={ !! this.state.display_options?.display_front_page }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
+						checked={!!this.state.display_options?.display_front_page}
+						disabled={this.props.isLoading}
+						onChange={this.handleDisplayToggle('display_front_page')}
 					>
-						{ translate( 'Front page' ) }
+						{translate('Front page')}
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options?.display_post }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'display_post' ) }
+						checked={!!this.state.display_options?.display_post}
+						disabled={this.props.isLoading}
+						onChange={this.handleDisplayToggle('display_post')}
 					>
-						{ translate( 'Posts' ) }
+						{translate('Posts')}
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options?.display_page }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'display_page' ) }
+						checked={!!this.state.display_options?.display_page}
+						disabled={this.props.isLoading}
+						onChange={this.handleDisplayToggle('display_page')}
 					>
-						{ translate( 'Pages' ) }
+						{translate('Pages')}
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options?.display_archive }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'display_archive' ) }
+						checked={!!this.state.display_options?.display_archive}
+						disabled={this.props.isLoading}
+						onChange={this.handleDisplayToggle('display_archive')}
 					>
-						{ translate( 'Archives' ) }
+						{translate('Archives')}
 					</CompactFormToggle>
 				</FormFieldset>
 				<FormFieldset className="ads__settings-display-toggles">
-					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
+					<FormLegend>{translate('Additional ad placements')}</FormLegend>
 					<CompactFormToggle
-						checked={ !! this.state.display_options?.enable_header_ad }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
+						checked={!!this.state.display_options?.enable_header_ad}
+						disabled={this.props.isLoading}
+						onChange={this.handleDisplayToggle('enable_header_ad')}
 					>
-						{ translate( 'Top of each page' ) }
+						{translate('Top of each page')}
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options?.second_belowpost }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
+						checked={!!this.state.display_options?.second_belowpost}
+						disabled={this.props.isLoading}
+						onChange={this.handleDisplayToggle('second_belowpost')}
 					>
-						{ translate( 'Second ad below post' ) }
+						{translate('Second ad below post')}
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options?.sidebar }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'sidebar' ) }
+						checked={!!this.state.display_options?.sidebar}
+						disabled={this.props.isLoading}
+						onChange={this.handleDisplayToggle('sidebar')}
 					>
-						{ translate( 'Sidebar' ) }
+						{translate('Sidebar')}
 					</CompactFormToggle>
 				</FormFieldset>
 			</div>
@@ -276,41 +276,41 @@ class AdsFormSettings extends Component {
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
+					<FormLabel htmlFor="paypal">{translate('PayPal E-mail Address')}</FormLabel>
 					<FormTextInput
 						name="paypal"
 						id="paypal"
-						value={ this.state.paypal || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.paypal || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="who_owns">{ translate( 'Who owns this site?' ) }</FormLabel>
+					<FormLabel htmlFor="who_owns">{translate('Who owns this site?')}</FormLabel>
 					<FormSelect
 						name="who_owns"
 						id="who_owns"
-						value={ this.state.who_owns || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.who_owns || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					>
-						<option value="">{ translate( 'Select who owns this site' ) }</option>
-						<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
-						<option value="corp">{ translate( 'A Corporation' ) }</option>
-						<option value="partnership">{ translate( 'A Partnership' ) }</option>
-						<option value="llc">{ translate( 'An LLC' ) }</option>
-						<option value="tax_exempt">{ translate( 'A Tax-Exempt Entity' ) }</option>
+						<option value="">{translate('Select who owns this site')}</option>
+						<option value="person">{translate('An Individual/Sole Proprietor')}</option>
+						<option value="corp">{translate('A Corporation')}</option>
+						<option value="partnership">{translate('A Partnership')}</option>
+						<option value="llc">{translate('An LLC')}</option>
+						<option value="tax_exempt">{translate('A Tax-Exempt Entity')}</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
 						<FormCheckbox
 							name="us_resident"
-							checked={ !! this.state.us_checked }
-							disabled={ this.props.isLoading }
-							onChange={ this.handleResidentCheckbox }
+							checked={!!this.state.us_checked}
+							disabled={this.props.isLoading}
+							onChange={this.handleResidentCheckbox}
 						/>
-						<span>{ translate( 'US Resident or based in the US' ) }</span>
+						<span>{translate('US Resident or based in the US')}</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>
@@ -322,92 +322,90 @@ class AdsFormSettings extends Component {
 
 		return (
 			<div>
-				<FormSectionHeading>{ translate( 'Tax Reporting Information' ) }</FormSectionHeading>
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="taxid">
-						{ translate( 'Social Security Number or US Tax ID' ) }
-					</FormLabel>
+				<FormSectionHeading>{translate('Tax Reporting Information')}</FormSectionHeading>
+				<FormFieldset disabled={'yes' !== this.state.us_resident}>
+					<FormLabel htmlFor="taxid">{translate('Social Security Number or US Tax ID')}</FormLabel>
 					<FormTextInput
 						name="taxid"
 						id="taxid"
 						placeholder={
 							this.state.taxid_last4
-								? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 )
+								? 'On file. Last Four Digits: '.concat(this.state.taxid_last4)
 								: ''
 						}
-						value={ this.state.taxid || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.taxid || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
 				</FormFieldset>
 
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
+				<FormFieldset disabled={'yes' !== this.state.us_resident}>
 					<FormLabel htmlFor="name">
-						{ translate( 'Full Name or Business / Non-profit Name' ) }
+						{translate('Full Name or Business / Non-profit Name')}
 					</FormLabel>
 					<FormTextInput
 						name="name"
 						id="name"
-						value={ this.state.name || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.name || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
 				</FormFieldset>
 
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="addr1">{ translate( 'Postal Address' ) }</FormLabel>
+				<FormFieldset disabled={'yes' !== this.state.us_resident}>
+					<FormLabel htmlFor="addr1">{translate('Postal Address')}</FormLabel>
 					<FormTextInput
 						name="addr1"
 						id="addr1"
 						placeholder="Address Line 1"
-						value={ this.state.addr1 || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.addr1 || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
 				</FormFieldset>
 
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
+				<FormFieldset disabled={'yes' !== this.state.us_resident}>
 					<FormTextInput
 						name="addr2"
 						id="addr2"
 						placeholder="Address Line 2"
-						value={ this.state.addr2 || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.addr2 || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
 				</FormFieldset>
 
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
+				<FormFieldset disabled={'yes' !== this.state.us_resident}>
+					<FormLabel htmlFor="city">{translate('City')}</FormLabel>
 					<FormTextInput
 						name="city"
 						id="city"
-						value={ this.state.city || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.city || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
 				</FormFieldset>
 
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="state">{ translate( 'State / Territory' ) }</FormLabel>
+				<FormFieldset disabled={'yes' !== this.state.us_resident}>
+					<FormLabel htmlFor="state">{translate('State / Territory')}</FormLabel>
 					<StateSelector
 						name="state"
 						id="state"
 						className="ads__settings-state"
-						value={ this.state.state || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.state || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
 				</FormFieldset>
 
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="zip">{ translate( 'Zip Code' ) }</FormLabel>
+				<FormFieldset disabled={'yes' !== this.state.us_resident}>
+					<FormLabel htmlFor="zip">{translate('Zip Code')}</FormLabel>
 					<FormTextInput
 						name="zip"
 						id="zip"
-						value={ this.state.zip || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						value={this.state.zip || ''}
+						onChange={this.handleChange}
+						disabled={this.props.isLoading}
 					/>
 				</FormFieldset>
 			</div>
@@ -422,12 +420,12 @@ class AdsFormSettings extends Component {
 				<FormLabel>
 					<FormCheckbox
 						name="tos"
-						checked={ !! this.state.tos }
-						onChange={ this.handleToggle }
-						disabled={ this.props.isLoading || 'signed' === this.state.tos }
+						checked={!!this.state.tos}
+						onChange={this.handleToggle}
+						disabled={this.props.isLoading || 'signed' === this.state.tos}
 					/>
 					<span>
-						{ translate(
+						{translate(
 							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}. {{br/}}I agree to post only {{b}}family-friendly content{{/b}} and will not purchase non-human traffic.',
 							{
 								components: {
@@ -448,7 +446,7 @@ class AdsFormSettings extends Component {
 									),
 								},
 							}
-						) }
+						)}
 					</span>
 				</FormLabel>
 			</FormFieldset>
@@ -462,37 +460,32 @@ class AdsFormSettings extends Component {
 
 		return (
 			<Fragment>
-				<QueryWordadsSettings siteId={ site.ID } />
+				<QueryWordadsSettings siteId={site.ID} />
 
-				{ this.props.siteIsJetpack && isWordAds ? this.jetpackPlacementControls() : null }
+				{this.props.siteIsJetpack && isWordAds ? this.jetpackPlacementControls() : null}
 
-				<SectionHeader label={ translate( 'Ads Settings' ) }>
-					<Button
-						compact
-						primary
-						onClick={ this.handleSubmit }
-						disabled={ isLoading || ! isWordAds }
-					>
-						{ isLoading ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+				<SectionHeader label={translate('Ads Settings')}>
+					<Button compact primary onClick={this.handleSubmit} disabled={isLoading || !isWordAds}>
+						{isLoading ? translate('Saving…') : translate('Save Settings')}
 					</Button>
 				</SectionHeader>
 
 				<Card>
 					<form
 						id="wordads-settings"
-						onSubmit={ this.handleSubmit }
-						onChange={ this.props.markChanged }
+						onSubmit={this.handleSubmit}
+						onChange={this.props.markChanged}
 					>
-						{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
+						{!this.props.siteIsJetpack ? this.showAdsToOptions() : null}
 
-						{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
+						{!this.props.siteIsJetpack ? this.displayOptions() : null}
 
-						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
-						{ this.siteOwnerOptions() }
-						{ this.state.us_checked ? this.taxOptions() : null }
+						<FormSectionHeading>{translate('Site Owner Information')}</FormSectionHeading>
+						{this.siteOwnerOptions()}
+						{this.state.us_checked ? this.taxOptions() : null}
 
-						<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
-						{ this.acceptCheckbox() }
+						<FormSectionHeading>{translate('Terms of Service')}</FormSectionHeading>
+						{this.acceptCheckbox()}
 					</form>
 				</Card>
 			</Fragment>
@@ -502,15 +495,15 @@ class AdsFormSettings extends Component {
 
 export default compose(
 	connect(
-		state => {
-			const siteId = getSelectedSiteId( state );
-			const isSavingSettings = isSavingWordadsSettings( state, siteId );
-			const wordadsSettings = getWordadsSettings( state, siteId );
+		(state) => {
+			const siteId = getSelectedSiteId(state);
+			const isSavingSettings = isSavingWordadsSettings(state, siteId);
+			const wordadsSettings = getWordadsSettings(state, siteId);
 
 			return {
-				isLoading: isSavingSettings || ! wordadsSettings,
-				site: getSelectedSite( state ),
-				siteIsJetpack: isJetpackSite( state, siteId ),
+				isLoading: isSavingSettings || !wordadsSettings,
+				site: getSelectedSite(state),
+				siteIsJetpack: isJetpackSite(state, siteId),
 				wordadsSettings,
 			};
 		},
@@ -518,4 +511,4 @@ export default compose(
 	),
 	localize,
 	protectForm
-)( AdsFormSettings );
+)(AdsFormSettings);

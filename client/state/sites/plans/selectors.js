@@ -18,35 +18,35 @@ import { calculateMonthlyPriceForPlan, planHasFeature } from 'lib/plans';
 /**
  * Module dependencies
  */
-const debug = debugFactory( 'calypso:state:sites:plans:selectors' );
+const debug = debugFactory('calypso:state:sites:plans:selectors');
 
-export function getPlansBySite( state, site ) {
-	if ( ! site ) {
+export function getPlansBySite(state, site) {
+	if (!site) {
 		return initialSiteState;
 	}
-	return getPlansBySiteId( state, site.ID );
+	return getPlansBySiteId(state, site.ID);
 }
 
-export function getPlansBySiteId( state, siteId ) {
-	if ( ! siteId ) {
+export function getPlansBySiteId(state, siteId) {
+	if (!siteId) {
 		return initialSiteState;
 	}
-	return state.sites.plans[ siteId ] || initialSiteState;
+	return state.sites.plans[siteId] || initialSiteState;
 }
 
-export const getCurrentPlan = ( state, siteId ) => {
-	const plans = getPlansBySiteId( state, siteId );
-	if ( plans.data ) {
-		const currentPlan = find( plans.data, 'currentPlan' );
+export const getCurrentPlan = (state, siteId) => {
+	const plans = getPlansBySiteId(state, siteId);
+	if (plans.data) {
+		const currentPlan = find(plans.data, 'currentPlan');
 
-		if ( currentPlan ) {
-			debug( 'current plan: %o', currentPlan );
+		if (currentPlan) {
+			debug('current plan: %o', currentPlan);
 			return currentPlan;
 		}
 
-		const site = getSite( state, siteId );
-		const plan = createSitePlanObject( site.plan );
-		debug( 'current plan: %o', plan );
+		const site = getSite(state, siteId);
+		const plan = createSitePlanObject(site.plan);
+		debug('current plan: %o', plan);
 		return plan;
 	}
 	return null;
@@ -61,14 +61,14 @@ export const getCurrentPlan = ( state, siteId ) => {
  * @returns {object} the matching plan
  */
 export const getSitePlan = createSelector(
-	( state, siteId, productSlug ) => {
-		const plansBySiteId = getPlansBySiteId( state, siteId );
-		if ( ! plansBySiteId || ! plansBySiteId.data ) {
+	(state, siteId, productSlug) => {
+		const plansBySiteId = getPlansBySiteId(state, siteId);
+		if (!plansBySiteId || !plansBySiteId.data) {
 			return null;
 		}
-		return plansBySiteId.data.filter( plan => plan.productSlug === productSlug ).shift();
+		return plansBySiteId.data.filter((plan) => plan.productSlug === productSlug).shift();
 	},
-	( state, siteId ) => getPlansBySiteId( state, siteId )
+	(state, siteId) => getPlansBySiteId(state, siteId)
 );
 
 /**
@@ -79,14 +79,14 @@ export const getSitePlan = createSelector(
  * @param  {string}   productSlug   the plan product slug
  * @returns {?boolean}              true if a plan has a discount
  */
-export function isSitePlanDiscounted( state, siteId, productSlug ) {
-	const plan = getSitePlan( state, siteId, productSlug );
+export function isSitePlanDiscounted(state, siteId, productSlug) {
+	const plan = getSitePlan(state, siteId, productSlug);
 
-	if ( ! plan ) {
+	if (!plan) {
 		return null;
 	}
 
-	return get( plan, 'rawDiscount', -1 ) > 0;
+	return get(plan, 'rawDiscount', -1) > 0;
 }
 
 /**
@@ -98,19 +98,14 @@ export function isSitePlanDiscounted( state, siteId, productSlug ) {
  * @param  {boolean} isMonthly     if true, returns monthly price
  * @returns {number}                plan discounted raw price
  */
-export function getPlanDiscountedRawPrice(
-	state,
-	siteId,
-	productSlug,
-	{ isMonthly = false } = {}
-) {
-	const plan = getSitePlan( state, siteId, productSlug );
+export function getPlanDiscountedRawPrice(state, siteId, productSlug, { isMonthly = false } = {}) {
+	const plan = getSitePlan(state, siteId, productSlug);
 
-	if ( get( plan, 'rawPrice', -1 ) < 0 || ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
+	if (get(plan, 'rawPrice', -1) < 0 || !isSitePlanDiscounted(state, siteId, productSlug)) {
 		return null;
 	}
 	const discountPrice = plan.rawPrice;
-	return isMonthly ? calculateMonthlyPriceForPlan( productSlug, discountPrice ) : discountPrice;
+	return isMonthly ? calculateMonthlyPriceForPlan(productSlug, discountPrice) : discountPrice;
 }
 
 /**
@@ -122,16 +117,16 @@ export function getPlanDiscountedRawPrice(
  * @param  {boolean} isMonthly     if true, returns monthly price
  * @returns {number}                plan raw price
  */
-export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = false } = {} ) {
-	const plan = getSitePlan( state, siteId, productSlug );
+export function getSitePlanRawPrice(state, siteId, productSlug, { isMonthly = false } = {}) {
+	const plan = getSitePlan(state, siteId, productSlug);
 
-	if ( get( plan, 'rawPrice', -1 ) < 0 ) {
+	if (get(plan, 'rawPrice', -1) < 0) {
 		return null;
 	}
 
-	const price = plan.rawPrice + get( plan, 'rawDiscount', 0 );
+	const price = plan.rawPrice + get(plan, 'rawDiscount', 0);
 
-	return isMonthly ? calculateMonthlyPriceForPlan( productSlug, price ) : price;
+	return isMonthly ? calculateMonthlyPriceForPlan(productSlug, price) : price;
 }
 
 /**
@@ -144,40 +139,38 @@ export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = f
  * @param  {boolean} isMonthly    if true, returns monthly price
  * @returns {number}               plan raw discount
  */
-export function getPlanRawDiscount( state, siteId, productSlug, { isMonthly = false } = {} ) {
-	const plan = getSitePlan( state, siteId, productSlug );
+export function getPlanRawDiscount(state, siteId, productSlug, { isMonthly = false } = {}) {
+	const plan = getSitePlan(state, siteId, productSlug);
 
-	if ( ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
+	if (!isSitePlanDiscounted(state, siteId, productSlug)) {
 		return null;
 	}
 
-	return isMonthly
-		? calculateMonthlyPriceForPlan( productSlug, plan.rawDiscount )
-		: plan.rawDiscount;
+	return isMonthly ? calculateMonthlyPriceForPlan(productSlug, plan.rawDiscount) : plan.rawDiscount;
 }
 
-export function hasDomainCredit( state, siteId ) {
-	if ( ! siteId ) {
+export function hasDomainCredit(state, siteId) {
+	if (!siteId) {
 		return initialSiteState;
 	}
-	const currentPlan = getCurrentPlan( state, siteId );
-	return get( currentPlan, 'hasDomainCredit', null );
+	const currentPlan = getCurrentPlan(state, siteId);
+	return get(currentPlan, 'hasDomainCredit', null);
 }
 
-export function isRequestingSitePlans( state, siteId ) {
-	const plans = getPlansBySiteId( state, siteId );
+export function isRequestingSitePlans(state, siteId) {
+	const plans = getPlansBySiteId(state, siteId);
 	return plans.isRequesting;
 }
 
-export function isCurrentPlanExpiring( state, siteId ) {
-	const currentPlan = getCurrentPlan( state, siteId );
+export function isCurrentPlanExpiring(state, siteId) {
+	const currentPlan = getCurrentPlan(state, siteId);
 
-	if ( ! currentPlan || ! currentPlan.expiryDate ) {
+	if (!currentPlan || !currentPlan.expiryDate) {
 		return true;
 	}
 
-	const expiration = moment( currentPlan.expiryDate ).startOf( 'day' );
-	return expiration < moment().add( 30, 'days' );
+	const expiration = moment(currentPlan.expiryDate).startOf('day');
+	return expiration < moment().add(30, 'days');
 }
 
 /**
@@ -187,10 +180,10 @@ export function isCurrentPlanExpiring( state, siteId ) {
  * @param  {number}  siteId       the site id
  * @returns {boolean}			  True when user is a plan owner
  */
-export function isCurrentUserCurrentPlanOwner( state, siteId ) {
-	const currentPlan = getCurrentPlan( state, siteId );
+export function isCurrentUserCurrentPlanOwner(state, siteId) {
+	const currentPlan = getCurrentPlan(state, siteId);
 
-	return get( currentPlan, 'userIsOwner', false );
+	return get(currentPlan, 'userIsOwner', false);
 }
 
 /**
@@ -200,8 +193,8 @@ export function isCurrentUserCurrentPlanOwner( state, siteId ) {
  * @param  {number}  siteId  Site ID
  * @returns {?string}          The site's current plan's product slug
  */
-export function getSitePlanSlug( state, siteId ) {
-	return get( getCurrentPlan( state, siteId ), 'productSlug', null );
+export function getSitePlanSlug(state, siteId) {
+	return get(getCurrentPlan(state, siteId), 'productSlug', null);
 }
 
 /**
@@ -216,6 +209,6 @@ export function getSitePlanSlug( state, siteId ) {
  * @param  {string}  feature The feature we're looking for
  * @returns {boolean}         True if the site's current plan includes the feature
  */
-export function hasFeature( state, siteId, feature ) {
-	return planHasFeature( getSitePlanSlug( state, siteId ), feature );
+export function hasFeature(state, siteId, feature) {
+	return planHasFeature(getSitePlanSlug(state, siteId), feature);
 }

@@ -8,5 +8,5 @@ export default {
 	name: 'main',
 	version: '20160601',
 	path: '/',
-	when: and( isNewUser, isEnabled( 'guided-tours/main' ) ),
+	when: and(isNewUser, isEnabled('guided-tours/main')),
 };

@@ -17,25 +17,25 @@ import wpcomRequest from 'wpcom-proxy-request';
  */
 import { register } from '..';
 
-jest.mock( 'wpcom-proxy-request', () => ( {
+jest.mock('wpcom-proxy-request', () => ({
 	__esModule: true,
 	default: jest.fn(),
-	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
-} ) );
+	requestAllBlogsAccess: jest.fn(() => Promise.resolve()),
+}));
 
-let store: ReturnType< typeof register >;
+let store: ReturnType<typeof register>;
 
-beforeAll( () => {
-	store = register( { client_id: '', client_secret: '' } );
-} );
+beforeAll(() => {
+	store = register({ client_id: '', client_secret: '' });
+});
 
-beforeEach( () => {
-	( wpcomRequest as jest.Mock ).mockReset();
-	dispatch( store ).reset();
-} );
+beforeEach(() => {
+	(wpcomRequest as jest.Mock).mockReset();
+	dispatch(store).reset();
+});
 
-describe( 'getSite', () => {
-	it( 'resolves the state via an API call and caches the resolver on success', async () => {
+describe('getSite', () => {
+	it('resolves the state via an API call and caches the resolver on success', async () => {
 		const slug = 'mytestsite12345.wordpress.com';
 		const apiResponse = {
 			ID: 1,
@@ -44,33 +44,31 @@ describe( 'getSite', () => {
 			URL: 'http://mytestsite12345.wordpress.com',
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		(wpcomRequest as jest.Mock).mockResolvedValue(apiResponse);
 
 		const listenForStateUpdate = () => {
-			return new Promise( resolve => {
-				const unsubscribe = subscribe( () => {
+			return new Promise((resolve) => {
+				const unsubscribe = subscribe(() => {
 					unsubscribe();
 					resolve();
-				} );
-			} );
+				});
+			});
 		};
 
 		// First call returns undefined
-		expect( select( store ).getSite( slug ) ).toEqual( undefined );
+		expect(select(store).getSite(slug)).toEqual(undefined);
 		await listenForStateUpdate();
 
 		// By the second call, the resolver will have resolved
-		expect( select( store ).getSite( slug ) ).toEqual( apiResponse );
+		expect(select(store).getSite(slug)).toEqual(apiResponse);
 		await listenForStateUpdate();
 
 		// The resolver should now be cached with an `isStarting` value of false
 
-		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
-			false
-		);
-	} );
+		expect(select('core/data').getIsResolving(store, 'getSite', [slug])).toStrictEqual(false);
+	});
 
-	it( 'resolves the state via an API call and invalidates the resolver cache on fail', async () => {
+	it('resolves the state via an API call and invalidates the resolver cache on fail', async () => {
 		const slug = 'mytestsite12345.wordpress.com';
 		const apiResponse = {
 			status: 404,
@@ -78,41 +76,35 @@ describe( 'getSite', () => {
 			message: 'Unknown blog',
 		};
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( apiResponse );
+		(wpcomRequest as jest.Mock).mockRejectedValue(apiResponse);
 
 		const listenForStateUpdate = () => {
 			// The subscribe function in wordpress/data stores only updates when state changes,
 			// so for this test (where state remains the same), use setTimeout instead.
-			return new Promise( resolve => {
-				setTimeout( () => {
+			return new Promise((resolve) => {
+				setTimeout(() => {
 					resolve();
-				}, 0 );
-			} );
+				}, 0);
+			});
 		};
 
 		// After the first call, the resolver's cache will be invalidated
-		expect( select( store ).getSite( slug ) ).toEqual( undefined );
+		expect(select(store).getSite(slug)).toEqual(undefined);
 		await listenForStateUpdate();
 
-		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
-			undefined
-		);
+		expect(select('core/data').getIsResolving(store, 'getSite', [slug])).toStrictEqual(undefined);
 
 		// After the second call, the resolver's cache will be valid
-		expect( select( store ).getSite( slug ) ).toEqual( undefined );
+		expect(select(store).getSite(slug)).toEqual(undefined);
 		await listenForStateUpdate();
 
-		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
-			false
-		);
+		expect(select('core/data').getIsResolving(store, 'getSite', [slug])).toStrictEqual(false);
 
 		// After the third call, the resolver's cache will be invalidated again
-		expect( select( store ).getSite( slug ) ).toEqual( undefined );
+		expect(select(store).getSite(slug)).toEqual(undefined);
 		await listenForStateUpdate();
 
 		// The resolver should now be cached with an `isStarting` value of false
-		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
-			undefined
-		);
-	} );
-} );
+		expect(select('core/data').getIsResolving(store, 'getSite', [slug])).toStrictEqual(undefined);
+	});
+});

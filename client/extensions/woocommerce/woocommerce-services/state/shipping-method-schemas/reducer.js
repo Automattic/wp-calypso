@@ -9,8 +9,8 @@ import {
 } from 'woocommerce/woocommerce-services/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
-const reducer = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+const reducer = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_SERVICES_SHIPPING_METHOD_SCHEMA_REQUEST: {
 			return LOADING;
 		}
@@ -21,6 +21,6 @@ const reducer = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default keyedReducer( 'methodId', reducer );
+export default keyedReducer('methodId', reducer);

@@ -24,19 +24,19 @@ class ActionHeader extends React.Component {
 		site: PropTypes.object.isRequired,
 	};
 
-	toggleSidebar = event => {
+	toggleSidebar = (event) => {
 		event.preventDefault();
-		this.props.setLayoutFocus( 'sidebar' );
+		this.props.setLayoutFocus('sidebar');
 	};
 
 	renderBreadcrumbs = () => {
 		const { breadcrumbs } = this.props;
 		let breadcrumbsOutput = breadcrumbs;
-		if ( isArray( breadcrumbs ) ) {
-			breadcrumbsOutput = breadcrumbs.map( ( crumb, i ) => <span key={ i }>{ crumb }</span> );
+		if (isArray(breadcrumbs)) {
+			breadcrumbsOutput = breadcrumbs.map((crumb, i) => <span key={i}>{crumb}</span>);
 		}
 
-		return <div className="action-header__breadcrumbs">{ breadcrumbsOutput }</div>;
+		return <div className="action-header__breadcrumbs">{breadcrumbsOutput}</div>;
 	};
 
 	render() {
@@ -44,31 +44,27 @@ class ActionHeader extends React.Component {
 
 		return (
 			<header className="action-header">
-				<Button
-					borderless
-					onClick={ this.toggleSidebar }
-					className="action-header__back-to-sidebar"
-				>
+				<Button borderless onClick={this.toggleSidebar} className="action-header__back-to-sidebar">
 					<Gridicon icon="chevron-left" />
 				</Button>
 				<div className="action-header__content">
-					<a href={ site.URL } aria-label={ site.title }>
-						<SiteIcon site={ site } />
+					<a href={site.URL} aria-label={site.title}>
+						<SiteIcon site={site} />
 					</a>
 					<div className="action-header__details">
-						{ site && <p className="action-header__site-title">{ site.title }</p> }
-						{ this.renderBreadcrumbs() }
+						{site && <p className="action-header__site-title">{site.title}</p>}
+						{this.renderBreadcrumbs()}
 					</div>
 				</div>
-				<ActionButtons primaryLabel={ primaryLabel }>{ children }</ActionButtons>
+				<ActionButtons primaryLabel={primaryLabel}>{children}</ActionButtons>
 			</header>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		site: getSelectedSiteWithFallback( state ),
-	} ),
+	(state) => ({
+		site: getSelectedSiteWithFallback(state),
+	}),
 	{ setLayoutFocus }
-)( ActionHeader );
+)(ActionHeader);

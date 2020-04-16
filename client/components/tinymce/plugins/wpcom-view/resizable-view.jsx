@@ -4,11 +4,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-export default function( Component ) {
+export default function (Component) {
 	const componentName = Component.displayName || Component.name || '';
 
 	return class extends PureComponent {
-		static displayName = `ResizableView(${ componentName })`;
+		static displayName = `ResizableView(${componentName})`;
 
 		static propTypes = {
 			onResize: PropTypes.func,
@@ -19,27 +19,27 @@ export default function( Component ) {
 		};
 
 		constructor() {
-			super( ...arguments );
+			super(...arguments);
 
-			this.boundSetWrapperState = this.setWrapperState.bind( this );
+			this.boundSetWrapperState = this.setWrapperState.bind(this);
 			this.state = {
 				wrapper: null,
 			};
 		}
 
-		setWrapperState( wrapper ) {
-			if ( ! wrapper ) {
+		setWrapperState(wrapper) {
+			if (!wrapper) {
 				return;
 			}
 
-			this.setState( { wrapper } );
+			this.setState({ wrapper });
 			this.disconnectObserver();
-			this.observer = new MutationObserver( this.props.onResize );
-			this.observer.observe( wrapper, {
+			this.observer = new MutationObserver(this.props.onResize);
+			this.observer.observe(wrapper, {
 				attributes: true,
 				childList: true,
 				subtree: true,
-			} );
+			});
 		}
 
 		componentWillUnmount() {
@@ -47,22 +47,22 @@ export default function( Component ) {
 		}
 
 		disconnectObserver() {
-			if ( this.observer ) {
+			if (this.observer) {
 				this.observer.disconnect();
 			}
 		}
 
 		render() {
 			let childProps;
-			if ( this.state.wrapper ) {
+			if (this.state.wrapper) {
 				childProps = {
 					width: this.state.wrapper.clientWidth,
 				};
 			}
 
 			return (
-				<div ref={ this.boundSetWrapperState }>
-					<Component { ...this.props } { ...childProps } />
+				<div ref={this.boundSetWrapperState}>
+					<Component {...this.props} {...childProps} />
 				</div>
 			);
 		}

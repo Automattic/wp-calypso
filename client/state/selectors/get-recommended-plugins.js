@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @returns {?Array<object>}                   Array of plugin objects.
  *                                            If null, there's no request in progress.
  */
-export default function getRecommendedPlugins( state, siteId ) {
-	return get( state, [ 'plugins', 'recommended', siteId ], null );
+export default function getRecommendedPlugins(state, siteId) {
+	return get(state, ['plugins', 'recommended', siteId], null);
 }

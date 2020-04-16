@@ -37,10 +37,10 @@ import { withAnalytics } from 'state/analytics/actions';
 class ProductCategoryCreate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			ID: PropTypes.number,
 			slug: PropTypes.string,
-		} ),
+		}),
 		hasEdits: PropTypes.bool,
 		category: PropTypes.object,
 		editProductCategory: PropTypes.func.isRequired,
@@ -55,62 +55,62 @@ class ProductCategoryCreate extends React.Component {
 	componentDidMount() {
 		const { site } = this.props;
 
-		if ( site && site.ID ) {
-			this.props.clearProductCategoryEdits( site.ID );
-			this.props.editProductCategory( site.ID, null, { parent: 0 } );
+		if (site && site.ID) {
+			this.props.clearProductCategoryEdits(site.ID);
+			this.props.editProductCategory(site.ID, null, { parent: 0 });
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { site } = this.props;
-		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-		const oldSiteId = ( site && site.ID ) || null;
-		if ( oldSiteId !== newSiteId ) {
-			this.props.clearProductCategoryEdits( newSiteId );
-			this.props.editProductCategory( newSiteId, null, { parent: 0 } );
+		const newSiteId = (newProps.site && newProps.site.ID) || null;
+		const oldSiteId = (site && site.ID) || null;
+		if (oldSiteId !== newSiteId) {
+			this.props.clearProductCategoryEdits(newSiteId);
+			this.props.editProductCategory(newSiteId, null, { parent: 0 });
 		}
 	}
 
 	componentWillUnmount() {
 		const { site } = this.props;
 
-		if ( site ) {
-			this.props.clearProductCategoryEdits( site.ID );
+		if (site) {
+			this.props.clearProductCategoryEdits(site.ID);
 		}
 	}
 
 	onUploadStart = () => {
-		this.setState( { isUploading: true } );
+		this.setState({ isUploading: true });
 	};
 
 	onUploadFinish = () => {
-		this.setState( { isUploading: false } );
+		this.setState({ isUploading: false });
 	};
 
 	onSave = () => {
 		const { site, category, translate } = this.props;
-		this.setState( { busy: true } );
+		this.setState({ busy: true });
 
 		const successAction = () => {
-			page.redirect( getLink( '/store/products/categories/:site', site ) );
-			return successNotice( translate( 'Category successfully created.' ), {
+			page.redirect(getLink('/store/products/categories/:site', site));
+			return successNotice(translate('Category successfully created.'), {
 				displayOnNextPage: true,
 				duration: 8000,
-			} );
+			});
 		};
 
-		const failureAction = ( dispatch, getState, passedProps ) => {
-			this.setState( { busy: false } );
+		const failureAction = (dispatch, getState, passedProps) => {
+			this.setState({ busy: false });
 
 			const { error } = passedProps;
-			const errorSlug = ( error && error.error ) || undefined;
+			const errorSlug = (error && error.error) || undefined;
 
-			return errorNotice( getSaveErrorMessage( errorSlug, translate ), {
+			return errorNotice(getSaveErrorMessage(errorSlug, translate), {
 				duration: 8000,
-			} );
+			});
 		};
 
-		this.props.createProductCategory( site.ID, category, successAction, failureAction );
+		this.props.createProductCategory(site.ID, category, successAction, failureAction);
 	};
 
 	render() {
@@ -122,36 +122,35 @@ class ProductCategoryCreate extends React.Component {
 			category &&
 			category.name &&
 			category.name.length &&
-			! isNull( category.parent ) &&
-			! isUploading;
+			!isNull(category.parent) &&
+			!isUploading;
 
 		return (
-			<Main className={ className } wideLayout>
+			<Main className={className} wideLayout>
 				<ProductCategoryHeader
-					site={ site }
-					category={ category }
-					onSave={ saveEnabled ? this.onSave : false }
-					isBusy={ busy }
+					site={site}
+					category={category}
+					onSave={saveEnabled ? this.onSave : false}
+					isBusy={busy}
 				/>
-				<ProtectFormGuard isChanged={ hasEdits } />
+				<ProtectFormGuard isChanged={hasEdits} />
 				<ProductCategoryForm
-					siteId={ site && site.ID }
-					category={ category || { parent: 0 } }
-					editProductCategory={ this.props.editProductCategory }
-					onUploadStart={ this.onUploadStart }
-					onUploadFinish={ this.onUploadFinish }
+					siteId={site && site.ID}
+					category={category || { parent: 0 }}
+					editProductCategory={this.props.editProductCategory}
+					onUploadStart={this.onUploadStart}
+					onUploadFinish={this.onUploadFinish}
 				/>
 			</Main>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
-	const categoryId = getCurrentlyEditingId( state );
-	const category =
-		! isNumber( categoryId ) && getProductCategoryWithLocalEdits( state, categoryId );
-	const hasEdits = ! isEmpty( omit( getProductCategoryEdits( state, categoryId ), 'id' ) );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
+	const categoryId = getCurrentlyEditingId(state);
+	const category = !isNumber(categoryId) && getProductCategoryWithLocalEdits(state, categoryId);
+	const hasEdits = !isEmpty(omit(getProductCategoryEdits(state, categoryId), 'id'));
 
 	return {
 		site,
@@ -160,19 +159,19 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			editProductCategory,
 			clearProductCategoryEdits,
-			createProductCategory: ( ...args ) =>
+			createProductCategory: (...args) =>
 				withAnalytics(
-					recordTrack( 'calypso_woocommerce_product_category_create' ),
-					createProductCategory( ...args )
+					recordTrack('calypso_woocommerce_product_category_create'),
+					createProductCategory(...args)
 				),
 		},
 		dispatch
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategoryCreate ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(ProductCategoryCreate));

@@ -26,7 +26,7 @@ import 'state/stats/init';
  * @param  {object} date	 Date
  * @returns {object}          Action object
  */
-export function receiveSiteStats( siteId, statType, query, data, date ) {
+export function receiveSiteStats(siteId, statType, query, data, date) {
 	return {
 		type: SITE_STATS_RECEIVE,
 		statType,
@@ -46,14 +46,14 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
  * @param  {object} query    Stats Query
  * @returns {Function}        Action thunk
  */
-export function requestSiteStats( siteId, statType, query ) {
-	return dispatch => {
-		dispatch( {
+export function requestSiteStats(siteId, statType, query) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_STATS_REQUEST,
 			statType,
 			siteId,
 			query,
-		} );
+		});
 		const isUndocumented = includes(
 			[
 				'statsFileDownloads',
@@ -68,18 +68,18 @@ export function requestSiteStats( siteId, statType, query ) {
 			statType
 		);
 		const options = 'statsVideo' === statType ? query.postId : query;
-		const site = isUndocumented ? wpcom.undocumented().site( siteId ) : wpcom.site( siteId );
+		const site = isUndocumented ? wpcom.undocumented().site(siteId) : wpcom.site(siteId);
 
-		return site[ statType ]( options )
-			.then( data => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
-			.catch( error => {
-				dispatch( {
+		return site[statType](options)
+			.then((data) => dispatch(receiveSiteStats(siteId, statType, query, data, Date.now())))
+			.catch((error) => {
+				dispatch({
 					type: SITE_STATS_REQUEST_FAILURE,
 					statType,
 					siteId,
 					query,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

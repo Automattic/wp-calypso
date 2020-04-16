@@ -10,10 +10,10 @@ import { connect } from 'react-redux';
  */
 import { requestTags } from 'state/reader/tags/items/actions';
 
-const QueryReaderTag = ( { tag, requestTags: request } ) => {
-	useEffect( () => {
-		request( tag );
-	}, [ request, tag ] );
+const QueryReaderTag = ({ tag, requestTags: request }) => {
+	useEffect(() => {
+		request(tag);
+	}, [request, tag]);
 	return null;
 };
 
@@ -22,4 +22,4 @@ QueryReaderTag.propTypes = {
 	tag: PropTypes.string.isRequired,
 };
 
-export default connect( null, { requestTags } )( QueryReaderTag );
+export default connect(null, { requestTags })(QueryReaderTag);

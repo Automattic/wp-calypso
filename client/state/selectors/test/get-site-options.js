@@ -9,19 +9,19 @@ import { expect } from 'chai';
 import getSiteOptions from 'state/selectors/get-site-options';
 import { userState } from './fixtures/user-state';
 
-describe( 'getSiteOptions()', () => {
-	test( 'should return null if site is not found', () => {
+describe('getSiteOptions()', () => {
+	test('should return null if site is not found', () => {
 		const state = {
 			...userState,
 			sites: {
 				items: {},
 			},
 		};
-		const siteOptions = getSiteOptions( state, 2916288 );
-		expect( siteOptions ).to.be.null;
-	} );
+		const siteOptions = getSiteOptions(state, 2916288);
+		expect(siteOptions).to.be.null;
+	});
 
-	test( 'should return default options object if no options are found', () => {
+	test('should return default options object if no options are found', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -31,11 +31,11 @@ describe( 'getSiteOptions()', () => {
 			},
 		};
 
-		const siteOptions = getSiteOptions( state, 2916288 );
-		expect( siteOptions ).to.eql( {} );
-	} );
+		const siteOptions = getSiteOptions(state, 2916288);
+		expect(siteOptions).to.eql({});
+	});
 
-	test( 'should return the options of the site if they exist', () => {
+	test('should return the options of the site if they exist', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -52,10 +52,10 @@ describe( 'getSiteOptions()', () => {
 			},
 		};
 
-		const siteOptions = getSiteOptions( state, 2916288 );
-		expect( siteOptions ).to.eql( {
+		const siteOptions = getSiteOptions(state, 2916288);
+		expect(siteOptions).to.eql({
 			default_post_format: 'test',
 			option2: 'not-ok',
-		} );
-	} );
-} );
+		});
+	});
+});

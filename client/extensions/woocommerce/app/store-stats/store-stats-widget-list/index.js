@@ -34,100 +34,95 @@ class StoreStatsWidgetList extends Component {
 	render() {
 		const { data, deltas, query, selectedDate, widgets, moment } = this.props;
 		const { unit } = query;
-		const selectedIndex = findIndex( data, d => d.period === selectedDate );
-		const firstRealKey = Object.keys( deltas[ selectedIndex ] ).filter(
-			key => key !== 'period'
-		)[ 0 ];
-		const sincePeriod = getDelta( deltas, selectedDate, firstRealKey );
-		const periodFormat = getPeriodFormat( unit, sincePeriod.reference_period );
+		const selectedIndex = findIndex(data, (d) => d.period === selectedDate);
+		const firstRealKey = Object.keys(deltas[selectedIndex]).filter((key) => key !== 'period')[0];
+		const sincePeriod = getDelta(deltas, selectedDate, firstRealKey);
+		const periodFormat = getPeriodFormat(unit, sincePeriod.reference_period);
 		const values = [
 			{
 				key: 'title',
-				label: translate( 'Stat' ),
+				label: translate('Stat'),
 			},
 			{
 				key: 'value',
-				label: translate( 'Value' ),
+				label: translate('Value'),
 			},
 			{
 				key: 'sparkline',
-				label: translate( 'Trend' ),
+				label: translate('Trend'),
 			},
 			{
 				key: 'delta',
-				label: `${ translate( 'Since' ) } \
-				${ moment( sincePeriod.reference_period, periodFormat ).format( UNITS[ unit ].shortFormat ) }`,
+				label: `${translate('Since')} \
+				${moment(sincePeriod.reference_period, periodFormat).format(UNITS[unit].shortFormat)}`,
 			},
 		];
 
 		const titles = (
 			<TableRow isHeader>
-				{ values.map( ( value, i ) => {
+				{values.map((value, i) => {
 					return (
 						<TableItem
-							className={ classnames( 'store-stats-widget-list__table-item', value.key ) }
+							className={classnames('store-stats-widget-list__table-item', value.key)}
 							isHeader
-							key={ i }
-							isTitle={ 0 === i }
+							key={i}
+							isTitle={0 === i}
 						>
-							{ value.label }
+							{value.label}
 						</TableItem>
 					);
-				} ) }
+				})}
 			</TableRow>
 		);
 
-		const widgetData = widgets.map( widget => {
-			const timeSeries = data.map( row => +row[ widget.key ] );
-			const delta = getDelta( deltas, selectedDate, widget.key );
+		const widgetData = widgets.map((widget) => {
+			const timeSeries = data.map((row) => +row[widget.key]);
+			const delta = getDelta(deltas, selectedDate, widget.key);
 			const deltaValue =
 				delta.direction === 'is-undefined-increase'
 					? '-'
-					: Math.abs( Math.round( delta.percentage_change * 100 ) );
+					: Math.abs(Math.round(delta.percentage_change * 100));
 			return {
 				title: widget.title,
-				value: formatValue( timeSeries[ selectedIndex ], widget.format, sincePeriod.currency ),
+				value: formatValue(timeSeries[selectedIndex], widget.format, sincePeriod.currency),
 				sparkline: (
 					<Sparkline
-						aspectRatio={ 3 }
-						data={ timeSeries }
-						highlightIndex={ selectedIndex }
-						maxHeight={ 50 }
+						aspectRatio={3}
+						data={timeSeries}
+						highlightIndex={selectedIndex}
+						maxHeight={50}
 					/>
 				),
 				delta: (
-					<Delta
-						value={ `${ deltaValue }%` }
-						className={ `${ delta.favorable } ${ delta.direction }` }
-					/>
+					<Delta value={`${deltaValue}%`} className={`${delta.favorable} ${delta.direction}`} />
 				),
 			};
-		} );
+		});
 
 		return (
-			<Table className="store-stats-widget-list" header={ titles }>
-				{ widgetData.map( ( row, i ) => (
-					<TableRow className="store-stats-widget-list__table-row" key={ i }>
-						{ values.map( ( value, j ) => (
+			<Table className="store-stats-widget-list" header={titles}>
+				{widgetData.map((row, i) => (
+					<TableRow className="store-stats-widget-list__table-row" key={i}>
+						{values.map((value, j) => (
 							<TableItem
-								className={ classnames( 'store-stats-widget-list__table-item', value.key ) }
-								key={ value.key }
-								isTitle={ 0 === j }
+								className={classnames('store-stats-widget-list__table-item', value.key)}
+								key={value.key}
+								isTitle={0 === j}
 							>
-								{ row[ value.key ] }
+								{row[value.key]}
 							</TableItem>
-						) ) }
+						))}
 					</TableRow>
-				) ) }
+				))}
 			</Table>
 		);
 	}
 }
 
-export default connect( ( state, { siteId, statType, query } ) => {
-	const siteStats = getSiteStatsNormalizedData( state, siteId, statType, query );
+export default connect((state, { siteId, statType, query }) => {
+	const siteStats = getSiteStatsNormalizedData(state, siteId, statType, query);
 	return {
 		data: siteStats.data,
 		deltas: siteStats.deltas,
 	};
-} )( withLocalizedMoment( StoreStatsWidgetList ) );
+})(withLocalizedMoment(StoreStatsWidgetList));

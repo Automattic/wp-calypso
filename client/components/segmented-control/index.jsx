@@ -34,11 +34,11 @@ export default class SegmentedControl extends React.Component {
 
 		return (
 			<ul
-				className={ classNames( 'segmented-control', segmentedClasses, this.props.className ) }
-				style={ this.props.style }
+				className={classNames('segmented-control', segmentedClasses, this.props.className)}
+				style={this.props.style}
 				role="radiogroup"
 			>
-				{ this.props.children }
+				{this.props.children}
 			</ul>
 		);
 	}

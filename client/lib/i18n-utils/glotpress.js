@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  */
 import { GP_BASE_URL } from './constants';
 
-const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
+const debug = debugFactory('calypso:i18n-utils:glotpress');
 
 /**
  * Sends the POST request
@@ -17,27 +17,27 @@ const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
  * @param {string} postFormData post data url param string
  * @returns {object} request object
  */
-export async function postRequest( glotPressUrl, postFormData ) {
+export async function postRequest(glotPressUrl, postFormData) {
 	let response;
 
 	try {
-		response = await fetch( glotPressUrl, {
+		response = await fetch(glotPressUrl, {
 			method: 'POST',
 			credentials: 'include',
 			body: postFormData,
-		} );
-		if ( response.ok ) {
+		});
+		if (response.ok) {
 			return await response.json();
 		}
-	} catch ( err ) {
+	} catch (err) {
 		throw err;
 	}
 
 	// Invalid response.
-	throw new Error( await response.body );
+	throw new Error(await response.body);
 }
 
-export function encodeOriginalKey( { original, context } ) {
+export function encodeOriginalKey({ original, context }) {
 	return context + '\u0004' + original;
 }
 
@@ -49,11 +49,11 @@ export function encodeOriginalKey( { original, context } ) {
  * @param {Function} post see postRequest()
  * @returns {object} request object
  */
-export function recordOriginals( originalKeys, recordId, post = postRequest ) {
-	const glotPressUrl = `${ GP_BASE_URL }/api/translations/-record-originals`;
-	const recordIdQueryFragment = recordId ? `record_id=${ encodeURIComponent( recordId ) }&` : '';
+export function recordOriginals(originalKeys, recordId, post = postRequest) {
+	const glotPressUrl = `${GP_BASE_URL}/api/translations/-record-originals`;
+	const recordIdQueryFragment = recordId ? `record_id=${encodeURIComponent(recordId)}&` : '';
 	const postFormData =
-		recordIdQueryFragment + `originals=${ encodeURIComponent( JSON.stringify( originalKeys ) ) }`;
+		recordIdQueryFragment + `originals=${encodeURIComponent(JSON.stringify(originalKeys))}`;
 
-	return post( glotPressUrl, postFormData ).catch( err => debug( 'recordOriginals failed:', err ) );
+	return post(glotPressUrl, postFormData).catch((err) => debug('recordOriginals failed:', err));
 }

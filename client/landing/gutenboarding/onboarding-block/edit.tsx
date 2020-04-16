@@ -22,44 +22,42 @@ import { isEnabled } from '../../../config';
 import './colors.scss';
 import './style.scss';
 
-const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
-	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
+const OnboardingEdit: FunctionComponent<BlockEditProps<Attributes>> = () => {
+	const { siteVertical, selectedDesign } = useSelect((select) => select(STORE_KEY).getState());
+	const isCreatingSite = useSelect((select) => select(SITE_STORE).isFetchingSite());
 	const replaceHistory = useNewQueryParam();
 
 	const makePath = usePath();
 
 	return (
-		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
-			{ isCreatingSite && (
-				<Redirect push={ replaceHistory ? undefined : true } to={ makePath( Step.CreateSite ) } />
-			) }
+		<div className="onboarding-block" data-vertical={siteVertical?.label}>
+			{isCreatingSite && (
+				<Redirect push={replaceHistory ? undefined : true} to={makePath(Step.CreateSite)} />
+			)}
 			<Switch>
-				<Route exact path={ makePath( Step.IntentGathering ) }>
+				<Route exact path={makePath(Step.IntentGathering)}>
 					<AcquireIntent />
 				</Route>
 
-				<Route path={ makePath( Step.DesignSelection ) }>
-					{ ! siteVertical ? (
-						<Redirect to={ makePath( Step.IntentGathering ) } />
-					) : (
-						<DesignSelector />
-					) }
+				<Route path={makePath(Step.DesignSelection)}>
+					{!siteVertical ? <Redirect to={makePath(Step.IntentGathering)} /> : <DesignSelector />}
 				</Route>
 
-				<Route path={ makePath( Step.Style ) }>
-					{ // Disable reason: Leave me alone, my nested ternaries are amazing ✨
-					// eslint-disable-next-line no-nested-ternary
-					! selectedDesign ? (
-						<Redirect to={ makePath( Step.DesignSelection ) } />
-					) : isEnabled( 'gutenboarding/style-preview' ) ? (
-						<StylePreview />
-					) : (
-						<Redirect to={ makePath( Step.DesignSelection ) } />
-					) }
+				<Route path={makePath(Step.Style)}>
+					{
+						// Disable reason: Leave me alone, my nested ternaries are amazing ✨
+						// eslint-disable-next-line no-nested-ternary
+						!selectedDesign ? (
+							<Redirect to={makePath(Step.DesignSelection)} />
+						) : isEnabled('gutenboarding/style-preview') ? (
+							<StylePreview />
+						) : (
+							<Redirect to={makePath(Step.DesignSelection)} />
+						)
+					}
 				</Route>
 
-				<Route path={ makePath( Step.CreateSite ) }>
+				<Route path={makePath(Step.CreateSite)}>
 					<CreateSite />
 				</Route>
 			</Switch>

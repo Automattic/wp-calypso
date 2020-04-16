@@ -18,21 +18,21 @@ export const CONTACT_FORM_FIELD_TYPES = {
 export const CONTACT_FORM_DEFAULT = {
 	fields: [
 		{
-			label: translate( 'Name' ),
+			label: translate('Name'),
 			type: CONTACT_FORM_FIELD_TYPES.name,
 			required: true,
 		},
 		{
-			label: translate( 'Email' ),
+			label: translate('Email'),
 			type: CONTACT_FORM_FIELD_TYPES.email,
 			required: true,
 		},
 		{
-			label: translate( 'Website' ),
+			label: translate('Website'),
 			type: CONTACT_FORM_FIELD_TYPES.website,
 		},
 		{
-			label: translate( 'Comment' ),
+			label: translate('Comment'),
 			type: CONTACT_FORM_FIELD_TYPES.textarea,
 			required: true,
 		},
@@ -40,7 +40,7 @@ export const CONTACT_FORM_DEFAULT = {
 };
 
 export const CONTACT_FORM_DEFAULT_NEW_FIELD = {
-	label: translate( 'Text' ),
+	label: translate('Text'),
 	type: CONTACT_FORM_FIELD_TYPES.text,
 	isExpanded: true,
 };

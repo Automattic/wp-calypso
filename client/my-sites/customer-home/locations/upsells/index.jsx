@@ -16,7 +16,7 @@ const cardComponents = {
 	'home-banner-legacy-stats-banners': StatsBanners,
 };
 
-const Upsells = ( { cards, primary, siteId, slug } ) => {
+const Upsells = ({ cards, primary, siteId, slug }) => {
 	const componentProps = {
 		primary,
 		siteId,
@@ -24,31 +24,31 @@ const Upsells = ( { cards, primary, siteId, slug } ) => {
 	};
 	return (
 		<>
-			{ cards &&
+			{cards &&
 				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
+					(card, index) =>
+						cardComponents[card] &&
 						React.createElement(
-							cardComponents[ card ],
+							cardComponents[card],
 							card === 'home-banner-legacy-stats-banners'
 								? { key: index, ...componentProps }
 								: { key: index }
 						)
-				) }
+				)}
 		</>
 	);
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const isChecklistComplete = isSiteChecklistComplete( state, siteId );
-	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const isChecklistComplete = isSiteChecklistComplete(state, siteId);
+	const siteIsUnlaunched = isUnlaunchedSite(state, siteId);
 
 	return {
-		primaryButton: isChecklistComplete && ! siteIsUnlaunched,
+		primaryButton: isChecklistComplete && !siteIsUnlaunched,
 		siteId,
-		slug: getSelectedSiteSlug( state ),
+		slug: getSelectedSiteSlug(state),
 	};
 };
 
-export default connect( mapStateToProps )( Upsells );
+export default connect(mapStateToProps)(Upsells);

@@ -20,9 +20,9 @@ import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './u
  * @param  {object}  query  Taxonomy query object
  * @returns {boolean}        Whether terms are being requested
  */
-export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
-	const serializedQuery = getSerializedTermsQuery( query );
-	return !! get( state.terms.queryRequests, [ siteId, taxonomy, serializedQuery ] );
+export function isRequestingTermsForQuery(state, siteId, taxonomy, query) {
+	const serializedQuery = getSerializedTermsQuery(query);
+	return !!get(state.terms.queryRequests, [siteId, taxonomy, serializedQuery]);
 }
 
 /**
@@ -35,16 +35,16 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  * @param  {object}  query    Terms query object
  * @returns {boolean}           Terms for the query
  */
-export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
-	const lastPage = getTermsLastPageForQuery( state, siteId, taxonomy, query );
-	if ( null === lastPage ) {
+export function isRequestingTermsForQueryIgnoringPage(state, siteId, taxonomy, query) {
+	const lastPage = getTermsLastPageForQuery(state, siteId, taxonomy, query);
+	if (null === lastPage) {
 		return false;
 	}
 
-	return range( 1, lastPage + 1 ).some( page => {
+	return range(1, lastPage + 1).some((page) => {
 		const termsQuery = { ...query, page };
-		return isRequestingTermsForQuery( state, siteId, taxonomy, termsQuery );
-	} );
+		return isRequestingTermsForQuery(state, siteId, taxonomy, termsQuery);
+	});
 }
 
 /**
@@ -58,18 +58,18 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
  * @returns {?Array}           Terms for the query
  */
 export const getTermsForQuery = createSelector(
-	( state, siteId, taxonomy, query ) => {
-		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-		if ( ! manager ) {
+	(state, siteId, taxonomy, query) => {
+		const manager = get(state.terms.queries, [siteId, taxonomy]);
+		if (!manager) {
 			return null;
 		}
 
-		return manager.getItems( query );
+		return manager.getItems(query);
 	},
-	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
-	( state, siteId, taxonomy, query ) => {
-		const serializedQuery = getSerializedTermsQuery( query );
-		return [ siteId, taxonomy, serializedQuery ].join();
+	(state, siteId, taxonomy) => get(state.terms.queries, [siteId, taxonomy]),
+	(state, siteId, taxonomy, query) => {
+		const serializedQuery = getSerializedTermsQuery(query);
+		return [siteId, taxonomy, serializedQuery].join();
 	}
 );
 
@@ -84,18 +84,18 @@ export const getTermsForQuery = createSelector(
  * @returns {?Array}           Terms for the query
  */
 export const getTermsForQueryIgnoringPage = createSelector(
-	( state, siteId, taxonomy, query ) => {
-		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-		if ( ! manager ) {
+	(state, siteId, taxonomy, query) => {
+		const manager = get(state.terms.queries, [siteId, taxonomy]);
+		if (!manager) {
 			return null;
 		}
 
-		return manager.getItemsIgnoringPage( query );
+		return manager.getItemsIgnoringPage(query);
 	},
-	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
-	( state, siteId, taxonomy, query ) => {
-		const serializedQuery = getSerializedTermsQueryWithoutPage( query );
-		return [ siteId, taxonomy, serializedQuery ].join();
+	(state, siteId, taxonomy) => get(state.terms.queries, [siteId, taxonomy]),
+	(state, siteId, taxonomy, query) => {
+		const serializedQuery = getSerializedTermsQueryWithoutPage(query);
+		return [siteId, taxonomy, serializedQuery].join();
 	}
 );
 
@@ -109,18 +109,18 @@ export const getTermsForQueryIgnoringPage = createSelector(
  * @param  {object}  query    Terms query object
  * @returns {?number}          Last terms page
  */
-export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
+export function getTermsLastPageForQuery(state, siteId, taxonomy, query) {
+	const manager = get(state.terms.queries, [siteId, taxonomy]);
+	if (!manager) {
 		return null;
 	}
 
-	const pages = manager.getNumberOfPages( query );
-	if ( null === pages ) {
+	const pages = manager.getNumberOfPages(query);
+	if (null === pages) {
 		return null;
 	}
 
-	return Math.max( pages, 1 );
+	return Math.max(pages, 1);
 }
 
 /**
@@ -131,9 +131,9 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
  * @param  {string} taxonomy Taxonomy slug
  * @returns {?Array}          Terms
  */
-export function getTerms( state, siteId, taxonomy ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
+export function getTerms(state, siteId, taxonomy) {
+	const manager = get(state.terms.queries, [siteId, taxonomy]);
+	if (!manager) {
 		return null;
 	}
 
@@ -149,15 +149,15 @@ export function getTerms( state, siteId, taxonomy ) {
  * @param  {number}  termId   Term ID
  * @returns {?object}         Term
  */
-export function getTerm( state, siteId, taxonomy, termId ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
+export function getTerm(state, siteId, taxonomy, termId) {
+	const manager = get(state.terms.queries, [siteId, taxonomy]);
+	if (!manager) {
 		return null;
 	}
 
-	const term = manager.getItem( termId );
+	const term = manager.getItem(termId);
 
-	if ( ! term ) {
+	if (!term) {
 		return null;
 	}
 
@@ -173,11 +173,11 @@ export function getTerm( state, siteId, taxonomy, termId ) {
  * @param  {object}  query    Terms query object
  * @returns {?number}          Count terms
  */
-export function countFoundTermsForQuery( state, siteId, taxonomy, query ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
+export function countFoundTermsForQuery(state, siteId, taxonomy, query) {
+	const manager = get(state.terms.queries, [siteId, taxonomy]);
+	if (!manager) {
 		return null;
 	}
 
-	return manager.getFound( query );
+	return manager.getFound(query);
 }

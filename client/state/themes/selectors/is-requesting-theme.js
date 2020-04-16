@@ -12,6 +12,6 @@ import 'state/themes/init';
  * @param  {number}  themeId Theme ID
  * @returns {boolean}        Whether request is in progress
  */
-export function isRequestingTheme( state, siteId, themeId ) {
-	return state.themes.themeRequests[ siteId ]?.[ themeId ] ?? false;
+export function isRequestingTheme(state, siteId, themeId) {
+	return state.themes.themeRequests[siteId]?.[themeId] ?? false;
 }

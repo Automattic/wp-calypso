@@ -22,8 +22,8 @@ import individualTransactions from './individual-transactions/reducer';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( billingTransactionsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(billingTransactionsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case BILLING_TRANSACTIONS_RECEIVE: {
 			const { past, upcoming } = action;
 			return { past, upcoming };
@@ -31,7 +31,7 @@ export const items = withSchemaValidation( billingTransactionsSchema, ( state = 
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated requests state after an action has been dispatched.
@@ -41,8 +41,8 @@ export const items = withSchemaValidation( billingTransactionsSchema, ( state = 
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case BILLING_TRANSACTIONS_REQUEST:
 			return true;
 		case BILLING_TRANSACTIONS_REQUEST_FAILURE:
@@ -52,7 +52,7 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated sending email requests state after an action has been dispatched.
@@ -62,14 +62,14 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const sendingReceiptEmail = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const sendingReceiptEmail = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case BILLING_RECEIPT_EMAIL_SEND: {
 			const { receiptId } = action;
 
 			return {
 				...state,
-				[ receiptId ]: true,
+				[receiptId]: true,
 			};
 		}
 		case BILLING_RECEIPT_EMAIL_SEND_FAILURE: {
@@ -77,7 +77,7 @@ export const sendingReceiptEmail = withoutPersistence( ( state = {}, action ) =>
 
 			return {
 				...state,
-				[ receiptId ]: false,
+				[receiptId]: false,
 			};
 		}
 		case BILLING_RECEIPT_EMAIL_SEND_SUCCESS: {
@@ -85,19 +85,19 @@ export const sendingReceiptEmail = withoutPersistence( ( state = {}, action ) =>
 
 			return {
 				...state,
-				[ receiptId ]: false,
+				[receiptId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
 	sendingReceiptEmail,
 	//individual transactions contains transactions that are not part of the items tree.
 	//TODO: if pagination is implemented, address potential data duplication between individualTransactions and items
 	individualTransactions,
-} );
+});

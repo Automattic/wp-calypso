@@ -25,8 +25,8 @@ class DomainsLandingHeader extends Component {
 		const { title } = this.props;
 		return (
 			<Card className="header">
-				<WordPressLogo className="header__logo" size={ 52 } />
-				{ title && <h2 className="header__title">{ title }</h2> }
+				<WordPressLogo className="header__logo" size={52} />
+				{title && <h2 className="header__title">{title}</h2>}
 			</Card>
 		);
 	}

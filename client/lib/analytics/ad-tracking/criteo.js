@@ -23,9 +23,9 @@ import './setup';
  *
  * @returns {void}
  */
-export async function recordInCriteo( eventName, eventProps ) {
-	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
-		debug( 'recordInCriteo: [Skipping] ad tracking is not allowed' );
+export async function recordInCriteo(eventName, eventProps) {
+	if (!isAdTrackingAllowed() || !isCriteoEnabled) {
+		debug('recordInCriteo: [Skipping] ad tracking is not allowed');
 		return;
 	}
 
@@ -34,28 +34,28 @@ export async function recordInCriteo( eventName, eventProps ) {
 	const events = [];
 	const currentUser = getCurrentUser();
 
-	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
-	events.push( { event: 'setSiteType', type: criteoSiteType() } );
+	events.push({ event: 'setAccount', account: TRACKING_IDS.criteo });
+	events.push({ event: 'setSiteType', type: criteoSiteType() });
 
-	if ( currentUser ) {
-		events.push( { event: 'setEmail', email: [ currentUser.hashedPii.email ] } );
+	if (currentUser) {
+		events.push({ event: 'setEmail', email: [currentUser.hashedPii.email] });
 	}
 
-	const conversionEvent = clone( eventProps );
+	const conversionEvent = clone(eventProps);
 	conversionEvent.event = eventName;
-	events.push( conversionEvent );
+	events.push(conversionEvent);
 
 	// The deep clone is necessary because the Criteo script modifies the objects in the
 	// array which causes the console to display different data than is originally added
-	debug( 'recordInCriteo: ' + eventName, cloneDeep( events ) );
-	window.criteo_q.push( ...events );
+	debug('recordInCriteo: ' + eventName, cloneDeep(events));
+	window.criteo_q.push(...events);
 }
 
 /**
  * Records in Criteo that the visitor viewed the plans page
  */
 export function recordPlansViewInCriteo() {
-	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+	if (!isAdTrackingAllowed() || !isCriteoEnabled) {
 		return;
 	}
 
@@ -65,8 +65,8 @@ export function recordPlansViewInCriteo() {
 			item: '1',
 		},
 	];
-	debug( 'recordPlansViewInCriteo:', params );
-	recordInCriteo( ...params );
+	debug('recordPlansViewInCriteo:', params);
+	recordInCriteo(...params);
 }
 
 /**
@@ -75,12 +75,12 @@ export function recordPlansViewInCriteo() {
  * @param {object} cart - cart as `CartValue` object
  * @returns {void}
  */
-export function recordViewCheckoutInCriteo( cart ) {
-	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+export function recordViewCheckoutInCriteo(cart) {
+	if (!isAdTrackingAllowed() || !isCriteoEnabled) {
 		return;
 	}
 
-	if ( cart.is_signup ) {
+	if (cart.is_signup) {
 		return;
 	}
 
@@ -89,11 +89,11 @@ export function recordViewCheckoutInCriteo( cart ) {
 		'viewBasket',
 		{
 			currency: cart.currency,
-			item: cartToCriteoItems( cart ),
+			item: cartToCriteoItems(cart),
 		},
 	];
-	debug( 'recordViewCheckoutInCriteo:', params );
-	recordInCriteo( ...params );
+	debug('recordViewCheckoutInCriteo:', params);
+	recordInCriteo(...params);
 }
 
 /**
@@ -102,14 +102,14 @@ export function recordViewCheckoutInCriteo( cart ) {
  * @param {object} cart - cart as `CartValue` object
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
-export function cartToCriteoItems( cart ) {
-	return cart.products.map( product => {
+export function cartToCriteoItems(cart) {
+	return cart.products.map((product) => {
 		return {
 			id: product.product_id,
 			price: product.cost,
 			quantity: product.volume,
 		};
-	} );
+	});
 }
 
 /**
@@ -119,11 +119,11 @@ export function cartToCriteoItems( cart ) {
  * @returns {string} 't', 'm', or 'd' for tablet, mobile, or desktop
  */
 function criteoSiteType() {
-	if ( /iPad/.test( window.navigator.userAgent ) ) {
+	if (/iPad/.test(window.navigator.userAgent)) {
 		return 't';
 	}
 
-	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( window.navigator.userAgent ) ) {
+	if (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test(window.navigator.userAgent)) {
 		return 'm';
 	}
 

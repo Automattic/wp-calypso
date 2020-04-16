@@ -17,25 +17,25 @@ import Divider from '../divider';
  */
 import './waiting-notification-approval.scss';
 
-export default function WaitingTwoFactorNotificationApproval( { isJetpack, isGutenboarding } ) {
+export default function WaitingTwoFactorNotificationApproval({ isJetpack, isGutenboarding }) {
 	const translate = useTranslate();
 
 	return (
 		<Fragment>
 			<Card compact>
 				<p className="two-factor-authentication__info">
-					{ translate(
+					{translate(
 						'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
 						{ components: { strong: <strong /> } }
-					) }
+					)}
 				</p>
 				<PushNotificationIllustration />
 			</Card>
-			<Divider>{ translate( 'or' ) }</Divider>
+			<Divider>{translate('or')}</Divider>
 			<TwoFactorActions
 				twoFactorAuthType="push"
-				isJetpack={ isJetpack }
-				isGutenboarding={ isGutenboarding }
+				isJetpack={isJetpack}
+				isGutenboarding={isGutenboarding}
 			/>
 		</Fragment>
 	);

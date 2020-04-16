@@ -12,8 +12,8 @@ import './setup';
  *
  * @param {object} cart - cart as `CartValue` object
  */
-export function recordViewCheckout( cart ) {
-	if ( isCriteoEnabled ) {
-		recordViewCheckoutInCriteo( cart );
+export function recordViewCheckout(cart) {
+	if (isCriteoEnabled) {
+		recordViewCheckoutInCriteo(cart);
 	}
 }

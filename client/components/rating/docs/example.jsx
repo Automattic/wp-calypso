@@ -13,6 +13,6 @@ export default class RatingExample extends React.PureComponent {
 	static displayName = 'Rating';
 
 	render() {
-		return <Rating rating={ 70 } size={ 48 } />;
+		return <Rating rating={70} size={48} />;
 	}
 }

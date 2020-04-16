@@ -12,15 +12,15 @@ import CreditCardFormFieldsLoadingPlaceholder from 'components/credit-card-form-
 import FormButton from 'components/forms/form-button';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 
-const CreditCardFormLoadingPlaceholder = ( { title } ) => {
+const CreditCardFormLoadingPlaceholder = ({ title }) => {
 	return (
-		<LoadingPlaceholder title={ title }>
+		<LoadingPlaceholder title={title}>
 			<Card className="credit-card-form__content">
 				<CreditCardFormFieldsLoadingPlaceholder />
 			</Card>
 
 			<CompactCard className="credit-card-form__footer">
-				<FormButton isPrimary={ false } />
+				<FormButton isPrimary={false} />
 			</CompactCard>
 		</LoadingPlaceholder>
 	);

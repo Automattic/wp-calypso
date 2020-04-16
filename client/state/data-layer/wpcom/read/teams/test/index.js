@@ -7,10 +7,10 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 const action = { type: 'DUMMY_ACTION' };
 
-test( 'should return an action for an HTTP request to teams endpoint', () => {
-	const result = handleTeamsRequest( action );
+test('should return an action for an HTTP request to teams endpoint', () => {
+	const result = handleTeamsRequest(action);
 
-	expect( result ).toEqual(
+	expect(result).toEqual(
 		http(
 			{
 				method: 'GET',
@@ -20,19 +20,19 @@ test( 'should return an action for an HTTP request to teams endpoint', () => {
 			action
 		)
 	);
-} );
+});
 
-test( 'should return a READER_TEAMS_RECEIVE action with error when request errors', () => {
-	const result = teamRequestFailure( action );
+test('should return a READER_TEAMS_RECEIVE action with error when request errors', () => {
+	const result = teamRequestFailure(action);
 
-	expect( result ).toEqual( {
+	expect(result).toEqual({
 		type: READER_TEAMS_RECEIVE,
 		payload: action,
 		error: true,
-	} );
-} );
+	});
+});
 
-test( 'should return a READER_TEAMS_RECEIVE action without error when request succeeds', () => {
+test('should return a READER_TEAMS_RECEIVE action without error when request succeeds', () => {
 	const apiResponse = {
 		teams: [
 			{
@@ -41,10 +41,10 @@ test( 'should return a READER_TEAMS_RECEIVE action without error when request su
 			},
 		],
 	};
-	const result = teamRequestReceived( action, apiResponse );
+	const result = teamRequestReceived(action, apiResponse);
 
-	expect( result ).toEqual( {
+	expect(result).toEqual({
 		type: READER_TEAMS_RECEIVE,
 		payload: apiResponse,
-	} );
-} );
+	});
+});

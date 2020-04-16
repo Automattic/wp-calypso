@@ -16,8 +16,8 @@ const DashboardPlaceholder = () => {
 		<div className="dashboard__placeholder">
 			<div className="dashboard__placeholder-large card dashboard-widget" />
 			<WidgetRow>
-				{ loading }
-				{ loading }
+				{loading}
+				{loading}
 			</WidgetRow>
 		</div>
 	);

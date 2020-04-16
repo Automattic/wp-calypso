@@ -18,15 +18,15 @@ import initialPackagesState from './data/initial-state';
 const siteId = 123;
 const orderId = 8;
 
-const getState = ( packagesState = initialPackagesState ) => {
+const getState = (packagesState = initialPackagesState) => {
 	return {
 		extensions: {
 			woocommerce: {
 				woocommerceServices: {
-					[ siteId ]: {
+					[siteId]: {
 						packages: packagesState,
 						shippingLabel: {
-							[ orderId ]: {
+							[orderId]: {
 								form: {
 									origin: {
 										values: {
@@ -48,8 +48,8 @@ const getState = ( packagesState = initialPackagesState ) => {
 	};
 };
 
-const setOrderAsInternational = state => {
-	const newState = Object.assign( {}, state );
+const setOrderAsInternational = (state) => {
+	const newState = Object.assign({}, state);
 	set(
 		newState,
 		[
@@ -70,15 +70,15 @@ const setOrderAsInternational = state => {
 };
 
 const getStateWithInternationalOrder = () => {
-	return setOrderAsInternational( getState() );
+	return setOrderAsInternational(getState());
 };
 
-describe( 'Packages selectors', () => {
-	test( 'getAllSelectedPackages when there are custom and predefined packages selected', () => {
+describe('Packages selectors', () => {
+	test('getAllSelectedPackages when there are custom and predefined packages selected', () => {
 		const state = getState();
 
-		const result = getAllSelectedPackages( state, siteId );
-		expect( result ).to.eql( [
+		const result = getAllSelectedPackages(state, siteId);
+		expect(result).to.eql([
 			{ index: 0, name: '1' },
 			{ index: 1, name: '2' },
 			{ id: 'box1', name: 'aBox', serviceId: 'service', can_ship_international: false },
@@ -90,35 +90,35 @@ describe( 'Packages selectors', () => {
 				can_ship_international: false,
 			},
 			{ index: 2, name: 'zBox' },
-		] );
-	} );
+		]);
+	});
 
-	test( 'getAllSelectedPackages when there are only custom packages selected', () => {
-		const state = getState( {
+	test('getAllSelectedPackages when there are only custom packages selected', () => {
+		const state = getState({
 			...initialPackagesState,
 			packages: {
 				custom: initialPackagesState.packages.custom,
 			},
-		} );
+		});
 
-		const result = getAllSelectedPackages( state, siteId );
-		expect( result ).to.eql( [
+		const result = getAllSelectedPackages(state, siteId);
+		expect(result).to.eql([
 			{ index: 0, name: '1' },
 			{ index: 1, name: '2' },
 			{ index: 2, name: 'zBox' },
-		] );
-	} );
+		]);
+	});
 
-	test( 'getAllSelectedPackages when there are only predefined packages selected', () => {
-		const state = getState( {
+	test('getAllSelectedPackages when there are only predefined packages selected', () => {
+		const state = getState({
 			...initialPackagesState,
 			packages: {
 				predefined: initialPackagesState.packages.predefined,
 			},
-		} );
+		});
 
-		const result = getAllSelectedPackages( state, siteId );
-		expect( result ).to.eql( [
+		const result = getAllSelectedPackages(state, siteId);
+		expect(result).to.eql([
 			{ id: 'box1', name: 'aBox', serviceId: 'service', can_ship_international: false },
 			{ id: 'box', name: 'bBox', serviceId: 'service', can_ship_international: true },
 			{
@@ -127,17 +127,17 @@ describe( 'Packages selectors', () => {
 				serviceId: 'otherService',
 				can_ship_international: false,
 			},
-		] );
-	} );
+		]);
+	});
 
-	test( 'getCurrentlyEditingPredefinedPackages', () => {
-		const state = getState( {
+	test('getCurrentlyEditingPredefinedPackages', () => {
+		const state = getState({
 			...initialPackagesState,
 			currentlyEditingPredefinedPackages: initialPackagesState.packages.predefined,
-		} );
-		const result = getCurrentlyEditingPredefinedPackages( state, siteId );
+		});
+		const result = getCurrentlyEditingPredefinedPackages(state, siteId);
 
-		expect( result ).to.eql( {
+		expect(result).to.eql({
 			'service-priority': {
 				groupId: 'priority',
 				selected: 2,
@@ -184,95 +184,95 @@ describe( 'Packages selectors', () => {
 					},
 				],
 			},
-		} );
-	} );
+		});
+	});
 
-	test( 'getPredefinedPackagesChangesSummary - no changes', () => {
-		const state = getState( {
+	test('getPredefinedPackagesChangesSummary - no changes', () => {
+		const state = getState({
 			...initialPackagesState,
 			currentlyEditingPredefinedPackages: initialPackagesState.packages.predefined,
-		} );
-		const result = getPredefinedPackagesChangesSummary( state, siteId );
+		});
+		const result = getPredefinedPackagesChangesSummary(state, siteId);
 
-		expect( result ).to.eql( {
+		expect(result).to.eql({
 			added: 0,
 			removed: 0,
-		} );
-	} );
+		});
+	});
 
-	test( 'getPredefinedPackagesChangesSummary - no preexisting packages', () => {
-		const state = getState( {
+	test('getPredefinedPackagesChangesSummary - no preexisting packages', () => {
+		const state = getState({
 			...initialPackagesState,
 			packages: {
 				...initialPackagesState.packages,
 				predefined: {},
 			},
 			currentlyEditingPredefinedPackages: initialPackagesState.packages.predefined,
-		} );
+		});
 
-		const result = getPredefinedPackagesChangesSummary( state, siteId );
+		const result = getPredefinedPackagesChangesSummary(state, siteId);
 
-		expect( result ).to.eql( {
+		expect(result).to.eql({
 			added: 3,
 			removed: 0,
-		} );
-	} );
+		});
+	});
 
-	test( 'getPredefinedPackagesChangesSummary - all packages removed', () => {
-		const state = getState( {
+	test('getPredefinedPackagesChangesSummary - all packages removed', () => {
+		const state = getState({
 			...initialPackagesState,
 			currentlyEditingPredefinedPackages: {},
-		} );
+		});
 
-		const result = getPredefinedPackagesChangesSummary( state, siteId );
+		const result = getPredefinedPackagesChangesSummary(state, siteId);
 
-		expect( result ).to.eql( {
+		expect(result).to.eql({
 			added: 0,
 			removed: 3,
-		} );
-	} );
+		});
+	});
 
-	test( 'getPredefinedPackagesChangesSummary - some packages removed, some added', () => {
-		const state = getState( {
+	test('getPredefinedPackagesChangesSummary - some packages removed, some added', () => {
+		const state = getState({
 			...initialPackagesState,
-			currentlyEditingPredefinedPackages: { service: [ 'box2' ] },
-		} );
+			currentlyEditingPredefinedPackages: { service: ['box2'] },
+		});
 
-		const result = getPredefinedPackagesChangesSummary( state, siteId );
+		const result = getPredefinedPackagesChangesSummary(state, siteId);
 
-		expect( result ).to.eql( {
+		expect(result).to.eql({
 			added: 1,
 			removed: 3,
-		} );
-	} );
+		});
+	});
 
-	describe( 'getPackageGroupsForLabelPurchase()', () => {
-		test( 'the package list for international orders should use only packages that can be shipped internationally, and only the groups that contains those packages', () => {
+	describe('getPackageGroupsForLabelPurchase()', () => {
+		test('the package list for international orders should use only packages that can be shipped internationally, and only the groups that contains those packages', () => {
 			const state = getStateWithInternationalOrder();
 
-			const result = getPackageGroupsForLabelPurchase( state, orderId, siteId );
+			const result = getPackageGroupsForLabelPurchase(state, orderId, siteId);
 
-			expect( result ).to.eql( {
+			expect(result).to.eql({
 				custom: {
 					title: 'Custom Packages',
-					definitions: [ { name: '1' }, { name: '2' }, { name: 'zBox' } ],
+					definitions: [{ name: '1' }, { name: '2' }, { name: 'zBox' }],
 				},
 				priority: {
 					title: 'Priority',
-					definitions: [ { id: 'box', name: 'bBox', can_ship_international: true } ],
+					definitions: [{ id: 'box', name: 'bBox', can_ship_international: true }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'the package list for domestic orders should use all packages', () => {
+		test('the package list for domestic orders should use all packages', () => {
 			const state = getState();
 
-			const result = getPackageGroupsForLabelPurchase( state, orderId, siteId );
+			const result = getPackageGroupsForLabelPurchase(state, orderId, siteId);
 
-			expect( result ).to.eql( {
+			expect(result).to.eql({
 				custom: {
 					title: 'Custom Packages',
-					definitions: [ { name: '1' }, { name: '2' }, { name: 'zBox' } ],
+					definitions: [{ name: '1' }, { name: '2' }, { name: 'zBox' }],
 				},
 				priority: {
 					title: 'Priority',
@@ -283,9 +283,9 @@ describe( 'Packages selectors', () => {
 				},
 				express: {
 					title: 'Express',
-					definitions: [ { id: 'envelope', name: 'envelope', can_ship_international: false } ],
+					definitions: [{ id: 'envelope', name: 'envelope', can_ship_international: false }],
 				},
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

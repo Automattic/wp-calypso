@@ -10,6 +10,6 @@ import 'state/posts/init';
  * @param {number} userId User ID
  * @returns {object}        User object
  */
-export function getPostRevisionAuthor( state, userId ) {
-	return state.posts.revisions.authors.items[ userId ];
+export function getPostRevisionAuthor(state, userId) {
+	return state.posts.revisions.authors.items[userId];
 }

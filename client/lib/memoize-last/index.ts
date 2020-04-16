@@ -10,23 +10,23 @@ interface Clearable {
  *
  * @returns The wrapped function.
  */
-export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: T ): T & Clearable {
-	let lastArgs: Parameters< T > | undefined;
-	let lastResult: ReturnType< T > | undefined;
+export default function memoizeLast<T extends (...args: any[]) => any>(fn: T): T & Clearable {
+	let lastArgs: Parameters<T> | undefined;
+	let lastResult: ReturnType<T> | undefined;
 
-	const func = ( ( ...args: Parameters< T > ) => {
+	const func = ((...args: Parameters<T>) => {
 		const isSame =
 			lastArgs &&
 			args.length === lastArgs.length &&
-			args.every( ( arg, index ) => arg === ( lastArgs as Parameters< T > )[ index ] );
+			args.every((arg, index) => arg === (lastArgs as Parameters<T>)[index]);
 
-		if ( ! isSame ) {
+		if (!isSame) {
 			lastArgs = args;
-			lastResult = fn( ...args );
+			lastResult = fn(...args);
 		}
 
 		return lastResult;
-	} ) as T & Clearable;
+	}) as T & Clearable;
 
 	func.clear = () => {
 		lastArgs = undefined;
@@ -46,10 +46,10 @@ export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: 
  *
  * @returns The wrapped function.
  */
-export function once< T extends () => any >( fn: T ) {
+export function once<T extends () => any>(fn: T) {
 	// Runtime validation. Useful when static validation is unavailable.
-	if ( process.env.NODE_ENV !== 'production' && fn.length !== 0 ) {
-		throw new Error( 'memoize-last: The `once` method expects a function with no arguments.' );
+	if (process.env.NODE_ENV !== 'production' && fn.length !== 0) {
+		throw new Error('memoize-last: The `once` method expects a function with no arguments.');
 	}
-	return memoizeLast( fn );
+	return memoizeLast(fn);
 }

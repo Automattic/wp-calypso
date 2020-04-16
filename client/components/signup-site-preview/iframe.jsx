@@ -44,26 +44,26 @@ export default class SignupSitePreviewIframe extends Component {
 		scrolling: true,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.iframe = React.createRef();
 	}
 
 	componentDidMount() {
-		this.setIframeSource( this.props );
-		if ( this.props.resize ) {
+		this.setIframeSource(this.props);
+		if (this.props.resize) {
 			this.resizeListener = window.addEventListener(
 				'resize',
-				debounce( this.setContainerHeight, 50 )
+				debounce(this.setContainerHeight, 50)
 			);
 		}
 	}
 
 	componentWillUnmount() {
-		this.resizeListener && window.removeEventListener( 'resize', this.resizeListener );
+		this.resizeListener && window.removeEventListener('resize', this.resizeListener);
 	}
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		if (
 			this.props.cssUrl !== nextProps.cssUrl ||
 			this.props.fontUrl !== nextProps.fontUrl ||
@@ -71,7 +71,7 @@ export default class SignupSitePreviewIframe extends Component {
 			this.props.langSlug !== nextProps.langSlug ||
 			this.props.isRtl !== nextProps.isRtl
 		) {
-			this.setIframeSource( nextProps );
+			this.setIframeSource(nextProps);
 			return false;
 		}
 
@@ -79,91 +79,91 @@ export default class SignupSitePreviewIframe extends Component {
 			this.props.content.title !== nextProps.content.title ||
 			this.props.content.tagline !== nextProps.content.tagline
 		) {
-			this.setContentTitle( nextProps.content.title, nextProps.content.tagline );
+			this.setContentTitle(nextProps.content.title, nextProps.content.tagline);
 		}
 
-		if ( this.props.content.body !== nextProps.content.body ) {
-			this.setIframeBodyContent( nextProps.content );
+		if (this.props.content.body !== nextProps.content.body) {
+			this.setIframeBodyContent(nextProps.content);
 		}
 
 		if (
 			this.props.content.body !== nextProps.content.body ||
-			! isShallowEqual( this.props.content.params, nextProps.content.params )
+			!isShallowEqual(this.props.content.params, nextProps.content.params)
 		) {
-			this.setContentParams( nextProps.content.params );
+			this.setContentParams(nextProps.content.params);
 		}
 
 		return false;
 	}
 
-	setContentTitle( title, tagline ) {
-		this.setIframeElementContent( '.signup-site-preview__title', title );
-		this.setIframeElementContent( 'title', createPreviewDocumentTitle( title, tagline ) );
+	setContentTitle(title, tagline) {
+		this.setIframeElementContent('.signup-site-preview__title', title);
+		this.setIframeElementContent('title', createPreviewDocumentTitle(title, tagline));
 	}
 
-	setContentParams( params ) {
-		for ( const [ key, value ] of Object.entries( params ) ) {
-			this.setIframeElementContent( `.${ getPreviewParamClass( key ) }`, value );
+	setContentParams(params) {
+		for (const [key, value] of Object.entries(params)) {
+			this.setIframeElementContent(`.${getPreviewParamClass(key)}`, value);
 		}
 	}
 
-	setIframeBodyContent( content ) {
-		if ( ! this.iframe.current ) {
+	setIframeBodyContent(content) {
+		if (!this.iframe.current) {
 			return;
 		}
-		const element = this.iframe.current.contentWindow.document.querySelector( '.entry-content' );
+		const element = this.iframe.current.contentWindow.document.querySelector('.entry-content');
 
-		if ( element ) {
+		if (element) {
 			element.innerHTML = content.body;
 			this.props.resize && this.setContainerHeight();
 		}
 	}
 
-	setIframeElementContent( selector, content ) {
-		if ( ! this.iframe.current ) {
+	setIframeElementContent(selector, content) {
+		if (!this.iframe.current) {
 			return;
 		}
-		const elements = this.iframe.current.contentWindow.document.querySelectorAll( selector );
+		const elements = this.iframe.current.contentWindow.document.querySelectorAll(selector);
 
 		// Using `_.forEach` instead of a for-of loop to fix environments that need
 		// polyfilled. This is probably required because the node list is being
 		// pulled out of the iframe environment which hasn't been polyfilled.
-		forEach( elements, element => {
+		forEach(elements, (element) => {
 			element.textContent = content;
-		} );
+		});
 	}
 
 	setOnPreviewClick = () => {
-		if ( ! this.iframe.current ) {
+		if (!this.iframe.current) {
 			return;
 		}
 		const element = this.iframe.current.contentWindow.document.body;
 
-		if ( element ) {
-			element.onclick = () => this.props.onPreviewClick( this.props.defaultViewportDevice );
+		if (element) {
+			element.onclick = () => this.props.onPreviewClick(this.props.defaultViewportDevice);
 		}
 	};
 
 	setIframeIsLoading = () => {
-		if ( ! this.iframe.current ) {
+		if (!this.iframe.current) {
 			return;
 		}
-		const element = this.iframe.current.contentWindow.document.querySelector( '.home' );
+		const element = this.iframe.current.contentWindow.document.querySelector('.home');
 
-		if ( element ) {
-			element.classList.remove( 'is-loading' );
+		if (element) {
+			element.classList.remove('is-loading');
 		}
 	};
 
 	setContainerHeight = () => {
-		if ( ! this.iframe.current ) {
+		if (!this.iframe.current) {
 			return;
 		}
 
-		const element = this.iframe.current.contentWindow.document.querySelector( '#page' );
+		const element = this.iframe.current.contentWindow.document.querySelector('#page');
 
-		if ( element ) {
-			this.props.setWrapperHeight( element.scrollHeight + 50 );
+		if (element) {
+			this.props.setWrapperHeight(element.scrollHeight + 50);
 		}
 	};
 
@@ -173,14 +173,14 @@ export default class SignupSitePreviewIframe extends Component {
 
 		const { params, tagline, title } = this.props.content;
 
-		this.setContentTitle( title, tagline );
-		this.setContentParams( params );
+		this.setContentTitle(title, tagline);
+		this.setContentParams(params);
 
 		this.props.resize && this.setContainerHeight();
 	};
 
-	setIframeSource = ( { content, cssUrl, fontUrl, gutenbergStylesUrl, isRtl, langSlug } ) => {
-		if ( ! this.iframe.current ) {
+	setIframeSource = ({ content, cssUrl, fontUrl, gutenbergStylesUrl, isRtl, langSlug }) => {
+		if (!this.iframe.current) {
 			return;
 		}
 
@@ -194,27 +194,27 @@ export default class SignupSitePreviewIframe extends Component {
 			this.props.scrolling
 		);
 
-		if ( isIE() ) {
+		if (isIE()) {
 			this.iframe.current.contentWindow.document.open();
-			this.iframe.current.contentWindow.document.write( iframeSrc );
+			this.iframe.current.contentWindow.document.write(iframeSrc);
 			this.iframe.current.contentWindow.document.close();
 		} else {
-			revokeObjectURL( this.iframe.current.src );
-			this.iframe.current.contentWindow.location.replace( iframeSrc );
+			revokeObjectURL(this.iframe.current.src);
+			this.iframe.current.contentWindow.location.replace(iframeSrc);
 		}
 
 		const { params, tagline, title } = content;
 
-		this.setContentTitle( title, tagline );
-		this.setContentParams( params );
+		this.setContentTitle(title, tagline);
+		this.setContentParams(params);
 	};
 
 	render() {
 		return (
 			<iframe
-				ref={ this.iframe }
+				ref={this.iframe}
 				className="signup-site-preview__iframe"
-				onLoad={ this.setLoaded }
+				onLoad={this.setLoaded}
 				title="WordPress.com"
 			/>
 		);

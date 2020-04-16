@@ -7,19 +7,19 @@ import {
 	WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export function fetchLocations( siteId ) {
+export function fetchLocations(siteId) {
 	return {
 		type: WOOCOMMERCE_LOCATIONS_REQUEST,
 		siteId,
 	};
 }
 
-export function locationsFailure( siteId, error = false ) {
-	const action = fetchLocations( siteId );
-	return setError( siteId, action, error );
+export function locationsFailure(siteId, error = false) {
+	const action = fetchLocations(siteId);
+	return setError(siteId, action, error);
 }
 
-export function locationsReceive( siteId, data ) {
+export function locationsReceive(siteId, data) {
 	return {
 		type: WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
 		siteId,

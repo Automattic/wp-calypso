@@ -37,16 +37,16 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 	};
 
 	componentDidMount() {
-		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
+		this.props.recordPageView('/log-in/link', 'Login > Link > Emailed');
 	}
 
-	onClickBackLink = event => {
+	onClickBackLink = (event) => {
 		event.preventDefault();
 
 		this.props.hideMagicLoginRequestForm();
 
 		page(
-			login( { isNative: true, isJetpack: this.props.isJetpackLogin, locale: this.props.locale } )
+			login({ isNative: true, isJetpack: this.props.isJetpackLogin, locale: this.props.locale })
 		);
 	};
 
@@ -54,43 +54,43 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		const { translate, emailAddress } = this.props;
 		const line = [
 			emailAddress
-				? translate( 'We just emailed a link to %(emailAddress)s.', {
+				? translate('We just emailed a link to %(emailAddress)s.', {
 						args: {
 							emailAddress,
 						},
-				  } )
-				: translate( 'We just emailed you a link.' ),
+				  })
+				: translate('We just emailed you a link.'),
 			' ',
-			translate( 'Please check your inbox and click the link to log in.' ),
+			translate('Please check your inbox and click the link to log in.'),
 		];
 
 		return (
 			<div>
 				<RedirectWhenLoggedIn
 					redirectTo="/help"
-					replaceCurrentLocation={ true }
-					waitForEmailAddress={ emailAddress }
+					replaceCurrentLocation={true}
+					waitForEmailAddress={emailAddress}
 				/>
 
-				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
+				<h1 className="magic-login__form-header">{translate('Check your email!')}</h1>
 
 				<Card className="magic-login__form">
-					<img alt="" src={ checkEmailImage } className="magic-login__check-email-image" />
-					<p>{ line }</p>
+					<img alt="" src={checkEmailImage} className="magic-login__check-email-image" />
+					<p>{line}</p>
 				</Card>
 
 				<div className="magic-login__footer">
 					<a
-						href={ login( {
+						href={login({
 							isNative: true,
 							isJetpack: this.props.isJetpackLogin,
 							isGutenboarding: this.props.isGutenboardingLogin,
 							locale: this.props.locale,
-						} ) }
-						onClick={ this.onClickBackLink }
+						})}
+						onClick={this.onClickBackLink}
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
-						{ translate( 'Back' ) }
+						<Gridicon icon="arrow-left" size={18} />
+						{translate('Back')}
 					</a>
 				</div>
 			</div>
@@ -98,15 +98,15 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 	}
 }
 
-const mapState = state => ( {
-	locale: getCurrentLocaleSlug( state ),
-	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/gutenboarding/link' ),
-} );
+const mapState = (state) => ({
+	locale: getCurrentLocaleSlug(state),
+	isJetpackLogin: getCurrentRoute(state) === '/log-in/jetpack/link',
+	isGutenboardingLogin: getCurrentRoute(state)?.startsWith('/log-in/gutenboarding/link'),
+});
 
 const mapDispatch = {
 	hideMagicLoginRequestForm,
-	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+	recordPageView: withEnhancers(recordPageView, [enhanceWithSiteType]),
 };
 
-export default connect( mapState, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );
+export default connect(mapState, mapDispatch)(localize(EmailedLoginLinkSuccessfully));

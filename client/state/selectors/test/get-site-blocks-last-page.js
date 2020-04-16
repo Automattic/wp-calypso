@@ -3,8 +3,8 @@
  */
 import { getSiteBlocksLastPage } from 'state/reader/site-blocks/selectors';
 
-describe( 'getSiteBlocksLastPage()', () => {
-	test( 'should return the last page', () => {
+describe('getSiteBlocksLastPage()', () => {
+	test('should return the last page', () => {
 		const prevState = {
 			reader: {
 				siteBlocks: {
@@ -12,11 +12,11 @@ describe( 'getSiteBlocksLastPage()', () => {
 				},
 			},
 		};
-		const nextState = getSiteBlocksLastPage( prevState );
-		expect( nextState ).toEqual( 4 );
-	} );
+		const nextState = getSiteBlocksLastPage(prevState);
+		expect(nextState).toEqual(4);
+	});
 
-	test( 'should return null if there is no last page yet', () => {
+	test('should return null if there is no last page yet', () => {
 		const prevState = {
 			reader: {
 				siteBlocks: {
@@ -24,7 +24,7 @@ describe( 'getSiteBlocksLastPage()', () => {
 				},
 			},
 		};
-		const nextState = getSiteBlocksLastPage( prevState );
-		expect( nextState ).toEqual( null );
-	} );
-} );
+		const nextState = getSiteBlocksLastPage(prevState);
+		expect(nextState).toEqual(null);
+	});
+});

@@ -23,7 +23,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {object} action Redux action
  * @returns {object} original action
  */
-export const fetchLanguageNames = action =>
+export const fetchLanguageNames = (action) =>
 	http(
 		{
 			method: 'GET',
@@ -39,14 +39,14 @@ export const fetchLanguageNames = action =>
  * @param {Array} data raw data from i18n/language-names
  * @returns {Array<object>} Redux actions
  */
-export const addLanguageNames = ( action, data ) => [ receiveLanguageNames( data ) ];
+export const addLanguageNames = (action, data) => [receiveLanguageNames(data)];
 
-export const dispatchPlansRequest = dispatchRequest( {
+export const dispatchPlansRequest = dispatchRequest({
 	fetch: fetchLanguageNames,
 	onSuccess: addLanguageNames,
 	onError: noop,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/i18n/language-names/index.js', {
-	[ I18N_LANGUAGE_NAMES_REQUEST ]: [ dispatchPlansRequest ],
-} );
+registerHandlers('state/data-layer/wpcom/i18n/language-names/index.js', {
+	[I18N_LANGUAGE_NAMES_REQUEST]: [dispatchPlansRequest],
+});

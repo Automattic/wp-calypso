@@ -18,8 +18,8 @@ export const DEFAULT_QUERY = {
  * @param  {object} query Reviews query
  * @returns {object}       Normalized reviews query
  */
-export function getNormalizedReviewsQuery( query ) {
-	return omitBy( query, ( value, key ) => DEFAULT_QUERY[ key ] === value );
+export function getNormalizedReviewsQuery(query) {
+	return omitBy(query, (value, key) => DEFAULT_QUERY[key] === value);
 }
 
 /**
@@ -28,9 +28,9 @@ export function getNormalizedReviewsQuery( query ) {
  * @param  {object} query  Reviews query
  * @returns {string}        Serialized reviews query
  */
-export function getSerializedReviewsQuery( query = {} ) {
-	const normalizedQuery = getNormalizedReviewsQuery( query );
-	const serializedQuery = JSON.stringify( normalizedQuery );
+export function getSerializedReviewsQuery(query = {}) {
+	const normalizedQuery = getNormalizedReviewsQuery(query);
+	const serializedQuery = JSON.stringify(normalizedQuery);
 
 	return serializedQuery;
 }

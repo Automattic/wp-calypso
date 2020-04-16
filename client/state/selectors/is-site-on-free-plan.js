@@ -16,14 +16,14 @@ import { isFreePlan } from 'lib/plans';
  * @param {number} siteId Site ID
  * @returns {boolean} Whether site is on a free plan
  */
-const isSiteOnFreePlan = ( state, siteId ) => {
-	const currentPlan = getCurrentPlan( state, siteId );
+const isSiteOnFreePlan = (state, siteId) => {
+	const currentPlan = getCurrentPlan(state, siteId);
 
-	if ( ! currentPlan ) {
+	if (!currentPlan) {
 		return false;
 	}
 
-	return isFreePlan( currentPlan.productSlug );
+	return isFreePlan(currentPlan.productSlug);
 };
 
 export default isSiteOnFreePlan;

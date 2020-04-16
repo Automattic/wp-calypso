@@ -9,15 +9,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-no-this-translate' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require('../../../lib/rules/i18n-no-this-translate'),
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester().run( 'i18n-no-this-translate', rule, {
-	valid: [ "i18n.translate('hello')", "translate('hello')", "this.props.translate('hello')" ],
+new RuleTester().run('i18n-no-this-translate', rule, {
+	valid: ["i18n.translate('hello')", "translate('hello')", "this.props.translate('hello')"],
 
 	invalid: [
 		{
@@ -30,4 +30,4 @@ new RuleTester().run( 'i18n-no-this-translate', rule, {
 			],
 		},
 	],
-} );
+});

@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import { customPostToProduct, productToCustomPost } from '../';
 
-describe( '#simplePayments', () => {
-	test( 'should convert customPost to product', () => {
+describe('#simplePayments', () => {
+	test('should convert customPost to product', () => {
 		const customPost = {
 			ID: 1,
 			type: 'jp_pay_product',
@@ -35,11 +35,11 @@ describe( '#simplePayments', () => {
 			multiple: false,
 		};
 
-		const convertedProduct = customPostToProduct( customPost );
-		expect( convertedProduct ).to.deep.equal( product );
-	} );
+		const convertedProduct = customPostToProduct(customPost);
+		expect(convertedProduct).to.deep.equal(product);
+	});
 
-	test( 'should decode special characters when converting to product', () => {
+	test('should decode special characters when converting to product', () => {
 		const customPost = {
 			ID: 2,
 			type: 'jp_pay_product',
@@ -54,13 +54,13 @@ describe( '#simplePayments', () => {
 				{ key: 'spay_bogus', value: 'ignore' },
 			],
 		};
-		const convertedProduct = customPostToProduct( customPost );
+		const convertedProduct = customPostToProduct(customPost);
 
-		expect( convertedProduct.title ).to.equal( '”∞” and ‘so much more’™ …' );
-		expect( convertedProduct.description ).to.equal( 'Accepting $, ₿, & ☃' );
-	} );
+		expect(convertedProduct.title).to.equal('”∞” and ‘so much more’™ …');
+		expect(convertedProduct.description).to.equal('Accepting $, ₿, & ☃');
+	});
 
-	test( 'should convert product to customPost', () => {
+	test('should convert product to customPost', () => {
 		const product = {
 			ID: 1,
 			title: 'The Button',
@@ -84,7 +84,7 @@ describe( '#simplePayments', () => {
 			],
 		};
 
-		const convertedCustomPost = productToCustomPost( product );
-		expect( convertedCustomPost ).to.deep.equal( customPost );
-	} );
-} );
+		const convertedCustomPost = productToCustomPost(product);
+		expect(convertedCustomPost).to.deep.equal(customPost);
+	});
+});

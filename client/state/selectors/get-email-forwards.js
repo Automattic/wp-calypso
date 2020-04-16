@@ -10,8 +10,8 @@ import { get } from 'lodash';
  * @param  {string} domainName domainName to request email forwards for
  * @returns {object}          EmailForwards list
  */
-export function getEmailForwards( state, domainName ) {
-	return get( state.emailForwarding, [ domainName, 'forwards' ], null );
+export function getEmailForwards(state, domainName) {
+	return get(state.emailForwarding, [domainName, 'forwards'], null);
 }
 
 /**
@@ -21,15 +21,15 @@ export function getEmailForwards( state, domainName ) {
  * @param  {string} domains domains to filter
  * @returns {Array}          list of domains with forwards
  */
-export function getDomainsWithForwards( state, domains ) {
-	if ( ! domains || ! domains.length ) {
+export function getDomainsWithForwards(state, domains) {
+	if (!domains || !domains.length) {
 		return [];
 	}
-	return domains.reduce( ( accumulator, domain ) => {
-		const forwards = getEmailForwards( state, domain.domain );
-		if ( forwards && forwards.length ) {
-			accumulator.push( domain.domain );
+	return domains.reduce((accumulator, domain) => {
+		const forwards = getEmailForwards(state, domain.domain);
+		if (forwards && forwards.length) {
+			accumulator.push(domain.domain);
 		}
 		return accumulator;
-	}, [] );
+	}, []);
 }

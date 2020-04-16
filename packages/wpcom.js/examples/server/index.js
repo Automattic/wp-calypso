@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -27,21 +26,21 @@ app.use(express.static(pub));
 app.set('views', __dirname + '/');
 app.set('view engine', 'jade');
 
-app.get('/', function(req, res){
-  // set site id
-  var site = wpcom.site(wpapp.site);
+app.get('/', function (req, res) {
+	// set site id
+	var site = wpcom.site(wpapp.site);
 
-  // get site info
-  site.get(function(err, info){
-    if (err) return console.log(err);
+	// get site info
+	site.get(function (err, info) {
+		if (err) return console.log(err);
 
-    // get lastest posts
-    site.postsList({ number: 10 }, function(err, posts) {
-      if (err) return console.log(err);
+		// get lastest posts
+		site.postsList({ number: 10 }, function (err, posts) {
+			if (err) return console.log(err);
 
-      res.render('layout', { site: info, posts: posts });
-    });
-  });
+			res.render('layout', { site: info, posts: posts });
+		});
+	});
 });
 
 app.listen(3000);

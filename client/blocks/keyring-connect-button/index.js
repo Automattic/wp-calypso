@@ -25,13 +25,13 @@ import {
 
 class KeyringConnectButton extends Component {
 	static propTypes = {
-		service: PropTypes.oneOfType( [
-			PropTypes.shape( {
+		service: PropTypes.oneOfType([
+			PropTypes.shape({
 				ID: PropTypes.string.isRequired,
 				connect_URL: PropTypes.string.isRequired,
-			} ),
+			}),
 			PropTypes.bool,
-		] ),
+		]),
 		isFetching: PropTypes.bool,
 		keyringConnections: PropTypes.array,
 		onClick: PropTypes.func,
@@ -65,18 +65,18 @@ class KeyringConnectButton extends Component {
 	 * @returns {string} Connection status.
 	 */
 	getConnectionStatus() {
-		if ( this.props.isFetching || this.props.isAwaitingConnections ) {
+		if (this.props.isFetching || this.props.isAwaitingConnections) {
 			// When connections are still loading, we don't know the status
 			return 'unknown';
 		}
 
 		// keyringConnections are already filtered for this.props.service.ID
-		if ( this.props.keyringConnections.length === 0 ) {
+		if (this.props.keyringConnections.length === 0) {
 			// If no connections exist, the service isn't connected
 			return 'not-connected';
 		}
 
-		if ( some( this.props.keyringConnections, { status: 'broken' } ) ) {
+		if (some(this.props.keyringConnections, { status: 'broken' })) {
 			// A problematic connection exists
 			return 'reconnect';
 		}
@@ -91,8 +91,8 @@ class KeyringConnectButton extends Component {
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus && ! forceReconnect ) {
-			this.props.onConnect( last( keyringConnections ) );
+		if ('connected' === connectionStatus && !forceReconnect) {
+			this.props.onConnect(last(keyringConnections));
 		} else {
 			this.addConnection();
 		}
@@ -102,44 +102,44 @@ class KeyringConnectButton extends Component {
 	 * Establishes a new connection.
 	 */
 	addConnection = () => {
-		this.setState( { isConnecting: true } );
-		if ( this.props.service ) {
+		this.setState({ isConnecting: true });
+		if (this.props.service) {
 			// Attempt to create a new connection. If a Keyring connection ID
 			// is not provided, the user will need to authorize the app
-			requestExternalAccess( this.props.service.connect_URL, ( { keyring_id: keyringId } ) => {
-				if ( ! keyringId ) {
-					this.setState( { isConnecting: false } );
+			requestExternalAccess(this.props.service.connect_URL, ({ keyring_id: keyringId }) => {
+				if (!keyringId) {
+					this.setState({ isConnecting: false });
 					return;
 				}
 
 				// When the user has finished authorizing the connection
 				// (or otherwise closed the window), force a refresh
-				this.props.requestKeyringConnections( true );
+				this.props.requestKeyringConnections(true);
 
 				// In the case that a Keyring connection doesn't exist, wait for app
 				// authorization to occur, then display with the available connections
-				this.setState( { isAwaitingConnections: true, keyringId } );
-			} );
+				this.setState({ isAwaitingConnections: true, keyringId });
+			});
 		} else {
-			this.setState( { isConnecting: false } );
+			this.setState({ isConnecting: false });
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.state.isAwaitingConnections ) {
-			this.setState( {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.state.isAwaitingConnections) {
+			this.setState({
 				isAwaitingConnections: false,
 				isRefreshing: false,
-			} );
+			});
 
-			if ( this.didKeyringConnectionSucceed( nextProps.keyringConnections ) ) {
-				const newKeyringConnection = find( nextProps.keyringConnections, {
+			if (this.didKeyringConnectionSucceed(nextProps.keyringConnections)) {
+				const newKeyringConnection = find(nextProps.keyringConnections, {
 					ID: this.state.keyringId,
-				} );
-				if ( newKeyringConnection ) {
-					this.props.onConnect( newKeyringConnection );
+				});
+				if (newKeyringConnection) {
+					this.props.onConnect(newKeyringConnection);
 				}
-				this.setState( { keyringId: null, isConnecting: false } );
+				this.setState({ keyringId: null, isConnecting: false });
 			}
 		}
 	}
@@ -151,15 +151,15 @@ class KeyringConnectButton extends Component {
 	 * @param {Array} keyringConnections props to check on if a keyring connection succeeded.
 	 * @returns {boolean} Whether the Keyring authorization attempt succeeded
 	 */
-	didKeyringConnectionSucceed( keyringConnections ) {
+	didKeyringConnectionSucceed(keyringConnections) {
 		const hasAnyConnectionOptions = some(
 			keyringConnections,
-			keyringConnection =>
+			(keyringConnection) =>
 				keyringConnection.isConnected === false || keyringConnection.isConnected === undefined
 		);
 
-		if ( ! this.state.keyringId || keyringConnections.length === 0 || ! hasAnyConnectionOptions ) {
-			this.setState( { isConnecting: false } );
+		if (!this.state.keyringId || keyringConnections.length === 0 || !hasAnyConnectionOptions) {
+			this.setState({ isConnecting: false });
 			return false;
 		}
 
@@ -176,13 +176,13 @@ class KeyringConnectButton extends Component {
 
 		const isPending = 'unknown' === status || isRefreshing || isConnecting;
 
-		if ( 'unknown' === status ) {
-			label = translate( 'Loading…' );
-		} else if ( isRefreshing ) {
-			label = translate( 'Reconnecting…' );
+		if ('unknown' === status) {
+			label = translate('Loading…');
+		} else if (isRefreshing) {
+			label = translate('Reconnecting…');
 			warning = true;
-		} else if ( isConnecting ) {
-			label = translate( 'Connecting…' );
+		} else if (isConnecting) {
+			label = translate('Connecting…');
 		} else {
 			label = this.props.children;
 			localPrimary = primary;
@@ -191,13 +191,8 @@ class KeyringConnectButton extends Component {
 		return (
 			<Fragment>
 				<QueryKeyringServices />
-				<Button
-					primary={ localPrimary }
-					scary={ warning }
-					onClick={ this.onClick }
-					disabled={ isPending }
-				>
-					{ label }
+				<Button primary={localPrimary} scary={warning} onClick={this.onClick} disabled={isPending}>
+					{label}
 				</Button>
 			</Fragment>
 		);
@@ -205,10 +200,10 @@ class KeyringConnectButton extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const service = getKeyringServiceByName( state, ownProps.serviceId );
-		const keyringConnections = service ? getKeyringConnectionsByName( state, service.ID ) : [];
-		const isFetching = isKeyringConnectionsFetching( state );
+	(state, ownProps) => {
+		const service = getKeyringServiceByName(state, ownProps.serviceId);
+		const keyringConnections = service ? getKeyringConnectionsByName(state, service.ID) : [];
+		const isFetching = isKeyringConnectionsFetching(state);
 
 		return {
 			service,
@@ -220,4 +215,4 @@ export default connect(
 		deleteStoredKeyringConnection,
 		requestKeyringConnections,
 	}
-)( localize( KeyringConnectButton ) );
+)(localize(KeyringConnectButton));

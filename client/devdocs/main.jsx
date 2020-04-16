@@ -40,7 +40,7 @@ const DEFAULT_FILES = [
  * Module variables
  */
 
-const log = debug( 'calypso:devdocs' );
+const log = debug('calypso:devdocs');
 
 export default class Devdocs extends React.Component {
 	static displayName = 'Devdocs';
@@ -63,35 +63,35 @@ export default class Devdocs extends React.Component {
 
 	// load default files if not already cached
 	loadDefaultFiles = () => {
-		if ( this.state.defaultResults.length ) {
+		if (this.state.defaultResults.length) {
 			return;
 		}
 
 		DocService.list(
 			DEFAULT_FILES,
-			function( err, results ) {
-				if ( ! err ) {
-					this.setState( {
+			function (err, results) {
+				if (!err) {
+					this.setState({
 						defaultResults: results,
-					} );
+					});
 				}
-			}.bind( this )
+			}.bind(this)
 		);
 	};
 
 	componentDidMount() {
 		const { term } = this.state;
 		this.loadDefaultFiles();
-		if ( ! term ) {
+		if (!term) {
 			return;
 		}
-		this.onSearchChange( this.state.term );
-		this.onSearch( this.state.term );
+		this.onSearchChange(this.state.term);
+		this.onSearch(this.state.term);
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		if ( isFunction( this.props.onSearchChange ) && prevState.term !== this.state.term ) {
-			this.props.onSearchChange( this.state.term );
+	componentDidUpdate(prevProps, prevState) {
+		if (isFunction(this.props.onSearchChange) && prevState.term !== this.state.term) {
+			this.props.onSearchChange(this.state.term);
 		}
 	}
 
@@ -99,80 +99,80 @@ export default class Devdocs extends React.Component {
 		return (
 			this.state.inputValue &&
 			this.state.term &&
-			! this.state.results.length &&
-			! this.state.searching
+			!this.state.results.length &&
+			!this.state.searching
 		);
 	};
 
-	onSearchChange = term => {
-		this.setState( {
+	onSearchChange = (term) => {
+		this.setState({
 			inputValue: term,
 			term: term,
-			searching: !! term,
-		} );
+			searching: !!term,
+		});
 	};
 
-	onSearch = term => {
-		if ( ! term ) {
+	onSearch = (term) => {
+		if (!term) {
 			return;
 		}
 		DocService.search(
 			term,
-			function( err, results ) {
-				if ( err ) {
-					log( 'search error: %o', err );
+			function (err, results) {
+				if (err) {
+					log('search error: %o', err);
 				}
 
-				this.setState( {
+				this.setState({
 					results: results,
 					searching: false,
-				} );
-			}.bind( this )
+				});
+			}.bind(this)
 		);
 	};
 
 	results = () => {
-		if ( this.notFound() ) {
+		if (this.notFound()) {
 			return <p>Not Found</p>;
 		}
 
 		const searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
-		return searchResults.map( function( result ) {
+		return searchResults.map(function (result) {
 			let url = '/devdocs/' + result.path;
 
-			if ( this.state.term ) {
-				url += '?term=' + encodeURIComponent( this.state.term );
+			if (this.state.term) {
+				url += '?term=' + encodeURIComponent(this.state.term);
 			}
 
 			return (
-				<Card compact className="devdocs__result" key={ result.path }>
+				<Card compact className="devdocs__result" key={result.path}>
 					<header className="devdocs__result-header">
 						<h1 className="devdocs__result-title">
-							<a className="devdocs__result-link" href={ url }>
-								{ result.title }
+							<a className="devdocs__result-link" href={url}>
+								{result.title}
 							</a>
 						</h1>
-						<h2 className="devdocs__result-path">{ result.path }</h2>
+						<h2 className="devdocs__result-path">{result.path}</h2>
 					</header>
-					{ this.snippet( result ) }
+					{this.snippet(result)}
 				</Card>
 			);
-		}, this );
+		}, this);
 	};
 
-	snippet = result => {
+	snippet = (result) => {
 		// split around <mark> tags to avoid setting unescaped inner HTML
-		const parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
+		const parts = result.snippet.split(/(<mark>.*?<\/mark>)/);
 
 		return (
-			<div className="devdocs__result-snippet" key={ 'snippet' + result.path }>
-				{ parts.map( function( part, i ) {
-					const markMatch = part.match( /<mark>(.*?)<\/mark>/ );
-					if ( markMatch ) {
-						return <mark key={ 'mark' + i }>{ markMatch[ 1 ] }</mark>;
+			<div className="devdocs__result-snippet" key={'snippet' + result.path}>
+				{parts.map(function (part, i) {
+					const markMatch = part.match(/<mark>(.*?)<\/mark>/);
+					if (markMatch) {
+						return <mark key={'mark' + i}>{markMatch[1]}</mark>;
 					}
 					return part;
-				} ) }
+				})}
 			</div>
 		);
 	};
@@ -186,12 +186,12 @@ export default class Devdocs extends React.Component {
 					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					placeholder="Search documentation…"
 					analyticsGroup="Docs"
-					initialValue={ this.state.term }
-					delaySearch={ true }
-					onSearchChange={ this.onSearchChange }
-					onSearch={ this.onSearch }
+					initialValue={this.state.term}
+					delaySearch={true}
+					onSearchChange={this.onSearchChange}
+					onSearch={this.onSearch}
 				/>
-				<div className="devdocs__results">{ this.results() }</div>
+				<div className="devdocs__results">{this.results()}</div>
 			</Main>
 		);
 	}

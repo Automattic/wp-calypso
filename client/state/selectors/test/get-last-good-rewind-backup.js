@@ -3,15 +3,15 @@
  */
 import getLastGoodRewindBackup from 'state/selectors/get-last-good-rewind-backup';
 
-describe( 'getLastGoodRewindBackup()', () => {
-	test( 'should return null if there is no rewind data', () => {
+describe('getLastGoodRewindBackup()', () => {
+	test('should return null if there is no rewind data', () => {
 		const state = {};
-		const backup = getLastGoodRewindBackup( state, 123 );
+		const backup = getLastGoodRewindBackup(state, 123);
 
-		expect( backup ).toBeNull();
-	} );
+		expect(backup).toBeNull();
+	});
 
-	test( 'should return null if the site is not tracked', () => {
+	test('should return null if the site is not tracked', () => {
 		const state = {
 			rewind: {
 				123: {
@@ -23,23 +23,23 @@ describe( 'getLastGoodRewindBackup()', () => {
 				},
 			},
 		};
-		const backup = getLastGoodRewindBackup( state, 124 );
+		const backup = getLastGoodRewindBackup(state, 124);
 
-		expect( backup ).toBeNull();
-	} );
+		expect(backup).toBeNull();
+	});
 
-	test( 'should return null if there are no backups data', () => {
+	test('should return null if there are no backups data', () => {
 		const state = {
 			rewind: {
 				123: {},
 			},
 		};
-		const backup = getLastGoodRewindBackup( state, 123 );
+		const backup = getLastGoodRewindBackup(state, 123);
 
-		expect( backup ).toBeNull();
-	} );
+		expect(backup).toBeNull();
+	});
 
-	test( 'should return undefined if there are no finished backups', () => {
+	test('should return undefined if there are no finished backups', () => {
 		const state = {
 			rewind: {
 				123: {
@@ -51,12 +51,12 @@ describe( 'getLastGoodRewindBackup()', () => {
 				},
 			},
 		};
-		const backup = getLastGoodRewindBackup( state, 123 );
+		const backup = getLastGoodRewindBackup(state, 123);
 
-		expect( backup ).toBeUndefined();
-	} );
+		expect(backup).toBeUndefined();
+	});
 
-	test( 'should return the first finished backup on list', () => {
+	test('should return the first finished backup on list', () => {
 		const state = {
 			rewind: {
 				123: {
@@ -68,8 +68,8 @@ describe( 'getLastGoodRewindBackup()', () => {
 				},
 			},
 		};
-		const backup = getLastGoodRewindBackup( state, 123 );
+		const backup = getLastGoodRewindBackup(state, 123);
 
-		expect( backup ).toEqual( { id: 2, status: 'finished' } );
-	} );
-} );
+		expect(backup).toEqual({ id: 2, status: 'finished' });
+	});
+});

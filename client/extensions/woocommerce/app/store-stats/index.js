@@ -47,139 +47,126 @@ class StoreStats extends Component {
 
 	render() {
 		const { queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
-		const endSelectedDate = getEndPeriod( selectedDate, unit );
-		const { orderQuery, referrerQuery } = getQueries( unit, queryDate );
-		const { topListQuery } = getQueries( unit, selectedDate );
-		const topWidgets = [ topProducts, topCategories, topCoupons ];
-		const widgetPath = getWidgetPath( unit, slug, queryParams );
+		const endSelectedDate = getEndPeriod(selectedDate, unit);
+		const { orderQuery, referrerQuery } = getQueries(unit, queryDate);
+		const { topListQuery } = getQueries(unit, selectedDate);
+		const topWidgets = [topProducts, topCategories, topCoupons];
+		const widgetPath = getWidgetPath(unit, slug, queryParams);
 
 		return (
-			<Main className="store-stats woocommerce" wideLayout={ true }>
+			<Main className="store-stats woocommerce" wideLayout={true}>
 				<PageViewTracker
-					path={ `/store/stats/orders/${ unit }/:site` }
-					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
+					path={`/store/stats/orders/${unit}/:site`}
+					title={`Store > Stats > Orders > ${titlecase(unit)}`}
 				/>
-				{ siteId && (
-					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
-				) }
+				{siteId && <QuerySiteStats statType="statsOrders" siteId={siteId} query={orderQuery} />}
 				<SidebarNavigation />
-				<StatsNavigation
-					selectedItem={ 'store' }
-					siteId={ siteId }
-					slug={ slug }
-					interval={ unit }
-				/>
+				<StatsNavigation selectedItem={'store'} siteId={siteId} slug={slug} interval={unit} />
 				<Chart
-					query={ orderQuery }
-					selectedDate={ endSelectedDate }
-					siteId={ siteId }
-					unit={ unit }
-					slug={ slug }
+					query={orderQuery}
+					selectedDate={endSelectedDate}
+					siteId={siteId}
+					unit={unit}
+					slug={slug}
 				/>
 				<StatsPeriodNavigation
-					date={ selectedDate }
-					period={ unit }
-					url={ `/store/stats/orders/${ unit }/${ slug }` }
+					date={selectedDate}
+					period={unit}
+					url={`/store/stats/orders/${unit}/${slug}`}
 				>
 					<DatePicker
-						period={ unit }
+						period={unit}
 						// this is needed to counter the +1d adjustment made in DatePicker for weeks
 						date={
 							unit === 'week'
-								? moment( selectedDate, 'YYYY-MM-DD' )
-										.subtract( 1, 'days' )
-										.format( 'YYYY-MM-DD' )
+								? moment(selectedDate, 'YYYY-MM-DD').subtract(1, 'days').format('YYYY-MM-DD')
 								: selectedDate
 						}
-						query={ orderQuery }
+						query={orderQuery}
 						statsType="statsOrders"
 						showQueryDate
 					/>
 				</StatsPeriodNavigation>
-				{ config.isEnabled( 'woocommerce/extension-referrers' ) && (
+				{config.isEnabled('woocommerce/extension-referrers') && (
 					<div>
-						{ siteId && (
+						{siteId && (
 							<QuerySiteStats
 								statType="statsStoreReferrers"
-								siteId={ siteId }
-								query={ referrerQuery }
+								siteId={siteId}
+								query={referrerQuery}
 							/>
-						) }
+						)}
 						<Module
-							siteId={ siteId }
-							emptyMessage={ noDataMsg }
-							query={ referrerQuery }
+							siteId={siteId}
+							emptyMessage={noDataMsg}
+							query={referrerQuery}
 							statType="statsStoreReferrers"
 							header={
 								<SectionHeader
-									href={ `/store/stats/referrers${ widgetPath }` }
-									label={ 'Store Referrers' }
+									href={`/store/stats/referrers${widgetPath}`}
+									label={'Store Referrers'}
 								/>
 							}
 						>
 							<StoreStatsReferrerWidget
-								unit={ unit }
-								queryParams={ queryParams }
-								slug={ slug }
-								siteId={ siteId }
-								query={ referrerQuery }
+								unit={unit}
+								queryParams={queryParams}
+								slug={slug}
+								siteId={siteId}
+								query={referrerQuery}
 								statType="statsStoreReferrers"
-								endSelectedDate={ endSelectedDate }
-								limit={ 5 }
+								endSelectedDate={endSelectedDate}
+								limit={5}
 								pageType="orders"
 							/>
 						</Module>
 					</div>
-				) }
+				)}
 				<div className="store-stats__widgets">
-					{ sparkWidgets.map( ( widget, index ) => (
-						<div className="store-stats__widgets-column widgets" key={ index }>
+					{sparkWidgets.map((widget, index) => (
+						<div className="store-stats__widgets-column widgets" key={index}>
 							<Module
-								siteId={ siteId }
-								emptyMessage={ noDataMsg }
-								query={ orderQuery }
+								siteId={siteId}
+								emptyMessage={noDataMsg}
+								query={orderQuery}
 								statType="statsOrders"
 							>
 								<WidgetList
-									siteId={ siteId }
-									query={ orderQuery }
-									selectedDate={ endSelectedDate }
+									siteId={siteId}
+									query={orderQuery}
+									selectedDate={endSelectedDate}
 									statType="statsOrders"
-									widgets={ widget }
+									widgets={widget}
 								/>
 							</Module>
 						</div>
-					) ) }
-					{ topWidgets.map( widget => {
+					))}
+					{topWidgets.map((widget) => {
 						const header = (
-							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
+							<SectionHeader href={widget.basePath + widgetPath} label={widget.title} />
 						);
 						return (
-							<div className="store-stats__widgets-column" key={ widget.basePath }>
-								{ siteId && (
-									<QuerySiteStats
-										statType={ widget.statType }
-										siteId={ siteId }
-										query={ topListQuery }
-									/>
-								) }
+							<div className="store-stats__widgets-column" key={widget.basePath}>
+								{siteId && (
+									<QuerySiteStats statType={widget.statType} siteId={siteId} query={topListQuery} />
+								)}
 								<Module
-									siteId={ siteId }
-									header={ header }
-									emptyMessage={ widget.empty }
-									query={ topListQuery }
-									statType={ widget.statType }
+									siteId={siteId}
+									header={header}
+									emptyMessage={widget.empty}
+									query={topListQuery}
+									statType={widget.statType}
 								>
 									<List
-										siteId={ siteId }
-										values={ widget.values }
-										query={ topListQuery }
-										statType={ widget.statType }
+										siteId={siteId}
+										values={widget.values}
+										query={topListQuery}
+										statType={widget.statType}
 									/>
 								</Module>
 							</div>
 						);
-					} ) }
+					})}
 				</div>
 				<JetpackColophon />
 			</Main>
@@ -187,7 +174,7 @@ class StoreStats extends Component {
 	}
 }
 
-export default connect( state => ( {
-	slug: getSelectedSiteSlug( state ),
-	siteId: getSelectedSiteId( state ),
-} ) )( StoreStats );
+export default connect((state) => ({
+	slug: getSelectedSiteSlug(state),
+	siteId: getSelectedSiteId(state),
+}))(StoreStats);

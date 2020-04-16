@@ -4,12 +4,12 @@
 import reducer from '../reducer';
 import { SIGNUP_VERTICALS_SET } from 'state/action-types';
 
-describe( 'state/signup/verticals/reducer', () => {
-	test( 'should default to an empty object', () => {
-		expect( reducer( undefined, {} ) ).toEqual( {} );
-	} );
+describe('state/signup/verticals/reducer', () => {
+	test('should default to an empty object', () => {
+		expect(reducer(undefined, {})).toEqual({});
+	});
 
-	test( 'should associate a trimmed and lowercase search string to the verticals array.', () => {
+	test('should associate a trimmed and lowercase search string to the verticals array.', () => {
 		const search = 'Foo';
 		const siteType = 'business';
 		const verticals = [
@@ -18,16 +18,16 @@ describe( 'state/signup/verticals/reducer', () => {
 		];
 
 		expect(
-			reducer( undefined, {
+			reducer(undefined, {
 				type: SIGNUP_VERTICALS_SET,
 				search,
 				siteType,
 				verticals,
-			} )
-		).toEqual( {
+			})
+		).toEqual({
 			business: {
 				foo: verticals,
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

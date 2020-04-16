@@ -166,7 +166,7 @@ function ChartExample() {
 		},
 	];
 
-	return <Chart loading={ false } data={ chartData } />;
+	return <Chart loading={false} data={chartData} />;
 }
 
 ChartExample.displayName = 'Chart';

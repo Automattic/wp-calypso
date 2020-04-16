@@ -44,17 +44,17 @@ class Widgets extends Component {
 		return (
 			<FormFieldset>
 				<SupportInfo
-					text={ translate( 'Provides additional widgets for use on your site.' ) }
+					text={translate('Provides additional widgets for use on your site.')}
 					link="https://jetpack.com/support/extra-sidebar-widgets/"
 				/>
 
 				<JetpackModuleToggle
-					siteId={ selectedSiteId }
+					siteId={selectedSiteId}
 					moduleSlug="widgets"
-					label={ translate(
+					label={translate(
 						'Make extra widgets available for use on your site including images and Twitter streams'
-					) }
-					disabled={ formPending }
+					)}
+					disabled={formPending}
 				/>
 			</FormFieldset>
 		);
@@ -67,19 +67,19 @@ class Widgets extends Component {
 		return (
 			<FormFieldset>
 				<SupportInfo
-					text={ translate(
+					text={translate(
 						'Widget visibility lets you decide which widgets appear on which pages, so you can finely tailor widget content.'
-					) }
+					)}
 					link="https://jetpack.com/support/widget-visibility"
 				/>
 
 				<JetpackModuleToggle
-					siteId={ selectedSiteId }
+					siteId={selectedSiteId}
 					moduleSlug="widget-visibility"
-					label={ translate(
+					label={translate(
 						'Enable widget visibility controls to display widgets only on particular posts or pages'
-					) }
-					disabled={ formPending }
+					)}
+					disabled={formPending}
 				/>
 			</FormFieldset>
 		);
@@ -91,12 +91,12 @@ class Widgets extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Fragment>
-				<SettingsSectionHeader title={ translate( 'Widgets' ) } />
+				<SettingsSectionHeader title={translate('Widgets')} />
 
 				<Card className="site-settings">
-					{ this.renderWidgetsSettings() }
+					{this.renderWidgetsSettings()}
 					<hr />
-					{ this.renderWidgetVisibilitySettings() }
+					{this.renderWidgetVisibilitySettings()}
 				</Card>
 			</Fragment>
 		);
@@ -104,18 +104,18 @@ class Widgets extends Component {
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
-		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
+		customizeUrl: getCustomizerUrl(state, selectedSiteId),
 		selectedSiteId,
-		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
-		widgetsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'widgets' ),
-		widgetVisibilityModuleActive: !! isJetpackModuleActive(
+		siteIsJetpack: isJetpackSite(state, selectedSiteId),
+		widgetsModuleActive: !!isJetpackModuleActive(state, selectedSiteId, 'widgets'),
+		widgetVisibilityModuleActive: !!isJetpackModuleActive(
 			state,
 			selectedSiteId,
 			'widget-visibility'
 		),
 	};
-} )( localize( Widgets ) );
+})(localize(Widgets));

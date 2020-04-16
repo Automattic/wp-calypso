@@ -43,9 +43,9 @@ const productListSchema = {
  *
  * @type {object}
  */
-export const metaKeyToSchemaKeyMap = Object.keys( metadataSchema ).reduce( ( prev, curr ) => {
-	prev[ metadataSchema[ curr ].metaKey ] = curr;
+export const metaKeyToSchemaKeyMap = Object.keys(metadataSchema).reduce((prev, curr) => {
+	prev[metadataSchema[curr].metaKey] = curr;
 	return prev;
-}, {} );
+}, {});
 
 export default productListSchema;

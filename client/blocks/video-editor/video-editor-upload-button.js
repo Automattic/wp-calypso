@@ -25,11 +25,11 @@ class VideoEditorUploadButton extends Component {
 		onUploadImage: noop,
 	};
 
-	uploadImage = files => {
-		const file = files[ 0 ];
+	uploadImage = (files) => {
+		const file = files[0];
 
-		if ( file ) {
-			this.props.onUploadImage( file );
+		if (file) {
+			this.props.onUploadImage(file);
 		}
 	};
 
@@ -38,13 +38,13 @@ class VideoEditorUploadButton extends Component {
 
 		return (
 			<form className="video-editor__upload-form">
-				<FilePicker accept="image/*" onPick={ this.uploadImage }>
+				<FilePicker accept="image/*" onPick={this.uploadImage}>
 					<Button
 						className="video-editor__controls-button"
-						disabled={ isPosterUpdating }
-						onClick={ onClick }
+						disabled={isPosterUpdating}
+						onClick={onClick}
 					>
-						{ children }
+						{children}
 					</Button>
 				</FilePicker>
 			</form>

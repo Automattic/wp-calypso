@@ -12,18 +12,18 @@ import { getUserPurchases } from 'state/purchases/selectors';
  * @param  {number}  userId      the user id
  * @returns {boolean} if the user currently has any purchases that can be canceled.
  */
-export const hasCancelableUserPurchases = ( state, userId ) => {
-	if ( ! state.purchases.hasLoadedUserPurchasesFromServer ) {
+export const hasCancelableUserPurchases = (state, userId) => {
+	if (!state.purchases.hasLoadedUserPurchasesFromServer) {
 		return false;
 	}
 
-	const purchases = getUserPurchases( state, userId ).filter( purchase => {
-		if ( purchase.isRefundable ) {
+	const purchases = getUserPurchases(state, userId).filter((purchase) => {
+		if (purchase.isRefundable) {
 			return true;
 		}
 
 		return purchase.productSlug !== 'premium_theme';
-	} );
+	});
 
 	return purchases && purchases.length > 0;
 };

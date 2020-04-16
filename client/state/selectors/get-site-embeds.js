@@ -5,4 +5,4 @@
  * @param   {number} siteId  Site ID
  * @returns {object}         Site embeds
  */
-export default ( state, siteId ) => state.embeds.siteItems?.[ siteId ] ?? null;
+export default (state, siteId) => state.embeds.siteItems?.[siteId] ?? null;

@@ -26,13 +26,13 @@ import {
  */
 export const itemReducer = withSchemaValidation(
 	itemSchema,
-	( state = { likes: undefined, iLike: false, found: 0, lastUpdated: undefined }, action ) => {
-		switch ( action.type ) {
+	(state = { likes: undefined, iLike: false, found: 0, lastUpdated: undefined }, action) => {
+		switch (action.type) {
 			case POST_LIKES_RECEIVE: {
 				const { likes, iLike, found } = action;
 				return {
-					likes: Array.isArray( likes )
-						? likes.map( like => {
+					likes: Array.isArray(likes)
+						? likes.map((like) => {
 								return {
 									ID: like.ID,
 									avatar_URL: like.avatar_URL,
@@ -41,7 +41,7 @@ export const itemReducer = withSchemaValidation(
 									site_ID: like.site_ID,
 									site_visible: like.site_visible,
 								};
-						  } )
+						  })
 						: state.likes,
 					iLike,
 					found,
@@ -49,7 +49,7 @@ export const itemReducer = withSchemaValidation(
 				};
 			}
 			case POST_LIKE: {
-				if ( state.iLike ) {
+				if (state.iLike) {
 					return state;
 				}
 
@@ -61,29 +61,29 @@ export const itemReducer = withSchemaValidation(
 				};
 			}
 			case POST_UNLIKE: {
-				if ( ! state.iLike ) {
+				if (!state.iLike) {
 					return state;
 				}
 
 				return {
 					likes: state.likes,
 					iLike: false,
-					found: Math.max( 0, state.found - 1 ),
+					found: Math.max(0, state.found - 1),
 					lastUpdated: state.lastUpdated,
 				};
 			}
 			case POST_LIKES_ADD_LIKER: {
 				const { likeCount, liker } = action;
-				const hasLiker = some( state.likes, like => like.ID === liker.ID );
+				const hasLiker = some(state.likes, (like) => like.ID === liker.ID);
 
-				if ( state.likeCount === likeCount && hasLiker ) {
+				if (state.likeCount === likeCount && hasLiker) {
 					// if the like count matches and we already have this liker, bail
 					return state;
 				}
 
 				let likes = state.likes;
-				if ( ! hasLiker ) {
-					likes = [ liker, ...( state.likes || [] ) ];
+				if (!hasLiker) {
+					likes = [liker, ...(state.likes || [])];
 				}
 
 				return {
@@ -95,16 +95,16 @@ export const itemReducer = withSchemaValidation(
 			}
 			case POST_LIKES_REMOVE_LIKER: {
 				const { likeCount, liker } = action;
-				const hasLiker = some( state.likes, like => like.ID === liker.ID );
+				const hasLiker = some(state.likes, (like) => like.ID === liker.ID);
 
-				if ( state.likeCount === likeCount && ! hasLiker ) {
+				if (state.likeCount === likeCount && !hasLiker) {
 					// if the like count matches and we don't have this liker, bail
 					return state;
 				}
 
 				let likes = state.likes;
-				if ( hasLiker ) {
-					likes = dropWhile( state.likes, l => liker.ID === l.ID );
+				if (hasLiker) {
+					likes = dropWhile(state.likes, (l) => liker.ID === l.ID);
 				}
 
 				return {
@@ -120,11 +120,11 @@ export const itemReducer = withSchemaValidation(
 	}
 );
 
-const postIdReducer = keyedReducer( 'postId', itemReducer );
+const postIdReducer = keyedReducer('postId', itemReducer);
 postIdReducer.hasCustomPersistence = true;
-export const items = keyedReducer( 'siteId', postIdReducer );
+export const items = keyedReducer('siteId', postIdReducer);
 items.hasCustomPersistence = true;
 
-export default combineReducers( {
+export default combineReducers({
 	items,
-} );
+});

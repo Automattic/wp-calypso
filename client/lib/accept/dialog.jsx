@@ -30,28 +30,28 @@ class AcceptDialog extends Component {
 
 	state = { isVisible: true };
 
-	onClose = action => {
-		this.setState( { isVisible: false } );
-		this.props.onClose( 'accept' === action );
+	onClose = (action) => {
+		this.setState({ isVisible: false });
+		this.props.onClose('accept' === action);
 	};
 
 	getActionButtons = () => {
 		const { options } = this.props;
 		const isScary = options && options.isScary;
-		const additionalClassNames = classnames( { 'is-scary': isScary } );
+		const additionalClassNames = classnames({ 'is-scary': isScary });
 		return [
 			{
 				action: 'cancel',
 				label: this.props.cancelButtonText
 					? this.props.cancelButtonText
-					: this.props.translate( 'Cancel' ),
+					: this.props.translate('Cancel'),
 				additionalClassNames: 'is-cancel',
 			},
 			{
 				action: 'accept',
 				label: this.props.confirmButtonText
 					? this.props.confirmButtonText
-					: this.props.translate( 'OK' ),
+					: this.props.translate('OK'),
 				isPrimary: true,
 				additionalClassNames,
 			},
@@ -59,21 +59,21 @@ class AcceptDialog extends Component {
 	};
 
 	render() {
-		if ( ! this.state.isVisible ) {
+		if (!this.state.isVisible) {
 			return null;
 		}
 
 		return (
 			<Dialog
-				buttons={ this.getActionButtons() }
-				onClose={ this.onClose }
+				buttons={this.getActionButtons()}
+				onClose={this.onClose}
 				className="accept__dialog"
 				isVisible
 			>
-				{ this.props.message }
+				{this.props.message}
 			</Dialog>
 		);
 	}
 }
 
-export default localize( AcceptDialog );
+export default localize(AcceptDialog);

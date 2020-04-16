@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param {number} siteId requested site for transfer info
  * @returns {?boolean} whether we are fetching transfer status for given siteId
  */
-export default ( state, siteId ) => {
-	return get( state, [ 'atomicTransfer', siteId, 'fetchingTransfer' ], false );
+export default (state, siteId) => {
+	return get(state, ['atomicTransfer', siteId, 'fetchingTransfer'], false);
 };

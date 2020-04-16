@@ -25,7 +25,7 @@ export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
  * @param {number} siteId Site ID
  * @returns {object} Action object
  */
-export function setSelectedSiteId( siteId ) {
+export function setSelectedSiteId(siteId) {
 	return {
 		type: SELECTED_SITE_SET,
 		siteId,
@@ -45,7 +45,7 @@ export function setAllSitesSelected() {
 	};
 }
 
-export function setPreviewShowing( isShowing ) {
+export function setPreviewShowing(isShowing) {
 	return {
 		type: PREVIEW_IS_SHOWING,
 		isShowing,
@@ -69,7 +69,7 @@ export const toggleNotificationsPanel = () => {
  * @param  {string} path Navigation path
  * @returns {object}      Action object
  */
-export const navigate = path => ( { type: NAVIGATE, path } );
+export const navigate = (path) => ({ type: NAVIGATE, path });
 
 /**
  * Replaces the current url and modifies the browser history entry. Equivalent to window.replaceHistory
@@ -78,8 +78,8 @@ export const navigate = path => ( { type: NAVIGATE, path } );
  * @param {boolean} saveContext true if we should save the current page.js context
  * @returns {object} Action object
  */
-export const replaceHistory = ( path, saveContext ) => ( {
+export const replaceHistory = (path, saveContext) => ({
 	type: HISTORY_REPLACE,
 	path,
 	saveContext,
-} );
+});

@@ -26,7 +26,7 @@ import './list-item.scss';
 interface MediaObject {
 	transient?: boolean;
 	file?: string;
-	[ propName: string ]: any;
+	[propName: string]: any;
 }
 type Media = string | MediaObject;
 // END TODO
@@ -38,14 +38,14 @@ interface Props {
 	thumbnailType?: string;
 	showGalleryHelp?: boolean;
 	selectedIndex?: number;
-	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => void;
+	onToggle?: (media: Media | undefined, shiftKey: boolean) => void;
 	onEditItem?: any; // Unused. Appears to have been left here for compatibility reasons.
 	style?: React.CSSProperties;
 }
 
-type DivProps = Omit< React.ComponentPropsWithoutRef< 'button' >, 'style' | 'onClick' >;
+type DivProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'style' | 'onClick'>;
 
-export default class MediaLibraryListItem extends React.Component< Props & DivProps > {
+export default class MediaLibraryListItem extends React.Component<Props & DivProps> {
 	static defaultProps = {
 		maxImageWidth: 450,
 		selectedIndex: -1,
@@ -53,31 +53,31 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		onEditItem: noop,
 	};
 
-	shouldComponentUpdate( nextProps: Props ) {
-		return ! (
+	shouldComponentUpdate(nextProps: Props) {
+		return !(
 			nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
 			nextProps.maxImageWidth === this.props.maxImageWidth &&
 			nextProps.thumbnailType === this.props.thumbnailType &&
 			nextProps.selectedIndex === this.props.selectedIndex &&
-			isEqual( nextProps.style, this.props.style )
+			isEqual(nextProps.style, this.props.style)
 		);
 	}
 
-	clickItem = ( event: React.MouseEvent ) => {
-		if ( this.props.onToggle ) {
-			this.props.onToggle( this.props.media, event.shiftKey );
+	clickItem = (event: React.MouseEvent) => {
+		if (this.props.onToggle) {
+			this.props.onToggle(this.props.media, event.shiftKey);
 		}
 	};
 
 	renderItem = () => {
 		let component;
 
-		if ( ! this.props.media ) {
+		if (!this.props.media) {
 			return;
 		}
 
-		switch ( getMimePrefix( this.props.media ) as string ) {
+		switch (getMimePrefix(this.props.media) as string) {
 			case 'image':
 				component = ListItemImage;
 				break;
@@ -92,7 +92,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 				break;
 		}
 
-		return React.createElement( component, this.props );
+		return React.createElement(component, this.props);
 	};
 
 	render() {
@@ -113,43 +113,43 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 
 		let dataAttributes = null;
 
-		const classes = classNames( 'media-library__list-item', {
-			'is-placeholder': ! media,
+		const classes = classNames('media-library__list-item', {
+			'is-placeholder': !media,
 			'is-selected': -1 !== selectedIndex,
-			'is-transient': media && ( media as MediaObject ).transient,
+			'is-transient': media && (media as MediaObject).transient,
 			'is-small': scale <= 0.125,
-		} );
+		});
 
 		const styleWithDefaults = { width: scale * 100 + '%', ...style };
 
-		if ( media && ( media as MediaObject ).file ) {
-			title = ( media as MediaObject ).file;
+		if (media && (media as MediaObject).file) {
+			title = (media as MediaObject).file;
 		}
 
-		if ( selectedIndex !== -1 && selectedIndex !== undefined ) {
+		if (selectedIndex !== -1 && selectedIndex !== undefined) {
 			selectedNumber = selectedIndex + 1;
 			dataAttributes = { 'data-selected-number': selectedNumber > 99 ? '99+' : selectedNumber };
 		}
 
 		return (
 			<button
-				className={ classes }
-				style={ styleWithDefaults }
-				onClick={ this.clickItem }
-				{ ...otherProps }
-				{ ...dataAttributes }
+				className={classes}
+				style={styleWithDefaults}
+				onClick={this.clickItem}
+				{...otherProps}
+				{...dataAttributes}
 			>
 				<span className="media-library__list-item-selected-icon">
-					<Gridicon icon="checkmark" size={ 18 } />
+					<Gridicon icon="checkmark" size={18} />
 				</span>
-				<figure className="media-library__list-item-figure" title={ title }>
-					{ this.renderItem() }
-					{ media && ( media as MediaObject ).transient && (
+				<figure className="media-library__list-item-figure" title={title}>
+					{this.renderItem()}
+					{media && (media as MediaObject).transient && (
 						<div className="media-library__list-item-spinner">
 							<Spinner />
 						</div>
-					) }
-					{ showGalleryHelp && <EditorMediaModalGalleryHelp /> }
+					)}
+					{showGalleryHelp && <EditorMediaModalGalleryHelp />}
 				</figure>
 			</button>
 		);

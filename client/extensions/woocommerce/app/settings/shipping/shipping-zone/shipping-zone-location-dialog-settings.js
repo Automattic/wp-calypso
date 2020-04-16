@@ -35,7 +35,7 @@ import {
 	editPostcode,
 } from 'woocommerce/state/ui/shipping/zones/locations/actions';
 
-const ShippingZoneLocationDialogSettings = ( {
+const ShippingZoneLocationDialogSettings = ({
 	canFilter,
 	unfiltered,
 	filteredByPostcode,
@@ -46,66 +46,66 @@ const ShippingZoneLocationDialogSettings = ( {
 	countryOwner,
 	translate,
 	actions,
-} ) => {
-	const onWholeCountrySelect = event => {
+}) => {
+	const onWholeCountrySelect = (event) => {
 		event.stopPropagation();
 		actions.filterByWholeCountry();
 	};
-	const onStateSelect = event => {
+	const onStateSelect = (event) => {
 		event.stopPropagation();
 		actions.filterByState();
 	};
-	const onPostcodeSelect = event => {
+	const onPostcodeSelect = (event) => {
 		event.stopPropagation();
 		actions.filterByPostcode();
 	};
 
 	const renderRadios = () => {
-		if ( ! canFilter ) {
+		if (!canFilter) {
 			return (
 				<div>
-					<FormRadio disabled={ true } checked={ true } readOnly={ true } />
-					{ translate( 'Include entire countries in the zone' ) }
+					<FormRadio disabled={true} checked={true} readOnly={true} />
+					{translate('Include entire countries in the zone')}
 				</div>
 			);
 		}
 
 		const radios = [
-			<label key={ 1 } htmlFor="include-postcodes">
+			<label key={1} htmlFor="include-postcodes">
 				<FormRadio
 					id="include-postcodes"
 					name="include"
-					onChange={ onPostcodeSelect }
-					checked={ filteredByPostcode }
+					onChange={onPostcodeSelect}
+					checked={filteredByPostcode}
 				/>
-				{ translate( 'Include specific postcodes in the zone' ) }
+				{translate('Include specific postcodes in the zone')}
 			</label>,
 		];
 
-		if ( ! countryOwner ) {
+		if (!countryOwner) {
 			radios.unshift(
-				<label key={ 0 } htmlFor="include-all">
+				<label key={0} htmlFor="include-all">
 					<FormRadio
 						id="include-all"
 						name="include"
-						onChange={ onWholeCountrySelect }
-						checked={ unfiltered }
+						onChange={onWholeCountrySelect}
+						checked={unfiltered}
 					/>
-					{ translate( 'Include entire country in the zone' ) }
+					{translate('Include entire country in the zone')}
 				</label>
 			);
 		}
 
-		if ( canFilterByState ) {
+		if (canFilterByState) {
 			radios.push(
-				<label key={ 2 } htmlFor="include-states">
+				<label key={2} htmlFor="include-states">
 					<FormRadio
 						id="include-states"
 						name="include"
-						onChange={ onStateSelect }
-						checked={ filteredByState }
+						onChange={onStateSelect}
+						checked={filteredByState}
 					/>
-					{ translate( 'Include specific states in the zone' ) }
+					{translate('Include specific states in the zone')}
 				</label>
 			);
 		}
@@ -113,63 +113,63 @@ const ShippingZoneLocationDialogSettings = ( {
 		return radios;
 	};
 
-	const renderState = ( state, index ) => {
+	const renderState = (state, index) => {
 		const { name, selected, code, disabled } = state;
 
-		const onToggle = event => {
+		const onToggle = (event) => {
 			event.stopPropagation();
-			if ( disabled ) {
+			if (disabled) {
 				return;
 			}
-			actions.toggleStateSelected( code, ! selected );
+			actions.toggleStateSelected(code, !selected);
 		};
 
-		const inputId = `state-${ index }`;
+		const inputId = `state-${index}`;
 
 		return (
-			<li key={ index } className="shipping-zone__location-dialog-list-item">
-				<label htmlFor={ inputId }>
+			<li key={index} className="shipping-zone__location-dialog-list-item">
+				<label htmlFor={inputId}>
 					<FormCheckbox
-						id={ inputId }
-						onChange={ onToggle }
+						id={inputId}
+						onChange={onToggle}
 						className="shipping-zone__location-dialog-list-item-checkbox"
-						checked={ selected }
-						disabled={ disabled }
+						checked={selected}
+						disabled={disabled}
 					/>
-					{ name }
+					{name}
 				</label>
 			</li>
 		);
 	};
 
 	const renderDetailedSettings = () => {
-		if ( filteredByPostcode ) {
-			const onPostcodeChange = event => actions.editPostcode( event.target.value );
+		if (filteredByPostcode) {
+			const onPostcodeChange = (event) => actions.editPostcode(event.target.value);
 
 			return (
 				<FormFieldSet>
 					<FormLabel htmlFor="postcodes" required>
-						{ translate( 'Post codes' ) }
+						{translate('Post codes')}
 					</FormLabel>
-					<FormTextInput id="postcodes" value={ postcode || '' } onChange={ onPostcodeChange } />
+					<FormTextInput id="postcodes" value={postcode || ''} onChange={onPostcodeChange} />
 					<p>
-						{ translate(
+						{translate(
 							'Postcodes containing wildcards (e.g. CB23*) and fully numeric ranges (e.g. 90210…99000) are also supported.'
-						) }
+						)}
 					</p>
 				</FormFieldSet>
 			);
 		}
 
-		if ( filteredByState ) {
+		if (filteredByState) {
 			return (
 				<FormFieldSet>
-					<FormLabel required>{ translate( 'States' ) }</FormLabel>
+					<FormLabel required>{translate('States')}</FormLabel>
 					<FilteredList
-						items={ states }
+						items={states}
 						filterBy="name"
-						renderItem={ renderState }
-						placeholder={ translate( 'Filter by state from the list below' ) }
+						renderItem={renderState}
+						placeholder={translate('Filter by state from the list below')}
 					/>
 				</FormFieldSet>
 			);
@@ -181,10 +181,10 @@ const ShippingZoneLocationDialogSettings = ( {
 	return (
 		<div className="shipping-zone__location-dialog-settings">
 			<FormFieldSet>
-				<FormLegend>{ translate( 'Shipping zone settings' ) }</FormLegend>
-				{ renderRadios() }
+				<FormLegend>{translate('Shipping zone settings')}</FormLegend>
+				{renderRadios()}
 			</FormFieldSet>
-			{ renderDetailedSettings() }
+			{renderDetailedSettings()}
 		</div>
 	);
 };
@@ -194,21 +194,21 @@ ShippingZoneLocationDialogSettings.propTypes = {
 };
 
 export default connect(
-	state => {
-		const locations = getShippingZoneLocationsWithEdits( state );
+	(state) => {
+		const locations = getShippingZoneLocationsWithEdits(state);
 
 		return {
-			canFilter: canLocationsBeFiltered( state ),
-			canFilterByState: canLocationsBeFilteredByState( state ),
-			filteredByPostcode: areLocationsFilteredByPostcode( state ),
-			filteredByState: areLocationsFilteredByState( state ),
-			unfiltered: areLocationsUnfiltered( state ),
-			states: getCurrentlyEditingShippingZoneStates( state ),
-			postcode: locations && locations.postcode[ 0 ],
-			countryOwner: getCurrentSelectedCountryZoneOwner( state ),
+			canFilter: canLocationsBeFiltered(state),
+			canFilterByState: canLocationsBeFilteredByState(state),
+			filteredByPostcode: areLocationsFilteredByPostcode(state),
+			filteredByState: areLocationsFilteredByState(state),
+			unfiltered: areLocationsUnfiltered(state),
+			states: getCurrentlyEditingShippingZoneStates(state),
+			postcode: locations && locations.postcode[0],
+			countryOwner: getCurrentSelectedCountryZoneOwner(state),
 		};
 	},
-	( dispatch, ownProps ) => ( {
+	(dispatch, ownProps) => ({
 		actions: bindActionCreatorsWithSiteId(
 			{
 				filterByWholeCountry,
@@ -220,5 +220,5 @@ export default connect(
 			dispatch,
 			ownProps.siteId
 		),
-	} )
-)( localize( ShippingZoneLocationDialogSettings ) );
+	})
+)(localize(ShippingZoneLocationDialogSettings));

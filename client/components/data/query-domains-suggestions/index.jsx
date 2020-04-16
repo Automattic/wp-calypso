@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { isRequestingDomainsSuggestions } from 'state/domains/suggestions/selectors';
 import { requestDomainsSuggestions } from 'state/domains/suggestions/actions';
 
-function getQueryObject( props ) {
+function getQueryObject(props) {
 	return {
 		include_wordpressdotcom: props.includeSubdomain,
 		quantity: props.quantity,
@@ -44,13 +44,13 @@ class QueryDomainsSuggestions extends PureComponent {
 		this.requestDomainsSuggestions();
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
 			this.props.requestingDomainsSuggestions ||
-			( prevProps.query === this.props.query &&
+			(prevProps.query === this.props.query &&
 				prevProps.vendor === this.props.vendor &&
 				prevProps.quantity === this.props.quantity &&
-				prevProps.includeSubdomain === this.props.includeSubdomain )
+				prevProps.includeSubdomain === this.props.includeSubdomain)
 		) {
 			return;
 		}
@@ -58,8 +58,8 @@ class QueryDomainsSuggestions extends PureComponent {
 	}
 
 	requestDomainsSuggestions() {
-		if ( ! this.props.requestingDomainsSuggestions ) {
-			this.props.requestDomainsSuggestions( getQueryObject( this.props ) );
+		if (!this.props.requestingDomainsSuggestions) {
+			this.props.requestDomainsSuggestions(getQueryObject(this.props));
 		}
 	}
 
@@ -69,13 +69,10 @@ class QueryDomainsSuggestions extends PureComponent {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			requestingDomainsSuggestions: isRequestingDomainsSuggestions(
-				state,
-				getQueryObject( ownProps )
-			),
+			requestingDomainsSuggestions: isRequestingDomainsSuggestions(state, getQueryObject(ownProps)),
 		};
 	},
 	{ requestDomainsSuggestions }
-)( QueryDomainsSuggestions );
+)(QueryDomainsSuggestions);

@@ -20,14 +20,14 @@ export default class extends React.PureComponent {
 	};
 
 	renderTitle = () => {
-		return getLabelForStream( this.props.stream ) || this.props.title;
+		return getLabelForStream(this.props.stream) || this.props.title;
 	};
 
 	render() {
 		return (
 			<div className="notification-settings-form-header">
 				<div className="notification-settings-form-header__title">
-					{ this.props.stream === 'timeline' ? <Gridicon icon="bell" /> : this.renderTitle() }
+					{this.props.stream === 'timeline' ? <Gridicon icon="bell" /> : this.renderTitle()}
 				</div>
 			</div>
 		);

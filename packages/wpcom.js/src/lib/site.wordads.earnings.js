@@ -5,9 +5,9 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {null} null
  */
-export default function SiteWordAdsEarnings( sid, wpcom ) {
-	if ( ! ( this instanceof SiteWordAdsEarnings ) ) {
-		return new SiteWordAdsEarnings( sid, wpcom );
+export default function SiteWordAdsEarnings(sid, wpcom) {
+	if (!(this instanceof SiteWordAdsEarnings)) {
+		return new SiteWordAdsEarnings(sid, wpcom);
 	}
 
 	this._sid = sid;
@@ -31,6 +31,6 @@ export default function SiteWordAdsEarnings( sid, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-SiteWordAdsEarnings.prototype.get = function( query, fn ) {
-	return this.wpcom.req.get( '/sites/' + this._sid + '/wordads/earnings', query, fn );
+SiteWordAdsEarnings.prototype.get = function (query, fn) {
+	return this.wpcom.req.get('/sites/' + this._sid + '/wordads/earnings', query, fn);
 };

@@ -15,19 +15,19 @@ import { recordTrack } from 'woocommerce/lib/analytics';
 
 class ManageExternalView extends Component {
 	static propTypes = {
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			URL: PropTypes.string.isRequired,
-		} ),
+		}),
 	};
 
 	recordAction = () => {
-		recordTrack( 'calypso_woocommerce_manage_external_clicked' );
+		recordTrack('calypso_woocommerce_manage_external_clicked');
 	};
 
 	render = () => {
 		const { site, translate } = this.props;
 
-		const title = translate( 'Managing your store' );
+		const title = translate('Managing your store');
 		const line = translate(
 			'Howdy! It looks like your store is located in a country that we can not fully ' +
 				'support in this interface. Store setup and management will take place in wp-admin, ' +
@@ -40,25 +40,20 @@ class ManageExternalView extends Component {
 				<ExternalLink
 					icon
 					className="dashboard__empty-action button is-primary"
-					onClick={ this.recordAction }
-					href={ actionURL }
+					onClick={this.recordAction}
+					href={actionURL}
 				>
-					{ translate( 'Manage my Store' ) }
+					{translate('Manage my Store')}
 				</ExternalLink>
 			),
 			secondaryAction = null;
 
 		return (
 			<div className="dashboard__manage-externally">
-				<EmptyContent
-					title={ title }
-					line={ line }
-					action={ action }
-					secondaryAction={ secondaryAction }
-				/>
+				<EmptyContent title={title} line={line} action={action} secondaryAction={secondaryAction} />
 			</div>
 		);
 	};
 }
 
-export default localize( ManageExternalView );
+export default localize(ManageExternalView);

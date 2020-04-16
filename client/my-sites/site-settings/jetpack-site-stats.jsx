@@ -46,38 +46,38 @@ class JetpackSiteStats extends Component {
 		path: PropTypes.string,
 	};
 
-	onChangeToggleGroup = ( groupName, fieldName ) => {
+	onChangeToggleGroup = (groupName, fieldName) => {
 		return () => {
 			const { setFieldValue, path } = this.props;
 
-			this.props.recordTracksEvent( 'calypso_site_stats_toggle_group_changed', {
+			this.props.recordTracksEvent('calypso_site_stats_toggle_group_changed', {
 				path,
 				group: groupName,
 				field: fieldName,
-			} );
+			});
 
-			let groupFields = this.getCurrentGroupFields( groupName );
+			let groupFields = this.getCurrentGroupFields(groupName);
 
-			if ( includes( groupFields, fieldName ) ) {
-				groupFields = groupFields.filter( field => field !== fieldName );
+			if (includes(groupFields, fieldName)) {
+				groupFields = groupFields.filter((field) => field !== fieldName);
 			} else {
-				groupFields.push( fieldName );
+				groupFields.push(fieldName);
 			}
 
-			setFieldValue( groupName, groupFields, true );
+			setFieldValue(groupName, groupFields, true);
 		};
 	};
 
-	getCurrentGroupFields( groupName ) {
+	getCurrentGroupFields(groupName) {
 		const { fields } = this.props;
 
-		if ( ! fields[ groupName ] ) {
+		if (!fields[groupName]) {
 			return [];
 		}
-		return fields[ groupName ];
+		return fields[groupName];
 	}
 
-	renderToggle( name, label, checked = null, onChange = null ) {
+	renderToggle(name, label, checked = null, onChange = null) {
 		const {
 			fields,
 			handleAutosavingToggle,
@@ -87,24 +87,24 @@ class JetpackSiteStats extends Component {
 			statsModuleActive,
 		} = this.props;
 
-		if ( checked === null ) {
-			checked = !! fields[ name ];
+		if (checked === null) {
+			checked = !!fields[name];
 		}
 
-		if ( onChange === null ) {
-			onChange = handleAutosavingToggle( name );
+		if (onChange === null) {
+			onChange = handleAutosavingToggle(name);
 		}
 
 		return (
 			<CompactFormToggle
-				checked={ checked }
+				checked={checked}
 				disabled={
-					isRequestingSettings || isSavingSettings || moduleUnavailable || ! statsModuleActive
+					isRequestingSettings || isSavingSettings || moduleUnavailable || !statsModuleActive
 				}
-				onChange={ onChange }
-				key={ name }
+				onChange={onChange}
+				key={name}
 			>
-				{ label }
+				{label}
 			</CompactFormToggle>
 		);
 	}
@@ -114,74 +114,74 @@ class JetpackSiteStats extends Component {
 
 		const header = (
 			<JetpackModuleToggle
-				siteId={ siteId }
+				siteId={siteId}
 				moduleSlug="stats"
-				label={ translate(
+				label={translate(
 					'See detailed information about your traffic, likes, comments, and subscribers.'
-				) }
-				disabled={ moduleUnavailable }
+				)}
+				disabled={moduleUnavailable}
 			/>
 		);
 
 		return (
 			<div className="site-settings__traffic-settings">
-				<QueryJetpackConnection siteId={ siteId } />
-				<QuerySiteRoles siteId={ siteId } />
+				<QueryJetpackConnection siteId={siteId} />
+				<QuerySiteRoles siteId={siteId} />
 
-				<SettingsSectionHeader title={ translate( 'Site stats' ) } />
+				<SettingsSectionHeader title={translate('Site stats')} />
 
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"
-					header={ header }
+					header={header}
 					clickableHeader
 				>
 					<FormFieldset>
 						<SupportInfo
-							text={ translate(
+							text={translate(
 								'Displays information on your site activity, ' +
 									'including visitors and popular posts or pages.'
-							) }
+							)}
 							link="https://jetpack.com/support/wordpress-com-stats/"
 						/>
-						{ this.renderToggle(
+						{this.renderToggle(
 							'admin_bar',
-							translate( 'Put a chart showing 48 hours of views in the admin bar' )
-						) }
-						{ this.renderToggle( 'hide_smile', translate( 'Hide the stats smiley face image' ) ) }
+							translate('Put a chart showing 48 hours of views in the admin bar')
+						)}
+						{this.renderToggle('hide_smile', translate('Hide the stats smiley face image'))}
 						<FormSettingExplanation isIndented>
-							{ translate( 'The image helps collect stats, but should work when hidden.' ) }
+							{translate('The image helps collect stats, but should work when hidden.')}
 						</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLegend>{ translate( 'Count logged in page views from' ) }</FormLegend>
-						{ siteRoles &&
-							siteRoles.map( role =>
+						<FormLegend>{translate('Count logged in page views from')}</FormLegend>
+						{siteRoles &&
+							siteRoles.map((role) =>
 								this.renderToggle(
 									'count_roles_' + role.name,
 									role.display_name,
-									includes( this.getCurrentGroupFields( 'count_roles' ), role.name ),
-									this.onChangeToggleGroup( 'count_roles', role.name )
+									includes(this.getCurrentGroupFields('count_roles'), role.name),
+									this.onChangeToggleGroup('count_roles', role.name)
 								)
-							) }
+							)}
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLegend>{ translate( 'Allow stats reports to be viewed by' ) }</FormLegend>
-						{ siteRoles &&
-							siteRoles.map( role =>
+						<FormLegend>{translate('Allow stats reports to be viewed by')}</FormLegend>
+						{siteRoles &&
+							siteRoles.map((role) =>
 								this.renderToggle(
 									'roles_' + role.name,
 									role.display_name,
-									includes( this.getCurrentGroupFields( 'roles' ), role.name ),
-									this.onChangeToggleGroup( 'roles', role.name )
+									includes(this.getCurrentGroupFields('roles'), role.name),
+									this.onChangeToggleGroup('roles', role.name)
 								)
-							) }
+							)}
 					</FormFieldset>
 				</FoldableCard>
 
-				<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
-					{ translate( 'View your site stats' ) }
+				<CompactCard href={getStatsPathForTab('day', siteSlug)}>
+					{translate('View your site stats')}
 				</CompactCard>
 			</div>
 		);
@@ -189,26 +189,26 @@ class JetpackSiteStats extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const siteInDevMode = isJetpackSiteInDevelopmentMode(state, siteId);
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 			state,
 			siteId,
 			'stats'
 		);
-		const path = getCurrentRouteParameterized( state, siteId );
+		const path = getCurrentRouteParameterized(state, siteId);
 
 		return {
 			siteId,
-			siteSlug: getSelectedSiteSlug( state, siteId ),
-			statsModuleActive: isJetpackModuleActive( state, siteId, 'stats' ),
+			siteSlug: getSelectedSiteSlug(state, siteId),
+			statsModuleActive: isJetpackModuleActive(state, siteId, 'stats'),
 			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			siteRoles: getSiteRoles( state, siteId ),
+			siteRoles: getSiteRoles(state, siteId),
 			path,
 		};
 	},
 	{
 		recordTracksEvent,
 	}
-)( localize( JetpackSiteStats ) );
+)(localize(JetpackSiteStats));

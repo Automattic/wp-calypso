@@ -21,9 +21,9 @@ class ConversationsEmptyContent extends React.Component {
 	}
 
 	recordAction = () => {
-		recordAction( 'clicked_search_on_empty' );
-		recordGaEvent( 'Clicked Search on EmptyContent' );
-		recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
+		recordAction('clicked_search_on_empty');
+		recordGaEvent('Clicked Search on EmptyContent');
+		recordTrack('calypso_reader_search_on_empty_stream_clicked');
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -31,10 +31,10 @@ class ConversationsEmptyContent extends React.Component {
 		const action = (
 				<a
 					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
+					onClick={this.recordAction}
 					href="/read/search"
 				>
-					{ this.props.translate( 'Find posts to follow' ) }
+					{this.props.translate('Find posts to follow')}
 				</a>
 			),
 			secondaryAction = null;
@@ -42,19 +42,19 @@ class ConversationsEmptyContent extends React.Component {
 		return (
 			<EmptyContent
 				className="conversations__empty-content"
-				title={ this.props.translate( 'Welcome to Conversations' ) }
-				line={ this.props.translate(
+				title={this.props.translate('Welcome to Conversations')}
+				line={this.props.translate(
 					"When WordPress posts spark lively conversations, they'll appear here. " +
 						'To get started, like or comment on some posts.'
-				) }
-				action={ action }
-				secondaryAction={ secondaryAction }
-				illustration={ charactersImage }
-				illustrationWidth={ 400 }
+				)}
+				action={action}
+				secondaryAction={secondaryAction}
+				illustration={charactersImage}
+				illustrationWidth={400}
 			/>
 		);
 	}
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-export default localize( ConversationsEmptyContent );
+export default localize(ConversationsEmptyContent);

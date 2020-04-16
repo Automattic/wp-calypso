@@ -9,7 +9,7 @@ import {
 	WOOCOMMERCE_PRODUCT_EDIT_CLEAR,
 } from 'woocommerce/state/action-types';
 
-export function editProduct( siteId, product, data ) {
+export function editProduct(siteId, product, data) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_EDIT,
 		siteId,
@@ -24,14 +24,14 @@ export function editProduct( siteId, product, data ) {
  * @param {number} siteId The site for which to clear all product edits.
  * @returns {object} action
  */
-export function clearProductEdits( siteId ) {
+export function clearProductEdits(siteId) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_EDIT_CLEAR,
 		siteId,
 	};
 }
 
-export function editProductAttribute( siteId, product, attribute, data ) {
+export function editProductAttribute(siteId, product, attribute, data) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 		siteId,
@@ -41,16 +41,16 @@ export function editProductAttribute( siteId, product, attribute, data ) {
 	};
 }
 
-export function editProductAddCategory( siteId, product, categoryId ) {
-	const categories = [ ...product.categories, { id: categoryId } ];
+export function editProductAddCategory(siteId, product, categoryId) {
+	const categories = [...product.categories, { id: categoryId }];
 
-	return editProduct( siteId, product, { categories } );
+	return editProduct(siteId, product, { categories });
 }
 
-export function editProductRemoveCategory( siteId, product, categoryId ) {
-	const categories = product.categories.filter( c => categoryId !== c.id );
+export function editProductRemoveCategory(siteId, product, categoryId) {
+	const categories = product.categories.filter((c) => categoryId !== c.id);
 
-	return editProduct( siteId, product, { categories } );
+	return editProduct(siteId, product, { categories });
 }
 
 /**
@@ -62,7 +62,7 @@ export function editProductRemoveCategory( siteId, product, categoryId ) {
  * @param {object} [failureAction] Action to be dispatched upon failure of execution.
  * @returns {Function} action
  */
-export function createProductActionList( successAction, failureAction ) {
+export function createProductActionList(successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 		successAction,

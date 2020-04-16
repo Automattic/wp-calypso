@@ -43,17 +43,17 @@ const NEWSLETTER_SETTINGS_STEP = 'newsletter_settings';
 const STORE_SYNC = 'sync';
 
 const steps = {
-	[ LOG_INTO_MAILCHIMP_STEP ]: { number: 0, nextStep: KEY_INPUT_STEP },
-	[ KEY_INPUT_STEP ]: { number: 1, nextStep: STORE_INFO_STEP },
-	[ STORE_INFO_STEP ]: { number: 2, nextStep: CAMPAIGN_DEFAULTS_STEP },
+	[LOG_INTO_MAILCHIMP_STEP]: { number: 0, nextStep: KEY_INPUT_STEP },
+	[KEY_INPUT_STEP]: { number: 1, nextStep: STORE_INFO_STEP },
+	[STORE_INFO_STEP]: { number: 2, nextStep: CAMPAIGN_DEFAULTS_STEP },
 	// CAMPAIGN_DEFAULTS_STEP is also number 2 because it happens silently in the
 	// background and the number here is used for UI purposes
-	[ CAMPAIGN_DEFAULTS_STEP ]: { number: 2, nextStep: NEWSLETTER_SETTINGS_STEP },
-	[ NEWSLETTER_SETTINGS_STEP ]: { number: 3, nextStep: STORE_SYNC },
-	[ STORE_SYNC ]: { number: 4, nextStep: null },
+	[CAMPAIGN_DEFAULTS_STEP]: { number: 2, nextStep: NEWSLETTER_SETTINGS_STEP },
+	[NEWSLETTER_SETTINGS_STEP]: { number: 3, nextStep: STORE_SYNC },
+	[STORE_SYNC]: { number: 4, nextStep: null },
 };
 
-const uiStepsCount = steps[ STORE_SYNC ].number + 1;
+const uiStepsCount = steps[STORE_SYNC].number + 1;
 
 const storeSettingsRequiredFields = [
 	'store_name',
@@ -78,50 +78,50 @@ const campaignDefaultsRequiredFields = [
 ];
 
 class MailChimpSetup extends React.Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		// make this react to the real phase the execution is.
 		this.state = {
 			step: LOG_INTO_MAILCHIMP_STEP,
-			settings: this.prepareDefaultValues( this.props ),
+			settings: this.prepareDefaultValues(this.props),
 			settings_values_missing: false,
 			input_field_has_changed: false,
 			api_key_input: this.props.settings.mailchimp_api_key || '',
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		// No state changes while doing request.
-		if ( nextProps.isBusy ) {
+		if (nextProps.isBusy) {
 			return;
 		}
 
 		const { active_tab } = nextProps.settings;
-		if ( steps[ this.state.step ].nextStep === active_tab ) {
-			const settings = this.prepareDefaultValues( nextProps );
-			if ( active_tab === CAMPAIGN_DEFAULTS_STEP ) {
+		if (steps[this.state.step].nextStep === active_tab) {
+			const settings = this.prepareDefaultValues(nextProps);
+			if (active_tab === CAMPAIGN_DEFAULTS_STEP) {
 				// quickly to the next step
 				// we want CAMPAIGN_DEFAULTS_STEP to happen in the background
 				// we already have all the required information
-				this.setState( { step: active_tab, settings }, this.next );
+				this.setState({ step: active_tab, settings }, this.next);
 			} else {
-				this.setState( { step: active_tab, settings } );
+				this.setState({ step: active_tab, settings });
 			}
-			if ( active_tab === STORE_SYNC ) {
-				nextProps.onClose( 'wizard-completed' );
+			if (active_tab === STORE_SYNC) {
+				nextProps.onClose('wizard-completed');
 			}
 		}
 
 		// Update settings if we have received lists
-		if ( nextProps.settings.mailchimp_lists && ! this.props.settings.mailchimp_lists ) {
-			const settings = this.prepareDefaultValues( nextProps );
-			this.setState( { step: active_tab, settings } );
+		if (nextProps.settings.mailchimp_lists && !this.props.settings.mailchimp_lists) {
+			const settings = this.prepareDefaultValues(nextProps);
+			this.setState({ step: active_tab, settings });
 		}
 	}
 
-	prepareDefaultValues( nextProps ) {
+	prepareDefaultValues(nextProps) {
 		const { settings, translate } = nextProps;
-		const newSettings = Object.assign( {}, settings );
+		const newSettings = Object.assign({}, settings);
 		newSettings.campaign_from_name = settings.campaign_from_name || settings.store_name || '';
 		newSettings.campaign_from_email = settings.campaign_from_email || settings.admin_email || '';
 		newSettings.campaign_subject = settings.campaign_subject || settings.store_name || '';
@@ -129,9 +129,9 @@ class MailChimpSetup extends React.Component {
 		newSettings.campaign_language = settings.campaign_language || settings.store_locale;
 		newSettings.campaign_permission_reminder =
 			settings.campaign_permission_reminder ||
-			translate( 'You were subscribed to the newsletter from %(store_name)s', {
+			translate('You were subscribed to the newsletter from %(store_name)s', {
 				args: { store_name: settings.store_name },
-			} );
+			});
 		newSettings.admin_email = settings.admin_email || nextProps.currentUserEmail || '';
 		newSettings.store_timezone =
 			settings.store_timezone || nextProps.timezone || 'America/New_York';
@@ -145,7 +145,7 @@ class MailChimpSetup extends React.Component {
 		// clear this and pass only what is required.
 		const { address, currency } = this.props;
 
-		const settings = pick( this.state.settings, storeSettingsRequiredFields );
+		const settings = pick(this.state.settings, storeSettingsRequiredFields);
 		settings.store_city = address.city;
 		settings.store_street = address.street + ' ' + address.street2;
 		settings.store_state = address.state;
@@ -156,34 +156,34 @@ class MailChimpSetup extends React.Component {
 	};
 
 	getCampaingDefaultsSettings = () => {
-		return pick( this.state.settings, campaignDefaultsRequiredFields );
+		return pick(this.state.settings, campaignDefaultsRequiredFields);
 	};
 
-	hasEmptyValues = data => {
-		return some( data, isEmpty );
+	hasEmptyValues = (data) => {
+		return some(data, isEmpty);
 	};
 
-	areStoreSettingsValid = settings => {
-		const hasAllKeys = storeSettingsRequiredFields.every( key => key in settings );
-		if ( ! hasAllKeys ) {
+	areStoreSettingsValid = (settings) => {
+		const hasAllKeys = storeSettingsRequiredFields.every((key) => key in settings);
+		if (!hasAllKeys) {
 			return false;
 		}
-		if ( this.hasEmptyValues( settings ) ) {
+		if (this.hasEmptyValues(settings)) {
 			return false;
 		}
-		if ( settings.store_phone.length < 6 ) {
+		if (settings.store_phone.length < 6) {
 			return false;
 		}
 
 		return true;
 	};
 
-	areCampaignSettingsValid = settings => {
-		const hasAllKeys = campaignDefaultsRequiredFields.every( key => key in settings );
-		if ( ! hasAllKeys ) {
+	areCampaignSettingsValid = (settings) => {
+		const hasAllKeys = campaignDefaultsRequiredFields.every((key) => key in settings);
+		if (!hasAllKeys) {
 			return false;
 		}
-		if ( this.hasEmptyValues( settings ) ) {
+		if (this.hasEmptyValues(settings)) {
 			return false;
 		}
 
@@ -194,92 +194,91 @@ class MailChimpSetup extends React.Component {
 		const { step } = this.state;
 		const { siteId } = this.props;
 
-		if ( LOG_INTO_MAILCHIMP_STEP === step ) {
-			this.setState( { step: steps[ this.state.step ].nextStep } );
-		} else if ( step === KEY_INPUT_STEP ) {
-			const validKey = !! this.state.api_key_input;
-			this.setState( {
-				settings_values_missing: ! validKey,
+		if (LOG_INTO_MAILCHIMP_STEP === step) {
+			this.setState({ step: steps[this.state.step].nextStep });
+		} else if (step === KEY_INPUT_STEP) {
+			const validKey = !!this.state.api_key_input;
+			this.setState({
+				settings_values_missing: !validKey,
 				input_field_has_changed: false,
-			} );
-			if ( validKey ) {
-				this.props.submitMailChimpApiKey( siteId, this.state.api_key_input );
+			});
+			if (validKey) {
+				this.props.submitMailChimpApiKey(siteId, this.state.api_key_input);
 			}
-		} else if ( STORE_INFO_STEP === step ) {
+		} else if (STORE_INFO_STEP === step) {
 			const settings = this.getStoreSettings();
-			const validSettings = this.areStoreSettingsValid( settings );
-			this.setState( { settings_values_missing: ! validSettings } );
-			if ( validSettings ) {
-				this.props.submitMailChimpStoreInfo( siteId, settings );
+			const validSettings = this.areStoreSettingsValid(settings);
+			this.setState({ settings_values_missing: !validSettings });
+			if (validSettings) {
+				this.props.submitMailChimpStoreInfo(siteId, settings);
 			}
-		} else if ( CAMPAIGN_DEFAULTS_STEP === step ) {
+		} else if (CAMPAIGN_DEFAULTS_STEP === step) {
 			const settings = this.getCampaingDefaultsSettings();
-			const validSettings = this.areCampaignSettingsValid( settings );
-			this.setState( { settings_values_missing: ! validSettings } );
-			if ( validSettings ) {
-				this.props.submitMailChimpCampaignDefaults( siteId, settings );
+			const validSettings = this.areCampaignSettingsValid(settings);
+			this.setState({ settings_values_missing: !validSettings });
+			if (validSettings) {
+				this.props.submitMailChimpCampaignDefaults(siteId, settings);
 			}
-		} else if ( NEWSLETTER_SETTINGS_STEP === step ) {
+		} else if (NEWSLETTER_SETTINGS_STEP === step) {
 			const mailchimp_list = this.state.settings.mailchimp_list;
-			this.setState( { settings_values_missing: ! mailchimp_list } );
-			if ( mailchimp_list ) {
-				this.props.submitMailChimpNewsletterSettings( siteId, { mailchimp_list } );
+			this.setState({ settings_values_missing: !mailchimp_list });
+			if (mailchimp_list) {
+				this.props.submitMailChimpNewsletterSettings(siteId, { mailchimp_list });
 			}
 		}
 	};
 
-	onKeyInputChange = e => {
+	onKeyInputChange = (e) => {
 		const value = e.target.value;
-		this.setState( {
+		this.setState({
 			api_key_input: value,
 			settings_values_missing: false,
 			input_field_has_changed: true,
-		} );
+		});
 	};
 
 	// Right now Store info is combination of values from SettingsPaymentsLocationCurrency
 	// and managed directly - not the greatest option but good for now.
-	onStoreInfoChange = e => {
-		this.setState( {
-			settings: Object.assign( {}, this.state.settings, { [ e.target.name ]: e.target.value } ),
-		} );
+	onStoreInfoChange = (e) => {
+		this.setState({
+			settings: Object.assign({}, this.state.settings, { [e.target.name]: e.target.value }),
+		});
 	};
 
 	renderStep = () => {
 		const { step, settings, settings_values_missing, input_field_has_changed } = this.state;
 		const { isBusy } = this.props;
-		if ( LOG_INTO_MAILCHIMP_STEP === step ) {
+		if (LOG_INTO_MAILCHIMP_STEP === step) {
 			return <LogIntoMailchimp />;
 		}
-		if ( KEY_INPUT_STEP === step ) {
+		if (KEY_INPUT_STEP === step) {
 			const keyCorrect =
-				( this.props.isKeyCorrect || input_field_has_changed || isBusy ) &&
-				! settings_values_missing;
+				(this.props.isKeyCorrect || input_field_has_changed || isBusy) && !settings_values_missing;
 			return (
 				<KeyInputStep
-					onChange={ this.onKeyInputChange }
-					apiKey={ this.state.api_key_input }
-					isKeyCorrect={ keyCorrect }
+					onChange={this.onKeyInputChange}
+					apiKey={this.state.api_key_input}
+					isKeyCorrect={keyCorrect}
 				/>
 			);
 		}
 		// we show the same UI view for two steps because the
 		// CAMPAIGN_DEFAULTS_STEP is executed silently in the background
-		if ( STORE_INFO_STEP === step || CAMPAIGN_DEFAULTS_STEP === step ) {
+		if (STORE_INFO_STEP === step || CAMPAIGN_DEFAULTS_STEP === step) {
 			return (
 				<StoreInfoStep
-					onChange={ this.onStoreInfoChange }
-					storeData={ settings }
-					validateFields={ settings_values_missing }
+					onChange={this.onStoreInfoChange}
+					storeData={settings}
+					validateFields={settings_values_missing}
 				/>
 			);
 		}
-		if ( NEWSLETTER_SETTINGS_STEP === step ) {
+		if (NEWSLETTER_SETTINGS_STEP === step) {
 			return (
 				<NewsletterSettings
-					onChange={ this.onStoreInfoChange }
-					storeData={ settings }
-					validateFields={ settings_values_missing }
+					onChange={this.onStoreInfoChange}
+					storeData={settings}
+					validateFields={settings_values_missing}
 				/>
 			);
 		}
@@ -292,40 +291,35 @@ class MailChimpSetup extends React.Component {
 		const isButtonBusy = isBusy ? 'is-busy' : '';
 		const mainButton = {
 			action: 'next',
-			label: NEWSLETTER_SETTINGS_STEP === step ? translate( 'Sync' ) : translate( 'Next' ),
+			label: NEWSLETTER_SETTINGS_STEP === step ? translate('Sync') : translate('Next'),
 			onClick: this.next,
 			isPrimary: true,
 			additionalClassNames: isButtonBusy,
 		};
-		const buttons = [ { action: 'cancel', label: translate( 'Cancel' ) }, mainButton ];
+		const buttons = [{ action: 'cancel', label: translate('Cancel') }, mainButton];
 
 		const dialogClass = 'woocommerce mailchimp__setup';
-		const stepNum = steps[ step ].number;
-		if ( ! hasMailChimp ) {
+		const stepNum = steps[step].number;
+		if (!hasMailChimp) {
 			return (
-				<Dialog isVisible buttons={ null } className={ dialogClass }>
+				<Dialog isVisible buttons={null} className={dialogClass}>
 					<div className="mailchimp__setup-dialog-title">MailChimp</div>
-					<RequiredPluginsInstallView site={ { ID: siteId } } skipConfirmation />
+					<RequiredPluginsInstallView site={{ ID: siteId }} skipConfirmation />
 				</Dialog>
 			);
 		}
 
-		if ( STORE_SYNC === step ) {
+		if (STORE_SYNC === step) {
 			return null;
 		}
 
 		return (
-			<Dialog
-				isVisible
-				buttons={ buttons }
-				onClose={ this.props.onClose }
-				className={ dialogClass }
-			>
+			<Dialog isVisible buttons={buttons} onClose={this.props.onClose} className={dialogClass}>
 				<div className="mailchimp__setup-dialog-progress">
-					<ProgressBar value={ stepNum + 1 } total={ uiStepsCount } compact />
-					<ProgressIndicator stepNumber={ stepNum } totalSteps={ uiStepsCount } />
+					<ProgressBar value={stepNum + 1} total={uiStepsCount} compact />
+					<ProgressIndicator stepNumber={stepNum} totalSteps={uiStepsCount} />
 				</div>
-				<div className="mailchimp__setup-dialog-content">{ this.renderStep() }</div>
+				<div className="mailchimp__setup-dialog-content">{this.renderStep()}</div>
 			</Dialog>
 		);
 	}
@@ -351,22 +345,22 @@ MailChimpSetup.propTypes = {
 
 export default localize(
 	connect(
-		( state, { siteId } ) => {
-			const isSavingApiKey = isSubmittingApiKey( state, siteId );
-			const isSavingStoreInfo = isSubmittingStoreInfo( state, siteId );
-			const isSavingNewsletterSettings = isSubmittingNewsletterSetting( state, siteId );
-			const isKeyCorrect = isApiKeyCorrect( state, siteId );
-			const address = getStoreLocation( state );
-			const currency = getCurrencyWithEdits( state );
+		(state, { siteId }) => {
+			const isSavingApiKey = isSubmittingApiKey(state, siteId);
+			const isSavingStoreInfo = isSubmittingStoreInfo(state, siteId);
+			const isSavingNewsletterSettings = isSubmittingNewsletterSetting(state, siteId);
+			const isKeyCorrect = isApiKeyCorrect(state, siteId);
+			const address = getStoreLocation(state);
+			const currency = getCurrencyWithEdits(state);
 			const isBusy = isSavingApiKey || isSavingStoreInfo || isSavingNewsletterSettings;
 			return {
 				isBusy,
 				address,
 				currency,
 				isKeyCorrect,
-				siteTitle: getSiteTitle( state, siteId ),
-				currentUserEmail: getCurrentUserEmail( state ),
-				timezone: getSiteTimezoneValue( state, siteId ),
+				siteTitle: getSiteTitle(state, siteId),
+				currentUserEmail: getCurrentUserEmail(state),
+				timezone: getSiteTimezoneValue(state, siteId),
 			};
 		},
 		{
@@ -375,5 +369,5 @@ export default localize(
 			submitMailChimpCampaignDefaults,
 			submitMailChimpNewsletterSettings,
 		}
-	)( MailChimpSetup )
+	)(MailChimpSetup)
 );

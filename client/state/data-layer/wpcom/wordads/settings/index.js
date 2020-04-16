@@ -20,16 +20,15 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fromApi = data => {
-	if ( ! data.hasOwnProperty( 'settings' ) ) {
-		throw new Error( 'Missing settings field in response' );
+const fromApi = (data) => {
+	if (!data.hasOwnProperty('settings')) {
+		throw new Error('Missing settings field in response');
 	}
 
 	return data.settings;
 };
 
-const receiveWordadsSettings = ( { siteId }, settings ) =>
-	updateWordadsSettings( siteId, settings );
+const receiveWordadsSettings = ({ siteId }, settings) => updateWordadsSettings(siteId, settings);
 
 /**
  * Dispatches a request to fetch WordAds settings for a given site
@@ -37,7 +36,7 @@ const receiveWordadsSettings = ( { siteId }, settings ) =>
  * @param   {object}   action         Redux action
  * @returns {object}   Dispatched http action
  */
-export const requestWordadsSettings = action => {
+export const requestWordadsSettings = (action) => {
 	const { siteId } = action;
 
 	return http(
@@ -56,15 +55,15 @@ export const requestWordadsSettings = action => {
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const saveWordadsSettings = action => ( dispatch, getState ) => {
+export const saveWordadsSettings = (action) => (dispatch, getState) => {
 	const { settings, siteId } = action;
-	const previousSettings = getWordadsSettings( getState(), siteId );
+	const previousSettings = getWordadsSettings(getState(), siteId);
 
 	// Optimistically update settings to the new ones
-	dispatch( updateWordadsSettings( siteId, settings ) );
+	dispatch(updateWordadsSettings(siteId, settings));
 
-	dispatch( removeNotice( `wordads-notice-success-${ siteId }` ) );
-	dispatch( removeNotice( `wordads-notice-error-${ siteId }` ) );
+	dispatch(removeNotice(`wordads-notice-success-${siteId}`));
+	dispatch(removeNotice(`wordads-notice-error-${siteId}`));
 
 	dispatch(
 		http(
@@ -82,38 +81,38 @@ export const saveWordadsSettings = action => ( dispatch, getState ) => {
 	);
 };
 
-export const handleSaveSuccess = ( { siteId } ) => [
-	saveWordadsSettingsSuccess( siteId ),
-	successNotice( translate( 'WordAds settings saved successfully!' ), {
-		id: `wordads-notice-success-${ siteId }`,
+export const handleSaveSuccess = ({ siteId }) => [
+	saveWordadsSettingsSuccess(siteId),
+	successNotice(translate('WordAds settings saved successfully!'), {
+		id: `wordads-notice-success-${siteId}`,
 		duration: 5000,
-	} ),
+	}),
 ];
 
-export const handleSaveFailure = ( { siteId, meta: { settings: previousSettings } } ) => [
-	saveWordadsSettingsFailure( siteId ),
-	updateWordadsSettings( siteId, previousSettings ),
-	errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-		id: `wordads-notice-error-${ siteId }`,
+export const handleSaveFailure = ({ siteId, meta: { settings: previousSettings } }) => [
+	saveWordadsSettingsFailure(siteId),
+	updateWordadsSettings(siteId, previousSettings),
+	errorNotice(translate('An unexpected error occurred. Please try again later.'), {
+		id: `wordads-notice-error-${siteId}`,
 		duration: 5000,
-	} ),
+	}),
 ];
 
-registerHandlers( 'state/data-layer/wpcom/wordads/settings/index.js', {
-	[ WORDADS_SETTINGS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/wordads/settings/index.js', {
+	[WORDADS_SETTINGS_REQUEST]: [
+		dispatchRequest({
 			fetch: requestWordadsSettings,
 			onSuccess: receiveWordadsSettings,
 			onError: noop,
 			fromApi,
-		} ),
+		}),
 	],
 
-	[ WORDADS_SETTINGS_SAVE ]: [
-		dispatchRequest( {
+	[WORDADS_SETTINGS_SAVE]: [
+		dispatchRequest({
 			fetch: saveWordadsSettings,
 			onSuccess: handleSaveSuccess,
 			onError: handleSaveFailure,
-		} ),
+		}),
 	],
-} );
+});

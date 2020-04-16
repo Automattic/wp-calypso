@@ -42,26 +42,26 @@ export class PeopleInviteDetails extends React.PureComponent {
 		inviteKey: PropTypes.string.isRequired,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.deleteSuccess && ! this.props.deleteSuccess ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.deleteSuccess && !this.props.deleteSuccess) {
 			this.goBack();
 		}
 	}
 
 	goBack = () => {
-		const siteSlug = get( this.props, 'site.slug' );
+		const siteSlug = get(this.props, 'site.slug');
 		const fallback = siteSlug ? '/people/invites/' + siteSlug : '/people/invites/';
 
 		// Go back to last route with /people/invites as the fallback
-		page.back( fallback );
+		page.back(fallback);
 	};
 
 	handleDelete = () => {
 		const { deleting, invite, site } = this.props;
-		if ( deleting ) {
+		if (deleting) {
 			return;
 		}
-		this.props.deleteInvite( site.ID, invite.key );
+		this.props.deleteInvite(site.ID, invite.key);
 	};
 
 	renderClearOrRevoke = () => {
@@ -78,14 +78,9 @@ export class PeopleInviteDetails extends React.PureComponent {
 
 		return (
 			<div className="people-invite-details__clear-revoke">
-				<div>{ isPending ? revokeMessage : clearMessage }</div>
-				<Button
-					busy={ deleting }
-					primary={ isPending }
-					scary={ isPending }
-					onClick={ this.handleDelete }
-				>
-					{ isPending ? translate( 'Revoke invite' ) : translate( 'Clear invite' ) }
+				<div>{isPending ? revokeMessage : clearMessage}</div>
+				<Button busy={deleting} primary={isPending} scary={isPending} onClick={this.handleDelete}>
+					{isPending ? translate('Revoke invite') : translate('Clear invite')}
 				</Button>
 			</div>
 		);
@@ -102,33 +97,33 @@ export class PeopleInviteDetails extends React.PureComponent {
 	renderInvite() {
 		const { site, requesting, invite, translate, deleteSuccess } = this.props;
 
-		if ( ! site || ! site.ID || deleteSuccess ) {
+		if (!site || !site.ID || deleteSuccess) {
 			return this.renderPlaceholder();
 		}
 
-		if ( ! invite ) {
-			if ( requesting ) {
+		if (!invite) {
+			if (requesting) {
 				return this.renderPlaceholder();
 			}
 
-			const message = translate( 'The requested invite does not exist.' );
-			return <EmptyContent title={ message } />;
+			const message = translate('The requested invite does not exist.');
+			return <EmptyContent title={message} />;
 		}
 
 		return (
 			<div>
 				<Card>
 					<PeopleListItem
-						key={ invite.key }
-						invite={ invite }
-						user={ invite.user }
-						site={ site }
+						key={invite.key}
+						invite={invite}
+						user={invite.user}
+						site={site}
 						type="invite-details"
-						isSelectable={ false }
+						isSelectable={false}
 					/>
-					{ this.renderInviteDetails() }
+					{this.renderInviteDetails()}
 				</Card>
-				{ this.renderClearOrRevoke() }
+				{this.renderClearOrRevoke()}
 			</div>
 		);
 	}
@@ -140,33 +135,29 @@ export class PeopleInviteDetails extends React.PureComponent {
 		return (
 			<div className="people-invite-details__meta">
 				<div className="people-invite-details__meta-item">
-					<span className="people-invite-details__meta-item-label">
-						{ translate( 'Invited By' ) }
-					</span>
-					<Gravatar user={ invite.invitedBy } size={ 24 } />
-					{ showName && (
-						<span className="people-invite-details__meta-item-user">{ invite.invitedBy.name }</span>
-					) }
+					<span className="people-invite-details__meta-item-label">{translate('Invited By')}</span>
+					<Gravatar user={invite.invitedBy} size={24} />
+					{showName && (
+						<span className="people-invite-details__meta-item-user">{invite.invitedBy.name}</span>
+					)}
 					<span className="people-invite-details__meta-item-username">
-						{ '@' + invite.invitedBy.login }
+						{'@' + invite.invitedBy.login}
 					</span>
 				</div>
 				<div className="people-invite-details__meta-item">
-					<span className="people-invite-details__meta-item-label">{ translate( 'Sent' ) }</span>
+					<span className="people-invite-details__meta-item-label">{translate('Sent')}</span>
 					<span className="people-invite-details__meta-item-date">
-						{ moment( invite.inviteDate ).format( 'LLL' ) }
+						{moment(invite.inviteDate).format('LLL')}
 					</span>
 				</div>
-				{ invite.acceptedDate && (
+				{invite.acceptedDate && (
 					<div className="people-invite-details__meta-item">
-						<span className="people-invite-details__meta-item-label">
-							{ translate( 'Accepted' ) }
-						</span>
+						<span className="people-invite-details__meta-item-label">{translate('Accepted')}</span>
 						<span className="people-invite-details__meta-item-date">
-							{ moment( invite.acceptedDate ).format( 'LLL' ) }
+							{moment(invite.acceptedDate).format('LLL')}
 						</span>
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -175,14 +166,14 @@ export class PeopleInviteDetails extends React.PureComponent {
 		const { canViewPeople, site, translate } = this.props;
 		const siteId = site && site.ID;
 
-		if ( siteId && ! canViewPeople ) {
+		if (siteId && !canViewPeople) {
 			return (
 				<Main>
 					<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						title={this.props.translate('You are not authorized to view this page')}
+						illustration={'/calypso/images/illustrations/illustration-404.svg'}
 					/>
 				</Main>
 			);
@@ -191,32 +182,32 @@ export class PeopleInviteDetails extends React.PureComponent {
 		return (
 			<Main className="people-invite-details">
 				<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
-				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
+				{siteId && <QuerySiteInvites siteId={siteId} />}
 				<SidebarNavigation />
 
-				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'Invite Details' ) }
+				<HeaderCake isCompact onClick={this.goBack}>
+					{translate('Invite Details')}
 				</HeaderCake>
 
-				{ this.renderInvite() }
+				{this.renderInvite()}
 			</Main>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const site = getSelectedSite( state );
+	(state, ownProps) => {
+		const site = getSelectedSite(state);
 		const siteId = site && site.ID;
 
 		return {
 			site,
-			requesting: isRequestingInvitesForSite( state, siteId ),
-			deleting: isDeletingInvite( state, siteId, ownProps.inviteKey ),
-			deleteSuccess: didInviteDeletionSucceed( state, siteId, ownProps.inviteKey ),
-			invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
-			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+			requesting: isRequestingInvitesForSite(state, siteId),
+			deleting: isDeletingInvite(state, siteId, ownProps.inviteKey),
+			deleteSuccess: didInviteDeletionSucceed(state, siteId, ownProps.inviteKey),
+			invite: getInviteForSite(state, siteId, ownProps.inviteKey),
+			canViewPeople: canCurrentUser(state, siteId, 'list_users'),
 		};
 	},
 	{ deleteInvite }
-)( localize( withLocalizedMoment( PeopleInviteDetails ) ) );
+)(localize(withLocalizedMoment(PeopleInviteDetails)));

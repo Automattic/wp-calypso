@@ -19,21 +19,21 @@ export * from './types';
 export { State };
 
 let isRegistered = false;
-export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
-	if ( ! isRegistered ) {
+export function register(clientCreds: WpcomClientCredentials): typeof STORE_KEY {
+	if (!isRegistered) {
 		isRegistered = true;
-		registerStore< State >( STORE_KEY, {
-			actions: createActions( clientCreds ),
+		registerStore<State>(STORE_KEY, {
+			actions: createActions(clientCreds),
 			controls: controls as any,
 			reducer,
-			resolvers: createResolvers( clientCreds ),
+			resolvers: createResolvers(clientCreds),
 			selectors,
-		} );
+		});
 	}
 	return STORE_KEY;
 }
 
 declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< ReturnType< typeof createActions > >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
+	function dispatch(key: typeof STORE_KEY): DispatchFromMap<ReturnType<typeof createActions>>;
+	function select(key: typeof STORE_KEY): SelectFromMap<typeof selectors>;
 }

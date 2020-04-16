@@ -11,12 +11,12 @@ import getRewindState from './get-rewind-state';
  * @param {string} rewindId the id of the rewind to get the percent done of
  * @returns {number} the url of the download, otherwise null
  */
-export default function getInProgressRewindPercentComplete( state, siteId, rewindId ) {
-	const maybeRewindState = getRewindState( state, siteId );
+export default function getInProgressRewindPercentComplete(state, siteId, rewindId) {
+	const maybeRewindState = getRewindState(state, siteId);
 	return maybeRewindState.state === 'active' &&
 		maybeRewindState.rewind &&
 		maybeRewindState.rewind.rewindId === rewindId &&
-		maybeRewindState.rewind.hasOwnProperty( 'progress' )
+		maybeRewindState.rewind.hasOwnProperty('progress')
 		? maybeRewindState.rewind.progress
 		: 0;
 }

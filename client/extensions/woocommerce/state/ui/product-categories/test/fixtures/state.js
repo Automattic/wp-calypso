@@ -17,11 +17,11 @@ const site1 = {
 		'{}': false,
 	},
 	items: {
-		1: categories[ 0 ],
-		2: categories[ 1 ],
+		1: categories[0],
+		2: categories[1],
 	},
 	queries: {
-		'{}': [ 1, 2 ],
+		'{}': [1, 2],
 	},
 	total: {
 		'{}': 6,
@@ -36,11 +36,11 @@ const site2 = {
 		'{}': false,
 	},
 	items: {
-		5: categories[ 4 ],
-		6: categories[ 5 ],
+		5: categories[4],
+		6: categories[5],
 	},
 	queries: {
-		'{}': [ 5, 6 ],
+		'{}': [5, 6],
 	},
 	total: {
 		'{}': 4,
@@ -55,10 +55,10 @@ const site3 = {
 		'{}': false,
 		'{"page":2}': false,
 	},
-	items: keyBy( categories, 'id' ),
+	items: keyBy(categories, 'id'),
 	queries: {
-		'{}': [ 1, 2, 3, 4, 5 ],
-		'{"page":2}': [ 6 ],
+		'{}': [1, 2, 3, 4, 5],
+		'{"page":2}': [6],
 	},
 	total: {
 		'{}': 6,

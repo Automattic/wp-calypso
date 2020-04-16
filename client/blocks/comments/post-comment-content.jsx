@@ -31,29 +31,29 @@ class PostCommentContent extends React.Component {
 
 	render() {
 		// Don't trust comment content unless it was provided by the API
-		if ( this.props.isPlaceholder ) {
+		if (this.props.isPlaceholder) {
 			return (
-				<div className={ classNames( 'comments__comment-content', this.props.className ) }>
-					{ this.props.content.split( '\n' ).map( ( item, key ) => {
+				<div className={classNames('comments__comment-content', this.props.className)}>
+					{this.props.content.split('\n').map((item, key) => {
 						return (
-							<span key={ key }>
-								{ item }
+							<span key={key}>
+								{item}
 								<br />
 							</span>
 						);
-					} ) }
+					})}
 				</div>
 			);
 		}
 		/*eslint-disable react/no-danger*/
 		return (
 			<AutoDirection>
-				<div className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }>
+				<div className={classNames('comments__comment-content-wrapper', this.props.className)}>
 					<Emojify>
 						<div
 							className="comments__comment-content"
-							ref={ this.props.setWithDimensionsRef }
-							dangerouslySetInnerHTML={ { __html: this.props.content } }
+							ref={this.props.setWithDimensionsRef}
+							dangerouslySetInnerHTML={{ __html: this.props.content }}
 						/>
 					</Emojify>
 				</div>
@@ -63,4 +63,4 @@ class PostCommentContent extends React.Component {
 	}
 }
 
-export default localize( PostCommentContent );
+export default localize(PostCommentContent);

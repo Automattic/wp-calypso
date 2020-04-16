@@ -25,7 +25,7 @@ import {
 import { abtest } from 'lib/abtest';
 import { generateSteps } from './steps-pure';
 
-export default generateSteps( {
+export default generateSteps({
 	addPlanToCart,
 	createAccount,
 	createSite,
@@ -40,11 +40,11 @@ export default generateSteps( {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
-} );
+});
 
-export function isDomainStepSkippable( flowName ) {
+export function isDomainStepSkippable(flowName) {
 	return (
 		flowName === 'test-fse' ||
-		( flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable' )
+		(flowName === 'onboarding' && abtest('skippableDomainStep') === 'skippable')
 	);
 }

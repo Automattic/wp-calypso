@@ -4,8 +4,8 @@
 import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
 import { GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL } from 'state/action-types';
 
-const statsInterval = withoutPersistence( ( state = 'week', action ) => {
-	switch ( action.type ) {
+const statsInterval = withoutPersistence((state = 'week', action) => {
+	switch (action.type) {
 		case GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL: {
 			const { interval } = action;
 			return interval;
@@ -13,9 +13,9 @@ const statsInterval = withoutPersistence( ( state = 'week', action ) => {
 	}
 
 	return state;
-} );
+});
 
 export default keyedReducer(
 	'siteId',
-	combineReducers( { statsInterval: keyedReducer( 'statType', statsInterval ) } )
+	combineReducers({ statsInterval: keyedReducer('statType', statsInterval) })
 );

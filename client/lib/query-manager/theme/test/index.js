@@ -3,10 +3,10 @@
  */
 import ThemeQueryManager from '../';
 
-describe( 'ThemeQueryManager', () => {
-	describe( '#sort()', () => {
-		test( 'should leave key order unchanged', () => {
-			const originalKeys = Object.freeze( [
+describe('ThemeQueryManager', () => {
+	describe('#sort()', () => {
+		test('should leave key order unchanged', () => {
+			const originalKeys = Object.freeze([
 				'adaline',
 				'fanwood-light',
 				'ixion',
@@ -18,11 +18,11 @@ describe( 'ThemeQueryManager', () => {
 				'dyad',
 				'little-story',
 				'pachyderm',
-			] );
-			const keys = [ ...originalKeys ];
+			]);
+			const keys = [...originalKeys];
 
-			ThemeQueryManager.sort( keys );
-			expect( keys ).toEqual( originalKeys );
-		} );
-	} );
-} );
+			ThemeQueryManager.sort(keys);
+			expect(keys).toEqual(originalKeys);
+		});
+	});
+});

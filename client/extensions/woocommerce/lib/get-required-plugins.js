@@ -4,7 +4,7 @@
  * @returns {Array} List of plugin slugs
  */
 export function getRequiredPluginsForCalypso() {
-	return [ 'woocommerce', 'woocommerce-services' ];
+	return ['woocommerce', 'woocommerce-services'];
 }
 
 /**
@@ -13,5 +13,5 @@ export function getRequiredPluginsForCalypso() {
  * @returns {Array} List of plugin slugs
  */
 export function getPluginsForStoreSetup() {
-	return [ 'woocommerce', 'woocommerce-gateway-stripe', 'woocommerce-services' ];
+	return ['woocommerce', 'woocommerce-gateway-stripe', 'woocommerce-services'];
 }

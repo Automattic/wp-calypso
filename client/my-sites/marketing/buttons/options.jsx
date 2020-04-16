@@ -39,67 +39,64 @@ class SharingButtonsOptions extends Component {
 	};
 
 	static defaultProps = {
-		settings: Object.freeze( {} ),
+		settings: Object.freeze({}),
 		onChange: () => {},
 		initialized: false,
 		saving: false,
 	};
 
-	getSanitizedTwitterUsername( username ) {
-		return username ? '@' + username.replace( /\W/g, '' ).substr( 0, 15 ) : '';
+	getSanitizedTwitterUsername(username) {
+		return username ? '@' + username.replace(/\W/g, '').substr(0, 15) : '';
 	}
 
 	trackTwitterViaAnalyticsEvent = () => {
 		const { path } = this.props;
-		this.props.recordTracksEvent( 'calypso_sharing_buttons_twitter_username_field_focused', {
+		this.props.recordTracksEvent('calypso_sharing_buttons_twitter_username_field_focused', {
 			path,
-		} );
-		this.props.recordGoogleEvent( 'Sharing', 'Focussed Twitter Username Field' );
+		});
+		this.props.recordGoogleEvent('Sharing', 'Focussed Twitter Username Field');
 	};
 
-	handleMultiCheckboxChange = ( name, event ) => {
+	handleMultiCheckboxChange = (name, event) => {
 		const { path } = this.props;
-		const delta = xor( this.props.settings.sharing_show, event.value );
-		this.props.onChange( name, event.value );
-		if ( delta.length ) {
-			const checked = -1 !== event.value.indexOf( delta[ 0 ] ) ? 1 : 0;
-			this.props.recordTracksEvent( 'calypso_sharing_buttons_show_buttons_on_page_click', {
-				page: delta[ 0 ],
+		const delta = xor(this.props.settings.sharing_show, event.value);
+		this.props.onChange(name, event.value);
+		if (delta.length) {
+			const checked = -1 !== event.value.indexOf(delta[0]) ? 1 : 0;
+			this.props.recordTracksEvent('calypso_sharing_buttons_show_buttons_on_page_click', {
+				page: delta[0],
 				checked,
 				path,
-			} );
+			});
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Show Sharing Buttons On Page Checkbox',
-				delta[ 0 ],
+				delta[0],
 				checked
 			);
 		}
 	};
 
-	handleTwitterViaChange = event => {
-		this.props.onChange(
-			event.target.name,
-			this.getSanitizedTwitterUsername( event.target.value )
-		);
+	handleTwitterViaChange = (event) => {
+		this.props.onChange(event.target.name, this.getSanitizedTwitterUsername(event.target.value));
 	};
 
-	handleChange = event => {
+	handleChange = (event) => {
 		const { path } = this.props;
 
 		let value;
-		if ( 'checkbox' === event.target.type ) {
+		if ('checkbox' === event.target.type) {
 			value = event.target.checked;
 		} else {
 			value = event.target.value;
 		}
 
-		if ( 'jetpack_comment_likes_enabled' === event.target.name ) {
+		if ('jetpack_comment_likes_enabled' === event.target.name) {
 			const checked = event.target.checked ? 1 : 0;
-			this.props.recordTracksEvent( 'calypso_sharing_buttons_likes_on_for_all_posts_click', {
+			this.props.recordTracksEvent('calypso_sharing_buttons_likes_on_for_all_posts_click', {
 				checked,
 				path,
-			} );
+			});
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Comment Likes On For All Posts Checkbox',
@@ -108,31 +105,31 @@ class SharingButtonsOptions extends Component {
 			);
 		}
 
-		this.props.onChange( event.target.name, value );
+		this.props.onChange(event.target.name, value);
 	};
 
-	getPostTypeLabel( postType ) {
+	getPostTypeLabel(postType) {
 		let label;
 
-		switch ( postType.name ) {
+		switch (postType.name) {
 			case 'index':
-				label = this.props.translate( 'Front Page, Archive Pages, and Search Results', {
+				label = this.props.translate('Front Page, Archive Pages, and Search Results', {
 					context: 'Show like and sharing buttons on',
-				} );
+				});
 				break;
 			case 'post':
-				label = this.props.translate( 'Posts', { context: 'Show like and sharing buttons on' } );
+				label = this.props.translate('Posts', { context: 'Show like and sharing buttons on' });
 				break;
 			case 'page':
-				label = this.props.translate( 'Pages', { context: 'Show like and sharing buttons on' } );
+				label = this.props.translate('Pages', { context: 'Show like and sharing buttons on' });
 				break;
 			case 'attachment':
-				label = this.props.translate( 'Media', { context: 'Show like and sharing buttons on' } );
+				label = this.props.translate('Media', { context: 'Show like and sharing buttons on' });
 				break;
 			case 'portfolio':
-				label = this.props.translate( 'Portfolio Items', {
+				label = this.props.translate('Portfolio Items', {
 					context: 'Show like and sharing buttons on',
-				} );
+				});
 				break;
 			default:
 				label = postType.label;
@@ -142,19 +139,19 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getDisplayOptions() {
-		return [ { name: 'index' } ].concat( this.props.postTypes ).map( postType => ( {
+		return [{ name: 'index' }].concat(this.props.postTypes).map((postType) => ({
 			value: postType.name,
-			label: this.getPostTypeLabel( postType ),
-		} ) );
+			label: this.getPostTypeLabel(postType),
+		}));
 	}
 
 	isTwitterButtonEnabled() {
-		return some( this.props.buttons, { ID: 'twitter', enabled: true } );
+		return some(this.props.buttons, { ID: 'twitter', enabled: true });
 	}
 
 	getTwitterViaOptionElement() {
 		const { isJetpack, initialized, settings, translate } = this.props;
-		if ( ! this.isTwitterButtonEnabled() ) {
+		if (!this.isTwitterButtonEnabled()) {
 			return;
 		}
 
@@ -163,21 +160,19 @@ class SharingButtonsOptions extends Component {
 		return (
 			<fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
-					{ translate( 'Twitter username' ) }
+					{translate('Twitter username')}
 				</legend>
 				<input
-					name={ option }
+					name={option}
 					type="text"
-					placeholder={ '@' + translate( 'username' ) }
-					value={ this.getSanitizedTwitterUsername( settings[ option ] ) }
-					onChange={ this.handleTwitterViaChange }
-					onFocus={ this.trackTwitterViaAnalyticsEvent }
-					disabled={ ! initialized }
+					placeholder={'@' + translate('username')}
+					value={this.getSanitizedTwitterUsername(settings[option])}
+					onChange={this.handleTwitterViaChange}
+					onFocus={this.trackTwitterViaAnalyticsEvent}
+					disabled={!initialized}
 				/>
 				<p className="sharing-buttons__fieldset-detail">
-					{ translate(
-						'This will be included in tweets when people share using the Twitter button.'
-					) }
+					{translate('This will be included in tweets when people share using the Twitter button.')}
 				</p>
 			</fieldset>
 		);
@@ -186,35 +181,35 @@ class SharingButtonsOptions extends Component {
 	getCommentLikesOptionElement() {
 		const { isJetpack, initialized, settings, translate } = this.props;
 
-		if ( isJetpack ) {
+		if (isJetpack) {
 			return;
 		}
 
-		const checked = get( settings, 'jetpack_comment_likes_enabled', false );
+		const checked = get(settings, 'jetpack_comment_likes_enabled', false);
 
 		return (
 			<fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
-					{ translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
+					{translate('Comment Likes', { context: 'Sharing options: Header' })}
 				</legend>
 				<label>
 					<input
 						name="jetpack_comment_likes_enabled"
 						type="checkbox"
-						checked={ checked }
-						onChange={ this.handleChange }
-						disabled={ ! initialized }
+						checked={checked}
+						onChange={this.handleChange}
+						disabled={!initialized}
 					/>
 					<span>
-						{ translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }
+						{translate('On for all posts', { context: 'Sharing options: Comment Likes' })}
 					</span>
 					<SupportInfo
-						text={ translate(
+						text={translate(
 							"Encourage your community by giving readers the ability to show appreciation for one another's comments."
-						) }
+						)}
 						link="https://wordpress.com/support/comment-likes/"
-						privacyLink={ false }
-						position={ 'bottom left' }
+						privacyLink={false}
+						position={'bottom left'}
 					/>
 				</label>
 			</fieldset>
@@ -224,22 +219,22 @@ class SharingButtonsOptions extends Component {
 	getSharingShowOptionsElement = () => {
 		const { initialized, settings, translate } = this.props;
 
-		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
+		const changeSharingPostTypes = partial(this.handleMultiCheckboxChange, 'sharing_show');
 		return (
 			<fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
-					{ translate( 'Show like and sharing buttons on', {
+					{translate('Show like and sharing buttons on', {
 						context: 'Sharing options: Header',
 						comment:
 							'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"',
-					} ) }
+					})}
 				</legend>
 				<MultiCheckbox
 					name="sharing_show"
-					options={ this.getDisplayOptions() }
-					checked={ settings.sharing_show }
-					onChange={ changeSharingPostTypes }
-					disabled={ ! initialized }
+					options={this.getDisplayOptions()}
+					checked={settings.sharing_show}
+					onChange={changeSharingPostTypes}
+					disabled={!initialized}
 				/>
 			</fieldset>
 		);
@@ -251,20 +246,20 @@ class SharingButtonsOptions extends Component {
 		return (
 			<Fragment>
 				<div className="sharing-buttons__panel">
-					{ siteId && <QueryPostTypes siteId={ siteId } /> }
-					<h4>{ translate( 'Options' ) }</h4>
+					{siteId && <QueryPostTypes siteId={siteId} />}
+					<h4>{translate('Options')}</h4>
 					<div className="sharing-buttons__fieldset-group">
-						{ this.getSharingShowOptionsElement() }
-						{ this.getCommentLikesOptionElement() }
-						{ this.getTwitterViaOptionElement() }
+						{this.getSharingShowOptionsElement()}
+						{this.getCommentLikesOptionElement()}
+						{this.getTwitterViaOptionElement()}
 					</div>
 
 					<button
 						type="submit"
 						className="button sharing-buttons__submit"
-						disabled={ saving || ! initialized }
+						disabled={saving || !initialized}
 					>
-						{ saving ? translate( 'Saving…' ) : translate( 'Save changes' ) }
+						{saving ? translate('Saving…') : translate('Save changes')}
 					</button>
 				</div>
 			</Fragment>
@@ -273,16 +268,16 @@ class SharingButtonsOptions extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const path = getCurrentRouteParameterized( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const path = getCurrentRouteParameterized(state, siteId);
 
-		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
+		const postTypes = filter(values(getPostTypes(state, siteId)), 'public');
 
 		return {
-			buttons: getSharingButtons( state, siteId ),
-			initialized: !! postTypes || !! getSiteSettings( state, siteId ),
-			isJetpack: isJetpackSite( state, siteId ),
+			buttons: getSharingButtons(state, siteId),
+			initialized: !!postTypes || !!getSiteSettings(state, siteId),
+			isJetpack: isJetpackSite(state, siteId),
 			path,
 			postTypes,
 			siteId,
@@ -291,4 +286,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight( connectComponent, localize )( SharingButtonsOptions );
+export default flowRight(connectComponent, localize)(SharingButtonsOptions);

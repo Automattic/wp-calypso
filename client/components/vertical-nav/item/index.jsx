@@ -38,7 +38,7 @@ class VerticalNavItem extends Component {
 			this.props.className
 		);
 		return (
-			<CompactCard className={ compactCardClassNames }>
+			<CompactCard className={compactCardClassNames}>
 				<span />
 				<span />
 			</CompactCard>
@@ -46,28 +46,28 @@ class VerticalNavItem extends Component {
 	};
 
 	render() {
-		if ( this.props.isPlaceholder ) {
+		if (this.props.isPlaceholder) {
 			return this.placeholder();
 		}
 
-		const compactCardClassNames = classNames( 'vertical-nav-item', this.props.className );
+		const compactCardClassNames = classNames('vertical-nav-item', this.props.className);
 
 		return (
 			<a
-				href={ this.props.path }
-				onClick={ this.props.onClick }
-				target={ this.props.external ? '_blank' : null }
+				href={this.props.path}
+				onClick={this.props.onClick}
+				target={this.props.external ? '_blank' : null}
 			>
-				<CompactCard className={ compactCardClassNames }>
-					{ this.getIcon() }
-					<span>{ this.props.children }</span>
+				<CompactCard className={compactCardClassNames}>
+					{this.getIcon()}
+					<span>{this.props.children}</span>
 				</CompactCard>
 			</a>
 		);
 	}
 
 	getIcon = () => {
-		if ( this.props.external ) {
+		if (this.props.external) {
 			return <Gridicon icon="external" />;
 		}
 

@@ -17,15 +17,15 @@ import {
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {
-		if ( ! this.props.recommendedThemes.length ) {
+		if (!this.props.recommendedThemes.length) {
 			this.props.getRecommendedThemes();
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		// Wait until rec themes to be loaded to scroll to search input if its in use.
 		const { isLoading, isShowcaseOpen, scrollToSearchInput } = this.props;
-		if ( prevProps.isLoading !== isLoading && isLoading === false && isShowcaseOpen ) {
+		if (prevProps.isLoading !== isLoading && isLoading === false && isShowcaseOpen) {
 			scrollToSearchInput();
 		}
 	}
@@ -34,26 +34,26 @@ class RecommendedThemes extends React.Component {
 		return (
 			<>
 				<h2>
-					<strong>{ translate( 'Recommended Themes' ) }</strong>
+					<strong>{translate('Recommended Themes')}</strong>
 				</h2>
-				{ this.props.isLoading ? (
-					<Spinner size={ 100 } />
+				{this.props.isLoading ? (
+					<Spinner size={100} />
 				) : (
-					<ConnectedThemesSelection { ...this.props } />
-				) }
+					<ConnectedThemesSelection {...this.props} />
+				)}
 			</>
 		);
 	}
 }
 
 const ConnectedRecommendedThemes = connect(
-	state => {
+	(state) => {
 		return {
-			recommendedThemes: getRecommendedThemesSelector( state ),
-			isLoading: areRecommendedThemesLoading( state ),
+			recommendedThemes: getRecommendedThemesSelector(state),
+			isLoading: areRecommendedThemesLoading(state),
 		};
 	},
 	{ getRecommendedThemes }
-)( RecommendedThemes );
+)(RecommendedThemes);
 
 export default ConnectedRecommendedThemes;

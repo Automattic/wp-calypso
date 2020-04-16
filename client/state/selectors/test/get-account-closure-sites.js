@@ -4,19 +4,19 @@
 import getAccountClosureSites from 'state/selectors/get-account-closure-sites';
 import { userState } from './fixtures/user-state';
 
-describe( 'getAccountClosureSites()', () => {
-	test( 'should return an empty array if no sites in state', () => {
+describe('getAccountClosureSites()', () => {
+	test('should return an empty array if no sites in state', () => {
 		const state = {
 			...userState,
 			sites: {
 				items: {},
 			},
 		};
-		const sites = getAccountClosureSites( state );
-		expect( sites ).toEqual( [] );
-	} );
+		const sites = getAccountClosureSites(state);
+		expect(sites).toEqual([]);
+	});
 
-	test( 'should not return any Jetpack sites', () => {
+	test('should not return any Jetpack sites', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -36,11 +36,11 @@ describe( 'getAccountClosureSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getAccountClosureSites( state );
-		expect( sites ).toEqual( [] );
-	} );
+		const sites = getAccountClosureSites(state);
+		expect(sites).toEqual([]);
+	});
 
-	test( 'should not return any sites the user is not an admin on', () => {
+	test('should not return any sites the user is not an admin on', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -61,11 +61,11 @@ describe( 'getAccountClosureSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getAccountClosureSites( state );
-		expect( sites ).toEqual( [] );
-	} );
+		const sites = getAccountClosureSites(state);
+		expect(sites).toEqual([]);
+	});
 
-	test( 'should return sites that are not Jetpack and user is an admin on', () => {
+	test('should return sites that are not Jetpack and user is an admin on', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -85,7 +85,7 @@ describe( 'getAccountClosureSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getAccountClosureSites( state );
-		expect( sites ).not.toEqual( [] );
-	} );
-} );
+		const sites = getAccountClosureSites(state);
+		expect(sites).not.toEqual([]);
+	});
+});

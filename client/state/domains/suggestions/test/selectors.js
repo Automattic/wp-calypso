@@ -12,9 +12,9 @@ import {
 	isRequestingDomainsSuggestions,
 } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#getDomainsSuggestions()', () => {
-		test( 'should return domain suggestions for a given query', () => {
+describe('selectors', () => {
+	describe('#getDomainsSuggestions()', () => {
+		test('should return domain suggestions for a given query', () => {
 			const state = {
 				domains: {
 					suggestions: {
@@ -59,16 +59,16 @@ describe( 'selectors', () => {
 				includeSubdomain: false,
 			};
 
-			const domainSuggestions = getDomainsSuggestions( state, queryObject );
+			const domainSuggestions = getDomainsSuggestions(state, queryObject);
 
-			expect( domainSuggestions ).to.eql( [
+			expect(domainSuggestions).to.eql([
 				{ domain_name: 'foobar.me', cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
 				{ domain_name: 'foobar.org', cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
-			] );
-		} );
-	} );
-	describe( '#isRequestingDomainsSuggestions()', () => {
-		test( 'should return requesting domains suggestion state for a given query', () => {
+			]);
+		});
+	});
+	describe('#isRequestingDomainsSuggestions()', () => {
+		test('should return requesting domains suggestion state for a given query', () => {
 			const state = {
 				domains: {
 					suggestions: {
@@ -101,13 +101,13 @@ describe( 'selectors', () => {
 				includeSubdomain: false,
 			};
 
-			expect( isRequestingDomainsSuggestions( state, example ) ).to.equal( true );
-			expect( isRequestingDomainsSuggestions( state, foobar ) ).to.equal( false );
-			expect( isRequestingDomainsSuggestions( state, notDefined ) ).to.equal( false );
-		} );
-		describe( '#getDomainsSuggestionsError()', () => {
-			test( 'should return requesting domains suggestion state for a given query', () => {
-				const error = new Error( 'something went wrong' );
+			expect(isRequestingDomainsSuggestions(state, example)).to.equal(true);
+			expect(isRequestingDomainsSuggestions(state, foobar)).to.equal(false);
+			expect(isRequestingDomainsSuggestions(state, notDefined)).to.equal(false);
+		});
+		describe('#getDomainsSuggestionsError()', () => {
+			test('should return requesting domains suggestion state for a given query', () => {
+				const error = new Error('something went wrong');
 				const state = {
 					domains: {
 						suggestions: {
@@ -140,10 +140,10 @@ describe( 'selectors', () => {
 					includeSubdomain: false,
 				};
 
-				expect( getDomainsSuggestionsError( state, example ) ).to.equal( error );
-				expect( getDomainsSuggestionsError( state, foobar ) ).to.equal( null );
-				expect( getDomainsSuggestionsError( state, notDefined ) ).to.equal( null );
-			} );
-		} );
-	} );
-} );
+				expect(getDomainsSuggestionsError(state, example)).to.equal(error);
+				expect(getDomainsSuggestionsError(state, foobar)).to.equal(null);
+				expect(getDomainsSuggestionsError(state, notDefined)).to.equal(null);
+			});
+		});
+	});
+});

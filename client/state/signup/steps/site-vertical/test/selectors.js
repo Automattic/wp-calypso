@@ -12,7 +12,7 @@ import {
 	getVerticalForDomainSuggestions,
 } from '../selectors';
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	const verticals = {
 		business: {
 			felice: [
@@ -53,65 +53,63 @@ describe( 'selectors', () => {
 		},
 	};
 
-	describe( 'getSiteVerticalName', () => {
-		test( 'should return empty string as a default state', () => {
-			expect( getSiteVerticalName( {} ) ).toEqual( '' );
-		} );
+	describe('getSiteVerticalName', () => {
+		test('should return empty string as a default state', () => {
+			expect(getSiteVerticalName({})).toEqual('');
+		});
 
-		test( 'should return site vertical from the state', () => {
-			expect( getSiteVerticalName( state ) ).toEqual( state.signup.steps.siteVertical.name );
-		} );
-	} );
-	describe( 'getSiteVerticalSlug', () => {
-		test( 'should return empty string as a default state', () => {
-			expect( getSiteVerticalSlug( {} ) ).toEqual( '' );
-		} );
+		test('should return site vertical from the state', () => {
+			expect(getSiteVerticalName(state)).toEqual(state.signup.steps.siteVertical.name);
+		});
+	});
+	describe('getSiteVerticalSlug', () => {
+		test('should return empty string as a default state', () => {
+			expect(getSiteVerticalSlug({})).toEqual('');
+		});
 
-		test( 'should return site vertical from the state', () => {
-			expect( getSiteVerticalSlug( state ) ).toEqual( state.signup.steps.siteVertical.slug );
-		} );
-	} );
-	describe( 'getSiteVerticalIsUserInput', () => {
-		test( 'should return true as a default state', () => {
-			expect( getSiteVerticalIsUserInput( {} ) ).toBe( true );
-		} );
+		test('should return site vertical from the state', () => {
+			expect(getSiteVerticalSlug(state)).toEqual(state.signup.steps.siteVertical.slug);
+		});
+	});
+	describe('getSiteVerticalIsUserInput', () => {
+		test('should return true as a default state', () => {
+			expect(getSiteVerticalIsUserInput({})).toBe(true);
+		});
 
-		test( 'should return site vertical from the state', () => {
-			expect( getSiteVerticalIsUserInput( state ) ).toEqual(
+		test('should return site vertical from the state', () => {
+			expect(getSiteVerticalIsUserInput(state)).toEqual(
 				state.signup.steps.siteVertical.isUserInput
 			);
-		} );
-	} );
-	describe( 'getSiteVerticalPreview', () => {
-		test( 'should return empty string as a default state', () => {
-			expect( getSiteVerticalPreview( {} ) ).toBe( '' );
-		} );
+		});
+	});
+	describe('getSiteVerticalPreview', () => {
+		test('should return empty string as a default state', () => {
+			expect(getSiteVerticalPreview({})).toBe('');
+		});
 
-		test( 'should return site vertical from the state', () => {
-			expect( getSiteVerticalPreview( state ) ).toEqual( verticals.business.felice[ 0 ].preview );
-		} );
-	} );
-	describe( '', () => {
-		test( 'should return empty string as a default state', () => {
-			expect( getSiteVerticalId( {} ) ).toBe( '' );
-		} );
+		test('should return site vertical from the state', () => {
+			expect(getSiteVerticalPreview(state)).toEqual(verticals.business.felice[0].preview);
+		});
+	});
+	describe('', () => {
+		test('should return empty string as a default state', () => {
+			expect(getSiteVerticalId({})).toBe('');
+		});
 
-		test( 'should return site id from the state', () => {
-			expect( getSiteVerticalId( state ) ).toEqual( state.signup.steps.siteVertical.id );
-		} );
-	} );
-	describe( 'getSiteVerticalParentId', () => {
-		test( 'should return empty string as a default state', () => {
-			expect( getSiteVerticalParentId( {} ) ).toBe( '' );
-		} );
+		test('should return site id from the state', () => {
+			expect(getSiteVerticalId(state)).toEqual(state.signup.steps.siteVertical.id);
+		});
+	});
+	describe('getSiteVerticalParentId', () => {
+		test('should return empty string as a default state', () => {
+			expect(getSiteVerticalParentId({})).toBe('');
+		});
 
-		test( 'should return site id from the state', () => {
-			expect( getSiteVerticalParentId( state ) ).toEqual(
-				state.signup.steps.siteVertical.parentId
-			);
-		} );
-	} );
-	describe( 'getSiteVerticalData', () => {
+		test('should return site id from the state', () => {
+			expect(getSiteVerticalParentId(state)).toEqual(state.signup.steps.siteVertical.parentId);
+		});
+	});
+	describe('getSiteVerticalData', () => {
 		const defaultPreviewData = {
 			isUserInputVertical: true,
 			parent: '',
@@ -123,27 +121,27 @@ describe( 'selectors', () => {
 			verticalSlug: '',
 		};
 
-		test( 'should return default vertical object with empty string values', () => {
-			expect( getSiteVerticalData( {} ) ).toEqual( defaultPreviewData );
-		} );
+		test('should return default vertical object with empty string values', () => {
+			expect(getSiteVerticalData({})).toEqual(defaultPreviewData);
+		});
 
-		test( 'should return direct match', () => {
-			expect( getSiteVerticalData( state ) ).toEqual( verticals.business.felice[ 0 ] );
-		} );
-	} );
+		test('should return direct match', () => {
+			expect(getSiteVerticalData(state)).toEqual(verticals.business.felice[0]);
+		});
+	});
 
-	describe( 'getVerticalForDomainSuggestions', () => {
-		test( 'should return empty string as a default state', () => {
-			expect( getVerticalForDomainSuggestions( { signup: undefined } ) ).toEqual( '' );
-		} );
+	describe('getVerticalForDomainSuggestions', () => {
+		test('should return empty string as a default state', () => {
+			expect(getVerticalForDomainSuggestions({ signup: undefined })).toEqual('');
+		});
 
-		test( 'should return vertical id first', () => {
-			expect( getVerticalForDomainSuggestions( state ) ).toEqual( 'p4u' );
-		} );
+		test('should return vertical id first', () => {
+			expect(getVerticalForDomainSuggestions(state)).toEqual('p4u');
+		});
 
-		test( 'should return survey vertical if vertical id not available', () => {
+		test('should return survey vertical if vertical id not available', () => {
 			expect(
-				getVerticalForDomainSuggestions( {
+				getVerticalForDomainSuggestions({
 					signup: {
 						steps: {
 							survey: {
@@ -153,8 +151,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-				} )
-			).toEqual( 'test-survey' );
-		} );
-	} );
-} );
+				})
+			).toEqual('test-survey');
+		});
+	});
+});

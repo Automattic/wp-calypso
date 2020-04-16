@@ -13,12 +13,12 @@ import { useEffect, useRef } from '@wordpress/element';
  * @param  {any}  value state or prop value for which previous value is required
  * @returns {any}  previous value of requested state or prop value
  */
-export function usePrevious( value ) {
+export function usePrevious(value) {
 	const ref = useRef();
 
-	useEffect( () => {
+	useEffect(() => {
 		ref.current = value;
-	}, [ value ] );
+	}, [value]);
 
 	return ref.current;
 }

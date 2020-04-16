@@ -13,25 +13,25 @@ const initialState = {
 	searchFilter: '',
 };
 
-export default withoutPersistence( ( state = initialState, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = initialState, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_PROMOTIONS_PAGE_SET:
-			return promotionsPageSet( state, action );
+			return promotionsPageSet(state, action);
 		case WOOCOMMERCE_PROMOTIONS_SEARCH:
-			return promotionsSearch( state, action );
+			return promotionsSearch(state, action);
 	}
 
 	return state;
-} );
+});
 
-function promotionsPageSet( state, action ) {
+function promotionsPageSet(state, action) {
 	const currentPage = 0 < action.currentPage ? action.currentPage : initialState.currentPage;
 	const perPage = 0 < action.perPage ? action.perPage : initialState.perPage;
 
 	return { ...state, perPage, currentPage };
 }
 
-function promotionsSearch( state, action ) {
+function promotionsSearch(state, action) {
 	const searchFilter = action.searchFilter || '';
 	return { ...state, searchFilter, currentPage: 1 };
 }

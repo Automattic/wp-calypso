@@ -13,7 +13,7 @@ export const itemsSchema = {
 	type: 'object',
 	patternProperties: {
 		'^[0-9]+-[0-9]+$': {
-			enum: values( CONVERSATION_FOLLOW_STATUS ),
+			enum: values(CONVERSATION_FOLLOW_STATUS),
 		},
 	},
 	additionalProperties: false,

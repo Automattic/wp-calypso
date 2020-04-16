@@ -4,11 +4,11 @@
  * @param {object} site Site object. We need just the slug (string) from it.
  * @returns {string} URL with site.
  */
-export const getLink = ( path, site ) => {
-	if ( ! site || ! site.slug ) {
+export const getLink = (path, site) => {
+	if (!site || !site.slug) {
 		return '#unknownsite';
 	}
-	return path.replace( ':site', site.slug );
+	return path.replace(':site', site.slug);
 };
 
 /* Returns the origin for the current browser window
@@ -17,12 +17,12 @@ export const getLink = ( path, site ) => {
  */
 export const getOrigin = () => {
 	let origin = 'https://wordpress.com';
-	if ( 'undefined' !== typeof window && window.location ) {
-		origin = `${ window.location.protocol }//${ window.location.hostname }`;
+	if ('undefined' !== typeof window && window.location) {
+		origin = `${window.location.protocol}//${window.location.hostname}`;
 	}
 
-	if ( window.location.port ) {
-		origin += `:${ window.location.port }`;
+	if (window.location.port) {
+		origin += `:${window.location.port}`;
 	}
 
 	return origin;

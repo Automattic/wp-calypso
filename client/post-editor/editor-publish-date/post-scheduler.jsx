@@ -16,22 +16,22 @@ import * as postUtils from 'state/posts/utils';
 import { timezone, gmtOffset } from 'lib/site/utils';
 import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
 
-const PostScheduleWithOtherPostsIndicated = connect( ( state, { site, query } ) => ( {
-	posts: getPostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
-} ) )( function( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
+const PostScheduleWithOtherPostsIndicated = connect((state, { site, query }) => ({
+	posts: getPostsForQueryIgnoringPage(state, get(site, 'ID'), query) || [],
+}))(function ({ onDateChange, onMonthChange, posts, selectedDay, site }) {
 	return (
 		<PostSchedule
-			displayInputChrono={ false }
-			selectedDay={ selectedDay }
-			onDateChange={ onDateChange }
-			onMonthChange={ onMonthChange }
-			posts={ posts }
-			site={ site }
-			timezone={ timezone( site ) }
-			gmtOffset={ gmtOffset( site ) }
+			displayInputChrono={false}
+			selectedDay={selectedDay}
+			onDateChange={onDateChange}
+			onMonthChange={onMonthChange}
+			posts={posts}
+			site={site}
+			timezone={timezone(site)}
+			gmtOffset={gmtOffset(site)}
 		/>
 	);
-} );
+});
 
 export default class PostScheduler extends PureComponent {
 	static propTypes = {
@@ -41,30 +41,24 @@ export default class PostScheduler extends PureComponent {
 		site: PropTypes.object,
 	};
 
-	state = this.getFirstAndLastDayOfTheMonth( this.props.initialDate );
+	state = this.getFirstAndLastDayOfTheMonth(this.props.initialDate);
 
 	// Calculates the start and end of the period shown by a monthly calendar UI
 	// for the specified `date`:
 	// - first day of the week containing the first day of the month
 	// - last day of the week containing the last day of the month
-	getFirstAndLastDayOfTheMonth( date ) {
-		const tz = timezone( this.props.site );
-		const tzDate = tz ? moment.tz( date, tz ) : moment( date );
+	getFirstAndLastDayOfTheMonth(date) {
+		const tz = timezone(this.props.site);
+		const tzDate = tz ? moment.tz(date, tz) : moment(date);
 
 		return {
-			firstDayOfTheMonth: tzDate
-				.clone()
-				.startOf( 'month' )
-				.startOf( 'week' ),
-			lastDayOfTheMonth: tzDate
-				.clone()
-				.endOf( 'month' )
-				.endOf( 'week' ),
+			firstDayOfTheMonth: tzDate.clone().startOf('month').startOf('week'),
+			lastDayOfTheMonth: tzDate.clone().endOf('month').endOf('week'),
 		};
 	}
 
-	setCurrentMonth = date => {
-		this.setState( this.getFirstAndLastDayOfTheMonth( date ) );
+	setCurrentMonth = (date) => {
+		this.setState(this.getFirstAndLastDayOfTheMonth(date));
 	};
 
 	render() {
@@ -78,15 +72,13 @@ export default class PostScheduler extends PureComponent {
 
 		return (
 			<Fragment>
-				{ ! postUtils.isPage( post ) && (
-					<QueryPosts siteId={ get( site, 'ID' ) } query={ query } />
-				) }
+				{!postUtils.isPage(post) && <QueryPosts siteId={get(site, 'ID')} query={query} />}
 				<PostScheduleWithOtherPostsIndicated
-					onDateChange={ setPostDate }
-					onMonthChange={ this.setCurrentMonth }
-					query={ query }
-					selectedDay={ get( post, 'date' ) }
-					site={ site }
+					onDateChange={setPostDate}
+					onMonthChange={this.setCurrentMonth}
+					query={query}
+					selectedDay={get(post, 'date')}
+					site={site}
 				/>
 			</Fragment>
 		);

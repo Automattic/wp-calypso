@@ -23,7 +23,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {object} action Redux action
  * @returns {object} WordPress.com API HTTP Request action object
  */
-export const fetchLocaleSuggestions = action =>
+export const fetchLocaleSuggestions = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -40,14 +40,14 @@ export const fetchLocaleSuggestions = action =>
  * @param {Array} data raw data from /locale-guess
  * @returns {object} Redux action
  */
-export const addLocaleSuggestions = ( action, data ) => receiveLocaleSuggestions( data );
+export const addLocaleSuggestions = (action, data) => receiveLocaleSuggestions(data);
 
-export const dispatchPlansRequest = dispatchRequest( {
+export const dispatchPlansRequest = dispatchRequest({
 	fetch: fetchLocaleSuggestions,
 	onSuccess: addLocaleSuggestions,
 	onError: noop,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/locale-guess/index.js', {
-	[ I18N_LOCALE_SUGGESTIONS_REQUEST ]: [ dispatchPlansRequest ],
-} );
+registerHandlers('state/data-layer/wpcom/locale-guess/index.js', {
+	[I18N_LOCALE_SUGGESTIONS_REQUEST]: [dispatchPlansRequest],
+});

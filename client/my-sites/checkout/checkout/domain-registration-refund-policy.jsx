@@ -16,7 +16,7 @@ class DomainRegistrationRefundPolicy extends React.Component {
 	static displayName = 'RegistrationRefundPolicy';
 
 	recordRefundsSupportClick = () => {
-		gaRecordEvent( 'Upgrades', 'Clicked Refund Support Link' );
+		gaRecordEvent('Upgrades', 'Clicked Refund Support Link');
 	};
 
 	renderPolicy = () => {
@@ -26,27 +26,27 @@ class DomainRegistrationRefundPolicy extends React.Component {
 				components: {
 					refundsSupportPage: (
 						<a
-							href={ REFUNDS }
+							href={REFUNDS}
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={ this.recordRefundsSupportClick }
+							onClick={this.recordRefundsSupportClick}
 						/>
 					),
 				},
 			}
 		);
 
-		if ( hasDomainBeingUsedForPlan( this.props.cart ) ) {
+		if (hasDomainBeingUsedForPlan(this.props.cart)) {
 			message = this.props.translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{
 					components: {
 						refundsSupportPage: (
 							<a
-								href={ REFUNDS }
+								href={REFUNDS}
 								target="_blank"
 								rel="noopener noreferrer"
-								onClick={ this.recordRefundsSupportClick }
+								onClick={this.recordRefundsSupportClick}
 							/>
 						),
 					},
@@ -58,17 +58,17 @@ class DomainRegistrationRefundPolicy extends React.Component {
 	};
 
 	render() {
-		if ( ! hasDomainRegistration( this.props.cart ) ) {
+		if (!hasDomainRegistration(this.props.cart)) {
 			return null;
 		}
 
 		return (
 			<div className="checkout__domain-refund-policy">
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>{ this.renderPolicy() }</p>
+				<Gridicon icon="info-outline" size={18} />
+				<p>{this.renderPolicy()}</p>
 			</div>
 		);
 	}
 }
 
-export default localize( DomainRegistrationRefundPolicy );
+export default localize(DomainRegistrationRefundPolicy);

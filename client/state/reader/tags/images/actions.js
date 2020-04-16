@@ -19,7 +19,7 @@ import 'state/reader/init';
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:redux:reader-tags-images' );
+const debug = debugModule('calypso:redux:reader-tags-images');
 
 /**
  * Returns an action object to signal that image objects have been received.
@@ -28,7 +28,7 @@ const debug = debugModule( 'calypso:redux:reader-tags-images' );
  * @param  {Array}  images Images received
  * @returns {object} Action object
  */
-export function receiveTagImages( tag, images ) {
+export function receiveTagImages(tag, images) {
 	return {
 		type: READER_TAG_IMAGES_RECEIVE,
 		tag,
@@ -43,42 +43,42 @@ export function receiveTagImages( tag, images ) {
  * @param  {number} limit Maximum number of results to return
  * @returns {Function} Action thunk
  */
-export function requestTagImages( tag, limit = 5 ) {
-	return dispatch => {
-		dispatch( {
+export function requestTagImages(tag, limit = 5) {
+	return (dispatch) => {
+		dispatch({
 			type: READER_TAG_IMAGES_REQUEST,
 			tag,
-		} );
+		});
 
 		const query = {
 			tag,
 			number: limit,
 		};
 
-		debug( `Requesting tag images for tag ${ tag }` );
+		debug(`Requesting tag images for tag ${tag}`);
 
 		return wpcom
 			.undocumented()
-			.readTagImages( query )
+			.readTagImages(query)
 			.then(
-				data => {
-					dispatch( receiveTagImages( tag, ( data && data.images ) || [] ) );
+				(data) => {
+					dispatch(receiveTagImages(tag, (data && data.images) || []));
 
-					dispatch( {
+					dispatch({
 						type: READER_TAG_IMAGES_REQUEST_SUCCESS,
 						tag,
 						data,
-					} );
+					});
 				},
-				error => {
+				(error) => {
 					// dispatch an empty array so we stop requesting it
-					dispatch( receiveTagImages( tag, [] ) );
+					dispatch(receiveTagImages(tag, []));
 
-					dispatch( {
+					dispatch({
 						type: READER_TAG_IMAGES_REQUEST_FAILURE,
 						tag,
 						error,
-					} );
+					});
 				}
 			);
 	};

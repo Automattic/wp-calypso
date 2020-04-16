@@ -8,18 +8,18 @@ import { expect } from 'chai';
  */
 import getGeoLocation from '../get-geolocation';
 
-describe( 'getGeoLocation', () => {
-	test( 'should return null if geoLocation is not set', () => {
-		const selected = getGeoLocation( {
+describe('getGeoLocation', () => {
+	test('should return null if geoLocation is not set', () => {
+		const selected = getGeoLocation({
 			happychat: {
 				user: { geoLocation: null },
 			},
-		} );
-		expect( selected ).to.equal( null );
-	} );
+		});
+		expect(selected).to.equal(null);
+	});
 
-	test( 'should return value if geoLocation is set', () => {
-		const selected = getGeoLocation( {
+	test('should return value if geoLocation is set', () => {
+		const selected = getGeoLocation({
 			happychat: {
 				user: {
 					geoLocation: {
@@ -27,7 +27,7 @@ describe( 'getGeoLocation', () => {
 					},
 				},
 			},
-		} );
-		expect( selected ).to.eql( { city: 'Timisoara' } );
-	} );
-} );
+		});
+		expect(selected).to.eql({ city: 'Timisoara' });
+	});
+});

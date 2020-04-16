@@ -48,8 +48,8 @@ export class Comment extends Component {
 		updateLastUndo: PropTypes.func,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			isEditMode: props.isEditMode,
@@ -59,48 +59,48 @@ export class Comment extends Component {
 	}
 
 	UNSAFE_componentWillMount() {
-		this.debounceScrollToOffset = debounce( this.scrollToOffset, 100 );
+		this.debounceScrollToOffset = debounce(this.scrollToOffset, 100);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { isBulkMode: wasBulkMode, isPostView: wasPostView } = this.props;
 		const { isBulkMode, isPostView } = nextProps;
 
 		const offsetTop =
-			wasPostView !== isPostView || `#comment-${ this.props.commentId }` !== window.location.hash
+			wasPostView !== isPostView || `#comment-${this.props.commentId}` !== window.location.hash
 				? 0
 				: this.getCommentOffsetTop();
 
-		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
+		this.setState(({ isEditMode, isReplyVisible }) => ({
 			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
 			offsetTop,
-		} ) );
+		}));
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		if ( prevState.offsetTop !== this.state.offsetTop ) {
-			this.debounceScrollToOffset( this.state.offsetTop );
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.offsetTop !== this.state.offsetTop) {
+			this.debounceScrollToOffset(this.state.offsetTop);
 		}
 	}
 
-	shouldComponentUpdate = ( nextProps, nextState ) =>
-		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
+	shouldComponentUpdate = (nextProps, nextState) =>
+		!isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
 
-	storeCardRef = card => ( this.commentCard = card );
+	storeCardRef = (card) => (this.commentCard = card);
 
-	keyDownHandler = event => {
+	keyDownHandler = (event) => {
 		const { isBulkMode } = this.props;
 		const commentHasFocus =
 			document &&
 			this.commentCard &&
-			document.activeElement === ReactDom.findDOMNode( this.commentCard );
+			document.activeElement === ReactDom.findDOMNode(this.commentCard);
 
-		if ( ! isBulkMode || ! commentHasFocus ) {
+		if (!isBulkMode || !commentHasFocus) {
 			return;
 		}
 
-		switch ( event.keyCode ) {
+		switch (event.keyCode) {
 			case 13: // enter
 			case 32: // space
 				event.preventDefault();
@@ -109,7 +109,7 @@ export class Comment extends Component {
 	};
 
 	getCommentOffsetTop = () => {
-		if ( ! window ) {
+		if (!window) {
 			return 0;
 		}
 
@@ -119,9 +119,9 @@ export class Comment extends Component {
 		// On >660px, adjust the comment card `offsetTop` to avoid being covered by the masterbar.
 		// 56px = 48px (masterbar height) + 8px (comment card vertical margin)
 		// 66px = 58px (post view sticky header) + 8px (comment card vertical margin)
-		const offsetAdjustment = ~~isWithinBreakpoint( '>660px' ) && 56 - ( isPostView && 66 );
+		const offsetAdjustment = ~~isWithinBreakpoint('>660px') && 56 - (isPostView && 66);
 
-		const commentNode = ReactDom.findDOMNode( this.commentCard );
+		const commentNode = ReactDom.findDOMNode(this.commentCard);
 		const newOffsetTop = commentNode.offsetTop;
 
 		return newOffsetTop > offsetAdjustment && newOffsetTop > offsetTop
@@ -130,24 +130,23 @@ export class Comment extends Component {
 	};
 
 	scrollToOffset = () => {
-		if ( ! window || `#comment-${ this.props.commentId }` !== window.location.hash ) {
+		if (!window || `#comment-${this.props.commentId}` !== window.location.hash) {
 			return;
 		}
 		const { offsetTop } = this.state;
-		scrollTo( { x: 0, y: offsetTop } );
+		scrollTo({ x: 0, y: offsetTop });
 	};
 
 	toggleEditMode = () => {
-		this.setState( ( { isEditMode } ) => ( {
-			isEditMode: ! isEditMode,
+		this.setState(({ isEditMode }) => ({
+			isEditMode: !isEditMode,
 			isReplyVisible: false,
-		} ) );
+		}));
 	};
 
-	toggleReply = () =>
-		this.setState( ( { isReplyVisible } ) => ( { isReplyVisible: ! isReplyVisible } ) );
+	toggleReply = () => this.setState(({ isReplyVisible }) => ({ isReplyVisible: !isReplyVisible }));
 
-	toggleSelected = () => this.props.toggleSelected( this.props.minimumComment );
+	toggleSelected = () => this.props.toggleSelected(this.props.minimumComment);
 
 	render() {
 		const {
@@ -167,71 +166,67 @@ export class Comment extends Component {
 		} = this.props;
 		const { isEditMode, isReplyVisible } = this.state;
 
-		const classes = classNames( 'comment', {
+		const classes = classNames('comment', {
 			'is-at-max-depth': isAtMaxDepth,
 			'is-bulk-mode': isBulkMode,
 			'is-edit-mode': isEditMode,
 			'is-placeholder': isLoading,
 			'is-pending': commentIsPending,
 			'is-reply-visible': isReplyVisible,
-		} );
+		});
 
 		return (
 			<Card
-				className={ classes }
-				id={ `comment-${ commentId }` }
-				onClick={ isBulkMode ? this.toggleSelected : undefined }
-				onKeyDown={ this.keyDownHandler }
-				ref={ this.storeCardRef }
+				className={classes}
+				id={`comment-${commentId}`}
+				onClick={isBulkMode ? this.toggleSelected : undefined}
+				onKeyDown={this.keyDownHandler}
+				ref={this.storeCardRef}
 			>
-				{ refreshCommentData && (
-					<QueryComment commentId={ commentId } siteId={ siteId } forceWpcom />
-				) }
+				{refreshCommentData && <QueryComment commentId={commentId} siteId={siteId} forceWpcom />}
 
-				{ ( ! isEditMode || isLoading ) && (
+				{(!isEditMode || isLoading) && (
 					<div className="comment__detail">
-						<CommentHeader { ...{ commentId, isBulkMode, isEditMode, isPostView, isSelected } } />
+						<CommentHeader {...{ commentId, isBulkMode, isEditMode, isPostView, isSelected }} />
 
-						<CommentContent { ...{ commentId, isBulkMode, isPostView } } />
+						<CommentContent {...{ commentId, isBulkMode, isPostView }} />
 
-						{ ! isBulkMode && (
+						{!isBulkMode && (
 							<CommentActions
-								{ ...{ siteId, postId, commentId, commentsListQuery, redirect, updateLastUndo } }
-								getCommentOffsetTop={ this.getCommentOffsetTop }
-								toggleEditMode={ this.toggleEditMode }
-								toggleReply={ this.toggleReply }
+								{...{ siteId, postId, commentId, commentsListQuery, redirect, updateLastUndo }}
+								getCommentOffsetTop={this.getCommentOffsetTop}
+								toggleEditMode={this.toggleEditMode}
+								toggleReply={this.toggleReply}
 							/>
-						) }
+						)}
 
-						{ ! isBulkMode && (
-							<CommentReply { ...{ commentId, commentsListQuery, isReplyVisible } } />
-						) }
+						{!isBulkMode && <CommentReply {...{ commentId, commentsListQuery, isReplyVisible }} />}
 					</div>
-				) }
+				)}
 
-				{ isEditMode && ! isLoading && (
-					<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
-				) }
+				{isEditMode && !isLoading && (
+					<CommentEdit {...{ commentId }} toggleEditMode={this.toggleEditMode} />
+				)}
 
-				{ isPostView && isEnabled( 'comments/management/threaded-view' ) && (
-					<CommentRepliesList { ...{ siteId, commentParentId: commentId } } />
-				) }
+				{isPostView && isEnabled('comments/management/threaded-view') && (
+					<CommentRepliesList {...{ siteId, commentParentId: commentId }} />
+				)}
 			</Card>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { commentId } ) => {
-	const siteId = getSelectedSiteId( state );
-	const comment = getSiteComment( state, siteId, commentId );
-	const commentStatus = get( comment, 'status' );
+const mapStateToProps = (state, { commentId }) => {
+	const siteId = getSelectedSiteId(state);
+	const comment = getSiteComment(state, siteId, commentId);
+	const commentStatus = get(comment, 'status');
 	return {
 		siteId,
-		postId: get( comment, 'post.ID' ),
+		postId: get(comment, 'post.ID'),
 		commentIsPending: 'unapproved' === commentStatus,
-		isLoading: isUndefined( comment ),
-		minimumComment: getMinimumComment( comment ),
+		isLoading: isUndefined(comment),
+		minimumComment: getMinimumComment(comment),
 	};
 };
 
-export default connect( mapStateToProps )( Comment );
+export default connect(mapStateToProps)(Comment);

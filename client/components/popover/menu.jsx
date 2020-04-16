@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
  */
 import Popover from 'components/popover';
 
-const isInvalidTarget = target => {
+const isInvalidTarget = (target) => {
 	return target.tagName === 'HR';
 };
 
@@ -52,43 +52,43 @@ class PopoverMenu extends Component {
 
 		return (
 			<PopoverComponent
-				onClose={ this._onClose }
-				onShow={ this._onShow }
-				autoPosition={ autoPosition }
-				className={ className }
-				context={ context }
-				customPosition={ customPosition }
-				isVisible={ isVisible }
-				popoverTitle={ popoverTitle }
-				position={ position }
+				onClose={this._onClose}
+				onShow={this._onShow}
+				autoPosition={autoPosition}
+				className={className}
+				context={context}
+				customPosition={customPosition}
+				isVisible={isVisible}
+				popoverTitle={popoverTitle}
+				position={position}
 			>
 				<div
-					ref={ this.menu }
+					ref={this.menu}
 					role="menu"
 					className="popover__menu"
-					onKeyDown={ this._onKeyDown }
+					onKeyDown={this._onKeyDown}
 					tabIndex="-1"
 				>
-					{ React.Children.map( this.props.children, this._setPropsOnChild, this ) }
+					{React.Children.map(this.props.children, this._setPropsOnChild, this)}
 				</div>
 			</PopoverComponent>
 		);
 	}
 
-	_setPropsOnChild = child => {
-		if ( child == null ) {
+	_setPropsOnChild = (child) => {
+		if (child == null) {
 			return child;
 		}
 
 		const { action, onClick } = child.props;
 
-		return React.cloneElement( child, {
+		return React.cloneElement(child, {
 			action: null,
 			onClick: () => {
 				onClick && onClick();
-				this._onClose( action );
+				this._onClose(action);
 			},
-		} );
+		});
 	};
 
 	_onShow = () => {
@@ -96,7 +96,7 @@ class PopoverMenu extends Component {
 
 		this._previouslyFocusedElement = document.activeElement;
 
-		if ( elementToFocus ) {
+		if (elementToFocus) {
 			elementToFocus.focus();
 		}
 	};
@@ -107,69 +107,67 @@ class PopoverMenu extends Component {
 	 * This doesn't cover crazy things like a separator at the very top or
 	 * bottom.
 	 */
-	_getClosestSibling = ( target, isDownwardMotion = true ) => {
+	_getClosestSibling = (target, isDownwardMotion = true) => {
 		const menu = this.menu.current;
 
 		let first = menu.firstChild,
 			last = menu.lastChild;
 
-		if ( ! isDownwardMotion ) {
+		if (!isDownwardMotion) {
 			first = menu.lastChild;
 			last = menu.firstChild;
 		}
 
-		if ( target === menu ) {
+		if (target === menu) {
 			return first;
 		}
 
-		const closest = target[ isDownwardMotion ? 'nextSibling' : 'previousSibling' ];
+		const closest = target[isDownwardMotion ? 'nextSibling' : 'previousSibling'];
 
 		const sibling = closest || last;
 
-		return isInvalidTarget( sibling )
-			? this._getClosestSibling( sibling, isDownwardMotion )
-			: sibling;
+		return isInvalidTarget(sibling) ? this._getClosestSibling(sibling, isDownwardMotion) : sibling;
 	};
 
-	_onKeyDown = event => {
+	_onKeyDown = (event) => {
 		const target = event.target;
 		let handled = false;
 		let elementToFocus;
 
-		switch ( event.keyCode ) {
+		switch (event.keyCode) {
 			case 9: // tab
 				this.props.onClose();
 				handled = true;
 				break;
 			case 38: // up arrow
-				elementToFocus = this._getClosestSibling( target, false );
+				elementToFocus = this._getClosestSibling(target, false);
 				handled = true;
 				break;
 			case 40: // down arrow
-				elementToFocus = this._getClosestSibling( target, true );
+				elementToFocus = this._getClosestSibling(target, true);
 				handled = true;
 				break;
 			default:
 				break; // do nothing
 		}
 
-		if ( elementToFocus ) {
+		if (elementToFocus) {
 			elementToFocus.focus();
 		}
 
-		if ( handled ) {
+		if (handled) {
 			event.preventDefault();
 		}
 	};
 
-	_onClose = action => {
-		if ( this._previouslyFocusedElement ) {
+	_onClose = (action) => {
+		if (this._previouslyFocusedElement) {
 			this._previouslyFocusedElement.focus();
 			this._previouslyFocusedElement = null;
 		}
 
-		if ( this.props.onClose ) {
-			this.props.onClose( action );
+		if (this.props.onClose) {
+			this.props.onClose(action);
 		}
 	};
 }

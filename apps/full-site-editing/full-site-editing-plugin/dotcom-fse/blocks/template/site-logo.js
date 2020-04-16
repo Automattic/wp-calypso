@@ -5,14 +5,14 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { addFilter } from '@wordpress/hooks';
 
-const addFSESiteLogoClassname = createHigherOrderComponent( BlockListBlock => {
-	return props => {
-		if ( props.attributes.className !== 'fse-site-logo' ) {
-			return <BlockListBlock { ...props } />;
+const addFSESiteLogoClassname = createHigherOrderComponent((BlockListBlock) => {
+	return (props) => {
+		if (props.attributes.className !== 'fse-site-logo') {
+			return <BlockListBlock {...props} />;
 		}
 
-		return <BlockListBlock { ...props } className="template__site-logo" />;
+		return <BlockListBlock {...props} className="template__site-logo" />;
 	};
-}, 'addFSESiteLogoClassname' );
+}, 'addFSESiteLogoClassname');
 
-addFilter( 'editor.BlockListBlock', 'full-site-editing/blocks/template', addFSESiteLogoClassname );
+addFilter('editor.BlockListBlock', 'full-site-editing/blocks/template', addFSESiteLogoClassname);

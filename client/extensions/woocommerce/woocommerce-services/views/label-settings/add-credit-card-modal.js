@@ -19,33 +19,33 @@ import { createCardToken } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import { StripeHookProvider } from 'lib/stripe';
 
-function AddCardDialog( {
+function AddCardDialog({
 	siteId,
 	isVisible,
 	translate,
 	closeAddCardDialog: closeDialog,
 	addStoredCard: saveStoredCard,
-} ) {
-	const createCardAddToken = ( ...args ) => createCardToken( 'card_add', ...args );
+}) {
+	const createCardAddToken = (...args) => createCardToken('card_add', ...args);
 	const recordFormSubmitEvent = () =>
-		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
-	const onClose = () => closeDialog( siteId );
+		analytics.tracks.recordEvent('calypso_add_credit_card_form_submit');
+	const onClose = () => closeDialog(siteId);
 
 	return (
 		<Dialog
 			additionalClassNames="add-credit-card-modal woocommerce wcc-root"
-			isVisible={ isVisible }
-			onClose={ onClose }
+			isVisible={isVisible}
+			onClose={onClose}
 		>
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+			<StripeHookProvider configurationArgs={{ needs_intent: true }}>
 				<CreditCardForm
-					createCardToken={ createCardAddToken }
-					recordFormSubmitEvent={ recordFormSubmitEvent }
-					saveStoredCard={ saveStoredCard }
-					successCallback={ onClose }
-					showUsedForExistingPurchasesInfo={ true }
-					heading={ translate( 'Add credit card' ) }
-					onCancel={ onClose }
+					createCardToken={createCardAddToken}
+					recordFormSubmitEvent={recordFormSubmitEvent}
+					saveStoredCard={saveStoredCard}
+					successCallback={onClose}
+					showUsedForExistingPurchasesInfo={true}
+					heading={translate('Add credit card')}
+					onCancel={onClose}
 				/>
 			</StripeHookProvider>
 		</Dialog>
@@ -60,15 +60,15 @@ AddCardDialog.propTypes = {
 	closeAddCardDialog: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId } ) => {
-	const form = getLabelSettingsForm( state, siteId );
+const mapStateToProps = (state, { siteId }) => {
+	const form = getLabelSettingsForm(state, siteId);
 	return {
-		isVisible: Boolean( form && form.addCardDialog ),
+		isVisible: Boolean(form && form.addCardDialog),
 	};
 };
 
-const mapDispatchToProps = dispatch => {
-	return bindActionCreators( { closeAddCardDialog, addStoredCard }, dispatch );
+const mapDispatchToProps = (dispatch) => {
+	return bindActionCreators({ closeAddCardDialog, addStoredCard }, dispatch);
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AddCardDialog ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(AddCardDialog));

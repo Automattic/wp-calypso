@@ -22,7 +22,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {object} action Redux action
  * @returns {object} original action
  */
-export const requestActivePromotions = action =>
+export const requestActivePromotions = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -39,9 +39,9 @@ export const requestActivePromotions = action =>
  * @param {Array} active_promotions raw data from active promotions API
  * @returns {Array<object>} Redux actions
  */
-export const receiveActivePromotions = ( action, { active_promotions } ) => [
+export const receiveActivePromotions = (action, { active_promotions }) => [
 	activePromotionsRequestSuccessAction(),
-	activePromotionsReceiveAction( active_promotions ),
+	activePromotionsReceiveAction(active_promotions),
 ];
 
 /**
@@ -51,15 +51,15 @@ export const receiveActivePromotions = ( action, { active_promotions } ) => [
  * @param {object} rawError raw error from HTTP request
  * @returns {object} Redux action
  */
-export const receiveError = ( action, rawError ) =>
-	activePromotionsRequestFailureAction( rawError instanceof Error ? rawError.message : rawError );
+export const receiveError = (action, rawError) =>
+	activePromotionsRequestFailureAction(rawError instanceof Error ? rawError.message : rawError);
 
-export const dispatchActivePromotionsRequest = dispatchRequest( {
+export const dispatchActivePromotionsRequest = dispatchRequest({
 	fetch: requestActivePromotions,
 	onSuccess: receiveActivePromotions,
 	onError: receiveError,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/active-promotions/index.js', {
-	[ ACTIVE_PROMOTIONS_REQUEST ]: [ dispatchActivePromotionsRequest ],
-} );
+registerHandlers('state/data-layer/wpcom/active-promotions/index.js', {
+	[ACTIVE_PROMOTIONS_REQUEST]: [dispatchActivePromotionsRequest],
+});

@@ -19,29 +19,29 @@ import 'state/posts/init';
  * @param {number} postId Post ID to load
  * @returns {Promise<?object>} The edited post object
  */
-export const startEditingExistingPost = ( siteId, postId ) => ( dispatch, getState ) => {
-	const currentSiteId = getSelectedSiteId( getState() );
-	const currentPostId = getEditorPostId( getState() );
-	const hasJustOptedOutOfGutenberg = isPreviousRouteGutenberg( getState() );
-	if ( ! hasJustOptedOutOfGutenberg && currentSiteId === siteId && currentPostId === postId ) {
+export const startEditingExistingPost = (siteId, postId) => (dispatch, getState) => {
+	const currentSiteId = getSelectedSiteId(getState());
+	const currentPostId = getEditorPostId(getState());
+	const hasJustOptedOutOfGutenberg = isPreviousRouteGutenberg(getState());
+	if (!hasJustOptedOutOfGutenberg && currentSiteId === siteId && currentPostId === postId) {
 		// already editing same post
-		return Promise.resolve( getEditedPost( getState(), siteId, postId ) );
+		return Promise.resolve(getEditedPost(getState(), siteId, postId));
 	}
 
-	dispatch( startEditingPost( siteId, postId ) );
+	dispatch(startEditingPost(siteId, postId));
 
 	return wpcom
-		.site( siteId )
-		.post( postId )
-		.get( { context: 'edit', meta: 'autosave' } )
-		.then( post => {
-			post = normalizePostForActions( post );
-			dispatch( receivePost( post ) );
-			dispatch( editorReset() );
+		.site(siteId)
+		.post(postId)
+		.get({ context: 'edit', meta: 'autosave' })
+		.then((post) => {
+			post = normalizePostForActions(post);
+			dispatch(receivePost(post));
+			dispatch(editorReset());
 			return post;
-		} )
-		.catch( error => {
-			dispatch( editorSetLoadingError( error ) );
+		})
+		.catch((error) => {
+			dispatch(editorSetLoadingError(error));
 			return null;
-		} );
+		});
 };

@@ -15,8 +15,8 @@ export default class VersionExample extends PureComponent {
 	render() {
 		return (
 			<div>
-				<Version icon="my-sites" version={ 4.4 } />
-				<Version icon="plugins" version={ 3.8 } />
+				<Version icon="my-sites" version={4.4} />
+				<Version icon="plugins" version={3.8} />
 			</div>
 		);
 	}

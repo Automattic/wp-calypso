@@ -1,5 +1,5 @@
-export function isPending( post ) {
-	if ( ! post ) {
+export function isPending(post) {
+	if (!post) {
 		return false;
 	}
 

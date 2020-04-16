@@ -11,17 +11,17 @@ import Gridicon from 'components/gridicon';
  */
 import './search.scss';
 
-function TermTreeSelectorSearch( { searchTerm, onSearch } ) {
+function TermTreeSelectorSearch({ searchTerm, onSearch }) {
 	const translate = useTranslate();
 
 	return (
 		<div className="term-tree-selector__search">
-			<Gridicon icon="search" size={ 18 } />
+			<Gridicon icon="search" size={18} />
 			<input
 				type="search"
-				placeholder={ translate( 'Search…', { textOnly: true } ) }
-				value={ searchTerm }
-				onChange={ onSearch }
+				placeholder={translate('Search…', { textOnly: true })}
+				value={searchTerm}
+				onChange={onSearch}
 			/>
 		</div>
 	);

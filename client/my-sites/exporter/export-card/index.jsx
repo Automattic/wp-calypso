@@ -24,12 +24,12 @@ import { shouldShowProgress, getSelectedPostType, isExporting } from 'state/expo
 
 class ExportCard extends Component {
 	UNSAFE_componentWillMount() {
-		this.props.advancedSettingsFetch( this.props.siteId );
+		this.props.advancedSettingsFetch(this.props.siteId);
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.props.advancedSettingsFetch( newProps.siteId );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		if (newProps.siteId !== this.props.siteId) {
+			this.props.advancedSettingsFetch(newProps.siteId);
 		}
 	}
 
@@ -39,11 +39,11 @@ class ExportCard extends Component {
 		const exportButton = (
 			<SpinnerButton
 				className="export-card__export-button"
-				loading={ this.props.shouldShowProgress }
-				isPrimary={ false }
-				onClick={ this.props.exportAll }
-				text={ translate( 'Export all' ) }
-				loadingText={ translate( 'Exporting…' ) }
+				loading={this.props.shouldShowProgress}
+				isPrimary={false}
+				onClick={this.props.exportAll}
+				text={translate('Export all')}
+				loadingText={translate('Exporting…')}
 			/>
 		);
 
@@ -53,49 +53,49 @@ class ExportCard extends Component {
 					actionButtonIcon="cog"
 					header={
 						<div>
-							<h1 className="export-card__title">{ translate( 'Export your content' ) }</h1>
+							<h1 className="export-card__title">{translate('Export your content')}</h1>
 							<h2 className="export-card__subtitle">
-								{ translate(
+								{translate(
 									'Export all (or specific) text content (pages, posts, feedback) from your site.'
-								) }
+								)}
 							</h2>
 						</div>
 					}
-					summary={ exportButton }
-					expandedSummary={ exportButton }
+					summary={exportButton}
+					expandedSummary={exportButton}
 				>
 					<AdvancedSettings
-						postType={ this.props.postType }
-						shouldShowProgress={ this.props.shouldShowProgress }
-						onSelectPostType={ this.props.setPostType }
-						onClickExport={ this.props.exportSelectedItems }
+						postType={this.props.postType}
+						shouldShowProgress={this.props.shouldShowProgress}
+						onSelectPostType={this.props.setPostType}
+						onClickExport={this.props.exportSelectedItems}
 					/>
 				</FoldableCard>
-				{ this.props.isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
+				{this.props.isExporting && <Interval onTick={fetchStatus} period={EVERY_SECOND} />}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	postType: getSelectedPostType( state ),
-	shouldShowProgress: shouldShowProgress( state, siteId ),
-	isExporting: isExporting( state, siteId ),
-} );
+const mapStateToProps = (state, { siteId }) => ({
+	postType: getSelectedPostType(state),
+	shouldShowProgress: shouldShowProgress(state, siteId),
+	isExporting: isExporting(state, siteId),
+});
 
-const trackExportClick = ( scope = 'all' ) =>
-	recordTracksEvent( 'calypso_export_start_button_click', { scope } );
+const trackExportClick = (scope = 'all') =>
+	recordTracksEvent('calypso_export_start_button_click', { scope });
 
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
-	setPostType: flowRight( dispatch, setPostType ),
-	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
+const mapDispatchToProps = (dispatch, { siteId }) => ({
+	advancedSettingsFetch: flowRight(dispatch, advancedSettingsFetch),
+	setPostType: flowRight(dispatch, setPostType),
+	fetchStatus: () => dispatch(exportStatusFetch(siteId)),
 
-	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
+	exportAll: () => dispatch(withAnalytics(trackExportClick(), startExport(siteId))),
 	exportSelectedItems: () =>
 		dispatch(
-			withAnalytics( trackExportClick( 'selected' ), startExport( siteId, { exportAll: false } ) )
+			withAnalytics(trackExportClick('selected'), startExport(siteId, { exportAll: false }))
 		),
-} );
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ExportCard ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(ExportCard));

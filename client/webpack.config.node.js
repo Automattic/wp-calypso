@@ -8,19 +8,19 @@
 /**
  * External dependencies
  */
-const path = require( 'path' );
-const webpack = require( 'webpack' );
+const path = require('path');
+const webpack = require('webpack');
 
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
-const config = require( './server/config' );
-const bundleEnv = config( 'env' );
-const { workerCount } = require( './webpack.common' );
-const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const nodeExternals = require( 'webpack-node-externals' );
-const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const cacheIdentifier = require('./server/bundler/babel/babel-loader-cache-identifier');
+const config = require('./server/config');
+const bundleEnv = config('env');
+const { workerCount } = require('./webpack.common');
+const TranspileConfig = require('@automattic/calypso-build/webpack/transpile');
+const nodeExternals = require('webpack-node-externals');
+const FileConfig = require('@automattic/calypso-build/webpack/file-loader');
 
 /**
  * Internal variables
@@ -28,12 +28,12 @@ const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const isDevelopment = bundleEnv === 'development';
 const devTarget = process.env.DEV_TARGET || 'evergreen';
 
-const fileLoader = FileConfig.loader( {
-	publicPath: isDevelopment ? `/calypso/${ devTarget }/images/` : '/calypso/images/',
+const fileLoader = FileConfig.loader({
+	publicPath: isDevelopment ? `/calypso/${devTarget}/images/` : '/calypso/images/',
 	emitFile: false, // On the server side, don't actually copy files
-} );
+});
 
-const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
+const commitSha = process.env.hasOwnProperty('COMMIT_SHA') ? process.env.COMMIT_SHA : '(unknown)';
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -46,7 +46,7 @@ function getExternals() {
 		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 		// with modules that are incompatible with webpack bundling.
 		//
-		nodeExternals( {
+		nodeExternals({
 			whitelist: [
 				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
 				// non-JS asset imports that couldn't be processed by Node.js at runtime.
@@ -56,7 +56,7 @@ function getExternals() {
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
 			],
-		} ),
+		}),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
 		// to the path of the `build/bundle.js` bundle.
 		{
@@ -72,11 +72,11 @@ function getExternals() {
 	];
 }
 
-const buildDir = path.resolve( 'build' );
+const buildDir = path.resolve('build');
 
 const webpackConfig = {
 	devtool: 'source-map',
-	entry: path.join( __dirname, 'server' ),
+	entry: path.join(__dirname, 'server'),
 	target: 'node',
 	output: {
 		path: buildDir,
@@ -87,19 +87,19 @@ const webpackConfig = {
 	module: {
 		rules: [
 			{
-				include: path.join( __dirname, 'sections.js' ),
+				include: path.join(__dirname, 'sections.js'),
 				use: {
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+					loader: path.join(__dirname, 'server', 'bundler', 'sections-loader'),
 					options: { forceRequire: true, onlyIsomorphic: true },
 				},
 			},
-			TranspileConfig.loader( {
+			TranspileConfig.loader({
 				workerCount,
-				configFile: path.resolve( 'babel.config.js' ),
-				cacheDirectory: path.join( buildDir, '.babel-server-cache' ),
+				configFile: path.resolve('babel.config.js'),
+				cacheDirectory: path.join(buildDir, '.babel-server-cache'),
 				cacheIdentifier,
 				exclude: /node_modules\//,
-			} ),
+			}),
 			fileLoader,
 			{
 				test: /\.(sc|sa|c)ss$/,
@@ -108,8 +108,8 @@ const webpackConfig = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
-		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
+		extensions: ['.json', '.js', '.jsx', '.ts', '.tsx'],
+		modules: [__dirname, path.join(__dirname, 'extensions'), 'node_modules'],
 		alias: {
 			config: 'server/config',
 		},
@@ -122,30 +122,30 @@ const webpackConfig = {
 	},
 	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( {
+		new webpack.BannerPlugin({
 			banner: 'require( "source-map-support" ).install();',
 			raw: true,
 			entryOnly: false,
-		} ),
-		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
-		new webpack.DefinePlugin( {
-			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
-			COMMIT_SHA: JSON.stringify( commitSha ),
-			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
-		} ),
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]user$/, 'lodash/noop' ), // Depends on BOM
+		}),
+		new webpack.ExternalsPlugin('commonjs', getExternals()),
+		new webpack.DefinePlugin({
+			BUILD_TIMESTAMP: JSON.stringify(new Date().toISOString()),
+			COMMIT_SHA: JSON.stringify(commitSha),
+			'process.env.NODE_ENV': JSON.stringify(bundleEnv),
+		}),
+		new webpack.NormalModuleReplacementPlugin(/^lib[/\\]abtest$/, 'lodash/noop'), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(/^lib[/\\]analytics$/, 'lodash/noop'), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(/^lib[/\\]user$/, 'lodash/noop'), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
-	].filter( Boolean ),
+	].filter(Boolean),
 };
 
-if ( ! config.isEnabled( 'desktop' ) ) {
+if (!config.isEnabled('desktop')) {
 	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
+		new webpack.NormalModuleReplacementPlugin(/^lib[/\\]desktop$/, 'lodash/noop')
 	);
 }
 

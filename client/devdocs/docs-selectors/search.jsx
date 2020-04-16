@@ -23,31 +23,31 @@ export default class DocsSelectorsSearch extends Component {
 	state = {};
 
 	componentDidMount() {
-		this.request( this.props.search );
+		this.request(this.props.search);
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.search !== this.props.search ) {
-			this.request( this.props.search );
+	componentDidUpdate(prevProps) {
+		if (prevProps.search !== this.props.search) {
+			this.request(this.props.search);
 		}
 	}
 
-	request = async search => {
-		const query = stringify( { search } );
+	request = async (search) => {
+		const query = stringify({ search });
 
 		try {
-			const res = await fetch( `/devdocs/service/selectors?${ query }` );
-			if ( res.ok ) {
+			const res = await fetch(`/devdocs/service/selectors?${query}`);
+			if (res.ok) {
 				const results = await res.json();
-				this.setState( { results } );
+				this.setState({ results });
 			}
-		} catch ( error ) {
+		} catch (error) {
 			// Do nothing.
 		}
 	};
 
-	onSearch( search ) {
-		page( addQueryArgs( { search }, '/devdocs/selectors' ) );
+	onSearch(search) {
+		page(addQueryArgs({ search }, '/devdocs/selectors'));
 	}
 
 	render() {
@@ -61,22 +61,22 @@ export default class DocsSelectorsSearch extends Component {
 					autoFocus
 					placeholder="Search selectors…"
 					analyticsGroup="Docs"
-					initialValue={ search }
+					initialValue={search}
 					delaySearch
-					onSearch={ this.onSearch }
+					onSearch={this.onSearch}
 				/>
-				{ results && ! results.length && (
+				{results && !results.length && (
 					<EmptyContent title="No selectors found" line="Try another search query" />
-				) }
+				)}
 				<ul className="docs-selectors__results">
-					{ map( results, ( { name, description, tags } ) => (
-						<li key={ name }>
+					{map(results, ({ name, description, tags }) => (
+						<li key={name}>
 							<DocsSelectorsResult
-								{ ...{ name, description, tags } }
-								url={ addQueryArgs( { search }, `/devdocs/selectors/${ name }` ) }
+								{...{ name, description, tags }}
+								url={addQueryArgs({ search }, `/devdocs/selectors/${name}`)}
 							/>
 						</li>
-					) ) }
+					))}
 				</ul>
 			</div>
 		);

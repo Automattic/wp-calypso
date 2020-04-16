@@ -11,6 +11,6 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID
  * @returns {object}          error object if present or null otherwise
  */
-export function getThemeRequestErrors( state, themeId, siteId ) {
-	return state.themes.themeRequestErrors[ siteId ]?.[ themeId ] ?? null;
+export function getThemeRequestErrors(state, themeId, siteId) {
+	return state.themes.themeRequestErrors[siteId]?.[themeId] ?? null;
 }

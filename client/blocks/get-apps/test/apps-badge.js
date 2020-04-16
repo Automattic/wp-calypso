@@ -14,13 +14,13 @@ import { identity } from 'lodash';
  */
 import { AppsBadge } from '../apps-badge';
 
-jest.mock( 'lib/i18n-utils', () => ( {
+jest.mock('lib/i18n-utils', () => ({
 	getLocaleSlug: () => {
 		return 'en';
 	},
-} ) );
+}));
 
-describe( 'AppsBadge', () => {
+describe('AppsBadge', () => {
 	const defaultProps = {
 		altText: 'titleText',
 		storeLink: 'https://wordpress.com',
@@ -29,8 +29,8 @@ describe( 'AppsBadge', () => {
 		translate: identity,
 	};
 
-	test( 'should render', () => {
-		const wrapper = shallow( <AppsBadge { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-	} );
-} );
+	test('should render', () => {
+		const wrapper = shallow(<AppsBadge {...defaultProps} />);
+		expect(wrapper).toMatchSnapshot();
+	});
+});

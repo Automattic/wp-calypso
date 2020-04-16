@@ -7,12 +7,12 @@ module.exports = {
 		'require-bugs': 'off',
 		'require-homepage': 'off',
 		'require-keywords': 'off',
-		'valid-values-author': [ 'error', [ 'Automattic Inc.' ] ],
-		'valid-values-name-scope': [ 'error', [ '@automattic' ] ],
+		'valid-values-author': ['error', ['Automattic Inc.']],
+		'valid-values-name-scope': ['error', ['@automattic']],
 	},
 	overrides: [
 		{
-			patterns: [ './package.json' ],
+			patterns: ['./package.json'],
 			rules: {
 				'prefer-no-devDependencies': 'off',
 			},
@@ -33,7 +33,7 @@ module.exports = {
 			},
 		},
 		{
-			patterns: [ './packages/material-design-icons/package.json' ],
+			patterns: ['./packages/material-design-icons/package.json'],
 			rules: {
 				'valid-values-license': 'off',
 			},

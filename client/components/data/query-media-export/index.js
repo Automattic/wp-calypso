@@ -19,11 +19,11 @@ class QueryMediaExport extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.mediaExportUrl ) {
+		if (this.props.mediaExportUrl) {
 			return;
 		}
 
-		this.props.requestMediaExport( this.props.siteId );
+		this.props.requestMediaExport(this.props.siteId);
 	}
 
 	render() {
@@ -32,8 +32,8 @@ class QueryMediaExport extends Component {
 }
 
 export default connect(
-	state => ( {
-		mediaExportUrl: getMediaExportUrl( state ),
-	} ),
+	(state) => ({
+		mediaExportUrl: getMediaExportUrl(state),
+	}),
 	{ requestMediaExport }
-)( QueryMediaExport );
+)(QueryMediaExport);

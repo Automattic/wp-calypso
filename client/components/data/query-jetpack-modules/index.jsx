@@ -20,21 +20,21 @@ class QueryJetpackModules extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.requestingModules ) {
+	request(props) {
+		if (props.requestingModules) {
 			return;
 		}
 
-		props.fetchModuleList( props.siteId );
+		props.fetchModuleList(props.siteId);
 	}
 
 	render() {
@@ -43,10 +43,10 @@ class QueryJetpackModules extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			requestingModules: isFetchingJetpackModules( state, ownProps.siteId ),
+			requestingModules: isFetchingJetpackModules(state, ownProps.siteId),
 		};
 	},
 	{ fetchModuleList }
-)( QueryJetpackModules );
+)(QueryJetpackModules);

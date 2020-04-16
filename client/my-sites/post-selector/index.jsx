@@ -30,8 +30,8 @@ export default class extends React.PureComponent {
 		excludeTree: PropTypes.number,
 		emptyMessage: PropTypes.string,
 		createLink: PropTypes.string,
-		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
-		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
+		orderBy: PropTypes.oneOf(['title', 'date', 'modified', 'comment_count', 'ID']),
+		order: PropTypes.oneOf(['ASC', 'DESC']),
 		showTypeLabels: PropTypes.bool,
 		suppressFirstPageLoad: PropTypes.bool,
 	};
@@ -49,11 +49,11 @@ export default class extends React.PureComponent {
 		search: '',
 	};
 
-	onSearch = term => {
-		if ( term !== this.state.search ) {
-			this.setState( {
+	onSearch = (term) => {
+		if (term !== this.state.search) {
+			this.setState({
 				search: term,
-			} );
+			});
 		}
 	};
 
@@ -63,21 +63,21 @@ export default class extends React.PureComponent {
 
 		return reduce(
 			{ type, status, excludeTree, orderBy, order, excludePrivateTypes, search },
-			( memo, value, key ) => {
-				if ( null === value || undefined === value ) {
+			(memo, value, key) => {
+				if (null === value || undefined === value) {
 					return memo;
 				}
 
 				// if we don't have a search term, default to ordering by date
-				if ( key === 'orderBy' && search !== '' ) {
+				if (key === 'orderBy' && search !== '') {
 					value = 'date';
 				}
 
-				if ( key === 'order' && search !== '' ) {
+				if (key === 'order' && search !== '') {
 					value = 'DESC';
 				}
 
-				memo[ snakeCase( key ) ] = value;
+				memo[snakeCase(key)] = value;
 				return memo;
 			},
 			{}
@@ -99,17 +99,17 @@ export default class extends React.PureComponent {
 
 		return (
 			<PostSelectorPosts
-				siteId={ siteId }
-				query={ this.getQuery() }
-				onSearch={ this.onSearch }
-				multiple={ multiple }
-				onChange={ onChange }
-				emptyMessage={ emptyMessage }
-				createLink={ createLink }
-				selected={ selected }
-				excludePost={ excludeTree }
-				showTypeLabels={ showTypeLabels }
-				suppressFirstPageLoad={ suppressFirstPageLoad }
+				siteId={siteId}
+				query={this.getQuery()}
+				onSearch={this.onSearch}
+				multiple={multiple}
+				onChange={onChange}
+				emptyMessage={emptyMessage}
+				createLink={createLink}
+				selected={selected}
+				excludePost={excludeTree}
+				showTypeLabels={showTypeLabels}
+				suppressFirstPageLoad={suppressFirstPageLoad}
 			/>
 		);
 	}

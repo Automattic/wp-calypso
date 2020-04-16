@@ -13,7 +13,7 @@ import { isFetchingAccountRecoverySettings } from 'state/account-recovery/select
 
 class QueryAccountRecoverySettings extends Component {
 	componentDidMount() {
-		if ( ! this.props.isFetching ) {
+		if (!this.props.isFetching) {
 			this.props.accountRecoverySettingsFetch();
 		}
 	}
@@ -24,8 +24,8 @@ class QueryAccountRecoverySettings extends Component {
 }
 
 export default connect(
-	state => ( {
-		isFetching: isFetchingAccountRecoverySettings( state ),
-	} ),
+	(state) => ({
+		isFetching: isFetchingAccountRecoverySettings(state),
+	}),
 	{ accountRecoverySettingsFetch }
-)( QueryAccountRecoverySettings );
+)(QueryAccountRecoverySettings);

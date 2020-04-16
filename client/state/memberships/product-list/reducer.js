@@ -17,17 +17,17 @@ import {
  * @param {object} newProduct to update list with
  * @returns {Array} updated array of products
  */
-function addOrEditProduct( list = [], newProduct ) {
+function addOrEditProduct(list = [], newProduct) {
 	let found = 0;
-	const products = list.map( product => {
-		if ( product.ID === newProduct.ID ) {
+	const products = list.map((product) => {
+		if (product.ID === newProduct.ID) {
 			found = 1;
 			return newProduct;
 		}
 		return product;
-	} );
-	if ( ! found ) {
-		return [ newProduct, ...products ];
+	});
+	if (!found) {
+		return [newProduct, ...products];
 	}
 	return products;
 }
@@ -39,14 +39,14 @@ function addOrEditProduct( list = [], newProduct ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( productListSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(productListSchema, (state = {}, action) => {
+	switch (action.type) {
 		case MEMBERSHIPS_PRODUCTS_RECEIVE: {
 			const { siteId, products } = action;
 
 			return {
 				...state,
-				[ siteId ]: products,
+				[siteId]: products,
 			};
 		}
 		case MEMBERSHIPS_PRODUCT_RECEIVE: {
@@ -54,7 +54,7 @@ export const items = withSchemaValidation( productListSchema, ( state = {}, acti
 
 			return {
 				...state,
-				[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+				[siteId]: addOrEditProduct(state[siteId], product),
 			};
 		}
 		case MEMBERSHIPS_PRODUCT_DELETE: {
@@ -62,14 +62,14 @@ export const items = withSchemaValidation( productListSchema, ( state = {}, acti
 
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].filter( existingProduct => existingProduct.ID !== product.ID ),
+				[siteId]: state[siteId].filter((existingProduct) => existingProduct.ID !== product.ID),
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
-} );
+});

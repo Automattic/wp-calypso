@@ -5,7 +5,7 @@ import config from 'config';
 import { LOCALE_SET } from 'state/action-types';
 
 const initialState = {
-	localeSlug: config( 'i18n_default_locale_slug' ),
+	localeSlug: config('i18n_default_locale_slug'),
 	localeVariant: null,
 };
 
@@ -17,8 +17,8 @@ const initialState = {
  * @returns {object} Updated state
  *
  */
-export default function language( state = initialState, action ) {
-	switch ( action.type ) {
+export default function language(state = initialState, action) {
+	switch (action.type) {
 		case LOCALE_SET:
 			return {
 				localeSlug: action.localeSlug,

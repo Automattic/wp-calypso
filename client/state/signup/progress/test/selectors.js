@@ -8,13 +8,13 @@ import { expect } from 'chai';
  */
 import { getSignupProgress } from '../selectors';
 
-describe( 'selectors', () => {
-	test( 'should return empty, plain object as a default state', () => {
+describe('selectors', () => {
+	test('should return empty, plain object as a default state', () => {
 		const state = { signup: undefined };
-		expect( getSignupProgress( state ) ).to.be.eql( {} );
-	} );
+		expect(getSignupProgress(state)).to.be.eql({});
+	});
 
-	test( 'should select progress from the state', () => {
+	test('should select progress from the state', () => {
 		const progress = {
 			'site-selection': {
 				status: 'completed',
@@ -23,6 +23,6 @@ describe( 'selectors', () => {
 		};
 		const state = { signup: { progress } };
 
-		expect( getSignupProgress( state ) ).to.be.eql( progress );
-	} );
-} );
+		expect(getSignupProgress(state)).to.be.eql(progress);
+	});
+});

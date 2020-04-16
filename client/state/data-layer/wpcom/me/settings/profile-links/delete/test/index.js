@@ -15,12 +15,12 @@ const error = {
 	message: 'An active access token must be used to query information about the current user.',
 };
 
-describe( 'deleteUserProfileLink()', () => {
-	test( 'should return an action for POST HTTP request to the delete user profile link endpoint', () => {
-		const action = deleteUserProfileLinkAction( linkSlug );
-		const testAction = deleteUserProfileLink( action );
+describe('deleteUserProfileLink()', () => {
+	test('should return an action for POST HTTP request to the delete user profile link endpoint', () => {
+		const action = deleteUserProfileLinkAction(linkSlug);
+		const testAction = deleteUserProfileLink(action);
 
-		expect( testAction ).toEqual(
+		expect(testAction).toEqual(
 			http(
 				{
 					apiVersion: '1.1',
@@ -30,21 +30,21 @@ describe( 'deleteUserProfileLink()', () => {
 				action
 			)
 		);
-	} );
-} );
+	});
+});
 
-describe( 'handleDeleteSuccess()', () => {
-	test( 'should return a user profile links delete success action', () => {
-		const action = handleDeleteSuccess( { linkSlug } );
+describe('handleDeleteSuccess()', () => {
+	test('should return a user profile links delete success action', () => {
+		const action = handleDeleteSuccess({ linkSlug });
 
-		expect( action ).toEqual( deleteUserProfileLinkSuccess( linkSlug ) );
-	} );
-} );
+		expect(action).toEqual(deleteUserProfileLinkSuccess(linkSlug));
+	});
+});
 
-describe( 'handleDeleteError()', () => {
-	test( 'should return a user profile links add error action', () => {
-		const action = handleDeleteError( { linkSlug }, error );
+describe('handleDeleteError()', () => {
+	test('should return a user profile links add error action', () => {
+		const action = handleDeleteError({ linkSlug }, error);
 
-		expect( action ).toEqual( deleteUserProfileLinkError( linkSlug, error ) );
-	} );
-} );
+		expect(action).toEqual(deleteUserProfileLinkError(linkSlug, error));
+	});
+});

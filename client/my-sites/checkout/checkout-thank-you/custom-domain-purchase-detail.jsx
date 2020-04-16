@@ -25,23 +25,23 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getRegisteredDomains } from 'lib/domains';
 
-const CustomDomainPurchaseDetail = ( {
+const CustomDomainPurchaseDetail = ({
 	selectedSite,
 	hasDomainCredit,
 	hasNonPrimaryDomainsFlag,
 	onlyBlogDomain,
 	registeredDomain,
 	translate,
-} ) => {
+}) => {
 	const customDomainIcon = onlyBlogDomain ? customDomainBloggerImage : customDomainImage;
-	if ( hasDomainCredit ) {
+	if (hasDomainCredit) {
 		return (
 			<PurchaseDetail
-				icon={ <img alt="" src={ customDomainIcon } /> }
+				icon={<img alt="" src={customDomainIcon} />}
 				title={
 					onlyBlogDomain
-						? translate( 'Select your .blog domain' )
-						: translate( 'Select your custom domain' )
+						? translate('Select your .blog domain')
+						: translate('Select your custom domain')
 				}
 				description={
 					onlyBlogDomain
@@ -52,44 +52,44 @@ const CustomDomainPurchaseDetail = ( {
 								'Your plan includes a free custom domain for one year, which gives your site a more professional, branded feel.'
 						  )
 				}
-				buttonText={ translate( 'Claim your free domain' ) }
-				href={ `/domains/add/${ selectedSite.slug }` }
+				buttonText={translate('Claim your free domain')}
+				href={`/domains/add/${selectedSite.slug}`}
 			/>
 		);
-	} else if ( ! hasDomainCredit && hasCustomDomain( selectedSite ) ) {
+	} else if (!hasDomainCredit && hasCustomDomain(selectedSite)) {
 		const actionButton = {};
-		actionButton.buttonText = translate( 'Manage my domains' );
-		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
+		actionButton.buttonText = translate('Manage my domains');
+		actionButton.href = `/domains/manage/${selectedSite.slug}`;
 		return (
 			<PurchaseDetail
-				icon={ <img alt="" src={ customDomainIcon } /> }
-				title={ translate( 'Custom Domain' ) }
-				description={ translate(
+				icon={<img alt="" src={customDomainIcon} />}
+				title={translate('Custom Domain')}
+				description={translate(
 					'Your plan includes one year of your custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
 					{
 						args: { siteDomain: selectedSite.domain },
 						components: { em: <em /> },
 					}
-				) }
-				{ ...actionButton }
+				)}
+				{...actionButton}
 			/>
 		);
-	} else if ( hasNonPrimaryDomainsFlag && registeredDomain ) {
+	} else if (hasNonPrimaryDomainsFlag && registeredDomain) {
 		const actionButton = {};
-		actionButton.buttonText = translate( 'Change primary domain' );
-		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
+		actionButton.buttonText = translate('Change primary domain');
+		actionButton.href = `/domains/manage/${selectedSite.slug}`;
 		return (
 			<PurchaseDetail
-				icon={ <img alt="" src={ customDomainIcon } /> }
-				title={ translate( 'Make your domain your primary address' ) }
-				description={ translate(
+				icon={<img alt="" src={customDomainIcon} />}
+				title={translate('Make your domain your primary address')}
+				description={translate(
 					'Make {{em}}%(domain)s{{/em}} the primary address that your visitors see when they come to your site.',
 					{
 						args: { domain: registeredDomain.name },
 						components: { em: <em /> },
 					}
-				) }
-				{ ...actionButton }
+				)}
+				{...actionButton}
 			/>
 		);
 	}
@@ -98,21 +98,21 @@ const CustomDomainPurchaseDetail = ( {
 
 CustomDomainPurchaseDetail.propTypes = {
 	onlyBlogDomain: PropTypes.bool,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
+	selectedSite: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
 	hasDomainCredit: PropTypes.bool,
 	hasNonPrimaryDomainsFlag: PropTypes.bool,
 	siteDomains: PropTypes.array,
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const siteDomains = getDomainsBySiteId( state, siteId );
-	const registeredDomains = getRegisteredDomains( siteDomains );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const siteDomains = getDomainsBySiteId(state, siteId);
+	const registeredDomains = getRegisteredDomains(siteDomains);
 
 	return {
-		hasNonPrimaryDomainsFlag: getCurrentUser( state )
-			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+		hasNonPrimaryDomainsFlag: getCurrentUser(state)
+			? currentUserHasFlag(state, NON_PRIMARY_DOMAINS_TO_FREE_USERS)
 			: false,
-		registeredDomain: head( registeredDomains ),
+		registeredDomain: head(registeredDomains),
 	};
-} )( localize( CustomDomainPurchaseDetail ) );
+})(localize(CustomDomainPurchaseDetail));

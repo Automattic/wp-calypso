@@ -13,6 +13,6 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID
  * @returns {boolean}         True if the theme is active on the site
  */
-export function isThemeActive( state, themeId, siteId ) {
-	return getActiveTheme( state, siteId ) === themeId;
+export function isThemeActive(state, themeId, siteId) {
+	return getActiveTheme(state, siteId) === themeId;
 }

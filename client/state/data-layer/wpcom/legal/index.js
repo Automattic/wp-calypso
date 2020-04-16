@@ -8,7 +8,7 @@ import { LEGAL_REQUEST, TOS_ACCEPT } from 'state/action-types';
 import { setLegalData } from 'state/legal/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-const requestLegalData = action => {
+const requestLegalData = (action) => {
 	return http(
 		{
 			method: 'GET',
@@ -19,12 +19,12 @@ const requestLegalData = action => {
 	);
 };
 
-const storeLegalData = ( action, legalData ) => [
-	setLegalData( legalData ),
-	recordTracksEvent( 'calypso_tos_accept' ),
+const storeLegalData = (action, legalData) => [
+	setLegalData(legalData),
+	recordTracksEvent('calypso_tos_accept'),
 ];
 
-const formatLegalData = ( { tos: { accepted, active_date, display_prompt } } ) => {
+const formatLegalData = ({ tos: { accepted, active_date, display_prompt } }) => {
 	return {
 		tos: {
 			accepted,
@@ -34,7 +34,7 @@ const formatLegalData = ( { tos: { accepted, active_date, display_prompt } } ) =
 	};
 };
 
-const acceptTos = action => {
+const acceptTos = (action) => {
 	return http(
 		{
 			method: 'POST',
@@ -48,19 +48,19 @@ const acceptTos = action => {
 	);
 };
 
-registerHandlers( 'state/data-layer/legal/index.js', {
-	[ LEGAL_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/legal/index.js', {
+	[LEGAL_REQUEST]: [
+		dispatchRequest({
 			fetch: requestLegalData,
 			onSuccess: storeLegalData,
 			fromApi: formatLegalData,
-		} ),
+		}),
 	],
-	[ TOS_ACCEPT ]: [
-		dispatchRequest( {
+	[TOS_ACCEPT]: [
+		dispatchRequest({
 			fetch: acceptTos,
 			onSuccess: storeLegalData,
 			fromApi: formatLegalData,
-		} ),
+		}),
 	],
-} );
+});

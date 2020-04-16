@@ -20,37 +20,37 @@ import 'state/jetpack-connect/init';
 /**
  * Module constants
  */
-const debug = debugFactory( 'calypso:jetpack-connect:actions' );
+const debug = debugFactory('calypso:jetpack-connect:actions');
 
-export function authorizeSSO( siteId, ssoNonce, siteUrl ) {
-	return dispatch => {
-		debug( 'Attempting to authorize SSO for ' + siteId );
-		dispatch( {
+export function authorizeSSO(siteId, ssoNonce, siteUrl) {
+	return (dispatch) => {
+		debug('Attempting to authorize SSO for ' + siteId);
+		dispatch({
 			type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.jetpackAuthorizeSSONonce( siteId, ssoNonce )
-			.then( data => {
-				dispatch( recordTracksEvent( 'calypso_jpc_authorize_sso_success' ) );
-				dispatch( {
+			.jetpackAuthorizeSSONonce(siteId, ssoNonce)
+			.then((data) => {
+				dispatch(recordTracksEvent('calypso_jpc_authorize_sso_success'));
+				dispatch({
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 					ssoUrl: data.sso_url,
 					siteUrl,
-				} );
-			} )
-			.catch( error => {
+				});
+			})
+			.catch((error) => {
 				dispatch(
-					recordTracksEvent( 'calypso_jpc_authorize_sso_error', {
+					recordTracksEvent('calypso_jpc_authorize_sso_error', {
 						error: error,
-					} )
+					})
 				);
-				dispatch( {
+				dispatch({
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
-					error: pick( error, [ 'error', 'status', 'message' ] ),
-				} );
-			} );
+					error: pick(error, ['error', 'status', 'message']),
+				});
+			});
 	};
 }

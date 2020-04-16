@@ -20,26 +20,21 @@ class PreferenceList extends Component {
 		return (
 			<div>
 				<QueryPreferences />
-				<a
-					href={ '/devdocs/client/state/preferences/README.md' }
-					title={ translate( 'Preferences' ) }
-				>
-					{ translate( 'Preferences' ) }
+				<a href={'/devdocs/client/state/preferences/README.md'} title={translate('Preferences')}>
+					{translate('Preferences')}
 				</a>
 				<Card className="preferences-helper__current-preferences">
-					{ ! isEmpty( preferences ) ? (
-						Object.keys( preferences ).map( preferenceName => (
+					{!isEmpty(preferences) ? (
+						Object.keys(preferences).map((preferenceName) => (
 							<Preference
-								key={ preferenceName }
-								name={ preferenceName }
-								value={ preferences[ preferenceName ] }
+								key={preferenceName}
+								name={preferenceName}
+								value={preferences[preferenceName]}
 							/>
-						) )
+						))
 					) : (
-						<h5 className="preferences-helper__preference-header">
-							{ translate( 'No Preferences' ) }
-						</h5>
-					) }
+						<h5 className="preferences-helper__preference-header">{translate('No Preferences')}</h5>
+					)}
 				</Card>
 			</div>
 		);
@@ -47,8 +42,8 @@ class PreferenceList extends Component {
 }
 
 export default connect(
-	state => ( {
-		preferences: getAllRemotePreferences( state ),
-	} ),
+	(state) => ({
+		preferences: getAllRemotePreferences(state),
+	}),
 	null
-)( localize( PreferenceList ) );
+)(localize(PreferenceList));

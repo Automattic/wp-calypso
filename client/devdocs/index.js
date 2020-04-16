@@ -11,9 +11,9 @@ import config from 'config';
 import controller from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
-	if ( config.isEnabled( 'devdocs' ) ) {
-		page( '/devdocs', controller.sidebar, controller.devdocs, makeLayout, clientRender );
+export default function () {
+	if (config.isEnabled('devdocs')) {
+		page('/devdocs', controller.sidebar, controller.devdocs, makeLayout, clientRender);
 		page(
 			'/devdocs/form-state-examples/:component?',
 			controller.sidebar,
@@ -42,10 +42,10 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-		page( '/devdocs/app-components/:component?', context =>
-			page.redirect( '/devdocs/blocks/' + ( context.params.component || '' ) )
+		page('/devdocs/app-components/:component?', (context) =>
+			page.redirect('/devdocs/blocks/' + (context.params.component || ''))
 		);
-		page( '/devdocs/app-components', '/devdocs/blocks' );
+		page('/devdocs/app-components', '/devdocs/blocks');
 		page(
 			'/devdocs/blocks/:component?',
 			controller.sidebar,
@@ -67,8 +67,8 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-		page( '/devdocs/start', controller.pleaseLogIn, makeLayout, clientRender );
-		page( '/devdocs/welcome', controller.sidebar, controller.welcome, makeLayout, clientRender );
-		page( '/devdocs/:path*', controller.sidebar, controller.singleDoc, makeLayout, clientRender );
+		page('/devdocs/start', controller.pleaseLogIn, makeLayout, clientRender);
+		page('/devdocs/welcome', controller.sidebar, controller.welcome, makeLayout, clientRender);
+		page('/devdocs/:path*', controller.sidebar, controller.singleDoc, makeLayout, clientRender);
 	}
 }

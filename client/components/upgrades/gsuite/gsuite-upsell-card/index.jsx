@@ -22,60 +22,60 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
  */
 import './style.scss';
 
-const GSuiteUpsellCard = ( {
+const GSuiteUpsellCard = ({
 	domain,
 	productSlug,
 	onAddEmailClick,
 	onSkipClick,
 	recordTracksEvent,
-} ) => {
-	const [ users, setUsers ] = useState( newUsers( domain ) );
+}) => {
+	const [users, setUsers] = useState(newUsers(domain));
 
-	const canContinue = areAllUsersValid( users );
+	const canContinue = areAllUsersValid(users);
 	const translate = useTranslate();
 
-	const recordClickEvent = eventName => {
-		recordTracksEvent( eventName, {
+	const recordClickEvent = (eventName) => {
+		recordTracksEvent(eventName, {
 			domain_name: domain,
 			user_count: users.length,
-		} );
+		});
 	};
 
-	const recordUsersChangedEvent = ( previousUsers, nextUsers ) => {
-		if ( previousUsers.length !== nextUsers.length ) {
-			recordTracksEvent( 'calypso_checkout_gsuite_upgrade_users_changed', {
+	const recordUsersChangedEvent = (previousUsers, nextUsers) => {
+		if (previousUsers.length !== nextUsers.length) {
+			recordTracksEvent('calypso_checkout_gsuite_upgrade_users_changed', {
 				domain_name: domain,
 				next_user_count: nextUsers.length,
 				prev_user_count: previousUsers.length,
-			} );
+			});
 		}
 	};
 
 	const handleAddEmailClick = () => {
-		recordClickEvent( `calypso_checkout_gsuite_upgrade_add_email_button_click` );
+		recordClickEvent(`calypso_checkout_gsuite_upgrade_add_email_button_click`);
 
-		if ( canContinue ) {
-			onAddEmailClick( getItemsForCart( [ domain ], productSlug, users ) );
+		if (canContinue) {
+			onAddEmailClick(getItemsForCart([domain], productSlug, users));
 		}
 	};
 
 	const handleSkipClick = () => {
-		recordClickEvent( `calypso_checkout_gsuite_upgrade_skip_button_click` );
+		recordClickEvent(`calypso_checkout_gsuite_upgrade_skip_button_click`);
 
 		onSkipClick();
 	};
 
-	const handleReturnKeyPress = event => {
+	const handleReturnKeyPress = (event) => {
 		// Simulate an implicit submission for the add user form :)
-		if ( event.key === 'Enter' ) {
+		if (event.key === 'Enter') {
 			handleAddEmailClick();
 		}
 	};
 
-	const handleUsersChange = changedUsers => {
-		recordUsersChangedEvent( users, changedUsers );
+	const handleUsersChange = (changedUsers) => {
+		recordUsersChangedEvent(users, changedUsers);
 
-		setUsers( changedUsers );
+		setUsers(changedUsers);
 	};
 
 	return (
@@ -85,41 +85,41 @@ const GSuiteUpsellCard = ( {
 			<CompactCard>
 				<header className="gsuite-upsell-card__header">
 					<h2 className="gsuite-upsell-card__title">
-						{ translate( 'Add professional email from G Suite by Google Cloud to %(domain)s', {
+						{translate('Add professional email from G Suite by Google Cloud to %(domain)s', {
 							args: {
 								domain,
 							},
-						} ) }
+						})}
 					</h2>
 
 					<h5 className="gsuite-upsell-card__no-setup-required">
-						{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
+						{translate('No setup or software required. Easy to manage from your dashboard.')}
 					</h5>
 				</header>
 			</CompactCard>
 
 			<CompactCard>
-				<GSuiteUpsellProductDetails domain={ domain } productSlug={ productSlug } />
+				<GSuiteUpsellProductDetails domain={domain} productSlug={productSlug} />
 
 				<GSuiteNewUserList
-					extraValidation={ user => user }
-					selectedDomainName={ domain }
-					onUsersChange={ handleUsersChange }
-					users={ users }
-					onReturnKeyPress={ handleReturnKeyPress }
+					extraValidation={(user) => user}
+					selectedDomainName={domain}
+					onUsersChange={handleUsersChange}
+					users={users}
+					onReturnKeyPress={handleReturnKeyPress}
 				>
 					<div className="gsuite-upsell-card__buttons">
-						<Button className="gsuite-upsell-card__skip-button" onClick={ handleSkipClick }>
-							{ translate( 'Skip for now' ) }
+						<Button className="gsuite-upsell-card__skip-button" onClick={handleSkipClick}>
+							{translate('Skip for now')}
 						</Button>
 
 						<Button
 							className="gsuite-upsell-card__add-email-button"
 							primary
-							disabled={ ! canContinue }
-							onClick={ handleAddEmailClick }
+							disabled={!canContinue}
+							onClick={handleAddEmailClick}
 						>
-							{ translate( 'Purchase G Suite' ) }
+							{translate('Purchase G Suite')}
 						</Button>
 					</div>
 				</GSuiteNewUserList>
@@ -135,6 +135,6 @@ GSuiteUpsellCard.propTypes = {
 	onSkipClick: PropTypes.func.isRequired,
 };
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent: recordTracksEventAction,
-} )( GSuiteUpsellCard );
+})(GSuiteUpsellCard);

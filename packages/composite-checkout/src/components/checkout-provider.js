@@ -23,9 +23,9 @@ import {
 	validatePaymentMethods,
 } from '../lib/validation';
 
-const debug = debugFactory( 'composite-checkout:checkout-provider' );
+const debug = debugFactory('composite-checkout:checkout-provider');
 
-export const CheckoutProvider = props => {
+export const CheckoutProvider = (props) => {
 	const {
 		locale,
 		total,
@@ -41,44 +41,44 @@ export const CheckoutProvider = props => {
 		isLoading,
 		children,
 	} = props;
-	const [ paymentMethodId, setPaymentMethodId ] = useState(
-		paymentMethods?.length ? paymentMethods[ 0 ].id : null
+	const [paymentMethodId, setPaymentMethodId] = useState(
+		paymentMethods?.length ? paymentMethods[0].id : null
 	);
-	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState( [] );
-	useEffect( () => {
-		if ( paymentMethods.length !== prevPaymentMethods.length ) {
-			debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
-			setPaymentMethodId( paymentMethods?.length ? paymentMethods[ 0 ].id : null );
-			setPrevPaymentMethods( paymentMethods );
+	const [prevPaymentMethods, setPrevPaymentMethods] = useState([]);
+	useEffect(() => {
+		if (paymentMethods.length !== prevPaymentMethods.length) {
+			debug('paymentMethods changed; setting payment method to first of', paymentMethods);
+			setPaymentMethodId(paymentMethods?.length ? paymentMethods[0].id : null);
+			setPrevPaymentMethods(paymentMethods);
 		}
-	}, [ paymentMethods, prevPaymentMethods ] );
+	}, [paymentMethods, prevPaymentMethods]);
 
-	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
-	const didCallOnPaymentComplete = useRef( false );
-	useEffect( () => {
-		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
-			debug( "form status is complete so I'm calling onPaymentComplete" );
+	const [formStatus, setFormStatus] = useFormStatusManager(isLoading);
+	const didCallOnPaymentComplete = useRef(false);
+	useEffect(() => {
+		if (formStatus === 'complete' && !didCallOnPaymentComplete.current) {
+			debug("form status is complete so I'm calling onPaymentComplete");
 			didCallOnPaymentComplete.current = true;
-			onPaymentComplete( { paymentMethodId } );
+			onPaymentComplete({ paymentMethodId });
 		}
-	}, [ formStatus, onPaymentComplete, paymentMethodId ] );
+	}, [formStatus, onPaymentComplete, paymentMethodId]);
 
 	// Create the registry automatically if it's not a prop
-	const registryRef = useRef( registry );
+	const registryRef = useRef(registry);
 	registryRef.current = registryRef.current || defaultRegistry;
 
 	const value = useMemo(
-		() => ( {
+		() => ({
 			allPaymentMethods: paymentMethods,
 			paymentMethodId,
 			setPaymentMethodId,
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
-			onEvent: onEvent || ( () => {} ),
+			onEvent: onEvent || (() => {}),
 			formStatus,
 			setFormStatus,
-		} ),
+		}),
 		[
 			formStatus,
 			onEvent,
@@ -94,13 +94,13 @@ export const CheckoutProvider = props => {
 	// This error message cannot be translated because translation hasn't loaded yet.
 	const errorMessage = 'Sorry, there was an error loading this page';
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage }>
-			<CheckoutProviderPropValidator propsToValidate={ props } />
-			<ThemeProvider theme={ theme || defaultTheme }>
-				<RegistryProvider value={ registryRef.current }>
-					<LocalizeProvider locale={ locale }>
-						<LineItemsProvider items={ items } total={ total }>
-							<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
+		<CheckoutErrorBoundary errorMessage={errorMessage}>
+			<CheckoutProviderPropValidator propsToValidate={props} />
+			<ThemeProvider theme={theme || defaultTheme}>
+				<RegistryProvider value={registryRef.current}>
+					<LocalizeProvider locale={locale}>
+						<LineItemsProvider items={items} total={total}>
+							<CheckoutContext.Provider value={value}>{children}</CheckoutContext.Provider>
 						</LineItemsProvider>
 					</LocalizeProvider>
 				</RegistryProvider>
@@ -114,8 +114,8 @@ CheckoutProvider.propTypes = {
 	registry: PropTypes.object,
 	locale: PropTypes.string.isRequired,
 	total: PropTypes.object.isRequired,
-	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
-	paymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
+	items: PropTypes.arrayOf(PropTypes.object).isRequired,
+	paymentMethods: PropTypes.arrayOf(PropTypes.object).isRequired,
 	paymentMethodId: PropTypes.string,
 	onPaymentComplete: PropTypes.func.isRequired,
 	showErrorMessage: PropTypes.func.isRequired,
@@ -125,7 +125,7 @@ CheckoutProvider.propTypes = {
 	isLoading: PropTypes.bool,
 };
 
-function CheckoutProviderPropValidator( { propsToValidate } ) {
+function CheckoutProviderPropValidator({ propsToValidate }) {
 	const {
 		locale,
 		total,
@@ -136,20 +136,20 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showSuccessMessage,
 		paymentMethods,
 	} = propsToValidate;
-	useEffect( () => {
-		debug( 'propsToValidate', propsToValidate );
+	useEffect(() => {
+		debug('propsToValidate', propsToValidate);
 
-		validateArg( locale, 'CheckoutProvider missing required prop: locale' );
-		validateArg( total, 'CheckoutProvider missing required prop: total' );
-		validateTotal( total );
-		validateArg( items, 'CheckoutProvider missing required prop: items' );
-		validateLineItems( items );
-		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
-		validatePaymentMethods( paymentMethods );
-		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
-		validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
-		validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
-		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
+		validateArg(locale, 'CheckoutProvider missing required prop: locale');
+		validateArg(total, 'CheckoutProvider missing required prop: total');
+		validateTotal(total);
+		validateArg(items, 'CheckoutProvider missing required prop: items');
+		validateLineItems(items);
+		validateArg(paymentMethods, 'CheckoutProvider missing required prop: paymentMethods');
+		validatePaymentMethods(paymentMethods);
+		validateArg(onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete');
+		validateArg(showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage');
+		validateArg(showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage');
+		validateArg(showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage');
 	}, [
 		items,
 		locale,
@@ -160,22 +160,22 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showInfoMessage,
 		showSuccessMessage,
 		total,
-	] );
+	]);
 	return null;
 }
 
 export function useEvents() {
-	const { onEvent } = useContext( CheckoutContext );
-	if ( ! onEvent ) {
-		throw new Error( 'useEvents can only be used inside a CheckoutProvider' );
+	const { onEvent } = useContext(CheckoutContext);
+	if (!onEvent) {
+		throw new Error('useEvents can only be used inside a CheckoutProvider');
 	}
 	return onEvent;
 }
 
 export function useMessages() {
-	const { showErrorMessage, showInfoMessage, showSuccessMessage } = useContext( CheckoutContext );
-	if ( ! showErrorMessage || ! showInfoMessage || ! showSuccessMessage ) {
-		throw new Error( 'useMessages can only be used inside a CheckoutProvider' );
+	const { showErrorMessage, showInfoMessage, showSuccessMessage } = useContext(CheckoutContext);
+	if (!showErrorMessage || !showInfoMessage || !showSuccessMessage) {
+		throw new Error('useMessages can only be used inside a CheckoutProvider');
 	}
 	return { showErrorMessage, showInfoMessage, showSuccessMessage };
 }

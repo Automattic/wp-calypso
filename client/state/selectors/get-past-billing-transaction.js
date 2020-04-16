@@ -17,8 +17,8 @@ import getPastBillingTransactions from 'state/selectors/get-past-billing-transac
  * @param  {number}  id      ID of the transaction
  * @returns {?object}         The transaction object or null if it doesn't exist
  */
-const getIndividualBillingTransaction = ( state, id ) =>
-	get( state, [ 'billingTransactions', 'individualTransactions', id, 'data' ], null );
+const getIndividualBillingTransaction = (state, id) =>
+	get(state, ['billingTransactions', 'individualTransactions', id, 'data'], null);
 
 /**
  * Returns a past billing transaction.
@@ -30,11 +30,7 @@ const getIndividualBillingTransaction = ( state, id ) =>
  * @returns {?object}         The transaction object
  */
 export default createSelector(
-	( state, id ) =>
-		find( getPastBillingTransactions( state ), { id } ) ||
-		getIndividualBillingTransaction( state, id ),
-	( state, id ) => [
-		getPastBillingTransactions( state ),
-		getIndividualBillingTransaction( state, id ),
-	]
+	(state, id) =>
+		find(getPastBillingTransactions(state), { id }) || getIndividualBillingTransaction(state, id),
+	(state, id) => [getPastBillingTransactions(state), getIndividualBillingTransaction(state, id)]
 );

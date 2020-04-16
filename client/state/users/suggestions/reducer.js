@@ -18,24 +18,24 @@ import { itemsSchema } from './schema';
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case USER_SUGGESTIONS_REQUEST: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case USER_SUGGESTIONS_REQUEST_FAILURE: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 		case USER_SUGGESTIONS_REQUEST_SUCCESS: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
@@ -46,18 +46,18 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case USER_SUGGESTIONS_RECEIVE: {
 			const { siteId, suggestions } = action;
-			return { ...state, [ siteId ]: suggestions };
+			return { ...state, [siteId]: suggestions };
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	items,
-} );
+});

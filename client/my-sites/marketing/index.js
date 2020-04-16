@@ -19,7 +19,7 @@ import {
 } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	const paths = [
 		'/marketing',
 		'/marketing/connections',
@@ -30,18 +30,18 @@ export default function() {
 		'/sharing/buttons',
 	];
 
-	paths.forEach( path => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
+	paths.forEach((path) => page(path, ...[siteSelection, sites, makeLayout, clientRender]));
 
-	page( '/sharing/:domain', redirectConnections );
-	page( '/sharing/buttons/:domain', redirectSharingButtons );
+	page('/sharing/:domain', redirectConnections);
+	page('/sharing/buttons/:domain', redirectSharingButtons);
 
-	page( '/marketing/:domain', redirectMarketingTools );
+	page('/marketing/:domain', redirectMarketingTools);
 
 	page(
 		'/marketing/connections/:domain',
 		siteSelection,
 		navigation,
-		jetpackModuleActive( 'publicize', false ),
+		jetpackModuleActive('publicize', false),
 		connections,
 		layout,
 		makeLayout,
@@ -62,7 +62,7 @@ export default function() {
 		'/marketing/sharing-buttons/:domain',
 		siteSelection,
 		navigation,
-		jetpackModuleActive( 'sharedaddy' ),
+		jetpackModuleActive('sharedaddy'),
 		sharingButtons,
 		layout,
 		makeLayout,

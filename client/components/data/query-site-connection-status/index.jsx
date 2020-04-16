@@ -20,21 +20,21 @@ class QuerySiteConnectionStatus extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.requestingSiteConnectionStatus || ! props.siteId ) {
+	request(props) {
+		if (props.requestingSiteConnectionStatus || !props.siteId) {
 			return;
 		}
 
-		props.requestConnectionStatus( props.siteId );
+		props.requestConnectionStatus(props.siteId);
 	}
 
 	render() {
@@ -43,10 +43,10 @@ class QuerySiteConnectionStatus extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			requestingSiteConnectionStatus: isRequestingSiteConnectionStatus( state, ownProps.siteId ),
+			requestingSiteConnectionStatus: isRequestingSiteConnectionStatus(state, ownProps.siteId),
 		};
 	},
 	{ requestConnectionStatus }
-)( QuerySiteConnectionStatus );
+)(QuerySiteConnectionStatus);

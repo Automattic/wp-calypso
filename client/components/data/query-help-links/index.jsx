@@ -15,8 +15,8 @@ class QueryHelpLinks extends Component {
 		this.requestHelpLinks();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.query === this.props.query ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.query === this.props.query) {
 			return;
 		}
 
@@ -24,8 +24,8 @@ class QueryHelpLinks extends Component {
 	}
 
 	requestHelpLinks() {
-		if ( this.props.query.length ) {
-			this.props.requestHelpLinks( this.props.query );
+		if (this.props.query.length) {
+			this.props.requestHelpLinks(this.props.query);
 		}
 	}
 
@@ -39,4 +39,4 @@ QueryHelpLinks.propTypes = {
 	requestHelpLinks: PropTypes.func,
 };
 
-export default connect( null, { requestHelpLinks } )( QueryHelpLinks );
+export default connect(null, { requestHelpLinks })(QueryHelpLinks);

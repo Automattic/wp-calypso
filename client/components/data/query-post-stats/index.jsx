@@ -30,8 +30,8 @@ class QueryPostStats extends Component {
 
 	UNSAFE_componentWillMount() {
 		const { requestingPostStats, siteId, postId } = this.props;
-		if ( ! requestingPostStats && siteId && ! isUndefined( postId ) ) {
-			this.requestPostStats( this.props );
+		if (!requestingPostStats && siteId && !isUndefined(postId)) {
+			this.requestPostStats(this.props);
 		}
 	}
 
@@ -39,35 +39,35 @@ class QueryPostStats extends Component {
 		this.clearInterval();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId, postId, fields, heartbeat } = this.props;
 		if (
-			! ( siteId && ! isUndefined( postId ) ) ||
-			( siteId === nextProps.siteId &&
+			!(siteId && !isUndefined(postId)) ||
+			(siteId === nextProps.siteId &&
 				postId === nextProps.postId &&
-				isEqual( fields, nextProps.fields ) &&
-				heartbeat === nextProps.heartbeat )
+				isEqual(fields, nextProps.fields) &&
+				heartbeat === nextProps.heartbeat)
 		) {
 			return;
 		}
 
-		this.requestPostStats( nextProps );
+		this.requestPostStats(nextProps);
 	}
 
-	requestPostStats( props ) {
+	requestPostStats(props) {
 		const { siteId, postId, fields, heartbeat } = props;
-		props.requestPostStats( siteId, postId, fields );
+		props.requestPostStats(siteId, postId, fields);
 		this.clearInterval();
-		if ( heartbeat ) {
-			this.interval = setInterval( () => {
-				props.requestPostStats( siteId, postId, fields );
-			}, heartbeat );
+		if (heartbeat) {
+			this.interval = setInterval(() => {
+				props.requestPostStats(siteId, postId, fields);
+			}, heartbeat);
 		}
 	}
 
 	clearInterval() {
-		if ( this.interval ) {
-			clearInterval( this.interval );
+		if (this.interval) {
+			clearInterval(this.interval);
 		}
 	}
 
@@ -77,10 +77,10 @@ class QueryPostStats extends Component {
 }
 
 export default connect(
-	( state, { siteId, postId, fields } ) => {
+	(state, { siteId, postId, fields }) => {
 		return {
-			requestingPostStats: isRequestingPostStats( state, siteId, postId, fields ),
+			requestingPostStats: isRequestingPostStats(state, siteId, postId, fields),
 		};
 	},
 	{ requestPostStats }
-)( QueryPostStats );
+)(QueryPostStats);

@@ -21,7 +21,7 @@ import {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const addNewShippingZone = siteId => {
+export const addNewShippingZone = (siteId) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_ADD, siteId };
 };
 
@@ -32,7 +32,7 @@ export const addNewShippingZone = siteId => {
  * @param {number} id Shipping Zone ID to open.
  * @returns {object} Action object.
  */
-export const openShippingZoneForEdit = ( siteId, id ) => {
+export const openShippingZoneForEdit = (siteId, id) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_OPEN, siteId, id };
 };
 
@@ -42,7 +42,7 @@ export const openShippingZoneForEdit = ( siteId, id ) => {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const closeEditingShippingZone = siteId => {
+export const closeEditingShippingZone = (siteId) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_CLOSE, siteId };
 };
 
@@ -53,7 +53,7 @@ export const closeEditingShippingZone = siteId => {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const cancelEditingShippingZone = siteId => {
+export const cancelEditingShippingZone = (siteId) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_CANCEL, siteId };
 };
 
@@ -64,7 +64,7 @@ export const cancelEditingShippingZone = siteId => {
  * @param {string} name New name for the Shipping Zone.
  * @returns {object} Action object.
  */
-export const changeShippingZoneName = ( siteId, name ) => {
+export const changeShippingZoneName = (siteId, name) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME, siteId, name };
 };
 
@@ -76,7 +76,7 @@ export const changeShippingZoneName = ( siteId, name ) => {
  * @param {number} id Shipping Zone ID to delete.
  * @returns {object} Action object.
  */
-export const deleteShippingZone = ( siteId, id ) => {
+export const deleteShippingZone = (siteId, id) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_REMOVE, siteId, id };
 };
 
@@ -115,7 +115,7 @@ export function createShippingZoneSaveActionList(
  * @param {Function} [failureAction] Action to be dispatched upon failure of execution.
  * @returns {object} Action object.
  */
-export function createShippingZoneDeleteActionList( successAction, failureAction ) {
+export function createShippingZoneDeleteActionList(successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_DELETE,
 		successAction,

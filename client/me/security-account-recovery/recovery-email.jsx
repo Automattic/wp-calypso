@@ -19,31 +19,31 @@ class RecoveryEmail extends Component {
 		return (
 			<ManageContact
 				type="email"
-				isLoading={ isLoading }
-				title={ translate( 'Recovery Email Address' ) }
-				subtitle={ email ? email : translate( 'Not set' ) }
-				hasValue={ !! email }
-				onSave={ this.onSave }
-				onDelete={ this.onDelete }
+				isLoading={isLoading}
+				title={translate('Recovery Email Address')}
+				subtitle={email ? email : translate('Not set')}
+				hasValue={!!email}
+				onSave={this.onSave}
+				onDelete={this.onDelete}
 			>
-				<EditEmail primaryEmail={ primaryEmail } storedEmail={ email || '' } />
+				<EditEmail primaryEmail={primaryEmail} storedEmail={email || ''} />
 			</ManageContact>
 		);
 	}
 
-	onSave = newEmail => {
-		this.props.updateEmail( newEmail );
+	onSave = (newEmail) => {
+		this.props.updateEmail(newEmail);
 	};
 
 	onDelete = () => {
 		const { translate, deleteEmail } = this.props;
 
-		accept( translate( 'Are you sure you want to remove the email address?' ), accepted => {
-			if ( accepted ) {
+		accept(translate('Are you sure you want to remove the email address?'), (accepted) => {
+			if (accepted) {
 				deleteEmail();
 			}
-		} );
+		});
 	};
 }
 
-export default localize( RecoveryEmail );
+export default localize(RecoveryEmail);

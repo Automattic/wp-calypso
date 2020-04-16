@@ -25,33 +25,33 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 
-const CancelPurchaseRefundInformation = ( {
+const CancelPurchaseRefundInformation = ({
 	purchase,
 	includedDomainPurchase,
 	cancelBundledDomain,
 	confirmCancelBundledDomain,
 	onCancelConfirmationStateChange,
-} ) => {
+}) => {
 	const { refundPeriodInDays } = purchase;
 	let text;
 	let showSupportLink = true;
-	const onCancelBundledDomainChange = event => {
+	const onCancelBundledDomainChange = (event) => {
 		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
-		onCancelConfirmationStateChange( {
+		onCancelConfirmationStateChange({
 			cancelBundledDomain: newCancelBundledDomainValue,
 			confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancelBundledDomain,
-		} );
+		});
 	};
 
-	const onConfirmCancelBundledDomainChange = event => {
-		onCancelConfirmationStateChange( {
+	const onConfirmCancelBundledDomainChange = (event) => {
+		onCancelConfirmationStateChange({
 			cancelBundledDomain,
 			confirmCancelBundledDomain: event.target.checked,
-		} );
+		});
 	};
 
-	if ( isRefundable( purchase ) ) {
-		if ( isDomainRegistration( purchase ) ) {
+	if (isRefundable(purchase)) {
+		if (isDomainRegistration(purchase)) {
 			text = i18n.translate(
 				'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
 					"you'll receive a refund and it will be removed from your site immediately.",
@@ -61,18 +61,18 @@ const CancelPurchaseRefundInformation = ( {
 			);
 		}
 
-		if ( isSubscription( purchase ) ) {
+		if (isSubscription(purchase)) {
 			text = [
 				i18n.translate(
 					"We're sorry to hear the %(productName)s plan didn't fit your current needs, but thank you for giving it a try.",
 					{
 						args: {
-							productName: getName( purchase ),
+							productName: getName(purchase),
 						},
 					}
 				),
 			];
-			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
+			if (includedDomainPurchase && isDomainMapping(includedDomainPurchase)) {
 				text.push(
 					i18n.translate(
 						'This plan includes mapping for the domain %(mappedDomain)s. ' +
@@ -104,14 +104,14 @@ const CancelPurchaseRefundInformation = ( {
 				);
 
 				showSupportLink = false;
-			} else if ( includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
-				const { precision } = getCurrencyDefaults( purchase.currencyCode );
+			} else if (includedDomainPurchase && isDomainRegistration(includedDomainPurchase)) {
+				const { precision } = getCurrencyDefaults(purchase.currencyCode);
 				const planCostText =
 					purchase.currencySymbol +
-					parseFloat( purchase.refundAmount + includedDomainPurchase.costToUnbundle ).toFixed(
+					parseFloat(purchase.refundAmount + includedDomainPurchase.costToUnbundle).toFixed(
 						precision
 					);
-				if ( isRefundable( includedDomainPurchase ) ) {
+				if (isRefundable(includedDomainPurchase)) {
 					text.push(
 						i18n.translate(
 							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +
@@ -123,53 +123,53 @@ const CancelPurchaseRefundInformation = ( {
 								},
 							}
 						),
-						i18n.translate( "We'd like to offer you two options to choose from:" ),
+						i18n.translate("We'd like to offer you two options to choose from:"),
 						<FormLabel key="keep_bundled_domain">
 							<FormRadio
 								name="keep_bundled_domain_false"
 								value="keep"
-								checked={ ! cancelBundledDomain }
-								onChange={ onCancelBundledDomainChange }
+								checked={!cancelBundledDomain}
+								onChange={onCancelBundledDomainChange}
 							/>
 							<span>
-								{ i18n.translate( 'Cancel the plan, but keep %(domain)s.', {
+								{i18n.translate('Cancel the plan, but keep %(domain)s.', {
 									args: {
 										domain: includedDomainPurchase.meta,
 									},
-								} ) }
+								})}
 								<br />
-								{ i18n.translate(
+								{i18n.translate(
 									"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
 										'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
 										"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
 									{
 										args: {
-											productName: getName( purchase ),
+											productName: getName(purchase),
 											domainCost: includedDomainPurchase.costToUnbundleText,
 											refundAmount: purchase.refundText,
 										},
 									}
-								) }
+								)}
 							</span>
 						</FormLabel>,
 						<FormLabel key="cancel_bundled_domain">
 							<FormRadio
 								name="cancel_bundled_domain_false"
 								value="cancel"
-								checked={ cancelBundledDomain }
-								onChange={ onCancelBundledDomainChange }
+								checked={cancelBundledDomain}
+								onChange={onCancelBundledDomainChange}
 							/>
 							<span>
-								{ i18n.translate( 'Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
+								{i18n.translate('Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
 									args: {
 										domain: includedDomainPurchase.meta,
 									},
 									components: {
 										em: <em />,
 									},
-								} ) }
+								})}
 								<br />
-								{ i18n.translate(
+								{i18n.translate(
 									"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
 										"you'll lose it permanently.",
 									{
@@ -177,12 +177,12 @@ const CancelPurchaseRefundInformation = ( {
 											planCost: planCostText,
 										},
 									}
-								) }
+								)}
 							</span>
 						</FormLabel>
 					);
 
-					if ( cancelBundledDomain ) {
+					if (cancelBundledDomain) {
 						text.push(
 							i18n.translate(
 								"When you cancel a domain, it becomes unavailable for a while. Anyone may register it once it's " +
@@ -191,17 +191,17 @@ const CancelPurchaseRefundInformation = ( {
 									'servers{{/a}} instead.',
 								{
 									components: {
-										a: <a href={ UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" />,
+										a: <a href={UPDATE_NAMESERVERS} target="_blank" rel="noopener noreferrer" />,
 									},
 								}
 							),
 							<FormLabel>
 								<FormCheckbox
-									checked={ confirmCancelBundledDomain }
-									onChange={ onConfirmCancelBundledDomainChange }
+									checked={confirmCancelBundledDomain}
+									onChange={onConfirmCancelBundledDomainChange}
 								/>
 								<span>
-									{ i18n.translate(
+									{i18n.translate(
 										'I understand that canceling my domain means I might {{strong}}never be able to register it ' +
 											'again{{/strong}}.',
 										{
@@ -209,7 +209,7 @@ const CancelPurchaseRefundInformation = ( {
 												strong: <strong />,
 											},
 										}
-									) }
+									)}
 								</span>
 							</FormLabel>
 						);
@@ -252,7 +252,7 @@ const CancelPurchaseRefundInformation = ( {
 			}
 		}
 
-		if ( isOneTimePurchase( purchase ) ) {
+		if (isOneTimePurchase(purchase)) {
 			text = i18n.translate(
 				'When you cancel this purchase within %(refundPeriodInDays)d days of purchasing, ' +
 					"you'll receive a refund and it will be removed from your site immediately.",
@@ -261,15 +261,15 @@ const CancelPurchaseRefundInformation = ( {
 				}
 			);
 		}
-	} else if ( isDomainRegistration( purchase ) ) {
+	} else if (isDomainRegistration(purchase)) {
 		text = i18n.translate(
 			'When you cancel your domain, it will remain registered and active until the registration expires, ' +
 				'at which point it will be automatically removed from your site.'
 		);
 	} else if (
-		isSubscription( purchase ) &&
+		isSubscription(purchase) &&
 		includedDomainPurchase &&
-		isDomainMapping( includedDomainPurchase )
+		isDomainMapping(includedDomainPurchase)
 	) {
 		text = i18n.translate(
 			'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
@@ -282,9 +282,9 @@ const CancelPurchaseRefundInformation = ( {
 			}
 		);
 	} else if (
-		isSubscription( purchase ) &&
+		isSubscription(purchase) &&
 		includedDomainPurchase &&
-		isDomainRegistration( includedDomainPurchase )
+		isDomainRegistration(includedDomainPurchase)
 	) {
 		text = i18n.translate(
 			'This plan includes the custom domain, %(domain)s. ' +
@@ -302,7 +302,7 @@ const CancelPurchaseRefundInformation = ( {
 				'Once it expires, it will be automatically removed from your site.',
 			{
 				args: {
-					productName: getName( purchase ),
+					productName: getName(purchase),
 				},
 			}
 		);
@@ -310,27 +310,27 @@ const CancelPurchaseRefundInformation = ( {
 
 	return (
 		<div className="cancel-purchase__info">
-			{ Array.isArray( text ) ? (
-				text.map( ( paragraph, index ) => (
+			{Array.isArray(text) ? (
+				text.map((paragraph, index) => (
 					<p
-						key={ purchase.id + '_refund_p_' + index }
+						key={purchase.id + '_refund_p_' + index}
 						className="cancel-purchase__refund-information"
 					>
-						{ paragraph }
+						{paragraph}
 					</p>
-				) )
+				))
 			) : (
-				<p className="cancel-purchase__refund-information">{ text }</p>
-			) }
+				<p className="cancel-purchase__refund-information">{text}</p>
+			)}
 
-			{ showSupportLink && (
+			{showSupportLink && (
 				<strong className="cancel-purchase__support-information">
-					{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
+					{!isRefundable(purchase) && maybeWithinRefundPeriod(purchase)
 						? i18n.translate(
 								'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
 								{
 									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
+										contactLink: <a href={CALYPSO_CONTACT} />,
 									},
 								}
 						  )
@@ -338,12 +338,12 @@ const CancelPurchaseRefundInformation = ( {
 								'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
 								{
 									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
+										contactLink: <a href={CALYPSO_CONTACT} />,
 									},
 								}
-						  ) }
+						  )}
 				</strong>
-			) }
+			)}
 		</div>
 	);
 };
@@ -356,6 +356,6 @@ CancelPurchaseRefundInformation.propTypes = {
 	onCancelConfirmationStateChange: PropTypes.func,
 };
 
-export default connect( ( state, props ) => ( {
-	includedDomainPurchase: getIncludedDomainPurchase( state, props.purchase ),
-} ) )( CancelPurchaseRefundInformation );
+export default connect((state, props) => ({
+	includedDomainPurchase: getIncludedDomainPurchase(state, props.purchase),
+}))(CancelPurchaseRefundInformation);

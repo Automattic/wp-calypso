@@ -24,20 +24,20 @@ class NameserversToggle extends React.PureComponent {
 		return (
 			<Card compact className="name-servers__dns">
 				<span className="name-servers__title">
-					{ this.props.translate( 'Use WordPress.com Name Servers' ) }
+					{this.props.translate('Use WordPress.com Name Servers')}
 				</span>
 
 				<form className="name-servers__toggle">
 					<Toggle
 						id="wp-nameservers"
 						name="wp-nameservers"
-						onChange={ this.handleToggle }
+						onChange={this.handleToggle}
 						type="checkbox"
-						checked={ this.props.enabled }
+						checked={this.props.enabled}
 						value="active"
 					/>
 				</form>
-				{ this.renderExplanation() }
+				{this.renderExplanation()}
 			</Card>
 		);
 	}
@@ -45,50 +45,50 @@ class NameserversToggle extends React.PureComponent {
 	handleToggle = () => {
 		this.props.wpcomNameServersToggleButtonClick(
 			this.props.selectedDomainName,
-			! this.props.enabled
+			!this.props.enabled
 		);
 		this.props.onToggle();
 	};
 
 	renderExplanation() {
-		if ( ! this.props.enabled ) {
+		if (!this.props.enabled) {
 			return null;
 		}
 
 		return (
 			<p className="name-servers__explanation">
-				{ this.props.translate(
+				{this.props.translate(
 					'Name servers point your domain to the right website host, like WordPress.com. ' +
 						'{{a}}Learn more.{{/a}}',
 					{
 						components: {
 							a: (
 								<a
-									href={ CHANGE_NAME_SERVERS }
+									href={CHANGE_NAME_SERVERS}
 									target="_blank"
 									rel="noopener noreferrer"
-									onClick={ this.handleLearnMoreClick }
+									onClick={this.handleLearnMoreClick}
 								/>
 							),
 						},
 					}
-				) }
+				)}
 			</p>
 		);
 	}
 
 	handleLearnMoreClick = () => {
-		this.props.wpcomNameServersLearnMoreClick( this.props.selectedDomainName );
+		this.props.wpcomNameServersLearnMoreClick(this.props.selectedDomainName);
 	};
 }
 
-const wpcomNameServersToggleButtonClick = ( domainName, enabled ) => {
+const wpcomNameServersToggleButtonClick = (domainName, enabled) => {
 	const state = enabled ? 'On' : 'Off';
 
 	return composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			`Click Toggle Button in "Use WordPress.com Name Servers" Section to "${ state }" in Name Servers and DNS`,
+			`Click Toggle Button in "Use WordPress.com Name Servers" Section to "${state}" in Name Servers and DNS`,
 			'Domain Name',
 			domainName
 		),
@@ -102,7 +102,7 @@ const wpcomNameServersToggleButtonClick = ( domainName, enabled ) => {
 	);
 };
 
-const wpcomNameServersLearnMoreClick = domainName =>
+const wpcomNameServersLearnMoreClick = (domainName) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -116,7 +116,7 @@ const wpcomNameServersLearnMoreClick = domainName =>
 		)
 	);
 
-export default connect( null, {
+export default connect(null, {
 	wpcomNameServersLearnMoreClick,
 	wpcomNameServersToggleButtonClick,
-} )( localize( NameserversToggle ) );
+})(localize(NameserversToggle));

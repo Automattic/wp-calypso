@@ -47,40 +47,40 @@ class InfoStep extends Component {
 		validation: '',
 	};
 
-	setTimezone = timezone => {
-		this.props.updateConciergeSignupForm( { ...this.props.signupForm, timezone } );
+	setTimezone = (timezone) => {
+		this.props.updateConciergeSignupForm({ ...this.props.signupForm, timezone });
 	};
 
-	updateSignupForm( name, value ) {
-		this.props.updateConciergeSignupForm( {
+	updateSignupForm(name, value) {
+		this.props.updateConciergeSignupForm({
 			...this.props.signupForm,
-			[ name ]: value,
-		} );
+			[name]: value,
+		});
 	}
 
-	setRebrandCitiesValue = value => {
-		this.updateSignupForm( 'isRebrandCitiesSite', value );
+	setRebrandCitiesValue = (value) => {
+		this.updateSignupForm('isRebrandCitiesSite', value);
 	};
 
-	onChange = phoneNumber => {
-		if ( phoneNumber.phoneNumber && ! phoneNumber.isValid ) {
-			this.setState( {
-				validation: this.props.translate( 'Please enter a valid phone number.' ),
-			} );
+	onChange = (phoneNumber) => {
+		if (phoneNumber.phoneNumber && !phoneNumber.isValid) {
+			this.setState({
+				validation: this.props.translate('Please enter a valid phone number.'),
+			});
 		} else {
-			this.setState( { validation: '' } );
+			this.setState({ validation: '' });
 		}
 
-		this.props.updateConciergeSignupForm( {
+		this.props.updateConciergeSignupForm({
 			...this.props.signupForm,
 			countryCode: phoneNumber.countryData.code,
 			phoneNumberWithoutCountryCode: phoneNumber.phoneNumber,
 			phoneNumber: phoneNumber.phoneNumber ? phoneNumber.phoneNumberFull : '',
-		} );
+		});
 	};
 
-	setFieldValue = ( { target: { name, value } } ) => {
-		this.updateSignupForm( name, value );
+	setFieldValue = ({ target: { name, value } }) => {
+		this.updateSignupForm(name, value);
 	};
 
 	canSubmitForm = () => {
@@ -88,11 +88,11 @@ class InfoStep extends Component {
 			signupForm: { firstname, message },
 		} = this.props;
 
-		if ( this.state.validation ) {
+		if (this.state.validation) {
 			return false;
 		}
 
-		return !! firstname.trim() && !! message.trim();
+		return !!firstname.trim() && !!message.trim();
 	};
 
 	componentDidMount() {
@@ -101,15 +101,15 @@ class InfoStep extends Component {
 			signupForm: { firstname, lastname },
 		} = this.props;
 
-		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
+		this.props.recordTracksEvent('calypso_concierge_book_info_step');
 
-		if ( ! firstname && ! lastname ) {
+		if (!firstname && !lastname) {
 			// Prefill the firstname & lastname fields by user settings.
-			this.props.updateConciergeSignupForm( {
+			this.props.updateConciergeSignupForm({
 				...this.props.signupForm,
 				firstname: userSettings.first_name,
 				lastname: userSettings.last_name,
-			} );
+			});
 		}
 	}
 
@@ -128,50 +128,50 @@ class InfoStep extends Component {
 			site,
 			translate,
 		} = this.props;
-		const language = getLanguage( currentUserLocale ).name;
-		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
-		const noticeText = translate( 'All sessions are in English (%(language)s is not available)', {
+		const language = getLanguage(currentUserLocale).name;
+		const isEnglish = includes(config('english_locales'), currentUserLocale);
+		const noticeText = translate('All sessions are in English (%(language)s is not available)', {
 			args: { language },
-		} );
+		});
 
 		return (
 			<div>
-				<IsRebrandCitiesSite onChange={ this.setRebrandCitiesValue } siteId={ site.ID } />
+				<IsRebrandCitiesSite onChange={this.setRebrandCitiesValue} siteId={site.ID} />
 				<PrimaryHeader />
-				{ ! isEnglish && <Notice showDismiss={ false } text={ noticeText } /> }
+				{!isEnglish && <Notice showDismiss={false} text={noticeText} />}
 				<CompactCard className="book__info-step-site-block">
-					<Site siteId={ site.ID } />
+					<Site siteId={site.ID} />
 				</CompactCard>
 
 				<CompactCard>
 					<FormFieldset>
-						<FormLabel htmlFor="firstname">{ translate( 'First Name' ) }</FormLabel>
+						<FormLabel htmlFor="firstname">{translate('First Name')}</FormLabel>
 						<FormTextInput
 							name="firstname"
-							placeholder={ translate( 'What may we call you?' ) }
-							onChange={ this.setFieldValue }
-							value={ firstname }
+							placeholder={translate('What may we call you?')}
+							onChange={this.setFieldValue}
+							value={firstname}
 						/>
 					</FormFieldset>
 					<FormFieldset>
-						<FormLabel htmlFor="lastname">{ translate( 'Last Name' ) }</FormLabel>
+						<FormLabel htmlFor="lastname">{translate('Last Name')}</FormLabel>
 						<FormTextInput
 							name="lastname"
-							placeholder={ translate( 'Optionally, please tell us your last name.' ) }
-							onChange={ this.setFieldValue }
-							value={ lastname }
+							placeholder={translate('Optionally, please tell us your last name.')}
+							onChange={this.setFieldValue}
+							value={lastname}
 						/>
 					</FormFieldset>
 					<FormFieldset>
-						<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
+						<FormLabel>{translate("What's your timezone?")}</FormLabel>
 						<Timezone
-							includeManualOffsets={ false }
+							includeManualOffsets={false}
 							name="timezone"
-							onSelect={ this.setTimezone }
-							selectedZone={ timezone }
+							onSelect={this.setTimezone}
+							selectedZone={timezone}
 						/>
 						<FormSettingExplanation>
-							{ translate( 'Choose a city in your timezone.' ) }
+							{translate('Choose a city in your timezone.')}
 						</FormSettingExplanation>
 					</FormFieldset>
 
@@ -179,49 +179,45 @@ class InfoStep extends Component {
 						<QuerySmsCountries />
 						<FormPhoneInput
 							name="phoneNumber"
-							countriesList={ this.props.countriesList }
-							onChange={ this.onChange }
-							initialCountryCode={ countryCode }
-							initialPhoneNumber={ phoneNumberWithoutCountryCode }
+							countriesList={this.props.countriesList}
+							onChange={this.onChange}
+							initialCountryCode={countryCode}
+							initialPhoneNumber={phoneNumberWithoutCountryCode}
 							className="book__info-step-phone-input"
 						/>
 						<FormSettingExplanation>
-							{ translate( 'We will not call you — this is so that we can send you a reminder.' ) }
+							{translate('We will not call you — this is so that we can send you a reminder.')}
 						</FormSettingExplanation>
 
-						{ this.state.validation && (
-							<FormInputValidation isError text={ this.state.validation } />
-						) }
+						{this.state.validation && <FormInputValidation isError text={this.state.validation} />}
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel>
-							{ translate( 'What are you hoping to accomplish with your site?' ) }
-						</FormLabel>
+						<FormLabel>{translate('What are you hoping to accomplish with your site?')}</FormLabel>
 						<FormTextarea
-							placeholder={ translate(
+							placeholder={translate(
 								'Sell products and services? Generate leads? Something else entirely?' +
 									" Be as specific as you can! It helps us provide the information you're looking for."
-							) }
+							)}
 							name="message"
-							onChange={ this.setFieldValue }
-							value={ message }
+							onChange={this.setFieldValue}
+							value={message}
 						/>
 
-						{ ! isEnglish && (
+						{!isEnglish && (
 							<FormSettingExplanation>
-								{ translate( 'Please respond in English.' ) }
+								{translate('Please respond in English.')}
 							</FormSettingExplanation>
-						) }
+						)}
 					</FormFieldset>
 
 					<FormButton
-						disabled={ ! this.canSubmitForm() }
-						isPrimary={ true }
+						disabled={!this.canSubmitForm()}
+						isPrimary={true}
 						type="button"
-						onClick={ onComplete }
+						onClick={onComplete}
 					>
-						{ translate( 'Continue to calendar' ) }
+						{translate('Continue to calendar')}
 					</FormButton>
 				</CompactCard>
 			</div>
@@ -230,14 +226,14 @@ class InfoStep extends Component {
 }
 
 export default connect(
-	state => ( {
-		currentUserLocale: getCurrentUserLocale( state ),
-		signupForm: getConciergeSignupForm( state ),
-		userSettings: getUserSettings( state ),
-		countriesList: getCountries( state, 'sms' ),
-	} ),
+	(state) => ({
+		currentUserLocale: getCurrentUserLocale(state),
+		signupForm: getConciergeSignupForm(state),
+		userSettings: getUserSettings(state),
+		countriesList: getCountries(state, 'sms'),
+	}),
 	{
 		updateConciergeSignupForm,
 		recordTracksEvent,
 	}
-)( localize( InfoStep ) );
+)(localize(InfoStep));

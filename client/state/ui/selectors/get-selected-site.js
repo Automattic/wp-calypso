@@ -10,11 +10,11 @@ import getSelectedSiteId from './get-selected-site-id';
  * @param  {object}  state  Global state tree
  * @returns {?object}        Selected site
  */
-export default function getSelectedSite( state ) {
-	const siteId = getSelectedSiteId( state );
-	if ( ! siteId ) {
+export default function getSelectedSite(state) {
+	const siteId = getSelectedSiteId(state);
+	if (!siteId) {
 		return null;
 	}
 
-	return getSite( state, siteId );
+	return getSite(state, siteId);
 }

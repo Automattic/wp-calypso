@@ -15,26 +15,26 @@ class PaginationExample extends Component {
 		compact: false,
 	};
 
-	updatePage = page => {
-		this.setState( { page } );
+	updatePage = (page) => {
+		this.setState({ page });
 	};
 
 	toggleCompact = () => {
-		this.setState( { compact: ! this.state.compact } );
+		this.setState({ compact: !this.state.compact });
 	};
 
 	render() {
 		return (
 			<div>
-				<button className="docs__design-toggle button" onClick={ this.toggleCompact }>
-					{ this.state.compact ? 'Normal' : 'Compact' }
+				<button className="docs__design-toggle button" onClick={this.toggleCompact}>
+					{this.state.compact ? 'Normal' : 'Compact'}
 				</button>
 				<Pagination
-					compact={ this.state.compact }
-					page={ this.state.page }
-					perPage={ 10 }
-					total={ 100 }
-					pageClick={ this.updatePage }
+					compact={this.state.compact}
+					page={this.state.page}
+					perPage={10}
+					total={100}
+					pageClick={this.updatePage}
 				/>
 			</div>
 		);

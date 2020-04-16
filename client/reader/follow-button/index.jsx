@@ -14,26 +14,26 @@ import {
 	recordUnfollow as recordUnfollowTracks,
 } from 'reader/stats';
 
-function ReaderFollowButton( props ) {
+function ReaderFollowButton(props) {
 	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl } = props;
 
-	function recordFollowToggle( isFollowing ) {
-		if ( isFollowing ) {
-			recordFollowTracks( siteUrl, railcar, { follow_source: followSource } );
+	function recordFollowToggle(isFollowing) {
+		if (isFollowing) {
+			recordFollowTracks(siteUrl, railcar, { follow_source: followSource });
 		} else {
-			recordUnfollowTracks( siteUrl, railcar, { follow_source: followSource } );
+			recordUnfollowTracks(siteUrl, railcar, { follow_source: followSource });
 		}
 
-		if ( onFollowToggle ) {
-			onFollowToggle( isFollowing );
+		if (onFollowToggle) {
+			onFollowToggle(isFollowing);
 		}
 	}
 
-	if ( isButtonOnly ) {
-		return <FollowButton { ...props } onFollowToggle={ recordFollowToggle } />;
+	if (isButtonOnly) {
+		return <FollowButton {...props} onFollowToggle={recordFollowToggle} />;
 	}
 
-	return <FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />;
+	return <FollowButtonContainer {...props} onFollowToggle={recordFollowToggle} />;
 }
 
 ReaderFollowButton.propTypes = {

@@ -17,10 +17,10 @@ export default class CommentButtonExample extends React.Component {
 		return (
 			<div>
 				<Card compact>
-					<CommentButton commentCount={ 0 } />
+					<CommentButton commentCount={0} />
 				</Card>
 				<Card compact>
-					<CommentButton commentCount={ 42 } />
+					<CommentButton commentCount={42} />
 				</Card>
 			</div>
 		);

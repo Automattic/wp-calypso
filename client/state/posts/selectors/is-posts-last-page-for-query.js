@@ -15,11 +15,11 @@ import 'state/posts/init';
  * @param   {object}   query  Post query object
  * @returns {?boolean}        Whether last posts page has been reached
  */
-export function isPostsLastPageForQuery( state, siteId, query = {} ) {
-	const lastPage = getPostsLastPageForQuery( state, siteId, query );
-	if ( null === lastPage ) {
+export function isPostsLastPageForQuery(state, siteId, query = {}) {
+	const lastPage = getPostsLastPageForQuery(state, siteId, query);
+	if (null === lastPage) {
 		return lastPage;
 	}
 
-	return lastPage === ( query.page || DEFAULT_POST_QUERY.page );
+	return lastPage === (query.page || DEFAULT_POST_QUERY.page);
 }

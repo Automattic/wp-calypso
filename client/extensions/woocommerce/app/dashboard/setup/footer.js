@@ -10,11 +10,11 @@ import PropTypes from 'prop-types';
  */
 import { Button } from '@automattic/components';
 
-const SetupFooter = ( { busy, disabled, label, onClick, primary } ) => {
+const SetupFooter = ({ busy, disabled, label, onClick, primary }) => {
 	return (
 		<div className="setup__footer">
-			<Button busy={ busy } disabled={ disabled } onClick={ onClick } primary={ primary }>
-				{ label }
+			<Button busy={busy} disabled={disabled} onClick={onClick} primary={primary}>
+				{label}
 			</Button>
 		</div>
 	);

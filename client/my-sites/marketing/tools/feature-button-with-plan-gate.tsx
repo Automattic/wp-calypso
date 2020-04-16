@@ -34,8 +34,9 @@ interface ExternalProps {
 	planSlug: T.PlanSlug;
 }
 
-const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps &
-	ConnectedProps > = ( {
+const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
+	ExternalProps & ConnectedProps
+> = ({
 	buttonText,
 	hasPlanFeature,
 	onDefaultButtonClick,
@@ -43,42 +44,42 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps 
 	planSlug,
 	planTitle,
 	selectedSiteSlug,
-} ) => {
+}) => {
 	const translate = useTranslate();
 
 	const handleUpgradeClick = () => {
-		if ( onUpgradeButtonClick ) {
+		if (onUpgradeButtonClick) {
 			onUpgradeButtonClick();
 		}
 
-		page( addQueryArgs( { plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
+		page(addQueryArgs({ plan: planSlug }, `/plans/${selectedSiteSlug}`));
 	};
 
-	if ( hasPlanFeature ) {
+	if (hasPlanFeature) {
 		return (
-			<Button compact onClick={ onDefaultButtonClick }>
-				{ buttonText }
+			<Button compact onClick={onDefaultButtonClick}>
+				{buttonText}
 			</Button>
 		);
 	}
 
 	return (
-		<Button compact onClick={ handleUpgradeClick }>
-			{ translate( 'Upgrade To %(plan)s', {
+		<Button compact onClick={handleUpgradeClick}>
+			{translate('Upgrade To %(plan)s', {
 				args: {
 					plan: planTitle,
 				},
-			} ) }
+			})}
 		</Button>
 	);
 };
 
-export default connect< ConnectedProps, {}, ExternalProps >( ( state, { feature, planSlug } ) => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect<ConnectedProps, {}, ExternalProps>((state, { feature, planSlug }) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
-		hasPlanFeature: selectedSiteId ? hasFeature( state, selectedSiteId, feature ) : false,
-		planTitle: getPlan( planSlug ).getTitle(),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
+		hasPlanFeature: selectedSiteId ? hasFeature(state, selectedSiteId, feature) : false,
+		planTitle: getPlan(planSlug).getTitle(),
+		selectedSiteSlug: getSelectedSiteSlug(state),
 	};
-} )( MarketingToolsFeatureButtonWithPlanGate );
+})(MarketingToolsFeatureButtonWithPlanGate);

@@ -25,67 +25,67 @@ export class SiteSettingsNavigation extends Component {
 	getStrings() {
 		const { translate } = this.props;
 		return {
-			general: translate( 'General', { context: 'settings screen' } ),
-			performance: translate( 'Performance', { context: 'settings screen' } ),
-			writing: translate( 'Writing', { context: 'settings screen' } ),
-			discussion: translate( 'Discussion', { context: 'settings screen' } ),
-			security: translate( 'Security', { context: 'settings screen' } ),
+			general: translate('General', { context: 'settings screen' }),
+			performance: translate('Performance', { context: 'settings screen' }),
+			writing: translate('Writing', { context: 'settings screen' }),
+			discussion: translate('Discussion', { context: 'settings screen' }),
+			security: translate('Security', { context: 'settings screen' }),
 		};
 	}
 
 	render() {
 		const { section, site } = this.props;
 		const strings = this.getStrings();
-		const selectedText = strings[ section ];
+		const selectedText = strings[section];
 
-		if ( ! site ) {
+		if (!site) {
 			return <SectionNav />;
 		}
 
-		if ( section === 'guidedTransfer' ) {
+		if (section === 'guidedTransfer') {
 			// Dont show the navigation for guided transfer since it includes its own back navigation
 			return null;
 		}
 
 		return (
-			<SectionNav selectedText={ selectedText }>
+			<SectionNav selectedText={selectedText}>
 				<NavTabs>
-					<NavItem path={ `/settings/general/${ site.slug }` } selected={ section === 'general' }>
-						{ strings.general }
+					<NavItem path={`/settings/general/${site.slug}`} selected={section === 'general'}>
+						{strings.general}
 					</NavItem>
 
-					{ config.isEnabled( 'manage/security' ) && site.jetpack && (
+					{config.isEnabled('manage/security') && site.jetpack && (
 						<NavItem
-							path={ `/settings/security/${ site.slug }` }
+							path={`/settings/security/${site.slug}`}
 							preloadSectionName="settings-security"
-							selected={ section === 'security' }
+							selected={section === 'security'}
 						>
-							{ strings.security }
+							{strings.security}
 						</NavItem>
-					) }
+					)}
 
 					<NavItem
-						path={ `/settings/performance/${ site.slug }` }
+						path={`/settings/performance/${site.slug}`}
 						preloadSectionName="settings-performance"
-						selected={ section === 'performance' }
+						selected={section === 'performance'}
 					>
-						{ strings.performance }
+						{strings.performance}
 					</NavItem>
 
 					<NavItem
-						path={ `/settings/writing/${ site.slug }` }
+						path={`/settings/writing/${site.slug}`}
 						preloadSectionName="settings-writing"
-						selected={ section === 'writing' }
+						selected={section === 'writing'}
 					>
-						{ strings.writing }
+						{strings.writing}
 					</NavItem>
 
 					<NavItem
-						path={ `/settings/discussion/${ site.slug }` }
+						path={`/settings/discussion/${site.slug}`}
 						preloadSectionName="settings-discussion"
-						selected={ section === 'discussion' }
+						selected={section === 'discussion'}
 					>
-						{ strings.discussion }
+						{strings.discussion}
 					</NavItem>
 				</NavTabs>
 			</SectionNav>
@@ -93,6 +93,6 @@ export class SiteSettingsNavigation extends Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-} ) )( localize( SiteSettingsNavigation ) );
+export default connect((state) => ({
+	site: getSelectedSite(state),
+}))(localize(SiteSettingsNavigation));

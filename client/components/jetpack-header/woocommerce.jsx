@@ -61,8 +61,8 @@ const darkColorSchemeLogo = (
 	</g>
 );
 
-function JetpackWooCommerceLogo( { darkColorScheme } ) {
-	if ( darkColorScheme ) {
+function JetpackWooCommerceLogo({ darkColorScheme }) {
+	if (darkColorScheme) {
 		return darkColorSchemeLogo;
 	}
 

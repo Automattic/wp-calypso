@@ -21,11 +21,11 @@ import 'state/comments/init';
  * @returns {object} that has i_like and like_count props
  */
 export const getCommentLike = treeSelect(
-	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
-	( [ comments ], siteId, postId, commentId ) => {
-		const comment = find( comments, { ID: commentId } );
+	(state, siteId, postId) => [getPostCommentItems(state, siteId, postId)],
+	([comments], siteId, postId, commentId) => {
+		const comment = find(comments, { ID: commentId });
 
-		if ( ! comment ) {
+		if (!comment) {
 			return undefined;
 		}
 		const { i_like, like_count } = comment;

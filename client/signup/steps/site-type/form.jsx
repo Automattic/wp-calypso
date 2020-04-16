@@ -35,11 +35,11 @@ class SiteTypeForm extends Component {
 		showPurchaseRequired: true,
 	};
 
-	handleSubmit = type => {
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
+	handleSubmit = (type) => {
+		this.props.recordTracksEvent('calypso_signup_actions_submit_site_type', {
 			value: type,
-		} );
-		this.props.submitForm( type );
+		});
+		this.props.submitForm(type);
 	};
 
 	render() {
@@ -48,34 +48,34 @@ class SiteTypeForm extends Component {
 		return (
 			<>
 				<Card className="site-type__wrapper">
-					{ getAllSiteTypes().map( siteTypeProperties => (
+					{getAllSiteTypes().map((siteTypeProperties) => (
 						<Card
 							className="site-type__option"
-							key={ siteTypeProperties.id }
+							key={siteTypeProperties.id}
 							tagName="button"
 							displayAsLink
-							data-e2e-title={ siteTypeProperties.slug }
-							onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
+							data-e2e-title={siteTypeProperties.slug}
+							onClick={this.handleSubmit.bind(this, siteTypeProperties.slug)}
 						>
-							<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
-							{ showDescriptions && (
+							<strong className="site-type__option-label">{siteTypeProperties.label}</strong>
+							{showDescriptions && (
 								<span className="site-type__option-description">
-									{ siteTypeProperties.description }
+									{siteTypeProperties.description}
 								</span>
-							) }
-							{ showPurchaseRequired && siteTypeProperties.purchaseRequired && (
+							)}
+							{showPurchaseRequired && siteTypeProperties.purchaseRequired && (
 								<Badge className="site-type__option-badge" type="info">
-									{ translate( 'Purchase required' ) }
+									{translate('Purchase required')}
 								</Badge>
-							) }
+							)}
 						</Card>
-					) ) }
+					))}
 				</Card>
 			</>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( SiteTypeForm ) );
+})(localize(SiteTypeForm));

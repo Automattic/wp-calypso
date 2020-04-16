@@ -19,71 +19,71 @@ import {
 	isThemeMatchingQuery,
 } from '../utils';
 
-describe( 'utils', () => {
-	describe( '#isPremium()', () => {
-		test( 'given no theme object, should return false', () => {
+describe('utils', () => {
+	describe('#isPremium()', () => {
+		test('given no theme object, should return false', () => {
 			const premium = isPremium();
-			expect( premium ).to.be.false;
-		} );
+			expect(premium).to.be.false;
+		});
 
-		test( 'given a theme object with no stylesheet attr, should return false', () => {
-			const premium = isPremium( {
+		test('given a theme object with no stylesheet attr, should return false', () => {
+			const premium = isPremium({
 				id: 'twentysixteen',
-			} );
-			expect( premium ).to.be.false;
-		} );
+			});
+			expect(premium).to.be.false;
+		});
 
-		test( 'given a theme object with a stylesheet attr that doesn\'t start with "premium/", should return false', () => {
-			const premium = isPremium( {
+		test('given a theme object with a stylesheet attr that doesn\'t start with "premium/", should return false', () => {
+			const premium = isPremium({
 				id: 'twentysixteen',
 				stylesheet: 'pub/twentysixteen',
-			} );
-			expect( premium ).to.be.false;
-		} );
+			});
+			expect(premium).to.be.false;
+		});
 
-		test( 'given a theme object with a stylesheet attr that starts with "premium/", should return true', () => {
-			const premium = isPremium( {
+		test('given a theme object with a stylesheet attr that starts with "premium/", should return true', () => {
+			const premium = isPremium({
 				id: 'mood',
 				stylesheet: 'premium/mood',
-			} );
-			expect( premium ).to.be.true;
-		} );
-	} );
+			});
+			expect(premium).to.be.true;
+		});
+	});
 
-	describe( '#normalizeJetpackTheme()', () => {
-		test( 'should return an empty object when given no argument', () => {
+	describe('#normalizeJetpackTheme()', () => {
+		test('should return an empty object when given no argument', () => {
 			const normalizedTheme = normalizeJetpackTheme();
-			expect( normalizedTheme ).to.deep.equal( {} );
-		} );
-		test( 'should rename some keys', () => {
-			const normalizedTheme = normalizeJetpackTheme( {
+			expect(normalizedTheme).to.deep.equal({});
+		});
+		test('should rename some keys', () => {
+			const normalizedTheme = normalizeJetpackTheme({
 				id: 'twentyfifteen',
 				name: 'Twenty Fifteen',
 				author: 'the WordPress team',
 				screenshot: 'twentyfifteen.png',
 				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
-				tags: [ 'custom-header', 'two-columns' ],
-			} );
-			expect( normalizedTheme ).to.deep.equal( {
+				tags: ['custom-header', 'two-columns'],
+			});
+			expect(normalizedTheme).to.deep.equal({
 				id: 'twentyfifteen',
 				name: 'Twenty Fifteen',
 				author: 'the WordPress team',
 				screenshot: 'twentyfifteen.png',
 				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
 				taxonomies: {
-					theme_feature: [ { slug: 'custom-header' }, { slug: 'two-columns' } ],
+					theme_feature: [{ slug: 'custom-header' }, { slug: 'two-columns' }],
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#normalizeWpcomTheme()', () => {
-		test( 'should return an empty object when given no argument', () => {
+	describe('#normalizeWpcomTheme()', () => {
+		test('should return an empty object when given no argument', () => {
 			const normalizedTheme = normalizeWpcomTheme();
-			expect( normalizedTheme ).to.deep.equal( {} );
-		} );
-		test( 'should rename some keys', () => {
-			const normalizedTheme = normalizeWpcomTheme( {
+			expect(normalizedTheme).to.deep.equal({});
+		});
+		test('should rename some keys', () => {
+			const normalizedTheme = normalizeWpcomTheme({
 				id: 'mood',
 				name: 'Mood',
 				author: 'Automattic',
@@ -96,8 +96,8 @@ describe( 'utils', () => {
 				stylesheet: 'premium/mood',
 				demo_uri: 'https://mooddemo.wordpress.com/',
 				author_uri: 'https://wordpress.com/themes/',
-			} );
-			expect( normalizedTheme ).to.deep.equal( {
+			});
+			expect(normalizedTheme).to.deep.equal({
 				id: 'mood',
 				name: 'Mood',
 				author: 'Automattic',
@@ -110,18 +110,18 @@ describe( 'utils', () => {
 				stylesheet: 'premium/mood',
 				demo_uri: 'https://mooddemo.wordpress.com/',
 				author_uri: 'https://wordpress.com/themes/',
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#normalizeWporgTheme()', () => {
-		test( 'should return an empty object when given no argument', () => {
+	describe('#normalizeWporgTheme()', () => {
+		test('should return an empty object when given no argument', () => {
 			const normalizedTheme = normalizeWporgTheme();
-			expect( normalizedTheme ).to.deep.equal( {} );
-		} );
+			expect(normalizedTheme).to.deep.equal({});
+		});
 
-		test( 'should rename some keys', () => {
-			const normalizedTheme = normalizeWporgTheme( {
+		test('should rename some keys', () => {
+			const normalizedTheme = normalizeWporgTheme({
 				slug: 'twentyfifteen',
 				name: 'Twenty Fifteen',
 				author: {
@@ -139,8 +139,8 @@ describe( 'utils', () => {
 					'custom-header': 'Custom Header',
 					'two-columns': 'Two Columns',
 				},
-			} );
-			expect( normalizedTheme ).to.deep.equal( {
+			});
+			expect(normalizedTheme).to.deep.equal({
 				id: 'twentyfifteen',
 				name: 'Twenty Fifteen',
 				author: 'WordPress.org',
@@ -154,51 +154,51 @@ describe( 'utils', () => {
 						{ slug: 'two-columns', name: 'Two Columns' },
 					],
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#getThemeIdFromStylesheet()', () => {
-		test( 'should return undefined when given no argument', () => {
+	describe('#getThemeIdFromStylesheet()', () => {
+		test('should return undefined when given no argument', () => {
 			const themeId = getThemeIdFromStylesheet();
-			expect( themeId ).to.be.undefined;
-		} );
+			expect(themeId).to.be.undefined;
+		});
 
-		test( "should return the argument if it doesn't contain a slash (/)", () => {
-			const themeId = getThemeIdFromStylesheet( 'twentysixteen' );
-			expect( themeId ).to.equal( 'twentysixteen' );
-		} );
+		test("should return the argument if it doesn't contain a slash (/)", () => {
+			const themeId = getThemeIdFromStylesheet('twentysixteen');
+			expect(themeId).to.equal('twentysixteen');
+		});
 
-		test( "should return argument's part after the slash if it does contain a slash (/)", () => {
-			const themeId = getThemeIdFromStylesheet( 'pub/twentysixteen' );
-			expect( themeId ).to.equal( 'twentysixteen' );
-		} );
-	} );
+		test("should return argument's part after the slash if it does contain a slash (/)", () => {
+			const themeId = getThemeIdFromStylesheet('pub/twentysixteen');
+			expect(themeId).to.equal('twentysixteen');
+		});
+	});
 
-	describe( '#getNormalizedThemesQuery()', () => {
-		test( 'should exclude default values', () => {
-			const query = getNormalizedThemesQuery( {
+	describe('#getNormalizedThemesQuery()', () => {
+		test('should exclude default values', () => {
+			const query = getNormalizedThemesQuery({
 				page: 4,
 				number: 20,
-			} );
+			});
 
-			expect( query ).to.eql( {
+			expect(query).to.eql({
 				page: 4,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#getSerializedThemesQuery()', () => {
-		test( 'should return a JSON string of a normalized query', () => {
-			const serializedQuery = getSerializedThemesQuery( {
+	describe('#getSerializedThemesQuery()', () => {
+		test('should return a JSON string of a normalized query', () => {
+			const serializedQuery = getSerializedThemesQuery({
 				type: 'page',
 				page: 1,
-			} );
+			});
 
-			expect( serializedQuery ).to.equal( '{"type":"page"}' );
-		} );
+			expect(serializedQuery).to.equal('{"type":"page"}');
+		});
 
-		test( 'should prefix site ID if specified', () => {
+		test('should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedThemesQuery(
 				{
 					search: 'Hello',
@@ -206,50 +206,50 @@ describe( 'utils', () => {
 				2916284
 			);
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
-		} );
-	} );
+			expect(serializedQuery).to.equal('2916284:{"search":"Hello"}');
+		});
+	});
 
-	describe( 'getDeserializedThemesQueryDetails()', () => {
-		test( 'should return undefined query and site if string does not contain JSON', () => {
-			const queryDetails = getDeserializedThemesQueryDetails( 'bad' );
+	describe('getDeserializedThemesQueryDetails()', () => {
+		test('should return undefined query and site if string does not contain JSON', () => {
+			const queryDetails = getDeserializedThemesQueryDetails('bad');
 
-			expect( queryDetails ).to.eql( {
+			expect(queryDetails).to.eql({
 				siteId: undefined,
 				query: undefined,
-			} );
-		} );
+			});
+		});
 
-		test( 'should return query but not site if string does not contain site prefix', () => {
-			const queryDetails = getDeserializedThemesQueryDetails( '{"search":"hello"}' );
+		test('should return query but not site if string does not contain site prefix', () => {
+			const queryDetails = getDeserializedThemesQueryDetails('{"search":"hello"}');
 
-			expect( queryDetails ).to.eql( {
+			expect(queryDetails).to.eql({
 				siteId: undefined,
 				query: { search: 'hello' },
-			} );
-		} );
+			});
+		});
 
-		test( 'should return query and site if string contains site prefix and JSON', () => {
-			const queryDetails = getDeserializedThemesQueryDetails( '2916284:{"search":"hello"}' );
+		test('should return query and site if string contains site prefix and JSON', () => {
+			const queryDetails = getDeserializedThemesQueryDetails('2916284:{"search":"hello"}');
 
-			expect( queryDetails ).to.eql( {
+			expect(queryDetails).to.eql({
 				siteId: 2916284,
 				query: { search: 'hello' },
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#getSerializedThemesQueryWithoutPage()', () => {
-		test( 'should return a JSON string of a normalized query omitting page', () => {
-			const serializedQuery = getSerializedThemesQueryWithoutPage( {
+	describe('#getSerializedThemesQueryWithoutPage()', () => {
+		test('should return a JSON string of a normalized query omitting page', () => {
+			const serializedQuery = getSerializedThemesQueryWithoutPage({
 				type: 'page',
 				page: 2,
-			} );
+			});
 
-			expect( serializedQuery ).to.equal( '{"type":"page"}' );
-		} );
+			expect(serializedQuery).to.equal('{"type":"page"}');
+		});
 
-		test( 'should prefix site ID if specified', () => {
+		test('should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedThemesQueryWithoutPage(
 				{
 					search: 'Hello',
@@ -258,11 +258,11 @@ describe( 'utils', () => {
 				2916284
 			);
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
-		} );
-	} );
+			expect(serializedQuery).to.equal('2916284:{"search":"Hello"}');
+		});
+	});
 
-	describe( '#matches()', () => {
+	describe('#matches()', () => {
 		const DEFAULT_THEME = {
 			id: 'twentysomething',
 			name: 'Twenty Something',
@@ -311,8 +311,8 @@ describe( 'utils', () => {
 				' — the horizontal masthead with an optional right sidebar that works perfectly for blogs and websites.',
 		};
 
-		describe( 'query.search', () => {
-			test( 'should return false for a non-matching search', () => {
+		describe('query.search', () => {
+			test('should return false for a non-matching search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'nonexisting',
@@ -320,10 +320,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.false;
-			} );
+				expect(isMatch).to.be.false;
+			});
 
-			test( 'should return true for a falsey search', () => {
+			test('should return true for a falsey search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: null,
@@ -331,10 +331,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.true;
-			} );
+				expect(isMatch).to.be.true;
+			});
 
-			test( 'should return true for a matching ID search', () => {
+			test('should return true for a matching ID search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'twentysomething',
@@ -342,10 +342,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.true;
-			} );
+				expect(isMatch).to.be.true;
+			});
 
-			test( 'should return true for a matching title search', () => {
+			test('should return true for a matching title search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'Twenty',
@@ -353,10 +353,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.true;
-			} );
+				expect(isMatch).to.be.true;
+			});
 
-			test( 'should return true for a matching content search', () => {
+			test('should return true for a matching content search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'modern',
@@ -364,10 +364,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.true;
-			} );
+				expect(isMatch).to.be.true;
+			});
 
-			test( 'should return true for a matching author search', () => {
+			test('should return true for a matching author search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'team',
@@ -375,10 +375,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.true;
-			} );
+				expect(isMatch).to.be.true;
+			});
 
-			test( 'should return true for a matching filter search', () => {
+			test('should return true for a matching filter search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'infinite',
@@ -386,10 +386,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.true;
-			} );
+				expect(isMatch).to.be.true;
+			});
 
-			test( 'should search case-insensitive', () => {
+			test('should search case-insensitive', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'Sidebar',
@@ -397,10 +397,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.true;
-			} );
+				expect(isMatch).to.be.true;
+			});
 
-			test( 'should separately test title and content fields', () => {
+			test('should separately test title and content fields', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'TwentyThe',
@@ -408,12 +408,12 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.false;
-			} );
-		} );
+				expect(isMatch).to.be.false;
+			});
+		});
 
-		describe( 'query.filter', () => {
-			test( 'should return false if theme does not include filter', () => {
+		describe('query.filter', () => {
+			test('should return false if theme does not include filter', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						filter: 'nosuchfilter',
@@ -421,10 +421,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.false;
-			} );
+				expect(isMatch).to.be.false;
+			});
 
-			test( 'should return false on a partial match', () => {
+			test('should return false on a partial match', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						filter: 'ourna',
@@ -432,10 +432,10 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.false;
-			} );
+				expect(isMatch).to.be.false;
+			});
 
-			test( 'should return true if theme includes filter', () => {
+			test('should return true if theme includes filter', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						filter: 'infinite-scroll',
@@ -443,11 +443,11 @@ describe( 'utils', () => {
 					DEFAULT_THEME
 				);
 
-				expect( isMatch ).to.be.true;
-			} );
+				expect(isMatch).to.be.true;
+			});
 
-			describe( 'with multiple filters from a single taxonomy', () => {
-				test( "should return false if theme doesn't match all filters", () => {
+			describe('with multiple filters from a single taxonomy', () => {
+				test("should return false if theme doesn't match all filters", () => {
 					const isMatch = isThemeMatchingQuery(
 						{
 							filter: 'infinite-scroll,business',
@@ -455,9 +455,9 @@ describe( 'utils', () => {
 						DEFAULT_THEME
 					);
 
-					expect( isMatch ).to.be.false;
-				} );
-				test( 'should return true if theme matches all filters', () => {
+					expect(isMatch).to.be.false;
+				});
+				test('should return true if theme matches all filters', () => {
 					const isMatch = isThemeMatchingQuery(
 						{
 							filter: 'infinite-scroll,custom-header',
@@ -465,12 +465,12 @@ describe( 'utils', () => {
 						DEFAULT_THEME
 					);
 
-					expect( isMatch ).to.be.true;
-				} );
-			} );
+					expect(isMatch).to.be.true;
+				});
+			});
 
-			describe( 'with multiple filters from different taxonomies', () => {
-				test( "should return false if theme doesn't match all filters", () => {
+			describe('with multiple filters from different taxonomies', () => {
+				test("should return false if theme doesn't match all filters", () => {
 					const isMatch = isThemeMatchingQuery(
 						{
 							filter: 'infinite-scroll,green',
@@ -478,9 +478,9 @@ describe( 'utils', () => {
 						DEFAULT_THEME
 					);
 
-					expect( isMatch ).to.be.false;
-				} );
-				test( 'should return true if theme matches all filters', () => {
+					expect(isMatch).to.be.false;
+				});
+				test('should return true if theme matches all filters', () => {
 					const isMatch = isThemeMatchingQuery(
 						{
 							filter: 'infinite-scroll,black',
@@ -488,9 +488,9 @@ describe( 'utils', () => {
 						DEFAULT_THEME
 					);
 
-					expect( isMatch ).to.be.true;
-				} );
-			} );
-		} );
-	} );
-} );
+					expect(isMatch).to.be.true;
+				});
+			});
+		});
+	});
+});

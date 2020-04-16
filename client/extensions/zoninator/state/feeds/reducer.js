@@ -9,8 +9,8 @@ import {
 	ZONINATOR_UPDATE_FEED,
 } from '../action-types';
 
-const isRequesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const isRequesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case ZONINATOR_REQUEST_FEED:
 			return true;
 		case ZONINATOR_REQUEST_FEED_ERROR:
@@ -20,12 +20,12 @@ const isRequesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const requesting = keyedReducer( 'siteId', keyedReducer( 'zoneId', isRequesting ) );
+export const requesting = keyedReducer('siteId', keyedReducer('zoneId', isRequesting));
 
-const feed = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const feed = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case ZONINATOR_UPDATE_FEED: {
 			const { posts } = action;
 			return posts;
@@ -33,11 +33,11 @@ const feed = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const items = keyedReducer( 'siteId', keyedReducer( 'zoneId', feed ) );
+export const items = keyedReducer('siteId', keyedReducer('zoneId', feed));
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	items,
-} );
+});

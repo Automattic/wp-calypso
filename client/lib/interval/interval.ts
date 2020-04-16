@@ -14,7 +14,7 @@ interface Props {
 	period: TimeoutMS;
 }
 
-export const Interval: FunctionComponent< Props > = props => {
-	useInterval( props.onTick, props.period );
+export const Interval: FunctionComponent<Props> = (props) => {
+	useInterval(props.onTick, props.period);
 	return null;
 };

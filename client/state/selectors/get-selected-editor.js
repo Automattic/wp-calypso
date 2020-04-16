@@ -16,8 +16,8 @@ import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
  * @returns {string} "gutenberg-iframe", "gutenberg-redirect", "gutenberg-redirect-and-style" or "classic", or null if we
  * have no data yet
  */
-export const getSelectedEditor = ( state, siteId ) => {
-	const selectedEditor = get( state, [ 'selectedEditor', siteId ], null );
+export const getSelectedEditor = (state, siteId) => {
+	const selectedEditor = get(state, ['selectedEditor', siteId], null);
 
 	const validEditors = [
 		'gutenberg-iframe',
@@ -25,11 +25,11 @@ export const getSelectedEditor = ( state, siteId ) => {
 		'gutenberg-redirect-and-style',
 		'classic',
 	];
-	if ( ! validEditors.includes( selectedEditor ) ) {
+	if (!validEditors.includes(selectedEditor)) {
 		return null;
 	}
 
-	if ( isClassicEditorForced( state, siteId ) ) {
+	if (isClassicEditorForced(state, siteId)) {
 		return 'classic';
 	}
 

@@ -24,15 +24,15 @@ class EmailProvider extends Component {
 		submitting: false,
 	};
 
-	onChange = event => {
+	onChange = (event) => {
 		const { value } = event.target;
 
-		this.setState( { token: trim( value ) } );
+		this.setState({ token: trim(value) });
 	};
 
-	onAddDnsRecords = event => {
+	onAddDnsRecords = (event) => {
 		event.preventDefault();
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
 		const { domain, translate, template } = this.props;
 		let variables = {
@@ -40,8 +40,8 @@ class EmailProvider extends Component {
 			domain,
 		};
 
-		if ( template.modifyVariables ) {
-			variables = template.modifyVariables( variables );
+		if (template.modifyVariables) {
+			variables = template.modifyVariables(variables);
 		}
 
 		this.props
@@ -54,52 +54,52 @@ class EmailProvider extends Component {
 			.then(
 				() => {
 					this.props.successNotice(
-						translate( "Hooray! We've successfully added DNS records for this service." ),
+						translate("Hooray! We've successfully added DNS records for this service."),
 						{ duration: 5000 }
 					);
 				},
-				error => {
+				(error) => {
 					this.props.errorNotice(
 						error.message ||
-							translate( "We weren't able to add DNS records for this service. Please try again." )
+							translate("We weren't able to add DNS records for this service. Please try again.")
 					);
 				}
 			)
-			.finally( () => {
-				this.setState( { submitting: false } );
-			} );
+			.finally(() => {
+				this.setState({ submitting: false });
+			});
 	};
 
 	render() {
 		const { template, translate } = this.props;
 		const { token, submitting } = this.state;
 		const { name, label, placeholder, validationPattern } = template;
-		const isDataValid = token.match( validationPattern );
+		const isDataValid = token.match(validationPattern);
 
 		return (
 			<form className="dns__form">
 				<FormFieldset>
-					<FormLabel htmlFor="dns-template-token">{ label }</FormLabel>
+					<FormLabel htmlFor="dns-template-token">{label}</FormLabel>
 					<FormTextInput
 						id="dns-template-token"
-						key={ `dns-templates-token-${ name }` }
+						key={`dns-templates-token-${name}`}
 						name="token"
-						isError={ ! isEmpty( token ) && ! isDataValid }
-						onChange={ this.onChange }
-						placeholder={ placeholder }
+						isError={!isEmpty(token) && !isDataValid}
+						onChange={this.onChange}
+						placeholder={placeholder}
 					/>
-					{ token && ! isDataValid && (
-						<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
-					) }
+					{token && !isDataValid && (
+						<FormInputValidation text={translate('Invalid Token')} isError />
+					)}
 				</FormFieldset>
 				<FormFooter>
-					<FormButton disabled={ ! isDataValid || submitting } onClick={ this.onAddDnsRecords }>
-						{ translate( 'Set up %(providerName)s', {
+					<FormButton disabled={!isDataValid || submitting} onClick={this.onAddDnsRecords}>
+						{translate('Set up %(providerName)s', {
 							args: { providerName: name },
 							comment:
 								'%(providerName)s will be replaced with the name of the service ' +
 								'provider that this template is used for, for example G Suite or Office 365',
-						} ) }
+						})}
 					</FormButton>
 				</FormFooter>
 			</form>
@@ -107,8 +107,8 @@ class EmailProvider extends Component {
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	applyDnsTemplate,
 	errorNotice,
 	successNotice,
-} )( localize( EmailProvider ) );
+})(localize(EmailProvider));

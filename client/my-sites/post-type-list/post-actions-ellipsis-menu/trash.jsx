@@ -32,49 +32,49 @@ class PostActionsEllipsisMenuTrash extends Component {
 	};
 
 	constructor() {
-		super( ...arguments );
+		super(...arguments);
 
-		this.trashPost = this.trashPost.bind( this );
+		this.trashPost = this.trashPost.bind(this);
 	}
 
 	trashPost() {
 		const { translate, siteId, postId, status } = this.props;
-		if ( ! postId ) {
+		if (!postId) {
 			return;
 		}
 
-		if ( 'trash' !== status ) {
+		if ('trash' !== status) {
 			this.props.onTrashClick();
-			this.props.trashPost( siteId, postId );
-		} else if ( confirm( translate( 'Are you sure you want to permanently delete this post?' ) ) ) {
+			this.props.trashPost(siteId, postId);
+		} else if (confirm(translate('Are you sure you want to permanently delete this post?'))) {
 			this.props.onDeleteClick();
-			this.props.deletePost( siteId, postId );
+			this.props.deletePost(siteId, postId);
 		}
 	}
 
 	render() {
 		const { translate, status, canDelete } = this.props;
-		if ( ! canDelete ) {
+		if (!canDelete) {
 			return null;
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.trashPost } icon="trash">
-				{ 'trash' === status
-					? translate( 'Delete Permanently' )
-					: translate( 'Trash', { context: 'verb' } ) }
+			<PopoverMenuItem onClick={this.trashPost} icon="trash">
+				{'trash' === status
+					? translate('Delete Permanently')
+					: translate('Trash', { context: 'verb' })}
 			</PopoverMenuItem>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
+const mapStateToProps = (state, { globalId }) => {
+	const post = getPost(state, globalId);
+	if (!post) {
 		return {};
 	}
 
-	const userId = getCurrentUserId( state );
+	const userId = getCurrentUserId(state);
 	const isAuthor = post.author && post.author.ID === userId;
 
 	return {
@@ -92,29 +92,29 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 const mapDispatchToProps = { trashPost, deletePost, bumpStat, recordTracksEvent };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpTrashStat = bumpStatGenerator( stateProps.type, 'trash', dispatchProps.bumpStat );
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	const bumpTrashStat = bumpStatGenerator(stateProps.type, 'trash', dispatchProps.bumpStat);
 	const onTrashClick = () => {
 		bumpTrashStat();
-		dispatchProps.recordTracksEvent( 'calypso_post_type_list_trash', {
+		dispatchProps.recordTracksEvent('calypso_post_type_list_trash', {
 			post_type: stateProps.type,
-		} );
+		});
 	};
-	const bumpDeleteStat = bumpStatGenerator( stateProps.type, 'delete', dispatchProps.bumpStat );
+	const bumpDeleteStat = bumpStatGenerator(stateProps.type, 'delete', dispatchProps.bumpStat);
 	const onDeleteClick = () => {
 		bumpDeleteStat();
-		dispatchProps.recordTracksEvent( 'calypso_post_type_list_delete', {
+		dispatchProps.recordTracksEvent('calypso_post_type_list_delete', {
 			post_type: stateProps.type,
-		} );
+		});
 	};
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, {
+	return Object.assign({}, ownProps, stateProps, dispatchProps, {
 		onTrashClick,
 		onDeleteClick,
-	} );
+	});
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( PostActionsEllipsisMenuTrash ) );
+)(localize(PostActionsEllipsisMenuTrash));

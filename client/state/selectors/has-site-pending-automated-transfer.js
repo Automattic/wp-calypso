@@ -24,17 +24,17 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  * @param   {number}  siteId Site of interest.
  * @returns {boolean}        Whether there might be a transfer process happening on the backend.
  */
-export default ( state, siteId ) => {
-	const siteOptions = getSiteOptions( state, siteId );
+export default (state, siteId) => {
+	const siteOptions = getSiteOptions(state, siteId);
 
-	if ( ! siteOptions ) {
+	if (!siteOptions) {
 		return null;
 	}
 
 	// If the site is an Atomic one, there is no Automated Transfer process happening on the backend.
-	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+	if (isSiteAutomatedTransfer(state, siteId)) {
 		return false;
 	}
 
-	return get( siteOptions, 'has_pending_automated_transfer', false );
+	return get(siteOptions, 'has_pending_automated_transfer', false);
 };

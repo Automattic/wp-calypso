@@ -11,15 +11,15 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * @param {string} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
  * @returns {number} The original number rounded to a decimal point
  */
-export function getCurrencyFormatDecimal( number, currency = 'USD' ) {
-	const { precision } = getCurrencyDefaults( currency );
-	if ( 'number' !== typeof number ) {
-		number = parseFloat( number );
+export function getCurrencyFormatDecimal(number, currency = 'USD') {
+	const { precision } = getCurrencyDefaults(currency);
+	if ('number' !== typeof number) {
+		number = parseFloat(number);
 	}
-	if ( isNaN( number ) ) {
+	if (isNaN(number)) {
 		return 0;
 	}
-	return Math.round( number * Math.pow( 10, precision ) ) / Math.pow( 10, precision );
+	return Math.round(number * Math.pow(10, precision)) / Math.pow(10, precision);
 }
 
 /**
@@ -30,13 +30,13 @@ export function getCurrencyFormatDecimal( number, currency = 'USD' ) {
  * @param {string} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
  * @returns {string} The original number rounded to a decimal point
  */
-export function getCurrencyFormatString( number, currency = 'USD' ) {
-	const { precision } = getCurrencyDefaults( currency );
-	if ( 'number' !== typeof number ) {
-		number = parseFloat( number );
+export function getCurrencyFormatString(number, currency = 'USD') {
+	const { precision } = getCurrencyDefaults(currency);
+	if ('number' !== typeof number) {
+		number = parseFloat(number);
 	}
-	if ( isNaN( number ) ) {
+	if (isNaN(number)) {
 		return '';
 	}
-	return number.toFixed( precision );
+	return number.toFixed(precision);
 }

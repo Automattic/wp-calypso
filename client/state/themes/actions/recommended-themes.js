@@ -16,9 +16,9 @@ import 'state/themes/init';
  * @param {Array} themes array of received theme objects
  * @returns {Function} Action thunk
  */
-export function receiveRecommendedThemes( themes ) {
-	return dispatch => {
-		dispatch( { type: RECOMMENDED_THEMES_SUCCESS, payload: themes } );
+export function receiveRecommendedThemes(themes) {
+	return (dispatch) => {
+		dispatch({ type: RECOMMENDED_THEMES_SUCCESS, payload: themes });
 	};
 }
 
@@ -29,8 +29,8 @@ export function receiveRecommendedThemes( themes ) {
  * @returns {Function} Action thunk
  */
 export function getRecommendedThemes() {
-	return async dispatch => {
-		dispatch( { type: RECOMMENDED_THEMES_FETCH } );
+	return async (dispatch) => {
+		dispatch({ type: RECOMMENDED_THEMES_FETCH });
 		const query = {
 			search: '',
 			number: 50,
@@ -39,10 +39,10 @@ export function getRecommendedThemes() {
 			apiVersion: '1.2',
 		};
 		try {
-			const res = await wpcom.undocumented().themes( null, query );
-			dispatch( receiveRecommendedThemes( res ) );
-		} catch ( error ) {
-			dispatch( { type: RECOMMENDED_THEMES_FAIL } );
+			const res = await wpcom.undocumented().themes(null, query);
+			dispatch(receiveRecommendedThemes(res));
+		} catch (error) {
+			dispatch({ type: RECOMMENDED_THEMES_FAIL });
 		}
 	};
 }

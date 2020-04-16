@@ -18,7 +18,7 @@ import { SiteId } from 'client/types';
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:gallery-shortcode' );
+const debug = debugModule('calypso:gallery-shortcode');
 
 interface Props {
 	siteId: SiteId;
@@ -38,15 +38,15 @@ interface RenderedShortcode {
 	styles?: unknown;
 }
 
-export default class GalleryShortcode extends Component< Props > {
+export default class GalleryShortcode extends Component<Props> {
 	static defaultProps = GalleryDefaultAttrs;
 
-	filterRenderResult = ( rendered: RenderedShortcode ) => {
-		if ( ! rendered.body && ! rendered.scripts && ! rendered.styles ) {
+	filterRenderResult = (rendered: RenderedShortcode) => {
+		if (!rendered.body && !rendered.scripts && !rendered.styles) {
 			return rendered;
 		}
 
-		const filtered = assign( {}, rendered, {
+		const filtered = assign({}, rendered, {
 			scripts: {
 				'tiled-gallery': {
 					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.js',
@@ -60,10 +60,10 @@ export default class GalleryShortcode extends Component< Props > {
 					src: 'https://widgets.wp.com/gallery-preview/style.css',
 				},
 			},
-		} );
+		});
 
-		if ( 'slideshow' === this.getAttributes().type ) {
-			assign( filtered, {
+		if ('slideshow' === this.getAttributes().type) {
+			assign(filtered, {
 				scripts: {
 					'jquery-cycle': {
 						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js',
@@ -79,37 +79,37 @@ export default class GalleryShortcode extends Component< Props > {
 						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css',
 					},
 				},
-			} );
+			});
 		}
 
 		return filtered;
 	};
 
 	getAttributes = () => {
-		const attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
+		const attributes = pick(this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size');
 
-		if ( this.props.children ) {
-			assign( attributes, parseShortcode( this.props.children ).attrs.named );
+		if (this.props.children) {
+			assign(attributes, parseShortcode(this.props.children).attrs.named);
 		}
 
 		return attributes;
 	};
 
 	getShortcode = () => {
-		if ( this.props.children ) {
+		if (this.props.children) {
 			return this.props.children;
 		}
 
-		return generateGalleryShortcode( this.getAttributes() );
+		return generateGalleryShortcode(this.getAttributes());
 	};
 
 	render() {
 		const shortcode = this.getShortcode();
-		if ( ! shortcode ) {
+		if (!shortcode) {
 			return null;
 		}
 
-		debug( shortcode );
+		debug(shortcode);
 
 		const {
 			siteId,
@@ -124,16 +124,16 @@ export default class GalleryShortcode extends Component< Props > {
 			...restProps
 		} = this.props;
 
-		const classes = classNames( 'gallery-shortcode', className );
+		const classes = classNames('gallery-shortcode', className);
 
 		return (
 			<Shortcode
-				{ ...restProps }
-				siteId={ siteId }
-				filterRenderResult={ this.filterRenderResult }
-				className={ classes }
+				{...restProps}
+				siteId={siteId}
+				filterRenderResult={this.filterRenderResult}
+				className={classes}
 			>
-				{ shortcode }
+				{shortcode}
 			</Shortcode>
 		);
 	}

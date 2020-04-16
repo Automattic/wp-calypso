@@ -12,12 +12,12 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchStats = action => {
+export const fetchStats = (action) => {
 	const { siteId, statType, interval = 'week', aggregation = 'total' } = action;
 
 	return http(
 		{
-			path: `/sites/${ siteId }/stats/google-my-business/${ statType }`,
+			path: `/sites/${siteId}/stats/google-my-business/${statType}`,
 			method: 'GET',
 			query: {
 				interval,
@@ -35,10 +35,10 @@ export const fetchStats = action => {
  * @param {Array} data raw data from stats API
  * @returns {object} action Redux action
  */
-export const receiveStats = ( action, data ) => {
+export const receiveStats = (action, data) => {
 	const { siteId, statType, interval, aggregation } = action;
 
-	return receiveGoogleMyBusinessStats( siteId, statType, interval, aggregation, data );
+	return receiveGoogleMyBusinessStats(siteId, statType, interval, aggregation, data);
 };
 
 /**
@@ -48,19 +48,19 @@ export const receiveStats = ( action, data ) => {
  * @param {object} error raw error from stats API
  * @returns {object} action Redux action
  */
-export const receiveStatsError = ( action, error ) => {
+export const receiveStatsError = (action, error) => {
 	const { siteId, statType, interval, aggregation } = action;
 
-	return failedRequestGoogleMyBusinessStats( siteId, statType, interval, aggregation, error );
+	return failedRequestGoogleMyBusinessStats(siteId, statType, interval, aggregation, error);
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/stats/google-my-business/index.js', {
-	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/stats/google-my-business/index.js', {
+	[GOOGLE_MY_BUSINESS_STATS_REQUEST]: [
+		dispatchRequest({
 			fetch: fetchStats,
 			onSuccess: receiveStats,
 			onError: receiveStatsError,
 			fromApi: convertToCamelCase,
-		} ),
+		}),
 	],
-} );
+});

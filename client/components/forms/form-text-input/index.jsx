@@ -16,49 +16,49 @@ export default class FormTextInput extends PureComponent {
 
 	currentTextField = undefined;
 
-	textFieldRef = element => {
+	textFieldRef = (element) => {
 		this.currentTextField = element;
 
 		const { inputRef } = this.props;
 
-		if ( ! inputRef ) {
+		if (!inputRef) {
 			return;
 		}
 
-		if ( typeof inputRef === 'function' ) {
-			inputRef( element );
+		if (typeof inputRef === 'function') {
+			inputRef(element);
 		} else {
 			inputRef.current = element;
 		}
 	};
 
 	focus() {
-		if ( this.currentTextField ) {
+		if (this.currentTextField) {
 			this.currentTextField.focus();
 		}
 	}
 
-	selectOnFocus = event => {
-		if ( this.props.selectOnFocus ) {
+	selectOnFocus = (event) => {
+		if (this.props.selectOnFocus) {
 			event.target.select();
 		}
 	};
 
 	render() {
-		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus', 'inputRef' );
+		const props = omit(this.props, 'isError', 'isValid', 'selectOnFocus', 'inputRef');
 
-		const classes = classNames( 'form-text-input', this.props.className, {
+		const classes = classNames('form-text-input', this.props.className, {
 			'is-error': this.props.isError,
 			'is-valid': this.props.isValid,
-		} );
+		});
 
 		return (
 			<input
 				type="text"
-				{ ...props }
-				ref={ this.textFieldRef }
-				className={ classes }
-				onClick={ this.selectOnFocus }
+				{...props}
+				ref={this.textFieldRef}
+				className={classes}
+				onClick={this.selectOnFocus}
 			/>
 		);
 	}

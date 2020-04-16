@@ -23,7 +23,7 @@ import { isSiteBlocked } from 'state/reader/site-blocks/selectors';
 import SiteBlocked from 'reader/site-blocked';
 
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
-const getReaderSiteId = feed => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );
+const getReaderSiteId = (feed) => (feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID);
 
 class FeedStream extends React.Component {
 	static propTypes = {
@@ -36,55 +36,55 @@ class FeedStream extends React.Component {
 		showBack: true,
 		className: 'is-site-stream',
 	};
-	constructor( props ) {
-		super( props );
-		this.title = props.translate( 'Loading Feed' );
+	constructor(props) {
+		super(props);
+		this.title = props.translate('Loading Feed');
 	}
 	render() {
 		const { feed, site, siteId, isBlocked } = this.props;
 
 		const emptyContent = <EmptyContent />;
-		const title = getSiteName( { feed, site } ) || this.title;
+		const title = getSiteName({ feed, site }) || this.title;
 
-		if ( isBlocked ) {
-			return <SiteBlocked title={ title } siteId={ siteId } />;
+		if (isBlocked) {
+			return <SiteBlocked title={title} siteId={siteId} />;
 		}
 
-		if ( ( feed && feed.is_error ) || ( site && site.is_error ) ) {
-			return <FeedError sidebarTitle={ title } />;
+		if ((feed && feed.is_error) || (site && site.is_error)) {
+			return <FeedError sidebarTitle={title} />;
 		}
 
 		return (
 			<Stream
-				{ ...this.props }
-				listName={ title }
-				emptyContent={ emptyContent }
-				showPostHeader={ false }
-				showSiteNameOnCards={ false }
-				shouldCombineCards={ false }
+				{...this.props}
+				listName={title}
+				emptyContent={emptyContent}
+				showPostHeader={false}
+				showSiteNameOnCards={false}
+				shouldCombineCards={false}
 			>
 				<DocumentHead
-					title={ this.props.translate( '%s ‹ Reader', {
+					title={this.props.translate('%s ‹ Reader', {
 						args: title,
 						comment: '%s is the section name. For example: "My Likes"',
-					} ) }
+					})}
 				/>
-				<ReaderFeedHeader feed={ feed } site={ site } showBack={ this.props.showBack } />
-				{ ! feed && <QueryReaderFeed feedId={ this.props.feedId } /> }
-				{ siteId && <QueryReaderSite siteId={ siteId } /> }
+				<ReaderFeedHeader feed={feed} site={site} showBack={this.props.showBack} />
+				{!feed && <QueryReaderFeed feedId={this.props.feedId} />}
+				{siteId && <QueryReaderSite siteId={siteId} />}
 			</Stream>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const feed = getFeed( state, ownProps.feedId );
-	const siteId = getReaderSiteId( feed );
+export default connect((state, ownProps) => {
+	const feed = getFeed(state, ownProps.feedId);
+	const siteId = getReaderSiteId(feed);
 
 	return {
 		feed,
 		siteId,
-		site: siteId && getSite( state, siteId ),
-		isBlocked: isSiteBlocked( state, siteId ),
+		site: siteId && getSite(state, siteId),
+		isBlocked: isSiteBlocked(state, siteId),
 	};
-} )( localize( FeedStream ) );
+})(localize(FeedStream));

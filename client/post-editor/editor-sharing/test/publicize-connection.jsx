@@ -26,21 +26,21 @@ const CONNECTION = {
 	label: 'Twitter',
 };
 
-describe( 'PublicizeConnection', () => {
-	describe( '#isConnectionSkipped()', () => {
-		test( 'should return true if connection is already skipped', () => {
+describe('PublicizeConnection', () => {
+	describe('#isConnectionSkipped()', () => {
+		test('should return true if connection is already skipped', () => {
 			let post, tree;
 
 			post = {
-				metadata: [ { id: 1234, key: '_wpas_skip_9903589', value: '1' } ],
+				metadata: [{ id: 1234, key: '_wpas_skip_9903589', value: '1' }],
 			};
 
-			tree = shallow( <PublicizeConnection post={ post } connection={ CONNECTION } /> ).instance();
+			tree = shallow(<PublicizeConnection post={post} connection={CONNECTION} />).instance();
 
-			expect( tree.isConnectionSkipped() ).to.equal( true );
-		} );
+			expect(tree.isConnectionSkipped()).to.equal(true);
+		});
 
-		test( 'should return false if connection is not skipped', () => {
+		test('should return false if connection is not skipped', () => {
 			let post, tree;
 
 			post = {
@@ -50,26 +50,26 @@ describe( 'PublicizeConnection', () => {
 				],
 			};
 
-			tree = shallow( <PublicizeConnection post={ post } connection={ CONNECTION } /> ).instance();
+			tree = shallow(<PublicizeConnection post={post} connection={CONNECTION} />).instance();
 
-			expect( tree.isConnectionSkipped() ).to.equal( false );
-		} );
-	} );
+			expect(tree.isConnectionSkipped()).to.equal(false);
+		});
+	});
 
-	describe( '#isConnectionDone()', () => {
-		test( 'should return true if connection is already publicized to', () => {
+	describe('#isConnectionDone()', () => {
+		test('should return true if connection is already publicized to', () => {
 			let post, tree;
 
 			post = {
-				metadata: [ { id: 1234, key: '_wpas_done_9903589', value: '1' } ],
+				metadata: [{ id: 1234, key: '_wpas_done_9903589', value: '1' }],
 			};
 
-			tree = shallow( <PublicizeConnection post={ post } connection={ CONNECTION } /> ).instance();
+			tree = shallow(<PublicizeConnection post={post} connection={CONNECTION} />).instance();
 
-			expect( tree.isConnectionDone() ).to.equal( true );
-		} );
+			expect(tree.isConnectionDone()).to.equal(true);
+		});
 
-		test( 'should return false if connection is not publicized to yet', () => {
+		test('should return false if connection is not publicized to yet', () => {
 			let post, tree;
 
 			post = {
@@ -79,9 +79,9 @@ describe( 'PublicizeConnection', () => {
 				],
 			};
 
-			tree = shallow( <PublicizeConnection post={ post } connection={ CONNECTION } /> ).instance();
+			tree = shallow(<PublicizeConnection post={post} connection={CONNECTION} />).instance();
 
-			expect( tree.isConnectionDone() ).to.equal( false );
-		} );
-	} );
-} );
+			expect(tree.isConnectionDone()).to.equal(false);
+		});
+	});
+});

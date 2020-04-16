@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { settingsPath } from '../../../app/util';
 
-const ZoneNotFound = ( { siteSlug, translate } ) => (
+const ZoneNotFound = ({ siteSlug, translate }) => (
 	<EmptyContent
-		title={ translate( 'Zone not found' ) }
-		line={ translate( "The zone you're trying to access doesn't exist." ) }
-		action={ translate( 'Add new' ) }
-		actionURL={ `${ settingsPath }/new/${ siteSlug }` }
+		title={translate('Zone not found')}
+		line={translate("The zone you're trying to access doesn't exist.")}
+		action={translate('Add new')}
+		actionURL={`${settingsPath}/new/${siteSlug}`}
 	/>
 );
 
@@ -26,4 +26,4 @@ ZoneNotFound.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( ZoneNotFound );
+export default localize(ZoneNotFound);

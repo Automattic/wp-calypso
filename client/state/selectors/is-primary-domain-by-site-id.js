@@ -14,6 +14,6 @@ import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site
  * @param {string} domain - domian name
  * @returns {object} primary domain
  */
-export default function isPrimaryDomainBySiteId( state, siteId, domain ) {
-	return domain === get( getPrimaryDomainBySiteId( state, siteId ), 'domain' );
+export default function isPrimaryDomainBySiteId(state, siteId, domain) {
+	return domain === get(getPrimaryDomainBySiteId(state, siteId), 'domain');
 }

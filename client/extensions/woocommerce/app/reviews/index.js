@@ -17,27 +17,27 @@ import ReviewsList from './reviews-list';
 
 class Reviews extends Component {
 	static propTypes = {
-		params: PropTypes.shape( {
+		params: PropTypes.shape({
 			filter: PropTypes.string,
 			productId: PropTypes.string,
-		} ),
+		}),
 		className: PropTypes.string,
 	};
 
 	render() {
 		const { className, translate, params } = this.props;
-		const classes = classNames( 'reviews__list', className );
+		const classes = classNames('reviews__list', className);
 
 		return (
-			<Main className={ classes } wideLayout>
-				<ActionHeader breadcrumbs={ <span>{ translate( 'Reviews' ) }</span> } />
+			<Main className={classes} wideLayout>
+				<ActionHeader breadcrumbs={<span>{translate('Reviews')}</span>} />
 				<ReviewsList
-					productId={ params && params.product_id && Number( params.product_id ) }
-					currentStatus={ params && params.filter }
+					productId={params && params.product_id && Number(params.product_id)}
+					currentStatus={params && params.filter}
 				/>
 			</Main>
 		);
 	}
 }
 
-export default localize( Reviews );
+export default localize(Reviews);

@@ -21,28 +21,28 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 
 	toggleSticker = () => {
 		const toggle = this.props.hasSticker ? this.props.removeBlogSticker : this.props.addBlogSticker;
-		toggle( this.props.blogId, this.props.blogStickerName );
+		toggle(this.props.blogId, this.props.blogStickerName);
 	};
 
 	render() {
 		const { hasSticker, blogStickerName, children } = this.props;
-		const classes = classnames( 'reader-post-options-menu__blog-sticker-menu-item', {
+		const classes = classnames('reader-post-options-menu__blog-sticker-menu-item', {
 			'has-sticker': hasSticker,
-		} );
+		});
 
 		return (
 			<PopoverMenuItem
 				icon="flag"
-				key={ blogStickerName }
-				className={ classes }
-				onClick={ this.toggleSticker }
+				key={blogStickerName}
+				className={classes}
+				onClick={this.toggleSticker}
 			>
-				{ children }
+				{children}
 			</PopoverMenuItem>
 		);
 	}
 }
 
-export default connect( null, { addBlogSticker, removeBlogSticker } )(
+export default connect(null, { addBlogSticker, removeBlogSticker })(
 	ReaderPostOptionsMenuBlogStickerMenuItem
 );

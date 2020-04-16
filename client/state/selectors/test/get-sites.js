@@ -22,19 +22,19 @@ const currentUserState = {
 	},
 };
 
-describe( 'getSites()', () => {
-	test( 'should return an empty array if no sites in state', () => {
+describe('getSites()', () => {
+	test('should return an empty array if no sites in state', () => {
 		const state = {
 			...currentUserState,
 			sites: {
 				items: {},
 			},
 		};
-		const sites = getSites( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getSites(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return the primary site if the user has only one site', () => {
+	test('should return the primary site if the user has only one site', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -44,11 +44,11 @@ describe( 'getSites()', () => {
 			},
 		};
 
-		const sites = getSites( state );
-		expect( sites ).to.have.length( 1 );
-	} );
+		const sites = getSites(state);
+		expect(sites).to.have.length(1);
+	});
 
-	test( 'should return the sites lists if the user has no primary site', () => {
+	test('should return the sites lists if the user has no primary site', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -59,11 +59,11 @@ describe( 'getSites()', () => {
 			},
 		};
 
-		const sites = getSites( state );
-		expect( sites ).to.have.length( 2 );
-	} );
+		const sites = getSites(state);
+		expect(sites).to.have.length(2);
+	});
 
-	test( 'should return all the sites in state', () => {
+	test('should return all the sites in state', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -76,13 +76,13 @@ describe( 'getSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getSites( state );
-		expect( sites ).to.have.length( 2 );
-		expect( sites[ 0 ] ).to.have.property( 'name', 'WordPress.com Example Blog' );
-		expect( sites[ 1 ] ).to.have.property( 'name', 'WordPress.com Way Better Example Blog' );
-	} );
+		const sites = getSites(state);
+		expect(sites).to.have.length(2);
+		expect(sites[0]).to.have.property('name', 'WordPress.com Example Blog');
+		expect(sites[1]).to.have.property('name', 'WordPress.com Way Better Example Blog');
+	});
 
-	test( 'should return the primary site as the first element of the list', () => {
+	test('should return the primary site as the first element of the list', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -96,13 +96,13 @@ describe( 'getSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getSites( state );
+		const sites = getSites(state);
 
-		expect( sites ).to.have.length( 3 );
-		expect( sites[ 0 ] ).to.have.property( 'ID', 2916288 );
-	} );
+		expect(sites).to.have.length(3);
+		expect(sites[0]).to.have.property('ID', 2916288);
+	});
 
-	test( 'should return sites in alphabetical order by name and url', () => {
+	test('should return sites in alphabetical order by name and url', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -130,17 +130,17 @@ describe( 'getSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getSites( state );
+		const sites = getSites(state);
 
-		expect( sites ).to.have.length( 9 );
-		expect( sites[ 0 ] ).to.have.property( 'ID', 2916288 ); // WordPress.com Z Blog - Primary Site
-		expect( sites[ 1 ] ).to.have.property( 'ID', 2916293 ); // https://0-site-with-no-name.wordpress.com
-		expect( sites[ 2 ] ).to.have.property( 'ID', 2916292 ); // https://z-site-with-no-name.wordpress.com
-		expect( sites[ 3 ] ).to.have.property( 'ID', 2916291 ); // WordPress.com 0 Site
-		expect( sites[ 4 ] ).to.have.property( 'ID', 2916289 ); // WordPress.com A Site
-		expect( sites[ 5 ] ).to.have.property( 'ID', 2916287 ); // WordPress.com B Site
-		expect( sites[ 6 ] ).to.have.property( 'ID', 2916295 ); // WordPress.com B Site - https://site-with-same-name-1.wordpress.com
-		expect( sites[ 7 ] ).to.have.property( 'ID', 2916294 ); // WordPress.com B Site - https://site-with-same-name-2.wordpress.com
-		expect( sites[ 8 ] ).to.have.property( 'ID', 2916290 ); // WordPress.com C Site
-	} );
-} );
+		expect(sites).to.have.length(9);
+		expect(sites[0]).to.have.property('ID', 2916288); // WordPress.com Z Blog - Primary Site
+		expect(sites[1]).to.have.property('ID', 2916293); // https://0-site-with-no-name.wordpress.com
+		expect(sites[2]).to.have.property('ID', 2916292); // https://z-site-with-no-name.wordpress.com
+		expect(sites[3]).to.have.property('ID', 2916291); // WordPress.com 0 Site
+		expect(sites[4]).to.have.property('ID', 2916289); // WordPress.com A Site
+		expect(sites[5]).to.have.property('ID', 2916287); // WordPress.com B Site
+		expect(sites[6]).to.have.property('ID', 2916295); // WordPress.com B Site - https://site-with-same-name-1.wordpress.com
+		expect(sites[7]).to.have.property('ID', 2916294); // WordPress.com B Site - https://site-with-same-name-2.wordpress.com
+		expect(sites[8]).to.have.property('ID', 2916290); // WordPress.com C Site
+	});
+});

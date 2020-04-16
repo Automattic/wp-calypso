@@ -12,9 +12,9 @@ import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function currentPage( state = 1, action ) {
+export function currentPage(state = 1, action) {
 	const { type, query } = action;
-	if ( WOOCOMMERCE_UI_REVIEWS_SET_QUERY === type ) {
+	if (WOOCOMMERCE_UI_REVIEWS_SET_QUERY === type) {
 		return query && query.page ? query.page : state;
 	}
 	return state;
@@ -27,9 +27,9 @@ export function currentPage( state = 1, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function currentProduct( state = null, action ) {
+export function currentProduct(state = null, action) {
 	const { type, query } = action;
-	if ( WOOCOMMERCE_UI_REVIEWS_SET_QUERY === type ) {
+	if (WOOCOMMERCE_UI_REVIEWS_SET_QUERY === type) {
 		return query && query.product ? query.product : state;
 	}
 	return state;
@@ -42,16 +42,16 @@ export function currentProduct( state = null, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function currentSearch( state = '', action ) {
+export function currentSearch(state = '', action) {
 	const { type, query } = action;
-	if ( WOOCOMMERCE_UI_REVIEWS_SET_QUERY === type ) {
+	if (WOOCOMMERCE_UI_REVIEWS_SET_QUERY === type) {
 		return query && 'undefined' !== typeof query.search ? query.search : state;
 	}
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	currentPage,
 	currentProduct,
 	currentSearch,
-} );
+});

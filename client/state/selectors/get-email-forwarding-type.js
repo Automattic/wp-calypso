@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {string} domainName domainName to request email forwards for
  * @returns {?string} the string type of the email forwards or null if it has not be retrieved yet
  */
-export default function getEmailForwardingType( state, domainName ) {
-	return get( state.emailForwarding, [ domainName, 'type' ], null );
+export default function getEmailForwardingType(state, domainName) {
+	return get(state.emailForwarding, [domainName, 'type'], null);
 }

@@ -5,44 +5,44 @@ import React, { Component } from 'react';
 import { union } from 'lodash';
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:track-form' );
+const debug = debugFactory('calypso:track-form');
 
-export const trackForm = WrappedComponent =>
+export const trackForm = (WrappedComponent) =>
 	class TrackFormComponent extends Component {
 		state = {
 			dirtyFields: [],
 			fields: {},
 		};
 
-		updateFields = ( fields, callback ) => {
+		updateFields = (fields, callback) => {
 			const newState = {
-				dirtyFields: union( this.state.dirtyFields, Object.keys( fields ) ),
+				dirtyFields: union(this.state.dirtyFields, Object.keys(fields)),
 				fields: {
 					...this.state.fields,
 					...fields,
 				},
 			};
-			debug( 'updateFields', { fields, newState } );
+			debug('updateFields', { fields, newState });
 
-			this.setState( newState, callback );
+			this.setState(newState, callback);
 		};
 
-		replaceFields = ( fields, callback, keepPrevFields = true ) => {
-			debug( 'replaceFields', { fields, keepPrevFields } );
+		replaceFields = (fields, callback, keepPrevFields = true) => {
+			debug('replaceFields', { fields, keepPrevFields });
 			const prevFields = keepPrevFields ? this.state.fields : {};
 			const newFields = {
 				...prevFields,
 				...fields,
 			};
 
-			this.setState( { fields: newFields }, callback );
+			this.setState({ fields: newFields }, callback);
 		};
 
 		clearDirtyFields = () => {
-			debug( 'clearDirtyFields' );
-			this.setState( {
+			debug('clearDirtyFields');
+			this.setState({
 				dirtyFields: [],
-			} );
+			});
 		};
 
 		render() {
@@ -50,12 +50,12 @@ export const trackForm = WrappedComponent =>
 
 			return (
 				<WrappedComponent
-					fields={ fields }
-					dirtyFields={ dirtyFields }
-					updateFields={ this.updateFields }
-					replaceFields={ this.replaceFields }
-					clearDirtyFields={ this.clearDirtyFields }
-					{ ...this.props }
+					fields={fields}
+					dirtyFields={dirtyFields}
+					updateFields={this.updateFields}
+					replaceFields={this.replaceFields}
+					clearDirtyFields={this.clearDirtyFields}
+					{...this.props}
 				/>
 			);
 		}

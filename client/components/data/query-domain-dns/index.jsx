@@ -9,11 +9,11 @@ import { useDispatch } from 'react-redux';
  */
 import { fetchDns } from 'state/domains/dns/actions';
 
-export default function QueryDomainDns( { domain } ) {
+export default function QueryDomainDns({ domain }) {
 	const dispatch = useDispatch();
-	React.useEffect( () => {
-		dispatch( fetchDns( domain ) );
-	}, [ dispatch, domain ] );
+	React.useEffect(() => {
+		dispatch(fetchDns(domain));
+	}, [dispatch, domain]);
 
 	return null;
 }

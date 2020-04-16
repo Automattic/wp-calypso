@@ -28,8 +28,8 @@ class PushNotificationApprovalPoller extends Component {
 		this.props.stopPollAppPushAuth();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( ! prevProps.pushSuccess && this.props.pushSuccess ) {
+	componentDidUpdate(prevProps) {
+		if (!prevProps.pushSuccess && this.props.pushSuccess) {
 			this.props.onSuccess();
 		}
 	}
@@ -40,11 +40,11 @@ class PushNotificationApprovalPoller extends Component {
 }
 
 export default connect(
-	state => ( {
-		pushSuccess: getTwoFactorPushPollSuccess( state ),
-	} ),
+	(state) => ({
+		pushSuccess: getTwoFactorPushPollSuccess(state),
+	}),
 	{
 		startPollAppPushAuth,
 		stopPollAppPushAuth,
 	}
-)( PushNotificationApprovalPoller );
+)(PushNotificationApprovalPoller);

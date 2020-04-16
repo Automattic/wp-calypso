@@ -15,11 +15,11 @@ import {
  * @param {string} app - app filter value
  * @returns {object} action
  */
-export const setApp = ( transactionType, app ) => ( {
+export const setApp = (transactionType, app) => ({
 	type: BILLING_TRANSACTIONS_FILTER_SET_APP,
 	transactionType,
 	app,
-} );
+});
 
 /**
  * Sets the date filter value on the given transactionType table to show the transactions relative
@@ -30,12 +30,12 @@ export const setApp = ( transactionType, app ) => ( {
  * @param {string} operator - operator for the month. One of: equal, before
  * @returns {object} action
  */
-export const setDate = ( transactionType, month, operator ) => ( {
+export const setDate = (transactionType, month, operator) => ({
 	type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 	transactionType,
 	month,
 	operator,
-} );
+});
 
 /**
  * Sets the page of the given transaction type table
@@ -44,11 +44,11 @@ export const setDate = ( transactionType, month, operator ) => ( {
  * @param {number} page - page number, starting at 1
  * @returns {object} action
  */
-export const setPage = ( transactionType, page ) => ( {
+export const setPage = (transactionType, page) => ({
 	type: BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	transactionType,
 	page,
-} );
+});
 
 /**
  * Sets the search query by which to filter the transactions of the given type
@@ -57,8 +57,8 @@ export const setPage = ( transactionType, page ) => ( {
  * @param {string} query - string query
  * @returns {object} action
  */
-export const setQuery = ( transactionType, query ) => ( {
+export const setQuery = (transactionType, query) => ({
 	type: BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 	transactionType,
 	query,
-} );
+});

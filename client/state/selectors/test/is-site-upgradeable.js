@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 
-describe( 'isSiteUpgradeable()', () => {
-	test( 'should return null if no siteId is given', () => {
+describe('isSiteUpgradeable()', () => {
+	test('should return null if no siteId is given', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -30,10 +30,10 @@ describe( 'isSiteUpgradeable()', () => {
 			null
 		);
 
-		expect( isUpgradeable ).to.be.null;
-	} );
+		expect(isUpgradeable).to.be.null;
+	});
 
-	test( 'should return null if there is no site with that siteId', () => {
+	test('should return null if there is no site with that siteId', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -52,10 +52,10 @@ describe( 'isSiteUpgradeable()', () => {
 			42
 		);
 
-		expect( isUpgradeable ).to.be.null;
-	} );
+		expect(isUpgradeable).to.be.null;
+	});
 
-	test( 'should return null if there is no current user', () => {
+	test('should return null if there is no current user', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -74,10 +74,10 @@ describe( 'isSiteUpgradeable()', () => {
 			77203199
 		);
 
-		expect( isUpgradeable ).to.be.null;
-	} );
+		expect(isUpgradeable).to.be.null;
+	});
 
-	test( 'should return false if the user cannot manage the site ', () => {
+	test('should return false if the user cannot manage the site ', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -103,10 +103,10 @@ describe( 'isSiteUpgradeable()', () => {
 			77203199
 		);
 
-		expect( isUpgradeable ).to.be.false;
-	} );
+		expect(isUpgradeable).to.be.false;
+	});
 
-	test( 'should return true if the user can manage the site ', () => {
+	test('should return true if the user can manage the site ', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -132,6 +132,6 @@ describe( 'isSiteUpgradeable()', () => {
 			77203199
 		);
 
-		expect( isUpgradeable ).to.be.true;
-	} );
-} );
+		expect(isUpgradeable).to.be.true;
+	});
+});

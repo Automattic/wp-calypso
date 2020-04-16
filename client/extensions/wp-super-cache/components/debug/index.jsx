@@ -31,7 +31,7 @@ class DebugTab extends Component {
 		fields: {},
 	};
 
-	deleteLog = () => this.props.saveSettings( this.props.siteId, { wpsc_delete_log: true } );
+	deleteLog = () => this.props.saveSettings(this.props.siteId, { wpsc_delete_log: true });
 
 	render() {
 		const {
@@ -59,92 +59,90 @@ class DebugTab extends Component {
 		return (
 			<div className="wp-super-cache__debug-tab">
 				<form>
-					<SectionHeader label={ translate( 'Debug' ) }>
+					<SectionHeader label={translate('Debug')}>
 						<FormButton
 							compact
 							primary
-							disabled={ isRequesting || isSaving }
-							isSubmitting={ isSaving }
-							onClick={ handleSubmitForm }
+							disabled={isRequesting || isSaving}
+							isSubmitting={isSaving}
+							onClick={handleSubmitForm}
 						/>
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
 							<FormToggle
-								checked={ !! wp_super_cache_debug }
-								disabled={ isRequesting || isSaving }
-								onChange={ handleAutosavingToggle( 'wp_super_cache_debug' ) }
+								checked={!!wp_super_cache_debug}
+								disabled={isRequesting || isSaving}
+								onChange={handleAutosavingToggle('wp_super_cache_debug')}
 							>
-								{ translate( 'Enable Debugging' ) }
+								{translate('Enable Debugging')}
 							</FormToggle>
 						</FormFieldset>
 						<div className="wp-super-cache__debug-fieldsets">
 							<FormFieldset>
 								<FormLabel htmlFor="debugLog">
-									{ wp_super_cache_debug
-										? translate( 'Currently logging to:' )
-										: translate( 'Last logged to:' ) }
+									{wp_super_cache_debug
+										? translate('Currently logging to:')
+										: translate('Last logged to:')}
 								</FormLabel>
-								<FormTextInput disabled id="debugLog" value={ cache_path + wp_cache_debug_log } />
+								<FormTextInput disabled id="debugLog" value={cache_path + wp_cache_debug_log} />
 								<Button
 									className="wp-super-cache__debug-log-button"
 									compact
-									disabled={ isRequesting || isSaving }
-									href={ cache_path_url + wp_cache_debug_log }
+									disabled={isRequesting || isSaving}
+									href={cache_path_url + wp_cache_debug_log}
 									rel="noopener noreferrer"
 									target="_blank"
 								>
-									{ translate( 'View debug log' ) }
+									{translate('View debug log')}
 								</Button>
 								<Button
 									className="wp-super-cache__debug-log-button"
 									compact
-									disabled={ isRequesting || isSaving }
-									onClick={ this.deleteLog }
+									disabled={isRequesting || isSaving}
+									onClick={this.deleteLog}
 									scary
 								>
-									{ translate( 'Reset debug log' ) }
+									{translate('Reset debug log')}
 								</Button>
 							</FormFieldset>
 							<FormFieldset>
-								<FormLabel htmlFor="username">{ translate( 'Username and Password:' ) }</FormLabel>
-								<ClipboardButtonInput id="username" value={ wp_cache_debug_username } />
+								<FormLabel htmlFor="username">{translate('Username and Password:')}</FormLabel>
+								<ClipboardButtonInput id="username" value={wp_cache_debug_username} />
 							</FormFieldset>
 							<FormFieldset>
-								<FormLabel htmlFor="ipAddress">{ translate( 'IP Address' ) }</FormLabel>
+								<FormLabel htmlFor="ipAddress">{translate('IP Address')}</FormLabel>
 								<FormTextInput
-									disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+									disabled={isRequesting || isSaving || !wp_super_cache_debug}
 									id="ipAddress"
-									onChange={ handleChange( 'wp_cache_debug_ip' ) }
-									value={ wp_cache_debug_ip || '' }
+									onChange={handleChange('wp_cache_debug_ip')}
+									value={wp_cache_debug_ip || ''}
 								/>
 								<FormSettingExplanation>
-									{ translate( '(only log requests from this IP address)' ) }
+									{translate('(only log requests from this IP address)')}
 								</FormSettingExplanation>
 							</FormFieldset>
 							<FormFieldset>
 								<FormToggle
-									checked={ !! wp_super_cache_comments }
-									disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
-									onChange={ handleAutosavingToggle( 'wp_super_cache_comments' ) }
+									checked={!!wp_super_cache_comments}
+									disabled={isRequesting || isSaving || !wp_super_cache_debug}
+									onChange={handleAutosavingToggle('wp_super_cache_comments')}
 								>
-									{ translate( 'Cache Status Messages' ) }
+									{translate('Cache Status Messages')}
 								</FormToggle>
 								<FormSettingExplanation isIndented>
-									{ translate( 'Display comments at the end of every page like this:' ) }
+									{translate('Display comments at the end of every page like this:')}
 									<span className="wp-super-cache__debug-cache-comment-snippet">
-										{ translate(
+										{translate(
 											'<!-- Dynamic page generated in 0.450 seconds. -->\n' +
 												'<!-- Cached page generated by WP-Super-Cache on %(date)s -->\n' +
 												'<!-- super cache -->',
 											{
 												args: {
-													date: moment()
-														.utc()
-														.format( 'YYYY-MM-DD HH:mm:ss' ),
+													date: moment().utc().format('YYYY-MM-DD HH:mm:ss'),
 												},
 											}
-										) }
+										)}
 									</span>
 								</FormSettingExplanation>
 							</FormFieldset>
@@ -153,75 +151,75 @@ class DebugTab extends Component {
 				</form>
 
 				<form>
-					<SectionHeader label={ translate( 'Advanced' ) }>
+					<SectionHeader label={translate('Advanced')}>
 						<FormButton
 							compact
 							primary
-							disabled={ isRequesting || isSaving }
-							isSubmitting={ isSaving }
-							onClick={ handleSubmitForm }
+							disabled={isRequesting || isSaving}
+							isSubmitting={isSaving}
+							onClick={handleSubmitForm}
 						/>
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
 							<FormToggle
-								checked={ !! wp_super_cache_front_page_check }
-								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
-								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_check' ) }
+								checked={!!wp_super_cache_front_page_check}
+								disabled={isRequesting || isSaving || !wp_super_cache_debug}
+								onChange={handleAutosavingToggle('wp_super_cache_front_page_check')}
 							>
-								{ translate( 'Check front page every 5 minutes.' ) }
+								{translate('Check front page every 5 minutes.')}
 							</FormToggle>
 							<FormSettingExplanation isIndented>
-								{ translate( " If there are errors you'll receive an email." ) }
+								{translate(" If there are errors you'll receive an email.")}
 							</FormSettingExplanation>
 						</FormFieldset>
 						<div className="wp-super-cache__debug-fieldsets">
 							<FormFieldset>
 								<FormLabel htmlFor="frontPageText">
-									{ translate( 'Check text for automatic cache clearing' ) }
+									{translate('Check text for automatic cache clearing')}
 								</FormLabel>
 								<FormTextInput
 									disabled={
 										isRequesting ||
 										isSaving ||
-										! wp_super_cache_debug ||
-										! wp_super_cache_front_page_check
+										!wp_super_cache_debug ||
+										!wp_super_cache_front_page_check
 									}
 									id="frontPageText"
-									onChange={ handleChange( 'wp_super_cache_front_page_text' ) }
-									value={ wp_super_cache_front_page_text || '' }
+									onChange={handleChange('wp_super_cache_front_page_text')}
+									value={wp_super_cache_front_page_text || ''}
 								/>
 								<FormSettingExplanation>
-									{ translate(
+									{translate(
 										"If the front page doesn't contain this text, the cache will be cleared automatically. " +
 											'Leave this field blank to disable automatic cache clearing.'
-									) }
+									)}
 								</FormSettingExplanation>
 							</FormFieldset>
 							<FormFieldset>
 								<FormToggle
-									checked={ !! wp_super_cache_front_page_clear }
+									checked={!!wp_super_cache_front_page_clear}
 									disabled={
 										isRequesting ||
 										isSaving ||
-										! wp_super_cache_debug ||
-										! wp_super_cache_front_page_check
+										!wp_super_cache_debug ||
+										!wp_super_cache_front_page_check
 									}
-									onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_clear' ) }
+									onChange={handleAutosavingToggle('wp_super_cache_front_page_clear')}
 								>
-									{ translate( 'Clear cache on error.' ) }
+									{translate('Clear cache on error.')}
 								</FormToggle>
 								<FormToggle
-									checked={ !! wp_super_cache_front_page_notification }
+									checked={!!wp_super_cache_front_page_notification}
 									disabled={
 										isRequesting ||
 										isSaving ||
-										! wp_super_cache_debug ||
-										! wp_super_cache_front_page_check
+										!wp_super_cache_debug ||
+										!wp_super_cache_front_page_check
 									}
-									onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_notification' ) }
+									onChange={handleAutosavingToggle('wp_super_cache_front_page_notification')}
 								>
-									{ translate( 'Email the blog admin when checks are made. (useful for testing)' ) }
+									{translate('Email the blog admin when checks are made. (useful for testing)')}
 								</FormToggle>
 							</FormFieldset>
 						</div>
@@ -232,8 +230,8 @@ class DebugTab extends Component {
 	}
 }
 
-const getFormSettings = settings => {
-	return pick( settings, [
+const getFormSettings = (settings) => {
+	return pick(settings, [
 		'cache_path',
 		'cache_path_url',
 		'wp_cache_debug_ip',
@@ -245,7 +243,7 @@ const getFormSettings = settings => {
 		'wp_super_cache_front_page_clear',
 		'wp_super_cache_front_page_text',
 		'wp_super_cache_front_page_notification',
-	] );
+	]);
 };
 
-export default WrapSettingsForm( getFormSettings )( DebugTab );
+export default WrapSettingsForm(getFormSettings)(DebugTab);

@@ -47,26 +47,26 @@ class HeaderCakeBack extends Component {
 	};
 
 	componentDidMount() {
-		this.resizeThrottled = throttle( this.handleWindowResize, 100 );
-		window.addEventListener( 'resize', this.resizeThrottled );
+		this.resizeThrottled = throttle(this.handleWindowResize, 100);
+		window.addEventListener('resize', this.resizeThrottled);
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.resizeThrottled );
+		window.removeEventListener('resize', this.resizeThrottled);
 	}
 
 	handleWindowResize = () => {
-		this.setState( {
+		this.setState({
 			windowWidth: getWindowInnerWidth(),
-		} );
+		});
 	};
 
-	hideText( text ) {
+	hideText(text) {
 		if (
-			! this.props.alwaysShowActionText &&
-			( ( this.state.windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
-				text.length >= HIDE_BACK_CRITERIA.characterLength ) ||
-				this.state.windowWidth <= 300 )
+			!this.props.alwaysShowActionText &&
+			((this.state.windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
+				text.length >= HIDE_BACK_CRITERIA.characterLength) ||
+				this.state.windowWidth <= 300)
 		) {
 			return true;
 		}
@@ -76,27 +76,27 @@ class HeaderCakeBack extends Component {
 
 	render() {
 		const { href, icon, onClick, spacer, text, translate } = this.props;
-		const backText = text === undefined ? translate( 'Back' ) : text;
-		const linkClasses = classNames( {
+		const backText = text === undefined ? translate('Back') : text;
+		const linkClasses = classNames({
 			'header-cake__back': true,
 			'is-spacer': spacer,
-			'is-action': !! icon,
-		} );
+			'is-action': !!icon,
+		});
 
 		return (
 			<Button
 				compact
 				borderless
-				className={ linkClasses }
-				href={ href }
-				onClick={ onClick }
-				disabled={ spacer }
+				className={linkClasses}
+				href={href}
+				onClick={onClick}
+				disabled={spacer}
 			>
-				<Gridicon icon={ icon || 'arrow-left' } size={ 18 } />
-				{ ! this.hideText( backText ) && backText }
+				<Gridicon icon={icon || 'arrow-left'} size={18} />
+				{!this.hideText(backText) && backText}
 			</Button>
 		);
 	}
 }
 
-export default localize( HeaderCakeBack );
+export default localize(HeaderCakeBack);

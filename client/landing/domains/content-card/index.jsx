@@ -18,18 +18,18 @@ import './style.scss';
 
 class DomainsLandingContentCard extends Component {
 	static propTypes = {
-		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
-		message: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+		message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 		messageAlignCenter: PropTypes.bool,
-		actionTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		actionTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 		actionCallback: PropTypes.func,
 		actionPrimary: PropTypes.bool,
 		actionBusy: PropTypes.bool,
-		alternateActionTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		alternateActionTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 		alternateActionCallback: PropTypes.func,
 		alternateActionPrimary: PropTypes.bool,
 		alternateActionBusy: PropTypes.bool,
-		footer: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		footer: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 		isLoading: PropTypes.bool,
 	};
 
@@ -47,7 +47,7 @@ class DomainsLandingContentCard extends Component {
 
 		return (
 			<CompactCard className="content-card content-card__loading-placeholder">
-				<h2 className="content-card__title">{ title }</h2>
+				<h2 className="content-card__title">{title}</h2>
 				<h3 className="content-card__message">loading</h3>
 				<h3 className="content-card__message">loading</h3>
 				<p className="content-card__footer">loading</p>
@@ -72,41 +72,41 @@ class DomainsLandingContentCard extends Component {
 			isLoading,
 		} = this.props;
 
-		if ( isLoading ) {
+		if (isLoading) {
 			return this.renderPlaceholder();
 		}
 
-		const messageClasses = classNames( 'content-card__message', {
+		const messageClasses = classNames('content-card__message', {
 			message_align_center: messageAlignCenter,
-		} );
+		});
 
 		return (
 			<CompactCard className="content-card">
-				{ <h2 className="content-card__title">{ title }</h2> }
-				{ message && <h3 className={ messageClasses }>{ message }</h3> }
-				{ actionTitle && (
+				{<h2 className="content-card__title">{title}</h2>}
+				{message && <h3 className={messageClasses}>{message}</h3>}
+				{actionTitle && (
 					<Button
 						className="content-card__action-button"
-						busy={ actionBusy }
-						disabled={ actionBusy }
-						primary={ actionPrimary }
-						onClick={ actionCallback }
+						busy={actionBusy}
+						disabled={actionBusy}
+						primary={actionPrimary}
+						onClick={actionCallback}
 					>
-						{ actionTitle }
+						{actionTitle}
 					</Button>
-				) }
-				{ alternateActionTitle && (
+				)}
+				{alternateActionTitle && (
 					<Button
 						className="content-card__alternate-action-button"
-						busy={ alternateActionBusy }
-						disabled={ alternateActionBusy }
-						primary={ alternateActionPrimary }
-						onClick={ alternateActionCallback }
+						busy={alternateActionBusy}
+						disabled={alternateActionBusy}
+						primary={alternateActionPrimary}
+						onClick={alternateActionCallback}
 					>
-						{ alternateActionTitle }
+						{alternateActionTitle}
 					</Button>
-				) }
-				{ footer && <p className="content-card__footer">{ footer }</p> }
+				)}
+				{footer && <p className="content-card__footer">{footer}</p>}
 			</CompactCard>
 		);
 	}

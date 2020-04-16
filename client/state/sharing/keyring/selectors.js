@@ -15,8 +15,8 @@ import createSelector from 'lib/create-selector';
  * @param  {object} state Global state tree
  * @returns {Array}        Keyring connections, if known.
  */
-export function getKeyringConnections( state ) {
-	return values( state.sharing.keyring.items );
+export function getKeyringConnections(state) {
+	return values(state.sharing.keyring.items);
 }
 
 /**
@@ -26,8 +26,8 @@ export function getKeyringConnections( state ) {
  * @param  {number} keyringConnectionId Keyring connection ID.
  * @returns {?object}                    Keyring connections, if known.
  */
-export function getKeyringConnectionById( state, keyringConnectionId ) {
-	return state.sharing.keyring.items[ keyringConnectionId ] || null;
+export function getKeyringConnectionById(state, keyringConnectionId) {
+	return state.sharing.keyring.items[keyringConnectionId] || null;
 }
 
 /**
@@ -38,8 +38,8 @@ export function getKeyringConnectionById( state, keyringConnectionId ) {
  * @returns {Array}         Keyring connections, if known.
  */
 export const getKeyringConnectionsByName = createSelector(
-	( state, service ) => filter( getKeyringConnections( state ), { service } ),
-	state => [ state.sharing.keyring.items ]
+	(state, service) => filter(getKeyringConnections(state), { service }),
+	(state) => [state.sharing.keyring.items]
 );
 
 /**
@@ -49,10 +49,10 @@ export const getKeyringConnectionsByName = createSelector(
  * @param  {string} service Service slug.
  * @returns {Array}         Keyring connections, if known.
  */
-export function getBrokenKeyringConnectionsByName( state, service ) {
-	return filter( getKeyringConnectionsByName( state, service ), {
+export function getBrokenKeyringConnectionsByName(state, service) {
+	return filter(getKeyringConnectionsByName(state, service), {
 		status: 'broken',
-	} );
+	});
 }
 
 /**
@@ -62,10 +62,10 @@ export function getBrokenKeyringConnectionsByName( state, service ) {
  * @param  {number} userId User ID.
  * @returns {Array}         Site connections, if known.
  */
-export function getUserConnections( state, userId ) {
+export function getUserConnections(state, userId) {
 	return filter(
 		state.sharing.keyring.items,
-		connection => connection.shared || connection.keyring_connection_user_ID === userId
+		(connection) => connection.shared || connection.keyring_connection_user_ID === userId
 	);
 }
 
@@ -76,6 +76,6 @@ export function getUserConnections( state, userId ) {
  * @param  {object}  state Global state tree
  * @returns {boolean}       Whether a request is in progress
  */
-export function isKeyringConnectionsFetching( state ) {
+export function isKeyringConnectionsFetching(state) {
 	return state.sharing.keyring.isFetching;
 }

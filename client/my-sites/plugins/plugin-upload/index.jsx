@@ -43,21 +43,21 @@ class PluginUpload extends React.Component {
 
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
-		! inProgress && this.props.clearPluginUpload( siteId );
+		!inProgress && this.props.clearPluginUpload(siteId);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.siteId !== this.props.siteId) {
 			const { siteId, inProgress } = nextProps;
-			! inProgress && this.props.clearPluginUpload( siteId );
+			!inProgress && this.props.clearPluginUpload(siteId);
 		}
 
-		if ( nextProps.showEligibility !== this.props.showEligibility ) {
-			this.setState( { showEligibility: nextProps.showEligibility } );
+		if (nextProps.showEligibility !== this.props.showEligibility) {
+			this.setState({ showEligibility: nextProps.showEligibility });
 		}
 
-		if ( nextProps.complete ) {
-			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+		if (nextProps.complete) {
+			page(`/plugins/${nextProps.pluginId}/${nextProps.siteSlug}`);
 		}
 
 		const { COMPLETE } = transferStates;
@@ -67,9 +67,9 @@ class PluginUpload extends React.Component {
 			nextProps.automatedTransferStatus === COMPLETE
 		) {
 			nextProps.successNotice(
-				nextProps.translate( "You've successfully uploaded the %(pluginId)s plugin.", {
+				nextProps.translate("You've successfully uploaded the %(pluginId)s plugin.", {
 					args: { pluginId: nextProps.pluginId },
-				} ),
+				}),
 				{ duration: 8000 }
 			);
 		}
@@ -80,7 +80,7 @@ class PluginUpload extends React.Component {
 	};
 
 	onProceedClick = () => {
-		this.setState( { showEligibility: false } );
+		this.setState({ showEligibility: false });
 	};
 
 	renderUploadCard() {
@@ -92,8 +92,8 @@ class PluginUpload extends React.Component {
 
 		return (
 			<Card>
-				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }
-				{ inProgress && this.renderProgressBar() }
+				{!inProgress && !complete && <UploadDropZone doUpload={uploadAction} />}
+				{inProgress && this.renderProgressBar()}
 			</Card>
 		);
 	}
@@ -101,18 +101,18 @@ class PluginUpload extends React.Component {
 	renderProgressBar() {
 		const { translate, progress, installing } = this.props;
 
-		const uploadingMessage = translate( 'Uploading your plugin' );
-		const installingMessage = translate( 'Installing your plugin' );
+		const uploadingMessage = translate('Uploading your plugin');
+		const installingMessage = translate('Installing your plugin');
 
 		return (
 			<div>
 				<span className="plugin-upload__title">
-					{ installing ? installingMessage : uploadingMessage }
+					{installing ? installingMessage : uploadingMessage}
 				</span>
 				<ProgressBar
-					value={ progress }
-					title={ translate( 'Uploading progress' ) }
-					isPulsing={ installing }
+					value={progress}
+					title={translate('Uploading progress')}
+					isPulsing={installing}
 				/>
 			</div>
 		);
@@ -123,10 +123,10 @@ class PluginUpload extends React.Component {
 
 		return (
 			<EmptyContent
-				title={ translate( 'Visit WP Admin to install your plugin.' ) }
-				action={ translate( 'Go to WP Admin' ) }
-				actionURL={ `${ siteAdminUrl }/plugin-install.php` }
-				illustration={ '/calypso/images/illustrations/illustration-jetpack.svg' }
+				title={translate('Visit WP Admin to install your plugin.')}
+				action={translate('Go to WP Admin')}
+				actionURL={`${siteAdminUrl}/plugin-install.php`}
+				illustration={'/calypso/images/illustrations/illustration-jetpack.svg'}
 			/>
 		);
 	}
@@ -138,61 +138,56 @@ class PluginUpload extends React.Component {
 		return (
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
-				<QueryEligibility siteId={ siteId } />
-				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
-				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
-				{ showEligibility && (
-					<EligibilityWarnings
-						backUrl={ `/plugins/${ siteSlug }` }
-						onProceed={ this.onProceedClick }
-					/>
-				) }
-				{ ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
+				<QueryEligibility siteId={siteId} />
+				<HeaderCake onClick={this.back}>{translate('Install plugin')}</HeaderCake>
+				{isJetpackMultisite && this.renderNotAvailableForMultisite()}
+				{showEligibility && (
+					<EligibilityWarnings backUrl={`/plugins/${siteSlug}`} onProceed={this.onProceedClick} />
+				)}
+				{!isJetpackMultisite && !showEligibility && this.renderUploadCard()}
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const error = getPluginUploadError( state, siteId );
-	const progress = getPluginUploadProgress( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
-	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const error = getPluginUploadError(state, siteId);
+	const progress = getPluginUploadProgress(state, siteId);
+	const isJetpack = isJetpackSite(state, siteId);
+	const isJetpackMultisite = isJetpackSiteMultiSite(state, siteId);
+	const { eligibilityHolds, eligibilityWarnings } = getEligibility(state, siteId);
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
-	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const hasEligibilityMessages = ! (
-		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
-	);
+	const isEligible = isEligibleForAutomatedTransfer(state, siteId);
+	const hasEligibilityMessages = !(isEmpty(eligibilityHolds) && isEmpty(eligibilityWarnings));
 
 	return {
 		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
+		siteSlug: getSelectedSiteSlug(state),
 		isJetpack,
-		inProgress: isPluginUploadInProgress( state, siteId ),
-		complete: isPluginUploadComplete( state, siteId ),
-		failed: !! error,
-		pluginId: getUploadedPluginId( state, siteId ),
+		inProgress: isPluginUploadInProgress(state, siteId),
+		complete: isPluginUploadComplete(state, siteId),
+		failed: !!error,
+		pluginId: getUploadedPluginId(state, siteId),
 		error,
 		progress,
 		installing: progress === 100,
 		isJetpackMultisite,
-		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
-		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+		siteAdminUrl: getSiteAdminUrl(state, siteId),
+		showEligibility: !isJetpack && (hasEligibilityMessages || !isEligible),
+		automatedTransferStatus: getAutomatedTransferStatus(state, siteId),
 	};
 };
 
 const flowRightArgs = [
-	connect( mapStateToProps, {
+	connect(mapStateToProps, {
 		uploadPlugin,
 		clearPluginUpload,
 		initiateAutomatedTransferWithPluginZip,
 		successNotice,
-	} ),
+	}),
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( PluginUpload );
+export default flowRight(...flowRightArgs)(PluginUpload);

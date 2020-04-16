@@ -14,47 +14,47 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
-function waitForState( context ) {
-	return new Promise( resolve => {
-		const unsubscribe = context.store.subscribe( () => {
+function waitForState(context) {
+	return new Promise((resolve) => {
+		const unsubscribe = context.store.subscribe(() => {
 			const state = context.store.getState();
 
-			const siteId = getSelectedSiteId( state );
-			if ( ! siteId ) {
+			const siteId = getSelectedSiteId(state);
+			if (!siteId) {
 				return;
 			}
 
-			const currentPlan = getCurrentPlan( state, siteId );
-			if ( ! currentPlan ) {
+			const currentPlan = getCurrentPlan(state, siteId);
+			if (!currentPlan) {
 				return;
 			}
 			unsubscribe();
 			resolve();
-		} );
+		});
 		// Trigger a `store.subscribe()` callback
-		context.store.dispatch( fetchSitePlans( getSelectedSiteId( context.store.getState() ) ) );
-	} );
+		context.store.dispatch(fetchSitePlans(getSelectedSiteId(context.store.getState())));
+	});
 }
 
-export async function handleHostingPanelRedirect( context, next ) {
+export async function handleHostingPanelRedirect(context, next) {
 	const { store } = context;
-	await waitForState( context );
+	await waitForState(context);
 	const state = store.getState();
 
-	if ( canSiteViewAtomicHosting( state ) ) {
+	if (canSiteViewAtomicHosting(state)) {
 		next();
 		return;
 	}
 
-	page.redirect( '/hosting-config' );
+	page.redirect('/hosting-config');
 }
 
-export function layout( context, next ) {
-	context.primary = React.createElement( Hosting );
+export function layout(context, next) {
+	context.primary = React.createElement(Hosting);
 	next();
 }
 
-export function activationLayout( context, next ) {
-	context.primary = React.createElement( HostingActivate );
+export function activationLayout(context, next) {
+	context.primary = React.createElement(HostingActivate);
 	next();
 }

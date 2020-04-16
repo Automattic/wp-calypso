@@ -13,6 +13,6 @@ import { get } from 'lodash';
  * @param {number} siteId the site ID
  * @returns {?string} ID of uploaded plugin
  */
-export default function getUploadedPluginId( state, siteId ) {
-	return get( state.plugins.upload.uploadedPluginId, siteId, null );
+export default function getUploadedPluginId(state, siteId) {
+	return get(state.plugins.upload.uploadedPluginId, siteId, null);
 }

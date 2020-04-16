@@ -25,24 +25,24 @@ import {
 	areSettingsGeneralLoadError,
 } from 'woocommerce/state/sites/settings/general/selectors';
 
-const ShippingZoneName = ( {
+const ShippingZoneName = ({
 	loaded,
 	fetchError,
 	zoneName,
 	generatedZoneName,
 	actions,
 	translate,
-} ) => {
-	const onNameChange = event => {
-		actions.changeShippingZoneName( event.target.value );
+}) => {
+	const onNameChange = (event) => {
+		actions.changeShippingZoneName(event.target.value);
 	};
 
 	const renderContent = () => {
-		if ( fetchError ) {
+		if (fetchError) {
 			return <div className="shipping-zone__name" />;
 		}
 
-		if ( ! loaded ) {
+		if (!loaded) {
 			return (
 				<div className="shipping-zone__name is-placeholder">
 					<span />
@@ -52,11 +52,7 @@ const ShippingZoneName = ( {
 
 		return (
 			<div className="shipping-zone__name">
-				<FormTextInput
-					value={ zoneName }
-					onChange={ onNameChange }
-					placeholder={ generatedZoneName }
-				/>
+				<FormTextInput value={zoneName} onChange={onNameChange} placeholder={generatedZoneName} />
 			</div>
 		);
 	};
@@ -64,13 +60,13 @@ const ShippingZoneName = ( {
 	return (
 		<div>
 			<ExtendedHeader
-				label={ translate( 'Zone name' ) }
-				description={ translate(
+				label={translate('Zone name')}
+				description={translate(
 					'Give the zone a name of your choosing, or just use the one we created for you.' +
 						' This is not visible to customers.'
-				) }
+				)}
 			/>
-			<Card className="shipping-zone__name-container">{ renderContent() }</Card>
+			<Card className="shipping-zone__name-container">{renderContent()}</Card>
 		</div>
 	);
 };
@@ -80,19 +76,19 @@ ShippingZoneName.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const loaded =
-			areShippingZonesFullyLoaded( state, ownProps.siteId ) &&
-			areSettingsGeneralLoaded( state, ownProps.siteId );
-		const zone = loaded && getCurrentlyEditingShippingZone( state, ownProps.siteId );
+			areShippingZonesFullyLoaded(state, ownProps.siteId) &&
+			areSettingsGeneralLoaded(state, ownProps.siteId);
+		const zone = loaded && getCurrentlyEditingShippingZone(state, ownProps.siteId);
 		return {
 			loaded,
-			fetchError: areSettingsGeneralLoadError( state, ownProps.siteId ), // TODO: add shipping zones/methods fetch errors too
+			fetchError: areSettingsGeneralLoadError(state, ownProps.siteId), // TODO: add shipping zones/methods fetch errors too
 			zoneName: zone && zone.name,
-			generatedZoneName: generateCurrentlyEditingZoneName( state, ownProps.siteId ),
+			generatedZoneName: generateCurrentlyEditingZoneName(state, ownProps.siteId),
 		};
 	},
-	( dispatch, ownProps ) => ( {
+	(dispatch, ownProps) => ({
 		actions: bindActionCreatorsWithSiteId(
 			{
 				changeShippingZoneName,
@@ -100,5 +96,5 @@ export default connect(
 			dispatch,
 			ownProps.siteId
 		),
-	} )
-)( localize( ShippingZoneName ) );
+	})
+)(localize(ShippingZoneName));

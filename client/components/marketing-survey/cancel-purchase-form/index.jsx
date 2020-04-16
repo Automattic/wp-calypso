@@ -59,7 +59,7 @@ class CancelPurchaseForm extends React.Component {
 		defaultContent: PropTypes.node.isRequired,
 		disableButtons: PropTypes.bool,
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.shape( { slug: PropTypes.string.isRequired } ),
+		selectedSite: PropTypes.shape({ slug: PropTypes.string.isRequired }),
 		isVisible: PropTypes.bool,
 		onInputChange: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
@@ -84,7 +84,7 @@ class CancelPurchaseForm extends React.Component {
 			precancellationChatAvailable,
 			downgradeClick,
 		} = this.props;
-		const downgradePossible = !! downgradeClick;
+		const downgradePossible = !!downgradeClick;
 
 		return stepsForProductAndSurvey(
 			this.state,
@@ -96,25 +96,25 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	initSurveyState() {
-		const [ firstStep ] = this.getAllSurveySteps();
+		const [firstStep] = this.getAllSurveySteps();
 
-		this.setState( {
+		this.setState({
 			surveyStep: firstStep,
 			...initialSurveyState(),
-		} );
+		});
 	}
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		const { purchase } = props;
-		const questionOneOrder = shuffle( cancellationOptionsForPurchase( purchase ) );
-		const questionTwoOrder = shuffle( nextAdventureOptionsForPurchase( purchase ) );
+		const questionOneOrder = shuffle(cancellationOptionsForPurchase(purchase));
+		const questionTwoOrder = shuffle(nextAdventureOptionsForPurchase(purchase));
 
-		questionOneOrder.push( 'anotherReasonOne' );
+		questionOneOrder.push('anotherReasonOne');
 
-		if ( questionTwoOrder.length > 0 ) {
-			questionTwoOrder.push( 'anotherReasonTwo' );
+		if (questionTwoOrder.length > 0) {
+			questionTwoOrder.push('anotherReasonTwo');
 		}
 
 		this.state = {
@@ -129,100 +129,100 @@ class CancelPurchaseForm extends React.Component {
 		};
 	}
 
-	recordEvent = ( name, properties = {} ) => {
+	recordEvent = (name, properties = {}) => {
 		const { purchase, flowType, isAtomicSite } = this.props;
 
-		this.props.recordTracksEvent( name, {
+		this.props.recordTracksEvent(name, {
 			cancellation_flow: flowType,
 			product_slug: purchase.productSlug,
 			is_atomic: isAtomicSite,
 
 			...properties,
-		} );
+		});
 	};
 
-	recordClickRadioEvent = ( option, value ) =>
-		this.props.recordTracksEvent( 'calypso_purchases_cancel_form_select_radio_option', {
+	recordClickRadioEvent = (option, value) =>
+		this.props.recordTracksEvent('calypso_purchases_cancel_form_select_radio_option', {
 			option,
 			value,
-		} );
+		});
 
-	onRadioOneChange = event => {
-		this.recordClickRadioEvent( 'radio_1', event.currentTarget.value );
+	onRadioOneChange = (event) => {
+		this.recordClickRadioEvent('radio_1', event.currentTarget.value);
 
 		const newState = {
 			...this.state,
 			questionOneRadio: event.currentTarget.value,
 			questionOneText: '',
 		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
+		this.setState(newState);
+		this.props.onInputChange(newState);
 	};
 
-	onTextOneChange = event => {
+	onTextOneChange = (event) => {
 		const newState = {
 			...this.state,
 			questionOneText: event.currentTarget.value,
 		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
+		this.setState(newState);
+		this.props.onInputChange(newState);
 	};
 
-	onRadioTwoChange = event => {
-		this.recordClickRadioEvent( 'radio_2', event.currentTarget.value );
+	onRadioTwoChange = (event) => {
+		this.recordClickRadioEvent('radio_2', event.currentTarget.value);
 
 		const newState = {
 			...this.state,
 			questionTwoRadio: event.currentTarget.value,
 			questionTwoText: '',
 		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
+		this.setState(newState);
+		this.props.onInputChange(newState);
 	};
 
-	onTextTwoChange = event => {
+	onTextTwoChange = (event) => {
 		const newState = {
 			...this.state,
 			questionTwoText: event.currentTarget.value,
 		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
+		this.setState(newState);
+		this.props.onInputChange(newState);
 	};
 
-	onTextThreeChange = event => {
+	onTextThreeChange = (event) => {
 		const newState = {
 			...this.state,
 			questionThreeText: event.currentTarget.value,
 		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
+		this.setState(newState);
+		this.props.onInputChange(newState);
 	};
 
-	onImportRadioChange = event => {
-		this.recordClickRadioEvent( 'import_radio', event.currentTarget.value );
+	onImportRadioChange = (event) => {
+		this.recordClickRadioEvent('import_radio', event.currentTarget.value);
 
 		const newState = {
 			...this.state,
 			importQuestionRadio: event.currentTarget.value,
 			importQuestionText: '',
 		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
+		this.setState(newState);
+		this.props.onInputChange(newState);
 	};
 
-	onImportTextChange = event => {
+	onImportTextChange = (event) => {
 		const newState = {
 			...this.state,
 			importQuestionText: event.currentTarget.value,
 		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
+		this.setState(newState);
+		this.props.onInputChange(newState);
 	};
 
 	// Because of the legacy reason, we can't just use `flowType` here.
 	// Instead we have to map it to the data keys defined way before `flowType` is introduced.
 	getSurveyDataType = () => {
-		switch ( this.props.flowType ) {
+		switch (this.props.flowType) {
 			case CANCEL_FLOW_TYPE.REMOVE:
 				return 'remove';
 			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
@@ -238,10 +238,10 @@ class CancelPurchaseForm extends React.Component {
 	onSubmit = () => {
 		const { purchase } = this.props;
 
-		if ( ! isGoogleApps( purchase ) ) {
-			this.setState( {
+		if (!isGoogleApps(purchase)) {
+			this.setState({
 				isSubmitting: true,
-			} );
+			});
 
 			const surveyData = {
 				'why-cancel': {
@@ -260,26 +260,26 @@ class CancelPurchaseForm extends React.Component {
 			submitSurvey(
 				'calypso-remove-purchase',
 				purchase.siteId,
-				enrichedSurveyData( surveyData, purchase )
-			).then( () => {
-				this.setState( {
+				enrichedSurveyData(surveyData, purchase)
+			).then(() => {
+				this.setState({
 					isSubmitting: false,
-				} );
-			} );
+				});
+			});
 		}
 
 		this.props.onClickFinalConfirm();
 
-		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
+		this.recordEvent('calypso_purchases_cancel_form_submit');
 	};
 
 	downgradeClick = () => {
-		if ( ! this.state.isSubmitting ) {
+		if (!this.state.isSubmitting) {
 			this.props.downgradeClick();
-			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
-			this.setState( {
+			this.recordEvent('calypso_purchases_downgrade_form_submit');
+			this.setState({
 				isSubmitting: true,
-			} );
+			});
 		}
 	};
 
@@ -288,8 +288,8 @@ class CancelPurchaseForm extends React.Component {
 		const { translate } = this.props;
 		const { questionOneOrder, questionOneRadio, questionOneText } = this.state;
 
-		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioOption(
+		const appendRadioOption = (key, radioPrompt, textPlaceholder) =>
+			(reasons[key] = radioOption(
 				key,
 				questionOneRadio,
 				questionOneText,
@@ -297,59 +297,59 @@ class CancelPurchaseForm extends React.Component {
 				this.onTextOneChange,
 				radioPrompt,
 				textPlaceholder
-			) );
+			));
 
 		appendRadioOption(
 			'couldNotInstall',
-			translate( "I couldn't install a plugin/theme I wanted." ),
-			translate( 'What plugin/theme were you trying to install?' )
+			translate("I couldn't install a plugin/theme I wanted."),
+			translate('What plugin/theme were you trying to install?')
 		);
 
 		appendRadioOption(
 			'tooHard',
-			translate( 'It was too hard to set up my site.' ),
-			translate( 'Where did you run into problems?' )
+			translate('It was too hard to set up my site.'),
+			translate('Where did you run into problems?')
 		);
 
 		appendRadioOption(
 			'didNotInclude',
-			translate( "This upgrade didn't include what I needed." ),
-			translate( 'What are we missing that you need?' )
+			translate("This upgrade didn't include what I needed."),
+			translate('What are we missing that you need?')
 		);
 
 		appendRadioOption(
 			'onlyNeedFree',
-			translate( 'The plan was too expensive.' ),
-			translate( 'How can we improve our upgrades?' )
+			translate('The plan was too expensive.'),
+			translate('How can we improve our upgrades?')
 		);
 
 		appendRadioOption(
 			'couldNotActivate',
-			translate( 'I was unable to activate or use the product.' ),
-			translate( 'Where did you run into problems?' )
+			translate('I was unable to activate or use the product.'),
+			translate('Where did you run into problems?')
 		);
 
 		appendRadioOption(
 			'noLongerWantToTransfer',
-			translate( 'I no longer want to transfer my domain.' )
+			translate('I no longer want to transfer my domain.')
 		);
 
 		appendRadioOption(
 			'couldNotCompleteTransfer',
-			translate( 'Something went wrong and I could not complete the transfer.' )
+			translate('Something went wrong and I could not complete the transfer.')
 		);
 
 		appendRadioOption(
 			'useDomainWithoutTransferring',
-			translate( 'I’m going to use my domain with WordPress.com without transferring it.' )
+			translate('I’m going to use my domain with WordPress.com without transferring it.')
 		);
 
-		appendRadioOption( 'anotherReasonOne', translate( 'Another reason…' ), ' ' );
+		appendRadioOption('anotherReasonOne', translate('Another reason…'), ' ');
 
 		return (
 			<div className="cancel-purchase-form__question">
-				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
-				{ questionOneOrder.map( question => reasons[ question ] ) }
+				<FormLegend>{translate('Please tell us why you are canceling:')}</FormLegend>
+				{questionOneOrder.map((question) => reasons[question])}
 			</div>
 		);
 	};
@@ -359,12 +359,12 @@ class CancelPurchaseForm extends React.Component {
 		const { translate } = this.props;
 		const { questionTwoOrder, questionTwoRadio, questionTwoText } = this.state;
 
-		if ( questionTwoOrder.length === 0 ) {
+		if (questionTwoOrder.length === 0) {
 			return null;
 		}
 
-		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioOption(
+		const appendRadioOption = (key, radioPrompt, textPlaceholder) =>
+			(reasons[key] = radioOption(
 				key,
 				questionTwoRadio,
 				questionTwoText,
@@ -372,46 +372,46 @@ class CancelPurchaseForm extends React.Component {
 				this.onTextTwoChange,
 				radioPrompt,
 				textPlaceholder
-			) );
+			));
 
-		appendRadioOption( 'stayingHere', translate( "I'm staying here and using the free plan." ) );
+		appendRadioOption('stayingHere', translate("I'm staying here and using the free plan."));
 
 		appendRadioOption(
 			'otherWordPress',
-			translate( "I'm going to use WordPress somewhere else." ),
-			translate( 'Mind telling us where?' )
+			translate("I'm going to use WordPress somewhere else."),
+			translate('Mind telling us where?')
 		);
 
 		appendRadioOption(
 			'differentService',
-			translate( "I'm going to use a different service for my website or blog." ),
-			translate( 'Mind telling us which one?' )
+			translate("I'm going to use a different service for my website or blog."),
+			translate('Mind telling us which one?')
 		);
 
 		appendRadioOption(
 			'noNeed',
-			translate( 'I no longer need a website or blog.' ),
-			translate( 'What will you do instead?' )
+			translate('I no longer need a website or blog.'),
+			translate('What will you do instead?')
 		);
 
 		appendRadioOption(
 			'otherPlugin',
-			translate( 'I found a better plugin or service.' ),
-			translate( 'Mind telling us which one(s)?' )
+			translate('I found a better plugin or service.'),
+			translate('Mind telling us which one(s)?')
 		);
 
 		appendRadioOption(
 			'leavingWP',
-			translate( "I'm moving my site off of WordPress." ),
-			translate( 'Any particular reason(s)?' )
+			translate("I'm moving my site off of WordPress."),
+			translate('Any particular reason(s)?')
 		);
 
-		appendRadioOption( 'anotherReasonTwo', translate( 'Another reason…' ), ' ' );
+		appendRadioOption('anotherReasonTwo', translate('Another reason…'), ' ');
 
 		return (
 			<div className="cancel-purchase-form__question">
-				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
-				{ questionTwoOrder.map( question => reasons[ question ] ) }
+				<FormLegend>{translate('Where is your next adventure taking you?')}</FormLegend>
+				{questionTwoOrder.map((question) => reasons[question])}
 			</div>
 		);
 	};
@@ -421,7 +421,7 @@ class CancelPurchaseForm extends React.Component {
 		const { translate } = this.props;
 		const { importQuestionRadio, importQuestionText } = this.state;
 
-		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+		const appendRadioOption = (key, radioPrompt, textPlaceholder) =>
 			reasons.push(
 				radioOption(
 					key,
@@ -434,28 +434,26 @@ class CancelPurchaseForm extends React.Component {
 				)
 			);
 
-		appendRadioOption( 'happy', translate( 'I was happy.' ) );
+		appendRadioOption('happy', translate('I was happy.'));
 
 		appendRadioOption(
 			'look',
-			translate(
-				'Most of my content was imported, but it was too hard to get things looking right.'
-			)
+			translate('Most of my content was imported, but it was too hard to get things looking right.')
 		);
 
-		appendRadioOption( 'content', translate( 'Not enough of my content was imported.' ) );
+		appendRadioOption('content', translate('Not enough of my content was imported.'));
 
 		appendRadioOption(
 			'functionality',
-			translate( "I didn't have the functionality I have on my existing site." )
+			translate("I didn't have the functionality I have on my existing site.")
 		);
 
 		return (
 			<div className="cancel-purchase-form__question">
 				<FormLegend>
-					{ translate( 'You imported from another site. How did the import go?' ) }
+					{translate('You imported from another site. How did the import go?')}
 				</FormLegend>
-				{ reasons }
+				{reasons}
 			</div>
 		);
 	};
@@ -465,12 +463,12 @@ class CancelPurchaseForm extends React.Component {
 		return (
 			<FormFieldset>
 				<FormLabel>
-					{ translate( "What's one thing we could have done better? (optional)" ) }
+					{translate("What's one thing we could have done better? (optional)")}
 					<FormTextarea
 						name="improvementInput"
 						id="improvementInput"
-						value={ this.state.questionThreeText }
-						onChange={ this.onTextThreeChange }
+						value={this.state.questionThreeText}
+						onChange={this.onTextThreeChange}
 					/>
 				</FormLabel>
 			</FormFieldset>
@@ -478,15 +476,15 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	recordClickConciergeEvent = () =>
-		this.props.recordTracksEvent( 'calypso_purchases_cancel_form_concierge_click' );
+		this.props.recordTracksEvent('calypso_purchases_cancel_form_concierge_click');
 
 	openConcierge = () => {
-		if ( ! this.props.selectedSite ) {
+		if (!this.props.selectedSite) {
 			return;
 		}
 		this.recordClickConciergeEvent();
 
-		return window.open( `/me/concierge/${ this.props.selectedSite.slug }/book` );
+		return window.open(`/me/concierge/${this.props.selectedSite.slug}/book`);
 	};
 
 	renderConciergeOffer = () => {
@@ -495,13 +493,13 @@ class CancelPurchaseForm extends React.Component {
 			selectedSite && (
 				<FormFieldset>
 					<p>
-						{ translate(
+						{translate(
 							'Schedule a 30 minute orientation with one of our Happiness Engineers. ' +
 								"We'll help you to set up your site and answer any questions you have!"
-						) }
+						)}
 					</p>
-					<Button onClick={ this.openConcierge } primary>
-						{ translate( 'Schedule a session' ) }
+					<Button onClick={this.openConcierge} primary>
+						{translate('Schedule a session')}
 					</Button>
 				</FormFieldset>
 			)
@@ -509,27 +507,27 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	onChatInitiated = () => {
-		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
+		this.recordEvent('calypso_purchases_cancel_form_chat_initiated');
 		this.closeDialog();
 	};
 
 	renderLiveChat = () => {
 		const { purchase, translate } = this.props;
-		const productName = getName( purchase );
+		const productName = getName(purchase);
 		return (
 			<FormFieldset>
 				<p>
-					{ translate(
+					{translate(
 						'As a %(productName)s user, you have instant access to our team of Happiness ' +
 							'Engineers who can answer your questions and get your site up and running ' +
 							'just as you like! Click the button below to start a chat now.',
 						{
 							args: { productName },
 						}
-					) }
+					)}
 				</p>
-				<HappychatButton primary borderless={ false } onClick={ this.onChatInitiated }>
-					{ translate( 'Start a Live chat' ) }
+				<HappychatButton primary borderless={false} onClick={this.onChatInitiated}>
+					{translate('Start a Live chat')}
 				</HappychatButton>
 			</FormFieldset>
 		);
@@ -538,120 +536,118 @@ class CancelPurchaseForm extends React.Component {
 	getRefundAmount = () => {
 		const { purchase } = this.props;
 		const { refundOptions, currencyCode } = purchase;
-		const { precision } = getCurrencyDefaults( currencyCode );
+		const { precision } = getCurrencyDefaults(currencyCode);
 		const refundAmount =
-			isRefundable( purchase ) && refundOptions[ 0 ] && refundOptions[ 0 ].refund_amount
-				? refundOptions[ 0 ].refund_amount
+			isRefundable(purchase) && refundOptions[0] && refundOptions[0].refund_amount
+				? refundOptions[0].refund_amount
 				: 0;
 
-		return parseFloat( refundAmount ).toFixed( precision );
+		return parseFloat(refundAmount).toFixed(precision);
 	};
 
 	surveyContent() {
 		const { translate, isImport, showSurvey, purchase } = this.props;
 		const { surveyStep } = this.state;
 
-		if ( showSurvey ) {
-			if ( surveyStep === steps.INITIAL_STEP ) {
+		if (showSurvey) {
+			if (surveyStep === steps.INITIAL_STEP) {
 				return (
 					<div>
-						<FormSectionHeading>{ translate( 'Your thoughts are needed.' ) }</FormSectionHeading>
+						<FormSectionHeading>{translate('Your thoughts are needed.')}</FormSectionHeading>
 						<p>
-							{ translate(
+							{translate(
 								'Before you go, please answer a few quick questions to help us improve WordPress.com.'
-							) }
+							)}
 						</p>
-						{ this.renderQuestionOne() }
-						{ isImport && this.renderImportQuestion() }
-						{ this.renderQuestionTwo() }
+						{this.renderQuestionOne()}
+						{isImport && this.renderImportQuestion()}
+						{this.renderQuestionTwo()}
 					</div>
 				);
 			}
 
-			if ( surveyStep === steps.CONCIERGE_STEP ) {
+			if (surveyStep === steps.CONCIERGE_STEP) {
 				return (
 					<div>
 						<FormSectionHeading>
-							{ translate( 'Let us help you set up your site!' ) }
+							{translate('Let us help you set up your site!')}
 						</FormSectionHeading>
-						{ this.renderConciergeOffer() }
+						{this.renderConciergeOffer()}
 					</div>
 				);
 			}
 
-			if ( surveyStep === steps.HAPPYCHAT_STEP ) {
+			if (surveyStep === steps.HAPPYCHAT_STEP) {
 				return (
 					<div>
-						<FormSectionHeading>{ translate( 'How can we help?' ) }</FormSectionHeading>
-						{ this.renderLiveChat() }
+						<FormSectionHeading>{translate('How can we help?')}</FormSectionHeading>
+						{this.renderLiveChat()}
 					</div>
 				);
 			}
 
-			if ( surveyStep === steps.BUSINESS_AT_STEP ) {
+			if (surveyStep === steps.BUSINESS_AT_STEP) {
 				return <BusinessATStep />;
 			}
 
-			if ( surveyStep === steps.UPGRADE_AT_STEP ) {
+			if (surveyStep === steps.UPGRADE_AT_STEP) {
 				return <UpgradeATStep />;
 			}
 
-			if ( surveyStep === steps.DOWNGRADE_STEP ) {
-				const { precision } = getCurrencyDefaults( purchase.currencyCode );
-				const planCost = parseFloat( this.props.downgradePlanPrice ).toFixed( precision );
+			if (surveyStep === steps.DOWNGRADE_STEP) {
+				const { precision } = getCurrencyDefaults(purchase.currencyCode);
+				const planCost = parseFloat(this.props.downgradePlanPrice).toFixed(precision);
 				return (
 					<DowngradeStep
-						currencySymbol={ purchase.currencySymbol }
-						planCost={ planCost }
-						refundAmount={ this.getRefundAmount() }
+						currencySymbol={purchase.currencySymbol}
+						planCost={planCost}
+						refundAmount={this.getRefundAmount()}
 					/>
 				);
 			}
 
 			return (
 				<div>
-					<FormSectionHeading>
-						{ translate( 'One more question before you go.' ) }
-					</FormSectionHeading>
-					{ this.renderFreeformQuestion() }
-					{ this.props.defaultContent }
+					<FormSectionHeading>{translate('One more question before you go.')}</FormSectionHeading>
+					{this.renderFreeformQuestion()}
+					{this.props.defaultContent}
 				</div>
 			);
 		}
 
 		// just return the default if we don't want to show the survey
-		return <div>{ this.props.defaultContent }</div>;
+		return <div>{this.props.defaultContent}</div>;
 	}
 
 	closeDialog = () => {
 		this.props.onClose();
 		this.initSurveyState();
 
-		this.recordEvent( 'calypso_purchases_cancel_form_close' );
+		this.recordEvent('calypso_purchases_cancel_form_close');
 	};
 
-	changeSurveyStep = stepFunction => {
+	changeSurveyStep = (stepFunction) => {
 		const allSteps = this.getAllSurveySteps();
-		const newStep = stepFunction( this.state.surveyStep, allSteps );
+		const newStep = stepFunction(this.state.surveyStep, allSteps);
 
-		this.setState( { surveyStep: newStep } );
+		this.setState({ surveyStep: newStep });
 
-		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
+		this.recordEvent('calypso_purchases_cancel_survey_step', { new_step: newStep });
 	};
 
 	clickNext = () => {
 		const { isImport } = this.props;
-		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state, isImport ) ) {
+		if (this.state.isRemoving || !isSurveyFilledIn(this.state, isImport)) {
 			return;
 		}
-		this.changeSurveyStep( nextStep );
+		this.changeSurveyStep(nextStep);
 	};
 
 	clickPrevious = () => {
-		if ( this.state.isRemoving ) {
+		if (this.state.isRemoving) {
 			return;
 		}
-		this.changeSurveyStep( previousStep );
+		this.changeSurveyStep(previousStep);
 	};
 
 	getStepButtons = () => {
@@ -662,82 +658,82 @@ class CancelPurchaseForm extends React.Component {
 		const close = {
 				action: 'close',
 				disabled,
-				label: translate( "I'll Keep It" ),
+				label: translate("I'll Keep It"),
 			},
 			chat = (
 				<PrecancellationChatButton
-					purchase={ purchase }
-					onClick={ this.closeDialog }
-					surveyStep={ surveyStep }
+					purchase={purchase}
+					onClick={this.closeDialog}
+					surveyStep={surveyStep}
 				/>
 			),
 			next = {
 				action: 'next',
-				disabled: disabled || ! isSurveyFilledIn( this.state, isImport ),
-				label: translate( 'Next Step' ),
+				disabled: disabled || !isSurveyFilledIn(this.state, isImport),
+				label: translate('Next Step'),
 				onClick: this.clickNext,
 			},
 			prev = {
 				action: 'prev',
 				disabled,
-				label: translate( 'Previous Step' ),
+				label: translate('Previous Step'),
 				onClick: this.clickPrevious,
 			},
 			cancel = {
 				action: 'cancel',
 				disabled,
-				label: translate( 'Cancel Now' ),
+				label: translate('Cancel Now'),
 				onClick: this.onSubmit,
 				isPrimary: true,
 			},
 			downgrade = {
 				action: 'downgrade',
 				disabled: this.state.isSubmitting,
-				label: translate( 'Switch to Personal' ),
+				label: translate('Switch to Personal'),
 				onClick: this.downgradeClick,
 				isPrimary: true,
 			},
 			remove = {
 				action: 'remove',
 				disabled,
-				label: translate( 'Remove Now' ),
+				label: translate('Remove Now'),
 				onClick: this.onSubmit,
 				isPrimary: true,
 			};
 
 		const firstButtons =
-			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
-				? [ chat, close ]
-				: [ close ];
+			config.isEnabled('upgrades/precancellation-chat') && surveyStep !== 'happychat_step'
+				? [chat, close]
+				: [close];
 
-		if ( surveyStep === steps.FINAL_STEP ) {
+		if (surveyStep === steps.FINAL_STEP) {
 			const stepsCount = this.getAllSurveySteps().length;
-			const prevButton = stepsCount > 1 ? [ prev ] : [];
+			const prevButton = stepsCount > 1 ? [prev] : [];
 
-			switch ( flowType ) {
+			switch (flowType) {
 				case CANCEL_FLOW_TYPE.REMOVE:
-					return firstButtons.concat( [ ...prevButton, remove ] );
+					return firstButtons.concat([...prevButton, remove]);
 				default:
-					return firstButtons.concat( [ ...prevButton, cancel ] );
+					return firstButtons.concat([...prevButton, cancel]);
 			}
 		}
 
-		if ( this.state.surveyStep === steps.DOWNGRADE_STEP ) {
-			return firstButtons.concat( [ prev, downgrade, next ] );
+		if (this.state.surveyStep === steps.DOWNGRADE_STEP) {
+			return firstButtons.concat([prev, downgrade, next]);
 		}
 
 		return firstButtons.concat(
-			this.state.surveyStep === steps.INITIAL_STEP ? [ next ] : [ prev, next ]
+			this.state.surveyStep === steps.INITIAL_STEP ? [next] : [prev, next]
 		);
 	};
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
-			! prevProps.isVisible &&
+			!prevProps.isVisible &&
 			this.props.isVisible &&
 			this.state.surveyStep === steps.INITIAL_STEP
 		) {
-			this.recordEvent( 'calypso_purchases_cancel_form_start' );
+			this.recordEvent('calypso_purchases_cancel_form_start');
 		}
 	}
 
@@ -749,29 +745,29 @@ class CancelPurchaseForm extends React.Component {
 		const { selectedSite } = this.props;
 		return (
 			<Dialog
-				isVisible={ this.props.isVisible }
-				onClose={ this.closeDialog }
-				buttons={ this.getStepButtons() }
+				isVisible={this.props.isVisible}
+				onClose={this.closeDialog}
+				buttons={this.getStepButtons()}
 				className="cancel-purchase-form__dialog"
 			>
-				{ this.surveyContent() }
+				{this.surveyContent()}
 				<QueryPlans />
-				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
+				{selectedSite && <QuerySitePlans siteId={selectedSite.ID} />}
 			</Dialog>
 		);
 	}
 }
 
 export default connect(
-	( state, { purchase } ) => ( {
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
-		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
-		isImport: !! getSiteImportEngine( state, purchase.siteId ),
-		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
-		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
-	} ),
+	(state, { purchase }) => ({
+		isChatAvailable: isHappychatAvailable(state),
+		isChatActive: hasActiveHappychatSession(state),
+		isAtomicSite: isSiteAutomatedTransfer(state, purchase.siteId),
+		isImport: !!getSiteImportEngine(state, purchase.siteId),
+		precancellationChatAvailable: isPrecancellationChatAvailable(state),
+		downgradePlanPrice: getDowngradePlanRawPrice(state, purchase),
+	}),
 	{
 		recordTracksEvent,
 	}
-)( localize( CancelPurchaseForm ) );
+)(localize(CancelPurchaseForm));

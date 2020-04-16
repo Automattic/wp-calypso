@@ -21,7 +21,7 @@ const events = [
 
 	{
 		title: 'Social Media - Facebook',
-		date: new Date( +new Date() + 60 * 60 * 24 * 1000 ),
+		date: new Date(+new Date() + 60 * 60 * 24 * 1000),
 		socialIcon: 'facebook',
 	},
 
@@ -46,7 +46,7 @@ const events = [
 
 	{
 		title: 'Social Media - Tumblr',
-		date: new Date( +new Date() + 60 * 60 * 24 * 1000 ),
+		date: new Date(+new Date() + 60 * 60 * 24 * 1000),
 		socialIcon: 'tumblr',
 	},
 
@@ -84,17 +84,17 @@ const events = [
 
 	{
 		title: 'Tomorrow is tomorrow',
-		date: new Date( +new Date() + 60 * 60 * 24 * 1000 ),
+		date: new Date(+new Date() + 60 * 60 * 24 * 1000),
 		type: 'future',
 	},
 	{
 		title: 'Yesterday',
-		date: new Date( +new Date() - 60 * 60 * 24 * 1000 ),
+		date: new Date(+new Date() - 60 * 60 * 24 * 1000),
 		type: 'past',
 	},
 	{
 		title: 'Retro birthday',
-		date: new Date( '1977-07-18' ),
+		date: new Date('1977-07-18'),
 		type: 'birthday',
 		icon: 'offline',
 	},
@@ -111,61 +111,61 @@ class DatePickerExample extends Component {
 		tooltipContext: null,
 	};
 
-	selectDay = ( date, modifiers ) => {
-		this.setState( { selectedDay: date } );
+	selectDay = (date, modifiers) => {
+		this.setState({ selectedDay: date });
 
-		if ( date ) {
-			console.log( date.toDate(), modifiers ); // eslint-disable-line no-console
+		if (date) {
+			console.log(date.toDate(), modifiers); // eslint-disable-line no-console
 		}
 	};
 
-	handleDayMouseEnter = ( date, modifiers, event, eventsByDay ) => {
-		this.setState( {
+	handleDayMouseEnter = (date, modifiers, event, eventsByDay) => {
+		this.setState({
 			eventsByDay,
 			tooltipContext: event.target,
 			showTooltip: true,
-		} );
+		});
 	};
 
 	handleDayMouseLeave = () => {
-		this.setState( {
+		this.setState({
 			eventsByDay: [],
 			tooltipContext: null,
 			showTooltip: false,
-		} );
+		});
 	};
 
 	render() {
 		// custom tooltip title
-		const tooltipTitle = this.props.translate( '%d Event', '%d Events', {
+		const tooltipTitle = this.props.translate('%d Event', '%d Events', {
 			count: this.state.eventsByDay.length,
 			args: this.state.eventsByDay.length,
-		} );
+		});
 
 		return (
-			<Card style={ { width: '300px', margin: 0 } }>
+			<Card style={{ width: '300px', margin: 0 }}>
 				<DatePicker
-					disabledDays={ [ { before: new Date() } ] }
-					events={ events }
-					onSelectDay={ this.selectDay }
-					onDayMouseEnter={ this.handleDayMouseEnter }
-					onDayMouseLeave={ this.handleDayMouseLeave }
-					selectedDay={ this.state.selectedDay }
+					disabledDays={[{ before: new Date() }]}
+					events={events}
+					onSelectDay={this.selectDay}
+					onDayMouseEnter={this.handleDayMouseEnter}
+					onDayMouseLeave={this.handleDayMouseLeave}
+					selectedDay={this.state.selectedDay}
 				/>
 
 				<EventsTooltip
-					events={ this.state.eventsByDay }
-					context={ this.state.tooltipContext }
-					isVisible={ this.state.showTooltip }
-					title={ tooltipTitle }
-					maxEvents={ 5 }
+					events={this.state.eventsByDay}
+					context={this.state.tooltipContext}
+					isVisible={this.state.showTooltip}
+					title={tooltipTitle}
+					maxEvents={5}
 				/>
 			</Card>
 		);
 	}
 }
 
-const localizedDatePickerExample = localize( DatePickerExample );
+const localizedDatePickerExample = localize(DatePickerExample);
 
 localizedDatePickerExample.displayName = 'DatePicker';
 

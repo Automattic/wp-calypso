@@ -15,8 +15,8 @@ import {
 	INLINE_HELP_POPOVER_SHOW,
 } from 'state/action-types';
 
-export const popover = withoutPersistence( ( state = { isVisible: false }, action ) => {
-	switch ( action.type ) {
+export const popover = withoutPersistence((state = { isVisible: false }, action) => {
+	switch (action.type) {
 		case INLINE_HELP_POPOVER_SHOW:
 			return { ...state, isVisible: true };
 		case INLINE_HELP_POPOVER_HIDE:
@@ -24,20 +24,20 @@ export const popover = withoutPersistence( ( state = { isVisible: false }, actio
 	}
 
 	return state;
-} );
+});
 
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
+export function requesting(state = {}, action) {
+	switch (action.type) {
 		case INLINE_HELP_SEARCH_REQUEST:
 			return {
 				...state,
-				[ action.searchQuery ]: true,
+				[action.searchQuery]: true,
 			};
 		case INLINE_HELP_SEARCH_REQUEST_SUCCESS:
 		case INLINE_HELP_SEARCH_REQUEST_FAILURE:
 			return {
 				...state,
-				[ action.searchQuery ]: false,
+				[action.searchQuery]: false,
 			};
 	}
 
@@ -54,7 +54,7 @@ export const search = withoutPersistence(
 		},
 		action
 	) => {
-		switch ( action.type ) {
+		switch (action.type) {
 			case INLINE_HELP_SEARCH_REQUEST:
 				return {
 					...state,
@@ -66,7 +66,7 @@ export const search = withoutPersistence(
 					selectedResult: -1,
 					items: {
 						...state.items,
-						[ action.searchQuery ]: action.searchResults,
+						[action.searchQuery]: action.searchResults,
 					},
 				};
 			case INLINE_HELP_SELECT_RESULT:
@@ -75,10 +75,10 @@ export const search = withoutPersistence(
 					selectedResult: action.resultIndex,
 				};
 			case INLINE_HELP_SELECT_NEXT_RESULT: {
-				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
+				if (state.items[state.searchQuery] && state.items[state.searchQuery].length) {
 					return {
 						...state,
-						selectedResult: ( state.selectedResult + 1 ) % state.items[ state.searchQuery ].length,
+						selectedResult: (state.selectedResult + 1) % state.items[state.searchQuery].length,
 					};
 				}
 
@@ -88,11 +88,11 @@ export const search = withoutPersistence(
 				};
 			}
 			case INLINE_HELP_SELECT_PREVIOUS_RESULT: {
-				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-					const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
+				if (state.items[state.searchQuery] && state.items[state.searchQuery].length) {
+					const newResult = (state.selectedResult - 1) % state.items[state.searchQuery].length;
 					return {
 						...state,
-						selectedResult: newResult < 0 ? state.items[ state.searchQuery ].length - 1 : newResult,
+						selectedResult: newResult < 0 ? state.items[state.searchQuery].length - 1 : newResult,
 					};
 				}
 
@@ -107,7 +107,7 @@ export const search = withoutPersistence(
 	}
 );
 
-const searchResults = combineReducers( { requesting, search } );
+const searchResults = combineReducers({ requesting, search });
 
 export const contactForm = withoutPersistence(
 	(
@@ -116,7 +116,7 @@ export const contactForm = withoutPersistence(
 		},
 		action
 	) => {
-		switch ( action.type ) {
+		switch (action.type) {
 			case INLINE_HELP_CONTACT_FORM_RESET:
 				return {
 					...state,
@@ -133,8 +133,8 @@ export const contactForm = withoutPersistence(
 	}
 );
 
-export default combineReducers( {
+export default combineReducers({
 	popover,
 	contactForm,
 	searchResults,
-} );
+});

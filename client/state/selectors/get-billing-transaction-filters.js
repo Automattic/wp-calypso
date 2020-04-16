@@ -10,8 +10,8 @@ import { get } from 'lodash';
  * @param  {string}  transactionType Transaction type
  * @returns {object}                 Billing transaction filters
  */
-export default ( state, transactionType ) => {
-	const filters = get( state, [ 'ui', 'billingTransactions', transactionType ], {} );
+export default (state, transactionType) => {
+	const filters = get(state, ['ui', 'billingTransactions', transactionType], {});
 	return {
 		app: '',
 		date: { month: null, operator: null },

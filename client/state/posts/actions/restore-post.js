@@ -15,35 +15,32 @@ import 'state/posts/init';
  * @param  {number}   postId Post ID
  * @returns {Function}        Action thunk
  */
-export function restorePost( siteId, postId ) {
-	return dispatch => {
-		dispatch( {
+export function restorePost(siteId, postId) {
+	return (dispatch) => {
+		dispatch({
 			type: POST_RESTORE,
 			siteId,
 			postId,
-		} );
+		});
 
-		const restoreResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.restore();
+		const restoreResult = wpcom.site(siteId).post(postId).restore();
 
 		restoreResult.then(
-			restoredPost => {
-				dispatch( {
+			(restoredPost) => {
+				dispatch({
 					type: POST_RESTORE_SUCCESS,
 					siteId,
 					postId,
-				} );
-				dispatch( receivePost( restoredPost ) );
+				});
+				dispatch(receivePost(restoredPost));
 			},
-			error => {
-				dispatch( {
+			(error) => {
+				dispatch({
 					type: POST_RESTORE_FAILURE,
 					siteId,
 					postId,
 					error,
-				} );
+				});
 			}
 		);
 

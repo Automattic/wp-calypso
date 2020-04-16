@@ -14,6 +14,6 @@ import getSectionGroup from './get-section-group';
  * @param  {object}  state Global state tree
  * @returns {boolean}       Whether current section is site-specific
  */
-export default function isSiteSection( state ) {
-	return includes( [ 'sites', 'editor', 'gutenberg' ], getSectionGroup( state ) );
+export default function isSiteSection(state) {
+	return includes(['sites', 'editor', 'gutenberg'], getSectionGroup(state));
 }

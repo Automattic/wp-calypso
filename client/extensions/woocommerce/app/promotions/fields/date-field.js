@@ -12,22 +12,22 @@ import DatePicker from 'components/date-picker';
 import { withLocalizedMoment } from 'components/localized-moment';
 import FormField from './form-field';
 
-const DateField = props => {
+const DateField = (props) => {
 	const { fieldName, explanationText, disabledDays, value, edit, moment } = props;
-	const selectedDay = value ? new Date( value ) : new Date();
+	const selectedDay = value ? new Date(value) : new Date();
 
-	const onSelectDay = day => {
-		edit( fieldName, moment( day ).format( 'YYYY-MM-DDTHH:mm:ss' ) );
+	const onSelectDay = (day) => {
+		edit(fieldName, moment(day).format('YYYY-MM-DDTHH:mm:ss'));
 	};
 
 	return (
-		<FormField { ...props }>
+		<FormField {...props}>
 			<DatePicker
-				aria-describedby={ explanationText && fieldName + '-description' }
-				calendarViewDate={ selectedDay }
-				selectedDay={ selectedDay }
-				onSelectDay={ onSelectDay }
-				disabledDays={ disabledDays }
+				aria-describedby={explanationText && fieldName + '-description'}
+				calendarViewDate={selectedDay}
+				selectedDay={selectedDay}
+				onSelectDay={onSelectDay}
+				disabledDays={disabledDays}
 			/>
 		</FormField>
 	);
@@ -40,4 +40,4 @@ DateField.propTypes = {
 	edit: PropTypes.func,
 };
 
-export default localize( withLocalizedMoment( DateField ) );
+export default localize(withLocalizedMoment(DateField));

@@ -15,14 +15,14 @@ class ExtendedHeader extends Component {
 
 		const labelContent = (
 			<div>
-				<div className="extended-header__header">{ label }</div>
-				<div className="extended-header__header-description">{ description }</div>
+				<div className="extended-header__header">{label}</div>
+				<div className="extended-header__header-description">{description}</div>
 			</div>
 		);
 
 		return (
-			<SectionHeader className="extended-header" label={ labelContent }>
-				{ children }
+			<SectionHeader className="extended-header" label={labelContent}>
+				{children}
 			</SectionHeader>
 		);
 	}

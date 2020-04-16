@@ -19,19 +19,19 @@ export const VOUCHER_1 = {
 };
 
 export const AD_CREDITS_0 = {
-	[ SERVICE_TYPE ]: [ VOUCHER_0 ],
+	[SERVICE_TYPE]: [VOUCHER_0],
 };
 
 export const AD_CREDITS_1 = {
-	[ SERVICE_TYPE ]: [ VOUCHER_1 ],
+	[SERVICE_TYPE]: [VOUCHER_1],
 };
 
 export const AD_CREDITS = {
-	[ SERVICE_TYPE ]: [ VOUCHER_0, VOUCHER_1 ],
+	[SERVICE_TYPE]: [VOUCHER_0, VOUCHER_1],
 };
 
 // WP REST-API error response
-export const ERROR_OBJECT = new Error( 'There was a problem fetching site vouchers.' );
+export const ERROR_OBJECT = new Error('There was a problem fetching site vouchers.');
 
 // WP RESP-API response
 export const REST_API_RESPONSE = {
@@ -71,17 +71,17 @@ export const getStateInstance = () => {
 		sites: {
 			vouchers: {
 				items: {
-					[ SITE_ID_0 ]: {
-						[ SERVICE_TYPE ]: [ VOUCHER_0 ],
+					[SITE_ID_0]: {
+						[SERVICE_TYPE]: [VOUCHER_0],
 					},
-					[ SITE_ID_1 ]: {
-						[ SERVICE_TYPE ]: [ VOUCHER_1 ],
+					[SITE_ID_1]: {
+						[SERVICE_TYPE]: [VOUCHER_1],
 					},
 				},
 
 				requesting: {
-					[ SITE_ID_0 ]: false,
-					[ SITE_ID_1 ]: true,
+					[SITE_ID_0]: false,
+					[SITE_ID_1]: true,
 				},
 			},
 		},

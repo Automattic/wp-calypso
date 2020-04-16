@@ -25,14 +25,14 @@ let client;
 
 const globalData = {};
 
-setGlobalData( globalData );
+setGlobalData(globalData);
 
 repliesCache.cleanup();
 
 /**
  * Force a manual refresh of the notes data
  */
-export const refreshNotes = () => client && client.refreshNotes.call( client );
+export const refreshNotes = () => client && client.refreshNotes.call(client);
 
 export class Notifications extends PureComponent {
 	static propTypes = {
@@ -46,7 +46,7 @@ export class Notifications extends PureComponent {
 	};
 
 	static defaultProps = {
-		customEnhancer: a => a,
+		customEnhancer: (a) => a,
 		customMiddleware: {},
 		isShowing: false,
 		isVisible: false,
@@ -64,26 +64,26 @@ export class Notifications extends PureComponent {
 			wpcom,
 		} = this.props;
 
-		initStore( {
+		initStore({
 			customEnhancer,
-			customMiddleware: mergeHandlers( customMiddleware, {
+			customMiddleware: mergeHandlers(customMiddleware, {
 				APP_REFRESH_NOTES: [
-					( store, action ) => {
-						if ( ! client ) {
+					(store, action) => {
+						if (!client) {
 							return;
 						}
 
-						if ( 'boolean' === typeof action.isVisible ) {
-							client.setVisibility.call( client, { isShowing, isVisible: action.isVisible } );
+						if ('boolean' === typeof action.isVisible) {
+							client.setVisibility.call(client, { isShowing, isVisible: action.isVisible });
 						}
 
-						client.refreshNotes.call( client, action.isVisible );
+						client.refreshNotes.call(client, action.isVisible);
 					},
 				],
-			} ),
-		} );
+			}),
+		});
 
-		initAPI( wpcom );
+		initAPI(wpcom);
 
 		client = new RestClient();
 		client.global = globalData;
@@ -95,45 +95,45 @@ export class Notifications extends PureComponent {
 		 *
 		 * @TODO: Pass this information directly into the Redux initial state
 		 */
-		store.dispatch( { type: SET_IS_SHOWING, isShowing } );
+		store.dispatch({ type: SET_IS_SHOWING, isShowing });
 
-		client.setVisibility( { isShowing, isVisible } );
+		client.setVisibility({ isShowing, isVisible });
 	}
 
 	componentDidMount() {
-		store.dispatch( { type: 'APP_IS_READY' } );
+		store.dispatch({ type: 'APP_IS_READY' });
 	}
 
-	UNSAFE_componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
-		if ( wpcom !== this.props.wpcom ) {
-			initAPI( wpcom );
+	UNSAFE_componentWillReceiveProps({ isShowing, isVisible, wpcom }) {
+		if (wpcom !== this.props.wpcom) {
+			initAPI(wpcom);
 		}
 
-		if ( this.props.isShowing && ! isShowing ) {
+		if (this.props.isShowing && !isShowing) {
 			// unselect the note so keyhandlers don't steal keystrokes
-			store.dispatch( actions.ui.unselectNote() );
+			store.dispatch(actions.ui.unselectNote());
 		}
 
-		if ( isShowing !== this.props.isShowing ) {
-			store.dispatch( { type: SET_IS_SHOWING, isShowing } );
+		if (isShowing !== this.props.isShowing) {
+			store.dispatch({ type: SET_IS_SHOWING, isShowing });
 		}
 
-		if ( isShowing !== this.props.isShowing || isVisible !== this.props.isVisible ) {
-			client.setVisibility( { isShowing, isVisible } );
+		if (isShowing !== this.props.isShowing || isVisible !== this.props.isVisible) {
+			client.setVisibility({ isShowing, isVisible });
 		}
 	}
 
 	render() {
 		return (
-			<Provider store={ store }>
+			<Provider store={store}>
 				<Layout
-					{ ...{
+					{...{
 						client,
 						data: globalData,
 						global: globalData,
 						isShowing: this.props.isShowing,
 						locale: this.props.locale,
-					} }
+					}}
 				/>
 			</Provider>
 		);

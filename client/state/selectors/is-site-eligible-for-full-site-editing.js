@@ -15,7 +15,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param {object} siteId Site ID
  * @returns {boolean} True if the site is eligible for Full Site Editing, otherwise false
  */
-export default function isSiteEligibleForFullSiteEditing( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	return get( site, 'is_fse_eligible', false );
+export default function isSiteEligibleForFullSiteEditing(state, siteId) {
+	const site = getRawSite(state, siteId);
+	return get(site, 'is_fse_eligible', false);
 }

@@ -10,8 +10,8 @@ import deepFreeze from 'deep-freeze';
 import reducer from '../reducer';
 import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types';
 
-describe( 'reducer', () => {
-	test( 'should store the current query for more than one site', () => {
+describe('reducer', () => {
+	test('should store the current query for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEWS_SET_QUERY,
 			siteId: 234,
@@ -19,13 +19,13 @@ describe( 'reducer', () => {
 				search: 'testing',
 			},
 		};
-		const originalState = deepFreeze( {
+		const originalState = deepFreeze({
 			123: { list: { currentPage: 3, currentSearch: '', currentProduct: null } },
-		} );
-		const newState = reducer( originalState, action );
-		expect( newState ).to.eql( {
+		});
+		const newState = reducer(originalState, action);
+		expect(newState).to.eql({
 			123: { list: { currentPage: 3, currentSearch: '', currentProduct: null } },
 			234: { list: { currentPage: 1, currentSearch: 'testing', currentProduct: null } },
-		} );
-	} );
-} );
+		});
+	});
+});

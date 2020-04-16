@@ -25,28 +25,28 @@ class Chart extends Component {
 		chartFormat: PropTypes.string,
 	};
 
-	formatTabValue = ( tab, item ) => {
-		return value => formatValue( value, tab.type, item.currency );
+	formatTabValue = (tab, item) => {
+		return (value) => formatValue(value, tab.type, item.currency);
 	};
 
-	renderTabs = ( { chartData, selectedIndex, selectedTabIndex, tabClick } ) => {
+	renderTabs = ({ chartData, selectedIndex, selectedTabIndex, tabClick }) => {
 		return (
-			<Tabs data={ chartData }>
-				{ tabs.map( ( tab, index ) => {
-					const item = chartData[ selectedIndex ].data;
+			<Tabs data={chartData}>
+				{tabs.map((tab, index) => {
+					const item = chartData[selectedIndex].data;
 					return (
 						<Tab
-							key={ tab.attr }
-							index={ index }
-							label={ tab.label }
-							selected={ index === selectedTabIndex }
-							tabClick={ tabClick }
-							gridicon={ tab.gridicon }
-							value={ item[ tab.attr ] }
-							format={ this.formatTabValue( tab, item ) }
+							key={tab.attr}
+							index={index}
+							label={tab.label}
+							selected={index === selectedTabIndex}
+							tabClick={tabClick}
+							gridicon={tab.gridicon}
+							value={item[tab.attr]}
+							format={this.formatTabValue(tab, item)}
 						/>
 					);
-				} ) }
+				})}
 			</Tabs>
 		);
 	};
@@ -55,34 +55,34 @@ class Chart extends Component {
 		const { data, selectedDate, unit, slug, selectedReferrer } = this.props;
 		const chartTitle = (
 			<div className="chart__title">
-				<span className="chart__title-label">{ `${ translate( 'Selected Referrer' ) }:` }</span>
-				<span className="chart__title-referrer">{ selectedReferrer || 'All' }</span>
+				<span className="chart__title-label">{`${translate('Selected Referrer')}:`}</span>
+				<span className="chart__title-referrer">{selectedReferrer || 'All'}</span>
 			</div>
 		);
 
 		return (
 			<StoreStatsChart
-				basePath={ '/store/stats/referrers' }
-				chartTitle={ chartTitle }
-				data={ data }
-				renderTabs={ this.renderTabs }
-				selectedDate={ selectedDate }
-				slug={ slug }
-				tabs={ tabs }
-				urlQueryParam={ { referrer: selectedReferrer } }
-				unit={ unit }
+				basePath={'/store/stats/referrers'}
+				chartTitle={chartTitle}
+				data={data}
+				renderTabs={this.renderTabs}
+				selectedDate={selectedDate}
+				slug={slug}
+				tabs={tabs}
+				urlQueryParam={{ referrer: selectedReferrer }}
+				unit={unit}
 			/>
 		);
 	}
 }
 
-export default connect( ( state, { siteId, query, selectedReferrer } ) => {
+export default connect((state, { siteId, query, selectedReferrer }) => {
 	return {
-		data: getStoreReferrersByReferrer( state, {
+		data: getStoreReferrersByReferrer(state, {
 			siteId,
 			statType: 'statsStoreReferrers',
 			query,
 			selectedReferrer,
-		} ),
+		}),
 	};
-} )( Chart );
+})(Chart);

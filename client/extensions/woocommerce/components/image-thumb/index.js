@@ -6,32 +6,32 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import MediaImage from 'my-sites/media-library/media-image';
 
-const ImageThumb = ( { width, height, src, alt, placeholder, ...props } ) => {
+const ImageThumb = ({ width, height, src, alt, placeholder, ...props }) => {
 	const style = {
 		width,
 		height,
 		minHeight: height,
 	};
 
-	const imageClasses = classNames( 'image-thumb', {
+	const imageClasses = classNames('image-thumb', {
 		hasImage: src,
-	} );
+	});
 
-	if ( ! src ) {
-		if ( placeholder ) {
-			style.backgroundImage = `url( ${ placeholder } )`;
+	if (!src) {
+		if (placeholder) {
+			style.backgroundImage = `url( ${placeholder} )`;
 		}
 
 		return (
-			<div className={ imageClasses }>
-				<div className="image-thumb__placeholder" style={ style } />
+			<div className={imageClasses}>
+				<div className="image-thumb__placeholder" style={style} />
 			</div>
 		);
 	}
 
 	return (
-		<div className={ imageClasses } style={ style }>
-			<MediaImage src={ src } alt={ alt } { ...props } />
+		<div className={imageClasses} style={style}>
+			<MediaImage src={src} alt={alt} {...props} />
 		</div>
 	);
 };

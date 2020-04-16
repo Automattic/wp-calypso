@@ -17,14 +17,14 @@ import { getPost } from 'state/posts/selectors';
  */
 import './style.scss';
 
-function PostTypePostAuthor( { name } ) {
-	if ( ! name ) {
+function PostTypePostAuthor({ name }) {
+	if (!name) {
 		return null;
 	}
 
 	return (
 		<div className="post-type-post-author">
-			<div className="post-type-post-author__name">{ name }</div>
+			<div className="post-type-post-author__name">{name}</div>
 		</div>
 	);
 }
@@ -34,10 +34,10 @@ PostTypePostAuthor.propTypes = {
 	name: PropTypes.string,
 };
 
-export default connect( ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
+export default connect((state, { globalId }) => {
+	const post = getPost(state, globalId);
 
 	return {
-		name: get( post, [ 'author', 'name' ] ),
+		name: get(post, ['author', 'name']),
 	};
-} )( PostTypePostAuthor );
+})(PostTypePostAuthor);

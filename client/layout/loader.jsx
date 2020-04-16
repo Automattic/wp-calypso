@@ -16,12 +16,12 @@ import { isSectionLoading } from 'state/ui/selectors';
  */
 import './loader.scss';
 
-const LayoutLoader = ( { isLoading } ) => (
-	<div className={ classnames( 'layout__loader', { 'is-active': isLoading } ) }>
-		{ isLoading && <PulsingDot delay={ 400 } active /> }
+const LayoutLoader = ({ isLoading }) => (
+	<div className={classnames('layout__loader', { 'is-active': isLoading })}>
+		{isLoading && <PulsingDot delay={400} active />}
 	</div>
 );
 
-export default connect( state => ( {
-	isLoading: isSectionLoading( state ),
-} ) )( LayoutLoader );
+export default connect((state) => ({
+	isLoading: isSectionLoading(state),
+}))(LayoutLoader);

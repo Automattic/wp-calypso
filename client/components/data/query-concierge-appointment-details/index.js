@@ -12,7 +12,7 @@ import { requestConciergeAppointmentDetails } from 'state/concierge/actions';
 class QueryConciergeAppointmentDetails extends Component {
 	UNSAFE_componentWillMount() {
 		const { appointmentId, scheduleId } = this.props;
-		this.props.requestConciergeAppointmentDetails( scheduleId, appointmentId );
+		this.props.requestConciergeAppointmentDetails(scheduleId, appointmentId);
 	}
 
 	render() {
@@ -20,6 +20,6 @@ class QueryConciergeAppointmentDetails extends Component {
 	}
 }
 
-export default connect( state => state, { requestConciergeAppointmentDetails } )(
+export default connect((state) => state, { requestConciergeAppointmentDetails })(
 	QueryConciergeAppointmentDetails
 );

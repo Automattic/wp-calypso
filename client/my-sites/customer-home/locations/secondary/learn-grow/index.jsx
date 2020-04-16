@@ -18,33 +18,33 @@ const cardComponents = {
 	'home-education-gutenberg': MasteringGutenberg,
 };
 
-const LearnGrow = ( { cards } ) => {
+const LearnGrow = ({ cards }) => {
 	const translate = useTranslate();
 
 	return (
 		<>
 			<h2 className="learn-grow__heading customer-home__section-heading">
-				{ translate( 'Learn and grow' ) }
+				{translate('Learn and grow')}
 			</h2>
-			{ cards &&
+			{cards &&
 				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
+					(card, index) =>
+						cardComponents[card] &&
+						React.createElement(cardComponents[card], {
 							key: index,
-						} )
-				) }
+						})
+				)}
 		</>
 	);
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const layout = getHomeLayout( state, siteId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const layout = getHomeLayout(state, siteId);
 
 	return {
-		cards: layout?.[ 'secondary.learn-grow' ] ?? [],
+		cards: layout?.['secondary.learn-grow'] ?? [],
 	};
 };
 
-export default connect( mapStateToProps )( LearnGrow );
+export default connect(mapStateToProps)(LearnGrow);

@@ -16,6 +16,6 @@ import 'state/posts/init';
  * @param  {number}  postId Post ID
  * @returns {boolean} Is the post liked
  */
-export default function isLikedPost( state, siteId, postId ) {
-	return get( state.posts.likes.items, [ siteId, postId, 'iLike' ], false );
+export default function isLikedPost(state, siteId, postId) {
+	return get(state.posts.likes.items, [siteId, postId, 'iLike'], false);
 }

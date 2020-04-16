@@ -12,6 +12,6 @@ import 'state/posts/init';
  * @param  {string}   query Post query
  * @returns {Function}       Action thunk
  */
-export function requestAllSitesPosts( query = {} ) {
-	return requestPosts( null, query );
+export function requestAllSitesPosts(query = {}) {
+	return requestPosts(null, query);
 }

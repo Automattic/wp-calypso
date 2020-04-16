@@ -9,15 +9,15 @@ import {
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_CURRENCIES_REQUEST } from 'woocommerce/state/action-types';
 
-export const fetch = action => {
+export const fetch = (action) => {
 	const { siteId } = action;
-	return request( siteId, action ).get( 'data/currencies' );
+	return request(siteId, action).get('data/currencies');
 };
 
-export const onSuccess = ( { siteId }, { data } ) => currenciesReceive( siteId, data );
+export const onSuccess = ({ siteId }, { data }) => currenciesReceive(siteId, data);
 
-export const onError = ( { siteId }, error ) => currenciesFailure( siteId, error );
+export const onError = ({ siteId }, error) => currenciesFailure(siteId, error);
 
 export default {
-	[ WOOCOMMERCE_CURRENCIES_REQUEST ]: [ dispatchRequest( { fetch, onSuccess, onError } ) ],
+	[WOOCOMMERCE_CURRENCIES_REQUEST]: [dispatchRequest({ fetch, onSuccess, onError })],
 };

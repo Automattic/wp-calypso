@@ -67,7 +67,7 @@ export const ACTION_ACTIVE_PROMOTIONS_REQUEST_FAILURE = {
 export const getStateInstance = () => {
 	return {
 		activePromotions: {
-			items: [ ...ACTIVE_PROMOTIONS ],
+			items: [...ACTIVE_PROMOTIONS],
 			requesting: false,
 			error: false,
 		},

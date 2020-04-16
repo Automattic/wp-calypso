@@ -35,76 +35,76 @@ class PostLifecycle extends React.Component {
 	render() {
 		const { post, postKey, followSource, isSelected, recsStreamKey, streamKey } = this.props;
 
-		if ( postKey.isRecommendationBlock ) {
+		if (postKey.isRecommendationBlock) {
 			return (
 				<RecommendedPosts
-					recommendations={ postKey.recommendations }
-					index={ postKey.index }
-					streamKey={ recsStreamKey }
-					followSource={ IN_STREAM_RECOMMENDATION }
+					recommendations={postKey.recommendations}
+					index={postKey.index}
+					streamKey={recsStreamKey}
+					followSource={IN_STREAM_RECOMMENDATION}
 				/>
 			);
-		} else if ( postKey.isCombination ) {
+		} else if (postKey.isCombination) {
 			return (
 				<CombinedCard
-					postKey={ postKey }
-					index={ this.props.index }
-					onClick={ this.props.handleClick }
-					selectedPostKey={ this.props.selectedPostKey }
-					followSource={ followSource }
-					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
-					blockedSites={ this.props.blockedSites }
+					postKey={postKey}
+					index={this.props.index}
+					onClick={this.props.handleClick}
+					selectedPostKey={this.props.selectedPostKey}
+					followSource={followSource}
+					showFollowButton={this.props.showPrimaryFollowButtonOnCards}
+					blockedSites={this.props.blockedSites}
 				/>
 			);
-		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
-			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;
-		} else if ( postKey.isGap ) {
+		} else if (streamKey.indexOf('rec') > -1) {
+			return <EmptySearchRecommendedPost post={post} site={postKey} />;
+		} else if (postKey.isGap) {
 			return (
 				<ListGap
-					gap={ postKey }
-					selected={ isSelected }
-					handleClick={ this.props.handleClick }
-					streamKey={ streamKey }
+					gap={postKey}
+					selected={isSelected}
+					handleClick={this.props.handleClick}
+					streamKey={streamKey}
 				/>
 			);
-		} else if ( ! post ) {
+		} else if (!post) {
 			return (
 				<Fragment>
-					<QueryReaderPost postKey={ postKey } />
+					<QueryReaderPost postKey={postKey} />
 					<PostPlaceholder />
 				</Fragment>
 			);
-		} else if ( post._state === 'error' ) {
-			return <PostUnavailable post={ post } />;
+		} else if (post._state === 'error') {
+			return <PostUnavailable post={post} />;
 		} else if (
-			( ! post.is_external || post.is_jetpack ) &&
-			includes( this.props.blockedSites, +post.site_ID )
+			(!post.is_external || post.is_jetpack) &&
+			includes(this.props.blockedSites, +post.site_ID)
 		) {
-			return <PostBlocked post={ post } />;
-		} else if ( isXPost( post ) ) {
-			const xMetadata = XPostHelper.getXPostMetadata( post );
+			return <PostBlocked post={post} />;
+		} else if (isXPost(post)) {
+			const xMetadata = XPostHelper.getXPostMetadata(post);
 			return (
 				<CrossPost
-					{ ...omit( this.props, 'store' ) }
-					xMetadata={ xMetadata }
-					post={ post }
-					postKey={ postKey }
+					{...omit(this.props, 'store')}
+					xMetadata={xMetadata}
+					post={post}
+					postKey={postKey}
 				/>
 			);
 		}
 
-		return <Post { ...this.props } />;
+		return <Post {...this.props} />;
 	}
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		post: getPostByKey( state, ownProps.postKey ),
-	} ),
+	(state, ownProps) => ({
+		post: getPostByKey(state, ownProps.postKey),
+	}),
 	null,
 	null,
 	{
 		forwardRef: true,
-		areOwnPropsEqual: compareProps( { ignore: [ 'handleClick' ] } ),
+		areOwnPropsEqual: compareProps({ ignore: ['handleClick'] }),
 	}
-)( PostLifecycle );
+)(PostLifecycle);

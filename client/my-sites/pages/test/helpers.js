@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { sortPagesHierarchically } from '../helpers';
 
-describe( 'helpers', () => {
-	describe( 'sortPagesHierarchically()', () => {
-		test( 'should place children under parents', () => {
+describe('helpers', () => {
+	describe('sortPagesHierarchically()', () => {
+		test('should place children under parents', () => {
 			const testData = [
 				{
 					ID: 1,
@@ -30,9 +30,9 @@ describe( 'helpers', () => {
 				},
 			];
 
-			const sortedPages = sortPagesHierarchically( testData );
+			const sortedPages = sortPagesHierarchically(testData);
 
-			expect( sortedPages ).to.deep.equal( [
+			expect(sortedPages).to.deep.equal([
 				{
 					ID: 2,
 					parent: false,
@@ -51,10 +51,10 @@ describe( 'helpers', () => {
 						ID: 1,
 					},
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'should sort first by hierarchy, then by menu_order', () => {
+		test('should sort first by hierarchy, then by menu_order', () => {
 			const testData = [
 				{
 					ID: 1,
@@ -82,9 +82,9 @@ describe( 'helpers', () => {
 				},
 			];
 
-			const sortedPages = sortPagesHierarchically( testData );
+			const sortedPages = sortPagesHierarchically(testData);
 
-			expect( sortedPages ).to.deep.equal( [
+			expect(sortedPages).to.deep.equal([
 				{
 					ID: 1,
 					menu_order: 0,
@@ -111,10 +111,10 @@ describe( 'helpers', () => {
 					menu_order: 6,
 					parent: false,
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'should place orphaned children at top-level, with their children properly beneath them', () => {
+		test('should place orphaned children at top-level, with their children properly beneath them', () => {
 			const testData = [
 				{
 					ID: 1,
@@ -144,9 +144,9 @@ describe( 'helpers', () => {
 				},
 			];
 
-			const sortedPages = sortPagesHierarchically( testData );
+			const sortedPages = sortPagesHierarchically(testData);
 
-			expect( sortedPages ).to.deep.equal( [
+			expect(sortedPages).to.deep.equal([
 				{
 					ID: 1,
 					menu_order: 1,
@@ -175,7 +175,7 @@ describe( 'helpers', () => {
 						ID: 3,
 					},
 				},
-			] );
-		} );
-	} );
-} );
+			]);
+		});
+	});
+});

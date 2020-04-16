@@ -18,18 +18,18 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const request = action =>
+export const request = (action) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
-			path: `/sites/${ action.siteId }/rewind/credentials/delete`,
+			path: `/sites/${action.siteId}/rewind/credentials/delete`,
 			body: { role: action.role },
 		},
 		{ ...action }
 	);
 
-export const success = ( { siteId }, { rewind_state } ) => {
+export const success = ({ siteId }, { rewind_state }) => {
 	const storeAction = {
 		type: JETPACK_CREDENTIALS_STORE,
 		credentials: {
@@ -47,20 +47,20 @@ export const success = ( { siteId }, { rewind_state } ) => {
 			{
 				type: REWIND_STATE_UPDATE,
 				siteId,
-				data: transformApi( rewind_state ),
+				data: transformApi(rewind_state),
 			},
 		];
-	} catch ( e ) {
+	} catch (e) {
 		return storeAction;
 	}
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/rewind/credentials/delete', {
-	[ JETPACK_CREDENTIALS_DELETE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/rewind/credentials/delete', {
+	[JETPACK_CREDENTIALS_DELETE]: [
+		dispatchRequest({
 			fetch: request,
 			onSuccess: success,
 			onError: noop,
-		} ),
+		}),
 	],
-} );
+});

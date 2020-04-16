@@ -15,15 +15,15 @@ import 'state/themes/init';
  * @param  {?number} siteId  Site ID to optionally use as context
  * @returns {?string}         Theme support page URL
  */
-export function getThemeHelpUrl( state, themeId, siteId ) {
-	if ( ! themeId ) {
+export function getThemeHelpUrl(state, themeId, siteId) {
+	if (!themeId) {
 		return null;
 	}
 
 	let baseUrl = oldShowcaseUrl + themeId;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }/support`;
+	if (config.isEnabled('manage/themes/details')) {
+		baseUrl = `/theme/${themeId}/support`;
 	}
 
-	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
+	return baseUrl + (siteId ? `/${getSiteSlug(state, siteId)}` : '');
 }

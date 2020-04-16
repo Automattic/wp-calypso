@@ -12,10 +12,10 @@ const schema = {
 	type: 'boolean',
 };
 
-const expansionReducer = withSchemaValidation( schema, ( state = false, action ) => {
-	switch ( action.type ) {
+const expansionReducer = withSchemaValidation(schema, (state = false, action) => {
+	switch (action.type) {
 		case MY_SITES_SIDEBAR_SECTION_TOGGLE:
-			return ! state;
+			return !state;
 		case MY_SITES_SIDEBAR_SECTION_EXPAND:
 			return true;
 		case MY_SITES_SIDEBAR_SECTION_COLLAPSE:
@@ -23,8 +23,8 @@ const expansionReducer = withSchemaValidation( schema, ( state = false, action )
 		default:
 			return state;
 	}
-} );
+});
 
-const sectionReducer = combineReducers( { isOpen: expansionReducer } );
+const sectionReducer = combineReducers({ isOpen: expansionReducer });
 
-export default keyedReducer( 'sidebarSection', sectionReducer );
+export default keyedReducer('sidebarSection', sectionReducer);

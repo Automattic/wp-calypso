@@ -8,10 +8,10 @@ import React from 'react';
  */
 import './divider.scss';
 
-export default function Divider( { children } ) {
+export default function Divider({ children }) {
 	return (
 		<div className="login__divider">
-			<span>{ children }</span>
+			<span>{children}</span>
 		</div>
 	);
 }

@@ -9,14 +9,14 @@ import React from 'react';
  */
 import CelebrateNotice from '../celebrate-notice';
 
-const CelebrateSiteMigration = ( { checklistMode, displayChecklist } ) => {
+const CelebrateSiteMigration = ({ checklistMode, displayChecklist }) => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
-			checklistMode={ checklistMode }
+			checklistMode={checklistMode}
 			dismissalPreferenceName="home-notice-site-migrated"
-			displayChecklist={ displayChecklist }
-			message={ translate( 'Your site has been imported!' ) }
+			displayChecklist={displayChecklist}
+			message={translate('Your site has been imported!')}
 		/>
 	);
 };

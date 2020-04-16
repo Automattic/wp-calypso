@@ -37,8 +37,8 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	navigateToUser = () => {
-		window.scrollTo( 0, 0 );
-		this.props.recordGoogleEvent( 'People', 'Clicked User Profile From Team List' );
+		window.scrollTo(0, 0);
+		this.props.recordGoogleEvent('People', 'Clicked User Profile From Team List');
 	};
 
 	userHasPromoteCapability = () => {
@@ -50,75 +50,75 @@ class PeopleListItem extends React.PureComponent {
 		const site = this.props.site,
 			user = this.props.user;
 		return (
-			config.isEnabled( 'manage/edit-user' ) &&
+			config.isEnabled('manage/edit-user') &&
 			user &&
 			user.roles &&
 			site &&
 			site.slug &&
 			this.userHasPromoteCapability() &&
-			! this.props.isSelectable
+			!this.props.isSelectable
 		);
 	};
 
 	maybeGetCardLink = () => {
 		const { invite, site, type, user } = this.props;
 
-		if ( 'invite-details' === type ) {
+		if ('invite-details' === type) {
 			return null;
 		}
 
-		const editLink = this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
-		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.key }`;
+		const editLink = this.canLinkToProfile() && `/people/edit/${site.slug}/${user.login}`;
+		const inviteLink = invite && `/people/invites/${site.slug}/${invite.key}`;
 
 		return type === 'invite' ? inviteLink : editLink;
 	};
 
-	onResend = event => {
+	onResend = (event) => {
 		const { requestingResend, resendSuccess, siteId, inviteKey } = this.props;
 
 		// Prevents navigation to invite-details screen and onClick event.
 		event.preventDefault();
 		event.stopPropagation();
 
-		if ( requestingResend || resendSuccess ) {
+		if (requestingResend || resendSuccess) {
 			return null;
 		}
 
-		this.props.resendInvite( siteId, inviteKey );
+		this.props.resendInvite(siteId, inviteKey);
 	};
 
 	renderInviteStatus = () => {
 		const { type, invite, translate, requestingResend, resendSuccess } = this.props;
 		const { isPending } = invite;
-		const className = classNames( 'people-list-item__invite-status', {
+		const className = classNames('people-list-item__invite-status', {
 			'is-pending': isPending,
 			'is-invite-details': type === 'invite-details',
-		} );
-		const buttonClassName = classNames( 'people-list-item__invite-resend', {
+		});
+		const buttonClassName = classNames('people-list-item__invite-resend', {
 			'is-success': resendSuccess,
-		} );
+		});
 
 		return (
-			<div className={ className }>
-				{ type === 'invite-details' &&
-					( isPending ? (
-						translate( 'Pending' )
+			<div className={className}>
+				{type === 'invite-details' &&
+					(isPending ? (
+						translate('Pending')
 					) : (
 						<React.Fragment>
-							<Gridicon icon="checkmark" size={ 18 } />
-							{ translate( 'Accepted' ) }
+							<Gridicon icon="checkmark" size={18} />
+							{translate('Accepted')}
 						</React.Fragment>
-					) ) }
-				{ isPending && (
+					))}
+				{isPending && (
 					<Button
-						className={ buttonClassName }
-						onClick={ this.onResend }
-						busy={ requestingResend }
+						className={buttonClassName}
+						onClick={this.onResend}
+						busy={requestingResend}
 						compact
 					>
-						{ resendSuccess ? translate( 'Invite Sent!' ) : translate( 'Resend Invite' ) }
+						{resendSuccess ? translate('Invite Sent!') : translate('Resend Invite')}
 					</Button>
-				) }
+				)}
 			</div>
 		);
 	};
@@ -135,9 +135,9 @@ class PeopleListItem extends React.PureComponent {
 			inviteWasDeleted,
 		} = this.props;
 
-		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
+		const isInvite = invite && ('invite' === type || 'invite-details' === type);
 
-		if ( isInvite && inviteWasDeleted ) {
+		if (isInvite && inviteWasDeleted) {
 			// After an invite is deleted and the user is returned to the
 			// invites list, the invite can occasionally reappear in the next
 			// API call, so we need to check for this situation and avoid
@@ -158,54 +158,54 @@ class PeopleListItem extends React.PureComponent {
 
 		return (
 			<CompactCard
-				className={ classes }
-				tagName={ tagName }
-				href={ this.maybeGetCardLink() }
-				onClick={ canLinkToProfile && this.navigateToUser }
+				className={classes}
+				tagName={tagName}
+				href={this.maybeGetCardLink()}
+				onClick={canLinkToProfile && this.navigateToUser}
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile invite={ invite } siteId={ siteId } type={ type } user={ user } />
+					<PeopleProfile invite={invite} siteId={siteId} type={type} user={user} />
 				</div>
 
-				{ isInvite && this.renderInviteStatus() }
+				{isInvite && this.renderInviteStatus()}
 
-				{ onRemove && (
+				{onRemove && (
 					<div className="people-list-item__actions">
 						<Button
 							compact
 							className="people-list-item__remove-button"
-							onClick={ onRemove }
-							data-e2e-remove-login={ get( user, 'login', '' ) }
+							onClick={onRemove}
+							data-e2e-remove-login={get(user, 'login', '')}
 						>
 							<Gridicon icon="cross" />
 							<span>
-								{ translate( 'Remove', {
+								{translate('Remove', {
 									context: 'Verb: Remove a user or follower from the blog.',
-								} ) }
+								})}
 							</span>
 						</Button>
 					</div>
-				) }
+				)}
 			</CompactCard>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { site, invite } = ownProps;
 
 		const siteId = site && site.ID;
 		const inviteKey = invite && invite.key;
-		const inviteWasDeleted = inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
+		const inviteWasDeleted = inviteKey && didInviteDeletionSucceed(state, siteId, inviteKey);
 
 		return {
-			requestingResend: isRequestingInviteResend( state, siteId, inviteKey ),
-			resendSuccess: didInviteResendSucceed( state, siteId, inviteKey ),
+			requestingResend: isRequestingInviteResend(state, siteId, inviteKey),
+			resendSuccess: didInviteResendSucceed(state, siteId, inviteKey),
 			siteId,
 			inviteKey,
 			inviteWasDeleted,
 		};
 	},
 	{ resendInvite, recordGoogleEvent }
-)( localize( PeopleListItem ) );
+)(localize(PeopleListItem));

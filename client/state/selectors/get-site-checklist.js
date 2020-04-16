@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {number}  siteId Site ID
  * @returns {object}        Site settings
  */
-export default function getSiteChecklist( state, siteId ) {
-	return get( state.checklist, [ siteId, 'items' ], null );
+export default function getSiteChecklist(state, siteId) {
+	return get(state.checklist, [siteId, 'items'], null);
 }

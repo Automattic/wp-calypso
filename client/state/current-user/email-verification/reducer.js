@@ -10,8 +10,8 @@ import {
 	EMAIL_VERIFY_STATE_RESET,
 } from 'state/action-types';
 
-export const status = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const status = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case EMAIL_VERIFY_REQUEST:
 			return 'requesting';
 		case EMAIL_VERIFY_REQUEST_SUCCESS:
@@ -23,10 +23,10 @@ export const status = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const errorMessage = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
+export const errorMessage = withoutPersistence((state = '', action) => {
+	switch (action.type) {
 		case EMAIL_VERIFY_REQUEST:
 			return '';
 		case EMAIL_VERIFY_REQUEST_SUCCESS:
@@ -40,9 +40,9 @@ export const errorMessage = withoutPersistence( ( state = '', action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	status,
 	errorMessage,
-} );
+});

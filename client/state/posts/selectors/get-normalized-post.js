@@ -17,6 +17,6 @@ import 'state/posts/init';
  * @returns {?object}          Post object
  */
 export const getNormalizedPost = createSelector(
-	( state, globalId ) => normalizePostForDisplay( getPost( state, globalId ) ),
-	state => [ state.posts.items, state.posts.queries ]
+	(state, globalId) => normalizePostForDisplay(getPost(state, globalId)),
+	(state) => [state.posts.items, state.posts.queries]
 );

@@ -19,18 +19,18 @@ import isJetpackSite from './is-jetpack-site';
  * @param {number} siteId Site ID
  * @returns {?boolean} true if the site can auto update
  */
-export default function canJetpackSiteAutoUpdateFiles( state, siteId ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
+export default function canJetpackSiteAutoUpdateFiles(state, siteId) {
+	if (!isJetpackSite(state, siteId)) {
 		return null;
 	}
 
-	if ( ! canJetpackSiteUpdateFiles( state, siteId ) ) {
+	if (!canJetpackSiteUpdateFiles(state, siteId)) {
 		return false;
 	}
 
-	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
+	const fileModDisabled = getSiteOption(state, siteId, 'file_mod_disabled');
 
-	if ( fileModDisabled && includes( fileModDisabled, 'automatic_updater_disabled' ) ) {
+	if (fileModDisabled && includes(fileModDisabled, 'automatic_updater_disabled')) {
 		return false;
 	}
 

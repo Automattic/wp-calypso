@@ -8,8 +8,8 @@ import {
 	WOOCOMMERCE_COUNT_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
-export function isLoading( state = {}, action ) {
-	switch ( action.type ) {
+export function isLoading(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_COUNT_REQUEST:
 		case WOOCOMMERCE_COUNT_REQUEST_SUCCESS:
 		case WOOCOMMERCE_COUNT_REQUEST_FAILURE:
@@ -19,8 +19,8 @@ export function isLoading( state = {}, action ) {
 	}
 }
 
-export function items( state = {}, action ) {
-	switch ( action.type ) {
+export function items(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_COUNT_REQUEST_SUCCESS:
 			return action.counts;
 		default:
@@ -28,7 +28,7 @@ export function items( state = {}, action ) {
 	}
 }
 
-export default combineReducers( {
+export default combineReducers({
 	isLoading,
 	items,
-} );
+});

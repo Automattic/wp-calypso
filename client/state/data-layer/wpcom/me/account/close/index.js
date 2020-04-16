@@ -17,7 +17,7 @@ import { closeAccountSuccess } from 'state/account/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export function requestAccountClose( action ) {
+export function requestAccountClose(action) {
 	return http(
 		{
 			method: 'POST',
@@ -29,10 +29,10 @@ export function requestAccountClose( action ) {
 	);
 }
 
-export function fromApi( response ) {
+export function fromApi(response) {
 	// don't need to check for existence of response because errors are handled
-	if ( ! response.success ) {
-		throw new Error( 'Account closure was unsuccessful', response );
+	if (!response.success) {
+		throw new Error('Account closure was unsuccessful', response);
 	}
 	return response;
 }
@@ -43,17 +43,17 @@ export function receiveAccountCloseSuccess() {
 
 export function receiveAccountCloseError() {
 	return errorNotice(
-		translate( 'Sorry, there was a problem closing your account. Please contact support.' )
+		translate('Sorry, there was a problem closing your account. Please contact support.')
 	);
 }
 
-registerHandlers( 'state/data-layer/wpcom/me/account/close/index.js', {
-	[ ACCOUNT_CLOSE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/account/close/index.js', {
+	[ACCOUNT_CLOSE]: [
+		dispatchRequest({
 			fetch: requestAccountClose,
 			onSuccess: receiveAccountCloseSuccess,
 			onError: receiveAccountCloseError,
 			fromApi,
-		} ),
+		}),
 	],
-} );
+});

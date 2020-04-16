@@ -9,22 +9,22 @@ import { pickBy } from 'lodash';
  */
 import { initialSiteState } from './reducer';
 
-export function getProductsBySiteId( state, siteId ) {
-	if ( ! siteId ) {
+export function getProductsBySiteId(state, siteId) {
+	if (!siteId) {
 		return initialSiteState;
 	}
-	return state.sites.products[ siteId ] || initialSiteState;
+	return state.sites.products[siteId] || initialSiteState;
 }
 
-export function getAvailableProductsBySiteId( state, siteId ) {
-	const products = getProductsBySiteId( state, siteId );
-	if ( products.data ) {
-		products.data = pickBy( products.data, product => product.available );
+export function getAvailableProductsBySiteId(state, siteId) {
+	const products = getProductsBySiteId(state, siteId);
+	if (products.data) {
+		products.data = pickBy(products.data, (product) => product.available);
 	}
 	return products;
 }
 
-export function isRequestingSiteProducts( state, siteId ) {
-	const products = getProductsBySiteId( state, siteId );
+export function isRequestingSiteProducts(state, siteId) {
+	const products = getProductsBySiteId(state, siteId);
 	return products.isRequesting;
 }

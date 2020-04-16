@@ -23,21 +23,21 @@
  * @returns {*} value of property named by the key
  */
 
-const config = data => key => {
-	if ( key in data ) {
-		return data[ key ];
+const config = (data) => (key) => {
+	if (key in data) {
+		return data[key];
 	}
 
-	if ( 'development' === process.env.NODE_ENV ) {
+	if ('development' === process.env.NODE_ENV) {
 		throw new ReferenceError(
-			`Could not find config value for key '${ key }'\n` +
+			`Could not find config value for key '${key}'\n` +
 				"Please make sure that if you need it then it has a default value assigned in 'config/_shared.json'"
 		);
 	}
 
 	// display console error only in a browser
 	// (not in tests, for example)
-	if ( 'undefined' !== typeof window ) {
+	if ('undefined' !== typeof window) {
 		console.error(
 			//eslint-disable-line no-console
 			'%cCore Error: ' +
@@ -63,11 +63,11 @@ const config = data => key => {
  * @returns {boolean} True when feature is enabled.
  * @api public
  */
-const isEnabled = data => feature => ( data.features && !! data.features[ feature ] ) || false;
+const isEnabled = (data) => (feature) => (data.features && !!data.features[feature]) || false;
 
-module.exports = data => {
-	const configApi = config( data );
-	configApi.isEnabled = isEnabled( data );
+module.exports = (data) => {
+	const configApi = config(data);
+	configApi.isEnabled = isEnabled(data);
 
 	return configApi;
 };

@@ -4,8 +4,8 @@
 import { setSiteVertical } from '../actions';
 import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
 
-describe( 'setSiteVertical()', () => {
-	test( 'should return the expected action object', () => {
+describe('setSiteVertical()', () => {
+	test('should return the expected action object', () => {
 		const siteVertical = {
 			isUserInput: false,
 			name: 'heureux',
@@ -13,9 +13,9 @@ describe( 'setSiteVertical()', () => {
 			preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
 		};
 
-		expect( setSiteVertical( siteVertical ) ).toEqual( {
+		expect(setSiteVertical(siteVertical)).toEqual({
 			type: SIGNUP_STEPS_SITE_VERTICAL_SET,
 			...siteVertical,
-		} );
-	} );
-} );
+		});
+	});
+});

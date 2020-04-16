@@ -10,10 +10,10 @@ import React from 'react';
 import HeaderButton from 'components/header-button';
 
 const HeaderButtonExample = () => {
-	const onClick = () => alert( 'clicked me!' );
+	const onClick = () => alert('clicked me!');
 	return (
 		<div>
-			<HeaderButton icon="plus-small" label="Add Plugin" onClick={ onClick } />
+			<HeaderButton icon="plus-small" label="Add Plugin" onClick={onClick} />
 		</div>
 	);
 };

@@ -18,6 +18,6 @@ import 'state/themes/init';
  * @param  {string}  term   The term slug
  * @returns {object}         A filter term object
  */
-export function getThemeFilterTerm( state, filter, term ) {
-	return get( getThemeFilterTerms( state, filter ), term );
+export function getThemeFilterTerm(state, filter, term) {
+	return get(getThemeFilterTerms(state, filter), term);
 }

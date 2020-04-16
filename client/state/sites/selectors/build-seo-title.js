@@ -3,54 +3,51 @@
  */
 import { get } from 'lodash';
 
-export default ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
-	const processPiece = ( piece = {}, data ) =>
-		'string' === piece.type ? piece.value : get( data, piece.type, '' );
+export default (titleFormats, type, { site, post = {}, tag = '', date = '' }) => {
+	const processPiece = (piece = {}, data) =>
+		'string' === piece.type ? piece.value : get(data, piece.type, '');
 
-	const buildTitle = ( format, data ) =>
-		get( titleFormats, format, [] ).reduce(
-			( title, piece ) => title + processPiece( piece, data ),
-			''
-		);
+	const buildTitle = (format, data) =>
+		get(titleFormats, format, []).reduce((title, piece) => title + processPiece(piece, data), '');
 
-	switch ( type ) {
+	switch (type) {
 		case 'frontPage':
 			return (
-				buildTitle( 'frontPage', {
+				buildTitle('frontPage', {
 					siteName: site.name,
 					tagline: site.description,
-				} ) || site.name
+				}) || site.name
 			);
 
 		case 'posts':
 			return (
-				buildTitle( 'posts', {
+				buildTitle('posts', {
 					siteName: site.name,
 					tagline: site.description,
-					postTitle: get( post, 'title', '' ),
-				} ) || get( post, 'title', '' )
+					postTitle: get(post, 'title', ''),
+				}) || get(post, 'title', '')
 			);
 
 		case 'pages':
-			return buildTitle( 'pages', {
+			return buildTitle('pages', {
 				siteName: site.name,
 				tagline: site.description,
-				pageTitle: get( post, 'title', '' ),
-			} );
+				pageTitle: get(post, 'title', ''),
+			});
 
 		case 'groups':
-			return buildTitle( 'groups', {
+			return buildTitle('groups', {
 				siteName: site.name,
 				tagline: site.description,
 				groupTitle: tag,
-			} );
+			});
 
 		case 'archives':
-			return buildTitle( 'archives', {
+			return buildTitle('archives', {
 				siteName: site.name,
 				tagline: site.description,
 				date: date,
-			} );
+			});
 
 		default:
 			return post.title || site.name;

@@ -9,19 +9,19 @@ import { expect } from 'chai';
 import getPublicSites from 'state/selectors/get-public-sites';
 import { userState } from './fixtures/user-state';
 
-describe( 'getPublicSites()', () => {
-	test( 'should return an empty array if no sites in state', () => {
+describe('getPublicSites()', () => {
+	test('should return an empty array if no sites in state', () => {
 		const state = {
 			...userState,
 			sites: {
 				items: {},
 			},
 		};
-		const sites = getPublicSites( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getPublicSites(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return the public sites in state', () => {
+	test('should return the public sites in state', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -50,8 +50,8 @@ describe( 'getPublicSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getPublicSites( state );
-		expect( sites ).to.eql( [
+		const sites = getPublicSites(state);
+		expect(sites).to.eql([
 			{
 				ID: 2916284,
 				is_private: false,
@@ -67,6 +67,6 @@ describe( 'getPublicSites()', () => {
 					unmapped_url: 'http://example.com',
 				},
 			},
-		] );
-	} );
-} );
+		]);
+	});
+});

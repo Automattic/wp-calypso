@@ -13,14 +13,14 @@ import {
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 } from 'woocommerce/state/action-types';
 
-export const fetchSettingsGeneral = siteId => {
+export const fetchSettingsGeneral = (siteId) => {
 	return {
 		type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 		siteId,
 	};
 };
 
-export const saveCurrencySuccess = ( siteId, data ) => {
+export const saveCurrencySuccess = (siteId, data) => {
 	return {
 		type: WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 		siteId,
@@ -28,7 +28,7 @@ export const saveCurrencySuccess = ( siteId, data ) => {
 	};
 };
 
-export const saveCurrency = ( siteId, currency, successAction = null, failureAction = null ) => {
+export const saveCurrency = (siteId, currency, successAction = null, failureAction = null) => {
 	return {
 		type: WOOCOMMERCE_CURRENCY_UPDATE,
 		siteId,
@@ -40,7 +40,7 @@ export const saveCurrency = ( siteId, currency, successAction = null, failureAct
 
 // TODO - we probably only need on individual setter (not separate ones for currency, taxes enabled, etc)
 
-const updateTaxesEnabledSettingSuccess = ( siteId, data ) => {
+const updateTaxesEnabledSettingSuccess = (siteId, data) => {
 	return {
 		type: WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
 		siteId,
@@ -53,31 +53,31 @@ export const updateTaxesEnabledSetting = (
 	taxesEnabled,
 	successAction = null,
 	failureAction = null
-) => ( dispatch, getState ) => {
+) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 	const updateAction = {
 		type: WOOCOMMERCE_TAXES_ENABLED_UPDATE,
 		siteId,
 	};
 
-	dispatch( updateAction );
+	dispatch(updateAction);
 
 	const value = taxesEnabled ? 'yes' : 'no';
-	return request( siteId )
-		.post( 'settings/general/woocommerce_calc_taxes', { value } )
-		.then( data => {
-			dispatch( updateTaxesEnabledSettingSuccess( siteId, data ) );
-			if ( successAction ) {
-				dispatch( successAction( data ) );
+	return request(siteId)
+		.post('settings/general/woocommerce_calc_taxes', { value })
+		.then((data) => {
+			dispatch(updateTaxesEnabledSettingSuccess(siteId, data));
+			if (successAction) {
+				dispatch(successAction(data));
 			}
-		} )
-		.catch( error => {
-			dispatch( setError( siteId, updateAction, error ) );
-			if ( failureAction ) {
-				dispatch( failureAction( error ) );
+		})
+		.catch((error) => {
+			dispatch(setError(siteId, updateAction, error));
+			if (failureAction) {
+				dispatch(failureAction(error));
 			}
-		} );
+		});
 };

@@ -32,29 +32,29 @@ class ZoneLockWarningNotice extends PureComponent {
 
 	refreshLock = () => {
 		// Refresh the forms as well if the zone was blocked by another user
-		if ( this.props.isBlocked ) {
-			this.props.requestFeed( this.props.siteId, this.props.zoneId );
-			this.props.requestZones( this.props.siteId );
+		if (this.props.isBlocked) {
+			this.props.requestFeed(this.props.siteId, this.props.zoneId);
+			this.props.requestZones(this.props.siteId);
 		}
 
-		this.props.resetLock( this.props.siteId, this.props.zoneId );
-		this.props.requestLock( this.props.siteId, this.props.zoneId );
+		this.props.resetLock(this.props.siteId, this.props.zoneId);
+		this.props.requestLock(this.props.siteId, this.props.zoneId);
 	};
 
-	noticeText = isBlocked =>
+	noticeText = (isBlocked) =>
 		isBlocked
 			? this.props.translate(
 					'This zone is currently being edited by another user. Try again in a moment.'
 			  )
-			: this.props.translate( 'You have reached the maximum idle limit. Refresh to continue.' );
+			: this.props.translate('You have reached the maximum idle limit. Refresh to continue.');
 
 	render() {
 		const { isBlocked, translate } = this.props;
 
 		return (
 			<div>
-				<Notice showDismiss={ false } status="is-warning" text={ this.noticeText( isBlocked ) }>
-					<NoticeAction onClick={ this.refreshLock }>{ translate( 'Refresh' ) }</NoticeAction>
+				<Notice showDismiss={false} status="is-warning" text={this.noticeText(isBlocked)}>
+					<NoticeAction onClick={this.refreshLock}>{translate('Refresh')}</NoticeAction>
 				</Notice>
 			</div>
 		);
@@ -62,12 +62,8 @@ class ZoneLockWarningNotice extends PureComponent {
 }
 
 const connectComponent = connect(
-	( state, { siteId, zoneId } ) => ( { isBlocked: blocked( state, siteId, zoneId ) } ),
+	(state, { siteId, zoneId }) => ({ isBlocked: blocked(state, siteId, zoneId) }),
 	{ requestFeed, requestLock, requestZones, resetLock }
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withLocalizedMoment
-)( ZoneLockWarningNotice );
+export default flowRight(connectComponent, localize, withLocalizedMoment)(ZoneLockWarningNotice);

@@ -16,13 +16,13 @@ import fromApi from './from-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchAppointmentDetails = action => {
+export const fetchAppointmentDetails = (action) => {
 	const { appointmentId, scheduleId } = action;
 
 	return http(
 		{
 			method: 'GET',
-			path: `/concierge/schedules/${ scheduleId }/appointments/${ appointmentId }/detail`,
+			path: `/concierge/schedules/${scheduleId}/appointments/${appointmentId}/detail`,
 			apiNamespace: 'wpcom/v2',
 			retryPolicy: noRetry(),
 		},
@@ -30,16 +30,16 @@ export const fetchAppointmentDetails = action => {
 	);
 };
 
-export const onSuccess = ( { appointmentId }, appointmentDetails ) =>
-	updateConciergeAppointmentDetails( appointmentId, appointmentDetails );
+export const onSuccess = ({ appointmentId }, appointmentDetails) =>
+	updateConciergeAppointmentDetails(appointmentId, appointmentDetails);
 
 export const onError = () =>
-	errorNotice( translate( 'We could not find your appointment. Please try again later.' ) );
+	errorNotice(translate('We could not find your appointment. Please try again later.'));
 
-registerHandlers( 'state/data-layer/wpcom/concierge/schedules/appointments/detail/index.js', {
-	[ CONCIERGE_APPOINTMENT_DETAILS_REQUEST ]: [
-		dispatchRequest( { fetch: fetchAppointmentDetails, onSuccess, onError, fromApi } ),
+registerHandlers('state/data-layer/wpcom/concierge/schedules/appointments/detail/index.js', {
+	[CONCIERGE_APPOINTMENT_DETAILS_REQUEST]: [
+		dispatchRequest({ fetch: fetchAppointmentDetails, onSuccess, onError, fromApi }),
 	],
-} );
+});
 
 export default {};

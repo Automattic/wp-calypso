@@ -23,15 +23,15 @@ import Input from './input';
 class StateSelect extends Component {
 	static instances = 0;
 
-	inputRef = element => {
+	inputRef = (element) => {
 		this.inputElement = element;
 
-		if ( ! this.props.inputRef ) {
+		if (!this.props.inputRef) {
 			return;
 		}
 
-		if ( typeof inputRef === 'function' ) {
-			this.props.inputRef( element );
+		if (typeof inputRef === 'function') {
+			this.props.inputRef(element);
 		} else {
 			this.props.inputRef.current = element;
 		}
@@ -44,24 +44,24 @@ class StateSelect extends Component {
 	recordStateSelectClick = () => {
 		const { eventFormName, recordGoogleEvent: recordEvent } = this.props;
 
-		if ( eventFormName ) {
-			recordEvent( 'Upgrades', `Clicked ${ eventFormName } State Select` );
+		if (eventFormName) {
+			recordEvent('Upgrades', `Clicked ${eventFormName} State Select`);
 		}
 	};
 
 	focus() {
 		const node = this.inputElement;
-		if ( node ) {
+		if (node) {
 			node.focus();
-			scrollIntoViewport( node, {
+			scrollIntoViewport(node, {
 				behavior: 'smooth',
 				scrollMode: 'if-needed',
-			} );
+			});
 		}
 	}
 
 	render() {
-		const classes = classNames( this.props.additionalClasses, 'state' );
+		const classes = classNames(this.props.additionalClasses, 'state');
 		const {
 			countryCode,
 			countryStates,
@@ -74,45 +74,43 @@ class StateSelect extends Component {
 			isError,
 			selectText,
 		} = this.props;
-		const validationId = `validation-field-${ this.props.name }`;
+		const validationId = `validation-field-${this.props.name}`;
 
 		return (
 			<div>
-				{ countryCode && <QueryCountryStates countryCode={ countryCode } /> }
-				{ isEmpty( countryStates ) ? (
-					<Input inputRef={ this.inputRef } { ...this.props } />
+				{countryCode && <QueryCountryStates countryCode={countryCode} />}
+				{isEmpty(countryStates) ? (
+					<Input inputRef={this.inputRef} {...this.props} />
 				) : (
-					<div className={ classes }>
-						<FormLabel htmlFor={ `${ this.constructor.name }-${ this.instance }` }>
-							{ this.props.label }
+					<div className={classes}>
+						<FormLabel htmlFor={`${this.constructor.name}-${this.instance}`}>
+							{this.props.label}
 						</FormLabel>
 						<FormSelect
-							aria-invalid={ isError }
-							aria-describedby={ validationId }
-							id={ `${ this.constructor.name }-${ this.instance }` }
-							name={ name }
-							value={ value }
-							disabled={ disabled }
-							onBlur={ onBlur }
-							onChange={ onChange }
-							onClick={ this.recordStateSelectClick }
-							isError={ isError }
-							inputRef={ this.inputRef }
+							aria-invalid={isError}
+							aria-describedby={validationId}
+							id={`${this.constructor.name}-${this.instance}`}
+							name={name}
+							value={value}
+							disabled={disabled}
+							onBlur={onBlur}
+							onChange={onChange}
+							onClick={this.recordStateSelectClick}
+							isError={isError}
+							inputRef={this.inputRef}
 						>
 							<option key="--" value="" disabled="disabled">
-								{ selectText || this.props.translate( 'Select State' ) }
+								{selectText || this.props.translate('Select State')}
 							</option>
-							{ countryStates.map( state => (
-								<option key={ state.code } value={ state.code }>
-									{ state.name }
+							{countryStates.map((state) => (
+								<option key={state.code} value={state.code}>
+									{state.name}
 								</option>
-							) ) }
+							))}
 						</FormSelect>
-						{ errorMessage && (
-							<FormInputValidation id={ validationId } text={ errorMessage } isError />
-						) }
+						{errorMessage && <FormInputValidation id={validationId} text={errorMessage} isError />}
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -135,8 +133,8 @@ StateSelect.propTypes = {
 };
 
 export default connect(
-	( state, { countryCode } ) => ( {
-		countryStates: countryCode ? getCountryStates( state, countryCode ) : [],
-	} ),
+	(state, { countryCode }) => ({
+		countryStates: countryCode ? getCountryStates(state, countryCode) : [],
+	}),
 	{ recordGoogleEvent }
-)( localize( StateSelect ) );
+)(localize(StateSelect));

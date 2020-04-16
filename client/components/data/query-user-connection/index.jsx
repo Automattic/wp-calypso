@@ -14,18 +14,18 @@ import { isUserConnected } from 'state/jetpack-connect/actions';
 
 class QueryUserConnection extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.siteId !== this.props.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.siteId && ! props.requestingSite ) {
-			props.isUserConnected( props.siteId, props.siteIsOnSitesList );
+	request(props) {
+		if (props.siteId && !props.requestingSite) {
+			props.isUserConnected(props.siteId, props.siteIsOnSitesList);
 		}
 	}
 
@@ -47,10 +47,10 @@ QueryUserConnection.defaultProps = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	(state, { siteId }) => {
 		return {
-			requestingSite: isRequestingSite( state, siteId ),
+			requestingSite: isRequestingSite(state, siteId),
 		};
 	},
 	{ isUserConnected }
-)( QueryUserConnection );
+)(QueryUserConnection);

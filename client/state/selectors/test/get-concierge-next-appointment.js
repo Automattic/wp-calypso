@@ -3,12 +3,12 @@
  */
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 
-describe( 'getConciergeNextAppointment()', () => {
-	test( 'should default to null', () => {
-		expect( getConciergeNextAppointment( {} ) ).toBeNull();
-	} );
+describe('getConciergeNextAppointment()', () => {
+	test('should default to null', () => {
+		expect(getConciergeNextAppointment({})).toBeNull();
+	});
 
-	test( 'should return the stored next appointment field.', () => {
+	test('should return the stored next appointment field.', () => {
 		const nextAppointment = {
 			beginTimestamp: 123,
 			endTimestamp: 999,
@@ -18,11 +18,11 @@ describe( 'getConciergeNextAppointment()', () => {
 		};
 
 		expect(
-			getConciergeNextAppointment( {
+			getConciergeNextAppointment({
 				concierge: {
 					nextAppointment,
 				},
-			} )
-		).toEqual( nextAppointment );
-	} );
-} );
+			})
+		).toEqual(nextAppointment);
+	});
+});

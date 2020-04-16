@@ -9,19 +9,19 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/jsx-gridicon-size' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require('../../../lib/rules/jsx-gridicon-size'),
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( {
-	parser: require.resolve( 'babel-eslint' ),
+new RuleTester({
+	parser: require.resolve('babel-eslint'),
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 	},
-} ).run( 'jsx-gridicon-size', rule, {
+}).run('jsx-gridicon-size', rule, {
 	valid: [
 		{
 			code: '<Gridicon size={ 18 } />',
@@ -38,4 +38,4 @@ new RuleTester( {
 			],
 		},
 	],
-} );
+});

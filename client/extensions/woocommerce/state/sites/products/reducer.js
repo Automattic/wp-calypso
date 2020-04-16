@@ -18,22 +18,22 @@ import {
 } from 'woocommerce/state/action-types';
 import { decodeEntities } from 'lib/formatting';
 
-export default withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_PRODUCT_DELETE_SUCCESS:
-			return productsDeleteSuccess( state, action );
+			return productsDeleteSuccess(state, action);
 		case WOOCOMMERCE_PRODUCT_UPDATED:
-			return productUpdated( state, action );
+			return productUpdated(state, action);
 		case WOOCOMMERCE_PRODUCTS_REQUEST:
-			return productsRequest( state, action );
+			return productsRequest(state, action);
 		case WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS:
-			return productsRequestSuccess( state, action );
+			return productsRequestSuccess(state, action);
 		case WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE:
-			return productsRequestFailure( state, action );
+			return productsRequestFailure(state, action);
 	}
 
 	return state;
-} );
+});
 
 /**
  * Merge a product into the products list
@@ -42,19 +42,19 @@ export default withoutPersistence( ( state = {}, action ) => {
  * @param  {object} product  A single product to update or add to the products list
  * @returns {Array}         Updated product list
  */
-function updateCachedProduct( products, product ) {
+function updateCachedProduct(products, product) {
 	let found = false;
-	const updatedProduct = { ...product, name: decodeEntities( product.name ) };
-	const newProducts = products.map( p => {
-		if ( p.id === product.id ) {
+	const updatedProduct = { ...product, name: decodeEntities(product.name) };
+	const newProducts = products.map((p) => {
+		if (p.id === product.id) {
 			found = true;
 			return updatedProduct;
 		}
 		return p;
-	} );
+	});
 
-	if ( ! found ) {
-		newProducts.push( updatedProduct );
+	if (!found) {
+		newProducts.push(updatedProduct);
 	}
 
 	return newProducts;
@@ -68,10 +68,10 @@ function updateCachedProduct( products, product ) {
  * @param  {boolean} newStatus The new value to save
  * @returns {object}            Updated isLoading state
  */
-function setLoading( state, params, newStatus ) {
-	const queries = ( state.queries && { ...state.queries } ) || {};
-	const key = getSerializedProductsQuery( params );
-	queries[ key ] = { ...( queries[ key ] || {} ), isLoading: newStatus };
+function setLoading(state, params, newStatus) {
+	const queries = (state.queries && { ...state.queries }) || {};
+	const key = getSerializedProductsQuery(params);
+	queries[key] = { ...(queries[key] || {}), isLoading: newStatus };
 	return queries;
 }
 
@@ -82,12 +82,12 @@ function setLoading( state, params, newStatus ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function productUpdated( state, action ) {
+export function productUpdated(state, action) {
 	const { data } = action;
 	const products = state.products || [];
 	return {
 		...state,
-		products: updateCachedProduct( products, data ),
+		products: updateCachedProduct(products, data),
 	};
 }
 
@@ -98,22 +98,22 @@ export function productUpdated( state, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function productsRequestSuccess( state = {}, action ) {
-	let products = get( state, 'products', [] );
-	action.products.forEach( function( product ) {
-		products = updateCachedProduct( products, product );
-	} );
+export function productsRequestSuccess(state = {}, action) {
+	let products = get(state, 'products', []);
+	action.products.forEach(function (product) {
+		products = updateCachedProduct(products, product);
+	});
 
-	const ids = action.products.map( p => p.id );
+	const ids = action.products.map((p) => p.id);
 	const isLoading = false;
-	const totalPages = get( action, 'totalPages', 0 );
-	const totalProducts = get( action, 'totalProducts', 0 );
+	const totalPages = get(action, 'totalPages', 0);
+	const totalProducts = get(action, 'totalProducts', 0);
 
-	const query = getSerializedProductsQuery( action.params );
-	const prevQueries = get( state, 'queries', {} );
+	const query = getSerializedProductsQuery(action.params);
+	const prevQueries = get(state, 'queries', {});
 	const queries = {
 		...prevQueries,
-		[ query ]: {
+		[query]: {
 			ids,
 			isLoading,
 			totalPages,
@@ -135,15 +135,15 @@ export function productsRequestSuccess( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function productsDeleteSuccess( state = {}, action ) {
-	const products = get( state, 'products', [] );
+export function productsDeleteSuccess(state = {}, action) {
+	const products = get(state, 'products', []);
 	const id = action.data.id;
-	const newProducts = reject( products, { id } );
+	const newProducts = reject(products, { id });
 	const newQueries = {};
-	forEach( get( state, 'queries', {} ), ( item, key ) => {
-		const ids = difference( item.ids, [ id ] );
-		newQueries[ key ] = { ...item, ids };
-	} );
+	forEach(get(state, 'queries', {}), (item, key) => {
+		const ids = difference(item.ids, [id]);
+		newQueries[key] = { ...item, ids };
+	});
 
 	return {
 		...state,
@@ -159,8 +159,8 @@ export function productsDeleteSuccess( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function productsRequest( state = {}, action ) {
-	const queries = setLoading( state, action.params, true );
+export function productsRequest(state = {}, action) {
+	const queries = setLoading(state, action.params, true);
 	return { ...state, queries };
 }
 
@@ -171,7 +171,7 @@ export function productsRequest( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function productsRequestFailure( state = {}, action ) {
-	const queries = setLoading( state, action.params, false );
+export function productsRequestFailure(state = {}, action) {
+	const queries = setLoading(state, action.params, false);
 	return { ...state, queries };
 }

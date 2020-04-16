@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import getJetpackUserConnection from 'state/selectors/get-jetpack-user-connection';
 import { dataItems } from './fixtures/jetpack-connection';
 
-describe( 'getJetpackUserConnection()', () => {
-	test( 'should return user connection data for a known site', () => {
+describe('getJetpackUserConnection()', () => {
+	test('should return user connection data for a known site', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -19,11 +19,11 @@ describe( 'getJetpackUserConnection()', () => {
 				},
 			},
 			siteId = 12345678;
-		const output = getJetpackUserConnection( stateIn, siteId );
-		expect( output ).to.eql( dataItems[ siteId ] );
-	} );
+		const output = getJetpackUserConnection(stateIn, siteId);
+		expect(output).to.eql(dataItems[siteId]);
+	});
 
-	test( 'should return null for an unknown site', () => {
+	test('should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -32,7 +32,7 @@ describe( 'getJetpackUserConnection()', () => {
 				},
 			},
 			siteId = 88888888;
-		const output = getJetpackUserConnection( stateIn, siteId );
-		expect( output ).to.be.null;
-	} );
-} );
+		const output = getJetpackUserConnection(stateIn, siteId);
+		expect(output).to.be.null;
+	});
+});

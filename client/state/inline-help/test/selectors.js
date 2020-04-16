@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { isInlineHelpPopoverVisible } from '../selectors';
 
-describe( 'selctors', () => {
-	describe( '#isInlineHelpPopoverVisible()', () => {
-		test( 'should return if the popover is visible', () => {
+describe('selctors', () => {
+	describe('#isInlineHelpPopoverVisible()', () => {
+		test('should return if the popover is visible', () => {
 			const state = {
 				inlineHelp: {
 					popover: {
@@ -19,7 +19,7 @@ describe( 'selctors', () => {
 				},
 			};
 
-			expect( isInlineHelpPopoverVisible( state ) ).to.be.true;
-		} );
-	} );
-} );
+			expect(isInlineHelpPopoverVisible(state)).to.be.true;
+		});
+	});
+});

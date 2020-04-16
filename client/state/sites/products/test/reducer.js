@@ -14,120 +14,120 @@ import {
 	SITE_PRODUCTS_REMOVE,
 } from 'state/action-types';
 
-describe( 'reducer', () => {
-	describe( '#products()', () => {
-		test( 'should return an empty state when original state is undefined and action is empty', () => {
-			const state = products( undefined, {} );
+describe('reducer', () => {
+	describe('#products()', () => {
+		test('should return an empty state when original state is undefined and action is empty', () => {
+			const state = products(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should return an empty state when original state and action are empty', () => {
-			const original = Object.freeze( {} ),
-				state = products( original, {} );
+		test('should return an empty state when original state and action are empty', () => {
+			const original = Object.freeze({}),
+				state = products(original, {});
 
-			expect( state ).to.eql( original );
-		} );
+			expect(state).to.eql(original);
+		});
 
-		test( 'should return an empty state when original state is undefined and action is unknown', () => {
-			const state = products( undefined, {
+		test('should return an empty state when original state is undefined and action is unknown', () => {
+			const state = products(undefined, {
 				type: 'SAY_HELLO',
 				siteId: 11111111,
-			} );
+			});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should return the original state when action is unknown', () => {
-			const original = Object.freeze( {
+		test('should return the original state when action is unknown', () => {
+			const original = Object.freeze({
 					11111111: {
 						data: {},
 						error: null,
 						hasLoadedFromServer: true,
 						isRequesting: false,
 					},
-				} ),
-				state = products( original, {
+				}),
+				state = products(original, {
 					type: 'MAKE_COFFEE',
 					siteId: 11111111,
-				} );
+				});
 
-			expect( state ).to.eql( original );
-		} );
+			expect(state).to.eql(original);
+		});
 
-		test( 'should return the initial state with requesting enabled when fetching is triggered', () => {
-			const state = products( undefined, {
+		test('should return the initial state with requesting enabled when fetching is triggered', () => {
+			const state = products(undefined, {
 				type: SITE_PRODUCTS_FETCH,
 				siteId: 11111111,
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				11111111: {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
 					isRequesting: true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return the original state with an error and requesting disabled when fetching failed', () => {
-			const original = Object.freeze( {
+		test('should return the original state with an error and requesting disabled when fetching failed', () => {
+			const original = Object.freeze({
 					11111111: {
 						data: {},
 						error: null,
 						hasLoadedFromServer: true,
 						isRequesting: true,
 					},
-				} ),
-				state = products( original, {
+				}),
+				state = products(original, {
 					type: SITE_PRODUCTS_FETCH_FAILED,
 					siteId: 11111111,
 					error: 'Unable to fetch site products',
-				} );
+				});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				11111111: {
 					data: {},
 					error: 'Unable to fetch site products',
 					hasLoadedFromServer: true,
 					isRequesting: false,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a list of products with loaded from server enabled and requesting disabled when fetching completed', () => {
-			const state = products( undefined, {
+		test('should return a list of products with loaded from server enabled and requesting disabled when fetching completed', () => {
+			const state = products(undefined, {
 				type: SITE_PRODUCTS_FETCH_COMPLETED,
 				siteId: 11111111,
 				products: {},
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				11111111: {
 					data: {},
 					error: null,
 					hasLoadedFromServer: true,
 					isRequesting: false,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should accumulate products for different sites', () => {
-			const original = Object.freeze( {
+		test('should accumulate products for different sites', () => {
+			const original = Object.freeze({
 					11111111: {
 						data: {},
 						error: null,
 						hasLoadedFromServer: true,
 						isRequesting: false,
 					},
-				} ),
-				state = products( original, {
+				}),
+				state = products(original, {
 					type: SITE_PRODUCTS_FETCH,
 					siteId: 55555555,
-				} );
+				});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				11111111: {
 					data: {},
 					error: null,
@@ -140,61 +140,61 @@ describe( 'reducer', () => {
 					hasLoadedFromServer: false,
 					isRequesting: true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should override previous products of the same site', () => {
-			const original = Object.freeze( {
+		test('should override previous products of the same site', () => {
+			const original = Object.freeze({
 					11111111: {
 						data: null,
 						error: 'Unable to fetch site products',
 						hasLoadedFromServer: false,
 						isRequesting: false,
 					},
-				} ),
-				state = products( original, {
+				}),
+				state = products(original, {
 					type: SITE_PRODUCTS_FETCH,
 					siteId: 11111111,
-				} );
+				});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				11111111: {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
 					isRequesting: true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return an empty state when original state is undefined and removal is triggered', () => {
-			const state = products( undefined, {
+		test('should return an empty state when original state is undefined and removal is triggered', () => {
+			const state = products(undefined, {
 				type: SITE_PRODUCTS_REMOVE,
 				siteId: 11111111,
-			} );
+			});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should return the original state when removal is triggered for an unknown site', () => {
-			const original = Object.freeze( {
+		test('should return the original state when removal is triggered for an unknown site', () => {
+			const original = Object.freeze({
 					11111111: {
 						data: null,
 						error: 'Unable to fetch site products',
 						hasLoadedFromServer: false,
 						isRequesting: false,
 					},
-				} ),
-				state = products( original, {
+				}),
+				state = products(original, {
 					type: SITE_PRODUCTS_REMOVE,
 					siteId: 22222222,
-				} );
+				});
 
-			expect( state ).to.eql( original );
-		} );
+			expect(state).to.eql(original);
+		});
 
-		test( 'should remove products for a given site when removal is triggered', () => {
-			const original = Object.freeze( {
+		test('should remove products for a given site when removal is triggered', () => {
+			const original = Object.freeze({
 					11111111: {
 						data: null,
 						error: 'Unable to fetch site products',
@@ -207,20 +207,20 @@ describe( 'reducer', () => {
 						hasLoadedFromServer: true,
 						isRequesting: false,
 					},
-				} ),
-				state = products( original, {
+				}),
+				state = products(original, {
 					type: SITE_PRODUCTS_REMOVE,
 					siteId: 11111111,
-				} );
+				});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				22222222: {
 					data: {},
 					error: null,
 					hasLoadedFromServer: true,
 					isRequesting: false,
 				},
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

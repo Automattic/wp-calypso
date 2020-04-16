@@ -34,15 +34,15 @@ export class AuthFormHeader extends Component {
 	getState() {
 		const { user, authorize, partnerSlug } = this.props;
 
-		if ( partnerSlug ) {
+		if (partnerSlug) {
 			return 'partner';
 		}
 
-		if ( ! user ) {
+		if (!user) {
 			return 'logged-out';
 		}
 
-		if ( authorize.authorizeSuccess ) {
+		if (authorize.authorizeSuccess) {
 			return 'logged-in-success';
 		}
 
@@ -53,7 +53,7 @@ export class AuthFormHeader extends Component {
 		const { translate, partnerSlug, isWoo } = this.props;
 
 		let host = '';
-		switch ( partnerSlug ) {
+		switch (partnerSlug) {
 			case 'dreamhost':
 				host = 'Dreamhost';
 				break;
@@ -71,32 +71,32 @@ export class AuthFormHeader extends Component {
 				break;
 		}
 
-		if ( host ) {
-			return translate( 'Jetpack, in partnership with %(host)s', {
+		if (host) {
+			return translate('Jetpack, in partnership with %(host)s', {
 				args: { host },
 				comment: '%(host)s is the company name of a hosting partner. Ex. - Pressable',
-			} );
+			});
 		}
 
 		const currentState = this.getState();
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
-			switch ( currentState ) {
+		if (config.isEnabled('jetpack/connect/woocommerce') && isWoo) {
+			switch (currentState) {
 				case 'logged-out':
-					return translate( 'Create a Jetpack account' );
+					return translate('Create a Jetpack account');
 				default:
-					return translate( 'Connecting your store' );
+					return translate('Connecting your store');
 			}
 		}
 
-		switch ( currentState ) {
+		switch (currentState) {
 			case 'logged-out':
-				return translate( 'Create an account to set up Jetpack' );
+				return translate('Create an account to set up Jetpack');
 			case 'logged-in-success':
-				return translate( "You're all set!" );
+				return translate("You're all set!");
 			case 'logged-in':
 			default:
-				return translate( 'Completing setup' );
+				return translate('Completing setup');
 		}
 	}
 
@@ -104,55 +104,55 @@ export class AuthFormHeader extends Component {
 		const { translate, isWoo } = this.props;
 		const currentState = this.getState();
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
-			switch ( currentState ) {
+		if (config.isEnabled('jetpack/connect/woocommerce') && isWoo) {
+			switch (currentState) {
 				case 'logged-out':
 					return translate(
 						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
 					);
 				default:
-					return translate( "Once connected we'll continue setting up your store" );
+					return translate("Once connected we'll continue setting up your store");
 			}
 		}
 
-		switch ( currentState ) {
+		switch (currentState) {
 			case 'logged-out':
-				return translate( 'You are moments away from a better WordPress.' );
+				return translate('You are moments away from a better WordPress.');
 			case 'logged-in-success':
-				return translate( 'Thank you for flying with Jetpack' );
+				return translate('Thank you for flying with Jetpack');
 			case 'partner':
-				return translate( 'Your new plan requires a connection to WordPress.com' );
+				return translate('Your new plan requires a connection to WordPress.com');
 			case 'logged-in':
 			default:
-				return translate( 'Jetpack is finishing setup' );
+				return translate('Jetpack is finishing setup');
 		}
 	}
 
 	getSiteCard() {
 		const { jpVersion } = this.props.authQuery;
-		if ( ! versionCompare( jpVersion, '4.0.3', '>' ) ) {
+		if (!versionCompare(jpVersion, '4.0.3', '>')) {
 			return null;
 		}
 
 		const { blogname, homeUrl, siteIcon, siteUrl } = this.props.authQuery;
-		const safeIconUrl = siteIcon ? safeImageUrl( siteIcon ) : false;
+		const safeIconUrl = siteIcon ? safeImageUrl(siteIcon) : false;
 		const icon = safeIconUrl ? { img: safeIconUrl } : false;
-		const url = decodeEntities( homeUrl );
-		const parsedUrl = new URL( url );
+		const url = decodeEntities(homeUrl);
+		const parsedUrl = new URL(url);
 		const path = parsedUrl.pathname === '/' ? '' : parsedUrl.pathname;
 		const site = {
-			admin_url: decodeEntities( siteUrl + '/wp-admin' ),
+			admin_url: decodeEntities(siteUrl + '/wp-admin'),
 			domain: parsedUrl.host + path,
 			icon,
 			ID: null,
 			is_vip: false,
-			title: decodeEntities( blogname ),
+			title: decodeEntities(blogname),
 			url: url,
 		};
 
 		return (
 			<CompactCard className="jetpack-connect__site">
-				<Site site={ site } />
+				<Site site={site} />
 			</CompactCard>
 		);
 	}
@@ -161,19 +161,19 @@ export class AuthFormHeader extends Component {
 		return (
 			<div>
 				<FormattedHeader
-					headerText={ this.getHeaderText() }
-					subHeaderText={ this.getSubHeaderText() }
+					headerText={this.getHeaderText()}
+					subHeaderText={this.getSubHeaderText()}
 				/>
-				{ this.getSiteCard() }
+				{this.getSiteCard()}
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
+export default connect((state) => {
 	return {
-		authorize: getAuthorizationData( state ),
-		user: getCurrentUser( state ),
-		partnerSlug: getPartnerSlugFromQuery( state ),
+		authorize: getAuthorizationData(state),
+		user: getCurrentUser(state),
+		partnerSlug: getPartnerSlugFromQuery(state),
 	};
-} )( localize( AuthFormHeader ) );
+})(localize(AuthFormHeader));

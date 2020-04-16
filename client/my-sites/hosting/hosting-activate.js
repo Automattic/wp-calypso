@@ -16,12 +16,12 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) => {
-	const backUrl = `/hosting-config/${ siteSlug }`;
+const HostingActivate = ({ initiateTransfer, siteId, siteSlug, translate }) => {
+	const backUrl = `/hosting-config/${siteSlug}`;
 
 	const transferInitiate = () => {
-		initiateTransfer( siteId, null, null );
-		page( backUrl );
+		initiateTransfer(siteId, null, null);
+		page(backUrl);
 	};
 
 	return (
@@ -30,17 +30,17 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 				path="/hosting-config/activate/:site"
 				title="Hosting Configuration > Activate"
 			/>
-			<HeaderCake isCompact={ true } backHref={ backUrl }>
-				{ translate( 'Activate Hosting Features' ) }
+			<HeaderCake isCompact={true} backHref={backUrl}>
+				{translate('Activate Hosting Features')}
 			</HeaderCake>
-			<EligibilityWarnings onProceed={ transferInitiate } backUrl={ backUrl } />
+			<EligibilityWarnings onProceed={transferInitiate} backUrl={backUrl} />
 		</MainComponent>
 	);
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSelectedSiteSlug(state);
 
 	return {
 		siteId,
@@ -52,4 +52,4 @@ const mapDispatchToProps = {
 	initiateTransfer: initiateThemeTransfer,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( HostingActivate ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(HostingActivate));

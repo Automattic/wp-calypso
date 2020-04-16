@@ -13,17 +13,17 @@ import 'state/posts/init';
  * @returns {Array}         Site posts
  */
 export const getSitePosts = createSelector(
-	( state, siteId ) => {
-		if ( ! siteId ) {
+	(state, siteId) => {
+		if (!siteId) {
 			return null;
 		}
 
-		const manager = state.posts.queries[ siteId ];
-		if ( ! manager ) {
+		const manager = state.posts.queries[siteId];
+		if (!manager) {
 			return [];
 		}
 
 		return manager.getItems();
 	},
-	state => state.posts.queries
+	(state) => state.posts.queries
 );

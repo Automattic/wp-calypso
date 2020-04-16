@@ -10,40 +10,40 @@ import {
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-const createRequestingReducer = requesting => ( state, { siteId } ) => ( {
+const createRequestingReducer = (requesting) => (state, { siteId }) => ({
 	...state,
-	[ siteId ]: requesting,
-} );
+	[siteId]: requesting,
+});
 
-export const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_CONNECTION_STATUS_RECEIVE: {
 			const { siteId, status } = action;
 
 			return {
 				...state,
-				[ siteId ]: status,
+				[siteId]: status,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_CONNECTION_STATUS_REQUEST:
-			return createRequestingReducer( true )( state, action );
+			return createRequestingReducer(true)(state, action);
 		case SITE_CONNECTION_STATUS_REQUEST_FAILURE:
-			return createRequestingReducer( false )( state, action );
+			return createRequestingReducer(false)(state, action);
 		case SITE_CONNECTION_STATUS_REQUEST_SUCCESS:
-			return createRequestingReducer( false )( state, action );
+			return createRequestingReducer(false)(state, action);
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
-} );
+});

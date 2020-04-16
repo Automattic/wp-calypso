@@ -13,8 +13,8 @@ import {
 	areSettingsGeneralLoaded,
 } from 'woocommerce/state/sites/settings/general/selectors';
 
-export const getCurrencyEdits = ( state, siteId ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'payments', siteId, 'currency' ] );
+export const getCurrencyEdits = (state, siteId) => {
+	return get(state, ['extensions', 'woocommerce', 'ui', 'payments', siteId, 'currency']);
 };
 
 /**
@@ -22,13 +22,13 @@ export const getCurrencyEdits = ( state, siteId ) => {
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {string} Returns the currently set currency with any local edits.
  */
-export const getCurrencyWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areSettingsGeneralLoaded( state, siteId ) ) {
+export const getCurrencyWithEdits = (state, siteId = getSelectedSiteId(state)) => {
+	if (!areSettingsGeneralLoaded(state, siteId)) {
 		return '';
 	}
-	const currency = getPaymentCurrencySettings( state, siteId ).value;
-	const edits = getCurrencyEdits( state, siteId );
-	if ( ! edits ) {
+	const currency = getPaymentCurrencySettings(state, siteId).value;
+	const edits = getCurrencyEdits(state, siteId);
+	if (!edits) {
 		return currency;
 	}
 	return edits;

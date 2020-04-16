@@ -10,6 +10,6 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * @param  {number}  siteId Site ID
  * @returns {?object}        Site object
  */
-export default ( state, siteId ) => {
-	return getSitesItems( state )[ siteId ] || null;
+export default (state, siteId) => {
+	return getSitesItems(state)[siteId] || null;
 };

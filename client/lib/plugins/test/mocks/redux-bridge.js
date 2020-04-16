@@ -11,7 +11,7 @@ import site from '../fixtures/site';
 const reduxState = {
 	sites: {
 		items: {
-			[ site.ID ]: site,
+			[site.ID]: site,
 		},
 	},
 	currentUser: {
@@ -19,5 +19,5 @@ const reduxState = {
 	},
 };
 
-export const reduxDispatch = action => action;
+export const reduxDispatch = (action) => action;
 export const reduxGetState = () => reduxState;

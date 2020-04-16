@@ -17,21 +17,19 @@ import getSiteSlug from './get-site-slug';
  * @param  {number}  siteId SiteId
  * @returns {?string}        Theme showcase path
  */
-export default function getSiteThemeShowcasePath( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site || site.jetpack ) {
+export default function getSiteThemeShowcasePath(state, siteId) {
+	const site = getRawSite(state, siteId);
+	if (!site || site.jetpack) {
 		return null;
 	}
 
-	const [ type, slug ] = split( getSiteOption( state, siteId, 'theme_slug' ), '/', 2 );
+	const [type, slug] = split(getSiteOption(state, siteId, 'theme_slug'), '/', 2);
 
 	// to accomodate a8c and other theme types
-	if ( ! includes( [ 'pub', 'premium' ], type ) ) {
+	if (!includes(['pub', 'premium'], type)) {
 		return null;
 	}
 
-	const siteSlug = getSiteSlug( state, siteId );
-	return type === 'premium'
-		? `/theme/${ slug }/setup/${ siteSlug }`
-		: `/theme/${ slug }/${ siteSlug }`;
+	const siteSlug = getSiteSlug(state, siteId);
+	return type === 'premium' ? `/theme/${slug}/setup/${siteSlug}` : `/theme/${slug}/${siteSlug}`;
 }

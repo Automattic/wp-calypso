@@ -14,7 +14,7 @@ import { requestJetpackUserConnectionData } from 'state/jetpack/connection/actio
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const changeConnectionOwner = action =>
+const changeConnectionOwner = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -22,37 +22,37 @@ const changeConnectionOwner = action =>
 			path: '/jetpack-blogs/' + action.siteId + '/rest-api/',
 			body: {
 				path: '/jetpack/v4/connection/owner/',
-				body: JSON.stringify( { owner: action.newOwnerWporgId } ),
+				body: JSON.stringify({ owner: action.newOwnerWporgId }),
 				json: true,
 			},
 		},
 		action
 	);
 
-const handleSuccess = ( { newOwnerWpcomDisplayName, siteId } ) => [
+const handleSuccess = ({ newOwnerWpcomDisplayName, siteId }) => [
 	successNotice(
-		translate( 'Site owner changed to %(user)s.', {
+		translate('Site owner changed to %(user)s.', {
 			args: { user: newOwnerWpcomDisplayName },
-		} )
+		})
 	),
-	requestJetpackUserConnectionData( siteId ),
+	requestJetpackUserConnectionData(siteId),
 ];
 
-const handleError = ( { newOwnerWpcomDisplayName } ) =>
+const handleError = ({ newOwnerWpcomDisplayName }) =>
 	errorNotice(
-		translate( 'Site owner could not be changed to %(user)s. Please contact support.', {
+		translate('Site owner could not be changed to %(user)s. Please contact support.', {
 			args: { user: newOwnerWpcomDisplayName },
-		} )
+		})
 	);
 
-registerHandlers( 'state/data-layer/wpcom/jetpack/connection/owner/index.js', {
-	[ JETPACK_USER_CONNECTION_CHANGE_OWNER ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/jetpack/connection/owner/index.js', {
+	[JETPACK_USER_CONNECTION_CHANGE_OWNER]: [
+		dispatchRequest({
 			fetch: changeConnectionOwner,
 			onSuccess: handleSuccess,
 			onError: handleError,
-		} ),
+		}),
 	],
-} );
+});
 
 export default {};

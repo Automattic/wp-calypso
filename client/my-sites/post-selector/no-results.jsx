@@ -17,33 +17,33 @@ class PostSelectorNoResults extends React.Component {
 		let createMessage;
 		let noResultsMessage;
 
-		noResultsMessage = this.props.translate( 'No results. Please try a different search.' );
+		noResultsMessage = this.props.translate('No results. Please try a different search.');
 
-		if ( this.props.createLink ) {
-			createMessage = this.props.translate( 'You may want to {{a}}create a new page{{/a}}.', {
+		if (this.props.createLink) {
+			createMessage = this.props.translate('You may want to {{a}}create a new page{{/a}}.', {
 				context: 'Menus: item search/listing results',
 				comment: 'This is used when no posts or pages match the given search.',
 				components: {
 					a: (
 						<a
 							className="create-link"
-							href={ this.props.createLink }
+							href={this.props.createLink}
 							target="_blank"
 							rel="noopener noreferrer"
 						/>
 					),
 				},
-			} );
+			});
 		}
 
 		return (
 			<span className="is-empty-content">
-				{ noResultsMessage }
+				{noResultsMessage}
 				&nbsp;
-				{ createMessage }
+				{createMessage}
 			</span>
 		);
 	}
 }
 
-export default localize( PostSelectorNoResults );
+export default localize(PostSelectorNoResults);

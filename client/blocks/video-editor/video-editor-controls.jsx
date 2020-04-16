@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import UploadButton from './video-editor-upload-button';
 
-const VideoEditorControls = ( {
+const VideoEditorControls = ({
 	isPosterUpdating,
 	isVideoLoading,
 	onCancel,
@@ -21,32 +21,32 @@ const VideoEditorControls = ( {
 	onUploadImage,
 	onUploadImageClick,
 	translate,
-} ) => {
+}) => {
 	return (
 		<div className="video-editor__controls">
-			{ onCancel && (
+			{onCancel && (
 				<Button
 					className="video-editor__controls-button"
-					disabled={ isPosterUpdating }
-					onClick={ onCancel }
+					disabled={isPosterUpdating}
+					onClick={onCancel}
 				>
-					{ translate( 'Cancel' ) }
+					{translate('Cancel')}
 				</Button>
-			) }
+			)}
 			<UploadButton
-				isPosterUpdating={ isPosterUpdating }
-				onClick={ onUploadImageClick }
-				onUploadImage={ onUploadImage }
+				isPosterUpdating={isPosterUpdating}
+				onClick={onUploadImageClick}
+				onUploadImage={onUploadImage}
 			>
-				{ translate( 'Upload Image' ) }
+				{translate('Upload Image')}
 			</UploadButton>
 			<Button
 				className="video-editor__controls-button"
-				disabled={ isVideoLoading || isPosterUpdating }
-				onClick={ onSelectFrame }
+				disabled={isVideoLoading || isPosterUpdating}
+				onClick={onSelectFrame}
 				primary
 			>
-				{ translate( 'Select Frame' ) }
+				{translate('Select Frame')}
 			</Button>
 		</div>
 	);
@@ -69,4 +69,4 @@ VideoEditorControls.defaultProps = {
 	onUploadImageClick: noop,
 };
 
-export default localize( VideoEditorControls );
+export default localize(VideoEditorControls);

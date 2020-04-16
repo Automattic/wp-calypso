@@ -32,114 +32,114 @@ import {
 } from 'woocommerce/state/action-types';
 import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
-const debug = debugFactory( 'woocommerce:orders' );
+const debug = debugFactory('woocommerce:orders');
 
-export const del = action => {
+export const del = (action) => {
 	const { siteId, orderId } = action;
-	return request( siteId, action ).del( `orders/${ orderId }` );
+	return request(siteId, action).del(`orders/${orderId}`);
 };
 
-const onDeleteError = ( action, error ) => dispatch => {
+const onDeleteError = (action, error) => (dispatch) => {
 	const { siteId, orderId } = action;
-	dispatch( deleteOrderError( siteId, orderId, error ) );
-	dispatch( errorNotice( translate( 'Unable to delete order.' ), { duration: 8000 } ) );
+	dispatch(deleteOrderError(siteId, orderId, error));
+	dispatch(errorNotice(translate('Unable to delete order.'), { duration: 8000 }));
 };
 
-const onDeleteSuccess = action => dispatch => {
+const onDeleteSuccess = (action) => (dispatch) => {
 	const { siteId, siteSlug, orderId } = action;
-	dispatch( deleteOrderSuccess( siteId, orderId ) );
-	dispatch( fetchCounts( siteId ) );
-	dispatch( navigate( `/store/orders/${ siteSlug }` ) );
-	dispatch( successNotice( translate( 'Order deleted.' ), { duration: 8000 } ) );
+	dispatch(deleteOrderSuccess(siteId, orderId));
+	dispatch(fetchCounts(siteId));
+	dispatch(navigate(`/store/orders/${siteSlug}`));
+	dispatch(successNotice(translate('Order deleted.'), { duration: 8000 }));
 };
 
-export function apiError( action, error ) {
-	debug( 'API Error: ', error );
+export function apiError(action, error) {
+	debug('API Error: ', error);
 
-	if ( action.failureAction ) {
+	if (action.failureAction) {
 		return { ...action.failureAction, error };
 	}
 }
 
-export function requestOrders( action ) {
+export function requestOrders(action) {
 	const { siteId, query } = action;
-	const queryString = stringify( omitBy( query, val => '' === val ) );
-	action.failureAction = failOrders( siteId, query );
+	const queryString = stringify(omitBy(query, (val) => '' === val));
+	action.failureAction = failOrders(siteId, query);
 
-	return request( siteId, action ).getWithHeaders( `orders?${ queryString }` );
+	return request(siteId, action).getWithHeaders(`orders?${queryString}`);
 }
 
-export function receivedOrders( action, { data } ) {
+export function receivedOrders(action, { data }) {
 	const { siteId, query } = action;
 	const { body, headers } = data;
-	const total = Number( headers[ 'X-WP-Total' ] );
+	const total = Number(headers['X-WP-Total']);
 
-	return updateOrders( siteId, query, body, total );
+	return updateOrders(siteId, query, body, total);
 }
 
-export function requestOrder( action ) {
+export function requestOrder(action) {
 	const { siteId, orderId } = action;
-	action.failureAction = failOrder( siteId, orderId );
+	action.failureAction = failOrder(siteId, orderId);
 
-	return request( siteId, action ).get( `orders/${ orderId }` );
+	return request(siteId, action).get(`orders/${orderId}`);
 }
 
-export function receivedOrder( action, { data } ) {
+export function receivedOrder(action, { data }) {
 	const { siteId, orderId } = action;
-	return updateOrder( siteId, orderId, data );
+	return updateOrder(siteId, orderId, data);
 }
 
-export function sendOrder( action ) {
+export function sendOrder(action) {
 	const { siteId, orderId, order } = action;
-	if ( isFinite( orderId ) ) {
-		return request( siteId, action ).post( `orders/${ orderId }`, order );
+	if (isFinite(orderId)) {
+		return request(siteId, action).post(`orders/${orderId}`, order);
 	}
-	return request( siteId, action ).post( 'orders', order );
+	return request(siteId, action).post('orders', order);
 }
 
-export function onOrderSaveSuccess( action, { data } ) {
-	return dispatch => {
+export function onOrderSaveSuccess(action, { data }) {
+	return (dispatch) => {
 		const { siteId, orderId } = action;
 		// Make sure we have a success function, and a new order ID
-		if ( 'function' === typeof action.onSuccess && 'undefined' !== typeof data.id ) {
-			action.onSuccess( dispatch, data.id );
+		if ('function' === typeof action.onSuccess && 'undefined' !== typeof data.id) {
+			action.onSuccess(dispatch, data.id);
 		}
-		dispatch( fetchCounts( siteId ) );
-		dispatch( saveOrderSuccess( siteId, orderId, data ) );
+		dispatch(fetchCounts(siteId));
+		dispatch(saveOrderSuccess(siteId, orderId, data));
 	};
 }
 
-export function onOrderSaveFailure( action, error ) {
-	return dispatch => {
+export function onOrderSaveFailure(action, error) {
+	return (dispatch) => {
 		const { siteId, orderId } = action;
-		if ( 'function' === typeof action.onFailure ) {
-			action.onFailure( dispatch );
+		if ('function' === typeof action.onFailure) {
+			action.onFailure(dispatch);
 		}
-		debug( 'API Error: ', error );
-		dispatch( saveOrderError( siteId, orderId, error ) );
+		debug('API Error: ', error);
+		dispatch(saveOrderError(siteId, orderId, error));
 	};
 }
 
 export default {
-	[ WOOCOMMERCE_ORDER_DELETE ]: [
-		dispatchRequest( {
+	[WOOCOMMERCE_ORDER_DELETE]: [
+		dispatchRequest({
 			fetch: del,
 			onSuccess: onDeleteSuccess,
 			onError: onDeleteError,
 			fromApi: verifyResponseHasData,
-		} ),
+		}),
 	],
-	[ WOOCOMMERCE_ORDER_REQUEST ]: [
-		dispatchRequest( { fetch: requestOrder, onSuccess: receivedOrder, onError: apiError } ),
+	[WOOCOMMERCE_ORDER_REQUEST]: [
+		dispatchRequest({ fetch: requestOrder, onSuccess: receivedOrder, onError: apiError }),
 	],
-	[ WOOCOMMERCE_ORDER_UPDATE ]: [
-		dispatchRequest( {
+	[WOOCOMMERCE_ORDER_UPDATE]: [
+		dispatchRequest({
 			fetch: sendOrder,
 			onSuccess: onOrderSaveSuccess,
 			onError: onOrderSaveFailure,
-		} ),
+		}),
 	],
-	[ WOOCOMMERCE_ORDERS_REQUEST ]: [
-		dispatchRequest( { fetch: requestOrders, onSuccess: receivedOrders, onError: apiError } ),
+	[WOOCOMMERCE_ORDERS_REQUEST]: [
+		dispatchRequest({ fetch: requestOrders, onSuccess: receivedOrders, onError: apiError }),
 	],
 };

@@ -9,11 +9,11 @@ import PropTypes from 'prop-types';
  */
 import FormButton from 'components/forms/form-button';
 
-const StepConfirmationButton = ( { disabled, onClick, children } ) => {
+const StepConfirmationButton = ({ disabled, onClick, children }) => {
 	return (
 		<div className="step-confirmation-button">
-			<FormButton type="button" onClick={ onClick } disabled={ Boolean( disabled ) } isPrimary>
-				{ children }
+			<FormButton type="button" onClick={onClick} disabled={Boolean(disabled)} isPrimary>
+				{children}
 			</FormButton>
 		</div>
 	);

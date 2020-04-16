@@ -16,9 +16,9 @@ import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
  * @param {string} query.status Comments status.
  * @returns {object} Action that updates the comments pagination.
  */
-export const updateCommentsQuery = ( siteId, comments, query ) => ( {
+export const updateCommentsQuery = (siteId, comments, query) => ({
 	type: COMMENTS_QUERY_UPDATE,
 	siteId,
 	comments,
 	query,
-} );
+});

@@ -8,22 +8,22 @@ import * as React from 'react';
 
 declare namespace i18nCalypso {
 	type NormalizedTranslateArgs =
-		| ( TranslateOptions & { original: string } )
-		| ( TranslateOptions & {
+		| (TranslateOptions & { original: string })
+		| (TranslateOptions & {
 				original: string;
 				plural: string;
 				count: number;
-		  } );
+		  });
 
 	export type Substitution = string | number;
 
 	export type Substitutions =
 		| Substitution
 		| Substitution[]
-		| { [ placeholder: string ]: Substitution };
+		| { [placeholder: string]: Substitution };
 
 	export interface ComponentInterpolations {
-		[ placeholder: string ]: React.ReactElement;
+		[placeholder: string]: React.ReactElement;
 	}
 
 	export interface TranslateOptions {
@@ -56,16 +56,16 @@ declare namespace i18nCalypso {
 	// Translate hooks force us to open up this type.
 	export type TranslateResult = string | React.ReactFragment;
 
-	export function translate( options: DeprecatedTranslateOptions ): TranslateResult;
-	export function translate( original: string ): TranslateResult;
-	export function translate( original: string, options: TranslateOptions ): TranslateResult;
+	export function translate(options: DeprecatedTranslateOptions): TranslateResult;
+	export function translate(original: string): TranslateResult;
+	export function translate(original: string, options: TranslateOptions): TranslateResult;
 	export function translate(
 		original: string,
 		plural: string,
 		options: TranslateOptions & { count: number }
 	): TranslateResult;
 
-	export function hasTranslation( original: string ): boolean;
+	export function hasTranslation(original: string): boolean;
 
 	export interface NumberFormatOptions {
 		decimals?: number;
@@ -73,8 +73,8 @@ declare namespace i18nCalypso {
 		thousandsSep?: string;
 	}
 
-	export function numberFormat( number: number, numberOfDecimalPlaces: number ): string;
-	export function numberFormat( number: number, options: NumberFormatOptions ): string;
+	export function numberFormat(number: number, numberOfDecimalPlaces: number): string;
+	export function numberFormat(number: number, options: NumberFormatOptions): string;
 
 	export interface LocalizeProps {
 		locale: string;
@@ -83,18 +83,16 @@ declare namespace i18nCalypso {
 	}
 
 	// Infers prop type from component C
-	export type GetProps< C > = C extends React.ComponentType< infer P > ? P : never;
+	export type GetProps<C> = C extends React.ComponentType<infer P> ? P : never;
 
-	export type WithoutLocalizedProps< OrigProps > = Pick<
+	export type WithoutLocalizedProps<OrigProps> = Pick<
 		OrigProps,
-		Exclude< keyof OrigProps, keyof LocalizeProps >
+		Exclude<keyof OrigProps, keyof LocalizeProps>
 	>;
 
-	export type LocalizedComponent< C > = React.ComponentClass<
-		WithoutLocalizedProps< GetProps< C > >
-	>;
+	export type LocalizedComponent<C> = React.ComponentClass<WithoutLocalizedProps<GetProps<C>>>;
 
-	export function localize< C >( component: C ): LocalizedComponent< C >;
+	export function localize<C>(component: C): LocalizedComponent<C>;
 
 	export function useTranslate(): typeof translate;
 
@@ -103,7 +101,7 @@ declare namespace i18nCalypso {
 		options: NormalizedTranslateArgs
 	) => TranslateResult;
 
-	export function registerTranslateHook( hook: TranslateHook ): void;
+	export function registerTranslateHook(hook: TranslateHook): void;
 }
 
 export = i18nCalypso;

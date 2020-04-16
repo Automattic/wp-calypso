@@ -30,75 +30,75 @@ class TransactionsTable extends React.Component {
 		header: false,
 	};
 
-	onPageClick = page => {
-		this.props.setPage( this.props.transactionType, page );
+	onPageClick = (page) => {
+		this.props.setPage(this.props.transactionType, page);
 	};
 
-	onSearch = terms => {
-		this.props.setQuery( this.props.transactionType, terms );
+	onSearch = (terms) => {
+		this.props.setQuery(this.props.transactionType, terms);
 	};
 
 	render() {
 		let header;
 
-		if ( false !== this.props.header ) {
-			header = <TransactionsHeader transactionType={ this.props.transactionType } />;
+		if (false !== this.props.header) {
+			header = <TransactionsHeader transactionType={this.props.transactionType} />;
 		}
 
 		return (
 			<div>
 				<SearchCard
-					placeholder={ this.props.translate( 'Search all receipts…', { textOnly: true } ) }
-					onSearch={ this.onSearch }
+					placeholder={this.props.translate('Search all receipts…', { textOnly: true })}
+					onSearch={this.onSearch}
 				/>
 				<table className="billing-history__transactions">
-					{ header }
-					<tbody>{ this.renderRows() }</tbody>
+					{header}
+					<tbody>{this.renderRows()}</tbody>
 				</table>
-				{ this.renderPagination() }
+				{this.renderPagination()}
 			</div>
 		);
 	}
 
-	serviceName = transaction => {
-		if ( ! transaction.items ) {
-			return this.serviceNameDescription( transaction );
+	serviceName = (transaction) => {
+		if (!transaction.items) {
+			return this.serviceNameDescription(transaction);
 		}
 
-		const [ transactionItem, ...moreTransactionItems ] = groupDomainProducts(
+		const [transactionItem, ...moreTransactionItems] = groupDomainProducts(
 			transaction.items,
 			this.props.translate
 		);
 
-		if ( moreTransactionItems.length > 0 ) {
-			return <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
+		if (moreTransactionItems.length > 0) {
+			return <strong>{this.props.translate('Multiple items')}</strong>;
 		}
 
-		if ( transactionItem.product === transactionItem.variation ) {
+		if (transactionItem.product === transactionItem.variation) {
 			return transactionItem.product;
 		}
 
-		return this.serviceNameDescription( {
+		return this.serviceNameDescription({
 			...transactionItem,
-			plan: capitalPDangit( titleCase( transactionItem.variation ) ),
-		} );
+			plan: capitalPDangit(titleCase(transactionItem.variation)),
+		});
 	};
 
-	serviceNameDescription = transaction => {
+	serviceNameDescription = (transaction) => {
 		let description;
-		if ( transaction.domain ) {
-			const termLabel = getPlanTermLabel( transaction.wpcom_product_slug, this.props.translate );
+		if (transaction.domain) {
+			const termLabel = getPlanTermLabel(transaction.wpcom_product_slug, this.props.translate);
 			description = (
 				<div>
-					<strong>{ transaction.plan }</strong>
-					<small>{ transaction.domain }</small>
-					{ termLabel ? <small>{ termLabel }</small> : null }
+					<strong>{transaction.plan}</strong>
+					<small>{transaction.domain}</small>
+					{termLabel ? <small>{termLabel}</small> : null}
 				</div>
 			);
 		} else {
 			description = (
 				<strong>
-					{ transaction.product } { transaction.plan }
+					{transaction.product} {transaction.plan}
 				</strong>
 			);
 		}
@@ -123,17 +123,17 @@ class TransactionsTable extends React.Component {
 	};
 
 	renderPagination = () => {
-		if ( this.props.total <= this.props.pageSize ) {
+		if (this.props.total <= this.props.pageSize) {
 			return null;
 		}
 
 		return (
 			<CompactCard>
 				<Pagination
-					page={ this.props.page }
-					perPage={ this.props.pageSize }
-					total={ this.props.total }
-					pageClick={ this.onPageClick }
+					page={this.props.page}
+					perPage={this.props.pageSize}
+					total={this.props.total}
+					pageClick={this.onPageClick}
 				/>
 			</CompactCard>
 		);
@@ -141,13 +141,13 @@ class TransactionsTable extends React.Component {
 
 	renderRows = () => {
 		const { transactions, date, app, query, transactionType, translate } = this.props;
-		if ( ! transactions ) {
+		if (!transactions) {
 			return this.renderPlaceholder();
 		}
 
-		if ( isEmpty( transactions ) ) {
+		if (isEmpty(transactions)) {
 			let noResultsText;
-			if ( ! date.newest || '' !== app || '' !== query ) {
+			if (!date.newest || '' !== app || '' !== query) {
 				noResultsText = this.props.noFilterResultsText;
 			} else {
 				noResultsText = this.props.emptyTableText;
@@ -155,37 +155,35 @@ class TransactionsTable extends React.Component {
 			return (
 				<tr className="billing-history__no-results">
 					<td className="billing-history__no-results-cell" colSpan="3">
-						{ noResultsText }
+						{noResultsText}
 					</td>
 				</tr>
 			);
 		}
 
-		return transactions.map( transaction => {
-			const transactionDate = this.props.moment( transaction.date ).format( 'll' );
+		return transactions.map((transaction) => {
+			const transactionDate = this.props.moment(transaction.date).format('ll');
 
 			return (
-				<tr key={ transaction.id } className="billing-history__transaction">
-					<td className="billing-history__date">{ transactionDate }</td>
+				<tr key={transaction.id} className="billing-history__transaction">
+					<td className="billing-history__date">{transactionDate}</td>
 					<td className="billing-history__trans-app">
 						<div className="billing-history__trans-wrap">
 							<div className="billing-history__service-description">
-								<div className="billing-history__service-name">
-									{ this.serviceName( transaction ) }
-								</div>
-								{ this.props.transactionRenderer( transaction ) }
+								<div className="billing-history__service-name">{this.serviceName(transaction)}</div>
+								{this.props.transactionRenderer(transaction)}
 							</div>
 						</div>
 					</td>
 					<td className="billing-history__amount">
-						{ renderTransactionAmount( transaction, {
+						{renderTransactionAmount(transaction, {
 							addingTax: transactionType === 'upcoming',
 							translate,
-						} ) }
+						})}
 					</td>
 				</tr>
 			);
-		}, this );
+		}, this);
 	};
 }
 
@@ -201,16 +199,16 @@ TransactionsTable.propTypes = {
 	//own props
 	transactionType: PropTypes.string.isRequired,
 	//array allows to accept the output of translate() with components in the string
-	emptyTableText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
-	noFilterResultsText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
+	emptyTableText: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
+	noFilterResultsText: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
 	transactionRenderer: PropTypes.func.isRequired,
 	header: PropTypes.bool,
 };
 
 export default connect(
-	( state, { transactionType } ) => {
-		const filteredTransactions = getFilteredBillingTransactions( state, transactionType );
-		const filter = getBillingTransactionFilters( state, transactionType );
+	(state, { transactionType }) => {
+		const filteredTransactions = getFilteredBillingTransactions(state, transactionType);
+		const filter = getBillingTransactionFilters(state, transactionType);
 		return {
 			app: filter.app,
 			date: filter.date,
@@ -225,4 +223,4 @@ export default connect(
 		setPage,
 		setQuery,
 	}
-)( localize( withLocalizedMoment( TransactionsTable ) ) );
+)(localize(withLocalizedMoment(TransactionsTable)));

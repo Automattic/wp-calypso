@@ -15,11 +15,11 @@ import shippingZoneMethodSettings from './shipping-zone-method-settings/reducer'
 
 export default keyedReducer(
 	'siteId',
-	combineReducers( {
+	combineReducers({
 		labelSettings,
 		packages,
 		shippingLabel,
 		shippingMethodSchemas,
 		shippingZoneMethodSettings,
-	} )
+	})
 );

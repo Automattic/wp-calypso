@@ -37,8 +37,8 @@ import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 
 export class ConciergeMain extends Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			currentStep: 0,
@@ -47,27 +47,27 @@ export class ConciergeMain extends Component {
 	}
 
 	componentDidMount() {
-		twoStepAuthorization.on( 'change', this.checkReauthRequired );
+		twoStepAuthorization.on('change', this.checkReauthRequired);
 		this.checkReauthRequired();
 	}
 
 	componentWillUnmount() {
-		twoStepAuthorization.off( 'change', this.checkReauthRequired );
+		twoStepAuthorization.off('change', this.checkReauthRequired);
 	}
 
 	checkReauthRequired = () => {
 		const reauthRequired = twoStepAuthorization.isReauthRequired();
-		if ( this.state.reauthRequired !== reauthRequired ) {
-			this.setState( { reauthRequired } );
+		if (this.state.reauthRequired !== reauthRequired) {
+			this.setState({ reauthRequired });
 		}
 	};
 
 	goToPreviousStep = () => {
-		this.setState( { currentStep: this.state.currentStep - 1 } );
+		this.setState({ currentStep: this.state.currentStep - 1 });
 	};
 
 	goToNextStep = () => {
-		this.setState( { currentStep: this.state.currentStep + 1 } );
+		this.setState({ currentStep: this.state.currentStep + 1 });
 	};
 
 	getDisplayComponent = () => {
@@ -82,34 +82,34 @@ export class ConciergeMain extends Component {
 			rescheduling,
 		} = this.props;
 
-		const CurrentStep = steps[ this.state.currentStep ];
+		const CurrentStep = steps[this.state.currentStep];
 		const Skeleton = this.props.skeleton;
 
-		if ( ! availableTimes || ! site || ! site.plan || null == scheduleId || ! userSettings ) {
+		if (!availableTimes || !site || !site.plan || null == scheduleId || !userSettings) {
 			return <Skeleton />;
 		}
 
 		// if scheduleId is 0, it means the user is not eligible for the concierge service.
-		if ( scheduleId === 0 ) {
-			return <Upsell site={ site } />;
+		if (scheduleId === 0) {
+			return <Upsell site={site} />;
 		}
 
-		if ( nextAppointment && ! rescheduling ) {
-			return <AppointmentInfo appointment={ nextAppointment } site={ site } />;
+		if (nextAppointment && !rescheduling) {
+			return <AppointmentInfo appointment={nextAppointment} site={site} />;
 		}
 
-		if ( isEmpty( availableTimes ) ) {
+		if (isEmpty(availableTimes)) {
 			return <NoAvailableTimes />;
 		}
 
 		// We have shift data and this is a business site — show the signup steps
 		return (
 			<CurrentStep
-				appointmentId={ appointmentId }
-				availableTimes={ availableTimes }
-				site={ site }
-				onComplete={ this.goToNextStep }
-				onBack={ this.goToPreviousStep }
+				appointmentId={appointmentId}
+				availableTimes={availableTimes}
+				site={site}
+				onComplete={this.goToNextStep}
+				onBack={this.goToPreviousStep}
 			/>
 		);
 	};
@@ -120,26 +120,26 @@ export class ConciergeMain extends Component {
 		const siteId = site && site.ID;
 		return (
 			<Main>
-				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				{ ! reauthRequired && (
+				<PageViewTracker path={analyticsPath} title={analyticsTitle} />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
+				{!reauthRequired && (
 					<>
 						<QueryUserSettings />
 						<QuerySites />
-						{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-						{ siteId && <QuerySitePlans siteId={ siteId } /> }
+						{siteId && <QueryConciergeInitial siteId={siteId} />}
+						{siteId && <QuerySitePlans siteId={siteId} />}
 					</>
-				) }
-				{ this.getDisplayComponent() }
+				)}
+				{this.getDisplayComponent()}
 			</Main>
 		);
 	}
 }
 
-export default connect( ( state, props ) => ( {
-	availableTimes: getConciergeAvailableTimes( state ),
-	nextAppointment: getConciergeNextAppointment( state ),
-	site: getSite( state, props.siteSlug ),
-	scheduleId: getConciergeScheduleId( state ),
-	userSettings: getUserSettings( state ),
-} ) )( ConciergeMain );
+export default connect((state, props) => ({
+	availableTimes: getConciergeAvailableTimes(state),
+	nextAppointment: getConciergeNextAppointment(state),
+	site: getSite(state, props.siteSlug),
+	scheduleId: getConciergeScheduleId(state),
+	userSettings: getUserSettings(state),
+}))(ConciergeMain);

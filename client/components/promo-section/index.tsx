@@ -26,32 +26,32 @@ export interface Props {
  */
 import './style.scss';
 
-const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
+const PromoSectionCard: FunctionComponent<PromoSectionCardProps> = ({
 	isPrimary,
 	title,
 	image,
 	body,
 	badge,
 	actions,
-} ) => {
-	const cta = get( actions, 'cta', null );
-	const learnMoreLink = get( actions, 'learnMoreLink', null );
+}) => {
+	const cta = get(actions, 'cta', null);
+	const learnMoreLink = get(actions, 'learnMoreLink', null);
 	return (
-		<PromoCard isPrimary={ !! isPrimary } title={ title } image={ image } badge={ badge }>
-			<p>{ body }</p>
-			{ cta && ( cta.component || <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } /> ) }
+		<PromoCard isPrimary={!!isPrimary} title={title} image={image} badge={badge}>
+			<p>{body}</p>
+			{cta && (cta.component || <PromoCardCta cta={cta} learnMoreLink={learnMoreLink} />)}
 		</PromoCard>
 	);
 };
 
-const PromoSection: FunctionComponent< Props > = ( { header, promos } ) => {
+const PromoSection: FunctionComponent<Props> = ({ header, promos }) => {
 	return (
 		<div className="promo-section">
-			{ header && <PromoSectionCard isPrimary={ true } { ...header } /> }
+			{header && <PromoSectionCard isPrimary={true} {...header} />}
 			<div className="promo-section__promos">
-				{ promos.map( ( promo, i ) => (
-					<PromoSectionCard { ...promo } key={ i } />
-				) ) }
+				{promos.map((promo, i) => (
+					<PromoSectionCard {...promo} key={i} />
+				))}
 			</div>
 		</div>
 	);

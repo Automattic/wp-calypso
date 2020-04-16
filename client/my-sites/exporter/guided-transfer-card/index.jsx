@@ -28,18 +28,18 @@ import { GUIDED_TRANSFER } from 'lib/url/support';
  */
 import './style.scss';
 
-const Feature = ( { children } ) => (
+const Feature = ({ children }) => (
 	<li className="guided-transfer-card__feature-list-item">
-		<Gridicon className="guided-transfer-card__feature-icon" size={ 18 } icon="checkmark" />
-		<span className="guided-transfer-card__feature-text">{ children }</span>
+		<Gridicon className="guided-transfer-card__feature-icon" size={18} icon="checkmark" />
+		<span className="guided-transfer-card__feature-text">{children}</span>
 	</li>
 );
 
-const UnavailableInfo = localize( ( { translate } ) => (
+const UnavailableInfo = localize(({ translate }) => (
 	<div className="guided-transfer-card__unavailable-notice">
-		<span>{ translate( 'Guided Transfer unavailable' ) }</span>
+		<span>{translate('Guided Transfer unavailable')}</span>
 		<InfoPopover className="guided-transfer-card__unavailable-info-icon" position="left">
-			{ translate(
+			{translate(
 				"Guided Transfer is unavailable at the moment. We'll " +
 					'be back as soon as possible! In the meantime, you can transfer your ' +
 					'WordPress.com blog elsewhere by following {{a}}these steps{{/a}}',
@@ -48,10 +48,10 @@ const UnavailableInfo = localize( ( { translate } ) => (
 						a: <a href="https://move.wordpress.com/" />,
 					},
 				}
-			) }
+			)}
 		</InfoPopover>
 	</div>
-) );
+));
 
 class GuidedTransferCard extends Component {
 	render() {
@@ -60,30 +60,30 @@ class GuidedTransferCard extends Component {
 		return (
 			<div>
 				<CompactCard>
-					<QuerySiteGuidedTransfer siteId={ siteId } />
+					<QuerySiteGuidedTransfer siteId={siteId} />
 					<div className="guided-transfer-card__options">
 						<div className="guided-transfer-card__options-header-title-container">
-							<h1 className="guided-transfer-card__title">{ translate( 'Guided Transfer' ) }</h1>
+							<h1 className="guided-transfer-card__title">{translate('Guided Transfer')}</h1>
 							<h2 className="guided-transfer-card__subtitle">
-								{ translate( '{{cost/}} One-time expense', {
+								{translate('{{cost/}} One-time expense', {
 									components: {
-										cost: <span className="guided-transfer-card__price">{ cost }</span>,
+										cost: <span className="guided-transfer-card__price">{cost}</span>,
 									},
-								} ) }
+								})}
 							</h2>
 						</div>
 						<div className="guided-transfer-card__options-header-button-container">
-							{ isAvailable || isRequestingStatus ? (
+							{isAvailable || isRequestingStatus ? (
 								<Button
-									href={ `/export/guided/${ siteSlug }` }
-									isPrimary={ false }
-									disabled={ isRequestingStatus }
+									href={`/export/guided/${siteSlug}`}
+									isPrimary={false}
+									disabled={isRequestingStatus}
 								>
-									{ translate( 'Purchase a Guided Transfer' ) }
+									{translate('Purchase a Guided Transfer')}
 								</Button>
 							) : (
 								<UnavailableInfo />
-							) }
+							)}
 						</div>
 					</div>
 				</CompactCard>
@@ -91,28 +91,28 @@ class GuidedTransferCard extends Component {
 					<div className="guided-transfer-card__details-container">
 						<div className="guided-transfer-card__details-text">
 							<h1 className="guided-transfer-card__details-title">
-								{ translate( 'Hassle-free migration with two weeks of support' ) }
+								{translate('Hassle-free migration with two weeks of support')}
 							</h1>
-							{ translate(
+							{translate(
 								'Have one of our Happiness Engineers {{strong}}transfer your ' +
 									'site{{/strong}} to a self-hosted WordPress.org installation with ' +
 									'one of our hosting partners.',
 								{ components: { strong: <strong /> } }
-							) }
+							)}
 							<br />
-							<a href={ GUIDED_TRANSFER }>{ translate( 'Learn more.' ) }</a>
+							<a href={GUIDED_TRANSFER}>{translate('Learn more.')}</a>
 						</div>
 						<ul className="guided-transfer-card__feature-list">
-							<Feature>{ translate( 'Seamless content transfer' ) }</Feature>
+							<Feature>{translate('Seamless content transfer')}</Feature>
 							<Feature>
-								{ translate( 'Install and configure plugins to keep your functionality' ) }
+								{translate('Install and configure plugins to keep your functionality')}
 							</Feature>
 							<Feature>
-								{ translate( 'Switch your domain over {{link}}and more!{{/link}}', {
+								{translate('Switch your domain over {{link}}and more!{{/link}}', {
 									components: {
-										link: <a href={ GUIDED_TRANSFER } />,
+										link: <a href={GUIDED_TRANSFER} />,
 									},
-								} ) }
+								})}
 							</Feature>
 						</ul>
 					</div>
@@ -122,12 +122,12 @@ class GuidedTransferCard extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	cost: getProductDisplayCost( state, 'guided_transfer' ),
-	siteId: getSelectedSiteId( state ),
-	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
-	isRequestingStatus: isRequestingGuidedTransferStatus( state, getSelectedSiteId( state ) ),
-	isAvailable: isGuidedTransferAvailableForAllSites( state, getSelectedSiteId( state ) ),
-} );
+const mapStateToProps = (state) => ({
+	cost: getProductDisplayCost(state, 'guided_transfer'),
+	siteId: getSelectedSiteId(state),
+	siteSlug: getSiteSlug(state, getSelectedSiteId(state)),
+	isRequestingStatus: isRequestingGuidedTransferStatus(state, getSelectedSiteId(state)),
+	isAvailable: isGuidedTransferAvailableForAllSites(state, getSelectedSiteId(state)),
+});
 
-export default connect( mapStateToProps )( localize( GuidedTransferCard ) );
+export default connect(mapStateToProps)(localize(GuidedTransferCard));

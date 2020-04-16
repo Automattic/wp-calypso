@@ -24,45 +24,45 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requests = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_STATS_REQUEST: {
 			const { siteId, statType, query } = action;
-			const queryKey = getSerializedStatsQuery( query );
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ statType ]: {
-						[ queryKey ]: { requesting: true, status: 'pending' },
+			const queryKey = getSerializedStatsQuery(query);
+			return merge({}, state, {
+				[siteId]: {
+					[statType]: {
+						[queryKey]: { requesting: true, status: 'pending' },
 					},
 				},
-			} );
+			});
 		}
 		case SITE_STATS_RECEIVE: {
 			const { siteId, statType, query, date } = action;
-			const queryKey = getSerializedStatsQuery( query );
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ statType ]: {
-						[ queryKey ]: { requesting: false, status: 'success', date },
+			const queryKey = getSerializedStatsQuery(query);
+			return merge({}, state, {
+				[siteId]: {
+					[statType]: {
+						[queryKey]: { requesting: false, status: 'success', date },
 					},
 				},
-			} );
+			});
 		}
 		case SITE_STATS_REQUEST_FAILURE: {
 			const { siteId, statType, query } = action;
-			const queryKey = getSerializedStatsQuery( query );
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ statType ]: {
-						[ queryKey ]: { requesting: false, status: 'error' },
+			const queryKey = getSerializedStatsQuery(query);
+			return merge({}, state, {
+				[siteId]: {
+					[statType]: {
+						[queryKey]: { requesting: false, status: 'error' },
 					},
 				},
-			} );
+			});
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -72,30 +72,30 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemSchema, (state = {}, action) => {
+	switch (action.type) {
 		case SITE_STATS_RECEIVE:
 			const { siteId, statType, query, data } = action;
-			const queryKey = getSerializedStatsQuery( query );
+			const queryKey = getSerializedStatsQuery(query);
 
 			// Build the items state in a way that will preserve all unmodified parts
 			// and recreate site -> statType -> queryKey that was currently changed.
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ statType ]: {
-						...get( state, [ siteId, statType ] ),
-						[ queryKey ]: data,
+				[siteId]: {
+					...state[siteId],
+					[statType]: {
+						...get(state, [siteId, statType]),
+						[queryKey]: data,
 					},
 				},
 			};
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requests,
 	items,
-} );
+});

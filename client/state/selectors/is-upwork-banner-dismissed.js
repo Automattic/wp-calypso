@@ -17,10 +17,10 @@ const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
  * @param  {string}  location The Id of the banner
  * @returns {number}  Timestamp marking the last time the banner was dismissed
  */
-const getLastDismissTime = ( state, location ) => {
-	const preference = getPreference( state, 'upwork-dismissible-banner' ) || {};
-	const sitePreference = preference[ location ] || [];
-	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
+const getLastDismissTime = (state, location) => {
+	const preference = getPreference(state, 'upwork-dismissible-banner') || {};
+	const sitePreference = preference[location] || [];
+	const lastEvent = last(sitePreference.filter((event) => 'dismiss' === event.type));
 
 	return lastEvent ? lastEvent.dismissedAt : 0;
 };
@@ -36,11 +36,11 @@ const getLastDismissTime = ( state, location ) => {
  * @param  {string}  location The location of the banner
  * @returns {boolean} True if the banner has been dismissed
  */
-export default function isUpworkBannerDismissed( state, location ) {
-	const lastDismissTime = getLastDismissTime( state, location );
+export default function isUpworkBannerDismissed(state, location) {
+	const lastDismissTime = getLastDismissTime(state, location);
 
 	// Return false if it has never been dismissed
-	if ( lastDismissTime === 0 ) {
+	if (lastDismissTime === 0) {
 		return false;
 	}
 

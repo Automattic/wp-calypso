@@ -11,6 +11,6 @@ import 'state/reader/init';
  * @returns {Array}          Reader Teams
  */
 
-export default function getReaderTeams( state ) {
+export default function getReaderTeams(state) {
 	return state.reader.teams.items;
 }

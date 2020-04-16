@@ -43,16 +43,16 @@ class DomainConnectAuthorize extends Component {
 			{ domain } = params;
 
 		wpcom
-			.getDnsTemplateRecords( domain, providerId, serviceId, params )
+			.getDnsTemplateRecords(domain, providerId, serviceId, params)
 			.then(
-				data => {
-					this.setState( {
+				(data) => {
+					this.setState({
 						action: actionType.READY_TO_SUBMIT,
 						dnsTemplateConflicts: data && data.conflicting_records,
 						dnsTemplateRecords: data && data.new_records,
-					} );
+					});
 				},
-				error => {
+				(error) => {
 					const errorMessage =
 						error.message ||
 						translate(
@@ -60,59 +60,59 @@ class DomainConnectAuthorize extends Component {
 								'with your service provider to make sure they provided all the correct data.'
 						);
 
-					this.setState( {
+					this.setState({
 						action: actionType.CLOSE,
 						noticeType: noticeType.ERROR,
 						noticeMessage: errorMessage,
 						dnsTemplateError: true,
-					} );
+					});
 				}
 			)
-			.then( () => {
-				this.setState( {
+			.then(() => {
+				this.setState({
 					dnsTemplateRecordsRetrieved: true,
-				} );
-			} );
+				});
+			});
 	}
 
 	handleClickConfirm = () => {
 		const { providerId, serviceId, params, translate } = this.props,
 			{ domain } = params;
 
-		this.setState( {
+		this.setState({
 			action: actionType.SUBMITTING,
 			noticeType: null,
-		} );
+		});
 
-		wpcom.applyDnsTemplateSyncFlow( domain, providerId, serviceId, params ).then(
-			result => {
+		wpcom.applyDnsTemplateSyncFlow(domain, providerId, serviceId, params).then(
+			(result) => {
 				let action = actionType.CLOSE;
-				let noticeMessage = translate( 'Hurray! Your new service is now all set up.' );
-				if ( result.redirect_uri ) {
+				let noticeMessage = translate('Hurray! Your new service is now all set up.');
+				if (result.redirect_uri) {
 					action = actionType.REDIRECTING;
 					noticeMessage = translate(
 						"Please wait while we redirect you back to the service provider's site to finalize this update."
 					);
-					window.location.assign( result.redirect_uri );
+					window.location.assign(result.redirect_uri);
 				}
-				this.setState( {
+				this.setState({
 					action,
 					noticeMessage,
 					noticeType: noticeType.SUCCESS,
-				} );
+				});
 			},
-			error => {
+			(error) => {
 				const errorMessage =
 					error.message ||
 					translate(
 						"We weren't able to add the DNS records needed for this service. Please try again."
 					);
 
-				this.setState( {
+				this.setState({
 					action: actionType.READY_TO_SUBMIT,
 					noticeMessage: errorMessage,
 					noticeType: noticeType.ERROR,
-				} );
+				});
 			}
 		);
 	};
@@ -122,12 +122,12 @@ class DomainConnectAuthorize extends Component {
 	};
 
 	renderNotice = () => {
-		if ( this.state.noticeType ) {
+		if (this.state.noticeType) {
 			return (
 				<Notice
-					showDismiss={ false }
-					status={ this.state.noticeType }
-					text={ this.state.noticeMessage }
+					showDismiss={false}
+					status={this.state.noticeType}
+					text={this.state.noticeMessage}
 				/>
 			);
 		}
@@ -143,31 +143,31 @@ class DomainConnectAuthorize extends Component {
 			<Main className="domain-connect__main">
 				<CompactCard>
 					<h2>
-						{ translate( 'Authorize DNS Changes for %(domain)s', {
+						{translate('Authorize DNS Changes for %(domain)s', {
 							args: { domain: domain },
 							comment:
 								'%(domain)s is the domain name that we are requesting the user to authorize changes to.',
-						} ) }
+						})}
 					</h2>
 					<DomainConnectAuthorizeDescription
-						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
-						providerId={ this.props.providerId }
-						dnsTemplateError={ this.state.dnsTemplateError }
+						isPlaceholder={!this.state.dnsTemplateRecordsRetrieved}
+						providerId={this.props.providerId}
+						dnsTemplateError={this.state.dnsTemplateError}
 					/>
 					<DomainConnectAuthorizeRecords
-						domain={ domain }
-						dnsTemplateRecords={ this.state.dnsTemplateRecords }
-						dnsTemplateConflicts={ this.state.dnsTemplateConflicts }
-						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
+						domain={domain}
+						dnsTemplateRecords={this.state.dnsTemplateRecords}
+						dnsTemplateConflicts={this.state.dnsTemplateConflicts}
+						isPlaceholder={!this.state.dnsTemplateRecordsRetrieved}
 					/>
-					{ this.renderNotice() }
+					{this.renderNotice()}
 				</CompactCard>
 				<CompactCard>
 					<DomainConnectAuthorizeFooter
-						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
-						onClose={ this.handleClickClose }
-						onConfirm={ this.handleClickConfirm }
-						showAction={ this.state.action }
+						isPlaceholder={!this.state.dnsTemplateRecordsRetrieved}
+						onClose={this.handleClickClose}
+						onConfirm={this.handleClickConfirm}
+						showAction={this.state.action}
 					/>
 				</CompactCard>
 			</Main>
@@ -175,4 +175,4 @@ class DomainConnectAuthorize extends Component {
 	}
 }
 
-export default localize( DomainConnectAuthorize );
+export default localize(DomainConnectAuthorize);

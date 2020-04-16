@@ -20,16 +20,16 @@ import { noSite, siteSelection } from 'my-sites/controller';
 import config from 'config';
 import userFactory from 'lib/user';
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	const user = userFactory();
-	const isLoggedOut = ! user.get();
+	const isLoggedOut = !user.get();
 
-	if ( isLoggedOut ) {
-		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
+	if (isLoggedOut) {
+		page('/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender);
 
-		page( '/checkout*', redirectLoggedOut );
+		page('/checkout*', redirectLoggedOut);
 
 		return;
 	}
@@ -83,7 +83,7 @@ export default function() {
 		clientRender
 	);
 
-	page( '/checkout/no-site', noSite, checkout, makeLayout, clientRender );
+	page('/checkout/no-site', noSite, checkout, makeLayout, clientRender);
 
 	page(
 		'/checkout/features/:feature/:domain/:plan_name?',
@@ -93,9 +93,9 @@ export default function() {
 		clientRender
 	);
 
-	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+	if (config.isEnabled('upsell/concierge-session')) {
 		// For backwards compatibility, retaining the old URL structure.
-		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
+		page('/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession);
 
 		page(
 			'/checkout/offer-support-session/:site?',
@@ -130,12 +130,12 @@ export default function() {
 		);
 	}
 
-	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+	page('/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender);
 
-	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+	page('/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender);
 
 	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
-	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
+	page('/checkout/:product/renew/:purchaseId', '/me/purchases');
 
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',
@@ -154,7 +154,7 @@ export default function() {
 	);
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
-	page( '/checkout', '/plans' );
+	page('/checkout', '/plans');
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',

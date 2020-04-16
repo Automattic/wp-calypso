@@ -20,20 +20,20 @@ import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@w
 import tracksRecordEvent from './track-record-event';
 
 // let's remove this line once the core version updates.
-const debug = debugFactory( 'wpcom-block-editor:tracking:inserter-menu' );
+const debug = debugFactory('wpcom-block-editor:tracking:inserter-menu');
 
-const InserterMenuTrackingEvent = function() {
-	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const { selectedBlock } = useSelect( select => ( {
-		selectedBlock: select( 'core/block-editor' ).getSelectedBlock(),
-	} ) );
+const InserterMenuTrackingEvent = function () {
+	const [searchTerm, setSearchTerm] = useState('');
+	const { selectedBlock } = useSelect((select) => ({
+		selectedBlock: select('core/block-editor').getSelectedBlock(),
+	}));
 
 	const pluginVersion = window.wpcomGutenberg ? window.wpcomGutenberg.pluginVersion : null;
 
-	const debouncedSetFilterValue = debounce( ( search_term, has_items ) => {
-		setSearchTerm( search_term );
+	const debouncedSetFilterValue = debounce((search_term, has_items) => {
+		setSearchTerm(search_term);
 
-		if ( search_term.length < 3 ) {
+		if (search_term.length < 3) {
 			return;
 		}
 
@@ -43,26 +43,26 @@ const InserterMenuTrackingEvent = function() {
 			selected_block: selectedBlock ? selectedBlock.name : null,
 		};
 
-		tracksRecordEvent( 'wpcom_block_picker_search_term', eventProperties );
+		tracksRecordEvent('wpcom_block_picker_search_term', eventProperties);
 
 		/*
 		 * Let's delegate registering no-results search event
 		 * to the temporary solution below if the core version
 		 * is equal to 7.8.1.
 		 */
-		if ( pluginVersion && pluginVersion === '7.8.1' ) {
+		if (pluginVersion && pluginVersion === '7.8.1') {
 			return null;
 		}
 
 		// let's remove this line once the core version updates.
-		debug( '%o: tracking with Slot parameter', pluginVersion );
+		debug('%o: tracking with Slot parameter', pluginVersion);
 
-		if ( has_items ) {
+		if (has_items) {
 			return;
 		}
 
-		tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
-	}, 500 );
+		tracksRecordEvent('wpcom_block_picker_no_results', eventProperties);
+	}, 500);
 
 	/*
 	 * Hacky temporal solution to detect no-results search result.
@@ -75,15 +75,15 @@ const InserterMenuTrackingEvent = function() {
 	 *   and replaced by the usage of the `hasItems` property,
 	 *   once a new version of core is available in dotcom.
 	 */
-	useEffect( () => {
+	useEffect(() => {
 		// Skip whether isn't the 7.8.1 version.
-		if ( pluginVersion && pluginVersion !== '7.8.1' ) {
+		if (pluginVersion && pluginVersion !== '7.8.1') {
 			return;
 		}
 		// let's remove this line once the core version updates.
-		debug( '%o: tracking inspecting DOM tree', pluginVersion );
+		debug('%o: tracking inspecting DOM tree', pluginVersion);
 
-		if ( ! searchTerm || searchTerm.length < 3 ) {
+		if (!searchTerm || searchTerm.length < 3) {
 			return;
 		}
 
@@ -93,27 +93,27 @@ const InserterMenuTrackingEvent = function() {
 			selected_block: selectedBlock ? selectedBlock.name : null,
 		};
 
-		const hasResultsEl = document.querySelectorAll( '.block-editor-inserter__results' );
+		const hasResultsEl = document.querySelectorAll('.block-editor-inserter__results');
 		const hasNoResultsEl =
-			document.querySelectorAll( '.block-editor-inserter__no-results' ).length !== 0;
+			document.querySelectorAll('.block-editor-inserter__no-results').length !== 0;
 
 		if (
 			hasNoResultsEl ||
-			( hasResultsEl && hasResultsEl[ 0 ] && hasResultsEl[ 0 ].children.length === 0 )
+			(hasResultsEl && hasResultsEl[0] && hasResultsEl[0].children.length === 0)
 		) {
-			tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
+			tracksRecordEvent('wpcom_block_picker_no_results', eventProperties);
 		}
-	}, [ searchTerm, pluginVersion, selectedBlock ] );
+	}, [searchTerm, pluginVersion, selectedBlock]);
 
 	return (
 		<InserterMenuExtension>
-			{ ( { filterValue, hasItems } ) => {
-				if ( searchTerm !== filterValue ) {
-					debouncedSetFilterValue( filterValue, hasItems );
+			{({ filterValue, hasItems }) => {
+				if (searchTerm !== filterValue) {
+					debouncedSetFilterValue(filterValue, hasItems);
 				}
 
 				return null;
-			} }
+			}}
 		</InserterMenuExtension>
 	);
 };

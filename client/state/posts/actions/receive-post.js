@@ -13,6 +13,6 @@ import 'state/posts/init';
  * @param  {?string} saveMarker Save marker in the edits log
  * @returns {object}             Action object
  */
-export function receivePost( post, saveMarker ) {
-	return receivePosts( [ post ], saveMarker );
+export function receivePost(post, saveMarker) {
+	return receivePosts([post], saveMarker);
 }

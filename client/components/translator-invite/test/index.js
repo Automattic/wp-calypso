@@ -13,9 +13,9 @@ import React from 'react';
  */
 import { TranslatorInvite } from '../';
 
-describe( 'TranslatorInvite', () => {
+describe('TranslatorInvite', () => {
 	const defaultProps = {
-		translate: x => x,
+		translate: (x) => x,
 		localizedLanguageNames: {
 			'en-gb': {
 				localized: 'British English',
@@ -40,13 +40,13 @@ describe( 'TranslatorInvite', () => {
 		},
 	};
 
-	test( 'should not render when no locale information present', () => {
-		const wrapper = shallow( <TranslatorInvite { ...defaultProps } /> );
-		expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 0 );
-	} );
+	test('should not render when no locale information present', () => {
+		const wrapper = shallow(<TranslatorInvite {...defaultProps} />);
+		expect(wrapper.find('.translator-invite__content')).toHaveLength(0);
+	});
 
-	test( 'should render when no locale information present', () => {
-		const wrapper = shallow( <TranslatorInvite { ...defaultProps } locale="tl" /> );
-		expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 1 );
-	} );
-} );
+	test('should render when no locale information present', () => {
+		const wrapper = shallow(<TranslatorInvite {...defaultProps} locale="tl" />);
+		expect(wrapper.find('.translator-invite__content')).toHaveLength(1);
+	});
+});

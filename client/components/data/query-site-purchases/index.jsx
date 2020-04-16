@@ -13,9 +13,9 @@ import { isFetchingSitePurchases } from 'state/purchases/selectors';
 import { fetchSitePurchases } from 'state/purchases/actions';
 
 class QuerySitePurchases extends Component {
-	requestSitePurchases( props = this.props ) {
-		if ( props.siteId && ! props.requesting ) {
-			this.props.fetchSitePurchases( props.siteId );
+	requestSitePurchases(props = this.props) {
+		if (props.siteId && !props.requesting) {
+			this.props.fetchSitePurchases(props.siteId);
 		}
 	}
 
@@ -23,12 +23,12 @@ class QuerySitePurchases extends Component {
 		this.requestSitePurchases();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.requestSitePurchases( nextProps );
+		this.requestSitePurchases(nextProps);
 	}
 
 	render() {
@@ -43,10 +43,10 @@ QuerySitePurchases.propTypes = {
 };
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			requesting: isFetchingSitePurchases( state ),
+			requesting: isFetchingSitePurchases(state),
 		};
 	},
 	{ fetchSitePurchases }
-)( QuerySitePurchases );
+)(QuerySitePurchases);

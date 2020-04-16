@@ -16,7 +16,7 @@ import { preventWidows } from 'lib/formatting';
  */
 import './style.scss';
 
-function FormattedHeader( {
+function FormattedHeader({
 	id,
 	headerText,
 	subHeaderText,
@@ -24,25 +24,21 @@ function FormattedHeader( {
 	compactOnMobile,
 	align,
 	isSecondary,
-} ) {
-	const classes = classNames( 'formatted-header', className, {
-		'is-without-subhead': ! subHeaderText,
+}) {
+	const classes = classNames('formatted-header', className, {
+		'is-without-subhead': !subHeaderText,
 		'is-compact-on-mobile': compactOnMobile,
 		'is-left-align': 'left' === align,
 		'is-right-align': 'right' === align,
-	} );
+	});
 
 	return (
-		<header id={ id } className={ classes }>
-			{ ! isSecondary && (
-				<h1 className="formatted-header__title">{ preventWidows( headerText, 2 ) }</h1>
-			) }
-			{ isSecondary && (
-				<h2 className="formatted-header__title">{ preventWidows( headerText, 2 ) }</h2>
-			) }
-			{ subHeaderText && (
-				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
-			) }
+		<header id={id} className={classes}>
+			{!isSecondary && <h1 className="formatted-header__title">{preventWidows(headerText, 2)}</h1>}
+			{isSecondary && <h2 className="formatted-header__title">{preventWidows(headerText, 2)}</h2>}
+			{subHeaderText && (
+				<p className="formatted-header__subtitle">{preventWidows(subHeaderText, 2)}</p>
+			)}
 		</header>
 	);
 }

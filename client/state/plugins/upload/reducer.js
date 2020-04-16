@@ -16,8 +16,8 @@ import {
 
 export const uploadedPluginId = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case PLUGIN_UPLOAD:
 				return null;
 			case PLUGIN_UPLOAD_COMPLETE: {
@@ -35,13 +35,13 @@ export const uploadedPluginId = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
 export const uploadError = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case PLUGIN_UPLOAD_ERROR: {
 				const { error } = action;
 				return error;
@@ -55,13 +55,13 @@ export const uploadError = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
 export const progressPercent = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case PLUGIN_UPLOAD_PROGRESS: {
 				const { progress } = action;
 				return progress;
@@ -75,13 +75,13 @@ export const progressPercent = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
 export const inProgress = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case PLUGIN_UPLOAD:
 				return true;
 			case PLUGIN_UPLOAD_COMPLETE:
@@ -99,12 +99,12 @@ export const inProgress = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
-export default combineReducers( {
+export default combineReducers({
 	uploadedPluginId,
 	uploadError,
 	progressPercent,
 	inProgress,
-} );
+});

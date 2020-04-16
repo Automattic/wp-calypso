@@ -6,6 +6,6 @@
  * @returns {boolean} true is the user has settings object
  */
 
-export default function hasUserSettings( state ) {
-	return !! state.userSettings.settings;
+export default function hasUserSettings(state) {
+	return !!state.userSettings.settings;
 }

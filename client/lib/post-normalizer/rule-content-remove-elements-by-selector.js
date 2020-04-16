@@ -22,20 +22,20 @@ const thingsToRemove = [
 	'select',
 	'button',
 	'textarea',
-].join( ', ' ); // make them all into one big selector
+].join(', '); // make them all into one big selector
 
-function removeElement( element ) {
-	element.parentNode && element.parentNode.removeChild( element );
+function removeElement(element) {
+	element.parentNode && element.parentNode.removeChild(element);
 }
 
-export default function sanitizeContent( post, dom ) {
-	if ( ! dom ) {
-		throw new Error( 'this transform must be used as part of withContentDOM' );
+export default function sanitizeContent(post, dom) {
+	if (!dom) {
+		throw new Error('this transform must be used as part of withContentDOM');
 	}
 
-	const elements = dom.querySelectorAll( thingsToRemove );
+	const elements = dom.querySelectorAll(thingsToRemove);
 	// using forEach because qsa doesn't return a real array
-	forEach( elements, removeElement );
+	forEach(elements, removeElement);
 
 	return post;
 }

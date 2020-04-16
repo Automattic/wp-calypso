@@ -1,3 +1,3 @@
 export const siteStyleSchema = {
-	type: [ 'string', 'null' ],
+	type: ['string', 'null'],
 };

@@ -15,29 +15,29 @@ import 'state/reader/init';
  * function( state, { streamKey: string, recsStreamKey: string, shouldCombine: boolean }): Array
  */
 export const getTransformedStreamItems = treeSelect(
-	( state, { streamKey, recsStreamKey } ) => [
-		getReaderStream( state, streamKey ).items,
-		getReaderStream( state, recsStreamKey ).items,
-		getReaderFollows( state ),
+	(state, { streamKey, recsStreamKey }) => [
+		getReaderStream(state, streamKey).items,
+		getReaderStream(state, recsStreamKey).items,
+		getReaderFollows(state),
 	],
-	( [ items, recs, follows ], { shouldCombine } ) => {
-		if ( items.length === 0 ) {
+	([items, recs, follows], { shouldCombine }) => {
+		if (items.length === 0) {
 			return [];
 		}
 
-		if ( recs.length > 0 ) {
-			items = injectRecommendations( items, recs, getDistanceBetweenRecs( follows.length ) );
+		if (recs.length > 0) {
+			items = injectRecommendations(items, recs, getDistanceBetweenRecs(follows.length));
 		}
 
-		if ( shouldCombine ) {
-			items = combineCards( items );
+		if (shouldCombine) {
+			items = combineCards(items);
 		}
 
 		return items;
 	},
 	{
-		getCacheKey: ( { streamKey, recsStreamKey, shouldCombine } ) =>
-			`${ streamKey }${ recsStreamKey }${ shouldCombine }`,
+		getCacheKey: ({ streamKey, recsStreamKey, shouldCombine }) =>
+			`${streamKey}${recsStreamKey}${shouldCombine}`,
 	}
 );
 

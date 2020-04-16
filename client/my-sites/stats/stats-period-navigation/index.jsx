@@ -42,23 +42,23 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	handleClickNext = () => {
-		this.handleClickArrow( 'next' );
+		this.handleClickArrow('next');
 	};
 
 	handleClickPrevious = () => {
-		this.handleClickArrow( 'previous' );
+		this.handleClickArrow('previous');
 	};
 
-	handleClickArrow = arrow => {
+	handleClickArrow = (arrow) => {
 		const { date, onPeriodChange, period, recordGoogleEvent } = this.props;
-		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
+		recordGoogleEvent('Stats Period Navigation', `Clicked ${arrow} ${period}`);
 
-		if ( onPeriodChange ) {
-			onPeriodChange( {
+		if (onPeriodChange) {
+			onPeriodChange({
 				date,
 				direction: arrow,
 				period,
-			} );
+			});
 		}
 	};
 
@@ -75,44 +75,40 @@ class StatsPeriodNavigation extends PureComponent {
 			queryParams,
 		} = this.props;
 
-		const isToday = moment( date ).isSame( moment(), period );
-		const previousDay = moment( date )
-			.subtract( 1, period )
-			.format( 'YYYY-MM-DD' );
+		const isToday = moment(date).isSame(moment(), period);
+		const previousDay = moment(date).subtract(1, period).format('YYYY-MM-DD');
 		const previousDayQuery = qs.stringify(
-			Object.assign( {}, queryParams, { startDate: previousDay } ),
+			Object.assign({}, queryParams, { startDate: previousDay }),
 			{ addQueryPrefix: true }
 		);
-		const nextDay = moment( date )
-			.add( 1, period )
-			.format( 'YYYY-MM-DD' );
-		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
+		const nextDay = moment(date).add(1, period).format('YYYY-MM-DD');
+		const nextDayQuery = qs.stringify(Object.assign({}, queryParams, { startDate: nextDay }), {
 			addQueryPrefix: true,
-		} );
+		});
 
 		return (
 			<div className="stats-period-navigation">
 				{
 					<a
-						className={ classNames( 'stats-period-navigation__previous', {
+						className={classNames('stats-period-navigation__previous', {
 							'is-disabled': hidePreviousArrow,
-						} ) }
-						href={ `${ url }${ previousDayQuery }` }
-						onClick={ this.handleClickPrevious }
+						})}
+						href={`${url}${previousDayQuery}`}
+						onClick={this.handleClickPrevious}
 					>
-						<Gridicon icon={ isRtl ? 'arrow-right' : 'arrow-left' } size={ 18 } />
+						<Gridicon icon={isRtl ? 'arrow-right' : 'arrow-left'} size={18} />
 					</a>
 				}
-				<div className="stats-period-navigation__children">{ children }</div>
+				<div className="stats-period-navigation__children">{children}</div>
 				{
 					<a
-						className={ classNames( 'stats-period-navigation__next', {
+						className={classNames('stats-period-navigation__next', {
 							'is-disabled': hideNextArrow || isToday,
-						} ) }
-						href={ `${ url }${ nextDayQuery }` }
-						onClick={ this.handleClickNext }
+						})}
+						href={`${url}${nextDayQuery}`}
+						onClick={this.handleClickNext}
 					>
-						<Gridicon icon={ isRtl ? 'arrow-left' : 'arrow-right' } size={ 18 } />
+						<Gridicon icon={isRtl ? 'arrow-left' : 'arrow-right'} size={18} />
 					</a>
 				}
 			</div>
@@ -120,11 +116,11 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const connectComponent = connect( null, { recordGoogleEvent: recordGoogleEventAction } );
+const connectComponent = connect(null, { recordGoogleEvent: recordGoogleEventAction });
 
 export default flowRight(
 	connectComponent,
 	localize,
 	withRtl,
 	withLocalizedMoment
-)( StatsPeriodNavigation );
+)(StatsPeriodNavigation);

@@ -9,13 +9,13 @@ import { expect } from 'chai';
 import getMediaUrl from 'state/selectors/get-media-url';
 import MediaQueryManager from 'lib/query-manager/media';
 
-describe( 'getMediaUrl()', () => {
+describe('getMediaUrl()', () => {
 	const url = 'https://example.files.wordpress.com/2014/06/flower.gif';
 
 	const state = {
 		media: {
 			queries: {
-				2916284: new MediaQueryManager( {
+				2916284: new MediaQueryManager({
 					items: {
 						42: {
 							ID: 42,
@@ -28,20 +28,20 @@ describe( 'getMediaUrl()', () => {
 						},
 					},
 					queries: {},
-				} ),
+				}),
 			},
 		},
 	};
 
-	test( 'should return null if the item is not in state', () => {
-		expect( getMediaUrl( state, 2916285, 42 ) ).to.be.null;
-	} );
+	test('should return null if the item is not in state', () => {
+		expect(getMediaUrl(state, 2916285, 42)).to.be.null;
+	});
 
-	test( 'should return null if the media item URL is invalid', () => {
-		expect( getMediaUrl( state, 2916284, 43 ) ).to.be.null;
-	} );
+	test('should return null if the media item URL is invalid', () => {
+		expect(getMediaUrl(state, 2916284, 43)).to.be.null;
+	});
 
-	test( 'should return a safe variation of the media URL', () => {
-		expect( getMediaUrl( state, 2916284, 42 ) ).to.be.equal( url );
-	} );
-} );
+	test('should return a safe variation of the media URL', () => {
+		expect(getMediaUrl(state, 2916284, 42)).to.be.equal(url);
+	});
+});

@@ -18,10 +18,10 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID
  * @returns {?string}         Theme ID
  */
-export function getActiveTheme( state, siteId ) {
-	const activeTheme = state.themes.activeThemes[ siteId ] ?? null;
+export function getActiveTheme(state, siteId) {
+	const activeTheme = state.themes.activeThemes[siteId] ?? null;
 	// If the theme ID is suffixed with -wpcom, remove that string. This is because
 	// we want to treat WP.com themes identically, whether or not they're installed
 	// on a given Jetpack site (where the -wpcom suffix would be appended).
-	return activeTheme && activeTheme.replace( '-wpcom', '' );
+	return activeTheme && activeTheme.replace('-wpcom', '');
 }

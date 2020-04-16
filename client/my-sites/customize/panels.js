@@ -6,12 +6,12 @@
  */
 
 export const PANEL_MAPPINGS = {
-	widgets: [ 'panel', 'widgets' ],
-	fonts: [ 'section', 'jetpack_fonts' ],
-	identity: [ 'section', 'title_tagline' ],
-	'custom-css': [ 'section', 'jetpack_custom_css' ],
-	amp: [ 'section', 'amp_design' ],
-	menus: [ 'panel', 'nav_menus' ],
+	widgets: ['panel', 'widgets'],
+	fonts: ['section', 'jetpack_fonts'],
+	identity: ['section', 'title_tagline'],
+	'custom-css': ['section', 'jetpack_custom_css'],
+	amp: ['section', 'amp_design'],
+	menus: ['panel', 'nav_menus'],
 };
 
 /**
@@ -22,10 +22,10 @@ export const PANEL_MAPPINGS = {
  * @param  {string}  panel Calypso panel slug
  * @returns {?object}       WordPress autofocus argument object
  */
-export function getCustomizerFocus( panel ) {
-	if ( PANEL_MAPPINGS.hasOwnProperty( panel ) ) {
-		const [ key, value ] = PANEL_MAPPINGS[ panel ];
-		return { [ `autofocus[${ key }]` ]: value };
+export function getCustomizerFocus(panel) {
+	if (PANEL_MAPPINGS.hasOwnProperty(panel)) {
+		const [key, value] = PANEL_MAPPINGS[panel];
+		return { [`autofocus[${key}]`]: value };
 	}
 
 	return null;

@@ -1,6 +1,6 @@
 {
 	"type": "object",
-	"required": [ "order_id", "user_id", "processing_status" ],
+	"required": ["order_id", "user_id", "processing_status"],
 	"properties": {
 		"order_id": { "type": "integer" },
 		"user_id": { "type": "integer" },

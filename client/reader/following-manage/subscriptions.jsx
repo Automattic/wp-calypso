@@ -33,84 +33,79 @@ class FollowingManageSubscriptions extends Component {
 		follows: PropTypes.array.isRequired,
 		doSearch: PropTypes.func.isRequired,
 		query: PropTypes.string,
-		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		sortOrder: PropTypes.oneOf(['date-followed', 'alpha']),
 		windowScrollerRef: PropTypes.func,
 	};
 
-	filterFollowsByQuery( query ) {
+	filterFollowsByQuery(query) {
 		const { follows } = this.props;
 
-		if ( ! query ) {
+		if (!query) {
 			return follows;
 		}
 
-		const phraseRe = new RegExp( escapeRegExp( query ), 'i' );
+		const phraseRe = new RegExp(escapeRegExp(query), 'i');
 
-		return follows.filter( follow => {
+		return follows.filter((follow) => {
 			const feed = follow.feed;
 			const site = follow.site;
-			const siteName = getSiteName( { feed, site } );
-			const siteUrl = getSiteUrl( { feed, site } );
-			const siteDescription = getSiteDescription( { feed, site } );
-			const siteAuthor = getSiteAuthorName( site );
+			const siteName = getSiteName({ feed, site });
+			const siteUrl = getSiteUrl({ feed, site });
+			const siteDescription = getSiteDescription({ feed, site });
+			const siteAuthor = getSiteAuthorName(site);
 
 			return (
-				`${ follow.URL }${ siteName }${ siteUrl }${ siteDescription }${ siteAuthor }`.search(
-					phraseRe
-				) !== -1
+				`${follow.URL}${siteName}${siteUrl}${siteDescription}${siteAuthor}`.search(phraseRe) !== -1
 			);
-		} );
+		});
 	}
 
-	sortFollows( follows, sortOrder ) {
-		if ( sortOrder === 'alpha' ) {
-			return sortBy( follows, follow => {
+	sortFollows(follows, sortOrder) {
+		if (sortOrder === 'alpha') {
+			return sortBy(follows, (follow) => {
 				const feed = follow.feed;
 				const site = follow.site;
-				const displayUrl = formatUrlForDisplay( follow.URL );
-				return trimStart( getFeedTitle( site, feed, displayUrl ).toLowerCase() );
-			} );
+				const displayUrl = formatUrlForDisplay(follow.URL);
+				return trimStart(getFeedTitle(site, feed, displayUrl).toLowerCase());
+			});
 		}
 
-		return reverse( sortBy( follows, [ 'date_subscribed' ] ) );
+		return reverse(sortBy(follows, ['date_subscribed']));
 	}
 
-	handleSortChange = sort => {
-		page.replace( addQueryArgs( { sort }, window.location.pathname + window.location.search ) );
+	handleSortChange = (sort) => {
+		page.replace(addQueryArgs({ sort }, window.location.pathname + window.location.search));
 	};
 
 	render() {
 		const { width, translate, query, followsCount, sortOrder } = this.props;
-		const filteredFollows = this.filterFollowsByQuery( query );
-		const sortedFollows = this.sortFollows( filteredFollows, sortOrder );
-		const noSitesMatchQuery = isEmpty( sortedFollows );
-		const subsListClassNames = classnames( 'following-manage__subscriptions-list', {
+		const filteredFollows = this.filterFollowsByQuery(query);
+		const sortedFollows = this.sortFollows(filteredFollows, sortOrder);
+		const noSitesMatchQuery = isEmpty(sortedFollows);
+		const subsListClassNames = classnames('following-manage__subscriptions-list', {
 			'is-empty': noSitesMatchQuery,
-		} );
+		});
 
 		return (
 			<div className="following-manage__subscriptions">
 				<SyncReaderFollows />
 				<div className="following-manage__subscriptions-controls">
 					<h1 className="following-manage__subscriptions-header">
-						{ translate( '%(num)s Followed Sites', {
+						{translate('%(num)s Followed Sites', {
 							args: { num: followsCount },
-						} ) }
+						})}
 					</h1>
 					<div className="following-manage__subscriptions-sort">
 						<FollowingManageSortControls
-							sortOrder={ sortOrder }
-							onSortChange={ this.handleSortChange }
+							sortOrder={sortOrder}
+							onSortChange={this.handleSortChange}
 						/>
 					</div>
 					<div className="following-manage__subscriptions-search">
-						<FollowingManageSearchFollowed
-							onSearch={ this.props.doSearch }
-							initialValue={ query }
-						/>
+						<FollowingManageSearchFollowed onSearch={this.props.doSearch} initialValue={query} />
 					</div>
 					<div className="following-manage__subscriptions-import-export">
-						<EllipsisMenu toggleTitle={ translate( 'More' ) } position="bottom">
+						<EllipsisMenu toggleTitle={translate('More')} position="bottom">
 							<PopoverMenuItem
 								className="following-manage__subscriptions-import-export-menu-item"
 								itemComponent="div"
@@ -126,40 +121,40 @@ class FollowingManageSubscriptions extends Component {
 						</EllipsisMenu>
 					</div>
 				</div>
-				<div className={ subsListClassNames }>
-					{ ! noSitesMatchQuery && (
+				<div className={subsListClassNames}>
+					{!noSitesMatchQuery && (
 						<InfiniteStream
-							items={ sortedFollows }
-							extraRenderItemProps={ {
+							items={sortedFollows}
+							extraRenderItemProps={{
 								followSource: READER_SUBSCRIPTIONS,
-							} }
-							width={ width }
-							totalCount={ sortedFollows.length }
-							windowScrollerRef={ this.props.windowScrollerRef }
-							rowRenderer={ siteRowRenderer }
+							}}
+							width={width}
+							totalCount={sortedFollows.length}
+							windowScrollerRef={this.props.windowScrollerRef}
+							rowRenderer={siteRowRenderer}
 						/>
-					) }
-					{ noSitesMatchQuery && (
+					)}
+					{noSitesMatchQuery && (
 						<span>
-							{ query
-								? translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
+							{query
+								? translate('Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
 										components: { italic: <i /> },
 										args: query,
 										comment: '%s is the user-entered search string. For example: "bananas"',
-								  } )
-								: translate( 'Sorry, no followed sites found.' ) }
+								  })
+								: translate('Sorry, no followed sites found.')}
 						</span>
-					) }
+					)}
 				</div>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const follows = getReaderFollows( state );
-	const followsCount = getReaderFollowsCount( state );
+const mapStateToProps = (state) => {
+	const follows = getReaderFollows(state);
+	const followsCount = getReaderFollowsCount(state);
 	return { follows, followsCount };
 };
 
-export default connect( mapStateToProps )( localize( UrlSearch( FollowingManageSubscriptions ) ) );
+export default connect(mapStateToProps)(localize(UrlSearch(FollowingManageSubscriptions)));

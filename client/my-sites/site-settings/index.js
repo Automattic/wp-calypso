@@ -23,8 +23,8 @@ import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 
-export default function() {
-	page( '/settings', '/settings/general' );
+export default function () {
+	page('/settings', '/settings/general');
 
 	page(
 		'/settings/general/:site_id',
@@ -38,22 +38,22 @@ export default function() {
 	);
 
 	// Redirect settings pages for import and export now that they have their own sections.
-	page( '/settings/:importOrExport(import|export)/:subroute(.*)', context => {
-		const importOrExport = get( context, 'params.importOrExport' );
-		const subroute = get( context, 'params.subroute' );
-		const queryString = get( context, 'querystring' );
-		let redirectPath = `/${ importOrExport }`;
+	page('/settings/:importOrExport(import|export)/:subroute(.*)', (context) => {
+		const importOrExport = get(context, 'params.importOrExport');
+		const subroute = get(context, 'params.subroute');
+		const queryString = get(context, 'querystring');
+		let redirectPath = `/${importOrExport}`;
 
-		if ( subroute ) {
-			redirectPath += `/${ subroute }`;
+		if (subroute) {
+			redirectPath += `/${subroute}`;
 		}
 
-		if ( queryString ) {
-			redirectPath += `?${ queryString }`;
+		if (queryString) {
+			redirectPath += `?${queryString}`;
 		}
 
-		return page.redirect( redirectPath );
-	} );
+		return page.redirect(redirectPath);
+	});
 
 	page(
 		'/settings/delete-site/:site_id',
@@ -114,9 +114,9 @@ export default function() {
 		clientRender
 	);
 
-	page( '/settings/traffic/:site_id', redirectToTraffic );
-	page( '/settings/analytics/:site_id?', redirectToTraffic );
-	page( '/settings/seo/:site_id?', redirectToTraffic );
+	page('/settings/traffic/:site_id', redirectToTraffic);
+	page('/settings/analytics/:site_id?', redirectToTraffic);
+	page('/settings/seo/:site_id?', redirectToTraffic);
 
-	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
+	page('/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender);
 }

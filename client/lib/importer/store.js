@@ -31,7 +31,7 @@ import { createReducerStore } from 'lib/store';
 /**
  * Module variables
  */
-const initialState = Object.freeze( {
+const initialState = Object.freeze({
 	count: 0,
 	importers: {},
 	importerLocks: {},
@@ -40,14 +40,14 @@ const initialState = Object.freeze( {
 		isFetching: false,
 		retryCount: 0,
 	},
-} );
+});
 
-const getImporterItemById = ( state, id ) => get( state, [ 'importers', id ], {} );
+const getImporterItemById = (state, id) => get(state, ['importers', id], {});
 
-const ImporterStore = createReducerStore( function( state, payload ) {
+const ImporterStore = createReducerStore(function (state, payload) {
 	const { action } = payload;
 
-	switch ( action.type ) {
+	switch (action.type) {
 		case IMPORTS_STORE_RESET:
 			// this is here to enable
 			// unit-testing the store
@@ -68,7 +68,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				api: {
 					...state.api,
 					isFetching: false,
-					retryCount: get( state, 'api.retryCount', 0 ) + 1,
+					retryCount: get(state, 'api.retryCount', 0) + 1,
 				},
 			};
 
@@ -87,18 +87,18 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case IMPORTS_IMPORT_RESET:
 			return {
 				...state,
-				importers: omit( state.importers, action.importerId ),
+				importers: omit(state.importers, action.importerId),
 			};
 
 		case IMPORTS_UPLOAD_FAILED: {
 			const { importerId } = action;
-			const importerItem = getImporterItemById( state, importerId );
+			const importerItem = getImporterItemById(state, importerId);
 
 			return {
 				...state,
 				importers: {
 					...state.importers,
-					[ importerId ]: {
+					[importerId]: {
 						...importerItem,
 						importerState: appStates.UPLOAD_FAILURE,
 						errorData: {
@@ -113,20 +113,20 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			return {
 				...state,
 				importers: {
-					...omit( state.importers, action.importerId ),
-					[ action.importerStatus.importerId ]: action.importerStatus,
+					...omit(state.importers, action.importerId),
+					[action.importerStatus.importerId]: action.importerStatus,
 				},
 			};
 
 		case IMPORTS_AUTHORS_START_MAPPING: {
 			const { importerId } = action;
-			const importerItem = getImporterItemById( state, importerId );
+			const importerItem = getImporterItemById(state, importerId);
 
 			return {
 				...state,
 				importers: {
 					...state.importers,
-					[ importerId ]: {
+					[importerId]: {
 						...importerItem,
 						importerState: appStates.MAP_AUTHORS,
 					},
@@ -135,17 +135,17 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		}
 		case IMPORTS_AUTHORS_SET_MAPPING: {
 			const { importerId, sourceAuthor, targetAuthor } = action;
-			const importerItem = getImporterItemById( state, importerId );
+			const importerItem = getImporterItemById(state, importerId);
 
 			return {
 				...state,
 				importers: {
 					...state.importers,
-					[ importerId ]: {
+					[importerId]: {
 						...importerItem,
 						customData: {
 							...importerItem.customData,
-							sourceAuthors: map( get( importerItem, 'customData.sourceAuthors' ), author =>
+							sourceAuthors: map(get(importerItem, 'customData.sourceAuthors'), (author) =>
 								sourceAuthor.id === author.id
 									? {
 											...author,
@@ -166,9 +166,9 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					isHydrated: true,
 				},
 			};
-			const importerId = get( action, 'importerStatus.importerId' );
+			const importerId = get(action, 'importerStatus.importerId');
 
-			if ( get( newState, [ 'importerLocks', importerId ] ) ) {
+			if (get(newState, ['importerLocks', importerId])) {
 				return newState;
 			}
 
@@ -177,10 +177,10 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					// filter the original set of importers...
 					...newState.importers,
 					// ...and the importer being received.
-					[ importerId ]: action.importerStatus,
+					[importerId]: action.importerStatus,
 				},
-				importer =>
-					includes( [ appStates.CANCEL_PENDING, appStates.DEFUNCT ], importer.importerState )
+				(importer) =>
+					includes([appStates.CANCEL_PENDING, appStates.DEFUNCT], importer.importerState)
 			);
 
 			return {
@@ -193,10 +193,9 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				importers: {
 					...state.importers,
-					[ action.importerId ]: {
-						...getImporterItemById( state, action.importerId ),
-						percentComplete:
-							( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100,
+					[action.importerId]: {
+						...getImporterItemById(state, action.importerId),
+						percentComplete: (action.uploadLoaded / (action.uploadTotal + Number.EPSILON)) * 100,
 					},
 				},
 			};
@@ -204,10 +203,10 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case IMPORTS_IMPORT_START:
 			return {
 				...state,
-				count: get( state, 'count', 0 ) + 1,
+				count: get(state, 'count', 0) + 1,
 				importers: {
 					...state.importers,
-					[ action.importerId ]: {
+					[action.importerId]: {
 						importerId: action.importerId,
 						importerState: appStates.READY_FOR_UPLOAD,
 						site: { ID: action.siteId },
@@ -221,8 +220,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				importers: {
 					...state.importers,
-					[ action.importerId ]: {
-						...getImporterItemById( state, action.importerId ),
+					[action.importerId]: {
+						...getImporterItemById(state, action.importerId),
 						importerState: appStates.IMPORTING,
 					},
 				},
@@ -233,8 +232,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				importers: {
 					...state.importers,
-					[ action.importerId ]: {
-						...getImporterItemById( state, action.importerId ),
+					[action.importerId]: {
+						...getImporterItemById(state, action.importerId),
 						importerState: appStates.UPLOADING,
 						filename: action.filename,
 					},
@@ -246,7 +245,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				importerLocks: {
 					...state.importerLocks,
-					[ action.importerId ]: true,
+					[action.importerId]: true,
 				},
 			};
 
@@ -255,13 +254,13 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				importerLocks: {
 					...state.importerLocks,
-					[ action.importerId ]: false,
+					[action.importerId]: false,
 				},
 			};
 	}
 
 	return state;
-}, initialState );
+}, initialState);
 
 export function getState() {
 	return ImporterStore.get();

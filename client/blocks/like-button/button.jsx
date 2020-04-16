@@ -44,18 +44,18 @@ class LikeButton extends PureComponent {
 		slug: null,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		this.toggleLiked = this.toggleLiked.bind( this );
+		this.toggleLiked = this.toggleLiked.bind(this);
 	}
 
-	toggleLiked( event ) {
-		if ( event ) {
+	toggleLiked(event) {
+		if (event) {
 			event.preventDefault();
 		}
-		if ( this.props.onLikeToggle ) {
-			this.props.onLikeToggle( ! this.props.liked );
+		if (this.props.onLikeToggle) {
+			this.props.onLikeToggle(!this.props.liked);
 		}
 	}
 
@@ -80,54 +80,54 @@ class LikeButton extends PureComponent {
 			'has-count': showLikeCount,
 			'has-label': this.props.showLabel,
 		};
-		let likeLabel = translate( 'Like', {
+		let likeLabel = translate('Like', {
 			context: 'verb: imperative',
 			comment: 'Label for a button to "like" a post.',
-		} );
+		});
 
-		if ( this.props.liked ) {
-			containerClasses[ 'is-liked' ] = true;
+		if (this.props.liked) {
+			containerClasses['is-liked'] = true;
 
-			if ( this.props.likedLabel ) {
+			if (this.props.likedLabel) {
 				likeLabel = this.props.likedLabel;
 			} else {
-				likeLabel = translate( 'Liked', { comment: 'Displayed when a person "likes" a post.' } );
+				likeLabel = translate('Liked', { comment: 'Displayed when a person "likes" a post.' });
 			}
 		}
 
 		// Override the label with a counter
-		if ( showLikeCount ) {
-			likeLabel = translate( 'Like', 'Likes', {
+		if (showLikeCount) {
+			likeLabel = translate('Like', 'Likes', {
 				count: likeCount,
 				context: 'noun',
 				comment: 'Number of likes.',
-			} );
+			});
 		}
 
 		const labelElement = (
 			<span className="like-button__label">
-				<span className="like-button__label-count">{ showLikeCount ? likeCount : '' }</span>
-				{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
+				<span className="like-button__label-count">{showLikeCount ? likeCount : ''}</span>
+				{this.props.showLabel && <span className="like-button__label-status">{likeLabel}</span>}
 			</span>
 		);
 
-		const href = isLink ? `/stats/post/${ postId }/${ slug }` : null;
+		const href = isLink ? `/stats/post/${postId}/${slug}` : null;
 		return React.createElement(
 			containerTag,
 			omitBy(
 				{
 					href,
-					className: classNames( containerClasses ),
-					onClick: ! isLink ? this.toggleLiked : null,
+					className: classNames(containerClasses),
+					onClick: !isLink ? this.toggleLiked : null,
 					onMouseEnter,
 					onMouseLeave,
 				},
 				isNull
 			),
-			<LikeIcons size={ this.props.iconSize } />,
+			<LikeIcons size={this.props.iconSize} />,
 			labelElement
 		);
 	}
 }
 
-export default localize( LikeButton );
+export default localize(LikeButton);

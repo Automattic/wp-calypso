@@ -145,7 +145,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	transferStartDate: null,
 	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: false,
-	whoisUpdateUnmodifiableFields: [ 'first_name', 'last_name' ],
+	whoisUpdateUnmodifiableFields: ['first_name', 'last_name'],
 	isWPCOMDomain: true,
 };
 
@@ -263,7 +263,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	supports_transfer_approval: true,
 	tld_maintenance_end_time: 0,
 	type: 'wpcom',
-	whois_update_unmodifiable_fields: [ 'first_name', 'last_name' ],
+	whois_update_unmodifiable_fields: ['first_name', 'last_name'],
 	wpcom_domain: true,
 };
 
@@ -273,7 +273,7 @@ export const REST_API_RESPONSE = {
 		'Content-Type': 'application/json',
 		Date: new Date().toGMTString(),
 	},
-	domains: [ REST_API_SITE_DOMAIN_FIRST ],
+	domains: [REST_API_SITE_DOMAIN_FIRST],
 };
 
 // WP RESP-API response
@@ -283,10 +283,10 @@ export const REST_API_ERROR_RESPONSE = {
 };
 
 // first testing-site domains
-export const SITE_FIRST_DOMAINS = [ createSiteDomainObject( REST_API_SITE_DOMAIN_FIRST ) ];
+export const SITE_FIRST_DOMAINS = [createSiteDomainObject(REST_API_SITE_DOMAIN_FIRST)];
 
 // second testing-site domains
-export const SITE_SECOND_DOMAINS = [ createSiteDomainObject( REST_API_SITE_DOMAIN_SECOND ) ];
+export const SITE_SECOND_DOMAINS = [createSiteDomainObject(REST_API_SITE_DOMAIN_SECOND)];
 
 // actions
 export const ACTION_SITE_DOMAIN_RECEIVE = {
@@ -324,13 +324,13 @@ export const getStateInstance = () => {
 		sites: {
 			domains: {
 				items: {
-					[ SITE_ID_FIRST ]: SITE_FIRST_DOMAINS,
-					[ SITE_ID_SECOND ]: SITE_SECOND_DOMAINS,
+					[SITE_ID_FIRST]: SITE_FIRST_DOMAINS,
+					[SITE_ID_SECOND]: SITE_SECOND_DOMAINS,
 				},
 
 				requesting: {
-					[ SITE_ID_FIRST ]: false,
-					[ SITE_ID_SECOND ]: true,
+					[SITE_ID_FIRST]: false,
+					[SITE_ID_SECOND]: true,
 				},
 			},
 		},

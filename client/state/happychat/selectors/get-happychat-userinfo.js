@@ -8,16 +8,16 @@ import moment from 'moment';
  */
 import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 
-export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
+export default (state) => ({ site, howCanWeHelp, howYouFeel }) => {
 	const info = {
 		howCanWeHelp,
 		howYouFeel,
 		siteId: site.ID,
 		siteUrl: site.URL,
-		localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
+		localDateTime: moment().format('h:mm a, MMMM Do YYYY'),
 	};
 
-	if ( typeof window !== 'undefined' ) {
+	if (typeof window !== 'undefined') {
 		// add screen size
 		info.screenSize = {
 			width: window.screen.width,
@@ -34,8 +34,8 @@ export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 		info.userAgent = window.navigator.userAgent;
 	}
 
-	const geoLocation = getGeoLocation( state );
-	if ( geoLocation ) {
+	const geoLocation = getGeoLocation(state);
+	if (geoLocation) {
 		info.geoLocation = geoLocation;
 	}
 

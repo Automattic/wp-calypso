@@ -19,7 +19,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const requestUserProfileLinks = action =>
+export const requestUserProfileLinks = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -36,15 +36,15 @@ export const requestUserProfileLinks = action =>
  * @param   {Array}  data   Response from the endpoint
  * @returns {object} Dispatched user profile links receive action
  */
-export const handleRequestSuccess = ( action, { profile_links } ) =>
-	receiveUserProfileLinks( profile_links );
+export const handleRequestSuccess = (action, { profile_links }) =>
+	receiveUserProfileLinks(profile_links);
 
-registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/index.js', {
-	[ USER_PROFILE_LINKS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/settings/profile-links/index.js', {
+	[USER_PROFILE_LINKS_REQUEST]: [
+		dispatchRequest({
 			fetch: requestUserProfileLinks,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
-		} ),
+		}),
 	],
-} );
+});

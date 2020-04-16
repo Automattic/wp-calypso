@@ -13,9 +13,9 @@ import { getCurrentUser } from 'state/current-user/selectors';
  * @param {object} state Global state tree
  * @returns {number|boolean} Timestamp registar date, false if cannot be determined
  */
-export default function getCurrentUserRegisterDate( state ) {
-	const user = getCurrentUser( state );
-	const registerDate = user && Date.parse( user.date );
+export default function getCurrentUserRegisterDate(state) {
+	const user = getCurrentUser(state);
+	const registerDate = user && Date.parse(user.date);
 
 	return registerDate ? registerDate : false;
 }

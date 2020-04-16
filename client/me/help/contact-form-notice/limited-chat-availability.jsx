@@ -11,10 +11,10 @@ import 'moment-timezone'; // monkey patches the existing moment.js
  */
 import ContactFormNotice from 'me/help/contact-form-notice/index';
 
-const LimitedChatAvailabilityNotice = ( { showAt, hideAt, compact } ) => {
+const LimitedChatAvailabilityNotice = ({ showAt, hideAt, compact }) => {
 	const translate = useTranslate();
 
-	const heading = translate( 'Limited chat availability' );
+	const heading = translate('Limited chat availability');
 	const message = translate(
 		'{{p}}We’re anticipating that our availability in chat the next few days may be lower than normal. ' +
 			'Our team is working to balance this moving forward so we can continue to support you and your ' +
@@ -27,11 +27,11 @@ const LimitedChatAvailabilityNotice = ( { showAt, hideAt, compact } ) => {
 
 	return (
 		<ContactFormNotice
-			showAt={ showAt }
-			hideAt={ hideAt }
-			heading={ heading }
-			message={ message }
-			compact={ compact }
+			showAt={showAt}
+			hideAt={hideAt}
+			heading={heading}
+			message={message}
+			compact={compact}
 		/>
 	);
 };

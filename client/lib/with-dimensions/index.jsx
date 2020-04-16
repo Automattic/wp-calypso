@@ -35,10 +35,11 @@ const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
  * @param {object} EnhancedComponent - react component to wrap and give the prop width/height to
  * @returns {object} the enhanced component
  */
-export default EnhancedComponent =>
+export default (EnhancedComponent) =>
 	class WithWidth extends React.Component {
-		static displayName = `WithDimensions( ${ EnhancedComponent.displayName ||
-			EnhancedComponent.name } )`;
+		static displayName = `WithDimensions( ${
+			EnhancedComponent.displayName || EnhancedComponent.name
+		} )`;
 		static propTypes = { domTarget: PropTypes.object };
 
 		state = {
@@ -46,12 +47,12 @@ export default EnhancedComponent =>
 			height: 0,
 		};
 
-		handleResize = afterLayoutFlush( ( props = this.props ) => {
+		handleResize = afterLayoutFlush((props = this.props) => {
 			const domElement = props.domTarget || this.setRef || this.divRef;
 
-			if ( domElement ) {
-				const dimensions = domElement.getClientRects()[ 0 ];
-				if ( ! dimensions ) {
+			if (domElement) {
+				const dimensions = domElement.getClientRects()[0];
+				if (!dimensions) {
 					return;
 				}
 
@@ -59,46 +60,43 @@ export default EnhancedComponent =>
 				const overflowX = domElement.scrollWidth > domElement.clientWidth + OVERFLOW_BUFFER;
 				const overflowY = domElement.scrollHeight > domElement.clientHeight + OVERFLOW_BUFFER;
 
-				this.setState( { width, height, overflowX, overflowY } );
+				this.setState({ width, height, overflowX, overflowY });
 			}
-		} );
+		});
 
 		componentDidMount() {
-			this.resizeEventListener = window.addEventListener(
-				'resize',
-				debounce( this.handleResize, 50 )
-			);
+			this.resizeEventListener = window.addEventListener('resize', debounce(this.handleResize, 50));
 			this.handleResize();
 		}
 
-		UNSAFE_componentWillReceiveProps( nextProps ) {
-			this.handleResize( nextProps );
+		UNSAFE_componentWillReceiveProps(nextProps) {
+			this.handleResize(nextProps);
 		}
 
 		componentWillUnmount() {
-			window.removeEventListener( 'resize', this.resizeEventListener );
+			window.removeEventListener('resize', this.resizeEventListener);
 		}
 
-		handleMount = ref => {
+		handleMount = (ref) => {
 			this.divRef = ref;
 			this.handleResize();
 		};
 
-		setWithDimensionsRef = ref => {
+		setWithDimensionsRef = (ref) => {
 			this.setRef = ref;
 			this.handleResize();
 		};
 
 		render() {
 			return (
-				<div ref={ this.handleMount }>
+				<div ref={this.handleMount}>
 					<EnhancedComponent
-						{ ...this.props }
-						width={ this.state.width }
-						height={ this.state.height }
-						overflowX={ this.state.overflowX }
-						overflowY={ this.state.overflowY }
-						setWithDimensionsRef={ this.setWithDimensionsRef }
+						{...this.props}
+						width={this.state.width}
+						height={this.state.height}
+						overflowX={this.state.overflowX}
+						overflowY={this.state.overflowY}
+						setWithDimensionsRef={this.setWithDimensionsRef}
 					/>
 				</div>
 			);

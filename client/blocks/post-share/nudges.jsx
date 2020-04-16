@@ -16,60 +16,60 @@ import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanRawPrice, getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 
-export const UpgradeToPremiumNudgePure = props => {
+export const UpgradeToPremiumNudgePure = (props) => {
 	const { price, planSlug, translate, userCurrency, canUserUpgrade, isJetpack } = props;
 
 	let featureList;
-	if ( isJetpack ) {
+	if (isJetpack) {
 		featureList = [
-			translate( 'Schedule your social messages in advance.' ),
-			translate( 'Easy monetization options' ),
-			translate( 'VideoPress support' ),
-			translate( 'Daily Malware Scanning' ),
+			translate('Schedule your social messages in advance.'),
+			translate('Easy monetization options'),
+			translate('VideoPress support'),
+			translate('Daily Malware Scanning'),
 		];
 	} else {
 		featureList = [
-			translate( 'Schedule your social messages in advance.' ),
-			translate( 'Remove all advertising from your site.' ),
-			translate( 'Enjoy live chat support.' ),
-			translate( 'Easy monetization options' ),
-			translate( 'Unlimited premium themes.' ),
+			translate('Schedule your social messages in advance.'),
+			translate('Remove all advertising from your site.'),
+			translate('Enjoy live chat support.'),
+			translate('Easy monetization options'),
+			translate('Unlimited premium themes.'),
 		];
 	}
 
-	if ( ! canUserUpgrade ) {
+	if (!canUserUpgrade) {
 		return null;
 	}
 
 	return (
 		<Banner
 			className="post-share__actions-list-upgrade-nudge"
-			callToAction={ translate( 'Upgrade for %s', {
-				args: formatCurrency( price, userCurrency ),
+			callToAction={translate('Upgrade for %s', {
+				args: formatCurrency(price, userCurrency),
 				comment: '%s will be replaced by a formatted price, i.e $9.99',
-			} ) }
-			list={ featureList }
-			plan={ planSlug }
-			title={ translate( 'Upgrade to a Premium Plan!' ) }
+			})}
+			list={featureList}
+			plan={planSlug}
+			title={translate('Upgrade to a Premium Plan!')}
 		/>
 	);
 };
 
-const getDiscountedOrRegularPrice = ( state, siteId, plan ) =>
-	getPlanDiscountedRawPrice( state, siteId, plan, { isMonthly: true } ) ||
-	getSitePlanRawPrice( state, siteId, plan, { isMonthly: true } );
+const getDiscountedOrRegularPrice = (state, siteId, plan) =>
+	getPlanDiscountedRawPrice(state, siteId, plan, { isMonthly: true }) ||
+	getSitePlanRawPrice(state, siteId, plan, { isMonthly: true });
 
-export const UpgradeToPremiumNudge = connect( ( state, ownProps ) => {
+export const UpgradeToPremiumNudge = connect((state, ownProps) => {
 	const { isJetpack, siteId } = ownProps;
-	const currentPlanSlug = ( getSitePlan( state, getSelectedSiteId( state ) ) || {} ).product_slug;
-	const proposedPlan = findFirstSimilarPlanKey( currentPlanSlug, {
+	const currentPlanSlug = (getSitePlan(state, getSelectedSiteId(state)) || {}).product_slug;
+	const proposedPlan = findFirstSimilarPlanKey(currentPlanSlug, {
 		type: TYPE_PREMIUM,
-		...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
-	} );
+		...(isJetpack ? { term: TERM_ANNUALLY } : {}),
+	});
 
 	return {
 		planSlug: proposedPlan,
-		price: getDiscountedOrRegularPrice( state, siteId, proposedPlan ),
-		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
+		price: getDiscountedOrRegularPrice(state, siteId, proposedPlan),
+		canUserUpgrade: canCurrentUser(state, siteId, 'manage_options'),
 	};
-} )( UpgradeToPremiumNudgePure );
+})(UpgradeToPremiumNudgePure);

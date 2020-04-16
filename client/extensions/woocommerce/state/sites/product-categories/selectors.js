@@ -14,8 +14,8 @@ import { getSerializedProductCategoriesQuery } from './utils';
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object} State tree local to product categories reducer
  */
-function getRawCategoryState( state, siteId = getSelectedSiteId( state ) ) {
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'productCategories' ], {} );
+function getRawCategoryState(state, siteId = getSelectedSiteId(state)) {
+	return get(state, ['extensions', 'woocommerce', 'sites', siteId, 'productCategories'], {});
 }
 
 /**
@@ -24,16 +24,12 @@ function getRawCategoryState( state, siteId = getSelectedSiteId( state ) ) {
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether product categories have been successfully loaded from the server
  */
-export function areProductCategoriesLoaded(
-	state,
-	query = {},
-	siteId = getSelectedSiteId( state )
-) {
-	const serializedQuery = getSerializedProductCategoriesQuery( query );
-	const categoryState = getRawCategoryState( state, siteId );
-	const cats = categoryState.queries && categoryState.queries[ serializedQuery ];
+export function areProductCategoriesLoaded(state, query = {}, siteId = getSelectedSiteId(state)) {
+	const serializedQuery = getSerializedProductCategoriesQuery(query);
+	const categoryState = getRawCategoryState(state, siteId);
+	const cats = categoryState.queries && categoryState.queries[serializedQuery];
 
-	return isArray( cats );
+	return isArray(cats);
 }
 
 /**
@@ -42,14 +38,10 @@ export function areProductCategoriesLoaded(
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether product categories are currently being retrieved from the server
  */
-export function areProductCategoriesLoading(
-	state,
-	query = {},
-	siteId = getSelectedSiteId( state )
-) {
-	const serializedQuery = getSerializedProductCategoriesQuery( query );
-	const categoryState = getRawCategoryState( state, siteId );
-	const isLoading = categoryState.isQueryLoading && categoryState.isQueryLoading[ serializedQuery ];
+export function areProductCategoriesLoading(state, query = {}, siteId = getSelectedSiteId(state)) {
+	const serializedQuery = getSerializedProductCategoriesQuery(query);
+	const categoryState = getRawCategoryState(state, siteId);
+	const isLoading = categoryState.isQueryLoading && categoryState.isQueryLoading[serializedQuery];
 	// Strict check because it could also be undefined.
 	return true === isLoading;
 }
@@ -61,9 +53,9 @@ export function areProductCategoriesLoading(
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean}       Returns true if currently requesting product categories for any query
  */
-export function areAnyProductCategoriesLoading( state, siteId = getSelectedSiteId( state ) ) {
-	const categoryState = getRawCategoryState( state, siteId );
-	return some( categoryState.isQueryLoading );
+export function areAnyProductCategoriesLoading(state, siteId = getSelectedSiteId(state)) {
+	const categoryState = getRawCategoryState(state, siteId);
+	return some(categoryState.isQueryLoading);
 }
 
 /**
@@ -74,13 +66,13 @@ export function areAnyProductCategoriesLoading( state, siteId = getSelectedSiteI
  * @param {number} siteId wpcom site id
  * @returns {object|null} Product category if found, otherwise null.
  */
-export function getProductCategory( state, categoryId, siteId = getSelectedSiteId( state ) ) {
-	const categoryState = getRawCategoryState( state, siteId );
-	const category = categoryState.items && categoryState.items[ categoryId ];
-	if ( ! category ) {
+export function getProductCategory(state, categoryId, siteId = getSelectedSiteId(state)) {
+	const categoryState = getRawCategoryState(state, siteId);
+	const category = categoryState.items && categoryState.items[categoryId];
+	if (!category) {
 		return null;
 	}
-	const label = getProductCategoryLabel( state, categoryId, siteId );
+	const label = getProductCategoryLabel(state, categoryId, siteId);
 	return { ...category, label };
 }
 
@@ -92,16 +84,16 @@ export function getProductCategory( state, categoryId, siteId = getSelectedSiteI
  * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @returns {Array} List of product categories
  */
-export function getProductCategories( state, query = {}, siteId = getSelectedSiteId( state ) ) {
-	if ( ! areProductCategoriesLoaded( state, query, siteId ) ) {
+export function getProductCategories(state, query = {}, siteId = getSelectedSiteId(state)) {
+	if (!areProductCategoriesLoaded(state, query, siteId)) {
 		return [];
 	}
-	const serializedQuery = getSerializedProductCategoriesQuery( query );
-	const categoryState = getRawCategoryState( state, siteId );
-	const idsForQuery = categoryState.queries && categoryState.queries[ serializedQuery ];
+	const serializedQuery = getSerializedProductCategoriesQuery(query);
+	const categoryState = getRawCategoryState(state, siteId);
+	const idsForQuery = categoryState.queries && categoryState.queries[serializedQuery];
 
-	if ( idsForQuery.length ) {
-		return idsForQuery.map( id => getProductCategory( state, id, siteId ) );
+	if (idsForQuery.length) {
+		return idsForQuery.map((id) => getProductCategory(state, id, siteId));
 	}
 
 	return [];
@@ -115,10 +107,10 @@ export function getProductCategories( state, query = {}, siteId = getSelectedSit
  * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @returns {Array} List of product categories
  */
-export function getAllProductCategories( state, siteId = getSelectedSiteId( state ) ) {
-	const categoryState = getRawCategoryState( state, siteId );
-	const items = values( categoryState.items ) || [];
-	return items.map( cat => getProductCategory( state, cat.id, siteId ) );
+export function getAllProductCategories(state, siteId = getSelectedSiteId(state)) {
+	const categoryState = getRawCategoryState(state, siteId);
+	const items = values(categoryState.items) || [];
+	return items.map((cat) => getProductCategory(state, cat.id, siteId));
 }
 
 /**
@@ -130,25 +122,21 @@ export function getAllProductCategories( state, siteId = getSelectedSiteId( stat
  * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @returns {Array} List of product categories for a search query
  */
-export function getAllProductCategoriesBySearch(
-	state,
-	search,
-	siteId = getSelectedSiteId( state )
-) {
-	const lastPage = getProductCategoriesLastPage( state, { search }, siteId );
-	if ( null === lastPage ) {
+export function getAllProductCategoriesBySearch(state, search, siteId = getSelectedSiteId(state)) {
+	const lastPage = getProductCategoriesLastPage(state, { search }, siteId);
+	if (null === lastPage) {
 		return [];
 	}
 
 	const result = [];
-	range( 1, lastPage + 1 ).some( page => {
+	range(1, lastPage + 1).some((page) => {
 		const query = {
 			search,
 			page,
 		};
-		const categories = getProductCategories( state, query, siteId );
-		result.push( ...categories );
-	} );
+		const categories = getProductCategories(state, query, siteId);
+		result.push(...categories);
+	});
 
 	return result;
 }
@@ -159,16 +147,10 @@ export function getAllProductCategoriesBySearch(
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number|null} Total number of pages available for a query, or null if not loaded yet.
  */
-export function getProductCategoriesLastPage(
-	state,
-	query = {},
-	siteId = getSelectedSiteId( state )
-) {
-	const serializedQuery = getSerializedProductCategoriesQuery(
-		omit( query, [ 'page', 'offset' ] )
-	);
-	const categoryState = getRawCategoryState( state, siteId );
-	return ( categoryState.totalPages && categoryState.totalPages[ serializedQuery ] ) || null;
+export function getProductCategoriesLastPage(state, query = {}, siteId = getSelectedSiteId(state)) {
+	const serializedQuery = getSerializedProductCategoriesQuery(omit(query, ['page', 'offset']));
+	const categoryState = getRawCategoryState(state, siteId);
+	return (categoryState.totalPages && categoryState.totalPages[serializedQuery]) || null;
 }
 
 /**
@@ -177,16 +159,10 @@ export function getProductCategoriesLastPage(
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number} Total number of product categories available for a query, or 0 if not loaded yet.
  */
-export function getTotalProductCategories(
-	state,
-	query = {},
-	siteId = getSelectedSiteId( state )
-) {
-	const serializedQuery = getSerializedProductCategoriesQuery(
-		omit( query, [ 'page', 'offset' ] )
-	);
-	const categoryState = getRawCategoryState( state, siteId );
-	return ( categoryState.total && categoryState.total[ serializedQuery ] ) || 0;
+export function getTotalProductCategories(state, query = {}, siteId = getSelectedSiteId(state)) {
+	const serializedQuery = getSerializedProductCategoriesQuery(omit(query, ['page', 'offset']));
+	const categoryState = getRawCategoryState(state, siteId);
+	return (categoryState.total && categoryState.total[serializedQuery]) || 0;
 }
 
 /*
@@ -197,15 +173,15 @@ export function getTotalProductCategories(
  * @param {number} [siteId] wpcom site id, if not provided, uses the selected site id.
  * @returns {string} Label of given category, with all parents included
  */
-function getProductCategoryLabel( state, categoryId, siteId = getSelectedSiteId( state ) ) {
-	const categoryState = getRawCategoryState( state, siteId );
+function getProductCategoryLabel(state, categoryId, siteId = getSelectedSiteId(state)) {
+	const categoryState = getRawCategoryState(state, siteId);
 	const categories = categoryState.items || {};
-	const category = categories[ categoryId ];
-	if ( ! category ) {
+	const category = categories[categoryId];
+	if (!category) {
 		return '';
 	}
-	if ( ! Number( category.parent ) ) {
+	if (!Number(category.parent)) {
 		return category.name;
 	}
-	return getProductCategoryLabel( state, category.parent, siteId ) + ` - ${ category.name }`;
+	return getProductCategoryLabel(state, category.parent, siteId) + ` - ${category.name}`;
 }

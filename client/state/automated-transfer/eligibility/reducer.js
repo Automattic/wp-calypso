@@ -15,12 +15,12 @@ const initialState = {
 	lastUpdate: 0,
 };
 
-const eligibilityReducer = ( state = initialState, action ) => {
-	switch ( action.type ) {
+const eligibilityReducer = (state = initialState, action) => {
+	switch (action.type) {
 		case UPDATE:
 			return {
-				eligibilityHolds: sortBy( action.eligibilityHolds ),
-				eligibilityWarnings: sortBy( action.eligibilityWarnings, property( 'name' ) ),
+				eligibilityHolds: sortBy(action.eligibilityHolds),
+				eligibilityWarnings: sortBy(action.eligibilityWarnings, property('name')),
 				lastUpdate: action.lastUpdate,
 			};
 	}

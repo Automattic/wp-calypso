@@ -47,54 +47,54 @@ class SocialLogin extends Component {
 
 		return (
 			<div>
-				{ errorUpdatingSocialConnection && (
-					<Notice status={ 'is-error' } showDismiss={ false }>
-						{ errorUpdatingSocialConnection.message }
+				{errorUpdatingSocialConnection && (
+					<Notice status={'is-error'} showDismiss={false}>
+						{errorUpdatingSocialConnection.message}
 					</Notice>
-				) }
+				)}
 
 				<CompactCard>
-					{ translate(
+					{translate(
 						'You’ll be able to log in faster by linking your WordPress.com account with the following ' +
 							'third-party services. We’ll never post without your permission.'
-					) }
+					)}
 				</CompactCard>
 
-				<SocialLoginService service="google" icon={ <GoogleIcon /> } />
+				<SocialLoginService service="google" icon={<GoogleIcon />} />
 
-				{ config.isEnabled( 'sign-in-with-apple' ) && (
+				{config.isEnabled('sign-in-with-apple') && (
 					<SocialLoginService
 						service="apple"
-						icon={ <AppleIcon /> }
-						redirectUri={ redirectUri }
+						icon={<AppleIcon />}
+						redirectUri={redirectUri}
 						socialServiceResponse={
 							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 						}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}
 
 	render() {
-		const title = this.props.translate( 'Social Login' );
+		const title = this.props.translate('Social Login');
 
 		return (
 			<Main className="social-login">
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
-				<DocumentHead title={ title } />
+				<DocumentHead title={title} />
 				<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
+				<SecuritySectionNav path={this.props.path} />
 
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 
-				{ this.renderContent() }
+				{this.renderContent()}
 			</Main>
 		);
 	}
 }
 
-export default connect( state => ( {
-	errorUpdatingSocialConnection: getRequestError( state ),
-} ) )( localize( SocialLogin ) );
+export default connect((state) => ({
+	errorUpdatingSocialConnection: getRequestError(state),
+}))(localize(SocialLogin));

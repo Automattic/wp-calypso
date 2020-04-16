@@ -29,12 +29,12 @@ class AutoRenewPaymentMethodDialog extends Component {
 		const buttons = [
 			{
 				action: 'close',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 				onClick: this.props.onClose,
 			},
 			{
 				action: 'add',
-				label: translate( 'Add a payment method' ),
+				label: translate('Add a payment method'),
 				onClick: this.props.onAddClick,
 				isPrimary: true,
 			},
@@ -42,23 +42,23 @@ class AutoRenewPaymentMethodDialog extends Component {
 
 		return (
 			<Dialog
-				isVisible={ isVisible }
+				isVisible={isVisible}
 				additionalClassNames="auto-renew-payment-method-dialog"
-				onClose={ this.props.onClose }
-				buttons={ buttons }
+				onClose={this.props.onClose}
+				buttons={buttons}
 			>
 				<h2 className="auto-renew-payment-method-dialog__header">
-					{ translate( 'Turn on auto-renew' ) }
+					{translate('Turn on auto-renew')}
 				</h2>
 				<p>
-					{ translate(
+					{translate(
 						"We currently don't have any payment details on file for this purchase to automatically renew it " +
 							'for you. Please add a payment method so we can continue your service without interruptions.'
-					) }
+					)}
 				</p>
 			</Dialog>
 		);
 	}
 }
 
-export default localize( AutoRenewPaymentMethodDialog );
+export default localize(AutoRenewPaymentMethodDialog);

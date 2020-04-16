@@ -35,41 +35,41 @@ class FormWeightInput extends Component {
 	componentDidMount() {
 		const { siteId } = this.props;
 
-		if ( siteId ) {
-			this.props.fetchSettingsProducts( siteId );
+		if (siteId) {
+			this.props.fetchSettingsProducts(siteId);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.props.fetchSettingsProducts( newProps.siteId );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		if (newProps.siteId !== this.props.siteId) {
+			this.props.fetchSettingsProducts(newProps.siteId);
 		}
 	}
 
 	render() {
 		const { className, weightUnit, value, onChange, noWrap } = this.props;
-		const classes = classNames( 'form-weight-input', className, { 'no-wrap': noWrap } );
+		const classes = classNames('form-weight-input', className, { 'no-wrap': noWrap });
 
 		return (
 			<FormTextInputWithAffixes
 				noWrap
 				name="weight"
 				min="0"
-				suffix={ weightUnit }
+				suffix={weightUnit}
 				type="number"
-				value={ value || '' }
-				onChange={ onChange }
-				className={ classes }
+				value={value || ''}
+				onChange={onChange}
+				className={classes}
 				size="4"
 			/>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
-	const weightUnitSetting = site && getWeightUnitSetting( state, site.ID );
-	const weightUnit = ( weightUnitSetting && weightUnitSetting.value ) || 'lbs';
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
+	const weightUnitSetting = site && getWeightUnitSetting(state, site.ID);
+	const weightUnit = (weightUnitSetting && weightUnitSetting.value) || 'lbs';
 
 	return {
 		siteId: site && site.ID,
@@ -77,7 +77,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			fetchSettingsProducts,
@@ -86,4 +86,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( FormWeightInput );
+export default connect(mapStateToProps, mapDispatchToProps)(FormWeightInput);

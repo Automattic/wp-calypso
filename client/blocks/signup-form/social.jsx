@@ -30,8 +30,8 @@ class SocialSignupForm extends Component {
 		compact: false,
 	};
 
-	handleAppleResponse = response => {
-		if ( ! response.id_token ) {
+	handleAppleResponse = (response) => {
+		if (!response.id_token) {
 			return;
 		}
 
@@ -40,31 +40,31 @@ class SocialSignupForm extends Component {
 			user_email: response.user.email,
 		};
 
-		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
+		this.props.handleResponse('apple', null, response.id_token, extraUserData);
 	};
 
-	handleGoogleResponse = ( response, triggeredByUser = true ) => {
-		if ( ! response.getAuthResponse ) {
+	handleGoogleResponse = (response, triggeredByUser = true) => {
+		if (!response.getAuthResponse) {
 			return;
 		}
 
 		const tokens = response.getAuthResponse();
 
-		if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
+		if (!tokens || !tokens.access_token || !tokens.id_token) {
 			return;
 		}
 
-		if ( ! triggeredByUser && this.props.socialService !== 'google' ) {
+		if (!triggeredByUser && this.props.socialService !== 'google') {
 			return;
 		}
 
-		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
+		this.props.handleResponse('google', tokens.access_token, tokens.id_token);
 	};
 
-	trackSocialLogin = service => {
-		this.props.recordTracksEvent( 'calypso_login_social_button_click', {
+	trackSocialLogin = (service) => {
+		this.props.recordTracksEvent('calypso_login_social_button_click', {
 			social_account_type: service,
-		} );
+		});
 	};
 
 	shouldUseRedirectFlow() {
@@ -76,7 +76,7 @@ class SocialSignupForm extends Component {
 
 		// Jetpack Connect-in-place auth flow contains special reserved args, so we want a popup for social signup.
 		// See p1HpG7-7nj-p2 for more information.
-		if ( isPopup && '/jetpack/connect/authorize' === currentRoute ) {
+		if (isPopup && '/jetpack/connect/authorize' === currentRoute) {
 			isPopup = false;
 		}
 
@@ -86,40 +86,40 @@ class SocialSignupForm extends Component {
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
 		const host = typeof window !== 'undefined' && window.location.host;
-		const redirectUri = `https://${ host }/start/user`;
-		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
+		const redirectUri = `https://${host}/start/user`;
+		const uxModeApple = config.isEnabled('sign-in-with-apple/redirect') ? 'redirect' : uxMode;
 
 		return (
 			<div className="signup-form__social">
-				{ ! this.props.compact && (
-					<p>{ preventWidows( this.props.translate( 'Or create an account using:' ) ) }</p>
-				) }
+				{!this.props.compact && (
+					<p>{preventWidows(this.props.translate('Or create an account using:'))}</p>
+				)}
 
 				<div className="signup-form__social-buttons">
 					<GoogleLoginButton
-						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ this.handleGoogleResponse }
-						uxMode={ uxMode }
-						redirectUri={ redirectUri }
-						onClick={ () => this.trackSocialLogin( 'google' ) }
+						clientId={config('google_oauth_client_id')}
+						responseHandler={this.handleGoogleResponse}
+						uxMode={uxMode}
+						redirectUri={redirectUri}
+						onClick={() => this.trackSocialLogin('google')}
 						socialServiceResponse={
 							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 						}
 					/>
 
 					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
-						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ redirectUri }
-						onClick={ () => this.trackSocialLogin( 'apple' ) }
+						clientId={config('apple_oauth_client_id')}
+						responseHandler={this.handleAppleResponse}
+						uxMode={uxModeApple}
+						redirectUri={redirectUri}
+						onClick={() => this.trackSocialLogin('apple')}
 						socialServiceResponse={
 							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 						}
 					/>
 
 					<p className="signup-form__social-buttons-tos">
-						{ this.props.translate(
+						{this.props.translate(
 							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
 								' are creating an account and you agree to our' +
 								' {{a}}Terms of Service{{/a}}.',
@@ -127,14 +127,14 @@ class SocialSignupForm extends Component {
 								components: {
 									a: (
 										<a
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											href={localizeUrl('https://wordpress.com/tos/')}
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
 									),
 								},
 							}
-						) }
+						)}
 					</p>
 				</div>
 			</div>
@@ -143,8 +143,8 @@ class SocialSignupForm extends Component {
 }
 
 export default connect(
-	state => ( {
-		currentRoute: getCurrentRoute( state ),
-	} ),
+	(state) => ({
+		currentRoute: getCurrentRoute(state),
+	}),
 	{ recordTracksEvent }
-)( localize( SocialSignupForm ) );
+)(localize(SocialSignupForm));

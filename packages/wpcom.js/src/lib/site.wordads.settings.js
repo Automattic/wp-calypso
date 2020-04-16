@@ -5,9 +5,9 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {null} null
  */
-export default function SiteWordAdsSettings( sid, wpcom ) {
-	if ( ! ( this instanceof SiteWordAdsSettings ) ) {
-		return new SiteWordAdsSettings( sid, wpcom );
+export default function SiteWordAdsSettings(sid, wpcom) {
+	if (!(this instanceof SiteWordAdsSettings)) {
+		return new SiteWordAdsSettings(sid, wpcom);
 	}
 
 	this._sid = sid;
@@ -31,8 +31,8 @@ export default function SiteWordAdsSettings( sid, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-SiteWordAdsSettings.prototype.get = function( query, fn ) {
-	return this.wpcom.req.get( '/sites/' + this._sid + '/wordads/settings', query, fn );
+SiteWordAdsSettings.prototype.get = function (query, fn) {
+	return this.wpcom.req.get('/sites/' + this._sid + '/wordads/settings', query, fn);
 };
 
 /**
@@ -55,7 +55,7 @@ SiteWordAdsSettings.prototype.get = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-SiteWordAdsSettings.prototype.update = function( query, body, fn ) {
+SiteWordAdsSettings.prototype.update = function (query, body, fn) {
 	var path = '/sites/' + this._sid + '/wordads/settings';
-	return this.wpcom.req.post( path, query, body, fn );
+	return this.wpcom.req.post(path, query, body, fn);
 };

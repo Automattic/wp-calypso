@@ -13,11 +13,11 @@ import getMediaItem from 'state/selectors/get-media-item';
  * @param  {number}  mediaId Media ID
  * @returns {?string}         Media URL, if known
  */
-export default function getMediaUrl( state, siteId, mediaId ) {
-	const media = getMediaItem( state, siteId, mediaId );
-	if ( ! media ) {
+export default function getMediaUrl(state, siteId, mediaId) {
+	const media = getMediaItem(state, siteId, mediaId);
+	if (!media) {
 		return null;
 	}
 
-	return safeImageUrl( media.URL );
+	return safeImageUrl(media.URL);
 }

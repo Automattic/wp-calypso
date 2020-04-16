@@ -24,77 +24,77 @@ class SharingButtonsStyle extends React.Component {
 	};
 
 	static defaultProps = {
-		onChange: function() {},
+		onChange: function () {},
 		disabled: false,
 	};
 
-	onChange = value => {
+	onChange = (value) => {
 		const { path } = this.props;
 
-		this.props.onChange( value );
-		analytics.tracks.recordEvent( 'calypso_sharing_buttons_style_radio_button_click', {
+		this.props.onChange(value);
+		analytics.tracks.recordEvent('calypso_sharing_buttons_style_radio_button_click', {
 			value,
 			path,
-		} );
-		gaRecordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
+		});
+		gaRecordEvent('Sharing', 'Clicked Button Style Radio Button', value);
 	};
 
 	getOptions = () => {
 		return [
 			{
 				value: 'icon-text',
-				label: this.props.translate( 'Icon & Text', {
+				label: this.props.translate('Icon & Text', {
 					context: 'Sharing: Sharing button option label',
-				} ),
+				}),
 			},
 			{
 				value: 'icon',
-				label: this.props.translate( 'Icon Only', {
+				label: this.props.translate('Icon Only', {
 					context: 'Sharing: Sharing button option label',
-				} ),
+				}),
 			},
 			{
 				value: 'text',
-				label: this.props.translate( 'Text Only', {
+				label: this.props.translate('Text Only', {
 					context: 'Sharing: Sharing button option label',
-				} ),
+				}),
 			},
 			{
 				value: 'official',
-				label: this.props.translate( 'Official Buttons', {
+				label: this.props.translate('Official Buttons', {
 					context: 'Sharing: Sharing button option label',
-				} ),
+				}),
 			},
-		].map( function( option ) {
+		].map(function (option) {
 			return (
-				<label key={ option.value }>
+				<label key={option.value}>
 					<input
 						name="sharing_button_style"
 						type="radio"
-						checked={ option.value === this.props.value }
-						onChange={ this.onChange.bind( null, option.value ) }
-						disabled={ this.props.disabled }
+						checked={option.value === this.props.value}
+						onChange={this.onChange.bind(null, option.value)}
+						disabled={this.props.disabled}
 					/>
-					{ option.label }
+					{option.label}
 				</label>
 			);
-		}, this );
+		}, this);
 	};
 
 	render() {
 		return (
 			<fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
-					{ this.props.translate( 'Button style', {
+					{this.props.translate('Button style', {
 						context: 'Sharing: Sharing button option heading',
-					} ) }
+					})}
 				</legend>
-				{ this.getOptions() }
+				{this.getOptions()}
 			</fieldset>
 		);
 	}
 }
 
-export default connect( state => {
-	return { path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ) };
-} )( localize( SharingButtonsStyle ) );
+export default connect((state) => {
+	return { path: getCurrentRouteParameterized(state, getSelectedSiteId(state)) };
+})(localize(SharingButtonsStyle));

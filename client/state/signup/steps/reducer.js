@@ -12,7 +12,7 @@ import siteVertical from './site-vertical/reducer';
 import { combineReducers } from 'state/utils';
 import survey from './survey/reducer';
 
-export default combineReducers( {
+export default combineReducers({
 	designType,
 	siteTitle,
 	siteGoals,
@@ -21,4 +21,4 @@ export default combineReducers( {
 	siteType,
 	siteVertical,
 	survey,
-} );
+});

@@ -9,10 +9,10 @@ import { get, isObject } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-const getShippingMethodSchemas = ( state, siteId = getSelectedSiteId( state ) ) => {
+const getShippingMethodSchemas = (state, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingMethodSchemas' ],
+		['extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingMethodSchemas'],
 		{}
 	);
 };
@@ -26,9 +26,9 @@ const getShippingMethodSchemas = ( state, siteId = getSelectedSiteId( state ) ) 
 export const isShippingMethodSchemaLoaded = (
 	state,
 	methodId,
-	siteId = getSelectedSiteId( state )
+	siteId = getSelectedSiteId(state)
 ) => {
-	return isObject( getShippingMethodSchemas( state, siteId )[ methodId ] );
+	return isObject(getShippingMethodSchemas(state, siteId)[methodId]);
 };
 
 /**
@@ -37,9 +37,9 @@ export const isShippingMethodSchemaLoaded = (
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object|null} The shipping method schema object, or "null" if the schema hasn't been retrieved yet
  */
-export const getShippingMethodSchema = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
-	return isShippingMethodSchemaLoaded( state, methodId, siteId )
-		? getShippingMethodSchemas( state, siteId )[ methodId ]
+export const getShippingMethodSchema = (state, methodId, siteId = getSelectedSiteId(state)) => {
+	return isShippingMethodSchemaLoaded(state, methodId, siteId)
+		? getShippingMethodSchemas(state, siteId)[methodId]
 		: null;
 };
 
@@ -52,7 +52,7 @@ export const getShippingMethodSchema = ( state, methodId, siteId = getSelectedSi
 export const isShippingMethodSchemaLoading = (
 	state,
 	methodId,
-	siteId = getSelectedSiteId( state )
+	siteId = getSelectedSiteId(state)
 ) => {
-	return LOADING === getShippingMethodSchemas( state, siteId )[ methodId ];
+	return LOADING === getShippingMethodSchemas(state, siteId)[methodId];
 };

@@ -31,20 +31,16 @@ export class CommentContent extends Component {
 	renderInReplyTo = () => {
 		const { commentId, isBulkMode, parentCommentContent, parentCommentUrl, translate } = this.props;
 
-		if ( ! parentCommentContent ) {
+		if (!parentCommentContent) {
 			return null;
 		}
 
 		return (
 			<div className="comment__in-reply-to">
-				{ isBulkMode && <Gridicon icon="reply" size={ 18 } /> }
-				<span>{ translate( 'In reply to:' ) }</span>
-				<CommentLink
-					commentId={ commentId }
-					href={ parentCommentUrl }
-					tabIndex={ isBulkMode ? -1 : 0 }
-				>
-					<Emojify>{ parentCommentContent }</Emojify>
+				{isBulkMode && <Gridicon icon="reply" size={18} />}
+				<span>{translate('In reply to:')}</span>
+				<CommentLink commentId={commentId} href={parentCommentUrl} tabIndex={isBulkMode ? -1 : 0}>
+					<Emojify>{parentCommentContent}</Emojify>
 				</CommentLink>
 			</div>
 		);
@@ -65,76 +61,76 @@ export class CommentContent extends Component {
 		} = this.props;
 		return (
 			<div className="comment__content">
-				{ ! isParentCommentLoaded && (
-					<QueryComment commentId={ parentCommentId } siteId={ siteId } forceWpcom />
-				) }
+				{!isParentCommentLoaded && (
+					<QueryComment commentId={parentCommentId} siteId={siteId} forceWpcom />
+				)}
 
-				{ isBulkMode && (
+				{isBulkMode && (
 					<div className="comment__content-preview">
-						{ this.renderInReplyTo() }
+						{this.renderInReplyTo()}
 
 						<AutoDirection>
-							<Emojify>{ decodeEntities( stripHTML( commentContent ) ) }</Emojify>
+							<Emojify>{decodeEntities(stripHTML(commentContent))}</Emojify>
 						</AutoDirection>
 					</div>
-				) }
+				)}
 
-				{ ! isBulkMode && (
+				{!isBulkMode && (
 					<div className="comment__content-full">
-						{ ( parentCommentContent || ! isPostView || 'approved' !== commentStatus ) && (
+						{(parentCommentContent || !isPostView || 'approved' !== commentStatus) && (
 							<div className="comment__content-info">
-								{ 'unapproved' === commentStatus && (
-									<div className="comment__status-label is-pending">{ translate( 'Pending' ) }</div>
-								) }
-								{ 'spam' === commentStatus && (
-									<div className="comment__status-label is-spam">{ translate( 'Spam' ) }</div>
-								) }
-								{ 'trash' === commentStatus && (
-									<div className="comment__status-label is-trash">{ translate( 'Trash' ) }</div>
-								) }
+								{'unapproved' === commentStatus && (
+									<div className="comment__status-label is-pending">{translate('Pending')}</div>
+								)}
+								{'spam' === commentStatus && (
+									<div className="comment__status-label is-spam">{translate('Spam')}</div>
+								)}
+								{'trash' === commentStatus && (
+									<div className="comment__status-label is-trash">{translate('Trash')}</div>
+								)}
 
-								{ ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
+								{!isPostView && <CommentPostLink {...{ commentId, isBulkMode }} />}
 
-								{ this.renderInReplyTo() }
+								{this.renderInReplyTo()}
 							</div>
-						) }
+						)}
 
 						<AutoDirection>
 							<Emojify>
 								<div
 									className="comment__content-body"
-									dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
+									dangerouslySetInnerHTML={{ __html: commentContent }} //eslint-disable-line react/no-danger
 								/>
 							</Emojify>
 						</AutoDirection>
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { commentId } ) => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-	const isJetpack = isJetpackSite( state, siteId );
+const mapStateToProps = (state, { commentId }) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSelectedSiteSlug(state);
+	const isJetpack = isJetpackSite(state, siteId);
 
-	const comment = getSiteComment( state, siteId, commentId );
-	const postId = get( comment, 'post.ID' );
+	const comment = getSiteComment(state, siteId, commentId);
+	const postId = get(comment, 'post.ID');
 
-	const parentComment = getParentComment( state, siteId, postId, commentId );
-	const parentCommentId = get( comment, 'parent.ID', 0 );
-	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
+	const parentComment = getParentComment(state, siteId, postId, commentId);
+	const parentCommentId = get(comment, 'parent.ID', 0);
+	const parentCommentContent = decodeEntities(stripHTML(get(parentComment, 'content')));
 
 	const parentCommentUrl = isJetpack
-		? get( parentComment, 'URL' )
-		: `/comment/${ siteSlug }/${ parentCommentId }`;
+		? get(parentComment, 'URL')
+		: `/comment/${siteSlug}/${parentCommentId}`;
 
 	return {
-		commentContent: get( comment, 'content' ),
-		commentStatus: get( comment, 'status' ),
+		commentContent: get(comment, 'content'),
+		commentStatus: get(comment, 'status'),
 		isJetpack,
-		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
+		isParentCommentLoaded: !parentCommentId || !!parentCommentContent,
 		parentCommentContent,
 		parentCommentId,
 		parentCommentUrl,
@@ -143,4 +139,4 @@ const mapStateToProps = ( state, { commentId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentContent ) );
+export default connect(mapStateToProps)(localize(CommentContent));

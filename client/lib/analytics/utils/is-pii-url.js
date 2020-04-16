@@ -23,9 +23,9 @@ const forbiddenPiiPatterns = [
 	'phone=',
 ];
 
-const forbiddenPiiPatternsEnc = forbiddenPiiPatterns.map( pattern => {
-	return encodeURIComponent( pattern );
-} );
+const forbiddenPiiPatternsEnc = forbiddenPiiPatterns.map((pattern) => {
+	return encodeURIComponent(pattern);
+});
 
 /**
  * Whether the current URL can potentially contain personally identifiable info.
@@ -34,9 +34,9 @@ const forbiddenPiiPatternsEnc = forbiddenPiiPatterns.map( pattern => {
  */
 export default function isPiiUrl() {
 	const href = document.location.href;
-	const match = pattern => href.indexOf( pattern ) !== -1;
-	const result = forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
+	const match = (pattern) => href.indexOf(pattern) !== -1;
+	const result = forbiddenPiiPatterns.some(match) || forbiddenPiiPatternsEnc.some(match);
 
-	debug( `Is PII URL: ${ result }` );
+	debug(`Is PII URL: ${result}`);
 	return result;
 }

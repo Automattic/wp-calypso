@@ -22,10 +22,10 @@ import 'state/themes/init';
  *                         `independent-publisher-2` or `maywood`.
  * @returns {boolean} True if the theme should be edited with gutenberg.
  */
-export function isThemeGutenbergFirst( state, themeId ) {
-	const theme = getTheme( state, 'wpcom', themeId );
-	const themeFeatures = getThemeTaxonomySlugs( theme, 'theme_feature' );
-	const neededFeatures = [ 'global-styles', 'auto-loading-homepage' ];
+export function isThemeGutenbergFirst(state, themeId) {
+	const theme = getTheme(state, 'wpcom', themeId);
+	const themeFeatures = getThemeTaxonomySlugs(theme, 'theme_feature');
+	const neededFeatures = ['global-styles', 'auto-loading-homepage'];
 	// The theme should have a positive number of matching features to qualify.
-	return !! intersection( themeFeatures, neededFeatures ).length;
+	return !!intersection(themeFeatures, neededFeatures).length;
 }

@@ -24,16 +24,16 @@ import { contextTypes } from '../context-types';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
 import { TimestampMS } from 'client/types';
 
-const debug = debugFactory( 'calypso:guided-tours' );
+const debug = debugFactory('calypso:guided-tours');
 
-const anyFrom = obj => {
-	const key = Object.keys( obj )[ 0 ];
-	return key && obj[ key ];
+const anyFrom = (obj) => {
+	const key = Object.keys(obj)[0];
+	return key && obj[key];
 };
 
 interface RequiredProps {
 	name: string;
-	children: FunctionComponent< { translate: typeof translate } >;
+	children: FunctionComponent<{ translate: typeof translate }>;
 }
 
 interface AcceptedProps {
@@ -64,7 +64,7 @@ interface State {
 
 type Props = RequiredProps & AcceptedProps & DefaultProps;
 
-export default class Step extends Component< Props, State > {
+export default class Step extends Component<Props, State> {
 	static displayName = 'Step';
 
 	static defaultProps = {
@@ -79,7 +79,7 @@ export default class Step extends Component< Props, State > {
 
 	mounted: boolean = false;
 
-	repositionInterval: ReturnType< typeof setInterval > | null = null;
+	repositionInterval: ReturnType<typeof setInterval> | null = null;
 
 	scrollContainer: Element | null = null;
 
@@ -97,59 +97,59 @@ export default class Step extends Component< Props, State > {
 	isUpdatingPosition: boolean = false;
 
 	UNSAFE_componentWillMount() {
-		this.wait( this.props, this.context ).then( () => {
+		this.wait(this.props, this.context).then(() => {
 			this.start();
-			this.setStepSection( this.context, { init: true } );
-			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
-			this.skipIfInvalidContext( this.props, this.context );
-			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
-			this.setStepPosition( this.props );
-			this.safeSetState( { initialized: true } );
-		} );
+			this.setStepSection(this.context, { init: true });
+			debug('Step#componentWillMount: stepSection:', this.stepSection);
+			this.skipIfInvalidContext(this.props, this.context);
+			this.scrollContainer = query(this.props.scrollContainer)[0] || window;
+			this.setStepPosition(this.props);
+			this.safeSetState({ initialized: true });
+		});
 	}
 
 	componentDidMount() {
 		this.mounted = true;
-		this.wait( this.props, this.context ).then( () => {
-			window.addEventListener( 'resize', this.onScrollOrResize );
+		this.wait(this.props, this.context).then(() => {
+			window.addEventListener('resize', this.onScrollOrResize);
 			this.watchTarget();
-		} );
-		if ( this.props.keepRepositioning ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
+		});
+		if (this.props.keepRepositioning) {
+			this.repositionInterval = setInterval(this.onScrollOrResize, 3000);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
+	UNSAFE_componentWillReceiveProps(nextProps: Props, nextContext) {
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
-		this.wait( nextProps, nextContext ).then( () => {
-			this.setStepSection( nextContext );
-			this.quitIfInvalidRoute( nextProps, nextContext );
-			this.skipIfInvalidContext( nextProps, nextContext );
-			if ( this.scrollContainer ) {
-				this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+		this.wait(nextProps, nextContext).then(() => {
+			this.setStepSection(nextContext);
+			this.quitIfInvalidRoute(nextProps, nextContext);
+			this.skipIfInvalidContext(nextProps, nextContext);
+			if (this.scrollContainer) {
+				this.scrollContainer.removeEventListener('scroll', this.onScrollOrResize);
 			}
-			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || window;
-			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
-			this.setStepPosition( nextProps, shouldScrollTo );
+			this.scrollContainer = query(nextProps.scrollContainer)[0] || window;
+			this.scrollContainer.addEventListener('scroll', this.onScrollOrResize);
+			this.setStepPosition(nextProps, shouldScrollTo);
 			this.watchTarget();
-		} );
-		if ( ! nextProps.keepRepositioning ) {
-			clearInterval( this.repositionInterval );
-		} else if ( ! this.repositionInterval ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
+		});
+		if (!nextProps.keepRepositioning) {
+			clearInterval(this.repositionInterval);
+		} else if (!this.repositionInterval) {
+			this.repositionInterval = setInterval(this.onScrollOrResize, 3000);
 		}
 	}
 
 	componentWillUnmount() {
 		this.mounted = false;
-		this.safeSetState( { initialized: false } );
+		this.safeSetState({ initialized: false });
 
-		window.removeEventListener( 'resize', this.onScrollOrResize );
-		if ( this.scrollContainer ) {
-			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+		window.removeEventListener('resize', this.onScrollOrResize);
+		if (this.scrollContainer) {
+			this.scrollContainer.removeEventListener('scroll', this.onScrollOrResize);
 		}
 		this.unwatchTarget();
-		clearInterval( this.repositionInterval );
+		clearInterval(this.repositionInterval);
 	}
 
 	/*
@@ -157,18 +157,18 @@ export default class Step extends Component< Props, State > {
 	 */
 	start() {
 		const { start, step, tour, tourVersion } = this.context;
-		start( { step, tour, tourVersion } );
+		start({ step, tour, tourVersion });
 	}
 
-	async wait( props: Props, context ) {
-		if ( isFunction( props.wait ) ) {
-			await context.dispatch( props.wait() );
+	async wait(props: Props, context) {
+		if (isFunction(props.wait)) {
+			await context.dispatch(props.wait());
 		}
 	}
 
-	safeSetState( state: State ) {
-		if ( this.mounted ) {
-			this.setState( state );
+	safeSetState(state: State) {
+		if (this.mounted) {
+			this.setState(state);
 		} else {
 			this.state = { ...this.state, ...state };
 		}
@@ -176,35 +176,35 @@ export default class Step extends Component< Props, State > {
 
 	watchTarget() {
 		if (
-			! this.props.target ||
-			! this.props.onTargetDisappear ||
+			!this.props.target ||
+			!this.props.onTargetDisappear ||
 			typeof MutationObserver === 'undefined'
 		) {
 			return;
 		}
 
-		if ( ! this.observer ) {
-			this.observer = new MutationObserver( () => {
+		if (!this.observer) {
+			this.observer = new MutationObserver(() => {
 				const { target, onTargetDisappear } = this.props;
 
-				if ( ! target || ! onTargetDisappear ) {
+				if (!target || !onTargetDisappear) {
 					return;
 				}
 
-				const targetEl = document.querySelector( `[data-tip-target="${ target }"]` );
-				if ( ! targetEl ) {
-					onTargetDisappear( {
-						quit: () => this.context.quit( this.context ),
-						next: () => this.skipToNext( this.props, this.context ),
-					} );
+				const targetEl = document.querySelector(`[data-tip-target="${target}"]`);
+				if (!targetEl) {
+					onTargetDisappear({
+						quit: () => this.context.quit(this.context),
+						next: () => this.skipToNext(this.props, this.context),
+					});
 				}
-			} );
-			this.observer.observe( document.body, { childList: true, subtree: true } );
+			});
+			this.observer.observe(document.body, { childList: true, subtree: true });
 		}
 	}
 
 	unwatchTarget() {
-		if ( this.observer ) {
+		if (this.observer) {
 			this.observer.disconnect();
 		}
 	}
@@ -222,8 +222,8 @@ export default class Step extends Component< Props, State > {
 	 * Below, `shouldPause` tells us that we're waiting for the section to
 	 * change.
 	 */
-	setStepSection( nextContext, { init = false } = {} ) {
-		if ( init ) {
+	setStepSection(nextContext, { init = false } = {}) {
+		if (init) {
 			// hard reset on Step instantiation
 			this.stepSection = nextContext.sectionName;
 			return;
@@ -235,26 +235,26 @@ export default class Step extends Component< Props, State > {
 			nextContext.sectionName
 		);
 
-		if ( this.context.step !== nextContext.step ) {
+		if (this.context.step !== nextContext.step) {
 			// invalidate if waiting for section
 			this.stepSection = nextContext.shouldPause ? null : nextContext.sectionName;
-		} else if ( this.context.shouldPause && ! nextContext.shouldPause && ! this.stepSection ) {
+		} else if (this.context.shouldPause && !nextContext.shouldPause && !this.stepSection) {
 			// only write if previously invalidated
 			this.stepSection = nextContext.sectionName;
 		}
 	}
 
-	quitIfInvalidRoute( nextProps: Props, nextContext ) {
+	quitIfInvalidRoute(nextProps: Props, nextContext) {
 		if (
 			nextContext.step !== this.context.step ||
 			nextContext.sectionName === this.context.sectionName ||
-			! nextContext.sectionName
+			!nextContext.sectionName
 		) {
 			return;
 		}
 
 		const { step, branching, lastAction } = nextContext;
-		const hasContinue = !! branching[ step ].continue;
+		const hasContinue = !!branching[step].continue;
 		const hasJustNavigated = lastAction.type === ROUTE_SET;
 
 		debug(
@@ -272,53 +272,53 @@ export default class Step extends Component< Props, State > {
 			'path',
 			lastAction.path,
 			'isDifferentSection',
-			this.isDifferentSection( lastAction.path )
+			this.isDifferentSection(lastAction.path)
 		);
 
-		if ( ! hasContinue && hasJustNavigated && this.isDifferentSection( lastAction.path ) ) {
-			defer( () => {
-				debug( 'Step.quitIfInvalidRoute: quitting (different section)' );
-				this.context.quit( this.context );
-			} );
+		if (!hasContinue && hasJustNavigated && this.isDifferentSection(lastAction.path)) {
+			defer(() => {
+				debug('Step.quitIfInvalidRoute: quitting (different section)');
+				this.context.quit(this.context);
+			});
 		}
 
 		// quit if we have a target but cant find it
-		defer( () => {
+		defer(() => {
 			const { quit } = this.context;
-			const target = targetForSlug( this.props.target );
-			if ( this.props.target && ! target ) {
-				debug( 'Step.quitIfInvalidRoute: quitting (cannot find target)' );
-				quit( this.context );
+			const target = targetForSlug(this.props.target);
+			if (this.props.target && !target) {
+				debug('Step.quitIfInvalidRoute: quitting (cannot find target)');
+				quit(this.context);
 			} else {
-				debug( 'Step.quitIfInvalidRoute: not quitting' );
+				debug('Step.quitIfInvalidRoute: not quitting');
 			}
-		} );
+		});
 	}
 
-	isDifferentSection( path ) {
-		return this.stepSection && path && this.stepSection !== pathToSection( path );
+	isDifferentSection(path) {
+		return this.stepSection && path && this.stepSection !== pathToSection(path);
 	}
 
-	skipToNext( props: Props, context ) {
+	skipToNext(props: Props, context) {
 		const { branching, next, step, tour, tourVersion } = context;
 
-		this.setAnalyticsTimestamp( context );
+		this.setAnalyticsTimestamp(context);
 
-		const nextStepName = props.next || anyFrom( branching[ step ] );
+		const nextStepName = props.next || anyFrom(branching[step]);
 		const skipping = this.shouldSkipAnalytics();
-		next( { tour, tourVersion, step, nextStepName, skipping } );
+		next({ tour, tourVersion, step, nextStepName, skipping });
 	}
 
-	skipIfInvalidContext( props: Props, context ) {
+	skipIfInvalidContext(props: Props, context) {
 		const { canSkip, when } = props;
 
-		if ( when && ! context.isValid( when ) && canSkip ) {
-			this.skipToNext( props, context );
+		if (when && !context.isValid(when) && canSkip) {
+			this.skipToNext(props, context);
 		}
 	}
 
-	setAnalyticsTimestamp( { step, shouldPause } ) {
-		if ( this.context.step !== step || ( this.context.shouldPause && ! shouldPause ) ) {
+	setAnalyticsTimestamp({ step, shouldPause }) {
+		if (this.context.step !== step || (this.context.shouldPause && !shouldPause)) {
 			this.lastTransitionTimestamp = Date.now();
 		}
 	}
@@ -328,24 +328,24 @@ export default class Step extends Component< Props, State > {
 	}
 
 	onScrollOrResize = () => {
-		if ( ! this.isUpdatingPosition ) {
-			requestAnimationFrame( () => {
-				this.setStepPosition( this.props );
+		if (!this.isUpdatingPosition) {
+			requestAnimationFrame(() => {
+				this.setStepPosition(this.props);
 				this.isUpdatingPosition = false;
-			} );
+			});
 			this.isUpdatingPosition = true;
 		}
 	};
 
-	setStepPosition( props: Props, shouldScrollTo = false ) {
+	setStepPosition(props: Props, shouldScrollTo = false) {
 		const { placement, target } = props;
-		const stepPos = getStepPosition( {
+		const stepPos = getStepPosition({
 			placement,
 			targetSlug: target,
 			shouldScrollTo,
 			scrollContainer: this.scrollContainer,
-		} );
-		this.setState( { stepPos } );
+		});
+		this.setState({ stepPos });
 	}
 
 	render() {
@@ -354,17 +354,17 @@ export default class Step extends Component< Props, State > {
 		const { when, children: ContentComponent } = this.props;
 		const { isLastStep } = this.context;
 
-		if ( ! this.state.initialized ) {
+		if (!this.state.initialized) {
 			return null;
 		}
 
-		debug( 'Step#render' );
-		if ( this.context.shouldPause ) {
-			debug( 'Step: shouldPause' );
+		debug('Step#render');
+		if (this.context.shouldPause) {
+			debug('Step: shouldPause');
 			return null;
 		}
 
-		if ( when && ! this.context.isValid( when ) ) {
+		if (when && !this.context.isValid(when)) {
 			return null;
 		}
 
@@ -381,18 +381,18 @@ export default class Step extends Component< Props, State > {
 			targetSlug && 'guided-tours__step-pointing',
 			targetSlug &&
 				'guided-tours__step-pointing-' +
-					getValidatedArrowPosition( {
+					getValidatedArrowPosition({
 						targetSlug,
 						arrow,
 						stepPos,
-					} ),
-		].filter( Boolean );
+					}),
+		].filter(Boolean);
 
-		const style = { ...this.props.style, ...posToCss( stepPos ) };
+		const style = { ...this.props.style, ...posToCss(stepPos) };
 
 		return (
-			<Card className={ classNames( ...classes ) } style={ style }>
-				<ContentComponent translate={ translate } />
+			<Card className={classNames(...classes)} style={style}>
+				<ContentComponent translate={translate} />
 			</Card>
 		);
 	}

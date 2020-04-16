@@ -13,8 +13,8 @@ import { combineReducers } from 'state/utils';
  * @param  {object}  action Action payload
  * @returns {?number}        Updated state
  */
-export function siteId( state = null, action ) {
-	switch ( action.type ) {
+export function siteId(state = null, action) {
+	switch (action.type) {
 		case EDITOR_LAST_DRAFT_SET:
 			return action.siteId;
 	}
@@ -30,8 +30,8 @@ export function siteId( state = null, action ) {
  * @param  {object}  action Action payload
  * @returns {?number}        Updated state
  */
-export function postId( state = null, action ) {
-	switch ( action.type ) {
+export function postId(state = null, action) {
+	switch (action.type) {
 		case EDITOR_LAST_DRAFT_SET:
 			return action.postId;
 	}
@@ -39,7 +39,7 @@ export function postId( state = null, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	siteId,
 	postId,
-} );
+});

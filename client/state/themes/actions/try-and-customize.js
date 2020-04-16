@@ -18,15 +18,15 @@ import 'state/themes/init';
  * @param  {number}   siteId    Site ID
  * @returns {Function}           Action thunk
  */
-export function tryAndCustomize( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+export function tryAndCustomize(themeId, siteId) {
+	return (dispatch, getState) => {
+		if (isJetpackSite(getState(), siteId) && !getTheme(getState(), siteId, themeId)) {
+			const installId = suffixThemeIdForInstall(getState(), siteId, themeId);
 			// If theme is already installed, installation will silently fail,
 			// and we just switch to the customizer.
-			return dispatch( installAndTryAndCustomizeTheme( installId, siteId ) );
+			return dispatch(installAndTryAndCustomizeTheme(installId, siteId));
 		}
 
-		return dispatch( tryAndCustomizeTheme( themeId, siteId ) );
+		return dispatch(tryAndCustomizeTheme(themeId, siteId));
 	};
 }

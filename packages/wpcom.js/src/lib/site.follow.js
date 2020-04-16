@@ -5,13 +5,13 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {null} null
  */
-export default function Follow( site_id, wpcom ) {
-	if ( ! site_id ) {
-		throw new Error( '`site id` is not correctly defined' );
+export default function Follow(site_id, wpcom) {
+	if (!site_id) {
+		throw new Error('`site id` is not correctly defined');
 	}
 
-	if ( ! ( this instanceof Follow ) ) {
-		return new Follow( site_id, wpcom );
+	if (!(this instanceof Follow)) {
+		return new Follow(site_id, wpcom);
 	}
 
 	this.wpcom = wpcom;
@@ -26,10 +26,9 @@ export default function Follow( site_id, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Follow.prototype.mine =
-Follow.prototype.state = function( query, fn ) {
+Follow.prototype.mine = Follow.prototype.state = function (query, fn) {
 	var path = '/sites/' + this._sid + '/follows/mine';
-	return this.wpcom.req.get( path, query, fn );
+	return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -39,10 +38,9 @@ Follow.prototype.state = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Follow.prototype.follow =
-Follow.prototype.add = function( query, fn ) {
+Follow.prototype.follow = Follow.prototype.add = function (query, fn) {
 	var path = '/sites/' + this._sid + '/follows/new';
-	return this.wpcom.req.put( path, query, null, fn );
+	return this.wpcom.req.put(path, query, null, fn);
 };
 
 /**
@@ -52,8 +50,7 @@ Follow.prototype.add = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Follow.prototype.unfollow =
-Follow.prototype.del = function( query, fn ) {
+Follow.prototype.unfollow = Follow.prototype.del = function (query, fn) {
 	var path = '/sites/' + this._sid + '/follows/mine/delete';
-	return this.wpcom.req.del( path, query, null, fn );
+	return this.wpcom.req.del(path, query, null, fn);
 };

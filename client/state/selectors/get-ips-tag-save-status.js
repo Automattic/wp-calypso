@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {string} domain  Domain
  * @returns {string}         Transfer status
  */
-export default function getIpsTagSaveStatus( state, domain ) {
-	return get( state.domains.transfer, [ 'items', domain, 'saveStatus' ] );
+export default function getIpsTagSaveStatus(state, domain) {
+	return get(state.domains.transfer, ['items', domain, 'saveStatus']);
 }

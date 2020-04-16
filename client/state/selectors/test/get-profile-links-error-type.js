@@ -3,7 +3,7 @@
  */
 import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
 
-describe( 'getProfileLinksErrorType()', () => {
+describe('getProfileLinksErrorType()', () => {
 	const profileLinks = [
 		{
 			link_slug: 'wordpress-org',
@@ -12,17 +12,17 @@ describe( 'getProfileLinksErrorType()', () => {
 		},
 	];
 
-	test( 'should return null if there are no errors from the last profile links request', () => {
+	test('should return null if there are no errors from the last profile links request', () => {
 		const state = {
 			userProfileLinks: {
 				errors: {},
 			},
 		};
 
-		expect( getProfileLinksErrorType( state ) ).toEqual( null );
-	} );
+		expect(getProfileLinksErrorType(state)).toEqual(null);
+	});
 
-	test( 'should return "duplicate" if there are duplicates in the last profile links request', () => {
+	test('should return "duplicate" if there are duplicates in the last profile links request', () => {
 		const state = {
 			userProfileLinks: {
 				errors: {
@@ -31,10 +31,10 @@ describe( 'getProfileLinksErrorType()', () => {
 			},
 		};
 
-		expect( getProfileLinksErrorType( state ) ).toEqual( 'duplicate' );
-	} );
+		expect(getProfileLinksErrorType(state)).toEqual('duplicate');
+	});
 
-	test( 'should return "malformed" if there are malformed links in the last profile links request', () => {
+	test('should return "malformed" if there are malformed links in the last profile links request', () => {
 		const state = {
 			userProfileLinks: {
 				errors: {
@@ -43,10 +43,10 @@ describe( 'getProfileLinksErrorType()', () => {
 			},
 		};
 
-		expect( getProfileLinksErrorType( state ) ).toEqual( 'malformed' );
-	} );
+		expect(getProfileLinksErrorType(state)).toEqual('malformed');
+	});
 
-	test( 'should return "other" if there is another error in the last profile links request', () => {
+	test('should return "other" if there is another error in the last profile links request', () => {
 		const state = {
 			userProfileLinks: {
 				errors: {
@@ -59,6 +59,6 @@ describe( 'getProfileLinksErrorType()', () => {
 			},
 		};
 
-		expect( getProfileLinksErrorType( state ) ).toEqual( 'other' );
-	} );
-} );
+		expect(getProfileLinksErrorType(state)).toEqual('other');
+	});
+});

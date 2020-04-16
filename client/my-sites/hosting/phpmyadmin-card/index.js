@@ -31,23 +31,23 @@ import { localizeUrl } from 'lib/i18n-utils';
  */
 import './style.scss';
 
-const requestId = siteId => `pma-link-request-${ siteId }`;
+const requestId = (siteId) => `pma-link-request-${siteId}`;
 
-export const requestPmaLink = siteId =>
+export const requestPmaLink = (siteId) =>
 	requestHttpData(
-		requestId( siteId ),
+		requestId(siteId),
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/hosting/pma/token`,
+				path: `/sites/${siteId}/hosting/pma/token`,
 				apiNamespace: 'wpcom/v2',
 				body: {},
 			},
 			{}
 		),
 		{
-			fromApi: () => ( { token } ) => {
-				return [ [ requestId( siteId ), { token } ] ];
+			fromApi: () => ({ token }) => {
+				return [[requestId(siteId), { token }]];
 			},
 			freshness: 0,
 		}
@@ -59,40 +59,40 @@ const trackOpenPhpmyadmin = () =>
 			'Hosting Configuration',
 			'Clicked "Open phpMyAdmin" Button in phpMyAdmin Card'
 		),
-		recordTracksEvent( 'calypso_hosting_configuration_open_phpmyadmin' ),
-		bumpStat( 'hosting-config', 'open-phpmyadmin' )
+		recordTracksEvent('calypso_hosting_configuration_open_phpmyadmin'),
+		bumpStat('hosting-config', 'open-phpmyadmin')
 	);
 
-const PhpMyAdminCard = ( {
+const PhpMyAdminCard = ({
 	translate,
 	siteId,
 	token,
 	loading,
 	disabled,
 	trackOpenPhpmyadmin: trackOpenDB,
-} ) => {
-	useEffect( () => {
-		if ( token ) {
+}) => {
+	useEffect(() => {
+		if (token) {
 			trackOpenDB();
-			window.open( `https://wordpress.com/pma-login?token=${ token }` );
+			window.open(`https://wordpress.com/pma-login?token=${token}`);
 		}
-		return () => resetHttpData( requestId( siteId ) );
-	}, [ token, siteId ] );
+		return () => resetHttpData(requestId(siteId));
+	}, [token, siteId]);
 
-	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
+	const [isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible] = useState(false);
 
 	return (
 		<Card className="phpmyadmin-card">
-			<MaterialIcon icon="dns" size={ 32 } />
-			<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
+			<MaterialIcon icon="dns" size={32} />
+			<CardHeading>{translate('Database Access')}</CardHeading>
 			<p>
-				{ translate(
+				{translate(
 					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
-				) }
+				)}
 			</p>
 			<div className="phpmyadmin-card__questions">
-				<Accordion title={ translate( 'What is phpMyAdmin?' ) }>
-					{ translate(
+				<Accordion title={translate('What is phpMyAdmin?')}>
+					{translate(
 						"It is a free open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
 						{
 							components: {
@@ -100,68 +100,68 @@ const PhpMyAdminCard = ( {
 									<ExternalLink
 										icon
 										target="_blank"
-										href={ localizeUrl( 'https://wordpress.com/support/phpmyadmin-and-mysql/' ) }
+										href={localizeUrl('https://wordpress.com/support/phpmyadmin-and-mysql/')}
 									/>
 								),
 							},
 						}
-					) }
+					)}
 				</Accordion>
 			</div>
 			<p className="phpmyadmin-card__db-warning">
-				{ translate(
+				{translate(
 					'Managing a database can be tricky and it’s not necessary for your site to function.'
-				) }
+				)}
 			</p>
 			<Button
-				onClick={ () => requestPmaLink( siteId ) }
-				busy={ ! disabled && loading }
-				disabled={ disabled }
+				onClick={() => requestPmaLink(siteId)}
+				busy={!disabled && loading}
+				disabled={disabled}
 			>
-				<span>{ translate( 'Open phpMyAdmin' ) }</span>
-				<MaterialIcon icon="launch" size={ 16 } />
+				<span>{translate('Open phpMyAdmin')}</span>
+				<MaterialIcon icon="launch" size={16} />
 			</Button>
-			{ ! disabled && (
+			{!disabled && (
 				<div className="phpmyadmin-card__restore-password">
-					{ translate( 'Having problems with access? Try {{a}}resetting the password{{/a}}.', {
+					{translate('Having problems with access? Try {{a}}resetting the password{{/a}}.', {
 						components: {
 							a: (
 								<Button
 									compact
 									borderless
-									onClick={ () => {
-										setIsRestorePasswordDialogVisible( true );
-									} }
+									onClick={() => {
+										setIsRestorePasswordDialogVisible(true);
+									}}
 								/>
 							),
 						},
-					} ) }
+					})}
 				</div>
-			) }
+			)}
 			<RestorePasswordDialog
-				isVisible={ isRestorePasswordDialogVisible }
-				onCancel={ () => {
-					setIsRestorePasswordDialogVisible( false );
-				} }
-				onRestore={ () => {
-					setIsRestorePasswordDialogVisible( false );
-				} }
+				isVisible={isRestorePasswordDialogVisible}
+				onCancel={() => {
+					setIsRestorePasswordDialogVisible(false);
+				}}
+				onRestore={() => {
+					setIsRestorePasswordDialogVisible(false);
+				}}
 			/>
 		</Card>
 	);
 };
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
-		const pmaTokenRequest = getHttpData( requestId( siteId ) );
+		const pmaTokenRequest = getHttpData(requestId(siteId));
 
 		return {
-			token: get( pmaTokenRequest.data, 'token', null ),
+			token: get(pmaTokenRequest.data, 'token', null),
 			loading: pmaTokenRequest.state === 'pending',
 			siteId,
 		};
 	},
 	{ trackOpenPhpmyadmin }
-)( localize( PhpMyAdminCard ) );
+)(localize(PhpMyAdminCard));

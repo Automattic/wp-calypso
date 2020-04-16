@@ -3,8 +3,8 @@
  */
 import { isFetchingSiteBlocks } from 'state/reader/site-blocks/selectors';
 
-describe( 'isFetchingSiteBlocks()', () => {
-	test( 'should return true if there is a fetch in progress', () => {
+describe('isFetchingSiteBlocks()', () => {
+	test('should return true if there is a fetch in progress', () => {
 		const prevState = {
 			reader: {
 				siteBlocks: {
@@ -12,11 +12,11 @@ describe( 'isFetchingSiteBlocks()', () => {
 				},
 			},
 		};
-		const nextState = isFetchingSiteBlocks( prevState );
-		expect( nextState ).toEqual( true );
-	} );
+		const nextState = isFetchingSiteBlocks(prevState);
+		expect(nextState).toEqual(true);
+	});
 
-	test( 'should return false if there is not a fetch in progress', () => {
+	test('should return false if there is not a fetch in progress', () => {
 		const prevState = {
 			reader: {
 				siteBlocks: {
@@ -24,7 +24,7 @@ describe( 'isFetchingSiteBlocks()', () => {
 				},
 			},
 		};
-		const nextState = isFetchingSiteBlocks( prevState );
-		expect( nextState ).toEqual( false );
-	} );
-} );
+		const nextState = isFetchingSiteBlocks(prevState);
+		expect(nextState).toEqual(false);
+	});
+});

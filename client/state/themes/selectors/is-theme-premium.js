@@ -13,6 +13,6 @@ import 'state/themes/init';
  * @param  {object} themeId Theme ID
  * @returns {boolean}        True if the theme is premium
  */
-export function isThemePremium( state, themeId ) {
-	return isPremium( getTheme( state, 'wpcom', themeId ) );
+export function isThemePremium(state, themeId) {
+	return isPremium(getTheme(state, 'wpcom', themeId));
 }

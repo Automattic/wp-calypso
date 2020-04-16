@@ -12,10 +12,10 @@ import {
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
 
-describe( 'reducer', () => {
-	describe( '#stats', () => {
-		test( 'should save data', () => {
-			const state = googleMyBusinessReducer( undefined, {
+describe('reducer', () => {
+	describe('#stats', () => {
+		test('should save data', () => {
+			const state = googleMyBusinessReducer(undefined, {
 				type: GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 				siteId: 123,
 				interval: 'month',
@@ -24,9 +24,9 @@ describe( 'reducer', () => {
 				data: {
 					hello: 'world',
 				},
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				123: {
 					stats: {
 						actions: {
@@ -37,10 +37,10 @@ describe( 'reducer', () => {
 					},
 					statsError: {},
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should reset data on request to server', () => {
+		test('should reset data on request to server', () => {
 			const state = {
 				123: {
 					stats: {
@@ -54,17 +54,17 @@ describe( 'reducer', () => {
 			};
 
 			expect(
-				googleMyBusinessReducer( state, {
+				googleMyBusinessReducer(state, {
 					type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 					siteId: 123,
 					interval: 'month',
 					statType: 'actions',
 					aggregation: 'total',
-				} )
+				})
 			).to.be.empty;
-		} );
+		});
 
-		test( 'should reset data only for specific site', () => {
+		test('should reset data only for specific site', () => {
 			const siteData = {
 				stats: {
 					actions: {
@@ -81,14 +81,14 @@ describe( 'reducer', () => {
 			};
 
 			expect(
-				googleMyBusinessReducer( state, {
+				googleMyBusinessReducer(state, {
 					type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 					siteId: 123,
 					interval: 'month',
 					statType: 'actions',
 					aggregation: 'total',
-				} )
-			).to.eql( {
+				})
+			).to.eql({
 				1234: {
 					stats: {
 						actions: {
@@ -98,10 +98,10 @@ describe( 'reducer', () => {
 						},
 					},
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should reset data only for specific stat', () => {
+		test('should reset data only for specific stat', () => {
 			const state = {
 				123: {
 					stats: {
@@ -116,14 +116,14 @@ describe( 'reducer', () => {
 			};
 
 			expect(
-				googleMyBusinessReducer( state, {
+				googleMyBusinessReducer(state, {
 					type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
 					siteId: 123,
 					interval: 'month',
 					statType: 'actions',
 					aggregation: 'total',
-				} )
-			).to.eql( {
+				})
+			).to.eql({
 				123: {
 					stats: {
 						actions: {
@@ -134,7 +134,7 @@ describe( 'reducer', () => {
 					},
 					statsError: {},
 				},
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

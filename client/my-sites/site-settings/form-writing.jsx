@@ -32,7 +32,7 @@ import SettingsSectionHeader from 'my-sites/site-settings/settings-section-heade
 
 class SiteSettingsFormWriting extends Component {
 	isMobile() {
-		return /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent );
+		return /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent);
 	}
 
 	render() {
@@ -60,141 +60,141 @@ class SiteSettingsFormWriting extends Component {
 		return (
 			<form
 				id="site-settings"
-				onSubmit={ handleSubmitForm }
+				onSubmit={handleSubmitForm}
 				className="site-settings__writing-settings"
 			>
-				{ config.isEnabled( 'manage/site-settings/categories' ) && (
+				{config.isEnabled('manage/site-settings/categories') && (
 					<div className="site-settings__taxonomies">
-						<QueryTaxonomies siteId={ siteId } postType="post" />
+						<QueryTaxonomies siteId={siteId} postType="post" />
 						<TaxonomyCard taxonomy="category" postType="post" />
 						<TaxonomyCard taxonomy="post_tag" postType="post" />
 					</div>
-				) }
+				)}
 
 				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
+					disabled={isRequestingSettings || isSavingSettings}
+					isSaving={isSavingSettings}
+					onButtonClick={handleSubmitForm}
 					showButton
-					title={ translate( 'Composing' ) }
+					title={translate('Composing')}
 				/>
 				<Composing
-					handleSelect={ handleSelect }
-					handleToggle={ handleToggle }
-					onChangeField={ onChangeField }
-					setFieldValue={ setFieldValue }
-					eventTracker={ eventTracker }
-					uniqueEventTracker={ uniqueEventTracker }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-					updateFields={ updateFields }
+					handleSelect={handleSelect}
+					handleToggle={handleToggle}
+					onChangeField={onChangeField}
+					setFieldValue={setFieldValue}
+					eventTracker={eventTracker}
+					uniqueEventTracker={uniqueEventTracker}
+					isSavingSettings={isSavingSettings}
+					isRequestingSettings={isRequestingSettings}
+					fields={fields}
+					updateFields={updateFields}
 				/>
 
-				{ siteIsJetpack && (
+				{siteIsJetpack && (
 					<div>
 						<SettingsSectionHeader
-							disabled={ isRequestingSettings || isSavingSettings }
-							isSaving={ isSavingSettings }
-							onButtonClick={ handleSubmitForm }
+							disabled={isRequestingSettings || isSavingSettings}
+							isSaving={isSavingSettings}
+							onButtonClick={handleSubmitForm}
 							showButton
-							title={ translate( 'Media' ) }
+							title={translate('Media')}
 						/>
 						<MediaSettingsWriting
-							siteId={ siteId }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							onChangeField={ onChangeField }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
+							siteId={siteId}
+							handleAutosavingToggle={handleAutosavingToggle}
+							onChangeField={onChangeField}
+							isSavingSettings={isSavingSettings}
+							isRequestingSettings={isRequestingSettings}
+							fields={fields}
 						/>
 					</div>
-				) }
+				)}
 
 				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
+					disabled={isRequestingSettings || isSavingSettings}
+					isSaving={isSavingSettings}
+					onButtonClick={handleSubmitForm}
 					showButton
-					title={ translate( 'Content Types' ) }
+					title={translate('Content Types')}
 				/>
 				<CustomContentTypes
-					handleAutosavingToggle={ handleAutosavingToggle }
-					onChangeField={ onChangeField }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
+					handleAutosavingToggle={handleAutosavingToggle}
+					onChangeField={onChangeField}
+					isSavingSettings={isSavingSettings}
+					isRequestingSettings={isRequestingSettings}
+					fields={fields}
 				/>
 
 				<FeedSettings
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-					handleSubmitForm={ handleSubmitForm }
-					handleToggle={ handleToggle }
-					onChangeField={ onChangeField }
+					isSavingSettings={isSavingSettings}
+					isRequestingSettings={isRequestingSettings}
+					fields={fields}
+					handleSubmitForm={handleSubmitForm}
+					handleToggle={handleToggle}
+					onChangeField={onChangeField}
 				/>
 
-				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
+				{isPodcastingSupported && <PodcastingLink fields={fields} />}
 
-				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{siteIsJetpack && <QueryJetpackModules siteId={siteId} />}
 
 				<ThemeEnhancements
-					onSubmitForm={ handleSubmitForm }
-					handleAutosavingToggle={ handleAutosavingToggle }
-					handleAutosavingRadio={ handleAutosavingRadio }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
+					onSubmitForm={handleSubmitForm}
+					handleAutosavingToggle={handleAutosavingToggle}
+					handleAutosavingRadio={handleAutosavingRadio}
+					isSavingSettings={isSavingSettings}
+					isRequestingSettings={isRequestingSettings}
+					fields={fields}
 				/>
 
-				{ siteIsJetpack && (
+				{siteIsJetpack && (
 					<Widgets
-						onSubmitForm={ handleSubmitForm }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
+						onSubmitForm={handleSubmitForm}
+						isSavingSettings={isSavingSettings}
+						isRequestingSettings={isRequestingSettings}
+						fields={fields}
 					/>
-				) }
+				)}
 
-				{ siteIsJetpack && config.isEnabled( 'press-this' ) && (
+				{siteIsJetpack && config.isEnabled('press-this') && (
 					<PublishingTools
-						onSubmitForm={ handleSubmitForm }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
+						onSubmitForm={handleSubmitForm}
+						isSavingSettings={isSavingSettings}
+						isRequestingSettings={isRequestingSettings}
+						fields={fields}
 					/>
-				) }
+				)}
 
-				{ config.isEnabled( 'press-this' ) && ! this.isMobile() && ! siteIsJetpack && (
+				{config.isEnabled('press-this') && !this.isMobile() && !siteIsJetpack && (
 					<div>
 						<SettingsSectionHeader
-							title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+							title={translate('Press This', { context: 'name of browser bookmarklet tool' })}
 						/>
 						<PressThis />
 					</div>
-				) }
+				)}
 
-				{ isMasterbarSectionVisible && (
+				{isMasterbarSectionVisible && (
 					<div>
-						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
+						<SettingsSectionHeader title={translate('WordPress.com toolbar')} />
 						<Masterbar
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
+							isSavingSettings={isSavingSettings}
+							isRequestingSettings={isRequestingSettings}
 						/>
 					</div>
-				) }
+				)}
 			</form>
 		);
 	}
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const siteIsJetpack = isJetpackSite( state, siteId );
-		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
-		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const siteIsJetpack = isJetpackSite(state, siteId);
+		const siteIsAutomatedTransfer = isSiteAutomatedTransfer(state, siteId);
+		const isPodcastingSupported = !siteIsJetpack || siteIsAutomatedTransfer;
 
 		return {
 			siteIsJetpack,
@@ -202,7 +202,7 @@ const connectComponent = connect(
 			isMasterbarSectionVisible:
 				siteIsJetpack &&
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
-				! siteIsAutomatedTransfer,
+				!siteIsAutomatedTransfer,
 			isPodcastingSupported,
 		};
 	},
@@ -211,8 +211,8 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-const getFormSettings = settings => {
-	const formSettings = pick( settings, [
+const getFormSettings = (settings) => {
+	const formSettings = pick(settings, [
 		'posts_per_page',
 		'posts_per_rss',
 		'rss_use_excerpt',
@@ -252,14 +252,14 @@ const getFormSettings = settings => {
 		'time_format',
 		'timezone_string',
 		'podcasting_category_id',
-	] );
+	]);
 
 	// handling `gmt_offset` and `timezone_string` values
-	const gmt_offset = get( settings, 'gmt_offset' );
-	const timezone_string = get( settings, 'timezone_string' );
+	const gmt_offset = get(settings, 'gmt_offset');
+	const timezone_string = get(settings, 'timezone_string');
 
-	if ( ! timezone_string && typeof gmt_offset === 'string' && gmt_offset.length ) {
-		formSettings.timezone_string = 'UTC' + ( /-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
+	if (!timezone_string && typeof gmt_offset === 'string' && gmt_offset.length) {
+		formSettings.timezone_string = 'UTC' + (/-/.test(gmt_offset) ? '' : '+') + gmt_offset;
 	}
 
 	return formSettings;
@@ -267,5 +267,5 @@ const getFormSettings = settings => {
 
 export default flowRight(
 	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormWriting );
+	wrapSettingsForm(getFormSettings)
+)(SiteSettingsFormWriting);

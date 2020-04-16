@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import CreditCardPaymentBox from './credit-card-payment-box';
 import { StripeHookProvider } from 'lib/stripe';
 
-export function StripeElementsPaymentBox( {
+export function StripeElementsPaymentBox({
 	translate,
 	cart,
 	children,
@@ -21,24 +21,24 @@ export function StripeElementsPaymentBox( {
 	transaction,
 	presaleChatAvailable,
 	cards,
-} ) {
+}) {
 	return (
 		<StripeHookProvider>
 			<CreditCardPaymentBox
-				translate={ translate }
-				cards={ cards }
-				transaction={ transaction }
-				cart={ cart }
-				countriesList={ countriesList }
-				initialCard={ initialCard }
-				selectedSite={ selectedSite }
-				onSubmit={ onSubmit }
-				transactionStep={ transaction.step }
-				presaleChatAvailable={ presaleChatAvailable }
+				translate={translate}
+				cards={cards}
+				transaction={transaction}
+				cart={cart}
+				countriesList={countriesList}
+				initialCard={initialCard}
+				selectedSite={selectedSite}
+				onSubmit={onSubmit}
+				transactionStep={transaction.step}
+				presaleChatAvailable={presaleChatAvailable}
 			>
-				{ children }
+				{children}
 			</CreditCardPaymentBox>
 		</StripeHookProvider>
 	);
 }
-export default localize( StripeElementsPaymentBox );
+export default localize(StripeElementsPaymentBox);

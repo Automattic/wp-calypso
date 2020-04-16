@@ -61,39 +61,31 @@ class StatsModule extends Component {
 		loaded: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.requesting && this.props.requesting ) {
-			this.setState( { loaded: true } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!nextProps.requesting && this.props.requesting) {
+			this.setState({ loaded: true });
 		}
 
-		if ( nextProps.query !== this.props.query && this.state.loaded ) {
-			this.setState( { loaded: false } );
+		if (nextProps.query !== this.props.query && this.state.loaded) {
+			this.setState({ loaded: false });
 		}
 	}
 
 	getModuleLabel() {
-		if ( ! this.props.summary ) {
+		if (!this.props.summary) {
 			return this.props.moduleStrings.title;
 		}
 		const { period, startOf } = this.props.period;
 		const { path, query } = this.props;
 
-		return (
-			<DatePicker
-				period={ period }
-				date={ startOf }
-				path={ path }
-				query={ query }
-				summary={ true }
-			/>
-		);
+		return <DatePicker period={period} date={startOf} path={path} query={query} summary={true} />;
 	}
 
 	getHref() {
 		const { summary, period, path, siteSlug } = this.props;
 
 		// Some modules do not have view all abilities
-		if ( ! summary && period && path && siteSlug ) {
+		if (!summary && period && path && siteSlug) {
 			return (
 				'/stats/' +
 				period.period +
@@ -102,7 +94,7 @@ class StatsModule extends Component {
 				'/' +
 				siteSlug +
 				'?startDate=' +
-				period.startOf.format( 'YYYY-MM-DD' )
+				period.startOf.format('YYYY-MM-DD')
 			);
 		}
 	}
@@ -116,7 +108,7 @@ class StatsModule extends Component {
 			'statsClicks',
 			'statsReferrers',
 		];
-		return summary && includes( summarizedTypes, statType );
+		return summary && includes(summarizedTypes, statType);
 	}
 
 	render() {
@@ -135,10 +127,10 @@ class StatsModule extends Component {
 			useShortLabel,
 		} = this.props;
 
-		const noData = data && this.state.loaded && ! data.length;
+		const noData = data && this.state.loaded && !data.length;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
-		const isLoading = ! this.state.loaded && ! ( data && data.length );
+		const isLoading = !this.state.loaded && !(data && data.length);
 
 		// TODO: Support error state in redux store
 		const hasError = false;
@@ -156,83 +148,73 @@ class StatsModule extends Component {
 		const summaryLink = this.getHref();
 		const displaySummaryLink = data && data.length >= 10;
 		const isAllTime = this.isAllTimeList();
-		const headerClass = classNames( 'stats-module__header', {
-			'is-refreshing': requesting && ! isLoading,
-		} );
+		const headerClass = classNames('stats-module__header', {
+			'is-refreshing': requesting && !isLoading,
+		});
 
 		return (
 			<div>
-				{ siteId && statType && (
-					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
-				) }
-				{ ! isAllTime && (
+				{siteId && statType && <QuerySiteStats statType={statType} siteId={siteId} query={query} />}
+				{!isAllTime && (
 					<SectionHeader
-						className={ headerClass }
-						label={ this.getModuleLabel() }
-						href={ ! summary ? summaryLink : null }
+						className={headerClass}
+						label={this.getModuleLabel()}
+						href={!summary ? summaryLink : null}
 					>
-						{ summary && (
-							<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
-						) }
+						{summary && (
+							<DownloadCsv statType={statType} query={query} path={path} period={period} />
+						)}
 					</SectionHeader>
-				) }
-				<Card compact className={ cardClasses }>
-					{ statType === 'statsFileDownloads' && (
+				)}
+				<Card compact className={cardClasses}>
+					{statType === 'statsFileDownloads' && (
 						<StatsModuleAvailabilityWarning
-							statType={ statType }
-							startOfPeriod={ period && period.startOf }
+							statType={statType}
+							startOfPeriod={period && period.startOf}
 						/>
-					) }
-					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
-					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-					{ hasError && <ErrorPanel /> }
-					{ this.props.children }
-					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-					<StatsModulePlaceholder isLoading={ isLoading } />
-					<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
-					{ this.props.showSummaryLink && displaySummaryLink && (
-						<StatsModuleExpand href={ summaryLink } />
-					) }
-					{ summary && 'countryviews' === path && (
+					)}
+					{isAllTime && <AllTimeNav path={path} query={query} period={period} />}
+					{noData && <ErrorPanel message={moduleStrings.empty} />}
+					{hasError && <ErrorPanel />}
+					{this.props.children}
+					<StatsListLegend value={moduleStrings.value} label={moduleStrings.item} />
+					<StatsModulePlaceholder isLoading={isLoading} />
+					<StatsList moduleName={path} data={data} useShortLabel={useShortLabel} />
+					{this.props.showSummaryLink && displaySummaryLink && (
+						<StatsModuleExpand href={summaryLink} />
+					)}
+					{summary && 'countryviews' === path && (
 						<UpsellNudge
-							title={ translate( 'Add Google Analytics' ) }
-							description={ translate(
-								'Upgrade to a Premium Plan for Google Analytics integration.'
-							) }
+							title={translate('Add Google Analytics')}
+							description={translate('Upgrade to a Premium Plan for Google Analytics integration.')}
 							event="googleAnalytics-stats-countries"
-							feature={ FEATURE_GOOGLE_ANALYTICS }
-							plan={ PLAN_PREMIUM }
+							feature={FEATURE_GOOGLE_ANALYTICS}
+							plan={PLAN_PREMIUM}
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
+							showIcon={true}
 						/>
-					) }
+					)}
 				</Card>
-				{ isAllTime && (
+				{isAllTime && (
 					<div className="stats-module__footer-actions">
-						<DownloadCsv
-							statType={ statType }
-							query={ query }
-							path={ path }
-							borderless
-							period={ period }
-						/>
+						<DownloadCsv statType={statType} query={query} path={path} borderless period={period} />
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
+export default connect((state, ownProps) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSiteSlug(state, siteId);
 	const { statType, query } = ownProps;
 
 	return {
-		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
-		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
+		requesting: isRequestingSiteStatsForQuery(state, siteId, statType, query),
+		data: getSiteStatsNormalizedData(state, siteId, statType, query),
 		siteId,
 		siteSlug,
 	};
-} )( localize( StatsModule ) );
+})(localize(StatsModule));

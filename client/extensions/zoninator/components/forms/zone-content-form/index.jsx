@@ -29,25 +29,25 @@ class ZoneContentForm extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	save = data => this.props.onSubmit( form, data );
+	save = (data) => this.props.onSubmit(form, data);
 
 	render() {
 		const { disabled, handleSubmit, label, requesting, submitting, translate } = this.props;
 		const isDisabled = disabled || requesting || submitting;
 
 		return (
-			<form onSubmit={ handleSubmit( this.save ) }>
-				<SectionHeader label={ label }>
-					<FormButton compact disabled={ isDisabled }>
-						{ translate( 'Save' ) }
+			<form onSubmit={handleSubmit(this.save)}>
+				<SectionHeader label={label}>
+					<FormButton compact disabled={isDisabled}>
+						{translate('Save')}
 					</FormButton>
 				</SectionHeader>
 				<CompactCard>
 					<FieldArray
 						rerenderOnEveryChange
 						name="posts"
-						props={ { requesting } }
-						component={ PostsList }
+						props={{ requesting }}
+						component={PostsList}
 					/>
 				</CompactCard>
 			</form>
@@ -55,9 +55,9 @@ class ZoneContentForm extends PureComponent {
 	}
 }
 
-const createReduxForm = reduxForm( {
+const createReduxForm = reduxForm({
 	enableReinitialize: true,
 	form,
-} );
+});
 
-export default flowRight( localize, createReduxForm )( ZoneContentForm );
+export default flowRight(localize, createReduxForm)(ZoneContentForm);

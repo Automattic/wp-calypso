@@ -11,31 +11,31 @@ import { __, _x } from '@wordpress/i18n';
  * Internal dependencies
  */
 
-const view = ( { attributes, className, isEditView } ) => {
+const view = ({ attributes, className, isEditView }) => {
 	// Expected values in save.
 	let days = '&nbsp;',
 		hours = '&nbsp;',
 		mins = '&nbsp;',
 		secs = '&nbsp;';
 
-	if ( isEditView ) {
+	if (isEditView) {
 		// Zero out.
 		days = hours = mins = secs = 0;
-		const eventTime = new Date( attributes.eventDate ).getTime();
+		const eventTime = new Date(attributes.eventDate).getTime();
 		const now = Date.now();
 		const diff = eventTime - now;
 
-		if ( diff > 0 ) {
+		if (diff > 0) {
 			// Convert diff to seconds.
-			let rem = Math.round( diff / 1000 );
+			let rem = Math.round(diff / 1000);
 
-			days = Math.floor( rem / ( 24 * 60 * 60 ) );
+			days = Math.floor(rem / (24 * 60 * 60));
 			rem = rem - days * 24 * 60 * 60;
 
-			hours = Math.floor( rem / ( 60 * 60 ) );
+			hours = Math.floor(rem / (60 * 60));
 			rem = rem - hours * 60 * 60;
 
-			mins = Math.floor( rem / 60 );
+			mins = Math.floor(rem / 60);
 			rem = rem - mins * 60;
 
 			secs = rem;
@@ -43,31 +43,31 @@ const view = ( { attributes, className, isEditView } ) => {
 	}
 
 	return (
-		<div className={ className }>
-			<div className="event-countdown__date">{ attributes.eventDate }</div>
+		<div className={className}>
+			<div className="event-countdown__date">{attributes.eventDate}</div>
 			<div className="event-countdown__counter">
 				<p>
-					<strong className="event-countdown__day">{ days }</strong>{ ' ' }
-					{ _x( 'days', 'Countdown days remaining', 'full-site-editing' ) }
+					<strong className="event-countdown__day">{days}</strong>{' '}
+					{_x('days', 'Countdown days remaining', 'full-site-editing')}
 				</p>
 				<p>
 					<span>
-						<strong className="event-countdown__hour">{ hours }</strong>{ ' ' }
-						{ _x( 'hours', 'Countdown hours remaining', 'full-site-editing' ) }
+						<strong className="event-countdown__hour">{hours}</strong>{' '}
+						{_x('hours', 'Countdown hours remaining', 'full-site-editing')}
 					</span>
 					<span>
-						<strong className="event-countdown__minute">{ mins }</strong>{ ' ' }
-						{ _x( 'minutes', 'Countdown minutes remaining', 'full-site-editing' ) }
+						<strong className="event-countdown__minute">{mins}</strong>{' '}
+						{_x('minutes', 'Countdown minutes remaining', 'full-site-editing')}
 					</span>
 					<span>
-						<strong className="event-countdown__second">{ secs }</strong>{ ' ' }
-						{ _x( 'seconds', 'Countdown seconds remaining', 'full-site-editing' ) }
+						<strong className="event-countdown__second">{secs}</strong>{' '}
+						{_x('seconds', 'Countdown seconds remaining', 'full-site-editing')}
 					</span>
 				</p>
-				<p>{ __( 'until', 'full-site-editing' ) }</p>
+				<p>{__('until', 'full-site-editing')}</p>
 			</div>
 			<div className="event-countdown__event-title">
-				<p>{ attributes.eventTitle }</p>
+				<p>{attributes.eventTitle}</p>
 			</div>
 		</div>
 	);

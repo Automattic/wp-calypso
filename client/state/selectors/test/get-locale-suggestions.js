@@ -3,22 +3,22 @@
  */
 import getLocaleSuggestions from 'state/selectors/get-locale-suggestions';
 
-describe( 'getLocaleSuggestions()', () => {
-	test( 'should return null if no items found', () => {
-		const suggestedLocales = getLocaleSuggestions( {
+describe('getLocaleSuggestions()', () => {
+	test('should return null if no items found', () => {
+		const suggestedLocales = getLocaleSuggestions({
 			i18n: {},
-		} );
+		});
 
-		expect( suggestedLocales ).toBe( null );
-	} );
+		expect(suggestedLocales).toBe(null);
+	});
 
-	test( 'should return the suggested locales', () => {
-		const suggestedLocales = getLocaleSuggestions( {
+	test('should return the suggested locales', () => {
+		const suggestedLocales = getLocaleSuggestions({
 			i18n: {
-				localeSuggestions: [ 'Phwoar!' ],
+				localeSuggestions: ['Phwoar!'],
 			},
-		} );
+		});
 
-		expect( suggestedLocales ).toEqual( [ 'Phwoar!' ] );
-	} );
-} );
+		expect(suggestedLocales).toEqual(['Phwoar!']);
+	});
+});

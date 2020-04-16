@@ -15,7 +15,7 @@ import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 import RelatedPost from 'blocks/reader-related-card';
 import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
 
-function RelatedPosts( {
+function RelatedPosts({
 	siteId,
 	postId,
 	posts,
@@ -24,55 +24,55 @@ function RelatedPosts( {
 	className = '',
 	onPostClick = noop,
 	onSiteClick = noop,
-} ) {
+}) {
 	let listItems;
 
-	if ( ! posts ) {
+	if (!posts) {
 		// Placeholders
-		listItems = times( 2, i => {
+		listItems = times(2, (i) => {
 			return (
 				/* eslint-disable */
-				<li className="reader-related-card__list-item" key={ 'related-post-placeholder-' + i }>
-					<RelatedPost post={ null } />
+				<li className="reader-related-card__list-item" key={'related-post-placeholder-' + i}>
+					<RelatedPost post={null} />
 				</li>
 				/* eslint-enable */
 			);
-		} );
-	} else if ( posts.length === 0 ) {
+		});
+	} else if (posts.length === 0) {
 		return null;
 	} else {
-		listItems = posts.map( post_id => {
+		listItems = posts.map((post_id) => {
 			return (
 				/* eslint-disable */
-				<li key={ post_id } className="reader-related-card__list-item">
-					<RelatedPost post={ post_id } onPostClick={ onPostClick } onSiteClick={ onSiteClick } />
+				<li key={post_id} className="reader-related-card__list-item">
+					<RelatedPost post={post_id} onPostClick={onPostClick} onSiteClick={onSiteClick} />
 				</li>
 				/* eslint-enable */
 			);
-		} );
+		});
 	}
 
 	return (
 		/* eslint-disable */
-		<div className={ classnames( 'reader-related-card__blocks', className ) }>
-			{ ! posts && <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ scope } /> }
-			<h1 className="reader-related-card__heading">{ title }</h1>
-			<ul className="reader-related-card__list">{ listItems }</ul>
+		<div className={classnames('reader-related-card__blocks', className)}>
+			{!posts && <QueryReaderRelatedPosts siteId={siteId} postId={postId} scope={scope} />}
+			<h1 className="reader-related-card__heading">{title}</h1>
+			<ul className="reader-related-card__list">{listItems}</ul>
 		</div>
 		/* eslint-enable */
 	);
 }
 
-export const RelatedPostsFromSameSite = connect( ( state, ownProps ) => {
+export const RelatedPostsFromSameSite = connect((state, ownProps) => {
 	return {
-		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_SAME ),
+		posts: relatedPostsForPost(state, ownProps.siteId, ownProps.postId, SCOPE_SAME),
 		scope: SCOPE_SAME,
 	};
-} )( RelatedPosts );
+})(RelatedPosts);
 
-export const RelatedPostsFromOtherSites = connect( ( state, ownProps ) => {
+export const RelatedPostsFromOtherSites = connect((state, ownProps) => {
 	return {
-		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
+		posts: relatedPostsForPost(state, ownProps.siteId, ownProps.postId, SCOPE_OTHER),
 		scope: SCOPE_OTHER,
 	};
-} )( RelatedPosts );
+})(RelatedPosts);

@@ -25,7 +25,7 @@ import {
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
-function Transfer( props ) {
+function Transfer(props) {
 	const {
 		isAtomic,
 		isDomainOnly,
@@ -35,44 +35,42 @@ function Transfer( props ) {
 		translate,
 	} = props;
 
-	const slug = get( selectedSite, 'slug' );
+	const slug = get(selectedSite, 'slug');
 
 	return (
 		<Main>
 			<Header
-				selectedDomainName={ selectedDomainName }
-				backHref={ domainManagementEdit( slug, selectedDomainName ) }
+				selectedDomainName={selectedDomainName}
+				backHref={domainManagementEdit(slug, selectedDomainName)}
 			>
-				{ translate( 'Transfer Domain' ) }
+				{translate('Transfer Domain')}
 			</Header>
 			<VerticalNav>
-				<VerticalNavItem path={ domainManagementTransferOut( slug, selectedDomainName ) }>
-					{ translate( 'Transfer to another registrar' ) }
+				<VerticalNavItem path={domainManagementTransferOut(slug, selectedDomainName)}>
+					{translate('Transfer to another registrar')}
 				</VerticalNavItem>
-				{ ! isDomainOnly && (
-					<VerticalNavItem
-						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
-					>
-						{ translate( 'Transfer to another user' ) }
+				{!isDomainOnly && (
+					<VerticalNavItem path={domainManagementTransferToAnotherUser(slug, selectedDomainName)}>
+						{translate('Transfer to another user')}
 					</VerticalNavItem>
-				) }
+				)}
 
-				{ ( ( isAtomic && ! isPrimaryDomain ) || ! isAtomic ) && ( // Simple and Atomic (not primary domain )
-					<VerticalNavItem path={ domainManagementTransferToOtherSite( slug, selectedDomainName ) }>
-						{ translate( 'Transfer to another WordPress.com site' ) }
+				{((isAtomic && !isPrimaryDomain) || !isAtomic) && ( // Simple and Atomic (not primary domain )
+					<VerticalNavItem path={domainManagementTransferToOtherSite(slug, selectedDomainName)}>
+						{translate('Transfer to another WordPress.com site')}
 					</VerticalNavItem>
-				) }
+				)}
 			</VerticalNav>
 		</Main>
 	);
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state, ownProps) => {
+	const siteId = getSelectedSiteId(state);
 	return {
-		isAtomic: isSiteAutomatedTransfer( state, siteId ),
-		isDomainOnly: isDomainOnlySite( state, siteId ),
-		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
-		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
+		isAtomic: isSiteAutomatedTransfer(state, siteId),
+		isDomainOnly: isDomainOnlySite(state, siteId),
+		primaryDomain: getPrimaryDomainBySiteId(state, siteId),
+		isPrimaryDomain: isPrimaryDomainBySiteId(state, siteId, ownProps.selectedDomainName),
 	};
-} )( localize( Transfer ) );
+})(localize(Transfer));

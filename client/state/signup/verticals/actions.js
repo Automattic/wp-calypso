@@ -14,12 +14,12 @@ import 'state/data-layer/wpcom/signup/verticals';
  *
  * @returns {object} The action object.
  */
-export const requestVerticals = ( search, siteType, limit ) => ( {
+export const requestVerticals = (search, siteType, limit) => ({
 	type: SIGNUP_VERTICALS_REQUEST,
 	search,
 	siteType,
 	limit,
-} );
+});
 
 /**
  * Action creator: Store verticals found for a given search term in the state tree.
@@ -30,9 +30,9 @@ export const requestVerticals = ( search, siteType, limit ) => ( {
  *
  * @returns {object} The action object.
  */
-export const setVerticals = ( search, siteType, verticals ) => ( {
+export const setVerticals = (search, siteType, verticals) => ({
 	type: SIGNUP_VERTICALS_SET,
 	search,
 	siteType,
 	verticals,
-} );
+});

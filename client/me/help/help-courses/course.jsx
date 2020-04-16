@@ -21,9 +21,9 @@ class Course extends Component {
 	componentDidMount() {
 		const { isBusinessPlanUser } = this.props;
 
-		analytics.tracks.recordEvent( 'calypso_help_course_pageview', {
+		analytics.tracks.recordEvent('calypso_help_course_pageview', {
 			is_business_plan_user: isBusinessPlanUser,
-		} );
+		});
 	}
 
 	render() {
@@ -31,39 +31,35 @@ class Course extends Component {
 
 		return (
 			<div className="help-courses__course">
-				{ isBusinessPlanUser && video && <CourseVideo { ...video } /> }
+				{isBusinessPlanUser && video && <CourseVideo {...video} />}
 				<Card compact>
-					<h1 className="help-courses__course-title">{ title }</h1>
-					<p className="help-courses__course-description">{ description }</p>
-					{ ! isBusinessPlanUser && (
+					<h1 className="help-courses__course-title">{title}</h1>
+					<p className="help-courses__course-description">{description}</p>
+					{!isBusinessPlanUser && (
 						<HelpTeaserButton
-							href={ `/plans/${ this.props.primarySiteSlug }` }
-							title={ translate( 'Join this course with the Business Plan.' ) }
-							description={ translate(
+							href={`/plans/${this.props.primarySiteSlug}`}
+							title={translate('Join this course with the Business Plan.')}
+							description={translate(
 								'Upgrade to access webinars and courses to learn how to make the most of your site'
-							) }
+							)}
 						/>
-					) }
+					)}
 				</Card>
-				{ schedule &&
-					schedule.map( ( item, key ) => {
+				{schedule &&
+					schedule.map((item, key) => {
 						return (
-							<CourseScheduleItem
-								{ ...item }
-								key={ key }
-								isBusinessPlanUser={ isBusinessPlanUser }
-							/>
+							<CourseScheduleItem {...item} key={key} isBusinessPlanUser={isBusinessPlanUser} />
 						);
-					} ) }
+					})}
 			</div>
 		);
 	}
 }
-export default connect( state => {
+export default connect((state) => {
 	return {
-		primarySiteSlug: getSiteSlug( state, getPrimarySiteId( state ) ),
+		primarySiteSlug: getSiteSlug(state, getPrimarySiteId(state)),
 	};
-} )( localize( Course ) );
+})(localize(Course));
 
 export const CoursePlaceholder = () => {
 	return <div className="help-courses__course is-placeholder" />;

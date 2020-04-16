@@ -1,5 +1,5 @@
-export function isScheduled( post ) {
-	if ( ! post ) {
+export function isScheduled(post) {
+	if (!post) {
 		return false;
 	}
 

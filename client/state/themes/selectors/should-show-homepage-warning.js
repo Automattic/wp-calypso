@@ -11,7 +11,7 @@ import 'state/themes/init';
  * @param {string} themeId Theme ID used to show the warning message before to activate.
  * @returns {boolean}      True it should show the auto loading modal. Otherwise, False.
  */
-export function shouldShowHomepageWarning( state, themeId ) {
+export function shouldShowHomepageWarning(state, themeId) {
 	return (
 		state.themes.themeHasAutoLoadingHomepageWarning?.themeId === themeId &&
 		state.themes.themeHasAutoLoadingHomepageWarning?.show

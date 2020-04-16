@@ -25,26 +25,26 @@ import 'state/posts/init';
  * @returns {boolean}        Whether posts are being requested
  */
 export const isRequestingPostsForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const normalizedQueryWithoutPage = omit( getNormalizedPostsQuery( query ), 'page' );
-		return some( state.posts.queryRequests, ( isRequesting, serializedQuery ) => {
-			if ( ! isRequesting ) {
+	(state, siteId, query) => {
+		const normalizedQueryWithoutPage = omit(getNormalizedPostsQuery(query), 'page');
+		return some(state.posts.queryRequests, (isRequesting, serializedQuery) => {
+			if (!isRequesting) {
 				return false;
 			}
 
-			const queryDetails = getDeserializedPostsQueryDetails( serializedQuery );
+			const queryDetails = getDeserializedPostsQueryDetails(serializedQuery);
 			// Specific site query
-			if ( queryDetails.siteId && queryDetails.siteId !== siteId ) {
+			if (queryDetails.siteId && queryDetails.siteId !== siteId) {
 				return false;
 			}
 			// All-sites query
-			if ( ! queryDetails.siteId && siteId ) {
+			if (!queryDetails.siteId && siteId) {
 				return false;
 			}
 
-			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
-		} );
+			return isEqual(normalizedQueryWithoutPage, omit(queryDetails.query, 'page'));
+		});
 	},
-	state => state.posts.queryRequests,
-	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
+	(state) => state.posts.queryRequests,
+	(state, siteId, query) => getSerializedPostsQuery(query, siteId)
 );

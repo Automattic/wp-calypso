@@ -16,10 +16,10 @@ import Search from 'components/search';
  */
 import './style.scss';
 
-const SearchCard = ( { className, ...props }, ref ) => (
-	<Card className={ classnames( 'search-card', className ) }>
-		<Search ref={ ref } { ...props } />
+const SearchCard = ({ className, ...props }, ref) => (
+	<Card className={classnames('search-card', className)}>
+		<Search ref={ref} {...props} />
 	</Card>
 );
 
-export default React.forwardRef( SearchCard );
+export default React.forwardRef(SearchCard);

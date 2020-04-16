@@ -40,8 +40,8 @@ class SiteTopicForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSiteTopicChange = verticalData => {
-		this.props.setSiteVertical( {
+	onSiteTopicChange = (verticalData) => {
+		this.props.setSiteVertical({
 			isUserInput: verticalData.isUserInputVertical,
 			name: verticalData.verticalName,
 			preview: verticalData.preview,
@@ -49,10 +49,10 @@ class SiteTopicForm extends Component {
 			id: verticalData.verticalId,
 			parentId: verticalData.parent,
 			suggestedTheme: verticalData.suggestedTheme,
-		} );
+		});
 	};
 
-	onSubmit = event => {
+	onSubmit = (event) => {
 		const {
 			isUserInput,
 			siteSlug,
@@ -64,49 +64,49 @@ class SiteTopicForm extends Component {
 
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
+		this.props.recordTracksEvent('calypso_signup_actions_submit_site_topic', {
 			value: siteSlug,
 			is_user_input_vertical: isUserInput,
 			parent_id: verticalParentId || verticalId,
-		} );
+		});
 
-		this.props.submitForm( {
+		this.props.submitForm({
 			isUserInput,
 			name: siteTopic,
 			slug: siteSlug,
 			parentId: verticalParentId,
 			id: verticalId,
 			suggestedTheme,
-		} );
+		});
 	};
 
 	render() {
 		const { isButtonDisabled, siteTopic, siteType } = this.props;
 		const suggestionSearchInputPlaceholder =
-			getSiteTypePropertyValue( 'slug', siteType, 'siteTopicInputPlaceholder' ) || '';
-		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicLabel' ) || '';
+			getSiteTypePropertyValue('slug', siteType, 'siteTopicInputPlaceholder') || '';
+		const headerText = getSiteTypePropertyValue('slug', siteType, 'siteTopicLabel') || '';
 
 		return (
-			<div className={ classNames( 'site-topic__content', { 'is-empty': ! siteTopic } ) }>
-				<form onSubmit={ this.onSubmit }>
+			<div className={classNames('site-topic__content', { 'is-empty': !siteTopic })}>
+				<form onSubmit={this.onSubmit}>
 					<FormFieldset>
 						<SiteVerticalsSuggestionSearch
-							placeholder={ suggestionSearchInputPlaceholder }
-							labelText={ headerText }
-							onChange={ this.onSiteTopicChange }
-							showPopular={ true }
-							searchValue={ siteTopic }
-							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-							siteType={ siteType }
+							placeholder={suggestionSearchInputPlaceholder}
+							labelText={headerText}
+							onChange={this.onSiteTopicChange}
+							showPopular={true}
+							searchValue={siteTopic}
+							autoFocus={true} // eslint-disable-line jsx-a11y/no-autofocus
+							siteType={siteType}
 						/>
 						<Button
-							title={ this.props.translate( 'Continue' ) }
-							aria-label={ this.props.translate( 'Continue' ) }
+							title={this.props.translate('Continue')}
+							aria-label={this.props.translate('Continue')}
 							type="submit"
-							disabled={ isButtonDisabled }
+							disabled={isButtonDisabled}
 							primary
 						>
-							{ this.props.translate( 'Continue' ) }
+							{this.props.translate('Continue')}
 						</Button>
 					</FormFieldset>
 				</form>
@@ -116,24 +116,24 @@ class SiteTopicForm extends Component {
 }
 
 export default connect(
-	state => {
-		const siteType = getSiteType( state );
-		const siteTopic = getSiteVerticalName( state );
-		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic, siteType );
+	(state) => {
+		const siteType = getSiteType(state);
+		const siteTopic = getSiteVerticalName(state);
+		const isButtonDisabled = !siteTopic || null == getVerticals(state, siteTopic, siteType);
 
 		return {
 			siteTopic,
 			siteType,
-			siteSlug: getSiteVerticalSlug( state ),
-			suggestedTheme: getSiteVerticalSuggestedTheme( state ),
-			isUserInput: getSiteVerticalIsUserInput( state ),
+			siteSlug: getSiteVerticalSlug(state),
+			suggestedTheme: getSiteVerticalSuggestedTheme(state),
+			isUserInput: getSiteVerticalIsUserInput(state),
 			isButtonDisabled,
-			verticalId: getSiteVerticalId( state ),
-			verticalParentId: getSiteVerticalParentId( state ),
+			verticalId: getSiteVerticalId(state),
+			verticalParentId: getSiteVerticalParentId(state),
 		};
 	},
 	{
 		recordTracksEvent,
 		setSiteVertical,
 	}
-)( localize( SiteTopicForm ) );
+)(localize(SiteTopicForm));

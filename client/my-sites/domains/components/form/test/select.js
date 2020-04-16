@@ -14,9 +14,9 @@ import React from 'react';
 import Select from '../select';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
-describe( '<Select />', () => {
+describe('<Select />', () => {
 	const defaultProps = {
 		label: 'Select label',
 		name: 'select',
@@ -30,17 +30,17 @@ describe( '<Select />', () => {
 		errorMessage: null,
 	};
 
-	test( 'should render expected output', () => {
-		const wrapper = shallow( <Select { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-	} );
+	test('should render expected output', () => {
+		const wrapper = shallow(<Select {...defaultProps} />);
+		expect(wrapper).toMatchSnapshot();
+	});
 
-	test( 'should render form validation when there is an error', () => {
+	test('should render form validation when there is an error', () => {
 		const newProps = {
 			...defaultProps,
 			errorMessage: 'Duh duh duh!',
 		};
-		const wrapper = shallow( <Select { ...newProps } /> );
-		expect( wrapper.find( 'FormInputValidation' ) ).toHaveLength( 1 );
-	} );
-} );
+		const wrapper = shallow(<Select {...newProps} />);
+		expect(wrapper.find('FormInputValidation')).toHaveLength(1);
+	});
+});

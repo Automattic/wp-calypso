@@ -45,27 +45,27 @@ class PeopleInvites extends React.PureComponent {
 		site: PropTypes.object,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			showClearAllConfirmation: false,
 		};
 	}
 
 	toggleClearAllConfirmation = () => {
-		this.setState( {
-			showClearAllConfirmation: ! this.state.showClearAllConfirmation,
-		} );
+		this.setState({
+			showClearAllConfirmation: !this.state.showClearAllConfirmation,
+		});
 	};
 
 	handleClearAll = () => {
 		const { acceptedInvites, deleting, site } = this.props;
 
-		if ( deleting ) {
+		if (deleting) {
 			return;
 		}
 
-		this.props.deleteInvites( site.ID, map( acceptedInvites, 'key' ) );
+		this.props.deleteInvites(site.ID, map(acceptedInvites, 'key'));
 		this.toggleClearAllConfirmation();
 	};
 
@@ -73,14 +73,14 @@ class PeopleInvites extends React.PureComponent {
 		const { site, canViewPeople, isJetpack, isPrivate, translate } = this.props;
 		const siteId = site && site.ID;
 
-		if ( siteId && ! canViewPeople ) {
+		if (siteId && !canViewPeople) {
 			return (
 				<Main>
 					<PageViewTracker path="/people/invites/:site" title="People > Invites" />
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						title={this.props.translate('You are not authorized to view this page')}
+						illustration={'/calypso/images/illustrations/illustration-404.svg'}
 					/>
 				</Main>
 			);
@@ -89,20 +89,20 @@ class PeopleInvites extends React.PureComponent {
 		return (
 			<Main className="people-invites">
 				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
-				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
+				{siteId && <QuerySiteInvites siteId={siteId} />}
 				<SidebarNavigation />
 				<FormattedHeader
 					className="people-invites__page-heading"
-					headerText={ translate( 'People' ) }
+					headerText={translate('People')}
 					align="left"
 				/>
 				<PeopleSectionNav
 					filter="invites"
-					site={ site }
-					isJetpack={ isJetpack }
-					isPrivate={ isPrivate }
+					site={site}
+					isJetpack={isJetpack}
+					isPrivate={isPrivate}
 				/>
-				{ this.renderInvitesList() }
+				{this.renderInvitesList()}
 			</Main>
 		);
 	}
@@ -117,7 +117,7 @@ class PeopleInvites extends React.PureComponent {
 			translate,
 		} = this.props;
 
-		if ( ! site || ! site.ID ) {
+		if (!site || !site.ID) {
 			return this.renderPlaceholder();
 		}
 
@@ -127,7 +127,7 @@ class PeopleInvites extends React.PureComponent {
 		const hasPendingInvites = pendingInvites && pendingInvites.length > 0;
 		const pendingInviteCount = hasPendingInvites ? pendingInvites.length : 0;
 
-		if ( ! hasPendingInvites && ! hasAcceptedInvites ) {
+		if (!hasPendingInvites && !hasAcceptedInvites) {
 			return requesting ? this.renderPlaceholder() : this.renderEmptyContent();
 		}
 
@@ -155,36 +155,36 @@ class PeopleInvites extends React.PureComponent {
 
 		return (
 			<React.Fragment>
-				{ hasPendingInvites && (
+				{hasPendingInvites && (
 					<div className="people-invites__pending">
-						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
+						<PeopleListSectionHeader label={pendingLabel} site={site} />
 						<Card className="people-invites__invites-list">
-							{ pendingInvites.map( this.renderInvite ) }
+							{pendingInvites.map(this.renderInvite)}
 						</Card>
 					</div>
-				) }
+				)}
 
-				{ hasAcceptedInvites && (
+				{hasAcceptedInvites && (
 					<div className="people-invites__accepted">
 						<PeopleListSectionHeader
-							label={ acceptedLabel }
-							site={ hasPendingInvites ? null : site }
+							label={acceptedLabel}
+							site={hasPendingInvites ? null : site}
 							// Excluding `site=` hides the "Invite user" link.
 						>
-							{ this.renderClearAll() }
+							{this.renderClearAll()}
 						</PeopleListSectionHeader>
 						<Card className="people-invites__invites-list">
-							{ acceptedInvites.map( this.renderInvite ) }
+							{acceptedInvites.map(this.renderInvite)}
 						</Card>
 					</div>
-				) }
+				)}
 
-				{ ( hasPendingInvites || hasAcceptedInvites ) && (
+				{(hasPendingInvites || hasAcceptedInvites) && (
 					<InvitesListEnd
-						shown={ pendingInviteCount + acceptedInviteCount }
-						found={ totalInvitesFound }
+						shown={pendingInviteCount + acceptedInviteCount}
+						found={totalInvitesFound}
 					/>
-				) }
+				)}
 			</React.Fragment>
 		);
 	}
@@ -193,22 +193,22 @@ class PeopleInvites extends React.PureComponent {
 		const { deleting, translate } = this.props;
 
 		const dialogButtons = [
-			<Button busy={ deleting } primary onClick={ this.handleClearAll }>
-				{ translate( 'Clear all' ) }
+			<Button busy={deleting} primary onClick={this.handleClearAll}>
+				{translate('Clear all')}
 			</Button>,
-			<Button busy={ deleting } onClick={ this.toggleClearAllConfirmation }>
-				{ translate( 'Cancel' ) }
+			<Button busy={deleting} onClick={this.toggleClearAllConfirmation}>
+				{translate('Cancel')}
 			</Button>,
 		];
 
 		return (
 			<React.Fragment>
-				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
-					{ translate( 'Clear all accepted' ) }
+				<Button busy={deleting} compact onClick={this.toggleClearAllConfirmation}>
+					{translate('Clear all accepted')}
 				</Button>
-				<Dialog isVisible={ this.state.showClearAllConfirmation } buttons={ dialogButtons }>
-					<h1>{ translate( 'Clear All Accepted' ) }</h1>
-					<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
+				<Dialog isVisible={this.state.showClearAllConfirmation} buttons={dialogButtons}>
+					<h1>{translate('Clear All Accepted')}</h1>
+					<p>{translate('Are you sure you wish to clear all accepted invites?')}</p>
 				</Dialog>
 			</React.Fragment>
 		);
@@ -218,16 +218,16 @@ class PeopleInvites extends React.PureComponent {
 		const emptyTitle = this.props.translate(
 			'Invite people to follow your site or help you manage it.'
 		);
-		return <EmptyContent title={ emptyTitle } action={ this.renderInviteUsersAction() } />;
+		return <EmptyContent title={emptyTitle} action={this.renderInviteUsersAction()} />;
 	}
 
-	renderInviteUsersAction( isPrimary = true ) {
+	renderInviteUsersAction(isPrimary = true) {
 		const { site, translate } = this.props;
 
 		return (
-			<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
+			<Button primary={isPrimary} href={`/people/new/${site.slug}`}>
 				<Gridicon icon="user-add" />
-				<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
+				<span>{translate('Invite', { context: 'Verb. Button to invite more users.' })}</span>
 			</Button>
 		);
 	}
@@ -240,40 +240,40 @@ class PeopleInvites extends React.PureComponent {
 		);
 	}
 
-	renderInvite = invite => {
+	renderInvite = (invite) => {
 		const user = invite.user;
 
 		const { site } = this.props;
 
 		return (
 			<PeopleListItem
-				key={ invite.key }
-				invite={ invite }
-				user={ user }
-				site={ site }
+				key={invite.key}
+				invite={invite}
+				user={user}
+				site={site}
 				type="invite"
-				isSelectable={ false }
+				isSelectable={false}
 			/>
 		);
 	};
 }
 
 export default connect(
-	state => {
-		const site = getSelectedSite( state );
+	(state) => {
+		const site = getSelectedSite(state);
 		const siteId = site && site.ID;
 
 		return {
 			site,
-			isJetpack: isJetpackSite( state, siteId ),
-			isPrivate: isPrivateSite( state, siteId ),
-			requesting: isRequestingInvitesForSite( state, siteId ),
-			pendingInvites: getPendingInvitesForSite( state, siteId ),
-			acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
-			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
-			deleting: isDeletingAnyInvite( state, siteId ),
-			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+			isJetpack: isJetpackSite(state, siteId),
+			isPrivate: isPrivateSite(state, siteId),
+			requesting: isRequestingInvitesForSite(state, siteId),
+			pendingInvites: getPendingInvitesForSite(state, siteId),
+			acceptedInvites: getAcceptedInvitesForSite(state, siteId),
+			totalInvitesFound: getNumberOfInvitesFoundForSite(state, siteId),
+			deleting: isDeletingAnyInvite(state, siteId),
+			canViewPeople: canCurrentUser(state, siteId, 'list_users'),
 		};
 	},
 	{ deleteInvites }
-)( localize( PeopleInvites ) );
+)(localize(PeopleInvites));

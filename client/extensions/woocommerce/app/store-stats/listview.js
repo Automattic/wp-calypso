@@ -39,38 +39,36 @@ class StoreStatsListView extends Component {
 
 	render() {
 		const { siteId, slug, selectedDate, type, unit, queryParams } = this.props;
-		const { topListQuery } = getQueries( unit, selectedDate, { topListQuery: { limit: 100 } } );
-		const statType = listType[ type ].statType;
+		const { topListQuery } = getQueries(unit, selectedDate, { topListQuery: { limit: 100 } });
+		const statType = listType[type].statType;
 		return (
 			<Main className="store-stats__list-view woocommerce" wideLayout>
 				<PageViewTracker
-					path={ `/store/stats/${ type }/${ unit }/:site` }
-					title={ `Store > Stats > ${ titlecase( type ) } > ${ titlecase( unit ) }` }
+					path={`/store/stats/${type}/${unit}/:site`}
+					title={`Store > Stats > ${titlecase(type)} > ${titlecase(unit)}`}
 				/>
-				{ siteId && (
-					<QuerySiteStats statType={ statType } siteId={ siteId } query={ topListQuery } />
-				) }
+				{siteId && <QuerySiteStats statType={statType} siteId={siteId} query={topListQuery} />}
 				<StoreStatsPeriodNav
-					type={ type }
-					selectedDate={ selectedDate }
-					unit={ unit }
-					slug={ slug }
-					query={ topListQuery }
-					statType={ statType }
-					title={ listType[ type ].title }
-					queryParams={ queryParams }
+					type={type}
+					selectedDate={selectedDate}
+					unit={unit}
+					slug={slug}
+					query={topListQuery}
+					statType={statType}
+					title={listType[type].title}
+					queryParams={queryParams}
 				/>
 				<Module
-					siteId={ siteId }
-					emptyMessage={ listType[ type ].empty }
-					query={ topListQuery }
-					statType={ statType }
+					siteId={siteId}
+					emptyMessage={listType[type].empty}
+					query={topListQuery}
+					statType={statType}
 				>
 					<List
-						siteId={ siteId }
-						values={ listType[ type ].values }
-						query={ topListQuery }
-						statType={ statType }
+						siteId={siteId}
+						values={listType[type].values}
+						query={topListQuery}
+						statType={statType}
 					/>
 				</Module>
 				<JetpackColophon />
@@ -79,7 +77,7 @@ class StoreStatsListView extends Component {
 	}
 }
 
-export default connect( state => ( {
-	slug: getSelectedSiteSlug( state ),
-	siteId: getSelectedSiteId( state ),
-} ) )( StoreStatsListView );
+export default connect((state) => ({
+	slug: getSelectedSiteSlug(state),
+	siteId: getSelectedSiteId(state),
+}))(StoreStatsListView);

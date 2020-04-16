@@ -14,29 +14,28 @@ import { isRequestingForSites } from 'state/plugins/installed/selectors';
 
 class QueryJetpackPlugins extends Component {
 	static propTypes = {
-		siteIds: PropTypes.arrayOf(
-			PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired
-		).isRequired,
+		siteIds: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired)
+			.isRequired,
 		isRequestingForSites: PropTypes.bool,
 		fetchPlugins: PropTypes.func,
 	};
 
 	UNSAFE_componentWillMount() {
-		if ( this.props.siteIds && ! this.props.isRequestingForSites ) {
-			this.props.fetchPlugins( this.props.siteIds );
+		if (this.props.siteIds && !this.props.isRequestingForSites) {
+			this.props.fetchPlugins(this.props.siteIds);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( isEqual( nextProps.siteIds, this.props.siteIds ) ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (isEqual(nextProps.siteIds, this.props.siteIds)) {
 			return;
 		}
-		this.refresh( nextProps.isRequestingForSites, nextProps.siteIds );
+		this.refresh(nextProps.isRequestingForSites, nextProps.siteIds);
 	}
 
-	refresh( isRequesting, siteIds ) {
-		if ( ! isRequesting ) {
-			this.props.fetchPlugins( siteIds );
+	refresh(isRequesting, siteIds) {
+		if (!isRequesting) {
+			this.props.fetchPlugins(siteIds);
 		}
 	}
 
@@ -46,10 +45,10 @@ class QueryJetpackPlugins extends Component {
 }
 
 export default connect(
-	( state, props ) => {
+	(state, props) => {
 		return {
-			isRequestingForSites: isRequestingForSites( state, props.siteIds ),
+			isRequestingForSites: isRequestingForSites(state, props.siteIds),
 		};
 	},
 	{ fetchPlugins }
-)( QueryJetpackPlugins );
+)(QueryJetpackPlugins);

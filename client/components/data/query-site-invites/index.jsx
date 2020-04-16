@@ -12,23 +12,23 @@ import { isRequestingInvitesForSite } from 'state/invites/selectors';
 
 class QuerySiteInvites extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( props.requesting || ! props.siteId ) {
+	request(props) {
+		if (props.requesting || !props.siteId) {
 			return;
 		}
 
-		props.requestSiteInvites( props.siteId );
+		props.requestSiteInvites(props.siteId);
 	}
 
 	render() {
@@ -37,11 +37,11 @@ class QuerySiteInvites extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { siteId } = ownProps;
 		return {
-			requesting: isRequestingInvitesForSite( state, siteId ),
+			requesting: isRequestingInvitesForSite(state, siteId),
 		};
 	},
 	{ requestSiteInvites }
-)( QuerySiteInvites );
+)(QuerySiteInvites);

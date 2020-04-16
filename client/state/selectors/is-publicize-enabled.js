@@ -14,10 +14,10 @@ import { postTypeSupports } from 'state/post-types/selectors';
  *
  * @returns {boolean} True when enabled
  */
-export default function isPublicizeEnabled( state, siteId, postType ) {
+export default function isPublicizeEnabled(state, siteId, postType) {
 	return (
-		true !== getSiteOption( state, siteId, 'publicize_permanently_disabled' ) &&
-		false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
-		postTypeSupports( state, siteId, postType, 'publicize' )
+		true !== getSiteOption(state, siteId, 'publicize_permanently_disabled') &&
+		false !== isJetpackModuleActive(state, siteId, 'publicize') &&
+		postTypeSupports(state, siteId, postType, 'publicize')
 	);
 }

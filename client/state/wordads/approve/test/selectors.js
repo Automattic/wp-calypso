@@ -15,9 +15,9 @@ import {
 	getWordAdsSuccessForSite,
 } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#isRequestingWordAdsApproval()', () => {
-		test( 'should return requesting site ID', () => {
+describe('selectors', () => {
+	describe('#isRequestingWordAdsApproval()', () => {
+		test('should return requesting site ID', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -28,13 +28,13 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingWordAdsApproval( state, 2916284 ) ).to.equal( true );
-			expect( isRequestingWordAdsApproval( state, 77203074 ) ).to.equal( false );
-			expect( isRequestingWordAdsApproval( state, 'unknown' ) ).to.equal( false );
-		} );
-	} );
-	describe( '#isRequestingWordAdsApprovalForSite()', () => {
-		test( 'should return requesting site ID', () => {
+			expect(isRequestingWordAdsApproval(state, 2916284)).to.equal(true);
+			expect(isRequestingWordAdsApproval(state, 77203074)).to.equal(false);
+			expect(isRequestingWordAdsApproval(state, 'unknown')).to.equal(false);
+		});
+	});
+	describe('#isRequestingWordAdsApprovalForSite()', () => {
+		test('should return requesting site ID', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -45,13 +45,13 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingWordAdsApprovalForSite( state, { ID: 2916284 } ) ).to.equal( true );
-			expect( isRequestingWordAdsApprovalForSite( state, { ID: 77203074 } ) ).to.equal( false );
-			expect( isRequestingWordAdsApprovalForSite( state, null ) ).to.equal( false );
-		} );
-	} );
-	describe( '#getWordAdsError()', () => {
-		test( 'should return word ads error', () => {
+			expect(isRequestingWordAdsApprovalForSite(state, { ID: 2916284 })).to.equal(true);
+			expect(isRequestingWordAdsApprovalForSite(state, { ID: 77203074 })).to.equal(false);
+			expect(isRequestingWordAdsApprovalForSite(state, null)).to.equal(false);
+		});
+	});
+	describe('#getWordAdsError()', () => {
+		test('should return word ads error', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -62,12 +62,12 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getWordAdsError( state, 2916284 ) ).to.equal( null );
-			expect( getWordAdsError( state, 77203074 ) ).to.equal( 'Something unexpected happened' );
-		} );
-	} );
-	describe( '#getWordAdsErrorForSite()', () => {
-		test( 'should return word ads error', () => {
+			expect(getWordAdsError(state, 2916284)).to.equal(null);
+			expect(getWordAdsError(state, 77203074)).to.equal('Something unexpected happened');
+		});
+	});
+	describe('#getWordAdsErrorForSite()', () => {
+		test('should return word ads error', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -78,15 +78,15 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getWordAdsErrorForSite( state, { ID: 2916284 } ) ).to.equal( null );
-			expect( getWordAdsErrorForSite( state, { ID: 77203074 } ) ).to.equal(
+			expect(getWordAdsErrorForSite(state, { ID: 2916284 })).to.equal(null);
+			expect(getWordAdsErrorForSite(state, { ID: 77203074 })).to.equal(
 				'Something unexpected happened'
 			);
-			expect( getWordAdsErrorForSite( state, null ) ).to.equal( null );
-		} );
-	} );
-	describe( '#getWordAdsSuccess()', () => {
-		test( 'should return word ads error', () => {
+			expect(getWordAdsErrorForSite(state, null)).to.equal(null);
+		});
+	});
+	describe('#getWordAdsSuccess()', () => {
+		test('should return word ads error', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -97,12 +97,12 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getWordAdsSuccess( state, 2916284 ) ).to.equal( null );
-			expect( getWordAdsSuccess( state, 77203074 ) ).to.equal( true );
-		} );
-	} );
-	describe( '#getWordAdsSuccessForSite()', () => {
-		test( 'should return word ads error', () => {
+			expect(getWordAdsSuccess(state, 2916284)).to.equal(null);
+			expect(getWordAdsSuccess(state, 77203074)).to.equal(true);
+		});
+	});
+	describe('#getWordAdsSuccessForSite()', () => {
+		test('should return word ads error', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -113,9 +113,9 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getWordAdsSuccessForSite( state, { ID: 2916284 } ) ).to.equal( null );
-			expect( getWordAdsSuccessForSite( state, { ID: 77203074 } ) ).to.equal( true );
-			expect( getWordAdsSuccessForSite( state, null ) ).to.equal( null );
-		} );
-	} );
-} );
+			expect(getWordAdsSuccessForSite(state, { ID: 2916284 })).to.equal(null);
+			expect(getWordAdsSuccessForSite(state, { ID: 77203074 })).to.equal(true);
+			expect(getWordAdsSuccessForSite(state, null)).to.equal(null);
+		});
+	});
+});

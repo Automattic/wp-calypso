@@ -17,16 +17,16 @@ import 'state/automated-transfer/init';
  * @param {number} siteId requested site for transfer info
  * @returns {?boolean} whether we are fetching transfer status for given siteId
  */
-export default ( state, siteId ) => {
-	if ( ! siteId ) {
+export default (state, siteId) => {
+	if (!siteId) {
 		return null;
 	}
 
-	const siteTransfer = getAutomatedTransfer( state, siteId );
+	const siteTransfer = getAutomatedTransfer(state, siteId);
 
-	if ( ! siteTransfer || isEmpty( siteTransfer ) ) {
+	if (!siteTransfer || isEmpty(siteTransfer)) {
 		return null;
 	}
 
-	return get( siteTransfer, 'fetchingStatus', false );
+	return get(siteTransfer, 'fetchingStatus', false);
 };

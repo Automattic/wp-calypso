@@ -18,18 +18,18 @@ import {
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'reducer', () => {
-	useSandbox( sandbox => {
-		sandbox.stub( console, 'warn' );
-	} );
+describe('reducer', () => {
+	useSandbox((sandbox) => {
+		sandbox.stub(console, 'warn');
+	});
 
-	test( 'should export expected reducer keys', () => {
-		const state = reducer( undefined, {} );
+	test('should export expected reducer keys', () => {
+		const state = reducer(undefined, {});
 
-		expect( state ).toHaveProperty( 'settings' );
-	} );
+		expect(state).toHaveProperty('settings');
+	});
 
-	describe( 'settings', () => {
+	describe('settings', () => {
 		const settings = {
 			onboarding: {
 				siteTitle: 'My awesome site',
@@ -37,12 +37,12 @@ describe( 'reducer', () => {
 			},
 		};
 
-		test( 'should default to an empty object', () => {
-			const state = settingsReducer( undefined, {} );
-			expect( state ).toEqual( {} );
-		} );
+		test('should default to an empty object', () => {
+			const state = settingsReducer(undefined, {});
+			expect(state).toEqual({});
+		});
 
-		test( 'should mark the module as active upon successful module activation', () => {
+		test('should mark the module as active upon successful module activation', () => {
 			const siteId = 12345678,
 				initialState = {
 					12345678: {
@@ -55,16 +55,16 @@ describe( 'reducer', () => {
 					siteId,
 					moduleSlug: 'module-a',
 				};
-			const state = settingsReducer( deepFreeze( initialState ), action );
-			expect( state ).toEqual( {
+			const state = settingsReducer(deepFreeze(initialState), action);
+			expect(state).toEqual({
 				12345678: {
 					setting_123: 'test',
 					'module-a': true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should mark the module as inactive upon successful module deactivation', () => {
+		test('should mark the module as inactive upon successful module deactivation', () => {
 			const siteId = 12345678,
 				initialState = {
 					12345678: {
@@ -77,16 +77,16 @@ describe( 'reducer', () => {
 					siteId,
 					moduleSlug: 'module-a',
 				};
-			const state = settingsReducer( deepFreeze( initialState ), action );
-			expect( state ).toEqual( {
+			const state = settingsReducer(deepFreeze(initialState), action);
+			expect(state).toEqual({
 				12345678: {
 					setting_123: 'test',
 					'module-a': false,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should update the module activation state upon receiving new modules', () => {
+		test('should update the module activation state upon receiving new modules', () => {
 			const siteId = 12345678,
 				initialState = {
 					12345678: {
@@ -107,17 +107,17 @@ describe( 'reducer', () => {
 						},
 					},
 				};
-			const state = settingsReducer( deepFreeze( initialState ), action );
-			expect( state ).toEqual( {
+			const state = settingsReducer(deepFreeze(initialState), action);
+			expect(state).toEqual({
 				12345678: {
 					setting_123: 'test',
 					'module-a': false,
 					'module-b': true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should update module settings with normalized ones when receiving new modules', () => {
+		test('should update module settings with normalized ones when receiving new modules', () => {
 			const siteId = 12345678,
 				initialState = {
 					12345678: {
@@ -141,49 +141,49 @@ describe( 'reducer', () => {
 						},
 					},
 				};
-			const state = settingsReducer( deepFreeze( initialState ), action );
-			expect( state ).toEqual( {
+			const state = settingsReducer(deepFreeze(initialState), action);
+			expect(state).toEqual({
 				12345678: {
 					setting_123: 'test',
 					minileven: true,
 					wp_mobile_excerpt: true,
 					some_other_option: '123',
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should index settings by siteId', () => {
+		test('should index settings by siteId', () => {
 			const siteId = 12345678;
-			const initialState = deepFreeze( {} );
-			const state = settingsReducer( initialState, {
+			const initialState = deepFreeze({});
+			const state = settingsReducer(initialState, {
 				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings,
-			} );
+			});
 
-			expect( state ).toEqual( {
-				[ siteId ]: settings,
-			} );
-		} );
+			expect(state).toEqual({
+				[siteId]: settings,
+			});
+		});
 
-		test( 'should store settings for new sites', () => {
+		test('should store settings for new sites', () => {
 			const siteId = 87654321;
-			const initialState = deepFreeze( {
-				[ 12345678 ]: settings,
-			} );
-			const state = settingsReducer( initialState, {
+			const initialState = deepFreeze({
+				[12345678]: settings,
+			});
+			const state = settingsReducer(initialState, {
 				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings,
-			} );
+			});
 
-			expect( state ).toEqual( {
+			expect(state).toEqual({
 				...initialState,
-				[ siteId ]: settings,
-			} );
-		} );
+				[siteId]: settings,
+			});
+		});
 
-		test( 'should add new settings for existing sites', () => {
+		test('should add new settings for existing sites', () => {
 			const siteId = 12345678;
 			const newSettings = {
 				onboarding: {
@@ -191,62 +191,62 @@ describe( 'reducer', () => {
 					siteType: 'business',
 				},
 			};
-			const initialState = deepFreeze( {
-				[ siteId ]: settings,
-				[ 87654321 ]: settings,
-			} );
-			const state = settingsReducer( initialState, {
+			const initialState = deepFreeze({
+				[siteId]: settings,
+				[87654321]: settings,
+			});
+			const state = settingsReducer(initialState, {
 				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings: newSettings,
-			} );
+			});
 
-			expect( state ).toEqual( {
+			expect(state).toEqual({
 				...initialState,
-				[ siteId ]: newSettings,
-			} );
-		} );
+				[siteId]: newSettings,
+			});
+		});
 
-		test( 'should update post-by-email address after regenerating', () => {
+		test('should update post-by-email address after regenerating', () => {
 			const siteId = 12345678;
 			const newSettings = {
 				post_by_email_address: 'example1234@automattic.com',
 			};
-			const initialState = deepFreeze( {
-				[ siteId ]: settings,
-				[ 87654321 ]: settings,
-			} );
-			const state = settingsReducer( initialState, {
+			const initialState = deepFreeze({
+				[siteId]: settings,
+				[87654321]: settings,
+			});
+			const state = settingsReducer(initialState, {
 				type: JETPACK_SETTINGS_SAVE_SUCCESS,
 				siteId,
 				settings: newSettings,
-			} );
+			});
 
-			expect( state ).toEqual( {
+			expect(state).toEqual({
 				...initialState,
-				[ siteId ]: { ...settings, ...newSettings },
-			} );
-		} );
+				[siteId]: { ...settings, ...newSettings },
+			});
+		});
 
-		test( "shouldn't update post-by-email address if it hasn't been regenerated", () => {
+		test("shouldn't update post-by-email address if it hasn't been regenerated", () => {
 			const siteId = 12345678;
 			const newSettings = {
 				post_by_email_address: '',
 			};
-			const initialState = deepFreeze( {
-				[ siteId ]: settings,
-				[ 87654321 ]: settings,
-			} );
-			const state = settingsReducer( initialState, {
+			const initialState = deepFreeze({
+				[siteId]: settings,
+				[87654321]: settings,
+			});
+			const state = settingsReducer(initialState, {
 				type: JETPACK_SETTINGS_SAVE_SUCCESS,
 				siteId,
 				settings: newSettings,
-			} );
+			});
 
-			expect( state ).toEqual( initialState );
-		} );
+			expect(state).toEqual(initialState);
+		});
 
-		test( 'should keep non-updated settings for sites', () => {
+		test('should keep non-updated settings for sites', () => {
 			const siteId = 12345678;
 			const newSettings = {
 				onboarding: {
@@ -255,48 +255,48 @@ describe( 'reducer', () => {
 				},
 			};
 
-			const initialState = deepFreeze( {
-				[ siteId ]: settings,
-				[ 87654321 ]: settings,
-			} );
-			const state = settingsReducer( initialState, {
+			const initialState = deepFreeze({
+				[siteId]: settings,
+				[87654321]: settings,
+			});
+			const state = settingsReducer(initialState, {
 				type: JETPACK_SETTINGS_UPDATE,
 				siteId,
 				settings: newSettings,
-			} );
+			});
 
-			expect( state ).toEqual( {
+			expect(state).toEqual({
 				...initialState,
-				[ siteId ]: newSettings,
-			} );
-		} );
+				[siteId]: newSettings,
+			});
+		});
 
-		test( 'should persist state', () => {
-			const original = deepFreeze( {
-				[ 12345678 ]: settings,
-			} );
-			const state = settingsReducer( original, { type: SERIALIZE } );
+		test('should persist state', () => {
+			const original = deepFreeze({
+				[12345678]: settings,
+			});
+			const state = settingsReducer(original, { type: SERIALIZE });
 
-			expect( state.root() ).toEqual( original );
-		} );
+			expect(state.root()).toEqual(original);
+		});
 
-		test( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
-				[ 12345678 ]: settings,
-			} );
+		test('should load valid persisted state', () => {
+			const original = deepFreeze({
+				[12345678]: settings,
+			});
 
-			const state = settingsReducer( original, { type: DESERIALIZE } );
+			const state = settingsReducer(original, { type: DESERIALIZE });
 
-			expect( state ).toEqual( original );
-		} );
+			expect(state).toEqual(original);
+		});
 
-		test( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
-				[ 12345678 ]: [ 'test' ],
-			} );
-			const state = settingsReducer( original, { type: DESERIALIZE } );
+		test('should not load invalid persisted state', () => {
+			const original = deepFreeze({
+				[12345678]: ['test'],
+			});
+			const state = settingsReducer(original, { type: DESERIALIZE });
 
-			expect( state ).toEqual( {} );
-		} );
-	} );
-} );
+			expect(state).toEqual({});
+		});
+	});
+});

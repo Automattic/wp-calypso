@@ -6,13 +6,13 @@
  * @returns {null} null
  */
 class SiteSettings {
-	constructor( sid, wpcom ) {
-		if ( ! sid ) {
-			throw new Error( '`site id` is not correctly defined' );
+	constructor(sid, wpcom) {
+		if (!sid) {
+			throw new Error('`site id` is not correctly defined');
 		}
 
-		if ( ! ( this instanceof SiteSettings ) ) {
-			return new SiteSettings( sid, wpcom );
+		if (!(this instanceof SiteSettings)) {
+			return new SiteSettings(sid, wpcom);
 		}
 
 		this.wpcom = wpcom;
@@ -27,8 +27,8 @@ class SiteSettings {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	get( query, fn ) {
-		return this.wpcom.req.get( this.path, query, fn );
+	get(query, fn) {
+		return this.wpcom.req.get(this.path, query, fn);
 	}
 
 	/**
@@ -38,31 +38,31 @@ class SiteSettings {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Function} request handler
 	 */
-	getOption( option, fn = () => {} ) {
+	getOption(option, fn = () => {}) {
 		let query = { fields: 'settings' };
-		return new Promise( ( resolve, reject ) => {
-			this.wpcom.req.get( this.path, query, ( err, data ) => {
-				if ( err ) {
-					fn( err );
-					return reject( err );
+		return new Promise((resolve, reject) => {
+			this.wpcom.req.get(this.path, query, (err, data) => {
+				if (err) {
+					fn(err);
+					return reject(err);
 				}
 
-				if ( ! data ) {
+				if (!data) {
 					fn();
 					return resolve();
 				}
 
 				let settings = data.settings;
 
-				if ( settings && typeof settings[ option ] !== 'undefined' ) {
-					fn( null, settings[ option ] );
-					return resolve( settings[ option ] );
+				if (settings && typeof settings[option] !== 'undefined') {
+					fn(null, settings[option]);
+					return resolve(settings[option]);
 				}
 
-				fn( null, data );
-				return resolve( data );
-			} );
-		} );
+				fn(null, data);
+				return resolve(data);
+			});
+		});
 	}
 
 	/**
@@ -73,8 +73,8 @@ class SiteSettings {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	update( query, body, fn ) {
-		return this.wpcom.req.put( this.path, query, body, fn );
+	update(query, body, fn) {
+		return this.wpcom.req.put(this.path, query, body, fn);
 	}
 
 	/**
@@ -85,8 +85,8 @@ class SiteSettings {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	setOption( option, value, fn ) {
-		return this.wpcom.req.put( this.path, {}, { [ option ]: value }, fn );
+	setOption(option, value, fn) {
+		return this.wpcom.req.put(this.path, {}, { [option]: value }, fn);
 	}
 }
 

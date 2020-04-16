@@ -48,26 +48,26 @@ class PluginRemoveButton extends React.Component {
 				}
 			),
 			this.processRemovalConfirmation,
-			this.props.translate( 'Remove' )
+			this.props.translate('Remove')
 		);
 	};
 
-	processRemovalConfirmation = accepted => {
-		if ( accepted ) {
-			PluginsActions.removePluginsNotices( 'completed', 'error' );
-			PluginsActions.removePlugin( this.props.site, this.props.plugin );
+	processRemovalConfirmation = (accepted) => {
+		if (accepted) {
+			PluginsActions.removePluginsNotices('completed', 'error');
+			PluginsActions.removePlugin(this.props.site, this.props.plugin);
 
-			if ( this.props.isEmbed ) {
+			if (this.props.isEmbed) {
 				gaRecordEvent(
 					'Plugins',
 					'Remove plugin with no selected site',
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_sites_list', {
+				analytics.tracks.recordEvent('calypso_plugin_remove_click_from_sites_list', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
-				} );
+				});
 			} else {
 				gaRecordEvent(
 					'Plugins',
@@ -75,21 +75,21 @@ class PluginRemoveButton extends React.Component {
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_plugin_info', {
+				analytics.tracks.recordEvent('calypso_plugin_remove_click_from_plugin_info', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
-				} );
+				});
 			}
 		}
 	};
 
 	getDisabledInfo = () => {
-		if ( ! this.props.site ) {
+		if (!this.props.site) {
 			// we don't have enough info
 			return null;
 		}
 
-		if ( this.props.site.options.is_multi_network ) {
+		if (this.props.site.options.is_multi_network) {
 			return this.props.translate(
 				'%(site)s is part of a multi-network installation, which is not currently supported.',
 				{
@@ -98,7 +98,7 @@ class PluginRemoveButton extends React.Component {
 			);
 		}
 
-		if ( ! isMainNetworkSite( this.props.site ) ) {
+		if (!isMainNetworkSite(this.props.site)) {
 			return this.props.translate(
 				'%(pluginName)s cannot be removed because %(site)s is not the main site of the multi-site installation.',
 				{
@@ -110,43 +110,43 @@ class PluginRemoveButton extends React.Component {
 			);
 		}
 
-		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
-			const reasons = getSiteFileModDisableReason( this.props.site, 'modifyFiles' );
+		if (!this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled) {
+			const reasons = getSiteFileModDisableReason(this.props.site, 'modifyFiles');
 			const html = [];
 
-			if ( reasons.length > 1 ) {
+			if (reasons.length > 1) {
 				html.push(
 					<p key="reason-shell">
-						{ this.props.translate( '%(pluginName)s cannot be removed:', {
+						{this.props.translate('%(pluginName)s cannot be removed:', {
 							args: { pluginName: this.props.plugin.name },
-						} ) }
+						})}
 					</p>
 				);
-				const list = reasons.map( ( reason, i ) => (
-					<li key={ 'reason-i' + i + '-' + this.props.site.ID }>{ reason }</li>
-				) );
+				const list = reasons.map((reason, i) => (
+					<li key={'reason-i' + i + '-' + this.props.site.ID}>{reason}</li>
+				));
 				html.push(
 					/* eslint-disable wpcalypso/jsx-classname-namespace */
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
-						{ list }
+						{list}
 					</ul>
 				);
 			} else {
 				html.push(
 					<p key="reason-shell">
-						{ this.props.translate( '%(pluginName)s cannot be removed. %(reason)s', {
-							args: { pluginName: this.props.plugin.name, reason: reasons[ 0 ] },
-						} ) }
+						{this.props.translate('%(pluginName)s cannot be removed. %(reason)s', {
+							args: { pluginName: this.props.plugin.name, reason: reasons[0] },
+						})}
 					</p>
 				);
 			}
 			html.push(
 				<ExternalLink
 					key="external-link"
-					onClick={ this.handleHowDoIFixThisButtonClick }
+					onClick={this.handleHowDoIFixThisButtonClick}
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
 				>
-					{ this.props.translate( 'How do I fix this?' ) }
+					{this.props.translate('How do I fix this?')}
 				</ExternalLink>
 			);
 
@@ -156,27 +156,27 @@ class PluginRemoveButton extends React.Component {
 	};
 
 	handleHowDoIFixThisButtonClick = () => {
-		gaRecordEvent( 'Plugins', 'Clicked How do I fix disabled plugin removal.' );
+		gaRecordEvent('Plugins', 'Clicked How do I fix disabled plugin removal.');
 	};
 
 	renderButton = () => {
-		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
+		const inProgress = PluginsLog.isInProgressAction(this.props.site.ID, this.props.plugin.slug, [
 			'REMOVE_PLUGIN',
-		] );
+		]);
 		const disabledInfo = this.getDisabledInfo();
-		const disabled = !! disabledInfo;
+		const disabled = !!disabledInfo;
 		const label = disabled
-			? this.props.translate( 'Removal Disabled', {
+			? this.props.translate('Removal Disabled', {
 					context:
 						'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" ',
-			  } )
-			: this.props.translate( 'Remove', {
+			  })
+			: this.props.translate('Remove', {
 					context: 'Verb. Presented to user as a label for a button.',
-			  } );
-		if ( inProgress ) {
+			  });
+		if (inProgress) {
 			return (
 				<span className="plugin-action plugin-remove-button__remove">
-					{ this.props.translate( 'Removing…' ) }
+					{this.props.translate('Removing…')}
 				</span>
 			);
 		}
@@ -185,26 +185,26 @@ class PluginRemoveButton extends React.Component {
 
 		return (
 			<PluginAction
-				label={ label }
-				htmlFor={ 'remove-plugin-' + this.props.site.ID }
-				action={ this.removeAction }
-				disabled={ disabled }
-				disabledInfo={ disabledInfo }
+				label={label}
+				htmlFor={'remove-plugin-' + this.props.site.ID}
+				action={this.removeAction}
+				disabled={disabled}
+				disabledInfo={disabledInfo}
 				className="plugin-remove-button__remove-link"
 			>
-				<a onClick={ handleClick } className="plugin-remove-button__remove-icon">
-					<Gridicon icon="trash" size={ 18 } />
+				<a onClick={handleClick} className="plugin-remove-button__remove-icon">
+					<Gridicon icon="trash" size={18} />
 				</a>
 			</PluginAction>
 		);
 	};
 
 	render() {
-		if ( ! this.props.site.jetpack ) {
+		if (!this.props.site.jetpack) {
 			return null;
 		}
 
-		if ( this.props.plugin.slug === 'jetpack' ) {
+		if (this.props.plugin.slug === 'jetpack') {
 			return null;
 		}
 
@@ -212,4 +212,4 @@ class PluginRemoveButton extends React.Component {
 	}
 }
 
-export default localize( PluginRemoveButton );
+export default localize(PluginRemoveButton);

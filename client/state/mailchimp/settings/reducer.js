@@ -5,14 +5,14 @@
 import { combineReducers, withoutPersistence } from 'state/utils';
 import { MAILCHIMP_SETTINGS_RECEIVE, MAILCHIMP_SETTINGS_UPDATE_SUCCESS } from 'state/action-types';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case MAILCHIMP_SETTINGS_RECEIVE: {
 			const { siteId, settings } = action;
 
 			return {
 				...state,
-				[ siteId ]: settings,
+				[siteId]: settings,
 			};
 		}
 		case MAILCHIMP_SETTINGS_UPDATE_SUCCESS: {
@@ -20,14 +20,14 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: settings,
+				[siteId]: settings,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
-} );
+});

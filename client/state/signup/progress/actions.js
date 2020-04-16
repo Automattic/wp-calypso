@@ -17,23 +17,23 @@ import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-function addProvidedDependencies( step, providedDependencies ) {
-	if ( isEmpty( providedDependencies ) ) {
+function addProvidedDependencies(step, providedDependencies) {
+	if (isEmpty(providedDependencies)) {
 		return step;
 	}
 
 	return { ...step, providedDependencies };
 }
 
-function recordSubmitStep( stepName, providedDependencies ) {
+function recordSubmitStep(stepName, providedDependencies) {
 	// Transform the keys since tracks events only accept snaked prop names.
 	// And anonymize personally identifiable information.
 	const inputs = reduce(
 		providedDependencies,
-		( props, propValue, propName ) => {
-			propName = snakeCase( propName );
+		(props, propValue, propName) => {
+			propName = snakeCase(propName);
 
-			if ( stepName === 'from-url' && propName === 'site_preview_image_blob' ) {
+			if (stepName === 'from-url' && propName === 'site_preview_image_blob') {
 				/**
 				 * There's no need to include a resource ID in our event.
 				 * Just record that a preview was fetched
@@ -41,78 +41,75 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				 * @see the `sitePreviewImageBlob` dependency
 				 */
 				propName = 'site_preview_image_fetched';
-				propValue = !! propValue;
+				propValue = !!propValue;
 			}
 
 			// Ensure we don't capture identifiable user data we don't need.
-			if ( includes( [ 'email' ], propName ) ) {
-				propName = `user_entered_${ propName }`;
-				propValue = !! propValue;
+			if (includes(['email'], propName)) {
+				propName = `user_entered_${propName}`;
+				propValue = !!propValue;
 			}
 
 			if (
-				( propName === 'cart_item' || propName === 'domain_item' ) &&
+				(propName === 'cart_item' || propName === 'domain_item') &&
 				typeof propValue !== 'string'
 			) {
-				propValue = toPairs( propValue )
-					.map( pair => pair.join( ':' ) )
-					.join( ',' );
+				propValue = toPairs(propValue)
+					.map((pair) => pair.join(':'))
+					.join(',');
 			}
 
 			return {
 				...props,
-				[ propName ]: propValue,
+				[propName]: propValue,
 			};
 		},
 		{}
 	);
 
-	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
+	return recordTracksEvent('calypso_signup_actions_submit_step', {
 		step: stepName,
 		...inputs,
-	} );
+	});
 }
 
-export function saveSignupStep( step ) {
-	return ( dispatch, getState ) => {
-		const lastKnownFlow = getCurrentFlowName( getState() );
+export function saveSignupStep(step) {
+	return (dispatch, getState) => {
+		const lastKnownFlow = getCurrentFlowName(getState());
 		const lastUpdated = Date.now();
 
-		dispatch( {
+		dispatch({
 			type: SIGNUP_PROGRESS_SAVE_STEP,
 			step: { ...step, lastKnownFlow, lastUpdated },
-		} );
+		});
 	};
 }
 
-export function submitSignupStep( step, providedDependencies ) {
-	assertValidDependencies( step.stepName, providedDependencies );
-	return ( dispatch, getState ) => {
-		const lastKnownFlow = getCurrentFlowName( getState() );
+export function submitSignupStep(step, providedDependencies) {
+	assertValidDependencies(step.stepName, providedDependencies);
+	return (dispatch, getState) => {
+		const lastKnownFlow = getCurrentFlowName(getState());
 		const lastUpdated = Date.now();
 
-		dispatch( recordSubmitStep( step.stepName, providedDependencies ) );
+		dispatch(recordSubmitStep(step.stepName, providedDependencies));
 
-		dispatch( {
+		dispatch({
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,
-			step: addProvidedDependencies(
-				{ ...step, lastKnownFlow, lastUpdated },
-				providedDependencies
-			),
-		} );
+			step: addProvidedDependencies({ ...step, lastKnownFlow, lastUpdated }, providedDependencies),
+		});
 	};
 }
 
-export function completeSignupStep( step, providedDependencies ) {
-	assertValidDependencies( step.stepName, providedDependencies );
+export function completeSignupStep(step, providedDependencies) {
+	assertValidDependencies(step.stepName, providedDependencies);
 	const lastUpdated = Date.now();
 	return {
 		type: SIGNUP_PROGRESS_COMPLETE_STEP,
-		step: addProvidedDependencies( { ...step, lastUpdated }, providedDependencies ),
+		step: addProvidedDependencies({ ...step, lastUpdated }, providedDependencies),
 	};
 }
 
-export function processStep( step ) {
+export function processStep(step) {
 	const lastUpdated = Date.now();
 	return {
 		type: SIGNUP_PROGRESS_PROCESS_STEP,
@@ -120,7 +117,7 @@ export function processStep( step ) {
 	};
 }
 
-export function invalidateStep( step, errors ) {
+export function invalidateStep(step, errors) {
 	const lastUpdated = Date.now();
 	return {
 		type: SIGNUP_PROGRESS_INVALIDATE_STEP,

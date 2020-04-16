@@ -31,33 +31,33 @@ class SharingButtonsLabelEditor extends React.Component {
 	static defaultProps = {
 		active: false,
 		value: '',
-		onChange: function() {},
-		onClose: function() {},
+		onChange: function () {},
+		onClose: function () {},
 		hasEnabledButtons: true,
 	};
 
-	onKeyDown = event => {
-		if ( -1 !== closeKeyCodes.indexOf( event.keyCode ) ) {
+	onKeyDown = (event) => {
+		if (-1 !== closeKeyCodes.indexOf(event.keyCode)) {
 			event.target.blur();
 			event.preventDefault();
 			this.props.onClose();
 		}
 	};
 
-	onInputChange = event => {
-		this.props.onChange( event.target.value );
+	onInputChange = (event) => {
+		this.props.onChange(event.target.value);
 	};
 
 	getNoButtonsNoticeElement = () => {
-		if ( ! this.props.hasEnabledButtons ) {
+		if (!this.props.hasEnabledButtons) {
 			return (
 				<em className="sharing-buttons-preview__panel-notice">
-					{ this.props.translate(
+					{this.props.translate(
 						"This text won't appear until you add at least one sharing button.",
 						{
 							context: 'Sharing: Buttons',
 						}
-					) }
+					)}
 				</em>
 			);
 		}
@@ -74,26 +74,26 @@ class SharingButtonsLabelEditor extends React.Component {
 		);
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<div className="sharing-buttons-preview__panel-content">
 					<h3 className="sharing-buttons-preview__panel-heading">
-						{ this.props.translate( 'Edit label text', { context: 'Sharing: buttons' } ) }
+						{this.props.translate('Edit label text', { context: 'Sharing: buttons' })}
 					</h3>
 					<p className="sharing-buttons-preview__panel-instructions">
-						{ this.props.translate( 'Change the text of the sharing buttons label' ) }
+						{this.props.translate('Change the text of the sharing buttons label')}
 					</p>
 					<input
 						type="text"
-						value={ decodeEntities( this.props.value ) }
-						onKeyDown={ this.onKeyDown }
-						onChange={ this.onInputChange }
+						value={decodeEntities(this.props.value)}
+						onKeyDown={this.onKeyDown}
+						onChange={this.onInputChange}
 						className="sharing-buttons-label-editor__input"
 					/>
-					{ this.getNoButtonsNoticeElement() }
+					{this.getNoButtonsNoticeElement()}
 				</div>
 				<footer className="sharing-buttons-preview__panel-actions">
-					<button type="button" className="button" onClick={ this.props.onClose }>
-						{ this.props.translate( 'Close' ) }
+					<button type="button" className="button" onClick={this.props.onClose}>
+						{this.props.translate('Close')}
 					</button>
 				</footer>
 			</div>
@@ -101,4 +101,4 @@ class SharingButtonsLabelEditor extends React.Component {
 	}
 }
 
-export default localize( SharingButtonsLabelEditor );
+export default localize(SharingButtonsLabelEditor);

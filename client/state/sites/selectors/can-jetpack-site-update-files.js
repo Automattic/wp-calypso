@@ -18,29 +18,29 @@ import isJetpackSiteSecondaryNetworkSite from './is-jetpack-site-secondary-netwo
  * @param   {number}   siteId Site ID
  * @returns {?boolean}        True if the site can update its file
  */
-export default function canJetpackSiteUpdateFiles( state, siteId ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
+export default function canJetpackSiteUpdateFiles(state, siteId) {
+	if (!isJetpackSite(state, siteId)) {
 		return null;
 	}
 
-	const isMultiNetwork = getSiteOption( state, siteId, 'is_multi_network' );
+	const isMultiNetwork = getSiteOption(state, siteId, 'is_multi_network');
 
-	if ( isMultiNetwork ) {
+	if (isMultiNetwork) {
 		return false;
 	}
 
-	if ( isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
+	if (isJetpackSiteSecondaryNetworkSite(state, siteId)) {
 		return false;
 	}
 
-	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
+	const fileModDisabled = getSiteOption(state, siteId, 'file_mod_disabled');
 
-	if ( ! fileModDisabled ) {
+	if (!fileModDisabled) {
 		return true;
 	}
 
 	return (
-		! includes( fileModDisabled, 'disallow_file_mods' ) &&
-		! includes( fileModDisabled, 'has_no_file_system_write_access' )
+		!includes(fileModDisabled, 'disallow_file_mods') &&
+		!includes(fileModDisabled, 'has_no_file_system_write_access')
 	);
 }

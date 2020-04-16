@@ -77,7 +77,7 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	markdownPlugin,
 	wpEmojiPlugin,
 	simplePaymentsPlugin,
-].forEach( initializePlugin => initializePlugin() );
+].forEach((initializePlugin) => initializePlugin());
 
 /**
  * Internal Dependencies
@@ -160,12 +160,12 @@ const PLUGINS = [
 ];
 
 mentionsPlugin();
-PLUGINS.push( 'wpcom/mentions' );
+PLUGINS.push('wpcom/mentions');
 
 const CONTENT_CSS = [
-	window.app.staticUrls[ 'tinymce/skins/wordpress/wp-content.css' ],
+	window.app.staticUrls['tinymce/skins/wordpress/wp-content.css'],
 	'//s1.wp.com/wp-includes/css/dashicons.css?v=20150727',
-	window.app.staticUrls[ 'editor.css' ],
+	window.app.staticUrls['editor.css'],
 	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap',
 ];
 
@@ -216,14 +216,14 @@ export default class TinyMCE extends React.Component {
 
 	textInput = React.createRef();
 
-	componentDidUpdate( prevProps ) {
-		if ( ! this._editor ) {
+	componentDidUpdate(prevProps) {
+		if (!this._editor) {
 			return;
 		}
 
-		this.bindEditorEvents( prevProps );
+		this.bindEditorEvents(prevProps);
 
-		if ( this.props.mode !== prevProps.mode ) {
+		if (this.props.mode !== prevProps.mode) {
 			this.toggleEditor();
 		}
 	}
@@ -232,20 +232,17 @@ export default class TinyMCE extends React.Component {
 		const { isGutenbergClassicBlock, isVipSite } = this.props;
 		this.mounted = true;
 
-		const setup = editor => {
+		const setup = (editor) => {
 			this._editor = editor;
 
-			if ( ! this.mounted ) {
+			if (!this.mounted) {
 				this.destroyEditor();
 				return;
 			}
 
 			this.bindEditorEvents();
-			editor.on( 'SetTextAreaContent', event => this.setTextAreaContent( event.content ) );
-			editor.once(
-				'PostRender',
-				this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } )
-			);
+			editor.on('SetTextAreaContent', (event) => this.setTextAreaContent(event.content));
+			editor.once('PostRender', this.toggleEditor.bind(this, { autofocus: !this.props.isNew }));
 		};
 
 		const store = this.reduxStore;
@@ -253,21 +250,21 @@ export default class TinyMCE extends React.Component {
 		let localeSlug = 'en';
 		let colorScheme = undefined;
 
-		if ( store ) {
+		if (store) {
 			const state = store.getState();
 
-			localeSlug = getCurrentLocaleSlug( state );
-			isRtl = isLocaleRtl( localeSlug );
-			colorScheme = getPreference( state, 'colorScheme' );
+			localeSlug = getCurrentLocaleSlug(state);
+			isRtl = isLocaleRtl(localeSlug);
+			colorScheme = getPreference(state, 'colorScheme');
 		}
 
-		this.localize( isRtl, localeSlug );
+		this.localize(isRtl, localeSlug);
 
 		const ltrButton = isRtl ? 'ltr,' : '';
 		const gutenbergClassName = isGutenbergClassicBlock ? ' is-gutenberg' : '';
 		const spellchecker = isVipSite ? ',spellchecker' : '';
 
-		tinymce.init( {
+		tinymce.init({
 			selector: '#' + this._id,
 			skin_url: '/calypso/tinymce/skins/lightgray',
 			skin: 'lightgray',
@@ -339,10 +336,10 @@ export default class TinyMCE extends React.Component {
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: isGutenbergClassicBlock
 				? 150
-				: Math.max( document.documentElement.clientHeight - 300, 300 ),
+				: Math.max(document.documentElement.clientHeight - 300, 300),
 			autoresize_bottom_margin: isGutenbergClassicBlock || isMobile() ? 10 : 50,
 
-			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright${ spellchecker },wp_more,${ ltrButton }wpcom_advanced`,
+			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright${spellchecker},wp_more,${ltrButton}wpcom_advanced`,
 			toolbar2:
 				'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
@@ -350,20 +347,20 @@ export default class TinyMCE extends React.Component {
 
 			tabfocus_elements: 'content-html,save-post',
 			tabindex: this.props.tabIndex,
-			body_class: `content post-type-post post-status-draft post-format-standard locale-en-us${ gutenbergClassName }`,
+			body_class: `content post-type-post post-status-draft post-format-standard locale-en-us${gutenbergClassName}`,
 			add_unload_trigger: false,
 
 			color_scheme: colorScheme,
 
 			setup: setup,
-		} );
+		});
 
-		autosize( this.textInput.current );
+		autosize(this.textInput.current);
 	}
 
 	componentWillUnmount() {
 		this.mounted = false;
-		if ( this._editor ) {
+		if (this._editor) {
 			this.destroyEditor();
 		}
 	}
@@ -371,138 +368,138 @@ export default class TinyMCE extends React.Component {
 	destroyEditor = () => {
 		forEach(
 			EVENTS,
-			function( eventHandler, eventName ) {
-				if ( this.props[ eventHandler ] ) {
-					this._editor.off( eventName, this.props[ eventHandler ] );
+			function (eventHandler, eventName) {
+				if (this.props[eventHandler]) {
+					this._editor.off(eventName, this.props[eventHandler]);
 				}
-			}.bind( this )
+			}.bind(this)
 		);
 
-		tinymce.remove( this._editor );
+		tinymce.remove(this._editor);
 		this._editor = null;
-		autosize.destroy( this.textInput.current );
+		autosize.destroy(this.textInput.current);
 	};
 
 	doAutosizeUpdate = () => {
-		autosize.update( this.textInput.current );
+		autosize.update(this.textInput.current);
 	};
 
-	bindEditorEvents = prevProps => {
+	bindEditorEvents = (prevProps) => {
 		prevProps = prevProps || {};
 
 		forEach(
 			EVENTS,
-			function( eventHandler, eventName ) {
-				if ( prevProps[ eventHandler ] !== this.props[ eventHandler ] ) {
-					if ( this.props[ eventHandler ] ) {
-						this._editor.on( eventName, this.props[ eventHandler ] );
+			function (eventHandler, eventName) {
+				if (prevProps[eventHandler] !== this.props[eventHandler]) {
+					if (this.props[eventHandler]) {
+						this._editor.on(eventName, this.props[eventHandler]);
 					} else {
-						this._editor.off( eventName, this.props[ eventHandler ] );
+						this._editor.off(eventName, this.props[eventHandler]);
 					}
 				}
-			}.bind( this )
+			}.bind(this)
 		);
 	};
 
-	toggleEditor = ( options = { autofocus: true } ) => {
-		if ( ! this._editor ) {
+	toggleEditor = (options = { autofocus: true }) => {
+		if (!this._editor) {
 			return;
 		}
 
-		if ( this.props.mode === 'html' ) {
+		if (this.props.mode === 'html') {
 			this._editor.hide();
 			this.doAutosizeUpdate();
-			if ( options.autofocus ) {
+			if (options.autofocus) {
 				this.focusEditor();
 			}
 			return;
 		}
 
 		this._editor.show();
-		if ( options.autofocus ) {
+		if (options.autofocus) {
 			this.focusEditor();
 		}
 	};
 
 	focusEditor = () => {
-		if ( this.props.mode === 'html' ) {
+		if (this.props.mode === 'html') {
 			const textNode = this.textInput.current;
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
-			if ( this.state.selection ) {
-				this.selectTextInTextArea( this.state.selection );
+			if (this.state.selection) {
+				this.selectTextInTextArea(this.state.selection);
 			} else {
-				textNode.setSelectionRange( 0, 0 );
+				textNode.setSelectionRange(0, 0);
 			}
 
 			// Browser is not Internet Explorer 11
-			if ( 11 !== tinymce.Env.ie ) {
+			if (11 !== tinymce.Env.ie) {
 				textNode.focus();
 			}
-		} else if ( this._editor ) {
+		} else if (this._editor) {
 			this._editor.focus();
 		}
 	};
 
-	getContent = args => {
-		if ( this.props.mode === 'html' ) {
+	getContent = (args) => {
+		if (this.props.mode === 'html') {
 			return this.state.content;
 		}
 
-		if ( ! this._editor ) {
+		if (!this._editor) {
 			return '';
 		}
 
-		let content = this._editor.getContent( args );
+		let content = this._editor.getContent(args);
 
-		if ( ! args || 'raw' !== args.format ) {
+		if (!args || 'raw' !== args.format) {
 			// TODO: fix code duplication between the wordpress plugin and the React component
-			content = content.replace( /<p>(?:<br ?\/?>|\u00a0|\uFEFF| )*<\/p>/g, '<p>&nbsp;</p>' );
+			content = content.replace(/<p>(?:<br ?\/?>|\u00a0|\uFEFF| )*<\/p>/g, '<p>&nbsp;</p>');
 
-			content = removep( content );
+			content = removep(content);
 		}
 
 		return content;
 	};
 
 	isDirty = () => {
-		if ( this._editor ) {
+		if (this._editor) {
 			return this._editor.isDirty();
 		}
 		return false;
 	};
 
-	setTextAreaContent = content => {
+	setTextAreaContent = (content) => {
 		this.setState(
 			{
-				content: decodeEntities( content ),
+				content: decodeEntities(content),
 			},
 			this.doAutosizeUpdate
 		);
 	};
 
-	setEditorContent = ( content, args = {} ) => {
-		if ( this._editor ) {
+	setEditorContent = (content, args = {}) => {
+		if (this._editor) {
 			const { mode } = this.props;
-			this._editor.setContent( wpautop( content ), { ...args, mode } );
-			if ( args.initial ) {
+			this._editor.setContent(wpautop(content), { ...args, mode });
+			if (args.initial) {
 				// Clear the undo stack when initially setting content
 				this._editor.undoManager.clear();
 			}
 		}
 
-		this.setTextAreaContent( content );
+		this.setTextAreaContent(content);
 	};
 
-	setSelection = selection => {
-		this.setState( {
+	setSelection = (selection) => {
+		this.setState({
 			selection,
-		} );
+		});
 	};
 
-	selectTextInTextArea = selection => {
+	selectTextInTextArea = (selection) => {
 		// only valid in the text area mode and if we have selection
-		if ( ! selection ) {
+		if (!selection) {
 			return;
 		}
 
@@ -511,49 +508,49 @@ export default class TinyMCE extends React.Component {
 		const start = selection.start;
 		const end = selection.end || selection.start;
 		// Collapse selection to avoid scrolling to the bottom of the textarea
-		textNode.setSelectionRange( start, end );
+		textNode.setSelectionRange(start, end);
 
 		// clear out the selection from the state
-		this.setState( { selection: null } );
+		this.setState({ selection: null });
 	};
 
-	onTextAreaChange = event => {
+	onTextAreaChange = (event) => {
 		const content = event.target.value;
 
-		if ( this.props.onTextEditorChange ) {
-			this.props.onTextEditorChange( content );
+		if (this.props.onTextEditorChange) {
+			this.props.onTextEditorChange(content);
 		}
 
-		this.setState( { content: content }, this.doAutosizeUpdate );
+		this.setState({ content: content }, this.doAutosizeUpdate);
 	};
 
-	onToolbarChangeContent = content => {
-		if ( this.props.onTextEditorChange ) {
-			this.props.onTextEditorChange( content );
+	onToolbarChangeContent = (content) => {
+		if (this.props.onTextEditorChange) {
+			this.props.onTextEditorChange(content);
 		}
 
-		this.setState( { content }, this.doAutosizeUpdate );
+		this.setState({ content }, this.doAutosizeUpdate);
 	};
 
-	localize = ( isRtl, localeSlug ) => {
+	localize = (isRtl, localeSlug) => {
 		let i18nStrings = i18n;
 
-		if ( isRtl ) {
-			i18nStrings = assign( { _dir: 'rtl' }, i18nStrings );
+		if (isRtl) {
+			i18nStrings = assign({ _dir: 'rtl' }, i18nStrings);
 		}
 
-		tinymce.addI18n( localeSlug, i18nStrings );
+		tinymce.addI18n(localeSlug, i18nStrings);
 
 		// Stop TinyMCE from trying to load the lang script by marking as done
-		tinymce.ScriptLoader.markDone( DUMMY_LANG_URL );
+		tinymce.ScriptLoader.markDone(DUMMY_LANG_URL);
 	};
 
 	renderEditor() {
 		const { mode } = this.props;
-		const className = classnames( {
+		const className = classnames({
 			tinymce: true,
 			'is-visible': mode === 'html',
-		} );
+		});
 
 		/*
 		 * Using `classnames()` here is partly a hack to avoid the linter complaining that the
@@ -563,23 +560,23 @@ export default class TinyMCE extends React.Component {
 		 * for some refactoring in the near future, so that will be a more convenient time to
 		 * clean this up.
 		 */
-		const containerClassName = classnames( 'tinymce-container', 'editor-mode-' + mode );
+		const containerClassName = classnames('tinymce-container', 'editor-mode-' + mode);
 
 		return (
-			<div className={ containerClassName }>
-				{ 'html' === mode && config.isEnabled( 'post-editor/html-toolbar' ) && (
+			<div className={containerClassName}>
+				{'html' === mode && config.isEnabled('post-editor/html-toolbar') && (
 					<EditorHtmlToolbar
-						content={ this.textInput.current }
-						onToolbarChangeContent={ this.onToolbarChangeContent }
+						content={this.textInput.current}
+						onToolbarChangeContent={this.onToolbarChangeContent}
 					/>
-				) }
+				)}
 				<textarea
-					ref={ this.textInput }
-					className={ className }
-					id={ this._id }
-					onChange={ this.onTextAreaChange }
-					tabIndex={ this.props.tabIndex }
-					value={ this.state.content }
+					ref={this.textInput}
+					className={className}
+					id={this._id}
+					onChange={this.onTextAreaChange}
+					tabIndex={this.props.tabIndex}
+					value={this.state.content}
 				/>
 			</div>
 		);
@@ -588,10 +585,10 @@ export default class TinyMCE extends React.Component {
 	render() {
 		return (
 			<ReactReduxContext.Consumer>
-				{ ( { store } ) => {
+				{({ store }) => {
 					this.reduxStore = store;
 					return this.renderEditor();
-				} }
+				}}
 			</ReactReduxContext.Consumer>
 		);
 	}

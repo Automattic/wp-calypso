@@ -24,47 +24,47 @@ import {
 import { not } from 'layout/guided-tours/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-function whenWeCanAutoconfigure( state ) {
-	const siteId = getSelectedSiteId( state );
-	const { canAutoconfigure, credentials = [] } = getRewindState( state, siteId );
+function whenWeCanAutoconfigure(state) {
+	const siteId = getSelectedSiteId(state);
+	const { canAutoconfigure, credentials = [] } = getRewindState(state, siteId);
 
-	return canAutoconfigure || credentials.some( c => c.type === 'auto' );
+	return canAutoconfigure || credentials.some((c) => c.type === 'auto');
 }
 
-const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
+const JetpackBackupsRewindTourButtons = ({ backText, translate }) => (
 	<Fragment>
-		<SiteLink isButton isPrimaryButton={ false } href="/plans/my-plan/:site">
-			{ backText || translate( 'Return to the checklist' ) }
+		<SiteLink isButton isPrimaryButton={false} href="/plans/my-plan/:site">
+			{backText || translate('Return to the checklist')}
 		</SiteLink>
-		<Quit>{ translate( 'No, thanks.' ) }</Quit>
+		<Quit>{translate('No, thanks.')}</Quit>
 	</Fragment>
 );
 
-const ContinueToLastStep = ( { siteHasCredentials } ) => (
+const ContinueToLastStep = ({ siteHasCredentials }) => (
 	<Continue
 		target=".rewind-credentials-form .is-primary"
 		step="finish"
-		when={ () => siteHasCredentials }
+		when={() => siteHasCredentials}
 		click
 		hidden
 	/>
 );
-const ConnectedContinueToLastStep = connect( state => ( {
+const ConnectedContinueToLastStep = connect((state) => ({
 	siteHasCredentials:
-		getJetpackCredentialsUpdateStatus( state, getSelectedSiteId( state ) ) === 'success',
-} ) )( ContinueToLastStep );
+		getJetpackCredentialsUpdateStatus(state, getSelectedSiteId(state)) === 'success',
+}))(ContinueToLastStep);
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackBackupsRewindTour = makeTour(
-	<Tour { ...meta }>
+	<Tour {...meta}>
 		<Step name="init" target=".credentials-setup-flow" placement="below" arrow="top-left">
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
 					<p>
-						{ translate(
+						{translate(
 							"Let's enable Jetpack backups and restores " +
 								'by adding access credentials for your site.'
-						) }
+						)}
 					</p>
 					<ButtonRow>
 						<Continue
@@ -73,10 +73,10 @@ export const JetpackBackupsRewindTour = makeTour(
 							click
 							hidden
 						/>
-						<JetpackBackupsRewindTourButtons translate={ translate } />
+						<JetpackBackupsRewindTourButtons translate={translate} />
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 
 		<Step
@@ -85,13 +85,13 @@ export const JetpackBackupsRewindTour = makeTour(
 			placement="below"
 			arrow="top-left"
 		>
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
-					<ConditionalBlock when={ whenWeCanAutoconfigure }>
+					<ConditionalBlock when={whenWeCanAutoconfigure}>
 						<p>
-							{ translate(
+							{translate(
 								"You can click this button to provide WordPress.com with access to your host's server."
-							) }
+							)}
 						</p>
 						<ButtonRow>
 							<Continue
@@ -100,14 +100,14 @@ export const JetpackBackupsRewindTour = makeTour(
 								click
 								hidden
 							/>
-							<JetpackBackupsRewindTourButtons translate={ translate } />
+							<JetpackBackupsRewindTourButtons translate={translate} />
 						</ButtonRow>
 					</ConditionalBlock>
-					<ConditionalBlock when={ not( whenWeCanAutoconfigure ) }>
+					<ConditionalBlock when={not(whenWeCanAutoconfigure)}>
 						<p>
-							{ translate(
+							{translate(
 								'You can click the button in order to agree and continue to the credentials form.'
-							) }
+							)}
 						</p>
 						<ButtonRow>
 							<Continue
@@ -116,45 +116,45 @@ export const JetpackBackupsRewindTour = makeTour(
 								click
 								hidden
 							/>
-							<JetpackBackupsRewindTourButtons translate={ translate } />
+							<JetpackBackupsRewindTourButtons translate={translate} />
 						</ButtonRow>
 					</ConditionalBlock>
 				</Fragment>
-			) }
+			)}
 		</Step>
 
 		<Step
 			name="credentials"
 			target=".rewind-credentials-form"
-			style={ {
+			style={{
 				display: 'none',
-			} }
+			}}
 		>
-			{ () => <ConnectedContinueToLastStep /> }
+			{() => <ConnectedContinueToLastStep />}
 		</Step>
 
 		<Step name="finish" target=".credentials-configured" placement="right">
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
 					<h1 className="tours__title">
 						<span className="tours__completed-icon-wrapper">
 							<Gridicon icon="checkmark" className="tours__completed-icon" />
 						</span>
-						{ translate( 'Excellent, you’re done!' ) }
+						{translate('Excellent, you’re done!')}
 					</h1>
 					<p>
-						{ translate(
+						{translate(
 							'Jetpack Backups has been enabled. Would you like to continue setting up the security essential features for your site?'
-						) }
+						)}
 					</p>
 					<ButtonRow>
 						<JetpackBackupsRewindTourButtons
-							translate={ translate }
-							backText={ translate( "Yes, let's do it." ) }
+							translate={translate}
+							backText={translate("Yes, let's do it.")}
 						/>
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 	</Tour>
 );

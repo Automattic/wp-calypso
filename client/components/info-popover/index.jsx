@@ -26,11 +26,11 @@ export default class InfoPopover extends Component {
 		icon: PropTypes.string,
 		iconSize: PropTypes.number,
 		id: PropTypes.string,
-		ignoreContext: PropTypes.shape( {
+		ignoreContext: PropTypes.shape({
 			getDOMNode: PropTypes.func,
-		} ),
+		}),
 		popoverName: PropTypes.string,
-		position: PropTypes.oneOf( [
+		position: PropTypes.oneOf([
 			'top',
 			'top right',
 			'right',
@@ -39,7 +39,7 @@ export default class InfoPopover extends Component {
 			'bottom left',
 			'left',
 			'top left',
-		] ),
+		]),
 	};
 
 	static defaultProps = {
@@ -53,20 +53,20 @@ export default class InfoPopover extends Component {
 
 	state = { showPopover: false };
 
-	handleClick = e => {
+	handleClick = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
+		this.setState({ showPopover: !this.state.showPopover }, this.recordStats);
 	};
 
-	handleClose = () => this.setState( { showPopover: false }, this.recordStats );
+	handleClose = () => this.setState({ showPopover: false }, this.recordStats);
 
 	recordStats = () => {
 		const { gaEventCategory, popoverName } = this.props;
 
-		if ( gaEventCategory && popoverName ) {
+		if (gaEventCategory && popoverName) {
 			const dialogState = this.state.showPopover ? ' Opened' : ' Closed';
-			gaRecordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
+			gaRecordEvent(gaEventCategory, 'InfoPopover: ' + popoverName + dialogState);
 		}
 	};
 
@@ -76,30 +76,30 @@ export default class InfoPopover extends Component {
 				<button
 					type="button"
 					aria-haspopup
-					aria-expanded={ this.state.showPopover }
-					aria-label={ translate( 'More information' ) }
-					onClick={ this.handleClick }
-					ref={ this.iconRef }
-					className={ classNames( 'info-popover', this.props.className, {
+					aria-expanded={this.state.showPopover}
+					aria-label={translate('More information')}
+					onClick={this.handleClick}
+					ref={this.iconRef}
+					className={classNames('info-popover', this.props.className, {
 						'is-active': this.state.showPopover,
-					} ) }
+					})}
 				>
-					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
+					<Gridicon icon={this.props.icon} size={this.props.iconSize} />
 				</button>
-				{ this.state.showPopover && (
+				{this.state.showPopover && (
 					<Popover
-						autoRtl={ this.props.autoRtl }
-						id={ this.props.id }
+						autoRtl={this.props.autoRtl}
+						id={this.props.id}
 						isVisible
-						context={ this.iconRef.current }
-						ignoreContext={ this.props.ignoreContext }
-						position={ this.props.position }
-						onClose={ this.handleClose }
-						className={ classNames( 'info-popover__tooltip', this.props.className ) }
+						context={this.iconRef.current}
+						ignoreContext={this.props.ignoreContext}
+						position={this.props.position}
+						onClose={this.handleClose}
+						className={classNames('info-popover__tooltip', this.props.className)}
 					>
-						{ this.props.children }
+						{this.props.children}
 					</Popover>
-				) }
+				)}
 			</Fragment>
 		);
 	}

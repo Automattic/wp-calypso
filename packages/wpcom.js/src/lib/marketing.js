@@ -10,9 +10,9 @@ export default class Marketing {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( wpcom ) {
-		if ( ! ( this instanceof Marketing ) ) {
-			return new Marketing( wpcom );
+	constructor(wpcom) {
+		if (!(this instanceof Marketing)) {
+			return new Marketing(wpcom);
 		}
 		this.wpcom = wpcom;
 	}
@@ -24,7 +24,7 @@ export default class Marketing {
 	 * @param {string} [siteId] - site identification
 	 * @returns {MarketingSurvey} MarketingSurvey instance
 	 */
-	survey( id, siteId ) {
-		return new MarketingSurvey( id, siteId, this.wpcom );
-	};
+	survey(id, siteId) {
+		return new MarketingSurvey(id, siteId, this.wpcom);
+	}
 }

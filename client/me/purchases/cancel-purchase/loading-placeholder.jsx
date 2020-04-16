@@ -13,16 +13,16 @@ import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import { managePurchase } from 'me/purchases/paths';
 import titles from 'me/purchases/titles';
 
-const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug } ) => {
+const CancelPurchaseLoadingPlaceholder = ({ purchaseId, siteSlug }) => {
 	let path;
 
-	if ( siteSlug ) {
-		path = managePurchase( siteSlug, purchaseId );
+	if (siteSlug) {
+		path = managePurchase(siteSlug, purchaseId);
 	}
 
 	return (
 		/* eslint-disable */
-		<LoadingPlaceholder title={ titles.cancelPurchase } path={ path }>
+		<LoadingPlaceholder title={titles.cancelPurchase} path={path}>
 			<Card className="cancel-purchase-loading-placeholder__card">
 				<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
 				<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />

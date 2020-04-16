@@ -7,7 +7,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const handleTeamsRequest = action =>
+export const handleTeamsRequest = (action) =>
 	http(
 		{
 			method: 'GET',
@@ -17,23 +17,23 @@ export const handleTeamsRequest = action =>
 		action
 	);
 
-export const teamRequestReceived = ( action, apiResponse ) => ( {
+export const teamRequestReceived = (action, apiResponse) => ({
 	type: READER_TEAMS_RECEIVE,
 	payload: apiResponse,
-} );
+});
 
-export const teamRequestFailure = error => ( {
+export const teamRequestFailure = (error) => ({
 	type: READER_TEAMS_RECEIVE,
 	payload: error,
 	error: true,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/read/teams/index.js', {
-	[ READER_TEAMS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/read/teams/index.js', {
+	[READER_TEAMS_REQUEST]: [
+		dispatchRequest({
 			fetch: handleTeamsRequest,
 			onSuccess: teamRequestReceived,
 			onError: teamRequestFailure,
-		} ),
+		}),
 	],
-} );
+});

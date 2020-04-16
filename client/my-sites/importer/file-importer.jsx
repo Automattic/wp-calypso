@@ -29,7 +29,7 @@ import './file-importer.scss';
 /**
  * Module variables
  */
-const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
+const compactStates = [appStates.DISABLED, appStates.INACTIVE],
 	importingStates = [
 		appStates.IMPORT_FAILURE,
 		appStates.IMPORT_SUCCESS,
@@ -46,41 +46,41 @@ const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
 
 class FileImporter extends React.PureComponent {
 	static propTypes = {
-		importerData: PropTypes.shape( {
+		importerData: PropTypes.shape({
 			title: PropTypes.string.isRequired,
 			icon: PropTypes.string.isRequired,
-			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
-			uploadDescription: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-		} ).isRequired,
-		importerStatus: PropTypes.shape( {
-			errorData: PropTypes.shape( {
+			description: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+			uploadDescription: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+		}).isRequired,
+		importerStatus: PropTypes.shape({
+			errorData: PropTypes.shape({
 				type: PropTypes.string.isRequired,
 				description: PropTypes.string.isRequired,
-			} ),
+			}),
 			importerState: PropTypes.string.isRequired,
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 			type: PropTypes.string.isRequired,
-		} ),
-		site: PropTypes.shape( {
+		}),
+		site: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
-		} ),
+		}),
 	};
 
-	handleClick = shouldStartImport => {
+	handleClick = (shouldStartImport) => {
 		const {
 			importerStatus: { type },
 			site: { ID: siteId },
 		} = this.props;
 
-		if ( shouldStartImport ) {
-			startImport( siteId, type );
+		if (shouldStartImport) {
+			startImport(siteId, type);
 		}
 
-		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
+		this.props.recordTracksEvent('calypso_importer_main_start_clicked', {
 			blog_id: siteId,
 			importer_id: type,
-		} );
+		});
 	};
 
 	render() {
@@ -94,48 +94,48 @@ class FileImporter extends React.PureComponent {
 		const { importerStatus, site } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
-		const showStart = includes( compactStates, importerState );
-		const cardClasses = classNames( 'importer__file-importer-card', {
+		const showStart = includes(compactStates, importerState);
+		const cardClasses = classNames('importer__file-importer-card', {
 			'is-compact': showStart,
-			'is-disabled': ! isEnabled,
-		} );
+			'is-disabled': !isEnabled,
+		});
 		const cardProps = {
 			displayAsLink: true,
-			onClick: this.handleClick.bind( this, true ),
+			onClick: this.handleClick.bind(this, true),
 			tagName: 'button',
 		};
 
-		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
+		if (isConfigEnabled('tools/migrate') && overrideDestination) {
 			/**
 			 * Override where the user lands when they click the importer.
 			 *
 			 * This is used for the new Migration logic for the moment.
 			 */
-			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
-			cardProps.onClick = this.handleClick.bind( this, false );
+			cardProps.href = overrideDestination.replace('%SITE_SLUG%', site.slug);
+			cardProps.onClick = this.handleClick.bind(this, false);
 		}
 
 		return (
-			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
+			<Card className={cardClasses} {...(showStart ? cardProps : undefined)}>
 				<ImporterHeader
-					importerStatus={ importerStatus }
-					{ ...{ icon, title, description, isEnabled, site } }
+					importerStatus={importerStatus}
+					{...{ icon, title, description, isEnabled, site }}
 				/>
-				{ errorData && <ErrorPane type={ errorData.type } description={ errorData.description } /> }
-				{ includes( importingStates, importerState ) && (
-					<ImportingPane importerStatus={ importerStatus } sourceType={ title } site={ site } />
-				) }
-				{ includes( uploadingStates, importerState ) && (
+				{errorData && <ErrorPane type={errorData.type} description={errorData.description} />}
+				{includes(importingStates, importerState) && (
+					<ImportingPane importerStatus={importerStatus} sourceType={title} site={site} />
+				)}
+				{includes(uploadingStates, importerState) && (
 					<UploadingPane
-						isEnabled={ isEnabled }
-						description={ uploadDescription }
-						importerStatus={ importerStatus }
-						site={ site }
+						isEnabled={isEnabled}
+						description={uploadDescription}
+						importerStatus={importerStatus}
+						site={site}
 					/>
-				) }
+				)}
 			</Card>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( FileImporter );
+export default connect(null, { recordTracksEvent })(FileImporter);

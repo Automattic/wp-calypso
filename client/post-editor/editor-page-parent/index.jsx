@@ -38,32 +38,32 @@ class EditorPageParent extends Component {
 	};
 
 	state = {
-		isTopLevel: ! this.props.parentId,
+		isTopLevel: !this.props.parentId,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.parentId !== nextProps.parentId ) {
-			this.setState( { isTopLevel: ! nextProps.parentId } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.parentId !== nextProps.parentId) {
+			this.setState({ isTopLevel: !nextProps.parentId });
 		}
 	}
 
-	updatePageParent = item => {
+	updatePageParent = (item) => {
 		const { siteId, postId } = this.props;
-		const parentId = get( item, 'ID' );
+		const parentId = get(item, 'ID');
 
-		if ( ! parentId ) {
+		if (!parentId) {
 			return this.setState(
-				( { isTopLevel } ) => ( { isTopLevel: ! isTopLevel } ),
+				({ isTopLevel }) => ({ isTopLevel: !isTopLevel }),
 				() => {
-					if ( this.state.isTopLevel ) {
-						this.props.editPost( siteId, postId, { parent: 0 } );
+					if (this.state.isTopLevel) {
+						this.props.editPost(siteId, postId, { parent: 0 });
 					}
 				}
 			);
 		}
 
-		this.setState( { isTopLevel: false } );
-		this.props.editPost( siteId, postId, { parent: parentId } );
+		this.setState({ isTopLevel: false });
+		this.props.editPost(siteId, postId, { parent: parentId });
 	};
 
 	render() {
@@ -74,54 +74,54 @@ class EditorPageParent extends Component {
 			<AccordionSection className="editor-page-parent">
 				<FormLabel>
 					<span className="editor-page-parent__label-text">
-						{ labels.parent || translate( 'Parent Page' ) }
+						{labels.parent || translate('Parent Page')}
 					</span>
 				</FormLabel>
 				<FormLabel className="editor-page-parent__top-level">
 					<FormToggle
-						checked={ isTopLevel }
-						onChange={ this.updatePageParent }
-						aria-label={ translate( 'Toggle to set as top level' ) }
+						checked={isTopLevel}
+						onChange={this.updatePageParent}
+						aria-label={translate('Toggle to set as top level')}
 					/>
 					<span className="editor-page-parent__top-level-label">
-						{ translate( 'Top level', {
+						{translate('Top level', {
 							context: 'Editor: Page being edited is top level i.e. has no parent',
-						} ) }
+						})}
 					</span>
-					{ isTopLevel && (
+					{isTopLevel && (
 						<span className="editor-page-parent__top-level-description">
-							{ translate( 'Disable to select a parent page' ) }
+							{translate('Disable to select a parent page')}
 						</span>
-					) }
+					)}
 				</FormLabel>
-				{ ! isTopLevel && (
+				{!isTopLevel && (
 					<div className="editor-page-parent__parent-tree-selector">
-						<FormLegend>{ translate( 'Choose a parent page' ) }</FormLegend>
+						<FormLegend>{translate('Choose a parent page')}</FormLegend>
 						<PostSelector
-							type={ postType }
-							siteId={ siteId }
-							onChange={ this.updatePageParent }
-							selected={ parentId }
-							excludeTree={ postId }
-							emptyMessage={ labels.not_found || translate( 'You have no other pages yet.' ) }
+							type={postType}
+							siteId={siteId}
+							onChange={this.updatePageParent}
+							selected={parentId}
+							excludeTree={postId}
+							emptyMessage={labels.not_found || translate('You have no other pages yet.')}
 						/>
 					</div>
-				) }
+				)}
 			</AccordionSection>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const parent = getEditedPostValue( state, siteId, postId, 'parent' );
-		const parentId = get( parent, 'ID', parent ) || 0;
-		const labels = get( getPostType( state, siteId, postType ), 'labels', {} );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const postType = getEditedPostValue(state, siteId, postId, 'type');
+		const parent = getEditedPostValue(state, siteId, postId, 'parent');
+		const parentId = get(parent, 'ID', parent) || 0;
+		const labels = get(getPostType(state, siteId, postType), 'labels', {});
 
 		return { siteId, postId, postType, parentId, labels };
 	},
 	{ editPost }
-)( localize( EditorPageParent ) );
+)(localize(EditorPageParent));

@@ -41,18 +41,18 @@ class DomainConnectRecord extends React.Component {
 			type: 'TXT',
 		};
 
-		this.props.deleteDns( selectedDomainName, record ).then(
+		this.props.deleteDns(selectedDomainName, record).then(
 			() => {
 				const successNoticeId = 'domain-connect-disable-success-notice';
-				this.props.successNotice( translate( 'The Domain Connect record has been disabled.' ), {
+				this.props.successNotice(translate('The Domain Connect record has been disabled.'), {
 					id: successNoticeId,
 					showDismiss: false,
 					duration: 5000,
-				} );
+				});
 			},
-			error => {
+			(error) => {
 				this.props.errorNotice(
-					error.message || translate( 'The Domain Connect record could not be disabled.' )
+					error.message || translate('The Domain Connect record could not be disabled.')
 				);
 			}
 		);
@@ -66,18 +66,18 @@ class DomainConnectRecord extends React.Component {
 			type: 'TXT',
 		};
 
-		const normalizedData = getNormalizedData( record, this.props.selectedDomainName );
+		const normalizedData = getNormalizedData(record, this.props.selectedDomainName);
 
-		this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
+		this.props.addDns(this.props.selectedDomainName, normalizedData).then(
 			() => {
-				this.props.successNotice( translate( 'The Domain Connect record has been enabled.' ), {
+				this.props.successNotice(translate('The Domain Connect record has been enabled.'), {
 					showDismiss: false,
 					duration: 5000,
-				} );
+				});
 			},
-			error => {
+			(error) => {
 				this.props.errorNotice(
-					error.message || translate( 'The Domain Connect record could not be enabled.' )
+					error.message || translate('The Domain Connect record could not be enabled.')
 				);
 			}
 		);
@@ -85,7 +85,7 @@ class DomainConnectRecord extends React.Component {
 
 	handleToggle = () => {
 		// this.setState( { enabled: ! this.state.enabled } );
-		if ( this.props.enabled ) {
+		if (this.props.enabled) {
 			this.disableDomainConnect();
 		} else {
 			this.enableDomainConnect();
@@ -95,28 +95,28 @@ class DomainConnectRecord extends React.Component {
 	render() {
 		const { enabled, selectedDomainName, hasWpcomNameservers, translate } = this.props;
 
-		if ( ! hasWpcomNameservers ) {
+		if (!hasWpcomNameservers) {
 			return null;
 		}
 
-		const name = `${ domainConnect.DISCOVERY_TXT_RECORD_NAME }.${ selectedDomainName }`;
+		const name = `${domainConnect.DISCOVERY_TXT_RECORD_NAME}.${selectedDomainName}`;
 
 		return (
 			<Fragment>
 				<DnsRecordsList className="dns__domain-connect-record">
 					<DnsRecordsListItem
-						disabled={ ! enabled }
+						disabled={!enabled}
 						type="TXT"
-						name={ name }
-						content={ translate( 'Handled by WordPress.com' ) }
+						name={name}
+						content={translate('Handled by WordPress.com')}
 						action={
 							<form className="dns__domain-connect-toggle">
 								<Toggle
 									id="domain-connect-record"
 									name="domain-connect-record"
-									onChange={ this.handleToggle }
+									onChange={this.handleToggle}
 									type="checkbox"
-									checked={ enabled }
+									checked={enabled}
 									value="active"
 								/>
 							</form>
@@ -125,10 +125,10 @@ class DomainConnectRecord extends React.Component {
 				</DnsRecordsList>
 				<div className="dns__domain-connect-explanation">
 					<em>
-						{ translate(
+						{translate(
 							'Enabling this special DNS record allows you to automatically configure ' +
 								'some third party services. '
-						) }
+						)}
 					</em>
 				</div>
 			</Fragment>
@@ -136,10 +136,10 @@ class DomainConnectRecord extends React.Component {
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	addDns,
 	deleteDns,
 	errorNotice,
 	removeNotice,
 	successNotice,
-} )( localize( DomainConnectRecord ) );
+})(localize(DomainConnectRecord));

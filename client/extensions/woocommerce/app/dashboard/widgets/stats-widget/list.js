@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import List from 'woocommerce/app/store-stats/store-stats-list';
 import Module from 'woocommerce/app/store-stats/store-stats-module';
 
-const StatsWidgetList = ( {
+const StatsWidgetList = ({
 	site,
 	values,
 	statType,
@@ -20,19 +20,19 @@ const StatsWidgetList = ( {
 	viewLink,
 	viewText,
 	onViewClick,
-} ) => {
+}) => {
 	const onView = () => {
-		if ( onViewClick ) {
-			onViewClick( statType );
+		if (onViewClick) {
+			onViewClick(statType);
 		}
 	};
 
 	let viewMarkup;
-	if ( viewLink && fetchedData && Array.isArray( fetchedData ) && fetchedData.length ) {
+	if (viewLink && fetchedData && Array.isArray(fetchedData) && fetchedData.length) {
 		viewMarkup = (
 			<div className="stats-widget__more">
-				<a href={ viewLink } onClick={ onView }>
-					{ viewText }
+				<a href={viewLink} onClick={onView}>
+					{viewText}
 				</a>
 			</div>
 		);
@@ -41,31 +41,31 @@ const StatsWidgetList = ( {
 	return (
 		<div className="stats-widget__box-contents stats-type-list">
 			<Module
-				siteId={ site.ID }
-				emptyMessage={ emptyMessage }
-				query={ query }
-				statType={ statType }
-				fetchedData={ fetchedData }
+				siteId={site.ID}
+				emptyMessage={emptyMessage}
+				query={query}
+				statType={statType}
+				fetchedData={fetchedData}
 			>
 				<List
-					siteId={ site.ID }
-					values={ values }
-					query={ query }
-					statType={ statType }
-					fetchedData={ fetchedData }
+					siteId={site.ID}
+					values={values}
+					query={query}
+					statType={statType}
+					fetchedData={fetchedData}
 				/>
 			</Module>
 
-			{ viewMarkup }
+			{viewMarkup}
 		</div>
 	);
 };
 
 StatsWidgetList.propTypes = {
-	site: PropTypes.shape( {
+	site: PropTypes.shape({
 		id: PropTypes.number,
 		slug: PropTypes.string,
-	} ),
+	}),
 	unit: PropTypes.string.isRequired,
 	values: PropTypes.array.isRequired,
 	statType: PropTypes.string.isRequired,

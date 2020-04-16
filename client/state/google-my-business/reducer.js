@@ -8,8 +8,8 @@ import {
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'state/action-types';
 
-const stats = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+const stats = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case GOOGLE_MY_BUSINESS_STATS_RECEIVE: {
 			const { data } = action;
 			return data;
@@ -21,10 +21,10 @@ const stats = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const statsError = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+const statsError = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case GOOGLE_MY_BUSINESS_STATS_RECEIVE:
 			return null;
 		case GOOGLE_MY_BUSINESS_STATS_REQUEST:
@@ -36,18 +36,15 @@ const statsError = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
 export default keyedReducer(
 	'siteId',
-	combineReducers( {
-		stats: keyedReducer(
-			'statType',
-			keyedReducer( 'interval', keyedReducer( 'aggregation', stats ) )
-		),
+	combineReducers({
+		stats: keyedReducer('statType', keyedReducer('interval', keyedReducer('aggregation', stats))),
 		statsError: keyedReducer(
 			'statType',
-			keyedReducer( 'interval', keyedReducer( 'aggregation', statsError ) )
+			keyedReducer('interval', keyedReducer('aggregation', statsError))
 		),
-	} )
+	})
 );

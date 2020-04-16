@@ -9,12 +9,12 @@ import { has } from 'lodash';
 import getSeoTitleFormats from './get-seo-title-formats';
 import buildSeoTitle from './build-seo-title';
 
-export default ( state, type, data ) => {
-	if ( ! has( data, 'site.ID' ) ) {
+export default (state, type, data) => {
+	if (!has(data, 'site.ID')) {
 		return '';
 	}
 
-	const titleFormats = getSeoTitleFormats( state, data.site.ID );
+	const titleFormats = getSeoTitleFormats(state, data.site.ID);
 
-	return buildSeoTitle( titleFormats, type, data );
+	return buildSeoTitle(titleFormats, type, data);
 };

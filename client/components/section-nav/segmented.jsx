@@ -27,25 +27,25 @@ class NavSegmented extends Component {
 	};
 
 	render() {
-		const segmentedClassName = classNames( 'section-nav-group', 'section-nav__segmented', {
+		const segmentedClassName = classNames('section-nav-group', 'section-nav__segmented', {
 			'has-siblings': this.props.hasSiblingControls,
-		} );
+		});
 
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<div className={ segmentedClassName }>
-				{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
+			<div className={segmentedClassName}>
+				{this.props.label && <h6 className="section-nav-group__label">{this.props.label}</h6>}
 
-				<SegmentedControl>{ this.getControlItems() }</SegmentedControl>
+				<SegmentedControl>{this.getControlItems()}</SegmentedControl>
 			</div>
 			/* eslint-enable wpcalyspo/jsx-classname-namespace */
 		);
 	}
 
 	getControlItems() {
-		return React.Children.map( this.props.children, ( child, index ) => (
-			<SegmentedControl.Item { ...child.props } key={ index } />
-		) );
+		return React.Children.map(this.props.children, (child, index) => (
+			<SegmentedControl.Item {...child.props} key={index} />
+		));
 	}
 }
 

@@ -43,7 +43,7 @@ import './style.scss';
 /**
  * Constants
  */
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
+const hasSupportingPlan = overSome(isBusiness, isEnterprise, isJetpackPremium, isEcommerce);
 
 /**
  * A mapping of post type to hard-coded post types support. These values are
@@ -81,16 +81,16 @@ class EditorDrawer extends Component {
 		confirmationSidebarStatus: PropTypes.string,
 	};
 
-	currentPostTypeSupports( feature ) {
+	currentPostTypeSupports(feature) {
 		const { typeObject, type } = this.props;
 
-		if ( typeObject && typeObject.supports ) {
-			return !! typeObject.supports[ feature ];
+		if (typeObject && typeObject.supports) {
+			return !!typeObject.supports[feature];
 		}
 
 		// Fall back to hard-coded settings if known for type
-		if ( POST_TYPE_SUPPORTS.hasOwnProperty( type ) ) {
-			return !! POST_TYPE_SUPPORTS[ type ][ feature ];
+		if (POST_TYPE_SUPPORTS.hasOwnProperty(type)) {
+			return !!POST_TYPE_SUPPORTS[type][feature];
 		}
 
 		// Default to true until post types are known
@@ -103,25 +103,25 @@ class EditorDrawer extends Component {
 
 		// Compatibility: Allow Tags for pages when supported prior to launch
 		// of custom post types feature (#6934). [TODO]: Remove after launch.
-		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
-		const typeSupportsTags = ! isCustomTypesEnabled && this.currentPostTypeSupports( 'tags' );
+		const isCustomTypesEnabled = config.isEnabled('manage/custom-post-types');
+		const typeSupportsTags = !isCustomTypesEnabled && this.currentPostTypeSupports('tags');
 
-		if ( 'post' === type || typeSupportsTags ) {
+		if ('post' === type || typeSupportsTags) {
 			return <CategoriesTagsAccordion />;
 		}
 	}
 
 	// Custom Taxonomies
 	renderTaxonomies() {
-		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
+		const isCustomTypesEnabled = config.isEnabled('manage/custom-post-types');
 
-		if ( isCustomTypesEnabled ) {
+		if (isCustomTypesEnabled) {
 			return <EditorDrawerTaxonomies />;
 		}
 	}
 
 	renderPostFormats() {
-		if ( ! this.currentPostTypeSupports( 'post-formats' ) ) {
+		if (!this.currentPostTypeSupports('post-formats')) {
 			return;
 		}
 
@@ -133,7 +133,7 @@ class EditorDrawer extends Component {
 	}
 
 	renderFeaturedImage() {
-		if ( ! this.currentPostTypeSupports( 'thumbnail' ) ) {
+		if (!this.currentPostTypeSupports('thumbnail')) {
 			return;
 		}
 
@@ -143,18 +143,18 @@ class EditorDrawer extends Component {
 	renderExcerpt() {
 		const { translate } = this.props;
 
-		if ( ! this.currentPostTypeSupports( 'excerpt' ) ) {
+		if (!this.currentPostTypeSupports('excerpt')) {
 			return;
 		}
 
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel
-					labelText={ translate( 'Excerpt' ) }
-					helpText={ translate(
+					labelText={translate('Excerpt')}
+					helpText={translate(
 						'An excerpt is a short summary you can add to your posts. ' +
 							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
-					) }
+					)}
 				/>
 				<EditorExcerpt />
 			</AccordionSection>
@@ -164,24 +164,24 @@ class EditorDrawer extends Component {
 	renderLocation() {
 		const { translate } = this.props;
 
-		if ( ! this.props.site ) {
+		if (!this.props.site) {
 			return;
 		}
 
-		if ( ! this.currentPostTypeSupports( 'geo-location' ) ) {
+		if (!this.currentPostTypeSupports('geo-location')) {
 			return;
 		}
 
 		return (
 			<AccordionSection>
-				<EditorDrawerLabel labelText={ translate( 'Location' ) } />
+				<EditorDrawerLabel labelText={translate('Location')} />
 				<AsyncLoad require="post-editor/editor-location" />
 			</AccordionSection>
 		);
 	}
 
 	renderDiscussion() {
-		if ( ! this.currentPostTypeSupports( 'comments' ) ) {
+		if (!this.currentPostTypeSupports('comments')) {
 			return;
 		}
 
@@ -201,14 +201,14 @@ class EditorDrawer extends Component {
 			site,
 		} = this.props;
 
-		if ( ! site ) {
+		if (!site) {
 			return;
 		}
 
-		if ( isJetpack ) {
+		if (isJetpack) {
 			if (
 				isRequestingPlugins ||
-				! isSeoToolsModuleActive ||
+				!isSeoToolsModuleActive ||
 				// Hide SEO accordion if this setting is managed by another SEO plugin.
 				hasConflictingSeoPlugins
 			) {
@@ -216,7 +216,7 @@ class EditorDrawer extends Component {
 			}
 		}
 
-		if ( ! hasSupportingPlan( site.plan ) ) {
+		if (!hasSupportingPlan(site.plan)) {
 			return;
 		}
 
@@ -225,7 +225,7 @@ class EditorDrawer extends Component {
 
 	renderCopyPost() {
 		const { type } = this.props;
-		if ( 'post' !== type && 'page' !== type ) {
+		if ('post' !== type && 'page' !== type) {
 			return;
 		}
 
@@ -236,31 +236,31 @@ class EditorDrawer extends Component {
 		const { isPermalinkEditable, translate } = this.props;
 
 		if (
-			! this.currentPostTypeSupports( 'excerpt' ) &&
-			! this.currentPostTypeSupports( 'geo-location' ) &&
-			! this.currentPostTypeSupports( 'comments' ) &&
-			! isPermalinkEditable
+			!this.currentPostTypeSupports('excerpt') &&
+			!this.currentPostTypeSupports('geo-location') &&
+			!this.currentPostTypeSupports('comments') &&
+			!isPermalinkEditable
 		) {
 			return;
 		}
 
 		return (
 			<Accordion
-				title={ translate( 'More Options' ) }
+				title={translate('More Options')}
 				className="editor-drawer__more-options"
 				e2eTitle="more-options"
 			>
-				{ isPermalinkEditable && <EditorMoreOptionsSlug /> }
-				{ this.renderExcerpt() }
-				{ this.renderLocation() }
-				{ this.renderDiscussion() }
-				{ this.renderCopyPost() }
+				{isPermalinkEditable && <EditorMoreOptionsSlug />}
+				{this.renderExcerpt()}
+				{this.renderLocation()}
+				{this.renderDiscussion()}
+				{this.renderCopyPost()}
 			</Accordion>
 		);
 	}
 
 	renderPageOptions() {
-		if ( ! this.currentPostTypeSupports( 'page-attributes' ) ) {
+		if (!this.currentPostTypeSupports('page-attributes')) {
 			return;
 		}
 
@@ -271,12 +271,12 @@ class EditorDrawer extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
+			<Accordion title={translate('Status')} e2eTitle="status">
 				<EditPostStatus
-					onSave={ this.props.onSave }
-					onPrivatePublish={ this.props.onPrivatePublish }
-					setPostDate={ this.props.setPostDate }
-					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
+					onSave={this.props.onSave}
+					onPrivatePublish={this.props.onPrivatePublish}
+					setPostDate={this.props.setPostDate}
+					confirmationSidebarStatus={this.props.confirmationSidebarStatus}
 				/>
 			</Accordion>
 		);
@@ -287,18 +287,18 @@ class EditorDrawer extends Component {
 
 		return (
 			<div className="editor-drawer">
-				{ site && <QueryPostTypes siteId={ site.ID } /> }
-				{ site && <QuerySiteSettings siteId={ site.ID } /> }
-				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
-				{ this.renderStatus() }
-				{ this.renderCategories() }
-				{ this.renderTaxonomies() }
-				{ this.renderFeaturedImage() }
-				{ this.renderPageOptions() }
-				{ this.renderSharing() }
-				{ this.renderPostFormats() }
-				{ this.renderSeo() }
-				{ this.renderMoreOptions() }
+				{site && <QueryPostTypes siteId={site.ID} />}
+				{site && <QuerySiteSettings siteId={site.ID} />}
+				{site && <QueryJetpackPlugins siteIds={[site.ID]} />}
+				{this.renderStatus()}
+				{this.renderCategories()}
+				{this.renderTaxonomies()}
+				{this.renderFeaturedImage()}
+				{this.renderPageOptions()}
+				{this.renderSharing()}
+				{this.renderPostFormats()}
+				{this.renderSeo()}
+				{this.renderMoreOptions()}
 			</div>
 		);
 	}
@@ -308,21 +308,21 @@ EditorDrawer.displayName = 'EditorDrawer';
 
 const enhance = flow(
 	localize,
-	connect( state => {
-		const siteId = getSelectedSiteId( state );
-		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
-		const activePlugins = getPlugins( state, [ siteId ], 'active' );
+	connect((state) => {
+		const siteId = getSelectedSiteId(state);
+		const type = getEditedPostValue(state, siteId, getEditorPostId(state), 'type');
+		const activePlugins = getPlugins(state, [siteId], 'active');
 
 		return {
-			hasConflictingSeoPlugins: !! getFirstConflictingPlugin( activePlugins ),
-			isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
-			isRequestingPlugins: isRequesting( state, siteId ),
+			hasConflictingSeoPlugins: !!getFirstConflictingPlugin(activePlugins),
+			isPermalinkEditable: areSitePermalinksEditable(state, siteId),
+			isJetpack: isJetpackSite(state, siteId),
+			isSeoToolsModuleActive: isJetpackModuleActive(state, siteId, 'seo-tools'),
+			isRequestingPlugins: isRequesting(state, siteId),
 			type,
-			typeObject: getPostType( state, siteId, type ),
+			typeObject: getPostType(state, siteId, type),
 		};
-	} )
+	})
 );
 
-export default enhance( EditorDrawer );
+export default enhance(EditorDrawer);

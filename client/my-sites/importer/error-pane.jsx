@@ -26,10 +26,10 @@ class ImporterError extends React.PureComponent {
 		retryImport: PropTypes.func,
 	};
 
-	contactSupport = event => {
+	contactSupport = (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( '/help' );
+		Page('/help');
 	};
 
 	getImportError = () => {
@@ -40,9 +40,9 @@ class ImporterError extends React.PureComponent {
 					errorDescription: this.props.description,
 				},
 				components: {
-					a: <Button className="importer__error-pane is-link" onClick={ this.retryImport } />,
+					a: <Button className="importer__error-pane is-link" onClick={this.retryImport} />,
 					br: <br />,
-					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					cs: <Button className="importer__error-pane is-link" onClick={this.contactSupport} />,
 				},
 			}
 		);
@@ -62,7 +62,7 @@ class ImporterError extends React.PureComponent {
 				},
 				components: {
 					br: <br />,
-					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					cs: <Button className="importer__error-pane is-link" onClick={this.contactSupport} />,
 				},
 			}
 		);
@@ -71,7 +71,7 @@ class ImporterError extends React.PureComponent {
 	getErrorMessage = () => {
 		let actionMessage;
 
-		switch ( this.props.type ) {
+		switch (this.props.type) {
 			case 'uploadError':
 				actionMessage = this.getUploadError();
 				break;
@@ -83,14 +83,14 @@ class ImporterError extends React.PureComponent {
 			case 'validationError':
 				actionMessage = this.props.description
 					? this.props.description
-					: this.props.translate( 'Data you entered are not valid' );
+					: this.props.translate('Data you entered are not valid');
 				break;
 		}
 
 		return actionMessage;
 	};
 
-	retryImport = event => {
+	retryImport = (event) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.retryImport();
@@ -99,10 +99,10 @@ class ImporterError extends React.PureComponent {
 	render() {
 		return (
 			<div>
-				<Notice status="is-error" text={ this.getErrorMessage() } showDismiss={ false } />
+				<Notice status="is-error" text={this.getErrorMessage()} showDismiss={false} />
 			</div>
 		);
 	}
 }
 
-export default localize( ImporterError );
+export default localize(ImporterError);

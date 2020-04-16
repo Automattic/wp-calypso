@@ -18,21 +18,21 @@ import { getShortcode } from 'state/shortcodes/selectors';
  */
 import ShortcodeFrame from './frame';
 
-const Shortcode = props => {
+const Shortcode = (props) => {
 	const { siteId, className, children, filterRenderResult, shortcode } = props;
-	const classes = classNames( 'shortcode', className );
+	const classes = classNames('shortcode', className);
 	let filteredShortcode = {};
-	if ( shortcode ) {
+	if (shortcode) {
 		shortcode.body = shortcode.result;
-		filteredShortcode = filterRenderResult( omit( shortcode, 'shortcode' ) );
+		filteredShortcode = filterRenderResult(omit(shortcode, 'shortcode'));
 	}
 	return (
 		<Fragment>
-			<QueryShortcode siteId={ siteId } shortcode={ children } />
+			<QueryShortcode siteId={siteId} shortcode={children} />
 			<ShortcodeFrame
-				{ ...omit( props, 'siteId', 'filterRenderResult', 'shortcode', 'dispatch' ) }
-				{ ...filteredShortcode }
-				className={ classes }
+				{...omit(props, 'siteId', 'filterRenderResult', 'shortcode', 'dispatch')}
+				{...filteredShortcode}
+				className={classes}
 			/>
 		</Fragment>
 	);
@@ -53,8 +53,8 @@ Shortcode.defaultProps = {
 };
 
 export default connect(
-	( state, { siteId, children } ) => ( {
-		shortcode: getShortcode( state, siteId, children ),
-	} ),
+	(state, { siteId, children }) => ({
+		shortcode: getShortcode(state, siteId, children),
+	}),
 	null
-)( Shortcode );
+)(Shortcode);

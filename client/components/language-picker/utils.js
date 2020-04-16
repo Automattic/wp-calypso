@@ -14,8 +14,8 @@ import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
  * @param {Array} languageGroups collection of territory data
  * @returns {string} territory slug
  */
-export function getLanguageGroupById( id, languageGroups = LANGUAGE_GROUPS ) {
-	return find( languageGroups, l => l.id === id );
+export function getLanguageGroupById(id, languageGroups = LANGUAGE_GROUPS) {
+	return find(languageGroups, (l) => l.id === id);
 }
 
 /**
@@ -31,7 +31,7 @@ export function getLanguageGroupFromTerritoryId(
 	languageGroups = LANGUAGE_GROUPS,
 	defaultLanguageGroup = DEFAULT_LANGUAGE_GROUP
 ) {
-	const languageGroup = find( languageGroups, t => includes( t.subTerritories, territoryId ) );
+	const languageGroup = find(languageGroups, (t) => includes(t.subTerritories, territoryId));
 	return languageGroup ? languageGroup.id : defaultLanguageGroup;
 }
 
@@ -43,13 +43,12 @@ export function getLanguageGroupFromTerritoryId(
  * @param {boolean} openInPopular  if langSlug is popular return popular language group id
  * @returns {string} language group id
  */
-export function getLanguageGroupByLangSlug( langSlug, languages, openInPopular = false ) {
-	const language = find( languages, l => l.langSlug === langSlug );
-	const territoryId =
-		language && isArray( language.territories ) ? language.territories[ 0 ] : null;
-	return get( language, 'popular', null ) && openInPopular === true
+export function getLanguageGroupByLangSlug(langSlug, languages, openInPopular = false) {
+	const language = find(languages, (l) => l.langSlug === langSlug);
+	const territoryId = language && isArray(language.territories) ? language.territories[0] : null;
+	return get(language, 'popular', null) && openInPopular === true
 		? 'popular'
-		: getLanguageGroupFromTerritoryId( territoryId );
+		: getLanguageGroupFromTerritoryId(territoryId);
 }
 
 /**
@@ -65,7 +64,7 @@ export function getLanguageGroupByCountryCode(
 	languageGroups = LANGUAGE_GROUPS,
 	defaultLanguageGroup = DEFAULT_LANGUAGE_GROUP
 ) {
-	const languageGroup = find( languageGroups, t => includes( t.countries, countryCode ) );
+	const languageGroup = find(languageGroups, (t) => includes(t.countries, countryCode));
 	return languageGroup ? languageGroup.id : defaultLanguageGroup;
 }
 
@@ -76,17 +75,17 @@ export function getLanguageGroupByCountryCode(
  * @param {string} langSlug value of config.language[ langSlug ].langSlug
  * @returns {object} { langCode: 'xx', langSubcode: 'xx' } | {}
  */
-export function getLanguageCodeLabels( langSlug ) {
+export function getLanguageCodeLabels(langSlug) {
 	const languageCodeLabels = {};
 
-	if ( ! langSlug ) {
+	if (!langSlug) {
 		return languageCodeLabels;
 	}
 
-	const languageCodes = langSlug.split( /[_-]+/ );
+	const languageCodes = langSlug.split(/[_-]+/);
 
-	languageCodeLabels.langCode = languageCodes[ 0 ];
-	languageCodeLabels.langSubcode = langSlug.indexOf( '-' ) > -1 ? languageCodes[ 1 ] : undefined;
+	languageCodeLabels.langCode = languageCodes[0];
+	languageCodeLabels.langSubcode = langSlug.indexOf('-') > -1 ? languageCodes[1] : undefined;
 
 	return {
 		...languageCodeLabels,

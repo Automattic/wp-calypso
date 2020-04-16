@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 
-const SettingsSectionHeader = ( {
+const SettingsSectionHeader = ({
 	children,
 	disabled,
 	id,
@@ -21,17 +21,17 @@ const SettingsSectionHeader = ( {
 	title,
 	numberFormat,
 	...buttonProps
-} ) => {
+}) => {
 	const translate = useTranslate();
 
 	return (
-		<SectionHeader label={ title } id={ id }>
-			{ children }
-			{ showButton && (
-				<Button compact primary onClick={ onButtonClick } disabled={ disabled } { ...buttonProps }>
-					{ isSaving ? translate( 'Saving…' ) : translate( 'Save settings' ) }
+		<SectionHeader label={title} id={id}>
+			{children}
+			{showButton && (
+				<Button compact primary onClick={onButtonClick} disabled={disabled} {...buttonProps}>
+					{isSaving ? translate('Saving…') : translate('Save settings')}
 				</Button>
-			) }
+			)}
 		</SectionHeader>
 	);
 };

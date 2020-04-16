@@ -8,13 +8,13 @@ import { expect } from 'chai';
  */
 import { isCurrentUserUploadingGravatar, getUserTempGravatar } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#isCurrentUserUploadingGravatar', () => {
-		test( 'returns false when state is undefined', () => {
-			expect( isCurrentUserUploadingGravatar( undefined ) ).to.equal( false );
-		} );
+describe('selectors', () => {
+	describe('#isCurrentUserUploadingGravatar', () => {
+		test('returns false when state is undefined', () => {
+			expect(isCurrentUserUploadingGravatar(undefined)).to.equal(false);
+		});
 
-		test( 'returns state when defined', () => {
+		test('returns state when defined', () => {
 			const uploadingState = {
 				currentUser: {
 					gravatarStatus: {
@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isCurrentUserUploadingGravatar( uploadingState ) ).to.equal( true );
+			expect(isCurrentUserUploadingGravatar(uploadingState)).to.equal(true);
 
 			const notUploadingState = {
 				currentUser: {
@@ -31,16 +31,16 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isCurrentUserUploadingGravatar( notUploadingState ) ).to.equal( false );
-		} );
-	} );
+			expect(isCurrentUserUploadingGravatar(notUploadingState)).to.equal(false);
+		});
+	});
 
-	describe( '#getUserTempGravatar', () => {
+	describe('#getUserTempGravatar', () => {
 		const imageSrc = 'image';
 		const currentUserId = 1;
 		const anotherUserId = 2;
 
-		test( 'returns false if user ID is not passed in, or is false', () => {
+		test('returns false if user ID is not passed in, or is false', () => {
 			const state = {
 				currentUser: {
 					gravatarStatus: {
@@ -51,11 +51,11 @@ describe( 'selectors', () => {
 					id: currentUserId,
 				},
 			};
-			expect( getUserTempGravatar( state ) ).to.equal( false );
-			expect( getUserTempGravatar( state, false ) ).to.equal( false );
-		} );
+			expect(getUserTempGravatar(state)).to.equal(false);
+			expect(getUserTempGravatar(state, false)).to.equal(false);
+		});
 
-		test( 'returns false if the user ID passed is not the current user ID', () => {
+		test('returns false if the user ID passed is not the current user ID', () => {
 			const state = {
 				currentUser: {
 					gravatarStatus: {
@@ -66,10 +66,10 @@ describe( 'selectors', () => {
 					id: currentUserId,
 				},
 			};
-			expect( getUserTempGravatar( state, anotherUserId ) ).to.equal( false );
-		} );
+			expect(getUserTempGravatar(state, anotherUserId)).to.equal(false);
+		});
 
-		test( 'returns false if the current user does not have temp image set', () => {
+		test('returns false if the current user does not have temp image set', () => {
 			const emptyTempImage = {
 				currentUser: {
 					gravatarStatus: {
@@ -78,10 +78,10 @@ describe( 'selectors', () => {
 					id: currentUserId,
 				},
 			};
-			expect( getUserTempGravatar( emptyTempImage, currentUserId ) ).to.equal( false );
-		} );
+			expect(getUserTempGravatar(emptyTempImage, currentUserId)).to.equal(false);
+		});
 
-		test( 'returns image src if given the current user ID, and the current user has a temp image set', () => {
+		test('returns image src if given the current user ID, and the current user has a temp image set', () => {
 			const state = {
 				currentUser: {
 					gravatarStatus: {
@@ -92,7 +92,7 @@ describe( 'selectors', () => {
 					id: currentUserId,
 				},
 			};
-			expect( getUserTempGravatar( state, currentUserId ) ).to.equal( imageSrc );
-		} );
-	} );
-} );
+			expect(getUserTempGravatar(state, currentUserId)).to.equal(imageSrc);
+		});
+	});
+});

@@ -13,15 +13,15 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
  *
  * @returns {string} Current user geo location
  */
-export default ( state, siteId ) => {
+export default (state, siteId) => {
 	const skills = {
 		// TODO: we should rename this to getProduct when cleaning up groups and locales
-		[ HAPPYCHAT_SKILL_PRODUCT ]: getGroups( state, siteId ),
+		[HAPPYCHAT_SKILL_PRODUCT]: getGroups(state, siteId),
 	};
 
-	const language = getCurrentUserLocale( state );
-	if ( language ) {
-		skills[ HAPPYCHAT_SKILL_LANGUAGE ] = [ language ];
+	const language = getCurrentUserLocale(state);
+	if (language) {
+		skills[HAPPYCHAT_SKILL_LANGUAGE] = [language];
 	}
 
 	return skills;

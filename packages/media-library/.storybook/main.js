@@ -1,7 +1,7 @@
-const path = require( 'path' );
+const path = require('path');
 
 module.exports = {
-	stories: [ '../src/**/*.stories.{js,jsx,ts,tsx}' ],
+	stories: ['../src/**/*.stories.{js,jsx,ts,tsx}'],
 	addons: [
 		'@storybook/addon-actions',
 		{
@@ -9,16 +9,16 @@ module.exports = {
 			options: {
 				tsLoaderOptions: {
 					transpileOnly: true,
-					configFile: path.resolve( __dirname, '../tsconfig.json' ),
+					configFile: path.resolve(__dirname, '../tsconfig.json'),
 				},
 				tsDocgenLoaderOptions: {
-					tsconfigPath: path.resolve( __dirname, '../tsconfig.json' ),
+					tsconfigPath: path.resolve(__dirname, '../tsconfig.json'),
 				},
 				forkTsCheckerWebpackPluginOptions: {
-					tsconfig: path.resolve( __dirname, '../tsconfig.json' ),
+					tsconfig: path.resolve(__dirname, '../tsconfig.json'),
 					memoryLimit: 4096,
 				},
-				include: [ path.resolve( __dirname, '../src' ) ],
+				include: [path.resolve(__dirname, '../src')],
 			},
 		},
 	],

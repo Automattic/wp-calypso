@@ -26,11 +26,11 @@ import { errorNotice, removeNotice, successNotice } from 'state/notices/actions'
  * @param  {object} plugins Plugins object
  * @returns {object} Action object
  */
-export const receivePlugins = ( siteId, plugins ) => ( {
+export const receivePlugins = (siteId, plugins) => ({
 	type: WP_SUPER_CACHE_RECEIVE_PLUGINS,
 	siteId,
 	plugins,
-} );
+});
 
 /*
  * Retrieves WPSC plugins for a site.
@@ -38,32 +38,29 @@ export const receivePlugins = ( siteId, plugins ) => ( {
  * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests plugins for a given site
  */
-export const requestPlugins = siteId => {
-	return dispatch => {
-		dispatch( {
+export const requestPlugins = (siteId) => {
+	return (dispatch) => {
+		dispatch({
 			type: WP_SUPER_CACHE_REQUEST_PLUGINS,
 			siteId,
-		} );
+		});
 
 		return wp.req
-			.get(
-				{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
-				{ path: '/wp-super-cache/v1/plugins' }
-			)
-			.then( ( { data } ) => {
-				dispatch( receivePlugins( siteId, data ) );
-				dispatch( {
+			.get({ path: `/jetpack-blogs/${siteId}/rest-api/` }, { path: '/wp-super-cache/v1/plugins' })
+			.then(({ data }) => {
+				dispatch(receivePlugins(siteId, data));
+				dispatch({
 					type: WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 };
 
@@ -75,36 +72,36 @@ export const requestPlugins = siteId => {
  * @param  {boolean}   activationStatus True to enable, false to disable
  * @returns {Function} Action thunk that toggles the plugin on a given site
  */
-export const togglePlugin = ( siteId, plugin, activationStatus ) => {
-	return dispatch => {
-		dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN, siteId, plugin } );
-		dispatch( removeNotice( 'wpsc-toggle-plugin' ) );
+export const togglePlugin = (siteId, plugin, activationStatus) => {
+	return (dispatch) => {
+		dispatch({ type: WP_SUPER_CACHE_TOGGLE_PLUGIN, siteId, plugin });
+		dispatch(removeNotice('wpsc-toggle-plugin'));
 
 		return wp.req
 			.post(
-				{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+				{ path: `/jetpack-blogs/${siteId}/rest-api/` },
 				{
 					path: '/wp-super-cache/v1/plugins',
-					body: JSON.stringify( { [ plugin ]: activationStatus } ),
+					body: JSON.stringify({ [plugin]: activationStatus }),
 					json: true,
 				}
 			)
-			.then( ( { data } ) => {
+			.then(({ data }) => {
 				const notice = activationStatus
-					? translate( 'Plugin successfully enabled' )
-					: translate( 'Plugin successfully disabled' );
-				dispatch( receivePlugins( siteId, data ) );
-				dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS, siteId, plugin } );
-				dispatch( successNotice( notice, { id: 'wpsc-toggle-plugin' } ) );
-			} )
-			.catch( error => {
-				dispatch( { type: WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE, siteId, plugin, error } );
+					? translate('Plugin successfully enabled')
+					: translate('Plugin successfully disabled');
+				dispatch(receivePlugins(siteId, data));
+				dispatch({ type: WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS, siteId, plugin });
+				dispatch(successNotice(notice, { id: 'wpsc-toggle-plugin' }));
+			})
+			.catch((error) => {
+				dispatch({ type: WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE, siteId, plugin, error });
 				dispatch(
 					errorNotice(
-						translate( 'There was a problem toggling plugin activation. Please try again.' ),
+						translate('There was a problem toggling plugin activation. Please try again.'),
 						{ id: 'wpsc-toggle-plugin' }
 					)
 				);
-			} );
+			});
 	};
 };

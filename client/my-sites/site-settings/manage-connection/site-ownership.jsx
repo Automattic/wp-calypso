@@ -42,83 +42,83 @@ class SiteOwnership extends Component {
 		);
 	}
 
-	isUserExcludedFromSelector = user => {
+	isUserExcludedFromSelector = (user) => {
 		const { currentUser } = this.props;
 		return (
 			user.linked_user_ID === false ||
 			user.linked_user_ID === currentUser.ID ||
-			! includes( user.roles, 'administrator' )
+			!includes(user.roles, 'administrator')
 		);
 	};
 
-	transformUser( user ) {
+	transformUser(user) {
 		return { ...user.linked_user_info, ...{ ID: user.ID } };
 	}
 
-	onSelectConnectionOwner = user => {
+	onSelectConnectionOwner = (user) => {
 		const { translate } = this.props;
 		const message = (
 			<Fragment>
 				<p>
-					{ translate( 'Are you sure you want to transfer site ownership to {{user /}}?', {
+					{translate('Are you sure you want to transfer site ownership to {{user /}}?', {
 						components: {
-							user: <strong>{ user.display_name || user.name }</strong>,
+							user: <strong>{user.display_name || user.name}</strong>,
 						},
-					} ) }
+					})}
 				</p>
 				<p>
-					{ translate(
+					{translate(
 						'Note: you cannot undo this action. ' +
 							'Going forward, only the new Site Owner can initiate a transfer.'
-					) }
+					)}
 				</p>
 			</Fragment>
 		);
 
 		accept(
 			message,
-			accepted => {
-				if ( accepted ) {
-					this.props.changeOwner( this.props.siteId, user.ID, user.name );
-					this.props.recordTracksEvent( 'calypso_jetpack_connection_ownership_changed' );
+			(accepted) => {
+				if (accepted) {
+					this.props.changeOwner(this.props.siteId, user.ID, user.name);
+					this.props.recordTracksEvent('calypso_jetpack_connection_ownership_changed');
 				}
 			},
-			translate( 'Transfer ownership' ),
-			translate( 'Keep ownership' ),
+			translate('Transfer ownership'),
+			translate('Keep ownership'),
 			{ isScary: true }
 		);
 	};
 
-	onSelectPlanOwner = user => {
+	onSelectPlanOwner = (user) => {
 		const { translate } = this.props;
 		const message = (
 			<Fragment>
 				<p>
-					{ translate( 'Are you sure you want to change the Plan Purchaser to {{user /}}?', {
+					{translate('Are you sure you want to change the Plan Purchaser to {{user /}}?', {
 						components: {
-							user: <strong>{ user.display_name || user.name }</strong>,
+							user: <strong>{user.display_name || user.name}</strong>,
 						},
-					} ) }
+					})}
 				</p>
 				<p>
-					{ translate(
+					{translate(
 						'Note: you cannot undo this action. ' +
 							'Going forward, only the new Plan Purchaser can initiate a change.'
-					) }
+					)}
 				</p>
 			</Fragment>
 		);
 
 		accept(
 			message,
-			accepted => {
-				if ( accepted ) {
-					this.props.transferPlanOwnership( this.props.siteId, user.linked_user_ID );
-					this.props.recordTracksEvent( 'calypso_jetpack_plan_ownership_changed' );
+			(accepted) => {
+				if (accepted) {
+					this.props.transferPlanOwnership(this.props.siteId, user.linked_user_ID);
+					this.props.recordTracksEvent('calypso_jetpack_plan_ownership_changed');
 				}
 			},
-			translate( 'Yes, change the plan purchaser' ),
-			translate( 'Cancel' ),
+			translate('Yes, change the plan purchaser'),
+			translate('Cancel'),
 			{ isScary: true }
 		);
 	};
@@ -128,28 +128,28 @@ class SiteOwnership extends Component {
 
 		return (
 			<div className="manage-connection__user">
-				<Gravatar user={ currentUser } size={ 24 } />
-				<span className="manage-connection__user-name">{ currentUser.display_name }</span>
+				<Gravatar user={currentUser} size={24} />
+				<span className="manage-connection__user-name">{currentUser.display_name}</span>
 			</div>
 		);
 	}
 
 	renderCurrentUserDropdown() {
 		const { currentUser, siteId } = this.props;
-		if ( ! currentUser ) {
+		if (!currentUser) {
 			return;
 		}
 
 		return (
 			<div className="manage-connection__user-dropdown">
 				<AuthorSelector
-					siteId={ siteId }
-					exclude={ this.isUserExcludedFromSelector }
-					transformAuthor={ this.transformUser }
+					siteId={siteId}
+					exclude={this.isUserExcludedFromSelector}
+					transformAuthor={this.transformUser}
 					allowSingleUser
-					onSelect={ this.onSelectConnectionOwner }
+					onSelect={this.onSelectConnectionOwner}
 				>
-					{ this.renderCurrentUser() }
+					{this.renderCurrentUser()}
 				</AuthorSelector>
 			</div>
 		);
@@ -158,30 +158,30 @@ class SiteOwnership extends Component {
 	renderConnectionDetails() {
 		const { siteIsConnected, siteIsInDevMode, translate, userIsMaster } = this.props;
 
-		if ( siteIsConnected === false ) {
-			return translate( 'The site is not connected.' );
+		if (siteIsConnected === false) {
+			return translate('The site is not connected.');
 		}
 
-		if ( siteIsInDevMode ) {
+		if (siteIsInDevMode) {
 			return (
 				<FormSettingExplanation>
-					{ translate(
+					{translate(
 						'Your site is in Development Mode, so it can not be connected to WordPress.com.'
-					) }
+					)}
 				</FormSettingExplanation>
 			);
 		}
 
 		return (
 			<Fragment>
-				{ userIsMaster !== null && (
+				{userIsMaster !== null && (
 					<FormSettingExplanation>
-						{ userIsMaster
-							? translate( "You are the owner of this site's connection to WordPress.com." )
-							: translate( "Somebody else owns this site's connection to WordPress.com." ) }
+						{userIsMaster
+							? translate("You are the owner of this site's connection to WordPress.com.")
+							: translate("Somebody else owns this site's connection to WordPress.com.")}
 					</FormSettingExplanation>
-				) }
-				{ userIsMaster && this.renderCurrentUserDropdown() }
+				)}
+				{userIsMaster && this.renderCurrentUserDropdown()}
 			</Fragment>
 		);
 	}
@@ -192,12 +192,12 @@ class SiteOwnership extends Component {
 		return (
 			<div className="manage-connection__user-dropdown">
 				<AuthorSelector
-					siteId={ siteId }
-					exclude={ this.isUserExcludedFromSelector }
+					siteId={siteId}
+					exclude={this.isUserExcludedFromSelector}
 					allowSingleUser
-					onSelect={ this.onSelectPlanOwner }
+					onSelect={this.onSelectPlanOwner}
 				>
-					{ this.renderCurrentUser() }
+					{this.renderCurrentUser()}
 				</AuthorSelector>
 			</div>
 		);
@@ -205,7 +205,7 @@ class SiteOwnership extends Component {
 
 	renderPlanDetails() {
 		const { currentUser, isCurrentPlanOwner, translate } = this.props;
-		if ( ! currentUser ) {
+		if (!currentUser) {
 			return;
 		}
 
@@ -213,7 +213,7 @@ class SiteOwnership extends Component {
 			this.renderPlanOwnerDropdown()
 		) : (
 			<FormSettingExplanation>
-				{ translate( 'Somebody else is the plan purchaser for this site.' ) }
+				{translate('Somebody else is the plan purchaser for this site.')}
 			</FormSettingExplanation>
 		);
 	}
@@ -224,20 +224,20 @@ class SiteOwnership extends Component {
 		return (
 			<Card>
 				<FormFieldset className="manage-connection__formfieldset">
-					<FormLabel>{ translate( 'Site owner' ) }</FormLabel>
-					{ this.renderConnectionDetails() }
+					<FormLabel>{translate('Site owner')}</FormLabel>
+					{this.renderConnectionDetails()}
 				</FormFieldset>
 
-				{ isPaidPlan && (
+				{isPaidPlan && (
 					<Fragment>
 						<FormFieldset className="manage-connection__formfieldset has-divider is-top-only">
-							<FormLabel>{ translate( 'Plan purchaser' ) }</FormLabel>
-							{ this.renderPlanDetails() }
+							<FormLabel>{translate('Plan purchaser')}</FormLabel>
+							{this.renderPlanDetails()}
 						</FormFieldset>
 
 						<OwnershipInformation />
 					</Fragment>
-				) }
+				)}
 			</Card>
 		);
 	}
@@ -245,44 +245,44 @@ class SiteOwnership extends Component {
 	render() {
 		const { canManageOptions, siteId, siteIsConnected, siteIsJetpack, translate } = this.props;
 
-		if ( ! siteId ) {
+		if (!siteId) {
 			return this.renderPlaceholder();
 		}
 
-		if ( ! canManageOptions ) {
+		if (!canManageOptions) {
 			return null;
 		}
 
 		return (
 			<Fragment>
-				{ siteIsJetpack && <QueryJetpackConnection siteId={ siteId } /> }
-				{ siteIsJetpack && <QueryJetpackUserConnection siteId={ siteId } /> }
+				{siteIsJetpack && <QueryJetpackConnection siteId={siteId} />}
+				{siteIsJetpack && <QueryJetpackUserConnection siteId={siteId} />}
 
-				<SettingsSectionHeader title={ translate( 'Site ownership' ) } />
+				<SettingsSectionHeader title={translate('Site ownership')} />
 
-				{ siteIsConnected === null ? this.renderPlaceholder() : this.renderCardContent() }
+				{siteIsConnected === null ? this.renderPlaceholder() : this.renderCardContent()}
 			</Fragment>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const isPaidPlan = isCurrentPlanPaid( state, siteId );
-		const isCurrentPlanOwner = isPaidPlan && isCurrentUserCurrentPlanOwner( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const isPaidPlan = isCurrentPlanPaid(state, siteId);
+		const isCurrentPlanOwner = isPaidPlan && isCurrentUserCurrentPlanOwner(state, siteId);
 
 		return {
-			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-			currentUser: getCurrentUser( state ),
+			canManageOptions: canCurrentUser(state, siteId, 'manage_options'),
+			currentUser: getCurrentUser(state),
 			isCurrentPlanOwner,
 			isPaidPlan,
 			siteId,
-			siteIsConnected: isJetpackSiteConnected( state, siteId ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
-			userIsMaster: isJetpackUserMaster( state, siteId ),
+			siteIsConnected: isJetpackSiteConnected(state, siteId),
+			siteIsJetpack: isJetpackSite(state, siteId),
+			siteIsInDevMode: isJetpackSiteInDevelopmentMode(state, siteId),
+			userIsMaster: isJetpackUserMaster(state, siteId),
 		};
 	},
 	{ changeOwner, recordTracksEvent, transferPlanOwnership }
-)( localize( SiteOwnership ) );
+)(localize(SiteOwnership));

@@ -24,21 +24,21 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class QueryLabels extends Component {
-	fetch( props ) {
+	fetch(props) {
 		const { orderId, siteId, loaded, fetching, error, refreshedLabelStatus } = props;
-		if ( ! loaded && ! fetching && ! error ) {
-			this.props.fetchLabelsData( orderId, siteId );
-		} else if ( loaded && ! refreshedLabelStatus ) {
-			this.props.fetchLabelsStatus( orderId, siteId );
+		if (!loaded && !fetching && !error) {
+			this.props.fetchLabelsData(orderId, siteId);
+		} else if (loaded && !refreshedLabelStatus) {
+			this.props.fetchLabelsStatus(orderId, siteId);
 		}
 	}
 
 	UNSAFE_componentWillMount() {
-		this.fetch( this.props );
+		this.fetch(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		this.fetch( newProps );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		this.fetch(newProps);
 	}
 
 	render() {
@@ -46,9 +46,9 @@ class QueryLabels extends Component {
 
 		return (
 			<div>
-				<QueryLabelSettings siteId={ siteId } />
-				<QueryPackages siteId={ siteId } />
-				<QueryLocations siteId={ siteId } />
+				<QueryLabelSettings siteId={siteId} />
+				<QueryPackages siteId={siteId} />
+				<QueryLocations siteId={siteId} />
 			</div>
 		);
 	}
@@ -60,13 +60,13 @@ QueryLabels.propTypes = {
 };
 
 export default connect(
-	( state, { orderId } ) => ( {
-		loaded: isLoaded( state, orderId ),
-		fetching: isFetching( state, orderId ),
-		error: isError( state, orderId ),
-		refreshedLabelStatus: hasRefreshedLabelStatus( state, orderId ),
-	} ),
-	dispatch =>
+	(state, { orderId }) => ({
+		loaded: isLoaded(state, orderId),
+		fetching: isFetching(state, orderId),
+		error: isError(state, orderId),
+		refreshedLabelStatus: hasRefreshedLabelStatus(state, orderId),
+	}),
+	(dispatch) =>
 		bindActionCreators(
 			{
 				fetchLabelsData,
@@ -74,4 +74,4 @@ export default connect(
 			},
 			dispatch
 		)
-)( QueryLabels );
+)(QueryLabels);

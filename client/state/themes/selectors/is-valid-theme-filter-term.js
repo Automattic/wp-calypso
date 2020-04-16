@@ -12,6 +12,6 @@ import 'state/themes/init';
  * @param  {string}  term  The term to validate
  * @returns {boolean}          True if term is valid
  */
-export function isValidThemeFilterTerm( state, term ) {
-	return !! findThemeFilterTerm( state, term );
+export function isValidThemeFilterTerm(state, term) {
+	return !!findThemeFilterTerm(state, term);
 }

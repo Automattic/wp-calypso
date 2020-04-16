@@ -16,7 +16,7 @@ import 'state/data-layer/wpcom/checklist';
  * @param {object} checklist the new checklist state
  * @returns {object} action object
  */
-export function receiveSiteChecklist( siteId, checklist ) {
+export function receiveSiteChecklist(siteId, checklist) {
 	return {
 		type: SITE_CHECKLIST_RECEIVE,
 		siteId,
@@ -31,7 +31,7 @@ export function receiveSiteChecklist( siteId, checklist ) {
  * @param {boolean} isSiteEligibleForFSE whether or not the site is eligible for Full Site Editing
  * @returns {object} action object
  */
-export const requestSiteChecklist = ( siteId, isSiteEligibleForFSE = false ) => ( {
+export const requestSiteChecklist = (siteId, isSiteEligibleForFSE = false) => ({
 	type: SITE_CHECKLIST_REQUEST,
 	siteId,
 	isSiteEligibleForFSE,
@@ -40,7 +40,7 @@ export const requestSiteChecklist = ( siteId, isSiteEligibleForFSE = false ) => 
 			trackRequest: true,
 		},
 	},
-} );
+});
 
 /**
  * Action creator function: SITE_CHECKLIST_TASK_UPDATE
@@ -49,8 +49,8 @@ export const requestSiteChecklist = ( siteId, isSiteEligibleForFSE = false ) => 
  * @param {string} taskId for the task
  * @returns {object} action object
  */
-export const requestSiteChecklistTaskUpdate = ( siteId, taskId ) => ( {
+export const requestSiteChecklistTaskUpdate = (siteId, taskId) => ({
 	type: SITE_CHECKLIST_TASK_UPDATE,
 	siteId,
 	taskId,
-} );
+});

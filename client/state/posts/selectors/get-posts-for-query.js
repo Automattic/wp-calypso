@@ -22,14 +22,14 @@ import 'state/posts/init';
  * @returns {?Array}         Posts for the post query
  */
 export const getPostsForQuery = createSelector(
-	( state, siteId, query ) => {
-		const manager = getQueryManager( state, siteId );
-		if ( ! manager ) {
+	(state, siteId, query) => {
+		const manager = getQueryManager(state, siteId);
+		if (!manager) {
 			return null;
 		}
 
-		const posts = manager.getItems( query );
-		if ( ! posts ) {
+		const posts = manager.getItems(query);
+		if (!posts) {
 			return null;
 		}
 
@@ -43,12 +43,12 @@ export const getPostsForQuery = createSelector(
 		// the WP.com API skips unreadable posts entirely instead of including
 		// them in the results.  See the 'handles items missing from the first
 		// and last pages' test case for PaginatedQueryManager.
-		if ( includes( posts, undefined ) ) {
+		if (includes(posts, undefined)) {
 			return null;
 		}
 
-		return posts.map( normalizePostForDisplay );
+		return posts.map(normalizePostForDisplay);
 	},
-	state => [ state.posts.queries, state.posts.allSitesQueries ],
-	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
+	(state) => [state.posts.queries, state.posts.allSitesQueries],
+	(state, siteId, query) => getSerializedPostsQuery(query, siteId)
 );

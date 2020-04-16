@@ -1,19 +1,19 @@
-const path = require( 'path' );
+const path = require('path');
 
 module.exports = {
 	env: {
 		browser: true,
 	},
 	rules: {
-		'import/no-extraneous-dependencies': [ 'error', { packageDir: __dirname } ],
+		'import/no-extraneous-dependencies': ['error', { packageDir: __dirname }],
 	},
 	overrides: [
 		{
-			files: [ '**/test/**/*' ],
+			files: ['**/test/**/*'],
 			rules: {
 				'import/no-extraneous-dependencies': [
 					'error',
-					{ packageDir: [ __dirname, path.join( __dirname, '..', '..' ) ] },
+					{ packageDir: [__dirname, path.join(__dirname, '..', '..')] },
 				],
 			},
 		},

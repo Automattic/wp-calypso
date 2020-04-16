@@ -3,8 +3,8 @@
  */
 import { I18N_LOCALE_SUGGESTIONS_ADD } from 'state/action-types';
 
-export const items = ( state = null, action ) => {
-	switch ( action.type ) {
+export const items = (state = null, action) => {
+	switch (action.type) {
 		case I18N_LOCALE_SUGGESTIONS_ADD:
 			return action.items;
 		default:

@@ -14,14 +14,14 @@ import 'state/themes/init';
  * @param {string} terms Space or + separated list of filter terms
  * @returns {string} Complete taxonomy:term filter string, or empty string if term is not valid
  */
-export function prependThemeFilterKeys( state, terms = '' ) {
+export function prependThemeFilterKeys(state, terms = '') {
 	const result = terms
-		.split( /[+\s]/ )
-		.map( term => getThemeFilterStringFromTerm( state, term ) )
-		.join( ' ' )
+		.split(/[+\s]/)
+		.map((term) => getThemeFilterStringFromTerm(state, term))
+		.join(' ')
 		.trim();
 
-	if ( result ) {
+	if (result) {
 		return result + ' ';
 	}
 	return '';

@@ -9,7 +9,7 @@ import { filter, last } from 'lodash';
 import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
 import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 
-function isConnected( keyringConnection, externalUser, siteKeyring ) {
+function isConnected(keyringConnection, externalUser, siteKeyring) {
 	return (
 		keyringConnection.ID === siteKeyring.keyring_id &&
 		externalUser.external_ID === siteKeyring.external_user_id
@@ -27,33 +27,33 @@ function isConnected( keyringConnection, externalUser, siteKeyring ) {
  * @param  {object} siteId The site ID
  * @returns {object}        List of GMB connections for this site
  */
-export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId ) {
+export default function getSiteUserConnectionsForGoogleMyBusiness(state, siteId) {
 	// Google My Business can only have one location connected at a time
 	const googleMyBusinessSiteKeyring = last(
-		getSiteKeyringsForService( state, siteId, 'google_my_business' )
+		getSiteKeyringsForService(state, siteId, 'google_my_business')
 	);
 
-	if ( ! googleMyBusinessSiteKeyring ) {
+	if (!googleMyBusinessSiteKeyring) {
 		return [];
 	}
 
-	const keyringConnections = getKeyringConnectionsByName( state, 'google_my_business' );
+	const keyringConnections = getKeyringConnectionsByName(state, 'google_my_business');
 	const locations = [];
 
-	keyringConnections.forEach( keyringConnection => {
-		if ( keyringConnection.additional_external_users ) {
-			keyringConnection.additional_external_users.forEach( externalUser => {
-				locations.push( {
+	keyringConnections.forEach((keyringConnection) => {
+		if (keyringConnection.additional_external_users) {
+			keyringConnection.additional_external_users.forEach((externalUser) => {
+				locations.push({
 					...keyringConnection,
 					keyring_connection_ID: keyringConnection.ID,
 					external_ID: externalUser.external_ID,
 					external_display: externalUser.external_name,
 					external_profile_picture: externalUser.external_profile_picture,
-					isConnected: isConnected( keyringConnection, externalUser, googleMyBusinessSiteKeyring ),
-				} );
-			} );
+					isConnected: isConnected(keyringConnection, externalUser, googleMyBusinessSiteKeyring),
+				});
+			});
 		}
-	} );
+	});
 
-	return filter( locations, { isConnected: true } );
+	return filter(locations, { isConnected: true });
 }

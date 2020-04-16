@@ -14,13 +14,13 @@ import { isEmpty } from 'lodash';
  * - Country / countries: Priority 3
  * - Continent / continents: Priority 4, lowest priority, these zones must be the last
  */
-export const getZoneLocationsPriority = ( { continent, country, state, postcode } ) => {
-	if ( ! isEmpty( continent ) ) {
+export const getZoneLocationsPriority = ({ continent, country, state, postcode }) => {
+	if (!isEmpty(continent)) {
 		return 4;
-	} else if ( ! isEmpty( state ) ) {
+	} else if (!isEmpty(state)) {
 		return 2;
-	} else if ( ! isEmpty( country ) ) {
-		return isEmpty( postcode ) ? 3 : 1;
+	} else if (!isEmpty(country)) {
+		return isEmpty(postcode) ? 3 : 1;
 	}
 	return 0;
 };

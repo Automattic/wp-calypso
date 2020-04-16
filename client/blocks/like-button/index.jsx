@@ -31,31 +31,24 @@ class LikeButtonContainer extends Component {
 		onLikeToggle: noop,
 	};
 
-	handleLikeToggle = liked => {
+	handleLikeToggle = (liked) => {
 		const toggler = liked ? this.props.like : this.props.unlike;
-		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
+		toggler(this.props.siteId, this.props.postId, { source: this.props.likeSource });
 
-		this.props.onLikeToggle( liked );
+		this.props.onLikeToggle(liked);
 	};
 
 	render() {
-		const props = omit( this.props, [
-			'siteId',
-			'postId',
-			'likeCount',
-			'iLike',
-			'like',
-			'unlike',
-		] );
+		const props = omit(this.props, ['siteId', 'postId', 'likeCount', 'iLike', 'like', 'unlike']);
 		return (
 			<Fragment>
-				<QueryPostLikes siteId={ this.props.siteId } postId={ this.props.postId } />
+				<QueryPostLikes siteId={this.props.siteId} postId={this.props.postId} />
 				<LikeButton
-					{ ...props }
-					likeCount={ this.props.likeCount }
-					liked={ this.props.iLike }
-					animateLike={ true }
-					onLikeToggle={ this.handleLikeToggle }
+					{...props}
+					likeCount={this.props.likeCount}
+					liked={this.props.iLike}
+					animateLike={true}
+					onLikeToggle={this.handleLikeToggle}
 				/>
 			</Fragment>
 		);
@@ -63,13 +56,13 @@ class LikeButtonContainer extends Component {
 }
 
 export default connect(
-	( state, { siteId, postId } ) => {
+	(state, { siteId, postId }) => {
 		return {
-			likeCount: getPostLikeCount( state, siteId, postId ),
-			iLike: isLikedPost( state, siteId, postId ),
+			likeCount: getPostLikeCount(state, siteId, postId),
+			iLike: isLikedPost(state, siteId, postId),
 		};
 	},
 	{ like, unlike },
 	null,
 	{ forwardRef: true }
-)( LikeButtonContainer );
+)(LikeButtonContainer);

@@ -14,20 +14,20 @@ const initialState = {
 	lastErrorTime: null,
 };
 
-export default withoutPersistence( ( state = initialState, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = initialState, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_WC_API_SUCCESS:
-			return apiSuccess( state, action );
+			return apiSuccess(state, action);
 		case WOOCOMMERCE_WC_API_UNAVAILABLE:
-			return apiUnavailable( state, action );
+			return apiUnavailable(state, action);
 		case WOOCOMMERCE_WC_API_UNKNOWN_ERROR:
-			return apiUnknownError( state, action );
+			return apiUnknownError(state, action);
 	}
 
 	return state;
-} );
+});
 
-function apiSuccess( state, action ) {
+function apiSuccess(state, action) {
 	const actionTime = action.time || Date.now();
 
 	return {
@@ -37,7 +37,7 @@ function apiSuccess( state, action ) {
 	};
 }
 
-function apiUnavailable( state, action ) {
+function apiUnavailable(state, action) {
 	const actionTime = action.time || Date.now();
 
 	return {
@@ -47,7 +47,7 @@ function apiUnavailable( state, action ) {
 	};
 }
 
-function apiUnknownError( state, action ) {
+function apiUnknownError(state, action) {
 	const actionTime = action.time || Date.now();
 
 	return {

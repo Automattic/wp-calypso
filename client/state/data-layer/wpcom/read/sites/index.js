@@ -14,15 +14,15 @@ import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/p
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export function requestReadSite( action ) {
+export function requestReadSite(action) {
 	return http(
 		{
 			apiVersion: '1.1',
 			method: 'GET',
-			path: `/read/sites/${ action.payload.ID }`,
+			path: `/read/sites/${action.payload.ID}`,
 			query: {
-				fields: fields.join( ',' ),
-				options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
+				fields: fields.join(','),
+				options: ['is_mapped_domain', 'unmapped_url', 'is_redirect'].join(','),
 			},
 			retryPolicy: noRetry(),
 		},
@@ -30,20 +30,20 @@ export function requestReadSite( action ) {
 	);
 }
 
-export function receiveReadSiteSuccess( action, response ) {
-	return bypassDataLayer( receiveReaderSiteRequestSuccess( response ) );
+export function receiveReadSiteSuccess(action, response) {
+	return bypassDataLayer(receiveReaderSiteRequestSuccess(response));
 }
 
-export function receiveReadSiteError( action, response ) {
-	return bypassDataLayer( receiveReaderSiteRequestFailure( action, response ) );
+export function receiveReadSiteError(action, response) {
+	return bypassDataLayer(receiveReaderSiteRequestFailure(action, response));
 }
 
-registerHandlers( 'state/data-layer/wpcom/read/sites/index.js', {
-	[ READER_SITE_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/read/sites/index.js', {
+	[READER_SITE_REQUEST]: [
+		dispatchRequest({
 			fetch: requestReadSite,
 			onSuccess: receiveReadSiteSuccess,
 			onError: receiveReadSiteError,
-		} ),
+		}),
 	],
-} );
+});

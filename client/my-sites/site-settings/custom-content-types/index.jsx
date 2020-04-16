@@ -38,23 +38,23 @@ class CustomContentTypes extends Component {
 			siteIsJetpack,
 		} = this.props;
 
-		if ( ! siteIsJetpack ) {
+		if (!siteIsJetpack) {
 			return;
 		}
 
-		if ( customContentTypesModuleActive !== false ) {
+		if (customContentTypesModuleActive !== false) {
 			return;
 		}
 
-		if ( ! fields.jetpack_portfolio && ! fields.jetpack_testimonial ) {
+		if (!fields.jetpack_portfolio && !fields.jetpack_testimonial) {
 			return;
 		}
 
-		if ( activatingCustomContentTypesModule ) {
+		if (activatingCustomContentTypesModule) {
 			return;
 		}
 
-		this.props.activateModule( siteId, 'custom-content-types', true );
+		this.props.activateModule(siteId, 'custom-content-types', true);
 	}
 
 	isFormPending() {
@@ -63,7 +63,7 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderContentTypeSettings( name, label, description ) {
+	renderContentTypeSettings(name, label, description) {
 		const {
 			activatingCustomContentTypesModule,
 			fields,
@@ -72,128 +72,128 @@ class CustomContentTypes extends Component {
 			translate,
 		} = this.props;
 		const numberFieldIdentifier = name === 'post' ? 'posts_per_page' : name + '_posts_per_page';
-		const isDisabled = this.isFormPending() || ( ! fields[ name ] && name !== 'post' );
+		const isDisabled = this.isFormPending() || (!fields[name] && name !== 'post');
 		const hasToggle = name !== 'post';
 
 		return (
 			<div className="custom-content-types__module-settings">
-				{ hasToggle ? (
+				{hasToggle ? (
 					<CompactFormToggle
-						checked={ !! fields[ name ] }
-						disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-						onChange={ handleAutosavingToggle( name ) }
+						checked={!!fields[name]}
+						disabled={this.isFormPending() || activatingCustomContentTypesModule}
+						onChange={handleAutosavingToggle(name)}
 					>
-						<span className="custom-content-types__label">{ label }</span>
+						<span className="custom-content-types__label">{label}</span>
 					</CompactFormToggle>
 				) : (
 					<div
-						id={ numberFieldIdentifier }
-						className={ classnames( 'custom-content-types__label', {
-							'indented-form-field': ! hasToggle,
-						} ) }
+						id={numberFieldIdentifier}
+						className={classnames('custom-content-types__label', {
+							'indented-form-field': !hasToggle,
+						})}
 					>
-						{ label }
+						{label}
 					</div>
-				) }
+				)}
 				<div className="custom-content-types__indented-form-field indented-form-field">
-					{ translate( 'Display {{field /}} per page', {
+					{translate('Display {{field /}} per page', {
 						comment:
 							'The field value is a number that refers to site content type, e.g., blog post, testimonial or portfolio project',
 						components: {
 							field: (
 								<FormTextInput
-									name={ numberFieldIdentifier }
+									name={numberFieldIdentifier}
 									type="number"
 									step="1"
 									min="0"
-									aria-labelledby={ numberFieldIdentifier }
+									aria-labelledby={numberFieldIdentifier}
 									value={
-										'undefined' === typeof fields[ numberFieldIdentifier ]
+										'undefined' === typeof fields[numberFieldIdentifier]
 											? 10
-											: fields[ numberFieldIdentifier ]
+											: fields[numberFieldIdentifier]
 									}
-									onChange={ onChangeField( numberFieldIdentifier ) }
-									disabled={ isDisabled }
+									onChange={onChangeField(numberFieldIdentifier)}
+									disabled={isDisabled}
 								/>
 							),
 						},
-					} ) }
+					})}
 				</div>
-				<FormSettingExplanation isIndented>{ description }</FormSettingExplanation>
+				<FormSettingExplanation isIndented>{description}</FormSettingExplanation>
 			</div>
 		);
 	}
 
 	renderBlogPostSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Blog Posts' );
-		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
+		const fieldLabel = translate('Blog Posts');
+		const fieldDescription = translate('On blog pages, the number of posts to show per page.');
 
 		return (
 			<div className="custom-content-types__module-settings">
-				{ this.renderContentTypeSettings( 'post', fieldLabel, fieldDescription ) }
+				{this.renderContentTypeSettings('post', fieldLabel, fieldDescription)}
 			</div>
 		);
 	}
 
 	renderTestimonialSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Testimonials' );
+		const fieldLabel = translate('Testimonials');
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					link: <a href={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) } />,
+					link: <a href={localizeUrl('https://wordpress.com/support/testimonials/')} />,
 				},
 			}
 		);
 
-		return this.renderContentTypeSettings( 'jetpack_testimonial', fieldLabel, fieldDescription );
+		return this.renderContentTypeSettings('jetpack_testimonial', fieldLabel, fieldDescription);
 	}
 
 	renderPortfolioSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Portfolio Projects' );
+		const fieldLabel = translate('Portfolio Projects');
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					link: <a href={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) } />,
+					link: <a href={localizeUrl('https://wordpress.com/support/portfolios/')} />,
 				},
 			}
 		);
 
-		return this.renderContentTypeSettings( 'jetpack_portfolio', fieldLabel, fieldDescription );
+		return this.renderContentTypeSettings('jetpack_portfolio', fieldLabel, fieldDescription);
 	}
 
 	render() {
 		const { translate } = this.props;
 		return (
 			<Card className="custom-content-types site-settings">
-				<FormFieldset>{ this.renderBlogPostSettings() }</FormFieldset>
+				<FormFieldset>{this.renderBlogPostSettings()}</FormFieldset>
 
 				<FormFieldset>
 					<SupportInfo
-						text={ translate(
+						text={translate(
 							'Adds the Testimonial custom post type, allowing you to collect, organize, ' +
 								'and display testimonials on your site.'
-						) }
+						)}
 						link="https://jetpack.com/support/custom-content-types/"
 					/>
-					{ this.renderTestimonialSettings() }
+					{this.renderTestimonialSettings()}
 				</FormFieldset>
 
 				<FormFieldset>
 					<SupportInfo
-						text={ translate(
+						text={translate(
 							'Adds the Portfolio custom post type, allowing you to ' +
 								'manage and showcase projects on your site.'
-						) }
+						)}
 						link="https://jetpack.com/support/custom-content-types/"
 					/>
-					{ this.renderPortfolioSettings() }
+					{this.renderPortfolioSettings()}
 				</FormFieldset>
 			</Card>
 		);
@@ -215,17 +215,13 @@ CustomContentTypes.propTypes = {
 };
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
 			siteId,
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			customContentTypesModuleActive: isJetpackModuleActive(
-				state,
-				siteId,
-				'custom-content-types'
-			),
+			siteIsJetpack: isJetpackSite(state, siteId),
+			customContentTypesModuleActive: isJetpackModuleActive(state, siteId, 'custom-content-types'),
 			activatingCustomContentTypesModule: isActivatingJetpackModule(
 				state,
 				siteId,
@@ -236,4 +232,4 @@ export default connect(
 	{
 		activateModule,
 	}
-)( localize( CustomContentTypes ) );
+)(localize(CustomContentTypes));

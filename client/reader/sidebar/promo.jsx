@@ -16,21 +16,21 @@ import QueryUserSettings from 'components/data/query-user-settings';
 import config from 'config';
 import getUserSetting from 'state/selectors/get-user-setting';
 
-export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } ) => {
+export const ReaderSidebarPromo = ({ currentUserLocale, shouldRenderAppPromo }) => {
 	return (
 		<Fragment>
 			<QueryUserSettings />
 
-			{ shouldRenderAppPromo && (
+			{shouldRenderAppPromo && (
 				<div className="sidebar__app-promo">
-					<AppPromo location="reader" locale={ currentUserLocale } />
+					<AppPromo location="reader" locale={currentUserLocale} />
 				</div>
-			) }
+			)}
 		</Fragment>
 	);
 };
 
-export const shouldRenderAppPromo = ( options = {} ) => {
+export const shouldRenderAppPromo = (options = {}) => {
 	// Until the user settings have loaded we'll indicate the user is is a
 	// desktop app user because until the user settings have loaded
 	// userSettings.getSetting( 'is_desktop_app_user' ) will return false which
@@ -39,29 +39,29 @@ export const shouldRenderAppPromo = ( options = {} ) => {
 	// the user settings does properly indicate that the user is one.
 	const haveUserSettingsLoaded = options.isDesktopAppUser === null;
 	const {
-		isDesktopPromoDisabled = store.get( 'desktop_promo_disabled' ),
+		isDesktopPromoDisabled = store.get('desktop_promo_disabled'),
 		isViewportMobile = isMobile(),
 		isUserLocaleEnglish = 'en' === options.currentUserLocale,
-		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
+		isDesktopPromoConfiguredToRun = config.isEnabled('desktop-promo'),
 		isUserDesktopAppUser = haveUserSettingsLoaded || options.isDesktopAppUser,
-		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent ),
+		isUserOnChromeOs = /\bCrOS\b/.test(navigator.userAgent),
 	} = options;
 
 	return (
-		! isDesktopPromoDisabled &&
+		!isDesktopPromoDisabled &&
 		isUserLocaleEnglish &&
-		! isViewportMobile &&
-		! isUserOnChromeOs &&
+		!isViewportMobile &&
+		!isUserOnChromeOs &&
 		isDesktopPromoConfiguredToRun &&
-		! isUserDesktopAppUser
+		!isUserDesktopAppUser
 	);
 };
 
-export default connect( state => {
+export default connect((state) => {
 	const newProps = {
-		currentUserLocale: getCurrentUserLocale( state ),
-		isDesktopAppUser: getUserSetting( state, 'is_desktop_app_user' ),
+		currentUserLocale: getCurrentUserLocale(state),
+		isDesktopAppUser: getUserSetting(state, 'is_desktop_app_user'),
 	};
-	newProps.shouldRenderAppPromo = shouldRenderAppPromo( newProps );
+	newProps.shouldRenderAppPromo = shouldRenderAppPromo(newProps);
 	return newProps;
-} )( localize( ReaderSidebarPromo ) );
+})(localize(ReaderSidebarPromo));

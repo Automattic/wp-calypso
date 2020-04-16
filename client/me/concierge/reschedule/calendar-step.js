@@ -41,7 +41,7 @@ class CalendarStep extends Component {
 		scheduleId: PropTypes.number,
 	};
 
-	onSubmit = timestamp => {
+	onSubmit = (timestamp) => {
 		const { appointmentDetails, appointmentId, scheduleId } = this.props;
 
 		this.props.rescheduleConciergeAppointment(
@@ -52,26 +52,26 @@ class CalendarStep extends Component {
 		);
 	};
 
-	setTimezone = timezone => {
+	setTimezone = (timezone) => {
 		const { appointmentDetails, appointmentId } = this.props;
-		this.props.updateConciergeAppointmentDetails( appointmentId, {
+		this.props.updateConciergeAppointmentDetails(appointmentId, {
 			...appointmentDetails,
 			meta: { ...appointmentDetails.meta, timezone },
-		} );
+		});
 	};
 
 	getFilteredTimeSlots = () => {
 		// filter out current timeslot
 		const { appointmentDetails, availableTimes } = this.props;
-		return without( availableTimes, appointmentDetails.beginTimestamp );
+		return without(availableTimes, appointmentDetails.beginTimestamp);
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_concierge_reschedule_calendar_step' );
+		this.props.recordTracksEvent('calypso_concierge_reschedule_calendar_step');
 	}
 
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
+	UNSAFE_componentWillUpdate(nextProps) {
+		if (nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED) {
 			// go to confirmation page if booking was successful
 			this.props.onComplete();
 		}
@@ -91,59 +91,54 @@ class CalendarStep extends Component {
 
 		return (
 			<div>
-				<QueryConciergeAppointmentDetails
-					appointmentId={ appointmentId }
-					scheduleId={ scheduleId }
-				/>
+				<QueryConciergeAppointmentDetails appointmentId={appointmentId} scheduleId={scheduleId} />
 
 				<CompactCard>
-					{ translate(
-						'To reschedule your session, let us know your timezone and preferred day.'
-					) }
+					{translate('To reschedule your session, let us know your timezone and preferred day.')}
 				</CompactCard>
 
-				{ appointmentDetails && (
+				{appointmentDetails && (
 					<div>
 						<CompactCard>
 							<FormFieldset>
-								<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
+								<FormLabel>{translate("What's your timezone?")}</FormLabel>
 								<Timezone
-									includeManualOffsets={ false }
+									includeManualOffsets={false}
 									name="timezone"
-									onSelect={ this.setTimezone }
-									selectedZone={ appointmentDetails.meta.timezone }
+									onSelect={this.setTimezone}
+									selectedZone={appointmentDetails.meta.timezone}
 								/>
 								<FormSettingExplanation>
-									{ translate( 'Choose a city in your timezone.' ) }
+									{translate('Choose a city in your timezone.')}
 								</FormSettingExplanation>
 							</FormFieldset>
 						</CompactCard>
 
 						<AvailableTimePicker
-							actionText={ translate( 'Reschedule to this date' ) }
-							availableTimes={ this.getFilteredTimeSlots() }
-							appointmentTimespan={ appointmentTimespan }
-							currentUserLocale={ currentUserLocale }
-							disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING || ! appointmentDetails }
-							onBack={ null }
-							onSubmit={ this.onSubmit }
-							site={ site }
-							timezone={ appointmentDetails.meta.timezone }
+							actionText={translate('Reschedule to this date')}
+							availableTimes={this.getFilteredTimeSlots()}
+							appointmentTimespan={appointmentTimespan}
+							currentUserLocale={currentUserLocale}
+							disabled={signupForm.status === CONCIERGE_STATUS_BOOKING || !appointmentDetails}
+							onBack={null}
+							onSubmit={this.onSubmit}
+							site={site}
+							timezone={appointmentDetails.meta.timezone}
 						/>
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => ( {
-		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
-		appointmentTimespan: getConciergeAppointmentTimespan( state ),
-		currentUserLocale: getCurrentUserLocale( state ),
-		signupForm: getConciergeSignupForm( state ),
-		scheduleId: getConciergeScheduleId( state ),
-	} ),
+	(state, props) => ({
+		appointmentDetails: getConciergeAppointmentDetails(state, props.appointmentId),
+		appointmentTimespan: getConciergeAppointmentTimespan(state),
+		currentUserLocale: getCurrentUserLocale(state),
+		signupForm: getConciergeSignupForm(state),
+		scheduleId: getConciergeScheduleId(state),
+	}),
 	{ recordTracksEvent, rescheduleConciergeAppointment, updateConciergeAppointmentDetails }
-)( localize( CalendarStep ) );
+)(localize(CalendarStep));

@@ -11,57 +11,57 @@
  *
  */
 
-const fs = require( 'fs' );
-const path = require( 'path' );
-const { spawnSync } = require( 'child_process' );
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
 //const debug = require( 'debug' )( 'calypso:install' );
 
 const needsInstall = () => {
 	try {
 		let lockfileTime = 0;
-		const packageDir = path.dirname( '.' );
-		if ( fs.existsSync( path.join( packageDir, 'yarn.lock' ) ) ) {
-			lockfileTime = fs.statSync( path.join( packageDir, 'yarn.lock' ) ).mtime;
+		const packageDir = path.dirname('.');
+		if (fs.existsSync(path.join(packageDir, 'yarn.lock'))) {
+			lockfileTime = fs.statSync(path.join(packageDir, 'yarn.lock')).mtime;
 		}
 
-		if ( ! lockfileTime ) {
+		if (!lockfileTime) {
 			//debug( '%s: true (no lockfile!)', packageDir );
 			return true;
 		}
 
-		const nodeModulesTime = fs.statSync( path.join( packageDir, 'node_modules' ) ).mtime;
+		const nodeModulesTime = fs.statSync(path.join(packageDir, 'node_modules')).mtime;
 		return lockfileTime - nodeModulesTime > 1000; // In Windows, directory mtime has less precision than file mtime
-	} catch ( e ) {
+	} catch (e) {
 		//debug( e );
 		return true;
 	}
 };
 
-if ( needsInstall() ) {
+if (needsInstall()) {
 	install();
 }
 
 function install() {
 	// run a distclean to clean things up. just ci is not enough with the monorepo.
-	const cleanResult = spawnSync( 'yarn', [ 'run', 'distclean' ], {
+	const cleanResult = spawnSync('yarn', ['run', 'distclean'], {
 		shell: true,
 		stdio: 'inherit',
-	} );
-	if ( cleanResult.status ) {
-		console.error( 'failed to clean: exited with code %d', cleanResult.status );
-		process.exit( cleanResult.status );
+	});
+	if (cleanResult.status) {
+		console.error('failed to clean: exited with code %d', cleanResult.status);
+		process.exit(cleanResult.status);
 	}
 
-	const installResult = spawnSync( 'yarn', [ 'install', '--frozen-lockfile' ], {
+	const installResult = spawnSync('yarn', ['install', '--frozen-lockfile'], {
 		shell: true,
 		stdio: 'inherit',
 		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env },
-	} );
-	if ( installResult.status ) {
-		console.error( 'failed to install: exited with code %d', installResult.status );
-		process.exit( installResult.status );
+	});
+	if (installResult.status) {
+		console.error('failed to install: exited with code %d', installResult.status);
+		process.exit(installResult.status);
 	}
 
 	const touchDate = new Date();
-	fs.utimesSync( 'node_modules', touchDate, touchDate );
+	fs.utimesSync('node_modules', touchDate, touchDate);
 }

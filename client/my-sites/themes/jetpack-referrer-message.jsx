@@ -16,28 +16,28 @@ import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 
-const JetpackReferrerMessage = ( {
+const JetpackReferrerMessage = ({
 	siteId,
 	translate,
 	adminUrl,
 	analyticsPath,
 	analyticsPageTitle,
-} ) => (
+}) => (
 	<Main className="themes">
-		<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
+		<PageViewTracker path={analyticsPath} title={analyticsPageTitle} />
 		<SidebarNavigation />
-		<CurrentTheme siteId={ siteId } />
+		<CurrentTheme siteId={siteId} />
 		<EmptyContent
-			title={ translate( 'Changing Themes?' ) }
-			line={ translate( 'Use your site theme browser to manage themes.' ) }
-			action={ translate( 'Open Site Theme Browser' ) }
-			actionURL={ adminUrl }
+			title={translate('Changing Themes?')}
+			line={translate('Use your site theme browser to manage themes.')}
+			action={translate('Open Site Theme Browser')}
+			actionURL={adminUrl}
 			actionTarget="_blank"
 			illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 		/>
 	</Main>
 );
 
-export default connect( ( state, { siteId } ) => ( {
-	adminUrl: getSiteAdminUrl( state, siteId, 'themes.php' ),
-} ) )( localize( JetpackReferrerMessage ) );
+export default connect((state, { siteId }) => ({
+	adminUrl: getSiteAdminUrl(state, siteId, 'themes.php'),
+}))(localize(JetpackReferrerMessage));

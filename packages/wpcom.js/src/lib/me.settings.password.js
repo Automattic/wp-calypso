@@ -1,16 +1,15 @@
 const root = '/me/settings/password/';
 
 export default class MeSettingsPassword {
-
 	/**
 	 * `MeSettingsPassword` constructor.
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
-	constructor( wpcom ) {
-		if ( ! ( this instanceof MeSettingsPassword ) ) {
-			return new MeSettingsPassword( wpcom );
+	constructor(wpcom) {
+		if (!(this instanceof MeSettingsPassword)) {
+			return new MeSettingsPassword(wpcom);
 		}
 		this.wpcom = wpcom;
 	}
@@ -23,7 +22,7 @@ export default class MeSettingsPassword {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	validate( password, query, fn ) {
-		return this.wpcom.req.post( root + 'validate', query, { password: password }, fn );
+	validate(password, query, fn) {
+		return this.wpcom.req.post(root + 'validate', query, { password: password }, fn);
 	}
 }

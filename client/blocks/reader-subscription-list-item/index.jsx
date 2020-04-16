@@ -37,9 +37,9 @@ import './style.scss';
  * @param {string} url - the url to format
  * @returns {string} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
  */
-const formatUrlForDisplay = url => untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
+const formatUrlForDisplay = (url) => untrailingslashit(url.replace(/^https?:\/\/(www\.)?/, ''));
 
-function ReaderSubscriptionListItem( {
+function ReaderSubscriptionListItem({
 	moment,
 	translate,
 	url,
@@ -53,118 +53,118 @@ function ReaderSubscriptionListItem( {
 	showLastUpdatedDate,
 	isFollowing,
 	railcar,
-} ) {
-	const siteTitle = getSiteName( { feed, site } );
+}) {
+	const siteTitle = getSiteName({ feed, site });
 	const siteAuthor = site && site.owner;
-	const siteExcerpt = getSiteDescription( { feed, site } );
-	const authorName = getSiteAuthorName( site );
-	const siteIcon = get( site, 'icon.img' );
-	const feedIcon = get( feed, 'image' );
-	const streamUrl = getStreamUrl( feedId, siteId );
-	const feedUrl = url || getFeedUrl( { feed, site } );
-	const siteUrl = getSiteUrl( { feed, site } );
-	const isMultiAuthor = get( site, 'is_multi_author', false );
-	const preferGravatar = ! isMultiAuthor;
+	const siteExcerpt = getSiteDescription({ feed, site });
+	const authorName = getSiteAuthorName(site);
+	const siteIcon = get(site, 'icon.img');
+	const feedIcon = get(feed, 'image');
+	const streamUrl = getStreamUrl(feedId, siteId);
+	const feedUrl = url || getFeedUrl({ feed, site });
+	const siteUrl = getSiteUrl({ feed, site });
+	const isMultiAuthor = get(site, 'is_multi_author', false);
+	const preferGravatar = !isMultiAuthor;
 
-	if ( ! site && ! feed ) {
+	if (!site && !feed) {
 		return <ReaderSubscriptionListItemPlaceholder />;
 	}
 
-	function recordEvent( name ) {
+	function recordEvent(name) {
 		const props = {
 			blog_id: siteId,
 			feed_id: feedId,
 			source: followSource,
 		};
-		if ( railcar ) {
-			recordTrackWithRailcar( name, railcar, props );
+		if (railcar) {
+			recordTrackWithRailcar(name, railcar, props);
 		} else {
-			recordTrack( name, props );
+			recordTrack(name, props);
 		}
 	}
 
-	const recordTitleClick = () => recordEvent( 'calypso_reader_feed_link_clicked' );
-	const recordAuthorClick = () => recordEvent( 'calypso_reader_author_link_clicked' );
-	const recordSiteUrlClick = () => recordEvent( 'calypso_reader_site_url_clicked' );
-	const recordAvatarClick = () => recordEvent( 'calypso_reader_avatar_clicked' );
+	const recordTitleClick = () => recordEvent('calypso_reader_feed_link_clicked');
+	const recordAuthorClick = () => recordEvent('calypso_reader_author_link_clicked');
+	const recordSiteUrlClick = () => recordEvent('calypso_reader_site_url_clicked');
+	const recordAvatarClick = () => recordEvent('calypso_reader_avatar_clicked');
 
 	return (
-		<div className={ classnames( 'reader-subscription-list-item', className ) }>
+		<div className={classnames('reader-subscription-list-item', className)}>
 			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
-					siteIcon={ siteIcon }
-					feedIcon={ feedIcon }
-					author={ siteAuthor }
-					preferBlavatar={ isMultiAuthor }
-					preferGravatar={ preferGravatar }
-					siteUrl={ streamUrl }
-					isCompact={ true }
-					onClick={ recordAvatarClick }
+					siteIcon={siteIcon}
+					feedIcon={feedIcon}
+					author={siteAuthor}
+					preferBlavatar={isMultiAuthor}
+					preferGravatar={preferGravatar}
+					siteUrl={streamUrl}
+					isCompact={true}
+					onClick={recordAvatarClick}
 				/>
 			</div>
 			<div className="reader-subscription-list-item__byline">
 				<span className="reader-subscription-list-item__site-title">
 					{
 						<a
-							href={ streamUrl }
+							href={streamUrl}
 							className="reader-subscription-list-item__link"
-							onClick={ recordTitleClick }
+							onClick={recordTitleClick}
 						>
-							{ siteTitle }
+							{siteTitle}
 						</a>
 					}
 				</span>
-				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
-				{ ! isMultiAuthor && ! isEmpty( authorName ) && (
+				<div className="reader-subscription-list-item__site-excerpt">{siteExcerpt}</div>
+				{!isMultiAuthor && !isEmpty(authorName) && (
 					<span className="reader-subscription-list-item__by-text">
-						{ translate( 'by {{author/}}', {
+						{translate('by {{author/}}', {
 							components: {
 								author: (
 									<a
-										href={ streamUrl }
+										href={streamUrl}
 										className="reader-subscription-list-item__link"
-										onClick={ recordAuthorClick }
+										onClick={recordAuthorClick}
 									>
-										{ authorName }
+										{authorName}
 									</a>
 								),
 							},
-						} ) }
+						})}
 					</span>
-				) }
-				{ siteUrl && (
+				)}
+				{siteUrl && (
 					<div className="reader-subscription-list-item__site-url-timestamp">
 						<ExternalLink
-							href={ siteUrl }
+							href={siteUrl}
 							className="reader-subscription-list-item__site-url"
-							onClick={ recordSiteUrlClick }
-							icon={ true }
-							iconSize={ 14 }
+							onClick={recordSiteUrlClick}
+							icon={true}
+							iconSize={14}
 						>
-							{ formatUrlForDisplay( siteUrl ) }
+							{formatUrlForDisplay(siteUrl)}
 						</ExternalLink>
-						{ showLastUpdatedDate && feed && feed.last_update && (
+						{showLastUpdatedDate && feed && feed.last_update && (
 							<span className="reader-subscription-list-item__timestamp">
-								{ translate( 'updated %s', { args: moment( feed.last_update ).fromNow() } ) }
+								{translate('updated %s', { args: moment(feed.last_update).fromNow() })}
 							</span>
-						) }
+						)}
 					</div>
-				) }
+				)}
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton
-					siteUrl={ feedUrl }
-					followSource={ followSource }
-					feedId={ feedId }
-					siteId={ siteId }
-					railcar={ railcar }
+					siteUrl={feedUrl}
+					followSource={followSource}
+					feedId={feedId}
+					siteId={siteId}
+					railcar={railcar}
 				/>
-				{ isFollowing && showNotificationSettings && (
-					<ReaderSiteNotificationSettings siteId={ siteId } />
-				) }
+				{isFollowing && showNotificationSettings && (
+					<ReaderSiteNotificationSettings siteId={siteId} />
+				)}
 			</div>
 		</div>
 	);
 }
 
-export default compose( localize, withLocalizedMoment )( ReaderSubscriptionListItem );
+export default compose(localize, withLocalizedMoment)(ReaderSubscriptionListItem);

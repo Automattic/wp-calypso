@@ -19,7 +19,7 @@ import {
  * @param {object|Function} [failureAction] Action with extra props { error }
  * @returns {object} Action object
  */
-export function fetchProductVariations( siteId, productId, successAction, failureAction ) {
+export function fetchProductVariations(siteId, productId, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
 		siteId,
@@ -40,13 +40,7 @@ export function fetchProductVariations( siteId, productId, successAction, failur
  * @param {object|Function} [failureAction] Action with extra props { error }
  * @returns {object} Action object
  */
-export function createProductVariation(
-	siteId,
-	productId,
-	variation,
-	successAction,
-	failureAction
-) {
+export function createProductVariation(siteId, productId, variation, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 		siteId,
@@ -67,13 +61,7 @@ export function createProductVariation(
  * @param {object|Function} [failureAction] Action with extra props { error }
  * @returns {object} Action object
  */
-export function updateProductVariation(
-	siteId,
-	productId,
-	variation,
-	successAction,
-	failureAction
-) {
+export function updateProductVariation(siteId, productId, variation, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 		siteId,
@@ -122,7 +110,7 @@ export function deleteProductVariation(
  * @param {object} originatingAction The action which was the source of this update.
  * @returns {object} Action object
  */
-export function productVariationUpdated( siteId, productId, data, originatingAction ) {
+export function productVariationUpdated(siteId, productId, data, originatingAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 		siteId,

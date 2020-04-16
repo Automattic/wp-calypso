@@ -60,183 +60,183 @@ export class ReaderSidebar extends React.Component {
 		this.openExpandableMenuForCurrentTagOrList();
 	}
 
-	handleClick = event => {
-		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
-			this.props.setNextLayoutFocus( 'content' );
-			window.scrollTo( 0, 0 );
+	handleClick = (event) => {
+		if (!event.isDefaultPrevented() && closest(event.target, 'a,span')) {
+			this.props.setNextLayoutFocus('content');
+			window.scrollTo(0, 0);
 		}
 	};
 
-	highlightNewTag( tagSlug ) {
-		const tagStreamUrl = getTagStreamUrl( tagSlug );
-		if ( tagStreamUrl !== page.current ) {
-			defer( function() {
-				page( tagStreamUrl );
-				window.scrollTo( 0, 0 );
-			} );
+	highlightNewTag(tagSlug) {
+		const tagStreamUrl = getTagStreamUrl(tagSlug);
+		if (tagStreamUrl !== page.current) {
+			defer(function () {
+				page(tagStreamUrl);
+				window.scrollTo(0, 0);
+			});
 		}
 	}
 
 	openExpandableMenuForCurrentTagOrList = () => {
-		const pathParts = this.props.path.split( '/' );
+		const pathParts = this.props.path.split('/');
 
-		if ( startsWith( this.props.path, '/tag/' ) ) {
-			const tagSlug = pathParts[ 2 ];
-			if ( tagSlug ) {
+		if (startsWith(this.props.path, '/tag/')) {
+			const tagSlug = pathParts[2];
+			if (tagSlug) {
 				// Open the sidebar
-				if ( ! this.props.isTagsOpen ) {
+				if (!this.props.isTagsOpen) {
 					this.props.toggleTagsVisibility();
-					this.setState( { currentTag: tagSlug } );
+					this.setState({ currentTag: tagSlug });
 				}
 			}
 		}
 
-		if ( startsWith( this.props.path, '/read/list/' ) ) {
-			const listOwner = pathParts[ 3 ];
-			const listSlug = pathParts[ 4 ];
-			if ( listOwner && listSlug ) {
+		if (startsWith(this.props.path, '/read/list/')) {
+			const listOwner = pathParts[3];
+			const listSlug = pathParts[4];
+			if (listOwner && listSlug) {
 				// Open the sidebar
-				if ( ! this.props.isListsOpen ) {
+				if (!this.props.isListsOpen) {
 					this.props.toggleListsVisibility();
-					this.setState( { currentListOwner: listOwner, currentListSlug: listSlug } );
+					this.setState({ currentListOwner: listOwner, currentListSlug: listSlug });
 				}
 			}
 		}
 	};
 
 	handleReaderSidebarFollowedSitesClicked() {
-		recordAction( 'clicked_reader_sidebar_followed_sites' );
-		recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
-		recordTrack( 'calypso_reader_sidebar_followed_sites_clicked' );
+		recordAction('clicked_reader_sidebar_followed_sites');
+		recordGaEvent('Clicked Reader Sidebar Followed Sites');
+		recordTrack('calypso_reader_sidebar_followed_sites_clicked');
 	}
 
 	handleReaderSidebarConversationsClicked() {
-		recordAction( 'clicked_reader_sidebar_conversations' );
-		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
-		recordTrack( 'calypso_reader_sidebar_conversations_clicked' );
+		recordAction('clicked_reader_sidebar_conversations');
+		recordGaEvent('Clicked Reader Sidebar Conversations');
+		recordTrack('calypso_reader_sidebar_conversations_clicked');
 	}
 
 	handleReaderSidebarA8cConversationsClicked() {
-		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
-		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
-		recordTrack( 'calypso_reader_sidebar_automattic_conversations_clicked' );
+		recordAction('clicked_reader_sidebar_a8c_conversations');
+		recordGaEvent('Clicked Reader Sidebar A8C Conversations');
+		recordTrack('calypso_reader_sidebar_automattic_conversations_clicked');
 	}
 
 	handleReaderSidebarDiscoverClicked() {
-		recordAction( 'clicked_reader_sidebar_discover' );
-		recordGaEvent( 'Clicked Reader Sidebar Discover' );
-		recordTrack( 'calypso_reader_sidebar_discover_clicked' );
+		recordAction('clicked_reader_sidebar_discover');
+		recordGaEvent('Clicked Reader Sidebar Discover');
+		recordTrack('calypso_reader_sidebar_discover_clicked');
 	}
 
 	handleReaderSidebarSearchClicked() {
-		recordAction( 'clicked_reader_sidebar_search' );
-		recordGaEvent( 'Clicked Reader Sidebar Search' );
-		recordTrack( 'calypso_reader_sidebar_search_clicked' );
+		recordAction('clicked_reader_sidebar_search');
+		recordGaEvent('Clicked Reader Sidebar Search');
+		recordTrack('calypso_reader_sidebar_search_clicked');
 	}
 
 	handleReaderSidebarLikeActivityClicked() {
-		recordAction( 'clicked_reader_sidebar_like_activity' );
-		recordGaEvent( 'Clicked Reader Sidebar Like Activity' );
-		recordTrack( 'calypso_reader_sidebar_like_activity_clicked' );
+		recordAction('clicked_reader_sidebar_like_activity');
+		recordGaEvent('Clicked Reader Sidebar Like Activity');
+		recordTrack('calypso_reader_sidebar_like_activity_clicked');
 	}
 
 	render() {
 		const { path, teams, translate } = this.props;
 
 		return (
-			<Sidebar onClick={ this.handleClick }>
+			<Sidebar onClick={this.handleClick}>
 				<SidebarRegion>
 					<ReaderSidebarNudges />
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
+						<SidebarHeading>{translate('Streams')}</SidebarHeading>
 						<ul>
 							<SidebarItem
-								className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+								className={ReaderSidebarHelper.itemLinkClass('/read', path, {
 									'sidebar-streams__following': true,
-								} ) }
-								label={ translate( 'Followed Sites' ) }
-								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+								})}
+								label={translate('Followed Sites')}
+								onNavigate={this.handleReaderSidebarFollowedSitesClicked}
 								materialIcon="check_circle"
 								link="/read"
 							/>
 
 							<SidebarItem
-								className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
+								className={ReaderSidebarHelper.itemLinkClass('/read/conversations', path, {
 									'sidebar-streams__conversations': true,
-								} ) }
-								label={ translate( 'Conversations' ) }
-								onNavigate={ this.handleReaderSidebarConversationsClicked }
+								})}
+								label={translate('Conversations')}
+								onNavigate={this.handleReaderSidebarConversationsClicked}
 								materialIcon="question_answer"
 								link="/read/conversations"
 							/>
 
-							<ReaderSidebarTeams teams={ teams } path={ path } />
+							<ReaderSidebarTeams teams={teams} path={path} />
 
-							{ isAutomatticTeamMember( teams ) && (
+							{isAutomatticTeamMember(teams) && (
 								<SidebarItem
-									className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
+									className={ReaderSidebarHelper.itemLinkClass('/read/conversations/a8c', path, {
 										'sidebar-streams__conversations': true,
-									} ) }
+									})}
 									label="A8C Conversations"
-									onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+									onNavigate={this.handleReaderSidebarA8cConversationsClicked}
 									link="/read/conversations/a8c"
-									customIcon={ <A8CConversationsIcon /> }
+									customIcon={<A8CConversationsIcon />}
 								/>
-							) }
+							)}
 
-							{ isDiscoverEnabled() && (
+							{isDiscoverEnabled() && (
 								<SidebarItem
-									className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
+									className={ReaderSidebarHelper.itemLinkClass('/discover', path, {
 										'sidebar-streams__discover': true,
-									} ) }
-									label={ translate( 'Discover' ) }
-									onNavigate={ this.handleReaderSidebarDiscoverClicked }
+									})}
+									label={translate('Discover')}
+									onNavigate={this.handleReaderSidebarDiscoverClicked}
 									icon="my-sites"
 									link="/discover"
 								/>
-							) }
+							)}
 
 							<SidebarItem
-								label={ translate( 'Search' ) }
-								onNavigate={ this.handleReaderSidebarSearchClicked }
+								label={translate('Search')}
+								onNavigate={this.handleReaderSidebarSearchClicked}
 								materialIcon="search"
 								link="/read/search"
-								className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
+								className={ReaderSidebarHelper.itemLinkClass('/read/search', path, {
 									'sidebar-streams__search': true,
-								} ) }
+								})}
 							/>
 
 							<SidebarItem
-								label={ translate( 'My Likes' ) }
-								onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+								label={translate('My Likes')}
+								onNavigate={this.handleReaderSidebarLikeActivityClicked}
 								materialIcon="star_border"
 								link="/activities/likes"
-								className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+								className={ReaderSidebarHelper.itemLinkClass('/activities/likes', path, {
 									'sidebar-activity__likes': true,
-								} ) }
+								})}
 							/>
 						</ul>
 					</SidebarMenu>
 
 					<QueryReaderLists />
 					<QueryReaderTeams />
-					{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
+					{this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
 						<ReaderSidebarLists
-							lists={ this.props.subscribedLists }
-							path={ path }
-							isOpen={ this.props.isListsOpen }
-							onClick={ this.props.toggleListsVisibility }
-							currentListOwner={ this.state.currentListOwner }
-							currentListSlug={ this.state.currentListSlug }
+							lists={this.props.subscribedLists}
+							path={path}
+							isOpen={this.props.isListsOpen}
+							onClick={this.props.toggleListsVisibility}
+							currentListOwner={this.state.currentListOwner}
+							currentListSlug={this.state.currentListSlug}
 						/>
-					) }
+					)}
 					<ReaderSidebarTags
-						tags={ this.props.followedTags }
-						path={ path }
-						isOpen={ this.props.isTagsOpen }
-						onClick={ this.props.toggleTagsVisibility }
-						onFollowTag={ this.highlightNewTag }
-						currentTag={ this.state.currentTag }
+						tags={this.props.followedTags}
+						path={path}
+						isOpen={this.props.isTagsOpen}
+						onClick={this.props.toggleTagsVisibility}
+						onFollowTag={this.highlightNewTag}
+						currentTag={this.state.currentTag}
 					/>
 				</SidebarRegion>
 
@@ -253,12 +253,12 @@ ReaderSidebar.defaultProps = {
 };
 
 export default connect(
-	state => {
+	(state) => {
 		return {
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
-			subscribedLists: getSubscribedLists( state ),
-			teams: getReaderTeams( state ),
+			subscribedLists: getSubscribedLists(state),
+			teams: getReaderTeams(state),
 		};
 	},
 	{
@@ -266,4 +266,4 @@ export default connect(
 		toggleTagsVisibility: toggleReaderSidebarTags,
 		setNextLayoutFocus,
 	}
-)( localize( ReaderSidebar ) );
+)(localize(ReaderSidebar));

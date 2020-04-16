@@ -22,78 +22,78 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import './style.scss';
 
 class Security2faBackupCodes extends React.Component {
-	constructor( props ) {
-		super( props );
-		const printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
+	constructor(props) {
+		super(props);
+		const printed = this.props.userSettings.getSetting('two_step_backup_codes_printed');
 
 		this.state = {
 			printed,
 			verified: printed,
-			showPrompt: ! printed,
+			showPrompt: !printed,
 			backupCodes: [],
 			generatingCodes: false,
 		};
 	}
 
 	handleGenerateButtonClick = () => {
-		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
+		this.props.recordGoogleEvent('Me', 'Clicked on Generate New Backup Codes Button');
 
-		this.setState( {
+		this.setState({
 			generatingCodes: true,
 			verified: false,
 			showPrompt: true,
-		} );
+		});
 
-		twoStepAuthorization.backupCodes( this.onRequestComplete );
+		twoStepAuthorization.backupCodes(this.onRequestComplete);
 	};
 
-	onRequestComplete = ( error, data ) => {
-		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
-			} );
+	onRequestComplete = (error, data) => {
+		if (error) {
+			this.setState({
+				lastError: this.props.translate('Unable to obtain backup codes. Please try again later.'),
+			});
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			backupCodes: data.codes,
 			generatingCodes: false,
-		} );
+		});
 	};
 
 	onNextStep = () => {
-		this.setState( {
+		this.setState({
 			backupCodes: [],
 			printed: true,
-		} );
+		});
 	};
 
 	onVerified = () => {
-		this.setState( {
+		this.setState({
 			printed: true,
 			verified: true,
 			showPrompt: false,
-		} );
+		});
 	};
 
 	renderStatus() {
-		if ( ! this.state.printed ) {
+		if (!this.state.printed) {
 			return (
 				<Notice
 					isCompact
 					status="is-error"
-					text={ this.props.translate( 'Backup codes have not been verified.' ) }
+					text={this.props.translate('Backup codes have not been verified.')}
 				/>
 			);
 		}
 
-		if ( ! this.state.verified ) {
+		if (!this.state.verified) {
 			return (
 				<Notice
 					isCompact
-					text={ this.props.translate(
+					text={this.props.translate(
 						'New backup codes have just been generated, but need to be verified.'
-					) }
+					)}
 				/>
 			);
 		}
@@ -102,7 +102,7 @@ class Security2faBackupCodes extends React.Component {
 			<Notice
 				isCompact
 				status="is-success"
-				text={ this.props.translate( 'Backup codes have been verified' ) }
+				text={this.props.translate('Backup codes have been verified')}
 			/>
 		);
 	}
@@ -110,9 +110,9 @@ class Security2faBackupCodes extends React.Component {
 	renderList() {
 		return (
 			<Security2faBackupCodesList
-				backupCodes={ this.state.backupCodes }
-				onNextStep={ this.onNextStep }
-				userSettings={ this.props.userSettings }
+				backupCodes={this.state.backupCodes}
+				onNextStep={this.onNextStep}
+				userSettings={this.props.userSettings}
 				showList
 			/>
 		);
@@ -122,16 +122,16 @@ class Security2faBackupCodes extends React.Component {
 		return (
 			<div>
 				<p>
-					{ this.props.translate(
+					{this.props.translate(
 						'Backup codes let you access your account if your phone is ' +
 							'lost, stolen, or if you run it through the washing ' +
 							"machine and the bag of rice trick doesn't work."
-					) }
+					)}
 				</p>
 
-				{ this.renderStatus() }
+				{this.renderStatus()}
 
-				{ this.state.showPrompt && <Security2faBackupCodesPrompt onSuccess={ this.onVerified } /> }
+				{this.state.showPrompt && <Security2faBackupCodesPrompt onSuccess={this.onVerified} />}
 			</div>
 		);
 	}
@@ -139,25 +139,25 @@ class Security2faBackupCodes extends React.Component {
 	render() {
 		return (
 			<div className="security-2fa-backup-codes">
-				<SectionHeader label={ this.props.translate( 'Backup Codes' ) }>
+				<SectionHeader label={this.props.translate('Backup Codes')}>
 					<Button
 						compact
-						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
-						onClick={ this.handleGenerateButtonClick }
+						disabled={this.state.generatingCodes || !!this.state.backupCodes.length}
+						onClick={this.handleGenerateButtonClick}
 					>
-						{ this.props.translate( 'Generate new backup codes' ) }
+						{this.props.translate('Generate new backup codes')}
 					</Button>
 				</SectionHeader>
 				<Card>
-					{ this.state.generatingCodes || this.state.backupCodes.length
+					{this.state.generatingCodes || this.state.backupCodes.length
 						? this.renderList()
-						: this.renderPrompt() }
+						: this.renderPrompt()}
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
-} )( localize( Security2faBackupCodes ) );
+})(localize(Security2faBackupCodes));

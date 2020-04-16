@@ -16,9 +16,9 @@ import { saveJetpackSettings } from 'state/jetpack/settings/actions';
  * @param  {number}  siteId      The ID of the site we're querying
  * @returns {boolean}             Whether Post by Email address is currently being updated
  */
-export default function isRegeneratingJetpackPostByEmail( state, siteId ) {
+export default function isRegeneratingJetpackPostByEmail(state, siteId) {
 	return get(
-		getRequest( state, saveJetpackSettings( siteId, { post_by_email_address: 'regenerate' } ) ),
+		getRequest(state, saveJetpackSettings(siteId, { post_by_email_address: 'regenerate' })),
 		'isLoading',
 		false
 	);

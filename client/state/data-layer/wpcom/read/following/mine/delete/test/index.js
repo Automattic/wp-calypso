@@ -7,13 +7,13 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
 
-describe( 'following/mine/delete', () => {
-	describe( 'requestUnfollow', () => {
-		test( 'should dispatch a http request', () => {
-			const action = unfollow( 'http://example.com' );
+describe('following/mine/delete', () => {
+	describe('requestUnfollow', () => {
+		test('should dispatch a http request', () => {
+			const action = unfollow('http://example.com');
 
-			expect( requestUnfollow( action ) ).toEqual(
-				http( {
+			expect(requestUnfollow(action)).toEqual(
+				http({
 					method: 'POST',
 					path: '/read/following/mine/delete',
 					apiVersion: '1.1',
@@ -23,22 +23,22 @@ describe( 'following/mine/delete', () => {
 					},
 					onSuccess: action,
 					onFailure: action,
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'fromApi', () => {
-		test( 'should abort if subscribed is true', () => {
-			expect( () => fromApi( { subscribed: true } ) ).toThrow();
-		} );
-	} );
+	describe('fromApi', () => {
+		test('should abort if subscribed is true', () => {
+			expect(() => fromApi({ subscribed: true })).toThrow();
+		});
+	});
 
-	describe( 'followError', () => {
-		test( 'should dispatch an error notice', () => {
-			const action = unfollow( 'http://example.com' );
+	describe('followError', () => {
+		test('should dispatch an error notice', () => {
+			const action = unfollow('http://example.com');
 			const dispatch = jest.fn();
-			const getState = () => ( {
+			const getState = () => ({
 				reader: {
 					sites: {
 						items: {},
@@ -47,12 +47,12 @@ describe( 'following/mine/delete', () => {
 						items: {},
 					},
 				},
-			} );
+			});
 
-			unfollowError( action )( dispatch, getState );
+			unfollowError(action)(dispatch, getState);
 
-			expect( dispatch ).toHaveBeenCalledWith( expect.objectContaining( { type: NOTICE_CREATE } ) );
-			expect( dispatch ).toHaveBeenCalledWith( bypassDataLayer( follow( 'http://example.com' ) ) );
-		} );
-	} );
-} );
+			expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: NOTICE_CREATE }));
+			expect(dispatch).toHaveBeenCalledWith(bypassDataLayer(follow('http://example.com')));
+		});
+	});
+});

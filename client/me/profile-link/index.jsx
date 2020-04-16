@@ -36,71 +36,71 @@ class ProfileLink extends React.Component {
 		slug: PropTypes.string.isRequired,
 	};
 
-	recordClickEvent = action => {
-		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	recordClickEvent = (action) => {
+		this.props.recordGoogleEvent('Me', 'Clicked on ' + action);
 	};
 
-	getClickHandler = action => {
-		return () => this.recordClickEvent( action );
+	getClickHandler = (action) => {
+		return () => this.recordClickEvent(action);
 	};
 
 	handleRemoveButtonClick = () => {
-		this.recordClickEvent( 'Remove Link Next to Site' );
+		this.recordClickEvent('Remove Link Next to Site');
 		this.props.onRemoveLink();
 	};
 
 	renderRemove() {
 		return (
-			<Button borderless className="profile-link__remove" onClick={ this.handleRemoveButtonClick }>
+			<Button borderless className="profile-link__remove" onClick={this.handleRemoveButtonClick}>
 				<Gridicon icon="cross" />
 			</Button>
 		);
 	}
 
 	render() {
-		const classes = classNames( {
+		const classes = classNames({
 				'profile-link': true,
 				'is-placeholder': this.props.isPlaceholder,
-			} ),
+			}),
 			imageSrc =
 				'//s1.wp.com/mshots/v1/' +
-				encodeURIComponent( this.props.url ) +
+				encodeURIComponent(this.props.url) +
 				'?w=' +
 				this.props.imageSize +
 				'&h=64',
-			linkHref = this.props.isPlaceholder ? null : safeProtocolUrl( this.props.url );
+			linkHref = this.props.isPlaceholder ? null : safeProtocolUrl(this.props.url);
 
 		return (
-			<li className={ classes }>
-				{ this.props.isPlaceholder ? (
+			<li className={classes}>
+				{this.props.isPlaceholder ? (
 					<div className="profile-link__image-link" />
 				) : (
 					<a
-						href={ linkHref }
+						href={linkHref}
 						className="profile-link__image-link"
 						target="_blank"
 						rel="noopener noreferrer"
-						onClick={ this.getClickHandler( 'Profile Links Site Images Link' ) }
+						onClick={this.getClickHandler('Profile Links Site Images Link')}
 					>
-						<img className="profile-link__image" src={ imageSrc } />
+						<img className="profile-link__image" src={imageSrc} />
 					</a>
-				) }
+				)}
 				<a
-					href={ linkHref }
+					href={linkHref}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={ this.getClickHandler( 'Profile Links Site Link' ) }
+					onClick={this.getClickHandler('Profile Links Site Link')}
 				>
-					<span className="profile-link__title">{ this.props.title }</span>
-					<span className="profile-link__url">{ withoutHttp( this.props.url ) }</span>
+					<span className="profile-link__title">{this.props.title}</span>
+					<span className="profile-link__url">{withoutHttp(this.props.url)}</span>
 				</a>
 
-				{ this.props.isPlaceholder ? null : this.renderRemove() }
+				{this.props.isPlaceholder ? null : this.renderRemove()}
 			</li>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
-} )( ProfileLink );
+})(ProfileLink);

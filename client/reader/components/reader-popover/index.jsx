@@ -15,14 +15,14 @@ import Popover from 'components/popover';
  */
 import './style.scss';
 
-const ReaderPopover = props => {
-	const classes = classnames( 'reader-popover', props.className );
-	const popoverProps = omit( props, 'className' );
+const ReaderPopover = (props) => {
+	const classes = classnames('reader-popover', props.className);
+	const popoverProps = omit(props, 'className');
 	return (
-		<Popover className={ classes } { ...popoverProps }>
+		<Popover className={classes} {...popoverProps}>
 			<div className="reader-popover__wrapper">
-				{ props.popoverTitle && <h3 className="reader-popover__header">{ props.popoverTitle }</h3> }
-				{ props.children }
+				{props.popoverTitle && <h3 className="reader-popover__header">{props.popoverTitle}</h3>}
+				{props.children}
 			</div>
 		</Popover>
 	);

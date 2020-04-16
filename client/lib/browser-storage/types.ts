@@ -1,3 +1,3 @@
 export interface StoredItems {
-	[ key: string ]: unknown;
+	[key: string]: unknown;
 }

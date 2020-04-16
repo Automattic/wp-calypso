@@ -12,8 +12,8 @@ import controller from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
-	if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
+export default function () {
+	if (config.isEnabled('upsell/nudge-a-palooza')) {
 		page(
 			'/feature/store/:domain',
 			siteSelection,
@@ -51,7 +51,7 @@ export default function() {
 		);
 
 		// Specific feature's page
-		page( /\/feature\/([a-zA-Z0-9\-]+)$/, siteSelection, sites, makeLayout, clientRender );
+		page(/\/feature\/([a-zA-Z0-9\-]+)$/, siteSelection, sites, makeLayout, clientRender);
 
 		// General features page
 		page(
@@ -62,6 +62,6 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-		page( '/feature', siteSelection, sites, makeLayout, clientRender );
+		page('/feature', siteSelection, sites, makeLayout, clientRender);
 	}
 }

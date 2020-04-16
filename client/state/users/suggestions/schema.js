@@ -6,7 +6,7 @@ export const itemsSchema = {
 			type: 'array',
 			items: {
 				type: 'object',
-				required: [ 'ID', 'user_login' ],
+				required: ['ID', 'user_login'],
 				properties: {
 					ID: { type: 'integer' },
 					display_name: { type: 'string' },

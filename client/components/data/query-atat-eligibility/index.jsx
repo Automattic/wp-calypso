@@ -18,17 +18,17 @@ export class QueryAutomatedTransferEligibility extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( { requestEligibility, siteId } ) {
-		siteId && requestEligibility( siteId );
+	request({ requestEligibility, siteId }) {
+		siteId && requestEligibility(siteId);
 	}
 
 	render() {
@@ -40,4 +40,4 @@ export const mapDispatchToProps = {
 	requestEligibility,
 };
 
-export default connect( null, mapDispatchToProps )( QueryAutomatedTransferEligibility );
+export default connect(null, mapDispatchToProps)(QueryAutomatedTransferEligibility);

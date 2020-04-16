@@ -15,10 +15,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {Array|false} Array of replies, or false if no list could be loaded.
  */
-export const getReviewReplies = ( state, reviewId, siteId = getSelectedSiteId( state ) ) => {
+export const getReviewReplies = (state, reviewId, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'reviewReplies', reviewId ],
+		['extensions', 'woocommerce', 'sites', siteId, 'reviewReplies', reviewId],
 		false
 	);
 };
@@ -30,7 +30,7 @@ export const getReviewReplies = ( state, reviewId, siteId = getSelectedSiteId( s
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object|false} Reply object, or false if no reply could be loaded.
  */
-export const getReviewReply = ( state, reviewId, replyId, siteId = getSelectedSiteId( state ) ) => {
-	const replies = getReviewReplies( state, reviewId, siteId );
-	return find( replies, { id: replyId } ) || false;
+export const getReviewReply = (state, reviewId, replyId, siteId = getSelectedSiteId(state)) => {
+	const replies = getReviewReplies(state, reviewId, siteId);
+	return find(replies, { id: replyId }) || false;
 };

@@ -5,15 +5,15 @@
 
 let returnValue;
 
-function makeSafe( url ) {
+function makeSafe(url) {
 	return returnValue !== undefined ? returnValue : url + '-SAFE';
 }
 
-makeSafe.setReturns = function( val ) {
+makeSafe.setReturns = function (val) {
 	returnValue = val;
 };
 
-makeSafe.undoReturns = function() {
+makeSafe.undoReturns = function () {
 	returnValue = undefined;
 };
 

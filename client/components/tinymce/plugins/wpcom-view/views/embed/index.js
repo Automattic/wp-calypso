@@ -16,71 +16,67 @@ export default class EmbedViewManager extends EventEmitter {
 	constructor() {
 		super();
 
-		getReduxStore().then( store => {
-			store.subscribe(
-				this.createListener( store, getSelectedSiteId, this.onChange.bind( this ) )
-			);
-			store.subscribe(
-				this.createListener( store, getCurrentSiteEmbeds, this.onChange.bind( this ) )
-			);
-		} );
+		getReduxStore().then((store) => {
+			store.subscribe(this.createListener(store, getSelectedSiteId, this.onChange.bind(this)));
+			store.subscribe(this.createListener(store, getCurrentSiteEmbeds, this.onChange.bind(this)));
+		});
 	}
 
 	onChange() {
-		this.emit( 'change' );
+		this.emit('change');
 	}
 
-	createListener( store, selector, callback ) {
-		let prevValue = selector( store.getState() );
+	createListener(store, selector, callback) {
+		let prevValue = selector(store.getState());
 		return () => {
-			const nextValue = selector( store.getState() );
+			const nextValue = selector(store.getState());
 
-			if ( nextValue !== prevValue ) {
+			if (nextValue !== prevValue) {
 				prevValue = nextValue;
-				callback( nextValue );
+				callback(nextValue);
 			}
 		};
 	}
 
-	match( content ) {
-		const siteId = getSelectedSiteId( reduxGetState() );
-		if ( ! siteId ) {
+	match(content) {
+		const siteId = getSelectedSiteId(reduxGetState());
+		if (!siteId) {
 			return;
 		}
 
-		const embeds = getCurrentSiteEmbeds( reduxGetState() );
-		if ( ! embeds ) {
-			reduxDispatch( requestEmbeds( siteId ) );
+		const embeds = getCurrentSiteEmbeds(reduxGetState());
+		if (!embeds) {
+			reduxDispatch(requestEmbeds(siteId));
 			return;
 		}
 
 		const rxLink = /(^|<p>)(https?:\/\/[^\s"]+?)(<\/p>\s*|$)/gi;
 		let currentMatch;
-		while ( ( currentMatch = rxLink.exec( content ) ) ) {
-			const url = currentMatch[ 2 ];
+		while ((currentMatch = rxLink.exec(content))) {
+			const url = currentMatch[2];
 
 			// Disregard URL if it's not a supported embed pattern for the site
-			const isMatchingPattern = embeds.some( pattern => pattern.test( url ) );
-			if ( ! isMatchingPattern ) {
+			const isMatchingPattern = embeds.some((pattern) => pattern.test(url));
+			if (!isMatchingPattern) {
 				continue;
 			}
 
 			return {
-				index: currentMatch.index + currentMatch[ 1 ].length,
+				index: currentMatch.index + currentMatch[1].length,
 				content: url,
 			};
 		}
 	}
 
-	serialize( content ) {
-		return encodeURIComponent( content );
+	serialize(content) {
+		return encodeURIComponent(content);
 	}
 
 	getComponent() {
 		return EmbedView;
 	}
 
-	edit( editor, content ) {
-		editor.execCommand( 'embedDialog', content );
+	edit(editor, content) {
+		editor.execCommand('embedDialog', content);
 	}
 }

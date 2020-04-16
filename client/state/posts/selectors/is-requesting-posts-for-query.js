@@ -14,7 +14,7 @@ import 'state/posts/init';
  * @param   {object}  query  Post query object
  * @returns {boolean}        Whether posts are being requested
  */
-export function isRequestingPostsForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	return !! state.posts.queryRequests[ serializedQuery ];
+export function isRequestingPostsForQuery(state, siteId, query) {
+	const serializedQuery = getSerializedPostsQuery(query, siteId);
+	return !!state.posts.queryRequests[serializedQuery];
 }

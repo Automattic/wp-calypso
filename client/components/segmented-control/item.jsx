@@ -21,8 +21,8 @@ class SegmentedControlItem extends React.Component {
 		selected: false,
 	};
 
-	handleKeyEvent = event => {
-		switch ( event.keyCode ) {
+	handleKeyEvent = (event) => {
+		switch (event.keyCode) {
 			case 13: // enter
 			case 32: // space
 				event.preventDefault();
@@ -32,29 +32,29 @@ class SegmentedControlItem extends React.Component {
 	};
 
 	render() {
-		const itemClassName = classNames( {
+		const itemClassName = classNames({
 			'segmented-control__item': true,
 			'is-selected': this.props.selected,
-		} );
+		});
 
-		const linkClassName = classNames( 'segmented-control__link', {
-			[ `item-index-${ this.props.index }` ]: this.props.index != null,
-		} );
+		const linkClassName = classNames('segmented-control__link', {
+			[`item-index-${this.props.index}`]: this.props.index != null,
+		});
 
 		return (
-			<li className={ itemClassName }>
+			<li className={itemClassName}>
 				<a
-					href={ this.props.path }
-					className={ linkClassName }
-					onClick={ this.props.onClick }
-					title={ this.props.title }
-					data-e2e-value={ this.props.value }
+					href={this.props.path}
+					className={linkClassName}
+					onClick={this.props.onClick}
+					title={this.props.title}
+					data-e2e-value={this.props.value}
 					role="radio"
-					tabIndex={ 0 }
-					aria-checked={ this.props.selected }
-					onKeyDown={ this.handleKeyEvent }
+					tabIndex={0}
+					aria-checked={this.props.selected}
+					onKeyDown={this.handleKeyEvent}
 				>
-					<span className="segmented-control__text">{ this.props.children }</span>
+					<span className="segmented-control__text">{this.props.children}</span>
 				</a>
 			</li>
 		);

@@ -16,20 +16,20 @@ const DIALOG_HEIGHT = 150;
 const DIALOG_PADDING = 10;
 const MASTERBAR_HEIGHT = 47;
 
-const middle = ( a: number, b: number ) => Math.abs( b - a ) / 2;
+const middle = (a: number, b: number) => Math.abs(b - a) / 2;
 
-const wouldBeOffscreen = ( pos: number ) => {
+const wouldBeOffscreen = (pos: number) => {
 	return pos < 0 || pos + DIALOG_PADDING + DIALOG_WIDTH > document.documentElement.clientWidth;
 };
 
-const fitOnScreen = ( pos: number ) => {
-	return Math.max( 0, pos - DIALOG_PADDING - DIALOG_WIDTH );
+const fitOnScreen = (pos: number) => {
+	return Math.max(0, pos - DIALOG_PADDING - DIALOG_WIDTH);
 };
 
-function yAbove( top: number ) {
+function yAbove(top: number) {
 	return top - DIALOG_HEIGHT;
 }
-function yBelow( bottom: number ) {
+function yBelow(bottom: number) {
 	return bottom + DIALOG_PADDING;
 }
 
@@ -37,76 +37,73 @@ function yBelow( bottom: number ) {
 // TODO: This hack should be removed because it's unnecessary and potentially problematic.
 // Unnecessary because, given that placement is determined manually, alignment can also be specified.
 // Potentially problematic because full document view is used instead of target content area.
-function xAboveBelow( left: number, right: number ) {
-	const leftAlign = left + middle( left, right ) < document.documentElement.clientWidth / 2;
-	if ( leftAlign ) {
+function xAboveBelow(left: number, right: number) {
+	const leftAlign = left + middle(left, right) < document.documentElement.clientWidth / 2;
+	if (leftAlign) {
 		return left + DIALOG_PADDING;
-	} else if ( right - DIALOG_WIDTH - DIALOG_PADDING > 0 ) {
+	} else if (right - DIALOG_WIDTH - DIALOG_PADDING > 0) {
 		return right - DIALOG_WIDTH;
 	}
 	return DIALOG_PADDING;
 }
 
-function getDialogPosition( position: DialogPosition, rect: ClientRect ): Coordinate {
-	switch ( position ) {
+function getDialogPosition(position: DialogPosition, rect: ClientRect): Coordinate {
+	switch (position) {
 		case 'above':
-			return { x: xAboveBelow( rect.left, rect.right ), y: yAbove( rect.top ) };
+			return { x: xAboveBelow(rect.left, rect.right), y: yAbove(rect.top) };
 		case 'below':
-			return { x: xAboveBelow( rect.left, rect.right ), y: yBelow( rect.bottom ) };
+			return { x: xAboveBelow(rect.left, rect.right), y: yBelow(rect.bottom) };
 		case 'beside':
 			return {
-				x: wouldBeOffscreen( rect.right ) ? fitOnScreen( rect.left ) : rect.right + DIALOG_PADDING,
+				x: wouldBeOffscreen(rect.right) ? fitOnScreen(rect.left) : rect.right + DIALOG_PADDING,
 				y: rect.top + DIALOG_PADDING,
 			};
 		case 'center':
 			return {
-				x: Math.max( 0, middle( rect.left, rect.right ) - DIALOG_WIDTH / 2 ),
+				x: Math.max(0, middle(rect.left, rect.right) - DIALOG_WIDTH / 2),
 				y: 0.2 * document.documentElement.clientHeight,
 			};
 		case 'middle':
 			return {
-				x: Math.max( 0, middle( rect.left, rect.right ) - DIALOG_WIDTH / 2 ),
+				x: Math.max(0, middle(rect.left, rect.right) - DIALOG_WIDTH / 2),
 				y: MASTERBAR_HEIGHT / 2 + DIALOG_HEIGHT / 2,
 			};
 		case 'right':
 			return {
-				x: Math.max( 0, document.documentElement.clientWidth - DIALOG_WIDTH - 3 * DIALOG_PADDING ),
+				x: Math.max(0, document.documentElement.clientWidth - DIALOG_WIDTH - 3 * DIALOG_PADDING),
 				y: MASTERBAR_HEIGHT + 16,
 			};
 	}
 }
 
-export const query = ( selector: string ) =>
-	Array.from( window.document.querySelectorAll( selector ) );
+export const query = (selector: string) => Array.from(window.document.querySelectorAll(selector));
 
-export const posToCss = ( { x, y }: Coordinate ): Pick< CSSProperties, 'top' | 'left' > => ( {
+export const posToCss = ({ x, y }: Coordinate): Pick<CSSProperties, 'top' | 'left'> => ({
 	top: y ? y + 'px' : undefined,
 	left: x ? x + 'px' : undefined,
-} );
+});
 
-function hasNonEmptyClientRect( el: Element ) {
+function hasNonEmptyClientRect(el: Element) {
 	const rect = el.getBoundingClientRect();
-	return ! ( rect.left === 0 && rect.top === 0 && rect.width === 0 && rect.height === 0 );
+	return !(rect.left === 0 && rect.top === 0 && rect.width === 0 && rect.height === 0);
 }
 
 // discern between tip targets and regular CSS by grepping for CSS-only characters
 const CSS_SELECTOR_REGEX = /[.# ]/;
-const isCssSelector = ( targetSlug: string ) => CSS_SELECTOR_REGEX.test( targetSlug );
+const isCssSelector = (targetSlug: string) => CSS_SELECTOR_REGEX.test(targetSlug);
 
-export function targetForSlug( targetSlug?: string ) {
-	if ( ! targetSlug ) {
+export function targetForSlug(targetSlug?: string) {
+	if (!targetSlug) {
 		return null;
 	}
 
-	const cssSelector = isCssSelector( targetSlug )
-		? targetSlug
-		: `[data-tip-target="${ targetSlug }"]`;
+	const cssSelector = isCssSelector(targetSlug) ? targetSlug : `[data-tip-target="${targetSlug}"]`;
 
-	const targetEls = query( cssSelector );
-	return find( targetEls, hasNonEmptyClientRect ) || null;
+	const targetEls = query(cssSelector);
+	return find(targetEls, hasNonEmptyClientRect) || null;
 }
 
-export function getValidatedArrowPosition( {
+export function getValidatedArrowPosition({
 	targetSlug,
 	arrow,
 	stepPos,
@@ -114,8 +111,8 @@ export function getValidatedArrowPosition( {
 	targetSlug: string;
 	arrow?: ArrowPosition;
 	stepPos: Coordinate;
-} ): ArrowPosition | 'none' {
-	const target = targetForSlug( targetSlug );
+}): ArrowPosition | 'none' {
+	const target = targetForSlug(targetSlug);
 	const rect =
 		target && target.getBoundingClientRect
 			? target.getBoundingClientRect()
@@ -132,7 +129,7 @@ export function getValidatedArrowPosition( {
 	}
 
 	if (
-		( startsWith( arrow, 'left' ) || startsWith( arrow, 'right' ) ) &&
+		(startsWith(arrow, 'left') || startsWith(arrow, 'right')) &&
 		DIALOG_WIDTH > 0.98 * document.documentElement.clientWidth
 	) {
 		// window not wide enough for adding an arrow
@@ -144,7 +141,7 @@ export function getValidatedArrowPosition( {
 	return arrow || 'none';
 }
 
-export function getStepPosition( {
+export function getStepPosition({
 	placement = 'center',
 	scrollContainer = null,
 	shouldScrollTo = false,
@@ -154,52 +151,52 @@ export function getStepPosition( {
 	scrollContainer: Element | null;
 	shouldScrollTo: boolean;
 	targetSlug?: string;
-} ): Coordinate {
-	const target = targetForSlug( targetSlug );
-	const scrollDiff = target && shouldScrollTo ? scrollIntoView( target, scrollContainer ) : 0;
+}): Coordinate {
+	const target = targetForSlug(targetSlug);
+	const scrollDiff = target && shouldScrollTo ? scrollIntoView(target, scrollContainer) : 0;
 	const rect =
 		target && target.getBoundingClientRect
 			? target.getBoundingClientRect()
 			: window.document.body.getBoundingClientRect();
-	const validatedPlacement = validatePlacement( placement, target );
-	const position = getDialogPosition( validatedPlacement, rect );
+	const validatedPlacement = validatePlacement(placement, target);
+	const position = getDialogPosition(validatedPlacement, rect);
 	return {
 		x: position.x,
-		y: position.y - scrollDiff + ( scrollDiff !== 0 ? DIALOG_PADDING : 0 ),
+		y: position.y - scrollDiff + (scrollDiff !== 0 ? DIALOG_PADDING : 0),
 	};
 }
 
 export function getScrollableSidebar() {
-	if ( isMobile() ) {
-		return query( '#secondary .sidebar' )[ 0 ];
+	if (isMobile()) {
+		return query('#secondary .sidebar')[0];
 	}
-	return query( '#secondary .sidebar .sidebar__region' )[ 0 ];
+	return query('#secondary .sidebar .sidebar__region')[0];
 }
 
-function validatePlacement( placement: DialogPosition, target: Element | null ): DialogPosition {
+function validatePlacement(placement: DialogPosition, target: Element | null): DialogPosition {
 	const targetSlug =
-		target && ( target as HTMLElement ).dataset && ( target as HTMLElement ).dataset.tipTarget;
+		target && (target as HTMLElement).dataset && (target as HTMLElement).dataset.tipTarget;
 
-	if ( targetSlug === 'sidebar' && isMobile() ) {
+	if (targetSlug === 'sidebar' && isMobile()) {
 		return 'middle';
 	}
 
 	return target && placement !== 'center' && isMobile() ? 'below' : placement;
 }
 
-function scrollIntoView( target: Element, scrollContainer: Element | null ) {
+function scrollIntoView(target: Element, scrollContainer: Element | null) {
 	// TODO(lsinger): consider replacing with lib/scroll-into-viewport
 	const container = scrollContainer || getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
 	const clientHeight = isMobile() ? document.documentElement.clientHeight : container.clientHeight;
 
-	if ( bottom + DIALOG_PADDING + DIALOG_HEIGHT <= clientHeight ) {
+	if (bottom + DIALOG_PADDING + DIALOG_HEIGHT <= clientHeight) {
 		return 0;
 	}
 
 	const scrollMax = container.scrollHeight - clientHeight - container.scrollTop;
-	const y = Math.min( 0.75 * top, scrollMax );
+	const y = Math.min(0.75 * top, scrollMax);
 
-	scrollTo( { y, container } );
+	scrollTo({ y, container });
 	return y;
 }

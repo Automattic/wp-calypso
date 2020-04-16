@@ -8,10 +8,10 @@ import { expect } from 'chai';
  */
 import { getCurrentLayoutFocus } from '../../layout-focus/selectors';
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	let state;
 
-	beforeAll( () => {
+	beforeAll(() => {
 		state = {
 			ui: {
 				layoutFocus: {
@@ -20,11 +20,11 @@ describe( 'selectors', () => {
 				},
 			},
 		};
-	} );
+	});
 
-	describe( 'getCurrentLayoutFocus', () => {
-		test( 'returns the current layout focus area', () => {
-			expect( getCurrentLayoutFocus( state ) ).to.equal( 'sites' );
-		} );
-	} );
-} );
+	describe('getCurrentLayoutFocus', () => {
+		test('returns the current layout focus area', () => {
+			expect(getCurrentLayoutFocus(state)).to.equal('sites');
+		});
+	});
+});

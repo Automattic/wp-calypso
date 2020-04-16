@@ -15,43 +15,43 @@ import {
 } from 'state/reader/action-types';
 import { key } from './utils';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case READER_RELATED_POSTS_RECEIVE: {
-			state = assign( {}, state, {
-				[ key( action.payload.siteId, action.payload.postId, action.payload.scope ) ]: map(
+			state = assign({}, state, {
+				[key(action.payload.siteId, action.payload.postId, action.payload.scope)]: map(
 					action.payload.posts,
 					'global_ID'
 				),
-			} );
+			});
 			return state;
 		}
 	}
 
 	return state;
-} );
+});
 
-function setRequestFlag( val, state, action ) {
+function setRequestFlag(val, state, action) {
 	const { siteId, postId, scope } = action.payload;
-	return assign( {}, state, {
-		[ key( siteId, postId, scope ) ]: val,
-	} );
+	return assign({}, state, {
+		[key(siteId, postId, scope)]: val,
+	});
 }
 
-export const queuedRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const queuedRequests = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case READER_RELATED_POSTS_REQUEST:
-			return partial( setRequestFlag, true )( state, action );
+			return partial(setRequestFlag, true)(state, action);
 		case READER_RELATED_POSTS_REQUEST_SUCCESS:
-			return partial( setRequestFlag, false )( state, action );
+			return partial(setRequestFlag, false)(state, action);
 		case READER_RELATED_POSTS_REQUEST_FAILURE:
-			return partial( setRequestFlag, false )( state, action );
+			return partial(setRequestFlag, false)(state, action);
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	queuedRequests,
-} );
+});

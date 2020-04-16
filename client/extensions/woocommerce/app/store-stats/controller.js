@@ -17,40 +17,40 @@ import { getQueryDate, getQueries } from './utils';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import config from 'config';
 
-function isValidParameters( context ) {
+function isValidParameters(context) {
 	const validParameters = {
-		type: [ 'orders', 'products', 'categories', 'coupons' ],
-		unit: [ 'day', 'week', 'month', 'year' ],
+		type: ['orders', 'products', 'categories', 'coupons'],
+		unit: ['day', 'week', 'month', 'year'],
 	};
-	if ( config.isEnabled( 'woocommerce/extension-referrers' ) ) {
-		validParameters.type.push( 'referrers' );
+	if (config.isEnabled('woocommerce/extension-referrers')) {
+		validParameters.type.push('referrers');
 	}
-	return Object.keys( validParameters ).every( param =>
-		includes( validParameters[ param ], context.params[ param ] )
+	return Object.keys(validParameters).every((param) =>
+		includes(validParameters[param], context.params[param])
 	);
 }
 
-export default function StatsController( context, next ) {
-	if ( ! context.params.site || context.params.site === 'null' ) {
-		page.redirect( '/stats/day/' );
+export default function StatsController(context, next) {
+	if (!context.params.site || context.params.site === 'null') {
+		page.redirect('/stats/day/');
 	}
-	if ( ! isValidParameters( context ) ) {
-		page.redirect( `/store/stats/orders/day/${ context.params.site }` );
+	if (!isValidParameters(context)) {
+		page.redirect(`/store/stats/orders/day/${context.params.site}`);
 	}
 
 	const props = {
 		type: context.params.type,
 		unit: context.params.unit,
 		path: context.pathname,
-		queryDate: getQueryDate( context ),
-		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
+		queryDate: getQueryDate(context),
+		selectedDate: context.query.startDate || moment().format('YYYY-MM-DD'),
 		queryParams: context.query || {},
 	};
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
+	context.store.dispatch(setTitle(translate('Stats', { textOnly: true })));
 
 	let tracksEvent;
-	switch ( props.type ) {
+	switch (props.type) {
 		case 'orders':
 			tracksEvent = 'calypso_woocommerce_stats_orders_page';
 			break;
@@ -67,12 +67,12 @@ export default function StatsController( context, next ) {
 			tracksEvent = 'calypso_woocommerce_stats_referrers_page';
 			break;
 	}
-	if ( tracksEvent ) {
-		recordTrack( tracksEvent, {
+	if (tracksEvent) {
+		recordTrack(tracksEvent, {
 			unit: props.unit,
 			query_date: props.queryDate,
 			selected_date: props.selectedDate,
-		} );
+		});
 	}
 
 	let asyncComponent;
@@ -80,24 +80,24 @@ export default function StatsController( context, next ) {
 	const placeholder = <StatsPagePlaceholder className="woocommerce" />;
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-	switch ( props.type ) {
+	switch (props.type) {
 		case 'orders':
 			asyncComponent = (
 				<AsyncLoad
-					placeholder={ placeholder }
+					placeholder={placeholder}
 					require="extensions/woocommerce/app/store-stats"
-					{ ...props }
+					{...props}
 				/>
 			);
 			break;
 		case 'referrers': {
-			const { referrerQuery } = getQueries( props.unit, props.queryDate );
+			const { referrerQuery } = getQueries(props.unit, props.queryDate);
 			asyncComponent = (
 				<AsyncLoad
-					placeholder={ placeholder }
+					placeholder={placeholder}
 					require="extensions/woocommerce/app/store-stats/referrers"
-					query={ referrerQuery }
-					{ ...props }
+					query={referrerQuery}
+					{...props}
 				/>
 			);
 			break;
@@ -105,9 +105,9 @@ export default function StatsController( context, next ) {
 		default:
 			asyncComponent = (
 				<AsyncLoad
-					placeholder={ placeholder }
+					placeholder={placeholder}
 					require="extensions/woocommerce/app/store-stats/listview"
-					{ ...props }
+					{...props}
 				/>
 			);
 			break;

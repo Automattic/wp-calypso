@@ -20,7 +20,7 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const DetailsDialog = props => {
+const DetailsDialog = (props) => {
 	const {
 		orderId,
 		siteId,
@@ -34,21 +34,21 @@ const DetailsDialog = props => {
 		translate,
 	} = props;
 
-	const onClose = () => props.closeDetailsDialog( orderId, siteId );
-	const buttons = [ { action: 'close', label: translate( 'Close' ), onClick: onClose } ];
+	const onClose = () => props.closeDetailsDialog(orderId, siteId);
+	const buttons = [{ action: 'close', label: translate('Close'), onClick: onClose }];
 
 	const renderReceiptLink = () => {
-		if ( ! canManagePayments || ! receiptId ) {
+		if (!canManagePayments || !receiptId) {
 			return null;
 		}
 
 		return (
 			<a
-				href={ `${ getOrigin() }/me/purchases/billing/${ receiptId }` }
+				href={`${getOrigin()}/me/purchases/billing/${receiptId}`}
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ translate( 'Receipt' ) }
+				{translate('Receipt')}
 			</a>
 		);
 	};
@@ -56,29 +56,29 @@ const DetailsDialog = props => {
 	return (
 		<Dialog
 			additionalClassNames="label-details-modal woocommerce wcc-root"
-			isVisible={ isVisible }
-			onClose={ onClose }
-			buttons={ buttons }
+			isVisible={isVisible}
+			onClose={onClose}
+			buttons={buttons}
 		>
 			<FormSectionHeading className="shipping-label__label-details-modal-heading">
 				<span className="shipping-label__label-details-modal-heading-title">
-					{ translate( 'Label #%(labelIndex)s details', { args: { labelIndex: labelIndex + 1 } } ) }
+					{translate('Label #%(labelIndex)s details', { args: { labelIndex: labelIndex + 1 } })}
 				</span>
-				{ renderReceiptLink() }
+				{renderReceiptLink()}
 			</FormSectionHeading>
 			<dl>
-				<dt>{ translate( 'Service' ) }</dt>
-				<dd>{ serviceName }</dd>
+				<dt>{translate('Service')}</dt>
+				<dd>{serviceName}</dd>
 
-				<dt>{ translate( 'Package' ) }</dt>
-				<dd>{ packageName }</dd>
+				<dt>{translate('Package')}</dt>
+				<dd>{packageName}</dd>
 
-				<dt>{ translate( 'Items' ) }</dt>
+				<dt>{translate('Items')}</dt>
 				<dd>
 					<ul>
-						{ productNames.map( ( productName, i ) => (
-							<li key={ i }>{ productName }</li>
-						) ) }
+						{productNames.map((productName, i) => (
+							<li key={i}>{productName}</li>
+						))}
 					</ul>
 				</dd>
 			</dl>
@@ -97,17 +97,17 @@ DetailsDialog.propTypes = {
 	receiptId: PropTypes.number,
 };
 
-const mapStateToProps = ( state, { orderId, siteId, labelId } ) => {
-	const loaded = isLoaded( state, orderId, siteId );
-	const { detailsDialog } = getShippingLabel( state, orderId, siteId );
+const mapStateToProps = (state, { orderId, siteId, labelId }) => {
+	const loaded = isLoaded(state, orderId, siteId);
+	const { detailsDialog } = getShippingLabel(state, orderId, siteId);
 	return {
-		isVisible: Boolean( loaded && detailsDialog && detailsDialog.labelId === labelId ),
-		canManagePayments: userCanManagePayments( state, siteId ),
+		isVisible: Boolean(loaded && detailsDialog && detailsDialog.labelId === labelId),
+		canManagePayments: userCanManagePayments(state, siteId),
 	};
 };
 
-const mapDispatchToProps = dispatch => {
-	return bindActionCreators( { closeDetailsDialog }, dispatch );
+const mapDispatchToProps = (dispatch) => {
+	return bindActionCreators({ closeDetailsDialog }, dispatch);
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( DetailsDialog ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(DetailsDialog));

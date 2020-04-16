@@ -26,27 +26,27 @@ export class CartPlanDiscountAd extends Component {
 		sitePlans: PropTypes.object,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.trackPlanDiscountAd = once( this.props.trackPlanDiscountAd );
+	constructor(props) {
+		super(props);
+		this.trackPlanDiscountAd = once(this.props.trackPlanDiscountAd);
 	}
 
 	componentDidMount() {
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
+		this.props.fetchSitePlans(this.props.sitePlans, this.props.selectedSite);
 	}
 
 	render() {
 		const { cart, translate, sitePlans } = this.props;
-		if ( ! sitePlans.hasLoadedFromServer || ! cart.hasLoadedFromServer || ! hasPlan( cart ) ) {
+		if (!sitePlans.hasLoadedFromServer || !cart.hasLoadedFromServer || !hasPlan(cart)) {
 			return null;
 		}
 
-		const cartPlan = getAllCartItems( cart ).find( isPlan );
-		const plan = sitePlans.data.filter( function( sitePlan ) {
+		const cartPlan = getAllCartItems(cart).find(isPlan);
+		const plan = sitePlans.data.filter(function (sitePlan) {
 			return sitePlan.productSlug === this.product_slug;
-		}, cartPlan )[ 0 ];
+		}, cartPlan)[0];
 
-		if ( plan.rawDiscount === 0 || ! plan.isDomainUpgrade ) {
+		if (plan.rawDiscount === 0 || !plan.isDomainUpgrade) {
 			return null;
 		}
 
@@ -55,7 +55,7 @@ export class CartPlanDiscountAd extends Component {
 		return (
 			<CartAd>
 				<p className="cart__cart-plan-discount-ad-paragraph">
-					{ translate(
+					{translate(
 						"You're getting a %(discount)s discount off the regular price of the plan (%(originalPrice)s)" +
 							', because you already paid for the domain.',
 						{
@@ -64,7 +64,7 @@ export class CartPlanDiscountAd extends Component {
 								originalPrice: plan.formattedOriginalPrice,
 							},
 						}
-					) }
+					)}
 				</p>
 			</CartAd>
 		);
@@ -72,21 +72,21 @@ export class CartPlanDiscountAd extends Component {
 }
 
 export default connect(
-	( state, { selectedSite } ) => {
+	(state, { selectedSite }) => {
 		return {
-			sitePlans: getPlansBySite( state, selectedSite ),
+			sitePlans: getPlansBySite(state, selectedSite),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return {
-			fetchSitePlans: ( sitePlans, site ) => {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
+			fetchSitePlans: (sitePlans, site) => {
+				if (shouldFetchSitePlans(sitePlans, site)) {
+					dispatch(fetchSitePlans(site.ID));
 				}
 			},
 			trackPlanDiscountAd: () => {
-				dispatch( recordTracksEvent( 'cart_plan_discount_ad' ) );
+				dispatch(recordTracksEvent('cart_plan_discount_ad'));
 			},
 		};
 	}
-)( localize( CartPlanDiscountAd ) );
+)(localize(CartPlanDiscountAd));

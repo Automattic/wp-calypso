@@ -8,32 +8,32 @@ import {
 	THEMES_BOOKMARK_SET,
 } from 'state/themes/action-types';
 
-describe( 'actions', () => {
-	describe( 'hideThemesBanner()', () => {
-		test( 'Should return the expected action object', () => {
+describe('actions', () => {
+	describe('hideThemesBanner()', () => {
+		test('Should return the expected action object', () => {
 			const action = hideThemesBanner();
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: THEMES_BANNER_HIDE,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'openThemesShowcase()', () => {
-		test( 'Should return the expected action object', () => {
+	describe('openThemesShowcase()', () => {
+		test('Should return the expected action object', () => {
 			const action = openThemesShowcase();
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: THEMES_SHOWCASE_OPEN,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'setThemesBookmark()', () => {
-		test( 'Should return the expected action object', () => {
-			const action = setThemesBookmark( 'abc' );
-			expect( action ).toEqual( {
+	describe('setThemesBookmark()', () => {
+		test('Should return the expected action object', () => {
+			const action = setThemesBookmark('abc');
+			expect(action).toEqual({
 				type: THEMES_BOOKMARK_SET,
 				payload: 'abc',
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

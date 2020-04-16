@@ -8,9 +8,9 @@ import variations from './variations/reducer';
 
 export default keyedReducer(
 	'siteId',
-	combineReducers( {
+	combineReducers({
 		list,
 		edits,
 		variations,
-	} )
+	})
 );

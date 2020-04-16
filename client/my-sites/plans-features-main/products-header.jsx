@@ -26,7 +26,7 @@ class PlansFeaturesMainProductsHeader extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Fragment>{ translate( "Looking for specific features? We've got you covered." ) }</Fragment>
+			<Fragment>{translate("Looking for specific features? We've got you covered.")}</Fragment>
 		);
 	}
 
@@ -35,10 +35,10 @@ class PlansFeaturesMainProductsHeader extends Component {
 
 		return (
 			<Fragment>
-				<QuerySitePurchases siteId={ siteId } />
+				<QuerySitePurchases siteId={siteId} />
 				<FormattedHeader
-					headerText={ translate( 'Solutions' ) }
-					subHeaderText={ this.getSubHeader() }
+					headerText={translate('Solutions')}
+					subHeaderText={this.getSubHeader()}
 					compactOnMobile
 					isSecondary
 				/>
@@ -47,10 +47,10 @@ class PlansFeaturesMainProductsHeader extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
 
 	return {
 		siteId,
 	};
-} )( localize( PlansFeaturesMainProductsHeader ) );
+})(localize(PlansFeaturesMainProductsHeader));

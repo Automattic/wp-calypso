@@ -15,19 +15,19 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * @returns {number[]}       WordPress.com site IDs with collisions
  */
 export default createSelector(
-	state =>
+	(state) =>
 		map(
-			filter( getSitesItems( state ), wpcomSite => {
-				const wpcomSiteUrlSansProtocol = withoutHttp( wpcomSite.URL );
+			filter(getSitesItems(state), (wpcomSite) => {
+				const wpcomSiteUrlSansProtocol = withoutHttp(wpcomSite.URL);
 				return (
-					! wpcomSite.jetpack &&
+					!wpcomSite.jetpack &&
 					some(
-						getSitesItems( state ),
-						jetpackSite =>
-							jetpackSite.jetpack && wpcomSiteUrlSansProtocol === withoutHttp( jetpackSite.URL )
+						getSitesItems(state),
+						(jetpackSite) =>
+							jetpackSite.jetpack && wpcomSiteUrlSansProtocol === withoutHttp(jetpackSite.URL)
 					)
 				);
-			} ),
+			}),
 			'ID'
 		),
 	getSitesItems

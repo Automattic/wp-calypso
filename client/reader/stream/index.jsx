@@ -101,49 +101,49 @@ class ReaderStream extends React.Component {
 
 	listRef = React.createRef();
 
-	componentDidUpdate( { selectedPostKey, streamKey } ) {
-		if ( streamKey !== this.props.streamKey ) {
+	componentDidUpdate({ selectedPostKey, streamKey }) {
+		if (streamKey !== this.props.streamKey) {
 			this.props.resetCardExpansions();
-			this.props.viewStream( { streamKey } );
-			this.fetchNextPage( {} );
+			this.props.viewStream({ streamKey });
+			this.fetchNextPage({});
 		}
 
-		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
-			this.scrollToSelectedPost( true );
+		if (!keysAreEqual(selectedPostKey, this.props.selectedPostKey)) {
+			this.scrollToSelectedPost(true);
 		}
 
-		if ( this.props.shouldRequestRecs ) {
-			this.props.requestPage( {
+		if (this.props.shouldRequestRecs) {
+			this.props.requestPage({
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
-			} );
+			});
 		}
 	}
 
 	_popstate = () => {
-		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
-			this.scrollToSelectedPost( false );
+		if (this.props.selectedPostKey && window.history.scrollRestoration !== 'manual') {
+			this.scrollToSelectedPost(false);
 		}
 	};
 
-	scrollToSelectedPost( animate ) {
+	scrollToSelectedPost(animate) {
 		const HEADER_OFFSET = -80; // a fixed position header means we can't just scroll the element into view.
-		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.is-selected' );
-		if ( selectedNode ) {
+		const selectedNode = ReactDom.findDOMNode(this).querySelector('.is-selected');
+		if (selectedNode) {
 			const documentElement = document.documentElement;
 			selectedNode.focus();
 			const windowTop =
-				( window.pageYOffset || documentElement.scrollTop ) - ( documentElement.clientTop || 0 );
+				(window.pageYOffset || documentElement.scrollTop) - (documentElement.clientTop || 0);
 			const boundingClientRect = selectedNode.getBoundingClientRect();
-			const scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
-			if ( animate ) {
-				scrollTo( {
+			const scrollY = parseInt(windowTop + boundingClientRect.top + HEADER_OFFSET, 10);
+			if (animate) {
+				scrollTo({
 					x: 0,
 					y: scrollY,
 					duration: 200,
-				} );
+				});
 			} else {
-				window.scrollTo( 0, scrollY );
+				window.scrollTo(0, scrollY);
 			}
 		}
 	}
@@ -151,43 +151,43 @@ class ReaderStream extends React.Component {
 	componentDidMount() {
 		const { streamKey } = this.props;
 		this.props.resetCardExpansions();
-		this.props.viewStream( { streamKey } );
-		this.fetchNextPage( {} );
+		this.props.viewStream({ streamKey });
+		this.fetchNextPage({});
 
-		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
-		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
-		KeyboardShortcuts.on( 'open-selection', this.handleOpenSelection );
-		KeyboardShortcuts.on( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
-		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
-		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
-		window.addEventListener( 'popstate', this._popstate );
-		if ( 'scrollRestoration' in window.history ) {
+		KeyboardShortcuts.on('move-selection-down', this.selectNextItem);
+		KeyboardShortcuts.on('move-selection-up', this.selectPrevItem);
+		KeyboardShortcuts.on('open-selection', this.handleOpenSelection);
+		KeyboardShortcuts.on('open-selection-new-tab', this.handleOpenSelectionNewTab);
+		KeyboardShortcuts.on('like-selection', this.toggleLikeOnSelectedPost);
+		KeyboardShortcuts.on('go-to-top', this.goToTop);
+		window.addEventListener('popstate', this._popstate);
+		if ('scrollRestoration' in window.history) {
 			window.history.scrollRestoration = 'manual';
 		}
 	}
 
 	componentWillUnmount() {
-		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
-		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
-		KeyboardShortcuts.off( 'open-selection', this.handleOpenSelection );
-		KeyboardShortcuts.off( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
-		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
-		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
-		window.removeEventListener( 'popstate', this._popstate );
-		if ( 'scrollRestoration' in window.history ) {
+		KeyboardShortcuts.off('move-selection-down', this.selectNextItem);
+		KeyboardShortcuts.off('move-selection-up', this.selectPrevItem);
+		KeyboardShortcuts.off('open-selection', this.handleOpenSelection);
+		KeyboardShortcuts.off('open-selection-new-tab', this.handleOpenSelectionNewTab);
+		KeyboardShortcuts.off('like-selection', this.toggleLikeOnSelectedPost);
+		KeyboardShortcuts.off('go-to-top', this.goToTop);
+		window.removeEventListener('popstate', this._popstate);
+		if ('scrollRestoration' in window.history) {
 			window.history.scrollRestoration = 'auto';
 		}
 	}
 
 	handleOpenSelectionNewTab = () => {
-		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+		window.open(this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener');
 	};
 
 	handleOpenSelection = () => {
-		showSelectedPost( {
+		showSelectedPost({
 			store: this.props.streamKey,
 			postKey: this.props.selectedPostKey,
-		} );
+		});
 	};
 
 	toggleLikeOnSelectedPost = () => {
@@ -195,40 +195,40 @@ class ReaderStream extends React.Component {
 
 		// only toggle a like on a x-post if we have the appropriate metadata,
 		// and original post is full screen
-		const xPostMetadata = XPostHelper.getXPostMetadata( post );
-		if ( xPostMetadata.postURL ) {
+		const xPostMetadata = XPostHelper.getXPostMetadata(post);
+		if (xPostMetadata.postURL) {
 			return;
 		}
 
-		if ( shouldShowLikes( post ) ) {
-			this.toggleLikeAction( post.site_ID, post.ID );
+		if (shouldShowLikes(post)) {
+			this.toggleLikeAction(post.site_ID, post.ID);
 		}
 	};
 
-	toggleLikeAction( siteId, postId ) {
-		const liked = isLikedPost( reduxGetState(), siteId, postId );
-		if ( liked === null ) {
+	toggleLikeAction(siteId, postId) {
+		const liked = isLikedPost(reduxGetState(), siteId, postId);
+		if (liked === null) {
 			// unknown... ignore for now
 			return;
 		}
 
 		const toggler = liked ? this.props.unlikePost : this.props.likePost;
-		toggler( siteId, postId, { source: 'reader' } );
+		toggler(siteId, postId, { source: 'reader' });
 	}
 
 	goToTop = () => {
 		const { streamKey, updateCount } = this.props;
-		if ( updateCount > 0 ) {
-			this.props.showUpdates( { streamKey } );
+		if (updateCount > 0) {
+			this.props.showUpdates({ streamKey });
 		} else {
-			this.props.selectFirstItem( { streamKey } );
+			this.props.selectFirstItem({ streamKey });
 		}
 	};
 
 	getVisibleItemIndexes() {
 		return (
 			this.listRef.current &&
-			this.listRef.current.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } )
+			this.listRef.current.getVisibleItemIndexes({ offsetTop: HEADER_OFFSET_TOP })
 		);
 	}
 
@@ -241,8 +241,8 @@ class ReaderStream extends React.Component {
 		} = this.props;
 
 		// do we have a selected item? if so, just move to the next one
-		if ( this.props.selectedPostKey ) {
-			this.props.selectNextItem( { streamKey, items } );
+		if (this.props.selectedPostKey) {
+			this.props.selectNextItem({ streamKey, items });
 			return;
 		}
 
@@ -255,42 +255,42 @@ class ReaderStream extends React.Component {
 		// at the top of the screen, rather than the strictly "next" item. This is so a user can
 		// pick an item with the keyboard shortcuts, then scroll down a bit, then hit `next` again
 		// and have it pick the item at the top of the screen, rather than the item we scrolled past
-		if ( visibleIndexes && visibleIndexes.length > 0 ) {
+		if (visibleIndexes && visibleIndexes.length > 0) {
 			// default to the first item in the visible list. this item is likely off screen when the user
 			// is scrolled down the page
-			let index = visibleIndexes[ 0 ].index;
+			let index = visibleIndexes[0].index;
 
 			// walk down the list of "visible" items, looking for the first item whose top extent is on screen
-			for ( let i = 0; i < visibleIndexes.length; i++ ) {
-				const visibleIndex = visibleIndexes[ i ];
+			for (let i = 0; i < visibleIndexes.length; i++) {
+				const visibleIndex = visibleIndexes[i];
 				// skip items whose top are off screen or are recommendation blocks
-				if ( visibleIndex.bounds.top > 0 && ! items[ visibleIndex.index ].isRecommendationBlock ) {
+				if (visibleIndex.bounds.top > 0 && !items[visibleIndex.index].isRecommendationBlock) {
 					index = visibleIndex.index;
 					break;
 				}
 			}
 
-			const candidateItem = items[ index ];
+			const candidateItem = items[index];
 			// is this a combo card?
-			if ( candidateItem.isCombination ) {
+			if (candidateItem.isCombination) {
 				// pick the first item
 				const postKey = {
-					postId: candidateItem.postIds[ 0 ],
+					postId: candidateItem.postIds[0],
 					feedId: candidateItem.feedId,
 					blogId: candidateItem.blogId,
 				};
-				this.props.selectItem( { streamKey, postKey } );
+				this.props.selectItem({ streamKey, postKey });
 			}
 
 			// find the index of the post / gap in the items array.
 			// Start the search from the index in the items array, which has to be equal to or larger than
 			// the index in the items array.
 			// Use lastIndexOf to walk the array from right to left
-			const selectedPostKey = findLast( items, items[ index ], index );
-			if ( keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
-				this.props.selectNextItem( { streamKey, items } );
+			const selectedPostKey = findLast(items, items[index], index);
+			if (keysAreEqual(selectedPostKey, this.props.selectedPostKey)) {
+				this.props.selectNextItem({ streamKey, items });
 			} else {
-				this.props.selectItem( { streamKey, postKey: selectedPostKey } );
+				this.props.selectItem({ streamKey, postKey: selectedPostKey });
 			}
 		}
 	};
@@ -306,37 +306,37 @@ class ReaderStream extends React.Component {
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
-		if ( selectedPostKey ) {
-			this.props.selectPrevItem( { streamKey, items } );
+		if (selectedPostKey) {
+			this.props.selectPrevItem({ streamKey, items });
 		}
 	};
 
 	poll = () => {
 		const { streamKey } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true } );
+		this.props.requestPage({ streamKey, isPoll: true });
 	};
 
-	fetchNextPage = ( options, props = this.props ) => {
+	fetchNextPage = (options, props = this.props) => {
 		const { streamKey, stream, startDate } = props;
-		if ( options.triggeredByScroll ) {
-			const page = pagesByKey.get( streamKey ) || 0;
-			pagesByKey.set( streamKey, page + 1 );
+		if (options.triggeredByScroll) {
+			const page = pagesByKey.get(streamKey) || 0;
+			pagesByKey.set(streamKey, page + 1);
 
-			props.trackScrollPage( page );
+			props.trackScrollPage(page);
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
-		props.requestPage( { streamKey, pageHandle } );
+		props.requestPage({ streamKey, pageHandle });
 	};
 
 	showUpdates = () => {
 		const { streamKey } = this.props;
 		this.props.onUpdatesShown();
-		this.props.showUpdates( { streamKey } );
+		this.props.showUpdates({ streamKey });
 		// @todo: do we need to shuffle?
 		// if ( this.props.recommendationsStore ) {
 		// 	shufflePosts( this.props.recommendationsStore.id );
 		// }
-		if ( this.listRef.current ) {
+		if (this.listRef.current) {
 			this.listRef.current.scrollToTop();
 		}
 	};
@@ -345,50 +345,50 @@ class ReaderStream extends React.Component {
 		const { items } = this.props;
 		const count = items.length === 0 ? INITIAL_FETCH : PER_FETCH;
 
-		return times( count, i => {
-			if ( this.props.placeholderFactory ) {
-				return this.props.placeholderFactory( { key: 'feed-post-placeholder-' + i } );
+		return times(count, (i) => {
+			if (this.props.placeholderFactory) {
+				return this.props.placeholderFactory({ key: 'feed-post-placeholder-' + i });
 			}
-			return <PostPlaceholder key={ 'feed-post-placeholder-' + i } />;
-		} );
+			return <PostPlaceholder key={'feed-post-placeholder-' + i} />;
+		});
 	};
 
-	getPostRef = postKey => {
-		return keyToString( postKey );
+	getPostRef = (postKey) => {
+		return keyToString(postKey);
 	};
 
-	renderPost = ( postKey, index ) => {
+	renderPost = (postKey, index) => {
 		const { selectedPostKey, streamKey } = this.props;
-		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
+		const isSelected = !!(selectedPostKey && keysAreEqual(selectedPostKey, postKey));
 
-		const itemKey = this.getPostRef( postKey );
-		const showPost = args =>
-			showSelectedPost( {
+		const itemKey = this.getPostRef(postKey);
+		const showPost = (args) =>
+			showSelectedPost({
 				...args,
-				postKey: postKey.isCombination ? keyForPost( args ) : postKey,
+				postKey: postKey.isCombination ? keyForPost(args) : postKey,
 				streamKey,
-			} );
+			});
 
 		return (
 			<PostLifecycle
-				key={ itemKey }
-				ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
-				isSelected={ isSelected }
-				handleClick={ showPost }
-				postKey={ postKey }
-				suppressSiteNameLink={ this.props.suppressSiteNameLink }
-				showPostHeader={ this.props.showPostHeader }
-				showFollowInHeader={ this.props.showFollowInHeader }
-				showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
-				isDiscoverStream={ this.props.isDiscoverStream }
-				showSiteName={ this.props.showSiteNameOnCards }
-				selectedPostKey={ postKey.isCombination ? selectedPostKey : undefined }
-				followSource={ this.props.followSource }
-				blockedSites={ this.props.blockedSites }
-				streamKey={ streamKey }
-				recsStreamKey={ this.props.recsStreamKey }
-				index={ index }
-				compact={ this.props.useCompactCards }
+				key={itemKey}
+				ref={itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */}
+				isSelected={isSelected}
+				handleClick={showPost}
+				postKey={postKey}
+				suppressSiteNameLink={this.props.suppressSiteNameLink}
+				showPostHeader={this.props.showPostHeader}
+				showFollowInHeader={this.props.showFollowInHeader}
+				showPrimaryFollowButtonOnCards={this.props.showPrimaryFollowButtonOnCards}
+				isDiscoverStream={this.props.isDiscoverStream}
+				showSiteName={this.props.showSiteNameOnCards}
+				selectedPostKey={postKey.isCombination ? selectedPostKey : undefined}
+				followSource={this.props.followSource}
+				blockedSites={this.props.blockedSites}
+				streamKey={streamKey}
+				recsStreamKey={this.props.recsStreamKey}
+				index={index}
+				compact={this.props.useCompactCards}
 			/>
 		);
 	};
@@ -397,19 +397,19 @@ class ReaderStream extends React.Component {
 		const { forcePlaceholders, lastPage, streamKey } = this.props;
 		let { items, isRequesting } = this.props;
 
-		const hasNoPosts = items.length === 0 && ! isRequesting;
+		const hasNoPosts = items.length === 0 && !isRequesting;
 		let body, showingStream;
 
 		// trick an infinite list to showing placeholders
-		if ( forcePlaceholders ) {
+		if (forcePlaceholders) {
 			items = [];
 			isRequesting = true;
 		}
 
 		// @TODO: has error of invalid tag?
-		if ( hasNoPosts ) {
+		if (hasNoPosts) {
 			body = this.props.emptyContent;
-			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
+			if (!body && this.props.showDefaultEmptyContentIfMissing) {
 				body = <EmptyContent />;
 			}
 			showingStream = false;
@@ -417,62 +417,62 @@ class ReaderStream extends React.Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			body = (
 				<InfiniteList
-					ref={ this.listRef }
+					ref={this.listRef}
 					className="reader__content"
-					items={ items }
-					lastPage={ lastPage }
-					fetchingNextPage={ isRequesting }
-					guessedItemHeight={ GUESSED_POST_HEIGHT }
-					fetchNextPage={ this.fetchNextPage }
-					getItemRef={ this.getPostRef }
-					renderItem={ this.renderPost }
-					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+					items={items}
+					lastPage={lastPage}
+					fetchingNextPage={isRequesting}
+					guessedItemHeight={GUESSED_POST_HEIGHT}
+					fetchNextPage={this.fetchNextPage}
+					getItemRef={this.getPostRef}
+					renderItem={this.renderPost}
+					renderLoadingPlaceholders={this.renderLoadingPlaceholders}
 				/>
 			);
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		const streamType = getStreamType( streamKey );
+		const streamType = getStreamType(streamKey);
 		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
-			<TopLevel className={ classnames( 'following', this.props.className ) }>
-				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
-				{ this.props.isMain && this.props.showMobileBackToSidebar && (
+			<TopLevel className={classnames('following', this.props.className)}>
+				{shouldPoll && <Interval onTick={this.poll} period={EVERY_MINUTE} />}
+				{this.props.isMain && this.props.showMobileBackToSidebar && (
 					<MobileBackToSidebar>
-						<h1>{ this.props.translate( 'Streams' ) }</h1>
+						<h1>{this.props.translate('Streams')}</h1>
 					</MobileBackToSidebar>
-				) }
+				)}
 
-				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
-				{ this.props.children }
-				{ showingStream && items.length ? this.props.intro : null }
-				{ body }
-				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
+				<UpdateNotice streamKey={streamKey} onClick={this.showUpdates} />
+				{this.props.children}
+				{showingStream && items.length ? this.props.intro : null}
+				{body}
+				{showingStream && items.length && !isRequesting ? <ListEnd /> : null}
 			</TopLevel>
 		);
 	}
 }
 
 export default connect(
-	( state, { streamKey, recsStreamKey, shouldCombineCards = true } ) => {
-		const stream = getStream( state, streamKey );
+	(state, { streamKey, recsStreamKey, shouldCombineCards = true }) => {
+		const stream = getStream(state, streamKey);
 
 		return {
-			blockedSites: getBlockedSites( state ),
-			items: getTransformedStreamItems( state, {
+			blockedSites: getBlockedSites(state),
+			items: getTransformedStreamItems(state, {
 				streamKey,
 				recsStreamKey,
 				shouldCombine: shouldCombineCards,
-			} ),
+			}),
 			stream,
-			recsStream: getStream( state, recsStreamKey ),
+			recsStream: getStream(state, recsStreamKey),
 			selectedPostKey: stream.selected,
-			selectedPost: getPostByKey( state, stream.selected ),
+			selectedPost: getPostByKey(state, stream.selected),
 			lastPage: stream.lastPage,
 			isRequesting: stream.isRequesting,
-			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
+			shouldRequestRecs: shouldRequestRecs(state, streamKey, recsStreamKey),
 		};
 	},
 	{
@@ -486,4 +486,4 @@ export default connect(
 		showUpdates,
 		viewStream,
 	}
-)( localize( ReaderStream ) );
+)(localize(ReaderStream));

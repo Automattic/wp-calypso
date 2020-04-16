@@ -1,9 +1,9 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock('lib/abtest', () => ({
 	abtest: () => '',
-} ) );
+}));
 
-jest.mock( 'lib/analytics/index', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock('lib/analytics/index', () => ({}));
+jest.mock('lib/analytics/page-view-tracker', () => 'PageViewTracker');
 
 /**
  * External dependencies
@@ -12,9 +12,9 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import { noop } from 'lodash';
 
-jest.mock( 'i18n-calypso', () => ( {
-	translate: str => str,
-} ) );
+jest.mock('i18n-calypso', () => ({
+	translate: (str) => str,
+}));
 
 /**
  * Internal dependencies
@@ -50,7 +50,7 @@ const props = {
 	},
 };
 
-describe( 'siteHasPaidPlan', () => {
+describe('siteHasPaidPlan', () => {
 	[
 		PLAN_BLOGGER,
 		PLAN_BLOGGER_2_YEARS,
@@ -69,30 +69,30 @@ describe( 'siteHasPaidPlan', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( product_slug => {
-		test( `Should return true for plan ${ product_slug }`, () => {
-			expect( siteHasPaidPlan( { plan: { product_slug } } ) ).toBe( true );
-		} );
-	} );
+	].forEach((product_slug) => {
+		test(`Should return true for plan ${product_slug}`, () => {
+			expect(siteHasPaidPlan({ plan: { product_slug } })).toBe(true);
+		});
+	});
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( product_slug => {
-		test( `Should return false for plan ${ product_slug }`, () => {
-			expect( siteHasPaidPlan( { plan: { product_slug } } ) ).toBe( false );
-		} );
-	} );
-} );
+	[PLAN_FREE, PLAN_JETPACK_FREE].forEach((product_slug) => {
+		test(`Should return false for plan ${product_slug}`, () => {
+			expect(siteHasPaidPlan({ plan: { product_slug } })).toBe(false);
+		});
+	});
+});
 
-describe( 'SitePickerSubmit', () => {
-	beforeEach( () => {
+describe('SitePickerSubmit', () => {
+	beforeEach(() => {
 		props.goToStep.mockReset();
-	} );
+	});
 
-	test( 'Does not blow up', () => {
-		expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
-		const comp = shallow( <SitePickerSubmit { ...props } /> );
-		expect( comp.find( '*' ).length ).toBe( 0 );
-		expect( props.goToStep ).toHaveBeenCalledTimes( 1 );
-	} );
+	test('Does not blow up', () => {
+		expect(props.goToStep).toHaveBeenCalledTimes(0);
+		const comp = shallow(<SitePickerSubmit {...props} />);
+		expect(comp.find('*').length).toBe(0);
+		expect(props.goToStep).toHaveBeenCalledTimes(1);
+	});
 
 	[
 		PLAN_BLOGGER,
@@ -112,23 +112,19 @@ describe( 'SitePickerSubmit', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
-		test( `Goes to step "user" when paid plan is passed (${ plan })`, () => {
-			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
-			shallow(
-				<SitePickerSubmit { ...props } selectedSite={ { plan: { product_slug: plan } } } />
-			);
-			expect( props.goToStep ).toHaveBeenCalledWith( 'user' );
-		} );
-	} );
+	].forEach((plan) => {
+		test(`Goes to step "user" when paid plan is passed (${plan})`, () => {
+			expect(props.goToStep).toHaveBeenCalledTimes(0);
+			shallow(<SitePickerSubmit {...props} selectedSite={{ plan: { product_slug: plan } }} />);
+			expect(props.goToStep).toHaveBeenCalledWith('user');
+		});
+	});
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( plan => {
-		test( `Goes to step "plans-site-selected" when a free plan is passed (${ plan })`, () => {
-			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
-			shallow(
-				<SitePickerSubmit { ...props } selectedSite={ { plan: { product_slug: plan } } } />
-			);
-			expect( props.goToStep ).toHaveBeenCalledWith( 'plans-site-selected' );
-		} );
-	} );
-} );
+	[PLAN_FREE, PLAN_JETPACK_FREE].forEach((plan) => {
+		test(`Goes to step "plans-site-selected" when a free plan is passed (${plan})`, () => {
+			expect(props.goToStep).toHaveBeenCalledTimes(0);
+			shallow(<SitePickerSubmit {...props} selectedSite={{ plan: { product_slug: plan } }} />);
+			expect(props.goToStep).toHaveBeenCalledWith('plans-site-selected');
+		});
+	});
+});

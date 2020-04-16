@@ -11,16 +11,16 @@ import notes from './notes/reducer';
 import suggestions from './suggestions/reducer';
 import ui from './ui/reducer';
 
-const reducer = combineReducers( {
+const reducer = combineReducers({
 	notes,
 	suggestions,
 	ui,
-} );
+});
 
 /** @see https://github.com/zalmoxisus/redux-devtools-extension */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const withMiddleware = customMiddleware =>
-	composeEnhancers( applyMiddleware( actionMiddleware( customMiddleware ) ) )( createStore );
+const withMiddleware = (customMiddleware) =>
+	composeEnhancers(applyMiddleware(actionMiddleware(customMiddleware)))(createStore);
 
 let store = null;
 init();
@@ -28,11 +28,11 @@ init();
 // Note: this function has the unexpected side effect of modifying
 // the `store` export. In order to maintain behaviour for consumers,
 // it's being kept this way, but beware this is not a pure function.
-function init( { customEnhancer, customMiddleware = {} } = {} ) {
-	const middle = withMiddleware( customMiddleware );
-	const create = customEnhancer ? customEnhancer( middle ) : middle;
+function init({ customEnhancer, customMiddleware = {} } = {}) {
+	const middle = withMiddleware(customMiddleware);
+	const create = customEnhancer ? customEnhancer(middle) : middle;
 
-	store = create( reducer, reducer( undefined, { type: '@@INIT' } ) );
+	store = create(reducer, reducer(undefined, { type: '@@INIT' }));
 	return store;
 }
 

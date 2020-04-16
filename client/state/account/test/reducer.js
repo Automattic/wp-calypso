@@ -9,21 +9,21 @@ import deepFreeze from 'deep-freeze';
 import { isClosed } from '../reducer';
 import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
 
-describe( 'reducer', () => {
-	describe( '#isClosed()', () => {
-		test( 'should default to false', () => {
-			const state = isClosed( undefined, {} );
-			expect( state ).toEqual( false );
-		} );
+describe('reducer', () => {
+	describe('#isClosed()', () => {
+		test('should default to false', () => {
+			const state = isClosed(undefined, {});
+			expect(state).toEqual(false);
+		});
 
-		test( 'should update for a successful account closure', () => {
-			const original = deepFreeze( {} );
+		test('should update for a successful account closure', () => {
+			const original = deepFreeze({});
 
-			const state = isClosed( original, {
+			const state = isClosed(original, {
 				type: ACCOUNT_CLOSE_SUCCESS,
-			} );
+			});
 
-			expect( state ).toEqual( true );
-		} );
-	} );
-} );
+			expect(state).toEqual(true);
+		});
+	});
+});

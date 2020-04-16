@@ -15,20 +15,20 @@ import { isSectionNameEnabled } from 'sections-filter';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable
  */
-export default function isSitePreviewable( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
+export default function isSitePreviewable(state, siteId) {
+	const site = getRawSite(state, siteId);
+	if (!site) {
 		return null;
 	}
 
-	if ( site.is_vip ) {
+	if (site.is_vip) {
 		return false;
 	}
 
-	if ( ! isSectionNameEnabled( 'preview' ) ) {
+	if (!isSectionNameEnabled('preview')) {
 		return false;
 	}
 
-	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
-	return !! unmappedUrl && isHttps( unmappedUrl );
+	const unmappedUrl = getSiteOption(state, siteId, 'unmapped_url');
+	return !!unmappedUrl && isHttps(unmappedUrl);
 }

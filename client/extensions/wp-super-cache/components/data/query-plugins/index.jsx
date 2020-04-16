@@ -14,24 +14,24 @@ import { requestPlugins } from '../../../state/plugins/actions';
 
 class QueryPlugins extends Component {
 	UNSAFE_componentWillMount() {
-		this.requestPlugins( this.props );
+		this.requestPlugins(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId } = this.props;
 
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
+		if (!nextProps.siteId || siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.requestPlugins( nextProps );
+		this.requestPlugins(nextProps);
 	}
 
-	requestPlugins( props ) {
+	requestPlugins(props) {
 		const { requestingPlugins, siteId } = props;
 
-		if ( ! requestingPlugins && siteId ) {
-			props.requestPlugins( siteId );
+		if (!requestingPlugins && siteId) {
+			props.requestPlugins(siteId);
 		}
 	}
 
@@ -47,10 +47,10 @@ QueryPlugins.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	(state, { siteId }) => {
 		return {
-			requestingPlugins: isRequestingPlugins( state, siteId ),
+			requestingPlugins: isRequestingPlugins(state, siteId),
 		};
 	},
 	{ requestPlugins }
-)( QueryPlugins );
+)(QueryPlugins);

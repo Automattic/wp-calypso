@@ -17,30 +17,30 @@ import { purchaseType } from 'lib/purchases';
 
 class GSuiteCancellationFeatures extends Component {
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_features_view' );
+		this.props.recordTracksEvent('calypso_purchases_gsuite_remove_purchase_features_view');
 	}
 
 	handleLearnMoreClick = () => {
-		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_learn_more_click' );
+		this.props.recordTracksEvent('calypso_purchases_gsuite_remove_purchase_learn_more_click');
 	};
 
 	render() {
 		const { purchase, translate } = this.props;
-		const gsuiteDomain = purchaseType( purchase );
+		const gsuiteDomain = purchaseType(purchase);
 		const { productSlug } = purchase;
 		return (
 			<div className="gsuite-cancel-purchase-dialog__features">
-				<CardHeading tagName="h3" size={ 24 }>
-					{ translate( "Are you sure? Here's what you'll be missing:" ) }
+				<CardHeading tagName="h3" size={24}>
+					{translate("Are you sure? Here's what you'll be missing:")}
 				</CardHeading>
 				<p>
-					{ translate(
+					{translate(
 						'If you cancel and remove G Suite from {{siteName/}} you will lose access to the following: ',
-						{ components: { siteName: <em>{ gsuiteDomain }</em> } }
-					) }
+						{ components: { siteName: <em>{gsuiteDomain}</em> } }
+					)}
 				</p>
-				<GSuiteFeatures productSlug={ productSlug } domainName={ gsuiteDomain } type={ 'list' } />
-				<GSuiteLearnMore onClick={ this.handleLearnMoreClick } />
+				<GSuiteFeatures productSlug={productSlug} domainName={gsuiteDomain} type={'list'} />
+				<GSuiteLearnMore onClick={this.handleLearnMoreClick} />
 			</div>
 		);
 	}
@@ -52,6 +52,6 @@ GSuiteCancellationFeatures.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( GSuiteCancellationFeatures ) );
+})(localize(GSuiteCancellationFeatures));

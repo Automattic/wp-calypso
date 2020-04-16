@@ -35,15 +35,15 @@ class SettingsEmail extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			slug: PropTypes.string,
 			ID: PropTypes.number,
-		} ),
+		}),
 		mailChimpSaveSettings: PropTypes.func.isRequired,
 	};
 
 	onChange = () => {
-		this.setState( { pristine: false } );
+		this.setState({ pristine: false });
 	};
 
 	onSave = () => {
@@ -52,11 +52,11 @@ class SettingsEmail extends Component {
 			mailChimpSaveSettings: saveMailChimp,
 			emailSettingsSaveSettings: saveSettings,
 		} = this.props;
-		this.setState( { pristine: true } );
-		saveMailChimp( site.ID );
+		this.setState({ pristine: true });
+		saveMailChimp(site.ID);
 
-		if ( config.isEnabled( 'woocommerce/extension-settings-email-generic' ) ) {
-			saveSettings( site.ID );
+		if (config.isEnabled('woocommerce/extension-settings-email-generic')) {
+			saveSettings(site.ID);
 		}
 	};
 
@@ -64,46 +64,45 @@ class SettingsEmail extends Component {
 		const { className, isSaving, params, site, translate } = this.props;
 
 		const breadcrumbs = [
-			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
-			<span>{ translate( 'Email' ) }</span>,
+			<a href={getLink('/store/settings/:site/', site)}>{translate('Settings')}</a>,
+			<span>{translate('Email')}</span>,
 		];
 
 		const { setup } = params;
 		const startWizard = 'wizard' === setup;
 
 		return (
-			<Main className={ classNames( 'email', className ) } wideLayout>
-				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button primary onClick={ this.onSave } busy={ isSaving } disabled={ isSaving }>
-						{ translate( 'Save' ) }
+			<Main className={classNames('email', className)} wideLayout>
+				<ActionHeader breadcrumbs={breadcrumbs}>
+					<Button primary onClick={this.onSave} busy={isSaving} disabled={isSaving}>
+						{translate('Save')}
 					</Button>
 				</ActionHeader>
 				<SettingsNavigation activeSection="email" />
-				{ config.isEnabled( 'woocommerce/extension-settings-email-generic' ) && (
-					<EmailSettings siteId={ site.ID } onSettingsChange={ this.onChange } />
-				) }
+				{config.isEnabled('woocommerce/extension-settings-email-generic') && (
+					<EmailSettings siteId={site.ID} onSettingsChange={this.onChange} />
+				)}
 				<MailChimp
-					onChange={ this.onChange }
-					siteId={ site.ID }
-					site={ site }
-					startWizard={ startWizard }
+					onChange={this.onChange}
+					siteId={site.ID}
+					site={site}
+					startWizard={startWizard}
 				/>
-				<ProtectFormGuard isChanged={ ! this.state.pristine } />
+				<ProtectFormGuard isChanged={!this.state.pristine} />
 			</Main>
 		);
 	};
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
 	return {
 		site,
-		isSaving:
-			isSavingMailChimpSettings( state, site.ID ) || isSavingEmailSettings( state, site.ID ),
+		isSaving: isSavingMailChimpSettings(state, site.ID) || isSavingEmailSettings(state, site.ID),
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			mailChimpSaveSettings,
@@ -113,4 +112,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsEmail ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(SettingsEmail));

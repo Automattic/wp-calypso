@@ -13,21 +13,21 @@ import { DOMAIN_TRANSFER_UPDATE } from 'state/action-types';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( domainTransferSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(domainTransferSchema, (state = {}, action) => {
+	switch (action.type) {
 		case DOMAIN_TRANSFER_UPDATE: {
 			const { domain, options } = action;
 
 			return {
 				...state,
-				[ domain ]: options,
+				[domain]: options,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
-} );
+});

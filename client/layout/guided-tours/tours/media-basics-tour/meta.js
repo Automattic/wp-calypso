@@ -13,5 +13,5 @@ export default {
 	name: 'mediaBasicsTour',
 	version: '20170321',
 	path: '/media',
-	when: and( isDesktop, isNewUser ),
+	when: and(isDesktop, isNewUser),
 };

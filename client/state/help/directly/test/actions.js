@@ -14,41 +14,41 @@ import {
 	DIRECTLY_INITIALIZATION_ERROR,
 } from 'state/action-types';
 
-describe( 'actions', () => {
-	describe( '#askQuestion()', () => {
+describe('actions', () => {
+	describe('#askQuestion()', () => {
 		const questionText = 'To be or not to be?';
 		const name = 'Hamlet';
 		const email = 'hammie@royalfamily.dk';
 
-		test( 'returns an action with appropriate type and question parameters', () => {
-			const action = askQuestion( questionText, name, email );
-			expect( action ).to.eql( {
+		test('returns an action with appropriate type and question parameters', () => {
+			const action = askQuestion(questionText, name, email);
+			expect(action).to.eql({
 				type: DIRECTLY_ASK_QUESTION,
 				questionText,
 				name,
 				email,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#initialize()', () => {
-		test( 'returns an action with appropriate type', () => {
+	describe('#initialize()', () => {
+		test('returns an action with appropriate type', () => {
 			const action = initialize();
-			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_START } );
-		} );
-	} );
+			expect(action).to.eql({ type: DIRECTLY_INITIALIZATION_START });
+		});
+	});
 
-	describe( '#initializationCompleted()', () => {
-		test( 'returns an action with appropriate type', () => {
+	describe('#initializationCompleted()', () => {
+		test('returns an action with appropriate type', () => {
 			const action = initializationCompleted();
-			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_SUCCESS } );
-		} );
-	} );
+			expect(action).to.eql({ type: DIRECTLY_INITIALIZATION_SUCCESS });
+		});
+	});
 
-	describe( '#initializationFailed()', () => {
-		test( 'returns an action with appropriate type', () => {
+	describe('#initializationFailed()', () => {
+		test('returns an action with appropriate type', () => {
 			const action = initializationFailed();
-			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_ERROR } );
-		} );
-	} );
-} );
+			expect(action).to.eql({ type: DIRECTLY_INITIALIZATION_ERROR });
+		});
+	});
+});

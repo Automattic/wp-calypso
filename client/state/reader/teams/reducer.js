@@ -10,21 +10,21 @@ import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/reader/action-
 import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 
-export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = [], action) => {
+	switch (action.type) {
 		case READER_TEAMS_RECEIVE: {
-			if ( action.error ) {
+			if (action.error) {
 				return state;
 			}
-			return get( action, [ 'payload', 'teams' ], state );
+			return get(action, ['payload', 'teams'], state);
 		}
 	}
 
 	return state;
-} );
+});
 
-export const isRequesting = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isRequesting = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case READER_TEAMS_REQUEST:
 			return true;
 		case READER_TEAMS_RECEIVE:
@@ -32,9 +32,9 @@ export const isRequesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	isRequesting,
-} );
+});

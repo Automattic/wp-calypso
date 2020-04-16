@@ -58,66 +58,64 @@ class DeleteUser extends React.Component {
 
 	getRemoveText = () => {
 		const { translate } = this.props;
-		if ( ! this.props.user || ! this.props.user.name ) {
-			return translate( 'Remove User' );
+		if (!this.props.user || !this.props.user.name) {
+			return translate('Remove User');
 		}
 
-		return translate( 'Remove %(username)s', {
+		return translate('Remove %(username)s', {
 			args: {
 				username: this.props.user.name,
 			},
-		} );
+		});
 	};
 
 	getDeleteText = () => {
 		const { translate } = this.props;
-		if ( ! this.props.user || ! this.props.user.name ) {
-			return translate( 'Delete User' );
+		if (!this.props.user || !this.props.user.name) {
+			return translate('Delete User');
 		}
 
-		return translate( 'Delete %(username)s', {
+		return translate('Delete %(username)s', {
 			args: {
 				username: this.props.user.name,
 			},
-		} );
+		});
 	};
 
-	handleRadioChange = event => {
+	handleRadioChange = (event) => {
 		const name = event.currentTarget.name,
 			value = event.currentTarget.value,
 			updateObj = {};
 
-		updateObj[ name ] = value;
+		updateObj[name] = value;
 
-		if ( event.currentTarget.value === 'reassign' ) {
-			this.setState( { authorSelectorToggled: true } );
+		if (event.currentTarget.value === 'reassign') {
+			this.setState({ authorSelectorToggled: true });
 		} else {
-			this.setState( { authorSelectorToggled: false } );
+			this.setState({ authorSelectorToggled: false });
 		}
 
-		this.setState( updateObj );
-		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
+		this.setState(updateObj);
+		this.props.recordGoogleEvent('People', 'Selected Delete User Assignment', 'Assign', value);
 	};
 
 	getAuthorSelector = () => {
 		return (
 			<AuthorSelector
 				allowSingleUser
-				siteId={ this.props.siteId }
-				onSelect={ this.onSelectAuthor }
-				exclude={ [ this.props.user.ID ] }
-				ignoreContext={ this.reassignLabel }
+				siteId={this.props.siteId}
+				onSelect={this.onSelectAuthor}
+				exclude={[this.props.user.ID]}
+				ignoreContext={this.reassignLabel}
 			>
-				{ this.state.reassignUser ? (
+				{this.state.reassignUser ? (
 					<span>
-						<Gravatar size={ 26 } user={ this.state.reassignUser } />
-						<span className="delete-user__reassign-user-name">
-							{ this.state.reassignUser.name }
-						</span>
+						<Gravatar size={26} user={this.state.reassignUser} />
+						<span className="delete-user__reassign-user-name">{this.state.reassignUser.name}</span>
 					</span>
 				) : (
 					this.getAuthorSelectPlaceholder()
-				) }
+				)}
 			</AuthorSelector>
 		);
 	};
@@ -125,21 +123,21 @@ class DeleteUser extends React.Component {
 	getAuthorSelectPlaceholder = () => {
 		return (
 			<span className="delete-user__select-placeholder">
-				<User size={ 26 } user={ { name: /* Don't translate yet */ 'Choose an author…' } } />
+				<User size={26} user={{ name: /* Don't translate yet */ 'Choose an author…' }} />
 			</span>
 		);
 	};
 
-	setReassignLabel = label => ( this.reassignLabel = label );
+	setReassignLabel = (label) => (this.reassignLabel = label);
 
-	onSelectAuthor = author => this.setState( { reassignUser: author } );
+	onSelectAuthor = (author) => this.setState({ reassignUser: author });
 
 	removeUser = () => {
 		const { contributorType, siteId, translate, user } = this.props;
 		accept(
 			<div>
 				<p>
-					{ user && user.name
+					{user && user.name
 						? translate(
 								'If you remove %(username)s, that user will no longer be able to access this site, ' +
 									'but any content that was created by %(username)s will remain on the site.',
@@ -152,23 +150,23 @@ class DeleteUser extends React.Component {
 						: translate(
 								'If you remove this user, he or she will no longer be able to access this site, ' +
 									'but any content that was created by this user will remain on the site.'
-						  ) }
+						  )}
 				</p>
-				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
+				<p>{translate('Would you still like to remove this user?')}</p>
 			</div>,
-			accepted => {
-				if ( accepted ) {
+			(accepted) => {
+				if (accepted) {
 					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
-					if ( 'external' === contributorType ) {
+					if ('external' === contributorType) {
 						requestExternalContributorsRemoval(
 							siteId,
 							user.linked_user_ID ? user.linked_user_ID : user.ID
 						);
 					}
-					deleteUser( siteId, user.ID );
+					deleteUser(siteId, user.ID);
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -176,36 +174,36 @@ class DeleteUser extends React.Component {
 					);
 				}
 			},
-			translate( 'Remove' )
+			translate('Remove')
 		);
-		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
+		this.props.recordGoogleEvent('People', 'Clicked Remove User on Edit User Network Site');
 	};
 
-	deleteUser = event => {
+	deleteUser = (event) => {
 		event.preventDefault();
 		const { contributorType, siteId, user } = this.props;
-		if ( ! user.ID ) {
+		if (!user.ID) {
 			return;
 		}
 
 		let reassignUserId;
-		if ( this.state.reassignUser && 'reassign' === this.state.radioOption ) {
+		if (this.state.reassignUser && 'reassign' === this.state.radioOption) {
 			reassignUserId = this.state.reassignUser.ID;
 		}
-		if ( 'external' === contributorType ) {
+		if ('external' === contributorType) {
 			requestExternalContributorsRemoval(
 				siteId,
 				user.linked_user_ID ? user.linked_user_ID : user.ID
 			);
 		}
-		deleteUser( siteId, user.ID, reassignUserId );
+		deleteUser(siteId, user.ID, reassignUserId);
 
-		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
+		this.props.recordGoogleEvent('People', 'Clicked Remove User on Edit User Single Site');
 	};
 
 	getTranslatedAssignLabel = () => {
 		const { translate } = this.props;
-		return translate( 'Attribute all content to another user' );
+		return translate('Attribute all content to another user');
 	};
 
 	isDeleteButtonDisabled = () => {
@@ -216,11 +214,11 @@ class DeleteUser extends React.Component {
 
 		const { radioOption, reassignUser } = this.state;
 
-		if ( 'pending' === contributorType ) {
+		if ('pending' === contributorType) {
 			return true;
 		}
 
-		if ( 'reassign' === radioOption ) {
+		if ('reassign' === radioOption) {
 			return false === reassignUser || reassignUser.ID === userId;
 		}
 
@@ -231,11 +229,11 @@ class DeleteUser extends React.Component {
 		const { translate } = this.props;
 		return (
 			<Card className="delete-user__single-site">
-				<form onSubmit={ this.deleteUser }>
-					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
+				<form onSubmit={this.deleteUser}>
+					<FormSectionHeading>{this.getDeleteText()}</FormSectionHeading>
 
 					<p className="delete-user__explanation">
-						{ this.props.user.name
+						{this.props.user.name
 							? translate(
 									'You have the option of reassigning all content created by ' +
 										'%(username)s, or deleting the content entirely.',
@@ -248,48 +246,48 @@ class DeleteUser extends React.Component {
 							: translate(
 									'You have the option of reassigning all content created by ' +
 										'this user, or deleting the content entirely.'
-							  ) }
+							  )}
 					</p>
 
 					<FormFieldset>
-						<FormLabel ref={ this.setReassignLabel }>
+						<FormLabel ref={this.setReassignLabel}>
 							<FormRadio
 								name="radioOption"
-								onChange={ this.handleRadioChange }
+								onChange={this.handleRadioChange}
 								value="reassign"
-								checked={ 'reassign' === this.state.radioOption }
+								checked={'reassign' === this.state.radioOption}
 							/>
 
-							<span>{ this.getTranslatedAssignLabel() }</span>
+							<span>{this.getTranslatedAssignLabel()}</span>
 						</FormLabel>
 
-						{ this.state.authorSelectorToggled ? (
-							<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
-						) : null }
+						{this.state.authorSelectorToggled ? (
+							<div className="delete-user__author-selector">{this.getAuthorSelector()}</div>
+						) : null}
 
 						<FormLabel>
 							<FormRadio
 								name="radioOption"
-								onChange={ this.handleRadioChange }
+								onChange={this.handleRadioChange}
 								value="delete"
-								checked={ 'delete' === this.state.radioOption }
+								checked={'delete' === this.state.radioOption}
 							/>
 
 							<span>
-								{ this.props.user.name
-									? translate( 'Delete all content created by %(username)s', {
+								{this.props.user.name
+									? translate('Delete all content created by %(username)s', {
 											args: {
 												username: this.props.user.name ? this.props.user.name : '',
 											},
-									  } )
-									: translate( 'Delete all content created by this user' ) }
+									  })
+									: translate('Delete all content created by this user')}
 							</span>
 						</FormLabel>
 					</FormFieldset>
 
 					<FormButtonsBar>
-						<FormButton scary={ true } disabled={ this.isDeleteButtonDisabled() }>
-							{ translate( 'Delete user', { context: 'Button label' } ) }
+						<FormButton scary={true} disabled={this.isDeleteButtonDisabled()}>
+							{translate('Delete user', { context: 'Button label' })}
 						</FormButton>
 					</FormButtonsBar>
 				</form>
@@ -300,9 +298,9 @@ class DeleteUser extends React.Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
+				<Button borderless className="delete-user__remove-user" onClick={this.removeUser}>
 					<Gridicon icon="trash" />
-					<span>{ this.getRemoveText() }</span>
+					<span>{this.getRemoveText()}</span>
 				</Button>
 			</CompactCard>
 		);
@@ -310,10 +308,10 @@ class DeleteUser extends React.Component {
 
 	render() {
 		// A user should not be able to remove themself.
-		if ( ! this.props.isJetpack && this.props.user.ID === this.props.currentUser.ID ) {
+		if (!this.props.isJetpack && this.props.user.ID === this.props.currentUser.ID) {
 			return null;
 		}
-		if ( this.props.isJetpack && this.props.user.linked_user_ID === this.props.currentUser.ID ) {
+		if (this.props.isJetpack && this.props.user.linked_user_ID === this.props.currentUser.ID) {
 			return null;
 		}
 
@@ -321,21 +319,21 @@ class DeleteUser extends React.Component {
 	}
 }
 
-const getContributorType = ( externalContributors, userId ) => {
-	if ( externalContributors.data ) {
-		return externalContributors.data.includes( userId ) ? 'external' : 'standard';
+const getContributorType = (externalContributors, userId) => {
+	if (externalContributors.data) {
+		return externalContributors.data.includes(userId) ? 'external' : 'standard';
 	}
 	return 'pending';
 };
 
 export default localize(
 	connect(
-		( state, { siteId, user } ) => {
+		(state, { siteId, user }) => {
 			const userId = user && user.ID;
 			const linkedUserId = user && user.linked_user_ID;
-			const externalContributors = siteId ? requestExternalContributors( siteId ) : httpData.empty;
+			const externalContributors = siteId ? requestExternalContributors(siteId) : httpData.empty;
 			return {
-				currentUser: getCurrentUser( state ),
+				currentUser: getCurrentUser(state),
 				contributorType: getContributorType(
 					externalContributors,
 					undefined !== linkedUserId ? linkedUserId : userId
@@ -343,5 +341,5 @@ export default localize(
 			};
 		},
 		{ recordGoogleEvent }
-	)( DeleteUser )
+	)(DeleteUser)
 );

@@ -11,17 +11,17 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  */
 import { MomentContext } from './context';
 
-export const withLocalizedMoment = createHigherOrderComponent( Wrapped => {
-	return function WithLocalizedMoment( props ) {
+export const withLocalizedMoment = createHigherOrderComponent((Wrapped) => {
+	return function WithLocalizedMoment(props) {
 		return (
 			<MomentContext.Consumer>
-				{ momentState => <Wrapped { ...props } { ...momentState } /> }
+				{(momentState) => <Wrapped {...props} {...momentState} />}
 			</MomentContext.Consumer>
 		);
 	};
-}, 'WithLocalizedMoment' );
+}, 'WithLocalizedMoment');
 
 export const useLocalizedMoment = () => {
-	const { moment } = React.useContext( MomentContext );
+	const { moment } = React.useContext(MomentContext);
 	return moment;
 };

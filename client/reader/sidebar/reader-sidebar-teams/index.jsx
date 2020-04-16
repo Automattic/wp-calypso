@@ -10,10 +10,8 @@ import React, { Component } from 'react';
  */
 import ReaderSidebarTeamsListItem from './list-item';
 
-const renderItems = ( teams, path ) =>
-	map( teams, team => (
-		<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
-	) );
+const renderItems = (teams, path) =>
+	map(teams, (team) => <ReaderSidebarTeamsListItem key={team.slug} team={team} path={path} />);
 
 export class ReaderSidebarTeams extends Component {
 	static propTypes = {
@@ -22,11 +20,11 @@ export class ReaderSidebarTeams extends Component {
 	};
 
 	render() {
-		if ( ! this.props.teams ) {
+		if (!this.props.teams) {
 			return null;
 		}
 
-		return <div>{ renderItems( this.props.teams, this.props.path ) }</div>;
+		return <div>{renderItems(this.props.teams, this.props.path)}</div>;
 	}
 }
 

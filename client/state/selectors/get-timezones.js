@@ -24,15 +24,15 @@ import getTimezonesLabel from 'state/selectors/get-timezones-label';
  * @param  {object} state - Global state tree
  * @returns {Array} Timezones arrays
  */
-export default function getTimezones( state ) {
-	const continents = toPairs( get( state, 'timezones.byContinents', null ) );
+export default function getTimezones(state) {
+	const continents = toPairs(get(state, 'timezones.byContinents', null));
 
-	if ( ! continents ) {
+	if (!continents) {
 		return null;
 	}
 
-	return map( continents, zones => [
-		zones[ 0 ],
-		map( zones[ 1 ], value => [ value, getTimezonesLabel( state, value ) ] ),
-	] );
+	return map(continents, (zones) => [
+		zones[0],
+		map(zones[1], (value) => [value, getTimezonesLabel(state, value)]),
+	]);
 }

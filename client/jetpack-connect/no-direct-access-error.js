@@ -29,8 +29,8 @@ class NoDirectAccessError extends PureComponent {
 			<Main className="jetpack-connect__main-error">
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'Oops, this URL should not be accessed directly' ) }
-					action={ translate( 'Get back to Jetpack Connect screen' ) }
+					title={translate('Oops, this URL should not be accessed directly')}
+					action={translate('Get back to Jetpack Connect screen')}
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
@@ -43,4 +43,4 @@ class NoDirectAccessError extends PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( NoDirectAccessError ) );
+export default connect(null, { recordTracksEvent })(localize(NoDirectAccessError));

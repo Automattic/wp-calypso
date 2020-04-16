@@ -20,29 +20,29 @@ import 'state/themes/init';
  * @param  {boolean}  purchased       Whether the theme has been purchased prior to activation
  * @returns {Function}                 Action thunk
  */
-export function themeActivated( themeStylesheet, siteId, source = 'unknown', purchased = false ) {
-	const themeActivatedThunk = ( dispatch, getState ) => {
+export function themeActivated(themeStylesheet, siteId, source = 'unknown', purchased = false) {
+	const themeActivatedThunk = (dispatch, getState) => {
 		const action = {
 			type: THEME_ACTIVATE_SUCCESS,
 			themeStylesheet,
 			siteId,
 		};
-		const previousThemeId = getActiveTheme( getState(), siteId );
-		const query = getLastThemeQuery( getState(), siteId );
-		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
-		const search_term = search_taxonomies + ( query.search || '' );
-		const trackThemeActivation = recordTracksEvent( 'calypso_themeshowcase_theme_activate', {
-			theme: getThemeIdFromStylesheet( themeStylesheet ),
+		const previousThemeId = getActiveTheme(getState(), siteId);
+		const query = getLastThemeQuery(getState(), siteId);
+		const search_taxonomies = prependThemeFilterKeys(getState(), query.filter);
+		const search_term = search_taxonomies + (query.search || '');
+		const trackThemeActivation = recordTracksEvent('calypso_themeshowcase_theme_activate', {
+			theme: getThemeIdFromStylesheet(themeStylesheet),
 			previous_theme: previousThemeId,
 			source: source,
 			purchased: purchased,
 			search_term: search_term || null,
 			search_taxonomies,
-		} );
-		dispatch( withAnalytics( trackThemeActivation, action ) );
+		});
+		dispatch(withAnalytics(trackThemeActivation, action));
 
 		// Update pages in case the front page was updated on theme switch.
-		dispatch( requestSitePosts( siteId, { type: 'page' } ) );
+		dispatch(requestSitePosts(siteId, { type: 'page' }));
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
 }

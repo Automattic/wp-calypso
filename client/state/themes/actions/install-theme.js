@@ -7,7 +7,11 @@ import { endsWith } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { THEME_INSTALL, THEME_INSTALL_SUCCESS, THEME_INSTALL_FAILURE } from 'state/themes/action-types';
+import {
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE,
+} from 'state/themes/action-types';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { getWpcomParentThemeId } from 'state/themes/selectors';
 
@@ -22,43 +26,40 @@ import 'state/themes/init';
  * @param  {string}   siteId  Jetpack Site ID
  * @returns {Function}         Action thunk
  */
-export function installTheme( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		dispatch( {
+export function installTheme(themeId, siteId) {
+	return (dispatch, getState) => {
+		dispatch({
 			type: THEME_INSTALL,
 			siteId,
 			themeId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.installThemeOnJetpack( siteId, themeId )
-			.then( theme => {
-				dispatch( receiveTheme( theme, siteId ) );
-				dispatch( {
+			.installThemeOnJetpack(siteId, themeId)
+			.then((theme) => {
+				dispatch(receiveTheme(theme, siteId));
+				dispatch({
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
 					themeId,
-				} );
+				});
 
 				// Install parent theme if theme requires one
-				if ( endsWith( themeId, '-wpcom' ) ) {
-					const parentThemeId = getWpcomParentThemeId(
-						getState(),
-						themeId.replace( '-wpcom', '' )
-					);
-					if ( parentThemeId ) {
-						return dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+				if (endsWith(themeId, '-wpcom')) {
+					const parentThemeId = getWpcomParentThemeId(getState(), themeId.replace('-wpcom', ''));
+					if (parentThemeId) {
+						return dispatch(installTheme(parentThemeId + '-wpcom', siteId));
 					}
 				}
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: THEME_INSTALL_FAILURE,
 					siteId,
 					themeId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

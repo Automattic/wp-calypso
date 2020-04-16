@@ -34,17 +34,17 @@ class SplitButtonExample extends React.PureComponent {
 		compactButtons: false,
 	};
 
-	toggleButtons = () => this.setState( { compactButtons: ! this.state.compactButtons } );
+	toggleButtons = () => this.setState({ compactButtons: !this.state.compactButtons });
 
 	render() {
 		const compact = { compact: this.state.compactButtons };
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>
-					{ this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons' }
+				<a className="docs__design-toggle button" onClick={this.toggleButtons}>
+					{this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons'}
 				</a>
 				<Card>
-					{ map(
+					{map(
 						[
 							[
 								{ label: 'Split Button', icon: 'history' },
@@ -79,20 +79,20 @@ class SplitButtonExample extends React.PureComponent {
 								{ icon: 'globe', primary: true, disabled: true, scary: true },
 							],
 						],
-						( row, rowIndex ) => (
-							<div className="docs__design-button-row" key={ `split-button-row-${ rowIndex }` }>
-								{ map( row, ( item, itemIndex ) => (
+						(row, rowIndex) => (
+							<div className="docs__design-button-row" key={`split-button-row-${rowIndex}`}>
+								{map(row, (item, itemIndex) => (
 									<SplitButton
-										key={ `split-button-item-${ rowIndex }-${ itemIndex }` }
-										{ ...item }
-										{ ...compact }
+										key={`split-button-item-${rowIndex}-${itemIndex}`}
+										{...item}
+										{...compact}
 									>
-										{ popoverItems }
+										{popoverItems}
 									</SplitButton>
-								) ) }
+								))}
 							</div>
 						)
-					) }
+					)}
 				</Card>
 			</div>
 		);

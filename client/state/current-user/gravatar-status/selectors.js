@@ -10,8 +10,8 @@ import { get } from 'lodash';
  * @param {object} state - The state
  * @returns {boolean} - If uploading a Gravatar
  */
-export function isCurrentUserUploadingGravatar( state ) {
-	return get( state, 'currentUser.gravatarStatus.isUploading', false );
+export function isCurrentUserUploadingGravatar(state) {
+	return get(state, 'currentUser.gravatarStatus.isUploading', false);
 }
 
 /**
@@ -22,9 +22,8 @@ export function isCurrentUserUploadingGravatar( state ) {
  * @param {number} userId - The ID of the user we're checking
  * @returns {string|boolean} - The temp Gravatar string, or false
  */
-export function getUserTempGravatar( state, userId ) {
+export function getUserTempGravatar(state, userId) {
 	return (
-		state.currentUser.id === userId &&
-		get( state, 'currentUser.gravatarStatus.tempImage.src', false )
+		state.currentUser.id === userId && get(state, 'currentUser.gravatarStatus.tempImage.src', false)
 	);
 }

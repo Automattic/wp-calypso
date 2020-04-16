@@ -30,12 +30,12 @@ export default class ReadmeViewer extends Component {
 		const { readmeFilePath } = this.props;
 
 		try {
-			const res = await fetch( `/devdocs/service/content?path=${ readmeFilePath }` );
-			if ( res.ok ) {
+			const res = await fetch(`/devdocs/service/content?path=${readmeFilePath}`);
+			if (res.ok) {
 				const text = await res.text();
-				this.setState( { readme: htmlToReactParser.parse( text ) } );
+				this.setState({ readme: htmlToReactParser.parse(text) });
 			}
-		} catch ( err ) {
+		} catch (err) {
 			// Do nothing.
 		}
 	};
@@ -44,8 +44,8 @@ export default class ReadmeViewer extends Component {
 		this.makeRequest();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.readmeFilePath !== this.props.readmeFilePath ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.readmeFilePath !== this.props.readmeFilePath) {
 			this.makeRequest();
 		}
 	}
@@ -55,7 +55,7 @@ export default class ReadmeViewer extends Component {
 		const editLink = (
 			<a
 				className="readme-viewer__doc-edit-link devdocs__doc-edit-link"
-				href={ `https://github.com/Automattic/wp-calypso/edit/master${ readmeFilePath }` }
+				href={`https://github.com/Automattic/wp-calypso/edit/master${readmeFilePath}`}
 			>
 				Improve this document on GitHub
 			</a>
@@ -63,10 +63,10 @@ export default class ReadmeViewer extends Component {
 
 		return this.props.readmeFilePath ? (
 			<div className="readme-viewer__wrapper devdocs__doc-content">
-				{ this.state.readme && showEditLink && editLink }
-				{ this.state.readme || (
+				{this.state.readme && showEditLink && editLink}
+				{this.state.readme || (
 					<div className="readme-viewer__not-available">No documentation available.</div>
-				) }
+				)}
 			</div>
 		) : null;
 	}

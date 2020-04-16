@@ -54,11 +54,11 @@ export class Banner extends Component {
 		icon: PropTypes.string,
 		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
-		list: PropTypes.arrayOf( PropTypes.string ),
+		list: PropTypes.arrayOf(PropTypes.string),
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
-		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		price: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
@@ -92,12 +92,12 @@ export class Banner extends Component {
 	getHref() {
 		const { canUserUpgrade, feature, href, plan, siteSlug, customerType } = this.props;
 
-		if ( ! href && siteSlug && canUserUpgrade ) {
-			if ( customerType ) {
-				return `/plans/${ siteSlug }?customerType=${ customerType }`;
+		if (!href && siteSlug && canUserUpgrade) {
+			if (customerType) {
+				return `/plans/${siteSlug}?customerType=${customerType}`;
 			}
-			const baseUrl = `/plans/${ siteSlug }`;
-			if ( feature || plan ) {
+			const baseUrl = `/plans/${siteSlug}`;
+			if (feature || plan) {
 				return addQueryArgs(
 					{
 						feature,
@@ -111,46 +111,46 @@ export class Banner extends Component {
 		return href;
 	}
 
-	handleClick = e => {
+	handleClick = (e) => {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
-		if ( event && tracksClickName ) {
-			this.props.recordTracksEvent( tracksClickName, {
+		if (event && tracksClickName) {
+			this.props.recordTracksEvent(tracksClickName, {
 				cta_name: event,
 				cta_feature: feature,
 				cta_size: compact ? 'compact' : 'regular',
 				...tracksClickProperties,
-			} );
+			});
 		}
 
-		onClick( e );
+		onClick(e);
 	};
 
-	handleDismiss = e => {
+	handleDismiss = (e) => {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
-		if ( event && tracksDismissName ) {
-			this.props.recordTracksEvent( tracksDismissName, {
+		if (event && tracksDismissName) {
+			this.props.recordTracksEvent(tracksDismissName, {
 				cta_name: event,
 				cta_feature: feature,
 				...tracksDismissProperties,
-			} );
+			});
 		}
 
-		onDismiss( e );
+		onDismiss(e);
 	};
 
 	getIcon() {
 		const { icon, jetpack, showIcon } = this.props;
 
-		if ( ! showIcon ) {
+		if (!showIcon) {
 			return;
 		}
 
-		if ( jetpack ) {
+		if (jetpack) {
 			return (
 				<div className="banner__icon-plan">
-					<JetpackLogo size={ 32 } />
+					<JetpackLogo size={32} />
 				</div>
 			);
 		}
@@ -158,10 +158,10 @@ export class Banner extends Component {
 		return (
 			<div className="banner__icons">
 				<div className="banner__icon">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
+					<Gridicon icon={icon || 'star'} size={18} />
 				</div>
 				<div className="banner__icon-circle">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
+					<Gridicon icon={icon || 'star'} size={18} />
 				</div>
 			</div>
 		);
@@ -183,62 +183,62 @@ export class Banner extends Component {
 			tracksImpressionProperties,
 		} = this.props;
 
-		const prices = Array.isArray( price ) ? price : [ price ];
+		const prices = Array.isArray(price) ? price : [price];
 
 		return (
 			<div className="banner__content">
-				{ tracksImpressionName && event && (
+				{tracksImpressionName && event && (
 					<TrackComponentView
-						eventName={ tracksImpressionName }
-						eventProperties={ {
+						eventName={tracksImpressionName}
+						eventProperties={{
 							cta_name: event,
 							cta_feature: feature,
 							cta_size: compact ? 'compact' : 'regular',
 							...tracksImpressionProperties,
-						} }
+						}}
 					/>
-				) }
+				)}
 				<div className="banner__info">
-					<div className="banner__title">{ title }</div>
-					{ description && <div className="banner__description">{ description }</div> }
-					{ size( list ) > 0 && (
+					<div className="banner__title">{title}</div>
+					{description && <div className="banner__description">{description}</div>}
+					{size(list) > 0 && (
 						<ul className="banner__list">
-							{ list.map( ( item, key ) => (
-								<li key={ key }>
-									<Gridicon icon="checkmark" size={ 18 } />
-									{ item }
+							{list.map((item, key) => (
+								<li key={key}>
+									<Gridicon icon="checkmark" size={18} />
+									{item}
 								</li>
-							) ) }
+							))}
 						</ul>
-					) }
+					)}
 				</div>
-				{ ( callToAction || price ) && (
+				{(callToAction || price) && (
 					<div className="banner__action">
-						{ size( prices ) === 1 && <PlanPrice rawPrice={ prices[ 0 ] } /> }
-						{ size( prices ) === 2 && (
+						{size(prices) === 1 && <PlanPrice rawPrice={prices[0]} />}
+						{size(prices) === 2 && (
 							<div className="banner__prices">
-								<PlanPrice rawPrice={ prices[ 0 ] } original />
-								<PlanPrice rawPrice={ prices[ 1 ] } discounted />
+								<PlanPrice rawPrice={prices[0]} original />
+								<PlanPrice rawPrice={prices[1]} discounted />
 							</div>
-						) }
-						{ callToAction &&
-							( forceHref ? (
-								<Button compact primary target={ target }>
-									{ callToAction }
+						)}
+						{callToAction &&
+							(forceHref ? (
+								<Button compact primary target={target}>
+									{callToAction}
 								</Button>
 							) : (
 								<Button
 									compact
-									href={ this.getHref() }
-									onClick={ this.handleClick }
+									href={this.getHref()}
+									onClick={this.handleClick}
 									primary
-									target={ target }
+									target={target}
 								>
-									{ callToAction }
+									{callToAction}
 								</Button>
-							) ) }
+							))}
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -258,7 +258,7 @@ export class Banner extends Component {
 		} = this.props;
 
 		// No Banners for WP for Teams sites.
-		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (config.isEnabled('signup/wpforteams') && this.props.isSiteWPForTeams) {
 			return null;
 		}
 
@@ -266,50 +266,50 @@ export class Banner extends Component {
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },
-			{ 'is-upgrade-blogger': plan && isBloggerPlan( plan ) },
-			{ 'is-upgrade-personal': plan && isPersonalPlan( plan ) },
-			{ 'is-upgrade-premium': plan && isPremiumPlan( plan ) },
-			{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
-			{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
-			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
-			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
+			{ 'is-upgrade-blogger': plan && isBloggerPlan(plan) },
+			{ 'is-upgrade-personal': plan && isPersonalPlan(plan) },
+			{ 'is-upgrade-premium': plan && isPremiumPlan(plan) },
+			{ 'is-upgrade-business': plan && isBusinessPlan(plan) },
+			{ 'is-upgrade-ecommerce': plan && isEcommercePlan(plan) },
+			{ 'is-jetpack-plan': plan && planMatches(plan, { group: GROUP_JETPACK }) },
+			{ 'is-wpcom-plan': plan && planMatches(plan, { group: GROUP_WPCOM }) },
 			{ 'is-compact': compact },
 			{ 'is-dismissible': dismissPreferenceName },
 			{ 'is-horizontal': horizontal },
 			{ 'is-jetpack': jetpack }
 		);
 
-		if ( dismissPreferenceName ) {
+		if (dismissPreferenceName) {
 			return (
 				<DismissibleCard
-					className={ classes }
-					preferenceName={ dismissPreferenceName }
-					temporary={ dismissTemporary }
-					onClick={ this.handleDismiss }
+					className={classes}
+					preferenceName={dismissPreferenceName}
+					temporary={dismissTemporary}
+					onClick={this.handleDismiss}
 				>
-					{ this.getIcon() }
-					{ this.getContent() }
+					{this.getIcon()}
+					{this.getContent()}
 				</DismissibleCard>
 			);
 		}
 
 		return (
 			<Card
-				className={ classes }
-				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
-				onClick={ callToAction && ! forceHref ? null : this.handleClick }
+				className={classes}
+				href={(disableHref || callToAction) && !forceHref ? null : this.getHref()}
+				onClick={callToAction && !forceHref ? null : this.handleClick}
 			>
-				{ this.getIcon() }
-				{ this.getContent() }
+				{this.getIcon()}
+				{this.getContent()}
 			</Card>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
-	canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-	isSiteWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
-} );
+const mapStateToProps = (state, ownProps) => ({
+	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug(state),
+	canUserUpgrade: canCurrentUser(state, getSelectedSiteId(state), 'manage_options'),
+	isSiteWPForTeams: isSiteWPForTeams(state, getSelectedSiteId(state)),
+});
 
-export default connect( mapStateToProps, { recordTracksEvent } )( Banner );
+export default connect(mapStateToProps, { recordTracksEvent })(Banner);

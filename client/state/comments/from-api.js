@@ -3,11 +3,11 @@
  */
 import { pickBy } from 'lodash';
 
-export const toAuthor = ( { avatar_URL, email, ID, name } ) => {
-	if ( ID > 0 ) {
+export const toAuthor = ({ avatar_URL, email, ID, name }) => {
+	if (ID > 0) {
 		return {
 			kind: 'known',
-			userId: parseInt( ID, 10 ),
+			userId: parseInt(ID, 10),
 		};
 	}
 
@@ -19,7 +19,7 @@ export const toAuthor = ( { avatar_URL, email, ID, name } ) => {
 	);
 };
 
-export const toWpcomUser = author =>
+export const toWpcomUser = (author) =>
 	pickBy(
 		{
 			ID: author.ID,
@@ -30,7 +30,7 @@ export const toWpcomUser = author =>
 			primary_blog_url: author.URL,
 			username: author.login,
 		},
-		a => !! a
+		(a) => !!a
 	);
 
 export const validStatusValues = {
@@ -48,31 +48,31 @@ export const validStatusValues = {
  * @param {object} data raw comment data from API
  * @returns {object} comment and WordPress.com user if available
  */
-export const fromApi = ( siteId, data ) => {
+export const fromApi = (siteId, data) => {
 	try {
 		return Object.assign(
 			{
 				comment: Object.assign(
 					{
 						state: 'loaded',
-						author: toAuthor( data.author ),
-						commentId: parseInt( data.ID, 10 ),
+						author: toAuthor(data.author),
+						commentId: parseInt(data.ID, 10),
 						content: data.content,
-						createdAt: Date.parse( data.date ),
-						isLiked: Boolean( data.i_like ),
+						createdAt: Date.parse(data.date),
+						isLiked: Boolean(data.i_like),
 					},
 					data.parent &&
-						data.parent.type === 'comment' && { parentId: parseInt( data.parent.ID, 10 ) },
+						data.parent.type === 'comment' && { parentId: parseInt(data.parent.ID, 10) },
 					{
-						postId: parseInt( data.post.ID, 10 ),
+						postId: parseInt(data.post.ID, 10),
 						siteId,
-						status: validStatusValues[ data.status ],
+						status: validStatusValues[data.status],
 					}
 				),
 			},
-			data.author.ID > 0 && { user: toWpcomUser( data.author ) }
+			data.author.ID > 0 && { user: toWpcomUser(data.author) }
 		);
-	} catch ( e ) {
+	} catch (e) {
 		return {
 			state: 'error',
 			error: 'invalid data structure',

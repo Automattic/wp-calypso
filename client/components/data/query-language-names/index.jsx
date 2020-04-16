@@ -14,9 +14,9 @@ export default function QueryLanguageNames() {
 	const dispatch = useDispatch();
 	const { localeSlug } = useTranslate();
 
-	useEffect( () => {
-		dispatch( requestLanguageNames() );
-	}, [ dispatch, localeSlug ] );
+	useEffect(() => {
+		dispatch(requestLanguageNames());
+	}, [dispatch, localeSlug]);
 
 	return null;
 }

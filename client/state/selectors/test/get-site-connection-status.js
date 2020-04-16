@@ -8,24 +8,24 @@ import { expect } from 'chai';
  */
 import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
 
-describe( 'getSiteConnectionStatus()', () => {
+describe('getSiteConnectionStatus()', () => {
 	const siteId = 2916284;
 
-	test( 'should return connection status for a known site', () => {
+	test('should return connection status for a known site', () => {
 		const state = {
 			sites: {
 				connection: {
 					items: {
-						[ siteId ]: true,
+						[siteId]: true,
 					},
 				},
 			},
 		};
-		const output = getSiteConnectionStatus( state, siteId );
-		expect( output ).to.be.true;
-	} );
+		const output = getSiteConnectionStatus(state, siteId);
+		expect(output).to.be.true;
+	});
 
-	test( 'should return null for an unknown site', () => {
+	test('should return null for an unknown site', () => {
 		const state = {
 			sites: {
 				connection: {
@@ -35,7 +35,7 @@ describe( 'getSiteConnectionStatus()', () => {
 				},
 			},
 		};
-		const output = getSiteConnectionStatus( state, siteId );
-		expect( output ).to.be.null;
-	} );
-} );
+		const output = getSiteConnectionStatus(state, siteId);
+		expect(output).to.be.null;
+	});
+});

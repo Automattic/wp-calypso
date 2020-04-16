@@ -27,12 +27,12 @@ class BlogSettingsHeader extends PureComponent {
 	state = { isExpanded: false };
 
 	toggleExpanded = () => {
-		if ( this.props.disableToggle ) {
+		if (this.props.disableToggle) {
 			return;
 		}
 
-		const isExpanded = ! this.state.isExpanded;
-		this.setState( { isExpanded } );
+		const isExpanded = !this.state.isExpanded;
+		this.setState({ isExpanded });
 
 		gaRecordEvent(
 			'Notification Settings',
@@ -45,62 +45,52 @@ class BlogSettingsHeader extends PureComponent {
 
 	getLegend = () => {
 		const { settings } = this.props;
-		const filteredSettings = omit( settings, [
+		const filteredSettings = omit(settings, [
 			'blog_id',
 			'devices',
 			'email.achievement',
 			'email.store_order',
 			'email.scheduled_publicize',
 			'timeline.store_order',
-		] );
+		]);
 		// Ignore the device_id of each device found.
-		const devicesSettings = map( settings.devices, device => omit( device, 'device_id' ) );
+		const devicesSettings = map(settings.devices, (device) => omit(device, 'device_id'));
 		const { true: onCount, false: offCount } = countBy(
 			// Here we're flattening the values of both sets of settings
 			// as both sets have two 'streams' of settings: 'email' and 'timeline'
-			[
-				...flatten( map( filteredSettings, values ) ),
-				...flatten( map( devicesSettings, values ) ),
-			]
+			[...flatten(map(filteredSettings, values)), ...flatten(map(devicesSettings, values))]
 		);
 
-		if ( ! onCount ) {
-			return this.props.translate( 'No notifications' );
+		if (!onCount) {
+			return this.props.translate('No notifications');
 		}
 
-		if ( ! offCount ) {
-			return this.props.translate( 'All notifications' );
+		if (!offCount) {
+			return this.props.translate('All notifications');
 		}
 
-		return this.props.translate( 'Some notifications' );
+		return this.props.translate('Some notifications');
 	};
 
 	render() {
 		const { site } = this.props;
 
 		return (
-			<header
-				key={ site.wpcom_url }
-				className="blogs-settings__header"
-				onClick={ this.toggleExpanded }
-			>
-				<SiteInfo site={ site } indicator={ false } />
+			<header key={site.wpcom_url} className="blogs-settings__header" onClick={this.toggleExpanded}>
+				<SiteInfo site={site} indicator={false} />
 				<div className="blogs-settings__header-legend">
-					<em>{ this.getLegend() }</em>
+					<em>{this.getLegend()}</em>
 				</div>
-				{ ! this.props.disableToggle ? (
+				{!this.props.disableToggle ? (
 					<div className="blogs-settings__header-expand">
 						<a>
-							<Gridicon
-								icon={ this.state.isExpanded ? 'chevron-up' : 'chevron-down' }
-								size={ 18 }
-							/>
+							<Gridicon icon={this.state.isExpanded ? 'chevron-up' : 'chevron-down'} size={18} />
 						</a>
 					</div>
-				) : null }
+				) : null}
 			</header>
 		);
 	}
 }
 
-export default localize( BlogSettingsHeader );
+export default localize(BlogSettingsHeader);

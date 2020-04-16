@@ -8,18 +8,18 @@ import { expect } from 'chai';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
-describe( 'KeyboardShortcuts', () => {
-	test( 'should emit events to subscribers', () => {
+describe('KeyboardShortcuts', () => {
+	test('should emit events to subscribers', () => {
 		let arbitraryData = 'hello, world?',
 			eventResult = '',
-			handleEvent = function( data ) {
+			handleEvent = function (data) {
 				eventResult = data;
 			};
 
-		KeyboardShortcuts.on( 'shortcut-event', handleEvent );
-		KeyboardShortcuts.emitEvent( 'shortcut-event', arbitraryData );
-		KeyboardShortcuts.off( 'shortcut-event', handleEvent );
+		KeyboardShortcuts.on('shortcut-event', handleEvent);
+		KeyboardShortcuts.emitEvent('shortcut-event', arbitraryData);
+		KeyboardShortcuts.off('shortcut-event', handleEvent);
 
-		expect( eventResult ).to.equal( arbitraryData );
-	} );
-} );
+		expect(eventResult).to.equal(arbitraryData);
+	});
+});

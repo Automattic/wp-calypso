@@ -24,26 +24,26 @@ class Sites extends Component {
 		siteBasePath: PropTypes.string.isRequired,
 	};
 
-	filterSites = site => {
+	filterSites = (site) => {
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
-		if ( /^\/domains/.test( path ) ) {
-			return ! site.jetpack || site.options.is_automated_transfer;
+		if (/^\/domains/.test(path)) {
+			return !site.jetpack || site.options.is_automated_transfer;
 		}
 
 		// Plans are for not Jetpack or Jetpack upgradeable sites.
-		if ( /^\/plans/.test( path ) ) {
-			return ! site.jetpack || site.isSiteUpgradeable;
+		if (/^\/plans/.test(path)) {
+			return !site.jetpack || site.isSiteUpgradeable;
 		}
 
 		// No support for Gutenberg on VIP.
-		if ( /^\/block-editor/.test( path ) ) {
-			return ! site.is_vip;
+		if (/^\/block-editor/.test(path)) {
+			return !site.is_vip;
 		}
 
-		if ( /^\/hosting-config/.test( path ) ) {
-			if ( ! site.capabilities.view_hosting ) {
+		if (/^\/hosting-config/.test(path)) {
+			if (!site.capabilities.view_hosting) {
 				return false;
 			}
 
@@ -52,89 +52,85 @@ class Sites extends Component {
 		}
 
 		// Supported on Simple and Atomic Sites
-		if ( /^\/home/.test( path ) ) {
-			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
+		if (/^\/home/.test(path)) {
+			return !site.is_vip && !(site.jetpack && !site.options.is_automated_transfer);
 		}
 
 		return site;
 	};
 
 	getHeaderText() {
-		if ( this.props.getSiteSelectionHeaderText ) {
+		if (this.props.getSiteSelectionHeaderText) {
 			return this.props.getSiteSelectionHeaderText();
 		}
 
-		let path = this.props.siteBasePath.split( '?' )[ 0 ].split( '/' )[ 1 ];
-		if ( typeof path !== 'undefined' ) {
+		let path = this.props.siteBasePath.split('?')[0].split('/')[1];
+		if (typeof path !== 'undefined') {
 			path = path.toLowerCase();
 		}
 
 		const { translate } = this.props;
 
 		// nicer wording for editor routes
-		const editorRouters = [ 'page', 'post', 'edit', 'block-editor' ];
-		if ( editorRouters.includes( path ) ) {
-			return translate( 'Select a site to start writing' );
+		const editorRouters = ['page', 'post', 'edit', 'block-editor'];
+		if (editorRouters.includes(path)) {
+			return translate('Select a site to start writing');
 		}
 
-		switch ( path ) {
+		switch (path) {
 			case 'activity-log':
-				path = translate( 'Activity' );
+				path = translate('Activity');
 				break;
 			case 'stats':
-				path = translate( 'Insights' );
+				path = translate('Insights');
 				break;
 			case 'plans':
-				path = translate( 'Plans' );
+				path = translate('Plans');
 				break;
 			case 'media':
-				path = translate( 'Media' );
+				path = translate('Media');
 				break;
 			case 'sharing':
-				path = translate( 'Sharing' );
+				path = translate('Sharing');
 				break;
 			case 'people':
-				path = translate( 'People' );
+				path = translate('People');
 				break;
 			case 'domains':
-				path = translate( 'Domains' );
+				path = translate('Domains');
 				break;
 			case 'settings':
-				path = translate( 'Settings' );
+				path = translate('Settings');
 				break;
 			case 'home':
-				path = translate( 'My Home' );
+				path = translate('My Home');
 				break;
 			case 'hosting-config':
-				path = translate( 'Hosting Configuration' );
+				path = translate('Hosting Configuration');
 				break;
 		}
 
-		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
+		return translate('Select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: { path },
 			components: {
 				strong: <strong />,
 			},
-		} );
+		});
 	}
 
 	render() {
 		return (
 			<Main className="sites">
 				<div className="sites__select-header">
-					<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
-					{ this.props.fromSite && <VisitSite siteSlug={ this.props.fromSite } /> }
+					<h2 className="sites__select-heading">{this.getHeaderText()}</h2>
+					{this.props.fromSite && <VisitSite siteSlug={this.props.fromSite} />}
 				</div>
 				<Card className="sites__select-wrapper">
-					<SiteSelector
-						filter={ this.filterSites }
-						siteBasePath={ this.props.siteBasePath }
-						groups
-					/>
+					<SiteSelector filter={this.filterSites} siteBasePath={this.props.siteBasePath} groups />
 				</Card>
 			</Main>
 		);
 	}
 }
 
-export default localize( Sites );
+export default localize(Sites);

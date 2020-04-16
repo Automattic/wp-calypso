@@ -14,7 +14,7 @@ import { Card } from '@automattic/components';
 import { isExternal } from 'lib/url';
 import FollowButton from 'blocks/follow-button/button';
 
-const ListStreamHeader = ( {
+const ListStreamHeader = ({
 	isPlaceholder,
 	title,
 	description,
@@ -24,40 +24,40 @@ const ListStreamHeader = ( {
 	following,
 	onFollowToggle,
 	translate,
-} ) => {
-	const classes = classnames( {
+}) => {
+	const classes = classnames({
 		'list-stream__header': true,
 		'is-placeholder': isPlaceholder,
-		'has-description': !! description,
-	} );
+		'has-description': !!description,
+	});
 
 	return (
-		<Card className={ classes }>
+		<Card className={classes}>
 			<span className="list-stream__header-icon">
-				<Gridicon icon="list-unordered" size={ 24 } />
+				<Gridicon icon="list-unordered" size={24} />
 			</span>
 
 			<div className="list-stream__header-details">
-				<h1 className="list-stream__header-title">{ title }</h1>
-				{ description && <p className="list-stream__header-description">{ description }</p> }
+				<h1 className="list-stream__header-title">{title}</h1>
+				{description && <p className="list-stream__header-description">{description}</p>}
 			</div>
 
-			{ showFollow && (
+			{showFollow && (
 				<div className="list-stream__header-follow">
-					<FollowButton iconSize={ 24 } following={ following } onFollowToggle={ onFollowToggle } />
+					<FollowButton iconSize={24} following={following} onFollowToggle={onFollowToggle} />
 				</div>
-			) }
+			)}
 
-			{ showEdit && editUrl && (
+			{showEdit && editUrl && (
 				<div className="list-stream__header-edit">
-					<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
+					<a href={editUrl} rel={isExternal(editUrl) ? 'external' : ''}>
 						<span className="list-stream__header-action-icon">
-							<Gridicon icon="cog" size={ 24 } />
+							<Gridicon icon="cog" size={24} />
 						</span>
-						<span className="list-stream__header-action-label">{ translate( 'Edit' ) }</span>
+						<span className="list-stream__header-action-label">{translate('Edit')}</span>
 					</a>
 				</div>
-			) }
+			)}
 		</Card>
 	);
 };
@@ -73,4 +73,4 @@ ListStreamHeader.propTypes = {
 	onFollowToggle: PropTypes.func,
 };
 
-export default localize( ListStreamHeader );
+export default localize(ListStreamHeader);

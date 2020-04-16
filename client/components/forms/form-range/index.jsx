@@ -26,13 +26,13 @@ export default class extends React.Component {
 	rangeRef = React.createRef();
 
 	componentDidMount() {
-		if ( this.shouldNormalizeChange() ) {
-			this.rangeRef.current.addEventListener( 'change', this.onChange );
+		if (this.shouldNormalizeChange()) {
+			this.rangeRef.current.addEventListener('change', this.onChange);
 		}
 	}
 
 	componentWillUnmount() {
-		this.rangeRef.current.removeEventListener( 'change', this.onChange );
+		this.rangeRef.current.removeEventListener('change', this.onChange);
 	}
 
 	shouldNormalizeChange = () => {
@@ -41,22 +41,22 @@ export default class extends React.Component {
 		// Internet Explorer doesn't trigger the normal "input" event as the
 		// user drags the thumb. Instead, it emits the equivalent event on
 		// "change", so we watch the change event and emit a simulated event.
-		return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
+		return -1 !== ua.indexOf('MSIE') || -1 !== ua.indexOf('Trident/');
 	};
 
-	onChange = event => {
-		this.props.onChange( event );
+	onChange = (event) => {
+		this.props.onChange(event);
 	};
 
 	render() {
-		const classes = classnames( this.props.className, 'form-range' );
+		const classes = classnames(this.props.className, 'form-range');
 
 		return (
 			<input
-				ref={ this.rangeRef }
+				ref={this.rangeRef}
 				type="range"
-				className={ classes }
-				{ ...omit( this.props, 'className' ) }
+				className={classes}
+				{...omit(this.props, 'className')}
 			/>
 		);
 	}

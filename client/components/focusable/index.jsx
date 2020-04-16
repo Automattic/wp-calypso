@@ -16,14 +16,14 @@ class Focusable extends Component {
 		onKeyDown: PropTypes.func,
 	};
 
-	onKeyDown = event => {
+	onKeyDown = (event) => {
 		const { onClick, onKeyDown } = this.props;
-		if ( onClick && ( event.key === 'Enter' || event.key === ' ' ) ) {
+		if (onClick && (event.key === 'Enter' || event.key === ' ')) {
 			event.preventDefault();
-			onClick( event );
+			onClick(event);
 		}
-		if ( onKeyDown ) {
-			onKeyDown( event );
+		if (onKeyDown) {
+			onKeyDown(event);
 		}
 	};
 
@@ -31,11 +31,11 @@ class Focusable extends Component {
 		const { className, ...passProps } = this.props;
 		return (
 			<div
-				{ ...passProps }
-				className={ classNames( 'focusable', className ) }
+				{...passProps}
+				className={classNames('focusable', className)}
 				role="button"
 				tabIndex="0"
-				onKeyDown={ this.onKeyDown }
+				onKeyDown={this.onKeyDown}
 			/>
 		);
 	}

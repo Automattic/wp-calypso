@@ -21,7 +21,7 @@ import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-d
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import SupportInfo from 'components/support-info';
 
-const Subscriptions = ( {
+const Subscriptions = ({
 	fields,
 	handleAutosavingToggle,
 	isRequestingSettings,
@@ -31,64 +31,64 @@ const Subscriptions = ( {
 	selectedSiteSlug,
 	subscriptionsModuleActive,
 	translate,
-} ) => {
+}) => {
 	return (
 		<div>
-			<QueryJetpackConnection siteId={ selectedSiteId } />
+			<QueryJetpackConnection siteId={selectedSiteId} />
 
 			<CompactCard className="subscriptions__card site-settings__discussion-settings">
 				<FormFieldset>
 					<SupportInfo
-						text={ translate(
+						text={translate(
 							'Allows readers to subscribe to your posts or comments, ' +
 								'and receive notifications of new content by email.'
-						) }
+						)}
 						link="https://jetpack.com/support/subscriptions/"
 					/>
 
 					<JetpackModuleToggle
-						siteId={ selectedSiteId }
+						siteId={selectedSiteId}
 						moduleSlug="subscriptions"
-						label={ translate( 'Let visitors subscribe to new posts and comments via email' ) }
-						disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
+						label={translate('Let visitors subscribe to new posts and comments via email')}
+						disabled={isRequestingSettings || isSavingSettings || moduleUnavailable}
 					/>
 
 					<div className="subscriptions__module-settings site-settings__child-settings">
 						<CompactFormToggle
-							checked={ !! fields.stb_enabled }
+							checked={!!fields.stb_enabled}
 							disabled={
 								isRequestingSettings ||
 								isSavingSettings ||
-								! subscriptionsModuleActive ||
+								!subscriptionsModuleActive ||
 								moduleUnavailable
 							}
-							onChange={ handleAutosavingToggle( 'stb_enabled' ) }
+							onChange={handleAutosavingToggle('stb_enabled')}
 						>
-							{ translate( 'Enable the "subscribe to site" option on your comment form' ) }
+							{translate('Enable the "subscribe to site" option on your comment form')}
 						</CompactFormToggle>
 
 						<CompactFormToggle
-							checked={ !! fields.stc_enabled }
+							checked={!!fields.stc_enabled}
 							disabled={
 								isRequestingSettings ||
 								isSavingSettings ||
-								! subscriptionsModuleActive ||
+								!subscriptionsModuleActive ||
 								moduleUnavailable
 							}
-							onChange={ handleAutosavingToggle( 'stc_enabled' ) }
+							onChange={handleAutosavingToggle('stc_enabled')}
 						>
-							{ translate( 'Enable the "subscribe to comments" option on your comment form' ) }
+							{translate('Enable the "subscribe to comments" option on your comment form')}
 						</CompactFormToggle>
 					</div>
 				</FormFieldset>
 			</CompactCard>
 
-			<CompactCard href={ '/people/email-followers/' + selectedSiteSlug }>
-				{ translate( 'View your email followers' ) }
+			<CompactCard href={'/people/email-followers/' + selectedSiteSlug}>
+				{translate('View your email followers')}
 			</CompactCard>
 
-			<CompactCard href={ 'https://wordpress.com/manage/' + selectedSiteId }>
-				{ translate( 'Migrate followers from another site' ) }
+			<CompactCard href={'https://wordpress.com/manage/' + selectedSiteId}>
+				{translate('Migrate followers from another site')}
 			</CompactCard>
 		</div>
 	);
@@ -108,10 +108,10 @@ Subscriptions.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const selectedSiteSlug = getSelectedSiteSlug( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const selectedSiteSlug = getSelectedSiteSlug(state);
+	const siteInDevMode = isJetpackSiteInDevelopmentMode(state, selectedSiteId);
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 		state,
 		selectedSiteId,
@@ -121,7 +121,7 @@ export default connect( state => {
 	return {
 		selectedSiteId,
 		selectedSiteSlug,
-		subscriptionsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'subscriptions' ),
+		subscriptionsModuleActive: !!isJetpackModuleActive(state, selectedSiteId, 'subscriptions'),
 		moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 	};
-} )( localize( Subscriptions ) );
+})(localize(Subscriptions));

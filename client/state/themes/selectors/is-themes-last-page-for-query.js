@@ -17,11 +17,11 @@ const emptyObject = {};
  * @param  {object}   query  Theme query object
  * @returns {?boolean}        Whether last themes page has been reached
  */
-export function isThemesLastPageForQuery( state, siteId, query = emptyObject ) {
-	const lastPage = getThemesLastPageForQuery( state, siteId, query );
-	if ( null === lastPage ) {
+export function isThemesLastPageForQuery(state, siteId, query = emptyObject) {
+	const lastPage = getThemesLastPageForQuery(state, siteId, query);
+	if (null === lastPage) {
 		return lastPage;
 	}
 
-	return lastPage === ( query.page || DEFAULT_THEME_QUERY.page );
+	return lastPage === (query.page || DEFAULT_THEME_QUERY.page);
 }

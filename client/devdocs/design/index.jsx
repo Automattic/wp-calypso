@@ -132,53 +132,53 @@ export default class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 	state = { filter: '' };
 
-	onSearch = term => {
-		this.setState( { filter: trim( term || '' ).toLowerCase() } );
+	onSearch = (term) => {
+		this.setState({ filter: trim(term || '').toLowerCase() });
 	};
 
 	backToComponents = () => {
-		page( '/devdocs/design/' );
+		page('/devdocs/design/');
 	};
 
 	render() {
 		const { component } = this.props;
 		const { filter } = this.state;
 
-		const className = classnames( 'devdocs', 'devdocs__components', {
+		const className = classnames('devdocs', 'devdocs__components', {
 			'is-single': this.props.component,
-			'is-list': ! this.props.component,
-		} );
+			'is-list': !this.props.component,
+		});
 
 		return (
-			<Main className={ className }>
+			<Main className={className}>
 				<DocumentHead title="UI Components" />
 
-				{ component ? (
+				{component ? (
 					<React.Fragment>
-						<HeaderCake onClick={ this.backToComponents } backText="All Components">
-							{ slugToCamelCase( component ) }
+						<HeaderCake onClick={this.backToComponents} backText="All Components">
+							{slugToCamelCase(component)}
 						</HeaderCake>
-						{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
+						{config.isEnabled('devdocs/color-scheme-picker') && (
 							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-						) }
+						)}
 					</React.Fragment>
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
 						<SearchCard
-							onSearch={ this.onSearch }
-							initialValue={ filter }
+							onSearch={this.onSearch}
+							initialValue={filter}
 							placeholder="Search components…"
 							analyticsGroup="Docs"
 							className="design__ui-components-search"
 						/>
 					</div>
-				) }
+				)}
 
-				<Collection component={ component } filter={ filter }>
-					{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
+				<Collection component={component} filter={filter}>
+					{config.isEnabled('devdocs/color-scheme-picker') && (
 						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					) }
+					)}
 					<Accordion readmeFilePath="accordion" />
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />

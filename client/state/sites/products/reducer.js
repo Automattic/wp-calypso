@@ -29,36 +29,36 @@ export const initialSiteState = {
  * @param {object} attributes list of attributes and their values
  * @returns {object} the new state
  */
-function updateSiteState( state, siteId, attributes ) {
-	return Object.assign( {}, state, {
-		[ siteId ]: Object.assign( {}, initialSiteState, state[ siteId ], attributes ),
-	} );
+function updateSiteState(state, siteId, attributes) {
+	return Object.assign({}, state, {
+		[siteId]: Object.assign({}, initialSiteState, state[siteId], attributes),
+	});
 }
 
-export function products( state = {}, action ) {
-	switch ( action.type ) {
+export function products(state = {}, action) {
+	switch (action.type) {
 		case SITE_PRODUCTS_FETCH:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				error: null,
 				isRequesting: true,
-			} );
+			});
 
 		case SITE_PRODUCTS_FETCH_COMPLETED:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				error: null,
 				hasLoadedFromServer: true,
 				isRequesting: false,
 				data: action.products,
-			} );
+			});
 
 		case SITE_PRODUCTS_FETCH_FAILED:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				error: action.error,
 				isRequesting: false,
-			} );
+			});
 
 		case SITE_PRODUCTS_REMOVE:
-			return omit( state, action.siteId );
+			return omit(state, action.siteId);
 	}
 
 	return state;

@@ -4,8 +4,8 @@
 import reducer from '../reducer';
 import { SIGNUP_STEPS_SITE_STYLE_SET } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( 'should update the site style', () => {
+describe('reducer', () => {
+	test('should update the site style', () => {
 		expect(
 			reducer(
 				{},
@@ -14,6 +14,6 @@ describe( 'reducer', () => {
 					siteStyle: 'prodigious-gravy',
 				}
 			)
-		).toEqual( 'prodigious-gravy' );
-	} );
-} );
+		).toEqual('prodigious-gravy');
+	});
+});

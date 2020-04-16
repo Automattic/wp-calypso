@@ -15,33 +15,33 @@ import {
 	fireGoogleAnalyticsTiming,
 } from 'lib/analytics/ad-tracking';
 
-const gaDebug = debug( 'calypso:analytics:ga' );
+const gaDebug = debug('calypso:analytics:ga');
 
 let initialized = false;
 
 function initialize() {
-	if ( ! initialized ) {
+	if (!initialized) {
 		const parameters = {
 			send_page_view: false,
 			...getGoogleAnalyticsDefaultConfig(),
 		};
 
-		gaDebug( 'parameters:', parameters );
+		gaDebug('parameters:', parameters);
 
-		setupGoogleAnalyticsGtag( parameters );
+		setupGoogleAnalyticsGtag(parameters);
 
 		initialized = true;
 	}
 }
 
-export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function recordPageView(
+export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction(function recordPageView(
 	urlPath,
 	pageTitle
 ) {
-	gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
+	gaDebug('Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']');
 
-	fireGoogleAnalyticsPageView( urlPath, pageTitle );
-} );
+	fireGoogleAnalyticsPageView(urlPath, pageTitle);
+});
 
 /**
  * Fires a generic Google Analytics event
@@ -51,42 +51,42 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
  * {string} label Is the string that will appear as the event label.
  * {string} value Is a non-negative integer that will appear as the event value.
  */
-export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction( function recordEvent(
+export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction(function recordEvent(
 	category,
 	action,
 	label,
 	value
 ) {
-	if ( 'undefined' !== typeof value && ! isNaN( Number( String( value ) ) ) ) {
-		value = Math.round( Number( String( value ) ) ); // GA requires an integer value.
+	if ('undefined' !== typeof value && !isNaN(Number(String(value)))) {
+		value = Math.round(Number(String(value))); // GA requires an integer value.
 		// https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#eventValue
 	}
 
 	let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
 
-	if ( 'undefined' !== typeof label ) {
+	if ('undefined' !== typeof label) {
 		debugText += ' [Option Label: ' + label + ']';
 	}
 
-	if ( 'undefined' !== typeof value ) {
+	if ('undefined' !== typeof value) {
 		debugText += ' [Option Value: ' + value + ']';
 	}
 
-	gaDebug( debugText );
+	gaDebug(debugText);
 
-	fireGoogleAnalyticsEvent( category, action, label, value );
-} );
+	fireGoogleAnalyticsEvent(category, action, label, value);
+});
 
-export const gaRecordTiming = makeGoogleAnalyticsTrackingFunction( function recordTiming(
+export const gaRecordTiming = makeGoogleAnalyticsTrackingFunction(function recordTiming(
 	urlPath,
 	eventType,
 	duration,
 	triggerName
 ) {
-	gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
+	gaDebug('Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']');
 
-	fireGoogleAnalyticsTiming( eventType, duration, urlPath, triggerName );
-} );
+	fireGoogleAnalyticsTiming(eventType, duration, urlPath, triggerName);
+});
 
 /**
  * Wrap Google Analytics with debugging, possible analytics supression, and initialization
@@ -99,15 +99,15 @@ export const gaRecordTiming = makeGoogleAnalyticsTrackingFunction( function reco
  * @param  {Function} func Google Analytics tracking function
  * @returns {Function} Wrapped function
  */
-export function makeGoogleAnalyticsTrackingFunction( func ) {
-	return function( ...args ) {
-		if ( ! isGoogleAnalyticsAllowed() ) {
-			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
+export function makeGoogleAnalyticsTrackingFunction(func) {
+	return function (...args) {
+		if (!isGoogleAnalyticsAllowed()) {
+			gaDebug('[Disallowed] analytics %s( %o )', func.name, args);
 			return;
 		}
 
 		initialize();
 
-		func( ...args );
+		func(...args);
 	};
 }

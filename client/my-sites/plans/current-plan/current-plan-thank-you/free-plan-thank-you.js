@@ -9,19 +9,19 @@ import React from 'react';
  */
 import ThankYou from './thank-you';
 
-const FreePlanThankYou = ( { translate } ) => (
+const FreePlanThankYou = ({ translate }) => (
 	<ThankYou
 		illustration="/calypso/images/illustrations/security.svg"
 		showCalypsoIntro
 		showContinueButton
-		title={ translate( 'Welcome to Jetpack Free!' ) }
+		title={translate('Welcome to Jetpack Free!')}
 	>
 		<p>
-			{ translate( "We've automatically begun to protect your site from attacks." ) }
+			{translate("We've automatically begun to protect your site from attacks.")}
 			<br />
-			{ translate( "You're now ready to finish the rest of the checklist." ) }
+			{translate("You're now ready to finish the rest of the checklist.")}
 		</p>
 	</ThankYou>
 );
 
-export default localize( FreePlanThankYou );
+export default localize(FreePlanThankYou);

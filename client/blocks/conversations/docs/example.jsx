@@ -12,21 +12,21 @@ import { posts } from 'blocks/reader-post-card/docs/fixtures';
 import { commentsTree } from 'blocks/conversations/docs/fixtures';
 
 const ConversationCommentListExample = () => {
-	const post = posts[ 0 ];
+	const post = posts[0];
 
 	return (
 		<div className="design-assets__group">
 			<ConversationCommentList
-				commentsFetchingStatus={ {} }
-				commentsTree={ commentsTree }
-				blogId={ 123 }
-				postId={ 12 }
-				commentIds={ [ 1, 2, 3 ] }
-				sortedComments={ compact( map( commentsTree, 'data' ) ) }
-				post={ post }
-				enableCaterpillar={ false }
-				shouldRequestComments={ false }
-				setActiveReply={ noop }
+				commentsFetchingStatus={{}}
+				commentsTree={commentsTree}
+				blogId={123}
+				postId={12}
+				commentIds={[1, 2, 3]}
+				sortedComments={compact(map(commentsTree, 'data'))}
+				post={post}
+				enableCaterpillar={false}
+				shouldRequestComments={false}
+				setActiveReply={noop}
 			/>
 		</div>
 	);

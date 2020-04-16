@@ -11,26 +11,26 @@ import { getThemeIdFromStylesheet } from 'state/themes/utils';
 const REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/,
 	REGEXP_PUBLICIZE_SERVICE_DONE = /^_wpas_done_(\d+)$/;
 
-function getValueByKey( metadata, key ) {
-	const meta = find( metadata, { key: key } );
+function getValueByKey(metadata, key) {
+	const meta = find(metadata, { key: key });
 
-	if ( meta ) {
+	if (meta) {
 		return meta.value;
 	}
 }
 
-function getConnectionIdsByPattern( metadata, pattern ) {
-	if ( ! metadata ) {
+function getConnectionIdsByPattern(metadata, pattern) {
+	if (!metadata) {
 		return [];
 	}
 
 	return metadata
-		.filter( function( meta ) {
-			return pattern.test( meta.key ) && 1 === parseInt( meta.value, 10 );
-		} )
-		.map( function( meta ) {
-			return parseInt( meta.key.match( pattern )[ 1 ], 10 );
-		} );
+		.filter(function (meta) {
+			return pattern.test(meta.key) && 1 === parseInt(meta.value, 10);
+		})
+		.map(function (meta) {
+			return parseInt(meta.key.match(pattern)[1], 10);
+		});
 }
 
 const PostMetadata = {
@@ -41,12 +41,12 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string}      Publicize custom message
 	 */
-	publicizeMessage: function( post ) {
-		if ( ! post ) {
+	publicizeMessage: function (post) {
+		if (!post) {
 			return;
 		}
 
-		return getValueByKey( post.metadata, '_wpas_mess' );
+		return getValueByKey(post.metadata, '_wpas_mess');
 	},
 
 	/**
@@ -57,12 +57,12 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {Array}       Array of Publicize service IDs
 	 */
-	publicizeDone: function( post ) {
-		if ( ! post ) {
+	publicizeDone: function (post) {
+		if (!post) {
 			return;
 		}
 
-		return getConnectionIdsByPattern( post.metadata, REGEXP_PUBLICIZE_SERVICE_DONE );
+		return getConnectionIdsByPattern(post.metadata, REGEXP_PUBLICIZE_SERVICE_DONE);
 	},
 
 	/**
@@ -73,12 +73,12 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {Array}       Array of Publicize service IDs
 	 */
-	publicizeSkipped: function( post ) {
-		if ( ! post ) {
+	publicizeSkipped: function (post) {
+		if (!post) {
 			return;
 		}
 
-		return getConnectionIdsByPattern( post.metadata, REGEXP_PUBLICIZE_SERVICE_SKIPPED );
+		return getConnectionIdsByPattern(post.metadata, REGEXP_PUBLICIZE_SERVICE_SKIPPED);
 	},
 
 	/**
@@ -88,12 +88,12 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string|undefined} ThemeId on success.
 	 */
-	homepageTemplate: function( post ) {
-		if ( ! post ) {
+	homepageTemplate: function (post) {
+		if (!post) {
 			return;
 		}
 
-		return getThemeIdFromStylesheet( getValueByKey( post.metadata, '_tft_homepage_template' ) );
+		return getThemeIdFromStylesheet(getValueByKey(post.metadata, '_tft_homepage_template'));
 	},
 
 	/**
@@ -104,12 +104,12 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string}      Human-readable geographic address label
 	 */
-	geoLabel: function( post ) {
-		if ( ! post ) {
+	geoLabel: function (post) {
+		if (!post) {
 			return;
 		}
 
-		return getValueByKey( post.metadata, 'geo_address' );
+		return getValueByKey(post.metadata, 'geo_address');
 	},
 
 	/**
@@ -119,12 +119,12 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string}      Custom post meta description
 	 */
-	metaDescription: function( post ) {
-		if ( ! post ) {
+	metaDescription: function (post) {
+		if (!post) {
 			return;
 		}
 
-		return getValueByKey( post.metadata, 'advanced_seo_description' );
+		return getValueByKey(post.metadata, 'advanced_seo_description');
 	},
 
 	/**
@@ -135,16 +135,16 @@ const PostMetadata = {
 	 * @param  {object} post Post object
 	 * @returns {string}      Array of geographic float coordinates
 	 */
-	geoCoordinates: function( post ) {
-		if ( ! post ) {
+	geoCoordinates: function (post) {
+		if (!post) {
 			return;
 		}
 
-		const latitude = parseFloat( getValueByKey( post.metadata, 'geo_latitude' ) );
-		const longitude = parseFloat( getValueByKey( post.metadata, 'geo_longitude' ) );
+		const latitude = parseFloat(getValueByKey(post.metadata, 'geo_latitude'));
+		const longitude = parseFloat(getValueByKey(post.metadata, 'geo_longitude'));
 
-		if ( latitude && longitude ) {
-			return [ latitude, longitude ];
+		if (latitude && longitude) {
+			return [latitude, longitude];
 		}
 	},
 
@@ -155,23 +155,23 @@ const PostMetadata = {
 	 * @param {object} post Post object
 	 * @returns {boolean|null} Whether the geo-location data is shared publicly.
 	 */
-	geoIsSharedPublicly: function( post ) {
-		if ( ! post ) {
+	geoIsSharedPublicly: function (post) {
+		if (!post) {
 			return null;
 		}
 
-		const isSharedPublicly = getValueByKey( post.metadata, 'geo_public' );
+		const isSharedPublicly = getValueByKey(post.metadata, 'geo_public');
 
-		if ( parseInt( isSharedPublicly, 10 ) ) {
+		if (parseInt(isSharedPublicly, 10)) {
 			return true;
 		}
 
-		if ( undefined === isSharedPublicly ) {
+		if (undefined === isSharedPublicly) {
 			// If they have no geo_public value but they do have a lat/long, then we assume they saved with Calypso
 			// before it supported geo_public, in which case we should treat it as private.
 			if (
-				getValueByKey( post.metadata, 'geo_latitude' ) ||
-				getValueByKey( post.metadata, 'geo_longitude' )
+				getValueByKey(post.metadata, 'geo_latitude') ||
+				getValueByKey(post.metadata, 'geo_longitude')
 			) {
 				return false;
 			}

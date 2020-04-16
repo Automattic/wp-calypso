@@ -10,16 +10,16 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
 } from 'woocommerce/state/action-types';
 
-export function fetchProductCategories( siteId, query = {} ) {
-	const normalizedQuery = getNormalizedProductCategoriesQuery( query );
-	return dispatch => {
+export function fetchProductCategories(siteId, query = {}) {
+	const normalizedQuery = getNormalizedProductCategoriesQuery(query);
+	return (dispatch) => {
 		const getAction = {
 			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 			siteId,
 			query: normalizedQuery,
 		};
 
-		dispatch( getAction );
+		dispatch(getAction);
 	};
 }
 
@@ -32,7 +32,7 @@ export function fetchProductCategories( siteId, query = {} ) {
  * @param {object|Function} [failureAction] action with extra props { error }
  * @returns {object} Action object
  */
-export function createProductCategory( siteId, category, successAction, failureAction ) {
+export function createProductCategory(siteId, category, successAction, failureAction) {
 	// TODO: Error action if not valid?
 
 	const action = {
@@ -55,7 +55,7 @@ export function createProductCategory( siteId, category, successAction, failureA
  * @param {object|Function} [failureAction] action with extra props { error }
  * @returns {object} Action object
  */
-export function updateProductCategory( siteId, category, successAction, failureAction ) {
+export function updateProductCategory(siteId, category, successAction, failureAction) {
 	const action = {
 		type: WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
 		siteId,
@@ -76,7 +76,7 @@ export function updateProductCategory( siteId, category, successAction, failureA
  * @param {object|Function} [failureAction] action with extra props { error }
  * @returns {object} Action object
  */
-export function deleteProductCategory( siteId, category, successAction, failureAction ) {
+export function deleteProductCategory(siteId, category, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
 		siteId,
@@ -94,7 +94,7 @@ export function deleteProductCategory( siteId, category, successAction, failureA
  * @param {object} originatingAction The action that precipitated this update.
  * @returns {object} Action object
  */
-export function productCategoryUpdated( siteId, data, originatingAction ) {
+export function productCategoryUpdated(siteId, data, originatingAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 		siteId,

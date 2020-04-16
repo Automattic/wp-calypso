@@ -6,10 +6,10 @@
 import { use } from '@wordpress/data';
 
 // The purpose of this override is to prevent Switch to Draft action for template CPTs.
-use( registry => {
+use((registry) => {
 	return {
-		dispatch: namespace => {
-			const actions = { ...registry.dispatch( namespace ) };
+		dispatch: (namespace) => {
+			const actions = { ...registry.dispatch(namespace) };
 			const { editorPostType } = fullSiteEditing;
 
 			if (
@@ -19,20 +19,20 @@ use( registry => {
 			) {
 				const originalEditPost = actions.editPost;
 
-				actions.editPost = edits => {
+				actions.editPost = (edits) => {
 					const { status } = edits;
 
 					// Bail if editPost is attempting to set draft as status.
-					if ( status === 'draft' ) {
+					if (status === 'draft') {
 						return;
 					}
 
 					// Proceed with the usual call otherwise.
-					originalEditPost( edits );
+					originalEditPost(edits);
 				};
 			}
 
 			return actions;
 		},
 	};
-} );
+});

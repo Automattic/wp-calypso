@@ -8,14 +8,14 @@ import {
 	LAYOUT_NEXT_FOCUS_ACTIVATE,
 } from 'state/action-types';
 
-export function setLayoutFocus( area ) {
+export function setLayoutFocus(area) {
 	return {
 		type: LAYOUT_FOCUS_SET,
 		area,
 	};
 }
 
-export function setNextLayoutFocus( area ) {
+export function setNextLayoutFocus(area) {
 	return {
 		type: LAYOUT_NEXT_FOCUS_SET,
 		area,

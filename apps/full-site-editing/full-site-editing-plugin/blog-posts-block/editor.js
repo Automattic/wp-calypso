@@ -18,20 +18,16 @@ import { registerQueryStore } from './newspack-homepage-articles/blocks/homepage
  */
 const blockName = 'a8c/blog-posts';
 
-function setBlockTransformationName( name ) {
+function setBlockTransformationName(name) {
 	return name !== 'newspack-blocks/homepage-articles' ? name : blockName;
 }
 
-addFilter(
-	'blocks.transforms_from_name',
-	'set-transformed-block-name',
-	setBlockTransformationName
-);
+addFilter('blocks.transforms_from_name', 'set-transformed-block-name', setBlockTransformationName);
 
-registerBlockType( blockName, {
+registerBlockType(blockName, {
 	...settings,
-	title: __( 'Blog Posts', 'full-site-editing' ),
+	title: __('Blog Posts', 'full-site-editing'),
 	category: 'layout',
-} );
+});
 
-registerQueryStore( blockName );
+registerQueryStore(blockName);

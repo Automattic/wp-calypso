@@ -5,19 +5,19 @@ import { fetch, onSuccess } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestChartCounts, receiveChartCounts } from 'state/stats/chart-tabs/actions';
 
-describe( 'fetch', () => {
-	it( 'should dispatch two http requests: one for the currently selected tab and another for the other tabs', () => {
-		const action = requestChartCounts( {
+describe('fetch', () => {
+	it('should dispatch two http requests: one for the currently selected tab and another for the other tabs', () => {
+		const action = requestChartCounts({
 			chartTab: 'views',
 			date: '2100-01-01',
 			period: 'day',
 			quantity: 10,
 			siteId: 1,
-			statFields: [ 'views', 'visitors', 'likes', 'comments', 'post_titles' ],
-		} );
-		const output = fetch( action );
-		expect( output ).toHaveLength( 2 );
-		expect( output ).toEqual( [
+			statFields: ['views', 'visitors', 'likes', 'comments', 'post_titles'],
+		});
+		const output = fetch(action);
+		expect(output).toHaveLength(2);
+		expect(output).toEqual([
 			http(
 				{
 					method: 'GET',
@@ -46,12 +46,12 @@ describe( 'fetch', () => {
 				},
 				action
 			),
-		] );
-	} );
-} );
+		]);
+	});
+});
 
-describe( 'onSuccess', () => {
-	test( 'should return a receiveChartCounts action with a transformed API response', () => {
+describe('onSuccess', () => {
+	test('should return a receiveChartCounts action with a transformed API response', () => {
 		const data = {
 			1: {
 				year: [
@@ -64,7 +64,7 @@ describe( 'onSuccess', () => {
 				],
 			},
 		};
-		const output = onSuccess( { siteId: 1, period: 'year' }, data );
-		expect( output ).toEqual( receiveChartCounts( 1, 'year', data ) );
-	} );
-} );
+		const output = onSuccess({ siteId: 1, period: 'year' }, data);
+		expect(output).toEqual(receiveChartCounts(1, 'year', data));
+	});
+});

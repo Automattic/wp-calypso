@@ -43,21 +43,21 @@ class PublishingTools extends Component {
 			selectedSiteId,
 		} = this.props;
 
-		if ( ! moduleUnavailable ) {
+		if (!moduleUnavailable) {
 			return;
 		}
 
 		if (
 			postByEmailAddressModuleActive &&
 			regeneratingPostByEmail === null &&
-			! fields.post_by_email_address
+			!fields.post_by_email_address
 		) {
-			this.props.regeneratePostByEmail( selectedSiteId );
+			this.props.regeneratePostByEmail(selectedSiteId);
 		}
 	}
 
 	onRegenerateButtonClick = () => {
-		this.props.regeneratePostByEmail( this.props.selectedSiteId );
+		this.props.regeneratePostByEmail(this.props.selectedSiteId);
 	};
 
 	isFormPending() {
@@ -80,34 +80,30 @@ class PublishingTools extends Component {
 				? fields.post_by_email_address
 				: '';
 		const labelClassName =
-			moduleUnavailable || regeneratingPostByEmail || ! postByEmailAddressModuleActive
+			moduleUnavailable || regeneratingPostByEmail || !postByEmailAddressModuleActive
 				? 'is-disabled'
 				: null;
 
 		return (
 			<div className="publishing-tools__module-settings site-settings__child-settings">
-				<FormLabel className={ labelClassName }>
-					{ translate( 'Send your new posts to this email address:' ) }
+				<FormLabel className={labelClassName}>
+					{translate('Send your new posts to this email address:')}
 				</FormLabel>
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
-					disabled={
-						regeneratingPostByEmail || ! postByEmailAddressModuleActive || moduleUnavailable
-					}
-					value={ email }
+					disabled={regeneratingPostByEmail || !postByEmailAddressModuleActive || moduleUnavailable}
+					value={email}
 				/>
 				<Button
-					onClick={ this.onRegenerateButtonClick }
+					onClick={this.onRegenerateButtonClick}
 					disabled={
 						isFormPending ||
 						regeneratingPostByEmail ||
-						! postByEmailAddressModuleActive ||
+						!postByEmailAddressModuleActive ||
 						moduleUnavailable
 					}
 				>
-					{ regeneratingPostByEmail
-						? translate( 'Regenerating…' )
-						: translate( 'Regenerate address' ) }
+					{regeneratingPostByEmail ? translate('Regenerating…') : translate('Regenerate address')}
 				</Button>
 			</div>
 		);
@@ -120,32 +116,32 @@ class PublishingTools extends Component {
 		return (
 			<FormFieldset>
 				<SupportInfo
-					text={ translate(
+					text={translate(
 						'Allows you to publish new posts by sending an email to a special address.'
-					) }
+					)}
 					link="https://jetpack.com/support/post-by-email/"
 				/>
 				<JetpackModuleToggle
-					siteId={ selectedSiteId }
+					siteId={selectedSiteId}
 					moduleSlug="post-by-email"
-					label={ translate( 'Publish posts by sending an email' ) }
-					disabled={ formPending || moduleUnavailable }
+					label={translate('Publish posts by sending an email')}
+					disabled={formPending || moduleUnavailable}
 				/>
 
-				{ this.renderPostByEmailSettings() }
+				{this.renderPostByEmailSettings()}
 			</FormFieldset>
 		);
 	}
 
 	renderPressThis() {
 		const { translate } = this.props;
-		if ( ! config.isEnabled( 'press-this' ) ) {
+		if (!config.isEnabled('press-this')) {
 			return null;
 		}
 
 		return (
 			<div>
-				<FormLegend>{ translate( 'Press This' ) }</FormLegend>
+				<FormLegend>{translate('Press This')}</FormLegend>
 				<PressThis />
 			</div>
 		);
@@ -156,14 +152,14 @@ class PublishingTools extends Component {
 
 		return (
 			<div>
-				<QueryJetpackConnection siteId={ selectedSiteId } />
+				<QueryJetpackConnection siteId={selectedSiteId} />
 
-				<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
+				<SettingsSectionHeader title={translate('Publishing Tools')} />
 
 				<Card className="publishing-tools__card site-settings__module-settings">
-					{ this.renderPostByEmailModule() }
+					{this.renderPostByEmailModule()}
 					<hr />
-					{ this.renderPressThis() }
+					{this.renderPressThis()}
 				</Card>
 			</div>
 		);
@@ -184,10 +180,10 @@ PublishingTools.propTypes = {
 };
 
 export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	(state) => {
+		const selectedSiteId = getSelectedSiteId(state);
+		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail(state, selectedSiteId);
+		const siteInDevMode = isJetpackSiteInDevelopmentMode(state, selectedSiteId);
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 			state,
 			selectedSiteId,
@@ -197,7 +193,7 @@ export default connect(
 		return {
 			selectedSiteId,
 			regeneratingPostByEmail,
-			postByEmailAddressModuleActive: !! isJetpackModuleActive(
+			postByEmailAddressModuleActive: !!isJetpackModuleActive(
 				state,
 				selectedSiteId,
 				'post-by-email'
@@ -208,4 +204,4 @@ export default connect(
 	{
 		regeneratePostByEmail,
 	}
-)( localize( PublishingTools ) );
+)(localize(PublishingTools));

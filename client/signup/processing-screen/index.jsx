@@ -20,54 +20,54 @@ export class SignupProcessingScreen extends Component {
 		/* eslint-disable wpcalypso/jsx-gridicon-size, wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="signup-processing-screen__floaties">
-				<Gridicon icon="add" size={ 64 } />
-				<Gridicon icon="aside" size={ 64 } />
-				<Gridicon icon="attachment" size={ 64 } />
-				<Gridicon icon="audio" size={ 64 } />
-				<Gridicon icon="bell" size={ 64 } />
-				<Gridicon icon="book" size={ 64 } />
-				<Gridicon icon="camera" size={ 64 } />
-				<Gridicon icon="comment" size={ 64 } />
-				<Gridicon icon="globe" size={ 64 } />
-				<Gridicon icon="pencil" size={ 64 } />
-				<Gridicon icon="phone" size={ 64 } />
-				<Gridicon icon="reader" size={ 64 } />
-				<Gridicon icon="star" size={ 64 } />
-				<Gridicon icon="video" size={ 64 } />
-				<Gridicon icon="align-image-right" size={ 64 } />
-				<Gridicon icon="bookmark" size={ 64 } />
-				<Gridicon icon="briefcase" size={ 64 } />
-				<Gridicon icon="calendar" size={ 64 } />
-				<Gridicon icon="clipboard" size={ 64 } />
-				<Gridicon icon="cloud-upload" size={ 64 } />
-				<Gridicon icon="cog" size={ 64 } />
-				<Gridicon icon="customize" size={ 64 } />
-				<Gridicon icon="help" size={ 64 } />
-				<Gridicon icon="link" size={ 64 } />
-				<Gridicon icon="lock" size={ 64 } />
-				<Gridicon icon="pages" size={ 64 } />
-				<Gridicon icon="share" size={ 64 } />
-				<Gridicon icon="stats" size={ 64 } />
+				<Gridicon icon="add" size={64} />
+				<Gridicon icon="aside" size={64} />
+				<Gridicon icon="attachment" size={64} />
+				<Gridicon icon="audio" size={64} />
+				<Gridicon icon="bell" size={64} />
+				<Gridicon icon="book" size={64} />
+				<Gridicon icon="camera" size={64} />
+				<Gridicon icon="comment" size={64} />
+				<Gridicon icon="globe" size={64} />
+				<Gridicon icon="pencil" size={64} />
+				<Gridicon icon="phone" size={64} />
+				<Gridicon icon="reader" size={64} />
+				<Gridicon icon="star" size={64} />
+				<Gridicon icon="video" size={64} />
+				<Gridicon icon="align-image-right" size={64} />
+				<Gridicon icon="bookmark" size={64} />
+				<Gridicon icon="briefcase" size={64} />
+				<Gridicon icon="calendar" size={64} />
+				<Gridicon icon="clipboard" size={64} />
+				<Gridicon icon="cloud-upload" size={64} />
+				<Gridicon icon="cog" size={64} />
+				<Gridicon icon="customize" size={64} />
+				<Gridicon icon="help" size={64} />
+				<Gridicon icon="link" size={64} />
+				<Gridicon icon="lock" size={64} />
+				<Gridicon icon="pages" size={64} />
+				<Gridicon icon="share" size={64} />
+				<Gridicon icon="stats" size={64} />
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size, wpcalypso/jsx-classname-namespace */
 	}
 
 	getTitle() {
-		return this.props.translate( '{{strong}}Hooray!{{/strong}} Your site will be ready shortly.', {
+		return this.props.translate('{{strong}}Hooray!{{/strong}} Your site will be ready shortly.', {
 			components: { strong: <strong />, br: <br /> },
 			comment:
 				'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
-		} );
+		});
 	}
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				{ this.renderFloaties() }
+				{this.renderFloaties()}
 				<div className="signup-processing-screen__content">
-					<p className="signup-processing-screen__title">{ this.getTitle() }</p>
+					<p className="signup-processing-screen__title">{this.getTitle()}</p>
 				</div>
 			</div>
 		);
@@ -75,4 +75,4 @@ export class SignupProcessingScreen extends Component {
 	}
 }
 
-export default localize( SignupProcessingScreen );
+export default localize(SignupProcessingScreen);

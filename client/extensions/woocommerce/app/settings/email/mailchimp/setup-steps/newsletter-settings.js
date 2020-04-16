@@ -19,38 +19,38 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Notice from 'components/notice';
 import QueryMailChimpLists from 'woocommerce/state/sites/settings/mailchimp/queryLists';
 
-const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, translate } ) => {
+const NewsletterSettings = ({ storeData = {}, onChange, siteId, isRequesting, translate }) => {
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
-			<QueryMailChimpLists siteId={ siteId } />
-			<p>{ translate( 'Finally, choose a mailing list to sync with your store.' ) }</p>
+			<QueryMailChimpLists siteId={siteId} />
+			<p>{translate('Finally, choose a mailing list to sync with your store.')}</p>
 			<Notice>
 				<p>
-					{ translate(
+					{translate(
 						"Choose your list carefully as you won't be able to change it later. " +
 							'Create a list in MailChimp if you have not already done so.'
-					) }
+					)}
 				</p>
 			</Notice>
-			<FormLabel>{ translate( 'Mailing list' ) }</FormLabel>
+			<FormLabel>{translate('Mailing list')}</FormLabel>
 			<FormSelect
-				name={ 'mailchimp_list' }
-				onChange={ onChange }
-				value={ storeData.mailchimp_list }
-				disabled={ isRequesting }
+				name={'mailchimp_list'}
+				onChange={onChange}
+				value={storeData.mailchimp_list}
+				disabled={isRequesting}
 			>
-				{ storeData.mailchimp_lists &&
-					map( storeData.mailchimp_lists, ( list, key ) => (
-						<option key={ key } value={ key }>
-							{ list }
+				{storeData.mailchimp_lists &&
+					map(storeData.mailchimp_lists, (list, key) => (
+						<option key={key} value={key}>
+							{list}
 						</option>
-					) ) }
+					))}
 			</FormSelect>
 			<FormSettingExplanation className="setup-steps__sync-explanation">
-				{ translate(
+				{translate(
 					"We'll sync your orders with this list so you can segment based on purchase history. We'll also " +
 						'sync products so you can add relevant product information to customer emails.'
-				) }
+				)}
 			</FormSettingExplanation>
 		</FormFieldset>
 	);
@@ -63,12 +63,12 @@ NewsletterSettings.propTypes = {
 	isRequesting: PropTypes.bool,
 };
 
-const NewsletterSettingsConnected = connect( state => {
-	const siteId = getSelectedSiteId( state );
+const NewsletterSettingsConnected = connect((state) => {
+	const siteId = getSelectedSiteId(state);
 	return {
 		siteId,
-		isRequesting: isRequestingLists( state, siteId ),
+		isRequesting: isRequestingLists(state, siteId),
 	};
-} )( NewsletterSettings );
+})(NewsletterSettings);
 
-export default localize( NewsletterSettingsConnected );
+export default localize(NewsletterSettingsConnected);

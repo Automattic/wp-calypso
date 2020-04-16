@@ -34,38 +34,38 @@ export class AddLinkDialog extends Component {
 		linkUrl: '',
 	};
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		this.setState( {
-			linkUrl: this.inferUrl( newProps.selectedText ),
+	UNSAFE_componentWillReceiveProps(newProps) {
+		this.setState({
+			linkUrl: this.inferUrl(newProps.selectedText),
 			linkText: newProps.selectedText,
-		} );
+		});
 	}
 
 	correctUrl() {
 		const url = this.state.linkUrl.trim();
-		if ( REGEXP_EMAIL.test( url ) ) {
-			return `mailto:${ url }`;
+		if (REGEXP_EMAIL.test(url)) {
+			return `mailto:${url}`;
 		}
-		if ( ! REGEXP_STANDALONE_URL.test( url ) ) {
-			return `http://${ url }`;
+		if (!REGEXP_STANDALONE_URL.test(url)) {
+			return `http://${url}`;
 		}
 		return url;
 	}
 
-	inferUrl( selectedText ) {
-		if ( REGEXP_EMAIL.test( selectedText ) ) {
+	inferUrl(selectedText) {
+		if (REGEXP_EMAIL.test(selectedText)) {
 			return 'mailto:' + selectedText;
-		} else if ( REGEXP_URL.test( selectedText ) ) {
-			return selectedText.replace( /&amp;|&#0?38;/gi, '&' );
+		} else if (REGEXP_URL.test(selectedText)) {
+			return selectedText.replace(/&amp;|&#0?38;/gi, '&');
 		}
 		return '';
 	}
 
-	setLinkUrl = event => this.setState( { linkUrl: event.target.value } );
+	setLinkUrl = (event) => this.setState({ linkUrl: event.target.value });
 
-	setLinkText = event => this.setState( { linkText: event.target.value } );
+	setLinkText = (event) => this.setState({ linkText: event.target.value });
 
-	setLinkNewTab = event => this.setState( { linkNewTab: event.target.checked } );
+	setLinkNewTab = (event) => this.setState({ linkNewTab: event.target.checked });
 
 	closeDialog = () =>
 		this.setState(
@@ -82,7 +82,7 @@ export class AddLinkDialog extends Component {
 		this.props.onInsert(
 			{
 				href: this.correctUrl(),
-				...( linkNewTab ? { target: '_blank' } : {} ),
+				...(linkNewTab ? { target: '_blank' } : {}),
 			},
 			linkText
 		);
@@ -96,39 +96,35 @@ export class AddLinkDialog extends Component {
 		const buttons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 			},
 			{
 				action: 'add-link',
 				isPrimary: true,
-				label: translate( 'Add Link' ),
+				label: translate('Add Link'),
 				onClick: this.insertATag,
 			},
 		];
 
 		return (
 			<Dialog
-				isVisible={ shouldDisplay }
-				buttons={ buttons }
-				onClose={ this.closeDialog }
+				isVisible={shouldDisplay}
+				buttons={buttons}
+				onClose={this.closeDialog}
 				additionalClassNames="comment-html-editor__dialog"
 			>
 				<FormFieldset>
-					<FormLabel htmlFor="link_url">{ translate( 'URL' ) }</FormLabel>
-					<FormTextInput name="link_url" onChange={ this.setLinkUrl } value={ linkUrl } />
+					<FormLabel htmlFor="link_url">{translate('URL')}</FormLabel>
+					<FormTextInput name="link_url" onChange={this.setLinkUrl} value={linkUrl} />
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="link_text">{ translate( 'Link Text' ) }</FormLabel>
-					<FormTextInput name="link_text" onChange={ this.setLinkText } value={ linkText } />
+					<FormLabel htmlFor="link_text">{translate('Link Text')}</FormLabel>
+					<FormTextInput name="link_text" onChange={this.setLinkText} value={linkText} />
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<FormCheckbox
-							checked={ linkNewTab }
-							name="link_new_tab"
-							onChange={ this.setLinkNewTab }
-						/>
-						<span>{ translate( 'Open link in a new window/tab' ) }</span>
+						<FormCheckbox checked={linkNewTab} name="link_new_tab" onChange={this.setLinkNewTab} />
+						<span>{translate('Open link in a new window/tab')}</span>
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>
@@ -136,4 +132,4 @@ export class AddLinkDialog extends Component {
 	}
 }
 
-export default localize( AddLinkDialog );
+export default localize(AddLinkDialog);

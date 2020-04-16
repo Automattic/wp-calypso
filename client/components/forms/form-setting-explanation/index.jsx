@@ -10,13 +10,13 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-function FormSettingExplanation( { className, noValidate, isIndented, ...rest } ) {
-	const classes = classNames( 'form-setting-explanation', className, {
+function FormSettingExplanation({ className, noValidate, isIndented, ...rest }) {
+	const classes = classNames('form-setting-explanation', className, {
 		'no-validate': noValidate,
 		'is-indented': isIndented,
-	} );
+	});
 
-	return <p { ...rest } className={ classes } />;
+	return <p {...rest} className={classes} />;
 }
 
 FormSettingExplanation.propTypes = {

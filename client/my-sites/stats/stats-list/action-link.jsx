@@ -18,7 +18,7 @@ class StatsActionLink extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	onClick = event => {
+	onClick = (event) => {
 		event.stopPropagation();
 		gaRecordEvent(
 			'Stats',
@@ -31,23 +31,23 @@ class StatsActionLink extends PureComponent {
 		return (
 			<li className="stats-list__item-action module-content-list-item-action">
 				<a
-					href={ href }
-					onClick={ this.onClick }
+					href={href}
+					onClick={this.onClick}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="stats-list__item-action-wrapper module-content-list-item-action-wrapper"
-					title={ translate( 'View content in a new window', {
+					title={translate('View content in a new window', {
 						textOnly: true,
 						context: 'Stats action tooltip: View content in a new window',
-					} ) }
-					aria-label={ translate( 'View content in a new window', {
+					})}
+					aria-label={translate('View content in a new window', {
 						textOnly: true,
 						context: 'Stats ARIA label: View content in new window action',
-					} ) }
+					})}
 				>
-					<Gridicon icon="external" size={ 18 } />
+					<Gridicon icon="external" size={18} />
 					<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
-						{ translate( 'View', { context: 'Stats: List item action to view content' } ) }
+						{translate('View', { context: 'Stats: List item action to view content' })}
 					</span>
 				</a>
 			</li>
@@ -55,4 +55,4 @@ class StatsActionLink extends PureComponent {
 	}
 }
 
-export default localize( StatsActionLink );
+export default localize(StatsActionLink);

@@ -17,19 +17,19 @@ const MAX_CONTENT_WIDTH = 720;
  * @returns {[type]} [description]
  */
 export default function contentWidth() {
-	if ( typeof document === 'undefined' ) {
+	if (typeof document === 'undefined') {
 		return undefined;
 	}
 
 	const clientWidth = document.documentElement.clientWidth;
-	if ( clientWidth > 1040 ) {
+	if (clientWidth > 1040) {
 		return MAX_CONTENT_WIDTH;
 	}
-	if ( clientWidth > 928 ) {
-		return clientWidth - ( SIDEBAR_WIDTH + PAGE_MARGIN_LARGE );
+	if (clientWidth > 928) {
+		return clientWidth - (SIDEBAR_WIDTH + PAGE_MARGIN_LARGE);
 	}
-	if ( clientWidth > 660 ) {
-		return clientWidth - ( SIDEBAR_WIDTH + PAGE_MARGIN_MEDIUM );
+	if (clientWidth > 660) {
+		return clientWidth - (SIDEBAR_WIDTH + PAGE_MARGIN_MEDIUM);
 	}
 	return clientWidth - PAGE_MARGIN_SMALL;
 }

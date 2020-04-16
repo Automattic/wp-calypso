@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import { Button } from '@automattic/components';
 import { localizeUrl } from 'lib/i18n-utils';
 
-const PurchaseButton = ( {
+const PurchaseButton = ({
 	className,
 	href,
 	disabled,
@@ -21,18 +21,18 @@ const PurchaseButton = ( {
 	rel,
 	text,
 	primary = true,
-} ) => {
+}) => {
 	return (
 		<Button
-			className={ classNames( 'purchase-detail__button', className ) }
-			disabled={ disabled }
-			href={ localizeUrl( href ) }
-			onClick={ onClick }
-			target={ target }
-			rel={ rel }
-			primary={ primary }
+			className={classNames('purchase-detail__button', className)}
+			disabled={disabled}
+			href={localizeUrl(href)}
+			onClick={onClick}
+			target={target}
+			rel={rel}
+			primary={primary}
 		>
-			{ text }
+			{text}
 		</Button>
 	);
 };

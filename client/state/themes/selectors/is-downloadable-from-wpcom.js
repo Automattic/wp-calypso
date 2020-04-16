@@ -13,7 +13,7 @@ import 'state/themes/init';
  * @param {string} themeId Theme ID
  * @returns {boolean} true if zip is available on wpcom
  */
-export function isDownloadableFromWpcom( state, themeId ) {
-	const downloadUri = getTheme( state, 'wpcom', themeId )?.download ?? '';
-	return downloadUri.includes( 'wordpress.com' );
+export function isDownloadableFromWpcom(state, themeId) {
+	const downloadUri = getTheme(state, 'wpcom', themeId)?.download ?? '';
+	return downloadUri.includes('wordpress.com');
 }

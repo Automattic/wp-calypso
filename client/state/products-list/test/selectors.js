@@ -18,81 +18,81 @@ import {
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
-const plans = require( 'lib/plans' );
+const plans = require('lib/plans');
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock('lib/abtest', () => ({
 	abtest: () => '',
-} ) );
+}));
 
-jest.mock( 'state/sites/plans/selectors', () => ( {
+jest.mock('state/sites/plans/selectors', () => ({
 	getPlanDiscountedRawPrice: jest.fn(),
-} ) );
+}));
 
-plans.applyTestFiltersToPlansList = jest.fn( x => x );
+plans.applyTestFiltersToPlansList = jest.fn((x) => x);
 plans.getPlan = jest.fn();
 
 const { getPlan } = plans;
 
-jest.mock( 'state/plans/selectors', () => ( {
+jest.mock('state/plans/selectors', () => ({
 	getPlanRawPrice: jest.fn(),
-} ) );
+}));
 
-describe( 'selectors', () => {
-	describe( '#getPlanPrice()', () => {
-		beforeEach( () => {
+describe('selectors', () => {
+	describe('#getPlanPrice()', () => {
+		beforeEach(() => {
 			getPlanDiscountedRawPrice.mockReset();
-			getPlanDiscountedRawPrice.mockImplementation( () => 12 );
+			getPlanDiscountedRawPrice.mockImplementation(() => 12);
 
 			getPlanRawPrice.mockReset();
-			getPlanRawPrice.mockImplementation( () => 50 );
-		} );
+			getPlanRawPrice.mockImplementation(() => 50);
+		});
 
-		test( 'Should return discounted price if available', () => {
+		test('Should return discounted price if available', () => {
 			const plan = { getStoreSlug: () => 'abc' };
-			expect( getPlanPrice( {}, 1, plan ) ).toBe( 12 );
-		} );
+			expect(getPlanPrice({}, 1, plan)).toBe(12);
+		});
 
-		test( 'Should pass correct arguments to getPlanDiscountedRawPrice', () => {
+		test('Should pass correct arguments to getPlanDiscountedRawPrice', () => {
 			const plan = { getStoreSlug: () => 'abc' };
-			getPlanPrice( { state: 1 }, 1, plan, false );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 0 ] ).toEqual( [
+			getPlanPrice({ state: 1 }, 1, plan, false);
+			expect(getPlanDiscountedRawPrice.mock.calls[0]).toEqual([
 				{ state: 1 },
 				1,
 				'abc',
 				{ isMonthly: false },
-			] );
-		} );
+			]);
+		});
 
-		test( 'Should return raw price if no discount available', () => {
-			getPlanDiscountedRawPrice.mockImplementation( () => null );
-
-			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( getPlanPrice( {}, 1, plan, false ) ).toBe( 50 );
-		} );
-
-		test( 'Should pass correct arguments to getPlanRawPrice', () => {
-			getPlanDiscountedRawPrice.mockImplementation( () => null );
+		test('Should return raw price if no discount available', () => {
+			getPlanDiscountedRawPrice.mockImplementation(() => null);
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			getPlanPrice( { state: 1 }, 1, plan, false );
-			expect( getPlanRawPrice.mock.calls[ 0 ] ).toEqual( [ { state: 1 }, 'def', false ] );
-		} );
+			expect(getPlanPrice({}, 1, plan, false)).toBe(50);
+		});
 
-		test( 'Should pass correct isMonthly value', () => {
+		test('Should pass correct arguments to getPlanRawPrice', () => {
+			getPlanDiscountedRawPrice.mockImplementation(() => null);
+
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			getPlanPrice( {}, 1, plan, false );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 0 ][ 3 ] ).toEqual( { isMonthly: false } );
+			getPlanPrice({ state: 1 }, 1, plan, false);
+			expect(getPlanRawPrice.mock.calls[0]).toEqual([{ state: 1 }, 'def', false]);
+		});
 
-			getPlanPrice( {}, 1, plan, true );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 1 ][ 3 ] ).toEqual( { isMonthly: true } );
+		test('Should pass correct isMonthly value', () => {
+			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
+			getPlanPrice({}, 1, plan, false);
+			expect(getPlanDiscountedRawPrice.mock.calls[0][3]).toEqual({ isMonthly: false });
 
-			getPlanPrice( {}, 1, { ...plan, term: TERM_MONTHLY }, true );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { isMonthly: true } );
-		} );
-	} );
+			getPlanPrice({}, 1, plan, true);
+			expect(getPlanDiscountedRawPrice.mock.calls[1][3]).toEqual({ isMonthly: true });
 
-	describe( '#planSlugToPlanProduct()', () => {
-		test( 'Should return shape { planSlug, plan, product }', () => {
+			getPlanPrice({}, 1, { ...plan, term: TERM_MONTHLY }, true);
+			expect(getPlanDiscountedRawPrice.mock.calls[2][3]).toEqual({ isMonthly: true });
+		});
+	});
+
+	describe('#planSlugToPlanProduct()', () => {
+		test('Should return shape { planSlug, plan, product }', () => {
 			const products = {
 				myPlanSlug: {
 					price: 10,
@@ -102,61 +102,61 @@ describe( 'selectors', () => {
 			const plan = {
 				storeId: 15,
 			};
-			getPlan.mockImplementation( () => plan );
+			getPlan.mockImplementation(() => plan);
 
-			expect( planSlugToPlanProduct( products, planSlug ) ).toEqual( {
+			expect(planSlugToPlanProduct(products, planSlug)).toEqual({
 				planSlug,
 				plan,
 				product: products.myPlanSlug,
-			} );
-		} );
+			});
+		});
 
-		test( 'Should return shape { planSlug, plan, product } with empty values if plan or product couldnt be found', () => {
+		test('Should return shape { planSlug, plan, product } with empty values if plan or product couldnt be found', () => {
 			const planSlug = 'myPlanSlug';
-			getPlan.mockImplementation( () => null );
+			getPlan.mockImplementation(() => null);
 
-			expect( planSlugToPlanProduct( {}, planSlug ) ).toEqual( {
+			expect(planSlugToPlanProduct({}, planSlug)).toEqual({
 				planSlug,
 				plan: null,
 				product: undefined,
-			} );
+			});
 
-			expect( planSlugToPlanProduct( { myPlanSlug: null }, planSlug ) ).toEqual( {
+			expect(planSlugToPlanProduct({ myPlanSlug: null }, planSlug)).toEqual({
 				planSlug,
 				plan: null,
 				product: null,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#computeFullAndMonthlyPricesForPlan()', () => {
-		test( 'Should return shape { priceFull, priceMonthly }', () => {
-			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
+	describe('#computeFullAndMonthlyPricesForPlan()', () => {
+		test('Should return shape { priceFull, priceMonthly }', () => {
+			getPlanDiscountedRawPrice.mockImplementation((a, b, c, { isMonthly }) =>
 				isMonthly ? 10 : 120
 			);
-			getPlanRawPrice.mockImplementation( () => 150 );
+			getPlanRawPrice.mockImplementation(() => 150);
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
+			expect(computeFullAndMonthlyPricesForPlan({}, 1, plan, 0, {})).toEqual({
 				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceFinal: 120,
 				priceMonthly: 10,
-			} );
-		} );
+			});
+		});
 
-		test( 'Should return proper priceFinal if couponDiscounts are provided', () => {
+		test('Should return proper priceFinal if couponDiscounts are provided', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, { def: 60 } ) ).toEqual( {
+			expect(computeFullAndMonthlyPricesForPlan({}, 1, plan, 0, { def: 60 })).toEqual({
 				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceFinal: 60,
 				priceMonthly: 10, // The monthly price is without discounts applied
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#computeProductsWithPrices()', () => {
+	describe('#computeProductsWithPrices()', () => {
 		const testPlans = {
 			plan1: {
 				id: 1,
@@ -173,20 +173,20 @@ describe( 'selectors', () => {
 			},
 		};
 
-		beforeEach( () => {
-			getPlanRawPrice.mockImplementation( () => 150 );
-			getPlanDiscountedRawPrice.mockImplementation( ( a, b, storeSlug, { isMonthly } ) => {
-				if ( storeSlug === 'abc' ) {
+		beforeEach(() => {
+			getPlanRawPrice.mockImplementation(() => 150);
+			getPlanDiscountedRawPrice.mockImplementation((a, b, storeSlug, { isMonthly }) => {
+				if (storeSlug === 'abc') {
 					return isMonthly ? 10 : 120;
 				}
 
 				return isMonthly ? 20 : 240;
-			} );
+			});
 
-			getPlan.mockImplementation( slug => testPlans[ slug ] );
-		} );
+			getPlan.mockImplementation((slug) => testPlans[slug]);
+		});
 
-		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, priceMonthly, plan, product, planSlug }', () => {
+		test('Should return list of shapes { priceFull, priceFullBeforeDiscount, priceMonthly, plan, product, planSlug }', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -196,7 +196,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
+			expect(computeProductsWithPrices(state, 10, ['plan1', 'plan2'], 0, {})).toEqual([
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
@@ -215,10 +215,10 @@ describe( 'selectors', () => {
 					priceFinal: 240,
 					priceMonthly: 20,
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'couponDiscount should discount priceFinal', () => {
+		test('couponDiscount should discount priceFinal', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -229,8 +229,8 @@ describe( 'selectors', () => {
 			};
 
 			expect(
-				computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, { def: 60, mno: 120 } )
-			).toEqual( [
+				computeProductsWithPrices(state, 10, ['plan1', 'plan2'], 0, { def: 60, mno: 120 })
+			).toEqual([
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
@@ -249,10 +249,10 @@ describe( 'selectors', () => {
 					priceFinal: 120,
 					priceMonthly: 20,
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'Should filter out unavailable products', () => {
+		test('Should filter out unavailable products', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -262,7 +262,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
+			expect(computeProductsWithPrices(state, 10, ['plan1', 'plan2'], 0, {})).toEqual([
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
@@ -272,10 +272,10 @@ describe( 'selectors', () => {
 					priceFull: 120,
 					priceMonthly: 10,
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'Should filter out unavailable not found products', () => {
+		test('Should filter out unavailable not found products', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -284,7 +284,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
+			expect(computeProductsWithPrices(state, 10, ['plan1', 'plan2'], 0, {})).toEqual([
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
@@ -294,20 +294,20 @@ describe( 'selectors', () => {
 					priceFinal: 120,
 					priceMonthly: 10,
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'Should filter out unavailable not found products with no price', () => {
-			getPlanDiscountedRawPrice.mockImplementation( ( a, b, storeSlug, { isMonthly } ) => {
-				if ( storeSlug === 'abc' ) {
+		test('Should filter out unavailable not found products with no price', () => {
+			getPlanDiscountedRawPrice.mockImplementation((a, b, storeSlug, { isMonthly }) => {
+				if (storeSlug === 'abc') {
 					return isMonthly ? 10 : 120;
 				}
-			} );
-			getPlanRawPrice.mockImplementation( ( a, productId ) => {
-				if ( productId === 'def' ) {
+			});
+			getPlanRawPrice.mockImplementation((a, productId) => {
+				if (productId === 'def') {
 					return 150;
 				}
-			} );
+			});
 
 			const state = {
 				productsList: {
@@ -318,7 +318,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
+			expect(computeProductsWithPrices(state, 10, ['plan1', 'plan2'], 0, {})).toEqual([
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
@@ -328,19 +328,19 @@ describe( 'selectors', () => {
 					priceFinal: 120,
 					priceMonthly: 10,
 				},
-			] );
-		} );
-	} );
+			]);
+		});
+	});
 
-	describe( '#getProductDisplayCost()', () => {
-		test( 'should return null when the products list has not been fetched', () => {
-			const state = deepFreeze( { productsList: { items: {} } } );
+	describe('#getProductDisplayCost()', () => {
+		test('should return null when the products list has not been fetched', () => {
+			const state = deepFreeze({ productsList: { items: {} } });
 
-			expect( getProductDisplayCost( state, 'guided_transfer' ) ).toBe( null );
-		} );
+			expect(getProductDisplayCost(state, 'guided_transfer')).toBe(null);
+		});
 
-		test( 'should return the display cost', () => {
-			const state = deepFreeze( {
+		test('should return the display cost', () => {
+			const state = deepFreeze({
 				productsList: {
 					items: {
 						guided_transfer: {
@@ -348,21 +348,21 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			expect( getProductDisplayCost( state, 'guided_transfer' ) ).toBe( 'A$169.00' );
-		} );
-	} );
+			expect(getProductDisplayCost(state, 'guided_transfer')).toBe('A$169.00');
+		});
+	});
 
-	describe( '#isProductsListFetching()', () => {
-		test( 'should return false when productsList.isFetching is false', () => {
+	describe('#isProductsListFetching()', () => {
+		test('should return false when productsList.isFetching is false', () => {
 			const state = { productsList: { isFetching: false } };
-			expect( isProductsListFetching( state ) ).toBe( false );
-		} );
+			expect(isProductsListFetching(state)).toBe(false);
+		});
 
-		test( 'should return true when productsList.isFetching is true', () => {
+		test('should return true when productsList.isFetching is true', () => {
 			const state = { productsList: { isFetching: true } };
-			expect( isProductsListFetching( state ) ).toBe( true );
-		} );
-	} );
-} );
+			expect(isProductsListFetching(state)).toBe(true);
+		});
+	});
+});

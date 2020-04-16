@@ -39,33 +39,33 @@ import { whoisType } from '../../../lib/domains/whois/constants';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const isRequestingContactDetailsCache = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isRequestingContactDetailsCache = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST:
-			return stubTrue( state, action );
+			return stubTrue(state, action);
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS:
-			return stubFalse( state, action );
+			return stubFalse(state, action);
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE:
-			return stubFalse( state, action );
+			return stubFalse(state, action);
 	}
 
 	return state;
-} );
+});
 
 export const isRequestingWhois = keyedReducer(
 	'domain',
-	withoutPersistence( ( state = false, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = false, action) => {
+		switch (action.type) {
 			case DOMAIN_MANAGEMENT_WHOIS_REQUEST:
-				return stubTrue( state, action );
+				return stubTrue(state, action);
 			case DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 			case DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 		}
 
 		return state;
-	} )
+	})
 );
 
 /**
@@ -76,14 +76,14 @@ export const isRequestingWhois = keyedReducer(
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const isSaving = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const isSaving = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case DOMAIN_MANAGEMENT_WHOIS_SAVE: {
 			const { domain } = action;
 
 			return {
 				...state,
-				[ domain ]: { saving: true, status: 'pending', error: false },
+				[domain]: { saving: true, status: 'pending', error: false },
 			};
 		}
 		case DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS: {
@@ -91,7 +91,7 @@ export const isSaving = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ domain ]: { saving: false, status: 'success', error: false },
+				[domain]: { saving: false, status: 'success', error: false },
 			};
 		}
 		case DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE: {
@@ -99,25 +99,25 @@ export const isSaving = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ domain ]: { saving: false, status: 'error', error },
+				[domain]: { saving: false, status: 'error', error },
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-function mergeDomainRegistrantContactDetails( domainState, registrantContactDetails ) {
-	return isArray( domainState )
-		? domainState.map( item => {
-				if ( item.type === whoisType.REGISTRANT ) {
+function mergeDomainRegistrantContactDetails(domainState, registrantContactDetails) {
+	return isArray(domainState)
+		? domainState.map((item) => {
+				if (item.type === whoisType.REGISTRANT) {
 					return {
 						...item,
 						...registrantContactDetails,
 					};
 				}
 				return item;
-		  } )
+		  })
 		: [
 				{
 					...registrantContactDetails,
@@ -134,50 +134,50 @@ function mergeDomainRegistrantContactDetails( domainState, registrantContactDeta
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( domainWhoisSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(domainWhoisSchema, (state = {}, action) => {
+	switch (action.type) {
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE: {
 			const { data } = action;
 
 			return {
 				...state,
-				_contactDetailsCache: sanitizeExtra( data ),
+				_contactDetailsCache: sanitizeExtra(data),
 			};
 		}
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE: {
 			const { data } = action;
-			return merge( {}, sanitizeExtra( state ), { _contactDetailsCache: sanitizeExtra( data ) } );
+			return merge({}, sanitizeExtra(state), { _contactDetailsCache: sanitizeExtra(data) });
 		}
 		case DOMAIN_MANAGEMENT_WHOIS_RECEIVE: {
 			const { domain, whoisData } = action;
 
 			return {
 				...state,
-				[ domain ]: whoisData,
+				[domain]: whoisData,
 			};
 		}
 		case DOMAIN_MANAGEMENT_WHOIS_UPDATE: {
 			const { domain, whoisData } = action;
-			const domainState = state[ domain ];
-			return merge( {}, state, {
-				[ domain ]: mergeDomainRegistrantContactDetails(
+			const domainState = state[domain];
+			return merge({}, state, {
+				[domain]: mergeDomainRegistrantContactDetails(
 					domainState !== undefined ? domainState : {},
 					whoisData
 				),
-			} );
+			});
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	isRequestingContactDetailsCache,
 	isRequestingWhois,
 	isSaving,
 	validationSchemas,
-} );
+});
 
 /**
  * Drop data.extra if it's an array
@@ -199,7 +199,7 @@ export default combineReducers( {
  * @param  {object} data   Potential contact details
  * @returns {object}        Sanitized contact details
  */
-function sanitizeExtra( data ) {
-	const path = data._contactDetailsCache ? [ '_contactDetailsCache', 'extra' ] : 'extra';
-	return data && isArray( get( data, path ) ) ? omit( data, path ) : data;
+function sanitizeExtra(data) {
+	const path = data._contactDetailsCache ? ['_contactDetailsCache', 'extra'] : 'extra';
+	return data && isArray(get(data, path)) ? omit(data, path) : data;
 }

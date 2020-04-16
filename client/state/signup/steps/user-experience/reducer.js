@@ -6,8 +6,8 @@ import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_USER_EXPERIENCE_SET } from 'state/a
 import { withSchemaValidation } from 'state/utils';
 import { userExperienceSchema } from './schema';
 
-export default withSchemaValidation( userExperienceSchema, ( state = '', action ) => {
-	switch ( action.type ) {
+export default withSchemaValidation(userExperienceSchema, (state = '', action) => {
+	switch (action.type) {
 		case SIGNUP_STEPS_USER_EXPERIENCE_SET: {
 			return action.userExperience;
 		}
@@ -17,4 +17,4 @@ export default withSchemaValidation( userExperienceSchema, ( state = '', action 
 	}
 
 	return state;
-} );
+});

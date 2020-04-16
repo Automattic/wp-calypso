@@ -18,16 +18,16 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
  * @param {number} siteId Site ID
  * @returns {?boolean} Whether site is a mapped domain site
  */
-export default function isMappedDomainSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	const domains = getDomainsBySiteId( state, siteId );
+export default function isMappedDomainSite(state, siteId) {
+	const site = getRawSite(state, siteId);
+	const domains = getDomainsBySiteId(state, siteId);
 
-	if ( ! site || 0 === domains.length ) {
+	if (!site || 0 === domains.length) {
 		return null;
 	}
 
 	return (
-		get( site, 'options.is_mapped_domain', false ) &&
-		some( domains, ( { isWPCOMDomain } ) => ! isWPCOMDomain )
+		get(site, 'options.is_mapped_domain', false) &&
+		some(domains, ({ isWPCOMDomain }) => !isWPCOMDomain)
 	);
 }

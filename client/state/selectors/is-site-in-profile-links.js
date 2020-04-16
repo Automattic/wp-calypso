@@ -18,16 +18,16 @@ import getProfileLinks from 'state/selectors/get-profile-links';
  * @returns {?boolean}           True if the site is in the user's profile links, false otherwise.
  */
 export default createSelector(
-	( state, siteDomain ) => {
-		const profileLinks = getProfileLinks( state );
-		if ( profileLinks === null ) {
+	(state, siteDomain) => {
+		const profileLinks = getProfileLinks(state);
+		if (profileLinks === null) {
 			return null;
 		}
 
-		return some( profileLinks, profileLink => {
+		return some(profileLinks, (profileLink) => {
 			// the regex below is used to strip any leading scheme from the profileLink's URL
-			return siteDomain === profileLink.value.replace( /^.*:\/\//, '' );
-		} );
+			return siteDomain === profileLink.value.replace(/^.*:\/\//, '');
+		});
 	},
-	[ getProfileLinks ]
+	[getProfileLinks]
 );

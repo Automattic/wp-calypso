@@ -16,16 +16,16 @@ import MaterialIcon from 'components/material-icon';
 import { preload } from 'sections-helper';
 import TranslatableString from 'components/translatable/proptype';
 
-export default function SidebarItem( props ) {
-	const isExternalLink = isExternal( props.link );
-	const showAsExternal = isExternalLink && ! props.forceInternalLink;
-	const classes = classnames( props.className, { selected: props.selected } );
+export default function SidebarItem(props) {
+	const isExternalLink = isExternal(props.link);
+	const showAsExternal = isExternalLink && !props.forceInternalLink;
+	const classes = classnames(props.className, { selected: props.selected });
 	const { materialIcon, materialIconStyle, icon, customIcon } = props;
 
 	let _preloaded = false;
 
 	const itemPreload = () => {
-		if ( ! _preloaded && props.preloadSectionName ) {
+		if (!_preloaded && props.preloadSectionName) {
 			_preloaded = true;
 			preload();
 		}
@@ -34,41 +34,41 @@ export default function SidebarItem( props ) {
 	const expandSectionIfSelected = () => {
 		const { expandSection, selected } = props;
 
-		if ( selected && isFunction( expandSection ) ) {
+		if (selected && isFunction(expandSection)) {
 			expandSection();
 		}
 	};
 
-	useEffect( expandSectionIfSelected, [ props.selected ] );
+	useEffect(expandSectionIfSelected, [props.selected]);
 
 	return (
-		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
+		<li className={classes} data-tip-target={props.tipTarget} data-post-type={props.postType}>
 			<a
 				className="sidebar__menu-link"
-				onClick={ props.onNavigate }
-				href={ props.link }
-				target={ showAsExternal ? '_blank' : null }
-				rel={ isExternalLink ? 'noopener noreferrer' : null }
-				onMouseEnter={ itemPreload }
+				onClick={props.onNavigate}
+				href={props.link}
+				target={showAsExternal ? '_blank' : null}
+				rel={isExternalLink ? 'noopener noreferrer' : null}
+				onMouseEnter={itemPreload}
 			>
-				{ icon && <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } /> }
+				{icon && <Gridicon className={'sidebar__menu-icon'} icon={icon} size={24} />}
 
-				{ materialIcon && (
+				{materialIcon && (
 					<MaterialIcon
-						className={ 'sidebar__menu-icon' }
-						icon={ materialIcon }
-						style={ materialIconStyle }
+						className={'sidebar__menu-icon'}
+						icon={materialIcon}
+						style={materialIconStyle}
 					/>
-				) }
+				)}
 
-				{ customIcon && customIcon }
+				{customIcon && customIcon}
 
-				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
-				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
-					{ props.label }
+				{/* eslint-disable wpcalypso/jsx-classname-namespace */}
+				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={props.label}>
+					{props.label}
 				</span>
-				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
-				{ props.children }
+				{showAsExternal && <Gridicon icon="external" size={24} />}
+				{props.children}
 			</a>
 		</li>
 	);

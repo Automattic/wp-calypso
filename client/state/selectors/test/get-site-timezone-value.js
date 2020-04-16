@@ -8,19 +8,19 @@ import { expect } from 'chai';
  */
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 
-describe( 'getSiteTimezoneValue()', () => {
-	test( 'should return null if the site has never been fetched', () => {
+describe('getSiteTimezoneValue()', () => {
+	test('should return null if the site has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {},
 			},
 		};
 
-		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
-		expect( timezone ).to.be.null;
-	} );
+		const timezone = getSiteTimezoneValue(stateTree, 2916284);
+		expect(timezone).to.be.null;
+	});
 
-	test( 'should return null if the site-settings has never been fetched', () => {
+	test('should return null if the site-settings has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -29,11 +29,11 @@ describe( 'getSiteTimezoneValue()', () => {
 			},
 		};
 
-		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
-		expect( timezone ).to.be.null;
-	} );
+		const timezone = getSiteTimezoneValue(stateTree, 2916284);
+		expect(timezone).to.be.null;
+	});
 
-	test( 'should return null if the timezone_string is an empty string', () => {
+	test('should return null if the timezone_string is an empty string', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -44,11 +44,11 @@ describe( 'getSiteTimezoneValue()', () => {
 			},
 		};
 
-		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
-		expect( timezone ).to.be.null;
-	} );
+		const timezone = getSiteTimezoneValue(stateTree, 2916284);
+		expect(timezone).to.be.null;
+	});
 
-	test( 'should return site-settings timezone', () => {
+	test('should return site-settings timezone', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -59,7 +59,7 @@ describe( 'getSiteTimezoneValue()', () => {
 			},
 		};
 
-		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
-		expect( timezone ).to.eql( 'Europe/Skopje' );
-	} );
-} );
+		const timezone = getSiteTimezoneValue(stateTree, 2916284);
+		expect(timezone).to.eql('Europe/Skopje');
+	});
+});

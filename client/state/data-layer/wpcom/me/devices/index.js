@@ -16,9 +16,9 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const devicesFromApi = devices =>
+const devicesFromApi = (devices) =>
 	keyBy(
-		devices.map( ( { device_id, device_name } ) => ( { id: device_id, name: device_name } ) ),
+		devices.map(({ device_id, device_name }) => ({ id: device_id, name: device_name })),
 		'id'
 	);
 
@@ -28,7 +28,7 @@ const devicesFromApi = devices =>
  * @param   {object} action Redux action
  * @returns {object} http request action
  */
-export const requestUserDevices = action =>
+export const requestUserDevices = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -45,7 +45,7 @@ export const requestUserDevices = action =>
  * @param   {object}   devices  Devices, returned from the endpoint
  * @returns {object}            User devices add action
  */
-export const handleSuccess = ( action, devices ) => userDevicesAdd( devices );
+export const handleSuccess = (action, devices) => userDevicesAdd(devices);
 
 /**
  * Returns an error notice action when the request for user devices fails
@@ -53,15 +53,15 @@ export const handleSuccess = ( action, devices ) => userDevicesAdd( devices );
  * @returns {object}            Error notice action
  */
 export const handleError = () =>
-	errorNotice( translate( "We couldn't load your devices, please try again." ) );
+	errorNotice(translate("We couldn't load your devices, please try again."));
 
-registerHandlers( 'state/data-layer/wpcom/me/devices/index.js', {
-	[ USER_DEVICES_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/devices/index.js', {
+	[USER_DEVICES_REQUEST]: [
+		dispatchRequest({
 			fetch: requestUserDevices,
 			onSuccess: handleSuccess,
 			onError: handleError,
 			fromApi: devicesFromApi,
-		} ),
+		}),
 	],
-} );
+});

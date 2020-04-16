@@ -26,72 +26,72 @@ import { getCurrentUserEmail } from 'state/current-user/selectors';
  */
 import './style.scss';
 
-export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
+export const GoMobile = ({ email, sendMobileLoginEmail }) => {
 	const translate = useTranslate();
 	const isDesktopView = isDesktop();
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
-	const showIosBadge = isDesktopView || isIos || ! isAndroid;
-	const showAndroidBadge = isDesktopView || isAndroid || ! isIos;
+	const showIosBadge = isDesktopView || isIos || !isAndroid;
+	const showAndroidBadge = isDesktopView || isAndroid || !isIos;
 	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
-	const isDesktopApp = config.isEnabled( 'desktop' );
+	const isDesktopApp = config.isEnabled('desktop');
 
 	const emailLogin = () => {
-		sendMobileLoginEmail( email );
+		sendMobileLoginEmail(email);
 	};
 
 	return (
 		<Card className="go-mobile">
-			<div className={ classnames( 'go-mobile__row', { 'has-2-cols': showOnlyOneBadge } ) }>
+			<div className={classnames('go-mobile__row', { 'has-2-cols': showOnlyOneBadge })}>
 				<div className="go-mobile__title">
-					<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
-					<h6 className="go-mobile__subheader">{ translate( 'Make updates on the go' ) }</h6>
+					<CardHeading>{translate('Go Mobile')}</CardHeading>
+					<h6 className="go-mobile__subheader">{translate('Make updates on the go')}</h6>
 				</div>
 				<div className="go-mobile__app-badges">
-					{ showIosBadge && (
+					{showIosBadge && (
 						<AppsBadge
 							storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
-							storeName={ 'ios' }
-							titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-							altText={ translate( 'Apple App Store download badge' ) }
+							storeName={'ios'}
+							titleText={translate('Download the WordPress iOS mobile app.')}
+							altText={translate('Apple App Store download badge')}
 						>
-							<img src={ appleStoreLogo } alt="" />
+							<img src={appleStoreLogo} alt="" />
 						</AppsBadge>
-					) }
-					{ showAndroidBadge && (
+					)}
+					{showAndroidBadge && (
 						<AppsBadge
 							storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-							storeName={ 'android' }
-							titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-							altText={ translate( 'Google Play Store download badge' ) }
+							storeName={'android'}
+							titleText={translate('Download the WordPress Android mobile app.')}
+							altText={translate('Google Play Store download badge')}
 						>
-							<img src={ googlePlayLogo } alt="" />
+							<img src={googlePlayLogo} alt="" />
 						</AppsBadge>
-					) }
+					)}
 				</div>
 			</div>
-			{ isDesktopView && ! isDesktopApp && (
-				<Button className="go-mobile__email-link-button" onClick={ emailLogin }>
-					{ translate( 'Email download link' ) }
+			{isDesktopView && !isDesktopApp && (
+				<Button className="go-mobile__email-link-button" onClick={emailLogin}>
+					{translate('Email download link')}
 				</Button>
-			) }
+			)}
 		</Card>
 	);
 };
 
-const sendMobileLoginEmail = email =>
+const sendMobileLoginEmail = (email) =>
 	withAnalytics(
-		recordTracksEvent( 'calypso_customer_home_request_mobile_email_login' ),
-		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
+		recordTracksEvent('calypso_customer_home_request_mobile_email_login'),
+		sendEmailLogin(email, { showGlobalNotices: true, isMobileAppLogin: true })
 	);
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			email: getCurrentUserEmail( state ),
+			email: getCurrentUserEmail(state),
 		};
 	},
 	{
 		sendMobileLoginEmail,
 	}
-)( GoMobile );
+)(GoMobile);

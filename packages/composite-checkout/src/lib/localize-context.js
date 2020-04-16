@@ -3,6 +3,6 @@
  */
 import { createContext } from 'react';
 
-const LocalizeContext = createContext( {} );
+const LocalizeContext = createContext({});
 
 export default LocalizeContext;

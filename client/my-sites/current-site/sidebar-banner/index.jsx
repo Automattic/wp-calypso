@@ -36,32 +36,32 @@ export class SidebarBanner extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onClick = e => {
+	onClick = (e) => {
 		const { ctaName, track, onClick } = this.props;
-		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
-		if ( onClick ) {
-			onClick( e );
+		track('calypso_upgrade_nudge_cta_click', { cta_name: ctaName });
+		if (onClick) {
+			onClick(e);
 		}
 	};
 
 	render() {
 		const { className, ctaName, ctaText, href, icon, text } = this.props;
-		const classes = classnames( 'sidebar-banner', className );
+		const classes = classnames('sidebar-banner', className);
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<TrackComponentView
 					eventName="calypso_upgrade_nudge_impression"
-					eventProperties={ { cta_name: ctaName } }
+					eventProperties={{ cta_name: ctaName }}
 				/>
-				<a className="sidebar-banner__link" onClick={ this.onClick } href={ href }>
+				<a className="sidebar-banner__link" onClick={this.onClick} href={href}>
 					<span className="sidebar-banner__icon-wrapper">
-						<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
+						<Gridicon className="sidebar-banner__icon" icon={icon} size={18} />
 					</span>
 					<span className="sidebar-banner__content">
-						<span className="sidebar-banner__text">{ text }</span>
+						<span className="sidebar-banner__text">{text}</span>
 					</span>
-					<span className="sidebar-banner__cta">{ ctaText }</span>
+					<span className="sidebar-banner__cta">{ctaText}</span>
 				</a>
 			</div>
 		);
@@ -71,4 +71,4 @@ export class SidebarBanner extends Component {
 const mapStateToProps = null;
 const mapDispatchToProps = { track: recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SidebarBanner ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(SidebarBanner));

@@ -43,62 +43,60 @@ const SERVER_WIDTH = 769;
 export const MOBILE_BREAKPOINT = '<480px';
 export const DESKTOP_BREAKPOINT = '>960px';
 
-const isServer = typeof window === 'undefined' || ! window.matchMedia;
+const isServer = typeof window === 'undefined' || !window.matchMedia;
 
 const noop = () => null;
 
-function createMediaQueryList( { min, max } = {} ) {
-	if ( min !== undefined && max !== undefined ) {
+function createMediaQueryList({ min, max } = {}) {
+	if (min !== undefined && max !== undefined) {
 		return isServer
 			? { matches: SERVER_WIDTH > min && SERVER_WIDTH <= max }
-			: window.matchMedia( `(min-width: ${ min + 1 }px) and (max-width: ${ max }px)` );
+			: window.matchMedia(`(min-width: ${min + 1}px) and (max-width: ${max}px)`);
 	}
 
-	if ( min !== undefined ) {
+	if (min !== undefined) {
 		return isServer
 			? { matches: SERVER_WIDTH > min }
-			: window.matchMedia( `(min-width: ${ min + 1 }px)` );
+			: window.matchMedia(`(min-width: ${min + 1}px)`);
 	}
 
-	if ( max !== undefined ) {
-		return isServer
-			? { matches: SERVER_WIDTH <= max }
-			: window.matchMedia( `(max-width: ${ max }px)` );
+	if (max !== undefined) {
+		return isServer ? { matches: SERVER_WIDTH <= max } : window.matchMedia(`(max-width: ${max}px)`);
 	}
 
 	return false;
 }
 
 const mediaQueryLists = {
-	'<480px': createMediaQueryList( { max: 480 } ),
-	'<660px': createMediaQueryList( { max: 660 } ),
-	'<800px': createMediaQueryList( { max: 800 } ),
-	'<960px': createMediaQueryList( { max: 960 } ),
-	'<1040px': createMediaQueryList( { max: 1040 } ),
-	'<1280px': createMediaQueryList( { max: 1280 } ),
-	'<1400px': createMediaQueryList( { max: 1400 } ),
-	'>480px': createMediaQueryList( { min: 480 } ),
-	'>660px': createMediaQueryList( { min: 660 } ),
-	'>800px': createMediaQueryList( { min: 800 } ),
-	'>960px': createMediaQueryList( { min: 960 } ),
-	'>1040px': createMediaQueryList( { min: 1040 } ),
-	'>1280px': createMediaQueryList( { min: 1280 } ),
-	'>1400px': createMediaQueryList( { min: 1400 } ),
-	'480px-660px': createMediaQueryList( { min: 480, max: 660 } ),
-	'660px-960px': createMediaQueryList( { min: 660, max: 960 } ),
-	'480px-960px': createMediaQueryList( { min: 480, max: 960 } ),
+	'<480px': createMediaQueryList({ max: 480 }),
+	'<660px': createMediaQueryList({ max: 660 }),
+	'<800px': createMediaQueryList({ max: 800 }),
+	'<960px': createMediaQueryList({ max: 960 }),
+	'<1040px': createMediaQueryList({ max: 1040 }),
+	'<1280px': createMediaQueryList({ max: 1280 }),
+	'<1400px': createMediaQueryList({ max: 1400 }),
+	'>480px': createMediaQueryList({ min: 480 }),
+	'>660px': createMediaQueryList({ min: 660 }),
+	'>800px': createMediaQueryList({ min: 800 }),
+	'>960px': createMediaQueryList({ min: 960 }),
+	'>1040px': createMediaQueryList({ min: 1040 }),
+	'>1280px': createMediaQueryList({ min: 1280 }),
+	'>1400px': createMediaQueryList({ min: 1400 }),
+	'480px-660px': createMediaQueryList({ min: 480, max: 660 }),
+	'660px-960px': createMediaQueryList({ min: 660, max: 960 }),
+	'480px-960px': createMediaQueryList({ min: 480, max: 960 }),
 };
 
-function getMediaQueryList( breakpoint ) {
-	if ( ! mediaQueryLists.hasOwnProperty( breakpoint ) ) {
+function getMediaQueryList(breakpoint) {
+	if (!mediaQueryLists.hasOwnProperty(breakpoint)) {
 		try {
 			// eslint-disable-next-line no-console
-			console.warn( 'Undefined breakpoint used in `mobile-first-breakpoint`', breakpoint );
-		} catch ( e ) {}
+			console.warn('Undefined breakpoint used in `mobile-first-breakpoint`', breakpoint);
+		} catch (e) {}
 		return undefined;
 	}
 
-	return mediaQueryLists[ breakpoint ];
+	return mediaQueryLists[breakpoint];
 }
 
 /**
@@ -108,8 +106,8 @@ function getMediaQueryList( breakpoint ) {
  *
  * @returns {boolean} Whether the provided breakpoint is matched.
  */
-export function isWithinBreakpoint( breakpoint ) {
-	const mediaQueryList = getMediaQueryList( breakpoint );
+export function isWithinBreakpoint(breakpoint) {
+	const mediaQueryList = getMediaQueryList(breakpoint);
 	return mediaQueryList ? mediaQueryList.matches : undefined;
 }
 
@@ -121,18 +119,18 @@ export function isWithinBreakpoint( breakpoint ) {
  *
  * @returns {Function} The function to be called when unsubscribing.
  */
-export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
-	if ( ! listener ) {
+export function subscribeIsWithinBreakpoint(breakpoint, listener) {
+	if (!listener) {
 		return noop;
 	}
 
-	const mediaQueryList = getMediaQueryList( breakpoint );
+	const mediaQueryList = getMediaQueryList(breakpoint);
 
-	if ( mediaQueryList && ! isServer ) {
-		const wrappedListener = evt => listener( evt.matches );
-		mediaQueryList.addListener( wrappedListener );
+	if (mediaQueryList && !isServer) {
+		const wrappedListener = (evt) => listener(evt.matches);
+		mediaQueryList.addListener(wrappedListener);
 		// Return unsubscribe function.
-		return () => mediaQueryList.removeListener( wrappedListener );
+		return () => mediaQueryList.removeListener(wrappedListener);
 	}
 
 	return noop;
@@ -144,7 +142,7 @@ export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
  * @returns {boolean} Whether the mobile breakpoint is matched.
  */
 export function isMobile() {
-	return isWithinBreakpoint( MOBILE_BREAKPOINT );
+	return isWithinBreakpoint(MOBILE_BREAKPOINT);
 }
 
 /**
@@ -154,8 +152,8 @@ export function isMobile() {
  *
  * @returns {Function} The registered subscription; undefined if none.
  */
-export function subscribeIsMobile( listener ) {
-	return subscribeIsWithinBreakpoint( MOBILE_BREAKPOINT, listener );
+export function subscribeIsMobile(listener) {
+	return subscribeIsWithinBreakpoint(MOBILE_BREAKPOINT, listener);
 }
 
 /**
@@ -164,7 +162,7 @@ export function subscribeIsMobile( listener ) {
  * @returns {boolean} Whether the desktop breakpoint is matched.
  */
 export function isDesktop() {
-	return isWithinBreakpoint( DESKTOP_BREAKPOINT );
+	return isWithinBreakpoint(DESKTOP_BREAKPOINT);
 }
 
 /**
@@ -174,8 +172,8 @@ export function isDesktop() {
  *
  * @returns {Function} The registered subscription; undefined if none.
  */
-export function subscribeIsDesktop( listener ) {
-	return subscribeIsWithinBreakpoint( DESKTOP_BREAKPOINT, listener );
+export function subscribeIsDesktop(listener) {
+	return subscribeIsWithinBreakpoint(DESKTOP_BREAKPOINT, listener);
 }
 
 /**

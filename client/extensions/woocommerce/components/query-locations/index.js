@@ -19,11 +19,11 @@ class QueryLocations extends Component {
 	};
 
 	componentDidMount = () => {
-		this.props.fetchLocations( this.props.siteId );
+		this.props.fetchLocations(this.props.siteId);
 	};
 
 	componentDidUpdate = () => {
-		this.props.fetchLocations( this.props.siteId );
+		this.props.fetchLocations(this.props.siteId);
 	};
 
 	render = () => {
@@ -31,6 +31,6 @@ class QueryLocations extends Component {
 	};
 }
 
-export default connect( null, dispatch => bindActionCreators( { fetchLocations }, dispatch ) )(
+export default connect(null, (dispatch) => bindActionCreators({ fetchLocations }, dispatch))(
 	QueryLocations
 );

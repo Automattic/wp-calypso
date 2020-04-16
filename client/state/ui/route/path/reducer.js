@@ -13,9 +13,9 @@ const initialState = {
 	previous: '',
 };
 
-export const pathReducer = ( state = initialState, action ) => {
+export const pathReducer = (state = initialState, action) => {
 	const { path, type } = action;
-	switch ( type ) {
+	switch (type) {
 		case ROUTE_SET:
 			return {
 				initial: state.initial === '' ? path : state.initial,

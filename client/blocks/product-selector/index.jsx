@@ -43,32 +43,32 @@ export class ProductSelector extends Component {
 		basePlansPath: PropTypes.string,
 		intervalType: PropTypes.string.isRequired,
 		products: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				title: PropTypes.string,
 				id: PropTypes.string,
-				description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
-				options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
+				description: PropTypes.oneOfType([PropTypes.string, PropTypes.element, PropTypes.node]),
+				options: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
 				optionDescriptions: PropTypes.objectOf(
-					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
+					PropTypes.oneOfType([PropTypes.string, PropTypes.element, PropTypes.node])
 				),
 				optionDisplayNames: PropTypes.objectOf(
-					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+					PropTypes.oneOfType([PropTypes.string, PropTypes.element])
 				),
 				optionShortNames: PropTypes.objectOf(
-					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+					PropTypes.oneOfType([PropTypes.string, PropTypes.element])
 				),
 				optionShortNamesCallback: PropTypes.func,
 				optionActionButtonNames: PropTypes.objectOf(
-					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+					PropTypes.oneOfType([PropTypes.string, PropTypes.element])
 				),
 				optionsLabel: PropTypes.string,
 				optionsLabelCallback: PropTypes.func,
-			} )
+			})
 		).isRequired,
-		productPriceMatrix: PropTypes.shape( {
+		productPriceMatrix: PropTypes.shape({
 			relatedProduct: PropTypes.string,
 			ratio: PropTypes.number,
-		} ),
+		}),
 		siteId: PropTypes.number,
 		onUpgradeClick: PropTypes.func,
 
@@ -79,7 +79,7 @@ export class ProductSelector extends Component {
 		fetchingPlans: PropTypes.bool,
 		fetchingSitePlans: PropTypes.bool,
 		fetchingSitePurchases: PropTypes.bool,
-		productSlugs: PropTypes.arrayOf( PropTypes.string ),
+		productSlugs: PropTypes.arrayOf(PropTypes.string),
 		purchases: PropTypes.array,
 		recordTracksEvent: PropTypes.func.isRequired,
 		selectedSiteId: PropTypes.number,
@@ -97,166 +97,166 @@ export class ProductSelector extends Component {
 		productPriceMatrix: {},
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		const { products } = props;
 
 		this.state = {
-			...products.reduce( ( acc, product ) => {
-				map( product.options, ( slugs, interval ) => {
+			...products.reduce((acc, product) => {
+				map(product.options, (slugs, interval) => {
 					// Default to the last option as the selected one
-					acc[ this.getStateKey( product.id, interval ) ] = slugs[ slugs.length - 1 ];
-				} );
+					acc[this.getStateKey(product.id, interval)] = slugs[slugs.length - 1];
+				});
 				return acc;
-			}, {} ),
+			}, {}),
 		};
 	}
 
-	getStateKey( productId, interval ) {
+	getStateKey(productId, interval) {
 		return productId + '_' + interval;
 	}
 
 	getBillingTimeFrameLabel() {
 		const { intervalType, translate } = this.props;
-		switch ( intervalType ) {
+		switch (intervalType) {
 			case 'monthly':
-				return translate( 'per month' );
+				return translate('per month');
 			case 'yearly':
-				return translate( 'per year' );
+				return translate('per year');
 			default:
 				return '';
 		}
 	}
 
-	getPurchaseByProduct( product ) {
+	getPurchaseByProduct(product) {
 		const { intervalType, purchases } = this.props;
-		const productSlugs = product.options[ intervalType ];
+		const productSlugs = product.options[intervalType];
 
 		return find(
 			purchases,
-			purchase =>
+			(purchase) =>
 				purchase.active &&
-				( includes( productSlugs, purchase.productSlug ) ||
-					includes( productSlugs, this.getRelatedYearlyProductSlug( purchase.productSlug ) ) ||
-					includes( productSlugs, this.getRelatedMonthlyProductSlug( purchase.productSlug ) ) )
+				(includes(productSlugs, purchase.productSlug) ||
+					includes(productSlugs, this.getRelatedYearlyProductSlug(purchase.productSlug)) ||
+					includes(productSlugs, this.getRelatedMonthlyProductSlug(purchase.productSlug)))
 		);
 	}
 
 	getPurchaseByCurrentPlan() {
 		const { currentPlanSlug, purchases } = this.props;
 
-		if ( ! currentPlanSlug ) {
+		if (!currentPlanSlug) {
 			return null;
 		}
 
 		return find(
 			purchases,
-			purchase => purchase.active && purchase.productSlug === currentPlanSlug
+			(purchase) => purchase.active && purchase.productSlug === currentPlanSlug
 		);
 	}
 
 	getProductSlugsForCurrentPlan() {
 		const { currentPlanSlug, productSlugs } = this.props;
-		return ! currentPlanSlug
+		return !currentPlanSlug
 			? null
-			: filter( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
+			: filter(productSlugs, (productSlug) => planHasFeature(currentPlanSlug, productSlug));
 	}
 
-	currentPlanIncludesProduct( product ) {
+	currentPlanIncludesProduct(product) {
 		const { currentPlanSlug } = this.props;
 		const productSlugs = this.getProductSlugsForCurrentPlan();
-		return ! currentPlanSlug || ! productSlugs
+		return !currentPlanSlug || !productSlugs
 			? false
-			: productSlugs.some( slug => product.slugs.includes( slug ) );
+			: productSlugs.some((slug) => product.slugs.includes(slug));
 	}
 
-	getProductSlugByCurrentPlan( product ) {
-		return ! this.props.currentPlanSlug
+	getProductSlugByCurrentPlan(product) {
+		return !this.props.currentPlanSlug
 			? null
-			: find( product.slugs, slug => planHasFeature( this.props.currentPlanSlug, slug ) );
+			: find(product.slugs, (slug) => planHasFeature(this.props.currentPlanSlug, slug));
 	}
 
-	getSubtitleByProduct( product ) {
+	getSubtitleByProduct(product) {
 		const { currentPlanSlug, moment, selectedSiteSlug, translate } = this.props;
-		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+		const currentPlan = currentPlanSlug && getPlan(currentPlanSlug);
 
-		if ( currentPlan && this.currentPlanIncludesProduct( product ) ) {
-			return translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
+		if (currentPlan && this.currentPlanIncludesProduct(product)) {
+			return translate('Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
 				args: {
 					planName: currentPlan.getTitle(),
 				},
 				components: {
-					planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
+					planLink: <a href={`/plans/my-plan/${selectedSiteSlug}`} />,
 				},
-			} );
+			});
 		}
 
-		const purchase = product ? this.getPurchaseByProduct( product ) : null;
+		const purchase = product ? this.getPurchaseByProduct(product) : null;
 
-		if ( ! purchase ) {
+		if (!purchase) {
 			return null;
 		}
 
-		const subscribedMoment = purchase.subscribedDate ? moment( purchase.subscribedDate ) : null;
+		const subscribedMoment = purchase.subscribedDate ? moment(purchase.subscribedDate) : null;
 
-		const expiryMoment = purchase.expiryDate ? moment( purchase.expiryDate ) : null;
+		const expiryMoment = purchase.expiryDate ? moment(purchase.expiryDate) : null;
 
 		const renewDateMoment =
-			! isExpiring( purchase ) && purchase.renewDate ? moment( purchase.renewDate ) : null;
+			!isExpiring(purchase) && purchase.renewDate ? moment(purchase.renewDate) : null;
 
 		return (
 			<ProductExpiration
-				expiryDateMoment={ expiryMoment }
-				renewDateMoment={ renewDateMoment }
-				purchaseDateMoment={ subscribedMoment }
-				isRefundable={ purchase.isRefundable }
+				expiryDateMoment={expiryMoment}
+				renewDateMoment={renewDateMoment}
+				purchaseDateMoment={subscribedMoment}
+				isRefundable={purchase.isRefundable}
 			/>
 		);
 	}
 
-	getDescriptionByProduct( product ) {
+	getDescriptionByProduct(product) {
 		const { description, optionDescriptions } = product;
-		const purchase = this.getPurchaseByProduct( product );
+		const purchase = this.getPurchaseByProduct(product);
 
 		// Description, obtained from a purchased product
-		if ( purchase && optionDescriptions && optionDescriptions[ purchase.productSlug ] ) {
-			return optionDescriptions[ purchase.productSlug ];
+		if (purchase && optionDescriptions && optionDescriptions[purchase.productSlug]) {
+			return optionDescriptions[purchase.productSlug];
 		}
 
 		// Description, obtained from a product that's included in a purchased plan
-		const planProductSlug = this.getProductSlugByCurrentPlan( product );
-		if ( planProductSlug && optionDescriptions && optionDescriptions[ planProductSlug ] ) {
-			return optionDescriptions[ planProductSlug ];
+		const planProductSlug = this.getProductSlugByCurrentPlan(product);
+		if (planProductSlug && optionDescriptions && optionDescriptions[planProductSlug]) {
+			return optionDescriptions[planProductSlug];
 		}
 
 		// Default product description.
 		return description;
 	}
 
-	getActionButtonName( product, productSlug ) {
-		if ( product.optionActionButtonNames && product.optionActionButtonNames[ productSlug ] ) {
-			return product.optionActionButtonNames[ productSlug ];
+	getActionButtonName(product, productSlug) {
+		if (product.optionActionButtonNames && product.optionActionButtonNames[productSlug]) {
+			return product.optionActionButtonNames[productSlug];
 		}
 
-		return this.getProductName( product, productSlug );
+		return this.getProductName(product, productSlug);
 	}
 
-	getProductName( product, productSlug ) {
-		if ( product.optionShortNames && product.optionShortNames[ productSlug ] ) {
-			return product.optionShortNames[ productSlug ];
+	getProductName(product, productSlug) {
+		if (product.optionShortNames && product.optionShortNames[productSlug]) {
+			return product.optionShortNames[productSlug];
 		}
 
 		const { storeProducts } = this.props;
-		if ( ! storeProducts ) {
+		if (!storeProducts) {
 			return null;
 		}
 
-		const productObject = storeProducts[ productSlug ];
+		const productObject = storeProducts[productSlug];
 
-		if ( product.optionShortNamesCallback ) {
-			const productName = product.optionShortNamesCallback( productObject );
-			if ( productName ) {
+		if (product.optionShortNamesCallback) {
+			const productName = product.optionShortNamesCallback(productObject);
+			if (productName) {
 				return productName;
 			}
 		}
@@ -264,187 +264,187 @@ export class ProductSelector extends Component {
 		return productObject.product_name;
 	}
 
-	getProductDisplayName( product ) {
+	getProductDisplayName(product) {
 		const { title, optionDisplayNames } = product;
-		const purchase = this.getPurchaseByProduct( product );
+		const purchase = this.getPurchaseByProduct(product);
 
 		// Product display name, obtained from a purchased product
-		if ( purchase && optionDisplayNames && optionDisplayNames[ purchase.productSlug ] ) {
-			return optionDisplayNames[ purchase.productSlug ];
+		if (purchase && optionDisplayNames && optionDisplayNames[purchase.productSlug]) {
+			return optionDisplayNames[purchase.productSlug];
 		}
 
 		// Product display name, obtained from a product that's included in a purchased plan
-		const planProductSlug = this.getProductSlugByCurrentPlan( product );
-		if ( planProductSlug && optionDisplayNames && optionDisplayNames[ planProductSlug ] ) {
-			return optionDisplayNames[ planProductSlug ];
+		const planProductSlug = this.getProductSlugByCurrentPlan(product);
+		if (planProductSlug && optionDisplayNames && optionDisplayNames[planProductSlug]) {
+			return optionDisplayNames[planProductSlug];
 		}
 
 		// Default product display name
 		return title;
 	}
 
-	getProductOptions( product ) {
+	getProductOptions(product) {
 		const { intervalType, storeProducts } = this.props;
-		const productSlugs = product.options[ intervalType ];
+		const productSlugs = product.options[intervalType];
 
-		return productSlugs.map( productSlug => {
-			const productObject = storeProducts[ productSlug ];
+		return productSlugs.map((productSlug) => {
+			const productObject = storeProducts[productSlug];
 
 			return {
 				billingTimeFrame: this.getBillingTimeFrameLabel(),
 				currencyCode: productObject.currency_code,
-				fullPrice: this.getProductOptionFullPrice( productSlug ),
-				discountedPrice: this.getProductOptionDiscountedPrice( productSlug ),
+				fullPrice: this.getProductOptionFullPrice(productSlug),
+				discountedPrice: this.getProductOptionDiscountedPrice(productSlug),
 				slug: productSlug,
-				title: this.getProductName( product, productSlug ),
+				title: this.getProductName(product, productSlug),
 			};
-		} );
+		});
 	}
 
-	handleCheckoutForProduct = productObject => {
+	handleCheckoutForProduct = (productObject) => {
 		const { currentPlanSlug, intervalType, selectedSiteSlug, onUpgradeClick } = this.props;
 
 		return () => {
-			this.props.recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+			this.props.recordTracksEvent('calypso_plan_features_upgrade_click', {
 				current_plan: currentPlanSlug,
 				product_name: productObject.product_slug,
 				billing_cycle: intervalType,
-			} );
-			if ( onUpgradeClick ) {
-				onUpgradeClick( productObject );
+			});
+			if (onUpgradeClick) {
+				onUpgradeClick(productObject);
 				return;
 			}
-			page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
+			page('/checkout/' + selectedSiteSlug + '/' + productObject.product_slug);
 		};
 	};
 
-	handleManagePurchase = productSlug => {
+	handleManagePurchase = (productSlug) => {
 		return () => {
-			this.props.recordTracksEvent( 'calypso_manage_purchase_click', {
+			this.props.recordTracksEvent('calypso_manage_purchase_click', {
 				slug: productSlug,
-			} );
+			});
 		};
 	};
 
-	handleProductOptionSelect( stateKey, selectedProductSlug, productId ) {
+	handleProductOptionSelect(stateKey, selectedProductSlug, productId) {
 		const { intervalType } = this.props;
 		const relatedStateChange = {};
 		const otherInterval = 'yearly' === intervalType ? 'monthly' : 'yearly';
-		const relatedStateKey = this.getStateKey( productId, otherInterval );
+		const relatedStateKey = this.getStateKey(productId, otherInterval);
 		const relatedProductSlug =
 			'yearly' === otherInterval
-				? this.getRelatedYearlyProductSlug( selectedProductSlug )
-				: this.getRelatedMonthlyProductSlug( selectedProductSlug );
+				? this.getRelatedYearlyProductSlug(selectedProductSlug)
+				: this.getRelatedMonthlyProductSlug(selectedProductSlug);
 
-		if ( relatedProductSlug ) {
-			relatedStateChange[ relatedStateKey ] = relatedProductSlug;
+		if (relatedProductSlug) {
+			relatedStateChange[relatedStateKey] = relatedProductSlug;
 		}
 
-		this.setState( {
-			[ stateKey ]: selectedProductSlug,
+		this.setState({
+			[stateKey]: selectedProductSlug,
 			// Also update the selected product option for the other interval type
 			...relatedStateChange,
-		} );
+		});
 	}
 
-	renderCheckoutButton( product ) {
+	renderCheckoutButton(product) {
 		const { intervalType, storeProducts, translate } = this.props;
-		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
-		const productObject = storeProducts[ selectedProductSlug ];
+		const selectedProductSlug = this.state[this.getStateKey(product.id, intervalType)];
+		const productObject = storeProducts[selectedProductSlug];
 
 		return (
 			<ProductCardAction
-				onClick={ this.handleCheckoutForProduct( productObject ) }
-				intro={ this.getIntervalDiscount( selectedProductSlug ) }
-				label={ translate( 'Get %(productName)s', {
+				onClick={this.handleCheckoutForProduct(productObject)}
+				intro={this.getIntervalDiscount(selectedProductSlug)}
+				label={translate('Get %(productName)s', {
 					args: {
-						productName: this.getActionButtonName( product, productObject.product_slug ),
+						productName: this.getActionButtonName(product, productObject.product_slug),
 					},
-				} ) }
+				})}
 			/>
 		);
 	}
 
-	renderManageButton( product, purchase ) {
+	renderManageButton(product, purchase) {
 		return (
 			<ProductCardAction
-				onClick={ this.handleManagePurchase( purchase.productSlug ) }
-				href={ managePurchase( purchase.domain, purchase.id ) }
+				onClick={this.handleManagePurchase(purchase.productSlug)}
+				href={managePurchase(purchase.domain, purchase.id)}
 				label={
-					this.currentPlanIncludesProduct( product )
-						? this.props.translate( 'Manage Plan' )
-						: this.props.translate( 'Manage Product' )
+					this.currentPlanIncludesProduct(product)
+						? this.props.translate('Manage Plan')
+						: this.props.translate('Manage Product')
 				}
-				primary={ false }
+				primary={false}
 			/>
 		);
 	}
 
-	getIntervalDiscount( selectedProductSlug ) {
+	getIntervalDiscount(selectedProductSlug) {
 		const { basePlansPath, currencyCode, intervalType, siteSlug } = this.props;
 
-		if ( ! basePlansPath ) {
+		if (!basePlansPath) {
 			return null;
 		}
 
 		const isYearly = 'yearly' === intervalType;
 		const discountedProductSlug = isYearly
 			? selectedProductSlug
-			: this.getRelatedYearlyProductSlug( selectedProductSlug );
+			: this.getRelatedYearlyProductSlug(selectedProductSlug);
 
-		if ( ! discountedProductSlug ) {
+		if (!discountedProductSlug) {
 			return null;
 		}
 
-		const discountedPrice = this.getProductOptionDiscountedPrice( discountedProductSlug );
-		const fullPrice = this.getProductOptionFullPrice( discountedProductSlug );
+		const discountedPrice = this.getProductOptionDiscountedPrice(discountedProductSlug);
+		const fullPrice = this.getProductOptionFullPrice(discountedProductSlug);
 
 		return (
 			discountedPrice &&
 			fullPrice && (
 				<PlanIntervalDiscount
-					basePlansPath={ basePlansPath }
-					currencyCode={ currencyCode }
-					discountPrice={ discountedPrice }
-					isYearly={ isYearly }
-					originalPrice={ fullPrice }
-					siteSlug={ siteSlug }
+					basePlansPath={basePlansPath}
+					currencyCode={currencyCode}
+					discountPrice={discountedPrice}
+					isYearly={isYearly}
+					originalPrice={fullPrice}
+					siteSlug={siteSlug}
 				/>
 			)
 		);
 	}
 
-	getRelatedYearlyProductSlug( monthlyProductSlug ) {
+	getRelatedYearlyProductSlug(monthlyProductSlug) {
 		const { productPriceMatrix } = this.props;
 
-		if ( ! productPriceMatrix ) {
+		if (!productPriceMatrix) {
 			return null;
 		}
 
 		return findKey(
 			productPriceMatrix,
-			relatedMonthlyProduct => relatedMonthlyProduct.relatedProduct === monthlyProductSlug
+			(relatedMonthlyProduct) => relatedMonthlyProduct.relatedProduct === monthlyProductSlug
 		);
 	}
 
-	getRelatedMonthlyProductSlug( yearlyProductSlug ) {
+	getRelatedMonthlyProductSlug(yearlyProductSlug) {
 		const { productPriceMatrix } = this.props;
 
-		if ( ! productPriceMatrix || ! productPriceMatrix[ yearlyProductSlug ] ) {
+		if (!productPriceMatrix || !productPriceMatrix[yearlyProductSlug]) {
 			return null;
 		}
 
-		return productPriceMatrix[ yearlyProductSlug ].relatedProduct;
+		return productPriceMatrix[yearlyProductSlug].relatedProduct;
 	}
 
-	getPurchaseBillingTimeframe( purchase ) {
-		if ( ! purchase ) {
+	getPurchaseBillingTimeframe(purchase) {
+		if (!purchase) {
 			return null;
 		}
 
-		if ( this.getRelatedYearlyProductSlug( purchase.productSlug ) ) {
+		if (this.getRelatedYearlyProductSlug(purchase.productSlug)) {
 			return 'monthly';
-		} else if ( this.getRelatedMonthlyProductSlug( purchase.productSlug ) ) {
+		} else if (this.getRelatedMonthlyProductSlug(purchase.productSlug)) {
 			return 'yearly';
 		}
 
@@ -453,46 +453,46 @@ export class ProductSelector extends Component {
 
 	isCurrentPlanInSelectedTimeframe() {
 		const { currentPlanSlug, intervalType } = this.props;
-		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+		const currentPlan = currentPlanSlug && getPlan(currentPlanSlug);
 
-		if ( ! currentPlan ) {
+		if (!currentPlan) {
 			return false;
 		}
 
 		return (
-			( currentPlan.term === TERM_ANNUALLY && 'yearly' === intervalType ) ||
-			( currentPlan.term === TERM_MONTHLY && 'monthly' === intervalType )
+			(currentPlan.term === TERM_ANNUALLY && 'yearly' === intervalType) ||
+			(currentPlan.term === TERM_MONTHLY && 'monthly' === intervalType)
 		);
 	}
 
-	getProductOptionFullPrice( productSlug ) {
+	getProductOptionFullPrice(productSlug) {
 		const { productPriceMatrix, storeProducts } = this.props;
 
-		if ( isEmpty( storeProducts ) ) {
+		if (isEmpty(storeProducts)) {
 			return null;
 		}
 
-		const productObject = storeProducts[ productSlug ];
-		const relatedProductObject = productPriceMatrix[ productSlug ];
+		const productObject = storeProducts[productSlug];
+		const relatedProductObject = productPriceMatrix[productSlug];
 
-		if ( relatedProductObject ) {
-			return storeProducts[ relatedProductObject.relatedProduct ].cost * relatedProductObject.ratio;
+		if (relatedProductObject) {
+			return storeProducts[relatedProductObject.relatedProduct].cost * relatedProductObject.ratio;
 		}
 
 		return productObject.cost;
 	}
 
-	getProductOptionDiscountedPrice( productSlug ) {
+	getProductOptionDiscountedPrice(productSlug) {
 		const { productPriceMatrix, storeProducts } = this.props;
 
-		if ( isEmpty( storeProducts ) ) {
+		if (isEmpty(storeProducts)) {
 			return null;
 		}
 
-		const productObject = storeProducts[ productSlug ];
-		const relatedProductObject = productPriceMatrix[ productSlug ];
+		const productObject = storeProducts[productSlug];
+		const relatedProductObject = productPriceMatrix[productSlug];
 
-		if ( relatedProductObject ) {
+		if (relatedProductObject) {
 			return productObject.cost;
 		}
 
@@ -511,107 +511,107 @@ export class ProductSelector extends Component {
 			translate,
 		} = this.props;
 
-		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
-			return map( products, product => {
+		if (isEmpty(storeProducts) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans) {
+			return map(products, (product) => {
 				return (
 					<ProductCard
-						key={ product.id }
-						title={ product.title }
-						isPlaceholder={ true }
-						description={ product.description ? product.description : null }
+						key={product.id}
+						title={product.title}
+						isPlaceholder={true}
+						description={product.description ? product.description : null}
 					/>
 				);
-			} );
+			});
 		}
 
 		const currentPlanInSelectedTimeframe = this.isCurrentPlanInSelectedTimeframe();
 
-		return map( products, product => {
-			const stateKey = this.getStateKey( product.id, intervalType );
-			const selectedSlug = this.state[ stateKey ];
-			const productObject = storeProducts[ selectedSlug ];
+		return map(products, (product) => {
+			const stateKey = this.getStateKey(product.id, intervalType);
+			const selectedSlug = this.state[stateKey];
+			const productObject = storeProducts[selectedSlug];
 
 			const linkUrl = selectedSiteSlug
-				? addQueryArgs( { site: selectedSiteSlug }, product.link.url )
+				? addQueryArgs({ site: selectedSiteSlug }, product.link.url)
 				: product.link.url;
 
 			let purchase, isCurrent;
-			if ( this.currentPlanIncludesProduct( product ) ) {
+			if (this.currentPlanIncludesProduct(product)) {
 				purchase = this.getPurchaseByCurrentPlan();
 				isCurrent = currentPlanInSelectedTimeframe;
 			} else {
-				purchase = this.getPurchaseByProduct( product );
-				isCurrent = this.getPurchaseBillingTimeframe( purchase ) === intervalType;
+				purchase = this.getPurchaseByProduct(product);
+				isCurrent = this.getPurchaseBillingTimeframe(purchase) === intervalType;
 			}
 
-			const hasProductPurchase = !! purchase;
+			const hasProductPurchase = !!purchase;
 
 			let optionsLabel;
-			if ( product.optionsLabel ) {
+			if (product.optionsLabel) {
 				optionsLabel = product.optionsLabel;
-			} else if ( product.optionsLabelCallback ) {
-				optionsLabel = product.optionsLabelCallback( productObject );
+			} else if (product.optionsLabelCallback) {
+				optionsLabel = product.optionsLabelCallback(productObject);
 			}
 
 			return (
 				<ProductCard
-					key={ product.id }
-					title={ this.getProductDisplayName( product ) }
+					key={product.id}
+					title={this.getProductDisplayName(product)}
 					description={
 						<Fragment>
-							{ this.getDescriptionByProduct( product ) }
-							{ product.link && ' ' }
-							{ product.link && (
+							{this.getDescriptionByProduct(product)}
+							{product.link && ' '}
+							{product.link && (
 								<ExternalLinkWithTracking
-									href={ linkUrl }
+									href={linkUrl}
 									tracksEventName="calypso_plan_link_click"
-									tracksEventProps={ {
+									tracksEventProps={{
 										link_location: product.link.props.location,
 										link_slug: product.link.props.slug,
-									} }
+									}}
 									icon
 								>
-									{ product.link.label }
+									{product.link.label}
 								</ExternalLinkWithTracking>
-							) }
+							)}
 						</Fragment>
 					}
-					purchase={ purchase }
-					subtitle={ this.getSubtitleByProduct( product ) }
+					purchase={purchase}
+					subtitle={this.getSubtitleByProduct(product)}
 				>
-					{ hasProductPurchase && isCurrent && this.renderManageButton( product, purchase ) }
-					{ ! hasProductPurchase && ! isCurrent && (
+					{hasProductPurchase && isCurrent && this.renderManageButton(product, purchase)}
+					{!hasProductPurchase && !isCurrent && (
 						<Fragment>
-							{ product.hasPromo && (
+							{product.hasPromo && (
 								<ProductCardPromoNudge
-									badgeText={ translate( 'Up to %(discount)s off!', {
+									badgeText={translate('Up to %(discount)s off!', {
 										args: { discount: '70%' },
-									} ) }
-									text={ translate(
+									})}
+									text={translate(
 										'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
 										{
 											components: { strong: <strong /> },
 										}
-									) }
+									)}
 								/>
-							) }
+							)}
 
 							<ProductCardOptions
-								optionsLabel={ optionsLabel }
-								options={ this.getProductOptions( product ) }
-								selectedSlug={ selectedSlug }
-								handleSelect={ productSlug =>
-									this.handleProductOptionSelect( stateKey, productSlug, product.id )
+								optionsLabel={optionsLabel}
+								options={this.getProductOptions(product)}
+								selectedSlug={selectedSlug}
+								handleSelect={(productSlug) =>
+									this.handleProductOptionSelect(stateKey, productSlug, product.id)
 								}
-								forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
+								forceRadiosEvenIfOnlyOneOption={!!product.forceRadios}
 							/>
 
-							{ this.renderCheckoutButton( product ) }
+							{this.renderCheckoutButton(product)}
 						</Fragment>
-					) }
+					)}
 				</ProductCard>
 			);
-		} );
+		});
 	}
 
 	render() {
@@ -619,47 +619,43 @@ export class ProductSelector extends Component {
 
 		return (
 			<div className="product-selector">
-				<QuerySiteProducts siteId={ selectedSiteId } />
-				{ isConnectStore ? (
-					<QueryProductsList />
-				) : (
-					<QuerySitePurchases siteId={ selectedSiteId } />
-				) }
-				{ this.renderProducts() }
+				<QuerySiteProducts siteId={selectedSiteId} />
+				{isConnectStore ? <QueryProductsList /> : <QuerySitePurchases siteId={selectedSiteId} />}
+				{this.renderProducts()}
 			</div>
 		);
 	}
 }
 
 const connectComponent = connect(
-	( state, { products, siteId, basePlansPath } ) => {
-		const selectedSiteId = siteId || getSelectedSiteId( state );
-		const productSlugs = extractProductSlugs( products );
+	(state, { products, siteId, basePlansPath }) => {
+		const selectedSiteId = siteId || getSelectedSiteId(state);
+		const productSlugs = extractProductSlugs(products);
 
 		const isConnectStore = basePlansPath && '/jetpack/connect/store' === basePlansPath;
 		const availableProducts = isConnectStore
-			? getAvailableProductsList( state )
-			: getAvailableProductsBySiteId( state, selectedSiteId ).data;
+			? getAvailableProductsList(state)
+			: getAvailableProductsBySiteId(state, selectedSiteId).data;
 
 		const isFetchingPurchases = isConnectStore
-			? isProductsListFetching( state )
-			: isFetchingSitePurchases( state );
+			? isProductsListFetching(state)
+			: isFetchingSitePurchases(state);
 
 		return {
 			isConnectStore,
 			availableProducts,
-			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
-			fetchingPlans: isRequestingPlans( state ),
-			fetchingSitePlans: isRequestingSitePlans( state ),
+			currencyCode: getCurrentUserCurrencyCode(state),
+			currentPlanSlug: getSitePlanSlug(state, selectedSiteId),
+			fetchingPlans: isRequestingPlans(state),
+			fetchingSitePlans: isRequestingSitePlans(state),
 			fetchingSitePurchases: isFetchingPurchases,
 			productSlugs,
-			purchases: getSitePurchases( state, selectedSiteId ),
+			purchases: getSitePurchases(state, selectedSiteId),
 			selectedSiteId,
-			selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-			storeProducts: isEmpty( availableProducts )
+			selectedSiteSlug: getSiteSlug(state, selectedSiteId),
+			storeProducts: isEmpty(availableProducts)
 				? {}
-				: filterByProductSlugs( availableProducts, productSlugs ),
+				: filterByProductSlugs(availableProducts, productSlugs),
 		};
 	},
 	{
@@ -667,4 +663,4 @@ const connectComponent = connect(
 	}
 );
 
-export default compose( connectComponent, localize, withLocalizedMoment )( ProductSelector );
+export default compose(connectComponent, localize, withLocalizedMoment)(ProductSelector);

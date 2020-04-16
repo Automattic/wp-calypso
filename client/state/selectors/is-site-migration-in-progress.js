@@ -14,8 +14,8 @@ import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
  * @param {object} siteId Site ID
  * @returns {boolean} True if site is the target of an active migration
  */
-export default function isSiteMigrationInProgress( state, siteId ) {
-	const migrationStatus = getSiteMigrationStatus( state, siteId );
+export default function isSiteMigrationInProgress(state, siteId) {
+	const migrationStatus = getSiteMigrationStatus(state, siteId);
 
 	return migrationStatus !== 'inactive' && migrationStatus !== 'done';
 }

@@ -16,48 +16,38 @@ import { FONT_BASE, FONT_HEADINGS } from './constants';
 
 const ANY_PROPERTY = 'ANY_PROPERTY';
 
-const isFor = filterProperty => option =>
+const isFor = (filterProperty) => (option) =>
 	option.prop === ANY_PROPERTY || option.prop === filterProperty;
 
-const toOption = font => {
-	if ( typeof font === 'object' ) {
+const toOption = (font) => {
+	if (typeof font === 'object') {
 		const { label, value, prop = ANY_PROPERTY } = font;
 		return { label, value, prop };
 	}
 	return { label: font, value: font, prop: ANY_PROPERTY };
 };
-const isNotNull = option => option.value !== null && option.label !== null;
+const isNotNull = (option) => option.value !== null && option.label !== null;
 
-const toOptions = ( options, filterProperty ) =>
-	! options
-		? []
-		: options
-				.map( toOption )
-				.filter( isNotNull )
-				.filter( isFor( filterProperty ) );
+const toOptions = (options, filterProperty) =>
+	!options ? [] : options.map(toOption).filter(isNotNull).filter(isFor(filterProperty));
 
-const PanelActionButtons = ( {
-	hasLocalChanges,
-	resetAction,
-	publishAction,
-	className = null,
-} ) => (
-	<div className={ className }>
-		<Button disabled={ ! hasLocalChanges } isDefault onClick={ resetAction }>
-			{ __( 'Reset' ) }
+const PanelActionButtons = ({ hasLocalChanges, resetAction, publishAction, className = null }) => (
+	<div className={className}>
+		<Button disabled={!hasLocalChanges} isDefault onClick={resetAction}>
+			{__('Reset')}
 		</Button>
 		<Button
-			className={ 'global-styles-sidebar__publish-button' }
-			disabled={ ! hasLocalChanges }
+			className={'global-styles-sidebar__publish-button'}
+			disabled={!hasLocalChanges}
 			isPrimary
-			onClick={ publishAction }
+			onClick={publishAction}
 		>
-			{ __( 'Publish' ) }
+			{__('Publish')}
 		</Button>
 	</div>
 );
 
-export default ( {
+export default ({
 	fontHeadings,
 	fontHeadingsDefault,
 	fontBase,
@@ -69,73 +59,72 @@ export default ( {
 	updateOptions,
 	hasLocalChanges,
 	resetLocalChanges,
-} ) => {
+}) => {
 	const publish = () =>
-		publishOptions( {
-			[ FONT_BASE ]: fontBase,
-			[ FONT_HEADINGS ]: fontHeadings,
-		} );
+		publishOptions({
+			[FONT_BASE]: fontBase,
+			[FONT_HEADINGS]: fontHeadings,
+		});
 	return (
 		<>
-			<PluginSidebarMoreMenuItem icon={ <GlobalStylesIcon /> } target="global-styles">
-				{ __( 'Global Styles' ) }
+			<PluginSidebarMoreMenuItem icon={<GlobalStylesIcon />} target="global-styles">
+				{__('Global Styles')}
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
-				icon={ <GlobalStylesIcon /> }
-				name={ 'global-styles' }
-				title={ __( 'Global Styles' ) }
+				icon={<GlobalStylesIcon />}
+				name={'global-styles'}
+				title={__('Global Styles')}
 				className="global-styles-sidebar"
 			>
 				<PanelBody>
 					<p>
-						{ /* translators: %s: Name of site. */
-						sprintf( __( 'You are customizing %s.' ), siteName ) }
+						{/* translators: %s: Name of site. */ sprintf(__('You are customizing %s.'), siteName)}
 					</p>
-					<p>{ __( 'Any change you make here will apply to the entire website.' ) }</p>
-					{ hasLocalChanges ? (
+					<p>{__('Any change you make here will apply to the entire website.')}</p>
+					{hasLocalChanges ? (
 						<div>
 							<p>
-								<em>{ __( 'You have unsaved changes.' ) }</em>
+								<em>{__('You have unsaved changes.')}</em>
 							</p>
 							<PanelActionButtons
-								hasLocalChanges={ hasLocalChanges }
-								publishAction={ publish }
-								resetAction={ resetLocalChanges }
+								hasLocalChanges={hasLocalChanges}
+								publishAction={publish}
+								resetAction={resetLocalChanges}
 							/>
 						</div>
-					) : null }
+					) : null}
 				</PanelBody>
-				<PanelBody title={ __( 'Font Selection' ) }>
+				<PanelBody title={__('Font Selection')}>
 					<FontSelectionPanel
-						fontBase={ fontBase }
-						fontBaseDefault={ fontBaseDefault }
-						fontHeadings={ fontHeadings }
-						fontHeadingsDefault={ fontHeadingsDefault }
-						fontBaseOptions={ toOptions( fontOptions, FONT_BASE ) }
-						fontHeadingsOptions={ toOptions( fontOptions, FONT_HEADINGS ) }
-						updateBaseFont={ value => updateOptions( { [ FONT_BASE ]: value } ) }
-						updateHeadingsFont={ value => updateOptions( { [ FONT_HEADINGS ]: value } ) }
+						fontBase={fontBase}
+						fontBaseDefault={fontBaseDefault}
+						fontHeadings={fontHeadings}
+						fontHeadingsDefault={fontHeadingsDefault}
+						fontBaseOptions={toOptions(fontOptions, FONT_BASE)}
+						fontHeadingsOptions={toOptions(fontOptions, FONT_HEADINGS)}
+						updateBaseFont={(value) => updateOptions({ [FONT_BASE]: value })}
+						updateHeadingsFont={(value) => updateOptions({ [FONT_HEADINGS]: value })}
 					/>
 					<FontPairingsPanel
-						fontHeadings={ fontHeadings }
-						fontBase={ fontBase }
-						fontPairings={ fontPairings }
-						update={ ( { headings, base } ) =>
-							updateOptions( { [ FONT_HEADINGS ]: headings, [ FONT_BASE ]: base } )
+						fontHeadings={fontHeadings}
+						fontBase={fontBase}
+						fontPairings={fontPairings}
+						update={({ headings, base }) =>
+							updateOptions({ [FONT_HEADINGS]: headings, [FONT_BASE]: base })
 						}
 					/>
 				</PanelBody>
 				<PanelBody>
-					{ hasLocalChanges ? (
+					{hasLocalChanges ? (
 						<p>
-							<em>{ __( 'You have unsaved changes.' ) }</em>
+							<em>{__('You have unsaved changes.')}</em>
 						</p>
-					) : null }
+					) : null}
 					<PanelActionButtons
-						hasLocalChanges={ hasLocalChanges }
-						publishAction={ publish }
-						resetAction={ resetLocalChanges }
-						className={ 'global-styles-sidebar__panel-action-buttons' }
+						hasLocalChanges={hasLocalChanges}
+						publishAction={publish}
+						resetAction={resetLocalChanges}
+						className={'global-styles-sidebar__panel-action-buttons'}
 					/>
 				</PanelBody>
 			</PluginSidebar>

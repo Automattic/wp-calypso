@@ -16,21 +16,21 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const activateRewind = action =>
+const activateRewind = (action) =>
 	http(
 		{
 			method: 'POST',
-			path: `/activity-log/${ action.siteId }/rewind/activate`,
+			path: `/activity-log/${action.siteId}/rewind/activate`,
 			apiVersion: '1',
-			...( action.isVpMigrate ? { body: { rewindOptIn: true } } : {} ),
+			...(action.isVpMigrate ? { body: { rewindOptIn: true } } : {}),
 		},
 		action
 	);
 
-export const activateSucceeded = ( action, rawData ) => {
-	const successNotifier = rewindActivateSuccess( action.siteId );
+export const activateSucceeded = (action, rawData) => {
+	const successNotifier = rewindActivateSuccess(action.siteId);
 
-	if ( undefined === get( rawData, 'rewind_state', undefined ) ) {
+	if (undefined === get(rawData, 'rewind_state', undefined)) {
 		return successNotifier;
 	}
 
@@ -39,22 +39,22 @@ export const activateSucceeded = ( action, rawData ) => {
 		{
 			type: REWIND_STATE_UPDATE,
 			siteId: action.siteId,
-			data: transformApi( rawData.rewind_state ),
+			data: transformApi(rawData.rewind_state),
 		},
 	];
 };
 
-export const activateFailed = ( { siteId }, { message } ) => [
-	errorNotice( translate( 'Problem activating rewind: %(message)s', { args: { message } } ) ),
-	rewindActivateFailure( siteId ),
+export const activateFailed = ({ siteId }, { message }) => [
+	errorNotice(translate('Problem activating rewind: %(message)s', { args: { message } })),
+	rewindActivateFailure(siteId),
 ];
 
-registerHandlers( 'state/data-layer/wpcom/activity-log/activate/index.js', {
-	[ REWIND_ACTIVATE_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/activity-log/activate/index.js', {
+	[REWIND_ACTIVATE_REQUEST]: [
+		dispatchRequest({
 			fetch: activateRewind,
 			onSuccess: activateSucceeded,
 			onError: activateFailed,
-		} ),
+		}),
 	],
-} );
+});

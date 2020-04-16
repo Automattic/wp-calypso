@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import isHiddenSite from 'state/selectors/is-hidden-site';
 
-describe( 'isHiddenSite()', () => {
-	test( 'should return null if the site is not known', () => {
+describe('isHiddenSite()', () => {
+	test('should return null if the site is not known', () => {
 		const isHidden = isHiddenSite(
 			{
 				siteSettings: {
@@ -23,10 +23,10 @@ describe( 'isHiddenSite()', () => {
 			2916285
 		);
 
-		expect( isHidden ).to.be.null;
-	} );
+		expect(isHidden).to.be.null;
+	});
 
-	test( 'should return false for public sites', () => {
+	test('should return false for public sites', () => {
 		const isHidden = isHiddenSite(
 			{
 				siteSettings: {
@@ -40,10 +40,10 @@ describe( 'isHiddenSite()', () => {
 			2916284
 		);
 
-		expect( isHidden ).to.be.false;
-	} );
+		expect(isHidden).to.be.false;
+	});
 
-	test( 'should return true for hidden sites', () => {
+	test('should return true for hidden sites', () => {
 		const isHidden = isHiddenSite(
 			{
 				siteSettings: {
@@ -57,6 +57,6 @@ describe( 'isHiddenSite()', () => {
 			2916284
 		);
 
-		expect( isHidden ).to.be.true;
-	} );
-} );
+		expect(isHidden).to.be.true;
+	});
+});

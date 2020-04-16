@@ -13,12 +13,12 @@ import { parse, stringify } from 'lib/shortcode';
  *
  * @returns {string} Serialized shortcode, e.g., `[simple-payment id="1"]`
  */
-export function serialize( { id } ) {
-	return stringify( {
+export function serialize({ id }) {
+	return stringify({
 		tag: 'simple-payment',
 		type: 'single',
 		attrs: { id },
-	} );
+	});
 }
 
 /**
@@ -27,18 +27,18 @@ export function serialize( { id } ) {
  * @param {string} shortcode Simple Payments shortcode (e.g. [simple-payment id="20"])
  * @returns {object} Returns an object containing shortcode data.
  */
-export function deserialize( shortcode ) {
-	if ( ! shortcode ) {
+export function deserialize(shortcode) {
+	if (!shortcode) {
 		return null;
 	}
 
-	const parsed = parse( shortcode );
+	const parsed = parse(shortcode);
 
 	const shortcodeData = {};
 
-	const simplePaymentId = parseInt( get( parsed, 'attrs.named.id', null ) );
+	const simplePaymentId = parseInt(get(parsed, 'attrs.named.id', null));
 
-	shortcodeData.id = isNaN( simplePaymentId ) ? null : simplePaymentId;
+	shortcodeData.id = isNaN(simplePaymentId) ? null : simplePaymentId;
 
 	return shortcodeData;
 }

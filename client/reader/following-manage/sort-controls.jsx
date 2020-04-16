@@ -14,7 +14,7 @@ import FormSelect from 'components/forms/form-select';
 class FollowingManageSortControls extends React.Component {
 	static propTypes = {
 		onSortChange: PropTypes.func,
-		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		sortOrder: PropTypes.oneOf(['date-followed', 'alpha']),
 	};
 
 	static defaultProps = {
@@ -22,8 +22,8 @@ class FollowingManageSortControls extends React.Component {
 		sortOrder: 'date-followed',
 	};
 
-	handleSelectChange = event => {
-		this.props.onSortChange( event.target.value );
+	handleSelectChange = (event) => {
+		this.props.onSortChange(event.target.value);
 	};
 
 	render() {
@@ -32,14 +32,14 @@ class FollowingManageSortControls extends React.Component {
 		return (
 			<FormSelect
 				className="following-manage__sort-controls"
-				onChange={ this.handleSelectChange }
-				value={ sortOrder }
+				onChange={this.handleSelectChange}
+				value={sortOrder}
 			>
-				<option value="date-followed">{ this.props.translate( 'Sort by date followed' ) }</option>
-				<option value="alpha">{ this.props.translate( 'Sort by site name' ) }</option>
+				<option value="date-followed">{this.props.translate('Sort by date followed')}</option>
+				<option value="alpha">{this.props.translate('Sort by site name')}</option>
 			</FormSelect>
 		);
 	}
 }
 
-export default localize( FollowingManageSortControls );
+export default localize(FollowingManageSortControls);

@@ -68,44 +68,44 @@ import { getFeaturedImageId } from 'state/posts/utils';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case POSTS_RECEIVE: {
 			return reduce(
 				action.posts,
-				( memo, post ) => {
+				(memo, post) => {
 					const { site_ID: siteId, ID: postId, global_ID: globalId } = post;
-					if ( memo[ globalId ] ) {
+					if (memo[globalId]) {
 						// We're making an assumption here that the site ID and post ID
 						// corresponding with a global ID will never change
 						return memo;
 					}
 
-					if ( memo === state ) {
+					if (memo === state) {
 						memo = { ...memo };
 					}
 
-					memo[ globalId ] = [ siteId, postId ];
+					memo[globalId] = [siteId, postId];
 					return memo;
 				},
 				state
 			);
 		}
 		case POST_DELETE_SUCCESS: {
-			const globalId = findKey( state, ( [ siteId, postId ] ) => {
+			const globalId = findKey(state, ([siteId, postId]) => {
 				return siteId === action.siteId && postId === action.postId;
-			} );
+			});
 
-			if ( ! globalId ) {
+			if (!globalId) {
 				return state;
 			}
 
-			return omit( state, globalId );
+			return omit(state, globalId);
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated site post requests state after an action has been
@@ -116,16 +116,16 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function siteRequests( state = {}, action ) {
-	switch ( action.type ) {
+export function siteRequests(state = {}, action) {
+	switch (action.type) {
 		case POST_REQUEST:
 		case POST_REQUEST_SUCCESS:
 		case POST_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
-					[ action.postId ]: POST_REQUEST === action.type,
-				} ),
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: Object.assign({}, state[action.siteId], {
+					[action.postId]: POST_REQUEST === action.type,
+				}),
+			});
 	}
 
 	return state;
@@ -140,15 +140,15 @@ export function siteRequests( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function queryRequests( state = {}, action ) {
-	switch ( action.type ) {
+export function queryRequests(state = {}, action) {
+	switch (action.type) {
 		case POSTS_REQUEST:
 		case POSTS_REQUEST_SUCCESS:
 		case POSTS_REQUEST_FAILURE:
-			const serializedQuery = getSerializedPostsQuery( action.query, action.siteId );
-			return Object.assign( {}, state, {
-				[ serializedQuery ]: POSTS_REQUEST === action.type,
-			} );
+			const serializedQuery = getSerializedPostsQuery(action.query, action.siteId);
+			return Object.assign({}, state, {
+				[serializedQuery]: POSTS_REQUEST === action.type,
+			});
 	}
 
 	return state;
@@ -163,64 +163,61 @@ export function queryRequests( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const queries = ( () => {
-	function applyToManager( state, siteId, method, createDefault, ...args ) {
-		if ( ! siteId ) {
+export const queries = (() => {
+	function applyToManager(state, siteId, method, createDefault, ...args) {
+		if (!siteId) {
 			return state;
 		}
 
-		if ( ! state[ siteId ] ) {
-			if ( ! createDefault ) {
+		if (!state[siteId]) {
+			if (!createDefault) {
 				return state;
 			}
 
 			return {
 				...state,
-				[ siteId ]: new PostQueryManager()[ method ]( ...args ),
+				[siteId]: new PostQueryManager()[method](...args),
 			};
 		}
 
-		const nextManager = state[ siteId ][ method ]( ...args );
-		if ( nextManager === state[ siteId ] ) {
+		const nextManager = state[siteId][method](...args);
+		if (nextManager === state[siteId]) {
 			return state;
 		}
 
 		return {
 			...state,
-			[ siteId ]: nextManager,
+			[siteId]: nextManager,
 		};
 	}
 
-	return withSchemaValidation( queriesSchema, ( state = {}, action ) => {
-		switch ( action.type ) {
+	return withSchemaValidation(queriesSchema, (state = {}, action) => {
+		switch (action.type) {
 			case POSTS_REQUEST_SUCCESS: {
 				const { siteId, query, posts, found } = action;
-				if ( ! siteId ) {
+				if (!siteId) {
 					// Handle site-specific queries only
 					return state;
 				}
-				const normalizedPosts = posts.map( normalizePostForState );
-				return applyToManager( state, siteId, 'receive', true, normalizedPosts, { query, found } );
+				const normalizedPosts = posts.map(normalizePostForState);
+				return applyToManager(state, siteId, 'receive', true, normalizedPosts, { query, found });
 			}
 			case POSTS_RECEIVE: {
 				const { posts } = action;
 				const postsBySiteId = reduce(
 					posts,
-					( memo, post ) => {
-						return Object.assign( memo, {
-							[ post.site_ID ]: [
-								...( memo[ post.site_ID ] || [] ),
-								normalizePostForState( post ),
-							],
-						} );
+					(memo, post) => {
+						return Object.assign(memo, {
+							[post.site_ID]: [...(memo[post.site_ID] || []), normalizePostForState(post)],
+						});
 					},
 					{}
 				);
 
 				return reduce(
 					postsBySiteId,
-					( memo, sitePosts, siteId ) => {
-						return applyToManager( memo, siteId, 'receive', true, sitePosts );
+					(memo, sitePosts, siteId) => {
+						return applyToManager(memo, siteId, 'receive', true, sitePosts);
 					},
 					state
 				);
@@ -297,19 +294,19 @@ export const queries = ( () => {
 			}
 			case POST_DELETE_SUCCESS: {
 				const { siteId, postId } = action;
-				return applyToManager( state, siteId, 'removeItem', false, postId );
+				return applyToManager(state, siteId, 'removeItem', false, postId);
 			}
 			case SERIALIZE: {
-				return mapValues( state, ( { data, options } ) => ( { data, options } ) );
+				return mapValues(state, ({ data, options }) => ({ data, options }));
 			}
 			case DESERIALIZE: {
-				return mapValues( state, ( { data, options } ) => new PostQueryManager( data, options ) );
+				return mapValues(state, ({ data, options }) => new PostQueryManager(data, options));
 			}
 		}
 
 		return state;
-	} );
-} )();
+	});
+})();
 
 /**
  * Returns the updated post query state for queries of all sites at once after
@@ -321,34 +318,34 @@ export const queries = ( () => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const allSitesQueries = ( () => {
-	function findItemKey( state, siteId, postId ) {
+export const allSitesQueries = (() => {
+	function findItemKey(state, siteId, postId) {
 		return (
-			findKey( state.data.items, post => {
+			findKey(state.data.items, (post) => {
 				return post.site_ID === siteId && post.ID === postId;
-			} ) || null
+			}) || null
 		);
 	}
 
 	return withSchemaValidation(
 		allSitesQueriesSchema,
-		( state = new PostQueryManager( {}, { itemKey: 'global_ID' } ), action ) => {
-			switch ( action.type ) {
+		(state = new PostQueryManager({}, { itemKey: 'global_ID' }), action) => {
+			switch (action.type) {
 				case POSTS_REQUEST_SUCCESS: {
 					const { siteId, query, posts, found } = action;
-					if ( siteId ) {
+					if (siteId) {
 						// Handle all-sites queries only.
 						return state;
 					}
-					return state.receive( posts.map( normalizePostForState ), { query, found } );
+					return state.receive(posts.map(normalizePostForState), { query, found });
 				}
 				case POSTS_RECEIVE: {
 					const { posts } = action;
-					return state.receive( posts );
+					return state.receive(posts);
 				}
 				case POST_RESTORE: {
 					const { siteId, postId } = action;
-					const globalId = findItemKey( state, siteId, postId );
+					const globalId = findItemKey(state, siteId, postId);
 					return state.receive(
 						{
 							global_ID: globalId,
@@ -359,7 +356,7 @@ export const allSitesQueries = ( () => {
 				}
 				case POST_RESTORE_FAILURE: {
 					const { siteId, postId } = action;
-					const globalId = findItemKey( state, siteId, postId );
+					const globalId = findItemKey(state, siteId, postId);
 					return state.receive(
 						{
 							global_ID: globalId,
@@ -370,7 +367,7 @@ export const allSitesQueries = ( () => {
 				}
 				case POST_SAVE: {
 					const { siteId, postId, post } = action;
-					const globalId = findItemKey( state, siteId, postId );
+					const globalId = findItemKey(state, siteId, postId);
 					return state.receive(
 						{
 							global_ID: globalId,
@@ -381,7 +378,7 @@ export const allSitesQueries = ( () => {
 				}
 				case POST_DELETE: {
 					const { siteId, postId } = action;
-					const globalId = findItemKey( state, siteId, postId );
+					const globalId = findItemKey(state, siteId, postId);
 					return state.receive(
 						{
 							global_ID: globalId,
@@ -392,7 +389,7 @@ export const allSitesQueries = ( () => {
 				}
 				case POST_DELETE_FAILURE: {
 					const { siteId, postId } = action;
-					const globalId = findItemKey( state, siteId, postId );
+					const globalId = findItemKey(state, siteId, postId);
 					return state.receive(
 						{
 							global_ID: globalId,
@@ -403,8 +400,8 @@ export const allSitesQueries = ( () => {
 				}
 				case POST_DELETE_SUCCESS: {
 					const { siteId, postId } = action;
-					const globalId = findItemKey( state, siteId, postId );
-					return state.removeItem( globalId );
+					const globalId = findItemKey(state, siteId, postId);
+					return state.removeItem(globalId);
 				}
 				case SERIALIZE:
 					return {
@@ -412,13 +409,13 @@ export const allSitesQueries = ( () => {
 						options: state.options,
 					};
 				case DESERIALIZE:
-					return new PostQueryManager( state.data, state.options );
+					return new PostQueryManager(state.data, state.options);
 			}
 
 			return state;
 		}
 	);
-} )();
+})();
 
 /**
  * Returns the updated editor posts state after an action has been dispatched.
@@ -429,80 +426,80 @@ export const allSitesQueries = ( () => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function edits( state = {}, action ) {
-	switch ( action.type ) {
+export function edits(state = {}, action) {
+	switch (action.type) {
 		case POSTS_RECEIVE:
 			return reduce(
 				action.posts,
-				( memoState, post ) => {
+				(memoState, post) => {
 					// Receive a new version of a post object, in most cases returned in the POST
 					// response after a successful save. Removes the edits that have been applied
 					// and leaves only the ones that are not noops.
-					let postEditsLog = get( memoState, [ post.site_ID, post.ID ] );
+					let postEditsLog = get(memoState, [post.site_ID, post.ID]);
 
-					if ( ! postEditsLog ) {
+					if (!postEditsLog) {
 						return memoState;
 					}
 
-					if ( memoState === state ) {
-						memoState = merge( {}, state );
+					if (memoState === state) {
+						memoState = merge({}, state);
 					}
 
 					// if the action has a save marker, remove the edits before that marker
-					if ( action.saveMarker ) {
-						const markerIndex = postEditsLog.indexOf( action.saveMarker );
-						if ( markerIndex !== -1 ) {
-							postEditsLog = postEditsLog.slice( markerIndex + 1 );
+					if (action.saveMarker) {
+						const markerIndex = postEditsLog.indexOf(action.saveMarker);
+						if (markerIndex !== -1) {
+							postEditsLog = postEditsLog.slice(markerIndex + 1);
 						}
 					}
 
 					// merge the array of remaining edits into one object
-					const postEdits = mergePostEdits( ...postEditsLog );
+					const postEdits = mergePostEdits(...postEditsLog);
 					let newEditsLog = null;
 
-					if ( postEdits ) {
+					if (postEdits) {
 						// remove the edits that try to set an attribute to a value it already has.
 						// For most attributes, it's a simple `isEqual` deep comparison, but a few
 						// properties are more complicated than that.
-						const unappliedPostEdits = omitBy( postEdits, ( value, key ) => {
-							switch ( key ) {
+						const unappliedPostEdits = omitBy(postEdits, (value, key) => {
+							switch (key) {
 								case 'author':
-									return isAuthorEqual( value, post[ key ] );
+									return isAuthorEqual(value, post[key]);
 								case 'date':
-									return isDateEqual( value, post[ key ] );
+									return isDateEqual(value, post[key]);
 								case 'discussion':
-									return isDiscussionEqual( value, post[ key ] );
+									return isDiscussionEqual(value, post[key]);
 								case 'featured_image':
-									return value === getFeaturedImageId( post );
+									return value === getFeaturedImageId(post);
 								case 'metadata':
 									// omit from unappliedPostEdits, metadata edits will be merged
 									return true;
 								case 'status':
-									return isStatusEqual( value, post[ key ] );
+									return isStatusEqual(value, post[key]);
 								case 'terms':
-									return isTermsEqual( value, post[ key ] );
+									return isTermsEqual(value, post[key]);
 							}
-							return isEqual( post[ key ], value );
-						} );
+							return isEqual(post[key], value);
+						});
 
 						// remove edits that are already applied in the incoming metadata values and
 						// leave only the unapplied ones.
-						if ( postEdits.metadata ) {
+						if (postEdits.metadata) {
 							const unappliedMetadataEdits = getUnappliedMetadataEdits(
 								postEdits.metadata,
 								post.metadata
 							);
-							if ( unappliedMetadataEdits.length > 0 ) {
+							if (unappliedMetadataEdits.length > 0) {
 								unappliedPostEdits.metadata = unappliedMetadataEdits;
 							}
 						}
 
-						if ( ! isEmpty( unappliedPostEdits ) ) {
-							newEditsLog = [ unappliedPostEdits ];
+						if (!isEmpty(unappliedPostEdits)) {
+							newEditsLog = [unappliedPostEdits];
 						}
 					}
 
-					return set( memoState, [ post.site_ID, post.ID ], newEditsLog );
+					return set(memoState, [post.site_ID, post.ID], newEditsLog);
 				},
 				state
 			);
@@ -511,55 +508,55 @@ export function edits( state = {}, action ) {
 			// process new edit for a post: merge it into the existing edits
 			const siteId = action.siteId;
 			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
-			const newEditsLog = appendToPostEditsLog( postEditsLog, action.post );
+			const postEditsLog = get(state, [siteId, postId]);
+			const newEditsLog = appendToPostEditsLog(postEditsLog, action.post);
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: newEditsLog,
+				[siteId]: {
+					...state[siteId],
+					[postId]: newEditsLog,
 				},
 			};
 		}
 
 		case EDITOR_START:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: {
-					...state[ action.siteId ],
-					[ action.postId || '' ]: null,
+			return Object.assign({}, state, {
+				[action.siteId]: {
+					...state[action.siteId],
+					[action.postId || '']: null,
 				},
-			} );
+			});
 
 		case EDITOR_STOP:
-			if ( ! state.hasOwnProperty( action.siteId ) ) {
+			if (!state.hasOwnProperty(action.siteId)) {
 				break;
 			}
 
-			return Object.assign( {}, state, {
-				[ action.siteId ]: omit( state[ action.siteId ], action.postId || '' ),
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: omit(state[action.siteId], action.postId || ''),
+			});
 
 		case EDITOR_SAVE: {
-			if ( ! action.saveMarker ) {
+			if (!action.saveMarker) {
 				break;
 			}
 
 			const siteId = action.siteId;
 			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
+			const postEditsLog = get(state, [siteId, postId]);
 
-			if ( isEmpty( postEditsLog ) ) {
+			if (isEmpty(postEditsLog)) {
 				break;
 			}
 
-			const newEditsLog = [ ...postEditsLog, action.saveMarker ];
+			const newEditsLog = [...postEditsLog, action.saveMarker];
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: newEditsLog,
+				[siteId]: {
+					...state[siteId],
+					[postId]: newEditsLog,
 				},
 			};
 		}
@@ -570,13 +567,11 @@ export function edits( state = {}, action ) {
 
 			// if new post (edited with a transient postId of '') has been just saved and assigned
 			// a real numeric ID, rewrite the state key with the new postId.
-			if ( postId === '' && action.savedPost ) {
+			if (postId === '' && action.savedPost) {
 				const newPostId = action.savedPost.ID;
 				state = {
 					...state,
-					[ siteId ]: mapKeys( state[ siteId ], ( value, key ) =>
-						key === '' ? newPostId : key
-					),
+					[siteId]: mapKeys(state[siteId], (value, key) => (key === '' ? newPostId : key)),
 				};
 			}
 
@@ -587,7 +582,7 @@ export function edits( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	counts,
 	items,
 	siteRequests,
@@ -597,4 +592,4 @@ export default combineReducers( {
 	edits,
 	likes,
 	revisions,
-} );
+});

@@ -6,4 +6,4 @@
  * @param {number}   mediaId ID of the media item
  * @returns {Array}          Media validation errors for that media item of that site.
  */
-export default ( state, siteId, mediaId ) => state.media.errors?.[ siteId ]?.[ mediaId ] ?? [];
+export default (state, siteId, mediaId) => state.media.errors?.[siteId]?.[mediaId] ?? [];

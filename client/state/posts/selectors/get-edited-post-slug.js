@@ -21,24 +21,24 @@ import 'state/posts/init';
  * @param   {number} postId Post ID
  * @returns {string}             Slug value
  */
-export function getEditedPostSlug( state, siteId, postId ) {
+export function getEditedPostSlug(state, siteId, postId) {
 	// if local edits exists, return them regardless of post status
-	const postEdits = getPostEdits( state, siteId, postId );
-	if ( has( postEdits, 'slug' ) ) {
+	const postEdits = getPostEdits(state, siteId, postId);
+	if (has(postEdits, 'slug')) {
 		return postEdits.slug;
 	}
 
-	const post = getSitePost( state, siteId, postId );
-	const postSlug = get( post, 'slug' );
+	const post = getSitePost(state, siteId, postId);
+	const postSlug = get(post, 'slug');
 
 	// when post is published, return the slug
-	if ( isPostPublished( state, siteId, postId ) ) {
-		return decodeURIIfValid( postSlug );
+	if (isPostPublished(state, siteId, postId)) {
+		return decodeURIIfValid(postSlug);
 	}
 
 	// only return suggested_slug if slug has not been edited
-	const suggestedSlug = get( post, [ 'other_URLs', 'suggested_slug' ] );
-	if ( suggestedSlug && ! postSlug ) {
+	const suggestedSlug = get(post, ['other_URLs', 'suggested_slug']);
+	if (suggestedSlug && !postSlug) {
 		return suggestedSlug;
 	}
 

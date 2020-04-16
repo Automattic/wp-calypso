@@ -18,10 +18,10 @@ import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 
 class StatsWidgetStat extends Component {
 	static propTypes = {
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			id: PropTypes.number,
 			slug: PropTypes.string,
-		} ),
+		}),
 		label: PropTypes.string.isRequired,
 		labelToolTip: PropTypes.string,
 		attribute: PropTypes.string.isRequired,
@@ -29,7 +29,7 @@ class StatsWidgetStat extends Component {
 		data: PropTypes.array.isRequired,
 		date: PropTypes.string.isRequired,
 		unit: PropTypes.string,
-		delta: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ).isRequired,
+		delta: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
 	};
 
 	static defaultProps = {
@@ -38,31 +38,26 @@ class StatsWidgetStat extends Component {
 
 	renderDelta = () => {
 		const { delta } = this.props;
-		if ( ! delta || ( ! delta.classes && ! delta.direction ) ) {
+		if (!delta || (!delta.classes && !delta.direction)) {
 			return null;
 		}
 
-		if ( delta.classes ) {
-			return <Delta value={ delta.value } className={ delta.classes.join( ' ' ) } />;
+		if (delta.classes) {
+			return <Delta value={delta.value} className={delta.classes.join(' ')} />;
 		}
 
 		const deltaValue =
 			delta.direction === 'is-undefined-increase'
 				? '-'
-				: Math.abs( Math.round( delta.percentage_change * 100 ) );
+				: Math.abs(Math.round(delta.percentage_change * 100));
 
-		return (
-			<Delta
-				value={ `${ deltaValue }%` }
-				className={ `${ delta.favorable } ${ delta.direction }` }
-			/>
-		);
+		return <Delta value={`${deltaValue}%`} className={`${delta.favorable} ${delta.direction}`} />;
 	};
 
 	render() {
 		const { data, site, date, attribute, label, requesting, type, labelToolTip, unit } = this.props;
 
-		if ( requesting || ! site.ID || ! data || ! data.length ) {
+		if (requesting || !site.ID || !data || !data.length) {
 			return (
 				<div className="stats-widget__box-contents stats-type-stat">
 					<StatsModulePlaceholder isLoading />
@@ -70,46 +65,46 @@ class StatsWidgetStat extends Component {
 			);
 		}
 
-		const index = findIndex( data, d => d.period === date );
-		if ( ! data[ index ] ) {
+		const index = findIndex(data, (d) => d.period === date);
+		if (!data[index]) {
 			return <div className="stats-widget__box-contents stats-type-stat" />;
 		}
 
-		const value = data[ index ][ attribute ];
+		const value = data[index][attribute];
 
 		// Our store stats REST API endpoints return zero filled data. The visitors endpoint and conversion data
 		// have not been zero filled. This catches any missing data points and fills them in so sparklines look consistent.
-		const timeSeries = data.map( row => +row[ attribute ] );
+		const timeSeries = data.map((row) => +row[attribute]);
 		const expectedDataPoints = 'month' === unit ? 12 : 30;
 		const missingDataPoints = expectedDataPoints - timeSeries.length;
-		for ( let i = missingDataPoints; i > 0; i-- ) {
-			timeSeries.unshift( 0 );
+		for (let i = missingDataPoints; i > 0; i--) {
+			timeSeries.unshift(0);
 		}
 		const highlightIndex = timeSeries.length - 1;
 
-		const labelClasses = classNames( 'stats-widget__box-label', {
+		const labelClasses = classNames('stats-widget__box-label', {
 			'stats-widget__box-label-tooltip': labelToolTip,
-		} );
+		});
 
 		return (
 			<div className="stats-widget__box-contents stats-type-stat">
 				<div className="stats-widget__box-data">
-					<span className={ labelClasses } title={ labelToolTip }>
-						{ label }
+					<span className={labelClasses} title={labelToolTip}>
+						{label}
 					</span>
 					<div className="stats-widget__box-value-and-delta">
 						<span className="stats-widget__box-value">
-							{ formatValue( value, type, data[ index ].currency ) }
+							{formatValue(value, type, data[index].currency)}
 						</span>
-						{ this.renderDelta() }
+						{this.renderDelta()}
 					</div>
 				</div>
 				<div className="stats-widget__box-sparkline">
 					<Sparkline
-						aspectRatio={ 3 }
-						data={ timeSeries }
-						highlightIndex={ highlightIndex }
-						maxHeight={ 50 }
+						aspectRatio={3}
+						data={timeSeries}
+						highlightIndex={highlightIndex}
+						maxHeight={50}
 					/>
 				</div>
 			</div>
@@ -117,8 +112,8 @@ class StatsWidgetStat extends Component {
 	}
 }
 
-export default connect( ( state, { site, query, statType } ) => {
+export default connect((state, { site, query, statType }) => {
 	return {
-		requesting: isRequestingSiteStatsForQuery( state, site.ID, statType, query ),
+		requesting: isRequestingSiteStatsForQuery(state, site.ID, statType, query),
 	};
-} )( StatsWidgetStat );
+})(StatsWidgetStat);

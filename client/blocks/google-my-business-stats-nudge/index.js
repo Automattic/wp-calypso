@@ -42,33 +42,33 @@ class GoogleMyBusinessStatsNudge extends Component {
 		this.recordView();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId) {
 			this.recordView();
 		}
 	}
 
 	recordView() {
-		if ( this.isVisible() ) {
-			this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view' );
+		if (this.isVisible()) {
+			this.props.recordTracksEvent('calypso_google_my_business_stats_nudge_view');
 		}
 	}
 
 	onDismissClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_dismiss_icon_click' );
+		this.props.recordTracksEvent('calypso_google_my_business_stats_nudge_dismiss_icon_click');
 		this.props.dismissNudge();
 	};
 
 	onStartNowClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click' );
+		this.props.recordTracksEvent('calypso_google_my_business_stats_nudge_start_now_button_click');
 	};
 
 	isVisible() {
-		return ! this.props.isDismissed && this.props.visible;
+		return !this.props.isDismissed && this.props.visible;
 	}
 
 	render() {
-		if ( ! this.isVisible() ) {
+		if (!this.isVisible()) {
 			return null;
 		}
 
@@ -79,12 +79,12 @@ class GoogleMyBusinessStatsNudge extends Component {
 				<Gridicon
 					icon="cross"
 					className="google-my-business-stats-nudge__close-icon"
-					onClick={ this.onDismissClick }
+					onClick={this.onDismissClick}
 				/>
 
 				<SectionHeader
 					className="google-my-business-stats-nudge__header"
-					label={ this.props.translate( 'Recommendations from WordPress.com' ) }
+					label={this.props.translate('Recommendations from WordPress.com')}
 				/>
 
 				<div className="google-my-business-stats-nudge__body">
@@ -92,28 +92,28 @@ class GoogleMyBusinessStatsNudge extends Component {
 						<img
 							className="google-my-business-stats-nudge__image"
 							src="/calypso/images/google-my-business/phone-screenshot-cropped.png"
-							alt={ this.props.translate( 'Your business with Google My Business' ) }
+							alt={this.props.translate('Your business with Google My Business')}
 						/>
 					</div>
 
 					<div className="google-my-business-stats-nudge__info">
 						<h1 className="google-my-business-stats-nudge__title">
-							{ this.props.translate( 'Can your customers find you on Google?' ) }
+							{this.props.translate('Can your customers find you on Google?')}
 						</h1>
 
 						<h2 className="google-my-business-stats-nudge__description">
-							{ this.props.translate(
+							{this.props.translate(
 								'Be there when customers search businesses like yours on Google Search and Maps.'
-							) }
+							)}
 						</h2>
 
 						<div className="google-my-business-stats-nudge__button-row">
 							<Button
-								href={ `/google-my-business/${ this.props.siteSlug }` }
-								primary={ this.props.primaryButton }
-								onClick={ this.onStartNowClick }
+								href={`/google-my-business/${this.props.siteSlug}`}
+								primary={this.props.primaryButton}
+								onClick={this.onStartNowClick}
 							>
-								{ this.props.translate( 'Start Now' ) }
+								{this.props.translate('Start Now')}
 							</Button>
 						</div>
 					</div>
@@ -124,14 +124,14 @@ class GoogleMyBusinessStatsNudge extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state, ownProps.siteId ),
-	} ),
+	(state, ownProps) => ({
+		isDismissed: isGoogleMyBusinessStatsNudgeDismissed(state, ownProps.siteId),
+	}),
 	{
 		dismissNudge,
-		recordTracksEvent: withEnhancers( recordTracksEvent, [
+		recordTracksEvent: withEnhancers(recordTracksEvent, [
 			enhanceWithDismissCount,
 			enhanceWithSiteType,
-		] ),
+		]),
 	}
-)( localize( GoogleMyBusinessStatsNudge ) );
+)(localize(GoogleMyBusinessStatsNudge));

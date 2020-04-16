@@ -11,8 +11,8 @@ import isEligibleForUpworkSupport, {
 	UPWORK_LOCALES,
 } from 'state/selectors/is-eligible-for-upwork-support';
 
-describe( 'isEligibleForUpworkSupport()', () => {
-	test( 'returns false for `en` users and all sites have a free plan', () => {
+describe('isEligibleForUpworkSupport()', () => {
+	test('returns false for `en` users and all sites have a free plan', () => {
 		const state = {
 			currentUser: { id: 1 },
 			sites: {
@@ -23,17 +23,17 @@ describe( 'isEligibleForUpworkSupport()', () => {
 			},
 			users: { items: { 1: { localeSlug: 'en' } } },
 		};
-		expect( isEligibleForUpworkSupport( state ) ).to.be.false;
-	} );
+		expect(isEligibleForUpworkSupport(state)).to.be.false;
+	});
 
 	/**
 	 * If any plan listed below in user's account then not eligible
 	 * for upwork support.
 	 */
-	const nonUpworkPlans = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
+	const nonUpworkPlans = [PLAN_BUSINESS, PLAN_ECOMMERCE];
 
-	describe.each( UPWORK_LOCALES )( 'when locale %s', localeSlug => {
-		test( 'returns true for users without Business and E-Commerce plans', () => {
+	describe.each(UPWORK_LOCALES)('when locale %s', (localeSlug) => {
+		test('returns true for users without Business and E-Commerce plans', () => {
 			const state = {
 				currentUser: { id: 1 },
 				sites: {
@@ -44,11 +44,11 @@ describe( 'isEligibleForUpworkSupport()', () => {
 				},
 				users: { items: { 1: { localeSlug } } },
 			};
-			expect( isEligibleForUpworkSupport( state ) ).to.be.true;
-		} );
+			expect(isEligibleForUpworkSupport(state)).to.be.true;
+		});
 
-		describe.each( nonUpworkPlans )( 'with plan %s', product_slug => {
-			test( 'returns false', () => {
+		describe.each(nonUpworkPlans)('with plan %s', (product_slug) => {
+			test('returns false', () => {
 				const state = {
 					currentUser: { id: 1 },
 					sites: {
@@ -58,8 +58,8 @@ describe( 'isEligibleForUpworkSupport()', () => {
 					},
 					users: { items: { 1: { localeSlug } } },
 				};
-				expect( isEligibleForUpworkSupport( state ) ).to.be.false;
-			} );
-		} );
-	} );
-} );
+				expect(isEligibleForUpworkSupport(state)).to.be.false;
+			});
+		});
+	});
+});

@@ -14,7 +14,7 @@ import MaterialIcon from 'components/material-icon';
 import SidebarHeading from 'layout/sidebar/heading';
 import TranslatableString from 'components/translatable/proptype';
 
-const ExpandableSidebarHeading = ( {
+const ExpandableSidebarHeading = ({
 	title,
 	count,
 	onClick,
@@ -23,23 +23,23 @@ const ExpandableSidebarHeading = ( {
 	materialIconStyle,
 	expanded,
 	menuId,
-} ) => {
+}) => {
 	return (
 		<SidebarHeading
-			aria-controls={ menuId }
-			aria-expanded={ expanded ? 'true' : 'false' }
-			onClick={ onClick }
+			aria-controls={menuId}
+			aria-expanded={expanded ? 'true' : 'false'}
+			onClick={onClick}
 		>
-			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
-			{ materialIcon && (
+			{icon && <Gridicon className="sidebar__menu-icon" icon={icon} />}
+			{materialIcon && (
 				<MaterialIcon
 					className="sidebar__menu-icon"
-					icon={ materialIcon }
-					style={ materialIconStyle }
+					icon={materialIcon}
+					style={materialIconStyle}
 				/>
-			) }
-			<span className="sidebar__expandable-title">{ title }</span>
-			{ undefined !== count && <Count count={ count } /> }
+			)}
+			<span className="sidebar__expandable-title">{title}</span>
+			{undefined !== count && <Count count={count} />}
 			<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
 		</SidebarHeading>
 	);

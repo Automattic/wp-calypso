@@ -16,80 +16,80 @@ import {
 	DESERIALIZE,
 } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( 'exports expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'isUploading', 'tempImage' ] );
-	} );
+describe('reducer', () => {
+	test('exports expected reducer keys', () => {
+		expect(reducer(undefined, {})).to.have.keys(['isUploading', 'tempImage']);
+	});
 
-	describe( '#isUploading', () => {
-		test( 'returns false by default', () => {
-			const state = isUploading( undefined, {} );
-			expect( state ).to.equal( false );
-		} );
+	describe('#isUploading', () => {
+		test('returns false by default', () => {
+			const state = isUploading(undefined, {});
+			expect(state).to.equal(false);
+		});
 
-		test( 'returns true when request is made', () => {
+		test('returns true when request is made', () => {
 			expect(
-				isUploading( false, {
+				isUploading(false, {
 					type: GRAVATAR_UPLOAD_REQUEST,
-				} )
-			).to.equal( true );
-		} );
+				})
+			).to.equal(true);
+		});
 
-		test( 'returns false when request succeeds', () => {
+		test('returns false when request succeeds', () => {
 			expect(
-				isUploading( true, {
+				isUploading(true, {
 					type: GRAVATAR_UPLOAD_REQUEST_SUCCESS,
-				} )
-			).to.equal( false );
-		} );
+				})
+			).to.equal(false);
+		});
 
-		test( 'returns false when request fails', () => {
+		test('returns false when request fails', () => {
 			expect(
-				isUploading( true, {
+				isUploading(true, {
 					type: GRAVATAR_UPLOAD_REQUEST_FAILURE,
-				} )
-			).to.equal( false );
-		} );
+				})
+			).to.equal(false);
+		});
 
-		test( 'never persists loading state', () => {
+		test('never persists loading state', () => {
 			expect(
-				isUploading( true, {
+				isUploading(true, {
 					type: SERIALIZE,
-				} )
+				})
 			).to.be.undefined;
 
 			expect(
-				isUploading( true, {
+				isUploading(true, {
 					type: DESERIALIZE,
-				} )
-			).to.equal( false );
-		} );
-	} );
+				})
+			).to.equal(false);
+		});
+	});
 
-	describe( '#tempImage', () => {
+	describe('#tempImage', () => {
 		const imageSrc = 'image';
 
-		test( 'returns empty object by default', () => {
-			const state = tempImage( undefined, {} );
-			expect( state ).to.eql( {} );
-		} );
+		test('returns empty object by default', () => {
+			const state = tempImage(undefined, {});
+			expect(state).to.eql({});
+		});
 
-		test( 'returns object with image src when response is received', () => {
-			const state = tempImage( undefined, {
+		test('returns object with image src when response is received', () => {
+			const state = tempImage(undefined, {
 				type: GRAVATAR_UPLOAD_RECEIVE,
 				src: imageSrc,
-			} );
-			expect( state ).to.eql( {
+			});
+			expect(state).to.eql({
 				src: imageSrc,
-			} );
-		} );
+			});
+		});
 
-		test( 'never persists state', () => {
+		test('never persists state', () => {
 			const state = {
 				src: imageSrc,
 			};
-			expect( tempImage( state, { type: SERIALIZE } ) ).to.be.undefined;
-			expect( tempImage( state, { type: DESERIALIZE } ) ).to.eql( {} );
-		} );
-	} );
-} );
+			expect(tempImage(state, { type: SERIALIZE })).to.be.undefined;
+			expect(tempImage(state, { type: DESERIALIZE })).to.eql({});
+		});
+	});
+});

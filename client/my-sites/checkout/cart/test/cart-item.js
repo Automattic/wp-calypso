@@ -30,36 +30,36 @@ import {
 	PLAN_PREMIUM,
 } from 'lib/plans/constants';
 
-const plansModule = require( 'lib/plans' );
-const originalPlansModuleFunctions = pick( plansModule, [
+const plansModule = require('lib/plans');
+const originalPlansModuleFunctions = pick(plansModule, [
 	'calculateMonthlyPriceForPlan',
 	'getBillingMonthsForPlan',
-] );
+]);
 const mockPlansModule = () => {
-	plansModule.calculateMonthlyPriceForPlan = jest.fn( () => 120 );
-	plansModule.getBillingMonthsForPlan = jest.fn( () => 10 );
+	plansModule.calculateMonthlyPriceForPlan = jest.fn(() => 120);
+	plansModule.getBillingMonthsForPlan = jest.fn(() => 10);
 };
 mockPlansModule();
 
-jest.mock( 'config', () => {
+jest.mock('config', () => {
 	const fn = () => {};
-	fn.isEnabled = jest.fn( () => null );
+	fn.isEnabled = jest.fn(() => null);
 	return fn;
-} );
-jest.mock( '@automattic/format-currency', () => ( {
-	getCurrencyObject: price => ( { integer: price } ),
-} ) );
-jest.mock( 'lib/products-values', () => ( {
-	isPlan: jest.fn( () => null ),
-	isTheme: jest.fn( () => null ),
-	isMonthly: jest.fn( () => null ),
-	isYearly: jest.fn( () => null ),
-	isBiennially: jest.fn( () => null ),
-	isBundled: jest.fn( () => null ),
-	isDomainProduct: jest.fn( () => null ),
-	isCredits: jest.fn( () => null ),
-	isGoogleApps: jest.fn( () => null ),
-} ) );
+});
+jest.mock('@automattic/format-currency', () => ({
+	getCurrencyObject: (price) => ({ integer: price }),
+}));
+jest.mock('lib/products-values', () => ({
+	isPlan: jest.fn(() => null),
+	isTheme: jest.fn(() => null),
+	isMonthly: jest.fn(() => null),
+	isYearly: jest.fn(() => null),
+	isBiennially: jest.fn(() => null),
+	isBundled: jest.fn(() => null),
+	isDomainProduct: jest.fn(() => null),
+	isCredits: jest.fn(() => null),
+	isGoogleApps: jest.fn(() => null),
+}));
 
 const cartItem = {
 	cost: 120,
@@ -69,157 +69,157 @@ const cartItem = {
 	product_slug: 'plan_value_bundle',
 };
 
-const translate = jest.fn( identity );
+const translate = jest.fn(identity);
 const props = {
 	cartItem,
 	translate,
 };
 
-describe( 'cart-item', () => {
-	test( 'Does not blow up', () => {
-		const comp = shallow( <CartItem { ...props } /> );
-		expect( comp.find( '.cart-item' ) ).toHaveLength( 1 );
-	} );
+describe('cart-item', () => {
+	test('Does not blow up', () => {
+		const comp = shallow(<CartItem {...props} />);
+		expect(comp.find('.cart-item')).toHaveLength(1);
+	});
 
-	describe( 'monthlyPrice', () => {
+	describe('monthlyPrice', () => {
 		let myTranslate, instance;
-		beforeEach( () => {
-			myTranslate = jest.fn( identity );
-			instance = new CartItem( {
+		beforeEach(() => {
+			myTranslate = jest.fn(identity);
+			instance = new CartItem({
 				translate: myTranslate,
 				cartItem: {
 					currency: 'AUD',
 				},
-			} );
-			instance.monthlyPriceApplies = jest.fn( () => true );
-			instance.calcMonthlyBillingDetails = jest.fn( () => ( {
+			});
+			instance.monthlyPriceApplies = jest.fn(() => true);
+			instance.calcMonthlyBillingDetails = jest.fn(() => ({
 				months: 17,
 				monthlyPrice: 133,
-			} ) );
-		} );
+			}));
+		});
 
-		test( 'Should call monthlyPriceApplies(), monthlyPriceApplies()', () => {
+		test('Should call monthlyPriceApplies(), monthlyPriceApplies()', () => {
 			instance.monthlyPrice();
-			expect( instance.monthlyPriceApplies ).toHaveBeenCalledTimes( 1 );
-			expect( instance.calcMonthlyBillingDetails ).toHaveBeenCalledTimes( 1 );
-		} );
+			expect(instance.monthlyPriceApplies).toHaveBeenCalledTimes(1);
+			expect(instance.calcMonthlyBillingDetails).toHaveBeenCalledTimes(1);
+		});
 
-		test( 'Should call translate() with args returned from calcMonthlyBillingDetails()', () => {
+		test('Should call translate() with args returned from calcMonthlyBillingDetails()', () => {
 			instance.monthlyPrice();
-			expect( myTranslate ).toHaveBeenCalledTimes( 1 );
-			expect( myTranslate.mock.calls[ 0 ][ 1 ] ).toEqual( {
+			expect(myTranslate).toHaveBeenCalledTimes(1);
+			expect(myTranslate.mock.calls[0][1]).toEqual({
 				args: {
 					monthlyPrice: '133',
 					currency: 'AUD',
 					months: 17,
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'monthlyPriceApplies', () => {
-		beforeEach( () => {
-			isPlan.mockImplementation( () => true );
-			isMonthly.mockImplementation( () => false );
-		} );
+	describe('monthlyPriceApplies', () => {
+		beforeEach(() => {
+			isPlan.mockImplementation(() => true);
+			isMonthly.mockImplementation(() => false);
+		});
 
-		test( 'Returns false if cartItem is not a plan', () => {
-			isPlan.mockImplementation( () => false );
-			const instance = new CartItem( {
+		test('Returns false if cartItem is not a plan', () => {
+			isPlan.mockImplementation(() => false);
+			const instance = new CartItem({
 				...props,
 				cartItem: {
 					...cartItem,
 				},
-			} );
-			expect( instance.monthlyPriceApplies() ).toBe( false );
-		} );
+			});
+			expect(instance.monthlyPriceApplies()).toBe(false);
+		});
 
-		test( 'Returns false if plan is a monthly plan', () => {
-			isMonthly.mockImplementation( () => true );
-			const instance = new CartItem( props );
-			expect( instance.monthlyPriceApplies() ).toBe( false );
-		} );
+		test('Returns false if plan is a monthly plan', () => {
+			isMonthly.mockImplementation(() => true);
+			const instance = new CartItem(props);
+			expect(instance.monthlyPriceApplies()).toBe(false);
+		});
 
-		test( 'Returns false if cost is undefined', () => {
-			const instance = new CartItem( {
+		test('Returns false if cost is undefined', () => {
+			const instance = new CartItem({
 				...props,
 				cartItem: {
 					...cartItem,
 					cost: undefined,
 				},
-			} );
-			expect( instance.monthlyPriceApplies() ).toBe( false );
-		} );
+			});
+			expect(instance.monthlyPriceApplies()).toBe(false);
+		});
 
-		test( 'Returns false if cost is 0', () => {
-			const instance = new CartItem( {
+		test('Returns false if cost is 0', () => {
+			const instance = new CartItem({
 				...props,
 				cartItem: {
 					...cartItem,
 					cost: 0,
 				},
-			} );
-			expect( instance.monthlyPriceApplies() ).toBe( false );
-		} );
+			});
+			expect(instance.monthlyPriceApplies()).toBe(false);
+		});
 
-		test( 'Returns false if cost is less than 0', () => {
-			const instance = new CartItem( {
+		test('Returns false if cost is less than 0', () => {
+			const instance = new CartItem({
 				...props,
 				cartItem: {
 					...cartItem,
 					cost: -1,
 				},
-			} );
-			expect( instance.monthlyPriceApplies() ).toBe( false );
-		} );
+			});
+			expect(instance.monthlyPriceApplies()).toBe(false);
+		});
 
-		test( 'Returns true if plan is not a monthly plan', () => {
-			const instance = new CartItem( props );
-			expect( instance.monthlyPriceApplies() ).toBe( true );
-		} );
-	} );
+		test('Returns true if plan is not a monthly plan', () => {
+			const instance = new CartItem(props);
+			expect(instance.monthlyPriceApplies()).toBe(true);
+		});
+	});
 
-	describe( 'calcMonthlyBillingDetails - mocks', () => {
+	describe('calcMonthlyBillingDetails - mocks', () => {
 		const { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } = plansModule;
-		beforeEach( () => {
+		beforeEach(() => {
 			calculateMonthlyPriceForPlan.mockReset();
-			calculateMonthlyPriceForPlan.mockImplementation( () => 299 );
+			calculateMonthlyPriceForPlan.mockImplementation(() => 299);
 
 			getBillingMonthsForPlan.mockReset();
-			getBillingMonthsForPlan.mockImplementation( () => 36 );
-		} );
+			getBillingMonthsForPlan.mockImplementation(() => 36);
+		});
 
-		test( 'Calls calculateMonthlyPriceForPlan to compute details', () => {
-			const instance = new CartItem( props );
+		test('Calls calculateMonthlyPriceForPlan to compute details', () => {
+			const instance = new CartItem(props);
 			instance.calcMonthlyBillingDetails();
-			expect( calculateMonthlyPriceForPlan ).toHaveBeenCalledTimes( 1 );
-			expect( calculateMonthlyPriceForPlan ).toHaveBeenCalledWith( 'plan_value_bundle', 120 );
+			expect(calculateMonthlyPriceForPlan).toHaveBeenCalledTimes(1);
+			expect(calculateMonthlyPriceForPlan).toHaveBeenCalledWith('plan_value_bundle', 120);
 
-			expect( getBillingMonthsForPlan ).toHaveBeenCalledTimes( 1 );
-			expect( getBillingMonthsForPlan ).toHaveBeenCalledWith( 'plan_value_bundle' );
-		} );
+			expect(getBillingMonthsForPlan).toHaveBeenCalledTimes(1);
+			expect(getBillingMonthsForPlan).toHaveBeenCalledWith('plan_value_bundle');
+		});
 
-		test( 'Uses values returned by calculateMonthlyPriceForPlan', () => {
-			const instance = new CartItem( props );
+		test('Uses values returned by calculateMonthlyPriceForPlan', () => {
+			const instance = new CartItem(props);
 			const details = instance.calcMonthlyBillingDetails();
-			expect( details ).toEqual( {
+			expect(details).toEqual({
 				monthlyPrice: 299,
 				months: 36,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'calcMonthlyBillingDetails - real callbacks', () => {
-		beforeAll( () => {
+	describe('calcMonthlyBillingDetails - real callbacks', () => {
+		beforeAll(() => {
 			// restore original functions
-			for ( const key in originalPlansModuleFunctions ) {
-				plansModule[ key ] = originalPlansModuleFunctions[ key ];
+			for (const key in originalPlansModuleFunctions) {
+				plansModule[key] = originalPlansModuleFunctions[key];
 			}
-		} );
+		});
 
-		afterAll( () => {
+		afterAll(() => {
 			mockPlansModule();
-		} );
+		});
 
 		const expectations = [
 			[
@@ -244,111 +244,111 @@ describe( 'cart-item', () => {
 			],
 		];
 
-		expectations.forEach( ( [ input, output ] ) => {
-			test( `Returns correct values for annual plan ${ input.product_slug }`, () => {
-				const instance = new CartItem( {
+		expectations.forEach(([input, output]) => {
+			test(`Returns correct values for annual plan ${input.product_slug}`, () => {
+				const instance = new CartItem({
 					...props,
 					cartItem: {
 						...cartItem,
 						...input,
 					},
-				} );
-				expect( instance.calcMonthlyBillingDetails() ).toEqual( output );
-			} );
-		} );
+				});
+				expect(instance.calcMonthlyBillingDetails()).toEqual(output);
+			});
+		});
 
-		test( 'Throws an error for an unknown plan', () => {
-			const instance = new CartItem( {
+		test('Throws an error for an unknown plan', () => {
+			const instance = new CartItem({
 				...props,
 				cartItem: {
 					...cartItem,
 					product_slug: 'fake',
 				},
-			} );
-			expect( () => instance.calcMonthlyBillingDetails() ).toThrow();
-		} );
-	} );
+			});
+			expect(() => instance.calcMonthlyBillingDetails()).toThrow();
+		});
+	});
 
-	describe( 'getSubscriptionLength() - bundled domains', () => {
-		beforeAll( () => {
-			isMonthly.mockImplementation( () => false );
-			isYearly.mockImplementation( () => true );
-			isBiennially.mockImplementation( () => false );
-		} );
+	describe('getSubscriptionLength() - bundled domains', () => {
+		beforeAll(() => {
+			isMonthly.mockImplementation(() => false);
+			isYearly.mockImplementation(() => true);
+			isBiennially.mockImplementation(() => false);
+		});
 
-		const instance = new CartItem( { ...props, cartItem: { cost: 0, bill_period: 1 } } );
+		const instance = new CartItem({ ...props, cartItem: { cost: 0, bill_period: 1 } });
 
-		test( 'Returns false for bundled domains', () => {
-			isEnabled.mockImplementation( () => true );
-			isDomainProduct.mockImplementation( () => true );
-			isBundled.mockImplementation( () => true );
-			expect( instance.getSubscriptionLength() ).toEqual( false );
-		} );
+		test('Returns false for bundled domains', () => {
+			isEnabled.mockImplementation(() => true);
+			isDomainProduct.mockImplementation(() => true);
+			isBundled.mockImplementation(() => true);
+			expect(instance.getSubscriptionLength()).toEqual(false);
+		});
 
-		test( 'Returns "annual subscription" for non-bundled domains', () => {
-			isEnabled.mockImplementation( () => true );
-			isDomainProduct.mockImplementation( () => true );
-			isBundled.mockImplementation( () => false );
+		test('Returns "annual subscription" for non-bundled domains', () => {
+			isEnabled.mockImplementation(() => true);
+			isDomainProduct.mockImplementation(() => true);
+			isBundled.mockImplementation(() => false);
 
-			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
-		} );
-	} );
+			expect(instance.getSubscriptionLength()).toEqual('annual subscription');
+		});
+	});
 
-	describe( 'getSubscriptionLength()', () => {
-		test( 'Returns false values for cart item with invalid bill_period (0)', () => {
-			const instance = new CartItem( { ...props, cartItem: { bill_period: 0 } } );
-			isMonthly.mockImplementation( () => true );
-			isYearly.mockImplementation( () => false );
-			isBiennially.mockImplementation( () => false );
-			expect( instance.getSubscriptionLength() ).toEqual( false );
-		} );
+	describe('getSubscriptionLength()', () => {
+		test('Returns false values for cart item with invalid bill_period (0)', () => {
+			const instance = new CartItem({ ...props, cartItem: { bill_period: 0 } });
+			isMonthly.mockImplementation(() => true);
+			isYearly.mockImplementation(() => false);
+			isBiennially.mockImplementation(() => false);
+			expect(instance.getSubscriptionLength()).toEqual(false);
+		});
 
-		test( 'Returns false values for cart item with invalid bill_period (-1)', () => {
-			const instance = new CartItem( { ...props, cartItem: { bill_period: -1 } } );
-			isMonthly.mockImplementation( () => true );
-			isYearly.mockImplementation( () => false );
-			isBiennially.mockImplementation( () => false );
-			expect( instance.getSubscriptionLength() ).toEqual( false );
-		} );
+		test('Returns false values for cart item with invalid bill_period (-1)', () => {
+			const instance = new CartItem({ ...props, cartItem: { bill_period: -1 } });
+			isMonthly.mockImplementation(() => true);
+			isYearly.mockImplementation(() => false);
+			isBiennially.mockImplementation(() => false);
+			expect(instance.getSubscriptionLength()).toEqual(false);
+		});
 
-		test( 'Returns false values for cart item with invalid bill_period (4)', () => {
-			const instance = new CartItem( { ...props, cartItem: { bill_period: -1 } } );
-			isMonthly.mockImplementation( () => true );
-			isYearly.mockImplementation( () => false );
-			isBiennially.mockImplementation( () => false );
-			expect( instance.getSubscriptionLength() ).toEqual( false );
-		} );
+		test('Returns false values for cart item with invalid bill_period (4)', () => {
+			const instance = new CartItem({ ...props, cartItem: { bill_period: -1 } });
+			isMonthly.mockImplementation(() => true);
+			isYearly.mockImplementation(() => false);
+			isBiennially.mockImplementation(() => false);
+			expect(instance.getSubscriptionLength()).toEqual(false);
+		});
 
-		test( 'Returns "monthly subscription" for monthly plan', () => {
-			const instance = new CartItem( props );
-			isMonthly.mockImplementation( () => true );
-			isYearly.mockImplementation( () => false );
-			isBiennially.mockImplementation( () => false );
-			expect( instance.getSubscriptionLength() ).toEqual( 'monthly subscription' );
-		} );
+		test('Returns "monthly subscription" for monthly plan', () => {
+			const instance = new CartItem(props);
+			isMonthly.mockImplementation(() => true);
+			isYearly.mockImplementation(() => false);
+			isBiennially.mockImplementation(() => false);
+			expect(instance.getSubscriptionLength()).toEqual('monthly subscription');
+		});
 
-		test( 'Returns "annual subscription" for annual plan', () => {
-			const instance = new CartItem( props );
-			isMonthly.mockImplementation( () => false );
-			isYearly.mockImplementation( () => true );
-			isBiennially.mockImplementation( () => false );
-			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
-		} );
+		test('Returns "annual subscription" for annual plan', () => {
+			const instance = new CartItem(props);
+			isMonthly.mockImplementation(() => false);
+			isYearly.mockImplementation(() => true);
+			isBiennially.mockImplementation(() => false);
+			expect(instance.getSubscriptionLength()).toEqual('annual subscription');
+		});
 
-		test( 'Returns "two year subscription" for biennial plan', () => {
-			const instance = new CartItem( props );
-			isMonthly.mockImplementation( () => false );
-			isYearly.mockImplementation( () => false );
-			isBiennially.mockImplementation( () => true );
-			expect( instance.getSubscriptionLength() ).toEqual( 'two year subscription' );
-		} );
+		test('Returns "two year subscription" for biennial plan', () => {
+			const instance = new CartItem(props);
+			isMonthly.mockImplementation(() => false);
+			isYearly.mockImplementation(() => false);
+			isBiennially.mockImplementation(() => true);
+			expect(instance.getSubscriptionLength()).toEqual('two year subscription');
+		});
 
-		test( 'Returns false for unknown type of plan', () => {
-			const instance = new CartItem( props );
-			isMonthly.mockImplementation( () => false );
-			isYearly.mockImplementation( () => false );
-			isBiennially.mockImplementation( () => false );
-			expect( instance.getSubscriptionLength() ).toEqual( false );
-		} );
-	} );
-} );
+		test('Returns false for unknown type of plan', () => {
+			const instance = new CartItem(props);
+			isMonthly.mockImplementation(() => false);
+			isYearly.mockImplementation(() => false);
+			isBiennially.mockImplementation(() => false);
+			expect(instance.getSubscriptionLength()).toEqual(false);
+		});
+	});
+});

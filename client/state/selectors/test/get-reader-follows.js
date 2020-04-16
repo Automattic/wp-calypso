@@ -10,7 +10,7 @@ import deepFreeze from 'deep-freeze';
 import { getReaderFollows } from 'state/reader/follows/selectors';
 import { userState } from './fixtures/user-state';
 
-describe( 'getReaderFollows()', () => {
+describe('getReaderFollows()', () => {
 	const siteOne = {
 		ID: 1,
 	};
@@ -23,7 +23,7 @@ describe( 'getReaderFollows()', () => {
 	const feedTwo = {
 		feed_ID: 2,
 	};
-	const state = deepFreeze( {
+	const state = deepFreeze({
 		...userState,
 		reader: {
 			follows: {
@@ -60,11 +60,11 @@ describe( 'getReaderFollows()', () => {
 				},
 			},
 		},
-	} );
+	});
 
-	test( 'should not return follows with an error set and should fill in feed and site when available', () => {
-		const follows = getReaderFollows( state );
-		expect( follows ).to.eql( [
+	test('should not return follows with an error set and should fill in feed and site when available', () => {
+		const follows = getReaderFollows(state);
+		expect(follows).to.eql([
 			{
 				URL: 'http://discover.wordpress.com',
 				blog_ID: 1,
@@ -84,6 +84,6 @@ describe( 'getReaderFollows()', () => {
 				feed_ID: 2,
 				feed: feedTwo,
 			},
-		] );
-	} );
-} );
+		]);
+	});
+});

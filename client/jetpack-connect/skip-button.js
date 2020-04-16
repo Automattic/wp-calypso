@@ -28,13 +28,13 @@ class SkipButton extends PureComponent {
 	handleClick = () => {
 		const { onClick, tracksEventName } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_jpc_skip_button_click' );
+		this.props.recordTracksEvent('calypso_jpc_skip_button_click');
 
-		if ( tracksEventName ) {
-			this.props.recordTracksEvent( tracksEventName );
+		if (tracksEventName) {
+			this.props.recordTracksEvent(tracksEventName);
 		}
 
-		if ( onClick ) {
+		if (onClick) {
 			onClick();
 		}
 	};
@@ -44,15 +44,15 @@ class SkipButton extends PureComponent {
 
 		return (
 			<div className="jetpack-connect__skip-button">
-				<Button onClick={ this.handleClick } borderless>
-					{ translate( 'Skip' ) }
-					<Gridicon icon="arrow-right" size={ 18 } />
+				<Button onClick={this.handleClick} borderless>
+					{translate('Skip')}
+					<Gridicon icon="arrow-right" size={18} />
 				</Button>
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( SkipButton ) );
+})(localize(SkipButton));

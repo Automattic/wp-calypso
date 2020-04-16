@@ -5,8 +5,8 @@
 import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 
-export const connectionState = withoutPersistence( ( state = 'CHECKING', action ) => {
-	switch ( action.type ) {
+export const connectionState = withoutPersistence((state = 'CHECKING', action) => {
+	switch (action.type) {
 		case CONNECTION_LOST:
 			return 'OFFLINE';
 		case CONNECTION_RESTORED:
@@ -14,8 +14,8 @@ export const connectionState = withoutPersistence( ( state = 'CHECKING', action 
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	connectionState,
-} );
+});

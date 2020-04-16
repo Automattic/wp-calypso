@@ -8,7 +8,7 @@ export const jetpackConnectAuthorizeSchema = {
 		{
 			type: 'object',
 			additionalProperties: true,
-			required: [ 'timestamp' ],
+			required: ['timestamp'],
 			properties: {
 				authorizationCode: { type: 'string' },
 				authorizeError: {
@@ -45,7 +45,7 @@ export const jetpackAuthAttemptsSchema = {
 		'^.+$': {
 			type: 'object',
 			additionalProperties: false,
-			required: [ 'attempt', 'timestamp' ],
+			required: ['attempt', 'timestamp'],
 			properties: {
 				attempt: {
 					type: 'integer',

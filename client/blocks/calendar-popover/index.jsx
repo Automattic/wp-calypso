@@ -29,7 +29,7 @@ class CalendarPopover extends Component {
 		// popover props
 		autoPosition: PropTypes.bool,
 		closeOnEsc: PropTypes.bool,
-		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
+		ignoreContext: PropTypes.shape({ getDOMNode: PropTypes.function }),
 		isVisible: PropTypes.bool,
 		position: PropTypes.string,
 		showDelay: PropTypes.number,
@@ -57,13 +57,13 @@ class CalendarPopover extends Component {
 		date: this.props.selectedDay || null,
 	};
 
-	setDate = date => {
-		this.setState( { date } );
-		this.props.onDateChange( date );
+	setDate = (date) => {
+		this.setState({ date });
+		this.props.onDateChange(date);
 	};
 
 	renderScheduler() {
-		const schedulerProps = pick( this.props, [
+		const schedulerProps = pick(this.props, [
 			'events',
 			'posts',
 			'site',
@@ -74,22 +74,22 @@ class CalendarPopover extends Component {
 			'onMonthChange',
 			'onDayMouseEnter',
 			'onDayMouseLeave',
-		] );
+		]);
 
 		return (
 			<PostSchedule
-				{ ...schedulerProps }
+				{...schedulerProps}
 				className="calendar-popover__scheduler"
-				selectedDay={ this.state.date }
-				gmtOffset={ this.props.gmtOffset }
-				timezone={ this.props.timezoneValue }
-				onDateChange={ this.setDate }
+				selectedDay={this.state.date}
+				gmtOffset={this.props.gmtOffset}
+				timezone={this.props.timezoneValue}
+				onDateChange={this.setDate}
 			/>
 		);
 	}
 
 	render() {
-		const popoverProps = pick( this.props, [
+		const popoverProps = pick(this.props, [
 			'autoPosition',
 			'closeOnEsc',
 			'context',
@@ -99,17 +99,17 @@ class CalendarPopover extends Component {
 			'showDelay',
 			'onClose',
 			'onShow',
-		] );
+		]);
 
 		return (
-			<Popover { ...popoverProps } className="calendar-popover__popover">
-				{ this.renderScheduler() }
+			<Popover {...popoverProps} className="calendar-popover__popover">
+				{this.renderScheduler()}
 			</Popover>
 		);
 	}
 }
 
-export default connect( ( state, { siteId } ) => ( {
-	gmtOffset: getSiteGmtOffset( state, siteId ),
-	timezoneValue: getSiteTimezoneValue( state, siteId ),
-} ) )( CalendarPopover );
+export default connect((state, { siteId }) => ({
+	gmtOffset: getSiteGmtOffset(state, siteId),
+	timezoneValue: getSiteTimezoneValue(state, siteId),
+}))(CalendarPopover);

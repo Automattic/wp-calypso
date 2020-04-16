@@ -127,7 +127,7 @@ class CloneStartStep extends Component {
 					</g>
 				</svg>
 				<p className="clone-start__description">
-					{ translate(
+					{translate(
 						"You're about to clone {{strong}}%(originSiteSlug)s{{/strong}}. " +
 							'All content, plugins, and themes will be copied to the ' +
 							'destination site.',
@@ -139,10 +139,10 @@ class CloneStartStep extends Component {
 								originSiteSlug,
 							},
 						}
-					) }
+					)}
 				</p>
 				<p className="clone-start__description">
-					{ translate(
+					{translate(
 						'To clone your site, you will need the {{strong}}server credentials' +
 							'{{/strong}} for the destination, which must be a WordPress site.',
 						{
@@ -150,10 +150,10 @@ class CloneStartStep extends Component {
 								strong: <strong />,
 							},
 						}
-					) }
+					)}
 				</p>
-				<Button primary className="clone-start__button" onClick={ this.goToNextStep }>
-					{ translate( 'Continue' ) }
+				<Button primary className="clone-start__button" onClick={this.goToNextStep}>
+					{translate('Continue')}
 				</Button>
 			</Card>
 		);
@@ -162,7 +162,7 @@ class CloneStartStep extends Component {
 	render() {
 		const { flowName, stepName, positionInFlow, originSiteName, translate } = this.props;
 
-		const headerText = translate( "Let's clone %(origin)s", { args: { origin: originSiteName } } );
+		const headerText = translate("Let's clone %(origin)s", { args: { origin: originSiteName } });
 		const subHeaderText = translate(
 			"Create a test or staging site, migrate your site, or just back up your data for safekeeping — it's up to you!"
 		);
@@ -170,30 +170,30 @@ class CloneStartStep extends Component {
 		return (
 			<StepWrapper
 				className="clone-start"
-				flowName={ flowName }
-				stepName={ stepName }
-				headerText={ headerText }
-				fallbackHeaderText={ headerText }
-				subHeaderText={ subHeaderText }
-				fallbackSubHeaderText={ subHeaderText }
-				positionInFlow={ positionInFlow }
-				stepContent={ this.renderStepContent() }
+				flowName={flowName}
+				stepName={stepName}
+				headerText={headerText}
+				fallbackHeaderText={headerText}
+				subHeaderText={subHeaderText}
+				fallbackSubHeaderText={subHeaderText}
+				positionInFlow={positionInFlow}
+				stepContent={this.renderStepContent()}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const originSiteSlug = get( ownProps, 'stepSectionName', '' );
-		const site = getSiteBySlug( state, originSiteSlug );
-		const originSiteName = get( site, 'name', '' );
+	(state, ownProps) => {
+		const originSiteSlug = get(ownProps, 'stepSectionName', '');
+		const site = getSiteBySlug(state, originSiteSlug);
+		const originSiteName = get(site, 'name', '');
 
 		return {
-			originBlogId: get( site, 'ID', -Infinity ),
+			originBlogId: get(site, 'ID', -Infinity),
 			originSiteName,
 			originSiteSlug,
 		};
 	},
 	{ submitSignupStep }
-)( localize( CloneStartStep ) );
+)(localize(CloneStartStep));

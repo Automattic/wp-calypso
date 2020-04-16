@@ -13,7 +13,7 @@ import { keyedReducer, withSchemaValidation, withoutPersistence } from 'state/ut
 
 const stubNull = () => null;
 
-const startProgress = ( state, { timestamp } ) => ( {
+const startProgress = (state, { timestamp }) => ({
 	errorCode: '',
 	failureReason: '',
 	message: '',
@@ -21,12 +21,12 @@ const startProgress = ( state, { timestamp } ) => ( {
 	status: 'queued',
 	timestamp,
 	rewindId: '',
-} );
+});
 
 const updateProgress = (
 	state,
 	{ errorCode, failureReason, message, percent, restoreId, status, timestamp, rewindId, context }
-) => ( {
+) => ({
 	errorCode,
 	failureReason,
 	message,
@@ -36,33 +36,33 @@ const updateProgress = (
 	timestamp,
 	rewindId,
 	context,
-} );
+});
 
 export const restoreProgress = withSchemaValidation(
 	restoreProgressSchema,
 	keyedReducer(
 		'siteId',
-		withoutPersistence( ( state = {}, action ) => {
-			switch ( action.type ) {
+		withoutPersistence((state = {}, action) => {
+			switch (action.type) {
 				case REWIND_RESTORE:
-					return startProgress( state, action );
+					return startProgress(state, action);
 				case REWIND_RESTORE_DISMISS_PROGRESS:
-					return stubNull( state, action );
+					return stubNull(state, action);
 				case REWIND_RESTORE_UPDATE_PROGRESS:
-					return updateProgress( state, action );
+					return updateProgress(state, action);
 				case REWIND_RESTORE_DISMISS:
-					return stubNull( state, action );
+					return stubNull(state, action);
 			}
 
 			return state;
-		} )
+		})
 	)
 );
 
 export const restoreRequest = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = undefined, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = undefined, action) => {
+		switch (action.type) {
 			case REWIND_RESTORE:
 				return undefined;
 			case REWIND_RESTORE_DISMISS:
@@ -74,5 +74,5 @@ export const restoreRequest = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );

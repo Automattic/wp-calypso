@@ -10,22 +10,22 @@ import { extendAction } from 'state/utils';
 import { HTTP_REQUEST } from 'state/action-types';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
 
-const encodeQueryParameters = queryParams => {
+const encodeQueryParameters = (queryParams) => {
 	return queryParams
 		.map(
-			( [ queryKey, queryValue ] ) =>
-				encodeURIComponent( queryKey ) + '=' + encodeURIComponent( queryValue )
+			([queryKey, queryValue]) =>
+				encodeURIComponent(queryKey) + '=' + encodeURIComponent(queryValue)
 		)
-		.join( '&' );
+		.join('&');
 };
 
-const isAllHeadersValid = headers =>
+const isAllHeadersValid = (headers) =>
 	headers.every(
-		headerPair =>
-			Array.isArray( headerPair ) &&
+		(headerPair) =>
+			Array.isArray(headerPair) &&
 			headerPair.length === 2 &&
-			typeof headerPair[ 0 ] === 'string' &&
-			typeof headerPair[ 1 ] === 'string'
+			typeof headerPair[0] === 'string' &&
+			typeof headerPair[1] === 'string'
 	);
 
 /**
@@ -42,7 +42,7 @@ const isAllHeadersValid = headers =>
  * @param {Function} dispatch redux store dispatch
  * @param {object} action dispatched action we need to handle
  */
-export const httpHandler = async ( { dispatch }, action ) => {
+export const httpHandler = async ({ dispatch }, action) => {
 	const {
 		url,
 		method,
@@ -54,51 +54,51 @@ export const httpHandler = async ( { dispatch }, action ) => {
 		onFailure,
 	} = action;
 
-	if ( ! isAllHeadersValid( headers ) ) {
-		const error = new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" );
-		dispatch( extendAction( onFailure, failureMeta( error ) ) );
+	if (!isAllHeadersValid(headers)) {
+		const error = new Error("Not all headers were of an array pair: [ 'key', 'value' ]");
+		dispatch(extendAction(onFailure, failureMeta(error)));
 		return;
 	}
 
-	const fetchHeaders = fromPairs( headers );
+	const fetchHeaders = fromPairs(headers);
 	fetchHeaders.Accept = 'application/json';
 
-	const contentType = ( fetchHeaders[ 'Content-Type' ] || '' ).split( ';' )[ 0 ];
+	const contentType = (fetchHeaders['Content-Type'] || '').split(';')[0];
 
 	let serialize;
 
-	if ( contentType === 'application/x-www-form-urlencoded' ) {
-		serialize = data => encodeQueryParameters( toPairs( data ) );
-	} else if ( typeof body !== 'string' ) {
-		serialize = JSON.stringify.bind( JSON );
+	if (contentType === 'application/x-www-form-urlencoded') {
+		serialize = (data) => encodeQueryParameters(toPairs(data));
+	} else if (typeof body !== 'string') {
+		serialize = JSON.stringify.bind(JSON);
 	} else {
 		// assume body is already serialized
 		serialize = identity;
 	}
 
-	const queryString = encodeQueryParameters( queryParams );
+	const queryString = encodeQueryParameters(queryParams);
 
 	let response, json;
 	try {
-		response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
+		response = await fetch(queryString.length ? `${url}?${queryString}` : url, {
 			method,
 			headers: fetchHeaders,
-			body: serialize( body ),
+			body: serialize(body),
 			credentials: withCredentials ? 'include' : 'same-origin',
-		} );
+		});
 		json = await response.json();
-	} catch ( error ) {
-		dispatch( extendAction( onFailure, failureMeta( error ) ) );
+	} catch (error) {
+		dispatch(extendAction(onFailure, failureMeta(error)));
 		return;
 	}
 
-	if ( response.ok ) {
-		dispatch( extendAction( onSuccess, successMeta( { body: json } ) ) );
+	if (response.ok) {
+		dispatch(extendAction(onSuccess, successMeta({ body: json })));
 	} else {
-		dispatch( extendAction( onFailure, failureMeta( { response: { body: json } } ) ) );
+		dispatch(extendAction(onFailure, failureMeta({ response: { body: json } })));
 	}
 };
 
 export default {
-	[ HTTP_REQUEST ]: [ httpHandler ],
+	[HTTP_REQUEST]: [httpHandler],
 };

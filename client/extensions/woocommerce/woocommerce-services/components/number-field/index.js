@@ -15,7 +15,7 @@ import FieldError from 'woocommerce/woocommerce-services/components/field-error'
 import FieldDescription from 'woocommerce/woocommerce-services/components/field-description';
 import sanitizeHTML from 'woocommerce/woocommerce-services/lib/utils/sanitize-html';
 
-const NumberField = ( {
+const NumberField = ({
 	id,
 	title,
 	description,
@@ -24,21 +24,21 @@ const NumberField = ( {
 	updateValue,
 	error,
 	className,
-} ) => {
-	const onChange = event => updateValue( parseNumber( event.target.value ) );
+}) => {
+	const onChange = (event) => updateValue(parseNumber(event.target.value));
 
 	return (
-		<FormFieldset className={ className }>
-			<FormLabel htmlFor={ id } dangerouslySetInnerHTML={ sanitizeHTML( title ) } />
+		<FormFieldset className={className}>
+			<FormLabel htmlFor={id} dangerouslySetInnerHTML={sanitizeHTML(title)} />
 			<NumberInput
-				id={ id }
-				name={ id }
-				placeholder={ placeholder }
-				value={ value }
-				onChange={ onChange }
-				isError={ Boolean( error ) }
+				id={id}
+				name={id}
+				placeholder={placeholder}
+				value={value}
+				onChange={onChange}
+				isError={Boolean(error)}
 			/>
-			{ error ? <FieldError text={ error } /> : <FieldDescription text={ description } /> }
+			{error ? <FieldError text={error} /> : <FieldDescription text={description} />}
 		</FormFieldset>
 	);
 };
@@ -47,9 +47,9 @@ NumberField.propTypes = {
 	id: PropTypes.string.isRequired,
 	title: PropTypes.string,
 	description: PropTypes.string,
-	value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+	value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	updateValue: PropTypes.func,
-	error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+	error: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 	className: PropTypes.string,
 };
 

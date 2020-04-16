@@ -1,21 +1,21 @@
 export default {
 	main: {
-		steps: [ 'user', 'site' ],
+		steps: ['user', 'site'],
 		destination: '/',
 	},
 
 	account: {
-		steps: [ 'user', 'site' ],
+		steps: ['user', 'site'],
 		destination: '/',
 	},
 
 	other: {
-		steps: [ 'user', 'site' ],
+		steps: ['user', 'site'],
 		destination: '/',
 	},
 
 	filtered: {
-		steps: [ 'user', 'site' ],
+		steps: ['user', 'site'],
 		destination: '/',
 	},
 
@@ -33,7 +33,7 @@ export default {
 	},
 
 	'onboarding-blog': {
-		steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
+		steps: ['user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans'],
 		destination: '/',
 	},
 

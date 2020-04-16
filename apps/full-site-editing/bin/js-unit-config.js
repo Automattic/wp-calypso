@@ -15,19 +15,19 @@
 
 // @wordpress/scripts manually adds additional Jest config ontop of
 // @wordpress/jest-preset-default so we pull in this file to extend it
-const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );
-const path = require( 'path' );
+const defaults = require('@wordpress/scripts/config/jest-unit.config.js');
+const path = require('path');
 
 // Basically, CWD, so 'apps/full-site-editing'.
 // Without this, it tries to use 'apps/full-site-editing/bin'
-const pluginRoot = path.resolve( './' );
+const pluginRoot = path.resolve('./');
 
 const config = {
 	...defaults,
-	rootDir: path.normalize( '../../../' ), // To detect wp-calypso root node_modules
-	testMatch: [ `${ pluginRoot }/**/?(*.)test.[jt]s?(x)` ],
+	rootDir: path.normalize('../../../'), // To detect wp-calypso root node_modules
+	testMatch: [`${pluginRoot}/**/?(*.)test.[jt]s?(x)`],
 	setupFilesAfterEnv: [
-		...( defaults.setupFilesAfterEnv || [] ), // extend if present
+		...(defaults.setupFilesAfterEnv || []), // extend if present
 		'<rootDir>/apps/full-site-editing/bin/js-unit-setup',
 	],
 };

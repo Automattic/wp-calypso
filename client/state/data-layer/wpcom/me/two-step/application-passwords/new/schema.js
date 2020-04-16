@@ -5,6 +5,6 @@ export default {
 		message: { type: 'string' },
 		success: { type: 'boolean' },
 	},
-	required: [ 'application_password' ],
+	required: ['application_password'],
 	additionalProperties: false,
 };

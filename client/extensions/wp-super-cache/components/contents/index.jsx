@@ -45,32 +45,32 @@ class ContentsTab extends Component {
 		isDeletingExpired: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
-			this.setState( {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.isDeleting && !nextProps.isDeleting) {
+			this.setState({
 				isDeleting: false,
 				isDeletingAll: false,
 				isDeletingExpired: false,
-			} );
+			});
 		}
 	}
 
 	deleteCache = () => {
-		this.setState( { isDeleting: true } );
-		this.props.handleDeleteCache( false, false );
+		this.setState({ isDeleting: true });
+		this.props.handleDeleteCache(false, false);
 	};
 
 	deleteExpiredCache = () => {
-		this.setState( { isDeletingExpired: true } );
-		this.props.handleDeleteCache( false, true );
+		this.setState({ isDeletingExpired: true });
+		this.props.handleDeleteCache(false, true);
 	};
 
 	deleteAllCaches = () => {
-		this.setState( { isDeletingAll: true } );
-		this.props.handleDeleteCache( true, false );
+		this.setState({ isDeletingAll: true });
+		this.props.handleDeleteCache(true, false);
 	};
 
-	generateStats = () => this.props.generateStats( this.props.siteId );
+	generateStats = () => this.props.generateStats(this.props.siteId);
 
 	render() {
 		const {
@@ -84,136 +84,136 @@ class ContentsTab extends Component {
 			translate,
 		} = this.props;
 		const isDisabled = isDeleting || isReadOnly;
-		const supercache = get( stats, 'supercache', {} );
-		const wpcache = get( stats, 'wpcache', {} );
+		const supercache = get(stats, 'supercache', {});
+		const wpcache = get(stats, 'wpcache', {});
 
 		return (
 			<div>
-				<QueryStats siteId={ siteId } />
-				<SectionHeader label={ translate( 'Cache Contents' ) } />
+				<QueryStats siteId={siteId} />
+				<SectionHeader label={translate('Cache Contents')} />
 				<Card compact>
 					<div>
-						{ wpcache && (
+						{wpcache && (
 							<div className="wp-super-cache__cache-stat">
 								<span className="wp-super-cache__cache-stat-label">
-									{ translate( 'WP-Cache (%(size)s)', {
-										args: { size: ( wpcache && wpcache.fsize ) || '0KB' },
-									} ) }
+									{translate('WP-Cache (%(size)s)', {
+										args: { size: (wpcache && wpcache.fsize) || '0KB' },
+									})}
 								</span>
 								<span className="wp-super-cache__cache-stat-item">
-									{ `${ ( wpcache && wpcache.cached ) || 0 } Cached Pages` }
+									{`${(wpcache && wpcache.cached) || 0} Cached Pages`}
 								</span>
 								<span className="wp-super-cache__cache-stat-item">
-									{ `${ ( wpcache && wpcache.expired ) || 0 } Expired Pages` }
+									{`${(wpcache && wpcache.expired) || 0} Expired Pages`}
 								</span>
 							</div>
-						) }
+						)}
 
-						{ supercache && (
+						{supercache && (
 							<div className="wp-super-cache__cache-stat">
 								<span className="wp-super-cache__cache-stat-label">
-									{ translate( 'WP-Super-Cache (%(size)s)', {
-										args: { size: ( supercache && supercache.fsize ) || '0KB' },
-									} ) }
+									{translate('WP-Super-Cache (%(size)s)', {
+										args: { size: (supercache && supercache.fsize) || '0KB' },
+									})}
 								</span>
 								<span className="wp-super-cache__cache-stat-item">
-									{ `${ ( supercache && supercache.cached ) || 0 } Cached Pages` }
+									{`${(supercache && supercache.cached) || 0} Cached Pages`}
 								</span>
 								<span className="wp-super-cache__cache-stat-item">
-									{ `${ ( supercache && supercache.expired ) || 0 } Expired Pages` }
+									{`${(supercache && supercache.expired) || 0} Expired Pages`}
 								</span>
 							</div>
-						) }
+						)}
 
 						<Button
 							compact
-							busy={ isGenerating }
-							disabled={ isGenerating }
-							onClick={ this.generateStats }
+							busy={isGenerating}
+							disabled={isGenerating}
+							onClick={this.generateStats}
 						>
-							{ translate( 'Regenerate Cache Stats' ) }
+							{translate('Regenerate Cache Stats')}
 						</Button>
 					</div>
 				</Card>
 
 				<div>
-					{ ! isEmpty( get( wpcache, 'cached_list' ) ) && (
+					{!isEmpty(get(wpcache, 'cached_list')) && (
 						<CacheStats
-							files={ wpcache.cached_list }
-							header={ translate( 'Fresh Full Cache Files' ) }
-							isCached={ true }
-							isSupercache={ false }
+							files={wpcache.cached_list}
+							header={translate('Fresh Full Cache Files')}
+							isCached={true}
+							isSupercache={false}
 						/>
-					) }
+					)}
 
-					{ ! isEmpty( get( wpcache, 'expired_list' ) ) && (
+					{!isEmpty(get(wpcache, 'expired_list')) && (
 						<CacheStats
-							files={ wpcache.expired_list }
-							header={ translate( 'Stale Full Cache Files' ) }
-							isCached={ false }
-							isSupercache={ false }
+							files={wpcache.expired_list}
+							header={translate('Stale Full Cache Files')}
+							isCached={false}
+							isSupercache={false}
 						/>
-					) }
+					)}
 
-					{ ! isEmpty( get( supercache, 'cached_list' ) ) && (
+					{!isEmpty(get(supercache, 'cached_list')) && (
 						<CacheStats
-							files={ supercache.cached_list }
-							header={ translate( 'Fresh Super Cached Files' ) }
-							isCached={ true }
-							isSupercache={ true }
+							files={supercache.cached_list}
+							header={translate('Fresh Super Cached Files')}
+							isCached={true}
+							isSupercache={true}
 						/>
-					) }
+					)}
 
-					{ ! isEmpty( get( supercache, 'expired_list' ) ) && (
+					{!isEmpty(get(supercache, 'expired_list')) && (
 						<CacheStats
-							files={ supercache.expired_list }
-							header={ translate( 'Stale Super Cached Files' ) }
-							isCached={ false }
-							isSupercache={ true }
+							files={supercache.expired_list}
+							header={translate('Stale Super Cached Files')}
+							isCached={false}
+							isSupercache={true}
 						/>
-					) }
+					)}
 				</div>
 
 				<Card>
-					{ cache_max_time > 0 && (
+					{cache_max_time > 0 && (
 						<p>
-							{ translate(
+							{translate(
 								'Expired files are files older than %(cache_max_time)d seconds. They are still used by ' +
 									'the plugin and are deleted periodically.',
 								{
 									args: { cache_max_time: cache_max_time || 0 },
 								}
-							) }
+							)}
 						</p>
-					) }
+					)}
 					<div>
 						<Button
 							compact
 							primary
-							busy={ this.state.isDeletingExpired }
-							disabled={ isDisabled }
-							onClick={ this.deleteExpiredCache }
+							busy={this.state.isDeletingExpired}
+							disabled={isDisabled}
+							onClick={this.deleteExpiredCache}
 						>
-							{ translate( 'Delete Expired' ) }
+							{translate('Delete Expired')}
 						</Button>
 						<Button
 							compact
-							busy={ this.state.isDeleting }
-							disabled={ isDisabled }
-							onClick={ this.deleteCache }
+							busy={this.state.isDeleting}
+							disabled={isDisabled}
+							onClick={this.deleteCache}
 						>
-							{ translate( 'Delete Cache' ) }
+							{translate('Delete Cache')}
 						</Button>
-						{ isMultisite && (
+						{isMultisite && (
 							<Button
 								compact
-								busy={ this.state.isDeletingAll }
-								disabled={ isDisabled }
-								onClick={ this.deleteAllCaches }
+								busy={this.state.isDeletingAll}
+								disabled={isDisabled}
+								onClick={this.deleteAllCaches}
 							>
-								{ translate( 'Delete Cache On All Blogs' ) }
+								{translate('Delete Cache On All Blogs')}
 							</Button>
-						) }
+						)}
 					</div>
 				</Card>
 			</div>
@@ -222,12 +222,12 @@ class ContentsTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const stats = getStats( state, siteId );
-		const isGenerating = isGeneratingStats( state, siteId );
-		const isMultisite = isJetpackSiteMultiSite( state, siteId );
-		const siteTitle = getSiteTitle( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const stats = getStats(state, siteId);
+		const isGenerating = isGeneratingStats(state, siteId);
+		const isMultisite = isJetpackSiteMultiSite(state, siteId);
+		const siteTitle = getSiteTitle(state, siteId);
 
 		return {
 			isGenerating,
@@ -239,8 +239,8 @@ const connectComponent = connect(
 	{ generateStats }
 );
 
-const getFormSettings = settings => {
-	return pick( settings, [ 'cache_max_time' ] );
+const getFormSettings = (settings) => {
+	return pick(settings, ['cache_max_time']);
 };
 
-export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( ContentsTab );
+export default flowRight(connectComponent, WrapSettingsForm(getFormSettings))(ContentsTab);

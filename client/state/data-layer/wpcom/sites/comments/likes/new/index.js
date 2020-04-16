@@ -15,40 +15,40 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const likeComment = action =>
+export const likeComment = (action) =>
 	http(
 		{
 			method: 'POST',
 			apiVersion: '1.1',
-			path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/new`,
+			path: `/sites/${action.siteId}/comments/${action.commentId}/likes/new`,
 		},
 		action
 	);
 
-export const updateCommentLikes = ( { siteId, postId, commentId }, { like_count } ) =>
-	bypassDataLayer( {
+export const updateCommentLikes = ({ siteId, postId, commentId }, { like_count }) =>
+	bypassDataLayer({
 		type: COMMENTS_LIKE,
 		siteId,
 		postId,
 		commentId,
 		like_count,
-	} );
+	});
 
-export const handleLikeFailure = ( { siteId, postId, commentId } ) => [
+export const handleLikeFailure = ({ siteId, postId, commentId }) => [
 	// revert optimistic updated on error
-	bypassDataLayer( { type: COMMENTS_UNLIKE, siteId, postId, commentId } ),
+	bypassDataLayer({ type: COMMENTS_UNLIKE, siteId, postId, commentId }),
 	// dispatch a error notice
-	errorNotice( translate( 'Could not like this comment' ) ),
+	errorNotice(translate('Could not like this comment')),
 ];
 
-registerHandlers( 'state/data-layer/wpcom/sites/comments/likes/new/index.js', {
-	[ COMMENTS_LIKE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/comments/likes/new/index.js', {
+	[COMMENTS_LIKE]: [
+		dispatchRequest({
 			fetch: likeComment,
 			onSuccess: updateCommentLikes,
 			onError: handleLikeFailure,
-		} ),
+		}),
 	],
-} );
+});
 
 export default {};

@@ -29,20 +29,20 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import './style.scss';
 
 class ListStream extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.title = props.translate( 'Loading list' );
+	constructor(props) {
+		super(props);
+		this.title = props.translate('Loading list');
 	}
-	toggleFollowing = isFollowRequested => {
+	toggleFollowing = (isFollowRequested) => {
 		const list = this.props.list;
 
-		if ( isFollowRequested ) {
-			this.props.followList( list.owner, list.slug );
+		if (isFollowRequested) {
+			this.props.followList(list.owner, list.slug);
 		} else {
-			this.props.unfollowList( list.owner, list.slug );
+			this.props.unfollowList(list.owner, list.slug);
 		}
 
-		recordAction( isFollowRequested ? 'followed_list' : 'unfollowed_list' );
+		recordAction(isFollowRequested ? 'followed_list' : 'unfollowed_list');
 		recordGaEvent(
 			isFollowRequested ? 'Clicked Follow List' : 'Clicked Unfollow List',
 			list.owner + ':' + list.slug
@@ -60,42 +60,42 @@ class ListStream extends React.Component {
 
 	render() {
 		const list = this.props.list,
-			shouldShowFollow = list && ! list.is_owner,
-			shouldShowEdit = ! shouldShowFollow,
+			shouldShowFollow = list && !list.is_owner,
+			shouldShowEdit = !shouldShowFollow,
 			emptyContent = <EmptyContent />,
 			listStreamIconClasses = 'gridicon gridicon__list';
 
 		let editUrl = null;
 
-		if ( list ) {
+		if (list) {
 			this.title = list.title;
 
-			editUrl = `https://wordpress.com/read/list/${ list.owner }/${ list.slug }/edit`;
+			editUrl = `https://wordpress.com/read/list/${list.owner}/${list.slug}/edit`;
 		}
 
-		if ( this.props.isMissing ) {
-			return <ListMissing owner={ this.props.owner } slug={ this.props.slug } />;
+		if (this.props.isMissing) {
+			return <ListMissing owner={this.props.owner} slug={this.props.slug} />;
 		}
 
 		return (
 			<Stream
-				{ ...this.props }
-				listName={ this.title }
-				emptyContent={ emptyContent }
-				showFollowInHeader={ shouldShowFollow }
+				{...this.props}
+				listName={this.title}
+				emptyContent={emptyContent}
+				showFollowInHeader={shouldShowFollow}
 			>
 				<DocumentHead
-					title={ this.props.translate( '%s ‹ Reader', {
+					title={this.props.translate('%s ‹ Reader', {
 						args: this.title,
 						comment: '%s is the section name. For example: "My Likes"',
-					} ) }
+					})}
 				/>
-				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
+				<QueryReaderList owner={this.props.owner} slug={this.props.slug} />
 				<ListStreamHeader
-					isPlaceholder={ ! list }
+					isPlaceholder={!list}
 					icon={
 						<svg
-							className={ listStreamIconClasses }
+							className={listStreamIconClasses}
 							height="32"
 							width="32"
 							xmlns="http://www.w3.org/2000/svg"
@@ -112,13 +112,13 @@ class ListStream extends React.Component {
 							</g>
 						</svg>
 					}
-					title={ this.title }
-					description={ list && list.description }
-					showFollow={ shouldShowFollow }
-					following={ this.props.isSubscribed }
-					onFollowToggle={ this.toggleFollowing }
-					showEdit={ shouldShowEdit }
-					editUrl={ editUrl }
+					title={this.title}
+					description={list && list.description}
+					showFollow={shouldShowFollow}
+					following={this.props.isSubscribed}
+					onFollowToggle={this.toggleFollowing}
+					showEdit={shouldShowEdit}
+					editUrl={editUrl}
 				/>
 			</Stream>
 		);
@@ -126,14 +126,14 @@ class ListStream extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			list: getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
-			isSubscribed: isSubscribedByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
-			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
+			list: getListByOwnerAndSlug(state, ownProps.owner, ownProps.slug),
+			isSubscribed: isSubscribedByOwnerAndSlug(state, ownProps.owner, ownProps.slug),
+			isMissing: isMissingByOwnerAndSlug(state, ownProps.owner, ownProps.slug),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				followList,
@@ -142,4 +142,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( localize( ListStream ) );
+)(localize(ListStream));

@@ -6,15 +6,15 @@
  * @returns {?object}         Media object, if known
  */
 
-export default function getMediaItem( state, siteId, mediaId ) {
-	const queries = state.media.queries[ siteId ];
+export default function getMediaItem(state, siteId, mediaId) {
+	const queries = state.media.queries[siteId];
 
-	if ( ! queries ) {
+	if (!queries) {
 		return null;
 	}
 
-	const media = queries.getItem( mediaId ) || null;
-	if ( media === null ) {
+	const media = queries.getItem(mediaId) || null;
+	if (media === null) {
 		return null;
 	}
 	// If media doesn't have a URL parameter then it is not an attachment but a post.

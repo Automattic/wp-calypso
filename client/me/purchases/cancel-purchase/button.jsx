@@ -47,54 +47,54 @@ class CancelPurchaseButton extends Component {
 	};
 
 	getCancellationFlowType = () => {
-		return hasAmountAvailableToRefund( this.props.purchase )
+		return hasAmountAvailableToRefund(this.props.purchase)
 			? CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
 			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	};
 
 	handleCancelPurchaseClick = () => {
-		if ( isDomainRegistration( this.props.purchase ) ) {
+		if (isDomainRegistration(this.props.purchase)) {
 			return this.goToCancelConfirmation();
 		}
 
-		this.setState( {
+		this.setState({
 			showDialog: true,
-		} );
+		});
 	};
 
 	closeDialog = () => {
-		this.setState( {
+		this.setState({
 			showDialog: false,
-		} );
+		});
 	};
 
-	onSurveyChange = update => {
-		this.setState( {
+	onSurveyChange = (update) => {
+		this.setState({
 			survey: update,
-		} );
+		});
 	};
 
 	goToCancelConfirmation = () => {
 		const { id } = this.props.purchase,
 			slug = this.props.siteSlug;
 
-		page( confirmCancelDomain( slug, id ) );
+		page(confirmCancelDomain(slug, id));
 	};
 
 	cancelPurchase = () => {
 		const { purchase, translate } = this.props;
 
-		this.setDisabled( true );
+		this.setDisabled(true);
 
-		cancelPurchase( purchase.id, success => {
-			const purchaseName = getName( purchase ),
-				subscriptionEndDate = getSubscriptionEndDate( purchase );
+		cancelPurchase(purchase.id, (success) => {
+			const purchaseName = getName(purchase),
+				subscriptionEndDate = getSubscriptionEndDate(purchase);
 
-			this.props.refreshSitePlans( purchase.siteId );
+			this.props.refreshSitePlans(purchase.siteId);
 
 			this.props.clearPurchases();
 
-			if ( success ) {
+			if (success) {
 				notices.success(
 					translate(
 						'%(purchaseName)s was successfully cancelled. It will be available ' +
@@ -109,7 +109,7 @@ class CancelPurchaseButton extends Component {
 					{ persistent: true }
 				);
 
-				page( purchasesRoot );
+				page(purchasesRoot);
 			} else {
 				notices.error(
 					translate(
@@ -122,71 +122,71 @@ class CancelPurchaseButton extends Component {
 				);
 				this.cancellationFailed();
 			}
-		} );
+		});
 	};
 
 	cancellationFailed = () => {
 		this.closeDialog();
-		this.setDisabled( false );
+		this.setDisabled(false);
 	};
 
-	setDisabled = disabled => {
-		this.setState( { disabled } );
+	setDisabled = (disabled) => {
+		this.setState({ disabled });
 	};
 
-	handleSubmit = ( error, response ) => {
-		if ( error ) {
-			notices.error( error.message );
+	handleSubmit = (error, response) => {
+		if (error) {
+			notices.error(error.message);
 
 			this.cancellationFailed();
 
 			return;
 		}
 
-		notices.success( response.message, { persistent: true } );
+		notices.success(response.message, { persistent: true });
 
-		this.props.refreshSitePlans( this.props.purchase.siteId );
+		this.props.refreshSitePlans(this.props.purchase.siteId);
 
 		this.props.clearPurchases();
 
-		page.redirect( purchasesRoot );
+		page.redirect(purchasesRoot);
 	};
 
 	cancelAndRefund = () => {
 		const { purchase, cancelBundledDomain } = this.props;
 
-		this.setDisabled( true );
+		this.setDisabled(true);
 
 		cancelAndRefundPurchase(
 			purchase.id,
 			{ product_id: purchase.productId, cancel_bundled_domain: cancelBundledDomain ? 1 : 0 },
-			( error, response ) => {
-				this.setDisabled( false );
+			(error, response) => {
+				this.setDisabled(false);
 
-				if ( error ) {
-					notices.error( error.message );
+				if (error) {
+					notices.error(error.message);
 
 					this.cancellationFailed();
 
 					return;
 				}
 
-				notices.success( response.message, { persistent: true } );
+				notices.success(response.message, { persistent: true });
 
-				this.props.refreshSitePlans( purchase.siteId );
+				this.props.refreshSitePlans(purchase.siteId);
 
 				this.props.clearPurchases();
 
-				page.redirect( purchasesRoot );
+				page.redirect(purchasesRoot);
 			}
 		);
 	};
 
 	downgradeClick = () => {
 		const { purchase } = this.props;
-		const downgradePlan = getDowngradePlanFromPurchase( purchase );
+		const downgradePlan = getDowngradePlanFromPurchase(purchase);
 
-		this.setDisabled( true );
+		this.setDisabled(true);
 
 		cancelAndRefundPurchase(
 			purchase.id,
@@ -195,32 +195,32 @@ class CancelPurchaseButton extends Component {
 				type: 'downgrade',
 				to_product_id: downgradePlan.getProductId(),
 			},
-			( error, response ) => {
-				this.setDisabled( false );
+			(error, response) => {
+				this.setDisabled(false);
 
-				if ( error ) {
-					notices.error( error.message );
+				if (error) {
+					notices.error(error.message);
 
 					this.cancellationFailed();
 
 					return;
 				}
 
-				notices.success( response.message, { persistent: true } );
+				notices.success(response.message, { persistent: true });
 
-				this.props.refreshSitePlans( purchase.siteId );
+				this.props.refreshSitePlans(purchase.siteId);
 
 				this.props.clearPurchases();
 
-				page.redirect( purchasesRoot );
+				page.redirect(purchasesRoot);
 			}
 		);
 	};
 
 	submitCancelAndRefundPurchase = () => {
-		const refundable = hasAmountAvailableToRefund( this.props.purchase );
+		const refundable = hasAmountAvailableToRefund(this.props.purchase);
 
-		if ( refundable ) {
+		if (refundable) {
 			this.cancelAndRefund();
 		} else {
 			this.cancelPurchase();
@@ -234,18 +234,18 @@ class CancelPurchaseButton extends Component {
 		if (
 			cancelBundledDomain &&
 			includedDomainPurchase &&
-			isDomainRegistration( includedDomainPurchase )
+			isDomainRegistration(includedDomainPurchase)
 		) {
-			const { precision } = getCurrencyDefaults( purchase.currencyCode );
+			const { precision } = getCurrencyDefaults(purchase.currencyCode);
 			overrides.refundText =
 				purchase.currencySymbol +
-				parseFloat( purchase.refundAmount + includedDomainPurchase.amount ).toFixed( precision );
+				parseFloat(purchase.refundAmount + includedDomainPurchase.amount).toFixed(precision);
 		}
 
 		return (
 			<p>
-				{ cancellationEffectHeadline( purchase, translate ) }
-				{ cancellationEffectDetail( purchase, translate, overrides ) }
+				{cancellationEffectHeadline(purchase, translate)}
+				{cancellationEffectDetail(purchase, translate, overrides)}
 			</p>
 		);
 	};
@@ -254,30 +254,30 @@ class CancelPurchaseButton extends Component {
 		const { purchase, selectedSite, translate } = this.props;
 		let text, onClick;
 
-		if ( hasAmountAvailableToRefund( purchase ) ) {
+		if (hasAmountAvailableToRefund(purchase)) {
 			onClick = this.handleCancelPurchaseClick;
 
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain and Refund' );
+			if (isDomainRegistration(purchase)) {
+				text = translate('Cancel Domain and Refund');
 			}
 
-			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription' );
+			if (isSubscription(purchase)) {
+				text = translate('Cancel Subscription');
 			}
 
-			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and Refund' );
+			if (isOneTimePurchase(purchase)) {
+				text = translate('Cancel and Refund');
 			}
 		} else {
 			onClick = this.cancelPurchase;
 
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain' );
+			if (isDomainRegistration(purchase)) {
+				text = translate('Cancel Domain');
 			}
 
-			if ( isSubscription( purchase ) ) {
+			if (isSubscription(purchase)) {
 				onClick = this.handleCancelPurchaseClick;
-				text = translate( 'Cancel Subscription' );
+				text = translate('Cancel Subscription');
 			}
 		}
 
@@ -287,30 +287,30 @@ class CancelPurchaseButton extends Component {
 			<div>
 				<Button
 					className="cancel-purchase__button"
-					disabled={ disableButtons }
-					onClick={ onClick }
+					disabled={disableButtons}
+					onClick={onClick}
 					primary
 				>
-					{ text }
+					{text}
 				</Button>
 				<CancelPurchaseForm
-					disableButtons={ disableButtons }
-					defaultContent={ this.renderCancellationEffect() }
-					onInputChange={ this.onSurveyChange }
-					purchase={ purchase }
-					selectedSite={ selectedSite }
-					isVisible={ this.state.showDialog }
-					onClose={ this.closeDialog }
-					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
-					downgradeClick={ this.downgradeClick }
-					flowType={ this.getCancellationFlowType() }
+					disableButtons={disableButtons}
+					defaultContent={this.renderCancellationEffect()}
+					onInputChange={this.onSurveyChange}
+					purchase={purchase}
+					selectedSite={selectedSite}
+					isVisible={this.state.showDialog}
+					onClose={this.closeDialog}
+					onClickFinalConfirm={this.submitCancelAndRefundPurchase}
+					downgradeClick={this.downgradeClick}
+					flowType={this.getCancellationFlowType()}
 				/>
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	clearPurchases,
 	refreshSitePlans,
-} )( localize( CancelPurchaseButton ) );
+})(localize(CancelPurchaseButton));

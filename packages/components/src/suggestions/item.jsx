@@ -33,26 +33,26 @@ class Item extends PureComponent {
 	 *
 	 * @returns {Array< ReactElement< JSX.IntrinsicElements[ 'span' ] > >} An element including the highlighted text.
 	 */
-	createTextWithHighlight( text, query ) {
-		const re = new RegExp( '(' + escapeRegExp( query ) + ')', 'gi' );
-		const parts = text.split( re );
+	createTextWithHighlight(text, query) {
+		const re = new RegExp('(' + escapeRegExp(query) + ')', 'gi');
+		const parts = text.split(re);
 
-		return parts.map( ( part, i ) => {
+		return parts.map((part, i) => {
 			const key = text + i;
 			const lowercasePart = part.toLowerCase();
-			const spanClass = classNames( 'suggestions__label', {
+			const spanClass = classNames('suggestions__label', {
 				'is-emphasized': lowercasePart === query.toLowerCase(),
-			} );
+			});
 
 			return (
-				<span key={ key } className={ spanClass }>
-					{ part }
+				<span key={key} className={spanClass}>
+					{part}
 				</span>
 			);
-		} );
+		});
 	}
 
-	handleMouseDown = event => {
+	handleMouseDown = (event) => {
 		event.stopPropagation();
 		event.preventDefault();
 		this.props.onMouseDown();
@@ -65,16 +65,16 @@ class Item extends PureComponent {
 	render() {
 		const { hasHighlight, label, query } = this.props;
 
-		const className = classNames( 'suggestions__item', { 'has-highlight': hasHighlight } );
+		const className = classNames('suggestions__item', { 'has-highlight': hasHighlight });
 
 		return (
 			<button
-				className={ className }
-				onMouseDown={ this.handleMouseDown }
-				onFocus={ this.handleMouseDown }
-				onMouseOver={ this.handleMouseOver }
+				className={className}
+				onMouseDown={this.handleMouseDown}
+				onFocus={this.handleMouseDown}
+				onMouseOver={this.handleMouseOver}
 			>
-				{ this.createTextWithHighlight( label, query ) }
+				{this.createTextWithHighlight(label, query)}
 			</button>
 		);
 	}

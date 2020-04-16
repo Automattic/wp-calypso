@@ -28,18 +28,18 @@ class ProductFormVariationsModal extends React.Component {
 		editProductVariation: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		const { selectedVariation } = props;
 
 		this.state = {
 			selectedVariation,
-			editor: () => this.editorComponent( selectedVariation ),
+			editor: () => this.editorComponent(selectedVariation),
 		};
 
-		this.switchVariation = this.switchVariation.bind( this );
-		this.toggleVisible = this.toggleVisible.bind( this );
+		this.switchVariation = this.switchVariation.bind(this);
+		this.toggleVisible = this.toggleVisible.bind(this);
 	}
 
 	/*
@@ -47,16 +47,16 @@ class ProductFormVariationsModal extends React.Component {
 	 * make sure the correct event handler runs, and that we don't share the
 	 * same TinyMCE instance for different descriptions.
 	 */
-	editorComponent = variationId => {
+	editorComponent = (variationId) => {
 		const { siteId, product, variations, editProductVariation } = this.props;
-		const variation = find( variations, v => variationId === v.id );
-		const setDescription = debounce( description => {
-			editProductVariation( siteId, product, variation, { description } );
-		}, 200 );
+		const variation = find(variations, (v) => variationId === v.id);
+		const setDescription = debounce((description) => {
+			editProductVariation(siteId, product, variation, { description });
+		}, 200);
 		return (
 			<CompactTinyMCE
-				initialValue={ variation.description || '' }
-				onContentsChange={ setDescription }
+				initialValue={variation.description || ''}
+				onContentsChange={setDescription}
 			/>
 		);
 	};
@@ -64,27 +64,27 @@ class ProductFormVariationsModal extends React.Component {
 	selectedVariation() {
 		const { selectedVariation } = this.state;
 		const { variations } = this.props;
-		return find( variations, v => selectedVariation === v.id );
+		return find(variations, (v) => selectedVariation === v.id);
 	}
 
-	setSku = sku => {
+	setSku = (sku) => {
 		const { siteId, product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
-		editProductVariation( siteId, product, variation, { sku } );
+		editProductVariation(siteId, product, variation, { sku });
 	};
 
 	toggleVisible() {
 		const { siteId, product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
 		const status = 'publish' === variation.status ? 'private' : 'publish';
-		editProductVariation( siteId, product, variation, { status } );
+		editProductVariation(siteId, product, variation, { status });
 	}
 
-	switchVariation( selectedVariation ) {
-		this.setState( {
+	switchVariation(selectedVariation) {
+		this.setState({
 			selectedVariation,
-			editor: () => this.editorComponent( selectedVariation ),
-		} );
+			editor: () => this.editorComponent(selectedVariation),
+		});
 	}
 
 	render() {
@@ -94,58 +94,55 @@ class ProductFormVariationsModal extends React.Component {
 
 		const navItems =
 			variations &&
-			variations.map( ( v, i ) => {
+			variations.map((v, i) => {
 				return (
 					<ModalNavItem
-						key={ i }
-						variation={ v }
-						onClick={ this.switchVariation }
-						selected={ selectedVariation }
+						key={i}
+						variation={v}
+						onClick={this.switchVariation}
+						selected={selectedVariation}
 					/>
 				);
-			} );
+			});
 
 		const Editor = this.state.editor;
 
 		return (
 			<div className="products__product-form-modal-wrapper">
-				<h1>{ translate( 'Variation details' ) }</h1>
+				<h1>{translate('Variation details')}</h1>
 
-				<div className="products__product-form-modal-menu vertical-menu">{ navItems }</div>
+				<div className="products__product-form-modal-menu vertical-menu">{navItems}</div>
 
 				<div className="products__product-form-modal-contents">
-					<h2>{ formattedVariationName( variation ) }</h2>
+					<h2>{formattedVariationName(variation)}</h2>
 					<FormFieldSet className="products__product-form-details-basic-sku">
-						<FormLabel htmlFor="sku">{ translate( 'SKU:' ) }</FormLabel>
+						<FormLabel htmlFor="sku">{translate('SKU:')}</FormLabel>
 						<FormClickToEditInput
 							id="sku"
-							value={ variation.sku || '' }
+							value={variation.sku || ''}
 							placeholder="-"
-							onChange={ this.setSku }
-							updateAriaLabel={ translate( 'Update SKU' ) }
-							editAriaLabel={ translate( 'Edit SKU' ) }
+							onChange={this.setSku}
+							updateAriaLabel={translate('Update SKU')}
+							editAriaLabel={translate('Edit SKU')}
 						/>
 					</FormFieldSet>
 
 					<FormFieldSet className="products__product-form-variation-description">
-						<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
+						<FormLabel htmlFor="description">{translate('Description')}</FormLabel>
 						<Editor />
 						<FormSettingExplanation>
-							{ translate(
+							{translate(
 								'This additional information will be displayed when a customer choses this variation.'
-							) }
+							)}
 						</FormSettingExplanation>
 					</FormFieldSet>
 
 					<FormLabel>
-						{ translate( 'Visible' ) }
-						<FormToggle
-							onChange={ this.toggleVisible }
-							checked={ 'publish' === variation.status }
-						/>
+						{translate('Visible')}
+						<FormToggle onChange={this.toggleVisible} checked={'publish' === variation.status} />
 					</FormLabel>
 					<FormSettingExplanation>
-						{ translate( 'Hide variations you don’t want to offer to customers.' ) }
+						{translate('Hide variations you don’t want to offer to customers.')}
 					</FormSettingExplanation>
 				</div>
 			</div>
@@ -153,26 +150,26 @@ class ProductFormVariationsModal extends React.Component {
 	}
 }
 
-const ModalNavItem = ( { onClick, variation, selected } ) => {
-	const classes = classNames( 'vertical-menu__items', {
+const ModalNavItem = ({ onClick, variation, selected }) => {
+	const classes = classNames('vertical-menu__items', {
 		'is-selected': variation.id === selected,
-	} );
+	});
 
 	const clickHandler = () => {
-		onClick( variation.id );
+		onClick(variation.id);
 	};
 
 	return (
 		<div
-			className={ classes }
+			className={classes}
 			role="button"
 			tabIndex="0"
-			onClick={ clickHandler }
-			onKeyDown={ getKeyboardHandler( clickHandler ) }
+			onClick={clickHandler}
+			onKeyDown={getKeyboardHandler(clickHandler)}
 		>
-			{ formattedVariationName( variation ) }
+			{formattedVariationName(variation)}
 		</div>
 	);
 };
 
-export default localize( ProductFormVariationsModal );
+export default localize(ProductFormVariationsModal);

@@ -10,10 +10,10 @@ import { includes } from 'lodash';
  * @returns {boolean} Whether the current user could be in the GDPR zone
  */
 export default function isCurrentUserMaybeInGdprZone() {
-	const cookies = cookie.parse( document.cookie );
+	const cookies = cookie.parse(document.cookie);
 	const countryCode = cookies.country_code;
 
-	if ( ! countryCode || 'unknown' === countryCode ) {
+	if (!countryCode || 'unknown' === countryCode) {
 		return true;
 	}
 
@@ -54,5 +54,5 @@ export default function isCurrentUserMaybeInGdprZone() {
 		'NO', // Norway
 	];
 
-	return includes( gdprCountries, countryCode );
+	return includes(gdprCountries, countryCode);
 }

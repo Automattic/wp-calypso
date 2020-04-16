@@ -23,8 +23,8 @@ const currentUserState = {
 	},
 };
 
-describe( 'getNewestSite()', () => {
-	test( 'should return null if no sites in state', () => {
+describe('getNewestSite()', () => {
+	test('should return null if no sites in state', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -32,11 +32,11 @@ describe( 'getNewestSite()', () => {
 			},
 		};
 
-		const newestSite = getNewestSite( state );
-		expect( newestSite ).to.be.null;
-	} );
+		const newestSite = getNewestSite(state);
+		expect(newestSite).to.be.null;
+	});
 
-	test( 'should return the single site if the user has only one site', () => {
+	test('should return the single site if the user has only one site', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -46,11 +46,11 @@ describe( 'getNewestSite()', () => {
 			},
 		};
 
-		const newestSite = getNewestSite( state );
-		expect( newestSite ).to.have.property( 'ID', 2916288 );
-	} );
+		const newestSite = getNewestSite(state);
+		expect(newestSite).to.have.property('ID', 2916288);
+	});
 
-	test( 'should return the site with the largest ID if user has multiple sites', () => {
+	test('should return the site with the largest ID if user has multiple sites', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -62,7 +62,7 @@ describe( 'getNewestSite()', () => {
 			},
 		};
 
-		const newestSite = getNewestSite( state );
-		expect( newestSite ).to.have.property( 'ID', 2916288 );
-	} );
-} );
+		const newestSite = getNewestSite(state);
+		expect(newestSite).to.have.property('ID', 2916288);
+	});
+});

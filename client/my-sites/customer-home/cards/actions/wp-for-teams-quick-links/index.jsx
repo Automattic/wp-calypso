@@ -37,7 +37,7 @@ import ActionBox from 'my-sites/customer-home/cards/actions/quick-links/action-b
  */
 import 'my-sites/customer-home/cards/actions/quick-links/style.scss';
 
-export const QuickLinks = ( {
+export const QuickLinks = ({
 	customizeUrl,
 	isStaticHomePage,
 	showCustomizer,
@@ -48,166 +48,165 @@ export const QuickLinks = ( {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-} ) => {
+}) => {
 	const translate = useTranslate();
 
 	const quickLinks = (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className="quick-links__boxes">
-			{ isStaticHomePage ? (
+			{isStaticHomePage ? (
 				<ActionBox
-					onClick={ editHomepageAction }
-					label={ translate( 'Edit homepage' ) }
+					onClick={editHomepageAction}
+					label={translate('Edit homepage')}
 					materialIcon="laptop"
 				/>
 			) : (
 				<ActionBox
-					onClick={ writePostAction }
-					label={ translate( 'Write blog post' ) }
+					onClick={writePostAction}
+					label={translate('Write blog post')}
 					materialIcon="edit"
 				/>
-			) }
-			{ isStaticHomePage ? (
+			)}
+			{isStaticHomePage ? (
 				<ActionBox
-					onClick={ addPageAction }
-					label={ translate( 'Add a page' ) }
+					onClick={addPageAction}
+					label={translate('Add a page')}
 					materialIcon="insert_drive_file"
 				/>
 			) : (
 				<ActionBox
-					onClick={ manageCommentsAction }
-					label={ translate( 'Manage comments' ) }
+					onClick={manageCommentsAction}
+					label={translate('Manage comments')}
 					materialIcon="mode_comment"
 				/>
-			) }
-			{ isStaticHomePage ? (
+			)}
+			{isStaticHomePage ? (
 				<ActionBox
-					onClick={ writePostAction }
-					label={ translate( 'Write blog post' ) }
+					onClick={writePostAction}
+					label={translate('Write blog post')}
 					materialIcon="edit"
 				/>
 			) : (
 				<ActionBox
-					onClick={ addPageAction }
-					label={ translate( 'Add a page' ) }
+					onClick={addPageAction}
+					label={translate('Add a page')}
 					materialIcon="insert_drive_file"
 				/>
-			) }
-			{ showCustomizer && (
+			)}
+			{showCustomizer && (
 				<ActionBox
-					href={ menusUrl }
-					onClick={ trackEditMenusAction }
-					label={ translate( 'Edit menus' ) }
+					href={menusUrl}
+					onClick={trackEditMenusAction}
+					label={translate('Edit menus')}
 					materialIcon="list"
 				/>
-			) }
-			{ showCustomizer && (
+			)}
+			{showCustomizer && (
 				<ActionBox
-					href={ customizeUrl }
-					onClick={ trackCustomizeThemeAction }
-					label={ translate( 'Customize theme' ) }
+					href={customizeUrl}
+					onClick={trackCustomizeThemeAction}
+					label={translate('Customize theme')}
 					materialIcon="palette"
 				/>
-			) }
+			)}
 		</div>
 	);
 
-	if ( ! isMobile() ) {
+	if (!isMobile()) {
 		return (
 			<Card className="quick-links">
-				<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
-				{ quickLinks }
+				<CardHeading>{translate('Quick Links')}</CardHeading>
+				{quickLinks}
 			</Card>
 		);
 	}
 	return (
 		<FoldableCard
 			className="quick-links card-heading-21"
-			header={ translate( 'Quick Links' ) }
+			header={translate('Quick Links')}
 			expanded
 		>
-			{ quickLinks }
+			{quickLinks}
 		</FoldableCard>
 	);
 };
 
-const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) =>
+const editHomepageAction = (editHomePageUrl, isStaticHomePage) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_edit_homepage_click', {
+			recordTracksEvent('calypso_customer_home_my_site_edit_homepage_click', {
 				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_edit_homepage' )
+			}),
+			bumpStat('calypso_customer_home', 'my_site_edit_homepage')
 		),
-		navigate( editHomePageUrl )
+		navigate(editHomePageUrl)
 	);
 
-const writePostAction = ( siteSlug, isStaticHomePage ) =>
+const writePostAction = (siteSlug, isStaticHomePage) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_write_post_click', {
+			recordTracksEvent('calypso_customer_home_my_site_write_post_click', {
 				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_write_post' )
+			}),
+			bumpStat('calypso_customer_home', 'my_site_write_post')
 		),
-		navigate( `/post/${ siteSlug }` )
+		navigate(`/post/${siteSlug}`)
 	);
 
-const addPageAction = ( siteSlug, isStaticHomePage ) =>
+const addPageAction = (siteSlug, isStaticHomePage) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_add_page_click', {
+			recordTracksEvent('calypso_customer_home_my_site_add_page_click', {
 				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_add_page' )
+			}),
+			bumpStat('calypso_customer_home', 'my_site_add_page')
 		),
-		navigate( `/page/${ siteSlug }` )
+		navigate(`/page/${siteSlug}`)
 	);
 
-const manageCommentsAction = ( siteSlug, isStaticHomePage ) =>
+const manageCommentsAction = (siteSlug, isStaticHomePage) =>
 	withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_manage_comments_click', {
+			recordTracksEvent('calypso_customer_home_my_site_manage_comments_click', {
 				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_manage_comments' )
+			}),
+			bumpStat('calypso_customer_home', 'my_site_manage_comments')
 		),
-		navigate( `/comments/${ siteSlug }` )
+		navigate(`/comments/${siteSlug}`)
 	);
 
-const trackEditMenusAction = isStaticHomePage =>
+const trackEditMenusAction = (isStaticHomePage) =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_my_site_edit_menus_click', {
+		recordTracksEvent('calypso_customer_home_my_site_edit_menus_click', {
 			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_edit_menus' )
+		}),
+		bumpStat('calypso_customer_home', 'my_site_edit_menus')
 	);
 
-const trackCustomizeThemeAction = isStaticHomePage =>
+const trackCustomizeThemeAction = (isStaticHomePage) =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_my_site_customize_theme_click', {
+		recordTracksEvent('calypso_customer_home_my_site_customize_theme_click', {
 			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_customize_theme' )
+		}),
+		bumpStat('calypso_customer_home', 'my_site_customize_theme')
 	);
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const domains = getDomainsBySiteId( state, siteId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const isClassicEditor = getSelectedEditor(state, siteId) === 'classic';
+	const domains = getDomainsBySiteId(state, siteId);
 	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
-	const siteSlug = getSelectedSiteSlug( state );
-	const staticHomePageId = getSiteFrontPage( state, siteId );
-	const editHomePageUrl =
-		isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
+		!isClassicEditor && 'page' === getSiteOption(state, siteId, 'show_on_front');
+	const siteSlug = getSelectedSiteSlug(state);
+	const staticHomePageId = getSiteFrontPage(state, siteId);
+	const editHomePageUrl = isStaticHomePage && `/block-editor/page/${siteSlug}/${staticHomePageId}`;
 
 	return {
-		customizeUrl: getCustomizerUrl( state, siteId ),
-		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
-		isNewlyCreatedSite: isNewSite( state, siteId ),
-		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
-		hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
+		customizeUrl: getCustomizerUrl(state, siteId),
+		menusUrl: getCustomizerUrl(state, siteId, 'menus'),
+		isNewlyCreatedSite: isNewSite(state, siteId),
+		showCustomizer: !isSiteUsingFullSiteEditing(state, siteId),
+		hasCustomDomain: getGSuiteSupportedDomains(domains).length > 0,
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
@@ -223,18 +222,18 @@ const mapDispatchToProps = {
 	trackCustomizeThemeAction,
 };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
 	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
 	return {
 		...stateProps,
-		editHomepageAction: () => dispatchProps.editHomepageAction( editHomePageUrl, isStaticHomePage ),
-		writePostAction: () => dispatchProps.writePostAction( siteSlug, isStaticHomePage ),
-		addPageAction: () => dispatchProps.addPageAction( siteSlug, isStaticHomePage ),
-		manageCommentsAction: () => dispatchProps.manageCommentsAction( siteSlug, isStaticHomePage ),
-		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),
-		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
+		editHomepageAction: () => dispatchProps.editHomepageAction(editHomePageUrl, isStaticHomePage),
+		writePostAction: () => dispatchProps.writePostAction(siteSlug, isStaticHomePage),
+		addPageAction: () => dispatchProps.addPageAction(siteSlug, isStaticHomePage),
+		manageCommentsAction: () => dispatchProps.manageCommentsAction(siteSlug, isStaticHomePage),
+		trackEditMenusAction: () => dispatchProps.trackEditMenusAction(isStaticHomePage),
+		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction(isStaticHomePage),
 		...ownProps,
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( QuickLinks );
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(QuickLinks);

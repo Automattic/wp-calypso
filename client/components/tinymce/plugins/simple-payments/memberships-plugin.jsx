@@ -13,50 +13,50 @@ import MembershipsDialog from './dialog/memberships';
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
-const simplePayments = editor => {
+const simplePayments = (editor) => {
 	let node;
-	const store = editor.getParam( 'redux_store' );
+	const store = editor.getParam('redux_store');
 
-	editor.on( 'init', () => {
-		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
-	} );
+	editor.on('init', () => {
+		node = editor.getContainer().appendChild(document.createElement('div'));
+	});
 
-	editor.on( 'remove', () => {
-		unmountComponentAtNode( node );
-		node.parentNode.removeChild( node );
+	editor.on('remove', () => {
+		unmountComponentAtNode(node);
+		node.parentNode.removeChild(node);
 		node = null;
-	} );
+	});
 
-	editor.addCommand( 'membershipsButton', content => {
+	editor.addCommand('membershipsButton', (content) => {
 		let editPaymentId = null;
-		if ( content ) {
-			const shortCodeData = deserialize( content );
+		if (content) {
+			const shortCodeData = deserialize(content);
 			editPaymentId = shortCodeData.id || null;
 		}
 
-		function renderModal( visibility = 'show' ) {
+		function renderModal(visibility = 'show') {
 			renderWithReduxStore(
-				createElement( MembershipsDialog, {
+				createElement(MembershipsDialog, {
 					showDialog: visibility === 'show',
 					editPaymentId,
-					onInsert( productData ) {
-						editor.execCommand( 'mceInsertContent', false, serialize( productData ) );
-						renderModal( 'hide' );
+					onInsert(productData) {
+						editor.execCommand('mceInsertContent', false, serialize(productData));
+						renderModal('hide');
 					},
 					onClose() {
 						editor.focus();
-						renderModal( 'hide' );
+						renderModal('hide');
 					},
-				} ),
+				}),
 				node,
 				store
 			);
 		}
 
 		renderModal();
-	} );
+	});
 };
 
 export default () => {
-	tinymce.PluginManager.add( 'wpcom/memberships', simplePayments );
+	tinymce.PluginManager.add('wpcom/memberships', simplePayments);
 };

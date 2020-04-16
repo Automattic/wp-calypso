@@ -5,8 +5,8 @@
  * @returns {boolean}       requesting state
  */
 
-export function isRequestingWordAdsApproval( state, siteId ) {
-	return !! state.wordads.approve.requesting[ siteId ];
+export function isRequestingWordAdsApproval(state, siteId) {
+	return !!state.wordads.approve.requesting[siteId];
 }
 
 /**
@@ -16,11 +16,11 @@ export function isRequestingWordAdsApproval( state, siteId ) {
  * @param   {object} site   Site
  * @returns {boolean}       requesting state
  */
-export function isRequestingWordAdsApprovalForSite( state, site ) {
-	if ( ! site || ! site.ID ) {
+export function isRequestingWordAdsApprovalForSite(state, site) {
+	if (!site || !site.ID) {
 		return false;
 	}
-	return isRequestingWordAdsApproval( state, site.ID );
+	return isRequestingWordAdsApproval(state, site.ID);
 }
 
 /**
@@ -30,8 +30,8 @@ export function isRequestingWordAdsApprovalForSite( state, site ) {
  * @param   {number} siteId Site Id
  * @returns {?object}       WordAds Error
  */
-export function getWordAdsError( state, siteId ) {
-	return state.wordads.approve.requestErrors[ siteId ];
+export function getWordAdsError(state, siteId) {
+	return state.wordads.approve.requestErrors[siteId];
 }
 
 /**
@@ -41,11 +41,11 @@ export function getWordAdsError( state, siteId ) {
  * @param   {object} site   Site
  * @returns {?object}       WordAds Error
  */
-export function getWordAdsErrorForSite( state, site ) {
-	if ( ! site || ! site.ID ) {
+export function getWordAdsErrorForSite(state, site) {
+	if (!site || !site.ID) {
 		return null;
 	}
-	return getWordAdsError( state, site.ID );
+	return getWordAdsError(state, site.ID);
 }
 
 /**
@@ -55,8 +55,8 @@ export function getWordAdsErrorForSite( state, site ) {
  * @param   {number} siteId Site Id
  * @returns {?object}       WordAds Error
  */
-export function getWordAdsSuccess( state, siteId ) {
-	return state.wordads.approve.requestSuccess[ siteId ];
+export function getWordAdsSuccess(state, siteId) {
+	return state.wordads.approve.requestSuccess[siteId];
 }
 
 /**
@@ -66,9 +66,9 @@ export function getWordAdsSuccess( state, siteId ) {
  * @param   {object} site   Site
  * @returns {?object}       WordAds Error
  */
-export function getWordAdsSuccessForSite( state, site ) {
-	if ( ! site || ! site.ID ) {
+export function getWordAdsSuccessForSite(state, site) {
+	if (!site || !site.ID) {
 		return null;
 	}
-	return getWordAdsSuccess( state, site.ID );
+	return getWordAdsSuccess(state, site.ID);
 }

@@ -16,6 +16,6 @@ import getSiteOptions from 'state/selectors/get-site-options';
  * @param  {string}  optionName The option key
  * @returns {*}  The value of that option or null
  */
-export default function getSiteOption( state, siteId, optionName ) {
-	return get( getSiteOptions( state, siteId ), optionName, null );
+export default function getSiteOption(state, siteId, optionName) {
+	return get(getSiteOptions(state, siteId), optionName, null);
 }

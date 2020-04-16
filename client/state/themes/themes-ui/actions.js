@@ -23,7 +23,7 @@ export function openThemesShowcase() {
 	};
 }
 
-export function setThemesBookmark( state ) {
+export function setThemesBookmark(state) {
 	return {
 		type: THEMES_BOOKMARK_SET,
 		payload: state,

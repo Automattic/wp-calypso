@@ -9,11 +9,11 @@ export default class ChartLegendItem extends React.PureComponent {
 		attr: PropTypes.string.isRequired,
 		changeHandler: PropTypes.func.isRequired,
 		checked: PropTypes.bool.isRequired,
-		label: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
+		label: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 	};
 
 	clickHandler = () => {
-		this.props.changeHandler( this.props.attr );
+		this.props.changeHandler(this.props.attr);
 	};
 
 	render() {
@@ -21,13 +21,13 @@ export default class ChartLegendItem extends React.PureComponent {
 			<li className="chart__legend-option">
 				<label className="chart__legend-label is-selectable">
 					<input
-						checked={ this.props.checked }
+						checked={this.props.checked}
 						className="chart__legend-checkbox"
-						onChange={ this.clickHandler }
+						onChange={this.clickHandler}
 						type="checkbox"
 					/>
-					<span className={ this.props.className } />
-					{ this.props.label }
+					<span className={this.props.className} />
+					{this.props.label}
 				</label>
 			</li>
 		);

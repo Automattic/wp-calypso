@@ -72,36 +72,34 @@ class Layout extends Component {
 	};
 
 	componentDidMount() {
-		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
+		if (!config.isEnabled('me/account/color-scheme-picker')) {
 			return;
 		}
-		if ( typeof document !== 'undefined' ) {
-			if ( this.props.colorSchemePreference ) {
-				document
-					.querySelector( 'body' )
-					.classList.add( `is-${ this.props.colorSchemePreference }` );
+		if (typeof document !== 'undefined') {
+			if (this.props.colorSchemePreference) {
+				document.querySelector('body').classList.add(`is-${this.props.colorSchemePreference}`);
 			}
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
+	componentDidUpdate(prevProps) {
+		if (!config.isEnabled('me/account/color-scheme-picker')) {
 			return;
 		}
-		if ( prevProps.colorSchemePreference === this.props.colorSchemePreference ) {
+		if (prevProps.colorSchemePreference === this.props.colorSchemePreference) {
 			return;
 		}
-		if ( typeof document !== 'undefined' ) {
-			const classList = document.querySelector( 'body' ).classList;
-			classList.remove( `is-${ prevProps.colorSchemePreference }` );
-			classList.add( `is-${ this.props.colorSchemePreference }` );
+		if (typeof document !== 'undefined') {
+			const classList = document.querySelector('body').classList;
+			classList.remove(`is-${prevProps.colorSchemePreference}`);
+			classList.add(`is-${this.props.colorSchemePreference}`);
 		}
 
 		// intentionally don't remove these in unmount
 	}
 
 	shouldLoadInlineHelp() {
-		if ( ! config.isEnabled( 'inline-help' ) ) {
+		if (!config.isEnabled('inline-help')) {
 			return false;
 		}
 
@@ -112,19 +110,19 @@ class Layout extends Component {
 			return false;
 		}
 
-		if ( '/log-in/jetpack' === this.props.currentRoute ) {
+		if ('/log-in/jetpack' === this.props.currentRoute) {
 			return false;
 		}
 
-		if ( '/me/account/closed' === this.props.currentRoute ) {
+		if ('/me/account/closed' === this.props.currentRoute) {
 			return false;
 		}
 
-		if ( 'happychat' === this.props.sectionName ) {
+		if ('happychat' === this.props.sectionName) {
 			return false;
 		}
 
-		if ( 'devdocs' === this.props.sectionName ) {
+		if ('devdocs' === this.props.sectionName) {
 			return false;
 		}
 
@@ -132,14 +130,14 @@ class Layout extends Component {
 	}
 
 	renderMasterbar() {
-		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
+		const MasterbarComponent = config.isEnabled('jetpack-cloud')
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
 
 		return (
 			<MasterbarComponent
-				section={ this.props.sectionGroup }
-				isCheckout={ this.props.sectionName === 'checkout' }
+				section={this.props.sectionGroup}
+				isCheckout={this.props.sectionName === 'checkout'}
 			/>
 		);
 	}
@@ -147,23 +145,23 @@ class Layout extends Component {
 	render() {
 		const sectionClass = classnames(
 			'layout',
-			`is-group-${ this.props.sectionGroup }`,
-			`is-section-${ this.props.sectionName }`,
-			`focus-${ this.props.currentLayoutFocus }`,
+			`is-group-${this.props.sectionGroup}`,
+			`is-section-${this.props.sectionName}`,
+			`focus-${this.props.currentLayoutFocus}`,
 			{
 				'is-add-site-page': this.props.currentRoute === '/jetpack/new',
 				'is-support-session': this.props.isSupportSession,
-				'has-no-sidebar': ! this.props.hasSidebar,
+				'has-no-sidebar': !this.props.hasSidebar,
 				'has-chat': this.props.chatIsOpen,
 				'has-no-masterbar': this.props.masterbarIsHidden,
 				'is-jetpack-login': this.props.isJetpackLogin,
 				'is-jetpack-site': this.props.isJetpack,
 				'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 				'is-jetpack-woocommerce-flow':
-					config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+					config.isEnabled('jetpack/connect/woocommerce') && this.props.isJetpackWooCommerceFlow,
 				'is-wccom-oauth-flow':
-					config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-					isWooOAuth2Client( this.props.oauth2Client ) &&
+					config.isEnabled('woocommerce/onboarding-oauth') &&
+					isWooOAuth2Client(this.props.oauth2Client) &&
 					this.props.wccomFrom,
 			}
 		);
@@ -171,7 +169,7 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const optionalProps = {};
 
-			if ( this.props.isFrankenflow || this.props.isCheckoutFromGutenboarding ) {
+			if (this.props.isFrankenflow || this.props.isCheckoutFromGutenboarding) {
 				optionalProps.bodyClass = 'is-frankenflow';
 			}
 
@@ -179,111 +177,109 @@ class Layout extends Component {
 		};
 
 		return (
-			<div className={ sectionClass }>
+			<div className={sectionClass}>
 				<BodySectionCssClass
-					group={ this.props.sectionGroup }
-					section={ this.props.sectionName }
-					{ ...optionalBodyProps() }
+					group={this.props.sectionGroup}
+					section={this.props.sectionName}
+					{...optionalBodyProps()}
 				/>
 				<HtmlIsIframeClassname />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
-				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
+				{this.props.shouldQueryAllSites && <QuerySites allSites />}
 				<QueryPreferences />
-				{ config.isEnabled( 'layout/query-selected-editor' ) && (
-					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
-				) }
-				{ config.isEnabled( 'layout/guided-tours' ) && (
-					<AsyncLoad require="layout/guided-tours" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'layout/nps-survey-notice' ) && ! isE2ETest() && (
-					<AsyncLoad require="layout/nps-survey-notice" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+				{config.isEnabled('layout/query-selected-editor') && (
+					<QuerySiteSelectedEditor siteId={this.props.siteId} />
+				)}
+				{config.isEnabled('layout/guided-tours') && (
+					<AsyncLoad require="layout/guided-tours" placeholder={null} />
+				)}
+				{config.isEnabled('layout/nps-survey-notice') && !isE2ETest() && (
+					<AsyncLoad require="layout/nps-survey-notice" placeholder={null} />
+				)}
+				{config.isEnabled('keyboard-shortcuts') ? <KeyboardShortcutsMenu /> : null}
+				{this.renderMasterbar()}
+				{config.isEnabled('support-user') && <SupportUser />}
 				<LayoutLoader />
-				{ this.props.isOffline && <OfflineStatus /> }
+				{this.props.isOffline && <OfflineStatus />}
 				<div id="content" className="layout__content">
-					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
+					{config.isEnabled('jitms') && this.props.isEligibleForJITM && (
 						<AsyncLoad
 							require="blocks/jitm"
-							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
-							sectionName={ this.props.sectionName }
+							messagePath={`calypso:${this.props.sectionJitmPath}:admin_notices`}
+							sectionName={this.props.sectionName}
 						/>
-					) }
+					)}
 					<AsyncLoad
 						require="components/global-notices"
-						placeholder={ null }
+						placeholder={null}
 						id="notices"
-						notices={ notices.list }
+						notices={notices.list}
 					/>
 					<div id="secondary" className="layout__secondary" role="navigation">
-						{ this.props.secondary }
+						{this.props.secondary}
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.props.primary }
+						{this.props.primary}
 					</div>
 				</div>
-				{ config.isEnabled( 'i18n/community-translator' ) ? (
+				{config.isEnabled('i18n/community-translator') ? (
 					isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
 				) : (
-					<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
-				) }
-				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
-				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
+					<AsyncLoad require="layout/community-translator/launcher" placeholder={null} />
+				)}
+				{this.props.sectionGroup === 'sites' && <SitePreview />}
+				{config.isEnabled('happychat') && this.props.chatIsOpen && (
 					<AsyncLoad require="components/happychat" />
-				) }
-				{ 'development' === process.env.NODE_ENV && (
-					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
-				) }
-				{ this.shouldLoadInlineHelp() && (
-					<AsyncLoad require="blocks/inline-help" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'layout/support-article-dialog' ) && (
-					<AsyncLoad require="blocks/support-article-dialog" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AsyncLoad require="blocks/app-banner" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'gdpr-banner' ) && (
-					<AsyncLoad require="blocks/gdpr-banner" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'legal-updates-banner' ) && (
-					<AsyncLoad require="blocks/legal-updates-banner" placeholder={ null } />
-				) }
+				)}
+				{'development' === process.env.NODE_ENV && (
+					<AsyncLoad require="components/webpack-build-monitor" placeholder={null} />
+				)}
+				{this.shouldLoadInlineHelp() && (
+					<AsyncLoad require="blocks/inline-help" placeholder={null} />
+				)}
+				{config.isEnabled('layout/support-article-dialog') && (
+					<AsyncLoad require="blocks/support-article-dialog" placeholder={null} />
+				)}
+				{config.isEnabled('layout/app-banner') && (
+					<AsyncLoad require="blocks/app-banner" placeholder={null} />
+				)}
+				{config.isEnabled('gdpr-banner') && (
+					<AsyncLoad require="blocks/gdpr-banner" placeholder={null} />
+				)}
+				{config.isEnabled('legal-updates-banner') && (
+					<AsyncLoad require="blocks/legal-updates-banner" placeholder={null} />
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const sectionGroup = getSectionGroup( state );
-	const sectionName = getSectionName( state );
-	const currentRoute = getCurrentRoute( state );
-	const siteId = getSelectedSiteId( state );
-	const sectionJitmPath = getMessagePathForJITM( currentRoute );
-	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
-	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+export default connect((state) => {
+	const sectionGroup = getSectionGroup(state);
+	const sectionName = getSectionName(state);
+	const currentRoute = getCurrentRoute(state);
+	const siteId = getSelectedSiteId(state);
+	const sectionJitmPath = getMessagePathForJITM(currentRoute);
+	const isJetpackLogin = startsWith(currentRoute, '/log-in/jetpack');
+	const isJetpack = isJetpackSite(state, siteId) && !isAtomicSite(state, siteId);
 	const isCheckoutFromGutenboarding =
-		'checkout' === sectionName && '1' === getCurrentQueryArguments( state )?.preLaunch;
+		'checkout' === sectionName && '1' === getCurrentQueryArguments(state)?.preLaunch;
 	const noMasterbarForRoute =
 		isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
-	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
+	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !!retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
-		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
-		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
-	const oauth2Client = getCurrentOAuth2Client( state );
-	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
-	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
+		('jetpack-connect' === sectionName || 'login' === sectionName) &&
+		'woocommerce-onboarding' === get(getCurrentQueryArguments(state), 'from');
+	const oauth2Client = getCurrentOAuth2Client(state);
+	const wccomFrom = get(getCurrentQueryArguments(state), 'wccom-from');
+	const isEligibleForJITM = ['stats', 'plans', 'themes', 'plugins'].indexOf(sectionName) >= 0;
 	const isFrankenflow =
-		startsWith( currentRoute, '/start/frankenflow' ) ||
-		startsWith( currentRoute, '/start/prelaunch' );
+		startsWith(currentRoute, '/start/frankenflow') || startsWith(currentRoute, '/start/prelaunch');
 
 	return {
-		masterbarIsHidden:
-			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
+		masterbarIsHidden: !masterbarIsVisible(state) || noMasterbarForSection || noMasterbarForRoute,
 		isJetpack,
 		isJetpackLogin,
 		isJetpackWooCommerceFlow,
@@ -291,15 +287,15 @@ export default connect( state => {
 		isEligibleForJITM,
 		oauth2Client,
 		wccomFrom,
-		isSupportSession: isSupportSession( state ),
+		isSupportSession: isSupportSession(state),
 		sectionGroup,
 		sectionName,
 		sectionJitmPath,
-		hasSidebar: hasSidebar( state ),
-		isOffline: isOffline( state ),
-		currentLayoutFocus: getCurrentLayoutFocus( state ),
-		chatIsOpen: isHappychatOpen( state ),
-		colorSchemePreference: getPreference( state, 'colorScheme' ),
+		hasSidebar: hasSidebar(state),
+		isOffline: isOffline(state),
+		currentLayoutFocus: getCurrentLayoutFocus(state),
+		chatIsOpen: isHappychatOpen(state),
+		colorSchemePreference: getPreference(state, 'colorScheme'),
 		currentRoute,
 		siteId,
 		/* We avoid requesting sites in the Jetpack Connect authorization step, because this would
@@ -311,4 +307,4 @@ export default connect( state => {
 		isFrankenflow,
 		isCheckoutFromGutenboarding,
 	};
-} )( Layout );
+})(Layout);

@@ -16,6 +16,6 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param  {number}  siteId Site ID
  * @returns {?string}        URL of site if known
  */
-export default function getSiteUrl( state, siteId ) {
-	return get( getRawSite( state, siteId ), 'URL', null );
+export default function getSiteUrl(state, siteId) {
+	return get(getRawSite(state, siteId), 'URL', null);
 }

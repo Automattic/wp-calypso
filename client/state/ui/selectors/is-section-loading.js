@@ -4,6 +4,6 @@
  * @param  {object}  state Global state tree
  * @returns {boolean}       Whether the section is loading
  */
-export default function isSectionLoading( state ) {
+export default function isSectionLoading(state) {
 	return state.ui.isLoading;
 }

@@ -3,6 +3,6 @@
  */
 import { isEmpty } from 'lodash';
 
-export function hasDomainDetails( transaction ) {
-	return ! isEmpty( transaction.domainDetails );
+export function hasDomainDetails(transaction) {
+	return !isEmpty(transaction.domainDetails);
 }

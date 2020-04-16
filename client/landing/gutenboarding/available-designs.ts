@@ -1,4 +1,4 @@
-const availableDesigns: Readonly< AvailableDesigns > = {
+const availableDesigns: Readonly<AvailableDesigns> = {
 	featured: [
 		{
 			title: 'Vesta',
@@ -10,7 +10,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Cabin',
 				base: 'Raleway',
 			},
-			categories: [ 'featured', 'portfolio' ],
+			categories: ['featured', 'portfolio'],
 		},
 		{
 			title: 'Reynolds',
@@ -22,7 +22,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Playfair Display',
 				base: 'Fira Sans',
 			},
-			categories: [ 'featured', 'portfolio' ],
+			categories: ['featured', 'portfolio'],
 		},
 		{
 			title: 'Easley',
@@ -34,7 +34,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Space Mono',
 				base: 'Roboto',
 			},
-			categories: [ 'featured', 'portfolio' ],
+			categories: ['featured', 'portfolio'],
 		},
 		{
 			title: 'Camdem',
@@ -46,7 +46,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Space Mono',
 				base: 'Roboto',
 			},
-			categories: [ 'featured', 'portfolio' ],
+			categories: ['featured', 'portfolio'],
 		},
 		{
 			title: 'Bowen',
@@ -58,7 +58,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Playfair Display',
 				base: 'Fira Sans',
 			},
-			categories: [ 'featured', 'blog' ],
+			categories: ['featured', 'blog'],
 		},
 		{
 			title: 'Edison',
@@ -70,7 +70,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Chivo',
 				base: 'Open Sans',
 			},
-			categories: [ 'featured', 'blog' ],
+			categories: ['featured', 'blog'],
 		},
 		{
 			title: 'Cassel',
@@ -82,7 +82,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Playfair Display',
 				base: 'Fira Sans',
 			},
-			categories: [ 'featured', 'blog' ],
+			categories: ['featured', 'blog'],
 		},
 		{
 			title: 'Overton',
@@ -94,7 +94,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Cabin',
 				base: 'Raleway',
 			},
-			categories: [ 'featured', 'business' ],
+			categories: ['featured', 'business'],
 		},
 		{
 			title: 'Doyle',
@@ -106,7 +106,7 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Playfair Display',
 				base: 'Fira Sans',
 			},
-			categories: [ 'featured', 'business' ],
+			categories: ['featured', 'business'],
 		},
 		{
 			title: 'Brice',
@@ -118,12 +118,12 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 				headings: 'Playfair Display',
 				base: 'Fira Sans',
 			},
-			categories: [ 'featured', 'charity', 'non-profit' ],
+			categories: ['featured', 'charity', 'non-profit'],
 		},
 	],
 };
 
 export default availableDesigns;
 interface AvailableDesigns {
-	featured: Array< import('./stores/onboard/types').Design >;
+	featured: Array<import('./stores/onboard/types').Design>;
 }

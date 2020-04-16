@@ -19,16 +19,16 @@ module.exports = {
 			category: 'Stylistic Issues',
 		},
 	},
-	create( context ) {
+	create(context) {
 		let hasIssue = false;
 
 		return {
 			ImportDeclaration() {
-				hasIssue = hasIssue || ! RX_DOCBLOCK.test( context.getSourceCode().text );
+				hasIssue = hasIssue || !RX_DOCBLOCK.test(context.getSourceCode().text);
 			},
-			'Program:exit'( node ) {
-				if ( hasIssue ) {
-					context.report( node, ERROR_MESSAGE );
+			'Program:exit'(node) {
+				if (hasIssue) {
+					context.report(node, ERROR_MESSAGE);
 				}
 			},
 		};

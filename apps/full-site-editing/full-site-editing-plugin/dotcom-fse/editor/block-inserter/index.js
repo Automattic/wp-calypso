@@ -15,25 +15,25 @@ import PostContentBlockAppender from './post-content-block-appender';
  * Renders a custom block inserter that will append new blocks inside the post content block.
  */
 function renderPostContentBlockInserter() {
-	if ( 'page' !== fullSiteEditing.editorPostType ) {
+	if ('page' !== fullSiteEditing.editorPostType) {
 		return;
 	}
 
-	const editPostHeaderToolbarInception = setInterval( () => {
-		const headerToolbar = document.querySelector( '.edit-post-header-toolbar' );
+	const editPostHeaderToolbarInception = setInterval(() => {
+		const headerToolbar = document.querySelector('.edit-post-header-toolbar');
 
-		if ( ! headerToolbar ) {
+		if (!headerToolbar) {
 			return;
 		}
-		clearInterval( editPostHeaderToolbarInception );
+		clearInterval(editPostHeaderToolbarInception);
 
-		const blockInserterContainer = document.createElement( 'div' );
-		blockInserterContainer.classList.add( 'fse-post-content-block-inserter' );
+		const blockInserterContainer = document.createElement('div');
+		blockInserterContainer.classList.add('fse-post-content-block-inserter');
 
-		headerToolbar.insertBefore( blockInserterContainer, headerToolbar.firstChild );
+		headerToolbar.insertBefore(blockInserterContainer, headerToolbar.firstChild);
 
-		render( <PostContentBlockAppender />, blockInserterContainer );
-	} );
+		render(<PostContentBlockAppender />, blockInserterContainer);
+	});
 }
 
-domReady( () => renderPostContentBlockInserter() );
+domReady(() => renderPostContentBlockInserter());

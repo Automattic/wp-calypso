@@ -30,24 +30,24 @@ class ContactFormDialogFieldRemoveButton extends React.PureComponent {
 				<Button
 					ref="removeField"
 					borderless
-					onMouseEnter={ () => this.setState( { showTooltip: true } ) }
-					onMouseLeave={ () => this.setState( { showTooltip: false } ) }
-					onClick={ this.props.onRemove }
+					onMouseEnter={() => this.setState({ showTooltip: true })}
+					onMouseLeave={() => this.setState({ showTooltip: false })}
+					onClick={this.props.onRemove}
 				>
 					<Gridicon icon="trash" className="editor-contact-form-modal-field__remove" />
 				</Button>
 				<Popover
-					isVisible={ this.state.showTooltip }
-					context={ this.refs && this.refs.removeField }
-					onClose={ () => {} }
+					isVisible={this.state.showTooltip}
+					context={this.refs && this.refs.removeField}
+					onClose={() => {}}
 					position="bottom"
 					className="popover tooltip is-dialog-visible"
 				>
-					{ this.props.translate( 'Remove Field', { context: 'button tooltip' } ) }
+					{this.props.translate('Remove Field', { context: 'button tooltip' })}
 				</Popover>
 			</div>
 		);
 	}
 }
 
-export default localize( ContactFormDialogFieldRemoveButton );
+export default localize(ContactFormDialogFieldRemoveButton);

@@ -8,25 +8,25 @@ import { HOME_LAYOUT_REQUEST } from 'state/action-types';
 import { setHomeLayout } from 'state/home/actions';
 import config from 'config';
 
-const requestLayout = action => {
+const requestLayout = (action) => {
 	return http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/home/layout`,
+			path: `/sites/${action.siteId}/home/layout`,
 			apiNamespace: 'wpcom/v2',
-			...( config.isEnabled( 'home/experimental-layout' ) && { query: { experimental: true } } ),
+			...(config.isEnabled('home/experimental-layout') && { query: { experimental: true } }),
 		},
 		action
 	);
 };
 
-const setLayout = ( { siteId }, layout ) => setHomeLayout( siteId, layout );
+const setLayout = ({ siteId }, layout) => setHomeLayout(siteId, layout);
 
-registerHandlers( 'state/data-layer/wpcom/sites/home/layout/index.js', {
-	[ HOME_LAYOUT_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/home/layout/index.js', {
+	[HOME_LAYOUT_REQUEST]: [
+		dispatchRequest({
 			fetch: requestLayout,
 			onSuccess: setLayout,
-		} ),
+		}),
 	],
-} );
+});

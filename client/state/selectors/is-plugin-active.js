@@ -13,10 +13,10 @@ import { find } from 'lodash';
  * @param {string} pluginSlug - Plugin slug
  * @returns {boolean} - truthiness of a site having an active plugin
  */
-export default function isPluginActive( state, siteId, pluginSlug ) {
-	const sitePlugins = state.plugins.installed.plugins[ siteId ];
-	const plugin = find( sitePlugins, { slug: pluginSlug, active: true } );
-	if ( ! plugin ) {
+export default function isPluginActive(state, siteId, pluginSlug) {
+	const sitePlugins = state.plugins.installed.plugins[siteId];
+	const plugin = find(sitePlugins, { slug: pluginSlug, active: true });
+	if (!plugin) {
 		return false;
 	}
 	return plugin.active;

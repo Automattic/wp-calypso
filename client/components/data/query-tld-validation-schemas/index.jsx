@@ -20,17 +20,17 @@ export class QueryTldValidationSchemas extends Component {
 	};
 
 	componentDidMount() {
-		this.fetchMissingSchemas( this.props.tlds );
+		this.fetchMissingSchemas(this.props.tlds);
 	}
 
-	componentDidUpdate( { tlds } ) {
-		this.fetchMissingSchemas( difference( tlds, this.props.tlds ) );
+	componentDidUpdate({ tlds }) {
+		this.fetchMissingSchemas(difference(tlds, this.props.tlds));
 	}
 
-	fetchMissingSchemas( tlds ) {
-		const missingSchemas = difference( tlds, keys( this.props.validationSchemas ) );
-		if ( ! isEmpty( missingSchemas ) ) {
-			this.props.requestValidationSchemas( missingSchemas );
+	fetchMissingSchemas(tlds) {
+		const missingSchemas = difference(tlds, keys(this.props.validationSchemas));
+		if (!isEmpty(missingSchemas)) {
+			this.props.requestValidationSchemas(missingSchemas);
 		}
 	}
 
@@ -40,8 +40,8 @@ export class QueryTldValidationSchemas extends Component {
 }
 
 export default connect(
-	state => ( {
-		validationSchemas: getValidationSchemas( state ),
-	} ),
+	(state) => ({
+		validationSchemas: getValidationSchemas(state),
+	}),
 	{ requestValidationSchemas }
-)( QueryTldValidationSchemas );
+)(QueryTldValidationSchemas);

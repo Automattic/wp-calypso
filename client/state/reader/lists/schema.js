@@ -4,7 +4,7 @@ export const itemsSchema = {
 		//be careful to escape regexes properly
 		'^[0-9]+$': {
 			type: 'object',
-			required: [ 'ID' ],
+			required: ['ID'],
 			properties: {
 				ID: { type: 'integer' },
 				title: { type: 'string' },

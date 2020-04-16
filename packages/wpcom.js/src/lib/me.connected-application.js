@@ -1,7 +1,6 @@
 const root = '/me/connected-applications/';
 
 export default class MeConnectedApp {
-
 	/**
 	 * `MeConnectedApp` constructor.
 	 *
@@ -9,9 +8,9 @@ export default class MeConnectedApp {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
-	constructor( appId, wpcom ) {
-		if ( ! ( this instanceof MeConnectedApp ) ) {
-			return new MeConnectedApp( appId, wpcom );
+	constructor(appId, wpcom) {
+		if (!(this instanceof MeConnectedApp)) {
+			return new MeConnectedApp(appId, wpcom);
 		}
 		this._id = appId;
 		this.wpcom = wpcom;
@@ -24,8 +23,8 @@ export default class MeConnectedApp {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	get( query, fn ) {
-		return this.wpcom.req.get( root + this._id, query, fn );
+	get(query, fn) {
+		return this.wpcom.req.get(root + this._id, query, fn);
 	}
 
 	/**
@@ -36,7 +35,7 @@ export default class MeConnectedApp {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	delete( query, fn ) {
-		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
+	delete(query, fn) {
+		return this.wpcom.req.del(root + this._id + '/delete', query, fn);
 	}
 }

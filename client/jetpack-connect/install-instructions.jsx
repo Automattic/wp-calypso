@@ -34,45 +34,45 @@ class InstallInstructions extends Component {
 
 		return {
 			headerTitle: notJetpack
-				? translate( 'Ready for installation' )
-				: translate( 'Ready for activation' ),
-			headerSubtitle: translate( "We'll need you to complete a few manual steps." ),
+				? translate('Ready for installation')
+				: translate('Ready for activation'),
+			headerSubtitle: translate("We'll need you to complete a few manual steps."),
 			steps: notJetpack
-				? [ 'installJetpack', 'activateJetpackAfterInstall', 'connectJetpackAfterInstall' ]
-				: [ 'activateJetpack', 'connectJetpack' ],
+				? ['installJetpack', 'activateJetpackAfterInstall', 'connectJetpackAfterInstall']
+				: ['activateJetpack', 'connectJetpack'],
 			buttonOnClick: notJetpack ? this.installJetpack : this.activateJetpack,
-			buttonText: notJetpack ? translate( 'Install Jetpack' ) : translate( 'Activate Jetpack' ),
+			buttonText: notJetpack ? translate('Install Jetpack') : translate('Activate Jetpack'),
 		};
 	}
 
 	installJetpack = () => {
 		const { remoteSiteUrl } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
+		this.props.recordTracksEvent('calypso_jpc_instructions_click', {
 			jetpack_funnel: remoteSiteUrl,
 			type: 'install_jetpack',
-		} );
+		});
 
-		externalRedirect( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_INSTALL ) );
+		externalRedirect(addCalypsoEnvQueryArg(remoteSiteUrl + REMOTE_PATH_INSTALL));
 	};
 
 	activateJetpack = () => {
 		const { remoteSiteUrl } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
+		this.props.recordTracksEvent('calypso_jpc_instructions_click', {
 			jetpack_funnel: remoteSiteUrl,
 			type: 'activate_jetpack',
-		} );
+		});
 
-		externalRedirect( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_ACTIVATE ) );
+		externalRedirect(addCalypsoEnvQueryArg(remoteSiteUrl + REMOTE_PATH_ACTIVATE));
 	};
 
 	renderLocaleSuggestions() {
-		if ( this.props.isLoggedIn || ! this.props.locale ) {
+		if (this.props.isLoggedIn || !this.props.locale) {
 			return;
 		}
 
-		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
+		return <LocaleSuggestions path={this.props.path} locale={this.props.locale} />;
 	}
 
 	render() {
@@ -81,28 +81,28 @@ class InstallInstructions extends Component {
 
 		return (
 			<MainWrapper isWide>
-				{ this.renderLocaleSuggestions() }
+				{this.renderLocaleSuggestions()}
 				<div className="jetpack-connect__install">
 					<FormattedHeader
-						headerText={ instructionsData.headerTitle }
-						subHeaderText={ instructionsData.headerSubtitle }
+						headerText={instructionsData.headerTitle}
+						subHeaderText={instructionsData.headerSubtitle}
 					/>
 					<div className="jetpack-connect__install-steps">
-						{ instructionsData.steps.map( ( stepName, key ) => {
+						{instructionsData.steps.map((stepName, key) => {
 							return (
 								<JetpackInstallStep
-									key={ 'instructions-step-' + key }
-									stepName={ stepName }
-									jetpackVersion={ jetpackVersion }
-									currentUrl={ remoteSiteUrl }
-									confirmJetpackInstallStatus={ this.props.confirmJetpackInstallStatus }
-									onClick={ instructionsData.buttonOnClick }
+									key={'instructions-step-' + key}
+									stepName={stepName}
+									jetpackVersion={jetpackVersion}
+									currentUrl={remoteSiteUrl}
+									confirmJetpackInstallStatus={this.props.confirmJetpackInstallStatus}
+									onClick={instructionsData.buttonOnClick}
 								/>
 							);
-						} ) }
+						})}
 					</div>
-					<Button onClick={ instructionsData.buttonOnClick } primary>
-						{ instructionsData.buttonText }
+					<Button onClick={instructionsData.buttonOnClick} primary>
+						{instructionsData.buttonText}
 					</Button>
 				</div>
 				<LoggedOutFormLinks>
@@ -114,16 +114,16 @@ class InstallInstructions extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const remoteSite = getConnectingSite( state );
+	(state) => {
+		const remoteSite = getConnectingSite(state);
 		const remoteSiteData = remoteSite.data || {};
-		let notJetpack = ! remoteSiteData.hasJetpack;
+		let notJetpack = !remoteSiteData.hasJetpack;
 
 		const { installConfirmedByUser } = remoteSite;
-		if ( installConfirmedByUser === false ) {
+		if (installConfirmedByUser === false) {
 			notJetpack = true;
 		}
-		if ( installConfirmedByUser === true ) {
+		if (installConfirmedByUser === true) {
 			notJetpack = false;
 		}
 
@@ -138,4 +138,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( InstallInstructions );
+export default flowRight(connectComponent, localize)(InstallInstructions);

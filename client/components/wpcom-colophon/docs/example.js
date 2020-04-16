@@ -10,7 +10,7 @@ import WpcomColophon from 'components/wpcom-colophon';
 
 export default function WpcomColophonExample() {
 	return (
-		<div style={ { fontSize: '15px' } }>
+		<div style={{ fontSize: '15px' }}>
 			<WpcomColophon />
 		</div>
 	);

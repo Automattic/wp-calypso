@@ -31,8 +31,8 @@ import './services-group.scss';
  */
 const NUMBER_OF_PLACEHOLDERS = 4;
 
-const serviceWarningLevelToNoticeStatus = level => {
-	switch ( level ) {
+const serviceWarningLevelToNoticeStatus = (level) => {
+	switch (level) {
 		case 'error':
 			return 'is-error';
 		case 'warning':
@@ -43,44 +43,44 @@ const serviceWarningLevelToNoticeStatus = level => {
 	}
 };
 
-const SharingServicesGroup = ( { isFetching, services, title } ) => {
-	if ( ! services.length && ! isFetching ) {
+const SharingServicesGroup = ({ isFetching, services, title }) => {
+	if (!services.length && !isFetching) {
 		return null;
 	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="sharing-services-group">
-			<SectionHeader label={ title } />
+			<SectionHeader label={title} />
 			<ul className="sharing-services-group__services">
-				{ services.length
-					? services.map( service => {
-							const Component = Components.hasOwnProperty( service.ID )
-								? Components[ service.ID ]
+				{services.length
+					? services.map((service) => {
+							const Component = Components.hasOwnProperty(service.ID)
+								? Components[service.ID]
 								: Service;
 
-							if ( service.warnings ) {
+							if (service.warnings) {
 								return (
-									<Fragment key={ service.ID }>
-										<Component service={ service } />
-										{ service.warnings.map( ( warning, index ) => (
+									<Fragment key={service.ID}>
+										<Component service={service} />
+										{service.warnings.map((warning, index) => (
 											<Notice
-												key={ `warning-${ index }` }
-												showDismiss={ false }
-												status={ serviceWarningLevelToNoticeStatus( warning.level ) }
+												key={`warning-${index}`}
+												showDismiss={false}
+												status={serviceWarningLevelToNoticeStatus(warning.level)}
 											>
-												{ warning.message }
+												{warning.message}
 											</Notice>
-										) ) }
+										))}
 									</Fragment>
 								);
 							}
 
-							return <Component key={ service.ID } service={ service } />;
-					  } )
-					: times( NUMBER_OF_PLACEHOLDERS, index => (
-							<ServicePlaceholder key={ 'service-placeholder-' + index } />
-					  ) ) }
+							return <Component key={service.ID} service={service} />;
+					  })
+					: times(NUMBER_OF_PLACEHOLDERS, (index) => (
+							<ServicePlaceholder key={'service-placeholder-' + index} />
+					  ))}
 			</ul>
 		</div>
 	);
@@ -99,7 +99,7 @@ SharingServicesGroup.defaultProps = {
 	services: [],
 };
 
-export default connect( ( state, { type } ) => ( {
-	isFetching: isKeyringServicesFetching( state ),
-	services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type ),
-} ) )( SharingServicesGroup );
+export default connect((state, { type }) => ({
+	isFetching: isKeyringServicesFetching(state),
+	services: getEligibleKeyringServices(state, getSelectedSiteId(state), type),
+}))(SharingServicesGroup);

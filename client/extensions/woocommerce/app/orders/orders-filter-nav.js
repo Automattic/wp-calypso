@@ -20,58 +20,58 @@ import SectionNav from 'components/section-nav';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 
 class OrdersFilterNav extends Component {
-	doSearch = search => {
-		this.props.updateCurrentOrdersQuery( this.props.site.ID, { search } );
+	doSearch = (search) => {
+		this.props.updateCurrentOrdersQuery(this.props.site.ID, { search });
 	};
 
 	clearSearch = () => {
-		this.doSearch( '' );
+		this.doSearch('');
 	};
 
 	render() {
 		const { translate, site, status } = this.props;
-		let currentSelection = translate( 'All orders' );
-		if ( ORDER_UNPAID === status ) {
-			currentSelection = translate( 'Awaiting payment' );
-		} else if ( ORDER_UNFULFILLED === status ) {
-			currentSelection = translate( 'Awaiting fulfillment' );
-		} else if ( ORDER_COMPLETED === status ) {
-			currentSelection = translate( 'Completed' );
+		let currentSelection = translate('All orders');
+		if (ORDER_UNPAID === status) {
+			currentSelection = translate('Awaiting payment');
+		} else if (ORDER_UNFULFILLED === status) {
+			currentSelection = translate('Awaiting fulfillment');
+		} else if (ORDER_COMPLETED === status) {
+			currentSelection = translate('Completed');
 		}
 
 		return (
-			<SectionNav selectedText={ currentSelection }>
-				<NavTabs label={ translate( 'Status' ) } selectedText={ currentSelection }>
-					<NavItem path={ getLink( '/store/orders/:site', site ) } selected={ 'any' === status }>
-						{ translate( 'All orders' ) }
+			<SectionNav selectedText={currentSelection}>
+				<NavTabs label={translate('Status')} selectedText={currentSelection}>
+					<NavItem path={getLink('/store/orders/:site', site)} selected={'any' === status}>
+						{translate('All orders')}
 					</NavItem>
 					<NavItem
-						path={ getLink( `/store/orders/${ ORDER_UNPAID }/:site`, site ) }
-						selected={ ORDER_UNPAID === status }
+						path={getLink(`/store/orders/${ORDER_UNPAID}/:site`, site)}
+						selected={ORDER_UNPAID === status}
 					>
-						{ translate( 'Awaiting payment' ) }
+						{translate('Awaiting payment')}
 					</NavItem>
 					<NavItem
-						path={ getLink( `/store/orders/${ ORDER_UNFULFILLED }/:site`, site ) }
-						selected={ ORDER_UNFULFILLED === status }
+						path={getLink(`/store/orders/${ORDER_UNFULFILLED}/:site`, site)}
+						selected={ORDER_UNFULFILLED === status}
 					>
-						{ translate( 'Awaiting fulfillment' ) }
+						{translate('Awaiting fulfillment')}
 					</NavItem>
 					<NavItem
-						path={ getLink( `/store/orders/${ ORDER_COMPLETED }/:site`, site ) }
-						selected={ ORDER_COMPLETED === status }
+						path={getLink(`/store/orders/${ORDER_COMPLETED}/:site`, site)}
+						selected={ORDER_COMPLETED === status}
 					>
-						{ translate( 'Completed' ) }
+						{translate('Completed')}
 					</NavItem>
 				</NavTabs>
 
 				<Search
-					ref={ this.props.searchRef }
+					ref={this.props.searchRef}
 					pinned
 					fitsContainer
-					onSearch={ this.doSearch }
-					onSearchClose={ this.clearSearch }
-					placeholder={ translate( 'Search orders' ) }
+					onSearch={this.doSearch}
+					onSearchClose={this.clearSearch}
+					placeholder={translate('Search orders')}
 					analyticsGroup="Orders"
 					delaySearch
 				/>
@@ -81,9 +81,9 @@ class OrdersFilterNav extends Component {
 }
 
 export default connect(
-	state => ( {
-		site: getSelectedSiteWithFallback( state ),
-		search: getOrdersCurrentSearch( state ),
-	} ),
-	dispatch => bindActionCreators( { updateCurrentOrdersQuery }, dispatch )
-)( localize( OrdersFilterNav ) );
+	(state) => ({
+		site: getSelectedSiteWithFallback(state),
+		search: getOrdersCurrentSearch(state),
+	}),
+	(dispatch) => bindActionCreators({ updateCurrentOrdersQuery }, dispatch)
+)(localize(OrdersFilterNav));

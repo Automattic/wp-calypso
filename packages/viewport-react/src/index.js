@@ -21,29 +21,29 @@ import {
  *
  * @returns {boolean} The current status for the breakpoint.
  */
-export function useBreakpoint( breakpoint ) {
-	const [ state, setState ] = useState( () => ( {
-		isActive: isWithinBreakpoint( breakpoint ),
+export function useBreakpoint(breakpoint) {
+	const [state, setState] = useState(() => ({
+		isActive: isWithinBreakpoint(breakpoint),
 		breakpoint,
-	} ) );
+	}));
 
-	useEffect( () => {
-		function handleBreakpointChange( isActive ) {
-			setState( prevState => {
+	useEffect(() => {
+		function handleBreakpointChange(isActive) {
+			setState((prevState) => {
 				// Ensure we bail out without rendering if nothing changes, by preserving state.
-				if ( prevState.isActive === isActive && prevState.breakpoint === breakpoint ) {
+				if (prevState.isActive === isActive && prevState.breakpoint === breakpoint) {
 					return prevState;
 				}
 				return { isActive, breakpoint };
-			} );
+			});
 		}
 
-		const unsubscribe = subscribeIsWithinBreakpoint( breakpoint, handleBreakpointChange );
+		const unsubscribe = subscribeIsWithinBreakpoint(breakpoint, handleBreakpointChange);
 		// The unsubscribe function is the entire cleanup for the effect.
 		return unsubscribe;
-	}, [ breakpoint ] );
+	}, [breakpoint]);
 
-	return breakpoint === state.breakpoint ? state.isActive : isWithinBreakpoint( breakpoint );
+	return breakpoint === state.breakpoint ? state.isActive : isWithinBreakpoint(breakpoint);
 }
 
 /**
@@ -53,7 +53,7 @@ export function useBreakpoint( breakpoint ) {
  * @returns {boolean} The current status for the breakpoint.
  */
 export function useMobileBreakpoint() {
-	return useBreakpoint( MOBILE_BREAKPOINT );
+	return useBreakpoint(MOBILE_BREAKPOINT);
 }
 
 /**
@@ -63,7 +63,7 @@ export function useMobileBreakpoint() {
  * @returns {boolean} The current status for the breakpoint.
  */
 export function useDesktopBreakpoint() {
-	return useBreakpoint( DESKTOP_BREAKPOINT );
+	return useBreakpoint(DESKTOP_BREAKPOINT);
 }
 
 /**
@@ -75,13 +75,13 @@ export function useDesktopBreakpoint() {
  * @returns {Function} A function that given a component returns the
  * wrapped component.
  */
-export const withBreakpoint = breakpoint =>
+export const withBreakpoint = (breakpoint) =>
 	createHigherOrderComponent(
-		WrappedComponent =>
-			forwardRef( ( props, ref ) => {
-				const isActive = useBreakpoint( breakpoint );
-				return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
-			} ),
+		(WrappedComponent) =>
+			forwardRef((props, ref) => {
+				const isActive = useBreakpoint(breakpoint);
+				return <WrappedComponent {...props} isBreakpointActive={isActive} ref={ref} />;
+			}),
 		'WithBreakpoint'
 	);
 
@@ -94,11 +94,11 @@ export const withBreakpoint = breakpoint =>
  * @returns {Function} The wrapped component.
  */
 export const withMobileBreakpoint = createHigherOrderComponent(
-	WrappedComponent =>
-		forwardRef( ( props, ref ) => {
-			const isActive = useBreakpoint( MOBILE_BREAKPOINT );
-			return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
-		} ),
+	(WrappedComponent) =>
+		forwardRef((props, ref) => {
+			const isActive = useBreakpoint(MOBILE_BREAKPOINT);
+			return <WrappedComponent {...props} isBreakpointActive={isActive} ref={ref} />;
+		}),
 	'WithMobileBreakpoint'
 );
 
@@ -111,10 +111,10 @@ export const withMobileBreakpoint = createHigherOrderComponent(
  * @returns {Function} The wrapped component.
  */
 export const withDesktopBreakpoint = createHigherOrderComponent(
-	WrappedComponent =>
-		forwardRef( ( props, ref ) => {
-			const isActive = useBreakpoint( DESKTOP_BREAKPOINT );
-			return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
-		} ),
+	(WrappedComponent) =>
+		forwardRef((props, ref) => {
+			const isActive = useBreakpoint(DESKTOP_BREAKPOINT);
+			return <WrappedComponent {...props} isBreakpointActive={isActive} ref={ref} />;
+		}),
 	'WithDesktopBreakpoint'
 );

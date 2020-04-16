@@ -17,17 +17,17 @@ import { getDomainTypeText } from 'lib/domains';
 
 class PrimaryDomainButton extends React.Component {
 	handleClick = () => {
-		this.props.recordMakePrimaryClick( this.props.domain );
-		page( domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
+		this.props.recordMakePrimaryClick(this.props.domain);
+		page(domainManagementPrimaryDomain(this.props.selectedSite.slug, this.props.domain.name));
 	};
 
 	render() {
 		const { domain, translate } = this.props;
 
-		if ( domain && ! domain.isPrimary ) {
+		if (domain && !domain.isPrimary) {
 			return (
-				<Button compact onClick={ this.handleClick }>
-					{ translate( 'Make primary' ) }
+				<Button compact onClick={this.handleClick}>
+					{translate('Make primary')}
 				</Button>
 			);
 		}
@@ -36,24 +36,24 @@ class PrimaryDomainButton extends React.Component {
 	}
 }
 
-const recordMakePrimaryClick = domain =>
+const recordMakePrimaryClick = (domain) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			`Clicked "Make Primary" link on a ${ getDomainTypeText( domain ) } in Edit`,
+			`Clicked "Make Primary" link on a ${getDomainTypeText(domain)} in Edit`,
 			'Domain Name',
 			domain.name
 		),
-		recordTracksEvent( 'calypso_domain_management_edit_make_primary_click', {
+		recordTracksEvent('calypso_domain_management_edit_make_primary_click', {
 			section: domain.type,
-		} )
+		})
 	);
 
 PrimaryDomainButton.propTypes = {
 	domain: PropTypes.object.isRequired,
 	recordMakePrimaryClick: PropTypes.func.isRequired,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { recordMakePrimaryClick } )( localize( PrimaryDomainButton ) );
+export default connect(null, { recordMakePrimaryClick })(localize(PrimaryDomainButton));

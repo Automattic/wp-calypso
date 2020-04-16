@@ -13,14 +13,14 @@ import { ValuesType } from 'utility-types';
  */
 export const selectorDebounce = 300;
 
-const fontTitles: Partial< Record< Font, string > > = {
+const fontTitles: Partial<Record<Font, string>> = {
 	'Playfair Display': 'Playfair',
 };
 
 export const PAID_DOMAINS_TO_SHOW = 5;
 
-export function getFontTitle( fontFamily: string ): string {
-	return fontTitles[ fontFamily as Font ] ?? fontFamily;
+export function getFontTitle(fontFamily: string): string {
+	return fontTitles[fontFamily as Font] ?? fontFamily;
 }
 
 /**
@@ -51,7 +51,7 @@ export const fontPairings = [
 	},
 ] as const;
 
-export type Font = ValuesType< ValuesType< typeof fontPairings > >;
+export type Font = ValuesType<ValuesType<typeof fontPairings>>;
 export interface FontPair {
 	headings: Font;
 	base: Font;

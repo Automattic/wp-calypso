@@ -9,14 +9,14 @@ import {
 
 import 'state/data-layer/wpcom/gsuite-users';
 
-export const getGSuiteUsers = siteId => {
+export const getGSuiteUsers = (siteId) => {
 	return {
 		type: GSUITE_USERS_REQUEST,
 		siteId,
 	};
 };
 
-export const receiveGetGSuiteUsersSuccess = ( siteId, response ) => {
+export const receiveGetGSuiteUsersSuccess = (siteId, response) => {
 	return {
 		type: GSUITE_USERS_REQUEST_SUCCESS,
 		siteId,
@@ -24,7 +24,7 @@ export const receiveGetGSuiteUsersSuccess = ( siteId, response ) => {
 	};
 };
 
-export const receiveGetGSuiteUsersFailure = ( siteId, error ) => {
+export const receiveGetGSuiteUsersFailure = (siteId, error) => {
 	return {
 		type: GSUITE_USERS_REQUEST_FAILURE,
 		siteId,

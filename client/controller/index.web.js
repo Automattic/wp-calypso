@@ -25,24 +25,24 @@ import { hydrate } from './web-util.js';
 export { setSection, setUpLocale } from './shared.js';
 export { render, hydrate, redirectLoggedIn } from './web-util.js';
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+export const ReduxWrappedLayout = ({ store, primary, secondary, redirectUri }) => {
 	const state = store.getState();
-	const userLoggedIn = isUserLoggedIn( state );
+	const userLoggedIn = isUserLoggedIn(state);
 
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } />
+		<Layout primary={primary} secondary={secondary} />
 	) : (
-		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+		<LayoutLoggedOut primary={primary} secondary={secondary} redirectUri={redirectUri} />
 	);
 
 	return (
-		<ReduxProvider store={ store }>
-			<MomentProvider>{ layout }</MomentProvider>
+		<ReduxProvider store={store}>
+			<MomentProvider>{layout}</MomentProvider>
 		</ReduxProvider>
 	);
 };
 
-export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
+export const makeLayout = makeLayoutMiddleware(ReduxWrappedLayout);
 
 /**
  * Isomorphic routing helper, client side
@@ -58,19 +58,19 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
  * (or, if that is empty, in `context.primary`) to the respectively corresponding
  * divs.
  */
-export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares, hydrate );
+export function clientRouter(route, ...middlewares) {
+	page(route, ...middlewares, hydrate);
 }
 
-export function redirectLoggedOut( context, next ) {
+export function redirectLoggedOut(context, next) {
 	const state = context.store.getState();
-	const userLoggedOut = ! isUserLoggedIn( state );
+	const userLoggedOut = !isUserLoggedIn(state);
 
-	if ( userLoggedOut ) {
-		const siteFragment = context.params.site || getSiteFragment( context.path );
+	if (userLoggedOut) {
+		const siteFragment = context.params.site || getSiteFragment(context.path);
 
 		const loginParameters = {
-			isNative: config.isEnabled( 'login/native-login-links' ),
+			isNative: config.isEnabled('login/native-login-links'),
 			redirectTo: context.path,
 			site: siteFragment,
 		};
@@ -79,17 +79,17 @@ export function redirectLoggedOut( context, next ) {
 		// original URL, to ensure the login form is pre-filled with the
 		// correct email address and built with the correct language (when
 		// either of those are requested).
-		const login_email = getImmediateLoginEmail( state );
-		if ( login_email ) {
+		const login_email = getImmediateLoginEmail(state);
+		if (login_email) {
 			loginParameters.emailAddress = login_email;
 		}
-		const login_locale = getImmediateLoginLocale( state );
-		if ( login_locale ) {
+		const login_locale = getImmediateLoginLocale(state);
+		if (login_locale) {
 			loginParameters.locale = login_locale;
 		}
 
 		// force full page reload to avoid SSR hydration issues.
-		window.location = login( loginParameters );
+		window.location = login(loginParameters);
 		return;
 	}
 	next();

@@ -7,15 +7,15 @@ const REGEXP_SERIALIZED_QUERY = /^((\d+):)?(.*)$/;
  * @param  {string} serializedQuery Serialized posts query
  * @returns {object}                 Deserialized posts query details
  */
-export function getDeserializedPostsQueryDetails( serializedQuery ) {
+export function getDeserializedPostsQueryDetails(serializedQuery) {
 	let siteId, query;
 
-	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
-	if ( matches ) {
-		siteId = Number( matches[ 2 ] ) || undefined;
+	const matches = serializedQuery.match(REGEXP_SERIALIZED_QUERY);
+	if (matches) {
+		siteId = Number(matches[2]) || undefined;
 		try {
-			query = JSON.parse( matches[ 3 ] );
-		} catch ( error ) {}
+			query = JSON.parse(matches[3]);
+		} catch (error) {}
 	}
 
 	return { siteId, query };

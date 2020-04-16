@@ -26,8 +26,8 @@ import { getSiteCommentCounts } from 'state/comments/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { COMMENTS_PER_PAGE } from '../constants';
 
-const CommentTransition = props => (
-	<CSSTransition { ...props } classNames="comment-list__transition" timeout={ 150 } />
+const CommentTransition = (props) => (
+	<CSSTransition {...props} classNames="comment-list__transition" timeout={150} />
 );
 
 export class CommentList extends Component {
@@ -50,55 +50,55 @@ export class CommentList extends Component {
 		selectedComments: [],
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId, status, changePage } = this.props;
 		const totalPages = this.getTotalPages();
-		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
-			return changePage( totalPages );
+		if (!this.isRequestedPageValid() && totalPages > 1) {
+			return changePage(totalPages);
 		}
 
-		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
-			this.setState( {
+		if (siteId !== nextProps.siteId || status !== nextProps.status) {
+			this.setState({
 				isBulkMode: false,
 				selectedComments: [],
-			} );
+			});
 		}
 	}
 
-	shouldComponentUpdate = ( nextProps, nextState ) =>
-		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
+	shouldComponentUpdate = (nextProps, nextState) =>
+		!isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
 
-	changePage = page => {
+	changePage = (page) => {
 		const { recordChangePage, changePage } = this.props;
 
-		recordChangePage( page, this.getTotalPages() );
+		recordChangePage(page, this.getTotalPages());
 
-		this.setState( { selectedComments: [] } );
+		this.setState({ selectedComments: [] });
 
-		changePage( page );
+		changePage(page);
 	};
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
 
-		const defaultLine = translate( 'Your queue is clear.' );
+		const defaultLine = translate('Your queue is clear.');
 
 		return get(
 			{
-				unapproved: [ translate( 'No pending comments.' ), defaultLine ],
-				approved: [ translate( 'No approved comments.' ), defaultLine ],
-				spam: [ translate( 'No spam comments.' ), defaultLine ],
-				trash: [ translate( 'No deleted comments.' ), defaultLine ],
-				all: [ translate( 'No comments yet.' ), defaultLine ],
+				unapproved: [translate('No pending comments.'), defaultLine],
+				approved: [translate('No approved comments.'), defaultLine],
+				spam: [translate('No spam comments.'), defaultLine],
+				trash: [translate('No deleted comments.'), defaultLine],
+				all: [translate('No comments yet.'), defaultLine],
 			},
 			status,
-			[ '', '' ]
+			['', '']
 		);
 	};
 
-	getTotalPages = () => Math.ceil( this.props.commentsCount / COMMENTS_PER_PAGE );
+	getTotalPages = () => Math.ceil(this.props.commentsCount / COMMENTS_PER_PAGE);
 
-	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
+	isCommentSelected = (commentId) => !!find(this.state.selectedComments, { commentId });
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
@@ -107,27 +107,27 @@ export class CommentList extends Component {
 		this.state.selectedComments.length === this.props.comments.length;
 
 	toggleBulkMode = () => {
-		this.setState( ( { isBulkMode } ) => ( { isBulkMode: ! isBulkMode, selectedComments: [] } ) );
+		this.setState(({ isBulkMode }) => ({ isBulkMode: !isBulkMode, selectedComments: [] }));
 	};
 
-	toggleCommentSelected = comment => {
-		if ( ! comment.can_moderate ) {
+	toggleCommentSelected = (comment) => {
+		if (!comment.can_moderate) {
 			return;
 		}
 
-		if ( this.isCommentSelected( comment.commentId ) ) {
-			return this.setState( ( { selectedComments } ) => ( {
+		if (this.isCommentSelected(comment.commentId)) {
+			return this.setState(({ selectedComments }) => ({
 				selectedComments: selectedComments.filter(
-					( { commentId } ) => comment.commentId !== commentId
+					({ commentId }) => comment.commentId !== commentId
 				),
-			} ) );
+			}));
 		}
-		this.setState( ( { selectedComments } ) => ( {
-			selectedComments: selectedComments.concat( comment ),
-		} ) );
+		this.setState(({ selectedComments }) => ({
+			selectedComments: selectedComments.concat(comment),
+		}));
 	};
 
-	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
+	toggleSelectAll = (selectedComments) => this.setState({ selectedComments });
 
 	render() {
 		const {
@@ -159,87 +159,87 @@ export class CommentList extends Component {
 			type: 'any',
 		};
 
-		const showPlaceholder = ( ! siteId || isLoading ) && ! comments.length;
-		const showEmptyContent = ! isLoading && ! commentsCount && ! showPlaceholder;
+		const showPlaceholder = (!siteId || isLoading) && !comments.length;
+		const showEmptyContent = !isLoading && !commentsCount && !showPlaceholder;
 
-		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
+		const [emptyMessageTitle, emptyMessageLine] = this.getEmptyMessage();
 
 		return (
 			<div className="comment-list">
-				<QuerySiteSettings siteId={ siteId } />
-				<QuerySiteCommentCounts { ...{ siteId, postId } } />
-				<QuerySiteCommentsList { ...commentsListQuery } />
+				<QuerySiteSettings siteId={siteId} />
+				<QuerySiteCommentCounts {...{ siteId, postId }} />
+				<QuerySiteCommentsList {...commentsListQuery} />
 
-				{ isPostView && <CommentListHeader postId={ postId } /> }
+				{isPostView && <CommentListHeader postId={postId} />}
 
 				<CommentNavigation
-					commentsListQuery={ commentsListQuery }
-					commentsPage={ comments }
-					counts={ counts }
-					isBulkMode={ isBulkMode }
-					isSelectedAll={ this.isSelectedAll() }
-					order={ order }
-					postId={ postId }
-					selectedComments={ selectedComments }
-					setOrder={ setOrder }
-					siteId={ siteId }
-					siteFragment={ siteFragment }
-					status={ status }
-					toggleBulkMode={ this.toggleBulkMode }
-					toggleSelectAll={ this.toggleSelectAll }
+					commentsListQuery={commentsListQuery}
+					commentsPage={comments}
+					counts={counts}
+					isBulkMode={isBulkMode}
+					isSelectedAll={this.isSelectedAll()}
+					order={order}
+					postId={postId}
+					selectedComments={selectedComments}
+					setOrder={setOrder}
+					siteId={siteId}
+					siteFragment={siteFragment}
+					status={status}
+					toggleBulkMode={this.toggleBulkMode}
+					toggleSelectAll={this.toggleSelectAll}
 				/>
 
 				<TransitionGroup className="comment-list__transition-wrapper">
-					{ map( comments, commentId => (
-						<CommentTransition key={ `comment-${ siteId }-${ commentId }` }>
+					{map(comments, (commentId) => (
+						<CommentTransition key={`comment-${siteId}-${commentId}`}>
 							<Comment
-								commentId={ commentId }
-								commentsListQuery={ commentsListQuery }
-								isBulkMode={ isBulkMode }
-								isPostView={ isPostView }
-								isSelected={ this.isCommentSelected( commentId ) }
-								toggleSelected={ this.toggleCommentSelected }
+								commentId={commentId}
+								commentsListQuery={commentsListQuery}
+								isBulkMode={isBulkMode}
+								isPostView={isPostView}
+								isSelected={this.isCommentSelected(commentId)}
+								toggleSelected={this.toggleCommentSelected}
 							/>
 						</CommentTransition>
-					) ) }
-					{ showPlaceholder && (
+					))}
+					{showPlaceholder && (
 						<CommentTransition>
-							<Comment commentId={ 0 } key="comment-detail-placeholder" />
+							<Comment commentId={0} key="comment-detail-placeholder" />
 						</CommentTransition>
-					) }
-					{ showEmptyContent && (
+					)}
+					{showEmptyContent && (
 						<CommentTransition>
 							<EmptyContent
 								illustration="/calypso/images/comments/illustration_comments_gray.svg"
-								illustrationWidth={ 150 }
+								illustrationWidth={150}
 								key="comment-list-empty"
-								line={ emptyMessageLine }
-								title={ emptyMessageTitle }
+								line={emptyMessageLine}
+								title={emptyMessageTitle}
 							/>
 						</CommentTransition>
-					) }
+					)}
 				</TransitionGroup>
 
-				{ ! isLoading && ! showPlaceholder && ! showEmptyContent && (
+				{!isLoading && !showPlaceholder && !showEmptyContent && (
 					<Pagination
 						key="comment-list-pagination"
-						page={ validPage }
-						pageClick={ this.changePage }
-						perPage={ COMMENTS_PER_PAGE }
-						total={ commentsCount }
+						page={validPage}
+						pageClick={this.changePage}
+						perPage={COMMENTS_PER_PAGE}
+						total={commentsCount}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { order, page, postId, siteId, status } ) => {
-	const comments = getCommentsPage( state, siteId, { order, page, postId, status } );
-	const counts = getSiteCommentCounts( state, siteId, postId );
-	const commentsCount = get( counts, 'unapproved' === status ? 'pending' : status );
-	const isLoading = isUndefined( comments );
-	const isPostView = !! postId;
+const mapStateToProps = (state, { order, page, postId, siteId, status }) => {
+	const comments = getCommentsPage(state, siteId, { order, page, postId, status });
+	const counts = getSiteCommentCounts(state, siteId, postId);
+	const commentsCount = get(counts, 'unapproved' === status ? 'pending' : status);
+	const isLoading = isUndefined(comments);
+	const isPostView = !!postId;
 
 	return {
 		comments: comments || [],
@@ -250,14 +250,14 @@ const mapStateToProps = ( state, { order, page, postId, siteId, status } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	recordChangePage: ( page, total ) =>
+const mapDispatchToProps = (dispatch) => ({
+	recordChangePage: (page, total) =>
 		dispatch(
 			composeAnalytics(
-				recordTracksEvent( 'calypso_comment_management_change_page', { page, total } ),
-				bumpStat( 'calypso_comment_management', 'change_page' )
+				recordTracksEvent('calypso_comment_management_change_page', { page, total }),
+				bumpStat('calypso_comment_management', 'change_page')
 			)
 		),
-} );
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(CommentList));

@@ -14,24 +14,24 @@ import { generateStats } from '../../../state/stats/actions';
 
 class QueryStats extends Component {
 	UNSAFE_componentWillMount() {
-		this.generateStats( this.props );
+		this.generateStats(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId } = this.props;
 
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
+		if (!nextProps.siteId || siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.generateStats( nextProps );
+		this.generateStats(nextProps);
 	}
 
-	generateStats( props ) {
+	generateStats(props) {
 		const { generatingStats, siteId } = props;
 
-		if ( ! generatingStats && siteId ) {
-			props.generateStats( siteId );
+		if (!generatingStats && siteId) {
+			props.generateStats(siteId);
 		}
 	}
 
@@ -47,10 +47,10 @@ QueryStats.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	(state, { siteId }) => {
 		return {
-			generatingStats: isGeneratingStats( state, siteId ),
+			generatingStats: isGeneratingStats(state, siteId),
 		};
 	},
 	{ generateStats }
-)( QueryStats );
+)(QueryStats);

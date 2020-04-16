@@ -20,166 +20,166 @@ import { items, requesting, toggling } from '../reducer';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'reducer', () => {
+describe('reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( sandbox => {
-		sandbox.stub( console, 'warn' );
-	} );
+	useSandbox((sandbox) => {
+		sandbox.stub(console, 'warn');
+	});
 
-	describe( 'requesting()', () => {
-		const previousState = deepFreeze( {
-			[ primarySiteId ]: true,
-		} );
+	describe('requesting()', () => {
+		const previousState = deepFreeze({
+			[primarySiteId]: true,
+		});
 
-		test( 'should default to an empty object', () => {
-			const state = requesting( undefined, {} );
+		test('should default to an empty object', () => {
+			const state = requesting(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should set request to true if request in progress', () => {
-			const state = requesting( undefined, {
+		test('should set request to true if request in progress', () => {
+			const state = requesting(undefined, {
 				type: WP_SUPER_CACHE_REQUEST_PLUGINS,
 				siteId: primarySiteId,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: true,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: true,
+			});
+		});
 
-		test( 'should accumulate requesting values', () => {
-			const state = requesting( previousState, {
+		test('should accumulate requesting values', () => {
+			const state = requesting(previousState, {
 				type: WP_SUPER_CACHE_REQUEST_PLUGINS,
 				siteId: secondarySiteId,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: true,
-				[ secondarySiteId ]: true,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: true,
+				[secondarySiteId]: true,
+			});
+		});
 
-		test( 'should set request to false if request finishes successfully', () => {
-			const state = requesting( previousState, {
+		test('should set request to false if request finishes successfully', () => {
+			const state = requesting(previousState, {
 				type: WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS,
 				siteId: primarySiteId,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: false,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: false,
+			});
+		});
 
-		test( 'should set request to false if request finishes with failure', () => {
-			const state = requesting( previousState, {
+		test('should set request to false if request finishes with failure', () => {
+			const state = requesting(previousState, {
 				type: WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE,
 				siteId: primarySiteId,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: false,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: false,
+			});
+		});
 
-		test( 'should not persist state', () => {
-			const state = requesting( previousState, {
+		test('should not persist state', () => {
+			const state = requesting(previousState, {
 				type: SERIALIZE,
-			} );
+			});
 
-			expect( state ).to.be.undefined;
-		} );
+			expect(state).to.be.undefined;
+		});
 
-		test( 'should not load persisted state', () => {
-			const state = requesting( previousState, {
+		test('should not load persisted state', () => {
+			const state = requesting(previousState, {
 				type: DESERIALIZE,
-			} );
+			});
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
+			expect(state).to.eql({});
+		});
+	});
 
-	describe( 'toggling()', () => {
-		const previousState = deepFreeze( {
-			[ primarySiteId ]: { no_adverts_for_friends: true },
-		} );
+	describe('toggling()', () => {
+		const previousState = deepFreeze({
+			[primarySiteId]: { no_adverts_for_friends: true },
+		});
 
-		test( 'should default to an empty object', () => {
-			const state = toggling( undefined, {} );
+		test('should default to an empty object', () => {
+			const state = toggling(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should set toggling status to true if request in progress', () => {
-			const state = toggling( undefined, {
+		test('should set toggling status to true if request in progress', () => {
+			const state = toggling(undefined, {
 				type: WP_SUPER_CACHE_TOGGLE_PLUGIN,
 				siteId: primarySiteId,
 				plugin: 'no_adverts_for_friends',
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: { no_adverts_for_friends: true },
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: { no_adverts_for_friends: true },
+			});
+		});
 
-		test( 'should accumulate toggling statuses', () => {
-			const state = toggling( previousState, {
+		test('should accumulate toggling statuses', () => {
+			const state = toggling(previousState, {
 				type: WP_SUPER_CACHE_TOGGLE_PLUGIN,
 				siteId: secondarySiteId,
 				plugin: 'awaitingmoderation',
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: { no_adverts_for_friends: true },
-				[ secondarySiteId ]: { awaitingmoderation: true },
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: { no_adverts_for_friends: true },
+				[secondarySiteId]: { awaitingmoderation: true },
+			});
+		});
 
-		test( 'should set toggling status to false if request finishes successfully', () => {
-			const state = toggling( previousState, {
+		test('should set toggling status to false if request finishes successfully', () => {
+			const state = toggling(previousState, {
 				type: WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 				siteId: primarySiteId,
 				plugin: 'no_adverts_for_friends',
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: { no_adverts_for_friends: false },
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: { no_adverts_for_friends: false },
+			});
+		});
 
-		test( 'should set toggling status to false if request finishes with failure', () => {
-			const state = toggling( previousState, {
+		test('should set toggling status to false if request finishes with failure', () => {
+			const state = toggling(previousState, {
 				type: WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,
 				siteId: primarySiteId,
 				plugin: 'no_adverts_for_friends',
 				error: 'my error',
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: { no_adverts_for_friends: false },
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: { no_adverts_for_friends: false },
+			});
+		});
 
-		test( 'should not persist state', () => {
-			const state = toggling( previousState, {
+		test('should not persist state', () => {
+			const state = toggling(previousState, {
 				type: SERIALIZE,
-			} );
+			});
 
-			expect( state ).to.be.undefined;
-		} );
+			expect(state).to.be.undefined;
+		});
 
-		test( 'should not load persisted state', () => {
-			const state = toggling( previousState, {
+		test('should not load persisted state', () => {
+			const state = toggling(previousState, {
 				type: DESERIALIZE,
-			} );
+			});
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
+			expect(state).to.eql({});
+		});
+	});
 
-	describe( 'items()', () => {
+	describe('items()', () => {
 		const primaryPlugins = {
 			awaitingmoderation: {
 				url: '',
@@ -198,97 +198,97 @@ describe( 'reducer', () => {
 				enabled: false,
 			},
 		};
-		const previousState = deepFreeze( {
-			[ primarySiteId ]: primaryPlugins,
-		} );
+		const previousState = deepFreeze({
+			[primarySiteId]: primaryPlugins,
+		});
 
-		test( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
+		test('should default to an empty object', () => {
+			const state = items(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should index plugins by site ID', () => {
-			const state = items( undefined, {
+		test('should index plugins by site ID', () => {
+			const state = items(undefined, {
 				type: WP_SUPER_CACHE_RECEIVE_PLUGINS,
 				siteId: primarySiteId,
 				plugins: primaryPlugins,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: primaryPlugins,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: primaryPlugins,
+			});
+		});
 
-		test( 'should accumulate plugins', () => {
-			const state = items( previousState, {
+		test('should accumulate plugins', () => {
+			const state = items(previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_PLUGINS,
 				siteId: secondarySiteId,
 				plugins: secondaryPlugins,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: primaryPlugins,
-				[ secondarySiteId ]: secondaryPlugins,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: primaryPlugins,
+				[secondarySiteId]: secondaryPlugins,
+			});
+		});
 
-		test( 'should override previous plugins of same site ID', () => {
-			const state = items( previousState, {
+		test('should override previous plugins of same site ID', () => {
+			const state = items(previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_PLUGINS,
 				siteId: primarySiteId,
 				plugins: secondaryPlugins,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: secondaryPlugins,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: secondaryPlugins,
+			});
+		});
 
-		test( 'should accumulate new plugins and overwrite existing ones for the same site ID', () => {
+		test('should accumulate new plugins and overwrite existing ones for the same site ID', () => {
 			const newPlugins = { is_cache_enabled: false, is_super_cache_enabled: true };
-			const state = items( previousState, {
+			const state = items(previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_PLUGINS,
 				siteId: primarySiteId,
 				plugins: newPlugins,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: { is_cache_enabled: false, is_super_cache_enabled: true },
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: { is_cache_enabled: false, is_super_cache_enabled: true },
+			});
+		});
 
-		test( 'should persist state', () => {
-			const state = items( previousState, {
+		test('should persist state', () => {
+			const state = items(previousState, {
 				type: SERIALIZE,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: primaryPlugins,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: primaryPlugins,
+			});
+		});
 
-		test( 'should load valid persisted state', () => {
-			const state = items( previousState, {
+		test('should load valid persisted state', () => {
+			const state = items(previousState, {
 				type: DESERIALIZE,
-			} );
+			});
 
-			expect( state ).to.eql( {
-				[ primarySiteId ]: primaryPlugins,
-			} );
-		} );
+			expect(state).to.eql({
+				[primarySiteId]: primaryPlugins,
+			});
+		});
 
-		test( 'should not load invalid persisted state', () => {
-			const previousInvalidState = deepFreeze( {
+		test('should not load invalid persisted state', () => {
+			const previousInvalidState = deepFreeze({
 				items: {
-					[ primarySiteId ]: 2,
+					[primarySiteId]: 2,
 				},
-			} );
-			const state = items( previousInvalidState, {
+			});
+			const state = items(previousInvalidState, {
 				type: DESERIALIZE,
-			} );
+			});
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
-} );
+			expect(state).to.eql({});
+		});
+	});
+});

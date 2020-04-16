@@ -10,9 +10,9 @@ import 'state/data-layer/wpcom/signup/segments';
  *
  * @returns {object} The action object.
  */
-export const requestSegments = () => ( {
+export const requestSegments = () => ({
 	type: SIGNUP_SEGMENTS_REQUEST,
-} );
+});
 
 /**
  * Action creator: Store segments in the state tree.
@@ -21,7 +21,7 @@ export const requestSegments = () => ( {
  *
  * @returns {object} The action object.
  */
-export const setSegments = segments => ( {
+export const setSegments = (segments) => ({
 	type: SIGNUP_SEGMENTS_SET,
 	segments,
-} );
+});

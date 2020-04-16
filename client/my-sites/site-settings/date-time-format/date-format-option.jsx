@@ -16,7 +16,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { defaultDateFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
 
-export const DateFormatOption = ( {
+export const DateFormatOption = ({
 	dateFormat,
 	disabled,
 	isCustom,
@@ -24,49 +24,49 @@ export const DateFormatOption = ( {
 	setCustomDateFormat,
 	setDateFormat,
 	translate,
-} ) => (
+}) => (
 	<FormFieldset>
-		<FormLabel>{ translate( 'Date Format' ) }</FormLabel>
-		{ defaultDateFormats.map( format => (
-			<FormLabel key={ format }>
+		<FormLabel>{translate('Date Format')}</FormLabel>
+		{defaultDateFormats.map((format) => (
+			<FormLabel key={format}>
 				<FormRadio
-					checked={ ! isCustom && format === dateFormat }
-					disabled={ disabled }
+					checked={!isCustom && format === dateFormat}
+					disabled={disabled}
 					name="date_format"
-					onChange={ setDateFormat }
-					value={ format }
+					onChange={setDateFormat}
+					value={format}
 				/>
-				<span>{ phpToMomentDatetimeFormat( localizedDate, format ) }</span>
+				<span>{phpToMomentDatetimeFormat(localizedDate, format)}</span>
 			</FormLabel>
-		) ) }
+		))}
 		<FormLabel className="date-time-format__custom-field">
 			<FormRadio
-				checked={ isCustom }
-				disabled={ disabled }
+				checked={isCustom}
+				disabled={disabled}
 				name="date_format"
-				onChange={ setCustomDateFormat }
-				value={ dateFormat }
+				onChange={setCustomDateFormat}
+				value={dateFormat}
 			/>
 			<span>
-				{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
+				{translate('Custom', { comment: 'Custom date/time format field' })}
 				<FormInput
-					disabled={ disabled }
+					disabled={disabled}
 					name="date_format_custom"
-					onChange={ setCustomDateFormat }
+					onChange={setCustomDateFormat}
 					type="text"
-					value={ dateFormat || '' }
+					value={dateFormat || ''}
 				/>
 				<FormSettingExplanation>
-					{ isCustom &&
+					{isCustom &&
 						dateFormat &&
-						translate( 'Preview: %s', {
-							args: phpToMomentDatetimeFormat( localizedDate, dateFormat ),
+						translate('Preview: %s', {
+							args: phpToMomentDatetimeFormat(localizedDate, dateFormat),
 							comment: 'Date/time format preview',
-						} ) }
+						})}
 				</FormSettingExplanation>
 			</span>
 		</FormLabel>
 	</FormFieldset>
 );
 
-export default localize( DateFormatOption );
+export default localize(DateFormatOption);

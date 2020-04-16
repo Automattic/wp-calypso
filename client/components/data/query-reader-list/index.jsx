@@ -15,20 +15,20 @@ import { requestList } from 'state/reader/lists/actions';
 
 class QueryReaderList extends Component {
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.isRequestingList ) {
-			this.props.requestList( this.props.owner, this.props.slug );
+		if (!this.props.isRequestingList) {
+			this.props.requestList(this.props.owner, this.props.slug);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (
 			nextProps.isRequestingList ||
-			( this.props.owner === nextProps.owner && this.props.slug === nextProps.slug )
+			(this.props.owner === nextProps.owner && this.props.slug === nextProps.slug)
 		) {
 			return;
 		}
 
-		nextProps.requestList( nextProps.owner, nextProps.slug );
+		nextProps.requestList(nextProps.owner, nextProps.slug);
 	}
 
 	render() {
@@ -48,13 +48,13 @@ QueryReaderList.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { owner, slug } = ownProps;
 		return {
-			isRequestingList: isRequestingList( state, owner, slug ),
+			isRequestingList: isRequestingList(state, owner, slug),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				requestList,
@@ -62,4 +62,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( QueryReaderList );
+)(QueryReaderList);

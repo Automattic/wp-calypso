@@ -35,35 +35,35 @@ export class TranslatorInvite extends Component {
 	};
 
 	recordClick = () =>
-		this.props.recordTracksEvent( 'calypso_translator_invitation', {
-			language: this.props.localizedLanguageNames[ this.props.locale ].en,
-		} );
+		this.props.recordTracksEvent('calypso_translator_invitation', {
+			language: this.props.localizedLanguageNames[this.props.locale].en,
+		});
 
 	renderNoticeLabelText() {
 		const { locale, localizedLanguageNames, translate } = this.props;
 
-		if ( localizedLanguageNames && localizedLanguageNames[ locale ] ) {
+		if (localizedLanguageNames && localizedLanguageNames[locale]) {
 			return (
 				<div className="translator-invite__content">
-					<Gridicon className="translator-invite__gridicon" icon="globe" size={ 18 } />
-					{ translate(
+					<Gridicon className="translator-invite__gridicon" icon="globe" size={18} />
+					{translate(
 						'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?',
 						{
-							args: { language: localizedLanguageNames[ locale ].localized },
+							args: { language: localizedLanguageNames[locale].localized },
 							comment:
 								'The language variable can be any major spoken language that WordPress.com supports',
 							components: {
 								a: (
 									<a
-										href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
-										onClick={ this.recordClick }
+										href={`https://translate.wordpress.com/projects/wpcom/${locale}/default/`}
+										onClick={this.recordClick}
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
 								),
 							},
 						}
-					) }
+					)}
 				</div>
 			);
 		}
@@ -74,7 +74,7 @@ export class TranslatorInvite extends Component {
 	render() {
 		return (
 			<div className="translator-invite">
-				{ this.renderNoticeLabelText() }
+				{this.renderNoticeLabelText()}
 				<QueryLanguageNames />
 			</div>
 		);
@@ -82,9 +82,9 @@ export class TranslatorInvite extends Component {
 }
 
 export default connect(
-	( state, props ) => ( {
-		localizedLanguageNames: getLocalizedLanguageNames( state ),
-		locale: getCurrentNonDefaultLocale( getCurrentLocaleSlug( state ), props.path ),
-	} ),
+	(state, props) => ({
+		localizedLanguageNames: getLocalizedLanguageNames(state),
+		locale: getCurrentNonDefaultLocale(getCurrentLocaleSlug(state), props.path),
+	}),
 	{ recordTracksEvent }
-)( localize( TranslatorInvite ) );
+)(localize(TranslatorInvite));

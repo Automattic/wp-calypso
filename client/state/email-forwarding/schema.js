@@ -2,7 +2,7 @@ export const forwardsSchema = {
 	type: 'array',
 	items: {
 		type: 'object',
-		required: [ 'email', 'mailbox', 'domain', 'forward_address' ],
+		required: ['email', 'mailbox', 'domain', 'forward_address'],
 		properties: {
 			email: { type: 'string' },
 			mailbox: { type: 'string' },
@@ -19,7 +19,7 @@ export const mxSchema = {
 	type: 'array',
 	items: {
 		type: 'object',
-		required: [ 'server', 'priority' ],
+		required: ['server', 'priority'],
 		properties: {
 			server: { type: 'string' },
 			priority: { type: 'string' },
@@ -29,5 +29,5 @@ export const mxSchema = {
 
 export const typeSchema = {
 	type: 'string',
-	enum: [ 'forward', 'custom', 'google-apps', 'google-apps-another-provider' ],
+	enum: ['forward', 'custom', 'google-apps', 'google-apps-another-provider'],
 };

@@ -12,11 +12,11 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
  * @param {object} siteId - site object
  * @returns {object} primary domain
  */
-export default function getPrimaryDomainBySiteId( state, siteId ) {
-	const domains = getDomainsBySiteId( state, siteId );
-	if ( domains.length === 0 ) {
+export default function getPrimaryDomainBySiteId(state, siteId) {
+	const domains = getDomainsBySiteId(state, siteId);
+	if (domains.length === 0) {
 		return null;
 	}
 
-	return domains.filter( domain => domain.isPrimary )[ 0 ];
+	return domains.filter((domain) => domain.isPrimary)[0];
 }

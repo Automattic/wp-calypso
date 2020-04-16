@@ -24,8 +24,8 @@ class ApplicationPasswordsItem extends React.Component {
 	handleRemovePasswordButtonClick = () => {
 		const { password } = this.props;
 
-		this.props.recordGoogleEvent( 'Me', 'Clicked on Remove Application Password Button' );
-		this.props.deleteApplicationPassword( password.ID );
+		this.props.recordGoogleEvent('Me', 'Clicked on Remove Application Password Button');
+		this.props.deleteApplicationPassword(password.ID);
 	};
 
 	render() {
@@ -34,17 +34,17 @@ class ApplicationPasswordsItem extends React.Component {
 		return (
 			<li className="application-password-item">
 				<div className="application-password-item__details">
-					<h2 className="application-password-item__name">{ password.name }</h2>
+					<h2 className="application-password-item__name">{password.name}</h2>
 					<p className="application-password-item__generated">
-						{ translate( 'Generated on %s', {
-							args: moment( password.generated ).format( 'lll' ),
-						} ) }
+						{translate('Generated on %s', {
+							args: moment(password.generated).format('lll'),
+						})}
 					</p>
 				</div>
 				<Button
 					borderless
 					className="application-password-item__revoke"
-					onClick={ this.handleRemovePasswordButtonClick }
+					onClick={this.handleRemovePasswordButtonClick}
 				>
 					<Gridicon icon="cross" />
 				</Button>
@@ -53,8 +53,8 @@ class ApplicationPasswordsItem extends React.Component {
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	deleteApplicationPassword,
 	errorNotice,
 	recordGoogleEvent,
-} )( localize( withLocalizedMoment( ApplicationPasswordsItem ) ) );
+})(localize(withLocalizedMoment(ApplicationPasswordsItem)));

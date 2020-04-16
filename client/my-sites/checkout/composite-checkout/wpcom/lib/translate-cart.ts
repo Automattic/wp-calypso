@@ -21,7 +21,7 @@ import {
  * @returns Cart object suitable for passing to the checkout component
  */
 export function translateWpcomCartToCheckoutCart(
-	translate: ( string, any? ) => string,
+	translate: (string, any?) => string,
 	serverCart: ResponseCart
 ): WPCOMCart {
 	const {
@@ -44,7 +44,7 @@ export function translateWpcomCartToCheckoutCart(
 
 	const taxLineItem: CheckoutCartItem = {
 		id: 'tax-line-item',
-		label: translate( 'Tax' ),
+		label: translate('Tax'),
 		type: 'tax', // TODO: does this need to be localized, e.g. tax-us?
 		amount: {
 			currency: currency,
@@ -55,15 +55,15 @@ export function translateWpcomCartToCheckoutCart(
 
 	// TODO: watch out for minimal currency units while localizing this
 	const couponValueRaw = products
-		.map( product => coupon_discounts_integer[ product.product_id ] )
-		.filter( Boolean )
-		.reduce( ( accum, current ) => accum + current, 0 );
-	const couponValue = Math.round( couponValueRaw );
-	const couponDisplayValue = `-$${ couponValueRaw / 100 }`;
+		.map((product) => coupon_discounts_integer[product.product_id])
+		.filter(Boolean)
+		.reduce((accum, current) => accum + current, 0);
+	const couponValue = Math.round(couponValueRaw);
+	const couponDisplayValue = `-$${couponValueRaw / 100}`;
 
 	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',
-		label: translate( 'Coupon: %s', { args: coupon } ),
+		label: translate('Coupon: %s', { args: coupon }),
 		type: 'coupon',
 		amount: {
 			currency: currency,
@@ -78,7 +78,7 @@ export function translateWpcomCartToCheckoutCart(
 	const totalItem: CheckoutCartItem = {
 		id: 'total',
 		type: 'total',
-		label: translate( 'Total' ),
+		label: translate('Total'),
 		amount: {
 			currency: currency,
 			value: total_cost_integer,
@@ -89,7 +89,7 @@ export function translateWpcomCartToCheckoutCart(
 	const subtotalItem: CheckoutCartItem = {
 		id: 'subtotal',
 		type: 'subtotal',
-		label: translate( 'Subtotal' ),
+		label: translate('Subtotal'),
 		amount: {
 			currency: currency,
 			value: sub_total_integer,
@@ -98,8 +98,8 @@ export function translateWpcomCartToCheckoutCart(
 	};
 
 	// TODO: inject a real currency localization function
-	function localizeCurrency( currencyCode: string, amount: number ): string {
-		switch ( currencyCode ) {
+	function localizeCurrency(currencyCode: string, amount: number): string {
+		switch (currencyCode) {
 			case 'BRL':
 				return 'R$' + amount / 100;
 			default:
@@ -122,16 +122,16 @@ export function translateWpcomCartToCheckoutCart(
 		credits: {
 			id: 'credits',
 			type: 'credits',
-			label: translate( 'Credits' ),
+			label: translate('Credits'),
 			amount: { value: credits_integer, displayValue: credits_display, currency },
 		},
 		allowedPaymentMethods: allowed_payment_methods
-			.filter( slug => {
+			.filter((slug) => {
 				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
-			} ) // TODO: stop returning this from the server
-			.map( readWPCOMPaymentMethodClass )
-			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
-			.filter( Boolean ),
+			}) // TODO: stop returning this from the server
+			.map(readWPCOMPaymentMethodClass)
+			.map(translateWpcomPaymentMethodToCheckoutPaymentMethod)
+			.filter(Boolean),
 		couponCode: coupon,
 	};
 }
@@ -140,9 +140,9 @@ export function translateWpcomCartToCheckoutCart(
 function translateWpcomCartItemToCheckoutCartItem(
 	is_coupon_applied: boolean,
 	coupon_discounts_integer: number[],
-	localizeCurrency: ( string, number ) => string
-): ( ResponseCartProduct ) => WPCOMCartItem {
-	return ( serverCartItem: ResponseCartProduct ) => {
+	localizeCurrency: (string, number) => string
+): (ResponseCartProduct) => WPCOMCartItem {
+	return (serverCartItem: ResponseCartProduct) => {
 		const {
 			product_id,
 			product_name,
@@ -164,9 +164,9 @@ function translateWpcomCartItemToCheckoutCartItem(
 
 		// TODO: watch out for this when localizing
 		const value = is_coupon_applied
-			? item_subtotal_integer + ( coupon_discounts_integer[ product_id ] ?? 0 )
+			? item_subtotal_integer + (coupon_discounts_integer[product_id] ?? 0)
 			: item_subtotal_integer;
-		const displayValue = localizeCurrency( currency, value );
+		const displayValue = localizeCurrency(currency, value);
 
 		return {
 			id: uuid,
@@ -195,5 +195,5 @@ function translateWpcomCartItemToCheckoutCartItem(
 }
 
 export function getNonProductWPCOMCartItemTypes(): string[] {
-	return [ 'tax', 'coupon', 'total', 'subtotal', 'credits' ];
+	return ['tax', 'coupon', 'total', 'subtotal', 'credits'];
 }

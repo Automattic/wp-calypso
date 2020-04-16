@@ -10,13 +10,13 @@ import createSelector from 'lib/create-selector';
 
 import 'state/comments/init';
 
-function filterCommentsByStatus( comments, status ) {
+function filterCommentsByStatus(comments, status) {
 	return 'all' === status
 		? filter(
 				comments,
-				comment => 'approved' === comment.status || 'unapproved' === comment.status
+				(comment) => 'approved' === comment.status || 'unapproved' === comment.status
 		  )
-		: filter( comments, comment => status === comment.status );
+		: filter(comments, (comment) => status === comment.status);
 }
 
 /**
@@ -29,15 +29,15 @@ function filterCommentsByStatus( comments, status ) {
  * @returns {Array<object>} Available comments for site, filtered by status
  */
 export const getSiteComments = createSelector(
-	( state, siteId, status, order = 'asc' ) => {
+	(state, siteId, status, order = 'asc') => {
 		const comments = state.comments.items ?? {};
-		const parsedComments = Object.keys( comments )
-			.filter( key => parseInt( key.split( '-', 1 ), 10 ) === siteId )
-			.reduce( ( list, key ) => [ ...list, ...comments[ key ] ], [] );
+		const parsedComments = Object.keys(comments)
+			.filter((key) => parseInt(key.split('-', 1), 10) === siteId)
+			.reduce((list, key) => [...list, ...comments[key]], []);
 
 		return status
-			? orderBy( filterCommentsByStatus( parsedComments, status ), 'date', order )
-			: orderBy( parsedComments, 'date', order );
+			? orderBy(filterCommentsByStatus(parsedComments, status), 'date', order)
+			: orderBy(parsedComments, 'date', order);
 	},
-	state => [ state.comments.items ]
+	(state) => [state.comments.items]
 );

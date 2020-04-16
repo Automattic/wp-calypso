@@ -6,8 +6,8 @@ import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_GOALS_SET } from 'state/action
 import { withSchemaValidation } from 'state/utils';
 import { siteGoalsSchema } from './schema';
 
-export default withSchemaValidation( siteGoalsSchema, ( state = '', action ) => {
-	switch ( action.type ) {
+export default withSchemaValidation(siteGoalsSchema, (state = '', action) => {
+	switch (action.type) {
 		case SIGNUP_STEPS_SITE_GOALS_SET: {
 			return action.siteGoals;
 		}
@@ -17,4 +17,4 @@ export default withSchemaValidation( siteGoalsSchema, ( state = '', action ) => 
 	}
 
 	return state;
-} );
+});

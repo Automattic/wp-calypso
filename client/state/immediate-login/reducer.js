@@ -13,14 +13,14 @@ const initialState = {
 	locale: null,
 };
 
-export default withoutPersistence( ( state = initialState, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = initialState, action) => {
+	switch (action.type) {
 		case IMMEDIATE_LOGIN_SAVE_INFO: {
 			const { success, reason, email, locale } = action;
 
 			return {
 				attempt: true,
-				success: !! success,
+				success: !!success,
 				reason: reason || null,
 				email: email || null,
 				locale: locale || null,
@@ -29,4 +29,4 @@ export default withoutPersistence( ( state = initialState, action ) => {
 	}
 
 	return state;
-} );
+});

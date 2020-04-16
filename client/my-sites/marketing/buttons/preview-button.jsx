@@ -19,7 +19,7 @@ import SocialLogo from 'components/social-logo';
 class SharingButtonsPreviewButton extends React.Component {
 	static propTypes = {
 		button: PropTypes.object.isRequired,
-		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		style: PropTypes.oneOf(['icon-text', 'icon', 'text', 'official']),
 		enabled: PropTypes.bool,
 		onMouseOver: PropTypes.func,
 		onClick: PropTypes.func,
@@ -29,7 +29,7 @@ class SharingButtonsPreviewButton extends React.Component {
 	static defaultProps = {
 		style: 'icon',
 		enabled: true,
-		onClick: function() {},
+		onClick: function () {},
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -44,17 +44,17 @@ class SharingButtonsPreviewButton extends React.Component {
 			twitter: 'twitter-alt',
 			more: 'share',
 		};
-		if ( ! this.props.button.custom ) {
-			const icon = shortnameToSocialLogo[ this.props.button.ID ] || this.props.button.shortname;
+		if (!this.props.button.custom) {
+			const icon = shortnameToSocialLogo[this.props.button.ID] || this.props.button.shortname;
 
-			return <SocialLogo icon={ icon } size={ 18 } />;
-		} else if ( 'string' === typeof this.props.button.icon ) {
+			return <SocialLogo icon={icon} size={18} />;
+		} else if ('string' === typeof this.props.button.icon) {
 			return (
 				<span
 					className="sharing-buttons-preview-button__custom-icon"
-					style={ {
-						backgroundImage: 'url(' + photon( this.props.button.icon, { width: 16 } ) + ')',
-					} }
+					style={{
+						backgroundImage: 'url(' + photon(this.props.button.icon, { width: 16 }) + ')',
+					}}
 				/>
 			);
 		}
@@ -62,12 +62,12 @@ class SharingButtonsPreviewButton extends React.Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	onClick = () => {
-		analytics.tracks.recordEvent( 'calypso_sharing_buttons_share_button_click', {
+		analytics.tracks.recordEvent('calypso_sharing_buttons_share_button_click', {
 			service: this.props.button.ID,
-			enabled: ! this.props.enabled, // during onClick enabled is the old state, so negating gives the new state
+			enabled: !this.props.enabled, // during onClick enabled is the old state, so negating gives the new state
 			path: this.props.path,
-		} );
-		gaRecordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
+		});
+		gaRecordEvent('Sharing', 'Clicked Share Button', this.props.button.ID);
 		this.props.onClick();
 	};
 
@@ -86,13 +86,13 @@ class SharingButtonsPreviewButton extends React.Component {
 		return (
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			<div
-				className={ classes }
-				onClick={ this.onClick }
-				onMouseOver={ this.props.onMouseOver }
+				className={classes}
+				onClick={this.onClick}
+				onMouseOver={this.props.onMouseOver}
 				role="presentation"
 			>
-				{ this.getIcon() }
-				<span className="sharing-buttons-preview-button__service">{ this.props.button.name }</span>
+				{this.getIcon()}
+				<span className="sharing-buttons-preview-button__service">{this.props.button.name}</span>
 			</div>
 		);
 	}
@@ -100,10 +100,10 @@ class SharingButtonsPreviewButton extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ),
-	} ),
+	(state) => ({
+		path: getCurrentRouteParameterized(state, getSelectedSiteId(state)),
+	}),
 	null,
 	null,
 	{ forwardRef: true }
-)( SharingButtonsPreviewButton );
+)(SharingButtonsPreviewButton);

@@ -25,93 +25,93 @@ import {
 } from '../../state/packages/selectors';
 
 class Packages extends Component {
-	renderListHeader = packages => {
+	renderListHeader = (packages) => {
 		const { translate } = this.props;
 
-		if ( ! packages || ! packages.length ) {
+		if (!packages || !packages.length) {
 			return null;
 		}
 
 		return (
 			<div className="packages__packages-row packages__packages-header">
 				<div className="packages__packages-row-icon" />
-				<div className="packages__packages-row-details">{ translate( 'Name' ) }</div>
-				<div className="packages__packages-row-dimensions">{ translate( 'Dimensions' ) }</div>
+				<div className="packages__packages-row-details">{translate('Name')}</div>
+				<div className="packages__packages-row-dimensions">{translate('Dimensions')}</div>
 				<div className="packages__packages-row-actions" />
 			</div>
 		);
 	};
 
-	renderListItem = ( pckg, index ) => {
+	renderListItem = (pckg, index) => {
 		const { siteId, isFetching, form, translate } = this.props;
 		const { dimensionUnit } = form;
 
 		let button = null;
-		if ( pckg.is_user_defined ) {
+		if (pckg.is_user_defined) {
 			const onEdit = () => {
 				this.props.onChange();
-				this.props.editPackage( siteId, pckg );
+				this.props.editPackage(siteId, pckg);
 			};
 			button = (
-				<Button compact onClick={ onEdit }>
-					{ translate( 'Edit' ) }
+				<Button compact onClick={onEdit}>
+					{translate('Edit')}
 				</Button>
 			);
 		} else {
 			const onRemove = () => {
 				this.props.onChange();
-				this.props.removePredefinedPackage( siteId, pckg.serviceId, pckg.id );
+				this.props.removePredefinedPackage(siteId, pckg.serviceId, pckg.id);
 			};
 			button = (
-				<Button compact onClick={ onRemove }>
-					{ translate( 'Remove' ) }
+				<Button compact onClick={onRemove}>
+					{translate('Remove')}
 				</Button>
 			);
 		}
 
 		return (
 			<PackagesListItem
-				key={ index }
-				siteId={ siteId }
-				isPlaceholder={ isFetching }
-				data={ pckg }
-				dimensionUnit={ dimensionUnit }
+				key={index}
+				siteId={siteId}
+				isPlaceholder={isFetching}
+				data={pckg}
+				dimensionUnit={dimensionUnit}
 			>
-				{ button }
+				{button}
 			</PackagesListItem>
 		);
 	};
 
 	render() {
 		const { isFetching, fetchError, siteId, allSelectedPackages, translate } = this.props;
-		if ( fetchError ) {
+		if (fetchError) {
 			return null;
 		}
 
-		const packages = isFetching ? [ {}, {}, {} ] : allSelectedPackages;
+		const packages = isFetching ? [{}, {}, {}] : allSelectedPackages;
 
 		const addPackage = () => {
 			this.props.onChange();
-			this.props.addPackage( siteId );
+			this.props.addPackage(siteId);
 		};
 
 		return (
 			<div>
-				<QueryPackages siteId={ siteId } />
+				<QueryPackages siteId={siteId} />
 				<ExtendedHeader
-					label={ translate( 'Packages' ) }
-					description={ translate(
+					label={translate('Packages')}
+					description={translate(
 						'Add boxes, envelopes, and other packages you use most frequently.'
-					) }
+					)}
 				>
-					<Button onClick={ addPackage } disabled={ isFetching }>
-						{ translate( 'Add package' ) }
+					<Button onClick={addPackage} disabled={isFetching}>
+						{translate('Add package')}
 					</Button>
 				</ExtendedHeader>
 				<Card className="packages__packages">
-					{ this.renderListHeader( packages ) }
-					{ packages.map( this.renderListItem ) }
-					{ ! isFetching && <PackageDialog { ...this.props } /> }
+					{this.renderListHeader(packages)}
+					{packages.map(this.renderListItem)}
+					{!isFetching && <PackageDialog {...this.props} />}
 				</Card>
 			</div>
 		);
@@ -129,28 +129,28 @@ Packages.propTypes = {
 	toggleOuterDimensions: PropTypes.func.isRequired,
 	setModalErrors: PropTypes.func.isRequired,
 	showModal: PropTypes.bool,
-	form: PropTypes.shape( {
+	form: PropTypes.shape({
 		packages: PropTypes.object,
 		dimensionUnit: PropTypes.string,
 		weightUnit: PropTypes.string,
 		packageSchema: PropTypes.object,
-		predefinedSchema: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
-	} ).isRequired,
+		predefinedSchema: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+	}).isRequired,
 };
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const form = getPackagesForm( state, siteId ) || {};
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const form = getPackagesForm(state, siteId) || {};
 		return {
 			siteId,
-			isFetching: ! form.packages || form.isFetching,
-			fetchError: isFetchError( state, siteId ),
+			isFetching: !form.packages || form.isFetching,
+			fetchError: isFetchError(state, siteId),
 			form,
-			allSelectedPackages: getAllSelectedPackages( state, siteId ) || [],
+			allSelectedPackages: getAllSelectedPackages(state, siteId) || [],
 		};
 	},
-	dispatch => ( {
-		...bindActionCreators( PackagesActions, dispatch ),
-	} )
-)( localize( Packages ) );
+	(dispatch) => ({
+		...bindActionCreators(PackagesActions, dispatch),
+	})
+)(localize(Packages));

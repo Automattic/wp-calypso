@@ -50,28 +50,28 @@ class SiteSelectorModal extends Component {
 		siteId: this.props.initialSiteId,
 	};
 
-	setSite = siteId => {
-		this.setState( { siteId } );
+	setSite = (siteId) => {
+		this.setState({ siteId });
 	};
 
-	onClose = action => {
-		if ( 'mainAction' === action ) {
-			this.props.mainAction( this.state.siteId );
+	onClose = (action) => {
+		if ('mainAction' === action) {
+			this.props.mainAction(this.state.siteId);
 		}
 
 		this.props.hide();
 	};
 
 	onButtonClick = () => {
-		this.props.mainAction( this.state.siteId );
+		this.props.mainAction(this.state.siteId);
 	};
 
 	getMainLink() {
-		const url = this.props.getMainUrl && this.props.getMainUrl( this.state.siteId );
+		const url = this.props.getMainUrl && this.props.getMainUrl(this.state.siteId);
 
 		return url ? (
-			<Button primary href={ url } onClick={ this.onButtonClick }>
-				{ this.props.mainActionLabel }
+			<Button primary href={url} onClick={this.onButtonClick}>
+				{this.props.mainActionLabel}
 			</Button>
 		) : (
 			{ action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true }
@@ -80,40 +80,38 @@ class SiteSelectorModal extends Component {
 
 	render() {
 		const mainLink = this.getMainLink();
-		const buttons = [ { action: 'back', label: this.props.translate( 'Back' ) }, mainLink ];
-		const classNames = classnames( 'site-selector-modal', this.props.className );
+		const buttons = [{ action: 'back', label: this.props.translate('Back') }, mainLink];
+		const classNames = classnames('site-selector-modal', this.props.className);
 
 		return (
 			<Dialog
-				className={ classNames }
-				isVisible={ this.props.isVisible }
-				buttons={ buttons }
-				onClose={ this.onClose }
+				className={classNames}
+				isVisible={this.props.isVisible}
+				buttons={buttons}
+				onClose={this.onClose}
 			>
-				<div className="site-selector-modal__content">{ this.props.children }</div>
+				<div className="site-selector-modal__content">{this.props.children}</div>
 				<SitesDropdown
-					onSiteSelect={ this.setSite }
-					selectedSiteId={ this.state.siteId }
-					filter={ this.props.filter }
+					onSiteSelect={this.setSite}
+					selectedSiteId={this.state.siteId}
+					filter={this.props.filter}
 				/>
 			</Dialog>
 		);
 	}
 }
 
-export default connect( ( state, { filter } ) => {
-	const primarySiteId = getPrimarySiteId( state );
-	const visibleSites = getVisibleSites( state );
+export default connect((state, { filter }) => {
+	const primarySiteId = getPrimarySiteId(state);
+	const visibleSites = getVisibleSites(state);
 
-	let filteredSiteIds = visibleSites.map( site => site.ID );
+	let filteredSiteIds = visibleSites.map((site) => site.ID);
 
-	if ( filter ) {
-		filteredSiteIds = filteredSiteIds.filter( filter );
+	if (filter) {
+		filteredSiteIds = filteredSiteIds.filter(filter);
 	}
 
 	return {
-		initialSiteId: includes( filteredSiteIds, primarySiteId )
-			? primarySiteId
-			: filteredSiteIds[ 0 ],
+		initialSiteId: includes(filteredSiteIds, primarySiteId) ? primarySiteId : filteredSiteIds[0],
 	};
-} )( localize( SiteSelectorModal ) );
+})(localize(SiteSelectorModal));

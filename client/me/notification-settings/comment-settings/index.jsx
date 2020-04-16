@@ -35,15 +35,15 @@ class NotificationCommentsSettings extends Component {
 	}
 
 	renderForm = () => {
-		if ( this.props.settings ) {
+		if (this.props.settings) {
 			return (
 				<SettingsForm
-					sourceId={ 'other' }
-					settings={ this.props.settings }
-					settingKeys={ [ 'comment_like', 'comment_reply' ] }
-					hasUnsavedChanges={ this.props.hasUnsavedChanges }
-					onToggle={ ( source, stream, setting ) => this.props.toggle( source, stream, setting ) }
-					onSave={ () => this.props.saveSettings( 'other', this.props.settings ) }
+					sourceId={'other'}
+					settings={this.props.settings}
+					settingKeys={['comment_like', 'comment_reply']}
+					hasUnsavedChanges={this.props.hasUnsavedChanges}
+					onToggle={(source, stream, setting) => this.props.toggle(source, stream, setting)}
+					onSave={() => this.props.saveSettings('other', this.props.settings)}
 				/>
 			);
 		}
@@ -62,16 +62,14 @@ class NotificationCommentsSettings extends Component {
 				/>
 				<QueryUserDevices />
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 
-				<Navigation path={ path } />
+				<Navigation path={path} />
 
 				<Card>
-					<FormSectionHeading>{ translate( 'Comments on other sites' ) }</FormSectionHeading>
-					<p>
-						{ translate( 'Control your notification settings when you comment on other blogs.' ) }
-					</p>
-					{ this.renderForm() }
+					<FormSectionHeading>{translate('Comments on other sites')}</FormSectionHeading>
+					<p>{translate('Control your notification settings when you comment on other blogs.')}</p>
+					{this.renderForm()}
 				</Card>
 			</Main>
 		);
@@ -79,9 +77,9 @@ class NotificationCommentsSettings extends Component {
 }
 
 export default connect(
-	state => ( {
-		settings: getNotificationSettings( state, 'other' ),
-		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'other' ),
-	} ),
+	(state) => ({
+		settings: getNotificationSettings(state, 'other'),
+		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges(state, 'other'),
+	}),
 	{ fetchSettings, toggle, saveSettings }
-)( localize( NotificationCommentsSettings ) );
+)(localize(NotificationCommentsSettings));

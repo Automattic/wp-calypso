@@ -14,22 +14,22 @@ import { requestSiteSettings } from 'state/site-settings/actions';
 
 class QuerySiteSettings extends Component {
 	UNSAFE_componentWillMount() {
-		this.requestSettings( this.props );
+		this.requestSettings(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId } = this.props;
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
+		if (!nextProps.siteId || siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.requestSettings( nextProps );
+		this.requestSettings(nextProps);
 	}
 
-	requestSettings( props ) {
+	requestSettings(props) {
 		const { requestingSiteSettings, siteId } = props;
-		if ( ! requestingSiteSettings && siteId ) {
-			props.requestSiteSettings( siteId );
+		if (!requestingSiteSettings && siteId) {
+			props.requestSiteSettings(siteId);
 		}
 	}
 
@@ -45,10 +45,10 @@ QuerySiteSettings.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	(state, { siteId }) => {
 		return {
-			requestingSiteSettings: isRequestingSiteSettings( state, siteId ),
+			requestingSiteSettings: isRequestingSiteSettings(state, siteId),
 		};
 	},
 	{ requestSiteSettings }
-)( QuerySiteSettings );
+)(QuerySiteSettings);

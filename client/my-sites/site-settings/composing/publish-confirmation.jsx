@@ -23,38 +23,38 @@ import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 
 class PublishConfirmation extends Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = { isToggleOn: props.publishConfirmationEnabled };
-		this.handleToggle = this.handleToggle.bind( this );
+		this.handleToggle = this.handleToggle.bind(this);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.publishConfirmationEnabled !== this.state.isToggleOn ) {
-			this.setState( { isToggleOn: nextProps.publishConfirmationEnabled } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.publishConfirmationEnabled !== this.state.isToggleOn) {
+			this.setState({ isToggleOn: nextProps.publishConfirmationEnabled });
 		}
 	}
 
 	handleToggle() {
 		const { siteId, savePublishConfirmationPreference } = this.props;
-		const isToggleOn = ! this.state.isToggleOn;
-		this.setState( { isToggleOn: isToggleOn } );
-		savePublishConfirmationPreference( siteId, isToggleOn );
+		const isToggleOn = !this.state.isToggleOn;
+		this.setState({ isToggleOn: isToggleOn });
+		savePublishConfirmationPreference(siteId, isToggleOn);
 	}
 
 	render() {
 		const { fetchingPreferences, translate, showPublishFlow } = this.props;
 
-		if ( showPublishFlow ) {
+		if (showPublishFlow) {
 			return (
 				<FormFieldset>
-					<FormLabel>{ translate( 'Show Publish Confirmation' ) }</FormLabel>
+					<FormLabel>{translate('Show Publish Confirmation')}</FormLabel>
 					<FormSettingExplanation isIndented>
-						{ translate(
+						{translate(
 							'The Block Editor handles the Publish confirmation setting. ' +
 								'To enable it, go to Options under the Ellipses menu in the Editor ' +
 								'and check "Enable Pre-publish checks."'
-						) }
+						)}
 					</FormSettingExplanation>
 				</FormFieldset>
 			);
@@ -64,18 +64,18 @@ class PublishConfirmation extends Component {
 			<FormFieldset className="composing__publish-confirmation has-divider is-bottom-only">
 				<QueryPreferences />
 				<CompactFormToggle
-					checked={ this.state.isToggleOn }
-					disabled={ fetchingPreferences }
-					onChange={ this.handleToggle }
+					checked={this.state.isToggleOn}
+					disabled={fetchingPreferences}
+					onChange={this.handleToggle}
 				>
-					{ translate( 'Show publish confirmation' ) }
+					{translate('Show publish confirmation')}
 				</CompactFormToggle>
 
 				<FormSettingExplanation isIndented>
-					{ translate(
+					{translate(
 						'This adds a confirmation step with helpful settings and tips ' +
 							'for double-checking your content before publishing.'
-					) }
+					)}
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
@@ -95,17 +95,17 @@ PublishConfirmation.propTypes = {
 };
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
 			siteId,
-			fetchingPreferences: isFetchingPreferences( state ),
-			publishConfirmationEnabled: isConfirmationSidebarEnabled( state, siteId ),
-			showPublishFlow: shouldLoadGutenberg( state, siteId ),
+			fetchingPreferences: isFetchingPreferences(state),
+			publishConfirmationEnabled: isConfirmationSidebarEnabled(state, siteId),
+			showPublishFlow: shouldLoadGutenberg(state, siteId),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				savePublishConfirmationPreference: saveConfirmationSidebarPreference,
@@ -113,4 +113,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( localize( PublishConfirmation ) );
+)(localize(PublishConfirmation));

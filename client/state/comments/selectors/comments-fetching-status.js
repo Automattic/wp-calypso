@@ -12,10 +12,10 @@ import { getStateKey } from 'state/comments/utils';
 
 import 'state/comments/init';
 
-export function commentsFetchingStatus( state, siteId, postId, commentTotal = 0 ) {
+export function commentsFetchingStatus(state, siteId, postId, commentTotal = 0) {
 	const fetchStatus =
-		state.comments.fetchStatus[ getStateKey( siteId, postId ) ] ?? fetchStatusInitialState;
-	const hasMoreComments = commentTotal > size( getPostCommentItems( state, siteId, postId ) );
+		state.comments.fetchStatus[getStateKey(siteId, postId)] ?? fetchStatusInitialState;
+	const hasMoreComments = commentTotal > size(getPostCommentItems(state, siteId, postId));
 
 	return {
 		haveEarlierCommentsToFetch: fetchStatus.before && hasMoreComments,

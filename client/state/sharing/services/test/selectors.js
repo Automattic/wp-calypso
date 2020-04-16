@@ -14,7 +14,7 @@ import {
 	isKeyringServicesFetching,
 } from '../selectors';
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	const defaultState = {
 		sharing: {
 			services: {
@@ -50,17 +50,17 @@ describe( 'selectors', () => {
 		},
 	};
 
-	describe( 'getKeyringServices()', () => {
-		test( 'should return empty object if there are no services', () => {
-			const services = getKeyringServices( defaultState );
+	describe('getKeyringServices()', () => {
+		test('should return empty object if there are no services', () => {
+			const services = getKeyringServices(defaultState);
 
-			expect( services ).to.be.empty;
-		} );
+			expect(services).to.be.empty;
+		});
 
-		test( 'should return the keyring services', () => {
-			const services = getKeyringServices( activeState );
+		test('should return the keyring services', () => {
+			const services = getKeyringServices(activeState);
 
-			expect( services ).to.eql( {
+			expect(services).to.eql({
 				facebook: {
 					ID: 'facebook',
 					jetpack_support: true,
@@ -77,42 +77,42 @@ describe( 'selectors', () => {
 					jetpack_module_required: 'publicize',
 					type: 'other',
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'getKeyringServicesByType()', () => {
-		test( 'should return empty object if there are no services', () => {
-			const services = getKeyringServicesByType( defaultState, 'other' );
+	describe('getKeyringServicesByType()', () => {
+		test('should return empty object if there are no services', () => {
+			const services = getKeyringServicesByType(defaultState, 'other');
 
-			expect( services ).to.be.empty;
-		} );
+			expect(services).to.be.empty;
+		});
 
-		test( 'should return the keyring services with the correct type', () => {
-			const services = getKeyringServicesByType( activeState, 'publicize' );
+		test('should return the keyring services with the correct type', () => {
+			const services = getKeyringServicesByType(activeState, 'publicize');
 
-			expect( services ).to.eql( [
+			expect(services).to.eql([
 				{ ID: 'facebook', type: 'publicize', jetpack_support: true },
 				{ ID: 'twitter', type: 'publicize', jetpack_support: true },
-			] );
-		} );
-	} );
+			]);
+		});
+	});
 
-	describe( 'getKeyringServiceByName()', () => {
-		test( 'should return false if there is no service', () => {
-			const service = getKeyringServiceByName( defaultState, 'thingy' );
+	describe('getKeyringServiceByName()', () => {
+		test('should return false if there is no service', () => {
+			const service = getKeyringServiceByName(defaultState, 'thingy');
 
-			expect( service ).to.be.false;
-		} );
+			expect(service).to.be.false;
+		});
 
-		test( 'should return the named keyring service', () => {
-			const service = getKeyringServiceByName( activeState, 'facebook' );
+		test('should return the named keyring service', () => {
+			const service = getKeyringServiceByName(activeState, 'facebook');
 
-			expect( service ).to.eql( activeState.sharing.services.items.facebook );
-		} );
-	} );
+			expect(service).to.eql(activeState.sharing.services.items.facebook);
+		});
+	});
 
-	describe( 'getEligibleKeyringServices()', () => {
+	describe('getEligibleKeyringServices()', () => {
 		const state = {
 			...activeState,
 			currentUser: {
@@ -131,7 +131,7 @@ describe( 'selectors', () => {
 						URL: 'https://example.com',
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							active_modules: [ 'publicize' ],
+							active_modules: ['publicize'],
 						},
 						jetpack: true,
 					},
@@ -142,73 +142,73 @@ describe( 'selectors', () => {
 			},
 		};
 
-		test( 'should return empty object if there are no services', () => {
-			const services = getEligibleKeyringServices( defaultState, 2916284, 'other' );
+		test('should return empty object if there are no services', () => {
+			const services = getEligibleKeyringServices(defaultState, 2916284, 'other');
 
-			expect( services ).to.eql( [] );
-		} );
+			expect(services).to.eql([]);
+		});
 
-		test( 'should return the keyring services with the correct type', () => {
-			const services = getEligibleKeyringServices( state, 2916284, 'publicize' );
+		test('should return the keyring services with the correct type', () => {
+			const services = getEligibleKeyringServices(state, 2916284, 'publicize');
 
-			expect( services ).to.eql( [
+			expect(services).to.eql([
 				{ ID: 'facebook', type: 'publicize', jetpack_support: true },
 				{ ID: 'twitter', type: 'publicize', jetpack_support: true },
-			] );
-		} );
+			]);
+		});
 
-		test( 'should omit publicize services if user can not publish_posts', () => {
-			state.currentUser.capabilities[ 2916284 ].publish_posts = false;
-			const services = getEligibleKeyringServices( state, 2916284, 'publicize' );
-			state.currentUser.capabilities[ 2916284 ].publish_posts = true;
+		test('should omit publicize services if user can not publish_posts', () => {
+			state.currentUser.capabilities[2916284].publish_posts = false;
+			const services = getEligibleKeyringServices(state, 2916284, 'publicize');
+			state.currentUser.capabilities[2916284].publish_posts = true;
 
-			expect( services ).to.eql( [] );
-		} );
+			expect(services).to.eql([]);
+		});
 
-		test( 'should include services if required module is activated', () => {
-			const services = getEligibleKeyringServices( state, 2916284, 'other' );
-			expect( services ).to.eql( [
+		test('should include services if required module is activated', () => {
+			const services = getEligibleKeyringServices(state, 2916284, 'other');
+			expect(services).to.eql([
 				{
 					ID: 'google-photos',
 					jetpack_support: true,
 					jetpack_module_required: 'publicize',
 					type: 'other',
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'should omit services if required module is not activated', () => {
-			state.sites.items[ 2916284 ].options.active_modules = [];
-			const services = getEligibleKeyringServices( state, 2916284, 'other' );
-			state.sites.items[ 2916284 ].options.active_modules = [ 'publicize' ];
+		test('should omit services if required module is not activated', () => {
+			state.sites.items[2916284].options.active_modules = [];
+			const services = getEligibleKeyringServices(state, 2916284, 'other');
+			state.sites.items[2916284].options.active_modules = ['publicize'];
 
-			expect( services ).to.eql( [] );
-		} );
-	} );
+			expect(services).to.eql([]);
+		});
+	});
 
-	describe( 'isKeyringServicesFetching()', () => {
-		test( 'should return false if there are no services', () => {
-			const isRequesting = isKeyringServicesFetching( defaultState );
+	describe('isKeyringServicesFetching()', () => {
+		test('should return false if there are no services', () => {
+			const isRequesting = isKeyringServicesFetching(defaultState);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if a request is in progress for the site', () => {
-			const isRequesting = isKeyringServicesFetching( activeState );
+		test('should return true if a request is in progress for the site', () => {
+			const isRequesting = isKeyringServicesFetching(activeState);
 
-			expect( isRequesting ).to.be.true;
-		} );
+			expect(isRequesting).to.be.true;
+		});
 
-		test( 'should return false if a request has completed for the site', () => {
-			const isRequesting = isKeyringServicesFetching( {
+		test('should return false if a request has completed for the site', () => {
+			const isRequesting = isKeyringServicesFetching({
 				sharing: {
 					services: {
 						isFetching: false,
 					},
 				},
-			} );
+			});
 
-			expect( isRequesting ).to.be.false;
-		} );
-	} );
-} );
+			expect(isRequesting).to.be.false;
+		});
+	});
+});

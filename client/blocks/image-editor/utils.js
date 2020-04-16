@@ -23,12 +23,12 @@ import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/c
  * @param   {Array}  aspectRatios list of aspect ratios to be validated and used in image editor
  * @returns {string}              the default valid aspect ratio image editor should use
  */
-export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = AspectRatiosValues ) {
-	if ( ! includes( aspectRatios, aspectRatio ) ) {
-		aspectRatio = get( aspectRatios, '0', AspectRatios.FREE );
+export function getDefaultAspectRatio(aspectRatio = null, aspectRatios = AspectRatiosValues) {
+	if (!includes(aspectRatios, aspectRatio)) {
+		aspectRatio = get(aspectRatios, '0', AspectRatios.FREE);
 	}
 
-	return includes( AspectRatiosValues, aspectRatio )
+	return includes(AspectRatiosValues, aspectRatio)
 		? aspectRatio
-		: getDefaultAspectRatio( aspectRatio );
+		: getDefaultAspectRatio(aspectRatio);
 }

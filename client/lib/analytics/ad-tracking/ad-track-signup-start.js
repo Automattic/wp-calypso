@@ -11,11 +11,11 @@ import { recordParamsInFloodlightGtag } from './floodlight';
 // Ensure setup has run.
 import './setup';
 
-export async function adTrackSignupStart( flow ) {
+export async function adTrackSignupStart(flow) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'adTrackSignupStart: [Skipping] ad tracking is not allowed' );
+	if (!isAdTrackingAllowed()) {
+		debug('adTrackSignupStart: [Skipping] ad tracking is not allowed');
 		return;
 	}
 
@@ -24,22 +24,22 @@ export async function adTrackSignupStart( flow ) {
 
 	// Floodlight.
 
-	if ( isFloodlightEnabled ) {
-		debug( 'adTrackSignupStart: [Floodlight]' );
-		recordParamsInFloodlightGtag( {
+	if (isFloodlightEnabled) {
+		debug('adTrackSignupStart: [Floodlight]');
+		recordParamsInFloodlightGtag({
 			send_to: 'DC-6355556/wordp0/pre-p0+unique',
-		} );
+		});
 	}
-	if ( isFloodlightEnabled && ! currentUser && 'onboarding' === flow ) {
-		debug( 'adTrackSignupStart: [Floodlight]' );
-		recordParamsInFloodlightGtag( {
+	if (isFloodlightEnabled && !currentUser && 'onboarding' === flow) {
+		debug('adTrackSignupStart: [Floodlight]');
+		recordParamsInFloodlightGtag({
 			send_to: 'DC-6355556/wordp0/landi00+unique',
-		} );
+		});
 	}
 
 	// Google Ads.
 
-	if ( isWpcomGoogleAdsGtagEnabled && ! currentUser && 'onboarding' === flow ) {
+	if (isWpcomGoogleAdsGtagEnabled && !currentUser && 'onboarding' === flow) {
 		const params = [
 			'event',
 			'conversion',
@@ -47,7 +47,7 @@ export async function adTrackSignupStart( flow ) {
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagSignupStart,
 			},
 		];
-		debug( 'adTrackSignupStart: [Google Ads Gtag]', params );
-		window.gtag( ...params );
+		debug('adTrackSignupStart: [Google Ads Gtag]', params);
+		window.gtag(...params);
 	}
 }

@@ -8,12 +8,12 @@ import { expect } from 'chai';
  */
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 
-describe( 'canCurrentUserEditPost()', () => {
+describe('canCurrentUserEditPost()', () => {
 	const fakeGlobalId = 'abcdef1234';
 	const fakeSiteId = 1;
 	const fakePostId = 2;
 
-	test( 'should return null if the post is not known', () => {
+	test('should return null if the post is not known', () => {
 		const canEdit = canCurrentUserEditPost(
 			{
 				posts: {
@@ -24,20 +24,20 @@ describe( 'canCurrentUserEditPost()', () => {
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.null;
-	} );
+		expect(canEdit).to.be.null;
+	});
 
-	test( 'should return null if the post capabilities are not known', () => {
+	test('should return null if the post capabilities are not known', () => {
 		const canEdit = canCurrentUserEditPost(
 			{
 				posts: {
 					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
+						[fakeGlobalId]: [fakeSiteId, fakePostId],
 					},
 					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
+						[fakeSiteId]: {
+							getItem(postId) {
+								if (postId === fakePostId) {
 									return {
 										type: 'post',
 									};
@@ -52,20 +52,20 @@ describe( 'canCurrentUserEditPost()', () => {
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.null;
-	} );
+		expect(canEdit).to.be.null;
+	});
 
-	test( 'should allow based on the post capabilities', () => {
+	test('should allow based on the post capabilities', () => {
 		const canEdit = canCurrentUserEditPost(
 			{
 				posts: {
 					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
+						[fakeGlobalId]: [fakeSiteId, fakePostId],
 					},
 					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
+						[fakeSiteId]: {
+							getItem(postId) {
+								if (postId === fakePostId) {
 									return {
 										type: 'post',
 										capabilities: {
@@ -83,20 +83,20 @@ describe( 'canCurrentUserEditPost()', () => {
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.true;
-	} );
+		expect(canEdit).to.be.true;
+	});
 
-	test( 'should deny based on the post capabilities', () => {
+	test('should deny based on the post capabilities', () => {
 		const canEdit = canCurrentUserEditPost(
 			{
 				posts: {
 					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
+						[fakeGlobalId]: [fakeSiteId, fakePostId],
 					},
 					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
+						[fakeSiteId]: {
+							getItem(postId) {
+								if (postId === fakePostId) {
 									return {
 										type: 'post',
 										capabilities: {
@@ -114,6 +114,6 @@ describe( 'canCurrentUserEditPost()', () => {
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.false;
-	} );
-} );
+		expect(canEdit).to.be.false;
+	});
+});

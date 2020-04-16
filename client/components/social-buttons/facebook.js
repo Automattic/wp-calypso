@@ -45,11 +45,11 @@ class FacebookLoginButton extends Component {
 		onClick: noop,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.initialized = null;
-		this.handleClick = this.handleClick.bind( this );
+		this.handleClick = this.handleClick.bind(this);
 	}
 
 	UNSAFE_componentWillMount() {
@@ -57,74 +57,74 @@ class FacebookLoginButton extends Component {
 	}
 
 	async loadDependency() {
-		if ( ! window.FB ) {
-			await loadScript( '//connect.facebook.net/en_US/sdk.js' );
+		if (!window.FB) {
+			await loadScript('//connect.facebook.net/en_US/sdk.js');
 		}
 
 		return window.FB;
 	}
 
 	initialize() {
-		if ( this.initialized ) {
+		if (this.initialized) {
 			return this.initialized;
 		}
 
 		this.initialized = this.loadDependency()
-			.then( FB => {
-				FB.init( {
+			.then((FB) => {
+				FB.init({
 					appId: this.props.appId,
 					version: this.props.version,
 					cookie: this.props.cookie,
 					xfbml: this.props.xfbml,
-				} );
+				});
 
 				return FB;
-			} )
-			.catch( error => {
+			})
+			.catch((error) => {
 				this.initialized = null;
 
-				return Promise.reject( error );
-			} );
+				return Promise.reject(error);
+			});
 
 		return this.initialized;
 	}
 
-	handleClick( event ) {
+	handleClick(event) {
 		event.preventDefault();
 
-		this.props.onClick( event );
+		this.props.onClick(event);
 
 		const { responseHandler, scope } = this.props;
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.initialize().then( FB => {
+		this.initialize().then((FB) => {
 			FB.login(
-				response => {
-					responseHandler( response );
+				(response) => {
+					responseHandler(response);
 				},
 				{ scope }
 			);
-		} );
+		});
 	}
 
 	render() {
-		const isDisabled = Boolean( this.props.isFormDisabled );
+		const isDisabled = Boolean(this.props.isFormDisabled);
 
 		return (
 			<div className="social-buttons__button-container">
 				<button
-					className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-					onClick={ this.handleClick }
+					className={classNames('social-buttons__button button', { disabled: isDisabled })}
+					onClick={this.handleClick}
 				>
 					<FacebookIcon />
 
 					<span className="social-buttons__service-name">
-						{ this.props.translate( 'Continue with %(service)s', {
+						{this.props.translate('Continue with %(service)s', {
 							args: { service: 'Facebook' },
 							comment:
 								'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-						} ) }
+						})}
 					</span>
 				</button>
 			</div>
@@ -132,6 +132,6 @@ class FacebookLoginButton extends Component {
 	}
 }
 
-export default connect( state => ( {
-	isFormDisabled: isFormDisabled( state ),
-} ) )( localize( FacebookLoginButton ) );
+export default connect((state) => ({
+	isFormDisabled: isFormDisabled(state),
+}))(localize(FacebookLoginButton));

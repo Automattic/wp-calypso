@@ -38,41 +38,41 @@ class UpworkStatsNudge extends Component {
 		this.recordView();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId) {
 			this.recordView();
 		}
 	}
 
 	recordView() {
-		if ( this.isVisible() ) {
-			this.props.recordTracksEvent( 'calypso_upwork_stats_nudge_view' );
+		if (this.isVisible()) {
+			this.props.recordTracksEvent('calypso_upwork_stats_nudge_view');
 		}
 	}
 
-	recordClick = eventName => {
+	recordClick = (eventName) => {
 		const plan = this.props.plan ? this.props.plan.productSlug : '';
 
-		this.props.recordTracksEvent( eventName, { plan } );
+		this.props.recordTracksEvent(eventName, { plan });
 	};
 
 	onDismissClick = () => {
-		this.recordClick( 'calypso_upwork_stats_nudge_dismiss_icon_click' );
+		this.recordClick('calypso_upwork_stats_nudge_dismiss_icon_click');
 		this.props.dismissNudge();
 	};
 
 	onStartNowClick = () => {
-		this.recordClick( 'calypso_upwork_stats_nudge_start_now_button_click' );
+		this.recordClick('calypso_upwork_stats_nudge_start_now_button_click');
 	};
 
 	isVisible() {
-		return ! this.props.isDismissed;
+		return !this.props.isDismissed;
 	}
 
 	render() {
 		const { translate } = this.props;
 
-		if ( ! this.isVisible() ) {
+		if (!this.isVisible()) {
 			return null;
 		}
 
@@ -83,12 +83,12 @@ class UpworkStatsNudge extends Component {
 				<Gridicon
 					icon="cross"
 					className="upwork-stats-nudge__close-icon"
-					onClick={ this.onDismissClick }
+					onClick={this.onDismissClick}
 				/>
 
 				<SectionHeader
 					className="upwork-stats-nudge__header"
-					label={ translate( 'Recommendations from WordPress.com' ) }
+					label={translate('Recommendations from WordPress.com')}
 				/>
 
 				<div className="upwork-stats-nudge__body">
@@ -96,28 +96,28 @@ class UpworkStatsNudge extends Component {
 						<img
 							className="upwork-stats-nudge__image"
 							src="/calypso/images/upwork/illustration-builder-referral.svg"
-							alt={ translate( 'Build your dream site with Upwork' ) }
+							alt={translate('Build your dream site with Upwork')}
 						/>
 					</div>
 
 					<div className="upwork-stats-nudge__info">
 						<h1 className="upwork-stats-nudge__title">
-							{ translate( 'Need an expert to help realize your vision? Hire one!' ) }
+							{translate('Need an expert to help realize your vision? Hire one!')}
 						</h1>
 						<p>
-							{ translate(
+							{translate(
 								"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
-							) }
+							)}
 						</p>
 						<div className="upwork-stats-nudge__button-row">
 							<Button
-								href={ '/experts/upwork?source=stat-banner' }
-								primary={ this.props.primaryButton }
-								onClick={ this.onStartNowClick }
+								href={'/experts/upwork?source=stat-banner'}
+								primary={this.props.primaryButton}
+								onClick={this.onStartNowClick}
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{ translate( 'Find your expert' ) }
+								{translate('Find your expert')}
 							</Button>
 						</div>
 					</div>
@@ -128,12 +128,12 @@ class UpworkStatsNudge extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		isDismissed: isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
-		plan: getCurrentPlan( state, ownProps.siteId ),
-	} ),
+	(state, ownProps) => ({
+		isDismissed: isUpworkStatsNudgeDismissed(state, ownProps.siteId),
+		plan: getCurrentPlan(state, ownProps.siteId),
+	}),
 	{
 		dismissNudge,
-		recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
+		recordTracksEvent: withEnhancers(recordTracksEvent, [enhanceWithSiteType]),
 	}
-)( localize( UpworkStatsNudge ) );
+)(localize(UpworkStatsNudge));

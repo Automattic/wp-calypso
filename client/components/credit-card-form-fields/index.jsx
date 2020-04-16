@@ -23,9 +23,9 @@ import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-spec
 import FormInputValidation from 'components/forms/form-input-validation';
 import { useStripe } from 'lib/stripe';
 
-const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
-const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
-const CardCvcElementWithValidation = withStripeElementValidation( CardCvcElement );
+const CardNumberElementWithValidation = withStripeElementValidation(CardNumberElement);
+const CardExpiryElementWithValidation = withStripeElementValidation(CardExpiryElement);
+const CardCvcElementWithValidation = withStripeElementValidation(CardCvcElement);
 
 /**
  * Style dependencies
@@ -38,15 +38,15 @@ import './style.scss';
 import creditCardSecurityBackImage from 'assets/images/upgrades/cc-cvv-back.svg';
 import creditCardSecurityFrontImage from 'assets/images/upgrades/cc-cvv-front.svg';
 
-function CvvPopover( { translate, card } ) {
-	const brand = getCreditCardType( card.number );
+function CvvPopover({ translate, card }) {
+	const brand = getCreditCardType(card.number);
 
 	let popoverText = translate(
 		'This is the 3-digit number printed on the signature panel on the back of your card.'
 	);
 	let popoverImage = creditCardSecurityBackImage;
 
-	if ( brand === 'amex' ) {
+	if (brand === 'amex') {
 		popoverText = translate(
 			'This is the 4-digit number printed above the account number ' + 'on the front of your card.'
 		);
@@ -57,12 +57,12 @@ function CvvPopover( { translate, card } ) {
 		<InfoPopover position="top" className="credit-card-form-fields__cvv-info">
 			<img
 				className="credit-card-form-fields__cvv-illustration"
-				src={ popoverImage }
+				src={popoverImage}
 				width="42"
 				height="30"
-				alt={ translate( 'Credit card Security Code illustration' ) }
+				alt={translate('Credit card Security Code illustration')}
 			/>
-			{ popoverText }
+			{popoverText}
 		</InfoPopover>
 	);
 }
@@ -72,36 +72,36 @@ CvvPopover.propTypes = {
 	card: PropTypes.object.isRequired,
 };
 
-function withStripeElementValidation( ElementComponent ) {
-	return ( { getErrorMessage, fieldName, ...props } ) => {
-		const [ errorMessage, setErrorMessage ] = useState();
-		const onChange = ( { error } ) => setErrorMessage( error ? error.message : null );
+function withStripeElementValidation(ElementComponent) {
+	return ({ getErrorMessage, fieldName, ...props }) => {
+		const [errorMessage, setErrorMessage] = useState();
+		const onChange = ({ error }) => setErrorMessage(error ? error.message : null);
 		return (
 			<React.Fragment>
-				<ElementComponent onChange={ onChange } { ...props } />
+				<ElementComponent onChange={onChange} {...props} />
 				<StripeElementErrors
-					errorMessage={ errorMessage }
-					getErrorMessage={ getErrorMessage }
-					fieldName={ fieldName }
+					errorMessage={errorMessage}
+					getErrorMessage={getErrorMessage}
+					fieldName={fieldName}
 				/>
 			</React.Fragment>
 		);
 	};
 }
 
-function StripeElementErrors( { errorMessage, getErrorMessage, fieldName } ) {
+function StripeElementErrors({ errorMessage, getErrorMessage, fieldName }) {
 	// If `errorMessage` is set, it will be displayed; otherwise the
 	// `getErrorMessage` function will be called for the `fieldName` to determine
 	// the error message.
-	if ( ! errorMessage ) {
-		const errorMessages = getErrorMessage( fieldName ) || [];
-		errorMessage = errorMessages.length ? errorMessages[ 0 ] : null;
+	if (!errorMessage) {
+		const errorMessages = getErrorMessage(fieldName) || [];
+		errorMessage = errorMessages.length ? errorMessages[0] : null;
 	}
-	if ( ! errorMessage ) {
+	if (!errorMessage) {
 		return null;
 	}
-	const id = `validation-field-${ fieldName }`;
-	return <FormInputValidation id={ id } isError text={ errorMessage } />;
+	const id = `validation-field-${fieldName}`;
+	return <FormInputValidation id={id} isError text={errorMessage} />;
 }
 
 StripeElementErrors.propTypes = {
@@ -110,13 +110,13 @@ StripeElementErrors.propTypes = {
 	fieldName: PropTypes.string.isRequired,
 };
 
-function CreditCardNumberField( { translate, createField, getErrorMessage, card } ) {
+function CreditCardNumberField({ translate, createField, getErrorMessage, card }) {
 	const { stripe, isStripeLoading, stripeLoadingError } = useStripe();
-	const cardNumberLabel = translate( 'Card Number', {
+	const cardNumberLabel = translate('Card Number', {
 		comment: 'Card number label on credit card form',
-	} );
+	});
 
-	if ( stripe && ! shouldRenderAdditionalCountryFields( card.country ) ) {
+	if (stripe && !shouldRenderAdditionalCountryFields(card.country)) {
 		const elementClasses = {
 			base: 'credit-card-form-fields__element',
 			invalid: 'is-error',
@@ -125,11 +125,11 @@ function CreditCardNumberField( { translate, createField, getErrorMessage, card 
 		return (
 			<div className="credit-card-form-fields__field number">
 				<label className="credit-card-form-fields__label form-label">
-					{ cardNumberLabel }
+					{cardNumberLabel}
 					<CardNumberElementWithValidation
 						fieldName="card_number"
-						getErrorMessage={ getErrorMessage }
-						classes={ elementClasses }
+						getErrorMessage={getErrorMessage}
+						classes={elementClasses}
 					/>
 				</label>
 			</div>
@@ -138,15 +138,15 @@ function CreditCardNumberField( { translate, createField, getErrorMessage, card 
 
 	const disabled =
 		isStripeLoading || stripeLoadingError
-			? ! shouldRenderAdditionalCountryFields( card.country )
+			? !shouldRenderAdditionalCountryFields(card.country)
 			: false;
 
-	return createField( 'number', CreditCardNumberInput, {
+	return createField('number', CreditCardNumberInput, {
 		inputMode: 'numeric',
 		label: cardNumberLabel,
 		placeholder: '•••• •••• •••• ••••',
 		disabled,
-	} );
+	});
 }
 
 CreditCardNumberField.propTypes = {
@@ -156,23 +156,23 @@ CreditCardNumberField.propTypes = {
 	card: PropTypes.object.isRequired,
 };
 
-function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage, card } ) {
+function CreditCardExpiryAndCvvFields({ translate, createField, getErrorMessage, card }) {
 	const { stripe, isStripeLoading, stripeLoadingError } = useStripe();
-	if ( stripeLoadingError && ! shouldRenderAdditionalCountryFields( card.country ) ) {
-		notices.error( stripeLoadingError.message || 'Error loading Stripe' );
+	if (stripeLoadingError && !shouldRenderAdditionalCountryFields(card.country)) {
+		notices.error(stripeLoadingError.message || 'Error loading Stripe');
 	}
 
-	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
+	const cvcLabel = translate('Security Code {{span}}("CVC" or "CVV"){{/span}}', {
 		components: {
 			span: <span className="credit-card-form-fields__explainer" />,
 		},
-	} );
+	});
 
-	const expiryLabel = translate( 'Expiry Date', {
+	const expiryLabel = translate('Expiry Date', {
 		comment: 'Expiry label on credit card form',
-	} );
+	});
 
-	if ( stripe && ! shouldRenderAdditionalCountryFields( card.country ) ) {
+	if (stripe && !shouldRenderAdditionalCountryFields(card.country)) {
 		const elementClasses = {
 			base: 'credit-card-form-fields__element',
 			invalid: 'is-error',
@@ -183,21 +183,21 @@ function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage
 			<React.Fragment>
 				<div className="credit-card-form-fields__field expiration-date">
 					<label className="credit-card-form-fields__label form-label">
-						{ expiryLabel }
+						{expiryLabel}
 						<CardExpiryElementWithValidation
 							fieldName="card_expiry"
-							getErrorMessage={ getErrorMessage }
-							classes={ elementClasses }
+							getErrorMessage={getErrorMessage}
+							classes={elementClasses}
 						/>
 					</label>
 				</div>
 				<div className="credit-card-form-fields__field cvv">
 					<label className="credit-card-form-fields__label form-label">
-						{ cvcLabel }
+						{cvcLabel}
 						<CardCvcElementWithValidation
 							fieldName="card_cvc"
-							getErrorMessage={ getErrorMessage }
-							classes={ elementClasses }
+							getErrorMessage={getErrorMessage}
+							classes={elementClasses}
 						/>
 					</label>
 				</div>
@@ -207,31 +207,31 @@ function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage
 
 	const disabled =
 		isStripeLoading || stripeLoadingError
-			? ! shouldRenderAdditionalCountryFields( card.country )
+			? !shouldRenderAdditionalCountryFields(card.country)
 			: false;
 
 	return (
 		<React.Fragment>
-			{ createField( 'expiration-date', Input, {
+			{createField('expiration-date', Input, {
 				inputMode: 'numeric',
 				label: expiryLabel,
 				disabled,
-				placeholder: translate( 'MM/YY', {
+				placeholder: translate('MM/YY', {
 					comment: 'Expiry placeholder for Expiry date on credit card form',
-				} ),
-			} ) }
+				}),
+			})}
 
-			{ createField( 'cvv', Input, {
+			{createField('cvv', Input, {
 				inputMode: 'numeric',
 				disabled,
 				placeholder: ' ',
-				label: translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}} {{infoPopover/}}', {
+				label: translate('Security Code {{span}}("CVC" or "CVV"){{/span}} {{infoPopover/}}', {
 					components: {
-						infoPopover: <CvvPopover translate={ translate } card={ card } />,
+						infoPopover: <CvvPopover translate={translate} card={card} />,
 						span: <span className="credit-card-form-fields__explainer" />,
 					},
-				} ),
-			} ) }
+				}),
+			})}
 		</React.Fragment>
 	);
 }
@@ -262,8 +262,8 @@ export class CreditCardFormFields extends React.Component {
 		isNewTransaction: false,
 	};
 
-	createField = ( fieldName, componentClass, props ) => {
-		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
+	createField = (fieldName, componentClass, props) => {
+		const errorMessage = this.props.getErrorMessage(fieldName) || [];
 		return React.createElement(
 			componentClass,
 			Object.assign(
@@ -271,12 +271,12 @@ export class CreditCardFormFields extends React.Component {
 				{
 					additionalClasses: 'credit-card-form-fields__field',
 					eventFormName: this.props.eventFormName,
-					isError: ! isEmpty( errorMessage ),
-					errorMessage: errorMessage[ 0 ],
+					isError: !isEmpty(errorMessage),
+					errorMessage: errorMessage[0],
 					name: fieldName,
 					onBlur: this.handleFieldChange,
 					onChange: this.handleFieldChange,
-					value: this.getFieldValue( fieldName ),
+					value: this.getFieldValue(fieldName),
 					autoComplete: 'off',
 				},
 				props
@@ -284,34 +284,34 @@ export class CreditCardFormFields extends React.Component {
 		);
 	};
 
-	getFieldValue = fieldName => this.props.card[ fieldName ] || '';
+	getFieldValue = (fieldName) => this.props.card[fieldName] || '';
 
-	updateFieldValues = ( fieldName, nextValue ) => {
-		const previousValue = this.getFieldValue( fieldName );
+	updateFieldValues = (fieldName, nextValue) => {
+		const previousValue = this.getFieldValue(fieldName);
 
-		if ( previousValue === nextValue ) {
+		if (previousValue === nextValue) {
 			return;
 		}
 
 		const { onFieldChange } = this.props;
 
 		const rawDetails = {
-			[ fieldName ]: unmaskField( fieldName, previousValue, nextValue ),
+			[fieldName]: unmaskField(fieldName, previousValue, nextValue),
 		};
 
 		const maskedDetails = {
-			[ fieldName ]: maskField( fieldName, previousValue, nextValue ),
+			[fieldName]: maskField(fieldName, previousValue, nextValue),
 		};
 
-		if ( fieldName === 'number' ) {
-			rawDetails.brand = getCreditCardType( rawDetails[ fieldName ] );
+		if (fieldName === 'number') {
+			rawDetails.brand = getCreditCardType(rawDetails[fieldName]);
 		}
 
-		onFieldChange( rawDetails, maskedDetails );
+		onFieldChange(rawDetails, maskedDetails);
 	};
 
-	handleFieldChange = event => {
-		this.updateFieldValues( event.target.name, event.target.value );
+	handleFieldChange = (event) => {
+		this.updateFieldValues(event.target.name, event.target.value);
 	};
 
 	shouldRenderCountrySpecificFields() {
@@ -320,74 +320,74 @@ export class CreditCardFormFields extends React.Component {
 		// i.e., when there is a current transaction.
 		return (
 			this.props.isNewTransaction &&
-			shouldRenderAdditionalCountryFields( this.getFieldValue( 'country' ) )
+			shouldRenderAdditionalCountryFields(this.getFieldValue('country'))
 		);
 	}
 
 	render() {
 		const { translate, countriesList, autoFocus } = this.props;
 		const countryDetailsRequired = this.shouldRenderCountrySpecificFields();
-		const creditCardFormFieldsExtrasClassNames = classNames( {
+		const creditCardFormFieldsExtrasClassNames = classNames({
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': countryDetailsRequired,
-		} );
+		});
 
 		return (
 			<div className="credit-card-form-fields">
-				{ this.createField( 'name', Input, {
+				{this.createField('name', Input, {
 					autoFocus,
-					label: translate( 'Cardholder Name {{span}}(as written on card){{/span}}', {
+					label: translate('Cardholder Name {{span}}(as written on card){{/span}}', {
 						comment: 'Cardholder name label on credit card form',
 						components: {
 							span: <span className="credit-card-form-fields__explainer" />,
 						},
-					} ),
+					}),
 					placeholder: ' ',
-				} ) }
+				})}
 				<div className="credit-card-form-fields__field number">
 					<CreditCardNumberField
-						translate={ this.props.translate }
-						createField={ this.createField }
-						getErrorMessage={ this.props.getErrorMessage }
-						card={ this.props.card }
+						translate={this.props.translate}
+						createField={this.createField}
+						getErrorMessage={this.props.getErrorMessage}
+						card={this.props.card}
 					/>
 				</div>
 
-				<div className={ creditCardFormFieldsExtrasClassNames }>
+				<div className={creditCardFormFieldsExtrasClassNames}>
 					<CreditCardExpiryAndCvvFields
-						translate={ this.props.translate }
-						createField={ this.createField }
-						getErrorMessage={ this.props.getErrorMessage }
-						card={ this.props.card }
+						translate={this.props.translate}
+						createField={this.createField}
+						getErrorMessage={this.props.getErrorMessage}
+						card={this.props.card}
 					/>
-					{ this.createField( 'country', PaymentCountrySelect, {
-						label: translate( 'Country' ),
+					{this.createField('country', PaymentCountrySelect, {
+						label: translate('Country'),
 						placeholder: ' ',
 						countriesList,
 						onChange: noop,
 						onCountrySelected: this.updateFieldValues,
-					} ) }
+					})}
 
-					{ countryDetailsRequired ? (
+					{countryDetailsRequired ? (
 						<CountrySpecificPaymentFields
-							countryCode={ this.getFieldValue( 'country' ) }
-							countriesList={ countriesList }
-							getErrorMessage={ this.props.getErrorMessage }
-							getFieldValue={ this.getFieldValue }
-							handleFieldChange={ this.updateFieldValues }
+							countryCode={this.getFieldValue('country')}
+							countriesList={countriesList}
+							getErrorMessage={this.props.getErrorMessage}
+							getFieldValue={this.getFieldValue}
+							handleFieldChange={this.updateFieldValues}
 						/>
 					) : (
-						this.createField( 'postal-code', Input, {
-							label: translate( 'Postal Code', {
+						this.createField('postal-code', Input, {
+							label: translate('Postal Code', {
 								comment: 'Postal code on credit card form',
-							} ),
+							}),
 							placeholder: ' ',
-						} )
-					) }
+						})
+					)}
 				</div>
 			</div>
 		);
 	}
 }
 
-export default localize( CreditCardFormFields );
+export default localize(CreditCardFormFields);

@@ -49,24 +49,24 @@ export interface Props {
 	isPrimary?: boolean;
 }
 
-function isCtaButton( cta: Cta ): cta is CtaButton {
-	return undefined !== ( cta as CtaButton ).text;
+function isCtaButton(cta: Cta): cta is CtaButton {
+	return undefined !== (cta as CtaButton).text;
 }
 
-function isCtaAction( action: any ): action is CtaAction {
-	return undefined !== ( action as CtaAction ).onClick;
+function isCtaAction(action: any): action is CtaAction {
+	return undefined !== (action as CtaAction).onClick;
 }
 
-function buttonProps( button: CtaButton, isPrimary: boolean ) {
-	const actionProps = isCtaAction( button.action )
+function buttonProps(button: CtaButton, isPrimary: boolean) {
+	const actionProps = isCtaAction(button.action)
 		? {
 				href: button.action.url,
 				onClick: button.action.onClick,
 		  }
 		: {
-				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
+				[typeof button.action === 'string' ? 'href' : 'onClick']: button.action,
 		  };
-	if ( undefined !== actionProps.href ) {
+	if (undefined !== actionProps.href) {
 		actionProps.target = '_blank';
 	}
 	return {
@@ -75,58 +75,56 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 		...actionProps,
 	};
 }
-const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
+const PromoCardCta: FunctionComponent<Props & ConnectedProps> = ({
 	cta,
 	learnMoreLink,
 	isPrimary,
 	hasPlanFeature,
-} ) => {
-	const ctaBtnProps = partialRight( buttonProps, true === isPrimary );
+}) => {
+	const ctaBtnProps = partialRight(buttonProps, true === isPrimary);
 	let ctaBtn;
 	const translate = useTranslate();
 	let learnMore = null;
 
-	if ( learnMoreLink ) {
-		learnMore = isCtaAction( learnMoreLink )
+	if (learnMoreLink) {
+		learnMore = isCtaAction(learnMoreLink)
 			? {
-					href: localizeUrl( learnMoreLink.url ),
+					href: localizeUrl(learnMoreLink.url),
 					target: '_blank',
 					onClick: learnMoreLink.onClick,
 			  }
 			: {
 					target: '_blank',
-					href: localizeUrl( learnMoreLink ),
+					href: localizeUrl(learnMoreLink),
 			  };
 	}
 
-	if ( isCtaButton( cta ) ) {
-		ctaBtn = <Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>;
+	if (isCtaButton(cta)) {
+		ctaBtn = <Button {...ctaBtnProps(cta)}>{cta.text}</Button>;
 	} else {
 		ctaBtn = hasPlanFeature ? (
-			<Button { ...ctaBtnProps( cta.defaultButton ) }>{ cta.defaultButton.text }</Button>
+			<Button {...ctaBtnProps(cta.defaultButton)}>{cta.defaultButton.text}</Button>
 		) : (
-			<Button { ...ctaBtnProps( cta.upgradeButton ) }>{ cta.upgradeButton.text }</Button>
+			<Button {...ctaBtnProps(cta.upgradeButton)}>{cta.upgradeButton.text}</Button>
 		);
 	}
 	return (
 		<ActionPanelCta>
-			{ ctaBtn }
-			{ learnMore && (
-				<Button borderless className="promo-card__cta-learn-more" { ...learnMore }>
-					{ translate( 'Learn more' ) }
+			{ctaBtn}
+			{learnMore && (
+				<Button borderless className="promo-card__cta-learn-more" {...learnMore}>
+					{translate('Learn more')}
 				</Button>
-			) }
+			)}
 		</ActionPanelCta>
 	);
 };
 
-export default connect< ConnectedProps, {}, Props >( ( state, { cta } ) => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect<ConnectedProps, {}, Props>((state, { cta }) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
 		hasPlanFeature:
-			selectedSiteId && ! isCtaButton( cta )
-				? hasFeature( state, selectedSiteId, cta.feature )
-				: false,
+			selectedSiteId && !isCtaButton(cta) ? hasFeature(state, selectedSiteId, cta.feature) : false,
 	};
-} )( PromoCardCta );
+})(PromoCardCta);

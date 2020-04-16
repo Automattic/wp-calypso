@@ -16,14 +16,14 @@ class ColorSchemePickerExample extends PureComponent {
 		selectedColorScheme: null,
 	};
 
-	handleColorSchemeSelection = colorScheme => {
-		this.setState( { selectedColorScheme: colorScheme } );
+	handleColorSchemeSelection = (colorScheme) => {
+		this.setState({ selectedColorScheme: colorScheme });
 	};
 
 	render() {
 		return (
 			<Card>
-				<ColorSchemePicker temporarySelection onSelection={ this.handleColorSchemeSelection } />
+				<ColorSchemePicker temporarySelection onSelection={this.handleColorSchemeSelection} />
 			</Card>
 		);
 	}

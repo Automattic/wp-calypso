@@ -14,10 +14,10 @@ import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'state/action-types';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const noticeOptions = siteId => ( {
+const noticeOptions = (siteId) => ({
 	duration: 8000,
-	id: `sites-plan-transfer-notice-${ siteId }`,
-} );
+	id: `sites-plan-transfer-notice-${siteId}`,
+});
 
 /**
  * Dispatches a request to transfer a site's plan to another user.
@@ -25,7 +25,7 @@ const noticeOptions = siteId => ( {
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const requestPlanOwnershipTransfer = action =>
+export const requestPlanOwnershipTransfer = (action) =>
 	http(
 		{
 			apiVersion: '1',
@@ -44,12 +44,9 @@ export const requestPlanOwnershipTransfer = action =>
  * @param   {object} action Redux action
  * @returns {object} Success notice action
  */
-export const handleTransferSuccess = ( { siteId } ) => [
-	successNotice(
-		translate( 'Plan purchaser has been changed successfully.' ),
-		noticeOptions( siteId )
-	),
-	refreshSitePlans( siteId ),
+export const handleTransferSuccess = ({ siteId }) => [
+	successNotice(translate('Plan purchaser has been changed successfully.'), noticeOptions(siteId)),
+	refreshSitePlans(siteId),
 ];
 
 /**
@@ -59,15 +56,15 @@ export const handleTransferSuccess = ( { siteId } ) => [
  * @param   {object} error  Error object
  * @returns {object} Error notice action
  */
-export const handleTransferError = ( { siteId }, { message } ) =>
-	errorNotice( message, noticeOptions( siteId ) );
+export const handleTransferError = ({ siteId }, { message }) =>
+	errorNotice(message, noticeOptions(siteId));
 
-registerHandlers( 'state/data-layer/wpcom/sites/plan-transfer/index.js', {
-	[ SITE_PLAN_OWNERSHIP_TRANSFER ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/plan-transfer/index.js', {
+	[SITE_PLAN_OWNERSHIP_TRANSFER]: [
+		dispatchRequest({
 			fetch: requestPlanOwnershipTransfer,
 			onSuccess: handleTransferSuccess,
 			onError: handleTransferError,
-		} ),
+		}),
 	],
-} );
+});

@@ -29,7 +29,7 @@ import './style.scss';
 
 export class Theme extends Component {
 	static propTypes = {
-		theme: PropTypes.shape( {
+		theme: PropTypes.shape({
 			// Theme ID (theme-slug)
 			id: PropTypes.string.isRequired,
 			// Theme name
@@ -41,7 +41,7 @@ export class Theme extends Component {
 			demo_uri: PropTypes.string,
 			stylesheet: PropTypes.string,
 			taxonomies: PropTypes.object,
-		} ),
+		}),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
 		// Theme price (pre-formatted string) -- empty string indicates free theme
@@ -58,12 +58,12 @@ export class Theme extends Component {
 		onMoreButtonClick: PropTypes.func,
 		// Options to populate the 'More' button popover menu with
 		buttonContents: PropTypes.objectOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				label: PropTypes.string,
 				header: PropTypes.string,
 				action: PropTypes.func,
 				getUrl: PropTypes.func,
-			} )
+			})
 		),
 		// Index of theme in results list
 		index: PropTypes.number,
@@ -73,10 +73,7 @@ export class Theme extends Component {
 		translate: PropTypes.func,
 		// Themes bookmark items.
 		setThemesBookmark: PropTypes.func,
-		bookmarkRef: PropTypes.oneOfType( [
-			PropTypes.func,
-			PropTypes.shape( { current: PropTypes.any } ),
-		] ),
+		bookmarkRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.any })]),
 	};
 
 	static defaultProps = {
@@ -87,16 +84,13 @@ export class Theme extends Component {
 		active: false,
 	};
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return (
 			nextProps.theme.id !== this.props.theme.id ||
 			nextProps.active !== this.props.active ||
 			nextProps.price !== this.props.price ||
 			nextProps.installing !== this.props.installing ||
-			! isEqual(
-				Object.keys( nextProps.buttonContents ),
-				Object.keys( this.props.buttonContents )
-			) ||
+			!isEqual(Object.keys(nextProps.buttonContents), Object.keys(this.props.buttonContents)) ||
 			nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ||
 			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
 			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick
@@ -105,15 +99,15 @@ export class Theme extends Component {
 
 	onScreenshotClick = () => {
 		const { onScreenshotClick } = this.props;
-		if ( typeof onScreenshotClick === 'function' ) {
-			onScreenshotClick( this.props.theme.id, this.props.index );
+		if (typeof onScreenshotClick === 'function') {
+			onScreenshotClick(this.props.theme.id, this.props.index);
 		}
 	};
 
 	isBeginnerTheme() {
 		const { theme } = this.props;
-		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
-		return some( skillLevels, { slug: 'beginner' } );
+		const skillLevels = get(theme, ['taxonomies', 'theme_skill-level']);
+		return some(skillLevels, { slug: 'beginner' });
 	}
 
 	renderPlaceholder() {
@@ -127,46 +121,46 @@ export class Theme extends Component {
 	}
 
 	renderInstalling() {
-		if ( this.props.installing ) {
+		if (this.props.installing) {
 			return (
 				<div className="theme__installing">
-					<PulsingDot active={ true } />
+					<PulsingDot active={true} />
 				</div>
 			);
 		}
 	}
 
 	onUpsellClick = () => {
-		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+		this.props.recordTracksEvent('calypso_upgrade_nudge_cta_click', {
 			cta_name: 'theme-upsell-popup',
 			theme: this.props.theme.id,
-		} );
+		});
 	};
 
 	setBookmark = () => {
-		this.props.setThemesBookmark( this.props.theme.id );
+		this.props.setThemesBookmark(this.props.theme.id);
 	};
 
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
-		const themeClass = classNames( 'theme', {
+		const themeClass = classNames('theme', {
 			'is-active': active,
 			'is-actionable': isActionable,
-		} );
+		});
 
-		const hasPrice = /\d/g.test( price );
+		const hasPrice = /\d/g.test(price);
 		const showUpsell = hasPrice && upsellUrl;
-		const priceClass = classNames( 'theme__badge-price', {
-			'theme__badge-price-upgrade': ! hasPrice,
+		const priceClass = classNames('theme__badge-price', {
+			'theme__badge-price-upgrade': !hasPrice,
 			'theme__badge-price-test': showUpsell,
-		} );
+		});
 
 		// for performance testing
 		const screenshotID = this.props.index === 0 ? 'theme__firstscreenshot' : null;
 
-		if ( this.props.isPlaceholder ) {
+		if (this.props.isPlaceholder) {
 			return this.renderPlaceholder();
 		}
 
@@ -176,25 +170,25 @@ export class Theme extends Component {
 		const upsell = showUpsell && (
 			<span className="theme__upsell">
 				<TrackComponentView
-					eventName={ impressionEventName }
-					eventProperties={ upsellEventProperties }
+					eventName={impressionEventName}
+					eventProperties={upsellEventProperties}
 				/>
 				<InfoPopover icon="star" className="theme__upsell-icon" position="top left">
 					<TrackComponentView
-						eventName={ impressionEventName }
-						eventProperties={ upsellPopupEventProperties }
+						eventName={impressionEventName}
+						eventProperties={upsellPopupEventProperties}
 					/>
 					<div className="theme__upsell-popover">
 						<h2 className="theme__upsell-heading">
-							{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
+							{translate('Use this theme at no extra cost on our Premium or Business Plan')}
 						</h2>
 						<Button
-							onClick={ this.onUpsellClick }
+							onClick={this.onUpsellClick}
 							className="theme__upsell-cta"
 							primary
-							href={ upsellUrl }
+							href={upsellUrl}
 						>
-							{ translate( 'Upgrade Now' ) }
+							{translate('Upgrade Now')}
 						</Button>
 					</div>
 				</InfoPopover>
@@ -202,66 +196,64 @@ export class Theme extends Component {
 		);
 
 		const fit = '479,360';
-		const themeImgSrc = photon( screenshot, { fit } );
-		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
-		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
+		const themeImgSrc = photon(screenshot, { fit });
+		const themeImgSrcDoubleDpi = photon(screenshot, { fit, zoom: 2 });
+		const e2eThemeName = name.toLowerCase().replace(/\s+/g, '-');
 
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
 
 		return (
-			<Card className={ themeClass } data-e2e-theme={ e2eThemeName } onClick={ this.setBookmark }>
-				{ this.isBeginnerTheme() && (
+			<Card className={themeClass} data-e2e-theme={e2eThemeName} onClick={this.setBookmark}>
+				{this.isBeginnerTheme() && (
 					<Ribbon className="theme__ribbon" color="green">
-						{ translate( 'Beginner' ) }
+						{translate('Beginner')}
 					</Ribbon>
-				) }
-				<div className="theme__content" { ...bookmarkRef }>
+				)}
+				<div className="theme__content" {...bookmarkRef}>
 					<a
-						aria-label={ name }
+						aria-label={name}
 						className="theme__thumbnail"
-						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
-						onClick={ this.onScreenshotClick }
-						title={ description }
+						href={this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */}
+						onClick={this.onScreenshotClick}
+						title={description}
 					>
-						{ isActionable && (
-							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
-						) }
-						{ this.renderInstalling() }
-						{ screenshot ? (
+						{isActionable && <div className="theme__thumbnail-label">{this.props.actionLabel}</div>}
+						{this.renderInstalling()}
+						{screenshot ? (
 							<img
-								alt={ description }
+								alt={description}
 								className="theme__img"
-								src={ themeImgSrc }
-								srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-								id={ screenshotID }
+								src={themeImgSrc}
+								srcSet={`${themeImgSrcDoubleDpi} 2x`}
+								id={screenshotID}
 							/>
 						) : (
 							<div className="theme__no-screenshot">
-								<Gridicon icon="themes" size={ 48 } />
+								<Gridicon icon="themes" size={48} />
 							</div>
-						) }
+						)}
 					</a>
 
 					<div className="theme__info">
-						<h2 className="theme__info-title">{ name }</h2>
-						{ active && (
+						<h2 className="theme__info-title">{name}</h2>
+						{active && (
 							<span className="theme__badge-active">
-								{ translate( 'Active', {
+								{translate('Active', {
 									context: 'singular noun, the currently active theme',
-								} ) }
+								})}
 							</span>
-						) }
-						<span className={ priceClass }>{ price }</span>
-						{ upsell }
-						{ ! isEmpty( this.props.buttonContents ) ? (
+						)}
+						<span className={priceClass}>{price}</span>
+						{upsell}
+						{!isEmpty(this.props.buttonContents) ? (
 							<ThemeMoreButton
-								index={ this.props.index }
-								themeId={ this.props.theme.id }
-								active={ this.props.active }
-								onMoreButtonClick={ this.props.onMoreButtonClick }
-								options={ this.props.buttonContents }
+								index={this.props.index}
+								themeId={this.props.theme.id}
+								active={this.props.active}
+								onMoreButtonClick={this.props.onMoreButtonClick}
+								options={this.props.buttonContents}
 							/>
-						) : null }
+						) : null}
 					</div>
 				</div>
 			</Card>
@@ -269,4 +261,4 @@ export class Theme extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent, setThemesBookmark } )( localize( Theme ) );
+export default connect(null, { recordTracksEvent, setThemesBookmark })(localize(Theme));

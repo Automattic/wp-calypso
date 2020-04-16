@@ -27,50 +27,50 @@ class Greeting extends React.Component {
 		return (
 			/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 			<div className="parent">
-				<h1 ref={ this.parentChildRef }>Greeting</h1>
+				<h1 ref={this.parentChildRef}>Greeting</h1>
 				<RootChild>
-					<span ref={ this.rootChildRef }>Hello { this.props.toWhom }!</span>
+					<span ref={this.rootChildRef}>Hello {this.props.toWhom}!</span>
 				</RootChild>
 			</div>
 		);
 	}
 }
 
-describe( 'RootChild', () => {
+describe('RootChild', () => {
 	let container;
 
-	beforeAll( function() {
-		container = document.createElement( 'div' );
-		document.body.appendChild( container );
-	} );
+	beforeAll(function () {
+		container = document.createElement('div');
+		document.body.appendChild(container);
+	});
 
-	afterEach( () => {
-		ReactDom.unmountComponentAtNode( container );
-	} );
+	afterEach(() => {
+		ReactDom.unmountComponentAtNode(container);
+	});
 
-	describe( 'rendering', () => {
-		test( 'should render any children as descendants of body', () => {
-			const tree = ReactDom.render( React.createElement( Greeting ), container );
+	describe('rendering', () => {
+		test('should render any children as descendants of body', () => {
+			const tree = ReactDom.render(React.createElement(Greeting), container);
 
-			expect( tree.parentChildRef.current.parentNode.className ).toBe( 'parent' );
-			expect( tree.rootChildRef.current.parentNode.parentNode ).toBe( document.body );
-		} );
+			expect(tree.parentChildRef.current.parentNode.className).toBe('parent');
+			expect(tree.rootChildRef.current.parentNode.parentNode).toBe(document.body);
+		});
 
-		test( 'should update the children if parent is re-rendered', () => {
-			const tree = mount( React.createElement( Greeting ), { attachTo: container } );
-			tree.setProps( { toWhom: 'Universe' } );
+		test('should update the children if parent is re-rendered', () => {
+			const tree = mount(React.createElement(Greeting), { attachTo: container });
+			tree.setProps({ toWhom: 'Universe' });
 
-			expect( tree.instance().rootChildRef.current.innerHTML ).toBe( 'Hello Universe!' );
+			expect(tree.instance().rootChildRef.current.innerHTML).toBe('Hello Universe!');
 			tree.detach();
-		} );
-	} );
+		});
+	});
 
-	describe( 'unmounting', () => {
-		test( 'should destroy the root child when the component is unmounted', () => {
-			ReactDom.render( React.createElement( Greeting ), container );
-			ReactDom.unmountComponentAtNode( container );
+	describe('unmounting', () => {
+		test('should destroy the root child when the component is unmounted', () => {
+			ReactDom.render(React.createElement(Greeting), container);
+			ReactDom.unmountComponentAtNode(container);
 
-			expect( Array.from( document.body.querySelectorAll( '*' ) ) ).toEqual( [ container ] );
-		} );
-	} );
-} );
+			expect(Array.from(document.body.querySelectorAll('*'))).toEqual([container]);
+		});
+	});
+});

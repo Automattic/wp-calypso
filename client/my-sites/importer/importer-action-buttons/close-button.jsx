@@ -20,14 +20,14 @@ export class ImporterCloseButton extends React.PureComponent {
 	static displayName = 'ImporterCloseButton';
 
 	static propTypes = {
-		importerStatus: PropTypes.shape( {
+		importerStatus: PropTypes.shape({
 			importerId: PropTypes.string.isRequired,
 			importerState: PropTypes.string.isRequired,
 			type: PropTypes.string.isRequired,
-		} ),
-		site: PropTypes.shape( {
+		}),
+		site: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
-		} ),
+		}),
 		isEnabled: PropTypes.bool.isRequired,
 	};
 
@@ -37,12 +37,12 @@ export class ImporterCloseButton extends React.PureComponent {
 			site: { ID: siteId },
 		} = this.props;
 
-		cancelImport( siteId, importerId );
+		cancelImport(siteId, importerId);
 
-		this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
+		this.props.recordTracksEvent('calypso_importer_main_cancel_clicked', {
 			blog_id: siteId,
 			importer_id: type,
-		} );
+		});
 	};
 
 	render() {
@@ -53,14 +53,14 @@ export class ImporterCloseButton extends React.PureComponent {
 			translate,
 		} = this.props;
 
-		const disabled = ! isEnabled || isUploading || appStates.UPLOADING === importerState;
+		const disabled = !isEnabled || isUploading || appStates.UPLOADING === importerState;
 
 		return (
-			<ImporterActionButton disabled={ disabled } onClick={ this.handleClick }>
-				{ translate( 'Cancel', { context: 'verb, to Cancel an operation' } ) }
+			<ImporterActionButton disabled={disabled} onClick={this.handleClick}>
+				{translate('Cancel', { context: 'verb, to Cancel an operation' })}
 			</ImporterActionButton>
 		);
 	}
 }
 
-export default flow( connect( null, { recordTracksEvent } ), localize )( ImporterCloseButton );
+export default flow(connect(null, { recordTracksEvent }), localize)(ImporterCloseButton);

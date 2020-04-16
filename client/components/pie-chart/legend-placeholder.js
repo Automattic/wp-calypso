@@ -10,34 +10,34 @@ import { get, maxBy } from 'lodash';
  */
 import { LegendItemPlaceholder } from 'components/legend-item';
 
-function getLongestName( dataSeriesInfo ) {
-	return get( maxBy( dataSeriesInfo, 'name.length' ), 'name', '' );
+function getLongestName(dataSeriesInfo) {
+	return get(maxBy(dataSeriesInfo, 'name.length'), 'name', '');
 }
 
-function PieChartLegendPlaceholder( { dataSeriesInfo } ) {
-	const longestName = getLongestName( dataSeriesInfo );
+function PieChartLegendPlaceholder({ dataSeriesInfo }) {
+	const longestName = getLongestName(dataSeriesInfo);
 
 	return (
 		<div className="pie-chart__placeholder-legend">
-			{ dataSeriesInfo.map( datumInfo => {
+			{dataSeriesInfo.map((datumInfo) => {
 				return (
 					<LegendItemPlaceholder
-						key={ datumInfo.name }
-						name={ longestName }
-						description={ datumInfo.description }
+						key={datumInfo.name}
+						name={longestName}
+						description={datumInfo.description}
 					/>
 				);
-			} ) }
+			})}
 		</div>
 	);
 }
 
 PieChartLegendPlaceholder.propTypes = {
 	dataSeriesInfo: PropTypes.arrayOf(
-		PropTypes.shape( {
+		PropTypes.shape({
 			description: PropTypes.string,
 			name: PropTypes.string.isRequired,
-		} )
+		})
 	).isRequired,
 };
 

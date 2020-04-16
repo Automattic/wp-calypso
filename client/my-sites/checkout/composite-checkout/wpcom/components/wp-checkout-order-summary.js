@@ -11,13 +11,13 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { isLineItemADomain } from '../hooks/has-domains';
 
-export default function WPCheckoutOrderSummary( { siteUrl } ) {
-	const [ items ] = useLineItems();
+export default function WPCheckoutOrderSummary({ siteUrl }) {
+	const [items] = useLineItems();
 
-	const firstDomainItem = items.find( isLineItemADomain );
+	const firstDomainItem = items.find(isLineItemADomain);
 	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
 
-	return <React.Fragment>{ domainUrl && <DomainURL>{ domainUrl }</DomainURL> }</React.Fragment>;
+	return <React.Fragment>{domainUrl && <DomainURL>{domainUrl}</DomainURL>}</React.Fragment>;
 }
 
 export function WPCheckoutOrderSummaryTitle() {
@@ -25,9 +25,9 @@ export function WPCheckoutOrderSummaryTitle() {
 	const total = useTotal();
 	return (
 		<CheckoutSummaryTitle>
-			<span>{ translate( 'You are all set to check out' ) }</span>
+			<span>{translate('You are all set to check out')}</span>
 			<CheckoutSummaryTotal>
-				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+				{renderDisplayValueMarkdown(total.amount.displayValue)}
 			</CheckoutSummaryTotal>
 		</CheckoutSummaryTitle>
 	);
@@ -39,7 +39,7 @@ const CheckoutSummaryTitle = styled.span`
 `;
 
 const CheckoutSummaryTotal = styled.span`
-	font-weight: ${props => props.theme.weights.bold};
+	font-weight: ${(props) => props.theme.weights.bold};
 `;
 
 const DomainURL = styled.div`

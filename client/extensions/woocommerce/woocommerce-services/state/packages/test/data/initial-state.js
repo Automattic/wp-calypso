@@ -2,8 +2,8 @@ export default {
 	showModal: false,
 	packageData: null,
 	packages: {
-		custom: [ { name: '1' }, { name: '2' }, { name: 'zBox' } ],
-		predefined: { service: [ 'box', 'box1' ], otherService: [ 'envelope' ] },
+		custom: [{ name: '1' }, { name: '2' }, { name: 'zBox' }],
+		predefined: { service: ['box', 'box1'], otherService: ['envelope'] },
 	},
 	predefinedSchema: {
 		service: {
@@ -18,7 +18,7 @@ export default {
 		},
 		otherService: {
 			express: {
-				definitions: [ { id: 'envelope', name: 'envelope', can_ship_international: false } ],
+				definitions: [{ id: 'envelope', name: 'envelope', can_ship_international: false }],
 				title: 'Express',
 			},
 		},

@@ -9,6 +9,6 @@ import { get } from 'lodash';
  * @param   {object}  state  Global state tree
  * @returns {boolean}        true, when presales is available
  */
-export default function isPresalesChatAvailable( state ) {
-	return get( state, 'happychat.user.isPresalesPrecancellationEligible.presale', false );
+export default function isPresalesChatAvailable(state) {
+	return get(state, 'happychat.user.isPresalesPrecancellationEligible.presale', false);
 }

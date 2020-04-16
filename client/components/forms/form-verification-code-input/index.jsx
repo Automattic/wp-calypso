@@ -32,35 +32,35 @@ export default class FormVerificationCodeInput extends React.Component {
 		this.input.focus();
 	};
 
-	saveRef = input => {
+	saveRef = (input) => {
 		this.input = input;
 	};
 
 	render() {
 		const { className, isError, isValid, method, ...otherProps } = this.props;
 
-		const classes = classNames( 'form-verification-code-input', className, {
+		const classes = classNames('form-verification-code-input', className, {
 			'is-error': isError,
 			'is-valid': isValid,
-		} );
+		});
 
 		let placeholder = constants.sixDigit2faPlaceholder;
 
-		if ( method === 'backup' ) {
+		if (method === 'backup') {
 			placeholder = constants.eightDigitBackupCodePlaceholder;
-		} else if ( method === 'sms' ) {
+		} else if (method === 'sms') {
 			placeholder = constants.sevenDigit2faPlaceholder;
 		}
 
 		return (
 			<input
 				autoComplete="off"
-				className={ classes }
+				className={classes}
 				pattern="[0-9 ]*"
-				placeholder={ placeholder }
-				ref={ this.saveRef }
+				placeholder={placeholder}
+				ref={this.saveRef}
 				type="tel"
-				{ ...otherProps }
+				{...otherProps}
 			/>
 		);
 	}

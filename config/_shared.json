@@ -37,7 +37,7 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"livechat_support_locales": [ "en", "es", "pt-br" ],
+	"livechat_support_locales": ["en", "es", "pt-br"],
 	"support_site_locales": [
 		"ar",
 		"de",
@@ -116,7 +116,7 @@
 		"zh-cn",
 		"zh-tw"
 	],
-	"english_locales": [ "en", "en-gb" ],
+	"english_locales": ["en", "en-gb"],
 	"readerFollowingSource": "calypso",
 	"rtl": false,
 	"siftscience_key": false,

@@ -15,46 +15,46 @@ import { useFormStatus } from '../lib/form-status';
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
 // See: https://github.com/stripe/react-stripe-elements/issues/284
-export default function PaymentRequestButton( {
+export default function PaymentRequestButton({
 	paymentRequest,
 	paymentType,
 	disabled,
 	disabledReason,
-} ) {
+}) {
 	const localize = useLocalize();
 	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
-	const onClick = event => {
+	const onClick = (event) => {
 		event.persist();
 		event.preventDefault();
 		setFormSubmitting();
-		paymentRequest.on( 'cancel', setFormReady );
+		paymentRequest.on('cancel', setFormReady);
 		paymentRequest.show();
 	};
-	if ( ! paymentRequest ) {
+	if (!paymentRequest) {
 		disabled = true;
 	}
 
-	if ( formStatus === 'submitting' ) {
+	if (formStatus === 'submitting') {
 		return (
 			<Button disabled fullWidth>
-				{ localize( 'Completing your purchase', { context: 'Loading state on /checkout' } ) }
+				{localize('Completing your purchase', { context: 'Loading state on /checkout' })}
 			</Button>
 		);
 	}
-	if ( disabled && disabledReason ) {
+	if (disabled && disabledReason) {
 		return (
 			<Button disabled fullWidth>
-				{ disabledReason }
+				{disabledReason}
 			</Button>
 		);
 	}
 
-	if ( paymentType === 'apple-pay' ) {
-		return <ApplePayButton disabled={ disabled } onClick={ onClick } />;
+	if (paymentType === 'apple-pay') {
+		return <ApplePayButton disabled={disabled} onClick={onClick} />;
 	}
 	return (
-		<Button disabled={ disabled } onClick={ onClick } fullWidth>
-			{ localize( 'Select a payment card' ) }
+		<Button disabled={disabled} onClick={onClick} fullWidth>
+			{localize('Select a payment card')}
 		</Button>
 	);
 }
@@ -75,7 +75,7 @@ const ApplePayButton = styled.button`
 
 	&::after {
 		content: '';
-		position: ${props => ( props.disabled ? 'absolute' : 'relative' )};
+		position: ${(props) => (props.disabled ? 'absolute' : 'relative')};
 		top: 0;
 		left: 0;
 		width: 100%;

@@ -29,7 +29,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  *
  * @param {object} editor The TinyMCE instance.
  */
-function wpview( editor ) {
+function wpview(editor) {
 	let $ = editor.$,
 		selected,
 		Env = tinymce.Env,
@@ -37,7 +37,7 @@ function wpview( editor ) {
 		TreeWalker = tinymce.dom.TreeWalker,
 		toRemove = false,
 		firstFocus = true,
-		isios = /iPad|iPod|iPhone/.test( navigator.userAgent ),
+		isios = /iPad|iPod|iPhone/.test(navigator.userAgent),
 		cursorInterval,
 		lastKeyDownNode,
 		setViewCursorTries,
@@ -52,15 +52,15 @@ function wpview( editor ) {
 	 * @returns {boolean} True if the replacement succeeded; false if it failed.
 	 */
 	function replaceMarkers() {
-		const markers = $( '.wpview-marker' );
+		const markers = $('.wpview-marker');
 
-		if ( ! markers.length ) {
+		if (!markers.length) {
 			return false;
 		}
 
-		markers.each( function( index, node ) {
-			let text = editor.dom.getAttrib( node, 'data-wpview-text' ),
-				type = editor.dom.getAttrib( node, 'data-wpview-type' );
+		markers.each(function (index, node) {
+			let text = editor.dom.getAttrib(node, 'data-wpview-text'),
+				type = editor.dom.getAttrib(node, 'data-wpview-type');
 			editor.dom.replace(
 				editor.dom.createFragment(
 					'<div class="wpview-wrap" data-wpview-text="' +
@@ -75,7 +75,7 @@ function wpview( editor ) {
 				),
 				node
 			);
-		} );
+		});
 
 		return true;
 	}
@@ -85,42 +85,42 @@ function wpview( editor ) {
 	}
 
 	function renderViews() {
-		if ( ! replaceMarkers() ) {
+		if (!replaceMarkers()) {
 			return;
 		}
 
-		const store = editor.getParam( 'redux_store' );
-		const siteId = getSelectedSiteId( store.getState() );
+		const store = editor.getParam('redux_store');
+		const siteId = getSelectedSiteId(store.getState());
 
-		$( '.wpview-wrap' ).each( function( index, view ) {
-			const $view = $( view );
+		$('.wpview-wrap').each(function (index, view) {
+			const $view = $(view);
 
-			if ( undefined !== $view.attr( 'data-wpview-rendered' ) ) {
+			if (undefined !== $view.attr('data-wpview-rendered')) {
 				return;
 			}
 
-			const type = $view.attr( 'data-wpview-type' );
+			const type = $view.attr('data-wpview-type');
 
 			renderWithReduxStore(
-				React.createElement( views.components[ type ], {
-					content: getText( view ),
+				React.createElement(views.components[type], {
+					content: getText(view),
 					siteId,
-					onResize: debounce( triggerNodeChanged, 500 ),
-				} ),
-				$view.find( '.wpview-body' )[ 0 ],
+					onResize: debounce(triggerNodeChanged, 500),
+				}),
+				$view.find('.wpview-body')[0],
 				store
 			);
 
-			$view.attr( 'data-wpview-rendered', '' );
-		} );
+			$view.attr('data-wpview-rendered', '');
+		});
 	}
 
-	function getText( node ) {
-		return decodeURIComponent( $( node ).attr( 'data-wpview-text' ) || '' );
+	function getText(node) {
+		return decodeURIComponent($(node).attr('data-wpview-text') || '');
 	}
 
-	function getView( node ) {
-		return getParent( node, 'wpview-wrap' );
+	function getView(node) {
+		return getParent(node, 'wpview-wrap');
 	}
 
 	/**
@@ -132,12 +132,9 @@ function wpview( editor ) {
 	 *
 	 * @returns {object|boolean} A node on success; false on failure.
 	 */
-	function getParent( node, className ) {
-		while ( node && node.parentNode ) {
-			if (
-				node.className &&
-				( ' ' + node.className + ' ' ).indexOf( ' ' + className + ' ' ) !== -1
-			) {
+	function getParent(node, className) {
+		while (node && node.parentNode) {
+			if (node.className && (' ' + node.className + ' ').indexOf(' ' + className + ' ') !== -1) {
 				return node;
 			}
 
@@ -147,74 +144,74 @@ function wpview( editor ) {
 		return false;
 	}
 
-	function _stop( event ) {
+	function _stop(event) {
 		event.stopPropagation();
 	}
 
-	function setViewCursor( before, view ) {
+	function setViewCursor(before, view) {
 		let location = before ? 'before' : 'after',
 			offset = before ? 0 : 1;
 		deselect();
 		editor.selection.setCursorLocation(
-			editor.dom.select( '.wpview-selection-' + location, view )[ 0 ],
+			editor.dom.select('.wpview-selection-' + location, view)[0],
 			offset
 		);
 		editor.nodeChanged();
 	}
 
-	function handleEnter( view, before, key ) {
+	function handleEnter(view, before, key) {
 		let dom = editor.dom,
-			padNode = dom.create( 'p' );
+			padNode = dom.create('p');
 
-		if ( ! ( Env.ie && Env.ie < 11 ) ) {
+		if (!(Env.ie && Env.ie < 11)) {
 			padNode.innerHTML = '<br data-mce-bogus="1">';
 		}
 
-		if ( before ) {
-			view.parentNode.insertBefore( padNode, view );
+		if (before) {
+			view.parentNode.insertBefore(padNode, view);
 		} else {
-			dom.insertAfter( padNode, view );
+			dom.insertAfter(padNode, view);
 		}
 
 		deselect();
 
-		if ( before && key === VK.ENTER ) {
-			setViewCursor( before, view );
+		if (before && key === VK.ENTER) {
+			setViewCursor(before, view);
 		} else {
-			editor.selection.setCursorLocation( padNode, 0 );
+			editor.selection.setCursorLocation(padNode, 0);
 		}
 
 		editor.nodeChanged();
 	}
 
-	function removeView( view ) {
-		editor.undoManager.transact( function() {
-			handleEnter( view );
-			ReactDom.unmountComponentAtNode( $( view ).find( '.wpview-body' )[ 0 ] );
-			editor.dom.remove( view );
+	function removeView(view) {
+		editor.undoManager.transact(function () {
+			handleEnter(view);
+			ReactDom.unmountComponentAtNode($(view).find('.wpview-body')[0]);
+			editor.dom.remove(view);
 			editor.focus();
-		} );
+		});
 	}
 
-	function select( viewNode ) {
+	function select(viewNode) {
 		let clipboard,
 			dom = editor.dom;
 
-		if ( ! viewNode ) {
+		if (!viewNode) {
 			return;
 		}
 
-		if ( viewNode !== selected ) {
+		if (viewNode !== selected) {
 			// Make sure that the editor is focused.
 			// It is possible that the editor is not focused when the mouse event fires
 			// without focus, the selection will not work properly.
-			if ( ! focus ) {
+			if (!focus) {
 				editor.getBody().focus();
 			}
 
 			deselect();
 			selected = viewNode;
-			dom.setAttrib( viewNode, 'data-mce-selected', 1 );
+			dom.setAttrib(viewNode, 'data-mce-selected', 1);
 
 			clipboard = dom.create(
 				'div',
@@ -222,25 +219,25 @@ function wpview( editor ) {
 					class: 'wpview-clipboard',
 					contenteditable: 'true',
 				},
-				getText( viewNode )
+				getText(viewNode)
 			);
 
-			editor.dom.select( '.wpview-body', viewNode )[ 0 ].appendChild( clipboard );
+			editor.dom.select('.wpview-body', viewNode)[0].appendChild(clipboard);
 
 			// Both of the following are necessary to prevent manipulating the selection/focus
-			dom.bind( clipboard, 'beforedeactivate focusin focusout', _stop );
-			dom.bind( selected, 'beforedeactivate focusin focusout', _stop );
+			dom.bind(clipboard, 'beforedeactivate focusin focusout', _stop);
+			dom.bind(selected, 'beforedeactivate focusin focusout', _stop);
 
 			// select the hidden div
-			if ( isios ) {
-				editor.selection.select( clipboard );
+			if (isios) {
+				editor.selection.select(clipboard);
 			} else {
-				editor.selection.select( clipboard, true );
+				editor.selection.select(clipboard, true);
 			}
 		}
 
 		editor.nodeChanged();
-		editor.fire( 'wpview-selected', viewNode );
+		editor.fire('wpview-selected', viewNode);
 	}
 
 	/**
@@ -250,85 +247,85 @@ function wpview( editor ) {
 		let clipboard,
 			dom = editor.dom;
 
-		if ( selected ) {
-			clipboard = editor.dom.select( '.wpview-clipboard', selected )[ 0 ];
-			dom.unbind( clipboard );
-			dom.remove( clipboard );
+		if (selected) {
+			clipboard = editor.dom.select('.wpview-clipboard', selected)[0];
+			dom.unbind(clipboard);
+			dom.remove(clipboard);
 
-			dom.unbind( selected, 'beforedeactivate focusin focusout click mouseup', _stop );
-			dom.setAttrib( selected, 'data-mce-selected', null );
+			dom.unbind(selected, 'beforedeactivate focusin focusout click mouseup', _stop);
+			dom.setAttrib(selected, 'data-mce-selected', null);
 		}
 
 		selected = null;
 	}
 
-	function resetViewsCallback( match, viewText ) {
-		return '<p>' + window.decodeURIComponent( viewText ) + '</p>';
+	function resetViewsCallback(match, viewText) {
+		return '<p>' + window.decodeURIComponent(viewText) + '</p>';
 	}
 
 	// Replace the view tags with the view string
-	function resetViews( content ) {
+	function resetViews(content) {
 		return content
 			.replace(
 				/<div[^>]+data-wpview-text="([^"]+)"[^>]*>(?:[\s\S]+?wpview-selection-after[^>]+>[^<>]*<\/p>\s*|\.)<\/div>/g,
 				resetViewsCallback
 			)
-			.replace( /<p [^>]*?data-wpview-text="([^"]+)"[^>]*>[\s\S]*?<\/p>/g, resetViewsCallback );
+			.replace(/<p [^>]*?data-wpview-text="([^"]+)"[^>]*>[\s\S]*?<\/p>/g, resetViewsCallback);
 	}
 
 	function setMarkers() {
 		let content, processedContent;
 
-		if ( editor.isHidden() ) {
+		if (editor.isHidden()) {
 			return;
 		}
 
-		content = editor.getContent( { format: 'raw' } );
-		processedContent = views.setMarkers( content );
+		content = editor.getContent({ format: 'raw' });
+		processedContent = views.setMarkers(content);
 
-		if ( content !== processedContent ) {
-			editor.setContent( processedContent, {
+		if (content !== processedContent) {
+			editor.setContent(processedContent, {
 				format: 'raw',
 				isSettingMarkers: true,
-			} );
+			});
 		}
 	}
 
 	// Prevent adding undo levels on changes inside a view wrapper
-	editor.on( 'BeforeAddUndo', function( event ) {
-		if ( event.level.content ) {
-			event.level.content = resetViews( event.level.content );
+	editor.on('BeforeAddUndo', function (event) {
+		if (event.level.content) {
+			event.level.content = resetViews(event.level.content);
 		}
-	} );
+	});
 
 	// When the editor's content changes, scan the new content for
 	// matching view patterns, and transform the matches into
 	// view wrappers.
-	editor.on( 'BeforeSetContent', function( event ) {
+	editor.on('BeforeSetContent', function (event) {
 		let node;
 
-		if ( ! event.selection ) {
-			$( '.wpview-wrap .wpview-body' ).each( function( i, viewBody ) {
-				ReactDom.unmountComponentAtNode( viewBody );
-			} );
+		if (!event.selection) {
+			$('.wpview-wrap .wpview-body').each(function (i, viewBody) {
+				ReactDom.unmountComponentAtNode(viewBody);
+			});
 		}
 
-		if ( ! event.content ) {
+		if (!event.content) {
 			return;
 		}
 
-		if ( ! event.load ) {
-			if ( selected ) {
-				removeView( selected );
+		if (!event.load) {
+			if (selected) {
+				removeView(selected);
 			}
 
 			node = editor.selection.getNode();
 
-			if ( node && node !== editor.getBody() && /^\s*https?:\/\/\S+\s*$/i.test( event.content ) ) {
+			if (node && node !== editor.getBody() && /^\s*https?:\/\/\S+\s*$/i.test(event.content)) {
 				// When a url is pasted or inserted, only try to embed it when it is in an empty paragrapgh.
-				node = editor.dom.getParent( node, 'p' );
+				node = editor.dom.getParent(node, 'p');
 
-				if ( node && /^[\s\uFEFF\u00A0]*$/.test( $( node ).text() || '' ) ) {
+				if (node && /^[\s\uFEFF\u00A0]*$/.test($(node).text() || '')) {
 					// Make sure there are no empty inline elements in the <p>
 					node.innerHTML = '';
 				} else {
@@ -337,39 +334,39 @@ function wpview( editor ) {
 			}
 		}
 
-		if ( ! event.isSettingMarkers ) {
-			event.content = views.setMarkers( event.content );
+		if (!event.isSettingMarkers) {
+			event.content = views.setMarkers(event.content);
 		}
-	} );
+	});
 
 	// When pasting strip all tags and check if the string is an URL.
 	// Then replace the pasted content with the cleaned URL.
-	editor.on( 'pastePreProcess', function( event ) {
+	editor.on('pastePreProcess', function (event) {
 		let pastedStr = event.content;
 
-		if ( pastedStr ) {
-			pastedStr = tinymce.trim( pastedStr.replace( /<[^>]+>/g, '' ) );
+		if (pastedStr) {
+			pastedStr = tinymce.trim(pastedStr.replace(/<[^>]+>/g, ''));
 
-			const imageMatch = /(https?:\/\/[^<]*)(\.jpg|\.jpeg|\.gif|\.png)\??.*$/i.exec( pastedStr );
-			if ( imageMatch ) {
+			const imageMatch = /(https?:\/\/[^<]*)(\.jpg|\.jpeg|\.gif|\.png)\??.*$/i.exec(pastedStr);
+			if (imageMatch) {
 				// If the link looks like an image, replace the pasted content with an <img> tag.
 				// As a side effect, this won't request an embed code to the REST API anymore.
-				event.content = `<img src="${ imageMatch[ 1 ] }${ imageMatch[ 2 ] }" style="max-width:100%;" />`;
-			} else if ( /^https?:\/\/\S+$/i.test( pastedStr ) ) {
+				event.content = `<img src="${imageMatch[1]}${imageMatch[2]}" style="max-width:100%;" />`;
+			} else if (/^https?:\/\/\S+$/i.test(pastedStr)) {
 				// Otherwise replace the content with the cleaned URL.
 				event.content = pastedStr;
 			}
 		}
-	} );
+	});
 
 	// When the editor's content has been updated and the DOM has been
 	// processed, render the views in the document.
-	editor.on( 'SetContent', function() {
+	editor.on('SetContent', function () {
 		renderViews();
-	} );
+	});
 
 	// Set the cursor before or after a view when clicking next to it.
-	editor.on( 'click', function( event ) {
+	editor.on('click', function (event) {
 		let x = event.clientX,
 			y = event.clientY,
 			body = editor.getBody(),
@@ -380,192 +377,189 @@ function wpview( editor ) {
 			lastRect,
 			view;
 
-		if ( ! first || ! last ) {
+		if (!first || !last) {
 			return;
 		}
 
 		firstRect = first.getBoundingClientRect();
 		lastRect = last.getBoundingClientRect();
 
-		if ( y < firstRect.top && ( view = getView( first ) ) ) {
-			setViewCursor( true, view );
+		if (y < firstRect.top && (view = getView(first))) {
+			setViewCursor(true, view);
 			event.preventDefault();
-		} else if ( y > lastRect.bottom && ( view = getView( last ) ) ) {
-			setViewCursor( false, view );
+		} else if (y > lastRect.bottom && (view = getView(last))) {
+			setViewCursor(false, view);
 			event.preventDefault();
-		} else if ( x < bodyRect.left || x > bodyRect.right ) {
-			tinymce.each( editor.dom.select( '.wpview-wrap' ), function( view ) {
+		} else if (x < bodyRect.left || x > bodyRect.right) {
+			tinymce.each(editor.dom.select('.wpview-wrap'), function (view) {
 				const rect = view.getBoundingClientRect();
 
-				if ( y < rect.top ) {
+				if (y < rect.top) {
 					return false;
 				}
 
-				if ( y >= rect.top && y <= rect.bottom ) {
-					if ( x < bodyRect.left ) {
-						setViewCursor( true, view );
+				if (y >= rect.top && y <= rect.bottom) {
+					if (x < bodyRect.left) {
+						setViewCursor(true, view);
 						event.preventDefault();
-					} else if ( x > bodyRect.right ) {
-						setViewCursor( false, view );
+					} else if (x > bodyRect.right) {
+						setViewCursor(false, view);
 						event.preventDefault();
 					}
 
 					return false;
 				}
-			} );
+			});
 		}
-	} );
+	});
 
-	editor.on( 'init', function() {
+	editor.on('init', function () {
 		let scrolled = false,
 			selection = editor.selection,
 			MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 		// When a view is selected, ensure content that is being pasted
 		// or inserted is added to a text node (instead of the view).
-		editor.on( 'BeforeSetContent', function() {
+		editor.on('BeforeSetContent', function () {
 			let walker,
 				target,
-				view = getView( selection.getNode() );
+				view = getView(selection.getNode());
 
 			// If the selection is not within a view, bail.
-			if ( ! view ) {
+			if (!view) {
 				return;
 			}
 
-			if ( ! view.nextSibling || getView( view.nextSibling ) ) {
+			if (!view.nextSibling || getView(view.nextSibling)) {
 				// If there are no additional nodes or the next node is a
 				// view, create a text node after the current view.
-				target = editor.getDoc().createTextNode( '' );
-				editor.dom.insertAfter( target, view );
+				target = editor.getDoc().createTextNode('');
+				editor.dom.insertAfter(target, view);
 			} else {
 				// Otherwise, find the next text node.
-				walker = new TreeWalker( view.nextSibling, view.nextSibling );
+				walker = new TreeWalker(view.nextSibling, view.nextSibling);
 				target = walker.next();
 			}
 
 			// Select the `target` text node.
-			selection.select( target );
-			selection.collapse( true );
-		} );
+			selection.select(target);
+			selection.collapse(true);
+		});
 
-		editor.dom.bind( editor.getDoc(), 'touchmove', function() {
+		editor.dom.bind(editor.getDoc(), 'touchmove', function () {
 			scrolled = true;
-		} );
+		});
 
 		editor.on(
 			'mousedown mouseup click touchend',
-			function( event ) {
-				const view = getView( event.target );
+			function (event) {
+				const view = getView(event.target);
 
 				firstFocus = false;
 
 				// Contain clicks inside the view wrapper
-				if ( view ) {
+				if (view) {
 					event.stopImmediatePropagation();
 					event.preventDefault();
 
-					if ( event.type === 'touchend' && scrolled ) {
+					if (event.type === 'touchend' && scrolled) {
 						scrolled = false;
 					} else {
-						select( view );
+						select(view);
 					}
 
 					// Returning false stops the ugly bars from appearing in IE11 and stops the view being selected as a range in FF.
 					// Unfortunately, it also inhibits the dragging of views to a new location.
 					return false;
-				} else if ( event.type === 'touchend' || event.type === 'mousedown' ) {
+				} else if (event.type === 'touchend' || event.type === 'mousedown') {
 					deselect();
 				}
 
-				if ( event.type === 'touchend' && scrolled ) {
+				if (event.type === 'touchend' && scrolled) {
 					scrolled = false;
 				}
 			},
 			true
 		);
 
-		if ( MutationObserver ) {
-			new MutationObserver( function() {
-				editor.fire( 'wp-body-class-change' );
-			} ).observe( editor.getBody(), {
+		if (MutationObserver) {
+			new MutationObserver(function () {
+				editor.fire('wp-body-class-change');
+			}).observe(editor.getBody(), {
 				attributes: true,
-				attributeFilter: [ 'class' ],
-			} );
+				attributeFilter: ['class'],
+			});
 		}
-	} );
+	});
 
-	editor.on( 'preinit show', function() {
-		views.emitters.forEach( function( emitter ) {
-			emitter.addListener( 'change', setMarkers, editor.getParam( 'redux_store' ) );
-		} );
+	editor.on('preinit show', function () {
+		views.emitters.forEach(function (emitter) {
+			emitter.addListener('change', setMarkers, editor.getParam('redux_store'));
+		});
 
 		setMarkers();
-	} );
+	});
 
-	editor.on( 'hide remove', function() {
-		views.emitters.forEach( function( emitter ) {
-			emitter.removeListener( 'change', setMarkers );
-		} );
-	} );
+	editor.on('hide remove', function () {
+		views.emitters.forEach(function (emitter) {
+			emitter.removeListener('change', setMarkers);
+		});
+	});
 
 	// Empty the wpview wrap and marker nodes
-	function emptyViewNodes( rootNode ) {
-		$( 'div.wpview-wrap, p.wpview-marker', rootNode ).each( function( i, node ) {
+	function emptyViewNodes(rootNode) {
+		$('div.wpview-wrap, p.wpview-marker', rootNode).each(function (i, node) {
 			node.innerHTML = '.';
-		} );
+		});
 	}
 
 	// Run that before the DOM cleanup
 	editor.on(
 		'PreProcess',
-		function( event ) {
-			emptyViewNodes( event.node );
+		function (event) {
+			emptyViewNodes(event.node);
 		},
 		true
 	);
 
-	editor.on( 'hide', function() {
+	editor.on('hide', function () {
 		deselect();
 		emptyViewNodes();
-	} );
+	});
 
-	editor.on( 'GetContent', function( event ) {
-		if ( event.format === 'raw' && event.content && ! event.selection ) {
-			event.content = resetViews( event.content );
+	editor.on('GetContent', function (event) {
+		if (event.format === 'raw' && event.content && !event.selection) {
+			event.content = resetViews(event.content);
 		}
-	} );
+	});
 
-	editor.on( 'PostProcess', function( event ) {
-		if ( event.content ) {
+	editor.on('PostProcess', function (event) {
+		if (event.content) {
 			event.content = event.content
-				.replace(
-					/<div [^>]*?data-wpview-text="([^"]+)"[^>]*>[\s\S]*?<\/div>/g,
-					resetViewsCallback
-				)
-				.replace( /<p [^>]*?data-wpview-text="([^"]+)"[^>]*>[\s\S]*?<\/p>/g, resetViewsCallback );
+				.replace(/<div [^>]*?data-wpview-text="([^"]+)"[^>]*>[\s\S]*?<\/div>/g, resetViewsCallback)
+				.replace(/<p [^>]*?data-wpview-text="([^"]+)"[^>]*>[\s\S]*?<\/p>/g, resetViewsCallback);
 		}
-	} );
+	});
 
 	// Excludes arrow keys, delete, backspace, enter, space bar.
 	// Ref: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.keyCode
-	function isSpecialKey( key ) {
+	function isSpecialKey(key) {
 		return (
-			( key <= 47 &&
+			(key <= 47 &&
 				key !== VK.SPACEBAR &&
 				key !== VK.ENTER &&
 				key !== VK.DELETE &&
 				key !== VK.BACKSPACE &&
-				( key < 37 || key > 40 ) ) ||
+				(key < 37 || key > 40)) ||
 			key >= 224 || // OEM or non-printable
-			( key >= 144 && key <= 150 ) || // Num Lock, Scroll Lock, OEM
-			( key >= 91 && key <= 93 ) || // Windows keys
-			( key >= 112 && key <= 135 )
+			(key >= 144 && key <= 150) || // Num Lock, Scroll Lock, OEM
+			(key >= 91 && key <= 93) || // Windows keys
+			(key >= 112 && key <= 135)
 		); // F keys
 	}
 
 	// (De)select views when arrow keys are used to navigate the content of the editor.
-	editor.on( 'keydown', function( event ) {
+	editor.on('keydown', function (event) {
 		let key = event.keyCode,
 			dom = editor.dom,
 			selection = editor.selection,
@@ -577,112 +571,112 @@ function wpview( editor ) {
 			clonedRange,
 			tempRange;
 
-		if ( selected ) {
+		if (selected) {
 			// Ignore key presses that involve the command or control key, but continue when in combination with backspace or v.
 			// Also ignore the F# keys.
 			if (
-				( ( event.metaKey || event.ctrlKey ) && key !== VK.BACKSPACE && key !== 86 ) ||
-				( key >= 112 && key <= 123 )
+				((event.metaKey || event.ctrlKey) && key !== VK.BACKSPACE && key !== 86) ||
+				(key >= 112 && key <= 123)
 			) {
 				// Remove the view when pressing cmd/ctrl+x on keyup, otherwise the browser can't copy the content.
-				if ( ( event.metaKey || event.ctrlKey ) && key === 88 ) {
+				if ((event.metaKey || event.ctrlKey) && key === 88) {
 					toRemove = selected;
 				}
 				return;
 			}
 
-			view = getView( selection.getNode() );
+			view = getView(selection.getNode());
 
 			// If the caret is not within the selected view, deselect the view and bail.
-			if ( view !== selected ) {
+			if (view !== selected) {
 				deselect();
 				return;
 			}
 
-			if ( key === VK.LEFT ) {
-				setViewCursor( true, view );
+			if (key === VK.LEFT) {
+				setViewCursor(true, view);
 				event.preventDefault();
-			} else if ( key === VK.UP ) {
-				if ( view.previousSibling ) {
-					if ( getView( view.previousSibling ) ) {
-						setViewCursor( true, view.previousSibling );
+			} else if (key === VK.UP) {
+				if (view.previousSibling) {
+					if (getView(view.previousSibling)) {
+						setViewCursor(true, view.previousSibling);
 					} else {
 						deselect();
-						selection.select( view.previousSibling, true );
+						selection.select(view.previousSibling, true);
 						selection.collapse();
 					}
 				} else {
-					setViewCursor( true, view );
+					setViewCursor(true, view);
 				}
 				event.preventDefault();
-			} else if ( key === VK.RIGHT ) {
-				setViewCursor( false, view );
+			} else if (key === VK.RIGHT) {
+				setViewCursor(false, view);
 				event.preventDefault();
-			} else if ( key === VK.DOWN ) {
-				if ( view.nextSibling ) {
-					if ( getView( view.nextSibling ) ) {
-						setViewCursor( false, view.nextSibling );
+			} else if (key === VK.DOWN) {
+				if (view.nextSibling) {
+					if (getView(view.nextSibling)) {
+						setViewCursor(false, view.nextSibling);
 					} else {
 						deselect();
-						selection.setCursorLocation( view.nextSibling, 0 );
+						selection.setCursorLocation(view.nextSibling, 0);
 					}
 				} else {
-					setViewCursor( false, view );
+					setViewCursor(false, view);
 				}
 
 				event.preventDefault();
 				// Ignore keys that don't insert anything.
-			} else if ( ! isSpecialKey( key ) ) {
-				removeView( selected );
+			} else if (!isSpecialKey(key)) {
+				removeView(selected);
 
-				if ( key === VK.ENTER || key === VK.DELETE || key === VK.BACKSPACE ) {
+				if (key === VK.ENTER || key === VK.DELETE || key === VK.BACKSPACE) {
 					event.preventDefault();
 				}
 			}
 		} else {
-			if ( event.metaKey || event.ctrlKey || ( key >= 112 && key <= 123 ) ) {
+			if (event.metaKey || event.ctrlKey || (key >= 112 && key <= 123)) {
 				return;
 			}
 
 			node = selection.getNode();
 			lastKeyDownNode = node;
-			view = getView( node );
+			view = getView(node);
 
 			// Make sure we don't delete part of a view.
 			// If the range ends or starts with the view, we'll need to trim it.
-			if ( ! selection.isCollapsed() ) {
+			if (!selection.isCollapsed()) {
 				range = selection.getRng();
 
-				if ( ( view = getView( range.endContainer ) ) ) {
+				if ((view = getView(range.endContainer))) {
 					clonedRange = range.cloneRange();
-					selection.select( view.previousSibling, true );
+					selection.select(view.previousSibling, true);
 					selection.collapse();
 					tempRange = selection.getRng();
-					clonedRange.setEnd( tempRange.endContainer, tempRange.endOffset );
-					selection.setRng( clonedRange );
-				} else if ( ( view = getView( range.startContainer ) ) ) {
+					clonedRange.setEnd(tempRange.endContainer, tempRange.endOffset);
+					selection.setRng(clonedRange);
+				} else if ((view = getView(range.startContainer))) {
 					clonedRange = range.cloneRange();
-					clonedRange.setStart( view.nextSibling, 0 );
-					selection.setRng( clonedRange );
+					clonedRange.setStart(view.nextSibling, 0);
+					selection.setRng(clonedRange);
 				}
 			}
 
-			if ( ! view ) {
+			if (!view) {
 				// Make sure we don't eat any content.
-				if ( event.keyCode === VK.BACKSPACE ) {
-					if ( editor.dom.isEmpty( node ) ) {
-						if ( ( view = getView( node.previousSibling ) ) ) {
-							setViewCursor( false, view );
-							editor.dom.remove( node );
+				if (event.keyCode === VK.BACKSPACE) {
+					if (editor.dom.isEmpty(node)) {
+						if ((view = getView(node.previousSibling))) {
+							setViewCursor(false, view);
+							editor.dom.remove(node);
 							event.preventDefault();
 						}
 					} else if (
-						( range = selection.getRng() ) &&
+						(range = selection.getRng()) &&
 						range.startOffset === 0 &&
 						range.endOffset === 0 &&
-						( view = getView( node.previousSibling ) )
+						(view = getView(node.previousSibling))
 					) {
-						setViewCursor( false, view );
+						setViewCursor(false, view);
 						event.preventDefault();
 					}
 				}
@@ -690,132 +684,132 @@ function wpview( editor ) {
 			}
 
 			if (
-				! (
-					( cursorBefore = dom.hasClass( view, 'wpview-selection-before' ) ) ||
-					( cursorAfter = dom.hasClass( view, 'wpview-selection-after' ) )
+				!(
+					(cursorBefore = dom.hasClass(view, 'wpview-selection-before')) ||
+					(cursorAfter = dom.hasClass(view, 'wpview-selection-after'))
 				)
 			) {
 				return;
 			}
 
-			if ( isSpecialKey( key ) ) {
+			if (isSpecialKey(key)) {
 				// ignore
 				return;
 			}
 
-			if ( ( cursorAfter && key === VK.UP ) || ( cursorBefore && key === VK.BACKSPACE ) ) {
-				if ( view.previousSibling ) {
-					if ( getView( view.previousSibling ) ) {
-						setViewCursor( false, view.previousSibling );
-					} else if ( dom.isEmpty( view.previousSibling ) && key === VK.BACKSPACE ) {
-						dom.remove( view.previousSibling );
+			if ((cursorAfter && key === VK.UP) || (cursorBefore && key === VK.BACKSPACE)) {
+				if (view.previousSibling) {
+					if (getView(view.previousSibling)) {
+						setViewCursor(false, view.previousSibling);
+					} else if (dom.isEmpty(view.previousSibling) && key === VK.BACKSPACE) {
+						dom.remove(view.previousSibling);
 					} else {
-						selection.select( view.previousSibling, true );
+						selection.select(view.previousSibling, true);
 						selection.collapse();
 					}
 				} else {
-					setViewCursor( true, view );
+					setViewCursor(true, view);
 				}
 				event.preventDefault();
-			} else if ( cursorAfter && ( key === VK.DOWN || key === VK.RIGHT ) ) {
-				if ( view.nextSibling ) {
-					if ( getView( view.nextSibling ) ) {
-						setViewCursor( key === VK.RIGHT, view.nextSibling );
+			} else if (cursorAfter && (key === VK.DOWN || key === VK.RIGHT)) {
+				if (view.nextSibling) {
+					if (getView(view.nextSibling)) {
+						setViewCursor(key === VK.RIGHT, view.nextSibling);
 					} else {
-						selection.setCursorLocation( view.nextSibling, 0 );
+						selection.setCursorLocation(view.nextSibling, 0);
 					}
 				}
 				event.preventDefault();
-			} else if ( cursorBefore && ( key === VK.UP || key === VK.LEFT ) ) {
-				if ( view.previousSibling ) {
-					if ( getView( view.previousSibling ) ) {
-						setViewCursor( key === VK.UP, view.previousSibling );
+			} else if (cursorBefore && (key === VK.UP || key === VK.LEFT)) {
+				if (view.previousSibling) {
+					if (getView(view.previousSibling)) {
+						setViewCursor(key === VK.UP, view.previousSibling);
 					} else {
-						selection.select( view.previousSibling, true );
+						selection.select(view.previousSibling, true);
 						selection.collapse();
 					}
 				}
 				event.preventDefault();
-			} else if ( cursorBefore && key === VK.DOWN ) {
-				if ( view.nextSibling ) {
-					if ( getView( view.nextSibling ) ) {
-						setViewCursor( true, view.nextSibling );
+			} else if (cursorBefore && key === VK.DOWN) {
+				if (view.nextSibling) {
+					if (getView(view.nextSibling)) {
+						setViewCursor(true, view.nextSibling);
 					} else {
-						selection.setCursorLocation( view.nextSibling, 0 );
+						selection.setCursorLocation(view.nextSibling, 0);
 					}
 				} else {
-					setViewCursor( false, view );
+					setViewCursor(false, view);
 				}
 				event.preventDefault();
-			} else if ( ( cursorAfter && key === VK.LEFT ) || ( cursorBefore && key === VK.RIGHT ) ) {
-				select( view );
+			} else if ((cursorAfter && key === VK.LEFT) || (cursorBefore && key === VK.RIGHT)) {
+				select(view);
 				event.preventDefault();
-			} else if ( cursorAfter && key === VK.BACKSPACE ) {
-				removeView( view );
+			} else if (cursorAfter && key === VK.BACKSPACE) {
+				removeView(view);
 				event.preventDefault();
-			} else if ( cursorAfter ) {
-				handleEnter( view );
-			} else if ( cursorBefore ) {
-				handleEnter( view, true, key );
+			} else if (cursorAfter) {
+				handleEnter(view);
+			} else if (cursorBefore) {
+				handleEnter(view, true, key);
 			}
 
-			if ( key === VK.ENTER ) {
+			if (key === VK.ENTER) {
 				event.preventDefault();
 			}
 		}
-	} );
+	});
 
-	editor.on( 'keyup', function() {
-		if ( toRemove ) {
-			removeView( toRemove );
+	editor.on('keyup', function () {
+		if (toRemove) {
+			removeView(toRemove);
 			toRemove = false;
 		}
-	} );
+	});
 
-	editor.on( 'focus', function() {
+	editor.on('focus', function () {
 		let view;
 
 		focus = true;
-		editor.dom.addClass( editor.getBody(), 'has-focus' );
+		editor.dom.addClass(editor.getBody(), 'has-focus');
 
 		// Edge case: show the fake caret when the editor is focused for the first time
 		// and the first element is a view.
-		if ( firstFocus && ( view = getView( editor.getBody().firstChild ) ) ) {
-			setViewCursor( true, view );
+		if (firstFocus && (view = getView(editor.getBody().firstChild))) {
+			setViewCursor(true, view);
 		}
 
 		firstFocus = false;
-	} );
+	});
 
-	editor.on( 'blur', function() {
+	editor.on('blur', function () {
 		focus = false;
-		editor.dom.removeClass( editor.getBody(), 'has-focus' );
-	} );
+		editor.dom.removeClass(editor.getBody(), 'has-focus');
+	});
 
-	editor.on( 'NodeChange', function( event ) {
+	editor.on('NodeChange', function (event) {
 		let dom = editor.dom,
-			views = editor.dom.select( '.wpview-wrap' ),
+			views = editor.dom.select('.wpview-wrap'),
 			className = event.element.className,
-			view = getView( event.element ),
+			view = getView(event.element),
 			lKDN = lastKeyDownNode;
 
 		lastKeyDownNode = false;
 
-		clearInterval( cursorInterval );
+		clearInterval(cursorInterval);
 
 		// This runs a lot and is faster than replacing each class separately
-		tinymce.each( views, function( view ) {
-			if ( view.className ) {
+		tinymce.each(views, function (view) {
+			if (view.className) {
 				view.className = view.className.replace(
 					/ ?\bwpview-(?:selection-before|selection-after|cursor-hide)\b/g,
 					''
 				);
 			}
-		} );
+		});
 
-		if ( focus && view ) {
+		if (focus && view) {
 			if (
-				( className === 'wpview-selection-before' || className === 'wpview-selection-after' ) &&
+				(className === 'wpview-selection-before' || className === 'wpview-selection-after') &&
 				editor.selection.isCollapsed()
 			) {
 				setViewCursorTries = 0;
@@ -824,134 +818,134 @@ function wpview( editor ) {
 
 				// Make sure the cursor arrived in the right node.
 				// This is necessary for Firefox.
-				if ( lKDN === view.previousSibling ) {
-					setViewCursor( true, view );
+				if (lKDN === view.previousSibling) {
+					setViewCursor(true, view);
 					return;
-				} else if ( lKDN === view.nextSibling ) {
-					setViewCursor( false, view );
+				} else if (lKDN === view.nextSibling) {
+					setViewCursor(false, view);
 					return;
 				}
 
-				dom.addClass( view, className );
+				dom.addClass(view, className);
 
-				cursorInterval = setInterval( function() {
-					if ( dom.hasClass( view, 'wpview-cursor-hide' ) ) {
-						dom.removeClass( view, 'wpview-cursor-hide' );
+				cursorInterval = setInterval(function () {
+					if (dom.hasClass(view, 'wpview-cursor-hide')) {
+						dom.removeClass(view, 'wpview-cursor-hide');
 					} else {
-						dom.addClass( view, 'wpview-cursor-hide' );
+						dom.addClass(view, 'wpview-cursor-hide');
 					}
-				}, 500 );
+				}, 500);
 				// If the cursor lands anywhere else in the view, set the cursor before it.
 				// Only try this once to prevent a loop. (You never know.)
-			} else if ( ! getParent( event.element, 'wpview-clipboard' ) && ! setViewCursorTries ) {
+			} else if (!getParent(event.element, 'wpview-clipboard') && !setViewCursorTries) {
 				deselect();
 				setViewCursorTries++;
-				setViewCursor( true, view );
+				setViewCursor(true, view);
 			}
 		}
-	} );
+	});
 
-	editor.on( 'BeforeExecCommand', function() {
+	editor.on('BeforeExecCommand', function () {
 		let node = editor.selection.getNode(),
 			view;
 
 		if (
 			node &&
-			( ( execCommandBefore = node.className === 'wpview-selection-before' ) ||
-				node.className === 'wpview-selection-after' ) &&
-			( view = getView( node ) )
+			((execCommandBefore = node.className === 'wpview-selection-before') ||
+				node.className === 'wpview-selection-after') &&
+			(view = getView(node))
 		) {
-			handleEnter( view, execCommandBefore );
+			handleEnter(view, execCommandBefore);
 			execCommandView = view;
 		}
-	} );
+	});
 
-	editor.on( 'ExecCommand', function( args ) {
+	editor.on('ExecCommand', function (args) {
 		let toSelect, node;
 
 		// Don't steal the focus from `.embed-dialog__url`
-		if ( 'embedDialog' === args.command ) {
+		if ('embedDialog' === args.command) {
 			return;
 		}
 
-		if ( selected ) {
+		if (selected) {
 			toSelect = selected;
 			deselect();
-			select( toSelect );
+			select(toSelect);
 		}
 
-		if ( execCommandView ) {
-			node = execCommandView[ execCommandBefore ? 'previousSibling' : 'nextSibling' ];
+		if (execCommandView) {
+			node = execCommandView[execCommandBefore ? 'previousSibling' : 'nextSibling'];
 
-			if ( node && node.nodeName === 'P' && editor.dom.isEmpty( node ) ) {
-				editor.dom.remove( node );
-				setViewCursor( execCommandBefore, execCommandView );
+			if (node && node.nodeName === 'P' && editor.dom.isEmpty(node)) {
+				editor.dom.remove(node);
+				setViewCursor(execCommandBefore, execCommandView);
 			}
 
 			execCommandView = false;
 		}
-	} );
+	});
 
-	editor.on( 'ResolveName', function( event ) {
-		if ( editor.dom.hasClass( event.target, 'wpview-wrap' ) ) {
-			event.name = editor.dom.getAttrib( event.target, 'data-wpview-type' ) || 'wpview';
+	editor.on('ResolveName', function (event) {
+		if (editor.dom.hasClass(event.target, 'wpview-wrap')) {
+			event.name = editor.dom.getAttrib(event.target, 'data-wpview-type') || 'wpview';
 			event.stopPropagation();
-		} else if ( getView( event.target ) ) {
+		} else if (getView(event.target)) {
 			event.preventDefault();
 			event.stopPropagation();
 		}
-	} );
+	});
 
-	editor.addButton( 'wp_view_edit', {
-		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
+	editor.addButton('wp_view_edit', {
+		tooltip: i18n.translate('Edit', { context: 'verb' }),
 		icon: 'dashicon dashicons-edit',
-		onPostRender: function() {
+		onPostRender: function () {
 			editor.on(
 				'wptoolbar',
-				function() {
+				function () {
 					let type;
 
-					if ( ! selected ) {
+					if (!selected) {
 						return;
 					}
 
-					type = editor.dom.getAttrib( selected, 'data-wpview-type' );
-					this.visible( views.isEditable( type ) );
-				}.bind( this )
+					type = editor.dom.getAttrib(selected, 'data-wpview-type');
+					this.visible(views.isEditable(type));
+				}.bind(this)
 			);
 		},
-		onClick: function() {
+		onClick: function () {
 			let type;
 
-			if ( ! selected ) {
+			if (!selected) {
 				return;
 			}
 
-			type = editor.dom.getAttrib( selected, 'data-wpview-type' );
-			views.edit( type, editor, getText( selected ) );
+			type = editor.dom.getAttrib(selected, 'data-wpview-type');
+			views.edit(type, editor, getText(selected));
 		},
-	} );
+	});
 
-	editor.addButton( 'wp_view_remove', {
-		tooltip: i18n.translate( 'Remove' ),
+	editor.addButton('wp_view_remove', {
+		tooltip: i18n.translate('Remove'),
 		icon: 'dashicon dashicons-no',
-		onClick: function() {
-			selected && removeView( selected );
+		onClick: function () {
+			selected && removeView(selected);
 		},
-	} );
+	});
 
-	editor.once( 'preinit', function() {
-		toolbar = editor.wp._createToolbar( [ 'wp_view_edit', 'wp_view_remove' ] );
-	} );
+	editor.once('preinit', function () {
+		toolbar = editor.wp._createToolbar(['wp_view_edit', 'wp_view_remove']);
+	});
 
-	editor.on( 'wptoolbar', function( event ) {
-		if ( selected ) {
+	editor.on('wptoolbar', function (event) {
+		if (selected) {
 			event.element = selected;
 			event.toolbar = toolbar;
 		}
-	} );
+	});
 }
 
-export default function() {
-	tinymce.PluginManager.add( 'wpcom/view', wpview );
+export default function () {
+	tinymce.PluginManager.add('wpcom/view', wpview);
 }

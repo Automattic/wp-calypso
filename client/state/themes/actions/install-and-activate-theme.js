@@ -17,12 +17,12 @@ import 'state/themes/init';
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @returns {Function}           Action thunk
  */
-export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
-	return dispatch => {
-		return dispatch( installTheme( themeId, siteId ) ).then( () => {
+export function installAndActivateTheme(themeId, siteId, source = 'unknown', purchased = false) {
+	return (dispatch) => {
+		return dispatch(installTheme(themeId, siteId)).then(() => {
 			// This will be called even if `installTheme` silently fails. We rely on
 			// `activateTheme`'s own error handling here.
-			dispatch( activateTheme( themeId, siteId, source, purchased ) );
-		} );
+			dispatch(activateTheme(themeId, siteId, source, purchased));
+		});
 	};
 }

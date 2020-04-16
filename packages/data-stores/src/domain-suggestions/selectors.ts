@@ -11,19 +11,19 @@ import { DomainSuggestionQuery } from './types';
 import { State } from './reducer';
 import { stringifyDomainQueryObject } from './utils';
 
-export const getState = ( state: State ) => state;
+export const getState = (state: State) => state;
 
-type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
+type DomainSuggestionSelectorOptions = Partial<Exclude<DomainSuggestionQuery, 'query'>>;
 
 export const getDomainSuggestions = (
 	_state: State,
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
 ) => {
-	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
+	const normalizedQuery = normalizeDomainSuggestionQuery(search, options);
 
 	// We need to go through the `select` store to get the resolver action
-	return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
+	return select(STORE_KEY).__internalGetDomainSuggestions(normalizedQuery);
 };
 
 export const isLoadingDomainSuggestions = (
@@ -31,11 +31,11 @@ export const isLoadingDomainSuggestions = (
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
 ) => {
-	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
+	const normalizedQuery = normalizeDomainSuggestionQuery(search, options);
 
-	return select( 'core/data' ).isResolving( STORE_KEY, '__internalGetDomainSuggestions', [
+	return select('core/data').isResolving(STORE_KEY, '__internalGetDomainSuggestions', [
 		normalizedQuery,
-	] );
+	]);
 };
 
 /**
@@ -51,7 +51,7 @@ export const __internalGetDomainSuggestions = (
 	state: State,
 	queryObject: DomainSuggestionQuery
 ) => {
-	return state.domainSuggestions[ stringifyDomainQueryObject( queryObject ) ];
+	return state.domainSuggestions[stringifyDomainQueryObject(queryObject)];
 };
 
 /**

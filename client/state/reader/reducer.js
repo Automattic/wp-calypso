@@ -20,7 +20,7 @@ import tags from './tags/reducer';
 import teams from './teams/reducer';
 import thumbnails from './thumbnails/reducer';
 
-const combinedReducer = combineReducers( {
+const combinedReducer = combineReducers({
 	conversations,
 	feeds,
 	feedSearches,
@@ -37,6 +37,6 @@ const combinedReducer = combineReducers( {
 	tags,
 	teams,
 	thumbnails,
-} );
-const readerReducer = withStorageKey( 'reader', combinedReducer );
+});
+const readerReducer = withStorageKey('reader', combinedReducer);
 export default readerReducer;

@@ -10,11 +10,9 @@ import { Field } from 'redux-form';
  */
 import FormTextInput from 'components/forms/form-text-input';
 
-const TextInputRenderer = ( { input, meta, ...props } ) => (
-	<FormTextInput { ...input } { ...props } />
-);
+const TextInputRenderer = ({ input, meta, ...props }) => <FormTextInput {...input} {...props} />;
 
-const ReduxFormTextInput = props => <Field component={ TextInputRenderer } { ...props } />;
+const ReduxFormTextInput = (props) => <Field component={TextInputRenderer} {...props} />;
 
 ReduxFormTextInput.propTypes = {
 	name: PropTypes.string.isRequired,

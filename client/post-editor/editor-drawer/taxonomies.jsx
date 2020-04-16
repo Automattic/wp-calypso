@@ -21,59 +21,59 @@ import Accordion from 'components/accordion';
 import TermTokenField from 'post-editor/term-token-field';
 import TermSelector from 'post-editor/editor-term-selector';
 
-function isSkippedTaxonomy( postType, taxonomy ) {
-	if ( includes( [ 'post_format', 'mentions', 'xposts' ], taxonomy ) ) {
+function isSkippedTaxonomy(postType, taxonomy) {
+	if (includes(['post_format', 'mentions', 'xposts'], taxonomy)) {
 		return true;
 	}
 
-	if ( 'post' === postType ) {
-		return includes( [ 'category', 'post_tag' ], taxonomy );
+	if ('post' === postType) {
+		return includes(['category', 'post_tag'], taxonomy);
 	}
 
 	return false;
 }
 
-function EditorDrawerTaxonomies( { translate, siteId, postType, taxonomies, terms } ) {
+function EditorDrawerTaxonomies({ translate, siteId, postType, taxonomies, terms }) {
 	return (
 		<div className="editor-drawer__taxonomies">
-			{ siteId && postType && <QueryTaxonomies { ...{ siteId, postType } } /> }
-			{ reduce(
+			{siteId && postType && <QueryTaxonomies {...{ siteId, postType }} />}
+			{reduce(
 				taxonomies,
-				( memo, taxonomy ) => {
+				(memo, taxonomy) => {
 					const { name, label, hierarchical } = taxonomy;
 
-					if ( isSkippedTaxonomy( postType, name ) ) {
+					if (isSkippedTaxonomy(postType, name)) {
 						return memo;
 					}
 
-					const taxonomyTerms = get( terms, name );
-					const taxonomyTermsCount = size( taxonomyTerms );
+					const taxonomyTerms = get(terms, name);
+					const taxonomyTermsCount = size(taxonomyTerms);
 
 					let subtitle;
-					if ( taxonomyTermsCount > 2 ) {
-						subtitle = translate( '%d selected', '%d selected', {
+					if (taxonomyTermsCount > 2) {
+						subtitle = translate('%d selected', '%d selected', {
 							count: taxonomyTermsCount,
-							args: [ taxonomyTermsCount ],
-						} );
+							args: [taxonomyTermsCount],
+						});
 					} else {
 						// Terms can be an array of strings or objects with `name`
-						subtitle = map( taxonomyTerms, term => {
-							return decodeEntities( term.name || term );
-						} ).join( ', ' );
+						subtitle = map(taxonomyTerms, (term) => {
+							return decodeEntities(term.name || term);
+						}).join(', ');
 					}
 
 					return memo.concat(
-						<Accordion key={ name } title={ label } subtitle={ subtitle } e2eTitle="taxonomies">
-							{ hierarchical ? (
-								<TermSelector compact taxonomyName={ name } />
+						<Accordion key={name} title={label} subtitle={subtitle} e2eTitle="taxonomies">
+							{hierarchical ? (
+								<TermSelector compact taxonomyName={name} />
 							) : (
-								<TermTokenField taxonomyName={ name } />
-							) }
+								<TermTokenField taxonomyName={name} />
+							)}
 						</Accordion>
 					);
 				},
 				[]
-			) }
+			)}
 		</div>
 	);
 }
@@ -82,19 +82,19 @@ EditorDrawerTaxonomies.propTypes = {
 	translate: PropTypes.func,
 	siteId: PropTypes.number,
 	postType: PropTypes.string,
-	terms: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
+	terms: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 	taxonomies: PropTypes.array,
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const postType = getEditedPostValue(state, siteId, postId, 'type');
 
 	return {
 		siteId,
 		postType,
-		terms: getEditedPostValue( state, siteId, postId, 'terms' ),
-		taxonomies: getPostTypeTaxonomies( state, siteId, postType ),
+		terms: getEditedPostValue(state, siteId, postId, 'terms'),
+		taxonomies: getPostTypeTaxonomies(state, siteId, postType),
 	};
-} )( localize( EditorDrawerTaxonomies ) );
+})(localize(EditorDrawerTaxonomies));

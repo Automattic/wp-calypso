@@ -43,51 +43,48 @@ class TagStream extends React.Component {
 		const self = this;
 		this._isMounted = true;
 		// can't use arrows with asyncRequire
-		asyncRequire( 'emoji-text', function( emojiText ) {
-			if ( self._isMounted ) {
-				self.setState( { emojiText } );
+		asyncRequire('emoji-text', function (emojiText) {
+			if (self._isMounted) {
+				self.setState({ emojiText });
 			}
-		} );
-		asyncRequire( 'twemoji', function( twemoji ) {
-			if ( self._isMounted ) {
+		});
+		asyncRequire('twemoji', function (twemoji) {
+			if (self._isMounted) {
 				const title = self.props.decodedTagSlug;
-				self.setState( {
+				self.setState({
 					twemoji,
-					isEmojiTitle: title && twemoji.test( title ),
-				} );
+					isEmojiTitle: title && twemoji.test(title),
+				});
 			}
-		} );
+		});
 	}
 
 	componentWillUnmount() {
 		this._isMounted = false;
 	}
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( ! prevState.twemoji || ! nextProps.decodedTagSlug ) {
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (!prevState.twemoji || !nextProps.decodedTagSlug) {
 			return null;
 		}
 
 		return {
-			isEmojiTitle: prevState.twemoji.test( nextProps.decodedTagSlug ),
+			isEmojiTitle: prevState.twemoji.test(nextProps.decodedTagSlug),
 		};
 	}
 
 	isSubscribed = () => {
-		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
-		return !! ( tag && tag.isFollowing );
+		const tag = find(this.props.tags, { slug: this.props.encodedTagSlug });
+		return !!(tag && tag.isFollowing);
 	};
 
 	toggleFollowing = () => {
 		const { decodedTagSlug, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
-		toggleAction( decodedTagSlug );
-		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
-		recordGaEvent(
-			isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic',
-			decodedTagSlug
-		);
+		toggleAction(decodedTagSlug);
+		recordAction(isFollowing ? 'unfollowed_topic' : 'followed_topic');
+		recordGaEvent(isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic', decodedTagSlug);
 		recordTrack(
 			isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed',
 			{
@@ -97,30 +94,30 @@ class TagStream extends React.Component {
 	};
 
 	render() {
-		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
+		const emptyContent = <EmptyContent decodedTagSlug={this.props.decodedTagSlug} />;
 		const title = this.props.decodedTagSlug;
-		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
+		const tag = find(this.props.tags, { slug: this.props.encodedTagSlug });
 
 		let imageSearchString = this.props.encodedTagSlug;
 
 		// If the tag contains emoji, convert to text equivalent
-		if ( this.state.emojiText && this.state.isEmojiTitle ) {
-			imageSearchString = this.state.emojiText.convert( title, {
+		if (this.state.emojiText && this.state.isEmojiTitle) {
+			imageSearchString = this.state.emojiText.convert(title, {
 				delimiter: '',
-			} );
+			});
 		}
 
-		if ( tag && tag.error ) {
+		if (tag && tag.error) {
 			return (
 				<React.Fragment>
 					<QueryReaderFollowedTags />
-					<QueryReaderTag tag={ this.props.decodedTagSlug } />
-					{ this.props.showBack && <HeaderBack /> }
+					<QueryReaderTag tag={this.props.decodedTagSlug} />
+					{this.props.showBack && <HeaderBack />}
 					<TagStreamHeader
-						title={ title }
-						imageSearchString={ imageSearchString }
-						showFollow={ false }
-						showBack={ this.props.showBack }
+						title={title}
+						imageSearchString={imageSearchString}
+						showFollow={false}
+						showBack={this.props.showBack}
 					/>
 					<EmptyContent />
 				</React.Fragment>
@@ -129,28 +126,28 @@ class TagStream extends React.Component {
 
 		return (
 			<Stream
-				{ ...this.props }
-				listName={ this.state.title }
-				emptyContent={ emptyContent }
-				showFollowInHeader={ true }
-				forcePlaceholders={ ! tag } // if tag hasn't loaded yet, then make everything a placeholder
+				{...this.props}
+				listName={this.state.title}
+				emptyContent={emptyContent}
+				showFollowInHeader={true}
+				forcePlaceholders={!tag} // if tag hasn't loaded yet, then make everything a placeholder
 			>
 				<QueryReaderFollowedTags />
-				<QueryReaderTag tag={ this.props.decodedTagSlug } />
+				<QueryReaderTag tag={this.props.decodedTagSlug} />
 				<DocumentHead
-					title={ this.props.translate( '%s ‹ Reader', {
+					title={this.props.translate('%s ‹ Reader', {
 						args: title,
 						comment: '%s is the section name. For example: "My Likes"',
-					} ) }
+					})}
 				/>
-				{ this.props.showBack && <HeaderBack /> }
+				{this.props.showBack && <HeaderBack />}
 				<TagStreamHeader
-					title={ title }
-					imageSearchString={ imageSearchString }
-					showFollow={ !! ( tag && tag.id ) }
-					following={ this.isSubscribed() }
-					onFollowToggle={ this.toggleFollowing }
-					showBack={ this.props.showBack }
+					title={title}
+					imageSearchString={imageSearchString}
+					showFollow={!!(tag && tag.id)}
+					following={this.isSubscribed()}
+					onFollowToggle={this.toggleFollowing}
+					showBack={this.props.showBack}
 				/>
 			</Stream>
 		);
@@ -158,12 +155,12 @@ class TagStream extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		followedTags: getReaderFollowedTags( state ),
-		tags: getReaderTags( state ),
-	} ),
+	(state) => ({
+		followedTags: getReaderFollowedTags(state),
+		tags: getReaderTags(state),
+	}),
 	{
 		followTag: requestFollowTag,
 		unfollowTag: requestUnfollowTag,
 	}
-)( localize( TagStream ) );
+)(localize(TagStream));

@@ -25,8 +25,8 @@ export default class LoggedOutForm extends React.Component {
 
 	render() {
 		return (
-			<Card className={ classnames( 'logged-out-form', this.props.className ) }>
-				<form { ...omit( this.props, 'className' ) }>{ this.props.children }</form>
+			<Card className={classnames('logged-out-form', this.props.className)}>
+				<form {...omit(this.props, 'className')}>{this.props.children}</form>
 			</Card>
 		);
 	}

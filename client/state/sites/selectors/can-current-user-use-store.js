@@ -16,19 +16,19 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable
  */
-export default function canCurrentUserUseStore( state, siteId = null ) {
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export default function canCurrentUserUseStore(state, siteId = null) {
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
-	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const isSiteAT = !! isSiteAutomatedTransfer( state, siteId );
+	const canUserManageOptions = canCurrentUser(state, siteId, 'manage_options');
+	const isSiteAT = !!isSiteAutomatedTransfer(state, siteId);
 
-	const hasSitePendingAT = hasSitePendingAutomatedTransfer( state, siteId );
-	const transferStatus = getAutomatedTransferStatus( state, siteId );
+	const hasSitePendingAT = hasSitePendingAutomatedTransfer(state, siteId);
+	const transferStatus = getAutomatedTransferStatus(state, siteId);
 	const siteHasBackgroundTransfer = hasSitePendingAT && transferStatus !== transferStates.ERROR;
 
 	return (
-		( canUserManageOptions && isSiteAT ) ||
-		( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
+		(canUserManageOptions && isSiteAT) ||
+		(config.isEnabled('signup/atomic-store-flow') && siteHasBackgroundTransfer)
 	);
 }

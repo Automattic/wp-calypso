@@ -19,88 +19,88 @@ import AsyncLoad from 'components/async-load';
 import QueryJITM from 'components/data/query-jitm';
 import 'state/data-layer/wpcom/marketing';
 
-const debug = debugFactory( 'calypso:jitm' );
+const debug = debugFactory('calypso:jitm');
 
-function renderTemplate( template, props ) {
-	if ( template === 'notice' ) {
-		return <AsyncLoad { ...props } require="blocks/jitm/templates/notice" />;
+function renderTemplate(template, props) {
+	if (template === 'notice') {
+		return <AsyncLoad {...props} require="blocks/jitm/templates/notice" />;
 	}
 
-	if ( template === 'sidebar-banner' ) {
-		return <AsyncLoad { ...props } require="blocks/jitm/templates/sidebar-banner" />;
+	if (template === 'sidebar-banner') {
+		return <AsyncLoad {...props} require="blocks/jitm/templates/sidebar-banner" />;
 	}
 
-	return <AsyncLoad { ...props } require="blocks/jitm/templates/default" />;
+	return <AsyncLoad {...props} require="blocks/jitm/templates/default" />;
 }
 
-function getEventHandlers( props, dispatch ) {
+function getEventHandlers(props, dispatch) {
 	const { jitm, currentSite, messagePath } = props;
 	const tracks = jitm.tracks || {};
 	const eventProps = { id: jitm.id, jitm: true };
 	const handlers = {};
 
-	if ( tracks.display ) {
+	if (tracks.display) {
 		handlers.trackImpression = () => (
 			<TrackComponentView
-				eventName={ tracks.display.name || 'calypso_jitm_nudge_impression' }
-				eventProperties={ { ...tracks.display.props, ...eventProps } }
+				eventName={tracks.display.name || 'calypso_jitm_nudge_impression'}
+				eventProperties={{ ...tracks.display.props, ...eventProps }}
 			/>
 		);
 	}
 
 	handlers.onDismiss = () => {
 		tracks.dismiss &&
-			props.recordTracksEvent( tracks.dismiss.name, { ...tracks.dismiss.props, ...eventProps } );
-		dispatch( dismissJITM( currentSite.ID, messagePath, jitm.featureClass ) );
+			props.recordTracksEvent(tracks.dismiss.name, { ...tracks.dismiss.props, ...eventProps });
+		dispatch(dismissJITM(currentSite.ID, messagePath, jitm.featureClass));
 	};
 
 	handlers.onClick = () => {
 		tracks.click &&
-			props.recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } );
+			props.recordTracksEvent(tracks.click.name, { ...tracks.click.props, ...eventProps });
 
-		jitm.action && dispatch( jitm.action );
+		jitm.action && dispatch(jitm.action);
 	};
 
 	return handlers;
 }
 
-function useDevTool( { currentSite }, dispatch ) {
-	useEffect( () => {
+function useDevTool({ currentSite }, dispatch) {
+	useEffect(() => {
 		// Do not setup the tool in production
-		if ( process.env.NODE_ENV === 'production' || ! currentSite ) {
+		if (process.env.NODE_ENV === 'production' || !currentSite) {
 			return;
 		}
 
-		currentSite.ID && setupDevTool( currentSite.ID, dispatch );
-	}, [ currentSite?.ID ] );
+		currentSite.ID && setupDevTool(currentSite.ID, dispatch);
+	}, [currentSite?.ID]);
 }
 
-export function JITM( props ) {
+export function JITM(props) {
 	const { jitm, currentSite, messagePath, isJetpack } = props;
 	const dispatch = useDispatch();
 
-	useDevTool( props, dispatch );
+	useDevTool(props, dispatch);
 
-	if ( ! currentSite || ! messagePath ) {
+	if (!currentSite || !messagePath) {
 		return null;
 	}
 
-	debug( `siteId: %d, messagePath: %s, message: `, currentSite.ID, messagePath, jitm );
+	debug(`siteId: %d, messagePath: %s, message: `, currentSite.ID, messagePath, jitm);
 
 	// 'jetpack' icon is only allowed to Jetpack sites
-	if ( jitm?.content?.icon === 'jetpack' && ! isJetpack ) {
+	if (jitm?.content?.icon === 'jetpack' && !isJetpack) {
 		jitm.content.icon = '';
 	}
 
 	return (
 		<>
-			<QueryJITM siteId={ currentSite.ID } messagePath={ messagePath } />
-			{ jitm &&
-				renderTemplate( jitm.template || props.template, {
+			<QueryJITM siteId={currentSite.ID} messagePath={messagePath} />
+			{jitm &&
+				renderTemplate(jitm.template || props.template, {
 					...jitm,
-					...getEventHandlers( props, dispatch ),
+					...getEventHandlers(props, dispatch),
 					currentSite,
-				} ) }
+				})}
 		</>
 	);
 }
@@ -114,13 +114,13 @@ JITM.defaultProps = {
 	template: 'default',
 };
 
-const mapStateToProps = ( state, ownProps ) => {
-	const currentSite = getSelectedSite( state );
+const mapStateToProps = (state, ownProps) => {
+	const currentSite = getSelectedSite(state);
 
 	return {
 		currentSite,
-		jitm: getTopJITM( state, ownProps.messagePath ),
-		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
+		jitm: getTopJITM(state, ownProps.messagePath),
+		isJetpack: currentSite && isJetpackSite(state, currentSite.ID),
 	};
 };
 
@@ -128,4 +128,4 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( JITM );
+export default connect(mapStateToProps, mapDispatchToProps)(JITM);

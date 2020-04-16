@@ -7,9 +7,9 @@ import connection from './connection/reducer';
 import ui from './ui/reducer';
 import user from './user/reducer';
 
-export default combineReducers( {
+export default combineReducers({
 	chat,
 	connection,
 	ui,
 	user,
-} );
+});

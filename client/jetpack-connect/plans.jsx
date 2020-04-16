@@ -58,35 +58,35 @@ class Plans extends Component {
 
 	componentDidMount() {
 		this.maybeRedirect();
-		if ( ! this.redirecting ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
+		if (!this.redirecting) {
+			this.props.recordTracksEvent('calypso_jpc_plans_view', {
 				user: this.props.userId,
-			} );
+			});
 		}
 	}
 
 	componentDidUpdate() {
-		if ( ! this.redirecting ) {
+		if (!this.redirecting) {
 			this.maybeRedirect();
 		}
 	}
 
 	maybeRedirect() {
-		if ( this.props.isAutomatedTransfer ) {
-			return externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+		if (this.props.isAutomatedTransfer) {
+			return externalRedirect(this.props.selectedSite.URL + JETPACK_ADMIN_PATH);
 		}
-		if ( this.props.selectedPlan ) {
-			return this.selectPlan( this.props.selectedPlan );
+		if (this.props.selectedPlan) {
+			return this.selectPlan(this.props.selectedPlan);
 		}
-		if ( ( this.props.hasPlan && ! this.props.product_slug ) || this.props.notJetpack ) {
-			return this.redirect( CALYPSO_PLANS_PAGE );
+		if ((this.props.hasPlan && !this.props.product_slug) || this.props.notJetpack) {
+			return this.redirect(CALYPSO_PLANS_PAGE);
 		}
-		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
+		if (!this.props.selectedSite && this.props.isSitesInitialized) {
 			// Invalid site
-			return this.redirect( JPC_PATH_PLANS );
+			return this.redirect(JPC_PATH_PLANS);
 		}
-		if ( ! this.props.canPurchasePlans ) {
-			if ( this.props.calypsoStartedConnection ) {
+		if (!this.props.canPurchasePlans) {
+			if (this.props.calypsoStartedConnection) {
 				return this.redirectToCalypso();
 			}
 			return this.redirectToWpAdmin();
@@ -96,27 +96,27 @@ class Plans extends Component {
 	redirectToCalypso() {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
-		if ( selectedSiteSlug && canPurchasePlans ) {
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, null, { 'thank-you': '' } );
+		if (selectedSiteSlug && canPurchasePlans) {
+			return this.redirect(CALYPSO_MY_PLAN_PAGE, null, { 'thank-you': '' });
 		}
 
-		return this.redirect( CALYPSO_REDIRECTION_PAGE );
+		return this.redirect(CALYPSO_REDIRECTION_PAGE);
 	}
 
 	handleSkipButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
+		this.props.recordTracksEvent('calypso_jpc_plans_skip_button_click');
 
 		this.selectFreeJetpackPlan();
 	};
 
 	redirectToWpAdmin() {
 		const { queryRedirect } = this.props;
-		if ( queryRedirect ) {
-			externalRedirect( queryRedirect );
+		if (queryRedirect) {
+			externalRedirect(queryRedirect);
 			this.redirecting = true;
 			this.props.completeFlow();
-		} else if ( this.props.selectedSite ) {
-			externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+		} else if (this.props.selectedSite) {
+			externalRedirect(this.props.selectedSite.URL + JETPACK_ADMIN_PATH);
 			this.redirecting = true;
 			this.props.completeFlow();
 		}
@@ -126,56 +126,56 @@ class Plans extends Component {
 		const redirectTo = CALYPSO_MY_PLAN_PAGE + this.props.selectedSiteSlug;
 		const args = { 'thank-you': '', install: 'all' };
 
-		return addQueryArgs( args, redirectTo );
+		return addQueryArgs(args, redirectTo);
 	}
 
-	redirect( path, product, args ) {
+	redirect(path, product, args) {
 		let redirectTo = path + this.props.selectedSiteSlug;
 
-		if ( product ) {
+		if (product) {
 			redirectTo += '/' + product;
 		}
 
-		if ( args ) {
-			redirectTo = addQueryArgs( args, redirectTo );
+		if (args) {
+			redirectTo = addQueryArgs(args, redirectTo);
 		}
 
-		page.redirect( redirectTo );
+		page.redirect(redirectTo);
 		this.redirecting = true;
 		this.props.completeFlow();
 	}
 
 	selectFreeJetpackPlan() {
 		clearPlan();
-		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
+		this.props.recordTracksEvent('calypso_jpc_plans_submit_free', {
 			user: this.props.userId,
-		} );
-		bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
+		});
+		bumpStat('calypso_jpc_plan_selection', 'jetpack_free');
 
 		this.redirectToCalypso();
 	}
 
-	selectPlan = cartItem => {
+	selectPlan = (cartItem) => {
 		clearPlan();
-		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
+		if (!cartItem || cartItem.product_slug === PLAN_JETPACK_FREE) {
 			return this.selectFreeJetpackPlan();
 		}
 
-		if ( cartItem.product_slug === get( this.props, 'selectedSite.plan.product_slug', null ) ) {
-			return this.redirect( CALYPSO_PLANS_PAGE );
+		if (cartItem.product_slug === get(this.props, 'selectedSite.plan.product_slug', null)) {
+			return this.redirect(CALYPSO_PLANS_PAGE);
 		}
 
-		this.props.recordTracksEvent( 'calypso_jpc_plans_submit', {
+		this.props.recordTracksEvent('calypso_jpc_plans_submit', {
 			user: this.props.userId,
 			product_slug: cartItem.product_slug,
-		} );
-		bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
+		});
+		bumpStat('calypso_jpc_plan_selection', cartItem.product_slug);
 
-		addItem( cartItem );
+		addItem(cartItem);
 		this.props.completeFlow();
-		persistSignupDestination( this.getMyPlansDestination() );
+		persistSignupDestination(this.getMyPlansDestination());
 
-		this.redirect( '/checkout/', cartItem.product_slug );
+		this.redirect('/checkout/', cartItem.product_slug);
 	};
 
 	shouldShowPlaceholder() {
@@ -183,22 +183,22 @@ class Plans extends Component {
 			this.redirecting ||
 			this.props.selectedPlanSlug ||
 			false !== this.props.notJetpack ||
-			! this.props.canPurchasePlans ||
+			!this.props.canPurchasePlans ||
 			false !== this.props.hasPlan ||
 			false !== this.props.isAutomatedTransfer
 		);
 	}
 
-	handleInfoButtonClick = info => () => {
-		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
+	handleInfoButtonClick = (info) => () => {
+		this.props.recordTracksEvent('calypso_jpc_external_help_click', {
 			help_type: info,
-		} );
+		});
 	};
 
 	render() {
 		const { interval, selectedSite, translate } = this.props;
 
-		if ( this.shouldShowPlaceholder() ) {
+		if (this.shouldShowPlaceholder()) {
 			return (
 				<Fragment>
 					<QueryPlans />
@@ -208,27 +208,27 @@ class Plans extends Component {
 			);
 		}
 
-		const helpButtonLabel = translate( 'Need help?' );
+		const helpButtonLabel = translate('Need help?');
 
 		return (
 			<Fragment>
-				<DocumentHead title={ translate( 'Plans' ) } />
+				<DocumentHead title={translate('Plans')} />
 				<QueryPlans />
-				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
+				{selectedSite && <QuerySitePlans siteId={selectedSite.ID} />}
 				<PlansGrid
-					basePlansPath={ this.props.basePlansPath }
-					onSelect={ this.selectPlan }
-					hideFreePlan={ true }
-					isLanding={ false }
-					interval={ interval }
-					selectedSite={ selectedSite }
+					basePlansPath={this.props.basePlansPath}
+					onSelect={this.selectPlan}
+					hideFreePlan={true}
+					isLanding={false}
+					interval={interval}
+					selectedSite={selectedSite}
 				>
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
-							label={ helpButtonLabel }
+							label={helpButtonLabel}
 							eventName="calypso_jpc_plans_chat_initiated"
 						>
-							<HelpButton label={ helpButtonLabel } />
+							<HelpButton label={helpButtonLabel} />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>
@@ -240,27 +240,27 @@ class Plans extends Component {
 export { Plans as PlansTestComponent };
 
 const connectComponent = connect(
-	state => {
-		const user = getCurrentUser( state );
-		const selectedSite = getSelectedSite( state );
+	(state) => {
+		const user = getCurrentUser(state);
+		const selectedSite = getSelectedSite(state);
 		const selectedSiteSlug = selectedSite ? selectedSite.slug : '';
 
 		const selectedPlanSlug = retrievePlan();
-		const isJetpackProductSlug = getJetpackProductSlug( selectedPlanSlug );
+		const isJetpackProductSlug = getJetpackProductSlug(selectedPlanSlug);
 
 		const selectedPlan = isJetpackProductSlug
-			? getProductBySlug( state, selectedPlanSlug )
-			: getPlanBySlug( state, selectedPlanSlug );
+			? getProductBySlug(state, selectedPlanSlug)
+			: getPlanBySlug(state, selectedPlanSlug);
 
 		return {
-			calypsoStartedConnection: isCalypsoStartedConnection( selectedSiteSlug ),
+			calypsoStartedConnection: isCalypsoStartedConnection(selectedSiteSlug),
 			canPurchasePlans: selectedSite
-				? canCurrentUser( state, selectedSite.ID, 'manage_options' )
+				? canCurrentUser(state, selectedSite.ID, 'manage_options')
 				: true,
-			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
-			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null,
-			isSitesInitialized: hasInitializedSites( state ),
-			notJetpack: selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null,
+			hasPlan: selectedSite ? isCurrentPlanPaid(state, selectedSite.ID) : null,
+			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer(state, selectedSite.ID) : null,
+			isSitesInitialized: hasInitializedSites(state),
+			notJetpack: selectedSite ? !isJetpackSite(state, selectedSite.ID) : null,
 			selectedPlan,
 			selectedPlanSlug,
 			selectedSite,
@@ -274,4 +274,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( Plans );
+export default flowRight(connectComponent, localize)(Plans);

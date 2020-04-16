@@ -17,7 +17,7 @@ import { receiveTheme } from 'state/themes/actions/receive-theme';
 
 import 'state/themes/init';
 
-const debug = debugFactory( 'calypso:themes:actions' );
+const debug = debugFactory('calypso:themes:actions');
 
 /**
  * This action queries wpcom endpoint for active theme for site.
@@ -27,34 +27,34 @@ const debug = debugFactory( 'calypso:themes:actions' );
  * @param  {number}   siteId Site for which to check active theme
  * @returns {Function}        Redux thunk with request action
  */
-export function requestActiveTheme( siteId ) {
-	return ( dispatch, getState ) => {
-		dispatch( {
+export function requestActiveTheme(siteId) {
+	return (dispatch, getState) => {
+		dispatch({
 			type: ACTIVE_THEME_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.activeTheme( siteId )
-			.then( theme => {
-				debug( 'Received current theme', theme );
+			.activeTheme(siteId)
+			.then((theme) => {
+				debug('Received current theme', theme);
 				// We want to store the theme object in the appropriate Redux subtree -- either 'wpcom'
 				// for WPCOM sites, or siteId for Jetpack sites.
-				const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
-				dispatch( receiveTheme( theme, siteIdOrWpcom ) );
-				dispatch( {
+				const siteIdOrWpcom = isJetpackSite(getState(), siteId) ? siteId : 'wpcom';
+				dispatch(receiveTheme(theme, siteIdOrWpcom));
+				dispatch({
 					type: ACTIVE_THEME_REQUEST_SUCCESS,
 					siteId,
 					theme,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

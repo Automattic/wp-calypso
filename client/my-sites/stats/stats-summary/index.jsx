@@ -35,18 +35,18 @@ class StatsSummaryChart extends Component {
 		onClick: () => {},
 	};
 
-	barClick = bar => {
-		const selectedBar = find( this.props.data, data => isEqual( data, bar.data ) );
-		this.props.recordGoogleEvent( 'Stats', 'Clicked Summary Chart Bar' );
-		this.props.onClick( selectedBar );
+	barClick = (bar) => {
+		const selectedBar = find(this.props.data, (data) => isEqual(data, bar.data));
+		this.props.recordGoogleEvent('Stats', 'Clicked Summary Chart Bar');
+		this.props.onClick(selectedBar);
 	};
 
 	buildChartData() {
 		const { data, labelClass, numberFormat, sectionClass, selected, tabLabel } = this.props;
-		return data.map( record => {
-			const className = classNames( {
-				'is-selected': isEqual( selected, record ),
-			} );
+		return data.map((record) => {
+			const className = classNames({
+				'is-selected': isEqual(selected, record),
+			});
 
 			const tooltipData = [
 				{
@@ -57,7 +57,7 @@ class StatsSummaryChart extends Component {
 				{
 					label: tabLabel,
 					className: sectionClass,
-					value: numberFormat( record.value ),
+					value: numberFormat(record.value),
 					icon: labelClass,
 				},
 			];
@@ -70,7 +70,7 @@ class StatsSummaryChart extends Component {
 				data: record,
 				tooltipData,
 			};
-		} );
+		});
 	}
 
 	render() {
@@ -83,29 +83,27 @@ class StatsSummaryChart extends Component {
 			selected,
 			tabLabel,
 		} = this.props;
-		const label = selected ? ': ' + selected[ labelKey ] : '';
+		const label = selected ? ': ' + selected[labelKey] : '';
 		const tabOptions = {
 			attr: labelKey,
-			value: selected ? numberFormat( selected[ dataKey ] ) : null,
+			value: selected ? numberFormat(selected[dataKey]) : null,
 			selected: true,
 			gridicon: labelClass,
 			label: tabLabel + label,
 		};
 
 		return (
-			<Card
-				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
-			>
-				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
-				<ElementChart data={ this.buildChartData() } barClick={ this.barClick } />
+			<Card className={classNames('stats-module', 'is-summary-chart', { 'is-loading': isLoading })}>
+				<StatsModulePlaceholder className="is-chart" isLoading={isLoading} />
+				<ElementChart data={this.buildChartData()} barClick={this.barClick} />
 				<StatsTabs>
-					<StatsTab { ...tabOptions } />
+					<StatsTab {...tabOptions} />
 				</StatsTabs>
 			</Card>
 		);
 	}
 }
 
-const connectComponent = connect( null, { recordGoogleEvent } );
+const connectComponent = connect(null, { recordGoogleEvent });
 
-export default flowRight( connectComponent, localize )( StatsSummaryChart );
+export default flowRight(connectComponent, localize)(StatsSummaryChart);

@@ -35,7 +35,7 @@ class QueryInlineHelpSupportTypes extends Component {
 	}
 
 	prepareDirectlyWidget = () => {
-		if ( this.hasDataToDetermineVariation() && this.props.isDirectlyUninitialized ) {
+		if (this.hasDataToDetermineVariation() && this.props.isDirectlyUninitialized) {
 			this.props.initializeDirectly();
 		}
 	};
@@ -50,7 +50,7 @@ class QueryInlineHelpSupportTypes extends Component {
 		const ticketReadyOrError =
 			this.props.ticketSupportConfigurationReady || this.props.ticketSupportRequestError !== null;
 		const happychatReadyOrDisabled =
-			! config.isEnabled( 'happychat' ) || this.props.isHappychatUserEligible !== null;
+			!config.isEnabled('happychat') || this.props.isHappychatUserEligible !== null;
 
 		return ticketReadyOrError && happychatReadyOrDisabled;
 	};
@@ -60,23 +60,22 @@ class QueryInlineHelpSupportTypes extends Component {
 			<React.Fragment>
 				<QueryTicketSupportConfiguration />
 				<QueryLanguageNames />
-				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
+				{this.props.shouldStartHappychatConnection && <HappychatConnection />}
 			</React.Fragment>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		shouldStartHappychatConnection:
-			! isRequestingSites( state ) && !! getHelpSelectedSiteId( state ),
-		ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
-		ticketSupportRequestError: getTicketSupportRequestError( state ),
-		isHappychatUserEligible: isHappychatUserEligible( state ),
-		isDirectlyUninitialized: isDirectlyUninitialized( state ),
-	} ),
+	(state) => ({
+		shouldStartHappychatConnection: !isRequestingSites(state) && !!getHelpSelectedSiteId(state),
+		ticketSupportConfigurationReady: isTicketSupportConfigurationReady(state),
+		ticketSupportRequestError: getTicketSupportRequestError(state),
+		isHappychatUserEligible: isHappychatUserEligible(state),
+		isDirectlyUninitialized: isDirectlyUninitialized(state),
+	}),
 	{
 		initializeDirectly,
 		openHappychat,
 	}
-)( QueryInlineHelpSupportTypes );
+)(QueryInlineHelpSupportTypes);

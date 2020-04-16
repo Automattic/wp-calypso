@@ -8,14 +8,14 @@ import { expect } from 'chai';
  */
 import { getNotices } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( 'getNotices()', () => {
-		beforeEach( () => {
+describe('selectors', () => {
+	describe('getNotices()', () => {
+		beforeEach(() => {
 			getNotices.memoizedSelector.cache.clear();
-		} );
+		});
 
-		test( 'should return an array of notices', () => {
-			const notices = getNotices( {
+		test('should return an array of notices', () => {
+			const notices = getNotices({
 				notices: {
 					items: {
 						1: { noticeId: 1 },
@@ -23,9 +23,9 @@ describe( 'selectors', () => {
 						3: { noticeId: 3 },
 					},
 				},
-			} );
+			});
 
-			expect( notices ).to.eql( [ { noticeId: 1 }, { noticeId: 2 }, { noticeId: 3 } ] );
-		} );
-	} );
-} );
+			expect(notices).to.eql([{ noticeId: 1 }, { noticeId: 2 }, { noticeId: 3 }]);
+		});
+	});
+});

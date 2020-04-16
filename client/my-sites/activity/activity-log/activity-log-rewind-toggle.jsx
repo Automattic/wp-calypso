@@ -42,38 +42,38 @@ class ActivityLogRewindToggle extends Component {
 		isVpMigrate: false,
 	};
 
-	activateRewind = () => this.props.activateRewind( this.props.siteId, this.props.isVpMigrate );
+	activateRewind = () => this.props.activateRewind(this.props.siteId, this.props.isVpMigrate);
 
 	render() {
 		const { isActivating, siteId, translate, label } = this.props;
 
-		const isSiteKnown = !! siteId;
+		const isSiteKnown = !!siteId;
 
 		return (
 			<Button
 				className="activity-log__rewind-toggle"
-				busy={ isSiteKnown && isActivating }
+				busy={isSiteKnown && isActivating}
 				primary
-				disabled={ ! isSiteKnown || isActivating }
-				onClick={ this.activateRewind }
+				disabled={!isSiteKnown || isActivating}
+				onClick={this.activateRewind}
 			>
-				{ label ? label : translate( 'Activate Rewind' ) }
+				{label ? label : translate('Activate Rewind')}
 			</Button>
 		);
 	}
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		isActivating: isRewindActivating( state, siteId ),
-	} ),
+	(state, { siteId }) => ({
+		isActivating: isRewindActivating(state, siteId),
+	}),
 	{
-		activateRewind: ( siteId, isVpMigrate ) =>
+		activateRewind: (siteId, isVpMigrate) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_vp_migrate_rewind', {
+				recordTracksEvent('calypso_activitylog_vp_migrate_rewind', {
 					rewind_opt_in: isVpMigrate,
-				} ),
-				activateRewind( siteId, isVpMigrate )
+				}),
+				activateRewind(siteId, isVpMigrate)
 			),
 	}
-)( localize( ActivityLogRewindToggle ) );
+)(localize(ActivityLogRewindToggle));

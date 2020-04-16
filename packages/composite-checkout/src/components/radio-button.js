@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-export default function RadioButton( {
+export default function RadioButton({
 	checked,
 	name,
 	value,
@@ -14,31 +14,31 @@ export default function RadioButton( {
 	label,
 	id,
 	ariaLabel,
-} ) {
-	const [ isFocused, changeFocus ] = useState( false );
+}) {
+	const [isFocused, changeFocus] = useState(false);
 
 	return (
-		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
+		<RadioButtonWrapper isFocused={isFocused} checked={checked}>
 			<Radio
 				type="radio"
-				name={ name }
-				id={ id }
-				value={ value }
-				checked={ checked }
-				onChange={ onChange }
-				onFocus={ () => {
-					changeFocus( true );
-				} }
-				onBlur={ () => {
-					changeFocus( false );
-				} }
-				readOnly={ ! onChange }
-				aria-label={ ariaLabel }
+				name={name}
+				id={id}
+				value={value}
+				checked={checked}
+				onChange={onChange}
+				onFocus={() => {
+					changeFocus(true);
+				}}
+				onBlur={() => {
+					changeFocus(false);
+				}}
+				readOnly={!onChange}
+				aria-label={ariaLabel}
 			/>
-			<Label checked={ checked } htmlFor={ id }>
-				{ label }
+			<Label checked={checked} htmlFor={id}>
+				{label}
 			</Label>
-			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
+			{children && <RadioButtonChildren checked={checked}>{children}</RadioButtonChildren>}
 		</RadioButtonWrapper>
 	);
 }
@@ -79,23 +79,23 @@ const RadioButtonWrapper = styled.div`
 	}
 
 	:hover:before {
-		border: 3px solid ${props => props.theme.colors.highlight};
+		border: 3px solid ${(props) => props.theme.colors.highlight};
 	}
 
 	.payment-logos {
 		display: none;
 
-		@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+		@media (${(props) => props.theme.breakpoints.smallPhoneUp}) {
 			display: block;
 		}
 	}
 
 	svg {
-		filter: grayscale( ${getGrayscaleValue} );
+		filter: grayscale(${getGrayscaleValue});
 	}
 
 	:hover svg {
-		filter: grayscale( 0 );
+		filter: grayscale(0);
 	}
 `;
 
@@ -125,12 +125,12 @@ const Label = styled.label`
 		width: 16px;
 		height: 16px;
 		content: '';
-		border: 1px solid ${props => props.theme.colors.borderColor};
+		border: 1px solid ${(props) => props.theme.colors.borderColor};
 		border-radius: 100%;
 		top: 19px;
 		left: 16px;
 		position: absolute;
-		background: ${props => props.theme.colors.surface};
+		background: ${(props) => props.theme.colors.surface};
 		box-sizing: border-box;
 		z-index: 2;
 	}
@@ -151,27 +151,27 @@ const Label = styled.label`
 `;
 
 const RadioButtonChildren = styled.div`
-	display: ${props => ( props.checked ? 'block' : 'none' )};
+	display: ${(props) => (props.checked ? 'block' : 'none')};
 `;
 
-function getBorderColor( { checked, theme } ) {
+function getBorderColor({ checked, theme }) {
 	return checked ? theme.colors.highlight : theme.colors.borderColor;
 }
 
-function getRadioColor( { checked, theme } ) {
+function getRadioColor({ checked, theme }) {
 	return checked ? theme.colors.highlight : theme.colors.surface;
 }
 
-function getBorderWidth( { checked } ) {
+function getBorderWidth({ checked }) {
 	return checked ? '3px' : '1px';
 }
 
-function getGrayscaleValue( { checked } ) {
+function getGrayscaleValue({ checked }) {
 	return checked ? 0 : '100%';
 }
 
-function getOutline( { isFocused, theme } ) {
-	if ( isFocused ) {
+function getOutline({ isFocused, theme }) {
+	if (isFocused) {
 		return theme.colors.outline + ' solid 2px';
 	}
 	return '0';

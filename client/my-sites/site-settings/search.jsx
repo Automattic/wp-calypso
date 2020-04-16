@@ -51,16 +51,16 @@ class Search extends Component {
 		fields: PropTypes.object,
 	};
 
-	renderInfoLink( link ) {
+	renderInfoLink(link) {
 		const { translate } = this.props;
 
 		return (
 			<SupportInfo
-				text={ translate(
+				text={translate(
 					'Replaces the default WordPress search with a faster, filterable search experience.'
-				) }
-				link={ link }
-				privacyLink={ false }
+				)}
+				link={link}
+				privacyLink={false}
 			/>
 		);
 	}
@@ -70,24 +70,20 @@ class Search extends Component {
 
 		return (
 			<FormSettingExplanation>
-				{ translate(
-					'Add the Search widget to your sidebar to configure advanced search filters.'
-				) }
+				{translate('Add the Search widget to your sidebar to configure advanced search filters.')}
 			</FormSettingExplanation>
 		);
 	}
 
-	renderSettingsContent( updatingSettings, searchActive ) {
+	renderSettingsContent(updatingSettings, searchActive) {
 		const { translate } = this.props;
 
 		return (
 			<div className="search__module-settings site-settings__child-settings">
-				{ updatingSettings && (
-					<FormSettingExplanation>{ translate( 'Updating settings…' ) }</FormSettingExplanation>
-				) }
-				{ searchActive && ! updatingSettings ? (
-					<div>{ this.renderSearchExplanation() }</div>
-				) : null }
+				{updatingSettings && (
+					<FormSettingExplanation>{translate('Updating settings…')}</FormSettingExplanation>
+				)}
+				{searchActive && !updatingSettings ? <div>{this.renderSearchExplanation()}</div> : null}
 			</div>
 		);
 	}
@@ -103,17 +99,17 @@ class Search extends Component {
 
 		return (
 			<FormFieldset>
-				{ this.renderInfoLink( 'https://wordpress.com/support/jetpack-search/' ) }
+				{this.renderInfoLink('https://wordpress.com/support/jetpack-search/')}
 
 				<CompactFormToggle
-					checked={ !! fields.jetpack_search_enabled }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'jetpack_search_enabled' ) }
+					checked={!!fields.jetpack_search_enabled}
+					disabled={isRequestingSettings || isSavingSettings}
+					onChange={handleAutosavingToggle('jetpack_search_enabled')}
 				>
-					{ translate( 'Replace WordPress built-in search with an improved search experience' ) }
+					{translate('Replace WordPress built-in search with an improved search experience')}
 				</CompactFormToggle>
 
-				{ this.renderSettingsContent( isSavingSettings, fields.jetpack_search_enabled ) }
+				{this.renderSettingsContent(isSavingSettings, fields.jetpack_search_enabled)}
 			</FormFieldset>
 		);
 	}
@@ -131,18 +127,16 @@ class Search extends Component {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<FormFieldset className="jetpack-search-settings">
-				{ this.renderInfoLink( 'https://jetpack.com/support/search/' ) }
+				{this.renderInfoLink('https://jetpack.com/support/search/')}
 
 				<JetpackModuleToggle
-					siteId={ siteId }
+					siteId={siteId}
 					moduleSlug="search"
-					label={ translate(
-						'Replace WordPress built-in search with an improved search experience'
-					) }
-					disabled={ isRequestingSettings || isSavingSettings }
+					label={translate('Replace WordPress built-in search with an improved search experience')}
+					disabled={isRequestingSettings || isSavingSettings}
 				/>
 
-				{ this.renderSettingsContent( activatingSearchModule, searchModuleActive ) }
+				{this.renderSettingsContent(activatingSearchModule, searchModuleActive)}
 			</FormFieldset>
 		);
 	}
@@ -160,9 +154,9 @@ class Search extends Component {
 									'The built-in WordPress search is great for sites without much content. But as your site grows, searches slow down and return less relevant results.'
 							  )
 					}
-					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
-					feature={ FEATURE_SEARCH }
-					plan={ this.props.siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PLAN_BUSINESS }
+					event={'calypso_jetpack_search_settings_upgrade_nudge'}
+					feature={FEATURE_SEARCH}
+					plan={this.props.siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PLAN_BUSINESS}
 					title={
 						this.props.siteIsJetpack
 							? this.props.translate(
@@ -181,16 +175,16 @@ class Search extends Component {
 		return (
 			<Fragment>
 				<CompactCard className="search__card site-settings__traffic-settings">
-					{ this.props.siteIsJetpack ? this.renderJetpackSettings() : this.renderWPComSettings() }
+					{this.props.siteIsJetpack ? this.renderJetpackSettings() : this.renderWPComSettings()}
 				</CompactCard>
-				{ ( this.props.searchModuleActive || this.props.fields.jetpack_search_enabled ) && (
+				{(this.props.searchModuleActive || this.props.fields.jetpack_search_enabled) && (
 					<CompactCard
-						href={ this.props.customizerUrl }
-						target={ this.props.siteIsJetpack ? 'external' : null }
+						href={this.props.customizerUrl}
+						target={this.props.siteIsJetpack ? 'external' : null}
 					>
-						{ this.props.translate( 'Add Search Widget' ) }
+						{this.props.translate('Add Search Widget')}
 					</CompactCard>
-				) }
+				)}
 			</Fragment>
 		);
 	}
@@ -198,45 +192,45 @@ class Search extends Component {
 	render() {
 		return (
 			<div className="site-settings__search-block">
-				{ this.props.siteId && <QueryJetpackConnection siteId={ this.props.siteId } /> }
-				{ this.props.siteId && <QuerySitePurchases siteId={ this.props.siteId } /> }
-				<SettingsSectionHeader title={ this.props.translate( 'Jetpack Search' ) } />
-				{ this.props.isLoading ? (
-					<Banner title="Loading..." plan={ PRODUCT_JETPACK_SEARCH } />
+				{this.props.siteId && <QueryJetpackConnection siteId={this.props.siteId} />}
+				{this.props.siteId && <QuerySitePurchases siteId={this.props.siteId} />}
+				<SettingsSectionHeader title={this.props.translate('Jetpack Search')} />
+				{this.props.isLoading ? (
+					<Banner title="Loading..." plan={PRODUCT_JETPACK_SEARCH} />
 				) : (
 					<Fragment>
-						{ ! this.props.fields.jetpack_search_supported && ! this.props.isSearchEligible
+						{!this.props.fields.jetpack_search_supported && !this.props.isSearchEligible
 							? this.renderUpgradeNotice()
-							: this.renderSettingsCard() }
+							: this.renderSettingsCard()}
 					</Fragment>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
-const checkForSearchProduct = purchase =>
-	purchase.active && isJetpackSearch( purchase.productSlug );
-export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	const hasSearchProduct = getSitePurchases( state, siteId ).find( checkForSearchProduct );
+const hasBusinessPlan = overSome(isJetpackBusiness, isBusiness, isEnterprise, isEcommerce);
+const checkForSearchProduct = (purchase) =>
+	purchase.active && isJetpackSearch(purchase.productSlug);
+export default connect((state) => {
+	const site = getSelectedSite(state);
+	const siteId = getSelectedSiteId(state);
+	const hasSearchProduct = getSitePurchases(state, siteId).find(checkForSearchProduct);
 	const isSearchEligible =
-		( site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) ) ) ||
-		!! hasSearchProduct;
+		(site && site.plan && (hasBusinessPlan(site.plan) || isVipPlan(site.plan))) ||
+		!!hasSearchProduct;
 
 	return {
 		siteId,
 		activatingSearchModule:
-			!! isActivatingJetpackModule( state, siteId, 'search' ) ||
-			!! isDeactivatingJetpackModule( state, siteId, 'search' ),
+			!!isActivatingJetpackModule(state, siteId, 'search') ||
+			!!isDeactivatingJetpackModule(state, siteId, 'search'),
 		isSearchEligible,
-		isLoading: isFetchingSitePurchases( state ),
-		site: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		searchModuleActive: !! isJetpackModuleActive( state, siteId, 'search' ),
-		customizerUrl: getCustomizerUrl( state, siteId ),
+		isLoading: isFetchingSitePurchases(state),
+		site: getSelectedSite(state),
+		siteSlug: getSelectedSiteSlug(state),
+		siteIsJetpack: isJetpackSite(state, siteId),
+		searchModuleActive: !!isJetpackModuleActive(state, siteId, 'search'),
+		customizerUrl: getCustomizerUrl(state, siteId),
 	};
-} )( localize( Search ) );
+})(localize(Search));

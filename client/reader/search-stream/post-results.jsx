@@ -22,40 +22,40 @@ class PostResults extends Component {
 		streamKey: PropTypes.string,
 	};
 
-	placeholderFactory = ( { key, ...rest } ) => {
-		if ( ! this.props.query ) {
+	placeholderFactory = ({ key, ...rest }) => {
+		if (!this.props.query) {
 			return (
-				<div className="search-stream__recommendation-list-item" key={ key }>
-					<RelatedPostCard { ...rest } />
+				<div className="search-stream__recommendation-list-item" key={key}>
+					<RelatedPostCard {...rest} />
 				</div>
 			);
 		}
-		return <PostPlaceholder key={ key } />;
+		return <PostPlaceholder key={key} />;
 	};
 
 	render() {
 		const { query, translate } = this.props;
-		const emptyContent = <EmptyContent query={ query } />;
+		const emptyContent = <EmptyContent query={query} />;
 		const transformStreamItems =
-			! query || query === '' ? postKey => ( { ...postKey, isRecommendation: true } ) : identity;
+			!query || query === '' ? (postKey) => ({ ...postKey, isRecommendation: true }) : identity;
 
 		return (
 			<Stream
-				{ ...this.props }
-				followSource={ SEARCH_RESULTS }
-				listName={ translate( 'Search' ) }
-				emptyContent={ emptyContent }
-				showFollowInHeader={ true }
-				placeholderFactory={ this.placeholderFactory }
-				shouldCombineCards={ true }
-				transformStreamItems={ transformStreamItems }
-				isMain={ false }
+				{...this.props}
+				followSource={SEARCH_RESULTS}
+				listName={translate('Search')}
+				emptyContent={emptyContent}
+				showFollowInHeader={true}
+				placeholderFactory={this.placeholderFactory}
+				shouldCombineCards={true}
+				transformStreamItems={transformStreamItems}
+				isMain={false}
 			>
-				{ this.props.showBack && <HeaderBack /> }
-				<div ref={ this.handleStreamMounted } />
+				{this.props.showBack && <HeaderBack />}
+				<div ref={this.handleStreamMounted} />
 			</Stream>
 		);
 	}
 }
 
-export default localize( PostResults );
+export default localize(PostResults);

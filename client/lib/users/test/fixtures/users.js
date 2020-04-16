@@ -9,7 +9,7 @@ export default {
 			name: 'Test One',
 			nice_name: 'test1',
 			profile_URL: 'http://en.gravatar.com',
-			roles: [ 'editor' ],
+			roles: ['editor'],
 			site_ID: 1234,
 		},
 
@@ -21,7 +21,7 @@ export default {
 			name: 'Test Two',
 			nice_name: 'test2',
 			profile_URL: 'http://en.gravatar.com',
-			roles: [ 'administrator' ],
+			roles: ['administrator'],
 			site_ID: 1234,
 		},
 
@@ -33,7 +33,7 @@ export default {
 			name: 'Test Three',
 			nice_name: 'test3',
 			profile_URL: 'http://en.gravatar.com',
-			roles: [ 'editor' ],
+			roles: ['editor'],
 			site_ID: 1234,
 		},
 
@@ -45,7 +45,7 @@ export default {
 			name: 'Test Four',
 			nice_name: 'test4',
 			profile_URL: 'http://en.gravatar.com',
-			roles: [ 'editor' ],
+			roles: ['editor'],
 			site_ID: 1234,
 		},
 
@@ -57,7 +57,7 @@ export default {
 			name: 'Test Five',
 			nice_name: 'test5',
 			profile_URL: 'http://en.gravatar.com',
-			roles: [ 'editor' ],
+			roles: ['editor'],
 			site_ID: 1234,
 		},
 	],

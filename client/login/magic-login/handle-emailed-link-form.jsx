@@ -50,7 +50,7 @@ class HandleEmailedLinkForm extends React.Component {
 		token: PropTypes.string.isRequired,
 
 		// Connected props
-		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		authError: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 		currentUser: PropTypes.object,
 		isAuthenticated: PropTypes.bool,
 		isExpired: PropTypes.bool,
@@ -72,22 +72,22 @@ class HandleEmailedLinkForm extends React.Component {
 		hasSubmitted: false,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		if ( isEmpty( props.emailAddress ) || isEmpty( props.token ) ) {
+		if (isEmpty(props.emailAddress) || isEmpty(props.token)) {
 			this.props.showMagicLoginLinkExpiredPage();
 		}
 	}
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 
-		this.setState( {
+		this.setState({
 			hasSubmitted: true,
-		} );
+		});
 
-		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal );
+		this.props.fetchMagicLoginAuthenticate(this.props.token, this.props.redirectToOriginal);
 	};
 
 	// Lifted from `blocks/login`
@@ -95,16 +95,16 @@ class HandleEmailedLinkForm extends React.Component {
 	handleValidToken = () => {
 		const { redirectToSanitized, twoFactorEnabled, twoFactorNotificationSent } = this.props;
 
-		if ( ! twoFactorEnabled ) {
+		if (!twoFactorEnabled) {
 			this.rebootAfterLogin();
 		} else {
 			page(
-				login( {
+				login({
 					isNative: true,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
+					twoFactorAuthType: twoFactorNotificationSent.replace('none', 'authenticator'),
 					redirectTo: redirectToSanitized,
-				} )
+				})
 			);
 		}
 	};
@@ -114,10 +114,10 @@ class HandleEmailedLinkForm extends React.Component {
 	rebootAfterLogin = () => {
 		const { redirectToSanitized, twoFactorEnabled } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_login_success', {
+		this.props.recordTracksEvent('calypso_login_success', {
 			two_factor_enabled: twoFactorEnabled,
 			magic_login: 1,
-		} );
+		});
 
 		// Redirects to / if no redirect url is available
 		const url = redirectToSanitized || '/';
@@ -125,20 +125,20 @@ class HandleEmailedLinkForm extends React.Component {
 		// user data is persisted in localstorage at `lib/user/user` line 157
 		// therefore we need to reset it before we redirect, otherwise we'll get
 		// mixed data from old and new user
-		user.clear().then( () => {
+		user.clear().then(() => {
 			window.location.href = url;
-		} );
+		});
 	};
 
-	UNSAFE_componentWillUpdate( nextProps, nextState ) {
+	UNSAFE_componentWillUpdate(nextProps, nextState) {
 		const { authError, isAuthenticated, isFetching } = nextProps;
 
-		if ( ! nextState.hasSubmitted || isFetching ) {
+		if (!nextState.hasSubmitted || isFetching) {
 			// Don't do anything here unless the browser has received the `POST` response
 			return;
 		}
 
-		if ( authError || ! isAuthenticated ) {
+		if (authError || !isAuthenticated) {
 			// @TODO if this is a 5XX, or timeout, show an error...?
 			this.props.showMagicLoginLinkExpiredPage();
 			return;
@@ -150,80 +150,80 @@ class HandleEmailedLinkForm extends React.Component {
 	render() {
 		const { currentUser, emailAddress, isExpired, isFetching, translate } = this.props;
 
-		if ( isExpired ) {
+		if (isExpired) {
 			return <EmailedLoginLinkExpired />;
 		}
 
 		const action = (
-			<Button primary disabled={ this.state.hasSubmitted } onClick={ this.handleSubmit }>
-				{ this.props.isImmediateLoginAttempt
-					? translate( 'Confirm Login to WordPress.com' )
-					: translate( 'Continue to WordPress.com' ) }
+			<Button primary disabled={this.state.hasSubmitted} onClick={this.handleSubmit}>
+				{this.props.isImmediateLoginAttempt
+					? translate('Confirm Login to WordPress.com')
+					: translate('Continue to WordPress.com')}
 			</Button>
 		);
 
 		let title;
-		if ( this.props.isManualRenewalImmediateLoginAttempt ) {
-			title = translate( 'Update your payment details and renew your subscription' );
+		if (this.props.isManualRenewalImmediateLoginAttempt) {
+			title = translate('Update your payment details and renew your subscription');
 		} else {
 			title =
-				this.props.clientId === config( 'wpcom_signup_id' )
-					? translate( 'Welcome back!' )
-					: translate( 'Continue to WordPress.com on your WordPress app' );
+				this.props.clientId === config('wpcom_signup_id')
+					? translate('Welcome back!')
+					: translate('Continue to WordPress.com on your WordPress app');
 		}
 
 		const line = [
-			translate( 'Logging in as %(emailAddress)s', {
+			translate('Logging in as %(emailAddress)s', {
 				args: {
 					emailAddress,
 				},
-			} ),
+			}),
 		];
 
-		if ( currentUser && currentUser.username ) {
+		if (currentUser && currentUser.username) {
 			line.push(
 				<p>
-					{ translate( 'NOTE: You are already logged in as user: %(user)s', {
+					{translate('NOTE: You are already logged in as user: %(user)s', {
 						args: {
 							user: currentUser.username,
 						},
-					} ) }
+					})}
 					<br />
-					{ translate( 'Continuing will switch users.' ) }
+					{translate('Continuing will switch users.')}
 				</p>
 			);
 		}
 
-		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
+		this.props.recordTracksEvent('calypso_login_email_link_handle_click_view');
 
 		return (
 			<EmptyContent
-				action={ action }
-				className={ classNames( 'magic-login__handle-link', {
+				action={action}
+				className={classNames('magic-login__handle-link', {
 					'magic-login__is-fetching-auth': isFetching,
-				} ) }
-				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
-				illustrationWidth={ 500 }
-				line={ line }
-				title={ title }
+				})}
+				illustration={'/calypso/images/illustrations/illustration-nosites.svg'}
+				illustrationWidth={500}
+				line={line}
+				title={title}
 			/>
 		);
 	}
 }
 
-const mapState = state => {
+const mapState = (state) => {
 	return {
-		redirectToOriginal: getRedirectToOriginal( state ),
-		redirectToSanitized: getRedirectToSanitized( state ),
-		authError: getMagicLoginRequestAuthError( state ),
-		currentUser: getCurrentUser( state ),
-		isAuthenticated: getMagicLoginRequestedAuthSuccessfully( state ),
-		isExpired: getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE,
-		isFetching: isFetchingMagicLoginAuth( state ),
-		isImmediateLoginAttempt: wasImmediateLoginAttempted( state ),
-		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
-		twoFactorEnabled: isTwoFactorEnabled( state ),
-		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		redirectToOriginal: getRedirectToOriginal(state),
+		redirectToSanitized: getRedirectToSanitized(state),
+		authError: getMagicLoginRequestAuthError(state),
+		currentUser: getCurrentUser(state),
+		isAuthenticated: getMagicLoginRequestedAuthSuccessfully(state),
+		isExpired: getMagicLoginCurrentView(state) === LINK_EXPIRED_PAGE,
+		isFetching: isFetchingMagicLoginAuth(state),
+		isImmediateLoginAttempt: wasImmediateLoginAttempted(state),
+		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted(state),
+		twoFactorEnabled: isTwoFactorEnabled(state),
+		twoFactorNotificationSent: getTwoFactorNotificationSent(state),
 	};
 };
 
@@ -233,4 +233,4 @@ const mapDispatch = {
 	showMagicLoginLinkExpiredPage,
 };
 
-export default connect( mapState, mapDispatch )( localize( HandleEmailedLinkForm ) );
+export default connect(mapState, mapDispatch)(localize(HandleEmailedLinkForm));

@@ -27,50 +27,50 @@ class UpgradeBanner extends Component {
 		const { translate, isJetpack } = this.props;
 		return (
 			<div className="activity-log-banner__upgrade">
-				{ isJetpack ? (
+				{isJetpack ? (
 					<UpsellNudge
-						callToAction={ translate( 'Learn more' ) }
+						callToAction={translate('Learn more')}
 						event="activity_log_upgrade_click_jetpack"
-						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
-						plan={ PLAN_JETPACK_PERSONAL_MONTHLY }
-						title={ translate( 'Unlock more activities now' ) }
-						description={ translate(
+						feature={FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY}
+						plan={PLAN_JETPACK_PERSONAL_MONTHLY}
+						title={translate('Unlock more activities now')}
+						description={translate(
 							'With your free plan, you can monitor the 20 most ' +
 								'recent events on your site. Upgrade to a paid plan to ' +
 								'unlock powerful features:'
-						) }
-						showIcon={ true }
-						list={ [
-							translate( 'Access full activity for the past 30 days' ),
-							translate( 'Filter events by type and date range' ),
-						] }
+						)}
+						showIcon={true}
+						list={[
+							translate('Access full activity for the past 30 days'),
+							translate('Filter events by type and date range'),
+						]}
 					/>
 				) : (
 					<UpsellNudge
-						forceDisplay={ true }
-						callToAction={ translate( 'Learn more' ) }
+						forceDisplay={true}
+						callToAction={translate('Learn more')}
 						event="activity_log_upgrade_click_wpcom"
-						feature={ FEATURE_JETPACK_ESSENTIAL }
-						plan={ PLAN_PERSONAL }
-						title={ translate( 'Unlock more activities now' ) }
-						description={ translate(
+						feature={FEATURE_JETPACK_ESSENTIAL}
+						plan={PLAN_PERSONAL}
+						title={translate('Unlock more activities now')}
+						description={translate(
 							'With your free plan, you can monitor the 20 most ' +
 								'recent events on your site. Upgrade to a paid plan to ' +
 								'unlock powerful features:'
-						) }
-						showIcon={ true }
-						list={ [
-							translate( 'Access full activity for the past 30 days' ),
-							translate( 'Filter events by type and date range' ),
-						] }
+						)}
+						showIcon={true}
+						list={[
+							translate('Access full activity for the past 30 days'),
+							translate('Filter events by type and date range'),
+						]}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { siteId } ) => ( {
-	isJetpack: isJetpackSite( state, siteId ),
+export default connect((state, { siteId }) => ({
+	isJetpack: isJetpackSite(state, siteId),
 	siteId: siteId,
-} ) )( localize( UpgradeBanner ) );
+}))(localize(UpgradeBanner));

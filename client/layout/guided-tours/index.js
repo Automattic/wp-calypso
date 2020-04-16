@@ -11,17 +11,17 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'components/async-load';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 
-function GuidedTours( { shouldShow } ) {
-	if ( ! shouldShow ) {
+function GuidedTours({ shouldShow }) {
+	if (!shouldShow) {
 		return null;
 	}
 
 	return <AsyncLoad require="layout/guided-tours/component" />;
 }
 
-export default connect( state => {
-	const tourState = getGuidedTourState( state );
+export default connect((state) => {
+	const tourState = getGuidedTourState(state);
 	return {
 		shouldShow: tourState && tourState.shouldShow,
 	};
-} )( GuidedTours );
+})(GuidedTours);

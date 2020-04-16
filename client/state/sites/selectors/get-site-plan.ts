@@ -29,15 +29,15 @@ export interface SitePlan {
  * @param siteId Site ID
  * @returns Site's plan object
  */
-export default function getSitePlan( state, siteId: number ): SitePlan | null {
-	const site = getRawSite( state, siteId );
+export default function getSitePlan(state, siteId: number): SitePlan | null {
+	const site = getRawSite(state, siteId);
 
-	if ( ! site ) {
+	if (!site) {
 		return null;
 	}
 
-	if ( get( site.plan, 'expired', false ) ) {
-		if ( site.jetpack ) {
+	if (get(site.plan, 'expired', false)) {
+		if (site.jetpack) {
 			return {
 				product_id: 2002,
 				product_slug: 'jetpack_free',

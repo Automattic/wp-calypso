@@ -15,18 +15,18 @@ import { keys } from '../helpers/input';
 import { getEditCommentLink } from '../helpers/notes';
 import { editComment } from '../state/ui/actions';
 
-const EditButton = ( { editComment, note, translate } ) => {
-	const { site: siteId, post: postId, comment: commentId } = get( note, 'meta.ids', {} );
+const EditButton = ({ editComment, note, translate }) => {
+	const { site: siteId, post: postId, comment: commentId } = get(note, 'meta.ids', {});
 	return (
 		<ActionButton
-			{ ...{
+			{...{
 				icon: 'pencil',
 				isActive: false,
 				hotkey: keys.KEY_E,
-				onToggle: () => editComment( siteId, postId, commentId, getEditCommentLink( note ) ),
-				text: translate( 'Edit', { context: 'verb: imperative' } ),
-				title: translate( 'Edit comment', { context: 'verb: imperative' } ),
-			} }
+				onToggle: () => editComment(siteId, postId, commentId, getEditCommentLink(note)),
+				text: translate('Edit', { context: 'verb: imperative' }),
+				title: translate('Edit comment', { context: 'verb: imperative' }),
+			}}
 		/>
 	);
 };
@@ -37,4 +37,4 @@ EditButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { editComment } )( localize( EditButton ) );
+export default connect(null, { editComment })(localize(EditButton));

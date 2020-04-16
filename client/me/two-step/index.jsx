@@ -30,7 +30,7 @@ import config from 'config';
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:me:two-step' );
+const debug = debugFactory('calypso:me:two-step');
 
 class TwoStep extends Component {
 	static displayName = 'TwoStep';
@@ -45,14 +45,14 @@ class TwoStep extends Component {
 	};
 
 	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-		this.props.userSettings.on( 'change', this.onUserSettingsChange );
+		debug(this.constructor.displayName + ' React component is mounted.');
+		this.props.userSettings.on('change', this.onUserSettingsChange);
 		this.props.userSettings.fetchSettings();
 	}
 
 	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
-		this.props.userSettings.off( 'change', this.onUserSettingsChange );
+		debug(this.constructor.displayName + ' React component is unmounting.');
+		this.props.userSettings.off('change', this.onUserSettingsChange);
 	}
 
 	onUserSettingsChange = () => {
@@ -62,16 +62,16 @@ class TwoStep extends Component {
 		// 	return;
 		// }
 
-		if ( ! this.state.initialized ) {
-			this.setState( {
+		if (!this.state.initialized) {
+			this.setState({
 				initialized: true,
-				doingSetup: ! this.props.userSettings.isTwoStepEnabled(),
-			} );
+				doingSetup: !this.props.userSettings.isTwoStepEnabled(),
+			});
 			return;
 		}
 
 		// are we doing setup? don't re-render during the setup flow
-		if ( this.state.doingSetup ) {
+		if (this.state.doingSetup) {
 			return;
 		}
 
@@ -103,11 +103,11 @@ class TwoStep extends Component {
 	renderPlaceholders = () => {
 		const placeholders = [];
 
-		for ( let i = 0; i < 5; i++ ) {
+		for (let i = 0; i < 5; i++) {
 			placeholders.push(
-				<p className="two-step__placeholder-text" key={ '2fa-placeholder' + i }>
-					{ ' ' }
-					&nbsp;{ ' ' }
+				<p className="two-step__placeholder-text" key={'2fa-placeholder' + i}>
+					{' '}
+					&nbsp;{' '}
 				</p>
 			);
 		}
@@ -116,29 +116,29 @@ class TwoStep extends Component {
 	};
 
 	renderTwoStepSection = () => {
-		if ( ! this.state.initialized ) {
+		if (!this.state.initialized) {
 			return this.renderPlaceholders();
 		}
 
-		if ( this.state.doingSetup ) {
+		if (this.state.doingSetup) {
 			return (
 				<Security2faSetup
-					userSettings={ this.props.userSettings }
-					onFinished={ this.onSetupFinished }
+					userSettings={this.props.userSettings}
+					onFinished={this.onSetupFinished}
 				/>
 			);
 		}
 
 		return (
 			<Security2faDisable
-				userSettings={ this.props.userSettings }
-				onFinished={ this.onDisableFinished }
+				userSettings={this.props.userSettings}
+				onFinished={this.onDisableFinished}
 			/>
 		);
 	};
 
 	renderApplicationPasswords = () => {
-		if ( ! this.state.initialized || this.state.doingSetup ) {
+		if (!this.state.initialized || this.state.doingSetup) {
 			return null;
 		}
 
@@ -146,7 +146,7 @@ class TwoStep extends Component {
 	};
 
 	render2faKey = () => {
-		if ( ! this.state.initialized || this.state.doingSetup ) {
+		if (!this.state.initialized || this.state.doingSetup) {
 			return null;
 		}
 
@@ -154,11 +154,11 @@ class TwoStep extends Component {
 	};
 
 	renderBackupCodes = () => {
-		if ( ! this.state.initialized || this.state.doingSetup ) {
+		if (!this.state.initialized || this.state.doingSetup) {
 			return null;
 		}
 
-		return <Security2faBackupCodes userSettings={ this.props.userSettings } />;
+		return <Security2faBackupCodes userSettings={this.props.userSettings} />;
 	};
 
 	render() {
@@ -167,20 +167,20 @@ class TwoStep extends Component {
 				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
 				<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
+				<SecuritySectionNav path={this.props.path} />
 
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 
-				<DocumentHead title={ this.props.translate( 'Two-Step Authentication' ) } />
+				<DocumentHead title={this.props.translate('Two-Step Authentication')} />
 
-				<Card>{ this.renderTwoStepSection() }</Card>
+				<Card>{this.renderTwoStepSection()}</Card>
 
-				{ config.isEnabled( '2fa/keys-support' ) && this.render2faKey() }
-				{ this.renderBackupCodes() }
-				{ this.renderApplicationPasswords() }
+				{config.isEnabled('2fa/keys-support') && this.render2faKey()}
+				{this.renderBackupCodes()}
+				{this.renderApplicationPasswords()}
 			</Main>
 		);
 	}
 }
 
-export default localize( TwoStep );
+export default localize(TwoStep);

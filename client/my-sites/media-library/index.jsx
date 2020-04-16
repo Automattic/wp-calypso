@@ -33,25 +33,25 @@ import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import './style.scss';
 
 // External media sources that do not need a user to connect them should be listed here.
-const noConnectionNeeded = [ 'pexels' ];
+const noConnectionNeeded = ['pexels'];
 
-const sourceNeedsKeyring = source => source !== '' && ! includes( noConnectionNeeded, source );
+const sourceNeedsKeyring = (source) => source !== '' && !includes(noConnectionNeeded, source);
 
-const isConnected = ( state, source ) =>
-	! sourceNeedsKeyring( source ) ||
-	some( getKeyringConnections( state ), { type: 'other', status: 'ok', service: source } );
+const isConnected = (state, source) =>
+	!sourceNeedsKeyring(source) ||
+	some(getKeyringConnections(state), { type: 'other', status: 'ok', service: source });
 
-const needsKeyring = ( state, source ) =>
-	sourceNeedsKeyring( source ) &&
-	! isKeyringConnectionsFetching( state ) &&
-	! some( getKeyringConnections( state ), { type: 'other', status: 'ok' } );
+const needsKeyring = (state, source) =>
+	sourceNeedsKeyring(source) &&
+	!isKeyringConnectionsFetching(state) &&
+	!some(getKeyringConnections(state), { type: 'other', status: 'ok' });
 
 class MediaLibrary extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		site: PropTypes.object,
 		filter: PropTypes.string,
-		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
+		enabledFilters: PropTypes.arrayOf(PropTypes.string),
 		search: PropTypes.string,
 		source: PropTypes.string,
 		onAddMedia: PropTypes.func,
@@ -66,7 +66,7 @@ class MediaLibrary extends Component {
 		scrollable: PropTypes.bool,
 		postId: PropTypes.number,
 		disableLargeImageSources: PropTypes.bool,
-		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
+		disabledDataSources: PropTypes.arrayOf(PropTypes.string),
 	};
 
 	static defaultProps = {
@@ -80,48 +80,45 @@ class MediaLibrary extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.needsKeyring ) {
+		if (this.props.needsKeyring) {
 			// Are we connected to anything yet?
 			this.props.requestKeyringConnections();
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.needsKeyring && ! sourceNeedsKeyring( prevProps.source ) ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.needsKeyring && !sourceNeedsKeyring(prevProps.source)) {
 			// If we have changed to an external data source then check for a keyring connection
 			this.props.requestKeyringConnections();
 		}
 	}
 
-	doSearch = keywords => {
-		searchUrl( keywords, this.props.search, this.props.onSearch );
+	doSearch = (keywords) => {
+		searchUrl(keywords, this.props.search, this.props.onSearch);
 	};
 
 	onAddMedia = () => {
-		const selectedItems = MediaLibrarySelectedStore.getAll( this.props.site.ID );
+		const selectedItems = MediaLibrarySelectedStore.getAll(this.props.site.ID);
 		let filteredItems = selectedItems;
 
-		if ( ! this.props.site ) {
+		if (!this.props.site) {
 			return;
 		}
 
-		if ( this.props.filter ) {
+		if (this.props.filter) {
 			// Ensure that items selected as a consequence of this upload match
 			// the current filter
-			filteredItems = filterItemsByMimePrefix(
-				filteredItems,
-				filterToMimePrefix( this.props.filter )
-			);
+			filteredItems = filterItemsByMimePrefix(filteredItems, filterToMimePrefix(this.props.filter));
 		}
 
-		if ( this.props.single && filteredItems.length > 1 ) {
+		if (this.props.single && filteredItems.length > 1) {
 			// If items were previously selected or multiple files were
 			// uploaded, select only the last item
-			filteredItems = filteredItems.slice( -1 );
+			filteredItems = filteredItems.slice(-1);
 		}
 
-		if ( ! isEqual( selectedItems, filteredItems ) ) {
-			MediaActions.setLibrarySelectedItems( this.props.site.ID, filteredItems );
+		if (!isEqual(selectedItems, filteredItems)) {
+			MediaActions.setLibrarySelectedItems(this.props.site.ID, filteredItems);
 		}
 
 		this.props.onAddMedia();
@@ -129,32 +126,32 @@ class MediaLibrary extends Component {
 
 	filterRequiresUpgrade() {
 		const { filter, site, source } = this.props;
-		if ( source ) {
+		if (source) {
 			return false;
 		}
 
-		switch ( filter ) {
+		switch (filter) {
 			case 'audio':
-				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || site.jetpack );
+				return !((site && site.options.upgraded_filetypes_enabled) || site.jetpack);
 
 			case 'videos':
-				return ! ( ( site && site.options.videopress_enabled ) || site.jetpack );
+				return !((site && site.options.videopress_enabled) || site.jetpack);
 		}
 
 		return false;
 	}
 
 	renderDropZone() {
-		if ( this.props.source !== '' ) {
+		if (this.props.source !== '') {
 			return null;
 		}
 
 		return (
 			<MediaLibraryDropZone
-				site={ this.props.site }
-				filter={ this.props.filter }
-				fullScreen={ this.props.fullScreenDropZone }
-				onAddMedia={ this.onAddMedia }
+				site={this.props.site}
+				filter={this.props.filter}
+				fullScreen={this.props.fullScreenDropZone}
+				onAddMedia={this.onAddMedia}
 			/>
 		);
 	}
@@ -167,44 +164,44 @@ class MediaLibrary extends Component {
 		);
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<QueryPreferences />
-				{ this.renderDropZone() }
+				{this.renderDropZone()}
 				<FilterBar
-					site={ this.props.site }
-					filter={ this.props.filter }
-					filterRequiresUpgrade={ this.filterRequiresUpgrade() }
-					enabledFilters={ this.props.enabledFilters }
-					search={ this.props.search }
-					onFilterChange={ this.props.onFilterChange }
-					onSourceChange={ this.props.onSourceChange }
-					source={ this.props.source }
-					onSearch={ this.doSearch }
-					isConnected={ this.props.isConnected }
-					post={ !! this.props.postId }
-					disableLargeImageSources={ this.props.disableLargeImageSources }
-					disabledDataSources={ this.props.disabledDataSources }
+					site={this.props.site}
+					filter={this.props.filter}
+					filterRequiresUpgrade={this.filterRequiresUpgrade()}
+					enabledFilters={this.props.enabledFilters}
+					search={this.props.search}
+					onFilterChange={this.props.onFilterChange}
+					onSourceChange={this.props.onSourceChange}
+					source={this.props.source}
+					onSearch={this.doSearch}
+					isConnected={this.props.isConnected}
+					post={!!this.props.postId}
+					disableLargeImageSources={this.props.disableLargeImageSources}
+					disabledDataSources={this.props.disabledDataSources}
 				/>
 				<Content
-					site={ this.props.site }
-					filter={ this.props.filter }
-					filterRequiresUpgrade={ this.filterRequiresUpgrade() }
-					search={ this.props.search }
-					source={ this.props.source }
-					isConnected={ this.props.isConnected }
-					containerWidth={ this.props.containerWidth }
-					single={ this.props.single }
-					scrollable={ this.props.scrollable }
-					onAddMedia={ this.onAddMedia }
-					onAddAndEditImage={ this.props.onAddAndEditImage }
-					onMediaScaleChange={ this.props.onScaleChange }
-					onSourceChange={ this.props.onSourceChange }
-					selectedItems={ this.props.mediaLibrarySelectedItems }
-					onDeleteItem={ this.props.onDeleteItem }
-					onEditItem={ this.props.onEditItem }
-					onViewDetails={ this.props.onViewDetails }
-					postId={ this.props.postId }
-					mediaValidationErrors={ this.props.site ? this.props.mediaValidationErrors : undefined }
+					site={this.props.site}
+					filter={this.props.filter}
+					filterRequiresUpgrade={this.filterRequiresUpgrade()}
+					search={this.props.search}
+					source={this.props.source}
+					isConnected={this.props.isConnected}
+					containerWidth={this.props.containerWidth}
+					single={this.props.single}
+					scrollable={this.props.scrollable}
+					onAddMedia={this.onAddMedia}
+					onAddAndEditImage={this.props.onAddAndEditImage}
+					onMediaScaleChange={this.props.onScaleChange}
+					onSourceChange={this.props.onSourceChange}
+					selectedItems={this.props.mediaLibrarySelectedItems}
+					onDeleteItem={this.props.onDeleteItem}
+					onEditItem={this.props.onEditItem}
+					onViewDetails={this.props.onViewDetails}
+					postId={this.props.postId}
+					mediaValidationErrors={this.props.site ? this.props.mediaValidationErrors : undefined}
 				/>
 			</div>
 		);
@@ -212,12 +209,12 @@ class MediaLibrary extends Component {
 }
 
 export default connect(
-	( state, { source = '', site } ) => ( {
-		isConnected: isConnected( state, source ),
-		mediaValidationErrors: getMediaErrors( state, site?.ID ),
-		needsKeyring: needsKeyring( state, source ),
-	} ),
+	(state, { source = '', site }) => ({
+		isConnected: isConnected(state, source),
+		mediaValidationErrors: getMediaErrors(state, site?.ID),
+		needsKeyring: needsKeyring(state, source),
+	}),
 	{
 		requestKeyringConnections,
 	}
-)( MediaLibrary );
+)(MediaLibrary);

@@ -2,19 +2,19 @@ let wpcomInstance;
 
 export const wpcom = () => wpcomInstance;
 
-export const init = provider => ( wpcomInstance = provider );
+export const init = (provider) => (wpcomInstance = provider);
 
-export const fetchNote = ( noteId, query, callback ) =>
+export const fetchNote = (noteId, query, callback) =>
 	wpcom().req.get(
 		{
-			path: `/notifications/${ noteId }`,
+			path: `/notifications/${noteId}`,
 			apiVersion: '1.1',
 		},
 		query,
 		callback
 	);
 
-export const fetchSuggestions = ( query, callback ) =>
+export const fetchSuggestions = (query, callback) =>
 	wpcom().req.get(
 		{
 			path: '/users/suggest',
@@ -24,7 +24,7 @@ export const fetchSuggestions = ( query, callback ) =>
 		callback
 	);
 
-export const listNotes = ( query, callback ) =>
+export const listNotes = (query, callback) =>
 	wpcom().req.get(
 		{
 			path: '/notifications/',
@@ -34,7 +34,7 @@ export const listNotes = ( query, callback ) =>
 		callback
 	);
 
-export const markReadStatus = ( noteId, isRead, callback ) =>
+export const markReadStatus = (noteId, isRead, callback) =>
 	wpcom().req.post(
 		{
 			path: '/notifications/read',
@@ -42,13 +42,13 @@ export const markReadStatus = ( noteId, isRead, callback ) =>
 		null,
 		{
 			counts: {
-				[ noteId ]: isRead ? 9999 : -1,
+				[noteId]: isRead ? 9999 : -1,
 			},
 		},
 		callback
 	);
 
-export const sendLastSeenTime = time =>
+export const sendLastSeenTime = (time) =>
 	wpcom().req.post(
 		{
 			path: '/notifications/seen',
@@ -57,5 +57,5 @@ export const sendLastSeenTime = time =>
 		{ time }
 	);
 
-export const subscribeToNoteStream = callback =>
-	wpcom().pinghub.connect( '/wpcom/me/newest-note-data', callback );
+export const subscribeToNoteStream = (callback) =>
+	wpcom().pinghub.connect('/wpcom/me/newest-note-data', callback);

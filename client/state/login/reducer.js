@@ -45,8 +45,8 @@ import {
 } from 'state/action-types';
 import { login } from 'lib/paths';
 
-export const isRequesting = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isRequesting = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
 			return true;
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
@@ -74,14 +74,14 @@ export const isRequesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const redirectTo = combineReducers( {
-	original: withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
+export const redirectTo = combineReducers({
+	original: withoutPersistence((state = null, action) => {
+		switch (action.type) {
 			case ROUTE_SET: {
 				const { path, query } = action;
-				if ( startsWith( path, '/log-in' ) ) {
+				if (startsWith(path, '/log-in')) {
 					return query.redirect_to || state;
 				}
 
@@ -90,16 +90,16 @@ export const redirectTo = combineReducers( {
 		}
 
 		return state;
-	} ),
-	sanitized: withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
+	}),
+	sanitized: withoutPersistence((state = null, action) => {
+		switch (action.type) {
 			case LOGIN_REQUEST:
 				return null;
 			case LOGIN_REQUEST_FAILURE:
 				return null;
 			case LOGIN_REQUEST_SUCCESS: {
 				const { data } = action;
-				return get( data, 'redirect_to', null );
+				return get(data, 'redirect_to', null);
 			}
 			case SOCIAL_LOGIN_REQUEST:
 				return null;
@@ -107,22 +107,22 @@ export const redirectTo = combineReducers( {
 				return null;
 			case SOCIAL_LOGIN_REQUEST_SUCCESS: {
 				const { data } = action;
-				return get( data, 'redirect_to', null );
+				return get(data, 'redirect_to', null);
 			}
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST:
 				return null;
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE:
 				return null;
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
-				return get( action, 'redirect_to', null );
+				return get(action, 'redirect_to', null);
 		}
 
 		return state;
-	} ),
-} );
+	}),
+});
 
-export const isFormDisabled = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const isFormDisabled = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
 			return true;
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
@@ -146,10 +146,10 @@ export const isFormDisabled = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const requestError = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const requestError = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
 			return null;
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE: {
@@ -203,10 +203,10 @@ export const requestError = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const requestSuccess = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const requestSuccess = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
 			return null;
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
@@ -234,10 +234,10 @@ export const requestSuccess = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const requestNotice = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const requestNotice = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST: {
 			const { notice } = action;
 			return notice;
@@ -256,7 +256,7 @@ export const requestNotice = withoutPersistence( ( state = null, action ) => {
 			return null;
 		case ROUTE_SET: {
 			// if we just navigated to the sms 2fa page, keep the notice (if any) from the loginUser action
-			if ( action.path === login( { isNative: true, twoFactorAuthType: 'sms' } ) ) {
+			if (action.path === login({ isNative: true, twoFactorAuthType: 'sms' })) {
 				return state;
 			}
 			return null;
@@ -264,12 +264,12 @@ export const requestNotice = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) =>
-	Object.assign( {}, state, {
-		[ `two_step_nonce_${ nonceType }` ]: twoStepNonce,
-	} );
+const updateTwoStepNonce = (state, { twoStepNonce, nonceType }) =>
+	Object.assign({}, state, {
+		[`two_step_nonce_${nonceType}`]: twoStepNonce,
+	});
 
 const twoFactorProperties = [
 	'push_web_token',
@@ -286,18 +286,18 @@ const twoFactorProperties = [
 	'user_id',
 ];
 
-export const twoFactorAuth = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const twoFactorAuth = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case LOGIN_REQUEST:
 			return null;
 		case LOGIN_REQUEST_FAILURE:
 			return null;
 		case LOGIN_REQUEST_SUCCESS: {
 			const { data } = action;
-			if ( data ) {
-				const twoFactorData = pick( data, twoFactorProperties );
+			if (data) {
+				const twoFactorData = pick(data, twoFactorProperties);
 
-				if ( ! isEmpty( twoFactorData ) ) {
+				if (!isEmpty(twoFactorData)) {
 					return twoFactorData;
 				}
 			}
@@ -310,10 +310,10 @@ export const twoFactorAuth = withoutPersistence( ( state = null, action ) => {
 			return null;
 		case SOCIAL_LOGIN_REQUEST_SUCCESS: {
 			const { data } = action;
-			if ( data ) {
-				const twoFactorData = pick( data, twoFactorProperties );
+			if (data) {
+				const twoFactorData = pick(data, twoFactorProperties);
 
-				if ( ! isEmpty( twoFactorData ) ) {
+				if (!isEmpty(twoFactorData)) {
 					return twoFactorData;
 				}
 			}
@@ -324,21 +324,21 @@ export const twoFactorAuth = withoutPersistence( ( state = null, action ) => {
 			return null;
 		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE: {
 			const { twoStepNonce } = action;
-			return updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } );
+			return updateTwoStepNonce(state, { twoStepNonce, nonceType: 'sms' });
 		}
 		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS: {
 			const { twoStepNonce } = action;
-			return updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } );
+			return updateTwoStepNonce(state, { twoStepNonce, nonceType: 'sms' });
 		}
 		case TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE:
-			return updateTwoStepNonce( state, action );
+			return updateTwoStepNonce(state, action);
 	}
 
 	return state;
-} );
+});
 
-export const isRequestingTwoFactorAuth = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isRequestingTwoFactorAuth = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
 			return true;
 		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE:
@@ -348,10 +348,10 @@ export const isRequestingTwoFactorAuth = withoutPersistence( ( state = false, ac
 	}
 
 	return state;
-} );
+});
 
-export const twoFactorAuthRequestError = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const twoFactorAuthRequestError = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
 			return null;
 		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE: {
@@ -367,11 +367,11 @@ export const twoFactorAuthRequestError = withoutPersistence( ( state = null, act
 	}
 
 	return state;
-} );
+});
 
 export const twoFactorAuthPushPoll = withoutPersistence(
-	( state = { inProgress: false, success: false }, action ) => {
-		switch ( action.type ) {
+	(state = { inProgress: false, success: false }, action) => {
+		switch (action.type) {
 			case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START:
 				return {
 					...state,
@@ -393,8 +393,8 @@ export const twoFactorAuthPushPoll = withoutPersistence(
 );
 
 export const socialAccount = withoutPersistence(
-	( state = { isCreating: false, createError: null }, action ) => {
-		switch ( action.type ) {
+	(state = { isCreating: false, createError: null }, action) => {
+		switch (action.type) {
 			case SOCIAL_CREATE_ACCOUNT_REQUEST:
 				return { isCreating: true };
 			case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE: {
@@ -440,8 +440,8 @@ export const socialAccount = withoutPersistence(
 	}
 );
 
-const userExistsErrorHandler = ( state, { error, authInfo } ) => {
-	if ( error.code === 'user_exists' ) {
+const userExistsErrorHandler = (state, { error, authInfo }) => {
+	if (error.code === 'user_exists') {
 		return {
 			isLinking: true,
 			email: error.email,
@@ -452,12 +452,12 @@ const userExistsErrorHandler = ( state, { error, authInfo } ) => {
 	return state;
 };
 
-export const socialAccountLink = withoutPersistence( ( state = { isLinking: false }, action ) => {
-	switch ( action.type ) {
+export const socialAccountLink = withoutPersistence((state = { isLinking: false }, action) => {
+	switch (action.type) {
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE:
-			return userExistsErrorHandler( state, action );
+			return userExistsErrorHandler(state, action);
 		case SOCIAL_LOGIN_REQUEST_FAILURE:
-			return userExistsErrorHandler( state, action );
+			return userExistsErrorHandler(state, action);
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
 			return { isLinking: false };
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
@@ -467,10 +467,10 @@ export const socialAccountLink = withoutPersistence( ( state = { isLinking: fals
 	}
 
 	return state;
-} );
+});
 
-export const authAccountType = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const authAccountType = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
 			return null;
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
@@ -488,9 +488,9 @@ export const authAccountType = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	authAccountType,
 	isFormDisabled,
 	isRequesting,
@@ -505,4 +505,4 @@ export default combineReducers( {
 	twoFactorAuth,
 	twoFactorAuthPushPoll,
 	twoFactorAuthRequestError,
-} );
+});

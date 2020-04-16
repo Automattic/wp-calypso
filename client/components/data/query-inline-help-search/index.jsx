@@ -12,23 +12,23 @@ import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/s
 
 class QueryInlineHelpSearch extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.query === nextProps.query ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.query === nextProps.query) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( props.requesting || ! props.query ) {
+	request(props) {
+		if (props.requesting || !props.query) {
 			return;
 		}
 
-		props.requestInlineHelpSearchResults( props.query );
+		props.requestInlineHelpSearchResults(props.query);
 	}
 
 	render() {
@@ -37,10 +37,10 @@ class QueryInlineHelpSearch extends Component {
 }
 
 export default connect(
-	( state, { query } ) => {
+	(state, { query }) => {
 		return {
-			requesting: isRequestingInlineHelpSearchResultsForQuery( state, query ),
+			requesting: isRequestingInlineHelpSearchResultsForQuery(state, query),
 		};
 	},
 	{ requestInlineHelpSearchResults }
-)( QueryInlineHelpSearch );
+)(QueryInlineHelpSearch);

@@ -9,6 +9,6 @@ import { get } from 'lodash';
  */
 import getMediaItem from 'state/selectors/get-media-item';
 
-export default function isTransientMedia( state, siteId, mediaId ) {
-	return !! get( getMediaItem( state, siteId, mediaId ), 'transient' );
+export default function isTransientMedia(state, siteId, mediaId) {
+	return !!get(getMediaItem(state, siteId, mediaId), 'transient');
 }

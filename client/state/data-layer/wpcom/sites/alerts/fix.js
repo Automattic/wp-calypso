@@ -13,8 +13,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
-export const request = action => {
-	const notice = successNotice( i18n.translate( 'Fixing threat…' ), { duration: 30000 } );
+export const request = (action) => {
+	const notice = successNotice(i18n.translate('Fixing threat…'), { duration: 30000 });
 	const {
 		notice: { noticeId },
 	} = notice;
@@ -25,7 +25,7 @@ export const request = action => {
 			{
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
-				path: `/sites/${ action.siteId }/alerts/${ action.threatId }?fix=true`,
+				path: `/sites/${action.siteId}/alerts/${action.threatId}?fix=true`,
 				body: {},
 			},
 			{ ...action, noticeId }
@@ -33,7 +33,7 @@ export const request = action => {
 	];
 };
 
-export const success = ( action, rewind_state ) => [
+export const success = (action, rewind_state) => [
 	successNotice(
 		i18n.translate(
 			"We're hard at work fixing this threat in the background. Please check back shortly."
@@ -47,29 +47,29 @@ export const success = ( action, rewind_state ) => [
 	 * The API transform could theoretically fail and the rewind data might
 	 * be unavailable. Just let it go.
 	 */
-	( () => {
+	(() => {
 		try {
 			return {
 				type: REWIND_STATE_UPDATE,
 				siteId: action.siteId,
-				data: transformApi( rewind_state ),
+				data: transformApi(rewind_state),
 			};
-		} catch ( e ) {}
-	} )(),
+		} catch (e) {}
+	})(),
 ];
 
-export const failure = action =>
-	errorNotice( i18n.translate( 'Error fixing threat. Please contact support.' ), {
+export const failure = (action) =>
+	errorNotice(i18n.translate('Error fixing threat. Please contact support.'), {
 		duration: 10000,
 		id: action.noticeId,
-	} );
+	});
 
-registerHandlers( 'state/data-layer/wpcom/sites/alerts/fix.js', {
-	[ JETPACK_SITE_ALERT_THREAT_FIX ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/alerts/fix.js', {
+	[JETPACK_SITE_ALERT_THREAT_FIX]: [
+		dispatchRequest({
 			fetch: request,
 			onSuccess: success,
 			onError: failure,
-		} ),
+		}),
 	],
-} );
+});

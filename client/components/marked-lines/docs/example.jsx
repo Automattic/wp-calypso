@@ -10,7 +10,7 @@ import MarkedLines from '../index';
 
 MarkedLines.displayName = 'MarkedLines';
 
-const MarkedLinesExample = ( { exampleCode } ) => exampleCode;
+const MarkedLinesExample = ({ exampleCode }) => exampleCode;
 
 MarkedLinesExample.displayName = 'MarkedLines';
 

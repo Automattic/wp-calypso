@@ -32,54 +32,54 @@ class RegisteredDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
 		const { domain, translate, moment } = this.props;
 
-		if ( domain.isAutoRenewing ) {
+		if (domain.isAutoRenewing) {
 			return (
 				<Property
-					label={ translate( 'Renews on', {
+					label={translate('Renews on', {
 						comment:
 							'The corresponding date is in a different cell in the UI, ' +
 							'the date is not included within the translated string',
-					} ) }
+					})}
 				>
-					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
+					{moment(domain.autoRenewalDate).format('LL')}
 				</Property>
 			);
 		}
 
 		return (
 			<Property
-				label={ translate( 'Expires on', {
+				label={translate('Expires on', {
 					comment:
 						'The corresponding date is in a different cell in the UI, ' +
 						'the date is not included within the translated string',
-				} ) }
+				})}
 			>
-				{ moment( domain.expiry ).format( 'LL' ) }
+				{moment(domain.expiry).format('LL')}
 			</Property>
 		);
 	}
 
-	getLabel( { status, icon, message, href } ) {
+	getLabel({ status, icon, message, href }) {
 		return (
-			<a href={ href }>
-				<Notice isCompact status={ status } icon={ icon }>
-					{ message }
+			<a href={href}>
+				<Notice isCompact status={status} icon={icon}>
+					{message}
 				</Notice>
 			</a>
 		);
 	}
 
 	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
+		this.props.recordPaymentSettingsClick(this.props.domain);
 	};
 
 	domainWarnings() {
 		return (
 			<DomainWarnings
-				domain={ this.props.domain }
+				domain={this.props.domain}
 				position="registered-domain"
-				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [
+				selectedSite={this.props.selectedSite}
+				ruleWhiteList={[
 					'expiredDomainsCanManage',
 					'expiringDomainsCanManage',
 					'newDomainsWithPrimary',
@@ -90,7 +90,7 @@ class RegisteredDomain extends React.Component {
 					'pendingTransfer',
 					'newTransfersWrongNS',
 					'pendingConsent',
-				] }
+				]}
 			/>
 		);
 	}
@@ -102,7 +102,7 @@ class RegisteredDomain extends React.Component {
 			<NonPrimaryDomainPlanUpsell
 				tracksImpressionName="calypso_non_primary_domain_settings_plan_upsell_impression"
 				tracksClickName="calypso_non_primary_domain_settings_plan_upsell_click"
-				domain={ domain }
+				domain={domain}
 			/>
 		);
 	}
@@ -110,35 +110,30 @@ class RegisteredDomain extends React.Component {
 	getVerticalNav() {
 		const { expiry, expired, pendingTransfer } = this.props.domain;
 		const { moment } = this.props;
-		const inNormalState = ! pendingTransfer && ! expired;
-		const inGracePeriod = moment().subtract( 18, 'days' ) <= moment( expiry );
+		const inNormalState = !pendingTransfer && !expired;
+		const inGracePeriod = moment().subtract(18, 'days') <= moment(expiry);
 
 		return (
 			<VerticalNav>
-				{ inNormalState && this.emailNavItem() }
-				{ ( inNormalState || inGracePeriod ) && this.nameServersNavItem() }
-				{ ( inNormalState || inGracePeriod ) && this.contactsPrivacyNavItem() }
-				{ ( ! expired || inGracePeriod ) && this.transferNavItem() }
+				{inNormalState && this.emailNavItem()}
+				{(inNormalState || inGracePeriod) && this.nameServersNavItem()}
+				{(inNormalState || inGracePeriod) && this.contactsPrivacyNavItem()}
+				{(!expired || inGracePeriod) && this.transferNavItem()}
 			</VerticalNav>
 		);
 	}
 
 	emailNavItem() {
-		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
+		const path = emailManagement(this.props.selectedSite.slug, this.props.domain.name);
 
-		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
+		return <VerticalNavItem path={path}>{this.props.translate('Email')}</VerticalNavItem>;
 	}
 
 	nameServersNavItem() {
-		const path = domainManagementNameServers(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
+		const path = domainManagementNameServers(this.props.selectedSite.slug, this.props.domain.name);
 
 		return (
-			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Name servers and DNS' ) }
-			</VerticalNavItem>
+			<VerticalNavItem path={path}>{this.props.translate('Name servers and DNS')}</VerticalNavItem>
 		);
 	}
 
@@ -149,15 +144,13 @@ class RegisteredDomain extends React.Component {
 			this.props.domain.name
 		);
 
-		return <VerticalNavItem path={ path }>{ translate( 'Contacts and privacy' ) }</VerticalNavItem>;
+		return <VerticalNavItem path={path}>{translate('Contacts and privacy')}</VerticalNavItem>;
 	}
 
 	transferNavItem() {
-		const path = domainManagementTransfer( this.props.selectedSite.slug, this.props.domain.name );
+		const path = domainManagementTransfer(this.props.selectedSite.slug, this.props.domain.name);
 
-		return (
-			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer domain' ) }</VerticalNavItem>
-		);
+		return <VerticalNavItem path={path}>{this.props.translate('Transfer domain')}</VerticalNavItem>;
 	}
 
 	render() {
@@ -166,45 +159,45 @@ class RegisteredDomain extends React.Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				{ this.domainWarnings() }
-				{ this.planUpsellForNonPrimaryDomain() }
+				{this.domainWarnings()}
+				{this.planUpsellForNonPrimaryDomain()}
 				<div className="domain-details-card">
-					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
+					{domain.isPendingIcannVerification && domain.currentUserCanManage && (
 						<IcannVerificationCard
-							selectedDomainName={ domain.name }
-							selectedSiteSlug={ this.props.selectedSite.slug }
+							selectedDomainName={domain.name}
+							selectedSiteSlug={this.props.selectedSite.slug}
 						/>
-					) }
+					)}
 
-					<Header { ...this.props } />
+					<Header {...this.props} />
 
 					<Card>
-						<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
-							{ translate( 'Registered Domain' ) }
+						<Property label={translate('Type', { context: 'A type of domain.' })}>
+							{translate('Registered Domain')}
 						</Property>
 
 						<Property
-							label={ translate( 'Registered on', {
+							label={translate('Registered on', {
 								comment:
 									'The corresponding date is in a different cell in the UI, ' +
 									'the date is not included within the translated string',
-							} ) }
+							})}
 						>
-							{ moment( domain.registrationDate ).format( 'LL' ) }
+							{moment(domain.registrationDate).format('LL')}
 						</Property>
 
-						{ this.getAutoRenewalOrExpirationDate() }
+						{this.getAutoRenewalOrExpirationDate()}
 
 						<SubscriptionSettings
-							type={ domain.type }
-							subscriptionId={ domain.subscriptionId }
-							siteSlug={ this.props.selectedSite.slug }
-							onClick={ this.handlePaymentSettingsClick }
+							type={domain.type}
+							subscriptionId={domain.subscriptionId}
+							siteSlug={this.props.selectedSite.slug}
+							onClick={this.handlePaymentSettingsClick}
 						/>
 					</Card>
 				</div>
 
-				{ this.getVerticalNav() }
+				{this.getVerticalNav()}
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -212,7 +205,7 @@ class RegisteredDomain extends React.Component {
 }
 
 export default compose(
-	connect( null, { recordPaymentSettingsClick } ),
+	connect(null, { recordPaymentSettingsClick }),
 	localize,
 	withLocalizedMoment
-)( RegisteredDomain );
+)(RegisteredDomain);

@@ -36,34 +36,34 @@ class CheckoutPending extends PureComponent {
 		errorNotice: identity,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { transaction, error } = nextProps;
 		const { translate, showErrorNotice, siteSlug, redirectTo } = this.props;
 
 		const retryOnError = () => {
-			page( `/checkout/${ siteSlug }` );
+			page(`/checkout/${siteSlug}`);
 
 			showErrorNotice(
-				translate( "Sorry, we couldn't process your payment. Please try again later." )
+				translate("Sorry, we couldn't process your payment. Please try again later.")
 			);
 		};
 
-		const planRoute = `/plans/my-plan/${ siteSlug }`;
+		const planRoute = `/plans/my-plan/${siteSlug}`;
 
-		if ( transaction ) {
+		if (transaction) {
 			const { processingStatus } = transaction;
 
-			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
+			if (ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus) {
 				const { receiptId } = transaction;
 
-				const redirectPath = redirectTo.replace( 'pending', receiptId );
-				page( redirectPath );
+				const redirectPath = redirectTo.replace('pending', receiptId);
+				page(redirectPath);
 
 				return;
 			}
 
-			if ( ORDER_TRANSACTION_STATUS.ASYNC_PENDING === transaction.processingStatus ) {
-				page( '/me/purchases/pending' );
+			if (ORDER_TRANSACTION_STATUS.ASYNC_PENDING === transaction.processingStatus) {
+				page('/me/purchases/pending');
 
 				return;
 			}
@@ -81,18 +81,18 @@ class CheckoutPending extends PureComponent {
 			}
 
 			// The API has responded a status string that we don't expect somehow.
-			if ( ORDER_TRANSACTION_STATUS.UNKNOWN === processingStatus ) {
+			if (ORDER_TRANSACTION_STATUS.UNKNOWN === processingStatus) {
 				// Redirect users back to the plan page so that they won't be stuck here.
-				page( planRoute );
+				page(planRoute);
 
-				showErrorNotice( translate( 'Oops! Something went wrong. Please try again later.' ) );
+				showErrorNotice(translate('Oops! Something went wrong. Please try again later.'));
 
 				return;
 			}
 		}
 
 		// A HTTP error occurs. We use the same handling
-		if ( error ) {
+		if (error) {
 			retryOnError();
 		}
 	}
@@ -102,7 +102,7 @@ class CheckoutPending extends PureComponent {
 
 		return (
 			<Main className="checkout-thank-you__pending">
-				<QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } />
+				<QueryOrderTransaction orderId={orderId} pollIntervalMs={5000} />
 				<PageViewTracker
 					path={
 						siteSlug
@@ -110,13 +110,13 @@ class CheckoutPending extends PureComponent {
 							: '/checkout/thank-you/no-site/pending/:order_id'
 					}
 					title="Checkout Pending"
-					properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
+					properties={{ order_id: orderId, ...(siteSlug && { site: siteSlug }) }}
 				/>
 				<EmptyContent
-					illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
-					illustrationWidth={ 500 }
-					title={ translate( 'Processing…' ) }
-					line={ translate( "Almost there – we're currently finalizing your order." ) }
+					illustration={'/calypso/images/illustrations/illustration-shopping-bags.svg'}
+					illustrationWidth={500}
+					title={translate('Processing…')}
+					line={translate("Almost there – we're currently finalizing your order.")}
 				/>
 			</Main>
 		);
@@ -124,11 +124,11 @@ class CheckoutPending extends PureComponent {
 }
 
 export default connect(
-	( state, props ) => ( {
-		transaction: getOrderTransaction( state, props.orderId ),
-		error: getOrderTransactionError( state, props.orderId ),
-	} ),
+	(state, props) => ({
+		transaction: getOrderTransaction(state, props.orderId),
+		error: getOrderTransactionError(state, props.orderId),
+	}),
 	{
 		showErrorNotice: errorNotice,
 	}
-)( localize( CheckoutPending ) );
+)(localize(CheckoutPending));

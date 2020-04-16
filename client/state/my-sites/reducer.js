@@ -15,4 +15,4 @@ const schema = {
 	additionalProperties: false,
 };
 
-export default combineReducers( { sidebarSections: withSchemaValidation( schema, sidebar ) } );
+export default combineReducers({ sidebarSections: withSchemaValidation(schema, sidebar) });

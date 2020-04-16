@@ -11,6 +11,6 @@ import getSiteFrontPageType from './get-site-front-page-type';
  * @param {object} siteId Site ID
  * @returns {boolean} False if not set or set to `0`. True otherwise.
  */
-export default function hasStaticFrontPage( state, siteId ) {
-	return 'page' === getSiteFrontPageType( state, siteId ) && !! getSiteFrontPage( state, siteId );
+export default function hasStaticFrontPage(state, siteId) {
+	return 'page' === getSiteFrontPageType(state, siteId) && !!getSiteFrontPage(state, siteId);
 }

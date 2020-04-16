@@ -25,29 +25,29 @@ import { recordTracksEvent } from 'state/analytics/actions';
 const eventName = 'cart_theme_to_plan_upsell';
 
 class CartPlanAdTheme extends Component {
-	addToCartAndRedirect = event => {
+	addToCartAndRedirect = (event) => {
 		event.preventDefault();
-		this.props.recordTracksEvent( 'calypso_banner_cta_click', {
+		this.props.recordTracksEvent('calypso_banner_cta_click', {
 			cta_name: eventName,
-		} );
-		addItem( premiumPlan( PLAN_PREMIUM, {} ) );
-		page( '/checkout/' + this.props.selectedSite.slug );
+		});
+		addItem(premiumPlan(PLAN_PREMIUM, {}));
+		page('/checkout/' + this.props.selectedSite.slug);
 	};
 
 	shouldDisplayAd = () => {
 		const { cart, hasUnlimitedPremiumThemes, selectedSite, isJetpack } = this.props;
-		const items = getAllCartItems( cart );
-		const hasOnlyAPremiumTheme = items.length === 1 && items[ 0 ].product_slug === 'premium_theme';
+		const items = getAllCartItems(cart);
+		const hasOnlyAPremiumTheme = items.length === 1 && items[0].product_slug === 'premium_theme';
 
 		return (
-			! isJetpack &&
-			! hasUnlimitedPremiumThemes &&
+			!isJetpack &&
+			!hasUnlimitedPremiumThemes &&
 			cart.hasLoadedFromServer &&
-			! cart.hasPendingServerUpdates &&
+			!cart.hasPendingServerUpdates &&
 			hasOnlyAPremiumTheme &&
 			selectedSite &&
 			selectedSite.plan &&
-			abtest( 'cartNudgeUpdateToPremium' ) === 'test'
+			abtest('cartNudgeUpdateToPremium') === 'test'
 		);
 	};
 
@@ -55,7 +55,7 @@ class CartPlanAdTheme extends Component {
 		// Nothing here is translated on purpose - this is a part of an A/B test that we are launching
 		// only for english audience. Remember to add translate() calls before concluding a test and
 		// enabling this for everyone!
-		if ( ! this.shouldDisplayAd() ) {
+		if (!this.shouldDisplayAd()) {
 			return null;
 		}
 
@@ -64,14 +64,14 @@ class CartPlanAdTheme extends Component {
 		return (
 			<CartAd>
 				<TrackComponentView
-					eventName={ 'calypso_banner_cta_impression' }
-					eventProperties={ {
+					eventName={'calypso_banner_cta_impression'}
+					eventProperties={{
 						cta_name: eventName,
-					} }
+					}}
 				/>
-				Get this theme for FREE when you upgrade to a Premium plan!{ ' ' }
-				<button className={ className } onClick={ this.addToCartAndRedirect }>
-					{ 'Upgrade Now' }
+				Get this theme for FREE when you upgrade to a Premium plan!{' '}
+				<button className={className} onClick={this.addToCartAndRedirect}>
+					{'Upgrade Now'}
 				</button>
 			</CartAd>
 		);
@@ -81,20 +81,16 @@ class CartPlanAdTheme extends Component {
 CartPlanAdTheme.propTypes = {
 	cart: PropTypes.object.isRequired,
 	hasUnlimitedPremiumThemes: PropTypes.bool,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+	selectedSite: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 };
 
-const mapStateToProps = state => {
-	const selectedSiteId = getSelectedSiteId( state );
+const mapStateToProps = (state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
-		isJetpack: isJetpackSite( state, selectedSiteId ),
-		hasUnlimitedPremiumThemes: hasFeature(
-			state,
-			selectedSiteId,
-			FEATURE_UNLIMITED_PREMIUM_THEMES
-		),
+		isJetpack: isJetpackSite(state, selectedSiteId),
+		hasUnlimitedPremiumThemes: hasFeature(state, selectedSiteId, FEATURE_UNLIMITED_PREMIUM_THEMES),
 	};
 };
 
-export default connect( mapStateToProps, { recordTracksEvent } )( localize( CartPlanAdTheme ) );
+export default connect(mapStateToProps, { recordTracksEvent })(localize(CartPlanAdTheme));

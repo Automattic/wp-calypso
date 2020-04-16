@@ -9,7 +9,7 @@ import renderer from 'react-test-renderer';
  */
 import GSuitePrice from '../';
 
-describe( 'GSuitePrice', () => {
+describe('GSuitePrice', () => {
 	const product = {
 		product_id: 69,
 		product_name: 'G Suite',
@@ -42,16 +42,16 @@ describe( 'GSuitePrice', () => {
 			SGD: 108,
 			TWD: 2304,
 			THB: 2520,
-			TRY: 396
+			TRY: 396,
 		},
 		is_domain_registration: false,
 		cost_display: '€76.00',
-		currency_code: 'EUR'
+		currency_code: 'EUR',
 	};
 
-	test( 'renders correctly', () => {
-		const tree = renderer.create( <GSuitePrice product={ product } currencyCode={ 'EUR' } /> ).toJSON();
+	test('renders correctly', () => {
+		const tree = renderer.create(<GSuitePrice product={product} currencyCode={'EUR'} />).toJSON();
 
-		expect( tree ).toMatchSnapshot();
-	} );
-} );
+		expect(tree).toMatchSnapshot();
+	});
+});

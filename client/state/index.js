@@ -24,20 +24,20 @@ import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 
-const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
-	const nextStore = nextCreator( reducer, initialState );
+const addReducerEnhancer = (nextCreator) => (reducer, initialState) => {
+	const nextStore = nextCreator(reducer, initialState);
 
 	let currentReducer = reducer;
-	function addReducer( keys, subReducer ) {
-		currentReducer = currentReducer.addReducer( keys, subReducer );
-		this.replaceReducer( currentReducer );
+	function addReducer(keys, subReducer) {
+		currentReducer = currentReducer.addReducer(keys, subReducer);
+		this.replaceReducer(currentReducer);
 	}
 
 	function getCurrentReducer() {
 		return currentReducer;
 	}
 
-	return Object.assign( {}, nextStore, { addReducer, getCurrentReducer } );
+	return Object.assign({}, nextStore, { addReducer, getCurrentReducer });
 };
 
 /**
@@ -48,7 +48,7 @@ const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
  * @property {Function} subscribe attaches an event listener to state changes
  */
 
-export function createReduxStore( initialState, reducer = initialReducer ) {
+export function createReduxStore(initialState, reducer = initialReducer) {
 	const isBrowser = typeof window === 'object';
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
@@ -66,23 +66,23 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		// as early as possible into the middleware chain.
 		wpcomApiMiddleware,
 		noticesMiddleware,
-		isBrowser && require( './happychat/middleware.js' ).default,
-		isBrowser && require( './happychat/middleware-calypso.js' ).default,
-		isBrowser && config.isEnabled( 'lasagna' ) && require( './lasagna/middleware.js' ).default,
-		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
-		isBrowser && require( './lib/middleware.js' ).default,
-		isAudioSupported && require( './audio/middleware.js' ).default,
+		isBrowser && require('./happychat/middleware.js').default,
+		isBrowser && require('./happychat/middleware-calypso.js').default,
+		isBrowser && config.isEnabled('lasagna') && require('./lasagna/middleware.js').default,
+		isBrowser && require('./analytics/middleware.js').analyticsMiddleware,
+		isBrowser && require('./lib/middleware.js').default,
+		isAudioSupported && require('./audio/middleware.js').default,
 		navigationMiddleware,
-	].filter( Boolean );
+	].filter(Boolean);
 
 	const enhancers = [
 		addReducerEnhancer,
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
 		httpDataEnhancer,
-		applyMiddleware( ...middlewares ),
+		applyMiddleware(...middlewares),
 		isBrowser && window.app && window.app.isDebug && actionLogger,
 		isBrowser && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-	].filter( Boolean );
+	].filter(Boolean);
 
-	return createStore( reducer, initialState, compose( ...enhancers ) );
+	return createStore(reducer, initialState, compose(...enhancers));
 }

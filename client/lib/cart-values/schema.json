@@ -1,7 +1,7 @@
 {
 	"title": "CartValue",
 	"type": "object",
-	"required": [ "blog_id", "products" ],
+	"required": ["blog_id", "products"],
 	"additionalProperties": false,
 	"properties": {
 		"blog_id": { "type": "number" },
@@ -29,7 +29,7 @@
 	"definitions": {
 		"CartItemValue": {
 			"type": "object",
-			"required": [ "product_id" ],
+			"required": ["product_id"],
 			"additionalProperties": false,
 			"properties": {
 				"product_id": { "type": "number" },
@@ -37,7 +37,7 @@
 				"product_slug": { "type": "string" },
 				"meta": { "type": "string" },
 				"cost": { "type": "number" },
-				"orig_cost": { "type": [ "number", "null" ] },
+				"orig_cost": { "type": ["number", "null"] },
 				"currency": { "type": "string" },
 				"volume": { "type": "number" },
 				"free_trial": { "type": "boolean" },
@@ -46,7 +46,7 @@
 		},
 		"ClientMetadata": {
 			"type": "object",
-			"required": [ "lastServerResponseDate" ],
+			"required": ["lastServerResponseDate"],
 			"additionalProperties": false,
 			"properties": {
 				"lastServerResponseDate": { "type": "string" }

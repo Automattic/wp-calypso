@@ -54,33 +54,33 @@ class OrderActionHeader extends Component {
 	// Put this order into the editing state
 	toggleEditing = () => {
 		const { siteId, orderId } = this.props;
-		recordTrack( 'calypso_woocommerce_order_edit_start' );
-		if ( siteId ) {
-			this.props.editOrder( siteId, { id: orderId } );
+		recordTrack('calypso_woocommerce_order_edit_start');
+		if (siteId) {
+			this.props.editOrder(siteId, { id: orderId });
 		}
 	};
 
 	// Clear this order's edits, takes it out of edit state
 	cancelEditing = () => {
 		const { siteId } = this.props;
-		recordTrack( 'calypso_woocommerce_order_edit_cancel' );
-		this.props.clearOrderEdits( siteId );
+		recordTrack('calypso_woocommerce_order_edit_cancel');
+		this.props.clearOrderEdits(siteId);
 	};
 
 	deleteOrder = () => {
 		const { orderId, site, translate } = this.props;
 
-		const areYouSure = translate( 'Are you sure you want to delete this order?' );
+		const areYouSure = translate('Are you sure you want to delete this order?');
 		accept(
 			areYouSure,
-			accepted => {
-				if ( ! accepted ) {
+			(accepted) => {
+				if (!accepted) {
 					return;
 				}
-				this.props.deleteOrder( site, orderId );
+				this.props.deleteOrder(site, orderId);
 			},
-			translate( 'Delete' ),
-			translate( 'Cancel' ),
+			translate('Delete'),
+			translate('Cancel'),
 			{ isScary: true }
 		);
 	};
@@ -89,40 +89,40 @@ class OrderActionHeader extends Component {
 	saveOrder = () => {
 		const { siteId, order, translate, site } = this.props;
 		const successOpts = { duration: 8000 };
-		if ( isOrderWaitingPayment( order.status ) ) {
-			successOpts.button = translate( 'Send new invoice to customer' );
+		if (isOrderWaitingPayment(order.status)) {
+			successOpts.button = translate('Send new invoice to customer');
 			successOpts.onClick = this.triggerInvoice;
 		}
-		const onSuccess = dispatch => {
+		const onSuccess = (dispatch) => {
 			dispatch(
 				successNotice(
-					translate( 'Order successfully updated. {{ordersLink}}View all orders{{/ordersLink}}.', {
+					translate('Order successfully updated. {{ordersLink}}View all orders{{/ordersLink}}.', {
 						components: {
-							ordersLink: <a href={ getLink( '/store/orders/:site/', site ) } />,
+							ordersLink: <a href={getLink('/store/orders/:site/', site)} />,
 						},
-					} ),
+					}),
 					successOpts
 				)
 			);
 		};
-		const onFailure = dispatch => {
-			dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 8000 } ) );
+		const onFailure = (dispatch) => {
+			dispatch(errorNotice(translate('Unable to save order.'), { duration: 8000 }));
 		};
 
-		recordTrack( 'calypso_woocommerce_order_edit_save' );
-		this.props.saveOrder( siteId, order, onSuccess, onFailure );
+		recordTrack('calypso_woocommerce_order_edit_save');
+		this.props.saveOrder(siteId, order, onSuccess, onFailure);
 	};
 
 	triggerInvoice = () => {
 		const { siteId, orderId, translate } = this.props;
-		if ( siteId && orderId ) {
-			const onSuccess = successNotice( translate( 'Order invoice sent.' ), { duration: 8000 } );
-			const onFailure = errorNotice( translate( 'Unable to send order invoice.' ), {
+		if (siteId && orderId) {
+			const onSuccess = successNotice(translate('Order invoice sent.'), { duration: 8000 });
+			const onFailure = errorNotice(translate('Unable to send order invoice.'), {
 				duration: 8000,
-			} );
+			});
 
-			recordTrack( 'calypso_woocommerce_order_manual_invoice' );
-			this.props.sendOrderInvoice( siteId, orderId, onSuccess, onFailure );
+			recordTrack('calypso_woocommerce_order_manual_invoice');
+			this.props.sendOrderInvoice(siteId, orderId, onSuccess, onFailure);
 		}
 	};
 
@@ -130,29 +130,29 @@ class OrderActionHeader extends Component {
 		const { isInvoiceSending, order, translate } = this.props;
 
 		const buttons = [
-			<Button key="edit" primary onClick={ this.toggleEditing }>
-				{ translate( 'Edit order' ) }
+			<Button key="edit" primary onClick={this.toggleEditing}>
+				{translate('Edit order')}
 			</Button>,
 		];
 
-		if ( isOrderWaitingPayment( order.status ) ) {
+		if (isOrderWaitingPayment(order.status)) {
 			buttons.unshift(
 				<Button
 					key="resend-invoice"
-					onClick={ this.triggerInvoice }
-					busy={ isInvoiceSending }
-					disabled={ isInvoiceSending }
+					onClick={this.triggerInvoice}
+					busy={isInvoiceSending}
+					disabled={isInvoiceSending}
 				>
-					{ translate( 'Resend invoice' ) }
+					{translate('Resend invoice')}
 				</Button>
 			);
 		}
 
 		// Unshifting so that the Delete is the first action in the row
 		buttons.unshift(
-			<Button key="delete" borderless scary onClick={ this.deleteOrder }>
+			<Button key="delete" borderless scary onClick={this.deleteOrder}>
 				<Gridicon icon="trash" />
-				{ translate( 'Delete' ) }
+				{translate('Delete')}
 			</Button>
 		);
 
@@ -162,17 +162,17 @@ class OrderActionHeader extends Component {
 	renderEditingButtons = () => {
 		const { hasOrderEdits, isSaving, translate } = this.props;
 		return [
-			<Button key="cancel" onClick={ this.cancelEditing }>
-				{ translate( 'Cancel' ) }
+			<Button key="cancel" onClick={this.cancelEditing}>
+				{translate('Cancel')}
 			</Button>,
 			<Button
 				key="save"
 				primary
-				onClick={ this.saveOrder }
-				busy={ isSaving }
-				disabled={ ! hasOrderEdits || isSaving }
+				onClick={this.saveOrder}
+				busy={isSaving}
+				disabled={!hasOrderEdits || isSaving}
 			>
-				{ translate( 'Update' ) }
+				{translate('Update')}
 			</Button>,
 		];
 	};
@@ -181,31 +181,29 @@ class OrderActionHeader extends Component {
 		const { isEditing, orderId, site, translate } = this.props;
 
 		const breadcrumbs = [
-			<a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a>,
-			<span>
-				{ translate( 'Order %(orderId)s details', { args: { orderId: `#${ orderId }` } } ) }
-			</span>,
+			<a href={getLink('/store/orders/:site/', site)}>{translate('Orders')}</a>,
+			<span>{translate('Order %(orderId)s details', { args: { orderId: `#${orderId}` } })}</span>,
 		];
 
-		const primaryLabel = isEditing ? translate( 'Update' ) : translate( 'Edit order' );
+		const primaryLabel = isEditing ? translate('Update') : translate('Edit order');
 
 		return (
-			<ActionHeader breadcrumbs={ breadcrumbs } primaryLabel={ primaryLabel }>
-				{ isEditing ? this.renderEditingButtons() : this.renderViewButtons() }
+			<ActionHeader breadcrumbs={breadcrumbs} primaryLabel={primaryLabel}>
+				{isEditing ? this.renderEditingButtons() : this.renderViewButtons()}
 			</ActionHeader>
 		);
 	}
 }
 
 export default connect(
-	( state, { orderId } ) => {
-		const site = getSelectedSiteWithFallback( state );
+	(state, { orderId }) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site ? site.ID : false;
-		const isSaving = isOrderUpdating( state, orderId );
-		const isEditing = isCurrentlyEditingOrder( state );
-		const isInvoiceSending = isOrderInvoiceSending( state, orderId );
-		const hasOrderEdits = ! isEmpty( getOrderEdits( state ) );
-		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, orderId );
+		const isSaving = isOrderUpdating(state, orderId);
+		const isEditing = isCurrentlyEditingOrder(state);
+		const isInvoiceSending = isOrderInvoiceSending(state, orderId);
+		const hasOrderEdits = !isEmpty(getOrderEdits(state));
+		const order = isEditing ? getOrderWithEdits(state) : getOrder(state, orderId);
 
 		return {
 			hasOrderEdits,
@@ -218,9 +216,9 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
+	(dispatch) =>
 		bindActionCreators(
 			{ clearOrderEdits, deleteOrder, editOrder, saveOrder, sendOrderInvoice },
 			dispatch
 		)
-)( localize( OrderActionHeader ) );
+)(localize(OrderActionHeader));

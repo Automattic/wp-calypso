@@ -5,14 +5,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const WpcomPlanPrice = ( { getPrice, hasDiscount, periodLabel } ) => {
+const WpcomPlanPrice = ({ getPrice, hasDiscount, periodLabel }) => {
 	return (
 		<div
-			className={ hasDiscount ? 'wpcom-plan-price wpcom-plan-price__discount' : 'wpcom-plan-price' }
+			className={hasDiscount ? 'wpcom-plan-price wpcom-plan-price__discount' : 'wpcom-plan-price'}
 		>
-			<span>{ getPrice() }</span>
+			<span>{getPrice()}</span>
 
-			<small className="wpcom-plan-price__billing-period">{ periodLabel }</small>
+			<small className="wpcom-plan-price__billing-period">{periodLabel}</small>
 		</div>
 	);
 };

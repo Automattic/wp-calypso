@@ -13,11 +13,11 @@ import { select, dispatch, subscribe } from '@wordpress/data';
  *
  * @see https://github.com/WordPress/gutenberg/issues/11681
  */
-const unsubscribe = subscribe( () => {
-	if ( 'page' !== fullSiteEditing.editorPostType ) {
+const unsubscribe = subscribe(() => {
+	if ('page' !== fullSiteEditing.editorPostType) {
 		return unsubscribe();
 	}
-	if ( select( 'core/block-editor' ).isValidTemplate() === false ) {
-		dispatch( 'core/block-editor' ).setTemplateValidity( true );
+	if (select('core/block-editor').isValidTemplate() === false) {
+		dispatch('core/block-editor').setTemplateValidity(true);
 	}
-} );
+});

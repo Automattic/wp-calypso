@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import { isCommentsTreeInitialized } from 'state/comments/selectors';
 
-describe( 'isCommentsTreeInitialized()', () => {
-	test( 'should return false if no data is available', () => {
+describe('isCommentsTreeInitialized()', () => {
+	test('should return false if no data is available', () => {
 		expect(
 			isCommentsTreeInitialized(
 				{
@@ -20,9 +20,9 @@ describe( 'isCommentsTreeInitialized()', () => {
 				77203074,
 				'spam'
 			)
-		).to.equal( false );
-	} );
-	test( 'should return true if data is available', () => {
+		).to.equal(false);
+	});
+	test('should return true if data is available', () => {
 		const state = {
 			comments: {
 				treesInitialized: {
@@ -30,9 +30,9 @@ describe( 'isCommentsTreeInitialized()', () => {
 				},
 			},
 		};
-		expect( isCommentsTreeInitialized( state, 77203074, 'spam' ) ).to.equal( true );
-	} );
-	test( 'should return false if no data is available for site', () => {
+		expect(isCommentsTreeInitialized(state, 77203074, 'spam')).to.equal(true);
+	});
+	test('should return false if no data is available for site', () => {
 		const state = {
 			comments: {
 				treesInitialized: {
@@ -40,9 +40,9 @@ describe( 'isCommentsTreeInitialized()', () => {
 				},
 			},
 		};
-		expect( isCommentsTreeInitialized( state, 77203074, 'spam' ) ).to.equal( false );
-	} );
-	test( 'should return false if no data is available for filter', () => {
+		expect(isCommentsTreeInitialized(state, 77203074, 'spam')).to.equal(false);
+	});
+	test('should return false if no data is available for filter', () => {
 		const state = {
 			comments: {
 				treesInitialized: {
@@ -50,6 +50,6 @@ describe( 'isCommentsTreeInitialized()', () => {
 				},
 			},
 		};
-		expect( isCommentsTreeInitialized( state, 77203074, 'unapproved' ) ).to.equal( false );
-	} );
-} );
+		expect(isCommentsTreeInitialized(state, 77203074, 'unapproved')).to.equal(false);
+	});
+});

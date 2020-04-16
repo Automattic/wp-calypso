@@ -24,40 +24,40 @@ class TaxSettingsSaveButton extends Component {
 		onSave: PropTypes.func.isRequired,
 	};
 
-	onSave = e => {
+	onSave = (e) => {
 		const { onSave, finishedInitialSetup, site } = this.props;
 
 		let onSuccessExtra = null;
-		if ( ! finishedInitialSetup ) {
+		if (!finishedInitialSetup) {
 			onSuccessExtra = () => {
-				page.redirect( getLink( '/store/:site', site ) );
+				page.redirect(getLink('/store/:site', site));
 			};
 		}
 
-		onSave( e, onSuccessExtra );
+		onSave(e, onSuccessExtra);
 	};
 
 	render() {
 		const { translate, loading, site, finishedInitialSetup } = this.props;
 
-		if ( loading || ! site ) {
+		if (loading || !site) {
 			return null;
 		}
 
-		const saveMessage = finishedInitialSetup ? translate( 'Save' ) : translate( 'Save & Finish' );
+		const saveMessage = finishedInitialSetup ? translate('Save') : translate('Save & Finish');
 
 		return (
-			<Button onClick={ this.onSave } primary>
-				{ saveMessage }
+			<Button onClick={this.onSave} primary>
+				{saveMessage}
 			</Button>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
-	const loading = areSetupChoicesLoading( state );
-	const finishedInitialSetup = getFinishedInitialSetup( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
+	const loading = areSetupChoicesLoading(state);
+	const finishedInitialSetup = getFinishedInitialSetup(state);
 	return {
 		site,
 		finishedInitialSetup,
@@ -65,4 +65,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( localize( TaxSettingsSaveButton ) );
+export default connect(mapStateToProps)(localize(TaxSettingsSaveButton));

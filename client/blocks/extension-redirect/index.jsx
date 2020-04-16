@@ -29,42 +29,42 @@ class ExtensionRedirect extends Component {
 		siteSlug: PropTypes.string,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		// Check for the following:
 		// Is the plugin active? (That implicitly also checks if the plugin is installed)
 		// Do we require a minimum version? Have we received the plugin's version? Is it sufficient?
 		if (
 			nextProps.pluginActive &&
-			( ! nextProps.minimumVersion ||
-				( nextProps.pluginVersion &&
-					versionCompare( nextProps.minimumVersion, nextProps.pluginVersion, '<=' ) ) )
+			(!nextProps.minimumVersion ||
+				(nextProps.pluginVersion &&
+					versionCompare(nextProps.minimumVersion, nextProps.pluginVersion, '<=')))
 		) {
 			return;
 		}
 
 		// Has the request completed?
 		// If it has, and the above criteria aren't fulfilled, we redirect.
-		if ( this.props.requestingPlugins && ! nextProps.requestingPlugins ) {
-			if ( nextProps.redirectUrl ) {
-				page.redirect( nextProps.redirectUrl );
+		if (this.props.requestingPlugins && !nextProps.requestingPlugins) {
+			if (nextProps.redirectUrl) {
+				page.redirect(nextProps.redirectUrl);
 			} else {
-				page.redirect( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+				page.redirect(`/plugins/${nextProps.pluginId}/${nextProps.siteSlug}`);
 			}
 		}
 	}
 
 	render() {
-		if ( ! this.props.siteId ) {
+		if (!this.props.siteId) {
 			return null;
 		}
 
-		return <QueryJetpackPlugins siteIds={ [ this.props.siteId ] } />;
+		return <QueryJetpackPlugins siteIds={[this.props.siteId]} />;
 	}
 }
 
-export default connect( ( state, { pluginId, siteId } ) => ( {
-	pluginActive: get( getPluginOnSite( state, siteId, pluginId ), 'active', false ),
-	pluginVersion: get( getPluginOnSite( state, siteId, pluginId ), 'version' ),
-	requestingPlugins: isRequesting( state, siteId ),
-	siteSlug: getSiteSlug( state, siteId ),
-} ) )( ExtensionRedirect );
+export default connect((state, { pluginId, siteId }) => ({
+	pluginActive: get(getPluginOnSite(state, siteId, pluginId), 'active', false),
+	pluginVersion: get(getPluginOnSite(state, siteId, pluginId), 'version'),
+	requestingPlugins: isRequesting(state, siteId),
+	siteSlug: getSiteSlug(state, siteId),
+}))(ExtensionRedirect);

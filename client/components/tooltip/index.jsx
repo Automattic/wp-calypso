@@ -16,31 +16,31 @@ import Popover from 'components/popover';
  */
 import './style.scss';
 
-function Tooltip( props ) {
+function Tooltip(props) {
 	const isMobile = useMobileBreakpoint();
 
-	if ( ! props.showOnMobile && isMobile ) {
+	if (!props.showOnMobile && isMobile) {
 		return null;
 	}
 
 	const classes = classnames(
 		'tooltip',
-		`is-${ props.status }`,
-		`is-${ props.position }`,
+		`is-${props.status}`,
+		`is-${props.position}`,
 		props.className
 	);
 
 	return (
 		<Popover
-			autoPosition={ props.autoPosition }
-			className={ classes }
-			context={ props.context }
-			id={ props.id }
-			isVisible={ props.isVisible }
-			position={ props.position }
-			showDelay={ props.showDelay }
+			autoPosition={props.autoPosition}
+			className={classes}
+			context={props.context}
+			id={props.id}
+			isVisible={props.isVisible}
+			position={props.position}
+			showDelay={props.showDelay}
 		>
-			{ props.children }
+			{props.children}
 		</Popover>
 	);
 }

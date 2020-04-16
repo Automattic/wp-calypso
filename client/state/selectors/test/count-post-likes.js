@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import countPostLikes from 'state/selectors/count-post-likes';
 
-describe( 'countPostLikes()', () => {
-	test( 'should return null if the site has never been fetched', () => {
+describe('countPostLikes()', () => {
+	test('should return null if the site has never been fetched', () => {
 		const count = countPostLikes(
 			{
 				posts: {
@@ -22,10 +22,10 @@ describe( 'countPostLikes()', () => {
 			50
 		);
 
-		expect( count ).to.be.null;
-	} );
+		expect(count).to.be.null;
+	});
 
-	test( 'should return null if the post has never been fetched', () => {
+	test('should return null if the post has never been fetched', () => {
 		const count = countPostLikes(
 			{
 				posts: {
@@ -42,10 +42,10 @@ describe( 'countPostLikes()', () => {
 			50
 		);
 
-		expect( count ).to.be.null;
-	} );
+		expect(count).to.be.null;
+	});
 
-	test( 'should return the total of post likes', () => {
+	test('should return the total of post likes', () => {
 		const count = countPostLikes(
 			{
 				posts: {
@@ -62,6 +62,6 @@ describe( 'countPostLikes()', () => {
 			50
 		);
 
-		expect( count ).to.eql( 42 );
-	} );
-} );
+		expect(count).to.eql(42);
+	});
+});

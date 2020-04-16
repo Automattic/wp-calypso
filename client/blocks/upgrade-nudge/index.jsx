@@ -62,12 +62,12 @@ export class UpgradeNudge extends React.Component {
 	handleClick = () => {
 		const { event, feature, onClick, recordTracksEvent: recordTracks } = this.props;
 
-		if ( event || feature ) {
-			recordTracks( 'calypso_upgrade_nudge_cta_click', {
+		if (event || feature) {
+			recordTracks('calypso_upgrade_nudge_cta_click', {
 				cta_name: event,
 				cta_feature: feature,
 				cta_size: 'regular',
-			} );
+			});
 		}
 
 		onClick();
@@ -94,76 +94,72 @@ export class UpgradeNudge extends React.Component {
 
 		const shouldNotDisplay =
 			isVip ||
-			! canManageSite ||
-			! site ||
+			!canManageSite ||
+			!site ||
 			typeof site !== 'object' ||
 			typeof site.jetpack !== 'boolean' ||
-			( feature && planHasFeature ) ||
-			( ! feature && ! isFreePlan( site.plan ) ) ||
-			( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-			( ! jetpack && site.jetpack ) ||
-			( jetpack && ! site.jetpack );
+			(feature && planHasFeature) ||
+			(!feature && !isFreePlan(site.plan)) ||
+			(feature === FEATURE_NO_ADS && site.options.wordads) ||
+			(!jetpack && site.jetpack) ||
+			(jetpack && !site.jetpack);
 
-		if ( shouldNotDisplay && ! forceDisplay ) {
+		if (shouldNotDisplay && !forceDisplay) {
 			return null;
 		}
 
 		let href = this.props.href;
-		if ( ! href && site ) {
-			href = addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
+		if (!href && site) {
+			href = addQueryArgs({ feature, plan }, `/plans/${site.slug}`);
 		}
 
-		const classes = classNames( 'upgrade-nudge', className );
+		const classes = classNames('upgrade-nudge', className);
 
-		if ( compact ) {
+		if (compact) {
 			return (
-				<Button className={ classes } onClick={ this.handleClick } href={ href }>
-					<Gridicon className="upgrade-nudge__icon" icon={ icon } />
+				<Button className={classes} onClick={this.handleClick} href={href}>
+					<Gridicon className="upgrade-nudge__icon" icon={icon} />
 					<div className="upgrade-nudge__info">
-						<span className="upgrade-nudge__title">
-							{ title || translate( 'Upgrade to Premium' ) }
-						</span>
-						<span className="upgrade-nudge__message">{ message }</span>
+						<span className="upgrade-nudge__title">{title || translate('Upgrade to Premium')}</span>
+						<span className="upgrade-nudge__message">{message}</span>
 					</div>
 				</Button>
 			);
 		}
 
 		return (
-			<Card compact className={ classes } onClick={ this.handleClick } href={ href }>
-				<Gridicon className="upgrade-nudge__icon" icon={ icon } size={ 18 } />
+			<Card compact className={classes} onClick={this.handleClick} href={href}>
+				<Gridicon className="upgrade-nudge__icon" icon={icon} size={18} />
 				<div className="upgrade-nudge__info">
-					<span className="upgrade-nudge__title">
-						{ title || translate( 'Upgrade to Premium' ) }
-					</span>
-					<span className="upgrade-nudge__message">{ message }</span>
+					<span className="upgrade-nudge__title">{title || translate('Upgrade to Premium')}</span>
+					<span className="upgrade-nudge__message">{message}</span>
 				</div>
 
-				{ ( event || feature ) && (
+				{(event || feature) && (
 					<TrackComponentView
-						eventName={ 'calypso_upgrade_nudge_impression' }
-						eventProperties={ {
+						eventName={'calypso_upgrade_nudge_impression'}
+						eventProperties={{
 							cta_name: event,
 							cta_feature: feature,
 							cta_size: 'regular',
-						} }
+						}}
 					/>
-				) }
+				)}
 			</Card>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
+	(state, ownProps) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			site: getSite( state, siteId ),
-			planHasFeature: hasFeature( state, siteId, ownProps.feature ),
-			canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
-			isVip: isVipSite( state, siteId ),
+			site: getSite(state, siteId),
+			planHasFeature: hasFeature(state, siteId, ownProps.feature),
+			canManageSite: canCurrentUser(state, siteId, 'manage_options'),
+			isVip: isVipSite(state, siteId),
 		};
 	},
 	{ recordTracksEvent }
-)( localize( UpgradeNudge ) );
+)(localize(UpgradeNudge));

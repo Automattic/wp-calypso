@@ -27,10 +27,10 @@ import {
  * @param  {object} state  Current state
  * @returns {object}        Updated state
  */
-function connectAccountClearError( state = {} ) {
-	return Object.assign( {}, state, {
+function connectAccountClearError(state = {}) {
+	return Object.assign({}, state, {
 		error: '',
-	} );
+	});
 }
 
 /**
@@ -39,10 +39,10 @@ function connectAccountClearError( state = {} ) {
  * @param  {object} state  Current state
  * @returns {object}        Updated state
  */
-function connectAccountClearCompletedNotification( state = {} ) {
-	return Object.assign( {}, state, {
+function connectAccountClearCompletedNotification(state = {}) {
+	return Object.assign({}, state, {
 		notifyCompleted: false,
-	} );
+	});
 }
 
 /**
@@ -51,12 +51,12 @@ function connectAccountClearCompletedNotification( state = {} ) {
  * @param  {object} state  Current state
  * @returns {object}        Updated state
  */
-function connectAccountCreate( state = {} ) {
-	return Object.assign( {}, state, {
+function connectAccountCreate(state = {}) {
+	return Object.assign({}, state, {
 		error: '',
 		isCreating: true,
 		notifyCompleted: false,
-	} );
+	});
 }
 
 /**
@@ -66,8 +66,8 @@ function connectAccountCreate( state = {} ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-function connectAccountCreateComplete( state = {}, action ) {
-	return Object.assign( {}, state, {
+function connectAccountCreateComplete(state = {}, action) {
+	return Object.assign({}, state, {
 		connectedUserID: action.connectedUserID || '',
 		displayName: '',
 		email: action.email || '',
@@ -79,7 +79,7 @@ function connectAccountCreateComplete( state = {}, action ) {
 		lastName: '',
 		logo: '',
 		notifyCompleted: true,
-	} );
+	});
 }
 
 /**
@@ -88,8 +88,8 @@ function connectAccountCreateComplete( state = {}, action ) {
  * @param  {object} state  Current state
  * @returns {object}        Updated state
  */
-function connectAccountFetch( state = {} ) {
-	return Object.assign( {}, state, {
+function connectAccountFetch(state = {}) {
+	return Object.assign({}, state, {
 		connectedUserID: '',
 		displayName: '',
 		email: '',
@@ -100,7 +100,7 @@ function connectAccountFetch( state = {} ) {
 		isRequesting: true,
 		lastName: '',
 		logo: '',
-	} );
+	});
 }
 
 /**
@@ -110,8 +110,8 @@ function connectAccountFetch( state = {} ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-function connectAccountFetchComplete( state = {}, action ) {
-	return Object.assign( {}, state, {
+function connectAccountFetchComplete(state = {}, action) {
+	return Object.assign({}, state, {
 		connectedUserID: action.connectedUserID || '',
 		displayName: action.displayName || '',
 		email: action.email || '',
@@ -122,7 +122,7 @@ function connectAccountFetchComplete( state = {}, action ) {
 		isRequesting: false,
 		lastName: action.lastName || '',
 		logo: action.logo || '',
-	} );
+	});
 }
 
 /**
@@ -131,10 +131,10 @@ function connectAccountFetchComplete( state = {}, action ) {
  * @param  {object} state  Current state
  * @returns {object}        Updated state
  */
-function connectAccountDeauthorize( state = {} ) {
-	return Object.assign( {}, state, {
+function connectAccountDeauthorize(state = {}) {
+	return Object.assign({}, state, {
 		isDeauthorizing: true,
-	} );
+	});
 }
 
 /**
@@ -144,8 +144,8 @@ function connectAccountDeauthorize( state = {} ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-function connectAccountDeauthorizeComplete( state = {}, action ) {
-	return Object.assign( {}, state, {
+function connectAccountDeauthorizeComplete(state = {}, action) {
+	return Object.assign({}, state, {
 		connectedUserID: '',
 		displayName: '',
 		email: '',
@@ -156,7 +156,7 @@ function connectAccountDeauthorizeComplete( state = {}, action ) {
 		isRequesting: false,
 		lastName: '',
 		logo: '',
-	} );
+	});
 }
 
 /**
@@ -165,11 +165,11 @@ function connectAccountDeauthorizeComplete( state = {}, action ) {
  * @param  {object} state  Current state
  * @returns {object}        Updated state
  */
-function connectAccountOAuthInit( state = {} ) {
-	return Object.assign( {}, state, {
+function connectAccountOAuthInit(state = {}) {
+	return Object.assign({}, state, {
 		isOAuthInitializing: true,
 		oauthUrl: '',
-	} );
+	});
 }
 
 /**
@@ -179,12 +179,12 @@ function connectAccountOAuthInit( state = {} ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-function connectAccountOAuthInitComplete( state = {}, action ) {
-	return Object.assign( {}, state, {
+function connectAccountOAuthInitComplete(state = {}, action) {
+	return Object.assign({}, state, {
 		isOAuthInitializing: false,
 		error: action.error || '',
 		oauthUrl: action.oauthUrl || '',
-	} );
+	});
 }
 
 /**
@@ -193,12 +193,12 @@ function connectAccountOAuthInitComplete( state = {}, action ) {
  * @param  {object} state  Current state
  * @returns {object}        Updated state
  */
-function connectAccountOAuthConnect( state = {} ) {
-	return Object.assign( {}, state, {
+function connectAccountOAuthConnect(state = {}) {
+	return Object.assign({}, state, {
 		error: '',
 		isOAuthConnecting: true,
 		notifyCompleted: false,
-	} );
+	});
 }
 
 /**
@@ -208,8 +208,8 @@ function connectAccountOAuthConnect( state = {} ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-function connectAccountOAuthConnectComplete( state = {}, action ) {
-	return Object.assign( {}, state, {
+function connectAccountOAuthConnectComplete(state = {}, action) {
+	return Object.assign({}, state, {
 		connectedUserID: action.connectedUserID || '',
 		email: '',
 		error: action.error || '',
@@ -221,36 +221,36 @@ function connectAccountOAuthConnectComplete( state = {}, action ) {
 		lastName: '',
 		logo: '',
 		notifyCompleted: true,
-	} );
+	});
 }
 
-export default withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION:
-			return connectAccountClearCompletedNotification( state, action );
+			return connectAccountClearCompletedNotification(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR:
-			return connectAccountClearError( state, action );
+			return connectAccountClearError(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE:
-			return connectAccountCreate( state, action );
+			return connectAccountCreate(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE:
-			return connectAccountCreateComplete( state, action );
+			return connectAccountCreateComplete(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE:
-			return connectAccountDeauthorize( state, action );
+			return connectAccountDeauthorize(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE:
-			return connectAccountDeauthorizeComplete( state, action );
+			return connectAccountDeauthorizeComplete(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST:
-			return connectAccountFetch( state, action );
+			return connectAccountFetch(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE:
-			return connectAccountFetchComplete( state, action );
+			return connectAccountFetchComplete(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT:
-			return connectAccountOAuthInit( state, action );
+			return connectAccountOAuthInit(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE:
-			return connectAccountOAuthInitComplete( state, action );
+			return connectAccountOAuthInitComplete(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT:
-			return connectAccountOAuthConnect( state, action );
+			return connectAccountOAuthConnect(state, action);
 		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE:
-			return connectAccountOAuthConnectComplete( state, action );
+			return connectAccountOAuthConnectComplete(state, action);
 	}
 
 	return state;
-} );
+});

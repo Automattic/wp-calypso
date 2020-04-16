@@ -53,85 +53,85 @@ class EditorSharingPublicizeOptions extends React.Component {
 	};
 
 	componentWillUnmount() {
-		if ( this.connectionPopupMonitor ) {
-			this.connectionPopupMonitor.off( 'close', this.onNewConnectionPopupClosed );
+		if (this.connectionPopupMonitor) {
+			this.connectionPopupMonitor.off('close', this.onNewConnectionPopupClosed);
 		}
 	}
 
 	newConnectionPopup = () => {
-		if ( ! this.props.site ) {
+		if (!this.props.site) {
 			return;
 		}
 
-		const href = publicizeConnections( this.props.site );
+		const href = publicizeConnections(this.props.site);
 
-		if ( ! this.connectionPopupMonitor ) {
+		if (!this.connectionPopupMonitor) {
 			this.connectionPopupMonitor = new PopupMonitor();
 		}
 
-		this.connectionPopupMonitor.open( href );
-		this.connectionPopupMonitor.once( 'close', this.onNewConnectionPopupClosed );
+		this.connectionPopupMonitor.open(href);
+		this.connectionPopupMonitor.once('close', this.onNewConnectionPopupClosed);
 	};
 
 	onNewConnectionPopupClosed = () => {
-		this.props.requestConnections( this.props.site.ID );
+		this.props.requestConnections(this.props.site.ID);
 	};
 
 	newConnection = () => {
 		this.newConnectionPopup();
-		this.props.recordEditorStat( 'sharing_create_service' );
-		this.props.recordEditorEvent( 'Opened Create New Sharing Service Dialog' );
+		this.props.recordEditorStat('sharing_create_service');
+		this.props.recordEditorEvent('Opened Create New Sharing Service Dialog');
 	};
 
 	renderServices = () => {
-		if ( ! this.props.site || ! this.hasConnections() ) {
+		if (!this.props.site || !this.hasConnections()) {
 			return;
 		}
 
-		return <PublicizeServices newConnectionPopup={ this.newConnectionPopup } />;
+		return <PublicizeServices newConnectionPopup={this.newConnectionPopup} />;
 	};
 
 	renderMessage = () => {
-		const skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
+		const skipped = this.hasConnections() ? PostMetadata.publicizeSkipped(this.props.post) : [],
 			targeted = this.hasConnections()
 				? this.props.connections.filter(
-						connection => skipped && -1 === skipped.indexOf( connection.keyring_connection_ID )
+						(connection) => skipped && -1 === skipped.indexOf(connection.keyring_connection_ID)
 				  )
 				: [],
-			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
+			requireCount = includes(map(targeted, 'service'), 'twitter'),
 			acceptableLength = requireCount ? 280 - 23 - 23 : null,
 			preFilledMessage = this.props.post ? this.props.post.title : '';
 
-		if ( ! this.hasConnections() ) {
+		if (!this.hasConnections()) {
 			return;
 		}
 
 		return (
 			<PublicizeMessage
-				message={ PostMetadata.publicizeMessage( this.props.post ) || '' }
-				onChange={ this.onMessageChange }
-				requireCount={ requireCount }
-				acceptableLength={ acceptableLength }
-				preFilledMessage={ preFilledMessage }
+				message={PostMetadata.publicizeMessage(this.props.post) || ''}
+				onChange={this.onMessageChange}
+				requireCount={requireCount}
+				acceptableLength={acceptableLength}
+				preFilledMessage={preFilledMessage}
 			/>
 		);
 	};
 
-	onMessageChange = message => {
-		this.props.updatePostMetadata( this.props.siteId, this.props.postId, '_wpas_mess', message );
+	onMessageChange = (message) => {
+		this.props.updatePostMetadata(this.props.siteId, this.props.postId, '_wpas_mess', message);
 	};
 
 	renderAddNewButton = () => {
 		// contributors cannot create publicize connections
-		if ( ! this.props.canUserPublishPosts ) {
+		if (!this.props.canUserPublishPosts) {
 			return;
 		}
 
 		return (
-			<Button borderless compact onClick={ this.newConnection }>
-				<Gridicon icon="add" /> { this.props.translate( 'Connect new service' ) }
+			<Button borderless compact onClick={this.newConnection}>
+				<Gridicon icon="add" /> {this.props.translate('Connect new service')}
 				<span className="editor-sharing__external-link-indicator">
-					<Gridicon icon="external" size={ 18 } />
+					<Gridicon icon="external" size={18} />
 				</span>
 			</Button>
 		);
@@ -140,61 +140,61 @@ class EditorSharingPublicizeOptions extends React.Component {
 	renderInfoNotice = () => {
 		// don't show the message if the are no connections
 		// and the user is not allowed to add any
-		if ( ! this.hasConnections() && ! this.props.canUserPublishPosts ) {
+		if (!this.hasConnections() && !this.props.canUserPublishPosts) {
 			return;
 		}
 
 		return (
 			<p className="editor-drawer__description">
-				{ this.props.translate(
+				{this.props.translate(
 					'Connect and select social media services to automatically share this post.'
-				) }
+				)}
 			</p>
 		);
 	};
 
 	render() {
-		if ( ! this.props.isPublicizeEnabled ) {
+		if (!this.props.isPublicizeEnabled) {
 			return null;
 		}
 
-		const classes = classNames( 'editor-sharing__publicize-options', {
+		const classes = classNames('editor-sharing__publicize-options', {
 			'has-connections': this.hasConnections(),
 			'has-add-option': this.props.canUserPublishPosts,
-		} );
+		});
 
 		return (
-			<div className={ classes }>
-				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
-				{ this.renderInfoNotice() }
-				{ this.renderServices() }
-				{ this.renderAddNewButton() }
-				{ this.renderMessage() }
+			<div className={classes}>
+				{this.props.siteId && <QueryPostTypes siteId={this.props.siteId} />}
+				{this.renderInfoNotice()}
+				{this.renderServices()}
+				{this.renderAddNewButton()}
+				{this.renderMessage()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const userId = getCurrentUserId( state );
-		const postId = getEditorPostId( state );
-		const site = getSite( state, siteId );
-		const post = getEditedPost( state, siteId, postId );
-		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const userId = getCurrentUserId(state);
+		const postId = getEditorPostId(state);
+		const site = getSite(state, siteId);
+		const post = getEditedPost(state, siteId, postId);
+		const postType = getEditedPostValue(state, siteId, postId, 'type');
 
-		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+		const canUserPublishPosts = canCurrentUser(state, siteId, 'publish_posts');
 
 		return {
 			siteId,
 			postId,
 			site,
 			post,
-			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
+			isPublicizeEnabled: isPublicizeEnabled(state, siteId, postType),
 			canUserPublishPosts,
-			connections: getSiteUserConnections( state, siteId, userId ),
+			connections: getSiteUserConnections(state, siteId, userId),
 		};
 	},
 	{ requestConnections, updatePostMetadata, recordEditorStat, recordEditorEvent }
-)( localize( EditorSharingPublicizeOptions ) );
+)(localize(EditorSharingPublicizeOptions));

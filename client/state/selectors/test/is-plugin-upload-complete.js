@@ -10,8 +10,8 @@ import isPluginUploadComplete from 'state/selectors/is-plugin-upload-complete';
 
 const siteId = 77203074;
 
-describe( 'isPluginUploadComplete', () => {
-	test( 'should return false by default', () => {
+describe('isPluginUploadComplete', () => {
+	test('should return false by default', () => {
 		const state = {
 			plugins: {
 				upload: {
@@ -20,52 +20,52 @@ describe( 'isPluginUploadComplete', () => {
 				},
 			},
 		};
-		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
-	} );
+		expect(isPluginUploadComplete(state, siteId)).to.be.false;
+	});
 
-	test( 'should return false if no plugin id available', () => {
+	test('should return false if no plugin id available', () => {
 		const state = {
 			plugins: {
 				upload: {
 					inProgress: {
-						[ siteId ]: false,
+						[siteId]: false,
 					},
 					uploadedPluginId: {},
 				},
 			},
 		};
-		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
-	} );
+		expect(isPluginUploadComplete(state, siteId)).to.be.false;
+	});
 
-	test( 'should return false if upload still in progress', () => {
+	test('should return false if upload still in progress', () => {
 		const state = {
 			plugins: {
 				upload: {
 					inProgress: {
-						[ siteId ]: true,
+						[siteId]: true,
 					},
 					uploadedPluginId: {
-						[ siteId ]: 'hello-dolly',
+						[siteId]: 'hello-dolly',
 					},
 				},
 			},
 		};
-		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
-	} );
+		expect(isPluginUploadComplete(state, siteId)).to.be.false;
+	});
 
-	test( 'should return true if upload not in progress and plugin id present', () => {
+	test('should return true if upload not in progress and plugin id present', () => {
 		const state = {
 			plugins: {
 				upload: {
 					inProgress: {
-						[ siteId ]: false,
+						[siteId]: false,
 					},
 					uploadedPluginId: {
-						[ siteId ]: 'hello-dolly',
+						[siteId]: 'hello-dolly',
 					},
 				},
 			},
 		};
-		expect( isPluginUploadComplete( state, siteId ) ).to.be.true;
-	} );
-} );
+		expect(isPluginUploadComplete(state, siteId)).to.be.true;
+	});
+});

@@ -9,7 +9,7 @@ export default {
 			name: 'Test Six',
 			nice_name: 'test6',
 			profile_URL: 'http://en.gravatar.com',
-			roles: [ 'editor' ],
+			roles: ['editor'],
 			site_ID: 1234,
 		},
 
@@ -21,7 +21,7 @@ export default {
 			name: 'Test Seven',
 			nice_name: 'test7',
 			profile_URL: 'http://en.gravatar.com',
-			roles: [ 'administrator' ],
+			roles: ['administrator'],
 			site_ID: 1234,
 		},
 	],

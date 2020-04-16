@@ -32,14 +32,14 @@ class PlanIntervalDiscount extends Component {
 
 	getDiscountPriceObject() {
 		const { currencyCode, discountPrice, originalPrice } = this.props;
-		return getCurrencyObject( originalPrice - discountPrice, currencyCode );
+		return getCurrencyObject(originalPrice - discountPrice, currencyCode);
 	}
 
 	renderYearlyViewDiscountInfo() {
 		const { basePlansPath, currencyCode, discountPrice, originalPrice } = this.props;
 
 		// Ensure we have required props.
-		if ( ! currencyCode || ! discountPrice || ! originalPrice ) {
+		if (!currencyCode || !discountPrice || !originalPrice) {
 			return null;
 		}
 
@@ -53,7 +53,7 @@ class PlanIntervalDiscount extends Component {
 				args: price,
 				components: {
 					b: <b />,
-					Link: <a href={ plansLink( basePlansPath, siteSlug, 'monthly', true ) } />,
+					Link: <a href={plansLink(basePlansPath, siteSlug, 'monthly', true)} />,
 				},
 			}
 		);
@@ -63,7 +63,7 @@ class PlanIntervalDiscount extends Component {
 		const { basePlansPath, currencyCode, discountPrice, originalPrice } = this.props;
 
 		// Ensure we have required props.
-		if ( ! basePlansPath || ! currencyCode || ! discountPrice || ! originalPrice ) {
+		if (!basePlansPath || !currencyCode || !discountPrice || !originalPrice) {
 			return null;
 		}
 
@@ -74,7 +74,7 @@ class PlanIntervalDiscount extends Component {
 			{
 				args: price,
 				components: {
-					Link: <a href={ plansLink( basePlansPath, siteSlug, 'yearly', true ) } />,
+					Link: <a href={plansLink(basePlansPath, siteSlug, 'yearly', true)} />,
 					b: <b />,
 				},
 			}
@@ -85,10 +85,10 @@ class PlanIntervalDiscount extends Component {
 		const { isYearly } = this.props;
 		return (
 			<div className="plan-interval-discount">
-				{ isYearly ? this.renderYearlyViewDiscountInfo() : this.renderMonthlyViewDiscountInfo() }
+				{isYearly ? this.renderYearlyViewDiscountInfo() : this.renderMonthlyViewDiscountInfo()}
 			</div>
 		);
 	}
 }
 
-export default localize( PlanIntervalDiscount );
+export default localize(PlanIntervalDiscount);

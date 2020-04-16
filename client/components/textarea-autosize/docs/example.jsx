@@ -11,7 +11,7 @@ import TextareaAutosize from '../index';
 TextareaAutosize.displayName = 'TextareaAutosize';
 TextareaAutosizeExample.displayName = 'TextareaAutosize';
 
-function TextareaAutosizeExample( props ) {
+function TextareaAutosizeExample(props) {
 	return props.exampleCode;
 }
 

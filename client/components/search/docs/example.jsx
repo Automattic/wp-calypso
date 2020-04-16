@@ -22,13 +22,13 @@ class SearchDemo extends PureComponent {
 		return (
 			<div>
 				<Search
-					onSearch={ noop }
+					onSearch={noop}
 					placeholder="What are you looking for?"
 					inputLabel="What do you seek? This is different on purpose."
 				/>
 				<h2>Search Card</h2>
 				<SearchCard
-					onSearch={ noop }
+					onSearch={noop}
 					placeholder="Seek and you shall find"
 					inputLabel="Seek and you shall find"
 				/>

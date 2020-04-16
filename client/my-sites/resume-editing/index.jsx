@@ -42,36 +42,36 @@ class ResumeEditing extends React.Component {
 		translate: PropTypes.func,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		// Once we start tracking a draft, monitor received changes for that
 		// post to ensure we stop tracking if it's published or trashed.
-		if ( get( nextProps.draft, 'status', 'draft' ) !== 'draft' ) {
+		if (get(nextProps.draft, 'status', 'draft') !== 'draft') {
 			nextProps.resetEditorLastDraft();
 		}
 	}
 
 	trackAnalytics = () => {
-		gaRecordEvent( 'Master Bar', 'Resumed Editing' );
-		bumpStat( 'calypso_edit_via', 'masterbar_resume_editing' );
+		gaRecordEvent('Master Bar', 'Resumed Editing');
+		bumpStat('calypso_edit_via', 'masterbar_resume_editing');
 	};
 
 	render() {
 		const { siteId, postId, requesting, draft, editPath, section, translate } = this.props;
-		if ( ! draft || 'post-editor' === section ) {
+		if (!draft || 'post-editor' === section) {
 			return null;
 		}
 
-		const classes = classnames( 'resume-editing', {
+		const classes = classnames('resume-editing', {
 			'is-requesting': requesting,
-		} );
+		});
 
 		return (
-			<a href={ editPath } onClick={ this.trackAnalytics } className={ classes }>
-				<QueryPosts siteId={ siteId } postId={ postId } />
-				<span className="resume-editing__label">{ translate( 'Continue Editing' ) }</span>
+			<a href={editPath} onClick={this.trackAnalytics} className={classes}>
+				<QueryPosts siteId={siteId} postId={postId} />
+				<span className="resume-editing__label">{translate('Continue Editing')}</span>
 				<span className="resume-editing__post-title">
-					<SiteIcon size={ 16 } siteId={ siteId } />
-					{ draft.title ? decodeEntities( draft.title ) : translate( 'Untitled' ) }
+					<SiteIcon size={16} siteId={siteId} />
+					{draft.title ? decodeEntities(draft.title) : translate('Untitled')}
 				</span>
 			</a>
 		);
@@ -79,18 +79,18 @@ class ResumeEditing extends React.Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getEditorLastDraftSiteId( state );
-		const postId = getEditorLastDraftPostId( state );
+	(state) => {
+		const siteId = getEditorLastDraftSiteId(state);
+		const postId = getEditorLastDraftPostId(state);
 
 		return {
 			siteId,
 			postId,
-			requesting: siteId && postId && isRequestingSitePost( state, siteId, postId ),
-			draft: getEditorLastDraftPost( state ),
-			editPath: getEditorPath( state, siteId, postId ),
-			section: getSectionName( state ),
+			requesting: siteId && postId && isRequestingSitePost(state, siteId, postId),
+			draft: getEditorLastDraftPost(state),
+			editPath: getEditorPath(state, siteId, postId),
+			section: getSectionName(state),
 		};
 	},
 	{ resetEditorLastDraft }
-)( localize( ResumeEditing ) );
+)(localize(ResumeEditing));

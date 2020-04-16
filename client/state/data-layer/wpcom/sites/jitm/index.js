@@ -21,8 +21,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {string} str The string to decode
  * @returns {string} The decoded string
  */
-const unescapeDecimalEntities = str =>
-	str.replace( /&#(\d+);/g, ( _, entity ) => String.fromCharCode( entity ) );
+const unescapeDecimalEntities = (str) =>
+	str.replace(/&#(\d+);/g, (_, entity) => String.fromCharCode(entity));
 
 /**
  * Given an object from the api, prepare it to be consumed by the ui by transforming the shape of the data
@@ -30,23 +30,23 @@ const unescapeDecimalEntities = str =>
  * @param {object} jitms The jitms to display from the api
  * @returns {object} The transformed data to display
  */
-const transformApiRequest = ( { data: jitms } ) =>
-	jitms.map( jitm => ( {
-		message: unescapeDecimalEntities( jitm.content.message || '' ),
-		description: unescapeDecimalEntities( jitm.content.description || '' ),
-		classes: unescapeDecimalEntities( jitm.content.classes || '' ),
-		icon: unescapeDecimalEntities( jitm.content.icon || '' ),
+const transformApiRequest = ({ data: jitms }) =>
+	jitms.map((jitm) => ({
+		message: unescapeDecimalEntities(jitm.content.message || ''),
+		description: unescapeDecimalEntities(jitm.content.description || ''),
+		classes: unescapeDecimalEntities(jitm.content.classes || ''),
+		icon: unescapeDecimalEntities(jitm.content.icon || ''),
 		featureClass: jitm.feature_class,
 		CTA: {
-			message: unescapeDecimalEntities( jitm.CTA.message ),
-			link: unescapeDecimalEntities( jitm.CTA.link || '' ),
+			message: unescapeDecimalEntities(jitm.CTA.message),
+			link: unescapeDecimalEntities(jitm.CTA.link || ''),
 		},
 		tracks: jitm.tracks,
 		action: jitm.action,
 		template: jitm.template,
 		id: jitm.id,
 		isDismissible: jitm.is_dismissible,
-	} ) );
+	}));
 
 /**
  * Processes the current state and determines if it should fire a jitm request
@@ -54,17 +54,17 @@ const transformApiRequest = ( { data: jitms } ) =>
  * @param {object} action The fetch action
  * @returns {object} The HTTP fetch action
  */
-export const doFetchJITM = action => {
+export const doFetchJITM = (action) => {
 	return http(
 		{
 			apiNamespace: 'rest',
 			method: 'GET',
-			path: `/v1.1/jetpack-blogs/${ action.siteId }/rest-api/`,
+			path: `/v1.1/jetpack-blogs/${action.siteId}/rest-api/`,
 			query: {
 				path: '/jetpack/v4/jitm',
-				query: JSON.stringify( {
+				query: JSON.stringify({
 					message_path: action.messagePath,
-				} ),
+				}),
 				http_envelope: 1,
 				locale: action.locale,
 			},
@@ -80,18 +80,18 @@ export const doFetchJITM = action => {
  * @param {object} action The dismissal action
  * @returns {object} The HTTP fetch action
  */
-export const doDismissJITM = action =>
+export const doDismissJITM = (action) =>
 	http(
 		{
 			apiNamespace: 'rest',
 			method: 'POST',
-			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			path: `/jetpack-blogs/${action.siteId}/rest-api/`,
 			query: {
 				path: '/jetpack/v4/jitm',
-				body: JSON.stringify( {
+				body: JSON.stringify({
 					feature_class: action.featureClass,
 					id: action.id,
-				} ),
+				}),
 				http_envelope: 1,
 				json: false,
 			},
@@ -108,9 +108,9 @@ export const doDismissJITM = action =>
  * @param {Array} jitms The jitms
  * @returns {Function} a handler for the request
  */
-export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
-	const siteId = action.siteId || action.site_id || getSelectedSiteId( getState() );
-	dispatch( insertJITM( siteId, action.messagePath, jitms ) );
+export const receiveJITM = (action, jitms) => (dispatch, getState) => {
+	const siteId = action.siteId || action.site_id || getSelectedSiteId(getState());
+	dispatch(insertJITM(siteId, action.messagePath, jitms));
 };
 
 /**
@@ -121,26 +121,26 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
  * @param {string} action.messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @returns {Function} a handler for the failed request
  */
-export const failedJITM = action => ( dispatch, getState ) => {
-	const siteId = action.siteId || action.site_id || getSelectedSiteId( getState() );
-	dispatch( clearJITM( siteId, action.messagePath ) );
+export const failedJITM = (action) => (dispatch, getState) => {
+	const siteId = action.siteId || action.site_id || getSelectedSiteId(getState());
+	dispatch(clearJITM(siteId, action.messagePath));
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
-	[ JITM_FETCH ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/jitm/index.js', {
+	[JITM_FETCH]: [
+		dispatchRequest({
 			fetch: doFetchJITM,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
-			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
-		} ),
+			fromApi: makeJsonSchemaParser(schema, transformApiRequest),
+		}),
 	],
 
-	[ JITM_DISMISS ]: [
-		dispatchRequest( {
+	[JITM_DISMISS]: [
+		dispatchRequest({
 			fetch: doDismissJITM,
 			onSuccess: noop,
 			onError: noop,
-		} ),
+		}),
 	],
-} );
+});

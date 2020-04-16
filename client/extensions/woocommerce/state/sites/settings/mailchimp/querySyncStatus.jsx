@@ -28,30 +28,30 @@ class QueryMailChimpSyncStatus extends Component {
 	};
 
 	createUpdateTimer = () => {
-		if ( this.updateTimer ) {
+		if (this.updateTimer) {
 			return;
 		}
 
 		const { isRequesting, isRequestingResync } = this.props;
 		const activeRequest = isRequesting || isRequestingResync;
 
-		! activeRequest && this.triggerRequest( this.props );
+		!activeRequest && this.triggerRequest(this.props);
 		// Trigger once each minute
-		this.updateTimer = window.setInterval( () => {
-			this.triggerRequest( this.props );
-		}, 60000 );
+		this.updateTimer = window.setInterval(() => {
+			this.triggerRequest(this.props);
+		}, 60000);
 	};
 
 	destroyUpdateTimer = () => {
-		if ( this.updateTimer ) {
-			window.clearInterval( this.updateTimer );
+		if (this.updateTimer) {
+			window.clearInterval(this.updateTimer);
 			this.updateTimer = false;
 		}
 	};
 
-	triggerRequest = props => {
-		if ( ! props.isRequesting && ! props.isRequestingResync && props.siteId ) {
-			props.request( props.siteId );
+	triggerRequest = (props) => {
+		if (!props.isRequesting && !props.isRequestingResync && props.siteId) {
+			props.request(props.siteId);
 		}
 	};
 
@@ -61,10 +61,10 @@ class QueryMailChimpSyncStatus extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
+	(state, { siteId }) => ({
 		siteId,
-		isRequesting: isRequestingSyncStatus( state, siteId ),
-		isRequestingResync: isResync( state, siteId ),
-	} ),
+		isRequesting: isRequestingSyncStatus(state, siteId),
+		isRequestingResync: isResync(state, siteId),
+	}),
 	{ request: requestSyncStatus }
-)( QueryMailChimpSyncStatus );
+)(QueryMailChimpSyncStatus);

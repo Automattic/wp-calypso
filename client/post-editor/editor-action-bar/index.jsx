@@ -45,27 +45,27 @@ class EditorActionBar extends Component {
 			type,
 		} = this.props;
 
-		const showSticky = type === 'post' && ! isPostPrivateOrPasswordProtected;
+		const showSticky = type === 'post' && !isPostPrivateOrPasswordProtected;
 
 		return (
 			<div className="editor-action-bar">
-				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+				{siteId && <QuerySiteSettings siteId={siteId} />}
 
 				<div className="editor-action-bar__cell is-left">
 					<EditorStatusLabel />
 				</div>
 				<div className="editor-action-bar__cell is-center">
-					{ multiUserSite && <AsyncLoad require="post-editor/editor-author" /> }
+					{multiUserSite && <AsyncLoad require="post-editor/editor-author" />}
 				</div>
 				<div className="editor-action-bar__cell is-right">
-					{ showSticky && <EditorSticky /> }
-					{ isPodcastEpisode && (
+					{showSticky && <EditorSticky />}
+					{isPodcastEpisode && (
 						<PodcastIndicator
 							className="editor-action-bar__podcasting-indicator"
-							size={ 24 }
+							size={24}
 							tooltipType="episode"
 						/>
-					) }
+					)}
 					<EditorViewLink />
 				</div>
 			</div>
@@ -73,23 +73,23 @@ class EditorActionBar extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const multiUserSite = isSingleUserSite( state, siteId ) === false;
-	const postId = getEditorPostId( state );
-	const post = getEditedPost( state, siteId, postId );
-	const type = getEditedPostValue( state, siteId, postId, 'type' );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const multiUserSite = isSingleUserSite(state, siteId) === false;
+	const postId = getEditorPostId(state);
+	const post = getEditedPost(state, siteId, postId);
+	const type = getEditedPostValue(state, siteId, postId, 'type');
 	const isPostPrivateOrPasswordProtected =
-		utils.isPrivate( post ) || utils.getVisibility( post ) === 'password';
+		utils.isPrivate(post) || utils.getVisibility(post) === 'password';
 
-	const podcastingCategoryId = getPodcastingCategoryId( state, siteId );
+	const podcastingCategoryId = getPodcastingCategoryId(state, siteId);
 	let isPodcastEpisode = false;
-	if ( podcastingCategoryId ) {
-		const postTerms = getEditedPostValue( state, siteId, postId, 'terms' );
+	if (podcastingCategoryId) {
+		const postTerms = getEditedPostValue(state, siteId, postId, 'terms');
 		const postCategories = postTerms && postTerms.category;
 		// WARNING: postCategories is an array for posts where categories have
 		// been edited, but an object for posts returned from the API
-		if ( some( postCategories, { ID: podcastingCategoryId } ) ) {
+		if (some(postCategories, { ID: podcastingCategoryId })) {
 			isPodcastEpisode = true;
 		}
 	}
@@ -103,4 +103,4 @@ export default connect( state => {
 		isPostPrivateOrPasswordProtected,
 		isPodcastEpisode,
 	};
-} )( EditorActionBar );
+})(EditorActionBar);

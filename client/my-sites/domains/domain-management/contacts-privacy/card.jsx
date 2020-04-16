@@ -27,7 +27,7 @@ class ContactsPrivacyCard extends React.Component {
 		privateDomain: PropTypes.bool.isRequired,
 		privacyAvailable: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 		contactInfoDisclosureAvailable: PropTypes.bool.isRequired,
 		contactInfoDisclosed: PropTypes.bool.isRequired,
 		isPendingIcannVerification: PropTypes.bool.isRequired,
@@ -36,20 +36,20 @@ class ContactsPrivacyCard extends React.Component {
 	togglePrivacy = () => {
 		const { selectedSite, privateDomain, selectedDomainName: name } = this.props;
 
-		if ( privateDomain ) {
-			this.props.disableDomainPrivacy( selectedSite.ID, name );
+		if (privateDomain) {
+			this.props.disableDomainPrivacy(selectedSite.ID, name);
 		} else {
-			this.props.enableDomainPrivacy( selectedSite.ID, name );
+			this.props.enableDomainPrivacy(selectedSite.ID, name);
 		}
 	};
 
 	toggleContactInfo = () => {
 		const { selectedSite, contactInfoDisclosed, selectedDomainName: name } = this.props;
 
-		if ( contactInfoDisclosed ) {
-			this.props.redactDomainContactInfo( selectedSite.ID, name );
+		if (contactInfoDisclosed) {
+			this.props.redactDomainContactInfo(selectedSite.ID, name);
 		} else {
-			this.props.discloseDomainContactInfo( selectedSite.ID, name );
+			this.props.discloseDomainContactInfo(selectedSite.ID, name);
 		}
 	};
 
@@ -58,11 +58,11 @@ class ContactsPrivacyCard extends React.Component {
 		const { translate, isUpdatingPrivacy } = this.props;
 
 		let privacyProtectionNote;
-		if ( ! privacyAvailable ) {
+		if (!privacyAvailable) {
 			privacyProtectionNote = (
 				<div className="contacts-privacy__settings warning">
-					<Gridicon icon="info-outline" size={ 18 } />
-					<p>{ translate( 'Privacy settings can not be changed for this domain' ) }</p>
+					<Gridicon icon="info-outline" size={18} />
+					<p>{translate('Privacy settings can not be changed for this domain')}</p>
 				</div>
 			);
 		}
@@ -72,15 +72,15 @@ class ContactsPrivacyCard extends React.Component {
 				<div className="contacts-privacy__settings">
 					<FormToggle
 						wrapperClassName="edit__privacy-protection-toggle"
-						checked={ privateDomain }
-						toggling={ isUpdatingPrivacy }
-						disabled={ isUpdatingPrivacy || ! privacyAvailable }
-						onChange={ this.togglePrivacy }
+						checked={privateDomain}
+						toggling={isUpdatingPrivacy}
+						disabled={isUpdatingPrivacy || !privacyAvailable}
+						onChange={this.togglePrivacy}
 					>
-						{ translate( 'Privacy Protection' ) }
+						{translate('Privacy Protection')}
 					</FormToggle>
 				</div>
-				{ privacyProtectionNote }
+				{privacyProtectionNote}
 			</React.Fragment>
 		);
 	}
@@ -96,17 +96,17 @@ class ContactsPrivacyCard extends React.Component {
 			translate,
 		} = this.props;
 
-		if ( ! privacyAvailable || ! contactInfoDisclosureAvailable || privateDomain ) {
+		if (!privacyAvailable || !contactInfoDisclosureAvailable || privateDomain) {
 			return false;
 		}
 
 		const contactVerificationNotice = isPendingIcannVerification ? (
 			<div className="contacts-privacy__settings warning">
-				<Gridicon icon="info-outline" size={ 18 } />
+				<Gridicon icon="info-outline" size={18} />
 				<p>
-					{ translate(
+					{translate(
 						'You need to verify the contact information for the domain before you can disclose it publicly.'
-					) }
+					)}
 				</p>
 			</div>
 		) : null;
@@ -116,15 +116,15 @@ class ContactsPrivacyCard extends React.Component {
 				<div className="contacts-privacy__settings">
 					<FormToggle
 						wrapperClassName="edit__disclose-contact-information"
-						checked={ contactInfoDisclosed }
-						toggling={ isUpdatingPrivacy }
-						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
-						onChange={ this.toggleContactInfo }
+						checked={contactInfoDisclosed}
+						toggling={isUpdatingPrivacy}
+						disabled={isUpdatingPrivacy || isPendingIcannVerification}
+						onChange={this.toggleContactInfo}
 					>
-						{ translate( 'Display my contact information in public WHOIS' ) }
+						{translate('Display my contact information in public WHOIS')}
 					</FormToggle>
 				</div>
-				{ contactVerificationNotice }
+				{contactVerificationNotice}
 			</React.Fragment>
 		);
 	}
@@ -135,20 +135,20 @@ class ContactsPrivacyCard extends React.Component {
 		return (
 			<div>
 				<Card className="contacts-privacy__card">
-					<p>{ translate( 'Your domain contact information' ) }</p>
+					<p>{translate('Your domain contact information')}</p>
 
-					<ContactDisplay selectedDomainName={ selectedDomainName } />
+					<ContactDisplay selectedDomainName={selectedDomainName} />
 
-					{ this.getPrivacyProtection() }
+					{this.getPrivacyProtection()}
 
-					{ this.getContactInfoDisclosed() }
+					{this.getContactInfoDisclosed()}
 
 					<p className="contacts-privacy__settings-explanation">
-						{ translate( '{{a}}Learn more{{/a}} about private registration and GDPR protection.', {
+						{translate('{{a}}Learn more{{/a}} about private registration and GDPR protection.', {
 							components: {
-								a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+								a: <a href={PUBLIC_VS_PRIVATE} target="_blank" rel="noopener noreferrer" />,
 							},
-						} ) }
+						})}
 					</p>
 				</Card>
 			</div>
@@ -157,17 +157,17 @@ class ContactsPrivacyCard extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
+	(state, ownProps) => ({
 		isUpdatingPrivacy: isUpdatingDomainPrivacy(
 			state,
 			ownProps.selectedSite.ID,
 			ownProps.selectedDomainName
 		),
-	} ),
+	}),
 	{
 		enableDomainPrivacy,
 		disableDomainPrivacy,
 		discloseDomainContactInfo,
 		redactDomainContactInfo,
 	}
-)( localize( ContactsPrivacyCard ) );
+)(localize(ContactsPrivacyCard));

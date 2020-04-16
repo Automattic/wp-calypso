@@ -14,7 +14,7 @@ import { tracksAnonymousUserId } from 'lib/analytics/ad-tracking';
  * Attempt to get the anon id for the user, if set
  */
 export function getAnonIdFromCookie(): string | null {
-	if ( typeof document !== 'undefined' ) {
+	if (typeof document !== 'undefined') {
 		const id = tracksAnonymousUserId();
 
 		return id == null || id === '' ? null : id;
@@ -23,22 +23,22 @@ export function getAnonIdFromCookie(): string | null {
 	return null;
 }
 
-type HandledActions = Action< 'EXPERIMENT_FETCH' > | ExperimentAssign;
+type HandledActions = Action<'EXPERIMENT_FETCH'> | ExperimentAssign;
 
 const appStartedAt = Date.now();
 
-const resetState: ( anonId: string | null ) => ExperimentState = anonId => ( {
+const resetState: (anonId: string | null) => ExperimentState = (anonId) => ({
 	anonId,
 	isLoading: true,
 	nextRefresh: appStartedAt,
 	variations: null,
-} );
+});
 
-const reducer: Reducer< ExperimentState, HandledActions > = (
-	state: ExperimentState = resetState( getAnonIdFromCookie() ),
+const reducer: Reducer<ExperimentState, HandledActions> = (
+	state: ExperimentState = resetState(getAnonIdFromCookie()),
 	action: HandledActions
 ): ExperimentState => {
-	switch ( action.type ) {
+	switch (action.type) {
 		/**
 		 * Store the user's assignment from the API
 		 */

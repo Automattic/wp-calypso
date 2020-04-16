@@ -10,16 +10,16 @@ import { startsWith } from 'lodash';
 import { combineReducers, withoutPersistence } from 'state/utils';
 import { ROUTE_SET } from 'state/action-types';
 
-export const currentClientId = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const currentClientId = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case ROUTE_SET: {
 			const { path, query } = action;
-			if ( startsWith( path, '/log-in' ) ) {
-				return query.client_id ? Number( query.client_id ) : state;
+			if (startsWith(path, '/log-in')) {
+				return query.client_id ? Number(query.client_id) : state;
 			}
 
-			if ( startsWith( path, '/start/wpcc' ) || startsWith( path, '/start/crowdsignal' ) ) {
-				return query.oauth2_client_id ? Number( query.oauth2_client_id ) : state;
+			if (startsWith(path, '/start/wpcc') || startsWith(path, '/start/crowdsignal')) {
+				return query.oauth2_client_id ? Number(query.oauth2_client_id) : state;
 			}
 
 			return state;
@@ -27,8 +27,8 @@ export const currentClientId = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	currentClientId,
-} );
+});

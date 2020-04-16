@@ -32,151 +32,151 @@ class OrderEvent extends Component {
 	};
 
 	eventPropsByType = {
-		[ EVENT_TYPES.INTERNAL_NOTE ]: event => {
+		[EVENT_TYPES.INTERNAL_NOTE]: (event) => {
 			const { translate } = this.props;
 			return {
 				icon: 'aside',
 				// @todo Add comment author once we have that info
-				heading: translate( 'Internal note' ),
-				content: decodeEntities( stripHTML( event.content ) ),
+				heading: translate('Internal note'),
+				content: decodeEntities(stripHTML(event.content)),
 			};
 		},
 
-		[ EVENT_TYPES.CUSTOMER_NOTE ]: event => {
+		[EVENT_TYPES.CUSTOMER_NOTE]: (event) => {
 			const { translate } = this.props;
 			return {
 				icon: 'mail',
 				// @todo Add comment author once we have that info
-				heading: translate( 'Note sent to customer' ),
-				content: decodeEntities( stripHTML( event.content ) ),
+				heading: translate('Note sent to customer'),
+				content: decodeEntities(stripHTML(event.content)),
 			};
 		},
 
-		[ EVENT_TYPES.LABEL_PURCHASING ]: event => {
+		[EVENT_TYPES.LABEL_PURCHASING]: (event) => {
 			return {
 				icon: 'sync',
 				content: (
 					<LabelItemInProgress
-						label={ event }
-						orderId={ this.props.orderId }
-						siteId={ this.props.siteId }
+						label={event}
+						orderId={this.props.orderId}
+						siteId={this.props.siteId}
 					/>
 				),
 			};
 		},
 
-		[ EVENT_TYPES.LABEL_PURCHASED ]: event => {
+		[EVENT_TYPES.LABEL_PURCHASED]: (event) => {
 			return {
 				icon: 'print',
 				content: (
-					<LabelItem label={ event } orderId={ this.props.orderId } siteId={ this.props.siteId } />
+					<LabelItem label={event} orderId={this.props.orderId} siteId={this.props.siteId} />
 				),
 			};
 		},
 
-		[ EVENT_TYPES.LABEL_REFUND_REQUESTED ]: event => {
+		[EVENT_TYPES.LABEL_REFUND_REQUESTED]: (event) => {
 			const { translate } = this.props;
 			return {
 				icon: 'time',
 				content: (
 					<div>
-						{ translate( '%(service)s label (#%(labelNum)d) refund requested (%(amount)s)', {
+						{translate('%(service)s label (#%(labelNum)d) refund requested (%(amount)s)', {
 							args: {
 								service: event.serviceName,
 								labelNum: event.labelIndex + 1,
-								amount: formatCurrency( event.amount, event.currency ),
+								amount: formatCurrency(event.amount, event.currency),
 							},
-						} ) }
+						})}
 					</div>
 				),
 			};
 		},
 
-		[ EVENT_TYPES.LABEL_REFUND_COMPLETED ]: event => {
+		[EVENT_TYPES.LABEL_REFUND_COMPLETED]: (event) => {
 			const { translate } = this.props;
 			return {
 				icon: 'refund',
 				content: (
 					<div>
-						{ translate( '%(service)s label (#%(labelNum)d) refunded (%(amount)s)', {
+						{translate('%(service)s label (#%(labelNum)d) refunded (%(amount)s)', {
 							args: {
 								service: event.serviceName,
 								labelNum: event.labelIndex + 1,
-								amount: formatCurrency( event.amount, event.currency ),
+								amount: formatCurrency(event.amount, event.currency),
 							},
-						} ) }
+						})}
 					</div>
 				),
 			};
 		},
 
-		[ EVENT_TYPES.LABEL_REFUND_REJECTED ]: event => {
+		[EVENT_TYPES.LABEL_REFUND_REJECTED]: (event) => {
 			const { translate } = this.props;
 			return {
 				icon: 'cross-small',
 				content: (
 					<div>
-						{ translate( '%(service)s label (#%(labelNum)d) refund rejected', {
+						{translate('%(service)s label (#%(labelNum)d) refund rejected', {
 							service: event.serviceName,
 							args: { labelNum: event.labelIndex + 1 },
-						} ) }
+						})}
 					</div>
 				),
 			};
 		},
 
-		[ EVENT_TYPES.REFUND_NOTE ]: event => {
+		[EVENT_TYPES.REFUND_NOTE]: (event) => {
 			const { translate } = this.props;
 			return {
 				icon: 'credit-card',
-				heading: translate( 'Refund' ),
+				heading: translate('Refund'),
 				content: (
 					<div>
-						{ translate( 'Refunded %(amount)s', {
+						{translate('Refunded %(amount)s', {
 							args: {
-								amount: formatCurrency( event.amount, event.currency ),
+								amount: formatCurrency(event.amount, event.currency),
 							},
-						} ) }
+						})}
 						<br />
-						{ event.reason }
+						{event.reason}
 					</div>
 				),
 			};
 		},
 
 		//render the loading placeholder without props
-		[ undefined ]: () => ( {} ),
+		[undefined]: () => ({}),
 	};
 
-	renderDefaultEvent = event => {
+	renderDefaultEvent = (event) => {
 		const { translate } = this.props;
 		return {
 			icon: 'aside',
-			heading: translate( 'Note' ),
+			heading: translate('Note'),
 			content: event.content,
 		};
 	};
 
 	render() {
 		const { moment, event } = this.props;
-		const renderEvent = this.eventPropsByType[ event.type ] || this.renderDefaultEvent;
-		const { icon, heading, content } = renderEvent( event );
+		const renderEvent = this.eventPropsByType[event.type] || this.renderDefaultEvent;
+		const { icon, heading, content } = renderEvent(event);
 
 		return (
 			<div className="order-activity-log__note">
 				<div className="order-activity-log__note-meta">
 					<span className="order-activity-log__note-time">
-						{ moment( event.timestamp ).format( 'LT' ) }
+						{moment(event.timestamp).format('LT')}
 					</span>
-					{ icon && <Gridicon icon={ icon } size={ 24 } /> }
+					{icon && <Gridicon icon={icon} size={24} />}
 				</div>
 				<div className="order-activity-log__note-body">
-					<div className="order-activity-log__note-type">{ heading }</div>
-					<div className="order-activity-log__note-content">{ content }</div>
+					<div className="order-activity-log__note-type">{heading}</div>
+					<div className="order-activity-log__note-content">{content}</div>
 				</div>
 			</div>
 		);
 	}
 }
 
-export default localize( withLocalizedMoment( OrderEvent ) );
+export default localize(withLocalizedMoment(OrderEvent));

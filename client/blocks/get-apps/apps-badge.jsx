@@ -28,10 +28,10 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
 		tracksEvent: 'calypso_app_download_ios_click',
-		getLocaleSlug: function() {
+		getLocaleSlug: function () {
 			const localeSlug = getLocaleSlug();
-			const localeSlugPrefix = localeSlug.split( '-' )[ 0 ];
-			return localeSlugPrefix === 'en' ? 'en-us' : `${ localeSlugPrefix }-${ localeSlugPrefix }`;
+			const localeSlugPrefix = localeSlug.split('-')[0];
+			return localeSlugPrefix === 'en' ? 'en-us' : `${localeSlugPrefix}-${localeSlugPrefix}`;
 		},
 	},
 	android: {
@@ -47,7 +47,7 @@ export class AppsBadge extends PureComponent {
 	static propTypes = {
 		altText: TranslatableString,
 		storeLink: PropTypes.string,
-		storeName: PropTypes.oneOf( [ 'ios', 'android' ] ).isRequired,
+		storeName: PropTypes.oneOf(['ios', 'android']).isRequired,
 		titleText: TranslatableString,
 		translate: PropTypes.func,
 	};
@@ -59,21 +59,21 @@ export class AppsBadge extends PureComponent {
 		translate: identity,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		const localeSlug = APP_STORE_BADGE_URLS[ props.storeName ].getLocaleSlug().toLowerCase();
+		const localeSlug = APP_STORE_BADGE_URLS[props.storeName].getLocaleSlug().toLowerCase();
 
-		const shouldLoadExternalImage = ! startsWith( localeSlug, 'en' );
+		const shouldLoadExternalImage = !startsWith(localeSlug, 'en');
 
 		this.state = {
 			shouldLoadExternalImage,
 			imageSrc: shouldLoadExternalImage
-				? APP_STORE_BADGE_URLS[ props.storeName ].src.replace( '{localeSlug}', localeSlug )
-				: APP_STORE_BADGE_URLS[ props.storeName ].defaultSrc,
+				? APP_STORE_BADGE_URLS[props.storeName].src.replace('{localeSlug}', localeSlug)
+				: APP_STORE_BADGE_URLS[props.storeName].defaultSrc,
 		};
 
-		if ( shouldLoadExternalImage ) {
+		if (shouldLoadExternalImage) {
 			this.image = null;
 			this.loadImage();
 		}
@@ -87,47 +87,42 @@ export class AppsBadge extends PureComponent {
 	}
 
 	onLoadImageComplete = () => {
-		this.setState( {
+		this.setState({
 			hasExternalImageLoaded: true,
-		} );
+		});
 	};
 
 	onLoadImageError = () => {
-		this.setState( {
+		this.setState({
 			hasExternalImageLoaded: false,
-			imageSrc: APP_STORE_BADGE_URLS[ this.props.storeName ].defaultSrc,
-		} );
+			imageSrc: APP_STORE_BADGE_URLS[this.props.storeName].defaultSrc,
+		});
 	};
 
 	onLinkClick = () => {
 		const { storeName } = this.props;
-		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent );
+		this.props.recordTracksEvent(APP_STORE_BADGE_URLS[storeName].tracksEvent);
 	};
 
 	render() {
 		const { altText, titleText, storeLink, storeName } = this.props;
 		const { imageSrc, hasExternalImageLoaded } = this.state;
 
-		const figureClassNames = classNames( 'get-apps__app-badge', {
-			[ `${ storeName }-app-badge` ]: true,
+		const figureClassNames = classNames('get-apps__app-badge', {
+			[`${storeName}-app-badge`]: true,
 			'is-external-image': hasExternalImageLoaded,
-		} );
+		});
 
 		return (
-			<figure className={ figureClassNames }>
-				<a
-					href={ storeLink }
-					onClick={ this.onLinkClick }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<img src={ imageSrc } title={ titleText } alt={ altText } />
+			<figure className={figureClassNames}>
+				<a href={storeLink} onClick={this.onLinkClick} target="_blank" rel="noopener noreferrer">
+					<img src={imageSrc} title={titleText} alt={altText} />
 				</a>
 			</figure>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( AppsBadge ) );
+})(localize(AppsBadge));

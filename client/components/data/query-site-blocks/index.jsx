@@ -21,12 +21,12 @@ class QuerySiteBlocks extends Component {
 	};
 
 	componentDidMount() {
-		this.props.requestSiteBlocks( { page: this.props.page } );
+		this.props.requestSiteBlocks({ page: this.props.page });
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.page !== prevProps.page ) {
-			this.props.requestSiteBlocks( { page: this.props.page } );
+	componentDidUpdate(prevProps) {
+		if (this.props.page !== prevProps.page) {
+			this.props.requestSiteBlocks({ page: this.props.page });
 		}
 	}
 
@@ -35,4 +35,4 @@ class QuerySiteBlocks extends Component {
 	}
 }
 
-export default connect( null, { requestSiteBlocks } )( QuerySiteBlocks );
+export default connect(null, { requestSiteBlocks })(QuerySiteBlocks);

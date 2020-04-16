@@ -30,27 +30,27 @@ import {
 	fetchReviews,
 } from 'woocommerce/state/sites/reviews/actions';
 
-describe( 'handlers', () => {
-	describe( '#handleReviewsRequest', () => {
-		test( 'should dispatch a get action', () => {
+describe('handlers', () => {
+	describe('#handleReviewsRequest', () => {
+		test('should dispatch a get action', () => {
 			const siteId = '123';
-			const action = fetchReviews( siteId );
-			const result = handleReviewsRequest( action );
-			expect( result ).toMatchObject( {
+			const action = fetchReviews(siteId);
+			const result = handleReviewsRequest(action);
+			expect(result).toMatchObject({
 				type: WPCOM_HTTP_REQUEST,
 				method: 'GET',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				path: `/jetpack-blogs/${siteId}/rest-api/`,
 				query: {
 					path:
 						'/wc/v3/products/calypso-reviews&page=1&per_page=10&status=pending&_envelope&_method=GET',
 					json: true,
 					apiVersion: '1.1',
 				},
-			} );
-		} );
-	} );
-	describe( '#handleReviewsRequestSuccess()', () => {
-		test( 'should dispatch reviews receive with the reviews list', () => {
+			});
+		});
+	});
+	describe('#handleReviewsRequestSuccess()', () => {
+		test('should dispatch reviews receive with the reviews list', () => {
 			const siteId = '123';
 			const response = {
 				data: {
@@ -62,18 +62,18 @@ describe( 'handlers', () => {
 					},
 				},
 			};
-			const action = fetchReviews( siteId );
-			const result = handleReviewsRequestSuccess( action, response );
+			const action = fetchReviews(siteId);
+			const result = handleReviewsRequestSuccess(action, response);
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				type: WOOCOMMERCE_REVIEWS_RECEIVE,
 				siteId,
 				query: {},
 				total: 2,
 				reviews,
-			} );
-		} );
-		test( 'should dispatch with an error if the envelope response is not 200', () => {
+			});
+		});
+		test('should dispatch with an error if the envelope response is not 200', () => {
 			const siteId = '123';
 			const response = {
 				data: {
@@ -85,58 +85,58 @@ describe( 'handlers', () => {
 				},
 			};
 
-			const action = fetchReviews( siteId );
-			const result = handleReviewsRequestSuccess( action, response );
+			const action = fetchReviews(siteId);
+			const result = handleReviewsRequestSuccess(action, response);
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				type: WOOCOMMERCE_REVIEWS_RECEIVE,
 				siteId,
 				query: {},
 				error: 'rest_no_route',
-			} );
-		} );
-	} );
-	describe( '#handleReviewsRequestError()', () => {
-		test( 'should dispatch error', () => {
+			});
+		});
+	});
+	describe('#handleReviewsRequestError()', () => {
+		test('should dispatch error', () => {
 			const siteId = '123';
-			const action = fetchReviews( siteId, 1 );
-			const result = handleReviewsRequestError( action, 'rest_no_route' );
+			const action = fetchReviews(siteId, 1);
+			const result = handleReviewsRequestError(action, 'rest_no_route');
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				type: WOOCOMMERCE_REVIEWS_RECEIVE,
 				siteId,
 				query: {},
 				error: 'rest_no_route',
-			} );
-		} );
-	} );
-	describe( '#handleChangeReviewStatus', () => {
-		test( 'should dispatch a request', () => {
+			});
+		});
+	});
+	describe('#handleChangeReviewStatus', () => {
+		test('should dispatch a request', () => {
 			const siteId = '123';
 			const productId = '544';
 			const reviewId = '105';
 			const currentStatus = 'pending';
 			const newStatus = 'approved';
 
-			const action = changeReviewStatus( siteId, productId, reviewId, currentStatus, newStatus );
-			const result = handleChangeReviewStatus( action );
+			const action = changeReviewStatus(siteId, productId, reviewId, currentStatus, newStatus);
+			const result = handleChangeReviewStatus(action);
 
-			expect( result ).toMatchObject( {
+			expect(result).toMatchObject({
 				type: WPCOM_HTTP_REQUEST,
 				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				path: `/jetpack-blogs/${siteId}/rest-api/`,
 				query: {
 					json: true,
 					apiVersion: '1.1',
 				},
 				body: {
-					path: `/wp/v2/comments/${ reviewId }&_method=POST`,
-					body: JSON.stringify( { status: 'approved' } ),
+					path: `/wp/v2/comments/${reviewId}&_method=POST`,
+					body: JSON.stringify({ status: 'approved' }),
 				},
-			} );
-		} );
-	} );
-	describe( '#handleChangeReviewStatusSuccess', () => {
+			});
+		});
+	});
+	describe('#handleChangeReviewStatusSuccess', () => {
 		const siteId = '123';
 		const productId = '544';
 		const reviewId = '105';
@@ -148,7 +148,7 @@ describe( 'handlers', () => {
 						sites: {
 							123: {
 								reviews: {
-									items: keyBy( reviews, 'id' ),
+									items: keyBy(reviews, 'id'),
 								},
 							},
 						},
@@ -157,84 +157,84 @@ describe( 'handlers', () => {
 			};
 		};
 
-		test( 'should dispatch a fetch request for trash status updates', () => {
+		test('should dispatch a fetch request for trash status updates', () => {
 			const dispatch = jest.fn();
-			const action = changeReviewStatus( siteId, productId, reviewId, currentStatus, 'trash' );
-			handleChangeReviewStatusSuccess( action )( dispatch, getState );
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
+			const action = changeReviewStatus(siteId, productId, reviewId, currentStatus, 'trash');
+			handleChangeReviewStatusSuccess(action)(dispatch, getState);
+			expect(dispatch).toHaveBeenCalledWith(
+				expect.objectContaining({
 					type: WOOCOMMERCE_REVIEWS_REQUEST,
-				} )
+				})
 			);
-		} );
+		});
 
-		test( 'should dispatch a fetch request for spam status updates', () => {
+		test('should dispatch a fetch request for spam status updates', () => {
 			const dispatch = jest.fn();
-			const action = changeReviewStatus( siteId, productId, reviewId, currentStatus, 'spam' );
-			handleChangeReviewStatusSuccess( action )( dispatch, getState );
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
+			const action = changeReviewStatus(siteId, productId, reviewId, currentStatus, 'spam');
+			handleChangeReviewStatusSuccess(action)(dispatch, getState);
+			expect(dispatch).toHaveBeenCalledWith(
+				expect.objectContaining({
 					type: WOOCOMMERCE_REVIEWS_REQUEST,
-				} )
+				})
 			);
-		} );
+		});
 
-		test( 'should not dispatch a fetch request for other status updates', () => {
+		test('should not dispatch a fetch request for other status updates', () => {
 			const dispatch = jest.fn();
-			const action = changeReviewStatus( siteId, productId, reviewId, currentStatus, 'approved' );
-			handleChangeReviewStatusSuccess( action )( dispatch, getState );
-			expect( dispatch ).not.toHaveBeenCalledWith(
-				expect.objectContaining( {
+			const action = changeReviewStatus(siteId, productId, reviewId, currentStatus, 'approved');
+			handleChangeReviewStatusSuccess(action)(dispatch, getState);
+			expect(dispatch).not.toHaveBeenCalledWith(
+				expect.objectContaining({
 					type: WOOCOMMERCE_REVIEWS_REQUEST,
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#announceStatusChangeFailure', () => {
-		test( 'should reset the status and dispatch an error', () => {
+	describe('#announceStatusChangeFailure', () => {
+		test('should reset the status and dispatch an error', () => {
 			const siteId = '123';
 			const productId = '544';
 			const reviewId = '105';
 			const currentStatus = 'pending';
-			const action = changeReviewStatus( siteId, productId, reviewId, currentStatus, 'approved' );
-			const result = announceStatusChangeFailure( action );
+			const action = changeReviewStatus(siteId, productId, reviewId, currentStatus, 'approved');
+			const result = announceStatusChangeFailure(action);
 
-			expect( result[ 0 ] ).toMatchObject( {
+			expect(result[0]).toMatchObject({
 				type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 				newStatus: 'pending', // Status should change back to 'pending'
-			} );
+			});
 
-			expect( result[ 1 ] ).toMatchObject( {
+			expect(result[1]).toMatchObject({
 				type: NOTICE_CREATE,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#handleDeleteReview', () => {
+	describe('#handleDeleteReview', () => {
 		const siteId = '123';
 		const productId = '544';
 		const reviewId = '105';
 
-		test( 'should dispatch a request', () => {
-			const action = deleteReview( siteId, productId, reviewId );
-			const result = handleDeleteReview( action );
-			expect( result ).toMatchObject( {
+		test('should dispatch a request', () => {
+			const action = deleteReview(siteId, productId, reviewId);
+			const result = handleDeleteReview(action);
+			expect(result).toMatchObject({
 				type: WPCOM_HTTP_REQUEST,
 				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				path: `/jetpack-blogs/${siteId}/rest-api/`,
 				query: {
 					json: true,
 					apiVersion: '1.1',
 				},
 				body: {
-					path: `/wp/v2/comments/${ reviewId }&force=true&_method=DELETE`,
+					path: `/wp/v2/comments/${reviewId}&force=true&_method=DELETE`,
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#announceDeleteSuccess', () => {
+	describe('#announceDeleteSuccess', () => {
 		const siteId = '123';
 		const getState = () => {
 			return {
@@ -243,7 +243,7 @@ describe( 'handlers', () => {
 						sites: {
 							123: {
 								reviews: {
-									items: keyBy( reviews, 'id' ),
+									items: keyBy(reviews, 'id'),
 								},
 							},
 						},
@@ -252,31 +252,31 @@ describe( 'handlers', () => {
 			};
 		};
 
-		test( 'should dispatch a fetch request and success notice', () => {
+		test('should dispatch a fetch request and success notice', () => {
 			const dispatch = jest.fn();
-			const action = deleteReview( siteId, 544, 105 );
-			announceDeleteSuccess( action )( dispatch, getState );
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
+			const action = deleteReview(siteId, 544, 105);
+			announceDeleteSuccess(action)(dispatch, getState);
+			expect(dispatch).toHaveBeenCalledWith(
+				expect.objectContaining({
 					type: WOOCOMMERCE_REVIEWS_REQUEST,
-				} )
+				})
 			);
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
+			expect(dispatch).toHaveBeenCalledWith(
+				expect.objectContaining({
 					type: NOTICE_CREATE,
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#announceDeleteFailure', () => {
-		test( 'should dispatch an error', () => {
+	describe('#announceDeleteFailure', () => {
+		test('should dispatch an error', () => {
 			const siteId = '123';
-			const action = deleteReview( siteId, 544, 105 );
-			const result = announceDeleteFailure( action );
-			expect( result ).toMatchObject( {
+			const action = deleteReview(siteId, 544, 105);
+			const result = announceDeleteFailure(action);
+			expect(result).toMatchObject({
 				type: NOTICE_CREATE,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

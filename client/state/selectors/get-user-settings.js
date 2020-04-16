@@ -6,6 +6,6 @@
  * @returns {?object} dictionary with the setting names and values
  */
 
-export default function getUserSettings( state ) {
+export default function getUserSettings(state) {
 	return state.userSettings.settings;
 }

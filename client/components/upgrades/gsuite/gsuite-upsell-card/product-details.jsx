@@ -15,7 +15,7 @@ import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
 import { GSUITE_SLUG_PROP_TYPES } from 'lib/gsuite/constants';
 
-function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlug } ) {
+function GSuiteUpsellProductDetails({ currencyCode, domain, product, productSlug }) {
 	const translate = useTranslate();
 
 	return (
@@ -23,22 +23,22 @@ function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlu
 			<div className="gsuite-upsell-card__product-intro">
 				<div className="gsuite-upsell-card__product-presentation">
 					<div className="gsuite-upsell-card__product-name">
-						{ /* Intentionally not translated as it is a brand name and Google keeps it in English */ }
+						{/* Intentionally not translated as it is a brand name and Google keeps it in English */}
 						<span className="gsuite-upsell-card__product-logo">G Suite</span>
 					</div>
 
 					<p>
-						{ translate(
+						{translate(
 							"We've teamed up with Google to offer you email, storage, docs, calendars, " +
 								'and more, integrated with your site.'
-						) }
+						)}
 					</p>
 				</div>
 
-				<GSuiteCompactFeatures domainName={ domain } productSlug={ productSlug } type={ 'list' } />
+				<GSuiteCompactFeatures domainName={domain} productSlug={productSlug} type={'list'} />
 			</div>
 
-			<GSuitePrice product={ product } currencyCode={ currencyCode } />
+			<GSuitePrice product={product} currencyCode={currencyCode} />
 		</div>
 	);
 }
@@ -50,9 +50,7 @@ GSuiteUpsellProductDetails.propTypes = {
 	productSlug: GSUITE_SLUG_PROP_TYPES,
 };
 
-export default connect(
-	( state, { productSlug } ) => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		product: getProductBySlug( state, productSlug ),
-	} )
-)( GSuiteUpsellProductDetails );
+export default connect((state, { productSlug }) => ({
+	currencyCode: getCurrentUserCurrencyCode(state),
+	product: getProductBySlug(state, productSlug),
+}))(GSuiteUpsellProductDetails);

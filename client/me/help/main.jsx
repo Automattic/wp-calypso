@@ -38,7 +38,7 @@ import './style.scss';
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:help-search' );
+const debug = debugModule('calypso:help-search');
 
 class Help extends React.PureComponent {
 	static displayName = 'Help';
@@ -47,35 +47,35 @@ class Help extends React.PureComponent {
 		const helpfulResults = [
 			{
 				link: 'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/',
-				title: this.props.translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
+				title: this.props.translate('Do I Need a Website, a Blog, or a Website with a Blog?'),
 				description: this.props.translate(
 					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
 				),
 			},
 			{
 				link: 'https://wordpress.com/support/business-plan/',
-				title: this.props.translate( 'Uploading custom plugins and themes' ),
+				title: this.props.translate('Uploading custom plugins and themes'),
 				description: this.props.translate(
 					'Learn more about installing a custom theme or plugin using the Business plan.'
 				),
 			},
 			{
 				link: 'https://wordpress.com/support/all-about-domains/',
-				title: this.props.translate( 'All About Domains' ),
+				title: this.props.translate('All About Domains'),
 				description: this.props.translate(
 					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 				),
 			},
 			{
 				link: 'https://wordpress.com/support/start/',
-				title: this.props.translate( 'Get Started' ),
+				title: this.props.translate('Get Started'),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
 				),
 			},
 			{
 				link: 'https://wordpress.com/support/settings/privacy-settings/',
-				title: this.props.translate( 'Privacy Settings' ),
+				title: this.props.translate('Privacy Settings'),
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
 				),
@@ -84,25 +84,25 @@ class Help extends React.PureComponent {
 
 		return (
 			<div className="help-results">
-				<SectionHeader label={ this.props.translate( 'Most Helpful Articles' ) } />
-				{ helpfulResults.map( ( result, index ) => {
+				<SectionHeader label={this.props.translate('Most Helpful Articles')} />
+				{helpfulResults.map((result, index) => {
 					const trackClick = () => {
-						debug( 'Suggested result click: ', result.link );
-						analytics.tracks.recordEvent( 'calypso_help_suggested_result_click', {
+						debug('Suggested result click: ', result.link);
+						analytics.tracks.recordEvent('calypso_help_suggested_result_click', {
 							link: result.link,
 							position: index,
-						} );
+						});
 					};
 
 					return (
 						<HelpResult
-							key={ result.link }
-							helpLink={ result }
+							key={result.link}
+							helpLink={result}
 							iconTypeDescription="book"
-							onClick={ trackClick }
+							onClick={trackClick}
 						/>
 					);
-				} ) }
+				})}
 			</div>
 		);
 	};
@@ -112,33 +112,33 @@ class Help extends React.PureComponent {
 			<div className="help__support-links">
 				<CompactCard
 					className="help__support-link"
-					href={ localizeUrl( 'https://wordpress.com/support/' ) }
+					href={localizeUrl('https://wordpress.com/support/')}
 					target="__blank"
 				>
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'All support articles' ) }
+							{this.props.translate('All support articles')}
 						</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
+							{this.props.translate(
 								'Looking to learn more about a feature? Our docs have all the details.'
-							) }
+							)}
 						</p>
 					</div>
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
+					href={localizeUrl('https://wordpress.com/support/video-tutorials/')}
 					target="__blank"
 				>
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Quick help video tutorials' ) }
+							{this.props.translate('Quick help video tutorials')}
 						</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
+							{this.props.translate(
 								'These short videos will demonstrate some of our most popular features.'
-							) }
+							)}
 						</p>
 					</div>
 				</CompactCard>
@@ -149,12 +149,12 @@ class Help extends React.PureComponent {
 				>
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Self-guided email courses for site owners and bloggers' ) }
+							{this.props.translate('Self-guided email courses for site owners and bloggers')}
 						</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
+							{this.props.translate(
 								'Pick from our ever-growing list of free email courses to improve your knowledge.'
-							) }
+							)}
 						</p>
 					</div>
 				</CompactCard>
@@ -165,12 +165,10 @@ class Help extends React.PureComponent {
 				>
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Self-guided online tutorial' ) }
+							{this.props.translate('Self-guided online tutorial')}
 						</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
-								'A step-by-step guide to getting familiar with the platform.'
-							) }
+							{this.props.translate('A step-by-step guide to getting familiar with the platform.')}
 						</p>
 					</div>
 				</CompactCard>
@@ -179,15 +177,13 @@ class Help extends React.PureComponent {
 					href="/help/contact/"
 				>
 					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">{ this.props.translate( 'Get in touch' ) }</h2>
+						<h2 className="help__support-link-title">{this.props.translate('Get in touch')}</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
-								"Can't find the answer? Drop us a line and we'll lend a hand."
-							) }
+							{this.props.translate("Can't find the answer? Drop us a line and we'll lend a hand.")}
 						</p>
 					</div>
 					<Button className="help__support-link-button" primary>
-						{ this.props.translate( 'Contact Us' ) }
+						{this.props.translate('Contact Us')}
 					</Button>
 				</CompactCard>
 			</div>
@@ -195,27 +191,27 @@ class Help extends React.PureComponent {
 	};
 
 	getCoursesTeaser = () => {
-		if ( ! this.props.showCoursesTeaser ) {
+		if (!this.props.showCoursesTeaser) {
 			return null;
 		}
 
 		return (
 			<HelpTeaserButton
-				onClick={ this.trackCoursesButtonClick }
+				onClick={this.trackCoursesButtonClick}
 				href="/help/courses"
-				title={ this.props.translate( 'Courses' ) }
-				description={ this.props.translate(
+				title={this.props.translate('Courses')}
+				description={this.props.translate(
 					'Learn how to make the most of your site with these courses and webinars'
-				) }
+				)}
 			/>
 		);
 	};
 
 	trackCoursesButtonClick = () => {
 		const { isBusinessPlanUser } = this.props;
-		analytics.tracks.recordEvent( 'calypso_help_courses_click', {
+		analytics.tracks.recordEvent('calypso_help_courses_click', {
 			is_business_plan_user: isBusinessPlanUser,
-		} );
+		});
 	};
 
 	getPlaceholders = () => {
@@ -233,7 +229,7 @@ class Help extends React.PureComponent {
 	render() {
 		const { isEmailVerified, userId, isLoading } = this.props;
 
-		if ( isLoading ) {
+		if (isLoading) {
 			return this.getPlaceholders();
 		}
 
@@ -242,27 +238,27 @@ class Help extends React.PureComponent {
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
 				<HelpSearch />
-				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
-				{ this.getCoursesTeaser() }
-				{ this.getHelpfulArticles() }
-				{ this.getSupportLinks() }
+				{!isEmailVerified && <HelpUnverifiedWarning />}
+				{this.getCoursesTeaser()}
+				{this.getHelpfulArticles()}
+				{this.getSupportLinks()}
 				<HappinessEngineers />
-				<QueryUserPurchases userId={ userId } />
+				<QueryUserPurchases userId={userId} />
 			</Main>
 		);
 	}
 }
 
-function planHasOnboarding( { productSlug } ) {
-	return planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING );
+function planHasOnboarding({ productSlug }) {
+	return planHasFeature(productSlug, FEATURE_BUSINESS_ONBOARDING);
 }
 
-export const mapStateToProps = ( state, ownProps ) => {
-	const isEmailVerified = isCurrentUserEmailVerified( state );
-	const userId = getCurrentUserId( state );
-	const purchases = getUserPurchases( state, userId );
-	const isLoading = isFetchingUserPurchases( state );
-	const isBusinessPlanUser = some( purchases, planHasOnboarding );
+export const mapStateToProps = (state, ownProps) => {
+	const isEmailVerified = isCurrentUserEmailVerified(state);
+	const userId = getCurrentUserId(state);
+	const purchases = getUserPurchases(state, userId);
+	const isLoading = isFetchingUserPurchases(state);
+	const isBusinessPlanUser = some(purchases, planHasOnboarding);
 	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
 
 	return {
@@ -274,4 +270,4 @@ export const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( Help ) );
+export default connect(mapStateToProps)(localize(Help));

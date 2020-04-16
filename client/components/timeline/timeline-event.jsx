@@ -19,7 +19,7 @@ class TimelineEvent extends PureComponent {
 		actionIsPrimary: PropTypes.bool,
 		actionIsScary: PropTypes.bool,
 		actionLabel: PropTypes.string,
-		date: PropTypes.instanceOf( Date ),
+		date: PropTypes.instanceOf(Date),
 		dateFormat: PropTypes.string,
 		detail: PropTypes.string,
 		disabled: PropTypes.bool,
@@ -51,38 +51,38 @@ class TimelineEvent extends PureComponent {
 			moment,
 			onActionClick,
 		} = this.props;
-		const cardClasses = classNames( 'timeline-event', { 'is-disabled': disabled } );
-		const iconClasses = classNames( 'timeline-event__icon', iconBackground );
+		const cardClasses = classNames('timeline-event', { 'is-disabled': disabled });
+		const iconClasses = classNames('timeline-event__icon', iconBackground);
 
 		return (
-			<CompactCard className={ cardClasses }>
+			<CompactCard className={cardClasses}>
 				<div className="timeline-event__icon-wrapper timeline-event__column">
-					<div className={ iconClasses }>
-						<Gridicon icon={ icon } size={ 18 } />
+					<div className={iconClasses}>
+						<Gridicon icon={icon} size={18} />
 					</div>
 				</div>
 				<div className="timeline-event__main-message timeline-event__column">
-					<div className="timeline-event__title">{ moment( date ).format( dateFormat ) }</div>
-					<div className="timeline-event__detail">{ detail }</div>
+					<div className="timeline-event__title">{moment(date).format(dateFormat)}</div>
+					<div className="timeline-event__detail">{detail}</div>
 				</div>
 				<div className="timeline-event__action-button-wrapper timeline-event__column">
-					{ actionLabel && onActionClick && (
+					{actionLabel && onActionClick && (
 						<Button
-							busy={ actionIsBusy }
+							busy={actionIsBusy}
 							className="timeline-event__action-button"
-							disabled={ actionIsDisabled || disabled }
-							primary={ actionIsPrimary }
+							disabled={actionIsDisabled || disabled}
+							primary={actionIsPrimary}
 							compact
-							onClick={ onActionClick }
-							scary={ actionIsScary }
+							onClick={onActionClick}
+							scary={actionIsScary}
 						>
-							{ actionLabel }
+							{actionLabel}
 						</Button>
-					) }
+					)}
 				</div>
 			</CompactCard>
 		);
 	}
 }
 
-export default withLocalizedMoment( TimelineEvent );
+export default withLocalizedMoment(TimelineEvent);

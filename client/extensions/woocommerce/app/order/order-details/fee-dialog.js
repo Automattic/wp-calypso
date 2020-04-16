@@ -24,13 +24,13 @@ class OrderFeeDialog extends Component {
 	static propTypes = {
 		isVisible: PropTypes.bool.isRequired,
 		editOrder: PropTypes.func.isRequired,
-		order: PropTypes.shape( {
+		order: PropTypes.shape({
 			currency: PropTypes.string.isRequired,
-			id: PropTypes.oneOfType( [
+			id: PropTypes.oneOfType([
 				PropTypes.number, // A number indicates an existing order
-				PropTypes.shape( { id: PropTypes.string } ), // Placeholders have format { id: 'order_1' }
-			] ).isRequired,
-		} ),
+				PropTypes.shape({ id: PropTypes.string }), // Placeholders have format { id: 'order_1' }
+			]).isRequired,
+		}),
 		siteId: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -40,28 +40,28 @@ class OrderFeeDialog extends Component {
 		total: 0,
 	};
 
-	UNSAFE_componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate(nextProps) {
 		// Dialog is being closed, clear the state
-		if ( this.props.isVisible && ! nextProps.isVisible ) {
-			this.setState( {
+		if (this.props.isVisible && !nextProps.isVisible) {
+			this.setState({
 				name: '',
 				total: 0,
-			} );
+			});
 		}
 	}
 
-	handleChange = event => {
+	handleChange = (event) => {
 		const value = event.target.value;
-		switch ( event.target.name ) {
+		switch (event.target.name) {
 			case 'new_fee_name':
-				this.setState( { name: value } );
+				this.setState({ name: value });
 				break;
 			case 'new_fee_total':
 				// If value is a positive number, we can use it
-				if ( ! isNaN( parseFloat( value ) ) && parseFloat( value ) >= 0 ) {
-					this.setState( { total: value } );
+				if (!isNaN(parseFloat(value)) && parseFloat(value) >= 0) {
+					this.setState({ total: value });
 				} else {
-					this.setState( { total: '' } );
+					this.setState({ total: '' });
 				}
 				break;
 		}
@@ -69,21 +69,21 @@ class OrderFeeDialog extends Component {
 
 	formatCurrencyInput = () => {
 		const { currency } = this.props.order;
-		this.setState( prevState => ( {
-			total: getCurrencyFormatDecimal( prevState.total, currency ),
-		} ) );
+		this.setState((prevState) => ({
+			total: getCurrencyFormatDecimal(prevState.total, currency),
+		}));
 	};
 
 	handleFeeSave = () => {
 		const { siteId, order } = this.props;
-		if ( siteId ) {
+		if (siteId) {
 			const { name, total } = this.state;
 			const feeLines = order.fee_lines || [];
-			const tempId = uniqueId( 'fee_' );
-			this.props.editOrder( siteId, {
+			const tempId = uniqueId('fee_');
+			this.props.editOrder(siteId, {
 				id: order.id,
-				fee_lines: [ ...feeLines, { id: tempId, name, total } ],
-			} );
+				fee_lines: [...feeLines, { id: tempId, name, total }],
+			});
 		}
 		this.props.closeDialog();
 	};
@@ -91,8 +91,8 @@ class OrderFeeDialog extends Component {
 	hasValidValues = () => {
 		const { currency } = this.props.order;
 
-		const hasName = !! trim( this.state.name );
-		const hasValue = getCurrencyFormatDecimal( this.state.total, currency ) > 0;
+		const hasName = !!trim(this.state.name);
+		const hasValue = getCurrencyFormatDecimal(this.state.total, currency) > 0;
 		return hasName && hasValue;
 	};
 
@@ -103,36 +103,36 @@ class OrderFeeDialog extends Component {
 		const canSave = this.hasValidValues();
 
 		const dialogButtons = [
-			<Button onClick={ closeDialog }>{ translate( 'Cancel' ) }</Button>,
-			<Button primary onClick={ this.handleFeeSave } disabled={ ! canSave }>
-				{ translate( 'Add fee' ) }
+			<Button onClick={closeDialog}>{translate('Cancel')}</Button>,
+			<Button primary onClick={this.handleFeeSave} disabled={!canSave}>
+				{translate('Add fee')}
 			</Button>,
 		];
 
 		return (
 			<Dialog
-				isVisible={ isVisible }
-				onClose={ closeDialog }
-				className={ dialogClass }
-				buttons={ dialogButtons }
+				isVisible={isVisible}
+				onClose={closeDialog}
+				className={dialogClass}
+				buttons={dialogButtons}
 			>
-				<h1>{ translate( 'Add a fee' ) }</h1>
-				<FormLabel htmlFor="newFeeName">{ translate( 'Name' ) }</FormLabel>
+				<h1>{translate('Add a fee')}</h1>
+				<FormLabel htmlFor="newFeeName">{translate('Name')}</FormLabel>
 				<FormTextInput
 					id="new_fee_name"
 					name="new_fee_name"
 					type="text"
-					value={ this.state.name }
-					onChange={ this.handleChange }
+					value={this.state.name}
+					onChange={this.handleChange}
 				/>
-				<FormLabel htmlFor="newFeeTotal">{ translate( 'Value' ) }</FormLabel>
+				<FormLabel htmlFor="newFeeTotal">{translate('Value')}</FormLabel>
 				<PriceInput
 					id="new_fee_total"
 					name="new_fee_total"
-					currency={ order.currency }
-					value={ this.state.total }
-					onChange={ this.handleChange }
-					onBlur={ this.formatCurrencyInput }
+					currency={order.currency}
+					value={this.state.total}
+					onChange={this.handleChange}
+					onBlur={this.formatCurrencyInput}
 				/>
 			</Dialog>
 		);
@@ -140,15 +140,15 @@ class OrderFeeDialog extends Component {
 }
 
 export default connect(
-	state => {
-		const site = getSelectedSiteWithFallback( state );
+	(state) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site ? site.ID : false;
-		const order = getOrderWithEdits( state );
+		const order = getOrderWithEdits(state);
 
 		return {
 			siteId,
 			order,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder }, dispatch )
-)( localize( OrderFeeDialog ) );
+	(dispatch) => bindActionCreators({ editOrder }, dispatch)
+)(localize(OrderFeeDialog));

@@ -12,12 +12,12 @@ import renderer from 'react-test-renderer';
 import { GSuitePurchaseCta } from '../';
 
 // components to mock
-jest.mock( 'components/email-verification/email-verification-gate', () => 'EmailVerificationGate' );
-jest.mock( 'my-sites/email/gsuite-purchase-cta/sku-info', () => 'GSuitePurchaseCtaSkuInfo' );
-jest.mock( 'components/data/query-products-list', () => 'QueryProductsList' );
+jest.mock('components/email-verification/email-verification-gate', () => 'EmailVerificationGate');
+jest.mock('my-sites/email/gsuite-purchase-cta/sku-info', () => 'GSuitePurchaseCtaSkuInfo');
+jest.mock('components/data/query-products-list', () => 'QueryProductsList');
 
-describe( 'GSuitePurchaseCta', () => {
-	test( 'renders correctly', () => {
+describe('GSuitePurchaseCta', () => {
+	test('renders correctly', () => {
 		const product = {
 			product_id: 69,
 			product_name: 'G Suite',
@@ -50,25 +50,25 @@ describe( 'GSuitePurchaseCta', () => {
 				SGD: 108,
 				TWD: 2304,
 				THB: 2520,
-				TRY: 396
+				TRY: 396,
 			},
 			is_domain_registration: false,
 			cost_display: '€76.00',
-			currency_code: 'EUR'
+			currency_code: 'EUR',
 		};
 
 		const tree = renderer
 			.create(
 				<GSuitePurchaseCta
-					currencyCode={ 'EUR' }
-					domainName={ 'test.com' }
-					product={ product }
-					recordTracksEvent={ noop }
-					selectedSiteSlug={ 'test.wordpress.com' }
+					currencyCode={'EUR'}
+					domainName={'test.com'}
+					product={product}
+					recordTracksEvent={noop}
+					selectedSiteSlug={'test.wordpress.com'}
 				/>
 			)
 			.toJSON();
 
-		expect( tree ).toMatchSnapshot();
-	} );
-} );
+		expect(tree).toMatchSnapshot();
+	});
+});

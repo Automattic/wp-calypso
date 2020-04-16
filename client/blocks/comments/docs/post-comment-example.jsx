@@ -49,32 +49,32 @@ const mockMultipleShortLineComment = {
 
 const mockComments = [
 	{ ...mockComment, ID: 0 },
-	{ ...mockComment, ID: 1, content: repeat( mockComment.content, 5 ) },
-	{ ...mockComment, ID: 2, content: repeat( mockComment.content, 5 ) },
+	{ ...mockComment, ID: 1, content: repeat(mockComment.content, 5) },
+	{ ...mockComment, ID: 2, content: repeat(mockComment.content, 5) },
 	{ ...mockShortComment, ID: 3 },
 	{ ...mockMultipleShortLineComment, ID: 4 },
 ];
 
 const commentsTree = {
 	'0': {
-		children: [ 1 ],
-		data: mockComments[ 0 ],
+		children: [1],
+		data: mockComments[0],
 	},
 	'1': {
 		children: [],
-		data: mockComments[ 1 ],
+		data: mockComments[1],
 	},
 	'2': {
 		children: [],
-		data: mockComments[ 2 ],
+		data: mockComments[2],
 	},
 	'3': {
-		children: [ 1 ],
-		data: mockComments[ 3 ],
+		children: [1],
+		data: mockComments[3],
 	},
 	'4': {
-		children: [ 1 ],
-		data: mockComments[ 4 ],
+		children: [1],
+		data: mockComments[4],
 	},
 };
 
@@ -97,50 +97,50 @@ export default class PostCommentExample extends React.Component {
 					<PostComment
 						showNestingReplyArrow
 						enableCaterpillar
-						commentId={ 0 }
-						depth={ 0 }
-						commentsTree={ commentsTree }
-						commentsToShow={ commentsToShow }
+						commentId={0}
+						depth={0}
+						commentsTree={commentsTree}
+						commentsToShow={commentsToShow}
 					/>
 					<PostComment
 						showNestingReplyArrow
 						enableCaterpillar
-						commentId={ 2 }
-						depth={ 0 }
-						commentsTree={ commentsTree }
-						commentsToShow={ commentsToShow }
+						commentId={2}
+						depth={0}
+						commentsTree={commentsTree}
+						commentsToShow={commentsToShow}
 					/>
 					<PostComment
 						showNestingReplyArrow
 						enableCaterpillar
-						commentId={ 3 }
-						depth={ 0 }
-						commentsTree={ commentsTree }
-						commentsToShow={ commentsToShow }
+						commentId={3}
+						depth={0}
+						commentsTree={commentsTree}
+						commentsToShow={commentsToShow}
 					/>
 					<PostComment
 						showNestingReplyArrow
 						enableCaterpillar
-						commentId={ 3 }
-						depth={ 0 }
-						commentsTree={ commentsTree }
-						commentsToShow={ commentsToShow }
+						commentId={3}
+						depth={0}
+						commentsTree={commentsTree}
+						commentsToShow={commentsToShow}
 					/>
 					<PostComment
 						showNestingReplyArrow
 						enableCaterpillar
-						commentId={ 4 }
-						depth={ 0 }
-						commentsTree={ commentsTree }
-						commentsToShow={ commentsToShow }
+						commentId={4}
+						depth={0}
+						commentsTree={commentsTree}
+						commentsToShow={commentsToShow}
 					/>
 					<PostComment
 						showNestingReplyArrow
 						enableCaterpillar
-						commentId={ 4 }
-						depth={ 0 }
-						commentsTree={ commentsTree }
-						commentsToShow={ commentsToShow }
+						commentId={4}
+						depth={0}
+						commentsTree={commentsTree}
+						commentsToShow={commentsToShow}
 					/>
 				</Card>
 			</div>

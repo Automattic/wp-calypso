@@ -24,23 +24,25 @@ class PartnerLogoGroup extends PureComponent {
 		const { width, viewBox, partnerName, translate } = this.props;
 
 		return (
-			<svg width={ width } viewBox={ viewBox }>
+			<svg width={width} viewBox={viewBox}>
 				<title>
-					{ // translators: partnerName is something like MilesWeb, WooCommerce or DreamHost
-					translate( 'Co-branded Jetpack and %(partnerName)s logo', {
-						args: {
-							partnerName,
-						},
-					} ) }
+					{
+						// translators: partnerName is something like MilesWeb, WooCommerce or DreamHost
+						translate('Co-branded Jetpack and %(partnerName)s logo', {
+							args: {
+								partnerName,
+							},
+						})
+					}
 				</title>
 				<g fill="none" fillRule="evenodd">
 					<g>
 						<g>
 							<g transform="translate(219 35.082353)" className="jetpack-header__partner-logo-plus">
-								<Gridicon icon="plus-small" size={ 72 } />
+								<Gridicon icon="plus-small" size={72} />
 							</g>
-							{ this.props.children }
-							<JetpackLogo size={ 150 } />
+							{this.props.children}
+							<JetpackLogo size={150} />
 						</g>
 					</g>
 				</g>
@@ -49,4 +51,4 @@ class PartnerLogoGroup extends PureComponent {
 	}
 }
 
-export default localize( PartnerLogoGroup );
+export default localize(PartnerLogoGroup);

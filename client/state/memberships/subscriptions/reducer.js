@@ -18,29 +18,29 @@ import { combineReducers, withoutPersistence } from 'state/utils';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withoutPersistence( ( state = [], action ) => {
-	switch ( action.type ) {
+export const items = withoutPersistence((state = [], action) => {
+	switch (action.type) {
 		case MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE: {
 			const { subscriptions } = action;
 			return subscriptions;
 		}
 		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
 			const { subscriptionId } = action;
-			return state.filter( sub => sub.ID !== subscriptionId );
+			return state.filter((sub) => sub.ID !== subscriptionId);
 		}
 	}
 
 	return state;
-} );
+});
 
-export const stoppingSubscription = withoutPersistence( ( state = [], action ) => {
-	switch ( action.type ) {
+export const stoppingSubscription = withoutPersistence((state = [], action) => {
+	switch (action.type) {
 		case MEMBERSHIPS_SUBSCRIPTION_STOP: {
 			const { subscriptionId } = action;
 
 			return {
 				...state,
-				[ subscriptionId ]: 'start',
+				[subscriptionId]: 'start',
 			};
 		}
 		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
@@ -48,7 +48,7 @@ export const stoppingSubscription = withoutPersistence( ( state = [], action ) =
 
 			return {
 				...state,
-				[ subscriptionId ]: 'success',
+				[subscriptionId]: 'success',
 			};
 		}
 		case MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE: {
@@ -56,15 +56,15 @@ export const stoppingSubscription = withoutPersistence( ( state = [], action ) =
 
 			return {
 				...state,
-				[ subscriptionId ]: 'fail',
+				[subscriptionId]: 'fail',
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	stoppingSubscription,
-} );
+});

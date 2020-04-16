@@ -26,7 +26,7 @@ import PurchaseReconnectNotice from './reconnect-notice';
  */
 import './style.scss';
 
-const PurchasesSite = ( {
+const PurchasesSite = ({
 	hasLoadedSite,
 	isPlaceholder,
 	site,
@@ -35,49 +35,49 @@ const PurchasesSite = ( {
 	name,
 	domain,
 	slug,
-} ) => {
+}) => {
 	let items;
 
-	const isJetpack = ! isPlaceholder && some( purchases, purchase => isJetpackPlan( purchase ) );
+	const isJetpack = !isPlaceholder && some(purchases, (purchase) => isJetpackPlan(purchase));
 
-	if ( isPlaceholder ) {
-		items = times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
+	if (isPlaceholder) {
+		items = times(2, (index) => <PurchaseItem isPlaceholder key={index} />);
 	} else {
-		items = purchases.map( purchase => (
+		items = purchases.map((purchase) => (
 			<PurchaseItem
-				key={ purchase.id }
-				slug={ slug }
-				isDisconnectedSite={ ! site }
-				purchase={ purchase }
-				isJetpack={ isJetpack }
+				key={purchase.id}
+				slug={slug}
+				isDisconnectedSite={!site}
+				purchase={purchase}
+				isJetpack={isJetpack}
 			/>
-		) );
+		));
 	}
 
 	return (
-		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
-			<QuerySites siteId={ siteId } />
+		<div className={classNames('purchases-site', { 'is-placeholder': isPlaceholder })}>
+			<QuerySites siteId={siteId} />
 
 			<PurchaseSiteHeader
-				siteId={ siteId }
-				name={ name }
-				domain={ domain }
-				isPlaceholder={ isPlaceholder }
+				siteId={siteId}
+				name={name}
+				domain={domain}
+				isPlaceholder={isPlaceholder}
 			/>
 
-			{ items }
+			{items}
 
 			<AsyncLoad
 				require="blocks/product-plan-overlap-notices"
-				placeholder={ null }
-				plans={ JETPACK_PLANS }
-				products={ JETPACK_PRODUCTS_LIST }
-				siteId={ siteId }
+				placeholder={null}
+				plans={JETPACK_PLANS}
+				products={JETPACK_PRODUCTS_LIST}
+				siteId={siteId}
 			/>
 
-			{ ! isPlaceholder && hasLoadedSite && ! site && (
-				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } />
-			) }
+			{!isPlaceholder && hasLoadedSite && !site && (
+				<PurchaseReconnectNotice isJetpack={isJetpack} name={name} />
+			)}
 		</div>
 	);
 };
@@ -91,7 +91,7 @@ PurchasesSite.propTypes = {
 	slug: PropTypes.string,
 };
 
-export default connect( ( state, { siteId } ) => ( {
-	site: getSite( state, siteId ),
-	hasLoadedSite: ! isRequestingSite( state, siteId ),
-} ) )( PurchasesSite );
+export default connect((state, { siteId }) => ({
+	site: getSite(state, siteId),
+	hasLoadedSite: !isRequestingSite(state, siteId),
+}))(PurchasesSite);

@@ -34,21 +34,21 @@ class JetpackPlansGrid extends Component {
 	};
 
 	handleSkipButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
+		this.props.recordTracksEvent('calypso_jpc_plans_skip_button_click');
 
-		this.props.onSelect( null );
+		this.props.onSelect(null);
 	};
 
 	renderConnectHeader() {
 		const { isLanding, translate } = this.props;
 
-		const headerText = translate( 'Explore our Jetpack plans' );
-		let subheaderText = translate( "Now that you're set up, pick a plan that fits your needs." );
+		const headerText = translate('Explore our Jetpack plans');
+		let subheaderText = translate("Now that you're set up, pick a plan that fits your needs.");
 
-		if ( isLanding ) {
-			subheaderText = translate( 'Pick a plan that fits your needs.' );
+		if (isLanding) {
+			subheaderText = translate('Pick a plan that fits your needs.');
 		}
-		return <FormattedHeader headerText={ headerText } subHeaderText={ subheaderText } />;
+		return <FormattedHeader headerText={headerText} subHeaderText={subheaderText} />;
 	}
 
 	render() {
@@ -58,22 +58,22 @@ class JetpackPlansGrid extends Component {
 		return (
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
-					{ this.renderConnectHeader() }
+					{this.renderConnectHeader()}
 					<div id="plans">
 						<PlansFeaturesMain
-							site={ this.props.selectedSite || defaultJetpackSite }
-							isInSignup={ true }
-							isLandingPage={ ! this.props.selectedSite }
-							basePlansPath={ this.props.basePlansPath }
-							onUpgradeClick={ this.props.onSelect }
-							intervalType={ interval ? interval : defaultInterval }
-							hideFreePlan={ this.props.hideFreePlan }
-							displayJetpackPlans={ true }
+							site={this.props.selectedSite || defaultJetpackSite}
+							isInSignup={true}
+							isLandingPage={!this.props.selectedSite}
+							basePlansPath={this.props.basePlansPath}
+							onUpgradeClick={this.props.onSelect}
+							intervalType={interval ? interval : defaultInterval}
+							hideFreePlan={this.props.hideFreePlan}
+							displayJetpackPlans={true}
 						/>
 
-						<PlansSkipButton onClick={ this.handleSkipButtonClick } />
+						<PlansSkipButton onClick={this.handleSkipButtonClick} />
 
-						{ this.props.children }
+						{this.props.children}
 					</div>
 				</div>
 			</MainWrapper>
@@ -81,6 +81,6 @@ class JetpackPlansGrid extends Component {
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( JetpackPlansGrid ) );
+})(localize(JetpackPlansGrid));

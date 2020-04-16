@@ -1,7 +1,6 @@
 const root = '/me/keyring-connections/';
 
 export default class KeyringConnection {
-
 	/**
 	 * `KeyringConnection` constructor.
 	 *
@@ -9,9 +8,9 @@ export default class KeyringConnection {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
-	constructor( keyId, wpcom ) {
-		if ( ! ( this instanceof KeyringConnection ) ) {
-			return new KeyringConnection( keyId, wpcom );
+	constructor(keyId, wpcom) {
+		if (!(this instanceof KeyringConnection)) {
+			return new KeyringConnection(keyId, wpcom);
 		}
 		this._id = keyId;
 		this.wpcom = wpcom;
@@ -24,8 +23,8 @@ export default class KeyringConnection {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	get( query, fn ) {
-		return this.wpcom.req.get( root + this._id, query, fn );
+	get(query, fn) {
+		return this.wpcom.req.get(root + this._id, query, fn);
 	}
 
 	/**
@@ -36,7 +35,7 @@ export default class KeyringConnection {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	delete( query, fn ) {
-		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
+	delete(query, fn) {
+		return this.wpcom.req.del(root + this._id + '/delete', query, fn);
 	}
 }

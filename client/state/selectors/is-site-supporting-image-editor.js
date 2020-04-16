@@ -13,9 +13,9 @@ import isPrivateSite from 'state/selectors/is-private-site';
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether site supports editing images
  */
-export default function isSiteSupportingImageEditor( state, siteId ) {
+export default function isSiteSupportingImageEditor(state, siteId) {
 	return (
-		true !== isPrivateSite( state, siteId ) &&
-		false !== isJetpackModuleActive( state, siteId, 'photon' )
+		true !== isPrivateSite(state, siteId) &&
+		false !== isJetpackModuleActive(state, siteId, 'photon')
 	);
 }

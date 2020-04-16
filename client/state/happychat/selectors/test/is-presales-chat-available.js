@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import isPresalesChatAvailable from '../is-presales-chat-available';
 
-describe( '#isPresalesChatAvailable()', () => {
-	test( 'should return false if presales chat is not available', () => {
-		const isPresaleAvailable = isPresalesChatAvailable( {
+describe('#isPresalesChatAvailable()', () => {
+	test('should return false if presales chat is not available', () => {
+		const isPresaleAvailable = isPresalesChatAvailable({
 			happychat: {
 				user: {
 					isPresalesPrecancellationEligible: {
@@ -18,11 +18,11 @@ describe( '#isPresalesChatAvailable()', () => {
 					},
 				},
 			},
-		} );
-		expect( isPresaleAvailable ).to.equal( false );
-	} );
-	test( 'should return true if presales chat is available', () => {
-		const isPresaleAvailable = isPresalesChatAvailable( {
+		});
+		expect(isPresaleAvailable).to.equal(false);
+	});
+	test('should return true if presales chat is available', () => {
+		const isPresaleAvailable = isPresalesChatAvailable({
 			happychat: {
 				user: {
 					isPresalesPrecancellationEligible: {
@@ -30,7 +30,7 @@ describe( '#isPresalesChatAvailable()', () => {
 					},
 				},
 			},
-		} );
-		expect( isPresaleAvailable ).to.equal( true );
-	} );
-} );
+		});
+		expect(isPresaleAvailable).to.equal(true);
+	});
+});

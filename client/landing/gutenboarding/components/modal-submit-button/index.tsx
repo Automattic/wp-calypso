@@ -9,10 +9,10 @@ import React from 'react';
  */
 import './style.scss';
 
-const ModalSubmitButton = ( props: Button.Props ): any => {
+const ModalSubmitButton = (props: Button.Props): any => {
 	return (
-		<Button type="submit" className="modal-submit-button" isPrimary { ...props }>
-			{ props.children }
+		<Button type="submit" className="modal-submit-button" isPrimary {...props}>
+			{props.children}
 		</Button>
 	);
 };

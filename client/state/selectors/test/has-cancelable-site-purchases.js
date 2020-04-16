@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  */
 import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purchases';
 
-describe( 'hasCancelableSitePurchases', () => {
+describe('hasCancelableSitePurchases', () => {
 	const targetUserId = 123;
 	const targetSiteId = 1337;
 	const examplePurchases = [
@@ -38,8 +38,8 @@ describe( 'hasCancelableSitePurchases', () => {
 		},
 	];
 
-	test( 'should return false because there are no purchases', () => {
-		const state = deepFreeze( {
+	test('should return false because there are no purchases', () => {
+		const state = deepFreeze({
 			purchases: {
 				data: [],
 				error: null,
@@ -48,13 +48,13 @@ describe( 'hasCancelableSitePurchases', () => {
 				hasLoadedSitePurchasesFromServer: true,
 				hasLoadedUserPurchasesFromServer: false,
 			},
-		} );
+		});
 
-		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
-	} );
+		expect(hasCancelableSitePurchases(state, targetSiteId)).toBe(false);
+	});
 
-	test( 'should return true because there are purchases from the target site', () => {
-		const state = deepFreeze( {
+	test('should return true because there are purchases from the target site', () => {
+		const state = deepFreeze({
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -63,13 +63,13 @@ describe( 'hasCancelableSitePurchases', () => {
 				hasLoadedSitePurchasesFromServer: true,
 				hasLoadedUserPurchasesFromServer: false,
 			},
-		} );
+		});
 
-		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( true );
-	} );
+		expect(hasCancelableSitePurchases(state, targetSiteId)).toBe(true);
+	});
 
-	test( 'should return false because there are no purchases for this site', () => {
-		const state = deepFreeze( {
+	test('should return false because there are no purchases for this site', () => {
+		const state = deepFreeze({
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -78,13 +78,13 @@ describe( 'hasCancelableSitePurchases', () => {
 				hasLoadedSitePurchasesFromServer: true,
 				hasLoadedUserPurchasesFromServer: false,
 			},
-		} );
+		});
 
-		expect( hasCancelableSitePurchases( state, 65535 ) ).toBe( false );
-	} );
+		expect(hasCancelableSitePurchases(state, 65535)).toBe(false);
+	});
 
-	test( 'should return false because the data is not ready', () => {
-		const state = deepFreeze( {
+	test('should return false because the data is not ready', () => {
+		const state = deepFreeze({
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -93,13 +93,13 @@ describe( 'hasCancelableSitePurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: false,
 			},
-		} );
+		});
 
-		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
-	} );
+		expect(hasCancelableSitePurchases(state, targetSiteId)).toBe(false);
+	});
 
-	test( 'should return false because the only purchase is a non-refundable theme', () => {
-		const state = deepFreeze( {
+	test('should return false because the only purchase is a non-refundable theme', () => {
+		const state = deepFreeze({
 			purchases: {
 				data: [
 					{
@@ -118,13 +118,13 @@ describe( 'hasCancelableSitePurchases', () => {
 				hasLoadedSitePurchasesFromServer: true,
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		} );
+		});
 
-		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
-	} );
+		expect(hasCancelableSitePurchases(state, targetSiteId)).toBe(false);
+	});
 
-	test( 'should return true because one of the purchases is a refundable theme', () => {
-		const state = deepFreeze( {
+	test('should return true because one of the purchases is a refundable theme', () => {
+		const state = deepFreeze({
 			purchases: {
 				data: [
 					{
@@ -143,13 +143,13 @@ describe( 'hasCancelableSitePurchases', () => {
 				hasLoadedSitePurchasesFromServer: true,
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		} );
+		});
 
-		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( true );
-	} );
+		expect(hasCancelableSitePurchases(state, targetSiteId)).toBe(true);
+	});
 
-	test( 'should return false if the only purchase is inactive', () => {
-		const state = deepFreeze( {
+	test('should return false if the only purchase is inactive', () => {
+		const state = deepFreeze({
 			purchases: {
 				data: [
 					{
@@ -168,8 +168,8 @@ describe( 'hasCancelableSitePurchases', () => {
 				hasLoadedSitePurchasesFromServer: true,
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		} );
+		});
 
-		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
-	} );
-} );
+		expect(hasCancelableSitePurchases(state, targetSiteId)).toBe(false);
+	});
+});

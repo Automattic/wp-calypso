@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { fromApi } from '../utils';
 
-describe( 'utils', () => {
-	describe( '#fromApi()', () => {
-		test( 'should parse expiration time and maximum lock period into milliseconds', () => {
+describe('utils', () => {
+	describe('#fromApi()', () => {
+		test('should parse expiration time and maximum lock period into milliseconds', () => {
 			const response = {
 				data: {
 					timeout: 30,
@@ -18,11 +18,11 @@ describe( 'utils', () => {
 				},
 			};
 			const now = new Date().getTime();
-			const lock = fromApi( response );
+			const lock = fromApi(response);
 
-			expect( lock ).to.have.keys( [ 'expires', 'maxLockPeriod' ] );
-			expect( lock.maxLockPeriod ).to.deep.equal( 600000 );
-			expect( lock.expires ).to.be.within( now + 30000, now + 31000 );
-		} );
-	} );
-} );
+			expect(lock).to.have.keys(['expires', 'maxLockPeriod']);
+			expect(lock.maxLockPeriod).to.deep.equal(600000);
+			expect(lock.expires).to.be.within(now + 30000, now + 31000);
+		});
+	});
+});

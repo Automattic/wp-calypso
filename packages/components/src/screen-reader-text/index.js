@@ -8,6 +8,6 @@ import React from 'react';
  */
 import './style.scss';
 
-export default function ScreenReaderText( { children } ) {
-	return <span className="screen-reader-text">{ children }</span>;
+export default function ScreenReaderText({ children }) {
+	return <span className="screen-reader-text">{children}</span>;
 }

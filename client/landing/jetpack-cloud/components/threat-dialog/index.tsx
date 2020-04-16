@@ -26,7 +26,7 @@ interface Props {
 	onConfirmation: Function;
 }
 
-class ThreatDialog extends React.PureComponent< Props > {
+class ThreatDialog extends React.PureComponent<Props> {
 	render() {
 		const {
 			action,
@@ -38,56 +38,53 @@ class ThreatDialog extends React.PureComponent< Props > {
 			threatTitle,
 		} = this.props;
 		const buttons = [
-			<Button className="threat-dialog__btn" onClick={ onCloseDialog }>
-				{ translate( 'Go back' ) }
+			<Button className="threat-dialog__btn" onClick={onCloseDialog}>
+				{translate('Go back')}
 			</Button>,
-			<Button primary className="threat-dialog__btn" onClick={ onConfirmation }>
-				{ action === 'fix' ? translate( 'Fix threat' ) : translate( 'Ignore threat' ) }
+			<Button primary className="threat-dialog__btn" onClick={onConfirmation}>
+				{action === 'fix' ? translate('Fix threat') : translate('Ignore threat')}
 			</Button>,
 		];
 
 		return (
 			<Dialog
 				additionalClassNames="threat-dialog"
-				isVisible={ showDialog }
-				onClose={ onCloseDialog }
-				buttons={ buttons }
+				isVisible={showDialog}
+				onClose={onCloseDialog}
+				buttons={buttons}
 			>
 				<h1
-					className={ classnames(
-						'threat-dialog__header',
-						`threat-dialog__header--${ action }-threat`
-					) }
+					className={classnames('threat-dialog__header', `threat-dialog__header--${action}-threat`)}
 				>
-					{ action === 'fix'
-						? translate( 'Fix threat' )
-						: translate( 'Do you really want to ignore this threat?' ) }
+					{action === 'fix'
+						? translate('Fix threat')
+						: translate('Do you really want to ignore this threat?')}
 				</h1>
-				<h3 className="threat-dialog__threat-title">{ threatTitle }</h3>
-				<div className="threat-dialog__threat-description">{ threatDescription }</div>
+				<h3 className="threat-dialog__threat-title">{threatTitle}</h3>
+				<div className="threat-dialog__threat-description">{threatDescription}</div>
 				<div className="threat-dialog__warning">
 					<Gridicon
-						className={ classnames(
+						className={classnames(
 							'threat-dialog__warning-icon',
-							`threat-dialog__warning-icon--${ action }-threat`
-						) }
+							`threat-dialog__warning-icon--${action}-threat`
+						)}
 						icon="info"
-						size={ 36 }
+						size={36}
 					/>
 					<p className="threat-dialog__warning-message">
-						{ action === 'fix'
+						{action === 'fix'
 							? translate(
 									'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.'
 							  )
 							: translate(
 									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site: {{strong}}%s{{/strong}}.',
 									{
-										args: [ siteName ],
+										args: [siteName],
 										components: {
 											strong: <strong />,
 										},
 									}
-							  ) }
+							  )}
 					</p>
 				</div>
 			</Dialog>

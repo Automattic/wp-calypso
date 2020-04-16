@@ -20,21 +20,21 @@ class QuerySiteRoles extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.requestingSiteRoles ) {
+	request(props) {
+		if (props.requestingSiteRoles) {
 			return;
 		}
 
-		props.requestSiteRoles( props.siteId );
+		props.requestSiteRoles(props.siteId);
 	}
 
 	render() {
@@ -43,10 +43,10 @@ class QuerySiteRoles extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			requestingSiteRoles: isRequestingSiteRoles( state, ownProps.siteId ),
+			requestingSiteRoles: isRequestingSiteRoles(state, ownProps.siteId),
 		};
 	},
 	{ requestSiteRoles }
-)( QuerySiteRoles );
+)(QuerySiteRoles);

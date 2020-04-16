@@ -4,15 +4,15 @@ export const itemSchema = {
 	patternProperties: {
 		'^\\d+$': {
 			type: 'object',
-			required: [ 'ID' ],
+			required: ['ID'],
 			properties: {
 				ID: { type: 'integer' },
 				additional_external_users: { type: 'array' },
 				expires: { type: 'string' },
-				external_ID: { type: [ 'string', 'null' ] },
-				external_display: { type: [ 'string', 'null' ] },
-				external_name: { type: [ 'string', 'null' ] },
-				external_profile_picture: { type: [ 'string', 'null' ] },
+				external_ID: { type: ['string', 'null'] },
+				external_display: { type: ['string', 'null'] },
+				external_name: { type: ['string', 'null'] },
+				external_profile_picture: { type: ['string', 'null'] },
 				issued: { type: 'string' },
 				label: { type: 'string' },
 				meta: { type: 'object' },

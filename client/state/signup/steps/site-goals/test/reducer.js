@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import reducer from '../reducer';
 import { SIGNUP_STEPS_SITE_GOALS_SET } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( 'should update the site goals', () => {
+describe('reducer', () => {
+	test('should update the site goals', () => {
 		expect(
 			reducer(
 				{},
@@ -19,6 +19,6 @@ describe( 'reducer', () => {
 					siteGoals: 'Showcase creative work',
 				}
 			)
-		).to.be.eql( 'Showcase creative work' );
-	} );
-} );
+		).to.be.eql('Showcase creative work');
+	});
+});

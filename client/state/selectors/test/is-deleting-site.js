@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import isDeletingSite from 'state/selectors/is-deleting-site';
 
-describe( 'isDeletingSite()', () => {
-	test( 'should return false if no requests have been triggered', () => {
+describe('isDeletingSite()', () => {
+	test('should return false if no requests have been triggered', () => {
 		const isDeleting = isDeletingSite(
 			{
 				sites: {
@@ -19,10 +19,10 @@ describe( 'isDeletingSite()', () => {
 			2916284
 		);
 
-		expect( isDeleting ).to.be.false;
-	} );
+		expect(isDeleting).to.be.false;
+	});
 
-	test( 'should return true if a request is in progress', () => {
+	test('should return true if a request is in progress', () => {
 		const isDeleting = isDeletingSite(
 			{
 				sites: {
@@ -34,10 +34,10 @@ describe( 'isDeletingSite()', () => {
 			2916284
 		);
 
-		expect( isDeleting ).to.be.true;
-	} );
+		expect(isDeleting).to.be.true;
+	});
 
-	test( 'should return false after a request has completed', () => {
+	test('should return false after a request has completed', () => {
 		const isDeleting = isDeletingSite(
 			{
 				sites: {
@@ -49,6 +49,6 @@ describe( 'isDeletingSite()', () => {
 			2916284
 		);
 
-		expect( isDeleting ).to.be.false;
-	} );
-} );
+		expect(isDeleting).to.be.false;
+	});
+});

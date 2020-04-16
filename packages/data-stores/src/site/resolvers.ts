@@ -17,14 +17,14 @@ import { STORE_KEY } from './constants';
  *
  * @param siteId {number}	The site to look up
  */
-export function* getSite( siteId: number ) {
+export function* getSite(siteId: number) {
 	try {
-		const existingSite = yield wpcomRequest( {
-			path: '/sites/' + encodeURIComponent( siteId ),
+		const existingSite = yield wpcomRequest({
+			path: '/sites/' + encodeURIComponent(siteId),
 			apiVersion: '1.1',
-		} );
-		yield dispatch( STORE_KEY ).receiveSite( siteId, existingSite );
-	} catch ( err ) {
-		yield dispatch( STORE_KEY ).receiveSiteFailed( siteId, undefined );
+		});
+		yield dispatch(STORE_KEY).receiveSite(siteId, existingSite);
+	} catch (err) {
+		yield dispatch(STORE_KEY).receiveSiteFailed(siteId, undefined);
 	}
 }

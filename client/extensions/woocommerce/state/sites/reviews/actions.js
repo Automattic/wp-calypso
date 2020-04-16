@@ -9,8 +9,8 @@ import {
 	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 } from 'woocommerce/state/action-types';
 
-export function fetchReviews( siteId, query = {} ) {
-	const normalizedQuery = getNormalizedReviewsQuery( query );
+export function fetchReviews(siteId, query = {}) {
+	const normalizedQuery = getNormalizedReviewsQuery(query);
 	return {
 		type: WOOCOMMERCE_REVIEWS_REQUEST,
 		siteId,
@@ -18,7 +18,7 @@ export function fetchReviews( siteId, query = {} ) {
 	};
 }
 
-export function deleteReview( siteId, productId, reviewId ) {
+export function deleteReview(siteId, productId, reviewId) {
 	return {
 		type: WOOCOMMERCE_REVIEW_DELETE,
 		siteId,
@@ -27,7 +27,7 @@ export function deleteReview( siteId, productId, reviewId ) {
 	};
 }
 
-export function changeReviewStatus( siteId, productId, reviewId, currentStatus, newStatus ) {
+export function changeReviewStatus(siteId, productId, reviewId, currentStatus, newStatus) {
 	return {
 		type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 		siteId,

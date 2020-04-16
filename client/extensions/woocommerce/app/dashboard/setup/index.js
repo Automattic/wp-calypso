@@ -28,18 +28,18 @@ import { recordTrack } from 'woocommerce/lib/analytics';
 
 class SetupTasksView extends Component {
 	static propTypes = {
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
-		} ),
+		}),
 	};
 
-	onFinished = event => {
+	onFinished = (event) => {
 		event.preventDefault();
-		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
+		recordTrack('calypso_woocommerce_dashboard_action_click', {
 			action: 'finished',
-		} );
-		this.props.setFinishedInitialSetup( this.props.site.ID, true );
+		});
+		this.props.setFinishedInitialSetup(this.props.site.ID, true);
 	};
 
 	render = () => {
@@ -47,42 +47,42 @@ class SetupTasksView extends Component {
 
 		return (
 			<Card className="setup__wrapper">
-				<QueryShippingZones siteId={ site.ID } />
-				<QuerySettingsGeneral siteId={ site.ID } />
+				<QueryShippingZones siteId={site.ID} />
+				<QuerySettingsGeneral siteId={site.ID} />
 				<SetupHeader
-					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
-					imageWidth={ 160 }
-					title={ translate( "Let's set up your store" ) }
-					subtitle={ translate(
+					imageSource={'/calypso/images/extensions/woocommerce/woocommerce-setup.svg'}
+					imageWidth={160}
+					title={translate("Let's set up your store")}
+					subtitle={translate(
 						'Here are the things you’ll need to do before you can start taking orders.'
-					) }
+					)}
 				/>
-				<SetupTasks site={ site } />
+				<SetupTasks site={site} />
 				<SetupFooter
-					onClick={ this.onFinished }
-					label={ translate( "I'm finished setting up" ) }
-					primary={ allTasksCompleted }
+					onClick={this.onFinished}
+					label={translate("I'm finished setting up")}
+					primary={allTasksCompleted}
 				/>
 			</Card>
 		);
 	};
 }
 
-function mapStateToProps( state ) {
+function mapStateToProps(state) {
 	// TODO - add test for hasProducts, paymentsAreSetUp and taxesAreSetUp
 	// when those selectors become available
 	const allTasksCompleted =
-		getOptedOutOfShippingSetup( state ) &&
-		getOptedOutofTaxesSetup( state ) &&
-		getTriedCustomizerDuringInitialSetup( state ) &&
-		areAnyShippingMethodsEnabled( state );
+		getOptedOutOfShippingSetup(state) &&
+		getOptedOutofTaxesSetup(state) &&
+		getTriedCustomizerDuringInitialSetup(state) &&
+		areAnyShippingMethodsEnabled(state);
 
 	return {
 		allTasksCompleted,
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			setFinishedInitialSetup,
@@ -91,4 +91,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasksView ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(SetupTasksView));

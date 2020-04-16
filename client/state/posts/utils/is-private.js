@@ -1,5 +1,5 @@
-export function isPrivate( post ) {
-	if ( ! post ) {
+export function isPrivate(post) {
+	if (!post) {
 		return false;
 	}
 

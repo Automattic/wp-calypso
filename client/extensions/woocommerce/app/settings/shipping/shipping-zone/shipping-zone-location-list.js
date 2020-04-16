@@ -28,28 +28,28 @@ import {
 	areSettingsGeneralLoadError,
 } from 'woocommerce/state/sites/settings/general/selectors';
 
-const ShippingZoneLocationList = ( {
+const ShippingZoneLocationList = ({
 	siteId,
 	loaded,
 	fetchError,
 	translate,
 	locations,
 	actions,
-} ) => {
-	const getLocationFlag = location => {
-		if ( 'continent' === location.type ) {
+}) => {
+	const getLocationFlag = (location) => {
+		if ('continent' === location.type) {
 			return null;
 		}
 
-		if ( 'state' === location.type ) {
-			return <LocationFlag code={ location.countryCode } />;
+		if ('state' === location.type) {
+			return <LocationFlag code={location.countryCode} />;
 		}
 
-		return <LocationFlag code={ location.code } />;
+		return <LocationFlag code={location.code} />;
 	};
 
-	const getLocationDescription = location => {
-		switch ( location.type ) {
+	const getLocationDescription = (location) => {
+		switch (location.type) {
 			case 'continent':
 				if (
 					location.selectedCountryCount &&
@@ -68,22 +68,22 @@ const ShippingZoneLocationList = ( {
 					);
 				}
 
-				return translate( 'All countries' );
+				return translate('All countries');
 			case 'country':
-				if ( location.postcodeFilter ) {
-					return translate( 'Specific postcodes: %s', { args: [ location.postcodeFilter ] } );
+				if (location.postcodeFilter) {
+					return translate('Specific postcodes: %s', { args: [location.postcodeFilter] });
 				}
 
-				return translate( 'Whole country' );
+				return translate('Whole country');
 			case 'state':
-				return translate( 'Whole state' );
+				return translate('Whole state');
 		}
 	};
 
-	const renderLocation = ( location, index ) => {
-		if ( ! loaded ) {
+	const renderLocation = (location, index) => {
+		if (!loaded) {
 			return (
-				<ListItem key={ index } className="shipping-zone__location is-placeholder">
+				<ListItem key={index} className="shipping-zone__location is-placeholder">
 					<ListItemField className="shipping-zone__location-title">
 						<div className="shipping-zone__placeholder-flag" />
 						<span />
@@ -97,54 +97,54 @@ const ShippingZoneLocationList = ( {
 		}
 
 		return (
-			<ListItem key={ index } className="shipping-zone__location">
+			<ListItem key={index} className="shipping-zone__location">
 				<ListItemField className="shipping-zone__location-title">
-					{ getLocationFlag( location ) }
-					{ location.name }
+					{getLocationFlag(location)}
+					{location.name}
 				</ListItemField>
 				<ListItemField className="shipping-zone__location-summary">
-					{ getLocationDescription( location ) }
+					{getLocationDescription(location)}
 				</ListItemField>
 			</ListItem>
 		);
 	};
 
 	const onAddLocation = () => {
-		if ( ! loaded ) {
+		if (!loaded) {
 			return;
 		}
 		actions.openEditLocations();
 	};
 
-	let locationsToRender = loaded ? locations : [ {}, {}, {} ];
-	if ( fetchError ) {
+	let locationsToRender = loaded ? locations : [{}, {}, {}];
+	if (fetchError) {
 		locationsToRender = [];
 	}
 
 	return (
 		<div className="shipping-zone__locations-container">
 			<ExtendedHeader
-				label={ translate( 'Zone locations' ) }
-				description={ translate( 'Define the places that are included in this zone.' ) }
+				label={translate('Zone locations')}
+				description={translate('Define the places that are included in this zone.')}
 			>
-				<Button onClick={ onAddLocation } disabled={ ! loaded }>
-					{ isEmpty( locations ) ? translate( 'Add locations' ) : translate( 'Edit locations' ) }
+				<Button onClick={onAddLocation} disabled={!loaded}>
+					{isEmpty(locations) ? translate('Add locations') : translate('Edit locations')}
 				</Button>
 			</ExtendedHeader>
 			<List>
-				{ locationsToRender.length ? (
+				{locationsToRender.length ? (
 					<ListHeader>
 						<ListItemField className="shipping-zone__location-title">
-							{ translate( 'Location' ) }
+							{translate('Location')}
 						</ListItemField>
 						<ListItemField className="shipping-zone__location-summary">
-							{ translate( 'Details' ) }
+							{translate('Details')}
 						</ListItemField>
 					</ListHeader>
-				) : null }
-				{ locationsToRender.map( renderLocation ) }
+				) : null}
+				{locationsToRender.map(renderLocation)}
 			</List>
-			<ShippingZoneLocationDialog siteId={ siteId } isAdding={ isEmpty( locations ) } />
+			<ShippingZoneLocationDialog siteId={siteId} isAdding={isEmpty(locations)} />
 		</div>
 	);
 };
@@ -154,18 +154,17 @@ ShippingZoneLocationList.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const loaded =
-			areShippingZonesFullyLoaded( state, ownProps.siteId ) &&
-			areSettingsGeneralLoaded( state, ownProps.siteId );
+			areShippingZonesFullyLoaded(state, ownProps.siteId) &&
+			areSettingsGeneralLoaded(state, ownProps.siteId);
 		return {
 			loaded,
-			fetchError: areSettingsGeneralLoadError( state, ownProps.siteId ), // TODO: add shipping zones/methods fetch errors too
-			locations:
-				loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20, ownProps.siteId ),
+			fetchError: areSettingsGeneralLoadError(state, ownProps.siteId), // TODO: add shipping zones/methods fetch errors too
+			locations: loaded && getCurrentlyEditingShippingZoneLocationsList(state, 20, ownProps.siteId),
 		};
 	},
-	( dispatch, ownProps ) => ( {
+	(dispatch, ownProps) => ({
 		actions: bindActionCreatorsWithSiteId(
 			{
 				openEditLocations,
@@ -173,5 +172,5 @@ export default connect(
 			dispatch,
 			ownProps.siteId
 		),
-	} )
-)( localize( ShippingZoneLocationList ) );
+	})
+)(localize(ShippingZoneLocationList));

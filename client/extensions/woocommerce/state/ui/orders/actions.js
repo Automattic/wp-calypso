@@ -9,40 +9,40 @@ import {
 	WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 } from 'woocommerce/state/action-types';
 
-export const clearOrderEdits = siteId => ( dispatch, getState ) => {
+export const clearOrderEdits = (siteId) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
-	dispatch( {
+	dispatch({
 		type: WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 		siteId,
-	} );
+	});
 };
 
-export const editOrder = ( siteId, order ) => ( dispatch, getState ) => {
+export const editOrder = (siteId, order) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
-	dispatch( {
+	dispatch({
 		type: WOOCOMMERCE_UI_ORDERS_EDIT,
 		siteId,
 		order,
-	} );
+	});
 };
 
-export const updateCurrentOrdersQuery = ( siteId, query ) => ( dispatch, getState ) => {
+export const updateCurrentOrdersQuery = (siteId, query) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
-	dispatch( {
+	dispatch({
 		type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 		siteId,
 		query,
-	} );
+	});
 };

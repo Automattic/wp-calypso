@@ -4,7 +4,7 @@
 
 function test() {
 	// simplest case... just a translation, no special options
-	i18n.translate( 'My test has two files.' );
+	i18n.translate('My test has two files.');
 }
 
 module.exports = test;

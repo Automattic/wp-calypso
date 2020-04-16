@@ -23,9 +23,9 @@ export default class Emojify extends PureComponent {
 		tagName: 'div',
 	};
 
-	constructor( props ) {
-		super( props );
-		this.setRef = this.setRef.bind( this );
+	constructor(props) {
+		super(props);
+		this.setRef = this.setRef.bind(this);
 	}
 
 	componentDidMount() {
@@ -36,27 +36,27 @@ export default class Emojify extends PureComponent {
 		this.parseEmoji();
 	}
 
-	setRef( component ) {
+	setRef(component) {
 		this.emojified = component;
 	}
 
 	parseEmoji = () => {
 		const { imgClassName, twemojiUrl } = this.props;
 
-		twemoji.parse( this.emojified, {
+		twemoji.parse(this.emojified, {
 			base: twemojiUrl,
 			size: '72x72',
 			className: imgClassName,
-			callback: function( icon, options ) {
-				const ignored = [ 'a9', 'ae', '2122', '2194', '2660', '2663', '2665', '2666' ];
+			callback: function (icon, options) {
+				const ignored = ['a9', 'ae', '2122', '2194', '2660', '2663', '2665', '2666'];
 
-				if ( -1 !== ignored.indexOf( icon ) ) {
+				if (-1 !== ignored.indexOf(icon)) {
 					return false;
 				}
 
-				return ''.concat( options.base, options.size, '/', icon, options.ext );
+				return ''.concat(options.base, options.size, '/', icon, options.ext);
 			},
-		} );
+		});
 	};
 
 	render() {
@@ -70,11 +70,11 @@ export default class Emojify extends PureComponent {
 			twemojiUrl,
 			...other
 		} = this.props;
-		const classes = classNames( className, 'emojify' );
+		const classes = classNames(className, 'emojify');
 
 		return (
-			<WrapperTagName className={ classes } ref={ this.setRef } { ...other }>
-				{ children }
+			<WrapperTagName className={classes} ref={this.setRef} {...other}>
+				{children}
 			</WrapperTagName>
 		);
 	}

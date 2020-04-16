@@ -28,7 +28,7 @@ class DomainConnectMapping extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 	};
 
 	state = {
@@ -37,12 +37,12 @@ class DomainConnectMapping extends React.Component {
 	};
 
 	getRedirectUriStatusString = () => {
-		return 'domain-connect-complete-' + this.props.selectedDomainName.replace( '.', '-' );
+		return 'domain-connect-complete-' + this.props.selectedDomainName.replace('.', '-');
 	};
 
 	isDomainConnectComplete = () => {
-		const queryObject = parse( window.location.search.replace( '?', '' ) );
-		const status = get( queryObject, 'status', null );
+		const queryObject = parse(window.location.search.replace('?', ''));
+		const status = get(queryObject, 'status', null);
 		const redirectUriStatusString = this.getRedirectUriStatusString();
 
 		// Some domain providers return the status string as a key rather than the value of
@@ -52,36 +52,33 @@ class DomainConnectMapping extends React.Component {
 	};
 
 	renderErrorNotice = () => {
-		if ( ! this.state.error ) {
+		if (!this.state.error) {
 			return;
 		}
 
 		const { translate } = this.props;
 
 		return (
-			<Notice status="is-error" icon="notice" onDismissClick={ this.dismissNotice }>
-				{ translate(
+			<Notice status="is-error" icon="notice" onDismissClick={this.dismissNotice}>
+				{translate(
 					'An error occured while redirecting to your domain provider. ' +
 						'If the issue persists please contact our support staff.'
-				) }
+				)}
 			</Notice>
 		);
 	};
 
 	renderSuccessNotice = () => {
-		const selectedDomain = getSelectedDomain( this.props );
-		if (
-			( ! selectedDomain.pointsToWpcom && ! this.isDomainConnectComplete() ) ||
-			this.state.error
-		) {
+		const selectedDomain = getSelectedDomain(this.props);
+		if ((!selectedDomain.pointsToWpcom && !this.isDomainConnectComplete()) || this.state.error) {
 			return;
 		}
 
 		const { translate } = this.props;
 
 		let message;
-		if ( selectedDomain.pointsToWpcom ) {
-			message = translate( 'Success! Your domain is configured to work with WordPress.com.' );
+		if (selectedDomain.pointsToWpcom) {
+			message = translate('Success! Your domain is configured to work with WordPress.com.');
 		} else {
 			message = translate(
 				'Success! Your domain is configured to work with WordPress.com. ' +
@@ -91,48 +88,48 @@ class DomainConnectMapping extends React.Component {
 		}
 
 		return (
-			<Notice status="is-success" icon="checkmark" showDismiss={ false }>
-				{ message }
+			<Notice status="is-success" icon="checkmark" showDismiss={false}>
+				{message}
 			</Notice>
 		);
 	};
 
 	renderActionCard = () => {
 		const { translate } = this.props;
-		const selectedDomain = getSelectedDomain( this.props );
+		const selectedDomain = getSelectedDomain(this.props);
 
-		if ( selectedDomain.pointsToWpcom ) {
+		if (selectedDomain.pointsToWpcom) {
 			return;
 		}
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Connect Your Domain' ) } />
+				<SectionHeader label={translate('Connect Your Domain')} />
 				<Card>
 					<div>
 						<p>
-							{ translate(
+							{translate(
 								'Your domain provider supports automatically configuring your ' +
 									'domain to use it with WordPress.com.'
-							) }
+							)}
 						</p>
 						<p>
-							{ translate(
+							{translate(
 								'Clicking the button below redirects you to your domain provider ' +
 									'where you may be asked to log in. Once you confirm your ' +
 									'settings and the process is complete, your domain will be ' +
 									'connected to your WordPress.com site and you will be redirected ' +
 									'back to WordPress.com.'
-							) }
+							)}
 						</p>
 						<Button
 							className="domain-connect-mapping__action-button"
-							onClick={ this.applyDomainConnectMappingTemplate }
+							onClick={this.applyDomainConnectMappingTemplate}
 							primary
-							busy={ this.state.submitting }
-							disabled={ this.state.submitting }
+							busy={this.state.submitting}
+							disabled={this.state.submitting}
 						>
-							{ translate( 'Configure Your Domain Settings' ) }
+							{translate('Configure Your Domain Settings')}
 						</Button>
 					</div>
 				</Card>
@@ -143,35 +140,35 @@ class DomainConnectMapping extends React.Component {
 	render() {
 		const { translate } = this.props;
 
-		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToDomainManagementEdit } />;
+		if (this.isDataLoading()) {
+			return <DomainMainPlaceholder goBack={this.goToDomainManagementEdit} />;
 		}
 
 		return (
 			<Main className="domain-connect-mapping">
 				<Header
-					onClick={ this.goToDomainManagementEdit }
-					selectedDomainName={ this.props.selectedDomainName }
+					onClick={this.goToDomainManagementEdit}
+					selectedDomainName={this.props.selectedDomainName}
 				>
-					{ translate( 'Connect Your Domain' ) }
+					{translate('Connect Your Domain')}
 				</Header>
-				{ this.renderErrorNotice() }
-				{ this.renderSuccessNotice() }
-				{ this.renderActionCard() }
+				{this.renderErrorNotice()}
+				{this.renderSuccessNotice()}
+				{this.renderActionCard()}
 			</Main>
 		);
 	}
 
 	isDataLoading = () => {
-		return ! getSelectedDomain( this.props );
+		return !getSelectedDomain(this.props);
 	};
 
 	dismissNotice = () => {
-		this.setState( { error: null } );
+		this.setState({ error: null });
 	};
 
 	applyDomainConnectMappingTemplate = () => {
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
 		const redirectUri =
 			'https://wordpress.com' +
@@ -190,30 +187,30 @@ class DomainConnectMapping extends React.Component {
 				redirectUri
 			)
 			.then(
-				data => {
-					const success = get( data, 'success', false );
-					const syncUxUrl = get( data, 'sync_ux_apply_url', null );
-					if ( success && syncUxUrl ) {
-						externalRedirect( syncUxUrl );
+				(data) => {
+					const success = get(data, 'success', false);
+					const syncUxUrl = get(data, 'sync_ux_apply_url', null);
+					if (success && syncUxUrl) {
+						externalRedirect(syncUxUrl);
 					} else {
-						this.setState( {
+						this.setState({
 							error: true,
 							submitting: false,
-						} );
+						});
 					}
 				},
 				() => {
-					this.setState( {
+					this.setState({
 						error: true,
 						submitting: false,
-					} );
+					});
 				}
 			);
 	};
 
 	goToDomainManagementEdit = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(domainManagementEdit(this.props.selectedSite.slug, this.props.selectedDomainName));
 	};
 }
 
-export default localize( DomainConnectMapping );
+export default localize(DomainConnectMapping);

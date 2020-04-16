@@ -33,26 +33,26 @@ class ConnectionsList extends PureComponent {
 	render() {
 		const { connections, onToggle, siteId } = this.props;
 
-		if ( ! siteId || ! connections.length ) {
+		if (!siteId || !connections.length) {
 			return null;
 		}
 
-		if ( ! this.props.hasFetchedConnections ) {
+		if (!this.props.hasFetchedConnections) {
 			return this.renderEmptyPlaceholder();
 		}
 
 		return (
 			<div className="post-share__connections">
-				{ connections.map( connection => (
+				{connections.map((connection) => (
 					<Connection
-						{ ...{
+						{...{
 							connection,
 							onToggle,
 							isActive: connection.isActive,
 							key: connection.keyring_connection_ID,
-						} }
+						}}
 					/>
-				) ) }
+				))}
 			</div>
 		);
 	}

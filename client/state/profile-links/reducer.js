@@ -18,23 +18,23 @@ import {
 	USER_PROFILE_LINKS_RESET_ERRORS,
 } from 'state/action-types';
 
-export const items = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const items = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case USER_PROFILE_LINKS_RECEIVE: {
 			const { profileLinks } = action;
 			return profileLinks;
 		}
 		case USER_PROFILE_LINKS_DELETE_SUCCESS: {
 			const { linkSlug } = action;
-			return reject( state, { link_slug: linkSlug } );
+			return reject(state, { link_slug: linkSlug });
 		}
 	}
 
 	return state;
-} );
+});
 
-export const errors = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const errors = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case USER_PROFILE_LINKS_ADD_SUCCESS:
 			return {};
 		case USER_PROFILE_LINKS_ADD_DUPLICATE: {
@@ -66,9 +66,9 @@ export const errors = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	errors,
-} );
+});

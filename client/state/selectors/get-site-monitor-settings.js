@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {number}    siteId  The ID of the site we're querying
  * @returns {?object}           The monitor settings of that site
  */
-export default function getSiteMonitorSettings( state, siteId ) {
-	return get( state, [ 'sites', 'monitor', 'items', siteId ], null );
+export default function getSiteMonitorSettings(state, siteId) {
+	return get(state, ['sites', 'monitor', 'items', siteId], null);
 }

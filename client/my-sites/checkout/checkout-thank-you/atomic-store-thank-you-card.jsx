@@ -30,13 +30,13 @@ const user = userFactory();
 class AtomicStoreThankYouCard extends Component {
 	state = { resendStatus: RESEND_NOT_SENT };
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		/**
 		 * This clears the  error in the event the email is verified in another tab
 		 * or another browser and the isEmailVerified props is updated via polling.
 		 */
-		if ( this.props.isEmailVerified && ! prevProps.isEmailVerified ) {
-			this.props.removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
+		if (this.props.isEmailVerified && !prevProps.isEmailVerified) {
+			this.props.removeNotice(VERIFY_EMAIL_ERROR_NOTICE);
 		}
 	}
 
@@ -46,44 +46,41 @@ class AtomicStoreThankYouCard extends Component {
 		const { translate } = this.props;
 		const { resendStatus } = this.state;
 
-		this.props.removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
+		this.props.removeNotice(VERIFY_EMAIL_ERROR_NOTICE);
 
-		if ( RESEND_PENDING === resendStatus ) {
+		if (RESEND_PENDING === resendStatus) {
 			return;
 		}
 
-		this.setState( { resendStatus: RESEND_PENDING } );
+		this.setState({ resendStatus: RESEND_PENDING });
 
-		user.sendVerificationEmail( error => {
-			if ( error ) {
-				this.props.errorNotice(
-					translate( "Couldn't resend verification email. Please try again." ),
-					{
-						id: VERIFY_EMAIL_ERROR_NOTICE,
-					}
-				);
+		user.sendVerificationEmail((error) => {
+			if (error) {
+				this.props.errorNotice(translate("Couldn't resend verification email. Please try again."), {
+					id: VERIFY_EMAIL_ERROR_NOTICE,
+				});
 
-				this.setState( { resendStatus: RESEND_ERROR } );
+				this.setState({ resendStatus: RESEND_ERROR });
 				return;
 			}
 
-			this.setState( { resendStatus: RESEND_SUCCESS } );
-		} );
+			this.setState({ resendStatus: RESEND_SUCCESS });
+		});
 	};
 
 	resendButtonText = () => {
 		const { translate } = this.props;
 		const { resendStatus } = this.state;
 
-		switch ( resendStatus ) {
+		switch (resendStatus) {
 			case RESEND_PENDING:
-				return translate( 'Sending…' );
+				return translate('Sending…');
 			case RESEND_SUCCESS:
-				return translate( 'Email sent' );
+				return translate('Email sent');
 			case RESEND_NOT_SENT:
 			case RESEND_ERROR:
 			default:
-				return translate( 'Resend email' );
+				return translate('Resend email');
 		}
 	};
 
@@ -91,16 +88,16 @@ class AtomicStoreThankYouCard extends Component {
 		const { isEmailVerified, site, translate } = this.props;
 		const { resendStatus } = this.state;
 
-		if ( ! isEmailVerified ) {
+		if (!isEmailVerified) {
 			return (
 				<div className="checkout-thank-you__atomic-store-action-buttons">
-					<Interval onTick={ this.checkVerification } period={ EVERY_FIVE_SECONDS } />
+					<Interval onTick={this.checkVerification} period={EVERY_FIVE_SECONDS} />
 					<Button
-						className={ classNames( 'button', 'thank-you-card__button' ) }
-						onClick={ this.resendEmail }
-						busy={ RESEND_PENDING === resendStatus }
+						className={classNames('button', 'thank-you-card__button')}
+						onClick={this.resendEmail}
+						busy={RESEND_PENDING === resendStatus}
 					>
-						{ this.resendButtonText() }
+						{this.resendButtonText()}
 					</Button>
 				</div>
 			);
@@ -109,10 +106,10 @@ class AtomicStoreThankYouCard extends Component {
 		return (
 			<div className="checkout-thank-you__atomic-store-action-buttons">
 				<a
-					className={ classNames( 'button', 'thank-you-card__button' ) }
-					href={ site.URL + '/wp-admin/admin.php?page=wc-setup&calypsoify=1' }
+					className={classNames('button', 'thank-you-card__button')}
+					href={site.URL + '/wp-admin/admin.php?page=wc-setup&calypsoify=1'}
 				>
-					{ translate( 'Create your store!' ) }
+					{translate('Create your store!')}
 				</a>
 			</div>
 		);
@@ -121,18 +118,18 @@ class AtomicStoreThankYouCard extends Component {
 	renderDescription() {
 		const { emailAddress, isEmailVerified, translate } = this.props;
 
-		if ( ! isEmailVerified ) {
+		if (!isEmailVerified) {
 			return (
 				<Fragment>
 					<div>
-						{ translate(
+						{translate(
 							'Now that we have taken care of your plan, we need to verify your email address to create your store.'
-						) }
+						)}
 					</div>
 					<div className="checkout-thank-you__atomic-store-email-instruction">
-						{ translate( 'Please click the link in the email we sent to %(emailAddress)s.', {
+						{translate('Please click the link in the email we sent to %(emailAddress)s.', {
 							args: { emailAddress },
-						} ) }
+						})}
 					</div>
 				</Fragment>
 			);
@@ -146,15 +143,15 @@ class AtomicStoreThankYouCard extends Component {
 	render() {
 		const { translate, siteId, planClass } = this.props;
 
-		const classes = classNames( 'checkout-thank-you__atomic-store', planClass );
+		const classes = classNames('checkout-thank-you__atomic-store', planClass);
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<PlanThankYouCard
-					siteId={ siteId }
-					action={ this.renderAction() }
-					heading={ translate( 'Thank you for your purchase!' ) }
-					description={ this.renderDescription() }
+					siteId={siteId}
+					action={this.renderAction()}
+					heading={translate('Thank you for your purchase!')}
+					description={this.renderDescription()}
 				/>
 			</div>
 		);
@@ -162,13 +159,13 @@ class AtomicStoreThankYouCard extends Component {
 }
 
 export default connect(
-	state => {
-		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
-		const plan = getCurrentPlan( state, siteId );
-		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : '';
-		const emailAddress = getCurrentUserEmail( state );
-		const isEmailVerified = isCurrentUserEmailVerified( state );
+	(state) => {
+		const site = getSelectedSite(state);
+		const siteId = getSelectedSiteId(state);
+		const plan = getCurrentPlan(state, siteId);
+		const planClass = plan && plan.productSlug ? getPlanClass(plan.productSlug) : '';
+		const emailAddress = getCurrentUserEmail(state);
+		const isEmailVerified = isCurrentUserEmailVerified(state);
 
 		return {
 			siteId,
@@ -179,4 +176,4 @@ export default connect(
 		};
 	},
 	{ errorNotice, removeNotice }
-)( localize( AtomicStoreThankYouCard ) );
+)(localize(AtomicStoreThankYouCard));

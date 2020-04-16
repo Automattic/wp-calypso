@@ -13,7 +13,7 @@ import React from 'react';
  */
 import { ReaderSidebarPromo, shouldRenderAppPromo } from '../promo';
 
-describe( 'ReaderSidebarPromo', () => {
+describe('ReaderSidebarPromo', () => {
 	const shouldRenderAppPromoDefaultProps = {
 		isDesktopPromoDisabled: false,
 		isUserLocaleEnglish: true,
@@ -23,77 +23,77 @@ describe( 'ReaderSidebarPromo', () => {
 		isUserDesktopAppUser: false,
 	};
 
-	test( 'should render the AppPromo when the shouldRenderAppPromo property is true', () => {
+	test('should render the AppPromo when the shouldRenderAppPromo property is true', () => {
 		const adjustedProperties = { shouldRenderAppPromo: true };
-		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
-		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 1 );
-	} );
+		const wrapper = shallow(<ReaderSidebarPromo {...adjustedProperties} />);
+		expect(wrapper.find('.sidebar__app-promo')).toHaveLength(1);
+	});
 
-	test( 'should not render the AppPromo when the shouldRenderAppPromo property is false', () => {
+	test('should not render the AppPromo when the shouldRenderAppPromo property is false', () => {
 		const adjustedProperties = {
 			shouldRenderAppPromo: false,
 		};
-		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
-		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 0 );
-	} );
+		const wrapper = shallow(<ReaderSidebarPromo {...adjustedProperties} />);
+		expect(wrapper.find('.sidebar__app-promo')).toHaveLength(0);
+	});
 
-	describe( 'shouldRenderAppPromo', () => {
-		test( 'should not render if desktop promo is disabled', () => {
+	describe('shouldRenderAppPromo', () => {
+		test('should not render if desktop promo is disabled', () => {
 			expect(
-				shouldRenderAppPromo( {
+				shouldRenderAppPromo({
 					...shouldRenderAppPromoDefaultProps,
 					isDesktopPromoDisabled: true,
-				} )
-			).toBe( false );
-		} );
+				})
+			).toBe(false);
+		});
 
-		test( "should not render if user locale isn't english", () => {
+		test("should not render if user locale isn't english", () => {
 			expect(
-				shouldRenderAppPromo( {
+				shouldRenderAppPromo({
 					...shouldRenderAppPromoDefaultProps,
 					isUserLocaleEnglish: false,
-				} )
-			).toBe( false );
-		} );
+				})
+			).toBe(false);
+		});
 
-		test( 'should not render if the viewport is mobile', () => {
+		test('should not render if the viewport is mobile', () => {
 			expect(
-				shouldRenderAppPromo( {
+				shouldRenderAppPromo({
 					...shouldRenderAppPromoDefaultProps,
 					isViewportMobile: true,
-				} )
-			).toBe( false );
-		} );
+				})
+			).toBe(false);
+		});
 
-		test( "should not render if it's ChromeOS", () => {
+		test("should not render if it's ChromeOS", () => {
 			expect(
-				shouldRenderAppPromo( {
+				shouldRenderAppPromo({
 					...shouldRenderAppPromoDefaultProps,
 					isUserOnChromeOs: true,
-				} )
-			).toBe( false );
-		} );
+				})
+			).toBe(false);
+		});
 
-		test( "should not render if desktop promo isn't configured to run", () => {
+		test("should not render if desktop promo isn't configured to run", () => {
 			expect(
-				shouldRenderAppPromo( {
+				shouldRenderAppPromo({
 					...shouldRenderAppPromoDefaultProps,
 					isDesktopPromoConfiguredToRun: false,
-				} )
-			).toBe( false );
-		} );
+				})
+			).toBe(false);
+		});
 
-		test( 'should not render if user is a desktop app user', () => {
+		test('should not render if user is a desktop app user', () => {
 			expect(
-				shouldRenderAppPromo( {
+				shouldRenderAppPromo({
 					...shouldRenderAppPromoDefaultProps,
 					isUserDesktopAppUser: true,
-				} )
-			).toBe( false );
-		} );
+				})
+			).toBe(false);
+		});
 
-		test( "should render if desktop promo wasn't disabled by the user, the locale is english, the viewport isn't mobile, it's not ChromeOS, the desktop promo is configured to run, and the user isn't a desktop app user", () => {
-			expect( shouldRenderAppPromo( shouldRenderAppPromoDefaultProps ) ).toBe( true );
-		} );
-	} );
-} );
+		test("should render if desktop promo wasn't disabled by the user, the locale is english, the viewport isn't mobile, it's not ChromeOS, the desktop promo is configured to run, and the user isn't a desktop app user", () => {
+			expect(shouldRenderAppPromo(shouldRenderAppPromoDefaultProps)).toBe(true);
+		});
+	});
+});

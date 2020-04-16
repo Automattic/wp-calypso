@@ -15,26 +15,26 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 import 'state/posts/init';
 
-export const autosave = () => async ( dispatch, getState ) => {
+export const autosave = () => async (dispatch, getState) => {
 	const state = getState();
 
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
 
-	if ( ! isEditedPostDirty( state, siteId, postId ) ) {
+	if (!isEditedPostDirty(state, siteId, postId)) {
 		return null;
 	}
 
-	const savedPost = getSitePost( state, siteId, postId );
-	const post = getEditedPost( state, siteId, postId );
+	const savedPost = getSitePost(state, siteId, postId);
+	const post = getEditedPost(state, siteId, postId);
 
-	store.set( 'wpcom-autosave:' + siteId + ':' + postId, post );
+	store.set('wpcom-autosave:' + siteId + ':' + postId, post);
 
 	// TODO: incorporate post locking
-	if ( isPublished( savedPost ) || isPublished( post ) ) {
-		await dispatch( editorAutosave( post ) );
+	if (isPublished(savedPost) || isPublished(post)) {
+		await dispatch(editorAutosave(post));
 		return null;
 	}
 
-	return await dispatch( saveEdited( { recordSaveEvent: false, autosave: true } ) );
+	return await dispatch(saveEdited({ recordSaveEvent: false, autosave: true }));
 };

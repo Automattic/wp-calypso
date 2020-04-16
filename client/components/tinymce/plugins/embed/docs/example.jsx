@@ -23,41 +23,41 @@ class EmbedDialogExample extends PureComponent {
 		showDialog: false,
 	};
 
-	openDialog = () => this.setState( { showDialog: true } );
+	openDialog = () => this.setState({ showDialog: true });
 
 	onCancel = () => {
-		this.setState( { showDialog: false } );
+		this.setState({ showDialog: false });
 	};
 
-	onUpdate = newUrl => {
-		this.setState( {
+	onUpdate = (newUrl) => {
+		this.setState({
 			embedUrl: newUrl,
 			showDialog: false,
-		} );
+		});
 	};
 
 	render() {
 		return (
 			<Card>
-				<Button onClick={ this.openDialog }>Open Embed Dialog</Button>
+				<Button onClick={this.openDialog}>Open Embed Dialog</Button>
 
 				<EmbedDialog
-					embedUrl={ this.state.embedUrl }
-					isVisible={ this.state.showDialog }
-					onCancel={ this.onCancel }
-					onUpdate={ this.onUpdate }
-					siteId={ this.props.siteId }
+					embedUrl={this.state.embedUrl}
+					isVisible={this.state.showDialog}
+					onCancel={this.onCancel}
+					onUpdate={this.onUpdate}
+					siteId={this.props.siteId}
 				/>
 			</Card>
 		);
 	}
 }
 
-const connectedEmbedDialogExample = connect( state => {
+const connectedEmbedDialogExample = connect((state) => {
 	return {
-		siteId: get( getCurrentUser( state ), 'primary_blog' ),
+		siteId: get(getCurrentUser(state), 'primary_blog'),
 	};
-} )( EmbedDialogExample );
+})(EmbedDialogExample);
 
 connectedEmbedDialogExample.displayName = 'EmbedDialogExample';
 

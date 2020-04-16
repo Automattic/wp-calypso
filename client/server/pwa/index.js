@@ -13,13 +13,13 @@ export default () => {
 	const app = express();
 
 	// manifest is part of PWA spec, and needs to be dynamic so we can inject l10n, branchName and other context
-	app.get( '/calypso/manifest.json', manifest );
+	app.get('/calypso/manifest.json', manifest);
 
 	// service-worker needs to be served from root to avoid scope issues
 	app.use(
 		'/service-worker.js',
 		express.static(
-			path.resolve( __dirname, '..', '..', 'lib', 'service-worker', 'service-worker.js' )
+			path.resolve(__dirname, '..', '..', 'lib', 'service-worker', 'service-worker.js')
 		)
 	);
 

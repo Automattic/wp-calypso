@@ -42,7 +42,7 @@ class Dns extends React.Component {
 		dns: PropTypes.object.isRequired,
 		showPlaceholder: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 	};
 
 	state = {
@@ -50,52 +50,48 @@ class Dns extends React.Component {
 	};
 
 	renderDnsTemplates() {
-		const selectedDomain = getSelectedDomain( this.props );
+		const selectedDomain = getSelectedDomain(this.props);
 
-		if ( ! selectedDomain || ! isMappedDomain( selectedDomain ) ) {
+		if (!selectedDomain || !isMappedDomain(selectedDomain)) {
 			return null;
 		}
 
 		return (
 			<VerticalNav>
-				<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+				<DnsTemplates selectedDomainName={this.props.selectedDomainName} />
 			</VerticalNav>
 		);
 	}
 
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite, translate } = this.props;
-		const domain = getSelectedDomain( this.props );
+		const domain = getSelectedDomain(this.props);
 		const hasWpcomNameservers = domain?.hasWpcomNameservers ?? false;
-		const domainConnectEnabled = some( dns.records, {
+		const domainConnectEnabled = some(dns.records, {
 			name: domainConnect.DISCOVERY_TXT_RECORD_NAME,
 			data: domainConnect.API_URL,
 			type: 'TXT',
-		} );
+		});
 
 		return (
 			<Main className="dns">
-				<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
-					{ translate( 'DNS Records' ) }
+				<Header onClick={this.goBack} selectedDomainName={selectedDomainName}>
+					{translate('DNS Records')}
 				</Header>
 				<Card>
 					<DnsDetails />
-					<DnsList
-						dns={ dns }
-						selectedSite={ selectedSite }
-						selectedDomainName={ selectedDomainName }
-					/>
+					<DnsList dns={dns} selectedSite={selectedSite} selectedDomainName={selectedDomainName} />
 					<DomainConnectRecord
-						enabled={ domainConnectEnabled }
-						selectedDomainName={ selectedDomainName }
-						hasWpcomNameservers={ hasWpcomNameservers }
+						enabled={domainConnectEnabled}
+						selectedDomainName={selectedDomainName}
+						hasWpcomNameservers={hasWpcomNameservers}
 					/>
 					<DnsAddNew
-						isSubmittingForm={ dns.isSubmittingForm }
-						selectedDomainName={ selectedDomainName }
+						isSubmittingForm={dns.isSubmittingForm}
+						selectedDomainName={selectedDomainName}
 					/>
 				</Card>
-				{ this.renderDnsTemplates() }
+				{this.renderDnsTemplates()}
 			</Main>
 		);
 	}
@@ -105,9 +101,9 @@ class Dns extends React.Component {
 
 		return (
 			<Fragment>
-				<QuerySiteDomains siteId={ selectedSite.ID } />
-				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
+				<QuerySiteDomains siteId={selectedSite.ID} />
+				<QueryDomainDns domain={selectedDomainName} />
+				{showPlaceholder ? <DomainMainPlaceholder goBack={this.goBack} /> : this.renderMain()}
 			</Fragment>
 		);
 	}
@@ -115,22 +111,22 @@ class Dns extends React.Component {
 	goBack = () => {
 		let path;
 
-		if ( isRegisteredDomain( getSelectedDomain( this.props ) ) ) {
+		if (isRegisteredDomain(getSelectedDomain(this.props))) {
 			path = domainManagementNameServers;
 		} else {
 			path = domainManagementEdit;
 		}
 
-		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(path(this.props.selectedSite.slug, this.props.selectedDomainName));
 	};
 }
 
-export default connect( ( state, { selectedDomainName } ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite.ID );
-	const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
-	const dns = getDomainDns( state, selectedDomainName );
-	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
+export default connect((state, { selectedDomainName }) => {
+	const selectedSite = getSelectedSite(state);
+	const domains = getDomainsBySiteId(state, selectedSite.ID);
+	const isRequestingDomains = isRequestingSiteDomains(state, selectedSite.ID);
+	const dns = getDomainDns(state, selectedDomainName);
+	const showPlaceholder = !dns.hasLoadedFromServer || isRequestingDomains;
 
 	return { selectedSite, domains, dns, showPlaceholder };
-} )( localize( Dns ) );
+})(localize(Dns));

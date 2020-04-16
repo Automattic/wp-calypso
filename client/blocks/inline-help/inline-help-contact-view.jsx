@@ -17,14 +17,14 @@ import { getHelpSelectedSite } from 'state/help/selectors';
 import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
-const InlineHelpContactView = ( {
+const InlineHelpContactView = ({
 	/* eslint-disable no-shadow */
 	isSupportVariationDetermined = false,
 	/* eslint-enable no-shadow */
 	supportVariation,
 	selectedSite,
-} ) => {
-	if ( ! isSupportVariationDetermined ) {
+}) => {
+	if (!isSupportVariationDetermined) {
 		return <PlaceholderLines />;
 	}
 
@@ -32,21 +32,21 @@ const InlineHelpContactView = ( {
 		<Fragment>
 			<TrackComponentView
 				eventName="calypso_inlinehelp_contact_view"
-				eventProperties={ {
+				eventProperties={{
 					support_variation: supportVariation,
-				} }
+				}}
 			/>
-			{ supportVariation === SUPPORT_FORUM ? (
+			{supportVariation === SUPPORT_FORUM ? (
 				<InlineHelpForumView />
 			) : (
-				<HelpContact compact selectedSite={ selectedSite } />
-			) }
+				<HelpContact compact selectedSite={selectedSite} />
+			)}
 		</Fragment>
 	);
 };
 
-export default connect( state => ( {
-	supportVariation: getInlineHelpSupportVariation( state ),
-	isSupportVariationDetermined: isSupportVariationDetermined( state ),
-	selectedSite: getHelpSelectedSite( state ),
-} ) )( InlineHelpContactView );
+export default connect((state) => ({
+	supportVariation: getInlineHelpSupportVariation(state),
+	isSupportVariationDetermined: isSupportVariationDetermined(state),
+	selectedSite: getHelpSelectedSite(state),
+}))(InlineHelpContactView);

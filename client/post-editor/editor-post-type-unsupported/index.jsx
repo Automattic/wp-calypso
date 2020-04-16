@@ -33,34 +33,32 @@ import './style.scss';
  *
  * @type {Array}
  */
-const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];
+const CONFIGURABLE_TYPES = ['jetpack-portfolio', 'jetpack-testimonial'];
 
-function EditorPostTypeUnsupported( {
+function EditorPostTypeUnsupported({
 	translate,
 	types,
 	type,
 	typeObject,
 	writePostPath,
 	siteSlug,
-} ) {
+}) {
 	// Don't display if:
 	//  1. Types don't exist (haven't yet been loaded for site)
 	//  2. The type value has been unset from the edited post (navigating away)
 	//  3. Type object provided (indicates that type indeed exists)
-	if ( ! types || ! type || typeObject ) {
+	if (!types || !type || typeObject) {
 		return null;
 	}
 
-	const buttons = [
-		<Button href={ `/posts/${ siteSlug }` }>{ translate( 'Back to My Sites' ) }</Button>,
-	];
+	const buttons = [<Button href={`/posts/${siteSlug}`}>{translate('Back to My Sites')}</Button>];
 
-	const isConfigurableType = includes( CONFIGURABLE_TYPES, type );
+	const isConfigurableType = includes(CONFIGURABLE_TYPES, type);
 	let helpText;
-	if ( isConfigurableType ) {
+	if (isConfigurableType) {
 		// For configurable post types (those supported on WordPress.com,
 		// direct user to enable them through their site settings)
-		switch ( type ) {
+		switch (type) {
 			case 'jetpack-portfolio':
 				helpText = translate(
 					'Portfolios are not enabled. Open your site settings to activate them.'
@@ -75,8 +73,8 @@ function EditorPostTypeUnsupported( {
 		}
 
 		buttons.push(
-			<Button href={ `/settings/writing/${ siteSlug }` } primary>
-				{ translate( 'Site Settings' ) }
+			<Button href={`/settings/writing/${siteSlug}`} primary>
+				{translate('Site Settings')}
 			</Button>
 		);
 	} else {
@@ -87,25 +85,25 @@ function EditorPostTypeUnsupported( {
 		);
 
 		buttons.push(
-			<Button href={ writePostPath } primary>
-				{ translate( 'Write a Blog Post' ) }
+			<Button href={writePostPath} primary>
+				{translate('Write a Blog Post')}
 			</Button>
 		);
 	}
 
 	return (
-		<Dialog isVisible buttons={ buttons } className="editor-post-type-unsupported">
-			<h1>{ translate( 'This post type is not supported' ) }</h1>
-			<p>{ helpText }</p>
+		<Dialog isVisible buttons={buttons} className="editor-post-type-unsupported">
+			<h1>{translate('This post type is not supported')}</h1>
+			<p>{helpText}</p>
 			<p>
-				{ translate(
+				{translate(
 					'For more information, visit our {{supportLink}}support page on custom content types{{/supportLink}}.',
 					{
 						components: {
 							supportLink: <a href="https://wordpress.com/support/custom-post-types/" />,
 						},
 					}
-				) }
+				)}
 			</p>
 		</Dialog>
 	);
@@ -120,15 +118,15 @@ EditorPostTypeUnsupported.propTypes = {
 	siteSlug: PropTypes.string,
 };
 
-export default connect( ( state, { type } ) => {
-	const siteId = getSelectedSiteId( state );
-	const postType = type || getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
+export default connect((state, { type }) => {
+	const siteId = getSelectedSiteId(state);
+	const postType = type || getEditedPostValue(state, siteId, getEditorPostId(state), 'type');
 
 	return {
 		type: postType,
-		types: getPostTypes( state, siteId ),
-		typeObject: getPostType( state, siteId, postType ),
-		writePostPath: getEditorNewPostPath( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
+		types: getPostTypes(state, siteId),
+		typeObject: getPostType(state, siteId, postType),
+		writePostPath: getEditorNewPostPath(state, siteId),
+		siteSlug: getSiteSlug(state, siteId),
 	};
-} )( localize( EditorPostTypeUnsupported ) );
+})(localize(EditorPostTypeUnsupported));

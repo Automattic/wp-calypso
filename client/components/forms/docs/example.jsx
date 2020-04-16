@@ -41,11 +41,11 @@ import getCountries from 'state/selectors/get-countries';
 import PhoneInput from 'components/phone-input';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 
-const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
-const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
+const currencyList = entries(CURRENCIES).map(([code]) => ({ code }));
+const visualCurrencyList = entries(CURRENCIES).map(([code, { symbol }]) => ({
 	code,
-	label: `${ code } ${ symbol }`,
-} ) );
+	label: `${code} ${symbol}`,
+}));
 
 class FormFields extends React.PureComponent {
 	static propTypes = {
@@ -60,40 +60,40 @@ class FormFields extends React.PureComponent {
 		currencyInput: { currency: 'USD', value: '' },
 	};
 
-	handleRadioChange = event => {
-		this.setState( { checkedRadio: event.currentTarget.value } );
+	handleRadioChange = (event) => {
+		this.setState({ checkedRadio: event.currentTarget.value });
 	};
 
 	handleToggle = () => {
-		this.setState( { toggled: ! this.state.toggled } );
+		this.setState({ toggled: !this.state.toggled });
 	};
 
 	handleCompactToggle = () => {
-		this.setState( { compactToggled: ! this.state.compactToggled } );
+		this.setState({ compactToggled: !this.state.compactToggled });
 	};
 
 	handleAction = () => {
-		alert( 'Thank you.' );
+		alert('Thank you.');
 	};
 
-	handlePhoneInputChange = data => {
-		this.setState( { phoneInput: data } );
+	handlePhoneInputChange = (data) => {
+		this.setState({ phoneInput: data });
 	};
 
-	handleCurrencyChange = event => {
+	handleCurrencyChange = (event) => {
 		const { value: currency } = event.currentTarget;
 
-		this.setState( state => ( {
+		this.setState((state) => ({
 			currencyInput: { ...state.currencyInput, currency },
-		} ) );
+		}));
 	};
 
-	handlePriceChange = event => {
+	handlePriceChange = (event) => {
 		const { value } = event.currentTarget;
 
-		this.setState( state => ( {
+		this.setState((state) => ({
 			currencyInput: { ...state.currencyInput, value },
-		} ) );
+		}));
 	};
 
 	render() {
@@ -171,7 +171,7 @@ class FormFields extends React.PureComponent {
 						<FormTextInputWithAction
 							placeholder="Enter a name for your site"
 							action="Continue"
-							onAction={ this.handleAction }
+							onAction={this.handleAction}
 						/>
 						<FormSettingExplanation>
 							Action becomes avaliable when filled. Can be triggered by clicking button or pressing
@@ -212,18 +212,18 @@ class FormFields extends React.PureComponent {
 					</FormFieldset>
 
 					<FormLegend>Form Toggle</FormLegend>
-					<FormToggle checked={ this.state.toggled } onChange={ this.handleToggle } />
+					<FormToggle checked={this.state.toggled} onChange={this.handleToggle} />
 					<br />
-					<FormToggle checked={ false } disabled />
+					<FormToggle checked={false} disabled />
 					<br />
-					<FormToggle checked={ true } disabled />
+					<FormToggle checked={true} disabled />
 					<br />
 					<CompactFormToggle
-						checked={ this.state.compactToggled }
-						onChange={ this.handleCompactToggle }
+						checked={this.state.compactToggled}
+						onChange={this.handleCompactToggle}
 					/>
 					<br />
-					<CompactFormToggle checked={ false } disabled />
+					<CompactFormToggle checked={false} disabled />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
@@ -239,7 +239,7 @@ class FormFields extends React.PureComponent {
 						<FormCountrySelect
 							name="country_code"
 							id="country_code"
-							countriesList={ this.props.countriesList }
+							countriesList={this.props.countriesList}
 						/>
 					</FormFieldset>
 
@@ -253,8 +253,8 @@ class FormFields extends React.PureComponent {
 						<FormLabel>
 							<FormRadio
 								value="first"
-								checked={ 'first' === this.state.checkedRadio }
-								onChange={ this.handleRadioChange }
+								checked={'first' === this.state.checkedRadio}
+								onChange={this.handleRadioChange}
 							/>
 							<span>First radio</span>
 						</FormLabel>
@@ -262,8 +262,8 @@ class FormFields extends React.PureComponent {
 						<FormLabel>
 							<FormRadio
 								value="second"
-								checked={ 'second' === this.state.checkedRadio }
-								onChange={ this.handleRadioChange }
+								checked={'second' === this.state.checkedRadio}
+								onChange={this.handleRadioChange}
 							/>
 							<span>Second radio</span>
 						</FormLabel>
@@ -274,10 +274,10 @@ class FormFields extends React.PureComponent {
 						<div>
 							<FormRadioWithThumbnail
 								label="First radio"
-								thumbnail={ { cssClass: 'some-class' } }
+								thumbnail={{ cssClass: 'some-class' }}
 								value="first"
-								checked={ 'first' === this.state.checkedRadio }
-								onChange={ this.handleRadioChange }
+								checked={'first' === this.state.checkedRadio}
+								onChange={this.handleRadioChange}
 							/>
 						</div>
 					</FormFieldset>
@@ -285,15 +285,15 @@ class FormFields extends React.PureComponent {
 					<FormFieldset>
 						<FormLegend>Form Radios Bar</FormLegend>
 						<FormRadiosBarExample
-							isThumbnail={ false }
-							checked={ this.state.checkedRadio }
-							onChange={ this.handleRadioChange }
+							isThumbnail={false}
+							checked={this.state.checkedRadio}
+							onChange={this.handleRadioChange}
 						/>
 						<br />
 						<FormRadiosBarExample
-							isThumbnail={ true }
-							checked={ this.state.checkedRadio }
-							onChange={ this.handleRadioChange }
+							isThumbnail={true}
+							checked={this.state.checkedRadio}
+							onChange={this.handleRadioChange}
 						/>
 					</FormFieldset>
 
@@ -329,17 +329,17 @@ class FormFields extends React.PureComponent {
 						<FormPhoneInput
 							initialCountryCode="US"
 							initialPhoneNumber="8772733049"
-							countriesList={ this.props.countriesList }
+							countriesList={this.props.countriesList}
 						/>
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel>Form Media Phone Input</FormLabel>
 						<PhoneInput
-							countryCode={ this.state.phoneInput.countryCode }
-							value={ this.state.phoneInput.value }
-							countriesList={ this.props.countriesList }
-							onChange={ this.handlePhoneInputChange }
+							countryCode={this.state.phoneInput.countryCode}
+							value={this.state.phoneInput.value}
+							countriesList={this.props.countriesList}
+							onChange={this.handlePhoneInputChange}
 						/>
 					</FormFieldset>
 
@@ -382,11 +382,11 @@ class FormFields extends React.PureComponent {
 						<FormCurrencyInput
 							name="currency_input_editable"
 							id="currency_input_editable"
-							value={ this.state.currencyInput.value }
-							onChange={ this.handlePriceChange }
-							currencySymbolPrefix={ this.state.currencyInput.currency }
-							onCurrencyChange={ this.handleCurrencyChange }
-							currencyList={ currencyList }
+							value={this.state.currencyInput.value}
+							onChange={this.handlePriceChange}
+							currencySymbolPrefix={this.state.currencyInput.currency}
+							onCurrencyChange={this.handleCurrencyChange}
+							currencyList={currencyList}
 							placeholder="Placeholder text..."
 						/>
 					</FormFieldset>
@@ -398,11 +398,11 @@ class FormFields extends React.PureComponent {
 						<FormCurrencyInput
 							name="currency_input_editable"
 							id="currency_input_editable"
-							value={ this.state.currencyInput.value }
-							onChange={ this.handlePriceChange }
-							currencySymbolPrefix={ this.state.currencyInput.currency }
-							onCurrencyChange={ this.handleCurrencyChange }
-							currencyList={ visualCurrencyList }
+							value={this.state.currencyInput.value}
+							onChange={this.handlePriceChange}
+							currencySymbolPrefix={this.state.currencyInput.currency}
+							onCurrencyChange={this.handleCurrencyChange}
+							currencyList={visualCurrencyList}
 							placeholder="Placeholder text..."
 						/>
 					</FormFieldset>
@@ -436,7 +436,7 @@ class FormFields extends React.PureComponent {
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
-						<FormButton type="button" isPrimary={ false }>
+						<FormButton type="button" isPrimary={false}>
 							Secondary Form Button
 						</FormButton>
 					</FormButtonsBar>
@@ -446,9 +446,9 @@ class FormFields extends React.PureComponent {
 	}
 }
 
-const ConnectedFormFields = connect( state => ( {
-	countriesList: getCountries( state, 'sms' ),
-} ) )( FormFields );
+const ConnectedFormFields = connect((state) => ({
+	countriesList: getCountries(state, 'sms'),
+}))(FormFields);
 
 ConnectedFormFields.displayName = 'FormFields';
 

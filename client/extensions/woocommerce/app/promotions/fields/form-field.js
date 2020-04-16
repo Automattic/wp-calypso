@@ -14,7 +14,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-const FormField = ( {
+const FormField = ({
 	fieldName,
 	labelText,
 	explanationText,
@@ -25,48 +25,48 @@ const FormField = ( {
 	value,
 	edit,
 	validationErrorText,
-} ) => {
-	const isValueValid = ! ( 'undefined' === typeof value );
+}) => {
+	const isValueValid = !('undefined' === typeof value);
 	const showChildren = isEnableable ? isValueValid : true;
 
 	const explanation = explanationText && (
-		<FormSettingExplanation id={ fieldName + '-description' }>
-			{ explanationText }
+		<FormSettingExplanation id={fieldName + '-description'}>
+			{explanationText}
 		</FormSettingExplanation>
 	);
 
 	let enableCheckbox = null;
 
-	if ( isEnableable ) {
+	if (isEnableable) {
 		const enableCheckboxChanged = () =>
-			edit( fieldName, isValueValid ? undefined : defaultValue || null );
+			edit(fieldName, isValueValid ? undefined : defaultValue || null);
 
-		enableCheckbox = <FormCheckbox checked={ isValueValid } onChange={ enableCheckboxChanged } />;
+		enableCheckbox = <FormCheckbox checked={isValueValid} onChange={enableCheckboxChanged} />;
 	}
 
-	const childrenClassNames = classNames( 'fields__fieldset-children', {
+	const childrenClassNames = classNames('fields__fieldset-children', {
 		'fields__fieldset-children-enableable': enableCheckbox,
-	} );
+	});
 
-	const formLabel = ( enableCheckbox || labelText ) && (
-		<FormLabel htmlFor={ enableCheckbox ? null : `${ fieldName }-label` } required={ isRequired }>
-			{ enableCheckbox }
-			{ labelText }
+	const formLabel = (enableCheckbox || labelText) && (
+		<FormLabel htmlFor={enableCheckbox ? null : `${fieldName}-label`} required={isRequired}>
+			{enableCheckbox}
+			{labelText}
 		</FormLabel>
 	);
 
 	const validationError = validationErrorText && (
-		<FormInputValidation isError text={ validationErrorText } />
+		<FormInputValidation isError text={validationErrorText} />
 	);
 
 	return (
 		<FormFieldset className="fields__fieldset">
-			{ formLabel }
-			<div className={ childrenClassNames }>
-				{ showChildren && children }
-				{ explanation }
+			{formLabel}
+			<div className={childrenClassNames}>
+				{showChildren && children}
+				{explanation}
 			</div>
-			{ showChildren && validationError }
+			{showChildren && validationError}
 		</FormFieldset>
 	);
 };

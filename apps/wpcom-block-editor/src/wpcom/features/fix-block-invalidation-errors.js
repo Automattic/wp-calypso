@@ -27,12 +27,12 @@ import { isEditorReadyWithBlocks } from '../../utils';
  * @param {object} block The block to check for content.
  * @returns bool True if the block has content. False otherwise.
  */
-function blockHasContent( block ) {
+function blockHasContent(block) {
 	// There is no content if there is no block.
-	if ( ! block ) {
+	if (!block) {
 		return false;
 	}
-	switch ( block.name ) {
+	switch (block.name) {
 		case 'core/paragraph':
 			return block.attributes?.content?.length > 0;
 		case 'core/image':
@@ -46,20 +46,20 @@ function blockHasContent( block ) {
 
 async function fixInvalidBlocks() {
 	const editorHasBlocks = await isEditorReadyWithBlocks();
-	if ( ! editorHasBlocks ) {
+	if (!editorHasBlocks) {
 		return;
 	}
 
 	// If any blocks have validation issues auto-fix them for now, until core is less strict.
-	select( 'core/editor' )
+	select('core/editor')
 		.getBlocks()
-		.filter( block => ! block.isValid )
-		.forEach( ( { clientId, name, attributes, innerBlocks } ) => {
-			const replacement = createBlock( name, attributes, innerBlocks );
-			if ( blockHasContent( replacement ) ) {
-				dispatch( 'core/editor' ).replaceBlock( clientId, replacement );
+		.filter((block) => !block.isValid)
+		.forEach(({ clientId, name, attributes, innerBlocks }) => {
+			const replacement = createBlock(name, attributes, innerBlocks);
+			if (blockHasContent(replacement)) {
+				dispatch('core/editor').replaceBlock(clientId, replacement);
 			}
-		} );
+		});
 }
 
 fixInvalidBlocks();

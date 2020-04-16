@@ -8,7 +8,7 @@ import { find } from 'lodash';
  */
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 
-export function createPromotionFromProduct( product ) {
+export function createPromotionFromProduct(product) {
 	const salePrice = product.sale_price;
 	const startDate = product.date_on_sale_from || undefined;
 	const endDate = product.date_on_sale_to || undefined;
@@ -17,9 +17,9 @@ export function createPromotionFromProduct( product ) {
 
 	return {
 		id: 'p' + product.id,
-		name: createProductName( product ),
+		name: createProductName(product),
 		type: 'product_sale',
-		appliesTo: { productIds: [ product.id ] },
+		appliesTo: { productIds: [product.id] },
 		salePrice,
 		startDate,
 		endDate,
@@ -28,26 +28,26 @@ export function createPromotionFromProduct( product ) {
 	};
 }
 
-function createProductName( product ) {
-	if ( product.productId ) {
+function createProductName(product) {
+	if (product.productId) {
 		// It's a variation, append the options.
-		return product.name + ' (' + formattedVariationName( product ) + ')';
+		return product.name + ' (' + formattedVariationName(product) + ')';
 	}
 
 	// Just a normal product.
 	return product.name;
 }
 
-export function createProductUpdateFromPromotion( promotion ) {
+export function createProductUpdateFromPromotion(promotion) {
 	const { productIds } = promotion.appliesTo || {};
-	const id = productIds && productIds[ 0 ];
+	const id = productIds && productIds[0];
 
 	// If dates are null, that means they were enabled but not selected, so use today as default.
 	const startDate = null === promotion.startDate ? new Date().toISOString() : promotion.startDate;
 	const endDate = null === promotion.endDate ? new Date().toISOString() : promotion.endDate;
 
-	if ( ! id ) {
-		throw new Error( 'Cannot create product from promotion, product id not found.' );
+	if (!id) {
+		throw new Error('Cannot create product from promotion, product id not found.');
 	}
 
 	return {
@@ -58,8 +58,8 @@ export function createProductUpdateFromPromotion( promotion ) {
 	};
 }
 
-export function createPromotionFromCoupon( coupon ) {
-	const promotionTypeMeta = find( coupon.meta_data, { key: 'promotion_type' } );
+export function createPromotionFromCoupon(coupon) {
+	const promotionTypeMeta = find(coupon.meta_data, { key: 'promotion_type' });
 	const promotionType = promotionTypeMeta ? promotionTypeMeta.value : coupon.discount_type;
 	const couponCode = coupon.code;
 	const startDate = coupon.date_created;
@@ -75,7 +75,7 @@ export function createPromotionFromCoupon( coupon ) {
 		id: 'c' + coupon.id,
 		name: coupon.code,
 		type: promotionType,
-		appliesTo: calculateCouponAppliesTo( coupon ),
+		appliesTo: calculateCouponAppliesTo(coupon),
 		couponCode,
 		startDate,
 		endDate,
@@ -88,7 +88,7 @@ export function createPromotionFromCoupon( coupon ) {
 		couponId: coupon.id,
 	};
 
-	switch ( coupon.discount_type ) {
+	switch (coupon.discount_type) {
 		case 'percent':
 			promotion.percentDiscount = coupon.amount;
 			break;
@@ -101,23 +101,23 @@ export function createPromotionFromCoupon( coupon ) {
 	return promotion;
 }
 
-export function createCouponUpdateFromPromotion( promotion ) {
+export function createCouponUpdateFromPromotion(promotion) {
 	const { appliesTo } = promotion;
 
-	if ( ! promotion.couponCode ) {
-		throw new Error( 'Cannot create coupon from promotion with nonexistant couponCode' );
+	if (!promotion.couponCode) {
+		throw new Error('Cannot create coupon from promotion with nonexistant couponCode');
 	}
 
 	let amount = undefined;
 	let freeShipping = promotion.freeShipping;
 	let discountType = promotion.type;
-	const meta = [ { key: 'promotion_type', value: promotion.type } ];
+	const meta = [{ key: 'promotion_type', value: promotion.type }];
 
-	let productIds = ( appliesTo && appliesTo.productIds ) || undefined;
-	let productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
+	let productIds = (appliesTo && appliesTo.productIds) || undefined;
+	let productCategoryIds = (appliesTo && appliesTo.productCategoryIds) || undefined;
 
 	// If 'all' was selected, pass in empty arrays to reset product ids and category ids
-	if ( appliesTo && appliesTo.all ) {
+	if (appliesTo && appliesTo.all) {
 		productIds = [];
 		productCategoryIds = [];
 	}
@@ -125,7 +125,7 @@ export function createCouponUpdateFromPromotion( promotion ) {
 	// If end date is null, that means it was enabled but not selected, so use today as default.
 	const endDate = null === promotion.endDate ? new Date().toISOString() : promotion.endDate;
 
-	switch ( promotion.type ) {
+	switch (promotion.type) {
 		case 'percent':
 			amount = promotion.percentDiscount;
 			break;
@@ -157,18 +157,18 @@ export function createCouponUpdateFromPromotion( promotion ) {
 	};
 }
 
-function calculateCouponAppliesTo( coupon ) {
+function calculateCouponAppliesTo(coupon) {
 	const { product_ids, product_categories } = coupon;
 
 	// Assume all are selected unless we find something more specific.
 	const appliesTo = { all: true };
 
-	if ( product_ids && product_ids.length ) {
+	if (product_ids && product_ids.length) {
 		appliesTo.productIds = product_ids;
 		appliesTo.all = false;
 	}
 
-	if ( product_categories && product_categories.length ) {
+	if (product_categories && product_categories.length) {
 		appliesTo.productCategoryIds = product_categories;
 		appliesTo.all = false;
 	}
@@ -176,42 +176,42 @@ function calculateCouponAppliesTo( coupon ) {
 	return appliesTo;
 }
 
-export function isCategoryExplicitlySelected( promotion, category ) {
-	return Boolean( find( promotion.appliesTo.productCategoryIds, id => id === category.id ) );
+export function isCategoryExplicitlySelected(promotion, category) {
+	return Boolean(find(promotion.appliesTo.productCategoryIds, (id) => id === category.id));
 }
 
-export function isProductExplicitlySelected( promotion, product ) {
-	return Boolean( find( promotion.appliesTo.productIds, id => id === product.id ) );
+export function isProductExplicitlySelected(promotion, product) {
+	return Boolean(find(promotion.appliesTo.productIds, (id) => id === product.id));
 }
 
-export function isCategorySelected( promotion, category ) {
+export function isCategorySelected(promotion, category) {
 	const { appliesTo } = promotion;
 
-	if ( appliesTo.all ) {
+	if (appliesTo.all) {
 		return true;
 	}
 
-	if ( isCategoryExplicitlySelected( promotion, category ) ) {
+	if (isCategoryExplicitlySelected(promotion, category)) {
 		return true;
 	}
 
 	return false;
 }
 
-export function isProductSelected( promotion, product ) {
+export function isProductSelected(promotion, product) {
 	const { appliesTo } = promotion;
 
-	if ( appliesTo.all ) {
+	if (appliesTo.all) {
 		return true;
 	}
 
-	if ( isProductExplicitlySelected( promotion, product ) ) {
+	if (isProductExplicitlySelected(promotion, product)) {
 		return true;
 	}
 
-	if ( appliesTo.productCategoryIds ) {
-		for ( const category of product.categories ) {
-			if ( isCategoryExplicitlySelected( promotion, category ) ) {
+	if (appliesTo.productCategoryIds) {
+		for (const category of product.categories) {
+			if (isCategoryExplicitlySelected(promotion, category)) {
 				return true;
 			}
 		}

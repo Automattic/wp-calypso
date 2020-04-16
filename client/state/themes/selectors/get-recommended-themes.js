@@ -12,6 +12,6 @@ const emptyList = [];
  *
  * @returns {Array} the list of recommended themes
  */
-export function getRecommendedThemes( state ) {
+export function getRecommendedThemes(state) {
 	return state.themes.recommendedThemes.themes || emptyList;
 }

@@ -15,10 +15,10 @@ import { requestPostComments } from 'state/comments/actions';
 
 class PostComments extends React.Component {
 	static propTypes = {
-		post: PropTypes.shape( {
+		post: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
 			site_ID: PropTypes.number.isRequired,
-		} ).isRequired,
+		}).isRequired,
 	};
 
 	static defaultProps = {
@@ -29,34 +29,34 @@ class PostComments extends React.Component {
 		const { siteId, postId } = this.props;
 
 		// Request page of comments
-		this.props.requestPostComments( {
+		this.props.requestPostComments({
 			siteId,
 			postId,
 			isPoll: true,
 			direction: 'after',
-		} );
+		});
 	};
 
 	render() {
 		const { siteId, postId, shouldPollForNewComments } = this.props;
 
-		if ( ! siteId || ! postId ) {
+		if (!siteId || !postId) {
 			return null;
 		}
 
 		return (
 			<Fragment>
-				{ shouldPollForNewComments && (
-					<Interval onTick={ this.pollForNewComments } period={ EVERY_MINUTE } />
-				) }
-				<PostCommentsList { ...this.props } />
+				{shouldPollForNewComments && (
+					<Interval onTick={this.pollForNewComments} period={EVERY_MINUTE} />
+				)}
+				<PostCommentsList {...this.props} />
 			</Fragment>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const siteId = ownProps.post.site_ID;
 		const postId = ownProps.post.ID;
 
@@ -68,4 +68,4 @@ export default connect(
 	{
 		requestPostComments,
 	}
-)( localize( PostComments ) );
+)(localize(PostComments));

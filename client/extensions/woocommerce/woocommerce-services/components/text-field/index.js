@@ -13,7 +13,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FieldError from '../field-error';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-const TextField = ( {
+const TextField = ({
 	id,
 	title,
 	description,
@@ -22,22 +22,22 @@ const TextField = ( {
 	updateValue,
 	error,
 	className,
-} ) => {
-	const handleChangeEvent = event => updateValue( event.target.value );
+}) => {
+	const handleChangeEvent = (event) => updateValue(event.target.value);
 
 	return (
-		<FormFieldset className={ className }>
-			<FormLabel htmlFor={ id }>{ title }</FormLabel>
+		<FormFieldset className={className}>
+			<FormLabel htmlFor={id}>{title}</FormLabel>
 			<FormTextInput
-				id={ id }
-				name={ id }
-				placeholder={ placeholder }
-				value={ value }
-				onChange={ handleChangeEvent }
-				isError={ Boolean( error ) }
+				id={id}
+				name={id}
+				placeholder={placeholder}
+				value={value}
+				onChange={handleChangeEvent}
+				isError={Boolean(error)}
 			/>
-			{ error && typeof error === 'string' && <FieldError text={ error } /> }
-			{ ! error && description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
+			{error && typeof error === 'string' && <FieldError text={error} />}
+			{!error && description && <FormSettingExplanation>{description}</FormSettingExplanation>}
 		</FormFieldset>
 	);
 };
@@ -48,7 +48,7 @@ TextField.propTypes = {
 	description: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	updateValue: PropTypes.func,
-	error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+	error: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 	className: PropTypes.string,
 };
 

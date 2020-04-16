@@ -71,8 +71,8 @@ const darkColorSchemeLogo = (
 	</g>
 );
 
-function JetpackPressableLogo( { darkColorScheme } ) {
-	if ( darkColorScheme ) {
+function JetpackPressableLogo({ darkColorScheme }) {
+	if (darkColorScheme) {
 		return darkColorSchemeLogo;
 	}
 

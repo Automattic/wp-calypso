@@ -47,49 +47,49 @@ class ReaderFeaturedVideo extends React.Component {
 		className: '',
 	};
 
-	setVideoSizingStrategy = videoEmbed => {
-		let sizingFunction = constant( {} );
-		if ( videoEmbed ) {
-			const maxWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
-			const embedSize = EmbedHelper.getEmbedSizingFunction( videoEmbed );
+	setVideoSizingStrategy = (videoEmbed) => {
+		let sizingFunction = constant({});
+		if (videoEmbed) {
+			const maxWidth = ReactDom.findDOMNode(this).parentNode.offsetWidth;
+			const embedSize = EmbedHelper.getEmbedSizingFunction(videoEmbed);
 
-			sizingFunction = ( available = maxWidth ) => embedSize( available );
+			sizingFunction = (available = maxWidth) => embedSize(available);
 		}
 		this.getEmbedSize = sizingFunction;
 	};
 
 	updateVideoSize = () => {
-		if ( this.videoEmbedRef ) {
-			const iframe = ReactDom.findDOMNode( this.videoEmbedRef ).querySelector( 'iframe' );
-			const availableWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
+		if (this.videoEmbedRef) {
+			const iframe = ReactDom.findDOMNode(this.videoEmbedRef).querySelector('iframe');
+			const availableWidth = ReactDom.findDOMNode(this).parentNode.offsetWidth;
 
-			Object.assign( iframe.style, this.getEmbedSize( availableWidth ) );
+			Object.assign(iframe.style, this.getEmbedSize(availableWidth));
 		}
 	};
 
-	throttledUpdateVideoSize = throttle( this.updateVideoSize, 100 );
+	throttledUpdateVideoSize = throttle(this.updateVideoSize, 100);
 
-	handleThumbnailClick = e => {
-		if ( this.props.allowPlaying ) {
+	handleThumbnailClick = (e) => {
+		if (this.props.allowPlaying) {
 			e.preventDefault();
 			this.props.onThumbnailClick();
 		}
 	};
 
-	setVideoEmbedRef = c => {
+	setVideoEmbedRef = (c) => {
 		this.videoEmbedRef = c;
-		this.setVideoSizingStrategy( this.props.videoEmbed );
+		this.setVideoSizingStrategy(this.props.videoEmbed);
 	};
 
 	componentDidMount() {
-		if ( this.props.allowPlaying && typeof window !== 'undefined' ) {
-			window.addEventListener( 'resize', this.throttledUpdateVideoSize );
+		if (this.props.allowPlaying && typeof window !== 'undefined') {
+			window.addEventListener('resize', this.throttledUpdateVideoSize);
 		}
 	}
 
 	componentWillUnmount() {
-		if ( this.props.allowPlaying && typeof window !== 'undefined' ) {
-			window.removeEventListener( 'resize', this.throttledUpdateVideoSize );
+		if (this.props.allowPlaying && typeof window !== 'undefined') {
+			window.removeEventListener('resize', this.throttledUpdateVideoSize);
 		}
 	}
 
@@ -109,50 +109,50 @@ class ReaderFeaturedVideo extends React.Component {
 			isExpanded,
 		} = this.props;
 
-		if ( ! isExpanded && thumbnailUrl ) {
+		if (!isExpanded && thumbnailUrl) {
 			return (
 				<ReaderFeaturedImage
-					imageUrl={ thumbnailUrl }
-					onClick={ this.handleThumbnailClick }
-					className={ className }
-					href={ href }
+					imageUrl={thumbnailUrl}
+					onClick={this.handleThumbnailClick}
+					className={className}
+					href={href}
 				>
-					{ allowPlaying && (
+					{allowPlaying && (
 						<img
 							className="reader-featured-video__play-icon"
-							src={ playIconImage }
-							title={ translate( 'Play Video' ) }
-							alt={ translate( 'Play button' ) }
+							src={playIconImage}
+							title={translate('Play Video')}
+							alt={translate('Play button')}
 						/>
-					) }
+					)}
 				</ReaderFeaturedImage>
 			);
 		}
 
 		// if we can't retrieve a thumbnail that means there was an issue
 		// with the embed and we shouldn't display it
-		const showEmbed = !! thumbnailUrl;
-		const classNames = classnames( className, 'reader-featured-video' );
+		const showEmbed = !!thumbnailUrl;
+		const classNames = classnames(className, 'reader-featured-video');
 
 		/* eslint-disable react/no-danger */
 		return (
-			<div className={ classNames }>
-				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
-				{ showEmbed && (
+			<div className={classNames}>
+				<QueryReaderThumbnail embedUrl={this.props.videoEmbed.src} />
+				{showEmbed && (
 					<div
-						ref={ this.setVideoEmbedRef }
+						ref={this.setVideoEmbedRef}
 						className="reader-featured-video__video"
-						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
+						dangerouslySetInnerHTML={{ __html: thumbnailUrl ? autoplayIframe : iframe }}
 					/>
-				) }
+				)}
 			</div>
 		);
 		/* eslint-enable-line react/no-danger */
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	thumbnailUrl: getThumbnailForIframe( state, ownProps.videoEmbed.src ),
-} );
+const mapStateToProps = (state, ownProps) => ({
+	thumbnailUrl: getThumbnailForIframe(state, ownProps.videoEmbed.src),
+});
 
-export default connect( mapStateToProps )( localize( ReaderFeaturedVideo ) );
+export default connect(mapStateToProps)(localize(ReaderFeaturedVideo));

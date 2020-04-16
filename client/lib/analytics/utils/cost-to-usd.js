@@ -180,8 +180,8 @@ const EXCHANGE_RATES = {
  * @param {string} currency - `USD`, `JPY`, etc
  * @returns {boolean} Whether there's an exchange rate for the currency
  */
-function isSupportedCurrency( currency ) {
-	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
+function isSupportedCurrency(currency) {
+	return Object.keys(EXCHANGE_RATES).indexOf(currency) !== -1;
 }
 
 /**
@@ -193,10 +193,10 @@ function isSupportedCurrency( currency ) {
  * @param {string} currency - The currency such as `USD`, `JPY`, etc
  * @returns {string} Or null if the currency is not supported
  */
-export default function costToUSD( cost, currency ) {
-	if ( ! isSupportedCurrency( currency ) ) {
+export default function costToUSD(cost, currency) {
+	if (!isSupportedCurrency(currency)) {
 		return null;
 	}
 
-	return ( cost / EXCHANGE_RATES[ currency ] ).toFixed( 3 );
+	return (cost / EXCHANGE_RATES[currency]).toFixed(3);
 }

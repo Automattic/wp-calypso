@@ -12,6 +12,6 @@ import 'state/themes/init';
  * @param  {number}  themeId Theme ID
  * @returns {boolean}         Whether theme is in WP.org theme directory
  */
-export function isWporgTheme( state, themeId ) {
-	return !! getTheme( state, 'wporg', themeId );
+export function isWporgTheme(state, themeId) {
+	return !!getTheme(state, 'wporg', themeId);
 }

@@ -25,7 +25,7 @@ export interface MediaFileProps extends ProxiedImageProps {
 	dispatch: any;
 }
 
-const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
+const MediaFile: React.FC<MediaFileProps> = function MediaFile({
 	src,
 	query,
 	filePath,
@@ -37,23 +37,23 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	component: Component,
 	proxiedComponent,
 	...rest
-} ) {
-	if ( useProxy ) {
+}) {
+	if (useProxy) {
 		return (
 			<ProxiedImage
-				siteSlug={ siteSlug }
-				filePath={ filePath }
-				query={ query }
-				component={ proxiedComponent || Component }
-				placeholder={ placeholder }
-				maxSize={ maxSize }
-				{ ...rest }
+				siteSlug={siteSlug}
+				filePath={filePath}
+				query={query}
+				component={proxiedComponent || Component}
+				placeholder={placeholder}
+				maxSize={maxSize}
+				{...rest}
 			/>
 		);
 	}
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
-	return <Component src={ src } { ...rest } />;
+	return <Component src={src} {...rest} />;
 };
 
 MediaFile.defaultProps = {
@@ -61,13 +61,13 @@ MediaFile.defaultProps = {
 	component: 'img',
 };
 
-export default connect( ( state, { src }: Pick< MediaFileProps, 'src' > ) => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state ) as string;
-	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );
-	const isPrivate = !! isPrivateSite( state, siteId );
-	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
-	const useProxy = ( isAtomic && isPrivate && filePath && isRelativeToSiteRoot ) as boolean;
+export default connect((state, { src }: Pick<MediaFileProps, 'src'>) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSelectedSiteSlug(state) as string;
+	const isAtomic = !!isSiteAutomatedTransfer(state, siteId as number);
+	const isPrivate = !!isPrivateSite(state, siteId);
+	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig(src, siteSlug);
+	const useProxy = (isAtomic && isPrivate && filePath && isRelativeToSiteRoot) as boolean;
 
 	return {
 		query,
@@ -75,4 +75,4 @@ export default connect( ( state, { src }: Pick< MediaFileProps, 'src' > ) => {
 		useProxy,
 		filePath,
 	};
-} )( MediaFile );
+})(MediaFile);

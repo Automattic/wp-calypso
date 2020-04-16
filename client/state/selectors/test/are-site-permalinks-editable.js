@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
 
-describe( 'areSitePermalinksEditable()', () => {
-	test( 'should return false if site ID is not tracked', () => {
+describe('areSitePermalinksEditable()', () => {
+	test('should return false if site ID is not tracked', () => {
 		const permalinksEditable = areSitePermalinksEditable(
 			{
 				sites: {
@@ -19,10 +19,10 @@ describe( 'areSitePermalinksEditable()', () => {
 			77203199
 		);
 
-		expect( permalinksEditable ).to.be.false;
-	} );
+		expect(permalinksEditable).to.be.false;
+	});
 
-	test( 'should return true if the permalinks structure contains postname', () => {
+	test('should return true if the permalinks structure contains postname', () => {
 		const permalinksEditable = areSitePermalinksEditable(
 			{
 				sites: {
@@ -39,10 +39,10 @@ describe( 'areSitePermalinksEditable()', () => {
 			77203199
 		);
 
-		expect( permalinksEditable ).to.be.true;
-	} );
+		expect(permalinksEditable).to.be.true;
+	});
 
-	test( 'should return false if the permalinks structure does not contain postname', () => {
+	test('should return false if the permalinks structure does not contain postname', () => {
 		const permalinksEditable = areSitePermalinksEditable(
 			{
 				sites: {
@@ -59,6 +59,6 @@ describe( 'areSitePermalinksEditable()', () => {
 			77203199
 		);
 
-		expect( permalinksEditable ).to.be.false;
-	} );
-} );
+		expect(permalinksEditable).to.be.false;
+	});
+});

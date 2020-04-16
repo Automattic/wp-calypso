@@ -19,27 +19,27 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 	};
 
 	render() {
-		const blogStickersOffered = [ 'dont-recommend', 'broken-in-reader', 'a8c-test-blog' ];
+		const blogStickersOffered = ['dont-recommend', 'broken-in-reader', 'a8c-test-blog'];
 		const { blogId, stickers } = this.props;
 
 		return (
 			<div className="reader-post-options-menu__blog-stickers">
-				<QueryBlogStickers blogId={ blogId } />
-				{ map( blogStickersOffered, blogStickerName => (
+				<QueryBlogStickers blogId={blogId} />
+				{map(blogStickersOffered, (blogStickerName) => (
 					<ReaderPostOptionsMenuBlogStickerMenuItem
-						key={ blogStickerName }
-						blogId={ blogId }
-						blogStickerName={ blogStickerName }
-						hasSticker={ includes( stickers, blogStickerName ) }
+						key={blogStickerName}
+						blogId={blogId}
+						blogStickerName={blogStickerName}
+						hasSticker={includes(stickers, blogStickerName)}
 					>
-						{ blogStickerName }
+						{blogStickerName}
 					</ReaderPostOptionsMenuBlogStickerMenuItem>
-				) ) }
+				))}
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { blogId } ) => ( {
-	stickers: getBlogStickers( state, blogId ),
-} ) )( ReaderPostOptionsMenuBlogStickers );
+export default connect((state, { blogId }) => ({
+	stickers: getBlogStickers(state, blogId),
+}))(ReaderPostOptionsMenuBlogStickers);

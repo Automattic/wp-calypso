@@ -22,14 +22,14 @@ import QueryTheme from 'components/data/query-theme';
  */
 import './style.scss';
 
-const getContentLink = ( state, siteId, page ) => {
+const getContentLink = (state, siteId, page) => {
 	let contentLinkURL = page.URL;
 	let contentLinkTarget = '_blank';
 
-	if ( canCurrentUser( state, siteId, 'edit_pages' ) && page.status !== 'trash' ) {
-		contentLinkURL = getEditorUrl( state, siteId, page.ID, 'page' );
+	if (canCurrentUser(state, siteId, 'edit_pages') && page.status !== 'trash') {
+		contentLinkURL = getEditorUrl(state, siteId, page.ID, 'page');
 		contentLinkTarget = null;
-	} else if ( page.status === 'trash' ) {
+	} else if (page.status === 'trash') {
 		contentLinkURL = null;
 	}
 
@@ -38,7 +38,7 @@ const getContentLink = ( state, siteId, page ) => {
 
 const ICON_SIZE = 12;
 
-function PageCardInfo( {
+function PageCardInfo({
 	page,
 	showTimestamp,
 	showPublishedStatus,
@@ -48,57 +48,57 @@ function PageCardInfo( {
 	contentLink,
 	theme,
 	themeId,
-} ) {
+}) {
 	const translate = useTranslate();
 
 	return (
 		<div className="page-card-info">
-			{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
-			{ siteUrl && <div className="page-card-info__site-url">{ siteUrl }</div> }
+			{themeId && <QueryTheme siteId="wpcom" themeId={themeId} />}
+			{siteUrl && <div className="page-card-info__site-url">{siteUrl}</div>}
 			<div>
-				{ showTimestamp && (
+				{showTimestamp && (
 					<PostRelativeTimeStatus
-						showPublishedStatus={ showPublishedStatus }
-						post={ page }
-						link={ contentLink.contentLinkURL }
-						target={ contentLink.contentLinkTarget }
-						gridiconSize={ ICON_SIZE }
-						includeBasicStatus={ true }
+						showPublishedStatus={showPublishedStatus}
+						post={page}
+						link={contentLink.contentLinkURL}
+						target={contentLink.contentLinkTarget}
+						gridiconSize={ICON_SIZE}
+						includeBasicStatus={true}
 					/>
-				) }
-				{ isFront && (
+				)}
+				{isFront && (
 					<span className="page-card-info__badge">
-						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__badge-icon" />
-						<span className="page-card-info__badge-text">{ translate( 'Homepage' ) }</span>
+						<Gridicon icon="house" size={ICON_SIZE} className="page-card-info__badge-icon" />
+						<span className="page-card-info__badge-text">{translate('Homepage')}</span>
 					</span>
-				) }
-				{ isPosts && (
+				)}
+				{isPosts && (
 					<span className="page-card-info__badge">
-						<Gridicon icon="posts" size={ ICON_SIZE } className="page-card-info__badge-icon" />
-						<span className="page-card-info__badge-text">{ translate( 'Your latest posts' ) }</span>
+						<Gridicon icon="posts" size={ICON_SIZE} className="page-card-info__badge-icon" />
+						<span className="page-card-info__badge-text">{translate('Your latest posts')}</span>
 					</span>
-				) }
-				{ ! isFront && theme && (
+				)}
+				{!isFront && theme && (
 					<span className="page-card-info__item">
-						<Gridicon icon="themes" size={ ICON_SIZE } className="page-card-info__item-icon" />
+						<Gridicon icon="themes" size={ICON_SIZE} className="page-card-info__item-icon" />
 						<span className="page-card-info__item-text">
-							{ translate( '%(title)s Theme', { args: { title: theme.name } } ) }
+							{translate('%(title)s Theme', { args: { title: theme.name } })}
 						</span>
 					</span>
-				) }
+				)}
 			</div>
 		</div>
 	);
 }
 
-export default connect( ( state, props ) => {
-	const themeId = PostMetadata.homepageTemplate( props.page );
+export default connect((state, props) => {
+	const themeId = PostMetadata.homepageTemplate(props.page);
 
 	return {
-		isFront: isFrontPage( state, props.page.site_ID, props.page.ID ),
-		isPosts: isPostsPage( state, props.page.site_ID, props.page.ID ),
-		theme: themeId && getTheme( state, 'wpcom', themeId ),
+		isFront: isFrontPage(state, props.page.site_ID, props.page.ID),
+		isPosts: isPostsPage(state, props.page.site_ID, props.page.ID),
+		theme: themeId && getTheme(state, 'wpcom', themeId),
 		themeId,
-		contentLink: getContentLink( state, props.page.site_ID, props.page ),
+		contentLink: getContentLink(state, props.page.site_ID, props.page),
 	};
-} )( PageCardInfo );
+})(PageCardInfo);

@@ -10,17 +10,17 @@ import { mapValues } from 'lodash';
  * @param  {object} settings Raw settings
  * @returns {object} Normalized settings
  */
-export const normalizeSettings = settings => {
-	return mapValues( settings, ( setting, key ) => {
-		switch ( key ) {
+export const normalizeSettings = (settings) => {
+	return mapValues(settings, (setting, key) => {
+		switch (key) {
 			case 'cache_acceptable_files':
 			case 'cache_rejected_uri':
 			case 'cache_rejected_user_agent':
-				return setting.join( '\n' );
+				return setting.join('\n');
 			default:
 				return setting;
 		}
-	} );
+	});
 };
 
 /**
@@ -29,13 +29,13 @@ export const normalizeSettings = settings => {
  * @param  {object} settings Normalized settings
  * @returns {object} Sanitized settings
  */
-export const sanitizeSettings = settings => {
-	return mapValues( settings, ( setting, key ) => {
-		switch ( key ) {
+export const sanitizeSettings = (settings) => {
+	return mapValues(settings, (setting, key) => {
+		switch (key) {
 			case 'cache_acceptable_files':
 			case 'cache_rejected_uri':
 			case 'cache_rejected_user_agent':
-				return setting.split( '\n' );
+				return setting.split('\n');
 			// Don't include read-only fields when saving.
 			case 'cache_mobile_browsers':
 			case 'cache_mobile_prefixes':
@@ -50,5 +50,5 @@ export const sanitizeSettings = settings => {
 			default:
 				return setting;
 		}
-	} );
+	});
 };

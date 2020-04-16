@@ -1,7 +1,7 @@
-const jscodeshiftArgs = [ '--extensions=js,jsx' ];
+const jscodeshiftArgs = ['--extensions=js,jsx'];
 
 // Used primarily by 5to6-codemod transformations
-const recastArgs = [ '--useTabs=true', '--arrayBracketSpacing=true' ];
+const recastArgs = ['--useTabs=true', '--arrayBracketSpacing=true'];
 
 const recastOptions = {
 	arrayBracketSpacing: true,
@@ -22,35 +22,35 @@ const commonArgs = {
 	],
 	react: [
 		// Recast options via react-codemod
-		`--printOptions=${ JSON.stringify( recastOptions ) }`,
+		`--printOptions=${JSON.stringify(recastOptions)}`,
 	],
 };
 
 const codemodArgs = {
 	'commonjs-exports': [
-		...commonArgs[ '5to6' ],
-		`--transform=${ require.resolve( '5to6-codemod/transforms/exports.js' ) }`,
+		...commonArgs['5to6'],
+		`--transform=${require.resolve('5to6-codemod/transforms/exports.js')}`,
 	],
 
 	'commonjs-imports': [
-		...commonArgs[ '5to6' ],
-		`--transform=${ require.resolve( '5to6-codemod/transforms/cjs.js' ) }`,
+		...commonArgs['5to6'],
+		`--transform=${require.resolve('5to6-codemod/transforms/cjs.js')}`,
 	],
 
 	'commonjs-imports-hoist': [
-		...commonArgs[ '5to6' ],
-		`--transform=${ require.resolve( '5to6-codemod/transforms/cjs.js' ) }`,
+		...commonArgs['5to6'],
+		`--transform=${require.resolve('5to6-codemod/transforms/cjs.js')}`,
 		'--hoist=true',
 	],
 
 	'named-exports-from-default': [
-		...commonArgs[ '5to6' ],
-		`--transform=${ require.resolve( '5to6-codemod/transforms/named-export-generation.js' ) }`,
+		...commonArgs['5to6'],
+		`--transform=${require.resolve('5to6-codemod/transforms/named-export-generation.js')}`,
 	],
 
 	'react-create-class': [
 		...commonArgs.react,
-		`--transform=${ require.resolve( 'react-codemod/transforms/class.js' ) }`,
+		`--transform=${require.resolve('react-codemod/transforms/class.js')}`,
 
 		// react-codemod options
 		'--pure-component=true',
@@ -59,9 +59,7 @@ const codemodArgs = {
 
 	'react-proptypes': [
 		...commonArgs.react,
-		`--transform=${ require.resolve(
-			'react-codemod/transforms/React-PropTypes-to-prop-types.js'
-		) }`,
+		`--transform=${require.resolve('react-codemod/transforms/React-PropTypes-to-prop-types.js')}`,
 	],
 };
 

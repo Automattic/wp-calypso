@@ -16,8 +16,8 @@ import { LOADING } from 'woocommerce/state/constants';
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {Array} Email settings.
  */
-export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email' ], null );
+export const getEmailSettings = (state, siteId = getSelectedSiteId(state)) => {
+	return get(state, ['extensions', 'woocommerce', 'sites', siteId, 'settings', 'email'], null);
 };
 
 /**
@@ -25,8 +25,8 @@ export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) =
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the email settings have been successfully loaded from the server
  */
-export const areEmailSettingsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isObject( getEmailSettings( state, siteId ) );
+export const areEmailSettingsLoaded = (state, siteId = getSelectedSiteId(state)) => {
+	return isObject(getEmailSettings(state, siteId));
 };
 
 /**
@@ -34,15 +34,15 @@ export const areEmailSettingsLoaded = ( state, siteId = getSelectedSiteId( state
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the email settings are currently being retrieved from the server
  */
-export const areEmailSettingsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getEmailSettings( state, siteId );
+export const areEmailSettingsLoading = (state, siteId = getSelectedSiteId(state)) => {
+	return LOADING === getEmailSettings(state, siteId);
 };
 
-const getField = field => {
-	return ( state, siteId = getSelectedSiteId( state ) ) => {
+const getField = (field) => {
+	return (state, siteId = getSelectedSiteId(state)) => {
 		return get(
 			state,
-			[ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email', field ],
+			['extensions', 'woocommerce', 'sites', siteId, 'settings', 'email', field],
 			false
 		);
 	};
@@ -55,7 +55,7 @@ const getField = field => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether user requested save action.
  */
-export const emailSettingsSaveRequest = getField( 'save' );
+export const emailSettingsSaveRequest = getField('save');
 
 /**
  * Returns true if email settings are being saved.
@@ -64,7 +64,7 @@ export const emailSettingsSaveRequest = getField( 'save' );
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether user requested save action.
  */
-export const isSavingEmailSettings = getField( 'isSaving' );
+export const isSavingEmailSettings = getField('isSaving');
 
 /**
  * Returns true if email settings are being saved.
@@ -73,4 +73,4 @@ export const isSavingEmailSettings = getField( 'isSaving' );
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether user requested save action.
  */
-export const emailSettingsSubmitSettingsError = getField( 'error' );
+export const emailSettingsSubmitSettingsError = getField('error');

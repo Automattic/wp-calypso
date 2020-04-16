@@ -13,15 +13,15 @@ interface Props {
 	message: i18nCalypso.TranslateResult;
 }
 
-const RewindFlowCheckYourEmail: FunctionComponent< Props > = ( { message } ) => {
+const RewindFlowCheckYourEmail: FunctionComponent<Props> = ({ message }) => {
 	const translate = useTranslate();
 
 	return (
 		<Notice
 			gridicon="mail"
-			type={ RewindFlowNoticeLevel.REMINDER }
-			message={ message }
-			title={ translate( 'Check your email' ) }
+			type={RewindFlowNoticeLevel.REMINDER}
+			message={message}
+			title={translate('Check your email')}
 		/>
 	);
 };

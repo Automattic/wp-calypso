@@ -25,7 +25,7 @@ import {
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const MoveItemDialog = props => {
+const MoveItemDialog = (props) => {
 	const {
 		site,
 		siteId,
@@ -39,110 +39,110 @@ const MoveItemDialog = props => {
 		translate,
 	} = props;
 
-	if ( -1 === movedItemIndex || ! showItemMoveDialog ) {
+	if (-1 === movedItemIndex || !showItemMoveDialog) {
 		return null;
 	}
 
-	const renderRadioButton = ( pckgId, label ) => {
-		const onChange = () => props.setTargetPackage( orderId, siteId, pckgId );
+	const renderRadioButton = (pckgId, label) => {
+		const onChange = () => props.setTargetPackage(orderId, siteId, pckgId);
 		return (
-			<FormLabel key={ pckgId } className="packages-step__dialog-package-option">
-				<FormRadio checked={ pckgId === targetPackageId } onChange={ onChange } />
-				{ label }
+			<FormLabel key={pckgId} className="packages-step__dialog-package-option">
+				<FormRadio checked={pckgId === targetPackageId} onChange={onChange} />
+				{label}
 			</FormLabel>
 		);
 	};
 
-	const openedPackage = selected[ openedPackageId ];
+	const openedPackage = selected[openedPackageId];
 	const items = openedPackage.items;
-	const item = items[ movedItemIndex ];
-	const itemUrl = getProductLink( item.product_id, site );
+	const item = items[movedItemIndex];
+	const itemUrl = getProductLink(item.product_id, site);
 	const itemLink = (
-		<a href={ itemUrl } target="_blank" rel="noopener noreferrer">
-			{ item.name }
+		<a href={itemUrl} target="_blank" rel="noopener noreferrer">
+			{item.name}
 		</a>
 	);
 	let desc;
 
-	const packageLabels = getPackageDescriptions( selected, all, true );
+	const packageLabels = getPackageDescriptions(selected, all, true);
 
 	const renderPackedOptions = () => {
 		const elements = [];
-		Object.keys( selected ).forEach( pckgId => {
-			const pckg = selected[ pckgId ];
-			if ( pckgId === openedPackageId || 'individual' === pckg.box_id ) {
+		Object.keys(selected).forEach((pckgId) => {
+			const pckg = selected[pckgId];
+			if (pckgId === openedPackageId || 'individual' === pckg.box_id) {
 				return;
 			}
 
-			elements.push( renderRadioButton( pckgId, packageLabels[ pckgId ] ) );
-		} );
+			elements.push(renderRadioButton(pckgId, packageLabels[pckgId]));
+		});
 
 		return elements;
 	};
 
 	const renderNewPackageOption = () => {
-		return renderRadioButton( 'new', translate( 'Add to a New Package' ) );
+		return renderRadioButton('new', translate('Add to a New Package'));
 	};
 
 	const renderIndividualOption = () => {
-		if ( openedPackage && 'individual' === openedPackage.box_id ) {
+		if (openedPackage && 'individual' === openedPackage.box_id) {
 			return null;
 		}
 
-		return renderRadioButton( 'individual', translate( 'Ship in original packaging' ) );
+		return renderRadioButton('individual', translate('Ship in original packaging'));
 	};
 
-	if ( '' === openedPackageId ) {
-		desc = translate( '{{itemLink/}} is currently saved for a later shipment.', {
+	if ('' === openedPackageId) {
+		desc = translate('{{itemLink/}} is currently saved for a later shipment.', {
 			components: { itemLink },
-		} );
-	} else if ( 'individual' === openedPackage.box_id ) {
-		desc = translate( '{{itemLink/}} is currently shipped in its original packaging.', {
+		});
+	} else if ('individual' === openedPackage.box_id) {
+		desc = translate('{{itemLink/}} is currently shipped in its original packaging.', {
 			components: { itemLink },
-		} );
+		});
 	} else {
-		desc = translate( '{{itemLink/}} is currently in {{pckg/}}.', {
+		desc = translate('{{itemLink/}} is currently in {{pckg/}}.', {
 			components: {
 				itemLink,
 				pckg: (
 					<span className="packages-step__dialog-package-name">
-						{ packageLabels[ openedPackageId ] }
+						{packageLabels[openedPackageId]}
 					</span>
 				),
 			},
-		} );
+		});
 	}
 
-	const onClose = () => props.closeItemMove( orderId, siteId );
+	const onClose = () => props.closeItemMove(orderId, siteId);
 
 	const buttons = [
-		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
+		{ action: 'cancel', label: translate('Cancel'), onClick: onClose },
 		{
 			action: 'move',
-			label: translate( 'Move' ),
+			label: translate('Move'),
 			isPrimary: true,
 			disabled: targetPackageId === openedPackageId, // Result of targetPackageId initialization
 			onClick: () =>
-				props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
+				props.moveItem(orderId, siteId, openedPackageId, movedItemIndex, targetPackageId),
 		},
 	];
 
 	return (
 		<Dialog
-			isVisible={ showItemMoveDialog }
-			isFullScreen={ false }
-			onClickOutside={ onClose }
-			onClose={ onClose }
-			buttons={ buttons }
+			isVisible={showItemMoveDialog}
+			isFullScreen={false}
+			onClickOutside={onClose}
+			onClose={onClose}
+			buttons={buttons}
 			additionalClassNames="wcc-root woocommerce packages-step__dialog"
 		>
-			<FormSectionHeading>{ translate( 'Move item' ) }</FormSectionHeading>
+			<FormSectionHeading>{translate('Move item')}</FormSectionHeading>
 			<div className="packages-step__dialog-body">
-				<p>{ desc }</p>
-				<p>{ translate( 'Where would you like to move it?' ) }</p>
-				{ renderPackedOptions() }
-				{ renderNewPackageOption() }
-				{ renderIndividualOption() }
+				<p>{desc}</p>
+				<p>{translate('Where would you like to move it?')}</p>
+				{renderPackedOptions()}
+				{renderNewPackageOption()}
+				{renderIndividualOption()}
 			</div>
 		</Dialog>
 	);
@@ -160,22 +160,22 @@ MoveItemDialog.propTypes = {
 	moveItem: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { orderId, siteId } ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const site = getSite( state, siteId );
+const mapStateToProps = (state, { orderId, siteId }) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
+	const site = getSite(state, siteId);
 	return {
 		site,
 		showItemMoveDialog: shippingLabel.showItemMoveDialog || false,
-		movedItemIndex: isNaN( shippingLabel.movedItemIndex ) ? -1 : shippingLabel.movedItemIndex,
+		movedItemIndex: isNaN(shippingLabel.movedItemIndex) ? -1 : shippingLabel.movedItemIndex,
 		targetPackageId: shippingLabel.targetPackageId,
 		openedPackageId: shippingLabel.openedPackageId,
 		selected: shippingLabel.form.packages.selected,
-		all: getAllPackageDefinitions( state, siteId ),
+		all: getAllPackageDefinitions(state, siteId),
 	};
 };
 
-const mapDispatchToProps = dispatch => {
-	return bindActionCreators( { closeItemMove, setTargetPackage, moveItem }, dispatch );
+const mapDispatchToProps = (dispatch) => {
+	return bindActionCreators({ closeItemMove, setTargetPackage, moveItem }, dispatch);
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( MoveItemDialog ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(MoveItemDialog));

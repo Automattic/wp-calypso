@@ -21,38 +21,38 @@ import {
 	getStateInstance,
 } from './fixture';
 
-describe( 'selectors', () => {
-	describe( '#getVouchersBySite()', () => {
-		test( 'should return vouchers by site', () => {
+describe('selectors', () => {
+	describe('#getVouchersBySite()', () => {
+		test('should return vouchers by site', () => {
 			const state = getStateInstance();
-			const vouchers = getVouchersBySite( state, { ID: firstSiteId } );
-			expect( vouchers ).to.eql( firstAdCredits );
-		} );
-	} );
+			const vouchers = getVouchersBySite(state, { ID: firstSiteId });
+			expect(vouchers).to.eql(firstAdCredits);
+		});
+	});
 
-	describe( '#getVouchersBySiteId()', () => {
-		test( 'should return vouchers by site id', () => {
+	describe('#getVouchersBySiteId()', () => {
+		test('should return vouchers by site id', () => {
 			const state = getStateInstance();
-			const vouchers = getVouchersBySiteId( state, firstSiteId );
-			expect( vouchers ).to.eql( firstAdCredits );
-		} );
-	} );
+			const vouchers = getVouchersBySiteId(state, firstSiteId);
+			expect(vouchers).to.eql(firstAdCredits);
+		});
+	});
 
-	describe( '#getVouchersBySiteIdAndServiceType()', () => {
-		test( 'should return vouchers by site id', () => {
+	describe('#getVouchersBySiteIdAndServiceType()', () => {
+		test('should return vouchers by site id', () => {
 			const state = getStateInstance();
-			const vouchers = getVouchersBySiteIdAndServiceType( state, firstSiteId, serviceType );
-			expect( vouchers ).to.eql( [ firstVoucher ] );
-		} );
-	} );
+			const vouchers = getVouchersBySiteIdAndServiceType(state, firstSiteId, serviceType);
+			expect(vouchers).to.eql([firstVoucher]);
+		});
+	});
 
-	describe( '#isRequestingSiteVouchers()', () => {
-		test( 'should return true if we are fetching vouchers', () => {
+	describe('#isRequestingSiteVouchers()', () => {
+		test('should return true if we are fetching vouchers', () => {
 			const state = getStateInstance();
 
-			expect( isRequestingSiteVouchers( state, firstSiteId ) ).to.equal( false );
-			expect( isRequestingSiteVouchers( state, secondSiteId ) ).to.equal( true );
-			expect( isRequestingSiteVouchers( state, 'unknown' ) ).to.equal( false );
-		} );
-	} );
-} );
+			expect(isRequestingSiteVouchers(state, firstSiteId)).to.equal(false);
+			expect(isRequestingSiteVouchers(state, secondSiteId)).to.equal(true);
+			expect(isRequestingSiteVouchers(state, 'unknown')).to.equal(false);
+		});
+	});
+});

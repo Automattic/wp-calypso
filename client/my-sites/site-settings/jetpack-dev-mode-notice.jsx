@@ -16,38 +16,36 @@ import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const JetpackDevModeNotice = ( { isJetpackSiteInDevMode, siteId, siteIsJetpack, translate } ) => {
-	if ( ! siteIsJetpack ) {
+const JetpackDevModeNotice = ({ isJetpackSiteInDevMode, siteId, siteIsJetpack, translate }) => {
+	if (!siteIsJetpack) {
 		return null;
 	}
 
 	return (
 		<div className="site-settings__jetpack-dev-mode-notice">
-			<QueryJetpackConnection siteId={ siteId } />
+			<QueryJetpackConnection siteId={siteId} />
 
-			{ isJetpackSiteInDevMode && (
+			{isJetpackSiteInDevMode && (
 				<Notice
-					text={ translate(
-						'Some features are disabled because your site is in development mode.'
-					) }
-					showDismiss={ false }
+					text={translate('Some features are disabled because your site is in development mode.')}
+					showDismiss={false}
 				>
-					<NoticeAction href={ 'https://jetpack.com/support/development-mode/' } external>
-						{ translate( 'Learn more' ) }
+					<NoticeAction href={'https://jetpack.com/support/development-mode/'} external>
+						{translate('Learn more')}
 					</NoticeAction>
 				</Notice>
-			) }
+			)}
 		</div>
 	);
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const siteIsJetpack = isJetpackSite( state, siteId );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const siteIsJetpack = isJetpackSite(state, siteId);
 
 	return {
-		isJetpackSiteInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
+		isJetpackSiteInDevMode: isJetpackSiteInDevelopmentMode(state, siteId),
 		siteId,
 		siteIsJetpack,
 	};
-} )( localize( JetpackDevModeNotice ) );
+})(localize(JetpackDevModeNotice));

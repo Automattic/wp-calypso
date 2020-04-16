@@ -16,15 +16,15 @@ class LocationSearchExample extends Component {
 		createNotice: PropTypes.func.isRequired,
 	};
 
-	handlePredictionClick = prediction => {
+	handlePredictionClick = (prediction) => {
 		this.props.createNotice(
 			'is-info',
-			`You clicked the '${ prediction.structured_formatting.main_text }' location`
+			`You clicked the '${prediction.structured_formatting.main_text}' location`
 		);
 	};
 
-	predictionTransformer( predictions, query ) {
-		if ( ! query ) {
+	predictionTransformer(predictions, query) {
+		if (!query) {
 			return predictions;
 		}
 
@@ -36,20 +36,20 @@ class LocationSearchExample extends Component {
 					secondary_text: 'Create a business with this name',
 				},
 			},
-			...( predictions || [] ),
+			...(predictions || []),
 		];
 	}
 
 	render() {
 		return (
 			<LocationSearch
-				onPredictionClick={ this.handlePredictionClick }
-				predictionsTransformation={ this.predictionTransformer }
+				onPredictionClick={this.handlePredictionClick}
+				predictionsTransformation={this.predictionTransformer}
 			/>
 		);
 	}
 }
 
-const ConnectedLocationSearchExample = connect( null, { createNotice } )( LocationSearchExample );
+const ConnectedLocationSearchExample = connect(null, { createNotice })(LocationSearchExample);
 ConnectedLocationSearchExample.displayName = 'LocationSearch';
 export default ConnectedLocationSearchExample;

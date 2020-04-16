@@ -16,7 +16,7 @@ export default class extends PureComponent {
 	};
 
 	toggleCompact = () => {
-		this.setState( { compact: ! this.state.compact } );
+		this.setState({ compact: !this.state.compact });
 	};
 
 	render() {
@@ -24,14 +24,14 @@ export default class extends PureComponent {
 
 		return (
 			<div>
-				<button className="docs__design-toggle button" onClick={ this.toggleCompact }>
-					{ toggleText }
+				<button className="docs__design-toggle button" onClick={this.toggleCompact}>
+					{toggleText}
 				</button>
 
-				<ProgressBar value={ 0 } title="0% complete" compact={ this.state.compact } />
-				<ProgressBar value={ 55 } total={ 100 } compact={ this.state.compact } />
-				<ProgressBar value={ 100 } color="#1BABDA" compact={ this.state.compact } />
-				<ProgressBar value={ 75 } compact={ this.state.compact } isPulsing />
+				<ProgressBar value={0} title="0% complete" compact={this.state.compact} />
+				<ProgressBar value={55} total={100} compact={this.state.compact} />
+				<ProgressBar value={100} color="#1BABDA" compact={this.state.compact} />
+				<ProgressBar value={75} compact={this.state.compact} isPulsing />
 			</div>
 		);
 	}

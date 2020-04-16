@@ -21,42 +21,42 @@ import { toggleDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
 import './style.scss';
 
 class ThemeSetupDialog extends React.Component {
-	renderButtons( { runThemeSetup, site, isActive, result, translate } ) {
+	renderButtons({ runThemeSetup, site, isActive, result, translate }) {
 		const keepContent = {
 			action: 'keep-content',
-			label: translate( 'Set Up Your Theme' ),
+			label: translate('Set Up Your Theme'),
 			isPrimary: true,
-			onClick: () => runThemeSetup( site.ID ),
+			onClick: () => runThemeSetup(site.ID),
 		};
 		const cancel = {
 			action: 'cancel',
-			label: translate( 'Cancel' ),
+			label: translate('Cancel'),
 		};
 		const backToSetup = {
 			action: 'back-to-setup',
-			label: translate( 'Back To Setup' ),
+			label: translate('Back To Setup'),
 			disabled: isActive,
 		};
 		const viewSite = {
 			action: 'view-site',
-			label: translate( 'View Site' ),
+			label: translate('View Site'),
 			isPrimary: true,
 			disabled: isActive,
-			onClick: () => page( site.URL ),
+			onClick: () => page(site.URL),
 		};
 
-		if ( isActive || 'success' === result.result ) {
-			return [ backToSetup, viewSite ];
+		if (isActive || 'success' === result.result) {
+			return [backToSetup, viewSite];
 		}
-		return [ cancel, keepContent ];
+		return [cancel, keepContent];
 	}
 
-	renderContent( { isActive, result, site, translate } ) {
+	renderContent({ isActive, result, site, translate }) {
 		const keepContent = (
 			<div>
-				<h1>{ translate( 'Theme Setup' ) }</h1>
+				<h1>{translate('Theme Setup')}</h1>
 				<p>
-					{ translate(
+					{translate(
 						'Settings will be changed on {{strong}}%(site)s{{/strong}}, and these changes will be live immediately. Do you want to proceed?',
 						{
 							components: {
@@ -66,33 +66,33 @@ class ThemeSetupDialog extends React.Component {
 								site: site.domain,
 							},
 						}
-					) }
+					)}
 				</p>
 			</div>
 		);
 		const loading = (
 			<div>
-				<h1>{ translate( 'Theme Setup' ) }</h1>
-				<p>{ translate( 'Running Theme Setup. This may take up to a minute.' ) }</p>
-				<PulsingDot active={ true } />
+				<h1>{translate('Theme Setup')}</h1>
+				<p>{translate('Running Theme Setup. This may take up to a minute.')}</p>
+				<PulsingDot active={true} />
 			</div>
 		);
 		const success = (
 			<div>
-				<h1>{ translate( 'Theme Setup' ) }</h1>
-				<p>{ translate( 'Success! Your theme is all set up like the demo.' ) }</p>
+				<h1>{translate('Theme Setup')}</h1>
+				<p>{translate('Success! Your theme is all set up like the demo.')}</p>
 			</div>
 		);
 		const failure = (
 			<div>
-				<h1>{ translate( 'Theme Setup' ) }</h1>
-				<p>{ translate( 'We encountered a problem – would you like to try again?' ) }</p>
+				<h1>{translate('Theme Setup')}</h1>
+				<p>{translate('We encountered a problem – would you like to try again?')}</p>
 			</div>
 		);
-		if ( isActive ) {
+		if (isActive) {
 			return loading;
 		}
-		if ( result ) {
+		if (result) {
 			return 'success' === result.result ? success : failure;
 		}
 		return keepContent;
@@ -102,23 +102,23 @@ class ThemeSetupDialog extends React.Component {
 		return (
 			<Dialog
 				className="theme-setup-dialog"
-				isVisible={ this.props.isDialogVisible }
-				buttons={ this.renderButtons( this.props ) }
-				onClose={ this.props.isActive ? null : this.props.toggleDialog }
+				isVisible={this.props.isDialogVisible}
+				buttons={this.renderButtons(this.props)}
+				onClose={this.props.isActive ? null : this.props.toggleDialog}
 			>
-				{ this.renderContent( this.props ) }
+				{this.renderContent(this.props)}
 			</Dialog>
 		);
 	}
 }
 
-ThemeSetupDialog = localize( ThemeSetupDialog );
+ThemeSetupDialog = localize(ThemeSetupDialog);
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
 	const isActive = state.ui.themeSetup.active;
 	const result = state.ui.themeSetup.result;
-	const site = getSelectedSite( state );
+	const site = getSelectedSite(state);
 	return {
 		isDialogVisible,
 		isActive,
@@ -127,4 +127,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { toggleDialog, runThemeSetup } )( ThemeSetupDialog );
+export default connect(mapStateToProps, { toggleDialog, runThemeSetup })(ThemeSetupDialog);

@@ -28,10 +28,10 @@ import request from 'woocommerce/state/sites/request';
  * @param {number} siteId The id of the site for which to clear.
  * @returns {object} Action object
  */
-export const clearCompletedNotification = siteId => ( dispatch, getState ) => {
+export const clearCompletedNotification = (siteId) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
 	const clearAction = {
@@ -39,7 +39,7 @@ export const clearCompletedNotification = siteId => ( dispatch, getState ) => {
 		siteId,
 	};
 
-	dispatch( clearAction );
+	dispatch(clearAction);
 };
 
 /**
@@ -48,10 +48,10 @@ export const clearCompletedNotification = siteId => ( dispatch, getState ) => {
  * @param {number} siteId The id of the site for which to clear errors.
  * @returns {object} Action object
  */
-export const clearError = siteId => ( dispatch, getState ) => {
+export const clearError = (siteId) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
 	const clearErrorAction = {
@@ -59,7 +59,7 @@ export const clearError = siteId => ( dispatch, getState ) => {
 		siteId,
 	};
 
-	dispatch( clearErrorAction );
+	dispatch(clearErrorAction);
 };
 
 /**
@@ -78,10 +78,10 @@ export const createAccount = (
 	country,
 	successAction = null,
 	failureAction = null
-) => ( dispatch, getState ) => {
+) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
 	const createAction = {
@@ -91,22 +91,22 @@ export const createAccount = (
 		siteId,
 	};
 
-	dispatch( createAction );
+	dispatch(createAction);
 
-	return request( siteId )
-		.post( 'connect/stripe/account', { email, country }, 'wc/v1' )
-		.then( data => {
-			dispatch( createSuccess( siteId, createAction, data ) );
-			if ( successAction ) {
-				dispatch( successAction( siteId, createAction, data ) );
+	return request(siteId)
+		.post('connect/stripe/account', { email, country }, 'wc/v1')
+		.then((data) => {
+			dispatch(createSuccess(siteId, createAction, data));
+			if (successAction) {
+				dispatch(successAction(siteId, createAction, data));
 			}
-		} )
-		.catch( error => {
-			dispatch( createFailure( siteId, createAction, error ) );
-			if ( failureAction ) {
-				dispatch( failureAction( siteId, createAction, error ) );
+		})
+		.catch((error) => {
+			dispatch(createFailure(siteId, createAction, error));
+			if (failureAction) {
+				dispatch(failureAction(siteId, createAction, error));
 			}
-		} );
+		});
 };
 
 /**
@@ -117,7 +117,7 @@ export const createAccount = (
  * @param {object} account_id The Stripe Connect Account id created for the site (from the data object).
  * @returns {object} Action object
  */
-function createSuccess( siteId, { email }, { account_id } ) {
+function createSuccess(siteId, { email }, { account_id }) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 		connectedUserID: account_id,
@@ -134,7 +134,7 @@ function createSuccess( siteId, { email }, { account_id } ) {
  * @param {object} message Error message returned (from the error object).
  * @returns {object} Action object
  */
-function createFailure( siteId, action, { message } ) {
+function createFailure(siteId, action, { message }) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 		error: message,
@@ -150,13 +150,13 @@ function createFailure( siteId, action, { message } ) {
  * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @returns {object} Action object
  */
-export const fetchAccountDetails = ( siteId, successAction = null, failureAction = null ) => (
+export const fetchAccountDetails = (siteId, successAction = null, failureAction = null) => (
 	dispatch,
 	getState
 ) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
 	const fetchAction = {
@@ -164,22 +164,22 @@ export const fetchAccountDetails = ( siteId, successAction = null, failureAction
 		siteId,
 	};
 
-	dispatch( fetchAction );
+	dispatch(fetchAction);
 
-	return request( siteId )
-		.get( 'connect/stripe/account', 'wc/v1' )
-		.then( data => {
-			dispatch( fetchSuccess( siteId, fetchAction, data ) );
-			if ( successAction ) {
-				dispatch( successAction( siteId, fetchAction, data ) );
+	return request(siteId)
+		.get('connect/stripe/account', 'wc/v1')
+		.then((data) => {
+			dispatch(fetchSuccess(siteId, fetchAction, data));
+			if (successAction) {
+				dispatch(successAction(siteId, fetchAction, data));
 			}
-		} )
-		.catch( error => {
-			dispatch( fetchFailure( siteId, fetchAction, error ) );
-			if ( failureAction ) {
-				dispatch( failureAction( error ) );
+		})
+		.catch((error) => {
+			dispatch(fetchFailure(siteId, fetchAction, error));
+			if (failureAction) {
+				dispatch(failureAction(error));
 			}
-		} );
+		});
 };
 
 /**
@@ -190,7 +190,7 @@ export const fetchAccountDetails = ( siteId, successAction = null, failureAction
  * @param {object} data The entire data object that was returned from the API.
  * @returns {object} Action object
  */
-function fetchSuccess( siteId, fetchAction, data ) {
+function fetchSuccess(siteId, fetchAction, data) {
 	const { account_id, display_name, email, business_logo, legal_entity, payouts_enabled } = data;
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
@@ -213,7 +213,7 @@ function fetchSuccess( siteId, fetchAction, data ) {
  * @param {object} message Error message returned (from the error object).
  * @returns {object} Action object
  */
-function fetchFailure( siteId, action, { message } ) {
+function fetchFailure(siteId, action, { message }) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
 		error: message,
@@ -229,13 +229,13 @@ function fetchFailure( siteId, action, { message } ) {
  * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @returns {object} Action object
  */
-export const deauthorizeAccount = ( siteId, successAction = null, failureAction = null ) => (
+export const deauthorizeAccount = (siteId, successAction = null, failureAction = null) => (
 	dispatch,
 	getState
 ) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
 	const deauthorizeAction = {
@@ -243,22 +243,22 @@ export const deauthorizeAccount = ( siteId, successAction = null, failureAction 
 		siteId,
 	};
 
-	dispatch( deauthorizeAction );
+	dispatch(deauthorizeAction);
 
-	return request( siteId )
-		.post( 'connect/stripe/account/deauthorize', {}, 'wc/v1' )
-		.then( data => {
-			dispatch( deauthorizeSuccess( siteId, deauthorizeAction, data ) );
-			if ( successAction ) {
-				dispatch( successAction( siteId, deauthorizeAction, data ) );
+	return request(siteId)
+		.post('connect/stripe/account/deauthorize', {}, 'wc/v1')
+		.then((data) => {
+			dispatch(deauthorizeSuccess(siteId, deauthorizeAction, data));
+			if (successAction) {
+				dispatch(successAction(siteId, deauthorizeAction, data));
 			}
-		} )
-		.catch( error => {
-			dispatch( deauthorizeFailure( siteId, deauthorizeAction, error ) );
-			if ( failureAction ) {
-				dispatch( failureAction( error ) );
+		})
+		.catch((error) => {
+			dispatch(deauthorizeFailure(siteId, deauthorizeAction, error));
+			if (failureAction) {
+				dispatch(failureAction(error));
 			}
-		} );
+		});
 };
 
 /**
@@ -270,7 +270,7 @@ export const deauthorizeAccount = ( siteId, successAction = null, failureAction 
  * @returns {object} Action object
  */
 // eslint-disable-next-line no-unused-vars
-function deauthorizeSuccess( siteId, action, data ) {
+function deauthorizeSuccess(siteId, action, data) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 		siteId,
@@ -285,7 +285,7 @@ function deauthorizeSuccess( siteId, action, data ) {
  * @param {object} errorMessage Error message returned.
  * @returns {object} Action object
  */
-function deauthorizeFailure( siteId, action, errorMessage ) {
+function deauthorizeFailure(siteId, action, errorMessage) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 		error: errorMessage,
@@ -302,13 +302,13 @@ function deauthorizeFailure( siteId, action, errorMessage ) {
  * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @returns {object} Action object
  */
-export const oauthInit = ( siteId, returnUrl, successAction = null, failureAction = null ) => (
+export const oauthInit = (siteId, returnUrl, successAction = null, failureAction = null) => (
 	dispatch,
 	getState
 ) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
 	const initAction = {
@@ -317,22 +317,22 @@ export const oauthInit = ( siteId, returnUrl, successAction = null, failureActio
 		siteId,
 	};
 
-	dispatch( initAction );
+	dispatch(initAction);
 
-	return request( siteId )
-		.post( 'connect/stripe/oauth/init', { returnUrl }, 'wc/v1' )
-		.then( data => {
-			dispatch( oauthInitSuccess( siteId, initAction, data ) );
-			if ( successAction ) {
-				dispatch( successAction( siteId, initAction, data ) );
+	return request(siteId)
+		.post('connect/stripe/oauth/init', { returnUrl }, 'wc/v1')
+		.then((data) => {
+			dispatch(oauthInitSuccess(siteId, initAction, data));
+			if (successAction) {
+				dispatch(successAction(siteId, initAction, data));
 			}
-		} )
-		.catch( error => {
-			dispatch( oauthInitFailure( siteId, initAction, error ) );
-			if ( failureAction ) {
-				dispatch( failureAction( siteId, initAction, error ) );
+		})
+		.catch((error) => {
+			dispatch(oauthInitFailure(siteId, initAction, error));
+			if (failureAction) {
+				dispatch(failureAction(siteId, initAction, error));
 			}
-		} );
+		});
 };
 
 /**
@@ -343,7 +343,7 @@ export const oauthInit = ( siteId, returnUrl, successAction = null, failureActio
  * @param {object} oauthUrl The URL to which the user needs to navigate to.
  * @returns {object} Action object
  */
-function oauthInitSuccess( siteId, action, { oauthUrl } ) {
+function oauthInitSuccess(siteId, action, { oauthUrl }) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
 		oauthUrl,
@@ -359,7 +359,7 @@ function oauthInitSuccess( siteId, action, { oauthUrl } ) {
  * @param {object} message Error message returned (from the error object).
  * @returns {object} Action object
  */
-function oauthInitFailure( siteId, action, { message } ) {
+function oauthInitFailure(siteId, action, { message }) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
 		error: message,
@@ -383,10 +383,10 @@ export const oauthConnect = (
 	stripeState,
 	successAction = null,
 	failureAction = null
-) => ( dispatch, getState ) => {
+) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
 	const connectAction = {
@@ -396,25 +396,25 @@ export const oauthConnect = (
 		siteId,
 	};
 
-	dispatch( connectAction );
+	dispatch(connectAction);
 
-	return request( siteId )
-		.post( 'connect/stripe/oauth/connect', { code: stripeCode, state: stripeState }, 'wc/v1' )
-		.then( data => {
-			dispatch( oauthConnectSuccess( siteId, connectAction, data ) );
-			if ( successAction ) {
-				dispatch( successAction( siteId, connectAction, data ) );
+	return request(siteId)
+		.post('connect/stripe/oauth/connect', { code: stripeCode, state: stripeState }, 'wc/v1')
+		.then((data) => {
+			dispatch(oauthConnectSuccess(siteId, connectAction, data));
+			if (successAction) {
+				dispatch(successAction(siteId, connectAction, data));
 			}
-		} )
-		.then( () => {
-			dispatch( fetchAccountDetails( siteId ) );
-		} )
-		.catch( error => {
-			dispatch( oauthConnectFailure( siteId, connectAction, error ) );
-			if ( failureAction ) {
-				dispatch( failureAction( siteId, connectAction, error ) );
+		})
+		.then(() => {
+			dispatch(fetchAccountDetails(siteId));
+		})
+		.catch((error) => {
+			dispatch(oauthConnectFailure(siteId, connectAction, error));
+			if (failureAction) {
+				dispatch(failureAction(siteId, connectAction, error));
 			}
-		} );
+		});
 };
 
 /**
@@ -425,7 +425,7 @@ export const oauthConnect = (
  * @param {object} account_id The account_id we are now connected to (from the data object)
  * @returns {object} Action object
  */
-function oauthConnectSuccess( siteId, action, { account_id } ) {
+function oauthConnectSuccess(siteId, action, { account_id }) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
 		connectedUserID: account_id,
@@ -444,7 +444,7 @@ function oauthConnectSuccess( siteId, action, { account_id } ) {
 // Note: Stripe and WooCommerce Services server errors will be returned in message, but
 // message will be empty for errors that the WooCommerce Services client generates itself
 // so we need to grab the string from the error field inside the error object for those.
-function oauthConnectFailure( siteId, action, { error, message } ) {
+function oauthConnectFailure(siteId, action, { error, message }) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
 		error: message || error,

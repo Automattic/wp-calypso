@@ -6,7 +6,7 @@ import { addLocaleToPath, localizeUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
 import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
-export function login( {
+export function login({
 	isJetpack,
 	isGutenboarding,
 	isWoo,
@@ -21,61 +21,61 @@ export function login( {
 	wccomFrom,
 	site,
 	useMagicLink,
-} = {} ) {
-	let url = config( 'login_url' );
+} = {}) {
+	let url = config('login_url');
 
-	if ( isNative && isEnabled( 'login/wp-login' ) ) {
+	if (isNative && isEnabled('login/wp-login')) {
 		url = '/log-in';
 
-		if ( socialService ) {
+		if (socialService) {
 			url += '/' + socialService + '/callback';
-		} else if ( twoFactorAuthType && isJetpack ) {
+		} else if (twoFactorAuthType && isJetpack) {
 			url += '/jetpack/' + twoFactorAuthType;
-		} else if ( twoFactorAuthType && isGutenboarding ) {
-			url += `/${ GUTENBOARDING_BASE_NAME }/` + twoFactorAuthType;
-		} else if ( twoFactorAuthType ) {
+		} else if (twoFactorAuthType && isGutenboarding) {
+			url += `/${GUTENBOARDING_BASE_NAME}/` + twoFactorAuthType;
+		} else if (twoFactorAuthType) {
 			url += '/' + twoFactorAuthType;
-		} else if ( socialConnect ) {
+		} else if (socialConnect) {
 			url += '/social-connect';
-		} else if ( isJetpack ) {
+		} else if (isJetpack) {
 			url += '/jetpack';
-		} else if ( isGutenboarding ) {
-			url += `/${ GUTENBOARDING_BASE_NAME }`;
-		} else if ( useMagicLink ) {
+		} else if (isGutenboarding) {
+			url += `/${GUTENBOARDING_BASE_NAME}`;
+		} else if (useMagicLink) {
 			url += '/link';
 		}
 	}
 
-	if ( locale && locale !== 'en' ) {
-		if ( isNative ) {
-			url = addLocaleToPath( url, locale );
+	if (locale && locale !== 'en') {
+		if (isNative) {
+			url = addLocaleToPath(url, locale);
 		} else {
-			url = localizeUrl( url, locale );
+			url = localizeUrl(url, locale);
 		}
 	}
 
-	if ( site ) {
-		url = addQueryArgs( { site }, url );
+	if (site) {
+		url = addQueryArgs({ site }, url);
 	}
 
-	if ( redirectTo ) {
-		url = addQueryArgs( { redirect_to: redirectTo }, url );
+	if (redirectTo) {
+		url = addQueryArgs({ redirect_to: redirectTo }, url);
 	}
 
-	if ( emailAddress ) {
-		url = addQueryArgs( { email_address: emailAddress }, url );
+	if (emailAddress) {
+		url = addQueryArgs({ email_address: emailAddress }, url);
 	}
 
-	if ( oauth2ClientId && ! isNaN( oauth2ClientId ) ) {
-		url = addQueryArgs( { client_id: oauth2ClientId }, url );
+	if (oauth2ClientId && !isNaN(oauth2ClientId)) {
+		url = addQueryArgs({ client_id: oauth2ClientId }, url);
 	}
 
-	if ( isWoo ) {
-		url = addQueryArgs( { from: 'woocommerce-onboarding' }, url );
+	if (isWoo) {
+		url = addQueryArgs({ from: 'woocommerce-onboarding' }, url);
 	}
 
-	if ( wccomFrom ) {
-		url = addQueryArgs( { 'wccom-from': wccomFrom }, url );
+	if (wccomFrom) {
+		url = addQueryArgs({ 'wccom-from': wccomFrom }, url);
 	}
 
 	return url;

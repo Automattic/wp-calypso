@@ -15,7 +15,7 @@ import {
  * @param {string} condition Condition that must be met to qualify for free shipping. See README.md for more details.
  * @returns {object} Action object.
  */
-export const setFreeShippingCondition = ( siteId, methodId, condition ) => {
+export const setFreeShippingCondition = (siteId, methodId, condition) => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_CONDITION,
 		siteId,
@@ -33,7 +33,7 @@ export const setFreeShippingCondition = ( siteId, methodId, condition ) => {
  * @param {number} cost Minimum monetary amount for an order to qualify for free shipping.
  * @returns {object} Action object.
  */
-export const setFreeShippingMinCost = ( siteId, methodId, cost ) => {
+export const setFreeShippingMinCost = (siteId, methodId, cost) => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_MIN_COST,
 		siteId,

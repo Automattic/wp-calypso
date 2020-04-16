@@ -18,22 +18,17 @@ import getEditorUrl from 'state/selectors/get-editor-url';
 import { preload } from 'sections-helper';
 
 function preloadEditor() {
-	preload( 'post-editor' );
+	preload('post-editor');
 }
 
-function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bumpStat } ) {
-	if ( 'trash' === status || ! canEdit ) {
+function PostActionsEllipsisMenuEdit({ translate, canEdit, status, editUrl, bumpStat }) {
+	if ('trash' === status || !canEdit) {
 		return null;
 	}
 
 	return (
-		<PopoverMenuItem
-			href={ editUrl }
-			onClick={ bumpStat }
-			icon="pencil"
-			onMouseOver={ preloadEditor }
-		>
-			{ translate( 'Edit', { context: 'verb' } ) }
+		<PopoverMenuItem href={editUrl} onClick={bumpStat} icon="pencil" onMouseOver={preloadEditor}>
+			{translate('Edit', { context: 'verb' })}
 		</PopoverMenuItem>
 	);
 }
@@ -47,29 +42,29 @@ PostActionsEllipsisMenuEdit.propTypes = {
 	bumpStat: PropTypes.func,
 };
 
-const mapStateToProps = ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
+const mapStateToProps = (state, { globalId }) => {
+	const post = getPost(state, globalId);
+	if (!post) {
 		return {};
 	}
 
 	return {
-		canEdit: canCurrentUserEditPost( state, globalId ),
+		canEdit: canCurrentUserEditPost(state, globalId),
 		status: post.status,
 		type: post.type,
-		editUrl: getEditorUrl( state, post.site_ID, post.ID, post.type ),
+		editUrl: getEditorUrl(state, post.site_ID, post.ID, post.type),
 	};
 };
 
 const mapDispatchToProps = { bumpAnalyticsStat };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator( stateProps.type, 'edit', dispatchProps.bumpAnalyticsStat );
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	const bumpStat = bumpStatGenerator(stateProps.type, 'edit', dispatchProps.bumpAnalyticsStat);
+	return Object.assign({}, ownProps, stateProps, dispatchProps, { bumpStat });
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( PostActionsEllipsisMenuEdit ) );
+)(localize(PostActionsEllipsisMenuEdit));

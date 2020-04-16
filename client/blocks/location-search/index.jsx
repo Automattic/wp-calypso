@@ -30,7 +30,7 @@ class LocationSearch extends Component {
 		onPredictionClick: PropTypes.func,
 		onSearch: PropTypes.func,
 		predictionsTransformation: PropTypes.func,
-		types: PropTypes.arrayOf( PropTypes.string ),
+		types: PropTypes.arrayOf(PropTypes.string),
 		hidePredictionsOnClick: PropTypes.bool,
 		inputType: PropTypes.string,
 		inputProps: PropTypes.object,
@@ -39,7 +39,7 @@ class LocationSearch extends Component {
 	static defaultProps = {
 		onSearch: noop,
 		predictionsTransformation: identity,
-		types: [ 'establishment' ],
+		types: ['establishment'],
 		hidePredictionsOnClick: false,
 		inputType: 'search-card',
 		inputProps: {},
@@ -53,13 +53,13 @@ class LocationSearch extends Component {
 	};
 
 	componentDidMount() {
-		if ( ! autocompleteService ) {
+		if (!autocompleteService) {
 			autocompleteService = {}; // if multiple components are initialized on the page, we'd want the script to load only once
 			loadScript(
-				`//maps.googleapis.com/maps/api/js?key=${ config(
+				`//maps.googleapis.com/maps/api/js?key=${config(
 					'google_maps_and_places_api_key'
-				) }&libraries=places`,
-				function() {
+				)}&libraries=places`,
+				function () {
 					// eslint-disable-next-line no-undef
 					autocompleteService = new google.maps.places.AutocompleteService();
 				}
@@ -67,23 +67,23 @@ class LocationSearch extends Component {
 		}
 	}
 
-	updatePredictions = predictions => {
+	updatePredictions = (predictions) => {
 		const { predictionsTransformation } = this.props;
 		const { query } = this.state;
 
-		this.setState( {
-			predictions: predictionsTransformation( predictions, query ),
+		this.setState({
+			predictions: predictionsTransformation(predictions, query),
 			loading: false,
-		} );
+		});
 	};
 
-	handleSearch = query => {
+	handleSearch = (query) => {
 		query = query.trim();
-		this.props.onSearch( query );
+		this.props.onSearch(query);
 
-		this.setState( { loading: true, query }, () => {
-			if ( query ) {
-				if ( ! sessionToken ) {
+		this.setState({ loading: true, query }, () => {
+			if (query) {
+				if (!sessionToken) {
 					// eslint-disable-next-line no-undef
 					sessionToken = new google.maps.places.AutocompleteSessionToken();
 				}
@@ -97,35 +97,35 @@ class LocationSearch extends Component {
 					this.updatePredictions
 				);
 			} else {
-				this.updatePredictions( [] );
+				this.updatePredictions([]);
 			}
-		} );
+		});
 	};
 
-	handleInputChange( onInputChange ) {
-		return event => {
-			onInputChange( event );
+	handleInputChange(onInputChange) {
+		return (event) => {
+			onInputChange(event);
 
 			const { value } = event.target;
-			this.handleSearch( value );
+			this.handleSearch(value);
 		};
 	}
 
-	handlePredictionClick = prediction => {
-		if ( this.props.hidePredictionsOnClick ) {
-			this.setState( { predictions: [] } );
+	handlePredictionClick = (prediction) => {
+		if (this.props.hidePredictionsOnClick) {
+			this.setState({ predictions: [] });
 		}
 
-		this.props.onPredictionClick( prediction, sessionToken, this.state.query );
+		this.props.onPredictionClick(prediction, sessionToken, this.state.query);
 		sessionToken = null;
 	};
 
-	renderPrediction = prediction => {
+	renderPrediction = (prediction) => {
 		return (
 			<Prediction
-				key={ prediction.place_id }
-				onPredictionClick={ this.handlePredictionClick }
-				prediction={ prediction }
+				key={prediction.place_id}
+				onPredictionClick={this.handlePredictionClick}
+				prediction={prediction}
 			/>
 		);
 	};
@@ -141,24 +141,22 @@ class LocationSearch extends Component {
 		};
 		const onInputChange = this.props.inputProps.onChange ? this.props.inputProps.onChange : noop;
 
-		switch ( this.props.inputType ) {
+		switch (this.props.inputType) {
 			case 'card':
-				return <Search { ...searchProps } />;
+				return <Search {...searchProps} />;
 
 			case 'input':
 				return (
 					<Input
-						{ ...this.props.inputProps }
-						onChange={ this.handleInputChange( onInputChange ) }
-						placeholder={ this.props.placeholder }
+						{...this.props.inputProps}
+						onChange={this.handleInputChange(onInputChange)}
+						placeholder={this.props.placeholder}
 					/>
 				);
 
 			case 'search-card':
 			default:
-				return (
-					<SearchCard { ...searchProps } className="location-search__search-card is-compact" />
-				);
+				return <SearchCard {...searchProps} className="location-search__search-card is-compact" />;
 		}
 	}
 
@@ -167,7 +165,7 @@ class LocationSearch extends Component {
 
 		return (
 			<Fragment>
-				{ predictions.map( this.renderPrediction ) }
+				{predictions.map(this.renderPrediction)}
 				<CompactCard className="location-search__attribution">
 					<img
 						src="https://s1.wp.com/i/powered-by-google-on-white-hdpi.png"
@@ -181,9 +179,9 @@ class LocationSearch extends Component {
 	render() {
 		return (
 			<Fragment>
-				{ this.renderInput() }
+				{this.renderInput()}
 				<div className="location-search__predictions">
-					{ ! isEmpty( this.state.predictions ) && this.renderPredictions() }
+					{!isEmpty(this.state.predictions) && this.renderPredictions()}
 				</div>
 			</Fragment>
 		);

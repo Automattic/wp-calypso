@@ -9,66 +9,64 @@ import React from 'react';
  */
 import ReaderAuthorLink from '../index';
 
-jest.mock( 'reader/stats', () => ( {
+jest.mock('reader/stats', () => ({
 	recordAction: () => {},
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
-} ) );
+}));
 
-describe( 'ReaderAuthorLink', () => {
+describe('ReaderAuthorLink', () => {
 	let author;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };
-	} );
+	});
 
-	test( 'should render children', () => {
-		const wrapper = shallow(
-			<ReaderAuthorLink author={ author }>Barnaby Blogwit</ReaderAuthorLink>
-		);
-		expect( wrapper.contains( 'Barnaby Blogwit' ) ).toEqual( true );
-	} );
+	test('should render children', () => {
+		const wrapper = shallow(<ReaderAuthorLink author={author}>Barnaby Blogwit</ReaderAuthorLink>);
+		expect(wrapper.contains('Barnaby Blogwit')).toEqual(true);
+	});
 
-	test( 'should accept a custom class of `test__ace`', () => {
+	test('should accept a custom class of `test__ace`', () => {
 		const wrapper = shallow(
-			<ReaderAuthorLink author={ author } className="test__ace">
+			<ReaderAuthorLink author={author} className="test__ace">
 				xyz
 			</ReaderAuthorLink>
 		);
-		expect( wrapper.is( '.test__ace' ) ).toEqual( true );
-	} );
+		expect(wrapper.is('.test__ace')).toEqual(true);
+	});
 
-	test( 'should return null with a null author name', () => {
+	test('should return null with a null author name', () => {
 		author.name = null;
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.type() ).toBe( null );
-	} );
+		const wrapper = shallow(<ReaderAuthorLink author={author}>xyz</ReaderAuthorLink>);
+		expect(wrapper.type()).toBe(null);
+	});
 
-	test( 'should return null with a blocked author name', () => {
+	test('should return null with a blocked author name', () => {
 		author.name = 'admin';
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.type() ).toBe( null );
-	} );
+		const wrapper = shallow(<ReaderAuthorLink author={author}>xyz</ReaderAuthorLink>);
+		expect(wrapper.type()).toBe(null);
+	});
 
-	test( 'should use siteUrl if provided', () => {
+	test('should use siteUrl if provided', () => {
 		const siteUrl = 'http://discover.wordpress.com';
 		const wrapper = shallow(
-			<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>
+			<ReaderAuthorLink author={author} siteUrl={siteUrl}>
 				xyz
 			</ReaderAuthorLink>
 		);
-		expect( wrapper.find( '.reader-author-link' ).prop( 'href' ) ).toEqual( siteUrl );
-	} );
+		expect(wrapper.find('.reader-author-link').prop('href')).toEqual(siteUrl);
+	});
 
-	test( 'should use author.URL if site URL is not provided', () => {
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.find( '.reader-author-link' ).prop( 'href' ) ).toEqual( author.URL );
-	} );
+	test('should use author.URL if site URL is not provided', () => {
+		const wrapper = shallow(<ReaderAuthorLink author={author}>xyz</ReaderAuthorLink>);
+		expect(wrapper.find('.reader-author-link').prop('href')).toEqual(author.URL);
+	});
 
-	test( 'should not return a link if siteUrl and author.URL are both missing', () => {
+	test('should not return a link if siteUrl and author.URL are both missing', () => {
 		author.URL = null;
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
+		const wrapper = shallow(<ReaderAuthorLink author={author}>xyz</ReaderAuthorLink>);
 		// Should just return children
-		expect( wrapper.type() ).toEqual( 'span' );
-	} );
-} );
+		expect(wrapper.type()).toEqual('span');
+	});
+});

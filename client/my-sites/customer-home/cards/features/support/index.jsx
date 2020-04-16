@@ -28,27 +28,27 @@ import './style.scss';
  */
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 
-const Support = ( { trackContactAction, trackDocsAction } ) => {
+const Support = ({ trackContactAction, trackDocsAction }) => {
 	const translate = useTranslate();
 
 	return (
 		<Card className="support">
-			<CardHeading>{ translate( 'Support' ) }</CardHeading>
+			<CardHeading>{translate('Support')}</CardHeading>
 			<h6 className="support__header customer-home__card-subheader">
-				{ translate( 'Get all the help you need' ) }
+				{translate('Get all the help you need')}
 			</h6>
 			<div className="support__content">
-				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
+				<img src={happinessIllustration} alt={translate('Support')} />
 				<VerticalNav>
 					<VerticalNavItem
-						path={ localizeUrl( 'https://wordpress.com/support' ) }
+						path={localizeUrl('https://wordpress.com/support')}
 						external
-						onClick={ trackDocsAction }
+						onClick={trackDocsAction}
 					>
-						{ translate( 'Support articles' ) }
+						{translate('Support articles')}
 					</VerticalNavItem>
-					<VerticalNavItem path="/help/contact" external onClick={ trackContactAction }>
-						{ translate( 'Contact us' ) }
+					<VerticalNavItem path="/help/contact" external onClick={trackContactAction}>
+						{translate('Contact us')}
 					</VerticalNavItem>
 				</VerticalNav>
 			</div>
@@ -56,31 +56,31 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 	);
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const isClassicEditor = getSelectedEditor(state, siteId) === 'classic';
 	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+		!isClassicEditor && 'page' === getSiteOption(state, siteId, 'show_on_front');
 
 	return {
 		isStaticHomePage,
 	};
 };
 
-const trackDocsAction = isStaticHomePage =>
+const trackDocsAction = (isStaticHomePage) =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_support_docs_click', {
+		recordTracksEvent('calypso_customer_home_support_docs_click', {
 			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'support_docs' )
+		}),
+		bumpStat('calypso_customer_home', 'support_docs')
 	);
 
-const trackContactAction = isStaticHomePage =>
+const trackContactAction = (isStaticHomePage) =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_support_contact_click', {
+		recordTracksEvent('calypso_customer_home_support_contact_click', {
 			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'support_contact' )
+		}),
+		bumpStat('calypso_customer_home', 'support_contact')
 	);
 
 const mapDispatchToProps = {
@@ -88,14 +88,14 @@ const mapDispatchToProps = {
 	trackDocsAction,
 };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
 	const { isStaticHomePage } = stateProps;
 	return {
 		...ownProps,
 		...stateProps,
-		trackContactAction: () => dispatchProps.trackContactAction( isStaticHomePage ),
-		trackDocsAction: () => dispatchProps.trackDocsAction( isStaticHomePage ),
+		trackContactAction: () => dispatchProps.trackContactAction(isStaticHomePage),
+		trackDocsAction: () => dispatchProps.trackDocsAction(isStaticHomePage),
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( Support );
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Support);

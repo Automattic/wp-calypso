@@ -36,11 +36,11 @@ import { editPost } from 'state/posts/actions';
  * Constants
  */
 export const MODAL_VIEW_STATS = {
-	[ ModalViews.LIST ]: 'view_list',
-	[ ModalViews.DETAIL ]: 'view_detail',
-	[ ModalViews.GALLERY ]: 'view_gallery',
-	[ ModalViews.IMAGE_EDITOR ]: 'view_edit',
-	[ ModalViews.VIDEO_EDITOR ]: 'view_edit',
+	[ModalViews.LIST]: 'view_list',
+	[ModalViews.DETAIL]: 'view_detail',
+	[ModalViews.GALLERY]: 'view_gallery',
+	[ModalViews.IMAGE_EDITOR]: 'view_edit',
+	[ModalViews.VIDEO_EDITOR]: 'view_edit',
 };
 
 /**
@@ -51,26 +51,26 @@ export const MODAL_VIEW_STATS = {
  * @param  {?number} postId   Post ID
  * @returns {Action}           Action object
  */
-export function startEditingPost( siteId, postId ) {
-	return dispatch => {
-		dispatch( editorReset( { isLoading: true } ) );
-		dispatch( { type: EDITOR_START, siteId, postId } );
+export function startEditingPost(siteId, postId) {
+	return (dispatch) => {
+		dispatch(editorReset({ isLoading: true }));
+		dispatch({ type: EDITOR_START, siteId, postId });
 	};
 }
 
-export function startEditingNewPost( siteId, post ) {
-	return dispatch => {
-		const postAttributes = defaults( post, {
+export function startEditingNewPost(siteId, post) {
+	return (dispatch) => {
+		const postAttributes = defaults(post, {
 			status: 'draft',
 			type: 'post',
 			content: '',
 			title: '',
-		} );
+		});
 
-		dispatch( editorReset( { isLoading: true } ) );
-		dispatch( { type: EDITOR_START, siteId, postId: null } );
-		dispatch( editPost( siteId, null, postAttributes ) );
-		dispatch( editorReset() );
+		dispatch(editorReset({ isLoading: true }));
+		dispatch({ type: EDITOR_START, siteId, postId: null });
+		dispatch(editPost(siteId, null, postAttributes));
+		dispatch(editorReset());
 	};
 }
 
@@ -82,10 +82,10 @@ export function startEditingNewPost( siteId, post ) {
  * @param  {?number} postId Post ID
  * @returns {Action}         Action object
  */
-export function stopEditingPost( siteId, postId ) {
-	return dispatch => {
-		dispatch( editorReset() );
-		dispatch( { type: EDITOR_STOP, siteId, postId } );
+export function stopEditingPost(siteId, postId) {
+	return (dispatch) => {
+		dispatch(editorReset());
+		dispatch({ type: EDITOR_STOP, siteId, postId });
 	};
 }
 
@@ -96,7 +96,7 @@ export function stopEditingPost( siteId, postId ) {
  * @param {string} source Identifier of the app the content was pasted from.
  * @returns {object} Action object
  */
-export function pasteEvent( source ) {
+export function pasteEvent(source) {
 	return {
 		type: EDITOR_PASTE_EVENT,
 		source,
@@ -110,12 +110,12 @@ export function pasteEvent( source ) {
  * @param  {ModalViews} view Media view
  * @returns {object}          Action object
  */
-export function setEditorMediaModalView( view ) {
-	const action = setMediaModalView( view );
+export function setEditorMediaModalView(view) {
+	const action = setMediaModalView(view);
 
-	const stat = MODAL_VIEW_STATS[ view ];
-	if ( stat ) {
-		return withAnalytics( bumpStat( 'editor_media_actions', stat ), action );
+	const stat = MODAL_VIEW_STATS[view];
+	if (stat) {
+		return withAnalytics(bumpStat('editor_media_actions', stat), action);
 	}
 
 	return action;
@@ -129,19 +129,19 @@ export function setEditorMediaModalView( view ) {
  * @param  {?Bool}   isEnabled Whether or not the sidebar should be shown
  * @returns {object}            Action object
  */
-export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
-	return ( dispatch, getState ) => {
-		const disabledSites = getPreference( getState(), 'editorConfirmationDisabledSites' );
+export function saveConfirmationSidebarPreference(siteId, isEnabled = true) {
+	return (dispatch, getState) => {
+		const disabledSites = getPreference(getState(), 'editorConfirmationDisabledSites');
 
-		if ( isEnabled ) {
+		if (isEnabled) {
 			dispatch(
 				savePreference(
 					'editorConfirmationDisabledSites',
-					filter( disabledSites, _siteId => siteId !== _siteId )
+					filter(disabledSites, (_siteId) => siteId !== _siteId)
 				)
 			);
 		} else {
-			dispatch( savePreference( 'editorConfirmationDisabledSites', [ ...disabledSites, siteId ] ) );
+			dispatch(savePreference('editorConfirmationDisabledSites', [...disabledSites, siteId]));
 		}
 
 		dispatch(
@@ -152,48 +152,45 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 			)
 		);
 
-		dispatch( bumpStat( 'calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled' ) );
+		dispatch(bumpStat('calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled'));
 	};
 }
 
-export const setEditorIframeLoaded = ( isIframeLoaded = true ) => ( {
+export const setEditorIframeLoaded = (isIframeLoaded = true) => ({
 	type: EDITOR_IFRAME_LOADED,
 	isIframeLoaded,
-} );
+});
 
-export const editorAutosaveReset = () => ( {
+export const editorAutosaveReset = () => ({
 	type: EDITOR_AUTOSAVE_RESET,
-} );
+});
 
-export const editorAutosaveSuccess = autosave => ( {
+export const editorAutosaveSuccess = (autosave) => ({
 	type: EDITOR_AUTOSAVE_SUCCESS,
 	autosave,
-} );
+});
 
-export const editorAutosaveFailure = error => ( {
+export const editorAutosaveFailure = (error) => ({
 	type: EDITOR_AUTOSAVE_FAILURE,
 	error,
-} );
+});
 
-export const editorAutosave = post => dispatch => {
-	if ( ! post.ID ) {
-		return Promise.reject( new Error( 'NO_AUTOSAVE' ) );
+export const editorAutosave = (post) => (dispatch) => {
+	if (!post.ID) {
+		return Promise.reject(new Error('NO_AUTOSAVE'));
 	}
 
-	dispatch( { type: EDITOR_AUTOSAVE } );
+	dispatch({ type: EDITOR_AUTOSAVE });
 
-	const autosaveResult = wpcom
-		.undocumented()
-		.site( post.site_ID )
-		.postAutosave( post.ID, {
-			content: post.content,
-			title: post.title,
-			excerpt: post.excerpt,
-		} );
+	const autosaveResult = wpcom.undocumented().site(post.site_ID).postAutosave(post.ID, {
+		content: post.content,
+		title: post.title,
+		excerpt: post.excerpt,
+	});
 
 	autosaveResult
-		.then( autosave => dispatch( editorAutosaveSuccess( autosave ) ) )
-		.catch( error => dispatch( editorAutosaveFailure( error ) ) );
+		.then((autosave) => dispatch(editorAutosaveSuccess(autosave)))
+		.catch((error) => dispatch(editorAutosaveFailure(error)));
 
 	return autosaveResult;
 };
@@ -204,7 +201,7 @@ export const editorAutosave = post => dispatch => {
  * @param {string} content Raw content
  * @returns {Action} Action object
  */
-export function editorEditRawContent( content ) {
+export function editorEditRawContent(content) {
 	return {
 		type: EDITOR_EDIT_RAW_CONTENT,
 		content,
@@ -222,23 +219,23 @@ export function editorResetRawContent() {
 	};
 }
 
-export function editorInitRawContent( content ) {
+export function editorInitRawContent(content) {
 	return {
 		type: EDITOR_INIT_RAW_CONTENT,
 		content,
 	};
 }
 
-export function editorReset( options ) {
+export function editorReset(options) {
 	return {
 		type: EDITOR_RESET,
-		isLoading: get( options, 'isLoading', false ),
-		loadingError: get( options, 'loadingError', null ),
+		isLoading: get(options, 'isLoading', false),
+		loadingError: get(options, 'loadingError', null),
 	};
 }
 
-export function editorSetLoadingError( loadingError ) {
-	return editorReset( { loadingError } );
+export function editorSetLoadingError(loadingError) {
+	return editorReset({ loadingError });
 }
 
 export function editorLoadingErrorReset() {
@@ -247,9 +244,9 @@ export function editorLoadingErrorReset() {
 	};
 }
 
-export const editorSave = ( siteId, postId, saveMarker ) => ( {
+export const editorSave = (siteId, postId, saveMarker) => ({
 	type: EDITOR_SAVE,
 	siteId,
 	postId,
 	saveMarker,
-} );
+});

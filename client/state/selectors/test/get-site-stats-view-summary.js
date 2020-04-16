@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import { getSiteStatsViewSummary } from 'state/stats/lists/selectors';
 
-describe( 'getSiteStatsViewSummary()', () => {
-	test( 'should return null if no data exists', () => {
+describe('getSiteStatsViewSummary()', () => {
+	test('should return null if no data exists', () => {
 		const data = getSiteStatsViewSummary(
 			{
 				stats: {
@@ -21,10 +21,10 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2916284
 		);
 
-		expect( data ).to.be.null;
-	} );
+		expect(data).to.be.null;
+	});
 
-	test( 'should return an empty object if data is empty', () => {
+	test('should return an empty object if data is empty', () => {
 		const data = getSiteStatsViewSummary(
 			{
 				stats: {
@@ -34,7 +34,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 								statsVisits: {
 									'[["quantity",-1],["stat_fields","views"]]': {
 										data: [],
-										fields: [ 'period', 'views' ],
+										fields: ['period', 'views'],
 										unit: 'day',
 									},
 								},
@@ -46,10 +46,10 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2916284
 		);
 
-		expect( data ).to.eql( {} );
-	} );
+		expect(data).to.eql({});
+	});
 
-	test( 'should return a parsed object if data is present', () => {
+	test('should return a parsed object if data is present', () => {
 		const data = getSiteStatsViewSummary(
 			{
 				stats: {
@@ -59,12 +59,12 @@ describe( 'getSiteStatsViewSummary()', () => {
 								statsVisits: {
 									'[["quantity",-1],["stat_fields","views"]]': {
 										data: [
-											[ '2014-01-01', 4 ],
-											[ '2014-01-02', 4 ],
-											[ '2014-01-03', 23 ],
-											[ '2015-01-01', 10 ],
+											['2014-01-01', 4],
+											['2014-01-02', 4],
+											['2014-01-03', 23],
+											['2015-01-01', 10],
 										],
-										fields: [ 'period', 'views' ],
+										fields: ['period', 'views'],
 										unit: 'day',
 									},
 								},
@@ -76,16 +76,16 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2916284
 		);
 
-		expect( data ).to.eql( {
+		expect(data).to.eql({
 			2014: {
 				0: {
 					total: 31,
 					average: 1,
 					daysInMonth: 31,
 					data: [
-						[ '2014-01-01', 4 ],
-						[ '2014-01-02', 4 ],
-						[ '2014-01-03', 23 ],
+						['2014-01-01', 4],
+						['2014-01-02', 4],
+						['2014-01-03', 23],
 					],
 				},
 			},
@@ -94,9 +94,9 @@ describe( 'getSiteStatsViewSummary()', () => {
 					total: 10,
 					average: 0,
 					daysInMonth: 31,
-					data: [ [ '2015-01-01', 10 ] ],
+					data: [['2015-01-01', 10]],
 				},
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

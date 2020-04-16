@@ -50,42 +50,42 @@ class Zone extends Component {
 		showDeleteDialog: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.lockExpires || nextProps.lockExpires === this.props.lockExpires ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!nextProps.lockExpires || nextProps.lockExpires === this.props.lockExpires) {
 			return;
 		}
 
 		// Add 2 seconds to the refresh clock to prevent race conditions
-		this._refresh && clearTimeout( this._refresh );
+		this._refresh && clearTimeout(this._refresh);
 		this._refresh = setTimeout(
 			() => this.forceUpdate(),
 			nextProps.lockExpires - new Date().getTime() + 2000
 		);
 	}
 
-	showDeleteDialog = () => this.setState( { showDeleteDialog: true } );
+	showDeleteDialog = () => this.setState({ showDeleteDialog: true });
 
-	hideDeleteDialog = () => this.setState( { showDeleteDialog: false } );
+	hideDeleteDialog = () => this.setState({ showDeleteDialog: false });
 
 	deleteZone = () =>
-		this.props.deleteZone( this.props.siteId, this.props.siteSlug, this.props.zoneId );
+		this.props.deleteZone(this.props.siteId, this.props.siteSlug, this.props.zoneId);
 
-	saveZoneDetails = ( form, data ) =>
-		this.props.saveZone( this.props.siteId, this.props.zoneId, form, data );
+	saveZoneDetails = (form, data) =>
+		this.props.saveZone(this.props.siteId, this.props.zoneId, form, data);
 
-	saveZoneFeed = ( form, data ) =>
-		this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
+	saveZoneFeed = (form, data) =>
+		this.props.saveFeed(this.props.siteId, this.props.zoneId, form, data.posts);
 
 	disabled = () =>
 		this.props.lockBlocked ||
-		( this.props.lockExpires !== 0 && this.props.lockExpires < new Date().getTime() );
+		(this.props.lockExpires !== 0 && this.props.lockExpires < new Date().getTime());
 
 	renderContent = () => {
 		const { feed, requestingFeed, requestingZones, siteSlug, translate, zone } = this.props;
 		const { showDeleteDialog } = this.state;
 
-		if ( ! zone ) {
-			return <ZoneNotFound siteSlug={ siteSlug } />;
+		if (!zone) {
+			return <ZoneNotFound siteSlug={siteSlug} />;
 		}
 
 		return (
@@ -95,28 +95,28 @@ class Zone extends Component {
 					title="WP Zone Manager > Edit Zone"
 				/>
 
-				{ showDeleteDialog && (
+				{showDeleteDialog && (
 					<DeleteZoneDialog
-						zoneName={ zone.name }
-						onConfirm={ this.deleteZone }
-						onCancel={ this.hideDeleteDialog }
+						zoneName={zone.name}
+						onConfirm={this.deleteZone}
+						onCancel={this.hideDeleteDialog}
 					/>
-				) }
+				)}
 
 				<ZoneDetailsForm
-					disabled={ this.disabled() }
-					label={ translate( 'Zone label' ) }
-					requesting={ requestingZones }
-					onSubmit={ this.saveZoneDetails }
-					initialValues={ zone }
+					disabled={this.disabled()}
+					label={translate('Zone label')}
+					requesting={requestingZones}
+					onSubmit={this.saveZoneDetails}
+					initialValues={zone}
 				/>
 
 				<ZoneContentForm
-					disabled={ this.disabled() }
-					label={ translate( 'Zone content' ) }
-					requesting={ requestingFeed }
-					onSubmit={ this.saveZoneFeed }
-					initialValues={ { posts: feed } }
+					disabled={this.disabled()}
+					label={translate('Zone content')}
+					requesting={requestingFeed}
+					onSubmit={this.saveZoneFeed}
+					initialValues={{ posts: feed }}
 				/>
 			</div>
 		);
@@ -126,46 +126,43 @@ class Zone extends Component {
 		const { requestingZones, siteId, siteSlug, translate, zone, zoneId } = this.props;
 
 		const deleteButton = (
-			<Button compact primary scary onClick={ this.showDeleteDialog } disabled={ this.disabled() }>
-				{ translate( 'Delete' ) }
+			<Button compact primary scary onClick={this.showDeleteDialog} disabled={this.disabled()}>
+				{translate('Delete')}
 			</Button>
 		);
 
 		return (
 			<div>
-				{ siteId && zoneId && <QueryFeed siteId={ siteId } zoneId={ zoneId } /> }
-				{ siteId && zoneId && <ZoneLock siteId={ siteId } zoneId={ zoneId } /> }
+				{siteId && zoneId && <QueryFeed siteId={siteId} zoneId={zoneId} />}
+				{siteId && zoneId && <ZoneLock siteId={siteId} zoneId={zoneId} />}
 
-				<HeaderCake
-					backHref={ `${ settingsPath }/${ siteSlug }` }
-					actionButton={ zone && deleteButton }
-				>
-					{ translate( 'Edit zone' ) }
+				<HeaderCake backHref={`${settingsPath}/${siteSlug}`} actionButton={zone && deleteButton}>
+					{translate('Edit zone')}
 				</HeaderCake>
 
-				{ zone && this.disabled() && <ZoneLockWarningNotice siteId={ siteId } zoneId={ zoneId } /> }
-				{ zone && ! requestingZones && this.renderContent() }
+				{zone && this.disabled() && <ZoneLockWarningNotice siteId={siteId} zoneId={zoneId} />}
+				{zone && !requestingZones && this.renderContent()}
 			</div>
 		);
 	}
 }
 
 const connectComponent = connect(
-	( state, { zoneId } ) => {
-		const siteId = getSelectedSiteId( state );
+	(state, { zoneId }) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			lockBlocked: blocked( state, siteId, zoneId ),
-			lockExpires: expires( state, siteId, zoneId ),
-			requestingFeed: isRequestingFeed( state, siteId, zoneId ),
-			requestingZones: isRequestingZones( state, siteId ),
+			lockBlocked: blocked(state, siteId, zoneId),
+			lockExpires: expires(state, siteId, zoneId),
+			requestingFeed: isRequestingFeed(state, siteId, zoneId),
+			requestingZones: isRequestingZones(state, siteId),
 			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
-			zone: getZone( state, siteId, zoneId ),
-			feed: getFeed( state, siteId, zoneId ),
+			siteSlug: getSelectedSiteSlug(state),
+			zone: getZone(state, siteId, zoneId),
+			feed: getFeed(state, siteId, zoneId),
 		};
 	},
 	{ deleteZone, saveZone, saveFeed }
 );
 
-export default flowRight( connectComponent, localize )( Zone );
+export default flowRight(connectComponent, localize)(Zone);

@@ -17,8 +17,8 @@ class QueryPostRevisions extends Component {
 		this.request();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.siteId === prevProps.siteId && this.props.postId === prevProps.postId ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.siteId === prevProps.siteId && this.props.postId === prevProps.postId) {
 			return;
 		}
 
@@ -27,7 +27,7 @@ class QueryPostRevisions extends Component {
 
 	request() {
 		const { comparisons, postId, postType, siteId } = this.props;
-		this.props.requestPostRevisions( siteId, postId, postType, comparisons );
+		this.props.requestPostRevisions(siteId, postId, postType, comparisons);
 	}
 
 	render() {
@@ -48,8 +48,8 @@ QueryPostRevisions.propTypes = {
 };
 
 export default connect(
-	( state, { postId, siteId } ) => ( {
-		postType: getEditedPostValue( state, siteId, postId, 'type' ),
-	} ),
+	(state, { postId, siteId }) => ({
+		postType: getEditedPostValue(state, siteId, postId, 'type'),
+	}),
 	{ requestPostRevisions }
-)( QueryPostRevisions );
+)(QueryPostRevisions);

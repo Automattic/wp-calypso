@@ -12,16 +12,16 @@ import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import Item from './item';
 
-const OptionShape = PropTypes.shape( {
+const OptionShape = PropTypes.shape({
 	label: PropTypes.string.isRequired,
 	uri: PropTypes.string.isRequired,
 	icon: PropTypes.string,
-} );
+});
 
 export default class Dropdown extends Component {
 	static propTypes = {
 		selected: OptionShape,
-		options: PropTypes.arrayOf( OptionShape ),
+		options: PropTypes.arrayOf(OptionShape),
 	};
 
 	state = {
@@ -29,58 +29,56 @@ export default class Dropdown extends Component {
 	};
 
 	componentDidMount() {
-		window.addEventListener( 'scroll', this.collapse );
+		window.addEventListener('scroll', this.collapse);
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'scroll', this.collapse );
+		window.removeEventListener('scroll', this.collapse);
 	}
 
 	render() {
-		const className = classNames( 'sub-masterbar-nav__dropdown', {
+		const className = classNames('sub-masterbar-nav__dropdown', {
 			'is-collapsed': this.state.collapsed,
-		} );
+		});
 
 		return (
-			<div className={ className }>
-				<div className="sub-masterbar-nav__select" onClick={ this.toggle }>
+			<div className={className}>
+				<div className="sub-masterbar-nav__select" onClick={this.toggle}>
 					<Item
-						isSelected={ true }
-						label={ this.props.selected.label }
-						icon={ this.props.selected.icon }
+						isSelected={true}
+						label={this.props.selected.label}
+						icon={this.props.selected.icon}
 					/>
 					<Gridicon icon="chevron-down" className="sub-masterbar-nav__select-icon" />
 				</div>
 				<div className="sub-masterbar-nav__wrapper">
-					<div className="sub-masterbar-nav__items">
-						{ this.props.options.map( this.renderItem ) }
-					</div>
+					<div className="sub-masterbar-nav__items">{this.props.options.map(this.renderItem)}</div>
 				</div>
 			</div>
 		);
 	}
 
-	renderItem = ( item, index ) => {
+	renderItem = (item, index) => {
 		return (
 			<Item
-				key={ index }
-				onClick={ this.collapse }
-				label={ item.label }
-				icon={ item.icon }
-				href={ item.uri }
+				key={index}
+				onClick={this.collapse}
+				label={item.label}
+				icon={item.icon}
+				href={item.uri}
 			/>
 		);
 	};
 
 	toggle = () => {
-		this.setState( state => ( {
-			collapsed: ! state.collapsed,
-		} ) );
+		this.setState((state) => ({
+			collapsed: !state.collapsed,
+		}));
 	};
 
 	collapse = () => {
-		this.setState( () => ( {
+		this.setState(() => ({
 			collapsed: true,
-		} ) );
+		}));
 	};
 }

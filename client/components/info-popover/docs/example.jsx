@@ -21,7 +21,7 @@ class InfoPopoverExample extends React.PureComponent {
 			<div>
 				<label>
 					Position
-					<select value={ this.state.popoverPosition } onChange={ this._changePopoverPosition }>
+					<select value={this.state.popoverPosition} onChange={this._changePopoverPosition}>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
 						<option value="top right">top right</option>
@@ -35,15 +35,15 @@ class InfoPopoverExample extends React.PureComponent {
 
 				<br />
 
-				<InfoPopover id="popover__info-popover-example" position={ this.state.popoverPosition }>
+				<InfoPopover id="popover__info-popover-example" position={this.state.popoverPosition}>
 					Some informational text.
 				</InfoPopover>
 			</div>
 		);
 	}
 
-	_changePopoverPosition = event => {
-		this.setState( { popoverPosition: event.target.value } );
+	_changePopoverPosition = (event) => {
+		this.setState({ popoverPosition: event.target.value });
 	};
 }
 

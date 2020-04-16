@@ -14,7 +14,7 @@ import joinClasses from './join-classes';
 import Field from './field';
 import Button from './button';
 
-export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
+export default function Coupon({ id, className, disabled, couponStatus, couponFieldStateProps }) {
 	const translate = useTranslate();
 	const {
 		couponFieldValue,
@@ -25,44 +25,44 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 		handleCouponSubmit,
 	} = couponFieldStateProps;
 
-	if ( couponStatus === 'applied' ) {
+	if (couponStatus === 'applied') {
 		// Clear the field value when the coupon is applied
-		setCouponFieldValue( '' );
+		setCouponFieldValue('');
 		return null;
 	}
 
 	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
 	const isPending = couponStatus === 'pending';
 
-	const errorMessage = getCouponErrorMessageFromStatus( translate, couponStatus, isFreshOrEdited );
+	const errorMessage = getCouponErrorMessageFromStatus(translate, couponStatus, isFreshOrEdited);
 
 	return (
 		<CouponWrapper
-			className={ joinClasses( [ className, 'coupon' ] ) }
-			onSubmit={ event => {
+			className={joinClasses([className, 'coupon'])}
+			onSubmit={(event) => {
 				event.preventDefault();
-				setIsFreshOrEdited( false );
+				setIsFreshOrEdited(false);
 				handleCouponSubmit();
-			} }
+			}}
 		>
 			<Field
-				id={ id }
-				value={ couponFieldValue }
-				disabled={ disabled || isPending }
-				placeholder={ translate( 'Enter your coupon code' ) }
-				isError={ hasCouponError && ! isFreshOrEdited }
-				errorMessage={ errorMessage }
-				onChange={ input => {
-					setIsFreshOrEdited( true );
-					setCouponFieldValue( input );
-				} }
+				id={id}
+				value={couponFieldValue}
+				disabled={disabled || isPending}
+				placeholder={translate('Enter your coupon code')}
+				isError={hasCouponError && !isFreshOrEdited}
+				errorMessage={errorMessage}
+				onChange={(input) => {
+					setIsFreshOrEdited(true);
+					setCouponFieldValue(input);
+				}}
 			/>
 
-			{ isApplyButtonActive && (
-				<ApplyButton buttonState={ isPending ? 'disabled' : 'secondary' }>
-					{ isPending ? translate( 'Processing…' ) : translate( 'Apply' ) }
+			{isApplyButtonActive && (
+				<ApplyButton buttonState={isPending ? 'disabled' : 'secondary'}>
+					{isPending ? translate('Processing…') : translate('Apply')}
 				</ApplyButton>
-			) }
+			)}
 		</CouponWrapper>
 	);
 }
@@ -86,12 +86,12 @@ const animateIn = keyframes`
 `;
 
 const CouponWrapper = styled.form`
-	margin: ${props => props.marginTop} 0 0 0;
+	margin: ${(props) => props.marginTop} 0 0 0;
 	padding-top: 0;
 	position: relative;
 `;
 
-const ApplyButton = styled( Button )`
+const ApplyButton = styled(Button)`
 	position: absolute;
 	top: 5px;
 	right: 4px;
@@ -101,12 +101,12 @@ const ApplyButton = styled( Button )`
 	margin: 0;
 `;
 
-function getCouponErrorMessageFromStatus( translate, status, isFreshOrEdited ) {
-	if ( status === 'invalid' && ! isFreshOrEdited ) {
-		return translate( "We couldn't find your coupon. Please check your code and try again." );
+function getCouponErrorMessageFromStatus(translate, status, isFreshOrEdited) {
+	if (status === 'invalid' && !isFreshOrEdited) {
+		return translate("We couldn't find your coupon. Please check your code and try again.");
 	}
-	if ( status === 'rejected' ) {
-		return translate( 'This coupon does not apply to any items in the cart.' );
+	if (status === 'rejected') {
+		return translate('This coupon does not apply to any items in the cart.');
 	}
 	return null;
 }

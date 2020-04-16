@@ -16,6 +16,6 @@ import getBillingTransactions from 'state/selectors/get-billing-transactions';
  * @param  {object}  state   Global state tree
  * @returns {?Array}          An array of upcoming transactions
  */
-export default function getUpcomingBillingTransactions( state ) {
-	return get( getBillingTransactions( state ), 'upcoming', null );
+export default function getUpcomingBillingTransactions(state) {
+	return get(getBillingTransactions(state), 'upcoming', null);
 }

@@ -9,12 +9,12 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
 
-const FetchError = ( { selectedDomainName, translate } ) => {
+const FetchError = ({ selectedDomainName, translate }) => {
 	return (
 		<Notice
 			status="is-warning"
-			showDismiss={ false }
-			text={ translate(
+			showDismiss={false}
+			text={translate(
 				'Sorry, there was an error fetching the nameservers for {{strong}}%(domain)s{{/strong}}.',
 				{
 					components: {
@@ -24,9 +24,9 @@ const FetchError = ( { selectedDomainName, translate } ) => {
 						domain: selectedDomainName,
 					},
 				}
-			) }
+			)}
 		/>
 	);
 };
 
-export default localize( FetchError );
+export default localize(FetchError);

@@ -45,42 +45,42 @@ class CancelAutoRenewalForm extends Component {
 	getProductTypeString = () => {
 		const { purchase, translate } = this.props;
 
-		if ( isDomainRegistration( purchase ) ) {
+		if (isDomainRegistration(purchase)) {
 			/* translators: as in "domain name"*/
-			return translate( 'domain' );
+			return translate('domain');
 		}
 
-		if ( isPlan( purchase ) ) {
+		if (isPlan(purchase)) {
 			/* translators: as in "Premium plan" or "Personal plan"*/
-			return translate( 'plan' );
+			return translate('plan');
 		}
 
-		return translate( 'subscription' );
+		return translate('subscription');
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		const { translate } = props;
 		const productType = this.getProductTypeString();
 
-		this.radioButtons = shuffle( [
+		this.radioButtons = shuffle([
 			[
 				'let-it-expire',
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
-				translate( "I'm going to let this %(productType)s expire.", {
+				translate("I'm going to let this %(productType)s expire.", {
 					args: { productType },
-				} ),
+				}),
 			],
 			[
 				'manual-renew',
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
-				translate( "I'm going to renew the %(productType)s, but will do it manually.", {
+				translate("I'm going to renew the %(productType)s, but will do it manually.", {
 					args: { productType },
-				} ),
+				}),
 			],
-			[ 'not-sure', translate( "I'm not sure." ) ],
-		] );
+			['not-sure', translate("I'm not sure.")],
+		]);
 	}
 
 	onSubmit = () => {
@@ -94,28 +94,28 @@ class CancelAutoRenewalForm extends Component {
 		submitSurvey(
 			'calypso-cancel-auto-renewal',
 			selectedSite.ID,
-			enrichedSurveyData( surveyData, purchase )
+			enrichedSurveyData(surveyData, purchase)
 		);
 
 		this.props.onClose();
 	};
 
-	onRadioChange = event => {
-		this.setState( {
+	onRadioChange = (event) => {
+		this.setState({
 			response: event.currentTarget.value,
-		} );
+		});
 	};
 
-	createRadioButton = ( value, text ) => {
+	createRadioButton = (value, text) => {
 		// adding `key` for resolving the unique key prop requirement when performing `map`
 		return (
-			<FormLabel key={ value }>
+			<FormLabel key={value}>
 				<FormRadio
-					value={ value }
-					onChange={ this.onRadioChange }
-					checked={ this.state.response === value }
+					value={value}
+					onChange={this.onRadioChange}
+					checked={this.state.response === value}
 				/>
-				<span>{ text }</span>
+				<span>{text}</span>
 			</FormLabel>
 		);
 	};
@@ -124,46 +124,42 @@ class CancelAutoRenewalForm extends Component {
 		const { translate, isVisible, purchase, onClose } = this.props;
 		const { response } = this.state;
 
-		const disableSubmit = ! response;
+		const disableSubmit = !response;
 		const productType = this.getProductTypeString();
 
 		return (
-			<Dialog
-				className="cancel-auto-renewal-form__dialog"
-				isVisible={ isVisible }
-				onClose={ onClose }
-			>
+			<Dialog className="cancel-auto-renewal-form__dialog" isVisible={isVisible} onClose={onClose}>
 				<FormSectionHeading className="cancel-auto-renewal-form__header">
-					{ translate( 'Your thoughts are needed.' ) }
+					{translate('Your thoughts are needed.')}
 				</FormSectionHeading>
 				<FormFieldset>
 					<p>
-						{ translate(
+						{translate(
 							"Auto-renewal is now off. Before you go, we'd love to know: " +
 								"are you letting this %(productType)s expire completely, or do you think you'll renew it manually?",
 							{
 								args: { productType },
 								comment: '%(productType)s will be either "plan", "domain", or "subscription".',
 							}
-						) }
+						)}
 					</p>
-					{ this.radioButtons.map( radioButton =>
-						this.createRadioButton( radioButton[ 0 ], radioButton[ 1 ] )
-					) }
+					{this.radioButtons.map((radioButton) =>
+						this.createRadioButton(radioButton[0], radioButton[1])
+					)}
 				</FormFieldset>
 
 				<FormButtonsBar>
-					<FormButton onClick={ this.onSubmit } disabled={ disableSubmit }>
-						{ translate( 'Submit' ) }
+					<FormButton onClick={this.onSubmit} disabled={disableSubmit}>
+						{translate('Submit')}
 					</FormButton>
-					<FormButton isPrimary={ false } onClick={ onClose }>
-						{ translate( 'Skip' ) }
+					<FormButton isPrimary={false} onClick={onClose}>
+						{translate('Skip')}
 					</FormButton>
-					<PrecancellationChatButton purchase={ purchase } onClick={ onClose } />
+					<PrecancellationChatButton purchase={purchase} onClick={onClose} />
 				</FormButtonsBar>
 			</Dialog>
 		);
 	}
 }
 
-export default connect()( localize( CancelAutoRenewalForm ) );
+export default connect()(localize(CancelAutoRenewalForm));

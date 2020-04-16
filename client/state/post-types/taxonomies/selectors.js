@@ -13,8 +13,8 @@ import { find, get } from 'lodash';
  * @param  {string}  postType Post type
  * @returns {boolean}          Whether request is in-progress
  */
-export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
-	return get( state.postTypes.taxonomies.requesting, [ siteId, postType ], false );
+export function isRequestingPostTypeTaxonomies(state, siteId, postType) {
+	return get(state.postTypes.taxonomies.requesting, [siteId, postType], false);
 }
 
 /**
@@ -26,8 +26,8 @@ export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
  * @param  {string}  postType Post type
  * @returns {Array?}           Post type taxonomies
  */
-export function getPostTypeTaxonomies( state, siteId, postType ) {
-	return get( state.postTypes.taxonomies.items, [ siteId, postType ], null );
+export function getPostTypeTaxonomies(state, siteId, postType) {
+	return get(state.postTypes.taxonomies.items, [siteId, postType], null);
 }
 
 /**
@@ -40,7 +40,7 @@ export function getPostTypeTaxonomies( state, siteId, postType ) {
  * @param  {string}  taxonomyName Taxonomy name
  * @returns {object?}              Post type taxonomy
  */
-export function getPostTypeTaxonomy( state, siteId, postType, taxonomyName ) {
-	const taxonomies = getPostTypeTaxonomies( state, siteId, postType );
-	return find( taxonomies, { name: taxonomyName } ) || null;
+export function getPostTypeTaxonomy(state, siteId, postType, taxonomyName) {
+	const taxonomies = getPostTypeTaxonomies(state, siteId, postType);
+	return find(taxonomies, { name: taxonomyName }) || null;
 }

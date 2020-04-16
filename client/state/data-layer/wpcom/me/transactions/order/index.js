@@ -13,10 +13,10 @@ import fromApi from './from-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchOrderTransaction = action =>
+export const fetchOrderTransaction = (action) =>
 	http(
 		{
-			path: `/me/transactions/order/${ action.orderId }`,
+			path: `/me/transactions/order/${action.orderId}`,
 			method: 'GET',
 			apiNamespace: 'rest/v1',
 			// At the moment, we have to pass this explicitly for rest/v1 APIs.
@@ -28,17 +28,17 @@ export const fetchOrderTransaction = action =>
 		action
 	);
 
-export const onSuccess = ( { orderId }, detail ) => setOrderTransaction( orderId, detail );
+export const onSuccess = ({ orderId }, detail) => setOrderTransaction(orderId, detail);
 
-export const onError = ( { orderId }, error ) => setOrderTransactionError( orderId, error );
+export const onError = ({ orderId }, error) => setOrderTransactionError(orderId, error);
 
-registerHandlers( 'state/data-layer/wpcom/me/transactions/order/index.js', {
-	[ ORDER_TRANSACTION_FETCH ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/transactions/order/index.js', {
+	[ORDER_TRANSACTION_FETCH]: [
+		dispatchRequest({
 			fetch: fetchOrderTransaction,
 			onSuccess,
 			onError,
 			fromApi,
-		} ),
+		}),
 	],
-} );
+});

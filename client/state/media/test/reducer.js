@@ -31,21 +31,21 @@ import {
 } from '../actions';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
 
-jest.mock( 'lib/media/utils', () => ( {
-	validateMediaItem: () => [ 'some-error' ],
-} ) );
+jest.mock('lib/media/utils', () => ({
+	validateMediaItem: () => ['some-error'],
+}));
 
-describe( 'reducer', () => {
-	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
+describe('reducer', () => {
+	test('should include expected keys in return value', () => {
+		expect(reducer(undefined, {})).to.have.keys([
 			'errors',
 			'queries',
 			'queryRequests',
 			'mediaItemRequests',
-		] );
-	} );
+		]);
+	});
 
-	describe( 'errors()', () => {
+	describe('errors()', () => {
 		const siteId = 2916284;
 		const site = {
 			ID: siteId,
@@ -54,260 +54,260 @@ describe( 'reducer', () => {
 			ID: 42,
 		};
 
-		test( 'should default to an empty object', () => {
-			const state = errors( undefined, {} );
+		test('should default to an empty object', () => {
+			const state = errors(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should store errors per site on media upload failure', () => {
-			const state = errors( {}, createMediaItem( site, mediaItem ) );
+		test('should store errors per site on media upload failure', () => {
+			const state = errors({}, createMediaItem(site, mediaItem));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ 'some-error' ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: ['some-error'],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a 404 error when failed with http_404 error during external media request', () => {
+		test('should return a 404 error when failed with http_404 error during external media request', () => {
 			const error = { error: 'http_404' };
-			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+			const state = errors({}, failMediaRequest(siteId, {}, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					0: [ MediaValidationErrors.UPLOAD_VIA_URL_404 ],
+			expect(state).to.eql({
+				[siteId]: {
+					0: [MediaValidationErrors.UPLOAD_VIA_URL_404],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return an error when there is not enough space to upload during external media request', () => {
+		test('should return an error when there is not enough space to upload during external media request', () => {
 			const error = {
 				error: 'upload_error',
 				message: 'Not enough space to upload',
 			};
-			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+			const state = errors({}, failMediaRequest(siteId, {}, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					0: [ MediaValidationErrors.NOT_ENOUGH_SPACE ],
+			expect(state).to.eql({
+				[siteId]: {
+					0: [MediaValidationErrors.NOT_ENOUGH_SPACE],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return an error when the space quota has been exceeded during external media request', () => {
+		test('should return an error when the space quota has been exceeded during external media request', () => {
 			const error = {
 				error: 'upload_error',
 				message: 'You have used your space quota',
 			};
-			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+			const state = errors({}, failMediaRequest(siteId, {}, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					0: [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ],
+			expect(state).to.eql({
+				[siteId]: {
+					0: [MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a generic server error when there is another upload error during external media request', () => {
+		test('should return a generic server error when there is another upload error during external media request', () => {
 			const error = {
 				error: 'upload_error',
 				message: 'Some misc upload error has occurred',
 			};
-			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+			const state = errors({}, failMediaRequest(siteId, {}, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					0: [ MediaValidationErrors.SERVER_ERROR ],
+			expect(state).to.eql({
+				[siteId]: {
+					0: [MediaValidationErrors.SERVER_ERROR],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a keyring auth failed error when keyring token failed during external media request', () => {
+		test('should return a keyring auth failed error when keyring token failed during external media request', () => {
 			const error = { error: 'keyring_token_error' };
-			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+			const state = errors({}, failMediaRequest(siteId, {}, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					0: [ MediaValidationErrors.SERVICE_AUTH_FAILED ],
+			expect(state).to.eql({
+				[siteId]: {
+					0: [MediaValidationErrors.SERVICE_AUTH_FAILED],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a service failure error when service failed during external media request', () => {
+		test('should return a service failure error when service failed during external media request', () => {
 			const error = { error: 'servicefail' };
-			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+			const state = errors({}, failMediaRequest(siteId, {}, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					0: [ MediaValidationErrors.SERVICE_FAILED ],
+			expect(state).to.eql({
+				[siteId]: {
+					0: [MediaValidationErrors.SERVICE_FAILED],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a generic server error for any other error during external media request', () => {
+		test('should return a generic server error for any other error during external media request', () => {
 			const error = { error: 'something' };
-			const state = errors( {}, failMediaRequest( siteId, {}, error ) );
+			const state = errors({}, failMediaRequest(siteId, {}, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					0: [ MediaValidationErrors.SERVER_ERROR ],
+			expect(state).to.eql({
+				[siteId]: {
+					0: [MediaValidationErrors.SERVER_ERROR],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a 404 error when failed with http_404 error', () => {
+		test('should return a 404 error when failed with http_404 error', () => {
 			const error = { error: 'http_404' };
-			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+			const state = errors({}, failMediaItemRequest(siteId, mediaItem.ID, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.UPLOAD_VIA_URL_404 ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: [MediaValidationErrors.UPLOAD_VIA_URL_404],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return an error when there is not enough space to upload', () => {
+		test('should return an error when there is not enough space to upload', () => {
 			const error = {
 				error: 'upload_error',
 				message: 'Not enough space to upload',
 			};
-			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+			const state = errors({}, failMediaItemRequest(siteId, mediaItem.ID, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.NOT_ENOUGH_SPACE ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: [MediaValidationErrors.NOT_ENOUGH_SPACE],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return an error when the space quota has been exceeded', () => {
+		test('should return an error when the space quota has been exceeded', () => {
 			const error = {
 				error: 'upload_error',
 				message: 'You have used your space quota',
 			};
-			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+			const state = errors({}, failMediaItemRequest(siteId, mediaItem.ID, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: [MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a generic server error when there is another upload error', () => {
+		test('should return a generic server error when there is another upload error', () => {
 			const error = {
 				error: 'upload_error',
 				message: 'Some misc upload error has occurred',
 			};
-			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+			const state = errors({}, failMediaItemRequest(siteId, mediaItem.ID, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: [MediaValidationErrors.SERVER_ERROR],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a keyring auth failed error when keyring token failed', () => {
+		test('should return a keyring auth failed error when keyring token failed', () => {
 			const error = { error: 'keyring_token_error' };
-			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+			const state = errors({}, failMediaItemRequest(siteId, mediaItem.ID, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.SERVICE_AUTH_FAILED ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: [MediaValidationErrors.SERVICE_AUTH_FAILED],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a service failure error when service failed', () => {
+		test('should return a service failure error when service failed', () => {
 			const error = { error: 'servicefail' };
-			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+			const state = errors({}, failMediaItemRequest(siteId, mediaItem.ID, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.SERVICE_FAILED ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: [MediaValidationErrors.SERVICE_FAILED],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a generic server error for any other error', () => {
+		test('should return a generic server error for any other error', () => {
 			const error = { error: 'something' };
-			const state = errors( {}, failMediaItemRequest( siteId, mediaItem.ID, error ) );
+			const state = errors({}, failMediaItemRequest(siteId, mediaItem.ID, error));
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: [MediaValidationErrors.SERVER_ERROR],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should clear errors by type', () => {
+		test('should clear errors by type', () => {
 			const state = errors(
 				{
-					[ siteId ]: {
-						[ mediaItem.ID ]: [
+					[siteId]: {
+						[mediaItem.ID]: [
 							MediaValidationErrors.SERVICE_FAILED,
 							MediaValidationErrors.SERVER_ERROR,
 						],
 					},
 				},
-				clearMediaErrors( siteId, MediaValidationErrors.SERVICE_FAILED )
+				clearMediaErrors(siteId, MediaValidationErrors.SERVICE_FAILED)
 			);
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.SERVER_ERROR ],
+			expect(state).to.eql({
+				[siteId]: {
+					[mediaItem.ID]: [MediaValidationErrors.SERVER_ERROR],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should clear errors for a media with a specified ID', () => {
+		test('should clear errors for a media with a specified ID', () => {
 			const otherMediaId = 123456;
 			const state = errors(
 				{
-					[ siteId ]: {
-						[ mediaItem.ID ]: [
+					[siteId]: {
+						[mediaItem.ID]: [
 							MediaValidationErrors.SERVICE_FAILED,
 							MediaValidationErrors.SERVER_ERROR,
 						],
-						[ otherMediaId ]: [ MediaValidationErrors.SERVICE_FAILED ],
+						[otherMediaId]: [MediaValidationErrors.SERVICE_FAILED],
 					},
 				},
-				clearMediaItemErrors( siteId, mediaItem.ID )
+				clearMediaItemErrors(siteId, mediaItem.ID)
 			);
 
-			expect( state ).to.eql( {
-				[ siteId ]: {
-					[ otherMediaId ]: [ MediaValidationErrors.SERVICE_FAILED ],
+			expect(state).to.eql({
+				[siteId]: {
+					[otherMediaId]: [MediaValidationErrors.SERVICE_FAILED],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should clear all errors when source is changed', () => {
+		test('should clear all errors when source is changed', () => {
 			const otherSiteState = {
-				[ 123456 ]: {
-					[ mediaItem.ID ]: [ MediaValidationErrors.SERVICE_FAILED ],
+				[123456]: {
+					[mediaItem.ID]: [MediaValidationErrors.SERVICE_FAILED],
 				},
 			};
 			const state = errors(
 				{
-					[ siteId ]: {
-						[ mediaItem.ID ]: [
+					[siteId]: {
+						[mediaItem.ID]: [
 							MediaValidationErrors.SERVICE_FAILED,
 							MediaValidationErrors.SERVER_ERROR,
 						],
 					},
 					...otherSiteState,
 				},
-				changeMediaSource( siteId )
+				changeMediaSource(siteId)
 			);
 
-			expect( state ).to.eql( otherSiteState );
-		} );
-	} );
+			expect(state).to.eql(otherSiteState);
+		});
+	});
 
-	describe( 'queries()', () => {
+	describe('queries()', () => {
 		const items = [
 			{
 				ID: 42,
@@ -339,78 +339,78 @@ describe( 'reducer', () => {
 			query: query2,
 		};
 
-		test( 'should default to an empty object', () => {
-			const state = queries( undefined, {} );
+		test('should default to an empty object', () => {
+			const state = queries(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should track media receive', () => {
-			const state = queries( deepFreeze( {} ), action1 );
+		test('should track media receive', () => {
+			const state = queries(deepFreeze({}), action1);
 
-			expect( state ).to.have.keys( '2916284' );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
-			expect( state[ 2916284 ].getItems( query1 ) ).to.eql( items );
-		} );
+			expect(state).to.have.keys('2916284');
+			expect(state[2916284]).to.be.an.instanceof(MediaQueryManager);
+			expect(state[2916284].getItems(query1)).to.eql(items);
+		});
 
-		test( 'should accumulate query requests', () => {
-			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
-			const state = queries( previousState, action2 );
+		test('should accumulate query requests', () => {
+			const previousState = deepFreeze(queries(deepFreeze({}), action1));
+			const state = queries(previousState, action2);
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
-			expect( state[ 2916284 ].getItems( query1 ) ).to.have.length( 1 );
-			expect( state[ 2916284 ].getItems( query2 ) ).to.have.length( 1 );
-		} );
+			expect(state).to.have.keys(['2916284']);
+			expect(state[2916284]).to.be.an.instanceof(MediaQueryManager);
+			expect(state[2916284].getItems(query1)).to.have.length(1);
+			expect(state[2916284].getItems(query2)).to.have.length(1);
+		});
 
-		test( 'should return the same state if successful request has no changes', () => {
-			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
-			const state = queries( previousState, action1 );
+		test('should return the same state if successful request has no changes', () => {
+			const previousState = deepFreeze(queries(deepFreeze({}), action1));
+			const state = queries(previousState, action1);
 
-			expect( state ).to.equal( previousState );
-		} );
+			expect(state).to.equal(previousState);
+		});
 
-		test( 'should track posts even if not associated with a query', () => {
-			const state = queries( deepFreeze( {} ), {
+		test('should track posts even if not associated with a query', () => {
+			const state = queries(deepFreeze({}), {
 				type: MEDIA_RECEIVE,
 				siteId: 2916284,
 				media: items,
-			} );
+			});
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
-			expect( state[ 2916284 ].getItems() ).to.eql( items );
-		} );
+			expect(state).to.have.keys(['2916284']);
+			expect(state[2916284]).to.be.an.instanceof(MediaQueryManager);
+			expect(state[2916284].getItems()).to.eql(items);
+		});
 
-		test( 'should update received posts', () => {
+		test('should update received posts', () => {
 			const updatedItem = {
 				ID: 42,
 				title: 'test',
 			};
 
-			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
-			const state = queries( previousState, {
+			const previousState = deepFreeze(queries(deepFreeze({}), action1));
+			const state = queries(previousState, {
 				...action1,
-				media: [ updatedItem ],
-			} );
+				media: [updatedItem],
+			});
 
-			expect( state[ 2916284 ].getItem( 42 ) ).to.eql( updatedItem );
-		} );
+			expect(state[2916284].getItem(42)).to.eql(updatedItem);
+		});
 
-		test( 'should remove item when post delete action success dispatched', () => {
-			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
-			const state = queries( previousState, {
+		test('should remove item when post delete action success dispatched', () => {
+			const previousState = deepFreeze(queries(deepFreeze({}), action1));
+			const state = queries(previousState, {
 				type: MEDIA_DELETE,
 				siteId: 2916284,
-				mediaIds: [ 42 ],
-			} );
+				mediaIds: [42],
+			});
 
-			expect( state[ 2916284 ].getItem( 42 ) ).to.be.undefined;
-			expect( state[ 2916284 ].getItems() ).to.be.empty;
-		} );
-	} );
+			expect(state[2916284].getItem(42)).to.be.undefined;
+			expect(state[2916284].getItems()).to.be.empty;
+		});
+	});
 
-	describe( 'queryRequests()', () => {
+	describe('queryRequests()', () => {
 		const query1 = {
 			search: 'flower',
 		};
@@ -421,146 +421,146 @@ describe( 'reducer', () => {
 
 		const state1 = {
 			2916284: {
-				[ MediaQueryManager.QueryKey.stringify( query1 ) ]: true,
+				[MediaQueryManager.QueryKey.stringify(query1)]: true,
 			},
 		};
 
 		const state2 = {
 			2916284: {
-				...state1[ 2916284 ],
-				[ MediaQueryManager.QueryKey.stringify( query2 ) ]: true,
+				...state1[2916284],
+				[MediaQueryManager.QueryKey.stringify(query2)]: true,
 			},
 		};
 
-		test( 'should default to an empty object', () => {
-			const state = queryRequests( undefined, {} );
+		test('should default to an empty object', () => {
+			const state = queryRequests(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should track media requesting', () => {
-			const state = queryRequests( deepFreeze( {} ), {
+		test('should track media requesting', () => {
+			const state = queryRequests(deepFreeze({}), {
 				type: MEDIA_REQUESTING,
 				siteId: 2916284,
 				query: query1,
-			} );
+			});
 
-			expect( state ).to.deep.eql( state1 );
-		} );
+			expect(state).to.deep.eql(state1);
+		});
 
-		test( 'should accumulate queries', () => {
-			const state = queryRequests( deepFreeze( state1 ), {
+		test('should accumulate queries', () => {
+			const state = queryRequests(deepFreeze(state1), {
 				type: MEDIA_REQUESTING,
 				siteId: 2916284,
 				query: query2,
-			} );
+			});
 
-			expect( state ).to.deep.eql( state2 );
-		} );
+			expect(state).to.deep.eql(state2);
+		});
 
-		test( 'should track media request success', () => {
-			const state = queryRequests( deepFreeze( state2 ), {
+		test('should track media request success', () => {
+			const state = queryRequests(deepFreeze(state2), {
 				type: MEDIA_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: query2,
-			} );
+			});
 
-			expect( state ).to.deep.eql( state1 );
-		} );
+			expect(state).to.deep.eql(state1);
+		});
 
-		test( 'should track media request failures', () => {
-			const state = queryRequests( deepFreeze( state2 ), {
+		test('should track media request failures', () => {
+			const state = queryRequests(deepFreeze(state2), {
 				type: MEDIA_REQUEST_FAILURE,
 				siteId: 2916284,
 				query: query2,
-			} );
+			});
 
-			expect( state ).to.deep.eql( state1 );
-		} );
+			expect(state).to.deep.eql(state1);
+		});
 
-		test( 'should never persist state', () => {
-			const state = queryRequests( deepFreeze( state1 ), { type: SERIALIZE } );
+		test('should never persist state', () => {
+			const state = queryRequests(deepFreeze(state1), { type: SERIALIZE });
 
-			expect( state ).to.be.undefined;
-		} );
+			expect(state).to.be.undefined;
+		});
 
-		test( 'should never load persisted state', () => {
-			const state = queryRequests( deepFreeze( state1 ), { type: DESERIALIZE } );
+		test('should never load persisted state', () => {
+			const state = queryRequests(deepFreeze(state1), { type: DESERIALIZE });
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
+			expect(state).to.eql({});
+		});
+	});
 
-	describe( 'mediaItemRequests()', () => {
+	describe('mediaItemRequests()', () => {
 		const state1 = {
 			2916284: {
-				[ 10 ]: true,
+				[10]: true,
 			},
 		};
 
 		const state2 = {
 			2916284: {
-				...state1[ 2916284 ],
-				[ 20 ]: true,
+				...state1[2916284],
+				[20]: true,
 			},
 		};
 
-		test( 'should default to an empty object', () => {
-			const state = mediaItemRequests( undefined, {} );
+		test('should default to an empty object', () => {
+			const state = mediaItemRequests(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should track media item requesting', () => {
-			const state = mediaItemRequests( deepFreeze( {} ), {
+		test('should track media item requesting', () => {
+			const state = mediaItemRequests(deepFreeze({}), {
 				type: MEDIA_ITEM_REQUESTING,
 				siteId: 2916284,
 				mediaId: 10,
-			} );
+			});
 
-			expect( state ).to.deep.eql( state1 );
-		} );
+			expect(state).to.deep.eql(state1);
+		});
 
-		test( 'should accumulate requests', () => {
-			const state = mediaItemRequests( deepFreeze( state1 ), {
+		test('should accumulate requests', () => {
+			const state = mediaItemRequests(deepFreeze(state1), {
 				type: MEDIA_ITEM_REQUESTING,
 				siteId: 2916284,
 				mediaId: 20,
-			} );
+			});
 
-			expect( state ).to.deep.eql( state2 );
-		} );
+			expect(state).to.deep.eql(state2);
+		});
 
-		test( 'should track media request success', () => {
-			const state = mediaItemRequests( deepFreeze( state2 ), {
+		test('should track media request success', () => {
+			const state = mediaItemRequests(deepFreeze(state2), {
 				type: MEDIA_ITEM_REQUEST_SUCCESS,
 				siteId: 2916284,
 				mediaId: 20,
-			} );
+			});
 
-			expect( state ).to.deep.eql( state1 );
-		} );
+			expect(state).to.deep.eql(state1);
+		});
 
-		test( 'should track media request failures', () => {
-			const state = mediaItemRequests( deepFreeze( state2 ), {
+		test('should track media request failures', () => {
+			const state = mediaItemRequests(deepFreeze(state2), {
 				type: MEDIA_ITEM_REQUEST_FAILURE,
 				siteId: 2916284,
 				mediaId: 20,
-			} );
+			});
 
-			expect( state ).to.deep.eql( state1 );
-		} );
+			expect(state).to.deep.eql(state1);
+		});
 
-		test( 'should never persist state', () => {
-			const state = mediaItemRequests( deepFreeze( state1 ), { type: SERIALIZE } );
+		test('should never persist state', () => {
+			const state = mediaItemRequests(deepFreeze(state1), { type: SERIALIZE });
 
-			expect( state ).to.be.undefined;
-		} );
+			expect(state).to.be.undefined;
+		});
 
-		test( 'should never load persisted state', () => {
-			const state = mediaItemRequests( deepFreeze( state1 ), { type: DESERIALIZE } );
+		test('should never load persisted state', () => {
+			const state = mediaItemRequests(deepFreeze(state1), { type: DESERIALIZE });
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
-} );
+			expect(state).to.eql({});
+		});
+	});
+});

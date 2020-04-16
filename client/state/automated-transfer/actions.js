@@ -26,11 +26,11 @@ import 'state/automated-transfer/init';
  * @param {window.File} pluginZip The plugin to upload and install on transferred site
  * @returns {object} An action object
  */
-export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => ( {
+export const initiateAutomatedTransferWithPluginZip = (siteId, pluginZip) => ({
 	type: AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
 	siteId,
 	pluginZip,
-} );
+});
 
 /**
  * Query the automated transfer status of a given site.
@@ -38,10 +38,10 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
  * @param {number} siteId The id of the site to query.
  * @returns {object} An action object
  */
-export const fetchAutomatedTransferStatus = siteId => ( {
+export const fetchAutomatedTransferStatus = (siteId) => ({
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
 	siteId,
-} );
+});
 
 /**
  * Sets the status of an automated transfer for a particular site.
@@ -57,12 +57,12 @@ export const fetchAutomatedTransferStatus = siteId => ( {
  * @param {string} uploadedPluginId Id of any uploaded plugin
  * @returns {object} An action object
  */
-export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) => ( {
+export const setAutomatedTransferStatus = (siteId, status, uploadedPluginId) => ({
 	type: AUTOMATED_TRANSFER_STATUS_SET,
 	siteId,
 	status,
 	uploadedPluginId,
-} );
+});
 
 /**
  * Report a failure of fetching Automated Transfer status (for example, the status
@@ -71,10 +71,10 @@ export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) =
  * @param {number} siteId The site id to which the status belongs
  * @returns {object} An action object
  */
-export const automatedTransferStatusFetchingFailure = siteId => ( {
+export const automatedTransferStatusFetchingFailure = (siteId) => ({
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 	siteId,
-} );
+});
 
 /**
  * Indicates that we need the eligibility information for a given site
@@ -82,10 +82,10 @@ export const automatedTransferStatusFetchingFailure = siteId => ( {
  * @param {number} siteId site for requested information
  * @returns {object} Redux action
  */
-export const requestEligibility = siteId => ( {
+export const requestEligibility = (siteId) => ({
 	type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	siteId,
-} );
+});
 
 /**
  * Merges given eligibility information into the app state
@@ -99,11 +99,11 @@ export const requestEligibility = siteId => ( {
 export const updateEligibility = (
 	siteId,
 	{ eligibilityHolds, eligibilityWarnings, lastUpdate, status }
-) => ( {
+) => ({
 	type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
 	eligibilityHolds,
 	eligibilityWarnings,
 	lastUpdate,
 	siteId,
 	status,
-} );
+});

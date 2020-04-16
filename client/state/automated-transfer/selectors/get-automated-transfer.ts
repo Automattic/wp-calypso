@@ -8,5 +8,5 @@ import { get } from 'lodash';
  */
 import 'state/automated-transfer/init';
 
-export const getAutomatedTransfer = ( state, siteId: number | null ) =>
-	get( state, [ 'automatedTransfer', siteId ], {} );
+export const getAutomatedTransfer = (state, siteId: number | null) =>
+	get(state, ['automatedTransfer', siteId], {});

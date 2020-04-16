@@ -24,50 +24,50 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const ReprintDialog = props => {
+const ReprintDialog = (props) => {
 	const { orderId, siteId, reprintDialog, paperSize, storeOptions, labelId, translate } = props;
 
-	const onClose = () => props.closeReprintDialog( orderId, siteId );
-	const onConfirm = () => props.confirmReprint( orderId, siteId );
-	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
+	const onClose = () => props.closeReprintDialog(orderId, siteId);
+	const onConfirm = () => props.confirmReprint(orderId, siteId);
+	const onPaperSizeChange = (value) => props.updatePaperSize(orderId, siteId, value);
 
 	const buttons = [
-		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
+		{ action: 'cancel', label: translate('Cancel'), onClick: onClose },
 		{
 			action: 'confirm',
 			onClick: onConfirm,
 			isPrimary: true,
-			disabled: reprintDialog && ! reprintDialog.fileData,
+			disabled: reprintDialog && !reprintDialog.fileData,
 			additionalClassNames: reprintDialog && reprintDialog.isFetching ? 'is-busy' : '',
-			label: translate( 'Print' ),
+			label: translate('Print'),
 		},
 	];
 
 	return (
 		<Dialog
-			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === labelId ) }
-			onClose={ onClose }
-			buttons={ buttons }
+			isVisible={Boolean(reprintDialog && reprintDialog.labelId === labelId)}
+			onClose={onClose}
+			buttons={buttons}
 			additionalClassNames="label-reprint-modal woocommerce wcc-root"
 		>
-			<FormSectionHeading>{ translate( 'Reprint shipping label' ) }</FormSectionHeading>
+			<FormSectionHeading>{translate('Reprint shipping label')}</FormSectionHeading>
 			<p>
-				{ translate(
+				{translate(
 					'If there was a printing error when you purchased the label, you can print it again.'
-				) }
+				)}
 			</p>
 			<p className="shipping-label__reprint-modal-notice">
-				{ translate(
+				{translate(
 					'NOTE: If you already used the label in a package, printing and using it again ' +
 						'is a violation of our terms of service and may result in criminal charges.'
-				) }
+				)}
 			</p>
 			<Dropdown
-				id={ 'paper_size' }
-				valuesMap={ getPaperSizes( storeOptions.origin_country ) }
-				title={ translate( 'Paper size' ) }
-				value={ paperSize }
-				updateValue={ onPaperSizeChange }
+				id={'paper_size'}
+				valuesMap={getPaperSizes(storeOptions.origin_country)}
+				title={translate('Paper size')}
+				value={paperSize}
+				updateValue={onPaperSizeChange}
 			/>
 		</Dialog>
 	);
@@ -85,9 +85,9 @@ ReprintDialog.propTypes = {
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { orderId, siteId } ) => {
-	const loaded = isLoaded( state, orderId, siteId );
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+const mapStateToProps = (state, { orderId, siteId }) => {
+	const loaded = isLoaded(state, orderId, siteId);
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return {
 		reprintDialog: loaded ? shippingLabel.reprintDialog : {},
 		paperSize: shippingLabel.paperSize,
@@ -95,8 +95,8 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
-	return bindActionCreators( { closeReprintDialog, confirmReprint, updatePaperSize }, dispatch );
+const mapDispatchToProps = (dispatch) => {
+	return bindActionCreators({ closeReprintDialog, confirmReprint, updatePaperSize }, dispatch);
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ReprintDialog ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(ReprintDialog));

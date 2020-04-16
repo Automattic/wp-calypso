@@ -15,51 +15,49 @@ import { parseWithAttributeSchema } from '@wordpress/blocks';
  *
  * @returns {Array|object} Gutenberg media blocks input
  */
-export const mediaCalypsoToGutenberg = media => {
+export const mediaCalypsoToGutenberg = (media) => {
 	return {
-		id: get( media, 'ID' ),
-		url: get( media, 'URL' ),
-		alt: get( media, 'alt' ),
+		id: get(media, 'ID'),
+		url: get(media, 'URL'),
+		alt: get(media, 'alt'),
 		// TODO: replace with `{ source: 'rich-text' }` after updating Gutenberg
-		caption: !! media.caption
-			? parseWithAttributeSchema( media.caption, { source: 'children' } )
-			: '',
-		description: get( media, 'description' ),
-		filename: get( media, 'file' ),
-		height: get( media, 'height' ),
-		icon: get( media, 'icon' ),
-		mime: get( media, 'mime_type' ),
+		caption: !!media.caption ? parseWithAttributeSchema(media.caption, { source: 'children' }) : '',
+		description: get(media, 'description'),
+		filename: get(media, 'file'),
+		height: get(media, 'height'),
+		icon: get(media, 'icon'),
+		mime: get(media, 'mime_type'),
 		sizes: {
 			full: {
-				url: get( media, 'URL' ),
+				url: get(media, 'URL'),
 			},
 			...reduce(
 				media.thumbnails,
-				( thumbnails, url, size ) => {
-					thumbnails[ size ] = { url };
+				(thumbnails, url, size) => {
+					thumbnails[size] = { url };
 					return thumbnails;
 				},
 				{}
 			),
 		},
-		title: get( media, 'title' ),
-		type: head( split( get( media, 'mime_type', '' ), '/' ) ),
-		width: get( media, 'width' ),
+		title: get(media, 'title'),
+		type: head(split(get(media, 'mime_type', ''), '/')),
+		width: get(media, 'width'),
 	};
 };
 
-export const getDisabledDataSources = allowedTypes => {
+export const getDisabledDataSources = (allowedTypes) => {
 	// Additional data sources are enabled for all blocks supporting images.
 	// The File block supports images, but doesn't explicitly allow any media type:
 	// its `allowedTypes` prop can be either undefined or an empty array.
 	if (
-		! allowedTypes ||
-		( isArray( allowedTypes ) && ! allowedTypes.length ) ||
-		includes( allowedTypes, 'image' )
+		!allowedTypes ||
+		(isArray(allowedTypes) && !allowedTypes.length) ||
+		includes(allowedTypes, 'image')
 	) {
 		return [];
 	}
-	return [ 'google_photos', 'pexels' ];
+	return ['google_photos', 'pexels'];
 };
 
 const enabledFiltersMap = {
@@ -68,8 +66,8 @@ const enabledFiltersMap = {
 	video: 'videos',
 };
 
-export const getEnabledFilters = allowedTypes => {
-	return isArray( allowedTypes ) && allowedTypes.length
-		? allowedTypes.map( type => enabledFiltersMap[ type ] )
+export const getEnabledFilters = (allowedTypes) => {
+	return isArray(allowedTypes) && allowedTypes.length
+		? allowedTypes.map((type) => enabledFiltersMap[type])
 		: undefined;
 };

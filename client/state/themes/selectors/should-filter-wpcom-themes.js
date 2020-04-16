@@ -19,10 +19,10 @@ import 'state/themes/init';
  * @param {number} siteId The Site ID
  * @returns {boolean} true if wpcom themes should be removed
  */
-export function shouldFilterWpcomThemes( state, siteId ) {
+export function shouldFilterWpcomThemes(state, siteId) {
 	return (
-		isJetpackSite( state, siteId ) &&
-		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
-		! isJetpackSiteMultiSite( state, siteId )
+		isJetpackSite(state, siteId) &&
+		hasJetpackSiteJetpackThemesExtendedFeatures(state, siteId) &&
+		!isJetpackSiteMultiSite(state, siteId)
 	);
 }

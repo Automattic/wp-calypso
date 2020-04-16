@@ -3,16 +3,16 @@
  */
 import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-transaction-date-filter-values';
 
-jest.mock( 'i18n-calypso', () => {
+jest.mock('i18n-calypso', () => {
 	return {
-		translate: str => str,
+		translate: (str) => str,
 	};
-} );
+});
 
-const moment = require( 'moment' );
-moment.now = () => new Date( 2018, 4, 24 ); // May 24, 2018
+const moment = require('moment');
+moment.now = () => new Date(2018, 4, 24); // May 24, 2018
 
-describe( 'getBillingTransactionDateFilterValues()', () => {
+describe('getBillingTransactionDateFilterValues()', () => {
 	const state = {
 		billingTransactions: {
 			items: {
@@ -52,9 +52,9 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 		},
 	};
 
-	test( 'returns transaction app filter values with counts', () => {
-		const result = getBillingTransactionDateFilterValues( state, 'past' );
-		expect( result ).toEqual( [
+	test('returns transaction app filter values with counts', () => {
+		const result = getBillingTransactionDateFilterValues(state, 'past');
+		expect(result).toEqual([
 			{
 				count: 1,
 				dateString: '2018-05-01',
@@ -111,10 +111,10 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 					operator: 'before',
 				},
 			},
-		] );
-	} );
+		]);
+	});
 
-	test( 'returns an empty array when there are no transactions', () => {
+	test('returns an empty array when there are no transactions', () => {
 		const result = getBillingTransactionDateFilterValues(
 			{
 				billingTransactions: {
@@ -123,6 +123,6 @@ describe( 'getBillingTransactionDateFilterValues()', () => {
 			},
 			'past'
 		);
-		expect( result ).toEqual( [] );
-	} );
-} );
+		expect(result).toEqual([]);
+	});
+});

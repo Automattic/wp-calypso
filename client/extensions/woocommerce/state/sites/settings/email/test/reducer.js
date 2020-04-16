@@ -14,19 +14,19 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
-describe( 'reducer', () => {
-	test( 'should mark the email settings tree as "loading"', () => {
+describe('reducer', () => {
+	test('should mark the email settings tree as "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 			siteId,
 		};
 
-		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].settings.email ).to.eql( LOADING );
-	} );
+		const newSiteData = reducer({}, action);
+		expect(newSiteData[siteId].settings.email).to.eql(LOADING);
+	});
 
-	test( 'should store data from the action', () => {
+	test('should store data from the action', () => {
 		const siteId = 123;
 		const settings = [
 			{
@@ -84,13 +84,13 @@ describe( 'reducer', () => {
 			data: settings,
 		};
 
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].settings ).to.exist;
-		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
-	} );
+		const newState = reducer({}, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].settings).to.exist;
+		expect(newState[siteId].settings.email).to.deep.equal(expectedResult);
+	});
 
-	test( 'should not use default value for settings with no value or default if option is disabled', () => {
+	test('should not use default value for settings with no value or default if option is disabled', () => {
 		const siteId = 123;
 		const settings = [
 			{
@@ -128,13 +128,13 @@ describe( 'reducer', () => {
 			data: settings,
 		};
 
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].settings ).to.exist;
-		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
-	} );
+		const newState = reducer({}, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].settings).to.exist;
+		expect(newState[siteId].settings.email).to.deep.equal(expectedResult);
+	});
 
-	test( 'should use default value for settings with no value or default if option is enabled', () => {
+	test('should use default value for settings with no value or default if option is enabled', () => {
 		const siteId = 123;
 		const settings = [
 			{
@@ -182,13 +182,13 @@ describe( 'reducer', () => {
 			data: settings,
 		};
 
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].settings ).to.exist;
-		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
-	} );
+		const newState = reducer({}, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].settings).to.exist;
+		expect(newState[siteId].settings.email).to.deep.equal(expectedResult);
+	});
 
-	test( 'should decode entities in woocommerce_email_from_name', () => {
+	test('should decode entities in woocommerce_email_from_name', () => {
 		const siteId = 123;
 		const settings = [
 			{
@@ -214,13 +214,13 @@ describe( 'reducer', () => {
 			data: settings,
 		};
 
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].settings ).to.exist;
-		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
-	} );
+		const newState = reducer({}, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].settings).to.exist;
+		expect(newState[siteId].settings.email).to.deep.equal(expectedResult);
+	});
 
-	test( 'should use default value from setting for settings with default and no value.', () => {
+	test('should use default value from setting for settings with default and no value.', () => {
 		// test check if default is not overwritten by default from woocommerce_email_from_address if it exists.
 		const siteId = 123;
 		const settings = [
@@ -259,13 +259,13 @@ describe( 'reducer', () => {
 			data: settings,
 		};
 
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].settings ).to.exist;
-		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
-	} );
+		const newState = reducer({}, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].settings).to.exist;
+		expect(newState[siteId].settings.email).to.deep.equal(expectedResult);
+	});
 
-	test( 'should update setting with new value.', () => {
+	test('should update setting with new value.', () => {
 		const siteId = 123;
 		const setting = {
 			option: 'woocommerce_email_from_address',
@@ -304,10 +304,10 @@ describe( 'reducer', () => {
 			setting,
 		};
 
-		const initialState = reducer( {}, setupAction );
-		const newState = reducer( initialState, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].settings ).to.exist;
-		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedState );
-	} );
-} );
+		const initialState = reducer({}, setupAction);
+		const newState = reducer(initialState, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].settings).to.exist;
+		expect(newState[siteId].settings.email).to.deep.equal(expectedState);
+	});
+});

@@ -14,7 +14,7 @@ export default class extends React.Component {
 	static displayName = 'NotificationSettingsFormLabelList';
 
 	static propTypes = {
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		settingKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
 	};
 
 	shouldComponentUpdate() {
@@ -24,13 +24,13 @@ export default class extends React.Component {
 	render() {
 		return (
 			<ul className="notification-settings-form-label-list">
-				{ this.props.settingKeys.map( ( key, index ) => {
+				{this.props.settingKeys.map((key, index) => {
 					return (
-						<li key={ index } className="notification-settings-form-label-list__item">
-							{ getLabelForSetting( key ) }
+						<li key={index} className="notification-settings-form-label-list__item">
+							{getLabelForSetting(key)}
 						</li>
 					);
-				} ) }
+				})}
 			</ul>
 		);
 	}

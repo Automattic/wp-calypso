@@ -21,14 +21,14 @@ import {
 	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'state/themes/action-types';
 
-export const uploadedThemeId = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const uploadedThemeId = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEME_UPLOAD_SUCCESS: {
 			const { siteId, themeId } = action;
 
 			return {
 				...state,
-				[ siteId ]: themeId,
+				[siteId]: themeId,
 			};
 		}
 		case THEME_TRANSFER_STATUS_RECEIVE: {
@@ -36,34 +36,34 @@ export const uploadedThemeId = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: themeId,
+				[siteId]: themeId,
 			};
 		}
 		case THEME_UPLOAD_CLEAR: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 		case THEME_UPLOAD_START: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 		case THEME_TRANSFER_INITIATE_REQUEST: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 	}
 
 	return state;
-} );
+});
 
-export const uploadError = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const uploadError = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEME_UPLOAD_FAILURE: {
 			const { siteId, error } = action;
 
 			return {
 				...state,
-				[ siteId ]: error,
+				[siteId]: error,
 			};
 		}
 		case THEME_TRANSFER_STATUS_FAILURE: {
@@ -71,7 +71,7 @@ export const uploadError = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: error,
+				[siteId]: error,
 			};
 		}
 		case THEME_TRANSFER_INITIATE_FAILURE: {
@@ -79,34 +79,34 @@ export const uploadError = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: error,
+				[siteId]: error,
 			};
 		}
 		case THEME_UPLOAD_CLEAR: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 		case THEME_UPLOAD_START: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 		case THEME_TRANSFER_INITIATE_REQUEST: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 	}
 
 	return state;
-} );
+});
 
-export const progressLoaded = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const progressLoaded = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEME_UPLOAD_PROGRESS: {
 			const { siteId, loaded } = action;
 
 			return {
 				...state,
-				[ siteId ]: loaded,
+				[siteId]: loaded,
 			};
 		}
 		case THEME_TRANSFER_INITIATE_PROGRESS: {
@@ -114,34 +114,34 @@ export const progressLoaded = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: loaded,
+				[siteId]: loaded,
 			};
 		}
 		case THEME_UPLOAD_CLEAR: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 		case THEME_UPLOAD_START: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 		case THEME_TRANSFER_INITIATE_REQUEST: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 	}
 
 	return state;
-} );
+});
 
-export const progressTotal = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const progressTotal = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEME_UPLOAD_PROGRESS: {
 			const { siteId, total } = action;
 
 			return {
 				...state,
-				[ siteId ]: total,
+				[siteId]: total,
 			};
 		}
 		case THEME_TRANSFER_INITIATE_PROGRESS: {
@@ -149,34 +149,34 @@ export const progressTotal = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: total,
+				[siteId]: total,
 			};
 		}
 		case THEME_UPLOAD_CLEAR: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 		case THEME_UPLOAD_START: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 		case THEME_TRANSFER_INITIATE_REQUEST: {
 			const { siteId } = action;
-			return omit( state, siteId );
+			return omit(state, siteId);
 		}
 	}
 
 	return state;
-} );
+});
 
-export const inProgress = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const inProgress = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEME_UPLOAD_START: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: true,
+				[siteId]: true,
 			};
 		}
 		case THEME_TRANSFER_INITIATE_REQUEST: {
@@ -184,7 +184,7 @@ export const inProgress = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: true,
+				[siteId]: true,
 			};
 		}
 		case THEME_UPLOAD_CLEAR: {
@@ -192,7 +192,7 @@ export const inProgress = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case THEME_UPLOAD_SUCCESS: {
@@ -200,7 +200,7 @@ export const inProgress = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case THEME_UPLOAD_FAILURE: {
@@ -208,7 +208,7 @@ export const inProgress = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case THEME_TRANSFER_STATUS_RECEIVE: {
@@ -216,7 +216,7 @@ export const inProgress = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: status !== 'complete',
+				[siteId]: status !== 'complete',
 			};
 		}
 		case THEME_TRANSFER_INITIATE_FAILURE: {
@@ -224,7 +224,7 @@ export const inProgress = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case THEME_TRANSFER_STATUS_FAILURE: {
@@ -232,18 +232,18 @@ export const inProgress = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	uploadedThemeId,
 	uploadError,
 	progressLoaded,
 	progressTotal,
 	inProgress,
-} );
+});

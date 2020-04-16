@@ -17,23 +17,17 @@ import { sidebar } from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
 import reducer from 'state/concierge/reducer';
 
-export default async ( router, addReducer ) => {
-	await addReducer( [ 'concierge' ], reducer );
+export default async (router, addReducer) => {
+	await addReducer(['concierge'], reducer);
 
-	if ( config.isEnabled( 'manage/payment-methods' ) ) {
-		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
+	if (config.isEnabled('manage/payment-methods')) {
+		router(paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender);
 
 		// redirect legacy urls
-		router( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
+		router('/payment-methods/add-credit-card', () => page.redirect(paths.addCreditCard));
 	}
 
-	router(
-		paths.billingHistory,
-		sidebar,
-		billingController.billingHistory,
-		makeLayout,
-		clientRender
-	);
+	router(paths.billingHistory, sidebar, billingController.billingHistory, makeLayout, clientRender);
 
 	router(
 		paths.upcomingCharges,
@@ -43,7 +37,7 @@ export default async ( router, addReducer ) => {
 		clientRender
 	);
 
-	if ( config.isEnabled( 'async-payments' ) ) {
+	if (config.isEnabled('async-payments')) {
 		router(
 			paths.purchasesRoot + '/pending',
 			sidebar,
@@ -68,32 +62,27 @@ export default async ( router, addReducer ) => {
 		clientRender
 	);
 	// Legacy:
-	router(
-		paths.purchasesRoot + '/memberships/:subscriptionId',
-		( { params: { subscriptionId } } ) => {
-			page.redirect( paths.purchasesRoot + '/other/' + subscriptionId );
-		}
-	);
-	router( paths.purchasesRoot + '/memberships', () =>
-		page.redirect( paths.purchasesRoot + '/other' )
-	);
+	router(paths.purchasesRoot + '/memberships/:subscriptionId', ({ params: { subscriptionId } }) => {
+		page.redirect(paths.purchasesRoot + '/other/' + subscriptionId);
+	});
+	router(paths.purchasesRoot + '/memberships', () => page.redirect(paths.purchasesRoot + '/other'));
 
 	router(
-		paths.billingHistoryReceipt( ':receiptId' ),
+		paths.billingHistoryReceipt(':receiptId'),
 		sidebar,
 		billingController.transaction,
 		makeLayout,
 		clientRender
 	);
 
-	router( paths.purchasesRoot, sidebar, controller.list, makeLayout, clientRender );
+	router(paths.purchasesRoot, sidebar, controller.list, makeLayout, clientRender);
 
 	/**
 	 * The siteSelection middleware has been removed from this route.
 	 * No selected site!
 	 */
 	router(
-		paths.managePurchase( ':site', ':purchaseId' ),
+		paths.managePurchase(':site', ':purchaseId'),
 		sidebar,
 		controller.managePurchase,
 		makeLayout,
@@ -105,7 +94,7 @@ export default async ( router, addReducer ) => {
 	 * No selected site!
 	 */
 	router(
-		paths.cancelPurchase( ':site', ':purchaseId' ),
+		paths.cancelPurchase(':site', ':purchaseId'),
 		sidebar,
 		controller.cancelPurchase,
 		makeLayout,
@@ -113,7 +102,7 @@ export default async ( router, addReducer ) => {
 	);
 
 	router(
-		paths.confirmCancelDomain( ':site', ':purchaseId' ),
+		paths.confirmCancelDomain(':site', ':purchaseId'),
 		sidebar,
 		siteSelection,
 		controller.confirmCancelDomain,
@@ -122,7 +111,7 @@ export default async ( router, addReducer ) => {
 	);
 
 	router(
-		paths.addCardDetails( ':site', ':purchaseId' ),
+		paths.addCardDetails(':site', ':purchaseId'),
 		sidebar,
 		siteSelection,
 		controller.addCardDetails,
@@ -131,7 +120,7 @@ export default async ( router, addReducer ) => {
 	);
 
 	router(
-		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
+		paths.editCardDetails(':site', ':purchaseId', ':cardId'),
 		sidebar,
 		siteSelection,
 		controller.editCardDetails,
@@ -140,30 +129,28 @@ export default async ( router, addReducer ) => {
 	);
 
 	// redirect legacy urls
-	router( '/purchases', () => page.redirect( paths.purchasesRoot ) );
-	router( '/purchases/:siteName/:purchaseId', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.managePurchase( siteName, purchaseId ) )
+	router('/purchases', () => page.redirect(paths.purchasesRoot));
+	router('/purchases/:siteName/:purchaseId', ({ params: { siteName, purchaseId } }) =>
+		page.redirect(paths.managePurchase(siteName, purchaseId))
 	);
-	router( '/purchases/:siteName/:purchaseId/cancel', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.cancelPurchase( siteName, purchaseId ) )
+	router('/purchases/:siteName/:purchaseId/cancel', ({ params: { siteName, purchaseId } }) =>
+		page.redirect(paths.cancelPurchase(siteName, purchaseId))
 	);
 	router(
 		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.confirmCancelDomain( siteName, purchaseId ) )
+		({ params: { siteName, purchaseId } }) =>
+			page.redirect(paths.confirmCancelDomain(siteName, purchaseId))
 	);
-	router(
-		'/purchases/:siteName/:purchaseId/payment/add',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.addCardDetails( siteName, purchaseId ) )
+	router('/purchases/:siteName/:purchaseId/payment/add', ({ params: { siteName, purchaseId } }) =>
+		page.redirect(paths.addCardDetails(siteName, purchaseId))
 	);
 	router(
 		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
-		( { params: { siteName, purchaseId, cardId } } ) =>
-			page.redirect( paths.editCardDetails( siteName, purchaseId, cardId ) )
+		({ params: { siteName, purchaseId, cardId } }) =>
+			page.redirect(paths.editCardDetails(siteName, purchaseId, cardId))
 	);
-	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
-	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
-		page.redirect( paths.billingHistoryReceipt( receiptId ) )
+	router('/me/billing', () => page.redirect(paths.billingHistory));
+	router('/me/billing/:receiptId', ({ params: { receiptId } }) =>
+		page.redirect(paths.billingHistoryReceipt(receiptId))
 	);
 };

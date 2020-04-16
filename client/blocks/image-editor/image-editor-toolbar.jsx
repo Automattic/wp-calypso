@@ -39,23 +39,23 @@ export class ImageEditorToolbar extends Component {
 		imageEditorRotateCounterclockwise: noop,
 		imageEditorFlip: noop,
 		setImageEditorAspectRatio: noop,
-		allowedAspectRatios: objectValues( AspectRatios ),
+		allowedAspectRatios: objectValues(AspectRatios),
 		onShowNotice: noop,
 		isAspectRatioDisabled: false,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			showAspectPopover: false,
 		};
 
-		this.setAspectMenuContext = this.setAspectMenuContext.bind( this );
-		this.onAspectOpen = this.onAspectOpen.bind( this );
-		this.onAspectClose = this.onAspectClose.bind( this );
-		this.rotate = this.rotate.bind( this );
-		this.flip = this.flip.bind( this );
+		this.setAspectMenuContext = this.setAspectMenuContext.bind(this);
+		this.onAspectOpen = this.onAspectOpen.bind(this);
+		this.onAspectClose = this.onAspectClose.bind(this);
+		this.rotate = this.rotate.bind(this);
+		this.flip = this.flip.bind(this);
 	}
 
 	rotate() {
@@ -66,12 +66,12 @@ export class ImageEditorToolbar extends Component {
 		this.props.imageEditorFlip();
 	}
 
-	onAspectOpen( event ) {
+	onAspectOpen(event) {
 		event.preventDefault();
 
 		const { isAspectRatioDisabled, onShowNotice, translate } = this.props;
 
-		if ( isAspectRatioDisabled ) {
+		if (isAspectRatioDisabled) {
 			const noticeText = translate(
 				'To change the aspect ratio, the height and width must be bigger than {{strong}}%(width)dpx{{/strong}}.',
 				{
@@ -84,23 +84,23 @@ export class ImageEditorToolbar extends Component {
 					},
 				}
 			);
-			onShowNotice( noticeText );
+			onShowNotice(noticeText);
 			return;
 		}
 
-		this.setState( { showAspectPopover: true } );
+		this.setState({ showAspectPopover: true });
 	}
 
-	onAspectClose( action ) {
-		this.setState( { showAspectPopover: false } );
+	onAspectClose(action) {
+		this.setState({ showAspectPopover: false });
 
-		if ( typeof action === 'string' ) {
-			this.props.setImageEditorAspectRatio( action );
+		if (typeof action === 'string') {
+			this.props.setImageEditorAspectRatio(action);
 		}
 	}
 
-	setAspectMenuContext( popoverContext ) {
-		this.setState( { popoverContext } );
+	setAspectMenuContext(popoverContext) {
+		this.setState({ popoverContext });
 	}
 
 	renderAspectMenu() {
@@ -108,58 +108,58 @@ export class ImageEditorToolbar extends Component {
 
 		const { translate, aspectRatio, allowedAspectRatios } = this.props;
 
-		if ( ! popoverContext || allowedAspectRatios.length === 1 ) {
+		if (!popoverContext || allowedAspectRatios.length === 1) {
 			return;
 		}
 
 		const items = [
 			{
 				action: AspectRatios.FREE,
-				label: translate( 'Freeform', {
+				label: translate('Freeform', {
 					context: 'Option in image editor used to crop images using freeform aspect ratio',
-				} ),
+				}),
 			},
 			{
 				action: AspectRatios.ORIGINAL,
-				label: translate( 'Original' ),
+				label: translate('Original'),
 			},
 			{
 				action: AspectRatios.ASPECT_1X1,
-				label: translate( 'Square' ),
+				label: translate('Square'),
 			},
 			{
 				action: AspectRatios.ASPECT_16X9,
-				label: translate( '16:9' ),
+				label: translate('16:9'),
 			},
 			{
 				action: AspectRatios.ASPECT_4X3,
-				label: translate( '4:3' ),
+				label: translate('4:3'),
 			},
 			{
 				action: AspectRatios.ASPECT_3X2,
-				label: translate( '3:2' ),
+				label: translate('3:2'),
 			},
 		];
 
 		return (
 			<PopoverMenu
-				isVisible={ showAspectPopover }
-				onClose={ this.onAspectClose }
+				isVisible={showAspectPopover}
+				onClose={this.onAspectClose}
 				position="top"
-				context={ popoverContext }
+				context={popoverContext}
 				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
-				{ items.map( item =>
-					allowedAspectRatios.indexOf( item.action ) !== -1 ? (
+				{items.map((item) =>
+					allowedAspectRatios.indexOf(item.action) !== -1 ? (
 						<PopoverMenuItem
-							key={ 'image-editor-toolbar-aspect-' + item.action }
-							action={ item.action }
+							key={'image-editor-toolbar-aspect-' + item.action}
+							action={item.action}
 						>
-							{ aspectRatio === item.action ? <Gridicon icon="checkmark" size={ 12 } /> : false }
-							{ item.label }
+							{aspectRatio === item.action ? <Gridicon icon="checkmark" size={12} /> : false}
+							{item.label}
 						</PopoverMenuItem>
 					) : null
-				) }
+				)}
 			</PopoverMenu>
 		);
 	}
@@ -171,7 +171,7 @@ export class ImageEditorToolbar extends Component {
 			{
 				tool: 'rotate',
 				icon: 'rotate',
-				text: translate( 'Rotate' ),
+				text: translate('Rotate'),
 				onClick: this.rotate,
 			},
 			allowedAspectRatios.length === 1
@@ -180,54 +180,54 @@ export class ImageEditorToolbar extends Component {
 						tool: 'aspect',
 						ref: this.setAspectMenuContext,
 						icon: 'crop',
-						text: translate( 'Crop' ),
+						text: translate('Crop'),
 						onClick: this.onAspectOpen,
 						disabled: isAspectRatioDisabled,
 				  },
 			{
 				tool: 'flip-vertical',
 				icon: 'flip-vertical',
-				text: translate( 'Flip' ),
+				text: translate('Flip'),
 				onClick: this.flip,
 			},
 		];
 
-		return buttons.map( button => {
-			const buttonClasses = classNames( 'image-editor__toolbar-button', {
+		return buttons.map((button) => {
+			const buttonClasses = classNames('image-editor__toolbar-button', {
 				'is-disabled': button && button.disabled,
-			} );
+			});
 			return button ? (
 				<button
-					key={ 'image-editor-toolbar-' + button.tool }
-					ref={ button.ref }
-					className={ buttonClasses }
-					onClick={ button.onClick }
+					key={'image-editor-toolbar-' + button.tool}
+					ref={button.ref}
+					className={buttonClasses}
+					onClick={button.onClick}
 				>
-					<Gridicon icon={ button.icon } />
-					<span>{ button.text }</span>
+					<Gridicon icon={button.icon} />
+					<span>{button.text}</span>
 				</button>
 			) : null;
-		} );
+		});
 	}
 
 	render() {
 		return (
 			<div className="image-editor__toolbar">
-				{ this.renderButtons() }
-				{ this.renderAspectMenu() }
+				{this.renderButtons()}
+				{this.renderAspectMenu()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const aspectRatio = getImageEditorAspectRatio( state );
-		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
+	(state) => {
+		const aspectRatio = getImageEditorAspectRatio(state);
+		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(state);
 
 		return {
 			aspectRatio,
-			isAspectRatioDisabled: ! isGreaterThanMinimumDimensions,
+			isAspectRatioDisabled: !isGreaterThanMinimumDimensions,
 		};
 	},
 	{
@@ -235,4 +235,4 @@ export default connect(
 		imageEditorFlip,
 		setImageEditorAspectRatio,
 	}
-)( localize( ImageEditorToolbar ) );
+)(localize(ImageEditorToolbar));

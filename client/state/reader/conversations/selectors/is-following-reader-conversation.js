@@ -18,9 +18,9 @@ import 'state/reader/init';
  * @param  {object} params Params including siteId and postId
  * @returns {boolean} Is the user following this conversation?
  */
-export default function isFollowingReaderConversation( state, { siteId, postId } ) {
+export default function isFollowingReaderConversation(state, { siteId, postId }) {
 	return (
-		get( state, [ 'reader', 'conversations', 'items', key( siteId, postId ) ] ) ===
+		get(state, ['reader', 'conversations', 'items', key(siteId, postId)]) ===
 		CONVERSATION_FOLLOW_STATUS.following
 	);
 }

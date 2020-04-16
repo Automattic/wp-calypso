@@ -32,52 +32,52 @@ const successfulUnfollowResponse = {
 
 const slug = 'chicken';
 
-describe( 'unfollow tag request', () => {
-	describe( '#requestUnfollow', () => {
-		test( 'should return an HTTP request to the unfollow tag endpoint', () => {
-			const action = requestUnfollowAction( slug );
+describe('unfollow tag request', () => {
+	describe('#requestUnfollow', () => {
+		test('should return an HTTP request to the unfollow tag endpoint', () => {
+			const action = requestUnfollowAction(slug);
 
-			expect( requestUnfollow( action ) ).toMatchObject(
-				http( {
+			expect(requestUnfollow(action)).toMatchObject(
+				http({
 					apiVersion: '1.1',
 					method: 'POST',
-					path: `/read/tags/${ slug }/mine/delete`,
+					path: `/read/tags/${slug}/mine/delete`,
 					onSuccess: action,
 					onFailure: action,
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#receiveUnfollowSuccess', () => {
-		test( 'should return the id of the unfollowed tag', () => {
-			const action = requestUnfollowAction( slug );
+	describe('#receiveUnfollowSuccess', () => {
+		test('should return the id of the unfollowed tag', () => {
+			const action = requestUnfollowAction(slug);
 
-			expect( receiveUnfollowTag( action, fromApi( successfulUnfollowResponse ) ) ).toMatchObject(
-				receiveUnfollowAction( {
+			expect(receiveUnfollowTag(action, fromApi(successfulUnfollowResponse))).toMatchObject(
+				receiveUnfollowAction({
 					payload: successfulUnfollowResponse.removed_tag,
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#receiveError', () => {
-		test( 'should dispatch an error notice', () => {
-			const action = requestUnfollowAction( slug );
+	describe('#receiveError', () => {
+		test('should dispatch an error notice', () => {
+			const action = requestUnfollowAction(slug);
 			const error = 'could not find tag';
 
-			expect( receiveError( action, error ) ).toMatchObject( {
+			expect(receiveError(action, error)).toMatchObject({
 				type: NOTICE_CREATE,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#fromApi', () => {
-		test( 'should extract the removed_tag from a response', () => {
+	describe('#fromApi', () => {
+		test('should extract the removed_tag from a response', () => {
 			const apiResponse = successfulUnfollowResponse;
-			const normalized = fromApi( apiResponse );
+			const normalized = fromApi(apiResponse);
 
-			expect( normalized ).toEqual( apiResponse.removed_tag );
-		} );
-	} );
-} );
+			expect(normalized).toEqual(apiResponse.removed_tag);
+		});
+	});
+});

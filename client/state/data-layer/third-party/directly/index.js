@@ -7,38 +7,38 @@ import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START } from 'state/acti
 import { initializationCompleted, initializationFailed } from 'state/help/directly/actions';
 import * as directly from 'lib/directly';
 
-export function askQuestion( { dispatch }, action ) {
+export function askQuestion({ dispatch }, action) {
 	return directly
-		.askQuestion( action.questionText, action.name, action.email )
-		.then( () => dispatch( recordTracksEvent( 'calypso_directly_ask_question' ) ) );
+		.askQuestion(action.questionText, action.name, action.email)
+		.then(() => dispatch(recordTracksEvent('calypso_directly_ask_question')));
 }
 
-export function initialize( { dispatch } ) {
-	dispatch( recordTracksEvent( 'calypso_directly_initialization_start' ) );
+export function initialize({ dispatch }) {
+	dispatch(recordTracksEvent('calypso_directly_initialization_start'));
 
 	return directly
 		.initialize()
-		.then( () =>
+		.then(() =>
 			dispatch(
 				withAnalytics(
-					recordTracksEvent( 'calypso_directly_initialization_success' ),
+					recordTracksEvent('calypso_directly_initialization_success'),
 					initializationCompleted()
 				)
 			)
 		)
-		.catch( error =>
+		.catch((error) =>
 			dispatch(
 				withAnalytics(
-					recordTracksEvent( 'calypso_directly_initialization_error', {
+					recordTracksEvent('calypso_directly_initialization_error', {
 						error: error ? error.toString() : 'Unknown error',
-					} ),
+					}),
 					initializationFailed()
 				)
 			)
 		);
 }
 
-registerHandlers( 'state/data-layer/third-party/directly', {
-	[ DIRECTLY_ASK_QUESTION ]: [ askQuestion ],
-	[ DIRECTLY_INITIALIZATION_START ]: [ initialize ],
-} );
+registerHandlers('state/data-layer/third-party/directly', {
+	[DIRECTLY_ASK_QUESTION]: [askQuestion],
+	[DIRECTLY_INITIALIZATION_START]: [initialize],
+});

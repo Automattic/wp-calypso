@@ -42,7 +42,7 @@ import './success-banner.scss';
  * @param {number} ts timestamp in 's' or 'ms'
  * @returns {number} timestamp in 'ms'
  */
-const ms = ts =>
+const ms = (ts) =>
 	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
 		? ts * 1000 // convert s -> ms
 		: ts;
@@ -70,13 +70,13 @@ class SuccessBanner extends PureComponent {
 
 	handleDismiss = () =>
 		this.props.backupUrl
-			? this.props.dismissBackupProgress( this.props.siteId, this.props.downloadId )
-			: this.props.dismissRestoreProgress( this.props.siteId, this.props.restoreId );
+			? this.props.dismissBackupProgress(this.props.siteId, this.props.downloadId)
+			: this.props.dismissRestoreProgress(this.props.siteId, this.props.restoreId);
 
 	trackDownload = () =>
-		this.props.recordTracksEvent( 'calypso_activitylog_backup_download', {
+		this.props.recordTracksEvent('calypso_activitylog_backup_download', {
 			download_count: this.props.downloadCount,
-		} );
+		});
 
 	render() {
 		const {
@@ -90,23 +90,20 @@ class SuccessBanner extends PureComponent {
 			trackHappyChatBackup,
 			trackHappyChatRestore,
 		} = this.props;
-		const date = applySiteOffset( moment( ms( timestamp ) ) ).format( 'LLLL' );
+		const date = applySiteOffset(moment(ms(timestamp))).format('LLLL');
 		const params = backupUrl
 			? {
-					title: translate( 'Your backup is now available for download' ),
+					title: translate('Your backup is now available for download'),
 					icon: 'cloud-download',
 					track: (
 						<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
 					),
-					taskFinished: translate(
-						'We successfully created a backup of your site as of %(date)s!',
-						{
-							args: { date },
-						}
-					),
+					taskFinished: translate('We successfully created a backup of your site as of %(date)s!', {
+						args: { date },
+					}),
 					actionButton: (
-						<Button href={ backupUrl } onClick={ this.trackDownload } primary>
-							{ translate( 'Download' ) }
+						<Button href={backupUrl} onClick={this.trackDownload} primary>
+							{translate('Download')}
 						</Button>
 					),
 					trackHappyChat: trackHappyChatBackup,
@@ -114,26 +111,26 @@ class SuccessBanner extends PureComponent {
 			: {
 					title:
 						'alternate' === context
-							? translate( 'Your site has been successfully cloned' )
-							: translate( 'Your site has been successfully restored' ),
+							? translate('Your site has been successfully cloned')
+							: translate('Your site has been successfully restored'),
 					icon: 'history',
 					track: (
 						<TrackComponentView
 							eventName="calypso_activitylog_restore_successbanner_impression"
-							eventProperties={ { restore_to: timestamp } }
+							eventProperties={{ restore_to: timestamp }}
 						/>
 					),
 					taskFinished:
 						'alternate' === context
-							? translate( 'We successfully cloned your site to the state as of %(date)s!', {
+							? translate('We successfully cloned your site to the state as of %(date)s!', {
 									args: { date },
-							  } )
-							: translate( 'We successfully restored your site back to %(date)s!', {
+							  })
+							: translate('We successfully restored your site back to %(date)s!', {
 									args: { date },
-							  } ),
+							  }),
 					actionButton: (
-						<Button href={ siteUrl } primary>
-							{ translate( 'View site' ) }
+						<Button href={siteUrl} primary>
+							{translate('View site')}
 						</Button>
 					),
 					trackHappyChat: trackHappyChatRestore,
@@ -141,25 +138,25 @@ class SuccessBanner extends PureComponent {
 		return (
 			<ActivityLogBanner
 				isDismissable
-				onDismissClick={ this.handleDismiss }
+				onDismissClick={this.handleDismiss}
 				status="success"
-				title={ params.title }
-				icon={ params.icon }
+				title={params.title}
+				icon={params.icon}
 			>
-				{ params.track }
-				<p>{ params.taskFinished }</p>
-				{ params.actionButton }
-				{ ! backupUrl && (
-					<Button className="activity-log-banner__success-gotit" onClick={ this.handleDismiss }>
-						{ translate( 'Thanks, got it!' ) }
+				{params.track}
+				<p>{params.taskFinished}</p>
+				{params.actionButton}
+				{!backupUrl && (
+					<Button className="activity-log-banner__success-gotit" onClick={this.handleDismiss}>
+						{translate('Thanks, got it!')}
 					</Button>
-				) }
+				)}
 				<HappychatButton
 					className="activity-log-banner__happychat-button"
-					onClick={ params.trackHappyChat }
+					onClick={params.trackHappyChat}
 				>
 					<Gridicon icon="chat" />
-					<span>{ translate( 'Get help' ) }</span>
+					<span>{translate('Get help')}</span>
 				</HappychatButton>
 			</ActivityLogBanner>
 		);
@@ -168,18 +165,17 @@ class SuccessBanner extends PureComponent {
 
 export default compose(
 	connect(
-		( state, { siteId } ) => ( {
-			siteUrl: getSiteUrl( state, siteId ),
-		} ),
+		(state, { siteId }) => ({
+			siteUrl: getSiteUrl(state, siteId),
+		}),
 		{
 			dismissRestoreProgress: dismissRewindRestoreProgress,
 			dismissBackupProgress: dismissRewindBackupProgress,
 			recordTracksEvent: recordTracksEvent,
-			trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_success_banner_backup' ),
-			trackHappyChatRestore: () =>
-				recordTracksEvent( 'calypso_activitylog_success_banner_restore' ),
+			trackHappyChatBackup: () => recordTracksEvent('calypso_activitylog_success_banner_backup'),
+			trackHappyChatRestore: () => recordTracksEvent('calypso_activitylog_success_banner_restore'),
 		}
 	),
 	localize,
 	withLocalizedMoment
-)( SuccessBanner );
+)(SuccessBanner);

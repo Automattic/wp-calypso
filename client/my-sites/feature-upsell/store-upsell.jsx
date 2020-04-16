@@ -53,16 +53,16 @@ class StoreUpsellComponent extends Component {
 		const { price, loadingPrice, currentSitePlanSlug } = this.props;
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell__main">
-				{ ! price && (
+				{!price && (
 					<React.Fragment>
 						<QueryPlans />
-						<QuerySitePlans siteId={ this.props.selectedSiteId } />
+						<QuerySitePlans siteId={this.props.selectedSiteId} />
 						<QueryActivePromotions />
 					</React.Fragment>
-				) }
+				)}
 
-				<PageViewTracker path={ '/feature/store/:site' } title="StoreUpsell" />
-				<DocumentHead title={ 'Store' } />
+				<PageViewTracker path={'/feature/store/:site'} title="StoreUpsell" />
+				<DocumentHead title={'Store'} />
 
 				<div className="feature-upsell__card">
 					<h1 className="feature-upsell__card-header is-capital is-main">
@@ -74,19 +74,19 @@ class StoreUpsellComponent extends Component {
 					</h2>
 
 					<div className="feature-upsell__cta">
-						{ loadingPrice ? (
+						{loadingPrice ? (
 							<div className="feature-upsell__placeholder is-cta" />
 						) : (
 							<React.Fragment>
 								<button
-									onClick={ this.handleUpgradeButtonClick }
+									onClick={this.handleUpgradeButtonClick}
 									className="button is-primary feature-upsell__cta-button"
 								>
-									Upgrade to Business plan for { this.renderPrice() } and get started
+									Upgrade to Business plan for {this.renderPrice()} and get started
 								</button>
 								<span className="feature-upsell__cta-guarantee">* 30-day money-back guarantee</span>
 							</React.Fragment>
-						) }
+						)}
 					</div>
 				</div>
 
@@ -97,8 +97,8 @@ class StoreUpsellComponent extends Component {
 				<div className="feature-upsell__features-list">
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="user" size={ 48 } /> }
-							title={ 'A one-on-one session with us' }
+							icon={<Gridicon icon="user" size={48} />}
+							title={'A one-on-one session with us'}
 							description={
 								'Getting where you want is easier with an expert guide. Our experts will flatten out your learning curve.'
 							}
@@ -106,8 +106,8 @@ class StoreUpsellComponent extends Component {
 					</div>
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="chat" size={ 48 } /> }
-							title={ 'Priority support' }
+							icon={<Gridicon icon="chat" size={48} />}
+							title={'Priority support'}
 							description={
 								'Need help? Our Happiness Engineers can answer any questions about your new store and account.'
 							}
@@ -115,23 +115,23 @@ class StoreUpsellComponent extends Component {
 					</div>
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="money" size={ 48 } /> }
-							title={ '$100 for Google Ads' }
-							description={ 'Attract new (and more!) traffic immediately with Google Ads.' }
+							icon={<Gridicon icon="money" size={48} />}
+							title={'$100 for Google Ads'}
+							description={'Attract new (and more!) traffic immediately with Google Ads.'}
 							body={
 								<div className="google-voucher__initial-step">
 									<TipInfo
-										info={ 'Offer valid in US and CA after spending the first $25 on Google Ads.' }
+										info={'Offer valid in US and CA after spending the first $25 on Google Ads.'}
 									/>
 								</div>
 							}
 						/>
 					</div>
-					{ isFreePlan( currentSitePlanSlug ) ? (
+					{isFreePlan(currentSitePlanSlug) ? (
 						<div className="feature-upsell__features-list-item">
 							<Feature
-								icon={ <Gridicon icon="domains" size={ 48 } /> }
-								title={ 'Custom site address' }
+								icon={<Gridicon icon="domains" size={48} />}
+								title={'Custom site address'}
 								description={
 									'Make your site memorable and professional - choose a .com, .shop, or any other dot.'
 								}
@@ -140,19 +140,19 @@ class StoreUpsellComponent extends Component {
 					) : (
 						<div className="feature-upsell__features-list-item">
 							<Feature
-								icon={ <Gridicon icon="plugins" size={ 48 } /> }
-								title={ 'Install Plugins' }
+								icon={<Gridicon icon="plugins" size={48} />}
+								title={'Install Plugins'}
 								description={
 									'Plugins are like smartphone apps for WordPress. They provide features like: ' +
 									'SEO and marketing, lead generation, appointment booking, and much, much more.'
 								}
 							/>
 						</div>
-					) }
+					)}
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="themes" size={ 48 } /> }
-							title={ 'Access to premium themes' }
+							icon={<Gridicon icon="themes" size={48} />}
+							title={'Access to premium themes'}
 							description={
 								'You don’t have to be a designer to make a beautiful site. Choose from a range of business-focused layouts created by pros.'
 							}
@@ -160,8 +160,8 @@ class StoreUpsellComponent extends Component {
 					</div>
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="gift" size={ 48 } /> }
-							title={ 'Even more!' }
+							icon={<Gridicon icon="gift" size={48} />}
+							title={'Even more!'}
 							description={
 								'Install plugins, access advanced SEO features, and more. You’ll have all the tools for a successful store.'
 							}
@@ -176,31 +176,31 @@ class StoreUpsellComponent extends Component {
 	handleUpgradeButtonClick = () => {
 		const { trackTracksEvent, selectedSiteSlug } = this.props;
 
-		trackTracksEvent( 'calypso_banner_cta_click', {
+		trackTracksEvent('calypso_banner_cta_click', {
 			cta_name: 'upsell-page-store',
-		} );
+		});
 
-		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
+		page(`/checkout/${selectedSiteSlug}/${getPlanPath(PLAN_BUSINESS) || ''}`);
 	};
 
 	renderPrice() {
-		if ( this.props.price === null ) {
+		if (this.props.price === null) {
 			return null;
 		}
-		const priceObject = getCurrencyObject( this.props.price, this.props.currencyCode );
-		let price = `${ priceObject.symbol }${ priceObject.integer }`;
-		if ( this.props.price.toFixed( 5 ).split( '.' )[ 1 ] !== '00000' ) {
+		const priceObject = getCurrencyObject(this.props.price, this.props.currencyCode);
+		let price = `${priceObject.symbol}${priceObject.integer}`;
+		if (this.props.price.toFixed(5).split('.')[1] !== '00000') {
 			price += priceObject.fraction;
 		}
 		return price;
 	}
 }
 
-const mapStateToProps = state => {
-	const selectedSite = getSelectedSite( state );
-	const selectedSiteId = getSelectedSiteId( state );
-	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-	const price = getUpsellPlanPrice( state, PLAN_BUSINESS, selectedSiteId );
+const mapStateToProps = (state) => {
+	const selectedSite = getSelectedSite(state);
+	const selectedSiteId = getSelectedSiteId(state);
+	const currentSitePlan = getCurrentPlan(state, selectedSiteId);
+	const price = getUpsellPlanPrice(state, PLAN_BUSINESS, selectedSiteId);
 
 	return {
 		price,
@@ -208,28 +208,28 @@ const mapStateToProps = state => {
 		currentSitePlan,
 		currentSitePlanSlug: currentSitePlan ? currentSitePlan.productSlug : '',
 		loadingPrice:
-			! price &&
-			( isRequestingPlans( state ) ||
-				isRequestingSitePlans( state ) ||
-				isRequestingActivePromotions( state ) ),
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
+			!price &&
+			(isRequestingPlans(state) ||
+				isRequestingSitePlans(state) ||
+				isRequestingActivePromotions(state)),
+		currencyCode: getCurrentUserCurrencyCode(state),
+		selectedSiteSlug: getSiteSlug(state, selectedSiteId),
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
-} );
+const mapDispatchToProps = (dispatch) => ({
+	trackTracksEvent: (name, props) => dispatch(recordTracksEvent(name, props)),
+});
 
 export default flowRight(
-	connect( mapStateToProps, mapDispatchToProps ),
+	connect(mapStateToProps, mapDispatchToProps),
 	localize,
 	redirectUnlessCanUpgradeSite,
 	redirectIf(
-		( state, siteId ) =>
-			canCurrentUserUseStore( state ) || hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ),
+		(state, siteId) =>
+			canCurrentUserUseStore(state) || hasFeature(state, siteId, FEATURE_UPLOAD_PLUGINS),
 		'/store'
 	)
-)( StoreUpsellComponent );
+)(StoreUpsellComponent);
 
 /* eslint-enable wpcalypso/jsx-classname-namespace */

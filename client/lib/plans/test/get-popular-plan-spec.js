@@ -4,39 +4,39 @@
 import { getPopularPlanSpec } from '..';
 import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_PREMIUM } from '../constants';
 
-describe( 'getPopularPlanSpec()', () => {
-	test( 'Should return biz for empty customer type', () => {
-		expect( getPopularPlanSpec( {} ) ).toEqual( {
+describe('getPopularPlanSpec()', () => {
+	test('Should return biz for empty customer type', () => {
+		expect(getPopularPlanSpec({})).toEqual({
 			type: TYPE_BUSINESS,
 			group: GROUP_WPCOM,
-		} );
-	} );
+		});
+	});
 
-	test( 'Should return premium for personal customer type', () => {
+	test('Should return premium for personal customer type', () => {
 		expect(
-			getPopularPlanSpec( {
+			getPopularPlanSpec({
 				customerType: 'personal',
-			} )
-		).toEqual( {
+			})
+		).toEqual({
 			type: TYPE_PREMIUM,
 			group: GROUP_WPCOM,
-		} );
-	} );
+		});
+	});
 
-	test( 'Should return biz for biz customer type', () => {
+	test('Should return biz for biz customer type', () => {
 		expect(
-			getPopularPlanSpec( {
+			getPopularPlanSpec({
 				customerType: 'business',
-			} )
-		).toEqual( { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
-	} );
+			})
+		).toEqual({ type: TYPE_BUSINESS, group: GROUP_WPCOM });
+	});
 
-	test( 'Should return false when isJetpack is true', () => {
+	test('Should return false when isJetpack is true', () => {
 		expect(
-			getPopularPlanSpec( {
+			getPopularPlanSpec({
 				customerType: 'business',
 				isJetpack: true,
-			} )
-		).toBe( false );
-	} );
-} );
+			})
+		).toBe(false);
+	});
+});

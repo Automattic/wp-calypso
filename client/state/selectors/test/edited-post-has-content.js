@@ -10,8 +10,8 @@ import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import { isEmptyContent } from '../edited-post-has-content';
 import PostQueryManager from 'lib/query-manager/post';
 
-describe( 'editedPostHasContent()', () => {
-	test( 'should return false if there are no edits and no post', () => {
+describe('editedPostHasContent()', () => {
+	test('should return false if there are no edits and no post', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -28,15 +28,15 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.false;
-	} );
+		expect(hasContent).to.be.false;
+	});
 
-	test( 'should return false if there are no edits and post has empty content', () => {
+	test('should return false if there are no edits and post has empty content', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {
-						2916284: new PostQueryManager( {
+						2916284: new PostQueryManager({
 							items: {
 								841: {
 									ID: 841,
@@ -45,7 +45,7 @@ describe( 'editedPostHasContent()', () => {
 									type: 'post',
 								},
 							},
-						} ),
+						}),
 					},
 					edits: {},
 				},
@@ -59,15 +59,15 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.false;
-	} );
+		expect(hasContent).to.be.false;
+	});
 
-	test( 'should return true if there are no edits and the post has a title', () => {
+	test('should return true if there are no edits and the post has a title', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {
-						2916284: new PostQueryManager( {
+						2916284: new PostQueryManager({
 							items: {
 								841: {
 									ID: 841,
@@ -77,7 +77,7 @@ describe( 'editedPostHasContent()', () => {
 									title: 'chiken',
 								},
 							},
-						} ),
+						}),
 					},
 					edits: {},
 				},
@@ -91,15 +91,15 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.true;
-	} );
+		expect(hasContent).to.be.true;
+	});
 
-	test( 'should return true if there are no edits and the post has content', () => {
+	test('should return true if there are no edits and the post has content', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {
-						2916284: new PostQueryManager( {
+						2916284: new PostQueryManager({
 							items: {
 								841: {
 									ID: 841,
@@ -109,7 +109,7 @@ describe( 'editedPostHasContent()', () => {
 									content: 'ribs',
 								},
 							},
-						} ),
+						}),
 					},
 					edits: {},
 				},
@@ -123,15 +123,15 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.true;
-	} );
+		expect(hasContent).to.be.true;
+	});
 
-	test( 'should return true if there are no edits and the post has an excerpt', () => {
+	test('should return true if there are no edits and the post has an excerpt', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {
-						2916284: new PostQueryManager( {
+						2916284: new PostQueryManager({
 							items: {
 								841: {
 									ID: 841,
@@ -141,7 +141,7 @@ describe( 'editedPostHasContent()', () => {
 									excerpt: 'chicken ribs',
 								},
 							},
-						} ),
+						}),
 					},
 					edits: {},
 				},
@@ -155,15 +155,15 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.true;
-	} );
+		expect(hasContent).to.be.true;
+	});
 
-	test( 'should return false if there are empty edits that overrides the post attributes', () => {
+	test('should return false if there are empty edits that overrides the post attributes', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {
-						2916284: new PostQueryManager( {
+						2916284: new PostQueryManager({
 							items: {
 								841: {
 									ID: 841,
@@ -175,7 +175,7 @@ describe( 'editedPostHasContent()', () => {
 									excerpt: 'chicken ribs',
 								},
 							},
-						} ),
+						}),
 					},
 					edits: {
 						2916284: {
@@ -199,17 +199,17 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.false;
-	} );
+		expect(hasContent).to.be.false;
+	});
 
-	test( 'should return true if there are title edits', () => {
+	test('should return true if there are title edits', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {},
 					edits: {
 						2916284: {
-							841: [ { title: 'chicken' } ],
+							841: [{ title: 'chicken' }],
 						},
 					},
 				},
@@ -223,17 +223,17 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.true;
-	} );
+		expect(hasContent).to.be.true;
+	});
 
-	test( 'should return true if there are content edits', () => {
+	test('should return true if there are content edits', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {},
 					edits: {
 						2916284: {
-							841: [ { content: 'ribs' } ],
+							841: [{ content: 'ribs' }],
 						},
 					},
 				},
@@ -247,17 +247,17 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.true;
-	} );
+		expect(hasContent).to.be.true;
+	});
 
-	test( 'should return true if there are excerpt edits', () => {
+	test('should return true if there are excerpt edits', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {},
 					edits: {
 						2916284: {
-							841: [ { excerpt: 'chicken ribs' } ],
+							841: [{ excerpt: 'chicken ribs' }],
 						},
 					},
 				},
@@ -271,15 +271,15 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.true;
-	} );
+		expect(hasContent).to.be.true;
+	});
 
-	test( 'should return true if there is empty content and non-empty raw content', () => {
+	test('should return true if there is empty content and non-empty raw content', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
 					queries: {
-						2916284: new PostQueryManager( {
+						2916284: new PostQueryManager({
 							items: {
 								841: {
 									ID: 841,
@@ -289,7 +289,7 @@ describe( 'editedPostHasContent()', () => {
 									content: '',
 								},
 							},
-						} ),
+						}),
 					},
 					edits: {},
 				},
@@ -306,26 +306,26 @@ describe( 'editedPostHasContent()', () => {
 			841
 		);
 
-		expect( hasContent ).to.be.true;
-	} );
-} );
+		expect(hasContent).to.be.true;
+	});
+});
 
-describe( 'isEmptyContent()', () => {
-	test( 'should return true for empty strings', () => {
+describe('isEmptyContent()', () => {
+	test('should return true for empty strings', () => {
 		const content = '';
 
-		expect( isEmptyContent( content ) ).to.eql( true );
-	} );
+		expect(isEmptyContent(content)).to.eql(true);
+	});
 
-	test( 'should return true for empty paragraphs', () => {
+	test('should return true for empty paragraphs', () => {
 		const content = '<p></p>';
 
-		expect( isEmptyContent( content ) ).to.eql( true );
-	} );
+		expect(isEmptyContent(content)).to.eql(true);
+	});
 
-	test( 'should return false for random texts', () => {
+	test('should return false for random texts', () => {
 		const content = 'small content';
 
-		expect( isEmptyContent( content ) ).to.eql( false );
-	} );
-} );
+		expect(isEmptyContent(content)).to.eql(false);
+	});
+});

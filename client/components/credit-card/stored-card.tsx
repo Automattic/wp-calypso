@@ -55,59 +55,59 @@ const CREDIT_CARD_DISABLED_PATHS = {
 
 const CREDIT_CARD_DEFAULT_PATH = creditCardPlaceholderImage;
 
-const getCreditCardImageURL = ( type, selected ) => {
+const getCreditCardImageURL = (type, selected) => {
 	const paths = selected ? CREDIT_CARD_SELECTED_PATHS : CREDIT_CARD_DISABLED_PATHS;
-	const imagePath = paths[ type ] || CREDIT_CARD_DEFAULT_PATH;
-	return `url(${ imagePath })`;
+	const imagePath = paths[type] || CREDIT_CARD_DEFAULT_PATH;
+	return `url(${imagePath})`;
 };
 
 const getCreditCardSummary = (
-	translate: ReturnType< typeof useTranslate >,
+	translate: ReturnType<typeof useTranslate>,
 	type: string,
-	digits?: Props[ 'lastDigits' ]
+	digits?: Props['lastDigits']
 ) => {
 	let displayType: string;
-	switch ( type && type.toLocaleLowerCase() ) {
+	switch (type && type.toLocaleLowerCase()) {
 		case 'american express':
 		case 'amex':
-			displayType = translate( 'American Express' );
+			displayType = translate('American Express');
 			break;
 
 		case 'diners':
-			displayType = translate( 'Diners Club' );
+			displayType = translate('Diners Club');
 			break;
 
 		case 'discover':
-			displayType = translate( 'Discover' );
+			displayType = translate('Discover');
 			break;
 
 		case 'jcb':
-			displayType = translate( 'JCB' );
+			displayType = translate('JCB');
 			break;
 
 		case 'mastercard':
-			displayType = translate( 'Mastercard' );
+			displayType = translate('Mastercard');
 			break;
 
 		case 'unionpay':
-			displayType = translate( 'UnionPay' );
+			displayType = translate('UnionPay');
 			break;
 
 		case 'visa':
-			displayType = translate( 'VISA' );
+			displayType = translate('VISA');
 			break;
 
 		default:
 			displayType = type;
 	}
 
-	if ( ! digits ) {
+	if (!digits) {
 		return displayType;
 	}
 
-	return translate( '%(displayType)s ****%(digits)s', {
+	return translate('%(displayType)s ****%(digits)s', {
 		args: { displayType, digits },
-	} );
+	});
 };
 
 interface Props {
@@ -117,34 +117,28 @@ interface Props {
 	expiry?: string;
 }
 
-const StoredCard: FunctionComponent< Props > = ( {
-	cardType,
-	expiry,
-	lastDigits,
-	name,
-	selected,
-} ) => {
+const StoredCard: FunctionComponent<Props> = ({ cardType, expiry, lastDigits, name, selected }) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
-	const expirationDate = expiry ? moment( expiry, moment.ISO_8601, true ).format( 'MM/YY' ) : null;
+	const expirationDate = expiry ? moment(expiry, moment.ISO_8601, true).format('MM/YY') : null;
 
 	const type = cardType && cardType.toLocaleLowerCase();
-	const typeStyle = { backgroundImage: getCreditCardImageURL( type, selected ) };
+	const typeStyle = { backgroundImage: getCreditCardImageURL(type, selected) };
 
 	return (
-		<div className="credit-card__stored-card" style={ typeStyle }>
+		<div className="credit-card__stored-card" style={typeStyle}>
 			<span className="credit-card__stored-card-number">
-				{ getCreditCardSummary( translate, cardType, lastDigits ) }
+				{getCreditCardSummary(translate, cardType, lastDigits)}
 			</span>
-			<span className="credit-card__stored-card-name">{ name }</span>
+			<span className="credit-card__stored-card-name">{name}</span>
 			<span className="credit-card__stored-card-expiration-date">
-				{ expirationDate &&
-					translate( 'Expires %(date)s', {
+				{expirationDate &&
+					translate('Expires %(date)s', {
 						args: { date: expirationDate },
 						context: 'date is of the form MM/YY',
-					} ) }
+					})}
 			</span>
 		</div>
 	);

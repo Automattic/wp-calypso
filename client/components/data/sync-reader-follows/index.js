@@ -13,7 +13,7 @@ import { requestFollows } from 'state/reader/follows/actions';
 
 class SyncReaderFollows extends Component {
 	check() {
-		if ( this.props.shouldSync ) {
+		if (this.props.shouldSync) {
 			this.props.requestFollows();
 		}
 	}
@@ -32,8 +32,8 @@ class SyncReaderFollows extends Component {
 }
 
 export default connect(
-	state => ( {
-		shouldSync: shouldSyncReaderFollows( state ),
-	} ),
+	(state) => ({
+		shouldSync: shouldSyncReaderFollows(state),
+	}),
 	{ requestFollows }
-)( SyncReaderFollows );
+)(SyncReaderFollows);

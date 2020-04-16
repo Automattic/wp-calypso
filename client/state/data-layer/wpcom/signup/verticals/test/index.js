@@ -6,15 +6,15 @@ import { requestVerticals, storeVerticals, showVerticalsRequestError } from '../
 import { setVerticals } from 'state/signup/verticals/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
-describe( 'data-layer/wpcom/signup/verticals', () => {
-	test( 'requestVerticals()', () => {
+describe('data-layer/wpcom/signup/verticals', () => {
+	test('requestVerticals()', () => {
 		const mockAction = {
 			search: 'Foo',
 			siteTypeId: 1,
 			limit: 7,
 		};
 
-		expect( requestVerticals( mockAction ) ).toEqual(
+		expect(requestVerticals(mockAction)).toEqual(
 			http(
 				{
 					apiNamespace: 'wpcom/v2',
@@ -31,18 +31,18 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 				mockAction
 			)
 		);
-	} );
+	});
 
-	test( 'requestVerticals() with missing siteTypeId', () => {
+	test('requestVerticals() with missing siteTypeId', () => {
 		const mockAction = {
 			search: 'Foo',
 			limit: 7,
 		};
 
-		expect( requestVerticals( mockAction ) ).not.toHaveProperty( 'query.site_type' );
-	} );
+		expect(requestVerticals(mockAction)).not.toHaveProperty('query.site_type');
+	});
 
-	test( 'storeVerticals()', () => {
+	test('storeVerticals()', () => {
 		const search = 'Profit!';
 		const siteType = 'business';
 		const verticals = [
@@ -50,18 +50,16 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 			{ id: 1, verticalName: 'Superfluous Profit!' },
 		];
 
-		expect( storeVerticals( { search }, verticals ) ).toEqual(
-			setVerticals( search, '', verticals )
+		expect(storeVerticals({ search }, verticals)).toEqual(setVerticals(search, '', verticals));
+		expect(storeVerticals({ search, siteType }, verticals)).toEqual(
+			setVerticals(search, siteType, verticals)
 		);
-		expect( storeVerticals( { search, siteType }, verticals ) ).toEqual(
-			setVerticals( search, siteType, verticals )
-		);
-	} );
+	});
 
-	test( 'showVerticalsRequestError()', () => {
+	test('showVerticalsRequestError()', () => {
 		const errorNotice = showVerticalsRequestError();
 
-		expect( errorNotice.type ).toEqual( NOTICE_CREATE );
-		expect( errorNotice.notice.status ).toEqual( 'is-error' );
-	} );
-} );
+		expect(errorNotice.type).toEqual(NOTICE_CREATE);
+		expect(errorNotice.notice.status).toEqual('is-error');
+	});
+});

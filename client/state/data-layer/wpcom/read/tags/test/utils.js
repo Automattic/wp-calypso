@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 
-const successfulFollowedTagsResponse = deepFreeze( {
+const successfulFollowedTagsResponse = deepFreeze({
 	tags: [
 		{
 			ID: '307',
@@ -25,9 +25,9 @@ const successfulFollowedTagsResponse = deepFreeze( {
 			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/design/posts',
 		},
 	],
-} );
+});
 
-const normalizedFollowedTagsResponse = deepFreeze( [
+const normalizedFollowedTagsResponse = deepFreeze([
 	{
 		id: '307',
 		slug: 'chickens',
@@ -42,9 +42,9 @@ const normalizedFollowedTagsResponse = deepFreeze( [
 		displayName: 'design',
 		url: '/tag/design',
 	},
-] );
+]);
 
-const successfulSingleTagResponse = deepFreeze( {
+const successfulSingleTagResponse = deepFreeze({
 	tag: {
 		ID: '307',
 		slug: 'chickens',
@@ -52,9 +52,9 @@ const successfulSingleTagResponse = deepFreeze( {
 		display_name: 'chickens',
 		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts',
 	},
-} );
+});
 
-const normalizedSuccessfulSingleTagResponse = deepFreeze( [
+const normalizedSuccessfulSingleTagResponse = deepFreeze([
 	{
 		id: '307',
 		slug: 'chickens',
@@ -62,28 +62,28 @@ const normalizedSuccessfulSingleTagResponse = deepFreeze( [
 		displayName: 'chickens',
 		url: '/tag/chickens',
 	},
-] );
+]);
 
-describe( 'wpcom-api: read/tags utils', () => {
-	describe( '#fromApi', () => {
-		test( 'should properly normalize many tags', () => {
-			const transformedResponse = fromApi( successfulFollowedTagsResponse );
-			expect( transformedResponse ).toEqual( normalizedFollowedTagsResponse );
-		} );
+describe('wpcom-api: read/tags utils', () => {
+	describe('#fromApi', () => {
+		test('should properly normalize many tags', () => {
+			const transformedResponse = fromApi(successfulFollowedTagsResponse);
+			expect(transformedResponse).toEqual(normalizedFollowedTagsResponse);
+		});
 
-		test( 'should properly normalize a single tag', () => {
-			const transformedResponse = fromApi( successfulSingleTagResponse );
-			expect( transformedResponse ).toEqual( normalizedSuccessfulSingleTagResponse );
-		} );
+		test('should properly normalize a single tag', () => {
+			const transformedResponse = fromApi(successfulSingleTagResponse);
+			expect(transformedResponse).toEqual(normalizedSuccessfulSingleTagResponse);
+		});
 
-		test( 'should blow up when given wrong keys', () => {
+		test('should blow up when given wrong keys', () => {
 			const badResponse = { noCorrectKeys: 'evil test' };
-			expect( () => fromApi( badResponse ) ).toThrow();
-		} );
+			expect(() => fromApi(badResponse)).toThrow();
+		});
 
-		test( 'should blow up when given bad values', () => {
-			const badResponse = fromApi( { tag: 'evil test' } );
-			expect( () => fromApi( badResponse ) ).toThrow();
-		} );
-	} );
-} );
+		test('should blow up when given bad values', () => {
+			const badResponse = fromApi({ tag: 'evil test' });
+			expect(() => fromApi(badResponse)).toThrow();
+		});
+	});
+});

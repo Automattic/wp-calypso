@@ -55,47 +55,47 @@ export class OrgCredentialsForm extends Component {
 		isSubmitting: false,
 	};
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
 
-		if ( this.state.isSubmitting ) {
+		if (this.state.isSubmitting) {
 			return;
 		}
-		this.setState( { isSubmitting: true } );
+		this.setState({ isSubmitting: true });
 
-		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_submit', {
+		this.props.recordTracksEvent('calypso_jpc_remoteinstall_submit', {
 			url: siteToConnect,
-		} );
-		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
+		});
+		this.props.jetpackRemoteInstall(siteToConnect, this.state.username, this.state.password);
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { installError } = nextProps;
 
-		if ( installError ) {
-			this.setState( { isSubmitting: false } );
+		if (installError) {
+			this.setState({ isSubmitting: false });
 		}
 	}
 
 	UNSAFE_componentWillMount() {
 		const { siteToConnect } = this.props;
 
-		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
-			if ( ! siteToConnect ) {
-				page.redirect( '/jetpack/connect' );
+		if (config.isEnabled('jetpack/connect/remote-install')) {
+			if (!siteToConnect) {
+				page.redirect('/jetpack/connect');
 			}
 		}
 
-		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_view', {
+		this.props.recordTracksEvent('calypso_jpc_remoteinstall_view', {
 			url: siteToConnect,
-		} );
+		});
 	}
 
 	componentDidUpdate() {
 		const { isResponseCompleted } = this.props;
 
-		if ( isResponseCompleted ) {
+		if (isResponseCompleted) {
 			// Login to remote site and redirect to JP connect URL
 			this.buildRemoteSiteLoginForm().submit();
 		}
@@ -104,37 +104,37 @@ export class OrgCredentialsForm extends Component {
 	buildRemoteSiteLoginForm() {
 		const { siteToConnect } = this.props;
 
-		const form = document.createElement( 'form' );
-		form.setAttribute( 'method', 'post' );
+		const form = document.createElement('form');
+		form.setAttribute('method', 'post');
 
-		const redirectUrl = addCalypsoEnvQueryArg( siteToConnect + REMOTE_PATH_AUTH );
-		const actionUrl = addQueryArgs( { redirect_to: redirectUrl }, siteToConnect + '/wp-login.php' );
-		form.setAttribute( 'action', actionUrl );
+		const redirectUrl = addCalypsoEnvQueryArg(siteToConnect + REMOTE_PATH_AUTH);
+		const actionUrl = addQueryArgs({ redirect_to: redirectUrl }, siteToConnect + '/wp-login.php');
+		form.setAttribute('action', actionUrl);
 
-		const user = document.createElement( 'input' );
-		user.setAttribute( 'type', 'hidden' );
-		user.setAttribute( 'name', 'log' );
-		user.setAttribute( 'value', this.state.username );
-		form.appendChild( user );
+		const user = document.createElement('input');
+		user.setAttribute('type', 'hidden');
+		user.setAttribute('name', 'log');
+		user.setAttribute('value', this.state.username);
+		form.appendChild(user);
 
-		const pwd = document.createElement( 'input' );
-		pwd.setAttribute( 'type', 'hidden' );
-		pwd.setAttribute( 'name', 'pwd' );
-		pwd.setAttribute( 'value', this.state.password );
-		form.appendChild( pwd );
+		const pwd = document.createElement('input');
+		pwd.setAttribute('type', 'hidden');
+		pwd.setAttribute('name', 'pwd');
+		pwd.setAttribute('value', this.state.password);
+		form.appendChild(pwd);
 
-		document.body.appendChild( form );
+		document.body.appendChild(form);
 		return form;
 	}
 
-	getChangeHandler = field => event => {
-		this.setState( { [ field ]: event.target.value } );
+	getChangeHandler = (field) => (event) => {
+		this.setState({ [field]: event.target.value });
 	};
 
 	getHeaderText() {
 		const { translate } = this.props;
 
-		return translate( 'Add your self-hosted WordPress credentials (wp-admin)' );
+		return translate('Add your self-hosted WordPress credentials (wp-admin)');
 	}
 
 	getSubHeaderText() {
@@ -142,33 +142,30 @@ export class OrgCredentialsForm extends Component {
 		const subheader = translate(
 			'Your login credentials are used for the purpose of securely auto-installing Jetpack and will not be stored.'
 		);
-		return <span>{ subheader }</span>;
+		return <span>{subheader}</span>;
 	}
 
-	getError( installError ) {
-		if ( installError === null ) {
+	getError(installError) {
+		if (installError === null) {
 			return undefined;
 		}
 
-		if (
-			installError === 'ACTIVATION_FAILURE' ||
-			installError === 'ACTIVATION_ON_INSTALL_FAILURE'
-		) {
+		if (installError === 'ACTIVATION_FAILURE' || installError === 'ACTIVATION_ON_INSTALL_FAILURE') {
 			return ACTIVATION_FAILURE;
 		}
-		if ( installError === 'INVALID_CREDENTIALS' ) {
+		if (installError === 'INVALID_CREDENTIALS') {
 			return INVALID_CREDENTIALS;
 		}
-		if ( installError === 'ACTIVATION_RESPONSE_ERROR' ) {
+		if (installError === 'ACTIVATION_RESPONSE_ERROR') {
 			return ACTIVATION_RESPONSE_ERROR;
 		}
-		if ( installError === 'INSTALL_RESPONSE_ERROR' ) {
+		if (installError === 'INSTALL_RESPONSE_ERROR') {
 			return INSTALL_RESPONSE_ERROR;
 		}
-		if ( installError === 'FORBIDDEN' ) {
+		if (installError === 'FORBIDDEN') {
 			return INVALID_PERMISSIONS;
 		}
-		if ( installError === 'LOGIN_FAILURE' ) {
+		if (installError === 'LOGIN_FAILURE') {
 			// Non-credentials login failure. We don't know of any action that can be taken.
 			return UNKNOWN_REMOTE_INSTALL_ERROR;
 		}
@@ -178,7 +175,7 @@ export class OrgCredentialsForm extends Component {
 
 	isInvalidCreds() {
 		const { installError } = this.props;
-		return includes( [ INVALID_CREDENTIALS ], this.getError( installError ) );
+		return includes([INVALID_CREDENTIALS], this.getError(installError));
 	}
 
 	isInvalidUsername() {
@@ -193,69 +190,69 @@ export class OrgCredentialsForm extends Component {
 		const { translate } = this.props;
 		const { isSubmitting, password, username } = this.state;
 
-		const userClassName = classnames( 'jetpack-connect__credentials-form-input', {
+		const userClassName = classnames('jetpack-connect__credentials-form-input', {
 			'is-error': this.isInvalidUsername(),
-		} );
-		const passwordClassName = classnames( 'jetpack-connect__password-form-input', {
+		});
+		const passwordClassName = classnames('jetpack-connect__password-form-input', {
 			'is-error': this.isInvalidPassword(),
-		} );
-		const removedProtocolURL = this.props.siteToConnect.replace( /(^\w+:|^)\/\//, '' );
+		});
+		const removedProtocolURL = this.props.siteToConnect.replace(/(^\w+:|^)\/\//, '');
 		return (
 			<Fragment>
 				<div className="jetpack-connect__site-address">
 					<div className="jetpack-connect__globe">
-						<Gridicon size={ 24 } icon="globe" />
-					</div>{ ' ' }
-					{ removedProtocolURL }
+						<Gridicon size={24} icon="globe" />
+					</div>{' '}
+					{removedProtocolURL}
 				</div>
 				<div className="jetpack-connect__wordpress-logo">
 					<WordPressLogo size="72" />
 				</div>
-				<FormLabel htmlFor="username">{ translate( 'WordPress username or email' ) }</FormLabel>
+				<FormLabel htmlFor="username">{translate('WordPress username or email')}</FormLabel>
 				<div className="jetpack-connect__site-address-container">
-					<Gridicon size={ 24 } icon="user" />
+					<Gridicon size={24} icon="user" />
 					<FormTextInput
 						autoCapitalize="off"
 						autoCorrect="off"
-						className={ userClassName }
-						disabled={ isSubmitting }
+						className={userClassName}
+						disabled={isSubmitting}
 						id="username"
 						name="username"
-						onChange={ this.getChangeHandler( 'username' ) }
-						value={ username || '' }
+						onChange={this.getChangeHandler('username')}
+						value={username || ''}
 					/>
-					{ this.isInvalidUsername() && (
+					{this.isInvalidUsername() && (
 						<FormInputValidation
 							isError
-							text={ translate( 'Username or email does not exist. Please try again.' ) }
+							text={translate('Username or email does not exist. Please try again.')}
 						/>
-					) }
+					)}
 				</div>
 				<div className="jetpack-connect__password-container">
-					<FormLabel htmlFor="password">{ translate( 'WordPress password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{translate('WordPress password')}</FormLabel>
 					<div className="jetpack-connect__password-form">
-						<Gridicon size={ 24 } icon="lock" />
+						<Gridicon size={24} icon="lock" />
 						<FormPasswordInput
-							className={ passwordClassName }
-							disabled={ isSubmitting }
+							className={passwordClassName}
+							disabled={isSubmitting}
 							id="password"
 							name="password"
-							onChange={ this.getChangeHandler( 'password' ) }
-							value={ password || '' }
+							onChange={this.getChangeHandler('password')}
+							value={password || ''}
 						/>
-						{ this.isInvalidPassword() && (
+						{this.isInvalidPassword() && (
 							<FormInputValidation
 								isError
-								text={ translate( 'Your password is incorrect, please try again' ) }
+								text={translate('Your password is incorrect, please try again')}
 							/>
-						) }
+						)}
 					</div>
 				</div>
 				<div className="jetpack-connect__note">
-					{ translate(
+					{translate(
 						'Note: WordPress credentials are not the same as WordPress.com credentials. ' +
 							'Be sure to enter the username and password for your self-hosted WordPress site.'
-					) }
+					)}
 				</div>
 			</Fragment>
 		);
@@ -265,15 +262,15 @@ export class OrgCredentialsForm extends Component {
 		const { isResponseCompleted, translate } = this.props;
 		const { isSubmitting } = this.state;
 
-		if ( isResponseCompleted ) {
-			return translate( 'Jetpack installed' );
+		if (isResponseCompleted) {
+			return translate('Jetpack installed');
 		}
 
-		if ( ! isSubmitting ) {
-			return translate( 'Install Jetpack' );
+		if (!isSubmitting) {
+			return translate('Install Jetpack');
 		}
 
-		return translate( 'Installing…' );
+		return translate('Installing…');
 	}
 
 	formFooter() {
@@ -281,12 +278,12 @@ export class OrgCredentialsForm extends Component {
 
 		return (
 			<div className="jetpack-connect__creds-form-footer">
-				{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
+				{isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" />}
 				<FormButton
 					className="jetpack-connect__credentials-submit"
-					disabled={ ! this.state.username || ! this.state.password || isSubmitting }
+					disabled={!this.state.username || !this.state.password || isSubmitting}
 				>
-					{ this.renderButtonLabel() }
+					{this.renderButtonLabel()}
 				</FormButton>
 			</div>
 		);
@@ -294,42 +291,39 @@ export class OrgCredentialsForm extends Component {
 
 	onClickBack = () => {
 		const { installError, siteToConnect } = this.props;
-		if ( installError && ! this.isInvalidCreds() ) {
-			this.props.jetpackRemoteInstallUpdateError( siteToConnect, null, null );
+		if (installError && !this.isInvalidCreds()) {
+			this.props.jetpackRemoteInstallUpdateError(siteToConnect, null, null);
 			return;
 		}
-		page.redirect( '/jetpack/connect' );
+		page.redirect('/jetpack/connect');
 	};
 
 	footerLink() {
 		const { installError, siteToConnect, translate } = this.props;
-		const manualInstallUrl = addQueryArgs(
-			{ url: siteToConnect },
-			'/jetpack/connect/instructions'
-		);
+		const manualInstallUrl = addQueryArgs({ url: siteToConnect }, '/jetpack/connect/instructions');
 		const manualInstallClick = () => {
-			this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_instructionsclick', {
+			this.props.recordTracksEvent('calypso_jpc_remoteinstall_instructionsclick', {
 				url: siteToConnect,
-			} );
+			});
 		};
 
 		return (
 			<LoggedOutFormLinks>
-				{ ( this.isInvalidCreds() || ! installError ) && (
-					<LoggedOutFormLinkItem href={ manualInstallUrl } onClick={ manualInstallClick }>
-						{ translate( 'Install Jetpack manually' ) }
+				{(this.isInvalidCreds() || !installError) && (
+					<LoggedOutFormLinkItem href={manualInstallUrl} onClick={manualInstallClick}>
+						{translate('Install Jetpack manually')}
 					</LoggedOutFormLinkItem>
-				) }
+				)}
 				<HelpButton />
 				<div className="jetpack-connect__navigation">
 					<Button
 						compact
 						borderless
 						className="jetpack-connect__back-button"
-						onClick={ this.onClickBack }
+						onClick={this.onClickBack}
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
-						{ translate( 'Back' ) }
+						<Gridicon icon="arrow-left" size={18} />
+						{translate('Back')}
 					</Button>
 				</div>
 			</LoggedOutFormLinks>
@@ -338,10 +332,7 @@ export class OrgCredentialsForm extends Component {
 
 	renderHeadersText() {
 		return (
-			<FormattedHeader
-				headerText={ this.getHeaderText() }
-				subHeaderText={ this.getSubHeaderText() }
-			/>
+			<FormattedHeader headerText={this.getHeaderText()} subHeaderText={this.getSubHeaderText()} />
 		);
 	}
 
@@ -350,41 +341,41 @@ export class OrgCredentialsForm extends Component {
 
 		return (
 			<MainWrapper>
-				{ ! this.isInvalidCreds() && installError && (
+				{!this.isInvalidCreds() && installError && (
 					<div className="jetpack-connect__notice">
-						<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
+						<JetpackRemoteInstallNotices noticeType={this.getError(installError)} />
 					</div>
-				) }
-				{ ( this.isInvalidCreds() || ! installError ) && (
+				)}
+				{(this.isInvalidCreds() || !installError) && (
 					<div className="jetpack-connect__site-url-entry-container">
-						{ this.renderHeadersText() }
+						{this.renderHeadersText()}
 						<Card className="jetpack-connect__site-url-input-container">
-							{ this.isInvalidCreds() && (
-								<JetpackConnectNotices noticeType={ this.getError( installError ) } />
-							) }
-							<form onSubmit={ this.handleSubmit }>
-								{ this.formFields() }
-								{ this.formFooter() }
+							{this.isInvalidCreds() && (
+								<JetpackConnectNotices noticeType={this.getError(installError)} />
+							)}
+							<form onSubmit={this.handleSubmit}>
+								{this.formFields()}
+								{this.formFooter()}
 							</form>
 						</Card>
 					</div>
-				) }
-				{ this.footerLink() }
+				)}
+				{this.footerLink()}
 			</MainWrapper>
 		);
 	}
 }
 
 const connectComponent = connect(
-	state => {
-		const jetpackConnectSite = getConnectingSite( state );
+	(state) => {
+		const jetpackConnectSite = getConnectingSite(state);
 		const siteData = jetpackConnectSite.data || {};
 		const siteToConnect = siteData.urlAfterRedirects || jetpackConnectSite.url;
 
 		return {
-			installError: getJetpackRemoteInstallErrorCode( state, siteToConnect ),
-			installErrorMessage: getJetpackRemoteInstallErrorMessage( state, siteToConnect ),
-			isResponseCompleted: isJetpackRemoteInstallComplete( state, siteToConnect ),
+			installError: getJetpackRemoteInstallErrorCode(state, siteToConnect),
+			installErrorMessage: getJetpackRemoteInstallErrorMessage(state, siteToConnect),
+			isResponseCompleted: isJetpackRemoteInstallComplete(state, siteToConnect),
 			siteToConnect,
 		};
 	},
@@ -395,4 +386,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( OrgCredentialsForm );
+export default flowRight(connectComponent, localize)(OrgCredentialsForm);

@@ -38,7 +38,7 @@ class Referrers extends Component {
 		query: PropTypes.object.isRequired,
 		data: PropTypes.array.isRequired,
 		selectedDate: PropTypes.string,
-		unit: PropTypes.oneOf( [ 'day', 'week', 'month', 'year' ] ),
+		unit: PropTypes.oneOf(['day', 'week', 'month', 'year']),
 		slug: PropTypes.string,
 		limit: PropTypes.number,
 	};
@@ -48,50 +48,50 @@ class Referrers extends Component {
 		selectedReferrer: {},
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.setData( nextProps, this.state.filter );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.setData(nextProps, this.state.filter);
 	}
 
 	UNSAFE_componentWillMount() {
-		this.setData( this.props, this.state.filter );
+		this.setData(this.props, this.state.filter);
 	}
 
-	onSearch = str => {
+	onSearch = (str) => {
 		const trimmedStr = str.trim();
-		if ( trimmedStr === '' ) {
+		if (trimmedStr === '') {
 			const { unit, slug } = this.props;
 			const basePath = '/store/stats/referrers';
 			const {
 				queryParams: { referrer, ...queryParams },
 			} = this.props;
-			const widgetPath = getWidgetPath( unit, slug, queryParams );
+			const widgetPath = getWidgetPath(unit, slug, queryParams);
 			this.state.filter = '';
 			this.state.selectedReferrer = {};
-			page( `${ basePath }${ widgetPath }` );
+			page(`${basePath}${widgetPath}`);
 		}
-		this.setData( this.props, trimmedStr );
+		this.setData(this.props, trimmedStr);
 	};
 
-	getFilteredData = ( filter, { data } ) => {
+	getFilteredData = (filter, { data }) => {
 		const filteredData = filter
-			? data.filter( d => d.referrer.toLowerCase().match( filter.toLowerCase() ) )
+			? data.filter((d) => d.referrer.toLowerCase().match(filter.toLowerCase()))
 			: data;
 		return {
-			filteredSortedData: sortBySales( filteredData ),
+			filteredSortedData: sortBySales(filteredData),
 			unfilteredDataLength: data.length,
 		};
 	};
 
-	getSelectedReferrer = ( filteredSortedData, { queryParams } ) => {
+	getSelectedReferrer = (filteredSortedData, { queryParams }) => {
 		let selectedReferrerIndex = null;
-		if ( queryParams.referrer ) {
-			const selectedReferrer = find( filteredSortedData, ( d, idx ) => {
-				if ( queryParams.referrer === d.referrer ) {
+		if (queryParams.referrer) {
+			const selectedReferrer = find(filteredSortedData, (d, idx) => {
+				if (queryParams.referrer === d.referrer) {
 					selectedReferrerIndex = idx;
 					return true;
 				}
 				return false;
-			} );
+			});
 			return {
 				selectedReferrer: selectedReferrer || {},
 				selectedReferrerIndex,
@@ -104,27 +104,26 @@ class Referrers extends Component {
 		};
 	};
 
-	setData( props, filter ) {
-		const { filteredSortedData, unfilteredDataLength } = this.getFilteredData( filter, props );
+	setData(props, filter) {
+		const { filteredSortedData, unfilteredDataLength } = this.getFilteredData(filter, props);
 		const { selectedReferrer, selectedReferrerIndex } = this.getSelectedReferrer(
 			filteredSortedData,
 			props
 		);
-		this.setState( {
+		this.setState({
 			filter,
 			filteredSortedData,
 			unfilteredDataLength,
 			selectedReferrer,
 			selectedReferrerIndex,
-		} );
+		});
 	}
 	render() {
 		const { siteId, query, selectedDate, unit, slug, translate, queryParams } = this.props;
 		const { filter, filteredSortedData, selectedReferrer, selectedReferrerIndex } = this.state;
-		const endSelectedDate = getEndPeriod( selectedDate, unit );
-		const title = `${ translate( 'Store Referrers' ) }: ${ queryParams.referrer ||
-			translate( 'All' ) }`;
-		const chartFormat = UNITS[ unit ].chartFormat;
+		const endSelectedDate = getEndPeriod(selectedDate, unit);
+		const title = `${translate('Store Referrers')}: ${queryParams.referrer || translate('All')}`;
+		const chartFormat = UNITS[unit].chartFormat;
 		const periodNavQueryParams = Object.assign(
 			{ referrer: selectedReferrer.referrer },
 			queryParams
@@ -133,92 +132,92 @@ class Referrers extends Component {
 		return (
 			<Main className="referrers woocommerce" wideLayout>
 				<PageViewTracker
-					path={ `/store/stats/referrers/${ unit }/:site` }
-					title={ `Store > Stats > Referrers > ${ titlecase( unit ) }` }
+					path={`/store/stats/referrers/${unit}/:site`}
+					title={`Store > Stats > Referrers > ${titlecase(unit)}`}
 				/>
-				{ siteId && <QuerySiteStats statType={ STAT_TYPE } siteId={ siteId } query={ query } /> }
+				{siteId && <QuerySiteStats statType={STAT_TYPE} siteId={siteId} query={query} />}
 				<StoreStatsPeriodNav
 					type="referrers"
-					selectedDate={ selectedDate }
-					unit={ unit }
-					slug={ slug }
-					query={ query }
-					statType={ STAT_TYPE }
-					title={ title }
-					queryParams={ periodNavQueryParams }
+					selectedDate={selectedDate}
+					unit={unit}
+					slug={slug}
+					query={query}
+					statType={STAT_TYPE}
+					title={title}
+					queryParams={periodNavQueryParams}
 				/>
 				<Module
 					className="referrers__search"
-					siteId={ siteId }
-					emptyMessage={ noDataMsg }
-					query={ query }
-					statType={ STAT_TYPE }
+					siteId={siteId}
+					emptyMessage={noDataMsg}
+					query={query}
+					statType={STAT_TYPE}
 				>
 					<SearchCard
-						className={ 'referrers__search-filter' }
-						onSearch={ this.onSearch }
+						className={'referrers__search-filter'}
+						onSearch={this.onSearch}
 						placeholder="Filter Store Referrers"
-						value={ selectOrFilter }
-						initialValue={ selectOrFilter }
+						value={selectOrFilter}
+						initialValue={selectOrFilter}
 					/>
 					<div className="referrers__widgets">
 						<StoreStatsReferrerWidget
-							fetchedData={ filteredSortedData }
-							unit={ unit }
-							siteId={ siteId }
-							query={ query }
-							statType={ STAT_TYPE }
-							endSelectedDate={ endSelectedDate }
-							queryParams={ queryParams }
-							slug={ slug }
-							limit={ 5 }
+							fetchedData={filteredSortedData}
+							unit={unit}
+							siteId={siteId}
+							query={query}
+							statType={STAT_TYPE}
+							endSelectedDate={endSelectedDate}
+							queryParams={queryParams}
+							slug={slug}
+							limit={5}
 							pageType="referrers"
 							paginate
-							selectedIndex={ selectedReferrerIndex }
-							selectedReferrer={ selectedReferrer.referrer }
+							selectedIndex={selectedReferrerIndex}
+							selectedReferrer={selectedReferrer.referrer}
 						/>
 					</div>
 				</Module>
 				<Module
 					className="referrers__chart"
-					siteId={ siteId }
-					emptyMessage={ noDataMsg }
-					query={ query }
-					statType={ STAT_TYPE }
+					siteId={siteId}
+					emptyMessage={noDataMsg}
+					query={query}
+					statType={STAT_TYPE}
 				>
 					<Chart
-						selectedDate={ endSelectedDate }
-						selectedReferrer={ selectedReferrer.referrer }
-						chartFormat={ chartFormat }
-						unit={ unit }
-						slug={ slug }
-						siteId={ siteId }
+						selectedDate={endSelectedDate}
+						selectedReferrer={selectedReferrer.referrer}
+						chartFormat={chartFormat}
+						unit={unit}
+						slug={slug}
+						siteId={siteId}
 						statType
-						query={ query }
+						query={query}
 					/>
 				</Module>
 				<Module
 					className="referrers__search"
-					siteId={ siteId }
-					emptyMessage={ noDataMsg }
-					query={ query }
-					statType={ STAT_TYPE }
+					siteId={siteId}
+					emptyMessage={noDataMsg}
+					query={query}
+					statType={STAT_TYPE}
 				>
 					<div className="referrers__widgets">
 						<StoreStatsReferrerConvWidget
-							fetchedData={ filteredSortedData }
-							unit={ unit }
-							siteId={ siteId }
-							query={ query }
-							statType={ STAT_TYPE }
-							endSelectedDate={ endSelectedDate }
-							queryParams={ queryParams }
-							slug={ slug }
-							limit={ LIMIT }
+							fetchedData={filteredSortedData}
+							unit={unit}
+							siteId={siteId}
+							query={query}
+							statType={STAT_TYPE}
+							endSelectedDate={endSelectedDate}
+							queryParams={queryParams}
+							slug={slug}
+							limit={LIMIT}
 							pageType="referrers"
 							paginate
-							selectedIndex={ selectedReferrerIndex }
-							selectedReferrer={ selectedReferrer.referrer }
+							selectedIndex={selectedReferrerIndex}
+							selectedReferrer={selectedReferrer.referrer}
 						/>
 					</div>
 				</Module>
@@ -228,16 +227,16 @@ class Referrers extends Component {
 	}
 }
 
-export default connect( ( state, { query, selectedDate, unit } ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state, { query, selectedDate, unit }) => {
+	const siteId = getSelectedSiteId(state);
 	return {
-		slug: getSelectedSiteSlug( state ),
+		slug: getSelectedSiteSlug(state),
 		siteId,
-		data: getStoreReferrersByDate( state, {
+		data: getStoreReferrersByDate(state, {
 			query,
 			siteId,
 			statType: STAT_TYPE,
-			endSelectedDate: getEndPeriod( selectedDate, unit ),
-		} ),
+			endSelectedDate: getEndPeriod(selectedDate, unit),
+		}),
 	};
-} )( localize( Referrers ) );
+})(localize(Referrers));

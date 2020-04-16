@@ -36,58 +36,58 @@ class CrossPost extends PureComponent {
 		feed: PropTypes.object,
 	};
 
-	handleTitleClick = event => {
+	handleTitleClick = (event) => {
 		// modified clicks should let the default action open a new tab/window
-		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+		if (event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey) {
 			return;
 		}
 		event.preventDefault();
-		this.props.handleClick( this.props.xMetadata );
+		this.props.handleClick(this.props.xMetadata);
 	};
 
-	handleCardClick = event => {
-		const rootNode = ReactDom.findDOMNode( this );
+	handleCardClick = (event) => {
+		const rootNode = ReactDom.findDOMNode(this);
 
-		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
-				window.scrollTo( 0, 0 );
-			}, 100 );
+		if (closest(event.target, '.should-scroll', rootNode)) {
+			setTimeout(function () {
+				window.scrollTo(0, 0);
+			}, 100);
 		}
 
-		if ( closest( event.target, '.ignore-click', rootNode ) ) {
+		if (closest(event.target, '.ignore-click', rootNode)) {
 			return;
 		}
 
 		// ignore clicks on anchors inside inline content
 		if (
-			closest( event.target, 'a', rootNode ) &&
-			closest( event.target, '.reader__x-post', rootNode )
+			closest(event.target, 'a', rootNode) &&
+			closest(event.target, '.reader__x-post', rootNode)
 		) {
 			return;
 		}
 
 		// if the click has modifier, ignore it
-		if ( event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+		if (event.metaKey || event.controlKey || event.shiftKey || event.altKey) {
 			return;
 		}
 
 		// programattic ignore
-		if ( ! event.defaultPrevented ) {
+		if (!event.defaultPrevented) {
 			// some child handled it
 			event.preventDefault();
-			this.props.handleClick( this.props.xMetadata );
+			this.props.handleClick(this.props.xMetadata);
 		}
 	};
 
-	getSiteNameFromURL = siteURL => {
-		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
+	getSiteNameFromURL = (siteURL) => {
+		return siteURL && `+${url.parse(siteURL).hostname.split('.')[0]}`;
 	};
 
-	getDescription = authorFirstName => {
+	getDescription = (authorFirstName) => {
 		let label;
-		const siteName = this.getSiteNameFromURL( this.props.xMetadata.siteURL );
-		const isCrossComment = !! this.props.xMetadata.commentURL;
-		if ( isCrossComment ) {
+		const siteName = this.getSiteNameFromURL(this.props.xMetadata.siteURL);
+		const isCrossComment = !!this.props.xMetadata.commentURL;
+		if (isCrossComment) {
 			label = this.props.translate(
 				'{{author}}%(authorFirstName)s{{/author}} {{label}}left a comment on %(siteName)s, cross-posted to{{/label}} {{blogNames/}}',
 				{
@@ -127,105 +127,105 @@ class CrossPost extends PureComponent {
 		const xPostedToList = [
 			{
 				siteURL: this.props.post.site_URL,
-				siteName: this.getSiteNameFromURL( this.props.post.site_URL ),
+				siteName: this.getSiteNameFromURL(this.props.post.site_URL),
 			},
 		];
 
 		// Add any other x-post URLs we know about
-		if ( postKey.xPostUrls ) {
-			forEach( postKey.xPostUrls, xPostUrl => {
-				xPostedToList.push( {
+		if (postKey.xPostUrls) {
+			forEach(postKey.xPostUrls, (xPostUrl) => {
+				xPostedToList.push({
 					siteURL: xPostUrl,
-					siteName: this.getSiteNameFromURL( xPostUrl ),
-				} );
-			} );
+					siteName: this.getSiteNameFromURL(xPostUrl),
+				});
+			});
 		}
 
-		return uniqBy( xPostedToList, 'siteName' ).map( ( xPostedTo, index, array ) => {
+		return uniqBy(xPostedToList, 'siteName').map((xPostedTo, index, array) => {
 			return (
-				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
-					{ xPostedTo.siteName }
-					{ index + 2 < array.length && <span>, </span> }
-					{ index + 2 === array.length && (
+				<span className="reader__x-post-site" key={xPostedTo.siteURL + '-' + index}>
+					{xPostedTo.siteName}
+					{index + 2 < array.length && <span>, </span>}
+					{index + 2 === array.length && (
 						<span>
-							{ ' ' }
-							{ translate( 'and', {
+							{' '}
+							{translate('and', {
 								comment:
 									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
-							} ) }{ ' ' }
+							})}{' '}
 						</span>
-					) }
+					)}
 				</span>
 			);
-		} );
+		});
 	};
 
 	render() {
 		const { post, postKey, site, feed, translate } = this.props;
 		const { blogId: siteId, feedId } = postKey;
-		const siteIcon = get( site, 'icon.img' );
-		const feedIcon = get( feed, 'image' );
+		const siteIcon = get(site, 'icon.img');
+		const feedIcon = get(feed, 'image');
 
-		const articleClasses = classnames( {
+		const articleClasses = classnames({
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
-		} );
+		});
 
 		// Remove the x-post text from the title.
 		// TODO: maybe add xpost metadata, so we can remove this regex
 		let xpostTitle = post.title;
-		xpostTitle = xpostTitle.replace( /x-post:/i, '' );
+		xpostTitle = xpostTitle.replace(/x-post:/i, '');
 
-		if ( ! xpostTitle ) {
-			xpostTitle = `(${ translate( 'no title' ) })`;
+		if (!xpostTitle) {
+			xpostTitle = `(${translate('no title')})`;
 		}
 
 		return (
-			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
+			<Card tagName="article" onClick={this.handleCardClick} className={articleClasses}>
 				<ReaderAvatar
-					siteIcon={ siteIcon }
-					feedIcon={ feedIcon }
-					author={ post.author }
-					onClick={ this.handleTitleClick }
-					isCompact={ true }
+					siteIcon={siteIcon}
+					feedIcon={feedIcon}
+					author={post.author}
+					onClick={this.handleTitleClick}
+					isCompact={true}
 				/>
 				<div className="reader__x-post">
-					{ post.title && (
+					{post.title && (
 						<h1 className="reader__post-title">
 							<a
 								className="reader__post-title-link"
-								onClick={ this.handleTitleClick }
-								href={ post.URL }
+								onClick={this.handleTitleClick}
+								href={post.URL}
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								<Emojify>{ xpostTitle }</Emojify>
+								<Emojify>{xpostTitle}</Emojify>
 							</a>
 						</h1>
-					) }
-					{ post.author && <Emojify>{ this.getDescription( post.author.first_name ) }</Emojify> }
+					)}
+					{post.author && <Emojify>{this.getDescription(post.author.first_name)}</Emojify>}
 				</div>
-				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
-				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
+				{feedId && <QueryReaderFeed feedId={+feedId} includeMeta={false} />}
+				{siteId && <QueryReaderSite siteId={+siteId} includeMeta={false} />}
 			</Card>
 		);
 	}
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const { feedId, blogId } = ownProps.postKey;
 	let feed, site;
-	if ( feedId ) {
-		feed = getFeed( state, feedId );
-		site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
+	if (feedId) {
+		feed = getFeed(state, feedId);
+		site = feed && feed.blog_ID ? getSite(state, feed.blog_ID) : undefined;
 	} else {
-		site = getSite( state, blogId );
-		feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
+		site = getSite(state, blogId);
+		feed = site && site.feed_ID ? getFeed(state, site.feed_ID) : undefined;
 	}
 	return {
 		feed,
 		site,
 	};
-} )( localize( CrossPost ) );
+})(localize(CrossPost));

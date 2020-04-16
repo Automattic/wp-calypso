@@ -9,19 +9,19 @@ import { expect } from 'chai';
 import { PLAN_BUSINESS, PLAN_FREE } from 'lib/plans/constants';
 import userHasAnyPaidPlans from 'state/selectors/user-has-any-paid-plans';
 
-describe( 'userHasAnyPaidPlans()', () => {
-	test( 'should return false if no sites in state', () => {
+describe('userHasAnyPaidPlans()', () => {
+	test('should return false if no sites in state', () => {
 		const state = {
 			sites: {
 				items: {},
 			},
 		};
 
-		const hasPlan = userHasAnyPaidPlans( state );
-		expect( hasPlan ).to.be.false;
-	} );
+		const hasPlan = userHasAnyPaidPlans(state);
+		expect(hasPlan).to.be.false;
+	});
 
-	test( 'should return false if all sites have a free plan', () => {
+	test('should return false if all sites have a free plan', () => {
 		const state = {
 			sites: {
 				items: {
@@ -34,11 +34,11 @@ describe( 'userHasAnyPaidPlans()', () => {
 			},
 		};
 
-		const hasPlan = userHasAnyPaidPlans( state );
-		expect( hasPlan ).to.be.false;
-	} );
+		const hasPlan = userHasAnyPaidPlans(state);
+		expect(hasPlan).to.be.false;
+	});
 
-	test( 'should return true if at least one site has a paid plan', () => {
+	test('should return true if at least one site has a paid plan', () => {
 		const state = {
 			sites: {
 				items: {
@@ -56,7 +56,7 @@ describe( 'userHasAnyPaidPlans()', () => {
 			},
 		};
 
-		const hasPlan = userHasAnyPaidPlans( state );
-		expect( hasPlan ).to.be.true;
-	} );
-} );
+		const hasPlan = userHasAnyPaidPlans(state);
+		expect(hasPlan).to.be.true;
+	});
+});

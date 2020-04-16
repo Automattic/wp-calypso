@@ -32,22 +32,22 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
-	initiateSecurityKeyAuthentication = event => {
+	initiateSecurityKeyAuthentication = (event) => {
 		event.preventDefault();
 
-		this.setState( { isAuthenticating: true, showError: false } );
+		this.setState({ isAuthenticating: true, showError: false });
 		this.props
 			.loginUserWithSecurityKey()
-			.then( response => this.onComplete( null, response ) )
-			.catch( error => {
-				this.setState( { isAuthenticating: false, showError: true } );
-				this.onComplete( error, null );
-			} );
+			.then((response) => this.onComplete(null, response))
+			.catch((error) => {
+				this.setState({ isAuthenticating: false, showError: true });
+				this.onComplete(error, null);
+			});
 	};
 
-	onComplete = ( error, data ) => {
-		if ( this.props.onComplete ) {
-			this.props.onComplete( error, data );
+	onComplete = (error, data) => {
+		if (this.props.onComplete) {
+			this.props.onComplete(error, data);
 		}
 	};
 
@@ -56,46 +56,46 @@ class SecurityKeyForm extends Component {
 		const { isAuthenticating } = this.state;
 
 		return (
-			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
+			<form onSubmit={this.initiateSecurityKeyAuthentication}>
 				<Card compact className="security-key-form__verification-code-form">
-					{ ! isAuthenticating ? (
+					{!isAuthenticating ? (
 						<div>
 							<p>
-								{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
+								{translate('{{strong}}Use your security key to finish logging in.{{/strong}}', {
 									components: {
 										strong: <strong />,
 									},
-								} ) }
+								})}
 							</p>
 							<p>
-								{ translate(
+								{translate(
 									'Insert your security key into your USB port. Then tap the button or gold disc.'
-								) }
+								)}
 							</p>
 						</div>
 					) : (
 						<div className="security-key-form__add-wait-for-key">
 							<Spinner />
 							<p className="security-key-form__add-wait-for-key-heading">
-								{ translate( 'Waiting for security key' ) }
+								{translate('Waiting for security key')}
 							</p>
-							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
+							<p>{translate('Connect and touch your security key to log in.')}</p>
 						</div>
-					) }
-					{ this.state.showError && (
+					)}
+					{this.state.showError && (
 						<FormInputValidation
 							isError
-							text={ this.props.translate(
+							text={this.props.translate(
 								'An error occurred, please try again or use an alternate authentication method.'
-							) }
+							)}
 						/>
-					) }
+					)}
 					<FormButton
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						primary
-						disabled={ isAuthenticating }
+						disabled={isAuthenticating}
 					>
-						{ translate( 'Continue with security key' ) }
+						{translate('Continue with security key')}
 					</FormButton>
 				</Card>
 			</form>
@@ -103,4 +103,4 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect( null, null )( localize( SecurityKeyForm ) );
+export default connect(null, null)(localize(SecurityKeyForm));

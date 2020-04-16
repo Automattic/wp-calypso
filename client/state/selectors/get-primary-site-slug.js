@@ -10,7 +10,7 @@ import { getSiteSlug } from 'state/sites/selectors';
  * @param  {object}  state Global state tree
  * @returns {?string}       The current user's primary site's slug
  */
-export default function getPrimarySiteSlug( state ) {
-	const primarySiteId = getPrimarySiteId( state );
-	return getSiteSlug( state, primarySiteId );
+export default function getPrimarySiteSlug(state) {
+	const primarySiteId = getPrimarySiteId(state);
+	return getSiteSlug(state, primarySiteId);
 }

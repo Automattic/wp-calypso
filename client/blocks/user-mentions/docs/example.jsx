@@ -28,14 +28,14 @@ const exampleSuggestions = [
 	},
 ];
 
-const UserMentionsExample = ( { translate } ) => (
+const UserMentionsExample = ({ translate }) => (
 	<div className="docs__design-assets-group">
-		<p>{ translate( 'Try typing an @username into the text input below.' ) }</p>
-		<UserMentionsExampleInput suggestions={ exampleSuggestions } />
+		<p>{translate('Try typing an @username into the text input below.')}</p>
+		<UserMentionsExampleInput suggestions={exampleSuggestions} />
 	</div>
 );
 
-const LocalizedUserMentionsExample = localize( UserMentionsExample );
+const LocalizedUserMentionsExample = localize(UserMentionsExample);
 LocalizedUserMentionsExample.displayName = 'UserMentions';
 
 export default LocalizedUserMentionsExample;

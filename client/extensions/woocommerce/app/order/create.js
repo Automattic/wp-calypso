@@ -41,115 +41,115 @@ class Order extends Component {
 	componentDidMount() {
 		const { siteId } = this.props;
 
-		if ( siteId ) {
-			this.props.editOrder( siteId, {} );
+		if (siteId) {
+			this.props.editOrder(siteId, {});
 		}
 
-		this.possiblyFetchDefaultCurrency( this.props );
+		this.possiblyFetchDefaultCurrency(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( this.props.siteId !== newProps.siteId ) {
-			this.props.editOrder( newProps.siteId, {} );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		if (this.props.siteId !== newProps.siteId) {
+			this.props.editOrder(newProps.siteId, {});
 		}
 	}
 
 	componentDidUpdate() {
-		this.possiblyFetchDefaultCurrency( this.props );
+		this.possiblyFetchDefaultCurrency(this.props);
 	}
 
 	componentWillUnmount() {
 		// Removing this component should clear any pending edits
-		this.props.clearOrderEdits( this.props.siteId );
+		this.props.clearOrderEdits(this.props.siteId);
 	}
 
-	possiblyFetchDefaultCurrency( props ) {
+	possiblyFetchDefaultCurrency(props) {
 		// Once we have the default currency for the store, we need to add it to
 		// the order edits to ensure the order is created with that same currency
 		const { currencyCode, orderEdits, settingsGeneralLoaded, siteId } = props;
-		if ( siteId ) {
-			if ( ! settingsGeneralLoaded ) {
-				this.props.fetchSettingsGeneral( siteId );
-			} else if ( isEmpty( orderEdits.currency ) ) {
-				this.props.editOrder( siteId, { currency: currencyCode } );
+		if (siteId) {
+			if (!settingsGeneralLoaded) {
+				this.props.fetchSettingsGeneral(siteId);
+			} else if (isEmpty(orderEdits.currency)) {
+				this.props.editOrder(siteId, { currency: currencyCode });
 			}
 		}
 	}
 
-	triggerInvoice = ( siteId, orderId ) => {
+	triggerInvoice = (siteId, orderId) => {
 		const { translate } = this.props;
-		const onSuccess = dispatch => {
+		const onSuccess = (dispatch) => {
 			dispatch(
-				successNotice( translate( 'An invoice has been sent to the customer.' ), {
+				successNotice(translate('An invoice has been sent to the customer.'), {
 					duration: 8000,
-				} )
+				})
 			);
 		};
 
-		this.props.sendOrderInvoice( siteId, orderId, onSuccess, noop );
+		this.props.sendOrderInvoice(siteId, orderId, onSuccess, noop);
 	};
 
 	// Saves changes to the remote site via API
 	saveOrder = () => {
 		const { site, siteId, order, translate } = this.props;
-		const onSuccess = ( dispatch, orderId ) => {
+		const onSuccess = (dispatch, orderId) => {
 			const successOpts = {
 				duration: 8000,
 				displayOnNextPage: true,
 			};
 			dispatch(
 				successNotice(
-					translate( 'Order successfully created. {{ordersLink}}View all orders{{/ordersLink}}.', {
+					translate('Order successfully created. {{ordersLink}}View all orders{{/ordersLink}}.', {
 						components: {
-							ordersLink: <a href={ getLink( '/store/orders/:site/', site ) } />,
+							ordersLink: <a href={getLink('/store/orders/:site/', site)} />,
 						},
-					} ),
+					}),
 					successOpts
 				)
 			);
 			// Send invoice if the order is awaiting payment and there is an email
-			if ( isOrderWaitingPayment( order.status ) && get( order, 'billing.email', false ) ) {
-				this.triggerInvoice( siteId, orderId );
+			if (isOrderWaitingPayment(order.status) && get(order, 'billing.email', false)) {
+				this.triggerInvoice(siteId, orderId);
 			}
-			page.redirect( getLink( `/store/order/:site/${ orderId }`, site ) );
+			page.redirect(getLink(`/store/order/:site/${orderId}`, site));
 		};
-		const onFailure = dispatch => {
-			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 8000 } ) );
+		const onFailure = (dispatch) => {
+			dispatch(errorNotice(translate('Unable to create order.'), { duration: 8000 }));
 		};
 
-		recordTrack( 'calypso_woocommerce_order_create' );
-		this.props.saveOrder( siteId, order, onSuccess, onFailure );
+		recordTrack('calypso_woocommerce_order_create');
+		this.props.saveOrder(siteId, order, onSuccess, onFailure);
 	};
 
 	render() {
 		const { className, hasOrderEdits, isSaving, orderId, site, translate } = this.props;
-		if ( ! orderId ) {
+		if (!orderId) {
 			return null;
 		}
 
 		const breadcrumbs = [
-			<a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a>,
-			<span>{ translate( 'New order' ) }</span>,
+			<a href={getLink('/store/orders/:site/', site)}>{translate('Orders')}</a>,
+			<span>{translate('New order')}</span>,
 		];
 
 		return (
-			<Main className={ className } wideLayout>
-				<ActionHeader breadcrumbs={ breadcrumbs }>
+			<Main className={className} wideLayout>
+				<ActionHeader breadcrumbs={breadcrumbs}>
 					<Button
 						key="save"
 						primary
-						onClick={ this.saveOrder }
-						busy={ isSaving }
-						disabled={ ! hasOrderEdits || isSaving }
+						onClick={this.saveOrder}
+						busy={isSaving}
+						disabled={!hasOrderEdits || isSaving}
 					>
-						{ translate( 'Save order' ) }
+						{translate('Save order')}
 					</Button>
 				</ActionHeader>
 
 				<div className="order__container">
-					<ProtectFormGuard isChanged={ hasOrderEdits } />
-					<OrderDetails orderId={ orderId } />
-					<OrderCustomerCreate orderId={ orderId } />
+					<ProtectFormGuard isChanged={hasOrderEdits} />
+					<OrderDetails orderId={orderId} />
+					<OrderCustomerCreate orderId={orderId} />
 				</div>
 			</Main>
 		);
@@ -157,19 +157,19 @@ class Order extends Component {
 }
 
 export default connect(
-	state => {
-		const site = getSelectedSiteWithFallback( state );
+	(state) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site ? site.ID : false;
-		const orderId = getCurrentlyEditingOrderId( state );
-		const isSaving = isOrderUpdating( state, orderId );
-		const orderEdits = getOrderEdits( state );
+		const orderId = getCurrentlyEditingOrderId(state);
+		const isSaving = isOrderUpdating(state, orderId);
+		const orderEdits = getOrderEdits(state);
 		// Although we need to always set the currency in the order edits in
 		// order to have the order created with the correct currency, we need to
 		// omit it here to avoid FormProtect thinking we have unsaved edits
-		const hasOrderEdits = ! isEmpty( omit( orderEdits, [ 'currency' ] ) );
-		const order = getOrderWithEdits( state );
-		const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
-		const currencySettings = getPaymentCurrencySettings( state, siteId );
+		const hasOrderEdits = !isEmpty(omit(orderEdits, ['currency']));
+		const order = getOrderWithEdits(state);
+		const settingsGeneralLoaded = areSettingsGeneralLoaded(state, siteId);
+		const currencySettings = getPaymentCurrencySettings(state, siteId);
 		const currencyCode = currencySettings.value || 'USD';
 
 		return {
@@ -184,7 +184,7 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
+	(dispatch) =>
 		bindActionCreators(
 			{
 				clearOrderEdits,
@@ -195,4 +195,4 @@ export default connect(
 			},
 			dispatch
 		)
-)( localize( Order ) );
+)(localize(Order));

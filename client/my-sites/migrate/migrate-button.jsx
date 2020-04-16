@@ -16,10 +16,10 @@ class MigrateButton extends Component {
 		busy: false,
 	};
 
-	confirmCallback = accepted => {
-		if ( accepted ) {
-			this.props.recordTracksEvent( 'calypso_site_migration_start_confirm_clicked' );
-			this.setState( { busy: true }, this.props.onClick );
+	confirmCallback = (accepted) => {
+		if (accepted) {
+			this.props.recordTracksEvent('calypso_site_migration_start_confirm_clicked');
+			this.setState({ busy: true }, this.props.onClick);
 		} else {
 			return;
 		}
@@ -28,35 +28,35 @@ class MigrateButton extends Component {
 	handleClick = () => {
 		const { translate } = this.props;
 
-		if ( this.state.busy ) {
+		if (this.state.busy) {
 			return;
 		}
 
 		const message = (
 			<>
-				<h1>{ translate( 'Import and replace everything on this site?' ) }</h1>
+				<h1>{translate('Import and replace everything on this site?')}</h1>
 				<div>
-					{ translate( 'All posts, pages, comments and media will be lost on %(targetDomain)s.', {
+					{translate('All posts, pages, comments and media will be lost on %(targetDomain)s.', {
 						args: {
 							targetDomain: this.props.targetSiteDomain,
 						},
-					} ) }
+					})}
 				</div>
 			</>
 		);
 
-		this.props.recordTracksEvent( 'calypso_site_migration_start_clicked' );
+		this.props.recordTracksEvent('calypso_site_migration_start_clicked');
 
-		accept( message, this.confirmCallback, translate( 'Import and overwrite' ) );
+		accept(message, this.confirmCallback, translate('Import and overwrite'));
 	};
 
 	render() {
 		return (
-			<Button primary busy={ this.state.busy } onClick={ this.handleClick }>
-				{ this.props.children }
+			<Button primary busy={this.state.busy} onClick={this.handleClick}>
+				{this.props.children}
 			</Button>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( MigrateButton ) );
+export default connect(null, { recordTracksEvent })(localize(MigrateButton));

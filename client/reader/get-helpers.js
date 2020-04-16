@@ -17,12 +17,12 @@ import { isSiteDescriptionBlocked } from 'reader/lib/site-description-blocklist'
  * @param {*} options - an object containing a feed, site, and post. all optional.
  * @returns {string} the site url
  */
-export const getSiteUrl = ( { feed, site, post } = {} ) => {
-	const siteUrl = !! site && ( site.URL || site.domain );
-	const feedUrl = !! feed && ( feed.URL || feed.feed_URL );
-	const postUrl = !! post && post.site_URL;
+export const getSiteUrl = ({ feed, site, post } = {}) => {
+	const siteUrl = !!site && (site.URL || site.domain);
+	const feedUrl = !!feed && (feed.URL || feed.feed_URL);
+	const postUrl = !!post && post.site_URL;
 
-	if ( ! siteUrl && ! feedUrl && ! postUrl ) {
+	if (!siteUrl && !feedUrl && !postUrl) {
 		return undefined;
 	}
 
@@ -37,10 +37,10 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
  * @param {*} options - an object containing a feed, site, and post. all optional.
  * @returns {string} the site url
  */
-export const getFeedUrl = ( { feed, site, post } = {} ) => {
-	const siteUrl = !! site && site.feed_URL;
-	const feedUrl = !! feed && ( feed.feed_URL || feed.URL );
-	const postUrl = !! post && post.feed_URL;
+export const getFeedUrl = ({ feed, site, post } = {}) => {
+	const siteUrl = !!site && site.feed_URL;
+	const feedUrl = !!feed && (feed.feed_URL || feed.URL);
+	const postUrl = !!post && post.feed_URL;
 
 	return siteUrl || feedUrl || postUrl;
 };
@@ -51,44 +51,43 @@ export const getFeedUrl = ( { feed, site, post } = {} ) => {
  * @param {*} options - an object containing a feed, site, and post. all optional
  * @returns {string} the site title
  */
-export const getSiteName = ( { feed, site, post } = {} ) => {
+export const getSiteName = ({ feed, site, post } = {}) => {
 	let siteName = null;
 	const isDefaultSiteTitle =
-		( site && site.name === translate( 'Site Title' ) ) ||
-		( feed && feed.name === translate( 'Site Title' ) );
+		(site && site.name === translate('Site Title')) ||
+		(feed && feed.name === translate('Site Title'));
 
-	if ( ! isDefaultSiteTitle && site && site.title ) {
+	if (!isDefaultSiteTitle && site && site.title) {
 		siteName = site.title;
-	} else if ( ! isDefaultSiteTitle && feed && ( feed.name || feed.title ) ) {
+	} else if (!isDefaultSiteTitle && feed && (feed.name || feed.title)) {
 		siteName = feed.name || feed.title;
-	} else if ( ! isDefaultSiteTitle && post && post.site_name ) {
+	} else if (!isDefaultSiteTitle && post && post.site_name) {
 		siteName = post.site_name;
-	} else if ( site && site.is_error && feed && feed.is_error && ! post ) {
-		siteName = translate( 'Error fetching feed' );
-	} else if ( site && site.domain ) {
+	} else if (site && site.is_error && feed && feed.is_error && !post) {
+		siteName = translate('Error fetching feed');
+	} else if (site && site.domain) {
 		siteName = site.domain;
 	} else {
-		const siteUrl = getSiteUrl( { feed, site, post } );
-		siteName = siteUrl ? url.parse( siteUrl ).hostname : null;
+		const siteUrl = getSiteUrl({ feed, site, post });
+		siteName = siteUrl ? url.parse(siteUrl).hostname : null;
 	}
 
-	return decodeEntities( siteName );
+	return decodeEntities(siteName);
 };
 
-export const getSiteDescription = ( { site, feed } ) => {
-	const description = ( site && site.description ) || ( feed && feed.description );
-	if ( isSiteDescriptionBlocked( description ) ) {
+export const getSiteDescription = ({ site, feed }) => {
+	const description = (site && site.description) || (feed && feed.description);
+	if (isSiteDescriptionBlocked(description)) {
 		return null;
 	}
 	return description;
 };
 
-export const getSiteAuthorName = site => {
+export const getSiteAuthorName = (site) => {
 	const siteAuthor = site && site.owner;
 	const authorFullName =
 		siteAuthor &&
-		( siteAuthor.name ||
-			trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
+		(siteAuthor.name || trim(`${siteAuthor.first_name || ''} ${siteAuthor.last_name || ''}`));
 
-	return decodeEntities( authorFullName );
+	return decodeEntities(authorFullName);
 };

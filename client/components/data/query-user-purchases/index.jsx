@@ -16,15 +16,15 @@ import {
 import { fetchUserPurchases } from 'state/purchases/actions';
 
 class QueryUserPurchases extends Component {
-	requestUserPurchases( nextProps ) {
+	requestUserPurchases(nextProps) {
 		const userChanged = nextProps && this.props.userId !== nextProps.userId,
 			props = nextProps || this.props;
 
 		if (
-			( ! props.isFetchingUserPurchases && ! props.hasLoadedUserPurchasesFromServer ) ||
+			(!props.isFetchingUserPurchases && !props.hasLoadedUserPurchasesFromServer) ||
 			userChanged
 		) {
-			this.props.fetchUserPurchases( props.userId );
+			this.props.fetchUserPurchases(props.userId);
 		}
 	}
 
@@ -32,8 +32,8 @@ class QueryUserPurchases extends Component {
 		this.requestUserPurchases();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.requestUserPurchases( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.requestUserPurchases(nextProps);
 	}
 
 	render() {
@@ -49,11 +49,11 @@ QueryUserPurchases.propTypes = {
 };
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			isFetchingUserPurchases: isFetchingUserPurchases( state ),
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer(state),
+			isFetchingUserPurchases: isFetchingUserPurchases(state),
 		};
 	},
 	{ fetchUserPurchases }
-)( QueryUserPurchases );
+)(QueryUserPurchases);

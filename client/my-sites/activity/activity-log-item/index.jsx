@@ -81,7 +81,7 @@ class ActivityLogItem extends Component {
 	};
 
 	confirmBackup = () =>
-		this.props.confirmBackup( this.props.activity.rewindId, this.state.downloadArgs );
+		this.props.confirmBackup(this.props.activity.rewindId, this.state.downloadArgs);
 
 	confirmRewind = () =>
 		this.props.confirmRewind(
@@ -90,22 +90,22 @@ class ActivityLogItem extends Component {
 			this.state.restoreArgs
 		);
 
-	restoreSettingsChange = ( { target: { name, checked } } ) => {
-		this.setState( {
-			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
-			disableRestoreButton: Object.keys( this.state.restoreArgs ).every(
-				k => ! this.state.restoreArgs[ k ]
+	restoreSettingsChange = ({ target: { name, checked } }) => {
+		this.setState({
+			restoreArgs: Object.assign(this.state.restoreArgs, { [name]: checked }),
+			disableRestoreButton: Object.keys(this.state.restoreArgs).every(
+				(k) => !this.state.restoreArgs[k]
 			),
-		} );
+		});
 	};
 
-	downloadSettingsChange = ( { target: { name, checked } } ) => {
-		this.setState( {
-			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
-			disableDownloadButton: Object.keys( this.state.downloadArgs ).every(
-				k => ! this.state.downloadArgs[ k ]
+	downloadSettingsChange = ({ target: { name, checked } }) => {
+		this.setState({
+			downloadArgs: Object.assign(this.state.downloadArgs, { [name]: checked }),
+			disableDownloadButton: Object.keys(this.state.downloadArgs).every(
+				(k) => !this.state.downloadArgs[k]
 			),
-		} );
+		});
 	};
 
 	cancelRewindIntent = () => {
@@ -119,7 +119,7 @@ class ActivityLogItem extends Component {
 	};
 
 	cancelIntent = () => {
-		this.setState( {
+		this.setState({
 			restoreArgs: {
 				themes: true,
 				plugins: true,
@@ -138,7 +138,7 @@ class ActivityLogItem extends Component {
 			},
 			disableRestoreButton: false,
 			disableDownloadButton: false,
-		} );
+		});
 	};
 
 	sizeChanged = () => {
@@ -159,38 +159,38 @@ class ActivityLogItem extends Component {
 		} = this.props;
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
-				{ activityMedia && isDesktop && (
+				<ActivityActor {...{ actorAvatarUrl, actorName, actorRole, actorType }} />
+				{activityMedia && isDesktop && (
 					<ActivityMedia
-						className={ classNames( {
+						className={classNames({
 							'activity-log-item__activity-media': true,
 							'is-desktop': true,
-							'has-gridicon': ! activityMedia.available,
-						} ) }
-						icon={ ! activityMedia.available && activityMedia.gridicon }
-						name={ activityMedia.available && activityMedia.name }
-						thumbnail={ activityMedia.available && activityMedia.thumbnail_url }
-						fullImage={ false }
+							'has-gridicon': !activityMedia.available,
+						})}
+						icon={!activityMedia.available && activityMedia.gridicon}
+						name={activityMedia.available && activityMedia.name}
+						thumbnail={activityMedia.available && activityMedia.thumbnail_url}
+						fullImage={false}
 					/>
-				) }
+				)}
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
 						<ActivityDescription
-							activity={ this.props.activity }
-							rewindIsActive={ this.props.rewindIsActive }
+							activity={this.props.activity}
+							rewindIsActive={this.props.rewindIsActive}
 						/>
 					</div>
-					<div className="activity-log-item__description-summary">{ activityTitle }</div>
+					<div className="activity-log-item__description-summary">{activityTitle}</div>
 				</div>
-				{ activityMedia && ! isDesktop && (
+				{activityMedia && !isDesktop && (
 					<ActivityMedia
 						className="activity-log-item__activity-media is-mobile"
-						icon={ false }
-						name={ activityMedia.available && activityMedia.name }
-						thumbnail={ false }
-						fullImage={ activityMedia.available && activityMedia.medium_url }
+						icon={false}
+						name={activityMedia.available && activityMedia.name}
+						thumbnail={false}
+						fullImage={activityMedia.available && activityMedia.medium_url}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -201,11 +201,11 @@ class ActivityLogItem extends Component {
 			activity: { activityIsRewindable, activityName, activityMeta },
 		} = this.props;
 
-		if ( enableClone ) {
+		if (enableClone) {
 			return activityIsRewindable ? this.renderCloneAction() : null;
 		}
 
-		switch ( activityName ) {
+		switch (activityName) {
 			case 'rewind__scan_result_found':
 				return this.renderHelpAction();
 			case 'rewind__backup_error':
@@ -224,15 +224,15 @@ class ActivityLogItem extends Component {
 					className="activity-log-item__clone-action"
 					primary
 					compact
-					onClick={ this.performCloneAction }
+					onClick={this.performCloneAction}
 				>
-					{ translate( 'Clone from here' ) }
+					{translate('Clone from here')}
 				</Button>
 			</div>
 		);
 	};
 
-	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
+	performCloneAction = () => this.props.cloneOnClick(this.props.activity.activityTs);
 
 	renderRewindAction() {
 		const {
@@ -248,39 +248,35 @@ class ActivityLogItem extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! activity.activityIsRewindable ) {
+		if (!activity.activityIsRewindable) {
 			return null;
 		}
 
 		return (
 			<div className="activity-log-item__action">
 				<EllipsisMenu>
-					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
-						{ translate( 'Restore to this point' ) }
+					<PopoverMenuItem disabled={disableRestore} icon="history" onClick={createRewind}>
+						{translate('Restore to this point')}
 					</PopoverMenuItem>
 
-					{ disableRestore && (
+					{disableRestore && (
 						<PopoverMenuItem
 							icon="plus"
 							href={
 								canAutoconfigure
-									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-									: `/settings/security/${ siteSlug }#credentials`
+									? `/start/rewind-auto-config/?blogid=${siteId}&siteSlug=${siteSlug}`
+									: `/settings/security/${siteSlug}#credentials`
 							}
-							onClick={ trackAddCreds }
+							onClick={trackAddCreds}
 						>
-							{ translate( 'Add server credentials to enable restoring' ) }
+							{translate('Add server credentials to enable restoring')}
 						</PopoverMenuItem>
-					) }
+					)}
 
 					<PopoverMenuSeparator />
 
-					<PopoverMenuItem
-						disabled={ disableBackup }
-						icon="cloud-download"
-						onClick={ createBackup }
-					>
-						{ translate( 'Download backup' ) }
+					<PopoverMenuItem disabled={disableBackup} icon="cloud-download" onClick={createBackup}>
+						{translate('Download backup')}
 					</PopoverMenuItem>
 				</EllipsisMenu>
 			</div>
@@ -295,15 +291,15 @@ class ActivityLogItem extends Component {
 	renderHelpAction = () => (
 		<HappychatButton
 			className="activity-log-item__help-action"
-			borderless={ false }
-			onClick={ this.handleTrackHelp }
+			borderless={false}
+			onClick={this.handleTrackHelp}
 		>
-			<Gridicon icon="chat" size={ 18 } />
-			{ this.props.translate( 'Get help' ) }
+			<Gridicon icon="chat" size={18} />
+			{this.props.translate('Get help')}
 		</HappychatButton>
 	);
 
-	handleTrackHelp = () => this.props.trackHelp( this.props.activity.activityName );
+	handleTrackHelp = () => this.props.trackHelp(this.props.activity.activityName);
 
 	/**
 	 * Displays a button to take users to enter credentials.
@@ -311,7 +307,7 @@ class ActivityLogItem extends Component {
 	 * @returns {object} Get button to fix credentials.
 	 */
 	renderFixCredsAction = () => {
-		if ( this.props.rewindIsActive ) {
+		if (this.props.rewindIsActive) {
 			return null;
 		}
 		const { siteId, siteSlug, trackFixCreds, translate, canAutoconfigure } = this.props;
@@ -322,12 +318,12 @@ class ActivityLogItem extends Component {
 				compact
 				href={
 					canAutoconfigure
-						? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-						: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }`
+						? `/start/rewind-auto-config/?blogid=${siteId}&siteSlug=${siteSlug}`
+						: `/start/rewind-setup/?siteId=${siteId}&siteSlug=${siteSlug}`
 				}
-				onClick={ trackFixCreds }
+				onClick={trackFixCreds}
 			>
-				{ translate( 'Fix credentials' ) }
+				{translate('Fix credentials')}
 			</Button>
 		);
 	};
@@ -345,71 +341,71 @@ class ActivityLogItem extends Component {
 		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
 
-		const classes = classNames( 'activity-log-item', className );
+		const classes = classNames('activity-log-item', className);
 
-		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
+		const adjustedTime = applySiteOffset(moment(activityTs), { timezone, gmtOffset });
 
 		return (
 			<React.Fragment>
-				{ mightRewind && (
+				{mightRewind && (
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
-						confirmTitle={ translate( 'Confirm Restore' ) }
+						confirmTitle={translate('Confirm Restore')}
 						notice={
 							this.state.disableRestoreButton
-								? translate( 'Please select at least one item to restore.' )
-								: translate( 'This will override and remove all content created after this point.' )
+								? translate('Please select at least one item to restore.')
+								: translate('This will override and remove all content created after this point.')
 						}
-						onClose={ this.cancelRewindIntent }
-						onConfirm={ this.confirmRewind }
-						onSettingsChange={ this.restoreSettingsChange }
+						onClose={this.cancelRewindIntent}
+						onConfirm={this.confirmRewind}
+						onSettingsChange={this.restoreSettingsChange}
 						supportLink="https://jetpack.com/support/how-to-rewind"
-						title={ translate( 'Restore Site' ) }
-						disableButton={ this.state.disableRestoreButton }
+						title={translate('Restore Site')}
+						disableButton={this.state.disableRestoreButton}
 					>
-						{ translate( '{{time/}} is the selected point for your site restore.', {
+						{translate('{{time/}} is the selected point for your site restore.', {
 							components: {
-								time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
+								time: <b>{adjustedTime.format('LLL')}</b>,
 							},
-						} ) }
+						})}
 					</ActivityLogConfirmDialog>
-				) }
-				{ mightBackup && (
+				)}
+				{mightBackup && (
 					<ActivityLogConfirmDialog
 						key="activity-backup-dialog"
-						confirmTitle={ translate( 'Create download' ) }
-						onClose={ this.cancelBackupIntent }
-						onConfirm={ this.confirmBackup }
-						onSettingsChange={ this.downloadSettingsChange }
+						confirmTitle={translate('Create download')}
+						onClose={this.cancelBackupIntent}
+						onConfirm={this.confirmBackup}
+						onSettingsChange={this.downloadSettingsChange}
 						supportLink="https://jetpack.com/support/backup"
-						title={ translate( 'Create downloadable backup' ) }
-						type={ 'backup' }
-						icon={ 'cloud-download' }
-						disableButton={ this.state.disableDownloadButton }
+						title={translate('Create downloadable backup')}
+						type={'backup'}
+						icon={'cloud-download'}
+						disableButton={this.state.disableDownloadButton}
 					>
-						{ translate(
+						{translate(
 							'{{time/}} is the selected point to create a download backup of. You will get a notification when the backup is ready to download.',
 							{
 								components: {
-									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
+									time: <b>{adjustedTime.format('LLL')}</b>,
 								},
 							}
-						) }
+						)}
 					</ActivityLogConfirmDialog>
-				) }
-				<div className={ classes }>
+				)}
+				<div className={classes}>
 					<div className="activity-log-item__type">
-						<div className="activity-log-item__time" title={ adjustedTime.format( 'LTS' ) }>
-							{ adjustedTime.format( 'LT' ) }
+						<div className="activity-log-item__time" title={adjustedTime.format('LTS')}>
+							{adjustedTime.format('LT')}
 						</div>
-						<ActivityIcon activityIcon={ activityIcon } activityStatus={ activityStatus } />
+						<ActivityIcon activityIcon={activityIcon} activityStatus={activityStatus} />
 					</div>
 					<FoldableCard
 						className="activity-log-item__card"
-						expandedSummary={ this.renderItemAction() }
-						header={ this.renderHeader() }
-						actionButton={ this.renderRewindAction() }
-						summary={ this.renderItemAction() }
+						expandedSummary={this.renderItemAction()}
+						header={this.renderHeader()}
+						actionButton={this.renderRewindAction()}
+						summary={this.renderItemAction()}
 					/>
 				</div>
 			</React.Fragment>
@@ -417,16 +413,16 @@ class ActivityLogItem extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { activity, siteId } ) => {
-	const rewindState = getRewindState( state, siteId );
-	const site = getSite( state, siteId );
+const mapStateToProps = (state, { activity, siteId }) => {
+	const rewindState = getRewindState(state, siteId);
+	const site = getSite(state, siteId);
 
 	return {
 		activity,
-		gmtOffset: getSiteGmtOffset( state, siteId ),
-		mightBackup: activity && activity.activityId === getRequestedBackup( state, siteId ),
-		mightRewind: activity && activity.activityId === getRequestedRewind( state, siteId ),
-		timezone: getSiteTimezoneValue( state, siteId ),
+		gmtOffset: getSiteGmtOffset(state, siteId),
+		mightBackup: activity && activity.activityId === getRequestedBackup(state, siteId),
+		mightRewind: activity && activity.activityId === getRequestedRewind(state, siteId),
+		timezone: getSiteTimezoneValue(state, siteId),
 		siteSlug: site.slug,
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
 		canAutoconfigure: rewindState.canAutoconfigure,
@@ -434,68 +430,68 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) => ( {
+const mapDispatchToProps = (dispatch, { activity: { activityId }, siteId }) => ({
 	createBackup: () =>
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_request', { from: 'item' } ),
-				rewindRequestBackup( siteId, activityId )
+				recordTracksEvent('calypso_activitylog_backup_request', { from: 'item' }),
+				rewindRequestBackup(siteId, activityId)
 			)
 		),
 	createRewind: () =>
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_request', { from: 'item' } ),
-				rewindRequestRestore( siteId, activityId )
+				recordTracksEvent('calypso_activitylog_restore_request', { from: 'item' }),
+				rewindRequestRestore(siteId, activityId)
 			)
 		),
 	dismissBackup: () =>
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
-				rewindBackupDismiss( siteId )
+				recordTracksEvent('calypso_activitylog_backup_cancel'),
+				rewindBackupDismiss(siteId)
 			)
 		),
 	dismissRewind: () =>
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
-				rewindRequestDismiss( siteId )
+				recordTracksEvent('calypso_activitylog_restore_cancel'),
+				rewindRequestDismiss(siteId)
 			)
 		),
-	confirmBackup: ( rewindId, downloadArgs ) => (
-		scrollTo( { x: 0, y: 0, duration: 250 } ),
+	confirmBackup: (rewindId, downloadArgs) => (
+		scrollTo({ x: 0, y: 0, duration: 250 }),
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: rewindId } ),
-				rewindBackup( siteId, rewindId, downloadArgs )
+				recordTracksEvent('calypso_activitylog_backup_confirm', { action_id: rewindId }),
+				rewindBackup(siteId, rewindId, downloadArgs)
 			)
 		)
 	),
-	confirmRewind: ( rewindId, activityName, restoreArgs ) => (
-		scrollTo( { x: 0, y: 0, duration: 250 } ),
+	confirmRewind: (rewindId, activityName, restoreArgs) => (
+		scrollTo({ x: 0, y: 0, duration: 250 }),
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_confirm', {
+				recordTracksEvent('calypso_activitylog_restore_confirm', {
 					action_id: rewindId,
 					activity_name: activityName,
-					restore_types: JSON.stringify( restoreArgs ),
-				} ),
-				rewindRestore( siteId, rewindId, restoreArgs )
+					restore_types: JSON.stringify(restoreArgs),
+				}),
+				rewindRestore(siteId, rewindId, restoreArgs)
 			)
 		)
 	),
-	trackHelp: activityName =>
+	trackHelp: (activityName) =>
 		dispatch(
-			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
+			recordTracksEvent('calypso_activitylog_event_get_help', { activity_name: activityName })
 		),
-	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
-	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
-} );
+	trackAddCreds: () => dispatch(recordTracksEvent('calypso_activitylog_event_add_credentials')),
+	trackFixCreds: () => dispatch(recordTracksEvent('calypso_activitylog_event_fix_credentials')),
+});
 
 export default compose(
-	connect( mapStateToProps, mapDispatchToProps ),
+	connect(mapStateToProps, mapDispatchToProps),
 	withDesktopBreakpoint,
 	withLocalizedMoment,
 	localize
-)( ActivityLogItem );
+)(ActivityLogItem);

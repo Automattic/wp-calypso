@@ -25,13 +25,13 @@ export class DoneButton extends React.PureComponent {
 	static displayName = 'DoneButton';
 
 	static propTypes = {
-		importerStatus: PropTypes.shape( {
+		importerStatus: PropTypes.shape({
 			importerId: PropTypes.string.isRequired,
 			type: PropTypes.string.isRequired,
-		} ),
-		site: PropTypes.shape( {
+		}),
+		site: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
-		} ),
+		}),
 	};
 
 	handleClick = () => {
@@ -42,13 +42,13 @@ export class DoneButton extends React.PureComponent {
 			siteSlug,
 		} = this.props;
 
-		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
+		this.props.recordTracksEvent('calypso_importer_main_done_clicked', {
 			blog_id: siteId,
 			importer_id: type,
-		} );
+		});
 
-		const destination = '/view/' + ( siteSlug || '' );
-		page( isSignup ? `${ destination }?welcome` : destination );
+		const destination = '/view/' + (siteSlug || '');
+		page(isSignup ? `${destination}?welcome` : destination);
 	};
 
 	componentWillUnmount() {
@@ -62,9 +62,9 @@ export class DoneButton extends React.PureComponent {
 		 * Calling `resetImport` in unmount defers until the redirect is in progress
 		 * Otherwise, you see the importers list during the route change
 		 */
-		resetImport( siteId, importerId );
+		resetImport(siteId, importerId);
 
-		if ( isSignup ) {
+		if (isSignup) {
 			this.props.clearImportingFromSignupFlow();
 		}
 	}
@@ -73,8 +73,8 @@ export class DoneButton extends React.PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<ImporterActionButton primary onClick={ this.handleClick }>
-				{ translate( 'View site' ) }
+			<ImporterActionButton primary onClick={this.handleClick}>
+				{translate('View site')}
 			</ImporterActionButton>
 		);
 	}
@@ -82,11 +82,11 @@ export class DoneButton extends React.PureComponent {
 
 export default flow(
 	connect(
-		state => ( {
-			isSignup: isImportingFromSignupFlow( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-		} ),
+		(state) => ({
+			isSignup: isImportingFromSignupFlow(state),
+			siteSlug: getSelectedSiteSlug(state),
+		}),
 		{ clearImportingFromSignupFlow, setImportOriginSiteDetails, recordTracksEvent }
 	),
 	localize
-)( DoneButton );
+)(DoneButton);

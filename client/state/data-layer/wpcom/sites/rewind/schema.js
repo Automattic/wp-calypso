@@ -17,13 +17,13 @@ export const credential = {
 	type: 'object',
 	properties: {
 		still_valid: { type: 'boolean' },
-		type: { type: 'string', enum: [ 'auto', 'ftp', 'managed', 'ssh' ] },
+		type: { type: 'string', enum: ['auto', 'ftp', 'managed', 'ssh'] },
 		host: { type: 'string' },
 		path: { type: 'string' },
 		port: { type: 'integer' },
 		role: { type: 'string' },
 	},
-	required: [ 'role', 'still_valid', 'type' ],
+	required: ['role', 'still_valid', 'type'],
 };
 
 export const download = {
@@ -36,7 +36,7 @@ export const download = {
 		downloadCount: { type: 'integer' },
 		validUntil: { type: 'integer' },
 	},
-	required: [ 'downloadId', 'rewindId', 'backupPoint', 'startedAt' ],
+	required: ['downloadId', 'rewindId', 'backupPoint', 'startedAt'],
 };
 
 export const rewind = {
@@ -45,12 +45,12 @@ export const rewind = {
 		links: { type: 'object' },
 		restore_id: { type: 'integer' },
 		rewind_id: { type: 'string' },
-		status: { type: 'string', enum: [ 'failed', 'finished', 'queued', 'running' ] },
+		status: { type: 'string', enum: ['failed', 'finished', 'queued', 'running'] },
 		started_at: { type: 'string' },
 		progress: { type: 'integer' },
 		reason: { type: 'string' },
 	},
-	required: [ 'restore_id', 'rewind_id', 'status' ],
+	required: ['restore_id', 'rewind_id', 'status'],
 };
 
 export const threat = {
@@ -60,15 +60,15 @@ export const threat = {
 		signature: { type: 'string' },
 		description: { type: 'string' },
 		first_detected: { type: 'string' },
-		fixable: { oneOf: [ { type: 'boolean' }, { type: 'object' } ] },
-		status: { type: 'string', enum: [ 'current', 'fixed', 'in_progress' ] },
+		fixable: { oneOf: [{ type: 'boolean' }, { type: 'object' }] },
+		status: { type: 'string', enum: ['current', 'fixed', 'in_progress'] },
 		filename: { type: 'string' },
 		context: { type: 'object' },
 		extension: { type: 'object' },
 	},
 };
 
-export const unavailable = stateSchema( 'unavailable', {
+export const unavailable = stateSchema('unavailable', {
 	type: 'object',
 	properties: {
 		state: {
@@ -78,12 +78,12 @@ export const unavailable = stateSchema( 'unavailable', {
 		reason: {
 			type: 'string',
 		},
-		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		last_updated: { oneOf: [{ type: 'integer' }, { type: 'string', format: 'date-time' }] },
 	},
-	required: [ 'state', 'last_updated' ],
-} );
+	required: ['state', 'last_updated'],
+});
 
-export const inactive = stateSchema( 'inactive', {
+export const inactive = stateSchema('inactive', {
 	type: 'object',
 	properties: {
 		state: {
@@ -94,24 +94,24 @@ export const inactive = stateSchema( 'inactive', {
 			type: 'array',
 			items: credential,
 		},
-		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		last_updated: { oneOf: [{ type: 'integer' }, { type: 'string', format: 'date-time' }] },
 	},
-	required: [ 'state', 'last_updated' ],
-} );
+	required: ['state', 'last_updated'],
+});
 
-export const awaitingCredentials = stateSchema( 'awaiting_credentials', {
+export const awaitingCredentials = stateSchema('awaiting_credentials', {
 	type: 'object',
 	properties: {
 		state: {
 			type: 'string',
 			pattern: '^awaiting_credentials$',
 		},
-		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		last_updated: { oneOf: [{ type: 'integer' }, { type: 'string', format: 'date-time' }] },
 	},
-	required: [ 'state', 'last_updated' ],
-} );
+	required: ['state', 'last_updated'],
+});
 
-export const provisioning = stateSchema( 'provisioning', {
+export const provisioning = stateSchema('provisioning', {
 	type: 'object',
 	properties: {
 		state: {
@@ -122,12 +122,12 @@ export const provisioning = stateSchema( 'provisioning', {
 			type: 'array',
 			items: credential,
 		},
-		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		last_updated: { oneOf: [{ type: 'integer' }, { type: 'string', format: 'date-time' }] },
 	},
-	required: [ 'state', 'last_updated' ],
-} );
+	required: ['state', 'last_updated'],
+});
 
-export const active = stateSchema( 'active', {
+export const active = stateSchema('active', {
 	type: 'object',
 	properties: {
 		state: {
@@ -149,23 +149,23 @@ export const active = stateSchema( 'active', {
 				threats: { type: threat },
 			},
 		},
-		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		last_updated: { oneOf: [{ type: 'integer' }, { type: 'string', format: 'date-time' }] },
 	},
-	required: [ 'state', 'last_updated' ],
-} );
+	required: ['state', 'last_updated'],
+});
 
 export const rewindStatus = {
-	allOf: [ unavailable, inactive, awaitingCredentials, provisioning, active ],
+	allOf: [unavailable, inactive, awaitingCredentials, provisioning, active],
 };
 
-function stateSchema( stateName, schema ) {
+function stateSchema(stateName, schema) {
 	return {
 		oneOf: [
 			{
 				not: {
 					type: 'object',
-					properties: { state: { type: 'string', pattern: `^${ stateName }$` } },
-					required: [ 'state' ],
+					properties: { state: { type: 'string', pattern: `^${stateName}$` } },
+					required: ['state'],
 				},
 			},
 			schema,

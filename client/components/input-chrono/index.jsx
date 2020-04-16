@@ -19,7 +19,7 @@ import './style.scss';
 /**
  * Supported languages
  */
-const supportedLanguages = [ 'en', 'jp' ];
+const supportedLanguages = ['en', 'jp'];
 
 class InputChrono extends React.Component {
 	static displayName = 'InputChrono';
@@ -44,18 +44,18 @@ class InputChrono extends React.Component {
 
 	focused = false;
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.focused && this.props.value !== nextProps.value ) {
-			this.setState( { value: nextProps.value } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!this.focused && this.props.value !== nextProps.value) {
+			this.setState({ value: nextProps.value });
 		}
 	}
 
-	handleChange = event => {
-		this.setState( { value: event.target.value } );
+	handleChange = (event) => {
+		this.setState({ value: event.target.value });
 	};
 
-	handleBlur = event => {
-		this.setDateText( event );
+	handleBlur = (event) => {
+		this.setDateText(event);
 		this.focused = false;
 	};
 
@@ -63,46 +63,46 @@ class InputChrono extends React.Component {
 		this.focused = true;
 	};
 
-	onKeyDown = event => {
-		if ( 13 !== event.keyCode ) {
+	onKeyDown = (event) => {
+		if (13 !== event.keyCode) {
 			return;
 		}
 
-		this.setDateText( event );
+		this.setDateText(event);
 	};
 
-	setDateText = event => {
-		const date = chrono.parseDate( event.target.value );
+	setDateText = (event) => {
+		const date = chrono.parseDate(event.target.value);
 
-		if ( date ) {
-			this.setState( { value: this.props.moment( date ).calendar() } );
-			this.props.onSet( this.props.moment( date ) );
+		if (date) {
+			this.setState({ value: this.props.moment(date).calendar() });
+			this.props.onSet(this.props.moment(date));
 		}
 	};
 
-	isLangSupported = lang => {
-		return supportedLanguages.indexOf( lang ) >= 0;
+	isLangSupported = (lang) => {
+		return supportedLanguages.indexOf(lang) >= 0;
 	};
 
 	render() {
 		return (
 			<div className="input-chrono">
-				{ this.isLangSupported( this.props.lang ) ? (
+				{this.isLangSupported(this.props.lang) ? (
 					<input
 						className="input-chrono__input"
-						value={ this.state.value }
-						placeholder={ this.props.placeholder }
-						onKeyDown={ this.onKeyDown }
-						onChange={ this.handleChange }
-						onFocus={ this.handleFocus }
-						onBlur={ this.handleBlur }
+						value={this.state.value}
+						placeholder={this.props.placeholder}
+						onKeyDown={this.onKeyDown}
+						onChange={this.handleChange}
+						onFocus={this.handleFocus}
+						onBlur={this.handleBlur}
 					/>
 				) : (
-					<div className="input-chrono__text">{ this.state.value }</div>
-				) }
+					<div className="input-chrono__text">{this.state.value}</div>
+				)}
 			</div>
 		);
 	}
 }
 
-export default localize( withLocalizedMoment( InputChrono ) );
+export default localize(withLocalizedMoment(InputChrono));

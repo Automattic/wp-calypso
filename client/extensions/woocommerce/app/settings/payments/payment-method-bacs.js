@@ -21,51 +21,51 @@ import FormTextInput from 'components/forms/form-text-input';
 
 class PaymentMethodBACS extends Component {
 	static propTypes = {
-		method: PropTypes.shape( {
-			settings: PropTypes.shape( {
-				title: PropTypes.shape( {
+		method: PropTypes.shape({
+			settings: PropTypes.shape({
+				title: PropTypes.shape({
 					id: PropTypes.string.isRequired,
 					label: PropTypes.string.isRequired,
 					type: PropTypes.string.isRequired,
 					value: PropTypes.string.isRequired,
-				} ),
-				accounts: PropTypes.shape( {
+				}),
+				accounts: PropTypes.shape({
 					id: PropTypes.string,
 					value: PropTypes.arrayOf(
-						PropTypes.shape( {
+						PropTypes.shape({
 							account_name: PropTypes.string,
 							account_number: PropTypes.string,
 							bank_name: PropTypes.string,
 							bic: PropTypes.string,
 							iban: PropTypes.string,
 							sort_code: PropTypes.string,
-						} )
+						})
 					),
-				} ),
-			} ),
-		} ),
+				}),
+			}),
+		}),
 		translate: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
 		onDone: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		const { iban, bic } = this.getAccountData( props );
+	constructor(props) {
+		super(props);
+		const { iban, bic } = this.getAccountData(props);
 		this.state = {
-			showInternational: ( iban && iban.length ) || ( bic && bic.length ),
+			showInternational: (iban && iban.length) || (bic && bic.length),
 		};
 	}
 
-	getAccountData = props => {
+	getAccountData = (props) => {
 		const {
 			method: { settings },
 		} = props || this.props;
-		const accountData = get( settings, [ 'accounts', 'value' ], [] );
+		const accountData = get(settings, ['accounts', 'value'], []);
 
 		return accountData.length
-			? accountData[ 0 ]
+			? accountData[0]
 			: {
 					account_name: '',
 					account_number: '',
@@ -76,28 +76,28 @@ class PaymentMethodBACS extends Component {
 			  };
 	};
 
-	onEditFieldHandler = e => {
-		this.props.onEditField( e.target.name, e.target.value );
+	onEditFieldHandler = (e) => {
+		this.props.onEditField(e.target.name, e.target.value);
 	};
 
-	onEditAccountHandler = e => {
+	onEditAccountHandler = (e) => {
 		const newValue = {};
-		newValue[ e.target.name ] = e.target.value;
-		const newAccount = Object.assign( {}, this.getAccountData(), newValue );
-		this.props.onEditField( 'accounts', [ newAccount ] );
+		newValue[e.target.name] = e.target.value;
+		const newAccount = Object.assign({}, this.getAccountData(), newValue);
+		this.props.onEditField('accounts', [newAccount]);
 	};
 
 	updateInternationalVisibility = () => {
-		this.setState( {
-			showInternational: ! this.state.showInternational,
-		} );
+		this.setState({
+			showInternational: !this.state.showInternational,
+		});
 	};
 
 	buttons = [
-		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
+		{ action: 'cancel', label: this.props.translate('Cancel'), onClick: this.props.onCancel },
 		{
 			action: 'save',
-			label: this.props.translate( 'Done' ),
+			label: this.props.translate('Done'),
 			onClick: this.props.onDone,
 			isPrimary: true,
 		},
@@ -111,108 +111,102 @@ class PaymentMethodBACS extends Component {
 		} = this.props;
 		const accountData = this.getAccountData();
 		const { showInternational } = this.state;
-		const classes = classNames( 'payments__dialog woocommerce', {
+		const classes = classNames('payments__dialog woocommerce', {
 			'show-international-options': showInternational,
-		} );
+		});
 
 		return (
-			<Dialog additionalClassNames={ classes } buttons={ this.buttons } isVisible>
+			<Dialog additionalClassNames={classes} buttons={this.buttons} isVisible>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Title' ) }</FormLabel>
+					<FormLabel>{translate('Title')}</FormLabel>
 					<FormTextInput
 						name="title"
-						onChange={ this.onEditFieldHandler }
-						value={ settings.title.value }
+						onChange={this.onEditFieldHandler}
+						value={settings.title.value}
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Account details' ) }</FormLabel>
-					{ translate(
+					<FormLabel>{translate('Account details')}</FormLabel>
+					{translate(
 						"These are the details of the bank account you'd like your customers to pay in to."
-					) }
+					)}
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Account name' ) }</FormLabel>
+					<FormLabel>{translate('Account name')}</FormLabel>
 					<FormTextInput
 						name="account_name"
-						onChange={ this.onEditAccountHandler }
-						value={ accountData.account_name }
+						onChange={this.onEditAccountHandler}
+						value={accountData.account_name}
 					/>
-					<FormSettingExplanation>
-						{ translate( 'This is for your reference' ) }
-					</FormSettingExplanation>
+					<FormSettingExplanation>{translate('This is for your reference')}</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Bank name' ) }</FormLabel>
+					<FormLabel>{translate('Bank name')}</FormLabel>
 					<FormTextInput
 						name="bank_name"
-						onChange={ this.onEditAccountHandler }
-						value={ accountData.bank_name }
+						onChange={this.onEditAccountHandler}
+						value={accountData.bank_name}
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Routing number' ) }</FormLabel>
+					<FormLabel>{translate('Routing number')}</FormLabel>
 					<FormPasswordInput
 						name="sort_code"
-						onChange={ this.onEditAccountHandler }
-						value={ accountData.sort_code }
+						onChange={this.onEditAccountHandler}
+						value={accountData.sort_code}
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Account number' ) }</FormLabel>
+					<FormLabel>{translate('Account number')}</FormLabel>
 					<FormPasswordInput
 						name="account_number"
-						onChange={ this.onEditAccountHandler }
-						value={ accountData.account_number }
+						onChange={this.onEditAccountHandler}
+						value={accountData.account_number}
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>
 						<FormCheckbox
 							className="payments__edit-international-options-checkbox"
-							checked={ showInternational }
-							onChange={ this.updateInternationalVisibility }
+							checked={showInternational}
+							onChange={this.updateInternationalVisibility}
 						/>
-						{ translate( 'I want to offer BACS payment as an option to international customers' ) }
+						{translate('I want to offer BACS payment as an option to international customers')}
 					</FormLabel>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container is-international-option">
-					<FormLabel>{ translate( 'IBAN' ) }</FormLabel>
+					<FormLabel>{translate('IBAN')}</FormLabel>
 					<FormTextInput
 						name="iban"
-						onChange={ this.onEditAccountHandler }
-						value={ accountData.iban }
+						onChange={this.onEditAccountHandler}
+						value={accountData.iban}
 					/>
 					<FormSettingExplanation>
-						{ translate( 'You can obtain your IBAN number from your bank' ) }
+						{translate('You can obtain your IBAN number from your bank')}
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container is-international-option">
-					<FormLabel>{ translate( 'BIC / Swift' ) }</FormLabel>
-					<FormTextInput
-						name="bic"
-						onChange={ this.onEditAccountHandler }
-						value={ accountData.bic }
-					/>
+					<FormLabel>{translate('BIC / Swift')}</FormLabel>
+					<FormTextInput name="bic" onChange={this.onEditAccountHandler} value={accountData.bic} />
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Instructions for customer at checkout' ) }</FormLabel>
+					<FormLabel>{translate('Instructions for customer at checkout')}</FormLabel>
 					<FormTextarea
 						name="description"
-						onChange={ this.onEditFieldHandler }
-						value={ method.description }
-						placeholder={ translate( 'Make your payment directly into our bank account.' ) }
+						onChange={this.onEditFieldHandler}
+						value={method.description}
+						placeholder={translate('Make your payment directly into our bank account.')}
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>
-						{ translate( 'Instructions for customer in order email notification' ) }
+						{translate('Instructions for customer in order email notification')}
 					</FormLabel>
 					<FormTextarea
 						name="instructions"
-						onChange={ this.onEditFieldHandler }
-						value={ settings.instructions.value }
-						placeholder={ translate( 'Use these bank account details…' ) }
+						onChange={this.onEditFieldHandler}
+						value={settings.instructions.value}
+						placeholder={translate('Use these bank account details…')}
 					/>
 				</FormFieldset>
 			</Dialog>
@@ -220,4 +214,4 @@ class PaymentMethodBACS extends Component {
 	}
 }
 
-export default localize( PaymentMethodBACS );
+export default localize(PaymentMethodBACS);

@@ -18,41 +18,41 @@ import { SchemaError } from 'lib/make-json-schema-parser';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fromApi = data => {
-	const restoreId = parseInt( data.restore_id, 10 );
+const fromApi = (data) => {
+	const restoreId = parseInt(data.restore_id, 10);
 
-	if ( Number.isNaN( restoreId ) ) {
-		throw new SchemaError( 'missing numeric restore id - found `${ data.restore_id }`' );
+	if (Number.isNaN(restoreId)) {
+		throw new SchemaError('missing numeric restore id - found `${ data.restore_id }`');
 	}
 
 	return restoreId;
 };
 
-const requestRewind = ( action, payload ) =>
+const requestRewind = (action, payload) =>
 	http(
 		{
 			apiVersion: '1',
 			method: 'POST',
-			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
-			body: Object.assign( payload, {
-				calypso_env: config( 'env_id' ),
-			} ),
+			path: `/activity-log/${action.siteId}/rewind/to/${action.timestamp}`,
+			body: Object.assign(payload, {
+				calypso_env: config('env_id'),
+			}),
 		},
 		action
 	);
 
-const requestRestore = action => requestRewind( action, { types: action.args } );
-const requestClone = action => requestRewind( action, action.payload );
+const requestRestore = (action) => requestRewind(action, { types: action.args });
+const requestClone = (action) => requestRewind(action, action.payload);
 
-export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
-	getRewindRestoreProgress( siteId, restoreId ),
-	requestRewindState( siteId ),
+export const receiveRestoreSuccess = ({ siteId }, restoreId) => [
+	getRewindRestoreProgress(siteId, restoreId),
+	requestRewindState(siteId),
 ];
 
-export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
-	error.hasOwnProperty( 'schemaErrors' )
+export const receiveRestoreError = ({ siteId, timestamp }, error) =>
+	error.hasOwnProperty('schemaErrors')
 		? withAnalytics(
-				recordTracksEvent( 'calypso_rewind_to_missing_restore_id', { site_id: siteId, timestamp } ),
+				recordTracksEvent('calypso_rewind_to_missing_restore_id', { site_id: siteId, timestamp }),
 				errorNotice(
 					translate(
 						"Oops, something went wrong. We've been notified and are working on resolving this issue."
@@ -60,7 +60,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 				)
 		  )
 		: withAnalytics(
-				recordTracksEvent( 'calypso_rewind_to_unknown_error', error ),
+				recordTracksEvent('calypso_rewind_to_unknown_error', error),
 				errorNotice(
 					translate(
 						'Oops, something went wrong. Please try again soon or contact support for help.'
@@ -68,22 +68,22 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 				)
 		  );
 
-registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/to/index.js', {
-	[ REWIND_RESTORE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/activity-log/rewind/to/index.js', {
+	[REWIND_RESTORE]: [
+		dispatchRequest({
 			fetch: requestRestore,
 			onSuccess: receiveRestoreSuccess,
 			onError: receiveRestoreError,
 			fromApi,
-		} ),
+		}),
 	],
 
-	[ REWIND_CLONE ]: [
-		dispatchRequest( {
+	[REWIND_CLONE]: [
+		dispatchRequest({
 			fetch: requestClone,
 			onSuccess: receiveRestoreSuccess,
 			onError: receiveRestoreError,
 			fromApi,
-		} ),
+		}),
 	],
-} );
+});

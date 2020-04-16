@@ -11,29 +11,29 @@ const urlWithoutHttpRegex = /^https?:\/\//;
  * @param  url The URL to remove http(s) from
  * @returns     URL without the initial http(s)
  */
-export function withoutHttp( url: '' ): '';
-export function withoutHttp( url: Falsy ): null;
-export function withoutHttp( url: TypedURL ): TypedURL;
-export function withoutHttp( url: TypedURL | Falsy ): TypedURL | null {
-	if ( url === '' ) {
+export function withoutHttp(url: ''): '';
+export function withoutHttp(url: Falsy): null;
+export function withoutHttp(url: TypedURL): TypedURL;
+export function withoutHttp(url: TypedURL | Falsy): TypedURL | null {
+	if (url === '') {
 		return '';
 	}
 
-	if ( ! url ) {
+	if (!url) {
 		return null;
 	}
 
-	return url.replace( urlWithoutHttpRegex, '' );
+	return url.replace(urlWithoutHttpRegex, '');
 }
 
-export function urlToSlug( url: Falsy ): null;
-export function urlToSlug( url: TypedURL ): SiteSlug;
-export function urlToSlug( url: TypedURL | Falsy ): SiteSlug | null {
-	if ( ! url ) {
+export function urlToSlug(url: Falsy): null;
+export function urlToSlug(url: TypedURL): SiteSlug;
+export function urlToSlug(url: TypedURL | Falsy): SiteSlug | null {
+	if (!url) {
 		return null;
 	}
 
-	return withoutHttp( url ).replace( /\//g, '::' );
+	return withoutHttp(url).replace(/\//g, '::');
 }
 
 /**
@@ -44,6 +44,6 @@ export function urlToSlug( url: TypedURL | Falsy ): SiteSlug | null {
  * @param  urlToConvert The URL to convert
  * @returns              The URL's domain and path
  */
-export function urlToDomainAndPath( urlToConvert: TypedURL ): TypedURL {
-	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
+export function urlToDomainAndPath(urlToConvert: TypedURL): TypedURL {
+	return withoutHttp(urlToConvert).replace(/\/$/, '');
 }

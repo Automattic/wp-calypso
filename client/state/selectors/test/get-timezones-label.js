@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getTimezonesLabel from 'state/selectors/get-timezones-label';
 
-describe( 'getTimezonesLabel()', () => {
-	test( "should return null if `timezones` aren't synced", () => {
+describe('getTimezonesLabel()', () => {
+	test("should return null if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
@@ -18,12 +18,12 @@ describe( 'getTimezonesLabel()', () => {
 			},
 		};
 
-		const label = getTimezonesLabel( state );
+		const label = getTimezonesLabel(state);
 
-		expect( label ).to.eql( null );
-	} );
+		expect(label).to.eql(null);
+	});
 
-	test( "should return null if `key` isn't defined", () => {
+	test("should return null if `key` isn't defined", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
@@ -36,11 +36,11 @@ describe( 'getTimezonesLabel()', () => {
 			},
 		};
 
-		const label = getTimezonesLabel( state );
-		expect( label ).to.eql( null );
-	} );
+		const label = getTimezonesLabel(state);
+		expect(label).to.eql(null);
+	});
 
-	test( 'should return the label of the given key', () => {
+	test('should return the label of the given key', () => {
 		const state = {
 			timezones: {
 				byContinents: {},
@@ -53,7 +53,7 @@ describe( 'getTimezonesLabel()', () => {
 			},
 		};
 
-		const label = getTimezonesLabel( state, 'America/Boa_Vista' );
-		expect( label ).to.eql( 'Boa Vista' );
-	} );
-} );
+		const label = getTimezonesLabel(state, 'America/Boa_Vista');
+		expect(label).to.eql('Boa Vista');
+	});
+});

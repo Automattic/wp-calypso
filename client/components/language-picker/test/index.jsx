@@ -54,31 +54,31 @@ const defaultProps = {
 	countryCode: 'FR',
 };
 
-describe( 'LanguagePicker', () => {
-	test( 'should render the right icon and label', () => {
-		const wrapper = shallow( <LanguagePicker { ...defaultProps } /> );
-		expect( wrapper.find( '.language-picker__icon' ).text() ).toBe( 'en' );
-		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( 'English' );
-	} );
-	test( 'should render the right icon and label for a language variant', () => {
+describe('LanguagePicker', () => {
+	test('should render the right icon and label', () => {
+		const wrapper = shallow(<LanguagePicker {...defaultProps} />);
+		expect(wrapper.find('.language-picker__icon').text()).toBe('en');
+		expect(wrapper.find('.language-picker__name-label').text()).toBe('English');
+	});
+	test('should render the right icon and label for a language variant', () => {
 		const newProps = { ...defaultProps, value: 'de_formal' };
-		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
-		expect( wrapper.find( '.language-picker__icon' ).text() ).toBe( 'de' );
-		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( 'Deutsch (Sie)' );
-	} );
-	test( 'should render the right icon and label for a language variant with regional subcode', () => {
+		const wrapper = shallow(<LanguagePicker {...newProps} />);
+		expect(wrapper.find('.language-picker__icon').text()).toBe('de');
+		expect(wrapper.find('.language-picker__name-label').text()).toBe('Deutsch (Sie)');
+	});
+	test('should render the right icon and label for a language variant with regional subcode', () => {
 		const newProps = { ...defaultProps, value: 'es-mx_gringos' };
-		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
-		expect( wrapper.find( '.language-picker__icon-inner' ).html() ).toBe(
+		const wrapper = shallow(<LanguagePicker {...newProps} />);
+		expect(wrapper.find('.language-picker__icon-inner').html()).toBe(
 			'<div class="language-picker__icon-inner">es<br/>mx</div>'
 		);
-		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe(
+		expect(wrapper.find('.language-picker__name-label').text()).toBe(
 			'Español de México de los Gringos'
 		);
-	} );
-	test( 'ensure non utf language names display in localized character sets', () => {
+	});
+	test('ensure non utf language names display in localized character sets', () => {
 		const newProps = { ...defaultProps, value: 'ko' };
-		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
-		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( '한국어' );
-	} );
-} );
+		const wrapper = shallow(<LanguagePicker {...newProps} />);
+		expect(wrapper.find('.language-picker__name-label').text()).toBe('한국어');
+	});
+});

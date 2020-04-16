@@ -44,9 +44,9 @@ import {
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:credit-card-form' );
+const debug = debugFactory('calypso:credit-card-form');
 
-export function CreditCardForm( {
+export function CreditCardForm({
 	apiParams = {},
 	createCardToken,
 	countriesList,
@@ -61,63 +61,61 @@ export function CreditCardForm( {
 	heading,
 	onCancel,
 	translate,
-} ) {
+}) {
 	const { stripe, stripeConfiguration, setStripeError } = useStripe();
-	const [ formSubmitting, setFormSubmitting ] = useState( false );
-	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
-	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
-	const [ formFieldErrors, setFormFieldErrors ] = useState(
+	const [formSubmitting, setFormSubmitting] = useState(false);
+	const [formFieldValues, setFormFieldValues] = useState(getInitializedFields(initialValues));
+	const [touchedFormFields, setTouchedFormFields] = useState({});
+	const [formFieldErrors, setFormFieldErrors] = useState(
 		camelCaseFormFields(
 			validatePaymentDetails(
-				kebabCaseFormFields( formFieldValues ),
+				kebabCaseFormFields(formFieldValues),
 				stripe ? 'stripe' : 'credit-card'
 			).errors
 		)
 	);
-	const [ debouncedFieldErrors, setDebouncedFieldErrors ] = useDebounce( formFieldErrors, 1000 );
+	const [debouncedFieldErrors, setDebouncedFieldErrors] = useDebounce(formFieldErrors, 1000);
 
-	const onFieldChange = rawDetails => {
-		const newValues = { ...formFieldValues, ...camelCaseFormFields( rawDetails ) };
-		setFormFieldValues( newValues );
-		setTouchedFormFields( { ...touchedFormFields, ...camelCaseFormFields( rawDetails ) } );
+	const onFieldChange = (rawDetails) => {
+		const newValues = { ...formFieldValues, ...camelCaseFormFields(rawDetails) };
+		setFormFieldValues(newValues);
+		setTouchedFormFields({ ...touchedFormFields, ...camelCaseFormFields(rawDetails) });
 		// Clear the errors of updated fields when typing then display them again after debounce
-		const clearedErrors = assignAllFormFields( camelCaseFormFields( rawDetails ), [] );
-		setDebouncedFieldErrors( { ...debouncedFieldErrors, ...clearedErrors } );
+		const clearedErrors = assignAllFormFields(camelCaseFormFields(rawDetails), []);
+		setDebouncedFieldErrors({ ...debouncedFieldErrors, ...clearedErrors });
 		// Debounce updating validation errors
 		setFormFieldErrors(
 			camelCaseFormFields(
-				validatePaymentDetails(
-					kebabCaseFormFields( newValues ),
-					stripe ? 'stripe' : 'credit-card'
-				).errors
+				validatePaymentDetails(kebabCaseFormFields(newValues), stripe ? 'stripe' : 'credit-card')
+					.errors
 			)
 		);
 	};
 
-	const getErrorMessage = fieldName => {
-		const camelName = camelCase( fieldName );
-		if ( touchedFormFields[ camelName ] ) {
-			return debouncedFieldErrors[ camelName ];
+	const getErrorMessage = (fieldName) => {
+		const camelName = camelCase(fieldName);
+		if (touchedFormFields[camelName]) {
+			return debouncedFieldErrors[camelName];
 		}
-		return formFieldValues[ camelName ] && debouncedFieldErrors[ camelName ];
+		return formFieldValues[camelName] && debouncedFieldErrors[camelName];
 	};
 
-	const onSubmit = async event => {
+	const onSubmit = async (event) => {
 		event.preventDefault();
 
-		if ( formSubmitting ) {
+		if (formSubmitting) {
 			return;
 		}
-		setFormSubmitting( true );
+		setFormSubmitting(true);
 
 		try {
-			setTouchedFormFields( formFieldErrors );
-			if ( ! areFormFieldsEmpty( formFieldErrors ) ) {
-				throw new Error( translate( 'Your credit card information is not valid' ) );
+			setTouchedFormFields(formFieldErrors);
+			if (!areFormFieldsEmpty(formFieldErrors)) {
+				throw new Error(translate('Your credit card information is not valid'));
 			}
 			recordFormSubmitEvent();
-			const createCardTokenAsync = makeAsyncCreateCardToken( createCardToken );
-			const createStripeSetupIntentAsync = async paymentDetails => {
+			const createCardTokenAsync = makeAsyncCreateCardToken(createCardToken);
+			const createStripeSetupIntentAsync = async (paymentDetails) => {
 				const { name, country, 'postal-code': zip } = paymentDetails;
 				const paymentDetailsForStripe = {
 					name,
@@ -126,11 +124,11 @@ export function CreditCardForm( {
 						postal_code: zip,
 					},
 				};
-				return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
+				return createStripeSetupIntent(stripe, stripeConfiguration, paymentDetailsForStripe);
 			};
-			const parseStripeToken = response => response.payment_method;
-			const parsePaygateToken = response => response.token;
-			await saveOrUpdateCreditCard( {
+			const parseStripeToken = (response) => response.payment_method;
+			const parsePaygateToken = (response) => response.token;
+			await saveOrUpdateCreditCard({
 				createCardToken: stripe ? createStripeSetupIntentAsync : createCardTokenAsync,
 				saveStoredCard,
 				translate,
@@ -140,48 +138,48 @@ export function CreditCardForm( {
 				formFieldValues,
 				stripeConfiguration,
 				parseTokenFromResponse: stripe ? parseStripeToken : parsePaygateToken,
-			} );
+			});
 			successCallback();
-		} catch ( error ) {
-			debug( 'Error while submitting', error );
-			setFormSubmitting( false );
-			error && setStripeError && setStripeError( error );
-			error && displayError( { translate, error } );
+		} catch (error) {
+			debug('Error while submitting', error);
+			setFormSubmitting(false);
+			error && setStripeError && setStripeError(error);
+			error && displayError({ translate, error });
 		}
 	};
 
 	return (
-		<form onSubmit={ onSubmit }>
+		<form onSubmit={onSubmit}>
 			<Card className="credit-card-form__content">
-				{ heading && <div className="credit-card-form__heading">{ heading }</div> }
+				{heading && <div className="credit-card-form__heading">{heading}</div>}
 				<QueryPaymentCountries />
 				<CreditCardFormFields
-					card={ kebabCaseFormFields( formFieldValues ) }
-					countriesList={ countriesList }
+					card={kebabCaseFormFields(formFieldValues)}
+					countriesList={countriesList}
 					eventFormName="Edit Card Details Form"
-					onFieldChange={ onFieldChange }
-					getErrorMessage={ getErrorMessage }
-					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+					onFieldChange={onFieldChange}
+					getErrorMessage={getErrorMessage}
+					autoFocus={autoFocus} // eslint-disable-line jsx-a11y/no-autofocus
 				/>
 				<div className="credit-card-form__card-terms">
-					<Gridicon icon="info-outline" size={ 18 } />
+					<Gridicon icon="info-outline" size={18} />
 					<p>
-						<TosText translate={ translate } />
+						<TosText translate={translate} />
 					</p>
 				</div>
 				<UsedForExistingPurchasesInfo
-					translate={ translate }
-					showUsedForExistingPurchasesInfo={ showUsedForExistingPurchasesInfo }
+					translate={translate}
+					showUsedForExistingPurchasesInfo={showUsedForExistingPurchasesInfo}
 				/>
 			</Card>
 			<CompactCard className="credit-card-form__footer">
-				<em>{ translate( 'All fields required' ) }</em>
-				{ onCancel && (
-					<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
-						{ translate( 'Cancel' ) }
+				<em>{translate('All fields required')}</em>
+				{onCancel && (
+					<FormButton type="button" isPrimary={false} onClick={onCancel}>
+						{translate('Cancel')}
 					</FormButton>
-				) }
-				<SaveButton translate={ translate } formSubmitting={ formSubmitting } />
+				)}
+				<SaveButton translate={translate} formSubmitting={formSubmitting} />
 			</CompactCard>
 		</form>
 	);
@@ -204,23 +202,23 @@ CreditCardForm.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-function SaveButton( { translate, formSubmitting } ) {
+function SaveButton({ translate, formSubmitting }) {
 	return (
-		<FormButton disabled={ formSubmitting } type="submit">
-			{ formSubmitting
-				? translate( 'Saving card…', {
+		<FormButton disabled={formSubmitting} type="submit">
+			{formSubmitting
+				? translate('Saving card…', {
 						context: 'Button label',
 						comment: 'Credit card',
-				  } )
-				: translate( 'Save card', {
+				  })
+				: translate('Save card', {
 						context: 'Button label',
 						comment: 'Credit card',
-				  } ) }
+				  })}
 		</FormButton>
 	);
 }
 
-function TosText( { translate } ) {
+function TosText({ translate }) {
 	return translate(
 		'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
 			'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
@@ -231,57 +229,55 @@ function TosText( { translate } ) {
 			components: {
 				tosLink: (
 					<a
-						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						href={localizeUrl('https://wordpress.com/tos/')}
 						target="_blank"
 						rel="noopener noreferrer"
 					/>
 				),
-				autoRenewalSupportPage: (
-					<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
-				),
+				autoRenewalSupportPage: <a href={AUTO_RENEWAL} target="_blank" rel="noopener noreferrer" />,
 				managePurchasesSupportPage: (
-					<a href={ MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
+					<a href={MANAGE_PURCHASES} target="_blank" rel="noopener noreferrer" />
 				),
 			},
 		}
 	);
 }
 
-function UsedForExistingPurchasesInfo( { translate, showUsedForExistingPurchasesInfo } ) {
-	if ( ! showUsedForExistingPurchasesInfo ) {
+function UsedForExistingPurchasesInfo({ translate, showUsedForExistingPurchasesInfo }) {
+	if (!showUsedForExistingPurchasesInfo) {
 		return null;
 	}
 
 	return (
 		<div className="credit-card-form__card-terms">
-			<Gridicon icon="info-outline" size={ 18 } />
-			<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
+			<Gridicon icon="info-outline" size={18} />
+			<p>{translate('This card will be used for future renewals of existing purchases.')}</p>
 		</div>
 	);
 }
 
-function StripeError( { translate } ) {
+function StripeError({ translate }) {
 	return (
 		<div>
-			{ translate(
+			{translate(
 				'There was a problem with your credit card. Please check your information and try again.'
-			) }
+			)}
 		</div>
 	);
 }
 
-function displayError( { translate, error } ) {
-	if ( error instanceof StripeSetupIntentError || error instanceof StripeValidationError ) {
-		notices.error( <StripeError translate={ translate } /> );
+function displayError({ translate, error }) {
+	if (error instanceof StripeSetupIntentError || error instanceof StripeValidationError) {
+		notices.error(<StripeError translate={translate} />);
 		return;
 	}
-	if ( typeof error.message === 'object' ) {
-		notices.error( <ValidationErrorList messages={ values( error.message ) } /> );
+	if (typeof error.message === 'object') {
+		notices.error(<ValidationErrorList messages={values(error.message)} />);
 		return;
 	}
-	notices.error( error.message );
+	notices.error(error.message);
 }
 
-export default connect( state => ( {
-	countriesList: getCountries( state, 'payments' ),
-} ) )( localize( CreditCardForm ) );
+export default connect((state) => ({
+	countriesList: getCountries(state, 'payments'),
+}))(localize(CreditCardForm));

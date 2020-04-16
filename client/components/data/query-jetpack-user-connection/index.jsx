@@ -21,19 +21,19 @@ class QueryJetpackUserConnection extends Component {
 	};
 
 	componentDidMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId) {
 			return;
 		}
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( props.siteId && ! props.isRequesting ) {
-			props.requestJetpackUserConnectionData( props.siteId );
+	request(props) {
+		if (props.siteId && !props.isRequesting) {
+			props.requestJetpackUserConnectionData(props.siteId);
 		}
 	}
 
@@ -43,8 +43,8 @@ class QueryJetpackUserConnection extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		isRequesting: isRequestingJetpackUserConnection( state, siteId ),
-	} ),
+	(state, { siteId }) => ({
+		isRequesting: isRequestingJetpackUserConnection(state, siteId),
+	}),
 	{ requestJetpackUserConnectionData }
-)( QueryJetpackUserConnection );
+)(QueryJetpackUserConnection);

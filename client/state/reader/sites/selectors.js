@@ -18,15 +18,15 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
  * @returns {boolean}        Whether site should be fetched
  */
 
-export function shouldSiteBeFetched( state, siteId ) {
-	const isNotQueued = ! state.reader.sites.queuedRequests[ siteId ];
-	const isMissing = ! getSite( state, siteId );
-	return isNotQueued && ( isMissing || isStale( state, siteId ) );
+export function shouldSiteBeFetched(state, siteId) {
+	const isNotQueued = !state.reader.sites.queuedRequests[siteId];
+	const isMissing = !getSite(state, siteId);
+	return isNotQueued && (isMissing || isStale(state, siteId));
 }
 
-function isStale( state, siteId ) {
-	const lastFetched = state.reader.sites.lastFetched[ siteId ];
-	if ( ! lastFetched ) {
+function isStale(state, siteId) {
+	const lastFetched = state.reader.sites.lastFetched[siteId];
+	if (!lastFetched) {
 		return true;
 	}
 	return lastFetched <= Date.now() - DAY_IN_MILLIS;
@@ -40,10 +40,10 @@ function isStale( state, siteId ) {
  * @returns {object}        Site
  */
 
-export function getSite( state, siteId ) {
-	return state.reader.sites.items[ siteId ];
+export function getSite(state, siteId) {
+	return state.reader.sites.items[siteId];
 }
 
-export function getSiteByFeedUrl( state, feedUrl ) {
-	return find( state.reader.sites.items, { feed_URL: feedUrl } );
+export function getSiteByFeedUrl(state, feedUrl) {
+	return find(state.reader.sites.items, { feed_URL: feedUrl });
 }

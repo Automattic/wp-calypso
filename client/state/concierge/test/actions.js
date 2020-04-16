@@ -25,9 +25,9 @@ import {
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
 
-describe( 'state/concierge', () => {
-	describe( 'actions', () => {
-		test( 'bookConciergeAppointment()', () => {
+describe('state/concierge', () => {
+	describe('actions', () => {
+		test('bookConciergeAppointment()', () => {
 			const scheduleId = 123;
 			const beginTimestamp = 1234567890;
 			const customerId = 1;
@@ -35,29 +35,29 @@ describe( 'state/concierge', () => {
 			const meta = { test: 'testing' };
 
 			expect(
-				bookConciergeAppointment( scheduleId, beginTimestamp, customerId, siteId, meta )
-			).toEqual( {
+				bookConciergeAppointment(scheduleId, beginTimestamp, customerId, siteId, meta)
+			).toEqual({
 				type: CONCIERGE_APPOINTMENT_CREATE,
 				scheduleId,
 				beginTimestamp,
 				customerId,
 				siteId,
 				meta,
-			} );
-		} );
+			});
+		});
 
-		test( 'cancelConciergeAppointment()', () => {
+		test('cancelConciergeAppointment()', () => {
 			const scheduleId = 123;
 			const appointmentId = 1;
 
-			expect( cancelConciergeAppointment( scheduleId, appointmentId ) ).toEqual( {
+			expect(cancelConciergeAppointment(scheduleId, appointmentId)).toEqual({
 				type: CONCIERGE_APPOINTMENT_CANCEL,
 				scheduleId,
 				appointmentId,
-			} );
-		} );
+			});
+		});
 
-		test( 'rescheduleConciergeAppointment()', () => {
+		test('rescheduleConciergeAppointment()', () => {
 			const scheduleId = 123;
 			const beginTimestamp = 1234567890;
 			const appointmentId = 1;
@@ -70,74 +70,74 @@ describe( 'state/concierge', () => {
 					beginTimestamp,
 					appointmentDetails
 				)
-			).toEqual( {
+			).toEqual({
 				type: CONCIERGE_APPOINTMENT_RESCHEDULE,
 				scheduleId,
 				appointmentId,
 				beginTimestamp,
 				appointmentDetails,
-			} );
-		} );
+			});
+		});
 
-		test( 'requestConciergeInitial()', () => {
+		test('requestConciergeInitial()', () => {
 			const siteId = 456;
 
-			expect( requestConciergeInitial( siteId ) ).toEqual( {
+			expect(requestConciergeInitial(siteId)).toEqual({
 				type: CONCIERGE_INITIAL_REQUEST,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'updateConciergeInitial()', () => {
+		test('updateConciergeInitial()', () => {
 			const initial = {
-				availableTimes: [ 111, 222, 333 ],
+				availableTimes: [111, 222, 333],
 				scheduleId: 123,
 			};
 
-			expect( updateConciergeInitial( initial ) ).toEqual( {
+			expect(updateConciergeInitial(initial)).toEqual({
 				type: CONCIERGE_INITIAL_UPDATE,
 				initial,
-			} );
-		} );
+			});
+		});
 
-		test( 'updateConciergeSignupForm()', () => {
+		test('updateConciergeSignupForm()', () => {
 			const signupForm = { timezone: 'UTC', message: 'hello there' };
 
-			expect( updateConciergeSignupForm( signupForm ) ).toEqual( {
+			expect(updateConciergeSignupForm(signupForm)).toEqual({
 				type: CONCIERGE_SIGNUP_FORM_UPDATE,
 				signupForm,
-			} );
-		} );
+			});
+		});
 
-		test( 'updateConciergeBookingStatus()', () => {
+		test('updateConciergeBookingStatus()', () => {
 			const status = 'booking';
 
-			expect( updateConciergeBookingStatus( status ) ).toEqual( {
+			expect(updateConciergeBookingStatus(status)).toEqual({
 				type: CONCIERGE_UPDATE_BOOKING_STATUS,
 				status,
-			} );
-		} );
+			});
+		});
 
-		test( 'requestConciergeAppointmentDetails()', () => {
+		test('requestConciergeAppointmentDetails()', () => {
 			const scheduleId = 1;
 			const appointmentId = 2;
 
-			expect( requestConciergeAppointmentDetails( scheduleId, appointmentId ) ).toEqual( {
+			expect(requestConciergeAppointmentDetails(scheduleId, appointmentId)).toEqual({
 				type: CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 				scheduleId,
 				appointmentId,
-			} );
-		} );
+			});
+		});
 
-		test( 'updateConciergeAppointmentDetails()', () => {
+		test('updateConciergeAppointmentDetails()', () => {
 			const appointmentId = 1;
 			const appointmentDetails = { id: appointmentId };
 
-			expect( updateConciergeAppointmentDetails( appointmentId, appointmentDetails ) ).toEqual( {
+			expect(updateConciergeAppointmentDetails(appointmentId, appointmentDetails)).toEqual({
 				type: CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
 				appointmentId,
 				appointmentDetails,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

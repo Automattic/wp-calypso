@@ -17,31 +17,31 @@ import { isEnabled } from 'config';
 import customizeImage from 'assets/images/illustrations/dashboard.svg';
 
 function isCustomizeEnabled() {
-	return isEnabled( 'manage/customize' );
+	return isEnabled('manage/customize');
 }
 
-function getCustomizeLink( selectedSite ) {
+function getCustomizeLink(selectedSite) {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
 		customizerInAdmin =
-			adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
+			adminUrl + 'customize.php?return=' + encodeURIComponent(window.location.href);
 
 	return isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
 }
 
-export default localize( ( { selectedSite, translate } ) => {
+export default localize(({ selectedSite, translate }) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src={ customizeImage } /> }
-				title={ translate( 'Advanced customization' ) }
-				description={ translate(
+				icon={<img alt="" src={customizeImage} />}
+				title={translate('Advanced customization')}
+				description={translate(
 					"Change your site's appearance in a few clicks, with an expanded " +
 						'selection of fonts and colors, and access to custom CSS.'
-				) }
-				buttonText={ translate( 'Start customizing' ) }
-				href={ getCustomizeLink( selectedSite ) }
-				target={ isCustomizeEnabled() ? undefined : '_blank' }
+				)}
+				buttonText={translate('Start customizing')}
+				href={getCustomizeLink(selectedSite)}
+				target={isCustomizeEnabled() ? undefined : '_blank'}
 			/>
 		</div>
 	);
-} );
+});

@@ -33,36 +33,36 @@ class WizardProgressBar extends Component {
 	};
 
 	renderNextButton() {
-		const text = this.props.nextButtonText || this.props.translate( 'Next' );
+		const text = this.props.nextButtonText || this.props.translate('Next');
 
 		return (
-			<Button primary onClick={ this.props.nextButtonClick }>
-				{ text }
+			<Button primary onClick={this.props.nextButtonClick}>
+				{text}
 			</Button>
 		);
 	}
 
 	renderPreviousButton() {
-		const text = this.props.previousButtonText || this.props.translate( 'Back' );
+		const text = this.props.previousButtonText || this.props.translate('Back');
 
-		return <Button onClick={ this.props.previousButtonClick }>{ text }</Button>;
+		return <Button onClick={this.props.previousButtonClick}>{text}</Button>;
 	}
 
 	render() {
 		return (
 			<CompactCard className="wizard-progress-bar">
-				{ this.renderPreviousButton() }
+				{this.renderPreviousButton()}
 
 				<ProgressBar
-					value={ this.props.currentStep }
-					total={ this.props.numberOfSteps }
-					canGoBackwards={ true }
+					value={this.props.currentStep}
+					total={this.props.numberOfSteps}
+					canGoBackwards={true}
 				/>
 
-				{ this.renderNextButton() }
+				{this.renderNextButton()}
 			</CompactCard>
 		);
 	}
 }
 
-export default localize( WizardProgressBar );
+export default localize(WizardProgressBar);

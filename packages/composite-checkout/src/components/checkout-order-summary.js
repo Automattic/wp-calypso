@@ -11,13 +11,13 @@ import { useLineItems, useTotal, renderDisplayValueMarkdown } from '../public-ap
 import { useLocalize } from '../lib/localize';
 
 export default function CheckoutOrderSummary() {
-	const [ items ] = useLineItems();
+	const [items] = useLineItems();
 
 	return (
 		<ProductList>
-			{ items.map( product => {
-				return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
-			} ) }
+			{items.map((product) => {
+				return <ProductListItem key={product.id}>{product.label}</ProductListItem>;
+			})}
 		</ProductList>
 	);
 }
@@ -38,9 +38,9 @@ export function CheckoutOrderSummaryTitle() {
 	const total = useTotal();
 	return (
 		<CheckoutSummaryTitle>
-			<span>{ localize( 'You are all set to check out' ) }</span>
+			<span>{localize('You are all set to check out')}</span>
 			<CheckoutSummaryTotal>
-				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+				{renderDisplayValueMarkdown(total.amount.displayValue)}
 			</CheckoutSummaryTotal>
 		</CheckoutSummaryTitle>
 	);
@@ -52,5 +52,5 @@ const CheckoutSummaryTitle = styled.span`
 `;
 
 const CheckoutSummaryTotal = styled.span`
-	font-weight: ${props => props.theme.weights.bold};
+	font-weight: ${(props) => props.theme.weights.bold};
 `;

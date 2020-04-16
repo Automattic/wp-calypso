@@ -64,16 +64,16 @@ class MediaSettingsPerformance extends Component {
 			isVideoPressAvailable && (
 				<FormFieldset className="site-settings__formfieldset jetpack-video-hosting-settings">
 					<SupportInfo
-						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
+						text={translate('Hosts your video files on the global WordPress.com servers.')}
 						link="https://jetpack.com/support/videopress/"
 					/>
 					<JetpackModuleToggle
-						siteId={ siteId }
+						siteId={siteId}
 						moduleSlug="videopress"
-						label={ translate( 'Enable fast, ad-free video hosting' ) }
-						disabled={ isRequestingOrSaving }
+						label={translate('Enable fast, ad-free video hosting')}
+						disabled={isRequestingOrSaving}
 					/>
-					{ this.props.isVideoPressActive && this.renderVideoStorageIndicator() }
+					{this.props.isVideoPressActive && this.renderVideoStorageIndicator()}
 				</FormFieldset>
 			)
 		);
@@ -96,29 +96,29 @@ class MediaSettingsPerformance extends Component {
 
 		const renderedStorageInfo =
 			isStorageDataValid &&
-			( isStorageUnlimited ? (
+			(isStorageUnlimited ? (
 				<FormSettingExplanation className="site-settings__videopress-storage-used">
-					{ translate( '%(size)s uploaded, unlimited storage available', {
+					{translate('%(size)s uploaded, unlimited storage available', {
 						args: {
-							size: filesize( mediaStorageUsed ),
+							size: filesize(mediaStorageUsed),
 						},
-					} ) }
+					})}
 				</FormSettingExplanation>
 			) : (
 				<PlanStorageBar
-					siteSlug={ siteSlug }
-					sitePlanSlug={ sitePlanSlug }
-					mediaStorage={ {
+					siteSlug={siteSlug}
+					sitePlanSlug={sitePlanSlug}
+					mediaStorage={{
 						max_storage_bytes: mediaStorageLimit,
 						storage_used_bytes: mediaStorageUsed,
-					} }
+					}}
 				/>
-			) );
+			));
 
 		return (
 			<div className="site-settings__videopress-storage">
-				<QueryMediaStorage siteId={ siteId } />
-				{ renderedStorageInfo }
+				<QueryMediaStorage siteId={siteId} />
+				{renderedStorageInfo}
 			</div>
 		);
 	}
@@ -127,17 +127,17 @@ class MediaSettingsPerformance extends Component {
 		const { isVideoPressAvailable, translate } = this.props;
 
 		return (
-			! isVideoPressAvailable && (
+			!isVideoPressAvailable && (
 				<Banner
-					description={ translate(
+					description={translate(
 						'Get high-speed, high-resolution video hosting without ads or watermarks.'
-					) }
-					event={ 'jetpack_video_settings' }
-					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
-					plan={ PLAN_JETPACK_PREMIUM }
-					title={ translate(
+					)}
+					event={'jetpack_video_settings'}
+					feature={FEATURE_VIDEO_UPLOADS_JETPACK_PRO}
+					plan={PLAN_JETPACK_PREMIUM}
+					title={translate(
 						'Host video right on your site! Upgrade to Jetpack Premium to get started'
-					) }
+					)}
 				/>
 			)
 		);
@@ -148,27 +148,27 @@ class MediaSettingsPerformance extends Component {
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
-				{ isVideoPressAvailable && <Card>{ this.renderVideoSettings() }</Card> }
-				{ this.renderVideoUpgradeNudge() }
+				{isVideoPressAvailable && <Card>{this.renderVideoSettings()}</Card>}
+				{this.renderVideoUpgradeNudge()}
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const sitePlanSlug = getSitePlanSlug(state, selectedSiteId);
 	const isVideoPressAvailable =
-		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
-		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
-		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
+		hasFeature(state, selectedSiteId, FEATURE_VIDEO_UPLOADS) ||
+		hasFeature(state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM) ||
+		hasFeature(state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO);
 
 	return {
-		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
+		isVideoPressActive: isJetpackModuleActive(state, selectedSiteId, 'videopress'),
 		isVideoPressAvailable,
-		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
-		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
+		mediaStorageLimit: getMediaStorageLimit(state, selectedSiteId),
+		mediaStorageUsed: getMediaStorageUsed(state, selectedSiteId),
 		sitePlanSlug,
-		siteSlug: getSiteSlug( state, selectedSiteId ),
+		siteSlug: getSiteSlug(state, selectedSiteId),
 	};
-} )( localize( MediaSettingsPerformance ) );
+})(localize(MediaSettingsPerformance));

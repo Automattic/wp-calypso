@@ -15,10 +15,10 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID
  * @returns {boolean}         True if siteId is a Jetpack site on which theme is installed or can be installed.
  */
-export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
+export function isThemeAvailableOnJetpackSite(state, themeId, siteId) {
 	return (
-		!! getTheme( state, siteId, themeId ) || // The theme is already available or...
-		( isWpcomTheme( state, themeId ) && // ...it's a WP.com theme and...
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) ) // ...the site supports theme installation from WP.com.
+		!!getTheme(state, siteId, themeId) || // The theme is already available or...
+		(isWpcomTheme(state, themeId) && // ...it's a WP.com theme and...
+			hasJetpackSiteJetpackThemesExtendedFeatures(state, siteId)) // ...the site supports theme installation from WP.com.
 	);
 }

@@ -15,20 +15,20 @@ import { requestThumbnail } from 'state/reader/thumbnails/actions';
 
 class QueryReaderThumbnails extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.embedUrl !== this.props.embedUrl ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.embedUrl !== this.props.embedUrl) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( ! props.shouldRequestThumbnail || ! props.embedUrl ) {
+	request(props) {
+		if (!props.shouldRequestThumbnail || !props.embedUrl) {
 			return;
 		}
-		props.requestThumbnail( props.embedUrl );
+		props.requestThumbnail(props.embedUrl);
 	}
 
 	render() {
@@ -41,10 +41,10 @@ QueryReaderThumbnails.propTypes = {
 	requestThumbnail: PropTypes.func,
 };
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	shouldRequestThumbnail: ! getThumbnailForIframe( state, ownProps.embedUrl ),
-} );
+const mapStateToProps = (state, ownProps) => ({
+	shouldRequestThumbnail: !getThumbnailForIframe(state, ownProps.embedUrl),
+});
 
-const mapDispatchToProps = dispatch => bindActionCreators( { requestThumbnail }, dispatch );
+const mapDispatchToProps = (dispatch) => bindActionCreators({ requestThumbnail }, dispatch);
 
-export default connect( mapStateToProps, mapDispatchToProps )( QueryReaderThumbnails );
+export default connect(mapStateToProps, mapDispatchToProps)(QueryReaderThumbnails);

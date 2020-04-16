@@ -14,24 +14,24 @@ import isJetpackSite from './is-jetpack-site';
  * @param {number} siteId Site ID
  * @returns {?boolean} true if the site is a secondary network site
  */
-export default function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
+export default function isJetpackSiteSecondaryNetworkSite(state, siteId) {
+	const site = getRawSite(state, siteId);
 
-	if ( ! site || ! isJetpackSite( state, siteId ) ) {
+	if (!site || !isJetpackSite(state, siteId)) {
 		return null;
 	}
 
-	if ( ! site.is_multisite ) {
+	if (!site.is_multisite) {
 		return false;
 	}
 
-	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' ),
-		mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+	const unmappedUrl = getSiteOption(state, siteId, 'unmapped_url'),
+		mainNetworkSite = getSiteOption(state, siteId, 'main_network_site');
 
-	if ( ! unmappedUrl || ! mainNetworkSite ) {
+	if (!unmappedUrl || !mainNetworkSite) {
 		return false;
 	}
 
 	// Compare unmapped_url with the main_network_site to see if is not the main network site.
-	return withoutHttp( unmappedUrl ) !== withoutHttp( mainNetworkSite );
+	return withoutHttp(unmappedUrl) !== withoutHttp(mainNetworkSite);
 }

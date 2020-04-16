@@ -55,7 +55,7 @@ const PromoSectionExample = () => {
 
 	return (
 		<div className="design-assets__group">
-			<PromoSection { ...promos } />
+			<PromoSection {...promos} />
 		</div>
 	);
 };

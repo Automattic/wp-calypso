@@ -15,8 +15,8 @@ import { setDocumentHeadTitle } from 'state/document-head/actions';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-const renderChat = ( context, next ) => {
-	context.store.dispatch( setDocumentHeadTitle( translate( 'Chat', { textOnly: true } ) ) );
+const renderChat = (context, next) => {
+	context.store.dispatch(setDocumentHeadTitle(translate('Chat', { textOnly: true })));
 	context.primary = (
 		<div>
 			<PageViewTracker path="/me/chat" title="Chat" />
@@ -27,7 +27,7 @@ const renderChat = ( context, next ) => {
 };
 
 export default () => {
-	if ( config.isEnabled( 'happychat' ) ) {
-		page( '/me/chat', sidebar, renderChat, makeLayout, clientRender );
+	if (config.isEnabled('happychat')) {
+		page('/me/chat', sidebar, renderChat, makeLayout, clientRender);
 	}
 };

@@ -33,20 +33,20 @@ export const paths = {
 };
 
 export const iconToProductSlugMap = {
-	'wpcom-free': [ 'free_plan' ],
-	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ],
-	'wpcom-personal': [ 'personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly' ],
-	'wpcom-premium': [ 'value_bundle', 'value_bundle-2y', 'value_bundle-monthly' ],
-	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
-	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
-	'jetpack-free': [ 'jetpack_free' ],
-	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],
-	'jetpack-premium': [ 'jetpack_premium', 'jetpack_premium_monthly' ],
-	'jetpack-professional': [ 'jetpack_business', 'jetpack_business_monthly' ],
-	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
-	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
-	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
-	'jetpack-search': [ 'jetpack_search', 'jetpack_search_monthly' ],
+	'wpcom-free': ['free_plan'],
+	'wpcom-blogger': ['blogger-bundle', 'blogger-bundle-2y'],
+	'wpcom-personal': ['personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly'],
+	'wpcom-premium': ['value_bundle', 'value_bundle-2y', 'value_bundle-monthly'],
+	'wpcom-ecommerce': ['ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly'],
+	'wpcom-business': ['business-bundle', 'business-bundle-2y', 'business-bundle-monthly'],
+	'jetpack-free': ['jetpack_free'],
+	'jetpack-personal': ['jetpack_personal', 'jetpack_personal_monthly'],
+	'jetpack-premium': ['jetpack_premium', 'jetpack_premium_monthly'],
+	'jetpack-professional': ['jetpack_business', 'jetpack_business_monthly'],
+	'jetpack-backup-daily': ['jetpack_backup_daily', 'jetpack_backup_daily_monthly'],
+	'jetpack-backup-realtime': ['jetpack_backup_realtime', 'jetpack_backup_realtime_monthly'],
+	'jetpack-scan': ['jetpack_scan', 'jetpack_scan_monthly'],
+	'jetpack-search': ['jetpack_search', 'jetpack_search_monthly'],
 };
 
-export const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].flat();
+export const supportedSlugs = [...Object.values(iconToProductSlugMap)].flat();

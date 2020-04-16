@@ -19,19 +19,19 @@ class InviteFormHeader extends React.Component {
 	static displayName = 'InviteFormHeader';
 
 	clickedSiteLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_form_header_site_link_click' );
+		analytics.tracks.recordEvent('calypso_invite_accept_form_header_site_link_click');
 	};
 
 	getSiteLink = () => {
 		const { site } = this.props;
 
-		if ( ! site ) {
+		if (!site) {
 			return null;
 		}
 
 		return (
-			<a href={ site.URL } onClick={ this.clickedSiteLink }>
-				{ site.title }
+			<a href={site.URL} onClick={this.clickedSiteLink}>
+				{site.title}
 			</a>
 		);
 	};
@@ -46,52 +46,52 @@ class InviteFormHeader extends React.Component {
 		let title = '';
 		const { role, forceMatchingEmail, knownUser } = this.props;
 
-		if ( forceMatchingEmail && knownUser ) {
-			return this.props.translate( 'Sign in to continue:' );
+		if (forceMatchingEmail && knownUser) {
+			return this.props.translate('Sign in to continue:');
 		}
 
-		switch ( role ) {
+		switch (role) {
 			case 'administrator':
-				title = this.props.translate( 'Sign up to start managing {{siteLink/}}.', {
+				title = this.props.translate('Sign up to start managing {{siteLink/}}.', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'editor':
-				title = this.props.translate( 'Sign up to start editing {{siteLink/}}.', {
+				title = this.props.translate('Sign up to start editing {{siteLink/}}.', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'author':
-				title = this.props.translate( 'Sign up to start writing for {{siteLink/}}.', {
+				title = this.props.translate('Sign up to start writing for {{siteLink/}}.', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'contributor':
-				title = this.props.translate( 'Sign up to start contributing to {{siteLink/}}.', {
+				title = this.props.translate('Sign up to start contributing to {{siteLink/}}.', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'subscriber':
-				title = this.props.translate( 'Sign up to start your subscription to {{siteLink/}}.', {
+				title = this.props.translate('Sign up to start your subscription to {{siteLink/}}.', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'viewer':
-				title = this.props.translate( 'Sign up to begin viewing {{siteLink/}}.', {
+				title = this.props.translate('Sign up to begin viewing {{siteLink/}}.', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'follower':
 				title = this.props.translate(
@@ -126,34 +126,34 @@ class InviteFormHeader extends React.Component {
 
 		const { role } = this.props;
 
-		switch ( role ) {
+		switch (role) {
 			case 'administrator':
-				title = this.props.translate( 'Would you like to start managing {{siteLink/}}?', {
+				title = this.props.translate('Would you like to start managing {{siteLink/}}?', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'editor':
-				title = this.props.translate( 'Would you like to start editing {{siteLink/}}?', {
+				title = this.props.translate('Would you like to start editing {{siteLink/}}?', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'author':
-				title = this.props.translate( 'Would you like to start writing for {{siteLink/}}?', {
+				title = this.props.translate('Would you like to start writing for {{siteLink/}}?', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'contributor':
-				title = this.props.translate( 'Would you like to start contributing to {{siteLink/}}?', {
+				title = this.props.translate('Would you like to start contributing to {{siteLink/}}?', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'subscriber':
 				title = this.props.translate(
@@ -166,18 +166,18 @@ class InviteFormHeader extends React.Component {
 				);
 				break;
 			case 'viewer':
-				title = this.props.translate( 'Would you like to be able to view {{siteLink/}}?', {
+				title = this.props.translate('Would you like to be able to view {{siteLink/}}?', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			case 'follower':
-				title = this.props.translate( 'Would you like to become a follower of {{siteLink/}}?', {
+				title = this.props.translate('Would you like to become a follower of {{siteLink/}}?', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
-				} );
+				});
 				break;
 			default:
 				title = this.props.translate(
@@ -200,7 +200,7 @@ class InviteFormHeader extends React.Component {
 	getExplanationForInvite = () => {
 		let explanation = '';
 
-		switch ( this.props.role ) {
+		switch (this.props.role) {
 			case 'administrator':
 				explanation = this.props.translate(
 					'As an administrator, you will be able to manage all aspects of %(siteName)s.',
@@ -266,14 +266,12 @@ class InviteFormHeader extends React.Component {
 		return (
 			<div className="invite-form-header">
 				<h3 className="invite-form-header__title">
-					{ this.props.user ? this.getLoggedInTitleForInvite() : this.getLoggedOutTitleForInvite() }
+					{this.props.user ? this.getLoggedInTitleForInvite() : this.getLoggedOutTitleForInvite()}
 				</h3>
-				{ roleExplanation && (
-					<p className="invite-form-header__explanation">{ roleExplanation }</p>
-				) }
+				{roleExplanation && <p className="invite-form-header__explanation">{roleExplanation}</p>}
 			</div>
 		);
 	}
 }
 
-export default localize( InviteFormHeader );
+export default localize(InviteFormHeader);

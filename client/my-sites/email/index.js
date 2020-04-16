@@ -11,24 +11,24 @@ import controller from './controller';
 import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
-function registerMultiPage( { paths: givenPaths, handlers } ) {
-	givenPaths.forEach( path => page( path, ...handlers ) );
+function registerMultiPage({ paths: givenPaths, handlers }) {
+	givenPaths.forEach((path) => page(path, ...handlers));
 }
 
-const commonHandlers = [ siteSelection, navigation ];
+const commonHandlers = [siteSelection, navigation];
 
-export default function() {
-	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
+export default function () {
+	page(paths.emailManagement(), siteSelection, sites, makeLayout, clientRender);
 
-	registerMultiPage( {
-		paths: [ paths.emailManagement( ':site', ':domain' ), paths.emailManagement( ':site' ) ],
-		handlers: [ ...commonHandlers, controller.emailManagement, makeLayout, clientRender ],
-	} );
+	registerMultiPage({
+		paths: [paths.emailManagement(':site', ':domain'), paths.emailManagement(':site')],
+		handlers: [...commonHandlers, controller.emailManagement, makeLayout, clientRender],
+	});
 
-	registerMultiPage( {
+	registerMultiPage({
 		paths: [
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsers( ':site' ),
+			paths.emailManagementAddGSuiteUsers(':site', ':domain'),
+			paths.emailManagementAddGSuiteUsers(':site'),
 		],
 		handlers: [
 			...commonHandlers,
@@ -36,18 +36,18 @@ export default function() {
 			makeLayout,
 			clientRender,
 		],
-	} );
+	});
 
-	registerMultiPage( {
+	registerMultiPage({
 		paths: [
-			paths.emailManagementAddGSuiteUsersLegacy( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsersLegacy( ':site' ),
+			paths.emailManagementAddGSuiteUsersLegacy(':site', ':domain'),
+			paths.emailManagementAddGSuiteUsersLegacy(':site'),
 		],
-		handlers: [ controller.emailManagementAddGSuiteUsersLegacyRedirect ],
-	} );
+		handlers: [controller.emailManagementAddGSuiteUsersLegacyRedirect],
+	});
 
 	page(
-		paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' ),
+		paths.emailManagementNewGSuiteAccount(':site', ':domain', ':planType'),
 		...commonHandlers,
 		controller.emailManagementNewGSuiteAccount,
 		makeLayout,
@@ -55,7 +55,7 @@ export default function() {
 	);
 
 	page(
-		paths.emailManagementForwarding( ':site', ':domain' ),
+		paths.emailManagementForwarding(':site', ':domain'),
 		...commonHandlers,
 		controller.emailManagementForwarding,
 		makeLayout,

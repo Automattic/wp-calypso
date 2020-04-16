@@ -10,17 +10,17 @@ import { useTranslate } from 'i18n-calypso';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
-const NoConnectionsNotice = ( { siteSlug } ) => {
+const NoConnectionsNotice = ({ siteSlug }) => {
 	const translate = useTranslate();
 
 	return (
 		<Notice
 			status="is-warning"
-			showDismiss={ false }
-			text={ translate( 'Connect an account to get started.' ) }
+			showDismiss={false}
+			text={translate('Connect an account to get started.')}
 		>
-			<NoticeAction href={ `/marketing/connections/${ siteSlug }` }>
-				{ translate( 'Settings' ) }
+			<NoticeAction href={`/marketing/connections/${siteSlug}`}>
+				{translate('Settings')}
 			</NoticeAction>
 		</Notice>
 	);

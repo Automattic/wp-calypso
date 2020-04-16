@@ -4,4 +4,4 @@
 import { registerReducer } from 'state/redux-store';
 import automatedTransferReducer from './reducer';
 
-registerReducer( [ 'automatedTransfer' ], automatedTransferReducer );
+registerReducer(['automatedTransfer'], automatedTransferReducer);

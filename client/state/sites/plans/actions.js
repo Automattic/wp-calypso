@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 import { map } from 'lodash';
 import i18n from 'i18n-calypso';
 
-const debug = debugFactory( 'calypso:site-plans:actions' );
+const debug = debugFactory('calypso:site-plans:actions');
 
 /**
  * Internal dependencies
@@ -33,25 +33,25 @@ import 'state/data-layer/wpcom/sites/plan-transfer';
  * @param {number} planId identifier of the plan
  * @returns {Function} a promise that will resolve once updating is completed
  */
-export function cancelSitePlanTrial( siteId, planId ) {
-	return dispatch => {
-		dispatch( {
+export function cancelSitePlanTrial(siteId, planId) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_PLANS_TRIAL_CANCEL,
 			siteId,
-		} );
+		});
 
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().cancelPlanTrial( planId, ( error, data ) => {
-				if ( data && data.success ) {
-					dispatch( {
+		return new Promise((resolve, reject) => {
+			wpcom.undocumented().cancelPlanTrial(planId, (error, data) => {
+				if (data && data.success) {
+					dispatch({
 						type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 						siteId,
-						plans: map( data.plans, createSitePlanObject ),
-					} );
+						plans: map(data.plans, createSitePlanObject),
+					});
 
 					resolve();
 				} else {
-					debug( 'Canceling site plan trial failed: ', error );
+					debug('Canceling site plan trial failed: ', error);
 
 					const errorMessage =
 						error.message ||
@@ -59,16 +59,16 @@ export function cancelSitePlanTrial( siteId, planId ) {
 							'There was a problem canceling the plan trial. Please try again later or contact support.'
 						);
 
-					dispatch( {
+					dispatch({
 						type: SITE_PLANS_TRIAL_CANCEL_FAILED,
 						siteId,
 						error: errorMessage,
-					} );
+					});
 
-					reject( errorMessage );
+					reject(errorMessage);
 				}
-			} );
-		} );
+			});
+		});
 	};
 }
 
@@ -78,7 +78,7 @@ export function cancelSitePlanTrial( siteId, planId ) {
  * @param {number} siteId identifier of the site
  * @returns {object} the corresponding action object
  */
-export function clearSitePlans( siteId ) {
+export function clearSitePlans(siteId) {
 	return {
 		type: SITE_PLANS_REMOVE,
 		siteId,
@@ -91,17 +91,17 @@ export function clearSitePlans( siteId ) {
  * @param {number} siteId identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
-export function fetchSitePlans( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function fetchSitePlans(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_PLANS_FETCH,
 			siteId,
-		} );
+		});
 
-		return new Promise( resolve => {
-			wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
-				if ( error ) {
-					debug( 'Fetching site plans failed: ', error );
+		return new Promise((resolve) => {
+			wpcom.undocumented().getSitePlans(siteId, (error, data) => {
+				if (error) {
+					debug('Fetching site plans failed: ', error);
 
 					const errorMessage =
 						error.message ||
@@ -109,18 +109,18 @@ export function fetchSitePlans( siteId ) {
 							'There was a problem fetching site plans. Please try again later or contact support.'
 						);
 
-					dispatch( {
+					dispatch({
 						type: SITE_PLANS_FETCH_FAILED,
 						siteId,
 						error: errorMessage,
-					} );
+					});
 				} else {
-					dispatch( fetchSitePlansCompleted( siteId, data ) );
+					dispatch(fetchSitePlansCompleted(siteId, data));
 				}
 
 				resolve();
-			} );
-		} );
+			});
+		});
 	};
 }
 
@@ -132,11 +132,11 @@ export function fetchSitePlans( siteId ) {
  * @param {object} plans - list of plans received from the API
  * @returns {object} the corresponding action object
  */
-export function fetchSitePlansCompleted( siteId, plans ) {
+export function fetchSitePlansCompleted(siteId, plans) {
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,
-		plans: map( plans, createSitePlanObject ),
+		plans: map(plans, createSitePlanObject),
 	};
 }
 
@@ -146,10 +146,10 @@ export function fetchSitePlansCompleted( siteId, plans ) {
  * @param {number} siteId identifier of the site
  * @returns {Function} the corresponding action thunk
  */
-export function refreshSitePlans( siteId ) {
-	return dispatch => {
-		dispatch( clearSitePlans( siteId ) );
-		dispatch( fetchSitePlans( siteId ) );
+export function refreshSitePlans(siteId) {
+	return (dispatch) => {
+		dispatch(clearSitePlans(siteId));
+		dispatch(fetchSitePlans(siteId));
 	};
 }
 
@@ -161,8 +161,8 @@ export function refreshSitePlans( siteId ) {
  * @param {number} newOwnerUserId - ID of the new owner user
  * @returns {object} the corresponding action object
  */
-export const transferPlanOwnership = ( siteId, newOwnerUserId ) => ( {
+export const transferPlanOwnership = (siteId, newOwnerUserId) => ({
 	type: SITE_PLAN_OWNERSHIP_TRANSFER,
 	newOwnerUserId,
 	siteId,
-} );
+});

@@ -13,6 +13,6 @@ export default class extends React.Component {
 	static displayName = 'MediaLibraryListItemDocument';
 
 	render() {
-		return <ListItemFileDetails { ...this.props } />;
+		return <ListItemFileDetails {...this.props} />;
 	}
 }

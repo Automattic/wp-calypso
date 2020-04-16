@@ -35,25 +35,25 @@ export default class ShareButton extends PureComponent {
 	};
 
 	getUrl() {
-		const template = services[ this.props.service ].url;
+		const template = services[this.props.service].url;
 		const args = {
-			URL: encodeURIComponent( this.props.url ),
-			TITLE: encodeURIComponent( this.props.title ),
+			URL: encodeURIComponent(this.props.url),
+			TITLE: encodeURIComponent(this.props.title),
 			SITE_SLUG: this.props.siteSlug,
 		};
 
-		return template.replace( /<([A-Z_]+)>/g, ( match, varName ) => args[ varName ] || '' );
+		return template.replace(/<([A-Z_]+)>/g, (match, varName) => args[varName] || '');
 	}
 
 	handleClick = () => {
-		if ( typeof window === 'undefined' ) {
+		if (typeof window === 'undefined') {
 			return;
 		}
 
 		const win = window.open(
 			this.getUrl(),
-			`share-button-window-${ this.props.service }`,
-			services[ this.props.service ].windowArg || 'width=550,height=420,resizeable,scrollbars'
+			`share-button-window-${this.props.service}`,
+			services[this.props.service].windowArg || 'width=550,height=420,resizeable,scrollbars'
 		);
 		win.focus();
 
@@ -61,17 +61,15 @@ export default class ShareButton extends PureComponent {
 	};
 
 	render() {
-		const className = [ 'share-button', this.props.color && 'has-color' ]
-			.filter( Boolean )
-			.join( ' ' );
+		const className = ['share-button', this.props.color && 'has-color'].filter(Boolean).join(' ');
 
-		if ( ! services[ this.props.service ] ) {
+		if (!services[this.props.service]) {
 			return null;
 		}
 
 		return (
-			<Button onClick={ this.handleClick } className={ className } borderless>
-				<SocialLogo size={ this.props.size } icon={ this.props.service } />
+			<Button onClick={this.handleClick} className={className} borderless>
+				<SocialLogo size={this.props.size} icon={this.props.service} />
 			</Button>
 		);
 	}

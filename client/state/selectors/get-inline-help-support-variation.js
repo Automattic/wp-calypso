@@ -18,22 +18,22 @@ export const SUPPORT_FORUM = 'SUPPORT_FORUM';
  * @param {object} state Global state tree
  * @returns {string} One of the exported support variation constants listed above
  */
-export default function getSupportVariation( state ) {
+export default function getSupportVariation(state) {
 	if (
-		config.isEnabled( 'happychat' ) &&
-		isHappychatAvailable( state ) &&
-		isHappychatUserEligible( state ) &&
+		config.isEnabled('happychat') &&
+		isHappychatAvailable(state) &&
+		isHappychatUserEligible(state) &&
 		// Upwork-eligible customers should skip Happychat and get sent to Tickets
-		! isEligibleForUpworkSupport( state )
+		!isEligibleForUpworkSupport(state)
 	) {
 		return SUPPORT_HAPPYCHAT;
 	}
 
-	if ( isTicketSupportEligible( state ) ) {
+	if (isTicketSupportEligible(state)) {
 		return SUPPORT_TICKET;
 	}
 
-	if ( getCurrentUserLocale( state ) === 'en' && isDirectlyReady( state ) ) {
+	if (getCurrentUserLocale(state) === 'en' && isDirectlyReady(state)) {
 		return SUPPORT_DIRECTLY;
 	}
 

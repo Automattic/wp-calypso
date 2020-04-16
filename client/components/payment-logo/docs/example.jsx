@@ -12,14 +12,14 @@ import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(
 	// 'placeholder' is a special case that needs to be demonstrated separately
-	arr => filter( arr, type => type !== 'placeholder' ),
+	(arr) => filter(arr, (type) => type !== 'placeholder'),
 
-	arr => map( arr, type => ( { type, isCompact: false } ) ),
-	arr => concat( arr, [ { type: 'paypal', isCompact: true } ] ),
-	arr => sortBy( arr, [ 'type', 'isCompact' ] )
+	(arr) => map(arr, (type) => ({ type, isCompact: false })),
+	(arr) => concat(arr, [{ type: 'paypal', isCompact: true }]),
+	(arr) => sortBy(arr, ['type', 'isCompact'])
 );
 
-const VENDORS = genVendors( POSSIBLE_TYPES );
+const VENDORS = genVendors(POSSIBLE_TYPES);
 
 class PaymentLogoExamples extends React.PureComponent {
 	static displayName = 'PaymentLogo';
@@ -34,11 +34,11 @@ class PaymentLogoExamples extends React.PureComponent {
 
 				<p>Supported Vendors</p>
 
-				{ VENDORS.map( ( { type, isCompact } ) => (
-					<div key={ [ type, isCompact ].join( '_' ) }>
-						<PaymentLogo type={ type } isCompact={ isCompact } />
+				{VENDORS.map(({ type, isCompact }) => (
+					<div key={[type, isCompact].join('_')}>
+						<PaymentLogo type={type} isCompact={isCompact} />
 					</div>
-				) ) }
+				))}
 			</div>
 		);
 	}

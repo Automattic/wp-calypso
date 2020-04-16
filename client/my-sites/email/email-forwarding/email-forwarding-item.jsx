@@ -21,12 +21,12 @@ import { removeEmailForward, resendVerificationEmail } from 'state/email-forward
 
 class EmailForwardingItem extends React.Component {
 	static propTypes = {
-		emailData: PropTypes.shape( {
+		emailData: PropTypes.shape({
 			domain: PropTypes.string.isRequired,
 			forward_address: PropTypes.string.isRequired,
 			mailbox: PropTypes.string.isRequired,
 			temporary: PropTypes.bool,
-		} ),
+		}),
 		removeEmailForwardWithAnalytics: PropTypes.func.isRequired,
 		resendVerificationEmailWithAnalytics: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -35,21 +35,21 @@ class EmailForwardingItem extends React.Component {
 	removeEmailForwardClick = () => {
 		const { temporary, domain, mailbox, forward_address: destination } = this.props.emailData;
 
-		if ( temporary ) {
+		if (temporary) {
 			return;
 		}
 
-		this.props.removeEmailForwardWithAnalytics( domain, mailbox, destination );
+		this.props.removeEmailForwardWithAnalytics(domain, mailbox, destination);
 	};
 
 	resendVerificationEmailClick = () => {
 		const { domain, forward_address: destination, mailbox, temporary } = this.props.emailData;
 
-		if ( temporary ) {
+		if (temporary) {
 			return;
 		}
 
-		this.props.resendVerificationEmailWithAnalytics( domain, mailbox, destination );
+		this.props.resendVerificationEmailWithAnalytics(domain, mailbox, destination);
 	};
 
 	render() {
@@ -58,25 +58,25 @@ class EmailForwardingItem extends React.Component {
 
 		return (
 			<li>
-				<Button borderless disabled={ temporary } onClick={ this.removeEmailForwardClick }>
+				<Button borderless disabled={temporary} onClick={this.removeEmailForwardClick}>
 					<Gridicon icon="trash" />
 				</Button>
 
-				{ ! active && (
+				{!active && (
 					<Button
-						disabled={ temporary }
+						disabled={temporary}
 						borderless
-						onClick={ this.resendVerificationEmailClick }
-						title={ translate( 'Resend Verification Email', {
+						onClick={this.resendVerificationEmailClick}
+						title={translate('Resend Verification Email', {
 							context: 'Email Forwarding',
-						} ) }
+						})}
 					>
 						<Gridicon icon="mail" />
 					</Button>
-				) }
+				)}
 
 				<span>
-					{ translate(
+					{translate(
 						'{{strong1}}%(email)s{{/strong1}} {{em}}forwards to{{/em}} {{strong2}}%(forwardTo)s{{/strong2}}',
 						{
 							components: {
@@ -89,14 +89,14 @@ class EmailForwardingItem extends React.Component {
 								forwardTo: destination,
 							},
 						}
-					) }
+					)}
 				</span>
 			</li>
 		);
 	}
 }
 
-const removeEmailForwardWithAnalytics = ( domainName, mailbox, destination ) =>
+const removeEmailForwardWithAnalytics = (domainName, mailbox, destination) =>
 	withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -105,16 +105,16 @@ const removeEmailForwardWithAnalytics = ( domainName, mailbox, destination ) =>
 				'Domain Name',
 				domainName
 			),
-			recordTracksEvent( 'calypso_domain_management_email_forwarding_delete_click', {
+			recordTracksEvent('calypso_domain_management_email_forwarding_delete_click', {
 				destination,
 				domain_name: domainName,
 				mailbox,
-			} )
+			})
 		),
-		removeEmailForward( domainName, mailbox )
+		removeEmailForward(domainName, mailbox)
 	);
 
-const resendVerificationEmailWithAnalytics = ( domainName, mailbox, destination ) =>
+const resendVerificationEmailWithAnalytics = (domainName, mailbox, destination) =>
 	withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -132,10 +132,10 @@ const resendVerificationEmailWithAnalytics = ( domainName, mailbox, destination 
 				}
 			)
 		),
-		resendVerificationEmail( domainName, mailbox, destination )
+		resendVerificationEmail(domainName, mailbox, destination)
 	);
 
-export default connect( null, {
+export default connect(null, {
 	removeEmailForwardWithAnalytics,
 	resendVerificationEmailWithAnalytics,
-} )( localize( EmailForwardingItem ) );
+})(localize(EmailForwardingItem));

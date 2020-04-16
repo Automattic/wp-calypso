@@ -12,6 +12,6 @@ import './setup';
  * @returns {string} - The Tracks anonymous user id
  */
 export function tracksAnonymousUserId() {
-	const cookies = cookie.parse( document.cookie );
+	const cookies = cookie.parse(document.cookie);
 	return cookies.tk_ai;
 }

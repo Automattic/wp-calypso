@@ -24,28 +24,28 @@ class Security2faSetup extends Component {
 	};
 
 	constructor() {
-		super( ...arguments );
+		super(...arguments);
 		this.state = {
 			step: 'initial-setup',
 		};
 	}
 
-	onCancelSetup = event => {
+	onCancelSetup = (event) => {
 		event.preventDefault();
-		this.setState( { step: 'initial-setup' } );
+		this.setState({ step: 'initial-setup' });
 	};
 
 	onInitialSetupSuccess = () => {
-		this.setState( { step: 'sms-settings' } );
+		this.setState({ step: 'sms-settings' });
 	};
 
 	onSetupSuccess = () => {
-		this.setState( { step: 'backup-codes' } );
+		this.setState({ step: 'backup-codes' });
 	};
 
 	onFinished = () => {
 		this.props.successNotice(
-			this.props.translate( 'Successfully enabled Two-Step Authentication.' ),
+			this.props.translate('Successfully enabled Two-Step Authentication.'),
 			{
 				duration: 4000,
 			}
@@ -54,55 +54,53 @@ class Security2faSetup extends Component {
 	};
 
 	onVerifyByApp = () => {
-		this.setState( { step: 'app-based' } );
+		this.setState({ step: 'app-based' });
 	};
 
 	onVerifyBySMS = () => {
-		this.setState( { step: 'sms-based' } );
+		this.setState({ step: 'sms-based' });
 	};
 
 	render() {
 		return (
 			<div className="security-2fa-setup__steps-container">
-				{ 'initial-setup' === this.state.step ? (
-					<Security2faInitialSetup onSuccess={ this.onInitialSetupSuccess } />
-				) : null }
+				{'initial-setup' === this.state.step ? (
+					<Security2faInitialSetup onSuccess={this.onInitialSetupSuccess} />
+				) : null}
 
-				{ 'sms-settings' === this.state.step ? (
+				{'sms-settings' === this.state.step ? (
 					<Security2faSMSSettings
-						userSettings={ this.props.userSettings }
-						onCancel={ this.onCancelSetup }
-						onVerifyByApp={ this.onVerifyByApp }
-						onVerifyBySMS={ this.onVerifyBySMS }
+						userSettings={this.props.userSettings}
+						onCancel={this.onCancelSetup}
+						onVerifyByApp={this.onVerifyByApp}
+						onVerifyBySMS={this.onVerifyBySMS}
 					/>
-				) : null }
+				) : null}
 
-				{ 'app-based' === this.state.step ? (
+				{'app-based' === this.state.step ? (
 					<Security2faEnable
-						doSMSFlow={ false }
-						onCancel={ this.onCancelSetup }
-						onSuccess={ this.onSetupSuccess }
-						userSettings={ this.props.userSettings }
+						doSMSFlow={false}
+						onCancel={this.onCancelSetup}
+						onSuccess={this.onSetupSuccess}
+						userSettings={this.props.userSettings}
 					/>
-				) : null }
+				) : null}
 
-				{ 'sms-based' === this.state.step ? (
+				{'sms-based' === this.state.step ? (
 					<Security2faEnable
 						doSMSFlow
-						onCancel={ this.onCancelSetup }
-						onSuccess={ this.onSetupSuccess }
-						userSettings={ this.props.userSettings }
+						onCancel={this.onCancelSetup}
+						onSuccess={this.onSetupSuccess}
+						userSettings={this.props.userSettings}
 					/>
-				) : null }
+				) : null}
 
-				{ 'backup-codes' === this.state.step ? (
-					<Security2faSetupBackupCodes onFinished={ this.onFinished } />
-				) : null }
+				{'backup-codes' === this.state.step ? (
+					<Security2faSetupBackupCodes onFinished={this.onFinished} />
+				) : null}
 			</div>
 		);
 	}
 }
 
-export default connect( null, { successNotice }, null, { pure: false } )(
-	localize( Security2faSetup )
-);
+export default connect(null, { successNotice }, null, { pure: false })(localize(Security2faSetup));

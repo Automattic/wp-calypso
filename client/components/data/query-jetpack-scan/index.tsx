@@ -14,16 +14,16 @@ interface Props {
 	siteId: number;
 }
 
-const QueryJetpackScan = ( { siteId }: Props ) => {
-	const requestingJetpackScan = useSelector( state => isRequestingJetpackScan( state, siteId ) );
+const QueryJetpackScan = ({ siteId }: Props) => {
+	const requestingJetpackScan = useSelector((state) => isRequestingJetpackScan(state, siteId));
 	const dispatch = useDispatch();
 
-	React.useEffect( () => {
-		if ( requestingJetpackScan ) {
+	React.useEffect(() => {
+		if (requestingJetpackScan) {
 			return;
 		}
-		siteId && dispatch( requestJetpackScanStatus( siteId ) );
-	}, [ siteId ] );
+		siteId && dispatch(requestJetpackScanStatus(siteId));
+	}, [siteId]);
 
 	return null;
 };

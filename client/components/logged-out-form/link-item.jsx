@@ -10,10 +10,10 @@ import classnames from 'classnames';
  */
 import './link-item.scss';
 
-export default function LoggedOutFormLinkItem( props ) {
+export default function LoggedOutFormLinkItem(props) {
 	return (
-		<a { ...props } className={ classnames( 'logged-out-form__link-item', props.className ) }>
-			{ props.children }
+		<a {...props} className={classnames('logged-out-form__link-item', props.className)}>
+			{props.children}
 		</a>
 	);
 }

@@ -37,69 +37,69 @@ class ConversationCaterpillarComponent extends React.Component {
 
 	getExpandableComments = () => {
 		const { comments, commentsToShow, parentCommentId, commentsTree } = this.props;
-		const isRoot = ! parentCommentId;
-		const parentComment = get( commentsTree, [ parentCommentId, 'data' ] );
+		const isRoot = !parentCommentId;
+		const parentComment = get(commentsTree, [parentCommentId, 'data']);
 
 		const childComments = isRoot
 			? comments
-			: filter( comments, child => isAncestor( parentComment, child, commentsTree ) );
+			: filter(comments, (child) => isAncestor(parentComment, child, commentsTree));
 
-		const commentsToExpand = filter( childComments, comment => ! commentsToShow[ comment.ID ] );
+		const commentsToExpand = filter(childComments, (comment) => !commentsToShow[comment.ID]);
 
 		return commentsToExpand;
 	};
 
 	handleTickle = () => {
 		const { blogId, postId } = this.props;
-		const commentsToExpand = takeRight( this.getExpandableComments(), NUMBER_TO_EXPAND );
+		const commentsToExpand = takeRight(this.getExpandableComments(), NUMBER_TO_EXPAND);
 
 		// expand all N comments to excerpt
-		this.props.expandComments( {
+		this.props.expandComments({
 			siteId: blogId,
 			postId,
-			commentIds: map( commentsToExpand, 'ID' ),
+			commentIds: map(commentsToExpand, 'ID'),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
-		} );
+		});
 		// for each of those comments, expand the comment's parent to singleLine
-		this.props.expandComments( {
+		this.props.expandComments({
 			siteId: blogId,
 			postId,
-			commentIds: compact( map( commentsToExpand, c => get( c, 'parent.ID', null ) ) ),
+			commentIds: compact(map(commentsToExpand, (c) => get(c, 'parent.ID', null))),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
-		} );
-		recordAction( 'comment_caterpillar_click' );
-		recordGaEvent( 'Clicked Caterpillar' );
-		recordTrack( 'calypso_reader_comment_caterpillar_click', {
+		});
+		recordAction('comment_caterpillar_click');
+		recordGaEvent('Clicked Caterpillar');
+		recordTrack('calypso_reader_comment_caterpillar_click', {
 			blog_id: blogId,
 			post_id: postId,
-		} );
+		});
 	};
 
 	render() {
 		const { translate, parentCommentId, comments } = this.props;
 		const allExpandableComments = this.getExpandableComments();
-		const expandableComments = takeRight( allExpandableComments, NUMBER_TO_EXPAND );
-		const isRoot = ! parentCommentId;
-		const numberUnfetchedComments = this.props.commentCount - size( comments );
+		const expandableComments = takeRight(allExpandableComments, NUMBER_TO_EXPAND);
+		const isRoot = !parentCommentId;
+		const numberUnfetchedComments = this.props.commentCount - size(comments);
 		const commentCount = isRoot
-			? numberUnfetchedComments + size( allExpandableComments )
-			: size( allExpandableComments );
+			? numberUnfetchedComments + size(allExpandableComments)
+			: size(allExpandableComments);
 
 		// Only display each author once
-		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'avatar_URL' );
-		const uniqueAuthorsCount = size( uniqueAuthors );
-		const lastAuthorName = get( last( uniqueAuthors ), 'name' );
+		const uniqueAuthors = uniqBy(map(expandableComments, 'author'), 'avatar_URL');
+		const uniqueAuthorsCount = size(uniqueAuthors);
+		const lastAuthorName = get(last(uniqueAuthors), 'name');
 
 		return (
 			<div className="conversation-caterpillar">
 				<GravatarCaterpillar
-					users={ uniqueAuthors }
-					onClick={ this.handleTickle }
-					maxGravatarsToDisplay={ MAX_GRAVATARS_TO_DISPLAY }
+					users={uniqueAuthors}
+					onClick={this.handleTickle}
+					maxGravatarsToDisplay={MAX_GRAVATARS_TO_DISPLAY}
 				/>
 				<button
 					className="conversation-caterpillar__count"
-					onClick={ this.handleTickle }
+					onClick={this.handleTickle}
 					title={
 						commentCount > 0 &&
 						translate(
@@ -114,45 +114,45 @@ class ConversationCaterpillarComponent extends React.Component {
 						)
 					}
 				>
-					{ commentCount > 1 &&
+					{commentCount > 1 &&
 						uniqueAuthorsCount > 1 &&
-						translate( 'Load previous comments from %(commenterName)s and others', {
+						translate('Load previous comments from %(commenterName)s and others', {
 							args: {
 								commenterName: lastAuthorName,
 								count: commentCount,
 							},
-						} ) }
-					{ commentCount > 1 &&
+						})}
+					{commentCount > 1 &&
 						uniqueAuthorsCount === 1 &&
-						translate( 'Load previous comments from %(commenterName)s', {
+						translate('Load previous comments from %(commenterName)s', {
 							args: {
 								commenterName: lastAuthorName,
 								count: commentCount,
 							},
-						} ) }
-					{ commentCount === 1 &&
-						translate( 'Load previous comment from %(commenterName)s', {
+						})}
+					{commentCount === 1 &&
+						translate('Load previous comment from %(commenterName)s', {
 							args: {
 								commenterName: lastAuthorName,
 							},
-						} ) }
+						})}
 				</button>
 			</div>
 		);
 	}
 }
 
-export const ConversationCaterpillar = localize( ConversationCaterpillarComponent );
+export const ConversationCaterpillar = localize(ConversationCaterpillarComponent);
 
 const ConnectedConversationCaterpillar = connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { blogId, postId } = ownProps;
 		return {
-			comments: getDateSortedPostComments( state, blogId, postId ),
-			commentsTree: getPostCommentsTree( state, blogId, postId, 'all' ),
+			comments: getDateSortedPostComments(state, blogId, postId),
+			commentsTree: getPostCommentsTree(state, blogId, postId, 'all'),
 		};
 	},
 	{ expandComments }
-)( ConversationCaterpillar );
+)(ConversationCaterpillar);
 
 export default ConnectedConversationCaterpillar;

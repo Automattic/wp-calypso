@@ -45,8 +45,8 @@ export const defaultCrop = {
 	heightRatio: 1,
 };
 
-export function hasChanges( state = false, action ) {
-	switch ( action.type ) {
+export function hasChanges(state = false, action) {
+	switch (action.type) {
 		case IMAGE_EDITOR_SET_ASPECT_RATIO:
 		case IMAGE_EDITOR_CROP:
 		case IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE:
@@ -65,8 +65,8 @@ export function hasChanges( state = false, action ) {
 	return state;
 }
 
-export const originalAspectRatio = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const originalAspectRatio = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case IMAGE_EDITOR_IMAGE_HAS_LOADED: {
 			const { width, height } = action;
 			return { width, height };
@@ -76,10 +76,10 @@ export const originalAspectRatio = withoutPersistence( ( state = null, action ) 
 	}
 
 	return state;
-} );
+});
 
-export function imageIsLoading( state = true, action ) {
-	switch ( action.type ) {
+export function imageIsLoading(state = true, action) {
+	switch (action.type) {
 		case IMAGE_EDITOR_IMAGE_HAS_LOADED:
 			return false;
 
@@ -90,8 +90,8 @@ export function imageIsLoading( state = true, action ) {
 	return state;
 }
 
-export function fileInfo( state = defaultFileInfo, action ) {
-	switch ( action.type ) {
+export function fileInfo(state = defaultFileInfo, action) {
+	switch (action.type) {
 		case IMAGE_EDITOR_SET_FILE_INFO: {
 			const { src, fileName, mimeType, title } = action;
 			return { ...state, src, fileName, mimeType, title };
@@ -106,44 +106,44 @@ export function fileInfo( state = defaultFileInfo, action ) {
 	return state;
 }
 
-export function transform( state = defaultTransform, action ) {
-	switch ( action.type ) {
+export function transform(state = defaultTransform, action) {
+	switch (action.type) {
 		case IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE:
-			return Object.assign( {}, state, { degrees: ( state.degrees - 90 ) % 360 } );
+			return Object.assign({}, state, { degrees: (state.degrees - 90) % 360 });
 		case IMAGE_EDITOR_FLIP:
-			return Object.assign( {}, state, { scaleX: -state.scaleX } );
+			return Object.assign({}, state, { scaleX: -state.scaleX });
 		case IMAGE_EDITOR_STATE_RESET:
 		case IMAGE_EDITOR_STATE_RESET_ALL:
-			return Object.assign( {}, defaultTransform );
+			return Object.assign({}, defaultTransform);
 	}
 
 	return state;
 }
 
-export function cropBounds( state = defaultCropBounds, action ) {
-	switch ( action.type ) {
+export function cropBounds(state = defaultCropBounds, action) {
+	switch (action.type) {
 		case IMAGE_EDITOR_SET_CROP_BOUNDS:
-			return Object.assign( {}, state, {
+			return Object.assign({}, state, {
 				topBound: action.topBound,
 				leftBound: action.leftBound,
 				bottomBound: action.bottomBound,
 				rightBound: action.rightBound,
-			} );
+			});
 	}
 
 	return state;
 }
 
-export function crop( state = defaultCrop, action ) {
-	switch ( action.type ) {
+export function crop(state = defaultCrop, action) {
+	switch (action.type) {
 		case IMAGE_EDITOR_CROP:
 		case IMAGE_EDITOR_COMPUTED_CROP:
-			return Object.assign( {}, state, {
+			return Object.assign({}, state, {
 				topRatio: action.topRatio,
 				leftRatio: action.leftRatio,
 				widthRatio: action.widthRatio,
 				heightRatio: action.heightRatio,
-			} );
+			});
 		case IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE:
 			return {
 				topRatio: 1 - state.widthRatio - state.leftRatio,
@@ -152,19 +152,19 @@ export function crop( state = defaultCrop, action ) {
 				heightRatio: state.widthRatio,
 			};
 		case IMAGE_EDITOR_FLIP:
-			return Object.assign( {}, state, {
+			return Object.assign({}, state, {
 				leftRatio: 1 - state.widthRatio - state.leftRatio,
-			} );
+			});
 		case IMAGE_EDITOR_STATE_RESET:
 		case IMAGE_EDITOR_STATE_RESET_ALL:
-			return Object.assign( {}, defaultCrop );
+			return Object.assign({}, defaultCrop);
 	}
 
 	return state;
 }
 
-export function aspectRatio( state = AspectRatios.FREE, action ) {
-	switch ( action.type ) {
+export function aspectRatio(state = AspectRatios.FREE, action) {
+	switch (action.type) {
 		case IMAGE_EDITOR_SET_ASPECT_RATIO:
 		case IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO:
 			return action.ratio;
@@ -173,7 +173,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 			const { additionalData = {} } = action;
 			const { aspectRatio: payloadAspectRatio } = additionalData;
 
-			if ( payloadAspectRatio && AspectRatios[ payloadAspectRatio ] ) {
+			if (payloadAspectRatio && AspectRatios[payloadAspectRatio]) {
 				return payloadAspectRatio;
 			}
 
@@ -184,7 +184,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	hasChanges,
 	fileInfo,
 	transform,
@@ -193,4 +193,4 @@ export default combineReducers( {
 	aspectRatio,
 	originalAspectRatio,
 	imageIsLoading,
-} );
+});

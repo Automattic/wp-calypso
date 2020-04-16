@@ -62,23 +62,23 @@ class CreditCards extends Component {
 	};
 
 	changeSelectedCard = () => {
-		const index = ( this.state.selectedCardIndex + 1 ) % CREDIT_CARD_EXAMPLES.length;
-		this.setState( { selectedCardIndex: index } );
+		const index = (this.state.selectedCardIndex + 1) % CREDIT_CARD_EXAMPLES.length;
+		this.setState({ selectedCardIndex: index });
 	};
 
 	render() {
 		return (
 			<Fragment>
-				{ CREDIT_CARD_EXAMPLES.map( ( card, i ) => (
+				{CREDIT_CARD_EXAMPLES.map((card, i) => (
 					<CreditCard
-						key={ `${ card.lastDigits }_${ i }` }
-						card={ card }
-						selected={ i === this.state.selectedCardIndex }
+						key={`${card.lastDigits}_${i}`}
+						card={card}
+						selected={i === this.state.selectedCardIndex}
 					/>
-				) ) }
+				))}
 				<CreditCard>
-					<Button compact style={ { margin: 20 } } onClick={ this.changeSelectedCard }>
-						{ this.props.translate( 'Add another credit card' ) }
+					<Button compact style={{ margin: 20 }} onClick={this.changeSelectedCard}>
+						{this.props.translate('Add another credit card')}
 					</Button>
 				</CreditCard>
 			</Fragment>
@@ -86,7 +86,7 @@ class CreditCards extends Component {
 	}
 }
 
-const LocalizedCreditCards = localize( CreditCards );
+const LocalizedCreditCards = localize(CreditCards);
 LocalizedCreditCards.displayName = 'CreditCard';
 
 export default LocalizedCreditCards;

@@ -35,40 +35,40 @@ class StatsModuleHeader extends React.Component {
 		onActionClick: () => {},
 	};
 
-	toggleInfo = event => {
+	toggleInfo = (event) => {
 		event.stopPropagation();
 		event.preventDefault();
 		const { path, onActionClick, showInfo } = this.props;
 		const gaEvent = showInfo ? 'Closed' : 'Opened';
 
-		if ( path ) {
-			gaRecordEvent( 'Stats', gaEvent + ' More Information Panel', titlecase( path ) );
+		if (path) {
+			gaRecordEvent('Stats', gaEvent + ' More Information Panel', titlecase(path));
 		}
 
-		onActionClick( {
-			showInfo: ! showInfo,
-		} );
+		onActionClick({
+			showInfo: !showInfo,
+		});
 	};
 
-	toggleModule = event => {
+	toggleModule = (event) => {
 		event.preventDefault();
 		const { path, onActionClick, showModule } = this.props;
 		const gaEvent = showModule ? 'Collapsed' : 'Expanded';
 
-		if ( path ) {
-			gaRecordEvent( 'Stats', gaEvent + ' Module', titlecase( path ) );
+		if (path) {
+			gaRecordEvent('Stats', gaEvent + ' Module', titlecase(path));
 		}
 
-		onActionClick( {
-			showModule: ! showModule,
-		} );
+		onActionClick({
+			showModule: !showModule,
+		});
 	};
 
 	renderActions = () => {
 		const { showCollapse, showInfo, showActions } = this.props;
 		const infoIcon = showInfo ? 'info' : 'info-outline';
 
-		if ( ! showActions ) {
+		if (!showActions) {
 			return null;
 		}
 
@@ -78,18 +78,18 @@ class StatsModuleHeader extends React.Component {
 					<a
 						href="#"
 						className="module-header-action-link"
-						aria-label={ this.props.translate( 'Show or hide panel information', {
+						aria-label={this.props.translate('Show or hide panel information', {
 							context: 'Stats panel action',
-						} ) }
-						title={ this.props.translate( 'Show or hide panel information', {
+						})}
+						title={this.props.translate('Show or hide panel information', {
 							context: 'Stats panel action',
-						} ) }
-						onClick={ this.toggleInfo }
+						})}
+						onClick={this.toggleInfo}
 					>
-						<Gridicon icon={ infoIcon } />
+						<Gridicon icon={infoIcon} />
 					</a>
 				</li>
-				{ showCollapse ? this.renderChevron() : null }
+				{showCollapse ? this.renderChevron() : null}
 			</ul>
 		);
 	};
@@ -100,13 +100,13 @@ class StatsModuleHeader extends React.Component {
 				<a
 					href="#"
 					className="module-header-action-link"
-					aria-label={ this.props.translate( 'Expand or collapse panel', {
+					aria-label={this.props.translate('Expand or collapse panel', {
 						context: 'Stats panel action',
-					} ) }
-					title={ this.props.translate( 'Expand or collapse panel', {
+					})}
+					title={this.props.translate('Expand or collapse panel', {
 						context: 'Stats panel action',
-					} ) }
-					onClick={ this.toggleModule }
+					})}
+					onClick={this.toggleModule}
 				>
 					<Gridicon icon="chevron-down" />
 				</a>
@@ -117,30 +117,30 @@ class StatsModuleHeader extends React.Component {
 	renderTitle = () => {
 		const { title, titleLink } = this.props;
 
-		if ( titleLink ) {
+		if (titleLink) {
 			return (
 				<h3 className="module-header-title">
-					<a href={ titleLink } className="module-header__link">
+					<a href={titleLink} className="module-header__link">
 						<span className="module-header__right-icon">
 							<Gridicon icon="stats" />
 						</span>
-						{ title }
+						{title}
 					</a>
 				</h3>
 			);
 		}
 
-		return <h3 className="module-header-title">{ title }</h3>;
+		return <h3 className="module-header-title">{title}</h3>;
 	};
 
 	render() {
 		return (
 			<div className="module-header">
-				{ this.renderTitle() }
-				{ this.renderActions() }
+				{this.renderTitle()}
+				{this.renderActions()}
 			</div>
 		);
 	}
 }
 
-export default localize( StatsModuleHeader );
+export default localize(StatsModuleHeader);

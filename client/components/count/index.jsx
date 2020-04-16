@@ -17,14 +17,14 @@ import formatNumberCompact from 'lib/format-number-compact';
  */
 import './style.scss';
 
-export const Count = ( { count, compact, numberFormat, primary, ...inheritProps } ) => {
+export const Count = ({ count, compact, numberFormat, primary, ...inheritProps }) => {
 	return (
 		// Omit props passed from the `localize` higher-order component that we don't need.
 		<span
-			className={ classnames( 'count', { 'is-primary': primary } ) }
-			{ ...omit( inheritProps, [ 'translate', 'moment' ] ) }
+			className={classnames('count', { 'is-primary': primary })}
+			{...omit(inheritProps, ['translate', 'moment'])}
 		>
-			{ compact ? formatNumberCompact( count ) || numberFormat( count ) : numberFormat( count ) }
+			{compact ? formatNumberCompact(count) || numberFormat(count) : numberFormat(count)}
 		</span>
 	);
 };
@@ -41,4 +41,4 @@ Count.defaultProps = {
 	compact: false,
 };
 
-export default localize( Count );
+export default localize(Count);

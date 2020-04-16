@@ -11,8 +11,8 @@ import { get } from 'lodash';
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether status are being requested
  */
-export function isRequestingStatus( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'status', 'requesting', siteId ], false );
+export function isRequestingStatus(state, siteId) {
+	return get(state, ['extensions', 'wpSuperCache', 'status', 'requesting', siteId], false);
 }
 
 /**
@@ -22,6 +22,6 @@ export function isRequestingStatus( state, siteId ) {
  * @param  {number} siteId Site ID
  * @returns {object} Status
  */
-export function getStatus( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'status', 'items', siteId ], {} );
+export function getStatus(state, siteId) {
+	return get(state, ['extensions', 'wpSuperCache', 'status', 'items', siteId], {});
 }

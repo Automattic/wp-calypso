@@ -25,18 +25,18 @@ class DisconnectJetpackButton extends Component {
 	handleClick = () => {
 		const { isMock, recordGoogleEvent, recordTracksEvent } = this.props;
 
-		if ( isMock ) {
+		if (isMock) {
 			return;
 		}
-		this.setState( { dialogVisible: true } );
-		recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
-		recordTracksEvent( 'calypso_jetpack_disconnect_start' );
+		this.setState({ dialogVisible: true });
+		recordGoogleEvent('Jetpack', 'Clicked To Open Disconnect Jetpack Dialog');
+		recordTracksEvent('calypso_jetpack_disconnect_start');
 	};
 
 	hideDialog = () => {
 		const { recordGoogleEvent } = this.props;
-		this.setState( { dialogVisible: false } );
-		recordGoogleEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
+		this.setState({ dialogVisible: false });
+		recordGoogleEvent('Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog');
 	};
 
 	render() {
@@ -56,27 +56,27 @@ class DisconnectJetpackButton extends Component {
 
 		return (
 			<Fragment>
-				<QuerySitePlans siteId={ site.ID } />
+				<QuerySitePlans siteId={site.ID} />
 				<Button
-					{ ...pick( this.props, buttonPropsList ) }
-					borderless={ linkDisplay }
+					{...pick(this.props, buttonPropsList)}
+					borderless={linkDisplay}
 					className="disconnect-jetpack-button"
 					compact
-					id={ `disconnect-jetpack-${ site.ID }` }
-					onClick={ this.handleClick }
+					id={`disconnect-jetpack-${site.ID}`}
+					onClick={this.handleClick}
 					scary
 				>
-					{ text ||
-						translate( 'Disconnect', {
+					{text ||
+						translate('Disconnect', {
 							context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
-						} ) }
+						})}
 				</Button>
 				<DisconnectJetpackDialog
-					isVisible={ this.state.dialogVisible }
-					onClose={ this.hideDialog }
+					isVisible={this.state.dialogVisible}
+					onClose={this.hideDialog}
 					isBroken
-					siteId={ site.ID }
-					disconnectHref={ this.props.redirect }
+					siteId={site.ID}
+					disconnectHref={this.props.redirect}
 				/>
 			</Fragment>
 		);
@@ -98,7 +98,7 @@ DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true,
 };
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent: recordGoogleEventAction,
 	recordTracksEvent: recordTracksEventAction,
-} )( localize( DisconnectJetpackButton ) );
+})(localize(DisconnectJetpackButton));

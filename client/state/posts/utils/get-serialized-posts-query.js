@@ -10,12 +10,12 @@ import { getNormalizedPostsQuery } from 'state/posts/utils/get-normalized-posts-
  * @param  {number} siteId Optional site ID
  * @returns {string}        Serialized posts query
  */
-export function getSerializedPostsQuery( query = {}, siteId ) {
-	const normalizedQuery = getNormalizedPostsQuery( query );
-	const serializedQuery = JSON.stringify( normalizedQuery );
+export function getSerializedPostsQuery(query = {}, siteId) {
+	const normalizedQuery = getNormalizedPostsQuery(query);
+	const serializedQuery = JSON.stringify(normalizedQuery);
 
-	if ( siteId ) {
-		return [ siteId, serializedQuery ].join( ':' );
+	if (siteId) {
+		return [siteId, serializedQuery].join(':');
 	}
 
 	return serializedQuery;

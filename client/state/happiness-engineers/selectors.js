@@ -6,7 +6,7 @@
  * @returns {Array} happiness engineers
  */
 
-export function getHappinessEngineers( state ) {
+export function getHappinessEngineers(state) {
 	return state.happinessEngineers.items;
 }
 
@@ -16,7 +16,7 @@ export function getHappinessEngineers( state ) {
  * @param {{}} state currents state
  * @returns {boolean} Whether we loaded some data or not
  */
-export function isRequestingHappinessEngineers( state ) {
+export function isRequestingHappinessEngineers(state) {
 	return state.happinessEngineers.requesting;
 }
 
@@ -26,6 +26,6 @@ export function isRequestingHappinessEngineers( state ) {
  * @param {{}} state currents state
  * @returns {boolean} true if loaded, false otherwise
  */
-export function hasReceivedHappinessEngineers( state ) {
+export function hasReceivedHappinessEngineers(state) {
 	return state.happinessEngineers.items !== null;
 }

@@ -9,15 +9,15 @@ import Button from '.';
 export default { title: 'Button' };
 
 const helloWorld = `Hello World!`;
-const handleClick = action( 'click' );
+const handleClick = action('click');
 
-const ButtonVariantions = props => (
+const ButtonVariantions = (props) => (
 	<>
-		<Button onClick={ handleClick } { ...props }>
-			{ helloWorld }
-		</Button>{ ' ' }
-		<Button primary onClick={ handleClick } { ...props }>
-			{ helloWorld }
+		<Button onClick={handleClick} {...props}>
+			{helloWorld}
+		</Button>{' '}
+		<Button primary onClick={handleClick} {...props}>
+			{helloWorld}
 		</Button>
 	</>
 );

@@ -37,7 +37,7 @@ import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
  * @param { Promise } auth Authentication promise, will return the user info upon fulfillment
  * @returns {object} Action object
  */
-export const initConnection = auth => ( { type: HAPPYCHAT_IO_INIT, auth } );
+export const initConnection = (auth) => ({ type: HAPPYCHAT_IO_INIT, auth });
 
 /**
  * Returns an action object for the connect event,
@@ -45,7 +45,7 @@ export const initConnection = auth => ( { type: HAPPYCHAT_IO_INIT, auth } );
  *
  * @returns {object} Action object
  */
-export const receiveConnect = () => ( { type: HAPPYCHAT_IO_RECEIVE_CONNECT } );
+export const receiveConnect = () => ({ type: HAPPYCHAT_IO_RECEIVE_CONNECT });
 
 /**
  * Returns an action object for the disconnect event,
@@ -54,10 +54,10 @@ export const receiveConnect = () => ( { type: HAPPYCHAT_IO_RECEIVE_CONNECT } );
  * @param {string} error The error
  * @returns {object} Action object
  */
-export const receiveDisconnect = error => ( {
+export const receiveDisconnect = (error) => ({
 	type: HAPPYCHAT_IO_RECEIVE_DISCONNECT,
 	error,
-} );
+});
 
 /**
  * Returns an action object for the token event,
@@ -65,7 +65,7 @@ export const receiveDisconnect = error => ( {
  *
  * @returns {object} Action object
  */
-export const receiveToken = () => ( { type: HAPPYCHAT_IO_RECEIVE_TOKEN } );
+export const receiveToken = () => ({ type: HAPPYCHAT_IO_RECEIVE_TOKEN });
 
 /**
  * Returns an action object for the init event, as received from Happychat.
@@ -74,7 +74,7 @@ export const receiveToken = () => ( { type: HAPPYCHAT_IO_RECEIVE_TOKEN } );
  * @param {object} user User object received
  * @returns {object} Action object
  */
-export const receiveInit = user => ( { type: HAPPYCHAT_IO_RECEIVE_INIT, user } );
+export const receiveInit = (user) => ({ type: HAPPYCHAT_IO_RECEIVE_INIT, user });
 
 /**
  * Returns an action object for the unauthorized event,
@@ -83,10 +83,10 @@ export const receiveInit = user => ( { type: HAPPYCHAT_IO_RECEIVE_INIT, user } )
  * @param {string} error Error reported
  * @returns {object} Action object
  */
-export const receiveUnauthorized = error => ( {
+export const receiveUnauthorized = (error) => ({
 	type: HAPPYCHAT_IO_RECEIVE_UNAUTHORIZED,
 	error,
-} );
+});
 
 /**
  * Returns an action object for the reconnecting event,
@@ -94,7 +94,7 @@ export const receiveUnauthorized = error => ( {
  *
  * @returns {object} Action object
  */
-export const receiveReconnecting = () => ( { type: HAPPYCHAT_IO_RECEIVE_RECONNECTING } );
+export const receiveReconnecting = () => ({ type: HAPPYCHAT_IO_RECEIVE_RECONNECTING });
 
 /**
  * Returns an action object for the accept event indicating the system availability,
@@ -103,10 +103,10 @@ export const receiveReconnecting = () => ( { type: HAPPYCHAT_IO_RECEIVE_RECONNEC
  * @param  {object} isAvailable Whether Happychat is available
  * @returns {object} Action object
  */
-export const receiveAccept = isAvailable => ( {
+export const receiveAccept = (isAvailable) => ({
 	type: HAPPYCHAT_IO_RECEIVE_ACCEPT,
 	isAvailable,
-} );
+});
 
 /**
  * Returns an action object for the accept event indicating the system availability,
@@ -115,10 +115,10 @@ export const receiveAccept = isAvailable => ( {
  * @param  {object} isAvailable Whether Happychat is available
  * @returns {object} Action object
  */
-export const receiveLocalizedSupport = isAvailable => ( {
+export const receiveLocalizedSupport = (isAvailable) => ({
 	type: HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 	isAvailable,
-} );
+});
 
 /**
  * Returns an action object for the message event,
@@ -127,7 +127,7 @@ export const receiveLocalizedSupport = isAvailable => ( {
  * @param  {object} message Message received
  * @returns {object} Action object
  */
-export const receiveMessage = message => ( { type: HAPPYCHAT_IO_RECEIVE_MESSAGE, message } );
+export const receiveMessage = (message) => ({ type: HAPPYCHAT_IO_RECEIVE_MESSAGE, message });
 
 /**
  * Returns an action object for the status event,
@@ -136,10 +136,10 @@ export const receiveMessage = message => ( { type: HAPPYCHAT_IO_RECEIVE_MESSAGE,
  * @param  {string} status New chat status
  * @returns {object} Action object
  */
-export const receiveStatus = status => ( {
+export const receiveStatus = (status) => ({
 	type: HAPPYCHAT_IO_RECEIVE_STATUS,
 	status,
-} );
+});
 
 /**
  * Returns an action object with the error received from Happychat
@@ -148,7 +148,7 @@ export const receiveStatus = status => ( {
  * @param  {object} error Error received
  * @returns {object} Action object
  */
-export const receiveError = error => ( { type: HAPPYCHAT_IO_RECEIVE_ERROR, error } );
+export const receiveError = (error) => ({ type: HAPPYCHAT_IO_RECEIVE_ERROR, error });
 
 /**
  * Returns an action object for the transcript reception.
@@ -156,20 +156,20 @@ export const receiveError = error => ( { type: HAPPYCHAT_IO_RECEIVE_ERROR, error
  * @param {object} result An object with {messages, timestamp} props
  * @returns {object} Action object
  */
-export const receiveTranscript = ( { messages, timestamp } ) => ( {
+export const receiveTranscript = ({ messages, timestamp }) => ({
 	type: HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	messages,
 	timestamp,
-} );
+});
 
 /**
  * Returns an action object for the timeout of the transcript request.
  *
  * @returns {object} Action object
  */
-export const receiveTranscriptTimeout = () => ( {
+export const receiveTranscriptTimeout = () => ({
 	type: HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
-} );
+});
 
 /**
  * Returns an action object that prepares the transcript request
@@ -181,14 +181,14 @@ export const receiveTranscriptTimeout = () => ( {
  *                 	 will dispatch the receiveTranscriptTimeout action.
  * @returns {object} Action object
  */
-export const requestTranscript = ( timestamp, timeout = 10000 ) => ( {
+export const requestTranscript = (timestamp, timeout = 10000) => ({
 	type: HAPPYCHAT_IO_REQUEST_TRANSCRIPT,
 	event: 'transcript',
 	payload: timestamp,
 	timeout: timeout,
 	callback: receiveTranscript,
 	callbackTimeout: receiveTranscriptTimeout,
-} );
+});
 
 /**
  * Returns an action object that prepares the chat message
@@ -198,11 +198,11 @@ export const requestTranscript = ( timestamp, timeout = 10000 ) => ( {
  * @param  {object} meta meta info to be sent along the message
  * @returns {object} Action object
  */
-export const sendMessage = ( message, meta = {} ) => ( {
+export const sendMessage = (message, meta = {}) => ({
 	type: HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	event: 'message',
 	payload: { id: uuid(), text: message, meta },
-} );
+});
 
 /**
  * Returns an action object that prepares the event message
@@ -211,7 +211,7 @@ export const sendMessage = ( message, meta = {} ) => ( {
  * @param  {object} message Message to be sent
  * @returns {object} Action object
  */
-export const sendEvent = message => ( {
+export const sendEvent = (message) => ({
 	type: HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
 	event: 'message',
 	payload: {
@@ -220,7 +220,7 @@ export const sendEvent = message => ( {
 		type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT,
 		meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT },
 	},
-} );
+});
 
 /**
  * Returns an action object that prepares the log message
@@ -229,7 +229,7 @@ export const sendEvent = message => ( {
  * @param  {object} message Message to be sent
  * @returns {object} Action object
  */
-export const sendLog = message => ( {
+export const sendLog = (message) => ({
 	type: HAPPYCHAT_IO_SEND_MESSAGE_LOG,
 	event: 'message',
 	payload: {
@@ -238,7 +238,7 @@ export const sendLog = message => ( {
 		type: HAPPYCHAT_MESSAGE_TYPES.LOG,
 		meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.LOG },
 	},
-} );
+});
 
 /**
  * Returns an action object that prepares the user information
@@ -247,7 +247,7 @@ export const sendLog = message => ( {
  * @param  {object} info Selected user info
  * @returns {object} Action object
  */
-export const sendUserInfo = info => ( {
+export const sendUserInfo = (info) => ({
 	type: HAPPYCHAT_IO_SEND_MESSAGE_USERINFO,
 	event: 'message',
 	payload: {
@@ -258,7 +258,7 @@ export const sendUserInfo = info => ( {
 			...info,
 		},
 	},
-} );
+});
 
 /**
  * Returns an action object that prepares the typing info
@@ -267,13 +267,13 @@ export const sendUserInfo = info => ( {
  * @param  {object} message What the user is typing
  * @returns {object} Action object
  */
-export const sendTyping = message => ( {
+export const sendTyping = (message) => ({
 	type: HAPPYCHAT_IO_SEND_TYPING,
 	event: 'typing',
 	payload: {
 		message,
 	},
-} );
+});
 
 /**
  * Returns an action object that prepares typing info (the user stopped typing)
@@ -281,7 +281,7 @@ export const sendTyping = message => ( {
  *
  * @returns {object} Action object
  */
-export const sendNotTyping = () => sendTyping( false );
+export const sendNotTyping = () => sendTyping(false);
 
 /**
  * Returns an action object that prepares the user routing preferences (locale and groups)
@@ -293,7 +293,7 @@ export const sendNotTyping = () => sendTyping( false );
  *
  * @returns {object} Action object
  */
-export const sendPreferences = ( locale, groups, skills ) => ( {
+export const sendPreferences = (locale, groups, skills) => ({
 	type: HAPPYCHAT_IO_SEND_PREFERENCES,
 	event: 'preferences',
 	payload: {
@@ -301,4 +301,4 @@ export const sendPreferences = ( locale, groups, skills ) => ( {
 		groups,
 		skills,
 	},
-} );
+});

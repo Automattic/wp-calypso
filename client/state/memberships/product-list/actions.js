@@ -17,12 +17,12 @@ import {
 import wpcom from 'lib/wp';
 import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/memberships';
 
-export const requestProducts = siteId => ( {
+export const requestProducts = (siteId) => ({
 	siteId,
 	type: MEMBERSHIPS_PRODUCTS_LIST,
-} );
+});
 
-export function receiveUpdateProduct( siteId, product ) {
+export function receiveUpdateProduct(siteId, product) {
 	return {
 		siteId,
 		type: MEMBERSHIPS_PRODUCT_RECEIVE,
@@ -30,7 +30,7 @@ export function receiveUpdateProduct( siteId, product ) {
 	};
 }
 
-export function receiveDeleteProduct( siteId, productId ) {
+export function receiveDeleteProduct(siteId, productId) {
 	return {
 		siteId,
 		productId,
@@ -38,139 +38,139 @@ export function receiveDeleteProduct( siteId, productId ) {
 	};
 }
 
-export const requestAddProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
-		dispatch( {
+export const requestAddProduct = (siteId, product, noticeText) => {
+	return (dispatch) => {
+		dispatch({
 			type: MEMBERSHIPS_PRODUCT_ADD,
 			siteId,
 			product,
-		} );
+		});
 
 		return wpcom.req
 			.post(
 				{
 					method: 'POST',
-					path: `/sites/${ siteId }/memberships/product`,
+					path: `/sites/${siteId}/memberships/product`,
 				},
 				product
 			)
-			.then( newProduct => {
-				const membershipProduct = membershipProductFromApi( newProduct.product );
-				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
-				dispatch( {
+			.then((newProduct) => {
+				const membershipProduct = membershipProductFromApi(newProduct.product);
+				dispatch(receiveUpdateProduct(siteId, membershipProduct));
+				dispatch({
 					type: NOTICE_CREATE,
 					notice: {
 						duration: 5000,
 						text: noticeText,
 						status: 'is-success',
 					},
-				} );
+				});
 				return membershipProduct;
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: MEMBERSHIPS_PRODUCT_ADD_FAILURE,
 					siteId,
 					error,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: NOTICE_CREATE,
 					notice: {
 						duration: 10000,
 						text: error.message,
 						status: 'is-error',
 					},
-				} );
-			} );
+				});
+			});
 	};
 };
 
-export const requestUpdateProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
-		dispatch( {
+export const requestUpdateProduct = (siteId, product, noticeText) => {
+	return (dispatch) => {
+		dispatch({
 			type: MEMBERSHIPS_PRODUCT_UPDATE,
 			siteId,
 			product,
-		} );
+		});
 
 		return wpcom.req
 			.post(
 				{
 					method: 'POST',
-					path: `/sites/${ siteId }/memberships/product/${ product.ID }`,
+					path: `/sites/${siteId}/memberships/product/${product.ID}`,
 				},
 				product
 			)
-			.then( newProduct => {
-				const membershipProduct = membershipProductFromApi( newProduct.product );
-				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
-				dispatch( {
+			.then((newProduct) => {
+				const membershipProduct = membershipProductFromApi(newProduct.product);
+				dispatch(receiveUpdateProduct(siteId, membershipProduct));
+				dispatch({
 					type: NOTICE_CREATE,
 					notice: {
 						duration: 5000,
 						text: noticeText,
 						status: 'is-success',
 					},
-				} );
+				});
 				return membershipProduct;
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
 					siteId,
 					error,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: NOTICE_CREATE,
 					notice: {
 						duration: 10000,
 						text: error.message,
 						status: 'is-error',
 					},
-				} );
-			} );
+				});
+			});
 	};
 };
 
-export const requestDeleteProduct = ( siteId, product, noticeText ) => {
-	return dispatch => {
-		dispatch( {
+export const requestDeleteProduct = (siteId, product, noticeText) => {
+	return (dispatch) => {
+		dispatch({
 			type: MEMBERSHIPS_PRODUCT_DELETE,
 			siteId,
 			product,
-		} );
+		});
 
 		return wpcom.req
-			.post( {
+			.post({
 				method: 'POST',
-				path: `/sites/${ siteId }/memberships/product/${ product.ID }/delete`,
-			} )
-			.then( () => {
-				dispatch( {
+				path: `/sites/${siteId}/memberships/product/${product.ID}/delete`,
+			})
+			.then(() => {
+				dispatch({
 					type: NOTICE_CREATE,
 					notice: {
 						duration: 5000,
 						text: noticeText,
 						status: 'is-success',
 					},
-				} );
+				});
 				return product.ID;
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 					siteId,
 					error,
 					product,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: NOTICE_CREATE,
 					notice: {
 						duration: 10000,
 						text: error.message,
 						status: 'is-error',
 					},
-				} );
-			} );
+				});
+			});
 	};
 };

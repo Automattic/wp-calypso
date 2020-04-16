@@ -53,60 +53,60 @@ import {
 } from 'woocommerce/state/sites/data/locations/selectors';
 import { isWcsInternationalLabelsEnabled } from 'woocommerce/state/selectors/plugins';
 
-export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+export const getShippingLabel = (state, orderId, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId ],
+		['extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId],
 		null
 	);
 };
 
-export const isLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+export const isLoaded = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return shippingLabel && shippingLabel.loaded;
 };
 
-export const isFetching = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+export const isFetching = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return shippingLabel && shippingLabel.isFetching;
 };
 
-export const isError = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+export const isError = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return shippingLabel && shippingLabel.error;
 };
 
-export const getLabels = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+export const getLabels = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return shippingLabel && shippingLabel.loaded ? shippingLabel.labels : [];
 };
 
-export const shouldFulfillOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+export const shouldFulfillOrder = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return shippingLabel && shippingLabel.fulfillOrder;
 };
 
-export const shouldEmailDetails = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+export const shouldEmailDetails = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return shippingLabel && shippingLabel.emailDetails;
 };
 
-export const getSelectedPaymentMethod = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	if ( ! shippingLabel ) {
+export const getSelectedPaymentMethod = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
+	if (!shippingLabel) {
 		return null;
 	}
 
 	return shippingLabel.paymentMethod;
 };
 
-export const hasRefreshedLabelStatus = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+export const hasRefreshedLabelStatus = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return shippingLabel && shippingLabel.refreshedLabelStatus;
 };
 
-export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+export const getForm = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	return shippingLabel && shippingLabel.form;
 };
 
@@ -119,9 +119,9 @@ export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
  *
  * @returns {object} price breakdown
  */
-export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const form = getForm( state, orderId, siteId );
-	if ( ! form ) {
+export const getTotalPriceBreakdown = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const form = getForm(state, orderId, siteId);
+	if (!form) {
 		return null;
 	}
 
@@ -129,16 +129,16 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 	const prices = [];
 	let discount = 0;
 	let total = 0;
-	for ( const packageId in selectedRates ) {
-		const packageRates = get( availableRates, [ packageId, 'rates' ], false );
-		const foundRate = find( packageRates, [ 'service_id', selectedRates[ packageId ] ] );
-		if ( foundRate ) {
-			prices.push( {
+	for (const packageId in selectedRates) {
+		const packageRates = get(availableRates, [packageId, 'rates'], false);
+		const foundRate = find(packageRates, ['service_id', selectedRates[packageId]]);
+		if (foundRate) {
+			prices.push({
 				title: foundRate.title,
 				retailRate: foundRate.retail_rate,
-			} );
+			});
 
-			discount += round( foundRate.retail_rate - foundRate.rate, 2 );
+			discount += round(foundRate.retail_rate - foundRate.rate, 2);
 			total += foundRate.rate;
 		}
 	}
@@ -153,32 +153,32 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 };
 
 export const isCustomsFormRequired = createSelector(
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getForm( state, orderId, siteId );
-		if ( isEmpty( form ) ) {
+	(state, orderId, siteId = getSelectedSiteId(state)) => {
+		const form = getForm(state, orderId, siteId);
+		if (isEmpty(form)) {
 			return false;
 		}
-		const origin = getAddressValues( form.origin );
-		const destination = getAddressValues( form.destination );
+		const origin = getAddressValues(form.origin);
+		const destination = getAddressValues(form.destination);
 
 		// Special case: Any shipment from/to military addresses must have Customs
-		if ( 'US' === origin.country && includes( US_MILITARY_STATES, origin.state ) ) {
+		if ('US' === origin.country && includes(US_MILITARY_STATES, origin.state)) {
 			return true;
 		}
-		if ( 'US' === destination.country && includes( US_MILITARY_STATES, destination.state ) ) {
+		if ('US' === destination.country && includes(US_MILITARY_STATES, destination.state)) {
 			return true;
 		}
 		// No need to have Customs if shipping inside the same territory (for example, from Guam to Guam)
-		if ( origin.country === destination.country ) {
+		if (origin.country === destination.country) {
 			return false;
 		}
 		// Shipments between US, Puerto Rico and Virgin Islands don't need Customs, everything else does
 		return (
-			! includes( DOMESTIC_US_TERRITORIES, origin.country ) ||
-			! includes( DOMESTIC_US_TERRITORIES, destination.country )
+			!includes(DOMESTIC_US_TERRITORIES, origin.country) ||
+			!includes(DOMESTIC_US_TERRITORIES, destination.country)
 		);
 	},
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => [ getForm( state, orderId, siteId ) ]
+	(state, orderId, siteId = getSelectedSiteId(state)) => [getForm(state, orderId, siteId)]
 );
 
 /**
@@ -190,43 +190,34 @@ export const isCustomsFormRequired = createSelector(
  * @param {boolean} shouldValidatePhone An indiator whether phone validation is required.
  * @returns {object}                     A hash of errors with field names as keys.
  */
-const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone ) => {
+const getRawAddressErrors = (appState, addressData, siteId, shouldValidatePhone) => {
 	const { values } = addressData;
-	const { phone, postcode, state, country } = getAddressValues( addressData );
-	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
+	const { phone, postcode, state, country } = getAddressValues(addressData);
+	const requiredFields = ['name', 'address', 'city', 'postcode', 'country'];
 	const errors = {};
-	requiredFields.forEach( field => {
-		if ( ! values[ field ] ) {
-			errors[ field ] = translate( 'This field is required' );
+	requiredFields.forEach((field) => {
+		if (!values[field]) {
+			errors[field] = translate('This field is required');
 		}
-	} );
+	});
 
-	if (
-		includes( ACCEPTED_USPS_ORIGIN_COUNTRIES, country ) &&
-		! /^\d{5}(?:-\d{4})?$/.test( postcode )
-	) {
-		errors.postcode = translate( 'Invalid ZIP code format' );
+	if (includes(ACCEPTED_USPS_ORIGIN_COUNTRIES, country) && !/^\d{5}(?:-\d{4})?$/.test(postcode)) {
+		errors.postcode = translate('Invalid ZIP code format');
 	}
 
-	if ( ! state && hasStates( appState, country, siteId ) ) {
-		errors.state = translate( 'This field is required' );
+	if (!state && hasStates(appState, country, siteId)) {
+		errors.state = translate('This field is required');
 	}
 
-	if ( shouldValidatePhone ) {
+	if (shouldValidatePhone) {
 		// EasyPost requires an origin phone number for international shipments.
 		// This validation ensures that EasyPost will accept it, even though the phone may be invalid.
-		if ( ! phone ) {
+		if (!phone) {
 			errors.phone = translate(
 				'Please enter a phone number for your origin address. ' +
 					"It's required because this shipment requires a customs form."
 			);
-		} else if (
-			10 !==
-			phone
-				.split( /\D+/g )
-				.join( '' )
-				.replace( /^1/, '' ).length
-		) {
+		} else if (10 !== phone.split(/\D+/g).join('').replace(/^1/, '').length) {
 			errors.phone = translate(
 				'Customs forms require a 10-digit phone number. ' +
 					'Please edit your phone number so it has at most 10 digits.'
@@ -237,7 +228,7 @@ const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone
 	return errors;
 };
 
-const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = false ) => {
+const getAddressErrors = (addressData, appState, siteId, shouldValidatePhone = false) => {
 	const {
 		isNormalized,
 		isUnverifiable,
@@ -245,53 +236,50 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 		ignoreValidation,
 		fieldErrors,
 	} = addressData;
-	if ( ( isNormalized || isUnverifiable ) && ! normalizedValues && fieldErrors ) {
+	if ((isNormalized || isUnverifiable) && !normalizedValues && fieldErrors) {
 		return fieldErrors;
-	} else if ( isNormalized && ! normalizedValues ) {
+	} else if (isNormalized && !normalizedValues) {
 		// If the address is normalized but the server didn't return a normalized address, then it's
 		// invalid and must register as an error
 		return {
-			address: translate( 'This address is not recognized. Please try another.' ),
+			address: translate('This address is not recognized. Please try another.'),
 		};
 	}
 
-	const errors = getRawAddressErrors( appState, addressData, siteId, shouldValidatePhone );
+	const errors = getRawAddressErrors(appState, addressData, siteId, shouldValidatePhone);
 
-	if ( ignoreValidation ) {
-		Object.keys( errors ).forEach( field => {
-			if ( ignoreValidation[ field ] ) {
-				delete errors[ field ];
+	if (ignoreValidation) {
+		Object.keys(errors).forEach((field) => {
+			if (ignoreValidation[field]) {
+				delete errors[field];
 			}
-		} );
+		});
 	}
 
 	return errors;
 };
 
-const getPackagesErrors = values =>
-	mapValues( values, pckg => {
+const getPackagesErrors = (values) =>
+	mapValues(values, (pckg) => {
 		const errors = {};
 
-		if ( 'not_selected' === pckg.box_id ) {
-			errors.box_id = translate( 'Please select a package' );
+		if ('not_selected' === pckg.box_id) {
+			errors.box_id = translate('Please select a package');
 		}
 
-		const isInvalidDimension = dimension => ! isFinite( dimension ) || 0 >= dimension;
+		const isInvalidDimension = (dimension) => !isFinite(dimension) || 0 >= dimension;
 
-		if ( isInvalidDimension( pckg.weight ) ) {
-			errors.weight = translate( 'Invalid weight' );
+		if (isInvalidDimension(pckg.weight)) {
+			errors.weight = translate('Invalid weight');
 		}
 
-		const hasInvalidDimensions = some(
-			[ pckg.length, pckg.width, pckg.height ],
-			isInvalidDimension
-		);
-		if ( hasInvalidDimensions ) {
-			errors.dimensions = translate( 'Package dimensions must be greater than zero' );
+		const hasInvalidDimensions = some([pckg.length, pckg.width, pckg.height], isInvalidDimension);
+		if (hasInvalidDimensions) {
+			errors.dimensions = translate('Package dimensions must be greater than zero');
 		}
 
 		return errors;
-	} );
+	});
 
 export const getCustomsErrors = (
 	packages,
@@ -299,61 +287,59 @@ export const getCustomsErrors = (
 	destinationCountryCode,
 	destinationCountryName
 ) => {
-	const usedProductIds = uniq(
-		flatten( map( packages, pckg => map( pckg.items, 'product_id' ) ) )
-	);
+	const usedProductIds = uniq(flatten(map(packages, (pckg) => map(pckg.items, 'product_id'))));
 
-	const valuesByProductId = zipObject( usedProductIds, fill( Array( usedProductIds.length ), 0 ) );
-	forEach( packages, pckg => {
+	const valuesByProductId = zipObject(usedProductIds, fill(Array(usedProductIds.length), 0));
+	forEach(packages, (pckg) => {
 		forEach(
 			pckg.items,
-			( { quantity, product_id } ) =>
-				( valuesByProductId[ product_id ] += quantity * customs.items[ product_id ].value )
+			({ quantity, product_id }) =>
+				(valuesByProductId[product_id] += quantity * customs.items[product_id].value)
 		);
-	} );
+	});
 
 	const valuesByTariffNumber = {};
-	forEach( pick( customs.items, usedProductIds ), ( itemData, productId ) => {
-		if ( itemData.tariffNumber && 6 === itemData.tariffNumber.length ) {
-			if ( ! valuesByTariffNumber[ itemData.tariffNumber ] ) {
-				valuesByTariffNumber[ itemData.tariffNumber ] = 0;
+	forEach(pick(customs.items, usedProductIds), (itemData, productId) => {
+		if (itemData.tariffNumber && 6 === itemData.tariffNumber.length) {
+			if (!valuesByTariffNumber[itemData.tariffNumber]) {
+				valuesByTariffNumber[itemData.tariffNumber] = 0;
 			}
-			valuesByTariffNumber[ itemData.tariffNumber ] += valuesByProductId[ productId ];
+			valuesByTariffNumber[itemData.tariffNumber] += valuesByProductId[productId];
 		}
-	} );
+	});
 
 	return {
-		packages: mapValues( packages, pckg => {
+		packages: mapValues(packages, (pckg) => {
 			const errors = {};
 
-			if ( 'other' === pckg.contentsType && ! pckg.contentsExplanation ) {
+			if ('other' === pckg.contentsType && !pckg.contentsExplanation) {
 				errors.contentsExplanation = translate(
 					'Please describe what kind of goods this package contains'
 				);
 			}
 
-			if ( 'other' === pckg.restrictionType && ! pckg.restrictionComments ) {
+			if ('other' === pckg.restrictionType && !pckg.restrictionComments) {
 				errors.restrictionComments = translate(
 					'Please describe what kind of restrictions this package must have'
 				);
 			}
 
 			const classesAbove2500usd = new Set();
-			forEach( pckg.items, ( { product_id } ) => {
-				const { tariffNumber } = customs.items[ product_id ];
-				if ( 2500 < valuesByTariffNumber[ tariffNumber ] ) {
-					classesAbove2500usd.add( tariffNumber );
+			forEach(pckg.items, ({ product_id }) => {
+				const { tariffNumber } = customs.items[product_id];
+				if (2500 < valuesByTariffNumber[tariffNumber]) {
+					classesAbove2500usd.add(tariffNumber);
 				}
-			} );
+			});
 
-			if ( pckg.itn ) {
+			if (pckg.itn) {
 				if (
-					! /^(?:(?:AES X\d{14})|(?:NOEEI 30\.\d{1,2}(?:\([a-z]\)(?:\(\d\))?)?))$/.test( pckg.itn )
+					!/^(?:(?:AES X\d{14})|(?:NOEEI 30\.\d{1,2}(?:\([a-z]\)(?:\(\d\))?)?))$/.test(pckg.itn)
 				) {
-					errors.itn = translate( 'Invalid format' );
+					errors.itn = translate('Invalid format');
 				}
-			} else if ( 'CA' !== destinationCountryCode ) {
-				if ( ! isEmpty( classesAbove2500usd ) ) {
+			} else if ('CA' !== destinationCountryCode) {
+				if (!isEmpty(classesAbove2500usd)) {
 					errors.itn = translate(
 						'International Transaction Number is required for shipping items valued over $2,500 per tariff number. ' +
 							'Products with tariff number %(code)s add up to more than $2,500.',
@@ -361,7 +347,7 @@ export const getCustomsErrors = (
 							args: { code: classesAbove2500usd.values().next().value }, // Just pick the first code
 						}
 					);
-				} else if ( includes( USPS_ITN_REQUIRED_DESTINATIONS, destinationCountryCode ) ) {
+				} else if (includes(USPS_ITN_REQUIRED_DESTINATIONS, destinationCountryCode)) {
 					errors.itn = translate(
 						'International Transaction Number is required for shipments to %(country)s',
 						{
@@ -372,95 +358,93 @@ export const getCustomsErrors = (
 			}
 
 			return errors;
-		} ),
+		}),
 
-		items: mapValues( pick( customs.items, usedProductIds ), ( itemData, productId ) => {
+		items: mapValues(pick(customs.items, usedProductIds), (itemData, productId) => {
 			const itemErrors = {};
-			if ( ! itemData.description ) {
-				itemErrors.description = translate( 'This field is required' );
+			if (!itemData.description) {
+				itemErrors.description = translate('This field is required');
 			}
-			if ( ! customs.ignoreWeightValidation[ productId ] ) {
-				if ( isNil( itemData.weight ) || '' === itemData.weight ) {
-					itemErrors.weight = translate( 'This field is required' );
-				} else if ( ! ( parseFloat( itemData.weight ) > 0 ) ) {
-					itemErrors.weight = translate( 'Weight must be greater than zero' );
+			if (!customs.ignoreWeightValidation[productId]) {
+				if (isNil(itemData.weight) || '' === itemData.weight) {
+					itemErrors.weight = translate('This field is required');
+				} else if (!(parseFloat(itemData.weight) > 0)) {
+					itemErrors.weight = translate('Weight must be greater than zero');
 				}
 			}
-			if ( ! customs.ignoreValueValidation[ productId ] ) {
-				if ( isNil( itemData.value ) || '' === itemData.value ) {
-					itemErrors.value = translate( 'This field is required' );
-				} else if ( ! ( parseFloat( itemData.value ) > 0 ) ) {
-					itemErrors.value = translate( 'Declared value must be greater than zero' );
+			if (!customs.ignoreValueValidation[productId]) {
+				if (isNil(itemData.value) || '' === itemData.value) {
+					itemErrors.value = translate('This field is required');
+				} else if (!(parseFloat(itemData.value) > 0)) {
+					itemErrors.value = translate('Declared value must be greater than zero');
 				}
 			}
-			if ( itemData.tariffNumber && 6 !== itemData.tariffNumber.length ) {
-				itemErrors.tariffNumber = translate( 'The tariff number must be 6 digits long' );
+			if (itemData.tariffNumber && 6 !== itemData.tariffNumber.length) {
+				itemErrors.tariffNumber = translate('The tariff number must be 6 digits long');
 			}
 			return itemErrors;
-		} ),
+		}),
 	};
 };
 
-export const getRatesErrors = ( { values: selectedRates, available: allRates } ) =>
-	mapValues( allRates, ( rate, boxId ) => {
-		if ( ! isEmpty( rate.errors ) ) {
-			const messages = rate.errors.map( err => err.userMessage || err.message ).filter( Boolean );
+export const getRatesErrors = ({ values: selectedRates, available: allRates }) =>
+	mapValues(allRates, (rate, boxId) => {
+		if (!isEmpty(rate.errors)) {
+			const messages = rate.errors.map((err) => err.userMessage || err.message).filter(Boolean);
 			return messages.length
 				? messages
-				: [ "We couldn't get a rate for this package, please try again." ];
+				: ["We couldn't get a rate for this package, please try again."];
 		}
 
-		if ( selectedRates[ boxId ] ) {
+		if (selectedRates[boxId]) {
 			return [];
-		} else if ( isEmpty( rate.rates ) ) {
+		} else if (isEmpty(rate.rates)) {
 			return [
 				translate(
 					'No rates available, please double check dimensions and weight or try using different packaging.'
 				),
 			];
 		}
-		return [ translate( 'Please choose a rate' ) ];
-	} );
+		return [translate('Please choose a rate')];
+	});
 
-const getSidebarErrors = paperSize => {
+const getSidebarErrors = (paperSize) => {
 	const errors = {};
-	if ( ! paperSize ) {
-		errors.paperSize = translate( 'This field is required' );
+	if (!paperSize) {
+		errors.paperSize = translate('This field is required');
 	}
 	return errors;
 };
 
 export const getFormErrors = createSelector(
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		if ( ! isLoaded( state, orderId, siteId ) ) {
+	(state, orderId, siteId = getSelectedSiteId(state)) => {
+		if (!isLoaded(state, orderId, siteId)) {
 			return {};
 		}
 
-		const shippingLabel = getShippingLabel( state, orderId, siteId );
+		const shippingLabel = getShippingLabel(state, orderId, siteId);
 		const { form, paperSize } = shippingLabel;
-		if ( isEmpty( form ) ) {
+		if (isEmpty(form)) {
 			return {};
 		}
 		const destinationCountryCode = form.destination.values.country;
-		const destinationCountryName = getCountryName( state, destinationCountryCode, siteId );
-		const shouldValidateOriginPhone = isCustomsFormRequired( state, orderId, siteId );
+		const destinationCountryName = getCountryName(state, destinationCountryCode, siteId);
+		const shouldValidateOriginPhone = isCustomsFormRequired(state, orderId, siteId);
 		return {
-			origin: getAddressErrors( form.origin, state, siteId, shouldValidateOriginPhone ),
-			destination: getAddressErrors( form.destination, state, siteId ),
-			packages: getPackagesErrors( form.packages.selected ),
+			origin: getAddressErrors(form.origin, state, siteId, shouldValidateOriginPhone),
+			destination: getAddressErrors(form.destination, state, siteId),
+			packages: getPackagesErrors(form.packages.selected),
 			customs: getCustomsErrors(
 				form.packages.selected,
 				form.customs,
 				destinationCountryCode,
 				destinationCountryName
 			),
-			rates: getRatesErrors( form.rates ),
-			sidebar: getSidebarErrors( paperSize ),
+			rates: getRatesErrors(form.rates),
+			sidebar: getSidebarErrors(paperSize),
 		};
 	},
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => [
-		getShippingLabel( state, orderId, siteId ),
-	]
+	(state, orderId, siteId = getSelectedSiteId(state)) => [getShippingLabel(state, orderId, siteId)]
 );
 
 /**
@@ -473,38 +457,34 @@ export const getFormErrors = createSelector(
  * @returns {boolean}
  */
 export const isAddressUsable = createSelector(
-	( appState, orderId, group, siteId = getSelectedSiteId( appState ) ) => {
-		const { form } = getShippingLabel( appState, orderId, siteId );
+	(appState, orderId, group, siteId = getSelectedSiteId(appState)) => {
+		const { form } = getShippingLabel(appState, orderId, siteId);
 
-		const validatePhone = 'origin' === group && isCustomsFormRequired( appState, orderId, siteId );
-		const errors = getRawAddressErrors( appState, form[ group ], siteId, validatePhone );
+		const validatePhone = 'origin' === group && isCustomsFormRequired(appState, orderId, siteId);
+		const errors = getRawAddressErrors(appState, form[group], siteId, validatePhone);
 
-		return 0 === Object.keys( errors ).length;
+		return 0 === Object.keys(errors).length;
 	},
-	( state, orderId, group, siteId = getSelectedSiteId( state ) ) => [
-		getShippingLabel( state, orderId, siteId ).form[ group ],
+	(state, orderId, group, siteId = getSelectedSiteId(state)) => [
+		getShippingLabel(state, orderId, siteId).form[group],
 	]
 );
 
-export const isCustomsFormStepSubmitted = (
-	state,
-	orderId,
-	siteId = getSelectedSiteId( state )
-) => {
-	const form = getForm( state, orderId, siteId );
-	if ( ! form ) {
+export const isCustomsFormStepSubmitted = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const form = getForm(state, orderId, siteId);
+	if (!form) {
 		return false;
 	}
 
 	const usedProductIds = uniq(
-		flatten( map( form.packages.selected, pckg => map( pckg.items, 'product_id' ) ) )
+		flatten(map(form.packages.selected, (pckg) => map(pckg.items, 'product_id')))
 	);
-	return ! some(
+	return !some(
 		usedProductIds.map(
-			productId =>
-				isNil( form.customs.items[ productId ].tariffNumber ) ||
-				form.customs.ignoreWeightValidation[ productId ] ||
-				form.customs.ignoreValueValidation[ productId ]
+			(productId) =>
+				isNil(form.customs.items[productId].tariffNumber) ||
+				form.customs.ignoreWeightValidation[productId] ||
+				form.customs.ignoreValueValidation[productId]
 		)
 	);
 };
@@ -518,43 +498,42 @@ export const isCustomsFormStepSubmitted = (
  *
  * @returns {string} erroneous step name or null
  */
-export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const form = getForm( state, orderId, siteId );
-	if ( ! form ) {
+export const getFirstErroneousStep = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const form = getForm(state, orderId, siteId);
+	if (!form) {
 		return null;
 	}
 
-	const errors = getFormErrors( state, orderId, siteId );
+	const errors = getFormErrors(state, orderId, siteId);
 
 	if (
-		! form.origin.isNormalized ||
-		! isEqual( form.origin.values, form.origin.normalized ) ||
-		hasNonEmptyLeaves( errors.origin )
+		!form.origin.isNormalized ||
+		!isEqual(form.origin.values, form.origin.normalized) ||
+		hasNonEmptyLeaves(errors.origin)
 	) {
 		return 'origin';
 	}
 
 	if (
-		! form.destination.isNormalized ||
-		! isEqual( form.destination.values, form.destination.normalized ) ||
-		hasNonEmptyLeaves( errors.destination )
+		!form.destination.isNormalized ||
+		!isEqual(form.destination.values, form.destination.normalized) ||
+		hasNonEmptyLeaves(errors.destination)
 	) {
 		return 'destination';
 	}
 
-	if ( hasNonEmptyLeaves( errors.packages ) ) {
+	if (hasNonEmptyLeaves(errors.packages)) {
 		return 'packages';
 	}
 
 	if (
-		isCustomsFormRequired( state, orderId, siteId ) &&
-		( hasNonEmptyLeaves( errors.customs ) ||
-			! isCustomsFormStepSubmitted( state, orderId, siteId ) )
+		isCustomsFormRequired(state, orderId, siteId) &&
+		(hasNonEmptyLeaves(errors.customs) || !isCustomsFormStepSubmitted(state, orderId, siteId))
 	) {
 		return 'customs';
 	}
 
-	if ( hasNonEmptyLeaves( errors.rates ) ) {
+	if (hasNonEmptyLeaves(errors.rates)) {
 		return 'rates';
 	}
 
@@ -562,21 +541,21 @@ export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteI
 };
 
 export const canPurchase = createSelector(
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getForm( state, orderId, siteId );
+	(state, orderId, siteId = getSelectedSiteId(state)) => {
+		const form = getForm(state, orderId, siteId);
 
 		return (
-			! isEmpty( form ) &&
-			! getFirstErroneousStep( state, orderId, siteId ) &&
-			! form.origin.normalizationInProgress &&
-			! form.destination.normalizationInProgress &&
-			! form.rates.retrievalInProgress &&
-			! isEmpty( form.rates.available )
+			!isEmpty(form) &&
+			!getFirstErroneousStep(state, orderId, siteId) &&
+			!form.origin.normalizationInProgress &&
+			!form.destination.normalizationInProgress &&
+			!form.rates.retrievalInProgress &&
+			!isEmpty(form.rates.available)
 		);
 	},
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => [
-		getForm( state, orderId, siteId ),
-		getFirstErroneousStep( state, orderId, siteId ),
+	(state, orderId, siteId = getSelectedSiteId(state)) => [
+		getForm(state, orderId, siteId),
+		getFirstErroneousStep(state, orderId, siteId),
 	]
 );
 
@@ -586,13 +565,13 @@ export const canPurchase = createSelector(
  * @returns {object} Map with the pairs { countryCode: countryName } of countries that are available as origin to print shipping labels
  */
 export const getOriginCountryNames = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const allNames = getAllCountryNames( state, siteId );
-		return isWcsInternationalLabelsEnabled( state, siteId )
-			? pick( allNames, ACCEPTED_USPS_ORIGIN_COUNTRIES )
-			: pick( allNames, DOMESTIC_US_TERRITORIES );
+	(state, siteId = getSelectedSiteId(state)) => {
+		const allNames = getAllCountryNames(state, siteId);
+		return isWcsInternationalLabelsEnabled(state, siteId)
+			? pick(allNames, ACCEPTED_USPS_ORIGIN_COUNTRIES)
+			: pick(allNames, DOMESTIC_US_TERRITORIES);
 	},
-	[ getAllCountryNames, isWcsInternationalLabelsEnabled ]
+	[getAllCountryNames, isWcsInternationalLabelsEnabled]
 );
 
 /**
@@ -601,13 +580,13 @@ export const getOriginCountryNames = createSelector(
  * @returns {object} Map with the pairs { countryCode: countryName } of countries that are available as destination to print shipping labels
  */
 export const getDestinationCountryNames = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const allNames = getAllCountryNames( state, siteId );
-		return isWcsInternationalLabelsEnabled( state, siteId )
+	(state, siteId = getSelectedSiteId(state)) => {
+		const allNames = getAllCountryNames(state, siteId);
+		return isWcsInternationalLabelsEnabled(state, siteId)
 			? allNames
-			: pick( allNames, DOMESTIC_US_TERRITORIES );
+			: pick(allNames, DOMESTIC_US_TERRITORIES);
 	},
-	[ getAllCountryNames, isWcsInternationalLabelsEnabled ]
+	[getAllCountryNames, isWcsInternationalLabelsEnabled]
 );
 
 /**
@@ -619,37 +598,37 @@ export const getDestinationCountryNames = createSelector(
  * the country doesn't have a list of states
  */
 export const getStateNames = createSelector(
-	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
-		if ( ! hasStates( state, countryCode, siteId ) ) {
+	(state, countryCode, siteId = getSelectedSiteId(state)) => {
+		if (!hasStates(state, countryCode, siteId)) {
 			return null;
 		}
-		const states = getStates( state, countryCode, siteId );
+		const states = getStates(state, countryCode, siteId);
 		const names = {};
-		states.forEach( ( { code, name } ) => ( names[ code ] = name ) );
+		states.forEach(({ code, name }) => (names[code] = name));
 
-		if ( 'US' === countryCode && ! isWcsInternationalLabelsEnabled( state, siteId ) ) {
+		if ('US' === countryCode && !isWcsInternationalLabelsEnabled(state, siteId)) {
 			// Filter out military addresses
-			return omit( names, US_MILITARY_STATES );
+			return omit(names, US_MILITARY_STATES);
 		}
 		return names;
 	},
-	[ getStates, isWcsInternationalLabelsEnabled ]
+	[getStates, isWcsInternationalLabelsEnabled]
 );
 
-export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+export const areLabelsFullyLoaded = (state, orderId, siteId = getSelectedSiteId(state)) => {
 	return (
-		isLoaded( state, orderId, siteId ) &&
-		areSettingsLoaded( state, siteId ) &&
-		arePackagesLoaded( state, siteId ) &&
-		areLocationsLoaded( state, siteId )
+		isLoaded(state, orderId, siteId) &&
+		areSettingsLoaded(state, siteId) &&
+		arePackagesLoaded(state, siteId) &&
+		areLocationsLoaded(state, siteId)
 	);
 };
 
-export const isLabelDataFetchError = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+export const isLabelDataFetchError = (state, orderId, siteId = getSelectedSiteId(state)) => {
 	return (
-		isError( state, orderId, siteId ) ||
-		areSettingsErrored( state, siteId ) ||
-		arePackagesErrored( state, siteId ) ||
-		areLocationsErrored( state, siteId )
+		isError(state, orderId, siteId) ||
+		areSettingsErrored(state, siteId) ||
+		arePackagesErrored(state, siteId) ||
+		areLocationsErrored(state, siteId)
 	);
 };

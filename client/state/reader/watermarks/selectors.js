@@ -10,4 +10,4 @@ import 'state/reader/init';
  * @param {string} streamKey -
  * @returns {number} date in number form
  */
-export const getReaderWatermark = ( state, streamKey ) => state.reader.watermarks[ streamKey ];
+export const getReaderWatermark = (state, streamKey) => state.reader.watermarks[streamKey];

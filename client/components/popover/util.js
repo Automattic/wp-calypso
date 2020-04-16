@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 /**
  * Module variables
  */
-const debug = debugFactory( 'calypso:popover:util' );
+const debug = debugFactory('calypso:popover:util');
 
 // inspired by https://github.com/jkroso/viewport
 function updateViewport() {
@@ -18,7 +18,7 @@ function updateViewport() {
 	viewport.right = viewport.left + viewport.width;
 	viewport.bottom = viewport.top + viewport.height;
 
-	debug( 'viewport: %o', viewport );
+	debug('viewport: %o', viewport);
 	return viewport;
 }
 
@@ -40,7 +40,7 @@ let _viewport = null;
 let _windowEventsRefCount = 0;
 
 function getViewport() {
-	if ( ! _viewport ) {
+	if (!_viewport) {
 		// initialize on first use
 		_viewport = updateViewport();
 	}
@@ -53,27 +53,27 @@ function onViewportChange() {
 }
 
 export function bindWindowListeners() {
-	if ( _windowEventsRefCount++ > 0 ) {
+	if (_windowEventsRefCount++ > 0) {
 		return;
 	}
 
-	debug( 'bind handlers to `resize` and `scroll` events' );
+	debug('bind handlers to `resize` and `scroll` events');
 	// don't debounce these because they don't so any work that requires layout
-	window.addEventListener( 'resize', onViewportChange, true );
-	window.addEventListener( 'scroll', onViewportChange, true );
+	window.addEventListener('resize', onViewportChange, true);
+	window.addEventListener('scroll', onViewportChange, true);
 }
 
 export function unbindWindowListeners() {
-	if ( --_windowEventsRefCount > 0 ) {
+	if (--_windowEventsRefCount > 0) {
 		return;
 	}
 
-	debug( 'unbind handlers to `resize` and `scroll` events' );
-	window.removeEventListener( 'resize', onViewportChange, true );
-	window.removeEventListener( 'scroll', onViewportChange, true );
+	debug('unbind handlers to `resize` and `scroll` events');
+	window.removeEventListener('resize', onViewportChange, true);
+	window.removeEventListener('scroll', onViewportChange, true);
 }
 
-export function suggested( pos, el, target ) {
+export function suggested(pos, el, target) {
 	const viewport = getViewport();
 	const targetPosition = target.getBoundingClientRect();
 	const h = el.clientHeight;
@@ -87,78 +87,69 @@ export function suggested( pos, el, target ) {
 		right: viewport.width - targetPosition.right - w,
 	};
 
-	const arrayPositions = pos.split( /\s+/ );
-	const [ pos0 ] = arrayPositions;
-	let [ , pos1 ] = arrayPositions;
+	const arrayPositions = pos.split(/\s+/);
+	const [pos0] = arrayPositions;
+	let [, pos1] = arrayPositions;
 
-	const primary = choosePrimary( pos0, room );
+	const primary = choosePrimary(pos0, room);
 
-	if ( pos1 === primary || pos1 === opposite[ primary ] ) {
+	if (pos1 === primary || pos1 === opposite[primary]) {
 		pos1 = null;
 	}
 
-	return chooseSecondary( primary, pos1, el, target, w, h ) || pos;
+	return chooseSecondary(primary, pos1, el, target, w, h) || pos;
 }
 
-function choosePrimary( prefered, room ) {
+function choosePrimary(prefered, room) {
 	// top, bottom, left, right in order of preference
-	const order = [
-		prefered,
-		opposite[ prefered ],
-		adjacent[ prefered ],
-		opposite[ adjacent[ prefered ] ],
-	];
+	const order = [prefered, opposite[prefered], adjacent[prefered], opposite[adjacent[prefered]]];
 
 	let best = -Infinity;
 	let bestPos;
 
-	for ( let i = 0, len = order.length; i < len; i++ ) {
-		const _prefered = order[ i ];
-		const space = room[ _prefered ];
+	for (let i = 0, len = order.length; i < len; i++) {
+		const _prefered = order[i];
+		const space = room[_prefered];
 		// the first side it fits completely
-		if ( space > 0 ) {
+		if (space > 0) {
 			return _prefered;
 		}
 
 		// less chopped of than other sides
-		if ( space > best ) {
-			( best = space ), ( bestPos = prefered );
+		if (space > best) {
+			(best = space), (bestPos = prefered);
 		}
 	}
 
 	return bestPos;
 }
 
-function chooseSecondary( primary, prefered, el, target, w, h ) {
+function chooseSecondary(primary, prefered, el, target, w, h) {
 	const viewport = getViewport();
 	// top, top left, top right in order of preference
 	const isVertical = primary === 'top' || primary === 'bottom';
 
 	const order = prefered
 		? [
-				isVertical ? `${ primary } ${ prefered }` : `${ prefered } ${ primary }`,
+				isVertical ? `${primary} ${prefered}` : `${prefered} ${primary}`,
 				primary,
-				isVertical
-					? `${ primary } ${ opposite[ prefered ] }`
-					: `${ opposite[ prefered ] } ${ primary }`,
+				isVertical ? `${primary} ${opposite[prefered]}` : `${opposite[prefered]} ${primary}`,
 		  ]
 		: [
 				primary,
+				isVertical ? `${primary} ${adjacent[primary]}` : `${adjacent[primary]} ${primary}`,
 				isVertical
-					? `${ primary } ${ adjacent[ primary ] }`
-					: `${ adjacent[ primary ] } ${ primary }`,
-				isVertical
-					? `${ primary } ${ opposite[ adjacent[ primary ] ] }`
-					: `${ opposite[ adjacent[ primary ] ] } ${ primary }`,
+					? `${primary} ${opposite[adjacent[primary]]}`
+					: `${opposite[adjacent[primary]]} ${primary}`,
 		  ];
 
 	let bestPos;
 	let best = 0;
 	const max = w * h;
 
-	for ( let i = 0, len = order.length; i < len; i++ ) {
-		const pos = order[ i ];
-		const off = offset( pos, el, target );
+	for (let i = 0, len = order.length; i < len; i++) {
+		const pos = order[i];
+		const off = offset(pos, el, target);
 		const offRight = off.left + w;
 		const offBottom = off.top + h;
 		const yVisible = Math.min(
@@ -174,46 +165,46 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 		const area = xVisible * yVisible;
 
 		// the first position that shows all the tip
-		if ( area === max ) {
+		if (area === max) {
 			return pos;
 		}
 
 		// shows more of the tip than the other positions
-		if ( area > best ) {
-			( best = area ), ( bestPos = pos );
+		if (area > best) {
+			(best = area), (bestPos = pos);
 		}
 	}
 
 	return bestPos;
 }
 
-export function offset( pos, el, target, relativePosition ) {
+export function offset(pos, el, target, relativePosition) {
 	const pad = 15;
 	const tipRect = el.getBoundingClientRect();
 
-	if ( ! tipRect ) {
-		throw new Error( 'could not get bounding client rect of Tip element' );
+	if (!tipRect) {
+		throw new Error('could not get bounding client rect of Tip element');
 	}
 
 	const ew = tipRect.width;
 	const eh = tipRect.height;
 	const targetRect = target.getBoundingClientRect();
 
-	if ( ! targetRect ) {
-		throw new Error( 'could not get bounding client rect of `target`' );
+	if (!targetRect) {
+		throw new Error('could not get bounding client rect of `target`');
 	}
 
 	const tw = targetRect.width;
 	const th = targetRect.height;
-	const to = _offset( targetRect, document );
+	const to = _offset(targetRect, document);
 
-	if ( ! to ) {
-		throw new Error( 'could not determine page offset of `target`' );
+	if (!to) {
+		throw new Error('could not determine page offset of `target`');
 	}
 
 	let _pos = {};
 
-	switch ( pos ) {
+	switch (pos) {
 		case 'top':
 			_pos = {
 				top: to.top - eh,
@@ -305,7 +296,7 @@ export function offset( pos, el, target, relativePosition ) {
 			break;
 
 		default:
-			throw new Error( `invalid position "${ pos }"` );
+			throw new Error(`invalid position "${pos}"`);
 	}
 
 	return _pos;
@@ -320,8 +311,8 @@ export function offset( pos, el, target, relativePosition ) {
  * @returns {object} an object with `top` and `left` Number properties
  * @private
  */
-function _offset( box, doc ) {
-	const body = doc.body || doc.getElementsByTagName( 'body' )[ 0 ];
+function _offset(box, doc) {
+	const body = doc.body || doc.getElementsByTagName('body')[0];
 	const docEl = doc.documentElement || body.parentNode;
 	const clientTop = docEl.clientTop || body.clientTop || 0;
 	const clientLeft = docEl.clientLeft || body.clientLeft || 0;
@@ -341,10 +332,10 @@ function _offset( box, doc ) {
  * @param {window.Element} el Element to be constained to viewport
  * @returns {number}    the best width
  */
-export function constrainLeft( off, el ) {
+export function constrainLeft(off, el) {
 	const viewport = getViewport();
 	const ew = el.getBoundingClientRect().width;
-	off.left = Math.max( 0, Math.min( off.left, viewport.width - ew ) );
+	off.left = Math.max(0, Math.min(off.left, viewport.width - ew));
 
 	return off;
 }

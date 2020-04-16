@@ -12,9 +12,9 @@ import { shallow } from 'enzyme';
  */
 import { PlansSkipButton } from '../';
 
-describe( 'PlansSkipButton', () => {
-	test( 'should render', () => {
-		const component = shallow( <PlansSkipButton /> );
-		expect( component ).toMatchSnapshot();
-	} );
-} );
+describe('PlansSkipButton', () => {
+	test('should render', () => {
+		const component = shallow(<PlansSkipButton />);
+		expect(component).toMatchSnapshot();
+	});
+});

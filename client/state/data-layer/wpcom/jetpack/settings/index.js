@@ -25,25 +25,24 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 
-export const fromApi = response => {
-	if ( ! response.data ) {
-		throw new Error( 'missing settings' );
+export const fromApi = (response) => {
+	if (!response.data) {
+		throw new Error('missing settings');
 	}
 
-	return normalizeSettings( response.data );
+	return normalizeSettings(response.data);
 };
 
-const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
+const toApi = (settings) => filterSettingsByActiveModules(sanitizeSettings(settings));
 
-const receiveJetpackSettings = ( { siteId }, settings ) =>
-	updateJetpackSettings( siteId, settings );
+const receiveJetpackSettings = ({ siteId }, settings) => updateJetpackSettings(siteId, settings);
 /**
  * Dispatches a request to fetch settings for a given site
  *
  * @param   {object}   action         Redux action
  * @returns {object}   Dispatched http action
  */
-export const requestJetpackSettings = action => {
+export const requestJetpackSettings = (action) => {
 	const { siteId, query } = action;
 
 	return http(
@@ -53,7 +52,7 @@ export const requestJetpackSettings = action => {
 			path: '/jetpack-blogs/' + siteId + '/rest-api/',
 			query: {
 				path: '/jetpack/v4/settings/',
-				query: JSON.stringify( query ),
+				query: JSON.stringify(query),
 				json: true,
 			},
 		},
@@ -61,19 +60,19 @@ export const requestJetpackSettings = action => {
 	);
 };
 
-export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) => {
+export const announceRequestFailure = ({ siteId }) => (dispatch, getState) => {
 	const state = getState();
-	const url = getSiteUrl( state, siteId );
+	const url = getSiteUrl(state, siteId);
 	const noticeOptions = {
-		id: `jps-communication-error-${ siteId }`,
+		id: `jps-communication-error-${siteId}`,
 	};
 
-	if ( url ) {
-		noticeOptions.button = translate( 'Visit site admin' );
-		noticeOptions.href = trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack';
+	if (url) {
+		noticeOptions.button = translate('Visit site admin');
+		noticeOptions.href = trailingslashit(url) + 'wp-admin/admin.php?page=jetpack';
 	}
 
-	return dispatch( errorNotice( translate( 'Something went wrong.' ), noticeOptions ) );
+	return dispatch(errorNotice(translate('Something went wrong.'), noticeOptions));
 };
 
 /**
@@ -82,13 +81,13 @@ export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) =
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const saveJetpackSettings = action => ( dispatch, getState ) => {
+export const saveJetpackSettings = (action) => (dispatch, getState) => {
 	const { settings, siteId } = action;
-	const previousSettings = getJetpackSettings( getState(), siteId );
+	const previousSettings = getJetpackSettings(getState(), siteId);
 
 	// We don't want any legacy Jetpack Onboarding credentials in our Jetpack Settings Redux state.
-	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
-	dispatch( updateJetpackSettings( siteId, settingsWithoutCredentials ) );
+	const settingsWithoutCredentials = omit(settings, ['onboarding.jpUser', 'onboarding.token']);
+	dispatch(updateJetpackSettings(siteId, settingsWithoutCredentials));
 	dispatch(
 		http(
 			{
@@ -97,7 +96,7 @@ export const saveJetpackSettings = action => ( dispatch, getState ) => {
 				path: '/jetpack-blogs/' + siteId + '/rest-api/',
 				body: {
 					path: '/jetpack/v4/settings/',
-					body: JSON.stringify( toApi( settings ) ),
+					body: JSON.stringify(toApi(settings)),
 					json: true,
 				},
 			},
@@ -113,18 +112,18 @@ export const saveJetpackSettings = action => ( dispatch, getState ) => {
 // the save request has finished. Tracking those requests is necessary for
 // displaying an up to date progress indicator for some steps.
 // We also need this to store a regenerated post-by-email address in Redux state.
-export const handleSaveSuccess = ( { siteId }, { data: { code, message, ...updatedSettings } } ) =>
-	saveJetpackSettingsSuccess( siteId, updatedSettings );
+export const handleSaveSuccess = ({ siteId }, { data: { code, message, ...updatedSettings } }) =>
+	saveJetpackSettingsSuccess(siteId, updatedSettings);
 
-export const handleSaveFailure = ( { siteId }, { meta: { settings: previousSettings } } ) => [
-	updateJetpackSettings( siteId, previousSettings ),
-	errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-		id: `jps-notice-error-${ siteId }`,
+export const handleSaveFailure = ({ siteId }, { meta: { settings: previousSettings } }) => [
+	updateJetpackSettings(siteId, previousSettings),
+	errorNotice(translate('An unexpected error occurred. Please try again later.'), {
+		id: `jps-notice-error-${siteId}`,
 		duration: 5000,
-	} ),
+	}),
 ];
 
-export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) => {
+export const retryOrAnnounceSaveFailure = (action, { message: errorMessage }) => {
 	const {
 		settings,
 		siteId,
@@ -137,11 +136,11 @@ export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) 
 	// since it might just be a slow server that actually ends up installing it
 	// properly, in which case a subsequent request will return 'success'.
 	if (
-		get( settings, [ 'onboarding', 'installWooCommerce' ] ) !== true ||
-		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
+		get(settings, ['onboarding', 'installWooCommerce']) !== true ||
+		!startsWith(errorMessage, 'cURL error 28') || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
-		return handleSaveFailure( { siteId }, action );
+		return handleSaveFailure({ siteId }, action);
 	}
 
 	// We cannot use `extendAction( action, ... )` here, since `meta.dataLayer` now includes error information,
@@ -160,21 +159,21 @@ export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) 
 	};
 };
 
-registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
-	[ JETPACK_SETTINGS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/jetpack/settings/index.js', {
+	[JETPACK_SETTINGS_REQUEST]: [
+		dispatchRequest({
 			fetch: requestJetpackSettings,
 			onSuccess: receiveJetpackSettings,
 			onError: announceRequestFailure,
 			fromApi,
-		} ),
+		}),
 	],
 
-	[ JETPACK_SETTINGS_SAVE ]: [
-		dispatchRequest( {
+	[JETPACK_SETTINGS_SAVE]: [
+		dispatchRequest({
 			fetch: saveJetpackSettings,
 			onSuccess: handleSaveSuccess,
 			onError: retryOrAnnounceSaveFailure,
-		} ),
+		}),
 	],
-} );
+});

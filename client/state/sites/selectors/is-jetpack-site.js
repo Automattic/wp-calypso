@@ -11,9 +11,9 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param  {?number}   siteId Site ID
  * @returns {?boolean}        Whether site is a Jetpack site
  */
-export default function isJetpackSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
+export default function isJetpackSite(state, siteId) {
+	const site = getRawSite(state, siteId);
+	if (!site) {
 		return null;
 	}
 

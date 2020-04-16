@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import { userState } from './fixtures/user-state';
 
-describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
-	test( 'should return an empty array if no sites exist in state', () => {
+describe('getSelectedOrAllSitesJetpackCanManage()', () => {
+	test('should return an empty array if no sites exist in state', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -18,11 +18,11 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			},
 			ui: { selectedSiteId: 2916284 },
 		};
-		const sites = getSelectedOrAllSitesJetpackCanManage( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getSelectedOrAllSitesJetpackCanManage(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return an empty array if the sites existing do not verify jetpack management conditions', () => {
+	test('should return an empty array if the sites existing do not verify jetpack management conditions', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -35,11 +35,11 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			},
 			ui: {},
 		};
-		const sites = getSelectedOrAllSitesJetpackCanManage( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getSelectedOrAllSitesJetpackCanManage(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return an array with one site if just one site exists and verifies jetpack management conditions', () => {
+	test('should return an array with one site if just one site exists and verifies jetpack management conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -61,12 +61,12 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			},
 			ui: {},
 		};
-		const sites = getSelectedOrAllSitesJetpackCanManage( state );
-		expect( sites ).to.have.length( 1 );
-		expect( sites[ 0 ].ID ).to.eql( 2916288 );
-	} );
+		const sites = getSelectedOrAllSitesJetpackCanManage(state);
+		expect(sites).to.have.length(1);
+		expect(sites[0].ID).to.eql(2916288);
+	});
 
-	test( 'should return an array with all the sites that verify jetpack management conditions', () => {
+	test('should return an array with all the sites that verify jetpack management conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -99,13 +99,13 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			},
 			ui: {},
 		};
-		const sites = getSelectedOrAllSitesJetpackCanManage( state );
-		expect( sites ).to.have.length( 2 );
-		expect( sites[ 0 ].ID ).to.eql( 2916286 );
-		expect( sites[ 1 ].ID ).to.eql( 2916289 );
-	} );
+		const sites = getSelectedOrAllSitesJetpackCanManage(state);
+		expect(sites).to.have.length(2);
+		expect(sites[0].ID).to.eql(2916286);
+		expect(sites[1].ID).to.eql(2916289);
+	});
 
-	test( 'should return an array with the selected site if it verifies jetpack management conditions', () => {
+	test('should return an array with the selected site if it verifies jetpack management conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -127,12 +127,12 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			},
 			ui: { selectedSiteId: 2916289 },
 		};
-		const sites = getSelectedOrAllSitesJetpackCanManage( state );
-		expect( sites ).to.have.length( 1 );
-		expect( sites[ 0 ].ID ).to.eql( 2916289 );
-	} );
+		const sites = getSelectedOrAllSitesJetpackCanManage(state);
+		expect(sites).to.have.length(1);
+		expect(sites[0].ID).to.eql(2916289);
+	});
 
-	test( 'should return an empty array if the selected site can not be managed', () => {
+	test('should return an empty array if the selected site can not be managed', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -153,7 +153,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			},
 			ui: { selectedSiteId: 2916287 },
 		};
-		const sites = getSelectedOrAllSitesJetpackCanManage( state );
-		expect( sites ).to.eql( [] );
-	} );
-} );
+		const sites = getSelectedOrAllSitesJetpackCanManage(state);
+		expect(sites).to.eql([]);
+	});
+});

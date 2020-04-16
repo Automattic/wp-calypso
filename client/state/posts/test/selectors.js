@@ -35,8 +35,8 @@ import {
 import PostQueryManager from 'lib/query-manager/post';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
-describe( 'selectors', () => {
-	beforeEach( () => {
+describe('selectors', () => {
+	beforeEach(() => {
 		getSitePosts.memoizedSelector.cache.clear();
 		getSitePost.memoizedSelector.cache.clear();
 		getPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
@@ -45,10 +45,10 @@ describe( 'selectors', () => {
 		getPostsForQuery.memoizedSelector.cache.clear();
 		getPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isPostPublished.memoizedSelector.cache.clear();
-	} );
+	});
 
-	describe( '#getPost()', () => {
-		test( 'should return null if the global ID is not tracked', () => {
+	describe('#getPost()', () => {
+		test('should return null if the global ID is not tracked', () => {
 			const post = getPost(
 				{
 					posts: {
@@ -59,15 +59,15 @@ describe( 'selectors', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( post ).to.be.null;
-		} );
+			expect(post).to.be.null;
+		});
 
-		test( 'should return null if there is no manager associated with the path site', () => {
+		test('should return null if there is no manager associated with the path site', () => {
 			const post = getPost(
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {},
 					},
@@ -75,10 +75,10 @@ describe( 'selectors', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( post ).to.be.null;
-		} );
+			expect(post).to.be.null;
+		});
 
-		test( 'should return the object for the post global ID', () => {
+		test('should return the object for the post global ID', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -89,24 +89,24 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 					},
 				},
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( post ).to.equal( postObject );
-		} );
-	} );
+			expect(post).to.equal(postObject);
+		});
+	});
 
-	describe( 'getNormalizedPost()', () => {
-		test( 'should return null if the post is not tracked', () => {
+	describe('getNormalizedPost()', () => {
+		test('should return null if the post is not tracked', () => {
 			const normalizedPost = getNormalizedPost(
 				{
 					posts: {
@@ -117,10 +117,10 @@ describe( 'selectors', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( normalizedPost ).to.be.null;
-		} );
+			expect(normalizedPost).to.be.null;
+		});
 
-		test( 'should return a normalized copy of the post', () => {
+		test('should return a normalized copy of the post', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -137,23 +137,23 @@ describe( 'selectors', () => {
 			};
 
 			const normalizedPost = getNormalizedPost(
-				deepFreeze( {
+				deepFreeze({
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 					},
-				} ),
+				}),
 				'3d097cb7c5473c169bba0eb8e3c6cb64'
 			);
 
-			expect( normalizedPost ).to.not.equal( postObject );
-			expect( normalizedPost ).to.eql( {
+			expect(normalizedPost).to.not.equal(postObject);
+			expect(normalizedPost).to.eql({
 				...postObject,
 				title: 'Ribs & Chicken',
 				author: {
@@ -164,12 +164,12 @@ describe( 'selectors', () => {
 					width: 700,
 					height: 200,
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#getSitePosts()', () => {
-		test( 'should return an array of post objects for the site', () => {
+	describe('#getSitePosts()', () => {
+		test('should return an array of post objects for the site', () => {
 			const postObjects = {
 				2916284: {
 					'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -197,22 +197,22 @@ describe( 'selectors', () => {
 			const state = {
 				posts: {
 					queries: {
-						2916284: new PostQueryManager( {
-							items: postObjects[ 2916284 ],
-						} ),
-						77203074: new PostQueryManager( {
-							items: postObjects[ 77203074 ],
-						} ),
+						2916284: new PostQueryManager({
+							items: postObjects[2916284],
+						}),
+						77203074: new PostQueryManager({
+							items: postObjects[77203074],
+						}),
 					},
 				},
 			};
 
-			expect( getSitePosts( state, 2916284 ) ).to.have.members( values( postObjects[ 2916284 ] ) );
-		} );
-	} );
+			expect(getSitePosts(state, 2916284)).to.have.members(values(postObjects[2916284]));
+		});
+	});
 
-	describe( '#getSitePost()', () => {
-		test( 'should return null if the post is not known for the site', () => {
+	describe('#getSitePost()', () => {
+		test('should return null if the post is not known for the site', () => {
 			const post = getSitePost(
 				{
 					posts: {
@@ -223,10 +223,10 @@ describe( 'selectors', () => {
 				413
 			);
 
-			expect( post ).to.be.null;
-		} );
+			expect(post).to.be.null;
+		});
 
-		test( 'should return the object for the post site ID, post ID pair', () => {
+		test('should return the object for the post site ID, post ID pair', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -237,9 +237,9 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 					},
 				},
@@ -247,12 +247,12 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( post ).to.equal( postObject );
-		} );
-	} );
+			expect(post).to.equal(postObject);
+		});
+	});
 
-	describe( '#getPostsForQuery()', () => {
-		test( 'should return null if the site query is not tracked', () => {
+	describe('#getPostsForQuery()', () => {
+		test('should return null if the site query is not tracked', () => {
 			const sitePosts = getPostsForQuery(
 				{
 					posts: {
@@ -263,18 +263,18 @@ describe( 'selectors', () => {
 				{ search: 'Ribs' }
 			);
 
-			expect( sitePosts ).to.be.null;
-		} );
+			expect(sitePosts).to.be.null;
+		});
 
-		test( 'should return null if the query is not tracked to the query manager', () => {
+		test('should return null if the query is not tracked to the query manager', () => {
 			const sitePosts = getPostsForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {},
 								queries: {},
-							} ),
+							}),
 						},
 					},
 				},
@@ -282,15 +282,15 @@ describe( 'selectors', () => {
 				{ search: 'Ribs' }
 			);
 
-			expect( sitePosts ).to.be.null;
-		} );
+			expect(sitePosts).to.be.null;
+		});
 
-		test( 'should return an array of normalized known queried posts', () => {
+		test('should return an array of normalized known queried posts', () => {
 			const sitePosts = getPostsForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -301,10 +301,10 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Ribs"]]': {
-										itemKeys: [ 841 ],
+										itemKeys: [841],
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -312,22 +312,22 @@ describe( 'selectors', () => {
 				{ search: 'Ribs' }
 			);
 
-			expect( sitePosts ).to.eql( [
+			expect(sitePosts).to.eql([
 				{
 					ID: 841,
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 					title: 'Ribs & Chicken',
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( "should return null if we know the number of found items but the requested set hasn't been received", () => {
+		test("should return null if we know the number of found items but the requested set hasn't been received", () => {
 			const sitePosts = getPostsForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									1204: {
 										ID: 1204,
@@ -338,11 +338,11 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Sweet"]]': {
-										itemKeys: [ 1204, undefined ],
+										itemKeys: [1204, undefined],
 										found: 2,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -350,12 +350,12 @@ describe( 'selectors', () => {
 				{ search: 'Sweet', number: 1, page: 2 }
 			);
 
-			expect( sitePosts ).to.be.null;
-		} );
-	} );
+			expect(sitePosts).to.be.null;
+		});
+	});
 
-	describe( '#isRequestingPostsForQuery()', () => {
-		test( 'should return false if the site has not been queried', () => {
+	describe('#isRequestingPostsForQuery()', () => {
+		test('should return false if the site has not been queried', () => {
 			const isRequesting = isRequestingPostsForQuery(
 				{
 					posts: {
@@ -366,10 +366,10 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if the site has not been queried for the specific query', () => {
+		test('should return false if the site has not been queried for the specific query', () => {
 			const isRequesting = isRequestingPostsForQuery(
 				{
 					posts: {
@@ -382,10 +382,10 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if the site has been queried for the specific query', () => {
+		test('should return true if the site has been queried for the specific query', () => {
 			const isRequesting = isRequestingPostsForQuery(
 				{
 					posts: {
@@ -398,10 +398,10 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
+			expect(isRequesting).to.be.true;
+		});
 
-		test( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
+		test('should return false if the site has previously, but is not currently, querying for the specified query', () => {
 			const isRequesting = isRequestingPostsForQuery(
 				{
 					posts: {
@@ -414,12 +414,12 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
-	} );
+			expect(isRequesting).to.be.false;
+		});
+	});
 
-	describe( 'getPostsFoundForQuery()', () => {
-		test( 'should return null if the site query is not tracked', () => {
+	describe('getPostsFoundForQuery()', () => {
+		test('should return null if the site query is not tracked', () => {
 			const found = getPostsFoundForQuery(
 				{
 					posts: {
@@ -430,15 +430,15 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( found ).to.be.null;
-		} );
+			expect(found).to.be.null;
+		});
 
-		test( 'should return the found items for a site query', () => {
+		test('should return the found items for a site query', () => {
 			const found = getPostsFoundForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -449,11 +449,11 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Hello"]]': {
-										itemKeys: [ 841 ],
+										itemKeys: [841],
 										found: 1,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -461,15 +461,15 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( found ).to.equal( 1 );
-		} );
+			expect(found).to.equal(1);
+		});
 
-		test( 'should return zero if in-fact there are zero items', () => {
+		test('should return zero if in-fact there are zero items', () => {
 			const found = getPostsFoundForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {},
 								queries: {
 									'[["search","Hello"]]': {
@@ -477,7 +477,7 @@ describe( 'selectors', () => {
 										found: 0,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -485,12 +485,12 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( found ).to.equal( 0 );
-		} );
-	} );
+			expect(found).to.equal(0);
+		});
+	});
 
-	describe( '#getPostsLastPageForQuery()', () => {
-		test( 'should return null if the site query is not tracked', () => {
+	describe('#getPostsLastPageForQuery()', () => {
+		test('should return null if the site query is not tracked', () => {
 			const lastPage = getPostsLastPageForQuery(
 				{
 					posts: {
@@ -501,15 +501,15 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( lastPage ).to.be.null;
-		} );
+			expect(lastPage).to.be.null;
+		});
 
-		test( 'should return the last page value for a site query', () => {
+		test('should return the last page value for a site query', () => {
 			const lastPage = getPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -520,11 +520,11 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Hello"]]': {
-										itemKeys: [ 841 ],
+										itemKeys: [841],
 										found: 1,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -532,15 +532,15 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( lastPage ).to.equal( 1 );
-		} );
+			expect(lastPage).to.equal(1);
+		});
 
-		test( 'should return the last page value for a site query, even if including page param', () => {
+		test('should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -551,11 +551,11 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Hello"]]': {
-										itemKeys: [ 841 ],
+										itemKeys: [841],
 										found: 4,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -563,15 +563,15 @@ describe( 'selectors', () => {
 				{ search: 'Hello', page: 3, number: 1 }
 			);
 
-			expect( lastPage ).to.equal( 4 );
-		} );
+			expect(lastPage).to.equal(4);
+		});
 
-		test( 'should return 1 if there are no found posts', () => {
+		test('should return 1 if there are no found posts', () => {
 			const lastPage = getPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {},
 								queries: {
 									'[["search","Hello"]]': {
@@ -579,7 +579,7 @@ describe( 'selectors', () => {
 										found: 0,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -587,12 +587,12 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( lastPage ).to.equal( 1 );
-		} );
-	} );
+			expect(lastPage).to.equal(1);
+		});
+	});
 
-	describe( '#isPostsLastPageForQuery()', () => {
-		test( 'should return null if the last page is not known', () => {
+	describe('#isPostsLastPageForQuery()', () => {
+		test('should return null if the last page is not known', () => {
 			const isLastPage = isPostsLastPageForQuery(
 				{
 					posts: {
@@ -603,15 +603,15 @@ describe( 'selectors', () => {
 				{ search: 'Hello' }
 			);
 
-			expect( isLastPage ).to.be.null;
-		} );
+			expect(isLastPage).to.be.null;
+		});
 
-		test( 'should return false if the query explicit value is not the last page', () => {
+		test('should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -622,11 +622,11 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Hello"]]': {
-										itemKeys: [ 841 ],
+										itemKeys: [841],
 										found: 4,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -634,15 +634,15 @@ describe( 'selectors', () => {
 				{ search: 'Hello', page: 3, number: 1 }
 			);
 
-			expect( isLastPage ).to.be.false;
-		} );
+			expect(isLastPage).to.be.false;
+		});
 
-		test( 'should return true if the query explicit value is the last page', () => {
+		test('should return true if the query explicit value is the last page', () => {
 			const isLastPage = isPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -653,11 +653,11 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Hello"]]': {
-										itemKeys: [ 841 ],
+										itemKeys: [841],
 										found: 4,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -665,15 +665,15 @@ describe( 'selectors', () => {
 				{ search: 'Hello', page: 4, number: 1 }
 			);
 
-			expect( isLastPage ).to.be.true;
-		} );
+			expect(isLastPage).to.be.true;
+		});
 
-		test( 'should return true if the query implicit value is the last page', () => {
+		test('should return true if the query implicit value is the last page', () => {
 			const isLastPage = isPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -684,11 +684,11 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Hello"]]': {
-										itemKeys: [ 841 ],
+										itemKeys: [841],
 										found: 1,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -696,12 +696,12 @@ describe( 'selectors', () => {
 				{ search: 'Hello', number: 1 }
 			);
 
-			expect( isLastPage ).to.be.true;
-		} );
-	} );
+			expect(isLastPage).to.be.true;
+		});
+	});
 
-	describe( '#getPostsForQueryIgnoringPage()', () => {
-		test( 'should return null if the query is not tracked', () => {
+	describe('#getPostsForQueryIgnoringPage()', () => {
+		test('should return null if the query is not tracked', () => {
 			const sitePosts = getPostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -713,19 +713,19 @@ describe( 'selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( sitePosts ).to.be.null;
-		} );
+			expect(sitePosts).to.be.null;
+		});
 
-		test( 'should return null if the query manager has not received items for query', () => {
+		test('should return null if the query manager has not received items for query', () => {
 			const sitePosts = getPostsForQueryIgnoringPage(
 				{
 					posts: {
 						items: {},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {},
 								queries: {},
-							} ),
+							}),
 						},
 					},
 				},
@@ -733,10 +733,10 @@ describe( 'selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( sitePosts ).to.be.null;
-		} );
+			expect(sitePosts).to.be.null;
+		});
 
-		test( 'should return a concatenated array of all site posts ignoring page', () => {
+		test('should return a concatenated array of all site posts ignoring page', () => {
 			const sitePosts = getPostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -755,7 +755,7 @@ describe( 'selectors', () => {
 							},
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -772,10 +772,10 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[]': {
-										itemKeys: [ 841, 413 ],
+										itemKeys: [841, 413],
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -783,7 +783,7 @@ describe( 'selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( sitePosts ).to.eql( [
+			expect(sitePosts).to.eql([
 				{
 					ID: 841,
 					site_ID: 2916284,
@@ -796,10 +796,10 @@ describe( 'selectors', () => {
 					global_ID: '6c831c187ffef321eb43a67761a525a3',
 					title: 'Ribs & Chicken',
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( "should omit found items for which the requested result hasn't been received", () => {
+		test("should omit found items for which the requested result hasn't been received", () => {
 			const sitePosts = getPostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -812,7 +812,7 @@ describe( 'selectors', () => {
 							},
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									1204: {
 										ID: 1204,
@@ -823,11 +823,11 @@ describe( 'selectors', () => {
 								},
 								queries: {
 									'[["search","Sweet"]]': {
-										itemKeys: [ 1204, undefined ],
+										itemKeys: [1204, undefined],
 										found: 2,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -835,19 +835,19 @@ describe( 'selectors', () => {
 				{ search: 'Sweet', number: 1 }
 			);
 
-			expect( sitePosts ).to.eql( [
+			expect(sitePosts).to.eql([
 				{
 					ID: 1204,
 					site_ID: 2916284,
 					global_ID: '48b6010b559efe6a77a429773e0cbf12',
 					title: 'Sweet & Savory',
 				},
-			] );
-		} );
-	} );
+			]);
+		});
+	});
 
-	describe( 'isRequestingPostsForQueryIgnoringPage()', () => {
-		test( 'should return false if not requesting for query', () => {
+	describe('isRequestingPostsForQueryIgnoringPage()', () => {
+		test('should return false if not requesting for query', () => {
 			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -858,10 +858,10 @@ describe( 'selectors', () => {
 				{ search: 'hel' }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true requesting for query at exact page', () => {
+		test('should return true requesting for query at exact page', () => {
 			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -874,10 +874,10 @@ describe( 'selectors', () => {
 				{ search: 'hel', page: 4 }
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
+			expect(isRequesting).to.be.true;
+		});
 
-		test( 'should return true requesting for query without page specified', () => {
+		test('should return true requesting for query without page specified', () => {
 			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -890,10 +890,10 @@ describe( 'selectors', () => {
 				{ search: 'hel' }
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
+			expect(isRequesting).to.be.true;
+		});
 
-		it( 'should return true for all-sites query', () => {
+		it('should return true for all-sites query', () => {
 			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -906,10 +906,10 @@ describe( 'selectors', () => {
 				{ status: 'publish,private', author: null }
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
+			expect(isRequesting).to.be.true;
+		});
 
-		it( 'should return false for single site when requesting all sites', () => {
+		it('should return false for single site when requesting all sites', () => {
 			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -922,16 +922,16 @@ describe( 'selectors', () => {
 				{ status: 'publish,private', author: null }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
-	} );
+			expect(isRequesting).to.be.false;
+		});
+	});
 
-	describe( '#getEditedPost()', () => {
-		beforeEach( () => {
+	describe('#getEditedPost()', () => {
+		beforeEach(() => {
 			getEditedPost.memoizedSelector.cache.clear();
-		} );
+		});
 
-		test( 'should return the original post if no revisions exist on site', () => {
+		test('should return the original post if no revisions exist on site', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -942,12 +942,12 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {},
 					},
@@ -956,10 +956,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.equal( postObject );
-		} );
+			expect(editedPost).to.equal(postObject);
+		});
 
-		test( 'should return revisions for a new draft', () => {
+		test('should return revisions for a new draft', () => {
 			const editedPost = getEditedPost(
 				{
 					posts: {
@@ -967,7 +967,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': [ { title: 'Ribs &amp; Chicken' } ],
+								'': [{ title: 'Ribs &amp; Chicken' }],
 							},
 						},
 					},
@@ -976,10 +976,10 @@ describe( 'selectors', () => {
 				null
 			);
 
-			expect( editedPost ).to.eql( { title: 'Ribs &amp; Chicken' } );
-		} );
+			expect(editedPost).to.eql({ title: 'Ribs &amp; Chicken' });
+		});
 
-		test( 'should return revisions for a draft if the original is unknown', () => {
+		test('should return revisions for a draft if the original is unknown', () => {
 			const editedPost = getEditedPost(
 				{
 					posts: {
@@ -987,7 +987,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								841: [ { title: 'Hello World!' } ],
+								841: [{ title: 'Hello World!' }],
 							},
 						},
 					},
@@ -996,10 +996,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( { title: 'Hello World!' } );
-		} );
+			expect(editedPost).to.eql({ title: 'Hello World!' });
+		});
 
-		test( 'should return revisions merged with the original post', () => {
+		test('should return revisions merged with the original post', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1010,16 +1010,16 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { title: 'Hello World!' } ],
+								841: [{ title: 'Hello World!' }],
 							},
 						},
 					},
@@ -1028,10 +1028,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( { ...postObject, title: 'Hello World!' } );
-		} );
+			expect(editedPost).to.eql({ ...postObject, title: 'Hello World!' });
+		});
 
-		test( 'should return revisions merged with original post nested properties', () => {
+		test('should return revisions merged with original post nested properties', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1044,12 +1044,12 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
@@ -1068,16 +1068,16 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( {
+			expect(editedPost).to.eql({
 				...postObject,
 				discussion: {
 					comments_open: true,
 					pings_open: true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return revisions with array properties overwriting objects', () => {
+		test('should return revisions with array properties overwriting objects', () => {
 			// This tests the initial edit of a non-hierarchical taxonomy
 			// TODO avoid changing the shape of the `terms` state - see:
 			// https://github.com/Automattic/wp-calypso/pull/6548#issuecomment-233148766
@@ -1085,10 +1085,10 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -1106,14 +1106,14 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
 								841: [
 									{
 										terms: {
-											post_tag: [ 'tag2', 'tag3' ],
+											post_tag: ['tag2', 'tag3'],
 										},
 									},
 								],
@@ -1125,37 +1125,37 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( {
+			expect(editedPost).to.eql({
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				terms: {
-					post_tag: [ 'tag2', 'tag3' ],
+					post_tag: ['tag2', 'tag3'],
 					category: {
 						category3: { ID: 3 },
 						category4: { ID: 4 },
 					},
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should return revisions with array properties overwriting previous versions', () => {
+		test('should return revisions with array properties overwriting previous versions', () => {
 			// This tests removal of a term from a non-hierarchical taxonomy
 			const editedPost = getEditedPost(
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
 										site_ID: 2916284,
 										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 										terms: {
-											post_tag: [ 'tag1', 'tag2' ],
+											post_tag: ['tag1', 'tag2'],
 											category: {
 												category3: { ID: 3 },
 												category4: { ID: 4 },
@@ -1163,14 +1163,14 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
 								841: [
 									{
 										terms: {
-											post_tag: [ 'tag1' ],
+											post_tag: ['tag1'],
 										},
 									},
 								],
@@ -1182,21 +1182,21 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( {
+			expect(editedPost).to.eql({
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				terms: {
-					post_tag: [ 'tag1' ],
+					post_tag: ['tag1'],
 					category: {
 						category3: { ID: 3 },
 						category4: { ID: 4 },
 					},
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should memoize the merged post if there are no changes from previous call', () => {
+		test('should memoize the merged post if there are no changes from previous call', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1208,46 +1208,46 @@ describe( 'selectors', () => {
 			const state = {
 				posts: {
 					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 					},
 					queries: {
-						2916284: new PostQueryManager( {
+						2916284: new PostQueryManager({
 							items: {
 								841: postObject,
 							},
-						} ),
+						}),
 					},
 					edits: {
 						2916284: {
-							841: [ { title: 'Hello World' } ],
+							841: [{ title: 'Hello World' }],
 						},
 					},
 				},
 			};
 
-			const editedPost1 = getEditedPost( state, 2916284, 841 );
-			const editedPost2 = getEditedPost( state, 2916284, 841 );
+			const editedPost1 = getEditedPost(state, 2916284, 841);
+			const editedPost2 = getEditedPost(state, 2916284, 841);
 
 			// check for exact (===) equality
-			expect( editedPost1 ).to.equal( editedPost2 );
-		} );
+			expect(editedPost1).to.equal(editedPost2);
+		});
 
-		test( 'should return updated post object if the original post changes', () => {
+		test('should return updated post object if the original post changes', () => {
 			// items key will not change
 			const items = {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 			};
 
 			// edits key will not change
 			const edits = {
 				2916284: {
-					841: [ { title: 'Hello World' } ],
+					841: [{ title: 'Hello World' }],
 				},
 			};
 
 			// queries are different for each state
 			const queries1 = {
-				2916284: new PostQueryManager( {
+				2916284: new PostQueryManager({
 					items: {
 						841: {
 							ID: 841,
@@ -1257,11 +1257,11 @@ describe( 'selectors', () => {
 							title: 'Hello',
 						},
 					},
-				} ),
+				}),
 			};
 
 			const queries2 = {
-				2916284: new PostQueryManager( {
+				2916284: new PostQueryManager({
 					items: {
 						841: {
 							ID: 841,
@@ -1271,7 +1271,7 @@ describe( 'selectors', () => {
 							title: 'Hello',
 						},
 					},
-				} ),
+				}),
 			};
 
 			const state1 = {
@@ -1290,24 +1290,24 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const editedPost1 = getEditedPost( state1, 2916284, 841 );
-			const editedPost2 = getEditedPost( state2, 2916284, 841 );
+			const editedPost1 = getEditedPost(state1, 2916284, 841);
+			const editedPost2 = getEditedPost(state2, 2916284, 841);
 
 			// check that the values are different
-			expect( editedPost1 ).to.not.equal( editedPost2 );
-			expect( editedPost1.status ).to.equal( 'draft' );
-			expect( editedPost2.status ).to.equal( 'trash' );
-		} );
+			expect(editedPost1).to.not.equal(editedPost2);
+			expect(editedPost1.status).to.equal('draft');
+			expect(editedPost2.status).to.equal('trash');
+		});
 
-		test( 'should return updated post object if the post edits change', () => {
+		test('should return updated post object if the post edits change', () => {
 			// items key will not change
 			const items = {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 			};
 
 			// queries key will not change
 			const queries = {
-				2916284: new PostQueryManager( {
+				2916284: new PostQueryManager({
 					items: {
 						841: {
 							ID: 841,
@@ -1317,19 +1317,19 @@ describe( 'selectors', () => {
 							title: 'Hello',
 						},
 					},
-				} ),
+				}),
 			};
 
 			// edits are different for each state
 			const edits1 = {
 				2916284: {
-					841: [ { title: 'Hello World' } ],
+					841: [{ title: 'Hello World' }],
 				},
 			};
 
 			const edits2 = {
 				2916284: {
-					841: [ { title: 'Hello World!' } ],
+					841: [{ title: 'Hello World!' }],
 				},
 			};
 
@@ -1349,18 +1349,18 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const editedPost1 = getEditedPost( state1, 2916284, 841 );
-			const editedPost2 = getEditedPost( state2, 2916284, 841 );
+			const editedPost1 = getEditedPost(state1, 2916284, 841);
+			const editedPost2 = getEditedPost(state2, 2916284, 841);
 
 			// check that the values are different
-			expect( editedPost1 ).to.not.equal( editedPost2 );
-			expect( editedPost1.title ).to.equal( 'Hello World' );
-			expect( editedPost2.title ).to.equal( 'Hello World!' );
-		} );
-	} );
+			expect(editedPost1).to.not.equal(editedPost2);
+			expect(editedPost1.title).to.equal('Hello World');
+			expect(editedPost2.title).to.equal('Hello World!');
+		});
+	});
 
-	describe( 'getPostEdits()', () => {
-		test( 'should return null if no edits exist for a new post', () => {
+	describe('getPostEdits()', () => {
+		test('should return null if no edits exist for a new post', () => {
 			const postEdits = getPostEdits(
 				{
 					posts: {
@@ -1372,10 +1372,10 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( postEdits ).to.be.null;
-		} );
+			expect(postEdits).to.be.null;
+		});
 
-		test( 'should return null if no edits exist for an existing post', () => {
+		test('should return null if no edits exist for an existing post', () => {
 			const postEdits = getPostEdits(
 				{
 					posts: {
@@ -1388,10 +1388,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( postEdits ).to.be.null;
-		} );
+			expect(postEdits).to.be.null;
+		});
 
-		test( 'should return the edited attributes for a new post', () => {
+		test('should return the edited attributes for a new post', () => {
 			const postEdits = getPostEdits(
 				{
 					posts: {
@@ -1399,7 +1399,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': [ { title: 'Hello World!' } ],
+								'': [{ title: 'Hello World!' }],
 							},
 						},
 					},
@@ -1407,12 +1407,12 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( postEdits ).to.eql( {
+			expect(postEdits).to.eql({
 				title: 'Hello World!',
-			} );
-		} );
+			});
+		});
 
-		test( 'should return the edited attributes for an existing post', () => {
+		test('should return the edited attributes for an existing post', () => {
 			const postEdits = getPostEdits(
 				{
 					posts: {
@@ -1420,7 +1420,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								841: [ { title: 'Hello World!' } ],
+								841: [{ title: 'Hello World!' }],
 							},
 						},
 					},
@@ -1429,14 +1429,14 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( postEdits ).to.eql( {
+			expect(postEdits).to.eql({
 				title: 'Hello World!',
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'getEditedPostValue()', () => {
-		test( 'should return undefined if the post does not exist', () => {
+	describe('getEditedPostValue()', () => {
+		test('should return undefined if the post does not exist', () => {
 			const editedPostValue = getEditedPostValue(
 				{
 					posts: {
@@ -1450,10 +1450,10 @@ describe( 'selectors', () => {
 				'title'
 			);
 
-			expect( editedPostValue ).to.be.undefined;
-		} );
+			expect(editedPostValue).to.be.undefined;
+		});
 
-		test( 'should return the assigned post value', () => {
+		test('should return the assigned post value', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1464,16 +1464,16 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { title: 'Hello World!' } ],
+								841: [{ title: 'Hello World!' }],
 							},
 						},
 					},
@@ -1483,10 +1483,10 @@ describe( 'selectors', () => {
 				'title'
 			);
 
-			expect( editedPostValue ).to.equal( 'Hello World!' );
-		} );
+			expect(editedPostValue).to.equal('Hello World!');
+		});
 
-		test( 'should return the assigned nested post value', () => {
+		test('should return the assigned nested post value', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1499,12 +1499,12 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
@@ -1524,12 +1524,12 @@ describe( 'selectors', () => {
 				'discussion.pings_open'
 			);
 
-			expect( editedPostValue ).to.be.true;
-		} );
-	} );
+			expect(editedPostValue).to.be.true;
+		});
+	});
 
-	describe( 'isEditedPostPasswordProtected()', () => {
-		test( 'should return false if the post does not exist', () => {
+	describe('isEditedPostPasswordProtected()', () => {
+		test('should return false if the post does not exist', () => {
 			const protectedPost = isEditedPostPasswordProtected(
 				{
 					posts: {
@@ -1542,10 +1542,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( protectedPost ).to.be.false;
-		} );
+			expect(protectedPost).to.be.false;
+		});
 
-		test( 'should return false if post password is a zero length string', () => {
+		test('should return false if post password is a zero length string', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1557,16 +1557,16 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { password: '' } ],
+								841: [{ password: '' }],
 							},
 						},
 					},
@@ -1575,10 +1575,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( protectedPost ).to.be.false;
-		} );
+			expect(protectedPost).to.be.false;
+		});
 
-		test( 'should return true if post password is a non-zero length string', () => {
+		test('should return true if post password is a non-zero length string', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1590,16 +1590,16 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { password: 'secret' } ],
+								841: [{ password: 'secret' }],
 							},
 						},
 					},
@@ -1608,10 +1608,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( protectedPost ).to.be.true;
-		} );
+			expect(protectedPost).to.be.true;
+		});
 
-		test( 'should return true if post password is whitespace only', () => {
+		test('should return true if post password is whitespace only', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1623,16 +1623,16 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { password: ' ' } ],
+								841: [{ password: ' ' }],
 							},
 						},
 					},
@@ -1641,12 +1641,12 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( protectedPost ).to.be.true;
-		} );
-	} );
+			expect(protectedPost).to.be.true;
+		});
+	});
 
-	describe( 'isEditedPostPasswordProtectedWithValidPassword()', () => {
-		test( 'should return false if the post does not exist', () => {
+	describe('isEditedPostPasswordProtectedWithValidPassword()', () => {
+		test('should return false if the post does not exist', () => {
 			const isPasswordValid = isEditedPostPasswordProtectedWithValidPassword(
 				{
 					posts: {
@@ -1659,10 +1659,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPasswordValid ).to.be.false;
-		} );
+			expect(isPasswordValid).to.be.false;
+		});
 
-		test( 'should return false if post password is a zero length string', () => {
+		test('should return false if post password is a zero length string', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1674,16 +1674,16 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { password: '' } ],
+								841: [{ password: '' }],
 							},
 						},
 					},
@@ -1692,10 +1692,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPasswordValid ).to.be.false;
-		} );
+			expect(isPasswordValid).to.be.false;
+		});
 
-		test( 'should return true if post password is a non-zero length string', () => {
+		test('should return true if post password is a non-zero length string', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1707,16 +1707,16 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { password: 'secret' } ],
+								841: [{ password: 'secret' }],
 							},
 						},
 					},
@@ -1725,10 +1725,10 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPasswordValid ).to.be.true;
-		} );
+			expect(isPasswordValid).to.be.true;
+		});
 
-		test( 'should return false if post password is whitespace only', () => {
+		test('should return false if post password is whitespace only', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1740,16 +1740,16 @@ describe( 'selectors', () => {
 				{
 					posts: {
 						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+							'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 						},
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: { 841: postObject },
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { password: ' ' } ],
+								841: [{ password: ' ' }],
 							},
 						},
 					},
@@ -1758,21 +1758,21 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPasswordValid ).to.be.false;
-		} );
-	} );
+			expect(isPasswordValid).to.be.false;
+		});
+	});
 
-	describe( 'isEditedPostDirty()', () => {
-		beforeEach( () => {
+	describe('isEditedPostDirty()', () => {
+		beforeEach(() => {
 			isEditedPostDirty.memoizedSelector.cache.clear();
-		} );
+		});
 
-		test( 'should return false if there are no edits for the post', () => {
+		test('should return false if there are no edits for the post', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -1780,7 +1780,7 @@ describe( 'selectors', () => {
 										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {},
 					},
@@ -1794,15 +1794,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( 'should return false if edited with a type', () => {
+		test('should return false if edited with a type', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -1811,11 +1811,11 @@ describe( 'selectors', () => {
 										type: 'post',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { type: 'post' } ],
+								841: [{ type: 'post' }],
 							},
 						},
 					},
@@ -1829,17 +1829,17 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( 'should return false if newly edited with custom type', () => {
+		test('should return false if newly edited with custom type', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {},
 						edits: {
 							2916284: {
-								'': [ { type: 'jetpack-portfolio' } ],
+								'': [{ type: 'jetpack-portfolio' }],
 							},
 						},
 					},
@@ -1852,17 +1852,17 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( 'should return false if no saved post and value matches default for new post', () => {
+		test('should return false if no saved post and value matches default for new post', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {},
 						edits: {
 							2916284: {
-								'': [ { status: 'draft' } ],
+								'': [{ status: 'draft' }],
 							},
 						},
 					},
@@ -1875,17 +1875,17 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( 'should return true if no saved post and value does not match default for new post', () => {
+		test('should return true if no saved post and value does not match default for new post', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {},
 						edits: {
 							2916284: {
-								'': [ { status: 'publish' } ],
+								'': [{ status: 'publish' }],
 							},
 						},
 					},
@@ -1898,17 +1898,17 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isDirty ).to.be.true;
-		} );
+			expect(isDirty).to.be.true;
+		});
 
-		test( 'should return true if no saved post and no default exists for key', () => {
+		test('should return true if no saved post and no default exists for key', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {},
 						edits: {
 							2916284: {
-								'': [ { author: 'testonesite2014' } ],
+								'': [{ author: 'testonesite2014' }],
 							},
 						},
 					},
@@ -1921,15 +1921,15 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isDirty ).to.be.true;
-		} );
+			expect(isDirty).to.be.true;
+		});
 
-		test( 'should return false if saved post value equals edited post value', () => {
+		test('should return false if saved post value equals edited post value', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -1938,11 +1938,11 @@ describe( 'selectors', () => {
 										title: 'Hello World',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { title: 'Hello World' } ],
+								841: [{ title: 'Hello World' }],
 							},
 						},
 					},
@@ -1956,15 +1956,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( 'should return true if edited post is unchanged but the raw content is different', () => {
+		test('should return true if edited post is unchanged but the raw content is different', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -1973,11 +1973,11 @@ describe( 'selectors', () => {
 										content: 'Hello World',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { content: 'Hello World' } ],
+								841: [{ content: 'Hello World' }],
 							},
 						},
 					},
@@ -1994,15 +1994,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.true;
-		} );
+			expect(isDirty).to.be.true;
+		});
 
-		test( 'should return true if saved post value does not equal edited post value', () => {
+		test('should return true if saved post value does not equal edited post value', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2011,11 +2011,11 @@ describe( 'selectors', () => {
 										title: 'Hello World',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { title: 'Hello World!' } ],
+								841: [{ title: 'Hello World!' }],
 							},
 						},
 					},
@@ -2029,15 +2029,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.true;
-		} );
+			expect(isDirty).to.be.true;
+		});
 
-		test( 'should return true if saved post parent attr changes', () => {
+		test('should return true if saved post parent attr changes', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2045,11 +2045,11 @@ describe( 'selectors', () => {
 										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { parent: 10 } ],
+								841: [{ parent: 10 }],
 							},
 						},
 					},
@@ -2063,15 +2063,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.true;
-		} );
+			expect(isDirty).to.be.true;
+		});
 
-		test( "should return false if saved post parent attr doesn't change", () => {
+		test("should return false if saved post parent attr doesn't change", () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2082,11 +2082,11 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { parent: 10 } ],
+								841: [{ parent: 10 }],
 							},
 						},
 					},
@@ -2100,28 +2100,28 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( 'should return true if saved post date changes', () => {
+		test('should return true if saved post date changes', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
 										site_ID: 2916284,
 										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										date: moment( '2016-09-14T15:47:33-04:00' ),
+										date: moment('2016-09-14T15:47:33-04:00'),
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { date: moment( '2017-09-14T15:47:33-04:00' ) } ],
+								841: [{ date: moment('2017-09-14T15:47:33-04:00') }],
 							},
 						},
 					},
@@ -2135,28 +2135,28 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.true;
-		} );
+			expect(isDirty).to.be.true;
+		});
 
-		test( "should return false if saved post date doesn't change", () => {
+		test("should return false if saved post date doesn't change", () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
 										site_ID: 2916284,
 										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										date: moment( '2016-09-14T15:47:33-04:00' ),
+										date: moment('2016-09-14T15:47:33-04:00'),
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { date: moment( '2016-09-14T15:47:33-04:00' ) } ],
+								841: [{ date: moment('2016-09-14T15:47:33-04:00') }],
 							},
 						},
 					},
@@ -2170,15 +2170,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( 'should return true if discussion options change', () => {
+		test('should return true if discussion options change', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2192,7 +2192,7 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
@@ -2217,15 +2217,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.true;
-		} );
+			expect(isDirty).to.be.true;
+		});
 
-		test( "should return false if discussion options didn't change", () => {
+		test("should return false if discussion options didn't change", () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2239,7 +2239,7 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
@@ -2264,15 +2264,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( "should return false if author ID didn't change", () => {
+		test("should return false if author ID didn't change", () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2284,7 +2284,7 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
@@ -2309,15 +2309,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( "should return false if featured image ID didn't change", () => {
+		test("should return false if featured image ID didn't change", () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2329,11 +2329,11 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { featured_image: 123 } ],
+								841: [{ featured_image: 123 }],
 							},
 						},
 					},
@@ -2347,20 +2347,20 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isDirty ).to.be.false;
-		} );
+			expect(isDirty).to.be.false;
+		});
 
-		test( 'should return true if there are unapplied metadata edits', () => {
+		test('should return true if there are unapplied metadata edits', () => {
 			const queries = {
-				2916284: new PostQueryManager( {
+				2916284: new PostQueryManager({
 					items: {
 						841: {
 							ID: 841,
 							site_ID: 2916284,
-							metadata: [ { key: 'seo_description', value: 'Hello' } ],
+							metadata: [{ key: 'seo_description', value: 'Hello' }],
 						},
 					},
-				} ),
+				}),
 			};
 
 			// check unapplied metadata update
@@ -2401,7 +2401,7 @@ describe( 'selectors', () => {
 			// check unapplied metadata delete
 			const deleteEdits = {
 				2916284: {
-					841: [ { metadata: [ { key: 'seo_description', operation: 'delete' } ] } ],
+					841: [{ metadata: [{ key: 'seo_description', operation: 'delete' }] }],
 				},
 			};
 
@@ -2422,23 +2422,23 @@ describe( 'selectors', () => {
 					841
 				)
 			).to.be.true;
-		} );
+		});
 
-		test( 'should return false if all metadata edits are already applied', () => {
+		test('should return false if all metadata edits are already applied', () => {
 			expect(
 				isEditedPostDirty(
 					{
 						posts: {
 							queries: {
-								2916284: new PostQueryManager( {
+								2916284: new PostQueryManager({
 									items: {
 										841: {
 											ID: 841,
 											site_ID: 2916284,
-											metadata: [ { key: 'seo_description', value: 'Hello World' } ],
+											metadata: [{ key: 'seo_description', value: 'Hello World' }],
 										},
 									},
-								} ),
+								}),
 							},
 							edits: {
 								2916284: {
@@ -2467,24 +2467,24 @@ describe( 'selectors', () => {
 					841
 				)
 			).to.be.false;
-		} );
+		});
 
-		test( 'should start returning false after update to original post makes the edits noop', () => {
+		test('should start returning false after update to original post makes the edits noop', () => {
 			// items key will not change
 			const items = {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
 			};
 
 			// edits key will not change
 			const edits = {
 				2916284: {
-					841: [ { title: 'Hello World' } ],
+					841: [{ title: 'Hello World' }],
 				},
 			};
 
 			// queries are different for each state
 			const queries1 = {
-				2916284: new PostQueryManager( {
+				2916284: new PostQueryManager({
 					items: {
 						841: {
 							ID: 841,
@@ -2493,11 +2493,11 @@ describe( 'selectors', () => {
 							title: 'Hello',
 						},
 					},
-				} ),
+				}),
 			};
 
 			const queries2 = {
-				2916284: new PostQueryManager( {
+				2916284: new PostQueryManager({
 					items: {
 						841: {
 							ID: 841,
@@ -2506,7 +2506,7 @@ describe( 'selectors', () => {
 							title: 'Hello World',
 						},
 					},
-				} ),
+				}),
 			};
 
 			const state1 = {
@@ -2536,14 +2536,14 @@ describe( 'selectors', () => {
 			};
 
 			// there are edits that change the post
-			expect( isEditedPostDirty( state1, 2916284, 841 ) ).to.be.true;
+			expect(isEditedPostDirty(state1, 2916284, 841)).to.be.true;
 			// the edits became noops and memoization cache was cleared
-			expect( isEditedPostDirty( state2, 2916284, 841 ) ).to.be.false;
-		} );
-	} );
+			expect(isEditedPostDirty(state2, 2916284, 841)).to.be.false;
+		});
+	});
 
-	describe( 'getPostPreviewUrl()', () => {
-		test( 'should return null if the post is not known', () => {
+	describe('getPostPreviewUrl()', () => {
+		test('should return null if the post is not known', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
@@ -2558,16 +2558,16 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.be.null;
-		} );
+			expect(previewUrl).to.be.null;
+		});
 
-		test( 'should return null if the post has no URL', () => {
+		test('should return null if the post has no URL', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2575,7 +2575,7 @@ describe( 'selectors', () => {
 										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 					sites: {
@@ -2586,16 +2586,16 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.be.null;
-		} );
+			expect(previewUrl).to.be.null;
+		});
 
-		test( 'should return null if the post is trashed', () => {
+		test('should return null if the post is trashed', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2605,7 +2605,7 @@ describe( 'selectors', () => {
 										status: 'trash',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 					sites: {
@@ -2616,16 +2616,16 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.be.null;
-		} );
+			expect(previewUrl).to.be.null;
+		});
 
-		test( 'should prefer the post preview URL if available', () => {
+		test('should prefer the post preview URL if available', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2636,7 +2636,7 @@ describe( 'selectors', () => {
 										preview_URL: 'https://example.com/preview-url',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 					sites: {
@@ -2647,16 +2647,16 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.equal( 'https://example.com/preview-url' );
-		} );
+			expect(previewUrl).to.equal('https://example.com/preview-url');
+		});
 
-		test( 'should use post URL if preview URL not available', () => {
+		test('should use post URL if preview URL not available', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2666,7 +2666,7 @@ describe( 'selectors', () => {
 										URL: 'https://example.com/post-url',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 					sites: {
@@ -2677,16 +2677,16 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.equal( 'https://example.com/post-url' );
-		} );
+			expect(previewUrl).to.equal('https://example.com/post-url');
+		});
 
-		test( 'should change http to https if mapped domain', () => {
+		test('should change http to https if mapped domain', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2696,7 +2696,7 @@ describe( 'selectors', () => {
 										URL: 'http://example.com/post-url',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 					sites: {
@@ -2719,16 +2719,16 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.equal( 'https://example.wordpress.com/post-url' );
-		} );
+			expect(previewUrl).to.equal('https://example.wordpress.com/post-url');
+		});
 
-		test( 'should append preview query argument to non-published posts', () => {
+		test('should append preview query argument to non-published posts', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2738,7 +2738,7 @@ describe( 'selectors', () => {
 										URL: 'https://example.com/post-url?other_arg=1',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 					sites: {
@@ -2749,12 +2749,12 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( previewUrl ).to.equal( 'https://example.com/post-url?other_arg=1&preview=true' );
-		} );
-	} );
+			expect(previewUrl).to.equal('https://example.com/post-url?other_arg=1&preview=true');
+		});
+	});
 
-	describe( 'isPostPublished()', () => {
-		test( 'should return null if the post is not known', () => {
+	describe('isPostPublished()', () => {
+		test('should return null if the post is not known', () => {
 			const isPublished = isPostPublished(
 				{
 					posts: {
@@ -2765,15 +2765,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPublished ).to.be.null;
-		} );
+			expect(isPublished).to.be.null;
+		});
 
-		test( 'should return true if the post status is publish', () => {
+		test('should return true if the post status is publish', () => {
 			const isPublished = isPostPublished(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2782,7 +2782,7 @@ describe( 'selectors', () => {
 										status: 'publish',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -2790,15 +2790,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPublished ).to.be.true;
-		} );
+			expect(isPublished).to.be.true;
+		});
 
-		test( 'should return true if the post status is private', () => {
+		test('should return true if the post status is private', () => {
 			const isPublished = isPostPublished(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2807,7 +2807,7 @@ describe( 'selectors', () => {
 										status: 'private',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -2815,15 +2815,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPublished ).to.be.true;
-		} );
+			expect(isPublished).to.be.true;
+		});
 
-		test( 'should return false if the post status is draft', () => {
+		test('should return false if the post status is draft', () => {
 			const isPublished = isPostPublished(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2832,7 +2832,7 @@ describe( 'selectors', () => {
 										status: 'draft',
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -2840,17 +2840,17 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPublished ).to.be.false;
-		} );
+			expect(isPublished).to.be.false;
+		});
 
-		test( 'should return false if the post status is future and date is in future', () => {
+		test('should return false if the post status is future and date is in future', () => {
 			const tenMinutes = 1000 * 60;
 			const postDate = Date.now() + tenMinutes;
 			const isPublished = isPostPublished(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2860,7 +2860,7 @@ describe( 'selectors', () => {
 										date: postDate,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -2868,17 +2868,17 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPublished ).to.be.false;
-		} );
+			expect(isPublished).to.be.false;
+		});
 
-		test( 'should return true if the post status is future and date is in past', () => {
+		test('should return true if the post status is future and date is in past', () => {
 			const tenMinutes = 1000 * 60;
 			const postDate = Date.now() - tenMinutes;
 			const isPublished = isPostPublished(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2888,7 +2888,7 @@ describe( 'selectors', () => {
 										date: postDate,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -2896,12 +2896,12 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( isPublished ).to.be.true;
-		} );
-	} );
+			expect(isPublished).to.be.true;
+		});
+	});
 
-	describe( 'getEditedPostSlug()', () => {
-		test( 'should return undefined if the post is not known', () => {
+	describe('getEditedPostSlug()', () => {
+		test('should return undefined if the post is not known', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2912,15 +2912,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.be.undefined;
-		} );
+			expect(slug).to.be.undefined;
+		});
 
-		test( 'should return post.slug if post is published', () => {
+		test('should return post.slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2930,7 +2930,7 @@ describe( 'selectors', () => {
 										slug: 'chewbacca',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {},
 					},
@@ -2939,15 +2939,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql( 'chewbacca' );
-		} );
+			expect(slug).to.eql('chewbacca');
+		});
 
-		test( 'should return decoded non-latin post.slug if post is published', () => {
+		test('should return decoded non-latin post.slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2957,7 +2957,7 @@ describe( 'selectors', () => {
 										slug: '%D7%96%D7%94%D7%95%20%D7%A2%D7%99%D7%9F%20%D7%94%D7%A0%D7%9E%D7%A8',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {},
 					},
@@ -2966,15 +2966,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql( 'זהו עין הנמר' );
-		} );
+			expect(slug).to.eql('זהו עין הנמר');
+		});
 
-		test( 'should return undecoded post.slug if post with malformed URI sequence is published', () => {
+		test('should return undecoded post.slug if post with malformed URI sequence is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -2984,7 +2984,7 @@ describe( 'selectors', () => {
 										slug: 'most-of-this-slug-is-fine-%F0%9F%99%88%-but-the-following-is-not-%e42',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {},
 					},
@@ -2993,17 +2993,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql(
-				'most-of-this-slug-is-fine-%F0%9F%99%88%-but-the-following-is-not-%e42'
-			);
-		} );
+			expect(slug).to.eql('most-of-this-slug-is-fine-%F0%9F%99%88%-but-the-following-is-not-%e42');
+		});
 
-		test( 'should return decoded post.slug with emoji sequences if post is published', () => {
+		test('should return decoded post.slug with emoji sequences if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -3013,7 +3011,7 @@ describe( 'selectors', () => {
 										slug: '%F0%9F%99%88%F0%9F%99%8A%F0%9F%99%89',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {},
 					},
@@ -3022,15 +3020,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql( '🙈🙊🙉' );
-		} );
+			expect(slug).to.eql('🙈🙊🙉');
+		});
 
-		test( 'should return edited slug if post is not published', () => {
+		test('should return edited slug if post is not published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -3043,11 +3041,11 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { slug: 'jedi' } ],
+								841: [{ slug: 'jedi' }],
 							},
 						},
 					},
@@ -3056,15 +3054,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql( 'jedi' );
-		} );
+			expect(slug).to.eql('jedi');
+		});
 
-		test( 'should return suggested-slug if post is not published', () => {
+		test('should return suggested-slug if post is not published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -3076,7 +3074,7 @@ describe( 'selectors', () => {
 										},
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {},
 					},
@@ -3085,15 +3083,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql( 'chewbacca' );
-		} );
+			expect(slug).to.eql('chewbacca');
+		});
 
-		test( 'should return slug if post is not published and slug is set', () => {
+		test('should return slug if post is not published and slug is set', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -3106,7 +3104,7 @@ describe( 'selectors', () => {
 										slug: 'jedi',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {},
 					},
@@ -3115,15 +3113,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql( 'jedi' );
-		} );
+			expect(slug).to.eql('jedi');
+		});
 
-		test( 'should return edited slug if post is published', () => {
+		test('should return edited slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -3136,11 +3134,11 @@ describe( 'selectors', () => {
 										slug: 'jedi',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { slug: 'ewok' } ],
+								841: [{ slug: 'ewok' }],
 							},
 						},
 					},
@@ -3149,15 +3147,15 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql( 'ewok' );
-		} );
+			expect(slug).to.eql('ewok');
+		});
 
-		test( 'should return an empty edited slug if post is published', () => {
+		test('should return an empty edited slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
 						queries: {
-							2916284: new PostQueryManager( {
+							2916284: new PostQueryManager({
 								items: {
 									841: {
 										ID: 841,
@@ -3170,11 +3168,11 @@ describe( 'selectors', () => {
 										slug: 'jedi',
 									},
 								},
-							} ),
+							}),
 						},
 						edits: {
 							2916284: {
-								841: [ { slug: '' } ],
+								841: [{ slug: '' }],
 							},
 						},
 					},
@@ -3183,12 +3181,12 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( slug ).to.eql( '' );
-		} );
-	} );
+			expect(slug).to.eql('');
+		});
+	});
 
-	describe( 'getSitePostsByTerm()', () => {
-		test( 'should return an array of post objects for the site matching the termId', () => {
+	describe('getSitePostsByTerm()', () => {
+		test('should return an array of post objects for the site matching the termId', () => {
 			const postObjects = {
 				2916284: {
 					'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -3197,7 +3195,7 @@ describe( 'selectors', () => {
 						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 						title: 'Hello World',
 						terms: {
-							category: [ { ID: 10 } ],
+							category: [{ ID: 10 }],
 						},
 					},
 					'6c831c187ffef321eb43a67761a525a3': {
@@ -3211,16 +3209,16 @@ describe( 'selectors', () => {
 			const state = {
 				posts: {
 					queries: {
-						2916284: new PostQueryManager( {
-							items: postObjects[ 2916284 ],
-						} ),
+						2916284: new PostQueryManager({
+							items: postObjects[2916284],
+						}),
 					},
 				},
 			};
 
-			expect( getSitePostsByTerm( state, 2916284, 'category', 10 ) ).to.have.members( [
-				postObjects[ 2916284 ][ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-			] );
-		} );
-	} );
-} );
+			expect(getSitePostsByTerm(state, 2916284, 'category', 10)).to.have.members([
+				postObjects[2916284]['3d097cb7c5473c169bba0eb8e3c6cb64'],
+			]);
+		});
+	});
+});

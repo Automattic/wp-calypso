@@ -3,29 +3,29 @@
  */
 import getPostRevisions from 'state/selectors/get-post-revisions';
 
-describe( 'getPostRevisions', () => {
+describe('getPostRevisions', () => {
 	const SITE_ID = 12345678;
 	const POST_ID = 10;
 
-	const stateWithRevisions = revisions => ( {
+	const stateWithRevisions = (revisions) => ({
 		posts: {
 			revisions: {
 				diffs: {
-					[ SITE_ID ]: {
-						[ POST_ID ]: {
+					[SITE_ID]: {
+						[POST_ID]: {
 							revisions,
 						},
 					},
 				},
 			},
 		},
-	} );
+	});
 
-	test( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {
-		expect( getPostRevisions( stateWithRevisions( {} ), SITE_ID, POST_ID ) ).toEqual( [] );
-	} );
+	test('should return an empty array if there is no revision in the state for `siteId, postId`', () => {
+		expect(getPostRevisions(stateWithRevisions({}), SITE_ID, POST_ID)).toEqual([]);
+	});
 
-	test( 'should return a sorted array of revisions', () => {
+	test('should return a sorted array of revisions', () => {
 		const revisions = {
 			168: {
 				post_date_gmt: '2017-12-12 18:24:37Z',
@@ -57,10 +57,10 @@ describe( 'getPostRevisions', () => {
 			},
 		};
 
-		const sortedRevisions = getPostRevisions( stateWithRevisions( revisions ), SITE_ID, POST_ID );
-		const sortedRevisionIds = sortedRevisions.map( revision => revision.id );
+		const sortedRevisions = getPostRevisions(stateWithRevisions(revisions), SITE_ID, POST_ID);
+		const sortedRevisionIds = sortedRevisions.map((revision) => revision.id);
 
 		// revisions with the same `post_modified_gmt` timestamp should be further desc-sorted by ID
-		expect( sortedRevisionIds ).toEqual( [ 170, 169, 168 ] );
-	} );
-} );
+		expect(sortedRevisionIds).toEqual([170, 169, 168]);
+	});
+});

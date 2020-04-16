@@ -14,46 +14,46 @@ import {
 } from 'state/themes/selectors';
 
 // Reorder and remove invalid filters to redirect to canonical URL
-export function validateFilters( context, next ) {
-	if ( ! context.params.filter ) {
+export function validateFilters(context, next) {
+	if (!context.params.filter) {
 		return next();
 	}
 
 	// Page.js replaces + with \s
-	const filterParam = context.params.filter.replace( /\s/g, '+' );
+	const filterParam = context.params.filter.replace(/\s/g, '+');
 
 	// Accept commas, which were previously used as canonical filter separators
 	const validFilters = filterParam
-		.split( /[,+]/ )
-		.filter( term => isValidThemeFilterTerm( context.store.getState(), term ) );
-	const sortedValidFilters = sortFilterTerms( context, validFilters ).join( '+' );
+		.split(/[,+]/)
+		.filter((term) => isValidThemeFilterTerm(context.store.getState(), term));
+	const sortedValidFilters = sortFilterTerms(context, validFilters).join('+');
 
-	if ( sortedValidFilters !== filterParam ) {
+	if (sortedValidFilters !== filterParam) {
 		const path = context.path;
 		const newPath = path.replace(
-			`/filter/${ filterParam }`,
-			sortedValidFilters ? `/filter/${ sortedValidFilters }` : ''
+			`/filter/${filterParam}`,
+			sortedValidFilters ? `/filter/${sortedValidFilters}` : ''
 		);
-		if ( context.isServerSide ) {
-			return context.res.redirect( newPath );
+		if (context.isServerSide) {
+			return context.res.redirect(newPath);
 		}
-		return page.redirect( newPath );
+		return page.redirect(newPath);
 	}
 
 	next();
 }
 
-export function validateVertical( context, next ) {
+export function validateVertical(context, next) {
 	const { vertical } = context.params;
 	const { store } = context;
 
-	if ( ! vertical ) {
+	if (!vertical) {
 		return next();
 	}
 
-	if ( ! getThemeFilterTerm( store.getState(), 'subject', vertical ) ) {
-		if ( context.isServerSide ) {
-			return next( 'route' );
+	if (!getThemeFilterTerm(store.getState(), 'subject', vertical)) {
+		if (context.isServerSide) {
+			return next('route');
 		}
 		// Client-side: Terminate routing, rely on server-side rendered markup.
 		return;
@@ -75,9 +75,9 @@ export function validateVertical( context, next ) {
  * @param {Array} terms Array of term strings
  * @returns {Array} Sorted array
  */
-export function sortFilterTerms( context, terms ) {
+export function sortFilterTerms(context, terms) {
 	return terms
-		.map( term => getThemeFilterStringFromTerm( context.store.getState(), term ) )
+		.map((term) => getThemeFilterStringFromTerm(context.store.getState(), term))
 		.sort()
-		.map( filter => getThemeFilterTermFromString( context.store.getState(), filter ) );
+		.map((filter) => getThemeFilterTermFromString(context.store.getState(), filter));
 }

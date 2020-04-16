@@ -32,38 +32,36 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { sendEmailLogin } from 'state/auth/actions';
 
-function sendSMS( phone ) {
-	function onSuccess( dispatch ) {
-		dispatch( successNotice( i18n.translate( 'SMS Sent. Go check your messages!' ) ) );
+function sendSMS(phone) {
+	function onSuccess(dispatch) {
+		dispatch(successNotice(i18n.translate('SMS Sent. Go check your messages!')));
 	}
 
-	function onFailure( dispatch ) {
-		dispatch(
-			errorNotice( i18n.translate( 'We couldn’t send the SMS — double check your number.' ) )
-		);
+	function onFailure(dispatch) {
+		dispatch(errorNotice(i18n.translate('We couldn’t send the SMS — double check your number.')));
 	}
 
-	return http( {
+	return http({
 		method: 'POST',
 		apiNamespace: 'wpcom/v2',
 		path: '/me/get-apps/send-download-sms',
 		body: { phone },
 		onSuccess,
 		onFailure,
-	} );
+	});
 }
 
 class MobileDownloadCard extends React.Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		countriesList: PropTypes.array.isRequired,
-		storedPhone: PropTypes.shape( {
+		storedPhone: PropTypes.shape({
 			countryCode: PropTypes.string,
 			countryNumericCode: PropTypes.string,
 			number: PropTypes.string,
 			numberFull: PropTypes.string,
 			isValid: PropTypes.bool,
-		} ),
+		}),
 		hasLoadedStoredPhone: PropTypes.bool,
 		hasSendingError: PropTypes.bool,
 	};
@@ -73,19 +71,19 @@ class MobileDownloadCard extends React.Component {
 	};
 
 	componentDidMount() {
-		twoStepAuthorization.on( 'change', this.maybeFetchAccountRecoverySettings );
+		twoStepAuthorization.on('change', this.maybeFetchAccountRecoverySettings);
 		this.maybeFetchAccountRecoverySettings();
 	}
 
 	componentWillUnmount() {
-		twoStepAuthorization.off( 'change', this.maybeFetchAccountRecoverySettings );
+		twoStepAuthorization.off('change', this.maybeFetchAccountRecoverySettings);
 	}
 
 	maybeFetchAccountRecoverySettings = () => {
 		const hasReauthData = twoStepAuthorization.data ? true : false;
 		const needsReauth = hasReauthData ? twoStepAuthorization.isReauthRequired() : true;
 
-		if ( needsReauth === false ) {
+		if (needsReauth === false) {
 			this.props.fetchUserSettings();
 			this.props.accountRecoverySettingsFetch();
 		}
@@ -100,7 +98,7 @@ class MobileDownloadCard extends React.Component {
 			isValid: false,
 		};
 
-		if ( ! this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone() ) {
+		if (!this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone()) {
 			return noPreferredNumber;
 		}
 
@@ -117,15 +115,15 @@ class MobileDownloadCard extends React.Component {
 
 		// If the user has typed their own phone number,
 		// that's the most preferred.
-		if ( this.state.phoneNumber !== null ) {
+		if (this.state.phoneNumber !== null) {
 			return this.state.phoneNumber;
 		}
 
 		// We proritize TFA over the account recovery number.
 		// Also, if we have their TFA phone number, but they're not using
 		// it for TFA, we won't show it to them, to avoid creeping them out.
-		if ( tfaNumber !== null && tfaCountryCode !== null && tfaSMSEnabled ) {
-			const countryCode = this.numericCountryCodeForCountryCode( tfaCountryCode );
+		if (tfaNumber !== null && tfaCountryCode !== null && tfaSMSEnabled) {
+			const countryCode = this.numericCountryCodeForCountryCode(tfaCountryCode);
 			const fullNumber = countryCode + tfaNumber;
 
 			return {
@@ -133,14 +131,14 @@ class MobileDownloadCard extends React.Component {
 				countryNumericCode: countryCode,
 				number: tfaNumber,
 				numberFull: fullNumber,
-				isValid: this.phoneNumberIsValid( fullNumber ),
+				isValid: this.phoneNumberIsValid(fullNumber),
 			};
 		}
 
 		// Account recovery number already has the keys formatted in the
 		// way we want, so we can just return it directly.
-		if ( accountRecoveryNumber !== null ) {
-			const isValid = this.phoneNumberIsValid( accountRecoveryNumber.numberFull );
+		if (accountRecoveryNumber !== null) {
+			const isValid = this.phoneNumberIsValid(accountRecoveryNumber.numberFull);
 			accountRecoveryNumber.isValid = isValid;
 
 			return accountRecoveryNumber;
@@ -150,16 +148,16 @@ class MobileDownloadCard extends React.Component {
 		return noPreferredNumber;
 	};
 
-	phoneNumberIsValid( number ) {
-		return ! phoneValidation( number ).error;
+	phoneNumberIsValid(number) {
+		return !phoneValidation(number).error;
 	}
 
-	numericCountryCodeForCountryCode( code ) {
-		const element = this.props.countriesList.find( item => {
+	numericCountryCodeForCountryCode(code) {
+		const element = this.props.countriesList.find((item) => {
 			return item.code === code;
-		} );
+		});
 
-		if ( element !== undefined ) {
+		if (element !== undefined) {
 			return element.numeric_code;
 		}
 
@@ -176,91 +174,85 @@ class MobileDownloadCard extends React.Component {
 		const hasAllData = this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone();
 		const { countryCode, number, isValid } = this.getPreferredNumber();
 		const { isMobile } = userAgent;
-		const featureIsEnabled = ! isMobile;
+		const featureIsEnabled = !isMobile;
 
 		return (
 			<Card className="get-apps__mobile">
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 
 				<div className="get-apps__store-subpanel">
 					<div className="get-apps__card-text">
-						<h3 className="get-apps__card-title">{ translate( 'Mobile Apps' ) }</h3>
-						<p className="get-apps__description">
-							{ translate( 'WordPress at your fingertips.' ) }
-						</p>
+						<h3 className="get-apps__card-title">{translate('Mobile Apps')}</h3>
+						<p className="get-apps__description">{translate('WordPress at your fingertips.')}</p>
 					</div>
 					<div className="get-apps__badges">
 						<AppsBadge
 							storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-get-apps%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-							storeName={ 'android' }
-							titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-							altText={ translate( 'Google Play Store download badge' ) }
+							storeName={'android'}
+							titleText={translate('Download the WordPress Android mobile app.')}
+							altText={translate('Google Play Store download badge')}
 						/>
 						<AppsBadge
 							storeLink="https://itunes.apple.com/app/apple-store/id335703880?pt=299112&ct=calpyso-get-apps-button&mt=8"
-							storeName={ 'ios' }
-							titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-							altText={ translate( 'Apple App Store download badge' ) }
+							storeName={'ios'}
+							titleText={translate('Download the WordPress iOS mobile app.')}
+							altText={translate('Apple App Store download badge')}
 						/>
 					</div>
 				</div>
 
-				{ featureIsEnabled && (
+				{featureIsEnabled && (
 					<div className="get-apps__sms-subpanel">
 						<p>
-							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
+							<strong>{translate('Ready to WordPress on the go?')}</strong>
 							<br />
-							{ translate(
+							{translate(
 								'We’ll send you an SMS message with a download link for the right app for your mobile device.'
-							) }
+							)}
 						</p>
 
 						<div className="get-apps__sms-field-wrapper">
 							<QuerySmsCountries />
 
-							{ hasAllData ? (
+							{hasAllData ? (
 								<FormPhoneInput
-									countriesList={ this.props.countriesList }
-									initialCountryCode={ countryCode }
-									initialPhoneNumber={ number }
-									phoneInputProps={ {
+									countriesList={this.props.countriesList}
+									initialCountryCode={countryCode}
+									initialPhoneNumber={number}
+									phoneInputProps={{
 										onKeyUp: this.onKeyUp,
-									} }
-									onChange={ this.onChange }
+									}}
+									onChange={this.onChange}
 								/>
 							) : (
 								<>
-									<FormPhoneInput countriesList={ this.props.countriesList } isDisabled={ true } />
+									<FormPhoneInput countriesList={this.props.countriesList} isDisabled={true} />
 								</>
-							) }
+							)}
 						</div>
 						<div className="get-apps__sms-button-wrapper">
-							<p>{ translate( 'Standard SMS rates may apply' ) }</p>
+							<p>{translate('Standard SMS rates may apply')}</p>
 
-							<Button
-								className="get-apps__sms-button"
-								onClick={ this.onSubmit }
-								disabled={ ! isValid }
-							>
-								{ translate( 'Text me a link' ) }
+							<Button className="get-apps__sms-button" onClick={this.onSubmit} disabled={!isValid}>
+								{translate('Text me a link')}
 							</Button>
 						</div>
 					</div>
-				) }
+				)}
 
 				<div className="get-apps__magic-link-subpanel">
 					<div className="get-apps__card-text">
 						<p>
-							<strong>{ translate( 'Instantly log in to the mobile app' ) }</strong>
+							<strong>{translate('Instantly log in to the mobile app')}</strong>
 							<br />
-							{ translate(
+							{translate(
 								'Send yourself links to download the app and instantly log in on your mobile device.'
-							) }
+							)}
 						</p>
 					</div>
 					<div className="get-apps__link-button-wrapper">
-						<Button className="get-apps__magic-link-button" onClick={ this.onSubmitLink }>
-							{ translate( 'Email me a log in link' ) }
+						<Button className="get-apps__magic-link-button" onClick={this.onSubmitLink}>
+							{translate('Email me a log in link')}
 						</Button>
 					</div>
 				</div>
@@ -268,8 +260,8 @@ class MobileDownloadCard extends React.Component {
 		);
 	}
 
-	onChange = phoneNumber => {
-		this.setState( {
+	onChange = (phoneNumber) => {
+		this.setState({
 			phoneNumber: {
 				countryCode: phoneNumber.countryData.code,
 				countryNumericCode: phoneNumber.countryData.numeric_code,
@@ -277,39 +269,39 @@ class MobileDownloadCard extends React.Component {
 				numberFull: phoneNumber.phoneNumberFull,
 				isValid: phoneNumber.isValid,
 			},
-		} );
+		});
 	};
 
-	onKeyUp = event => {
-		if ( event.key === 'Enter' ) {
-			this.onSubmit( event );
+	onKeyUp = (event) => {
+		if (event.key === 'Enter') {
+			this.onSubmit(event);
 		}
 	};
 
 	onSubmit = () => {
 		const phoneNumber = this.getPreferredNumber().numberFull;
-		this.props.sendSMS( phoneNumber );
+		this.props.sendSMS(phoneNumber);
 	};
 
 	onSubmitLink = () => {
 		const email = this.props.userSettings.user_email;
-		this.props.sendMagicLink( email );
+		this.props.sendMagicLink(email);
 	};
 }
 
-const sendMagicLink = email =>
+const sendMagicLink = (email) =>
 	withAnalytics(
-		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
-		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
+		recordTracksEvent('calypso_get_apps_magic_link_button_click'),
+		sendEmailLogin(email, { showGlobalNotices: true, isMobileAppLogin: true })
 	);
 
 export default connect(
-	state => ( {
-		countriesList: getCountries( state, 'sms' ),
-		accountRecoveryPhone: getAccountRecoveryPhone( state ),
-		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
-		userSettings: getUserSettings( state ),
-		hasUserSettings: hasUserSettings( state ),
-	} ),
+	(state) => ({
+		countriesList: getCountries(state, 'sms'),
+		accountRecoveryPhone: getAccountRecoveryPhone(state),
+		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady(state),
+		userSettings: getUserSettings(state),
+		hasUserSettings: hasUserSettings(state),
+	}),
 	{ sendSMS, sendMagicLink, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
-)( localize( MobileDownloadCard ) );
+)(localize(MobileDownloadCard));

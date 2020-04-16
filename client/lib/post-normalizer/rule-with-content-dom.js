@@ -9,18 +9,18 @@ import { reduce } from 'lodash';
  */
 import { domForHtml } from './utils';
 
-export default function createDomTransformRunner( transforms ) {
-	return function withContentDOM( post ) {
-		if ( ! post || ! post.content || ! transforms ) {
+export default function createDomTransformRunner(transforms) {
+	return function withContentDOM(post) {
+		if (!post || !post.content || !transforms) {
 			return post;
 		}
 
-		const dom = domForHtml( post.content );
+		const dom = domForHtml(post.content);
 
 		post = reduce(
 			transforms,
-			( memo, transform ) => {
-				return transform( memo, dom );
+			(memo, transform) => {
+				return transform(memo, dom);
 			},
 			post
 		);

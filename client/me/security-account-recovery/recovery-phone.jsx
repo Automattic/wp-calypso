@@ -19,34 +19,34 @@ class RecoveryPhone extends Component {
 		return (
 			<ManageContact
 				type="sms"
-				isLoading={ isLoading }
-				title={ translate( 'Recovery SMS Number', {
+				isLoading={isLoading}
+				title={translate('Recovery SMS Number', {
 					comment: 'Account security',
-				} ) }
-				subtitle={ phone ? phone.numberFull : translate( 'Not set' ) }
-				hasValue={ !! phone }
-				disabled={ disabled }
-				onSave={ this.onSave }
-				onDelete={ this.onDelete }
+				})}
+				subtitle={phone ? phone.numberFull : translate('Not set')}
+				hasValue={!!phone}
+				disabled={disabled}
+				onSave={this.onSave}
+				onDelete={this.onDelete}
 			>
-				<EditPhone storedPhone={ phone } />
+				<EditPhone storedPhone={phone} />
 			</ManageContact>
 		);
 	}
 
-	onSave = phone => {
-		this.props.updatePhone( phone );
+	onSave = (phone) => {
+		this.props.updatePhone(phone);
 	};
 
 	onDelete = () => {
 		const { translate, deletePhone } = this.props;
 
-		accept( translate( 'Are you sure you want to remove the SMS number?' ), accepted => {
-			if ( accepted ) {
+		accept(translate('Are you sure you want to remove the SMS number?'), (accepted) => {
+			if (accepted) {
 				deletePhone();
 			}
-		} );
+		});
 	};
 }
 
-export default localize( RecoveryPhone );
+export default localize(RecoveryPhone);

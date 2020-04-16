@@ -19,13 +19,13 @@ import reducer from './state/reducer';
  */
 import './style.scss';
 
-export default async function( _, addReducer ) {
-	await addReducer( [ 'extensions', 'wpSuperCache' ], reducer );
+export default async function (_, addReducer) {
+	await addReducer(['extensions', 'wpSuperCache'], reducer);
 
-	const validTabSlugs = compact( map( Tabs, ( { slug } ) => slug ) ).join( '|' );
-	page( '/extensions/wp-super-cache', siteSelection, sites, makeLayout, clientRender );
+	const validTabSlugs = compact(map(Tabs, ({ slug }) => slug)).join('|');
+	page('/extensions/wp-super-cache', siteSelection, sites, makeLayout, clientRender);
 	page(
-		`/extensions/wp-super-cache/:tab(${ validTabSlugs })?/:site`,
+		`/extensions/wp-super-cache/:tab(${validTabSlugs})?/:site`,
 		siteSelection,
 		navigation,
 		settings,

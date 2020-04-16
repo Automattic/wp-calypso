@@ -13,7 +13,7 @@ export const schema = {
 				lastUpdated: { type: 'number' },
 				status: {
 					type: 'string',
-					enum: [ 'completed', 'processing', 'pending', 'in-progress', 'invalid' ],
+					enum: ['completed', 'processing', 'pending', 'in-progress', 'invalid'],
 				},
 				stepName: { type: 'string' },
 			},
@@ -31,4 +31,4 @@ export interface StepState {
 	stepName: string;
 }
 
-export type ProgressState = Record< string, StepState >;
+export type ProgressState = Record<string, StepState>;

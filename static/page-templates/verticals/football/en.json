@@ -33,7 +33,7 @@
 		"1 Example Street,Anytown, NY 10100",
 		"(555) 555 1234mail@example.com"
 	],
-	"button": [ "View the latest news" ],
+	"button": ["View the latest news"],
 	"text-contact": [
 		"Come to play some footie with us! call us (123) 444\u20135678 or use the form below."
 	]

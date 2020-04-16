@@ -43,7 +43,7 @@ class NameServers extends React.Component {
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		nameservers: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 	};
 
 	state = {
@@ -51,29 +51,29 @@ class NameServers extends React.Component {
 		nameservers: this.props.nameservers.hasLoadedFromServer ? this.props.nameservers.list : null,
 	};
 
-	UNSAFE_componentWillReceiveProps( props ) {
-		this.setStateWhenLoadedFromServer( props );
+	UNSAFE_componentWillReceiveProps(props) {
+		this.setStateWhenLoadedFromServer(props);
 	}
 
 	hasWpcomNameservers = () => {
-		if ( ! this.props.nameservers.hasLoadedFromServer ) {
+		if (!this.props.nameservers.hasLoadedFromServer) {
 			return true;
 		}
 
-		return isWpcomDefaults( this.state.nameservers );
+		return isWpcomDefaults(this.state.nameservers);
 	};
 
-	setStateWhenLoadedFromServer( props ) {
+	setStateWhenLoadedFromServer(props) {
 		const prevNameservers = this.props.nameservers;
 		const nextNameservers = props.nameservers;
 		const finishedLoading =
-			! prevNameservers.hasLoadedFromServer && nextNameservers.hasLoadedFromServer;
+			!prevNameservers.hasLoadedFromServer && nextNameservers.hasLoadedFromServer;
 
-		if ( ! finishedLoading ) {
+		if (!finishedLoading) {
 			return;
 		}
 
-		this.setState( { nameservers: nextNameservers.list } );
+		this.setState({ nameservers: nextNameservers.list });
 	}
 
 	isLoading() {
@@ -81,9 +81,9 @@ class NameServers extends React.Component {
 	}
 
 	isPendingTransfer() {
-		const domain = getSelectedDomain( this.props );
+		const domain = getSelectedDomain(this.props);
 
-		return get( domain, 'pendingTransfer', false );
+		return get(domain, 'pendingTransfer', false);
 	}
 
 	warning() {
@@ -93,107 +93,107 @@ class NameServers extends React.Component {
 			this.hasWpcomNameservers() ||
 			this.isPendingTransfer() ||
 			this.needsVerification() ||
-			! this.state.nameservers
+			!this.state.nameservers
 		) {
 			return null;
 		}
 
 		return (
-			<Notice status="is-warning" showDismiss={ false }>
-				{ translate(
+			<Notice status="is-warning" showDismiss={false}>
+				{translate(
 					'Your domain must use WordPress.com name servers for your ' +
 						'WordPress.com site to load & other features to be available.'
-				) }{ ' ' }
+				)}{' '}
 				<a
-					href={ CHANGE_NAME_SERVERS }
+					href={CHANGE_NAME_SERVERS}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={ this.handleLearnMoreClick }
+					onClick={this.handleLearnMoreClick}
 				>
-					{ translate( 'Learn more.' ) }
+					{translate('Learn more.')}
 				</a>
 			</Notice>
 		);
 	}
 
 	handleLearnMoreClick = () => {
-		this.props.customNameServersLearnMoreClick( this.props.selectedDomainName );
+		this.props.customNameServersLearnMoreClick(this.props.selectedDomainName);
 	};
 
 	getContent() {
-		if ( this.props.nameservers.error ) {
-			return <FetchError selectedDomainName={ this.props.selectedDomainName } />;
+		if (this.props.nameservers.error) {
+			return <FetchError selectedDomainName={this.props.selectedDomainName} />;
 		}
 
-		const domain = getSelectedDomain( this.props );
+		const domain = getSelectedDomain(this.props);
 
 		return (
 			<React.Fragment>
 				<DomainWarnings
-					domain={ domain }
+					domain={domain}
 					position="domain-name-servers"
-					selectedSite={ this.props.selectedSite }
-					ruleWhiteList={ [ 'pendingTransfer' ] }
+					selectedSite={this.props.selectedSite}
+					ruleWhiteList={['pendingTransfer']}
 				/>
-				{ this.warning() }
-				{ this.planUpsellForNonPrimaryDomain( domain ) }
+				{this.warning()}
+				{this.planUpsellForNonPrimaryDomain(domain)}
 				<VerticalNav>
-					{ this.wpcomNameserversToggle() }
-					{ this.customNameservers() }
-					{ this.dnsRecordsNavItem() }
+					{this.wpcomNameserversToggle()}
+					{this.customNameservers()}
+					{this.dnsRecordsNavItem()}
 				</VerticalNav>
 
 				<VerticalNav>
-					{ this.hasWpcomNameservers() && ! this.isPendingTransfer() && (
-						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
-					) }
+					{this.hasWpcomNameservers() && !this.isPendingTransfer() && (
+						<DnsTemplates selectedDomainName={this.props.selectedDomainName} />
+					)}
 				</VerticalNav>
 			</React.Fragment>
 		);
 	}
 
 	render() {
-		const classes = classNames( 'name-servers', {
+		const classes = classNames('name-servers', {
 			'is-placeholder': this.isLoading(),
-		} );
+		});
 
 		return (
-			<Main className={ classes }>
-				{ this.header() }
-				{ this.getContent() }
+			<Main className={classes}>
+				{this.header()}
+				{this.getContent()}
 			</Main>
 		);
 	}
 
 	wpcomNameserversToggle() {
-		if ( this.isPendingTransfer() ) {
+		if (this.isPendingTransfer()) {
 			return null;
 		}
 
 		return (
 			<WpcomNameserversToggle
-				selectedDomainName={ this.props.selectedDomainName }
-				onToggle={ this.handleToggle }
-				enabled={ this.hasWpcomNameservers() }
+				selectedDomainName={this.props.selectedDomainName}
+				onToggle={this.handleToggle}
+				enabled={this.hasWpcomNameservers()}
 			/>
 		);
 	}
 
 	handleToggle = () => {
-		if ( this.hasWpcomNameservers() ) {
-			this.setState( { nameservers: [] } );
+		if (this.hasWpcomNameservers()) {
+			this.setState({ nameservers: [] });
 		} else {
 			this.resetToWpcomNameservers();
 		}
 	};
 
 	resetToWpcomNameservers = () => {
-		if ( isEmpty( this.state.nameservers ) ) {
-			this.setState( { nameservers: WPCOM_DEFAULTS } );
+		if (isEmpty(this.state.nameservers)) {
+			this.setState({ nameservers: WPCOM_DEFAULTS });
 		} else {
-			this.setState( { nameservers: WPCOM_DEFAULTS }, () => {
+			this.setState({ nameservers: WPCOM_DEFAULTS }, () => {
 				this.saveNameservers();
-			} );
+			});
 		}
 	};
 
@@ -201,46 +201,46 @@ class NameServers extends React.Component {
 		const { nameservers } = this.state;
 		const { selectedDomainName, translate } = this.props;
 
-		this.setState( { formSubmitting: true } );
+		this.setState({ formSubmitting: true });
 
-		updateNameservers( selectedDomainName, nameservers, error => {
-			if ( error ) {
-				this.props.errorNotice( error.message );
+		updateNameservers(selectedDomainName, nameservers, (error) => {
+			if (error) {
+				this.props.errorNotice(error.message);
 			} else {
 				this.props.successNotice(
-					translate( 'Yay, the name servers have been successfully updated!' ),
+					translate('Yay, the name servers have been successfully updated!'),
 					{
 						duration: 5000,
 					}
 				);
 			}
 
-			this.setState( { formSubmitting: false } );
-		} );
+			this.setState({ formSubmitting: false });
+		});
 	};
 
 	header() {
 		return (
-			<Header onClick={ this.back } selectedDomainName={ this.props.selectedDomainName }>
-				{ this.props.translate( 'Name Servers and DNS' ) }
+			<Header onClick={this.back} selectedDomainName={this.props.selectedDomainName}>
+				{this.props.translate('Name Servers and DNS')}
 			</Header>
 		);
 	}
 
 	back = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(domainManagementEdit(this.props.selectedSite.slug, this.props.selectedDomainName));
 	};
 
 	customNameservers() {
-		if ( this.hasWpcomNameservers() || this.isPendingTransfer() ) {
+		if (this.hasWpcomNameservers() || this.isPendingTransfer()) {
 			return null;
 		}
 
-		if ( this.needsVerification() ) {
+		if (this.needsVerification()) {
 			return (
 				<IcannVerificationCard
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSiteSlug={ this.props.selectedSite.slug }
+					selectedDomainName={this.props.selectedDomainName}
+					selectedSiteSlug={this.props.selectedSite.slug}
 					explanationContext="name-servers"
 				/>
 			);
@@ -248,37 +248,37 @@ class NameServers extends React.Component {
 
 		return (
 			<CustomNameserversForm
-				nameservers={ this.state.nameservers }
-				selectedSite={ this.props.selectedSite }
-				selectedDomainName={ this.props.selectedDomainName }
-				onChange={ this.handleChange }
-				onReset={ this.handleReset }
-				onSubmit={ this.handleSubmit }
-				submitDisabled={ this.state.formSubmitting }
+				nameservers={this.state.nameservers}
+				selectedSite={this.props.selectedSite}
+				selectedDomainName={this.props.selectedDomainName}
+				onChange={this.handleChange}
+				onReset={this.handleReset}
+				onSubmit={this.handleSubmit}
+				submitDisabled={this.state.formSubmitting}
 			/>
 		);
 	}
 
-	planUpsellForNonPrimaryDomain( domain ) {
+	planUpsellForNonPrimaryDomain(domain) {
 		return (
 			<NonPrimaryDomainPlanUpsell
 				tracksImpressionName="calypso_non_primary_domain_ns_plan_upsell_impression"
 				tracksClickName="calypso_non_primary_domain_ns_plan_upsell_click"
-				domain={ domain }
+				domain={domain}
 			/>
 		);
 	}
 
 	needsVerification() {
-		if ( this.props.isRequestingSiteDomains ) {
+		if (this.props.isRequestingSiteDomains) {
 			return false;
 		}
 
-		return getSelectedDomain( this.props ).isPendingIcannVerification;
+		return getSelectedDomain(this.props).isPendingIcannVerification;
 	}
 
-	handleChange = nameservers => {
-		this.setState( { nameservers } );
+	handleChange = (nameservers) => {
+		this.setState({ nameservers });
 	};
 
 	handleReset = () => {
@@ -290,22 +290,22 @@ class NameServers extends React.Component {
 	};
 
 	dnsRecordsNavItem() {
-		if ( ! this.hasWpcomNameservers() ) {
+		if (!this.hasWpcomNameservers()) {
 			return null;
 		}
 
 		return (
 			<VerticalNavItem
-				isPlaceholder={ this.isLoading() }
-				path={ domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }
+				isPlaceholder={this.isLoading()}
+				path={domainManagementDns(this.props.selectedSite.slug, this.props.selectedDomainName)}
 			>
-				{ this.props.translate( 'DNS records' ) }
+				{this.props.translate('DNS records')}
 			</VerticalNavItem>
 		);
 	}
 }
 
-const customNameServersLearnMoreClick = domainName =>
+const customNameServersLearnMoreClick = (domainName) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -319,8 +319,8 @@ const customNameServersLearnMoreClick = domainName =>
 		)
 	);
 
-export default connect( null, {
+export default connect(null, {
 	customNameServersLearnMoreClick,
 	errorNotice,
 	successNotice,
-} )( localize( NameServers ) );
+})(localize(NameServers));

@@ -20,21 +20,21 @@ class QueryPostFormats extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.requestingPostFormats ) {
+	request(props) {
+		if (props.requestingPostFormats) {
 			return;
 		}
 
-		props.requestPostFormats( props.siteId );
+		props.requestPostFormats(props.siteId);
 	}
 
 	render() {
@@ -43,10 +43,10 @@ class QueryPostFormats extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			requestingPostFormats: isRequestingPostFormats( state, ownProps.siteId ),
+			requestingPostFormats: isRequestingPostFormats(state, ownProps.siteId),
 		};
 	},
 	{ requestPostFormats }
-)( QueryPostFormats );
+)(QueryPostFormats);

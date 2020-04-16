@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export function CheckIcon( { className, id } ) {
+export function CheckIcon({ className, id }) {
 	return (
 		<svg
 			width="20"
@@ -13,10 +13,10 @@ export function CheckIcon( { className, id } ) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
-			className={ className }
+			className={className}
 		>
 			<mask
-				id={ id + '-check-icon-mask' }
+				id={id + '-check-icon-mask'}
 				mask-type="alpha"
 				maskUnits="userSpaceOnUse"
 				x="2"
@@ -29,7 +29,7 @@ export function CheckIcon( { className, id } ) {
 					fill="white"
 				/>
 			</mask>
-			<g mask={ 'url(#' + id + '-check-icon-mask)' }>
+			<g mask={'url(#' + id + '-check-icon-mask)'}>
 				<rect width="20" height="20" fill="white" />
 			</g>
 		</svg>
@@ -41,7 +41,7 @@ CheckIcon.propTypes = {
 	id: PropTypes.string,
 };
 
-export function ErrorIcon( { className } ) {
+export function ErrorIcon({ className }) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@ export function ErrorIcon( { className } ) {
 			height="24"
 			viewBox="0 0 24 24"
 			aria-hidden="true"
-			className={ className }
+			className={className}
 		>
 			<path
 				fill="#FFFFFF"
@@ -59,14 +59,14 @@ export function ErrorIcon( { className } ) {
 	);
 }
 
-export function InfoIcon( { className } ) {
+export function InfoIcon({ className }) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
 			height="24"
 			viewBox="0 0 24 24"
-			className={ className }
+			className={className}
 			aria-hidden="true"
 		>
 			<path fill="none" d="M0 0h24v24H0V0z" />

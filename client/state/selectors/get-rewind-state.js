@@ -9,6 +9,6 @@ const uninitialized = {
  * @param {?number|string} siteId the site ID
  * @returns {object} Rewind state object
  */
-export default function getRewindState( state, siteId ) {
-	return state.rewind?.[ siteId ]?.state ?? uninitialized;
+export default function getRewindState(state, siteId) {
+	return state.rewind?.[siteId]?.state ?? uninitialized;
 }

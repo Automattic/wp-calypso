@@ -3,24 +3,24 @@
  */
 import { transferStatus } from 'lib/domains/constants';
 
-export function getTransferStatus( domainFromApi ) {
-	if ( domainFromApi.transfer_status === 'pending_owner' ) {
+export function getTransferStatus(domainFromApi) {
+	if (domainFromApi.transfer_status === 'pending_owner') {
 		return transferStatus.PENDING_OWNER;
 	}
 
-	if ( domainFromApi.transfer_status === 'pending_registry' ) {
+	if (domainFromApi.transfer_status === 'pending_registry') {
 		return transferStatus.PENDING_REGISTRY;
 	}
 
-	if ( domainFromApi.transfer_status === 'cancelled' ) {
+	if (domainFromApi.transfer_status === 'cancelled') {
 		return transferStatus.CANCELLED;
 	}
 
-	if ( domainFromApi.transfer_status === 'completed' ) {
+	if (domainFromApi.transfer_status === 'completed') {
 		return transferStatus.COMPLETED;
 	}
 
-	if ( domainFromApi.transfer_status === 'pending_start' ) {
+	if (domainFromApi.transfer_status === 'pending_start') {
 		return transferStatus.PENDING_START;
 	}
 

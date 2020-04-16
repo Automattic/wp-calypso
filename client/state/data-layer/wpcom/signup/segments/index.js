@@ -15,7 +15,7 @@ import { errorNotice } from 'state/notices/actions';
 import { setSegments } from 'state/signup/segments/actions';
 import { SIGNUP_SEGMENTS_REQUEST } from 'state/action-types';
 
-export const requestSegments = action =>
+export const requestSegments = (action) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -25,19 +25,19 @@ export const requestSegments = action =>
 		action
 	);
 
-export const storeSegments = ( action, data ) => setSegments( data );
+export const storeSegments = (action, data) => setSegments(data);
 export const showSegmentsRequestError = () =>
 	errorNotice(
-		translate( 'We encountered an error on fetching data from our server. Please try again.' )
+		translate('We encountered an error on fetching data from our server. Please try again.')
 	);
 
-registerHandlers( 'state/data-layer/wpcom/signup/segments', {
-	[ SIGNUP_SEGMENTS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/signup/segments', {
+	[SIGNUP_SEGMENTS_REQUEST]: [
+		dispatchRequest({
 			fetch: requestSegments,
 			onSuccess: storeSegments,
 			onError: showSegmentsRequestError,
 			fromApi: convertToCamelCase,
-		} ),
+		}),
 	],
-} );
+});

@@ -3,7 +3,7 @@ export const restoreProgressSchema = {
 	patternProperties: {
 		'^\\d+$': {
 			type: 'object',
-			required: [ 'restoreId', 'status', 'timestamp' ],
+			required: ['restoreId', 'status', 'timestamp'],
 			properties: {
 				errorCode: { type: 'string' },
 				failureReason: { type: 'string' },

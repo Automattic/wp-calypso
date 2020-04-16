@@ -32,12 +32,12 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  */
 const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
 
-const requestTwoFactorPushNotificationStatus = action => ( dispatch, getState ) => {
+const requestTwoFactorPushNotificationStatus = (action) => (dispatch, getState) => {
 	const state = getState();
 	const auth_type = 'push';
-	const user_id = getTwoFactorUserId( state );
-	const two_step_nonce = getTwoFactorAuthNonce( state, auth_type );
-	const two_step_push_token = getTwoFactorPushToken( state );
+	const user_id = getTwoFactorUserId(state);
+	const two_step_nonce = getTwoFactorAuthNonce(state, auth_type);
+	const two_step_push_token = getTwoFactorPushToken(state);
 
 	dispatch(
 		http(
@@ -46,7 +46,7 @@ const requestTwoFactorPushNotificationStatus = action => ( dispatch, getState ) 
 					'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint'
 				),
 				method: 'POST',
-				headers: [ [ 'Content-Type', 'application/x-www-form-urlencoded' ] ],
+				headers: [['Content-Type', 'application/x-www-form-urlencoded']],
 				withCredentials: true,
 				body: {
 					user_id,
@@ -54,8 +54,8 @@ const requestTwoFactorPushNotificationStatus = action => ( dispatch, getState ) 
 					remember_me: true,
 					two_step_nonce,
 					two_step_push_token,
-					client_id: config( 'wpcom_signup_id' ),
-					client_secret: config( 'wpcom_signup_key' ),
+					client_id: config('wpcom_signup_id'),
+					client_secret: config('wpcom_signup_key'),
 				},
 			},
 			action
@@ -63,38 +63,38 @@ const requestTwoFactorPushNotificationStatus = action => ( dispatch, getState ) 
 	);
 };
 
-const receivedTwoFactorPushNotificationApprovedResponse = ( action, response ) =>
-	receivedTwoFactorPushNotificationApproved( get( response, 'body.data.token_links' ) );
+const receivedTwoFactorPushNotificationApprovedResponse = (action, response) =>
+	receivedTwoFactorPushNotificationApproved(get(response, 'body.data.token_links'));
 
 /*
  * Receive error from the two factor push notification status http request
  */
-const receivedTwoFactorPushNotificationError = ( action, error ) => ( dispatch, getState ) => {
-	const isNetworkFailure = ! error.status;
-	const twoStepNonce = get( error, 'response.body.data.two_step_nonce' );
+const receivedTwoFactorPushNotificationError = (action, error) => (dispatch, getState) => {
+	const isNetworkFailure = !error.status;
+	const twoStepNonce = get(error, 'response.body.data.two_step_nonce');
 
-	if ( twoStepNonce ) {
-		dispatch( updateNonce( 'push', twoStepNonce ) );
-	} else if ( ! isNetworkFailure ) {
-		dispatch( stopPollAppPushAuth() );
+	if (twoStepNonce) {
+		dispatch(updateNonce('push', twoStepNonce));
+	} else if (!isNetworkFailure) {
+		dispatch(stopPollAppPushAuth());
 		return;
 	}
 
-	setTimeout( () => {
+	setTimeout(() => {
 		// If the poll wasn't stopped while we were waiting, send the status request again.
 		// It directly calls the `fetch` handler with a "dummy" action object.
-		if ( getTwoFactorPushPollInProgress( getState() ) ) {
-			dispatch( requestTwoFactorPushNotificationStatus( startPollAppPushAuth() ) );
+		if (getTwoFactorPushPollInProgress(getState())) {
+			dispatch(requestTwoFactorPushNotificationStatus(startPollAppPushAuth()));
 		}
-	}, POLL_APP_PUSH_INTERVAL_SECONDS * 1000 );
+	}, POLL_APP_PUSH_INTERVAL_SECONDS * 1000);
 };
 
-const makePushNotificationRequest = dispatchRequest( {
+const makePushNotificationRequest = dispatchRequest({
 	fetch: requestTwoFactorPushNotificationStatus,
 	onSuccess: receivedTwoFactorPushNotificationApprovedResponse,
 	onError: receivedTwoFactorPushNotificationError,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/login-2fa/index.js', {
-	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START ]: [ makePushNotificationRequest ],
-} );
+registerHandlers('state/data-layer/wpcom/login-2fa/index.js', {
+	[TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START]: [makePushNotificationRequest],
+});

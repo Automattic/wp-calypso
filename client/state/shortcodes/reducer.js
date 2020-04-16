@@ -17,16 +17,16 @@ import {
 import { registerActionForward } from 'lib/redux-bridge';
 import { parse } from 'lib/shortcode';
 
-registerActionForward( 'RECEIVE_MEDIA_ITEMS' );
-registerActionForward( 'RECEIVE_MEDIA_ITEM' );
+registerActionForward('RECEIVE_MEDIA_ITEMS');
+registerActionForward('RECEIVE_MEDIA_ITEM');
 
-const createRequestingReducer = requesting => {
-	return ( state, { siteId, shortcode } ) => {
-		return merge( {}, state, {
-			[ siteId ]: {
-				[ shortcode ]: requesting,
+const createRequestingReducer = (requesting) => {
+	return (state, { siteId, shortcode }) => {
+		return merge({}, state, {
+			[siteId]: {
+				[shortcode]: requesting,
 			},
-		} );
+		});
 	};
 };
 
@@ -39,46 +39,46 @@ const createRequestingReducer = requesting => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SHORTCODE_REQUEST:
-			return createRequestingReducer( true )( state, action );
+			return createRequestingReducer(true)(state, action);
 		case SHORTCODE_REQUEST_FAILURE:
-			return createRequestingReducer( false )( state, action );
+			return createRequestingReducer(false)(state, action);
 		case SHORTCODE_REQUEST_SUCCESS:
-			return createRequestingReducer( false )( state, action );
+			return createRequestingReducer(false)(state, action);
 	}
 
 	return state;
-} );
+});
 
-function mediaItemsReducer( state, { siteId, data } ) {
-	if ( ! state.hasOwnProperty( siteId ) ) {
+function mediaItemsReducer(state, { siteId, data }) {
+	if (!state.hasOwnProperty(siteId)) {
 		return state;
 	}
 
-	if ( ! data ) {
+	if (!data) {
 		return state;
 	}
-	const media = Array.isArray( data.media ) ? data.media : [ data ];
-	const updatedIds = media.map( item => String( item.ID ) );
+	const media = Array.isArray(data.media) ? data.media : [data];
+	const updatedIds = media.map((item) => String(item.ID));
 
 	return {
 		...state,
-		[ siteId ]: pickBy( state[ siteId ], shortcode => {
-			const parsed = parse( shortcode.shortcode );
+		[siteId]: pickBy(state[siteId], (shortcode) => {
+			const parsed = parse(shortcode.shortcode);
 			if (
 				parsed.tag !== 'gallery' ||
-				! parsed.attrs ||
-				! parsed.attrs.named ||
-				! parsed.attrs.named.ids
+				!parsed.attrs ||
+				!parsed.attrs.named ||
+				!parsed.attrs.named.ids
 			) {
 				return true;
 			}
 
-			const ids = parsed.attrs.named.ids.split( ',' );
-			return ! intersection( ids, updatedIds ).length;
-		} ),
+			const ids = parsed.attrs.named.ids.split(',');
+			return !intersection(ids, updatedIds).length;
+		}),
 	};
 }
 
@@ -90,26 +90,26 @@ function mediaItemsReducer( state, { siteId, data } ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( shortcodesSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(shortcodesSchema, (state = {}, action) => {
+	switch (action.type) {
 		case 'FLUX_RECEIVE_MEDIA_ITEM':
-			return mediaItemsReducer( state, action );
+			return mediaItemsReducer(state, action);
 		case 'FLUX_RECEIVE_MEDIA_ITEMS':
-			return mediaItemsReducer( state, action );
+			return mediaItemsReducer(state, action);
 		case SHORTCODE_RECEIVE: {
 			const { siteId, shortcode, data } = action;
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ shortcode ]: data,
+			return merge({}, state, {
+				[siteId]: {
+					[shortcode]: data,
 				},
-			} );
+			});
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	items,
-} );
+});

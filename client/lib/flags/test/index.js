@@ -3,17 +3,17 @@
  */
 import { flagUrl } from '..';
 
-describe( 'flagUrl', () => {
-	test( 'Given a valid country code, returns an SVG file path ', () => {
+describe('flagUrl', () => {
+	test('Given a valid country code, returns an SVG file path ', () => {
 		// Note that the 'real' helper function returns a full path,
 		// not just a filename plus extension. However, that behavior
 		// relies on a webpack loader, which we can't fully emulate
 		// in a testing context. The closest we can get to this behavior
 		// uses a mock to return just a filename with extension, but no path.
-		expect( flagUrl( 'us' ) ).toBe( 'us.svg' );
-	} );
+		expect(flagUrl('us')).toBe('us.svg');
+	});
 
-	test( 'Given an invalid country code, returns a fallback inline SVG ', () => {
+	test('Given an invalid country code, returns a fallback inline SVG ', () => {
 		const gridicon = `
 			<svg
 				class="gridicon gridicons-globe"
@@ -28,6 +28,6 @@ describe( 'flagUrl', () => {
 			</svg>`;
 		const globeSvg = 'data:image/svg+xml;utf8,' + gridicon;
 
-		expect( flagUrl( 'blerg' ) ).toBe( globeSvg );
-	} );
-} );
+		expect(flagUrl('blerg')).toBe(globeSvg);
+	});
+});

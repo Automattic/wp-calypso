@@ -8,7 +8,7 @@ import React from 'react';
  */
 import SettingsPage from './main';
 
-export function settings( context, next ) {
+export function settings(context, next) {
 	context.primary = <SettingsPage />;
 	next();
 }

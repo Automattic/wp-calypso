@@ -8,14 +8,14 @@ export const initialState = {
 	errors: {},
 };
 
-export const reducer = ( state = initialState, { action: { type, data, formId } } ) => {
-	switch ( type ) {
+export const reducer = (state = initialState, { action: { type, data, formId } }) => {
+	switch (type) {
 		case ActionTypes.RECEIVE_SENDING_INVITES_ERROR:
 			return {
 				...state,
 				errors: {
 					...state.errors,
-					[ formId ]: data,
+					[formId]: data,
 				},
 			};
 
@@ -24,7 +24,7 @@ export const reducer = ( state = initialState, { action: { type, data, formId } 
 				...state,
 				successes: {
 					...state.successes,
-					[ formId ]: data,
+					[formId]: data,
 				},
 			};
 

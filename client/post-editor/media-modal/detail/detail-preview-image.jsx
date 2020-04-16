@@ -25,33 +25,33 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		onLoad: noop,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		this.onImagePreloaderLoad = this.onImagePreloaderLoad.bind( this );
+		this.onImagePreloaderLoad = this.onImagePreloaderLoad.bind(this);
 		this.state = { loading: false };
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.item.URL === nextProps.item.URL ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.item.URL === nextProps.item.URL) {
 			return null;
 		}
 
-		this.setState( { loading: true } );
+		this.setState({ loading: true });
 	}
 
 	onImagePreloaderLoad() {
-		this.setState( { loading: false } );
+		this.setState({ loading: false });
 		this.props.onLoad();
 	}
 
 	render() {
-		const src = url( this.props.item, {
-			photon: this.props.site && ! this.props.site.is_private,
-		} );
-		const uploading = isItemBeingUploaded( this.props.item );
+		const src = url(this.props.item, {
+			photon: this.props.site && !this.props.site.is_private,
+		});
+		const uploading = isItemBeingUploaded(this.props.item);
 		const loading = this.state.loading;
-		const isBlob = /^blob/.test( src );
+		const isBlob = /^blob/.test(src);
 
 		// Let's add special classes to differentiate
 		// the different states that an image could have.
@@ -85,24 +85,24 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		return (
 			<div>
 				<MediaImage
-					src={ src }
-					width={ this.props.item.width }
-					height={ this.props.item.height }
-					alt={ this.props.item.alt || this.props.item.title }
-					className={ fakeClasses }
+					src={src}
+					width={this.props.item.width}
+					height={this.props.item.height}
+					alt={this.props.item.alt || this.props.item.title}
+					className={fakeClasses}
 				/>
 
 				<MediaImage
-					src={ src }
-					width={ this.props.item.width }
-					height={ this.props.item.height }
-					onLoad={ this.onImagePreloaderLoad }
-					placeholder={ <span /> }
-					alt={ this.props.item.alt || this.props.item.title }
-					className={ classes }
+					src={src}
+					width={this.props.item.width}
+					height={this.props.item.height}
+					onLoad={this.onImagePreloaderLoad}
+					placeholder={<span />}
+					alt={this.props.item.alt || this.props.item.title}
+					className={classes}
 				/>
 
-				{ ( uploading || loading ) && <Spinner /> }
+				{(uploading || loading) && <Spinner />}
 			</div>
 		);
 	}

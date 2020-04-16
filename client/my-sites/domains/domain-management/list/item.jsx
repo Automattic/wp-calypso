@@ -36,14 +36,14 @@ class ListItem extends React.PureComponent {
 	};
 
 	renderContent() {
-		if ( this.props.enableSelection ) {
-			const content = <label htmlFor={ this.getInputId() }>{ this.content() }</label>;
+		if (this.props.enableSelection) {
+			const content = <label htmlFor={this.getInputId()}>{this.content()}</label>;
 
-			if ( this.props.shouldUpgradeToMakePrimary ) {
+			if (this.props.shouldUpgradeToMakePrimary) {
 				return (
 					<div className="domain-management-list-item__content">
-						{ content }
-						{ this.upgradeToMakePrimary() }
+						{content}
+						{this.upgradeToMakePrimary()}
 					</div>
 				);
 			}
@@ -56,15 +56,15 @@ class ListItem extends React.PureComponent {
 
 	render() {
 		const { busy, enableSelection, shouldUpgradeToMakePrimary } = this.props;
-		const cardClass = classNames( 'domain-management-list-item', {
-			busy: busy || ( enableSelection && shouldUpgradeToMakePrimary ),
-		} );
+		const cardClass = classNames('domain-management-list-item', {
+			busy: busy || (enableSelection && shouldUpgradeToMakePrimary),
+		});
 		const onClick = enableSelection && shouldUpgradeToMakePrimary ? null : this.handleClick;
 
 		return (
-			<CompactCard className={ cardClass } onClick={ onClick }>
-				{ this.selectionRadio() }
-				{ this.renderContent() }
+			<CompactCard className={cardClass} onClick={onClick}>
+				{this.selectionRadio()}
+				{this.renderContent()}
 			</CompactCard>
 		);
 	}
@@ -74,9 +74,9 @@ class ListItem extends React.PureComponent {
 
 		return (
 			<div className="domain-management-list-item__upsell">
-				<span>{ translate( 'Upgrade to a paid plan to make this your primary domain' ) }</span>
-				<Button primary onClick={ this.props.onUpgradeClick }>
-					{ translate( 'Upgrade' ) }
+				<span>{translate('Upgrade to a paid plan to make this your primary domain')}</span>
+				<Button primary onClick={this.props.onUpgradeClick}>
+					{translate('Upgrade')}
 				</Button>
 				<TrackComponentView eventName="calypso_domain_management_list_change_primary_upgrade_impression" />
 			</div>
@@ -86,111 +86,108 @@ class ListItem extends React.PureComponent {
 	content() {
 		return (
 			<div className="domain-management-list-item__link">
-				{ this.icon() }
-				<div className="domain-management-list-item__title">{ this.props.domain.name }</div>
+				{this.icon()}
+				<div className="domain-management-list-item__title">{this.props.domain.name}</div>
 				<span className="domain-management-list-item__meta">
-					<span className="domain-management-list-item__type">{ this.getDomainTypeText() }</span>
-					{ this.props.domain.type !== 'WPCOM' &&
-						this.showDomainExpirationWarning( this.props.domain ) }
-					{ this.showGdprConsentPending( this.props.domain ) }
-					<DomainPrimaryFlag domain={ this.props.domain } />
-					<DomainTransferFlag domain={ this.props.domain } />
+					<span className="domain-management-list-item__type">{this.getDomainTypeText()}</span>
+					{this.props.domain.type !== 'WPCOM' &&
+						this.showDomainExpirationWarning(this.props.domain)}
+					{this.showGdprConsentPending(this.props.domain)}
+					<DomainPrimaryFlag domain={this.props.domain} />
+					<DomainTransferFlag domain={this.props.domain} />
 				</span>
-				{ this.busyMessage() }
+				{this.busyMessage()}
 			</div>
 		);
 	}
 
 	busyMessage() {
-		if ( this.props.busy && this.props.busyMessage ) {
+		if (this.props.busy && this.props.busyMessage) {
 			return (
-				<div className="domain-management-list-item__busy-message">{ this.props.busyMessage }</div>
+				<div className="domain-management-list-item__busy-message">{this.props.busyMessage}</div>
 			);
 		}
 	}
 
 	icon() {
-		if ( this.props.busy ) {
-			return <Spinner className="domain-management-list-item__spinner" size={ 20 } />;
+		if (this.props.busy) {
+			return <Spinner className="domain-management-list-item__spinner" size={20} />;
 		}
 
-		if ( this.props.enableSelection ) {
+		if (this.props.enableSelection) {
 			return null;
 		}
 		return <Gridicon className="card__link-indicator" icon="chevron-right" />;
 	}
 
 	handleClick = () => {
-		if ( this.props.shouldUpgradeToMakePrimary && this.props.enableSelection ) {
+		if (this.props.shouldUpgradeToMakePrimary && this.props.enableSelection) {
 			return;
-		} else if ( this.props.enableSelection ) {
-			this.props.onSelect( this.props.selectionIndex, this.props.domain );
+		} else if (this.props.enableSelection) {
+			this.props.onSelect(this.props.selectionIndex, this.props.domain);
 		} else {
-			this.props.onClick( this.props.domain );
+			this.props.onClick(this.props.domain);
 		}
 	};
 
 	getInputId() {
-		return `domain-management-list-item_radio-${ this.props.domain.name }`;
+		return `domain-management-list-item_radio-${this.props.domain.name}`;
 	}
 
 	selectionRadio() {
-		if ( ! this.props.enableSelection || this.props.shouldUpgradeToMakePrimary ) {
+		if (!this.props.enableSelection || this.props.shouldUpgradeToMakePrimary) {
 			return null;
 		}
 
 		return (
 			<input
-				id={ this.getInputId() }
+				id={this.getInputId()}
 				className="domain-management-list-item__radio"
 				type="radio"
-				checked={ this.props.isSelected }
-				onChange={ noop }
+				checked={this.props.isSelected}
+				onChange={noop}
 			/>
 		);
 	}
 
-	showDomainExpirationWarning( domain ) {
+	showDomainExpirationWarning(domain) {
 		const { translate, moment } = this.props;
 
-		if ( domain.expired ) {
+		if (domain.expired) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
-					{ translate( 'Expired %(timeSinceExpiry)s', {
+					{translate('Expired %(timeSinceExpiry)s', {
 						args: {
-							timeSinceExpiry: moment( domain.expiry ).fromNow(),
+							timeSinceExpiry: moment(domain.expiry).fromNow(),
 						},
 						context:
 							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-					} ) }
+					})}
 				</Notice>
 			);
 		}
 
-		if ( domain.expiry && moment( domain.expiry ) < this.props.moment().add( 30, 'days' ) ) {
+		if (domain.expiry && moment(domain.expiry) < this.props.moment().add(30, 'days')) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
-					{ translate( 'Expires %(timeUntilExpiry)s', {
+					{translate('Expires %(timeUntilExpiry)s', {
 						args: {
-							timeUntilExpiry: moment( domain.expiry ).fromNow(),
+							timeUntilExpiry: moment(domain.expiry).fromNow(),
 						},
 						context:
 							'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-					} ) }
+					})}
 				</Notice>
 			);
 		}
 	}
 
-	showGdprConsentPending( domain ) {
+	showGdprConsentPending(domain) {
 		const { translate } = this.props;
-		if (
-			domain.gdprConsentStatus &&
-			gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus
-		) {
+		if (domain.gdprConsentStatus && gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
-					{ translate( 'Action Required' ) }
+					{translate('Action Required')}
 				</Notice>
 			);
 		}
@@ -199,23 +196,23 @@ class ListItem extends React.PureComponent {
 	getDomainTypeText() {
 		const { domain, translate } = this.props;
 
-		switch ( domain.type ) {
+		switch (domain.type) {
 			case domainTypes.MAPPED:
-				return translate( 'Mapped Domain' );
+				return translate('Mapped Domain');
 
 			case domainTypes.REGISTERED:
-				return translate( 'Registered Domain' );
+				return translate('Registered Domain');
 
 			case domainTypes.SITE_REDIRECT:
-				return translate( 'Site Redirect' );
+				return translate('Site Redirect');
 
 			case domainTypes.TRANSFER:
-				return translate( 'Incoming Domain Transfer' );
+				return translate('Incoming Domain Transfer');
 
 			case domainTypes.WPCOM:
-				return translate( 'Included with Site' );
+				return translate('Included with Site');
 		}
 	}
 }
 
-export default localize( withLocalizedMoment( ListItem ) );
+export default localize(withLocalizedMoment(ListItem));

@@ -13,10 +13,10 @@ import {
 import { withSchemaValidation } from 'state/utils';
 import schema from './schema';
 
-const reducer = ( state = null, action ) => {
-	switch ( action.type ) {
+const reducer = (state = null, action) => {
+	switch (action.type) {
 		case CONNECTED_APPLICATION_DELETE_SUCCESS:
-			return reject( state, { ID: action.appId } );
+			return reject(state, { ID: action.appId });
 		case CONNECTED_APPLICATIONS_RECEIVE:
 			return action.apps;
 		default:
@@ -24,4 +24,4 @@ const reducer = ( state = null, action ) => {
 	}
 };
 
-export default withSchemaValidation( schema, reducer );
+export default withSchemaValidation(schema, reducer);

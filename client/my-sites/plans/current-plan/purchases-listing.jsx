@@ -61,64 +61,64 @@ class PurchasesListing extends Component {
 	isLoading() {
 		const { currentPlan, selectedSite, isRequestingPlans } = this.props;
 
-		return ! currentPlan || ! selectedSite || isRequestingPlans;
+		return !currentPlan || !selectedSite || isRequestingPlans;
 	}
 
-	isFreePlan( purchase ) {
+	isFreePlan(purchase) {
 		const { currentPlan } = this.props;
 
-		if ( purchase && isJetpackProduct( purchase ) ) {
+		if (purchase && isJetpackProduct(purchase)) {
 			return false;
 		}
 
-		return ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan );
+		return !currentPlan || isFreePlan(currentPlan) || isFreeJetpackPlan(currentPlan);
 	}
 
-	isProductExpiring( product ) {
+	isProductExpiring(product) {
 		const { moment } = this.props;
 
-		if ( ! product.expiryDate ) {
+		if (!product.expiryDate) {
 			return false;
 		}
 
-		return moment( product.expiryDate ) < moment().add( 30, 'days' );
+		return moment(product.expiryDate) < moment().add(30, 'days');
 	}
 
 	getProductPurchases() {
 		return (
-			filter( this.props.purchases, purchase => purchase.active && isJetpackProduct( purchase ) ) ??
+			filter(this.props.purchases, (purchase) => purchase.active && isJetpackProduct(purchase)) ??
 			null
 		);
 	}
 
-	getTitle( purchase ) {
+	getTitle(purchase) {
 		const { currentPlanSlug } = this.props;
 
-		if ( isJetpackProduct( purchase ) ) {
-			return getJetpackProductDisplayName( purchase );
+		if (isJetpackProduct(purchase)) {
+			return getJetpackProductDisplayName(purchase);
 		}
 
-		if ( currentPlanSlug ) {
-			const planObject = getPlan( currentPlanSlug );
+		if (currentPlanSlug) {
+			const planObject = getPlan(currentPlanSlug);
 			return planObject.getTitle();
 		}
 
 		return null;
 	}
 
-	getTagline( purchase ) {
+	getTagline(purchase) {
 		const { currentPlanSlug, translate } = this.props;
 
-		if ( isJetpackProduct( purchase ) ) {
-			return getJetpackProductTagline( purchase );
+		if (isJetpackProduct(purchase)) {
+			return getJetpackProductTagline(purchase);
 		}
 
 		const productPurchases = this.getProductPurchases();
 
-		if ( currentPlanSlug ) {
-			const planObject = getPlan( currentPlanSlug );
+		if (currentPlanSlug) {
+			const planObject = getPlan(currentPlanSlug);
 			return (
-				planObject.getTagline?.( productPurchases[ 0 ]?.productSlug ) ??
+				planObject.getTagline?.(productPurchases[0]?.productSlug) ??
 				translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
 				)
@@ -128,74 +128,70 @@ class PurchasesListing extends Component {
 		return null;
 	}
 
-	getExpirationInfoForPlan( plan ) {
+	getExpirationInfoForPlan(plan) {
 		// No expiration date for free plans.
-		if ( this.isFreePlan( plan ) ) {
+		if (this.isFreePlan(plan)) {
 			return null;
 		}
 
-		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : null;
+		const expiryMoment = plan.expiryDate ? this.props.moment(plan.expiryDate) : null;
 
 		const renewMoment =
-			plan.autoRenew && plan.autoRenewDate ? this.props.moment( plan.autoRenewDate ) : null;
+			plan.autoRenew && plan.autoRenewDate ? this.props.moment(plan.autoRenewDate) : null;
 
-		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
+		return <ProductExpiration expiryDateMoment={expiryMoment} renewDateMoment={renewMoment} />;
 	}
 
-	getExpirationInfoForPurchase( purchase ) {
+	getExpirationInfoForPurchase(purchase) {
 		// No expiration date for free plan or partner site.
-		if ( this.isFreePlan( purchase ) || isPartnerPurchase( purchase ) ) {
+		if (this.isFreePlan(purchase) || isPartnerPurchase(purchase)) {
 			return null;
 		}
 
-		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
+		const expiryMoment = purchase.expiryDate ? this.props.moment(purchase.expiryDate) : null;
 
 		const renewMoment =
-			! isExpiring( purchase ) && purchase.renewDate
-				? this.props.moment( purchase.renewDate )
-				: null;
+			!isExpiring(purchase) && purchase.renewDate ? this.props.moment(purchase.renewDate) : null;
 
-		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
+		return <ProductExpiration expiryDateMoment={expiryMoment} renewDateMoment={renewMoment} />;
 	}
 
-	getActionButton( purchase ) {
+	getActionButton(purchase) {
 		const { selectedSiteSlug, translate } = this.props;
 
 		// No action button if there's no site selected or we're dealing with a partner site.
-		if ( ! selectedSiteSlug || ! purchase || isPartnerPurchase( purchase ) ) {
+		if (!selectedSiteSlug || !purchase || isPartnerPurchase(purchase)) {
 			return null;
 		}
 
 		// For free plan show a button redirecting to the plans comparison.
-		if ( this.isFreePlan( purchase ) ) {
-			return (
-				<Button href={ `/plans/${ selectedSiteSlug }` }>{ translate( 'Compare plans' ) }</Button>
-			);
+		if (this.isFreePlan(purchase)) {
+			return <Button href={`/plans/${selectedSiteSlug}`}>{translate('Compare plans')}</Button>;
 		}
 
 		// If there's no purchase id, there's no manage purchase link so exit.
-		if ( ! purchase.id ) {
+		if (!purchase.id) {
 			return null;
 		}
 
 		// For plans, show action button only to the site owners.
-		if ( ! isJetpackProduct( purchase ) && ! purchase.userIsOwner ) {
+		if (!isJetpackProduct(purchase) && !purchase.userIsOwner) {
 			return null;
 		}
 
-		let label = translate( 'Manage plan' );
+		let label = translate('Manage plan');
 
-		if ( isJetpackProduct( purchase ) ) {
-			label = translate( 'Manage product' );
+		if (isJetpackProduct(purchase)) {
+			label = translate('Manage product');
 		}
 
-		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
-			label = translate( 'Renew now' );
+		if (purchase.autoRenew && !shouldAddPaymentSourceInsteadOfRenewingNow(purchase)) {
+			label = translate('Renew now');
 		}
 
 		return (
-			<Button href={ managePurchase( selectedSiteSlug, purchase.id ) } compact>
-				{ label }
+			<Button href={managePurchase(selectedSiteSlug, purchase.id)} compact>
+				{label}
 			</Button>
 		);
 	}
@@ -206,20 +202,20 @@ class PurchasesListing extends Component {
 		return (
 			<Fragment>
 				<Card compact>
-					<strong>{ translate( 'My Plan' ) }</strong>
+					<strong>{translate('My Plan')}</strong>
 				</Card>
-				{ this.isLoading() ? (
+				{this.isLoading() ? (
 					<MyPlanCard isPlaceholder />
 				) : (
 					<MyPlanCard
-						action={ this.getActionButton( currentPlan ) }
-						details={ this.getExpirationInfoForPlan( currentPlan ) }
-						isError={ isPlanExpiring }
-						product={ currentPlanSlug }
-						tagline={ this.getTagline( currentPlan ) }
-						title={ this.getTitle( currentPlan ) }
+						action={this.getActionButton(currentPlan)}
+						details={this.getExpirationInfoForPlan(currentPlan)}
+						isError={isPlanExpiring}
+						product={currentPlanSlug}
+						tagline={this.getTagline(currentPlan)}
+						title={this.getTitle(currentPlan)}
 					/>
-				) }
+				)}
 			</Fragment>
 		);
 	}
@@ -230,27 +226,27 @@ class PurchasesListing extends Component {
 		// Get all products and filter out falsy items.
 		const productPurchases = this.getProductPurchases();
 
-		if ( isEmpty( productPurchases ) ) {
+		if (isEmpty(productPurchases)) {
 			return null;
 		}
 
 		return (
 			<Fragment>
 				<Card compact>
-					<strong>{ translate( 'My Solutions' ) }</strong>
+					<strong>{translate('My Solutions')}</strong>
 				</Card>
-				{ productPurchases.map( purchase => (
+				{productPurchases.map((purchase) => (
 					<MyPlanCard
-						key={ purchase.id }
-						action={ this.getActionButton( purchase ) }
-						details={ this.getExpirationInfoForPurchase( purchase ) }
-						isError={ this.isProductExpiring( purchase ) }
-						isPlaceholder={ this.isLoading() }
-						product={ purchase?.productSlug }
-						tagline={ this.getTagline( purchase ) }
-						title={ this.getTitle( purchase ) }
+						key={purchase.id}
+						action={this.getActionButton(purchase)}
+						details={this.getExpirationInfoForPurchase(purchase)}
+						isError={this.isProductExpiring(purchase)}
+						isPlaceholder={this.isLoading()}
+						product={purchase?.productSlug}
+						tagline={this.getTagline(purchase)}
+						title={this.getTitle(purchase)}
 					/>
-				) ) }
+				))}
 			</Fragment>
 		);
 	}
@@ -260,28 +256,28 @@ class PurchasesListing extends Component {
 
 		return (
 			<Fragment>
-				<QuerySites siteId={ selectedSiteId } />
-				<QuerySitePlans siteId={ selectedSiteId } />
-				<QuerySitePurchases siteId={ selectedSiteId } />
+				<QuerySites siteId={selectedSiteId} />
+				<QuerySitePlans siteId={selectedSiteId} />
+				<QuerySitePurchases siteId={selectedSiteId} />
 
-				{ this.renderPlan() }
-				{ this.renderProducts() }
+				{this.renderPlan()}
+				{this.renderProducts()}
 			</Fragment>
 		);
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
-		currentPlan: getCurrentPlan( state, selectedSiteId ),
-		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
-		isPlanExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-		isRequestingPlans: isRequestingSitePlans( state, selectedSiteId ),
-		purchases: getSitePurchases( state, selectedSiteId ),
-		selectedSite: getSelectedSite( state ),
+		currentPlan: getCurrentPlan(state, selectedSiteId),
+		currentPlanSlug: getSitePlanSlug(state, selectedSiteId),
+		isPlanExpiring: isCurrentPlanExpiring(state, selectedSiteId),
+		isRequestingPlans: isRequestingSitePlans(state, selectedSiteId),
+		purchases: getSitePurchases(state, selectedSiteId),
+		selectedSite: getSelectedSite(state),
 		selectedSiteId,
-		selectedSiteSlug: getSelectedSiteSlug( state ),
+		selectedSiteSlug: getSelectedSiteSlug(state),
 	};
-} )( localize( withLocalizedMoment( PurchasesListing ) ) );
+})(localize(withLocalizedMoment(PurchasesListing)));

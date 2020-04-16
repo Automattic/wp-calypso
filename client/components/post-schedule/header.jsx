@@ -35,51 +35,49 @@ class PostScheduleHeader extends React.Component {
 
 	setToCurrentMonth = () => {
 		const { moment, date, onDateChange } = this.props;
-		onDateChange( moment( date ).month( moment().month() ) );
+		onDateChange(moment(date).month(moment().month()));
 	};
 
 	setToCurrentYear = () => {
 		const { moment, date, onDateChange } = this.props;
-		onDateChange( moment( date ).year( moment().year() ) );
+		onDateChange(moment(date).year(moment().year()));
 	};
 
-	setYear = modifier => {
+	setYear = (modifier) => {
 		const { moment, date, onDateChange } = this.props;
-		const newDate = moment( date ).add( modifier, 'y' );
+		const newDate = moment(date).add(modifier, 'y');
 
-		if ( 0 > newDate.year() || newDate.year() > 9999 ) {
+		if (0 > newDate.year() || newDate.year() > 9999) {
 			return null;
 		}
 
-		onDateChange( newDate );
+		onDateChange(newDate);
 	};
 
 	render() {
-		const headerClasses = classNames( 'post-schedule__header', {
+		const headerClasses = classNames('post-schedule__header', {
 			'is-input-chrono-displayed': this.props.inputChronoDisplayed,
-		} );
+		});
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 		return (
-			<div className={ headerClasses }>
-				<span className="post-schedule__header-month" onClick={ this.setToCurrentMonth }>
-					{ this.props.date.clone().format( 'MMM' ) }
+			<div className={headerClasses}>
+				<span className="post-schedule__header-month" onClick={this.setToCurrentMonth}>
+					{this.props.date.clone().format('MMM')}
 				</span>
 
 				<div
 					className="post-schedule__header-year"
-					onMouseEnter={ () => {
-						this.setState( { showYearControls: true } );
-					} }
-					onMouseLeave={ () => {
-						this.setState( { showYearControls: false } );
-					} }
+					onMouseEnter={() => {
+						this.setState({ showYearControls: true });
+					}}
+					onMouseLeave={() => {
+						this.setState({ showYearControls: false });
+					}}
 				>
-					<span onClick={ this.setToCurrentYear }>
-						{ this.props.date.clone().format( 'YYYY' ) }
-					</span>
+					<span onClick={this.setToCurrentYear}>{this.props.date.clone().format('YYYY')}</span>
 
-					{ this.state.showYearControls && <HeaderControl onYearChange={ this.setYear } /> }
+					{this.state.showYearControls && <HeaderControl onYearChange={this.setYear} />}
 				</div>
 			</div>
 		);
@@ -87,4 +85,4 @@ class PostScheduleHeader extends React.Component {
 	}
 }
 
-export default withLocalizedMoment( PostScheduleHeader );
+export default withLocalizedMoment(PostScheduleHeader);

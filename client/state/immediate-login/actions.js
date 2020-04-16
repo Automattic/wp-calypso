@@ -18,10 +18,10 @@ import { IMMEDIATE_LOGIN_SAVE_INFO } from 'state/action-types';
  *                          user attempting to log in, if known.
  * @returns {void}
  */
-export const saveImmediateLoginInformation = ( success, reason, email, locale ) => ( {
+export const saveImmediateLoginInformation = (success, reason, email, locale) => ({
 	type: IMMEDIATE_LOGIN_SAVE_INFO,
 	success,
 	reason,
 	email,
 	locale,
-} );
+});

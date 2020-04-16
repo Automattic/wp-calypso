@@ -44,7 +44,7 @@ class ThemesSelection extends Component {
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
 		// connected props
-		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
+		source: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['wpcom', 'wporg'])]),
 		themes: PropTypes.array,
 		recommendedThemes: PropTypes.array,
 		themesCount: PropTypes.number,
@@ -54,10 +54,7 @@ class ThemesSelection extends Component {
 		getPremiumThemePrice: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		placeholderCount: PropTypes.number,
-		bookmarkRef: PropTypes.oneOfType( [
-			PropTypes.func,
-			PropTypes.shape( { current: PropTypes.any } ),
-		] ),
+		bookmarkRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.any })]),
 	};
 
 	static defaultProps = {
@@ -68,89 +65,89 @@ class ThemesSelection extends Component {
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
 		const { query, recommendedThemes } = this.props;
-		if ( ! recommendedThemes && ! query.search && ! query.filter && ! query.tier ) {
+		if (!recommendedThemes && !query.search && !query.filter && !query.tier) {
 			this.props.incrementPage();
 		}
 	}
 
-	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
+	recordSearchResultsClick = (themeId, resultsRank, action) => {
 		// TODO do we need different query if from RecommendedThemes?
 		const { query, filterString } = this.props;
 		const themes = this.props.recommendedThemes || this.props.themes;
 		const search_taxonomies = filterString;
-		const search_term = search_taxonomies + ( query.search || '' );
+		const search_term = search_taxonomies + (query.search || '');
 
-		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
+		this.props.recordTracksEvent('calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: themeId,
 			results_rank: resultsRank + 1,
-			results: themes.map( property( 'id' ) ).join(),
+			results: themes.map(property('id')).join(),
 			page_number: query.page,
-			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
-			action: snakeCase( action ),
-		} );
+			theme_on_page: parseInt((resultsRank + 1) / query.number),
+			action: snakeCase(action),
+		});
 	};
 
 	trackScrollPage() {
-		this.props.recordTracksEvent( 'calypso_themeshowcase_scroll' );
+		this.props.recordTracksEvent('calypso_themeshowcase_scroll');
 		this.props.trackScrollPage();
 	}
 
 	trackLastPage() {
-		this.props.recordGoogleEvent( 'Themes', 'Reached Last Page' );
-		this.props.recordTracksEvent( 'calypso_themeshowcase_last_page_scroll' );
+		this.props.recordGoogleEvent('Themes', 'Reached Last Page');
+		this.props.recordTracksEvent('calypso_themeshowcase_last_page_scroll');
 	}
 
-	onScreenshotClick = ( themeId, resultsRank ) => {
-		trackClick( 'theme', 'screenshot' );
-		if ( ! this.props.isThemeActive( themeId ) ) {
-			this.recordSearchResultsClick( themeId, resultsRank, 'screenshot_info' );
+	onScreenshotClick = (themeId, resultsRank) => {
+		trackClick('theme', 'screenshot');
+		if (!this.props.isThemeActive(themeId)) {
+			this.recordSearchResultsClick(themeId, resultsRank, 'screenshot_info');
 		}
-		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
+		this.props.onScreenshotClick && this.props.onScreenshotClick(themeId);
 	};
 
-	fetchNextPage = options => {
-		if ( this.props.isRequesting || this.props.isLastPage ) {
+	fetchNextPage = (options) => {
+		if (this.props.isRequesting || this.props.isLastPage) {
 			return;
 		}
 
-		if ( options.triggeredByScroll ) {
+		if (options.triggeredByScroll) {
 			this.trackScrollPage();
 		}
 
-		if ( ! this.props.recommendedThemes ) {
+		if (!this.props.recommendedThemes) {
 			this.props.incrementPage();
 		}
 	};
 
 	//intercept preview and add primary and secondary
-	getOptions = themeId => {
-		const options = this.props.getOptions( themeId );
-		const wrappedPreviewAction = action => {
+	getOptions = (themeId) => {
+		const options = this.props.getOptions(themeId);
+		const wrappedPreviewAction = (action) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
-			return t => {
-				if ( ! this.props.isLoggedIn ) {
+			return (t) => {
+				if (!this.props.isLoggedIn) {
 					defaultOption = options.signup;
 					secondaryOption = null;
-				} else if ( this.props.isThemeActive( themeId ) ) {
+				} else if (this.props.isThemeActive(themeId)) {
 					defaultOption = options.customize;
-				} else if ( options.purchase ) {
+				} else if (options.purchase) {
 					defaultOption = options.purchase;
-				} else if ( options.upgradePlan ) {
+				} else if (options.upgradePlan) {
 					defaultOption = options.upgradePlan;
 					secondaryOption = null;
 				} else {
 					defaultOption = options.activate;
 				}
-				this.props.setThemePreviewOptions( defaultOption, secondaryOption );
-				return action( t );
+				this.props.setThemePreviewOptions(defaultOption, secondaryOption);
+				return action(t);
 			};
 		};
 
-		if ( options && options.preview ) {
-			options.preview.action = wrappedPreviewAction( options.preview.action );
+		if (options && options.preview) {
+			options.preview.action = wrappedPreviewAction(options.preview.action);
 		}
 
 		return options;
@@ -161,48 +158,48 @@ class ThemesSelection extends Component {
 
 		return (
 			<div className="themes__selection">
-				<QueryThemes query={ query } siteId={ source } />
+				<QueryThemes query={query} siteId={source} />
 				<ThemesList
-					upsellUrl={ upsellUrl }
-					themes={ this.props.recommendedThemes || this.props.themes }
-					fetchNextPage={ this.fetchNextPage }
-					onMoreButtonClick={ this.recordSearchResultsClick }
-					getButtonOptions={ this.getOptions }
-					onScreenshotClick={ this.onScreenshotClick }
-					getScreenshotUrl={ this.props.getScreenshotUrl }
-					getActionLabel={ this.props.getActionLabel }
-					isActive={ this.props.isThemeActive }
-					getPrice={ this.props.getPremiumThemePrice }
-					isInstalling={ this.props.isInstallingTheme }
-					loading={ this.props.isRequesting }
-					emptyContent={ this.props.emptyContent }
-					placeholderCount={ this.props.placeholderCount }
-					bookmarkRef={ this.props.bookmarkRef }
+					upsellUrl={upsellUrl}
+					themes={this.props.recommendedThemes || this.props.themes}
+					fetchNextPage={this.fetchNextPage}
+					onMoreButtonClick={this.recordSearchResultsClick}
+					getButtonOptions={this.getOptions}
+					onScreenshotClick={this.onScreenshotClick}
+					getScreenshotUrl={this.props.getScreenshotUrl}
+					getActionLabel={this.props.getActionLabel}
+					isActive={this.props.isThemeActive}
+					getPrice={this.props.getPremiumThemePrice}
+					isInstalling={this.props.isInstallingTheme}
+					loading={this.props.isRequesting}
+					emptyContent={this.props.emptyContent}
+					placeholderCount={this.props.placeholderCount}
+					bookmarkRef={this.props.bookmarkRef}
 				/>
 			</div>
 		);
 	}
 }
 
-function bindIsThemeActive( state, siteId ) {
-	return themeId => isThemeActive( state, themeId, siteId );
+function bindIsThemeActive(state, siteId) {
+	return (themeId) => isThemeActive(state, themeId, siteId);
 }
 
-function bindIsInstallingTheme( state, siteId ) {
-	return themeId => isInstallingTheme( state, themeId, siteId );
+function bindIsInstallingTheme(state, siteId) {
+	return (themeId) => isInstallingTheme(state, themeId, siteId);
 }
 
-function bindGetPremiumThemePrice( state, siteId ) {
-	themeId => getPremiumThemePrice( state, themeId, siteId );
+function bindGetPremiumThemePrice(state, siteId) {
+	(themeId) => getPremiumThemePrice(state, themeId, siteId);
 }
 
 // Exporting this for use in recommended-themes.jsx
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
-	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
-		const isJetpack = isJetpackSite( state, siteId );
+	(state, { filter, page, search, tier, vertical, siteId, source }) => {
+		const isJetpack = isJetpackSite(state, siteId);
 		let sourceSiteId;
-		if ( source === 'wpcom' || source === 'wporg' ) {
+		if (source === 'wpcom' || source === 'wporg') {
 			sourceSiteId = source;
 		} else {
 			sourceSiteId = siteId && isJetpack ? siteId : 'wpcom';
@@ -212,37 +209,37 @@ export const ConnectedThemesSelection = connect(
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = ! includes( [ 'wpcom', 'wporg' ], sourceSiteId ) ? 2000 : 20;
+		const number = !includes(['wpcom', 'wporg'], sourceSiteId) ? 2000 : 20;
 		const query = {
 			search,
 			page,
-			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
-			filter: compact( [ filter, vertical ] ).join( ',' ),
+			tier: config.isEnabled('upgrades/premium-themes') ? tier : 'free',
+			filter: compact([filter, vertical]).join(','),
 			number,
 		};
 
 		return {
 			query,
 			source: sourceSiteId,
-			siteSlug: getSiteSlug( state, siteId ),
-			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
-			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
-			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
-			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
-			isLoggedIn: !! getCurrentUserId( state ),
-			isThemeActive: bindIsThemeActive( state, siteId ),
-			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
+			siteSlug: getSiteSlug(state, siteId),
+			themes: getThemesForQueryIgnoringPage(state, sourceSiteId, query) || [],
+			themesCount: getThemesFoundForQuery(state, sourceSiteId, query),
+			isRequesting: isRequestingThemesForQuery(state, sourceSiteId, query),
+			isLastPage: isThemesLastPageForQuery(state, sourceSiteId, query),
+			isLoggedIn: !!getCurrentUserId(state),
+			isThemeActive: bindIsThemeActive(state, siteId),
+			isInstallingTheme: bindIsInstallingTheme(state, siteId),
 			// Note: This component assumes that purchase and plans data is already present in the state tree
 			// (used by the `isPremiumThemeAvailable` selector). That data is provided by the `<QuerySitePurchases />`
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
-			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
-			filterString: prependThemeFilterKeys( state, query.filter ),
+			getPremiumThemePrice: bindGetPremiumThemePrice(state, siteId),
+			filterString: prependThemeFilterKeys(state, query.filter),
 		};
 	},
 	{ setThemePreviewOptions, recordGoogleEvent, recordTracksEvent }
-)( ThemesSelection );
+)(ThemesSelection);
 
 /**
  * Provide page state management needed for `ThemesSelection`. We cannot store the
@@ -254,31 +251,31 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||
-			! isEqual( nextProps.filter, this.props.filter ) ||
-			! isEqual( nextProps.vertical, this.props.vertical )
+			!isEqual(nextProps.filter, this.props.filter) ||
+			!isEqual(nextProps.vertical, this.props.vertical)
 		) {
 			this.resetPage();
 		}
 	}
 
 	incrementPage = () => {
-		this.setState( { page: this.state.page + 1 } );
+		this.setState({ page: this.state.page + 1 });
 	};
 
 	resetPage = () => {
-		this.setState( { page: 1 } );
+		this.setState({ page: 1 });
 	};
 
 	render() {
 		return (
 			<ConnectedThemesSelection
-				{ ...this.props }
-				page={ this.state.page }
-				incrementPage={ this.incrementPage }
+				{...this.props}
+				page={this.state.page}
+				incrementPage={this.incrementPage}
 			/>
 		);
 	}

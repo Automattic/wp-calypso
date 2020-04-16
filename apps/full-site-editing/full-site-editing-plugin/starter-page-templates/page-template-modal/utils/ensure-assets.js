@@ -64,12 +64,12 @@ import { removeQueryArgs } from '@wordpress/url';
  * @param {Array<Usage>} usages A list of {@link Usage} objects.
  * @returns {Assets} assets object with the new {@link Asset} included
  */
-const addAssetToLoad = ( assets, url, usages ) => {
+const addAssetToLoad = (assets, url, usages) => {
 	// Remove resizing query arguments from the URL.
-	url = removeQueryArgs( url, 'w', 's' );
+	url = removeQueryArgs(url, 'w', 's');
 
 	// Use an existing asset for the URL or make a new one.
-	const asset = assets[ url ] || {
+	const asset = assets[url] || {
 		url,
 		usages: [],
 	};
@@ -77,10 +77,10 @@ const addAssetToLoad = ( assets, url, usages ) => {
 	// Return new result object, extended with the new/updated asset.
 	return {
 		...assets,
-		[ url ]: {
+		[url]: {
 			...asset,
 			// Store where exactly block uses id/url so we can update it later.
-			usages: [ ...asset.usages, ...usages ],
+			usages: [...asset.usages, ...usages],
 		},
 	};
 };
@@ -93,49 +93,49 @@ const addAssetToLoad = ( assets, url, usages ) => {
  * @param {GutenbergBlock} block Gutenberg Block object.
  * @returns {FetchSession} Updated session object
  */
-const findAssetsInBlock = ( session, block ) => {
+const findAssetsInBlock = (session, block) => {
 	// Save a reference for the block so we can later easily
 	// find it without any loops and recursion.
-	session.blocksByClientId[ block.clientId ] = block;
+	session.blocksByClientId[block.clientId] = block;
 
 	// Identify assets in blocks where we expect them.
-	switch ( block.name ) {
+	switch (block.name) {
 		// Both of these blocks use same attribute names for image id and url
 		// and thus we can share the implementation.
 		case 'core/cover':
 		case 'core/image': {
 			const url = block.attributes.url;
-			if ( url ) {
-				session.assets = addAssetToLoad( session.assets, url, [
-					{ prop: 'url', path: [ block.clientId, 'attributes', 'url' ] },
-					{ prop: 'id', path: [ block.clientId, 'attributes', 'id' ] },
-				] );
+			if (url) {
+				session.assets = addAssetToLoad(session.assets, url, [
+					{ prop: 'url', path: [block.clientId, 'attributes', 'url'] },
+					{ prop: 'id', path: [block.clientId, 'attributes', 'id'] },
+				]);
 			}
 		}
 		case 'core/media-text': {
 			const url = block.attributes.mediaUrl;
-			if ( url && block.attributes.mediaType === 'image' ) {
-				session.assets = addAssetToLoad( session.assets, url, [
-					{ prop: 'url', path: [ block.clientId, 'attributes', 'mediaUrl' ] },
-					{ prop: 'id', path: [ block.clientId, 'attributes', 'mediaId' ] },
-				] );
+			if (url && block.attributes.mediaType === 'image') {
+				session.assets = addAssetToLoad(session.assets, url, [
+					{ prop: 'url', path: [block.clientId, 'attributes', 'mediaUrl'] },
+					{ prop: 'id', path: [block.clientId, 'attributes', 'mediaId'] },
+				]);
 			}
 		}
 		case 'core/gallery': {
-			forEach( block.attributes.images, ( image, i ) => {
-				session.assets = addAssetToLoad( session.assets, image.url, [
-					{ prop: 'url', path: [ block.clientId, 'attributes', 'images', i, 'url' ] },
-					{ prop: 'url', path: [ block.clientId, 'attributes', 'images', i, 'link' ] },
-					{ prop: 'id', path: [ block.clientId, 'attributes', 'images', i, 'id' ] },
-					{ prop: 'id', path: [ block.clientId, 'attributes', 'ids', i ] },
-				] );
-			} );
+			forEach(block.attributes.images, (image, i) => {
+				session.assets = addAssetToLoad(session.assets, image.url, [
+					{ prop: 'url', path: [block.clientId, 'attributes', 'images', i, 'url'] },
+					{ prop: 'url', path: [block.clientId, 'attributes', 'images', i, 'link'] },
+					{ prop: 'id', path: [block.clientId, 'attributes', 'images', i, 'id'] },
+					{ prop: 'id', path: [block.clientId, 'attributes', 'ids', i] },
+				]);
+			});
 		}
 	}
 
 	// Recursively process all inner blocks.
-	if ( ! isEmpty( block.innerBlocks ) ) {
-		return reduce( block.innerBlocks, findAssetsInBlock, session );
+	if (!isEmpty(block.innerBlocks)) {
+		return reduce(block.innerBlocks, findAssetsInBlock, session);
 	}
 
 	return session;
@@ -147,19 +147,19 @@ const findAssetsInBlock = ( session, block ) => {
  * @param {Assets} assets Assets that were detected from blocks.
  * @returns {Promise} Promise that resoves into an object with URLs as keys and fetch results as values.
  */
-const fetchAssets = async assets => {
-	return await apiFetch( {
+const fetchAssets = async (assets) => {
+	return await apiFetch({
 		method: 'POST',
 		path: '/fse/v1/sideload/image/batch',
-		data: { resources: map( assets ) },
-	} ).then( response =>
+		data: { resources: map(assets) },
+	}).then((response) =>
 		reduce(
 			assets,
-			( fetched, asset ) => {
+			(fetched, asset) => {
 				const { id, source_url } = response.shift();
 				return {
 					...fetched,
-					[ asset.url ]: { id, url: source_url },
+					[asset.url]: { id, url: source_url },
 				};
 			},
 			{}
@@ -175,16 +175,16 @@ const fetchAssets = async assets => {
  * @param {object<string, object>} fetchedAssets Fetched assets.
  * @returns {Array<GutenbergBlock>} A promise resolving into an array of blocks.
  */
-const getBlocksWithAppliedAssets = ( session, fetchedAssets ) => {
-	forEach( session.assets, asset => {
-		const newAsset = fetchedAssets[ asset.url ];
-		if ( ! newAsset ) {
+const getBlocksWithAppliedAssets = (session, fetchedAssets) => {
+	forEach(session.assets, (asset) => {
+		const newAsset = fetchedAssets[asset.url];
+		if (!newAsset) {
 			return;
 		}
-		forEach( asset.usages, usage => {
-			set( session.blocksByClientId, usage.path, newAsset[ usage.prop ] );
-		} );
-	} );
+		forEach(asset.usages, (usage) => {
+			set(session.blocksByClientId, usage.path, newAsset[usage.prop]);
+		});
+	});
 
 	return session.blocks;
 };
@@ -196,24 +196,24 @@ const getBlocksWithAppliedAssets = ( session, fetchedAssets ) => {
  * @param {Array<GutenbergBlock>} blocks Blocks, as returned by `wp.block.parse`
  * @returns {Promise} A promise that resolves into an array of {@link GutenbergBlock} with updated assets
  */
-const ensureAssetsInBlocks = async blocks => {
+const ensureAssetsInBlocks = async (blocks) => {
 	// Create a FetchSession object by reducing blocks.
-	const session = reduce( blocks, findAssetsInBlock, {
+	const session = reduce(blocks, findAssetsInBlock, {
 		assets: {},
 		blocksByClientId: {},
 		blocks,
-	} );
+	});
 
 	// No assets found. Proceed with insertion right away.
-	if ( isEmpty( session.assets ) ) {
+	if (isEmpty(session.assets)) {
 		return blocks;
 	}
 
 	// Ensure assets are available on the site and replace originals
 	// with local copies before inserting the template.
-	return fetchAssets( session.assets ).then( fetchedAssets => {
-		return getBlocksWithAppliedAssets( session, fetchedAssets );
-	} );
+	return fetchAssets(session.assets).then((fetchedAssets) => {
+		return getBlocksWithAppliedAssets(session, fetchedAssets);
+	});
 };
 
 export default ensureAssetsInBlocks;

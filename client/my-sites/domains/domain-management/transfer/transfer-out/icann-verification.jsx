@@ -19,11 +19,11 @@ class IcannVerification extends React.Component {
 	};
 
 	handleClick = () => {
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
-		resendIcannVerification( this.props.selectedDomainName, error => {
-			if ( error ) {
-				notices.error( error.message );
+		resendIcannVerification(this.props.selectedDomainName, (error) => {
+			if (error) {
+				notices.error(error.message);
 			} else {
 				notices.success(
 					this.props.translate(
@@ -33,8 +33,8 @@ class IcannVerification extends React.Component {
 				);
 			}
 
-			this.setState( { submitting: false } );
-		} );
+			this.setState({ submitting: false });
+		});
 	};
 
 	render() {
@@ -44,29 +44,29 @@ class IcannVerification extends React.Component {
 			<div>
 				<Card className="transfer-out__card">
 					<p>
-						{ translate(
+						{translate(
 							'You must verify your email address before you can transfer this domain. ' +
 								'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 							{
 								components: {
 									learnMoreLink: (
 										<a
-											href={ TRANSFER_DOMAIN_REGISTRATION }
+											href={TRANSFER_DOMAIN_REGISTRATION}
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
 									),
 								},
 							}
-						) }
+						)}
 					</p>
 					<Button
 						className="transfer-out__action-button"
-						onClick={ this.handleClick }
-						disabled={ this.state.submitting }
+						onClick={this.handleClick}
+						disabled={this.state.submitting}
 						primary
 					>
-						{ translate( 'Resend Verification Email' ) }
+						{translate('Resend Verification Email')}
 					</Button>
 				</Card>
 			</div>
@@ -74,4 +74,4 @@ class IcannVerification extends React.Component {
 	}
 }
 
-export default localize( IcannVerification );
+export default localize(IcannVerification);

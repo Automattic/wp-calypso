@@ -14,7 +14,7 @@ import {
 } from '../../action-types';
 import { requestFeed, requestFeedError, saveFeed, updateFeed } from '../actions';
 
-describe( 'actions', () => {
+describe('actions', () => {
 	const siteId = 1234;
 	const zoneId = 5678;
 
@@ -23,54 +23,54 @@ describe( 'actions', () => {
 		{ ID: 2, title: 'Another test post' },
 	];
 
-	describe( 'requestFeed()', () => {
-		test( 'should return an action object', () => {
-			const action = requestFeed( siteId, zoneId );
+	describe('requestFeed()', () => {
+		test('should return an action object', () => {
+			const action = requestFeed(siteId, zoneId);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_REQUEST_FEED,
 				siteId,
 				zoneId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'requestFeedError()', () => {
-		it( 'should return an action object', () => {
-			const action = requestFeedError( siteId, zoneId );
+	describe('requestFeedError()', () => {
+		it('should return an action object', () => {
+			const action = requestFeedError(siteId, zoneId);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_REQUEST_FEED_ERROR,
 				siteId,
 				zoneId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'saveFeed()', () => {
-		test( 'should return an action object', () => {
-			const action = saveFeed( siteId, zoneId, 'test-form', posts );
+	describe('saveFeed()', () => {
+		test('should return an action object', () => {
+			const action = saveFeed(siteId, zoneId, 'test-form', posts);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_SAVE_FEED,
 				form: 'test-form',
 				posts,
 				siteId,
 				zoneId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'updateFeed()', () => {
-		test( 'should return an action object', () => {
-			const action = updateFeed( siteId, zoneId, posts );
+	describe('updateFeed()', () => {
+		test('should return an action object', () => {
+			const action = updateFeed(siteId, zoneId, posts);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_UPDATE_FEED,
 				posts,
 				siteId,
 				zoneId,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

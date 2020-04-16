@@ -37,40 +37,40 @@ const response = {
 	],
 };
 
-describe( 'recommended sites', () => {
-	describe( '#requestRecommendedSites', () => {
-		test( 'should dispatch an http request and call through next', () => {
-			const action = requestRecommendedSitesAction( { seed } );
-			const result = requestRecommendedSites( action );
-			expect( result ).toEqual(
-				http( {
+describe('recommended sites', () => {
+	describe('#requestRecommendedSites', () => {
+		test('should dispatch an http request and call through next', () => {
+			const action = requestRecommendedSitesAction({ seed });
+			const result = requestRecommendedSites(action);
+			expect(result).toEqual(
+				http({
 					method: 'GET',
 					path: '/read/recommendations/sites',
 					query: { number: 4, offset: 0, seed, posts_per_site: 0 },
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#receiveRecommendedSites', () => {
-		test( 'should dispatch action with sites if successful', () => {
-			const action = requestRecommendedSitesAction( { seed } );
-			const result = addRecommendedSites( action, response );
-			expect( result ).toEqual(
-				receiveRecommendedSites( {
+	describe('#receiveRecommendedSites', () => {
+		test('should dispatch action with sites if successful', () => {
+			const action = requestRecommendedSitesAction({ seed });
+			const result = addRecommendedSites(action, response);
+			expect(result).toEqual(
+				receiveRecommendedSites({
 					sites: response,
 					seed,
 					offset: 0,
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#fromApi', () => {
-		test( 'should extract only what we care about from the api response. and decode entities', () => {
+	describe('#fromApi', () => {
+		test('should extract only what we care about from the api response. and decode entities', () => {
 			const expected = [
 				{
 					algorithm,
@@ -98,7 +98,7 @@ describe( 'recommended sites', () => {
 				},
 			];
 
-			expect( fromApi( response ) ).toEqual( expected );
-		} );
-	} );
-} );
+			expect(fromApi(response)).toEqual(expected);
+		});
+	});
+});

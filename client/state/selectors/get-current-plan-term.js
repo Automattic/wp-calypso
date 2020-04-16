@@ -12,14 +12,14 @@ import { getSitePlan } from 'state/sites/selectors';
  * @param {number} siteId Site ID
  * @returns {string} Human-readable interval type
  */
-export default function getTermFromCurrentPlan( state, siteId ) {
-	const currentPlanProduct = getSitePlan( state, siteId );
-	if ( ! currentPlanProduct ) {
+export default function getTermFromCurrentPlan(state, siteId) {
+	const currentPlanProduct = getSitePlan(state, siteId);
+	if (!currentPlanProduct) {
 		return null;
 	}
 
-	const currentPlanObject = getPlan( currentPlanProduct.product_slug );
-	if ( ! currentPlanObject ) {
+	const currentPlanObject = getPlan(currentPlanProduct.product_slug);
+	if (!currentPlanObject) {
 		return null;
 	}
 	return currentPlanObject.term;

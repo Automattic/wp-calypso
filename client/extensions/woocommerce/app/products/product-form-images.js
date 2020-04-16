@@ -20,10 +20,10 @@ import Spinner from 'components/spinner';
 class ProductFormImages extends Component {
 	static propTypes = {
 		images: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				id: PropTypes.number.isRequired,
 				src: PropTypes.string.isRequired,
-			} )
+			})
 		),
 		onUpload: PropTypes.func.isRequired,
 		onRemove: PropTypes.func.isRequired,
@@ -36,8 +36,8 @@ class ProductFormImages extends Component {
 		onRemove: noop,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		const { images } = this.props;
 		// Images are stored incomponent state so that we can display placeholder images
 		// as they upload, along side previously uploaded images.
@@ -46,19 +46,19 @@ class ProductFormImages extends Component {
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.images !== this.props.images ) {
-			this.setState( { images: nextProps.images } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.images !== this.props.images) {
+			this.setState({ images: nextProps.images });
 		}
 	}
 
-	onUpload = file => {
+	onUpload = (file) => {
 		const { onUpload } = this.props;
-		onUpload( file );
+		onUpload(file);
 
 		// Update a placeholder entry with the final source image.
-		const images = [ ...this.state.images ].map( i => {
-			if ( i.transientId === file.transientId ) {
+		const images = [...this.state.images].map((i) => {
+			if (i.transientId === file.transientId) {
 				return {
 					...i,
 					src: file.URL,
@@ -66,100 +66,100 @@ class ProductFormImages extends Component {
 				};
 			}
 			return i;
-		} );
+		});
 
-		this.setState( {
+		this.setState({
 			images,
-		} );
+		});
 	};
 
-	onSelect = files => {
+	onSelect = (files) => {
 		const { images } = this.state;
-		const newImages = files.map( file => {
+		const newImages = files.map((file) => {
 			return {
 				placeholder: file.preview,
 				transientId: file.ID,
 				src: null,
 				id: null,
 			};
-		} );
+		});
 		this.props.onUploadStart();
-		this.setState( {
-			images: [ ...images, ...newImages ],
-		} );
+		this.setState({
+			images: [...images, ...newImages],
+		});
 	};
 
-	onError = file => {
-		const images = [ ...this.state.images ].filter( i => i.transientId !== file.transientId );
-		this.setState( {
+	onError = (file) => {
+		const images = [...this.state.images].filter((i) => i.transientId !== file.transientId);
+		this.setState({
 			images,
-		} );
+		});
 	};
 
-	removeImage = id => {
-		let images = [ ...this.state.images ];
-		if ( isNumber( id ) ) {
-			images = images.filter( i => i.id !== id ) || [];
-			this.props.onRemove( id );
+	removeImage = (id) => {
+		let images = [...this.state.images];
+		if (isNumber(id)) {
+			images = images.filter((i) => i.id !== id) || [];
+			this.props.onRemove(id);
 		} else {
-			images = images.filter( i => i.transientId !== id ) || [];
+			images = images.filter((i) => i.transientId !== id) || [];
 		}
 
-		this.setState( {
+		this.setState({
 			images,
-		} );
+		});
 	};
 
-	renderPlaceholder = image => {
+	renderPlaceholder = (image) => {
 		const { placeholder } = image;
 		return (
 			<figure>
-				<img src={ placeholder || '' } alt="" />
+				<img src={placeholder || ''} alt="" />
 				<Spinner />
 			</figure>
 		);
 	};
 
-	renderUploaded = ( { src, placeholder }, thumb ) => {
+	renderUploaded = ({ src, placeholder }, thumb) => {
 		const { translate } = this.props;
 
 		return (
 			<figure>
 				<MediaImage
-					src={ src }
-					alt={ thumb ? translate( 'Product thumbnail' ) : translate( 'Featured product image' ) }
-					placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
+					src={src}
+					alt={thumb ? translate('Product thumbnail') : translate('Featured product image')}
+					placeholder={placeholder ? <img src={placeholder} alt="" /> : <span />}
 				/>
 			</figure>
 		);
 	};
 
-	renderImage = ( image, thumb = true ) => {
+	renderImage = (image, thumb = true) => {
 		const { src } = image;
 		const { translate } = this.props;
 		const id = image.id || image.transientId;
 
 		const removeImage = () => {
-			this.removeImage( id );
+			this.removeImage(id);
 		};
 
-		const classes = classNames( 'products__product-form-images-item', {
+		const classes = classNames('products__product-form-images-item', {
 			preview: null === src,
 			thumb,
-		} );
+		});
 
 		return (
-			<div className={ classes } key={ id }>
-				{ src ? this.renderUploaded( image, thumb ) : this.renderPlaceholder( image ) }
+			<div className={classes} key={id}>
+				{src ? this.renderUploaded(image, thumb) : this.renderPlaceholder(image)}
 				<Button
-					onClick={ removeImage }
+					onClick={removeImage}
 					compact
-					aria-label={ translate( 'Remove image' ) }
+					aria-label={translate('Remove image')}
 					className="products__product-form-images-item-remove"
 				>
 					<Gridicon
 						icon="cross-small"
-						size={ 24 }
+						size={24}
 						className="products__product-form-images-item-remove-icon"
 					/>
 				</Button>
@@ -169,35 +169,35 @@ class ProductFormImages extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const images = [ ...this.state.images ];
-		const featuredImage = ( images && images.shift() ) || null;
+		const images = [...this.state.images];
+		const featuredImage = (images && images.shift()) || null;
 
 		return (
 			<div className="products__product-form-images-wrapper">
 				<div className="products__product-form-images">
 					<div className="products__product-form-images-featured">
-						{ featuredImage && this.renderImage( featuredImage, false ) }
+						{featuredImage && this.renderImage(featuredImage, false)}
 					</div>
 
 					<div className="products__product-form-images-thumbs">
-						{ images.map( image => this.renderImage( image ) ) }
+						{images.map((image) => this.renderImage(image))}
 
 						<ProductImageUploader
-							onSelect={ this.onSelect }
-							onUpload={ this.onUpload }
-							onError={ this.onError }
-							compact={ this.state.images.length > 0 }
-							onFinish={ this.props.onUploadFinish }
+							onSelect={this.onSelect}
+							onUpload={this.onUpload}
+							onError={this.onError}
+							compact={this.state.images.length > 0}
+							onFinish={this.props.onUploadFinish}
 						/>
 					</div>
 				</div>
 
 				<FormSettingExplanation>
-					{ translate( 'For best results, upload photos larger than 1000x1000px.' ) }
+					{translate('For best results, upload photos larger than 1000x1000px.')}
 				</FormSettingExplanation>
 			</div>
 		);
 	}
 }
 
-export default localize( ProductFormImages );
+export default localize(ProductFormImages);

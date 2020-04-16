@@ -38,17 +38,17 @@ class TagStreamHeader extends React.Component {
 
 	state = {
 		tagImages: this.props.tagImages,
-		chosenTagImage: sample( this.props.tagImages ),
+		chosenTagImage: sample(this.props.tagImages),
 	};
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( nextProps.tagImages === prevState.tagImages ) {
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (nextProps.tagImages === prevState.tagImages) {
 			return null;
 		}
 
 		return {
 			tagImages: nextProps.tagImages,
-			chosenTagImage: sample( nextProps.tagImages ),
+			chosenTagImage: sample(nextProps.tagImages),
 		};
 	}
 
@@ -63,73 +63,73 @@ class TagStreamHeader extends React.Component {
 			showBack,
 			imageSearchString,
 		} = this.props;
-		const classes = classnames( {
+		const classes = classnames({
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
 			'has-back-button': showBack,
-		} );
+		});
 		const imageStyle = {};
 		const tagImage = this.state.chosenTagImage;
 
 		let sourceWrapper;
 		let authorLink;
-		if ( tagImage ) {
-			const imageUrl = resizeImageUrl( 'https://' + tagImage.url, {
-				resize: `${ TAG_HEADER_WIDTH },${ TAG_HEADER_HEIGHT }`,
-			} );
-			const safeCssUrl = cssSafeUrl( imageUrl );
+		if (tagImage) {
+			const imageUrl = resizeImageUrl('https://' + tagImage.url, {
+				resize: `${TAG_HEADER_WIDTH},${TAG_HEADER_HEIGHT}`,
+			});
+			const safeCssUrl = cssSafeUrl(imageUrl);
 			imageStyle.backgroundImage = 'url(' + safeCssUrl + ')';
 
 			sourceWrapper = <span className="tag-stream__header-image-byline-label" />;
 			authorLink = (
 				<a
-					href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` }
+					href={`/read/blogs/${tagImage.blog_id}/posts/${tagImage.post_id}`}
 					className="tag-stream__header-image-byline-link"
 					rel="author"
 				>
-					{ decodeEntities( tagImage.author ) }
+					{decodeEntities(tagImage.author)}
 				</a>
 			);
 		}
 
 		return (
-			<div className={ classes }>
-				<QueryReaderTagImages tag={ imageSearchString } />
-				{ showFollow && (
+			<div className={classes}>
+				<QueryReaderTagImages tag={imageSearchString} />
+				{showFollow && (
 					<div className="tag-stream__header-follow">
 						<FollowButton
-							followLabel={ translate( 'Follow Tag' ) }
-							followingLabel={ translate( 'Following Tag' ) }
-							iconSize={ 24 }
-							following={ following }
-							onFollowToggle={ onFollowToggle }
+							followLabel={translate('Follow Tag')}
+							followingLabel={translate('Following Tag')}
+							iconSize={24}
+							following={following}
+							onFollowToggle={onFollowToggle}
 						/>
 					</div>
-				) }
+				)}
 
-				<div className="tag-stream__header-image" style={ imageStyle }>
+				<div className="tag-stream__header-image" style={imageStyle}>
 					<h1 className="tag-stream__header-image-title">
-						<Gridicon icon="tag" size={ 24 } />
-						{ title }
+						<Gridicon icon="tag" size={24} />
+						{title}
 					</h1>
-					{ tagImage && (
+					{tagImage && (
 						<div className="tag-stream__header-image-byline">
-							{ translate( '{{sourceWrapper}}Photo from{{/sourceWrapper}} {{authorLink/}}', {
+							{translate('{{sourceWrapper}}Photo from{{/sourceWrapper}} {{authorLink/}}', {
 								components: {
 									sourceWrapper,
 									authorLink,
 								},
-							} ) }
+							})}
 						</div>
-					) }
+					)}
 				</div>
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	return {
-		tagImages: getTagImages( state, ownProps.imageSearchString ),
+		tagImages: getTagImages(state, ownProps.imageSearchString),
 	};
-} )( localize( TagStreamHeader ) );
+})(localize(TagStreamHeader));

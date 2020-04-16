@@ -8,17 +8,17 @@ import { expect } from 'chai';
  */
 import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
 
-describe( 'getSiteDefaultPostFormat()', () => {
+describe('getSiteDefaultPostFormat()', () => {
 	const siteId = 2916284;
 
-	test( 'should return default post format for a known site when settings have not been fetched', () => {
+	test('should return default post format for a known site when settings have not been fetched', () => {
 		const state = {
 			siteSettings: {
 				items: {},
 			},
 			sites: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						options: {
 							default_post_format: 'image',
 						},
@@ -26,15 +26,15 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				},
 			},
 		};
-		const output = getSiteDefaultPostFormat( state, siteId );
-		expect( output ).to.eql( 'image' );
-	} );
+		const output = getSiteDefaultPostFormat(state, siteId);
+		expect(output).to.eql('image');
+	});
 
-	test( 'should return default post format when settings have been fetched and site is unknown', () => {
+	test('should return default post format when settings have been fetched and site is unknown', () => {
 		const state = {
 			siteSettings: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						default_post_format: 'aside',
 					},
 				},
@@ -43,22 +43,22 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				items: {},
 			},
 		};
-		const output = getSiteDefaultPostFormat( state, siteId );
-		expect( output ).to.eql( 'aside' );
-	} );
+		const output = getSiteDefaultPostFormat(state, siteId);
+		expect(output).to.eql('aside');
+	});
 
-	test( 'should prioritize default post format from settings over post format from sites', () => {
+	test('should prioritize default post format from settings over post format from sites', () => {
 		const state = {
 			siteSettings: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						default_post_format: 'aside',
 					},
 				},
 			},
 			sites: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						options: {
 							default_post_format: 'image',
 						},
@@ -66,18 +66,18 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				},
 			},
 		};
-		const output = getSiteDefaultPostFormat( state, siteId );
-		expect( output ).to.eql( 'aside' );
-	} );
+		const output = getSiteDefaultPostFormat(state, siteId);
+		expect(output).to.eql('aside');
+	});
 
-	test( 'should return standard if post format is set to 0', () => {
+	test('should return standard if post format is set to 0', () => {
 		const state = {
 			siteSettings: {
 				items: {},
 			},
 			sites: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						options: {
 							default_post_format: '0',
 						},
@@ -85,18 +85,18 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				},
 			},
 		};
-		const output = getSiteDefaultPostFormat( state, siteId );
-		expect( output ).to.eql( 'standard' );
-	} );
+		const output = getSiteDefaultPostFormat(state, siteId);
+		expect(output).to.eql('standard');
+	});
 
-	test( 'should return standard if post format is set to an empty string', () => {
+	test('should return standard if post format is set to an empty string', () => {
 		const state = {
 			siteSettings: {
 				items: {},
 			},
 			sites: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						options: {
 							default_post_format: '',
 						},
@@ -104,18 +104,18 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				},
 			},
 		};
-		const output = getSiteDefaultPostFormat( state, siteId );
-		expect( output ).to.eql( 'standard' );
-	} );
+		const output = getSiteDefaultPostFormat(state, siteId);
+		expect(output).to.eql('standard');
+	});
 
-	test( 'should return standard if post format is missing for a known site', () => {
+	test('should return standard if post format is missing for a known site', () => {
 		const state = {
 			siteSettings: {
 				items: {},
 			},
 			sites: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						options: {
 							exampleOption: 'exampleValue',
 						},
@@ -123,15 +123,15 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				},
 			},
 		};
-		const output = getSiteDefaultPostFormat( state, siteId );
-		expect( output ).to.eql( 'standard' );
-	} );
+		const output = getSiteDefaultPostFormat(state, siteId);
+		expect(output).to.eql('standard');
+	});
 
-	test( 'should return standard if settings are fetched, but post format option is missing', () => {
+	test('should return standard if settings are fetched, but post format option is missing', () => {
 		const state = {
 			siteSettings: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						options: {
 							some_option: 'example',
 						},
@@ -142,11 +142,11 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				items: {},
 			},
 		};
-		const output = getSiteDefaultPostFormat( state, siteId );
-		expect( output ).to.eql( 'standard' );
-	} );
+		const output = getSiteDefaultPostFormat(state, siteId);
+		expect(output).to.eql('standard');
+	});
 
-	test( 'should return null for an unknown site when settings have not been fetched', () => {
+	test('should return null for an unknown site when settings have not been fetched', () => {
 		const state = {
 			siteSettings: {
 				items: {},
@@ -161,7 +161,7 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				},
 			},
 		};
-		const output = getSiteDefaultPostFormat( state, siteId );
-		expect( output ).to.be.null;
-	} );
-} );
+		const output = getSiteDefaultPostFormat(state, siteId);
+		expect(output).to.be.null;
+	});
+});

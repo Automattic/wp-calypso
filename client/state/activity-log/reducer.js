@@ -11,8 +11,8 @@ export const emptyFilter = {
 	page: 1,
 };
 
-export const filterState = ( state = emptyFilter, { type, filter } ) => {
-	switch ( type ) {
+export const filterState = (state = emptyFilter, { type, filter }) => {
+	switch (type) {
 		case ACTIVITY_LOG_FILTER_SET:
 			return { ...emptyFilter, ...filter };
 
@@ -24,11 +24,11 @@ export const filterState = ( state = emptyFilter, { type, filter } ) => {
 	}
 };
 
-export default combineReducers( {
+export default combineReducers({
 	activationRequesting,
-	filter: keyedReducer( 'siteId', filterState ),
+	filter: keyedReducer('siteId', filterState),
 	restoreProgress,
 	restoreRequest,
 	backupProgress,
 	backupRequest,
-} );
+});

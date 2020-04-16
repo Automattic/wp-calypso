@@ -5,11 +5,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const FAQItem = ( { question, answer } ) => {
+const FAQItem = ({ question, answer }) => {
 	return (
 		<li className="faq__item">
-			<h4 className="faq__question">{ question }</h4>
-			<p className="faq__answer">{ answer }</p>
+			<h4 className="faq__question">{question}</h4>
+			<p className="faq__answer">{answer}</p>
 		</li>
 	);
 };

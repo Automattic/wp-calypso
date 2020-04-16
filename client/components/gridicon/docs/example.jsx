@@ -210,9 +210,9 @@ const icons = [
 ];
 
 export default function GridiconExample() {
-	function handleClick( icon ) {
-		const toCopy = `<Gridicon icon="${ icon }" />`;
-		window.prompt( 'Copy component code:', toCopy );
+	function handleClick(icon) {
+		const toCopy = `<Gridicon icon="${icon}" />`;
+		window.prompt('Copy component code:', toCopy);
 	}
 
 	return (
@@ -222,9 +222,9 @@ export default function GridiconExample() {
 				<a href="/devdocs/design/social-logo">Social Logo</a>
 			</h2>
 			<div>
-				{ icons.map( icon => (
-					<Gridicon key={ icon } icon={ icon } size={ 48 } onClick={ () => handleClick( icon ) } />
-				) ) }
+				{icons.map((icon) => (
+					<Gridicon key={icon} icon={icon} size={48} onClick={() => handleClick(icon)} />
+				))}
 			</div>
 		</div>
 	);

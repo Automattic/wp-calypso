@@ -10,15 +10,15 @@ import { combineReducers } from '@wordpress/data';
 import { Vertical } from './types';
 import { Action } from './actions';
 
-const verticals: Reducer< Vertical[], Action > = ( state = [], action ) => {
-	if ( action.type === 'RECEIVE_VERTICALS' ) {
+const verticals: Reducer<Vertical[], Action> = (state = [], action) => {
+	if (action.type === 'RECEIVE_VERTICALS') {
 		return action.verticals;
 	}
 	return state;
 };
 
-const reducer = combineReducers( { verticals } );
+const reducer = combineReducers({ verticals });
 
-export type State = ReturnType< typeof reducer >;
+export type State = ReturnType<typeof reducer>;
 
 export default reducer;

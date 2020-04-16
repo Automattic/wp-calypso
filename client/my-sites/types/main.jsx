@@ -23,7 +23,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 
-function Types( {
+function Types({
 	siteId,
 	query,
 	postType,
@@ -31,33 +31,33 @@ function Types( {
 	userCanEdit,
 	statusSlug,
 	showPublishedStatus,
-} ) {
+}) {
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ get( postType, 'label' ) } />
-			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
+			<DocumentHead title={get(postType, 'label')} />
+			<PageViewTracker path={siteId ? '/types/:site' : '/types'} title="Custom Post Type" />
 			<SidebarNavigation />
 			<FormattedHeader
 				className="types__page-heading"
-				headerText={ get( postType, 'label' ) }
+				headerText={get(postType, 'label')}
 				align="left"
 			/>
-			{ false !== userCanEdit &&
+			{false !== userCanEdit &&
 				false !== postTypeSupported && [
 					<PostTypeFilter
 						key="filter"
-						query={ userCanEdit ? query : null }
-						statusSlug={ statusSlug }
+						query={userCanEdit ? query : null}
+						statusSlug={statusSlug}
 					/>,
 					<PostTypeList
 						key="list"
-						query={ userCanEdit ? query : null }
-						showPublishedStatus={ showPublishedStatus }
-						scrollContainer={ document.body }
+						query={userCanEdit ? query : null}
+						showPublishedStatus={showPublishedStatus}
+						scrollContainer={document.body}
 					/>,
-				] }
-			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
-			{ false === userCanEdit && <PostTypeForbidden /> }
+				]}
+			{false === postTypeSupported && <PostTypeUnsupported type={query.type} />}
+			{false === userCanEdit && <PostTypeForbidden />}
 		</Main>
 	);
 }
@@ -72,15 +72,15 @@ Types.propTypes = {
 	showPublishedStatus: PropTypes.bool,
 };
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
-	const postType = getPostType( state, siteId, ownProps.query.type );
-	const capability = get( postType, [ 'capabilities', 'edit_posts' ], null );
+export default connect((state, ownProps) => {
+	const siteId = getSelectedSiteId(state);
+	const postType = getPostType(state, siteId, ownProps.query.type);
+	const capability = get(postType, ['capabilities', 'edit_posts'], null);
 
 	return {
 		siteId,
 		postType,
-		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
-		userCanEdit: canCurrentUser( state, siteId, capability ),
+		postTypeSupported: isPostTypeSupported(state, siteId, ownProps.query.type),
+		userCanEdit: canCurrentUser(state, siteId, capability),
 	};
-} )( Types );
+})(Types);

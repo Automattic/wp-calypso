@@ -18,19 +18,19 @@ const cardComponents = {
 	'home-notice-celebrate-site-setup-complete': CelebrateSiteSetupComplete,
 };
 
-const Notices = ( { checklistMode, displayChecklist, cards } ) => {
+const Notices = ({ checklistMode, displayChecklist, cards }) => {
 	return (
 		<>
-			{ cards &&
+			{cards &&
 				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
+					(card, index) =>
+						cardComponents[card] &&
+						React.createElement(cardComponents[card], {
 							key: index,
 							checklistMode,
 							displayChecklist,
-						} )
-				) }
+						})
+				)}
 		</>
 	);
 };

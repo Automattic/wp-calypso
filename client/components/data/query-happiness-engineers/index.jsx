@@ -14,7 +14,7 @@ import { fetchHappinessEngineers } from 'state/happiness-engineers/actions';
 
 class QueryHappinessEngineers extends Component {
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.isRequestingHappinessEngineers ) {
+		if (!this.props.isRequestingHappinessEngineers) {
 			this.props.fetchHappinessEngineers();
 		}
 	}
@@ -34,10 +34,10 @@ QueryHappinessEngineers.defaultProps = {
 };
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state ),
+			isRequestingHappinessEngineers: isRequestingHappinessEngineers(state),
 		};
 	},
 	{ fetchHappinessEngineers }
-)( QueryHappinessEngineers );
+)(QueryHappinessEngineers);

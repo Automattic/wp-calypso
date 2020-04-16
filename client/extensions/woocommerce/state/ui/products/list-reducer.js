@@ -14,21 +14,21 @@ import {
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_PRODUCTS_REQUEST:
-			return productsRequest( state, action );
+			return productsRequest(state, action);
 		case WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS:
-			return productsRequestSuccess( state, action );
+			return productsRequestSuccess(state, action);
 	}
 
 	return state;
-} );
+});
 
-export function productsRequestSuccess( state = {}, action ) {
+export function productsRequestSuccess(state = {}, action) {
 	// If not set in the action, default to the defaults
-	const page = get( action, 'params.page', DEFAULT_QUERY.page );
-	const search = get( action, 'params.search', DEFAULT_QUERY.search );
+	const page = get(action, 'params.page', DEFAULT_QUERY.page);
+	const search = get(action, 'params.search', DEFAULT_QUERY.search);
 
 	return {
 		...state,
@@ -39,9 +39,9 @@ export function productsRequestSuccess( state = {}, action ) {
 	};
 }
 
-export function productsRequest( state = {}, action ) {
-	const page = get( action, 'params.page', null );
-	const search = get( action, 'params.search', null );
+export function productsRequest(state = {}, action) {
+	const page = get(action, 'params.page', null);
+	const search = get(action, 'params.search', null);
 
 	return {
 		...state,

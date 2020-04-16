@@ -31,10 +31,10 @@ class FormCountrySelectFromApi extends Component {
 	static propTypes = {
 		isLoaded: PropTypes.bool.isRequired,
 		locationsList: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				code: PropTypes.string.isRequired,
 				name: PropTypes.string.isRequired,
-			} )
+			})
 		),
 		onChange: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -43,31 +43,31 @@ class FormCountrySelectFromApi extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.fetchData( this.props );
+		this.fetchData(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.fetchData( newProps );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		if (newProps.siteId !== this.props.siteId) {
+			this.fetchData(newProps);
 		}
 	}
 
-	fetchData = ( { siteId, isLoaded, areSettingsLoaded } ) => {
-		if ( ! siteId ) {
+	fetchData = ({ siteId, isLoaded, areSettingsLoaded }) => {
+		if (!siteId) {
 			return;
 		}
-		if ( ! isLoaded ) {
-			this.props.fetchLocations( siteId );
+		if (!isLoaded) {
+			this.props.fetchLocations(siteId);
 		}
-		if ( ! areSettingsLoaded ) {
-			this.props.fetchSettingsGeneral( siteId );
+		if (!areSettingsLoaded) {
+			this.props.fetchSettingsGeneral(siteId);
 		}
 	};
 
-	renderOption = option => {
+	renderOption = (option) => {
 		return (
-			<option key={ `${ option.continent }-${ option.code }` } value={ option.code }>
-				{ option.name }
+			<option key={`${option.continent}-${option.code}`} value={option.code}>
+				{option.name}
 			</option>
 		);
 	};
@@ -77,18 +77,18 @@ class FormCountrySelectFromApi extends Component {
 
 		return (
 			<div>
-				<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
+				<FormLabel htmlFor="country">{translate('Country')}</FormLabel>
 				<FormSelect
 					autoComplete="country-code"
 					id="country"
 					name="country"
-					onChange={ onChange }
-					value={ value }
+					onChange={onChange}
+					value={value}
 				>
 					<option key="default" value="" disabled>
-						{ translate( 'Select Country' ) }
+						{translate('Select Country')}
 					</option>
-					{ locationsList.map( this.renderOption ) }
+					{locationsList.map(this.renderOption)}
 				</FormSelect>
 			</div>
 		);
@@ -97,39 +97,39 @@ class FormCountrySelectFromApi extends Component {
 
 // TODO Move this to a proper selector (with tests)
 // https://github.com/Automattic/wp-calypso/pull/24571#discussion_r185268996
-const getContinentsWithCountries = ( state, continents, siteId ) => {
+const getContinentsWithCountries = (state, continents, siteId) => {
 	const locationsList = [];
-	continents.forEach( continent => {
-		const countries = getCountriesByContinent( state, continent.code, siteId );
+	continents.forEach((continent) => {
+		const countries = getCountriesByContinent(state, continent.code, siteId);
 		locationsList.push(
-			...countries.map( country => ( {
+			...countries.map((country) => ({
 				...country,
 				continent: continent.code,
-			} ) )
+			}))
 		);
-	} );
+	});
 	return locationsList;
 };
 
 export default connect(
-	( state, props ) => {
-		const site = getSelectedSiteWithFallback( state );
+	(state, props) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site.ID || null;
-		const address = getStoreLocation( state );
-		const areSettingsLoaded = areSettingsGeneralLoaded( state );
-		const value = ! props.value ? address.country : props.value;
+		const address = getStoreLocation(state);
+		const areSettingsLoaded = areSettingsGeneralLoaded(state);
+		const value = !props.value ? address.country : props.value;
 
-		const isLoaded = areLocationsLoaded( state, siteId );
-		const continents = getContinents( state, siteId );
-		const locationsList = getContinentsWithCountries( state, continents, siteId );
+		const isLoaded = areLocationsLoaded(state, siteId);
+		const continents = getContinents(state, siteId);
+		const locationsList = getContinentsWithCountries(state, continents, siteId);
 
 		return {
 			areSettingsLoaded,
 			isLoaded,
-			locationsList: sortPopularCountriesToTop( locationsList ),
+			locationsList: sortPopularCountriesToTop(locationsList),
 			siteId,
 			value,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
-)( localize( FormCountrySelectFromApi ) );
+	(dispatch) => bindActionCreators({ fetchLocations, fetchSettingsGeneral }, dispatch)
+)(localize(FormCountrySelectFromApi));

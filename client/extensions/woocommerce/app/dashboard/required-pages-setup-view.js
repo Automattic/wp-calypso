@@ -19,15 +19,15 @@ import { setUpStorePages } from 'woocommerce/state/sites/setup-choices/actions';
 class RequiredPagesSetupView extends Component {
 	static propTypes = {
 		setUpStorePages: PropTypes.func.isRequired,
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
-		} ),
+		}),
 	};
 
 	componentDidMount = () => {
 		const { site } = this.props;
-		if ( site ) {
-			this.props.setUpStorePages( site.ID );
+		if (site) {
+			this.props.setUpStorePages(site.ID);
 		}
 	};
 
@@ -36,26 +36,26 @@ class RequiredPagesSetupView extends Component {
 		return (
 			<div className="card dashboard__setup-wrapper setup__wrapper">
 				<SetupHeader
-					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
-					imageWidth={ 160 }
-					title={ translate( 'Building your store' ) }
-					subtitle={ translate( "Give us a minute and we'll move right along." ) }
+					imageSource={'/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg'}
+					imageWidth={160}
+					title={translate('Building your store')}
+					subtitle={translate("Give us a minute and we'll move right along.")}
 				>
-					<ProgressBar value={ 100 } isPulsing />
+					<ProgressBar value={100} isPulsing />
 				</SetupHeader>
 			</div>
 		);
 	};
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
 	return {
 		site,
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			setUpStorePages,
@@ -64,4 +64,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( RequiredPagesSetupView ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(RequiredPagesSetupView));

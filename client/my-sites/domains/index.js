@@ -14,59 +14,59 @@ import config from 'config';
 import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
-function registerMultiPage( { paths: givenPaths, handlers } ) {
-	givenPaths.forEach( path => page( path, ...handlers ) );
+function registerMultiPage({ paths: givenPaths, handlers }) {
+	givenPaths.forEach((path) => page(path, ...handlers));
 }
 
-function getCommonHandlers( {
+function getCommonHandlers({
 	noSitePath = paths.domainManagementRoot(),
 	warnIfJetpack = true,
-} = {} ) {
-	const handlers = [ siteSelection, navigation ];
+} = {}) {
+	const handlers = [siteSelection, navigation];
 
-	if ( noSitePath ) {
-		handlers.push( domainsController.redirectIfNoSite( noSitePath ) );
+	if (noSitePath) {
+		handlers.push(domainsController.redirectIfNoSite(noSitePath));
 	}
 
-	if ( warnIfJetpack ) {
-		handlers.push( domainsController.jetpackNoDomainsWarning );
+	if (warnIfJetpack) {
+		handlers.push(domainsController.jetpackNoDomainsWarning);
 	}
 
 	return handlers;
 }
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	// These redirects are work-around in response to an issue where navigating back after a
 	// successful site address change shows a continuous placeholder state... #23929 for details.
-	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
-	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
+	page.redirect('/domains/manage/edit', paths.domainManagementRoot());
+	page.redirect('/domains/manage/edit/:site', paths.domainManagementRoot());
 
-	registerMultiPage( {
+	registerMultiPage({
 		paths: [
 			paths.domainManagementEmail(),
-			paths.domainManagementEmail( ':site', ':domain' ),
-			paths.domainManagementEmail( ':site' ),
+			paths.domainManagementEmail(':site', ':domain'),
+			paths.domainManagementEmail(':site'),
 		],
-		handlers: [ domainManagementController.domainManagementEmailRedirect ],
-	} );
+		handlers: [domainManagementController.domainManagementEmailRedirect],
+	});
 
-	registerMultiPage( {
+	registerMultiPage({
 		paths: [
-			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
-			paths.domainManagementAddGSuiteUsers( ':site' ),
+			paths.domainManagementAddGSuiteUsers(':site', ':domain'),
+			paths.domainManagementAddGSuiteUsers(':site'),
 		],
-		handlers: [ domainManagementController.domainManagementAddGSuiteUsersRedirect ],
-	} );
+		handlers: [domainManagementController.domainManagementAddGSuiteUsersRedirect],
+	});
 
 	page(
-		paths.domainManagementEmailForwarding( ':site', ':domain' ),
+		paths.domainManagementEmailForwarding(':site', ':domain'),
 		domainManagementController.domainManagementEmailForwardingRedirect
 	);
 
 	page(
-		paths.domainManagementChangeSiteAddress( ':site', ':domain' ),
+		paths.domainManagementChangeSiteAddress(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementChangeSiteAddress,
 		makeLayout,
@@ -74,7 +74,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementRedirectSettings( ':site', ':domain' ),
+		paths.domainManagementRedirectSettings(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementRedirectSettings,
 		makeLayout,
@@ -82,7 +82,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementContactsPrivacy( ':site', ':domain' ),
+		paths.domainManagementContactsPrivacy(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementContactsPrivacy,
 		makeLayout,
@@ -90,7 +90,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementEditContactInfo( ':site', ':domain' ),
+		paths.domainManagementEditContactInfo(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementEditContactInfo,
 		makeLayout,
@@ -98,7 +98,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementManageConsent( ':site', ':domain' ),
+		paths.domainManagementManageConsent(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementManageConsent,
 		makeLayout,
@@ -106,7 +106,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementDomainConnectMapping( ':site', ':domain' ),
+		paths.domainManagementDomainConnectMapping(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementDomainConnectMapping,
 		makeLayout,
@@ -114,7 +114,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementDns( ':site', ':domain' ),
+		paths.domainManagementDns(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementDns,
 		makeLayout,
@@ -122,7 +122,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementNameServers( ':site', ':domain' ),
+		paths.domainManagementNameServers(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementNameServers,
 		makeLayout,
@@ -130,7 +130,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementTransfer( ':site', ':domain' ),
+		paths.domainManagementTransfer(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementTransfer,
 		makeLayout,
@@ -138,7 +138,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementTransferOut( ':site', ':domain' ),
+		paths.domainManagementTransferOut(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementTransferOut,
 		makeLayout,
@@ -146,7 +146,7 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementTransferToAnotherUser( ':site', ':domain' ),
+		paths.domainManagementTransferToAnotherUser(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementTransferToOtherUser,
 		makeLayout,
@@ -154,37 +154,37 @@ export default function() {
 	);
 
 	page(
-		paths.domainManagementTransferToOtherSite( ':site', ':domain' ),
+		paths.domainManagementTransferToOtherSite(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementTransferToOtherSite,
 		makeLayout,
 		clientRender
 	);
 
-	if ( config.isEnabled( 'manage/all-domains' ) ) {
+	if (config.isEnabled('manage/all-domains')) {
 		page(
 			paths.domainManagementRoot(),
-			...getCommonHandlers( { noSitePath: false } ),
+			...getCommonHandlers({ noSitePath: false }),
 			domainManagementController.domainManagementListAllSites,
 			makeLayout,
 			clientRender
 		);
 	} else {
-		page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
+		page(paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender);
 	}
 
 	page(
-		paths.domainManagementList( ':site' ),
+		paths.domainManagementList(':site'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementList,
 		makeLayout,
 		clientRender
 	);
 
-	registerMultiPage( {
+	registerMultiPage({
 		paths: [
-			paths.domainManagementEdit( ':site', ':domain' ),
-			paths.domainManagementTransferIn( ':site', ':domain' ),
+			paths.domainManagementEdit(':site', ':domain'),
+			paths.domainManagementTransferIn(':site', ':domain'),
 		],
 		handlers: [
 			...getCommonHandlers(),
@@ -192,17 +192,17 @@ export default function() {
 			makeLayout,
 			clientRender,
 		],
-	} );
+	});
 
 	page(
-		paths.domainManagementPrimaryDomain( ':site', ':domain' ),
+		paths.domainManagementPrimaryDomain(':site', ':domain'),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementPrimaryDomain,
 		makeLayout,
 		clientRender
 	);
 
-	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
+	if (config.isEnabled('upgrades/domain-search')) {
 		page(
 			'/domains/add',
 			siteSelection,
@@ -248,7 +248,7 @@ export default function() {
 			'/domains/add/:domain',
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.redirectIfNoSite('/domains/add'),
 			domainsController.redirectToUseYourDomainIfVipSite(),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.domainSearch,
@@ -260,7 +260,7 @@ export default function() {
 			'/domains/add/suggestion/:suggestion/:domain',
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.redirectIfNoSite('/domains/add'),
 			domainsController.redirectToUseYourDomainIfVipSite(),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.redirectToDomainSearchSuggestion
@@ -270,7 +270,7 @@ export default function() {
 			'/domains/add/:registerDomain/google-apps/:domain',
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.redirectIfNoSite('/domains/add'),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.googleAppsWithRegistration,
 			makeLayout,
@@ -281,7 +281,7 @@ export default function() {
 			'/domains/add/mapping/:domain',
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/mapping' ),
+			domainsController.redirectIfNoSite('/domains/add/mapping'),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.mapDomain,
 			makeLayout,
@@ -292,7 +292,7 @@ export default function() {
 			'/domains/add/site-redirect/:domain',
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
+			domainsController.redirectIfNoSite('/domains/add/site-redirect'),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.siteRedirect,
 			makeLayout,
@@ -300,10 +300,10 @@ export default function() {
 		);
 
 		page(
-			paths.domainTransferIn( ':domain' ),
+			paths.domainTransferIn(':domain'),
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
+			domainsController.redirectIfNoSite('/domains/add/transfer'),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.transferDomain,
 			makeLayout,
@@ -311,10 +311,10 @@ export default function() {
 		);
 
 		page(
-			paths.domainUseYourDomain( ':site' ),
+			paths.domainUseYourDomain(':site'),
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.redirectIfNoSite('/domains/add'),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.useYourDomain,
 			makeLayout,
@@ -322,10 +322,10 @@ export default function() {
 		);
 
 		page(
-			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
+			paths.domainManagementTransferInPrecheck(':site', ':domain'),
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/manage' ),
+			domainsController.redirectIfNoSite('/domains/manage'),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.transferDomainPrecheck,
 			makeLayout,

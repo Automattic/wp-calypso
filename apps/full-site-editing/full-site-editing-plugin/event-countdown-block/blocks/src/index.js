@@ -13,8 +13,8 @@ import view from './view';
 import './editor.scss';
 import './style.scss';
 
-registerBlockType( 'jetpack/event-countdown', {
-	title: __( 'Event Countdown', 'full-site-editing' ),
+registerBlockType('jetpack/event-countdown', {
+	title: __('Event Countdown', 'full-site-editing'),
 	description: __(
 		'Count down to your favorite next thing, and celebrate with fireworks when the time is right!',
 		'full-site-editing'
@@ -22,7 +22,7 @@ registerBlockType( 'jetpack/event-countdown', {
 	icon: EventCountdownIcon,
 	category: 'widgets',
 	supports: {
-		align: [ 'wide', 'full' ],
+		align: ['wide', 'full'],
 	},
 	example: {
 		attributes: {
@@ -41,12 +41,12 @@ registerBlockType( 'jetpack/event-countdown', {
 		},
 	},
 
-	edit: props => {
-		if ( props.isSelected ) {
-			return edit( props );
+	edit: (props) => {
+		if (props.isSelected) {
+			return edit(props);
 		}
-		return view( { ...props, isEditView: true } );
+		return view({ ...props, isEditView: true });
 	},
 
 	save: view,
-} );
+});

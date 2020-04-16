@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import signupDependencyStore from '../reducer';
 import { SIGNUP_STEPS_SITE_TITLE_SET } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( 'should update the site title', () => {
+describe('reducer', () => {
+	test('should update the site title', () => {
 		expect(
 			signupDependencyStore(
 				{},
@@ -19,6 +19,6 @@ describe( 'reducer', () => {
 					siteTitle: 'site title',
 				}
 			)
-		).to.be.eql( 'site title' );
-	} );
-} );
+		).to.be.eql('site title');
+	});
+});

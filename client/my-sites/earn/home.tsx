@@ -45,14 +45,14 @@ interface ConnectedProps {
 	hasWordAds: boolean;
 	hasConnectedAccount: boolean;
 	hasSetupAds: boolean;
-	trackUpgrade: ( plan: string, feature: string ) => void;
-	trackLearnLink: ( feature: string ) => void;
-	trackCtaButton: ( feature: string ) => void;
+	trackUpgrade: (plan: string, feature: string) => void;
+	trackLearnLink: (feature: string) => void;
+	trackCtaButton: (feature: string) => void;
 }
 
 const wpcom = wp.undocumented();
 
-const Home: FunctionComponent< ConnectedProps > = ( {
+const Home: FunctionComponent<ConnectedProps> = ({
 	siteId,
 	selectedSiteSlug,
 	isFreePlan,
@@ -65,22 +65,22 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
-} ) => {
+}) => {
 	const translate = useTranslate();
-	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
+	const [peerReferralLink, setPeerReferralLink] = useState('');
 
-	useEffect( () => {
-		if ( peerReferralLink ) return;
-		wpcom.me().getPeerReferralLink( ( error: string, data: string ) => {
-			setPeerReferralLink( ! error && data ? data : '' );
-		} );
-	}, [ peerReferralLink ] );
+	useEffect(() => {
+		if (peerReferralLink) return;
+		wpcom.me().getPeerReferralLink((error: string, data: string) => {
+			setPeerReferralLink(!error && data ? data : '');
+		});
+	}, [peerReferralLink]);
 
 	const onPeerReferralCtaClick = () => {
-		if ( peerReferralLink ) return;
-		wpcom.me().setPeerReferralLinkEnable( true, ( error: string, data: string ) => {
-			setPeerReferralLink( ! error && data ? data : '' );
-		} );
+		if (peerReferralLink) return;
+		wpcom.me().setPeerReferralLinkEnable(true, (error: string, data: string) => {
+			setPeerReferralLink(!error && data ? data : '');
+		});
 	};
 
 	/**
@@ -93,21 +93,21 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/';
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Collect one-time payments' ),
-					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
+					text: translate('Collect one-time payments'),
+					action: { url: supportLink, onClick: () => trackCtaButton('simple-payments') },
 			  }
 			: {
-					text: translate( 'Upgrade to Premium' ),
+					text: translate('Upgrade to Premium'),
 					action: () => {
-						trackUpgrade( 'premium', 'simple-payments' );
-						page( `/checkout/${ selectedSiteSlug }/premium/` );
+						trackUpgrade('premium', 'simple-payments');
+						page(`/checkout/${selectedSiteSlug}/premium/`);
 					},
 			  };
 		const learnMoreLink = hasSimplePayments
 			? null
-			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
+			: { url: supportLink, onClick: () => trackLearnLink('simple-payments') };
 		return {
-			title: translate( 'Collect one-time payments' ),
+			title: translate('Collect one-time payments'),
 			body: translate(
 				'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. {{em}}Available to any site with a Premium plan{{/em}}.',
 				{
@@ -134,22 +134,22 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const getRecurringPaymentsCard = () => {
 		const cta = isFreePlan
 			? {
-					text: translate( 'Upgrade' ),
+					text: translate('Upgrade'),
 					action: () => {
-						trackUpgrade( 'any-paid-plan', 'recurring-payments' );
-						page( `/plans/${ selectedSiteSlug }` );
+						trackUpgrade('any-paid-plan', 'recurring-payments');
+						page(`/plans/${selectedSiteSlug}`);
 					},
 			  }
 			: {
-					text: translate( 'Collect recurring payments' ),
+					text: translate('Collect recurring payments'),
 					action: () => {
-						trackCtaButton( 'recurring-payments' );
-						page( `/earn/payments/${ selectedSiteSlug }` );
+						trackCtaButton('recurring-payments');
+						page(`/earn/payments/${selectedSiteSlug}`);
 					},
 			  };
 		const title = hasConnectedAccount
-			? translate( 'Manage Recurring Payments' )
-			: translate( 'Collect recurring payments' );
+			? translate('Manage Recurring Payments')
+			: translate('Collect recurring payments');
 		const body = hasConnectedAccount
 			? translate(
 					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
@@ -165,13 +165,13 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://wordpress.com/support/recurring-payments/',
-					onClick: () => trackLearnLink( 'recurring-payments' ),
+					onClick: () => trackLearnLink('recurring-payments'),
 			  }
 			: null;
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
+			badge: translate('New'),
 			image: {
 				path: recurringImage,
 			},
@@ -188,26 +188,26 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPeerReferralsCard = () => {
-		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
+		const isJetpackNotAtomic = isJetpack && !isAtomicSite;
 
-		if ( isJetpackNotAtomic ) {
+		if (isJetpackNotAtomic) {
 			return;
 		}
 
 		const cta: CtaButton = {
-			text: translate( 'Earn free credits' ) as string,
+			text: translate('Earn free credits') as string,
 			action: () => {
-				trackCtaButton( 'peer-referral-wpcom' );
+				trackCtaButton('peer-referral-wpcom');
 				onPeerReferralCtaClick();
 			},
 		};
 
-		if ( peerReferralLink ) {
-			cta.component = <ClipboardButtonInput value={ peerReferralLink } />;
+		if (peerReferralLink) {
+			cta.component = <ClipboardButtonInput value={peerReferralLink} />;
 		}
 
 		return {
-			title: translate( 'Refer a friend, you’ll both earn credits' ),
+			title: translate('Refer a friend, you’ll both earn credits'),
 			body: peerReferralLink
 				? translate(
 						'To earn free credits, share the link below with your friends, family, and website visitors. ' +
@@ -250,22 +250,20 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta =
 			hasWordAds || hasSetupAds
 				? {
-						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
+						text: hasSetupAds ? translate('View ad dashboard') : translate('Earn ad revenue'),
 						action: () => {
-							trackCtaButton( 'ads' );
-							page(
-								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
-							);
+							trackCtaButton('ads');
+							page(`/earn/${hasSetupAds ? 'ads-earnings' : 'ads-settings'}/${selectedSiteSlug}`);
 						},
 				  }
 				: {
-						text: translate( 'Upgrade to Premium' ),
+						text: translate('Upgrade to Premium'),
 						action: () => {
-							trackUpgrade( 'premium', 'ads' );
-							page( `/checkout/${ selectedSiteSlug }/premium/` );
+							trackUpgrade('premium', 'ads');
+							page(`/checkout/${selectedSiteSlug}/premium/`);
 						},
 				  };
-		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
+		const title = hasSetupAds ? translate('View ad dashboard') : translate('Earn ad revenue');
 		const body = hasSetupAds
 			? translate(
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
@@ -278,8 +276,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  );
-		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
-			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
+		const learnMoreLink = !(hasWordAds || hasSetupAds)
+			? { url: 'https://wordads.co/', onClick: () => trackLearnLink('ads') }
 			: null;
 		return {
 			title,
@@ -296,70 +294,70 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	const promos: PromoSectionProps = {
 		header: {
-			title: translate( 'Start earning money now' ),
+			title: translate('Start earning money now'),
 			image: {
 				path: earnSectionImage,
 			},
-			body: translate( 'There is a range of ways to earn money through your WordPress site.' ),
+			body: translate('There is a range of ways to earn money through your WordPress site.'),
 		},
-		promos: compact( [
+		promos: compact([
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
 			getAdsCard(),
 			getPeerReferralsCard(),
-		] ),
+		]),
 	};
 
 	return (
 		<Fragment>
-			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
-			{ ! isFreePlan && <QueryMembershipsSettings siteId={ siteId } /> }
-			<PromoSection { ...promos } />
+			{!hasWordAds && <QueryWordadsStatus siteId={siteId} />}
+			{!isFreePlan && <QueryMembershipsSettings siteId={siteId} />}
+			<PromoSection {...promos} />
 		</Fragment>
 	);
 };
 
-export default connect< ConnectedProps, {}, {} >(
-	state => {
-		const selectedSiteSlug = getSelectedSiteSlug( state );
-		const site = getSiteBySlug( state, selectedSiteSlug );
+export default connect<ConnectedProps, {}, {}>(
+	(state) => {
+		const selectedSiteSlug = getSelectedSiteSlug(state);
+		const site = getSiteBySlug(state, selectedSiteSlug);
 		return {
 			siteId: site.ID,
 			selectedSiteSlug,
-			isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
-			isJetpack: isJetpackSite( state, site.ID ),
-			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
-			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
-			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
-			hasConnectedAccount: !! get(
+			isFreePlan: !isCurrentPlanPaid(state, site.ID),
+			isJetpack: isJetpackSite(state, site.ID),
+			isAtomicSite: isSiteAutomatedTransfer(state, site.ID),
+			hasWordAds: hasFeature(state, site.ID, FEATURE_WORDADS_INSTANT),
+			hasSimplePayments: hasFeature(state, site.ID, FEATURE_SIMPLE_PAYMENTS),
+			hasConnectedAccount: !!get(
 				state,
-				[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
+				['memberships', 'settings', site.ID, 'connectedAccountId'],
 				false
 			),
-			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
+			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite(state, site),
 		};
 	},
-	dispatch => ( {
-		trackUpgrade: ( plan: string, feature: string ) =>
+	(dispatch) => ({
+		trackUpgrade: (plan: string, feature: string) =>
 			dispatch(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_upgrade_button_click', { plan, feature } ),
-					bumpStat( 'calypso_earn_page', 'upgrade-button-' + feature )
+					recordTracksEvent('calypso_earn_page_upgrade_button_click', { plan, feature }),
+					bumpStat('calypso_earn_page', 'upgrade-button-' + feature)
 				)
 			),
-		trackLearnLink: ( feature: string ) =>
+		trackLearnLink: (feature: string) =>
 			dispatch(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_learn_link_click', { feature } ),
-					bumpStat( 'calypso_earn_page', 'learn-link-' + feature )
+					recordTracksEvent('calypso_earn_page_learn_link_click', { feature }),
+					bumpStat('calypso_earn_page', 'learn-link-' + feature)
 				)
 			),
-		trackCtaButton: ( feature: string ) =>
+		trackCtaButton: (feature: string) =>
 			dispatch(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
-					bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
+					recordTracksEvent('calypso_earn_page_cta_button_click', { feature }),
+					bumpStat('calypso_earn_page', 'cta-button-' + feature)
 				)
 			),
-	} )
-)( Home );
+	})
+)(Home);

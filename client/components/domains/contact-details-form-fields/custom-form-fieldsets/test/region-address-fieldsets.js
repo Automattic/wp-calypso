@@ -18,77 +18,77 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from '../constants';
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
-} ) );
+jest.mock('i18n-calypso', () => ({
+	localize: (x) => x,
+	translate: (x) => x,
+}));
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
-describe( 'Region Address Fieldsets', () => {
+describe('Region Address Fieldsets', () => {
 	const defaultProps = {
-		getFieldProps: name => ( {
+		getFieldProps: (name) => ({
 			value: '',
 			name,
-		} ),
+		}),
 		hasCountryStates: false,
 	};
 
 	const propsWithStates = {
-		getFieldProps: name => ( {
+		getFieldProps: (name) => ({
 			value: '',
 			name,
-		} ),
+		}),
 		hasCountryStates: true,
 	};
 
-	test( 'should render `<UsAddressFieldset />` with default props', () => {
-		const wrapper = shallow( <RegionAddressFieldsets { ...defaultProps } /> );
-		expect( wrapper.find( 'UsAddressFieldset' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="address-1"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="address-2"]' ) ).to.have.length( 1 );
-	} );
+	test('should render `<UsAddressFieldset />` with default props', () => {
+		const wrapper = shallow(<RegionAddressFieldsets {...defaultProps} />);
+		expect(wrapper.find('UsAddressFieldset')).to.have.length(1);
+		expect(wrapper.find('[name="address-1"]')).to.have.length(1);
+		expect(wrapper.find('[name="address-2"]')).to.have.length(1);
+	});
 
-	test( 'should render `<UkAddressFieldset />` with a UK region countryCode', () => {
+	test('should render `<UkAddressFieldset />` with a UK region countryCode', () => {
 		const wrapper = shallow(
 			<RegionAddressFieldsets
-				{ ...defaultProps }
-				countryCode={ CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
+				{...defaultProps}
+				countryCode={CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[0]}
 			/>
 		);
-		expect( wrapper.find( 'UkAddressFieldset' ) ).to.have.length( 1 );
-	} );
+		expect(wrapper.find('UkAddressFieldset')).to.have.length(1);
+	});
 
-	test( 'should render `<EuAddressFieldset />` with an EU region countryCode', () => {
+	test('should render `<EuAddressFieldset />` with an EU region countryCode', () => {
 		const wrapper = shallow(
 			<RegionAddressFieldsets
-				{ ...defaultProps }
-				countryCode={ CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
+				{...defaultProps}
+				countryCode={CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[0]}
 			/>
 		);
-		expect( wrapper.find( 'EuAddressFieldset' ) ).to.have.length( 1 );
-	} );
+		expect(wrapper.find('EuAddressFieldset')).to.have.length(1);
+	});
 
-	test( 'should render `<UsAddressFieldset />` with an EU region country that has states', () => {
+	test('should render `<UsAddressFieldset />` with an EU region country that has states', () => {
 		const wrapper = shallow(
 			<RegionAddressFieldsets
-				{ ...propsWithStates }
-				countryCode={ CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
+				{...propsWithStates}
+				countryCode={CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[0]}
 			/>
 		);
-		expect( wrapper.find( 'UsAddressFieldset' ) ).to.have.length( 1 );
-		expect( wrapper.find( 'EuAddressFieldset' ) ).to.have.length( 0 );
-	} );
+		expect(wrapper.find('UsAddressFieldset')).to.have.length(1);
+		expect(wrapper.find('EuAddressFieldset')).to.have.length(0);
+	});
 
-	test( 'should render `<UsAddressFieldset />` with a UK region country that has states', () => {
+	test('should render `<UsAddressFieldset />` with a UK region country that has states', () => {
 		const wrapper = shallow(
 			<RegionAddressFieldsets
-				{ ...propsWithStates }
-				countryCode={ CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
+				{...propsWithStates}
+				countryCode={CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[0]}
 			/>
 		);
-		expect( wrapper.find( 'UsAddressFieldset' ) ).to.have.length( 1 );
-		expect( wrapper.find( 'UkAddressFieldset' ) ).to.have.length( 0 );
-	} );
-} );
+		expect(wrapper.find('UsAddressFieldset')).to.have.length(1);
+		expect(wrapper.find('UkAddressFieldset')).to.have.length(0);
+	});
+});

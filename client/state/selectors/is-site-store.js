@@ -14,9 +14,9 @@ import { isJetpackSite } from 'state/sites/selectors';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is an Jetpack and has WooCommerce active
  */
-export default function isSiteStore( state, siteId ) {
+export default function isSiteStore(state, siteId) {
 	return (
-		isJetpackSite( state, siteId ) &&
-		get( state, [ 'sites', 'items', siteId, 'options', 'woocommerce_is_active' ], null )
+		isJetpackSite(state, siteId) &&
+		get(state, ['sites', 'items', siteId, 'options', 'woocommerce_is_active'], null)
 	);
 }

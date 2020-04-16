@@ -6,7 +6,7 @@
  * @returns {object}  image editor transform { degrees, scaleX, scaleY }
  */
 
-export function getImageEditorTransform( state ) {
+export function getImageEditorTransform(state) {
 	return state.ui.editor.imageEditor.transform;
 }
 
@@ -17,7 +17,7 @@ export function getImageEditorTransform( state ) {
  * @returns {object}  image data { src, fileName }
  *
  */
-export function getImageEditorFileInfo( state ) {
+export function getImageEditorFileInfo(state) {
 	return state.ui.editor.imageEditor.fileInfo;
 }
 
@@ -28,7 +28,7 @@ export function getImageEditorFileInfo( state ) {
  * @returns {boolean} true if editor has changes
  *
  */
-export function imageEditorHasChanges( state ) {
+export function imageEditorHasChanges(state) {
 	return state.ui.editor.imageEditor.hasChanges;
 }
 
@@ -39,8 +39,8 @@ export function imageEditorHasChanges( state ) {
  * @returns {boolean} true if image has been loaded
  *
  */
-export function isImageEditorImageLoaded( state ) {
-	return ! state.ui.editor.imageEditor.imageIsLoading;
+export function isImageEditorImageLoaded(state) {
+	return !state.ui.editor.imageEditor.imageIsLoading;
 }
 
 /**
@@ -50,7 +50,7 @@ export function isImageEditorImageLoaded( state ) {
  * @returns {object} topBound, leftBound, bottomBound and rightBound of the canvas
  *
  */
-export function getImageEditorCropBounds( state ) {
+export function getImageEditorCropBounds(state) {
 	return state.ui.editor.imageEditor.cropBounds;
 }
 
@@ -61,7 +61,7 @@ export function getImageEditorCropBounds( state ) {
  * @returns {object} topRatio, leftRatio, widthRatio and heightRatio of the crop
  *
  */
-export function getImageEditorCrop( state ) {
+export function getImageEditorCrop(state) {
 	return state.ui.editor.imageEditor.crop;
 }
 
@@ -72,6 +72,6 @@ export function getImageEditorCrop( state ) {
  * @returns {object} one of the AspectRatios as defined in state/ui/editor/image-editor/constants
  *
  */
-export function getImageEditorAspectRatio( state ) {
+export function getImageEditorAspectRatio(state) {
 	return state.ui.editor.imageEditor.aspectRatio;
 }

@@ -15,7 +15,7 @@ export interface I18nProps {
 	i18nLocale: string;
 }
 
-const I18nContext = React.createContext< I18nProps >( makeI18n( DEFAULT_LOCALE ) );
+const I18nContext = React.createContext<I18nProps>(makeI18n(DEFAULT_LOCALE));
 
 interface Props {
 	/**
@@ -23,15 +23,15 @@ interface Props {
 	 */
 	locale: string;
 }
-export const I18nProvider: React.FunctionComponent< Props > = ( { children, locale } ) => {
-	const [ contextValue, setContextValue ] = React.useState< I18nProps >( makeI18n( locale ) );
-	React.useEffect( () => {
-		setContextValue( makeI18n( locale ) );
-	}, [ locale ] );
-	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
+export const I18nProvider: React.FunctionComponent<Props> = ({ children, locale }) => {
+	const [contextValue, setContextValue] = React.useState<I18nProps>(makeI18n(locale));
+	React.useEffect(() => {
+		setContextValue(makeI18n(locale));
+	}, [locale]);
+	return <I18nContext.Provider value={contextValue}>{children}</I18nContext.Provider>;
 };
 
-function makeI18n( i18nLocale: string ) {
+function makeI18n(i18nLocale: string) {
 	return { __, _n, _nx, _x, i18nLocale };
 }
 
@@ -47,8 +47,8 @@ function makeI18n( i18nLocale: string ) {
  * }
  */
 export const useI18n = (): I18nProps => {
-	const i18n = React.useContext( I18nContext );
-	React.useDebugValue( i18n.i18nLocale );
+	const i18n = React.useContext(I18nContext);
+	React.useDebugValue(i18n.i18nLocale);
 	return i18n;
 };
 
@@ -66,9 +66,9 @@ export const useI18n = (): I18nProps => {
  * }
  * export default withI18n( MyComponent );
  */
-export const withI18n = createHigherOrderComponent< I18nProps >( InnerComponent => {
-	return props => {
+export const withI18n = createHigherOrderComponent<I18nProps>((InnerComponent) => {
+	return (props) => {
 		const i18n = useI18n();
-		return <InnerComponent { ...i18n } { ...props } />;
+		return <InnerComponent {...i18n} {...props} />;
 	};
-}, 'withI18n' );
+}, 'withI18n');

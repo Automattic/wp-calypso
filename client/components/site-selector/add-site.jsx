@@ -18,19 +18,19 @@ class SiteSelectorAddSite extends Component {
 	}
 
 	recordAddNewSite = () => {
-		this.props.recordTracksEvent( 'calypso_add_new_wordpress_click' );
+		this.props.recordTracksEvent('calypso_add_new_wordpress_click');
 	};
 
 	render() {
 		const { translate } = this.props;
 		return (
 			<span className="site-selector__add-new-site">
-				<Button borderless href={ this.getAddNewSiteUrl() } onClick={ this.recordAddNewSite }>
-					<Gridicon icon="add-outline" /> { translate( 'Add new site' ) }
+				<Button borderless href={this.getAddNewSiteUrl()} onClick={this.recordAddNewSite}>
+					<Gridicon icon="add-outline" /> {translate('Add new site')}
 				</Button>
 			</span>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( SiteSelectorAddSite ) );
+export default connect(null, { recordTracksEvent })(localize(SiteSelectorAddSite));

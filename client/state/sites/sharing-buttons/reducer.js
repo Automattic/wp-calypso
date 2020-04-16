@@ -27,18 +27,18 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SHARING_BUTTONS_REQUEST: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case SHARING_BUTTONS_REQUEST_SUCCESS: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case SHARING_BUTTONS_REQUEST_FAILURE: {
@@ -46,13 +46,13 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the save Request status after an action has been dispatched. The
@@ -62,14 +62,14 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const saveRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const saveRequests = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SHARING_BUTTONS_SAVE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: { saving: true, status: 'pending' },
+				[siteId]: { saving: true, status: 'pending' },
 			};
 		}
 		case SHARING_BUTTONS_SAVE_SUCCESS: {
@@ -77,7 +77,7 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: { saving: false, status: 'success' },
+				[siteId]: { saving: false, status: 'success' },
 			};
 		}
 		case SHARING_BUTTONS_SAVE_FAILURE: {
@@ -85,13 +85,13 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: { saving: false, status: 'error' },
+				[siteId]: { saving: false, status: 'error' },
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -101,14 +101,14 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemSchemas, (state = {}, action) => {
+	switch (action.type) {
 		case SHARING_BUTTONS_RECEIVE: {
 			const { siteId, settings } = action;
 
 			return {
 				...state,
-				[ siteId ]: settings,
+				[siteId]: settings,
 			};
 		}
 		case SHARING_BUTTONS_UPDATE: {
@@ -116,16 +116,16 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 
 			return {
 				...state,
-				[ siteId ]: uniqBy( settings.concat( state[ siteId ] || [] ), 'ID' ),
+				[siteId]: uniqBy(settings.concat(state[siteId] || []), 'ID'),
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
 	saveRequests,
-} );
+});

@@ -19,18 +19,18 @@ import 'state/comments/init';
  * @returns {Array<object>} Comments tree for site, filtered by status
  */
 export const getSiteCommentsTree = createSelector(
-	( state, siteId, status ) => {
-		const siteTree = state.comments.trees[ siteId ];
-		if ( ! status ) {
+	(state, siteId, status) => {
+		const siteTree = state.comments.trees[siteId];
+		if (!status) {
 			return siteTree;
 		}
 
 		return 'all' === status
 			? filter(
 					siteTree,
-					comment => 'approved' === comment.status || 'unapproved' === comment.status
+					(comment) => 'approved' === comment.status || 'unapproved' === comment.status
 			  )
-			: filter( siteTree, { status } );
+			: filter(siteTree, { status });
 	},
-	( state, siteId ) => [ state.comments.trees[ siteId ] ]
+	(state, siteId) => [state.comments.trees[siteId]]
 );

@@ -20,29 +20,29 @@ import { withoutPersistence } from './without-persistence';
  * @returns {Function} The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
-export function addReducer( origReducer, reducers ) {
-	return ( keyPath, reducer ) => {
+export function addReducer(origReducer, reducers) {
+	return (keyPath, reducer) => {
 		// extract the first key from keyPath and dive recursively into the reducer tree
-		const [ key, ...restKeys ] = keyPath;
+		const [key, ...restKeys] = keyPath;
 
-		const existingReducer = reducers[ key ];
+		const existingReducer = reducers[key];
 		let newReducer;
 
 		// if there is an existing reducer at this path, we'll recursively call `addReducer`
 		// until we reach the final destination in the tree.
-		if ( existingReducer ) {
+		if (existingReducer) {
 			// we reached the final destination in the tree and another reducer already lives there!
-			if ( restKeys.length === 0 ) {
-				throw new Error( `Reducer with key '${ key }' is already registered` );
+			if (restKeys.length === 0) {
+				throw new Error(`Reducer with key '${key}' is already registered`);
 			}
 
-			if ( ! existingReducer.addReducer ) {
+			if (!existingReducer.addReducer) {
 				throw new Error(
 					"New reducer can be added only into a reducer created with 'combineReducers'"
 				);
 			}
 
-			newReducer = existingReducer.addReducer( restKeys, reducer );
+			newReducer = existingReducer.addReducer(restKeys, reducer);
 		} else {
 			// for the remaining keys in the keyPath, create a nested reducer:
 			// if `restKeys` is `[ 'a', 'b', 'c']`, then the result of this `reduceRight` is:
@@ -57,12 +57,12 @@ export function addReducer( origReducer, reducers ) {
 			// ```
 			newReducer = reduceRight(
 				restKeys,
-				( subreducer, subkey ) => createCombinedReducer( { [ subkey ]: subreducer } ),
-				setupReducerPersistence( reducer )
+				(subreducer, subkey) => createCombinedReducer({ [subkey]: subreducer }),
+				setupReducerPersistence(reducer)
 			);
 		}
 
-		const newCombinedReducer = createCombinedReducer( { ...reducers, [ key ]: newReducer } );
+		const newCombinedReducer = createCombinedReducer({ ...reducers, [key]: newReducer });
 
 		// Preserve the storageKey of the updated reducer
 		newCombinedReducer.storageKey = origReducer.storageKey;
@@ -133,65 +133,65 @@ export function addReducer( origReducer, reducers ) {
  * @param {object} reducers - object containing the reducers to merge
  * @returns {Function} - Returns the combined reducer function
  */
-export function combineReducers( reducers ) {
+export function combineReducers(reducers) {
 	// set up persistence of reducers passed from app and then create a combined one
-	return createCombinedReducer( mapValues( reducers, setupReducerPersistence ) );
+	return createCombinedReducer(mapValues(reducers, setupReducerPersistence));
 }
 
-function applyStoredState( reducers, state, action ) {
+function applyStoredState(reducers, state, action) {
 	let hasChanged = false;
-	const nextState = mapValues( reducers, ( reducer, key ) => {
+	const nextState = mapValues(reducers, (reducer, key) => {
 		// Replace the value for the key we want to init with action.storedState.
-		if ( reducer.storageKey === action.storageKey ) {
+		if (reducer.storageKey === action.storageKey) {
 			hasChanged = true;
 			return action.storedState;
 		}
 
 		// Descend into nested state levels, possibly the storageKey will be found there?
-		const prevStateForKey = get( state, key );
-		const nextStateForKey = reducer( prevStateForKey, action );
+		const prevStateForKey = get(state, key);
+		const nextStateForKey = reducer(prevStateForKey, action);
 		hasChanged = hasChanged || nextStateForKey !== prevStateForKey;
 		return nextStateForKey;
-	} );
+	});
 
 	// return identical state if the stored state didn't get applied in this reducer
 	return hasChanged ? nextState : state;
 }
 
-function createCombinedReducer( reducers ) {
-	const combined = combine( reducers );
+function createCombinedReducer(reducers) {
+	const combined = combine(reducers);
 
-	const combinedReducer = ( state, action ) => {
-		switch ( action.type ) {
+	const combinedReducer = (state, action) => {
+		switch (action.type) {
 			case SERIALIZE:
-				return serializeState( reducers, state, action );
+				return serializeState(reducers, state, action);
 
 			case DESERIALIZE:
-				return combined( pick( state, Object.keys( reducers ) ), action );
+				return combined(pick(state, Object.keys(reducers)), action);
 
 			case APPLY_STORED_STATE:
-				return applyStoredState( reducers, state, action );
+				return applyStoredState(reducers, state, action);
 
 			default:
-				return combined( state, action );
+				return combined(state, action);
 		}
 	};
 
 	combinedReducer.hasCustomPersistence = true;
-	combinedReducer.addReducer = addReducer( combinedReducer, reducers );
-	combinedReducer.getStorageKeys = getStorageKeys( reducers );
+	combinedReducer.addReducer = addReducer(combinedReducer, reducers);
+	combinedReducer.getStorageKeys = getStorageKeys(reducers);
 
 	return combinedReducer;
 }
 
-function getStorageKeys( reducers ) {
-	return function*() {
-		for ( const reducer of Object.values( reducers ) ) {
-			if ( reducer.storageKey ) {
+function getStorageKeys(reducers) {
+	return function* () {
+		for (const reducer of Object.values(reducers)) {
+			if (reducer.storageKey) {
 				yield { storageKey: reducer.storageKey, reducer };
 			}
 
-			if ( reducer.getStorageKeys ) {
+			if (reducer.getStorageKeys) {
 				yield* reducer.getStorageKeys();
 			}
 		}
@@ -207,24 +207,24 @@ function getStorageKeys( reducers ) {
 //   `undefined` rather than an empty object.
 // - if the state to serialize is `undefined` (happens when some key in state is missing)
 //   the serialized value is `undefined` and there's no need to reduce anything.
-function serializeState( reducers, state, action ) {
-	if ( state === undefined ) {
+function serializeState(reducers, state, action) {
+	if (state === undefined) {
 		return undefined;
 	}
 
 	return reduce(
 		reducers,
-		( result, reducer, reducerKey ) => {
-			const serialized = reducer( state[ reducerKey ], action );
-			if ( serialized !== undefined ) {
-				if ( ! result ) {
+		(result, reducer, reducerKey) => {
+			const serialized = reducer(state[reducerKey], action);
+			if (serialized !== undefined) {
+				if (!result) {
 					// instantiate the result object only when it's going to have at least one property
 					result = new SerializationResult();
 				}
-				if ( reducer.storageKey ) {
-					result.addKeyResult( reducer.storageKey, serialized );
+				if (reducer.storageKey) {
+					result.addKeyResult(reducer.storageKey, serialized);
 				} else {
-					result.addRootResult( reducerKey, serialized );
+					result.addRootResult(reducerKey, serialized);
 				}
 			}
 			return result;
@@ -237,16 +237,16 @@ function serializeState( reducers, state, action ) {
  * Wrap the reducer with appropriate persistence code. If it has the `hasCustomPersistence` flag,
  * it means it's already set up and we don't need to make any changes.
  */
-function setupReducerPersistence( reducer ) {
-	if ( reducer.hasCustomPersistence ) {
+function setupReducerPersistence(reducer) {
+	if (reducer.hasCustomPersistence) {
 		return reducer;
 	}
 
-	if ( reducer.schema ) {
+	if (reducer.schema) {
 		throw new Error(
 			'`schema` properties in reducers are no longer supported. Please wrap reducers with withSchemaValidation.'
 		);
 	}
 
-	return withoutPersistence( reducer );
+	return withoutPersistence(reducer);
 }

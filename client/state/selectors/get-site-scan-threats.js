@@ -16,6 +16,6 @@ import 'state/data-layer/wpcom/sites/scan';
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {object[]}         Array of threats found
  */
-export default function getSiteScanThreats( state, siteId ) {
-	return get( state, [ 'jetpackScan', 'scan', siteId, 'threats' ], [] );
+export default function getSiteScanThreats(state, siteId) {
+	return get(state, ['jetpackScan', 'scan', siteId, 'threats'], []);
 }

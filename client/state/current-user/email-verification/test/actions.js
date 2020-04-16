@@ -9,18 +9,18 @@ import { expect } from 'chai';
 import { verifyEmail, resetVerifyEmailState } from '../actions';
 import { EMAIL_VERIFY_REQUEST, EMAIL_VERIFY_STATE_RESET } from 'state/action-types';
 
-describe( 'actions', () => {
-	describe( '#verifyEmail', () => {
-		test( 'returns request action', () => {
+describe('actions', () => {
+	describe('#verifyEmail', () => {
+		test('returns request action', () => {
 			const result = verifyEmail();
-			expect( result ).to.eql( { type: EMAIL_VERIFY_REQUEST } );
-		} );
-	} );
+			expect(result).to.eql({ type: EMAIL_VERIFY_REQUEST });
+		});
+	});
 
-	describe( '#resetVerifyEmailState', () => {
-		test( 'returns reset action', () => {
+	describe('#resetVerifyEmailState', () => {
+		test('returns reset action', () => {
 			const result = resetVerifyEmailState();
-			expect( result ).to.eql( { type: EMAIL_VERIFY_STATE_RESET } );
-		} );
-	} );
-} );
+			expect(result).to.eql({ type: EMAIL_VERIFY_STATE_RESET });
+		});
+	});
+});

@@ -14,7 +14,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class GSuiteCancellationSurvey extends Component {
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_survey_view' );
+		this.props.recordTracksEvent('calypso_purchases_gsuite_remove_purchase_survey_view');
 	}
 
 	render() {
@@ -27,41 +27,41 @@ class GSuiteCancellationSurvey extends Component {
 		} = this.props;
 		return (
 			<MultipleChoiceQuestion
-				answers={ [
+				answers={[
 					{
 						id: 'too-expensive',
-						answerText: translate( "It's too expensive." ),
+						answerText: translate("It's too expensive."),
 						textInput: true,
-						textInputPrompt: translate( 'How can we improve G Suite?' ),
+						textInputPrompt: translate('How can we improve G Suite?'),
 					},
 					{
 						id: 'do-not-need-it',
-						answerText: translate( "I don't need it." ),
+						answerText: translate("I don't need it."),
 						textInput: true,
-						textInputPrompt: translate( 'What are we missing that you need?' ),
+						textInputPrompt: translate('What are we missing that you need?'),
 					},
 					{
 						id: 'purchased-by-mistake',
-						answerText: translate( 'I purchased it by mistake.' ),
+						answerText: translate('I purchased it by mistake.'),
 					},
 					{
 						id: 'it-did-not-work',
-						answerText: translate( 'I was unable to activate or use it.' ),
+						answerText: translate('I was unable to activate or use it.'),
 						textInput: true,
-						textInputPrompt: translate( 'Where did you run into problems?' ),
+						textInputPrompt: translate('Where did you run into problems?'),
 					},
 					{
 						id: 'another-reason',
-						answerText: translate( 'Another reason…' ),
+						answerText: translate('Another reason…'),
 						textInput: true,
 						doNotShuffle: true,
 					},
-				] }
-				question={ translate( 'Please tell us why you are cancelling G Suite:' ) }
-				onAnswerChange={ onSurveyAnswerChange }
-				disabled={ disabled }
-				selectedAnswerId={ surveyAnswerId }
-				selectedAnswerText={ surveyAnswerText }
+				]}
+				question={translate('Please tell us why you are cancelling G Suite:')}
+				onAnswerChange={onSurveyAnswerChange}
+				disabled={disabled}
+				selectedAnswerId={surveyAnswerId}
+				selectedAnswerText={surveyAnswerText}
 			/>
 		);
 	}
@@ -75,6 +75,6 @@ GSuiteCancellationSurvey.propTypes = {
 	surveyAnswerText: PropTypes.string,
 };
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( GSuiteCancellationSurvey ) );
+})(localize(GSuiteCancellationSurvey));

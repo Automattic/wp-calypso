@@ -29,9 +29,9 @@ const icon = (
 	</svg>
 );
 
-registerBlockType( metadata.name, {
-	title: __( 'Blog Posts Listing', 'full-site-editing' ),
-	description: __( 'Displays your latest Blog Posts.', 'full-site-editing' ),
+registerBlockType(metadata.name, {
+	title: __('Blog Posts Listing', 'full-site-editing'),
+	description: __('Displays your latest Blog Posts.', 'full-site-editing'),
 	icon: icon,
 	category: 'layout',
 	supports: {
@@ -41,64 +41,64 @@ registerBlockType( metadata.name, {
 		inserter: false,
 	},
 	attributes: metadata.attributes,
-	edit: ( { attributes, setAttributes, clientId, isSelected } ) => {
-		const block = select( 'core/block-editor' ).getBlock( clientId );
+	edit: ({ attributes, setAttributes, clientId, isSelected }) => {
+		const block = select('core/block-editor').getBlock(clientId);
 
 		// Find if any of possible transformations is into the Homepage Posts block.
-		const possibleTransforms = getPossibleBlockTransformations( [ block ] );
+		const possibleTransforms = getPossibleBlockTransformations([block]);
 		const homepagePostsTransform = possibleTransforms.find(
-			transform => transform && isValidHomepagePostsBlockType( transform.name )
+			(transform) => transform && isValidHomepagePostsBlockType(transform.name)
 		);
-		const canBeUpgraded = !! homepagePostsTransform;
+		const canBeUpgraded = !!homepagePostsTransform;
 
 		const upgradeBlock = () => {
-			dispatch( 'core/block-editor' ).replaceBlocks(
+			dispatch('core/block-editor').replaceBlocks(
 				block.clientId,
-				switchToBlockType( block, homepagePostsTransform.name )
+				switchToBlockType(block, homepagePostsTransform.name)
 			);
 		};
 
 		return (
 			<Fragment>
-				{ canBeUpgraded && (
+				{canBeUpgraded && (
 					<Notice
-						actions={ [
+						actions={[
 							{
-								label: __( 'Update Block', 'full-site-editing' ),
+								label: __('Update Block', 'full-site-editing'),
 								onClick: upgradeBlock,
 							},
-						] }
+						]}
 						className="posts-list__notice"
-						isDismissible={ false }
+						isDismissible={false}
 					>
-						{ __(
+						{__(
 							'An improved version of this block is available. Update for a better, more natural way to manage your blog post listings. There may be small visual changes.',
 							'full-site-editing'
-						) }
+						)}
 					</Notice>
-				) }
+				)}
 				<Placeholder
-					icon={ icon }
-					label={ __( 'Your recent blog posts will be displayed here.', 'full-site-editing' ) }
+					icon={icon}
+					label={__('Your recent blog posts will be displayed here.', 'full-site-editing')}
 				>
-					{ isSelected ? (
+					{isSelected ? (
 						<RangeControl
-							label={ __( 'Number of posts to show', 'full-site-editing' ) }
-							value={ attributes.postsPerPage }
-							onChange={ val => setAttributes( { postsPerPage: val } ) }
-							min={ 1 }
-							max={ 50 }
+							label={__('Number of posts to show', 'full-site-editing')}
+							value={attributes.postsPerPage}
+							onChange={(val) => setAttributes({ postsPerPage: val })}
+							min={1}
+							max={50}
 						/>
-					) : null }
+					) : null}
 				</Placeholder>
 				<InspectorControls>
 					<PanelBody>
 						<RangeControl
-							label={ __( 'Number of posts', 'full-site-editing' ) }
-							value={ attributes.postsPerPage }
-							onChange={ val => setAttributes( { postsPerPage: val } ) }
-							min={ 1 }
-							max={ 50 }
+							label={__('Number of posts', 'full-site-editing')}
+							value={attributes.postsPerPage}
+							onChange={(val) => setAttributes({ postsPerPage: val })}
+							min={1}
+							max={50}
 						/>
 					</PanelBody>
 				</InspectorControls>
@@ -107,4 +107,4 @@ registerBlockType( metadata.name, {
 	},
 	save: () => null,
 	transforms,
-} );
+});

@@ -12,7 +12,7 @@ import config from 'config';
 import { isDefaultLocale, getLanguage } from './utils';
 import { getUrlFromParts } from 'lib/url/url-parts';
 
-const debug = debugFactory( 'calypso:i18n' );
+const debug = debugFactory('calypso:i18n');
 
 const getPromises = {};
 
@@ -24,12 +24,12 @@ const getPromises = {};
  *
  * @returns {Promise} The fetch promise.
  */
-function dedupedGet( url ) {
-	if ( ! ( url in getPromises ) ) {
-		getPromises[ url ] = globalThis.fetch( url ).finally( () => delete getPromises[ url ] );
+function dedupedGet(url) {
+	if (!(url in getPromises)) {
+		getPromises[url] = globalThis.fetch(url).finally(() => delete getPromises[url]);
 	}
 
-	return getPromises[ url ];
+	return getPromises[url];
 }
 
 /**
@@ -42,7 +42,7 @@ function dedupedGet( url ) {
 export function getLanguageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
 
-	return `${ protocol }widgets.wp.com/languages/calypso/`;
+	return `${protocol}widgets.wp.com/languages/calypso/`;
 }
 
 /**
@@ -51,7 +51,7 @@ export function getLanguageFilePathUrl() {
  * @returns {string} The internal base file path for language files.
  */
 export function getLanguagesInternalBasePath() {
-	if ( ! window || ! window.__requireChunkCallback__ ) {
+	if (!window || !window.__requireChunkCallback__) {
 		return '/calypso/evergreen/languages';
 	}
 
@@ -68,25 +68,25 @@ export function getLanguagesInternalBasePath() {
  *
  * @returns {string} A language file URL.
  */
-export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevisions = {} ) {
-	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+export function getLanguageFileUrl(localeSlug, fileType = 'json', languageRevisions = {}) {
+	if (!includes(['js', 'json'], fileType)) {
 		fileType = 'json';
 	}
 
-	const revision = languageRevisions[ localeSlug ];
-	const fileUrl = `${ getLanguageFilePathUrl() }${ localeSlug }-v1.1.${ fileType }`;
+	const revision = languageRevisions[localeSlug];
+	const fileUrl = `${getLanguageFilePathUrl()}${localeSlug}-v1.1.${fileType}`;
 
-	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
+	return typeof revision === 'number' ? fileUrl + `?v=${revision}` : fileUrl;
 }
 
 function getHtmlLangAttribute() {
 	// translation of this string contains the desired HTML attribute value
-	const slug = i18n.translate( 'html_lang_attribute' );
+	const slug = i18n.translate('html_lang_attribute');
 
 	// Hasn't been translated? Some languages don't have the translation for this string,
 	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug
 	// -- there's no special one available for `<html lang>`.
-	if ( slug === 'html_lang_attribute' ) {
+	if (slug === 'html_lang_attribute') {
 		return i18n.getLocaleSlug();
 	}
 
@@ -98,15 +98,15 @@ function setLocaleInDOM() {
 	const isRTL = i18n.isRtl();
 	document.documentElement.lang = htmlLangAttribute;
 	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-	document.body.classList[ isRTL ? 'add' : 'remove' ]( 'rtl' );
+	document.body.classList[isRTL ? 'add' : 'remove']('rtl');
 
-	switchWebpackCSS( isRTL );
+	switchWebpackCSS(isRTL);
 }
 
-export async function getFile( url ) {
-	const response = await dedupedGet( url );
-	if ( response.ok ) {
-		if ( response.bodyUsed ) {
+export async function getFile(url) {
+	const response = await dedupedGet(url);
+	if (response.ok) {
+		if (response.bodyUsed) {
 			// If the body was already used, we assume that we already parsed the
 			// response and set the locale in the DOM, so we don't need to do anything
 			// else here.
@@ -119,10 +119,10 @@ export async function getFile( url ) {
 	throw new Error();
 }
 
-export function getLanguageFile( targetLocaleSlug ) {
-	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
+export function getLanguageFile(targetLocaleSlug) {
+	const url = getLanguageFileUrl(targetLocaleSlug, 'json', window.languageRevisions || {});
 
-	return getFile( url );
+	return getFile(url);
 }
 
 /**
@@ -134,11 +134,11 @@ export function getLanguageFile( targetLocaleSlug ) {
  *
  * @returns {string} A language manifest file URL.
  */
-export function getLanguageManifestFileUrl( localeSlug, languageRevisions = {} ) {
-	const revision = languageRevisions[ localeSlug ];
-	const fileUrl = `${ getLanguagesInternalBasePath() }/${ localeSlug }-language-manifest.json`;
+export function getLanguageManifestFileUrl(localeSlug, languageRevisions = {}) {
+	const revision = languageRevisions[localeSlug];
+	const fileUrl = `${getLanguagesInternalBasePath()}/${localeSlug}-language-manifest.json`;
 
-	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
+	return typeof revision === 'number' ? fileUrl + `?v=${revision}` : fileUrl;
 }
 
 /**
@@ -148,10 +148,10 @@ export function getLanguageManifestFileUrl( localeSlug, languageRevisions = {} )
  *
  * @returns {Promise} Language manifest json content
  */
-export function getLanguageManifestFile( targetLocaleSlug ) {
-	const url = getLanguageManifestFileUrl( targetLocaleSlug, window.languageRevisions || {} );
+export function getLanguageManifestFile(targetLocaleSlug) {
+	const url = getLanguageManifestFileUrl(targetLocaleSlug, window.languageRevisions || {});
 
-	return getFile( url );
+	return getFile(url);
 }
 
 /**
@@ -164,11 +164,11 @@ export function getLanguageManifestFile( targetLocaleSlug ) {
  *
  * @returns {string} A translation chunk file URL.
  */
-export function getTranslationChunkFileUrl( chunkId, localeSlug, languageRevisions = {} ) {
-	const revision = languageRevisions[ localeSlug ];
-	const fileUrl = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json`;
+export function getTranslationChunkFileUrl(chunkId, localeSlug, languageRevisions = {}) {
+	const revision = languageRevisions[localeSlug];
+	const fileUrl = `${getLanguagesInternalBasePath()}/${localeSlug}-${chunkId}.json`;
 
-	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
+	return typeof revision === 'number' ? fileUrl + `?v=${revision}` : fileUrl;
 }
 
 /**
@@ -179,76 +179,72 @@ export function getTranslationChunkFileUrl( chunkId, localeSlug, languageRevisio
  *
  * @returns {Promise} Translation chunk json content
  */
-export function getTranslationChunkFile( chunkId, targetLocaleSlug ) {
-	const url = getTranslationChunkFileUrl(
-		chunkId,
-		targetLocaleSlug,
-		window.languageRevisions || {}
-	);
+export function getTranslationChunkFile(chunkId, targetLocaleSlug) {
+	const url = getTranslationChunkFileUrl(chunkId, targetLocaleSlug, window.languageRevisions || {});
 
-	return getFile( url );
+	return getFile(url);
 }
 
 let lastRequestedLocale = null;
-export default function switchLocale( localeSlug ) {
+export default function switchLocale(localeSlug) {
 	// check if the language exists in config.languages
-	const language = getLanguage( localeSlug );
+	const language = getLanguage(localeSlug);
 
-	if ( ! language ) {
+	if (!language) {
 		return;
 	}
 
 	// Note: i18n is a singleton that will be shared between all server requests!
 	// Disable switching locale on the server
-	if ( typeof document === 'undefined' ) {
+	if (typeof document === 'undefined') {
 		return;
 	}
 
 	lastRequestedLocale = localeSlug;
 
-	if ( config.isEnabled( 'use-translation-chunks' ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
+	if (config.isEnabled('use-translation-chunks')) {
+		i18n.configure({ defaultLocaleSlug: localeSlug });
 		setLocaleInDOM();
 
 		return;
 	}
 
-	if ( isDefaultLocale( localeSlug ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
+	if (isDefaultLocale(localeSlug)) {
+		i18n.configure({ defaultLocaleSlug: localeSlug });
 		setLocaleInDOM();
 	} else {
-		getLanguageFile( localeSlug ).then(
+		getLanguageFile(localeSlug).then(
 			// Success.
-			body => {
-				if ( body ) {
+			(body) => {
+				if (body) {
 					// Handle race condition when we're requested to switch to a different
 					// locale while we're in the middle of request, we should abandon result
-					if ( localeSlug !== lastRequestedLocale ) {
+					if (localeSlug !== lastRequestedLocale) {
 						return;
 					}
 
-					i18n.setLocale( body );
+					i18n.setLocale(body);
 					setLocaleInDOM();
-					loadUserUndeployedTranslations( localeSlug );
+					loadUserUndeployedTranslations(localeSlug);
 				}
 			},
 			// Failure.
 			() => {
 				debug(
-					`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
+					`Encountered an error loading locale file for ${localeSlug}. Falling back to English.`
 				);
 			}
 		);
 	}
 }
 
-export function loadUserUndeployedTranslations( currentLocaleSlug ) {
-	if ( typeof window === 'undefined' || ! window.location || ! window.location.search ) {
+export function loadUserUndeployedTranslations(currentLocaleSlug) {
+	if (typeof window === 'undefined' || !window.location || !window.location.search) {
 		return;
 	}
 
-	const search = new URLSearchParams( window.location.search );
-	const params = Object.fromEntries( search.entries() );
+	const search = new URLSearchParams(window.location.search);
+	const params = Object.fromEntries(search.entries());
 
 	const {
 		'load-user-translations': username,
@@ -258,27 +254,22 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		locale = currentLocaleSlug,
 	} = params;
 
-	if ( ! username ) {
+	if (!username) {
 		return;
 	}
 
-	if ( ! includes( [ 'current', 'waiting' ], translationStatus ) ) {
+	if (!includes(['current', 'waiting'], translationStatus)) {
 		return;
 	}
 
-	if ( 'waiting' === translationStatus ) {
+	if ('waiting' === translationStatus) {
 		// TODO only allow loading your own waiting translations. Disallow loading them for now.
 		return;
 	}
 
-	const pathname = [
-		'api',
-		'projects',
-		project,
-		locale,
-		translationSet,
-		'export-translations',
-	].join( '/' );
+	const pathname = ['api', 'projects', project, locale, translationSet, 'export-translations'].join(
+		'/'
+	);
 
 	const query = {
 		'filters[user_login]': username,
@@ -286,20 +277,20 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		format: 'json',
 	};
 
-	const requestUrl = getUrlFromParts( {
+	const requestUrl = getUrlFromParts({
 		protocol: 'https:',
 		host: 'translate.wordpress.com',
 		pathname,
 		query,
-	} );
+	});
 
 	return window
-		.fetch( requestUrl.href, {
+		.fetch(requestUrl.href, {
 			headers: { Accept: 'application/json' },
 			credentials: 'include',
-		} )
-		.then( res => res.json() )
-		.then( translations => i18n.addTranslations( translations ) );
+		})
+		.then((res) => res.json())
+		.then((translations) => i18n.addTranslations(translations));
 }
 
 /*
@@ -307,12 +298,12 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
  * with `.css` suffix. This function sets a desired `isRTL` flag on the supplied URL, i.e., it
  * changes the extension if necessary.
  */
-function setRTLFlagOnCSSLink( url, isRTL ) {
-	if ( isRTL ) {
-		return url.endsWith( '.rtl.css' ) ? url : url.replace( /\.css$/, '.rtl.css' );
+function setRTLFlagOnCSSLink(url, isRTL) {
+	if (isRTL) {
+		return url.endsWith('.rtl.css') ? url : url.replace(/\.css$/, '.rtl.css');
 	}
 
-	return ! url.endsWith( '.rtl.css' ) ? url : url.replace( /\.rtl.css$/, '.css' );
+	return !url.endsWith('.rtl.css') ? url : url.replace(/\.rtl.css$/, '.css');
 }
 
 /**
@@ -320,23 +311,23 @@ function setRTLFlagOnCSSLink( url, isRTL ) {
  *
  * @param {boolean} isRTL True to use RTL css.
  */
-export function switchWebpackCSS( isRTL ) {
-	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
+export function switchWebpackCSS(isRTL) {
+	const currentLinks = document.querySelectorAll('link[rel="stylesheet"][data-webpack]');
 
-	forEach( currentLinks, async currentLink => {
-		const currentHref = currentLink.getAttribute( 'href' );
-		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
-		if ( currentHref === newHref ) {
+	forEach(currentLinks, async (currentLink) => {
+		const currentHref = currentLink.getAttribute('href');
+		const newHref = setRTLFlagOnCSSLink(currentHref, isRTL);
+		if (currentHref === newHref) {
 			return;
 		}
 
-		const newLink = await loadCSS( newHref, currentLink );
-		newLink.setAttribute( 'data-webpack', true );
+		const newLink = await loadCSS(newHref, currentLink);
+		newLink.setAttribute('data-webpack', true);
 
-		if ( currentLink.parentElement ) {
-			currentLink.parentElement.removeChild( currentLink );
+		if (currentLink.parentElement) {
+			currentLink.parentElement.removeChild(currentLink);
 		}
-	} );
+	});
 }
 
 /**
@@ -346,25 +337,25 @@ export function switchWebpackCSS( isRTL ) {
  * @param {window.Element} currentLink an existing <link> DOM element before which we want to insert the new one
  * @returns {Promise<string>} the new <link> DOM element after the CSS has been loaded
  */
-function loadCSS( cssUrl, currentLink ) {
-	return new Promise( resolve => {
-		const link = document.createElement( 'link' );
+function loadCSS(cssUrl, currentLink) {
+	return new Promise((resolve) => {
+		const link = document.createElement('link');
 		link.rel = 'stylesheet';
 		link.type = 'text/css';
 		link.href = cssUrl;
 
-		if ( 'onload' in link ) {
+		if ('onload' in link) {
 			link.onload = () => {
 				link.onload = null;
-				resolve( link );
+				resolve(link);
 			};
 		} else {
 			// just wait 500ms if the browser doesn't support link.onload
 			// https://pie.gd/test/script-link-events/
 			// https://github.com/ariya/phantomjs/issues/12332
-			setTimeout( () => resolve( link ), 500 );
+			setTimeout(() => resolve(link), 500);
 		}
 
-		document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
-	} );
+		document.head.insertBefore(link, currentLink ? currentLink.nextSibling : null);
+	});
 }

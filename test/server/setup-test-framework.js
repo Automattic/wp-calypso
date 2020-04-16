@@ -5,20 +5,20 @@ import * as nock from 'nock';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 
-chai.use( sinonChai );
+chai.use(sinonChai);
 
 // Disables all network requests for all tests.
 nock.disableNetConnect();
 
-beforeAll( () => {
+beforeAll(() => {
 	// reactivate nock on test start
-	if ( ! nock.isActive() ) {
+	if (!nock.isActive()) {
 		nock.activate();
 	}
-} );
+});
 
-afterAll( () => {
+afterAll(() => {
 	// helps clean up nock after each test run and avoid memory leaks
 	nock.restore();
 	nock.cleanAll();
-} );
+});

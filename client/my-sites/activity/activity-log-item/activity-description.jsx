@@ -11,13 +11,13 @@ import analytics from 'lib/analytics';
 import FormattedBlock from 'components/notes-formatted-block';
 
 class ActivityDescription extends Component {
-	trackContentLinkClick = ( {
+	trackContentLinkClick = ({
 		target: {
 			dataset: { activity, section, intent },
 		},
-	} ) => {
+	}) => {
 		const params = { activity, section, intent };
-		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', params );
+		analytics.tracks.recordEvent('calypso_activitylog_item_click', params);
 	};
 
 	render() {
@@ -41,18 +41,18 @@ class ActivityDescription extends Component {
 		/* There is no great way to generate a more valid React key here
 		 * but the index is probably sufficient because these sub-items
 		 * shouldn't be changing. */
-		return activityDescription.map( ( part, i ) => {
+		return activityDescription.map((part, i) => {
 			const { intent, section } = part;
 			return (
 				<FormattedBlock
-					key={ i }
-					content={ part }
-					onClick={ this.trackContentLinkClick }
-					meta={ { activity: activityName, intent, section } }
+					key={i}
+					content={part}
+					onClick={this.trackContentLinkClick}
+					meta={{ activity: activityName, intent, section }}
 				/>
 			);
-		} );
+		});
 	}
 }
 
-export default localize( ActivityDescription );
+export default localize(ActivityDescription);

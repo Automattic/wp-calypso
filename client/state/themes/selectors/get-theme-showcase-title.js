@@ -11,25 +11,25 @@ import { getThemeFilterTerm } from 'state/themes/selectors/get-theme-filter-term
 
 import 'state/themes/init';
 
-export function getThemeShowcaseTitle( state, { filter, tier, vertical } = {} ) {
-	if ( vertical ) {
-		const name = get( getThemeFilterTerm( state, 'subject', vertical ), 'name' );
-		if ( name ) {
-			return `${ name } WordPress Themes`;
+export function getThemeShowcaseTitle(state, { filter, tier, vertical } = {}) {
+	if (vertical) {
+		const name = get(getThemeFilterTerm(state, 'subject', vertical), 'name');
+		if (name) {
+			return `${name} WordPress Themes`;
 		}
 	}
 
 	// If we have *one* filter, use its name
-	if ( filter && ! includes( filter, '+' ) ) {
-		const filterName = get( findThemeFilterTerm( state, filter ), 'name' );
-		if ( filterName ) {
-			return `${ filterName } WordPress Themes`;
+	if (filter && !includes(filter, '+')) {
+		const filterName = get(findThemeFilterTerm(state, filter), 'name');
+		if (filterName) {
+			return `${filterName} WordPress Themes`;
 		}
 	}
 
-	if ( tier === 'free' ) {
+	if (tier === 'free') {
 		return 'Free WordPress Themes';
-	} else if ( tier === 'premium' ) {
+	} else if (tier === 'premium') {
 		return 'Premium WordPress Themes';
 	}
 

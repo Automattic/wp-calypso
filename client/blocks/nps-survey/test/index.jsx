@@ -14,15 +14,15 @@ import { translate } from 'i18n-calypso';
  */
 import { NpsSurvey } from '../';
 
-jest.mock( 'react-redux', () => ( {
+jest.mock('react-redux', () => ({
 	connect: () => () => {},
-} ) );
+}));
 
-jest.mock( 'state/nps-survey/actions' );
-jest.mock( 'state/analytics/actions' );
-jest.mock( 'state/notices/actions' );
+jest.mock('state/nps-survey/actions');
+jest.mock('state/analytics/actions');
+jest.mock('state/notices/actions');
 
-describe( 'NpsSurvey', () => {
+describe('NpsSurvey', () => {
 	const mockedProps = {
 		name: 'test-survey',
 		onChangeForm: jest.fn(),
@@ -38,90 +38,88 @@ describe( 'NpsSurvey', () => {
 		translate,
 	};
 
-	beforeEach( () => {
+	beforeEach(() => {
 		mockedProps.recordTracksEvent.mockReset();
-	} );
+	});
 
-	test( 'should track current page in the dialog', () => {
-		const wrapper = shallow( <NpsSurvey { ...mockedProps } /> );
+	test('should track current page in the dialog', () => {
+		const wrapper = shallow(<NpsSurvey {...mockedProps} />);
 
-		wrapper.setState( {
+		wrapper.setState({
 			score: 6,
 			feedback: 'feedback',
-		} );
+		});
 
-		expect( wrapper.state( 'currentForm' ) ).toBe( 'score' );
-		wrapper.find( '.nps-survey__finish-button' ).simulate( 'click' );
+		expect(wrapper.state('currentForm')).toBe('score');
+		wrapper.find('.nps-survey__finish-button').simulate('click');
 		// we don't track the first page.
 
-		expect( wrapper.state( 'currentForm' ) ).toBe( 'feedback' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect(wrapper.state('currentForm')).toBe('feedback');
+		expect(mockedProps.recordTracksEvent).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'feedback',
 				has_available_concierge_sessions: true,
 			}
 		);
-		wrapper.find( '.nps-survey__finish-button' ).simulate( 'click' );
+		wrapper.find('.nps-survey__finish-button').simulate('click');
 
-		expect( wrapper.state( 'currentForm' ) ).toBe( 'promotion' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect(wrapper.state('currentForm')).toBe('promotion');
+		expect(mockedProps.recordTracksEvent).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'promotion',
 				has_available_concierge_sessions: true,
 			}
 		);
-	} );
+	});
 
-	test( 'should track the concierge session availability too', () => {
-		const wrapper = shallow(
-			<NpsSurvey { ...mockedProps } hasAvailableConciergeSession={ false } />
-		);
+	test('should track the concierge session availability too', () => {
+		const wrapper = shallow(<NpsSurvey {...mockedProps} hasAvailableConciergeSession={false} />);
 
-		wrapper.setState( {
+		wrapper.setState({
 			score: 6,
 			feedback: 'feedback',
-		} );
+		});
 
-		expect( wrapper.state( 'currentForm' ) ).toBe( 'score' );
-		wrapper.find( '.nps-survey__finish-button' ).simulate( 'click' );
+		expect(wrapper.state('currentForm')).toBe('score');
+		wrapper.find('.nps-survey__finish-button').simulate('click');
 		// we don't track the first page.
 
-		expect( wrapper.state( 'currentForm' ) ).toBe( 'feedback' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect(wrapper.state('currentForm')).toBe('feedback');
+		expect(mockedProps.recordTracksEvent).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'feedback',
 				has_available_concierge_sessions: false,
 			}
 		);
-		wrapper.find( '.nps-survey__finish-button' ).simulate( 'click' );
+		wrapper.find('.nps-survey__finish-button').simulate('click');
 
-		expect( wrapper.state( 'currentForm' ) ).toBe( 'promotion' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		expect(wrapper.state('currentForm')).toBe('promotion');
+		expect(mockedProps.recordTracksEvent).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'promotion',
 				has_available_concierge_sessions: false,
 			}
 		);
-	} );
+	});
 
-	test( 'should track when any link in the promotion page is clicked', () => {
-		const wrapper = mount( <NpsSurvey { ...mockedProps } /> );
+	test('should track when any link in the promotion page is clicked', () => {
+		const wrapper = mount(<NpsSurvey {...mockedProps} />);
 
-		wrapper.setState( {
+		wrapper.setState({
 			score: 6,
 			feedback: 'feedback',
 			currentForm: 'promotion',
-		} );
+		});
 
-		expect( wrapper.state( 'currentForm' ) ).toBe( 'promotion' );
-		expect( wrapper.find( 'a[data-type]' ) ).toHaveLength( 2 );
+		expect(wrapper.state('currentForm')).toBe('promotion');
+		expect(wrapper.find('a[data-type]')).toHaveLength(2);
 
-		wrapper.find( 'a[data-type="booking"]' ).simulate( 'click' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		wrapper.find('a[data-type="booking"]').simulate('click');
+		expect(mockedProps.recordTracksEvent).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_link_clicked',
 			{
 				url: 'https://example.com/me/concierge',
@@ -129,8 +127,8 @@ describe( 'NpsSurvey', () => {
 			}
 		);
 
-		wrapper.find( 'a[data-type="contact"]' ).simulate( 'click' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		wrapper.find('a[data-type="contact"]').simulate('click');
+		expect(mockedProps.recordTracksEvent).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_link_clicked',
 			{
 				url: 'https://example.com/help/contact',
@@ -139,18 +137,18 @@ describe( 'NpsSurvey', () => {
 		);
 
 		// When the user used up concierge sessions
-		wrapper.setProps( { ...mockedProps, hasAvailableConciergeSession: false } );
+		wrapper.setProps({ ...mockedProps, hasAvailableConciergeSession: false });
 
 		// There will be only one contact link
-		expect( wrapper.find( 'a[data-type]' ) ).toHaveLength( 1 );
+		expect(wrapper.find('a[data-type]')).toHaveLength(1);
 
-		wrapper.find( 'a[data-type="contact"]' ).simulate( 'click' );
-		expect( mockedProps.recordTracksEvent ).toHaveBeenLastCalledWith(
+		wrapper.find('a[data-type="contact"]').simulate('click');
+		expect(mockedProps.recordTracksEvent).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_link_clicked',
 			{
 				url: 'https://example.com/help/contact',
 				type: 'contact',
 			}
 		);
-	} );
-} );
+	});
+});

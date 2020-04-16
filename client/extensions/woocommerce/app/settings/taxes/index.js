@@ -39,59 +39,59 @@ class SettingsTaxes extends Component {
 	};
 
 	componentDidMount = () => {
-		if ( this.props.setupChoicesLoaded ) {
+		if (this.props.setupChoicesLoaded) {
 			this.maybeSetCheckedTaxSetup();
 		}
 	};
 
-	componentDidUpdate = prevProps => {
-		if ( this.props.setupChoicesLoaded && ! prevProps.setupChoicesLoaded ) {
+	componentDidUpdate = (prevProps) => {
+		if (this.props.setupChoicesLoaded && !prevProps.setupChoicesLoaded) {
 			this.maybeSetCheckedTaxSetup();
 		}
 	};
 
 	maybeSetCheckedTaxSetup = () => {
 		const { taxesAreSetUp, siteId } = this.props;
-		if ( taxesAreSetUp ) {
+		if (taxesAreSetUp) {
 			return;
 		}
-		this.props.setCheckedTaxSetup( siteId, true );
+		this.props.setCheckedTaxSetup(siteId, true);
 	};
 
 	render = () => {
 		const { className, site, siteId, sitePluginsLoaded, siteSlug, taxJarPluginActive } = this.props;
 
 		const renderTaxesByTaxJar = taxJarPluginActive;
-		const renderTaxesByWCS = sitePluginsLoaded && ! taxJarPluginActive;
-		const renderPlaceholder = ! renderTaxesByTaxJar && ! renderTaxesByWCS;
+		const renderTaxesByWCS = sitePluginsLoaded && !taxJarPluginActive;
+		const renderPlaceholder = !renderTaxesByTaxJar && !renderTaxesByWCS;
 
 		return (
-			<Main className={ classNames( 'settings-taxes', className ) } wideLayout>
-				{ renderPlaceholder && <SettingsTaxesPlaceholder siteSlug={ siteSlug } /> }
-				{ renderTaxesByTaxJar && <SettingsTaxesTaxJar site={ site } /> }
-				{ renderTaxesByWCS && (
-					<SettingsTaxesWooCommerceServices siteId={ siteId } siteSlug={ siteSlug } />
-				) }
+			<Main className={classNames('settings-taxes', className)} wideLayout>
+				{renderPlaceholder && <SettingsTaxesPlaceholder siteSlug={siteSlug} />}
+				{renderTaxesByTaxJar && <SettingsTaxesTaxJar site={site} />}
+				{renderTaxesByWCS && (
+					<SettingsTaxesWooCommerceServices siteId={siteId} siteSlug={siteSlug} />
+				)}
 			</Main>
 		);
 	};
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
 	const siteId = site ? site.ID : null;
 	const siteSlug = site ? site.slug : '';
 
-	const isRequestingSitePlugins = site ? isRequesting( state, siteId ) : false;
-	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
-	const sitePluginsLoaded = ! isEmpty( sitePlugins );
-	const taxJarPluginActive = !! find( sitePlugins, {
+	const isRequestingSitePlugins = site ? isRequesting(state, siteId) : false;
+	const sitePlugins = site ? getPlugins(state, [site.ID]) : [];
+	const sitePluginsLoaded = !isEmpty(sitePlugins);
+	const taxJarPluginActive = !!find(sitePlugins, {
 		slug: 'taxjar-simplified-taxes-for-woocommerce',
 		active: true,
-	} );
+	});
 
-	const setupChoicesLoaded = areSetupChoicesLoaded( state, siteId );
-	const taxesAreSetUp = getCheckedTaxSetup( state, siteId );
+	const setupChoicesLoaded = areSetupChoicesLoaded(state, siteId);
+	const taxesAreSetUp = getCheckedTaxSetup(state, siteId);
 
 	return {
 		isRequestingSitePlugins,
@@ -105,7 +105,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			setCheckedTaxSetup,
@@ -113,4 +113,4 @@ function mapDispatchToProps( dispatch ) {
 		dispatch
 	);
 }
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsTaxes ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(SettingsTaxes));

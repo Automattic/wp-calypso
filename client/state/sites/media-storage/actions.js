@@ -18,7 +18,7 @@ import {
  * @param  {number} siteId       Site ID
  * @returns {object}              Action object
  */
-export function receiveMediaStorage( mediaStorage, siteId ) {
+export function receiveMediaStorage(mediaStorage, siteId) {
 	return {
 		type: SITE_MEDIA_STORAGE_RECEIVE,
 		mediaStorage,
@@ -32,29 +32,29 @@ export function receiveMediaStorage( mediaStorage, siteId ) {
  * @param   {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */
-export function requestMediaStorage( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function requestMediaStorage(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_MEDIA_STORAGE_REQUEST,
 			siteId,
-		} );
+		});
 		return wpcom
 			.undocumented()
-			.site( siteId )
+			.site(siteId)
 			.mediaStorage()
-			.then( mediaStorage => {
-				dispatch( receiveMediaStorage( mediaStorage, siteId ) );
-				dispatch( {
+			.then((mediaStorage) => {
+				dispatch(receiveMediaStorage(mediaStorage, siteId));
+				dispatch({
 					type: SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_MEDIA_STORAGE_REQUEST_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

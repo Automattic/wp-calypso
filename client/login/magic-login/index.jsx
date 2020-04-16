@@ -59,13 +59,13 @@ class MagicLogin extends React.Component {
 	};
 
 	componentDidMount() {
-		this.props.recordPageView( '/log-in/link', 'Login > Link' );
+		this.props.recordPageView('/log-in/link', 'Login > Link');
 	}
 
-	onClickEnterPasswordInstead = event => {
+	onClickEnterPasswordInstead = (event) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
+		this.props.recordTracksEvent('calypso_login_email_link_page_click_back');
 
 		const loginParameters = {
 			isNative: true,
@@ -73,11 +73,11 @@ class MagicLogin extends React.Component {
 			isGutenboarding: this.props.isGutenboardingLogin,
 			locale: this.props.locale,
 		};
-		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
-		if ( emailAddress ) {
+		const emailAddress = get(this.props, ['query', 'email_address']);
+		if (emailAddress) {
 			loginParameters.emailAddress = emailAddress;
 		}
-		page( login( loginParameters ) );
+		page(login(loginParameters));
 	};
 
 	renderLinks() {
@@ -89,7 +89,7 @@ class MagicLogin extends React.Component {
 			translate,
 		} = this.props;
 
-		if ( showCheckYourEmail ) {
+		if (showCheckYourEmail) {
 			return null;
 		}
 
@@ -106,9 +106,9 @@ class MagicLogin extends React.Component {
 
 		return (
 			<div className="magic-login__footer">
-				<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ translate( 'Enter a password instead' ) }
+				<a href={login(loginParameters)} onClick={this.onClickEnterPasswordInstead}>
+					<Gridicon icon="arrow-left" size={18} />
+					{translate('Enter a password instead')}
 				</a>
 			</div>
 		);
@@ -117,11 +117,11 @@ class MagicLogin extends React.Component {
 	renderLocaleSuggestions() {
 		const { locale, path, showCheckYourEmail } = this.props;
 
-		if ( showCheckYourEmail ) {
+		if (showCheckYourEmail) {
 			return null;
 		}
 
-		return <LocaleSuggestions locale={ locale } path={ path } />;
+		return <LocaleSuggestions locale={locale} path={path} />;
 	}
 
 	renderGutenboardingLogo() {
@@ -145,39 +145,39 @@ class MagicLogin extends React.Component {
 	render() {
 		return (
 			<Main
-				className={ classNames( 'magic-login', 'magic-login__request-link', {
+				className={classNames('magic-login', 'magic-login__request-link', {
 					'is-gutenboarding-login': this.props.isGutenboardingLogin,
-				} ) }
+				})}
 			>
-				{ this.props.isJetpackLogin && <JetpackHeader /> }
-				{ this.props.isGutenboardingLogin && this.renderGutenboardingLogo() }
+				{this.props.isJetpackLogin && <JetpackHeader />}
+				{this.props.isGutenboardingLogin && this.renderGutenboardingLogo()}
 
-				{ this.renderLocaleSuggestions() }
+				{this.renderLocaleSuggestions()}
 
-				<GlobalNotices id="notices" notices={ notices.list } />
+				<GlobalNotices id="notices" notices={notices.list} />
 
 				<RequestLoginEmailForm />
 
-				{ this.renderLinks() }
+				{this.renderLinks()}
 			</Main>
 		);
 	}
 }
 
-const mapState = state => ( {
-	locale: getCurrentLocaleSlug( state ),
-	query: getCurrentQueryArguments( state ),
-	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
-	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isGutenboardingLogin: getCurrentRoute( state )?.startsWith(
-		`/log-in/${ GUTENBOARDING_BASE_NAME }/link`
+const mapState = (state) => ({
+	locale: getCurrentLocaleSlug(state),
+	query: getCurrentQueryArguments(state),
+	showCheckYourEmail: getMagicLoginCurrentView(state) === CHECK_YOUR_EMAIL_PAGE,
+	isJetpackLogin: getCurrentRoute(state) === '/log-in/jetpack/link',
+	isGutenboardingLogin: getCurrentRoute(state)?.startsWith(
+		`/log-in/${GUTENBOARDING_BASE_NAME}/link`
 	),
-} );
+});
 
 const mapDispatch = {
 	hideMagicLoginRequestForm,
-	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
-	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
+	recordPageView: withEnhancers(recordPageView, [enhanceWithSiteType]),
+	recordTracksEvent: withEnhancers(recordTracksEvent, [enhanceWithSiteType]),
 };
 
-export default connect( mapState, mapDispatch )( localize( MagicLogin ) );
+export default connect(mapState, mapDispatch)(localize(MagicLogin));

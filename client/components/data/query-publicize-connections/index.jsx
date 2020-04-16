@@ -15,14 +15,14 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryPublicizeConnections extends Component {
 	componentDidMount() {
-		if ( ! this.props.requestingConnections && this.props.siteId ) {
-			this.props.requestConnections( this.props.siteId );
+		if (!this.props.requestingConnections && this.props.siteId) {
+			this.props.requestConnections(this.props.siteId);
 		}
 	}
 
-	componentDidUpdate( { siteId } ) {
-		if ( this.props.siteId && siteId !== this.props.siteId && ! this.props.requestingConnections ) {
-			this.props.requestConnections( this.props.siteId );
+	componentDidUpdate({ siteId }) {
+		if (this.props.siteId && siteId !== this.props.siteId && !this.props.requestingConnections) {
+			this.props.requestConnections(this.props.siteId);
 		}
 	}
 
@@ -46,15 +46,15 @@ QueryPublicizeConnections.defaultProps = {
 };
 
 export default connect(
-	( state, { siteId, selectedSite } ) => {
-		siteId = siteId || ( selectedSite && getSelectedSiteId( state ) );
+	(state, { siteId, selectedSite }) => {
+		siteId = siteId || (selectedSite && getSelectedSiteId(state));
 
 		return {
-			requestingConnections: isRequestingConnections( state, siteId ),
+			requestingConnections: isRequestingConnections(state, siteId),
 			siteId,
 		};
 	},
 	{
 		requestConnections,
 	}
-)( QueryPublicizeConnections );
+)(QueryPublicizeConnections);

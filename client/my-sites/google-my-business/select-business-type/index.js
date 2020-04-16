@@ -49,18 +49,18 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/marketing/tools/${ this.props.siteSlug }` );
+		page.back(`/marketing/tools/${this.props.siteSlug}`);
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = (keyringConnection) => {
 		const { siteId, siteSlug } = this.props;
 
-		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
+		this.props.connectGoogleMyBusinessAccount(siteId, keyringConnection.ID).then(() => {
 			this.props.recordTracksEventWithLocationCounts(
 				'calypso_google_my_business_select_business_type_connect'
 			);
-			page.redirect( `/google-my-business/${ siteSlug }` );
-		} );
+			page.redirect(`/google-my-business/${siteSlug}`);
+		});
 	};
 
 	trackCreateListingClick = () => {
@@ -92,19 +92,19 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 		let connectButton;
 
-		if ( canUserManageOptions ) {
+		if (canUserManageOptions) {
 			connectButton = (
 				<KeyringConnectButton
 					serviceId="google_my_business"
-					onClick={ this.trackConnectToGoogleMyBusinessClick }
-					onConnect={ this.handleConnect }
+					onClick={this.trackConnectToGoogleMyBusinessClick}
+					onConnect={this.handleConnect}
 					forceReconnect
 					primary
 				>
-					{ translate( 'Connect to Google My Business', {
+					{translate('Connect to Google My Business', {
 						comment:
 							'Call to Action to connect the site to a business listing in Google My Business',
-					} ) }
+					})}
 				</KeyringConnectButton>
 			);
 		} else {
@@ -113,26 +113,26 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					primary
 					href="https://business.google.com/create"
 					target="_blank"
-					onClick={ this.trackCreateListingClick }
+					onClick={this.trackCreateListingClick}
 				>
-					{ translate( 'Create Listing', {
+					{translate('Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }{ ' ' }
+					})}{' '}
 					<Gridicon icon="external" />
 				</Button>
 			);
 		}
 		return (
 			<ActionCard
-				headerText={ translate( 'Physical Location or Service Area', {
+				headerText={translate('Physical Location or Service Area', {
 					comment: 'In the context of a business activity, brick and mortar or online service',
-				} ) }
-				mainText={ translate(
+				})}
+				mainText={translate(
 					'Your business has a physical location customers can visit, ' +
 						'or provides goods and services to local customers, or both.'
-				) }
+				)}
 			>
-				{ connectButton }
+				{connectButton}
 			</ActionCard>
 		);
 	}
@@ -146,17 +146,17 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 		return (
 			<ActionCard
-				headerText={ translate( 'Online Only', {
+				headerText={translate('Online Only', {
 					comment: 'In the context of a business activity, as opposed to a brick and mortar',
-				} ) }
-				mainText={ translate(
+				})}
+				mainText={translate(
 					"Don't provide in-person services? Learn more about reaching your customers online."
-				) }
+				)}
 				buttonTarget="_blank"
-				buttonText={ translate( 'Learn More about SEO', { comment: 'Call to Action button' } ) }
-				buttonHref={ seoHelpLink }
+				buttonText={translate('Learn More about SEO', { comment: 'Call to Action button' })}
+				buttonHref={seoHelpLink}
 				buttonIcon="external"
-				buttonOnClick={ this.trackLearnMoreAboutSEOClick }
+				buttonOnClick={this.trackLearnMoreAboutSEOClick}
 			/>
 		);
 	}
@@ -172,24 +172,24 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					title="Google My Business > Select Business Type"
 				/>
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={translate('Google My Business')} />
 
 				<QueryKeyringServices />
-				<QuerySiteKeyrings siteId={ siteId } />
+				<QuerySiteKeyrings siteId={siteId} />
 				<QueryKeyringConnections />
 
-				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+				<HeaderCake isCompact={false} alwaysShowActionText={false} onClick={this.goBack}>
+					{translate('Google My Business')}
 				</HeaderCake>
 
 				<Card className="gmb-select-business-type__explanation">
 					<div className="gmb-select-business-type__explanation-main">
-						<CardHeading tagName="h1" size={ 24 }>
-							{ translate( 'Which type of business are you?' ) }
+						<CardHeading tagName="h1" size={24}>
+							{translate('Which type of business are you?')}
 						</CardHeading>
 
 						<p>
-							{ translate(
+							{translate(
 								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
 									'It works for businesses that have a physical location, or serve a local area.',
 								{
@@ -199,49 +199,49 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 												href="https://www.google.com/business/"
 												target="_blank"
 												rel="noopener noreferrer"
-												icon={ true }
-												onClick={ this.trackGoogleMyBusinessClick }
+												icon={true}
+												onClick={this.trackGoogleMyBusinessClick}
 											/>
 										),
 									},
 								}
-							) }
+							)}
 						</p>
 					</div>
 
 					<img
 						className="gmb-select-business-type__illustration"
 						src="/calypso/images/google-my-business/business-local.svg"
-						alt={ translate( 'Local business illustration' ) }
+						alt={translate('Local business illustration')}
 					/>
 				</Card>
 
-				{ this.renderLocalBusinessCard() }
+				{this.renderLocalBusinessCard()}
 
-				{ this.renderOnlineBusinessCard() }
+				{this.renderOnlineBusinessCard()}
 			</Main>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			locations: getGoogleMyBusinessLocations( state, siteId ),
-			canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+			locations: getGoogleMyBusinessLocations(state, siteId),
+			canUserManageOptions: canCurrentUser(state, siteId, 'manage_options'),
 			siteId,
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
+			siteIsJetpack: isJetpackSite(state, siteId),
+			siteSlug: getSelectedSiteSlug(state),
 		};
 	},
 	{
-		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+		recordTracksEvent: withEnhancers(recordTracksEvent, enhanceWithSiteType),
+		recordTracksEventWithLocationCounts: withEnhancers(recordTracksEvent, [
 			enhanceWithLocationCounts,
 			enhanceWithSiteType,
-		] ),
+		]),
 		connectGoogleMyBusinessAccount,
 	}
-)( localize( GoogleMyBusinessSelectBusinessType ) );
+)(localize(GoogleMyBusinessSelectBusinessType));

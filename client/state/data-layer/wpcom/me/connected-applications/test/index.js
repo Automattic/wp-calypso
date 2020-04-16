@@ -32,30 +32,30 @@ const apps = [
 	},
 ];
 
-describe( 'requestConnectedApplications()', () => {
-	test( 'should return an action for HTTP request to request the connected applications', () => {
+describe('requestConnectedApplications()', () => {
+	test('should return an action for HTTP request to request the connected applications', () => {
 		const action = requestConnectedApplications();
 
-		expect( action ).toEqual(
-			http( {
+		expect(action).toEqual(
+			http({
 				apiVersion: '1.1',
 				method: 'GET',
 				path: '/me/connected-applications',
-			} )
+			})
 		);
-	} );
-} );
+	});
+});
 
-describe( 'handleRequestSuccess()', () => {
-	test( 'should return a connected applications receive action', () => {
-		const action = handleRequestSuccess( null, apps );
+describe('handleRequestSuccess()', () => {
+	test('should return a connected applications receive action', () => {
+		const action = handleRequestSuccess(null, apps);
 
-		expect( action ).toEqual( receiveConnectedApplications( apps ) );
-	} );
-} );
+		expect(action).toEqual(receiveConnectedApplications(apps));
+	});
+});
 
-describe( 'apiTransformer()', () => {
-	test( 'should transform original response for a successful request', () => {
-		expect( apiTransformer( { connected_applications: apps } ) ).toEqual( apps );
-	} );
-} );
+describe('apiTransformer()', () => {
+	test('should transform original response for a successful request', () => {
+		expect(apiTransformer({ connected_applications: apps })).toEqual(apps);
+	});
+});

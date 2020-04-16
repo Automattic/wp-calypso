@@ -22,7 +22,7 @@ class JetpackInstallStep extends Component {
 	static propTypes = {
 		confirmJetpackInstallStatus: PropTypes.func.isRequired,
 		currentUrl: PropTypes.string,
-		jetpackVersion: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		jetpackVersion: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 		onClick: PropTypes.func,
 	};
 
@@ -31,14 +31,14 @@ class JetpackInstallStep extends Component {
 		onClick: noop,
 	};
 
-	confirmJetpackInstalled = event => {
+	confirmJetpackInstalled = (event) => {
 		event.preventDefault();
-		this.props.confirmJetpackInstallStatus( true );
+		this.props.confirmJetpackInstallStatus(true);
 	};
 
-	confirmJetpackNotInstalled = event => {
+	confirmJetpackNotInstalled = (event) => {
 		event.preventDefault();
-		this.props.confirmJetpackInstallStatus( false );
+		this.props.confirmJetpackInstallStatus(false);
 	};
 
 	renderAlreadyHaveJetpackButton() {
@@ -46,9 +46,9 @@ class JetpackInstallStep extends Component {
 			<a
 				className="jetpack-connect__already-installed-jetpack-button"
 				href="#"
-				onClick={ this.confirmJetpackInstalled }
+				onClick={this.confirmJetpackInstalled}
 			>
-				{ preventWidows( this.props.translate( 'Already have Jetpack installed?' ) ) }
+				{preventWidows(this.props.translate('Already have Jetpack installed?'))}
 			</a>
 		);
 	}
@@ -58,85 +58,81 @@ class JetpackInstallStep extends Component {
 			<a
 				className="jetpack-connect__no-jetpack-button"
 				href="#"
-				onClick={ this.confirmJetpackNotInstalled }
+				onClick={this.confirmJetpackNotInstalled}
 			>
-				{ preventWidows( this.props.translate( "Don't have Jetpack installed?" ) ) }
+				{preventWidows(this.props.translate("Don't have Jetpack installed?"))}
 			</a>
 		);
 	}
 
-	getStep( stepName ) {
+	getStep(stepName) {
 		const { currentUrl, jetpackVersion, onClick, translate } = this.props;
 
 		const isLegacyVersion =
-			jetpackVersion && versionCompare( jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '<' );
+			jetpackVersion && versionCompare(jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '<');
 
 		const jetpackConnectExample = (
-			<JetpackExampleConnect url={ currentUrl } isLegacy={ isLegacyVersion } onClick={ onClick } />
+			<JetpackExampleConnect url={currentUrl} isLegacy={isLegacyVersion} onClick={onClick} />
 		);
 
 		const steps = {
 			installJetpack: {
-				title: translate( '1. Install Jetpack' ),
+				title: translate('1. Install Jetpack'),
 				text: translate(
 					"Click the green “Install Jetpack” button below. You'll be redirected to the " +
 						"Jetpack plugin page on your site’s wp-admin dashboard, where you'll " +
 						'then click the blue “Install Now” button.'
 				),
 				action: this.renderAlreadyHaveJetpackButton(),
-				example: <JetpackExampleInstall url={ currentUrl } onClick={ onClick } />,
+				example: <JetpackExampleInstall url={currentUrl} onClick={onClick} />,
 			},
 			activateJetpackAfterInstall: {
-				title: translate( '2. Activate Jetpack' ),
-				text: translate( 'Next, click the blue “Activate Plugin” button to activate Jetpack.' ),
+				title: translate('2. Activate Jetpack'),
+				text: translate('Next, click the blue “Activate Plugin” button to activate Jetpack.'),
 				action: null,
-				example: (
-					<JetpackExampleActivate url={ currentUrl } isInstall={ true } onClick={ onClick } />
-				),
+				example: <JetpackExampleActivate url={currentUrl} isInstall={true} onClick={onClick} />,
 			},
 			connectJetpackAfterInstall: {
-				title: translate( '3. Connect Jetpack' ),
-				text: translate( 'Finally, click the “Set up Jetpack” button to finish the process.' ),
+				title: translate('3. Connect Jetpack'),
+				text: translate('Finally, click the “Set up Jetpack” button to finish the process.'),
 				action: null,
 				example: jetpackConnectExample,
 			},
 			activateJetpack: {
-				title: translate( '1. Activate Jetpack' ),
+				title: translate('1. Activate Jetpack'),
 				text: translate(
 					"You'll be redirected to the Plugins page on your site’s wp-admin " +
 						"dashboard, where you'll then Click the blue “Activate” link. "
 				),
 				action: this.renderNotJetpackButton(),
-				example: (
-					<JetpackExampleActivate url={ currentUrl } isInstall={ false } onClick={ onClick } />
-				),
+				example: <JetpackExampleActivate url={currentUrl} isInstall={false} onClick={onClick} />,
 			},
 			connectJetpack: {
-				title: translate( '2. Connect Jetpack' ),
-				text: translate( 'Then click the “Set up Jetpack” button to finish the process.' ),
+				title: translate('2. Connect Jetpack'),
+				text: translate('Then click the “Set up Jetpack” button to finish the process.'),
 				action: null,
 				example: jetpackConnectExample,
 			},
 		};
-		return steps[ stepName ];
+		return steps[stepName];
 	}
 
 	render() {
-		const step = this.getStep( this.props.stepName );
+		const step = this.getStep(this.props.stepName);
 		return (
 			<Card className="jetpack-connect__install-step">
-				<div className="jetpack-connect__install-step-title">{ step.title }</div>
+				<div className="jetpack-connect__install-step-title">{step.title}</div>
 				<div className="jetpack-connect__install-step-text">
 					<span>
-						{ preventWidows( step.text ) }
+						{preventWidows(step.text)}
 						&nbsp;
-						{ step.action }
+						{step.action}
 					</span>
 				</div>
-				{ step.example }
+				{step.example}
 			</Card>
 		);
 	}
 }
 
-export default localize( JetpackInstallStep );
+export default localize(JetpackInstallStep);

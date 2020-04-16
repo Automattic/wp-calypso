@@ -11,18 +11,18 @@ import { useDispatch } from 'react-redux';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
-const request = siteId => ( dispatch, getState ) => {
-	if ( siteId && ! isRequestingSitePlans( getState(), siteId ) ) {
-		dispatch( fetchSitePlans( siteId ) );
+const request = (siteId) => (dispatch, getState) => {
+	if (siteId && !isRequestingSitePlans(getState(), siteId)) {
+		dispatch(fetchSitePlans(siteId));
 	}
 };
 
-export default function QuerySitePlans( { siteId } ) {
+export default function QuerySitePlans({ siteId }) {
 	const dispatch = useDispatch();
 
-	useEffect( () => {
-		dispatch( request( siteId ) );
-	}, [ dispatch, siteId ] );
+	useEffect(() => {
+		dispatch(request(siteId));
+	}, [dispatch, siteId]);
 
 	return null;
 }

@@ -23,8 +23,8 @@ export default class Quit extends Component {
 
 	static contextTypes = contextTypes;
 
-	constructor( props, context ) {
-		super( props, context );
+	constructor(props, context) {
+		super(props, context);
 	}
 
 	componentDidMount() {
@@ -45,36 +45,36 @@ export default class Quit extends Component {
 
 	addTargetListener() {
 		const { target = false } = this.props;
-		const targetNode = targetForSlug( target );
+		const targetNode = targetForSlug(target);
 
-		if ( targetNode && targetNode.addEventListener ) {
-			targetNode.addEventListener( 'click', this.onClick );
-			targetNode.addEventListener( 'touchstart', this.onClick );
+		if (targetNode && targetNode.addEventListener) {
+			targetNode.addEventListener('click', this.onClick);
+			targetNode.addEventListener('touchstart', this.onClick);
 		}
 	}
 
 	removeTargetListener() {
 		const { target = false } = this.props;
-		const targetNode = targetForSlug( target );
+		const targetNode = targetForSlug(target);
 
-		if ( targetNode && targetNode.removeEventListener ) {
-			targetNode.removeEventListener( 'click', this.onClick );
-			targetNode.removeEventListener( 'touchstart', this.onClick );
+		if (targetNode && targetNode.removeEventListener) {
+			targetNode.removeEventListener('click', this.onClick);
+			targetNode.removeEventListener('touchstart', this.onClick);
 		}
 	}
 
-	onClick = event => {
-		this.props.onClick && this.props.onClick( event );
+	onClick = (event) => {
+		this.props.onClick && this.props.onClick(event);
 		const { quit, tour, tourVersion, step, isLastStep } = this.context;
-		quit( { tour, tourVersion, step, isLastStep } );
+		quit({ tour, tourVersion, step, isLastStep });
 	};
 
 	render() {
 		const { children, primary } = this.props;
 		const classes = primary ? 'guided-tours__primary-button' : 'guided-tours__quit-button';
 		return (
-			<Button className={ classes } onClick={ this.onClick } primary={ primary }>
-				{ children || translate( 'Quit' ) }
+			<Button className={classes} onClick={this.onClick} primary={primary}>
+				{children || translate('Quit')}
 			</Button>
 		);
 	}

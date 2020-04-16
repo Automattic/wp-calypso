@@ -1,9 +1,9 @@
-const mockFiles = filesToMock => {
-	Object.entries( filesToMock ).forEach( ( [ file, content ] ) => {
-		jest.mock( file, () => content, { virtual: true } );
-	} );
+const mockFiles = (filesToMock) => {
+	Object.entries(filesToMock).forEach(([file, content]) => {
+		jest.mock(file, () => content, { virtual: true });
+	});
 };
-mockFiles( {
+mockFiles({
 	'/project/root/package.json': {
 		name: 'root',
 		version: '1.0.0',
@@ -28,14 +28,14 @@ mockFiles( {
 		name: 'c',
 		version: '3.2.1',
 	},
-} );
+});
 
-const { candidates, getEffectiveTreeAsTree } = require( '../index' );
+const { candidates, getEffectiveTreeAsTree } = require('../index');
 
-describe( 'Candidate generation', () => {
-	it( 'Traverses the path', () => {
-		const paths = Array.from( candidates( '/project/root/a/node_modules/b/node_modules/c' ) );
-		expect( paths ).toStrictEqual( [
+describe('Candidate generation', () => {
+	it('Traverses the path', () => {
+		const paths = Array.from(candidates('/project/root/a/node_modules/b/node_modules/c'));
+		expect(paths).toStrictEqual([
 			'/project/root/a/node_modules/b/node_modules/c/node_modules',
 			'/project/root/a/node_modules/b/node_modules',
 			'/project/root/a/node_modules',
@@ -43,18 +43,18 @@ describe( 'Candidate generation', () => {
 			'/project/node_modules',
 			'/node_modules',
 			'/node_modules',
-		] );
-	} );
-} );
+		]);
+	});
+});
 
-describe( 'Effective tree generation', () => {
-	beforeEach( () => {
-		jest.spyOn( console, 'warn' ).mockImplementation();
-	} );
+describe('Effective tree generation', () => {
+	beforeEach(() => {
+		jest.spyOn(console, 'warn').mockImplementation();
+	});
 
-	describe( 'as tree', () => {
-		it( 'Generates the simplified tree', () => {
-			const tree = getEffectiveTreeAsTree( '/project/root/package.json' );
+	describe('as tree', () => {
+		it('Generates the simplified tree', () => {
+			const tree = getEffectiveTreeAsTree('/project/root/package.json');
 			//prettier-ignore
 			expect(tree).toEqual([
 				'└─ root@1.0.0',
@@ -62,10 +62,10 @@ describe( 'Effective tree generation', () => {
 				'   └─ b@2.2.2',
 				'      └─ c@3.2.1',
 			].join('\n'));
-		} );
+		});
 
-		it( 'Detects circular dependencies', () => {
-			mockFiles( {
+		it('Detects circular dependencies', () => {
+			mockFiles({
 				'/project/root/node_modules/c/package.json': {
 					name: 'c',
 					version: '3.2.1',
@@ -73,12 +73,12 @@ describe( 'Effective tree generation', () => {
 						b: '^2.0.0',
 					},
 				},
-			} );
+			});
 
 			jest.resetModules();
 			//eslint-disable-next-line no-shadow
-			const { getEffectiveTreeAsTree } = require( '../index' );
-			const tree = getEffectiveTreeAsTree( '/project/root/package.json' );
+			const { getEffectiveTreeAsTree } = require('../index');
+			const tree = getEffectiveTreeAsTree('/project/root/package.json');
 
 			//prettier-ignore
 			expect(tree).toEqual([
@@ -88,11 +88,11 @@ describe( 'Effective tree generation', () => {
 				'      └─ c@3.2.1',
 				'         └─ b@2.2.2: [Circular]'
 			].join('\n'));
-		} );
+		});
 
-		it( 'Does not cache circular dependencies', async () => {
+		it('Does not cache circular dependencies', async () => {
 			jest.resetModules();
-			mockFiles( {
+			mockFiles({
 				'/project/root/package.json': {
 					name: 'root',
 					version: '1.0.0',
@@ -122,11 +122,11 @@ describe( 'Effective tree generation', () => {
 						a: '^1.0.0',
 					},
 				},
-			} );
+			});
 
 			//eslint-disable-next-line no-shadow
-			const { getEffectiveTreeAsTree } = require( '../index' );
-			const tree = await getEffectiveTreeAsTree( '/project/root/package.json' );
+			const { getEffectiveTreeAsTree } = require('../index');
+			const tree = await getEffectiveTreeAsTree('/project/root/package.json');
 
 			/**
 			 * Note that when we find 'b' in the second chain (root->b->...), it has been processed previously in the first chain
@@ -151,13 +151,13 @@ describe( 'Effective tree generation', () => {
 				'         └─ a@1.1.1',
 				'            └─ b@2.2.2: [Circular]',
 			].join('\n'));
-		} );
-	} );
+		});
+	});
 
-	describe( 'as list', () => {
-		it( 'Complex tree', async () => {
+	describe('as list', () => {
+		it('Complex tree', async () => {
 			jest.resetModules();
-			mockFiles( {
+			mockFiles({
 				'/project/root/package.json': {
 					name: 'root',
 					version: '1.0.0',
@@ -187,11 +187,11 @@ describe( 'Effective tree generation', () => {
 						a: '^1.0.0',
 					},
 				},
-			} );
+			});
 
 			//eslint-disable-next-line no-shadow
-			const { getEffectiveTreeAsList } = require( '../index' );
-			const tree = await getEffectiveTreeAsList( '/project/root/package.json' );
+			const { getEffectiveTreeAsList } = require('../index');
+			const tree = await getEffectiveTreeAsList('/project/root/package.json');
 
 			//prettier-ignore
 			expect(tree).toEqual([
@@ -205,11 +205,11 @@ describe( 'Effective tree generation', () => {
 				'root@1.0.0 b@2.2.2 c@3.2.1 a@1.1.1',
 				'root@1.0.0 b@2.2.2 c@3.2.1 a@1.1.1 b@2.2.2 [Circular]',
 			].join('\n'));
-		} );
-	} );
+		});
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		//eslint-disable-next-line no-console
 		console.warn.mockRestore();
-	} );
-} );
+	});
+});

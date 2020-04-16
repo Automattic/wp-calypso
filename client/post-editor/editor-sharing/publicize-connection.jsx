@@ -46,10 +46,10 @@ export class EditorSharingPublicizeConnection extends React.Component {
 	isConnectionSkipped = () => {
 		const { post, connection } = this.props;
 		return (
-			( post &&
+			(post &&
 				connection &&
-				includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID ) ) ||
-			( connection.service === 'facebook' && ! this.isAdditionalExternalUser( connection ) )
+				includes(PostMetadata.publicizeSkipped(post), connection.keyring_connection_ID)) ||
+			(connection.service === 'facebook' && !this.isAdditionalExternalUser(connection))
 		);
 	};
 
@@ -58,34 +58,34 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		return (
 			post &&
 			connection &&
-			includes( PostMetadata.publicizeDone( post ), connection.keyring_connection_ID )
+			includes(PostMetadata.publicizeDone(post), connection.keyring_connection_ID)
 		);
 	};
 
 	isDisabled = () => {
 		const { connection } = this.props;
 		return (
-			! connection ||
+			!connection ||
 			connection.read_only ||
-			( connection.service === 'facebook' && ! this.isAdditionalExternalUser( connection ) ) ||
-			( 'linkedin' === connection.service && 'must_reauth' === connection.status )
+			(connection.service === 'facebook' && !this.isAdditionalExternalUser(connection)) ||
+			('linkedin' === connection.service && 'must_reauth' === connection.status)
 		);
 	};
 
-	onChange = event => {
+	onChange = (event) => {
 		const { connection } = this.props;
-		if ( ! connection ) {
+		if (!connection) {
 			return;
 		}
 
-		if ( event.target.checked ) {
+		if (event.target.checked) {
 			this.props.deletePostMetadata(
 				this.props.siteId,
 				this.props.postId,
 				'_wpas_skip_' + connection.keyring_connection_ID
 			);
-			this.props.recordEditorStat( 'sharing_enabled_' + connection.service );
-			this.props.recordEditorEvent( 'Publicize Service', connection.service, 'enabled' );
+			this.props.recordEditorStat('sharing_enabled_' + connection.service);
+			this.props.recordEditorEvent('Publicize Service', connection.service, 'enabled');
 		} else {
 			this.props.updatePostMetadata(
 				this.props.siteId,
@@ -93,15 +93,15 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				'_wpas_skip_' + connection.keyring_connection_ID,
 				1
 			);
-			this.props.recordEditorStat( 'sharing_disabled_' + connection.service );
-			this.props.recordEditorEvent( 'Publicize Service', connection.service, 'disabled' );
+			this.props.recordEditorStat('sharing_disabled_' + connection.service);
+			this.props.recordEditorEvent('Publicize Service', connection.service, 'disabled');
 		}
 	};
 
-	isAdditionalExternalUser( connection ) {
+	isAdditionalExternalUser(connection) {
 		const { keyringConnection } = this.props;
 
-		if ( ! keyringConnection ) return false;
+		if (!keyringConnection) return false;
 
 		return keyringConnection.external_ID !== connection.external_ID;
 	}
@@ -109,10 +109,10 @@ export class EditorSharingPublicizeConnection extends React.Component {
 	renderFacebookProfileWarning = () => {
 		const { connection, isKeyringFetching } = this.props;
 		if (
-			! connection ||
+			!connection ||
 			connection.service !== 'facebook' ||
 			isKeyringFetching ||
-			this.isAdditionalExternalUser( connection )
+			this.isAdditionalExternalUser(connection)
 		) {
 			return;
 		}
@@ -122,30 +122,30 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				isCompact
 				className="editor-sharing__broken-publicize-connection"
 				status="is-error"
-				showDismiss={ false }
+				showDismiss={false}
 			>
-				{ this.props.translate(
+				{this.props.translate(
 					'Connections to Facebook profiles ceased to work on August 1st. ' +
 						'{{a}}Learn More{{/a}}',
 					{
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://wordpress.com/support/publicize/#facebook-pages' ) }
+									href={localizeUrl('https://wordpress.com/support/publicize/#facebook-pages')}
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
 							),
 						},
 					}
-				) }
+				)}
 			</Notice>
 		);
 	};
 
 	renderBrokenConnection = () => {
 		const { connection } = this.props;
-		if ( ! connection || connection.status !== 'broken' ) {
+		if (!connection || connection.status !== 'broken') {
 			return;
 		}
 
@@ -154,13 +154,13 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				isCompact
 				className="editor-sharing__broken-publicize-connection"
 				status="is-warning"
-				showDismiss={ false }
+				showDismiss={false}
 			>
-				{ this.props.translate( 'There is an issue connecting to %s.', {
+				{this.props.translate('There is an issue connecting to %s.', {
 					args: connection.label,
-				} ) }
-				<NoticeAction onClick={ this.props.onRefresh }>
-					Reconnect <Gridicon icon="external" size={ 18 } />
+				})}
+				<NoticeAction onClick={this.props.onRefresh}>
+					Reconnect <Gridicon icon="external" size={18} />
 				</NoticeAction>
 			</Notice>
 		);
@@ -173,7 +173,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 	 */
 	renderMustReauthConnection = () => {
 		const { connection, siteSlug } = this.props;
-		if ( ! connection || connection.status !== 'must_reauth' ) {
+		if (!connection || connection.status !== 'must_reauth') {
 			return null;
 		}
 
@@ -182,14 +182,13 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				isCompact
 				className="editor-sharing__must-reauth-publicize-connection"
 				status="is-warning"
-				showDismiss={ false }
+				showDismiss={false}
 			>
-				{ this.props.translate(
+				{this.props.translate(
 					'Your LinkedIn connection needs to be reauthenticated to continue working – head to Sharing to take care of it.'
-				) }
-				<NoticeAction href={ addSiteFragment( '/sharing', siteSlug ) }>
-					{ this.props.translate( 'Go to Sharing settings' ) }{ ' ' }
-					<Gridicon icon="external" size={ 18 } />
+				)}
+				<NoticeAction href={addSiteFragment('/sharing', siteSlug)}>
+					{this.props.translate('Go to Sharing settings')} <Gridicon icon="external" size={18} />
 				</NoticeAction>
 			</Notice>
 		);
@@ -203,35 +202,35 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				<QueryKeyringConnections />
 				<label>
 					<FormCheckbox
-						checked={ ! this.isConnectionSkipped() }
-						disabled={ this.isDisabled() }
-						onChange={ this.onChange }
+						checked={!this.isConnectionSkipped()}
+						disabled={this.isDisabled()}
+						onChange={this.onChange}
 					/>
-					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
+					<span data-e2e-service={label}>{connection && connection.external_display}</span>
 				</label>
-				{ this.renderFacebookProfileWarning() }
-				{ this.renderBrokenConnection() }
-				{ this.renderMustReauthConnection() }
+				{this.renderFacebookProfileWarning()}
+				{this.renderBrokenConnection()}
+				{this.renderMustReauthConnection()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
+	(state, ownProps) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
 
 		return {
 			siteId,
 			postId,
-			post: getEditedPost( state, siteId, postId ),
-			isKeyringFetching: isKeyringConnectionsFetching( state ),
+			post: getEditedPost(state, siteId, postId),
+			isKeyringFetching: isKeyringConnectionsFetching(state),
 			keyringConnection: ownProps.connection
-				? getKeyringConnectionById( state, ownProps.connection.keyring_connection_ID )
+				? getKeyringConnectionById(state, ownProps.connection.keyring_connection_ID)
 				: null,
-			siteSlug: getSiteSlug( state, siteId ),
+			siteSlug: getSiteSlug(state, siteId),
 		};
 	},
 	{ updatePostMetadata, deletePostMetadata, recordEditorStat, recordEditorEvent }
-)( localize( EditorSharingPublicizeConnection ) );
+)(localize(EditorSharingPublicizeConnection));

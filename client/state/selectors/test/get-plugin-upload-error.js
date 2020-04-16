@@ -14,8 +14,8 @@ const error = {
 	message: 'folder_exists',
 };
 
-describe( 'getPluginUploadError', () => {
-	test( 'should return null by default', () => {
+describe('getPluginUploadError', () => {
+	test('should return null by default', () => {
 		const state = {
 			plugins: {
 				upload: {
@@ -23,19 +23,19 @@ describe( 'getPluginUploadError', () => {
 				},
 			},
 		};
-		expect( getPluginUploadError( state, siteId ) ).to.be.null;
-	} );
+		expect(getPluginUploadError(state, siteId)).to.be.null;
+	});
 
-	test( 'should return current value for site', () => {
+	test('should return current value for site', () => {
 		const state = {
 			plugins: {
 				upload: {
 					uploadError: {
-						[ siteId ]: error,
+						[siteId]: error,
 					},
 				},
 			},
 		};
-		expect( getPluginUploadError( state, siteId ) ).to.deep.equal( error );
-	} );
-} );
+		expect(getPluginUploadError(state, siteId)).to.deep.equal(error);
+	});
+});

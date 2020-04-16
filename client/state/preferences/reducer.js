@@ -27,24 +27,24 @@ import { remoteValuesSchema } from './schema';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const localValues = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const localValues = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case PREFERENCES_SET: {
 			const { key, value } = action;
-			if ( state[ key ] === value ) {
+			if (state[key] === value) {
 				return state;
 			}
 
-			return { ...state, [ key ]: value };
+			return { ...state, [key]: value };
 		}
 		case PREFERENCES_SAVE_SUCCESS: {
 			const { key } = action;
-			return omit( state, key );
+			return omit(state, key);
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated remote values state after an action has been dispatched.
@@ -55,8 +55,8 @@ export const localValues = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const remoteValues = withSchemaValidation( remoteValuesSchema, ( state = null, action ) => {
-	switch ( action.type ) {
+export const remoteValues = withSchemaValidation(remoteValuesSchema, (state = null, action) => {
+	switch (action.type) {
 		case PREFERENCES_RECEIVE: {
 			const { values } = action;
 			return values;
@@ -64,10 +64,10 @@ export const remoteValues = withSchemaValidation( remoteValuesSchema, ( state = 
 	}
 
 	return state;
-} );
+});
 
-export const fetching = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const fetching = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case PREFERENCES_FETCH_SUCCESS:
 			return false;
 		case PREFERENCES_FETCH_FAILURE:
@@ -77,20 +77,20 @@ export const fetching = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const lastFetchedTimestamp = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+const lastFetchedTimestamp = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case PREFERENCES_FETCH_SUCCESS:
 			return Date.now();
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	localValues,
 	remoteValues,
 	fetching,
 	lastFetchedTimestamp,
-} );
+});

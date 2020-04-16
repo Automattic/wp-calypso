@@ -11,11 +11,11 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 
 const updateNoticeId = 'hosting-clear-wordpress-cache';
 
-const clearWordPressCache = action =>
+const clearWordPressCache = (action) =>
 	http(
 		{
 			method: 'POST',
-			path: `/sites/${ action.siteId }/hosting/clear-cache`,
+			path: `/sites/${action.siteId}/hosting/clear-cache`,
 			apiNamespace: 'wpcom/v2',
 			body: {
 				reason: action.reason,
@@ -24,7 +24,7 @@ const clearWordPressCache = action =>
 		action
 	);
 
-export const hostingClearWordPressCacheTracking = result =>
+export const hostingClearWordPressCacheTracking = (result) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Hosting Configuration',
@@ -32,35 +32,35 @@ export const hostingClearWordPressCacheTracking = result =>
 			`Clear WordPress Cache`,
 			result
 		),
-		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', { result } )
+		recordTracksEvent('calypso_hosting_configuration_clear_wordpress_cache', { result })
 	);
 
 const clearWordPressCacheSuccess = () => {
 	return [
-		hostingClearWordPressCacheTracking( true ),
-		successNotice( translate( 'Successfully cleared WordPress cache.' ), {
+		hostingClearWordPressCacheTracking(true),
+		successNotice(translate('Successfully cleared WordPress cache.'), {
 			id: updateNoticeId,
 			showDismiss: false,
 			duration: 5000,
-		} ),
+		}),
 	];
 };
 
 const clearWordPressCacheError = () => {
 	return [
-		hostingClearWordPressCacheTracking( false ),
-		errorNotice( translate( 'Failed to clear WordPress cache.' ), {
+		hostingClearWordPressCacheTracking(false),
+		errorNotice(translate('Failed to clear WordPress cache.'), {
 			id: updateNoticeId,
-		} ),
+		}),
 	];
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/hosting/clear-cache.js', {
-	[ HOSTING_CLEAR_CACHE_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/hosting/clear-cache.js', {
+	[HOSTING_CLEAR_CACHE_REQUEST]: [
+		dispatchRequest({
 			fetch: clearWordPressCache,
 			onSuccess: clearWordPressCacheSuccess,
 			onError: clearWordPressCacheError,
-		} ),
+		}),
 	],
-} );
+});

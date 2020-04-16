@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 /**
  * Globals
  */
-const debug = debugFactory( 'calypso:resizable-iframe' ),
+const debug = debugFactory('calypso:resizable-iframe'),
 	noop = () => {};
 
 export default class extends React.Component {
@@ -19,8 +19,8 @@ export default class extends React.Component {
 
 	static propTypes = {
 		src: PropTypes.string,
-		width: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
-		height: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+		height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 		onLoad: PropTypes.func,
 		onResize: PropTypes.func,
 	};
@@ -33,11 +33,11 @@ export default class extends React.Component {
 	state = { width: 0, height: 0 };
 
 	UNSAFE_componentWillMount() {
-		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
+		debug('Mounting ' + this.constructor.displayName + ' React component.');
 	}
 
 	componentDidMount() {
-		window.addEventListener( 'message', this.checkMessageForResize, false );
+		window.addEventListener('message', this.checkMessageForResize, false);
 		this.maybeConnect();
 	}
 
@@ -46,24 +46,24 @@ export default class extends React.Component {
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'message', this.checkMessageForResize );
+		window.removeEventListener('message', this.checkMessageForResize);
 	}
 
 	getFrameBody = () => {
-		return ReactDom.findDOMNode( this.refs.iframe ).contentDocument.body;
+		return ReactDom.findDOMNode(this.refs.iframe).contentDocument.body;
 	};
 
 	maybeConnect = () => {
-		if ( ! this.isFrameAccessible() ) {
+		if (!this.isFrameAccessible()) {
 			return;
 		}
 
 		const body = this.getFrameBody();
-		if ( null !== body.getAttribute( 'data-resizable-iframe-connected' ) ) {
+		if (null !== body.getAttribute('data-resizable-iframe-connected')) {
 			return;
 		}
 
-		const script = document.createElement( 'script' );
+		const script = document.createElement('script');
 		script.innerHTML = `
 			( function() {
 				var observer;
@@ -114,60 +114,60 @@ export default class extends React.Component {
 				sendResize();
 			} )();
 		`;
-		body.appendChild( script );
+		body.appendChild(script);
 	};
 
 	isFrameAccessible = () => {
 		try {
-			return !! this.getFrameBody();
-		} catch ( e ) {
+			return !!this.getFrameBody();
+		} catch (e) {
 			return false;
 		}
 	};
 
-	checkMessageForResize = event => {
-		const iframe = ReactDom.findDOMNode( this.refs.iframe );
+	checkMessageForResize = (event) => {
+		const iframe = ReactDom.findDOMNode(this.refs.iframe);
 
 		// Attempt to parse the message data as JSON if passed as string
 		let data = event.data || {};
-		if ( typeof data === 'string' ) {
+		if (typeof data === 'string') {
 			try {
-				data = JSON.parse( data );
-			} catch ( e ) {} // eslint-disable-line no-empty
+				data = JSON.parse(data);
+			} catch (e) {} // eslint-disable-line no-empty
 		}
 
 		// Verify that the mounted element is the source of the message
-		if ( ! iframe || iframe.contentWindow !== event.source ) {
+		if (!iframe || iframe.contentWindow !== event.source) {
 			return;
 		}
 
-		debug( 'Received message: %o', data );
+		debug('Received message: %o', data);
 
 		// Update the state only if the message is formatted as we expect, i.e.
 		// as an object with a 'resize' action, width, and height
 		const { action, width, height } = data;
 		const { width: oldWidth, height: oldHeight } = this.state;
 
-		if ( 'resize' === action && ( oldWidth !== width || oldHeight !== height ) ) {
-			this.setState( { width, height } );
+		if ('resize' === action && (oldWidth !== width || oldHeight !== height)) {
+			this.setState({ width, height });
 			this.props.onResize();
 		}
 	};
 
-	onLoad = event => {
+	onLoad = (event) => {
 		this.maybeConnect();
-		this.props.onLoad( event );
+		this.props.onLoad(event);
 	};
 
 	render() {
-		const omitProps = [ 'onResize' ];
+		const omitProps = ['onResize'];
 		return (
 			<iframe
 				ref="iframe"
-				{ ...omit( this.props, omitProps ) }
-				onLoad={ this.onLoad }
-				width={ this.props.width || this.state.width }
-				height={ this.props.height || this.state.height }
+				{...omit(this.props, omitProps)}
+				onLoad={this.onLoad}
+				width={this.props.width || this.state.width}
+				height={this.props.height || this.state.height}
 			/>
 		);
 	}

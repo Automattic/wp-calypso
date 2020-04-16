@@ -16,35 +16,35 @@ import { requestMediaStorage } from 'state/sites/media-storage/actions';
 import MediaStore from 'lib/media/store';
 
 class QueryMediaStorage extends Component {
-	constructor( props ) {
-		super( props );
-		this.requestStorage = this.requestStorage.bind( this );
+	constructor(props) {
+		super(props);
+		this.requestStorage = this.requestStorage.bind(this);
 	}
 
-	requestStorage( props = this.props ) {
-		if ( ! props.requestingMediaStorage && props.siteId ) {
-			props.requestMediaStorage( props.siteId );
+	requestStorage(props = this.props) {
+		if (!props.requestingMediaStorage && props.siteId) {
+			props.requestMediaStorage(props.siteId);
 		}
 	}
 
 	UNSAFE_componentWillMount() {
 		this.requestStorage();
-		MediaStore.on( 'fetch-media-limits', this.requestStorage );
+		MediaStore.on('fetch-media-limits', this.requestStorage);
 	}
 
 	componentWillUnmount() {
-		MediaStore.off( 'fetch-media-limits', this.requestStorage );
+		MediaStore.off('fetch-media-limits', this.requestStorage);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (
 			nextProps.requestingMediaStorage ||
-			! nextProps.siteId ||
+			!nextProps.siteId ||
 			this.props.siteId === nextProps.siteId
 		) {
 			return;
 		}
-		this.requestStorage( nextProps );
+		this.requestStorage(nextProps);
 	}
 
 	render() {
@@ -63,12 +63,12 @@ QueryMediaStorage.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			requestingMediaStorage: isRequestingMediaStorage( state, ownProps.siteId ),
+			requestingMediaStorage: isRequestingMediaStorage(state, ownProps.siteId),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				requestMediaStorage,
@@ -76,4 +76,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( QueryMediaStorage );
+)(QueryMediaStorage);

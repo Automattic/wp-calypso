@@ -10,18 +10,18 @@ import React from 'react';
 import { getOrderStatusList } from 'woocommerce/lib/order-status';
 import FormSelect from 'components/forms/form-select';
 
-function OrderStatusSelect( { onChange, value } ) {
+function OrderStatusSelect({ onChange, value }) {
 	const statuses = getOrderStatusList();
 
 	return (
-		<FormSelect id="select" value={ value } onChange={ onChange }>
-			{ statuses.map( ( status, i ) => {
+		<FormSelect id="select" value={value} onChange={onChange}>
+			{statuses.map((status, i) => {
 				return (
-					<option key={ i } value={ status.value }>
-						{ status.name }
+					<option key={i} value={status.value}>
+						{status.name}
 					</option>
 				);
-			} ) }
+			})}
 		</FormSelect>
 	);
 }

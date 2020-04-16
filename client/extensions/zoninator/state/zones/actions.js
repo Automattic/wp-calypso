@@ -18,7 +18,7 @@ import {
  * @param  {number} siteId Site ID
  * @returns {Action}        Action object
  */
-export const requestZones = siteId => ( { type: ZONINATOR_REQUEST_ZONES, siteId } );
+export const requestZones = (siteId) => ({ type: ZONINATOR_REQUEST_ZONES, siteId });
 
 /**
  * Returns an action object to indicate that an error was received when fetching the zones.
@@ -26,7 +26,7 @@ export const requestZones = siteId => ( { type: ZONINATOR_REQUEST_ZONES, siteId 
  * @param  {number} siteId Site ID
  * @returns {Action}        Action object
  */
-export const requestError = siteId => ( { type: ZONINATOR_REQUEST_ERROR, siteId } );
+export const requestError = (siteId) => ({ type: ZONINATOR_REQUEST_ERROR, siteId });
 
 /**
  * Returns an action object to indicate that all the zones should be updated.
@@ -35,7 +35,7 @@ export const requestError = siteId => ( { type: ZONINATOR_REQUEST_ERROR, siteId 
  * @param  {object} data   Zones
  * @returns {object}        Action object
  */
-export const updateZones = ( siteId, data ) => ( { type: ZONINATOR_UPDATE_ZONES, siteId, data } );
+export const updateZones = (siteId, data) => ({ type: ZONINATOR_UPDATE_ZONES, siteId, data });
 
 /**
  * Returns an action object to indicate that a zone should be updated.
@@ -45,12 +45,12 @@ export const updateZones = ( siteId, data ) => ( { type: ZONINATOR_UPDATE_ZONES,
  * @param  {object} data   Zone details
  * @returns {object}        Action object
  */
-export const updateZone = ( siteId, zoneId, data ) => ( {
+export const updateZone = (siteId, zoneId, data) => ({
 	type: ZONINATOR_UPDATE_ZONE,
 	siteId,
 	zoneId,
 	data,
-} );
+});
 
 /**
  * Returns an action object to indicate that a new zone should be created.
@@ -61,13 +61,13 @@ export const updateZone = ( siteId, zoneId, data ) => ( {
  * @param  {object} data     Zone details
  * @returns {object}          Action object
  */
-export const addZone = ( siteId, siteSlug, form, data ) => ( {
+export const addZone = (siteId, siteSlug, form, data) => ({
 	type: ZONINATOR_ADD_ZONE,
 	siteId,
 	siteSlug,
 	form,
 	data,
-} );
+});
 
 /**
  * Returns an action object to indicate that a zone should be saved.
@@ -78,13 +78,13 @@ export const addZone = ( siteId, siteSlug, form, data ) => ( {
  * @param  {object} data   Zone details
  * @returns {object}        Action object
  */
-export const saveZone = ( siteId, zoneId, form, data ) => ( {
+export const saveZone = (siteId, zoneId, form, data) => ({
 	type: ZONINATOR_SAVE_ZONE,
 	siteId,
 	zoneId,
 	form,
 	data,
-} );
+});
 
 /**
  * Returns an action object to indicate that a zone should be deleted.
@@ -94,9 +94,9 @@ export const saveZone = ( siteId, zoneId, form, data ) => ( {
  * @param  {number} zoneId   Zone ID
  * @returns {object}          Action object
  */
-export const deleteZone = ( siteId, siteSlug, zoneId ) => ( {
+export const deleteZone = (siteId, siteSlug, zoneId) => ({
 	type: ZONINATOR_DELETE_ZONE,
 	siteId,
 	siteSlug,
 	zoneId,
-} );
+});

@@ -32,7 +32,7 @@ import { updateField } from 'woocommerce/woocommerce-services/state/service-sett
  * @param {string} title Title of the new method.
  * @returns {object} Action object.
  */
-export const addMethodToShippingZone = ( siteId, methodType, title ) => {
+export const addMethodToShippingZone = (siteId, methodType, title) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD, siteId, methodType, title };
 };
 
@@ -43,7 +43,7 @@ export const addMethodToShippingZone = ( siteId, methodType, title ) => {
  * @param {number|object} methodId ID of the shipping method to open.
  * @returns {object} Action object.
  */
-export const openShippingZoneMethod = ( siteId, methodId ) => {
+export const openShippingZoneMethod = (siteId, methodId) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN, siteId, methodId };
 };
 
@@ -53,7 +53,7 @@ export const openShippingZoneMethod = ( siteId, methodId ) => {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const cancelShippingZoneMethod = siteId => {
+export const cancelShippingZoneMethod = (siteId) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL, siteId };
 };
 
@@ -63,16 +63,14 @@ export const cancelShippingZoneMethod = siteId => {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
-	const method = getCurrentlyOpenShippingZoneMethod( getState(), siteId );
+export const closeShippingZoneMethod = (siteId) => (dispatch, getState) => {
+	const method = getCurrentlyOpenShippingZoneMethod(getState(), siteId);
 	// Perform validation if the method is from WooCommerce Services
-	if ( startsWith( method.methodType, 'wc_services' ) ) {
-		const methodFields = omit( method, [ 'id', 'enabled', 'methodType' ] );
+	if (startsWith(method.methodType, 'wc_services')) {
+		const methodFields = omit(method, ['id', 'enabled', 'methodType']);
 		// Mark all the fields as "interacted with" to trigger a full validation
-		forEach( methodFields, ( value, key ) =>
-			dispatch( updateField( siteId, method.id, key, value ) )
-		);
-		if ( ! isEmpty( getFormErrors( getState(), siteId ) ) ) {
+		forEach(methodFields, (value, key) => dispatch(updateField(siteId, method.id, key, value)));
+		if (!isEmpty(getFormErrors(getState(), siteId))) {
 			return dispatch(
 				errorNotice(
 					translate(
@@ -84,7 +82,7 @@ export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
 			);
 		}
 	}
-	dispatch( { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE, siteId } );
+	dispatch({ type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE, siteId });
 };
 
 /**
@@ -94,7 +92,7 @@ export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
  * @param {string} methodId ID of the shipping method to delete.
  * @returns {object} Action object.
  */
-export const removeMethodFromShippingZone = ( siteId, methodId ) => {
+export const removeMethodFromShippingZone = (siteId, methodId) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE, siteId, methodId };
 };
 
@@ -107,7 +105,7 @@ export const removeMethodFromShippingZone = ( siteId, methodId ) => {
  * @param {string} title New method title.
  * @returns {object} Action object.
  */
-export const changeShippingZoneMethodType = ( siteId, methodType, title ) => {
+export const changeShippingZoneMethodType = (siteId, methodType, title) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE, siteId, methodType, title };
 };
 
@@ -118,7 +116,7 @@ export const changeShippingZoneMethodType = ( siteId, methodType, title ) => {
  * @param {string} title New user-facing title for the shipping method.
  * @returns {object} Action object.
  */
-export const changeShippingZoneMethodTitle = ( siteId, title ) => {
+export const changeShippingZoneMethodTitle = (siteId, title) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE, siteId, title };
 };
 
@@ -129,7 +127,7 @@ export const changeShippingZoneMethodTitle = ( siteId, title ) => {
  * @param {boolean} enabled Whether to enable (true) or disable (false) the shipping method.
  * @returns {object} Action object.
  */
-export const toggleOpenedShippingZoneMethodEnabled = ( siteId, enabled ) => {
+export const toggleOpenedShippingZoneMethodEnabled = (siteId, enabled) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED, siteId, enabled };
 };
 
@@ -141,6 +139,6 @@ export const toggleOpenedShippingZoneMethodEnabled = ( siteId, enabled ) => {
  * @param {boolean} enabled Whether to enable (true) or disable (false) the shipping method.
  * @returns {object} Action object.
  */
-export const toggleShippingZoneMethodEnabled = ( siteId, methodId, enabled ) => {
+export const toggleShippingZoneMethodEnabled = (siteId, methodId, enabled) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED, siteId, methodId, enabled };
 };

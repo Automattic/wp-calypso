@@ -24,25 +24,25 @@ const initialState = {
 	selectedPosts: [],
 };
 
-export const postTypeList = ( state = initialState, action ) => {
-	switch ( action.type ) {
+export const postTypeList = (state = initialState, action) => {
+	switch (action.type) {
 		case POST_TYPE_LIST_MULTI_SELECTION_MODE_TOGGLE:
 			return {
 				...state,
-				isMultiSelectEnabled: ! state.isMultiSelectEnabled,
+				isMultiSelectEnabled: !state.isMultiSelectEnabled,
 				selectedPosts: state.isMultiSelectEnabled ? state.selectedPosts : [],
 			};
 
 		case POST_TYPE_LIST_SELECTION_TOGGLE:
-			if ( state.selectedPosts.indexOf( action.postGlobalId ) > -1 ) {
+			if (state.selectedPosts.indexOf(action.postGlobalId) > -1) {
 				return {
 					...state,
-					selectedPosts: without( state.selectedPosts, action.postGlobalId ),
+					selectedPosts: without(state.selectedPosts, action.postGlobalId),
 				};
 			}
 			return {
 				...state,
-				selectedPosts: [ ...state.selectedPosts, action.postGlobalId ],
+				selectedPosts: [...state.selectedPosts, action.postGlobalId],
 			};
 
 		case ROUTE_SET:
@@ -60,7 +60,7 @@ export const postTypeList = ( state = initialState, action ) => {
 			};
 
 		case POST_TYPE_LIST_LIKES_POPOVER_TOGGLE:
-			if ( state.postIdWithActiveLikesPopover === action.postGlobalId ) {
+			if (state.postIdWithActiveLikesPopover === action.postGlobalId) {
 				return {
 					...state,
 					postIdWithActiveLikesPopover: null,
@@ -78,7 +78,7 @@ export const postTypeList = ( state = initialState, action ) => {
 			};
 
 		case POST_TYPE_LIST_SHARE_PANEL_TOGGLE:
-			if ( state.postIdWithActiveSharePanel === action.postGlobalId ) {
+			if (state.postIdWithActiveSharePanel === action.postGlobalId) {
 				return {
 					...state,
 					postIdWithActiveSharePanel: null,

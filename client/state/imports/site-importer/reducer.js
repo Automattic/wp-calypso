@@ -26,8 +26,8 @@ const DEFAULT_ERROR_STATE = {
 const DEFAULT_IMPORT_STAGE = 'idle';
 const DEFAULT_IMPORT_DATA = {};
 
-const isLoading = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+const isLoading = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case SITE_IMPORTER_IMPORT_FAILURE:
 			return false;
 		case SITE_IMPORTER_IMPORT_START:
@@ -45,10 +45,10 @@ const isLoading = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const error = withoutPersistence( ( state = DEFAULT_ERROR_STATE, action ) => {
-	switch ( action.type ) {
+const error = withoutPersistence((state = DEFAULT_ERROR_STATE, action) => {
+	switch (action.type) {
 		case SITE_IMPORTER_IMPORT_SUCCESS:
 			return DEFAULT_ERROR_STATE;
 		case SITE_IMPORTER_IMPORT_FAILURE: {
@@ -89,10 +89,10 @@ const error = withoutPersistence( ( state = DEFAULT_ERROR_STATE, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const importStage = withoutPersistence( ( state = DEFAULT_IMPORT_STAGE, action ) => {
-	switch ( action.type ) {
+const importStage = withoutPersistence((state = DEFAULT_IMPORT_STAGE, action) => {
+	switch (action.type) {
 		case SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS:
 			return 'importable';
 		case SITE_IMPORTER_IMPORT_RESET:
@@ -100,10 +100,10 @@ const importStage = withoutPersistence( ( state = DEFAULT_IMPORT_STAGE, action )
 	}
 
 	return state;
-} );
+});
 
-const importData = withoutPersistence( ( state = DEFAULT_IMPORT_DATA, action ) => {
-	switch ( action.type ) {
+const importData = withoutPersistence((state = DEFAULT_IMPORT_DATA, action) => {
+	switch (action.type) {
 		case SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS: {
 			const { response } = action;
 
@@ -119,23 +119,23 @@ const importData = withoutPersistence( ( state = DEFAULT_IMPORT_DATA, action ) =
 	}
 
 	return state;
-} );
+});
 
-const validatedSiteUrl = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
+const validatedSiteUrl = withoutPersistence((state = '', action) => {
+	switch (action.type) {
 		case SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS: {
 			const { response } = action;
-			return get( response, 'site_url', '' );
+			return get(response, 'site_url', '');
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	isLoading,
 	error,
 	importStage,
 	importData,
 	validatedSiteUrl,
-} );
+});

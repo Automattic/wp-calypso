@@ -9,9 +9,9 @@ import deepFreeze from 'deep-freeze';
  */
 import isRequestingResetPassword from 'state/selectors/is-requesting-reset-password';
 
-describe( 'isRequestingResetPassword()', () => {
-	test( 'should return isRequesting field under resetPassword state tree.', () => {
-		const state = deepFreeze( {
+describe('isRequestingResetPassword()', () => {
+	test('should return isRequesting field under resetPassword state tree.', () => {
+		const state = deepFreeze({
 			accountRecovery: {
 				reset: {
 					resetPassword: {
@@ -19,12 +19,12 @@ describe( 'isRequestingResetPassword()', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		assert.isTrue( isRequestingResetPassword( state ) );
-	} );
+		assert.isTrue(isRequestingResetPassword(state));
+	});
 
-	test( 'should return false as default value.', () => {
-		assert.isFalse( isRequestingResetPassword( undefined ) );
-	} );
-} );
+	test('should return false as default value.', () => {
+		assert.isFalse(isRequestingResetPassword(undefined));
+	});
+});

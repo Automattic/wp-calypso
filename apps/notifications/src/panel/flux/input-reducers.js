@@ -1,9 +1,9 @@
 import { actions } from './constants';
 
-export default ( state, action ) => {
+export default (state, action) => {
 	let newState;
 
-	switch ( action.type ) {
+	switch (action.type) {
 		case actions.DISABLE_KEYBOARD_SHORTCUTS:
 		case actions.ENABLE_KEYBOARD_SHORTCUTS:
 			const doEnable = action.type === actions.ENABLE_KEYBOARD_SHORTCUTS;

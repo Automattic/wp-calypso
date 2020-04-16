@@ -6,6 +6,6 @@ export default {
 	name: 'Test Won',
 	nice_name: 'test1',
 	profile_URL: 'http://en.gravatar.com',
-	roles: [ 'administrator' ],
+	roles: ['administrator'],
 	site_ID: 1234,
 };

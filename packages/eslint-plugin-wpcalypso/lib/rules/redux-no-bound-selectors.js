@@ -13,12 +13,12 @@ const REF = ' See wp-calypso#14024';
 const BIND_ERROR_MESSAGE = "Don't bind functions within `connect`." + REF;
 const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF;
 
-function isStateInArgs( node ) {
-	return node.params.some( ( { name } ) => name === 'state' );
+function isStateInArgs(node) {
+	return node.params.some(({ name }) => name === 'state');
 }
 
-function contains( xs, y ) {
-	return xs.some( x => x === y );
+function contains(xs, y) {
+	return xs.some((x) => x === y);
 }
 
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
 		},
 		schema: [],
 	},
-	create: function( context ) {
+	create: function (context) {
 		/*
 		 * An array of tuples of shape
 		 *
@@ -77,29 +77,29 @@ module.exports = {
 		 */
 		let stateProviderFunctionBody;
 
-		function onFunctionEnter( node ) {
-			if ( stateProviderFunctionBody ) {
-				reports.push( {
+		function onFunctionEnter(node) {
+			if (stateProviderFunctionBody) {
+				reports.push({
 					inner: node,
 					outer: stateProviderFunctionBody,
 					message: FUNC_ERROR_MESSAGE,
-				} );
+				});
 				return;
 			}
 
-			if ( isStateInArgs( node ) ) {
+			if (isStateInArgs(node)) {
 				stateProviderFunctionBody = node.body;
 			}
 		}
 
-		function onFunctionExit( node ) {
-			if ( stateProviderFunctionBody && isStateInArgs( node ) ) {
+		function onFunctionExit(node) {
+			if (stateProviderFunctionBody && isStateInArgs(node)) {
 				stateProviderFunctionBody = null;
 			}
 		}
 
-		function onConnectCall( node ) {
-			if ( ! node.arguments.length ) {
+		function onConnectCall(node) {
+			if (!node.arguments.length) {
 				return;
 			}
 
@@ -108,18 +108,18 @@ module.exports = {
 			 * variable for a function, or an anonymous/inlined function.
 			 * Let's handle both cases.
 			 */
-			const mapStateNode = node.arguments[ 0 ];
+			const mapStateNode = node.arguments[0];
 
 			let mapStateBody;
 
-			if ( mapStateNode.type === 'Identifier' ) {
+			if (mapStateNode.type === 'Identifier') {
 				/*
 				 * If it's a variable, obtain the function it refers to,
 				 * which should be readily available in scope.
 				 */
 				const mapStateName = mapStateNode.name;
-				const variable = context.getScope().set.get( mapStateName );
-				const definition = variable && variable.defs && variable.defs[ 0 ];
+				const variable = context.getScope().set.get(mapStateName);
+				const definition = variable && variable.defs && variable.defs[0];
 				mapStateBody =
 					definition && definition.node && definition.node.init && definition.node.init.body;
 			} else {
@@ -129,44 +129,44 @@ module.exports = {
 				mapStateBody = mapStateNode.body;
 			}
 
-			if ( mapStateBody ) {
-				nodesToReportOn.push( mapStateBody );
+			if (mapStateBody) {
+				nodesToReportOn.push(mapStateBody);
 			}
 		}
 
-		function onBindCall( node ) {
-			if ( stateProviderFunctionBody ) {
-				reports.push( {
+		function onBindCall(node) {
+			if (stateProviderFunctionBody) {
+				reports.push({
 					inner: node,
 					outer: stateProviderFunctionBody,
 					message: BIND_ERROR_MESSAGE,
-				} );
+				});
 			}
 		}
 
-		function isBindCallee( node ) {
+		function isBindCallee(node) {
 			const { callee } = node;
-			if ( contains( [ 'bind', 'partial', 'partialRight' ], callee.name ) ) {
+			if (contains(['bind', 'partial', 'partialRight'], callee.name)) {
 				return true;
 			}
 
-			return !! callee.property && callee.property.name === 'bind';
+			return !!callee.property && callee.property.name === 'bind';
 		}
 
 		return {
-			'Program:exit': function() {
+			'Program:exit': function () {
 				reports
-					.filter( ( { outer } ) => contains( nodesToReportOn, outer ) )
-					.forEach( ( { inner, message } ) => context.report( inner, message ) );
+					.filter(({ outer }) => contains(nodesToReportOn, outer))
+					.forEach(({ inner, message }) => context.report(inner, message));
 			},
 
-			CallExpression: function( node ) {
-				if ( node.callee.name === 'connect' ) {
-					return onConnectCall( node );
+			CallExpression: function (node) {
+				if (node.callee.name === 'connect') {
+					return onConnectCall(node);
 				}
 
-				if ( isBindCallee( node ) ) {
-					return onBindCall( node );
+				if (isBindCallee(node)) {
+					return onBindCall(node);
 				}
 			},
 

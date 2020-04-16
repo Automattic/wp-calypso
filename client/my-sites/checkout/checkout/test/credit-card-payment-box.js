@@ -38,25 +38,25 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 
-jest.mock( 'lib/cart-values', () => ( {
-	isPaymentMethodEnabled: jest.fn( false ),
-	paymentMethodName: jest.fn( false ),
+jest.mock('lib/cart-values', () => ({
+	isPaymentMethodEnabled: jest.fn(false),
+	paymentMethodName: jest.fn(false),
 	cartItems: {
-		hasRenewableSubscription: jest.fn( false ),
-		hasRenewalItem: jest.fn( false ),
+		hasRenewableSubscription: jest.fn(false),
+		hasRenewalItem: jest.fn(false),
 	},
-} ) );
+}));
 
-jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
-jest.mock( 'lib/cart-values', () => ( {
+jest.mock('lib/abtest', () => ({ abtest: () => {} }));
+jest.mock('lib/cart-values', () => ({
 	cartItems: {
-		hasRenewableSubscription: jest.fn( false ),
+		hasRenewableSubscription: jest.fn(false),
 	},
-} ) );
+}));
 
 jest.useFakeTimers();
 
-describe( 'Credit Card Payment Box', () => {
+describe('Credit Card Payment Box', () => {
 	const defaultProps = {
 		cards: [],
 		transaction: {},
@@ -68,76 +68,76 @@ describe( 'Credit Card Payment Box', () => {
 		translate: identity,
 	};
 
-	test( 'does not blow up with default props', () => {
-		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
-		expect( wrapper ).toHaveLength( 1 );
-		expect( wrapper.find( CheckoutTerms ) ).toHaveLength( 1 );
-	} );
+	test('does not blow up with default props', () => {
+		const wrapper = shallow(<CreditCardPaymentBox {...defaultProps} />);
+		expect(wrapper).toHaveLength(1);
+		expect(wrapper.find(CheckoutTerms)).toHaveLength(1);
+	});
 
-	test( 'should set progress timer when incoming validation transaction step contains no errors', () => {
-		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
-		const tickSpy = jest.spyOn( wrapper.instance(), 'tick' );
+	test('should set progress timer when incoming validation transaction step contains no errors', () => {
+		const wrapper = shallow(<CreditCardPaymentBox {...defaultProps} />);
+		const tickSpy = jest.spyOn(wrapper.instance(), 'tick');
 		wrapper.update();
-		expect( wrapper.instance().timer ).toBe( null );
-		wrapper.setProps( {
+		expect(wrapper.instance().timer).toBe(null);
+		wrapper.setProps({
 			transactionStep: {
 				name: INPUT_VALIDATION,
 			},
-		} );
+		});
 		jest.runOnlyPendingTimers();
-		expect( wrapper.instance().timer ).not.toBe( null );
-		expect( tickSpy.mock.calls ).toHaveLength( 1 );
-		expect( setInterval.mock.calls ).toHaveLength( 1 );
+		expect(wrapper.instance().timer).not.toBe(null);
+		expect(tickSpy.mock.calls).toHaveLength(1);
+		expect(setInterval.mock.calls).toHaveLength(1);
 		setInterval.mockClear();
-	} );
+	});
 
-	test( 'should not set progress timer when incoming validation transaction step contains errors', () => {
-		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
-		const tickSpy = jest.spyOn( wrapper.instance(), 'tick' );
+	test('should not set progress timer when incoming validation transaction step contains errors', () => {
+		const wrapper = shallow(<CreditCardPaymentBox {...defaultProps} />);
+		const tickSpy = jest.spyOn(wrapper.instance(), 'tick');
 		wrapper.update();
-		expect( wrapper.instance().timer ).toBe( null );
-		wrapper.setProps( {
+		expect(wrapper.instance().timer).toBe(null);
+		wrapper.setProps({
 			transactionStep: {
 				name: INPUT_VALIDATION,
 				error: {},
 			},
-		} );
+		});
 		jest.runOnlyPendingTimers();
-		expect( wrapper.instance().timer ).toBe( null );
-		expect( tickSpy.mock.calls ).toHaveLength( 0 );
-		expect( setInterval.mock.calls ).toHaveLength( 0 );
+		expect(wrapper.instance().timer).toBe(null);
+		expect(tickSpy.mock.calls).toHaveLength(0);
+		expect(setInterval.mock.calls).toHaveLength(0);
 		setInterval.mockClear();
-	} );
+	});
 
-	test( 'should clear progress timer when incoming validation transaction step contains errors ', () => {
-		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
-		const tickSpy = jest.spyOn( wrapper.instance(), 'tick' );
+	test('should clear progress timer when incoming validation transaction step contains errors ', () => {
+		const wrapper = shallow(<CreditCardPaymentBox {...defaultProps} />);
+		const tickSpy = jest.spyOn(wrapper.instance(), 'tick');
 		wrapper.update();
-		expect( wrapper.instance().timer ).toBe( null );
-		wrapper.setProps( {
+		expect(wrapper.instance().timer).toBe(null);
+		wrapper.setProps({
 			transactionStep: {
 				name: INPUT_VALIDATION,
 			},
-		} );
+		});
 		jest.runOnlyPendingTimers();
-		expect( wrapper.instance().timer ).not.toBe( null );
-		expect( tickSpy.mock.calls ).toHaveLength( 1 );
-		expect( setInterval.mock.calls ).toHaveLength( 1 );
-		wrapper.setProps( {
+		expect(wrapper.instance().timer).not.toBe(null);
+		expect(tickSpy.mock.calls).toHaveLength(1);
+		expect(setInterval.mock.calls).toHaveLength(1);
+		wrapper.setProps({
 			transactionStep: {
 				name: INPUT_VALIDATION,
 				error: {},
 			},
-		} );
+		});
 		jest.runOnlyPendingTimers();
-		expect( wrapper.instance().timer ).toBe( null );
-		expect( tickSpy.mock.calls ).toHaveLength( 1 );
-		expect( setInterval.mock.calls ).toHaveLength( 1 );
+		expect(wrapper.instance().timer).toBe(null);
+		expect(tickSpy.mock.calls).toHaveLength(1);
+		expect(setInterval.mock.calls).toHaveLength(1);
 		setInterval.mockClear();
-	} );
-} );
+	});
+});
 
-describe( 'Credit Card Payment Box - PaymentChatButton', () => {
+describe('Credit Card Payment Box - PaymentChatButton', () => {
 	const defaultProps = {
 		cart: {},
 		translate: identity,
@@ -154,33 +154,33 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 		PLAN_ECOMMERCE_2_YEARS,
 	];
 
-	eligiblePlans.forEach( product_slug => {
-		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
+	eligiblePlans.forEach((product_slug) => {
+		test('should render PaymentChatButton if any WP.com business plan is in the cart', () => {
 			const props = {
 				...defaultProps,
 				presaleChatAvailable: true,
 				cart: {
-					products: [ { product_slug } ],
+					products: [{ product_slug }],
 				},
 			};
-			const wrapper = shallow( <CreditCardPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 1 );
-		} );
-	} );
+			const wrapper = shallow(<CreditCardPaymentBox {...props} />);
+			expect(wrapper.find(PaymentChatButton)).toHaveLength(1);
+		});
+	});
 
-	eligiblePlans.forEach( product_slug => {
-		test( 'should not render PaymentChatButton if presaleChatAvailable is false', () => {
+	eligiblePlans.forEach((product_slug) => {
+		test('should not render PaymentChatButton if presaleChatAvailable is false', () => {
 			const props = {
 				...defaultProps,
 				presaleChatAvailable: false,
 				cart: {
-					products: [ { product_slug } ],
+					products: [{ product_slug }],
 				},
 			};
-			const wrapper = shallow( <CreditCardPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
-		} );
-	} );
+			const wrapper = shallow(<CreditCardPaymentBox {...props} />);
+			expect(wrapper.find(PaymentChatButton)).toHaveLength(0);
+		});
+	});
 
 	const otherPlans = [
 		PLAN_PREMIUM,
@@ -199,16 +199,16 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	];
 
-	otherPlans.forEach( product_slug => {
-		test( 'should not render PaymentChatButton if only non-business plan products are in the cart', () => {
+	otherPlans.forEach((product_slug) => {
+		test('should not render PaymentChatButton if only non-business plan products are in the cart', () => {
 			const props = {
 				...defaultProps,
 				cart: {
-					products: [ { product_slug } ],
+					products: [{ product_slug }],
 				},
 			};
-			const wrapper = shallow( <CreditCardPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
-		} );
-	} );
-} );
+			const wrapper = shallow(<CreditCardPaymentBox {...props} />);
+			expect(wrapper.find(PaymentChatButton)).toHaveLength(0);
+		});
+	});
+});

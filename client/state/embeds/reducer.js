@@ -14,13 +14,13 @@ import { normalizeEmbeds } from './utils';
  * @param   {object} action Action payload
  * @returns {object}        Updated state
  */
-export const siteItems = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const siteItems = (state = {}, action) => {
+	switch (action.type) {
 		case EMBEDS_RECEIVE: {
 			const { siteId, embeds } = action;
 			return {
 				...state,
-				[ siteId ]: normalizeEmbeds( embeds ),
+				[siteId]: normalizeEmbeds(embeds),
 			};
 		}
 	}
@@ -37,15 +37,15 @@ export const siteItems = ( state = {}, action ) => {
  * @param   {object} action Action payload
  * @returns {object}        Updated state
  */
-export const urlItems = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const urlItems = (state = {}, action) => {
+	switch (action.type) {
 		case EMBED_RECEIVE: {
 			const { url, embed, siteId } = action;
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ url ]: {
+				[siteId]: {
+					...state[siteId],
+					[url]: {
 						body: embed.result,
 						scripts: embed.scripts,
 						styles: embed.styles,
@@ -58,7 +58,7 @@ export const urlItems = ( state = {}, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	siteItems,
 	urlItems,
-} );
+});

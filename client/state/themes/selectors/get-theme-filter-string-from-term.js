@@ -21,15 +21,15 @@ import 'state/themes/init';
  * @param {string} term The term slug
  * @returns {string} Complete taxonomy:term filter, or empty string if term is not valid
  */
-export function getThemeFilterStringFromTerm( state, term ) {
-	const terms = getThemeFilterTermsTable( state );
-	const taxonomy = terms[ term ];
+export function getThemeFilterStringFromTerm(state, term) {
+	const terms = getThemeFilterTermsTable(state);
+	const taxonomy = terms[term];
 
-	if ( taxonomy ) {
-		if ( includes( term, ':' ) ) {
+	if (taxonomy) {
+		if (includes(term, ':')) {
 			return term;
 		}
-		return `${ taxonomy }:${ term }`;
+		return `${taxonomy}:${term}`;
 	}
 
 	return '';

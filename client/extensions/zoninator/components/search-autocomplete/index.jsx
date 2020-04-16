@@ -29,74 +29,74 @@ class SearchAutocomplete extends Component {
 		searchIsOpen: false,
 	};
 
-	handleSearch = term => {
-		if ( this.state.search === term ) {
+	handleSearch = (term) => {
+		if (this.state.search === term) {
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			search: term || '',
-		} );
+		});
 	};
 
 	searchRef = React.createRef();
 
 	suggestionsRef = React.createRef();
 
-	handleSearchClose = () => this.setState( { search: '', searchIsOpen: false } );
+	handleSearchClose = () => this.setState({ search: '', searchIsOpen: false });
 
-	handleSearchOpen = () => this.setState( { searchIsOpen: true } );
+	handleSearchOpen = () => this.setState({ searchIsOpen: true });
 
-	handleKeyDown = event => {
-		if ( event.key === 'Enter' ) {
+	handleKeyDown = (event) => {
+		if (event.key === 'Enter') {
 			event.preventDefault();
 		}
 
-		this.suggestionsRef.current && this.suggestionsRef.current.handleKeyEvent( event );
+		this.suggestionsRef.current && this.suggestionsRef.current.handleKeyEvent(event);
 	};
 
-	handleSelect = item => {
+	handleSelect = (item) => {
 		this.searchRef.current.clear();
-		this.props.onSelect( item );
+		this.props.onSelect(item);
 	};
 
 	render() {
 		const { exclude, translate } = this.props;
 
-		const searchAutocompleteClass = classNames( 'zoninator__search-autocomplete', {
+		const searchAutocompleteClass = classNames('zoninator__search-autocomplete', {
 			'has-highlight': this.state.searchIsOpen,
-		} );
+		});
 		const cardClass = 'zoninator__search-autocomplete-card';
 
 		return (
-			<div className={ searchAutocompleteClass }>
-				<Card className={ cardClass }>
-					{ this.props.children }
+			<div className={searchAutocompleteClass}>
+				<Card className={cardClass}>
+					{this.props.children}
 
 					<Search
 						pinned
 						fitsContainer
 						delaySearch
 						disableAutocorrect
-						ref={ this.searchRef }
-						onSearch={ this.handleSearch }
-						onSearchOpen={ this.handleSearchOpen }
-						onSearchClose={ this.handleSearchClose }
-						onKeyDown={ this.handleKeyDown }
-						placeholder={ translate( 'Search for content' ) }
+						ref={this.searchRef}
+						onSearch={this.handleSearch}
+						onSearchOpen={this.handleSearchOpen}
+						onSearchClose={this.handleSearchClose}
+						onKeyDown={this.handleKeyDown}
+						placeholder={translate('Search for content')}
 					/>
-					{ this.state.search && (
+					{this.state.search && (
 						<PostSuggestions
-							ref={ this.suggestionsRef }
-							search={ this.state.search }
-							exclude={ exclude }
-							suggest={ this.handleSelect }
+							ref={this.suggestionsRef}
+							search={this.state.search}
+							exclude={exclude}
+							suggest={this.handleSelect}
 						/>
-					) }
+					)}
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default localize( SearchAutocomplete );
+export default localize(SearchAutocomplete);

@@ -7,16 +7,9 @@ import page from 'page';
 import { makeLayout, render as clientRender } from 'controller';
 import { sidebar } from 'me/controller';
 
-export default function() {
-	if ( config.isEnabled( 'help' ) ) {
-		page(
-			'/help',
-			helpController.loggedOut,
-			sidebar,
-			helpController.help,
-			makeLayout,
-			clientRender
-		);
+export default function () {
+	if (config.isEnabled('help')) {
+		page('/help', helpController.loggedOut, sidebar, helpController.help, makeLayout, clientRender);
 		page(
 			'/help/contact',
 			helpController.loggedOut,
@@ -27,7 +20,7 @@ export default function() {
 		);
 	}
 
-	if ( config.isEnabled( 'help/courses' ) ) {
+	if (config.isEnabled('help/courses')) {
 		page(
 			'/help/courses',
 			helpController.loggedOut,

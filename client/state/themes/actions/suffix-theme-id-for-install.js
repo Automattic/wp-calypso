@@ -16,12 +16,12 @@ import 'state/themes/init';
  * @param {string} themeId Theme ID
  * @returns {string} the theme id to use when installing the theme
  */
-export function suffixThemeIdForInstall( state, siteId, themeId ) {
+export function suffixThemeIdForInstall(state, siteId, themeId) {
 	// AT sites do not use the -wpcom suffix
-	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+	if (isSiteAutomatedTransfer(state, siteId)) {
 		return themeId;
 	}
-	if ( ! isDownloadableFromWpcom( state, themeId ) ) {
+	if (!isDownloadableFromWpcom(state, themeId)) {
 		return themeId;
 	}
 	return themeId + '-wpcom';

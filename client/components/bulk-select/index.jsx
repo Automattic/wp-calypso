@@ -28,8 +28,8 @@ export class BulkSelect extends React.Component {
 	};
 
 	getStateIcon = () => {
-		if ( this.hasSomeElementsSelected() ) {
-			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={ 18 } />;
+		if (this.hasSomeElementsSelected()) {
+			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={18} />;
 		}
 	};
 
@@ -42,35 +42,35 @@ export class BulkSelect extends React.Component {
 	};
 
 	handleToggleAll = () => {
-		const newCheckedState = ! ( this.hasSomeElementsSelected() || this.hasAllElementsSelected() );
-		this.props.onToggle( newCheckedState );
+		const newCheckedState = !(this.hasSomeElementsSelected() || this.hasAllElementsSelected());
+		this.props.onToggle(newCheckedState);
 	};
 
 	render() {
-		const { translate, ariaLabel = translate( 'Select All' ) } = this.props;
+		const { translate, ariaLabel = translate('Select All') } = this.props;
 		const isChecked = this.hasAllElementsSelected();
-		const inputClasses = classNames( 'bulk-select__box', {
+		const inputClasses = classNames('bulk-select__box', {
 			// We need to add this CSS class to be able to test if the input if checked,
 			// since Enzyme still doesn't support :checked pseudoselector.
 			'is-checked': isChecked,
-		} );
+		});
 
 		return (
 			<span className="bulk-select">
 				<label className="bulk-select__container">
 					<input
 						type="checkbox"
-						className={ inputClasses }
-						checked={ isChecked }
-						onChange={ this.handleToggleAll }
-						aria-label={ ariaLabel }
+						className={inputClasses}
+						checked={isChecked}
+						onChange={this.handleToggleAll}
+						aria-label={ariaLabel}
 					/>
-					<Count count={ this.props.selectedElements } />
-					{ this.getStateIcon() }
+					<Count count={this.props.selectedElements} />
+					{this.getStateIcon()}
 				</label>
 			</span>
 		);
 	}
 }
 
-export default localize( BulkSelect );
+export default localize(BulkSelect);

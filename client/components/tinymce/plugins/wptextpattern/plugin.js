@@ -22,7 +22,7 @@
  */
 import tinymce from 'tinymce/tinymce';
 
-function wptextpattern( editor ) {
+function wptextpattern(editor) {
 	const VK = tinymce.util.VK;
 
 	const spacePatterns = [
@@ -40,44 +40,44 @@ function wptextpattern( editor ) {
 		{ regExp: /^(-){3,}$/, element: 'hr' },
 	];
 
-	const inlinePatterns = [ { start: '`', end: '`', format: 'code' } ];
+	const inlinePatterns = [{ start: '`', end: '`', format: 'code' }];
 
 	let canUndo;
 	const chars = [];
 
-	tinymce.each( inlinePatterns, function( pattern ) {
-		tinymce.each( ( pattern.start + pattern.end ).split( '' ), function( c ) {
-			if ( tinymce.inArray( chars, c ) === -1 ) {
-				chars.push( c );
+	tinymce.each(inlinePatterns, function (pattern) {
+		tinymce.each((pattern.start + pattern.end).split(''), function (c) {
+			if (tinymce.inArray(chars, c) === -1) {
+				chars.push(c);
 			}
-		} );
-	} );
+		});
+	});
 
-	editor.on( 'selectionchange', function() {
+	editor.on('selectionchange', function () {
 		canUndo = null;
-	} );
+	});
 
 	editor.on(
 		'keydown',
-		function( event ) {
+		function (event) {
 			if (
-				( canUndo && event.keyCode === 27 ) /* ESCAPE */ ||
-				( canUndo === 'space' && event.keyCode === VK.BACKSPACE )
+				(canUndo && event.keyCode === 27) /* ESCAPE */ ||
+				(canUndo === 'space' && event.keyCode === VK.BACKSPACE)
 			) {
 				editor.undoManager.undo();
 				event.preventDefault();
 				event.stopImmediatePropagation();
 			}
 
-			if ( event.keyCode === VK.ENTER && ! VK.modifierPressed( event ) ) {
+			if (event.keyCode === VK.ENTER && !VK.modifierPressed(event)) {
 				enter();
 			}
 
 			// Wait for the browser to insert the character.
-			if ( event.keyCode === VK.SPACEBAR && ! event.ctrlKey && ! event.metaKey && ! event.altKey ) {
-				setTimeout( space );
-			} else if ( event.keyCode > 47 && ! ( event.keyCode >= 91 && event.keyCode <= 93 ) ) {
-				setTimeout( inline );
+			if (event.keyCode === VK.SPACEBAR && !event.ctrlKey && !event.metaKey && !event.altKey) {
+				setTimeout(space);
+			} else if (event.keyCode > 47 && !(event.keyCode >= 91 && event.keyCode <= 93)) {
+				setTimeout(inline);
 			}
 		},
 		true
@@ -93,108 +93,108 @@ function wptextpattern( editor ) {
 		let format;
 		let zero;
 
-		if ( ! node || node.nodeType !== 3 || ! node.data.length || ! offset ) {
+		if (!node || node.nodeType !== 3 || !node.data.length || !offset) {
 			return;
 		}
 
-		if ( tinymce.inArray( chars, node.data.charAt( offset - 1 ) ) === -1 ) {
+		if (tinymce.inArray(chars, node.data.charAt(offset - 1)) === -1) {
 			return;
 		}
 
-		function findStart( node ) {
+		function findStart(node) {
 			let i = inlinePatterns.length;
 			let offset;
 
-			while ( i-- ) {
-				pattern = inlinePatterns[ i ];
-				offset = node.data.indexOf( pattern.end );
+			while (i--) {
+				pattern = inlinePatterns[i];
+				offset = node.data.indexOf(pattern.end);
 
-				if ( offset !== -1 ) {
+				if (offset !== -1) {
 					return offset;
 				}
 			}
 		}
 
-		startOffset = findStart( node );
-		endOffset = node.data.lastIndexOf( pattern.end );
+		startOffset = findStart(node);
+		endOffset = node.data.lastIndexOf(pattern.end);
 
-		if ( startOffset === endOffset || endOffset === -1 ) {
+		if (startOffset === endOffset || endOffset === -1) {
 			return;
 		}
 
-		if ( endOffset - startOffset <= pattern.start.length ) {
+		if (endOffset - startOffset <= pattern.start.length) {
 			return;
 		}
 
 		if (
 			node.data
-				.slice( startOffset + pattern.start.length, endOffset )
-				.indexOf( pattern.start.slice( 0, 1 ) ) !== -1
+				.slice(startOffset + pattern.start.length, endOffset)
+				.indexOf(pattern.start.slice(0, 1)) !== -1
 		) {
 			return;
 		}
 
-		format = editor.formatter.get( pattern.format );
+		format = editor.formatter.get(pattern.format);
 
-		if ( format && format[ 0 ].inline ) {
+		if (format && format[0].inline) {
 			editor.undoManager.add();
 
-			editor.undoManager.transact( function() {
-				node.insertData( offset, '\u200b' );
+			editor.undoManager.transact(function () {
+				node.insertData(offset, '\u200b');
 
-				node = node.splitText( startOffset );
-				zero = node.splitText( offset - startOffset );
+				node = node.splitText(startOffset);
+				zero = node.splitText(offset - startOffset);
 
-				node.deleteData( 0, pattern.start.length );
-				node.deleteData( node.data.length - pattern.end.length, pattern.end.length );
+				node.deleteData(0, pattern.start.length);
+				node.deleteData(node.data.length - pattern.end.length, pattern.end.length);
 
-				editor.formatter.apply( pattern.format, {}, node );
+				editor.formatter.apply(pattern.format, {}, node);
 
-				editor.selection.setCursorLocation( zero, 1 );
-			} );
+				editor.selection.setCursorLocation(zero, 1);
+			});
 
 			// We need to wait for native events to be triggered.
-			setTimeout( function() {
+			setTimeout(function () {
 				canUndo = 'space';
 
-				editor.once( 'selectionchange', function() {
+				editor.once('selectionchange', function () {
 					let offset;
 
-					if ( zero ) {
-						offset = zero.data.indexOf( '\u200b' );
+					if (zero) {
+						offset = zero.data.indexOf('\u200b');
 
-						if ( offset !== -1 ) {
-							zero.deleteData( offset, offset + 1 );
+						if (offset !== -1) {
+							zero.deleteData(offset, offset + 1);
 						}
 					}
-				} );
-			} );
+				});
+			});
 		}
 	}
 
-	function firstTextNode( node ) {
-		let parent = editor.dom.getParent( node, 'p' ),
+	function firstTextNode(node) {
+		let parent = editor.dom.getParent(node, 'p'),
 			child;
 
-		if ( ! parent ) {
+		if (!parent) {
 			return;
 		}
 
-		while ( ( child = parent.firstChild ) ) {
+		while ((child = parent.firstChild)) {
 			// eslint-disable-line no-cond-assign
-			if ( child.nodeType !== 3 ) {
+			if (child.nodeType !== 3) {
 				parent = child;
 			} else {
 				break;
 			}
 		}
 
-		if ( ! child ) {
+		if (!child) {
 			return;
 		}
 
-		if ( ! child.data ) {
-			if ( child.nextSibling && child.nextSibling.nodeType === 3 ) {
+		if (!child.data) {
+			if (child.nextSibling && child.nextSibling.nodeType === 3) {
 				child = child.nextSibling;
 			} else {
 				child = null;
@@ -210,107 +210,107 @@ function wptextpattern( editor ) {
 			parent,
 			text;
 
-		if ( ! node || firstTextNode( node ) !== node ) {
+		if (!node || firstTextNode(node) !== node) {
 			return;
 		}
 
 		parent = node.parentNode;
 		text = node.data;
 
-		tinymce.each( spacePatterns, function( pattern ) {
-			const match = text.match( pattern.regExp );
+		tinymce.each(spacePatterns, function (pattern) {
+			const match = text.match(pattern.regExp);
 
-			if ( ! match || rng.startOffset !== match[ 0 ].length ) {
+			if (!match || rng.startOffset !== match[0].length) {
 				return;
 			}
 
 			editor.undoManager.add();
 
-			editor.undoManager.transact( function() {
-				node.deleteData( 0, match[ 0 ].length );
+			editor.undoManager.transact(function () {
+				node.deleteData(0, match[0].length);
 
-				if ( ! parent.innerHTML ) {
-					parent.appendChild( document.createElement( 'br' ) );
+				if (!parent.innerHTML) {
+					parent.appendChild(document.createElement('br'));
 				}
 
-				editor.selection.setCursorLocation( parent );
-				editor.execCommand( pattern.cmd );
-			} );
+				editor.selection.setCursorLocation(parent);
+				editor.execCommand(pattern.cmd);
+			});
 
 			// We need to wait for native events to be triggered.
-			setTimeout( function() {
+			setTimeout(function () {
 				canUndo = 'space';
-			} );
+			});
 
 			return false;
-		} );
+		});
 	}
 
 	function enter() {
 		let rng = editor.selection.getRng(),
 			start = rng.startContainer,
-			node = firstTextNode( start ),
+			node = firstTextNode(start),
 			i = enterPatterns.length,
 			text,
 			pattern,
 			parent;
 
-		if ( ! node ) {
+		if (!node) {
 			return;
 		}
 
 		text = node.data;
 
-		while ( i-- ) {
-			if ( enterPatterns[ i ].start ) {
-				if ( text.indexOf( enterPatterns[ i ].start ) === 0 ) {
-					pattern = enterPatterns[ i ];
+		while (i--) {
+			if (enterPatterns[i].start) {
+				if (text.indexOf(enterPatterns[i].start) === 0) {
+					pattern = enterPatterns[i];
 					break;
 				}
-			} else if ( enterPatterns[ i ].regExp ) {
-				if ( enterPatterns[ i ].regExp.test( text ) ) {
-					pattern = enterPatterns[ i ];
+			} else if (enterPatterns[i].regExp) {
+				if (enterPatterns[i].regExp.test(text)) {
+					pattern = enterPatterns[i];
 					break;
 				}
 			}
 		}
 
-		if ( ! pattern ) {
+		if (!pattern) {
 			return;
 		}
 
-		if ( node === start && tinymce.trim( text ) === pattern.start ) {
+		if (node === start && tinymce.trim(text) === pattern.start) {
 			return;
 		}
 
-		editor.once( 'keyup', function() {
+		editor.once('keyup', function () {
 			editor.undoManager.add();
 
-			editor.undoManager.transact( function() {
-				if ( pattern.format ) {
-					editor.formatter.apply( pattern.format, {}, node );
-					node.replaceData( 0, node.data.length, ltrim( node.data.slice( pattern.start.length ) ) );
-				} else if ( pattern.element ) {
+			editor.undoManager.transact(function () {
+				if (pattern.format) {
+					editor.formatter.apply(pattern.format, {}, node);
+					node.replaceData(0, node.data.length, ltrim(node.data.slice(pattern.start.length)));
+				} else if (pattern.element) {
 					parent = node.parentNode && node.parentNode.parentNode;
 
-					if ( parent ) {
-						parent.replaceChild( document.createElement( pattern.element ), node.parentNode );
+					if (parent) {
+						parent.replaceChild(document.createElement(pattern.element), node.parentNode);
 					}
 				}
-			} );
+			});
 
 			// We need to wait for native events to be triggered.
-			setTimeout( function() {
+			setTimeout(function () {
 				canUndo = 'enter';
-			} );
-		} );
+			});
+		});
 	}
 
-	function ltrim( text ) {
-		return text ? text.replace( /^\s+/, '' ) : '';
+	function ltrim(text) {
+		return text ? text.replace(/^\s+/, '') : '';
 	}
 }
 
-export default function() {
-	tinymce.PluginManager.add( 'wptextpattern', wptextpattern );
+export default function () {
+	tinymce.PluginManager.add('wptextpattern', wptextpattern);
 }

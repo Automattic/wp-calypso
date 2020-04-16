@@ -19,12 +19,12 @@ import { REWIND_RESTORE_DISMISS_PROGRESS } from 'state/action-types';
  * @param   {object}   action   Changeset to update state.
  * @returns {object}          The dispatched action.
  */
-export const dismissRestore = action =>
+export const dismissRestore = (action) =>
 	http(
 		{
 			method: 'POST',
 			apiNamespace: 'wpcom/v2',
-			path: `/sites/${ action.siteId }/rewind/restores/${ action.restoreId }`,
+			path: `/sites/${action.siteId}/rewind/restores/${action.restoreId}`,
 			body: {
 				dismissed: true,
 			},
@@ -40,9 +40,9 @@ export const dismissRestore = action =>
  * @param {object}     data     Description of request result.
  * @returns {Function} The dispatched action.
  */
-export const restoreSilentlyDismissed = ( action, data ) =>
-	! data.dismissed
-		? errorNotice( translate( 'Dismissing restore failed. Please reload and try again.' ) )
+export const restoreSilentlyDismissed = (action, data) =>
+	!data.dismissed
+		? errorNotice(translate('Dismissing restore failed. Please reload and try again.'))
 		: null;
 
 /**
@@ -58,18 +58,18 @@ export const restoreDismissFailed = () => null;
  * @param   {object} data   The data received from API response.
  * @returns {object} Parsed response data.
  */
-const fromRestoreDismiss = data => ( {
-	restoreId: parseInt( data.restore_id ),
+const fromRestoreDismiss = (data) => ({
+	restoreId: parseInt(data.restore_id),
 	dismissed: data.is_dismissed,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/sites/rewind/restores', {
-	[ REWIND_RESTORE_DISMISS_PROGRESS ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/rewind/restores', {
+	[REWIND_RESTORE_DISMISS_PROGRESS]: [
+		dispatchRequest({
 			fetch: dismissRestore,
 			onSuccess: restoreSilentlyDismissed,
 			onError: restoreDismissFailed,
 			fromApi: fromRestoreDismiss,
-		} ),
+		}),
 	],
-} );
+});

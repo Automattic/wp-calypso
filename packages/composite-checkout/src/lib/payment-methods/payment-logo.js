@@ -17,55 +17,55 @@ import {
 	DiscoverLogo,
 } from '../../components/payment-logos';
 
-export default function PaymentLogo( { brand, isSummary } ) {
+export default function PaymentLogo({ brand, isSummary }) {
 	let cardFieldIcon = null;
 
-	switch ( brand ) {
+	switch (brand) {
 		case 'visa':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo isSummary={isSummary}>
 					<VisaLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'mastercard':
 			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
+				<SmallBrandLogo isSummary={isSummary}>
 					<MastercardLogo />
 				</SmallBrandLogo>
 			);
 			break;
 		case 'amex':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo isSummary={isSummary}>
 					<AmexLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'jcb':
 			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
+				<SmallBrandLogo isSummary={isSummary}>
 					<JcbLogo />
 				</SmallBrandLogo>
 			);
 			break;
 		case 'diners':
 			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
+				<SmallBrandLogo isSummary={isSummary}>
 					<DinersLogo />
 				</SmallBrandLogo>
 			);
 			break;
 		case 'unionpay':
 			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
+				<SmallBrandLogo isSummary={isSummary}>
 					<UnionpayLogo />
 				</SmallBrandLogo>
 			);
 			break;
 		case 'discover':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo isSummary={isSummary}>
 					<DiscoverLogo />
 				</BrandLogo>
 			);
@@ -78,14 +78,14 @@ export default function PaymentLogo( { brand, isSummary } ) {
 }
 
 const BrandLogo = styled.span`
-	display: ${props => ( props.isSummary ? 'inline-block' : 'block' )};
-	position: ${props => ( props.isSummary ? 'relative' : 'absolute' )};
-	top: ${props => ( props.isSummary ? '0' : '15px' )};
-	right: ${props => ( props.isSummary ? '0' : '10px' )};
-	transform: translateY( ${props => ( props.isSummary ? '4px' : '0' )} );
+	display: ${(props) => (props.isSummary ? 'inline-block' : 'block')};
+	position: ${(props) => (props.isSummary ? 'relative' : 'absolute')};
+	top: ${(props) => (props.isSummary ? '0' : '15px')};
+	right: ${(props) => (props.isSummary ? '0' : '10px')};
+	transform: translateY(${(props) => (props.isSummary ? '4px' : '0')});
 `;
 
-const LockIconGraphic = styled( LockIcon )`
+const LockIconGraphic = styled(LockIcon)`
 	display: block;
 	position: absolute;
 	right: 10px;
@@ -94,14 +94,14 @@ const LockIconGraphic = styled( LockIcon )`
 	height: 20px;
 `;
 
-const SmallBrandLogo = styled( BrandLogo )`
-	transform: translate( ${props => ( props.isSummary ? '-10px, 4px' : '10px, 0' )} );
+const SmallBrandLogo = styled(BrandLogo)`
+	transform: translate(${(props) => (props.isSummary ? '-10px, 4px' : '10px, 0')});
 `;
 
-function LockIcon( { className } ) {
+function LockIcon({ className }) {
 	return (
 		<svg
-			className={ className }
+			className={className}
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
 			height="24"

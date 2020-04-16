@@ -14,14 +14,14 @@ import './setup';
  * @returns {void}
  */
 export function recordAliasInFloodlight() {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+	if (!isAdTrackingAllowed() || !isFloodlightEnabled) {
 		return;
 	}
 
-	debug( 'recordAliasInFloodlight: Aliasing anonymous user id with WordPress.com user id' );
+	debug('recordAliasInFloodlight: Aliasing anonymous user id with WordPress.com user id');
 
-	debug( 'recordAliasInFloodlight:' );
-	recordParamsInFloodlightGtag( {
+	debug('recordAliasInFloodlight:');
+	recordParamsInFloodlightGtag({
 		send_to: 'DC-6355556/wordp0/alias0+standard',
-	} );
+	});
 }

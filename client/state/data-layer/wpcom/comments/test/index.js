@@ -17,10 +17,10 @@ import {
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'wpcom-api', () => {
-	describe( 'post comments request', () => {
-		describe( '#fetchPostComments()', () => {
-			test( 'should dispatch an HTTP request to the post replies endpoint', () => {
+describe('wpcom-api', () => {
+	describe('post comments request', () => {
+		describe('#fetchPostComments()', () => {
+			test('should dispatch an HTTP request to the post replies endpoint', () => {
 				const query = {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
@@ -33,18 +33,18 @@ describe( 'wpcom-api', () => {
 					query,
 				};
 				const dispatch = jest.fn();
-				const getState = () => ( {
+				const getState = () => ({
 					comments: {
 						items: {
 							'2916284-1010': [],
 						},
 					},
-				} );
+				});
 
-				fetchPostComments( action )( dispatch, getState );
+				fetchPostComments(action)(dispatch, getState);
 
-				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith(
+				expect(dispatch).toHaveBeenCalledTimes(1);
+				expect(dispatch).toHaveBeenCalledWith(
 					http(
 						{
 							apiVersion: '1.1',
@@ -55,9 +55,9 @@ describe( 'wpcom-api', () => {
 						action
 					)
 				);
-			} );
+			});
 
-			test( 'should dispatch an HTTP request to the post replies endpoint, before the oldest contiguous comment in state', () => {
+			test('should dispatch an HTTP request to the post replies endpoint, before the oldest contiguous comment in state', () => {
 				const query = {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
@@ -71,7 +71,7 @@ describe( 'wpcom-api', () => {
 					direction: 'before',
 				};
 				const dispatch = jest.fn();
-				const getState = () => ( {
+				const getState = () => ({
 					comments: {
 						items: {
 							'2916284-1010': [
@@ -82,12 +82,12 @@ describe( 'wpcom-api', () => {
 							],
 						},
 					},
-				} );
+				});
 
-				fetchPostComments( action )( dispatch, getState );
+				fetchPostComments(action)(dispatch, getState);
 
-				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith(
+				expect(dispatch).toHaveBeenCalledTimes(1);
+				expect(dispatch).toHaveBeenCalledWith(
 					http(
 						{
 							apiVersion: '1.1',
@@ -101,11 +101,11 @@ describe( 'wpcom-api', () => {
 						action
 					)
 				);
-			} );
-		} );
+			});
+		});
 
-		describe( '#addComments', () => {
-			test( 'should dispatch a comments receive action', () => {
+		describe('#addComments', () => {
+			test('should dispatch a comments receive action', () => {
 				const action = {
 					siteId: 2916284,
 					postId: 1010,
@@ -116,43 +116,43 @@ describe( 'wpcom-api', () => {
 					found: -1,
 				};
 
-				expect( addComments( action, data ) ).toEqual( {
+				expect(addComments(action, data)).toEqual({
 					type: COMMENTS_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
 					comments: [],
 					direction: 'before',
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch a comments receive action and a count receive action when comments found', () => {
+			test('should dispatch a comments receive action and a count receive action when comments found', () => {
 				const action = {
 					siteId: 2916284,
 					postId: 1010,
 					direction: 'before',
 				};
 				const data = {
-					comments: [ {}, {} ],
+					comments: [{}, {}],
 					found: 2,
 				};
 
-				expect( addComments( action, data ) ).toContainEqual( {
+				expect(addComments(action, data)).toContainEqual({
 					type: COMMENTS_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
-					comments: [ {}, {} ],
+					comments: [{}, {}],
 					direction: 'before',
-				} );
+				});
 
-				expect( addComments( action, data ) ).toContainEqual( {
+				expect(addComments(action, data)).toContainEqual({
 					type: COMMENTS_COUNT_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
 					totalCommentsCount: 2,
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch a comments updates receive action if isPoll is true', () => {
+			test('should dispatch a comments updates receive action if isPoll is true', () => {
 				const action = {
 					siteId: 2916284,
 					postId: 1010,
@@ -160,73 +160,73 @@ describe( 'wpcom-api', () => {
 					isPoll: true,
 				};
 				const data = {
-					comments: [ {}, {} ],
+					comments: [{}, {}],
 					found: 2,
 				};
 
-				expect( addComments( action, data ) ).toContainEqual( {
+				expect(addComments(action, data)).toContainEqual({
 					type: COMMENTS_UPDATES_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
-					comments: [ {}, {} ],
+					comments: [{}, {}],
 					direction: 'after',
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		describe( 'commentsFromApi', () => {
-			test( 'should decode author name entities', () => {
-				const comments = [ { author: { name: 'joe' } }, { author: { name: '&#9829;' } } ];
-				expect( commentsFromApi( comments ) ).toEqual( [
+		describe('commentsFromApi', () => {
+			test('should decode author name entities', () => {
+				const comments = [{ author: { name: 'joe' } }, { author: { name: '&#9829;' } }];
+				expect(commentsFromApi(comments)).toEqual([
 					{ author: { name: 'joe' } },
 					{ author: { name: '♥' } },
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( '#announceFailure', () => {
-			test( 'should dispatch an error notice', () => {
+		describe('#announceFailure', () => {
+			test('should dispatch an error notice', () => {
 				const dispatch = jest.fn();
-				const getState = () => ( {
+				const getState = () => ({
 					posts: {
 						queries: {},
 					},
-				} );
+				});
 
-				announceFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
+				announceFailure({ siteId: 2916284, postId: 1010 })(dispatch, getState);
 
-				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith(
-					expect.objectContaining( {
+				expect(dispatch).toHaveBeenCalledTimes(1);
+				expect(dispatch).toHaveBeenCalledWith(
+					expect.objectContaining({
 						type: NOTICE_CREATE,
-						notice: expect.objectContaining( {
+						notice: expect.objectContaining({
 							status: 'is-error',
 							text: 'Could not retrieve comments for requested post',
 							duration: 5000,
-						} ),
-					} )
+						}),
+					})
 				);
-			} );
-		} );
+			});
+		});
 
-		describe( '#handleDeleteSuccess', () => {
-			test( 'should not do anything when no options are set', () => {
-				expect( handleDeleteSuccess( {} ) ).toEqual( [] );
-			} );
+		describe('#handleDeleteSuccess', () => {
+			test('should not do anything when no options are set', () => {
+				expect(handleDeleteSuccess({})).toEqual([]);
+			});
 
-			test( 'should show a success notice if the related option is set', () => {
-				expect( handleDeleteSuccess( { options: { showSuccessNotice: true } } ) ).toContainEqual( {
+			test('should show a success notice if the related option is set', () => {
+				expect(handleDeleteSuccess({ options: { showSuccessNotice: true } })).toContainEqual({
 					type: NOTICE_CREATE,
-					notice: expect.objectContaining( {
+					notice: expect.objectContaining({
 						status: 'is-success',
 						text: 'Comment deleted permanently.',
-					} ),
-				} );
-			} );
+					}),
+				});
+			});
 
-			test( 'should request a fresh copy of a comments page when the query object is filled', () => {
+			test('should request a fresh copy of a comments page when the query object is filled', () => {
 				expect(
-					handleDeleteSuccess( {
+					handleDeleteSuccess({
 						options: { showSuccessNotice: true },
 						refreshCommentListQuery: {
 							listType: 'site',
@@ -236,8 +236,8 @@ describe( 'wpcom-api', () => {
 							status: 'all',
 							type: 'any',
 						},
-					} )
-				).toContainEqual( {
+					})
+				).toContainEqual({
 					type: 'COMMENTS_LIST_REQUEST',
 					query: {
 						listType: 'site',
@@ -247,8 +247,8 @@ describe( 'wpcom-api', () => {
 						status: 'all',
 						type: 'any',
 					},
-				} );
-			} );
-		} );
-	} );
-} );
+				});
+			});
+		});
+	});
+});

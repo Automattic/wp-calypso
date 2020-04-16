@@ -17,13 +17,13 @@ import ContactComponent from './help-contact';
 import { CONTACT, SUPPORT_ROOT } from 'lib/url/support';
 import userUtils from 'lib/user/utils';
 
-export function loggedOut( context, next ) {
-	if ( userUtils.isLoggedIn() ) {
+export function loggedOut(context, next) {
+	if (userUtils.isLoggedIn()) {
 		return next();
 	}
 
 	let url;
-	switch ( context.path ) {
+	switch (context.path) {
 		case '/help':
 			url = SUPPORT_ROOT;
 			break;
@@ -31,32 +31,32 @@ export function loggedOut( context, next ) {
 			url = CONTACT;
 			break;
 		default:
-			url = login( { redirectTo: window.location.href } );
+			url = login({ redirectTo: window.location.href });
 	}
 
 	// Not using the page library here since this is an external URL
 	window.location.href = url;
 }
 
-export function help( context, next ) {
+export function help(context, next) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
+	context.store.dispatch(setTitle(i18n.translate('Help', { textOnly: true })));
 
-	context.primary = <HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />;
+	context.primary = <HelpComponent isCoursesEnabled={config.isEnabled('help/courses')} />;
 	next();
 }
 
-export function courses( context, next ) {
+export function courses(context, next) {
 	context.primary = <CoursesComponent />;
 	next();
 }
 
-export function contact( context, next ) {
+export function contact(context, next) {
 	// Scroll to the top
-	if ( typeof window !== 'undefined' ) {
-		window.scrollTo( 0, 0 );
+	if (typeof window !== 'undefined') {
+		window.scrollTo(0, 0);
 	}
 
-	context.primary = <ContactComponent clientSlug={ config( 'client_slug' ) } />;
+	context.primary = <ContactComponent clientSlug={config('client_slug')} />;
 	next();
 }

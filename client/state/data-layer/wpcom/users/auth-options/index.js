@@ -18,10 +18,10 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const getAuthAccountType = action =>
+export const getAuthAccountType = (action) =>
 	http(
 		{
-			path: `/users/${ encodeURIComponent( action.usernameOrEmail ) }/auth-options`,
+			path: `/users/${encodeURIComponent(action.usernameOrEmail)}/auth-options`,
 			method: 'GET',
 			apiVersion: '1.1',
 			retryPolicy: noRetry(),
@@ -29,8 +29,8 @@ export const getAuthAccountType = action =>
 		action
 	);
 
-export const receiveSuccess = ( action, data ) => {
-	const isPasswordless = get( data, 'passwordless' );
+export const receiveSuccess = (action, data) => {
+	const isPasswordless = get(data, 'passwordless');
 
 	return [
 		{
@@ -39,11 +39,11 @@ export const receiveSuccess = ( action, data ) => {
 				type: isPasswordless ? 'passwordless' : 'regular',
 			},
 		},
-		recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' ),
+		recordTracksEvent('calypso_login_block_login_form_get_auth_type_success'),
 	];
 };
 
-export const receiveError = ( action, { error: code, message } ) => [
+export const receiveError = (action, { error: code, message }) => [
 	{
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 		error: {
@@ -52,18 +52,18 @@ export const receiveError = ( action, { error: code, message } ) => [
 			field: 'usernameOrEmail',
 		},
 	},
-	recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
+	recordTracksEvent('calypso_login_block_login_form_get_auth_type_failure', {
 		error_code: code,
 		error_message: message,
-	} ),
+	}),
 ];
 
-const getAuthAccountTypeRequest = dispatchRequest( {
+const getAuthAccountTypeRequest = dispatchRequest({
 	fetch: getAuthAccountType,
 	onSuccess: receiveSuccess,
 	onError: receiveError,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/users/auth-options/index.js', {
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING ]: [ getAuthAccountTypeRequest ],
-} );
+registerHandlers('state/data-layer/wpcom/users/auth-options/index.js', {
+	[LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING]: [getAuthAccountTypeRequest],
+});

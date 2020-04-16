@@ -10,7 +10,7 @@ const themesSchema = {
 	patternProperties: {
 		'^[\\w-]+$': {
 			additionalProperties: true,
-			required: [ 'id', 'name', 'author', 'screenshot' ],
+			required: ['id', 'name', 'author', 'screenshot'],
 			type: 'object',
 			properties: {
 				active: { type: 'boolean' },
@@ -31,14 +31,14 @@ const themesSchema = {
 				},
 				taxonomies: { type: 'object' },
 				theme_uri: { type: 'string' },
-				update: { type: [ 'null', 'object' ] },
+				update: { type: ['null', 'object'] },
 				version: { type: 'string' },
 			},
 		},
 	},
 };
 
-const themeQueryManagerSchema = withItemsSchema( themesSchema );
+const themeQueryManagerSchema = withItemsSchema(themesSchema);
 
 export const queriesSchema = {
 	type: 'object',

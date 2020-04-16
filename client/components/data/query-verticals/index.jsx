@@ -34,8 +34,8 @@ export class QueryVerticals extends Component {
 	bindDebouncedRequest = () => {
 		const { debounceTime, debounceFunc } = this.props;
 
-		if ( debounceTime > 0 ) {
-			return debounceFunc( this.props.requestVerticals, this.props.debounceTime );
+		if (debounceTime > 0) {
+			return debounceFunc(this.props.requestVerticals, this.props.debounceTime);
 		}
 
 		return this.props.requestVerticals;
@@ -47,21 +47,21 @@ export class QueryVerticals extends Component {
 
 		this.debouncedRequest = this.bindDebouncedRequest();
 
-		if ( ! isFetched && trimmedSearchTerm ) {
-			this.debouncedRequest( trimmedSearchTerm, siteType, limit );
+		if (!isFetched && trimmedSearchTerm) {
+			this.debouncedRequest(trimmedSearchTerm, siteType, limit);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const { isFetched, searchTerm, siteType, limit, debounceTime } = this.props;
 		const trimmedSearchTerm = searchTerm.trim();
 
-		if ( prevProps.debounceTime !== debounceTime ) {
+		if (prevProps.debounceTime !== debounceTime) {
 			this.debouncedRequest = this.bindDebouncedRequest();
 		}
 
-		if ( ! isFetched && trimmedSearchTerm ) {
-			this.debouncedRequest( trimmedSearchTerm, siteType, limit );
+		if (!isFetched && trimmedSearchTerm) {
+			this.debouncedRequest(trimmedSearchTerm, siteType, limit);
 		}
 	}
 
@@ -71,10 +71,10 @@ export class QueryVerticals extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		isFetched: null !== getVerticals( state, ownProps.searchTerm, ownProps.siteType ),
-	} ),
+	(state, ownProps) => ({
+		isFetched: null !== getVerticals(state, ownProps.searchTerm, ownProps.siteType),
+	}),
 	{
 		requestVerticals,
 	}
-)( QueryVerticals );
+)(QueryVerticals);

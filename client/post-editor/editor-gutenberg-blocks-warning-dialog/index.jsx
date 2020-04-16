@@ -63,16 +63,16 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		forceClassic: false,
 	};
 
-	shouldComponentUpdate( nextProps, nextState ) {
+	shouldComponentUpdate(nextProps, nextState) {
 		return this.state.isDialogVisible !== nextState.isDialogVisible;
 	}
 
-	static getDerivedStateFromProps( props, state ) {
+	static getDerivedStateFromProps(props, state) {
 		const { hasGutenbergBlocks } = props;
 		const { forceClassic } = state;
 
 		return {
-			isDialogVisible: ! forceClassic && hasGutenbergBlocks,
+			isDialogVisible: !forceClassic && hasGutenbergBlocks,
 		};
 	}
 
@@ -80,23 +80,23 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		const { logClassicEditorUsed, isPrivateAtomic, wpAdminRedirectionUrl } = this.props;
 		logClassicEditorUsed();
 		this.hideDialog();
-		if ( isPrivateAtomic ) {
+		if (isPrivateAtomic) {
 			window.location.href = wpAdminRedirectionUrl;
 		}
 	};
 
 	hideDialog = () => {
-		this.setState( {
+		this.setState({
 			forceClassic: true,
-		} );
+		});
 	};
 
 	switchToGutenberg = () => {
 		const { switchToGutenberg, siteId, gutenbergUrl } = this.props;
-		switchToGutenberg( siteId, gutenbergUrl );
+		switchToGutenberg(siteId, gutenbergUrl);
 	};
 
-	showDocumentHistory = e => {
+	showDocumentHistory = (e) => {
 		e.preventDefault();
 		this.props.openPostRevisionsDialog();
 		this.useClassicEditor();
@@ -105,7 +105,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	render() {
 		const { translate, optInEnabled } = this.props;
 
-		if ( ! optInEnabled ) {
+		if (!optInEnabled) {
 			return null;
 		}
 
@@ -113,13 +113,13 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		const buttons = [
 			{
 				action: 'gutenberg',
-				label: translate( 'Switch to the new editor' ),
+				label: translate('Switch to the new editor'),
 				onClick: this.switchToGutenberg,
 				isPrimary: true,
 			},
 			{
 				action: 'cancel',
-				label: translate( 'Use the classic editor' ),
+				label: translate('Use the classic editor'),
 				onClick: this.useClassicEditor,
 			},
 		];
@@ -127,30 +127,30 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		return (
 			<Dialog
 				additionalClassNames="editor-gutenberg-blocks-warning-dialog"
-				isVisible={ isDialogVisible }
-				buttons={ buttons }
-				onClose={ this.useClassicEditor }
+				isVisible={isDialogVisible}
+				buttons={buttons}
+				onClose={this.useClassicEditor}
 			>
-				<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
+				<h1>{translate('This post uses blocks from the new editor')}</h1>
 
 				<p>
-					{ translate(
+					{translate(
 						'You can continue to edit this post in the Classic Editor, but you may lose some data and formatting. You can also check the {{a}}document history{{/a}} and restore a version of the page from earlier.',
 						{
 							components: {
 								//eslint-disable-next-line jsx-a11y/anchor-is-valid
-								a: <a href="#" onClick={ this.showDocumentHistory } />,
+								a: <a href="#" onClick={this.showDocumentHistory} />,
 							},
 						}
-					) }
+					)}
 				</p>
 			</Dialog>
 		);
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	switchToGutenberg: ( siteId, gutenbergUrl ) => {
+const mapDispatchToProps = (dispatch) => ({
+	switchToGutenberg: (siteId, gutenbergUrl) => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -160,12 +160,12 @@ const mapDispatchToProps = dispatch => ( {
 						'Opt-In',
 						true
 					),
-					recordTracksEvent( 'calypso_gutenberg_opt_in', {
+					recordTracksEvent('calypso_gutenberg_opt_in', {
 						opt_in: true,
-					} ),
-					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
+					}),
+					bumpStat('gutenberg-opt-in', 'Calypso Dialog Opt In')
 				),
-				setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
+				setSelectedEditor(siteId, 'gutenberg', gutenbergUrl)
 			)
 		);
 	},
@@ -179,24 +179,23 @@ const mapDispatchToProps = dispatch => ( {
 						'Opt-In',
 						false
 					),
-					recordTracksEvent( 'calypso_gutenberg_use_classic_editor' ),
-					bumpStat( 'selected-editor', 'calypso-gutenberg-use-classic-editor' )
+					recordTracksEvent('calypso_gutenberg_use_classic_editor'),
+					bumpStat('selected-editor', 'calypso-gutenberg-use-classic-editor')
 				)
 			)
 		);
 	},
-	openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
-} );
+	openPostRevisionsDialog: () => dispatch(openPostRevisionsDialog()),
+});
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
-	const isPrivateAtomic =
-		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
-	const wpAdminRedirectionUrl = getWpAdminClassicEditorRedirectionUrl( state, siteId );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const postType = getEditedPostValue(state, siteId, postId, 'type');
+	const gutenbergUrl = getGutenbergEditorUrl(state, siteId, postId, postType);
+	const optInEnabled = isGutenbergOptInEnabled(state, siteId);
+	const isPrivateAtomic = isSiteAutomatedTransfer(state, siteId) && isPrivateSite(state, siteId);
+	const wpAdminRedirectionUrl = getWpAdminClassicEditorRedirectionUrl(state, siteId);
 
 	return {
 		siteId,
@@ -205,4 +204,4 @@ export default connect( state => {
 		isPrivateAtomic,
 		wpAdminRedirectionUrl,
 	};
-}, mapDispatchToProps )( localize( EditorGutenbergBlocksWarningDialog ) );
+}, mapDispatchToProps)(localize(EditorGutenbergBlocksWarningDialog));

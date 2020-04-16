@@ -17,18 +17,18 @@ import getBillingTransactionsByType from 'state/selectors/get-billing-transactio
  * @returns {Array}                   App filter metadata
  */
 export default createSelector(
-	( state, transactionType ) => {
-		const transactions = getBillingTransactionsByType( state, transactionType );
-		if ( ! transactions ) {
+	(state, transactionType) => {
+		const transactions = getBillingTransactionsByType(state, transactionType);
+		if (!transactions) {
 			return [];
 		}
 
-		const appGroups = groupBy( transactions, 'service' );
-		return map( appGroups, ( appGroup, app ) => ( {
+		const appGroups = groupBy(transactions, 'service');
+		return map(appGroups, (appGroup, app) => ({
 			title: app,
 			value: app,
 			count: appGroup.length,
-		} ) );
+		}));
 	},
-	( state, transactionType ) => [ getBillingTransactionsByType( state, transactionType ) ]
+	(state, transactionType) => [getBillingTransactionsByType(state, transactionType)]
 );

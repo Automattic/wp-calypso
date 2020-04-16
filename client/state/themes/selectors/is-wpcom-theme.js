@@ -12,6 +12,6 @@ import 'state/themes/init';
  * @param  {number}  themeId Theme ID
  * @returns {boolean}         Whether theme is in WP.com theme directory
  */
-export function isWpcomTheme( state, themeId ) {
-	return !! getTheme( state, 'wpcom', themeId );
+export function isWpcomTheme(state, themeId) {
+	return !!getTheme(state, 'wpcom', themeId);
 }

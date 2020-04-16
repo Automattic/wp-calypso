@@ -26,11 +26,11 @@ class LoggedOutFormFooter extends Component {
 	render() {
 		return (
 			<Card
-				className={ classnames( 'logged-out-form__footer', this.props.className, {
+				className={classnames('logged-out-form__footer', this.props.className, {
 					'is-blended': this.props.isBlended,
-				} ) }
+				})}
 			>
-				{ this.props.children }
+				{this.props.children}
 			</Card>
 		);
 	}

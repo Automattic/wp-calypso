@@ -21,31 +21,31 @@ class EmailForwardingDetails extends React.Component {
 	render() {
 		return (
 			<p className="email-forwarding__explanation">
-				{ this.props.translate(
+				{this.props.translate(
 					'Create an email address that uses your custom domain and have it automatically forward to the email account of your choice. Now your email address can be as memorable as your website!'
-				) }{ ' ' }
+				)}{' '}
 				<a
-					href={ EMAIL_FORWARDING }
+					href={EMAIL_FORWARDING}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={ this.learnMoreClick }
+					onClick={this.learnMoreClick}
 				>
-					{ this.props.translate( 'Learn more.' ) }
+					{this.props.translate('Learn more.')}
 				</a>
 			</p>
 		);
 	}
 
 	learnMoreClick = () => {
-		this.props.trackLearnMoreClick( this.props.selectedDomainName );
+		this.props.trackLearnMoreClick(this.props.selectedDomainName);
 	};
 }
 
-const trackLearnMoreClick = domainName =>
+const trackLearnMoreClick = (domainName) =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_domain_management_email_forwarding_learn_more_click', {
+		recordTracksEvent('calypso_domain_management_email_forwarding_learn_more_click', {
 			domain_name: domainName,
-		} ),
+		}),
 		recordGoogleEvent(
 			'Domain Management',
 			'Clicked "Learn more" link in Email Forwarding',
@@ -54,6 +54,6 @@ const trackLearnMoreClick = domainName =>
 		)
 	);
 
-export default connect( null, {
+export default connect(null, {
 	trackLearnMoreClick,
-} )( localize( EmailForwardingDetails ) );
+})(localize(EmailForwardingDetails));

@@ -12,9 +12,9 @@ import save from './save';
 import icon from './icon';
 
 export function registerBlock() {
-	registerBlockType( 'a8c/project-status', {
-		title: __( 'Project status' ),
-		description: __( 'Display a task overview of the status of a project.' ),
+	registerBlockType('a8c/project-status', {
+		title: __('Project status'),
+		description: __('Display a task overview of the status of a project.'),
 		icon,
 		category: 'a8c',
 		supports: {
@@ -32,7 +32,7 @@ export function registerBlock() {
 		},
 		edit,
 		save,
-	} );
+	});
 }
 
 registerBlock();

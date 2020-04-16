@@ -24,44 +24,40 @@ class ComponentPlayground extends Component {
 	};
 
 	handleClick() {
-		alert( 'Copied to clipboard!' );
+		alert('Copied to clipboard!');
 	}
 
 	showCode = () => {
-		this.setState( {
-			showCode: ! this.state.showCode,
-		} );
+		this.setState({
+			showCode: !this.state.showCode,
+		});
 	};
 
 	render() {
 		const toggleCode = this.props.code.length > 200;
-		const codeClassName = classNames( {
+		const codeClassName = classNames({
 			'design__component-playground-code': true,
 			'show-code': toggleCode ? this.state.showCode : true,
-		} );
-		const scope = require( 'devdocs/design/playground-scope' );
+		});
+		const scope = require('devdocs/design/playground-scope');
 
 		return (
 			<LiveProvider
-				code={ this.props.code }
-				scope={ scope }
-				mountStylesheet={ false }
+				code={this.props.code}
+				scope={scope}
+				mountStylesheet={false}
 				className="design__component-playground"
 			>
-				<DocsExampleWrapper
-					name={ this.props.name }
-					unique={ this.props.unique }
-					url={ this.props.url }
-				>
+				<DocsExampleWrapper name={this.props.name} unique={this.props.unique} url={this.props.url}>
 					<LivePreview />
 				</DocsExampleWrapper>
 
-				{ this.props.component && (
-					<div className={ codeClassName }>
+				{this.props.component && (
+					<div className={codeClassName}>
 						<ClipboardButton
-							text={ this.props.code }
+							text={this.props.code}
 							borderless
-							onClick={ this.handleClick }
+							onClick={this.handleClick}
 							className="design__component-playground-clipboard"
 						>
 							<Gridicon icon="clipboard" />
@@ -70,15 +66,15 @@ class ComponentPlayground extends Component {
 						<LiveError />
 						<LiveEditor />
 					</div>
-				) }
+				)}
 
-				{ this.props.component && toggleCode && (
+				{this.props.component && toggleCode && (
 					<div className="design__component-playground-show-code">
-						<Button onClick={ this.showCode }>
-							{ this.state.showCode ? 'Hide' : 'Show' } code <Gridicon icon="code" />
+						<Button onClick={this.showCode}>
+							{this.state.showCode ? 'Hide' : 'Show'} code <Gridicon icon="code" />
 						</Button>
 					</div>
-				) }
+				)}
 			</LiveProvider>
 		);
 	}

@@ -30,7 +30,7 @@ import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions'
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:steps:site' );
+const debug = debugFactory('calypso:steps:site');
 
 /**
  * Constants
@@ -54,22 +54,22 @@ class Site extends React.Component {
 	UNSAFE_componentWillMount() {
 		let initialState;
 
-		if ( this.props.step && this.props.step.form ) {
+		if (this.props.step && this.props.step.form) {
 			initialState = this.props.step.form;
 
-			if ( ! isEmpty( this.props.step.errors ) ) {
+			if (!isEmpty(this.props.step.errors)) {
 				initialState = formState.setFieldErrors(
-					formState.setFieldsValidating( initialState ),
+					formState.setFieldsValidating(initialState),
 					{
-						site: this.props.step.errors[ 0 ].message,
+						site: this.props.step.errors[0].message,
 					},
 					true
 				);
 			}
 		}
 
-		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'site' ],
+		this.formStateController = new formState.Controller({
+			fieldNames: ['site'],
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
@@ -77,66 +77,66 @@ class Site extends React.Component {
 			debounceWait: VALIDATION_DELAY_AFTER_FIELD_CHANGES,
 			hideFieldErrorsOnChange: true,
 			initialState: initialState,
-		} );
+		});
 
-		this.setState( { form: this.formStateController.getInitialState() } );
+		this.setState({ form: this.formStateController.getInitialState() });
 	}
 
 	componentWillUnmount() {
 		this.save();
 	}
 
-	sanitizeSubdomain = domain => {
-		if ( ! domain ) {
+	sanitizeSubdomain = (domain) => {
+		if (!domain) {
 			return domain;
 		}
-		return domain.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
+		return domain.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 	};
 
-	sanitize = ( fields, onComplete ) => {
-		const sanitizedSubdomain = this.sanitizeSubdomain( fields.site );
-		if ( fields.site !== sanitizedSubdomain ) {
-			onComplete( { site: sanitizedSubdomain } );
+	sanitize = (fields, onComplete) => {
+		const sanitizedSubdomain = this.sanitizeSubdomain(fields.site);
+		if (fields.site !== sanitizedSubdomain) {
+			onComplete({ site: sanitizedSubdomain });
 		}
 	};
 
-	validate = ( fields, onComplete ) => {
+	validate = (fields, onComplete) => {
 		wpcom.undocumented().sitesNew(
 			{
 				blog_name: fields.site,
 				blog_title: fields.site,
 				validate: true,
 			},
-			function( error, response ) {
+			function (error, response) {
 				let messages = {};
 
-				debug( error, response );
+				debug(error, response);
 
-				if ( error && error.message ) {
-					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
-						siteUrlsSearched.push( fields.site );
+				if (error && error.message) {
+					if (fields.site && !includes(siteUrlsSearched, fields.site)) {
+						siteUrlsSearched.push(fields.site);
 
-						analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
+						analytics.tracks.recordEvent('calypso_signup_site_url_validation_failed', {
 							error: error.error,
 							site_url: fields.site,
-						} );
+						});
 					}
 
 					timesValidationFailed++;
 
 					messages = {
 						site: {
-							[ error.error ]: error.message,
+							[error.error]: error.message,
 						},
 					};
 				}
-				onComplete( null, messages );
+				onComplete(null, messages);
 			}
 		);
 	};
 
-	setFormState = state => {
-		this.setState( { form: state } );
+	setFormState = (state) => {
+		this.setState({ form: state });
 	};
 
 	resetAnalyticsData = () => {
@@ -144,36 +144,36 @@ class Site extends React.Component {
 		timesValidationFailed = 0;
 	};
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
 		this.formStateController.handleSubmit(
-			function( hasErrors ) {
-				const site = formState.getFieldValue( this.state.form, 'site' );
+			function (hasErrors) {
+				const site = formState.getFieldValue(this.state.form, 'site');
 
-				this.setState( { submitting: false } );
+				this.setState({ submitting: false });
 
-				if ( hasErrors ) {
+				if (hasErrors) {
 					return;
 				}
 
-				analytics.tracks.recordEvent( 'calypso_signup_site_step_submit', {
+				analytics.tracks.recordEvent('calypso_signup_site_step_submit', {
 					unique_site_urls_searched: siteUrlsSearched.length,
 					times_validation_failed: timesValidationFailed,
-				} );
+				});
 
 				this.resetAnalyticsData();
 
-				this.props.submitSignupStep( {
+				this.props.submitSignupStep({
 					stepName: this.props.stepName,
 					form: this.state.form,
 					site,
-				} );
+				});
 
 				this.props.goToNextStep();
-			}.bind( this )
+			}.bind(this)
 		);
 	};
 
@@ -184,59 +184,59 @@ class Site extends React.Component {
 	};
 
 	save = () => {
-		this.props.saveSignupStep( {
+		this.props.saveSignupStep({
 			stepName: 'site',
 			form: this.state.form,
-		} );
+		});
 	};
 
-	handleChangeEvent = event => {
-		this.formStateController.handleFieldChange( {
+	handleChangeEvent = (event) => {
+		this.formStateController.handleFieldChange({
 			name: event.target.name,
 			value: event.target.value,
-		} );
+		});
 	};
 
-	handleFormControllerError = error => {
-		if ( error ) {
+	handleFormControllerError = (error) => {
+		if (error) {
 			throw error;
 		}
 	};
 
-	getErrorMessagesWithLogin = fieldName => {
-		const link = login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
+	getErrorMessagesWithLogin = (fieldName) => {
+		const link = login({
+				isNative: config.isEnabled('login/native-login-links'),
 				redirectTo: window.location.href,
-			} ),
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+			}),
+			messages = formState.getFieldErrorMessages(this.state.form, fieldName);
 
-		if ( ! messages ) {
+		if (!messages) {
 			return;
 		}
 
 		return map(
 			messages,
-			function( message, error_code ) {
-				if ( error_code === 'blog_name_reserved' ) {
+			function (message, error_code) {
+				if (error_code === 'blog_name_reserved') {
 					return (
 						<span>
 							<p>
-								{ message }
+								{message}
 								&nbsp;
-								{ this.props.translate(
+								{this.props.translate(
 									'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
 									{
 										components: {
-											a: <a href={ link } />,
+											a: <a href={link} />,
 										},
 									}
-								) }
+								)}
 							</p>
 						</span>
 					);
 				}
 				return message;
-			}.bind( this )
+			}.bind(this)
 		);
 	};
 
@@ -244,20 +244,20 @@ class Site extends React.Component {
 		const fieldDisabled = this.state.submitting;
 
 		return (
-			<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
-				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
+			<ValidationFieldset errorMessages={this.getErrorMessagesWithLogin('site')}>
+				<FormLabel htmlFor="site">{this.props.translate('Choose a site address')}</FormLabel>
 				<FormTextInput
-					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-					autoCapitalize={ 'off' }
+					autoFocus={true} // eslint-disable-line jsx-a11y/no-autofocus
+					autoCapitalize={'off'}
 					className="site__site-url"
-					disabled={ fieldDisabled }
+					disabled={fieldDisabled}
 					type="text"
 					name="site"
-					value={ formState.getFieldValue( this.state.form, 'site' ) }
-					isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
-					isValid={ formState.isFieldValid( this.state.form, 'site' ) }
-					onBlur={ this.handleBlur }
-					onChange={ this.handleChangeEvent }
+					value={formState.getFieldValue(this.state.form, 'site')}
+					isError={formState.isFieldInvalid(this.state.form, 'site')}
+					isValid={formState.isFieldValid(this.state.form, 'site')}
+					onBlur={this.handleBlur}
+					onChange={this.handleChangeEvent}
 				/>
 				<span className="site__wordpress-domain-suffix">.wordpress.com</span>
 			</ValidationFieldset>
@@ -265,27 +265,27 @@ class Site extends React.Component {
 	};
 
 	buttonText = () => {
-		if ( this.props.step && 'completed' === this.props.step.status ) {
-			return this.props.translate( 'Site created - Go to next step' );
+		if (this.props.step && 'completed' === this.props.step.status) {
+			return this.props.translate('Site created - Go to next step');
 		}
 
-		if ( this.state.submitting ) {
-			return this.props.translate( 'Creating your site…' );
+		if (this.state.submitting) {
+			return this.props.translate('Creating your site…');
 		}
 
-		return this.props.translate( 'Create My Site' );
+		return this.props.translate('Create My Site');
 	};
 
 	formFooter = () => {
-		return <FormButton>{ this.buttonText() }</FormButton>;
+		return <FormButton>{this.buttonText()}</FormButton>;
 	};
 
 	renderSiteForm = () => {
 		return (
-			<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
-				{ this.formFields() }
+			<LoggedOutForm onSubmit={this.handleSubmit} noValidate>
+				{this.formFields()}
 
-				<LoggedOutFormFooter>{ this.formFooter() }</LoggedOutFormFooter>
+				<LoggedOutFormFooter>{this.formFooter()}</LoggedOutFormFooter>
 			</LoggedOutForm>
 		);
 	};
@@ -293,14 +293,14 @@ class Site extends React.Component {
 	render() {
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your site.' ) }
-				stepContent={ this.renderSiteForm() }
+				flowName={this.props.flowName}
+				stepName={this.props.stepName}
+				positionInFlow={this.props.positionInFlow}
+				fallbackHeaderText={this.props.translate('Create your site.')}
+				stepContent={this.renderSiteForm()}
 			/>
 		);
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep } )( localize( Site ) );
+export default connect(null, { saveSignupStep, submitSignupStep })(localize(Site));

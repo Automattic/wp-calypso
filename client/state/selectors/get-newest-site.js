@@ -17,14 +17,14 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * @returns {object}       Site object
  */
 export default createSelector(
-	state => {
-		const newestSite = sortBy( Object.values( getSitesItems( state ) ), 'ID' ).pop();
+	(state) => {
+		const newestSite = sortBy(Object.values(getSitesItems(state)), 'ID').pop();
 
-		if ( ! newestSite ) {
+		if (!newestSite) {
 			return null;
 		}
 
-		return getSite( state, newestSite.ID );
+		return getSite(state, newestSite.ID);
 	},
-	state => [ getSitesItems( state ), state.currentUser.capabilities ]
+	(state) => [getSitesItems(state), state.currentUser.capabilities]
 );

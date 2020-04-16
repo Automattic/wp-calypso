@@ -16,7 +16,7 @@ import User from 'lib/user';
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:state' );
+const debug = debugModule('calypso:state');
 const user = User();
 
 const DAY_IN_HOURS = 24;
@@ -33,27 +33,27 @@ export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
  */
 let stateCache = {};
 
-function serialize( state, reducer ) {
-	return reducer( state, { type: SERIALIZE } );
+function serialize(state, reducer) {
+	return reducer(state, { type: SERIALIZE });
 }
 
-function deserialize( state, reducer ) {
+function deserialize(state, reducer) {
 	delete state._timestamp;
-	return reducer( state, { type: DESERIALIZE } );
+	return reducer(state, { type: DESERIALIZE });
 }
 
 // get bootstrapped state from a server-side render
-function getInitialServerState( initialReducer ) {
-	if ( typeof window !== 'object' || ! window.initialReduxState || isSupportSession() ) {
+function getInitialServerState(initialReducer) {
+	if (typeof window !== 'object' || !window.initialReduxState || isSupportSession()) {
 		return null;
 	}
 
-	const serverState = deserialize( window.initialReduxState, initialReducer );
-	return pick( serverState, Object.keys( window.initialReduxState ) );
+	const serverState = deserialize(window.initialReduxState, initialReducer);
+	return pick(serverState, Object.keys(window.initialReduxState));
 }
 
 function shouldPersist() {
-	return config.isEnabled( 'persist-redux' ) && ! isSupportSession();
+	return config.isEnabled('persist-redux') && !isSupportSession();
 }
 
 /**
@@ -70,17 +70,17 @@ function shouldPersist() {
  */
 function shouldAddSympathy() {
 	// If `force-sympathy` flag is enabled, always clear persistent state.
-	if ( config.isEnabled( 'force-sympathy' ) ) {
+	if (config.isEnabled('force-sympathy')) {
 		return true;
 	}
 
 	// If `no-force-sympathy` flag is enabled, never clear persistent state.
-	if ( config.isEnabled( 'no-force-sympathy' ) ) {
+	if (config.isEnabled('no-force-sympathy')) {
 		return false;
 	}
 
 	// Otherwise, in development mode, clear persistent state 25% of the time.
-	if ( 'development' === process.env.NODE_ENV && Math.random() < 0.25 ) {
+	if ('development' === process.env.NODE_ENV && Math.random() < 0.25) {
 		return true;
 	}
 
@@ -94,29 +94,29 @@ function shouldAddSympathy() {
 // bad state data (from before this check was added) or any other
 // scenario where state data may have been stored without this
 // check being performed.
-function verifyStoredRootState( state ) {
+function verifyStoredRootState(state) {
 	const currentUserId = user?.get()?.ID ?? null;
 	const storedUserId = state?.currentUser?.id ?? null;
 
-	if ( currentUserId !== storedUserId ) {
-		debug( `current user ID=${ currentUserId } and state user ID=${ storedUserId } don't match` );
+	if (currentUserId !== storedUserId) {
+		debug(`current user ID=${currentUserId} and state user ID=${storedUserId} don't match`);
 		return false;
 	}
 
 	return true;
 }
 
-function verifyStateTimestamp( state ) {
+function verifyStateTimestamp(state) {
 	return state._timestamp && state._timestamp + MAX_AGE > Date.now();
 }
 
 export async function loadAllState() {
 	try {
-		const storedState = await getAllStoredItems( /^redux-state-/ );
-		debug( 'fetched stored Redux state from persistent storage', storedState );
+		const storedState = await getAllStoredItems(/^redux-state-/);
+		debug('fetched stored Redux state from persistent storage', storedState);
 		stateCache = storedState ?? {};
-	} catch ( error ) {
-		debug( 'error while loading stored Redux state:', error );
+	} catch (error) {
+		debug('error while loading stored Redux state:', error);
 	}
 }
 
@@ -125,52 +125,52 @@ export async function clearAllState() {
 	await clearStorage();
 }
 
-export function getStateFromCache( reducer, subkey, forceLoggedOutUser = false ) {
-	const reduxStateKey = getReduxStateKey( forceLoggedOutUser ) + ( subkey ? ':' + subkey : '' );
+export function getStateFromCache(reducer, subkey, forceLoggedOutUser = false) {
+	const reduxStateKey = getReduxStateKey(forceLoggedOutUser) + (subkey ? ':' + subkey : '');
 
 	try {
-		const storedState = stateCache[ reduxStateKey ] ?? null;
+		const storedState = stateCache[reduxStateKey] ?? null;
 
-		if ( storedState === null ) {
-			debug( 'stored Redux state not found in cache' );
+		if (storedState === null) {
+			debug('stored Redux state not found in cache');
 			return null;
 		}
 
-		if ( ! verifyStateTimestamp( storedState ) ) {
-			debug( 'stored Redux state is too old, dropping' );
+		if (!verifyStateTimestamp(storedState)) {
+			debug('stored Redux state is too old, dropping');
 			return null;
 		}
 
-		const deserializedState = deserialize( storedState, reducer );
-		if ( ! deserializedState ) {
-			debug( 'stored Redux state failed to deserialize, dropping' );
+		const deserializedState = deserialize(storedState, reducer);
+		if (!deserializedState) {
+			debug('stored Redux state failed to deserialize, dropping');
 			return null;
 		}
 
-		if ( ! subkey && ! verifyStoredRootState( deserializedState ) ) {
-			debug( 'stored root Redux state has invalid currentUser.id, dropping' );
+		if (!subkey && !verifyStoredRootState(deserializedState)) {
+			debug('stored root Redux state has invalid currentUser.id, dropping');
 			return null;
 		}
 
 		return deserializedState;
-	} catch ( error ) {
-		debug( 'error while loading stored Redux state:', error );
+	} catch (error) {
+		debug('error while loading stored Redux state:', error);
 		return null;
 	}
 }
 
-function getReduxStateKey( forceLoggedOutUser = false ) {
-	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user?.get()?.ID ?? null );
+function getReduxStateKey(forceLoggedOutUser = false) {
+	return getReduxStateKeyForUserId(forceLoggedOutUser ? null : user?.get()?.ID ?? null);
 }
 
-function getReduxStateKeyForUserId( userId ) {
-	if ( ! userId ) {
+function getReduxStateKeyForUserId(userId) {
+	if (!userId) {
 		return 'redux-state-logged-out';
 	}
 	return 'redux-state-' + userId;
 }
 
-function isValidReduxKeyAndState( key, state ) {
+function isValidReduxKeyAndState(key, state) {
 	// When the current user is changed (for example via logout) the previous
 	// user's state remains in memory until the page refreshes. To prevent this
 	// outdated state from being written to the new user's local storage, it is
@@ -180,72 +180,72 @@ function isValidReduxKeyAndState( key, state ) {
 	// https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store/35641992#35641992
 	// - without generating any errors. Until then, it must remain in place.)
 	const userId = state?.currentUser?.id ?? null;
-	return key === getReduxStateKeyForUserId( userId );
+	return key === getReduxStateKeyForUserId(userId);
 }
 
-async function persistentStoreState( reduxStateKey, storageKey, state, _timestamp ) {
-	if ( storageKey !== 'root' ) {
+async function persistentStoreState(reduxStateKey, storageKey, state, _timestamp) {
+	if (storageKey !== 'root') {
 		reduxStateKey += ':' + storageKey;
 	}
 
 	const newState = { ...state, _timestamp };
-	const result = await setStoredItem( reduxStateKey, newState );
-	stateCache[ reduxStateKey ] = newState;
+	const result = await setStoredItem(reduxStateKey, newState);
+	stateCache[reduxStateKey] = newState;
 	return result;
 }
 
-export function persistOnChange( reduxStore ) {
-	if ( ! shouldPersist() ) {
+export function persistOnChange(reduxStore) {
+	if (!shouldPersist()) {
 		return;
 	}
 
 	let prevState = null;
 
 	const throttledSaveState = throttle(
-		function() {
+		function () {
 			const state = reduxStore.getState();
-			if ( state === prevState ) {
+			if (state === prevState) {
 				return;
 			}
 
 			const reduxStateKey = getReduxStateKey();
-			if ( ! isValidReduxKeyAndState( reduxStateKey, state ) ) {
+			if (!isValidReduxKeyAndState(reduxStateKey, state)) {
 				return;
 			}
 
 			prevState = state;
 
-			const serializedState = serialize( state, reduxStore.getCurrentReducer() );
+			const serializedState = serialize(state, reduxStore.getCurrentReducer());
 			const _timestamp = Date.now();
 
-			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
-				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
+			const storeTasks = map(serializedState.get(), (data, storageKey) =>
+				persistentStoreState(reduxStateKey, storageKey, data, _timestamp)
 			);
 
-			Promise.all( storeTasks ).catch( setError =>
-				debug( 'failed to set redux-store state', setError )
+			Promise.all(storeTasks).catch((setError) =>
+				debug('failed to set redux-store state', setError)
 			);
 		},
 		SERIALIZE_THROTTLE,
 		{ leading: false, trailing: true }
 	);
 
-	if ( typeof window !== 'undefined' ) {
-		window.addEventListener( 'beforeunload', throttledSaveState.flush );
+	if (typeof window !== 'undefined') {
+		window.addEventListener('beforeunload', throttledSaveState.flush);
 	}
 
-	reduxStore.subscribe( throttledSaveState );
+	reduxStore.subscribe(throttledSaveState);
 }
 
-function getInitialStoredState( initialReducer ) {
-	if ( ! shouldPersist() ) {
+function getInitialStoredState(initialReducer) {
+	if (!shouldPersist()) {
 		return null;
 	}
 
-	if ( 'development' === process.env.NODE_ENV ) {
-		window.resetState = () => clearAllState().then( () => window.location.reload( true ) );
+	if ('development' === process.env.NODE_ENV) {
+		window.resetState = () => clearAllState().then(() => window.location.reload(true));
 
-		if ( shouldAddSympathy() ) {
+		if (shouldAddSympathy()) {
 			// eslint-disable-next-line no-console
 			console.log(
 				'%cSkipping initial state rehydration. (This runs during random page requests in the Calypso development environment, to simulate loading the application with an empty cache.)',
@@ -257,35 +257,35 @@ function getInitialStoredState( initialReducer ) {
 		}
 	}
 
-	let initialStoredState = getStateFromCache( initialReducer );
-	const storageKeys = [ ...initialReducer.getStorageKeys() ];
+	let initialStoredState = getStateFromCache(initialReducer);
+	const storageKeys = [...initialReducer.getStorageKeys()];
 
-	function loadReducerState( { storageKey, reducer } ) {
-		let storedState = getStateFromCache( reducer, storageKey, false );
+	function loadReducerState({ storageKey, reducer }) {
+		let storedState = getStateFromCache(reducer, storageKey, false);
 
-		if ( ! storedState && storageKey === 'signup' ) {
-			storedState = getStateFromCache( reducer, storageKey, true );
-			debug( 'fetched signup state from logged out state', storedState );
+		if (!storedState && storageKey === 'signup') {
+			storedState = getStateFromCache(reducer, storageKey, true);
+			debug('fetched signup state from logged out state', storedState);
 		}
 
-		if ( storedState ) {
-			initialStoredState = initialReducer( initialStoredState, {
+		if (storedState) {
+			initialStoredState = initialReducer(initialStoredState, {
 				type: APPLY_STORED_STATE,
 				storageKey,
 				storedState,
-			} );
+			});
 		}
 	}
 
-	for ( const item of storageKeys ) {
-		loadReducerState( item );
+	for (const item of storageKeys) {
+		loadReducerState(item);
 	}
 
 	return initialStoredState;
 }
 
-export function getInitialState( initialReducer ) {
-	const storedState = getInitialStoredState( initialReducer );
-	const serverState = getInitialServerState( initialReducer );
+export function getInitialState(initialReducer) {
+	const storedState = getInitialStoredState(initialReducer);
+	const serverState = getInitialServerState(initialReducer);
 	return { ...storedState, ...serverState };
 }

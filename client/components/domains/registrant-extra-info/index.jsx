@@ -25,8 +25,8 @@ const tldSpecificForms = {
 	uk,
 };
 
-const enabledTldForms = filter( keys( tldSpecificForms ), tld =>
-	config.isEnabled( `domains/cctlds/${ tld }` )
+const enabledTldForms = filter(keys(tldSpecificForms), (tld) =>
+	config.isEnabled(`domains/cctlds/${tld}`)
 );
 
 export const tldsWithAdditionalDetailsForms = enabledTldForms;
@@ -34,13 +34,13 @@ export const tldsWithAdditionalDetailsForms = enabledTldForms;
 export default class DomainDetailsForm extends PureComponent {
 	render() {
 		const { tld, ...props } = this.props;
-		const topLevelOfTld = tld.substring( tld.lastIndexOf( '.' ) + 1 );
-		const TldSpecificForm = tldSpecificForms[ topLevelOfTld ];
+		const topLevelOfTld = tld.substring(tld.lastIndexOf('.') + 1);
+		const TldSpecificForm = tldSpecificForms[topLevelOfTld];
 
-		if ( ! TldSpecificForm ) {
-			throw new Error( 'unrecognized tld in extra info form:', tld );
+		if (!TldSpecificForm) {
+			throw new Error('unrecognized tld in extra info form:', tld);
 		}
 
-		return <TldSpecificForm { ...props } />;
+		return <TldSpecificForm {...props} />;
 	}
 }

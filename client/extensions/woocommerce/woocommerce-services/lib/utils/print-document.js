@@ -13,12 +13,12 @@ let iframe = null;
  * @param {string} url URL to load
  * @returns {Promise} Promise that resolves when the iframe finished loading, rejects on error
  */
-const loadDocumentInFrame = url => {
-	return new Promise( ( resolve, reject ) => {
-		if ( iframe ) {
-			document.body.removeChild( iframe );
+const loadDocumentInFrame = (url) => {
+	return new Promise((resolve, reject) => {
+		if (iframe) {
+			document.body.removeChild(iframe);
 		}
-		iframe = document.createElement( 'iframe' );
+		iframe = document.createElement('iframe');
 		iframe.src = url;
 
 		// Note: Don't change this for "display: none" or it will stop working on MS Edge
@@ -28,22 +28,22 @@ const loadDocumentInFrame = url => {
 		iframe.onload = () => {
 			resolve();
 		};
-		iframe.onerror = error => {
-			reject( error );
+		iframe.onerror = (error) => {
+			reject(error);
 		};
 
-		document.body.appendChild( iframe );
-	} );
+		document.body.appendChild(iframe);
+	});
 };
 
-const buildBlob = ( b64Content, mimeType ) => {
-	const rawData = atob( b64Content );
+const buildBlob = (b64Content, mimeType) => {
+	const rawData = atob(b64Content);
 	const rawDataLen = rawData.length;
-	const binData = new Uint8Array( new ArrayBuffer( rawDataLen ) );
-	for ( let i = 0; i < rawDataLen; i++ ) {
-		binData[ i ] = rawData.charCodeAt( i );
+	const binData = new Uint8Array(new ArrayBuffer(rawDataLen));
+	for (let i = 0; i < rawDataLen; i++) {
+		binData[i] = rawData.charCodeAt(i);
 	}
-	return new Blob( [ binData ], { type: mimeType } );
+	return new Blob([binData], { type: mimeType });
 };
 
 /**
@@ -57,37 +57,37 @@ const buildBlob = ( b64Content, mimeType ) => {
  * @returns {Promise} Promise that resolves if the printing dialog (or equivalent) was correctly
  * invoked, rejects otherwise.
  */
-export default ( { b64Content, mimeType }, fileName ) => {
-	const blob = buildBlob( b64Content, mimeType );
-	const blobUrl = 'ie' !== getPDFSupport() ? URL.createObjectURL( blob ) : null; // IE has no use for "blob:" URLs
+export default ({ b64Content, mimeType }, fileName) => {
+	const blob = buildBlob(b64Content, mimeType);
+	const blobUrl = 'ie' !== getPDFSupport() ? URL.createObjectURL(blob) : null; // IE has no use for "blob:" URLs
 
-	switch ( getPDFSupport() ) {
+	switch (getPDFSupport()) {
 		case 'native':
 			// Happy case where everything can happen automatically. Supported in Chrome and Safari
-			return loadDocumentInFrame( blobUrl ).then( () => {
+			return loadDocumentInFrame(blobUrl).then(() => {
 				iframe.contentWindow.print();
-				URL.revokeObjectURL( blobUrl );
-			} );
+				URL.revokeObjectURL(blobUrl);
+			});
 
 		case 'addon':
 			// window.open will be blocked by the browser if this code isn't being executed from a direct user interaction
-			const success = window.open( blobUrl );
-			setTimeout( () => URL.revokeObjectURL( blobUrl ), 1000 );
+			const success = window.open(blobUrl);
+			setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 			return success
 				? Promise.resolve()
-				: Promise.reject( new Error( 'Unable to open label PDF in new tab' ) );
+				: Promise.reject(new Error('Unable to open label PDF in new tab'));
 
 		case 'ie':
 			// Internet Explorer / Edge don't allow to load "blob:" URLs into an <iframe> or a new tab. The only solution is to download
-			return window.navigator.msSaveOrOpenBlob( blob, fileName )
+			return window.navigator.msSaveOrOpenBlob(blob, fileName)
 				? Promise.resolve()
-				: Promise.reject( new Error( 'Unable to download the PDF' ) );
+				: Promise.reject(new Error('Unable to download the PDF'));
 
 		default:
 			// If browser doesn't support PDFs at all, this will trigger the "Download" pop-up.
 			// No need to wait for the iframe to load, it will never finish.
-			loadDocumentInFrame( blobUrl );
-			setTimeout( () => URL.revokeObjectURL( blobUrl ), 0 );
+			loadDocumentInFrame(blobUrl);
+			setTimeout(() => URL.revokeObjectURL(blobUrl), 0);
 			return Promise.resolve();
 	}
 };

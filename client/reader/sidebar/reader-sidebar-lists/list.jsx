@@ -26,33 +26,33 @@ export class ReaderSidebarListsList extends React.Component {
 
 	renderItems() {
 		const { currentListOwner, currentListSlug, path } = this.props;
-		return map( this.props.lists, function( list ) {
+		return map(this.props.lists, function (list) {
 			return (
 				<ReaderSidebarListsListItem
-					key={ list.ID }
-					list={ list }
-					path={ path }
-					currentListOwner={ currentListOwner }
-					currentListSlug={ currentListSlug }
+					key={list.ID}
+					list={list}
+					path={path}
+					currentListOwner={currentListOwner}
+					currentListSlug={currentListSlug}
 				/>
 			);
-		} );
+		});
 	}
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const { translate, lists } = this.props;
-		if ( ! lists || lists.length === 0 ) {
+		if (!lists || lists.length === 0) {
 			return (
 				<div key="empty" className="sidebar__menu-empty">
-					{ translate( 'Collect sites together by adding a list.' ) }
+					{translate('Collect sites together by adding a list.')}
 				</div>
 			);
 		}
 
-		return <ul className="sidebar__menu-list">{ this.renderItems() }</ul>;
+		return <ul className="sidebar__menu-list">{this.renderItems()}</ul>;
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default localize( ReaderSidebarListsList );
+export default localize(ReaderSidebarListsList);

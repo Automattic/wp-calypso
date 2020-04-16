@@ -5,12 +5,12 @@
  * @param {object} definitions - Common definitions.
  * @returns {object} - Schema object for field, potentially pulled from $ref's definition.
  */
-const getFieldSchema = ( fieldSchema, definitions ) => {
-	if ( fieldSchema.$ref ) {
-		const definitionKey = fieldSchema.$ref.match( /^#\/definitions\/(.+)/ );
+const getFieldSchema = (fieldSchema, definitions) => {
+	if (fieldSchema.$ref) {
+		const definitionKey = fieldSchema.$ref.match(/^#\/definitions\/(.+)/);
 
-		if ( definitionKey && definitions[ definitionKey[ 1 ] ] ) {
-			fieldSchema = definitions[ definitionKey[ 1 ] ];
+		if (definitionKey && definitions[definitionKey[1]]) {
+			fieldSchema = definitions[definitionKey[1]];
 		}
 	}
 	return fieldSchema;
@@ -24,34 +24,34 @@ const getFieldSchema = ( fieldSchema, definitions ) => {
  * @param {object} definitions - Schema definitions.
  * @returns {*} - Coerced value.
  */
-export const coerceValue = ( schema, value, definitions ) => {
+export const coerceValue = (schema, value, definitions) => {
 	// If the value is undefined or we don't have a schema type to reference, leave it be.
-	if ( undefined === value || null === value || ! schema ) {
+	if (undefined === value || null === value || !schema) {
 		return value;
 	}
-	schema = getFieldSchema( schema, definitions );
+	schema = getFieldSchema(schema, definitions);
 
-	switch ( schema.type ) {
+	switch (schema.type) {
 		case 'number':
-			if ( '' === value ) {
+			if ('' === value) {
 				return undefined;
 			}
 
-			if ( ! isNaN( value ) ) {
-				return parseFloat( value );
+			if (!isNaN(value)) {
+				return parseFloat(value);
 			}
 
 			return value;
 
 		case 'boolean':
-			const truthy = [ 'true', 'True', 'TRUE', '1', 1, true ];
-			const falsy = [ 'false', 'False', 'FALSE', '0', 0, false ];
+			const truthy = ['true', 'True', 'TRUE', '1', 1, true];
+			const falsy = ['false', 'False', 'FALSE', '0', 0, false];
 
-			if ( -1 !== truthy.indexOf( value ) ) {
+			if (-1 !== truthy.indexOf(value)) {
 				return true;
 			}
 
-			if ( -1 !== falsy.indexOf( value ) ) {
+			if (-1 !== falsy.indexOf(value)) {
 				return false;
 			}
 
@@ -62,14 +62,14 @@ export const coerceValue = ( schema, value, definitions ) => {
 
 		case 'object':
 			const coerced = {};
-			Object.keys( value ).forEach( key => {
-				const fieldSchema = ( schema.properties || {} )[ key ];
-				coerced[ key ] = coerceValue( fieldSchema, value[ key ], definitions );
-			} );
+			Object.keys(value).forEach((key) => {
+				const fieldSchema = (schema.properties || {})[key];
+				coerced[key] = coerceValue(fieldSchema, value[key], definitions);
+			});
 			return coerced;
 
 		case 'array':
-			return value.map( arrayItem => coerceValue( schema.items, arrayItem, definitions ) );
+			return value.map((arrayItem) => coerceValue(schema.items, arrayItem, definitions));
 
 		default:
 			return value;
@@ -83,12 +83,8 @@ export const coerceValue = ( schema, value, definitions ) => {
  * @param {object} values - Form values.
  * @returns {object} - Coerced values based on schema.
  */
-const coerceFormValues = ( schema, values ) => {
-	return coerceValue(
-		{ type: 'object', properties: schema.properties },
-		values,
-		schema.definitions
-	);
+const coerceFormValues = (schema, values) => {
+	return coerceValue({ type: 'object', properties: schema.properties }, values, schema.definitions);
 };
 
 export default coerceFormValues;

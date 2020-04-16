@@ -12,30 +12,27 @@ import {
  */
 import { get } from 'lodash';
 
-describe( 'updateManagedContactDetailsShape', function() {
-	const testPropertyWithAccessor = ( merge, construct, update, data ) => accessor => {
-		const value = get(
-			updateManagedContactDetailsShape( merge, construct, update, data ),
-			accessor
-		);
-		if ( get( update, accessor ) !== undefined && get( data, accessor ) !== undefined ) {
-			it( 'update.A and data.A are both defined at ' + accessor, function() {
-				expect( value ).toEqual( merge( get( update, accessor ), get( data, accessor ) ) );
-			} );
-		} else if ( get( update, accessor ) !== undefined && get( data, accessor ) === undefined ) {
-			it( 'update.A is defined, data.A is undefined at ' + accessor, function() {
-				expect( value ).toEqual( construct( get( update, accessor ) ) );
-			} );
-		} else if ( get( update, accessor ) === undefined && get( data, accessor ) !== undefined ) {
-			it( 'data.A is defined, update.A is undefined at ' + accessor, function() {
-				expect( value ).toEqual( get( data, accessor ) );
-			} );
-		} else if ( get( update, accessor ) === undefined && get( data, accessor ) === undefined ) {
-			it( 'data.A and update.A are both undefined at ' + accessor, function() {
-				expect( value ).toBeUndefined();
-			} );
+describe('updateManagedContactDetailsShape', function () {
+	const testPropertyWithAccessor = (merge, construct, update, data) => (accessor) => {
+		const value = get(updateManagedContactDetailsShape(merge, construct, update, data), accessor);
+		if (get(update, accessor) !== undefined && get(data, accessor) !== undefined) {
+			it('update.A and data.A are both defined at ' + accessor, function () {
+				expect(value).toEqual(merge(get(update, accessor), get(data, accessor)));
+			});
+		} else if (get(update, accessor) !== undefined && get(data, accessor) === undefined) {
+			it('update.A is defined, data.A is undefined at ' + accessor, function () {
+				expect(value).toEqual(construct(get(update, accessor)));
+			});
+		} else if (get(update, accessor) === undefined && get(data, accessor) !== undefined) {
+			it('data.A is defined, update.A is undefined at ' + accessor, function () {
+				expect(value).toEqual(get(data, accessor));
+			});
+		} else if (get(update, accessor) === undefined && get(data, accessor) === undefined) {
+			it('data.A and update.A are both undefined at ' + accessor, function () {
+				expect(value).toBeUndefined();
+			});
 		} else {
-			throw new Error( 'testPropertyWithAccessor: this case should be unreachable.' );
+			throw new Error('testPropertyWithAccessor: this case should be unreachable.');
 		}
 		return true;
 	};
@@ -67,22 +64,22 @@ describe( 'updateManagedContactDetailsShape', function() {
 		'extra.fr.sirenSirat',
 	];
 
-	const testProperty = ( merge, construct, update, data ) => {
+	const testProperty = (merge, construct, update, data) => {
 		expect(
-			accessors.map( testPropertyWithAccessor( merge, construct, update, data ) ).every( x => x )
+			accessors.map(testPropertyWithAccessor(merge, construct, update, data)).every((x) => x)
 		).toBeTruthy();
 	};
 
-	function getRandomBoolean( prob ): boolean {
-		return Math.random() >= ( prob ?? 0.5 );
+	function getRandomBoolean(prob): boolean {
+		return Math.random() >= (prob ?? 0.5);
 	}
 
-	function getRandomInt( min, max ): number {
-		return Math.floor( Math.random() * ( max - min ) ) + min;
+	function getRandomInt(min, max): number {
+		return Math.floor(Math.random() * (max - min)) + min;
 	}
 
 	// The property should be satisfied for _all_ data, so we check it for arbitrary data.
-	const arbitraryData: ( gen: () => T ) => ManagedContactDetailsShape< T > = gen => {
+	const arbitraryData: (gen: () => T) => ManagedContactDetailsShape<T> = (gen) => {
 		const data = {
 			firstName: gen(),
 			lastName: gen(),
@@ -102,21 +99,21 @@ describe( 'updateManagedContactDetailsShape', function() {
 			tldExtraFields: {},
 		};
 
-		if ( getRandomBoolean() ) {
+		if (getRandomBoolean()) {
 			data.tldExtraFields.ca = {
 				lang: gen(),
 				legalType: gen(),
 				ciraAgreementAccepted: gen(),
 			};
 		}
-		if ( getRandomBoolean() ) {
+		if (getRandomBoolean()) {
 			data.tldExtraFields.uk = {
 				registrantType: gen(),
 				registrationNumber: gen(),
 				tradingName: gen(),
 			};
 		}
-		if ( getRandomBoolean() ) {
+		if (getRandomBoolean()) {
 			data.tldExtraFields.fr = {
 				registrantType: gen(),
 				trademarkNumber: gen(),
@@ -127,94 +124,91 @@ describe( 'updateManagedContactDetailsShape', function() {
 		return data;
 	};
 
-	describe( 'with update:boolean and data:number', function() {
+	describe('with update:boolean and data:number', function () {
 		// arbitrarily chosen function
-		const m = getRandomInt( -10, 10 );
-		const b = getRandomInt( -10, 10 );
-		const merge: ( arg0: boolean, arg1: number ) => number = ( arg0, arg1 ) => {
+		const m = getRandomInt(-10, 10);
+		const b = getRandomInt(-10, 10);
+		const merge: (arg0: boolean, arg1: number) => number = (arg0, arg1) => {
 			return arg0 ? m * arg1 : arg1 + b;
 		};
 		// arbitrarily chosen function
-		const t = getRandomInt( -10, 10 );
-		const f = getRandomInt( -10, 10 );
-		const construct: ( arg0: boolean ) => number = arg0 => {
+		const t = getRandomInt(-10, 10);
+		const f = getRandomInt(-10, 10);
+		const construct: (arg0: boolean) => number = (arg0) => {
 			return arg0 ? t : f;
 		};
-		const update: ManagedContactDetailsShape< boolean > = arbitraryData( () => getRandomBoolean() );
-		const data: ManagedContactDetailsShape< number > = arbitraryData( () => getRandomInt( 0, 10 ) );
-		testProperty( merge, construct, update, data );
-	} );
+		const update: ManagedContactDetailsShape<boolean> = arbitraryData(() => getRandomBoolean());
+		const data: ManagedContactDetailsShape<number> = arbitraryData(() => getRandomInt(0, 10));
+		testProperty(merge, construct, update, data);
+	});
 
-	describe( 'with update:(boolean | undefined) and data:number', function() {
+	describe('with update:(boolean | undefined) and data:number', function () {
 		// arbitrarily chosen function
-		const m = getRandomInt( -10, 10 );
-		const b = getRandomInt( -10, 10 );
-		const merge: ( arg0: boolean | undefined, arg1: number ) => number = ( arg0, arg1 ) => {
+		const m = getRandomInt(-10, 10);
+		const b = getRandomInt(-10, 10);
+		const merge: (arg0: boolean | undefined, arg1: number) => number = (arg0, arg1) => {
 			return arg0 ? m * arg1 : arg1 + b;
 		};
 		// arbitrarily chosen function
-		const t = getRandomInt( -10, 10 );
-		const f = getRandomInt( -10, 10 );
-		const construct: ( arg0: boolean | undefined ) => number = arg0 => {
+		const t = getRandomInt(-10, 10);
+		const f = getRandomInt(-10, 10);
+		const construct: (arg0: boolean | undefined) => number = (arg0) => {
 			return arg0 ? t : f;
 		};
-		const update: ManagedContactDetailsShape< boolean | undefined > = arbitraryData( () =>
+		const update: ManagedContactDetailsShape<boolean | undefined> = arbitraryData(() =>
 			getRandomBoolean() ? undefined : getRandomBoolean()
 		);
-		const data: ManagedContactDetailsShape< number > = arbitraryData( () => getRandomInt( 0, 10 ) );
-		testProperty( merge, construct, update, data );
-	} );
+		const data: ManagedContactDetailsShape<number> = arbitraryData(() => getRandomInt(0, 10));
+		testProperty(merge, construct, update, data);
+	});
 
-	describe( 'with update:boolean and data:(number | undefined)', function() {
+	describe('with update:boolean and data:(number | undefined)', function () {
 		// arbitrarily chosen function
-		const m = getRandomInt( -10, 10 );
-		const b = getRandomInt( -10, 10 );
-		const merge: ( arg0: boolean, arg1: number | undefined ) => number = ( arg0, arg1 ) => {
+		const m = getRandomInt(-10, 10);
+		const b = getRandomInt(-10, 10);
+		const merge: (arg0: boolean, arg1: number | undefined) => number = (arg0, arg1) => {
 			return arg0 ? m * arg1 : arg1 + b;
 		};
 		// arbitrarily chosen function
-		const t = getRandomInt( -10, 10 );
-		const f = getRandomInt( -10, 10 );
-		const construct: ( arg0: boolean ) => number = arg0 => {
+		const t = getRandomInt(-10, 10);
+		const f = getRandomInt(-10, 10);
+		const construct: (arg0: boolean) => number = (arg0) => {
 			return arg0 ? t : f;
 		};
-		const update: ManagedContactDetailsShape< boolean > = arbitraryData( () => getRandomBoolean() );
-		const data: ManagedContactDetailsShape< number > = arbitraryData( () =>
-			getRandomBoolean() ? undefined : getRandomInt( 0, 10 )
+		const update: ManagedContactDetailsShape<boolean> = arbitraryData(() => getRandomBoolean());
+		const data: ManagedContactDetailsShape<number> = arbitraryData(() =>
+			getRandomBoolean() ? undefined : getRandomInt(0, 10)
 		);
-		testProperty( merge, construct, update, data );
-	} );
+		testProperty(merge, construct, update, data);
+	});
 
-	describe( 'with update:(boolean | undefined) and data:(number | undefined)', function() {
+	describe('with update:(boolean | undefined) and data:(number | undefined)', function () {
 		// arbitrarily chosen function
-		const m = getRandomInt( -10, 10 );
-		const b = getRandomInt( -10, 10 );
-		const merge: ( arg0: boolean | undefined, arg1: number | undefined ) => number = (
-			arg0,
-			arg1
-		) => {
+		const m = getRandomInt(-10, 10);
+		const b = getRandomInt(-10, 10);
+		const merge: (arg0: boolean | undefined, arg1: number | undefined) => number = (arg0, arg1) => {
 			return arg0 ? m * arg1 : arg1 + b;
 		};
 		// arbitrarily chosen function
-		const t = getRandomInt( -10, 10 );
-		const f = getRandomInt( -10, 10 );
-		const construct: ( arg0: boolean | undefined ) => number = arg0 => {
+		const t = getRandomInt(-10, 10);
+		const f = getRandomInt(-10, 10);
+		const construct: (arg0: boolean | undefined) => number = (arg0) => {
 			return arg0 ? t : f;
 		};
-		const update: ManagedContactDetailsShape< boolean > = arbitraryData( () =>
+		const update: ManagedContactDetailsShape<boolean> = arbitraryData(() =>
 			getRandomBoolean() ? undefined : getRandomBoolean()
 		);
-		const data: ManagedContactDetailsShape< number > = arbitraryData( () =>
-			getRandomBoolean() ? undefined : getRandomInt( 0, 10 )
+		const data: ManagedContactDetailsShape<number> = arbitraryData(() =>
+			getRandomBoolean() ? undefined : getRandomInt(0, 10)
 		);
-		testProperty( merge, construct, update, data );
-	} );
-} );
+		testProperty(merge, construct, update, data);
+	});
+});
 
-describe( 'flattenManagedContactDetailsShape', function() {
-	it( 'with no extra fields', () => {
+describe('flattenManagedContactDetailsShape', function () {
+	it('with no extra fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape((x) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -231,13 +225,13 @@ describe( 'flattenManagedContactDetailsShape', function() {
 				fax: 'fax',
 				vatId: 'vatId',
 				tldExtraFields: {},
-			} )
-		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5 ] );
-	} );
+			})
+		).toEqual([9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5]);
+	});
 
-	it( 'with ca fields', () => {
+	it('with ca fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape((x) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -260,13 +254,13 @@ describe( 'flattenManagedContactDetailsShape', function() {
 						ciraAgreementAccepted: 'ciraAgreementAccepted',
 					},
 				},
-			} )
-		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 4, 9, 21 ] );
-	} );
+			})
+		).toEqual([9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 4, 9, 21]);
+	});
 
-	it( 'with uk fields', () => {
+	it('with uk fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape((x) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -289,13 +283,13 @@ describe( 'flattenManagedContactDetailsShape', function() {
 						tradingName: 'tradingName',
 					},
 				},
-			} )
-		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 18, 11 ] );
-	} );
+			})
+		).toEqual([9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 18, 11]);
+	});
 
-	it( 'with fr fields', () => {
+	it('with fr fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape((x) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -318,13 +312,13 @@ describe( 'flattenManagedContactDetailsShape', function() {
 						sirenSirat: 'sirenSirat',
 					},
 				},
-			} )
-		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 15, 10 ] );
-	} );
+			})
+		).toEqual([9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 15, 10]);
+	});
 
-	it( 'with all fields', () => {
+	it('with all fields', () => {
 		expect(
-			flattenManagedContactDetailsShape( x => x.length, {
+			flattenManagedContactDetailsShape((x) => x.length, {
 				firstName: 'firstName',
 				lastName: 'lastName',
 				organization: 'organization',
@@ -357,32 +351,7 @@ describe( 'flattenManagedContactDetailsShape', function() {
 						sirenSirat: 'sirenSirat',
 					},
 				},
-			} )
-		).toEqual( [
-			9,
-			8,
-			12,
-			5,
-			14,
-			5,
-			18,
-			8,
-			8,
-			4,
-			5,
-			10,
-			11,
-			3,
-			5,
-			4,
-			9,
-			21,
-			14,
-			18,
-			11,
-			14,
-			15,
-			10,
-		] );
-	} );
-} );
+			})
+		).toEqual([9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 4, 9, 21, 14, 18, 11, 14, 15, 10]);
+	});
+});

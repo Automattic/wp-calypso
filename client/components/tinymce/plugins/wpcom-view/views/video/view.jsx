@@ -15,8 +15,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { stringify, parse } from 'lib/shortcode';
 import Shortcode from 'blocks/shortcode';
 
-function VideoView( { siteId, content, width } ) {
-	if ( ! siteId || ! width ) {
+function VideoView({ siteId, content, width }) {
+	if (!siteId || !width) {
 		return null;
 	}
 
@@ -29,13 +29,13 @@ function VideoView( { siteId, content, width } ) {
 					},
 				},
 			},
-			parse( content )
+			parse(content)
 		)
 	);
 
 	return (
-		<Shortcode siteId={ siteId } width={ width } allowSameOrigin={ true }>
-			{ shortcode }
+		<Shortcode siteId={siteId} width={width} allowSameOrigin={true}>
+			{shortcode}
 		</Shortcode>
 	);
 }
@@ -46,6 +46,6 @@ VideoView.propTypes = {
 	width: PropTypes.number,
 };
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( resizableView( VideoView ) );
+export default connect((state) => ({
+	siteId: getSelectedSiteId(state),
+}))(resizableView(VideoView));

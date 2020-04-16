@@ -7,7 +7,7 @@ import {
 	WOOCOMMERCE_ORDER_INVOICE_SEND_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const sendOrderInvoice = ( siteId, orderId, onSuccess, onFailure ) => {
+export const sendOrderInvoice = (siteId, orderId, onSuccess, onFailure) => {
 	return {
 		type: WOOCOMMERCE_ORDER_INVOICE_SEND,
 		siteId,
@@ -17,7 +17,7 @@ export const sendOrderInvoice = ( siteId, orderId, onSuccess, onFailure ) => {
 	};
 };
 
-export const orderInvoiceFailure = ( siteId, orderId, error = {} ) => {
+export const orderInvoiceFailure = (siteId, orderId, error = {}) => {
 	return {
 		type: WOOCOMMERCE_ORDER_INVOICE_SEND_FAILURE,
 		siteId,
@@ -26,7 +26,7 @@ export const orderInvoiceFailure = ( siteId, orderId, error = {} ) => {
 	};
 };
 
-export const orderInvoiceSuccess = ( siteId, orderId, note ) => {
+export const orderInvoiceSuccess = (siteId, orderId, note) => {
 	return {
 		type: WOOCOMMERCE_ORDER_INVOICE_SEND_SUCCESS,
 		siteId,

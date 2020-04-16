@@ -10,8 +10,8 @@ import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
  * @param {object} action data request action
  * @returns {*} metadata about request
  */
-export default ( state, action ) => {
-	const data = state?.dataRequests?.[ getRequestKey( action ) ] ?? {};
+export default (state, action) => {
+	const data = state?.dataRequests?.[getRequestKey(action)] ?? {};
 
 	return {
 		...data,

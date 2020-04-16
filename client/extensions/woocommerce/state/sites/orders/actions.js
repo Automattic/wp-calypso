@@ -27,7 +27,7 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const deleteOrder = ( site, orderId ) => {
+export const deleteOrder = (site, orderId) => {
 	return {
 		type: WOOCOMMERCE_ORDER_DELETE,
 		siteId: site.ID,
@@ -36,7 +36,7 @@ export const deleteOrder = ( site, orderId ) => {
 	};
 };
 
-export const deleteOrderError = ( siteId, orderId, error ) => {
+export const deleteOrderError = (siteId, orderId, error) => {
 	return {
 		type: WOOCOMMERCE_ORDER_DELETE_FAILURE,
 		siteId,
@@ -44,7 +44,7 @@ export const deleteOrderError = ( siteId, orderId, error ) => {
 		error,
 	};
 };
-export const deleteOrderSuccess = ( siteId, orderId ) => {
+export const deleteOrderSuccess = (siteId, orderId) => {
 	return {
 		type: WOOCOMMERCE_ORDER_DELETE_SUCCESS,
 		siteId,
@@ -52,10 +52,10 @@ export const deleteOrderSuccess = ( siteId, orderId ) => {
 	};
 };
 
-export const fetchOrders = ( siteId, requestedQuery = {} ) => {
+export const fetchOrders = (siteId, requestedQuery = {}) => {
 	const query = { ...DEFAULT_QUERY, ...requestedQuery };
 	// Convert URL status to status group
-	query.status = getOrderStatusGroup( query.status );
+	query.status = getOrderStatusGroup(query.status);
 
 	return {
 		type: WOOCOMMERCE_ORDERS_REQUEST,
@@ -64,30 +64,30 @@ export const fetchOrders = ( siteId, requestedQuery = {} ) => {
 	};
 };
 
-export const failOrders = ( siteId, query = {}, error = false ) => {
+export const failOrders = (siteId, query = {}, error = false) => {
 	return {
 		type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 		siteId,
-		query: getNormalizedOrdersQuery( query ),
+		query: getNormalizedOrdersQuery(query),
 		error,
 	};
 };
 
-export const updateOrders = ( siteId, query = {}, orders = [], total = 0 ) => {
+export const updateOrders = (siteId, query = {}, orders = [], total = 0) => {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( ! isArray( orders ) ) {
-		return failOrders( siteId, query, orders );
+	if (!isArray(orders)) {
+		return failOrders(siteId, query, orders);
 	}
 	return {
 		type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 		siteId,
-		query: getNormalizedOrdersQuery( query ),
+		query: getNormalizedOrdersQuery(query),
 		total,
 		orders,
 	};
 };
 
-export const fetchOrder = ( siteId, orderId ) => {
+export const fetchOrder = (siteId, orderId) => {
 	return {
 		type: WOOCOMMERCE_ORDER_REQUEST,
 		siteId,
@@ -95,7 +95,7 @@ export const fetchOrder = ( siteId, orderId ) => {
 	};
 };
 
-export const failOrder = ( siteId, orderId, error = false ) => {
+export const failOrder = (siteId, orderId, error = false) => {
 	return {
 		type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 		siteId,
@@ -104,10 +104,10 @@ export const failOrder = ( siteId, orderId, error = false ) => {
 	};
 };
 
-export const updateOrder = ( siteId, orderId, order ) => {
+export const updateOrder = (siteId, orderId, order) => {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( 'undefined' === typeof order.id ) {
-		return failOrder( siteId, orderId, order );
+	if ('undefined' === typeof order.id) {
+		return failOrder(siteId, orderId, order);
 	}
 	return {
 		type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -123,7 +123,7 @@ export const saveOrder = (
 	onSuccess = noop,
 	onFailure = noop
 ) => {
-	order = transformOrderForApi( removeTemporaryIds( order ) );
+	order = transformOrderForApi(removeTemporaryIds(order));
 	return {
 		type: WOOCOMMERCE_ORDER_UPDATE,
 		siteId,
@@ -134,7 +134,7 @@ export const saveOrder = (
 	};
 };
 
-export const saveOrderError = ( siteId, orderId, error = false ) => {
+export const saveOrderError = (siteId, orderId, error = false) => {
 	return {
 		type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
 		siteId,
@@ -143,10 +143,10 @@ export const saveOrderError = ( siteId, orderId, error = false ) => {
 	};
 };
 
-export const saveOrderSuccess = ( siteId, orderId, order = {} ) => {
+export const saveOrderSuccess = (siteId, orderId, order = {}) => {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( 'undefined' === typeof order.id ) {
-		return saveOrderError( siteId, orderId, order );
+	if ('undefined' === typeof order.id) {
+		return saveOrderError(siteId, orderId, order);
 	}
 	return {
 		type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,

@@ -62,39 +62,39 @@ class ReaderPostOptionsMenu extends React.Component {
 	};
 
 	blockSite = () => {
-		stats.recordAction( 'blocked_blog' );
-		stats.recordGaEvent( 'Clicked Block Site' );
-		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
-		this.props.blockSite( this.props.post.site_ID );
+		stats.recordAction('blocked_blog');
+		stats.recordGaEvent('Clicked Block Site');
+		stats.recordTrackForPost('calypso_reader_block_site', this.props.post);
+		this.props.blockSite(this.props.post.site_ID);
 		this.props.onBlock();
 	};
 
 	reportPost = () => {
-		if ( ! this.props.post || ! this.props.post.URL ) {
+		if (!this.props.post || !this.props.post.URL) {
 			return;
 		}
 
-		stats.recordAction( 'report_post' );
-		stats.recordGaEvent( 'Clicked Report Post', 'post_options' );
-		stats.recordTrackForPost( 'calypso_reader_post_reported', this.props.post );
+		stats.recordAction('report_post');
+		stats.recordGaEvent('Clicked Report Post', 'post_options');
+		stats.recordTrackForPost('calypso_reader_post_reported', this.props.post);
 
 		window.open(
-			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ),
+			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent(this.props.post.URL),
 			'_blank'
 		);
 	};
 
 	reportSite = () => {
-		if ( ! this.props.site || ! this.props.site.URL ) {
+		if (!this.props.site || !this.props.site.URL) {
 			return;
 		}
 
-		stats.recordAction( 'report_site' );
-		stats.recordGaEvent( 'Clicked Report Site', 'post_options' );
-		stats.recordTrackForPost( 'calypso_reader_site_reported', this.props.site );
+		stats.recordAction('report_site');
+		stats.recordGaEvent('Clicked Report Site', 'post_options');
+		stats.recordTrackForPost('calypso_reader_site_reported', this.props.site);
 
 		window.open(
-			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.site.URL ),
+			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent(this.props.site.URL),
 			'_blank'
 		);
 	};
@@ -105,11 +105,11 @@ class ReaderPostOptionsMenu extends React.Component {
 			: this.props.post.feed_URL || this.props.post.site_URL;
 	};
 
-	onMenuToggle = isMenuVisible => {
-		stats.recordAction( isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu' );
-		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
+	onMenuToggle = (isMenuVisible) => {
+		stats.recordAction(isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu');
+		stats.recordGaEvent(isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu');
 		stats.recordTrackForPost(
-			'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ),
+			'calypso_reader_post_options_menu_' + (isMenuVisible ? 'opened' : 'closed'),
 			this.props.post
 		);
 	};
@@ -118,135 +118,131 @@ class ReaderPostOptionsMenu extends React.Component {
 		const { post, site } = this.props;
 		let editUrl = '//wordpress.com/post/' + post.site_ID + '/' + post.ID + '/';
 
-		if ( site && site.slug ) {
-			editUrl = PostUtils.getEditURL( post, site );
+		if (site && site.slug) {
+			editUrl = PostUtils.getEditURL(post, site);
 		}
 
-		stats.recordAction( 'edit_post' );
-		stats.recordGaEvent( 'Clicked Edit Post', 'post_options' );
-		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', this.props.post );
+		stats.recordAction('edit_post');
+		stats.recordGaEvent('Clicked Edit Post', 'post_options');
+		stats.recordTrackForPost('calypso_reader_edit_post_clicked', this.props.post);
 
-		setTimeout( function() {
+		setTimeout(function () {
 			// give the analytics a chance to escape
-			if ( editUrl.indexOf( '//' ) === 0 ) {
+			if (editUrl.indexOf('//') === 0) {
 				window.location.href = editUrl;
 			} else {
-				page( editUrl );
+				page(editUrl);
 			}
-		}, 100 );
+		}, 100);
 	};
 
 	visitPost = () => {
 		const post = this.props.post;
 
-		if ( ! post || ! post.URL ) {
+		if (!post || !post.URL) {
 			return;
 		}
 
-		stats.recordAction( 'visit_post' );
-		stats.recordGaEvent( 'Clicked Visit Post', 'post_options' );
-		stats.recordTrackForPost( 'calypso_reader_visit_post_clicked', post );
+		stats.recordAction('visit_post');
+		stats.recordGaEvent('Clicked Visit Post', 'post_options');
+		stats.recordTrackForPost('calypso_reader_visit_post_clicked', post);
 
-		window.open( post.URL, '_blank' );
+		window.open(post.URL, '_blank');
 	};
 
 	render() {
 		const { post, site, feed, teams, translate, position } = this.props;
 
-		if ( ! post ) {
+		if (!post) {
 			return null;
 		}
 
 		const { ID: postId, site_ID: siteId } = post;
-		const isEditPossible = PostUtils.userCan( 'edit_post', post );
-		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
+		const isEditPossible = PostUtils.userCan('edit_post', post);
+		const isDiscoverPost = DiscoverHelper.isDiscoverPost(post);
 		const followUrl = this.getFollowUrl();
-		const isTeamMember = isAutomatticTeamMember( teams );
+		const isTeamMember = isAutomatticTeamMember(teams);
 		const showConversationFollowButton =
-			this.props.showConversationFollow && shouldShowConversationFollowButton( post );
+			this.props.showConversationFollow && shouldShowConversationFollowButton(post);
 
 		let isBlockPossible = false;
 
 		// Should we show the 'block' option?
 		if (
 			post.site_ID &&
-			( ! post.is_external || post.is_jetpack ) &&
-			! isEditPossible &&
-			! isDiscoverPost
+			(!post.is_external || post.is_jetpack) &&
+			!isEditPossible &&
+			!isDiscoverPost
 		) {
 			isBlockPossible = true;
 		}
 
-		const classes = classnames( 'reader-post-options-menu', this.props.className );
+		const classes = classnames('reader-post-options-menu', this.props.className);
 
 		return (
-			<span className={ classes }>
-				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-				{ ! site && post && ! post.is_external && post.site_ID && (
-					<QueryReaderSite siteId={ +post.site_ID } />
-				) }
-				{ ! teams && <QueryReaderTeams /> }
+			<span className={classes}>
+				{!feed && post && post.feed_ID && <QueryReaderFeed feedId={+post.feed_ID} />}
+				{!site && post && !post.is_external && post.site_ID && (
+					<QueryReaderSite siteId={+post.site_ID} />
+				)}
+				{!teams && <QueryReaderTeams />}
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
 					popoverClassName="reader-post-options-menu__popover"
-					onToggle={ this.onMenuToggle }
-					position={ position }
+					onToggle={this.onMenuToggle}
+					position={position}
 				>
-					{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
+					{isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={+site.ID} />}
 
-					{ this.props.showFollow && (
+					{this.props.showFollow && (
 						<FollowButton
-							tagName={ PopoverMenuItem }
-							siteUrl={ followUrl }
-							followLabel={ showConversationFollowButton ? translate( 'Follow site' ) : null }
-							followingLabel={ showConversationFollowButton ? translate( 'Following site' ) : null }
+							tagName={PopoverMenuItem}
+							siteUrl={followUrl}
+							followLabel={showConversationFollowButton ? translate('Follow site') : null}
+							followingLabel={showConversationFollowButton ? translate('Following site') : null}
 						/>
-					) }
+					)}
 
-					{ showConversationFollowButton && (
+					{showConversationFollowButton && (
 						<ConversationFollowButton
-							tagName={ PopoverMenuItem }
-							siteId={ siteId }
-							postId={ postId }
-							post={ post }
-							followSource={ READER_POST_OPTIONS_MENU }
+							tagName={PopoverMenuItem}
+							siteId={siteId}
+							postId={postId}
+							post={post}
+							followSource={READER_POST_OPTIONS_MENU}
 						/>
-					) }
+					)}
 
-					{ this.props.showVisitPost && post.URL && (
-						<PopoverMenuItem onClick={ this.visitPost } icon="external">
-							{ translate( 'Visit post' ) }
+					{this.props.showVisitPost && post.URL && (
+						<PopoverMenuItem onClick={this.visitPost} icon="external">
+							{translate('Visit post')}
 						</PopoverMenuItem>
-					) }
+					)}
 
-					{ this.props.showEditPost && isEditPossible && (
-						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
-							{ translate( 'Edit post' ) }
+					{this.props.showEditPost && isEditPossible && (
+						<PopoverMenuItem onClick={this.editPost} icon="pencil">
+							{translate('Edit post')}
 						</PopoverMenuItem>
-					) }
+					)}
 
-					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
-						( isBlockPossible || isDiscoverPost ) && (
-							<hr className="reader-post-options-menu__hr" />
-						) }
+					{(this.props.showFollow || isEditPossible || post.URL) &&
+						(isBlockPossible || isDiscoverPost) && <hr className="reader-post-options-menu__hr" />}
 
-					{ isBlockPossible && (
-						<PopoverMenuItem onClick={ this.blockSite }>
-							{ translate( 'Block site' ) }
+					{isBlockPossible && (
+						<PopoverMenuItem onClick={this.blockSite}>{translate('Block site')}</PopoverMenuItem>
+					)}
+
+					{((this.props.showReportPost && isBlockPossible) || isDiscoverPost) && (
+						<PopoverMenuItem onClick={this.reportPost}>
+							{translate('Report this post')}
 						</PopoverMenuItem>
-					) }
+					)}
 
-					{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
-						<PopoverMenuItem onClick={ this.reportPost }>
-							{ translate( 'Report this post' ) }
+					{this.props.showReportSite && site && isBlockPossible && (
+						<PopoverMenuItem onClick={this.reportSite}>
+							{translate('Report this site')}
 						</PopoverMenuItem>
-					) }
-
-					{ this.props.showReportSite && site && isBlockPossible && (
-						<PopoverMenuItem onClick={ this.reportSite }>
-							{ translate( 'Report this site' ) }
-						</PopoverMenuItem>
-					) }
+					)}
 				</EllipsisMenu>
 			</span>
 		);
@@ -254,16 +250,16 @@ class ReaderPostOptionsMenu extends React.Component {
 }
 
 export default connect(
-	( state, { post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
+	(state, { post: { feed_ID: feedId, is_external, site_ID } = {} }) => {
 		const siteId = is_external ? null : site_ID;
 
 		return Object.assign(
-			{ teams: getReaderTeams( state ) },
-			feedId > 0 && { feed: getFeed( state, feedId ) },
-			siteId > 0 && { site: getSite( state, siteId ) }
+			{ teams: getReaderTeams(state) },
+			feedId > 0 && { feed: getFeed(state, feedId) },
+			siteId > 0 && { site: getSite(state, siteId) }
 		);
 	},
 	{
 		blockSite,
 	}
-)( localize( ReaderPostOptionsMenu ) );
+)(localize(ReaderPostOptionsMenu));

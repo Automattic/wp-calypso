@@ -10,7 +10,7 @@ import sinon from 'sinon';
 import { isActivityLogLoaded, isActivityLogLoading, getActivityLogEvents } from '../selectors';
 import * as plugins from 'woocommerce/state/selectors/plugins';
 
-const getState = ( notesState, labelsState ) => ( {
+const getState = (notesState, labelsState) => ({
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -29,7 +29,7 @@ const getState = ( notesState, labelsState ) => ( {
 			},
 		},
 	},
-} );
+});
 
 const notesLoadingSubtree = {
 	isLoading: {
@@ -64,7 +64,7 @@ const notesLoadedSubtree = {
 		},
 	},
 	orders: {
-		45: [ 1, 2 ],
+		45: [1, 2],
 	},
 };
 
@@ -98,7 +98,7 @@ const labelsLoadedSubtree = {
 			created_date: 4000000,
 			used_date: null,
 			expiry_date: 4500000,
-			product_names: [ 'poutine' ],
+			product_names: ['poutine'],
 			package_name: 'box',
 			tracking: '12345',
 			carrier_id: 'canada_post',
@@ -119,7 +119,7 @@ const labelsLoadedSubtree = {
 			created_date: 3000000,
 			used_date: null,
 			expiry_date: null,
-			product_names: [ 'Autograph' ],
+			product_names: ['Autograph'],
 			package_name: 'Small Envelope',
 			tracking: '12345',
 			carrier_id: 'usps',
@@ -141,7 +141,7 @@ const labelsLoadedSubtree = {
 			created_date: 2000000,
 			used_date: null,
 			expiry_date: 2500000,
-			product_names: [ 'blender' ],
+			product_names: ['blender'],
 			package_name: 'regular box',
 			tracking: '12345',
 			carrier_id: 'canada_post',
@@ -161,7 +161,7 @@ const labelsLoadedSubtree = {
 			created_date: 1000000,
 			used_date: 1100000,
 			expiry_date: 1500000,
-			product_names: [ 'bee', 'bee' ],
+			product_names: ['bee', 'bee'],
 			package_name: 'bee box',
 			tracking: '12345',
 			carrier_id: 'usps',
@@ -177,7 +177,7 @@ const labelsLoadedSubtree = {
 			created_date: 1000000,
 			used_date: 1100000,
 			expiry_date: 1500000,
-			product_names: [ 'bee', 'bee' ],
+			product_names: ['bee', 'bee'],
 			package_name: 'bee box',
 			tracking: '12345',
 			carrier_id: 'usps',
@@ -193,7 +193,7 @@ const labelsLoadedSubtree = {
 			created_date: 1000000,
 			used_date: 1100000,
 			expiry_date: 1500000,
-			product_names: [ 'bee', 'bee' ],
+			product_names: ['bee', 'bee'],
 			package_name: 'bee box',
 			tracking: '12345',
 			carrier_id: 'usps',
@@ -227,7 +227,7 @@ const anonymizedLabelsSubtree = {
 			created_date: 4000000,
 			used_date: null,
 			expiry_date: 4500000,
-			product_names: [ 'poutine' ],
+			product_names: ['poutine'],
 			package_name: 'box',
 			tracking: '12345',
 			carrier_id: 'canada_post',
@@ -237,131 +237,131 @@ const anonymizedLabelsSubtree = {
 	],
 };
 
-const notesAndLabelsLoadingState = getState( notesLoadingSubtree, labelsLoadingSubtree );
-const notesLoadingState = getState( notesLoadingSubtree, labelsLoadedSubtree );
-const labelsLoadingState = getState( notesLoadedSubtree, labelsLoadingSubtree );
-const loadedState = getState( notesLoadedSubtree, labelsLoadedSubtree );
+const notesAndLabelsLoadingState = getState(notesLoadingSubtree, labelsLoadingSubtree);
+const notesLoadingState = getState(notesLoadingSubtree, labelsLoadedSubtree);
+const labelsLoadingState = getState(notesLoadedSubtree, labelsLoadingSubtree);
+const loadedState = getState(notesLoadedSubtree, labelsLoadedSubtree);
 const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	let wcsEnabledStub;
-	beforeEach( () => {
-		wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( true );
-	} );
+	beforeEach(() => {
+		wcsEnabledStub = sinon.stub(plugins, 'isWcsEnabled').returns(true);
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		wcsEnabledStub.restore();
-	} );
+	});
 
-	describe( '#isActivityLogLoaded', () => {
-		it( 'should be false when notes are currently being fetched for this order.', () => {
-			expect( isActivityLogLoaded( notesAndLabelsLoadingState, 45, 123 ) ).to.be.false;
-			expect( isActivityLogLoaded( notesLoadingState, 45, 123 ) ).to.be.false;
-		} );
+	describe('#isActivityLogLoaded', () => {
+		it('should be false when notes are currently being fetched for this order.', () => {
+			expect(isActivityLogLoaded(notesAndLabelsLoadingState, 45, 123)).to.be.false;
+			expect(isActivityLogLoaded(notesLoadingState, 45, 123)).to.be.false;
+		});
 
-		it( 'should be false when notes are loaded but labels are not.', () => {
-			expect( isActivityLogLoaded( labelsLoadingState, 45, 123 ) ).to.not.be.ok;
-		} );
+		it('should be false when notes are loaded but labels are not.', () => {
+			expect(isActivityLogLoaded(labelsLoadingState, 45, 123)).to.not.be.ok;
+		});
 
-		it( 'should be true when notes are loaded and the WooCommerce Services extension is disabled.', () => {
+		it('should be true when notes are loaded and the WooCommerce Services extension is disabled.', () => {
 			wcsEnabledStub.restore();
-			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
-			expect( isActivityLogLoaded( labelsLoadingState, 45, 123 ) ).to.be.true;
-		} );
+			wcsEnabledStub = sinon.stub(plugins, 'isWcsEnabled').returns(false);
+			expect(isActivityLogLoaded(labelsLoadingState, 45, 123)).to.be.true;
+		});
 
-		it( 'should be true when notes and labels are loaded for this order.', () => {
-			expect( isActivityLogLoaded( loadedState, 45, 123 ) ).to.be.true;
-		} );
+		it('should be true when notes and labels are loaded for this order.', () => {
+			expect(isActivityLogLoaded(loadedState, 45, 123)).to.be.true;
+		});
 
-		it( 'should be false when notes are loaded only for a different order.', () => {
-			expect( isActivityLogLoaded( loadedState, 20, 123 ) ).to.be.false;
-		} );
+		it('should be false when notes are loaded only for a different order.', () => {
+			expect(isActivityLogLoaded(loadedState, 20, 123)).to.be.false;
+		});
 
-		it( 'should be false when notes are loaded only for a different site.', () => {
-			expect( isActivityLogLoaded( loadedState, 45, 456 ) ).to.be.false;
-		} );
+		it('should be false when notes are loaded only for a different site.', () => {
+			expect(isActivityLogLoaded(loadedState, 45, 456)).to.be.false;
+		});
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( isActivityLogLoaded( loadedStateWithUi, 45 ) ).to.be.true;
-		} );
+		it('should get the siteId from the UI tree if not provided.', () => {
+			expect(isActivityLogLoaded(loadedStateWithUi, 45)).to.be.true;
+		});
 
-		it( 'should be true if labels fetch errors out, but notes were loaded', () => {
-			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsErrorSubtree ), 45, 123 ) )
-				.to.be.true;
-		} );
+		it('should be true if labels fetch errors out, but notes were loaded', () => {
+			expect(isActivityLogLoaded(getState(notesLoadedSubtree, labelsErrorSubtree), 45, 123)).to.be
+				.true;
+		});
 
-		it( 'should be false if labels fetch errors out, and notes were not loaded', () => {
-			expect( isActivityLogLoaded( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) )
-				.to.be.false;
-		} );
+		it('should be false if labels fetch errors out, and notes were not loaded', () => {
+			expect(isActivityLogLoaded(getState(notesLoadingSubtree, labelsErrorSubtree), 45, 123)).to.be
+				.false;
+		});
 
-		it( 'should be true if WCS is disabled, and notes were loaded', () => {
+		it('should be true if WCS is disabled, and notes were loaded', () => {
 			wcsEnabledStub.restore();
-			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
-			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsLoadingState ), 45, 123 ) )
-				.to.be.true;
-		} );
-	} );
+			wcsEnabledStub = sinon.stub(plugins, 'isWcsEnabled').returns(false);
+			expect(isActivityLogLoaded(getState(notesLoadedSubtree, labelsLoadingState), 45, 123)).to.be
+				.true;
+		});
+	});
 
-	describe( '#isActivityLogLoading', () => {
-		it( 'should be true when notes are currently being fetched for this order.', () => {
-			expect( isActivityLogLoading( notesAndLabelsLoadingState, 45, 123 ) ).to.be.true;
-			expect( isActivityLogLoading( notesLoadingState, 45, 123 ) ).to.be.true;
-		} );
+	describe('#isActivityLogLoading', () => {
+		it('should be true when notes are currently being fetched for this order.', () => {
+			expect(isActivityLogLoading(notesAndLabelsLoadingState, 45, 123)).to.be.true;
+			expect(isActivityLogLoading(notesLoadingState, 45, 123)).to.be.true;
+		});
 
-		it( 'should be true when notes are loaded but labels are not.', () => {
-			expect( isActivityLogLoading( labelsLoadingState, 45, 123 ) ).to.be.true;
-		} );
+		it('should be true when notes are loaded but labels are not.', () => {
+			expect(isActivityLogLoading(labelsLoadingState, 45, 123)).to.be.true;
+		});
 
-		it( 'should be false when notes are loaded and the WooCommerce Services extension is disabled.', () => {
+		it('should be false when notes are loaded and the WooCommerce Services extension is disabled.', () => {
 			wcsEnabledStub.restore();
-			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
-			expect( isActivityLogLoading( labelsLoadingState, 45, 123 ) ).to.be.false;
-		} );
+			wcsEnabledStub = sinon.stub(plugins, 'isWcsEnabled').returns(false);
+			expect(isActivityLogLoading(labelsLoadingState, 45, 123)).to.be.false;
+		});
 
-		it( 'should be false when notes and labels are loaded for this order.', () => {
-			expect( isActivityLogLoading( loadedState, 45, 123 ) ).to.be.false;
-		} );
+		it('should be false when notes and labels are loaded for this order.', () => {
+			expect(isActivityLogLoading(loadedState, 45, 123)).to.be.false;
+		});
 
-		it( 'should be false when notes are loading only for a different order.', () => {
-			expect( isActivityLogLoading( notesLoadingState, 20, 123 ) ).to.not.be.ok;
-		} );
+		it('should be false when notes are loading only for a different order.', () => {
+			expect(isActivityLogLoading(notesLoadingState, 20, 123)).to.not.be.ok;
+		});
 
-		it( 'should be false when notes are loading only for a different site.', () => {
-			expect( isActivityLogLoading( notesLoadingState, 45, 456 ) ).to.not.be.ok;
-		} );
+		it('should be false when notes are loading only for a different site.', () => {
+			expect(isActivityLogLoading(notesLoadingState, 45, 456)).to.not.be.ok;
+		});
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( isActivityLogLoading( loadedStateWithUi, 45 ) ).to.be.false;
-		} );
+		it('should get the siteId from the UI tree if not provided.', () => {
+			expect(isActivityLogLoading(loadedStateWithUi, 45)).to.be.false;
+		});
 
-		it( 'should be false when notes are loaded and labels errored out', () => {
-			expect( isActivityLogLoading( getState( notesLoadedSubtree, labelsErrorSubtree ), 45, 123 ) )
-				.to.be.false;
-		} );
+		it('should be false when notes are loaded and labels errored out', () => {
+			expect(isActivityLogLoading(getState(notesLoadedSubtree, labelsErrorSubtree), 45, 123)).to.be
+				.false;
+		});
 
-		it( 'should be true when notes are loading and labels errored out', () => {
-			expect( isActivityLogLoading( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) )
-				.to.be.true;
-		} );
-	} );
+		it('should be true when notes are loading and labels errored out', () => {
+			expect(isActivityLogLoading(getState(notesLoadingSubtree, labelsErrorSubtree), 45, 123)).to.be
+				.true;
+		});
+	});
 
-	describe( '#getActivityLogEvents', () => {
-		it( 'should be empty when notes are currently being fetched for this order.', () => {
-			expect( getActivityLogEvents( notesAndLabelsLoadingState, 45, 123 ) ).to.be.empty;
-			expect( getActivityLogEvents( getState( notesLoadingSubtree, emptyLabelsSubtree ), 45, 123 ) )
-				.to.be.empty;
-		} );
+	describe('#getActivityLogEvents', () => {
+		it('should be empty when notes are currently being fetched for this order.', () => {
+			expect(getActivityLogEvents(notesAndLabelsLoadingState, 45, 123)).to.be.empty;
+			expect(getActivityLogEvents(getState(notesLoadingSubtree, emptyLabelsSubtree), 45, 123)).to.be
+				.empty;
+		});
 
-		it( 'should be empty when notes are loaded but labels are not.', () => {
-			expect( getActivityLogEvents( getState( emptyNotesSubtree, labelsLoadingSubtree ), 45, 123 ) )
-				.to.be.empty;
-		} );
+		it('should be empty when notes are loaded but labels are not.', () => {
+			expect(getActivityLogEvents(getState(emptyNotesSubtree, labelsLoadingSubtree), 45, 123)).to.be
+				.empty;
+		});
 
-		it( 'should return just the notes when notes are loaded and the Services extension is disabled.', () => {
+		it('should return just the notes when notes are loaded and the Services extension is disabled.', () => {
 			wcsEnabledStub.restore();
-			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
-			expect( getActivityLogEvents( loadedState, 45, 123 ) ).to.deep.equal( [
+			wcsEnabledStub = sinon.stub(plugins, 'isWcsEnabled').returns(false);
+			expect(getActivityLogEvents(loadedState, 45, 123)).to.deep.equal([
 				{
 					key: 1,
 					type: 'INTERNAL_NOTE',
@@ -374,11 +374,11 @@ describe( 'selectors', () => {
 					timestamp: 1505731071000,
 					content: 'Something customer-facing',
 				},
-			] );
-		} );
+			]);
+		});
 
-		it( 'should return a list of events if everything is loaded.', () => {
-			expect( getActivityLogEvents( loadedState, 45, 123 ) ).to.deep.equal( [
+		it('should return a list of events if everything is loaded.', () => {
+			expect(getActivityLogEvents(loadedState, 45, 123)).to.deep.equal([
 				{
 					key: 1,
 					type: 'INTERNAL_NOTE',
@@ -412,7 +412,7 @@ describe( 'selectors', () => {
 					currency: 'CAD',
 					refundableAmount: 10,
 					packageName: 'box',
-					productNames: [ 'poutine' ],
+					productNames: ['poutine'],
 					tracking: '12345',
 					carrierId: 'canada_post',
 					serviceName: 'Xpress',
@@ -442,7 +442,7 @@ describe( 'selectors', () => {
 					currency: 'USD',
 					refundableAmount: 7,
 					packageName: 'Small Envelope',
-					productNames: [ 'Autograph' ],
+					productNames: ['Autograph'],
 					tracking: '12345',
 					carrierId: 'usps',
 					serviceName: 'First Class',
@@ -472,7 +472,7 @@ describe( 'selectors', () => {
 					currency: 'CAD',
 					refundableAmount: 7,
 					packageName: 'regular box',
-					productNames: [ 'blender' ],
+					productNames: ['blender'],
 					tracking: '12345',
 					carrierId: 'canada_post',
 					serviceName: 'Xpress',
@@ -493,7 +493,7 @@ describe( 'selectors', () => {
 					currency: 'USD',
 					refundableAmount: 4.5,
 					packageName: 'bee box',
-					productNames: [ 'bee', 'bee' ],
+					productNames: ['bee', 'bee'],
 					tracking: '12345',
 					carrierId: 'usps',
 					serviceName: 'First Class',
@@ -508,28 +508,28 @@ describe( 'selectors', () => {
 					serviceName: 'First Class',
 					carrierId: 'usps',
 				},
-			] );
-		} );
+			]);
+		});
 
-		it( 'should be empty when notes are loaded only for a different order.', () => {
-			expect( getActivityLogEvents( loadedState, 20, 123 ) ).to.be.empty;
-		} );
+		it('should be empty when notes are loaded only for a different order.', () => {
+			expect(getActivityLogEvents(loadedState, 20, 123)).to.be.empty;
+		});
 
-		it( 'should be empty when notes are loaded only for a different site.', () => {
-			expect( getActivityLogEvents( loadedState, 45, 456 ) ).to.be.empty;
-		} );
+		it('should be empty when notes are loaded only for a different site.', () => {
+			expect(getActivityLogEvents(loadedState, 45, 456)).to.be.empty;
+		});
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( getActivityLogEvents( loadedStateWithUi, 45 ) ).to.not.be.empty;
-		} );
+		it('should get the siteId from the UI tree if not provided.', () => {
+			expect(getActivityLogEvents(loadedStateWithUi, 45)).to.not.be.empty;
+		});
 
-		it( 'should mark anonymized labels as not available for reprint', () => {
+		it('should mark anonymized labels as not available for reprint', () => {
 			const result = getActivityLogEvents(
-				getState( emptyNotesSubtree, anonymizedLabelsSubtree ),
+				getState(emptyNotesSubtree, anonymizedLabelsSubtree),
 				45,
 				123
 			);
-			expect( result[ 0 ].anonymized ).to.be.true;
-		} );
-	} );
-} );
+			expect(result[0].anonymized).to.be.true;
+		});
+	});
+});

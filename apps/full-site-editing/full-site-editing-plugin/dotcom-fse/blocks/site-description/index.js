@@ -11,9 +11,9 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/site-description', {
-	title: __( 'Site Description' ),
-	description: __( 'Site description, also known as the tagline.' ),
+registerBlockType('a8c/site-description', {
+	title: __('Site Description'),
+	description: __('Site description, also known as the tagline.'),
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
 			<path fill="none" d="M0 0h24v24H0z" />
@@ -22,7 +22,7 @@ registerBlockType( 'a8c/site-description', {
 	),
 	category: 'layout',
 	supports: {
-		align: [ 'wide', 'full' ],
+		align: ['wide', 'full'],
 		html: false,
 		multiple: false,
 		reusable: false,
@@ -58,4 +58,4 @@ registerBlockType( 'a8c/site-description', {
 	},
 	edit,
 	save: () => null,
-} );
+});

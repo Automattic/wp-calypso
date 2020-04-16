@@ -8,20 +8,20 @@ import { assign, noop } from 'lodash';
 import pick from 'component-file-picker';
 
 export default class FilePicker extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.showPicker = this.showPicker.bind( this );
+	constructor(props) {
+		super(props);
+		this.showPicker = this.showPicker.bind(this);
 	}
 
 	showPicker() {
 		this.props.onClick();
-		pick( assign( {}, this.props ), this.props.onPick );
+		pick(assign({}, this.props), this.props.onPick);
 	}
 
 	render() {
 		return (
-			<span className="file-picker" onClick={ this.showPicker }>
-				{ this.props.children }
+			<span className="file-picker" onClick={this.showPicker}>
+				{this.props.children}
 			</span>
 		);
 	}

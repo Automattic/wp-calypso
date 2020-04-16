@@ -14,8 +14,7 @@ import { isRequestingTheme } from 'state/themes/selectors';
 
 class QueryTheme extends Component {
 	static propTypes = {
-		siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] )
-			.isRequired,
+		siteId: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['wpcom', 'wporg'])]).isRequired,
 		themeId: PropTypes.string.isRequired,
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
@@ -23,19 +22,19 @@ class QueryTheme extends Component {
 	};
 
 	componentDidMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId && this.props.themeId === nextProps.themeId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId && this.props.themeId === nextProps.themeId) {
 			return;
 		}
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestTheme( props.themeId, props.siteId );
+	request(props) {
+		if (!props.isRequesting) {
+			props.requestTheme(props.themeId, props.siteId);
 		}
 	}
 
@@ -45,8 +44,8 @@ class QueryTheme extends Component {
 }
 
 export default connect(
-	( state, { siteId, themeId } ) => ( {
-		isRequesting: isRequestingTheme( state, siteId, themeId ),
-	} ),
+	(state, { siteId, themeId }) => ({
+		isRequesting: isRequestingTheme(state, siteId, themeId),
+	}),
 	{ requestTheme }
-)( QueryTheme );
+)(QueryTheme);

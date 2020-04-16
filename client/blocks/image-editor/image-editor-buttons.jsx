@@ -43,44 +43,44 @@ class ImageEditorButtons extends Component {
 
 		return (
 			<div className="image-editor__buttons">
-				{ onCancel && (
+				{onCancel && (
 					<Button
 						className="image-editor__buttons-button"
-						onClick={ onCancel }
+						onClick={onCancel}
 						data-e2e-button="cancel"
 					>
-						{ translate( 'Cancel' ) }
+						{translate('Cancel')}
 					</Button>
-				) }
+				)}
 				<Button
 					className="image-editor__buttons-button"
-					disabled={ ! hasChanges }
-					onClick={ onReset }
+					disabled={!hasChanges}
+					onClick={onReset}
 					data-e2e-button="reset"
 				>
-					{ translate( 'Reset' ) }
+					{translate('Reset')}
 				</Button>
 				<Button
 					className="image-editor__buttons-button"
-					disabled={ ! src }
+					disabled={!src}
 					primary
-					onClick={ onDone }
+					onClick={onDone}
 					data-e2e-button="done"
 					data-tip-target="image-editor-button-done"
 				>
-					{ doneButtonText || translate( ' Done ' ) }
+					{doneButtonText || translate(' Done ')}
 				</Button>
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const { src } = getImageEditorFileInfo( state ),
-		hasChanges = imageEditorHasChanges( state );
+export default connect((state) => {
+	const { src } = getImageEditorFileInfo(state),
+		hasChanges = imageEditorHasChanges(state);
 
 	return {
 		src,
 		hasChanges,
 	};
-} )( localize( ImageEditorButtons ) );
+})(localize(ImageEditorButtons));

@@ -16,19 +16,19 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isSending( state = {}, action ) {
+export function isSending(state = {}, action) {
 	const { type, orderId } = action;
-	switch ( type ) {
+	switch (type) {
 		case WOOCOMMERCE_ORDER_INVOICE_SEND:
-			return { ...state, [ orderId ]: true };
+			return { ...state, [orderId]: true };
 		case WOOCOMMERCE_ORDER_INVOICE_SEND_SUCCESS:
 		case WOOCOMMERCE_ORDER_INVOICE_SEND_FAILURE:
-			return { ...state, [ orderId ]: false };
+			return { ...state, [orderId]: false };
 		default:
 			return state;
 	}
 }
 
-export default combineReducers( {
+export default combineReducers({
 	isSending,
-} );
+});

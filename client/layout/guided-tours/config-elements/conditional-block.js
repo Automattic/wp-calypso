@@ -20,7 +20,7 @@ export default class ConditionalBlock extends React.PureComponent {
 	render() {
 		const { isValid } = this.context;
 
-		if ( ! isValid( this.props.when ) ) {
+		if (!isValid(this.props.when)) {
 			return null;
 		}
 

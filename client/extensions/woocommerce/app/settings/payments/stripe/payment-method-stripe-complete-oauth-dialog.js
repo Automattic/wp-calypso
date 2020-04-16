@@ -44,51 +44,51 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 
 		// Kick off the last step of the OAuth flow, but only if we don't
 		// have a connected user ID (to prevent re-entrancy)
-		const connectedUserID = get( stripeConnectAccount, [ 'connectedUserID' ], '' );
-		if ( isEmpty( connectedUserID ) ) {
-			this.props.oauthConnect( siteId, oauthCode, oauthState );
+		const connectedUserID = get(stripeConnectAccount, ['connectedUserID'], '');
+		if (isEmpty(connectedUserID)) {
+			this.props.oauthConnect(siteId, oauthCode, oauthState);
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = ( { stripeConnectAccount } ) => {
+	UNSAFE_componentWillReceiveProps = ({ stripeConnectAccount }) => {
 		// Did we receive a connected user ID? Connect must have finished, so
 		// let's close this dialog
-		const connectedUserID = get( stripeConnectAccount, [ 'connectedUserID' ], '' );
-		if ( ! isEmpty( connectedUserID ) ) {
+		const connectedUserID = get(stripeConnectAccount, ['connectedUserID'], '');
+		if (!isEmpty(connectedUserID)) {
 			this.onClose();
 		}
 	};
 
 	possiblyRenderProgress = () => {
 		const { error } = this.props;
-		if ( 0 === error.length ) {
-			return <ProgressBar value={ 100 } isPulsing />;
+		if (0 === error.length) {
+			return <ProgressBar value={100} isPulsing />;
 		}
 		return null;
 	};
 
 	possiblyRenderNotice = () => {
 		const { error } = this.props;
-		if ( 0 === error.length ) {
+		if (0 === error.length) {
 			return null;
 		}
-		return <Notice showDismiss={ false } status="is-error" text={ error } />;
+		return <Notice showDismiss={false} status="is-error" text={error} />;
 	};
 
 	onClose = () => {
 		const { error, site } = this.props;
-		const oauthCompleted = isEmpty( error );
+		const oauthCompleted = isEmpty(error);
 		this.props.clearError();
 
 		// Important - when the user closes the dialog (which should only happen
 		// in case of error), let's clear the query params by calling page
 		// with the payment settings path
-		const paymentsSettingsLink = getLink( '/store/settings/payments/:site', site );
+		const paymentsSettingsLink = getLink('/store/settings/payments/:site', site);
 		const paymentsSettingsQuery = oauthCompleted ? '?oauth_complete=1' : '';
-		page( paymentsSettingsLink + paymentsSettingsQuery );
+		page(paymentsSettingsLink + paymentsSettingsQuery);
 
 		// Lastly, in the case of an error, let's make sure state reflects that the dialog is closed
-		if ( ! oauthCompleted ) {
+		if (!oauthCompleted) {
 			this.props.onCancel();
 		}
 	};
@@ -96,14 +96,14 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	getButtons = () => {
 		const { isOAuthConnecting, isRequesting, translate } = this.props;
 
-		if ( isOAuthConnecting || isRequesting ) {
+		if (isOAuthConnecting || isRequesting) {
 			return [];
 		}
 
 		return [
 			{
 				action: 'cancel',
-				label: translate( 'Close' ),
+				label: translate('Close'),
 				onClick: this.onClose,
 			},
 		];
@@ -115,26 +115,26 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 		return (
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"
-				buttons={ this.getButtons() }
+				buttons={this.getButtons()}
 				isVisible
 			>
 				<div className="stripe__method-edit-header">
-					{ translate( 'Completing Your Connection to Stripe' ) }
+					{translate('Completing Your Connection to Stripe')}
 				</div>
-				{ this.possiblyRenderProgress() }
-				{ this.possiblyRenderNotice() }
+				{this.possiblyRenderProgress()}
+				{this.possiblyRenderNotice()}
 			</Dialog>
 		);
 	};
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
 	const siteId = site.ID || false;
-	const error = getError( state, siteId );
-	const isOAuthConnecting = getIsOAuthConnecting( state, siteId );
-	const isRequesting = getIsRequesting( state, siteId );
-	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
+	const error = getError(state, siteId);
+	const isOAuthConnecting = getIsOAuthConnecting(state, siteId);
+	const isRequesting = getIsRequesting(state, siteId);
+	const stripeConnectAccount = getStripeConnectAccount(state, siteId);
 
 	return {
 		error,
@@ -146,7 +146,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			clearError,
@@ -157,5 +157,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeCompleteOAuthDialog )
+	connect(mapStateToProps, mapDispatchToProps)(PaymentMethodStripeCompleteOAuthDialog)
 );

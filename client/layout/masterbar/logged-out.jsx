@@ -29,7 +29,7 @@ class MasterbarLoggedOut extends PureComponent {
 		title: PropTypes.string,
 
 		// Connected props
-		currentQuery: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		currentQuery: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 		currentRoute: PropTypes.string,
 		userSiteCount: PropTypes.number,
 	};
@@ -41,38 +41,38 @@ class MasterbarLoggedOut extends PureComponent {
 
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
-		if ( includes( [ 'login' ], sectionName ) ) {
+		if (includes(['login'], sectionName)) {
 			return null;
 		}
 
 		let redirectTo = null;
-		if ( redirectUri ) {
+		if (redirectUri) {
 			redirectTo = redirectUri;
-		} else if ( currentRoute ) {
-			redirectTo = currentQuery ? addQueryArgs( currentQuery, currentRoute ) : currentRoute;
+		} else if (currentRoute) {
+			redirectTo = currentQuery ? addQueryArgs(currentQuery, currentRoute) : currentRoute;
 		}
 
 		const isJetpack = 'jetpack-connect' === sectionName;
 
-		let loginUrl = login( {
+		let loginUrl = login({
 			// We may know the email from Jetpack connection details
-			emailAddress: isJetpack && get( currentQuery, 'user_email', false ),
+			emailAddress: isJetpack && get(currentQuery, 'user_email', false),
 			isJetpack,
-			isNative: config.isEnabled( 'login/native-login-links' ),
+			isNative: config.isEnabled('login/native-login-links'),
 			locale: getLocaleSlug(),
 			redirectTo,
-		} );
+		});
 
-		if ( currentQuery && currentQuery.partner_id ) {
-			loginUrl = addQueryArgs( { partner_id: currentQuery.partner_id }, loginUrl );
+		if (currentQuery && currentQuery.partner_id) {
+			loginUrl = addQueryArgs({ partner_id: currentQuery.partner_id }, loginUrl);
 		}
 
 		return (
-			<Item url={ loginUrl }>
-				{ translate( 'Log In', {
+			<Item url={loginUrl}>
+				{translate('Log In', {
 					context: 'Toolbar',
 					comment: 'Should be shorter than ~12 chars',
-				} ) }
+				})}
 			</Item>
 		);
 	}
@@ -81,7 +81,7 @@ class MasterbarLoggedOut extends PureComponent {
 		const { currentQuery, currentRoute, sectionName, translate } = this.props;
 
 		// Hide for some sections
-		if ( includes( [ 'signup' ], sectionName ) ) {
+		if (includes(['signup'], sectionName)) {
 			return null;
 		}
 
@@ -89,7 +89,7 @@ class MasterbarLoggedOut extends PureComponent {
 		 * Hide signup from Jetpack connect authorization step. This step handles signup as part of
 		 * the flow.
 		 */
-		if ( startsWith( currentRoute, '/jetpack/connect/authorize' ) ) {
+		if (startsWith(currentRoute, '/jetpack/connect/authorize')) {
 			return null;
 		}
 
@@ -97,7 +97,7 @@ class MasterbarLoggedOut extends PureComponent {
 		 * Hide signup from from New Site screen. This allows starting with a new Jetpack or
 		 * WordPress.com site.
 		 */
-		if ( startsWith( currentRoute, '/jetpack/new' ) ) {
+		if (startsWith(currentRoute, '/jetpack/new')) {
 			return null;
 		}
 
@@ -105,21 +105,21 @@ class MasterbarLoggedOut extends PureComponent {
 		 * Hide signup from the screen when we have been sent to the login page from a redirect
 		 * by a service provider to authorize a Domain Connect template application.
 		 */
-		const redirectTo = get( currentQuery, 'redirect_to', '' );
-		if ( isDomainConnectAuthorizePath( redirectTo ) ) {
+		const redirectTo = get(currentQuery, 'redirect_to', '');
+		if (isDomainConnectAuthorizePath(redirectTo)) {
 			return null;
 		}
 
-		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
+		let signupUrl = config('signup_url');
+		const signupFlow = get(currentQuery, 'signup_flow');
 		if (
 			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
+			startsWith(currentRoute, '/log-in/jetpack')
 		) {
 			// Basic validation that we're in a valid Jetpack Authorization flow
 			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
+				includes(get(currentQuery, 'redirect_to'), '/jetpack/connect/authorize') &&
+				includes(get(currentQuery, 'redirect_to'), '_wp_nonce')
 			) {
 				/**
 				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
@@ -130,18 +130,18 @@ class MasterbarLoggedOut extends PureComponent {
 			} else {
 				signupUrl = '/jetpack/new';
 			}
-		} else if ( 'jetpack-connect' === sectionName ) {
+		} else if ('jetpack-connect' === sectionName) {
 			signupUrl = '/jetpack/new';
-		} else if ( signupFlow ) {
+		} else if (signupFlow) {
 			signupUrl += '/' + signupFlow;
 		}
 
 		return (
-			<Item url={ signupUrl }>
-				{ translate( 'Sign Up', {
+			<Item url={signupUrl}>
+				{translate('Sign Up', {
 					context: 'Toolbar',
 					comment: 'Should be shorter than ~12 chars',
-				} ) }
+				})}
 			</Item>
 		);
 	}
@@ -154,17 +154,17 @@ class MasterbarLoggedOut extends PureComponent {
 					<WordPressLogo className="masterbar__wpcom-logo" />
 					<WordPressWordmark className="masterbar__wpcom-wordmark" />
 				</Item>
-				<Item className="masterbar__item-title">{ title }</Item>
+				<Item className="masterbar__item-title">{title}</Item>
 				<div className="masterbar__login-links">
-					{ this.renderSignupItem() }
-					{ this.renderLoginItem() }
+					{this.renderSignupItem()}
+					{this.renderLoginItem()}
 				</div>
 			</Masterbar>
 		);
 	}
 }
 
-export default connect( state => ( {
-	currentQuery: getCurrentQueryArguments( state ),
-	currentRoute: getCurrentRoute( state ),
-} ) )( localize( MasterbarLoggedOut ) );
+export default connect((state) => ({
+	currentQuery: getCurrentQueryArguments(state),
+	currentRoute: getCurrentRoute(state),
+}))(localize(MasterbarLoggedOut));

@@ -36,65 +36,65 @@ class DesktopDownloadCard extends Component {
 		trackLinuxDebClick: noop,
 	};
 
-	getDescription( platform ) {
+	getDescription(platform) {
 		const { translate } = this.props;
-		switch ( platform ) {
+		switch (platform) {
 			case 'MacIntel':
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
-				return translate( 'A desktop app that gives WordPress a permanent home in your dock.' );
+				return translate('A desktop app that gives WordPress a permanent home in your dock.');
 			default:
-				return translate( 'A desktop app that gives WordPress a permanent home in your taskbar.' );
+				return translate('A desktop app that gives WordPress a permanent home in your taskbar.');
 		}
 	}
 
-	getRequirementsText( platform ) {
+	getRequirementsText(platform) {
 		const { translate } = this.props;
-		switch ( platform ) {
+		switch (platform) {
 			case 'MacIntel':
-				return translate( 'Requires Mac OS X 10.11+. ' );
+				return translate('Requires Mac OS X 10.11+. ');
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
-				return translate( 'Requires a 64-bit kernel. ' );
+				return translate('Requires a 64-bit kernel. ');
 			default:
-				return translate( 'Requires Windows 7+. ' );
+				return translate('Requires Windows 7+. ');
 		}
 	}
 
-	getTranslateComponents( platform ) {
-		switch ( platform ) {
+	getTranslateComponents(platform) {
+		switch (platform) {
 			case 'MacIntel':
 				return {
-					firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+					firstAvailableLink: this.getLinkAnchorTag(WINDOWS_LINK),
+					secondAvailableLink: this.getLinkAnchorTag(LINUX_TAR_LINK),
+					thirdAvailableLink: this.getLinkAnchorTag(LINUX_DEB_LINK),
 				};
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
 				return {
-					firstAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
+					firstAvailableLink: this.getLinkAnchorTag(LINUX_DEB_LINK),
+					secondAvailableLink: this.getLinkAnchorTag(WINDOWS_LINK),
+					thirdAvailableLink: this.getLinkAnchorTag(MAC_LINK),
 				};
 			default:
 				return {
-					firstAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+					firstAvailableLink: this.getLinkAnchorTag(MAC_LINK),
+					secondAvailableLink: this.getLinkAnchorTag(LINUX_TAR_LINK),
+					thirdAvailableLink: this.getLinkAnchorTag(LINUX_DEB_LINK),
 				};
 		}
 	}
 
-	getAlsoAvailableText( platform ) {
+	getAlsoAvailableText(platform) {
 		const { translate } = this.props;
-		switch ( platform ) {
+		switch (platform) {
 			case 'MacIntel':
 				return translate(
 					'Also available for: ' +
 						'{{firstAvailableLink}}Windows{{/firstAvailableLink}}, ' +
 						'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
 						'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
-					{ components: this.getTranslateComponents( platform ) }
+					{ components: this.getTranslateComponents(platform) }
 				);
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
@@ -103,7 +103,7 @@ class DesktopDownloadCard extends Component {
 						'{{firstAvailableLink}}Linux (.deb){{/firstAvailableLink}}, ' +
 						'{{secondAvailableLink}}Windows{{/secondAvailableLink}}, ' +
 						'{{thirdAvailableLink}}Mac{{/thirdAvailableLink}}.',
-					{ components: this.getTranslateComponents( platform ) }
+					{ components: this.getTranslateComponents(platform) }
 				);
 			default:
 				return translate(
@@ -111,15 +111,15 @@ class DesktopDownloadCard extends Component {
 						'{{firstAvailableLink}}MacOS{{/firstAvailableLink}}, ' +
 						'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
 						'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
-					{ components: this.getTranslateComponents( platform ) }
+					{ components: this.getTranslateComponents(platform) }
 				);
 		}
 	}
 
-	getButtonClickHandler( platform ) {
+	getButtonClickHandler(platform) {
 		const { trackWindowsClick, trackMacClick, trackLinuxTarClick, trackLinuxDebClick } = this.props;
 
-		switch ( platform ) {
+		switch (platform) {
 			case 'MacIntel':
 				return trackMacClick;
 			case 'Linux i686':
@@ -131,8 +131,8 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getButtonLink( platform ) {
-		switch ( platform ) {
+	getButtonLink(platform) {
+		switch (platform) {
 			case 'MacIntel':
 				return MAC_LINK;
 			case 'Linux i686':
@@ -143,31 +143,31 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getCardTitle( platform ) {
+	getCardTitle(platform) {
 		const { translate } = this.props;
-		switch ( platform ) {
+		switch (platform) {
 			case 'MacIntel':
-				return translate( 'Desktop App for Mac' );
+				return translate('Desktop App for Mac');
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
-				return translate( 'Desktop App for Linux' );
+				return translate('Desktop App for Linux');
 			default:
-				return translate( 'Desktop App for Windows' );
+				return translate('Desktop App for Windows');
 		}
 	}
 
-	getLinkAnchorTag( platformLink ) {
+	getLinkAnchorTag(platformLink) {
 		const { trackWindowsClick, trackMacClick, trackLinuxTarClick, trackLinuxDebClick } = this.props;
 
-		switch ( platformLink ) {
+		switch (platformLink) {
 			case MAC_LINK:
-				return <a href={ platformLink } onClick={ trackMacClick } />;
+				return <a href={platformLink} onClick={trackMacClick} />;
 			case LINUX_TAR_LINK:
-				return <a href={ platformLink } onClick={ trackLinuxTarClick } />;
+				return <a href={platformLink} onClick={trackLinuxTarClick} />;
 			case LINUX_DEB_LINK:
-				return <a href={ platformLink } onClick={ trackLinuxDebClick } />;
+				return <a href={platformLink} onClick={trackLinuxDebClick} />;
 			default:
-				return <a href={ platformLink } onClick={ trackWindowsClick } />;
+				return <a href={platformLink} onClick={trackWindowsClick} />;
 		}
 	}
 
@@ -178,19 +178,19 @@ class DesktopDownloadCard extends Component {
 		return (
 			<Card className="get-apps__desktop">
 				<div className="get-apps__card-text">
-					<h3 className="get-apps__card-title">{ this.getCardTitle( platform ) }</h3>
-					<p className="get-apps__description">{ this.getDescription( platform ) }</p>
+					<h3 className="get-apps__card-title">{this.getCardTitle(platform)}</h3>
+					<p className="get-apps__description">{this.getDescription(platform)}</p>
 					<p className="get-apps__also-available">
-						{ this.getRequirementsText( platform ) }
-						{ this.getAlsoAvailableText( platform ) }
+						{this.getRequirementsText(platform)}
+						{this.getAlsoAvailableText(platform)}
 					</p>
 				</div>
 				<Button
 					className="get-apps__desktop-button"
-					href={ this.getButtonLink( platform ) }
-					onClick={ this.getButtonClickHandler( platform ) }
+					href={this.getButtonLink(platform)}
+					onClick={this.getButtonClickHandler(platform)}
 				>
-					{ translate( 'Download' ) }
+					{translate('Download')}
 				</Button>
 			</Card>
 		);
@@ -198,10 +198,10 @@ class DesktopDownloadCard extends Component {
 }
 
 const mapDispatchToProps = {
-	trackWindowsClick: () => recordTracksEvent( 'calypso_app_download_windows_click' ),
-	trackMacClick: () => recordTracksEvent( 'calypso_app_download_mac_click' ),
-	trackLinuxTarClick: () => recordTracksEvent( 'calypso_app_download_linux_tar_click' ),
-	trackLinuxDebClick: () => recordTracksEvent( 'calypso_app_download_linux_deb_click' ),
+	trackWindowsClick: () => recordTracksEvent('calypso_app_download_windows_click'),
+	trackMacClick: () => recordTracksEvent('calypso_app_download_mac_click'),
+	trackLinuxTarClick: () => recordTracksEvent('calypso_app_download_linux_tar_click'),
+	trackLinuxDebClick: () => recordTracksEvent('calypso_app_download_linux_deb_click'),
 };
 
-export default connect( null, mapDispatchToProps )( localize( DesktopDownloadCard ) );
+export default connect(null, mapDispatchToProps)(localize(DesktopDownloadCard));

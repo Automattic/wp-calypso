@@ -17,25 +17,25 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { ZONINATOR_MIN_VERSION } from '../../app/constants';
 import QueryZones from '../data/query-zones';
 
-const Settings = ( { children, siteId, translate } ) => {
+const Settings = ({ children, siteId, translate }) => {
 	const mainClassName = 'zoninator__main';
 
 	return (
-		<Main className={ mainClassName }>
+		<Main className={mainClassName}>
 			<ExtensionRedirect
 				pluginId="zoninator"
-				siteId={ siteId }
-				minimumVersion={ ZONINATOR_MIN_VERSION }
+				siteId={siteId}
+				minimumVersion={ZONINATOR_MIN_VERSION}
 			/>
-			<QueryZones siteId={ siteId } />
-			<DocumentHead title={ translate( 'WP Zone Manager' ) } />
-			{ children }
+			<QueryZones siteId={siteId} />
+			<DocumentHead title={translate('WP Zone Manager')} />
+			{children}
 		</Main>
 	);
 };
 
-const connectComponent = connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-} ) );
+const connectComponent = connect((state) => ({
+	siteId: getSelectedSiteId(state),
+}));
 
-export default flowRight( connectComponent, localize )( Settings );
+export default flowRight(connectComponent, localize)(Settings);

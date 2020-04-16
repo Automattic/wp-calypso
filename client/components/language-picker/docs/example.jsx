@@ -20,18 +20,18 @@ class LanguagePickerExample extends PureComponent {
 		language: 'en',
 	};
 
-	selectLanguage = event => {
-		this.setState( { language: event.target.value } );
+	selectLanguage = (event) => {
+		this.setState({ language: event.target.value });
 	};
 
 	toggleDisabled = () => {
-		this.setState( { disabled: ! this.state.disabled } );
+		this.setState({ disabled: !this.state.disabled });
 	};
 
 	triggerLoading = () => {
-		if ( ! this.state.loading ) {
-			this.setState( { loading: true } );
-			setTimeout( () => this.setState( { loading: false } ), 2000 );
+		if (!this.state.loading) {
+			this.setState({ loading: true });
+			setTimeout(() => this.setState({ loading: false }), 2000);
 		}
 	};
 
@@ -41,20 +41,20 @@ class LanguagePickerExample extends PureComponent {
 		return (
 			<div>
 				<div className="docs__design-toggle">
-					<Button onClick={ this.toggleDisabled }>
-						{ disabled ? 'Enabled State' : 'Disabled State' }
+					<Button onClick={this.toggleDisabled}>
+						{disabled ? 'Enabled State' : 'Disabled State'}
 					</Button>
-					<Button busy={ loading } style={ { marginLeft: '8px' } } onClick={ this.triggerLoading }>
+					<Button busy={loading} style={{ marginLeft: '8px' }} onClick={this.triggerLoading}>
 						Test Loading
 					</Button>
 				</div>
 				<Card>
 					<LanguagePicker
-						languages={ languages }
+						languages={languages}
 						valueKey="langSlug"
-						value={ loading ? null : language }
-						onChange={ this.selectLanguage }
-						disabled={ disabled }
+						value={loading ? null : language}
+						onChange={this.selectLanguage}
+						disabled={disabled}
 					/>
 				</Card>
 			</div>

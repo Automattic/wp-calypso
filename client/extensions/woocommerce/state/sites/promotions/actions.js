@@ -8,7 +8,7 @@ import {
 	WOOCOMMERCE_PROMOTIONS_REQUEST,
 } from 'woocommerce/state/action-types';
 
-export function fetchPromotions( siteId, perPage = undefined ) {
+export function fetchPromotions(siteId, perPage = undefined) {
 	return {
 		type: WOOCOMMERCE_PROMOTIONS_REQUEST,
 		siteId,
@@ -16,7 +16,7 @@ export function fetchPromotions( siteId, perPage = undefined ) {
 	};
 }
 
-export function createPromotion( siteId, promotion, successAction, failureAction ) {
+export function createPromotion(siteId, promotion, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PROMOTION_CREATE,
 		siteId,
@@ -26,7 +26,7 @@ export function createPromotion( siteId, promotion, successAction, failureAction
 	};
 }
 
-export function updatePromotion( siteId, promotion, successAction, failureAction ) {
+export function updatePromotion(siteId, promotion, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PROMOTION_UPDATE,
 		siteId,
@@ -36,7 +36,7 @@ export function updatePromotion( siteId, promotion, successAction, failureAction
 	};
 }
 
-export function deletePromotion( siteId, promotion, successAction, failureAction ) {
+export function deletePromotion(siteId, promotion, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PROMOTION_DELETE,
 		siteId,

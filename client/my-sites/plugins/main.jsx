@@ -43,88 +43,88 @@ import { isEnabled } from 'config';
 import './style.scss';
 
 export class PluginsMain extends Component {
-	state = this.getPluginsState( this.props );
+	state = this.getPluginsState(this.props);
 
 	componentDidMount() {
-		PluginsStore.on( 'change', this.refreshPlugins );
+		PluginsStore.on('change', this.refreshPlugins);
 	}
 
 	componentWillUnmount() {
-		PluginsStore.removeListener( 'change', this.refreshPlugins );
+		PluginsStore.removeListener('change', this.refreshPlugins);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
 
-		if ( this.props.isRequestingSites && ! nextProps.isRequestingSites ) {
+		if (this.props.isRequestingSites && !nextProps.isRequestingSites) {
 			// Selected site is not a Jetpack site
-			if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
-				page.redirect( `/plugins/${ selectedSiteSlug }` );
+			if (selectedSiteSlug && !selectedSiteIsJetpack) {
+				page.redirect(`/plugins/${selectedSiteSlug}`);
 				return;
 			}
 
 			//  None of the other sites are Jetpack sites
-			if ( ! selectedSiteSlug && ! hasJpSites ) {
-				page.redirect( '/plugins' );
+			if (!selectedSiteSlug && !hasJpSites) {
+				page.redirect('/plugins');
 				return;
 			}
 		}
 
-		this.refreshPlugins( nextProps );
+		this.refreshPlugins(nextProps);
 	}
 
-	getPluginsFromStore( nextProps, sites ) {
+	getPluginsFromStore(nextProps, sites) {
 		const props = nextProps || this.props;
 		let plugins = null;
-		if ( ! props.selectedSiteSlug ) {
+		if (!props.selectedSiteSlug) {
 			plugins = PluginsStore.getPlugins(
-				sites.filter( site => site.visible ),
+				sites.filter((site) => site.visible),
 				props.filter
 			);
 		} else {
-			plugins = PluginsStore.getPlugins( sites, props.filter );
+			plugins = PluginsStore.getPlugins(sites, props.filter);
 		}
 
-		if ( ! plugins ) {
+		if (!plugins) {
 			return plugins;
 		}
 
-		if ( props && props.search ) {
-			plugins = plugins.filter( this.matchSearchTerms.bind( this, props.search ) );
+		if (props && props.search) {
+			plugins = plugins.filter(this.matchSearchTerms.bind(this, props.search));
 		}
 
-		return this.addWporgDataToPlugins( plugins );
+		return this.addWporgDataToPlugins(plugins);
 	}
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
-	addWporgDataToPlugins( plugins ) {
-		return plugins.map( plugin => {
-			const pluginData = getPlugin( this.props.wporgPlugins, plugin.slug );
-			if ( ! pluginData ) {
-				this.props.wporgFetchPluginData( plugin.slug );
+	addWporgDataToPlugins(plugins) {
+		return plugins.map((plugin) => {
+			const pluginData = getPlugin(this.props.wporgPlugins, plugin.slug);
+			if (!pluginData) {
+				this.props.wporgFetchPluginData(plugin.slug);
 			}
-			return Object.assign( {}, plugin, pluginData );
-		} );
+			return Object.assign({}, plugin, pluginData);
+		});
 	}
 
-	getPluginsState( nextProps ) {
+	getPluginsState(nextProps) {
 		const sites = this.props.sites,
-			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
+			pluginUpdate = PluginsStore.getPlugins(sites, 'updates');
 		return {
-			plugins: this.getPluginsFromStore( nextProps, sites ),
+			plugins: this.getPluginsFromStore(nextProps, sites),
 			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
 			selectedAction: 'Actions',
 		};
 	}
 
-	refreshPlugins = nextProps => {
-		this.setState( this.getPluginsState( nextProps ) );
+	refreshPlugins = (nextProps) => {
+		this.setState(this.getPluginsState(nextProps));
 	};
 
-	matchSearchTerms( search, plugin ) {
+	matchSearchTerms(search, plugin) {
 		search = search.toLowerCase();
-		return [ 'name', 'description', 'author' ].some(
-			attribute => plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
+		return ['name', 'description', 'author'].some(
+			(attribute) => plugin[attribute] && plugin[attribute].toLowerCase().indexOf(search) !== -1
 		);
 	}
 
@@ -134,22 +134,22 @@ export class PluginsMain extends Component {
 
 		return [
 			{
-				title: translate( 'All', { context: 'Filter label for plugins list' } ),
+				title: translate('All', { context: 'Filter label for plugins list' }),
 				path: '/plugins/manage' + siteFilter,
 				id: 'all',
 			},
 			{
-				title: translate( 'Active', { context: 'Filter label for plugins list' } ),
+				title: translate('Active', { context: 'Filter label for plugins list' }),
 				path: '/plugins/active' + siteFilter,
 				id: 'active',
 			},
 			{
-				title: translate( 'Inactive', { context: 'Filter label for plugins list' } ),
+				title: translate('Inactive', { context: 'Filter label for plugins list' }),
 				path: '/plugins/inactive' + siteFilter,
 				id: 'inactive',
 			},
 			{
-				title: translate( 'Updates', { context: 'Filter label for plugins list' } ),
+				title: translate('Updates', { context: 'Filter label for plugins list' }),
 				path: '/plugins/updates' + siteFilter,
 				id: 'updates',
 			},
@@ -157,12 +157,12 @@ export class PluginsMain extends Component {
 	}
 
 	isFetchingPlugins() {
-		return this.props.sites.some( PluginsStore.isFetchingSite );
+		return this.props.sites.some(PluginsStore.isFetchingSite);
 	}
 
 	getSelectedText() {
-		const found = find( this.getFilters(), filterItem => this.props.filter === filterItem.id );
-		if ( 'undefined' !== typeof found ) {
+		const found = find(this.getFilters(), (filterItem) => this.props.filter === filterItem.id);
+		if ('undefined' !== typeof found) {
 			return found.title;
 		}
 		return '';
@@ -171,18 +171,18 @@ export class PluginsMain extends Component {
 	getSearchPlaceholder() {
 		const { translate } = this.props;
 
-		switch ( this.props.filter ) {
+		switch (this.props.filter) {
 			case 'active':
-				return translate( 'Search All…', { textOnly: true } );
+				return translate('Search All…', { textOnly: true });
 
 			case 'inactive':
-				return translate( 'Search Inactive…', { textOnly: true } );
+				return translate('Search Inactive…', { textOnly: true });
 
 			case 'updates':
-				return translate( 'Search Updates…', { textOnly: true } );
+				return translate('Search Updates…', { textOnly: true });
 
 			case 'all':
-				return translate( 'Search All…', { textOnly: true } );
+				return translate('Search All…', { textOnly: true });
 		}
 	}
 
@@ -191,7 +191,7 @@ export class PluginsMain extends Component {
 		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
 			{ selectedSite } = this.props;
 
-		if ( selectedSite ) {
+		if (selectedSite) {
 			emptyContentData.title = translate(
 				'All plugins on %(siteName)s are {{span}}up to date.{{/span}}',
 				{
@@ -202,32 +202,32 @@ export class PluginsMain extends Component {
 				}
 			);
 		} else {
-			emptyContentData.title = translate( 'All plugins are up to date.', { textOnly: true } );
+			emptyContentData.title = translate('All plugins are up to date.', { textOnly: true });
 		}
 
-		if ( this.getUpdatesTabVisibility() ) {
+		if (this.getUpdatesTabVisibility()) {
 			return emptyContentData;
 		}
 
-		emptyContentData.action = translate( 'All Plugins', { textOnly: true } );
+		emptyContentData.action = translate('All Plugins', { textOnly: true });
 
-		if ( selectedSite ) {
+		if (selectedSite) {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
-			if ( this.props.selectedSiteIsJetpack ) {
+			if (this.props.selectedSiteIsJetpack) {
 				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
-				emptyContentData.title = translate( "Plugins can't be updated on %(siteName)s.", {
+				emptyContentData.title = translate("Plugins can't be updated on %(siteName)s.", {
 					textOnly: true,
 					args: { siteName: selectedSite.title },
-				} );
+				});
 			} else {
 				// buisness plan sites
-				emptyContentData.title = translate( 'Plugins are updated automatically on %(siteName)s.', {
+				emptyContentData.title = translate('Plugins are updated automatically on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title },
-				} );
+				});
 			}
 		} else {
-			emptyContentData.title = translate( 'No updates are available.', { textOnly: true } );
+			emptyContentData.title = translate('No updates are available.', { textOnly: true });
 			emptyContentData.illustration =
 				'/calypso/images/illustrations/illustration-empty-results.svg';
 			emptyContentData.actionURL = '/plugins';
@@ -242,12 +242,12 @@ export class PluginsMain extends Component {
 			illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
 		};
 
-		switch ( this.props.filter ) {
+		switch (this.props.filter) {
 			case 'active':
-				emptyContentData.title = translate( 'No plugins are active.', { textOnly: true } );
+				emptyContentData.title = translate('No plugins are active.', { textOnly: true });
 				break;
 			case 'inactive':
-				emptyContentData.title = translate( 'No plugins are inactive.', { textOnly: true } );
+				emptyContentData.title = translate('No plugins are inactive.', { textOnly: true });
 				break;
 			case 'updates':
 				emptyContentData = this.getEmptyContentUpdateData();
@@ -261,61 +261,59 @@ export class PluginsMain extends Component {
 	getUpdatesTabVisibility() {
 		const { selectedSite } = this.props;
 
-		if ( selectedSite ) {
+		if (selectedSite) {
 			return this.props.selectedSiteIsJetpack && this.props.canSelectedJetpackSiteUpdateFiles;
 		}
 
 		return some(
 			this.props.sites,
-			site =>
-				site &&
-				this.props.isJetpackSite( site.ID ) &&
-				this.props.canJetpackSiteUpdateFiles( site.ID )
+			(site) =>
+				site && this.props.isJetpackSite(site.ID) && this.props.canJetpackSiteUpdateFiles(site.ID)
 		);
 	}
 
 	shouldShowPluginListPlaceholders() {
 		const { plugins } = this.state;
 
-		return isEmpty( plugins ) && this.isFetchingPlugins();
+		return isEmpty(plugins) && this.isFetchingPlugins();
 	}
 
 	renderPageViewTracking() {
 		const { selectedSiteId, filter, selectedSiteIsJetpack } = this.props;
 
-		const analyticsPageTitle = filter ? `Plugins > ${ capitalize( filter ) }` : 'Plugins';
+		const analyticsPageTitle = filter ? `Plugins > ${capitalize(filter)}` : 'Plugins';
 
 		// 'All' view corresponds to '/plugins/manage' path.
 		// Other filters appear unchanged in path (eg. Active -> /plugins/active)
 		const currentFilter = filter === 'all' ? 'manage' : filter;
 
 		const analyticsPath = selectedSiteId
-			? `/plugins/${ currentFilter }/:site`
-			: `/plugins/${ currentFilter }`;
+			? `/plugins/${currentFilter}/:site`
+			: `/plugins/${currentFilter}`;
 
-		if ( selectedSiteId && ! selectedSiteIsJetpack ) {
+		if (selectedSiteId && !selectedSiteIsJetpack) {
 			return null;
 		}
 
-		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+		return <PageViewTracker path={analyticsPath} title={analyticsPageTitle} />;
 	}
 
 	renderPluginsContent() {
 		const { plugins = [] } = this.state;
 		const { filter, search } = this.props;
 
-		const showInstalledPluginList = ! isEmpty( plugins ) || this.isFetchingPlugins();
-		const showSuggestedPluginsList = filter === 'all' || ( ! showInstalledPluginList && search );
+		const showInstalledPluginList = !isEmpty(plugins) || this.isFetchingPlugins();
+		const showSuggestedPluginsList = filter === 'all' || (!showInstalledPluginList && search);
 
-		if ( ! showInstalledPluginList && ! search ) {
+		if (!showInstalledPluginList && !search) {
 			const emptyContentData = this.getEmptyContentData();
-			if ( emptyContentData ) {
+			if (emptyContentData) {
 				return (
 					<EmptyContent
-						title={ emptyContentData.title }
-						illustration={ emptyContentData.illustration }
-						actionURL={ emptyContentData.actionURL }
-						action={ emptyContentData.action }
+						title={emptyContentData.title}
+						illustration={emptyContentData.illustration}
+						actionURL={emptyContentData.actionURL}
+						action={emptyContentData.action}
 					/>
 				);
 			}
@@ -323,100 +321,100 @@ export class PluginsMain extends Component {
 
 		const installedPluginsList = showInstalledPluginList && (
 			<PluginsList
-				header={ this.props.translate( 'Installed Plugins' ) }
-				plugins={ plugins }
-				pluginUpdateCount={ this.state.pluginUpdateCount }
-				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+				header={this.props.translate('Installed Plugins')}
+				plugins={plugins}
+				pluginUpdateCount={this.state.pluginUpdateCount}
+				isPlaceholder={this.shouldShowPluginListPlaceholders()}
 			/>
 		);
 
 		const morePluginsHeader = showInstalledPluginList && showSuggestedPluginsList && (
-			<h3 className="plugins__more-header">{ this.props.translate( 'More Plugins' ) }</h3>
+			<h3 className="plugins__more-header">{this.props.translate('More Plugins')}</h3>
 		);
 
 		let searchTitle;
-		if ( search ) {
-			searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
+		if (search) {
+			searchTitle = this.props.translate('Suggested plugins for: %(searchQuery)s', {
 				textOnly: true,
 				args: {
 					searchQuery: search,
 				},
-			} );
+			});
 		}
 
 		const suggestedPluginsList = showSuggestedPluginsList && (
 			<PluginsBrowser
 				hideSearchForm
-				path={ this.props.context.path }
-				search={ search }
-				searchTitle={ searchTitle }
-				trackPageViews={ false }
+				path={this.props.context.path}
+				search={search}
+				searchTitle={searchTitle}
+				trackPageViews={false}
 			/>
 		);
 
 		return (
 			<div>
-				{ installedPluginsList }
-				{ morePluginsHeader }
-				{ suggestedPluginsList }
+				{installedPluginsList}
+				{morePluginsHeader}
+				{suggestedPluginsList}
 			</div>
 		);
 	}
 
 	handleAddPluginButtonClick = () => {
-		this.props.recordGoogleEvent( 'Plugins', 'Clicked Add New Plugins' );
+		this.props.recordGoogleEvent('Plugins', 'Clicked Add New Plugins');
 	};
 
 	renderAddPluginButton() {
 		const { selectedSiteSlug, translate } = this.props;
-		const browserUrl = '/plugins' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+		const browserUrl = '/plugins' + (selectedSiteSlug ? '/' + selectedSiteSlug : '');
 
 		return (
 			<Button
 				className="plugins__button"
 				compact
-				href={ browserUrl }
-				onClick={ this.handleAddPluginButtonClick }
+				href={browserUrl}
+				onClick={this.handleAddPluginButtonClick}
 			>
 				<Gridicon icon="plus" />
-				<span className="plugins__button-text">{ translate( 'Add Plugin' ) }</span>
+				<span className="plugins__button-text">{translate('Add Plugin')}</span>
 			</Button>
 		);
 	}
 
 	handleUploadPluginButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_click_plugin_upload' );
-		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
+		this.props.recordTracksEvent('calypso_click_plugin_upload');
+		this.props.recordGoogleEvent('Plugins', 'Clicked Plugin Upload Link');
 	};
 
 	renderUploadPluginButton() {
-		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
+		if (!isEnabled('manage/plugins/upload')) {
 			return null;
 		}
 
 		const { selectedSiteSlug, translate } = this.props;
-		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+		const uploadUrl = '/plugins/upload' + (selectedSiteSlug ? '/' + selectedSiteSlug : '');
 
 		return (
 			<Button
 				className="plugins__button"
 				compact
-				href={ uploadUrl }
-				onClick={ this.handleUploadPluginButtonClick }
+				href={uploadUrl}
+				onClick={this.handleUploadPluginButtonClick}
 			>
 				<Gridicon icon="cloud-upload" />
-				<span className="plugins__button-text">{ translate( 'Install plugin' ) }</span>
+				<span className="plugins__button-text">{translate('Install plugin')}</span>
 			</Button>
 		);
 	}
 
 	render() {
-		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
-			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
+		if (!this.props.isRequestingSites && !this.props.userCanManagePlugins) {
+			return <NoPermissionsError title={this.props.translate('Plugins', { textOnly: true })} />;
 		}
 
-		const navItems = this.getFilters().map( filterItem => {
-			if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
+		const navItems = this.getFilters().map((filterItem) => {
+			if ('updates' === filterItem.id && !this.getUpdatesTabVisibility()) {
 				return null;
 			}
 
@@ -426,38 +424,38 @@ export class PluginsMain extends Component {
 				selected: filterItem.id === this.props.filter,
 			};
 
-			if ( 'updates' === filterItem.id ) {
+			if ('updates' === filterItem.id) {
 				attr.count = this.state.pluginUpdateCount;
 			}
-			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
-		} );
+			return <NavItem {...attr}>{filterItem.title}</NavItem>;
+		});
 
 		return (
 			<Main wideLayout>
-				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
-				{ this.renderPageViewTracking() }
+				<DocumentHead title={this.props.translate('Plugins', { textOnly: true })} />
+				{this.renderPageViewTracking()}
 				<SidebarNavigation />
 				<div className="plugins__main">
 					<div className="plugins__main-header">
-						<SectionNav selectedText={ this.getSelectedText() }>
-							<NavTabs>{ navItems }</NavTabs>
+						<SectionNav selectedText={this.getSelectedText()}>
+							<NavTabs>{navItems}</NavTabs>
 							<Search
 								pinned
 								fitsContainer
-								onSearch={ this.props.doSearch }
-								initialValue={ this.props.search }
-								ref={ `url-search` }
+								onSearch={this.props.doSearch}
+								initialValue={this.props.search}
+								ref={`url-search`}
 								analyticsGroup="Plugins"
-								placeholder={ this.getSearchPlaceholder() }
+								placeholder={this.getSearchPlaceholder()}
 							/>
 						</SectionNav>
 					</div>
 					<div className="plugins__main-buttons">
-						{ this.renderAddPluginButton() }
-						{ this.renderUploadPluginButton() }
+						{this.renderAddPluginButton()}
+						{this.renderUploadPluginButton()}
 					</div>
 				</div>
-				{ this.renderPluginsContent() }
+				{this.renderPluginsContent()}
 			</Main>
 		);
 	}
@@ -467,31 +465,31 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		state => {
-			const selectedSite = getSelectedSite( state );
-			const selectedSiteId = getSelectedSiteId( state );
+		(state) => {
+			const selectedSite = getSelectedSite(state);
+			const selectedSiteId = getSelectedSiteId(state);
 
 			return {
-				hasJetpackSites: hasJetpackSites( state ),
-				sites: getSelectedOrAllSitesWithPlugins( state ),
+				hasJetpackSites: hasJetpackSites(state),
+				sites: getSelectedOrAllSitesWithPlugins(state),
 				selectedSite,
 				selectedSiteId,
-				selectedSiteSlug: getSelectedSiteSlug( state ),
-				selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
+				selectedSiteSlug: getSelectedSiteSlug(state),
+				selectedSiteIsJetpack: selectedSite && isJetpackSite(state, selectedSiteId),
 				canSelectedJetpackSiteUpdateFiles:
-					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
+					selectedSite && canJetpackSiteUpdateFiles(state, selectedSiteId),
 				/* eslint-disable wpcalypso/redux-no-bound-selectors */
 				// @TODO: follow up with fixing these functions
-				canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
-				isJetpackSite: siteId => isJetpackSite( state, siteId ),
+				canJetpackSiteUpdateFiles: (siteId) => canJetpackSiteUpdateFiles(state, siteId),
+				isJetpackSite: (siteId) => isJetpackSite(state, siteId),
 				/* eslint-enable wpcalypso/redux-no-bound-selectors */
 				wporgPlugins: state.plugins.wporg.items,
-				isRequestingSites: isRequestingSites( state ),
+				isRequestingSites: isRequestingSites(state),
 				userCanManagePlugins: selectedSiteId
-					? canCurrentUser( state, selectedSiteId, 'manage_options' )
-					: canCurrentUserManagePlugins( state ),
+					? canCurrentUser(state, selectedSiteId, 'manage_options')
+					: canCurrentUserManagePlugins(state),
 			};
 		},
 		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
 	)
-)( PluginsMain );
+)(PluginsMain);

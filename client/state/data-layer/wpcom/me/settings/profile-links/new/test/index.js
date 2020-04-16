@@ -29,12 +29,12 @@ const error = {
 	message: 'An active access token must be used to query information about the current user.',
 };
 
-describe( 'addUserProfileLinks()', () => {
-	test( 'should return an action for POST HTTP request to the users new profile links endpoint', () => {
-		const action = addUserProfileLinksAction( profileLinks );
-		const testAction = addUserProfileLinks( action );
+describe('addUserProfileLinks()', () => {
+	test('should return an action for POST HTTP request to the users new profile links endpoint', () => {
+		const action = addUserProfileLinksAction(profileLinks);
+		const testAction = addUserProfileLinks(action);
 
-		expect( testAction ).toEqual(
+		expect(testAction).toEqual(
 			http(
 				{
 					apiVersion: '1.2',
@@ -47,52 +47,52 @@ describe( 'addUserProfileLinks()', () => {
 				action
 			)
 		);
-	} );
-} );
+	});
+});
 
-describe( 'handleAddSuccess()', () => {
-	const successAction = addUserProfileLinksSuccess( profileLinks );
+describe('handleAddSuccess()', () => {
+	const successAction = addUserProfileLinksSuccess(profileLinks);
 
-	test( 'should return user profile links add success and receive actions', () => {
+	test('should return user profile links add success and receive actions', () => {
 		const data = { profile_links: profileLinks };
-		const actions = handleAddSuccess( successAction, data );
+		const actions = handleAddSuccess(successAction, data);
 
-		expect( actions ).toHaveLength( 2 );
-		expect( actions[ 0 ] ).toEqual( successAction );
-		expect( actions[ 1 ] ).toEqual( receiveUserProfileLinks( profileLinks ) );
-	} );
+		expect(actions).toHaveLength(2);
+		expect(actions[0]).toEqual(successAction);
+		expect(actions[1]).toEqual(receiveUserProfileLinks(profileLinks));
+	});
 
-	test( 'should return user profile links add success and duplicate actions', () => {
+	test('should return user profile links add success and duplicate actions', () => {
 		const data = {
-			profile_links: [ profileLinks[ 0 ] ],
-			duplicate: [ profileLinks[ 1 ] ],
+			profile_links: [profileLinks[0]],
+			duplicate: [profileLinks[1]],
 		};
-		const duplicateAction = addUserProfileLinksDuplicate( data.duplicate );
-		const actions = handleAddSuccess( { profileLinks }, data );
+		const duplicateAction = addUserProfileLinksDuplicate(data.duplicate);
+		const actions = handleAddSuccess({ profileLinks }, data);
 
-		expect( actions ).toHaveLength( 2 );
-		expect( actions[ 0 ] ).toEqual( successAction );
-		expect( actions[ 1 ] ).toEqual( duplicateAction );
-	} );
+		expect(actions).toHaveLength(2);
+		expect(actions[0]).toEqual(successAction);
+		expect(actions[1]).toEqual(duplicateAction);
+	});
 
-	test( 'should return user profile links add success and malformed actions', () => {
+	test('should return user profile links add success and malformed actions', () => {
 		const data = {
-			profile_links: [ profileLinks[ 0 ] ],
-			malformed: [ profileLinks[ 1 ] ],
+			profile_links: [profileLinks[0]],
+			malformed: [profileLinks[1]],
 		};
-		const malformedAction = addUserProfileLinksMalformed( data.malformed );
-		const actions = handleAddSuccess( { profileLinks }, data );
+		const malformedAction = addUserProfileLinksMalformed(data.malformed);
+		const actions = handleAddSuccess({ profileLinks }, data);
 
-		expect( actions ).toHaveLength( 2 );
-		expect( actions[ 0 ] ).toEqual( successAction );
-		expect( actions[ 1 ] ).toEqual( malformedAction );
-	} );
-} );
+		expect(actions).toHaveLength(2);
+		expect(actions[0]).toEqual(successAction);
+		expect(actions[1]).toEqual(malformedAction);
+	});
+});
 
-describe( 'handleAddError()', () => {
-	test( 'should return a user profile links add error action', () => {
-		const action = handleAddError( { profileLinks }, error );
+describe('handleAddError()', () => {
+	test('should return a user profile links add error action', () => {
+		const action = handleAddError({ profileLinks }, error);
 
-		expect( action ).toEqual( addUserProfileLinksError( profileLinks, error ) );
-	} );
-} );
+		expect(action).toEqual(addUserProfileLinksError(profileLinks, error));
+	});
+});

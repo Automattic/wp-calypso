@@ -8,9 +8,5 @@ export default {
 	name: 'tutorialSitePreview',
 	version: '20170101',
 	path: '/stats',
-	when: and(
-		isEnabled( 'guided-tours/tutorial-site-preview' ),
-		isSelectedSitePreviewable,
-		isNewUser
-	),
+	when: and(isEnabled('guided-tours/tutorial-site-preview'), isSelectedSitePreviewable, isNewUser),
 };

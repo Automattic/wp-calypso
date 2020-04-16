@@ -17,7 +17,7 @@ import 'state/data-layer/wpcom/read/sites';
 
 import 'state/reader/init';
 
-export function requestSite( blogId ) {
+export function requestSite(blogId) {
 	return {
 		type: READER_SITE_REQUEST,
 		payload: {
@@ -26,14 +26,14 @@ export function requestSite( blogId ) {
 	};
 }
 
-export function receiveReaderSiteRequestSuccess( data ) {
+export function receiveReaderSiteRequestSuccess(data) {
 	return {
 		type: READER_SITE_REQUEST_SUCCESS,
 		payload: data,
 	};
 }
 
-export function receiveReaderSiteRequestFailure( action, error ) {
+export function receiveReaderSiteRequestFailure(action, error) {
 	return {
 		type: READER_SITE_REQUEST_FAILURE,
 		payload: action.payload,
@@ -41,9 +41,9 @@ export function receiveReaderSiteRequestFailure( action, error ) {
 	};
 }
 
-export function updateSites( sites ) {
-	if ( ! isArray( sites ) ) {
-		sites = [ sites ];
+export function updateSites(sites) {
+	if (!isArray(sites)) {
+		sites = [sites];
 	}
 	return {
 		type: READER_SITE_UPDATE,

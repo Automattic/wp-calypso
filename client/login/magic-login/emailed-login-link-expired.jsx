@@ -21,7 +21,7 @@ import {
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
 
-const nativeLoginUrl = login( { isNative: true, twoFactorAuthType: 'link' } );
+const nativeLoginUrl = login({ isNative: true, twoFactorAuthType: 'link' });
 
 const lostPasswordURL = addQueryArgs(
 	{
@@ -38,15 +38,15 @@ class EmailedLoginLinkExpired extends React.Component {
 	};
 
 	componentDidMount() {
-		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
+		this.props.recordPageView('/log-in/link/use', 'Login > Link > Expired');
 	}
 
-	onClickTryAgainLink = event => {
+	onClickTryAgainLink = (event) => {
 		event.preventDefault();
 
 		this.props.hideMagicLoginRequestForm();
 
-		page( nativeLoginUrl );
+		page(nativeLoginUrl);
 	};
 
 	render() {
@@ -54,23 +54,19 @@ class EmailedLoginLinkExpired extends React.Component {
 
 		return (
 			<div>
-				<RedirectWhenLoggedIn
-					delayAtMount={ 3500 }
-					redirectTo="/"
-					replaceCurrentLocation={ true }
-				/>
+				<RedirectWhenLoggedIn delayAtMount={3500} redirectTo="/" replaceCurrentLocation={true} />
 
 				<EmptyContent
-					action={ translate( 'Try again' ) }
-					actionCallback={ this.onClickTryAgainLink }
-					actionURL={ nativeLoginUrl }
+					action={translate('Try again')}
+					actionCallback={this.onClickTryAgainLink}
+					actionURL={nativeLoginUrl}
 					className="magic-login__link-expired"
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-					illustrationWidth={ 500 }
-					line={ translate( 'Maybe try resetting your password instead' ) }
-					secondaryAction={ translate( 'Reset my password' ) }
-					secondaryActionURL={ lostPasswordURL }
-					title={ translate( 'Login link is expired or invalid' ) }
+					illustration={'/calypso/images/illustrations/illustration-404.svg'}
+					illustrationWidth={500}
+					line={translate('Maybe try resetting your password instead')}
+					secondaryAction={translate('Reset my password')}
+					secondaryActionURL={lostPasswordURL}
+					title={translate('Login link is expired or invalid')}
 				/>
 			</div>
 		);
@@ -79,7 +75,7 @@ class EmailedLoginLinkExpired extends React.Component {
 
 const mapDispatchToProps = {
 	hideMagicLoginRequestForm,
-	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+	recordPageView: withEnhancers(recordPageView, [enhanceWithSiteType]),
 };
 
-export default connect( null, mapDispatchToProps )( localize( EmailedLoginLinkExpired ) );
+export default connect(null, mapDispatchToProps)(localize(EmailedLoginLinkExpired));

@@ -13,14 +13,14 @@ import isSiteConflicting from './is-site-conflicting';
  * @param  {number}  siteId Site ID
  * @returns {?string}        Site Url
  */
-export default function getSiteUrl( state, siteId ) {
-	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-		return getSiteSlug( state, siteId );
+export default function getSiteUrl(state, siteId) {
+	if (getSiteOption(state, siteId, 'is_redirect') || isSiteConflicting(state, siteId)) {
+		return getSiteSlug(state, siteId);
 	}
 
-	const site = getRawSite( state, siteId );
+	const site = getRawSite(state, siteId);
 
-	if ( ! site ) {
+	if (!site) {
 		return null;
 	}
 

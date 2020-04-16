@@ -13,8 +13,8 @@ import MultipleChoiceQuestion from '../';
 import notices from 'notices';
 
 function MultipleChoiceQuestionExamples() {
-	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
-	const [ answerText, setAnswerText ] = useState( '' );
+	const [selectedAnswer, setSelectedAnswer] = useState(null);
+	const [answerText, setAnswerText] = useState('');
 
 	const answers = [
 		{ id: 'hungry-bunnies', answerText: 'Hungry Bunnies' },
@@ -29,12 +29,12 @@ function MultipleChoiceQuestionExamples() {
 			answerText: 'Starving Storks',
 			children: (
 				<Button
-					onClick={ () => {
-						notices.success( 'The Stork Button was clicked', { duration: 5000 } );
-					} }
+					onClick={() => {
+						notices.success('The Stork Button was clicked', { duration: 5000 });
+					}}
 					primary
 				>
-					{ 'The Stork Button' }
+					{'The Stork Button'}
 				</Button>
 			),
 		},
@@ -46,11 +46,11 @@ function MultipleChoiceQuestionExamples() {
 			textInputPrompt: 'Who else?',
 			children: (
 				<Button
-					onClick={ () => {
-						notices.success( 'The Extra Button was clicked', { duration: 5000 } );
-					} }
+					onClick={() => {
+						notices.success('The Extra Button was clicked', { duration: 5000 });
+					}}
 				>
-					{ 'The Extra Button' }
+					{'The Extra Button'}
 				</Button>
 			),
 		},
@@ -60,23 +60,23 @@ function MultipleChoiceQuestionExamples() {
 		<div>
 			<Card>
 				<MultipleChoiceQuestion
-					answers={ answers }
-					question={ 'Please choose one of the following:' }
-					onAnswerChange={ ( answer, text ) => {
-						setSelectedAnswer( answer );
-						setAnswerText( text || '' );
-					} }
+					answers={answers}
+					question={'Please choose one of the following:'}
+					onAnswerChange={(answer, text) => {
+						setSelectedAnswer(answer);
+						setAnswerText(text || '');
+					}}
 				/>
 			</Card>
 			<Card>
-				<CardHeading>{ 'Selected Answer' }</CardHeading>
+				<CardHeading>{'Selected Answer'}</CardHeading>
 				<p>
 					<b>Selected Answer is: </b>
-					{ selectedAnswer ? selectedAnswer : 'No Answer Currently Selected' }
+					{selectedAnswer ? selectedAnswer : 'No Answer Currently Selected'}
 				</p>
 				<p>
 					<b>Answer Text is: </b>
-					{ answerText }
+					{answerText}
 				</p>
 			</Card>
 		</div>

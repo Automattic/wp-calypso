@@ -25,14 +25,14 @@ export default class StatsModulePlaceholder extends PureComponent {
 	render() {
 		const { className, isLoading } = this.props;
 
-		if ( ! isLoading ) {
+		if (!isLoading) {
 			return null;
 		}
 
-		const classes = classNames( 'stats-module__placeholder', 'is-void', className );
+		const classes = classNames('stats-module__placeholder', 'is-void', className);
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<Spinner />
 			</div>
 		);

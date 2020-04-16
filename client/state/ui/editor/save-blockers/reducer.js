@@ -8,12 +8,12 @@ import { includes, without } from 'lodash';
  */
 import { EDITOR_RESET, EDITOR_SAVE_BLOCK, EDITOR_SAVE_UNBLOCK } from 'state/action-types';
 
-export default ( state = [], action ) => {
-	switch ( action.type ) {
+export default (state = [], action) => {
+	switch (action.type) {
 		case EDITOR_SAVE_BLOCK:
-			return includes( state, action.key ) ? state : [ ...state, action.key ];
+			return includes(state, action.key) ? state : [...state, action.key];
 		case EDITOR_SAVE_UNBLOCK:
-			return includes( state, action.key ) ? without( state, action.key ) : state;
+			return includes(state, action.key) ? without(state, action.key) : state;
 		case EDITOR_RESET:
 			return state.length > 0 ? [] : state;
 	}

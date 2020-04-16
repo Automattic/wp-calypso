@@ -23,18 +23,18 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
+export function requesting(state = {}, action) {
+	switch (action.type) {
 		case POST_STATS_REQUEST:
 		case POST_STATS_REQUEST_SUCCESS:
 		case POST_STATS_REQUEST_FAILURE:
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.postId ]: {
-						[ action.fields.join() ]: POST_STATS_REQUEST === action.type,
+			return merge({}, state, {
+				[action.siteId]: {
+					[action.postId]: {
+						[action.fields.join()]: POST_STATS_REQUEST === action.type,
 					},
 				},
-			} );
+			});
 	}
 
 	return state;
@@ -48,15 +48,15 @@ export function requesting( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemSchemas, (state = {}, action) => {
+	switch (action.type) {
 		case POST_STATS_RECEIVE:
 			return {
 				...state,
-				[ action.siteId ]: {
-					...get( state, [ action.siteId ], {} ),
-					[ action.postId ]: {
-						...get( state, [ action.siteId, action.postId ], {} ),
+				[action.siteId]: {
+					...get(state, [action.siteId], {}),
+					[action.postId]: {
+						...get(state, [action.siteId, action.postId], {}),
 						...action.stats,
 					},
 				},
@@ -64,9 +64,9 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	items,
-} );
+});

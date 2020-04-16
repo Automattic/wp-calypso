@@ -32,22 +32,22 @@ interface Props {
 	selectedSiteSlug: T.SiteSlug | null;
 }
 
-const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
+const MarketingToolsGoogleMyBusinessFeature: FunctionComponent<Props> = ({
 	connectedGoogleMyBusinessLocation,
 	recordTracksEvent,
 	selectedSiteId,
 	selectedSiteSlug,
-} ) => {
+}) => {
 	const handleConnectToGoogleMyBusinessClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_connect_to_google_my_business_button_click' );
+		recordTracksEvent('calypso_marketing_tools_connect_to_google_my_business_button_click');
 
-		page( `/google-my-business/${ selectedSiteSlug || '' }` );
+		page(`/google-my-business/${selectedSiteSlug || ''}`);
 	};
 
 	const handleGoToGoogleMyBusinessClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_go_to_google_my_business_button_click' );
+		recordTracksEvent('calypso_marketing_tools_go_to_google_my_business_button_click');
 
-		page( `/google-my-business/stats/${ selectedSiteSlug || '' }` );
+		page(`/google-my-business/stats/${selectedSiteSlug || ''}`);
 	};
 
 	const handleUpgradeToBusinessPlanClick = () => {
@@ -64,49 +64,49 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 
 	return (
 		<Fragment>
-			{ selectedSiteId && <QuerySiteKeyrings siteId={ selectedSiteId } /> }
+			{selectedSiteId && <QuerySiteKeyrings siteId={selectedSiteId} />}
 			<QueryKeyringConnections forceRefresh />
 			<QueryKeyringServices />
 
 			<MarketingToolsFeature
-				description={ translate(
+				description={translate(
 					'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
-				) }
+				)}
 				imagePath="/calypso/images/marketing/google-my-business-logo.svg"
-				title={ translate( 'Let your customers find you on Google' ) }
+				title={translate('Let your customers find you on Google')}
 			>
-				{ ! connectedGoogleMyBusinessLocation ? (
+				{!connectedGoogleMyBusinessLocation ? (
 					<MarketingToolsFeatureButtonWithPlanGate
-						buttonText={ translate( 'Connect to Google My Business' ) }
-						feature={ FEATURE_GOOGLE_MY_BUSINESS }
-						onDefaultButtonClick={ handleConnectToGoogleMyBusinessClick }
-						onUpgradeButtonClick={ handleUpgradeToBusinessPlanClick }
-						planSlug={ PLAN_BUSINESS }
+						buttonText={translate('Connect to Google My Business')}
+						feature={FEATURE_GOOGLE_MY_BUSINESS}
+						onDefaultButtonClick={handleConnectToGoogleMyBusinessClick}
+						onUpgradeButtonClick={handleUpgradeToBusinessPlanClick}
+						planSlug={PLAN_BUSINESS}
 					/>
 				) : (
-					<Button compact onClick={ handleGoToGoogleMyBusinessClick }>
-						{ translate( 'Go To Google My Business' ) }
+					<Button compact onClick={handleGoToGoogleMyBusinessClick}>
+						{translate('Go To Google My Business')}
 					</Button>
-				) }
+				)}
 			</MarketingToolsFeature>
 		</Fragment>
 	);
 };
 
 export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
+	(state) => {
+		const selectedSiteId = getSelectedSiteId(state);
 
 		return {
 			connectedGoogleMyBusinessLocation: getGoogleMyBusinessConnectedLocation(
 				state,
 				selectedSiteId
 			),
-			selectedSiteSlug: getSelectedSiteSlug( state ),
+			selectedSiteSlug: getSelectedSiteSlug(state),
 			selectedSiteId,
 		};
 	},
 	{
 		recordTracksEvent: recordTracksEventAction,
 	}
-)( MarketingToolsGoogleMyBusinessFeature );
+)(MarketingToolsGoogleMyBusinessFeature);

@@ -18,11 +18,11 @@ import { isFunction, isObject } from 'lodash';
  * @param {object|Function} action The action to be dispatched
  * @param {object} props The props to be sent to the function or assigned to the object.
  */
-export function dispatchWithProps( dispatch, getState, action, props ) {
-	if ( isFunction( action ) ) {
-		const returnValue = action( dispatch, getState, props );
-		dispatchWithProps( dispatch, getState, returnValue, props );
-	} else if ( isObject( action ) ) {
-		dispatch( { ...action, ...props } );
+export function dispatchWithProps(dispatch, getState, action, props) {
+	if (isFunction(action)) {
+		const returnValue = action(dispatch, getState, props);
+		dispatchWithProps(dispatch, getState, returnValue, props);
+	} else if (isObject(action)) {
+		dispatch({ ...action, ...props });
 	}
 }

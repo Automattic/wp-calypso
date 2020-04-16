@@ -14,9 +14,9 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { localize } from 'i18n-calypso';
 
-const DomainPrimaryFlag = ( { isDomainOnly, domain, translate } ) => {
-	if ( domain.isPrimary && ! isDomainOnly ) {
-		return <strong className="domain__primary-flag">{ translate( 'Primary Domain' ) }</strong>;
+const DomainPrimaryFlag = ({ isDomainOnly, domain, translate }) => {
+	if (domain.isPrimary && !isDomainOnly) {
+		return <strong className="domain__primary-flag">{translate('Primary Domain')}</strong>;
 	}
 
 	return null;
@@ -30,7 +30,7 @@ DomainPrimaryFlag.propTypes = {
 
 export default flow(
 	localize,
-	connect( state => ( {
-		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
-	} ) )
-)( DomainPrimaryFlag );
+	connect((state) => ({
+		isDomainOnly: isDomainOnlySite(state, getSelectedSiteId(state)),
+	}))
+)(DomainPrimaryFlag);

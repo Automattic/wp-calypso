@@ -24,7 +24,7 @@ import { localizeUrl } from 'lib/i18n-utils';
  *
  * @type {string[]}
  */
-const SERVICES_WHITELIST = [ 'facebook', 'twitter', 'instagram', 'google_plus' ];
+const SERVICES_WHITELIST = ['facebook', 'twitter', 'instagram', 'google_plus'];
 
 class SharingServiceTip extends Component {
 	static propTypes = {
@@ -43,17 +43,17 @@ class SharingServiceTip extends Component {
 				components: {
 					likeBoxLink: (
 						<a
-							href={ localizeUrl(
+							href={localizeUrl(
 								'https://wordpress.com/support/facebook-integration/#facebook-like-box'
-							) }
+							)}
 						/>
 					),
-					shareButtonLink: <a href={ localizeUrl( 'https://wordpress.com/support/sharing/' ) } />,
+					shareButtonLink: <a href={localizeUrl('https://wordpress.com/support/sharing/')} />,
 					embedLink: (
 						<a
-							href={ localizeUrl(
+							href={localizeUrl(
 								'https://wordpress.com/support/facebook-integration/facebook-embeds/'
-							) }
+							)}
 						/>
 					),
 				},
@@ -69,9 +69,7 @@ class SharingServiceTip extends Component {
 				components: {
 					widgetLink: (
 						<a
-							href={ localizeUrl(
-								'https://wordpress.com/support/widgets/twitter-timeline-widget/'
-							) }
+							href={localizeUrl('https://wordpress.com/support/widgets/twitter-timeline-widget/')}
 						/>
 					),
 				},
@@ -86,9 +84,7 @@ class SharingServiceTip extends Component {
 			{
 				components: {
 					widgetLink: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/support/instagram/instagram-widget/' ) }
-						/>
+						<a href={localizeUrl('https://wordpress.com/support/instagram/instagram-widget/')} />
 					),
 				},
 				context: 'Sharing: Tip in settings',
@@ -102,17 +98,17 @@ class SharingServiceTip extends Component {
 
 	render() {
 		const { service } = this.props;
-		if ( ! includes( SERVICES_WHITELIST, service.ID ) || 'google_plus' === service.ID ) {
+		if (!includes(SERVICES_WHITELIST, service.ID) || 'google_plus' === service.ID) {
 			return <div className="connections__sharing-service-tip" />;
 		}
 
 		return (
 			<div className="connections__sharing-service-tip">
-				<Gridicon icon="info" size={ 18 } />
-				{ this[ service.ID ]() }
+				<Gridicon icon="info" size={18} />
+				{this[service.ID]()}
 			</div>
 		);
 	}
 }
 
-export default localize( SharingServiceTip );
+export default localize(SharingServiceTip);

@@ -35,8 +35,8 @@ class PlansNavigation extends React.Component {
 		cartVisible: false,
 	};
 
-	getSectionTitle( path ) {
-		switch ( path ) {
+	getSectionTitle(path) {
+		switch (path) {
 			case '/plans/my-plan':
 				return 'My Plan';
 
@@ -53,97 +53,92 @@ class PlansNavigation extends React.Component {
 				return 'Email';
 
 			default:
-				return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
+				return path.split('?')[0].replace(/\//g, ' ');
 		}
 	}
 
 	render() {
 		const { isJetpack, site, shouldShowMyPlan, translate } = this.props;
-		const path = sectionify( this.props.path );
-		const sectionTitle = this.getSectionTitle( path );
-		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
-		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
+		const path = sectionify(this.props.path);
+		const sectionTitle = this.getSectionTitle(path);
+		const userCanManageOptions = get(site, 'capabilities.manage_options', false);
+		const canManageDomain = userCanManageOptions && (isATEnabled(site) || !isJetpack);
 		const cartToggleButton = this.cartToggleButton();
 		const hasPinnedItems = isMobile() && cartToggleButton != null;
 
 		return (
 			site && (
 				<SectionNav
-					hasPinnedItems={ hasPinnedItems }
-					selectedText={ sectionTitle }
-					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
+					hasPinnedItems={hasPinnedItems}
+					selectedText={sectionTitle}
+					onMobileNavPanelOpen={this.onMobileNavPanelOpen}
 				>
-					<NavTabs label="Section" selectedText={ sectionTitle }>
-						{ shouldShowMyPlan && (
-							<NavItem
-								path={ `/plans/my-plan/${ site.slug }` }
-								selected={ path === '/plans/my-plan' }
-							>
-								{ translate( 'My Plan' ) }
+					<NavTabs label="Section" selectedText={sectionTitle}>
+						{shouldShowMyPlan && (
+							<NavItem path={`/plans/my-plan/${site.slug}`} selected={path === '/plans/my-plan'}>
+								{translate('My Plan')}
 							</NavItem>
-						) }
+						)}
 						<NavItem
-							path={ `/plans/${ site.slug }` }
-							selected={
-								path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
-							}
+							path={`/plans/${site.slug}`}
+							selected={path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'}
 						>
-							{ translate( 'Plans' ) }
+							{translate('Plans')}
 						</NavItem>
-						{ canManageDomain && (
+						{canManageDomain && (
 							<NavItem
-								path={ `/domains/manage/${ site.slug }` }
-								selected={ path === '/domains/manage' || path === '/domains/add' }
+								path={`/domains/manage/${site.slug}`}
+								selected={path === '/domains/manage' || path === '/domains/add'}
 							>
-								{ translate( 'Domains' ) }
+								{translate('Domains')}
 							</NavItem>
-						) }
-						{ canManageDomain && (
-							<NavItem path={ `/email/${ site.slug }` } selected={ path === '/email' }>
-								{ translate( 'Email' ) }
+						)}
+						{canManageDomain && (
+							<NavItem path={`/email/${site.slug}`} selected={path === '/email'}>
+								{translate('Email')}
 							</NavItem>
-						) }
+						)}
 					</NavTabs>
-					{ cartToggleButton }
+					{cartToggleButton}
 				</SectionNav>
 			)
 		);
 	}
 
 	toggleCartVisibility = () => {
-		this.setState( { cartVisible: ! this.state.cartVisible } );
+		this.setState({ cartVisible: !this.state.cartVisible });
 	};
 
 	onMobileNavPanelOpen = () => {
-		this.setState( { cartVisible: false } );
+		this.setState({ cartVisible: false });
 	};
 
 	cartToggleButton() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart || ! this.props.site ) {
+		if (!config.isEnabled('upgrades/checkout') || !this.props.cart || !this.props.site) {
 			return null;
 		}
 
 		return (
 			<PopoverCart
-				cart={ this.props.cart }
-				selectedSite={ this.props.site }
-				onToggle={ this.toggleCartVisibility }
-				pinned={ isMobile() }
-				visible={ this.state.cartVisible }
-				path={ this.props.path }
+				cart={this.props.cart}
+				selectedSite={this.props.site}
+				onToggle={this.toggleCartVisibility}
+				pinned={isMobile()}
+				visible={this.state.cartVisible}
+				path={this.props.path}
 			/>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const site = getSite( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isOnFreePlan = isSiteOnFreePlan( state, siteId );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const site = getSite(state, siteId);
+	const isJetpack = isJetpackSite(state, siteId);
+	const isOnFreePlan = isSiteOnFreePlan(state, siteId);
 	return {
 		isJetpack,
-		shouldShowMyPlan: ! isOnFreePlan || isJetpack,
+		shouldShowMyPlan: !isOnFreePlan || isJetpack,
 		site,
 	};
-} )( localize( PlansNavigation ) );
+})(localize(PlansNavigation));

@@ -33,18 +33,18 @@ import './style.scss';
 /**
  * Module variables
  */
-const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
+const globalKeyBoardShortcutsEnabled = config.isEnabled('keyboard-shortcuts');
 const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
 	? getGlobalKeyboardShortcuts()
 	: null;
-const debug = debugFactory( 'calypso:inline-help' );
+const debug = debugFactory('calypso:inline-help');
 
-const InlineHelpPopover = props => (
-	<AsyncLoad { ...props } require="blocks/inline-help/popover" placeholder={ null } />
+const InlineHelpPopover = (props) => (
+	<AsyncLoad {...props} require="blocks/inline-help/popover" placeholder={null} />
 );
 
-const InlineHelpDialog = props => (
-	<AsyncLoad { ...props } require="blocks/inline-help/dialog" placeholder={ null } />
+const InlineHelpDialog = (props) => (
+	<AsyncLoad {...props} require="blocks/inline-help/dialog" placeholder={null} />
 );
 
 class InlineHelp extends Component {
@@ -61,19 +61,19 @@ class InlineHelp extends Component {
 	state = {};
 
 	componentDidMount() {
-		if ( globalKeyboardShortcuts ) {
+		if (globalKeyboardShortcuts) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
 	}
 
 	componentWillUnmount() {
-		if ( globalKeyboardShortcuts ) {
+		if (globalKeyboardShortcuts) {
 			globalKeyboardShortcuts.showInlineHelp = null;
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( ! prevProps.isHappychatOpen && this.props.isHappychatOpen ) {
+	componentDidUpdate(prevProps) {
+		if (!prevProps.isHappychatOpen && this.props.isHappychatOpen) {
 			this.closeInlineHelp();
 		}
 	}
@@ -82,14 +82,14 @@ class InlineHelp extends Component {
 
 	// Preload the async chunk on mouse hover or touch start
 	preload = () => {
-		if ( ! this.preloaded ) {
-			asyncRequire( 'blocks/inline-help/popover' );
+		if (!this.preloaded) {
+			asyncRequire('blocks/inline-help/popover');
 			this.preloaded = true;
 		}
 	};
 
 	toggleInlineHelp = () => {
-		if ( this.props.isPopoverVisible ) {
+		if (this.props.isPopoverVisible) {
 			this.closeInlineHelp();
 		} else {
 			this.showInlineHelp();
@@ -97,14 +97,14 @@ class InlineHelp extends Component {
 	};
 
 	showInlineHelp = () => {
-		debug( 'showing inline help.' );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
+		debug('showing inline help.');
+		this.props.recordTracksEvent('calypso_inlinehelp_show');
 		this.props.showInlineHelpPopover();
 	};
 
 	closeInlineHelp = () => {
-		debug( 'hiding inline help.' );
-		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
+		debug('hiding inline help.');
+		this.props.recordTracksEvent('calypso_inlinehelp_close');
 		this.props.hideInlineHelpPopover();
 	};
 
@@ -112,19 +112,19 @@ class InlineHelp extends Component {
 		this.toggleInlineHelp();
 	};
 
-	inlineHelpToggleRef = node => {
+	inlineHelpToggleRef = (node) => {
 		this.inlineHelpToggle = node;
 	};
 
 	// @TODO: Instead of prop drilling this should be done via redux
-	setDialogState = ( { showDialog, videoLink = null, dialogType } ) =>
-		this.setState( {
+	setDialogState = ({ showDialog, videoLink = null, dialogType }) =>
+		this.setState({
 			showDialog,
 			videoLink,
 			dialogType,
-		} );
+		});
 
-	closeDialog = () => this.setState( { showDialog: false } );
+	closeDialog = () => this.setState({ showDialog: false });
 
 	render() {
 		const { translate, isPopoverVisible } = this.props;
@@ -137,48 +137,48 @@ class InlineHelp extends Component {
 		return (
 			<div className="inline-help">
 				<Button
-					className={ classNames( inlineHelpButtonClasses ) }
-					onClick={ this.handleHelpButtonClicked }
-					onTouchStart={ this.preload }
-					onMouseEnter={ this.preload }
+					className={classNames(inlineHelpButtonClasses)}
+					onClick={this.handleHelpButtonClicked}
+					onTouchStart={this.preload}
+					onMouseEnter={this.preload}
 					borderless
-					title={ translate( 'Help' ) }
-					ref={ this.inlineHelpToggleRef }
+					title={translate('Help')}
+					ref={this.inlineHelpToggleRef}
 				>
-					<Gridicon icon="help-outline" size={ 36 } />
+					<Gridicon icon="help-outline" size={36} />
 				</Button>
-				{ isPopoverVisible && (
+				{isPopoverVisible && (
 					<InlineHelpPopover
-						context={ this.inlineHelpToggle }
-						onClose={ this.closeInlineHelp }
-						setDialogState={ this.setDialogState }
+						context={this.inlineHelpToggle}
+						onClose={this.closeInlineHelp}
+						setDialogState={this.setDialogState}
 					/>
-				) }
-				{ isWithinBreakpoint( '<660px' ) && isPopoverVisible && (
+				)}
+				{isWithinBreakpoint('<660px') && isPopoverVisible && (
 					<RootChild>
 						<div className="inline-help__mobile-overlay"></div>
 					</RootChild>
-				) }
-				{ showDialog && (
+				)}
+				{showDialog && (
 					<InlineHelpDialog
-						dialogType={ dialogType }
-						videoLink={ videoLink }
-						onClose={ this.closeDialog }
+						dialogType={dialogType}
+						videoLink={videoLink}
+						onClose={this.closeDialog}
 					/>
-				) }
-				{ this.props.isHappychatButtonVisible && config.isEnabled( 'happychat' ) && (
+				)}
+				{this.props.isHappychatButtonVisible && config.isEnabled('happychat') && (
 					<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	return {
-		isHappychatButtonVisible: hasActiveHappychatSession( state ),
-		isHappychatOpen: isHappychatOpen( state ),
-		isPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isHappychatButtonVisible: hasActiveHappychatSession(state),
+		isHappychatOpen: isHappychatOpen(state),
+		isPopoverVisible: isInlineHelpPopoverVisible(state),
 	};
 };
 
@@ -188,4 +188,4 @@ const mapDispatchToProps = {
 	hideInlineHelpPopover,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(InlineHelp));

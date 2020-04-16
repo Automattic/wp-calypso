@@ -30,44 +30,44 @@ class SiteLink extends Component {
 
 	static contextTypes = contextTypes;
 
-	onClick = event => {
-		this.props.onClick && this.props.onClick( event );
+	onClick = (event) => {
+		this.props.onClick && this.props.onClick(event);
 		const { quit, tour, tourVersion, step, isLastStep } = this.context;
-		quit( { tour, tourVersion, step, isLastStep } );
+		quit({ tour, tourVersion, step, isLastStep });
 	};
 
 	render() {
 		const { children, href, siteSlug, isButton, isPrimaryButton, newWindow } = this.props;
-		const siteHref = href.replace( ':site', siteSlug );
+		const siteHref = href.replace(':site', siteSlug);
 		const siteTarget = newWindow ? '_blank' : null;
 
-		if ( isButton ) {
+		if (isButton) {
 			return (
 				<Button
-					primary={ isPrimaryButton }
-					onClick={ this.onClick }
-					href={ siteHref }
-					target={ siteTarget }
+					primary={isPrimaryButton}
+					onClick={this.onClick}
+					href={siteHref}
+					target={siteTarget}
 				>
-					{ children }
+					{children}
 				</Button>
 			);
 		}
 
 		return (
-			<a onClick={ this.onClick } href={ siteHref } className="config-elements__text-link">
-				{ children }
+			<a onClick={this.onClick} href={siteHref} className="config-elements__text-link">
+				{children}
 			</a>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSiteSlug(state, siteId);
 	return { siteId, siteSlug };
 };
 
 const mapDispatchToProps = null;
 
-export default connect( mapStateToProps, mapDispatchToProps )( SiteLink );
+export default connect(mapStateToProps, mapDispatchToProps)(SiteLink);

@@ -61,7 +61,7 @@ export const moduleData = {
 		introduced: '1.0',
 		changed: '',
 		free: true,
-		module_tags: [ 'Test tag' ],
+		module_tags: ['Test tag'],
 	},
 	'module-b': {
 		module: 'module-b',
@@ -72,6 +72,6 @@ export const moduleData = {
 		introduced: '1.0',
 		changed: '',
 		free: true,
-		module_tags: [ 'Test tag' ],
+		module_tags: ['Test tag'],
 	},
 };

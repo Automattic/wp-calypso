@@ -40,8 +40,8 @@ class SpeedUpSiteSettings extends Component {
 		// If one of them is on, we turn everything off.
 		updateFields(
 			{
-				photon: ! siteAcceleratorStatus,
-				'photon-cdn': ! siteAcceleratorStatus,
+				photon: !siteAcceleratorStatus,
+				'photon-cdn': !siteAcceleratorStatus,
 			},
 			submitForm
 		);
@@ -65,87 +65,87 @@ class SpeedUpSiteSettings extends Component {
 				<Card>
 					<FormFieldset className="site-settings__formfieldset jetpack-site-accelerator-settings">
 						<SupportInfo
-							text={ translate(
+							text={translate(
 								"Jetpack's global Content Delivery Network (CDN) optimizes " +
 									'files and images so your visitors enjoy ' +
 									'the fastest experience regardless of device or location.'
-							) }
+							)}
 							link="http://jetpack.com/support/site-accelerator/"
 						/>
 						<FormSettingExplanation className="site-settings__feature-description">
-							{ translate(
+							{translate(
 								'Load pages faster by allowing Jetpack to optimize your images and serve your images ' +
 									'and static files (like CSS and JavaScript) from our global network of servers.'
-							) }
+							)}
 						</FormSettingExplanation>
 						<CompactFormToggle
-							checked={ siteAcceleratorStatus }
-							disabled={ isRequestingOrSaving || photonModuleUnavailable }
-							onChange={ this.handleCdnChange }
+							checked={siteAcceleratorStatus}
+							disabled={isRequestingOrSaving || photonModuleUnavailable}
+							onChange={this.handleCdnChange}
 						>
-							{ translate( 'Enable site accelerator' ) }
+							{translate('Enable site accelerator')}
 						</CompactFormToggle>
 						<div className="site-settings__child-settings">
 							<JetpackModuleToggle
-								siteId={ selectedSiteId }
+								siteId={selectedSiteId}
 								moduleSlug="photon"
-								label={ translate( 'Speed up image load times' ) }
-								disabled={ isRequestingOrSaving || photonModuleUnavailable }
+								label={translate('Speed up image load times')}
+								disabled={isRequestingOrSaving || photonModuleUnavailable}
 							/>
 							<JetpackModuleToggle
-								siteId={ selectedSiteId }
+								siteId={selectedSiteId}
 								moduleSlug="photon-cdn"
-								label={ translate( 'Speed up static file load times' ) }
-								disabled={ isRequestingOrSaving }
+								label={translate('Speed up static file load times')}
+								disabled={isRequestingOrSaving}
 							/>
 						</div>
 					</FormFieldset>
 
-					{ siteIsJetpack && (
+					{siteIsJetpack && (
 						<FormFieldset className="site-settings__formfieldset has-divider is-top-only jetpack-lazy-images-settings">
 							<SupportInfo
-								text={ translate(
+								text={translate(
 									"Delays the loading of images until they are visible in the visitor's browser."
-								) }
+								)}
 								link="https://jetpack.com/support/lazy-images/"
 							/>
 							<JetpackModuleToggle
-								siteId={ selectedSiteId }
+								siteId={selectedSiteId}
 								moduleSlug="lazy-images"
-								label={ translate( 'Lazy load images' ) }
-								description={ translate(
+								label={translate('Lazy load images')}
+								description={translate(
 									"Improve your site's speed by only loading images visible on the screen. New images will " +
 										'load just before they scroll into view. This prevents viewers from having to download ' +
 										"all the images on a page all at once, even ones they can't see."
-								) }
-								disabled={ isRequestingOrSaving }
+								)}
+								disabled={isRequestingOrSaving}
 							/>
 						</FormFieldset>
-					) }
+					)}
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const siteInDevMode = isJetpackSiteInDevelopmentMode(state, selectedSiteId);
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 		state,
 		selectedSiteId,
 		'photon'
 	);
-	const photonModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon' );
-	const assetCdnModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon-cdn' );
+	const photonModuleActive = isJetpackModuleActive(state, selectedSiteId, 'photon');
+	const assetCdnModuleActive = isJetpackModuleActive(state, selectedSiteId, 'photon-cdn');
 
 	// Status of the main site accelerator toggle.
-	const siteAcceleratorStatus = !! ( photonModuleActive || assetCdnModuleActive );
+	const siteAcceleratorStatus = !!(photonModuleActive || assetCdnModuleActive);
 
 	return {
 		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		selectedSiteId,
 		siteAcceleratorStatus,
-		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
+		siteIsJetpack: isJetpackSite(state, selectedSiteId),
 	};
-} )( localize( SpeedUpSiteSettings ) );
+})(localize(SpeedUpSiteSettings));

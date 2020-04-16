@@ -8,7 +8,7 @@ import moment from 'moment';
  */
 import getUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 
-describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
+describe('HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 	const state = {
 		happychat: {
 			user: {
@@ -19,7 +19,7 @@ describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 		},
 	};
 
-	beforeAll( () => {
+	beforeAll(() => {
 		global.window = {
 			innerWidth: 'windowInnerWidth',
 			innerHeight: 'windowInnerHeight',
@@ -31,15 +31,15 @@ describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 				userAgent: 'navigatorUserAgent',
 			},
 		};
-	} );
+	});
 
-	test( 'should send relevant browser information to the connection', () => {
+	test('should send relevant browser information to the connection', () => {
 		const expectedInfo = {
 			howCanWeHelp: 'howCanWeHelp',
 			howYouFeel: 'howYouFeel',
 			siteId: 'siteId',
 			siteUrl: 'siteUrl',
-			localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
+			localDateTime: moment().format('h:mm a, MMMM Do YYYY'),
 			screenSize: {
 				width: 'screenWidth',
 				height: 'screenHeight',
@@ -52,15 +52,15 @@ describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 			geoLocation: state.happychat.user.geoLocation,
 		};
 
-		const userInfo = getUserInfo( state )( {
+		const userInfo = getUserInfo(state)({
 			site: {
 				ID: 'siteId',
 				URL: 'siteUrl',
 			},
 			howCanWeHelp: 'howCanWeHelp',
 			howYouFeel: 'howYouFeel',
-		} );
+		});
 
-		expect( userInfo ).toEqual( expectedInfo );
-	} );
-} );
+		expect(userInfo).toEqual(expectedInfo);
+	});
+});

@@ -14,11 +14,11 @@ import MediaListStore from 'lib/media/list-store';
 import passToChildren from 'lib/react-pass-to-children';
 import utils from './utils';
 
-function getStateData( siteId ) {
+function getStateData(siteId) {
 	return {
-		media: MediaListStore.getAll( siteId ),
-		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
-		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId ),
+		media: MediaListStore.getAll(siteId),
+		mediaHasNextPage: MediaListStore.hasNextPage(siteId),
+		mediaFetchingNextPage: MediaListStore.isFetchingNextPage(siteId),
 	};
 }
 
@@ -33,53 +33,53 @@ export default class extends React.Component {
 		search: PropTypes.string,
 	};
 
-	state = getStateData( this.props.siteId );
+	state = getStateData(this.props.siteId);
 
 	UNSAFE_componentWillMount() {
-		MediaActions.setQuery( this.props.siteId, this.getQuery() );
-		MediaListStore.on( 'change', this.updateStateData );
+		MediaActions.setQuery(this.props.siteId, this.getQuery());
+		MediaListStore.on('change', this.updateStateData);
 		this.updateStateData();
 	}
 
 	componentWillUnmount() {
-		MediaListStore.off( 'change', this.updateStateData );
+		MediaListStore.off('change', this.updateStateData);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const nextQuery = this.getQuery( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		const nextQuery = this.getQuery(nextProps);
 
-		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
-			MediaActions.setQuery( nextProps.siteId, nextQuery );
-			this.setState( getStateData( nextProps.siteId ) );
+		if (this.props.siteId !== nextProps.siteId || !isEqual(nextQuery, this.getQuery())) {
+			MediaActions.setQuery(nextProps.siteId, nextQuery);
+			this.setState(getStateData(nextProps.siteId));
 		}
 	}
 
-	getQuery = props => {
+	getQuery = (props) => {
 		const query = {};
 
 		props = props || this.props;
 
-		if ( props.search ) {
+		if (props.search) {
 			query.search = props.search;
 		}
 
-		if ( props.filter && ! props.source ) {
-			if ( props.filter === 'this-post' ) {
-				if ( props.postId ) {
+		if (props.filter && !props.source) {
+			if (props.filter === 'this-post') {
+				if (props.postId) {
 					query.post_ID = props.postId;
 				}
 			} else {
-				query.mime_type = utils.getMimeBaseTypeFromFilter( props.filter );
+				query.mime_type = utils.getMimeBaseTypeFromFilter(props.filter);
 			}
 		}
 
-		if ( props.source ) {
+		if (props.source) {
 			query.source = props.source;
 			query.path = 'recent';
 
-			if ( props.source === 'google_photos' ) {
+			if (props.source === 'google_photos') {
 				// Add any query params specific to Google Photos
-				return utils.getGoogleQuery( query, props );
+				return utils.getGoogleQuery(query, props);
 			}
 		}
 
@@ -87,19 +87,19 @@ export default class extends React.Component {
 	};
 
 	fetchData = () => {
-		MediaActions.fetchNextPage( this.props.siteId );
+		MediaActions.fetchNextPage(this.props.siteId);
 	};
 
 	updateStateData = () => {
-		this.setState( getStateData( this.props.siteId ) );
+		this.setState(getStateData(this.props.siteId));
 	};
 
 	render() {
 		return passToChildren(
 			this,
-			assign( {}, this.state, {
+			assign({}, this.state, {
 				mediaOnFetchNextPage: this.fetchData,
-			} )
+			})
 		);
 	}
 }

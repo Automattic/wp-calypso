@@ -17,7 +17,7 @@ import {
 /**
  * Module variables
  */
-const productSlugs = [ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ];
+const productSlugs = [PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY];
 
 /**
  * True if the site supports Jetpack Real-time Backup, false otherwise.
@@ -30,17 +30,17 @@ const productSlugs = [ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_R
  * @param   {number}  siteId ID of the site
  * @returns {boolean}        Whether site supports Jetpack Real-time Backup
  */
-export default function siteSupportsRealtimeBackup( state, siteId ) {
-	const currentPlanSlug = getSitePlanSlug( state, siteId );
-	const purchases = getSitePurchases( state, siteId );
+export default function siteSupportsRealtimeBackup(state, siteId) {
+	const currentPlanSlug = getSitePlanSlug(state, siteId);
+	const purchases = getSitePurchases(state, siteId);
 
-	const currentPlanSupportsRealtimeBackup = some( productSlugs, productSlug =>
-		planHasFeature( currentPlanSlug, productSlug )
+	const currentPlanSupportsRealtimeBackup = some(productSlugs, (productSlug) =>
+		planHasFeature(currentPlanSlug, productSlug)
 	);
 	const hasActiveRealtimeBackupProduct = some(
 		purchases,
-		purchase =>
-			purchase.active && some( productSlugs, productSlug => productSlug === purchase.productSlug )
+		(purchase) =>
+			purchase.active && some(productSlugs, (productSlug) => productSlug === purchase.productSlug)
 	);
 
 	return currentPlanSupportsRealtimeBackup || hasActiveRealtimeBackupProduct;

@@ -9,8 +9,8 @@ import {
 } from 'state/action-types';
 import { combineReducers, keyedReducer } from 'state/utils';
 
-export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
-	switch ( type ) {
+export const requestStatus = keyedReducer('siteId', (state, { type }) => {
+	switch (type) {
 		case JETPACK_SCAN_HISTORY_REQUEST:
 			return 'pending';
 
@@ -22,18 +22,18 @@ export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	}
 
 	return state;
-} );
+});
 
-export const data = keyedReducer( 'siteId', ( state, { type, payload } ) => {
-	switch ( type ) {
+export const data = keyedReducer('siteId', (state, { type, payload }) => {
+	switch (type) {
 		case JETPACK_SCAN_HISTORY_UPDATE:
 			return payload;
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requestStatus,
 	data,
-} );
+});

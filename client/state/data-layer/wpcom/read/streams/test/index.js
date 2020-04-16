@@ -14,18 +14,18 @@ import {
 	receiveUpdates,
 } from 'state/reader/streams/actions';
 
-jest.mock( 'lib/analytics', () => ( {
+jest.mock('lib/analytics', () => ({
 	tracks: { recordEvent: jest.fn() },
-} ) );
+}));
 
-jest.mock( 'lib/wp' );
-jest.mock( 'reader/stats', () => ( { recordTrack: () => {} } ) );
-jest.mock( 'lib/warn', () => () => {} );
+jest.mock('lib/wp');
+jest.mock('reader/stats', () => ({ recordTrack: () => {} }));
+jest.mock('lib/warn', () => () => {});
 
-describe( 'streams', () => {
-	const action = deepfreeze( requestPageAction( { streamKey: 'following', page: 2 } ) );
+describe('streams', () => {
+	const action = deepfreeze(requestPageAction({ streamKey: 'following', page: 2 }));
 
-	describe( 'requestPage', () => {
+	describe('requestPage', () => {
 		const query = {
 			orderBy: 'date',
 			meta: QUERY_META,
@@ -33,37 +33,37 @@ describe( 'streams', () => {
 			content_width: 675,
 		};
 
-		it( 'should return an http request', () => {
-			expect( requestPage( action ) ).toEqual(
-				http( {
+		it('should return an http request', () => {
+			expect(requestPage(action)).toEqual(
+				http({
 					method: 'GET',
 					path: '/read/following',
 					apiVersion: '1.2',
 					query,
 					onSuccess: action,
 					onFailure: action,
-				} )
+				})
 			);
-		} );
+		});
 
-		it( 'should set proper params for subsequent fetches', () => {
+		it('should set proper params for subsequent fetches', () => {
 			const pageHandle = { after: 'the robots attack' };
 			const secondPage = { ...action, payload: { ...action.payload, pageHandle } };
-			const httpAction = requestPage( secondPage );
+			const httpAction = requestPage(secondPage);
 
-			expect( httpAction ).toEqual(
-				http( {
+			expect(httpAction).toEqual(
+				http({
 					method: 'GET',
 					path: '/read/following',
 					apiVersion: '1.2',
 					query: { ...query, number: PER_FETCH, after: 'the robots attack' },
 					onSuccess: secondPage,
 					onFailure: secondPage,
-				} )
+				})
 			);
-		} );
+		});
 
-		describe( 'stream types', () => {
+		describe('stream types', () => {
 			// a bunch of test cases
 			// each test is an assertion of the http call that should be made
 			// when the given stream id is handed to request page
@@ -176,7 +176,7 @@ describe( 'streams', () => {
 						apiVersion: '1.2',
 						query: {
 							algorithm: 'read:recommendations:posts/es/1',
-							seed: expect.any( Number ),
+							seed: expect.any(Number),
 						},
 					},
 				},
@@ -189,54 +189,54 @@ describe( 'streams', () => {
 						query: {
 							...query,
 							alg_prefix: 'read:recommendations:posts',
-							seed: expect.any( Number ),
+							seed: expect.any(Number),
 						},
 					},
 				},
-			].forEach( testCase => {
-				it( testCase.stream + ' should pass the expected params', () => {
-					const pageAction = requestPageAction( { streamKey: testCase.stream } );
+			].forEach((testCase) => {
+				it(testCase.stream + ' should pass the expected params', () => {
+					const pageAction = requestPageAction({ streamKey: testCase.stream });
 					const expected = {
 						onSuccess: pageAction,
 						onFailure: pageAction,
 						...testCase.expected,
 					};
-					expect( requestPage( pageAction ) ).toEqual( http( expected ) );
-				} );
-			} );
-		} );
-	} );
+					expect(requestPage(pageAction)).toEqual(http(expected));
+				});
+			});
+		});
+	});
 
-	describe( 'handlePage', () => {
-		const data = deepfreeze( { posts: [], date_range: { after: '2018' } } );
+	describe('handlePage', () => {
+		const data = deepfreeze({ posts: [], date_range: { after: '2018' } });
 
-		it( 'should return a receivePage action', () => {
+		it('should return a receivePage action', () => {
 			const { streamKey, query } = action.payload;
-			expect( handlePage( action, data ) ).toEqual( [
-				expect.any( Function ), // receivePosts thunk
-				receivePage( {
+			expect(handlePage(action, data)).toEqual([
+				expect.any(Function), // receivePosts thunk
+				receivePage({
 					streamKey,
 					query,
 					streamItems: data.posts,
 					gap: null,
 					pageHandle: { before: '2018' },
-				} ),
-			] );
-		} );
+				}),
+			]);
+		});
 
-		it( 'should return a receiveUpdates action when type is a poll', () => {
+		it('should return a receiveUpdates action when type is a poll', () => {
 			const { streamKey, query } = action.payload;
-			expect(
-				handlePage( { ...action, payload: { ...action.payload, isPoll: true } }, data )
-			).toEqual( [
-				receiveUpdates( {
-					streamKey,
-					query,
-					streamItems: data.posts,
-					gap: null,
-					pageHandle: { before: '2018' },
-				} ),
-			] );
-		} );
-	} );
-} );
+			expect(handlePage({ ...action, payload: { ...action.payload, isPoll: true } }, data)).toEqual(
+				[
+					receiveUpdates({
+						streamKey,
+						query,
+						streamItems: data.posts,
+						gap: null,
+						pageHandle: { before: '2018' },
+					}),
+				]
+			);
+		});
+	});
+});

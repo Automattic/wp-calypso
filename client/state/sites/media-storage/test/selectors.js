@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { getMediaStorage, isRequestingMediaStorage, isOverMediaLimit } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#getMediaStorage()', () => {
-		test( 'should return media storage for a given site ID', () => {
+describe('selectors', () => {
+	describe('#getMediaStorage()', () => {
+		test('should return media storage for a given site ID', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -27,16 +27,16 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const mediaStorage = getMediaStorage( state, 2916284 );
+			const mediaStorage = getMediaStorage(state, 2916284);
 
-			expect( mediaStorage ).to.eql( {
+			expect(mediaStorage).to.eql({
 				max_storage_bytes: 3221225472,
 				storage_used_bytes: 56000,
-			} );
-		} );
-	} );
-	describe( '#isRequestingMediaStorage()', () => {
-		test( 'should return fetching media storage state for a given site ID', () => {
+			});
+		});
+	});
+	describe('#isRequestingMediaStorage()', () => {
+		test('should return fetching media storage state for a given site ID', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -48,13 +48,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isRequestingMediaStorage( state, 2916284 ) ).to.equal( true );
-			expect( isRequestingMediaStorage( state, 77203074 ) ).to.equal( false );
-			expect( isRequestingMediaStorage( state, 'not-defined' ) ).to.equal( false );
-		} );
-	} );
-	describe( '#isOverMediaLimit()', () => {
-		test( 'should return true if a site is over storage limits', () => {
+			expect(isRequestingMediaStorage(state, 2916284)).to.equal(true);
+			expect(isRequestingMediaStorage(state, 77203074)).to.equal(false);
+			expect(isRequestingMediaStorage(state, 'not-defined')).to.equal(false);
+		});
+	});
+	describe('#isOverMediaLimit()', () => {
+		test('should return true if a site is over storage limits', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -72,10 +72,10 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isOverMediaLimit( state, 2916284 ) ).to.equal( true );
-			expect( isOverMediaLimit( state, 77203074 ) ).to.equal( false );
-		} );
-		test( 'should return false if a site is unlimited', () => {
+			expect(isOverMediaLimit(state, 2916284)).to.equal(true);
+			expect(isOverMediaLimit(state, 77203074)).to.equal(false);
+		});
+		test('should return false if a site is unlimited', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -89,9 +89,9 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isOverMediaLimit( state, 2916284 ) ).to.equal( false );
-		} );
-		test( 'should return null if a media storage is not loaded yet', () => {
+			expect(isOverMediaLimit(state, 2916284)).to.equal(false);
+		});
+		test('should return null if a media storage is not loaded yet', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -104,7 +104,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isOverMediaLimit( state, 77203074 ) ).to.equal( null );
-		} );
-	} );
-} );
+			expect(isOverMediaLimit(state, 77203074)).to.equal(null);
+		});
+	});
+});

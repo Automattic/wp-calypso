@@ -26,8 +26,8 @@ import './style.scss';
 
 class ProductPlanOverlapNotices extends Component {
 	static propTypes = {
-		plans: PropTypes.arrayOf( PropTypes.string ).isRequired,
-		products: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		plans: PropTypes.arrayOf(PropTypes.string).isRequired,
+		products: PropTypes.arrayOf(PropTypes.string).isRequired,
 		siteId: PropTypes.number,
 		currentPurchase: PropTypes.object,
 
@@ -44,79 +44,77 @@ class ProductPlanOverlapNotices extends Component {
 	getOverlappingProducts() {
 		const { availableProducts, currentPlanSlug, plans, purchases } = this.props;
 
-		if ( ! currentPlanSlug || ! purchases || ! availableProducts ) {
+		if (!currentPlanSlug || !purchases || !availableProducts) {
 			return [];
 		}
 
 		// Is the current plan among the plans we're interested in?
-		if ( ! plans.includes( currentPlanSlug ) ) {
+		if (!plans.includes(currentPlanSlug)) {
 			return [];
 		}
 
 		// Is the current product among the products we're interested in?
 		const currentProductSlugs = this.getCurrentProductSlugs();
-		if ( ! currentProductSlugs.length ) {
+		if (!currentProductSlugs.length) {
 			return [];
 		}
 
 		// Does the current plan include the current product as a feature, or have a superior version of it?
 		return currentProductSlugs.filter(
-			productSlug =>
-				planHasFeature( currentPlanSlug, productSlug ) ||
-				planHasSuperiorFeature( currentPlanSlug, productSlug )
+			(productSlug) =>
+				planHasFeature(currentPlanSlug, productSlug) ||
+				planHasSuperiorFeature(currentPlanSlug, productSlug)
 		);
 	}
 
 	getCurrentProductSlugs() {
 		const { products, purchases } = this.props;
 
-		const currentProducts = purchases.filter( purchase =>
-			products.includes( purchase.productSlug )
-		);
-		return currentProducts.map( product => product.productSlug );
+		const currentProducts = purchases.filter((purchase) => products.includes(purchase.productSlug));
+		return currentProducts.map((product) => product.productSlug);
 	}
 
-	getProductName( currentProductSlug ) {
+	getProductName(currentProductSlug) {
 		const { availableProducts } = this.props;
 
-		if ( ! currentProductSlug || ! availableProducts[ currentProductSlug ] ) {
+		if (!currentProductSlug || !availableProducts[currentProductSlug]) {
 			return '';
 		}
 
-		return availableProducts[ currentProductSlug ].product_name;
+		return availableProducts[currentProductSlug].product_name;
 	}
 
 	getCurrentPlanName() {
 		const { availableProducts, currentPlanSlug } = this.props;
 
-		if ( ! availableProducts[ currentPlanSlug ] ) {
+		if (!availableProducts[currentPlanSlug]) {
 			return '';
 		}
 
-		return availableProducts[ currentPlanSlug ].product_name;
+		return availableProducts[currentPlanSlug].product_name;
 	}
 
-	clickPurchaseHandler = productSlug => {
-		this.props.recordTracksEvent( 'calypso_product_overlap_purchase_click', {
+	clickPurchaseHandler = (productSlug) => {
+		this.props.recordTracksEvent('calypso_product_overlap_purchase_click', {
 			purchase_slug: productSlug,
-		} );
+		});
 	};
 
-	getProductItem( productSlug ) {
+	getProductItem(productSlug) {
 		const { purchases } = this.props;
-		const productPurchase = purchases.find( purchase => purchase.productSlug === productSlug );
+		const productPurchase = purchases.find((purchase) => purchase.productSlug === productSlug);
 
-		if ( ! productPurchase ) {
+		if (!productPurchase) {
 			return false;
 		}
 
 		return (
-			<li key={ productSlug }>
+			<li key={productSlug}>
 				<a
-					href={ managePurchase( productPurchase.domain, productPurchase.id ) }
-					onClick={ () => this.clickPurchaseHandler( productSlug ) }
+					href={managePurchase(productPurchase.domain, productPurchase.id)}
+					onClick={() => this.clickPurchaseHandler(productSlug)}
 				>
-					{ this.getProductName( productSlug ) }
+					{this.getProductName(productSlug)}
 				</a>
 			</li>
 		);
@@ -128,11 +126,11 @@ class ProductPlanOverlapNotices extends Component {
 		overlappingProductSlugs.sort();
 
 		let showOverlap = false;
-		if ( 0 !== overlappingProductSlugs.length ) {
+		if (0 !== overlappingProductSlugs.length) {
 			if (
 				currentPurchase &&
-				isJetpackProduct( currentPurchase ) &&
-				! overlappingProductSlugs.includes( currentPurchase.productSlug )
+				isJetpackProduct(currentPurchase) &&
+				!overlappingProductSlugs.includes(currentPurchase.productSlug)
 			) {
 				showOverlap = false;
 			} else {
@@ -142,14 +140,14 @@ class ProductPlanOverlapNotices extends Component {
 
 		return (
 			<Fragment>
-				<QuerySitePlans siteId={ selectedSiteId } />
-				<QuerySitePurchases siteId={ selectedSiteId } />
+				<QuerySitePlans siteId={selectedSiteId} />
+				<QuerySitePurchases siteId={selectedSiteId} />
 				<QueryProductsList />
 
-				{ showOverlap && (
+				{showOverlap && (
 					<Notice
-						showDismiss={ false }
-						text={ translate(
+						showDismiss={false}
+						text={translate(
 							'Your %(planName)s Plan includes:' +
 								'{{list/}}' +
 								'Consider removing conflicting products.',
@@ -160,33 +158,33 @@ class ProductPlanOverlapNotices extends Component {
 								components: {
 									list: (
 										<ul className="product-plan-overlap-notices__product-list">
-											{ overlappingProductSlugs.map( productSlug =>
-												this.getProductItem( productSlug )
-											) }
+											{overlappingProductSlugs.map((productSlug) =>
+												this.getProductItem(productSlug)
+											)}
 										</ul>
 									),
 								},
 							}
-						) }
+						)}
 					/>
-				) }
+				)}
 			</Fragment>
 		);
 	}
 }
 
 export default connect(
-	( state, { siteId } ) => {
-		const selectedSiteId = siteId || getSelectedSiteId( state );
+	(state, { siteId }) => {
+		const selectedSiteId = siteId || getSelectedSiteId(state);
 
 		return {
-			availableProducts: getAvailableProductsList( state ),
-			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
-			purchases: getSitePurchases( state, selectedSiteId ),
+			availableProducts: getAvailableProductsList(state),
+			currentPlanSlug: getSitePlanSlug(state, selectedSiteId),
+			purchases: getSitePurchases(state, selectedSiteId),
 			selectedSiteId,
 		};
 	},
 	{
 		recordTracksEvent,
 	}
-)( localize( ProductPlanOverlapNotices ) );
+)(localize(ProductPlanOverlapNotices));

@@ -37,7 +37,7 @@ class FeedSettings extends Component {
 
 		const isDisabled = isRequestingSettings || isSavingSettings;
 
-		if ( 'undefined' === typeof fields.posts_per_rss ) {
+		if ('undefined' === typeof fields.posts_per_rss) {
 			// Do not allow these settings to be updated if they cannot be read from the API.
 			return null;
 		}
@@ -45,15 +45,15 @@ class FeedSettings extends Component {
 		return (
 			<div className="feed-settings">
 				<SettingsSectionHeader
-					disabled={ isDisabled }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
+					disabled={isDisabled}
+					isSaving={isSavingSettings}
+					onButtonClick={handleSubmitForm}
 					showButton
-					title={ translate( 'Feed Settings' ) }
+					title={translate('Feed Settings')}
 				/>
 				<CompactCard>
 					<FormFieldset>
-						{ translate( 'Display {{field /}} most recent blog posts', {
+						{translate('Display {{field /}} most recent blog posts', {
 							components: {
 								field: (
 									<FormTextInput
@@ -62,36 +62,36 @@ class FeedSettings extends Component {
 										step="1"
 										min="0"
 										id="posts_per_rss"
-										value={ fields.posts_per_rss }
-										onChange={ onChangeField( 'posts_per_rss' ) }
-										disabled={ isDisabled }
+										value={fields.posts_per_rss}
+										onChange={onChangeField('posts_per_rss')}
+										disabled={isDisabled}
 									/>
 								),
 							},
-						} ) }
+						})}
 						<FormSettingExplanation>
-							{ translate(
+							{translate(
 								"The number of posts to include in your site's feed. {{link}}Learn more about feeds{{/link}}",
 								{
 									components: {
-										link: <a href={ localizeUrl( 'https://wordpress.com/support/feeds/' ) } />,
+										link: <a href={localizeUrl('https://wordpress.com/support/feeds/')} />,
 									},
 								}
-							) }
+							)}
 						</FormSettingExplanation>
 					</FormFieldset>
 					<CompactFormToggle
-						checked={ !! fields.rss_use_excerpt }
-						disabled={ isDisabled }
-						onChange={ handleToggle( 'rss_use_excerpt' ) }
+						checked={!!fields.rss_use_excerpt}
+						disabled={isDisabled}
+						onChange={handleToggle('rss_use_excerpt')}
 					>
-						{ translate( 'Limit feed to excerpt only' ) }
+						{translate('Limit feed to excerpt only')}
 					</CompactFormToggle>
 					<FormSettingExplanation isIndented className="feed-settings__excerpt-explanation">
-						{ translate(
+						{translate(
 							'Enable this to include only an excerpt of your content. ' +
 								'Users will need to visit your site to view the full content.'
-						) }
+						)}
 					</FormSettingExplanation>
 				</CompactCard>
 			</div>
@@ -99,10 +99,10 @@ class FeedSettings extends Component {
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
 		selectedSiteId,
 	};
-} )( localize( FeedSettings ) );
+})(localize(FeedSettings));

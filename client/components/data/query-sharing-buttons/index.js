@@ -14,22 +14,22 @@ import { requestSharingButtons } from 'state/sites/sharing-buttons/actions';
 
 class QuerySharingButtons extends Component {
 	UNSAFE_componentWillMount() {
-		this.requestSettings( this.props );
+		this.requestSettings(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId } = this.props;
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
+		if (!nextProps.siteId || siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.requestSettings( nextProps );
+		this.requestSettings(nextProps);
 	}
 
-	requestSettings( props ) {
+	requestSettings(props) {
 		const { requestingSharingButtons, siteId } = props;
-		if ( ! requestingSharingButtons && siteId ) {
-			props.requestSharingButtons( siteId );
+		if (!requestingSharingButtons && siteId) {
+			props.requestSharingButtons(siteId);
 		}
 	}
 
@@ -45,10 +45,10 @@ QuerySharingButtons.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	(state, { siteId }) => {
 		return {
-			requestingSharingButtons: isRequestingSharingButtons( state, siteId ),
+			requestingSharingButtons: isRequestingSharingButtons(state, siteId),
 		};
 	},
 	{ requestSharingButtons }
-)( QuerySharingButtons );
+)(QuerySharingButtons);

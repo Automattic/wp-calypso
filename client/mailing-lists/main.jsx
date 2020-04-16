@@ -34,13 +34,13 @@ class MainComponent extends React.Component {
 		this.onUnsubscribeClick();
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.isSubscribed !== prevState.isSubscribed ) {
+	componentDidUpdate(prevProps, prevState) {
+		if (this.state.isSubscribed !== prevState.isSubscribed) {
 			notices.success(
 				this.state.isSubscribed ? this.getSubscribedMessage() : this.getUnsubscribedMessage(),
 				{ overlay: false, showDismiss: false }
 			);
-		} else if ( this.state.isError ) {
+		} else if (this.state.isError) {
 			notices.error(
 				this.state.isSubscribed
 					? this.getUnsubscribedErrorMessage()
@@ -51,25 +51,25 @@ class MainComponent extends React.Component {
 	}
 
 	getSubscribedMessage = () => {
-		return this.props.translate( 'Subscribed to {{em}}%(categoryName)s{{/em}}', {
+		return this.props.translate('Subscribed to {{em}}%(categoryName)s{{/em}}', {
 			args: {
 				categoryName: this.getCategoryName(),
 			},
 			components: {
 				em: <em />,
 			},
-		} );
+		});
 	};
 
 	getUnsubscribedMessage = () => {
-		return this.props.translate( 'Unsubscribed from {{em}}%(categoryName)s{{/em}}', {
+		return this.props.translate('Unsubscribed from {{em}}%(categoryName)s{{/em}}', {
 			args: {
 				categoryName: this.getCategoryName(),
 			},
 			components: {
 				em: <em />,
 			},
-		} );
+		});
 	};
 
 	getSubscribedErrorMessage = () => {
@@ -102,24 +102,24 @@ class MainComponent extends React.Component {
 
 	getCategoryName = () => {
 		const category = this.getCategoryFromMessageTypeId();
-		if ( 'marketing' === category ) {
-			return this.props.translate( 'Suggestions' );
-		} else if ( 'research' === category ) {
-			return this.props.translate( 'Research' );
-		} else if ( 'community' === category ) {
-			return this.props.translate( 'Community' );
-		} else if ( 'digest' === category ) {
-			return this.props.translate( 'Digests' );
-		} else if ( 'news' === category ) {
-			return this.props.translate( 'Newsletter' );
-		} else if ( 'jetpack_marketing' === category ) {
-			return this.props.translate( 'Jetpack Suggestions' );
-		} else if ( 'jetpack_research' === category ) {
-			return this.props.translate( 'Jetpack Research' );
-		} else if ( 'jetpack_promotion' === category ) {
-			return this.props.translate( 'Jetpack Promotions' );
-		} else if ( 'jetpack_news' === category ) {
-			return this.props.translate( 'Jetpack Newsletter' );
+		if ('marketing' === category) {
+			return this.props.translate('Suggestions');
+		} else if ('research' === category) {
+			return this.props.translate('Research');
+		} else if ('community' === category) {
+			return this.props.translate('Community');
+		} else if ('digest' === category) {
+			return this.props.translate('Digests');
+		} else if ('news' === category) {
+			return this.props.translate('Newsletter');
+		} else if ('jetpack_marketing' === category) {
+			return this.props.translate('Jetpack Suggestions');
+		} else if ('jetpack_research' === category) {
+			return this.props.translate('Jetpack Research');
+		} else if ('jetpack_promotion' === category) {
+			return this.props.translate('Jetpack Promotions');
+		} else if ('jetpack_news' === category) {
+			return this.props.translate('Jetpack Newsletter');
 		}
 
 		return category;
@@ -127,32 +127,30 @@ class MainComponent extends React.Component {
 
 	getCategoryDescription = () => {
 		const category = this.getCategoryFromMessageTypeId();
-		if ( 'marketing' === category ) {
-			return this.props.translate( 'Tips for getting the most out of WordPress.com.' );
-		} else if ( 'research' === category ) {
+		if ('marketing' === category) {
+			return this.props.translate('Tips for getting the most out of WordPress.com.');
+		} else if ('research' === category) {
 			return this.props.translate(
 				'Opportunities to participate in WordPress.com research and surveys.'
 			);
-		} else if ( 'community' === category ) {
+		} else if ('community' === category) {
 			return this.props.translate(
 				'Information on WordPress.com courses and events (online and in-person).'
 			);
-		} else if ( 'digest' === category ) {
+		} else if ('digest' === category) {
 			return this.props.translate(
 				'Popular content from the blogs you follow, and reports on your own site and its performance.'
 			);
-		} else if ( 'news' === category ) {
-			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
-		} else if ( 'jetpack_marketing' === category ) {
-			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
-		} else if ( 'jetpack_research' === category ) {
-			return this.props.translate(
-				'Opportunities to participate in Jetpack research and surveys.'
-			);
-		} else if ( 'jetpack_promotion' === category ) {
-			return this.props.translate( 'Promotions and deals on upgrades.' );
-		} else if ( 'jetpack_news' === category ) {
-			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
+		} else if ('news' === category) {
+			return this.props.translate('WordPress.com news, announcements, and product spotlights.');
+		} else if ('jetpack_marketing' === category) {
+			return this.props.translate('Tips for getting the most out of Jetpack.');
+		} else if ('jetpack_research' === category) {
+			return this.props.translate('Opportunities to participate in Jetpack research and surveys.');
+		} else if ('jetpack_promotion' === category) {
+			return this.props.translate('Promotions and deals on upgrades.');
+		} else if ('jetpack_news' === category) {
+			return this.props.translate('Jetpack news, announcements, and product spotlights.');
 		}
 
 		return null;
@@ -164,7 +162,7 @@ class MainComponent extends React.Component {
 	 * These are Iterable message type ids that we need to map to our internal categories.
 	 */
 	getCategoryFromMessageTypeId = () => {
-		switch ( this.props.category ) {
+		switch (this.props.category) {
 			case '20659':
 				return 'marketing';
 			case '20784':
@@ -192,81 +190,76 @@ class MainComponent extends React.Component {
 
 	onUnsubscribeClick = () => {
 		utils
-			.deleteSubscriber(
-				this.props.category,
-				this.props.email,
-				this.props.hmac,
-				this.props.context
-			)
-			.then( () => {
-				this.setState( { isError: false, isSubscribed: false } );
-			} )
-			.catch( () => {
-				this.setState( { isError: true } );
-			} );
+			.deleteSubscriber(this.props.category, this.props.email, this.props.hmac, this.props.context)
+			.then(() => {
+				this.setState({ isError: false, isSubscribed: false });
+			})
+			.catch(() => {
+				this.setState({ isError: true });
+			});
 	};
 
 	onResubscribeClick = () => {
 		utils
-			.addSubscriber( this.props.category, this.props.email, this.props.hmac, this.props.context )
-			.then( () => {
-				this.setState( { isError: false, isSubscribed: true } );
-			} )
-			.catch( () => {
-				this.setState( { isError: true } );
-			} );
+			.addSubscriber(this.props.category, this.props.email, this.props.hmac, this.props.context)
+			.then(() => {
+				this.setState({ isError: false, isSubscribed: true });
+			})
+			.catch(() => {
+				this.setState({ isError: true });
+			});
 	};
 
 	onManageUpdatesClick = () => {
 		// Use redirect because we want to replace the history entry,
 		// preventing the user from going back to the unsubscribe page
-		page.redirect( '/me/notifications/updates' );
+		page.redirect('/me/notifications/updates');
 	};
 
 	render() {
 		const translate = this.props.translate;
 		const headingLabel = this.state.isSubscribed
-				? translate( "You're subscribed" )
-				: translate( "We've unsubscribed your email." ),
+				? translate("You're subscribed")
+				: translate("We've unsubscribed your email."),
 			messageLabel = this.state.isSubscribed
-				? translate( "We'll send you updates for this mailing list." )
-				: translate( 'You will no longer receive updates for this mailing list.' );
+				? translate("We'll send you updates for this mailing list.")
+				: translate('You will no longer receive updates for this mailing list.');
 
 		return (
 			<div className="mailing-lists">
 				<div className="mailing-lists__header">
-					<Gridicon icon="mail" size={ 54 } />
-					{ this.state.isSubscribed ? null : <Gridicon icon="cross" size={ 24 } /> }
-					<h1>{ preventWidows( headingLabel, 2 ) }</h1>
-					<p>{ preventWidows( messageLabel, 2 ) }</p>
+					<Gridicon icon="mail" size={54} />
+					{this.state.isSubscribed ? null : <Gridicon icon="cross" size={24} />}
+					<h1>{preventWidows(headingLabel, 2)}</h1>
+					<p>{preventWidows(messageLabel, 2)}</p>
 				</div>
 
 				<Card className="mailing-lists__details">
-					<h4>{ this.getCategoryName() }</h4>
-					<p>{ this.getCategoryDescription() }</p>
-					{ this.state.isSubscribed ? (
+					<h4>{this.getCategoryName()}</h4>
+					<p>{this.getCategoryDescription()}</p>
+					{this.state.isSubscribed ? (
 						<button
 							className="mailing-lists__unsubscribe-button button is-primary"
-							onClick={ this.onUnsubscribeClick }
+							onClick={this.onUnsubscribeClick}
 						>
-							{ translate( 'Unsubscribe' ) }
+							{translate('Unsubscribe')}
 						</button>
 					) : (
 						<button
 							className="mailing-lists__resubscribe-button button"
-							onClick={ this.onResubscribeClick }
+							onClick={this.onResubscribeClick}
 						>
-							{ translate( 'Resubscribe' ) }
+							{translate('Resubscribe')}
 						</button>
-					) }
+					)}
 				</Card>
 
 				<p className="mailing-lists__manage-link">
 					<button
 						className="mailing-lists__manage-button button is-link"
-						onClick={ this.onManageUpdatesClick }
+						onClick={this.onManageUpdatesClick}
 					>
-						{ translate( 'Manage all your email subscriptions' ) }
+						{translate('Manage all your email subscriptions')}
 					</button>
 				</p>
 			</div>
@@ -274,4 +267,4 @@ class MainComponent extends React.Component {
 	}
 }
 
-export default localize( MainComponent );
+export default localize(MainComponent);

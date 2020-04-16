@@ -14,7 +14,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextValidation from 'components/forms/form-input-validation';
-const NotificationsOrigin = ( {
+const NotificationsOrigin = ({
 	item,
 	recipient,
 	onChange,
@@ -22,44 +22,44 @@ const NotificationsOrigin = ( {
 	checkEmail,
 	translate,
 	placeholder,
-} ) => {
-	const change = ( { target: { value } } ) => {
-		onChange( {
+}) => {
+	const change = ({ target: { value } }) => {
+		onChange({
 			setting: item.field,
 			option: item.option,
 			value,
-		} );
+		});
 	};
 
 	const emailValidationError =
-		checkEmail && recipient.length !== 0 && ! emailValidator.validate( recipient );
+		checkEmail && recipient.length !== 0 && !emailValidator.validate(recipient);
 
 	const placeholderComponent = <p className="components__is-placeholder" />;
 
 	return (
 		<div className="components__notification-origin">
-			{ loaded ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
+			{loaded ? <FormLabel>{item.title}</FormLabel> : placeholderComponent}
 			<FormTextInput
-				className={ ! loaded ? 'components__is-placeholder' : null }
-				isError={ emailValidationError }
-				name={ item.field }
-				onChange={ change }
-				value={ recipient }
-				placeholder={ placeholder }
+				className={!loaded ? 'components__is-placeholder' : null}
+				isError={emailValidationError}
+				name={item.field}
+				onChange={change}
+				value={recipient}
+				placeholder={placeholder}
 			/>
-			{ emailValidationError && (
+			{emailValidationError && (
 				<FormTextValidation
-					isError={ true }
-					text={ translate( '%(recipient)s is not a valid email address.', {
+					isError={true}
+					text={translate('%(recipient)s is not a valid email address.', {
 						args: { recipient },
-					} ) }
+					})}
 				/>
-			) }
-			{ loaded ? (
-				<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
+			)}
+			{loaded ? (
+				<FormSettingExplanation>{item.subtitle}</FormSettingExplanation>
 			) : (
 				placeholderComponent
-			) }
+			)}
 		</div>
 	);
 };
@@ -73,4 +73,4 @@ NotificationsOrigin.propTypes = {
 	checkEmail: PropTypes.bool,
 };
 
-export default localize( NotificationsOrigin );
+export default localize(NotificationsOrigin);

@@ -16,13 +16,13 @@ import Gridicon from 'components/gridicon';
  */
 import './style.scss';
 
-export const PlansSkipButton = ( { onClick, translate = identity } ) => (
+export const PlansSkipButton = ({ onClick, translate = identity }) => (
 	<div className="plans-skip-button">
-		<Button onClick={ onClick }>
-			{ translate( 'Start with free' ) }
-			<Gridicon icon="arrow-right" size={ 18 } />
+		<Button onClick={onClick}>
+			{translate('Start with free')}
+			<Gridicon icon="arrow-right" size={18} />
 		</Button>
 	</div>
 );
 
-export default localize( PlansSkipButton );
+export default localize(PlansSkipButton);

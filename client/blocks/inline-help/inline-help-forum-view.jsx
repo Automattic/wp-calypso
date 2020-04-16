@@ -13,15 +13,15 @@ import { preventWidows } from 'lib/formatting';
 import analytics from 'lib/analytics';
 import { localizeUrl } from 'lib/i18n-utils';
 
-const trackForumOpen = () => analytics.tracks.recordEvent( 'calypso_inlinehelp_forums_open' );
+const trackForumOpen = () => analytics.tracks.recordEvent('calypso_inlinehelp_forums_open');
 
-const InlineHelpForumView = ( { translate = identity } ) => (
+const InlineHelpForumView = ({ translate = identity }) => (
 	<div className="inline-help__forum-view">
 		<h2 className="inline-help__view-heading">
-			{ preventWidows( translate( 'Ask the Community for Help' ) ) }
+			{preventWidows(translate('Ask the Community for Help'))}
 		</h2>
 		<p>
-			{ preventWidows(
+			{preventWidows(
 				translate(
 					'Use this link to post a question in our {{strong}}public forums{{/strong}}, ' +
 						'where thousands of WordPress.com members around the world ' +
@@ -32,18 +32,18 @@ const InlineHelpForumView = ( { translate = identity } ) => (
 						},
 					}
 				)
-			) }
+			)}
 		</p>
 		<Button
-			href={ localizeUrl( 'https://en.forums.wordpress.com/' ) }
+			href={localizeUrl('https://en.forums.wordpress.com/')}
 			target="_blank"
 			rel="noopener noreferrer"
 			primary
-			onClick={ trackForumOpen }
+			onClick={trackForumOpen}
 		>
-			{ translate( 'Go to the Support Forums' ) }
+			{translate('Go to the Support Forums')}
 		</Button>
 	</div>
 );
 
-export default localize( InlineHelpForumView );
+export default localize(InlineHelpForumView);

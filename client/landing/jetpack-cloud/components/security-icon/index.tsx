@@ -18,11 +18,11 @@ interface Props {
 	className?: string;
 }
 
-function SecurityIcon( props: Props ) {
+function SecurityIcon(props: Props) {
 	const { icon, className } = props;
 
 	let iconPath;
-	switch ( icon ) {
+	switch (icon) {
 		case 'error':
 			iconPath = scanErrorIcon;
 			break;
@@ -43,8 +43,8 @@ function SecurityIcon( props: Props ) {
 
 	return (
 		<img
-			src={ iconPath }
-			className={ classnames( 'security-icon', `security-icon__${ icon }`, className ) }
+			src={iconPath}
+			className={classnames('security-icon', `security-icon__${icon}`, className)}
 			role="presentation"
 			alt=""
 		/>

@@ -10,8 +10,8 @@ import { get, find, isEqual, isObject } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getProduct } from 'woocommerce/state/sites/products/selectors';
 
-export function getAllProductEdits( state, siteId ) {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'edits' ], {} );
+export function getAllProductEdits(state, siteId) {
+	return get(state, ['extensions', 'woocommerce', 'ui', 'products', siteId, 'edits'], {});
 }
 
 /**
@@ -22,12 +22,12 @@ export function getAllProductEdits( state, siteId ) {
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object} The current accumulated edits
  */
-export function getProductEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
-	const edits = getAllProductEdits( state, siteId );
-	const bucket = isObject( productId ) ? 'creates' : 'updates';
-	const array = get( edits, bucket, [] );
+export function getProductEdits(state, productId, siteId = getSelectedSiteId(state)) {
+	const edits = getAllProductEdits(state, siteId);
+	const bucket = isObject(productId) ? 'creates' : 'updates';
+	const array = get(edits, bucket, []);
 
-	return find( array, p => isEqual( productId, p.id ) );
+	return find(array, (p) => isEqual(productId, p.id));
 }
 
 /**
@@ -38,13 +38,13 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object} The product data merged between the fetched data and edits
  */
-export function getProductWithLocalEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
-	const existing = ! isObject( productId );
+export function getProductWithLocalEdits(state, productId, siteId = getSelectedSiteId(state)) {
+	const existing = !isObject(productId);
 
-	const product = existing && getProduct( state, productId );
-	const productEdits = getProductEdits( state, productId, siteId );
+	const product = existing && getProduct(state, productId);
+	const productEdits = getProductEdits(state, productId, siteId);
 
-	return ( ( product || productEdits ) && { ...product, ...productEdits } ) || undefined;
+	return ((product || productEdits) && { ...product, ...productEdits }) || undefined;
 }
 
 /**
@@ -54,8 +54,8 @@ export function getProductWithLocalEdits( state, productId, siteId = getSelected
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number|object} Id of the currently editing product.
  */
-export function getCurrentlyEditingId( state, siteId = getSelectedSiteId( state ) ) {
-	const edits = getAllProductEdits( state, siteId ) || {};
+export function getCurrentlyEditingId(state, siteId = getSelectedSiteId(state)) {
+	const edits = getAllProductEdits(state, siteId) || {};
 	const { currentlyEditingId } = edits;
 
 	return currentlyEditingId;
@@ -68,10 +68,10 @@ export function getCurrentlyEditingId( state, siteId = getSelectedSiteId( state 
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object} Product object that is merged between fetched data and edits
  */
-export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( state ) ) {
-	const currentlyEditingId = getCurrentlyEditingId( state, siteId );
+export function getCurrentlyEditingProduct(state, siteId = getSelectedSiteId(state)) {
+	const currentlyEditingId = getCurrentlyEditingId(state, siteId);
 
-	return getProductWithLocalEdits( state, currentlyEditingId, siteId );
+	return getProductWithLocalEdits(state, currentlyEditingId, siteId);
 }
 
 /**
@@ -81,10 +81,10 @@ export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( s
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number} Current product list page (defaul: 1)
  */
-export function getProductsCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
+export function getProductsCurrentPage(state, siteId = getSelectedSiteId(state)) {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentPage' ],
+		['extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentPage'],
 		1
 	);
 }
@@ -96,10 +96,10 @@ export function getProductsCurrentPage( state, siteId = getSelectedSiteId( state
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {string} Current product list search term (defaul: '')
  */
-export function getProductsCurrentSearch( state, siteId = getSelectedSiteId( state ) ) {
+export function getProductsCurrentSearch(state, siteId = getSelectedSiteId(state)) {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentSearch' ],
+		['extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentSearch'],
 		''
 	);
 }
@@ -111,10 +111,10 @@ export function getProductsCurrentSearch( state, siteId = getSelectedSiteId( sta
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number|null} Requested product list page
  */
-export function getProductsRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
+export function getProductsRequestedPage(state, siteId = getSelectedSiteId(state)) {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedPage' ],
+		['extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedPage'],
 		null
 	);
 }
@@ -126,10 +126,10 @@ export function getProductsRequestedPage( state, siteId = getSelectedSiteId( sta
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {string|null} Requested product list term
  */
-export function getProductsRequestedSearch( state, siteId = getSelectedSiteId( state ) ) {
+export function getProductsRequestedSearch(state, siteId = getSelectedSiteId(state)) {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedSearch' ],
+		['extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedSearch'],
 		null
 	);
 }

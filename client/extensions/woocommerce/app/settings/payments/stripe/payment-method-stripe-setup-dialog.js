@@ -40,8 +40,8 @@ class PaymentMethodStripeSetupDialog extends Component {
 		onUserRequestsKeyFlow: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			createSelected: true,
 		};
@@ -53,33 +53,33 @@ class PaymentMethodStripeSetupDialog extends Component {
 
 	onSelectCreate = () => {
 		const { isCreating } = this.props;
-		if ( isCreating ) {
+		if (isCreating) {
 			return;
 		}
-		this.setState( { createSelected: true } );
+		this.setState({ createSelected: true });
 	};
 
 	onSelectConnect = () => {
 		const { isCreating, isOAuthInitializing, oauthUrl, siteId, siteSlug } = this.props;
-		if ( isCreating ) {
+		if (isCreating) {
 			return;
 		}
-		this.setState( { createSelected: false } );
+		this.setState({ createSelected: false });
 
 		// See if we still need to initialize OAuth, and if so, do so
-		if ( ! isOAuthInitializing && 0 === oauthUrl.length ) {
+		if (!isOAuthInitializing && 0 === oauthUrl.length) {
 			const origin = getOrigin();
-			const path = getLink( '/store/settings/payments/:site', { slug: siteSlug } );
-			const returnUrl = `${ origin }${ path }`;
-			this.props.oauthInit( siteId, returnUrl );
+			const path = getLink('/store/settings/payments/:site', { slug: siteSlug });
+			const returnUrl = `${origin}${path}`;
+			this.props.oauthInit(siteId, returnUrl);
 		}
 	};
 
 	onConnect = () => {
 		const { country, email, oauthUrl, siteId } = this.props;
 
-		if ( this.state.createSelected ) {
-			this.props.createAccount( siteId, email, country );
+		if (this.state.createSelected) {
+			this.props.createAccount(siteId, email, country);
 		} else {
 			window.location = oauthUrl;
 		}
@@ -99,39 +99,39 @@ class PaymentMethodStripeSetupDialog extends Component {
 		const isBusy = isCreating || isLoadingAddress || isOAuthInitializing;
 
 		// Allow them to switch to key based flow if they want
-		buttons.push( {
+		buttons.push({
 			action: 'switch',
 			additionalClassNames: 'payments__method-stripe-force-flow is-borderless',
-			label: <span>{ translate( 'I want to enter my own keys' ) }</span>,
+			label: <span>{translate('I want to enter my own keys')}</span>,
 			onClick: onUserRequestsKeyFlow,
-		} );
+		});
 
 		// Always give the user a Cancel button
-		buttons.push( {
+		buttons.push({
 			action: 'cancel',
 			disabled: isBusy,
-			label: translate( 'Cancel' ),
+			label: translate('Cancel'),
 			onClick: onCancel,
-		} );
+		});
 
 		// And then the connect button itself
-		buttons.push( {
+		buttons.push({
 			action: 'connect',
 			disabled: isBusy,
 			isPrimary: true,
-			label: translate( 'Connect' ),
+			label: translate('Connect'),
 			onClick: this.onConnect,
-		} );
+		});
 
 		return buttons;
 	};
 
 	possiblyRenderNotice = () => {
 		const { error } = this.props;
-		if ( 0 === error.length ) {
+		if (0 === error.length) {
 			return null;
 		}
-		return <Notice showDismiss={ false } status="is-error" text={ error } />;
+		return <Notice showDismiss={false} status="is-error" text={error} />;
 	};
 
 	render = () => {
@@ -140,37 +140,37 @@ class PaymentMethodStripeSetupDialog extends Component {
 		return (
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"
-				buttons={ this.getButtons() }
+				buttons={this.getButtons()}
 				isVisible
 			>
 				<div className="stripe__method-edit-header">
-					{ translate( 'Accept credit card payments with Stripe' ) }
+					{translate('Accept credit card payments with Stripe')}
 				</div>
 				<StripeConnectPrompt
-					isCreateSelected={ this.state.createSelected }
-					onSelectCreate={ this.onSelectCreate }
-					onSelectConnect={ this.onSelectConnect }
+					isCreateSelected={this.state.createSelected}
+					onSelectCreate={this.onSelectCreate}
+					onSelectConnect={this.onSelectConnect}
 				/>
-				{ this.possiblyRenderNotice() }
-				<QuerySettingsGeneral siteId={ siteId } />
+				{this.possiblyRenderNotice()}
+				<QuerySettingsGeneral siteId={siteId} />
 			</Dialog>
 		);
 	};
 }
 
-function mapStateToProps( state ) {
-	const email = getCurrentUserEmail( state );
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const email = getCurrentUserEmail(state);
+	const site = getSelectedSiteWithFallback(state);
 	const siteId = site.ID || false;
 	const siteSlug = site.slug || '';
 
-	const error = getError( state, siteId );
-	const isCreating = getIsCreating( state, siteId );
-	const isOAuthInitializing = getIsOAuthInitializing( state, siteId );
-	const oauthUrl = getOAuthURL( state, siteId );
+	const error = getError(state, siteId);
+	const isCreating = getIsCreating(state, siteId);
+	const isOAuthInitializing = getIsOAuthInitializing(state, siteId);
+	const oauthUrl = getOAuthURL(state, siteId);
 
-	const isLoadingAddress = areSettingsGeneralLoading( state, siteId );
-	const storeLocation = getStoreLocation( state, siteId );
+	const isLoadingAddress = areSettingsGeneralLoading(state, siteId);
+	const storeLocation = getStoreLocation(state, siteId);
 	const country = isLoadingAddress ? '' : storeLocation.country;
 
 	return {
@@ -186,7 +186,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			clearError,
@@ -198,5 +198,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeSetupDialog )
+	connect(mapStateToProps, mapDispatchToProps)(PaymentMethodStripeSetupDialog)
 );

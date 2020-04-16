@@ -11,18 +11,18 @@ import { isEmpty, isEqual } from 'lodash';
  * @param {string[]} options A list of option names to keep track of.
  * @param {Function} getOptionValue A function that given an option name as a string, returns the current option value.
  */
-export default ( options, getOptionValue ) => {
-	domReady( () => {
+export default (options, getOptionValue) => {
+	domReady(() => {
 		// Book-keeping.
 		const currentOptions = {};
 		let previousOptions = {};
 		const cssVariables = {};
-		options.forEach( option => {
-			cssVariables[ option ] = `--${ option.replace( '_', '-' ) }`;
-		} );
+		options.forEach((option) => {
+			cssVariables[option] = `--${option.replace('_', '-')}`;
+		});
 
 		let styleElement = null;
-		subscribe( () => {
+		subscribe(() => {
 			/**
 			 * Do nothing until the editor is ready. This is required when
 			 * working in wpcom iframe environment to avoid running code before
@@ -30,24 +30,24 @@ export default ( options, getOptionValue ) => {
 			 *
 			 * @see https://github.com/Automattic/wp-calypso/pull/40690
 			 */
-			const isEditorReady = select( 'core/editor' ).__unstableIsEditorReady;
-			if ( isEditorReady && isEditorReady() === false ) {
+			const isEditorReady = select('core/editor').__unstableIsEditorReady;
+			if (isEditorReady && isEditorReady() === false) {
 				return;
 			}
 
 			// Create style element if it has not been created yet. Must happen
 			// after the editor is ready or the style element will be appended
 			// before the styles it needs to affect.
-			if ( ! styleElement ) {
-				styleElement = document.createElement( 'style' );
-				document.body.appendChild( styleElement );
+			if (!styleElement) {
+				styleElement = document.createElement('style');
+				document.body.appendChild(styleElement);
 			}
 
 			// Maybe bail-out early.
-			options.forEach( option => {
-				currentOptions[ option ] = getOptionValue( option );
-			} );
-			if ( isEmpty( currentOptions ) || isEqual( currentOptions, previousOptions ) ) {
+			options.forEach((option) => {
+				currentOptions[option] = getOptionValue(option);
+			});
+			if (isEmpty(currentOptions) || isEqual(currentOptions, previousOptions)) {
 				return;
 			}
 			previousOptions = { ...currentOptions };
@@ -55,10 +55,10 @@ export default ( options, getOptionValue ) => {
 			// Update style node. We need this to be a stylesheet rather than inline styles
 			// so the styles apply to all editor instances incl. previews.
 			let declarationList = '';
-			Object.keys( currentOptions ).forEach( key => {
-				declarationList += `${ cssVariables[ key ] }:${ currentOptions[ key ] };`;
-			} );
-			styleElement.textContent = `.editor-styles-wrapper{${ declarationList }}`;
-		} );
-	} );
+			Object.keys(currentOptions).forEach((key) => {
+				declarationList += `${cssVariables[key]}:${currentOptions[key]};`;
+			});
+			styleElement.textContent = `.editor-styles-wrapper{${declarationList}}`;
+		});
+	});
 };

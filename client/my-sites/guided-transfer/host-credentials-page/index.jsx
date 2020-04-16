@@ -31,26 +31,26 @@ class HostCredentialsPage extends Component {
 
 	state = { fieldValues: {} };
 
-	setFieldValue = ( fieldName, fieldValue ) => {
-		this.setState( {
+	setFieldValue = (fieldName, fieldValue) => {
+		this.setState({
 			fieldValues: {
 				...this.state.fieldValues,
-				[ fieldName ]: fieldValue,
+				[fieldName]: fieldValue,
 			},
-		} );
+		});
 	};
 
-	onFieldChange = fieldName => e => {
-		this.setFieldValue( fieldName, e.target.value );
+	onFieldChange = (fieldName) => (e) => {
+		this.setFieldValue(fieldName, e.target.value);
 	};
 
 	redirectToCart = () => {
-		addItem( guidedTransferItem() );
-		page.redirect( `/checkout/${ this.props.siteSlug }` );
+		addItem(guidedTransferItem());
+		page.redirect(`/checkout/${this.props.siteSlug}`);
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isAwaitingPurchase ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.isAwaitingPurchase) {
 			this.redirectToCart();
 		}
 	}
@@ -61,7 +61,7 @@ class HostCredentialsPage extends Component {
 			host_slug: this.props.hostSlug,
 		};
 
-		this.props.submit( payload );
+		this.props.submit(payload);
 	};
 
 	getHostForm() {
@@ -75,13 +75,13 @@ class HostCredentialsPage extends Component {
 			isSubmitting: this.props.isSubmitting,
 		};
 
-		switch ( this.props.hostSlug ) {
+		switch (this.props.hostSlug) {
 			case 'bluehost':
-				return <Bluehost { ...props } />;
+				return <Bluehost {...props} />;
 			case 'siteground':
-				return <SiteGround { ...props } />;
+				return <SiteGround {...props} />;
 			case 'pressable':
-				return <Pressable { ...props } />;
+				return <Pressable {...props} />;
 		}
 
 		return null;
@@ -91,21 +91,21 @@ class HostCredentialsPage extends Component {
 		return (
 			<div>
 				<ErrorNotice />
-				<SectionHeader label={ this.props.translate( 'Account Info' ) } />
-				{ this.getHostForm() }
+				<SectionHeader label={this.props.translate('Account Info')} />
+				{this.getHostForm()}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	isSubmitting: isGuidedTransferSavingHostDetails( state, siteId ),
-	isAwaitingPurchase: isGuidedTransferAwaitingPurchase( state, siteId ),
-	siteSlug: getSiteSlug( state, siteId ),
-} );
+const mapStateToProps = (state, { siteId }) => ({
+	isSubmitting: isGuidedTransferSavingHostDetails(state, siteId),
+	isAwaitingPurchase: isGuidedTransferAwaitingPurchase(state, siteId),
+	siteSlug: getSiteSlug(state, siteId),
+});
 
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	submit: data => dispatch( saveHostDetails( siteId, data ) ),
-} );
+const mapDispatchToProps = (dispatch, { siteId }) => ({
+	submit: (data) => dispatch(saveHostDetails(siteId, data)),
+});
 
-export default localize( connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage ) );
+export default localize(connect(mapStateToProps, mapDispatchToProps)(HostCredentialsPage));

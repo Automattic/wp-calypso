@@ -31,15 +31,15 @@ export class ReaderSidebarLists extends Component {
 		const { translate, isOpen, onClick, ...passedProps } = this.props;
 		return (
 			<ExpandableSidebarMenu
-				expanded={ isOpen }
-				title={ translate( 'Lists' ) }
-				onClick={ onClick }
+				expanded={isOpen}
+				title={translate('Lists')}
+				onClick={onClick}
 				hideAddButton
 			>
-				<ReaderSidebarListsList { ...passedProps } />
+				<ReaderSidebarListsList {...passedProps} />
 			</ExpandableSidebarMenu>
 		);
 	}
 }
 
-export default localize( ReaderSidebarLists );
+export default localize(ReaderSidebarLists);

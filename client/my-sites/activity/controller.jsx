@@ -15,7 +15,7 @@ import { setFilter } from 'state/activity-log/actions';
 import { queryToFilterState } from 'state/activity-log/utils';
 import { recordTrack } from 'reader/stats';
 
-function queryFilterToStats( filter ) {
+function queryFilterToStats(filter) {
 	// These values are hardcoded so that the attributes that we collect via stats are not unbound
 	const possibleGroups = [
 		'attachment',
@@ -39,46 +39,46 @@ function queryFilterToStats( filter ) {
 	];
 
 	const groupStats = {};
-	possibleGroups.forEach( groupSlug => {
-		groupStats[ 'filter_group_' + groupSlug ] = !! (
-			filter.group && filter.group.indexOf( groupSlug ) >= 0
+	possibleGroups.forEach((groupSlug) => {
+		groupStats['filter_group_' + groupSlug] = !!(
+			filter.group && filter.group.indexOf(groupSlug) >= 0
 		);
-	} );
+	});
 
 	return {
 		...groupStats,
-		filter_date_on: !! filter.on || !! filter.before || !! filter.after,
-		page: filter.page ? parseInt( filter.page ) : 1,
+		filter_date_on: !!filter.on || !!filter.before || !!filter.after,
+		page: filter.page ? parseInt(filter.page) : 1,
 	};
 }
 
-export function activity( context, next ) {
+export function activity(context, next) {
 	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId(state);
 
-	const filter = siteId && getActivityLogFilter( state, siteId );
-	const queryFilter = queryToFilterState( context.query );
+	const filter = siteId && getActivityLogFilter(state, siteId);
+	const queryFilter = queryToFilterState(context.query);
 
-	if ( ! isEqual( filter, queryFilter ) ) {
-		context.store.dispatch( {
-			...setFilter( siteId, queryFilter ),
+	if (!isEqual(filter, queryFilter)) {
+		context.store.dispatch({
+			...setFilter(siteId, queryFilter),
 			meta: { skipUrlUpdate: true },
-		} );
+		});
 	}
 
-	recordTrack( 'calypso_activitylog_view', queryFilterToStats( queryFilter ) );
-	context.primary = <ActivityLog siteId={ siteId } context={ context } />;
+	recordTrack('calypso_activitylog_view', queryFilterToStats(queryFilter));
+	context.primary = <ActivityLog siteId={siteId} context={context} />;
 
 	next();
 }
 
 // Add redirect
-export function redirect( context ) {
+export function redirect(context) {
 	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	if ( siteId ) {
-		page.redirect( '/activity-log/' + siteId );
+	const siteId = getSelectedSiteId(state);
+	if (siteId) {
+		page.redirect('/activity-log/' + siteId);
 		return;
 	}
-	page.redirect( '/activity-log/' );
+	page.redirect('/activity-log/');
 }

@@ -21,13 +21,13 @@ const initialState = {
 let state = { ...initialState };
 
 function emitChange() {
-	eventEmitter.emit( 'change' );
+	eventEmitter.emit('change');
 }
 
-function reduce( state, action ) {
+function reduce(state, action) {
 	let newState;
 
-	switch ( action.type ) {
+	switch (action.type) {
 		case actions.SET_GLOBAL_DATA:
 			newState = {
 				...state,
@@ -40,25 +40,25 @@ function reduce( state, action ) {
 			break;
 	}
 
-	newState = inputReducers( newState, action );
+	newState = inputReducers(newState, action);
 
 	return newState;
 }
 
 export default {
-	dispatch( action ) {
+	dispatch(action) {
 		const oldState = state;
 
-		state = reduce( state, action );
+		state = reduce(state, action);
 
-		if ( oldState !== state ) {
+		if (oldState !== state) {
 			emitChange();
 		}
 	},
 
-	get( item ) {
-		if ( item ) {
-			return state[ item ];
+	get(item) {
+		if (item) {
+			return state[item];
 		}
 
 		return state;

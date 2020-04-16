@@ -15,20 +15,20 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
  * @param {number} siteId Site ID
  * @returns {boolean} True if current user is able to see the checklist
  */
-export default function isEligibleForDotcomChecklist( state, siteId ) {
-	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
+export default function isEligibleForDotcomChecklist(state, siteId) {
+	if (isJetpackSite(state, siteId) && !isAtomicSite(state, siteId)) {
 		return false;
 	}
 
 	//TODO: we should add checklist support for Atomic
-	if ( isAtomicSite( state, siteId ) ) {
+	if (isAtomicSite(state, siteId)) {
 		return false;
 	}
 
-	const siteOptions = getSiteOptions( state, siteId );
+	const siteOptions = getSiteOptions(state, siteId);
 
 	// Checklist should not show up if the site is created before the feature was launched.
-	if ( get( siteOptions, 'created_at', '' ) < '2018-02-01' ) {
+	if (get(siteOptions, 'created_at', '') < '2018-02-01') {
 		return false;
 	}
 

@@ -8,14 +8,14 @@ import { Reducer, Store } from 'redux';
  */
 import { addReducerToStore, clear as clearReducers, WithAddReducer } from './add-reducer';
 
-type QueueEntry = [ string[], Reducer ];
+type QueueEntry = [string[], Reducer];
 
-let applicationStore: ( Store & WithAddReducer ) | undefined;
+let applicationStore: (Store & WithAddReducer) | undefined;
 const reducerRegistrationQueue: QueueEntry[] = [];
 
-export function setStore( store: Store & WithAddReducer ) {
+export function setStore(store: Store & WithAddReducer) {
 	// Clear any previously added reducers when replacing an existing store.
-	if ( applicationStore ) {
+	if (applicationStore) {
 		clearReducers();
 	}
 
@@ -24,17 +24,17 @@ export function setStore( store: Store & WithAddReducer ) {
 	// Synchronously add all pending reducers.
 	// These include reducers registered to previous stores, since their code has
 	// already been loaded.
-	for ( const [ key, reducer ] of reducerRegistrationQueue ) {
-		addReducerToStore( applicationStore )( key, reducer );
+	for (const [key, reducer] of reducerRegistrationQueue) {
+		addReducerToStore(applicationStore)(key, reducer);
 	}
 }
 
-export function registerReducer( key: string[], reducer: Reducer ) {
-	if ( applicationStore ) {
+export function registerReducer(key: string[], reducer: Reducer) {
+	if (applicationStore) {
 		// Register immediately.
-		addReducerToStore( applicationStore )( key, reducer );
+		addReducerToStore(applicationStore)(key, reducer);
 	}
 
 	// Add to queue, for future stores.
-	reducerRegistrationQueue.push( [ key, reducer ] );
+	reducerRegistrationQueue.push([key, reducer]);
 }

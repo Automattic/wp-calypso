@@ -21,13 +21,13 @@ export class Suggestion extends Component {
 
 	componentDidMount() {
 		const { railcar } = this.props;
-		analytics.tracks.recordEvent( 'calypso_traintracks_render', railcar );
+		analytics.tracks.recordEvent('calypso_traintracks_render', railcar);
 	}
 
 	handleSuggestionClick = () => {
 		const { suggestion, source, railcar } = this.props;
-		recordTrack( 'calypso_reader_search_suggestion_click', { suggestion, source } );
-		recordTracksRailcarInteract( 'search_suggestion_click', railcar );
+		recordTrack('calypso_reader_search_suggestion_click', { suggestion, source });
+		recordTracksRailcarInteract('search_suggestion_click', railcar);
 	};
 
 	render() {
@@ -38,11 +38,11 @@ export class Suggestion extends Component {
 			sort,
 		};
 
-		const searchUrl = '/read/search?' + stringify( args );
+		const searchUrl = '/read/search?' + stringify(args);
 
 		return (
-			<a onClick={ this.handleSuggestionClick } href={ searchUrl }>
-				{ suggestion }
+			<a onClick={this.handleSuggestionClick} href={searchUrl}>
+				{suggestion}
 			</a>
 		);
 	}

@@ -12,12 +12,12 @@ import {
 	WOOCOMMERCE_ORDER_REFUNDS_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
-export const sendRefund = ( siteId, orderId, refund, onSuccess = false, onFailure = false ) => {
-	if ( ! onFailure ) {
-		onFailure = errorNotice( translate( 'Unable to grant refund.' ), { duration: 5000 } );
+export const sendRefund = (siteId, orderId, refund, onSuccess = false, onFailure = false) => {
+	if (!onFailure) {
+		onFailure = errorNotice(translate('Unable to grant refund.'), { duration: 5000 });
 	}
-	if ( ! onSuccess ) {
-		onSuccess = successNotice( translate( 'Refund granted.' ), { duration: 5000 } );
+	if (!onSuccess) {
+		onSuccess = successNotice(translate('Refund granted.'), { duration: 5000 });
 	}
 
 	return {
@@ -30,7 +30,7 @@ export const sendRefund = ( siteId, orderId, refund, onSuccess = false, onFailur
 	};
 };
 
-export const createRefundFailure = ( siteId, orderId, error = {} ) => {
+export const createRefundFailure = (siteId, orderId, error = {}) => {
 	return {
 		type: WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
 		siteId,
@@ -39,7 +39,7 @@ export const createRefundFailure = ( siteId, orderId, error = {} ) => {
 	};
 };
 
-export const createRefundSuccess = ( siteId, orderId, refund ) => {
+export const createRefundSuccess = (siteId, orderId, refund) => {
 	return {
 		type: WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 		siteId,
@@ -48,7 +48,7 @@ export const createRefundSuccess = ( siteId, orderId, refund ) => {
 	};
 };
 
-export const fetchRefunds = ( siteId, orderId ) => {
+export const fetchRefunds = (siteId, orderId) => {
 	return {
 		type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST,
 		siteId,
@@ -56,7 +56,7 @@ export const fetchRefunds = ( siteId, orderId ) => {
 	};
 };
 
-export const fetchRefundsFailure = ( siteId, orderId, error = {} ) => {
+export const fetchRefundsFailure = (siteId, orderId, error = {}) => {
 	return {
 		type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST_FAILURE,
 		siteId,
@@ -65,7 +65,7 @@ export const fetchRefundsFailure = ( siteId, orderId, error = {} ) => {
 	};
 };
 
-export const fetchRefundsSuccess = ( siteId, orderId, refunds ) => {
+export const fetchRefundsSuccess = (siteId, orderId, refunds) => {
 	return {
 		type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS,
 		siteId,

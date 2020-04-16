@@ -14,14 +14,14 @@ import { isRequestingGuidedTransferStatus } from 'state/sites/guided-transfer/se
 import { requestGuidedTransferStatus } from 'state/sites/guided-transfer/actions';
 
 class QuerySiteGuidedTransfer extends Component {
-	constructor( props ) {
-		super( props );
-		this.request = this.request.bind( this );
+	constructor(props) {
+		super(props);
+		this.request = this.request.bind(this);
 	}
 
-	request( props = this.props ) {
-		if ( ! props.isRequesting && props.siteId ) {
-			props.requestGuidedTransferStatus( props.siteId );
+	request(props = this.props) {
+		if (!props.isRequesting && props.siteId) {
+			props.requestGuidedTransferStatus(props.siteId);
 		}
 	}
 
@@ -29,9 +29,9 @@ class QuerySiteGuidedTransfer extends Component {
 		this.request();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
@@ -49,11 +49,11 @@ QuerySiteGuidedTransfer.defaultProps = {
 	requestGuidedTransferStatus: () => {},
 };
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	isRequesting: isRequestingGuidedTransferStatus( state, ownProps.siteId ),
-} );
+const mapStateToProps = (state, ownProps) => ({
+	isRequesting: isRequestingGuidedTransferStatus(state, ownProps.siteId),
+});
 
-const mapDispatchToProps = dispatch =>
-	bindActionCreators( { requestGuidedTransferStatus }, dispatch );
+const mapDispatchToProps = (dispatch) =>
+	bindActionCreators({ requestGuidedTransferStatus }, dispatch);
 
-export default connect( mapStateToProps, mapDispatchToProps )( QuerySiteGuidedTransfer );
+export default connect(mapStateToProps, mapDispatchToProps)(QuerySiteGuidedTransfer);

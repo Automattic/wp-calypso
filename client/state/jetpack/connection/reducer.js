@@ -32,8 +32,8 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  */
 export const items = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case JETPACK_CONNECTION_STATUS_RECEIVE: {
 				const { status } = action;
 				return status;
@@ -41,7 +41,7 @@ export const items = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
 /**
@@ -54,18 +54,18 @@ export const items = keyedReducer(
  */
 export const requests = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case JETPACK_CONNECTION_STATUS_REQUEST:
-				return stubTrue( state, action );
+				return stubTrue(state, action);
 			case JETPACK_CONNECTION_STATUS_REQUEST_FAILURE:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 			case JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 		}
 
 		return state;
-	} )
+	})
 );
 
 /**
@@ -78,8 +78,8 @@ export const requests = keyedReducer(
  */
 export const dataItems = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case JETPACK_USER_CONNECTION_DATA_RECEIVE: {
 				const { data } = action;
 				return data;
@@ -87,7 +87,7 @@ export const dataItems = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
 /**
@@ -100,40 +100,40 @@ export const dataItems = keyedReducer(
  */
 export const dataRequests = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case JETPACK_USER_CONNECTION_DATA_REQUEST:
-				return stubTrue( state, action );
+				return stubTrue(state, action);
 			case JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 			case JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 		}
 
 		return state;
-	} )
+	})
 );
 
 export const disconnectRequests = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case JETPACK_DISCONNECT_REQUEST:
-				return stubTrue( state, action );
+				return stubTrue(state, action);
 			case JETPACK_DISCONNECT_REQUEST_FAILURE:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 			case JETPACK_DISCONNECT_REQUEST_SUCCESS:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 		}
 
 		return state;
-	} )
+	})
 );
 
-export const reducer = combineReducers( {
+export const reducer = combineReducers({
 	items,
 	requests,
 	dataItems,
 	dataRequests,
 	disconnectRequests,
-} );
+});

@@ -8,38 +8,38 @@ import { expect } from 'chai';
  */
 import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
 
-describe( 'isRequestingSiteMonitorSettings()', () => {
+describe('isRequestingSiteMonitorSettings()', () => {
 	const siteId = 2916284;
 
-	test( 'should return true if monitor settings are currently being requested for that site', () => {
+	test('should return true if monitor settings are currently being requested for that site', () => {
 		const state = {
 			sites: {
 				monitor: {
 					requesting: {
-						[ siteId ]: true,
+						[siteId]: true,
 					},
 				},
 			},
 		};
-		const output = isRequestingSiteMonitorSettings( state, siteId );
-		expect( output ).to.be.true;
-	} );
+		const output = isRequestingSiteMonitorSettings(state, siteId);
+		expect(output).to.be.true;
+	});
 
-	test( 'should return false if monitor settings are currently not being requested for that site', () => {
+	test('should return false if monitor settings are currently not being requested for that site', () => {
 		const state = {
 			sites: {
 				monitor: {
 					requesting: {
-						[ siteId ]: false,
+						[siteId]: false,
 					},
 				},
 			},
 		};
-		const output = isRequestingSiteMonitorSettings( state, siteId );
-		expect( output ).to.be.false;
-	} );
+		const output = isRequestingSiteMonitorSettings(state, siteId);
+		expect(output).to.be.false;
+	});
 
-	test( 'should return false if monitor settings have never been requested for that site', () => {
+	test('should return false if monitor settings have never been requested for that site', () => {
 		const state = {
 			sites: {
 				monitor: {
@@ -49,7 +49,7 @@ describe( 'isRequestingSiteMonitorSettings()', () => {
 				},
 			},
 		};
-		const output = isRequestingSiteMonitorSettings( state, siteId );
-		expect( output ).to.be.false;
-	} );
-} );
+		const output = isRequestingSiteMonitorSettings(state, siteId);
+		expect(output).to.be.false;
+	});
+});

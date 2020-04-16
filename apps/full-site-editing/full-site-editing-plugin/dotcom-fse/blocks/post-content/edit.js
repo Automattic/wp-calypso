@@ -17,15 +17,15 @@ import { Component, Fragment } from '@wordpress/element';
 class PostContentEdit extends Component {
 	toggleEditing() {
 		const { isEditing, setState } = this.props;
-		setState( { isEditing: ! isEditing } );
+		setState({ isEditing: !isEditing });
 	}
 
-	onSelectPost( { id, type } ) {
-		this.props.setState( {
+	onSelectPost({ id, type }) {
+		this.props.setState({
 			isEditing: false,
 			selectedPostId: id,
 			selectedPostType: type,
-		} );
+		});
 	}
 
 	render() {
@@ -35,28 +35,28 @@ class PostContentEdit extends Component {
 		return (
 			<Fragment>
 				<div
-					className={ classNames( 'post-content-block', {
-						[ `align${ align }` ]: align,
-					} ) }
+					className={classNames('post-content-block', {
+						[`align${align}`]: align,
+					})}
 				>
 					<PostTitle />
-					<InnerBlocks templateLock={ false } />
+					<InnerBlocks templateLock={false} />
 				</div>
 			</Fragment>
 		);
 	}
 }
 
-export default compose( [
-	withState( {
+export default compose([
+	withState({
 		isEditing: false,
 		selectedPostId: undefined,
 		selectedPostType: undefined,
-	} ),
-	withSelect( ( select, { selectedPostId, selectedPostType } ) => {
-		const { getEntityRecord } = select( 'core' );
+	}),
+	withSelect((select, { selectedPostId, selectedPostType }) => {
+		const { getEntityRecord } = select('core');
 		return {
-			selectedPost: getEntityRecord( 'postType', selectedPostType, selectedPostId ),
+			selectedPost: getEntityRecord('postType', selectedPostType, selectedPostId),
 		};
-	} ),
-] )( PostContentEdit );
+	}),
+])(PostContentEdit);

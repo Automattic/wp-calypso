@@ -21,9 +21,9 @@ class TaxesOptions extends Component {
 		onCheckboxChange: PropTypes.func.isRequired,
 		pricesIncludeTaxes: PropTypes.bool,
 		shippingIsTaxable: PropTypes.bool,
-		shipToCountry: PropTypes.shape( {
+		shipToCountry: PropTypes.shape({
 			value: PropTypes.string,
-		} ),
+		}),
 	};
 
 	render = () => {
@@ -36,40 +36,40 @@ class TaxesOptions extends Component {
 		} = this.props;
 
 		const shippingDisabled =
-			( shipToCountry && shipToCountry.value && 'disabled' === shipToCountry.value ) || false;
+			(shipToCountry && shipToCountry.value && 'disabled' === shipToCountry.value) || false;
 		const shippingDisabledMessage =
-			( shippingDisabled && (
+			(shippingDisabled && (
 				<FormSettingExplanation>
-					{ translate( 'Shipping has been disabled for this site.' ) }
+					{translate('Shipping has been disabled for this site.')}
 				</FormSettingExplanation>
-			) ) ||
+			)) ||
 			null;
 
 		return (
 			<div className="taxes__taxes-options">
 				<ExtendedHeader
-					label={ translate( 'Tax settings' ) }
-					description={ translate( 'Configure how taxes are calculated' ) }
+					label={translate('Tax settings')}
+					description={translate('Configure how taxes are calculated')}
 				/>
 				<Card>
 					<FormFieldset>
 						<FormLabel>
 							<FormCheckbox
-								checked={ pricesIncludeTaxes || false }
+								checked={pricesIncludeTaxes || false}
 								name="pricesIncludeTaxes"
-								onChange={ onCheckboxChange }
+								onChange={onCheckboxChange}
 							/>
-							<span>{ translate( 'Taxes are included in product prices' ) }</span>
+							<span>{translate('Taxes are included in product prices')}</span>
 						</FormLabel>
 						<FormLabel>
 							<FormCheckbox
-								checked={ shippingIsTaxable || false }
+								checked={shippingIsTaxable || false}
 								name="shippingIsTaxable"
-								onChange={ onCheckboxChange }
-								disabled={ shippingDisabled }
+								onChange={onCheckboxChange}
+								disabled={shippingDisabled}
 							/>
-							<span>{ translate( 'Charge taxes on shipping costs' ) }</span>
-							{ shippingDisabledMessage }
+							<span>{translate('Charge taxes on shipping costs')}</span>
+							{shippingDisabledMessage}
 						</FormLabel>
 					</FormFieldset>
 				</Card>
@@ -78,4 +78,4 @@ class TaxesOptions extends Component {
 	};
 }
 
-export default localize( TaxesOptions );
+export default localize(TaxesOptions);

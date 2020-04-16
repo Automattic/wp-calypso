@@ -15,17 +15,17 @@ import { useI18n } from '@automattic/react-i18n';
 // Refactor, external svg with use?
 
 interface Props {
-	onSelect: ( selection: T.Viewport ) => void;
+	onSelect: (selection: T.Viewport) => void;
 	selected: T.Viewport;
 }
-const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) => {
+const ViewportSelect: React.FunctionComponent<Props> = ({ onSelect, selected }) => {
 	const { __ } = useI18n();
 	return (
 		<div className="style-preview__viewport-select">
 			<ViewportButton
-				aria-label={ __( 'Select desktop preview' ) }
-				onClick={ () => onSelect( 'desktop' ) }
-				isSelected={ selected === 'desktop' }
+				aria-label={__('Select desktop preview')}
+				onClick={() => onSelect('desktop')}
+				isSelected={selected === 'desktop'}
 			>
 				<SVG width="55" height="55" viewBox="0 0 55 55">
 					<Path
@@ -40,9 +40,9 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 				</SVG>
 			</ViewportButton>
 			<ViewportButton
-				aria-label={ __( 'Select tablet preview' ) }
-				onClick={ () => onSelect( 'tablet' ) }
-				isSelected={ selected === 'tablet' }
+				aria-label={__('Select tablet preview')}
+				onClick={() => onSelect('tablet')}
+				isSelected={selected === 'tablet'}
 			>
 				<SVG width="48" height="48" viewBox="0 0 48 48">
 					<Rect
@@ -58,9 +58,9 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 				</SVG>
 			</ViewportButton>
 			<ViewportButton
-				aria-label={ __( 'Select mobile preview' ) }
-				onClick={ () => onSelect( 'mobile' ) }
-				isSelected={ selected === 'mobile' }
+				aria-label={__('Select mobile preview')}
+				onClick={() => onSelect('mobile')}
+				isSelected={selected === 'mobile'}
 			>
 				<SVG width="40" height="40" viewBox="0 0 40 40">
 					<Rect
@@ -83,20 +83,20 @@ interface ButtonProps {
 	onClick: () => void;
 	isSelected?: boolean;
 }
-const ViewportButton: React.FunctionComponent< ButtonProps > = ( {
+const ViewportButton: React.FunctionComponent<ButtonProps> = ({
 	children,
 	onClick,
 	isSelected,
 	...rest
-} ) => (
+}) => (
 	<Button
-		className={ classnames( 'style-preview__viewport-select-button', {
+		className={classnames('style-preview__viewport-select-button', {
 			'is-selected': isSelected,
-		} ) }
-		onClick={ onClick }
-		{ ...rest }
+		})}
+		onClick={onClick}
+		{...rest}
 	>
-		{ children }
+		{children}
 	</Button>
 );
 

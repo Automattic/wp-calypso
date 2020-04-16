@@ -11,30 +11,30 @@ import { Button } from '@automattic/components';
  */
 import PendingGSuiteTosNoticeDialog from './pending-gsuite-tos-notice-dialog';
 
-function PendingGSuiteTosNoticeAction( props ) {
-	const [ dialogVisible, setDialogVisible ] = useState( false );
-	const onFixClickHandler = e => {
+function PendingGSuiteTosNoticeAction(props) {
+	const [dialogVisible, setDialogVisible] = useState(false);
+	const onFixClickHandler = (e) => {
 		e.preventDefault();
-		setDialogVisible( true );
+		setDialogVisible(true);
 	};
 	const onCloseClickHandler = () => {
-		setDialogVisible( false );
+		setDialogVisible(false);
 	};
 
 	const translate = useTranslate();
 
 	return (
 		<Fragment>
-			<Button primary={ true } compact={ true } onClick={ onFixClickHandler }>
-				{ translate( 'Finish Setup' ) }
+			<Button primary={true} compact={true} onClick={onFixClickHandler}>
+				{translate('Finish Setup')}
 			</Button>
 			<PendingGSuiteTosNoticeDialog
-				domainName={ props.domainName }
-				onClose={ onCloseClickHandler }
-				section={ props.section }
-				siteSlug={ props.siteSlug }
-				user={ props.user }
-				visible={ dialogVisible }
+				domainName={props.domainName}
+				onClose={onCloseClickHandler}
+				section={props.section}
+				siteSlug={props.siteSlug}
+				user={props.user}
+				visible={dialogVisible}
 			/>
 		</Fragment>
 	);

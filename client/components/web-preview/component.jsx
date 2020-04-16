@@ -85,8 +85,8 @@ export class WebPreviewModal extends Component {
 		overridePost: null,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this._hasTouch = false;
 		this._isMobile = false;
@@ -95,8 +95,8 @@ export class WebPreviewModal extends Component {
 			device: props.defaultViewportDevice || 'computer',
 		};
 
-		this.keyDown = this.keyDown.bind( this );
-		this.setDeviceViewport = this.setDeviceViewport.bind( this );
+		this.keyDown = this.keyDown.bind(this);
+		this.setDeviceViewport = this.setDeviceViewport.bind(this);
 	}
 
 	UNSAFE_componentWillMount() {
@@ -106,48 +106,48 @@ export class WebPreviewModal extends Component {
 	}
 
 	componentDidMount() {
-		if ( this.props.showPreview ) {
-			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
+		if (this.props.showPreview) {
+			document.documentElement.classList.add('no-scroll', 'is-previewing');
 		}
-		this.props.setPreviewShowing( this.props.showPreview );
+		this.props.setPreviewShowing(this.props.showPreview);
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const { showPreview } = this.props;
 
 		// add/remove listener if showPreview has changed
-		if ( showPreview === prevProps.showPreview ) {
+		if (showPreview === prevProps.showPreview) {
 			return;
 		}
-		this.props.setPreviewShowing( showPreview );
-		if ( showPreview ) {
-			window.addEventListener( 'keydown', this.keyDown );
-			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
+		this.props.setPreviewShowing(showPreview);
+		if (showPreview) {
+			window.addEventListener('keydown', this.keyDown);
+			document.documentElement.classList.add('no-scroll', 'is-previewing');
 		} else {
-			window.removeEventListener( 'keydown', this.keyDown );
-			document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
+			window.removeEventListener('keydown', this.keyDown);
+			document.documentElement.classList.remove('no-scroll', 'is-previewing');
 		}
 	}
 
 	componentWillUnmount() {
-		this.props.setPreviewShowing( false );
-		window.removeEventListener( 'keydown', this.keyDown );
-		document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
+		this.props.setPreviewShowing(false);
+		window.removeEventListener('keydown', this.keyDown);
+		document.documentElement.classList.remove('no-scroll', 'is-previewing');
 	}
 
-	keyDown( event ) {
-		if ( event.keyCode === 27 ) {
+	keyDown(event) {
+		if (event.keyCode === 27) {
 			this.props.onClose();
 			event.preventDefault();
 		}
 	}
 
-	setDeviceViewport( device = 'computer' ) {
-		this.setState( { device } );
+	setDeviceViewport(device = 'computer') {
+		this.setState({ device });
 	}
 
 	render() {
-		const className = classNames( this.props.className, 'web-preview', {
+		const className = classNames(this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
@@ -155,20 +155,20 @@ export class WebPreviewModal extends Component {
 			'is-tablet': this.state.device === 'tablet',
 			'is-phone': this.state.device === 'phone',
 			'is-seo': this.state.device === 'seo',
-		} );
+		});
 
 		return (
 			<RootChild>
-				<div className={ className }>
-					{ /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
-					<div className="web-preview__backdrop" onClick={ this.props.onClose } />
-					{ /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
+				<div className={className}>
+					{/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
+					<div className="web-preview__backdrop" onClick={this.props.onClose} />
+					{/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
 					<div className="web-preview__content">
 						<WebPreviewContent
-							{ ...this.props }
-							onDeviceUpdate={ this.setDeviceViewport }
-							isModalWindow={ true }
-							frontPageMetaDescription={ this.props.frontPageMetaDescription || null }
+							{...this.props}
+							onDeviceUpdate={this.setDeviceViewport}
+							isModalWindow={true}
+							frontPageMetaDescription={this.props.frontPageMetaDescription || null}
 						/>
 					</div>
 				</div>
@@ -177,14 +177,12 @@ export class WebPreviewModal extends Component {
 	}
 }
 
-const ConnectedWebPreviewModal = connect( null, { setPreviewShowing } )(
-	localize( WebPreviewModal )
-);
+const ConnectedWebPreviewModal = connect(null, { setPreviewShowing })(localize(WebPreviewModal));
 
-const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
+const WebPreviewInner = ({ isContentOnly, ...restProps }) => {
 	const WebPreviewComponent = isContentOnly ? WebPreviewContent : ConnectedWebPreviewModal;
 
-	return <WebPreviewComponent { ...restProps } />;
+	return <WebPreviewComponent {...restProps} />;
 };
 
 export default WebPreviewInner;

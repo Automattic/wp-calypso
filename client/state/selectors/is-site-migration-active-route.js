@@ -10,12 +10,12 @@ import getCurrentRoute from 'state/selectors/get-current-route';
  * @param {object} state Global state tree
  * @returns {boolean} True if route is an active migration route
  */
-export default function isSiteMigrationActiveRoute( state ) {
-	const route = getCurrentRoute( state );
+export default function isSiteMigrationActiveRoute(state) {
+	const route = getCurrentRoute(state);
 
-	if ( ! route ) {
+	if (!route) {
 		return false;
 	}
 
-	return route.match( /\/migrate\/(upgrade\/)?from\/[^/]+\/to\// );
+	return route.match(/\/migrate\/(upgrade\/)?from\/[^/]+\/to\//);
 }

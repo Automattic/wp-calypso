@@ -9,9 +9,9 @@ import { expect } from 'chai';
 import { getFollowersForQuery } from '../selectors';
 import { getSerializedQuery } from '../utils';
 
-describe( 'selctors', () => {
-	describe( '#getFollowersForQuery()', () => {
-		test( 'should should only return followers that match query', () => {
+describe('selctors', () => {
+	describe('#getFollowersForQuery()', () => {
+		test('should should only return followers that match query', () => {
 			const state = {
 				followers: {
 					items: {
@@ -33,12 +33,12 @@ describe( 'selctors', () => {
 						},
 					},
 					queries: {
-						[ getSerializedQuery( { siteId: 555 } ) ]: [ 101 ],
+						[getSerializedQuery({ siteId: 555 })]: [101],
 					},
 				},
 			};
 			const query = { siteId: 555 };
-			expect( getFollowersForQuery( state, query ) ).to.eql( [
+			expect(getFollowersForQuery(state, query)).to.eql([
 				{
 					ID: 101,
 					avatar: 'https://1.gravatar.com/avatar',
@@ -47,17 +47,17 @@ describe( 'selctors', () => {
 					label: 'Test Person101',
 					display_name: 'test101',
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'should return null for untracked queries', () => {
+		test('should return null for untracked queries', () => {
 			const state = {
 				followers: {
 					queries: {},
 				},
 			};
 			const query = { siteId: 555 };
-			expect( getFollowersForQuery( state, query ) ).to.be.null;
-		} );
-	} );
-} );
+			expect(getFollowersForQuery(state, query)).to.be.null;
+		});
+	});
+});

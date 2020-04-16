@@ -29,10 +29,10 @@ class SimplePaymentsView extends Component {
 
 		return (
 			<div className="wpview-content wpview-type-simple-payments">
-				<QuerySimplePayments siteId={ siteId } productId={ productId } />
-				<QuerySitePlans siteId={ siteId } />
-				{ product && <QueryMedia siteId={ siteId } mediaId={ product.featuredImageId } /> }
-				{ this.renderContent() }
+				<QuerySimplePayments siteId={siteId} productId={productId} />
+				<QuerySitePlans siteId={siteId} />
+				{product && <QueryMedia siteId={siteId} mediaId={product.featuredImageId} />}
+				{this.renderContent()}
 			</div>
 		);
 	}
@@ -40,18 +40,18 @@ class SimplePaymentsView extends Component {
 	renderContent() {
 		const { translate, product, productImage, planHasSimplePaymentsFeature, sitePlan } = this.props;
 
-		if ( ! product || ! sitePlan ) {
+		if (!product || !sitePlan) {
 			return;
 		}
 
-		if ( ! planHasSimplePaymentsFeature ) {
+		if (!planHasSimplePaymentsFeature) {
 			return (
 				<div className="wpview-type-simple-payments__unsupported">
 					<div className="wpview-type-simple-payments__unsupported-icon">
 						<Gridicon icon="cross" />
 					</div>
 					<p className="wpview-type-simple-payments__unsupported-message">
-						{ translate( "Your plan doesn't include Simple Payments." ) }
+						{translate("Your plan doesn't include Simple Payments.")}
 					</p>
 				</div>
 			);
@@ -61,25 +61,25 @@ class SimplePaymentsView extends Component {
 
 		return (
 			<div className="wpview-type-simple-payments__wrapper">
-				{ productImage && (
+				{productImage && (
 					<div className="wpview-type-simple-payments__image-part">
 						<figure className="wpview-type-simple-payments__image-figure">
 							<img
 								className="wpview-type-simple-payments__image"
-								src={ productImage.URL }
-								alt={ description }
+								src={productImage.URL}
+								alt={description}
 							/>
 						</figure>
 					</div>
-				) }
+				)}
 				<div className="wpview-type-simple-payments__text-part">
-					<div className="wpview-type-simple-payments__title">{ title }</div>
-					<div className="wpview-type-simple-payments__description">{ description }</div>
+					<div className="wpview-type-simple-payments__title">{title}</div>
+					<div className="wpview-type-simple-payments__description">{description}</div>
 					<div className="wpview-type-simple-payments__price-part">
-						{ formatCurrency( price, currency ) }
+						{formatCurrency(price, currency)}
 					</div>
 					<div className="wpview-type-simple-payments__pay-part">
-						{ multiple && (
+						{multiple && (
 							<div className="wpview-type-simple-payments__pay-quantity">
 								<input
 									className="wpview-type-simple-payments__pay-quantity-input"
@@ -88,11 +88,11 @@ class SimplePaymentsView extends Component {
 									readOnly
 								/>
 							</div>
-						) }
+						)}
 						<div className="wpview-type-simple-payments__pay-paypal-button-wrapper">
 							<div className="wpview-type-simple-payments__pay-paypal-button-content">
 								<span className="wpview-type-simple-payments__pay-paypal-button-text">
-									{ translate( 'Pay with' ) }
+									{translate('Pay with')}
 								</span>
 								<span className="wpview-type-simple-payments_paypal-logo" />
 							</div>
@@ -104,15 +104,15 @@ class SimplePaymentsView extends Component {
 	}
 }
 
-SimplePaymentsView = connect( ( state, props ) => {
+SimplePaymentsView = connect((state, props) => {
 	const { content: shortcode } = props;
 
-	const shortcodeData = deserialize( shortcode );
+	const shortcodeData = deserialize(shortcode);
 
 	const { id: productId = null } = shortcodeData;
-	const siteId = getSelectedSiteId( state );
-	const sitePlan = getCurrentPlan( state, siteId );
-	const product = getSimplePayments( state, siteId, productId );
+	const siteId = getSelectedSiteId(state);
+	const sitePlan = getCurrentPlan(state, siteId);
+	const product = getSimplePayments(state, siteId, productId);
 
 	return {
 		shortcodeData,
@@ -120,15 +120,15 @@ SimplePaymentsView = connect( ( state, props ) => {
 		siteId,
 		sitePlan,
 		product,
-		productImage: getMediaItem( state, siteId, get( product, 'featuredImageId' ) ),
-		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
+		productImage: getMediaItem(state, siteId, get(product, 'featuredImageId')),
+		planHasSimplePaymentsFeature: hasFeature(state, siteId, FEATURE_SIMPLE_PAYMENTS),
 	};
-} )( localize( SimplePaymentsView ) );
+})(localize(SimplePaymentsView));
 
-SimplePaymentsView.match = content => {
-	const match = next( 'simple-payment', content );
+SimplePaymentsView.match = (content) => {
+	const match = next('simple-payment', content);
 
-	if ( match ) {
+	if (match) {
 		return {
 			index: match.index,
 			content: match.content,
@@ -139,12 +139,12 @@ SimplePaymentsView.match = content => {
 	}
 };
 
-SimplePaymentsView.serialize = content => {
-	return encodeURIComponent( content );
+SimplePaymentsView.serialize = (content) => {
+	return encodeURIComponent(content);
 };
 
-SimplePaymentsView.edit = ( editor, content ) => {
-	editor.execCommand( 'simplePaymentsButton', content );
+SimplePaymentsView.edit = (editor, content) => {
+	editor.execCommand('simplePaymentsButton', content);
 };
 
 export default SimplePaymentsView;

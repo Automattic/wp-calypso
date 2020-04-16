@@ -36,8 +36,8 @@ class TransferAwayConfirmationPage extends Component {
 		error: false,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = this.getLoadingState();
 	}
 
@@ -45,12 +45,12 @@ class TransferAwayConfirmationPage extends Component {
 		const { domain, recipientId, token } = this.props;
 		const { verifyEmail } = VerifyConfirmationCommand;
 
-		wpcom.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, verifyEmail ).then(
+		wpcom.domainsVerifyOutboundTransferConfirmation(domain, recipientId, token, verifyEmail).then(
 			() => {
-				this.setState( this.getConfirmationSelectState() );
+				this.setState(this.getConfirmationSelectState());
 			},
-			error => {
-				this.setErrorState( error );
+			(error) => {
+				this.setErrorState(error);
 			}
 		);
 	}
@@ -59,8 +59,8 @@ class TransferAwayConfirmationPage extends Component {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
-			title: translate( 'Manage your Domain Transfer' ),
-			message: translate( 'Loading…' ),
+			title: translate('Manage your Domain Transfer'),
+			message: translate('Loading…'),
 			actionTitle: null,
 			actionCallback: null,
 		};
@@ -70,16 +70,16 @@ class TransferAwayConfirmationPage extends Component {
 		const { domain, recipientId, token } = this.props;
 		const { acceptTransfer } = VerifyConfirmationCommand;
 
-		this.setState( { isProcessingRequest: true } );
+		this.setState({ isProcessingRequest: true });
 
 		wpcom
-			.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, acceptTransfer )
+			.domainsVerifyOutboundTransferConfirmation(domain, recipientId, token, acceptTransfer)
 			.then(
 				() => {
-					this.setSuccessState( 'accept_transfer_success' );
+					this.setSuccessState('accept_transfer_success');
 				},
 				() => {
-					this.setErrorState( { error: 'accept_transfer_failed' } );
+					this.setErrorState({ error: 'accept_transfer_failed' });
 				}
 			);
 	};
@@ -88,24 +88,22 @@ class TransferAwayConfirmationPage extends Component {
 		const { domain, recipientId, token } = this.props;
 		const { denyTransfer } = VerifyConfirmationCommand;
 
-		this.setState( { isProcessingRequest: true } );
+		this.setState({ isProcessingRequest: true });
 
-		wpcom
-			.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, denyTransfer )
-			.then(
-				() => {
-					this.setSuccessState( 'cancel_transfer_success' );
-				},
-				() => {
-					this.setErrorState( { error: 'cancel_transfer_failed' } );
-				}
-			);
+		wpcom.domainsVerifyOutboundTransferConfirmation(domain, recipientId, token, denyTransfer).then(
+			() => {
+				this.setSuccessState('cancel_transfer_success');
+			},
+			() => {
+				this.setErrorState({ error: 'cancel_transfer_failed' });
+			}
+		);
 	};
 
 	getConfirmationSelectState = () => {
 		const { domain, translate } = this.props;
 		return {
-			title: translate( 'Manage your Domain Transfer' ),
+			title: translate('Manage your Domain Transfer'),
 			message: translate(
 				'You have requested to transfer {{strong}}%(domain)s{{/strong}} away from WordPress.com to another registration provider.{{br/}}{{br/}}' +
 					'If you take no action, the domain transfer will process automatically within seven days of when it was started.{{br/}}{{br/}}' +
@@ -122,9 +120,9 @@ class TransferAwayConfirmationPage extends Component {
 				}
 			),
 			messageAlignCenter: false,
-			actionTitle: translate( 'Accept Transfer' ),
+			actionTitle: translate('Accept Transfer'),
 			actionCallback: this.acceptTransfer,
-			alternateActionTitle: translate( 'Cancel Transfer' ),
+			alternateActionTitle: translate('Cancel Transfer'),
 			alternateActionCallback: this.cancelTransfer,
 			isLoading: false,
 		};
@@ -171,7 +169,7 @@ class TransferAwayConfirmationPage extends Component {
 				'This email has expired.{{br/}}{{br/}}If it has been over seven days since you have started your transfer and it has not yet completed, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
 				{
 					components: {
-						a: <a href={ CALYPSO_CONTACT } />,
+						a: <a href={CALYPSO_CONTACT} />,
 						br: <br />,
 						strong: <strong />,
 					},
@@ -185,7 +183,7 @@ class TransferAwayConfirmationPage extends Component {
 		const { translate } = this.props;
 
 		return {
-			title: translate( 'Domain not awaiting transfer.' ),
+			title: translate('Domain not awaiting transfer.'),
 			message: translate(
 				'This domain is no longer pending transfer.{{br/}}{{br/}}If your transfer has completed successfully or you previously cancelled your domain transfer, there is nothing else you need to do.',
 				{
@@ -197,13 +195,13 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	getRunningMaintenanceErrorState = error => {
+	getRunningMaintenanceErrorState = (error) => {
 		const { translate } = this.props;
 
-		const message = getMaintenanceMessageFromError( error, translate );
+		const message = getMaintenanceMessageFromError(error, translate);
 
 		return {
-			title: translate( 'Domain maintenance in progress' ),
+			title: translate('Domain maintenance in progress'),
 			message: message,
 		};
 	};
@@ -214,15 +212,15 @@ class TransferAwayConfirmationPage extends Component {
 			"If you're having trouble managing your domain transfer, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.",
 			{
 				components: {
-					a: <a href={ CALYPSO_CONTACT } />,
+					a: <a href={CALYPSO_CONTACT} />,
 					strong: <strong />,
 				},
 			}
 		);
 
 		return {
-			title: translate( 'Uh oh!' ),
-			message: translate( 'Hmm. Something went wrong.' ),
+			title: translate('Uh oh!'),
+			message: translate('Hmm. Something went wrong.'),
 			messageAlignCenter: true,
 			actionTitle: null,
 			actionCallback: null,
@@ -234,10 +232,10 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	setErrorState = error => {
+	setErrorState = (error) => {
 		let errorState;
 
-		switch ( error.error ) {
+		switch (error.error) {
 			case 'email_mismatch':
 				errorState = this.getEmailMismatchState();
 				break;
@@ -256,14 +254,14 @@ class TransferAwayConfirmationPage extends Component {
 
 			case 'domain_registration_unavailable':
 			case 'tld-in-maintenance':
-				errorState = this.getRunningMaintenanceErrorState( error );
+				errorState = this.getRunningMaintenanceErrorState(error);
 				break;
 		}
 
-		this.setState( {
+		this.setState({
 			...this.getDefaultErrorState(),
 			...errorState,
-		} );
+		});
 	};
 
 	getAcceptTransferSuccessState = () => {
@@ -300,7 +298,7 @@ class TransferAwayConfirmationPage extends Component {
 		const { translate } = this.props;
 
 		return {
-			title: translate( 'Success!' ),
+			title: translate('Success!'),
 			messageAlignCenter: true,
 			actionTitle: null,
 			actionCallback: null,
@@ -312,10 +310,10 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
-	setSuccessState = success => {
+	setSuccessState = (success) => {
 		let successState;
 
-		switch ( success ) {
+		switch (success) {
 			case 'accept_transfer_success':
 				successState = this.getAcceptTransferSuccessState();
 				break;
@@ -325,10 +323,10 @@ class TransferAwayConfirmationPage extends Component {
 				break;
 		}
 
-		this.setState( {
+		this.setState({
 			...this.getDefaultSuccessState(),
 			...successState,
-		} );
+		});
 	};
 
 	render() {
@@ -336,25 +334,25 @@ class TransferAwayConfirmationPage extends Component {
 
 		return (
 			<div className="transfer-away-confirmation">
-				<DomainsLandingHeader title={ translate( 'Domain Transfer Management' ) } />
+				<DomainsLandingHeader title={translate('Domain Transfer Management')} />
 				<DomainsLandingContentCard
-					title={ this.state.title }
-					message={ this.state.message }
-					messageAlignCenter={ this.state.messageAlignCenter }
-					actionTitle={ this.state.actionTitle }
-					actionCallback={ this.state.actionCallback }
-					actionPrimary={ false }
-					actionBusy={ this.state.isProcessingRequest }
-					alternateActionTitle={ this.state.alternateActionTitle }
-					alternateActionCallback={ this.state.alternateActionCallback }
-					alternateActionPrimary={ false }
-					alternateActionBusy={ this.state.isProcessingRequest }
-					footer={ this.state.footer }
-					isLoading={ this.state.isLoading }
+					title={this.state.title}
+					message={this.state.message}
+					messageAlignCenter={this.state.messageAlignCenter}
+					actionTitle={this.state.actionTitle}
+					actionCallback={this.state.actionCallback}
+					actionPrimary={false}
+					actionBusy={this.state.isProcessingRequest}
+					alternateActionTitle={this.state.alternateActionTitle}
+					alternateActionCallback={this.state.alternateActionCallback}
+					alternateActionPrimary={false}
+					alternateActionBusy={this.state.isProcessingRequest}
+					footer={this.state.footer}
+					isLoading={this.state.isLoading}
 				/>
 			</div>
 		);
 	}
 }
 
-export default localize( TransferAwayConfirmationPage );
+export default localize(TransferAwayConfirmationPage);

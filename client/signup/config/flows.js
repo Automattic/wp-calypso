@@ -14,22 +14,22 @@ import { addQueryArgs } from 'lib/url';
 
 const user = userFactory();
 
-function getCheckoutUrl( dependencies ) {
+function getCheckoutUrl(dependencies) {
 	return addQueryArgs(
 		{
 			signup: 1,
-			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
-			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
+			...(dependencies.isPreLaunch && { preLaunch: 1 }),
+			...(dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 }),
 		},
-		`/checkout/${ dependencies.siteSlug }`
+		`/checkout/${dependencies.siteSlug}`
 	);
 }
 
-function dependenciesContainCartItem( dependencies ) {
+function dependenciesContainCartItem(dependencies) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
 }
 
-function getSiteDestination( dependencies ) {
+function getSiteDestination(dependencies) {
 	let protocol = 'https';
 
 	/**
@@ -37,17 +37,17 @@ function getSiteDestination( dependencies ) {
 	 *
 	 * Redirect them
 	 */
-	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
+	if (!dependencies.siteSlug.match(/wordpress\.[a-z]+$/i)) {
 		protocol = 'http';
 	}
 
 	return protocol + '://' + dependencies.siteSlug;
 }
 
-function getRedirectDestination( dependencies ) {
+function getRedirectDestination(dependencies) {
 	if (
 		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
+		dependencies.oauth2_redirect.startsWith('https://public-api.wordpress.com')
 	) {
 		return dependencies.oauth2_redirect;
 	}
@@ -55,31 +55,31 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+function getSignupDestination(dependencies) {
+	return `/home/${dependencies.siteSlug}`;
 }
 
-function getLaunchDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }?d=launched`;
+function getLaunchDestination(dependencies) {
+	return `/home/${dependencies.siteSlug}?d=launched`;
 }
 
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }?d=theme`;
+function getChecklistThemeDestination(dependencies) {
+	return `/home/${dependencies.siteSlug}?d=theme`;
 }
 
-function getEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home`;
+function getEditorDestination(dependencies) {
+	return `/block-editor/page/${dependencies.siteSlug}/home`;
 }
 
-function getPreLaunchEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home?is-gutenboarding`;
+function getPreLaunchEditorDestination(dependencies) {
+	return `/block-editor/page/${dependencies.siteSlug}/home?is-gutenboarding`;
 }
 
-const flows = generateFlows( {
+const flows = generateFlows({
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
@@ -88,28 +88,28 @@ const flows = generateFlows( {
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getPreLaunchEditorDestination,
-} );
+});
 
-function removeUserStepFromFlow( flow ) {
-	if ( ! flow ) {
+function removeUserStepFromFlow(flow) {
+	if (!flow) {
 		return;
 	}
 
-	return assign( {}, flow, {
-		steps: reject( flow.steps, stepName => stepConfig[ stepName ].providesToken ),
-	} );
+	return assign({}, flow, {
+		steps: reject(flow.steps, (stepName) => stepConfig[stepName].providesToken),
+	});
 }
 
-function filterDestination( destination, dependencies ) {
-	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
+function filterDestination(destination, dependencies) {
+	if (dependenciesContainCartItem(dependencies)) {
+		return getCheckoutUrl(dependencies);
 	}
 
 	return destination;
 }
 
 function getDefaultFlowName() {
-	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+	return config.isEnabled('signup/onboarding-flow') ? 'onboarding' : 'main';
 }
 
 const Flows = {
@@ -126,31 +126,31 @@ const Flows = {
 	 * @param {string} flowName The name of the flow to return
 	 * @returns {object} A flow object
 	 */
-	getFlow( flowName ) {
-		let flow = Flows.getFlows()[ flowName ];
+	getFlow(flowName) {
+		let flow = Flows.getFlows()[flowName];
 
 		// if the flow couldn't be found, return early
-		if ( ! flow ) {
+		if (!flow) {
 			return flow;
 		}
 
-		if ( user && user.get() ) {
-			flow = removeUserStepFromFlow( flow );
+		if (user && user.get()) {
+			flow = removeUserStepFromFlow(flow);
 		}
 
-		return Flows.filterExcludedSteps( flow );
+		return Flows.filterExcludedSteps(flow);
 	},
 
-	getNextStepNameInFlow( flowName, currentStepName = '' ) {
-		const flow = Flows.getFlows()[ flowName ];
+	getNextStepNameInFlow(flowName, currentStepName = '') {
+		const flow = Flows.getFlows()[flowName];
 
-		if ( ! flow ) {
+		if (!flow) {
 			return false;
 		}
 		const flowSteps = flow.steps;
-		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const currentStepIndex = indexOf(flowSteps, currentStepName);
 		const nextIndex = currentStepIndex + 1;
-		const nextStepName = get( flowSteps, nextIndex );
+		const nextStepName = get(flowSteps, nextIndex);
 
 		return nextStepName;
 	},
@@ -162,18 +162,18 @@ const Flows = {
 	 *
 	 * @param {string} step Name of the step to be excluded.
 	 */
-	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+	excludeStep(step) {
+		step && Flows.excludedSteps.push(step);
 	},
 
-	filterExcludedSteps( flow ) {
-		if ( ! flow ) {
+	filterExcludedSteps(flow) {
+		if (!flow) {
 			return;
 		}
 
-		return assign( {}, flow, {
-			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
-		} );
+		return assign({}, flow, {
+			steps: reject(flow.steps, (stepName) => includes(Flows.excludedSteps, stepName)),
+		});
 	},
 
 	resetExcludedSteps() {

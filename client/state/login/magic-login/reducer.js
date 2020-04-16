@@ -25,8 +25,8 @@ import {
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 } from 'state/action-types';
 
-export const currentView = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const currentView = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case MAGIC_LOGIN_HIDE_REQUEST_FORM:
 			return null;
 		case MAGIC_LOGIN_RESET_REQUEST_FORM:
@@ -40,10 +40,10 @@ export const currentView = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const isFetchingEmail = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isFetchingEmail = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case MAGIC_LOGIN_HIDE_REQUEST_FORM:
 			return false;
 		case MAGIC_LOGIN_HIDE_REQUEST_NOTICE:
@@ -57,10 +57,10 @@ export const isFetchingEmail = withoutPersistence( ( state = false, action ) => 
 	}
 
 	return state;
-} );
+});
 
-export const isFetchingAuth = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isFetchingAuth = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case MAGIC_LOGIN_REQUEST_AUTH_ERROR:
 			return false;
 		case MAGIC_LOGIN_REQUEST_AUTH_FETCH:
@@ -72,10 +72,10 @@ export const isFetchingAuth = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const requestAuthSuccess = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requestAuthSuccess = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case MAGIC_LOGIN_REQUEST_AUTH_ERROR:
 			return false;
 		case MAGIC_LOGIN_REQUEST_AUTH_FETCH:
@@ -85,10 +85,10 @@ export const requestAuthSuccess = withoutPersistence( ( state = false, action ) 
 	}
 
 	return state;
-} );
+});
 
-export const requestAuthError = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const requestAuthError = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case MAGIC_LOGIN_REQUEST_AUTH_ERROR: {
 			const { error } = action;
 			return error;
@@ -100,10 +100,10 @@ export const requestAuthError = withoutPersistence( ( state = null, action ) => 
 	}
 
 	return state;
-} );
+});
 
-export const requestEmailError = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const requestEmailError = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case MAGIC_LOGIN_HIDE_REQUEST_NOTICE:
 			return null;
 		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR: {
@@ -119,10 +119,10 @@ export const requestEmailError = withoutPersistence( ( state = null, action ) =>
 	}
 
 	return state;
-} );
+});
 
-export const requestEmailSuccess = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requestEmailSuccess = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case MAGIC_LOGIN_HIDE_REQUEST_NOTICE:
 			return false;
 		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR:
@@ -136,9 +136,9 @@ export const requestEmailSuccess = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	isFetchingAuth,
 	isFetchingEmail,
 	requestAuthError,
@@ -146,4 +146,4 @@ export default combineReducers( {
 	requestEmailError,
 	requestEmailSuccess,
 	currentView,
-} );
+});

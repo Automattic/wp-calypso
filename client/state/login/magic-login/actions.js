@@ -51,18 +51,18 @@ export const hideMagicLoginRequestNotice = () => {
 	};
 };
 
-async function postMagicLoginRequest( url, bodyObj ) {
-	const response = await fetch( url, {
+async function postMagicLoginRequest(url, bodyObj) {
+	const response = await fetch(url, {
 		method: 'POST',
 		credentials: 'include',
 		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: stringify( bodyObj ),
-	} );
+		body: stringify(bodyObj),
+	});
 
-	if ( response.ok ) {
+	if (response.ok) {
 		return await response.json();
 	}
-	throw new HTTPError( response, await response.text() );
+	throw new HTTPError(response, await response.text());
 }
 
 /**
@@ -72,31 +72,31 @@ async function postMagicLoginRequest( url, bodyObj ) {
  * @param  {string}   redirectTo Url to redirect the user to upon successful login
  * @returns {Function}            A thunk that can be dispatched
  */
-export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => dispatch => {
-	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
+export const fetchMagicLoginAuthenticate = (token, redirectTo) => (dispatch) => {
+	dispatch({ type: MAGIC_LOGIN_REQUEST_AUTH_FETCH });
 
-	postMagicLoginRequest( AUTHENTICATE_URL, {
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
+	postMagicLoginRequest(AUTHENTICATE_URL, {
+		client_id: config('wpcom_signup_id'),
+		client_secret: config('wpcom_signup_key'),
 		token,
 		redirect_to: redirectTo,
-	} )
-		.then( json => {
-			dispatch( {
+	})
+		.then((json) => {
+			dispatch({
 				type: LOGIN_REQUEST_SUCCESS,
 				data: json.data,
-			} );
+			});
 
-			dispatch( {
+			dispatch({
 				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
-			} );
-		} )
-		.catch( error => {
+			});
+		})
+		.catch((error) => {
 			const { status } = error;
 
-			dispatch( {
+			dispatch({
 				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 				error: status,
-			} );
-		} );
+			});
+		});
 };

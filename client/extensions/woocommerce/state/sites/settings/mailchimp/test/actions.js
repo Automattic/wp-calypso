@@ -30,16 +30,16 @@ import {
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
 } from 'woocommerce/state/action-types';
 
-describe( 'actions', () => {
-	describe( '#requestSettings()', () => {
+describe('actions', () => {
+	describe('#requestSettings()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/mailchimp&_via_calypso&_method=get', json: true } )
-				.reply( 200, {
+				.get('/rest/v1.1/jetpack-blogs/123/rest-api/')
+				.query({ path: '/wc/v3/mailchimp&_via_calypso&_method=get', json: true })
+				.reply(200, {
 					data: {
 						mailchimp_api_key: '6e46d0621d-us16',
 						mailchimp_debugging: false,
@@ -56,26 +56,26 @@ describe( 'actions', () => {
 						newsletter_label: 'Subscribe to our newsletter',
 						mailchimp_active_tab: 'sync',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			requestSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			requestSettings(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with settings information when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with settings information when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = requestSettings( siteId )( dispatch, getState );
+			const response = requestSettings(siteId)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
 					siteId,
 					settings: {
@@ -94,25 +94,25 @@ describe( 'actions', () => {
 						newsletter_label: 'Subscribe to our newsletter',
 						mailchimp_active_tab: 'sync',
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#submitMailChimpApiKey()', () => {
+	describe('#submitMailChimpApiKey()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/mailchimp/api_key&_via_calypso&_method=put',
-					body: JSON.stringify( {
+					body: JSON.stringify({
 						mailchimp_api_key: '12345testing',
-					} ),
+					}),
 					json: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					data: {
 						mailchimp_api_key: '12345testing',
 						mailchimp_debugging: false,
@@ -120,28 +120,28 @@ describe( 'actions', () => {
 						mailchimp_account_info_username: 'ski',
 						mailchimp_active_tab: 'store_info',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
 			const api_key = '12345testing';
-			submitMailChimpApiKey( siteId, api_key )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			submitMailChimpApiKey(siteId, api_key)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with settings information when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with settings information when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
 			const api_key = '12345testing';
-			const response = submitMailChimpApiKey( siteId, api_key )( dispatch, getState );
+			const response = submitMailChimpApiKey(siteId, api_key)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 					siteId,
 					settings: {
@@ -151,27 +151,27 @@ describe( 'actions', () => {
 						mailchimp_account_info_username: 'ski',
 						mailchimp_active_tab: 'store_info',
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#submitMailChimpStoreInfo()', () => {
+	describe('#submitMailChimpStoreInfo()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/mailchimp/store_info&_via_calypso&_method=put',
-					body: JSON.stringify( {
+					body: JSON.stringify({
 						store_name: 'mystore',
 						store_street: 'street',
 						store_city: 'Valhalla',
-					} ),
+					}),
 					json: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					data: {
 						mailchimp_api_key: '12345testing',
 						mailchimp_debugging: false,
@@ -182,32 +182,32 @@ describe( 'actions', () => {
 						store_street: 'street',
 						store_city: 'Valhalla',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
 			const storeInfo = { store_name: 'mystore' };
-			submitMailChimpStoreInfo( siteId, storeInfo )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			submitMailChimpStoreInfo(siteId, storeInfo)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with settings information when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with settings information when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
 			const storeInfo = {
 				store_name: 'mystore',
 				store_street: 'street',
 				store_city: 'Valhalla',
 			};
-			const response = submitMailChimpStoreInfo( siteId, storeInfo )( dispatch, getState );
+			const response = submitMailChimpStoreInfo(siteId, storeInfo)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
 					siteId,
 					settings: {
@@ -220,26 +220,26 @@ describe( 'actions', () => {
 						store_street: 'street',
 						store_city: 'Valhalla',
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#submitMailChimpCampaignDefaults()', () => {
+	describe('#submitMailChimpCampaignDefaults()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/mailchimp/campaign_defaults&_via_calypso&_method=put',
-					body: JSON.stringify( {
+					body: JSON.stringify({
 						campaign_from_name: 'woo',
 						campaign_from_email: 'mystore@woo.woo',
-					} ),
+					}),
 					json: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					data: {
 						mailchimp_api_key: '12345testing',
 						mailchimp_debugging: false,
@@ -252,37 +252,37 @@ describe( 'actions', () => {
 						campaign_from_name: 'woo',
 						campaign_from_email: 'mystore@woo.woo',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
 			const campaignDefaults = {
 				campaign_from_name: 'woo',
 				campaign_from_email: 'mystore@woo.woo',
 			};
-			submitMailChimpCampaignDefaults( siteId, campaignDefaults )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			submitMailChimpCampaignDefaults(siteId, campaignDefaults)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with settings information when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with settings information when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
 			const campaignDefaults = {
 				campaign_from_name: 'woo',
 				campaign_from_email: 'mystore@woo.woo',
 			};
-			const response = submitMailChimpCampaignDefaults( siteId, campaignDefaults )(
+			const response = submitMailChimpCampaignDefaults(siteId, campaignDefaults)(
 				dispatch,
 				getState
 			);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
 					siteId,
 					settings: {
@@ -297,20 +297,20 @@ describe( 'actions', () => {
 						campaign_from_name: 'woo',
 						campaign_from_email: 'mystore@woo.woo',
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#requestSyncStatus()', () => {
+	describe('#requestSyncStatus()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/mailchimp/sync&_via_calypso&_method=get', json: true } )
-				.reply( 200, {
+				.get('/rest/v1.1/jetpack-blogs/123/rest-api/')
+				.query({ path: '/wc/v3/mailchimp/sync&_via_calypso&_method=get', json: true })
+				.reply(200, {
 					data: {
 						last_updated_time: '2017-10-17T22:22:44',
 						store_syncing: false,
@@ -322,26 +322,26 @@ describe( 'actions', () => {
 						mailchimp_list_name: 'ski',
 						store_id: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			requestSyncStatus( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			requestSyncStatus(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with settings information when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with settings information when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = requestSyncStatus( siteId )( dispatch, getState );
+			const response = requestSyncStatus(siteId)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
 					siteId,
 					syncStatus: {
@@ -355,30 +355,30 @@ describe( 'actions', () => {
 						mailchimp_list_name: 'ski',
 						store_id: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#mailChimpSaveSettings()', () => {
+	describe('#mailChimpSaveSettings()', () => {
 		const siteId = '123';
 
-		test( 'should not dispatch an action if there are not settings in state', () => {
-			const getState = () => ( {} );
+		test('should not dispatch an action if there are not settings in state', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			mailChimpSaveSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.not.been.calledWith( {
+			mailChimpSaveSettings(siteId)(dispatch, getState);
+			expect(dispatch).to.have.not.been.calledWith({
 				type: WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should not dispatch an action if the state does not represent completed setup', () => {
-			const getState = () => ( {
+		test('should not dispatch an action if the state does not represent completed setup', () => {
+			const getState = () => ({
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
+							[siteId]: {
 								settings: {
 									mailchimp: {
 										settings: {
@@ -399,22 +399,22 @@ describe( 'actions', () => {
 						},
 					},
 				},
-			} );
+			});
 
 			const dispatch = spy();
-			mailChimpSaveSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.not.been.calledWith( {
+			mailChimpSaveSettings(siteId)(dispatch, getState);
+			expect(dispatch).to.have.not.been.calledWith({
 				type: WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch an action if the state represents completed setup', () => {
-			const getState = () => ( {
+		test('should dispatch an action if the state represents completed setup', () => {
+			const getState = () => ({
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
+							[siteId]: {
 								settings: {
 									mailchimp: {
 										settings: {
@@ -440,14 +440,14 @@ describe( 'actions', () => {
 						},
 					},
 				},
-			} );
+			});
 
 			const dispatch = spy();
-			mailChimpSaveSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			mailChimpSaveSettings(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
 				siteId,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

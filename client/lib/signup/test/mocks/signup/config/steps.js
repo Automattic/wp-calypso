@@ -15,46 +15,46 @@ export default {
 
 	stepRequiringSiteSlug: {
 		stepName: 'stepRequiringSiteSlug',
-		dependencies: [ 'siteSlug' ],
+		dependencies: ['siteSlug'],
 	},
 
 	asyncStep: {
 		stepName: 'asyncStep',
-		apiRequestFunction: function( callback, dependencies, stepData ) {
-			defer( callback );
+		apiRequestFunction: function (callback, dependencies, stepData) {
+			defer(callback);
 			stepData.done();
 		},
 	},
 
 	siteCreation: {
 		stepName: 'siteCreation',
-		dependencies: [ 'bearer_token' ],
-		providesDependencies: [ 'siteSlug' ],
-		apiRequestFunction: function( callback, dependencies, stepData ) {
-			defer( function() {
-				callback( null, { siteSlug: 'testsite.wordpress.com' } );
-				stepData.stepCallback( dependencies );
-			} );
+		dependencies: ['bearer_token'],
+		providesDependencies: ['siteSlug'],
+		apiRequestFunction: function (callback, dependencies, stepData) {
+			defer(function () {
+				callback(null, { siteSlug: 'testsite.wordpress.com' });
+				stepData.stepCallback(dependencies);
+			});
 		},
 	},
 
 	userCreation: {
 		stepName: 'userCreation',
 		providesToken: true,
-		providesDependencies: [ 'bearer_token' ],
-		apiRequestFunction: function( callback ) {
-			defer( function() {
-				callback( null, { bearer_token: 'TOKEN' } );
-			} );
+		providesDependencies: ['bearer_token'],
+		apiRequestFunction: function (callback) {
+			defer(function () {
+				callback(null, { bearer_token: 'TOKEN' });
+			});
 		},
 	},
 
 	userCreationWithoutToken: {
 		stepName: 'userCreation',
 		providesToken: true,
-		providesDependencies: [ 'bearer_token' ],
-		apiRequestFunction: function( callback ) {
-			defer( callback );
+		providesDependencies: ['bearer_token'],
+		apiRequestFunction: function (callback) {
+			defer(callback);
 		},
 	},
 
@@ -62,50 +62,50 @@ export default {
 		stepName: 'delayedStep',
 		component: null,
 		delayApiRequestUntilComplete: true,
-		apiRequestFunction: function( callback, dependencies, stepData ) {
+		apiRequestFunction: function (callback, dependencies, stepData) {
 			stepData.stepCallback();
-			defer( callback );
+			defer(callback);
 		},
 	},
 
 	'domains-launch': {
 		stepName: 'domains-launch',
-		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'domainItem' ],
+		dependencies: ['siteSlug'],
+		providesDependencies: ['domainItem'],
 	},
 
 	plans: {
 		stepName: 'plans',
-		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'cartItem' ],
+		dependencies: ['siteSlug'],
+		providesDependencies: ['cartItem'],
 	},
 
 	'site-type': {
 		stepName: 'site-type',
-		providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+		providesDependencies: ['siteType', 'themeSlugWithRepo'],
 	},
 
 	'site-topic': {
 		stepName: 'site-topic',
-		providesDependencies: [ 'siteTopic' ],
+		providesDependencies: ['siteTopic'],
 	},
 
 	'site-topic-and-title': {
 		stepName: 'site-topic-and-title',
-		providesDependencies: [ 'siteTopic', 'siteTitle' ],
+		providesDependencies: ['siteTopic', 'siteTitle'],
 	},
 
 	'site-topic-with-optional-theme': {
 		stepName: 'site-topic-with-optional-theme',
-		providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-		optionalDependencies: [ 'themeSlugWithRepo' ],
+		providesDependencies: ['siteTopic', 'themeSlugWithRepo'],
+		optionalDependencies: ['themeSlugWithRepo'],
 	},
 
 	'site-topic-with-optional-survey-question': {
 		stepName: 'site-topic-with-optional-survey-question',
-		providesDependencies: [ 'siteTopic', 'surveyQuestion' ],
-		optionalDependencies: [ 'surveyQuestion' ],
+		providesDependencies: ['siteTopic', 'surveyQuestion'],
+		optionalDependencies: ['surveyQuestion'],
 	},
 };
 
-export const isDomainStepSkippable = jest.fn( () => false );
+export const isDomainStepSkippable = jest.fn(() => false);

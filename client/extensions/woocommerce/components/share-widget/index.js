@@ -31,7 +31,7 @@ class ShareWidget extends Component {
 					pathname: '/sharer.php',
 					query: {
 						u: urlToShare,
-						app_id: config( 'facebook_api_key' ),
+						app_id: config('facebook_api_key'),
 					},
 				},
 			},
@@ -42,7 +42,7 @@ class ShareWidget extends Component {
 					hostname: 'twitter.com',
 					pathname: '/intent/tweet',
 					query: {
-						text: translate( 'Come check out our store!' ),
+						text: translate('Come check out our store!'),
 						url: urlToShare,
 						via: 'wordpressdotcom',
 					},
@@ -89,16 +89,16 @@ class ShareWidget extends Component {
 
 		return (
 			<ul className="share-widget__services">
-				{ services.map( service => {
-					const link = url.format( service.urlProperties );
+				{services.map((service) => {
+					const link = url.format(service.urlProperties);
 					return (
-						<li className="share-widget__service" key={ service.icon }>
-							<a href={ link } rel="noopener noreferrer" target="_blank">
-								<SocialLogo icon={ service.icon } size={ 48 } />
+						<li className="share-widget__service" key={service.icon}>
+							<a href={link} rel="noopener noreferrer" target="_blank">
+								<SocialLogo icon={service.icon} size={48} />
 							</a>
 						</li>
 					);
-				} ) }
+				})}
 			</ul>
 		);
 	};
@@ -110,17 +110,17 @@ class ShareWidget extends Component {
 		return (
 			<DashboardWidget
 				className="share-widget__container"
-				title={ title }
+				title={title}
 				image="/calypso/images/extensions/woocommerce/woocommerce-share.svg"
 				imagePosition="bottom"
 				imageFlush
 			>
-				<p>{ text }</p>
-				{ this.renderServiceIcons( urlToShare ) }
+				<p>{text}</p>
+				{this.renderServiceIcons(urlToShare)}
 			</DashboardWidget>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default localize( ShareWidget );
+export default localize(ShareWidget);

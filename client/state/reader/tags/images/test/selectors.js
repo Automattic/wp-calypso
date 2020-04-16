@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { getTagImages, shouldRequestTagImages } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#getTagImages()', () => {
-		test( 'should return undefined if there is no image available', () => {
+describe('selectors', () => {
+	describe('#getTagImages()', () => {
+		test('should return undefined if there is no image available', () => {
 			const state = {
 				reader: {
 					tags: {
@@ -20,10 +20,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getTagImages( state, 'banana' ) ).to.equal( undefined );
-		} );
+			expect(getTagImages(state, 'banana')).to.equal(undefined);
+		});
 
-		test( 'should return the an image if images exist for a tag', () => {
+		test('should return the an image if images exist for a tag', () => {
 			const firstBananaImage = { url: 'http://example.com/banana1.jpg' };
 			const secondBananaImage = { url: 'http://example.com/banana2.jpg' };
 			const state = {
@@ -31,19 +31,19 @@ describe( 'selectors', () => {
 					tags: {
 						images: {
 							items: {
-								banana: [ firstBananaImage, secondBananaImage ],
+								banana: [firstBananaImage, secondBananaImage],
 							},
 						},
 					},
 				},
 			};
-			expect( getTagImages( state, 'banana' ) ).to.have.length( 2 );
-			expect( getTagImages( state, 'apple' ) ).to.eql( undefined );
-		} );
-	} );
+			expect(getTagImages(state, 'banana')).to.have.length(2);
+			expect(getTagImages(state, 'apple')).to.eql(undefined);
+		});
+	});
 
-	describe( '#isRequestingTagImages()', () => {
-		test( 'should return true if requesting images for the specified tag', () => {
+	describe('#isRequestingTagImages()', () => {
+		test('should return true if requesting images for the specified tag', () => {
 			const state = {
 				reader: {
 					tags: {
@@ -53,16 +53,16 @@ describe( 'selectors', () => {
 								feijoa: false,
 							},
 							items: {
-								pants: [ { url: 'foo' } ],
+								pants: [{ url: 'foo' }],
 							},
 						},
 					},
 				},
 			};
-			expect( shouldRequestTagImages( state, 'banana' ) ).to.equal( false );
-			expect( shouldRequestTagImages( state, 'feijoa' ) ).to.equal( true );
-			expect( shouldRequestTagImages( state, 'unknown' ) ).to.equal( true );
-			expect( shouldRequestTagImages( state, 'pants' ) ).to.equal( false );
-		} );
-	} );
-} );
+			expect(shouldRequestTagImages(state, 'banana')).to.equal(false);
+			expect(shouldRequestTagImages(state, 'feijoa')).to.equal(true);
+			expect(shouldRequestTagImages(state, 'unknown')).to.equal(true);
+			expect(shouldRequestTagImages(state, 'pants')).to.equal(false);
+		});
+	});
+});

@@ -39,9 +39,9 @@ class RewindFormCreds extends Component {
 	 *
 	 * @param {object} nextProps Props received by component for next update.
 	 */
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( nextProps.rewindIsNowActive ) {
-			this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
+	UNSAFE_componentWillUpdate(nextProps) {
+		if (nextProps.rewindIsNowActive) {
+			this.props.submitSignupStep({ stepName: this.props.stepName }, { rewindconfig: true });
 			this.props.goToNextStep();
 		}
 	}
@@ -52,7 +52,7 @@ class RewindFormCreds extends Component {
 	 * @param {object} nextProps Props received by component for next update.
 	 * @returns {boolean} False if the Rewind state is the same.
 	 */
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return this.props.rewindIsNowActive !== nextProps.rewindIsNowActive;
 	}
 
@@ -62,16 +62,16 @@ class RewindFormCreds extends Component {
 		return (
 			<Fragment>
 				<FormattedHeader
-					headerText={ translate( 'Site credentials' ) }
-					subHeaderText={ translate(
+					headerText={translate('Site credentials')}
+					subHeaderText={translate(
 						"We'll guide you through the process of finding and entering your site's credentials."
-					) }
+					)}
 				/>
 				<Card className="rewind-form-creds__card rewind-switch__card rewind-switch__content">
 					<Card compact className="rewind-form-creds__legend">
-						{ translate( 'Enter your credentials' ) }
+						{translate('Enter your credentials')}
 					</Card>
-					<RewindCredentialsForm role="main" siteId={ siteId } allowCancel={ false } />
+					<RewindCredentialsForm role="main" siteId={siteId} allowCancel={false} />
 				</Card>
 				,
 			</Fragment>
@@ -81,26 +81,26 @@ class RewindFormCreds extends Component {
 	render() {
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				stepContent={ this.stepContent() }
-				hideFormattedHeader={ true }
-				hideSkip={ true }
-				hideBack={ false }
+				flowName={this.props.flowName}
+				stepName={this.props.stepName}
+				positionInFlow={this.props.positionInFlow}
+				stepContent={this.stepContent()}
+				hideFormattedHeader={true}
+				hideSkip={true}
+				hideBack={false}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
-		const rewindState = getRewindState( state, siteId );
+	(state, ownProps) => {
+		const siteId = parseInt(get(ownProps, ['initialContext', 'query', 'siteId'], 0));
+		const rewindState = getRewindState(state, siteId);
 		return {
 			siteId,
-			rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
+			rewindIsNowActive: includes(['active', 'provisioning'], rewindState.state),
 		};
 	},
 	{ submitSignupStep }
-)( localize( RewindFormCreds ) );
+)(localize(RewindFormCreds));

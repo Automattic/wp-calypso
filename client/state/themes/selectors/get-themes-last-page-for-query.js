@@ -14,20 +14,20 @@ import 'state/themes/init';
  * @param  {object}  query  Theme query object
  * @returns {?number}        Last themes page
  */
-export function getThemesLastPageForQuery( state, siteId, query ) {
-	if ( ! state.themes.queries[ siteId ] ) {
+export function getThemesLastPageForQuery(state, siteId, query) {
+	if (!state.themes.queries[siteId]) {
 		return null;
 	}
 
-	const pages = state.themes.queries[ siteId ]?.getNumberOfPages( query );
-	if ( null === pages ) {
+	const pages = state.themes.queries[siteId]?.getNumberOfPages(query);
+	if (null === pages) {
 		return null;
 	}
 
 	// No pagination on Jetpack sites -- everything is returned at once, i.e. on one page
-	if ( isJetpackSite( state, siteId ) ) {
+	if (isJetpackSite(state, siteId)) {
 		return 1;
 	}
 
-	return Math.max( pages, 1 );
+	return Math.max(pages, 1);
 }

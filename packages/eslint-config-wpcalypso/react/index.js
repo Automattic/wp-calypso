@@ -7,9 +7,9 @@ module.exports = {
 		},
 		sourceType: 'module',
 	},
-	plugins: [ 'react', 'react-hooks', 'wpcalypso' ],
+	plugins: ['react', 'react-hooks', 'wpcalypso'],
 	rules: {
-		'react/jsx-curly-spacing': [ 2, 'always' ],
+		'react/jsx-curly-spacing': [2, 'always'],
 		'react/jsx-no-duplicate-props': 2,
 		'react/jsx-no-target-blank': 2,
 		'react/jsx-no-undef': 2,

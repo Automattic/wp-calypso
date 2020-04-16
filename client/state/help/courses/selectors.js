@@ -6,6 +6,6 @@
  * @returns {Array}         Course objects
  */
 
-export function getHelpCourses( state ) {
+export function getHelpCourses(state) {
 	return state.help.courses.items;
 }

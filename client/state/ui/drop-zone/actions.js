@@ -11,7 +11,7 @@ import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
  *
  * @returns {object} Redux action
  */
-export function showDropZone( dropZoneName = null ) {
+export function showDropZone(dropZoneName = null) {
 	return {
 		type: DROPZONE_SHOW,
 		dropZoneName,
@@ -25,7 +25,7 @@ export function showDropZone( dropZoneName = null ) {
  *
  * @returns {object} Redux action
  */
-export function hideDropZone( dropZoneName ) {
+export function hideDropZone(dropZoneName) {
 	return {
 		type: DROPZONE_HIDE,
 		dropZoneName,

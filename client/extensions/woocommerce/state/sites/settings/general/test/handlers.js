@@ -29,15 +29,15 @@ const settingsData = [
 	},
 ];
 
-describe( 'handlers', () => {
-	describe( '#handleSettingsGeneral()', () => {
-		test( 'should dispatch a get action', () => {
+describe('handlers', () => {
+	describe('#handleSettingsGeneral()', () => {
+		test('should dispatch a get action', () => {
 			const siteId = '123';
-			const getState = () => ( {
+			const getState = () => ({
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
+							[siteId]: {
 								settings: {
 									general: null,
 								},
@@ -45,31 +45,31 @@ describe( 'handlers', () => {
 						},
 					},
 				},
-			} );
+			});
 			const dispatch = jest.fn();
-			const action = fetchSettingsGeneral( siteId );
+			const action = fetchSettingsGeneral(siteId);
 
-			handleSettingsGeneral( action, noop )( dispatch, getState );
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
+			handleSettingsGeneral(action, noop)(dispatch, getState);
+			expect(dispatch).toHaveBeenCalledWith(
+				expect.objectContaining({
 					type: WPCOM_HTTP_REQUEST,
 					method: 'GET',
-					path: `/jetpack-blogs/${ siteId }/rest-api/`,
+					path: `/jetpack-blogs/${siteId}/rest-api/`,
 					query: {
 						path: '/wc/v3/settings/general&_method=GET',
 						json: true,
 						apiVersion: '1.1',
 					},
-				} )
+				})
 			);
-		} );
-		test( 'should not dispatch if settings are already loaded for this site', () => {
+		});
+		test('should not dispatch if settings are already loaded for this site', () => {
 			const siteId = '123';
-			const getState = () => ( {
+			const getState = () => ({
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
+							[siteId]: {
 								settings: {
 									general: settingsData,
 								},
@@ -77,40 +77,40 @@ describe( 'handlers', () => {
 						},
 					},
 				},
-			} );
+			});
 			const dispatch = jest.fn();
-			const action = fetchSettingsGeneral( siteId );
+			const action = fetchSettingsGeneral(siteId);
 
-			handleSettingsGeneral( action )( dispatch, getState );
-			expect( dispatch ).not.toHaveBeenCalled();
-		} );
-	} );
-	describe( '#handleSettingsGeneralSuccess()', () => {
-		test( 'should dispatch success with settings data', () => {
+			handleSettingsGeneral(action)(dispatch, getState);
+			expect(dispatch).not.toHaveBeenCalled();
+		});
+	});
+	describe('#handleSettingsGeneralSuccess()', () => {
+		test('should dispatch success with settings data', () => {
 			const siteId = '123';
 			const response = { data: settingsData };
 
-			const action = fetchSettingsGeneral( siteId );
-			const result = handleSettingsGeneralSuccess( action, response );
+			const action = fetchSettingsGeneral(siteId);
+			const result = handleSettingsGeneralSuccess(action, response);
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				data: settingsData,
-			} );
-		} );
-	} );
-	describe( '#handleSettingsGeneralError()', () => {
-		test( 'should dispatch error', () => {
+			});
+		});
+	});
+	describe('#handleSettingsGeneralError()', () => {
+		test('should dispatch error', () => {
 			const siteId = '123';
-			const action = fetchSettingsGeneral( siteId );
-			const result = handleSettingsGeneralError( action, 'rest_no_route' );
+			const action = fetchSettingsGeneral(siteId);
+			const result = handleSettingsGeneralError(action, 'rest_no_route');
 
-			expect( result ).toEqual( {
+			expect(result).toEqual({
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				error: 'rest_no_route',
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

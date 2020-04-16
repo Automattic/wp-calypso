@@ -15,7 +15,7 @@ export enum BuildState {
 	ERROR,
 }
 
-type BuildStateSetter = ( buildState: BuildState ) => void;
+type BuildStateSetter = (buildState: BuildState) => void;
 
 interface UpdateMessage {
 	errors: string[];
@@ -24,110 +24,110 @@ interface UpdateMessage {
 }
 
 // avoid reporting the same errors/warnings over and over
-const previousProblems = new Map< string, string >();
-function alreadyReported( type: string, problems: string[] ) {
-	const key = problems.join( '\n' );
-	if ( previousProblems.get( type ) === key ) {
+const previousProblems = new Map<string, string>();
+function alreadyReported(type: string, problems: string[]) {
+	const key = problems.join('\n');
+	if (previousProblems.get(type) === key) {
 		return true;
 	}
 
-	previousProblems.set( type, key );
+	previousProblems.set(type, key);
 	return false;
 }
 
-function reportProblems( type: string, problems: string[] ) {
-	if ( alreadyReported( type, problems ) ) {
+function reportProblems(type: string, problems: string[]) {
+	if (alreadyReported(type, problems)) {
 		return;
 	}
 
 	const log = type === 'errors' ? console.error : console.warn;
-	log( `[webpack] build finished with ${ problems.length } ${ type }:` );
-	for ( const problem of problems ) {
-		log( problem );
+	log(`[webpack] build finished with ${problems.length} ${type}:`);
+	for (const problem of problems) {
+		log(problem);
 	}
 }
 
-function processUpdate( message: UpdateMessage, setBuildState: BuildStateSetter ) {
+function processUpdate(message: UpdateMessage, setBuildState: BuildStateSetter) {
 	const { errors, warnings, hash } = message;
 
-	if ( errors.length ) {
-		setBuildState( BuildState.ERROR );
-		reportProblems( 'errors', errors );
+	if (errors.length) {
+		setBuildState(BuildState.ERROR);
+		reportProblems('errors', errors);
 		return;
 	}
 
-	if ( warnings.length ) {
-		reportProblems( 'warnings', warnings );
+	if (warnings.length) {
+		reportProblems('warnings', warnings);
 	}
 
-	if ( hash === __webpack_hash__ ) {
-		setBuildState( BuildState.IDLE );
+	if (hash === __webpack_hash__) {
+		setBuildState(BuildState.IDLE);
 		return;
 	}
 
 	// if the webpack runtime doesn't have the hot reload plugin, reload is always needed
-	if ( ! module.hot ) {
-		setBuildState( BuildState.NEEDS_RELOAD );
+	if (!module.hot) {
+		setBuildState(BuildState.NEEDS_RELOAD);
 		return;
 	}
 
 	// hot update already in progress, triggered by another message handler
-	if ( module.hot.status() !== 'idle' ) {
+	if (module.hot.status() !== 'idle') {
 		return;
 	}
 
-	setBuildState( BuildState.UPDATING );
+	setBuildState(BuildState.UPDATING);
 
 	module.hot
-		.check( true )
-		.then( updatedModules => {
-			setBuildState( BuildState.IDLE );
-			console.log( `[webpack] hot updated ${ updatedModules.length } modules:` );
-			for ( const updatedModuleId of updatedModules ) {
-				console.log( updatedModuleId );
+		.check(true)
+		.then((updatedModules) => {
+			setBuildState(BuildState.IDLE);
+			console.log(`[webpack] hot updated ${updatedModules.length} modules:`);
+			for (const updatedModuleId of updatedModules) {
+				console.log(updatedModuleId);
 			}
-		} )
-		.catch( error => {
-			setBuildState( BuildState.NEEDS_RELOAD );
-			console.error( '[webpack] hot update failed:', error );
-		} );
+		})
+		.catch((error) => {
+			setBuildState(BuildState.NEEDS_RELOAD);
+			console.error('[webpack] hot update failed:', error);
+		});
 }
 
-export default function connectToWebpackServer( setBuildState: BuildStateSetter ) {
-	if ( typeof EventSource === 'undefined' ) {
-		if ( process.env.NODE_ENV !== 'production' ) {
-			console.warn( '[webpack] build monitor disabled. No `EventSource`.' );
+export default function connectToWebpackServer(setBuildState: BuildStateSetter) {
+	if (typeof EventSource === 'undefined') {
+		if (process.env.NODE_ENV !== 'production') {
+			console.warn('[webpack] build monitor disabled. No `EventSource`.');
 		}
 		return;
 	}
 
-	const source = new EventSource( '/__webpack_hmr' );
+	const source = new EventSource('/__webpack_hmr');
 
 	source.onopen = () => {
-		console.log( '[webpack] build monitor connected to server' );
-		setBuildState( BuildState.IDLE );
+		console.log('[webpack] build monitor connected to server');
+		setBuildState(BuildState.IDLE);
 	};
 
-	source.onerror = error => {
-		console.log( '[webpack] build monitor disconnected from server:', error );
-		setBuildState( BuildState.DISCONNECTED );
+	source.onerror = (error) => {
+		console.log('[webpack] build monitor disconnected from server:', error);
+		setBuildState(BuildState.DISCONNECTED);
 	};
 
-	source.onmessage = m => {
-		if ( m.data === '💓' ) {
+	source.onmessage = (m) => {
+		if (m.data === '💓') {
 			return;
 		}
 
-		const message = JSON.parse( m.data );
+		const message = JSON.parse(m.data);
 
-		switch ( message.action ) {
+		switch (message.action) {
 			case 'building':
-				setBuildState( BuildState.BUILDING );
+				setBuildState(BuildState.BUILDING);
 				break;
 
 			case 'built':
 			case 'sync':
-				processUpdate( message, setBuildState );
+				processUpdate(message, setBuildState);
 				break;
 		}
 	};

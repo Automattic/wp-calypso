@@ -21,56 +21,56 @@ import initialShippingClasses from './data/initial-state';
 
 const siteId = 123;
 
-const getState = ( shippingClasses = initialShippingClasses ) => () => ( {
+const getState = (shippingClasses = initialShippingClasses) => () => ({
 	extensions: {
 		woocommerce: {
 			sites: {
-				[ siteId ]: {
+				[siteId]: {
 					shippingClasses,
 				},
 			},
 		},
 	},
-} );
+});
 
-describe( 'Shipping classes state actions', () => {
+describe('Shipping classes state actions', () => {
 	/**
 	 * fetchShippingClassesSuccess
 	 */
 
-	test( '#fetchShippingClassesSuccess', () => {
-		expect( fetchShippingClassesSuccess( siteId, initialShippingClasses ) ).to.eql( {
+	test('#fetchShippingClassesSuccess', () => {
+		expect(fetchShippingClassesSuccess(siteId, initialShippingClasses)).to.eql({
 			type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
 			siteId,
 			data: initialShippingClasses,
-		} );
-	} );
+		});
+	});
 
 	/**
 	 * fetchShippingClassesFailure
 	 */
 
-	test( '#fetchShippingClassesFailure', () => {
-		const result = fetchShippingClassesFailure( { siteId }, '' );
+	test('#fetchShippingClassesFailure', () => {
+		const result = fetchShippingClassesFailure({ siteId }, '');
 
-		expect( result ).to.be.an( 'object' );
-		expect( result.type ).to.equal( NOTICE_CREATE );
-		expect( result.notice ).to.be.an( 'object' );
-		expect( result.notice.status ).to.equal( 'is-error' );
-	} );
+		expect(result).to.be.an('object');
+		expect(result.type).to.equal(NOTICE_CREATE);
+		expect(result.notice).to.be.an('object');
+		expect(result.notice.status).to.equal('is-error');
+	});
 
 	/**
 	 * fetchShippingClasses
 	 */
 
-	test( '#fetchShippingClasses', () => {
-		expect( fetchShippingClasses( siteId )( identity, getState( false ) ) ).to.eql( {
+	test('#fetchShippingClasses', () => {
+		expect(fetchShippingClasses(siteId)(identity, getState(false))).to.eql({
 			type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 			siteId,
-		} );
-	} );
+		});
+	});
 
-	test( '#fetchShippingClasses when classes have been already loaded', () => {
-		expect( fetchShippingClasses( siteId )( identity, getState() ) ).to.equal( undefined );
-	} );
-} );
+	test('#fetchShippingClasses when classes have been already loaded', () => {
+		expect(fetchShippingClasses(siteId)(identity, getState())).to.equal(undefined);
+	});
+});

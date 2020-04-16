@@ -21,67 +21,67 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-export const activateModule = ( siteId, moduleSlug, silent = false ) => {
-	return dispatch => {
-		dispatch( {
+export const activateModule = (siteId, moduleSlug, silent = false) => {
+	return (dispatch) => {
+		dispatch({
 			type: JETPACK_MODULE_ACTIVATE,
 			siteId,
 			moduleSlug,
 			silent,
-		} );
+		});
 
 		return wp
 			.undocumented()
-			.jetpackModuleActivate( siteId, moduleSlug )
-			.then( () => {
-				dispatch( {
+			.jetpackModuleActivate(siteId, moduleSlug)
+			.then(() => {
+				dispatch({
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
 					siteId,
 					moduleSlug,
 					silent,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: JETPACK_MODULE_ACTIVATE_FAILURE,
 					siteId,
 					moduleSlug,
 					silent,
 					error: error.message,
-				} );
-			} );
+				});
+			});
 	};
 };
 
-export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
-	return dispatch => {
-		dispatch( {
+export const deactivateModule = (siteId, moduleSlug, silent = false) => {
+	return (dispatch) => {
+		dispatch({
 			type: JETPACK_MODULE_DEACTIVATE,
 			siteId,
 			moduleSlug,
 			silent,
-		} );
+		});
 
 		return wp
 			.undocumented()
-			.jetpackModuleDeactivate( siteId, moduleSlug )
-			.then( () => {
-				dispatch( {
+			.jetpackModuleDeactivate(siteId, moduleSlug)
+			.then(() => {
+				dispatch({
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
 					siteId,
 					moduleSlug,
 					silent,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 					siteId,
 					moduleSlug,
 					silent,
 					error: error.message,
-				} );
-			} );
+				});
+			});
 	};
 };
 
@@ -93,7 +93,7 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
  * @param  {object[]} modules Object of modules indexed by slug
  * @returns {object}             Action object
  */
-export function receiveJetpackModules( siteId, modules ) {
+export function receiveJetpackModules(siteId, modules) {
 	return {
 		type: JETPACK_MODULES_RECEIVE,
 		siteId,
@@ -101,34 +101,34 @@ export function receiveJetpackModules( siteId, modules ) {
 	};
 }
 
-export const fetchModuleList = siteId => {
-	return dispatch => {
-		dispatch( {
+export const fetchModuleList = (siteId) => {
+	return (dispatch) => {
+		dispatch({
 			type: JETPACK_MODULES_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wp
 			.undocumented()
-			.getJetpackModules( siteId )
-			.then( ( { data } ) => {
-				const modules = mapValues( data, module => ( {
+			.getJetpackModules(siteId)
+			.then(({ data }) => {
+				const modules = mapValues(data, (module) => ({
 					active: module.activated,
-					...omit( module, 'activated' ),
-				} ) );
+					...omit(module, 'activated'),
+				}));
 
-				dispatch( receiveJetpackModules( siteId, modules ) );
-				dispatch( {
+				dispatch(receiveJetpackModules(siteId, modules));
+				dispatch({
 					type: JETPACK_MODULES_REQUEST_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: JETPACK_MODULES_REQUEST_FAILURE,
 					siteId,
 					error: error.message,
-				} );
-			} );
+				});
+			});
 	};
 };

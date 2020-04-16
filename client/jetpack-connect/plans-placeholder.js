@@ -15,7 +15,7 @@ const placeholderContent = (
 	<Main className="jetpack-connect__hide-plan-icons" wideLayout>
 		<div className="jetpack-connect__plans placeholder">
 			<FormattedHeader
-				headerText={ <span className="placeholder-text">Your site is now connected!</span> }
+				headerText={<span className="placeholder-text">Your site is now connected!</span>}
 				subHeaderText={
 					<span className="placeholder-text">Now pick a plan that's right for you.</span>
 				}
@@ -26,8 +26,8 @@ const placeholderContent = (
 					<table className="plan-features__table">
 						<tbody>
 							<tr className="plan-features__row">
-								{ times( 3, cellKey => (
-									<td className="plan-features__table-item has-border-top" key={ cellKey }>
+								{times(3, (cellKey) => (
+									<td className="plan-features__table-item has-border-top" key={cellKey}>
 										<div className="plan-features__header-wrapper">
 											<header className="plan-features__header">
 												<div className="plan-features__header-text">
@@ -51,15 +51,15 @@ const placeholderContent = (
 												</div>
 											</div>
 										</div>
-										{ times( 5, featureKey => (
-											<div className="plan-features__item" key={ featureKey }>
+										{times(5, (featureKey) => (
+											<div className="plan-features__item" key={featureKey}>
 												<span className="placeholder-text">
-													Test feature { random( 1, Number.MAX_SAFE_INTEGER ) }
+													Test feature {random(1, Number.MAX_SAFE_INTEGER)}
 												</span>
 											</div>
-										) ) }
+										))}
 									</td>
-								) ) }
+								))}
 							</tr>
 						</tbody>
 					</table>

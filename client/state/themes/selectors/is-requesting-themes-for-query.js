@@ -14,7 +14,7 @@ import 'state/themes/init';
  * @param  {object}  query  Theme query object
  * @returns {boolean}        Whether themes are being requested
  */
-export function isRequestingThemesForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedThemesQuery( query, siteId );
-	return !! state.themes.queryRequests[ serializedQuery ];
+export function isRequestingThemesForQuery(state, siteId, query) {
+	const serializedQuery = getSerializedThemesQuery(query, siteId);
+	return !!state.themes.queryRequests[serializedQuery];
 }

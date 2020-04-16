@@ -15,17 +15,17 @@ import { difference, identity, set } from 'lodash';
  */
 import { ValidatedRegistrantExtraInfoUkForm, RegistrantExtraInfoUkForm } from '../uk-form';
 
-jest.mock( 'state/selectors/get-validation-schemas', () => () => ( {
-	uk: require( './uk-schema.json' ),
-} ) );
+jest.mock('state/selectors/get-validation-schemas', () => () => ({
+	uk: require('./uk-schema.json'),
+}));
 
 const mockStore = {
-	getState: () => ( {} ),
+	getState: () => ({}),
 	subscribe: () => () => {},
 	dispatch: () => {},
 };
 
-const MockReduxProvider = ( { children } ) => <Provider store={ mockStore }>{ children }</Provider>;
+const MockReduxProvider = ({ children }) => <Provider store={mockStore}>{children}</Provider>;
 
 const mockProps = {
 	translate: identity,
@@ -33,7 +33,7 @@ const mockProps = {
 	tld: 'uk',
 };
 
-describe( 'uk-form validation', () => {
+describe('uk-form validation', () => {
 	const validTradingName = 'A valid trading name';
 	const validRegistrationNumber = 'AB123456';
 
@@ -57,22 +57,12 @@ describe( 'uk-form validation', () => {
 	];
 
 	// see http://domains.opensrs.guide/docs/tld#section-uk
-	const needsRegistrationNumber = [ 'LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR' ];
+	const needsRegistrationNumber = ['LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR'];
 
-	const needsTradingName = [
-		'LTD',
-		'PLC',
-		'LLP',
-		'IP',
-		'RCHAR',
-		'FCORP',
-		'OTHER',
-		'FOTHER',
-		'STRA',
-	];
+	const needsTradingName = ['LTD', 'PLC', 'LLP', 'IP', 'RCHAR', 'FCORP', 'OTHER', 'FOTHER', 'STRA'];
 
-	describe( 'registrationNumber field', () => {
-		test( 'should be required for some values of registrantType', () => {
+	describe('registrationNumber field', () => {
+		test('should be required for some values of registrantType', () => {
 			const testContactDetails = {
 				extra: {
 					uk: {
@@ -82,17 +72,17 @@ describe( 'uk-form validation', () => {
 				},
 			};
 
-			needsRegistrationNumber.forEach( registrantType => {
+			needsRegistrationNumber.forEach((registrantType) => {
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
-						{ ...mockProps }
-						contactDetails={ set( testContactDetails, 'extra.uk.registrantType', registrantType ) }
-						ccTldDetails={ { registrantType } }
+						{...mockProps}
+						contactDetails={set(testContactDetails, 'extra.uk.registrantType', registrantType)}
+						ccTldDetails={{ registrantType }}
 					/>,
 					{ wrappingComponent: MockReduxProvider }
-				).find( RegistrantExtraInfoUkForm );
+				).find(RegistrantExtraInfoUkForm);
 
-				expect( wrapper.props() ).toMatchObject( {
+				expect(wrapper.props()).toMatchObject({
 					validationErrors: {
 						extra: {
 							uk: {
@@ -102,11 +92,11 @@ describe( 'uk-form validation', () => {
 							},
 						},
 					},
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should not be required for other values of registrantType', () => {
+		test('should not be required for other values of registrantType', () => {
 			const testContactDetails = {
 				extra: {
 					uk: {
@@ -116,21 +106,21 @@ describe( 'uk-form validation', () => {
 				},
 			};
 
-			difference( allRegistrantTypes, needsRegistrationNumber ).forEach( registrantType => {
+			difference(allRegistrantTypes, needsRegistrationNumber).forEach((registrantType) => {
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
-						{ ...mockProps }
-						contactDetails={ set( testContactDetails, 'extra.uk.registrantType', registrantType ) }
-						ccTldDetails={ { registrantType } }
+						{...mockProps}
+						contactDetails={set(testContactDetails, 'extra.uk.registrantType', registrantType)}
+						ccTldDetails={{ registrantType }}
 					/>,
 					{ wrappingComponent: MockReduxProvider }
-				).find( RegistrantExtraInfoUkForm );
+				).find(RegistrantExtraInfoUkForm);
 
-				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {} );
-			} );
-		} );
+				expect(wrapper.props()).toHaveProperty('validationErrors', {});
+			});
+		});
 
-		test( 'should reject bad formats', () => {
+		test('should reject bad formats', () => {
 			const testContactDetails = {
 				extra: {
 					uk: {
@@ -140,29 +130,29 @@ describe( 'uk-form validation', () => {
 				},
 			};
 
-			const badFormats = [ '124', 'OC38599', '066566879', 'OCABCDEF', '054025OC' ];
+			const badFormats = ['124', 'OC38599', '066566879', 'OCABCDEF', '054025OC'];
 
-			badFormats.forEach( registrationNumber => {
+			badFormats.forEach((registrationNumber) => {
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
-						{ ...mockProps }
-						contactDetails={ set(
+						{...mockProps}
+						contactDetails={set(
 							testContactDetails,
 							'extra.uk.registrationNumber',
 							registrationNumber
-						) }
-						ccTldDetails={ { registrationNumber } }
+						)}
+						ccTldDetails={{ registrationNumber }}
 					/>,
 					{ wrappingComponent: MockReduxProvider }
-				).find( RegistrantExtraInfoUkForm );
+				).find(RegistrantExtraInfoUkForm);
 
-				expect( wrapper.props() ).toHaveProperty( 'validationErrors.extra.uk.registrationNumber' );
-			} );
-		} );
-	} );
+				expect(wrapper.props()).toHaveProperty('validationErrors.extra.uk.registrationNumber');
+			});
+		});
+	});
 
-	describe( 'tradingName', () => {
-		test( 'should be required for some values of registrantType', () => {
+	describe('tradingName', () => {
+		test('should be required for some values of registrantType', () => {
 			const testContactDetails = {
 				extra: {
 					uk: {
@@ -173,17 +163,17 @@ describe( 'uk-form validation', () => {
 				},
 			};
 
-			needsTradingName.forEach( registrantType => {
+			needsTradingName.forEach((registrantType) => {
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
-						{ ...mockProps }
-						contactDetails={ set( testContactDetails, 'extra.uk.registrantType', registrantType ) }
-						ccTldDetails={ { registrantType } }
+						{...mockProps}
+						contactDetails={set(testContactDetails, 'extra.uk.registrantType', registrantType)}
+						ccTldDetails={{ registrantType }}
 					/>,
 					{ wrappingComponent: MockReduxProvider }
-				).find( RegistrantExtraInfoUkForm );
+				).find(RegistrantExtraInfoUkForm);
 
-				expect( wrapper.props() ).toMatchObject( {
+				expect(wrapper.props()).toMatchObject({
 					validationErrors: {
 						extra: {
 							uk: {
@@ -193,12 +183,12 @@ describe( 'uk-form validation', () => {
 							},
 						},
 					},
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should not be required for other values of registrantType', () => {
-			difference( allRegistrantTypes, needsTradingName ).forEach( registrantType => {
+		test('should not be required for other values of registrantType', () => {
+			difference(allRegistrantTypes, needsTradingName).forEach((registrantType) => {
 				const testContactDetails = {
 					extra: {
 						uk: {
@@ -211,15 +201,15 @@ describe( 'uk-form validation', () => {
 
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
-						{ ...mockProps }
-						contactDetails={ testContactDetails }
-						ccTldDetails={ testContactDetails.extra.uk }
+						{...mockProps}
+						contactDetails={testContactDetails}
+						ccTldDetails={testContactDetails.extra.uk}
 					/>,
 					{ wrappingComponent: MockReduxProvider }
-				).find( RegistrantExtraInfoUkForm );
+				).find(RegistrantExtraInfoUkForm);
 
-				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {} );
-			} );
-		} );
-	} );
-} );
+				expect(wrapper.props()).toHaveProperty('validationErrors', {});
+			});
+		});
+	});
+});

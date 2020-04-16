@@ -9,7 +9,7 @@ import { get, find, has } from 'lodash';
  */
 import { DEFAULT_PREFERENCE_VALUES } from './constants';
 
-export const isFetchingPreferences = state => !! state.preferences.fetching;
+export const isFetchingPreferences = (state) => !!state.preferences.fetching;
 
 /**
  * Returns the preference value associated with the specified key. Attempts to
@@ -20,11 +20,11 @@ export const isFetchingPreferences = state => !! state.preferences.fetching;
  * @param  {string} key   Preference key
  * @returns {*}            Preference value
  */
-export function getPreference( state, key ) {
+export function getPreference(state, key) {
 	return get(
 		find(
-			[ state.preferences.localValues, state.preferences.remoteValues, DEFAULT_PREFERENCE_VALUES ],
-			source => has( source, key )
+			[state.preferences.localValues, state.preferences.remoteValues, DEFAULT_PREFERENCE_VALUES],
+			(source) => has(source, key)
 		),
 		key,
 		null
@@ -39,11 +39,11 @@ export function getPreference( state, key ) {
  * @param  {object} state Global state tree
  * @returns {object}       Preference value
  */
-export function getAllRemotePreferences( state ) {
+export function getAllRemotePreferences(state) {
 	return state.preferences.remoteValues;
 }
 
-export const preferencesLastFetchedTimestamp = state => state.preferences.lastFetchedTimestamp;
+export const preferencesLastFetchedTimestamp = (state) => state.preferences.lastFetchedTimestamp;
 
 /**
  * Returns true if preferences have been received from the remote source, or
@@ -52,6 +52,6 @@ export const preferencesLastFetchedTimestamp = state => state.preferences.lastFe
  * @param  {object}  state Global state tree
  * @returns {boolean}       Whether preferences have been received
  */
-export function hasReceivedRemotePreferences( state ) {
-	return !! state.preferences.remoteValues;
+export function hasReceivedRemotePreferences(state) {
+	return !!state.preferences.remoteValues;
 }

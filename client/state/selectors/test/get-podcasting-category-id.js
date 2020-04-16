@@ -4,8 +4,8 @@
 import { expect } from 'chai';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
-describe( 'getPodcastingCategoryId', () => {
-	test( 'returns null if settings are missing', () => {
+describe('getPodcastingCategoryId', () => {
+	test('returns null if settings are missing', () => {
 		expect(
 			getPodcastingCategoryId(
 				{
@@ -19,9 +19,9 @@ describe( 'getPodcastingCategoryId', () => {
 				1
 			)
 		).to.be.null;
-	} );
+	});
 
-	test( 'returns 0 if podcasting has not been configured', () => {
+	test('returns 0 if podcasting has not been configured', () => {
 		expect(
 			getPodcastingCategoryId(
 				{
@@ -38,10 +38,10 @@ describe( 'getPodcastingCategoryId', () => {
 				},
 				1
 			)
-		).to.equal( 0 );
-	} );
+		).to.equal(0);
+	});
 
-	test( 'returns a category ID if podcasting has been configured', () => {
+	test('returns a category ID if podcasting has been configured', () => {
 		expect(
 			getPodcastingCategoryId(
 				{
@@ -58,10 +58,10 @@ describe( 'getPodcastingCategoryId', () => {
 				},
 				1
 			)
-		).to.equal( 123 );
-	} );
+		).to.equal(123);
+	});
 
-	test( 'returns null for private sites', () => {
+	test('returns null for private sites', () => {
 		expect(
 			getPodcastingCategoryId(
 				{
@@ -83,5 +83,5 @@ describe( 'getPodcastingCategoryId', () => {
 				1
 			)
 		).to.be.null;
-	} );
-} );
+	});
+});

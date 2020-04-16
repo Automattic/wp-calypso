@@ -27,11 +27,11 @@ import './style.scss';
  * 3. dismount old ReaderMain from the first step (dismount, 1 ref)
  */
 let activeReaderMainRefCount = 0;
-const setIsReaderPage = add => {
-	if ( add ) {
-		document.querySelector( 'body' ).classList.add( 'is-reader-page' );
-	} else if ( activeReaderMainRefCount === 0 ) {
-		document.querySelector( 'body' ).classList.remove( 'is-reader-page' );
+const setIsReaderPage = (add) => {
+	if (add) {
+		document.querySelector('body').classList.add('is-reader-page');
+	} else if (activeReaderMainRefCount === 0) {
+		document.querySelector('body').classList.remove('is-reader-page');
 	}
 };
 
@@ -44,20 +44,20 @@ const setIsReaderPage = add => {
 export default class ReaderMain extends React.Component {
 	componentDidMount() {
 		activeReaderMainRefCount++;
-		setIsReaderPage( true );
+		setIsReaderPage(true);
 	}
 
 	componentWillUnmount() {
 		activeReaderMainRefCount--;
-		setIsReaderPage( false );
+		setIsReaderPage(false);
 	}
 
 	render() {
 		const { children, ...props } = this.props;
 		return (
-			<Main { ...props }>
+			<Main {...props}>
 				<SyncReaderFollows key="syncReaderFollows" />
-				{ children }
+				{children}
 			</Main>
 		);
 	}

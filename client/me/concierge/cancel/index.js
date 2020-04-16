@@ -36,11 +36,11 @@ class ConciergeCancel extends Component {
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_concierge_cancel_step' );
+		this.props.recordTracksEvent('calypso_concierge_cancel_step');
 	}
 	cancelAppointment = () => {
 		const { appointmentId, scheduleId } = this.props;
-		this.props.cancelConciergeAppointment( scheduleId, appointmentId );
+		this.props.cancelConciergeAppointment(scheduleId, appointmentId);
 	};
 
 	getDisplayComponent = () => {
@@ -53,71 +53,68 @@ class ConciergeCancel extends Component {
 			translate,
 		} = this.props;
 
-		switch ( signupForm.status ) {
+		switch (signupForm.status) {
 			case CONCIERGE_STATUS_CANCELLED:
 				return (
 					<Confirmation
-						description={ translate( 'Would you like to schedule a new session?' ) }
-						title={ translate( 'Your session has been cancelled.' ) }
+						description={translate('Would you like to schedule a new session?')}
+						title={translate('Your session has been cancelled.')}
 					>
 						<Button
 							className="cancel__schedule-button"
-							href={ `/me/concierge/${ siteSlug }/book` }
-							primary={ true }
+							href={`/me/concierge/${siteSlug}/book`}
+							primary={true}
 						>
-							{ translate( 'Schedule', {
+							{translate('Schedule', {
 								context: 'Concierge session',
-							} ) }
+							})}
 						</Button>
 					</Confirmation>
 				);
 
 			default: {
 				const disabledCancelling =
-					includes(
-						[ CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING ],
-						signupForm.status
-					) ||
-					! appointmentDetails ||
-					! scheduleId;
+					includes([CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING], signupForm.status) ||
+					!appointmentDetails ||
+					!scheduleId;
 
 				const disabledRescheduling =
-					signupForm.status === CONCIERGE_STATUS_CANCELLING || ! appointmentDetails || ! scheduleId;
+					signupForm.status === CONCIERGE_STATUS_CANCELLING || !appointmentDetails || !scheduleId;
 
 				return (
 					<div>
-						{ scheduleId && (
+						{scheduleId && (
 							<QueryConciergeAppointmentDetails
-								appointmentId={ appointmentId }
-								scheduleId={ scheduleId }
+								appointmentId={appointmentId}
+								scheduleId={scheduleId}
 							/>
-						) }
+						)}
 
-						<HeaderCake backHref={ `/me/concierge/${ siteSlug }/book` }>
-							{ translate( 'Reschedule or cancel' ) }
+						<HeaderCake backHref={`/me/concierge/${siteSlug}/book`}>
+							{translate('Reschedule or cancel')}
 						</HeaderCake>
 						<Confirmation
-							description={ translate(
+							description={translate(
 								'You can also reschedule your session. What would you like to do?'
-							) }
-							title={ translate( 'Cancel your session' ) }
+							)}
+							title={translate('Cancel your session')}
 						>
 							<Button
 								className="cancel__reschedule-button"
-								disabled={ disabledRescheduling }
-								href={ `/me/concierge/${ siteSlug }/${ appointmentId }/reschedule` }
+								disabled={disabledRescheduling}
+								href={`/me/concierge/${siteSlug}/${appointmentId}/reschedule`}
 							>
-								{ translate( 'Reschedule session' ) }
+								{translate('Reschedule session')}
 							</Button>
 
 							<Button
 								className="cancel__confirmation-button"
-								disabled={ disabledCancelling }
-								onClick={ this.cancelAppointment }
-								primary={ true }
-								scary={ true }
+								disabled={disabledCancelling}
+								onClick={this.cancelAppointment}
+								primary={true}
+								scary={true}
 							>
-								{ translate( 'Cancel session' ) }
+								{translate('Cancel session')}
 							</Button>
 						</Confirmation>
 					</div>
@@ -133,20 +130,20 @@ class ConciergeCancel extends Component {
 		return (
 			<Main>
 				<QuerySites />
-				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
-				{ this.getDisplayComponent() }
+				{siteId && <QueryConciergeInitial siteId={siteId} />}
+				<PageViewTracker path={analyticsPath} title={analyticsTitle} />
+				{this.getDisplayComponent()}
 			</Main>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => ( {
-		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
-		signupForm: getConciergeSignupForm( state ),
-		site: getSite( state, props.siteSlug ),
-		scheduleId: getConciergeScheduleId( state ),
-	} ),
+	(state, props) => ({
+		appointmentDetails: getConciergeAppointmentDetails(state, props.appointmentId),
+		signupForm: getConciergeSignupForm(state),
+		site: getSite(state, props.siteSlug),
+		scheduleId: getConciergeScheduleId(state),
+	}),
 	{ cancelConciergeAppointment, recordTracksEvent }
-)( localize( ConciergeCancel ) );
+)(localize(ConciergeCancel));

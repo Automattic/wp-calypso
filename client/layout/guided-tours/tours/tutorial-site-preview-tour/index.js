@@ -19,48 +19,48 @@ import {
 import { ViewSiteButton } from 'layout/guided-tours/button-labels';
 
 export const TutorialSitePreviewTour = makeTour(
-	<Tour { ...meta }>
+	<Tour {...meta}>
 		<Step
 			name="init"
 			target="sitePreview"
 			arrow="top-left"
 			placement="below"
 			scrollContainer=".sidebar__region"
-			style={ { animationDelay: '2s' } }
+			style={{ animationDelay: '2s' }}
 		>
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
 					<p>
-						{ translate(
+						{translate(
 							'{{viewSiteButton/}} shows you what your site looks like to visitors. Click it to continue.',
 							{
 								components: {
 									viewSiteButton: <ViewSiteButton />,
 								},
 							}
-						) }
+						)}
 					</p>
 					<Continue hidden click step="finish" target="sitePreview" />
 					<ButtonRow>
-						<Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
+						<Quit subtle>{translate('No, thanks.')}</Quit>
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 
 		<Step name="finish" placement="center">
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
 					<p>
-						{ translate(
+						{translate(
 							"Take a look around — and when you're done, explore the rest of WordPress.com."
-						) }
+						)}
 					</p>
 					<ButtonRow>
-						<Quit primary>{ translate( 'Got it.' ) }</Quit>
+						<Quit primary>{translate('Got it.')}</Quit>
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 	</Tour>
 );

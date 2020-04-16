@@ -7,12 +7,12 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
-const handleMonthClick = ( onClick = noop ) => event => {
+const handleMonthClick = (onClick = noop) => (event) => {
 	event.preventDefault();
 	onClick();
 };
 
-export const DatePickerNavBar = ( {
+export const DatePickerNavBar = ({
 	nextMonth,
 	previousMonth,
 	onPreviousClick,
@@ -21,39 +21,39 @@ export const DatePickerNavBar = ( {
 	localeUtils,
 	showPreviousButton = true,
 	showNextButton = true,
-} ) => {
-	const classes = classNames( 'date-picker__nav-bar', {
-		[ className ]: !! className,
-	} );
+}) => {
+	const classes = classNames('date-picker__nav-bar', {
+		[className]: !!className,
+	});
 	return (
-		<div className={ classes }>
-			{ showPreviousButton && (
+		<div className={classes}>
+			{showPreviousButton && (
 				<button
 					className="date-picker__previous-month button"
 					type="button"
-					aria-label={ translate( 'Previous month (%s)', {
+					aria-label={translate('Previous month (%s)', {
 						comment: 'Aria label for date picker controls',
-						args: localeUtils.formatMonthTitle( previousMonth ),
-					} ) }
-					onClick={ handleMonthClick( onPreviousClick ) }
+						args: localeUtils.formatMonthTitle(previousMonth),
+					})}
+					onClick={handleMonthClick(onPreviousClick)}
 				>
-					{ localeUtils.formatMonthShort( previousMonth ) }
+					{localeUtils.formatMonthShort(previousMonth)}
 				</button>
-			) }
+			)}
 
-			{ showNextButton && (
+			{showNextButton && (
 				<button
 					className="date-picker__next-month button"
 					type="button"
-					aria-label={ translate( 'Next month (%s)', {
+					aria-label={translate('Next month (%s)', {
 						comment: 'Aria label for date picker controls',
-						args: localeUtils.formatMonthTitle( nextMonth ),
-					} ) }
-					onClick={ handleMonthClick( onNextClick ) }
+						args: localeUtils.formatMonthTitle(nextMonth),
+					})}
+					onClick={handleMonthClick(onNextClick)}
 				>
-					{ localeUtils.formatMonthShort( nextMonth ) }
+					{localeUtils.formatMonthShort(nextMonth)}
 				</button>
-			) }
+			)}
 		</div>
 	);
 };

@@ -10,12 +10,12 @@ import React from 'react';
 import VerticalMenu from '../index';
 import { SocialItem } from '../items';
 
-const announceIt = console.log.bind( console );
+const announceIt = console.log.bind(console);
 
 export const VerticalMenuExample = () => (
 	<div>
 		<h3>Social Items</h3>
-		<VerticalMenu onClick={ announceIt }>
+		<VerticalMenu onClick={announceIt}>
 			<SocialItem service="google" />
 			<SocialItem service="facebook" />
 			<SocialItem service="wordpress" />

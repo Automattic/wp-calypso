@@ -6,16 +6,16 @@
  * @param  search Search terms
  * @returns        Path including search terms
  */
-export function buildRelativeSearchUrl( uri: string, search: string ): string {
+export function buildRelativeSearchUrl(uri: string, search: string): string {
 	// We only care about the relative part, but the URL API only deals with absolute URLs,
 	// so we need to provide a dummy domain.
-	const parsedUrl = new URL( uri, 'http://dummy.example' );
+	const parsedUrl = new URL(uri, 'http://dummy.example');
 
-	if ( search ) {
-		parsedUrl.searchParams.set( 's', search );
+	if (search) {
+		parsedUrl.searchParams.set('s', search);
 	} else {
-		parsedUrl.searchParams.delete( 's' );
+		parsedUrl.searchParams.delete('s');
 	}
 
-	return `${ parsedUrl.pathname }${ parsedUrl.search }${ parsedUrl.hash }`.replace( /%20/g, '+' );
+	return `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`.replace(/%20/g, '+');
 }

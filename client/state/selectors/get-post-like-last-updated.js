@@ -8,6 +8,6 @@ import { get } from 'lodash';
  */
 import 'state/posts/init';
 
-export default function getPostLikeLastUpdated( state, siteId, postId ) {
-	return get( state.posts.likes.items, [ siteId, postId, 'lastUpdated' ] );
+export default function getPostLikeLastUpdated(state, siteId, postId) {
+	return get(state.posts.likes.items, [siteId, postId, 'lastUpdated']);
 }

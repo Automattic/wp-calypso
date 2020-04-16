@@ -8,15 +8,15 @@ import isJetpackSite from './is-jetpack-site';
 import isJetpackSiteMainNetworkSite from './is-jetpack-site-main-network-site';
 import isJetpackSiteSecondaryNetworkSite from './is-jetpack-site-secondary-network-site';
 
-export default function getJetpackComputedAttributes( state, siteId ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
+export default function getJetpackComputedAttributes(state, siteId) {
+	if (!isJetpackSite(state, siteId)) {
 		return {};
 	}
 	return {
-		canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
-		canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
-		isMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
-		isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite( state, siteId ),
-		isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
+		canAutoupdateFiles: canJetpackSiteAutoUpdateFiles(state, siteId),
+		canUpdateFiles: canJetpackSiteUpdateFiles(state, siteId),
+		isMainNetworkSite: isJetpackSiteMainNetworkSite(state, siteId),
+		isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite(state, siteId),
+		isSiteUpgradeable: isSiteUpgradeable(state, siteId),
 	};
 }

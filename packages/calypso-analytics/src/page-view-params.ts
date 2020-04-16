@@ -5,11 +5,11 @@ let mostRecentUrlPath: string | null = null;
 // pathCounter is used to keep track of the order of calypso_page_view Tracks events.
 let pathCounter = 0;
 
-if ( typeof window !== 'undefined' ) {
-	window.addEventListener( 'popstate', function() {
+if (typeof window !== 'undefined') {
+	window.addEventListener('popstate', function () {
 		// throw away our URL value if the user used the back/forward buttons
 		mostRecentUrlPath = null;
-	} );
+	});
 }
 
 interface PageViewParams {
@@ -17,10 +17,10 @@ interface PageViewParams {
 	this_pageview_path_with_count: string;
 }
 
-export function getPageViewParams( urlPath: string ): PageViewParams {
+export function getPageViewParams(urlPath: string): PageViewParams {
 	const params = {
-		last_pageview_path_with_count: `${ mostRecentUrlPath }(${ pathCounter.toString() })`,
-		this_pageview_path_with_count: `${ urlPath }(${ pathCounter + 1 })`,
+		last_pageview_path_with_count: `${mostRecentUrlPath}(${pathCounter.toString()})`,
+		this_pageview_path_with_count: `${urlPath}(${pathCounter + 1})`,
 	};
 	// Record this path.
 	mostRecentUrlPath = urlPath;

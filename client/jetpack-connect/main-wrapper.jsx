@@ -33,34 +33,34 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	render() {
 		const { isWide, className, children, partnerSlug, translate } = this.props;
 
-		const isWoo = config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isWoo;
+		const isWoo = config.isEnabled('jetpack/connect/woocommerce') && this.props.isWoo;
 
-		const wrapperClassName = classNames( 'jetpack-connect__main', {
+		const wrapperClassName = classNames('jetpack-connect__main', {
 			'is-wide': isWide,
 			'is-woocommerce': isWoo,
-			'is-mobile-app-flow': !! retrieveMobileRedirect(),
-		} );
+			'is-mobile-app-flow': !!retrieveMobileRedirect(),
+		});
 
 		const width = isWoo ? 200 : undefined;
 		const darkColorScheme = isWoo ? false : true;
 
 		return (
-			<Main className={ classNames( className, wrapperClassName ) }>
-				<DocumentHead title={ translate( 'Jetpack Connect' ) } />
+			<Main className={classNames(className, wrapperClassName)}>
+				<DocumentHead title={translate('Jetpack Connect')} />
 				<div className="jetpack-connect__main-logo">
 					<JetpackHeader
-						partnerSlug={ partnerSlug }
-						isWoo={ isWoo }
-						width={ width }
-						darkColorScheme={ darkColorScheme }
+						partnerSlug={partnerSlug}
+						isWoo={isWoo}
+						width={width}
+						darkColorScheme={darkColorScheme}
 					/>
 				</div>
-				{ children }
+				{children}
 			</Main>
 		);
 	}
 }
 
-export default connect( state => ( {
-	partnerSlug: getPartnerSlugFromQuery( state ),
-} ) )( localize( JetpackConnectMainWrapper ) );
+export default connect((state) => ({
+	partnerSlug: getPartnerSlugFromQuery(state),
+}))(localize(JetpackConnectMainWrapper));

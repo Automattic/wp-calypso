@@ -23,55 +23,55 @@ import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
  * Module variables
  */
 const user = _user();
-const debug = debugModule( 'calypso:invite-accept:controller' );
+const debug = debugModule('calypso:invite-accept:controller');
 
-export function redirectWithoutLocaleifLoggedIn( context, next ) {
-	if ( user.get() && getLocaleFromPath( context.path ) ) {
-		return page.redirect( removeLocaleFromPath( context.path ) );
+export function redirectWithoutLocaleifLoggedIn(context, next) {
+	if (user.get() && getLocaleFromPath(context.path)) {
+		return page.redirect(removeLocaleFromPath(context.path));
 	}
 
 	next();
 }
 
-export function acceptInvite( context, next ) {
+export function acceptInvite(context, next) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) );
+	context.store.dispatch(setTitle(i18n.translate('Accept Invite', { textOnly: true })));
 
-	context.store.dispatch( hideSidebar() );
+	context.store.dispatch(hideSidebar());
 
-	const acceptedInvite = store.get( 'invite_accepted' );
-	if ( acceptedInvite ) {
-		debug( 'invite_accepted is set in localStorage' );
-		if ( user.get().email === acceptedInvite.sentTo ) {
-			debug( 'Setting email_verified in user object' );
-			user.set( { email_verified: true } );
+	const acceptedInvite = store.get('invite_accepted');
+	if (acceptedInvite) {
+		debug('invite_accepted is set in localStorage');
+		if (user.get().email === acceptedInvite.sentTo) {
+			debug('Setting email_verified in user object');
+			user.set({ email_verified: true });
 		}
-		store.remove( 'invite_accepted' );
-		const acceptInviteCallback = error => {
-			if ( error ) {
-				debug( 'Accept invite error: ' + JSON.stringify( error ) );
-				page( window.location.href );
-			} else if ( get( acceptedInvite, 'site.is_vip' ) ) {
-				debug( 'Accepted invite for VIP sites' );
-				window.location.href = getRedirectAfterAccept( acceptedInvite );
+		store.remove('invite_accepted');
+		const acceptInviteCallback = (error) => {
+			if (error) {
+				debug('Accept invite error: ' + JSON.stringify(error));
+				page(window.location.href);
+			} else if (get(acceptedInvite, 'site.is_vip')) {
+				debug('Accepted invite for VIP sites');
+				window.location.href = getRedirectAfterAccept(acceptedInvite);
 			} else {
-				const redirect = getRedirectAfterAccept( acceptedInvite );
-				debug( 'Accepted invite and redirecting to:  ' + redirect );
-				page( redirect );
+				const redirect = getRedirectAfterAccept(acceptedInvite);
+				debug('Accepted invite and redirecting to:  ' + redirect);
+				page(redirect);
 			}
 		};
 
-		acceptInviteAction( acceptedInvite, acceptInviteCallback )( context.store.dispatch );
+		acceptInviteAction(acceptedInvite, acceptInviteCallback)(context.store.dispatch);
 		return;
 	}
 
-	context.primary = React.createElement( InviteAccept, {
+	context.primary = React.createElement(InviteAccept, {
 		siteId: context.params.site_id,
 		inviteKey: context.params.invitation_key,
 		activationKey: context.params.activation_key,
 		authKey: context.params.auth_key,
 		locale: context.params.locale,
 		path: context.path,
-	} );
+	});
 	next();
 }

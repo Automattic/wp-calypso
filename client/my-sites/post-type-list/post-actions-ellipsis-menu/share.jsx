@@ -30,14 +30,14 @@ class PostActionsEllipsisMenuShare extends Component {
 	};
 
 	constructor() {
-		super( ...arguments );
+		super(...arguments);
 
-		this.sharePost = this.sharePost.bind( this );
+		this.sharePost = this.sharePost.bind(this);
 	}
 
 	sharePost() {
 		this.props.bumpStat();
-		this.props.toggleSharePanel( this.props.globalId );
+		this.props.toggleSharePanel(this.props.globalId);
 		this.props.onClick(); // hide ellipsis menu
 	}
 
@@ -49,45 +49,45 @@ class PostActionsEllipsisMenuShare extends Component {
 			type,
 			isPublicizeEnabled: isPublicizeEnabledForSite,
 		} = this.props;
-		if ( 'publish' !== status || ! isPublicizeEnabledForSite || 'post' !== type || ! canShare ) {
+		if ('publish' !== status || !isPublicizeEnabledForSite || 'post' !== type || !canShare) {
 			return null;
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.sharePost } icon="share">
-				{ translate( 'Share' ) }
+			<PopoverMenuItem onClick={this.sharePost} icon="share">
+				{translate('Share')}
 			</PopoverMenuItem>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
+const mapStateToProps = (state, { globalId }) => {
+	const post = getPost(state, globalId);
+	if (!post) {
 		return {};
 	}
 
 	return {
 		status: post.status,
 		type: post.type,
-		isPublicizeEnabled: isPublicizeEnabled( state, post.site_ID, post.type ),
-		canShare: canCurrentUser( state, getSelectedSiteId( state ), 'publish_posts' ),
+		isPublicizeEnabled: isPublicizeEnabled(state, post.site_ID, post.type),
+		canShare: canCurrentUser(state, getSelectedSiteId(state), 'publish_posts'),
 	};
 };
 
 const mapDispatchToProps = { toggleSharePanel, bumpAnalyticsStat };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
 	const bumpStat = bumpStatGenerator(
 		stateProps.type,
 		'toggle_share_panel',
 		dispatchProps.bumpAnalyticsStat
 	);
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+	return Object.assign({}, ownProps, stateProps, dispatchProps, { bumpStat });
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( PostActionsEllipsisMenuShare ) );
+)(localize(PostActionsEllipsisMenuShare));

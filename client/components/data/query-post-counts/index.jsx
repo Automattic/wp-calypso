@@ -11,20 +11,20 @@ import { useDispatch } from 'react-redux';
 import { requestPostCounts } from 'state/posts/counts/actions';
 import { isRequestingPostCounts } from 'state/posts/counts/selectors';
 
-const request = ( siteId, type ) => ( dispatch, getState ) => {
-	if ( ! isRequestingPostCounts( getState(), siteId, type ) ) {
-		dispatch( requestPostCounts( siteId, type ) );
+const request = (siteId, type) => (dispatch, getState) => {
+	if (!isRequestingPostCounts(getState(), siteId, type)) {
+		dispatch(requestPostCounts(siteId, type));
 	}
 };
 
-export default function QueryPostCounts( { siteId, type } ) {
+export default function QueryPostCounts({ siteId, type }) {
 	const dispatch = useDispatch();
 
-	useEffect( () => {
-		if ( siteId && type ) {
-			dispatch( request( siteId, type ) );
+	useEffect(() => {
+		if (siteId && type) {
+			dispatch(request(siteId, type));
 		}
-	}, [ dispatch, siteId, type ] );
+	}, [dispatch, siteId, type]);
 
 	return null;
 }

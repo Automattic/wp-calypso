@@ -5,8 +5,8 @@
  * @param  {number}  siteId Site ID
  * @returns {?object}        Site post types
  */
-export function getPostTypes( state, siteId ) {
-	return state.postTypes.items[ siteId ] || null;
+export function getPostTypes(state, siteId) {
+	return state.postTypes.items[siteId] || null;
 }
 
 /**
@@ -17,13 +17,13 @@ export function getPostTypes( state, siteId ) {
  * @param  {string}  slug   Post type slug
  * @returns {?object}        Post type
  */
-export function getPostType( state, siteId, slug ) {
-	const postTypes = getPostTypes( state, siteId );
-	if ( ! postTypes ) {
+export function getPostType(state, siteId, slug) {
+	const postTypes = getPostTypes(state, siteId);
+	if (!postTypes) {
 		return null;
 	}
 
-	return postTypes[ slug ] || null;
+	return postTypes[slug] || null;
 }
 
 /**
@@ -36,18 +36,18 @@ export function getPostType( state, siteId, slug ) {
  * @param  {string}   localeSlug LocalSlug @TODO to remove (see note below)
  * @returns {?boolean}         Whether post type supports feature
  */
-export function getPostTypeLabel( state, siteId, slug, label, localeSlug ) {
-	const postType = getPostType( state, siteId, slug );
-	if ( postType ) {
-		let postTypeLabel = postType.labels[ label ];
+export function getPostTypeLabel(state, siteId, slug, label, localeSlug) {
+	const postType = getPostType(state, siteId, slug);
+	if (postType) {
+		let postTypeLabel = postType.labels[label];
 
 		/*
 		 * Temporary workaround to Sentence case label from core API for EN langs
 		 * @TODO: Remove when https://core.trac.wordpress.org/ticket/49616 is merged
 		 */
 
-		if ( localeSlug && ( 'en' === localeSlug || 'en-gb' === localeSlug ) ) {
-			postTypeLabel = postTypeLabel[ 0 ].toUpperCase() + postTypeLabel.slice( 1 ).toLowerCase();
+		if (localeSlug && ('en' === localeSlug || 'en-gb' === localeSlug)) {
+			postTypeLabel = postTypeLabel[0].toUpperCase() + postTypeLabel.slice(1).toLowerCase();
 		}
 
 		return postTypeLabel;
@@ -66,28 +66,28 @@ export function getPostTypeLabel( state, siteId, slug, label, localeSlug ) {
  * @param  {string}   feature Feature slug
  * @returns {?boolean}         Whether post type supports feature
  */
-export function postTypeSupports( state, siteId, slug, feature ) {
+export function postTypeSupports(state, siteId, slug, feature) {
 	// Hard-coded overrides; even if we know the post type object, continue to
 	// defer to these values. Indicates that REST API supports are inaccurate.
-	switch ( slug ) {
+	switch (slug) {
 		case 'post':
-			switch ( feature ) {
+			switch (feature) {
 				case 'publicize':
 					return true;
 			}
 	}
 
-	const postType = getPostType( state, siteId, slug );
-	if ( postType ) {
-		return !! postType.supports[ feature ];
+	const postType = getPostType(state, siteId, slug);
+	if (postType) {
+		return !!postType.supports[feature];
 	}
 
 	// Hard-coded fallbacks; while themes can technically override these
 	// supports, we can be relatively safe in making the assumption. By
 	// defining fallbacks, we avoid UI flickering after request completes.
-	switch ( slug ) {
+	switch (slug) {
 		case 'page':
-			switch ( feature ) {
+			switch (feature) {
 				case 'publicize':
 					return false;
 			}
@@ -106,11 +106,11 @@ export function postTypeSupports( state, siteId, slug, feature ) {
  * @param  {string}   slug   Post type slug
  * @returns {?boolean}        Whether site supports post type
  */
-export function isPostTypeSupported( state, siteId, slug ) {
-	const postTypes = getPostTypes( state, siteId );
-	if ( ! postTypes ) {
+export function isPostTypeSupported(state, siteId, slug) {
+	const postTypes = getPostTypes(state, siteId);
+	if (!postTypes) {
 		return null;
 	}
 
-	return !! postTypes[ slug ];
+	return !!postTypes[slug];
 }

@@ -28,8 +28,7 @@ import { getSearchQuery } from 'state/inline-help/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
-const amendYouTubeLink = ( link = '' ) =>
-	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
+const amendYouTubeLink = (link = '') => link.replace('youtube.com/embed/', 'youtube.com/watch?v=');
 
 class InlineHelpRichResult extends Component {
 	static propTypes = {
@@ -45,9 +44,9 @@ class InlineHelpRichResult extends Component {
 	};
 
 	buttonLabels = {
-		article: this.props.translate( 'Read more' ),
-		video: this.props.translate( 'Watch a video' ),
-		tour: this.props.translate( 'Start Tour' ),
+		article: this.props.translate('Read more'),
+		video: this.props.translate('Watch a video'),
+		tour: this.props.translate('Start Tour'),
 	};
 
 	buttonIcons = {
@@ -60,7 +59,7 @@ class InlineHelpRichResult extends Component {
 		showDialog: false,
 	};
 
-	handleClick = event => {
+	handleClick = (event) => {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
 		const { type, tour, link, searchQuery, postId } = this.props;
 
@@ -73,56 +72,56 @@ class InlineHelpRichResult extends Component {
 			isUndefined
 		);
 
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData );
+		this.props.recordTracksEvent(`calypso_inlinehelp_${type}_open`, tracksData);
 		this.props.closePopover();
 
-		if ( type === RESULT_TOUR ) {
+		if (type === RESULT_TOUR) {
 			event.preventDefault();
-			this.props.requestGuidedTour( tour );
-		} else if ( type === RESULT_VIDEO ) {
+			this.props.requestGuidedTour(tour);
+		} else if (type === RESULT_VIDEO) {
 			event.preventDefault();
-			this.props.setDialogState( {
+			this.props.setDialogState({
 				showDialog: true,
 				dialogType: 'video',
 				videoLink: link,
-			} );
-		} else if ( type === RESULT_ARTICLE && postId && isLocaleEnglish ) {
+			});
+		} else if (type === RESULT_ARTICLE && postId && isLocaleEnglish) {
 			// Until we can deliver localized inline support article content, we send the
 			// the user to the localized support blog, if one exists.
 			event.preventDefault();
-			this.props.openSupportArticleDialog( { postId, postUrl: link } );
+			this.props.openSupportArticleDialog({ postId, postUrl: link });
 		} // else falls back on href
 	};
 
 	render() {
 		const { type, title, description, link } = this.props;
-		const buttonLabel = get( this.buttonLabels, type, '' );
-		const buttonIcon = get( this.buttonIcons, type );
-		const classes = classNames( 'inline-help__richresult__title' );
+		const buttonLabel = get(this.buttonLabels, type, '');
+		const buttonIcon = get(this.buttonIcons, type);
+		const classes = classNames('inline-help__richresult__title');
 
 		return (
 			<div>
-				<h2 className={ classes }>{ preventWidows( decodeEntities( title ) ) }</h2>
-				<p>{ preventWidows( decodeEntities( description ) ) }</p>
-				<Button primary onClick={ this.handleClick } href={ link }>
-					{ buttonIcon && <Gridicon icon={ buttonIcon } size={ 12 } /> }
-					{ buttonIcon && buttonLabel && ' ' }
-					{ buttonLabel }
+				<h2 className={classes}>{preventWidows(decodeEntities(title))}</h2>
+				<p>{preventWidows(decodeEntities(description))}</p>
+				<Button primary onClick={this.handleClick} href={link}>
+					{buttonIcon && <Gridicon icon={buttonIcon} size={12} />}
+					{buttonIcon && buttonLabel && ' '}
+					{buttonLabel}
 				</Button>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { result } ) => ( {
-	searchQuery: getSearchQuery( state ),
-	type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
-	title: get( result, RESULT_TITLE ),
-	link: amendYouTubeLink( get( result, RESULT_LINK ) ),
-	description: get( result, RESULT_DESCRIPTION ),
-	tour: get( result, RESULT_TOUR ),
-	postId: get( result, 'post_id' ),
-} );
+const mapStateToProps = (state, { result }) => ({
+	searchQuery: getSearchQuery(state),
+	type: get(result, RESULT_TYPE, RESULT_ARTICLE),
+	title: get(result, RESULT_TITLE),
+	link: amendYouTubeLink(get(result, RESULT_LINK)),
+	description: get(result, RESULT_DESCRIPTION),
+	tour: get(result, RESULT_TOUR),
+	postId: get(result, 'post_id'),
+});
 
 const mapDispatchToProps = {
 	recordTracksEvent,
@@ -130,4 +129,4 @@ const mapDispatchToProps = {
 	openSupportArticleDialog,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(InlineHelpRichResult));

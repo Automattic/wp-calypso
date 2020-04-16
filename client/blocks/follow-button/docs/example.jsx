@@ -17,13 +17,13 @@ export default class FollowButtonExample extends React.PureComponent {
 		return (
 			<div>
 				<Card compact>
-					<FollowButton following={ false } />
+					<FollowButton following={false} />
 				</Card>
 				<Card compact>
-					<FollowButton following={ true } />
+					<FollowButton following={true} />
 				</Card>
 				<Card compact>
-					<FollowButton disabled={ true } />
+					<FollowButton disabled={true} />
 				</Card>
 				<Card compact>
 					<h3>With custom label</h3>

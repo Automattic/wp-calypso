@@ -22,11 +22,11 @@ import { storedCardsSchema } from './schema';
  * @param  {object} action storeCard action
  * @returns {Array}         Updated state
  */
-export const items = withSchemaValidation( storedCardsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(storedCardsSchema, (state = [], action) => {
+	switch (action.type) {
 		case STORED_CARDS_ADD_COMPLETED: {
 			const { item } = action;
-			return [ ...state, item ];
+			return [...state, item];
 		}
 		case STORED_CARDS_FETCH_COMPLETED: {
 			const { list } = action;
@@ -34,12 +34,12 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
 		}
 		case STORED_CARDS_DELETE_COMPLETED: {
 			const { card } = action;
-			return state.filter( item => item.stored_details_id !== card.stored_details_id );
+			return state.filter((item) => item.stored_details_id !== card.stored_details_id);
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns whether the list of stored cards has been loaded from the server in reaction to the specified action.
@@ -48,8 +48,8 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
  * @param {object} action - action payload
  * @returns {boolean} - updated state
  */
-export const hasLoadedFromServer = ( state = false, action ) => {
-	switch ( action.type ) {
+export const hasLoadedFromServer = (state = false, action) => {
+	switch (action.type) {
 		case STORED_CARDS_FETCH_COMPLETED:
 			return true;
 	}
@@ -65,8 +65,8 @@ export const hasLoadedFromServer = ( state = false, action ) => {
  * @param {object} action - storedCard action
  * @returns {object} updated state
  */
-export const isFetching = ( state = false, action ) => {
-	switch ( action.type ) {
+export const isFetching = (state = false, action) => {
+	switch (action.type) {
 		case STORED_CARDS_FETCH:
 			return true;
 
@@ -86,27 +86,27 @@ export const isFetching = ( state = false, action ) => {
  * @param {object} action - storedCard action
  * @returns {object} updated state
  */
-export const isDeleting = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const isDeleting = (state = {}, action) => {
+	switch (action.type) {
 		case STORED_CARDS_DELETE:
 			return {
 				...state,
-				[ action.card.stored_details_id ]: true,
+				[action.card.stored_details_id]: true,
 			};
 
 		case STORED_CARDS_DELETE_FAILED:
 		case STORED_CARDS_DELETE_COMPLETED:
 			const nextState = { ...state };
-			delete nextState[ action.card.stored_details_id ];
+			delete nextState[action.card.stored_details_id];
 			return nextState;
 	}
 
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	hasLoadedFromServer,
 	isDeleting,
 	isFetching,
 	items,
-} );
+});

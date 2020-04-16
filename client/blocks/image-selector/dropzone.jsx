@@ -30,48 +30,48 @@ class ImageSelectorDropZone extends Component {
 		translate: PropTypes.func,
 	};
 
-	onFilesDrop = files => {
+	onFilesDrop = (files) => {
 		/**
 		 * Filter files for `image` media prefix and return the first image.
 		 *
 		 * At the moment we ignore all the other images that were dragged onto the DropZone
 		 */
-		const droppedImage = head( filterItemsByMimePrefix( files, 'image' ) );
+		const droppedImage = head(filterItemsByMimePrefix(files, 'image'));
 
-		if ( ! droppedImage ) {
+		if (!droppedImage) {
 			return false;
 		}
 
-		const transientMediaId = uniqueId( 'image-selector' );
+		const transientMediaId = uniqueId('image-selector');
 		const { siteId, site } = this.props;
 
 		const handleImageSelectorUpload = () => {
-			const media = MediaStore.get( siteId, transientMediaId );
-			const isUploadInProgress = media && isItemBeingUploaded( media );
-			const isFailedUpload = ! media;
+			const media = MediaStore.get(siteId, transientMediaId);
+			const isUploadInProgress = media && isItemBeingUploaded(media);
+			const isFailedUpload = !media;
 
-			if ( isFailedUpload ) {
-				this.props.deleteMedia( siteId, transientMediaId );
+			if (isFailedUpload) {
+				this.props.deleteMedia(siteId, transientMediaId);
 			} else {
-				this.props.receiveMedia( siteId, media );
+				this.props.receiveMedia(siteId, media);
 			}
 
 			/**
 			 * File upload finished. No need to listen for changes anymore.
 			 */
-			if ( ! isUploadInProgress ) {
-				MediaStore.off( 'change', handleImageSelectorUpload );
+			if (!isUploadInProgress) {
+				MediaStore.off('change', handleImageSelectorUpload);
 			}
-			this.props.onDroppedImage( media );
+			this.props.onDroppedImage(media);
 		};
 
-		MediaStore.on( 'change', handleImageSelectorUpload );
+		MediaStore.on('change', handleImageSelectorUpload);
 
-		MediaActions.add( site, {
+		MediaActions.add(site, {
 			ID: transientMediaId,
 			fileContents: droppedImage,
 			fileName: droppedImage.name,
-		} );
+		});
 	};
 
 	render() {
@@ -79,24 +79,24 @@ class ImageSelectorDropZone extends Component {
 			<DropZone
 				className="image-selector__dropzone"
 				dropZoneName="imageSelector"
-				icon={ <ImageSelectorDropZoneIcon /> }
-				textLabel={ this.props.translate( 'Add Image' ) }
-				onFilesDrop={ this.onFilesDrop }
+				icon={<ImageSelectorDropZoneIcon />}
+				textLabel={this.props.translate('Add Image')}
+				onFilesDrop={this.onFilesDrop}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { siteId } = ownProps;
 		const props = {
-			siteId: getSelectedSiteId( state ),
-			site: getSelectedSite( state ),
+			siteId: getSelectedSiteId(state),
+			site: getSelectedSite(state),
 		};
-		if ( siteId ) {
+		if (siteId) {
 			props.siteId = siteId;
-			props.site = getSite( state, siteId );
+			props.site = getSite(state, siteId);
 		}
 		return props;
 	},
@@ -104,4 +104,4 @@ export default connect(
 		deleteMedia,
 		receiveMedia,
 	}
-)( localize( ImageSelectorDropZone ) );
+)(localize(ImageSelectorDropZone));

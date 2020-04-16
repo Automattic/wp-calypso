@@ -26,36 +26,32 @@ import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from 'lib
  * @returns {object[]} the sorted list of items in the shopping cart
  */
 
-function sortProducts( products ) {
+function sortProducts(products) {
 	let planItems, includedItems, domainItems, creditItems, otherItems;
 
-	planItems = products.filter( isPlan );
+	planItems = products.filter(isPlan);
 
-	includedItems = products.filter( isIncludedWithPlan );
+	includedItems = products.filter(isIncludedWithPlan);
 
-	domainItems = difference( products, includedItems );
-	domainItems = domainItems.filter( isDomainProduct );
-	domainItems = toPairs( groupBy( domainItems, 'meta' ) );
-	domainItems = sortBy( domainItems, function( pair ) {
-		if ( pair[ 1 ][ 0 ] && pair[ 1 ][ 0 ].cost === 0 ) {
+	domainItems = difference(products, includedItems);
+	domainItems = domainItems.filter(isDomainProduct);
+	domainItems = toPairs(groupBy(domainItems, 'meta'));
+	domainItems = sortBy(domainItems, function (pair) {
+		if (pair[1][0] && pair[1][0].cost === 0) {
 			return -1;
 		}
-		return pair[ 0 ];
-	} );
-	domainItems = domainItems.map( function( pair ) {
-		return sortBy( pair[ 1 ], getDomainProductRanking );
-	} );
-	domainItems = flatten( domainItems );
+		return pair[0];
+	});
+	domainItems = domainItems.map(function (pair) {
+		return sortBy(pair[1], getDomainProductRanking);
+	});
+	domainItems = flatten(domainItems);
 
-	creditItems = products.filter( isCredits );
+	creditItems = products.filter(isCredits);
 
-	otherItems = difference( products, planItems, domainItems, includedItems, creditItems );
+	otherItems = difference(products, planItems, domainItems, includedItems, creditItems);
 
-	return planItems
-		.concat( includedItems )
-		.concat( domainItems )
-		.concat( otherItems )
-		.concat( creditItems );
+	return planItems.concat(includedItems).concat(domainItems).concat(otherItems).concat(creditItems);
 }
 
 export default sortProducts;

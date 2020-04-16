@@ -13,15 +13,15 @@ import getSiteDomain from './get-site-domain';
  * @param  {?number}  siteId Site ID
  * @returns {?string}        Site title
  */
-export default function getSiteTitle( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
+export default function getSiteTitle(state, siteId) {
+	const site = getRawSite(state, siteId);
+	if (!site) {
 		return null;
 	}
 
-	if ( site.name ) {
+	if (site.name) {
 		return site.name.trim();
 	}
 
-	return getSiteDomain( state, siteId );
+	return getSiteDomain(state, siteId);
 }

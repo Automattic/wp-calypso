@@ -22,13 +22,13 @@ class QueryReaderPost extends Component {
 		this.maybeFetch();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeFetch( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.maybeFetch(nextProps);
 	}
 
-	maybeFetch = ( props = this.props ) => {
-		if ( isPostKeyLike( props.postKey ) && ( ! props.post || props.post._state === 'minimal' ) ) {
-			this.props.fetchPost( props.postKey );
+	maybeFetch = (props = this.props) => {
+		if (isPostKeyLike(props.postKey) && (!props.post || props.post._state === 'minimal')) {
+			this.props.fetchPost(props.postKey);
 		}
 	};
 
@@ -38,8 +38,8 @@ class QueryReaderPost extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		post: getPostByKey( state, ownProps.postKey ),
-	} ),
+	(state, ownProps) => ({
+		post: getPostByKey(state, ownProps.postKey),
+	}),
 	{ fetchPost }
-)( QueryReaderPost );
+)(QueryReaderPost);

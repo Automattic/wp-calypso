@@ -15,7 +15,7 @@ import { getSiteSettings } from 'state/site-settings/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 
 // list of site settings properties that trigger a new query when they change
-const POST_TYPE_SETTINGS = [ 'jetpack_portfolio', 'jetpack_testimonial' ];
+const POST_TYPE_SETTINGS = ['jetpack_portfolio', 'jetpack_testimonial'];
 
 class QueryPostTypes extends Component {
 	static propTypes = {
@@ -27,10 +27,10 @@ class QueryPostTypes extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteSettings, siteId, themeSlug } = this.props;
 		const {
 			siteSettings: nextSiteSettings,
@@ -39,18 +39,18 @@ class QueryPostTypes extends Component {
 		} = nextProps;
 
 		const hasThemeChanged = themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug;
-		const hasPostTypeSettingChanged = ! isEqual(
-			pick( siteSettings, POST_TYPE_SETTINGS ),
-			pick( nextSiteSettings, POST_TYPE_SETTINGS )
+		const hasPostTypeSettingChanged = !isEqual(
+			pick(siteSettings, POST_TYPE_SETTINGS),
+			pick(nextSiteSettings, POST_TYPE_SETTINGS)
 		);
 
-		if ( siteId !== nextSiteId || hasThemeChanged || hasPostTypeSettingChanged ) {
-			this.request( nextProps );
+		if (siteId !== nextSiteId || hasThemeChanged || hasPostTypeSettingChanged) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		props.requestPostTypes( props.siteId );
+	request(props) {
+		props.requestPostTypes(props.siteId);
 	}
 
 	render() {
@@ -59,9 +59,9 @@ class QueryPostTypes extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		siteSettings: getSiteSettings( state, siteId ),
-		themeSlug: getSiteOption( state, siteId, 'theme_slug' ),
-	} ),
+	(state, { siteId }) => ({
+		siteSettings: getSiteSettings(state, siteId),
+		themeSlug: getSiteOption(state, siteId, 'theme_slug'),
+	}),
 	{ requestPostTypes }
-)( QueryPostTypes );
+)(QueryPostTypes);

@@ -3,6 +3,6 @@
  */
 import { createContext } from 'react';
 
-const CheckoutContext = createContext( {} );
+const CheckoutContext = createContext({});
 
 export default CheckoutContext;

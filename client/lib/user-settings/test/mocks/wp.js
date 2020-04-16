@@ -1,19 +1,19 @@
-const me = function() {
+const me = function () {
 	return {
-		get: async () => ( {} ),
+		get: async () => ({}),
 		settings() {
 			return {
-				get( callback ) {
-					callback( false, {
+				get(callback) {
+					callback(false, {
 						test: false,
 						lang_id: false,
 						testParent: {
 							testChild: false,
 						},
-					} );
+					});
 				},
-				update( settings, callback ) {
-					setTimeout( () => callback( null, settings ) );
+				update(settings, callback) {
+					setTimeout(() => callback(null, settings));
 				},
 			};
 		},

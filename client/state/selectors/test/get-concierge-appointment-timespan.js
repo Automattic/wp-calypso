@@ -3,20 +3,20 @@
  */
 import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';
 
-describe( 'getConciergeAppointmentTimespan()', () => {
-	test( 'should default to null', () => {
-		expect( getConciergeAppointmentTimespan( {} ) ).toBeNull();
-	} );
+describe('getConciergeAppointmentTimespan()', () => {
+	test('should default to null', () => {
+		expect(getConciergeAppointmentTimespan({})).toBeNull();
+	});
 
-	test( 'should return the appointment timespan state value,', () => {
+	test('should return the appointment timespan state value,', () => {
 		const appointmentTimespan = 987;
 
 		expect(
-			getConciergeAppointmentTimespan( {
+			getConciergeAppointmentTimespan({
 				concierge: {
 					appointmentTimespan,
 				},
-			} )
-		).toEqual( appointmentTimespan );
-	} );
-} );
+			})
+		).toEqual(appointmentTimespan);
+	});
+});

@@ -32,16 +32,16 @@ class SiteTitleControl extends React.Component {
 		disabled: false,
 	};
 
-	onChangeSiteTitle = event => {
+	onChangeSiteTitle = (event) => {
 		const blogdescription = this.props.blogdescription;
 		const blogname = event.target.value;
-		this.props.onChange( { blogname, blogdescription } );
+		this.props.onChange({ blogname, blogdescription });
 	};
 
-	onChangeDescription = event => {
+	onChangeDescription = (event) => {
 		const blogname = this.props.blogname;
 		const blogdescription = event.target.value;
-		this.props.onChange( { blogname, blogdescription } );
+		this.props.onChange({ blogname, blogdescription });
 	};
 
 	render() {
@@ -57,27 +57,27 @@ class SiteTitleControl extends React.Component {
 		return (
 			<div className="site-title">
 				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ translate( 'Site Title' ) }</FormLabel>
+					<FormLabel htmlFor="blogname">{translate('Site Title')}</FormLabel>
 					<FormTextInput
-						autoFocus={ autoFocusBlogname }
-						disabled={ disabled }
+						autoFocus={autoFocusBlogname}
+						disabled={disabled}
 						id="blogname"
-						isError={ ! disabled && isBlognameRequired && ! blogname }
-						isValid={ ! disabled && isBlognameRequired && !! blogname }
-						onChange={ this.onChangeSiteTitle }
-						value={ blogname }
+						isError={!disabled && isBlognameRequired && !blogname}
+						isValid={!disabled && isBlognameRequired && !!blogname}
+						onChange={this.onChangeSiteTitle}
+						value={blogname}
 					/>
-					{ ! disabled && isBlognameRequired && ! blogname && (
-						<FormInputValidation isError text={ translate( 'Please enter a site title' ) } />
-					) }
+					{!disabled && isBlognameRequired && !blogname && (
+						<FormInputValidation isError text={translate('Please enter a site title')} />
+					)}
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ translate( 'Tagline' ) }</FormLabel>
+					<FormLabel htmlFor="blogdescription">{translate('Tagline')}</FormLabel>
 					<FormTextInput
-						disabled={ disabled }
+						disabled={disabled}
 						id="blogdescription"
-						onChange={ this.onChangeDescription }
-						value={ blogdescription }
+						onChange={this.onChangeDescription}
+						value={blogdescription}
 					/>
 				</FormFieldset>
 			</div>
@@ -85,4 +85,4 @@ class SiteTitleControl extends React.Component {
 	}
 }
 
-export default localize( SiteTitleControl );
+export default localize(SiteTitleControl);

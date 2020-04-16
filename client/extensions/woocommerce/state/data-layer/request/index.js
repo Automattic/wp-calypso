@@ -16,37 +16,37 @@ import {
 	WOOCOMMERCE_API_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
-const debug = debugFactory( 'woocommerce:request' );
+const debug = debugFactory('woocommerce:request');
 
-export function handleRequest( { dispatch, getState }, action ) {
+export function handleRequest({ dispatch, getState }, action) {
 	const { method, siteId, path, body, onSuccessAction, onFailureAction } = action;
 
-	return request( siteId )
-		[ method ]( path, body )
-		.then( data => {
-			dispatch( {
+	return request(siteId)
+		[method](path, body)
+		.then((data) => {
+			dispatch({
 				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
 				action,
 				data,
-			} );
+			});
 
-			dispatchWithProps( dispatch, getState, onSuccessAction, { data } );
-		} )
-		.catch( error => {
-			debug( 'Caught error while handling request: ', error );
+			dispatchWithProps(dispatch, getState, onSuccessAction, { data });
+		})
+		.catch((error) => {
+			debug('Caught error while handling request: ', error);
 
 			// TODO: Maybe phase out usage of this in favor of the failure action?
-			dispatch( setError( siteId, action, { message: error.toString() } ) );
-			dispatch( {
+			dispatch(setError(siteId, action, { message: error.toString() }));
+			dispatch({
 				type: WOOCOMMERCE_API_REQUEST_FAILURE,
 				action,
 				error,
-			} );
+			});
 
-			dispatchWithProps( dispatch, getState, onFailureAction, { error } );
-		} );
+			dispatchWithProps(dispatch, getState, onFailureAction, { error });
+		});
 }
 
 export default {
-	[ WOOCOMMERCE_API_REQUEST ]: [ handleRequest ],
+	[WOOCOMMERCE_API_REQUEST]: [handleRequest],
 };

@@ -14,7 +14,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class ConfirmationStep extends Component {
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_concierge_book_confirmation_step' );
+		this.props.recordTracksEvent('calypso_concierge_book_confirmation_step');
 	}
 
 	handleClick = () => {
@@ -26,15 +26,15 @@ class ConfirmationStep extends Component {
 
 		return (
 			<Confirmation
-				description={ translate( 'We will send you an email with information on how to prepare.' ) }
-				title={ translate( 'Your session is booked!' ) }
+				description={translate('We will send you an email with information on how to prepare.')}
+				title={translate('Your session is booked!')}
 			>
-				<Button className="book__schedule-button" onClick={ this.handleClick } primary={ true }>
-					{ translate( 'View your session dashboard' ) }
+				<Button className="book__schedule-button" onClick={this.handleClick} primary={true}>
+					{translate('View your session dashboard')}
 				</Button>
 			</Confirmation>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( ConfirmationStep ) );
+export default connect(null, { recordTracksEvent })(localize(ConfirmationStep));

@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { isRequestingPostStats, getPostStat, getPostStats } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( 'isRequestingPostStats()', () => {
-		test( 'should return false if the stat is not attached', () => {
+describe('selectors', () => {
+	describe('isRequestingPostStats()', () => {
+		test('should return false if the stat is not attached', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -22,12 +22,12 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'countComments' ] );
+			const isRequesting = isRequestingPostStats(state, 2916284, 2454, ['countComments']);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if the stat is not fetching', () => {
+		test('should return false if the stat is not fetching', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -39,12 +39,12 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'views', 'years' ] );
+			const isRequesting = isRequestingPostStats(state, 2916284, 2454, ['views', 'years']);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if the site is fetching', () => {
+		test('should return true if the site is fetching', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -56,14 +56,14 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'views', 'years' ] );
+			const isRequesting = isRequestingPostStats(state, 2916284, 2454, ['views', 'years']);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( '#getPostStat()', () => {
-		test( 'should return null if the site is not tracked', () => {
+	describe('#getPostStat()', () => {
+		test('should return null if the site is not tracked', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -75,12 +75,12 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const statValue = getPostStat( state, 2916284, 2454, 'countComments' );
+			const statValue = getPostStat(state, 2916284, 2454, 'countComments');
 
-			expect( statValue ).to.be.null;
-		} );
+			expect(statValue).to.be.null;
+		});
 
-		test( 'should return the post stat for a siteId, postId and stat key', () => {
+		test('should return the post stat for a siteId, postId and stat key', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -92,14 +92,14 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const statValue = getPostStat( state, 2916284, 2454, 'views' );
+			const statValue = getPostStat(state, 2916284, 2454, 'views');
 
-			expect( statValue ).to.eql( 2 );
-		} );
-	} );
+			expect(statValue).to.eql(2);
+		});
+	});
 
-	describe( 'getPostStats()', () => {
-		test( 'should return null if the site is not tracked', () => {
+	describe('getPostStats()', () => {
+		test('should return null if the site is not tracked', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -111,12 +111,12 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const statValue = getPostStats( state, 2916285, 2454 );
+			const statValue = getPostStats(state, 2916285, 2454);
 
-			expect( statValue ).to.be.null;
-		} );
+			expect(statValue).to.be.null;
+		});
 
-		test( 'should return the post stats for a siteId, postId', () => {
+		test('should return the post stats for a siteId, postId', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -128,9 +128,9 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const statValue = getPostStats( state, 2916284, 2454 );
+			const statValue = getPostStats(state, 2916284, 2454);
 
-			expect( statValue ).to.eql( { views: 2 } );
-		} );
-	} );
-} );
+			expect(statValue).to.eql({ views: 2 });
+		});
+	});
+});

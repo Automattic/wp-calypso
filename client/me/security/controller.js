@@ -17,53 +17,53 @@ import ConnectedAppsComponent from 'me/connected-applications';
 import AccountRecoveryComponent from 'me/security-account-recovery';
 import { getSocialServiceFromClientId } from 'lib/login';
 
-export function password( context, next ) {
-	if ( context.query && context.query.updated === 'password' ) {
-		notices.success( i18n.translate( 'Your password was saved successfully.' ), {
+export function password(context, next) {
+	if (context.query && context.query.updated === 'password') {
+		notices.success(i18n.translate('Your password was saved successfully.'), {
 			persistent: true,
-		} );
+		});
 
-		page.replace( window.location.pathname );
+		page.replace(window.location.pathname);
 	}
 
-	context.primary = React.createElement( PasswordComponent, {
+	context.primary = React.createElement(PasswordComponent, {
 		userSettings: userSettings,
 		path: context.path,
 		accountPasswordData: accountPasswordData,
-	} );
+	});
 	next();
 }
 
-export function twoStep( context, next ) {
-	const TwoStepComponent = require( 'me/two-step' ).default;
+export function twoStep(context, next) {
+	const TwoStepComponent = require('me/two-step').default;
 
-	context.primary = React.createElement( TwoStepComponent, {
+	context.primary = React.createElement(TwoStepComponent, {
 		userSettings: userSettings,
 		path: context.path,
-	} );
+	});
 	next();
 }
 
-export function connectedApplications( context, next ) {
-	context.primary = React.createElement( ConnectedAppsComponent, {
+export function connectedApplications(context, next) {
+	context.primary = React.createElement(ConnectedAppsComponent, {
 		userSettings: userSettings,
 		path: context.path,
-	} );
+	});
 	next();
 }
 
-export function accountRecovery( context, next ) {
-	context.primary = React.createElement( AccountRecoveryComponent, {
+export function accountRecovery(context, next) {
+	context.primary = React.createElement(AccountRecoveryComponent, {
 		userSettings: userSettings,
 		path: context.path,
-	} );
+	});
 	next();
 }
 
-export function socialLogin( context, next ) {
+export function socialLogin(context, next) {
 	// Remove id_token from the address bar and push social connect args into the state instead
-	if ( context.hash && context.hash.client_id ) {
-		page.replace( context.path, context.hash );
+	if (context.hash && context.hash.client_id) {
+		page.replace(context.path, context.hash);
 		return;
 	}
 
@@ -72,13 +72,13 @@ export function socialLogin( context, next ) {
 	const socialServiceResponse = client_id
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
-	const socialService = getSocialServiceFromClientId( client_id );
+	const socialService = getSocialServiceFromClientId(client_id);
 
-	context.primary = React.createElement( SocialLoginComponent, {
+	context.primary = React.createElement(SocialLoginComponent, {
 		path: context.path,
 		socialService,
 		socialServiceResponse,
 		userSettings,
-	} );
+	});
 	next();
 }

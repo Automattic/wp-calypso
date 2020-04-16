@@ -973,7 +973,7 @@ export const CURRENCIES = {
  * @param   {string} code      currency code
  * @returns {?object}          currency defaults
  */
-export function getCurrencyDefaults( code ) {
+export function getCurrencyDefaults(code) {
 	const defaultCurrency = {
 		symbol: '$',
 		grouping: ',',
@@ -981,5 +981,5 @@ export function getCurrencyDefaults( code ) {
 		precision: 2,
 	};
 
-	return CURRENCIES[ code ] || defaultCurrency;
+	return CURRENCIES[code] || defaultCurrency;
 }

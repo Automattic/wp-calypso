@@ -11,7 +11,7 @@ import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
  */
 import { getStripeConfiguration } from 'lib/store-transactions';
 
-const debug = debugFactory( 'calypso:stripe' );
+const debug = debugFactory('calypso:stripe');
 
 const StripeContext = createContext();
 
@@ -27,9 +27,9 @@ const StripeContext = createContext();
  * @param {string} code - The error code
  * @param {object} messagesByField - An object whose keys are input field names and whose values are arrays of error strings for that field
  */
-function StripeValidationError( code, messagesByField ) {
-	const fields = Object.keys( messagesByField );
-	const firstMessage = fields.length ? messagesByField[ fields[ 0 ] ] : code;
+function StripeValidationError(code, messagesByField) {
+	const fields = Object.keys(messagesByField);
+	const firstMessage = fields.length ? messagesByField[fields[0]] : code;
 	this.message = firstMessage;
 	this.code = code;
 	this.messagesByField = messagesByField;
@@ -47,7 +47,7 @@ export { StripeValidationError };
  *
  * @param {object} stripeError - The original Stripe error object
  */
-function StripeSetupIntentError( stripeError ) {
+function StripeSetupIntentError(stripeError) {
 	this.stripeError = stripeError;
 	this.message = stripeError.message;
 }
@@ -61,7 +61,7 @@ export { StripeSetupIntentError };
  *
  * @param {object} stripeError - The original Stripe error object
  */
-function StripePaymentMethodError( stripeError ) {
+function StripePaymentMethodError(stripeError) {
 	this.stripeError = stripeError;
 	this.message = stripeError.message;
 }
@@ -88,49 +88,43 @@ export { StripePaymentMethodError };
  * @param {object} paymentDetails The `billing_details` field of the `createPaymentMethod()` request
  * @returns {Promise} Promise that will be resolved or rejected
  */
-export async function createStripePaymentMethod( stripe, paymentDetails ) {
-	debug( 'creating payment method...', paymentDetails );
-	const { paymentMethod, error } = await stripe.createPaymentMethod( 'card', {
+export async function createStripePaymentMethod(stripe, paymentDetails) {
+	debug('creating payment method...', paymentDetails);
+	const { paymentMethod, error } = await stripe.createPaymentMethod('card', {
 		billing_details: paymentDetails,
-	} );
-	debug( 'payment method creation complete', paymentMethod, error );
-	if ( error ) {
+	});
+	debug('payment method creation complete', paymentMethod, error);
+	if (error) {
 		// Note that this is a promise rejection
-		if ( error.type === 'validation_error' ) {
-			throw new StripeValidationError(
-				error.code,
-				getValidationErrorsFromStripeError( error ) || {}
-			);
+		if (error.type === 'validation_error') {
+			throw new StripeValidationError(error.code, getValidationErrorsFromStripeError(error) || {});
 		}
-		throw new Error( error.message );
+		throw new Error(error.message);
 	}
 	return paymentMethod;
 }
 
-export async function createStripeSetupIntent( stripe, stripeConfiguration, paymentDetails ) {
-	debug( 'creating setup intent...', paymentDetails );
+export async function createStripeSetupIntent(stripe, stripeConfiguration, paymentDetails) {
+	debug('creating setup intent...', paymentDetails);
 	let stripeResponse = {};
 	try {
-		stripeResponse = await stripe.handleCardSetup( stripeConfiguration.setup_intent_id, {
+		stripeResponse = await stripe.handleCardSetup(stripeConfiguration.setup_intent_id, {
 			payment_method_data: {
 				billing_details: paymentDetails,
 			},
-		} );
-	} catch ( error ) {
+		});
+	} catch (error) {
 		// Some errors are thrown by handleCardSetup and not returned as an error
-		throw new StripeSetupIntentError( error );
+		throw new StripeSetupIntentError(error);
 	}
 	const { setupIntent, error } = stripeResponse;
-	debug( 'setup intent creation complete', setupIntent, error );
-	if ( error || ! setupIntent ) {
+	debug('setup intent creation complete', setupIntent, error);
+	if (error || !setupIntent) {
 		// Note that this is a promise rejection
-		if ( error.type === 'validation_error' ) {
-			throw new StripeValidationError(
-				error.code,
-				getValidationErrorsFromStripeError( error ) || {}
-			);
+		if (error.type === 'validation_error') {
+			throw new StripeValidationError(error.code, getValidationErrorsFromStripeError(error) || {});
 		}
-		throw new StripeSetupIntentError( error );
+		throw new StripeSetupIntentError(error);
 	}
 	return setupIntent;
 }
@@ -147,21 +141,21 @@ export async function createStripeSetupIntent( stripe, stripeConfiguration, paym
  * @param {string} paymentIntentClientSecret The client secret of the PaymentIntent
  * @returns {Promise} Promise that will be resolved or rejected
  */
-export async function confirmStripePaymentIntent( stripeConfiguration, paymentIntentClientSecret ) {
-	debug( 'Confirming paymentIntent...', paymentIntentClientSecret );
+export async function confirmStripePaymentIntent(stripeConfiguration, paymentIntentClientSecret) {
+	debug('Confirming paymentIntent...', paymentIntentClientSecret);
 
 	// Setup a stripe instance that is disconnected from our Elements
 	// Otherwise, we'll create another paymentMethod, which we don't want
-	const standAloneStripe = window.Stripe( stripeConfiguration.public_key );
+	const standAloneStripe = window.Stripe(stripeConfiguration.public_key);
 
 	const { paymentIntent, error } = await standAloneStripe.handleCardPayment(
 		paymentIntentClientSecret,
 		{}
 	);
-	if ( error ) {
-		debug( 'Confirming paymentIntent failed', error );
+	if (error) {
+		debug('Confirming paymentIntent failed', error);
 		// Note that this is a promise rejection
-		throw new StripePaymentMethodError( error );
+		throw new StripePaymentMethodError(error);
 	}
 
 	return paymentIntent;
@@ -175,25 +169,25 @@ export async function confirmStripePaymentIntent( stripeConfiguration, paymentIn
  * @param {object} error An error returned by a Stripe function like createPaymentMethod
  * @returns {object | null} An object keyed by input field name whose values are arrays of error strings for that field
  */
-function getValidationErrorsFromStripeError( error ) {
-	if ( error.type !== 'validation_error' || ! error.code ) {
+function getValidationErrorsFromStripeError(error) {
+	if (error.type !== 'validation_error' || !error.code) {
 		return null;
 	}
-	switch ( error.code ) {
+	switch (error.code) {
 		case 'incomplete_number':
 		case 'invalid_number':
 			return {
-				card_number: [ error.message ],
+				card_number: [error.message],
 			};
 		case 'incomplete_cvc':
 		case 'invalid_cvc':
 			return {
-				card_cvc: [ error.message ],
+				card_cvc: [error.message],
 			};
 		case 'incomplete_expiry':
 		case 'invalid_expiry':
 			return {
-				card_expiry: [ error.message ],
+				card_expiry: [error.message],
 			};
 	}
 	return null;
@@ -209,41 +203,41 @@ function getValidationErrorsFromStripeError( error ) {
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
  * @returns {object} { stripeJs, isStripeLoading }
  */
-function useStripeJs( stripeConfiguration ) {
-	const [ stripeJs, setStripeJs ] = useState( null );
-	const [ isStripeLoading, setStripeLoading ] = useState( true );
-	const [ stripeLoadingError, setStripeLoadingError ] = useState();
-	useEffect( () => {
+function useStripeJs(stripeConfiguration) {
+	const [stripeJs, setStripeJs] = useState(null);
+	const [isStripeLoading, setStripeLoading] = useState(true);
+	const [stripeLoadingError, setStripeLoadingError] = useState();
+	useEffect(() => {
 		let isSubscribed = true;
 		async function loadAndInitStripe() {
-			if ( ! stripeConfiguration ) {
+			if (!stripeConfiguration) {
 				return;
 			}
-			if ( window.Stripe ) {
-				debug( 'stripe.js already loaded' );
-				setStripeLoading( false );
-				if ( ! stripeJs ) {
+			if (window.Stripe) {
+				debug('stripe.js already loaded');
+				setStripeLoading(false);
+				if (!stripeJs) {
 					setStripeLoadingError();
-					setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+					setStripeJs(window.Stripe(stripeConfiguration.public_key));
 				}
 				return;
 			}
-			debug( 'loading stripe.js...' );
-			await loadScript( stripeConfiguration.js_url );
-			debug( 'stripe.js loaded!' );
-			isSubscribed && setStripeLoading( false );
+			debug('loading stripe.js...');
+			await loadScript(stripeConfiguration.js_url);
+			debug('stripe.js loaded!');
+			isSubscribed && setStripeLoading(false);
 			isSubscribed && setStripeLoadingError();
-			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+			isSubscribed && setStripeJs(window.Stripe(stripeConfiguration.public_key));
 		}
 
-		loadAndInitStripe().catch( error => {
-			debug( 'error while loading stripeJs', error );
-			isSubscribed && setStripeLoading( false );
-			isSubscribed && setStripeLoadingError( error );
-		} );
+		loadAndInitStripe().catch((error) => {
+			debug('error while loading stripeJs', error);
+			isSubscribed && setStripeLoading(false);
+			isSubscribed && setStripeLoadingError(error);
+		});
 
-		return () => ( isSubscribed = false );
-	}, [ stripeConfiguration, stripeJs ] );
+		return () => (isSubscribed = false);
+	}, [stripeConfiguration, stripeJs]);
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
@@ -268,34 +262,34 @@ function useStripeJs( stripeConfiguration ) {
  * @param {Function} fetchStripeConfiguration (optional) If provided, will call instead of getStripeConfiguration
  * @returns {object} See above
  */
-function useStripeConfiguration( requestArgs, fetchStripeConfiguration ) {
-	const [ stripeError, setStripeError ] = useState();
-	const [ stripeConfiguration, setStripeConfiguration ] = useState();
-	useEffect( () => {
+function useStripeConfiguration(requestArgs, fetchStripeConfiguration) {
+	const [stripeError, setStripeError] = useState();
+	const [stripeConfiguration, setStripeConfiguration] = useState();
+	useEffect(() => {
 		const getConfig = fetchStripeConfiguration || getStripeConfiguration;
-		debug( 'loading stripe configuration' );
+		debug('loading stripe configuration');
 		let isSubscribed = true;
-		getConfig( requestArgs || {} ).then(
-			configuration => isSubscribed && setStripeConfiguration( configuration )
+		getConfig(requestArgs || {}).then(
+			(configuration) => isSubscribed && setStripeConfiguration(configuration)
 		);
-		return () => ( isSubscribed = false );
-	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
+		return () => (isSubscribed = false);
+	}, [requestArgs, stripeError, fetchStripeConfiguration]);
 	return { stripeConfiguration, setStripeError };
 }
 
-function StripeHookProviderInnerWrapper( { stripe, stripeData, children } ) {
+function StripeHookProviderInnerWrapper({ stripe, stripeData, children }) {
 	const updatedStripeData = { ...stripeData, stripe };
-	return <StripeContext.Provider value={ updatedStripeData }>{ children }</StripeContext.Provider>;
+	return <StripeContext.Provider value={updatedStripeData}>{children}</StripeContext.Provider>;
 }
-const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
+const StripeInjectedWrapper = injectStripe(StripeHookProviderInnerWrapper);
 
-export function StripeHookProvider( { children, configurationArgs, fetchStripeConfiguration } ) {
-	debug( 'rendering StripeHookProvider' );
+export function StripeHookProvider({ children, configurationArgs, fetchStripeConfiguration }) {
+	debug('rendering StripeHookProvider');
 	const { stripeConfiguration, setStripeError } = useStripeConfiguration(
 		configurationArgs,
 		fetchStripeConfiguration
 	);
-	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
+	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs(stripeConfiguration);
 
 	const stripeData = {
 		stripe: null, // This must be set inside the injected component
@@ -306,9 +300,9 @@ export function StripeHookProvider( { children, configurationArgs, fetchStripeCo
 	};
 
 	return (
-		<StripeProvider stripe={ stripeJs }>
+		<StripeProvider stripe={stripeJs}>
 			<Elements>
-				<StripeInjectedWrapper stripeData={ stripeData }>{ children }</StripeInjectedWrapper>
+				<StripeInjectedWrapper stripeData={stripeData}>{children}</StripeInjectedWrapper>
 			</Elements>
 		</StripeProvider>
 	);
@@ -332,7 +326,7 @@ export function StripeHookProvider( { children, configurationArgs, fetchStripeCo
  * @returns {object} See above
  */
 export function useStripe() {
-	const stripeData = useContext( StripeContext );
+	const stripeData = useContext(StripeContext);
 	return (
 		stripeData || {
 			stripe: null,
@@ -353,10 +347,10 @@ export function useStripe() {
  * @param {object} WrappedComponent The component to wrap
  * @returns {object} WrappedComponent
  */
-export function withStripeProps( WrappedComponent ) {
-	return props => {
+export function withStripeProps(WrappedComponent) {
+	return (props) => {
 		const stripeData = useStripe();
 		const newProps = { ...props, ...stripeData };
-		return <WrappedComponent { ...newProps } />;
+		return <WrappedComponent {...newProps} />;
 	};
 }

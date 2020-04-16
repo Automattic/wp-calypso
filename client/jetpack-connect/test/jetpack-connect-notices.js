@@ -17,51 +17,51 @@ const terminalErrorNoticeType = 'notExists';
 const nonTerminalErrorNoticeType = 'retryAuth';
 const requiredProps = { translate: identity };
 
-describe( 'JetpackConnectNotices', () => {
-	test( 'Should render notice', () => {
+describe('JetpackConnectNotices', () => {
+	test('Should render notice', () => {
 		const wrapper = shallow(
-			<JetpackConnectNotices { ...requiredProps } noticeType={ terminalErrorNoticeType } />
+			<JetpackConnectNotices {...requiredProps} noticeType={terminalErrorNoticeType} />
 		);
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.isEmptyRender() ).toBe( false );
-	} );
+		expect(wrapper).toMatchSnapshot();
+		expect(wrapper.isEmptyRender()).toBe(false);
+	});
 
-	test( 'Should not render terminal notice if callback supplied', () => {
+	test('Should not render terminal notice if callback supplied', () => {
 		const onTerminalError = jest.fn();
 		const wrapper = shallow(
 			<JetpackConnectNotices
-				{ ...requiredProps }
-				noticeType={ terminalErrorNoticeType }
-				onTerminalError={ onTerminalError }
+				{...requiredProps}
+				noticeType={terminalErrorNoticeType}
+				onTerminalError={onTerminalError}
 			/>
 		);
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.isEmptyRender() ).toBe( true );
-	} );
+		expect(wrapper).toMatchSnapshot();
+		expect(wrapper.isEmptyRender()).toBe(true);
+	});
 
-	test( 'Should call callback on terminal error', () => {
+	test('Should call callback on terminal error', () => {
 		const onTerminalError = jest.fn();
 		shallow(
 			<JetpackConnectNotices
-				{ ...requiredProps }
-				noticeType={ terminalErrorNoticeType }
-				onTerminalError={ onTerminalError }
+				{...requiredProps}
+				noticeType={terminalErrorNoticeType}
+				onTerminalError={onTerminalError}
 			/>
 		);
-		expect( onTerminalError ).toHaveBeenCalledTimes( 1 );
-	} );
+		expect(onTerminalError).toHaveBeenCalledTimes(1);
+	});
 
-	test( 'Should render non-terminal notice if callback supplied', () => {
+	test('Should render non-terminal notice if callback supplied', () => {
 		const onTerminalError = jest.fn();
 		const wrapper = shallow(
 			<JetpackConnectNotices
-				{ ...requiredProps }
-				noticeType={ nonTerminalErrorNoticeType }
-				onTerminalError={ onTerminalError }
+				{...requiredProps}
+				noticeType={nonTerminalErrorNoticeType}
+				onTerminalError={onTerminalError}
 			/>
 		);
-		expect( onTerminalError ).not.toHaveBeenCalled();
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.isEmptyRender() ).toBe( false );
-	} );
-} );
+		expect(onTerminalError).not.toHaveBeenCalled();
+		expect(wrapper).toMatchSnapshot();
+		expect(wrapper.isEmptyRender()).toBe(false);
+	});
+});

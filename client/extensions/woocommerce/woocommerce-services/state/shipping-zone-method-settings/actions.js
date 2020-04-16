@@ -13,7 +13,7 @@ import {
 	isShippingZoneMethodSettingsLoading,
 } from './selectors';
 
-export const fetchShippingZoneMethodSettingsSuccess = ( siteId, instanceId, data ) => {
+export const fetchShippingZoneMethodSettingsSuccess = (siteId, instanceId, data) => {
 	return {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS,
 		siteId,
@@ -22,13 +22,13 @@ export const fetchShippingZoneMethodSettingsSuccess = ( siteId, instanceId, data
 	};
 };
 
-export const fetchShippingZoneMethodSettings = ( siteId, methodId, instanceId ) => (
+export const fetchShippingZoneMethodSettings = (siteId, methodId, instanceId) => (
 	dispatch,
 	getState
 ) => {
 	if (
-		isShippingZoneMethodSettingsLoaded( getState(), instanceId, siteId ) ||
-		isShippingZoneMethodSettingsLoading( getState(), instanceId, siteId )
+		isShippingZoneMethodSettingsLoaded(getState(), instanceId, siteId) ||
+		isShippingZoneMethodSettingsLoading(getState(), instanceId, siteId)
 	) {
 		return;
 	}
@@ -39,10 +39,10 @@ export const fetchShippingZoneMethodSettings = ( siteId, methodId, instanceId ) 
 		siteId,
 	};
 
-	dispatch( getAction );
+	dispatch(getAction);
 
 	return api
-		.get( siteId, api.url.serviceSettings( methodId, instanceId ) )
-		.then( data => dispatch( fetchShippingZoneMethodSettingsSuccess( siteId, instanceId, data ) ) )
-		.catch( err => dispatch( setError( siteId, getAction, err ) ) );
+		.get(siteId, api.url.serviceSettings(methodId, instanceId))
+		.then((data) => dispatch(fetchShippingZoneMethodSettingsSuccess(siteId, instanceId, data)))
+		.catch((err) => dispatch(setError(siteId, getAction, err)));
 };

@@ -18,9 +18,9 @@ const defaultProps = {
 	plural: 'Original translations',
 };
 
-describe( '<Translatable /> ', () => {
-	test( 'should render', () => {
-		const wrapper = shallow( <Translatable { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-	} );
-} );
+describe('<Translatable /> ', () => {
+	test('should render', () => {
+		const wrapper = shallow(<Translatable {...defaultProps} />);
+		expect(wrapper).toMatchSnapshot();
+	});
+});

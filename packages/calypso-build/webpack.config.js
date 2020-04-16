@@ -6,21 +6,21 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
-const path = require( 'path' );
-const process = require( 'process' );
-const webpack = require( 'webpack' );
-const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
-const FileConfig = require( './webpack/file-loader' );
-const Minify = require( './webpack/minify' );
-const SassConfig = require( './webpack/sass' );
-const TranspileConfig = require( './webpack/transpile' );
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const fs = require('fs');
+const path = require('path');
+const process = require('process');
+const webpack = require('webpack');
+const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
+const FileConfig = require('./webpack/file-loader');
+const Minify = require('./webpack/minify');
+const SassConfig = require('./webpack/sass');
+const TranspileConfig = require('./webpack/transpile');
+const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
 
 /**
  * Internal dependencies
  */
-const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
+const { cssNameFromFilename, shouldTranspileDependency } = require('./webpack/util');
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
@@ -50,38 +50,38 @@ function getWebpackConfig(
 	{
 		entry,
 		'output-chunk-filename': outputChunkFilename,
-		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
+		'output-path': outputPath = path.join(process.cwd(), 'dist'),
 		'output-filename': outputFilename = '[name].js',
 		'output-library-target': outputLibraryTarget = 'window',
 	}
 ) {
 	const workerCount = 1;
 
-	const cssFilename = cssNameFromFilename( outputFilename );
-	const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+	const cssFilename = cssNameFromFilename(outputFilename);
+	const cssChunkFilename = cssNameFromFilename(outputChunkFilename);
 
-	let babelConfig = path.join( process.cwd(), 'babel.config.js' );
+	let babelConfig = path.join(process.cwd(), 'babel.config.js');
 	let presets = [];
-	if ( ! fs.existsSync( babelConfig ) ) {
+	if (!fs.existsSync(babelConfig)) {
 		// Default to this package's Babel presets
 		presets = [
-			path.join( __dirname, 'babel', 'default' ),
-			env.WP && path.join( __dirname, 'babel', 'wordpress-element' ),
-		].filter( Boolean );
+			path.join(__dirname, 'babel', 'default'),
+			env.WP && path.join(__dirname, 'babel', 'wordpress-element'),
+		].filter(Boolean);
 		babelConfig = undefined;
 	}
 
 	let postCssConfigPath = process.cwd();
-	if ( ! fs.existsSync( path.join( postCssConfigPath, 'postcss.config.js' ) ) ) {
+	if (!fs.existsSync(path.join(postCssConfigPath, 'postcss.config.js'))) {
 		// Default to this package's PostCSS config
 		postCssConfigPath = __dirname;
 	}
 
 	const webpackConfig = {
-		bail: ! isDevelopment,
+		bail: !isDevelopment,
 		entry,
 		mode: isDevelopment ? 'development' : 'production',
-		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
+		devtool: process.env.SOURCEMAP || (isDevelopment ? '#eval' : false),
 		output: {
 			chunkFilename: outputChunkFilename,
 			path: outputPath,
@@ -89,61 +89,61 @@ function getWebpackConfig(
 			libraryTarget: outputLibraryTarget,
 		},
 		optimization: {
-			minimize: ! isDevelopment,
-			minimizer: Minify( {
+			minimize: !isDevelopment,
+			minimizer: Minify({
 				cache: process.env.CIRCLECI
-					? `${ process.env.HOME }/terser-cache`
+					? `${process.env.HOME}/terser-cache`
 					: 'docker' !== process.env.CONTAINER,
 				parallel: workerCount,
-				sourceMap: Boolean( process.env.SOURCEMAP ),
+				sourceMap: Boolean(process.env.SOURCEMAP),
 				extractComments: false,
 				terserOptions: {
 					ecma: 5,
 					safari10: true,
 					mangle: true,
 				},
-			} ),
+			}),
 		},
 		module: {
 			rules: [
-				TranspileConfig.loader( {
+				TranspileConfig.loader({
 					cacheDirectory: true,
 					configFile: babelConfig,
 					exclude: /node_modules\//,
 					presets,
 					workerCount,
-				} ),
-				TranspileConfig.loader( {
+				}),
+				TranspileConfig.loader({
 					cacheDirectory: true,
 					include: shouldTranspileDependency,
-					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
+					presets: [path.join(__dirname, 'babel', 'dependencies')],
 					workerCount,
-				} ),
-				SassConfig.loader( { postCssConfig: { path: postCssConfigPath } } ),
+				}),
+				SassConfig.loader({ postCssConfig: { path: postCssConfigPath } }),
 				FileConfig.loader(),
 			],
 		},
 		resolve: {
-			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
-			modules: [ 'node_modules' ],
+			extensions: ['.json', '.js', '.jsx', '.ts', '.tsx'],
+			modules: ['node_modules'],
 		},
 		node: false,
 		plugins: [
-			new webpack.DefinePlugin( {
-				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
+			new webpack.DefinePlugin({
+				'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
 				'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
-					!! process.env.FORCE_REDUCED_MOTION || false
+					!!process.env.FORCE_REDUCED_MOTION || false
 				),
 				global: 'window',
-			} ),
-			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			...SassConfig.plugins( {
+			}),
+			new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+			...SassConfig.plugins({
 				chunkFilename: cssChunkFilename,
 				filename: cssFilename,
-				minify: ! isDevelopment,
-			} ),
+				minify: !isDevelopment,
+			}),
 			new DuplicatePackageCheckerPlugin(),
-			...( env.WP ? [ new DependencyExtractionWebpackPlugin( { injectPolyfill: true } ) ] : [] ),
+			...(env.WP ? [new DependencyExtractionWebpackPlugin({ injectPolyfill: true })] : []),
 		],
 	};
 

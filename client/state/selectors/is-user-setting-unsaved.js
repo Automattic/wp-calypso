@@ -11,6 +11,6 @@ import { has } from 'lodash';
  * @param  {string} settingName setting name
  * @returns {boolean} is there unsaved value for the setting?
  */
-export default function isUserSettingUnsaved( state, settingName ) {
-	return has( state, [ 'userSettings', 'unsavedSettings', settingName ] );
+export default function isUserSettingUnsaved(state, settingName) {
+	return has(state, ['userSettings', 'unsavedSettings', settingName]);
 }

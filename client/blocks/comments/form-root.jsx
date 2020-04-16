@@ -16,29 +16,29 @@ import PostCommentForm from './form';
 /*
  * A component for displaying a comment form at the root of a conversation.
  */
-const PostCommentFormRoot = ( {
+const PostCommentFormRoot = ({
 	post,
 	commentText,
 	activeReplyCommentId,
 	commentsTree,
 	onUpdateCommentText = noop,
-} ) => {
+}) => {
 	// Are we displaying the comment form elsewhere? If so, don't render the root form.
 	if (
 		activeReplyCommentId ||
-		some( commentsTree, comment => {
-			return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
-		} )
+		some(commentsTree, (comment) => {
+			return comment.data && comment.data.isPlaceholder && !comment.data.parent;
+		})
 	) {
 		return null;
 	}
 
 	return (
 		<PostCommentForm
-			post={ post }
-			parentCommentId={ null }
-			commentText={ commentText }
-			onUpdateCommentText={ onUpdateCommentText }
+			post={post}
+			parentCommentId={null}
+			commentText={commentText}
+			onUpdateCommentText={onUpdateCommentText}
 		/>
 	);
 };

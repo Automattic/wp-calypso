@@ -4,15 +4,15 @@
 
 import React from 'react';
 
-const SidebarHeading = ( { children, onClick, ...extraProps } ) => {
+const SidebarHeading = ({ children, onClick, ...extraProps }) => {
 	const tabIndex = onClick ? 0 : -1;
 
 	let onKeyDown = null;
 
-	if ( onClick ) {
-		onKeyDown = event => {
+	if (onClick) {
+		onKeyDown = (event) => {
 			// Trigger click for enter, similarly to default brower behavior for <a> or <button>
-			if ( 13 === event.keyCode ) {
+			if (13 === event.keyCode) {
 				event.preventDefault();
 				onClick();
 			}
@@ -22,13 +22,13 @@ const SidebarHeading = ( { children, onClick, ...extraProps } ) => {
 	/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 	return (
 		<h2
-			tabIndex={ tabIndex }
+			tabIndex={tabIndex}
 			className="sidebar__heading"
-			onKeyDown={ onKeyDown }
-			onClick={ onClick }
-			{ ...extraProps }
+			onKeyDown={onKeyDown}
+			onClick={onClick}
+			{...extraProps}
 		>
-			{ children }
+			{children}
 		</h2>
 	);
 };

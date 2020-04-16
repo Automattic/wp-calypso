@@ -24,8 +24,8 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
  * @param  url URL to check
  * @returns     true if the given URL is located outside of Calypso
  */
-function isOutsideCalypso( url ) {
-	return !! url && ( url.startsWith( '//' ) || ! url.startsWith( '/' ) );
+function isOutsideCalypso(url) {
+	return !!url && (url.startsWith('//') || !url.startsWith('/'));
 }
 
 class ThemeMoreButton extends Component {
@@ -34,22 +34,22 @@ class ThemeMoreButton extends Component {
 	moreButtonRef = React.createRef();
 
 	togglePopover = () => {
-		this.setState( { showPopover: ! this.state.showPopover } );
-		! this.state.showPopover &&
-			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_open' );
+		this.setState({ showPopover: !this.state.showPopover });
+		!this.state.showPopover &&
+			this.props.onMoreButtonClick(this.props.themeId, this.props.index, 'popup_open');
 	};
 
-	closePopover = action => {
-		this.setState( { showPopover: false } );
-		if ( isFunction( action ) ) {
+	closePopover = (action) => {
+		this.setState({ showPopover: false });
+		if (isFunction(action)) {
 			action();
 		}
 	};
 
-	popoverAction( action, label ) {
+	popoverAction(action, label) {
 		return () => {
-			action( this.props.themeId );
-			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_' + label );
+			action(this.props.themeId);
+			this.props.onMoreButtonClick(this.props.themeId, this.props.index, 'popup_' + label);
 		};
 	}
 
@@ -61,50 +61,50 @@ class ThemeMoreButton extends Component {
 		);
 
 		return (
-			<span className={ classes }>
-				<button ref={ this.moreButtonRef } onClick={ this.togglePopover }>
-					<Gridicon icon="ellipsis" size={ 24 } />
+			<span className={classes}>
+				<button ref={this.moreButtonRef} onClick={this.togglePopover}>
+					<Gridicon icon="ellipsis" size={24} />
 				</button>
 
-				{ this.state.showPopover && (
+				{this.state.showPopover && (
 					<PopoverMenu
-						context={ this.moreButtonRef.current }
+						context={this.moreButtonRef.current}
 						isVisible
-						onClose={ this.closePopover }
+						onClose={this.closePopover}
 						position="top left"
 					>
-						{ map( this.props.options, ( option, key ) => {
-							if ( option.separator ) {
-								return <PopoverMenuSeparator key={ key } />;
+						{map(this.props.options, (option, key) => {
+							if (option.separator) {
+								return <PopoverMenuSeparator key={key} />;
 							}
-							if ( option.getUrl ) {
-								const url = option.getUrl( this.props.themeId );
+							if (option.getUrl) {
+								const url = option.getUrl(this.props.themeId);
 								return (
 									<PopoverMenuItem
-										key={ option.label }
-										action={ this.popoverAction( option.action, option.label ) }
-										href={ url }
-										target={ isOutsideCalypso( url ) ? '_blank' : null }
+										key={option.label}
+										action={this.popoverAction(option.action, option.label)}
+										href={url}
+										target={isOutsideCalypso(url) ? '_blank' : null}
 									>
-										{ option.label }
+										{option.label}
 									</PopoverMenuItem>
 								);
 							}
-							if ( option.action ) {
+							if (option.action) {
 								return (
 									<PopoverMenuItem
-										key={ option.label }
-										action={ this.popoverAction( option.action, option.label ) }
+										key={option.label}
+										action={this.popoverAction(option.action, option.label)}
 									>
-										{ option.label }
+										{option.label}
 									</PopoverMenuItem>
 								);
 							}
 							// If neither getUrl() nor action() are specified, filter this option.
 							return null;
-						} ) }
+						})}
 					</PopoverMenu>
-				) }
+				)}
 			</span>
 		);
 	}
@@ -119,12 +119,12 @@ ThemeMoreButton.propTypes = {
 	onMoreButtonClick: PropTypes.func,
 	// Options to populate the popover menu with
 	options: PropTypes.objectOf(
-		PropTypes.shape( {
+		PropTypes.shape({
 			label: PropTypes.string,
 			header: PropTypes.string,
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
-		} )
+		})
 	).isRequired,
 	active: PropTypes.bool,
 };

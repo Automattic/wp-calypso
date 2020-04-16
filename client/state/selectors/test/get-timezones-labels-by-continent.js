@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getTimezonesLabelsByContinent from 'state/selectors/get-timezones-labels-by-continent';
 
-describe( 'getTimezonesLabelsByContinent()', () => {
-	test( "should return null if `timezones` aren't synced", () => {
+describe('getTimezonesLabelsByContinent()', () => {
+	test("should return null if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
@@ -18,17 +18,17 @@ describe( 'getTimezonesLabelsByContinent()', () => {
 			},
 		};
 
-		const labelsByContinent = getTimezonesLabelsByContinent( state, 'Atlantic' );
-		expect( labelsByContinent ).to.eql( null );
-	} );
+		const labelsByContinent = getTimezonesLabelsByContinent(state, 'Atlantic');
+		expect(labelsByContinent).to.eql(null);
+	});
 
-	test( "should return null if `continent` isn't defined", () => {
+	test("should return null if `continent` isn't defined", () => {
 		const state = {
 			timezones: {
 				byContinents: {
-					Asia: [ 'Asia/Aqtobe' ],
-					America: [ 'America/Blanc-Sablon', 'America/Boa_Vista' ],
-					Indian: [ 'Indian/Comoro' ],
+					Asia: ['Asia/Aqtobe'],
+					America: ['America/Blanc-Sablon', 'America/Boa_Vista'],
+					Indian: ['Indian/Comoro'],
 				},
 				labels: {
 					'Asia/Aqtobe': 'Aqtobe',
@@ -40,17 +40,17 @@ describe( 'getTimezonesLabelsByContinent()', () => {
 			},
 		};
 
-		const labelsByContinent = getTimezonesLabelsByContinent( state );
-		expect( labelsByContinent ).to.eql( null );
-	} );
+		const labelsByContinent = getTimezonesLabelsByContinent(state);
+		expect(labelsByContinent).to.eql(null);
+	});
 
-	test( 'should return timezones by contienent object data', () => {
+	test('should return timezones by contienent object data', () => {
 		const state = {
 			timezones: {
 				byContinents: {
-					Asia: [ 'Asia/Aqtobe' ],
-					America: [ 'America/Blanc-Sablon', 'America/Boa_Vista' ],
-					Indian: [ 'Indian/Comoro' ],
+					Asia: ['Asia/Aqtobe'],
+					America: ['America/Blanc-Sablon', 'America/Boa_Vista'],
+					Indian: ['Indian/Comoro'],
 				},
 				labels: {
 					'Asia/Aqtobe': 'Aqtobe',
@@ -62,10 +62,10 @@ describe( 'getTimezonesLabelsByContinent()', () => {
 			},
 		};
 
-		const labelsByContinent = getTimezonesLabelsByContinent( state, 'America' );
-		expect( labelsByContinent ).to.eql( {
+		const labelsByContinent = getTimezonesLabelsByContinent(state, 'America');
+		expect(labelsByContinent).to.eql({
 			'America/Blanc-Sablon': 'Blanc-Sablon',
 			'America/Boa_Vista': 'Boa Vista',
-		} );
-	} );
-} );
+		});
+	});
+});

@@ -14,11 +14,11 @@ import 'state/posts/init';
  * @param   {object}  query  Post query object
  * @returns {?number}        Total number of found items
  */
-export function getPostsFoundForQuery( state, siteId, query ) {
-	const manager = getQueryManager( state, siteId );
-	if ( ! manager ) {
+export function getPostsFoundForQuery(state, siteId, query) {
+	const manager = getQueryManager(state, siteId);
+	if (!manager) {
 		return null;
 	}
 
-	return manager.getFound( query );
+	return manager.getFound(query);
 }

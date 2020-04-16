@@ -12,9 +12,9 @@ import {
 	isRequestingSiteProducts,
 } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#getProductsBySiteId()', () => {
-		test( 'should return products by site id', () => {
+describe('selectors', () => {
+	describe('#getProductsBySiteId()', () => {
+		test('should return products by site id', () => {
 			const products1 = {
 				data: { first_product: { available: true }, second_product: { available: false } },
 			};
@@ -29,14 +29,14 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const products = getProductsBySiteId( state, 2916284 );
+			const products = getProductsBySiteId(state, 2916284);
 
-			expect( products ).to.eql( products1 );
-		} );
-	} );
+			expect(products).to.eql(products1);
+		});
+	});
 
-	describe( '#getAvailableProductsBySiteId()', () => {
-		test( 'should return available products by site id', () => {
+	describe('#getAvailableProductsBySiteId()', () => {
+		test('should return available products by site id', () => {
 			const state = {
 				sites: {
 					products: {
@@ -51,16 +51,16 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const products = getAvailableProductsBySiteId( state, 2916284 );
+			const products = getAvailableProductsBySiteId(state, 2916284);
 
-			expect( products ).to.eql( {
+			expect(products).to.eql({
 				data: { first_product: { available: true }, third_product: { available: true } },
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#isRequestingSiteProducts()', () => {
-		test( 'should return true if we are fetching products', () => {
+	describe('#isRequestingSiteProducts()', () => {
+		test('should return true if we are fetching products', () => {
 			const state = {
 				sites: {
 					products: {
@@ -80,9 +80,9 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isRequestingSiteProducts( state, 2916284 ) ).to.equal( true );
-			expect( isRequestingSiteProducts( state, 77203074 ) ).to.equal( false );
-			expect( isRequestingSiteProducts( state, 'unknown' ) ).to.equal( false );
-		} );
-	} );
-} );
+			expect(isRequestingSiteProducts(state, 2916284)).to.equal(true);
+			expect(isRequestingSiteProducts(state, 77203074)).to.equal(false);
+			expect(isRequestingSiteProducts(state, 'unknown')).to.equal(false);
+		});
+	});
+});

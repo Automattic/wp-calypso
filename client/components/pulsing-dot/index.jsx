@@ -21,14 +21,14 @@ class PulsingDot extends React.Component {
 	componentDidMount() {
 		const { delay } = this.props;
 
-		this.timeout = setTimeout( () => {
-			this.setState( { show: true } );
-		}, delay );
+		this.timeout = setTimeout(() => {
+			this.setState({ show: true });
+		}, delay);
 	}
 
 	componentWillUnmount() {
-		if ( this.timeout ) {
-			clearTimeout( this.timeout );
+		if (this.timeout) {
+			clearTimeout(this.timeout);
 		}
 	}
 
@@ -36,12 +36,12 @@ class PulsingDot extends React.Component {
 		const { active } = this.props;
 		const { show } = this.state;
 
-		if ( ! show ) {
+		if (!show) {
 			return null;
 		}
 
-		const className = classnames( 'pulsing-dot', { 'is-active': active } );
-		return <div className={ className } />;
+		const className = classnames('pulsing-dot', { 'is-active': active });
+		return <div className={className} />;
 	}
 }
 

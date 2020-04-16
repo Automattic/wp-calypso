@@ -11,62 +11,62 @@
  * @param  {object} match - parser matching object
  * @returns {object} data object combining the strings and options passed into translate();
  */
-module.exports = function preProcessXGettextJSMatch( match ) {
+module.exports = function preProcessXGettextJSMatch(match) {
 	const finalProps = { line: match.line };
 
-	if ( ! match.arguments.length ) {
+	if (!match.arguments.length) {
 		return;
 	}
 
 	const args = match.arguments;
 	let options;
 
-	[ 'single', 'plural', 'options' ].slice( 0, args.length ).forEach( function( field, i ) {
-		if ( 'StringLiteral' === args[ i ].type ) {
-			finalProps[ field ] = makeDoubleQuoted( args[ i ].extra.raw );
-		} else if ( 'BinaryExpression' === args[ i ].type ) {
-			finalProps[ field ] = encapsulateString( concatenateBinaryExpression( args[ i ] ) );
-		} else if ( 'ObjectExpression' === args[ i ].type && 'undefined' === typeof options ) {
-			options = args[ i ];
-		} else if ( 'TemplateLiteral' === args[ i ].type ) {
-			finalProps[ field ] = makeDoubleQuoted( '`' + args[ i ].quasis[ 0 ].value.raw + '`' );
+	['single', 'plural', 'options'].slice(0, args.length).forEach(function (field, i) {
+		if ('StringLiteral' === args[i].type) {
+			finalProps[field] = makeDoubleQuoted(args[i].extra.raw);
+		} else if ('BinaryExpression' === args[i].type) {
+			finalProps[field] = encapsulateString(concatenateBinaryExpression(args[i]));
+		} else if ('ObjectExpression' === args[i].type && 'undefined' === typeof options) {
+			options = args[i];
+		} else if ('TemplateLiteral' === args[i].type) {
+			finalProps[field] = makeDoubleQuoted('`' + args[i].quasis[0].value.raw + '`');
 		}
-	} );
+	});
 
-	if ( 'undefined' !== typeof options ) {
+	if ('undefined' !== typeof options) {
 		// map options to finalProps object
-		options.properties.forEach( function( property ) {
+		options.properties.forEach(function (property) {
 			// key might be an  Identifier (name), or a StringLiteral (value)
 			const key = property.key.name || property.key.value;
-			if ( 'StringLiteral' === property.value.type ) {
+			if ('StringLiteral' === property.value.type) {
 				const keyName = key === 'original' ? 'single' : key;
-				finalProps[ keyName ] =
-					'comment' === key ? property.value.value : makeDoubleQuoted( property.value.extra.raw );
-			} else if ( 'ObjectExpression' === property.value.type && 'original' === key ) {
+				finalProps[keyName] =
+					'comment' === key ? property.value.value : makeDoubleQuoted(property.value.extra.raw);
+			} else if ('ObjectExpression' === property.value.type && 'original' === key) {
 				// Get pluralization strings. This clause can be removed when all translations
 				// are updated to the new approach for plurals.
-				property.value.properties.forEach( function( innerProp ) {
-					if ( 'StringLiteral' === innerProp.value.type ) {
-						finalProps[ innerProp.key.name || innerProp.key.value ] = makeDoubleQuoted(
+				property.value.properties.forEach(function (innerProp) {
+					if ('StringLiteral' === innerProp.value.type) {
+						finalProps[innerProp.key.name || innerProp.key.value] = makeDoubleQuoted(
 							innerProp.value.extra.raw
 						);
 					}
-				} );
+				});
 			}
-		} );
+		});
 	}
 
 	// We don't care about the actual count value on the server, we just want to
 	// register the translation string in GlotPress, and the real count value
 	// will be used on the client to determine which plural version to display.
-	if ( typeof finalProps.plural !== 'undefined' ) {
+	if (typeof finalProps.plural !== 'undefined') {
 		finalProps.count = 1;
 	}
 
 	// Brittle test to check for collision of the method name because d3
 	// also provides a translate() method. Longer-term solution would be
 	// better namespacing.
-	if ( ! finalProps.single ) {
+	if (!finalProps.single) {
 		return false;
 	}
 
@@ -80,19 +80,19 @@ module.exports = function preProcessXGettextJSMatch( match ) {
  * @param  {object} ASTNode - the BinaryExpression object returned from the AST parser
  * @returns {string}          - the concatenated string
  */
-function concatenateBinaryExpression( ASTNode ) {
-	if ( ASTNode.operator !== '+' ) {
+function concatenateBinaryExpression(ASTNode) {
+	if (ASTNode.operator !== '+') {
 		return false;
 	}
 
 	let result =
 		'StringLiteral' === ASTNode.left.type
 			? ASTNode.left.value
-			: concatenateBinaryExpression( ASTNode.left );
+			: concatenateBinaryExpression(ASTNode.left);
 	result +=
 		'StringLiteral' === ASTNode.right.type
 			? ASTNode.right.value
-			: concatenateBinaryExpression( ASTNode.right );
+			: concatenateBinaryExpression(ASTNode.right);
 
 	return result;
 }
@@ -104,36 +104,36 @@ function concatenateBinaryExpression( ASTNode ) {
  * @param  {string} literal - origin literal (string with quotes)
  * @returns {string}         - double quote representation of the string
  */
-function makeDoubleQuoted( literal ) {
-	if ( ! literal || literal.length < 2 ) {
+function makeDoubleQuoted(literal) {
+	if (!literal || literal.length < 2) {
 		return undefined;
 	}
 
 	// double-quoted string
-	if ( literal.charAt( 0 ) === '"' ) {
-		return literal.replace( /(\\)/g, '\\$1' );
+	if (literal.charAt(0) === '"') {
+		return literal.replace(/(\\)/g, '\\$1');
 	}
 
 	// single-quoted string
-	if ( literal.charAt( 0 ) === "'" ) {
+	if (literal.charAt(0) === "'") {
 		return (
 			'"' +
 			literal
-				.substring( 1, literal.length - 1 )
-				.replace( /\\'/g, "'" )
-				.replace( /(\\|")/g, '\\$1' ) +
+				.substring(1, literal.length - 1)
+				.replace(/\\'/g, "'")
+				.replace(/(\\|")/g, '\\$1') +
 			'"'
 		);
 	}
 
 	// ES6 string
-	if ( literal.charAt( 0 ) === '`' ) {
+	if (literal.charAt(0) === '`') {
 		return (
 			'"' +
 			literal
-				.substring( 1, literal.length - 1 )
-				.replace( /`/g, '`' )
-				.replace( /(\\|")/g, '\\$1' ) +
+				.substring(1, literal.length - 1)
+				.replace(/`/g, '`')
+				.replace(/(\\|")/g, '\\$1') +
 			'"'
 		);
 	}
@@ -148,7 +148,7 @@ function makeDoubleQuoted( literal ) {
  * @param  {string} input  - origin string or other type of input
  * @returns {string}        - universal representation of string or input unchanged
  */
-function encapsulateString( input ) {
-	if ( 'string' !== typeof input ) return input;
-	return '"' + input.replace( /(\\|")/g, '\\$1' ) + '"';
+function encapsulateString(input) {
+	if ('string' !== typeof input) return input;
+	return '"' + input.replace(/(\\|")/g, '\\$1') + '"';
 }

@@ -17,9 +17,9 @@ export default class FocusableExample extends React.PureComponent {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<DocsExample>
-				<Focusable onClick={ noop }>
+				<Focusable onClick={noop}>
 					<p>
-						This keyboard-accessible component can contain other elements as children, including{ ' ' }
+						This keyboard-accessible component can contain other elements as children, including{' '}
 						<code>p</code>
 						s, <code>div</code>
 						s, or other components.
@@ -29,7 +29,7 @@ export default class FocusableExample extends React.PureComponent {
 					An example of real use is in the Language Picker, which can be considered a "complex
 					button."
 				</p>
-				<Focusable onClick={ noop } className="language-picker">
+				<Focusable onClick={noop} className="language-picker">
 					<div className="language-picker__icon" aria-hidden>
 						<div className="language-picker__icon-inner">en</div>
 					</div>

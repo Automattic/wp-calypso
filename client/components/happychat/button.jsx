@@ -51,21 +51,21 @@ export class HappychatButton extends Component {
 		translate: identity,
 	};
 
-	onClick = event => {
-		if ( this.props.allowMobileRedirect && isMobile() ) {
+	onClick = (event) => {
+		if (this.props.allowMobileRedirect && isMobile()) {
 			// For mobile clients, happychat will always use the
 			// page componet instead of the sidebar
-			page( '/me/chat' );
+			page('/me/chat');
 		} else {
 			this.props.openChat();
 		}
 
-		this.props.onClick( event );
+		this.props.onClick(event);
 	};
 
 	componentDidMount() {
-		if ( this.props.isConnectionUninitialized ) {
-			this.props.initConnection( this.props.getAuth() );
+		if (this.props.isConnectionUninitialized) {
+			this.props.initConnection(this.props.getAuth());
 		}
 	}
 
@@ -81,38 +81,38 @@ export class HappychatButton extends Component {
 			isChatActive,
 		} = this.props;
 		const showButton = isChatAvailable || isChatActive;
-		const classes = classnames( 'happychat__button', className, {
+		const classes = classnames('happychat__button', className, {
 			'has-unread': hasUnread,
-		} );
+		});
 
-		if ( ! showButton ) {
+		if (!showButton) {
 			return null;
 		}
 
 		return (
 			<Button
-				className={ classes }
-				primary={ primary }
-				borderless={ borderless }
-				onClick={ this.onClick }
-				title={ translate( 'Support Chat' ) }
+				className={classes}
+				primary={primary}
+				borderless={borderless}
+				onClick={this.onClick}
+				title={translate('Support Chat')}
 			>
-				{ children || <Gridicon icon="chat" /> }
+				{children || <Gridicon icon="chat" />}
 			</Button>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		hasUnread: hasUnreadMessages( state ),
-		getAuth: getHappychatAuth( state ),
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
-		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
-	} ),
+	(state) => ({
+		hasUnread: hasUnreadMessages(state),
+		getAuth: getHappychatAuth(state),
+		isChatAvailable: isHappychatAvailable(state),
+		isChatActive: hasActiveHappychatSession(state),
+		isConnectionUninitialized: isHappychatConnectionUninitialized(state),
+	}),
 	{
 		openChat,
 		initConnection,
 	}
-)( localize( HappychatButton ) );
+)(localize(HappychatButton));

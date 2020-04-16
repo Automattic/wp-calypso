@@ -30,39 +30,39 @@ import './credit-cards.scss';
 
 class CreditCards extends Component {
 	renderCards() {
-		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
-			return <div className="credit-cards__no-results">{ this.props.translate( 'Loading…' ) }</div>;
+		if (this.props.isFetching && !this.props.hasLoadedFromServer) {
+			return <div className="credit-cards__no-results">{this.props.translate('Loading…')}</div>;
 		}
 
-		if ( ! this.props.cards.length ) {
+		if (!this.props.cards.length) {
 			return (
 				<div className="credit-cards__no-results">
-					{ this.props.translate( 'You have no saved cards.' ) }
+					{this.props.translate('You have no saved cards.')}
 				</div>
 			);
 		}
 
-		return this.props.cards.map( card => {
+		return this.props.cards.map((card) => {
 			return (
-				<CreditCard key={ card.stored_details_id }>
-					<CreditCardDelete card={ card } />
+				<CreditCard key={card.stored_details_id}>
+					<CreditCardDelete card={card} />
 				</CreditCard>
 			);
-		} );
+		});
 	}
 
 	goToAddCreditCard() {
-		page( addCreditCard );
+		page(addCreditCard);
 	}
 
 	renderAddCreditCardButton() {
-		if ( ! config.isEnabled( 'manage/payment-methods' ) ) {
+		if (!config.isEnabled('manage/payment-methods')) {
 			return null;
 		}
 
 		return (
-			<Button primary compact className="credit-cards__add" onClick={ this.goToAddCreditCard }>
-				{ this.props.translate( 'Add credit card' ) }
+			<Button primary compact className="credit-cards__add" onClick={this.goToAddCreditCard}>
+				{this.props.translate('Add credit card')}
 			</Button>
 		);
 	}
@@ -72,20 +72,20 @@ class CreditCards extends Component {
 			<div className="credit-cards">
 				<QueryStoredCards />
 
-				<SectionHeader label={ this.props.translate( 'Manage Your Credit Cards' ) }>
-					{ this.renderAddCreditCardButton() }
+				<SectionHeader label={this.props.translate('Manage Your Credit Cards')}>
+					{this.renderAddCreditCardButton()}
 				</SectionHeader>
 
 				<Card>
-					<div>{ this.renderCards() }</div>
+					<div>{this.renderCards()}</div>
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	cards: getStoredCards( state ),
-	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
-	isFetching: isFetchingStoredCards( state ),
-} ) )( localize( CreditCards ) );
+export default connect((state) => ({
+	cards: getStoredCards(state),
+	hasLoadedFromServer: hasLoadedStoredCardsFromServer(state),
+	isFetching: isFetchingStoredCards(state),
+}))(localize(CreditCards));

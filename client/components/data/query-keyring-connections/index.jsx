@@ -24,8 +24,8 @@ class QueryKeyringConnections extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.isRequesting ) {
-			this.props.requestKeyringConnections( this.props.forceRefresh );
+		if (!this.props.isRequesting) {
+			this.props.requestKeyringConnections(this.props.forceRefresh);
 		}
 	}
 
@@ -35,8 +35,8 @@ class QueryKeyringConnections extends Component {
 }
 
 export default connect(
-	state => ( {
-		isRequesting: isKeyringConnectionsFetching( state ),
-	} ),
+	(state) => ({
+		isRequesting: isKeyringConnectionsFetching(state),
+	}),
 	{ requestKeyringConnections }
-)( QueryKeyringConnections );
+)(QueryKeyringConnections);

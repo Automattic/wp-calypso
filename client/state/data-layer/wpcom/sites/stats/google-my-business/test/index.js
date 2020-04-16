@@ -9,16 +9,16 @@ import { fetchStats, receiveStats } from '..';
 import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( '#fetchStats', () => {
-	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {
+describe('#fetchStats', () => {
+	test('should dispatch HTTP request to Google My Business stats endpoint', () => {
 		const action = {
 			siteId: 12345,
 			statType: 'queries',
 		};
 
-		const result = fetchStats( action );
+		const result = fetchStats(action);
 
-		expect( result ).toEqual(
+		expect(result).toEqual(
 			http(
 				{
 					path: '/sites/12345/stats/google-my-business/queries',
@@ -31,11 +31,11 @@ describe( '#fetchStats', () => {
 				action
 			)
 		);
-	} );
-} );
+	});
+});
 
-describe( '#receiveStats', () => {
-	test( 'should dispatch receive stats action', () => {
+describe('#receiveStats', () => {
+	test('should dispatch receive stats action', () => {
 		const action = {
 			interval: 'month',
 			aggregation: 'total',
@@ -75,9 +75,9 @@ describe( '#receiveStats', () => {
 			],
 		};
 
-		const result = receiveStats( action, data );
+		const result = receiveStats(action, data);
 
-		expect( result ).toEqual(
+		expect(result).toEqual(
 			receiveGoogleMyBusinessStats(
 				action.siteId,
 				action.statType,
@@ -86,9 +86,9 @@ describe( '#receiveStats', () => {
 				data
 			)
 		);
-	} );
+	});
 
-	test( 'should transform data snake_case to camelCase', () => {
+	test('should transform data snake_case to camelCase', () => {
 		const action = {
 			interval: 'quarter',
 			aggregation: 'daily',
@@ -96,9 +96,9 @@ describe( '#receiveStats', () => {
 			statType: 'actions',
 		};
 
-		const result = receiveStats( action, { hello_world: 'hello' } );
+		const result = receiveStats(action, { hello_world: 'hello' });
 
-		expect( result ).toEqual(
+		expect(result).toEqual(
 			receiveGoogleMyBusinessStats(
 				action.siteId,
 				action.statType,
@@ -109,5 +109,5 @@ describe( '#receiveStats', () => {
 				}
 			)
 		);
-	} );
-} );
+	});
+});

@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { getSiteRoles, isRequestingSiteRoles } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#isRequestingSiteRoles()', () => {
-		test( 'should return false if roles have never been fetched for that site', () => {
+describe('selectors', () => {
+	describe('#isRequestingSiteRoles()', () => {
+		test('should return false if roles have never been fetched for that site', () => {
 			const isRequesting = isRequestingSiteRoles(
 				{
 					siteRoles: {
@@ -22,10 +22,10 @@ describe( 'selectors', () => {
 				12345678
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if roles are not being fetched for that site', () => {
+		test('should return false if roles are not being fetched for that site', () => {
 			const isRequesting = isRequestingSiteRoles(
 				{
 					siteRoles: {
@@ -37,10 +37,10 @@ describe( 'selectors', () => {
 				12345678
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if the roles are being fetched for that site', () => {
+		test('should return true if the roles are being fetched for that site', () => {
 			const isRequesting = isRequestingSiteRoles(
 				{
 					siteRoles: {
@@ -52,11 +52,11 @@ describe( 'selectors', () => {
 				12345678
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( '#getSiteRoles()', () => {
+	describe('#getSiteRoles()', () => {
 		const roles = [
 			{
 				name: 'administrator',
@@ -83,16 +83,16 @@ describe( 'selectors', () => {
 			},
 		};
 
-		test( 'should return the roles for the site ID', () => {
-			const siteRoles = getSiteRoles( state, 12345678 );
+		test('should return the roles for the site ID', () => {
+			const siteRoles = getSiteRoles(state, 12345678);
 
-			expect( siteRoles ).to.eql( roles );
-		} );
+			expect(siteRoles).to.eql(roles);
+		});
 
-		test( 'should return undefined if there is no such site', () => {
-			const siteRoles = getSiteRoles( state, 87654321 );
+		test('should return undefined if there is no such site', () => {
+			const siteRoles = getSiteRoles(state, 87654321);
 
-			expect( siteRoles ).to.be.undefined;
-		} );
-	} );
-} );
+			expect(siteRoles).to.be.undefined;
+		});
+	});
+});

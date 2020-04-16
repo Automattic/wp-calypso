@@ -28,7 +28,7 @@ class MediaModalSecondaryActions extends Component {
 		user: PropTypes.object,
 		site: PropTypes.object,
 		selectedItems: PropTypes.array,
-		view: PropTypes.oneOf( values( ModalViews ) ),
+		view: PropTypes.oneOf(values(ModalViews)),
 		disabled: PropTypes.bool,
 		onDelete: PropTypes.func,
 		onViewDetails: PropTypes.func,
@@ -54,81 +54,81 @@ class MediaModalSecondaryActions extends Component {
 
 		const buttons = [];
 
-		if ( ModalViews.LIST === view && selectedItems.length ) {
-			buttons.push( {
+		if (ModalViews.LIST === view && selectedItems.length) {
+			buttons.push({
 				key: 'edit',
-				text: translate( 'Edit' ),
+				text: translate('Edit'),
 				disabled: disabled,
 				primary: true,
 				onClick: onViewDetails,
-			} );
+			});
 		}
 
 		const canDeleteItems =
 			selectedItems.length &&
-			every( selectedItems, item => {
-				return canUserDeleteItem( item, user, site );
-			} );
+			every(selectedItems, (item) => {
+				return canUserDeleteItem(item, user, site);
+			});
 
-		if ( ModalViews.GALLERY !== view && canDeleteItems ) {
-			const isButtonDisabled = disabled || some( selectedItems, 'transient' );
-			buttons.push( {
+		if (ModalViews.GALLERY !== view && canDeleteItems) {
+			const isButtonDisabled = disabled || some(selectedItems, 'transient');
+			buttons.push({
 				key: 'delete',
 				icon: 'trash',
 				className: 'editor-media-modal__delete',
 				disabled: isButtonDisabled,
 				onClick: isButtonDisabled ? noop : onDelete,
-			} );
+			});
 		}
 
 		return buttons;
 	}
 
 	render() {
-		if ( this.props.hideButton ) {
+		if (this.props.hideButton) {
 			return null;
 		}
 
 		return (
 			<div>
-				{ this.getButtons().map( button => (
+				{this.getButtons().map((button) => (
 					<Button
-						className={ classNames( 'editor-media-modal__secondary-action', button.className ) }
-						data-e2e-button={ button.key }
+						className={classNames('editor-media-modal__secondary-action', button.className)}
+						data-e2e-button={button.key}
 						compact
-						{ ...pick( button, [ 'key', 'disabled', 'onClick', 'primary' ] ) }
+						{...pick(button, ['key', 'disabled', 'onClick', 'primary'])}
 					>
-						{ button.icon && <Gridicon icon={ button.icon } /> }
-						{ button.text && button.text }
+						{button.icon && <Gridicon icon={button.icon} />}
+						{button.text && button.text}
 					</Button>
-				) ) }
+				))}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		view: getMediaModalView( state ),
-		user: getCurrentUser( state ),
-		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
-		hideButton: ! canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
-	} ),
+	(state, ownProps) => ({
+		view: getMediaModalView(state),
+		user: getCurrentUser(state),
+		siteSlug: ownProps.site ? getSiteSlug(state, ownProps.site.ID) : '',
+		hideButton: !canCurrentUser(state, ownProps.site.ID, 'publish_posts'),
+	}),
 	{
 		onViewDetails: flow(
-			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
-			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
-			partial( setEditorMediaModalView, ModalViews.DETAIL )
+			withAnalytics(bumpStat('editor_media_actions', 'edit_button_dialog')),
+			withAnalytics(recordGoogleEvent('Media', 'Clicked Dialog Edit Button')),
+			partial(setEditorMediaModalView, ModalViews.DETAIL)
 		),
 	},
-	function mergeProps( stateProps, dispatchProps, ownProps ) {
+	function mergeProps(stateProps, dispatchProps, ownProps) {
 		//We want to overwrite connected props if 'onViewDetails', 'view' were provided
 		return Object.assign(
 			{},
 			ownProps,
 			stateProps,
 			dispatchProps,
-			pick( ownProps, [ 'onViewDetails', 'view' ] )
+			pick(ownProps, ['onViewDetails', 'view'])
 		);
 	}
-)( localize( MediaModalSecondaryActions ) );
+)(localize(MediaModalSecondaryActions));

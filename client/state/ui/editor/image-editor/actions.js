@@ -18,7 +18,7 @@ import {
 
 // Doesn't reset image file info (src, fileName, etc).
 // additionalData can contain arbitrarily needed data.
-export function resetImageEditorState( additionalData = {} ) {
+export function resetImageEditorState(additionalData = {}) {
 	return {
 		type: IMAGE_EDITOR_STATE_RESET,
 		additionalData,
@@ -27,7 +27,7 @@ export function resetImageEditorState( additionalData = {} ) {
 
 // Resets image file info as well (src, fileName, etc).
 // additionalData can contain arbitrarily needed data.
-export function resetAllImageEditorState( additionalData = {} ) {
+export function resetAllImageEditorState(additionalData = {}) {
 	return {
 		type: IMAGE_EDITOR_STATE_RESET_ALL,
 		additionalData,
@@ -46,21 +46,21 @@ export function imageEditorFlip() {
 	};
 }
 
-export function setImageEditorAspectRatio( ratio ) {
+export function setImageEditorAspectRatio(ratio) {
 	return {
 		type: IMAGE_EDITOR_SET_ASPECT_RATIO,
 		ratio,
 	};
 }
 
-export function setImageEditorDefaultAspectRatio( ratio ) {
+export function setImageEditorDefaultAspectRatio(ratio) {
 	return {
 		type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 		ratio,
 	};
 }
 
-export function setImageEditorFileInfo( src, fileName, mimeType, title ) {
+export function setImageEditorFileInfo(src, fileName, mimeType, title) {
 	return {
 		type: IMAGE_EDITOR_SET_FILE_INFO,
 		src,
@@ -70,7 +70,7 @@ export function setImageEditorFileInfo( src, fileName, mimeType, title ) {
 	};
 }
 
-export function setImageEditorCropBounds( topBound, leftBound, bottomBound, rightBound ) {
+export function setImageEditorCropBounds(topBound, leftBound, bottomBound, rightBound) {
 	return {
 		type: IMAGE_EDITOR_SET_CROP_BOUNDS,
 		topBound,
@@ -80,7 +80,7 @@ export function setImageEditorCropBounds( topBound, leftBound, bottomBound, righ
 	};
 }
 
-export function imageEditorComputedCrop( topRatio, leftRatio, widthRatio, heightRatio ) {
+export function imageEditorComputedCrop(topRatio, leftRatio, widthRatio, heightRatio) {
 	return {
 		type: IMAGE_EDITOR_COMPUTED_CROP,
 		topRatio,
@@ -90,7 +90,7 @@ export function imageEditorComputedCrop( topRatio, leftRatio, widthRatio, height
 	};
 }
 
-export function imageEditorCrop( topRatio, leftRatio, widthRatio, heightRatio ) {
+export function imageEditorCrop(topRatio, leftRatio, widthRatio, heightRatio) {
 	return {
 		type: IMAGE_EDITOR_CROP,
 		topRatio,
@@ -100,7 +100,7 @@ export function imageEditorCrop( topRatio, leftRatio, widthRatio, heightRatio ) 
 	};
 }
 
-export function setImageEditorImageHasLoaded( width, height ) {
+export function setImageEditorImageHasLoaded(width, height) {
 	return {
 		type: IMAGE_EDITOR_IMAGE_HAS_LOADED,
 		width,

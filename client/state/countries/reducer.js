@@ -8,8 +8,8 @@ import {
 	COUNTRIES_SMS_UPDATED,
 } from 'state/action-types';
 
-const createListReducer = updatedActionType => ( state = [], action ) => {
-	switch ( action.type ) {
+const createListReducer = (updatedActionType) => (state = [], action) => {
+	switch (action.type) {
 		case updatedActionType:
 			return action.countries;
 		default:
@@ -17,8 +17,8 @@ const createListReducer = updatedActionType => ( state = [], action ) => {
 	}
 };
 
-export default combineReducers( {
-	domains: createListReducer( COUNTRIES_DOMAINS_UPDATED ),
-	payments: createListReducer( COUNTRIES_PAYMENTS_UPDATED ),
-	sms: createListReducer( COUNTRIES_SMS_UPDATED ),
-} );
+export default combineReducers({
+	domains: createListReducer(COUNTRIES_DOMAINS_UPDATED),
+	payments: createListReducer(COUNTRIES_PAYMENTS_UPDATED),
+	sms: createListReducer(COUNTRIES_SMS_UPDATED),
+});

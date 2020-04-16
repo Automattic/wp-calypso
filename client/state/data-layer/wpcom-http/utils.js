@@ -16,7 +16,7 @@ import warn from 'lib/warn';
  * @param {object} action may contain HTTP response data
  * @returns {*|undefined} response data if available
  */
-export const getData = action => get( action, 'meta.dataLayer.data', undefined );
+export const getData = (action) => get(action, 'meta.dataLayer.data', undefined);
 
 /**
  * Returns error data from an HTTP request failure action if available
@@ -24,7 +24,7 @@ export const getData = action => get( action, 'meta.dataLayer.data', undefined )
  * @param {object} action may contain HTTP response error data
  * @returns {*|undefined} error data if available
  */
-export const getError = action => get( action, 'meta.dataLayer.error', undefined );
+export const getError = (action) => get(action, 'meta.dataLayer.error', undefined);
 
 /**
  * Returns (response) headers data from an HTTP request action if available
@@ -32,7 +32,7 @@ export const getError = action => get( action, 'meta.dataLayer.error', undefined
  * @param   {object}      action Request action for which to retrieve HTTP response headers
  * @returns {*|undefined}        Headers data if available
  */
-export const getHeaders = action => get( action, 'meta.dataLayer.headers', undefined );
+export const getHeaders = (action) => get(action, 'meta.dataLayer.headers', undefined);
 
 /**
  * @typedef {object} ProgressData
@@ -46,32 +46,32 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', undef
  * @param  {object} action          may contain HTTP progress data
  * @returns {ProgressData|undefined} Progress data if available
  */
-export const getProgress = action => get( action, 'meta.dataLayer.progress', undefined );
+export const getProgress = (action) => get(action, 'meta.dataLayer.progress', undefined);
 
-const getRequestStatus = action => {
-	if ( undefined !== getError( action ) ) {
+const getRequestStatus = (action) => {
+	if (undefined !== getError(action)) {
 		return 'failure';
 	}
 
-	if ( undefined !== getData( action ) ) {
+	if (undefined !== getData(action)) {
 		return 'success';
 	}
 
 	return 'pending';
 };
 
-export const getRequestKey = fullAction => {
+export const getRequestKey = (fullAction) => {
 	const { meta, ...action } = fullAction;
-	const requestKey = get( meta, 'dataLayer.requestKey' );
+	const requestKey = get(meta, 'dataLayer.requestKey');
 
-	return requestKey ? requestKey : deterministicStringify( action );
+	return requestKey ? requestKey : deterministicStringify(action);
 };
 
 export const requestsReducerItem = (
 	state = null,
 	{ meta: { dataLayer: { lastUpdated, pendingSince, status } = {} } = {} }
 ) => {
-	if ( status === undefined ) {
+	if (status === undefined) {
 		return state;
 	}
 	return Object.assign(
@@ -82,7 +82,7 @@ export const requestsReducerItem = (
 	);
 };
 
-export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReducerItem );
+export const reducer = keyedReducer('meta.dataLayer.requestKey', requestsReducerItem);
 
 /**
  * Tracks the state of network activity for a given request type
@@ -104,23 +104,23 @@ export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReduce
  * @param {Function} next next link in HTTP middleware chain
  * @returns {Function} middleware function to track requests
  */
-export const trackRequests = next => ( store, action ) => {
+export const trackRequests = (next) => (store, action) => {
 	// progress events don't affect
 	// any tracking meta at the moment
-	if ( true !== get( action, 'meta.dataLayer.trackRequest' ) || getProgress( action ) ) {
-		return next( store, action );
+	if (true !== get(action, 'meta.dataLayer.trackRequest') || getProgress(action)) {
+		return next(store, action);
 	}
 
-	const requestKey = getRequestKey( action );
-	const status = getRequestStatus( action );
+	const requestKey = getRequestKey(action);
+	const status = getRequestStatus(action);
 	const dataLayer = Object.assign(
 		{ requestKey, status },
 		status === 'pending' ? { pendingSince: Date.now() } : { lastUpdated: Date.now() }
 	);
 
-	const dispatch = response => store.dispatch( merge( response, { meta: { dataLayer } } ) );
+	const dispatch = (response) => store.dispatch(merge(response, { meta: { dataLayer } }));
 
-	next( { ...store, dispatch }, action );
+	next({ ...store, dispatch }, action);
 };
 
 /**
@@ -160,43 +160,43 @@ export const trackRequests = next => ( store, action ) => {
  * function - options.fromApi maps between API data and Calypso data
  * @returns {object} action or action thunk to be executed in response to HTTP event
  */
-export const requestDispatcher = middleware => options => {
-	if ( ! options.fetch ) {
-		warn( 'fetch handler is not defined: no request will ever be issued' );
+export const requestDispatcher = (middleware) => (options) => {
+	if (!options.fetch) {
+		warn('fetch handler is not defined: no request will ever be issued');
 	}
 
-	if ( ! options.onSuccess ) {
-		warn( 'onSuccess handler is not defined: response to the request is being ignored' );
+	if (!options.onSuccess) {
+		warn('onSuccess handler is not defined: response to the request is being ignored');
 	}
 
-	if ( ! options.onError ) {
-		warn( 'onError handler is not defined: error during the request is being ignored' );
+	if (!options.onError) {
+		warn('onError handler is not defined: error during the request is being ignored');
 	}
 
-	return middleware( ( store, action ) => {
+	return middleware((store, action) => {
 		// create the low-level action we want to dispatch
-		const requestAction = createRequestAction( options, action );
+		const requestAction = createRequestAction(options, action);
 
 		// dispatch the low level action (if any was created) and return the result
-		if ( ! requestAction ) {
+		if (!requestAction) {
 			return;
 		}
 
-		if ( Array.isArray( requestAction ) ) {
-			return requestAction.map( store.dispatch );
+		if (Array.isArray(requestAction)) {
+			return requestAction.map(store.dispatch);
 		}
 
-		return store.dispatch( requestAction );
-	} );
+		return store.dispatch(requestAction);
+	});
 };
-export const dispatchRequest = requestDispatcher( trackRequests );
+export const dispatchRequest = requestDispatcher(trackRequests);
 
 /*
  * Converts an application-level Calypso action that's handled by the data-layer middleware
  * into a low-level action. For example, HTTP request that's being initiated, or a response
  * action with a `meta.dataLayer` property.
  */
-function createRequestAction( options, action ) {
+function createRequestAction(options, action) {
 	const {
 		fetch = noop,
 		onSuccess = noop,
@@ -205,24 +205,24 @@ function createRequestAction( options, action ) {
 		fromApi = identity,
 	} = options;
 
-	const error = getError( action );
-	if ( error ) {
-		return onError( action, error );
+	const error = getError(action);
+	if (error) {
+		return onError(action, error);
 	}
 
-	const data = getData( action );
-	if ( data ) {
+	const data = getData(action);
+	if (data) {
 		try {
-			return onSuccess( action, fromApi( data ) );
-		} catch ( err ) {
-			return onError( action, err );
+			return onSuccess(action, fromApi(data));
+		} catch (err) {
+			return onError(action, err);
 		}
 	}
 
-	const progress = getProgress( action );
-	if ( progress ) {
-		return onProgress( action, progress );
+	const progress = getProgress(action);
+	if (progress) {
+		return onProgress(action, progress);
 	}
 
-	return fetch( action );
+	return fetch(action);
 }

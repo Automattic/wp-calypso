@@ -14,8 +14,8 @@ import {
 	READER_RELATED_POSTS_RECEIVE,
 } from 'state/reader/action-types';
 
-describe( 'items', () => {
-	test( 'should store the posts by global_ID', () => {
+describe('items', () => {
+	test('should store the posts by global_ID', () => {
 		expect(
 			items(
 				{},
@@ -24,38 +24,38 @@ describe( 'items', () => {
 					payload: {
 						siteId: 1,
 						postId: 1,
-						posts: [ { global_ID: 2 }, { global_ID: 3 }, { global_ID: 4 } ],
+						posts: [{ global_ID: 2 }, { global_ID: 3 }, { global_ID: 4 }],
 					},
 				}
 			)
-		).to.deep.equal( {
-			'1-1-all': [ 2, 3, 4 ],
-		} );
-	} );
+		).to.deep.equal({
+			'1-1-all': [2, 3, 4],
+		});
+	});
 
-	test( 'should overwrite existing posts', () => {
+	test('should overwrite existing posts', () => {
 		expect(
 			items(
 				{
-					'1-1-all': [ 2, 3, 4 ],
+					'1-1-all': [2, 3, 4],
 				},
 				{
 					type: READER_RELATED_POSTS_RECEIVE,
 					payload: {
 						siteId: 1,
 						postId: 1,
-						posts: [ { global_ID: 3 }, { global_ID: 4 }, { global_ID: 9 } ],
+						posts: [{ global_ID: 3 }, { global_ID: 4 }, { global_ID: 9 }],
 					},
 				}
 			)
-		).to.deep.equal( {
-			'1-1-all': [ 3, 4, 9 ],
-		} );
-	} );
-} );
+		).to.deep.equal({
+			'1-1-all': [3, 4, 9],
+		});
+	});
+});
 
-describe( 'queuedRequests', () => {
-	test( 'request should set the flag', () => {
+describe('queuedRequests', () => {
+	test('request should set the flag', () => {
 		expect(
 			queuedRequests(
 				{},
@@ -67,12 +67,12 @@ describe( 'queuedRequests', () => {
 					},
 				}
 			)
-		).to.deep.equal( {
+		).to.deep.equal({
 			'1-1-all': true,
-		} );
-	} );
+		});
+	});
 
-	test( 'request success should unset the flag', () => {
+	test('request success should unset the flag', () => {
 		expect(
 			queuedRequests(
 				{
@@ -86,12 +86,12 @@ describe( 'queuedRequests', () => {
 					},
 				}
 			)
-		).to.deep.equal( {
+		).to.deep.equal({
 			'1-1-all': false,
-		} );
-	} );
+		});
+	});
 
-	test( 'request failure should unset the flag', () => {
+	test('request failure should unset the flag', () => {
 		expect(
 			queuedRequests(
 				{},
@@ -103,8 +103,8 @@ describe( 'queuedRequests', () => {
 					},
 				}
 			)
-		).to.deep.equal( {
+		).to.deep.equal({
 			'1-1-all': false,
-		} );
-	} );
-} );
+		});
+	});
+});

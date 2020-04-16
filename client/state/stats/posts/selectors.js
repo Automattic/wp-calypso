@@ -18,8 +18,8 @@ import 'state/stats/init';
  * @param  {object}  fields Stat fields
  * @returns {boolean}        Whether post stat is being requested
  */
-export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
-	return get( state.stats.posts.requesting, [ siteId, postId, fields.join() ], false );
+export function isRequestingPostStats(state, siteId, postId, fields = []) {
+	return get(state.stats.posts.requesting, [siteId, postId, fields.join()], false);
 }
 
 /**
@@ -32,8 +32,8 @@ export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
  * @param  {string}  stat   Stat Key
  * @returns {*}              Stat value
  */
-export function getPostStat( state, siteId, postId, stat ) {
-	return get( state.stats.posts.items, [ siteId, postId, stat ], null );
+export function getPostStat(state, siteId, postId, stat) {
+	return get(state.stats.posts.items, [siteId, postId, stat], null);
 }
 
 /**
@@ -44,6 +44,6 @@ export function getPostStat( state, siteId, postId, stat ) {
  * @param  {number}  postId Post Id
  * @returns {object}         Stats
  */
-export function getPostStats( state, siteId, postId ) {
-	return get( state.stats.posts.items, [ siteId, postId ], null );
+export function getPostStats(state, siteId, postId) {
+	return get(state.stats.posts.items, [siteId, postId], null);
 }

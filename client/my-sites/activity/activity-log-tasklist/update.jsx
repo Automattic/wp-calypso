@@ -36,52 +36,51 @@ class ActivityLogTaskUpdate extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	handleEnqueue = () => this.props.enqueue( this.props.toUpdate );
-	handleDismiss = () => this.props.dismiss( this.props.toUpdate );
-	handleNameClick = () => this.props.goToPage( this.props.slug, this.props.type );
+	handleEnqueue = () => this.props.enqueue(this.props.toUpdate);
+	handleDismiss = () => this.props.dismiss(this.props.toUpdate);
+	handleNameClick = () => this.props.goToPage(this.props.slug, this.props.type);
 
 	render() {
 		const { translate, name, version, type, disable, linked, slug, siteSlug } = this.props;
 
-		let updateType = translate( 'Plugin update available' );
-		if ( 'theme' === type ) {
-			updateType = translate( 'Theme update available' );
-		} else if ( 'core' === type ) {
-			updateType = translate( 'Core update available' );
+		let updateType = translate('Plugin update available');
+		if ('theme' === type) {
+			updateType = translate('Theme update available');
+		} else if ('core' === type) {
+			updateType = translate('Core update available');
 		}
 
-		const url =
-			'plugin' === type ? `/plugins/${ slug }/${ siteSlug }` : `/theme/${ slug }/${ siteSlug }`;
+		const url = 'plugin' === type ? `/plugins/${slug}/${siteSlug}` : `/theme/${slug}/${siteSlug}`;
 		return (
 			<Card className="activity-log-tasklist__task" compact>
 				<ActivityIcon
-					activityIcon={ 'plugin' === type || 'theme' === type ? `${ type }s` : 'my-sites' }
+					activityIcon={'plugin' === type || 'theme' === type ? `${type}s` : 'my-sites'}
 					activityStatus="warning"
 				/>
 				<span className="activity-log-tasklist__update-item">
 					<div className="activity-log-tasklist__update-text">
-						{ linked ? (
-							<a href={ url } onClick={ this.handleNameClick }>
-								{ decodeEntities( name ) }
+						{linked ? (
+							<a href={url} onClick={this.handleNameClick}>
+								{decodeEntities(name)}
 							</a>
 						) : (
 							// Add button classes so unlinked names look the same.
-							<span className="activity-log-tasklist__unlinked">{ decodeEntities( name ) }</span>
-						) }
+							<span className="activity-log-tasklist__unlinked">{decodeEntities(name)}</span>
+						)}
 						<span className="activity-log-tasklist__update-bullet">&bull;</span>
-						<span className="activity-log-tasklist__update-version">{ version }</span>
+						<span className="activity-log-tasklist__update-version">{version}</span>
 					</div>
-					<div className="activity-log-tasklist__update-type">{ updateType }</div>
+					<div className="activity-log-tasklist__update-type">{updateType}</div>
 				</span>
 				<span className="activity-log-tasklist__update-action">
 					<SplitButton
 						compact
-						label={ translate( 'Update' ) }
-						onClick={ this.handleEnqueue }
-						disabled={ disable }
+						label={translate('Update')}
+						onClick={this.handleEnqueue}
+						disabled={disable}
 					>
-						<PopoverMenuItem icon="trash" onClick={ this.handleDismiss }>
-							{ translate( 'Dismiss' ) }
+						<PopoverMenuItem icon="trash" onClick={this.handleDismiss}>
+							{translate('Dismiss')}
 						</PopoverMenuItem>
 					</SplitButton>
 				</span>
@@ -90,4 +89,4 @@ class ActivityLogTaskUpdate extends Component {
 	}
 }
 
-export default localize( ActivityLogTaskUpdate );
+export default localize(ActivityLogTaskUpdate);

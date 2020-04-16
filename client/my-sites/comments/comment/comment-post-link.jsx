@@ -17,7 +17,7 @@ import { getSiteComment } from 'state/comments/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-const CommentPostLink = ( {
+const CommentPostLink = ({
 	commentId,
 	isBulkMode,
 	isPostTitleLoaded,
@@ -27,37 +27,36 @@ const CommentPostLink = ( {
 	siteSlug,
 	status,
 	translate,
-} ) => (
+}) => (
 	<div className="comment__post-link">
-		{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
+		{!isPostTitleLoaded && <QueryPosts siteId={siteId} postId={postId} />}
 
-		<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
+		<Gridicon icon={isBulkMode ? 'chevron-right' : 'posts'} size={18} />
 
 		<CommentLink
-			commentId={ commentId }
-			href={ `/comments/${ status }/${ siteSlug }/${ postId }` }
-			tabIndex={ isBulkMode ? -1 : 0 }
+			commentId={commentId}
+			href={`/comments/${status}/${siteSlug}/${postId}`}
+			tabIndex={isBulkMode ? -1 : 0}
 		>
-			{ postTitle.trim() || translate( 'Untitled' ) }
+			{postTitle.trim() || translate('Untitled')}
 		</CommentLink>
 	</div>
 );
 
-const mapStateToProps = ( state, { commentId } ) => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
+const mapStateToProps = (state, { commentId }) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSelectedSiteSlug(state);
 
-	const comment = getSiteComment( state, siteId, commentId );
-	const commentStatus = get( comment, 'status' );
+	const comment = getSiteComment(state, siteId, commentId);
+	const commentStatus = get(comment, 'status');
 
-	const postId = get( comment, 'post.ID' );
-	const post = getSitePost( state, siteId, postId );
+	const postId = get(comment, 'post.ID');
+	const post = getSitePost(state, siteId, postId);
 	const postTitle =
-		decodeEntities( get( comment, 'post.title' ) ) ||
-		decodeEntities( stripHTML( get( post, 'excerpt' ) ) );
+		decodeEntities(get(comment, 'post.title')) || decodeEntities(stripHTML(get(post, 'excerpt')));
 
 	return {
-		isPostTitleLoaded: !! postTitle || !! post,
+		isPostTitleLoaded: !!postTitle || !!post,
 		postId,
 		postTitle,
 		siteSlug,
@@ -66,4 +65,4 @@ const mapStateToProps = ( state, { commentId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentPostLink ) );
+export default connect(mapStateToProps)(localize(CommentPostLink));

@@ -24,13 +24,13 @@ class RelatedPostCardExample extends React.Component {
 						<h1 className="reader-related-card__heading">
 							More in <a className="reader-related-card__link">Longreads</a>
 						</h1>
-						<RelatedPostsFromSameSite siteId={ LONGREADS_SITE_ID } postId={ LONGREADS_POST_ID } />
+						<RelatedPostsFromSameSite siteId={LONGREADS_SITE_ID} postId={LONGREADS_POST_ID} />
 					</div>
 					<div className="reader-related-card__blocks is-other-site">
 						<h1 className="reader-related-card__heading">
 							More in <a className="reader-related-card__link">WordPress.com</a>
 						</h1>
-						<RelatedPostsFromOtherSites siteId={ LONGREADS_SITE_ID } postId={ LONGREADS_POST_ID } />
+						<RelatedPostsFromOtherSites siteId={LONGREADS_SITE_ID} postId={LONGREADS_POST_ID} />
 					</div>
 				</Card>
 			</div>

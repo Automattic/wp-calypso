@@ -30,19 +30,19 @@ import { queriesSchema } from './schema';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function queryRequests( state = {}, action ) {
-	switch ( action.type ) {
+export function queryRequests(state = {}, action) {
+	switch (action.type) {
 		case TERMS_REQUEST:
 		case TERMS_REQUEST_SUCCESS:
 		case TERMS_REQUEST_FAILURE:
-			const serializedQuery = getSerializedTermsQuery( action.query );
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.taxonomy ]: {
-						[ serializedQuery ]: TERMS_REQUEST === action.type,
+			const serializedQuery = getSerializedTermsQuery(action.query);
+			return merge({}, state, {
+				[action.siteId]: {
+					[action.taxonomy]: {
+						[serializedQuery]: TERMS_REQUEST === action.type,
 					},
 				},
-			} );
+			});
 	}
 
 	return state;
@@ -53,65 +53,65 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping of serialized query key to an array of term IDs
  * for the query, if a query response was successfully received.
  */
-export const queries = withSchemaValidation( queriesSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const queries = withSchemaValidation(queriesSchema, (state = {}, action) => {
+	switch (action.type) {
 		case TERMS_RECEIVE: {
 			const { siteId, query, taxonomy, terms, found } = action;
-			const hasManager = state[ siteId ] && state[ siteId ][ taxonomy ];
-			const manager = hasManager ? state[ siteId ][ taxonomy ] : new TermQueryManager();
-			const nextManager = manager.receive( terms, { query, found } );
+			const hasManager = state[siteId] && state[siteId][taxonomy];
+			const manager = hasManager ? state[siteId][taxonomy] : new TermQueryManager();
+			const nextManager = manager.receive(terms, { query, found });
 
-			if ( hasManager && nextManager === state[ siteId ][ taxonomy ] ) {
+			if (hasManager && nextManager === state[siteId][taxonomy]) {
 				return state;
 			}
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ taxonomy ]: nextManager,
+				[siteId]: {
+					...state[siteId],
+					[taxonomy]: nextManager,
 				},
 			};
 		}
 		case TERM_REMOVE: {
 			const { siteId, taxonomy, termId } = action;
-			if ( ! state[ siteId ] || ! state[ siteId ][ taxonomy ] ) {
+			if (!state[siteId] || !state[siteId][taxonomy]) {
 				return state;
 			}
 
-			const nextManager = state[ siteId ][ taxonomy ].removeItem( termId );
-			if ( nextManager === state[ siteId ][ taxonomy ] ) {
+			const nextManager = state[siteId][taxonomy].removeItem(termId);
+			if (nextManager === state[siteId][taxonomy]) {
 				return state;
 			}
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ taxonomy ]: nextManager,
+				[siteId]: {
+					...state[siteId],
+					[taxonomy]: nextManager,
 				},
 			};
 		}
 		case SERIALIZE: {
-			return mapValues( state, taxonomies => {
-				return mapValues( taxonomies, ( { data, options } ) => {
+			return mapValues(state, (taxonomies) => {
+				return mapValues(taxonomies, ({ data, options }) => {
 					return { data, options };
-				} );
-			} );
+				});
+			});
 		}
 		case DESERIALIZE: {
-			return mapValues( state, taxonomies => {
-				return mapValues( taxonomies, ( { data, options } ) => {
-					return new TermQueryManager( data, options );
-				} );
-			} );
+			return mapValues(state, (taxonomies) => {
+				return mapValues(taxonomies, ({ data, options }) => {
+					return new TermQueryManager(data, options);
+				});
+			});
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	queries,
 	queryRequests,
-} );
+});

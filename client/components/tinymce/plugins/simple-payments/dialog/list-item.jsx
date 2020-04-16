@@ -34,21 +34,21 @@ class ProductListItem extends Component {
 		onTrashClick: noop,
 	};
 
-	handleRadioChange = () => this.props.onSelectedChange( this.props.paymentId );
-	handleEditClick = () => this.props.onEditClick( this.props.paymentId );
-	handleTrashClick = () => this.props.onTrashClick( this.props.paymentId );
+	handleRadioChange = () => this.props.onSelectedChange(this.props.paymentId);
+	handleEditClick = () => this.props.onEditClick(this.props.paymentId);
+	handleTrashClick = () => this.props.onTrashClick(this.props.paymentId);
 
-	formatPrice( price, currency = DEFAULT_CURRENCY ) {
-		if ( isNaN( price ) ) {
-			log( 'Simple Payments: invalid price value', {
+	formatPrice(price, currency = DEFAULT_CURRENCY) {
+		if (isNaN(price)) {
+			log('Simple Payments: invalid price value', {
 				siteId: this.props.siteId,
 				paymentId: this.props.paymentId,
 				price,
-			} );
-			return `---- ${ currency }`;
+			});
+			return `---- ${currency}`;
 		}
-		const { integer, fraction } = getCurrencyObject( price, currency );
-		return `${ integer }${ fraction } ${ currency }`;
+		const { integer, fraction } = getCurrencyObject(price, currency);
+		return `${integer}${fraction} ${currency}`;
 	}
 
 	render() {
@@ -62,36 +62,36 @@ class ProductListItem extends Component {
 			isSelected,
 			translate,
 		} = this.props;
-		const radioId = `simple-payments-list-item-radio-${ paymentId }`;
-		const labelClasses = classnames( {
+		const radioId = `simple-payments-list-item-radio-${paymentId}`;
+		const labelClasses = classnames({
 			'editor-simple-payments-modal__list-label': true,
-			'is-error': isNaN( price ),
-		} );
+			'is-error': isNaN(price),
+		});
 
 		return (
 			<CompactCard className="editor-simple-payments-modal__list-item">
 				<FormRadio
 					name="selection"
-					id={ radioId }
-					value={ paymentId }
-					checked={ isSelected }
-					onChange={ this.handleRadioChange }
+					id={radioId}
+					value={paymentId}
+					checked={isSelected}
+					onChange={this.handleRadioChange}
 				/>
-				<label className={ labelClasses } htmlFor={ radioId }>
-					<div className="editor-simple-payments-modal__list-name">{ title }</div>
-					<div>{ this.formatPrice( price, currency ) }</div>
+				<label className={labelClasses} htmlFor={radioId}>
+					<div className="editor-simple-payments-modal__list-name">{title}</div>
+					<div>{this.formatPrice(price, currency)}</div>
 				</label>
-				<ProductImage siteId={ siteId } imageId={ featuredImageId } />
+				<ProductImage siteId={siteId} imageId={featuredImageId} />
 				<EllipsisMenu
 					className="editor-simple-payments-modal__list-menu"
 					popoverClassName="is-dialog-visible"
 					position="bottom left"
 				>
-					<PopoverMenuItem icon="pencil" onClick={ this.handleEditClick }>
-						{ translate( 'Edit' ) }
+					<PopoverMenuItem icon="pencil" onClick={this.handleEditClick}>
+						{translate('Edit')}
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="trash" onClick={ this.handleTrashClick }>
-						{ translate( 'Trash' ) }
+					<PopoverMenuItem icon="trash" onClick={this.handleTrashClick}>
+						{translate('Trash')}
 					</PopoverMenuItem>
 				</EllipsisMenu>
 			</CompactCard>
@@ -99,4 +99,4 @@ class ProductListItem extends Component {
 	}
 }
 
-export default localize( ProductListItem );
+export default localize(ProductListItem);

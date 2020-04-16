@@ -11,8 +11,8 @@ import { getByPurchaseId } from 'state/purchases/selectors';
  * @param  {number}  siteId Site ID
  * @returns {?object}        Purchase object or null if not found
  */
-export default function getCurrentPlanPurchase( state, siteId ) {
-	const result = getByPurchaseId( state, getCurrentPlanPurchaseId( state, siteId ) );
+export default function getCurrentPlanPurchase(state, siteId) {
+	const result = getByPurchaseId(state, getCurrentPlanPurchaseId(state, siteId));
 	// getByPurchaseId may return `undefined`. Ensure our return is [ purchase object | null ]
 	return 'undefined' !== typeof result ? result : null;
 }

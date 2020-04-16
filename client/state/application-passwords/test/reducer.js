@@ -14,13 +14,13 @@ import {
 	APPLICATION_PASSWORDS_RECEIVE,
 } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( 'should export expected reducer keys', () => {
-		const state = reducer( undefined, {} );
-		expect( state ).toMatchSnapshot();
-	} );
+describe('reducer', () => {
+	test('should export expected reducer keys', () => {
+		const state = reducer(undefined, {});
+		expect(state).toMatchSnapshot();
+	});
 
-	describe( 'items', () => {
+	describe('items', () => {
 		const appPasswords = [
 			{
 				ID: 12345,
@@ -41,74 +41,74 @@ describe( 'reducer', () => {
 			},
 		];
 
-		test( 'should default to an empty array', () => {
-			const state = items( undefined, {} );
-			expect( state ).toEqual( [] );
-		} );
+		test('should default to an empty array', () => {
+			const state = items(undefined, {});
+			expect(state).toEqual([]);
+		});
 
-		test( 'should set application passwords to empty array when user has no application passwords', () => {
-			const state = items( undefined, {
+		test('should set application passwords to empty array when user has no application passwords', () => {
+			const state = items(undefined, {
 				type: APPLICATION_PASSWORDS_RECEIVE,
 				appPasswords: [],
-			} );
+			});
 
-			expect( state ).toEqual( [] );
-		} );
+			expect(state).toEqual([]);
+		});
 
-		test( 'should add application passwords to the initial state', () => {
-			const state = items( [], {
+		test('should add application passwords to the initial state', () => {
+			const state = items([], {
 				type: APPLICATION_PASSWORDS_RECEIVE,
 				appPasswords,
-			} );
+			});
 
-			expect( state ).toEqual( appPasswords );
-		} );
+			expect(state).toEqual(appPasswords);
+		});
 
-		test( 'should overwrite previous application passwords in state', () => {
-			const state = deepFreeze( appPasswords );
-			const newState = items( state, {
+		test('should overwrite previous application passwords in state', () => {
+			const state = deepFreeze(appPasswords);
+			const newState = items(state, {
 				type: APPLICATION_PASSWORDS_RECEIVE,
 				appPasswords: otherAppPasswords,
-			} );
+			});
 
-			expect( newState ).toEqual( otherAppPasswords );
-		} );
+			expect(newState).toEqual(otherAppPasswords);
+		});
 
-		test( 'should delete application passwords by ID from state', () => {
-			const state = deepFreeze( appPasswords );
-			const newState = items( state, {
+		test('should delete application passwords by ID from state', () => {
+			const state = deepFreeze(appPasswords);
+			const newState = items(state, {
 				type: APPLICATION_PASSWORD_DELETE_SUCCESS,
-				appPasswordId: appPasswords[ 0 ].ID,
-			} );
+				appPasswordId: appPasswords[0].ID,
+			});
 
-			expect( newState ).toEqual( [ appPasswords[ 1 ] ] );
-		} );
-	} );
+			expect(newState).toEqual([appPasswords[1]]);
+		});
+	});
 
-	describe( 'newPassword', () => {
+	describe('newPassword', () => {
 		const appPassword = 'abcd 1234 efgh 5678';
 
-		test( 'should default to null', () => {
-			const state = newPassword( undefined, {} );
-			expect( state ).toBeNull();
-		} );
+		test('should default to null', () => {
+			const state = newPassword(undefined, {});
+			expect(state).toBeNull();
+		});
 
-		test( 'should set new application password when successfully created', () => {
-			const state = newPassword( undefined, {
+		test('should set new application password when successfully created', () => {
+			const state = newPassword(undefined, {
 				type: APPLICATION_PASSWORD_CREATE_SUCCESS,
 				appPassword,
-			} );
+			});
 
-			expect( state ).toBe( appPassword );
-		} );
+			expect(state).toBe(appPassword);
+		});
 
-		test( 'should clear new application password when clearing requested', () => {
-			const state = newPassword( appPassword, {
+		test('should clear new application password when clearing requested', () => {
+			const state = newPassword(appPassword, {
 				type: APPLICATION_PASSWORD_NEW_CLEAR,
 				appPassword,
-			} );
+			});
 
-			expect( state ).toBeNull();
-		} );
-	} );
-} );
+			expect(state).toBeNull();
+		});
+	});
+});

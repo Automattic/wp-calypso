@@ -18,15 +18,15 @@ import { getEnabledPaymentMethods } from 'lib/cart-values';
  */
 import './style.scss';
 
-function PaymentMethods( { translate, cart } ) {
-	if ( ! cart.hasLoadedFromServer ) {
+function PaymentMethods({ translate, cart }) {
+	if (!cart.hasLoadedFromServer) {
 		return false;
 	}
 
-	let methods = getEnabledPaymentMethods( cart );
+	let methods = getEnabledPaymentMethods(cart);
 
-	if ( methods.includes( 'credit-card' ) ) {
-		methods.splice( methods.indexOf( 'credit-card' ), 1, 'mastercard', 'visa', 'amex', 'discover' );
+	if (methods.includes('credit-card')) {
+		methods.splice(methods.indexOf('credit-card'), 1, 'mastercard', 'visa', 'amex', 'discover');
 	}
 
 	// The web-payment method technically supports multiple digital wallets,
@@ -34,13 +34,13 @@ function PaymentMethods( { translate, cart } ) {
 	// to split web-payment up into multiple methods anyway (so that each
 	// wallet is a separate payment choice for the user), so it's fine to just
 	// hardcode this to Apple Pay in the meantime.
-	if ( methods.includes( 'web-payment' ) ) {
-		methods.splice( methods.indexOf( 'web-payment' ), 1, 'apple-pay' );
+	if (methods.includes('web-payment')) {
+		methods.splice(methods.indexOf('web-payment'), 1, 'apple-pay');
 	}
 
-	methods = intersection( methods, POSSIBLE_TYPES );
+	methods = intersection(methods, POSSIBLE_TYPES);
 
-	if ( methods.length === 0 ) {
+	if (methods.length === 0) {
 		return null;
 	}
 
@@ -48,18 +48,18 @@ function PaymentMethods( { translate, cart } ) {
 		<div className="payment-methods">
 			<Gridicon
 				icon="lock"
-				size={ 18 }
-				aria-label={ translate( 'Lock icon' ) }
+				size={18}
+				aria-label={translate('Lock icon')}
 				className="payment-methods__icon"
 			/>
-			{ translate( 'Secure payment using:', {
+			{translate('Secure payment using:', {
 				comment: 'Followed by a graphical list of payment methods available to the user',
-			} ) }
+			})}
 
 			<div className="payment-methods__methods">
-				{ methods.map( method => (
-					<PaymentLogo type={ method } key={ method } />
-				) ) }
+				{methods.map((method) => (
+					<PaymentLogo type={method} key={method} />
+				))}
 			</div>
 		</div>
 	);
@@ -70,4 +70,4 @@ PaymentMethods.propTypes = {
 	cart: PropTypes.object,
 };
 
-export default localize( PaymentMethods );
+export default localize(PaymentMethods);

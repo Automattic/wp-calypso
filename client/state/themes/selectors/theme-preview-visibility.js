@@ -9,6 +9,6 @@ import 'state/themes/init';
  * @param  {object}  state Global state tree
  * @returns {?string}  ThemePreview state
  */
-export function themePreviewVisibility( state ) {
+export function themePreviewVisibility(state) {
 	return state.themes.themePreviewVisibility;
 }

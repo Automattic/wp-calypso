@@ -17,7 +17,7 @@ import {
  * @param  {object[]} happinessEngineers Array of template objects
  * @returns {object}                      Action object
  */
-export function receiveHappinessEngineers( happinessEngineers ) {
+export function receiveHappinessEngineers(happinessEngineers) {
 	return {
 		type: HAPPINESS_ENGINEERS_RECEIVE,
 		happinessEngineers,
@@ -30,25 +30,25 @@ export function receiveHappinessEngineers( happinessEngineers ) {
  * @returns {Function} Action thunk
  */
 export function fetchHappinessEngineers() {
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: HAPPINESS_ENGINEERS_FETCH,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
 			.getHappinessEngineers()
-			.then( happinessEngineers => {
-				dispatch( receiveHappinessEngineers( happinessEngineers ) );
-				dispatch( {
+			.then((happinessEngineers) => {
+				dispatch(receiveHappinessEngineers(happinessEngineers));
+				dispatch({
 					type: HAPPINESS_ENGINEERS_FETCH_SUCCESS,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: HAPPINESS_ENGINEERS_FETCH_FAILURE,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

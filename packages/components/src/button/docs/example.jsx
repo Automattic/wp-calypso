@@ -171,6 +171,6 @@ export default class ButtonExample extends React.PureComponent {
 	};
 
 	render() {
-		return <DocsExample>{ this.props.exampleCode }</DocsExample>;
+		return <DocsExample>{this.props.exampleCode}</DocsExample>;
 	}
 }

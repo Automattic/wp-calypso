@@ -34,9 +34,9 @@ class EditorFeaturedImagePreview extends Component {
 
 	state = this.constructor.initialState;
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const currentSrc = this.src();
-		if ( ! currentSrc || currentSrc === this.src( nextProps ) ) {
+		if (!currentSrc || currentSrc === this.src(nextProps)) {
 			return;
 		}
 
@@ -49,62 +49,62 @@ class EditorFeaturedImagePreview extends Component {
 		// If the next image is the persisted copy of an in-progress upload, we
 		// should continue to show the transient blob image as the placeholder
 		// instead of a spinner, since we know it'll appear visually identical
-		if ( this.isReceivingPersistedImage( this.props, nextProps ) ) {
+		if (this.isReceivingPersistedImage(this.props, nextProps)) {
 			nextState.transientSrc = currentSrc;
 		}
 
-		this.setState( nextState );
+		this.setState(nextState);
 	}
 
-	isReceivingPersistedImage = ( props, nextProps ) => {
+	isReceivingPersistedImage = (props, nextProps) => {
 		const { siteId } = this.props;
-		if ( siteId !== nextProps.siteId ) {
+		if (siteId !== nextProps.siteId) {
 			return false;
 		}
 
 		const { image } = this.props;
-		if ( ! image || ! image.transient || ! nextProps.image ) {
+		if (!image || !image.transient || !nextProps.image) {
 			return false;
 		}
 
 		// Compare images by resolving the media store reference for the
 		// transient copy. MediaStore tracks pointers from transient media
 		// to its persisted copy, so we can compare the resolved object IDs
-		const media = MediaStore.get( siteId, image.ID );
+		const media = MediaStore.get(siteId, image.ID);
 		return media && media.ID === nextProps.image.ID;
 	};
 
-	src = ( props = this.props ) => {
-		if ( ! props.image ) {
+	src = (props = this.props) => {
+		if (!props.image) {
 			return;
 		}
 
-		return url( props.image, {
+		return url(props.image, {
 			maxWidth: this.props.maxWidth,
 			size: 'post-thumbnail',
-		} );
+		});
 	};
 
 	clearState = () => {
-		if ( ! some( this.state ) ) {
+		if (!some(this.state)) {
 			return;
 		}
 
-		this.setState( this.constructor.initialState );
+		this.setState(this.constructor.initialState);
 	};
 
 	render() {
 		const { height } = this.state;
-		const classes = classNames( 'editor-featured-image__preview', {
-			'is-transient': get( this.props.image, 'transient' ),
-			'has-assigned-height': !! height,
-		} );
+		const classes = classNames('editor-featured-image__preview', {
+			'is-transient': get(this.props.image, 'transient'),
+			'has-assigned-height': !!height,
+		});
 
 		let placeholder;
-		if ( this.state.transientSrc ) {
+		if (this.state.transientSrc) {
 			placeholder = (
 				<img
-					src={ this.state.transientSrc }
+					src={this.state.transientSrc}
 					className="editor-featured-image__preview-image"
 					alt="placeholder"
 				/>
@@ -114,24 +114,24 @@ class EditorFeaturedImagePreview extends Component {
 		}
 
 		return (
-			<div ref="preview" className={ classes } style={ { height } }>
+			<div ref="preview" className={classes} style={{ height }}>
 				<Spinner />
 				<ImagePreloader
-					placeholder={ placeholder }
-					src={ this.src() }
-					onLoad={ this.clearState }
+					placeholder={placeholder}
+					src={this.src()}
+					onLoad={this.clearState}
 					className="editor-featured-image__preview-image"
 				/>
-				{ this.props.showEditIcon && (
+				{this.props.showEditIcon && (
 					<Gridicon icon="pencil" className="editor-featured-image__edit-icon" />
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
+export default connect((state) => {
 	return {
-		siteId: getSelectedSiteId( state ),
+		siteId: getSelectedSiteId(state),
 	};
-} )( EditorFeaturedImagePreview );
+})(EditorFeaturedImagePreview);

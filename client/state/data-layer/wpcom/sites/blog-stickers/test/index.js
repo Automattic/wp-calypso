@@ -5,12 +5,12 @@ import { requestBlogStickerList, receiveBlogStickerListError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 
-describe( 'blog-sticker-list', () => {
-	describe( 'requestBlogStickerList', () => {
-		test( 'should dispatch a http request', () => {
-			const action = listBlogStickers( 123 );
-			const output = requestBlogStickerList( action );
-			expect( output ).toEqual(
+describe('blog-sticker-list', () => {
+	describe('requestBlogStickerList', () => {
+		test('should dispatch a http request', () => {
+			const action = listBlogStickers(123);
+			const output = requestBlogStickerList(action);
+			expect(output).toEqual(
 				http(
 					{
 						method: 'GET',
@@ -21,19 +21,19 @@ describe( 'blog-sticker-list', () => {
 					action
 				)
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'receiveBlogStickerListError', () => {
-		test( 'should dispatch an error notice', () => {
-			const output = receiveBlogStickerListError( { payload: { blogId: 123 } } );
-			expect( output ).toEqual(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
+	describe('receiveBlogStickerListError', () => {
+		test('should dispatch an error notice', () => {
+			const output = receiveBlogStickerListError({ payload: { blogId: 123 } });
+			expect(output).toEqual(
+				expect.objectContaining({
+					notice: expect.objectContaining({
 						status: 'is-error',
-					} ),
-				} )
+					}),
+				})
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

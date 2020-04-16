@@ -11,6 +11,6 @@ import { get, every } from 'lodash';
  * @param  {object}  savedDiscussion      discussion property returned from API POST
  * @returns {boolean}                      are there differences in local edits vs saved values?
  */
-export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
-	return every( localDiscussionEdits, ( value, key ) => get( savedDiscussion, [ key ] ) === value );
+export function isDiscussionEqual(localDiscussionEdits, savedDiscussion) {
+	return every(localDiscussionEdits, (value, key) => get(savedDiscussion, [key]) === value);
 }

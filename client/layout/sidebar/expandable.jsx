@@ -12,70 +12,65 @@ import { get, uniqueId } from 'lodash';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'layout/sidebar/menu';
 
-function containsSelectedSidebarItem( children ) {
+function containsSelectedSidebarItem(children) {
 	let selectedItemFound = false;
 
-	React.Children.forEach( children, child => {
-		if ( selectedItemFound ) {
+	React.Children.forEach(children, (child) => {
+		if (selectedItemFound) {
 			return true;
 		}
 
-		if ( get( child, 'props.selected' ) ) {
+		if (get(child, 'props.selected')) {
 			selectedItemFound = true;
 		} else {
-			const descendants = get( child, 'props.children' );
+			const descendants = get(child, 'props.children');
 
-			if ( descendants ) {
-				selectedItemFound = containsSelectedSidebarItem( descendants );
+			if (descendants) {
+				selectedItemFound = containsSelectedSidebarItem(descendants);
 			}
 		}
-	} );
+	});
 
 	return selectedItemFound;
 }
 
-export const ExpandableSidebarMenu = props => {
+export const ExpandableSidebarMenu = (props) => {
 	const { className, title, count, onClick, icon, materialIcon, materialIconStyle } = props;
 
 	let { expanded } = props;
 
-	if ( null === expanded ) {
-		expanded = containsSelectedSidebarItem( props.children );
+	if (null === expanded) {
+		expanded = containsSelectedSidebarItem(props.children);
 	}
 
-	const classes = classNames( className, {
-		'is-toggle-open': !! expanded,
+	const classes = classNames(className, {
+		'is-toggle-open': !!expanded,
 		'is-togglable': true,
-	} );
+	});
 
-	const menuId = uniqueId( 'menu' );
+	const menuId = uniqueId('menu');
 
 	return (
-		<SidebarMenu className={ classes }>
+		<SidebarMenu className={classes}>
 			<ExpandableSidebarHeading
-				title={ title }
-				count={ count }
-				onClick={ onClick }
-				icon={ icon }
-				materialIcon={ materialIcon }
-				materialIconStyle={ materialIconStyle }
-				expanded={ expanded }
-				menuId={ menuId }
+				title={title}
+				count={count}
+				onClick={onClick}
+				icon={icon}
+				materialIcon={materialIcon}
+				materialIconStyle={materialIconStyle}
+				expanded={expanded}
+				menuId={menuId}
 			/>
-			<div
-				role="region"
-				id={ menuId }
-				className="sidebar__expandable-content"
-				hidden={ ! expanded }
-			>
-				{ props.children }
+			<div role="region" id={menuId} className="sidebar__expandable-content" hidden={!expanded}>
+				{props.children}
 			</div>
 		</SidebarMenu>
 	);
 };
 
 ExpandableSidebarMenu.propTypes = {
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+	title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 	icon: PropTypes.string,

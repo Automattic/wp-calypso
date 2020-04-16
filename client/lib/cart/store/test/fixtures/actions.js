@@ -113,14 +113,14 @@ export const payments = {
 	},
 };
 
-export const transactionPaymentSetActions = mapValues( payments, payment => ( {
+export const transactionPaymentSetActions = mapValues(payments, (payment) => ({
 	type: 'TRANSACTION_PAYMENT_SET',
 	payment,
-} ) );
+}));
 
 export const paymentActionLocations = [
-	[ 'stored', { postalCode: '90001', countryCode: 'US' } ],
-	[ 'creditCard', { postalCode: '90014', countryCode: 'US1' } ],
-	[ 'credits', { postalCode: null, countryCode: null } ],
-	[ 'unrecognized', { postalCode: null, countryCode: null } ],
+	['stored', { postalCode: '90001', countryCode: 'US' }],
+	['creditCard', { postalCode: '90014', countryCode: 'US1' }],
+	['credits', { postalCode: null, countryCode: null }],
+	['unrecognized', { postalCode: null, countryCode: null }],
 ];

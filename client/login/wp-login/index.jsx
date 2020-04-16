@@ -60,100 +60,100 @@ export class Login extends React.Component {
 	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
 
 	componentDidMount() {
-		this.recordPageView( this.props );
+		this.recordPageView(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
-			this.recordPageView( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.twoFactorAuthType !== nextProps.twoFactorAuthType) {
+			this.recordPageView(nextProps);
 		}
 
-		if ( this.props.socialConnect !== nextProps.socialConnect ) {
-			this.recordPageView( nextProps );
+		if (this.props.socialConnect !== nextProps.socialConnect) {
+			this.recordPageView(nextProps);
 		}
 	}
 
-	recordPageView( props ) {
+	recordPageView(props) {
 		const { socialConnect, twoFactorAuthType } = props;
 
 		let url = '/log-in';
 		let title = 'Login';
 
-		if ( twoFactorAuthType ) {
-			url += `/${ twoFactorAuthType }`;
-			title += ` > Two-Step Authentication > ${ startCase( twoFactorAuthType ) }`;
+		if (twoFactorAuthType) {
+			url += `/${twoFactorAuthType}`;
+			title += ` > Two-Step Authentication > ${startCase(twoFactorAuthType)}`;
 		}
 
-		if ( socialConnect ) {
-			url += `/${ socialConnect }`;
+		if (socialConnect) {
+			url += `/${socialConnect}`;
 			title += ' > Social Connect';
 		}
 
-		this.props.recordPageView( url, title );
+		this.props.recordPageView(url, title);
 	}
 
 	recordBackToWpcomLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
+		this.props.recordTracksEvent('calypso_login_back_to_wpcom_link_click');
 	};
 
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
-		if ( ! isLoginView ) {
+		if (!isLoginView) {
 			return null;
 		}
 
-		return <LocaleSuggestions locale={ locale } path={ path } />;
+		return <LocaleSuggestions locale={locale} path={path} />;
 	}
 
 	renderFooter() {
 		const { isJetpack, isGutenboarding, translate } = this.props;
-		const isOauthLogin = !! this.props.oauth2Client;
+		const isOauthLogin = !!this.props.oauth2Client;
 
-		if ( isJetpack || isGutenboarding ) {
+		if (isJetpack || isGutenboarding) {
 			return null;
 		}
 
 		return (
 			<div
-				className={ classNames( 'wp-login__footer', {
+				className={classNames('wp-login__footer', {
 					'wp-login__footer--oauth': isOauthLogin,
-					'wp-login__footer--jetpack': ! isOauthLogin,
-				} ) }
+					'wp-login__footer--jetpack': !isOauthLogin,
+				})}
 			>
-				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
+				{isCrowdsignalOAuth2Client(this.props.oauth2Client) && (
 					<LoggedOutFormBackLink
-						classes={ { 'logged-out-form__link-item': false } }
-						oauth2Client={ this.props.oauth2Client }
-						recordClick={ this.recordBackToWpcomLinkClick }
+						classes={{ 'logged-out-form__link-item': false }}
+						oauth2Client={this.props.oauth2Client}
+						recordClick={this.recordBackToWpcomLinkClick}
 					/>
-				) }
+				)}
 
-				{ isOauthLogin ? (
+				{isOauthLogin ? (
 					<div className="wp-login__footer-links">
 						<a
-							href={ localizeUrl( 'https://wordpress.com/about/' ) }
+							href={localizeUrl('https://wordpress.com/about/')}
 							rel="noopener noreferrer"
 							target="_blank"
-							title={ translate( 'About' ) }
+							title={translate('About')}
 						>
-							{ translate( 'About' ) }
+							{translate('About')}
 						</a>
 						<a
-							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+							href={localizeUrl('https://automattic.com/privacy/')}
 							rel="noopener noreferrer"
 							target="_blank"
-							title={ translate( 'Privacy' ) }
+							title={translate('Privacy')}
 						>
-							{ translate( 'Privacy' ) }
+							{translate('Privacy')}
 						</a>
 						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							href={localizeUrl('https://wordpress.com/tos/')}
 							rel="noopener noreferrer"
 							target="_blank"
-							title={ translate( 'Terms of Service' ) }
+							title={translate('Terms of Service')}
 						>
-							{ translate( 'Terms of Service' ) }
+							{translate('Terms of Service')}
 						</a>
 					</div>
 				) : (
@@ -161,22 +161,22 @@ export class Login extends React.Component {
 						src="/calypso/images/jetpack/powered-by-jetpack.svg?v=20180619"
 						alt="Powered by Jetpack"
 					/>
-				) }
+				)}
 
-				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
+				{isCrowdsignalOAuth2Client(this.props.oauth2Client) && (
 					<div className="wp-login__crowdsignal-footer">
 						<p className="wp-login__crowdsignal-footer-text">
 							Powered by
-							<Gridicon icon="my-sites" size={ 18 } />
+							<Gridicon icon="my-sites" size={18} />
 							WordPress.com
 						</p>
 						<p className="wp-login__crowdsignal-footer-text">
 							An
-							<AutomatticLogo size={ 18 } />
+							<AutomatticLogo size={18} />
 							Company
 						</p>
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -201,76 +201,76 @@ export class Login extends React.Component {
 			signupUrl,
 		} = this.props;
 
-		if ( privateSite && isLoggedIn ) {
+		if (privateSite && isLoggedIn) {
 			return <PrivateSite />;
 		}
 
 		const footer = (
 			<>
-				{ ! socialConnect && (
+				{!socialConnect && (
 					<LoginLinks
-						locale={ locale }
-						privateSite={ privateSite }
-						twoFactorAuthType={ twoFactorAuthType }
-						isGutenboarding={ isGutenboarding }
-						signupUrl={ signupUrl }
+						locale={locale}
+						privateSite={privateSite}
+						twoFactorAuthType={twoFactorAuthType}
+						isGutenboarding={isGutenboarding}
+						signupUrl={signupUrl}
 					/>
-				) }
-				{ isLoginView && <TranslatorInvite path={ path } /> }
+				)}
+				{isLoginView && <TranslatorInvite path={path} />}
 			</>
 		);
 
 		return (
 			<LoginBlock
-				twoFactorAuthType={ twoFactorAuthType }
-				socialConnect={ socialConnect }
-				privateSite={ privateSite }
-				clientId={ clientId }
-				isJetpack={ isJetpack }
-				isGutenboarding={ isGutenboarding }
-				oauth2Client={ oauth2Client }
-				socialService={ socialService }
-				socialServiceResponse={ socialServiceResponse }
-				domain={ domain }
-				fromSite={ fromSite }
-				footer={ footer }
-				locale={ locale }
+				twoFactorAuthType={twoFactorAuthType}
+				socialConnect={socialConnect}
+				privateSite={privateSite}
+				clientId={clientId}
+				isJetpack={isJetpack}
+				isGutenboarding={isGutenboarding}
+				oauth2Client={oauth2Client}
+				socialService={socialService}
+				socialServiceResponse={socialServiceResponse}
+				domain={domain}
+				fromSite={fromSite}
+				footer={footer}
+				locale={locale}
 			/>
 		);
 	}
 
 	render() {
 		const { locale, translate } = this.props;
-		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
+		const canonicalUrl = localizeUrl('https://wordpress.com/log-in', locale);
 		return (
 			<div>
 				<Main className="wp-login__main">
-					{ this.renderI18nSuggestions() }
+					{this.renderI18nSuggestions()}
 
 					<DocumentHead
-						title={ translate( 'Log In' ) }
-						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
-						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
+						title={translate('Log In')}
+						link={[{ rel: 'canonical', href: canonicalUrl }]}
+						meta={[{ name: 'description', content: 'Log in to WordPress.com' }]}
 					/>
 
-					<div className="wp-login__container">{ this.renderContent() }</div>
+					<div className="wp-login__container">{this.renderContent()}</div>
 				</Main>
 
-				{ this.renderFooter() }
+				{this.renderFooter()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => ( {
-		isLoggedIn: Boolean( getCurrentUserId( state ) ),
-		locale: getCurrentLocaleSlug( state ),
-		oauth2Client: getCurrentOAuth2Client( state ),
-		isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
-	} ),
+	(state, props) => ({
+		isLoggedIn: Boolean(getCurrentUserId(state)),
+		locale: getCurrentLocaleSlug(state),
+		oauth2Client: getCurrentOAuth2Client(state),
+		isLoginView: !props.twoFactorAuthType && !props.socialConnect,
+	}),
 	{
-		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+		recordPageView: withEnhancers(recordPageView, [enhanceWithSiteType]),
 		recordTracksEvent,
 	}
-)( localize( Login ) );
+)(localize(Login));

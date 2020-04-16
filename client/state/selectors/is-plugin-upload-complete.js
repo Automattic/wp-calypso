@@ -14,6 +14,6 @@ import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progre
  * @param {number} siteId the site ID
  * @returns {boolean} true if plugin upload is complete
  */
-export default function isPluginUploadComplete( state, siteId ) {
-	return !! ( ! isPluginUploadInProgress( state, siteId ) && getUploadedPluginId( state, siteId ) );
+export default function isPluginUploadComplete(state, siteId) {
+	return !!(!isPluginUploadInProgress(state, siteId) && getUploadedPluginId(state, siteId));
 }

@@ -26,20 +26,20 @@ const Markup = {
 	 * @param  {object} options Appearance options
 	 * @returns {string}         A markup string
 	 */
-	get: function( site, media, options ) {
-		if ( ! media || media.hasOwnProperty( 'status' ) ) {
+	get: function (site, media, options) {
+		if (!media || media.hasOwnProperty('status')) {
 			return '';
 		}
 
-		const mimePrefix = MediaUtils.getMimePrefix( media );
+		const mimePrefix = MediaUtils.getMimePrefix(media);
 
 		// Attempt to find a matching function in the mimeTypes object using
 		// the MIME type prefix
-		if ( mimePrefix && 'function' === typeof Markup.mimeTypes[ mimePrefix ] ) {
-			return Markup.mimeTypes[ mimePrefix ]( site, media, options );
+		if (mimePrefix && 'function' === typeof Markup.mimeTypes[mimePrefix]) {
+			return Markup.mimeTypes[mimePrefix](site, media, options);
 		}
 
-		return Markup.link( media );
+		return Markup.link(media);
 	},
 
 	/**
@@ -49,7 +49,7 @@ const Markup = {
 	 * @param  {object} media A media object
 	 * @returns {string}       A link markup string
 	 */
-	link: function( media ) {
+	link: function (media) {
 		const element = React.createElement(
 			'a',
 			{
@@ -59,7 +59,7 @@ const Markup = {
 			media.title
 		);
 
-		return ReactDomServer.renderToStaticMarkup( element );
+		return ReactDomServer.renderToStaticMarkup(element);
 	},
 
 	/**
@@ -76,41 +76,37 @@ const Markup = {
 	 * @returns {string}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
-	caption: function( site, media ) {
+	caption: function (site, media) {
 		let img, caption, width;
 
-		if ( 'string' !== typeof media ) {
-			media = Markup.get( site, media );
+		if ('string' !== typeof media) {
+			media = Markup.get(site, media);
 		}
 
-		const parsed = parse( media );
-		if ( ! parsed || ! parsed.content ) {
+		const parsed = parse(media);
+		if (!parsed || !parsed.content) {
 			return null;
 		}
 
-		const match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
-		if ( match ) {
-			img = match[ 1 ].trim();
-			caption = match[ 2 ].trim();
+		const match = parsed.content.match(/((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i);
+		if (match) {
+			img = match[1].trim();
+			caption = match[2].trim();
 		}
 
 		width = parsed.attrs.named.width;
-		if ( ! width ) {
-			width = deserialize( img ).width;
+		if (!width) {
+			width = deserialize(img).width;
 		}
 
 		/*eslint-disable react/no-danger*/
 		return (
 			<dl
-				className={ classNames(
-					'wp-caption',
-					parsed.attrs.named.align,
-					parsed.attrs.named.classes
-				) }
-				style={ { width: parseInt( width, 10 ) } }
+				className={classNames('wp-caption', parsed.attrs.named.align, parsed.attrs.named.classes)}
+				style={{ width: parseInt(width, 10) }}
 			>
-				<dt className="wp-caption-dt" dangerouslySetInnerHTML={ { __html: img } } />
-				<dd className="wp-caption-dd">{ caption }</dd>
+				<dt className="wp-caption-dt" dangerouslySetInnerHTML={{ __html: img }} />
+				<dd className="wp-caption-dd">{caption}</dd>
 			</dl>
 		);
 		/*eslint-enable react/no-danger*/
@@ -126,7 +122,7 @@ const Markup = {
 		 * @param  {object} options Appearance options
 		 * @returns {string}         An image markup string
 		 */
-		image: function( site, media, options ) {
+		image: function (site, media, options) {
 			options = assign(
 				{
 					size: 'full',
@@ -137,32 +133,32 @@ const Markup = {
 			);
 
 			let width, height;
-			if ( 'full' === options.size ) {
+			if ('full' === options.size) {
 				width = media.width;
 				height = media.height;
 			} else {
-				const dimensions = MediaUtils.getThumbnailSizeDimensions( options.size, site );
+				const dimensions = MediaUtils.getThumbnailSizeDimensions(options.size, site);
 				const ratio = Math.min(
 					dimensions.width / media.width || Infinity,
 					dimensions.height / media.height || Infinity
 				);
 
-				width = Math.round( media.width * ratio );
-				height = Math.round( media.height * ratio );
+				width = Math.round(media.width * ratio);
+				height = Math.round(media.height * ratio);
 			}
 
 			let urlOptions;
-			if ( options.forceResize || ( site && ! site.jetpack && width && width !== media.width ) ) {
+			if (options.forceResize || (site && !site.jetpack && width && width !== media.width)) {
 				urlOptions = { maxWidth: width };
 			} else {
 				urlOptions = { size: options.size };
 			}
 
-			const img = React.createElement( 'img', {
-				src: MediaUtils.url( media, urlOptions ),
+			const img = React.createElement('img', {
+				src: MediaUtils.url(media, urlOptions),
 				alt: media.alt || media.title,
-				width: isFinite( width ) ? width : null,
-				height: isFinite( height ) ? height : null,
+				width: isFinite(width) ? width : null,
+				height: isFinite(height) ? height : null,
 				className: classNames(
 					'align' + options.align,
 					'size-' + options.size,
@@ -171,18 +167,18 @@ const Markup = {
 				// make data-istransient a boolean att https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute
 				// it is false if it doesn't exist
 				'data-istransient': media.transient ? 'istransient' : null,
-			} );
+			});
 
-			let markup = ReactDomServer.renderToStaticMarkup( img );
-			if ( media.caption && width ) {
-				markup = stringify( {
+			let markup = ReactDomServer.renderToStaticMarkup(img);
+			if (media.caption && width) {
+				markup = stringify({
 					tag: 'caption',
 					attrs: {
 						id: 'attachment_' + media.ID,
 						width: width,
 					},
-					content: [ markup, media.caption ].join( ' ' ),
-				} );
+					content: [markup, media.caption].join(' '),
+				});
 			}
 
 			return markup;
@@ -196,13 +192,13 @@ const Markup = {
 		 * @param  {object} media An audio media object
 		 * @returns {string}       An audio markup string
 		 */
-		audio: function( site, media ) {
-			return stringify( {
+		audio: function (site, media) {
+			return stringify({
 				tag: 'audio',
 				attrs: {
 					src: media.URL,
 				},
-			} );
+			});
 		},
 
 		/**
@@ -213,23 +209,23 @@ const Markup = {
 		 * @param  {string} media A video media object
 		 * @returns {string}       A video markup string
 		 */
-		video: function( site, media ) {
-			if ( MediaUtils.isVideoPressItem( media ) ) {
-				return stringify( {
+		video: function (site, media) {
+			if (MediaUtils.isVideoPressItem(media)) {
+				return stringify({
 					tag: 'wpvideo',
-					attrs: [ media.videopress_guid ],
+					attrs: [media.videopress_guid],
 					type: 'single',
-				} );
+				});
 			}
 
-			return stringify( {
+			return stringify({
 				tag: 'video',
 				attrs: {
 					src: media.URL,
 					height: media.height,
 					width: media.width,
 				},
-			} );
+			});
 		},
 	},
 };

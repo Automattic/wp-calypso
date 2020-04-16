@@ -17,12 +17,12 @@ import getSiteSlug from './get-site-slug';
  * @param {object} siteId Site ID
  * @returns {boolean} True if site title is default, false otherwise.
  */
-export default function hasDefaultSiteTitle( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
+export default function hasDefaultSiteTitle(state, siteId) {
+	const site = getRawSite(state, siteId);
+	if (!site) {
 		return null;
 	}
-	const slug = getSiteSlug( state, siteId );
+	const slug = getSiteSlug(state, siteId);
 	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
-	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
+	return site.name === i18n.translate('Site Title') || startsWith(slug, site.name);
 }

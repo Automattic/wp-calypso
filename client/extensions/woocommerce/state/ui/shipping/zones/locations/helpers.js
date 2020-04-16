@@ -11,8 +11,8 @@ import { pullAll, union } from 'lodash';
  * (i.e. the "Edit Locations" modal is still open). Same format as zoneLocationEdits
  * @returns {object} A merge of the 2 edit objects, or just zoneLocationEdits if currentLocationEdits is omitted
  */
-export const mergeLocationEdits = ( zoneLocationEdits, currentLocationEdits ) => {
-	if ( ! currentLocationEdits || currentLocationEdits.pristine ) {
+export const mergeLocationEdits = (zoneLocationEdits, currentLocationEdits) => {
+	if (!currentLocationEdits || currentLocationEdits.pristine) {
 		return zoneLocationEdits;
 	}
 	const { journal, states } = zoneLocationEdits;
@@ -23,24 +23,24 @@ export const mergeLocationEdits = ( zoneLocationEdits, currentLocationEdits ) =>
 	} = currentLocationEdits;
 
 	let mergedStates = null;
-	if ( null !== currentStates ) {
-		if ( null === states ) {
+	if (null !== currentStates) {
+		if (null === states) {
 			mergedStates = currentStates;
 		} else {
 			mergedStates = {
-				add: currentStates.removeAll ? [] : [ ...states.add ],
-				remove: currentStates.removeAll ? [] : [ ...states.remove ],
+				add: currentStates.removeAll ? [] : [...states.add],
+				remove: currentStates.removeAll ? [] : [...states.remove],
 				removeAll: states.removeAll || currentStates.removeAll,
 			};
-			pullAll( mergedStates.add, currentStates.remove );
-			pullAll( mergedStates.remove, currentStates.add );
-			mergedStates.add = union( mergedStates.add, currentStates.add );
-			mergedStates.remove = union( mergedStates.remove, currentStates.remove );
+			pullAll(mergedStates.add, currentStates.remove);
+			pullAll(mergedStates.remove, currentStates.add);
+			mergedStates.add = union(mergedStates.add, currentStates.add);
+			mergedStates.remove = union(mergedStates.remove, currentStates.remove);
 		}
 	}
 
 	return {
-		journal: [ ...journal, ...currentJournal ],
+		journal: [...journal, ...currentJournal],
 		states: mergedStates,
 		postcode: currentPostcode,
 		pristine: currentLocationEdits.pristine && zoneLocationEdits.pristine,

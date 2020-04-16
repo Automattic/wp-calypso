@@ -25,55 +25,55 @@ class TransactionsHeader extends React.Component {
 		searchValue: '',
 	};
 
-	preventEnterKeySubmission = event => {
+	preventEnterKeySubmission = (event) => {
 		event.preventDefault();
 	};
 
 	componentDidMount() {
-		document.body.addEventListener( 'click', this.closePopoverIfClickedOutside );
+		document.body.addEventListener('click', this.closePopoverIfClickedOutside);
 	}
 
 	componentWillUnmount() {
-		document.body.removeEventListener( 'click', this.closePopoverIfClickedOutside );
+		document.body.removeEventListener('click', this.closePopoverIfClickedOutside);
 	}
 
-	recordClickEvent = action => {
-		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	recordClickEvent = (action) => {
+		this.props.recordGoogleEvent('Me', 'Clicked on ' + action);
 	};
 
-	getDatePopoverItemClickHandler( analyticsEvent, date ) {
+	getDatePopoverItemClickHandler(analyticsEvent, date) {
 		return () => {
 			const { transactionType } = this.props;
-			this.recordClickEvent( 'Date Popover Item: ' + analyticsEvent );
-			this.props.setDate( transactionType, date.month, date.operator );
-			this.setState( { activePopover: '' } );
+			this.recordClickEvent('Date Popover Item: ' + analyticsEvent);
+			this.props.setDate(transactionType, date.month, date.operator);
+			this.setState({ activePopover: '' });
 		};
 	}
 
-	getAppPopoverItemClickHandler( analyticsEvent, app ) {
+	getAppPopoverItemClickHandler(analyticsEvent, app) {
 		return () => {
-			this.recordClickEvent( 'App Popover Item: ' + analyticsEvent );
-			this.props.setApp( this.props.transactionType, app );
-			this.setState( { activePopover: '' } );
+			this.recordClickEvent('App Popover Item: ' + analyticsEvent);
+			this.props.setApp(this.props.transactionType, app);
+			this.setState({ activePopover: '' });
 		};
 	}
 
 	handleDatePopoverLinkClick = () => {
-		this.recordClickEvent( 'Toggle Date Popover in Billing History' );
-		this.togglePopover( 'date' );
+		this.recordClickEvent('Toggle Date Popover in Billing History');
+		this.togglePopover('date');
 	};
 
 	handleAppsPopoverLinkClick = () => {
-		this.recordClickEvent( 'Toggle Apps Popover in Billing History' );
-		this.togglePopover( 'apps' );
+		this.recordClickEvent('Toggle Apps Popover in Billing History');
+		this.togglePopover('apps');
 	};
 
-	closePopoverIfClickedOutside = event => {
-		if ( closest( event.target, 'thead' ) ) {
+	closePopoverIfClickedOutside = (event) => {
+		if (closest(event.target, 'thead')) {
 			return;
 		}
 
-		this.setState( { activePopover: '' } );
+		this.setState({ activePopover: '' });
 	};
 
 	render() {
@@ -84,129 +84,129 @@ class TransactionsHeader extends React.Component {
 						className="billing-history__date billing-history__trans-app billing-history__header-column"
 						colSpan="3"
 					>
-						{ this.renderDatePopover() }
-						{ this.renderAppsPopover() }
+						{this.renderDatePopover()}
+						{this.renderAppsPopover()}
 					</th>
 				</tr>
 			</thead>
 		);
 	}
 
-	getFilterTitle( filter ) {
-		if ( ! filter ) {
-			return this.props.translate( 'Date' );
+	getFilterTitle(filter) {
+		if (!filter) {
+			return this.props.translate('Date');
 		}
 
-		if ( filter.older ) {
-			return this.props.translate( 'Older' );
+		if (filter.older) {
+			return this.props.translate('Older');
 		}
 
-		return this.props.moment( filter.dateString ).format( 'MMM YYYY' );
+		return this.props.moment(filter.dateString).format('MMM YYYY');
 	}
 
 	renderDatePopover() {
 		const { dateFilters, filter, translate } = this.props;
-		const selectedFilter = find( dateFilters, { value: filter.date } );
-		const selectedText = this.getFilterTitle( selectedFilter );
+		const selectedFilter = find(dateFilters, { value: filter.date });
+		const selectedText = this.getFilterTitle(selectedFilter);
 
 		return (
 			<SelectDropdown
-				selectedText={ selectedText }
-				onClick={ this.handleAppsPopoverLinkClick }
+				selectedText={selectedText}
+				onClick={this.handleAppsPopoverLinkClick}
 				className="billing-history__transactions-header-select-dropdown"
 			>
-				<SelectDropdown.Label>{ translate( 'Recent Transactions' ) }</SelectDropdown.Label>
-				{ this.renderDatePicker(
+				<SelectDropdown.Label>{translate('Recent Transactions')}</SelectDropdown.Label>
+				{this.renderDatePicker(
 					'Newest',
-					translate( 'Newest' ),
+					translate('Newest'),
 					{
 						month: null,
 						operator: null,
 					},
 					null
-				) }
+				)}
 				<SelectDropdown.Separator />
-				<SelectDropdown.Label>{ translate( 'By Month' ) }</SelectDropdown.Label>
-				{ dateFilters.map( ( dateFilter, index ) => {
+				<SelectDropdown.Label>{translate('By Month')}</SelectDropdown.Label>
+				{dateFilters.map((dateFilter, index) => {
 					let analyticsEvent = 'Current Month';
 
-					if ( 1 === index ) {
+					if (1 === index) {
 						analyticsEvent = '1 Month Before';
-					} else if ( 1 < index ) {
+					} else if (1 < index) {
 						analyticsEvent = index + ' Months Before';
 					}
 
 					return this.renderDatePicker(
 						index,
-						this.getFilterTitle( dateFilter ),
+						this.getFilterTitle(dateFilter),
 						dateFilter.value,
 						dateFilter.count,
 						analyticsEvent
 					);
-				} ) }
+				})}
 			</SelectDropdown>
 		);
 	}
 
-	togglePopover( name ) {
+	togglePopover(name) {
 		let activePopover;
-		if ( this.state.activePopover === name ) {
+		if (this.state.activePopover === name) {
 			activePopover = '';
 		} else {
 			activePopover = name;
 		}
 
-		this.setState( { activePopover: activePopover } );
+		this.setState({ activePopover: activePopover });
 	}
 
-	renderDatePicker( titleKey, titleTranslated, value, count, analyticsEvent ) {
+	renderDatePicker(titleKey, titleTranslated, value, count, analyticsEvent) {
 		const currentDate = this.props.filter.date;
-		const isSelected = isEqual( currentDate, value );
+		const isSelected = isEqual(currentDate, value);
 		analyticsEvent = 'undefined' === typeof analyticsEvent ? titleKey : analyticsEvent;
 
 		return (
 			<SelectDropdown.Item
-				key={ titleKey }
-				selected={ isSelected }
-				onClick={ this.getDatePopoverItemClickHandler( analyticsEvent, value ) }
-				count={ count }
+				key={titleKey}
+				selected={isSelected}
+				onClick={this.getDatePopoverItemClickHandler(analyticsEvent, value)}
+				count={count}
 			>
-				{ titleTranslated }
+				{titleTranslated}
 			</SelectDropdown.Item>
 		);
 	}
 
 	renderAppsPopover() {
 		const { appFilters, filter, translate } = this.props;
-		const selectedFilter = find( appFilters, { value: filter.app } );
-		const selectedText = selectedFilter ? selectedFilter.title : translate( 'All Apps' );
+		const selectedFilter = find(appFilters, { value: filter.app });
+		const selectedText = selectedFilter ? selectedFilter.title : translate('All Apps');
 
 		return (
 			<SelectDropdown
-				selectedText={ selectedText }
-				onClick={ this.handleAppsPopoverLinkClick }
+				selectedText={selectedText}
+				onClick={this.handleAppsPopoverLinkClick}
 				className="billing-history__transactions-header-select-dropdown"
 			>
-				<SelectDropdown.Label>{ translate( 'App Name' ) }</SelectDropdown.Label>
-				{ this.renderAppPicker( translate( 'All Apps' ), 'all' ) }
-				{ appFilters.map( function( { title, value, count } ) {
-					return this.renderAppPicker( title, value, count, 'Specific App' );
-				}, this ) }
+				<SelectDropdown.Label>{translate('App Name')}</SelectDropdown.Label>
+				{this.renderAppPicker(translate('All Apps'), 'all')}
+				{appFilters.map(function ({ title, value, count }) {
+					return this.renderAppPicker(title, value, count, 'Specific App');
+				}, this)}
 			</SelectDropdown>
 		);
 	}
 
-	renderAppPicker( title, app, count, analyticsEvent ) {
+	renderAppPicker(title, app, count, analyticsEvent) {
 		const selected = app === this.props.filter.app;
 
 		return (
 			<SelectDropdown.Item
-				key={ app }
-				selected={ selected }
-				onClick={ this.getAppPopoverItemClickHandler( analyticsEvent, app ) }
-				count={ count }
+				key={app}
+				selected={selected}
+				onClick={this.getAppPopoverItemClickHandler(analyticsEvent, app)}
+				count={count}
 			>
-				{ title }
+				{title}
 			</SelectDropdown.Item>
 		);
 	}
@@ -222,14 +222,14 @@ TransactionsHeader.propTypes = {
 };
 
 export default connect(
-	( state, { transactionType } ) => ( {
-		appFilters: getBillingTransactionAppFilterValues( state, transactionType ),
-		dateFilters: getBillingTransactionDateFilterValues( state, transactionType ),
-		filter: getBillingTransactionFilters( state, transactionType ),
-	} ),
+	(state, { transactionType }) => ({
+		appFilters: getBillingTransactionAppFilterValues(state, transactionType),
+		dateFilters: getBillingTransactionDateFilterValues(state, transactionType),
+		filter: getBillingTransactionFilters(state, transactionType),
+	}),
 	{
 		recordGoogleEvent,
 		setApp,
 		setDate,
 	}
-)( localize( withLocalizedMoment( TransactionsHeader ) ) );
+)(localize(withLocalizedMoment(TransactionsHeader)));

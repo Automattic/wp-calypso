@@ -27,9 +27,9 @@ import { random } from 'lodash';
  * @param {number} retryCount attempt number for retry
  * @returns {number} ms delay until next attempt
  */
-export const decorrelatedJitter = ( baseDelay, retryCount ) => {
-	const delay = Math.round( ( baseDelay * Math.pow( 2, retryCount - 1 ) ) / 2 );
-	const jitter = delay + random( 0, delay );
+export const decorrelatedJitter = (baseDelay, retryCount) => {
+	const delay = Math.round((baseDelay * Math.pow(2, retryCount - 1)) / 2);
+	const jitter = delay + random(0, delay);
 
-	return random( baseDelay, jitter * 3 );
+	return random(baseDelay, jitter * 3);
 };

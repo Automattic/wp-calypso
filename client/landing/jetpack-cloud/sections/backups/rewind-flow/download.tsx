@@ -28,26 +28,26 @@ interface Props {
 	siteSlug: string;
 }
 
-const BackupDownloadFlow: FunctionComponent< Props > = ( {
+const BackupDownloadFlow: FunctionComponent<Props> = ({
 	backupDisplayDate,
 	rewindId,
 	siteId,
 	siteSlug,
-} ) => {
+}) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
+	const [rewindConfig, setRewindConfig] = useState<RewindConfig>(defaultRewindConfig);
 
-	const downloadId = useSelector( state => getBackupDownloadId( state, siteId, rewindId ) );
-	const downloadUrl = useSelector( state => getBackupDownloadUrl( state, siteId, rewindId ) );
-	const downloadProgress = useSelector( state =>
-		getBackupDownloadProgress( state, siteId, rewindId )
+	const downloadId = useSelector((state) => getBackupDownloadId(state, siteId, rewindId));
+	const downloadUrl = useSelector((state) => getBackupDownloadUrl(state, siteId, rewindId));
+	const downloadProgress = useSelector((state) =>
+		getBackupDownloadProgress(state, siteId, rewindId)
 	);
 
 	const requestDownload = useCallback(
-		() => dispatch( rewindBackup( siteId, rewindId, rewindConfig ) ),
-		[ dispatch, rewindConfig, rewindId, siteId ]
+		() => dispatch(rewindBackup(siteId, rewindId, rewindConfig)),
+		[dispatch, rewindConfig, rewindId, siteId]
 	);
 
 	const renderConfirm = () => (
@@ -58,9 +58,9 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download ready"
 				/>
 			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Create downloadable backup' ) }</h3>
+			<h3 className="rewind-flow__title">{translate('Create downloadable backup')}</h3>
 			<p className="rewind-flow__info">
-				{ translate(
+				{translate(
 					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to create a download backup of. ',
 					{
 						args: {
@@ -70,23 +70,23 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 							strong: <strong />,
 						},
 					}
-				) }
+				)}
 			</p>
-			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
-			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
+			<h4 className="rewind-flow__cta">{translate('Choose the items you wish to restore:')}</h4>
+			<RewindConfigEditor currentConfig={rewindConfig} onConfigChange={setRewindConfig} />
 			<RewindFlowNotice
 				gridicon="notice-outline"
-				title={ translate( 'More info' ) }
-				type={ RewindFlowNoticeLevel.NOTICE }
+				title={translate('More info')}
+				type={RewindFlowNoticeLevel.NOTICE}
 				link="https://jetpack.com/support/backup"
 			/>
 			<Button
 				className="rewind-flow__primary-button"
 				primary
-				onClick={ requestDownload }
-				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
+				onClick={requestDownload}
+				disabled={Object.values(rewindConfig).every((setting) => !setting)}
 			>
-				{ translate( 'Create downloadable file' ) }
+				{translate('Create downloadable file')}
 			</Button>
 		</>
 	);
@@ -100,11 +100,11 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				/>
 			</div>
 			<h3 className="rewind-flow__title">
-				{ translate( 'Currently creating a downloadable backup of your site' ) }
+				{translate('Currently creating a downloadable backup of your site')}
 			</h3>
-			<ProgressBar percent={ downloadProgress } />
+			<ProgressBar percent={downloadProgress} />
 			<p className="rewind-flow__info">
-				{ translate(
+				{translate(
 					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
 					{
 						args: {
@@ -114,10 +114,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 							strong: <strong />,
 						},
 					}
-				) }
+				)}
 			</p>
 			<CheckYourEmail
-				message={ translate( "For your convenience, we'll email you when your file is ready." ) }
+				message={translate("For your convenience, we'll email you when your file is ready.")}
 			/>
 		</>
 	);
@@ -131,10 +131,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				/>
 			</div>
 			<h3 className="rewind-flow__title">
-				{ translate( 'Your backup is now available for download.' ) }
+				{translate('Your backup is now available for download.')}
 			</h3>
 			<p className="rewind-flow__info">
-				{ translate(
+				{translate(
 					'We successfully created a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
@@ -144,15 +144,15 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 							strong: <strong />,
 						},
 					}
-				) }
+				)}
 			</p>
-			<Button href={ downloadUrl } primary className="rewind-flow__primary-button">
-				{ translate( 'Download file' ) }
+			<Button href={downloadUrl} primary className="rewind-flow__primary-button">
+				{translate('Download file')}
 			</Button>
 			<CheckYourEmail
-				message={ translate(
+				message={translate(
 					"For your convenience, we've emailed you a link to your downloadable backup file."
-				) }
+				)}
 			/>
 		</>
 	);
@@ -166,28 +166,28 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				/>
 			</div>
 			<h3 className="rewind-flow__title">
-				{ translate( 'An error occurred while creating your download' ) }
+				{translate('An error occurred while creating your download')}
 			</h3>
 			<Button
 				className="rewind-flow__primary-button"
-				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				href={`https://jetpack.com/contact-support/?scan-state=error&site-slug=${siteSlug}`}
 				primary
 				rel="noopener noreferrer"
 				target="_blank"
 			>
-				{ translate( 'Contact Support {{externalIcon/}}', {
-					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
-				} ) }
+				{translate('Contact Support {{externalIcon/}}', {
+					components: { externalIcon: <Gridicon icon="external" size={24} /> },
+				})}
 			</Button>
 		</>
 	);
 
 	const render = () => {
-		if ( downloadProgress === null && downloadUrl === null ) {
+		if (downloadProgress === null && downloadUrl === null) {
 			return renderConfirm();
-		} else if ( downloadProgress !== null && downloadUrl === null ) {
+		} else if (downloadProgress !== null && downloadUrl === null) {
 			return renderInProgress();
-		} else if ( downloadUrl !== null ) {
+		} else if (downloadUrl !== null) {
 			return renderReady();
 		}
 
@@ -196,8 +196,8 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
-			{ render() }
+			<QueryRewindBackupStatus downloadId={downloadId} siteId={siteId} />
+			{render()}
 		</>
 	);
 };

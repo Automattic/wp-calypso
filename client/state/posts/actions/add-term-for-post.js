@@ -20,28 +20,28 @@ import 'state/posts/init';
  * @param  {number}   postId   ID of post to which term is associated
  * @returns {Function}          Action thunk
  */
-export function addTermForPost( siteId, taxonomy, term, postId ) {
-	return ( dispatch, getState ) => {
+export function addTermForPost(siteId, taxonomy, term, postId) {
+	return (dispatch, getState) => {
 		const state = getState();
-		const post = getEditedPost( state, siteId, postId );
+		const post = getEditedPost(state, siteId, postId);
 
 		// if there is no post, no term, or term is temporary, bail
-		if ( ! post || ! term || ! isNumber( term.ID ) ) {
+		if (!post || !term || !isNumber(term.ID)) {
 			return;
 		}
 
 		const postTerms = post.terms || {};
 
 		// ensure we have an array since API returns an object
-		const taxonomyTerms = toArray( postTerms[ taxonomy ] );
-		taxonomyTerms.push( term );
+		const taxonomyTerms = toArray(postTerms[taxonomy]);
+		taxonomyTerms.push(term);
 
 		dispatch(
-			editPost( siteId, postId, {
+			editPost(siteId, postId, {
 				terms: {
-					[ taxonomy ]: taxonomyTerms,
+					[taxonomy]: taxonomyTerms,
 				},
-			} )
+			})
 		);
 	};
 }

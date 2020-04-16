@@ -17,6 +17,6 @@ import 'state/data-layer/wpcom/sites/scan/history';
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {?boolean}          Whether the connection data is being requested
  */
-export default function isRequestingJetpackScanHistory( state, siteId ) {
-	return get( state.jetpackScan.history.requestStatus, [ siteId ], false ) === 'pending';
+export default function isRequestingJetpackScanHistory(state, siteId) {
+	return get(state.jetpackScan.history.requestStatus, [siteId], false) === 'pending';
 }

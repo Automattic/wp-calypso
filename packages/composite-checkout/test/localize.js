@@ -15,34 +15,34 @@ import { useLocalize, LocalizeProvider } from '../src/lib/localize';
 /* eslint-disable no-console */
 const original = console.error;
 
-describe( 'useLocalize', function() {
-	beforeEach( () => {
+describe('useLocalize', function () {
+	beforeEach(() => {
 		console.error = jest.fn();
-	} );
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		console.error = original;
-	} );
+	});
 
-	it( 'throws if outside of a CheckoutProvider', function() {
+	it('throws if outside of a CheckoutProvider', function () {
 		const ThingWithLocalize = () => {
 			const localize = useLocalize();
-			return <span>{ localize( 'hello' ) }</span>;
+			return <span>{localize('hello')}</span>;
 		};
-		expect( () => render( <ThingWithLocalize /> ) ).toThrow( /CheckoutProvider/ );
-	} );
+		expect(() => render(<ThingWithLocalize />)).toThrow(/CheckoutProvider/);
+	});
 
-	it( 'returns a function that returns a string', function() {
+	it('returns a function that returns a string', function () {
 		const ThingWithLocalize = () => {
 			const localize = useLocalize();
-			return <span data-testid="text">{ localize( 'hello' ) }</span>;
+			return <span data-testid="text">{localize('hello')}</span>;
 		};
 		const { getByTestId } = render(
-			<LocalizeProvider locale={ 'US' }>
+			<LocalizeProvider locale={'US'}>
 				<ThingWithLocalize />
 			</LocalizeProvider>
 		);
-		expect( getByTestId( 'text' ) ).toHaveTextContent( 'hello' );
-	} );
-} );
+		expect(getByTestId('text')).toHaveTextContent('hello');
+	});
+});
 /* eslint-enable no-console */

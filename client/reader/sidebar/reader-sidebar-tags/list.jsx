@@ -25,19 +25,14 @@ export class ReaderSidebarTagsList extends Component {
 
 	renderItems() {
 		const { path, currentTag, tags } = this.props;
-		return map( tags, tag => (
-			<ReaderSidebarTagsListItem
-				key={ tag.id }
-				tag={ tag }
-				path={ path }
-				currentTag={ currentTag }
-			/>
-		) );
+		return map(tags, (tag) => (
+			<ReaderSidebarTagsListItem key={tag.id} tag={tag} path={path} currentTag={currentTag} />
+		));
 	}
 
 	render() {
-		return <ul className="reader-sidebar-tags__list">{ this.renderItems() }</ul>;
+		return <ul className="reader-sidebar-tags__list">{this.renderItems()}</ul>;
 	}
 }
 
-export default localize( ReaderSidebarTagsList );
+export default localize(ReaderSidebarTagsList);

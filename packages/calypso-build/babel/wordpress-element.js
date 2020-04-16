@@ -1,7 +1,7 @@
-module.exports = () => ( {
+module.exports = () => ({
 	plugins: [
 		[
-			require.resolve( '@wordpress/babel-plugin-import-jsx-pragma' ),
+			require.resolve('@wordpress/babel-plugin-import-jsx-pragma'),
 			{
 				scopeVariable: 'createElement',
 				scopeVariableFrag: 'Fragment',
@@ -10,11 +10,11 @@ module.exports = () => ( {
 			},
 		],
 		[
-			require.resolve( '@babel/plugin-transform-react-jsx' ),
+			require.resolve('@babel/plugin-transform-react-jsx'),
 			{
 				pragma: 'createElement',
 				pragmaFrag: 'Fragment',
 			},
 		],
 	],
-} );
+});

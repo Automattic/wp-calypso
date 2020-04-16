@@ -37,34 +37,34 @@ class SelectDropdownItem extends Component {
 	}
 
 	render() {
-		const optionClassName = classNames( 'select-dropdown__item', this.props.className, {
+		const optionClassName = classNames('select-dropdown__item', this.props.className, {
 			'is-selected': this.props.selected,
 			'is-disabled': this.props.disabled,
 			'has-icon': this.props.icon,
-		} );
+		});
 
 		return (
 			<li className="select-dropdown__option">
 				<a
-					ref={ this.linkRef }
-					href={ this.props.path }
-					className={ optionClassName }
-					onClick={ this.props.disabled ? null : this.props.onClick }
-					data-bold-text={ this.props.value || this.props.children }
+					ref={this.linkRef}
+					href={this.props.path}
+					className={optionClassName}
+					onClick={this.props.disabled ? null : this.props.onClick}
+					data-bold-text={this.props.value || this.props.children}
 					role="menuitem"
 					tabIndex="0"
-					aria-current={ this.props.selected }
-					data-e2e-title={ this.props.e2eTitle }
+					aria-current={this.props.selected}
+					data-e2e-title={this.props.e2eTitle}
 				>
 					<span className="select-dropdown__item-text">
-						{ this.props.icon && this.props.icon.type === Gridicon ? this.props.icon : null }
-						{ this.props.children }
+						{this.props.icon && this.props.icon.type === Gridicon ? this.props.icon : null}
+						{this.props.children}
 					</span>
-					{ 'number' === typeof this.props.count && (
-						<span data-text={ this.props.count } className="select-dropdown__item-count">
-							<Count count={ this.props.count } compact={ this.props.compactCount } />
+					{'number' === typeof this.props.count && (
+						<span data-text={this.props.count} className="select-dropdown__item-count">
+							<Count count={this.props.count} compact={this.props.compactCount} />
 						</span>
-					) }
+					)}
 				</a>
 			</li>
 		);

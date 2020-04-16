@@ -10,9 +10,9 @@ import { useDispatch } from 'react-redux';
 import { isProductsListFetching } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 
-const request = () => ( dispatch, getState ) => {
-	if ( ! isProductsListFetching( getState() ) ) {
-		dispatch( requestProductsList() );
+const request = () => (dispatch, getState) => {
+	if (!isProductsListFetching(getState())) {
+		dispatch(requestProductsList());
 	}
 };
 
@@ -20,9 +20,9 @@ export default function QueryProductsList() {
 	const dispatch = useDispatch();
 
 	// Only runs on mount.
-	useEffect( () => {
-		dispatch( request() );
-	}, [ dispatch ] );
+	useEffect(() => {
+		dispatch(request());
+	}, [dispatch]);
 
 	return null;
 }

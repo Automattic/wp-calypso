@@ -36,106 +36,103 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		const { translate } = props;
 		const registrantTypes = {
-			IND: translate( 'Individual' ),
-			FIND: translate( 'Foreign Individual' ),
-			STRA: translate( 'UK Sole Trader', {
+			IND: translate('Individual'),
+			FIND: translate('Foreign Individual'),
+			STRA: translate('UK Sole Trader', {
 				comment: 'Refers to UK legal concept of self-employment/sole proprietorship',
-			} ),
-			PTNR: translate( 'UK Partnership' ),
-			LTD: translate( 'UK Limited Company' ),
-			LLP: translate( 'UK Limited Liability Partnership' ),
-			CRC: translate( 'UK Corporation by Royal Charter' ),
-			FCORP: translate( 'Non-UK Corporation' ),
-			IP: translate( 'UK Industrial/Provident Registered Company' ),
-			PLC: translate( 'UK Public Limited Company' ),
-			SCH: translate( 'UK School' ),
-			GOV: translate( 'UK Government Body' ),
-			RCHAR: translate( 'UK Registered Charity' ),
-			STAT: translate( 'UK Statutory Body' ),
-			OTHER: translate( 'UK Entity that does not fit another category' ),
-			FOTHER: translate( 'Non-UK Entity that does not fit another category' ),
+			}),
+			PTNR: translate('UK Partnership'),
+			LTD: translate('UK Limited Company'),
+			LLP: translate('UK Limited Liability Partnership'),
+			CRC: translate('UK Corporation by Royal Charter'),
+			FCORP: translate('Non-UK Corporation'),
+			IP: translate('UK Industrial/Provident Registered Company'),
+			PLC: translate('UK Public Limited Company'),
+			SCH: translate('UK School'),
+			GOV: translate('UK Government Body'),
+			RCHAR: translate('UK Registered Charity'),
+			STAT: translate('UK Statutory Body'),
+			OTHER: translate('UK Entity that does not fit another category'),
+			FOTHER: translate('Non-UK Entity that does not fit another category'),
 		};
-		this.registrantTypeOptions = map( registrantTypes, ( text, optionValue ) => (
-			<option value={ optionValue } key={ optionValue }>
-				{ text }
+		this.registrantTypeOptions = map(registrantTypes, (text, optionValue) => (
+			<option value={optionValue} key={optionValue}>
+				{text}
 			</option>
-		) );
+		));
 	}
 
 	UNSAFE_componentWillMount() {
 		// Add defaults to redux state to make accepting default values work.
-		const neededRequiredDetails = difference(
-			[ 'registrantType' ],
-			keys( this.props.ccTldDetails )
-		);
+		const neededRequiredDetails = difference(['registrantType'], keys(this.props.ccTldDetails));
 
 		// Bail early as we already have the details from a previous purchase.
-		if ( isEmpty( neededRequiredDetails ) ) {
+		if (isEmpty(neededRequiredDetails)) {
 			return;
 		}
 
 		const payload = {
 			extra: {
-				uk: pick( defaultValues, neededRequiredDetails ),
+				uk: pick(defaultValues, neededRequiredDetails),
 			},
 		};
 
-		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+		this.props.updateContactDetailsCache(payload);
+		this.props.onContactDetailsChange?.(payload);
 	}
 
-	handleChangeEvent = event => {
+	handleChangeEvent = (event) => {
 		const payload = {
 			extra: {
-				uk: { [ camelCase( event.target.id ) ]: event.target.value },
+				uk: { [camelCase(event.target.id)]: event.target.value },
 			},
 		};
-		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+		this.props.updateContactDetailsCache(payload);
+		this.props.onContactDetailsChange?.(payload);
 	};
 
-	isTradingNameRequired( registrantType ) {
+	isTradingNameRequired(registrantType) {
 		return includes(
-			[ 'LTD', 'PLC', 'LLP', 'IP', 'RCHAR', 'FCORP', 'OTHER', 'FOTHER', 'STRA' ],
+			['LTD', 'PLC', 'LLP', 'IP', 'RCHAR', 'FCORP', 'OTHER', 'FOTHER', 'STRA'],
 			registrantType
 		);
 	}
 
-	isRegistrationNumberRequired( registrantType ) {
-		return includes( [ 'LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR' ], registrantType );
+	isRegistrationNumberRequired(registrantType) {
+		return includes(['LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR'], registrantType);
 	}
 
 	renderTradingNameField() {
 		const { ccTldDetails, translate } = this.props;
-		const tradingName = get( ccTldDetails, 'tradingName', '' );
+		const tradingName = get(ccTldDetails, 'tradingName', '');
 		const tradingNameErrors = get(
 			this.props.contactDetailsValidationErrors,
-			[ 'extra', 'uk', 'tradingName' ],
+			['extra', 'uk', 'tradingName'],
 			[]
 		);
-		const isError = ! isEmpty( tradingNameErrors );
+		const isError = !isEmpty(tradingNameErrors);
 
 		return (
 			<div>
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__trading-name" htmlFor="trading-name">
-						{ translate( 'Trading Name' ) }
+						{translate('Trading Name')}
 					</FormLabel>
 					<FormTextInput
 						id="trading-name"
-						value={ tradingName }
+						value={tradingName}
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
-						onChange={ this.handleChangeEvent }
-						isError={ isError }
+						placeholder={''}
+						onChange={this.handleChangeEvent}
+						isError={isError}
 					/>
-					{ map( tradingNameErrors, this.renderValidationError ) }
+					{map(tradingNameErrors, this.renderValidationError)}
 				</FormFieldset>
 			</div>
 		);
@@ -143,14 +140,14 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 
 	renderRegistrationNumberField() {
 		const { ccTldDetails, translate } = this.props;
-		const registrationNumber = get( ccTldDetails, 'registrationNumber', '' );
+		const registrationNumber = get(ccTldDetails, 'registrationNumber', '');
 		const registrationNumberErrors = get(
 			this.props.contactDetailsValidationErrors,
-			[ 'extra', 'uk', 'registrationNumber' ],
+			['extra', 'uk', 'registrationNumber'],
 			[]
 		);
 
-		const isError = ! isEmpty( registrationNumberErrors );
+		const isError = !isEmpty(registrationNumberErrors);
 
 		return (
 			<div>
@@ -159,31 +156,31 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 						className="registrant-extra-info__registration-number"
 						htmlFor="registration-number"
 					>
-						{ translate( 'Registration Number' ) }
+						{translate('Registration Number')}
 					</FormLabel>
 					<FormTextInput
 						id="registration-number"
-						value={ registrationNumber }
+						value={registrationNumber}
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
-						onChange={ this.handleChangeEvent }
-						isError={ isError }
+						placeholder={''}
+						onChange={this.handleChangeEvent}
+						isError={isError}
 					/>
-					{ map( registrationNumberErrors, this.renderValidationError ) }
+					{map(registrationNumberErrors, this.renderValidationError)}
 				</FormFieldset>
 			</div>
 		);
 	}
 
-	renderValidationError = ( { errorCode, errorMessage } ) => {
+	renderValidationError = ({ errorCode, errorMessage }) => {
 		const { translate } = this.props;
 		return (
 			<FormInputValidation
 				isError
-				key={ errorCode }
-				text={ errorMessage || translate( 'There was a problem with this field.' ) }
+				key={errorCode}
+				text={errorMessage || translate('There was a problem with this field.')}
 			/>
 		);
 	};
@@ -195,42 +192,41 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			...this.props.ccTldDetails,
 		};
 
-		const relevantExtraFields = filter( [
-			this.isTradingNameRequired( registrantType ) && 'tradingName',
-			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
-		] );
-		const isValid = Object.keys( this.props.contactDetailsValidationErrors?.extra?.uk ?? {} ).every(
-			errorKey => ! relevantExtraFields.includes( errorKey )
+		const relevantExtraFields = filter([
+			this.isTradingNameRequired(registrantType) && 'tradingName',
+			this.isRegistrationNumberRequired(registrantType) && 'registrationNumber',
+		]);
+		const isValid = Object.keys(this.props.contactDetailsValidationErrors?.extra?.uk ?? {}).every(
+			(errorKey) => !relevantExtraFields.includes(errorKey)
 		);
 
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
-					{ translate( 'Almost done! We need some extra details to register your %(tld)s domain.', {
+					{translate('Almost done! We need some extra details to register your %(tld)s domain.', {
 						args: { tld: '.uk' },
-					} ) }
+					})}
 				</p>
 				<FormFieldset>
 					<FormLabel htmlFor="registrant-type">
-						{ translate(
+						{translate(
 							'Choose the option that best describes your presence in the United Kingdom:'
-						) }
+						)}
 					</FormLabel>
 					<FormSelect
 						id="registrant-type"
-						value={ registrantType }
+						value={registrantType}
 						className="registrant-extra-info__form-registrant-type"
-						onChange={ this.handleChangeEvent }
+						onChange={this.handleChangeEvent}
 					>
-						{ this.registrantTypeOptions }
+						{this.registrantTypeOptions}
 					</FormSelect>
 				</FormFieldset>
 
-				{ this.isTradingNameRequired( registrantType ) && this.renderTradingNameField() }
+				{this.isTradingNameRequired(registrantType) && this.renderTradingNameField()}
 
-				{ this.isRegistrationNumberRequired( registrantType ) &&
-					this.renderRegistrationNumberField() }
-				{ isValid ? this.props.children : disableSubmitButton( this.props.children ) }
+				{this.isRegistrationNumberRequired(registrantType) && this.renderRegistrationNumberField()}
+				{isValid ? this.props.children : disableSubmitButton(this.props.children)}
 			</form>
 		);
 	}
@@ -242,12 +238,12 @@ export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
 );
 
 export default connect(
-	state => {
-		const contactDetails = getContactDetailsCache( state );
+	(state) => {
+		const contactDetails = getContactDetailsCache(state);
 		return {
 			contactDetails,
-			ccTldDetails: get( contactDetails, 'extra.uk', {} ),
+			ccTldDetails: get(contactDetails, 'extra.uk', {}),
 		};
 	},
 	{ updateContactDetailsCache }
-)( localize( ValidatedRegistrantExtraInfoUkForm ) );
+)(localize(ValidatedRegistrantExtraInfoUkForm));

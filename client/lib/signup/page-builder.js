@@ -7,24 +7,24 @@ import { getSectionGroup } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 
 export function isInPageBuilderTest() {
-	return 'test' === getABTestVariation( 'pageBuilderMVP' );
+	return 'test' === getABTestVariation('pageBuilderMVP');
 }
 
 export function shouldEnterPageBuilder() {
-	return 'test' === abtest( 'pageBuilderMVP' );
+	return 'test' === abtest('pageBuilderMVP');
 }
 
-export function getEditHomeUrl( siteSlug ) {
+export function getEditHomeUrl(siteSlug) {
 	// @todo we will need to retrieve the home page ID from site options
-	return `/block-editor/page/${ siteSlug }/2`;
+	return `/block-editor/page/${siteSlug}/2`;
 }
 
-export function isEligibleForPageBuilder( segment, flowName ) {
+export function isEligibleForPageBuilder(segment, flowName) {
 	return 'en' === getLocaleSlug() && 1 === segment && 'onboarding' === flowName;
 }
 
-export function isBlockEditorSectionInTest( state ) {
-	return 'gutenberg' === getSectionGroup( state ) && isInPageBuilderTest();
+export function isBlockEditorSectionInTest(state) {
+	return 'gutenberg' === getSectionGroup(state) && isInPageBuilderTest();
 }
 
 /**
@@ -34,7 +34,7 @@ export function isBlockEditorSectionInTest( state ) {
  * @param {number} siteId Current site ID
  * @returns {bool}        Is the site qualified?
  */
-export function siteQualifiesForPageBuilder( state, siteId ) {
-	const segment = getSiteOption( state, siteId, 'site_segment' );
-	return isEligibleForPageBuilder( segment, 'onboarding' );
+export function siteQualifiesForPageBuilder(state, siteId) {
+	const segment = getSiteOption(state, siteId, 'site_segment');
+	return isEligibleForPageBuilder(segment, 'onboarding');
 }

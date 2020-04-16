@@ -20,24 +20,24 @@ import {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackSearchTour = makeTour(
-	<Tour { ...meta }>
+	<Tour {...meta}>
 		<Step
 			name="init"
 			target=".jetpack-search-settings .form-toggle__switch"
 			arrow="top-left"
 			placement="below"
-			style={ {
+			style={{
 				animationDelay: '0.7s',
 				zIndex: 1,
-			} }
+			}}
 		>
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
 					<p>
-						{ translate(
+						{translate(
 							'Jetpack Search replaces the built-in WordPress search tool ' +
 								"with one that's faster and filterable."
-						) }
+						)}
 					</p>
 					<ButtonRow>
 						<Continue
@@ -46,36 +46,34 @@ export const JetpackSearchTour = makeTour(
 							click
 							hidden
 						/>
-						<SiteLink href="/plans/my-plan/:site">
-							{ translate( 'Return to the checklist' ) }
-						</SiteLink>
+						<SiteLink href="/plans/my-plan/:site">{translate('Return to the checklist')}</SiteLink>
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 
 		<Step name="finish" placement="right">
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
 					<h1 className="tours__title">
 						<span className="tours__completed-icon-wrapper">
 							<Gridicon icon="checkmark" className="tours__completed-icon" />
 						</span>
-						{ translate( 'Excellent, you’re done!' ) }
+						{translate('Excellent, you’re done!')}
 					</h1>
 					<p>
-						{ translate(
+						{translate(
 							'Jetpack Search is active on your site. Ready for the next performance feature?'
-						) }
+						)}
 					</p>
 					<ButtonRow>
 						<SiteLink isButton href="/plans/my-plan/:site">
-							{ translate( "Yes, let's do it." ) }
+							{translate("Yes, let's do it.")}
 						</SiteLink>
-						<Quit>{ translate( 'No, thanks.' ) }</Quit>
+						<Quit>{translate('No, thanks.')}</Quit>
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 	</Tour>
 );

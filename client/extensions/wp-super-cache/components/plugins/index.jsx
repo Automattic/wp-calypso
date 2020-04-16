@@ -34,8 +34,8 @@ class PluginsTab extends Component {
 		fields: {},
 	};
 
-	togglePlugin = ( plugin, newState ) => () => {
-		this.props.togglePlugin( this.props.siteId, plugin, newState );
+	togglePlugin = (plugin, newState) => () => {
+		this.props.togglePlugin(this.props.siteId, plugin, newState);
 	};
 
 	render() {
@@ -43,23 +43,23 @@ class PluginsTab extends Component {
 
 		return (
 			<div className="wp-super-cache__plugins-tab">
-				<QueryPlugins siteId={ siteId } />
+				<QueryPlugins siteId={siteId} />
 
 				<Card>
 					<p>
-						{ translate(
+						{translate(
 							"Cache plugins are PHP scripts you'll find in a dedicated folder inside the WP Super Cache folder " +
 								'(wp-super-cache/plugins/). They load at the same time as WP Super Cache, and before regular WordPress plugins.'
-						) }
+						)}
 					</p>
 					<p>
-						{ translate(
+						{translate(
 							"Keep in mind that cache plugins are for advanced users only. To create and manage them, you'll need extensive " +
 								'knowledge of both PHP and WordPress actions.'
-						) }
+						)}
 					</p>
 					<p>
-						{ translate(
+						{translate(
 							'{{strong}}Warning!{{/strong}} Due to the way WordPress upgrades plugins, the ones you upload to the ' +
 								'WP Super Cache folder (wp-super-cache/plugins/) will be deleted when you upgrade WP Super Cache. ' +
 								'To avoid this loss, load your cache plugins from a different location. When you set ' +
@@ -76,34 +76,34 @@ class PluginsTab extends Component {
 									strong: <strong />,
 								},
 							}
-						) }
+						)}
 					</p>
 				</Card>
 
-				<SectionHeader label={ translate( 'Plugins' ) } />
+				<SectionHeader label={translate('Plugins')} />
 				<Card>
-					{ map( plugins, ( { desc, enabled, key, title, toggling, url } ) => {
+					{map(plugins, ({ desc, enabled, key, title, toggling, url }) => {
 						return (
-							<div key={ key }>
+							<div key={key}>
 								<FormToggle
-									checked={ !! enabled }
-									data-plugin={ key }
-									disabled={ isRequesting || toggling }
-									onChange={ this.togglePlugin( key, ! enabled ) }
+									checked={!!enabled}
+									data-plugin={key}
+									disabled={isRequesting || toggling}
+									onChange={this.togglePlugin(key, !enabled)}
 								>
-									<span>{ title }</span>
+									<span>{title}</span>
 								</FormToggle>
 								<FormSettingExplanation>
-									{ desc + ' ' }
-									{ url && (
-										<ExternalLink href={ url } target="_blank">
-											{ translate( 'Plugin Information' ) }
+									{desc + ' '}
+									{url && (
+										<ExternalLink href={url} target="_blank">
+											{translate('Plugin Information')}
 										</ExternalLink>
-									) }
+									)}
 								</FormSettingExplanation>
 							</div>
 						);
-					} ) }
+					})}
 				</Card>
 			</div>
 		);
@@ -111,24 +111,24 @@ class PluginsTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const plugins = getPlugins( state, siteId );
-		const isRequesting = isRequestingPlugins( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const plugins = getPlugins(state, siteId);
+		const isRequesting = isRequestingPlugins(state, siteId);
 
 		return {
 			isRequesting,
-			plugins: mapValues( plugins, plugin => ( {
+			plugins: mapValues(plugins, (plugin) => ({
 				...plugin,
-				toggling: isTogglingPlugin( state, siteId, plugin.key ),
-			} ) ),
+				toggling: isTogglingPlugin(state, siteId, plugin.key),
+			})),
 		};
 	},
 	{ togglePlugin }
 );
 
-const getFormSettings = settings => {
-	return pick( settings, [ 'plugin_list' ] );
+const getFormSettings = (settings) => {
+	return pick(settings, ['plugin_list']);
 };
 
-export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( PluginsTab );
+export default flowRight(connectComponent, WrapSettingsForm(getFormSettings))(PluginsTab);

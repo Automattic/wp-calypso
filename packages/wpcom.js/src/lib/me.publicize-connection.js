@@ -2,15 +2,15 @@ const root = '/me/publicize-connections/';
 
 export default class PublicizeConnection {
 	/**
-	* `PublicizeConnection` constructor.
-	*
-	* @param {string} connectionId - application identifier
-	* @param {WPCOM} wpcom - wpcom instance
-	* @returns {null} null
-	*/
-	constructor( connectionId, wpcom ) {
-		if ( ! ( this instanceof PublicizeConnection ) ) {
-			return new PublicizeConnection( connectionId, wpcom );
+	 * `PublicizeConnection` constructor.
+	 *
+	 * @param {string} connectionId - application identifier
+	 * @param {WPCOM} wpcom - wpcom instance
+	 * @returns {null} null
+	 */
+	constructor(connectionId, wpcom) {
+		if (!(this instanceof PublicizeConnection)) {
+			return new PublicizeConnection(connectionId, wpcom);
 		}
 		this._id = connectionId;
 		this.wpcom = wpcom;
@@ -23,8 +23,8 @@ export default class PublicizeConnection {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	get( query, fn ) {
-		return this.wpcom.req.get( root + this._id, query, fn );
+	get(query, fn) {
+		return this.wpcom.req.get(root + this._id, query, fn);
 	}
 
 	/**
@@ -35,8 +35,8 @@ export default class PublicizeConnection {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	add( query, body, fn ) {
-		return this.wpcom.req.post( root + 'new', query, body, fn );
+	add(query, body, fn) {
+		return this.wpcom.req.post(root + 'new', query, body, fn);
 	}
 
 	/**
@@ -47,19 +47,19 @@ export default class PublicizeConnection {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	update( query, body, fn ) {
-		return this.wpcom.req.put( root + this._id, query, body, fn );
+	update(query, body, fn) {
+		return this.wpcom.req.put(root + this._id, query, body, fn);
 	}
 
 	/**
-	* Delete the app of the  current user
-	* through of the given connectionId
-	*
-	* @param {object} [query] - query object parameter
-	* @param {Function} fn - callback function
-	* @returns {Function} request handler
-	*/
-	delete( query, fn ) {
-		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
+	 * Delete the app of the  current user
+	 * through of the given connectionId
+	 *
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	delete(query, fn) {
+		return this.wpcom.req.del(root + this._id + '/delete', query, fn);
 	}
 }

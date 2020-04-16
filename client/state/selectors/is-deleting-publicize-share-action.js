@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {number}   actionId   The ID of specific share post action we're querying
  * @returns {?boolean}          Whether currently deleting sharePost action.
  */
-export default function isDeletingPublicizeShareAction( state, siteId, postId, actionId ) {
-	return get( state, [ 'sharing', 'sharePostActions', 'items', siteId, postId, actionId ], false );
+export default function isDeletingPublicizeShareAction(state, siteId, postId, actionId) {
+	return get(state, ['sharing', 'sharePostActions', 'items', siteId, postId, actionId], false);
 }

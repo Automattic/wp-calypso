@@ -22,11 +22,11 @@ import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products
 class FormDimensionsInput extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		dimensions: PropTypes.shape( {
+		dimensions: PropTypes.shape({
 			width: PropTypes.string,
 			height: PropTypes.string,
 			length: PropTypes.string,
-		} ),
+		}),
 		dimensionsUnit: PropTypes.string,
 		onChange: PropTypes.func.isRequired,
 		noWrap: PropTypes.bool,
@@ -42,47 +42,47 @@ class FormDimensionsInput extends Component {
 	componentDidMount() {
 		const { siteId } = this.props;
 
-		if ( siteId ) {
-			this.props.fetchSettingsProducts( siteId );
+		if (siteId) {
+			this.props.fetchSettingsProducts(siteId);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.props.fetchSettingsProducts( newProps.siteId );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		if (newProps.siteId !== this.props.siteId) {
+			this.props.fetchSettingsProducts(newProps.siteId);
 		}
 	}
 
 	render() {
 		const { className, noWrap, dimensions, onChange, translate, dimensionsUnit } = this.props;
-		const classes = classNames( 'form-dimensions-input', className, { 'no-wrap': noWrap } );
+		const classes = classNames('form-dimensions-input', className, { 'no-wrap': noWrap });
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<FormTextInput
 					name="length"
-					placeholder={ translate( 'L', { comment: 'Length placeholder for dimensions input' } ) }
+					placeholder={translate('L', { comment: 'Length placeholder for dimensions input' })}
 					type="number"
-					value={ ( dimensions && dimensions.length ) || '' }
-					onChange={ onChange }
+					value={(dimensions && dimensions.length) || ''}
+					onChange={onChange}
 					className="form-dimensions-input__length"
 				/>
 				<FormTextInput
 					name="width"
-					placeholder={ translate( 'W', { comment: 'Width placeholder for dimensions input' } ) }
+					placeholder={translate('W', { comment: 'Width placeholder for dimensions input' })}
 					type="number"
-					value={ ( dimensions && dimensions.width ) || '' }
-					onChange={ onChange }
+					value={(dimensions && dimensions.width) || ''}
+					onChange={onChange}
 					className="form-dimensions-input__width"
 				/>
 				<FormTextInputWithAffixes
 					name="height"
-					placeholder={ translate( 'H', { comment: 'Height placeholder for dimensions input' } ) }
-					suffix={ dimensionsUnit }
+					placeholder={translate('H', { comment: 'Height placeholder for dimensions input' })}
+					suffix={dimensionsUnit}
 					type="number"
-					noWrap={ noWrap }
-					value={ ( dimensions && dimensions.height ) || '' }
-					onChange={ onChange }
+					noWrap={noWrap}
+					value={(dimensions && dimensions.height) || ''}
+					onChange={onChange}
 					className="form-dimensions-input__height"
 				/>
 			</div>
@@ -90,11 +90,11 @@ class FormDimensionsInput extends Component {
 	}
 }
 
-function mapStateToProps( state, { dimensionsUnit } ) {
-	const site = getSelectedSiteWithFallback( state );
-	if ( ! dimensionsUnit ) {
-		const dimensionsUnitSetting = site && getDimensionsUnitSetting( state, site.ID );
-		dimensionsUnit = ( dimensionsUnitSetting && dimensionsUnitSetting.value ) || 'in';
+function mapStateToProps(state, { dimensionsUnit }) {
+	const site = getSelectedSiteWithFallback(state);
+	if (!dimensionsUnit) {
+		const dimensionsUnitSetting = site && getDimensionsUnitSetting(state, site.ID);
+		dimensionsUnit = (dimensionsUnitSetting && dimensionsUnitSetting.value) || 'in';
 	}
 
 	return {
@@ -103,7 +103,7 @@ function mapStateToProps( state, { dimensionsUnit } ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			fetchSettingsProducts,
@@ -112,4 +112,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( FormDimensionsInput ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(FormDimensionsInput));

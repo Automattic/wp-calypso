@@ -20,15 +20,15 @@ class WpcomDomainType extends React.Component {
 		return (
 			<div className="domain-types__container">
 				<DomainStatus
-					header={ domain_name }
-					statusText={ this.props.translate( 'Active' ) }
+					header={domain_name}
+					statusText={this.props.translate('Active')}
 					statusClass="status-success"
 					icon="check_circle"
 				/>
-				<DomainManagementNavigation domain={ domain } selectedSite={ this.props.selectedSite } />
+				<DomainManagementNavigation domain={domain} selectedSite={this.props.selectedSite} />
 			</div>
 		);
 	}
 }
 
-export default localize( WpcomDomainType );
+export default localize(WpcomDomainType);

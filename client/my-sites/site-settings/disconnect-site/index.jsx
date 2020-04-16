@@ -23,26 +23,26 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
  */
 import './style.scss';
 
-const DisconnectSite = ( { reason, siteSlug, translate } ) => {
+const DisconnectSite = ({ reason, siteSlug, translate }) => {
 	const confirmHref = '/settings/disconnect-site/confirm/' + siteSlug;
 
 	let backHref = '/settings/manage-connection/' + siteSlug;
-	if ( reason ) {
+	if (reason) {
 		backHref = '/settings/disconnect-site/' + siteSlug;
 	}
 
 	return (
 		<div>
 			<Main className="disconnect-site__site-settings">
-				<DocumentHead title={ translate( 'Site Settings' ) } />
+				<DocumentHead title={translate('Site Settings')} />
 				<FormattedHeader
-					headerText={ translate( 'Disable Jetpack' ) }
-					subHeaderText={ translate( "Please let us know why you're disabling Jetpack." ) }
+					headerText={translate('Disable Jetpack')}
+					subHeaderText={translate("Please let us know why you're disabling Jetpack.")}
 				/>
-				<DisconnectSurvey confirmHref={ confirmHref } />
+				<DisconnectSurvey confirmHref={confirmHref} />
 				<div className="disconnect-site__navigation-links">
-					<NavigationLink href={ backHref } direction="back" />
-					<NavigationLink href={ confirmHref } direction="forward" />
+					<NavigationLink href={backHref} direction="back" />
+					<NavigationLink href={confirmHref} direction="forward" />
 				</div>
 				<Troubleshoot />
 			</Main>
@@ -50,8 +50,8 @@ const DisconnectSite = ( { reason, siteSlug, translate } ) => {
 	);
 };
 
-const connectComponent = connect( state => ( {
-	siteSlug: getSelectedSiteSlug( state ),
-} ) );
+const connectComponent = connect((state) => ({
+	siteSlug: getSelectedSiteSlug(state),
+}));
 
-export default flowRight( connectComponent, localize, redirectNonJetpack() )( DisconnectSite );
+export default flowRight(connectComponent, localize, redirectNonJetpack())(DisconnectSite);

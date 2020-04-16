@@ -15,6 +15,6 @@ import { getSerializedPostsQuery } from 'state/posts/utils/get-serialized-posts-
  * @param  {number} siteId Optional site ID
  * @returns {string}        Serialized posts query
  */
-export function getSerializedPostsQueryWithoutPage( query, siteId ) {
-	return getSerializedPostsQuery( omit( query, 'page' ), siteId );
+export function getSerializedPostsQueryWithoutPage(query, siteId) {
+	return getSerializedPostsQuery(omit(query, 'page'), siteId);
 }

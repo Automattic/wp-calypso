@@ -20,13 +20,13 @@ import 'state/themes/init';
  * @param  {string}   siteId       Jetpack Site ID
  * @returns {Function}              Action thunk
  */
-export function tryAndCustomizeTheme( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		const url = getThemeCustomizeUrl( getState(), themeId, siteId );
-		if ( isExternal( url ) ) {
+export function tryAndCustomizeTheme(themeId, siteId) {
+	return (dispatch, getState) => {
+		const url = getThemeCustomizeUrl(getState(), themeId, siteId);
+		if (isExternal(url)) {
 			window.location.href = url;
 			return;
 		}
-		page( getThemeCustomizeUrl( getState(), themeId, siteId ) );
+		page(getThemeCustomizeUrl(getState(), themeId, siteId));
 	};
 }

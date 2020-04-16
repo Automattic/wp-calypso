@@ -10,7 +10,7 @@ import { filter, head, orderBy, values } from 'lodash';
  */
 import InlineSupportLink from 'components/inline-support-link';
 
-function getConfig( { siteTitle = '' } = {} ) {
+function getConfig({ siteTitle = '' } = {}) {
 	const importerConfig = {};
 
 	importerConfig.wordpress = {
@@ -39,10 +39,10 @@ function getConfig( { siteTitle = '' } = {} ) {
 				components: {
 					supportLink: (
 						<InlineSupportLink
-							supportPostId={ 67084 }
+							supportPostId={67084}
 							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
-							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
+							showIcon={false}
+							text={translate('Need help exporting your content?')}
 						/>
 					),
 				},
@@ -81,10 +81,10 @@ function getConfig( { siteTitle = '' } = {} ) {
 				components: {
 					supportLink: (
 						<InlineSupportLink
-							supportPostId={ 66764 }
+							supportPostId={66764}
 							supportLink="https://wordpress.com/support/import/coming-from-blogger/"
-							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
+							showIcon={false}
+							text={translate('Need help exporting your content?')}
 						/>
 					),
 				},
@@ -93,7 +93,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		weight: 0,
 	};
 
-	importerConfig[ 'godaddy-gocentral' ] = {
+	importerConfig['godaddy-gocentral'] = {
 		engine: 'godaddy-gocentral',
 		key: 'importer-type-godaddy-gocentral',
 		type: 'url',
@@ -110,18 +110,18 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 			}
 		),
-		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
+		uploadDescription: translate('Enter the URL of your existing site. ' + '{{supportLink/}}', {
 			components: {
 				supportLink: (
 					<InlineSupportLink
-						supportPostId={ 154436 }
+						supportPostId={154436}
 						supportLink="https://wordpress.com/support/import/import-from-godaddy/"
-						showIcon={ false }
-						text={ translate( 'Need help?' ) }
+						showIcon={false}
+						text={translate('Need help?')}
 					/>
 				),
 			},
-		} ),
+		}),
 		weight: 0,
 	};
 
@@ -154,10 +154,10 @@ function getConfig( { siteTitle = '' } = {} ) {
 				components: {
 					supportLink: (
 						<InlineSupportLink
-							supportPostId={ 93180 }
+							supportPostId={93180}
 							supportLink="https://wordpress.com/support/import/import-from-medium/"
-							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
+							showIcon={false}
+							text={translate('Need help exporting your content?')}
 						/>
 					),
 				},
@@ -195,10 +195,10 @@ function getConfig( { siteTitle = '' } = {} ) {
 				components: {
 					supportLink: (
 						<InlineSupportLink
-							supportPostId={ 87696 }
+							supportPostId={87696}
 							supportLink="https://wordpress.com/support/import/import-from-squarespace/"
-							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
+							showIcon={false}
+							text={translate('Need help exporting your content?')}
 						/>
 					),
 				},
@@ -224,40 +224,36 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 			}
 		),
-		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
+		uploadDescription: translate('Enter the URL of your existing site. ' + '{{supportLink/}}', {
 			components: {
 				supportLink: (
 					<InlineSupportLink
-						supportPostId={ 147777 }
+						supportPostId={147777}
 						supportLink="https://wordpress.com/support/import/import-from-wix/"
-						showIcon={ false }
-						text={ translate( 'Need help?' ) }
+						showIcon={false}
+						text={translate('Need help?')}
 					/>
 				),
 			},
-		} ),
+		}),
 		weight: 0,
 	};
 
 	return importerConfig;
 }
 
-export function getImporters( params = {} ) {
-	const importers = orderBy(
-		values( getConfig( params ) ),
-		[ 'weight', 'title' ],
-		[ 'desc', 'asc' ]
-	);
+export function getImporters(params = {}) {
+	const importers = orderBy(values(getConfig(params)), ['weight', 'title'], ['desc', 'asc']);
 
 	return importers;
 }
 
-export function getFileImporters( params = {} ) {
-	return filter( getImporters( params ), importer => importer.type === 'file' );
+export function getFileImporters(params = {}) {
+	return filter(getImporters(params), (importer) => importer.type === 'file');
 }
 
-export function getImporterByKey( key, params = {} ) {
-	return head( filter( getImporters( params ), importer => importer.key === key ) );
+export function getImporterByKey(key, params = {}) {
+	return head(filter(getImporters(params), (importer) => importer.key === key));
 }
 
 export default getConfig;

@@ -17,8 +17,8 @@ import 'state/reader/init';
  * @param  {object}  state  Global state tree
  * @returns {boolean}        Whether lists are being requested
  */
-export function isRequestingList( state ) {
-	return !! state.reader.lists.isRequestingList;
+export function isRequestingList(state) {
+	return !!state.reader.lists.isRequestingList;
 }
 
 /**
@@ -28,8 +28,8 @@ export function isRequestingList( state ) {
  * @param  {object}  state  Global state tree
  * @returns {boolean}        Whether lists are being requested
  */
-export function isRequestingSubscribedLists( state ) {
-	return !! state.reader.lists.isRequestingLists;
+export function isRequestingSubscribedLists(state) {
+	return !!state.reader.lists.isRequestingLists;
 }
 
 /**
@@ -39,15 +39,15 @@ export function isRequestingSubscribedLists( state ) {
  * @returns {?object}        Reader lists
  */
 export const getSubscribedLists = createSelector(
-	state =>
+	(state) =>
 		sortBy(
-			filter( state.reader.lists.items, item => {
+			filter(state.reader.lists.items, (item) => {
 				// Is the user subscribed to this list?
-				return includes( state.reader.lists.subscribedLists, item.ID );
-			} ),
+				return includes(state.reader.lists.subscribedLists, item.ID);
+			}),
 			'slug'
 		),
-	state => [ state.reader.lists.items, state.reader.lists.subscribedLists ]
+	(state) => [state.reader.lists.items, state.reader.lists.subscribedLists]
 );
 
 /**
@@ -57,11 +57,11 @@ export const getSubscribedLists = createSelector(
  * @param  {number}  listId  List ID
  * @returns {boolean}        Whether lists are being requested
  */
-export function isUpdatedList( state, listId ) {
-	if ( ! has( state, 'reader.lists.updatedLists' ) ) {
+export function isUpdatedList(state, listId) {
+	if (!has(state, 'reader.lists.updatedLists')) {
 		return false;
 	}
-	return includes( state.reader.lists.updatedLists, listId );
+	return includes(state.reader.lists.updatedLists, listId);
 }
 
 /**
@@ -71,8 +71,8 @@ export function isUpdatedList( state, listId ) {
  * @param  {number}  listId  List ID
  * @returns {boolean}        Whether list has an error
  */
-export function hasError( state, listId ) {
-	if ( ! has( state, 'reader.lists.errors' ) ) {
+export function hasError(state, listId) {
+	if (!has(state, 'reader.lists.errors')) {
 		return false;
 	}
 
@@ -87,17 +87,17 @@ export function hasError( state, listId ) {
  * @param  {string}  slug  List slug
  * @returns {?object}        Reader list
  */
-export function getListByOwnerAndSlug( state, owner, slug ) {
-	if ( ! has( state, 'reader.lists.items' ) || ! owner || ! slug ) {
+export function getListByOwnerAndSlug(state, owner, slug) {
+	if (!has(state, 'reader.lists.items') || !owner || !slug) {
 		return;
 	}
 
 	const preparedOwner = owner.toLowerCase();
 	const preparedSlug = slug.toLowerCase();
 
-	return find( state.reader.lists.items, list => {
+	return find(state.reader.lists.items, (list) => {
 		return list.owner === preparedOwner && list.slug === preparedSlug;
-	} );
+	});
 }
 
 /**
@@ -108,12 +108,12 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
  * @param  {string}  slug  List slug
  * @returns {boolean} Is the user subscribed?
  */
-export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
-	const list = getListByOwnerAndSlug( state, owner, slug );
-	if ( ! list ) {
+export function isSubscribedByOwnerAndSlug(state, owner, slug) {
+	const list = getListByOwnerAndSlug(state, owner, slug);
+	if (!list) {
 		return false;
 	}
-	return includes( state.reader.lists.subscribedLists, list.ID );
+	return includes(state.reader.lists.subscribedLists, list.ID);
 }
 
 /**
@@ -124,11 +124,11 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
  * @param  {string}  slug  List slug
  * @returns {boolean} Is the list missing?
  */
-export function isMissingByOwnerAndSlug( state, owner, slug ) {
+export function isMissingByOwnerAndSlug(state, owner, slug) {
 	const preparedOwner = owner.toLowerCase();
 	const preparedSlug = slug.toLowerCase();
 
-	return !! find( state.reader.lists.missingLists, list => {
+	return !!find(state.reader.lists.missingLists, (list) => {
 		return list.owner === preparedOwner && list.slug === preparedSlug;
-	} );
+	});
 }

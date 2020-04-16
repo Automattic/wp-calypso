@@ -20,14 +20,14 @@ import {
 	GP_PROJECT_TRANSLATION_SET_SLUGS,
 } from 'lib/i18n-utils/constants';
 
-jest.mock( '@automattic/viewport', () => ( {
+jest.mock('@automattic/viewport', () => ({
 	isMobile: jest.fn(),
-} ) );
+}));
 
-jest.mock( 'lib/user-settings', () => ( {
+jest.mock('lib/user-settings', () => ({
 	getSetting: jest.fn(),
 	getOriginalSetting: jest.fn(),
-} ) );
+}));
 
 // see: `languages` array in config/_shared.json
 const languagesMock = [
@@ -66,62 +66,60 @@ const mockGpApiResponseItem = {
 	],
 };
 
-describe( 'Community Translator', () => {
-	afterEach( () => {
+describe('Community Translator', () => {
+	afterEach(() => {
 		isMobile.mockReset();
-	} );
-	describe( 'canDisplayCommunityTranslator()', () => {
-		test( 'should display community translator in non-mobile and non-en locale', () => {
-			isMobile.mockReturnValue( false );
-			expect( canDisplayCommunityTranslator( 'it', '' ) ).toBe( true );
-		} );
+	});
+	describe('canDisplayCommunityTranslator()', () => {
+		test('should display community translator in non-mobile and non-en locale', () => {
+			isMobile.mockReturnValue(false);
+			expect(canDisplayCommunityTranslator('it', '')).toBe(true);
+		});
 
-		test( 'should not display community translator in non-mobile and en locale', () => {
-			isMobile.mockReturnValue( false );
-			expect( canDisplayCommunityTranslator( 'en', '' ) ).toBe( false );
-		} );
+		test('should not display community translator in non-mobile and en locale', () => {
+			isMobile.mockReturnValue(false);
+			expect(canDisplayCommunityTranslator('en', '')).toBe(false);
+		});
 
-		test( 'should not display community translator in mobile', () => {
-			isMobile.mockReturnValue( true );
-			expect( canDisplayCommunityTranslator( 'de', '' ) ).toBe( false );
-		} );
+		test('should not display community translator in mobile', () => {
+			isMobile.mockReturnValue(true);
+			expect(canDisplayCommunityTranslator('de', '')).toBe(false);
+		});
 
-		test( 'should not display community translator when locale is not defined', () => {
-			isMobile.mockReturnValue( false );
-			expect( canDisplayCommunityTranslator( undefined ) ).toBe( false );
-		} );
-	} );
+		test('should not display community translator when locale is not defined', () => {
+			isMobile.mockReturnValue(false);
+			expect(canDisplayCommunityTranslator(undefined)).toBe(false);
+		});
+	});
 
-	describe( 'getTranslationPermaLink()', () => {
-		test( 'should return null by default', () => {
-			expect( getTranslationPermaLink() ).toBe( null );
-		} );
+	describe('getTranslationPermaLink()', () => {
+		test('should return null by default', () => {
+			expect(getTranslationPermaLink()).toBe(null);
+		});
 
-		test( 'should return valid url with correct params for root language', () => {
-			expect( getTranslationPermaLink( '123', languagesMock[ 0 ] ) ).toBe(
-				`${ GP_BASE_URL }/projects/${ GP_PROJECT }/${ languagesMock[ 0 ].langSlug }/default?filters[original_id]=123`
+		test('should return valid url with correct params for root language', () => {
+			expect(getTranslationPermaLink('123', languagesMock[0])).toBe(
+				`${GP_BASE_URL}/projects/${GP_PROJECT}/${languagesMock[0].langSlug}/default?filters[original_id]=123`
 			);
-		} );
+		});
 
-		test( 'should return valid url with correct params for locale variant', () => {
-			expect( getTranslationPermaLink( '321', languagesMock[ 1 ], 'bean' ) ).toBe(
-				`${ GP_BASE_URL }/projects/bean/${ languagesMock[ 1 ].parentLangSlug }/` +
-					`${
-						GP_PROJECT_TRANSLATION_SET_SLUGS[ languagesMock[ 1 ].langSlug ]
-					}?filters[original_id]=321`
+		test('should return valid url with correct params for locale variant', () => {
+			expect(getTranslationPermaLink('321', languagesMock[1], 'bean')).toBe(
+				`${GP_BASE_URL}/projects/bean/${languagesMock[1].parentLangSlug}/` +
+					`${GP_PROJECT_TRANSLATION_SET_SLUGS[languagesMock[1].langSlug]}?filters[original_id]=321`
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'normalizeDetailsFromTranslationData()', () => {
-		test( 'should return valid url with correct params for root language', () => {
-			expect( normalizeDetailsFromTranslationData( mockGpApiResponseItem ) ).toEqual( {
+	describe('normalizeDetailsFromTranslationData()', () => {
+		test('should return valid url with correct params for root language', () => {
+			expect(normalizeDetailsFromTranslationData(mockGpApiResponseItem)).toEqual({
 				originalId: '149708',
 				comment: 'Hi!',
 				translatedSingular: 'Verwalte, welche Websites in Ihrem Profil angezeigt werden.',
 				translatedPlural: 'Plural!',
 				lastModified: '2018-03-21 05:46:44',
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

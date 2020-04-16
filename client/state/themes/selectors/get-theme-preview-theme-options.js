@@ -3,6 +3,6 @@
  */
 import 'state/themes/init';
 
-export function getThemePreviewThemeOptions( state ) {
+export function getThemePreviewThemeOptions(state) {
 	return state.themes.themePreviewOptions;
 }

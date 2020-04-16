@@ -13,20 +13,20 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
 import wpcom from 'lib/wp';
 
-export default function getWpAdminClassicEditorRedirectionUrl( state: AppState, siteId: number ) {
-	const postId = getEditorPostId( state ) as number;
-	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+export default function getWpAdminClassicEditorRedirectionUrl(state: AppState, siteId: number) {
+	const postId = getEditorPostId(state) as number;
+	const postType = getEditedPostValue(state, siteId, postId, 'type');
 
-	let queryArgs = pickBy( {
+	let queryArgs = pickBy({
 		post: postId,
 		action: postId && 'edit', // If postId is set, open edit view.
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		'classic-editor': 1,
-	} );
+	});
 
 	// needed for loading the editor in SU sessions
-	if ( wpcom.addSupportParams ) {
-		queryArgs = wpcom.addSupportParams( queryArgs );
+	if (wpcom.addSupportParams) {
+		queryArgs = wpcom.addSupportParams(queryArgs);
 	}
 
 	const siteAdminUrl = getSiteAdminUrl(
@@ -34,6 +34,6 @@ export default function getWpAdminClassicEditorRedirectionUrl( state: AppState, 
 		siteId,
 		postId ? 'post.php' : 'post-new.php'
 	) as string;
-	const wpAdminUrl = addQueryArgs( queryArgs, siteAdminUrl );
+	const wpAdminUrl = addQueryArgs(queryArgs, siteAdminUrl);
 	return wpAdminUrl;
 }

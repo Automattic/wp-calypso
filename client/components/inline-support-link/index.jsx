@@ -60,13 +60,13 @@ class InlineSupportLink extends Component {
 			openDialog,
 		} = this.props;
 
-		if ( ! supportPostId && ! supportLink ) {
+		if (!supportPostId && !supportLink) {
 			return null;
 		}
 
 		const LinkComponent = supportPostId ? 'a' : ExternalLink;
-		const url = supportPostId ? localizeUrl( supportLink ) : supportLink;
-		const externalLinkProps = ! supportPostId && {
+		const url = supportPostId ? localizeUrl(supportLink) : supportLink;
+		const externalLinkProps = !supportPostId && {
 			icon: showIcon,
 			iconSize,
 		};
@@ -74,20 +74,20 @@ class InlineSupportLink extends Component {
 		return (
 			<LinkComponent
 				className="inline-support-link"
-				href={ url }
-				onClick={ openDialog }
+				href={url}
+				onClick={openDialog}
 				target="_blank"
 				rel="noopener noreferrer"
-				{ ...externalLinkProps }
+				{...externalLinkProps}
 			>
-				{ showText && ( text || translate( 'Learn more' ) ) }
-				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{showText && (text || translate('Learn more'))}
+				{supportPostId && showIcon && <Gridicon icon="help-outline" size={iconSize} />}
 			</LinkComponent>
 		);
 	}
 }
 
-const mapDispatchToProps = ( dispatch, ownProps ) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
 	const {
 		tracksEvent,
 		tracksOptions,
@@ -97,31 +97,31 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 		supportLink,
 	} = ownProps;
 	return {
-		openDialog: event => {
-			if ( ! supportPostId ) {
+		openDialog: (event) => {
+			if (!supportPostId) {
 				return;
 			}
 			event.preventDefault();
 			const analyticsEvents = [
-				...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
-				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
+				...(tracksEvent ? [recordTracksEvent(tracksEvent, tracksOptions)] : []),
+				...(statsGroup && statsName ? [bumpStat(statsGroup, statsName)] : []),
 			];
-			if ( analyticsEvents.length > 0 ) {
+			if (analyticsEvents.length > 0) {
 				return dispatch(
 					withAnalytics(
-						composeAnalytics( ...analyticsEvents ),
-						openSupportArticleDialog( { postId: supportPostId, postUrl: supportLink } )
+						composeAnalytics(...analyticsEvents),
+						openSupportArticleDialog({ postId: supportPostId, postUrl: supportLink })
 					)
 				);
 			}
 			return dispatch(
-				openSupportArticleDialog( {
+				openSupportArticleDialog({
 					postId: supportPostId,
 					postUrl: supportLink,
-				} )
+				})
 			);
 		},
 	};
 };
 
-export default connect( null, mapDispatchToProps )( localize( InlineSupportLink ) );
+export default connect(null, mapDispatchToProps)(localize(InlineSupportLink));

@@ -13,7 +13,7 @@ const siteId = 77203074;
 const timestamp = 1496768464;
 const restoreId = 12345;
 
-const FINISHED_RESPONSE = deepFreeze( {
+const FINISHED_RESPONSE = deepFreeze({
 	error: '',
 	ok: '',
 	restore_status: {
@@ -25,12 +25,12 @@ const FINISHED_RESPONSE = deepFreeze( {
 		rewindId: '',
 		context: 'main',
 	},
-} );
+});
 
-describe( 'receiveRestoreProgress', () => {
-	test( 'should dispatch updateRewindRestoreProgress', () => {
-		const action = updateProgress( { siteId, timestamp, restoreId }, fromApi( FINISHED_RESPONSE ) );
-		const expectedAction = updateRewindRestoreProgress( siteId, timestamp, restoreId, {
+describe('receiveRestoreProgress', () => {
+	test('should dispatch updateRewindRestoreProgress', () => {
+		const action = updateProgress({ siteId, timestamp, restoreId }, fromApi(FINISHED_RESPONSE));
+		const expectedAction = updateRewindRestoreProgress(siteId, timestamp, restoreId, {
 			errorCode: '',
 			failureReason: '',
 			message: '',
@@ -38,7 +38,7 @@ describe( 'receiveRestoreProgress', () => {
 			status: 'finished',
 			rewindId: '',
 			context: 'main',
-		} );
-		expect( action ).toEqual( expectedAction );
-	} );
-} );
+		});
+		expect(action).toEqual(expectedAction);
+	});
+});

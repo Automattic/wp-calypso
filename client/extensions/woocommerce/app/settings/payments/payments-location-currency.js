@@ -39,65 +39,65 @@ class SettingsPaymentsLocationCurrency extends Component {
 	componentDidMount = () => {
 		const { site } = this.props;
 
-		if ( site && site.ID ) {
-			this.props.fetchCurrencies( site.ID );
+		if (site && site.ID) {
+			this.props.fetchCurrencies(site.ID);
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = (newProps) => {
 		const { site } = this.props;
 
-		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-		const oldSiteId = ( site && site.ID ) || null;
+		const newSiteId = (newProps.site && newProps.site.ID) || null;
+		const oldSiteId = (site && site.ID) || null;
 
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchCurrencies( newSiteId );
+		if (oldSiteId !== newSiteId) {
+			this.props.fetchCurrencies(newSiteId);
 		}
 	};
 
-	renderOption = currency => {
+	renderOption = (currency) => {
 		const { currencies } = this.props;
-		const option = find( currencies, { code: currency } );
+		const option = find(currencies, { code: currency });
 		return (
-			<option key={ option.code } value={ option.code }>
-				{ decodeEntities( option.symbol ) } - { decodeEntities( option.name ) }
+			<option key={option.code} value={option.code}>
+				{decodeEntities(option.symbol)} - {decodeEntities(option.name)}
 			</option>
 		);
 	};
 
-	onChange = e => {
+	onChange = (e) => {
 		const { site } = this.props;
 		const newCurrency = e.target.value;
-		this.props.changeCurrency( site.ID, newCurrency );
+		this.props.changeCurrency(site.ID, newCurrency);
 		this.props.onChange();
 	};
 
 	render() {
 		const { currencies, currency, site, translate } = this.props;
-		const validCurrencies = [ 'USD', 'AUD', 'CAD', 'GBP', 'BRL' ];
+		const validCurrencies = ['USD', 'AUD', 'CAD', 'GBP', 'BRL'];
 		return (
 			<div className="payments__location-currency">
-				<QuerySettingsGeneral siteId={ site && site.ID } />
+				<QuerySettingsGeneral siteId={site && site.ID} />
 				<ExtendedHeader
-					label={ translate( 'Store location and currency' ) }
-					description={ translate(
+					label={translate('Store location and currency')}
+					description={translate(
 						'Different options are available based on your location and currency.'
-					) }
+					)}
 				/>
 				<Card className="payments__address-currency-container">
-					<StoreAddress showLabel={ false } />
+					<StoreAddress showLabel={false} />
 					<div className="payments__currency-container">
-						<FormLabel>{ translate( 'Store currency' ) }</FormLabel>
+						<FormLabel>{translate('Store currency')}</FormLabel>
 						<FormSelect
 							className="payments__currency-select"
-							onChange={ this.onChange }
-							value={ currency }
-							disabled={ ! currency }
+							onChange={this.onChange}
+							value={currency}
+							disabled={!currency}
 						>
-							{ currency &&
+							{currency &&
 								currencies &&
 								currencies.length &&
-								validCurrencies.map( this.renderOption ) }
+								validCurrencies.map(this.renderOption)}
 						</FormSelect>
 					</div>
 				</Card>
@@ -106,10 +106,10 @@ class SettingsPaymentsLocationCurrency extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
-	const currencies = getCurrencies( state );
-	const currency = getCurrencyWithEdits( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
+	const currencies = getCurrencies(state);
+	const currency = getCurrencyWithEdits(state);
 	return {
 		currencies,
 		currency,
@@ -117,7 +117,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			changeCurrency,
@@ -129,5 +129,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsLocationCurrency )
+	connect(mapStateToProps, mapDispatchToProps)(SettingsPaymentsLocationCurrency)
 );

@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import reducer from '../reducer';
 import { SIGNUP_STEPS_DESIGN_TYPE_SET } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( 'should update the design type', () => {
+describe('reducer', () => {
+	test('should update the design type', () => {
 		expect(
 			reducer(
 				{},
@@ -19,6 +19,6 @@ describe( 'reducer', () => {
 					designType: 'design type',
 				}
 			)
-		).to.be.eql( 'design type' );
-	} );
-} );
+		).to.be.eql('design type');
+	});
+});

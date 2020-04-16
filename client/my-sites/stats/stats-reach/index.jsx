@@ -22,15 +22,15 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
-export const StatsReach = props => {
+export const StatsReach = (props) => {
 	const { translate, siteId, followData, publicizeData, isLoadingPublicize, siteSlug } = props;
 
-	const isLoadingFollowData = ! followData;
-	const wpcomFollowCount = get( followData, 'total_wpcom', 0 );
-	const emailFollowCount = get( followData, 'total_email', 0 );
+	const isLoadingFollowData = !followData;
+	const wpcomFollowCount = get(followData, 'total_wpcom', 0);
+	const emailFollowCount = get(followData, 'total_email', 0);
 	const publicizeFollowCount = reduce(
 		publicizeData,
-		( sum, item ) => {
+		(sum, item) => {
 			return sum + item.value;
 		},
 		0
@@ -38,32 +38,32 @@ export const StatsReach = props => {
 
 	return (
 		<div>
-			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
-			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
-			<SectionHeader label={ translate( 'Follower Totals' ) } />
+			{siteId && <QuerySiteStats siteId={siteId} statType="statsFollowers" />}
+			{siteId && <QuerySiteStats siteId={siteId} statType="statsPublicize" />}
+			<SectionHeader label={translate('Follower Totals')} />
 			<Card className="stats-module stats-reach__card">
 				<StatsTabs borderless>
 					<StatsTab
 						gridicon="my-sites"
-						label={ translate( 'WordPress.com' ) }
-						loading={ isLoadingFollowData }
-						href={ `/people/followers/${ siteSlug }` }
-						value={ wpcomFollowCount }
+						label={translate('WordPress.com')}
+						loading={isLoadingFollowData}
+						href={`/people/followers/${siteSlug}`}
+						value={wpcomFollowCount}
 						compact
 					/>
 					<StatsTab
 						gridicon="mail"
-						label={ translate( 'Email' ) }
-						loading={ isLoadingFollowData }
-						href={ `/people/email-followers/${ siteSlug }` }
-						value={ emailFollowCount }
+						label={translate('Email')}
+						loading={isLoadingFollowData}
+						href={`/people/email-followers/${siteSlug}`}
+						value={emailFollowCount}
 						compact
 					/>
 					<StatsTab
 						gridicon="share"
-						label={ translate( 'Social' ) }
-						loading={ isLoadingPublicize }
-						value={ publicizeFollowCount }
+						label={translate('Social')}
+						loading={isLoadingPublicize}
+						value={publicizeFollowCount}
 						compact
 					/>
 				</StatsTabs>
@@ -72,13 +72,13 @@ export const StatsReach = props => {
 	);
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const followData = getSiteStatsNormalizedData( state, siteId, 'statsFollowers' );
-	const publicizeData = getSiteStatsNormalizedData( state, siteId, 'statsPublicize' );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const followData = getSiteStatsNormalizedData(state, siteId, 'statsFollowers');
+	const publicizeData = getSiteStatsNormalizedData(state, siteId, 'statsPublicize');
 	const isLoadingPublicize =
-		isRequestingSiteStatsForQuery( state, siteId, 'statsPublicize' ) && ! publicizeData.length;
-	const siteSlug = getSiteSlug( state, siteId );
+		isRequestingSiteStatsForQuery(state, siteId, 'statsPublicize') && !publicizeData.length;
+	const siteSlug = getSiteSlug(state, siteId);
 
 	return {
 		siteId,
@@ -87,4 +87,4 @@ export default connect( state => {
 		isLoadingPublicize,
 		siteSlug,
 	};
-} )( localize( StatsReach ) );
+})(localize(StatsReach));

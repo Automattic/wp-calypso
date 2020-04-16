@@ -12,7 +12,7 @@ export const themes = [
 		description: translate(
 			'A functional and responsive theme perfect for your business’s online presence.'
 		),
-		design: [ 'page', 'store' ],
+		design: ['page', 'store'],
 		demo_uri: 'https://wordpress.com/theme/shoreditch',
 		verticals: [],
 	},
@@ -46,7 +46,7 @@ export const themes = [
 		slug: 'penscratch-2',
 		repo: 'pub',
 		fallback: true,
-		description: translate( 'A fresh, stylish design for sharing your writing.' ),
+		description: translate('A fresh, stylish design for sharing your writing.'),
 		design: 'blog',
 		demo_uri: 'https://penscratch2demo.wordpress.com',
 		verticals: [],
@@ -109,7 +109,7 @@ export const themes = [
 		description: translate(
 			'A business theme with clean, streamlined design, ideal for health and wellness-focused websites.'
 		),
-		design: [ 'page', 'store' ],
+		design: ['page', 'store'],
 		demo_uri: 'https://karunademo.wordpress.com',
 		verticals: [],
 	},
@@ -121,7 +121,7 @@ export const themes = [
 		description: translate(
 			'With bold featured images and bright, cheerful colors, Dara is ready to get to work for your business.'
 		),
-		design: [ 'page', 'store' ],
+		design: ['page', 'store'],
 		demo_uri: 'https://darademo.wordpress.com',
 		verticals: [],
 	},

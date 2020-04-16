@@ -11,8 +11,8 @@ import { get, reduce } from 'lodash';
  * @param  {number} siteId   Site ID
  * @returns {object}          Sync status object
  */
-function getSyncStatus( state, siteId ) {
-	return get( state, [ 'jetpackSync', 'syncStatus', siteId ] );
+function getSyncStatus(state, siteId) {
+	return get(state, ['jetpackSync', 'syncStatus', siteId]);
 }
 
 /**
@@ -22,8 +22,8 @@ function getSyncStatus( state, siteId ) {
  * @param  {number} siteId   Site ID
  * @returns {object}          Full sync request object
  */
-function getFullSyncRequest( state, siteId ) {
-	return get( state, [ 'jetpackSync', 'fullSyncRequest', siteId ] );
+function getFullSyncRequest(state, siteId) {
+	return get(state, ['jetpackSync', 'fullSyncRequest', siteId]);
 }
 
 /**
@@ -33,32 +33,32 @@ function getFullSyncRequest( state, siteId ) {
  * @param  {number} siteId   Site ID
  * @returns {boolean}         Whether a sync is pending start for site
  */
-function isPendingSyncStart( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId );
-	const fullSyncRequest = getFullSyncRequest( state, siteId );
+function isPendingSyncStart(state, siteId) {
+	const syncStatus = getSyncStatus(state, siteId);
+	const fullSyncRequest = getFullSyncRequest(state, siteId);
 
 	// Is the sync scheduled and awaiting cron?
-	const isScheduled = get( syncStatus, 'is_scheduled' );
-	if ( isScheduled ) {
+	const isScheduled = get(syncStatus, 'is_scheduled');
+	if (isScheduled) {
 		return true;
 	}
 
 	// Have we requested a full sync from Calypso?
 	const requestingFullSync =
-		get( fullSyncRequest, 'isRequesting' ) || get( fullSyncRequest, 'scheduled' );
-	if ( ! requestingFullSync ) {
+		get(fullSyncRequest, 'isRequesting') || get(fullSyncRequest, 'scheduled');
+	if (!requestingFullSync) {
 		return false;
 	}
 
 	// If we have requested a full sync, is that request newer than the last time we received sync status?
-	const lastRequested = get( fullSyncRequest, 'lastRequested' );
-	const lastSuccessfulStatus = get( syncStatus, 'lastSuccessfulStatus' );
+	const lastRequested = get(fullSyncRequest, 'lastRequested');
+	const lastSuccessfulStatus = get(syncStatus, 'lastSuccessfulStatus');
 
-	if ( ! lastSuccessfulStatus ) {
+	if (!lastSuccessfulStatus) {
 		return true;
 	}
 
-	return parseInt( lastRequested, 10 ) > parseInt( lastSuccessfulStatus, 10 );
+	return parseInt(lastRequested, 10) > parseInt(lastSuccessfulStatus, 10);
 }
 
 /**
@@ -68,9 +68,9 @@ function isPendingSyncStart( state, siteId ) {
  * @param  {number} siteId   Site ID
  * @returns {boolean}        Whether a site is using immediate full sync
  */
-function isImmediateFullSync( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId );
-	return ! get( syncStatus, 'queue' ); // Immediate full sync sites will not have a `queue` property.
+function isImmediateFullSync(state, siteId) {
+	const syncStatus = getSyncStatus(state, siteId);
+	return !get(syncStatus, 'queue'); // Immediate full sync sites will not have a `queue` property.
 }
 
 /**
@@ -80,28 +80,28 @@ function isImmediateFullSync( state, siteId ) {
  * @param  {number} siteId   Site ID
  * @returns {number}         The percentage of sync completed, expressed as an integer
  */
-function getImmediateSyncProgressPercentage( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId ),
-		progress = get( syncStatus, 'progress' );
+function getImmediateSyncProgressPercentage(state, siteId) {
+	const syncStatus = getSyncStatus(state, siteId),
+		progress = get(syncStatus, 'progress');
 
-	if ( ! progress ) {
+	if (!progress) {
 		return 0;
 	}
 	const totalItems = reduce(
-		Object.values( progress ),
-		( sum, syncItem ) => {
-			return syncItem.total ? ( sum += parseInt( syncItem.total ) ) : sum;
+		Object.values(progress),
+		(sum, syncItem) => {
+			return syncItem.total ? (sum += parseInt(syncItem.total)) : sum;
 		},
 		0
 	);
 	const totalSent = reduce(
-		Object.values( progress ),
-		( sum, syncItem ) => {
-			return syncItem.sent ? ( sum += parseInt( syncItem.sent ) ) : sum;
+		Object.values(progress),
+		(sum, syncItem) => {
+			return syncItem.sent ? (sum += parseInt(syncItem.sent)) : sum;
 		},
 		0
 	);
-	return Math.ceil( ( totalSent / totalItems ) * 100 );
+	return Math.ceil((totalSent / totalItems) * 100);
 }
 
 /**
@@ -111,16 +111,16 @@ function getImmediateSyncProgressPercentage( state, siteId ) {
  * @param  {number} siteId   Site ID
  * @returns {boolean}         Whether a sync is in the process of syncing
  */
-function isFullSyncing( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId );
-	if ( ! syncStatus ) {
+function isFullSyncing(state, siteId) {
+	const syncStatus = getSyncStatus(state, siteId);
+	if (!syncStatus) {
 		return false;
 	}
 
-	const isStarted = get( syncStatus, 'started' );
-	const isFinished = get( syncStatus, 'finished' );
+	const isStarted = get(syncStatus, 'started');
+	const isFinished = get(syncStatus, 'finished');
 
-	return isStarted && ! isFinished;
+	return isStarted && !isFinished;
 }
 
 /**
@@ -130,49 +130,49 @@ function isFullSyncing( state, siteId ) {
  * @param  {number} siteId   Site ID
  * @returns {number}          The percentage of sync completed, expressed as an integer
  */
-function getSyncProgressPercentage( state, siteId ) {
-	if ( isImmediateFullSync( state, siteId ) ) {
-		return getImmediateSyncProgressPercentage( state, siteId );
+function getSyncProgressPercentage(state, siteId) {
+	if (isImmediateFullSync(state, siteId)) {
+		return getImmediateSyncProgressPercentage(state, siteId);
 	}
 
-	const syncStatus = getSyncStatus( state, siteId ),
-		queued = get( syncStatus, 'queue' ),
-		sent = get( syncStatus, 'sent' ),
-		total = get( syncStatus, 'total' ),
+	const syncStatus = getSyncStatus(state, siteId),
+		queued = get(syncStatus, 'queue'),
+		sent = get(syncStatus, 'sent'),
+		total = get(syncStatus, 'total'),
 		queuedMultiplier = 0.1,
 		sentMultiplier = 0.9;
 
-	if ( isPendingSyncStart( state, siteId ) || ! queued || ! sent || ! total ) {
+	if (isPendingSyncStart(state, siteId) || !queued || !sent || !total) {
 		return 0;
 	}
 
 	const countQueued = reduce(
 		queued,
-		( sum, value ) => {
-			return ( sum += value );
+		(sum, value) => {
+			return (sum += value);
 		},
 		0
 	);
 
 	const countSent = reduce(
 		sent,
-		( sum, value ) => {
-			return ( sum += value );
+		(sum, value) => {
+			return (sum += value);
 		},
 		0
 	);
 
 	const countTotal = reduce(
 		total,
-		( sum, value ) => {
-			return ( sum += value );
+		(sum, value) => {
+			return (sum += value);
 		},
 		0
 	);
 
-	const percentQueued = ( countQueued / countTotal ) * queuedMultiplier * 100;
-	const percentSent = ( countSent / countTotal ) * sentMultiplier * 100;
-	return Math.ceil( percentQueued + percentSent );
+	const percentQueued = (countQueued / countTotal) * queuedMultiplier * 100;
+	const percentSent = (countSent / countTotal) * sentMultiplier * 100;
+	return Math.ceil(percentQueued + percentSent);
 }
 
 export default {

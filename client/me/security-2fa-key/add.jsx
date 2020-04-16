@@ -16,7 +16,7 @@ import { registerSecurityKey } from 'lib/webauthn';
 import Security2faKeyAddName from './name';
 import WaitForKey from './wait-for-key';
 
-const debug = debugFactory( 'calypso:me:security-2fa-key' );
+const debug = debugFactory('calypso:me:security-2fa-key');
 
 class Security2faKeyAdd extends React.Component {
 	static propTypes = {
@@ -29,34 +29,34 @@ class Security2faKeyAdd extends React.Component {
 		securityKeyName: '',
 	};
 
-	registerKey = securityKeyName => {
-		this.setState( { securityKeyName } );
-		registerSecurityKey( securityKeyName )
-			.then( data => {
-				debug( 'registered key with data', data );
+	registerKey = (securityKeyName) => {
+		this.setState({ securityKeyName });
+		registerSecurityKey(securityKeyName)
+			.then((data) => {
+				debug('registered key with data', data);
 				this.keyRegistered();
-			} )
-			.catch( e => {
-				this.handleError( e );
-			} );
+			})
+			.catch((e) => {
+				this.handleError(e);
+			});
 	};
 
-	handleError = e => {
-		if ( 'Canceled' === e.error ) {
-			this.props.warningNotice( e.message, {
+	handleError = (e) => {
+		if ('Canceled' === e.error) {
+			this.props.warningNotice(e.message, {
 				showDismiss: true,
 				isPersistent: true,
 				duration: 5000,
-			} );
+			});
 		} else {
-			this.props.errorNotice( e.message );
+			this.props.errorNotice(e.message);
 		}
 		this.props.onCancel();
 	};
 
 	keyRegistered = () => {
 		this.props.successNotice(
-			this.props.translate( 'Security key has been successfully registered.' ),
+			this.props.translate('Security key has been successfully registered.'),
 			{
 				showDismiss: true,
 				isPersistent: true,
@@ -69,20 +69,17 @@ class Security2faKeyAdd extends React.Component {
 	render() {
 		return (
 			<Card>
-				{ ! this.state.securityKeyName && (
-					<Security2faKeyAddName
-						onNameSubmit={ this.registerKey }
-						onCancel={ this.props.onCancel }
-					/>
-				) }
-				{ this.state.securityKeyName && <WaitForKey /> }
+				{!this.state.securityKeyName && (
+					<Security2faKeyAddName onNameSubmit={this.registerKey} onCancel={this.props.onCancel} />
+				)}
+				{this.state.securityKeyName && <WaitForKey />}
 			</Card>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	errorNotice,
 	warningNotice,
 	successNotice,
-} )( localize( Security2faKeyAdd ) );
+})(localize(Security2faKeyAdd));

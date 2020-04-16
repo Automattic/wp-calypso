@@ -15,6 +15,6 @@ import { DEFAULT_POST_QUERY } from 'state/posts/constants';
  * @param  {object} query Posts query
  * @returns {object}       Normalized posts query
  */
-export function getNormalizedPostsQuery( query ) {
-	return omitBy( query, ( value, key ) => DEFAULT_POST_QUERY[ key ] === value );
+export function getNormalizedPostsQuery(query) {
+	return omitBy(query, (value, key) => DEFAULT_POST_QUERY[key] === value);
 }

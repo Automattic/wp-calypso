@@ -20,26 +20,26 @@ import isJetpackSite from './is-jetpack-site';
  * @param  {string} panel  Optional panel to autofocus
  * @returns {string}        Customizer URL
  */
-export default function getCustomizerUrl( state, siteId, panel ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
-		const siteSlug = getSiteSlug( state, siteId );
-		return [ '' ].concat( compact( [ 'customize', panel, siteSlug ] ) ).join( '/' );
+export default function getCustomizerUrl(state, siteId, panel) {
+	if (!isJetpackSite(state, siteId)) {
+		const siteSlug = getSiteSlug(state, siteId);
+		return [''].concat(compact(['customize', panel, siteSlug])).join('/');
 	}
 
-	const adminUrl = getSiteAdminUrl( state, siteId, 'customize.php' );
-	if ( ! adminUrl ) {
+	const adminUrl = getSiteAdminUrl(state, siteId, 'customize.php');
+	if (!adminUrl) {
 		return null;
 	}
 
 	let returnUrl;
-	if ( 'undefined' !== typeof window ) {
+	if ('undefined' !== typeof window) {
 		returnUrl = window.location.href;
 	}
 
 	return addQueryArgs(
 		{
 			return: returnUrl,
-			...getCustomizerFocus( panel ),
+			...getCustomizerFocus(panel),
 		},
 		adminUrl
 	);

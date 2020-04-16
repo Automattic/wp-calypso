@@ -40,18 +40,18 @@ class EmailVerificationCard extends React.Component {
 	};
 
 	componentWillUnmount() {
-		if ( this.timer ) {
-			clearTimeout( this.timer );
+		if (this.timer) {
+			clearTimeout(this.timer);
 			this.timer = null;
 		}
 	}
 
 	revertToWaitingState = () => {
 		this.timer = null;
-		this.setState( { emailSent: false } );
+		this.setState({ emailSent: false });
 	};
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		const {
 			errorMessage,
 			resendVerification,
@@ -63,71 +63,66 @@ class EmailVerificationCard extends React.Component {
 
 		event.preventDefault();
 
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
-		resendVerification( selectedDomainName, error => {
-			if ( error ) {
-				const message = get( error, 'message', errorMessage );
-				this.props.errorNotice( message );
-			} else if ( compact ) {
+		resendVerification(selectedDomainName, (error) => {
+			if (error) {
+				const message = get(error, 'message', errorMessage);
+				this.props.errorNotice(message);
+			} else if (compact) {
 				this.props.successNotice(
-					translate( 'Check your email — instructions sent to %(email)s.', {
+					translate('Check your email — instructions sent to %(email)s.', {
 						args: { email: contactEmail },
-					} ),
+					}),
 					{ duration: 5000 }
 				);
 			} else {
-				this.timer = setTimeout( this.revertToWaitingState, 5000 );
-				this.setState( { emailSent: true } );
+				this.timer = setTimeout(this.revertToWaitingState, 5000);
+				this.setState({ emailSent: true });
 			}
 
-			this.setState( { submitting: false } );
-		} );
+			this.setState({ submitting: false });
+		});
 	};
 
 	renderStatus() {
 		const { changeEmailHref, contactEmail, translate } = this.props;
 		const { emailSent, submitting } = this.state;
-		const statusClassNames = classNames( 'email-verification__status-container', {
-			waiting: ! emailSent,
+		const statusClassNames = classNames('email-verification__status-container', {
+			waiting: !emailSent,
 			sent: emailSent,
-		} );
+		});
 		let statusIcon = 'notice-outline';
-		let statusText = translate( 'Check your email — instructions sent to %(email)s.', {
+		let statusText = translate('Check your email — instructions sent to %(email)s.', {
 			args: { email: contactEmail },
-		} );
+		});
 
-		if ( emailSent ) {
+		if (emailSent) {
 			statusIcon = 'mail';
-			statusText = translate( 'Sent to %(email)s. Check your email to verify.', {
+			statusText = translate('Sent to %(email)s. Check your email to verify.', {
 				args: { email: contactEmail },
-			} );
+			});
 		}
 
 		return (
-			<div className={ statusClassNames }>
+			<div className={statusClassNames}>
 				<div className="email-verification__status">
-					<Gridicon icon={ statusIcon } size={ 36 } />
-					{ statusText }
+					<Gridicon icon={statusIcon} size={36} />
+					{statusText}
 
-					{ ! emailSent && (
+					{!emailSent && (
 						<div>
-							<Button
-								compact
-								busy={ submitting }
-								disabled={ submitting }
-								onClick={ this.handleSubmit }
-							>
-								{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
+							<Button compact busy={submitting} disabled={submitting} onClick={this.handleSubmit}>
+								{submitting ? translate('Sending…') : translate('Send Again')}
 							</Button>
 
-							{ changeEmailHref && (
-								<Button compact href={ changeEmailHref } onClick={ this.props.onClick }>
-									{ this.props.translate( 'Change Email Address' ) }
+							{changeEmailHref && (
+								<Button compact href={changeEmailHref} onClick={this.props.onClick}>
+									{this.props.translate('Change Email Address')}
 								</Button>
-							) }
+							)}
 						</div>
-					) }
+					)}
 				</div>
 			</div>
 		);
@@ -139,29 +134,29 @@ class EmailVerificationCard extends React.Component {
 
 		return (
 			<div>
-				<p>{ this.props.verificationExplanation }</p>
-				<Button busy={ submitting } disabled={ submitting } onClick={ this.handleSubmit }>
-					{ submitting ? translate( 'Sending…' ) : translate( 'Resend email' ) }
+				<p>{this.props.verificationExplanation}</p>
+				<Button busy={submitting} disabled={submitting} onClick={this.handleSubmit}>
+					{submitting ? translate('Sending…') : translate('Resend email')}
 				</Button>
 			</div>
 		);
 	}
 
 	render() {
-		if ( this.props.compact ) {
+		if (this.props.compact) {
 			return this.renderCompact();
 		}
 
 		return (
 			<Card highlight="warning" className="email-verification">
 				<div className="email-verification__explanation">
-					<h1 className="email-verification__heading">{ this.props.headerText }</h1>
-					{ this.props.verificationExplanation }
+					<h1 className="email-verification__heading">{this.props.headerText}</h1>
+					{this.props.verificationExplanation}
 				</div>
-				{ this.renderStatus() }
+				{this.renderStatus()}
 			</Card>
 		);
 	}
 }
 
-export default connect( null, { errorNotice, successNotice } )( localize( EmailVerificationCard ) );
+export default connect(null, { errorNotice, successNotice })(localize(EmailVerificationCard));

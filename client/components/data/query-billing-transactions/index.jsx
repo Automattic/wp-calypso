@@ -19,7 +19,7 @@ class QueryBillingTransactions extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.requestingBillingTransactions ) {
+		if (this.props.requestingBillingTransactions) {
 			return;
 		}
 
@@ -32,8 +32,8 @@ class QueryBillingTransactions extends Component {
 }
 
 export default connect(
-	state => ( {
-		requestingBillingTransactions: isRequestingBillingTransactions( state ),
-	} ),
+	(state) => ({
+		requestingBillingTransactions: isRequestingBillingTransactions(state),
+	}),
 	{ requestBillingTransactions }
-)( QueryBillingTransactions );
+)(QueryBillingTransactions);

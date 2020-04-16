@@ -10,7 +10,7 @@ import JetpackColophon from 'components/jetpack-colophon';
 
 export default function JetpackColophonExample() {
 	return (
-		<div style={ { fontSize: '15px' } }>
+		<div style={{ fontSize: '15px' }}>
 			<JetpackColophon />
 		</div>
 	);

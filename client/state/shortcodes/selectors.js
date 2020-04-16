@@ -13,8 +13,8 @@ import { get } from 'lodash';
  * @param  {string}  shortcode Shortcode
  * @returns {boolean}           Whether that shortcode is being requested
  */
-export const isRequestingShortcode = ( state, siteId, shortcode ) => {
-	return get( state.shortcodes.requesting, [ siteId, shortcode ], false );
+export const isRequestingShortcode = (state, siteId, shortcode) => {
+	return get(state.shortcodes.requesting, [siteId, shortcode], false);
 };
 
 /**
@@ -25,6 +25,6 @@ export const isRequestingShortcode = ( state, siteId, shortcode ) => {
  * @param  {string} shortcode  Shortcode
  * @returns {object}            Shortcode data
  */
-export const getShortcode = ( state, siteId, shortcode ) => {
-	return get( state.shortcodes.items, [ siteId, shortcode ] );
+export const getShortcode = (state, siteId, shortcode) => {
+	return get(state.shortcodes.items, [siteId, shortcode]);
 };

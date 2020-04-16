@@ -44,28 +44,28 @@ import NoSitesMessage from 'components/empty-content/no-sites-message';
 
 class PurchasesList extends Component {
 	isDataLoading() {
-		if ( this.props.isFetchingUserPurchases && ! this.props.hasLoadedUserPurchasesFromServer ) {
+		if (this.props.isFetchingUserPurchases && !this.props.hasLoadedUserPurchasesFromServer) {
 			return true;
 		}
 
-		return ! this.props.sites.length;
+		return !this.props.sites.length;
 	}
 
 	renderConciergeBanner() {
 		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
 
-		if ( null === hasAvailableConciergeSessions ) {
+		if (null === hasAvailableConciergeSessions) {
 			return (
-				<ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />
+				<ConciergeBanner bannerType={CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION} showPlaceholder />
 			);
 		}
 
 		let bannerType;
 
-		if ( nextAppointment ) {
+		if (nextAppointment) {
 			bannerType = CONCIERGE_HAS_UPCOMING_APPOINTMENT;
-		} else if ( hasAvailableConciergeSessions ) {
-			switch ( scheduleId ) {
+		} else if (hasAvailableConciergeSessions) {
+			switch (scheduleId) {
 				case CONCIERGE_WPCOM_BUSINESS_ID:
 					bannerType = CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION;
 					break;
@@ -82,41 +82,38 @@ class PurchasesList extends Component {
 		}
 
 		return (
-			<ConciergeBanner
-				bannerType={ bannerType }
-				recordTracksEvent={ this.props.recordTracksEvent }
-			/>
+			<ConciergeBanner bannerType={bannerType} recordTracksEvent={this.props.recordTracksEvent} />
 		);
 	}
 
 	render() {
 		let content;
 
-		if ( this.isDataLoading() ) {
+		if (this.isDataLoading()) {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
+		if (this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length) {
 			content = (
 				<div>
-					{ this.renderConciergeBanner() }
+					{this.renderConciergeBanner()}
 
-					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
+					{getPurchasesBySite(this.props.purchases, this.props.sites).map((site) => (
 						<PurchasesSite
-							key={ site.id }
-							siteId={ site.id }
-							name={ site.name }
-							domain={ site.domain }
-							slug={ site.slug }
-							purchases={ site.purchases }
+							key={site.id}
+							siteId={site.id}
+							name={site.name}
+							domain={site.domain}
+							slug={site.slug}
+							purchases={site.purchases}
 						/>
-					) ) }
+					))}
 				</div>
 			);
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
-			if ( ! this.props.sites.length ) {
+		if (this.props.hasLoadedUserPurchasesFromServer && !this.props.purchases.length) {
+			if (!this.props.sites.length) {
 				return (
 					<Main>
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
@@ -127,18 +124,18 @@ class PurchasesList extends Component {
 			}
 			content = (
 				<>
-					{ this.renderConciergeBanner() }
+					{this.renderConciergeBanner()}
 
 					<CompactCard className="purchases-list__no-content">
 						<EmptyContent
-							title={ this.props.translate( 'Looking to upgrade?' ) }
-							line={ this.props.translate(
+							title={this.props.translate('Looking to upgrade?')}
+							line={this.props.translate(
 								'Our plans give your site the power to thrive. ' +
 									'Find the plan that works for you.'
-							) }
-							action={ this.props.translate( 'Upgrade now' ) }
-							actionURL={ '/plans' }
-							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+							)}
+							action={this.props.translate('Upgrade now')}
+							actionURL={'/plans'}
+							illustration={'/calypso/images/illustrations/illustration-nosites.svg'}
 						/>
 					</CompactCard>
 				</>
@@ -147,11 +144,11 @@ class PurchasesList extends Component {
 
 		return (
 			<Main className="purchases-list">
-				<QueryUserPurchases userId={ this.props.userId } />
+				<QueryUserPurchases userId={this.props.userId} />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
 				<PurchasesHeader section="purchases" />
-				{ content }
+				{content}
 				<QueryConciergeInitial />
 			</Main>
 		);
@@ -161,25 +158,25 @@ class PurchasesList extends Component {
 PurchasesList.propTypes = {
 	isBusinessPlanUser: PropTypes.bool.isRequired,
 	noticeType: PropTypes.string,
-	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
+	purchases: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
 	sites: PropTypes.array.isRequired,
 	userId: PropTypes.number.isRequired,
 };
 
 export default connect(
-	state => {
-		const userId = getCurrentUserId( state );
+	(state) => {
+		const userId = getCurrentUserId(state);
 		return {
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			isBusinessPlanUser: isBusinessPlanUser( state ),
-			isFetchingUserPurchases: isFetchingUserPurchases( state ),
-			purchases: getUserPurchases( state, userId ),
-			sites: getSites( state ),
-			nextAppointment: getConciergeNextAppointment( state ),
-			hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
-			scheduleId: getConciergeScheduleId( state ),
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer(state),
+			isBusinessPlanUser: isBusinessPlanUser(state),
+			isFetchingUserPurchases: isFetchingUserPurchases(state),
+			purchases: getUserPurchases(state, userId),
+			sites: getSites(state),
+			nextAppointment: getConciergeNextAppointment(state),
+			hasAvailableConciergeSessions: getHasAvailableConciergeSessions(state),
+			scheduleId: getConciergeScheduleId(state),
 			userId,
 		};
 	},
 	{ recordTracksEvent }
-)( localize( PurchasesList ) );
+)(localize(PurchasesList));

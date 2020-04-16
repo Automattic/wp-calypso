@@ -17,14 +17,10 @@ import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-s
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {?boolean}          Whether the site is in development mode.
  */
-export default function isJetpackSiteInDevelopmentMode( state, siteId ) {
-	const isDevMode = get(
-		getJetpackConnectionStatus( state, siteId ),
-		[ 'devMode', 'isActive' ],
-		null
-	);
-	if ( isDevMode === null ) {
+export default function isJetpackSiteInDevelopmentMode(state, siteId) {
+	const isDevMode = get(getJetpackConnectionStatus(state, siteId), ['devMode', 'isActive'], null);
+	if (isDevMode === null) {
 		return null;
 	}
-	return !! isDevMode;
+	return !!isDevMode;
 }

@@ -25,4 +25,4 @@ export class QueryThemeFilters extends Component {
 	}
 }
 
-export default connect( null, { requestThemeFilters } )( QueryThemeFilters );
+export default connect(null, { requestThemeFilters })(QueryThemeFilters);

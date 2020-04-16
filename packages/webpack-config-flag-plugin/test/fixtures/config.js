@@ -1,4 +1,4 @@
-export function isEnabled( flag ) {
+export function isEnabled(flag) {
 	return 'argh';
 }
 

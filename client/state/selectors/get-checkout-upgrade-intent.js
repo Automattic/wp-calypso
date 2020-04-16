@@ -4,6 +4,6 @@
  * @param {object} state  Global state tree
  * @returns {string} The intent signaled by the customer for upgrade purposes
  */
-export default function getCheckoutUpgradeIntent( state ) {
+export default function getCheckoutUpgradeIntent(state) {
 	return state?.ui?.checkout?.upgradeIntent || '';
 }

@@ -20,7 +20,7 @@ import 'state/data-layer/wpcom/me/two-step/application-passwords/new';
  *
  * @returns {object} Action object
  */
-export const requestApplicationPasswords = () => ( { type: APPLICATION_PASSWORDS_REQUEST } );
+export const requestApplicationPasswords = () => ({ type: APPLICATION_PASSWORDS_REQUEST });
 
 /**
  * Returns an action object to signal the receiving of application passwords.
@@ -28,10 +28,10 @@ export const requestApplicationPasswords = () => ( { type: APPLICATION_PASSWORDS
  * @param  {Array}  appPasswords Array containing the application passwords of the current user.
  * @returns {object}              Action object.
  */
-export const receiveApplicationPasswords = appPasswords => ( {
+export const receiveApplicationPasswords = (appPasswords) => ({
 	type: APPLICATION_PASSWORDS_RECEIVE,
 	appPasswords,
-} );
+});
 
 /**
  * Returns an action object to signal the creation of an application password.
@@ -39,10 +39,10 @@ export const receiveApplicationPasswords = appPasswords => ( {
  * @param  {string} applicationName Name of the application password.
  * @returns {object}                 Action object.
  */
-export const createApplicationPassword = applicationName => ( {
+export const createApplicationPassword = (applicationName) => ({
 	type: APPLICATION_PASSWORD_CREATE,
 	applicationName,
-} );
+});
 
 /**
  * Returns an action object to signal the successful creation of an application password.
@@ -50,19 +50,19 @@ export const createApplicationPassword = applicationName => ( {
  * @param  {object} appPassword Application password.
  * @returns {object}             Action object.
  */
-export const createApplicationPasswordSuccess = appPassword => ( {
+export const createApplicationPasswordSuccess = (appPassword) => ({
 	type: APPLICATION_PASSWORD_CREATE_SUCCESS,
 	appPassword,
-} );
+});
 
 /**
  * Returns an action object to signal the clearing of the new application password.
  *
  * @returns {object} Action object.
  */
-export const clearNewApplicationPassword = () => ( {
+export const clearNewApplicationPassword = () => ({
 	type: APPLICATION_PASSWORD_NEW_CLEAR,
-} );
+});
 
 /**
  * Returns an action object to signal the deletion of an application password.
@@ -70,10 +70,10 @@ export const clearNewApplicationPassword = () => ( {
  * @param  {number} appPasswordId ID of the application password.
  * @returns {object}               Action object.
  */
-export const deleteApplicationPassword = appPasswordId => ( {
+export const deleteApplicationPassword = (appPasswordId) => ({
 	type: APPLICATION_PASSWORD_DELETE,
 	appPasswordId,
-} );
+});
 
 /**
  * Returns an action object to signal the successful deletion of an application password.
@@ -81,7 +81,7 @@ export const deleteApplicationPassword = appPasswordId => ( {
  * @param  {number} appPasswordId ID of the application password.
  * @returns {object}               Action object.
  */
-export const deleteApplicationPasswordSuccess = appPasswordId => ( {
+export const deleteApplicationPasswordSuccess = (appPasswordId) => ({
 	type: APPLICATION_PASSWORD_DELETE_SUCCESS,
 	appPasswordId,
-} );
+});

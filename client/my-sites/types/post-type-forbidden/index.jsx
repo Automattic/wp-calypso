@@ -16,12 +16,12 @@ import EmptyContent from 'components/empty-content';
  */
 import whoopsImage from 'assets/images/illustrations/whoops.svg';
 
-function PostTypeForbidden( { translate } ) {
+function PostTypeForbidden({ translate }) {
 	return (
 		<EmptyContent
-			illustration={ whoopsImage }
-			title={ translate( 'You need permission to manage this post type' ) }
-			line={ translate( 'Ask your site administrator to grant you access' ) }
+			illustration={whoopsImage}
+			title={translate('You need permission to manage this post type')}
+			line={translate('Ask your site administrator to grant you access')}
 		/>
 	);
 }
@@ -30,4 +30,4 @@ PostTypeForbidden.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default localize( PostTypeForbidden );
+export default localize(PostTypeForbidden);

@@ -58,60 +58,58 @@ export class CommentView extends Component {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="comments" wideLayout>
 				<PageViewTracker path="/comment/:site/:commentId" title="Comments" />
-				<QuerySiteCommentsTree siteId={ siteId } status={ 'all' } />
-				<DocumentHead title={ translate( 'Comment' ) } />
-				{ canModerateComments && (
+				<QuerySiteCommentsTree siteId={siteId} status={'all'} />
+				<DocumentHead title={translate('Comment')} />
+				{canModerateComments && (
 					<ModerateComment
-						{ ...{ siteId, postId, commentId, newStatus: action, redirectToPostView } }
+						{...{ siteId, postId, commentId, newStatus: action, redirectToPostView }}
 					/>
-				) }
-				{ 'delete' === action && (
-					<CommentDeleteWarning { ...{ siteId, postId, commentId, redirectToPostView } } />
-				) }
-				<CommentListHeader { ...{ postId, commentId } } />
-				{ ! canModerateComments && (
+				)}
+				{'delete' === action && (
+					<CommentDeleteWarning {...{ siteId, postId, commentId, redirectToPostView }} />
+				)}
+				<CommentListHeader {...{ postId, commentId }} />
+				{!canModerateComments && (
 					<EmptyContent
-						title={ preventWidows(
-							translate( "Oops! You don't have permission to manage comments." )
-						) }
-						line={ preventWidows(
-							translate( "If you think you should, contact this site's administrator." )
-						) }
+						title={preventWidows(translate("Oops! You don't have permission to manage comments."))}
+						line={preventWidows(
+							translate("If you think you should, contact this site's administrator.")
+						)}
 						illustration="/calypso/images/illustrations/error.svg"
 					/>
-				) }
-				{ canModerateComments && (
+				)}
+				{canModerateComments && (
 					<Comment
-						commentId={ commentId }
-						refreshCommentData={ true }
-						redirect={ redirectToPostView }
-						isPostView={ true }
-						isEditMode={ canModerateComments && 'edit' === action }
+						commentId={commentId}
+						refreshCommentData={true}
+						redirect={redirectToPostView}
+						isPostView={true}
+						isEditMode={canModerateComments && 'edit' === action}
 					/>
-				) }
-				{ canModerateComments && hasPermalink && <CommentPermalink { ...{ siteId, commentId } } /> }
+				)}
+				{canModerateComments && hasPermalink && <CommentPermalink {...{ siteId, commentId }} />}
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = (state, ownProps) => {
 	const { commentId, redirectToPostView, siteFragment } = ownProps;
 
-	const siteId = getSiteId( state, siteFragment );
-	const comment = getSiteComment( state, siteId, commentId );
-	const postId = get( comment, 'post.ID' );
+	const siteId = getSiteId(state, siteFragment);
+	const comment = getSiteComment(state, siteId, commentId);
+	const postId = get(comment, 'post.ID');
 
-	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' ) !== false;
-	const hasPermalink = includes( [ 'approved', 'unapproved' ], get( comment, 'status' ) );
+	const canModerateComments = canCurrentUser(state, siteId, 'moderate_comments') !== false;
+	const hasPermalink = includes(['approved', 'unapproved'], get(comment, 'status'));
 
 	return {
 		siteId,
 		postId,
 		canModerateComments,
 		hasPermalink,
-		redirectToPostView: redirectToPostView( postId ),
+		redirectToPostView: redirectToPostView(postId),
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentView ) );
+export default connect(mapStateToProps)(localize(CommentView));

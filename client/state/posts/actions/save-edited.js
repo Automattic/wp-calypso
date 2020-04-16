@@ -44,11 +44,11 @@ let saveMarkerId = 0;
  * @param  {object} attributes - changed attributes
  * @returns {object} - normalized attributes
  */
-function normalizeApiAttributes( attributes ) {
-	attributes = clone( attributes );
-	attributes = normalizeTermsForApi( attributes );
+function normalizeApiAttributes(attributes) {
+	attributes = clone(attributes);
+	attributes = normalizeTermsForApi(attributes);
 
-	if ( attributes.author ) {
+	if (attributes.author) {
 		attributes.author = attributes.author.ID;
 	}
 
@@ -60,31 +60,31 @@ function normalizeApiAttributes( attributes ) {
  *
  * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
  */
-export const saveEdited = options => async ( dispatch, getState ) => {
-	const siteId = getSelectedSiteId( getState() );
-	const postId = getEditorPostId( getState() );
-	const post = getEditedPost( getState(), siteId, postId );
+export const saveEdited = (options) => async (dispatch, getState) => {
+	const siteId = getSelectedSiteId(getState());
+	const postId = getEditorPostId(getState());
+	const post = getEditedPost(getState(), siteId, postId);
 
 	// Don't send a request to the API if the post has no content (title,
 	// content, or excerpt). A post without content is invalid.
-	if ( ! editedPostHasContent( getState(), siteId, postId ) ) {
-		throw new Error( 'NO_CONTENT' );
+	if (!editedPostHasContent(getState(), siteId, postId)) {
+		throw new Error('NO_CONTENT');
 	}
 
 	// Prevent saving post if another module has blocked saving.
-	if ( isEditorSaveBlocked( getState() ) ) {
-		throw new Error( 'SAVE_BLOCKED' );
+	if (isEditorSaveBlocked(getState())) {
+		throw new Error('SAVE_BLOCKED');
 	}
 
-	const initialRawContent = getEditorInitialRawContent( getState() );
-	const rawContent = getEditorRawContent( getState() );
+	const initialRawContent = getEditorInitialRawContent(getState());
+	const rawContent = getEditorRawContent(getState());
 
-	let changedAttributes = getPostEdits( getState(), siteId, postId );
+	let changedAttributes = getPostEdits(getState(), siteId, postId);
 
 	// when toggling editor modes, it is possible for the post to be dirty
 	// even though the content hasn't changed. To avoid a confusing UX
 	// let's just pass the content through and save it anyway
-	if ( ! get( changedAttributes, 'content' ) && rawContent !== initialRawContent ) {
+	if (!get(changedAttributes, 'content') && rawContent !== initialRawContent) {
 		changedAttributes = {
 			...changedAttributes,
 			content: post.content,
@@ -93,33 +93,33 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 
 	// Don't send a request to the API if the post is unchanged. An empty post request is invalid.
 	// This case is not treated as error, but rather as a successful save.
-	if ( isEmpty( changedAttributes ) ) {
+	if (isEmpty(changedAttributes)) {
 		return null;
 	}
 
-	const saveMarker = `save-marker-${ ++saveMarkerId }`;
-	dispatch( editorSave( siteId, postId, saveMarker ) );
+	const saveMarker = `save-marker-${++saveMarkerId}`;
+	dispatch(editorSave(siteId, postId, saveMarker));
 
-	changedAttributes = normalizeApiAttributes( changedAttributes );
-	const mode = getPreference( getState(), 'editor-mode' );
-	const isNew = ! postId;
+	changedAttributes = normalizeApiAttributes(changedAttributes);
+	const mode = getPreference(getState(), 'editor-mode');
+	const isNew = !postId;
 
-	const postHandle = wpcom.site( siteId ).post( postId );
+	const postHandle = wpcom.site(siteId).post(postId);
 	const query = {
 		context: 'edit',
 		apiVersion: '1.2',
 	};
-	if ( options && options.autosave ) {
+	if (options && options.autosave) {
 		query.autosave = options.autosave;
 	}
 
-	if ( ! options || options.recordSaveEvent !== false ) {
-		dispatch( recordSaveEvent() ); // do this before changing status from 'future'
+	if (!options || options.recordSaveEvent !== false) {
+		dispatch(recordSaveEvent()); // do this before changing status from 'future'
 	}
 
 	if (
-		( changedAttributes && changedAttributes.status === 'future' && isFutureDated( post ) ) ||
-		( changedAttributes && changedAttributes.status === 'publish' && isBackDated( post ) )
+		(changedAttributes && changedAttributes.status === 'future' && isFutureDated(post)) ||
+		(changedAttributes && changedAttributes.status === 'publish' && isBackDated(post))
 	) {
 		// HACK: This is necessary because for some reason v1.1 and v1.2 of the update post endpoints
 		// don't accept a status of 'future' under any conditions.
@@ -127,41 +127,41 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 
 		// HACK^2: If a post is back-dated, we must also pass in the date, otherwise the API resets the date
 		// here /public.api/rest/json-endpoints/class.wpcom-json-api-update-post-v1-2-endpoint.php#L102
-		changedAttributes = assign( {}, changedAttributes, {
+		changedAttributes = assign({}, changedAttributes, {
 			status: 'publish',
 			date: post.date,
-		} );
+		});
 	}
 
-	const data = await postHandle[ isNew ? 'add' : 'update' ]( query, changedAttributes );
+	const data = await postHandle[isNew ? 'add' : 'update'](query, changedAttributes);
 
-	const currentMode = getPreference( getState(), 'editor-mode' );
+	const currentMode = getPreference(getState(), 'editor-mode');
 
-	dispatch( editorAutosaveReset() );
-	dispatch( editorLoadingErrorReset() );
+	dispatch(editorAutosaveReset());
+	dispatch(editorLoadingErrorReset());
 
 	// Retrieve the normalized post and use it to update Redux store
-	const receivedPost = normalizePostForActions( data );
+	const receivedPost = normalizePostForActions(data);
 
-	if ( receivedPost.status === 'draft' ) {
+	if (receivedPost.status === 'draft') {
 		// If a draft was successfully saved, set it as "last edited draft"
 		// There's UI in masterbar for one-click "continue editing"
-		dispatch( setEditorLastDraft( receivedPost.site_ID, receivedPost.ID ) );
+		dispatch(setEditorLastDraft(receivedPost.site_ID, receivedPost.ID));
 	} else {
 		// Draft was published or trashed: reset the "last edited draft" record
-		dispatch( resetEditorLastDraft() );
+		dispatch(resetEditorLastDraft());
 	}
 
 	// `post.ID` can be null/undefined, which means we're saving new post.
 	// `savePostSuccess` will convert the temporary ID (empty string key) in Redux
 	// to the newly assigned ID in `receivedPost.ID`.
-	dispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {} ) );
-	dispatch( receivePost( receivedPost, saveMarker ) );
+	dispatch(savePostSuccess(receivedPost.site_ID, post.ID, receivedPost, {}));
+	dispatch(receivePost(receivedPost, saveMarker));
 
 	// Only re-init the rawContent if the mode hasn't changed since the request was initiated.
 	// Changing the mode re-initializes the rawContent, so we don't want to stomp on it
-	if ( mode === currentMode ) {
-		dispatch( editorInitRawContent( rawContent ) );
+	if (mode === currentMode) {
+		dispatch(editorInitRawContent(rawContent));
 	}
 
 	/*

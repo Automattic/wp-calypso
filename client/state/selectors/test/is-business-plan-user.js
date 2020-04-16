@@ -10,11 +10,11 @@ import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
 import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'lib/plans/constants';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
-describe( 'isBusinessPlanUser()', () => {
-	test( 'should return true if any purchase is a business plan.', () => {
-		const state = deepFreeze( {
+describe('isBusinessPlanUser()', () => {
+	test('should return true if any purchase is a business plan.', () => {
+		const state = deepFreeze({
 			currentUser: {
 				id: 123,
 			},
@@ -31,13 +31,13 @@ describe( 'isBusinessPlanUser()', () => {
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		} );
+		});
 
-		expect( isBusinessPlanUser( state ) ).toBe( true );
-	} );
+		expect(isBusinessPlanUser(state)).toBe(true);
+	});
 
-	test( 'should return true if any purchase is a business plan (2y).', () => {
-		const state = deepFreeze( {
+	test('should return true if any purchase is a business plan (2y).', () => {
+		const state = deepFreeze({
 			currentUser: {
 				id: 123,
 			},
@@ -54,13 +54,13 @@ describe( 'isBusinessPlanUser()', () => {
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		} );
+		});
 
-		expect( isBusinessPlanUser( state ) ).toBe( true );
-	} );
+		expect(isBusinessPlanUser(state)).toBe(true);
+	});
 
-	test( 'should return false if non of the purchases is a business plan.', () => {
-		const state = deepFreeze( {
+	test('should return false if non of the purchases is a business plan.', () => {
+		const state = deepFreeze({
 			currentUser: {
 				id: 123,
 			},
@@ -77,21 +77,21 @@ describe( 'isBusinessPlanUser()', () => {
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		} );
+		});
 
-		expect( isBusinessPlanUser( state ) ).toBe( false );
-	} );
+		expect(isBusinessPlanUser(state)).toBe(false);
+	});
 
-	test( 'should return false if current user id is null.', () => {
-		const state = deepFreeze( {
+	test('should return false if current user id is null.', () => {
+		const state = deepFreeze({
 			currentUser: {},
-		} );
+		});
 
-		expect( isBusinessPlanUser( state ) ).toBe( false );
-	} );
+		expect(isBusinessPlanUser(state)).toBe(false);
+	});
 
-	test( 'should return false if purchasing data is null.', () => {
-		const state = deepFreeze( {
+	test('should return false if purchasing data is null.', () => {
+		const state = deepFreeze({
 			currentUser: {
 				id: 123,
 			},
@@ -105,8 +105,8 @@ describe( 'isBusinessPlanUser()', () => {
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		} );
+		});
 
-		expect( isBusinessPlanUser( state ) ).toBe( false );
-	} );
-} );
+		expect(isBusinessPlanUser(state)).toBe(false);
+	});
+});

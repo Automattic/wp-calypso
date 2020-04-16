@@ -17,19 +17,19 @@ import 'state/posts/init';
  * @returns {?Array}         Posts for the post query
  */
 export const getPostsForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const manager = getQueryManager( state, siteId );
-		if ( ! manager ) {
+	(state, siteId, query) => {
+		const manager = getQueryManager(state, siteId);
+		if (!manager) {
 			return null;
 		}
 
-		const itemsIgnoringPage = manager.getItemsIgnoringPage( query );
-		if ( ! itemsIgnoringPage ) {
+		const itemsIgnoringPage = manager.getItemsIgnoringPage(query);
+		if (!itemsIgnoringPage) {
 			return null;
 		}
 
-		return itemsIgnoringPage.map( normalizePostForDisplay );
+		return itemsIgnoringPage.map(normalizePostForDisplay);
 	},
-	state => [ state.posts.queries, state.posts.allSitesQueries ],
-	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
+	(state) => [state.posts.queries, state.posts.allSitesQueries],
+	(state, siteId, query) => getSerializedPostsQueryWithoutPage(query, siteId)
 );

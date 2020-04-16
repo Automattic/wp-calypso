@@ -22,22 +22,22 @@ class Notices extends React.PureComponent {
 
 		return (
 			<div>
-				<button className="docs__design-toggle button" onClick={ this.toggleNotices }>
-					{ toggleNoticesText }
+				<button className="docs__design-toggle button" onClick={this.toggleNotices}>
+					{toggleNoticesText}
 				</button>
 
 				<div>
-					<Notice showDismiss={ false } isCompact={ this.state.compactNotices ? true : null }>
+					<Notice showDismiss={false} isCompact={this.state.compactNotices ? true : null}>
 						I'm a notice with no status and <a href="#link">a link</a>.
 					</Notice>
 				</div>
 				<div>
 					<Notice
 						text="I'm a notice with no status and an action."
-						showDismiss={ false }
-						isCompact={ this.state.compactNotices ? true : null }
+						showDismiss={false}
+						isCompact={this.state.compactNotices ? true : null}
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">{'Update'}</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -45,35 +45,35 @@ class Notices extends React.PureComponent {
 						status="is-info"
 						text="I'm an `is-info` notice with custom icon."
 						icon="heart"
-						isCompact={ this.state.compactNotices ? true : null }
+						isCompact={this.state.compactNotices ? true : null}
 					/>
 				</div>
 				<div>
 					<Notice
 						status="is-info"
-						showDismiss={ false }
+						showDismiss={false}
 						text="I'm an `is-info` notice with custom icon and an action."
 						icon="heart"
-						isCompact={ this.state.compactNotices ? true : null }
+						isCompact={this.state.compactNotices ? true : null}
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">{'Update'}</NoticeAction>
 					</Notice>
 				</div>
 				<div>
 					<Notice
 						status="is-success"
 						text="I'm an `is-success` notice."
-						isCompact={ this.state.compactNotices ? true : null }
+						isCompact={this.state.compactNotices ? true : null}
 					/>
 				</div>
 				<div>
 					<Notice
 						status="is-error"
-						showDismiss={ false }
+						showDismiss={false}
 						text="I'm an `is-error` notice."
-						isCompact={ this.state.compactNotices ? true : null }
+						isCompact={this.state.compactNotices ? true : null}
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">{'Update'}</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -81,37 +81,37 @@ class Notices extends React.PureComponent {
 						status="is-warning"
 						icon="ellipsis-circle"
 						text="I'm an `is-warning` notice with custom icon and an action."
-						isCompact={ this.state.compactNotices ? true : null }
+						isCompact={this.state.compactNotices ? true : null}
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">{'Update'}</NoticeAction>
 					</Notice>
 				</div>
 				<div>
 					<Notice
 						status="is-warning"
-						isCompact={ this.state.compactNotices ? true : null }
-						showDismiss={ false }
-						text={ "I'm an `is-warning` notice." }
+						isCompact={this.state.compactNotices ? true : null}
+						showDismiss={false}
+						text={"I'm an `is-warning` notice."}
 					/>
 				</div>
 				<div>
 					<Notice
 						status="is-success"
-						isCompact={ this.state.compactNotices ? true : null }
-						showDismiss={ false }
-						text={ "I'm an `is-success` notice with an arrow link." }
+						isCompact={this.state.compactNotices ? true : null}
+						showDismiss={false}
+						text={"I'm an `is-success` notice with an arrow link."}
 					>
-						<NoticeAction href="#" external={ true }>
-							{ 'Preview' }
+						<NoticeAction href="#" external={true}>
+							{'Preview'}
 						</NoticeAction>
 					</Notice>
 				</div>
 				<div>
 					<Notice
 						status="is-error"
-						showDismiss={ true }
+						showDismiss={true}
 						text="I'm an always dismissable error notice."
-						isCompact={ this.state.compactNotices ? true : null }
+						isCompact={this.state.compactNotices ? true : null}
 					>
 						<NoticeAction href="#">More</NoticeAction>
 					</Notice>
@@ -122,8 +122,8 @@ class Notices extends React.PureComponent {
 						icon="reader"
 						isLoading
 						text="I'm a notice that's loading…"
-						showDismiss={ false }
-						isCompact={ this.state.compactNotices ? true : null }
+						showDismiss={false}
+						isCompact={this.state.compactNotices ? true : null}
 					/>
 				</div>
 			</div>
@@ -131,7 +131,7 @@ class Notices extends React.PureComponent {
 	}
 
 	toggleNotices = () => {
-		this.setState( { compactNotices: ! this.state.compactNotices } );
+		this.setState({ compactNotices: !this.state.compactNotices });
 	};
 }
 

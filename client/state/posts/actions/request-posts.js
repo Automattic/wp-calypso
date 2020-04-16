@@ -14,35 +14,35 @@ import 'state/posts/init';
  * @param  {string}   query  Post query
  * @returns {Function}        Action thunk
  */
-export function requestPosts( siteId, query = {} ) {
-	return dispatch => {
-		dispatch( {
+export function requestPosts(siteId, query = {}) {
+	return (dispatch) => {
+		dispatch({
 			type: POSTS_REQUEST,
 			siteId,
 			query,
-		} );
+		});
 
-		const source = siteId ? wpcom.site( siteId ) : wpcom.me();
+		const source = siteId ? wpcom.site(siteId) : wpcom.me();
 
 		return source
-			.postsList( { ...query } )
-			.then( ( { found, posts } ) => {
-				dispatch( receivePosts( posts ) );
-				dispatch( {
+			.postsList({ ...query })
+			.then(({ found, posts }) => {
+				dispatch(receivePosts(posts));
+				dispatch({
 					type: POSTS_REQUEST_SUCCESS,
 					siteId,
 					query,
 					found,
 					posts,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: POSTS_REQUEST_FAILURE,
 					siteId,
 					query,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

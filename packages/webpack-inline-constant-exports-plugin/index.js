@@ -1,17 +1,17 @@
-const HarmonyImportSideEffectDependency = require( 'webpack/lib/dependencies/HarmonyImportSideEffectDependency' );
-const HarmonyImportSpecifierDependency = require( 'webpack/lib/dependencies/HarmonyImportSpecifierDependency' );
-const ConstDependency = require( 'webpack/lib/dependencies/ConstDependency' );
+const HarmonyImportSideEffectDependency = require('webpack/lib/dependencies/HarmonyImportSideEffectDependency');
+const HarmonyImportSpecifierDependency = require('webpack/lib/dependencies/HarmonyImportSpecifierDependency');
+const ConstDependency = require('webpack/lib/dependencies/ConstDependency');
 
-function addConstantExport( module, name, value ) {
-	if ( ! module.constantExports ) {
+function addConstantExport(module, name, value) {
+	if (!module.constantExports) {
 		module.constantExports = {};
 	}
-	module.constantExports[ name ] = value;
+	module.constantExports[name] = value;
 }
 
-function removeDependency( module, dep ) {
-	module.removeDependency( dep );
-	dep.module.reasons = dep.module.reasons.filter( r => r.dependency !== dep );
+function removeDependency(module, dep) {
+	module.removeDependency(dep);
+	dep.module.reasons = dep.module.reasons.filter((r) => r.dependency !== dep);
 }
 
 class InlineConstantExportsPlugin {
@@ -19,31 +19,31 @@ class InlineConstantExportsPlugin {
 	 * `matchers` is a regular expression or an array of regular expressions that are used
 	 * to match module paths. Only constants from matching modules will be inlined.
 	 */
-	constructor( matchers ) {
-		if ( Array.isArray( matchers ) ) {
+	constructor(matchers) {
+		if (Array.isArray(matchers)) {
 			this.matchers = matchers;
 		} else {
-			this.matchers = [ matchers ];
+			this.matchers = [matchers];
 		}
 	}
 
-	isConstantsModule( module ) {
-		return module && this.matchers.some( matcher => matcher.test( module.resource ) );
+	isConstantsModule(module) {
+		return module && this.matchers.some((matcher) => matcher.test(module.resource));
 	}
 
-	apply( compiler ) {
+	apply(compiler) {
 		compiler.hooks.compilation.tap(
 			'InlineConstantExportsPlugin',
-			( compilation, { normalModuleFactory } ) => {
+			(compilation, { normalModuleFactory }) => {
 				/*
 				 * Look at parsed module source code and look for constant exports. If found, put them into
 				 * the `constantExports` map field on the `module` object.
 				 */
-				const handleParser = parser => {
-					const handleExport = ( statement, declaration ) => {
+				const handleParser = (parser) => {
+					const handleExport = (statement, declaration) => {
 						const { module } = parser.state;
 
-						if ( ! this.isConstantsModule( module ) ) {
+						if (!this.isConstantsModule(module)) {
 							return;
 						}
 
@@ -62,16 +62,16 @@ class InlineConstantExportsPlugin {
 							declaration.type === 'VariableDeclaration' &&
 							declaration.kind === 'const'
 						) {
-							for ( const declarator of declaration.declarations ) {
-								if ( declarator.init.type === 'Literal' ) {
-									addConstantExport( module, declarator.id.name, declarator.init.raw );
+							for (const declarator of declaration.declarations) {
+								if (declarator.init.type === 'Literal') {
+									addConstantExport(module, declarator.id.name, declarator.init.raw);
 								}
 							}
 						}
 
 						/* Look for statements like `export default 123;` */
-						if ( statement.type === 'ExportDefaultDeclaration' && declaration.type === 'Literal' ) {
-							addConstantExport( module, 'default', declaration.raw );
+						if (statement.type === 'ExportDefaultDeclaration' && declaration.type === 'Literal') {
+							addConstantExport(module, 'default', declaration.raw);
 						}
 
 						/*
@@ -88,24 +88,24 @@ class InlineConstantExportsPlugin {
 					};
 
 					/* ExportNamedDeclaration nodes trigger this hook */
-					parser.hooks.exportDeclaration.tap( 'InlineConstantExportsPlugin', handleExport );
+					parser.hooks.exportDeclaration.tap('InlineConstantExportsPlugin', handleExport);
 					/* ExportDefaultDeclaration nodes trigger this hook */
-					parser.hooks.exportExpression.tap( 'InlineConstantExportsPlugin', handleExport );
+					parser.hooks.exportExpression.tap('InlineConstantExportsPlugin', handleExport);
 				};
 
 				/* Hook into all JavaScript module types */
-				for ( const moduleType of [ 'javascript/auto', 'javascript/dynamic', 'javascript/esm' ] ) {
+				for (const moduleType of ['javascript/auto', 'javascript/dynamic', 'javascript/esm']) {
 					normalModuleFactory.hooks.parser
-						.for( moduleType )
-						.tap( 'InlineConstantExportsPlugin', handleParser );
+						.for(moduleType)
+						.tap('InlineConstantExportsPlugin', handleParser);
 				}
 
 				/*
 				 * Use the information gathered during the parse phase to optimize the constant dependencies
 				 * by inlining them.
 				 */
-				compilation.hooks.optimizeDependencies.tap( 'InlineConstantExportsPlugin', modules => {
-					for ( const module of modules ) {
+				compilation.hooks.optimizeDependencies.tap('InlineConstantExportsPlugin', (modules) => {
+					for (const module of modules) {
 						/* Track the dependencies we find in this module, so that we can correctly remove them
 						 * at the end. */
 						const importSideEffectDependencies = new Map(); // Module -> Dependency
@@ -113,8 +113,8 @@ class InlineConstantExportsPlugin {
 						const usesConstantDependencies = new Map(); // Module -> Boolean
 						const importSpecifierDependencies = []; // [ ImportSpecifierDependency ]
 
-						for ( const dep of module.dependencies ) {
-							if ( ! this.isConstantsModule( dep.module ) ) {
+						for (const dep of module.dependencies) {
+							if (!this.isConstantsModule(dep.module)) {
 								continue;
 							}
 
@@ -128,8 +128,8 @@ class InlineConstantExportsPlugin {
 							 * That means that we treat constant modules as side-effect fee, i.e., we can safely
 							 * remove the import.
 							 */
-							if ( dep instanceof HarmonyImportSideEffectDependency ) {
-								importSideEffectDependencies.set( dep.module, dep );
+							if (dep instanceof HarmonyImportSideEffectDependency) {
+								importSideEffectDependencies.set(dep.module, dep);
 							}
 
 							/*
@@ -149,11 +149,11 @@ class InlineConstantExportsPlugin {
 							 * When inlining a constant, we remove the ImportSpecifierDependency and replace it
 							 * with a ConstDependency that inserts the inlined code verbatim.
 							 */
-							if ( dep instanceof HarmonyImportSpecifierDependency ) {
-								if ( dep.module.constantExports && dep.id in dep.module.constantExports ) {
+							if (dep instanceof HarmonyImportSpecifierDependency) {
+								if (dep.module.constantExports && dep.id in dep.module.constantExports) {
 									// Mark the dependency for removal: we'll remove it after we're finished
 									// traversing the dependency graph.
-									importSpecifierDependencies.push( dep );
+									importSpecifierDependencies.push(dep);
 
 									let inlinedCode;
 									/*
@@ -162,44 +162,44 @@ class InlineConstantExportsPlugin {
 									 *   const supportedPlans = { BLOGGER };
 									 * Then we need to expand the shorthand into `{ BLOGGER: __inline_value__ }`
 									 */
-									if ( dep.shorthand ) {
-										inlinedCode = `${ dep.name }: ${ dep.module.constantExports[ dep.id ] }`;
+									if (dep.shorthand) {
+										inlinedCode = `${dep.name}: ${dep.module.constantExports[dep.id]}`;
 									} else {
 										/* Every other usage is just inlined as is */
-										inlinedCode = dep.module.constantExports[ dep.id ];
+										inlinedCode = dep.module.constantExports[dep.id];
 									}
-									const inlineDep = new ConstDependency( '/* inline */ ' + inlinedCode, dep.range );
+									const inlineDep = new ConstDependency('/* inline */ ' + inlinedCode, dep.range);
 									inlineDep.loc = dep.loc;
-									module.addDependency( inlineDep );
+									module.addDependency(inlineDep);
 
 									/* Remember the fact that we inlined some constant. We remove import statements
 									 * only for modules where we inlined at least something. The other modules we
 									 * leave as they are. */
-									usesConstantDependencies.set( dep.module, true );
+									usesConstantDependencies.set(dep.module, true);
 								} else {
 									/* This dependency was not a constant and cannot be inlined. Remember this fact
 									 * so that we don't remove the import statement for this module. */
-									usesNonConstantDependencies.set( dep.module, true );
+									usesNonConstantDependencies.set(dep.module, true);
 								}
 							}
 						}
 
 						/* Remove the import statements if all the imported bindings were inlined */
-						for ( const [ depModule, depImport ] of importSideEffectDependencies ) {
+						for (const [depModule, depImport] of importSideEffectDependencies) {
 							if (
-								usesConstantDependencies.get( depModule ) &&
-								! usesNonConstantDependencies.get( depModule )
+								usesConstantDependencies.get(depModule) &&
+								!usesNonConstantDependencies.get(depModule)
 							) {
-								removeDependency( module, depImport );
+								removeDependency(module, depImport);
 							}
 						}
 
 						/* Remove the ImportSpecifierDependencies that were replaced with ConstDependencies */
-						for ( const dep of importSpecifierDependencies ) {
-							removeDependency( module, dep );
+						for (const dep of importSpecifierDependencies) {
+							removeDependency(module, dep);
 						}
 					}
-				} );
+				});
 			}
 		);
 	}

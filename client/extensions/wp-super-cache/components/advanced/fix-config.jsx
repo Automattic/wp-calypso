@@ -26,22 +26,22 @@ class FixConfig extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	restoreSettings = () => this.props.restoreSettings( this.props.siteId );
+	restoreSettings = () => this.props.restoreSettings(this.props.siteId);
 
 	render() {
 		const { isReadOnly, isRestoring, translate } = this.props;
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Fix Configuration' ) } />
+				<SectionHeader label={translate('Fix Configuration')} />
 				<Card>
 					<Button
 						compact
-						busy={ isRestoring }
-						disabled={ isRestoring || isReadOnly }
-						onClick={ this.restoreSettings }
+						busy={isRestoring}
+						disabled={isRestoring || isReadOnly}
+						onClick={this.restoreSettings}
 					>
-						{ translate( 'Restore Default Configuration' ) }
+						{translate('Restore Default Configuration')}
 					</Button>
 				</Card>
 			</div>
@@ -50,9 +50,9 @@ class FixConfig extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const isRestoring = isRestoringSettings( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const isRestoring = isRestoringSettings(state, siteId);
 
 		return {
 			isRestoring,
@@ -62,4 +62,4 @@ const connectComponent = connect(
 	{ restoreSettings }
 );
 
-export default flowRight( connectComponent, localize )( FixConfig );
+export default flowRight(connectComponent, localize)(FixConfig);

@@ -13,13 +13,13 @@ import { getSiteSlug } from 'state/sites/selectors';
  * @param  {number}  siteId Site ID
  * @returns {?string}        The current route with site parameters
  */
-export default function getCurrentRouteParameterized( state, siteId ) {
-	const route = getCurrentRoute( state );
-	const slug = getSiteSlug( state, siteId );
+export default function getCurrentRouteParameterized(state, siteId) {
+	const route = getCurrentRoute(state);
+	const slug = getSiteSlug(state, siteId);
 
-	if ( null === route || null === slug ) {
+	if (null === route || null === slug) {
 		return null;
 	}
 
-	return route.replace( slug, ':site' ).replace( siteId, ':siteid' );
+	return route.replace(slug, ':site').replace(siteId, ':siteid');
 }

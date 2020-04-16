@@ -7,10 +7,10 @@ export default {
 	 * @param {string} filter - The filter to get a mime from
 	 * @returns {string} Mime type
 	 */
-	getMimeBaseTypeFromFilter: function( filter ) {
+	getMimeBaseTypeFromFilter: function (filter) {
 		let mime;
 
-		switch ( filter ) {
+		switch (filter) {
 			case 'images':
 				mime = 'image/';
 				break;
@@ -42,19 +42,19 @@ export default {
 	 * @param {object} props Media library request props
 	 * @returns {object} Modified query for Google Photos
 	 */
-	getGoogleQuery: function( query, props ) {
+	getGoogleQuery: function (query, props) {
 		const { categoryFilter, filter } = props;
 		const googleFilter = [];
 
-		if ( filter && this.convertMimeFilter( filter ) ) {
-			googleFilter.push( 'mediaType=' + this.convertMimeFilter( filter ) );
+		if (filter && this.convertMimeFilter(filter)) {
+			googleFilter.push('mediaType=' + this.convertMimeFilter(filter));
 		}
 
-		if ( categoryFilter ) {
-			googleFilter.push( 'categoryInclude=' + categoryFilter );
+		if (categoryFilter) {
+			googleFilter.push('categoryInclude=' + categoryFilter);
 		}
 
-		if ( googleFilter.length ) {
+		if (googleFilter.length) {
 			return { ...query, filter: googleFilter };
 		}
 
@@ -67,10 +67,10 @@ export default {
 	 * @param {string} wpMimeFilter Calypso MIME filter
 	 * @returns {string} Converted MIME filter, or null if unsupported type
 	 */
-	convertMimeFilter( wpMimeFilter ) {
-		if ( wpMimeFilter === 'videos' ) {
+	convertMimeFilter(wpMimeFilter) {
+		if (wpMimeFilter === 'videos') {
 			return 'video';
-		} else if ( wpMimeFilter === 'images' ) {
+		} else if (wpMimeFilter === 'images') {
 			return 'photo';
 		}
 

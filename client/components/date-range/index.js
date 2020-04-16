@@ -33,24 +33,24 @@ const NO_DATE_SELECTED_VALUE = null;
 
 export class DateRange extends Component {
 	static propTypes = {
-		selectedStartDate: PropTypes.oneOfType( [
-			PropTypes.instanceOf( Date ),
-			PropTypes.instanceOf( moment ),
-		] ),
-		selectedEndDate: PropTypes.oneOfType( [
-			PropTypes.instanceOf( Date ),
-			PropTypes.instanceOf( moment ),
-		] ),
+		selectedStartDate: PropTypes.oneOfType([
+			PropTypes.instanceOf(Date),
+			PropTypes.instanceOf(moment),
+		]),
+		selectedEndDate: PropTypes.oneOfType([
+			PropTypes.instanceOf(Date),
+			PropTypes.instanceOf(moment),
+		]),
 		onDateSelect: PropTypes.func,
 		onDateCommit: PropTypes.func,
-		firstSelectableDate: PropTypes.oneOfType( [
-			PropTypes.instanceOf( Date ),
-			PropTypes.instanceOf( moment ),
-		] ),
-		lastSelectableDate: PropTypes.oneOfType( [
-			PropTypes.instanceOf( Date ),
-			PropTypes.instanceOf( moment ),
-		] ),
+		firstSelectableDate: PropTypes.oneOfType([
+			PropTypes.instanceOf(Date),
+			PropTypes.instanceOf(moment),
+		]),
+		lastSelectableDate: PropTypes.oneOfType([
+			PropTypes.instanceOf(Date),
+			PropTypes.instanceOf(moment),
+		]),
 		triggerText: PropTypes.func,
 		isCompact: PropTypes.bool,
 		showTriggerClear: PropTypes.bool,
@@ -65,40 +65,39 @@ export class DateRange extends Component {
 		isCompact: false,
 		focusedMonth: null,
 		showTriggerClear: true,
-		renderTrigger: props => <DateRangeTrigger { ...props } />,
-		renderHeader: props => <DateRangeHeader { ...props } />,
-		renderInputs: props => <DateRangeInputs { ...props } />,
+		renderTrigger: (props) => <DateRangeTrigger {...props} />,
+		renderHeader: (props) => <DateRangeHeader {...props} />,
+		renderInputs: (props) => <DateRangeInputs {...props} />,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		// Define the date range that is selectable (ie: not disabled)
 		const firstSelectableDate =
-			has( this.props, 'firstSelectableDate' ) &&
-			this.props.moment( this.props.firstSelectableDate );
+			has(this.props, 'firstSelectableDate') && this.props.moment(this.props.firstSelectableDate);
 		const lastSelectableDate =
-			has( this.props, 'lastSelectableDate' ) && this.props.moment( this.props.lastSelectableDate );
+			has(this.props, 'lastSelectableDate') && this.props.moment(this.props.lastSelectableDate);
 
 		// Clamp start/end dates to ranges (if specified)
-		let startDate = isNil( this.props.selectedStartDate )
+		let startDate = isNil(this.props.selectedStartDate)
 			? NO_DATE_SELECTED_VALUE
-			: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
+			: this.clampDateToRange(this.props.moment(this.props.selectedStartDate), {
 					dateFrom: firstSelectableDate,
 					dateTo: lastSelectableDate,
-			  } );
+			  });
 
-		let endDate = isNil( this.props.selectedEndDate )
+		let endDate = isNil(this.props.selectedEndDate)
 			? NO_DATE_SELECTED_VALUE
-			: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
+			: this.clampDateToRange(this.props.moment(this.props.selectedEndDate), {
 					dateFrom: firstSelectableDate,
 					dateTo: lastSelectableDate,
-			  } );
+			  });
 
 		// Ensure start is before end otherwise flip the values
-		if ( startDate && endDate && endDate.isBefore( startDate ) ) {
+		if (startDate && endDate && endDate.isBefore(startDate)) {
 			// flip values via array destructuring (think about it...)
-			[ startDate, endDate ] = [ endDate, startDate ];
+			[startDate, endDate] = [endDate, startDate];
 		}
 
 		// Build initial state
@@ -111,8 +110,8 @@ export class DateRange extends Component {
 			staleDatesSaved: false,
 			// this needs to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
-			textInputStartDate: this.toDateString( startDate ),
-			textInputEndDate: this.toDateString( endDate ),
+			textInputStartDate: this.toDateString(startDate),
+			textInputEndDate: this.toDateString(endDate),
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
@@ -127,9 +126,9 @@ export class DateRange extends Component {
 	 * Note this does not commit the current date state
 	 */
 	openPopover = () => {
-		this.setState( {
+		this.setState({
 			popoverVisible: true,
-		} );
+		});
 	};
 
 	/**
@@ -137,9 +136,9 @@ export class DateRange extends Component {
 	 * Note this does not commit the current date state
 	 */
 	closePopover = () => {
-		this.setState( {
+		this.setState({
 			popoverVisible: false,
-		} );
+		});
 	};
 
 	/**
@@ -147,7 +146,7 @@ export class DateRange extends Component {
 	 * Note this does not commit the current date state
 	 */
 	togglePopover = () => {
-		if ( this.state.popoverVisible ) {
+		if (this.state.popoverVisible) {
 			this.closePopover();
 		} else {
 			this.openPopover();
@@ -171,10 +170,10 @@ export class DateRange extends Component {
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
-	handleInputChange = ( val, startOrEnd ) => {
-		this.setState( {
-			[ `textInput${ startOrEnd }Date` ]: val,
-		} );
+	handleInputChange = (val, startOrEnd) => {
+		this.setState({
+			[`textInput${startOrEnd}Date`]: val,
+		});
 	};
 
 	/**
@@ -184,27 +183,27 @@ export class DateRange extends Component {
 	 * @param  {moment}  date MomentJS date object
 	 * @returns {boolean}      whether date is considered valid or not
 	 */
-	isValidDate( date ) {
+	isValidDate(date) {
 		const { firstSelectableDate, lastSelectableDate } = this.props;
 
-		const epoch = this.props.moment( '01/01/1970', this.getLocaleDateFormat() );
+		const epoch = this.props.moment('01/01/1970', this.getLocaleDateFormat());
 
 		// By default check
 		// 1. Looks like a valid date
 		// 2. after 01/01/1970 (avoids bugs when really stale dates are treated as valid)
-		if ( ! date.isValid() || ! date.isSameOrAfter( epoch ) ) {
+		if (!date.isValid() || !date.isSameOrAfter(epoch)) {
 			return false;
 		}
 
 		// Check not before the first selectable date
 		// https://momentjs.com/docs/#/query/is-same-or-before/
-		if ( firstSelectableDate && date.isBefore( firstSelectableDate ) ) {
+		if (firstSelectableDate && date.isBefore(firstSelectableDate)) {
 			return false;
 		}
 
 		// Check not before the last selectable date
 		// https://momentjs.com/docs/#/query/is-same-or-before/
-		if ( lastSelectableDate && date.isAfter( lastSelectableDate ) ) {
+		if (lastSelectableDate && date.isAfter(lastSelectableDate)) {
 			return false;
 		}
 
@@ -217,28 +216,28 @@ export class DateRange extends Component {
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
-	handleInputBlur = ( val, startOrEnd ) => {
-		if ( val === '' ) {
+	handleInputBlur = (val, startOrEnd) => {
+		if (val === '') {
 			return;
 		}
-		const date = this.props.moment( val, this.getLocaleDateFormat() );
+		const date = this.props.moment(val, this.getLocaleDateFormat());
 
-		if ( ! date.isValid() ) {
+		if (!date.isValid()) {
 			return; // bail out
 		}
 
 		// Either `startDate` or `endDate`
-		const stateKey = `${ startOrEnd.toLowerCase() }Date`;
+		const stateKey = `${startOrEnd.toLowerCase()}Date`;
 
-		const isSameDate = ! isNull( this.state[ stateKey ] )
-			? this.state[ stateKey ].isSame( date, 'day' )
+		const isSameDate = !isNull(this.state[stateKey])
+			? this.state[stateKey].isSame(date, 'day')
 			: false;
 
-		if ( isSameDate ) {
+		if (isSameDate) {
 			return;
 		}
 
-		this.onSelectDate( date );
+		this.onSelectDate(date);
 	};
 
 	/**
@@ -249,14 +248,14 @@ export class DateRange extends Component {
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
-	handleInputFocus = ( val, startOrEnd ) => {
-		if ( val === '' ) {
+	handleInputFocus = (val, startOrEnd) => {
+		if (val === '') {
 			return;
 		}
 
-		const date = this.props.moment( val, this.getLocaleDateFormat() );
+		const date = this.props.moment(val, this.getLocaleDateFormat());
 
-		if ( ! date.isValid() ) {
+		if (!date.isValid()) {
 			return; // bail out
 		}
 
@@ -264,15 +263,15 @@ export class DateRange extends Component {
 
 		// If we focused the endDate and we're showing more than 1 month
 		// then the picker should focus the month before
-		if ( startOrEnd === 'End' && numMonthsShowing > 1 ) {
+		if (startOrEnd === 'End' && numMonthsShowing > 1) {
 			// moment isn't immutable so this modifies
 			// the existing moment instance
-			date.subtract( 1, 'months' );
+			date.subtract(1, 'months');
 		}
 
-		this.setState( {
+		this.setState({
 			focusedMonth: date.toDate(),
-		} );
+		});
 	};
 
 	/**
@@ -283,10 +282,10 @@ export class DateRange extends Component {
 	 * @param  {MomentJSDate} endDate   the end date for the range
 	 * @returns {object}           the date range object
 	 */
-	toDateRange( startDate, endDate ) {
+	toDateRange(startDate, endDate) {
 		return {
-			from: this.momentDateToJsDate( startDate ),
-			to: this.momentDateToJsDate( endDate ),
+			from: this.momentDateToJsDate(startDate),
+			to: this.momentDateToJsDate(endDate),
 		};
 	}
 
@@ -300,43 +299,43 @@ export class DateRange extends Component {
 	 *
 	 * @param  {MomentJSDate} date the newly selected date object
 	 */
-	onSelectDate = date => {
-		if ( ! this.isValidDate( date ) ) {
+	onSelectDate = (date) => {
+		if (!this.isValidDate(date)) {
 			return;
 		}
 
 		// DateUtils requires a range object with this shape
-		const range = this.toDateRange( this.state.startDate, this.state.endDate );
+		const range = this.toDateRange(this.state.startDate, this.state.endDate);
 
-		const rawDay = this.momentDateToJsDate( date );
+		const rawDay = this.momentDateToJsDate(date);
 
 		// Calculate the new Date range
-		const newRange = DateUtils.addDayToRange( rawDay, range );
+		const newRange = DateUtils.addDayToRange(rawDay, range);
 
 		// Update state to reflect new date range for
 		// calendar and text inputs
 		this.setState(
-			previousState => {
+			(previousState) => {
 				// Update to date or `null` which means "not date"
-				const newStartDate = isNull( newRange.from )
+				const newStartDate = isNull(newRange.from)
 					? NO_DATE_SELECTED_VALUE
-					: this.nativeDateToMoment( newRange.from );
-				const newEndDate = isNull( newRange.to )
+					: this.nativeDateToMoment(newRange.from);
+				const newEndDate = isNull(newRange.to)
 					? NO_DATE_SELECTED_VALUE
-					: this.nativeDateToMoment( newRange.to );
+					: this.nativeDateToMoment(newRange.to);
 
 				// Update start/end state values
 				let newState = {
 					startDate: newStartDate,
 					endDate: newEndDate,
-					textInputStartDate: this.toDateString( newStartDate ),
-					textInputEndDate: this.toDateString( newEndDate ),
+					textInputStartDate: this.toDateString(newStartDate),
+					textInputEndDate: this.toDateString(newEndDate),
 				};
 
 				// For first date selection only: "cache" previous dates
 				// just in case user doesn't "Apply" and we need to revert
 				// to the original dates
-				if ( ! previousState.staleDatesSaved ) {
+				if (!previousState.staleDatesSaved) {
 					newState = {
 						...newState,
 						staleStartDate: previousState.startDate,
@@ -350,7 +349,7 @@ export class DateRange extends Component {
 			() => {
 				// Trigger callback prop to allow parent components to consume
 				// this components state
-				this.props.onDateSelect( this.state.startDate, this.state.endDate );
+				this.props.onDateSelect(this.state.startDate, this.state.endDate);
 			}
 		);
 	};
@@ -362,13 +361,13 @@ export class DateRange extends Component {
 	 */
 	commitDates = () => {
 		this.setState(
-			previousState => ( {
+			(previousState) => ({
 				staleStartDate: previousState.startDate, // update cached stale dates
 				staleEndDate: previousState.endDate, // update cached stale dates
 				staleDatesSaved: false,
-			} ),
+			}),
 			() => {
-				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+				this.props.onDateCommit(this.state.startDate, this.state.endDate);
 				this.closePopover();
 			}
 		);
@@ -380,7 +379,7 @@ export class DateRange extends Component {
 	 * the DateRange without clicking "Apply"
 	 */
 	revertDates = () => {
-		this.setState( previousState => {
+		this.setState((previousState) => {
 			const startDate = previousState.staleStartDate;
 			const endDate = previousState.staleEndDate;
 
@@ -388,12 +387,12 @@ export class DateRange extends Component {
 				staleDatesSaved: false,
 				startDate: startDate,
 				endDate: endDate,
-				textInputStartDate: this.toDateString( startDate ),
-				textInputEndDate: this.toDateString( endDate ),
+				textInputStartDate: this.toDateString(startDate),
+				textInputEndDate: this.toDateString(endDate),
 			};
 
 			return newState;
-		} );
+		});
 	};
 
 	/**
@@ -405,7 +404,7 @@ export class DateRange extends Component {
 	 * without selecting any dates
 	 */
 	resetDates = () => {
-		this.setState( previousState => {
+		this.setState((previousState) => {
 			const startDate = previousState.initialStartDate;
 			const endDate = previousState.initialEndDate;
 
@@ -413,12 +412,12 @@ export class DateRange extends Component {
 				staleDatesSaved: false,
 				startDate: startDate,
 				endDate: endDate,
-				textInputStartDate: this.toDateString( startDate ),
-				textInputEndDate: this.toDateString( endDate ),
+				textInputStartDate: this.toDateString(startDate),
+				textInputEndDate: this.toDateString(endDate),
 			};
 
 			return newState;
-		} );
+		});
 	};
 
 	/**
@@ -437,7 +436,7 @@ export class DateRange extends Component {
 			},
 			() => {
 				// Fired to ensure date change is propagated upwards
-				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+				this.props.onDateCommit(this.state.startDate, this.state.endDate);
 			}
 		);
 	};
@@ -448,8 +447,8 @@ export class DateRange extends Component {
 	 * @param  {MomentJSDate} momentDate a momentjs date object to convert
 	 * @returns {Date}            the converted JS Date object
 	 */
-	momentDateToJsDate( momentDate ) {
-		return this.props.moment.isMoment( momentDate ) ? momentDate.toDate() : momentDate;
+	momentDateToJsDate(momentDate) {
+		return this.props.moment.isMoment(momentDate) ? momentDate.toDate() : momentDate;
 	}
 
 	/**
@@ -458,8 +457,8 @@ export class DateRange extends Component {
 	 * @param  {Date} nativeDate date to be converted
 	 * @returns {MomentJSDate}            the converted Date
 	 */
-	nativeDateToMoment( nativeDate ) {
-		return this.props.moment( nativeDate );
+	nativeDateToMoment(nativeDate) {
+		return this.props.moment(nativeDate);
 	}
 
 	/**
@@ -469,8 +468,8 @@ export class DateRange extends Component {
 	 * @param  {Date|MomentJSDate} date the date to be converted
 	 * @returns {string}      the date as a formatted locale string
 	 */
-	formatDateToLocale( date ) {
-		return this.props.moment( date ).format( 'L' );
+	formatDateToLocale(date) {
+		return this.props.moment(date).format('L');
 	}
 
 	/**
@@ -479,7 +478,7 @@ export class DateRange extends Component {
 	 * @returns {string} date format as a string
 	 */
 	getLocaleDateFormat() {
-		return this.props.moment.localeData().longDateFormat( 'L' );
+		return this.props.moment.localeData().longDateFormat('L');
 	}
 
 	/**
@@ -491,13 +490,13 @@ export class DateRange extends Component {
 	 * @param  {Moment|Date} options.dateTo   the end of the date range
 	 * @returns {Moment}                  the date clamped to be within the range
 	 */
-	clampDateToRange( date, { dateFrom, dateTo } ) {
+	clampDateToRange(date, { dateFrom, dateTo }) {
 		// Ensure endDate is within bounds of firstSelectableDate
-		if ( dateFrom && date.isBefore( dateFrom ) ) {
+		if (dateFrom && date.isBefore(dateFrom)) {
 			date = dateFrom;
 		}
 
-		if ( dateTo && date.isAfter( dateTo ) ) {
+		if (dateTo && date.isAfter(dateTo)) {
 			date = dateTo;
 		}
 
@@ -513,9 +512,9 @@ export class DateRange extends Component {
 	 * @returns {string}      the date expressed as a locale appropriate string or if null
 	 *                       then returns the locale format (eg: MM/DD/YYYY)
 	 */
-	toDateString( date ) {
-		if ( this.props.moment.isMoment( date ) || this.props.moment.isDate( date ) ) {
-			return this.formatDateToLocale( this.props.moment( date ) );
+	toDateString(date) {
+		if (this.props.moment.isMoment(date) || this.props.moment.isDate(date)) {
+			return this.formatDateToLocale(this.props.moment(date));
 		}
 
 		return this.getLocaleDateFormat(); // "MM/DD/YYY" or locale equivalent
@@ -537,20 +536,20 @@ export class DateRange extends Component {
 
 		const config = {};
 
-		if ( firstSelectableDate ) {
-			config.before = this.momentDateToJsDate( firstSelectableDate ); // disable all days before today
+		if (firstSelectableDate) {
+			config.before = this.momentDateToJsDate(firstSelectableDate); // disable all days before today
 		}
 
-		if ( lastSelectableDate ) {
-			config.after = this.momentDateToJsDate( lastSelectableDate ); // disable all days before today
+		if (lastSelectableDate) {
+			config.after = this.momentDateToJsDate(lastSelectableDate); // disable all days before today
 		}
 
 		// Requires a wrapping Array
-		return [ config ];
+		return [config];
 	}
 
 	getNumberOfMonths() {
-		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
+		return window.matchMedia('(min-width: 480px)').matches ? 2 : 1;
 	}
 
 	renderDateHelp() {
@@ -558,29 +557,29 @@ export class DateRange extends Component {
 
 		return (
 			<div className="date-range__info" role="status" aria-live="polite">
-				{ ! startDate &&
-					! endDate &&
-					this.props.translate( '{{icon/}} Please select the {{em}}first{{/em}} day.', {
+				{!startDate &&
+					!endDate &&
+					this.props.translate('{{icon/}} Please select the {{em}}first{{/em}} day.', {
 						components: {
 							icon: <Gridicon aria-hidden="true" icon="info" />,
 							em: <em />,
 						},
-					} ) }
-				{ startDate &&
-					! endDate &&
-					this.props.translate( '{{icon/}} Please select the {{em}}last{{/em}} day.', {
+					})}
+				{startDate &&
+					!endDate &&
+					this.props.translate('{{icon/}} Please select the {{em}}last{{/em}} day.', {
 						components: {
 							icon: <Gridicon aria-hidden="true" icon="info" />,
 							em: <em />,
 						},
-					} ) }
-				{ startDate && endDate && (
-					<Button className="date-range__info-btn" borderless compact onClick={ this.resetDates }>
-						{ this.props.translate( '{{icon/}} reset selected dates', {
+					})}
+				{startDate && endDate && (
+					<Button className="date-range__info-btn" borderless compact onClick={this.resetDates}>
+						{this.props.translate('{{icon/}} reset selected dates', {
 							components: { icon: <Gridicon aria-hidden="true" icon="cross-small" /> },
-						} ) }
+						})}
 					</Button>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -607,18 +606,18 @@ export class DateRange extends Component {
 		return (
 			<Popover
 				className="date-range__popover"
-				isVisible={ this.state.popoverVisible }
-				context={ this.triggerButtonRef.current }
+				isVisible={this.state.popoverVisible}
+				context={this.triggerButtonRef.current}
 				position="bottom"
-				onClose={ this.closePopoverAndCommit }
+				onClose={this.closePopoverAndCommit}
 			>
 				<div className="date-range__popover-inner">
 					<div className="date-range__controls">
-						{ this.props.renderHeader( headerProps ) }
-						{ this.renderDateHelp() }
+						{this.props.renderHeader(headerProps)}
+						{this.renderDateHelp()}
 					</div>
-					{ this.props.renderInputs( inputsProps ) }
-					{ this.renderDatePicker() }
+					{this.props.renderInputs(inputsProps)}
+					{this.renderDatePicker()}
 				</div>
 			</Popover>
 		);
@@ -630,8 +629,8 @@ export class DateRange extends Component {
 	 * @returns {ReactComponent} the DatePicker component
 	 */
 	renderDatePicker() {
-		const fromDate = this.momentDateToJsDate( this.state.startDate );
-		const toDate = this.momentDateToJsDate( this.state.endDate );
+		const fromDate = this.momentDateToJsDate(this.state.startDate);
+		const toDate = this.momentDateToJsDate(this.state.endDate);
 
 		// Add "Range" modifier classes to Day component
 		// within Date Picker to aid "range" styling
@@ -662,16 +661,16 @@ export class DateRange extends Component {
 
 		return (
 			<DatePicker
-				calendarViewDate={ this.state.focusedMonth }
-				rootClassNames={ rootClassNames }
-				modifiers={ modifiers }
-				showOutsideDays={ false }
-				fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
-				toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
-				onSelectDay={ this.onSelectDate }
-				selectedDays={ selected }
-				numberOfMonths={ this.getNumberOfMonths() }
-				disabledDays={ this.getDisabledDaysConfig() }
+				calendarViewDate={this.state.focusedMonth}
+				rootClassNames={rootClassNames}
+				modifiers={modifiers}
+				showOutsideDays={false}
+				fromMonth={this.momentDateToJsDate(this.props.firstSelectableDate)}
+				toMonth={this.momentDateToJsDate(this.props.lastSelectableDate)}
+				onSelectDay={this.onSelectDate}
+				selectedDays={selected}
+				numberOfMonths={this.getNumberOfMonths()}
+				disabledDays={this.getDisabledDaysConfig()}
 			/>
 		);
 	}
@@ -682,16 +681,16 @@ export class DateRange extends Component {
 	 * @returns {ReactComponent} the DateRange component
 	 */
 	render() {
-		const rootClassNames = classNames( {
+		const rootClassNames = classNames({
 			'date-range': true,
 			'toggle-visible': this.state.popoverVisible,
-		} );
+		});
 
 		const triggerProps = {
 			startDate: this.state.startDate,
 			endDate: this.state.endDate,
-			startDateText: this.toDateString( this.state.startDate ),
-			endDateText: this.toDateString( this.state.endDate ),
+			startDateText: this.toDateString(this.state.startDate),
+			endDateText: this.toDateString(this.state.endDate),
 			buttonRef: this.triggerButtonRef,
 			onTriggerClick: this.togglePopover,
 			onClearClick: this.clearDates,
@@ -701,12 +700,12 @@ export class DateRange extends Component {
 		};
 
 		return (
-			<div className={ rootClassNames }>
-				{ this.props.renderTrigger( triggerProps ) }
-				{ this.renderPopover() }
+			<div className={rootClassNames}>
+				{this.props.renderTrigger(triggerProps)}
+				{this.renderPopover()}
 			</div>
 		);
 	}
 }
 
-export default localize( withLocalizedMoment( DateRange ) );
+export default localize(withLocalizedMoment(DateRange));

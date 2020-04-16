@@ -14,15 +14,15 @@ import { useLocalizedMoment } from 'components/localized-moment';
 
 const DATE_FORMAT = 'LLL';
 
-export const easterHolidayName = translate( 'Easter', {
+export const easterHolidayName = translate('Easter', {
 	context: 'Holiday name',
-} );
+});
 
-export const xmasHolidayName = translate( 'Christmas', {
+export const xmasHolidayName = translate('Christmas', {
 	context: 'Holiday name',
-} );
+});
 
-const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
+const LiveChatClosureNotice = ({ closesAt, compact, displayAt, holidayName, reopensAt }) => {
 	const moment = useLocalizedMoment();
 
 	const currentDate = moment();
@@ -30,33 +30,33 @@ const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reo
 
 	let heading, message;
 
-	if ( currentDate.isBefore( closesAt ) ) {
-		heading = translate( 'Live chat will be closed for %(holidayName)s', {
+	if (currentDate.isBefore(closesAt)) {
+		heading = translate('Live chat will be closed for %(holidayName)s', {
 			args: { holidayName },
-		} );
+		});
 
 		message = translate(
 			'Live chat will be closed for %(holidayName)s from %(closesAt)s until %(reopensAt)s. ' +
 				'You’ll be able to reach us by email and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					closesAt: moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
-					reopensAt: moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
+					closesAt: moment.tz(closesAt, guessedTimezone).format(DATE_FORMAT),
+					reopensAt: moment.tz(reopensAt, guessedTimezone).format(DATE_FORMAT),
 					holidayName,
 				},
 			}
 		);
 	} else {
-		heading = translate( 'Live chat closed for %(holidayName)s', {
+		heading = translate('Live chat closed for %(holidayName)s', {
 			args: { holidayName },
-		} );
+		});
 
 		message = translate(
 			'Live chat is closed for %(holidayName)s and will reopen %(reopensAt)s. ' +
 				'You can reach us by email below and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					reopensAt: moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
+					reopensAt: moment.tz(reopensAt, guessedTimezone).format(DATE_FORMAT),
 					holidayName,
 				},
 			}
@@ -65,11 +65,11 @@ const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reo
 
 	return (
 		<ContactFormNotice
-			showAt={ displayAt }
-			hideAt={ reopensAt }
-			heading={ heading }
-			message={ <p>{ message }</p> }
-			compact={ compact }
+			showAt={displayAt}
+			hideAt={reopensAt}
+			heading={heading}
+			message={<p>{message}</p>}
+			compact={compact}
 		/>
 	);
 };

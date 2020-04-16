@@ -18,20 +18,20 @@ import SocialLogo from 'components/social-logo';
  */
 import './importer-logo.scss';
 
-const ImporterLogo = ( { icon } ) => {
-	if ( includes( [ 'wordpress', 'blogger-alt', 'squarespace' ], icon ) ) {
-		return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
+const ImporterLogo = ({ icon }) => {
+	if (includes(['wordpress', 'blogger-alt', 'squarespace'], icon)) {
+		return <SocialLogo className="importer__service-icon" icon={icon} size={48} />;
 	}
 
-	if ( 'wix' === icon ) {
+	if ('wix' === icon) {
 		return <WixLogo />;
 	}
 
-	if ( 'godaddy-gocentral' === icon ) {
+	if ('godaddy-gocentral' === icon) {
 		return <GoDaddyGoCentralLogo />;
 	}
 
-	if ( 'medium' === icon ) {
+	if ('medium' === icon) {
 		return <MediumLogo />;
 	}
 

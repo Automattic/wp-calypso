@@ -14,16 +14,16 @@ import { FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constant
 import UpsellNudge from 'blocks/upsell-nudge';
 import ListPlanPromo from './list-plan-promo';
 
-function getTitle( filter, translate ) {
-	if ( filter === 'audio' ) {
-		return translate( 'Upgrade to the Premium Plan to Enable Audio Uploads' );
+function getTitle(filter, translate) {
+	if (filter === 'audio') {
+		return translate('Upgrade to the Premium Plan to Enable Audio Uploads');
 	}
 
-	return translate( 'Upgrade to the Premium Plan to Enable VideoPress' );
+	return translate('Upgrade to the Premium Plan to Enable VideoPress');
 }
 
-function getSubtitle( filter, translate ) {
-	if ( filter === 'audio' ) {
+function getSubtitle(filter, translate) {
+	if (filter === 'audio') {
 		return translate(
 			"By upgrading to the Premium plan, you'll enable audio upload support on your site."
 		);
@@ -34,18 +34,18 @@ function getSubtitle( filter, translate ) {
 	);
 }
 
-export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
+export const MediaLibraryUpgradeNudge = ({ translate, filter, site }) => (
 	<div className="media-library__videopress-nudge-container">
-		<ListPlanPromo site={ site } filter={ filter }>
+		<ListPlanPromo site={site} filter={filter}>
 			<UpsellNudge
 				className="media-library__videopress-nudge-regular"
-				title={ getTitle( filter, translate ) }
-				description={ getSubtitle( filter, translate ) }
-				feature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
+				title={getTitle(filter, translate)}
+				description={getSubtitle(filter, translate)}
+				feature={'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS}
 				event="calypso_media_uploads_upgrade_nudge"
 				tracksImpressionName="calypso_upgrade_nudge_impression"
 				tracksClickName="calypso_upgrade_nudge_cta_click"
-				showIcon={ true }
+				showIcon={true}
 			/>
 		</ListPlanPromo>
 	</div>
@@ -62,4 +62,4 @@ MediaLibraryUpgradeNudge.defaultProps = {
 	filter: 'video',
 };
 
-export default localize( MediaLibraryUpgradeNudge );
+export default localize(MediaLibraryUpgradeNudge);

@@ -16,8 +16,8 @@ import 'state/posts/init';
  * @param  {number}   postId Post ID
  * @returns {Function}        Action thunk
  */
-export function trashPost( siteId, postId ) {
-	return dispatch => {
+export function trashPost(siteId, postId) {
+	return (dispatch) => {
 		// Trashing post is almost equivalent to saving the post with status field set to `trash`
 		// and the action behaves like it was doing exactly that -- it dispatches the `POST_SAVE_*`
 		// actions with the right properties.
@@ -29,30 +29,27 @@ export function trashPost( siteId, postId ) {
 		// recovered as `draft`.
 		const post = { status: 'trash' };
 
-		dispatch( {
+		dispatch({
 			type: POST_SAVE,
 			siteId,
 			postId,
 			post,
-		} );
+		});
 
-		const trashResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.delete();
+		const trashResult = wpcom.site(siteId).post(postId).delete();
 
 		trashResult.then(
-			savedPost => {
-				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
-				dispatch( receivePost( savedPost ) );
+			(savedPost) => {
+				dispatch(savePostSuccess(siteId, postId, savedPost, post));
+				dispatch(receivePost(savedPost));
 			},
-			error => {
-				dispatch( {
+			(error) => {
+				dispatch({
 					type: POST_SAVE_FAILURE,
 					siteId,
 					postId,
 					error,
-				} );
+				});
 			}
 		);
 

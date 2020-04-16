@@ -6,16 +6,15 @@ import MeTwoStepSMS from './me.two-step.sms';
 const root = '/me/two-step/';
 
 export default class MeTwoStep {
-
 	/**
 	 * `MeTwoStep` constructor.
 	 *
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
-	constructor( wpcom ) {
-		if ( ! ( this instanceof MeTwoStep ) ) {
-			return new MeTwoStep( wpcom );
+	constructor(wpcom) {
+		if (!(this instanceof MeTwoStep)) {
+			return new MeTwoStep(wpcom);
 		}
 		this.wpcom = wpcom;
 	}
@@ -27,8 +26,8 @@ export default class MeTwoStep {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	get( query, fn ) {
-		return this.wpcom.req.get( root, query, fn );
+	get(query, fn) {
+		return this.wpcom.req.get(root, query, fn);
 	}
 
 	/**
@@ -37,6 +36,6 @@ export default class MeTwoStep {
 	 * @returns {MeTwoStepSMS} MeTwoStepSMS instance
 	 */
 	sms() {
-		return new MeTwoStepSMS( this.wpcom );
-	};
+		return new MeTwoStepSMS(this.wpcom);
+	}
 }

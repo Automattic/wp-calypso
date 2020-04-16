@@ -17,50 +17,50 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'state/action-types';
 
-const setTargetState = value => ( state, { target } ) => ( {
+const setTargetState = (value) => (state, { target }) => ({
 	...state,
-	[ target ]: value,
-} );
+	[target]: value,
+});
 
-const isUpdating = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const isUpdating = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_UPDATE:
-			return setTargetState( true )( state, action );
+			return setTargetState(true)(state, action);
 		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS:
-			return setTargetState( false )( state, action );
+			return setTargetState(false)(state, action);
 		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED:
-			return setTargetState( false )( state, action );
+			return setTargetState(false)(state, action);
 	}
 
 	return state;
-} );
+});
 
-const isDeleting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const isDeleting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_DELETE:
-			return setTargetState( true )( state, action );
+			return setTargetState(true)(state, action);
 		case ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS:
-			return setTargetState( false )( state, action );
+			return setTargetState(false)(state, action);
 		case ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED:
-			return setTargetState( false )( state, action );
+			return setTargetState(false)(state, action);
 	}
 
 	return state;
-} );
+});
 
-const hasSentValidation = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const hasSentValidation = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION:
-			return setTargetState( true )( state, action );
+			return setTargetState(true)(state, action);
 		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS:
-			return setTargetState( true )( state, action );
+			return setTargetState(true)(state, action);
 	}
 
 	return state;
-} );
+});
 
-const convertPhoneResponse = phoneResponse => {
-	if ( ! phoneResponse ) {
+const convertPhoneResponse = (phoneResponse) => {
+	if (!phoneResponse) {
 		return null;
 	}
 
@@ -74,11 +74,11 @@ const convertPhoneResponse = phoneResponse => {
 	};
 };
 
-const phone = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+const phone = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
 			const { settings } = action;
-			return convertPhoneResponse( settings.phone );
+			return convertPhoneResponse(settings.phone);
 		}
 		case ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS: {
 			const { target, value } = action;
@@ -91,10 +91,10 @@ const phone = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const email = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
+const email = withoutPersistence((state = '', action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
 			const { settings } = action;
 			return settings.email;
@@ -110,10 +110,10 @@ const email = withoutPersistence( ( state = '', action ) => {
 	}
 
 	return state;
-} );
+});
 
-const phoneValidated = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+const phoneValidated = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
 			const { settings } = action;
 			return settings.phone_validated;
@@ -131,10 +131,10 @@ const phoneValidated = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const isValidatingPhone = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+const isValidatingPhone = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE:
 			return true;
 		case ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS:
@@ -144,10 +144,10 @@ const isValidatingPhone = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const emailValidated = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+const emailValidated = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS: {
 			const { settings } = action;
 			return settings.email_validated;
@@ -163,27 +163,27 @@ const emailValidated = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const isReady = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+const isReady = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS:
 			return true;
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
-	data: combineReducers( {
+export default combineReducers({
+	data: combineReducers({
 		phone,
 		phoneValidated,
 		email,
 		emailValidated,
-	} ),
+	}),
 	isReady,
 	isUpdating,
 	isDeleting,
 	isValidatingPhone,
 	hasSentValidation,
-} );
+});

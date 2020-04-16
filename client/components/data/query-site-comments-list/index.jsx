@@ -34,10 +34,10 @@ export class QuerySiteCommentsList extends PureComponent {
 	}
 
 	request() {
-		if ( ! this.props.siteId ) {
+		if (!this.props.siteId) {
 			return;
 		}
-		this.props.requestCommentsList( { ...this.props } );
+		this.props.requestCommentsList({ ...this.props });
 	}
 
 	render() {
@@ -45,4 +45,4 @@ export class QuerySiteCommentsList extends PureComponent {
 	}
 }
 
-export default connect( null, { requestCommentsList } )( QuerySiteCommentsList );
+export default connect(null, { requestCommentsList })(QuerySiteCommentsList);

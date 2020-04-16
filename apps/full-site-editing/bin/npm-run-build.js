@@ -5,9 +5,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
 
-const runAll = require( 'npm-run-all' );
+const runAll = require('npm-run-all');
 
-const args = process.argv.slice( 2 );
+const args = process.argv.slice(2);
 
 const argsToCommands = {
 	'--build': 'build:*',
@@ -15,9 +15,9 @@ const argsToCommands = {
 	'--sync': 'wpcom-sync',
 };
 
-const commands = args.map( arg => argsToCommands[ arg ] ).filter( val => !! val );
+const commands = args.map((arg) => argsToCommands[arg]).filter((val) => !!val);
 
-console.log( `Running the following commands: ${ commands.toString() }` );
+console.log(`Running the following commands: ${commands.toString()}`);
 
 const runOptions = {
 	parallel: true,
@@ -26,6 +26,6 @@ const runOptions = {
 	printLabel: true,
 };
 
-runAll( commands, runOptions ).then( () => {
-	console.log( 'Finished running commands!' );
-} );
+runAll(commands, runOptions).then(() => {
+	console.log('Finished running commands!');
+});

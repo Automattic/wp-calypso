@@ -14,7 +14,7 @@ import {
 } from '../selectors';
 import { dummyError } from './test-data';
 
-describe( 'ticket-support/configuration/selectors', () => {
+describe('ticket-support/configuration/selectors', () => {
 	const uninitState = {
 		help: {
 			ticket: {
@@ -37,42 +37,42 @@ describe( 'ticket-support/configuration/selectors', () => {
 		},
 	};
 
-	describe( '#isTicketSupportEligible', () => {
-		test( 'should default to false', () => {
-			assert.isFalse( isTicketSupportEligible( uninitState ) );
-		} );
+	describe('#isTicketSupportEligible', () => {
+		test('should default to false', () => {
+			assert.isFalse(isTicketSupportEligible(uninitState));
+		});
 
-		test( 'should return true', () => {
-			assert.isTrue( isTicketSupportEligible( initedState ) );
-		} );
-	} );
+		test('should return true', () => {
+			assert.isTrue(isTicketSupportEligible(initedState));
+		});
+	});
 
-	describe( '#isTicketSupportConfigurationReady', () => {
-		test( 'should return false', () => {
-			assert.isFalse( isTicketSupportConfigurationReady( uninitState ) );
-		} );
+	describe('#isTicketSupportConfigurationReady', () => {
+		test('should return false', () => {
+			assert.isFalse(isTicketSupportConfigurationReady(uninitState));
+		});
 
-		test( 'should return true', () => {
-			assert.isTrue( isTicketSupportConfigurationReady( initedState ) );
-		} );
-	} );
+		test('should return true', () => {
+			assert.isTrue(isTicketSupportConfigurationReady(initedState));
+		});
+	});
 
-	describe( '#isRequestingTicketSupportConfiguration', () => {
-		test( 'should return true', () => {
+	describe('#isRequestingTicketSupportConfiguration', () => {
+		test('should return true', () => {
 			assert.isTrue(
-				isRequestingTicketSupportConfiguration( {
+				isRequestingTicketSupportConfiguration({
 					help: {
 						ticket: {
 							isRequesting: true,
 						},
 					},
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#getTicketSupportRequestError', () => {
-		test( 'should return the error object', () => {
+	describe('#getTicketSupportRequestError', () => {
+		test('should return the error object', () => {
 			const errorState = {
 				help: {
 					ticket: {
@@ -81,7 +81,7 @@ describe( 'ticket-support/configuration/selectors', () => {
 				},
 			};
 
-			assert.deepEqual( getTicketSupportRequestError( errorState ), dummyError );
-		} );
-	} );
-} );
+			assert.deepEqual(getTicketSupportRequestError(errorState), dummyError);
+		});
+	});
+});

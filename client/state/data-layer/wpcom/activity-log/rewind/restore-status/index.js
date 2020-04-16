@@ -33,30 +33,30 @@ const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
  * @param  {object} action Redux action
  * @returns {object}        Redux action
  */
-const fetchProgress = action => {
+const fetchProgress = (action) => {
 	const { restoreId, siteId } = action;
-	const key = `${ siteId }-${ restoreId }`;
+	const key = `${siteId}-${restoreId}`;
 
-	const lastUpdate = recentRequests.get( key ) || -Infinity;
+	const lastUpdate = recentRequests.get(key) || -Infinity;
 	const now = Date.now();
 
-	if ( now - lastUpdate < POLL_INTERVAL ) {
+	if (now - lastUpdate < POLL_INTERVAL) {
 		return;
 	}
 
-	recentRequests.set( key, now );
+	recentRequests.set(key, now);
 
 	return http(
 		{
 			apiVersion: '1',
 			method: 'GET',
-			path: `/activity-log/${ siteId }/rewind/${ restoreId }/restore-status`,
+			path: `/activity-log/${siteId}/rewind/${restoreId}/restore-status`,
 		},
 		action
 	);
 };
 
-export const fromApi = ( {
+export const fromApi = ({
 	restore_status: {
 		error_code = '',
 		failure_reason = '',
@@ -66,7 +66,7 @@ export const fromApi = ( {
 		rewind_id = '',
 		context = '',
 	} = {},
-} ) => ( {
+}) => ({
 	errorCode: error_code,
 	failureReason: failure_reason,
 	message,
@@ -74,24 +74,24 @@ export const fromApi = ( {
 	status,
 	rewindId: rewind_id,
 	context,
-} );
+});
 
-export const updateProgress = ( { siteId, restoreId, timestamp }, data ) =>
-	updateRewindRestoreProgress( siteId, timestamp, restoreId, data );
+export const updateProgress = ({ siteId, restoreId, timestamp }, data) =>
+	updateRewindRestoreProgress(siteId, timestamp, restoreId, data);
 
 export const announceFailure = () =>
 	errorNotice(
-		translate( "Hmm, we can't update the status of your restore. Please refresh this page." ),
+		translate("Hmm, we can't update the status of your restore. Please refresh this page."),
 		{ id: ERROR_NOTICE_ID }
 	);
 
-registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/restore-status/index.js', {
-	[ REWIND_RESTORE_PROGRESS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/activity-log/rewind/restore-status/index.js', {
+	[REWIND_RESTORE_PROGRESS_REQUEST]: [
+		dispatchRequest({
 			fetch: fetchProgress,
 			onSuccess: updateProgress,
 			onError: announceFailure,
 			fromApi,
-		} ),
+		}),
 	],
-} );
+});

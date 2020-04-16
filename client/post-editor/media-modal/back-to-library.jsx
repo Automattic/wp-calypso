@@ -12,11 +12,11 @@ class BackToLibrary extends React.Component {
 	render() {
 		return (
 			<span className="editor-media-modal__back-to-library">
-				<span className="is-mobile">{ this.props.translate( 'Library' ) }</span>
-				<span className="is-desktop">{ this.props.translate( 'Media Library' ) }</span>
+				<span className="is-mobile">{this.props.translate('Library')}</span>
+				<span className="is-desktop">{this.props.translate('Media Library')}</span>
 			</span>
 		);
 	}
 }
 
-export default localize( BackToLibrary );
+export default localize(BackToLibrary);

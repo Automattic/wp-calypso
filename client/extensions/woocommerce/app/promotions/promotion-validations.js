@@ -15,10 +15,10 @@ import { isEmpty, isUndefined } from 'lodash';
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateCouponCode( fieldName, promotion, currency, showEmpty ) {
+export function validateCouponCode(fieldName, promotion, currency, showEmpty) {
 	const couponCode = promotion.couponCode || '';
-	if ( showEmpty && isEmpty( couponCode.trim() ) ) {
-		return translate( 'Enter a coupon code so your customers can access this promotion.' );
+	if (showEmpty && isEmpty(couponCode.trim())) {
+		return translate('Enter a coupon code so your customers can access this promotion.');
 	}
 }
 
@@ -31,13 +31,13 @@ export function validateCouponCode( fieldName, promotion, currency, showEmpty ) 
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateDiscount( fieldName, promotion, currency, showEmpty ) {
-	const discount = promotion[ fieldName ];
-	if ( showEmpty && isEmpty( discount ) ) {
-		return translate( 'Discount cannot be blank.' );
+export function validateDiscount(fieldName, promotion, currency, showEmpty) {
+	const discount = promotion[fieldName];
+	if (showEmpty && isEmpty(discount)) {
+		return translate('Discount cannot be blank.');
 	}
-	if ( 0 >= discount ) {
-		return translate( 'Discount must be greater than zero.' );
+	if (0 >= discount) {
+		return translate('Discount must be greater than zero.');
 	}
 }
 
@@ -50,12 +50,12 @@ export function validateDiscount( fieldName, promotion, currency, showEmpty ) {
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateSalePrice( fieldName, promotion, currency, showEmpty ) {
-	if ( showEmpty && isEmpty( promotion.salePrice ) ) {
-		return translate( 'Define a sale price.' );
+export function validateSalePrice(fieldName, promotion, currency, showEmpty) {
+	if (showEmpty && isEmpty(promotion.salePrice)) {
+		return translate('Define a sale price.');
 	}
-	if ( 0 >= promotion.salePrice ) {
-		return translate( 'Sale price must be greater than zero.' );
+	if (0 >= promotion.salePrice) {
+		return translate('Sale price must be greater than zero.');
 	}
 }
 
@@ -66,17 +66,17 @@ export function validateSalePrice( fieldName, promotion, currency, showEmpty ) {
  * @param { string } endDateString String form of end date, or null/undefined.
  * @returns { boolean } True if the end date is before the start date, false if not.
  */
-export function isEndDateBeforeStartDate( startDateString, endDateString ) {
-	const startDate = startDateString ? new Date( startDateString ) : new Date();
-	const endDate = endDateString ? new Date( endDateString ) : null;
+export function isEndDateBeforeStartDate(startDateString, endDateString) {
+	const startDate = startDateString ? new Date(startDateString) : new Date();
+	const endDate = endDateString ? new Date(endDateString) : null;
 
-	if ( ! endDate ) {
+	if (!endDate) {
 		return false;
 	}
 
 	// Clear the times, we only care about days.
-	startDate.setHours( 0, 0, 0, 0 );
-	endDate.setHours( 0, 0, 0, 0 );
+	startDate.setHours(0, 0, 0, 0);
+	endDate.setHours(0, 0, 0, 0);
 
 	return endDate < startDate;
 }
@@ -90,16 +90,16 @@ export function isEndDateBeforeStartDate( startDateString, endDateString ) {
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateStartEndDate( fieldName, promotion ) {
-	if ( isEndDateBeforeStartDate( promotion.startDate, promotion.endDate ) ) {
-		switch ( fieldName ) {
+export function validateStartEndDate(fieldName, promotion) {
+	if (isEndDateBeforeStartDate(promotion.startDate, promotion.endDate)) {
+		switch (fieldName) {
 			case 'startDate':
-				return ! isUndefined( promotion.startDate )
-					? translate( 'Start date cannot be after end date.' )
+				return !isUndefined(promotion.startDate)
+					? translate('Start date cannot be after end date.')
 					: null;
 			case 'endDate':
-				return ! isUndefined( promotion.endDate )
-					? translate( 'End date cannot be before start date.' )
+				return !isUndefined(promotion.endDate)
+					? translate('End date cannot be before start date.')
 					: null;
 		}
 	}
@@ -114,13 +114,13 @@ export function validateStartEndDate( fieldName, promotion ) {
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateEndDate( fieldName, promotion ) {
-	if ( isUndefined( promotion.endDate ) ) {
+export function validateEndDate(fieldName, promotion) {
+	if (isUndefined(promotion.endDate)) {
 		// Field is not enabled.
 		return;
 	}
-	if ( isEndDateBeforeStartDate( null, promotion.endDate ) ) {
-		return translate( 'End date cannot be in the past.' );
+	if (isEndDateBeforeStartDate(null, promotion.endDate)) {
+		return translate('End date cannot be in the past.');
 	}
 }
 
@@ -133,23 +133,23 @@ export function validateEndDate( fieldName, promotion ) {
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateMinimumAmount( fieldName, promotion, currency, showEmpty ) {
+export function validateMinimumAmount(fieldName, promotion, currency, showEmpty) {
 	const { minimumAmount, maximumAmount } = promotion;
 
-	if ( isUndefined( minimumAmount ) ) {
+	if (isUndefined(minimumAmount)) {
 		// Field is not enabled.
 		return;
 	}
-	if ( showEmpty && isEmpty( minimumAmount ) ) {
-		return translate( 'Define a minimum amount.' );
+	if (showEmpty && isEmpty(minimumAmount)) {
+		return translate('Define a minimum amount.');
 	}
-	if ( null !== minimumAmount ) {
-		if ( 0 >= minimumAmount ) {
-			return translate( 'Amount must be greater than zero.' );
+	if (null !== minimumAmount) {
+		if (0 >= minimumAmount) {
+			return translate('Amount must be greater than zero.');
 		}
 
-		if ( null !== maximumAmount && Number( maximumAmount ) < Number( minimumAmount ) ) {
-			return translate( 'Amount must be less than maximum amount.' );
+		if (null !== maximumAmount && Number(maximumAmount) < Number(minimumAmount)) {
+			return translate('Amount must be less than maximum amount.');
 		}
 	}
 }
@@ -163,23 +163,23 @@ export function validateMinimumAmount( fieldName, promotion, currency, showEmpty
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateMaximumAmount( fieldName, promotion, currency, showEmpty ) {
+export function validateMaximumAmount(fieldName, promotion, currency, showEmpty) {
 	const { minimumAmount, maximumAmount } = promotion;
 
-	if ( isUndefined( maximumAmount ) ) {
+	if (isUndefined(maximumAmount)) {
 		// Field is not enabled.
 		return;
 	}
-	if ( showEmpty && isEmpty( maximumAmount ) ) {
-		return translate( 'Amount cannot be blank.' );
+	if (showEmpty && isEmpty(maximumAmount)) {
+		return translate('Amount cannot be blank.');
 	}
-	if ( null !== maximumAmount ) {
-		if ( 0 >= maximumAmount ) {
-			return translate( 'Amount must be greater than zero.' );
+	if (null !== maximumAmount) {
+		if (0 >= maximumAmount) {
+			return translate('Amount must be greater than zero.');
 		}
 
-		if ( null !== minimumAmount && Number( minimumAmount ) > Number( maximumAmount ) ) {
-			return translate( 'Amount must be greater than minimum amount.' );
+		if (null !== minimumAmount && Number(minimumAmount) > Number(maximumAmount)) {
+			return translate('Amount must be greater than minimum amount.');
 		}
 	}
 }
@@ -193,23 +193,23 @@ export function validateMaximumAmount( fieldName, promotion, currency, showEmpty
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateUsageLimit( fieldName, promotion, currency, showEmpty ) {
+export function validateUsageLimit(fieldName, promotion, currency, showEmpty) {
 	const { usageLimit, usageLimitPerUser } = promotion;
 
-	if ( isUndefined( usageLimit ) ) {
+	if (isUndefined(usageLimit)) {
 		// Field is not enabled.
 		return;
 	}
-	if ( showEmpty && isEmpty( String( usageLimit ) ) ) {
-		return translate( 'Number cannot be blank.' );
+	if (showEmpty && isEmpty(String(usageLimit))) {
+		return translate('Number cannot be blank.');
 	}
-	if ( null !== usageLimit ) {
-		if ( 0 >= usageLimit ) {
-			return translate( 'Number must be greater than zero.' );
+	if (null !== usageLimit) {
+		if (0 >= usageLimit) {
+			return translate('Number must be greater than zero.');
 		}
 
-		if ( usageLimitPerUser && Number( usageLimitPerUser ) > Number( usageLimit ) ) {
-			return translate( 'Total usage limit must not be less than per user limit.' );
+		if (usageLimitPerUser && Number(usageLimitPerUser) > Number(usageLimit)) {
+			return translate('Total usage limit must not be less than per user limit.');
 		}
 	}
 }
@@ -223,23 +223,23 @@ export function validateUsageLimit( fieldName, promotion, currency, showEmpty ) 
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateUsageLimitPerUser( fieldName, promotion, currency, showEmpty ) {
+export function validateUsageLimitPerUser(fieldName, promotion, currency, showEmpty) {
 	const { usageLimit, usageLimitPerUser } = promotion;
 
-	if ( isUndefined( usageLimitPerUser ) ) {
+	if (isUndefined(usageLimitPerUser)) {
 		// Field is not enabled.
 		return;
 	}
-	if ( showEmpty && isEmpty( String( usageLimitPerUser ) ) ) {
-		return translate( 'Number cannot be blank.' );
+	if (showEmpty && isEmpty(String(usageLimitPerUser))) {
+		return translate('Number cannot be blank.');
 	}
-	if ( null !== usageLimitPerUser ) {
-		if ( 0 >= usageLimitPerUser ) {
-			return translate( 'Number must be greater than zero.' );
+	if (null !== usageLimitPerUser) {
+		if (0 >= usageLimitPerUser) {
+			return translate('Number must be greater than zero.');
 		}
 
-		if ( usageLimit && Number( usageLimitPerUser ) > Number( usageLimit ) ) {
-			return translate( 'Per user limit must not be greater than total usage limit.' );
+		if (usageLimit && Number(usageLimitPerUser) > Number(usageLimit)) {
+			return translate('Per user limit must not be greater than total usage limit.');
 		}
 	}
 }
@@ -253,16 +253,16 @@ export function validateUsageLimitPerUser( fieldName, promotion, currency, showE
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateCouponAppliesTo( fieldName, promotion, currency, showEmpty ) {
+export function validateCouponAppliesTo(fieldName, promotion, currency, showEmpty) {
 	const { appliesTo } = promotion;
 	const { productIds, productCategoryIds } = appliesTo || {};
 
-	if ( showEmpty ) {
-		if ( productIds && 0 === productIds.length ) {
-			return translate( 'At least one product must be selected.' );
+	if (showEmpty) {
+		if (productIds && 0 === productIds.length) {
+			return translate('At least one product must be selected.');
 		}
-		if ( productCategoryIds && 0 === productCategoryIds.length ) {
-			return translate( 'At least one product category must be selected.' );
+		if (productCategoryIds && 0 === productCategoryIds.length) {
+			return translate('At least one product category must be selected.');
 		}
 	}
 }
@@ -276,11 +276,11 @@ export function validateCouponAppliesTo( fieldName, promotion, currency, showEmp
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @returns { string } Returns a validation error, or undefined if none.
  */
-export function validateAppliesToSingleProduct( fieldName, promotion, currency, showEmpty ) {
+export function validateAppliesToSingleProduct(fieldName, promotion, currency, showEmpty) {
 	const { appliesTo } = promotion;
 	const { productIds } = appliesTo || {};
 
-	if ( showEmpty && isEmpty( productIds ) ) {
-		return translate( 'A product must be selected.' );
+	if (showEmpty && isEmpty(productIds)) {
+		return translate('A product must be selected.');
 	}
 }

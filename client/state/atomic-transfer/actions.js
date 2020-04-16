@@ -17,10 +17,10 @@ import 'state/data-layer/wpcom/sites/transfers/latest';
  * @param {number} siteId The id of the site to query.
  * @returns {object} An action object
  */
-export const fetchAtomicTransfer = siteId => ( {
+export const fetchAtomicTransfer = (siteId) => ({
 	type: ATOMIC_TRANSFER_REQUEST,
 	siteId,
-} );
+});
 
 /**
  * Report a failure of fetching Automated Transfer status (for example, the status
@@ -29,15 +29,15 @@ export const fetchAtomicTransfer = siteId => ( {
  * @param {number} siteId The site id to which the status belongs
  * @returns {object} An action object
  */
-export const atomicTransferFetchingFailure = siteId => ( {
+export const atomicTransferFetchingFailure = (siteId) => ({
 	type: ATOMIC_TRANSFER_REQUEST_FAILURE,
 	siteId,
-} );
+});
 
-export const atomicTransferComplete = siteId => ( {
+export const atomicTransferComplete = (siteId) => ({
 	type: ATOMIC_TRANSFER_COMPLETE,
 	siteId,
-} );
+});
 
 /**
  *
@@ -47,8 +47,8 @@ export const atomicTransferComplete = siteId => ( {
  * @param {object} transfer atomic transfer object
  * @returns {object} An action object
  */
-export const setAtomicTransfer = ( siteId, transfer ) => ( {
+export const setAtomicTransfer = (siteId, transfer) => ({
 	type: ATOMIC_TRANSFER_SET,
 	siteId,
 	transfer,
-} );
+});

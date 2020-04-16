@@ -19,8 +19,8 @@ import { combineReducers, withSchemaValidation, withoutPersistence } from 'state
 import { itemSchema } from './schema';
 
 // Tracks fetching state for keyring connections
-export const isFetching = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isFetching = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case KEYRING_CONNECTIONS_REQUEST:
 			return true;
 		case KEYRING_CONNECTIONS_REQUEST_SUCCESS:
@@ -30,44 +30,44 @@ export const isFetching = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
 // Stores the list of available keyring connections
-export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemSchema, (state = {}, action) => {
+	switch (action.type) {
 		case KEYRING_CONNECTIONS_RECEIVE: {
 			const { connections } = action;
 
 			return {
-				...keyBy( connections, 'ID' ),
+				...keyBy(connections, 'ID'),
 			};
 		}
 		case KEYRING_CONNECTION_DELETE: {
 			const { connection } = action;
-			return omit( state, connection.ID );
+			return omit(state, connection.ID);
 		}
 		case PUBLICIZE_CONNECTION_CREATE: {
 			const { connection } = action;
 			const { keyring_connection_ID: id, site_ID: siteId } = connection;
-			const keyringConnection = state[ id ];
-			const sites = [ ...keyringConnection.sites, siteId.toString() ];
+			const keyringConnection = state[id];
+			const sites = [...keyringConnection.sites, siteId.toString()];
 
-			return { ...state, [ id ]: { ...keyringConnection, sites } };
+			return { ...state, [id]: { ...keyringConnection, sites } };
 		}
 		case PUBLICIZE_CONNECTION_DELETE: {
 			const { connection } = action;
 			const { keyring_connection_ID: id, site_ID: siteId } = connection;
-			const keyringConnection = state[ id ];
-			const sites = without( keyringConnection.sites, siteId.toString() );
+			const keyringConnection = state[id];
+			const sites = without(keyringConnection.sites, siteId.toString());
 
-			return { ...state, [ id ]: { ...keyringConnection, sites } };
+			return { ...state, [id]: { ...keyringConnection, sites } };
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	isFetching,
 	items,
-} );
+});

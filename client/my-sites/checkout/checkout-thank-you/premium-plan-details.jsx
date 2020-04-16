@@ -28,35 +28,32 @@ import customizeThemeImage from 'assets/images/upgrades/customize-theme.svg';
 import mediaPostImage from 'assets/images/upgrades/media-post.svg';
 import wordAdsImage from 'assets/images/upgrades/word-ads.svg';
 
-const PremiumPlanDetails = ( {
+const PremiumPlanDetails = ({
 	selectedSite,
 	sitePlans,
 	selectedFeature,
 	purchases,
 	customizeUrl,
-} ) => {
+}) => {
 	const translate = useTranslate();
-	const plan = find( sitePlans.data, isPremium ),
-		isPremiumPlan = isPremium( selectedSite.plan );
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const plan = find(sitePlans.data, isPremium),
+		isPremiumPlan = isPremium(selectedSite.plan);
+	const googleAppsWasPurchased = purchases.some(isGoogleApps);
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{googleAppsWasPurchased && <GoogleAppsDetails isRequired />}
 
 			<CustomDomainPurchaseDetail
-				selectedSite={ selectedSite }
-				hasDomainCredit={ plan && plan.hasDomainCredit }
+				selectedSite={selectedSite}
+				hasDomainCredit={plan && plan.hasDomainCredit}
 			/>
 
 			<PurchaseDetail
 				icon={
-					<img
-						alt={ translate( 'Advertising Removed Illustration' ) }
-						src={ advertisingRemovedImage }
-					/>
+					<img alt={translate('Advertising Removed Illustration')} src={advertisingRemovedImage} />
 				}
-				title={ translate( 'Advertising Removed' ) }
+				title={translate('Advertising Removed')}
 				description={
 					isPremiumPlan
 						? translate(
@@ -70,78 +67,72 @@ const PremiumPlanDetails = ( {
 			/>
 
 			<PurchaseDetail
-				icon={ <img alt="" src={ analyticsImage } /> }
-				title={ translate( 'Connect to Google Analytics' ) }
-				description={ translate(
+				icon={<img alt="" src={analyticsImage} />}
+				title={translate('Connect to Google Analytics')}
+				description={translate(
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
-				) }
-				buttonText={ translate( 'Connect Google Analytics' ) }
-				href={ '/settings/analytics/' + selectedSite.slug }
+				)}
+				buttonText={translate('Connect Google Analytics')}
+				href={'/settings/analytics/' + selectedSite.slug}
 			/>
 
-			<QuerySiteVouchers siteId={ selectedSite.ID } />
+			<QuerySiteVouchers siteId={selectedSite.ID} />
 			<PurchaseDetail
 				id="google-credits"
-				icon={
-					<img alt={ translate( 'Google AdWords Illustration' ) } src={ googleAdwordsImage } />
-				}
-				title={ translate( 'Google Ads credit' ) }
-				description={ translate(
+				icon={<img alt={translate('Google AdWords Illustration')} src={googleAdwordsImage} />}
+				title={translate('Google Ads credit')}
+				description={translate(
 					'Use a %(cost)s credit with Google to bring traffic to your most important Posts and Pages.',
 					{
 						args: {
 							cost: '$100',
 						},
 					}
-				) }
-				body={ <GoogleVoucherDetails selectedSite={ selectedSite } /> }
+				)}
+				body={<GoogleVoucherDetails selectedSite={selectedSite} />}
 			/>
 
-			{ ! selectedFeature && (
+			{!selectedFeature && (
 				<PurchaseDetail
-					icon={
-						<img alt={ translate( 'Customize Theme Illustration' ) } src={ customizeThemeImage } />
-					}
-					title={ translate( 'Customize your theme' ) }
-					description={ translate(
+					icon={<img alt={translate('Customize Theme Illustration')} src={customizeThemeImage} />}
+					title={translate('Customize your theme')}
+					description={translate(
 						"You now have direct control over your site's fonts and colors in the customizer. " +
 							"Change your site's entire look in a few clicks."
-					) }
-					buttonText={ translate( 'Start customizing' ) }
-					href={ customizeUrl }
+					)}
+					buttonText={translate('Start customizing')}
+					href={customizeUrl}
 				/>
-			) }
+			)}
 
 			<PurchaseDetail
-				icon={
-					<img alt={ translate( 'Add Media to Your Posts Illustration' ) } src={ mediaPostImage } />
-				}
-				title={ translate( 'Video and audio posts' ) }
-				description={ translate(
+				icon={<img alt={translate('Add Media to Your Posts Illustration')} src={mediaPostImage} />}
+				title={translate('Video and audio posts')}
+				description={translate(
 					'Enrich your posts with video and audio, uploaded directly on your site. ' +
 						'No ads. The Premium plan offers 13GB of file storage.'
-				) }
-				buttonText={ translate( 'Start a new post' ) }
-				href={ newPost( selectedSite ) }
+				)}
+				buttonText={translate('Start a new post')}
+				href={newPost(selectedSite)}
 			/>
-			{ isWordadsInstantActivationEligible( selectedSite ) && (
+			{isWordadsInstantActivationEligible(selectedSite) && (
 				<PurchaseDetail
-					icon={ <img alt={ translate( 'WordAds Illustration' ) } src={ wordAdsImage } /> }
-					title={ translate( 'Easily monetize your site' ) }
-					description={ translate(
+					icon={<img alt={translate('WordAds Illustration')} src={wordAdsImage} />}
+					title={translate('Easily monetize your site')}
+					description={translate(
 						'Take advantage of WordAds instant activation on your upgraded site. ' +
 							'WordAds lets you earn money by displaying promotional content.'
-					) }
-					buttonText={ translate( 'Start Earning' ) }
-					href={ '/ads/settings/' + selectedSite.slug }
+					)}
+					buttonText={translate('Start Earning')}
+					href={'/ads/settings/' + selectedSite.slug}
 				/>
-			) }
+			)}
 		</div>
 	);
 };
 
 PremiumPlanDetails.propTypes = {
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
+	selectedSite: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
 	selectedFeature: PropTypes.object,
 	sitePlans: PropTypes.object.isRequired,
 };

@@ -14,15 +14,15 @@ const DAY_IN_MS = 1000 * 60 * 60 * 24;
  * @param {number} to Upper bound on days
  * @returns {?boolean} True if the number of days falls withing the specified range
  */
-export default function isUserRegistrationDaysWithinRange( state, refDate, from, to ) {
-	const date = getCurrentUserDate( state );
+export default function isUserRegistrationDaysWithinRange(state, refDate, from, to) {
+	const date = getCurrentUserDate(state);
 
-	if ( ! date ) {
+	if (!date) {
 		return null;
 	}
 
 	refDate = refDate || Date.now();
-	const days = ( refDate - new Date( date ) ) / DAY_IN_MS;
+	const days = (refDate - new Date(date)) / DAY_IN_MS;
 
 	return days >= from && days <= to;
 }

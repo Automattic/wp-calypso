@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  */
 import { loadScript } from '@automattic/load-script';
 
-const debug = debugFactory( 'calypso:analytics:recaptcha' );
+const debug = debugFactory('calypso:analytics:recaptcha');
 
 const GOOGLE_RECAPTCHA_SCRIPT_URL = 'https://www.google.com/recaptcha/api.js?render=explicit';
 
@@ -18,18 +18,18 @@ const GOOGLE_RECAPTCHA_SCRIPT_URL = 'https://www.google.com/recaptcha/api.js?ren
  * @returns {boolean} false if the script failed to load
  */
 async function loadGoogleRecaptchaScript() {
-	if ( window.grecaptcha ) {
+	if (window.grecaptcha) {
 		// reCAPTCHA already loaded
 		return true;
 	}
 
 	try {
 		const src = GOOGLE_RECAPTCHA_SCRIPT_URL;
-		await loadScript( src );
-		debug( 'loadGoogleRecaptchaScript: [Loaded]', src );
+		await loadScript(src);
+		debug('loadGoogleRecaptchaScript: [Loaded]', src);
 		return true;
-	} catch ( error ) {
-		debug( 'loadGoogleRecaptchaScript: [Load Error] the script failed to load: ', error );
+	} catch (error) {
+		debug('loadGoogleRecaptchaScript: [Load Error] the script failed to load: ', error);
 		return false;
 	}
 }
@@ -41,16 +41,16 @@ async function loadGoogleRecaptchaScript() {
  * @param {string} siteKey - reCAPTCHA site key
  * @returns {number} reCAPTCHA clientId
  */
-async function renderRecaptchaClient( elementId, siteKey ) {
+async function renderRecaptchaClient(elementId, siteKey) {
 	try {
-		const clientId = await window.grecaptcha.render( elementId, {
+		const clientId = await window.grecaptcha.render(elementId, {
 			sitekey: siteKey,
 			size: 'invisible',
-		} );
-		debug( 'renderRecaptchaClient: [Success]', elementId );
+		});
+		debug('renderRecaptchaClient: [Success]', elementId);
 		return clientId;
-	} catch ( error ) {
-		debug( 'renderRecaptchaClient: [Error]', error );
+	} catch (error) {
+		debug('renderRecaptchaClient: [Error]', error);
 		return null;
 	}
 }
@@ -61,8 +61,8 @@ async function renderRecaptchaClient( elementId, siteKey ) {
  * @param {number} clientId - a clientId of the reCAPTCHA instance
  * @param {string} action  - name of action to record in reCAPTCHA
  */
-export async function recordGoogleRecaptchaAction( clientId, action ) {
-	if ( ! window.grecaptcha ) {
+export async function recordGoogleRecaptchaAction(clientId, action) {
+	if (!window.grecaptcha) {
 		debug(
 			'recordGoogleRecaptchaAction: [Error] window.grecaptcha not defined. Did you forget to init?'
 		);
@@ -70,11 +70,11 @@ export async function recordGoogleRecaptchaAction( clientId, action ) {
 	}
 
 	try {
-		const token = await window.grecaptcha.execute( clientId, { action } );
-		debug( 'recordGoogleRecaptchaAction: [Success]', action, token, clientId );
+		const token = await window.grecaptcha.execute(clientId, { action });
+		debug('recordGoogleRecaptchaAction: [Success]', action, token, clientId);
 		return token;
-	} catch ( error ) {
-		debug( 'recordGoogleRecaptchaAction: [Error]', action, error );
+	} catch (error) {
+		debug('recordGoogleRecaptchaAction: [Error]', action, error);
 		return null;
 	}
 }
@@ -94,34 +94,34 @@ export async function recordGoogleRecaptchaAction( clientId, action ) {
  *
  * @returns {RecaptchaActionResult|null} either the reCAPTCHA token and clientId, or null if the function fails
  */
-export async function initGoogleRecaptcha( elementId, action, siteKey ) {
-	if ( ! siteKey ) {
+export async function initGoogleRecaptcha(elementId, action, siteKey) {
+	if (!siteKey) {
 		return null;
 	}
 
-	if ( ! ( await loadGoogleRecaptchaScript() ) ) {
+	if (!(await loadGoogleRecaptchaScript())) {
 		return null;
 	}
 
-	await new Promise( resolve => window.grecaptcha.ready( resolve ) );
+	await new Promise((resolve) => window.grecaptcha.ready(resolve));
 
 	try {
-		const clientId = await renderRecaptchaClient( elementId, siteKey );
-		if ( clientId == null ) {
+		const clientId = await renderRecaptchaClient(elementId, siteKey);
+		if (clientId == null) {
 			return null;
 		}
 
-		const token = await recordGoogleRecaptchaAction( clientId, action );
-		if ( token == null ) {
+		const token = await recordGoogleRecaptchaAction(clientId, action);
+		if (token == null) {
 			return null;
 		}
 
-		debug( 'initGoogleRecaptcha: [Success]', action, token, clientId );
+		debug('initGoogleRecaptcha: [Success]', action, token, clientId);
 		return { token, clientId };
-	} catch ( error ) {
+	} catch (error) {
 		// We don't want errors interrupting our flow, so convert any exceptions
 		// into return values.
-		debug( 'initGoogleRecaptcha: [Error]', action, error );
+		debug('initGoogleRecaptcha: [Error]', action, error);
 		return null;
 	}
 }

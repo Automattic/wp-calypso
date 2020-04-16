@@ -39,7 +39,7 @@ export class EditorAuthor extends Component {
 		const { post, author, translate, site } = this.props;
 
 		// if it's not a new post and we are still loading, show a placeholder component
-		if ( ! post && ! this.props.isNew ) {
+		if (!post && !this.props.isNew) {
 			return this.renderPlaceholder();
 		}
 
@@ -56,10 +56,10 @@ export class EditorAuthor extends Component {
 
 		return (
 			<div className="editor-author">
-				<Wrapper { ...wrapperProps }>
-					<Gravatar size={ 26 } user={ author } />
+				<Wrapper {...wrapperProps}>
+					<Gravatar size={26} user={author} />
 					<span className="editor-author__name">
-						{ translate( 'by %(name)s', { args: { name: name } } ) }
+						{translate('by %(name)s', { args: { name: name } })}
 					</span>
 				</Wrapper>
 			</div>
@@ -69,30 +69,30 @@ export class EditorAuthor extends Component {
 	renderPlaceholder() {
 		return (
 			<div className="editor-author is-placeholder">
-				<Gravatar size={ 26 } />
+				<Gravatar size={26} />
 				<span className="editor-author__name" />
 			</div>
 		);
 	}
 
-	onSelect = author => {
-		this.props.recordEditorStat( 'advanced_author_changed' );
-		this.props.recordEditorEvent( 'Changed Author' );
+	onSelect = (author) => {
+		this.props.recordEditorStat('advanced_author_changed');
+		this.props.recordEditorEvent('Changed Author');
 
-		const siteId = get( this.props.site, 'ID', null );
-		const postId = get( this.props.post, 'ID', null );
-		this.props.editPost( siteId, postId, { author } );
+		const siteId = get(this.props.site, 'ID', null);
+		const postId = get(this.props.post, 'ID', null);
+		this.props.editPost(siteId, postId, { author });
 	};
 
 	userCanAssignAuthor() {
 		const { post, site } = this.props;
-		if ( ! post ) {
+		if (!post) {
 			return false;
 		}
 		const reassignCapability = 'edit_others_' + post.type + 's';
 
 		// if user cannot edit others posts
-		if ( ! site || ! site.capabilities || ! site.capabilities[ reassignCapability ] ) {
+		if (!site || !site.capabilities || !site.capabilities[reassignCapability]) {
 			return false;
 		}
 
@@ -101,18 +101,18 @@ export class EditorAuthor extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const isNew = isEditorNewPost( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const isNew = isEditorNewPost(state);
 
-		const site = getSite( state, siteId );
-		const post = getEditedPost( state, siteId, postId );
-		const postAuthor = get( post, 'author' );
+		const site = getSite(state, siteId);
+		const post = getEditedPost(state, siteId, postId);
+		const postAuthor = get(post, 'author');
 		//default to current user when null or falsey
-		const author = postAuthor ? postAuthor : getCurrentUser( state );
+		const author = postAuthor ? postAuthor : getCurrentUser(state);
 
 		return { site, post, author, isNew };
 	},
 	{ editPost, recordEditorStat, recordEditorEvent }
-)( localize( EditorAuthor ) );
+)(localize(EditorAuthor));

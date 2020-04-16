@@ -12,26 +12,26 @@ import { CompactCard as Card } from '@automattic/components';
 
 class SimpleLikeButtonContainer extends React.PureComponent {
 	state = {
-		liked: !! this.props.liked,
+		liked: !!this.props.liked,
 		count: this.props.likeCount || 0,
 	};
 
 	render() {
 		return (
 			<LikeButton
-				{ ...this.props }
-				onLikeToggle={ this.handleLikeToggle }
-				likeCount={ this.state.count }
-				liked={ this.state.liked }
+				{...this.props}
+				onLikeToggle={this.handleLikeToggle}
+				likeCount={this.state.count}
+				liked={this.state.liked}
 			/>
 		);
 	}
 
-	handleLikeToggle = newState => {
-		this.setState( {
+	handleLikeToggle = (newState) => {
+		this.setState({
 			liked: newState,
-			count: ( this.state.count += newState ? 1 : -1 ),
-		} );
+			count: (this.state.count += newState ? 1 : -1),
+		});
 	};
 }
 
@@ -42,13 +42,13 @@ class LikeButtons extends React.PureComponent {
 		return (
 			<div>
 				<Card compact>
-					<SimpleLikeButtonContainer tagName="a" likeCount={ 0 } />
+					<SimpleLikeButtonContainer tagName="a" likeCount={0} />
 				</Card>
 				<Card compact>
-					<SimpleLikeButtonContainer tagName="a" likeCount={ 12 } />
+					<SimpleLikeButtonContainer tagName="a" likeCount={12} />
 				</Card>
 				<Card compact>
-					<SimpleLikeButtonContainer tagName="a" likeCount={ 12 } liked={ true } />
+					<SimpleLikeButtonContainer tagName="a" likeCount={12} liked={true} />
 				</Card>
 			</div>
 		);

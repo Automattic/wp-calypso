@@ -18,14 +18,14 @@ import isJetpackSite from './is-jetpack-site';
  * @param {Array} moduleIds A list of active module ids to verify
  * @returns {?boolean} true if the all the given modules are active for this site
  */
-export default function verifyJetpackModulesActive( state, siteId, moduleIds ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
+export default function verifyJetpackModulesActive(state, siteId, moduleIds) {
+	if (!isJetpackSite(state, siteId)) {
 		return null;
 	}
 
-	if ( ! Array.isArray( moduleIds ) ) {
-		moduleIds = [ moduleIds ];
+	if (!Array.isArray(moduleIds)) {
+		moduleIds = [moduleIds];
 	}
 
-	return every( moduleIds, moduleId => isJetpackModuleActive( state, siteId, moduleId ) );
+	return every(moduleIds, (moduleId) => isJetpackModuleActive(state, siteId, moduleId));
 }

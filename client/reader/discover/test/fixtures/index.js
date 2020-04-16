@@ -71,6 +71,6 @@ export const discoverPost = {
 	},
 };
 
-const externalPost = cloneDeep( discoverPost );
+const externalPost = cloneDeep(discoverPost);
 externalPost.discover_metadata.featured_post_wpcom_data = null;
 export const externalDiscoverPost = externalPost;

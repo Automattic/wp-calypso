@@ -7,8 +7,8 @@ import {
 	JETPACK_CONNECT_RETRY_AUTH,
 } from 'state/jetpack-connect/action-types';
 
-describe( '#authAttempts()', () => {
-	test( 'should update the timestamp when adding an existent slug with stale timestamp', () => {
+describe('#authAttempts()', () => {
+	test('should update the timestamp when adding an existent slug with stale timestamp', () => {
 		const state = authAttempts(
 			{ timestamp: 1, attempt: 1 },
 			{
@@ -17,12 +17,12 @@ describe( '#authAttempts()', () => {
 				attemptNumber: 2,
 			}
 		);
-		expect( state ).toMatchObject( {
-			timestamp: expect.any( Number ),
-		} );
-	} );
+		expect(state).toMatchObject({
+			timestamp: expect.any(Number),
+		});
+	});
 
-	test( 'should reset the attempt number to 0 when adding an existent slug with stale timestamp', () => {
+	test('should reset the attempt number to 0 when adding an existent slug with stale timestamp', () => {
 		const state = authAttempts(
 			{ timestamp: 1, attempt: 1 },
 			{
@@ -32,10 +32,10 @@ describe( '#authAttempts()', () => {
 			}
 		);
 
-		expect( state ).toMatchObject( { attempt: 0 } );
-	} );
+		expect(state).toMatchObject({ attempt: 0 });
+	});
 
-	test( 'should store the attempt number when adding an existent slug with non-stale timestamp', () => {
+	test('should store the attempt number when adding an existent slug with non-stale timestamp', () => {
 		const state = authAttempts(
 			{ timestamp: Date.now(), attempt: 1 },
 			{
@@ -45,10 +45,10 @@ describe( '#authAttempts()', () => {
 			}
 		);
 
-		expect( state ).toMatchObject( { attempt: 2 } );
-	} );
+		expect(state).toMatchObject({ attempt: 2 });
+	});
 
-	test( 'should clear state on completion', () => {
+	test('should clear state on completion', () => {
 		const state = authAttempts(
 			{ timestamp: Date.now(), attempt: 1 },
 			{
@@ -57,12 +57,12 @@ describe( '#authAttempts()', () => {
 			}
 		);
 
-		expect( state ).not.toBeDefined();
-	} );
-} );
+		expect(state).not.toBeDefined();
+	});
+});
 
-describe( '#reducer()', () => {
-	test( 'should be keyed by slug', () => {
+describe('#reducer()', () => {
+	test('should be keyed by slug', () => {
 		const previousState = {
 			nonMatchingSlug: {
 				attempt: 1,
@@ -73,17 +73,17 @@ describe( '#reducer()', () => {
 				timestamp: Infinity,
 			},
 		};
-		const nextState = reducer( previousState, {
+		const nextState = reducer(previousState, {
 			type: JETPACK_CONNECT_RETRY_AUTH,
 			attemptNumber: 2,
 			slug: 'example.com',
-		} );
-		expect( nextState ).toMatchObject( {
+		});
+		expect(nextState).toMatchObject({
 			nonMatchingSlug: previousState.nonMatchingSlug,
 			'example.com': {
 				attempt: 2,
-				timestamp: expect.any( Number ),
+				timestamp: expect.any(Number),
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

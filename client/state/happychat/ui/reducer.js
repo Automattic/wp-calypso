@@ -20,8 +20,8 @@ import { combineReducers, withSchemaValidation } from 'state/utils';
  * @returns {object}        Updated state
  *
  */
-export const currentMessage = ( state = '', action ) => {
-	switch ( action.type ) {
+export const currentMessage = (state = '', action) => {
+	switch (action.type) {
 		case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
 			return '';
 		case HAPPYCHAT_SET_CURRENT_MESSAGE:
@@ -40,12 +40,12 @@ const lostFocusAtSchema = { type: 'number' };
  * @param {object} action Action payload
  * @returns {object}        Updated state
  */
-export const lostFocusAt = withSchemaValidation( lostFocusAtSchema, ( state = null, action ) => {
-	switch ( action.type ) {
+export const lostFocusAt = withSchemaValidation(lostFocusAtSchema, (state = null, action) => {
+	switch (action.type) {
 		case SERIALIZE:
 			// If there's already a timestamp set, use that. Otherwise treat a SERIALIZE as a
 			// "loss of focus" since it represents the state when the browser (and HC) closed.
-			if ( state === null ) {
+			if (state === null) {
 				return Date.now();
 			}
 			return state;
@@ -55,12 +55,12 @@ export const lostFocusAt = withSchemaValidation( lostFocusAtSchema, ( state = nu
 			return null;
 	}
 	return state;
-} );
+});
 
-const isOpen = ( state = false, action ) => {
-	switch ( action.type ) {
+const isOpen = (state = false, action) => {
+	switch (action.type) {
 		case HAPPYCHAT_OPEN:
-			return !! action.isOpen;
+			return !!action.isOpen;
 	}
 	return state;
 };
@@ -73,12 +73,12 @@ const isOpen = ( state = false, action ) => {
  * @returns {object}        Updated state
  *
  */
-const isMinimizing = ( state = false, action ) => {
-	switch ( action.type ) {
+const isMinimizing = (state = false, action) => {
+	switch (action.type) {
 		case HAPPYCHAT_MINIMIZING:
 			return action.isMinimizing ? true : false;
 	}
 	return state;
 };
 
-export default combineReducers( { currentMessage, isMinimizing, isOpen, lostFocusAt } );
+export default combineReducers({ currentMessage, isMinimizing, isOpen, lostFocusAt });

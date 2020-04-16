@@ -24,9 +24,9 @@ class OrderTotalRow extends Component {
 		onBlur: PropTypes.func,
 		onChange: PropTypes.func,
 		showTax: PropTypes.bool,
-		taxValue: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		taxValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		translate: PropTypes.func.isRequired,
-		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
+		value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
 	};
 
 	static defaultProps = {
@@ -39,25 +39,25 @@ class OrderTotalRow extends Component {
 	renderEditable = () => {
 		const { className, currency, initialValue, label, onBlur, onChange, value } = this.props;
 		let name = this.props.name;
-		if ( ! name ) {
-			name = snakeCase( label );
+		if (!name) {
+			name = snakeCase(label);
 		}
-		const total = '' !== value && isNaN( parseFloat( value ) ) ? 0 : value;
+		const total = '' !== value && isNaN(parseFloat(value)) ? 0 : value;
 
-		const classes = classnames( className, 'order-details__total order-details__total-edit' );
+		const classes = classnames(className, 'order-details__total order-details__total-edit');
 		return (
-			<TableRow className={ classes }>
+			<TableRow className={classes}>
 				<TableItem isRowHeader className="order-details__totals-label">
-					{ label }
+					{label}
 				</TableItem>
 				<TableItem className="order-details__totals-value" colSpan="2">
 					<PriceInput
-						name={ name }
-						currency={ currency }
-						onBlur={ onBlur }
-						onChange={ onChange }
-						initialValue={ initialValue }
-						value={ total }
+						name={name}
+						currency={currency}
+						onBlur={onBlur}
+						onChange={onChange}
+						initialValue={initialValue}
+						value={total}
 						noWrap="true"
 					/>
 				</TableItem>
@@ -66,30 +66,30 @@ class OrderTotalRow extends Component {
 	};
 
 	render() {
-		if ( this.props.isEditable ) {
+		if (this.props.isEditable) {
 			return this.renderEditable();
 		}
 		const { className, currency, label, value, showTax, taxValue } = this.props;
 
 		const tax = (
 			<TableItem className="order-details__totals-tax">
-				{ formatCurrency( taxValue, currency ) }
+				{formatCurrency(taxValue, currency)}
 			</TableItem>
 		);
-		const classes = classnames( className, 'order-details__total' );
+		const classes = classnames(className, 'order-details__total');
 
 		return (
-			<TableRow className={ classes }>
+			<TableRow className={classes}>
 				<TableItem isRowHeader className="order-details__totals-label">
-					{ label }
+					{label}
 				</TableItem>
-				{ showTax && tax }
+				{showTax && tax}
 				<TableItem className="order-details__totals-value">
-					{ formatCurrency( value, currency ) }
+					{formatCurrency(value, currency)}
 				</TableItem>
 			</TableRow>
 		);
 	}
 }
 
-export default localize( OrderTotalRow );
+export default localize(OrderTotalRow);

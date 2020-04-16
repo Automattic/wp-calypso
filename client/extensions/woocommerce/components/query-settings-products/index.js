@@ -19,14 +19,14 @@ class QuerySettingsProducts extends Component {
 	};
 
 	componentDidMount() {
-		this.props.fetchSettingsProducts( this.props.siteId );
+		this.props.fetchSettingsProducts(this.props.siteId);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId) {
 			return;
 		}
-		nextProps.fetchSettingsProducts( nextProps.siteId );
+		nextProps.fetchSettingsProducts(nextProps.siteId);
 	}
 
 	render() {
@@ -34,4 +34,4 @@ class QuerySettingsProducts extends Component {
 	}
 }
 
-export default connect( null, { fetchSettingsProducts } )( QuerySettingsProducts );
+export default connect(null, { fetchSettingsProducts })(QuerySettingsProducts);

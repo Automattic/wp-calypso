@@ -10,10 +10,10 @@ import Gridicon from 'components/gridicon';
  */
 import './icons.scss';
 
-const LikeIcons = ( { size } ) => (
+const LikeIcons = ({ size }) => (
 	<span className="like-button__like-icons">
-		<Gridicon icon="star" size={ size } />
-		<Gridicon icon="star-outline" size={ size } />
+		<Gridicon icon="star" size={size} />
+		<Gridicon icon="star-outline" size={size} />
 	</span>
 );
 

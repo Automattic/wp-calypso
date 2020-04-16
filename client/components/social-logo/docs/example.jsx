@@ -58,9 +58,9 @@ const logos = [
 ];
 
 export default function SocialLogoExample() {
-	function handleClick( icon ) {
+	function handleClick(icon) {
 		const toCopy = '<SocialLogo icon="' + icon + '" />';
-		window.prompt( 'Copy component code:', toCopy );
+		window.prompt('Copy component code:', toCopy);
 	}
 
 	return (
@@ -70,14 +70,9 @@ export default function SocialLogoExample() {
 				<a href="/devdocs/design/social-logo">Social Logo</a>
 			</h2>
 			<div>
-				{ logos.map( logo => (
-					<SocialLogo
-						key={ logo }
-						icon={ logo }
-						size={ 48 }
-						onClick={ () => handleClick( logo ) }
-					/>
-				) ) }
+				{logos.map((logo) => (
+					<SocialLogo key={logo} icon={logo} size={48} onClick={() => handleClick(logo)} />
+				))}
 			</div>
 		</div>
 	);

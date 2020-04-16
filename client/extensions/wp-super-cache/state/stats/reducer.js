@@ -26,18 +26,18 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated generating state
  */
-export const generating = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const generating = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_GENERATE_STATS: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case WP_SUPER_CACHE_GENERATE_STATS_FAILURE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case WP_SUPER_CACHE_GENERATE_STATS_SUCCESS: {
@@ -45,13 +45,13 @@ export const generating = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
@@ -61,18 +61,18 @@ export const generating = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated deleting state
  */
-const deleting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const deleting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_DELETE_FILE: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case WP_SUPER_CACHE_DELETE_FILE_FAILURE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case WP_SUPER_CACHE_DELETE_FILE_SUCCESS: {
@@ -80,13 +80,13 @@ const deleting = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Tracks the stats for a particular site.
@@ -95,14 +95,14 @@ const deleting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated stats
  */
-const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+const items = withSchemaValidation(statsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_GENERATE_STATS_SUCCESS: {
 			const { siteId, stats } = action;
 
 			return {
 				...state,
-				[ siteId ]: stats,
+				[siteId]: stats,
 			};
 		}
 		case WP_SUPER_CACHE_DELETE_CACHE_SUCCESS: {
@@ -112,7 +112,7 @@ const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
 				expired_list: {},
 			};
 
-			if ( ! deleteExpired ) {
+			if (!deleteExpired) {
 				emptyCache = {
 					...emptyCache,
 					cached: 0,
@@ -122,13 +122,13 @@ const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					supercache: {
-						...state[ siteId ].supercache,
+						...state[siteId].supercache,
 						...emptyCache,
 					},
 					wpcache: {
-						...state[ siteId ].wpcache,
+						...state[siteId].wpcache,
 						...emptyCache,
 					},
 				},
@@ -140,17 +140,17 @@ const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
 			const listType = isCached ? 'cached_list' : 'expired_list';
 			const countType = isCached ? 'cached' : 'expired';
 			// Store the object whose key is given by `url` in the `file` var, and all other files in `remainingFiles`.
-			const { [ url ]: file, ...remainingFiles } = state[ siteId ][ cacheType ][ listType ];
-			const fileCount = get( file, 'files', 0 );
+			const { [url]: file, ...remainingFiles } = state[siteId][cacheType][listType];
+			const fileCount = get(file, 'files', 0);
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ cacheType ]: {
-						...state[ siteId ][ cacheType ],
-						[ countType ]: state[ siteId ][ cacheType ][ countType ] - fileCount,
-						[ listType ]: remainingFiles,
+				[siteId]: {
+					...state[siteId],
+					[cacheType]: {
+						...state[siteId][cacheType],
+						[countType]: state[siteId][cacheType][countType] - fileCount,
+						[listType]: remainingFiles,
 					},
 				},
 			};
@@ -158,10 +158,10 @@ const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	deleting,
 	generating,
 	items,
-} );
+});

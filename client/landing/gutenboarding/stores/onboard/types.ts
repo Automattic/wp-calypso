@@ -33,5 +33,5 @@ export interface Design {
 	theme: string;
 	template: string;
 	fonts: FontPair;
-	categories: Array< string >;
+	categories: Array<string>;
 }

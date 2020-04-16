@@ -13,9 +13,9 @@ import { getActiveTheme, isThemeGutenbergFirst } from '../themes/selectors';
  * @param {string} siteId The ID of the selected site.
  * @returns {boolean} True if Gutenberg should be opened.
  */
-export default function shouldCustomizeHomepageWithGutenberg( state, siteId ) {
-	const theme = getActiveTheme( state, siteId );
-	const isGutenbergTheme = isThemeGutenbergFirst( state, theme );
-	const isHomepageAPage = 'page' === getSiteFrontPageType( state, siteId );
+export default function shouldCustomizeHomepageWithGutenberg(state, siteId) {
+	const theme = getActiveTheme(state, siteId);
+	const isGutenbergTheme = isThemeGutenbergFirst(state, theme);
+	const isHomepageAPage = 'page' === getSiteFrontPageType(state, siteId);
 	return isGutenbergTheme && isHomepageAPage;
 }

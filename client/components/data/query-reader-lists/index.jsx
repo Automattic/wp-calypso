@@ -15,7 +15,7 @@ import { requestSubscribedLists } from 'state/reader/lists/actions';
 
 class QueryReaderLists extends Component {
 	UNSAFE_componentWillMount() {
-		if ( this.props.isRequestingSubscribedLists ) {
+		if (this.props.isRequestingSubscribedLists) {
 			return;
 		}
 
@@ -37,12 +37,12 @@ QueryReaderLists.defaultProps = {
 };
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			isRequestingSubscribedLists: isRequestingSubscribedLists( state ),
+			isRequestingSubscribedLists: isRequestingSubscribedLists(state),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				requestSubscribedLists,
@@ -50,4 +50,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( QueryReaderLists );
+)(QueryReaderLists);

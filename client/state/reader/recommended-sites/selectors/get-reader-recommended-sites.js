@@ -11,4 +11,4 @@ import 'state/reader/init';
  * @returns {Array} array of recommended sites for a given seed
  */
 
-export default ( state, seed ) => state.reader.recommendedSites.items[ seed ];
+export default (state, seed) => state.reader.recommendedSites.items[seed];

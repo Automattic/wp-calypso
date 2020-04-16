@@ -10,7 +10,7 @@ export const itemsSchema = {
 					type: 'array',
 					items: {
 						type: 'object',
-						required: [ 'name' ],
+						required: ['name'],
 						properties: {
 							name: { type: 'string' },
 							label: { type: 'string' },

@@ -48,45 +48,45 @@ export class DateTimeFormat extends Component {
 		isLoadingSettings: true,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const {
 			fields: { date_format: dateFormat, time_format: timeFormat },
 		} = nextProps;
 
-		if ( ! this.state.isLoadingSettings || '' === dateFormat || '' === timeFormat ) {
+		if (!this.state.isLoadingSettings || '' === dateFormat || '' === timeFormat) {
 			return;
 		}
 
-		this.setState( {
-			customDateFormat: ! includes( defaultDateFormats, dateFormat ),
-			customTimeFormat: ! includes( defaultTimeFormats, timeFormat ),
+		this.setState({
+			customDateFormat: !includes(defaultDateFormats, dateFormat),
+			customTimeFormat: !includes(defaultTimeFormats, timeFormat),
 			isLoadingSettings: false,
-		} );
+		});
 	}
 
-	setFormat = ( name, defaultFormats ) => event => {
+	setFormat = (name, defaultFormats) => (event) => {
 		const { value: format } = event.currentTarget;
-		this.props.updateFields( { [ `${ name }_format` ]: format } );
-		this.setState( {
-			[ `custom${ capitalize( name ) }Format` ]: ! includes( defaultFormats, format ),
-		} );
+		this.props.updateFields({ [`${name}_format`]: format });
+		this.setState({
+			[`custom${capitalize(name)}Format`]: !includes(defaultFormats, format),
+		});
 	};
 
-	setDateFormat = this.setFormat( 'date', defaultDateFormats );
+	setDateFormat = this.setFormat('date', defaultDateFormats);
 
-	setTimeFormat = this.setFormat( 'time', defaultTimeFormats );
+	setTimeFormat = this.setFormat('time', defaultTimeFormats);
 
-	setCustomFormat = name => event => {
+	setCustomFormat = (name) => (event) => {
 		const { value: format } = event.currentTarget;
-		this.props.updateFields( { [ `${ name }_format` ]: format } );
-		this.setState( {
-			[ `custom${ capitalize( name ) }Format` ]: true,
-		} );
+		this.props.updateFields({ [`${name}_format`]: format });
+		this.setState({
+			[`custom${capitalize(name)}Format`]: true,
+		});
 	};
 
-	setCustomDateFormat = this.setCustomFormat( 'date' );
+	setCustomDateFormat = this.setCustomFormat('date');
 
-	setCustomTimeFormat = this.setCustomFormat( 'time' );
+	setCustomTimeFormat = this.setCustomFormat('time');
 
 	getCardHeader = () => {
 		const {
@@ -100,18 +100,16 @@ export class DateTimeFormat extends Component {
 			translate,
 		} = this.props;
 
-		const localizedDate = getLocalizedDate( timezoneString );
-		const weekday = startOfWeek
-			? moment.weekdays( parseInt( startOfWeek, 10 ) )
-			: moment.weekdays( 0 );
+		const localizedDate = getLocalizedDate(timezoneString);
+		const weekday = startOfWeek ? moment.weekdays(parseInt(startOfWeek, 10)) : moment.weekdays(0);
 
 		return (
 			<div>
-				<div className="date-time-format__title">{ translate( 'Date and Time Format' ) }</div>
+				<div className="date-time-format__title">{translate('Date and Time Format')}</div>
 				<div className="date-time-format__info">
-					{ dateFormat && phpToMomentDatetimeFormat( localizedDate, dateFormat ) } &bull;{ ' ' }
-					{ timeFormat && phpToMomentDatetimeFormat( localizedDate, timeFormat ) } &bull;{ ' ' }
-					{ translate( 'Week starts on %s', { args: weekday } ) }
+					{dateFormat && phpToMomentDatetimeFormat(localizedDate, dateFormat)} &bull;{' '}
+					{timeFormat && phpToMomentDatetimeFormat(localizedDate, timeFormat)} &bull;{' '}
+					{translate('Week starts on %s', { args: weekday })}
 				</div>
 			</div>
 		);
@@ -132,38 +130,38 @@ export class DateTimeFormat extends Component {
 
 		const { customDateFormat, customTimeFormat } = this.state;
 
-		const localizedDate = getLocalizedDate( timezoneString );
+		const localizedDate = getLocalizedDate(timezoneString);
 
 		return (
 			<FoldableCard
 				className="date-time-format site-settings__foldable-card"
 				clickableHeader
-				header={ this.getCardHeader() }
+				header={this.getCardHeader()}
 			>
 				<DateFormatOption
-					dateFormat={ dateFormat }
-					disabled={ isRequestingSettings || isSavingSettings }
-					isCustom={ customDateFormat }
-					localizedDate={ localizedDate }
-					setCustomDateFormat={ this.setCustomDateFormat }
-					setDateFormat={ this.setDateFormat }
+					dateFormat={dateFormat}
+					disabled={isRequestingSettings || isSavingSettings}
+					isCustom={customDateFormat}
+					localizedDate={localizedDate}
+					setCustomDateFormat={this.setCustomDateFormat}
+					setDateFormat={this.setDateFormat}
 				/>
 				<TimeFormatOption
-					disabled={ isRequestingSettings || isSavingSettings }
-					isCustom={ customTimeFormat }
-					localizedDate={ localizedDate }
-					setCustomTimeFormat={ this.setCustomTimeFormat }
-					setTimeFormat={ this.setTimeFormat }
-					timeFormat={ timeFormat }
+					disabled={isRequestingSettings || isSavingSettings}
+					isCustom={customTimeFormat}
+					localizedDate={localizedDate}
+					setCustomTimeFormat={this.setCustomTimeFormat}
+					setTimeFormat={this.setTimeFormat}
+					timeFormat={timeFormat}
 				/>
 				<StartOfWeekOption
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleSelect }
-					startOfWeek={ startOfWeek }
+					disabled={isRequestingSettings || isSavingSettings}
+					onChange={handleSelect}
+					startOfWeek={startOfWeek}
 				/>
 			</FoldableCard>
 		);
 	}
 }
 
-export default localize( withLocalizedMoment( DateTimeFormat ) );
+export default localize(withLocalizedMoment(DateTimeFormat));

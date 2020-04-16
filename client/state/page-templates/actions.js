@@ -18,7 +18,7 @@ import {
  * @param  {object[]} templates Array of template objects
  * @returns {object}             Action object
  */
-export function receivePageTemplates( siteId, templates ) {
+export function receivePageTemplates(siteId, templates) {
 	return {
 		type: PAGE_TEMPLATES_RECEIVE,
 		siteId,
@@ -33,29 +33,29 @@ export function receivePageTemplates( siteId, templates ) {
  * @param  {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */
-export function requestPageTemplates( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function requestPageTemplates(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: PAGE_TEMPLATES_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
-			.site( siteId )
+			.site(siteId)
 			.pageTemplates()
-			.then( ( { templates } ) => {
-				dispatch( receivePageTemplates( siteId, templates ) );
-				dispatch( {
+			.then(({ templates }) => {
+				dispatch(receivePageTemplates(siteId, templates));
+				dispatch({
 					type: PAGE_TEMPLATES_REQUEST_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: PAGE_TEMPLATES_REQUEST_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

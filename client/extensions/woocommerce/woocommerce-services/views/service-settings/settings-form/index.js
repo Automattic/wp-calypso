@@ -18,12 +18,12 @@ import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shippin
 import { getSite } from 'state/sites/selectors';
 import { getShippingClassOptions } from 'woocommerce/state/sites/shipping-classes/selectors';
 
-const SettingsForm = props => {
-	const renderGroup = index => {
-		return <SettingsGroup { ...props } group={ props.layout[ index ] } key={ index } />;
+const SettingsForm = (props) => {
+	const renderGroup = (index) => {
+		return <SettingsGroup {...props} group={props.layout[index]} key={index} />;
 	};
 
-	return <div>{ props.layout.map( ( group, idx ) => renderGroup( idx ) ) }</div>;
+	return <div>{props.layout.map((group, idx) => renderGroup(idx))}</div>;
 };
 
 SettingsForm.propTypes = {
@@ -31,33 +31,31 @@ SettingsForm.propTypes = {
 	method: PropTypes.object.isRequired,
 };
 
-function mapStateToProps( state, props ) {
+function mapStateToProps(state, props) {
 	const { storeOptions, formSchema, formLayout } = getShippingMethodSchema(
 		state,
 		props.method.methodType,
 		props.siteId
 	);
 	return {
-		formData: getCurrentlyOpenShippingZoneMethod( state, props.siteId ),
-		shippingClasses: getShippingClassOptions( state, props.siteId ),
-		errors: getFormErrors( state, props.siteId ),
+		formData: getCurrentlyOpenShippingZoneMethod(state, props.siteId),
+		shippingClasses: getShippingClassOptions(state, props.siteId),
+		errors: getFormErrors(state, props.siteId),
 		storeOptions,
 		schema: formSchema,
 		layout: formLayout,
-		site: getSite( state, props.siteId ),
+		site: getSite(state, props.siteId),
 	};
 }
 
-function mapDispatchToProps( dispatch, ownProps ) {
+function mapDispatchToProps(dispatch, ownProps) {
 	return {
-		noticeActions: bindActionCreators( { successNotice, errorNotice }, dispatch ),
+		noticeActions: bindActionCreators({ successNotice, errorNotice }, dispatch),
 		formValueActions: {
-			updateField: ( path, value ) =>
-				dispatch(
-					FormValueActions.updateField( ownProps.siteId, ownProps.method.id, path, value )
-				),
+			updateField: (path, value) =>
+				dispatch(FormValueActions.updateField(ownProps.siteId, ownProps.method.id, path, value)),
 		},
 	};
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( SettingsForm );
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsForm);

@@ -26,26 +26,26 @@ class Security2faKeyDeleteButton extends Component {
 
 	handleRemoveKeyButtonClick = () => {
 		this.buttons = [
-			{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
+			{ action: 'cancel', label: this.props.translate('Cancel') },
 			{
 				action: 'delete',
-				label: this.props.translate( 'Remove key' ),
+				label: this.props.translate('Remove key'),
 				onClick: this.onDeleteKey,
 				additionalClassNames: 'is-scary',
 			},
 		];
 
-		this.setState( { showDialog: ! this.state.showDialog } );
+		this.setState({ showDialog: !this.state.showDialog });
 	};
 
 	onCloseDialog = () => {
-		this.setState( { showDialog: false } );
+		this.setState({ showDialog: false });
 	};
 
-	onDeleteKey = closeDialog => {
+	onDeleteKey = (closeDialog) => {
 		// Actually delete the key
-		if ( this.props.onDelete ) {
-			this.props.onDelete( this.props.securityKey );
+		if (this.props.onDelete) {
+			this.props.onDelete(this.props.securityKey);
 		}
 		// Close the dialog
 		closeDialog();
@@ -57,20 +57,20 @@ class Security2faKeyDeleteButton extends Component {
 				<Button
 					compact
 					className="security-2fa-key__delete-key"
-					onClick={ this.handleRemoveKeyButtonClick }
+					onClick={this.handleRemoveKeyButtonClick}
 				>
 					<Gridicon icon="trash" />
 				</Button>
-				{ this.state.showDialog && (
+				{this.state.showDialog && (
 					<Dialog
-						isVisible={ this.state.showDialog }
-						buttons={ this.buttons }
-						onClose={ this.onCloseDialog }
+						isVisible={this.state.showDialog}
+						buttons={this.buttons}
+						onClose={this.onCloseDialog}
 					>
-						<h1>{ this.props.translate( 'Remove key?' ) }</h1>
-						<p>{ this.props.translate( 'Are you sure you want to remove this security key?' ) }</p>
+						<h1>{this.props.translate('Remove key?')}</h1>
+						<p>{this.props.translate('Are you sure you want to remove this security key?')}</p>
 					</Dialog>
-				) }
+				)}
 			</Fragment>
 		);
 	}
@@ -83,4 +83,4 @@ export default connect(
 		recordGoogleEvent,
 	},
 	null
-)( localize( Security2faKeyDeleteButton ) );
+)(localize(Security2faKeyDeleteButton));

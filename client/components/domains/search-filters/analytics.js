@@ -3,7 +3,7 @@
  */
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
-export function recordTldFilterSelected( tld, position, isSelecting ) {
+export function recordTldFilterSelected(tld, position, isSelecting) {
 	return composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',

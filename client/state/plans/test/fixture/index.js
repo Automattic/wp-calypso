@@ -37,7 +37,7 @@ export const PLAN_1 = {
 	store: 0,
 	features_highlight: [
 		{
-			items: [ 'free-blog', 'space', 'support' ],
+			items: ['free-blog', 'space', 'support'],
 		},
 	],
 	bill_period_label: 'for life',
@@ -90,7 +90,7 @@ export const PLAN_1003 = {
 			],
 		},
 		{
-			items: [ 'free-blog' ],
+			items: ['free-blog'],
 		},
 	],
 	width: 500,
@@ -168,15 +168,15 @@ export const PLAN_1008 = {
 	android_sku: 'sub_test_plan_business_001',
 	features_highlight: [
 		{
-			items: [ 'premium-themes', 'space', 'support' ],
+			items: ['premium-themes', 'space', 'support'],
 		},
 		{
 			title: 'Includes WordPress.com Premium features:',
-			items: [ 'custom-design', 'videopress', 'no-adverts/no-adverts.php', 'custom-domain' ],
+			items: ['custom-design', 'videopress', 'no-adverts/no-adverts.php', 'custom-domain'],
 		},
 		{
 			title: 'Included with all plans:',
-			items: [ 'free-blog' ],
+			items: ['free-blog'],
 		},
 	],
 	bill_period: 365,
@@ -238,11 +238,11 @@ export const PLAN_1009 = {
 	android_sku: 'sub_test_plan_personal_001',
 	features_highlight: [
 		{
-			items: [ 'no-adverts/no-adverts.php', 'custom-domain', 'support', 'space' ],
+			items: ['no-adverts/no-adverts.php', 'custom-domain', 'support', 'space'],
 		},
 		{
 			title: 'Included with all plans:',
-			items: [ 'free-blog' ],
+			items: ['free-blog'],
 		},
 	],
 	bill_period: 365,
@@ -313,7 +313,7 @@ export const PLAN_1029 = {
 		THB: 2880,
 		TWD: 2880,
 	},
-	bundle_product_ids: [ 21, 12, 50, 5 ],
+	bundle_product_ids: [21, 12, 50, 5],
 	product_slug: 'personal-bundle-2y',
 	description: '',
 	cost: 312,
@@ -459,7 +459,7 @@ export const PLAN_2003 = {
 		TWD: 223.68,
 		THB: 244.65,
 	},
-	bundle_product_ids: [ 'WPCOM_VIDEORESS', 9 ],
+	bundle_product_ids: ['WPCOM_VIDEORESS', 9],
 	product_slug: 'jetpack_premium_monthly',
 	description: '',
 	cost: 39,
@@ -533,7 +533,7 @@ export const ACTION_PLANS_REQUEST_FAILURE = {
 export const getStateInstance = () => {
 	return {
 		plans: {
-			items: [ ...PLANS ],
+			items: [...PLANS],
 			requesting: false,
 			error: false,
 		},

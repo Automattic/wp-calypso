@@ -50,68 +50,68 @@ class EditorTitle extends Component {
 		onChange: () => {},
 	};
 
-	componentDidUpdate( prevProps ) {
-		if ( isMobile() ) {
+	componentDidUpdate(prevProps) {
+		if (isMobile()) {
 			return;
 		}
 
 		// If next post is new, or the next site is different, focus title
 		const { isNew, siteId } = this.props;
-		if ( ( isNew && ! prevProps.isNew ) || ( isNew && prevProps.siteId !== siteId ) ) {
-			const input = ReactDom.findDOMNode( this.refs.titleInput );
+		if ((isNew && !prevProps.isNew) || (isNew && prevProps.siteId !== siteId)) {
+			const input = ReactDom.findDOMNode(this.refs.titleInput);
 			input.focus();
 		}
 	}
 
-	onChange = event => {
+	onChange = (event) => {
 		const { siteId, editedPostId } = this.props;
-		const newTitle = event.target.value.replace( REGEXP_NEWLINES, ' ' );
-		this.props.editPost( siteId, editedPostId, {
+		const newTitle = event.target.value.replace(REGEXP_NEWLINES, ' ');
+		this.props.editPost(siteId, editedPostId, {
 			title: newTitle,
-		} );
-		this.props.onChange( newTitle );
+		});
+		this.props.onChange(newTitle);
 	};
 
-	resizeAfterNewlineInput = event => {
+	resizeAfterNewlineInput = (event) => {
 		const title = event.target.value;
-		if ( REGEXP_NEWLINES.test( title ) ) {
-			event.target.value = title.replace( REGEXP_NEWLINES, ' ' );
+		if (REGEXP_NEWLINES.test(title)) {
+			event.target.value = title.replace(REGEXP_NEWLINES, ' ');
 			this.refs.titleInput.resize();
 		}
 	};
 
 	recordChangeStats = () => {
-		const isPage = PostUtils.isPage( this.props.post );
-		this.props.recordEditorStat( isPage ? 'page_title_changed' : 'post_title_changed' );
-		this.props.recordEditorEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
+		const isPage = PostUtils.isPage(this.props.post);
+		this.props.recordEditorStat(isPage ? 'page_title_changed' : 'post_title_changed');
+		this.props.recordEditorEvent(isPage ? 'Changed Page Title' : 'Changed Post Title');
 	};
 
 	render() {
 		const { post, isPermalinkEditable, isNew, tabIndex, translate } = this.props;
 
-		const classes = classNames( 'editor-title', {
-			'is-loading': ! post,
-		} );
+		const classes = classNames('editor-title', {
+			'is-loading': !post,
+		});
 
 		return (
-			<div className={ classes }>
-				{ post && post.ID && ! PostUtils.isPage( post ) && (
+			<div className={classes}>
+				{post && post.ID && !PostUtils.isPage(post) && (
 					<EditorPermalink
-						path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
-						isEditable={ isPermalinkEditable }
+						path={isPermalinkEditable ? PostUtils.getPermalinkBasePath(post) : post.URL}
+						isEditable={isPermalinkEditable}
 					/>
-				) }
-				<TrackInputChanges onNewValue={ this.recordChangeStats }>
+				)}
+				<TrackInputChanges onNewValue={this.recordChangeStats}>
 					<TextareaAutosize
-						tabIndex={ tabIndex }
+						tabIndex={tabIndex}
 						className="editor-title__input"
-						placeholder={ translate( 'Title' ) }
-						onChange={ this.onChange }
-						onInput={ this.resizeAfterNewlineInput }
-						onBlur={ this.onBlur }
-						autoFocus={ isNew && ! isMobile() }
-						value={ post && post.title ? post.title : '' }
-						aria-label={ translate( 'Edit title' ) }
+						placeholder={translate('Title')}
+						onChange={this.onChange}
+						onInput={this.resizeAfterNewlineInput}
+						onBlur={this.onBlur}
+						autoFocus={isNew && !isMobile()}
+						value={post && post.title ? post.title : ''}
+						aria-label={translate('Edit title')}
 						ref="titleInput"
 						rows="1"
 					/>
@@ -122,12 +122,12 @@ class EditorTitle extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const isPermalinkEditable = areSitePermalinksEditable( state, siteId );
-		const editedPostId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, editedPostId );
-		const isNew = isEditorNewPost( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const isPermalinkEditable = areSitePermalinksEditable(state, siteId);
+		const editedPostId = getEditorPostId(state);
+		const post = getEditedPost(state, siteId, editedPostId);
+		const isNew = isEditorNewPost(state);
 
 		return {
 			editedPostId,
@@ -138,4 +138,4 @@ export default connect(
 		};
 	},
 	{ editPost, recordEditorStat, recordEditorEvent }
-)( localize( EditorTitle ) );
+)(localize(EditorTitle));

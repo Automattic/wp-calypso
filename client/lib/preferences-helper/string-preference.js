@@ -17,10 +17,10 @@ class StringPreference extends Component {
 
 		return (
 			<ul className="preferences-helper__list">
-				<li key={ name }>{ value }</li>
+				<li key={name}>{value}</li>
 			</ul>
 		);
 	}
 }
 
-export default connect( null, null )( localize( StringPreference ) );
+export default connect(null, null)(localize(StringPreference));

@@ -21,8 +21,8 @@ class ConvertToBlocksDialog extends Component {
 		handleConversionResponse: PropTypes.func,
 	};
 
-	close = action => {
-		this.props.handleResponse( action === 'convert' );
+	close = (action) => {
+		this.props.handleResponse(action === 'convert');
 	};
 
 	render() {
@@ -32,31 +32,31 @@ class ConvertToBlocksDialog extends Component {
 			{
 				action: 'convert',
 				isPrimary: true,
-				label: translate( 'Convert to Blocks' ),
+				label: translate('Convert to Blocks'),
 			},
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 			},
 		];
 
 		return (
 			<Dialog
 				additionalClassNames="editor__gutenberg-convert-blocks-dialog"
-				buttons={ buttons }
-				isVisible={ showDialog }
-				onClose={ this.close }
+				buttons={buttons}
+				isVisible={showDialog}
+				onClose={this.close}
 			>
-				<h1>{ translate( 'Ready to try blocks?' ) }</h1>
+				<h1>{translate('Ready to try blocks?')}</h1>
 
 				<p>
-					{ translate(
+					{translate(
 						'This post contains content you created using the older editor. For the best editing experience, we recommend converting this content to blocks.'
-					) }
+					)}
 				</p>
 			</Dialog>
 		);
 	}
 }
 
-export default localize( ConvertToBlocksDialog );
+export default localize(ConvertToBlocksDialog);

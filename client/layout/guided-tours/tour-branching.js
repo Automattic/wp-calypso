@@ -9,12 +9,12 @@ import { fromPairs, flatMap, identity, isFunction } from 'lodash';
  * Transforms a React `Children` object into an array. The children of a `Step` are
  * a render prop and we need to call the function to get the children array.
  */
-const childrenToArray = children => {
-	if ( isFunction( children ) ) {
-		children = children( { translate: identity } );
+const childrenToArray = (children) => {
+	if (isFunction(children)) {
+		children = children({ translate: identity });
 	}
 
-	return Children.toArray( children );
+	return Children.toArray(children);
 };
 
 /*
@@ -53,19 +53,19 @@ const childrenToArray = children => {
  * chain.
  *
  */
-const branching = element => {
+const branching = (element) => {
 	// Skip null elements and text nodes
-	if ( ! element || ! element.props ) {
+	if (!element || !element.props) {
 		return [];
 	}
 
 	// If the element has a `step` prop, it's the leaf branching node we're looking for
-	if ( element.props.step ) {
+	if (element.props.step) {
 		const typeName = element.type.displayName || element.type.name || 'unknown';
-		return [ [ typeName.toLowerCase(), element.props.step ] ];
+		return [[typeName.toLowerCase(), element.props.step]];
 	}
 
-	return flatMap( childrenToArray( element.props.children ), branching );
+	return flatMap(childrenToArray(element.props.children), branching);
 };
 
 /*
@@ -78,8 +78,8 @@ const branching = element => {
  * This data is used to skip steps (`Step.skipToNext`) and to figure out if a step is the
  * last one in a tour (`isLastStep` in tour context).
  */
-export const tourBranching = tourTree => {
-	const steps = childrenToArray( tourTree.props.children );
+export const tourBranching = (tourTree) => {
+	const steps = childrenToArray(tourTree.props.children);
 
-	return fromPairs( steps.map( step => [ step.props.name, fromPairs( branching( step ) ) ] ) );
+	return fromPairs(steps.map((step) => [step.props.name, fromPairs(branching(step))]));
 };

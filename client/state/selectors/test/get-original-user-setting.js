@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 
-describe( 'getOriginalUserSetting()', () => {
-	test( 'should return null if the server values were not received yet', () => {
+describe('getOriginalUserSetting()', () => {
+	test('should return null if the server values were not received yet', () => {
 		const setting = getOriginalUserSetting(
 			{
 				userSettings: {
@@ -20,10 +20,10 @@ describe( 'getOriginalUserSetting()', () => {
 			'foo'
 		);
 
-		expect( setting ).to.be.null;
-	} );
+		expect(setting).to.be.null;
+	});
 
-	test( 'should ignore the unsaved settings and always return the server value', () => {
+	test('should ignore the unsaved settings and always return the server value', () => {
 		const setting = getOriginalUserSetting(
 			{
 				userSettings: {
@@ -34,6 +34,6 @@ describe( 'getOriginalUserSetting()', () => {
 			'foo'
 		);
 
-		expect( setting ).to.eql( 'bar' );
-	} );
-} );
+		expect(setting).to.eql('bar');
+	});
+});

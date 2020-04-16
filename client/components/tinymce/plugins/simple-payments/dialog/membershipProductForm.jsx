@@ -27,9 +27,9 @@ import getMembershipsConnectedAccounts from 'state/selectors/get-memberships-con
 export const REDUX_FORM_NAME = 'membershipsForm';
 
 // Export some selectors that are needed by the code that submits the form
-export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( state );
-export const isProductFormValid = state => isValid( REDUX_FORM_NAME )( state );
-export const isProductFormDirty = state => isDirty( REDUX_FORM_NAME )( state );
+export const getProductFormValues = (state) => getFormValues(REDUX_FORM_NAME)(state);
+export const isProductFormValid = (state) => isValid(REDUX_FORM_NAME)(state);
+export const isProductFormDirty = (state) => isDirty(REDUX_FORM_NAME)(state);
 
 // https://developer.paypal.com/docs/integration/direct/rest/currency-codes/
 const SUPPORTED_CURRENCY_LIST = [
@@ -59,44 +59,44 @@ const SUPPORTED_CURRENCY_LIST = [
 	'THB',
 ];
 
-const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( code => {
-	const { symbol } = getCurrencyDefaults( code );
+const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map((code) => {
+	const { symbol } = getCurrencyDefaults(code);
 	// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
 	// trim the dot at the end, e.g., 'kr.' becomes 'kr'
-	const label = symbol === code ? code : `${ code } ${ trimEnd( symbol, '.' ) }`;
+	const label = symbol === code ? code : `${code} ${trimEnd(symbol, '.')}`;
 	return { code, label };
-} );
+});
 
 // based on https://stackoverflow.com/a/10454560/59752
-function decimalPlaces( number ) {
-	const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
-	if ( ! match ) {
+function decimalPlaces(number) {
+	const match = ('' + number).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+	if (!match) {
 		return 0;
 	}
-	return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
+	return Math.max(0, (match[1] ? match[1].length : 0) - (match[2] ? +match[2] : 0));
 }
 
 // Validation function for the form
-const validate = ( values, props ) => {
+const validate = (values, props) => {
 	// The translate function was passed as a prop to the `reduxForm()` wrapped component
 	const { translate } = props;
-	const { precision } = getCurrencyDefaults( values.currency );
+	const { precision } = getCurrencyDefaults(values.currency);
 	const errors = {};
 
-	if ( ! values.title ) {
+	if (!values.title) {
 		errors.title = translate(
 			"People need to know what they're paying for! Please add a brief title."
 		);
 	}
 
-	if ( ! values.price || parseFloat( values.price ) === 0 ) {
-		errors.price = translate( 'Everything comes with a price tag these days. Add yours here.' );
-	} else if ( isNaN( parseFloat( values.price ) ) ) {
-		errors.price = translate( 'Invalid price' );
-	} else if ( parseFloat( values.price ) < 0 ) {
-		errors.price = translate( "Your price is negative — now that doesn't sound right, does it?" );
-	} else if ( decimalPlaces( values.price ) > precision ) {
-		if ( precision === 0 ) {
+	if (!values.price || parseFloat(values.price) === 0) {
+		errors.price = translate('Everything comes with a price tag these days. Add yours here.');
+	} else if (isNaN(parseFloat(values.price))) {
+		errors.price = translate('Invalid price');
+	} else if (parseFloat(values.price) < 0) {
+		errors.price = translate("Your price is negative — now that doesn't sound right, does it?");
+	} else if (decimalPlaces(values.price) > precision) {
+		if (precision === 0) {
 			errors.price = translate(
 				"We know every penny counts, but prices can't contain decimal values."
 			);
@@ -111,21 +111,21 @@ const validate = ( values, props ) => {
 					},
 				}
 			);
-			errors.price = translate( 'Price cannot have more than %(countDecimal)s.', {
+			errors.price = translate('Price cannot have more than %(countDecimal)s.', {
 				args: { countDecimal },
-			} );
+			});
 		}
 	}
 
-	if ( ! values.renewal_schedule ) {
+	if (!values.renewal_schedule) {
 		errors.renewal_schedule = 'Please choose a renewal schedule';
 	}
 
-	if ( ! values.stripe_account ) {
+	if (!values.stripe_account) {
 		errors.stripe_account = 'Choose or connect a new Stripe Account.';
 	}
 
-	if ( values.stripe_account === 'create' && ! values.email ) {
+	if (values.stripe_account === 'create' && !values.email) {
 		errors.email = translate(
 			'If you want us to create a Stripe account for you, you need to provide an email address.'
 		);
@@ -137,19 +137,19 @@ const validate = ( values, props ) => {
 // render it using the `Fields` component instead of `Field`. We need this rendering wrapper
 // to transform the props from `{ price: { input, meta }, currency: { input, meta } }` that
 // `Fields` is receiving to `{ input, meta }` that `Field` expects.
-const renderPriceField = ( { price, currency, ...props } ) => {
-	const { precision } = getCurrencyDefaults( currency.input.value );
+const renderPriceField = ({ price, currency, ...props }) => {
+	const { precision } = getCurrencyDefaults(currency.input.value);
 	// Tune the placeholder to the precision value: 0 -> '1', 1 -> '1.0', 2 -> '1.00'
-	const placeholder = precision > 0 ? padEnd( '1.', precision + 2, '0' ) : '1';
+	const placeholder = precision > 0 ? padEnd('1.', precision + 2, '0') : '1';
 	return (
 		<FieldsetRenderer
-			inputComponent={ FormCurrencyInput }
-			{ ...price }
-			{ ...omit( props, [ 'names' ] ) }
-			currencySymbolPrefix={ currency.input.value }
-			onCurrencyChange={ currency.input.onChange }
-			currencyList={ VISUAL_CURRENCY_LIST }
-			placeholder={ placeholder }
+			inputComponent={FormCurrencyInput}
+			{...price}
+			{...omit(props, ['names'])}
+			currencySymbolPrefix={currency.input.value}
+			onCurrencyChange={currency.input.onChange}
+			currencyList={VISUAL_CURRENCY_LIST}
+			placeholder={placeholder}
 		/>
 	);
 };
@@ -163,23 +163,23 @@ class ProductForm extends Component {
 				<div className="editor-simple-payments-modal__form-fields">
 					<ReduxFormFieldset
 						name="title"
-						label={ translate( 'What is this payment for?' ) }
-						component={ FormTextInput }
-						explanation={ translate(
+						label={translate('What is this payment for?')}
+						component={FormTextInput}
+						explanation={translate(
 							'For example: event tickets, charitable donations, training courses, coaching fees, etc.'
-						) }
+						)}
 					/>
 					<ReduxFormFieldset
 						name="description"
-						label={ translate( 'Description' ) }
-						component={ FormTextarea }
+						label={translate('Description')}
+						component={FormTextarea}
 					/>
 					<Fields
-						names={ [ 'price', 'currency' ] }
-						label={ translate( 'Price' ) }
-						component={ renderPriceField }
+						names={['price', 'currency']}
+						label={translate('Price')}
+						component={renderPriceField}
 					/>
-					{ this.renderRecurringFields() }
+					{this.renderRecurringFields()}
 				</div>
 			</form>
 		);
@@ -192,50 +192,50 @@ class ProductForm extends Component {
 				<QueryMembershipsConnectedAccounts />
 				<ReduxFormFieldset
 					name="stripe_account"
-					explanation={ translate( 'This is the Stripe account where the funds will end up.' ) }
-					label={ translate( 'Stripe account' ) }
-					component={ FormSelect }
-					children={ Object.values( this.props.membershipsConnectedAccounts )
-						.map( acct => (
+					explanation={translate('This is the Stripe account where the funds will end up.')}
+					label={translate('Stripe account')}
+					component={FormSelect}
+					children={Object.values(this.props.membershipsConnectedAccounts)
+						.map((acct) => (
 							<option
-								value={ acct.connected_destination_account_id }
-								key={ acct.connected_destination_account_id }
+								value={acct.connected_destination_account_id}
+								key={acct.connected_destination_account_id}
 							>
-								{ acct.payment_partner_account_id }
+								{acct.payment_partner_account_id}
 							</option>
-						) )
-						.concat( [
+						))
+						.concat([
 							<option value="create" key="create">
-								{ translate( 'Create Stripe account for me' ) }
+								{translate('Create Stripe account for me')}
 							</option>,
 							<option value="authorize" key="authorize">
-								{ translate( 'I already have a Stripe account' ) }
+								{translate('I already have a Stripe account')}
 							</option>,
-						] ) }
+						])}
 				/>
-				{ this.props.isChoosingToAuthorizeStripeAccount && (
-					<Button onClick={ this.props.authorizeStripeAccount }>
-						{ translate( 'Authorize Stripe account' ) }
+				{this.props.isChoosingToAuthorizeStripeAccount && (
+					<Button onClick={this.props.authorizeStripeAccount}>
+						{translate('Authorize Stripe account')}
 					</Button>
-				) }
-				{ this.props.isChoosingToCreateStripeAccount && (
+				)}
+				{this.props.isChoosingToCreateStripeAccount && (
 					<div>
 						<ReduxFormFieldset
 							name="email"
-							label={ translate( 'Email' ) }
-							explanation={ translate( 'New Stripe account will be tied to this email address.' ) }
-							component={ FormTextInput }
+							label={translate('Email')}
+							explanation={translate('New Stripe account will be tied to this email address.')}
+							component={FormTextInput}
 						/>
 					</div>
-				) }
+				)}
 				<ReduxFormFieldset
 					name="renewal_schedule"
-					explanation={ translate( 'After what time should the subscription renew?' ) }
-					label={ translate( 'Renewal Schedule' ) }
-					component={ FormSelect }
+					explanation={translate('After what time should the subscription renew?')}
+					label={translate('Renewal Schedule')}
+					component={FormSelect}
 				>
-					<option value="1 month">{ translate( '1 Month' ) }</option>
-					<option value="1 year">{ translate( '1 Year' ) }</option>
+					<option value="1 month">{translate('1 Month')}</option>
+					<option value="1 year">{translate('1 Year')}</option>
 				</ReduxFormFieldset>
 			</div>
 		);
@@ -244,21 +244,21 @@ class ProductForm extends Component {
 
 export default compose(
 	localize, // must be the outer HOC, as the validation function relies on `translate` prop
-	reduxForm( {
+	reduxForm({
 		form: REDUX_FORM_NAME,
 		enableReinitialize: true,
 		validate,
-	} ),
+	}),
 	connect(
-		state => {
+		(state) => {
 			return {
 				isChoosingToAuthorizeStripeAccount:
-					getEditedSimplePaymentsStripeAccount( state, REDUX_FORM_NAME ) === 'authorize',
+					getEditedSimplePaymentsStripeAccount(state, REDUX_FORM_NAME) === 'authorize',
 				isChoosingToCreateStripeAccount:
-					getEditedSimplePaymentsStripeAccount( state, REDUX_FORM_NAME ) === 'create',
-				membershipsConnectedAccounts: getMembershipsConnectedAccounts( state ),
+					getEditedSimplePaymentsStripeAccount(state, REDUX_FORM_NAME) === 'create',
+				membershipsConnectedAccounts: getMembershipsConnectedAccounts(state),
 			};
 		},
 		{ authorizeStripeAccount }
 	)
-)( ProductForm );
+)(ProductForm);

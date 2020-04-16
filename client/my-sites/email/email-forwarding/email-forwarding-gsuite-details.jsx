@@ -11,18 +11,18 @@ import React from 'react';
 import { CompactCard as Card } from '@automattic/components';
 import { emailManagement } from 'my-sites/email/paths';
 
-const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate } ) => {
+const EmailForwardingGSuiteDetails = ({ selectedDomainName, siteSlug, translate }) => {
 	return (
 		<Card className="email-forwarding__card">
 			<p className="email-forwarding__explanation">
-				{ translate(
+				{translate(
 					"You're using G Suite with this domain, so you'll use that to create custom email addresses. {{a}}Manage your G Suite settings.{{/a}}",
 					{
 						components: {
-							a: <a href={ emailManagement( siteSlug, selectedDomainName ) } />,
+							a: <a href={emailManagement(siteSlug, selectedDomainName)} />,
 						},
 					}
-				) }
+				)}
 			</p>
 		</Card>
 	);
@@ -34,4 +34,4 @@ EmailForwardingGSuiteDetails.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( EmailForwardingGSuiteDetails );
+export default localize(EmailForwardingGSuiteDetails);

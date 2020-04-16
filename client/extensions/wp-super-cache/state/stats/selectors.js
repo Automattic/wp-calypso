@@ -4,8 +4,8 @@
 
 import { get } from 'lodash';
 
-function getStatsState( state ) {
-	return get( state, 'extensions.wpSuperCache.stats', {} );
+function getStatsState(state) {
+	return get(state, 'extensions.wpSuperCache.stats', {});
 }
 
 /**
@@ -15,8 +15,8 @@ function getStatsState( state ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether stats are being generated
  */
-export function isGeneratingStats( state, siteId ) {
-	return get( getStatsState( state ), [ 'generating', siteId ], false );
+export function isGeneratingStats(state, siteId) {
+	return get(getStatsState(state), ['generating', siteId], false);
 }
 
 /**
@@ -26,8 +26,8 @@ export function isGeneratingStats( state, siteId ) {
  * @param  {number} siteId Site ID
  * @returns {object} Stats
  */
-export function getStats( state, siteId ) {
-	return get( getStatsState( state ), [ 'items', siteId ], null );
+export function getStats(state, siteId) {
+	return get(getStatsState(state), ['items', siteId], null);
 }
 
 /**
@@ -37,6 +37,6 @@ export function getStats( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether the cached file is being deleted
  */
-export function isDeletingFile( state, siteId ) {
-	return get( getStatsState( state ), [ 'deleting', siteId ], false );
+export function isDeletingFile(state, siteId) {
+	return get(getStatsState(state), ['deleting', siteId], false);
 }

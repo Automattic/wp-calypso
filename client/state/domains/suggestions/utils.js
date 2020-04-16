@@ -7,28 +7,28 @@
  * @returns {?string}              Serialized DomainsSuggestions query
  */
 
-export function getSerializedDomainsSuggestionsQuery( queryObject ) {
-	if ( ! queryObject ) {
+export function getSerializedDomainsSuggestionsQuery(queryObject) {
+	if (!queryObject) {
 		return null;
 	}
 	const { query, quantity, vendor } = queryObject;
 	if (
-		! query ||
+		!query ||
 		query.length === 0 ||
-		! quantity ||
+		!quantity ||
 		quantity <= 0 ||
-		! vendor ||
+		!vendor ||
 		vendor.length === 0
 	) {
 		return null;
 	}
-	const include_wordpressdotcom = !! (
+	const include_wordpressdotcom = !!(
 		queryObject.include_wordpressdotcom || queryObject.includeSubdomain
 	);
-	return JSON.stringify( {
+	return JSON.stringify({
 		query,
 		quantity,
 		vendor,
 		include_wordpressdotcom,
-	} ).toLocaleLowerCase();
+	}).toLocaleLowerCase();
 }

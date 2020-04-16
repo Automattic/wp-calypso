@@ -15,25 +15,21 @@ import { bumpStatGenerator } from './utils';
 import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
 
-function PostActionsEllipsisMenuStats( {
+function PostActionsEllipsisMenuStats({
 	translate,
 	siteSlug,
 	postId,
 	status,
 	isStatsActive,
 	bumpStat,
-} ) {
-	if ( ! isStatsActive || 'publish' !== status ) {
+}) {
+	if (!isStatsActive || 'publish' !== status) {
 		return null;
 	}
 
 	return (
-		<PopoverMenuItem
-			href={ `/stats/post/${ postId }/${ siteSlug }` }
-			onClick={ bumpStat }
-			icon="stats-alt"
-		>
-			{ translate( 'Stats' ) }
+		<PopoverMenuItem href={`/stats/post/${postId}/${siteSlug}`} onClick={bumpStat} icon="stats-alt">
+			{translate('Stats')}
 		</PopoverMenuItem>
 	);
 }
@@ -48,35 +44,35 @@ PostActionsEllipsisMenuStats.propTypes = {
 	bumpStat: PropTypes.func,
 };
 
-const mapStateToProps = ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
+const mapStateToProps = (state, { globalId }) => {
+	const post = getPost(state, globalId);
+	if (!post) {
 		return {};
 	}
 
 	return {
-		siteSlug: getSiteSlug( state, post.site_ID ),
+		siteSlug: getSiteSlug(state, post.site_ID),
 		postId: post.ID,
 		status: post.status,
 		type: post.type,
-		isStatsActive: false !== isJetpackModuleActive( state, post.site_ID, 'stats' ),
+		isStatsActive: false !== isJetpackModuleActive(state, post.site_ID, 'stats'),
 	};
 };
 
 const mapDispatchToProps = { bumpAnalyticsStat, recordTracksEvent };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
 	const bumpStat = bumpStatGenerator(
 		stateProps.type,
 		'stats',
 		dispatchProps.bumpAnalyticsStat,
 		dispatchProps.recordTracksEvent
 	);
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+	return Object.assign({}, ownProps, stateProps, dispatchProps, { bumpStat });
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( PostActionsEllipsisMenuStats ) );
+)(localize(PostActionsEllipsisMenuStats));

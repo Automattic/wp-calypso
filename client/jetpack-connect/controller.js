@@ -52,7 +52,7 @@ import {
 /**
  * Module variables
  */
-const debug = new Debug( 'calypso:jetpack-connect:controller' );
+const debug = new Debug('calypso:jetpack-connect:controller');
 const analyticsPageTitleByType = {
 	install: 'Jetpack Install',
 	personal: 'Jetpack Connect Personal',
@@ -61,9 +61,9 @@ const analyticsPageTitleByType = {
 	jetpack_search: 'Jetpack Search',
 };
 
-const removeSidebar = context => context.store.dispatch( hideSidebar() );
+const removeSidebar = (context) => context.store.dispatch(hideSidebar());
 
-const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
+const getPlanSlugFromFlowType = (type, interval = 'yearly') => {
 	const planSlugs = {
 		yearly: {
 			personal: PLAN_JETPACK_PERSONAL,
@@ -83,109 +83,104 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 		},
 	};
 
-	return get( planSlugs, [ interval, type ], '' );
+	return get(planSlugs, [interval, type], '');
 };
 
-export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
-	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
-		const urlWithoutLocale = removeLocaleFromPath( context.path );
-		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
-		return page.redirect( urlWithoutLocale );
+export function redirectWithoutLocaleIfLoggedIn(context, next) {
+	const isLoggedIn = !!getCurrentUserId(context.store.getState());
+	if (isLoggedIn && getLocaleFromPath(context.path)) {
+		const urlWithoutLocale = removeLocaleFromPath(context.path);
+		debug('redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale);
+		return page.redirect(urlWithoutLocale);
 	}
 
 	next();
 }
 
-export function newSite( context, next ) {
-	analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
-	removeSidebar( context );
-	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
+export function newSite(context, next) {
+	analytics.pageView.record('/jetpack/new', 'Add a new site (Jetpack)');
+	removeSidebar(context);
+	context.primary = <JetpackNewSite locale={context.params.locale} path={context.path} />;
 	next();
 }
 
-export function persistMobileAppFlow( context, next ) {
+export function persistMobileAppFlow(context, next) {
 	const { query } = context;
-	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
-		if (
-			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
-		) {
-			debug( `In mobile app flow with redirect url: ${ query.mobile_redirect }` );
-			persistMobileRedirect( query.mobile_redirect );
+	if (config.isEnabled('jetpack/connect/mobile-app-flow')) {
+		if (some(MOBILE_APP_REDIRECT_URL_WHITELIST, (pattern) => pattern.test(query.mobile_redirect))) {
+			debug(`In mobile app flow with redirect url: ${query.mobile_redirect}`);
+			persistMobileRedirect(query.mobile_redirect);
 		} else {
-			persistMobileRedirect( '' );
+			persistMobileRedirect('');
 		}
 	}
 	next();
 }
 
-export function setMasterbar( context, next ) {
-	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
+export function setMasterbar(context, next) {
+	if (config.isEnabled('jetpack/connect/mobile-app-flow')) {
 		const masterbarToggle = retrieveMobileRedirect() ? hideMasterbar() : showMasterbar();
-		context.store.dispatch( masterbarToggle );
+		context.store.dispatch(masterbarToggle);
 	}
 	next();
 }
 
-export function connect( context, next ) {
+export function connect(context, next) {
 	const { path, pathname, params, query } = context;
 	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
-	const planSlug = getPlanSlugFromFlowType( type, interval );
+	const analyticsPageTitle = get(type, analyticsPageTitleByType, 'Jetpack Connect');
+	const planSlug = getPlanSlugFromFlowType(type, interval);
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
-	planSlug && storePlan( planSlug );
-	analytics.pageView.record( pathname, analyticsPageTitle );
+	planSlug && storePlan(planSlug);
+	analytics.pageView.record(pathname, analyticsPageTitle);
 
-	removeSidebar( context );
+	removeSidebar(context);
 
 	context.primary = (
 		<JetpackConnect
-			ctaFrom={ query.cta_from /* origin tracking params */ }
-			ctaId={ query.cta_id /* origin tracking params */ }
-			locale={ params.locale }
-			path={ path }
-			type={ type }
-			url={ query.url }
-			forceRemoteInstall={ query.forceInstall }
+			ctaFrom={query.cta_from /* origin tracking params */}
+			ctaId={query.cta_id /* origin tracking params */}
+			locale={params.locale}
+			path={path}
+			type={type}
+			url={query.url}
+			forceRemoteInstall={query.forceInstall}
 		/>
 	);
 	next();
 }
 
-export function instructions( context, next ) {
-	analytics.pageView.record(
-		'jetpack/connect/instructions',
-		'Jetpack Manual Install Instructions'
-	);
+export function instructions(context, next) {
+	analytics.pageView.record('jetpack/connect/instructions', 'Jetpack Manual Install Instructions');
 
 	const url = context.query.url;
-	if ( ! url ) {
-		return page.redirect( '/jetpack/connect' );
+	if (!url) {
+		return page.redirect('/jetpack/connect');
 	}
-	context.primary = <InstallInstructions remoteSiteUrl={ url } />;
+	context.primary = <InstallInstructions remoteSiteUrl={url} />;
 	next();
 }
 
-export function signupForm( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+export function signupForm(context, next) {
+	analytics.pageView.record('jetpack/connect/authorize', 'Jetpack Authorize');
 
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
-	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
+	const isLoggedIn = !!getCurrentUserId(context.store.getState());
+	if (retrieveMobileRedirect() && !isLoggedIn) {
 		// Force login for mobile app flow. App will intercept this request and prompt native login.
-		return window.location.replace( login( { isNative: true, redirectTo: context.path } ) );
+		return window.location.replace(login({ isNative: true, redirectTo: context.path }));
 	}
 
-	removeSidebar( context );
+	removeSidebar(context);
 
 	const { query } = context;
-	const transformedQuery = parseAuthorizationQuery( query );
-	if ( transformedQuery ) {
-		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
+	const transformedQuery = parseAuthorizationQuery(query);
+	if (transformedQuery) {
+		context.store.dispatch(startAuthorizeStep(transformedQuery.clientId));
 
 		const { locale } = context.params;
 		context.primary = (
-			<JetpackSignup path={ context.path } locale={ locale } authQuery={ transformedQuery } />
+			<JetpackSignup path={context.path} locale={locale} authQuery={transformedQuery} />
 		);
 	} else {
 		context.primary = <NoDirectAccessError />;
@@ -193,86 +188,82 @@ export function signupForm( context, next ) {
 	next();
 }
 
-export function credsForm( context, next ) {
+export function credsForm(context, next) {
 	context.primary = <OrgCredentialsForm />;
 	next();
 }
 
-export function authorizeForm( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+export function authorizeForm(context, next) {
+	analytics.pageView.record('jetpack/connect/authorize', 'Jetpack Authorize');
 
-	removeSidebar( context );
+	removeSidebar(context);
 
 	const { query } = context;
-	const transformedQuery = parseAuthorizationQuery( query );
-	if ( transformedQuery ) {
-		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
-		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
+	const transformedQuery = parseAuthorizationQuery(query);
+	if (transformedQuery) {
+		context.store.dispatch(startAuthorizeStep(transformedQuery.clientId));
+		context.primary = <JetpackAuthorize authQuery={transformedQuery} />;
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}
 	next();
 }
 
-export function sso( context, next ) {
+export function sso(context, next) {
 	const analyticsBasePath = '/jetpack/sso';
 	const analyticsPageTitle = 'Jetpack SSO';
 
-	removeSidebar( context );
+	removeSidebar(context);
 
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	analytics.pageView.record(analyticsBasePath, analyticsPageTitle);
 
 	context.primary = (
 		<JetpackSsoForm
-			locale={ context.params.locale }
-			path={ context.path }
-			siteId={ context.params.siteId }
-			ssoNonce={ context.params.ssoNonce }
+			locale={context.params.locale}
+			path={context.path}
+			siteId={context.params.siteId}
+			ssoNonce={context.params.ssoNonce}
 		/>
 	);
 	next();
 }
 
-export function plansLanding( context, next ) {
+export function plansLanding(context, next) {
 	const analyticsPageTitle = 'Plans';
-	const basePath = sectionify( context.path );
+	const basePath = sectionify(context.path);
 	const analyticsBasePath = basePath + '/:site';
 
-	removeSidebar( context );
+	removeSidebar(context);
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	analytics.tracks.recordEvent('calypso_plans_view');
+	analytics.pageView.record(analyticsBasePath, analyticsPageTitle);
 
 	context.primary = (
-		<PlansLanding
-			context={ context }
-			interval={ context.params.interval }
-			url={ context.query.site }
-		/>
+		<PlansLanding context={context} interval={context.params.interval} url={context.query.site} />
 	);
 	next();
 }
 
-export function plansSelection( context, next ) {
+export function plansSelection(context, next) {
 	const analyticsPageTitle = 'Plans';
-	const basePath = sectionify( context.path );
+	const basePath = sectionify(context.path);
 	const analyticsBasePath = basePath + '/:site';
 
-	removeSidebar( context );
+	removeSidebar(context);
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	analytics.tracks.recordEvent('calypso_plans_view');
+	analytics.pageView.record(analyticsBasePath, analyticsPageTitle);
 
 	context.primary = (
 		<Plans
 			basePlansPath={
 				context.query.redirect
-					? addQueryArgs( { redirect: context.query.redirect }, JPC_PATH_PLANS )
+					? addQueryArgs({ redirect: context.query.redirect }, JPC_PATH_PLANS)
 					: JPC_PATH_PLANS
 			}
-			context={ context }
-			interval={ context.params.interval }
-			queryRedirect={ context.query.redirect }
+			context={context}
+			interval={context.params.interval}
+			queryRedirect={context.query.redirect}
 		/>
 	);
 	next();
@@ -286,18 +277,18 @@ export function plansSelection( context, next ) {
  * @param {object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
-export function setLoggedOutLocale( context, next ) {
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
-	const locale = getLocaleFromPath( context.path );
+export function setLoggedOutLocale(context, next) {
+	const isLoggedIn = !!getCurrentUserId(context.store.getState());
+	const locale = getLocaleFromPath(context.path);
 
-	if ( ! locale ) {
+	if (!locale) {
 		return next();
 	}
 
-	if ( isLoggedIn ) {
-		page.redirect( dropRight( getPathParts( context.path ) ).join( '/' ) );
+	if (isLoggedIn) {
+		page.redirect(dropRight(getPathParts(context.path)).join('/'));
 	} else {
-		switchLocale( locale );
+		switchLocale(locale);
 	}
 
 	next();

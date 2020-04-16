@@ -18,20 +18,20 @@ import {
 import OrderEvent from './event';
 import OrderEventsByDay from './day';
 
-function getSortedEvents( events ) {
+function getSortedEvents(events) {
 	const eventsByDay = {};
-	events.forEach( event => {
-		const day = moment( event.timestamp ).format( 'YYYYMMDD' );
-		if ( eventsByDay[ day ] ) {
-			eventsByDay[ day ].push( event );
+	events.forEach((event) => {
+		const day = moment(event.timestamp).format('YYYYMMDD');
+		if (eventsByDay[day]) {
+			eventsByDay[day].push(event);
 		} else {
-			eventsByDay[ day ] = [ event ];
+			eventsByDay[day] = [event];
 		}
-	} );
+	});
 
-	keys( eventsByDay ).forEach( day => {
-		eventsByDay[ day ] = sortBy( eventsByDay[ day ], [ 'timestamp', 'key' ] ).reverse();
-	} );
+	keys(eventsByDay).forEach((day) => {
+		eventsByDay[day] = sortBy(eventsByDay[day], ['timestamp', 'key']).reverse();
+	});
 	return eventsByDay;
 }
 
@@ -42,50 +42,50 @@ class OrderEvents extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.setState( { openDay: last( keys( this.props.eventsByDay ) ) } );
+		this.setState({ openDay: last(keys(this.props.eventsByDay)) });
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const newOpenDay = last( keys( nextProps.eventsByDay ) );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		const newOpenDay = last(keys(nextProps.eventsByDay));
 		//if a new latest day has been appended, open it
-		if ( ! this.props.eventsByDay[ newOpenDay ] ) {
-			this.setState( { openDay: newOpenDay } );
+		if (!this.props.eventsByDay[newOpenDay]) {
+			this.setState({ openDay: newOpenDay });
 		}
 	}
 
-	toggleOpenDay = date => {
-		this.setState( () => ( { openDay: date } ) );
+	toggleOpenDay = (date) => {
+		this.setState(() => ({ openDay: date }));
 	};
 
 	renderNotes = () => {
 		const { days, eventsByDay, translate } = this.props;
-		if ( ! days.length ) {
-			return <p>{ translate( 'No activity yet' ) }</p>;
+		if (!days.length) {
+			return <p>{translate('No activity yet')}</p>;
 		}
 
 		return (
 			<div>
-				{ days.map( day => {
-					const events = eventsByDay[ day ];
+				{days.map((day) => {
+					const events = eventsByDay[day];
 					return (
 						<OrderEventsByDay
-							key={ day }
-							count={ events.length }
-							date={ day }
-							isOpen={ day === this.state.openDay }
-							onClick={ this.toggleOpenDay }
+							key={day}
+							count={events.length}
+							date={day}
+							isOpen={day === this.state.openDay}
+							onClick={this.toggleOpenDay}
 						>
-							{ events.map( event => (
+							{events.map((event) => (
 								<OrderEvent
-									key={ `${ event.type }-${ event.key }` }
-									event={ event }
-									orderId={ this.props.orderId }
-									siteId={ this.props.siteId }
+									key={`${event.type}-${event.key}`}
+									event={event}
+									orderId={this.props.orderId}
+									siteId={this.props.siteId}
 								/>
-							) ) }
+							))}
 						</OrderEventsByDay>
 					);
-				} ) }
+				})}
 			</div>
 		);
 	};
@@ -93,8 +93,8 @@ class OrderEvents extends Component {
 	renderPlaceholder = () => {
 		const placeholderClassName = 'is-placeholder';
 		return (
-			<div className={ placeholderClassName }>
-				<OrderEventsByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
+			<div className={placeholderClassName}>
+				<OrderEventsByDay count={0} date="" isOpen={true} index={1} onClick={noop}>
 					<OrderEvent />
 				</OrderEventsByDay>
 			</div>
@@ -106,14 +106,14 @@ class OrderEvents extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
+export default connect((state, props) => {
 	const orderId = props.orderId || false;
 
-	const isLoaded = isActivityLogLoaded( state, orderId );
-	const events = getActivityLogEvents( state, orderId );
+	const isLoaded = isActivityLogLoaded(state, orderId);
+	const events = getActivityLogEvents(state, orderId);
 
-	const eventsByDay = events.length ? getSortedEvents( events ) : {};
-	const days = eventsByDay ? keys( eventsByDay ) : [];
+	const eventsByDay = events.length ? getSortedEvents(events) : {};
+	const days = eventsByDay ? keys(eventsByDay) : [];
 	days.sort().reverse();
 
 	return {
@@ -122,4 +122,4 @@ export default connect( ( state, props ) => {
 		events,
 		eventsByDay,
 	};
-} )( localize( OrderEvents ) );
+})(localize(OrderEvents));

@@ -17,6 +17,6 @@ import getJetpackSettings from 'state/selectors/get-jetpack-settings';
  * @param  {string}  setting  Name of the setting
  * @returns {*}                Value of the Jetpack setting
  */
-export default function getJetpackSetting( state, siteId, setting ) {
-	return get( getJetpackSettings( state, siteId ), [ setting ], null );
+export default function getJetpackSetting(state, siteId, setting) {
+	return get(getJetpackSettings(state, siteId), [setting], null);
 }

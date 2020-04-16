@@ -24,34 +24,34 @@ class QuerySimplePayments extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId || nextProps.productId !== this.props.productId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.siteId !== this.props.siteId || nextProps.productId !== this.props.productId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
+	request(props) {
 		const { siteId, productId } = props;
 
-		if ( ! siteId ) {
+		if (!siteId) {
 			return;
 		}
 
 		// Products are indexed from 1.
-		if ( productId === 0 ) {
+		if (productId === 0) {
 			return;
 		}
 
-		if ( productId ) {
-			props.requestProduct( siteId, productId );
+		if (productId) {
+			props.requestProduct(siteId, productId);
 
 			return;
 		}
 
-		props.requestProducts( siteId );
+		props.requestProducts(siteId);
 	}
 
 	render() {
@@ -59,4 +59,4 @@ class QuerySimplePayments extends Component {
 	}
 }
 
-export default connect( null, { requestProduct, requestProducts } )( QuerySimplePayments );
+export default connect(null, { requestProduct, requestProducts })(QuerySimplePayments);

@@ -12,10 +12,10 @@ import Gridicon from 'components/gridicon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getTerm } from 'state/terms/selectors';
 
-function PodcastingPublishNotice( { translate, podcastingCategoryName } ) {
+function PodcastingPublishNotice({ translate, podcastingCategoryName }) {
 	let podcastNoticeText;
 
-	if ( podcastingCategoryName ) {
+	if (podcastingCategoryName) {
 		podcastNoticeText = translate(
 			'Publish blog posts in the {{strong}}%s{{/strong}} category to add new episodes.',
 			{
@@ -24,26 +24,26 @@ function PodcastingPublishNotice( { translate, podcastingCategoryName } ) {
 			}
 		);
 	} else {
-		podcastNoticeText = translate( 'Select a category to enable podcasting.' );
+		podcastNoticeText = translate('Select a category to enable podcasting.');
 	}
 
 	return (
 		<div className="podcasting-details__publish-notice">
-			<Gridicon icon="microphone" size={ 24 } />
-			<span className="podcasting-details__publish-notice-text">{ podcastNoticeText }</span>
+			<Gridicon icon="microphone" size={24} />
+			<span className="podcasting-details__publish-notice-text">{podcastNoticeText}</span>
 		</div>
 	);
 }
 
-export default connect( ( state, ownProps ) => {
-	if ( ownProps.podcastingCategoryId <= 0 ) {
+export default connect((state, ownProps) => {
+	if (ownProps.podcastingCategoryId <= 0) {
 		return null;
 	}
 
-	const siteId = getSelectedSiteId( state );
-	const podcastingCategory = getTerm( state, siteId, 'category', ownProps.podcastingCategoryId );
+	const siteId = getSelectedSiteId(state);
+	const podcastingCategory = getTerm(state, siteId, 'category', ownProps.podcastingCategoryId);
 
 	return {
 		podcastingCategoryName: podcastingCategory && podcastingCategory.name,
 	};
-} )( localize( PodcastingPublishNotice ) );
+})(localize(PodcastingPublishNotice));

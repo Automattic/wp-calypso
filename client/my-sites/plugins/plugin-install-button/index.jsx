@@ -41,25 +41,25 @@ export class PluginInstallButton extends Component {
 			recordTracksEvent: recordEvent,
 		} = this.props;
 
-		if ( isInstalling ) {
+		if (isInstalling) {
 			return;
 		}
 
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
-		PluginsActions.installPlugin( selectedSite, plugin );
+		PluginsActions.removePluginsNotices('completed', 'error');
+		PluginsActions.installPlugin(selectedSite, plugin);
 
-		if ( isEmbed ) {
-			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_install_click_from_sites_list', {
+		if (isEmbed) {
+			recordGAEvent('Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug);
+			recordEvent('calypso_plugin_install_click_from_sites_list', {
 				site: siteId,
 				plugin: plugin.slug,
-			} );
+			});
 		} else {
-			recordGAEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_install_click_from_plugin_info', {
+			recordGAEvent('Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug);
+			recordEvent('calypso_plugin_install_click_from_plugin_info', {
 				site: siteId,
 				plugin: plugin.slug,
-			} );
+			});
 		}
 	};
 
@@ -71,11 +71,11 @@ export class PluginInstallButton extends Component {
 			recordTracksEvent: recordEvent,
 		} = this.props;
 
-		recordGAEvent( 'Plugins', 'Update jetpack', 'Plugin Name', plugin.slug );
-		recordEvent( 'calypso_plugin_update_jetpack', {
+		recordGAEvent('Plugins', 'Update jetpack', 'Plugin Name', plugin.slug);
+		recordEvent('calypso_plugin_update_jetpack', {
 			site: siteId,
 			plugin: plugin.slug,
-		} );
+		});
 	};
 
 	clickSupportLink = () => {
@@ -86,21 +86,21 @@ export class PluginInstallButton extends Component {
 	};
 
 	clickSiteManagmentLink = () => {
-		this.props.recordGoogleEvent( 'Plugins', 'Clicked How do I fix disabled plugin installs' );
+		this.props.recordGoogleEvent('Plugins', 'Clicked How do I fix disabled plugin installs');
 	};
 
-	togglePopover = event => {
-		this.refs.infoPopover._onClick( event );
+	togglePopover = (event) => {
+		this.refs.infoPopover._onClick(event);
 	};
 
 	getDisabledInfo() {
 		const { translate, selectedSite, siteId } = this.props;
-		if ( ! selectedSite ) {
+		if (!selectedSite) {
 			// we don't have enough info
 			return null;
 		}
 
-		if ( selectedSite.options.is_multi_network ) {
+		if (selectedSite.options.is_multi_network) {
 			return translate(
 				'%(site)s is part of a multi-network installation, which is not currently supported.',
 				{
@@ -109,49 +109,49 @@ export class PluginInstallButton extends Component {
 			);
 		}
 
-		if ( ! isMainNetworkSite( selectedSite ) ) {
-			return translate( 'Only the main site on a multi-site installation can install plugins.', {
+		if (!isMainNetworkSite(selectedSite)) {
+			return translate('Only the main site on a multi-site installation can install plugins.', {
 				args: { site: selectedSite.title },
-			} );
+			});
 		}
 
-		if ( ! selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled ) {
-			const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
+		if (!selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled) {
+			const reasons = getSiteFileModDisableReason(selectedSite, 'modifyFiles');
 			const html = [];
 
-			if ( reasons.length > 1 ) {
+			if (reasons.length > 1) {
 				html.push(
 					<p key="reason-shell">
-						{ translate( 'Plugin install is not available for %(site)s:', {
+						{translate('Plugin install is not available for %(site)s:', {
 							args: { site: selectedSite.title },
-						} ) }
+						})}
 					</p>
 				);
-				const list = reasons.map( ( reason, i ) => (
-					<li key={ 'reason-i' + i + '-' + siteId }>{ reason }</li>
-				) );
+				const list = reasons.map((reason, i) => (
+					<li key={'reason-i' + i + '-' + siteId}>{reason}</li>
+				));
 				html.push(
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
-						{ list }
+						{list}
 					</ul>
 				);
 			} else {
 				html.push(
 					<p key="reason-shell">
-						{ translate( 'Plugin install is not available for %(site)s. %(reason)s', {
-							args: { site: selectedSite.title, reason: reasons[ 0 ] },
-						} ) }
+						{translate('Plugin install is not available for %(site)s. %(reason)s', {
+							args: { site: selectedSite.title, reason: reasons[0] },
+						})}
 					</p>
 				);
 			}
 			html.push(
 				<ExternalLink
 					key="external-link"
-					onClick={ this.clickSiteManagmentLink }
+					onClick={this.clickSiteManagmentLink}
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
 				>
-					{ translate( 'How do I fix this?' ) }
+					{translate('How do I fix this?')}
 				</ExternalLink>
 			);
 
@@ -163,31 +163,29 @@ export class PluginInstallButton extends Component {
 	renderUnreachableNotice() {
 		const { translate, selectedSite, isEmbed } = this.props;
 		return (
-			<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
+			<div className={classNames({ 'plugin-install-button__install': true, embed: isEmbed })}>
 				<span
-					onClick={ this.togglePopover }
+					onClick={this.togglePopover}
 					ref="disabledInfoLabel"
 					className="plugin-install-button__warning"
 				>
-					{ translate( 'Site unreachable' ) }
+					{translate('Site unreachable')}
 				</span>
 				<InfoPopover
 					position="bottom left"
-					popoverName={ 'Plugin Action Disabled Install' }
+					popoverName={'Plugin Action Disabled Install'}
 					gaEventCategory="Plugins"
 					ref="infoPopover"
-					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
+					ignoreContext={this.refs && this.refs.disabledInfoLabel}
 				>
 					<div>
-						<p>
-							{ translate( '%(site)s is unresponsive.', { args: { site: selectedSite.title } } ) }
-						</p>
+						<p>{translate('%(site)s is unresponsive.', { args: { site: selectedSite.title } })}</p>
 						<ExternalLink
 							key="external-link"
-							onClick={ this.clickSupportLink }
-							href={ 'http://jetpack.me/support/debug/?url=' + selectedSite.URL }
+							onClick={this.clickSupportLink}
+							href={'http://jetpack.me/support/debug/?url=' + selectedSite.URL}
 						>
-							{ translate( 'Debug site!' ) }
+							{translate('Debug site!')}
 						</ExternalLink>
 					</div>
 				</InfoPopover>
@@ -198,27 +196,25 @@ export class PluginInstallButton extends Component {
 	renderDisabledNotice() {
 		const { translate, selectedSite, isEmbed } = this.props;
 
-		if ( ! selectedSite.canUpdateFiles ) {
-			if ( this.getDisabledInfo() ) {
+		if (!selectedSite.canUpdateFiles) {
+			if (this.getDisabledInfo()) {
 				return (
-					<div
-						className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }
-					>
+					<div className={classNames({ 'plugin-install-button__install': true, embed: isEmbed })}>
 						<span
-							onClick={ this.togglePopover }
+							onClick={this.togglePopover}
 							ref="disabledInfoLabel"
 							className="plugin-install-button__warning"
 						>
-							{ translate( 'Install Disabled' ) }
+							{translate('Install Disabled')}
 						</span>
 						<InfoPopover
 							position="bottom left"
-							popoverName={ 'Plugin Action Disabled Install' }
+							popoverName={'Plugin Action Disabled Install'}
 							gaEventCategory="Plugins"
 							ref="infoPopover"
-							ignoreContext={ this.refs && this.refs.disabledInfoLabel }
+							ignoreContext={this.refs && this.refs.disabledInfoLabel}
 						>
-							{ this.getDisabledInfo() }
+							{this.getDisabledInfo()}
 						</InfoPopover>
 					</div>
 				);
@@ -229,32 +225,28 @@ export class PluginInstallButton extends Component {
 
 	renderButton() {
 		const { translate, isInstalling, isEmbed, disabled } = this.props;
-		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
+		const label = isInstalling ? translate('Installing…') : translate('Install');
 
-		if ( isEmbed ) {
+		if (isEmbed) {
 			return (
 				<span className="plugin-install-button__install embed">
-					{ isInstalling ? (
-						<span className="plugin-install-button__installing">{ label }</span>
+					{isInstalling ? (
+						<span className="plugin-install-button__installing">{label}</span>
 					) : (
-						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
-							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-							<Gridicon icon="plugins" size={ 18 } />
-							{ translate( 'Install' ) }
+						<Button compact={true} onClick={this.installAction} disabled={disabled}>
+							<Gridicon key="plus-icon" icon="plus-small" size={18} />
+							<Gridicon icon="plugins" size={18} />
+							{translate('Install')}
 						</Button>
-					) }
+					)}
 				</span>
 			);
 		}
 
 		return (
 			<span className="plugin-install-button__install">
-				<Button
-					onClick={ this.installAction }
-					primary={ true }
-					disabled={ isInstalling || disabled }
-				>
-					{ label }
+				<Button onClick={this.installAction} primary={true} disabled={isInstalling || disabled}>
+					{label}
 				</Button>
 			</span>
 		);
@@ -263,11 +255,11 @@ export class PluginInstallButton extends Component {
 	renderNoticeOrButton() {
 		const { selectedSite, siteIsConnected } = this.props;
 
-		if ( siteIsConnected === false ) {
+		if (siteIsConnected === false) {
 			return this.renderUnreachableNotice();
 		}
 
-		if ( ! selectedSite.canUpdateFiles ) {
+		if (!selectedSite.canUpdateFiles) {
 			return this.renderDisabledNotice();
 		}
 
@@ -279,8 +271,8 @@ export class PluginInstallButton extends Component {
 
 		return (
 			<div>
-				<QuerySiteConnectionStatus siteId={ siteId } />
-				{ this.renderNoticeOrButton() }
+				<QuerySiteConnectionStatus siteId={siteId} />
+				{this.renderNoticeOrButton()}
 			</div>
 		);
 	}
@@ -296,16 +288,16 @@ PluginInstallButton.propTypes = {
 };
 
 export default connect(
-	( state, { selectedSite } ) => {
+	(state, { selectedSite }) => {
 		const siteId = selectedSite && selectedSite.ID;
 
 		return {
 			siteId,
-			siteIsConnected: getSiteConnectionStatus( state, siteId ),
+			siteIsConnected: getSiteConnectionStatus(state, siteId),
 		};
 	},
 	{
 		recordGoogleEvent,
 		recordTracksEvent,
 	}
-)( localize( PluginInstallButton ) );
+)(localize(PluginInstallButton));

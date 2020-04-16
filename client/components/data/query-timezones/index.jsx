@@ -25,4 +25,4 @@ export class QueryTimezones extends Component {
 	}
 }
 
-export default connect( null, { requestTimezones } )( QueryTimezones );
+export default connect(null, { requestTimezones })(QueryTimezones);

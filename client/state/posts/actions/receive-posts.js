@@ -13,9 +13,9 @@ import 'state/posts/init';
  * @param  {?string} saveMarker Save marker in the edits log
  * @returns {object}             Action object
  */
-export function receivePosts( posts, saveMarker ) {
+export function receivePosts(posts, saveMarker) {
 	const action = { type: POSTS_RECEIVE, posts };
-	if ( saveMarker ) {
+	if (saveMarker) {
 		action.saveMarker = saveMarker;
 	}
 	return action;

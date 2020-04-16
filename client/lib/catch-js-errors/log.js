@@ -4,7 +4,7 @@
 
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:catch-js-errors:log' );
+const debug = debugFactory('calypso:catch-js-errors:log');
 let logger = null;
 
 /**
@@ -14,13 +14,13 @@ let logger = null;
  *
  * @param  {object} loggerObject
  */
-export function registerLogger( loggerObject ) {
+export function registerLogger(loggerObject) {
 	logger = loggerObject;
 }
 
-export default function log( msg, data ) {
-	debug( msg, data );
-	if ( logger && logger.log ) {
-		logger.log( msg, data );
+export default function log(msg, data) {
+	debug(msg, data);
+	if (logger && logger.log) {
+		logger.log(msg, data);
 	}
 }

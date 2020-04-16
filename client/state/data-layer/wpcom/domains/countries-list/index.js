@@ -19,7 +19,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param 	{string} action The action to dispatch next
  * @returns {object} dispatched http action
  */
-export const fetchCountriesDomains = action =>
+export const fetchCountriesDomains = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -36,10 +36,10 @@ export const fetchCountriesDomains = action =>
  * @param   {Array}    countries  array of raw device data returned from the endpoint
  * @returns {object}            disparched user devices add action
  */
-export const updateCountriesDomains = ( action, countries ) => ( {
+export const updateCountriesDomains = (action, countries) => ({
 	type: COUNTRIES_DOMAINS_UPDATED,
 	countries,
-} );
+});
 
 /**
  * Dispatches a error notice action when the request for the supported countries list fails.
@@ -48,14 +48,14 @@ export const updateCountriesDomains = ( action, countries ) => ( {
  * @returns {object}            dispatched error notice action
  */
 export const showCountriesDomainsLoadingError = () =>
-	errorNotice( translate( "We couldn't load the countries list." ) );
+	errorNotice(translate("We couldn't load the countries list."));
 
-registerHandlers( 'state/data-layer/wpcom/domains/countries-list/index.js', {
-	[ COUNTRIES_DOMAINS_FETCH ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/domains/countries-list/index.js', {
+	[COUNTRIES_DOMAINS_FETCH]: [
+		dispatchRequest({
 			fetch: fetchCountriesDomains,
 			onSuccess: updateCountriesDomains,
 			onError: showCountriesDomainsLoadingError,
-		} ),
+		}),
 	],
-} );
+});

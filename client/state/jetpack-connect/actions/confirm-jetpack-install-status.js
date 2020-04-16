@@ -5,7 +5,7 @@ import { JETPACK_CONNECT_CONFIRM_JETPACK_STATUS } from 'state/jetpack-connect/ac
 
 import 'state/jetpack-connect/init';
 
-export function confirmJetpackInstallStatus( status ) {
+export function confirmJetpackInstallStatus(status) {
 	return {
 		type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 		status,

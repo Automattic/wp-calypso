@@ -8,12 +8,12 @@ import { expect } from 'chai';
  */
 import getSiteSlugsForUpcomingTransactions from 'state/selectors/get-site-slugs-for-upcoming-transactions';
 
-describe( 'getSiteSlugsForUpcomingTransactions()', () => {
-	beforeEach( () => {
+describe('getSiteSlugsForUpcomingTransactions()', () => {
+	beforeEach(() => {
 		getSiteSlugsForUpcomingTransactions.memoizedSelector.cache.clear();
-	} );
+	});
 
-	test( 'should return slugs for sites with transactions only', () => {
+	test('should return slugs for sites with transactions only', () => {
 		const state = {
 			sites: {
 				items: {
@@ -31,13 +31,13 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 				},
 			},
 		};
-		const output = getSiteSlugsForUpcomingTransactions( state );
-		expect( output ).to.eql( {
+		const output = getSiteSlugsForUpcomingTransactions(state);
+		expect(output).to.eql({
 			2916284: 'example.wordpress.com',
-		} );
-	} );
+		});
+	});
 
-	test( 'should not return duplicate slugs when multiple transactions are for the same site', () => {
+	test('should not return duplicate slugs when multiple transactions are for the same site', () => {
 		const state = {
 			sites: {
 				items: {
@@ -55,28 +55,28 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 				},
 			},
 		};
-		const output = getSiteSlugsForUpcomingTransactions( state );
-		expect( output ).to.eql( {
+		const output = getSiteSlugsForUpcomingTransactions(state);
+		expect(output).to.eql({
 			2916284: 'example.wordpress.com',
-		} );
-	} );
+		});
+	});
 
-	test( 'should skip transactions with empty blog_id', () => {
+	test('should skip transactions with empty blog_id', () => {
 		const state = {
 			sites: {
 				items: {},
 			},
 			billingTransactions: {
 				items: {
-					upcoming: [ { id: 234567, blog_id: null } ],
+					upcoming: [{ id: 234567, blog_id: null }],
 				},
 			},
 		};
-		const output = getSiteSlugsForUpcomingTransactions( state );
-		expect( output ).to.eql( {} );
-	} );
+		const output = getSiteSlugsForUpcomingTransactions(state);
+		expect(output).to.eql({});
+	});
 
-	test( 'should skip sites that are not loaded yet', () => {
+	test('should skip sites that are not loaded yet', () => {
 		const state = {
 			sites: {
 				items: {
@@ -85,11 +85,11 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 			},
 			billingTransactions: {
 				items: {
-					upcoming: [ { id: 123456, blog_id: '2916284' } ],
+					upcoming: [{ id: 123456, blog_id: '2916284' }],
 				},
 			},
 		};
-		const output = getSiteSlugsForUpcomingTransactions( state );
-		expect( output ).to.eql( {} );
-	} );
-} );
+		const output = getSiteSlugsForUpcomingTransactions(state);
+		expect(output).to.eql({});
+	});
+});

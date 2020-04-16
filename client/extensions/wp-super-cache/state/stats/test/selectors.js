@@ -8,12 +8,12 @@ import { expect } from 'chai';
  */
 import { getStats, isDeletingFile, isGeneratingStats } from '../selectors';
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	describe( 'isGeneratingStats()', () => {
-		test( 'should return false if no state exists', () => {
+	describe('isGeneratingStats()', () => {
+		test('should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -21,173 +21,173 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const isGenerating = isGeneratingStats( state, primarySiteId );
+			const isGenerating = isGeneratingStats(state, primarySiteId);
 
-			expect( isGenerating ).to.be.false;
-		} );
+			expect(isGenerating).to.be.false;
+		});
 
-		test( 'should return false if the site is not attached', () => {
+		test('should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
 							generating: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isGenerating = isGeneratingStats( state, secondarySiteId );
+			const isGenerating = isGeneratingStats(state, secondarySiteId);
 
-			expect( isGenerating ).to.be.false;
-		} );
+			expect(isGenerating).to.be.false;
+		});
 
-		test( 'should return false if the stats are not generating', () => {
+		test('should return false if the stats are not generating', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
 							generating: {
-								[ primarySiteId ]: false,
+								[primarySiteId]: false,
 							},
 						},
 					},
 				},
 			};
-			const isGenerating = isGeneratingStats( state, primarySiteId );
+			const isGenerating = isGeneratingStats(state, primarySiteId);
 
-			expect( isGenerating ).to.be.false;
-		} );
+			expect(isGenerating).to.be.false;
+		});
 
-		test( 'should return true if the stats are generating', () => {
+		test('should return true if the stats are generating', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
 							generating: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isGenerating = isGeneratingStats( state, primarySiteId );
+			const isGenerating = isGeneratingStats(state, primarySiteId);
 
-			expect( isGenerating ).to.be.true;
-		} );
-	} );
+			expect(isGenerating).to.be.true;
+		});
+	});
 
-	describe( 'getStats()', () => {
+	describe('getStats()', () => {
 		const primaryStats = { generated: 1493997829 };
 
-		test( 'should return null if no state exists', () => {
+		test('should return null if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
 				},
 			};
-			const stats = getStats( state, primarySiteId );
+			const stats = getStats(state, primarySiteId);
 
-			expect( stats ).to.be.null;
-		} );
+			expect(stats).to.be.null;
+		});
 
-		test( 'should return null if the site is not attached', () => {
+		test('should return null if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
 							items: {
-								[ primarySiteId ]: primaryStats,
+								[primarySiteId]: primaryStats,
 							},
 						},
 					},
 				},
 			};
-			const stats = getStats( state, secondarySiteId );
+			const stats = getStats(state, secondarySiteId);
 
-			expect( stats ).to.be.null;
-		} );
+			expect(stats).to.be.null;
+		});
 
-		test( 'should return the stats for a siteId', () => {
+		test('should return the stats for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
 							items: {
-								[ primarySiteId ]: primaryStats,
+								[primarySiteId]: primaryStats,
 							},
 						},
 					},
 				},
 			};
-			const stats = getStats( state, primarySiteId );
+			const stats = getStats(state, primarySiteId);
 
-			expect( stats ).to.eql( primaryStats );
-		} );
-	} );
+			expect(stats).to.eql(primaryStats);
+		});
+	});
 
-	describe( 'isDeletingFile()', () => {
-		test( 'should return false if no state exists', () => {
+	describe('isDeletingFile()', () => {
+		test('should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
 				},
 			};
-			const isDeleting = isDeletingFile( state, primarySiteId );
+			const isDeleting = isDeletingFile(state, primarySiteId);
 
-			expect( isDeleting ).to.be.false;
-		} );
+			expect(isDeleting).to.be.false;
+		});
 
-		test( 'should return false if the site is not attached', () => {
+		test('should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
 							deleting: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isDeleting = isDeletingFile( state, secondarySiteId );
+			const isDeleting = isDeletingFile(state, secondarySiteId);
 
-			expect( isDeleting ).to.be.false;
-		} );
+			expect(isDeleting).to.be.false;
+		});
 
-		test( 'should return false if the file is not being deleted', () => {
+		test('should return false if the file is not being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
 							deleting: {
-								[ primarySiteId ]: false,
+								[primarySiteId]: false,
 							},
 						},
 					},
 				},
 			};
-			const isDeleting = isDeletingFile( state, primarySiteId );
+			const isDeleting = isDeletingFile(state, primarySiteId);
 
-			expect( isDeleting ).to.be.false;
-		} );
+			expect(isDeleting).to.be.false;
+		});
 
-		test( 'should return true if the file is being deleted', () => {
+		test('should return true if the file is being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						stats: {
 							deleting: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isDeleting = isDeletingFile( state, primarySiteId );
+			const isDeleting = isDeletingFile(state, primarySiteId);
 
-			expect( isDeleting ).to.be.true;
-		} );
-	} );
-} );
+			expect(isDeleting).to.be.true;
+		});
+	});
+});

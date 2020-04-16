@@ -9,27 +9,27 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../jsx-classname-namespace' );
-const formatMessage = require( '../../../test-utils/format-message' );
-const { RuleTester } = require( 'eslint' );
+const rule = require('../jsx-classname-namespace');
+const formatMessage = require('../../../test-utils/format-message');
+const { RuleTester } = require('eslint');
 
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 
-const EXPECTED_FOO_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo__ prefix' } );
+const EXPECTED_FOO_ERROR = formatMessage(rule.ERROR_MESSAGE, { expected: 'foo__ prefix' });
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( {
-	parser: require.resolve( 'babel-eslint' ),
+new RuleTester({
+	parser: require.resolve('babel-eslint'),
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 		sourceType: 'module',
 	},
-} ).run( 'jsx-classname-namespace', rule, {
+}).run('jsx-classname-namespace', rule, {
 	valid: [
 		{
 			code: 'export default function() { return <Foo className="foo" />; }',
@@ -94,7 +94,7 @@ new RuleTester( {
 		{
 			code: 'export default function() { return <div className="foo"></div>; }',
 			filename: '/tmp/foo/bar.js',
-			options: [ { rootFiles: [ 'bar.js' ] } ],
+			options: [{ rootFiles: ['bar.js'] }],
 		},
 		{
 			code:
@@ -107,43 +107,43 @@ new RuleTester( {
 		{
 			code: 'export default function() { return <Foo className="foobar" />; }',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [{ message: EXPECTED_FOO_ERROR }],
 		},
 		{
 			code: 'export default () => <Foo className="foobar" />;',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [{ message: EXPECTED_FOO_ERROR }],
 		},
 		{
 			code: 'export default function() { return <Foo className="quux foobar" />; }',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [{ message: EXPECTED_FOO_ERROR }],
 		},
 		{
 			code: 'function child() { return <Foo className="foobar__child" />; }',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [{ message: EXPECTED_FOO_ERROR }],
 		},
 		{
 			code: 'function child() { return <Foo className="quux foobar__child" />; }',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [{ message: EXPECTED_FOO_ERROR }],
 		},
 		{
 			code: 'export default function() { return <div className="foo__" />; }',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [{ message: EXPECTED_FOO_ERROR }],
 		},
 		{
 			code: 'export default function() { return <Foo className="foo__child_example" />; }',
 			filename: '/tmp/foo/index.js',
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			errors: [{ message: EXPECTED_FOO_ERROR }],
 		},
 		{
 			code: 'export default function() { return <div className="bar"></div>; }',
 			filename: '/tmp/foo/bar.js',
-			options: [ { rootFiles: [ 'bar.js' ] } ],
-			errors: [ { message: EXPECTED_FOO_ERROR } ],
+			options: [{ rootFiles: ['bar.js'] }],
+			errors: [{ message: EXPECTED_FOO_ERROR }],
 		},
 	],
-} );
+});

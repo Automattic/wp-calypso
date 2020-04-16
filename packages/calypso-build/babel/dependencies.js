@@ -1,4 +1,4 @@
-module.exports = () => ( {
+module.exports = () => ({
 	// see https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
 	sourceType: 'unambiguous',
 	presets: [
@@ -9,7 +9,7 @@ module.exports = () => ( {
 				useBuiltIns: 'entry',
 				corejs: 3.6,
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
-				exclude: [ 'transform-typeof-symbol' ],
+				exclude: ['transform-typeof-symbol'],
 			},
 		],
 	],
@@ -24,4 +24,4 @@ module.exports = () => ( {
 			},
 		],
 	],
-} );
+});

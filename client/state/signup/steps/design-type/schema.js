@@ -1,3 +1,3 @@
 export const designTypeSchema = {
-	type: [ 'string', 'null' ],
+	type: ['string', 'null'],
 };

@@ -21,9 +21,9 @@ class FollowingEmptyContent extends React.Component {
 	}
 
 	recordAction = () => {
-		recordAction( 'clicked_search_on_empty' );
-		recordGaEvent( 'Clicked Search on EmptyContent' );
-		recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
+		recordAction('clicked_search_on_empty');
+		recordGaEvent('Clicked Search on EmptyContent');
+		recordTrack('calypso_reader_search_on_empty_stream_clicked');
 	};
 
 	render() {
@@ -31,10 +31,10 @@ class FollowingEmptyContent extends React.Component {
 		const action = (
 				<a
 					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
+					onClick={this.recordAction}
 					href="/read/search"
 				>
-					{ this.props.translate( 'Find sites to follow' ) }
+					{this.props.translate('Find sites to follow')}
 				</a>
 			),
 			secondaryAction = null;
@@ -42,16 +42,16 @@ class FollowingEmptyContent extends React.Component {
 		return (
 			<EmptyContent
 				className="stream__empty"
-				title={ this.props.translate( 'Welcome to Reader' ) }
-				line={ this.props.translate( 'Recent posts from sites you follow will appear here.' ) }
-				action={ action }
-				secondaryAction={ secondaryAction }
-				illustration={ welcomeImage }
-				illustrationWidth={ 350 }
+				title={this.props.translate('Welcome to Reader')}
+				line={this.props.translate('Recent posts from sites you follow will appear here.')}
+				action={action}
+				secondaryAction={secondaryAction}
+				illustration={welcomeImage}
+				illustrationWidth={350}
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default localize( FollowingEmptyContent );
+export default localize(FollowingEmptyContent);

@@ -35,41 +35,41 @@ class RecentPostsDropdown extends PureComponent {
 		exclude: [],
 	};
 
-	handleSelect = option => {
+	handleSelect = (option) => {
 		const { onSelect, posts } = this.props;
 		const slug = option.value;
 
-		onSelect( find( posts, { slug } ) );
+		onSelect(find(posts, { slug }));
 	};
 
 	render() {
 		const { exclude, posts, siteId, translate } = this.props;
-		const options = map( posts, ( { slug, title } ) => ( { label: title, value: slug } ) );
+		const options = map(posts, ({ slug, title }) => ({ label: title, value: slug }));
 
 		const className = 'zoninator__recent-posts-dropdown';
 
 		return (
-			<div className={ className }>
-				<QueryPosts siteId={ siteId } query={ { ...recentPostsQuery, exclude } } />
+			<div className={className}>
+				<QueryPosts siteId={siteId} query={{ ...recentPostsQuery, exclude }} />
 
 				<SelectDropdown
 					compact
-					selectedText={ translate( 'Recent posts' ) }
-					options={ options }
-					onSelect={ this.handleSelect }
+					selectedText={translate('Recent posts')}
+					options={options}
+					onSelect={this.handleSelect}
 				/>
 			</div>
 		);
 	}
 }
 
-const connectComponent = connect( ( state, { exclude } ) => {
-	const siteId = getSelectedSiteId( state );
+const connectComponent = connect((state, { exclude }) => {
+	const siteId = getSelectedSiteId(state);
 
 	return {
-		posts: getPostsForQuery( state, siteId, { ...recentPostsQuery, exclude } ) || [],
+		posts: getPostsForQuery(state, siteId, { ...recentPostsQuery, exclude }) || [],
 		siteId,
 	};
-} );
+});
 
-export default flowRight( connectComponent, localize )( RecentPostsDropdown );
+export default flowRight(connectComponent, localize)(RecentPostsDropdown);

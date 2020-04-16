@@ -25,8 +25,8 @@ export default class extends React.Component {
 		return (
 			<EditorMediaModalDetailPreviewMediaFile
 				component="audio"
-				className={ classNames( className, 'is-audio' ) }
-				{ ...props }
+				className={classNames(className, 'is-audio')}
+				{...props}
 			/>
 		);
 	}

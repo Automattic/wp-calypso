@@ -16,11 +16,11 @@ import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestBlogStickerList = action =>
+export const requestBlogStickerList = (action) =>
 	http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.payload.blogId }/blog-stickers`,
+			path: `/sites/${action.payload.blogId}/blog-stickers`,
 			body: {}, // have to have an empty body to make wpcom-http happy
 			apiVersion: '1.1',
 		},
@@ -28,19 +28,19 @@ export const requestBlogStickerList = action =>
 	);
 
 export const receiveBlogStickerListError = () =>
-	errorNotice( translate( 'Sorry, we had a problem retrieving blog stickers. Please try again.' ) );
+	errorNotice(translate('Sorry, we had a problem retrieving blog stickers. Please try again.'));
 
-export const receiveBlogStickerList = ( action, response ) =>
-	! response || ! isArray( response )
-		? receiveBlogStickerListError( action )
-		: receiveBlogStickers( action.payload.blogId, response );
+export const receiveBlogStickerList = (action, response) =>
+	!response || !isArray(response)
+		? receiveBlogStickerListError(action)
+		: receiveBlogStickers(action.payload.blogId, response);
 
-registerHandlers( 'state/data-layer/wpcom/sites/blog-stickers/index.js', {
-	[ SITES_BLOG_STICKER_LIST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/blog-stickers/index.js', {
+	[SITES_BLOG_STICKER_LIST]: [
+		dispatchRequest({
 			fetch: requestBlogStickerList,
 			onSuccess: receiveBlogStickerList,
 			onError: receiveBlogStickerListError,
-		} ),
+		}),
 	],
-} );
+});

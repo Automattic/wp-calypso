@@ -14,13 +14,13 @@ import edit from './edit';
 import save from './save';
 import './style.scss';
 
-registerBlockType( 'a8c/post-content', {
-	title: __( 'Content' ),
-	description: __( 'The page content.' ),
+registerBlockType('a8c/post-content', {
+	title: __('Content'),
+	description: __('The page content.'),
 	icon: 'layout',
 	category: 'layout',
 	supports: {
-		align: [ 'full' ],
+		align: ['full'],
 		anchor: false,
 		customClassName: false,
 		html: false,
@@ -36,17 +36,17 @@ registerBlockType( 'a8c/post-content', {
 	},
 	edit,
 	save,
-} );
+});
 
-const addContentSlotClassname = createHigherOrderComponent( BlockListBlock => {
-	return props => {
-		if ( props.name !== 'a8c/post-content' ) {
-			return <BlockListBlock { ...props } />;
+const addContentSlotClassname = createHigherOrderComponent((BlockListBlock) => {
+	return (props) => {
+		if (props.name !== 'a8c/post-content') {
+			return <BlockListBlock {...props} />;
 		}
 
-		return <BlockListBlock { ...props } className={ 'post-content__block' } />;
+		return <BlockListBlock {...props} className={'post-content__block'} />;
 	};
-}, 'addContentSlotClassname' );
+}, 'addContentSlotClassname');
 
 // Must be 9 or this breaks on Simple Sites
 addFilter(

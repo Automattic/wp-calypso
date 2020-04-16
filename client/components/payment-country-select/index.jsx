@@ -33,24 +33,24 @@ export class PaymentCountrySelect extends Component {
 	componentDidMount() {
 		// Notify the callback function about the country (or lack thereof)
 		// that is pre-selected at the time the component is first displayed
-		if ( this.props.countriesList.length ) {
+		if (this.props.countriesList.length) {
 			const validCountryCode = this.getValidCountryCode(
 				this.props.countryCode,
 				this.props.countriesList
 			);
-			this.props.onCountrySelected( this.props.name, validCountryCode );
+			this.props.onCountrySelected(this.props.name, validCountryCode);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		// There's a chance on first mount that 'countriesList' isn't filled yet
 		// which is why we listen to when 'countriesList' gets filled.
-		if ( ! prevProps.countriesList.length && this.props.countriesList.length ) {
+		if (!prevProps.countriesList.length && this.props.countriesList.length) {
 			const validCountryCode = this.getValidCountryCode(
 				this.props.countryCode,
 				this.props.countriesList
 			);
-			this.props.onCountrySelected( this.props.name, validCountryCode );
+			this.props.onCountrySelected(this.props.name, validCountryCode);
 		}
 	}
 
@@ -60,17 +60,17 @@ export class PaymentCountrySelect extends Component {
 	// country that it considers to be an invalid choice, and so that
 	// it always matches what the user actually sees pre-selected in
 	// the form field).
-	getValidCountryCode = ( countryCode, countriesList ) =>
-		some( countriesList, [ 'code', countryCode ] ) ? countryCode : '';
+	getValidCountryCode = (countryCode, countriesList) =>
+		some(countriesList, ['code', countryCode]) ? countryCode : '';
 
-	handleFieldChange = event => {
-		this.props.updateGlobalCountryCode( event.target.value );
-		this.props.updateCartStore( event.target.value );
+	handleFieldChange = (event) => {
+		this.props.updateGlobalCountryCode(event.target.value);
+		this.props.updateCartStore(event.target.value);
 		// Notify the callback function that a new country was selected.
-		this.props.onCountrySelected( event.target.name, event.target.value );
+		this.props.onCountrySelected(event.target.name, event.target.value);
 		// Also notify the standard onChange field handler, if there is one.
-		if ( isFunction( this.props.onChange ) ) {
-			this.props.onChange( event );
+		if (isFunction(this.props.onChange)) {
+			this.props.onChange(event);
 		}
 	};
 
@@ -90,25 +90,25 @@ export class PaymentCountrySelect extends Component {
 		];
 		return (
 			<CountrySelect
-				{ ...omit( this.props, propsToOmit ) }
-				value={ this.props.countryCode }
-				onChange={ this.handleFieldChange }
+				{...omit(this.props, propsToOmit)}
+				value={this.props.countryCode}
+				onChange={this.handleFieldChange}
 			/>
 		);
 	}
 }
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			countryCode: getPaymentCountryCode( state ),
+			countryCode: getPaymentCountryCode(state),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return {
-			updateGlobalCountryCode: newCountryCode => {
-				dispatch( setPaymentCountryCode( newCountryCode ) );
+			updateGlobalCountryCode: (newCountryCode) => {
+				dispatch(setPaymentCountryCode(newCountryCode));
 			},
 		};
 	}
-)( PaymentCountrySelect );
+)(PaymentCountrySelect);

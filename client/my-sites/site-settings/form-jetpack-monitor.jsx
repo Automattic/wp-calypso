@@ -32,24 +32,24 @@ import isUpdatingSiteMonitorSettings from 'state/selectors/is-updating-site-moni
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( isEmpty( this.state ) && nextProps.monitorSettings ) {
-			this.setState( nextProps.monitorSettings );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (isEmpty(this.state) && nextProps.monitorSettings) {
+			this.setState(nextProps.monitorSettings);
 		}
 	}
 
-	recordEvent = event => {
+	recordEvent = (event) => {
 		return () => {
-			this.props.trackEvent( event );
+			this.props.trackEvent(event);
 		};
 	};
 
-	handleToggle = name => () => {
-		this.props.trackEvent( `Toggled ${ name }` );
+	handleToggle = (name) => () => {
+		this.props.trackEvent(`Toggled ${name}`);
 		this.setState(
 			{
 				...this.state,
-				[ name ]: ! this.state[ name ],
+				[name]: !this.state[name],
 			},
 			this.saveSettings
 		);
@@ -58,7 +58,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	saveSettings = () => {
 		const { siteId } = this.props;
 
-		this.props.updateSiteMonitorSettings( siteId, this.state );
+		this.props.updateSiteMonitorSettings(siteId, this.state);
 	};
 
 	settingsMonitorEmailCheckbox() {
@@ -66,22 +66,20 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 		return (
 			<CompactFormToggle
-				disabled={ this.disableForm() || ! monitorActive }
-				onChange={ this.handleToggle( 'email_notifications' ) }
-				checked={ !! this.state.email_notifications }
+				disabled={this.disableForm() || !monitorActive}
+				onChange={this.handleToggle('email_notifications')}
+				checked={!!this.state.email_notifications}
 			>
-				{ translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}', {
+				{translate('Send notifications to your {{a}}WordPress.com email address{{/a}}', {
 					components: {
 						a: (
 							<a
 								href="/me/account"
-								onClick={ this.recordEvent(
-									'Clicked on Monitor Link to WordPress.com Email Address'
-								) }
+								onClick={this.recordEvent('Clicked on Monitor Link to WordPress.com Email Address')}
 							/>
 						),
 					},
-				} ) }
+				})}
 			</CompactFormToggle>
 		);
 	}
@@ -90,11 +88,11 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		const { monitorActive, translate } = this.props;
 		return (
 			<CompactFormToggle
-				disabled={ this.disableForm() || ! monitorActive }
-				onChange={ this.handleToggle( 'wp_note_notifications' ) }
-				checked={ !! this.state.wp_note_notifications }
+				disabled={this.disableForm() || !monitorActive}
+				onChange={this.handleToggle('wp_note_notifications')}
+				checked={!!this.state.wp_note_notifications}
 			>
-				{ translate( 'Send notifications via WordPress.com notification' ) }
+				{translate('Send notifications via WordPress.com notification')}
 			</CompactFormToggle>
 		);
 	}
@@ -111,50 +109,50 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 	handleActivationButtonClick = () => {
 		const { siteId } = this.props;
-		this.props.activateModule( siteId, 'monitor', true );
+		this.props.activateModule(siteId, 'monitor', true);
 	};
 
 	handleDeactivationButtonClick = () => {
 		const { siteId } = this.props;
-		this.props.deactivateModule( siteId, 'monitor', true );
+		this.props.deactivateModule(siteId, 'monitor', true);
 	};
 
 	render() {
 		const { siteId, translate } = this.props;
 
-		if ( ! config.isEnabled( 'settings/security/monitor' ) ) {
+		if (!config.isEnabled('settings/security/monitor')) {
 			return null;
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="site-settings__security-settings">
-				<QueryJetpackModules siteId={ siteId } />
-				<QuerySiteMonitorSettings siteId={ siteId } />
+				<QueryJetpackModules siteId={siteId} />
+				<QuerySiteMonitorSettings siteId={siteId} />
 
-				<SettingsSectionHeader title={ translate( 'Downtime Monitoring' ) } />
+				<SettingsSectionHeader title={translate('Downtime Monitoring')} />
 
 				<Card className="jetpack-monitor-settings">
 					<SupportInfo
-						text={ translate(
+						text={translate(
 							'Jetpack will continuously monitor your site, and alert you the moment downtime is detected.'
-						) }
+						)}
 						link="https://jetpack.com/support/monitor/"
 					/>
 
 					<JetpackModuleToggle
-						siteId={ siteId }
+						siteId={siteId}
 						moduleSlug="monitor"
-						label={ translate(
+						label={translate(
 							'Get alerts if your site goes offline. We’ll let you know when it’s back up, too.'
-						) }
-						disabled={ this.disableForm() }
+						)}
+						disabled={this.disableForm()}
 					/>
 
 					<div className="site-settings__child-settings">
-						{ this.settingsMonitorEmailCheckbox() }
-						{ config.isEnabled( 'settings/security/monitor/wp-note' ) &&
-							this.settingsMonitorWpNoteCheckbox() }
+						{this.settingsMonitorEmailCheckbox()}
+						{config.isEnabled('settings/security/monitor/wp-note') &&
+							this.settingsMonitorWpNoteCheckbox()}
 					</div>
 				</Card>
 			</div>
@@ -164,22 +162,22 @@ class SiteSettingsFormJetpackMonitor extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
 			siteId,
-			monitorActive: isJetpackModuleActive( state, siteId, 'monitor' ),
-			activatingMonitor: isActivatingJetpackModule( state, siteId, 'monitor' ),
-			deactivatingMonitor: isDeactivatingJetpackModule( state, siteId, 'monitor' ),
-			fetchingJetpackModules: isFetchingJetpackModules( state, siteId ),
-			monitorSettings: getSiteMonitorSettings( state, siteId ),
-			requestingMonitorSettings: isRequestingSiteMonitorSettings( state, siteId ),
-			updatingMonitorSettings: isUpdatingSiteMonitorSettings( state, siteId ),
+			monitorActive: isJetpackModuleActive(state, siteId, 'monitor'),
+			activatingMonitor: isActivatingJetpackModule(state, siteId, 'monitor'),
+			deactivatingMonitor: isDeactivatingJetpackModule(state, siteId, 'monitor'),
+			fetchingJetpackModules: isFetchingJetpackModules(state, siteId),
+			monitorSettings: getSiteMonitorSettings(state, siteId),
+			requestingMonitorSettings: isRequestingSiteMonitorSettings(state, siteId),
+			updatingMonitorSettings: isUpdatingSiteMonitorSettings(state, siteId),
 		};
 	},
 	{
-		trackEvent: partial( recordGoogleEvent, 'Site Settings' ),
+		trackEvent: partial(recordGoogleEvent, 'Site Settings'),
 		updateSiteMonitorSettings,
 	}
-)( localize( SiteSettingsFormJetpackMonitor ) );
+)(localize(SiteSettingsFormJetpackMonitor));

@@ -19,20 +19,20 @@ class RecoveryEmailValidationNotice extends Component {
 			<Notice
 				className="security-account-recovery__validation-notice"
 				status="is-warning"
-				text={ translate(
+				text={translate(
 					'Please verify your recovery email address. ' +
 						'Check your inbox for a confirmation link.'
-				) }
-				showDismiss={ false }
+				)}
+				showDismiss={false}
 			>
-				{ ! hasSent && (
-					<NoticeAction href="#" onClick={ onResend }>
-						{ translate( 'Resend' ) }
+				{!hasSent && (
+					<NoticeAction href="#" onClick={onResend}>
+						{translate('Resend')}
 					</NoticeAction>
-				) }
+				)}
 			</Notice>
 		);
 	}
 }
 
-export default localize( RecoveryEmailValidationNotice );
+export default localize(RecoveryEmailValidationNotice);

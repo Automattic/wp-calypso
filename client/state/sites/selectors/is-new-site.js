@@ -13,13 +13,13 @@ const MINUTE_IN_MS = 60 * 1000;
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether site is newly created.
  */
-export default function isNewSite( state, siteId ) {
-	const createdAt = getSiteOption( state, siteId, 'created_at' );
+export default function isNewSite(state, siteId) {
+	const createdAt = getSiteOption(state, siteId, 'created_at');
 
-	if ( ! createdAt ) {
+	if (!createdAt) {
 		return false;
 	}
 
 	// less than 30 minutes
-	return Date.now() - new Date( createdAt ) < 30 * MINUTE_IN_MS;
+	return Date.now() - new Date(createdAt) < 30 * MINUTE_IN_MS;
 }

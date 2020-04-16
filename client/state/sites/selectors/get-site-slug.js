@@ -16,17 +16,17 @@ import isSiteConflicting from './is-site-conflicting';
  * @returns {?string}        Site slug
  */
 export default createSelector(
-	( state, siteId ) => {
-		const site = getRawSite( state, siteId );
-		if ( ! site ) {
+	(state, siteId) => {
+		const site = getRawSite(state, siteId);
+		if (!site) {
 			return null;
 		}
 
-		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+		if (getSiteOption(state, siteId, 'is_redirect') || isSiteConflicting(state, siteId)) {
+			return withoutHttp(getSiteOption(state, siteId, 'unmapped_url'));
 		}
 
-		return urlToSlug( site.URL );
+		return urlToSlug(site.URL);
 	},
-	[ getSitesItems ]
+	[getSitesItems]
 );

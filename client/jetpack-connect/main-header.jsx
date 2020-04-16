@@ -15,7 +15,7 @@ import { retrievePlan } from './persistence-utils';
 
 class JetpackConnectMainHeader extends PureComponent {
 	static propTypes = {
-		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
+		type: PropTypes.oneOf(concat(FLOW_TYPES, false)),
 	};
 
 	getTexts() {
@@ -28,7 +28,7 @@ class JetpackConnectMainHeader extends PureComponent {
 			selectedPlan === 'jetpack_business_monthly'
 		) {
 			return {
-				title: translate( 'Get Jetpack Professional' ),
+				title: translate('Get Jetpack Professional'),
 				subtitle: translate(
 					'WordPress sites from start to finish: unlimited premium themes, ' +
 						'business class security, and marketing automation.'
@@ -42,7 +42,7 @@ class JetpackConnectMainHeader extends PureComponent {
 			selectedPlan === 'jetpack_premium_monthly'
 		) {
 			return {
-				title: translate( 'Get Jetpack Premium' ),
+				title: translate('Get Jetpack Premium'),
 				subtitle: translate(
 					'Automated backups and malware scanning, expert priority support, ' +
 						'marketing automation, and more.'
@@ -56,7 +56,7 @@ class JetpackConnectMainHeader extends PureComponent {
 			selectedPlan === 'jetpack_personal_monthly'
 		) {
 			return {
-				title: translate( 'Get Jetpack Personal' ),
+				title: translate('Get Jetpack Personal'),
 				subtitle: translate(
 					'Security essentials for your WordPress site ' +
 						'including automated backups and priority support.'
@@ -64,9 +64,9 @@ class JetpackConnectMainHeader extends PureComponent {
 			};
 		}
 
-		if ( type === 'install' ) {
+		if (type === 'install') {
 			return {
-				title: translate( 'Install Jetpack' ),
+				title: translate('Install Jetpack'),
 				subtitle: translate(
 					'Jetpack brings free themes, security services, and essential marketing tools ' +
 						'to your self-hosted WordPress site.'
@@ -75,7 +75,7 @@ class JetpackConnectMainHeader extends PureComponent {
 		}
 
 		return {
-			title: translate( 'Set up Jetpack on your self-hosted WordPress' ),
+			title: translate('Set up Jetpack on your self-hosted WordPress'),
 			subtitle: translate(
 				"We'll be installing the Jetpack plugin so WordPress.com can communicate with " +
 					'your self-hosted WordPress site.'
@@ -86,8 +86,8 @@ class JetpackConnectMainHeader extends PureComponent {
 	render() {
 		const { title, subtitle } = this.getTexts();
 
-		return <FormattedHeader headerText={ title } subHeaderText={ subtitle } />;
+		return <FormattedHeader headerText={title} subHeaderText={subtitle} />;
 	}
 }
 
-export default localize( JetpackConnectMainHeader );
+export default localize(JetpackConnectMainHeader);

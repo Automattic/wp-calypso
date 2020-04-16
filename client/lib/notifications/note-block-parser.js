@@ -17,18 +17,18 @@ import { compact, find, initial } from 'lodash';
  * @param {number} bEnd end index of second range
  * @returns {number} -1/0/1 indicating sort order
  */
-const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] } ) => {
+const rangeSort = ({ indices: [aStart, aEnd] }, { indices: [bStart, bEnd] }) => {
 	// some "invisible" tokens appear as zero-length ranges
 	// at the beginning of certain formatted blocks
-	if ( aStart === 0 && aEnd === 0 && bEnd !== 0 ) {
+	if (aStart === 0 && aEnd === 0 && bEnd !== 0) {
 		return -1;
 	}
 
-	if ( aStart < bStart ) {
+	if (aStart < bStart) {
 		return -1;
 	}
 
-	if ( bStart < aStart ) {
+	if (bStart < aStart) {
 		return 1;
 	}
 
@@ -52,7 +52,7 @@ const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] }
  * @param {number} innerEnd end of possibly-inner range
  * @returns {Function({indices: Number[]}): boolean} performs the check
  */
-const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
+const encloses = ({ indices: [innerStart, innerEnd] }) =>
 	/**
 	 * Indicates if the given range encloses the first "inner" range
 	 *
@@ -60,7 +60,7 @@ const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
 	 * @param {number} outerEnd end of possibly-outer range
 	 * @returns {boolean} whether the "outer" range encloses the "inner" range
 	 */
-	( { indices: [ outerStart, outerEnd ] = [ 0, 0 ] } ) =>
+	({ indices: [outerStart, outerEnd] = [0, 0] }) =>
 		innerStart !== 0 && innerEnd !== 0 && outerStart <= innerStart && outerEnd >= innerEnd;
 
 /**
@@ -82,57 +82,57 @@ const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
  * @param {object} range the range to add
  * @returns {object[]} the new tree
  */
-const addRange = ( ranges, range ) => {
-	const parent = find( ranges, encloses( range ) );
+const addRange = (ranges, range) => {
+	const parent = find(ranges, encloses(range));
 
 	return parent
-		? [ ...initial( ranges ), { ...parent, children: addRange( parent.children, range ) } ]
-		: [ ...ranges, range ];
+		? [...initial(ranges), { ...parent, children: addRange(parent.children, range) }]
+		: [...ranges, range];
 };
 
 //
 // Range type mappings: extract and normalize necessary data from range objects
 //
 
-const commentNode = ( { id: commentId, post_id: postId, site_id: siteId } ) => ( {
+const commentNode = ({ id: commentId, post_id: postId, site_id: siteId }) => ({
 	type: 'comment',
 	commentId,
 	postId,
 	siteId,
-} );
+});
 
-const linkNode = ( { url, intent, section } ) => ( { type: 'link', url, intent, section } );
+const linkNode = ({ url, intent, section }) => ({ type: 'link', url, intent, section });
 
-const postNode = ( { id: postId, site_id: siteId } ) => ( { type: 'post', postId, siteId } );
+const postNode = ({ id: postId, site_id: siteId }) => ({ type: 'post', postId, siteId });
 
-const siteNode = ( { id: siteId, intent, section } ) => ( {
+const siteNode = ({ id: siteId, intent, section }) => ({
 	type: 'site',
 	siteId,
 	intent,
 	section,
-} );
+});
 
-const typedNode = ( { type } ) => ( { type } );
+const typedNode = ({ type }) => ({ type });
 
-const userNode = ( { id: userId, name, site_id: siteId, intent, section } ) => ( {
+const userNode = ({ id: userId, name, site_id: siteId, intent, section }) => ({
 	type: 'person',
 	name,
 	siteId,
 	userId,
 	intent,
 	section,
-} );
+});
 
-const pluginNode = ( { site_slug, slug, version, intent, section } ) => ( {
+const pluginNode = ({ site_slug, slug, version, intent, section }) => ({
 	type: 'plugin',
 	siteSlug: site_slug,
 	pluginSlug: slug,
 	version,
 	intent,
 	section,
-} );
+});
 
-const themeNode = ( { site_slug, slug, version, uri, intent, section } ) => ( {
+const themeNode = ({ site_slug, slug, version, uri, intent, section }) => ({
 	type: 'theme',
 	siteSlug: site_slug,
 	themeSlug: slug,
@@ -140,17 +140,17 @@ const themeNode = ( { site_slug, slug, version, uri, intent, section } ) => ( {
 	version,
 	intent,
 	section,
-} );
+});
 
-const inferNode = range => {
+const inferNode = (range) => {
 	const { type, url } = range;
 
-	if ( type ) {
-		return typedNode( range );
+	if (type) {
+		return typedNode(range);
 	}
 
-	if ( url ) {
-		return linkNode( range );
+	if (url) {
+		return linkNode(range);
 	}
 
 	return range;
@@ -166,8 +166,8 @@ const inferNode = range => {
  * @param {string} type type of node specified in range
  * @returns {Function(object): object} maps block to meta data
  */
-const nodeMappings = type => {
-	switch ( type ) {
+const nodeMappings = (type) => {
+	switch (type) {
 		case 'comment':
 			return commentNode;
 
@@ -199,10 +199,10 @@ const nodeMappings = type => {
  * @param {object} range contains type and meta information
  * @returns {{children: *[]}} new node
  */
-const newNode = ( text, range = {} ) => ( {
-	...nodeMappings( range.type )( range ),
-	children: [ text ],
-} );
+const newNode = (text, range = {}) => ({
+	...nodeMappings(range.type)(range),
+	children: [text],
+});
 
 /**
  * Reducer to combine ongoing results with new results
@@ -211,11 +211,11 @@ const newNode = ( text, range = {} ) => ( {
  * @param {?Array} remainder new results
  * @returns {Array} combined results
  */
-const joinResults = ( [ reduced, remainder ] ) =>
+const joinResults = ([reduced, remainder]) =>
 	reduced.length // eslint-disable-line no-nested-ternary
-		? compact( reduced.concat( remainder ) )
+		? compact(reduced.concat(remainder))
 		: remainder.length
-		? [ remainder ]
+		? [remainder]
 		: [];
 
 /**
@@ -236,27 +236,27 @@ const joinResults = ( [ reduced, remainder ] ) =>
  * @param {object} nextRange next range from formatted block
  * @returns {Array} parsed results: text and nodes
  */
-const parse = ( [ prev, text, offset ], nextRange ) => {
+const parse = ([prev, text, offset], nextRange) => {
 	const {
-		indices: [ start, end ],
+		indices: [start, end],
 	} = nextRange;
 	const offsetStart = start - offset;
 	const offsetEnd = end - offset;
 
 	// Sometimes there's text before the first range
-	const preText = offsetStart > 0 ? [ text.slice( 0, offsetStart ) ] : [];
+	const preText = offsetStart > 0 ? [text.slice(0, offsetStart)] : [];
 
 	// recurse into the children of the top-level ranges
 	const children = joinResults(
-		nextRange.children.reduce( parse, [ [], text.slice( offsetStart, offsetEnd ), start ] )
+		nextRange.children.reduce(parse, [[], text.slice(offsetStart, offsetEnd), start])
 	);
 
 	const parsed = Object.assign(
-		newNode( text.slice( offsetStart, offsetEnd ), nextRange ),
+		newNode(text.slice(offsetStart, offsetEnd), nextRange),
 		children.length && { children }
 	);
 
-	return [ [ ...prev, ...preText, parsed ], text.slice( offsetEnd ), end ];
+	return [[...prev, ...preText, parsed], text.slice(offsetEnd), end];
 };
 
 /**
@@ -270,13 +270,13 @@ const parse = ( [ prev, text, offset ], nextRange ) => {
  * @param {object} block the block to parse
  * @returns {Array} list of text and node segments with children
  */
-export const parseBlock = block =>
+export const parseBlock = (block) =>
 	block.ranges // is it complex or unformatted text?
 		? joinResults(
 				block.ranges
-					.map( o => ( { ...o, children: [] } ) )
-					.sort( rangeSort )
-					.reduce( addRange, [] )
-					.reduce( parse, [ [], block.text, 0 ] )
+					.map((o) => ({ ...o, children: [] }))
+					.sort(rangeSort)
+					.reduce(addRange, [])
+					.reduce(parse, [[], block.text, 0])
 		  )
-		: [ newNode( block ) ];
+		: [newNode(block)];

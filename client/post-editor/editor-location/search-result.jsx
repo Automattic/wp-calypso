@@ -21,8 +21,8 @@ export default class extends React.Component {
 		const { result, onClick } = this.props;
 
 		return (
-			<div onClick={ onClick } className="editor-location__search-result">
-				{ result.formatted_address }
+			<div onClick={onClick} className="editor-location__search-result">
+				{result.formatted_address}
 			</div>
 		);
 	}

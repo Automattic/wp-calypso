@@ -13,8 +13,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
-export const request = action => {
-	const notice = successNotice( i18n.translate( 'Ignoring threat…' ), { duration: 30000 } );
+export const request = (action) => {
+	const notice = successNotice(i18n.translate('Ignoring threat…'), { duration: 30000 });
 	const {
 		notice: { noticeId },
 	} = notice;
@@ -25,7 +25,7 @@ export const request = action => {
 			{
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
-				path: `/sites/${ action.siteId }/alerts/${ action.threatId }?ignore=true`,
+				path: `/sites/${action.siteId}/alerts/${action.threatId}?ignore=true`,
 				body: {},
 			},
 			{ ...action, noticeId }
@@ -33,38 +33,38 @@ export const request = action => {
 	];
 };
 
-export const success = ( action, rewind_state ) => [
-	successNotice( i18n.translate( 'Threat ignored.' ), {
+export const success = (action, rewind_state) => [
+	successNotice(i18n.translate('Threat ignored.'), {
 		duration: 4000,
 		id: action.noticeId,
-	} ),
+	}),
 	/**
 	 * The API transform could theoretically fail and the rewind data might
 	 * be unavailable. Just let it go.
 	 */
-	( () => {
+	(() => {
 		try {
 			return {
 				type: REWIND_STATE_UPDATE,
 				siteId: action.siteId,
-				data: transformApi( rewind_state ),
+				data: transformApi(rewind_state),
 			};
-		} catch ( e ) {}
-	} )(),
+		} catch (e) {}
+	})(),
 ];
 
-export const failure = action =>
-	errorNotice( i18n.translate( 'Error ignoring threat. Please contact support.' ), {
+export const failure = (action) =>
+	errorNotice(i18n.translate('Error ignoring threat. Please contact support.'), {
 		duration: 10000,
 		id: action.noticeId,
-	} );
+	});
 
-registerHandlers( 'state/data-layer/wpcom/sites/alerts/ignore.js', {
-	[ JETPACK_SITE_ALERT_THREAT_IGNORE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/alerts/ignore.js', {
+	[JETPACK_SITE_ALERT_THREAT_IGNORE]: [
+		dispatchRequest({
 			fetch: request,
 			onSuccess: success,
 			onError: failure,
-		} ),
+		}),
 	],
-} );
+});

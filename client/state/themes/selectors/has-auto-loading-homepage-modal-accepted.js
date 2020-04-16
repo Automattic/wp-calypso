@@ -12,7 +12,7 @@ import 'state/themes/init';
  * @param {string} themeId Theme ID to activate in the site.
  * @returns {boolean}      True if the auto loading homepage dialog has been accepted. Otherwise, False.
  */
-export function hasAutoLoadingHomepageModalAccepted( state, themeId ) {
+export function hasAutoLoadingHomepageModalAccepted(state, themeId) {
 	return (
 		state.themes.themeHasAutoLoadingHomepageWarning?.themeId === themeId &&
 		state.themes.themeHasAutoLoadingHomepageWarning?.accepted

@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import getMenuItemTypes from 'state/selectors/get-menu-item-types';
 
-describe( 'getMenuItemTypes()', () => {
+describe('getMenuItemTypes()', () => {
 	const defaultItems = [
 		{
 			name: 'page',
@@ -64,18 +64,18 @@ describe( 'getMenuItemTypes()', () => {
 		},
 	];
 
-	test( 'should return an empty array if the site is untracked', () => {
+	test('should return an empty array if the site is untracked', () => {
 		const state = {
 			sites: {
 				items: {},
 			},
 		};
-		const items = getMenuItemTypes( state, 2916284 );
+		const items = getMenuItemTypes(state, 2916284);
 
-		expect( items ).to.eql( [] );
-	} );
+		expect(items).to.eql([]);
+	});
 
-	test( 'should return the default items if the site has not post types', () => {
+	test('should return the default items if the site has not post types', () => {
 		const state = {
 			sites: {
 				items: {
@@ -92,12 +92,12 @@ describe( 'getMenuItemTypes()', () => {
 				items: {},
 			},
 		};
-		const items = getMenuItemTypes( state, 2916284 );
+		const items = getMenuItemTypes(state, 2916284);
 
-		expect( items ).to.eql( defaultItems );
-	} );
+		expect(items).to.eql(defaultItems);
+	});
 
-	test( 'should merge the default items with post types', () => {
+	test('should merge the default items with post types', () => {
 		const state = {
 			sites: {
 				items: {
@@ -126,9 +126,9 @@ describe( 'getMenuItemTypes()', () => {
 				},
 			},
 		};
-		const items = getMenuItemTypes( state, 2916284 );
+		const items = getMenuItemTypes(state, 2916284);
 
-		expect( items ).to.eql( [
+		expect(items).to.eql([
 			...defaultItems,
 			{
 				createLink: '/edit/testimonial/chicken',
@@ -141,6 +141,6 @@ describe( 'getMenuItemTypes()', () => {
 				renderer: 'renderPostOptions',
 				show: true,
 			},
-		] );
-	} );
-} );
+		]);
+	});
+});

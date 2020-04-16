@@ -32,22 +32,22 @@ class PostCard extends Component {
 		dispatch: PropTypes.func.isRequired,
 	};
 
-	handleMouseDown = event => {
+	handleMouseDown = (event) => {
 		event.stopPropagation();
 		event.preventDefault();
 	};
 
-	viewPost = event => {
+	viewPost = (event) => {
 		const { dispatch, isPreviewable, previewUrl } = this.props;
 
 		event.preventDefault();
 
-		if ( ! isPreviewable && typeof window === 'object' ) {
-			return window.open( previewUrl );
+		if (!isPreviewable && typeof window === 'object') {
+			return window.open(previewUrl);
 		}
 
-		dispatch( setPreviewUrl( setUrlScheme( previewUrl, 'https' ) ) );
-		dispatch( setLayoutFocus( 'preview' ) );
+		dispatch(setPreviewUrl(setUrlScheme(previewUrl, 'https')));
+		dispatch(setLayoutFocus('preview'));
 	};
 
 	render() {
@@ -56,32 +56,32 @@ class PostCard extends Component {
 		const postCardClass = 'zoninator__zone-list-item';
 
 		return (
-			<SectionHeader label={ postTitle } className={ postCardClass }>
+			<SectionHeader label={postTitle} className={postCardClass}>
 				<Button
 					compact
-					onMouseDown={ this.handleMouseDown }
-					onClick={ this.viewPost }
-					href={ previewUrl }
+					onMouseDown={this.handleMouseDown}
+					onClick={this.viewPost}
+					href={previewUrl}
 					draggable="false"
 					target="_blank"
 				>
-					{ translate( 'View' ) }
+					{translate('View')}
 				</Button>
-				<Button compact onMouseDown={ this.handleMouseDown } href={ editorPath } draggable="false">
-					{ translate( 'Edit' ) }
+				<Button compact onMouseDown={this.handleMouseDown} href={editorPath} draggable="false">
+					{translate('Edit')}
 				</Button>
-				<Button compact scary onMouseDown={ this.handleMouseDown } onClick={ remove }>
-					{ translate( 'Remove' ) }
+				<Button compact scary onMouseDown={this.handleMouseDown} onClick={remove}>
+					{translate('Remove')}
 				</Button>
 			</SectionHeader>
 		);
 	}
 }
 
-const connectComponent = connect( ( state, { postId, siteId } ) => ( {
-	editorPath: getEditorPath( state, siteId, postId ),
-	isPreviewable: !! isSitePreviewable( state, postId ),
-	previewUrl: getPostPreviewUrl( state, siteId, postId ),
-} ) );
+const connectComponent = connect((state, { postId, siteId }) => ({
+	editorPath: getEditorPath(state, siteId, postId),
+	isPreviewable: !!isSitePreviewable(state, postId),
+	previewUrl: getPostPreviewUrl(state, siteId, postId),
+}));
 
-export default flowRight( connectComponent, localize )( PostCard );
+export default flowRight(connectComponent, localize)(PostCard);

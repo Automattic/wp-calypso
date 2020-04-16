@@ -3,8 +3,8 @@
  */
 import getConnectedApplications from 'state/selectors/get-connected-applications';
 
-describe( 'getConnectedApplications()', () => {
-	test( 'should return connected applications of the current user', () => {
+describe('getConnectedApplications()', () => {
+	test('should return connected applications of the current user', () => {
 		const apps = [
 			{
 				ID: '12345678',
@@ -34,12 +34,12 @@ describe( 'getConnectedApplications()', () => {
 		const state = {
 			connectedApplications: apps,
 		};
-		const result = getConnectedApplications( state );
-		expect( result ).toBe( apps );
-	} );
+		const result = getConnectedApplications(state);
+		expect(result).toBe(apps);
+	});
 
-	test( 'should return null with an empty state', () => {
-		const result = getConnectedApplications( undefined );
-		expect( result ).toBeNull();
-	} );
-} );
+	test('should return null with an empty state', () => {
+		const result = getConnectedApplications(undefined);
+		expect(result).toBeNull();
+	});
+});

@@ -1,3 +1,3 @@
 export const siteGoalsSchema = {
-	type: [ 'string', 'null' ],
+	type: ['string', 'null'],
 };

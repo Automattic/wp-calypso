@@ -10,9 +10,9 @@ import React from 'react';
  */
 import FollowButton from '../button';
 
-describe( 'FollowButton', () => {
-	test( 'should apply a custom follow label', () => {
-		const wrapper = render( <FollowButton followLabel="Follow Tag" /> );
-		expect( wrapper.text() ).to.contain( 'Follow Tag' );
-	} );
-} );
+describe('FollowButton', () => {
+	test('should apply a custom follow label', () => {
+		const wrapper = render(<FollowButton followLabel="Follow Tag" />);
+		expect(wrapper.text()).to.contain('Follow Tag');
+	});
+});

@@ -20,11 +20,11 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
  * @param  {number}  siteId Site ID
  * @returns {?number}        Purchase ID if known
  */
-export default function getCurrentPlanPurchaseId( state, siteId ) {
-	const result = get( getCurrentPlan( state, siteId ), 'id', null );
+export default function getCurrentPlanPurchaseId(state, siteId) {
+	const result = get(getCurrentPlan(state, siteId), 'id', null);
 
 	// getCurrentPlan uses an "assembler" which may have NaN in the `id`.
-	if ( isNaN( result ) ) {
+	if (isNaN(result)) {
 		return null;
 	}
 

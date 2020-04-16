@@ -74,12 +74,12 @@ import getInlineHelpSupportVariation, {
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:help-contact' );
+const debug = debugFactory('calypso:help-contact');
 
 /**
  * Module variables
  */
-const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
+const defaultLanguageSlug = config('i18n_default_locale_slug');
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
@@ -110,40 +110,40 @@ class HelpContact extends React.Component {
 	}
 
 	backToHelp = () => {
-		page( '/help' );
+		page('/help');
 	};
 
 	clearSavedContactForm = () => {
 		savedContactForm = null;
 	};
 
-	startHappychat = contactForm => {
-		this.recordCompactSubmit( 'happychat' );
+	startHappychat = (contactForm) => {
+		this.recordCompactSubmit('happychat');
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
-		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
-		this.props.sendHappychatMessage( message, { includeInSummary: true } );
+		this.props.sendUserInfo(this.props.getUserInfo({ howCanWeHelp, howYouFeel, site }));
+		this.props.sendHappychatMessage(message, { includeInSummary: true });
 
-		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
+		analytics.tracks.recordEvent('calypso_help_live_chat_begin', {
 			site_plan_product_id: site ? site.plan.product_id : null,
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
-		} );
+		});
 
-		this.setState( {
+		this.setState({
 			isSubmitting: false,
 			confirmation: {
-				title: this.props.translate( "We're on it!" ),
+				title: this.props.translate("We're on it!"),
 				message: this.props.translate(
 					"We've received your message, and you'll hear back from " +
 						'one of our Happiness Engineers shortly.'
 				),
 			},
-		} );
+		});
 		this.clearSavedContactForm();
 
-		if ( ! this.props.compact ) {
-			page( '/help' );
+		if (!this.props.compact) {
+			page('/help');
 		}
 	};
 
@@ -157,107 +157,107 @@ class HelpContact extends React.Component {
 		}
 	};
 
-	submitDirectlyQuestion = contactForm => {
-		this.recordCompactSubmit( 'directly' );
+	submitDirectlyQuestion = (contactForm) => {
+		this.recordCompactSubmit('directly');
 		const { display_name, email } = this.props.currentUser;
 
-		this.props.askDirectlyQuestion( contactForm.message, display_name, email );
+		this.props.askDirectlyQuestion(contactForm.message, display_name, email);
 
 		this.clearSavedContactForm();
 
-		if ( ! this.props.compact ) {
-			page( '/help' );
+		if (!this.props.compact) {
+			page('/help');
 		}
 	};
 
-	submitKayakoTicket = contactForm => {
+	submitKayakoTicket = (contactForm) => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
 		const { currentUserLocale } = this.props;
 
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
 			'How I feel: ' + howYouFeel,
-			'Site I need help with: ' + ( site ? site.URL : 'N/A' ),
+			'Site I need help with: ' + (site ? site.URL : 'N/A'),
 		];
 
-		const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
+		const kayakoMessage = [...ticketMeta, '\n', message].join('\n');
 
-		this.setState( { isSubmitting: true } );
-		this.recordCompactSubmit( 'kayako' );
+		this.setState({ isSubmitting: true });
+		this.recordCompactSubmit('kayako');
 
 		wpcom.submitKayakoTicket(
 			subject,
 			kayakoMessage,
 			currentUserLocale,
 			this.props.clientSlug,
-			error => {
-				if ( error ) {
+			(error) => {
+				if (error) {
 					// TODO: bump a stat here
-					notices.error( error.message );
+					notices.error(error.message);
 
-					this.setState( { isSubmitting: false } );
+					this.setState({ isSubmitting: false });
 					return;
 				}
 
-				this.setState( {
+				this.setState({
 					isSubmitting: false,
 					confirmation: {
-						title: this.props.translate( "We're on it!" ),
+						title: this.props.translate("We're on it!"),
 						message: this.props.translate(
 							"We've received your message, and you'll hear back from " +
 								'one of our Happiness Engineers shortly.'
 						),
 					},
-				} );
+				});
 
-				analytics.tracks.recordEvent( 'calypso_help_contact_submit', {
+				analytics.tracks.recordEvent('calypso_help_contact_submit', {
 					ticket_type: 'kayako',
 					site_plan_product_id: site ? site.plan.product_id : null,
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
-				} );
+				});
 			}
 		);
 
 		this.clearSavedContactForm();
 	};
 
-	submitSupportForumsTopic = contactForm => {
+	submitSupportForumsTopic = (contactForm) => {
 		const { subject, message } = contactForm;
 		const { currentUserLocale } = this.props;
 
-		this.setState( { isSubmitting: true } );
-		this.recordCompactSubmit( 'forums' );
+		this.setState({ isSubmitting: true });
+		this.recordCompactSubmit('forums');
 
 		wpcom.submitSupportForumsTopic(
 			subject,
 			message,
 			currentUserLocale,
 			this.props.clientSlug,
-			( error, data ) => {
-				if ( error ) {
+			(error, data) => {
+				if (error) {
 					// TODO: bump a stat here
-					notices.error( error.message );
+					notices.error(error.message);
 
-					this.setState( { isSubmitting: false } );
+					this.setState({ isSubmitting: false });
 					return;
 				}
 
-				this.setState( {
+				this.setState({
 					isSubmitting: false,
 					confirmation: {
-						title: this.props.translate( 'Got it!' ),
+						title: this.props.translate('Got it!'),
 						message: this.props.translate(
 							'Your message has been submitted to our ' + '{{a}}community forums{{/a}}',
 							{
 								components: {
-									a: <a href={ data.topic_URL } />,
+									a: <a href={data.topic_URL} />,
 								},
 							}
 						),
 					},
-				} );
+				});
 
-				analytics.tracks.recordEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
+				analytics.tracks.recordEvent('calypso_help_contact_submit', { ticket_type: 'forum' });
 			}
 		);
 
@@ -266,7 +266,7 @@ class HelpContact extends React.Component {
 
 	shouldUseHappychat = () => {
 		// if happychat is disabled in the config, do not use it
-		if ( ! config.isEnabled( 'happychat' ) ) {
+		if (!config.isEnabled('happychat')) {
 			return false;
 		}
 
@@ -276,54 +276,54 @@ class HelpContact extends React.Component {
 
 	shouldUseDirectly = () => {
 		const isEn = this.props.currentUserLocale === 'en';
-		return isEn && ! this.props.isDirectlyFailed;
+		return isEn && !this.props.isDirectlyFailed;
 	};
 
-	recordCompactSubmit = variation => {
-		if ( this.props.compact ) {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+	recordCompactSubmit = (variation) => {
+		if (this.props.compact) {
+			this.props.recordTracksEvent('calypso_inlinehelp_contact_submit', {
 				support_variation: variation,
-			} );
+			});
 		}
 	};
 
-	getContactFormPropsVariation = variationSlug => {
+	getContactFormPropsVariation = (variationSlug) => {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale, hasMoreThanOneSite, translate, localizedLanguageNames } = this.props;
-		let buttonLabel = translate( 'Chat with us' );
+		let buttonLabel = translate('Chat with us');
 		const languageForumAvailable =
-			isDefaultLocale( currentUserLocale ) ||
-			localizeUrl( 'https://en.forums.wordpress.com/' ) !== 'https://en.forums.wordpress.com/';
+			isDefaultLocale(currentUserLocale) ||
+			localizeUrl('https://en.forums.wordpress.com/') !== 'https://en.forums.wordpress.com/';
 
-		switch ( variationSlug ) {
+		switch (variationSlug) {
 			case SUPPORT_HAPPYCHAT: {
 				// TEMPORARY: to collect data about the customer preferences, context 1050-happychat-gh
 				// for non english customers check if we have full support in their language
 				let additionalSupportOption = { enabled: false };
 
-				if ( ! isDefaultLocale( currentUserLocale ) && ! this.props.hasHappychatLocalizedSupport ) {
+				if (!isDefaultLocale(currentUserLocale) && !this.props.hasHappychatLocalizedSupport) {
 					// make sure we only record the track once
-					if ( ! this.state.wasAdditionalSupportOptionShown ) {
+					if (!this.state.wasAdditionalSupportOptionShown) {
 						// track that additional support option is shown
-						this.props.recordTracksEvent( 'calypso_happychat_a_b_additional_support_option_shown', {
+						this.props.recordTracksEvent('calypso_happychat_a_b_additional_support_option_shown', {
 							locale: currentUserLocale,
-						} );
-						this.setState( { wasAdditionalSupportOptionShown: true } );
+						});
+						this.setState({ wasAdditionalSupportOptionShown: true });
 					}
 
-					if ( localizedLanguageNames && localizedLanguageNames[ defaultLanguageSlug ] ) {
+					if (localizedLanguageNames && localizedLanguageNames[defaultLanguageSlug]) {
 						// override chat buttons
-						buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
+						buttonLabel = translate('Chat with us in %(defaultLanguage)s', {
 							args: {
-								defaultLanguage: localizedLanguageNames[ defaultLanguageSlug ].localized,
+								defaultLanguage: localizedLanguageNames[defaultLanguageSlug].localized,
 							},
-						} );
+						});
 					}
 
 					// add additional support option
 					additionalSupportOption = {
 						enabled: true,
-						label: translate( 'Email us' ),
+						label: translate('Email us'),
 						onSubmit: this.submitKayakoTicket,
 					};
 				}
@@ -342,7 +342,7 @@ class HelpContact extends React.Component {
 			case SUPPORT_TICKET:
 				return {
 					onSubmit: this.submitKayakoTicket,
-					buttonLabel: isSubmitting ? translate( 'Sending email' ) : translate( 'Email us' ),
+					buttonLabel: isSubmitting ? translate('Sending email') : translate('Email us'),
 					showSubjectField: true,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
@@ -353,7 +353,7 @@ class HelpContact extends React.Component {
 			case SUPPORT_DIRECTLY:
 				return {
 					onSubmit: this.submitDirectlyQuestion,
-					buttonLabel: translate( 'Ask an Expert' ),
+					buttonLabel: translate('Ask an Expert'),
 					formDescription: translate(
 						'Get help from an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
 							'These are other users, like yourself, who have been selected because ' +
@@ -380,8 +380,8 @@ class HelpContact extends React.Component {
 				return {
 					onSubmit: this.submitSupportForumsTopic,
 					buttonLabel: languageForumAvailable
-						? translate( 'Ask in the forums' )
-						: translate( 'Ask in the English forums' ),
+						? translate('Ask in the forums')
+						: translate('Ask in the English forums'),
 					formDescription: languageForumAvailable
 						? translate(
 								'Post a new question in our {{strong}}public forums{{/strong}}, ' +
@@ -419,7 +419,7 @@ class HelpContact extends React.Component {
 		}
 	};
 
-	getContactFormCommonProps = variationSlug => {
+	getContactFormCommonProps = (variationSlug) => {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale } = this.props;
 
@@ -430,7 +430,7 @@ class HelpContact extends React.Component {
 		//    requests are sent to the language specific forums (for popular languages)
 		//    we don't tell the user that support is only offered in English.
 		const showHelpLanguagePrompt =
-			config( 'livechat_support_locales' ).indexOf( currentUserLocale ) === -1 &&
+			config('livechat_support_locales').indexOf(currentUserLocale) === -1 &&
 			SUPPORT_FORUM !== variationSlug;
 
 		return {
@@ -440,12 +440,12 @@ class HelpContact extends React.Component {
 			showHelpLanguagePrompt,
 			valueLink: {
 				value: savedContactForm,
-				requestChange: contactForm => ( savedContactForm = contactForm ),
+				requestChange: (contactForm) => (savedContactForm = contactForm),
 			},
 		};
 	};
 
-	shouldShowTicketRequestErrorNotice = variationSlug => {
+	shouldShowTicketRequestErrorNotice = (variationSlug) => {
 		const { ticketSupportRequestError } = this.props;
 
 		return SUPPORT_HAPPYCHAT !== variationSlug && null != ticketSupportRequestError;
@@ -461,29 +461,27 @@ class HelpContact extends React.Component {
 		const ticketReadyOrError =
 			this.props.ticketSupportConfigurationReady || null != this.props.ticketSupportRequestError;
 		const happychatReadyOrDisabled =
-			! config.isEnabled( 'happychat' ) || this.props.isHappychatUserEligible !== null;
+			!config.isEnabled('happychat') || this.props.isHappychatUserEligible !== null;
 
 		return ticketReadyOrError && happychatReadyOrDisabled;
 	};
 
 	shouldShowPreloadForm = () => {
 		const { supportVariation } = this.props;
-		const waitingOnDirectly = supportVariation === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
+		const waitingOnDirectly = supportVariation === SUPPORT_DIRECTLY && !this.props.isDirectlyReady;
 
-		return (
-			this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly
-		);
+		return this.props.isRequestingSites || !this.hasDataToDetermineVariation() || waitingOnDirectly;
 	};
 
 	// Modifies passed props for the "compact" contact form style.
-	contactFormPropsCompactFilter = props => {
-		if ( this.props.compact ) {
-			return Object.assign( props, {
+	contactFormPropsCompactFilter = (props) => {
+		if (this.props.compact) {
+			return Object.assign(props, {
 				showSubjectField: false,
 				showHowCanWeHelpField: false,
 				showHowYouFeelField: false,
 				showQASuggestions: false,
-			} );
+			});
 		}
 		return props;
 	};
@@ -497,13 +495,13 @@ class HelpContact extends React.Component {
 		const { confirmation } = this.state;
 		const { compact, supportVariation, translate } = this.props;
 
-		debug( { supportVariation } );
+		debug({ supportVariation });
 
-		if ( confirmation ) {
-			return <HelpContactConfirmation { ...confirmation } />;
+		if (confirmation) {
+			return <HelpContactConfirmation {...confirmation} />;
 		}
 
-		if ( this.shouldShowPreloadForm() ) {
+		if (this.shouldShowPreloadForm()) {
 			return (
 				<div className="help-contact__placeholder">
 					<h4 className="help-contact__header">Loading contact form</h4>
@@ -518,13 +516,13 @@ class HelpContact extends React.Component {
 			);
 		}
 
-		if ( supportVariation === SUPPORT_DIRECTLY && this.props.hasAskedADirectlyQuestion ) {
+		if (supportVariation === SUPPORT_DIRECTLY && this.props.hasAskedADirectlyQuestion) {
 			// We're taking the Directly confirmation outside the standard `confirmation` state object
 			// that other variations use, because we need this to persist even if the component is
 			// removed and re-mounted. Using `confirmation` in component state would mean you could
 			// ask a new Directy question every time you left the help section and came back.
 			const directlyConfirmation = {
-				title: translate( "We're on it!" ),
+				title: translate("We're on it!"),
 				message: translate(
 					'We sent your question to our {{strong}}Expert Users{{/strong}}. ' +
 						'You will hear back via email as soon as an Expert has responded ' +
@@ -537,12 +535,12 @@ class HelpContact extends React.Component {
 					}
 				),
 			};
-			return <HelpContactConfirmation { ...directlyConfirmation } />;
+			return <HelpContactConfirmation {...directlyConfirmation} />;
 		}
 
 		const contactFormProps = Object.assign(
-			this.getContactFormCommonProps( supportVariation ),
-			this.contactFormPropsCompactFilter( this.getContactFormPropsVariation( supportVariation ) )
+			this.getContactFormCommonProps(supportVariation),
+			this.contactFormPropsCompactFilter(this.getContactFormPropsVariation(supportVariation))
 		);
 
 		// Customers sent to Directly and Forum are not affected by live chat closures
@@ -551,40 +549,40 @@ class HelpContact extends React.Component {
 
 		return (
 			<div>
-				{ isUserAffectedByLiveChatClosure && (
+				{isUserAffectedByLiveChatClosure && (
 					<>
 						<LimitedChatAvailabilityNotice
-							compact={ compact }
+							compact={compact}
 							showAt="2020-03-27 00:00Z"
 							hideAt="2020-04-12 00:00Z"
 						/>
 
 						<LiveChatClosureNotice
-							compact={ compact }
-							holidayName={ easterHolidayName }
+							compact={compact}
+							holidayName={easterHolidayName}
 							displayAt="2020-04-12 00:00Z"
 							closesAt="2020-04-12 06:00Z"
 							reopensAt="2020-04-13 06:00Z"
 						/>
 
 						<LimitedChatAvailabilityNotice
-							compact={ compact }
+							compact={compact}
 							showAt="2020-04-13 06:00Z"
 							hideAt="2021-01-01 00:00Z"
 						/>
 					</>
-				) }
-				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
+				)}
+				{this.shouldShowTicketRequestErrorNotice(supportVariation) && (
 					<Notice
 						status="is-warning"
-						text={ translate(
+						text={translate(
 							'We had trouble loading the support information for your account. ' +
 								'Please check your internet connection and reload the page, or try again later.'
-						) }
-						showDismiss={ false }
+						)}
+						showDismiss={false}
 					/>
-				) }
-				<HelpContactForm { ...contactFormProps } />
+				)}
+				<HelpContactForm {...contactFormProps} />
 			</div>
 		);
 	};
@@ -593,46 +591,46 @@ class HelpContact extends React.Component {
 		const content = (
 			<Fragment>
 				<PageViewTracker path="/help/contact" title="Help > Contact" />
-				{ ! this.props.compact && (
-					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
-						{ this.props.translate( 'Contact Us' ) }
+				{!this.props.compact && (
+					<HeaderCake onClick={this.backToHelp} isCompact={true}>
+						{this.props.translate('Contact Us')}
 					</HeaderCake>
-				) }
-				{ ! this.props.compact && ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
-				<Card className="help-contact__form">{ this.getView() }</Card>
-				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
+				)}
+				{!this.props.compact && !this.props.isEmailVerified && <HelpUnverifiedWarning />}
+				<Card className="help-contact__form">{this.getView()}</Card>
+				{this.props.shouldStartHappychatConnection && <HappychatConnection />}
 				<QueryTicketSupportConfiguration />
-				<QueryUserPurchases userId={ this.props.currentUser.ID } />
+				<QueryUserPurchases userId={this.props.currentUser.ID} />
 				<QueryLanguageNames />
 			</Fragment>
 		);
-		if ( this.props.compact ) {
+		if (this.props.compact) {
 			return content;
 		}
-		return <Main className="help-contact">{ content }</Main>;
+		return <Main className="help-contact">{content}</Main>;
 	}
 }
 
 export default connect(
-	state => {
-		const helpSelectedSiteId = getHelpSelectedSiteId( state );
+	(state) => {
+		const helpSelectedSiteId = getHelpSelectedSiteId(state);
 		return {
-			currentUserLocale: getCurrentUserLocale( state ),
-			currentUser: getCurrentUser( state ),
-			getUserInfo: getHappychatUserInfo( state ),
-			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
-			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
-			isDirectlyReady: isDirectlyReady( state ),
-			isDirectlyUninitialized: isDirectlyUninitialized( state ),
-			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isHappychatUserEligible: isHappychatUserEligible( state ),
-			localizedLanguageNames: getLocalizedLanguageNames( state ),
-			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
-			ticketSupportRequestError: getTicketSupportRequestError( state ),
-			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
-			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
-			isRequestingSites: isRequestingSites( state ),
-			supportVariation: getInlineHelpSupportVariation( state ),
+			currentUserLocale: getCurrentUserLocale(state),
+			currentUser: getCurrentUser(state),
+			getUserInfo: getHappychatUserInfo(state),
+			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport(state),
+			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion(state),
+			isDirectlyReady: isDirectlyReady(state),
+			isDirectlyUninitialized: isDirectlyUninitialized(state),
+			isEmailVerified: isCurrentUserEmailVerified(state),
+			isHappychatUserEligible: isHappychatUserEligible(state),
+			localizedLanguageNames: getLocalizedLanguageNames(state),
+			ticketSupportConfigurationReady: isTicketSupportConfigurationReady(state),
+			ticketSupportRequestError: getTicketSupportRequestError(state),
+			hasMoreThanOneSite: getCurrentUserSiteCount(state) > 1,
+			shouldStartHappychatConnection: !isRequestingSites(state) && helpSelectedSiteId,
+			isRequestingSites: isRequestingSites(state),
+			supportVariation: getInlineHelpSupportVariation(state),
 		};
 	},
 	{
@@ -643,4 +641,4 @@ export default connect(
 		sendHappychatMessage,
 		sendUserInfo,
 	}
-)( localize( HelpContact ) );
+)(localize(HelpContact));

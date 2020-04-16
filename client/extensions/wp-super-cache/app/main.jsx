@@ -41,16 +41,16 @@ class WPSuperCache extends Component {
 		tab: '',
 	};
 
-	renderTab( isReadOnly ) {
+	renderTab(isReadOnly) {
 		const { tab } = this.props;
 
-		switch ( tab ) {
+		switch (tab) {
 			case Tabs.ADVANCED.slug:
-				return <AdvancedTab isReadOnly={ isReadOnly } />;
+				return <AdvancedTab isReadOnly={isReadOnly} />;
 			case Tabs.CDN.slug:
 				return <CdnTab />;
 			case Tabs.CONTENTS.slug:
-				return <ContentsTab isReadOnly={ isReadOnly } />;
+				return <ContentsTab isReadOnly={isReadOnly} />;
 			case Tabs.PRELOAD.slug:
 				return <PreloadTab />;
 			case Tabs.PLUGINS.slug:
@@ -58,7 +58,7 @@ class WPSuperCache extends Component {
 			case Tabs.DEBUG.slug:
 				return <DebugTab />;
 			default:
-				return <EasyTab isReadOnly={ isReadOnly } />;
+				return <EasyTab isReadOnly={isReadOnly} />;
 		}
 	}
 
@@ -72,55 +72,55 @@ class WPSuperCache extends Component {
 		} = this.props;
 		const mainClassName = 'wp-super-cache__main';
 
-		const currentTab = find( Tabs, t => t.slug === tab );
+		const currentTab = find(Tabs, (t) => t.slug === tab);
 		// Required minimum version for the extension is WPSC_MIN_VERSION, but some tabs require later versions.
-		const minVersion = get( currentTab, 'minVersion', WPSC_MIN_VERSION );
+		const minVersion = get(currentTab, 'minVersion', WPSC_MIN_VERSION);
 
 		let redirectUrl = '';
-		if ( minVersion !== WPSC_MIN_VERSION ) {
+		if (minVersion !== WPSC_MIN_VERSION) {
 			// We have a tab specific minimum version. If that version isn't fulfilled, we want to redirect
 			// to the 'default' tab (instead of the plugin installation page).
 			redirectUrl = '/extensions/wp-super-cache/' + siteSlug;
 		}
 
 		return (
-			<Main className={ mainClassName }>
+			<Main className={mainClassName}>
 				<ExtensionRedirect
 					pluginId="wp-super-cache"
-					minimumVersion={ minVersion }
-					siteId={ siteId }
-					redirectUrl={ redirectUrl }
+					minimumVersion={minVersion}
+					siteId={siteId}
+					redirectUrl={redirectUrl}
 				/>
-				<QueryStatus siteId={ siteId } />
+				<QueryStatus siteId={siteId} />
 				<PageViewTracker
-					path={ `/extensions/wp-super-cache/${ tab ? tab + '/' : '' }:site` }
-					title={ `WP Super Cache > ${ tab ? titlecase( tab ) : 'Easy' }` }
+					path={`/extensions/wp-super-cache/${tab ? tab + '/' : ''}:site`}
+					title={`WP Super Cache > ${tab ? titlecase(tab) : 'Easy'}`}
 				/>
 
-				{ cacheDisabled && (
+				{cacheDisabled && (
 					<Notice
-						showDismiss={ false }
+						showDismiss={false}
 						status="is-error"
-						text={ translate( 'Read Only Mode. Configuration cannot be changed.' ) }
+						text={translate('Read Only Mode. Configuration cannot be changed.')}
 					/>
-				) }
+				)}
 
-				<Navigation activeTab={ tab } siteId={ siteId } />
-				{ this.renderTab( !! cacheDisabled ) }
+				<Navigation activeTab={tab} siteId={siteId} />
+				{this.renderTab(!!cacheDisabled)}
 			</Main>
 		);
 	}
 }
 
-const connectComponent = connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
+const connectComponent = connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSiteSlug(state, siteId);
 
 	return {
-		status: getStatus( state, siteId ),
+		status: getStatus(state, siteId),
 		siteId,
 		siteSlug,
 	};
-} );
+});
 
-export default connectComponent( localize( WPSuperCache ) );
+export default connectComponent(localize(WPSuperCache));

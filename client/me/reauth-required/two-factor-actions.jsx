@@ -32,11 +32,11 @@ class TwoFactorActions extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	recordButtonClicked = event => {
+	recordButtonClicked = (event) => {
 		event.preventDefault();
 		let tracksEvent;
 
-		switch ( event.target.value ) {
+		switch (event.target.value) {
 			case 'sms':
 				tracksEvent = 'calypso_twostep_reauth_sms_clicked';
 				break;
@@ -48,11 +48,11 @@ class TwoFactorActions extends Component {
 				break;
 		}
 
-		if ( tracksEvent ) {
-			this.props.recordTracksEventWithClientId( tracksEvent );
+		if (tracksEvent) {
+			this.props.recordTracksEventWithClientId(tracksEvent);
 		}
 
-		this.props.onChange( event.target.value );
+		this.props.onChange(event.target.value);
 	};
 
 	render() {
@@ -69,47 +69,47 @@ class TwoFactorActions extends Component {
 		const isAuthenticatorAvailable =
 			isSecurityKeySupported && isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
 
-		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
+		if (!isSmsAvailable && !isAuthenticatorAvailable && !isSecurityKeyAvailable) {
 			return null;
 		}
 
 		return (
 			<Card className="two-factor-actions__actions">
-				{ isSecurityKeyAvailable && (
+				{isSecurityKeyAvailable && (
 					<Button
 						data-e2e-link="2fa-security-key-link"
 						value="webauthn"
-						onClick={ this.recordButtonClicked }
+						onClick={this.recordButtonClicked}
 					>
-						{ translate( 'Continue with your security\u00A0key' ) }
+						{translate('Continue with your security\u00A0key')}
 					</Button>
-				) }
+				)}
 
-				{ isAuthenticatorAvailable && (
+				{isAuthenticatorAvailable && (
 					<Button
 						data-e2e-link="2fa-otp-link"
 						value="authenticator"
-						onClick={ this.recordButtonClicked }
+						onClick={this.recordButtonClicked}
 					>
-						{ translate( 'Continue with your authenticator\u00A0app' ) }
+						{translate('Continue with your authenticator\u00A0app')}
 					</Button>
-				) }
+				)}
 
-				{ isSmsAvailable && (
+				{isSmsAvailable && (
 					<Button
 						data-e2e-link="2fa-sms-link"
 						value="sms"
-						disabled={ ! this.props.isSmsAllowed }
-						onClick={ this.recordButtonClicked }
+						disabled={!this.props.isSmsAllowed}
+						onClick={this.recordButtonClicked}
 					>
-						{ translate( 'Send code via\u00A0text\u00A0message' ) }
+						{translate('Send code via\u00A0text\u00A0message')}
 					</Button>
-				) }
+				)}
 			</Card>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEventWithClientId,
-} )( localize( TwoFactorActions ) );
+})(localize(TwoFactorActions));

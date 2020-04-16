@@ -1,7 +1,7 @@
 /**
  * External dependencies.
  */
-const webpack = require( 'webpack' ); //eslint-disable-line import/no-extraneous-dependencies
+const webpack = require('webpack'); //eslint-disable-line import/no-extraneous-dependencies
 
 const { Template } = webpack;
 
@@ -13,12 +13,12 @@ const { Template } = webpack;
 const PLUGIN_NAME = 'RequireChunkCallback';
 
 class RequireChunkCallbackPlugin {
-	apply( compiler ) {
-		compiler.hooks.thisCompilation.tap( PLUGIN_NAME, compilation => {
+	apply(compiler) {
+		compiler.hooks.thisCompilation.tap(PLUGIN_NAME, (compilation) => {
 			const { mainTemplate } = compilation;
 
-			mainTemplate.hooks.localVars.tap( PLUGIN_NAME, source => {
-				return Template.asString( [
+			mainTemplate.hooks.localVars.tap(PLUGIN_NAME, (source) => {
+				return Template.asString([
 					source,
 					'',
 					`
@@ -64,11 +64,11 @@ class RequireChunkCallbackPlugin {
 
 						window.__requireChunkCallback__ = requireChunkCallback;
 					`,
-				] );
-			} );
+				]);
+			});
 
-			mainTemplate.hooks.requireEnsure.tap( PLUGIN_NAME, source => {
-				return Template.asString( [
+			mainTemplate.hooks.requireEnsure.tap(PLUGIN_NAME, (source) => {
+				return Template.asString([
 					source,
 					'',
 					`requireChunkCallback.trigger( {
@@ -76,9 +76,9 @@ class RequireChunkCallbackPlugin {
 						publicPath: __webpack_require__.p,
 						scriptSrc: jsonpScriptSrc( chunkId )
 					}, promises )`,
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 	}
 }
 

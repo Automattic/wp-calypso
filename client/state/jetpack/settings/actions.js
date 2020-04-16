@@ -10,7 +10,7 @@ import {
 
 import 'state/data-layer/wpcom/jetpack/settings';
 
-export const requestJetpackSettings = ( siteId, query ) => ( {
+export const requestJetpackSettings = (siteId, query) => ({
 	type: JETPACK_SETTINGS_REQUEST,
 	siteId,
 	query,
@@ -19,9 +19,9 @@ export const requestJetpackSettings = ( siteId, query ) => ( {
 			trackRequest: true,
 		},
 	},
-} );
+});
 
-export const saveJetpackSettings = ( siteId, settings ) => ( {
+export const saveJetpackSettings = (siteId, settings) => ({
 	type: JETPACK_SETTINGS_SAVE,
 	siteId,
 	settings,
@@ -30,19 +30,19 @@ export const saveJetpackSettings = ( siteId, settings ) => ( {
 			trackRequest: true,
 		},
 	},
-} );
+});
 
-export const saveJetpackSettingsSuccess = ( siteId, settings ) => ( {
+export const saveJetpackSettingsSuccess = (siteId, settings) => ({
 	type: JETPACK_SETTINGS_SAVE_SUCCESS,
 	siteId,
 	settings,
-} );
+});
 
-export const updateJetpackSettings = ( siteId, settings ) => ( {
+export const updateJetpackSettings = (siteId, settings) => ({
 	type: JETPACK_SETTINGS_UPDATE,
 	siteId,
 	settings,
-} );
+});
 
 /**
  * Regenerate the target email of Post by Email.
@@ -50,5 +50,5 @@ export const updateJetpackSettings = ( siteId, settings ) => ( {
  * @param  {Int}     siteId  ID of the site.
  * @returns {object}          Action object to regenerate the email when dispatched.
  */
-export const regeneratePostByEmail = siteId =>
-	saveJetpackSettings( siteId, { post_by_email_address: 'regenerate' } );
+export const regeneratePostByEmail = (siteId) =>
+	saveJetpackSettings(siteId, { post_by_email_address: 'regenerate' });

@@ -25,7 +25,7 @@ import getRequest from 'state/selectors/get-request';
  */
 import './style.scss';
 
-const PhpVersionCard = ( {
+const PhpVersionCard = ({
 	disabled,
 	isUpdatingPhpVersion,
 	isGettingPhpVersion,
@@ -33,109 +33,105 @@ const PhpVersionCard = ( {
 	translate,
 	updatePhpVersion,
 	version,
-} ) => {
-	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
+}) => {
+	const [selectedPhpVersion, setSelectedPhpVersion] = useState('');
 
 	const recommendedValue = '7.3';
 
-	const changePhpVersion = event => {
+	const changePhpVersion = (event) => {
 		const newVersion = event.target.value;
 
-		setSelectedPhpVersion( newVersion );
+		setSelectedPhpVersion(newVersion);
 	};
 
 	const updateVersion = () => {
-		updatePhpVersion( siteId, selectedPhpVersion );
+		updatePhpVersion(siteId, selectedPhpVersion);
 	};
 
 	const getPhpVersions = () => {
 		return [
 			{
-				label: translate( '7.2', {
+				label: translate('7.2', {
 					comment: 'PHP Version for a version switcher',
-				} ),
+				}),
 				value: '7.2',
 			},
 			{
-				label: translate( '7.3 (recommended)', {
+				label: translate('7.3 (recommended)', {
 					comment: 'PHP Version for a version switcher',
-				} ),
+				}),
 				value: recommendedValue,
 			},
 			{
-				label: translate( '7.4', {
+				label: translate('7.4', {
 					comment: 'PHP Version for a version switcher',
-				} ),
+				}),
 				value: '7.4',
 			},
 		];
 	};
 
 	const getContent = () => {
-		if ( isGettingPhpVersion ) {
+		if (isGettingPhpVersion) {
 			return;
 		}
 
-		const isButtonDisabled = disabled || ! selectedPhpVersion || selectedPhpVersion === version;
-		const selectedValue = selectedPhpVersion || version || ( disabled && recommendedValue );
+		const isButtonDisabled = disabled || !selectedPhpVersion || selectedPhpVersion === version;
+		const selectedValue = selectedPhpVersion || version || (disabled && recommendedValue);
 
 		return (
 			<div>
 				<div>
-					<FormLabel>{ translate( 'Your site is currently running:' ) }</FormLabel>
+					<FormLabel>{translate('Your site is currently running:')}</FormLabel>
 					<FormSelect
-						disabled={ disabled || isUpdatingPhpVersion }
+						disabled={disabled || isUpdatingPhpVersion}
 						className="php-version-card__version-select"
-						onChange={ changePhpVersion }
-						value={ selectedValue }
+						onChange={changePhpVersion}
+						value={selectedValue}
 					>
-						{ getPhpVersions().map( option => {
+						{getPhpVersions().map((option) => {
 							return (
-								<option
-									disabled={ option.value === version }
-									value={ option.value }
-									key={ option.label }
-								>
-									{ option.label }
+								<option disabled={option.value === version} value={option.value} key={option.label}>
+									{option.label}
 								</option>
 							);
-						} ) }
+						})}
 					</FormSelect>
 				</div>
-				{ ! isButtonDisabled && (
+				{!isButtonDisabled && (
 					<Button
 						className="php-version-card__set-version"
-						onClick={ updateVersion }
-						busy={ isUpdatingPhpVersion }
-						disabled={ isUpdatingPhpVersion }
+						onClick={updateVersion}
+						busy={isUpdatingPhpVersion}
+						disabled={isUpdatingPhpVersion}
 					>
-						<span>{ translate( 'Update PHP Version' ) }</span>
+						<span>{translate('Update PHP Version')}</span>
 					</Button>
-				) }
+				)}
 			</div>
 		);
 	};
 
 	return (
 		<Card className="php-version-card">
-			<QuerySitePhpVersion siteId={ siteId } />
-			<MaterialIcon icon="build" size={ 32 } />
-			<CardHeading>{ translate( 'PHP Version' ) }</CardHeading>
-			{ getContent() }
-			{ isGettingPhpVersion && <Spinner /> }
+			<QuerySitePhpVersion siteId={siteId} />
+			<MaterialIcon icon="build" size={32} />
+			<CardHeading>{translate('PHP Version')}</CardHeading>
+			{getContent()}
+			{isGettingPhpVersion && <Spinner />}
 		</Card>
 	);
 };
 
 export default connect(
-	( state, props ) => {
-		const siteId = getSelectedSiteId( state );
-		const version = getAtomicHostingPhpVersion( state, siteId );
+	(state, props) => {
+		const siteId = getSelectedSiteId(state);
+		const version = getAtomicHostingPhpVersion(state, siteId);
 
 		return {
 			isUpdatingPhpVersion:
-				getRequest( state, updateAtomicPhpVersion( siteId, null ) )?.isLoading ?? false,
-			isGettingPhpVersion: ! props.disabled && ! version,
+				getRequest(state, updateAtomicPhpVersion(siteId, null))?.isLoading ?? false,
+			isGettingPhpVersion: !props.disabled && !version,
 			siteId,
 			version,
 		};
@@ -143,4 +139,4 @@ export default connect(
 	{
 		updatePhpVersion: updateAtomicPhpVersion,
 	}
-)( localize( PhpVersionCard ) );
+)(localize(PhpVersionCard));

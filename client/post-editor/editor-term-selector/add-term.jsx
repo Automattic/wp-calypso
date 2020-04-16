@@ -38,56 +38,56 @@ class TermSelectorAddTerm extends Component {
 		onSuccess: noop,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			showDialog: false,
 		};
 	}
 
-	openDialog = event => {
+	openDialog = (event) => {
 		event.preventDefault();
-		this.setState( { showDialog: true } );
+		this.setState({ showDialog: true });
 	};
 
 	closeDialog = () => {
-		this.setState( { showDialog: false } );
+		this.setState({ showDialog: false });
 	};
 
 	render() {
 		const { labels, onSuccess, type, terms, taxonomy } = this.props;
 		const totalTerms = terms ? terms.length : 0;
-		const classes = classNames( 'editor-term-selector__add-term', {
+		const classes = classNames('editor-term-selector__add-term', {
 			'is-compact': totalTerms < 8,
-		} );
+		});
 
 		return (
-			<div className={ classes }>
-				<Button borderless compact onClick={ this.openDialog }>
-					<Gridicon icon="folder" /> { labels.add_new_item }
+			<div className={classes}>
+				<Button borderless compact onClick={this.openDialog}>
+					<Gridicon icon="folder" /> {labels.add_new_item}
 				</Button>
 				<TermFormDialog
-					showDialog={ this.state.showDialog }
-					onClose={ this.closeDialog }
-					postType={ type }
-					taxonomy={ taxonomy }
-					onSuccess={ onSuccess }
+					showDialog={this.state.showDialog}
+					onClose={this.closeDialog}
+					postType={type}
+					taxonomy={taxonomy}
+					onSuccess={onSuccess}
 				/>
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { taxonomy } ) => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const type = getEditedPostValue( state, siteId, postId, 'type' );
-	const taxonomyDetails = getPostTypeTaxonomy( state, siteId, type, taxonomy );
-	const labels = get( taxonomyDetails, 'labels', {} );
+export default connect((state, { taxonomy }) => {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const type = getEditedPostValue(state, siteId, postId, 'type');
+	const taxonomyDetails = getPostTypeTaxonomy(state, siteId, type, taxonomy);
+	const labels = get(taxonomyDetails, 'labels', {});
 
 	return {
-		terms: getTerms( state, siteId, taxonomy ),
+		terms: getTerms(state, siteId, taxonomy),
 		labels,
 		type,
 	};
-} )( TermSelectorAddTerm );
+})(TermSelectorAddTerm);

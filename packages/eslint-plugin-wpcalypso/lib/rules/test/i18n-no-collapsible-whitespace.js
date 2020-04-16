@@ -9,26 +9,26 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../i18n-no-collapsible-whitespace' ),
+const rule = require('../i18n-no-collapsible-whitespace'),
 	config = { env: { es6: true } }, // support for string templates
-	formatMessage = require( '../../../test-utils/format-message' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+	formatMessage = require('../../../test-utils/format-message'),
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 
-const NO_NEWLINES = formatMessage( rule.ERROR_MESSAGE, { problem: ' (\\n)' } );
-const NO_CONSECUTIVE_SPACES = formatMessage( rule.ERROR_MESSAGE, {
+const NO_NEWLINES = formatMessage(rule.ERROR_MESSAGE, { problem: ' (\\n)' });
+const NO_CONSECUTIVE_SPACES = formatMessage(rule.ERROR_MESSAGE, {
 	problem: ' (consecutive spaces)',
-} );
-const NO_TABS = formatMessage( rule.ERROR_MESSAGE, { problem: ' (\\t)' } );
+});
+const NO_TABS = formatMessage(rule.ERROR_MESSAGE, { problem: ' (\\t)' });
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-no-collapsible-whitespace', rule, {
+new RuleTester(config).run('i18n-no-collapsible-whitespace', rule, {
 	valid: [
 		{
 			code: "this.translate( 'Hello World…' );",
@@ -114,4 +114,4 @@ new RuleTester( config ).run( 'i18n-no-collapsible-whitespace', rule, {
 			],
 		},
 	],
-} );
+});

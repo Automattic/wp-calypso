@@ -26,14 +26,14 @@ import {
 	backupDetailPath,
 } from './paths';
 
-export default function() {
-	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+export default function () {
+	if (config.isEnabled('jetpack-cloud/backups')) {
 		/* handles /backups/activity, see `backupActivityPath` */
-		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );
+		page(backupActivityPath(), siteSelection, sites, makeLayout, clientRender);
 
 		/* handles /backups/activity/:site, see `backupActivityPath` */
 		page(
-			backupActivityPath( ':site' ),
+			backupActivityPath(':site'),
 			siteSelection,
 			navigation,
 			backupActivity,
@@ -44,7 +44,7 @@ export default function() {
 
 		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
 		page(
-			backupDetailPath( ':site', ':backupId' ),
+			backupDetailPath(':site', ':backupId'),
 			siteSelection,
 			navigation,
 			backupDetail,
@@ -54,7 +54,7 @@ export default function() {
 		);
 		/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
 		page(
-			backupDownloadPath( ':site', ':rewindId' ),
+			backupDownloadPath(':site', ':rewindId'),
 			siteSelection,
 			navigation,
 			backupDownload,
@@ -63,10 +63,10 @@ export default function() {
 			clientRender
 		);
 
-		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
+		if (config.isEnabled('jetpack-cloud/backups-restore')) {
 			/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
 			page(
-				backupRestorePath( ':site', ':rewindId' ),
+				backupRestorePath(':site', ':rewindId'),
 				siteSelection,
 				navigation,
 				backupRestore,
@@ -77,7 +77,7 @@ export default function() {
 		}
 		/* handles /backups/:site, see `backupMainPath` */
 		page(
-			backupMainPath( ':site' ),
+			backupMainPath(':site'),
 			siteSelection,
 			navigation,
 			backups,
@@ -86,6 +86,6 @@ export default function() {
 			clientRender
 		);
 		/* handles /backups, see `backupMainPath` */
-		page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
+		page(backupMainPath(), siteSelection, sites, makeLayout, clientRender);
 	}
 }

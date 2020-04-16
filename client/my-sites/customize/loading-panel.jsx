@@ -24,19 +24,19 @@ class CustomizerLoadingPanel extends React.Component {
 	};
 
 	render() {
-		const noticeClassNames = classnames( 'customizer-loading-panel__notice', {
+		const noticeClassNames = classnames('customizer-loading-panel__notice', {
 			'is-iframe-loaded': this.props.isLoaded,
-		} );
+		});
 
 		return (
-			<div className={ noticeClassNames }>
+			<div className={noticeClassNames}>
 				<div className="customizer-loading-panel__notice-label">
 					<Spinner />
-					{ this.props.translate( 'Loading the Customizer…' ) }
+					{this.props.translate('Loading the Customizer…')}
 				</div>
 			</div>
 		);
 	}
 }
 
-export default localize( CustomizerLoadingPanel );
+export default localize(CustomizerLoadingPanel);

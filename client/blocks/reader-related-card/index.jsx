@@ -29,42 +29,38 @@ import './style.scss';
 
 const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
 
-function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
-	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
-	const siteName = ( site && site.title ) || post.site_name;
-	const authorName = get( post, 'author.name', '' );
-	const authorAndSiteAreDifferent = ! areEqualIgnoringWhitespaceAndCase( siteName, authorName );
+function AuthorAndSiteFollow({ post, site, onSiteClick, followSource }) {
+	const siteUrl = getStreamUrl(post.feed_ID, post.site_ID);
+	const siteName = (site && site.title) || post.site_name;
+	const authorName = get(post, 'author.name', '');
+	const authorAndSiteAreDifferent = !areEqualIgnoringWhitespaceAndCase(siteName, authorName);
 
 	return (
 		<div className="reader-related-card__meta">
-			<a href={ siteUrl } onClick={ onSiteClick } aria-hidden="true">
-				<Gravatar user={ post.author } />
+			<a href={siteUrl} onClick={onSiteClick} aria-hidden="true">
+				<Gravatar user={post.author} />
 			</a>
 			<div className="reader-related-card__byline">
-				{ authorName && authorAndSiteAreDifferent && (
+				{authorName && authorAndSiteAreDifferent && (
 					<span className="reader-related-card__byline-author">
 						<ReaderAuthorLink
-							author={ post.author }
-							siteUrl={ siteUrl }
-							post={ post }
-							onClick={ onSiteClick }
+							author={post.author}
+							siteUrl={siteUrl}
+							post={post}
+							onClick={onSiteClick}
 							className="reader-related-card__link"
 						>
-							{ authorName }
+							{authorName}
 						</ReaderAuthorLink>
 					</span>
-				) }
+				)}
 				<span className="reader-related-card__byline-site">
-					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
-						{ siteName }
+					<a href={siteUrl} onClick={onSiteClick} className="reader-related-card__link">
+						{siteName}
 					</a>
 				</span>
 			</div>
-			<FollowButton
-				siteUrl={ post.site_URL }
-				followSource={ followSource }
-				railcar={ post.railcar }
-			/>
+			<FollowButton siteUrl={post.site_URL} followSource={followSource} railcar={post.railcar} />
 		</div>
 	);
 }
@@ -72,7 +68,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 function AuthorAndSiteFollowPlaceholder() {
 	return (
 		<div className="reader-related-card__meta is-placeholder">
-			<Gravatar user={ null } />
+			<Gravatar user={null} />
 			<div className="reader-related-card__byline">
 				<span className="reader-related-card__byline-author">Author name</span>
 				<span className="reader-related-card__byline-site">Site title</span>
@@ -98,72 +94,72 @@ function RelatedPostCardPlaceholder() {
 	);
 }
 
-export function RelatedPostCard( {
+export function RelatedPostCard({
 	post,
 	site,
 	siteId,
 	onPostClick = noop,
 	onSiteClick = noop,
 	followSource,
-} ) {
-	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
+}) {
+	if (!post || post._state === 'minimal' || post._state === 'pending') {
 		return <RelatedPostCardPlaceholder />;
 	}
 
-	const postLink = getPostUrl( post );
-	const classes = classnames( 'reader-related-card', {
-		'has-thumbnail': !! post.canonical_media,
+	const postLink = getPostUrl(post);
+	const classes = classnames('reader-related-card', {
+		'has-thumbnail': !!post.canonical_media,
 		'has-excerpt': post.excerpt && post.excerpt.length > 1,
-	} );
-	const postClickTracker = partial( onPostClick, post );
-	const siteClickTracker = partial( onSiteClick, post );
+	});
+	const postClickTracker = partial(onPostClick, post);
+	const siteClickTracker = partial(onSiteClick, post);
 
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
-	if ( ! canonicalMedia ) {
+	if (!canonicalMedia) {
 		featuredAsset = null;
-	} else if ( canonicalMedia.mediaType === 'video' ) {
+	} else if (canonicalMedia.mediaType === 'video') {
 		featuredAsset = (
 			<ReaderFeaturedVideo
-				{ ...canonicalMedia }
-				videoEmbed={ canonicalMedia }
-				className={ 'reader-related-card__featured-image' }
-				href={ postLink }
-				onThumbnailClick={ postClickTracker }
-				allowPlaying={ false }
+				{...canonicalMedia}
+				videoEmbed={canonicalMedia}
+				className={'reader-related-card__featured-image'}
+				href={postLink}
+				onThumbnailClick={postClickTracker}
+				allowPlaying={false}
 			/>
 		);
 	} else {
 		featuredAsset = (
 			<ReaderFeaturedImage
-				imageUrl={ canonicalMedia.src }
-				imageWidth={ RELATED_IMAGE_WIDTH }
-				onClick={ postClickTracker }
-				href={ postLink }
-				className={ 'reader-related-card__featured-image' }
+				imageUrl={canonicalMedia.src}
+				imageWidth={RELATED_IMAGE_WIDTH}
+				onClick={postClickTracker}
+				href={postLink}
+				className={'reader-related-card__featured-image'}
 			/>
 		);
 	}
 
 	return (
-		<Card className={ classes }>
-			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
+		<Card className={classes}>
+			{siteId && !site && <QueryReaderSite siteId={siteId} />}
 			<AuthorAndSiteFollow
-				post={ post }
-				site={ site }
-				onSiteClick={ siteClickTracker }
-				followSource={ followSource }
+				post={post}
+				site={site}
+				onSiteClick={siteClickTracker}
+				followSource={followSource}
 			/>
-			{ featuredAsset }
+			{featuredAsset}
 			<a
-				href={ postLink }
+				href={postLink}
 				className="reader-related-card__post reader-related-card__link-block"
-				onClick={ postClickTracker }
+				onClick={postClickTracker}
 			>
 				<div className="reader-related-card__site-info">
-					<h1 className="reader-related-card__title">{ post.title }</h1>
+					<h1 className="reader-related-card__title">{post.title}</h1>
 					<div className="reader-related-card__excerpt post-excerpt">
-						{ !! post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html }
+						{!!post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html}
 					</div>
 				</div>
 			</a>
@@ -171,16 +167,16 @@ export function RelatedPostCard( {
 	);
 }
 
-export const LocalizedRelatedPostCard = localize( RelatedPostCard );
+export const LocalizedRelatedPostCard = localize(RelatedPostCard);
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const { post } = ownProps;
-	const actualPost = getPostById( state, post );
+	const actualPost = getPostById(state, post);
 	const siteId = post && post.site_ID;
-	const site = siteId && getSite( state, siteId );
+	const site = siteId && getSite(state, siteId);
 	return {
 		post: actualPost,
 		site,
 		siteId,
 	};
-} )( LocalizedRelatedPostCard );
+})(LocalizedRelatedPostCard);

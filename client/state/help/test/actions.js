@@ -9,15 +9,15 @@ import { expect } from 'chai';
 import { selectSiteId } from '../actions';
 import { HELP_CONTACT_FORM_SITE_SELECT } from 'state/action-types';
 
-describe( 'actions', () => {
-	describe( '#selectSiteId()', () => {
-		test( 'should return an action object', () => {
-			const action = selectSiteId( 1 );
+describe('actions', () => {
+	describe('#selectSiteId()', () => {
+		test('should return an action object', () => {
+			const action = selectSiteId(1);
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: HELP_CONTACT_FORM_SITE_SELECT,
 				siteId: 1,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

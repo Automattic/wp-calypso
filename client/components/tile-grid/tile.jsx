@@ -45,27 +45,27 @@ export default class extends React.PureComponent {
 
 		return (
 			<Card
-				className={ tileClassName }
-				href={ href }
-				onClick={ onClick }
+				className={tileClassName}
+				href={href}
+				onClick={onClick}
 				tabIndex="-1"
-				data-e2e-type={ e2eType }
+				data-e2e-type={e2eType}
 			>
-				{ image && (
+				{image && (
 					<div className="tile-grid__image">
-						<img src={ image } />
+						<img src={image} />
 					</div>
-				) }
+				)}
 				<div className="tile-grid__item-copy">
-					{ buttonLabel && (
+					{buttonLabel && (
 						<Button
-							className={ classNames( 'tile-grid__cta', buttonClassName ) }
-							compact={ !! description }
+							className={classNames('tile-grid__cta', buttonClassName)}
+							compact={!!description}
 						>
-							{ buttonLabel }
+							{buttonLabel}
 						</Button>
-					) }
-					{ description && <p className="tile-grid__item-description">{ description }</p> }
+					)}
+					{description && <p className="tile-grid__item-description">{description}</p>}
 				</div>
 			</Card>
 		);

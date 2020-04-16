@@ -17,7 +17,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const deleteUserProfileLink = action =>
+export const deleteUserProfileLink = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -33,7 +33,7 @@ export const deleteUserProfileLink = action =>
  * @param   {object} action Redux action
  * @returns {object} Dispatched user profile links delete success action
  */
-export const handleDeleteSuccess = ( { linkSlug } ) => deleteUserProfileLinkSuccess( linkSlug );
+export const handleDeleteSuccess = ({ linkSlug }) => deleteUserProfileLinkSuccess(linkSlug);
 
 /**
  * Dispatches a user profile links deletion error action when the request failed.
@@ -42,15 +42,15 @@ export const handleDeleteSuccess = ( { linkSlug } ) => deleteUserProfileLinkSucc
  * @param   {object} error  Error returned
  * @returns {object} Dispatched user profile links delete error action
  */
-export const handleDeleteError = ( { linkSlug }, error ) =>
-	deleteUserProfileLinkError( linkSlug, error );
+export const handleDeleteError = ({ linkSlug }, error) =>
+	deleteUserProfileLinkError(linkSlug, error);
 
-registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/delete/index.js', {
-	[ USER_PROFILE_LINKS_DELETE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/settings/profile-links/delete/index.js', {
+	[USER_PROFILE_LINKS_DELETE]: [
+		dispatchRequest({
 			fetch: deleteUserProfileLink,
 			onSuccess: handleDeleteSuccess,
 			onError: handleDeleteError,
-		} ),
+		}),
 	],
-} );
+});

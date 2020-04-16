@@ -22,21 +22,21 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param 	{string} action saveDomainIpsTag action
  * @returns {Array} array of further actions
  */
-export const saveDomainIpsTag = action => {
+export const saveDomainIpsTag = (action) => {
 	const { domain, ipsTag } = action;
 
 	return [
-		updateDomainTransfer( domain, { saveStatus: 'saving' } ),
+		updateDomainTransfer(domain, { saveStatus: 'saving' }),
 		http(
 			{
 				apiVersion: '1',
 				method: 'POST',
 				path: '/domains/' + domain + '/transfer/',
 				body: {
-					domainStatus: JSON.stringify( {
+					domainStatus: JSON.stringify({
 						command: 'set-ips-tag',
 						payload: { ips_tag: ipsTag },
-					} ),
+					}),
 				},
 			},
 			action
@@ -44,27 +44,27 @@ export const saveDomainIpsTag = action => {
 	];
 };
 
-export const handleIpsTagSaveSuccess = ( { domain, selectedRegistrar } ) =>
-	updateDomainTransfer( domain, { selectedRegistrar, saveStatus: 'success' } );
+export const handleIpsTagSaveSuccess = ({ domain, selectedRegistrar }) =>
+	updateDomainTransfer(domain, { selectedRegistrar, saveStatus: 'success' });
 
-export const handleIpsTagSaveFailure = ( { domain, selectedRegistrar } ) => [
-	updateDomainTransfer( domain, { selectedRegistrar, saveStatus: 'error' } ),
-	errorNotice( translate( 'IPS tag save failed!' ), {
+export const handleIpsTagSaveFailure = ({ domain, selectedRegistrar }) => [
+	updateDomainTransfer(domain, { selectedRegistrar, saveStatus: 'error' }),
+	errorNotice(translate('IPS tag save failed!'), {
 		duration: 20000,
 		id: 'ips-tag-save-failure-notice',
 		isPersistent: true,
 		href: 'https://wordpress.com/help/contact',
 		button: 'Get Help',
 		showDismiss: false,
-	} ),
+	}),
 ];
 
-registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
-	[ DOMAIN_TRANSFER_IPS_TAG_SAVE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/domains/transfer/index.js', {
+	[DOMAIN_TRANSFER_IPS_TAG_SAVE]: [
+		dispatchRequest({
 			fetch: saveDomainIpsTag,
 			onSuccess: handleIpsTagSaveSuccess,
 			onError: handleIpsTagSaveFailure,
-		} ),
+		}),
 	],
-} );
+});

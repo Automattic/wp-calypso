@@ -27,7 +27,7 @@ import './style.scss';
 const DATE_FORMAT_SHORT = 'MMMM D';
 const DATE_FORMAT_LONG = 'dddd, MMMM Do LT';
 
-const GMClosureNotice = ( {
+const GMClosureNotice = ({
 	priorityChatClosesAt,
 	priorityChatReopensAt,
 	compact,
@@ -35,24 +35,24 @@ const GMClosureNotice = ( {
 	basicChatReopensAt,
 	displayAt,
 	purchases,
-} ) => {
+}) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const hasBusinessOrEcommercePlan = some(
 		purchases,
-		( { productSlug } ) => isBusinessPlan( productSlug ) || isEcommercePlan( productSlug )
+		({ productSlug }) => isBusinessPlan(productSlug) || isEcommercePlan(productSlug)
 	);
 	const hasPersonalOrPremiumPlan = some(
 		purchases,
-		( { productSlug } ) => isPersonalPlan( productSlug ) || isPremiumPlan( productSlug )
+		({ productSlug }) => isPersonalPlan(productSlug) || isPremiumPlan(productSlug)
 	);
-	const hasNoPlan = ! hasBusinessOrEcommercePlan && ! hasPersonalOrPremiumPlan;
+	const hasNoPlan = !hasBusinessOrEcommercePlan && !hasPersonalOrPremiumPlan;
 
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
 
-	const [ closesAt, reopensAt ] = [
+	const [closesAt, reopensAt] = [
 		moment.tz(
 			hasBusinessOrEcommercePlan ? priorityChatClosesAt : basicChatClosesAt,
 			guessedTimezone
@@ -63,22 +63,20 @@ const GMClosureNotice = ( {
 		),
 	];
 
-	if ( ! currentDate.isBetween( displayAt, reopensAt ) ) {
+	if (!currentDate.isBetween(displayAt, reopensAt)) {
 		return null;
 	}
 
-	const HEADING = translate( 'Limited Support %(closesAt)s – %(reopensAt)s', {
+	const HEADING = translate('Limited Support %(closesAt)s – %(reopensAt)s', {
 		args: {
-			closesAt: closesAt.format( DATE_FORMAT_SHORT ),
-			reopensAt: reopensAt.format(
-				reopensAt.isSame( closesAt, 'month' ) ? 'D' : DATE_FORMAT_SHORT
-			),
+			closesAt: closesAt.format(DATE_FORMAT_SHORT),
+			reopensAt: reopensAt.format(reopensAt.isSame(closesAt, 'month') ? 'D' : DATE_FORMAT_SHORT),
 		},
-	} );
+	});
 
 	const mainMessageArgs = {
-		closes_at: closesAt.format( DATE_FORMAT_LONG ),
-		reopens_at: reopensAt.format( DATE_FORMAT_LONG ),
+		closes_at: closesAt.format(DATE_FORMAT_LONG),
+		reopens_at: reopensAt.format(DATE_FORMAT_LONG),
 	};
 
 	const MAIN_MESSAGES = {
@@ -97,9 +95,9 @@ const GMClosureNotice = ( {
 				'Live chat support is closed until %(reopens_at)s. In the meantime you can still reach us by email.',
 				{ args: mainMessageArgs }
 			),
-			nonPlan: translate( 'Private support is closed until %(reopens_at)s.', {
+			nonPlan: translate('Private support is closed until %(reopens_at)s.', {
 				args: mainMessageArgs,
-			} ),
+			}),
 		},
 	};
 
@@ -119,10 +117,10 @@ const GMClosureNotice = ( {
 			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}%(linkUrl)s{{/supportLink}}',
 			{
 				components: {
-					supportLink: <a href={ localizeUrl( 'https://wordpress.com/support/' ) } />,
+					supportLink: <a href={localizeUrl('https://wordpress.com/support/')} />,
 				},
 				args: {
-					linkUrl: localizeUrl( 'https://wordpress.com/support/' ),
+					linkUrl: localizeUrl('https://wordpress.com/support/'),
 				},
 			}
 		),
@@ -132,47 +130,47 @@ const GMClosureNotice = ( {
 		'Our staff will be keeping an eye on the {{link}}Forums{{/link}} for urgent matters.',
 		{
 			components: {
-				link: <a href={ localizeUrl( 'https://en.forums.wordpress.com/forum/support/' ) } />,
+				link: <a href={localizeUrl('https://en.forums.wordpress.com/forum/support/')} />,
 			},
 		}
 	);
 
-	const period = currentDate.isBefore( closesAt ) ? 'before' : 'during';
-	const mainMessage = hasNoPlan ? MAIN_MESSAGES[ period ].nonPlan : MAIN_MESSAGES[ period ].hasPlan;
+	const period = currentDate.isBefore(closesAt) ? 'before' : 'during';
+	const mainMessage = hasNoPlan ? MAIN_MESSAGES[period].nonPlan : MAIN_MESSAGES[period].hasPlan;
 	const reason = hasNoPlan ? REASON_MESSAGES.nonPlan : REASON_MESSAGES.hasPlan;
 
-	if ( compact ) {
+	if (compact) {
 		return (
 			<FoldableCard
 				className="gm-closure-notice"
-				clickableHeader={ true }
-				compact={ true }
-				header={ HEADING }
+				clickableHeader={true}
+				compact={true}
+				header={HEADING}
 			>
-				{ mainMessage }
+				{mainMessage}
 				<br />
 				<br />
-				{ translate( '{{contactLink}}Read more.{{/contactLink}}', {
+				{translate('{{contactLink}}Read more.{{/contactLink}}', {
 					components: { contactLink: <a href="/help/contact" /> },
-				} ) }
+				})}
 			</FoldableCard>
 		);
 	}
 
 	return (
 		<div className="gm-closure-notice">
-			<FormSectionHeading>{ HEADING }</FormSectionHeading>
+			<FormSectionHeading>{HEADING}</FormSectionHeading>
 			<div>
-				<p>{ mainMessage }</p>
-				<p>{ reason }</p>
-				{ hasNoPlan && <p>{ FORUMS_NOTE }</p> }
+				<p>{mainMessage}</p>
+				<p>{reason}</p>
+				{hasNoPlan && <p>{FORUMS_NOTE}</p>}
 			</div>
 			<hr />
 		</div>
 	);
 };
 
-export default connect( state => {
-	const userId = getCurrentUserId( state );
-	return { purchases: getUserPurchases( state, userId ) };
-} )( GMClosureNotice );
+export default connect((state) => {
+	const userId = getCurrentUserId(state);
+	return { purchases: getUserPurchases(state, userId) };
+})(GMClosureNotice);

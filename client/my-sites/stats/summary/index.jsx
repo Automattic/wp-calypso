@@ -30,22 +30,22 @@ const StatsStrings = statsStringsFactory();
 
 class StatsSummary extends Component {
 	goBack = () => {
-		const pathParts = this.props.path.split( '/' );
+		const pathParts = this.props.path.split('/');
 		const queryString = this.props.context.querystring
 			? '?' + this.props.context.querystring
 			: null;
 
-		if ( history.length ) {
+		if (history.length) {
 			history.back();
 		} else {
-			setTimeout( () => {
-				page.show( '/stats/' + pathParts[ pathParts.length - 1 ] + queryString );
-			} );
+			setTimeout(() => {
+				page.show('/stats/' + pathParts[pathParts.length - 1] + queryString);
+			});
 		}
 	};
 
 	componentDidMount() {
-		window.scrollTo( 0, 0 );
+		window.scrollTo(0, 0);
 	}
 
 	render() {
@@ -59,20 +59,20 @@ class StatsSummary extends Component {
 		const { period, endOf } = this.props.period;
 		const query = {
 			period: period,
-			date: endOf.format( 'YYYY-MM-DD' ),
+			date: endOf.format('YYYY-MM-DD'),
 			max: 0,
 		};
 
-		switch ( this.props.context.params.module ) {
+		switch (this.props.context.params.module) {
 			case 'referrers':
-				title = translate( 'Referrers' );
+				title = translate('Referrers');
 				summaryView = (
 					<StatsModule
 						key="referrers-summary"
 						path="referrers"
-						moduleStrings={ StatsStrings.referrers }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
+						moduleStrings={StatsStrings.referrers}
+						period={this.props.period}
+						query={merge({}, statsQueryOptions, query)}
 						statType="statsReferrers"
 						summary
 					/>
@@ -80,14 +80,14 @@ class StatsSummary extends Component {
 				break;
 
 			case 'clicks':
-				title = translate( 'Clicks' );
+				title = translate('Clicks');
 				summaryView = (
 					<StatsModule
 						key="clicks-summary"
 						path="clicks"
-						moduleStrings={ StatsStrings.clicks }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
+						moduleStrings={StatsStrings.clicks}
+						period={this.props.period}
+						query={merge({}, statsQueryOptions, query)}
 						statType="statsClicks"
 						summary
 					/>
@@ -95,27 +95,27 @@ class StatsSummary extends Component {
 				break;
 
 			case 'countryviews':
-				title = translate( 'Countries' );
+				title = translate('Countries');
 				summaryView = (
 					<Countries
 						key="countries-summary"
 						path="countryviews"
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						summary={ true }
+						period={this.props.period}
+						query={merge({}, statsQueryOptions, query)}
+						summary={true}
 					/>
 				);
 				break;
 
 			case 'posts':
-				title = translate( 'Posts & Pages' );
+				title = translate('Posts & Pages');
 				summaryView = (
 					<StatsModule
 						key="posts-summary"
 						path="posts"
-						moduleStrings={ StatsStrings.posts }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
+						moduleStrings={StatsStrings.posts}
+						period={this.props.period}
+						query={merge({}, statsQueryOptions, query)}
 						statType="statsTopPosts"
 						summary
 					/>
@@ -123,33 +123,33 @@ class StatsSummary extends Component {
 				break;
 
 			case 'authors':
-				title = translate( 'Authors' );
+				title = translate('Authors');
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
 					<StatsModule
 						key="authors-summary"
 						path="authors"
-						moduleStrings={ StatsStrings.authors }
-						period={ this.props.period }
-						query={ query }
+						moduleStrings={StatsStrings.authors}
+						period={this.props.period}
+						query={query}
 						statType="statsTopAuthors"
 						className="stats__author-views"
-						summary={ true }
+						summary={true}
 					/>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				break;
 
 			case 'videoplays':
-				title = translate( 'Videos' );
+				title = translate('Videos');
 				summaryView = (
 					<StatsModule
 						key="videoplays-summary"
 						path="videoplays"
-						moduleStrings={ StatsStrings.videoplays }
-						period={ this.props.period }
-						query={ query }
+						moduleStrings={StatsStrings.videoplays}
+						period={this.props.period}
+						query={query}
 						statType="statsVideoPlays"
 						summary
 					/>
@@ -157,14 +157,14 @@ class StatsSummary extends Component {
 				break;
 
 			case 'filedownloads':
-				title = translate( 'File Downloads' );
+				title = translate('File Downloads');
 				summaryView = (
 					<StatsModule
 						key="filedownloads-summary"
 						path="filedownloads"
-						moduleStrings={ StatsStrings.filedownloads }
-						period={ this.props.period }
-						query={ query }
+						moduleStrings={StatsStrings.filedownloads}
+						period={this.props.period}
+						query={query}
 						statType="statsFileDownloads"
 						summary
 					/>
@@ -172,8 +172,8 @@ class StatsSummary extends Component {
 				break;
 
 			case 'videodetails':
-				title = translate( 'Video' );
-				if ( this.props.media ) {
+				title = translate('Video');
+				if (this.props.media) {
 					title = this.props.media.title;
 				}
 
@@ -181,56 +181,56 @@ class StatsSummary extends Component {
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				chartTitle = (
 					<h3 key="summary-title" className="stats-section-title">
-						{ translate( 'Video Details' ) }
+						{translate('Video Details')}
 					</h3>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-				if ( siteId ) {
+				if (siteId) {
 					summaryViews.push(
-						<QueryMedia key="query-media" siteId={ siteId } mediaId={ this.props.postId } />
+						<QueryMedia key="query-media" siteId={siteId} mediaId={this.props.postId} />
 					);
 				}
-				summaryViews.push( chartTitle );
-				barChart = <StatsVideoSummary key="video-chart" postId={ this.props.postId } />;
+				summaryViews.push(chartTitle);
+				barChart = <StatsVideoSummary key="video-chart" postId={this.props.postId} />;
 
-				summaryViews.push( barChart );
-				summaryView = <VideoPlayDetails key="page-embeds" postId={ this.props.postId } />;
+				summaryViews.push(barChart);
+				summaryView = <VideoPlayDetails key="page-embeds" postId={this.props.postId} />;
 				break;
 
 			case 'searchterms':
-				title = translate( 'Search Terms' );
+				title = translate('Search Terms');
 				summaryView = (
 					<StatsModule
 						key="search-terms-summary"
 						path="searchterms"
-						moduleStrings={ StatsStrings.search }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
+						moduleStrings={StatsStrings.search}
+						period={this.props.period}
+						query={merge({}, statsQueryOptions, query)}
 						statType="statsSearchTerms"
 						summary
 					/>
 				);
 				break;
 			case 'annualstats':
-				title = translate( 'Annual Site Stats' );
+				title = translate('Annual Site Stats');
 				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
 		}
 
-		summaryViews.push( summaryView );
+		summaryViews.push(summaryView);
 
 		const { module } = this.props.context.params;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout={true}>
 				<PageViewTracker
-					path={ `/stats/${ period }/${ module }/:site` }
-					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
+					path={`/stats/${period}/${module}/:site`}
+					title={`Stats > ${titlecase(period)} > ${titlecase(module)}`}
 				/>
 				<div id="my-stats-content">
-					<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
-					{ summaryViews }
+					<HeaderCake onClick={this.goBack}>{title}</HeaderCake>
+					{summaryViews}
 				</div>
 				<JetpackColophon />
 			</Main>
@@ -238,10 +238,10 @@ class StatsSummary extends Component {
 	}
 }
 
-export default connect( ( state, { context, postId } ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state, { context, postId }) => {
+	const siteId = getSelectedSiteId(state);
 	return {
-		siteId: getSelectedSiteId( state ),
-		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
+		siteId: getSelectedSiteId(state),
+		media: context.params.module === 'videodetails' ? getMediaItem(state, siteId, postId) : false,
 	};
-} )( localize( StatsSummary ) );
+})(localize(StatsSummary));

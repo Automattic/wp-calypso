@@ -22,43 +22,43 @@ import {
 	isTheme,
 } from 'lib/products-values';
 
-const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
+const ProductLink = ({ productUrl, purchase, selectedSite }) => {
 	let props = {},
 		url,
 		text;
 
-	if ( ! selectedSite ) {
+	if (!selectedSite) {
 		return <span />;
 	}
 
-	if ( isPlan( purchase ) ) {
+	if (isPlan(purchase)) {
 		url = '/plans/my-plan/' + selectedSite.slug;
-		text = i18n.translate( 'View Plan Features' );
+		text = i18n.translate('View Plan Features');
 	}
 
-	if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
-		url = domainManagementEdit( selectedSite.slug, purchase.meta );
-		text = i18n.translate( 'Domain Settings' );
+	if (isDomainProduct(purchase) || isSiteRedirect(purchase)) {
+		url = domainManagementEdit(selectedSite.slug, purchase.meta);
+		text = i18n.translate('Domain Settings');
 	}
 
-	if ( isGoogleApps( purchase ) ) {
-		url = emailManagement( selectedSite.slug, purchase.meta );
-		text = i18n.translate( 'Email Settings' );
+	if (isGoogleApps(purchase)) {
+		url = emailManagement(selectedSite.slug, purchase.meta);
+		text = i18n.translate('Email Settings');
 	}
 
-	if ( isTheme( purchase ) ) {
+	if (isTheme(purchase)) {
 		url = productUrl;
-		text = i18n.translate( 'Theme Details' );
+		text = i18n.translate('Theme Details');
 
-		if ( ! config.isEnabled( 'manage/themes/details' ) ) {
+		if (!config.isEnabled('manage/themes/details')) {
 			props = { target: '_blank' };
 		}
 	}
 
-	if ( url && text ) {
+	if (url && text) {
 		return (
-			<a className="product-link" href={ url } { ...props }>
-				{ text }
+			<a className="product-link" href={url} {...props}>
+				{text}
 			</a>
 		);
 	}
@@ -68,15 +68,15 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 
 ProductLink.propTypes = {
 	purchase: PropTypes.object.isRequired,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+	selectedSite: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 };
 
-export default connect( ( state, { purchase } ) => {
-	if ( isTheme( purchase ) ) {
+export default connect((state, { purchase }) => {
+	if (isTheme(purchase)) {
 		return {
 			// No <QueryTheme /> component needed, since getThemeDetailsUrl() only needs the themeId which we pass here.
-			productUrl: getThemeDetailsUrl( state, purchase.meta, purchase.siteId ),
+			productUrl: getThemeDetailsUrl(state, purchase.meta, purchase.siteId),
 		};
 	}
 	return {};
-} )( ProductLink );
+})(ProductLink);

@@ -26,24 +26,24 @@ export default class SectionHeader extends PureComponent {
 
 	render() {
 		const hasCount = 'number' === typeof this.props.count;
-		const isEmpty = ! ( this.props.label || hasCount || this.props.children );
-		const classes = classNames( this.props.className, 'section-header', {
+		const isEmpty = !(this.props.label || hasCount || this.props.children);
+		const classes = classNames(this.props.className, 'section-header', {
 			'is-empty': isEmpty,
 			'is-placeholder': this.props.isPlaceholder,
-		} );
+		});
 		const { id, popoverText } = this.props;
 		const otherProps = { id };
 
 		return (
-			<CompactCard className={ classes } href={ this.props.href } { ...otherProps }>
+			<CompactCard className={classes} href={this.props.href} {...otherProps}>
 				<div className="section-header__label">
-					<span className="section-header__label-text">{ this.props.label }</span>
-					{ hasCount && <Count count={ this.props.count } /> }
-					{ popoverText && ! this.props.isPlaceholder && (
-						<SupportInfo position="right" text={ popoverText } />
-					) }
+					<span className="section-header__label-text">{this.props.label}</span>
+					{hasCount && <Count count={this.props.count} />}
+					{popoverText && !this.props.isPlaceholder && (
+						<SupportInfo position="right" text={popoverText} />
+					)}
 				</div>
-				<div className="section-header__actions">{ this.props.children }</div>
+				<div className="section-header__actions">{this.props.children}</div>
 			</CompactCard>
 		);
 	}

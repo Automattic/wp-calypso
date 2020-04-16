@@ -23,8 +23,8 @@ import {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case HAPPINESS_ENGINEERS_FETCH:
 			return true;
 		case HAPPINESS_ENGINEERS_FETCH_FAILURE:
@@ -34,7 +34,7 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
@@ -45,18 +45,18 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  * @param  {object} action Action object
  * @returns {Array}         Updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = null, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = null, action) => {
+	switch (action.type) {
 		case HAPPINESS_ENGINEERS_RECEIVE: {
 			const { happinessEngineers } = action;
-			return map( happinessEngineers, 'avatar_URL' );
+			return map(happinessEngineers, 'avatar_URL');
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	items,
-} );
+});

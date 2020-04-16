@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const request = require( 'request' );
-const vm = require( 'vm' );
-const _ = require( 'lodash' );
-const path = require( 'path' );
-const fs = require( 'fs' );
+const request = require('request');
+const vm = require('vm');
+const _ = require('lodash');
+const path = require('path');
+const fs = require('fs');
 
 const areaCodes = {
 	CA: [
@@ -49,8 +49,8 @@ const areaCodes = {
 		'902',
 		'905',
 	],
-	DO: [ '809', '829', '849' ],
-	PR: [ '787', '939' ],
+	DO: ['809', '829', '849'],
+	PR: ['787', '939'],
 };
 
 /**
@@ -134,40 +134,37 @@ const aliases = {
 };
 
 function getLibPhoneNumberData() {
-	return new Promise( function( resolve, reject ) {
-		request.get( LIBPHONENUMBER_METADATA_URL, function( error, response, body ) {
-			if ( error || response.statusCode >= 400 ) {
+	return new Promise(function (resolve, reject) {
+		request.get(LIBPHONENUMBER_METADATA_URL, function (error, response, body) {
+			if (error || response.statusCode >= 400) {
 				throw error || response.statusCode;
 			}
 
-			const capture = body.substring(
-				body.indexOf( 'countryToMetadata = ' ) + 20,
-				body.length - 2
-			);
+			const capture = body.substring(body.indexOf('countryToMetadata = ') + 20, body.length - 2);
 			const sandbox = { container: {} };
-			const script = new vm.Script( 'container.data = ' + capture );
+			const script = new vm.Script('container.data = ' + capture);
 
 			try {
-				script.runInNewContext( sandbox );
-			} catch ( e ) {
-				reject( e );
+				script.runInNewContext(sandbox);
+			} catch (e) {
+				reject(e);
 			}
 
-			if ( sandbox.container.data ) {
-				resolve( sandbox.container.data );
+			if (sandbox.container.data) {
+				resolve(sandbox.container.data);
 			} else {
-				reject( new Error( 'Failed to parse data' ) );
+				reject(new Error('Failed to parse data'));
 			}
-		} );
-	} );
+		});
+	});
 }
 
-function processNumberFormat( format ) {
+function processNumberFormat(format) {
 	return {
-		match: format[ numberFormatIndexes.PATTERN ],
-		replace: format[ numberFormatIndexes.FORMAT ],
-		nationalFormat: format[ numberFormatIndexes.NATIONAL_CALLING_FORMAT ] || undefined,
-		leadingDigitPattern: _.last( format[ numberFormatIndexes.LEADING_DIGIT_PATTERN ] || [] ),
+		match: format[numberFormatIndexes.PATTERN],
+		replace: format[numberFormatIndexes.FORMAT],
+		nationalFormat: format[numberFormatIndexes.NATIONAL_CALLING_FORMAT] || undefined,
+		leadingDigitPattern: _.last(format[numberFormatIndexes.LEADING_DIGIT_PATTERN] || []),
 	};
 }
 
@@ -177,31 +174,27 @@ function processNumberFormat( format ) {
  * @param {object} obj
  * @returns {object} obj, with keys with value "undefined" removed.
  */
-function deepRemoveUndefinedKeysFromObject( obj ) {
-	for ( let key in obj ) {
-		if ( obj.hasOwnProperty( key ) ) {
-			if ( _.isUndefined( obj[ key ] ) ) {
-				delete obj[ key ];
-			} else if ( _.isObject( obj[ key ] ) ) {
-				deepRemoveUndefinedKeysFromObject( obj[ key ] );
+function deepRemoveUndefinedKeysFromObject(obj) {
+	for (let key in obj) {
+		if (obj.hasOwnProperty(key)) {
+			if (_.isUndefined(obj[key])) {
+				delete obj[key];
+			} else if (_.isObject(obj[key])) {
+				deepRemoveUndefinedKeysFromObject(obj[key]);
 			}
 		}
 	}
 	return obj;
 }
 
-function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
-	return function deepRemoveEmptyArraysFromObject( obj ) {
-		for ( let key in obj ) {
-			if ( obj.hasOwnProperty( key ) ) {
-				if (
-					_.includes( allowedKeys, key ) &&
-					_.isArray( obj[ key ] ) &&
-					obj[ key ].length === 0
-				) {
-					delete obj[ key ];
-				} else if ( _.isObject( obj[ key ] ) ) {
-					deepRemoveEmptyArraysFromObject( obj[ key ] );
+function generateDeepRemoveEmptyArraysFromObject(allowedKeys) {
+	return function deepRemoveEmptyArraysFromObject(obj) {
+		for (let key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				if (_.includes(allowedKeys, key) && _.isArray(obj[key]) && obj[key].length === 0) {
+					delete obj[key];
+				} else if (_.isObject(obj[key])) {
+					deepRemoveEmptyArraysFromObject(obj[key]);
 				}
 			}
 		}
@@ -209,16 +202,16 @@ function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 	};
 }
 
-function removeAllNumberKeys( obj ) {
-	return _.omitBy( obj, ( val, key ) => /^\d+$/.test( key ) );
+function removeAllNumberKeys(obj) {
+	return _.omitBy(obj, (val, key) => /^\d+$/.test(key));
 }
 
-function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryData ) {
-	for ( let key in countryData ) {
-		if ( countryData.hasOwnProperty( key ) ) {
-			const country = countryData[ key ],
+function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode(countryData) {
+	for (let key in countryData) {
+		if (countryData.hasOwnProperty(key)) {
+			const country = countryData[key],
 				{ countryDialCode, dialCode } = country;
-			if ( countryDialCode === dialCode ) {
+			if (countryDialCode === dialCode) {
 				delete country.regionCode;
 				delete country.countryDialCode;
 			}
@@ -233,50 +226,48 @@ function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryDat
  * @param {{}} libPhoneNumberData
  * @returns {{}}
  */
-function processLibPhoneNumberMetadata( libPhoneNumberData ) {
+function processLibPhoneNumberMetadata(libPhoneNumberData) {
 	const data = {};
-	for ( let countryCode in libPhoneNumberData ) {
-		if ( libPhoneNumberData.hasOwnProperty( countryCode ) ) {
+	for (let countryCode in libPhoneNumberData) {
+		if (libPhoneNumberData.hasOwnProperty(countryCode)) {
 			const countryCodeUpper = countryCode.toUpperCase();
-			const country = libPhoneNumberData[ countryCode ];
-			data[ countryCodeUpper ] = {
+			const country = libPhoneNumberData[countryCode];
+			data[countryCodeUpper] = {
 				isoCode: countryCodeUpper,
 				dialCode: String(
-					country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] +
-						( country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '' )
+					country[libPhoneNumberIndexes.COUNTRY_DIAL_CODE] +
+						(country[libPhoneNumberIndexes.REGION_AREA_CODE] || '')
 				),
-				countryDialCode: String( country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] ),
-				regionCode: country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '',
-				areaCodes: areaCodes[ countryCode ],
-				nationalPrefix: country[ libPhoneNumberIndexes.NATIONAL_PREFIX ],
-				patterns: ( country[ libPhoneNumberIndexes.NUMBER_FORMAT ] || [] ).map(
-					processNumberFormat
-				),
+				countryDialCode: String(country[libPhoneNumberIndexes.COUNTRY_DIAL_CODE]),
+				regionCode: country[libPhoneNumberIndexes.REGION_AREA_CODE] || '',
+				areaCodes: areaCodes[countryCode],
+				nationalPrefix: country[libPhoneNumberIndexes.NATIONAL_PREFIX],
+				patterns: (country[libPhoneNumberIndexes.NUMBER_FORMAT] || []).map(processNumberFormat),
 				internationalPatterns: (
-					country[ libPhoneNumberIndexes.INTERNATIONAL_NUMBER_FORMAT ] || []
-				).map( processNumberFormat ),
-				priority: priorityData[ countryCodeUpper ],
+					country[libPhoneNumberIndexes.INTERNATIONAL_NUMBER_FORMAT] || []
+				).map(processNumberFormat),
+				priority: priorityData[countryCodeUpper],
 			};
 		}
 	}
 
-	const noPattern = _.filter( data, _.conforms( { patterns: patterns => patterns.length === 0 } ) );
-	_.forIn( noPattern, function( country ) {
+	const noPattern = _.filter(data, _.conforms({ patterns: (patterns) => patterns.length === 0 }));
+	_.forIn(noPattern, function (country) {
 		country.patternRegion = (
-			_.maxBy( _.values( _.filter( data, { dialCode: country.dialCode } ) ), 'priority' ) || {}
+			_.maxBy(_.values(_.filter(data, { dialCode: country.dialCode })), 'priority') || {}
 		).isoCode;
 		console.log(
 			'Info: ' +
 				country.isoCode +
 				" didn't have a pattern" +
-				( country.patternRegion ? ' so we use ' + country.patternRegion : '.' )
+				(country.patternRegion ? ' so we use ' + country.patternRegion : '.')
 		);
-	} );
+	});
 	return data;
 }
 
 // Political correction
-function injectHardCodedValues( libPhoneNumberData ) {
+function injectHardCodedValues(libPhoneNumberData) {
 	return Object.assign(
 		{},
 		{
@@ -333,10 +324,10 @@ function injectHardCodedValues( libPhoneNumberData ) {
  *
  * @param data
  */
-function insertCountryAliases( data ) {
-	Object.keys( aliases ).forEach( source => {
-		data[ source ] = data[ aliases[ source ] ];
-	} );
+function insertCountryAliases(data) {
+	Object.keys(aliases).forEach((source) => {
+		data[source] = data[aliases[source]];
+	});
 	return data;
 }
 
@@ -345,67 +336,60 @@ function insertCountryAliases( data ) {
  *
  * @param {object} data
  */
-function saveToFile( data ) {
+function saveToFile(data) {
 	const scriptStr =
 		'// Generated by build-metadata.js\n' +
 		'/* eslint-disable */\n' +
-		Object.keys( data )
-			.map( key => `export const ${ key } = ${ JSON.stringify( data[ key ], null, '\t' ) };\n` )
-			.join( '\n' ) +
+		Object.keys(data)
+			.map((key) => `export const ${key} = ${JSON.stringify(data[key], null, '\t')};\n`)
+			.join('\n') +
 		'/* eslint-enable */\n';
-	const filePath = path.resolve(
-		__dirname,
-		'..',
-		'client',
-		'components',
-		'phone-input',
-		'data.js'
-	);
-	fs.writeFileSync( filePath, scriptStr );
+	const filePath = path.resolve(__dirname, '..', 'client', 'components', 'phone-input', 'data.js');
+	fs.writeFileSync(filePath, scriptStr);
 }
 
-function generateDialCodeMap( metadata ) {
+function generateDialCodeMap(metadata) {
 	const res = {};
-	function addValue( key, value ) {
-		if ( ! /^\d+$/.test( key ) ) {
-			console.warn( 'Warning: ' + value + ' has invalid dialCode: ' + key );
+	function addValue(key, value) {
+		if (!/^\d+$/.test(key)) {
+			console.warn('Warning: ' + value + ' has invalid dialCode: ' + key);
 			return;
 		}
-		res[ key ] = res[ key ] || [];
-		if ( ! _.includes( res[ key ], value ) ) {
-			res[ key ].push( value );
+		res[key] = res[key] || [];
+		if (!_.includes(res[key], value)) {
+			res[key].push(value);
 		}
 	}
-	_.forIn( metadata, function( country ) {
-		addValue( country.dialCode, country.isoCode );
-		( country.areaCodes || [] ).forEach( areaCode =>
-			addValue( country.dialCode + areaCode, country.isoCode )
+	_.forIn(metadata, function (country) {
+		addValue(country.dialCode, country.isoCode);
+		(country.areaCodes || []).forEach((areaCode) =>
+			addValue(country.dialCode + areaCode, country.isoCode)
 		);
-	} );
+	});
 
-	return _.mapValues( res, countryCodes =>
-		_.orderBy( countryCodes, countryCode => metadata[ countryCode ].priority || 0, 'desc' )
+	return _.mapValues(res, (countryCodes) =>
+		_.orderBy(countryCodes, (countryCode) => metadata[countryCode].priority || 0, 'desc')
 	);
 }
 
-function generateFullDataset( metadata ) {
+function generateFullDataset(metadata) {
 	return {
 		countries: metadata,
-		dialCodeMap: generateDialCodeMap( metadata ),
+		dialCodeMap: generateDialCodeMap(metadata),
 	};
 }
 
 getLibPhoneNumberData()
-	.then( processLibPhoneNumberMetadata )
-	.then( injectHardCodedValues )
-	.then( generateDeepRemoveEmptyArraysFromObject( [ 'patterns', 'internationalPatterns' ] ) )
-	.then( insertCountryAliases )
-	.then( removeAllNumberKeys )
-	.then( removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode )
-	.then( generateFullDataset )
-	.then( deepRemoveUndefinedKeysFromObject )
-	.then( saveToFile )
-	.catch( function( error ) {
-		console.error( error.stack );
-		process.exit( -1 );
-	} );
+	.then(processLibPhoneNumberMetadata)
+	.then(injectHardCodedValues)
+	.then(generateDeepRemoveEmptyArraysFromObject(['patterns', 'internationalPatterns']))
+	.then(insertCountryAliases)
+	.then(removeAllNumberKeys)
+	.then(removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode)
+	.then(generateFullDataset)
+	.then(deepRemoveUndefinedKeysFromObject)
+	.then(saveToFile)
+	.catch(function (error) {
+		console.error(error.stack);
+		process.exit(-1);
+	});

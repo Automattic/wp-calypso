@@ -12,88 +12,88 @@ const url = 'https://yourgroovydomain.com';
 const errorCodeString = 'INVALID_CREDENTIALS';
 const errorMessageString = 'bad password';
 
-describe( 'reducer', () => {
-	test( 'should export expected reducer keys', () => {
-		const state = reducer( undefined, {} );
+describe('reducer', () => {
+	test('should export expected reducer keys', () => {
+		const state = reducer(undefined, {});
 
-		expect( state ).toHaveProperty( 'isComplete' );
-		expect( state ).toHaveProperty( 'errorCode' );
-		expect( state ).toHaveProperty( 'errorMessage' );
-	} );
+		expect(state).toHaveProperty('isComplete');
+		expect(state).toHaveProperty('errorCode');
+		expect(state).toHaveProperty('errorMessage');
+	});
 
-	describe( 'isComplete', () => {
-		test( 'should store install complete by url', () => {
-			const state = isComplete( undefined, { type: JETPACK_REMOTE_INSTALL_SUCCESS, url } );
-			expect( state[ url ] ).toBe( true );
-		} );
+	describe('isComplete', () => {
+		test('should store install complete by url', () => {
+			const state = isComplete(undefined, { type: JETPACK_REMOTE_INSTALL_SUCCESS, url });
+			expect(state[url]).toBe(true);
+		});
 
-		test( 'should be cleared on install request', () => {
+		test('should be cleared on install request', () => {
 			const initialState = {
-				[ url ]: {
+				[url]: {
 					isComplete: true,
 				},
 			};
-			const state = isComplete( initialState, { type: JETPACK_REMOTE_INSTALL, url } );
-			expect( state[ url ] ).not.toBeDefined();
-		} );
-	} );
+			const state = isComplete(initialState, { type: JETPACK_REMOTE_INSTALL, url });
+			expect(state[url]).not.toBeDefined();
+		});
+	});
 
-	describe( 'errorCode', () => {
+	describe('errorCode', () => {
 		const errorState = {
-			[ url ]: {
+			[url]: {
 				errorCode: errorCodeString,
 			},
 		};
 
-		test( 'should store error by url', () => {
-			const state = errorCodeReducer( undefined, {
+		test('should store error by url', () => {
+			const state = errorCodeReducer(undefined, {
 				type: JETPACK_REMOTE_INSTALL_FAILURE,
 				url,
 				errorCode: errorCodeString,
-			} );
-			expect( state[ url ] ).toEqual( errorCodeString );
-		} );
+			});
+			expect(state[url]).toEqual(errorCodeString);
+		});
 
-		test( 'should be cleared on successful install', () => {
-			const state = errorCodeReducer( errorState, { type: JETPACK_REMOTE_INSTALL_SUCCESS, url } );
-			expect( state[ url ] ).not.toBeDefined();
-		} );
+		test('should be cleared on successful install', () => {
+			const state = errorCodeReducer(errorState, { type: JETPACK_REMOTE_INSTALL_SUCCESS, url });
+			expect(state[url]).not.toBeDefined();
+		});
 
-		test( 'should be cleared on install request', () => {
-			const state = errorCodeReducer( errorState, { type: JETPACK_REMOTE_INSTALL, url } );
-			expect( state[ url ] ).not.toBeDefined();
-		} );
-	} );
+		test('should be cleared on install request', () => {
+			const state = errorCodeReducer(errorState, { type: JETPACK_REMOTE_INSTALL, url });
+			expect(state[url]).not.toBeDefined();
+		});
+	});
 
-	describe( 'errorMessage', () => {
+	describe('errorMessage', () => {
 		const errorState = {
-			[ url ]: {
+			[url]: {
 				errorCode: errorCodeString,
 				errorMessage: errorMessageString,
 			},
 		};
 
-		test( 'should store error message by url', () => {
-			const state = errorMessageReducer( undefined, {
+		test('should store error message by url', () => {
+			const state = errorMessageReducer(undefined, {
 				type: JETPACK_REMOTE_INSTALL_FAILURE,
 				url,
 				errorCode: errorCodeString,
 				errorMessage: errorMessageString,
-			} );
-			expect( state[ url ] ).toEqual( errorMessageString );
-		} );
+			});
+			expect(state[url]).toEqual(errorMessageString);
+		});
 
-		test( 'should be cleared on successful install', () => {
-			const state = errorMessageReducer( errorState, {
+		test('should be cleared on successful install', () => {
+			const state = errorMessageReducer(errorState, {
 				type: JETPACK_REMOTE_INSTALL_SUCCESS,
 				url,
-			} );
-			expect( state[ url ] ).not.toBeDefined();
-		} );
+			});
+			expect(state[url]).not.toBeDefined();
+		});
 
-		test( 'should be cleared on install request', () => {
-			const state = errorMessageReducer( errorState, { type: JETPACK_REMOTE_INSTALL, url } );
-			expect( state[ url ] ).not.toBeDefined();
-		} );
-	} );
-} );
+		test('should be cleared on install request', () => {
+			const state = errorMessageReducer(errorState, { type: JETPACK_REMOTE_INSTALL, url });
+			expect(state[url]).not.toBeDefined();
+		});
+	});
+});

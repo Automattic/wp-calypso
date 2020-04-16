@@ -20,25 +20,25 @@ import 'state/themes/init';
  * @param  {?number} siteId  Site ID to optionally use as context
  * @returns {?string}         Theme details sheet URL
  */
-export function getThemeDetailsUrl( state, themeId, siteId ) {
-	if ( ! themeId ) {
+export function getThemeDetailsUrl(state, themeId, siteId) {
+	if (!themeId) {
 		return null;
 	}
 
 	if (
-		isJetpackSite( state, siteId ) &&
-		! (
-			config.isEnabled( 'manage/themes/details/jetpack' ) &&
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
+		isJetpackSite(state, siteId) &&
+		!(
+			config.isEnabled('manage/themes/details/jetpack') &&
+			hasJetpackSiteJetpackThemesExtendedFeatures(state, siteId)
 		)
 	) {
-		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + themeId;
+		return getSiteOption(state, siteId, 'admin_url') + 'themes.php?theme=' + themeId;
 	}
 
 	let baseUrl = oldShowcaseUrl + themeId;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }`;
+	if (config.isEnabled('manage/themes/details')) {
+		baseUrl = `/theme/${themeId}`;
 	}
 
-	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
+	return baseUrl + (siteId ? `/${getSiteSlug(state, siteId)}` : '');
 }

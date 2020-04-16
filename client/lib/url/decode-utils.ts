@@ -9,14 +9,14 @@ interface Stringable {
 
 function decodeIfValid(
 	encodedItem: Stringable | Falsy,
-	decodingFunction: ( item: string ) => string
+	decodingFunction: (item: string) => string
 ) {
 	const encodedURIString: string =
 		encodedItem && encodedItem.toString ? encodedItem.toString() : '';
 
 	try {
-		return decodingFunction( encodedURIString );
-	} catch ( e ) {
+		return decodingFunction(encodedURIString);
+	} catch (e) {
 		return encodedURIString;
 	}
 }
@@ -27,8 +27,8 @@ function decodeIfValid(
  * @param  encodedURI URI to attempt to decode
  * @returns            Decoded URI (or passed in value on error)
  */
-export function decodeURIIfValid( encodedURI: Stringable | Falsy ): string {
-	return decodeIfValid( encodedURI, decodeURI );
+export function decodeURIIfValid(encodedURI: Stringable | Falsy): string {
+	return decodeIfValid(encodedURI, decodeURI);
 }
 
 /**
@@ -37,6 +37,6 @@ export function decodeURIIfValid( encodedURI: Stringable | Falsy ): string {
  * @param  encodedURIComponent URI component to attempt to decode
  * @returns                     Decoded URI component (or passed in value on error)
  */
-export function decodeURIComponentIfValid( encodedURIComponent: Stringable | Falsy ): string {
-	return decodeIfValid( encodedURIComponent, decodeURIComponent );
+export function decodeURIComponentIfValid(encodedURIComponent: Stringable | Falsy): string {
+	return decodeIfValid(encodedURIComponent, decodeURIComponent);
 }

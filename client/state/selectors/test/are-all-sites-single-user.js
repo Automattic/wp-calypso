@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { userState } from './fixtures/user-state';
 
-describe( 'areAllSitesSingleUser()', () => {
-	test( "should return false sites haven't been fetched yet", () => {
+describe('areAllSitesSingleUser()', () => {
+	test("should return false sites haven't been fetched yet", () => {
 		const state = {
 			...userState,
 			sites: {
@@ -18,11 +18,11 @@ describe( 'areAllSitesSingleUser()', () => {
 			},
 		};
 
-		const allAreSingleUser = areAllSitesSingleUser( state );
-		expect( allAreSingleUser ).to.be.false;
-	} );
+		const allAreSingleUser = areAllSitesSingleUser(state);
+		expect(allAreSingleUser).to.be.false;
+	});
 
-	test( "should return false if single_user_site isn't true for all sites", () => {
+	test("should return false if single_user_site isn't true for all sites", () => {
 		const state = {
 			...userState,
 			sites: {
@@ -42,11 +42,11 @@ describe( 'areAllSitesSingleUser()', () => {
 			},
 		};
 
-		const allAreSingleUser = areAllSitesSingleUser( state );
-		expect( allAreSingleUser ).to.be.false;
-	} );
+		const allAreSingleUser = areAllSitesSingleUser(state);
+		expect(allAreSingleUser).to.be.false;
+	});
 
-	test( 'should return true if single_user_site is true for all sites', () => {
+	test('should return true if single_user_site is true for all sites', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -66,7 +66,7 @@ describe( 'areAllSitesSingleUser()', () => {
 			},
 		};
 
-		const allAreSingleUser = areAllSitesSingleUser( state );
-		expect( allAreSingleUser ).to.be.true;
-	} );
-} );
+		const allAreSingleUser = areAllSitesSingleUser(state);
+		expect(allAreSingleUser).to.be.true;
+	});
+});

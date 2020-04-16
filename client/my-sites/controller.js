@@ -63,10 +63,10 @@ import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
-const getStore = context => ( {
+const getStore = (context) => ({
 	getState: () => context.store.getState(),
-	dispatch: action => context.store.dispatch( action ),
-} );
+	dispatch: (action) => context.store.dispatch(action),
+});
 
 /**
  * Module vars
@@ -79,45 +79,41 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @param { object } context - Middleware context
  * @returns { object } React element containing the site selector and sidebar
  */
-function createNavigation( context ) {
-	const siteFragment = getSiteFragment( context.pathname );
+function createNavigation(context) {
+	const siteFragment = getSiteFragment(context.pathname);
 	let basePath = context.pathname;
 
-	if ( siteFragment ) {
-		basePath = sectionify( context.pathname );
+	if (siteFragment) {
+		basePath = sectionify(context.pathname);
 	}
 
 	return (
-		<NavigationComponent
-			path={ context.path }
-			allSitesPath={ basePath }
-			siteBasePath={ basePath }
-		/>
+		<NavigationComponent path={context.path} allSitesPath={basePath} siteBasePath={basePath} />
 	);
 }
 
-function removeSidebar( context ) {
-	context.store.dispatch( setSection( { group: 'sites', secondary: false } ) );
+function removeSidebar(context) {
+	context.store.dispatch(setSection({ group: 'sites', secondary: false }));
 }
 
-function renderEmptySites( context ) {
-	removeSidebar( context );
+function renderEmptySites(context) {
+	removeSidebar(context);
 
-	context.primary = React.createElement( NoSitesMessage );
+	context.primary = React.createElement(NoSitesMessage);
 
-	makeLayout( context, noop );
-	clientRender( context );
+	makeLayout(context, noop);
+	clientRender(context);
 }
 
-function renderNoVisibleSites( context ) {
-	const { getState } = getStore( context );
-	const currentUser = getCurrentUser( getState() );
+function renderNoVisibleSites(context) {
+	const { getState } = getStore(context);
+	const currentUser = getCurrentUser(getState());
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
-	const signup_url = config( 'signup_url' );
+	const signup_url = config('signup_url');
 
-	removeSidebar( context );
+	removeSidebar(context);
 
-	context.primary = React.createElement( EmptyContentComponent, {
+	context.primary = React.createElement(EmptyContentComponent, {
 		title: i18n.translate(
 			'You have %(hidden)d hidden WordPress site.',
 			'You have %(hidden)d hidden WordPress sites.',
@@ -135,26 +131,26 @@ function renderNoVisibleSites( context ) {
 			}
 		),
 
-		action: i18n.translate( 'Change Visibility' ),
+		action: i18n.translate('Change Visibility'),
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
-		secondaryAction: i18n.translate( 'Create New Site' ),
-		secondaryActionURL: `${ signup_url }?ref=calypso-nosites`,
-	} );
+		secondaryAction: i18n.translate('Create New Site'),
+		secondaryActionURL: `${signup_url}?ref=calypso-nosites`,
+	});
 
-	makeLayout( context, noop );
-	clientRender( context );
+	makeLayout(context, noop);
+	clientRender(context);
 }
 
-function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	reactContext.primary = <DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />;
+function renderSelectedSiteIsDomainOnly(reactContext, selectedSite) {
+	reactContext.primary = <DomainOnly siteId={selectedSite.ID} hasNotice={false} />;
 
-	reactContext.secondary = createNavigation( reactContext );
+	reactContext.secondary = createNavigation(reactContext);
 
-	makeLayout( reactContext, noop );
-	clientRender( reactContext );
+	makeLayout(reactContext, noop);
+	clientRender(reactContext);
 }
 
-function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) {
+function isPathAllowedForDomainOnlySite(path, slug, primaryDomain, contextParams) {
 	const allPaths = [
 		domainManagementContactsPrivacy,
 		domainManagementDns,
@@ -172,88 +168,88 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementForwarding,
 	];
 
-	let domainManagementPaths = allPaths.map( pathFactory => {
-		if ( pathFactory === emailManagementNewGSuiteAccount ) {
+	let domainManagementPaths = allPaths.map((pathFactory) => {
+		if (pathFactory === emailManagementNewGSuiteAccount) {
 			// `emailManagementNewGSuiteAccount` takes `planType` from `context.params`, otherwise path comparisons won't work well.
-			return emailManagementNewGSuiteAccount( slug, slug, contextParams.planType );
+			return emailManagementNewGSuiteAccount(slug, slug, contextParams.planType);
 		}
-		return pathFactory( slug, slug );
-	} );
+		return pathFactory(slug, slug);
+	});
 
-	if ( primaryDomain && slug !== primaryDomain.name ) {
+	if (primaryDomain && slug !== primaryDomain.name) {
 		domainManagementPaths = domainManagementPaths.concat(
-			allPaths.map( pathFactory => pathFactory( slug, primaryDomain.name ) )
+			allPaths.map((pathFactory) => pathFactory(slug, primaryDomain.name))
 		);
 	}
 
-	const startsWithPaths = [ '/checkout/', `/me/purchases/${ slug }` ];
+	const startsWithPaths = ['/checkout/', `/me/purchases/${slug}`];
 
-	if ( some( startsWithPaths, startsWithPath => startsWith( path, startsWithPath ) ) ) {
+	if (some(startsWithPaths, (startsWithPath) => startsWith(path, startsWithPath))) {
 		return true;
 	}
 
-	return domainManagementPaths.indexOf( path ) > -1;
+	return domainManagementPaths.indexOf(path) > -1;
 }
 
-function onSelectedSiteAvailable( context, basePath ) {
+function onSelectedSiteAvailable(context, basePath) {
 	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
+	const selectedSite = getSelectedSite(state);
 
-	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
-	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'manage_options' );
-	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
+	const isAtomicSite = isSiteAutomatedTransfer(state, selectedSite.ID);
+	const userCanManagePlugins = canCurrentUser(state, selectedSite.ID, 'manage_options');
+	const calypsoify = isAtomicSite && config.isEnabled('calypsoify/plugins');
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
-	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
+	const isMigrationInProgress = isSiteMigrationInProgress(state, selectedSite.ID);
 
-	if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
-		page.redirect( `/migrate/${ selectedSite.slug }` );
+	if (isMigrationInProgress && !startsWith(context.pathname, '/migrate/')) {
+		page.redirect(`/migrate/${selectedSite.slug}`);
 		return false;
 	}
 
-	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
-		const plugin = get( context, 'params.plugin' );
+	if (userCanManagePlugins && calypsoify && /^\/plugins/.test(basePath)) {
+		const plugin = get(context, 'params.plugin');
 		let pluginString = '';
-		if ( plugin ) {
+		if (plugin) {
 			pluginString = [
 				'tab=search',
-				`s=${ plugin }`,
+				`s=${plugin}`,
 				'type=term',
 				'modal-mode=true',
-				`plugin=${ plugin }`,
-			].join( '&' );
+				`plugin=${plugin}`,
+			].join('&');
 		}
 
-		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
-		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
+		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${pluginString}`;
+		const pluginLink = getSiteAdminUrl(state, selectedSite.ID) + pluginInstallURL;
 
-		window.location.replace( pluginLink );
+		window.location.replace(pluginLink);
 		return false;
 	}
 
-	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
+	const primaryDomain = getPrimaryDomainBySiteId(state, selectedSite.ID);
 	if (
-		isDomainOnlySite( state, selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite(
+		isDomainOnlySite(state, selectedSite.ID) &&
+		!isPathAllowedForDomainOnlySite(
 			context.pathname,
 			selectedSite.slug,
 			primaryDomain,
 			context.params
 		)
 	) {
-		renderSelectedSiteIsDomainOnly( context, selectedSite );
+		renderSelectedSiteIsDomainOnly(context, selectedSite);
 		return false;
 	}
 
 	// Update recent sites preference
-	if ( hasReceivedRemotePreferences( state ) ) {
-		const recentSites = getPreference( state, 'recentSites' );
-		if ( selectedSite.ID !== recentSites[ 0 ] ) {
+	if (hasReceivedRemotePreferences(state)) {
+		const recentSites = getPreference(state, 'recentSites');
+		if (selectedSite.ID !== recentSites[0]) {
 			//also filter recent sites if not available locally
-			const updatedRecentSites = uniq( [ selectedSite.ID, ...recentSites ] )
-				.slice( 0, 5 )
-				.filter( recentId => !! getSite( state, recentId ) );
-			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
+			const updatedRecentSites = uniq([selectedSite.ID, ...recentSites])
+				.slice(0, 5)
+				.filter((recentId) => !!getSite(state, recentId));
+			context.store.dispatch(savePreference('recentSites', updatedRecentSites));
 		}
 	}
 
@@ -266,24 +262,24 @@ function onSelectedSiteAvailable( context, basePath ) {
  * @param {object} context -- Middleware context
  * @returns {object} A site-picker React element
  */
-function createSitesComponent( context ) {
-	const contextPath = sectionify( context.path );
+function createSitesComponent(context) {
+	const contextPath = sectionify(context.path);
 
 	// This path sets the URL to be visited once a site is selected
 	const basePath = contextPath === '/sites' ? '/home' : contextPath;
 
-	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
+	analytics.pageView.record(contextPath, sitesPageTitleForAnalytics);
 
 	return (
 		<SitesComponent
-			siteBasePath={ basePath }
-			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
-			fromSite={ context.query.site }
+			siteBasePath={basePath}
+			getSiteSelectionHeaderText={context.getSiteSelectionHeaderText}
+			fromSite={context.query.site}
 		/>
 	);
 }
 
-function showMissingPrimaryError( currentUser, dispatch ) {
+function showMissingPrimaryError(currentUser, dispatch) {
 	const { username, primary_blog, primary_blog_url, primary_blog_is_jetpack } = currentUser;
 	const tracksPayload = {
 		username,
@@ -292,52 +288,52 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 		primary_blog_is_jetpack,
 	};
 
-	if ( currentUser.primary_blog_is_jetpack ) {
+	if (currentUser.primary_blog_is_jetpack) {
 		dispatch(
-			warningNotice( i18n.translate( "Please check your Primary Site's Jetpack connection" ), {
+			warningNotice(i18n.translate("Please check your Primary Site's Jetpack connection"), {
 				button: 'wp-admin',
-				href: `${ currentUser.primary_blog_url }/wp-admin`,
-			} )
+				href: `${currentUser.primary_blog_url}/wp-admin`,
+			})
 		);
 		analytics.tracks.recordEvent(
 			'calypso_mysites_single_site_jetpack_connection_error',
 			tracksPayload
 		);
 	} else {
-		analytics.tracks.recordEvent( 'calypso_mysites_single_site_error', tracksPayload );
+		analytics.tracks.recordEvent('calypso_mysites_single_site_error', tracksPayload);
 	}
 }
 
 // Clears selected site from global redux state
-export function noSite( context, next ) {
-	context.store.dispatch( setSelectedSiteId( null ) );
+export function noSite(context, next) {
+	context.store.dispatch(setSelectedSiteId(null));
 	return next();
 }
 
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
-export function siteSelection( context, next ) {
-	const { getState, dispatch } = getStore( context );
-	const siteFragment = context.params.site || getSiteFragment( context.path );
-	const basePath = sectionify( context.path, siteFragment );
-	const currentUser = getCurrentUser( getState() );
+export function siteSelection(context, next) {
+	const { getState, dispatch } = getStore(context);
+	const siteFragment = context.params.site || getSiteFragment(context.path);
+	const basePath = sectionify(context.path, siteFragment);
+	const currentUser = getCurrentUser(getState());
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
 	// The user doesn't have any sites: render `NoSitesMessage`
-	if ( currentUser && currentUser.site_count === 0 ) {
-		renderEmptySites( context );
-		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
+	if (currentUser && currentUser.site_count === 0) {
+		renderEmptySites(context);
+		return analytics.pageView.record('/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
 			base_path: basePath,
-		} );
+		});
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
-	if ( currentUser && currentUser.visible_site_count === 0 ) {
-		renderNoVisibleSites( context );
+	if (currentUser && currentUser.visible_site_count === 0) {
+		renderNoVisibleSites(context);
 		return analytics.pageView.record(
 			'/no-sites',
-			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
+			`${sitesPageTitleForAnalytics} > All Sites Hidden`,
 			{ base_path: basePath }
 		);
 	}
@@ -351,97 +347,97 @@ export function siteSelection( context, next ) {
 	 * current user object and therefore always available, we need to fetch the site info in order
 	 * to convert the site ID to the site slug that will be part of the redirect URL)
 	 */
-	if ( hasOneSite && ! siteFragment ) {
-		const primarySiteId = getPrimarySiteId( getState() );
+	if (hasOneSite && !siteFragment) {
+		const primarySiteId = getPrimarySiteId(getState());
 
-		const redirectToPrimary = primarySiteSlug => {
-			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
-			if ( context.querystring ) {
-				redirectPath += `?${ context.querystring }`;
+		const redirectToPrimary = (primarySiteSlug) => {
+			let redirectPath = `${context.pathname}/${primarySiteSlug}`;
+			if (context.querystring) {
+				redirectPath += `?${context.querystring}`;
 			}
-			page.redirect( redirectPath );
+			page.redirect(redirectPath);
 		};
 
-		const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
-		if ( primarySiteSlug ) {
-			redirectToPrimary( primarySiteSlug );
+		const primarySiteSlug = getSiteSlug(getState(), primarySiteId);
+		if (primarySiteSlug) {
+			redirectToPrimary(primarySiteSlug);
 		} else {
 			// Fetch the primary site by ID and then try to determine its slug again.
-			dispatch( requestSite( primarySiteId ) ).then( () => {
-				const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
-				if ( freshPrimarySiteSlug ) {
-					redirectToPrimary( freshPrimarySiteSlug );
+			dispatch(requestSite(primarySiteId)).then(() => {
+				const freshPrimarySiteSlug = getSiteSlug(getState(), primarySiteId);
+				if (freshPrimarySiteSlug) {
+					redirectToPrimary(freshPrimarySiteSlug);
 				} else {
 					// If the primary site does not exist, skip redirect
 					// and display a useful error notification
-					showMissingPrimaryError( currentUser, dispatch );
+					showMissingPrimaryError(currentUser, dispatch);
 				}
-			} );
+			});
 		}
 
 		return;
 	}
 
 	// If the path fragment does not resemble a site, set all sites to visible
-	if ( ! siteFragment ) {
-		dispatch( setAllSitesSelected() );
+	if (!siteFragment) {
+		dispatch(setAllSitesSelected());
 		return next();
 	}
 
-	const siteId = getSiteId( getState(), siteFragment );
-	if ( siteId ) {
+	const siteId = getSiteId(getState(), siteFragment);
+	if (siteId) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
-		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context, basePath ) ) {
+		dispatch(setSelectedSiteId(siteId));
+		if (onSelectedSiteAvailable(context, basePath)) {
 			next();
 		}
 	} else {
 		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) ).then( () => {
-			const freshSiteId = getSiteId( getState(), siteFragment );
+		dispatch(requestSite(siteFragment)).then(() => {
+			const freshSiteId = getSiteId(getState(), siteFragment);
 
-			if ( freshSiteId ) {
+			if (freshSiteId) {
 				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 				// to wp-admin. In that case, don't continue handling the route.
-				dispatch( setSelectedSiteId( freshSiteId ) );
-				if ( onSelectedSiteAvailable( context, basePath ) ) {
+				dispatch(setSelectedSiteId(freshSiteId));
+				if (onSelectedSiteAvailable(context, basePath)) {
 					next();
 				}
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				const allSitesPath = addQueryArgs(
 					{ site: siteFragment },
-					sectionify( context.path, siteFragment )
+					sectionify(context.path, siteFragment)
 				);
-				page.redirect( allSitesPath );
+				page.redirect(allSitesPath);
 			}
-		} );
+		});
 	}
 }
 
-export function jetpackModuleActive( moduleId, redirect ) {
-	return function( context, next ) {
-		const { getState } = getStore( context );
-		const siteId = getSelectedSiteId( getState() );
-		const isJetpack = isJetpackSite( getState(), siteId );
-		const isModuleActive = isJetpackModuleActive( getState(), siteId, moduleId );
+export function jetpackModuleActive(moduleId, redirect) {
+	return function (context, next) {
+		const { getState } = getStore(context);
+		const siteId = getSelectedSiteId(getState());
+		const isJetpack = isJetpackSite(getState(), siteId);
+		const isModuleActive = isJetpackModuleActive(getState(), siteId, moduleId);
 
-		if ( ! isJetpack ) {
+		if (!isJetpack) {
 			return next();
 		}
 
-		if ( isModuleActive || false === redirect ) {
+		if (isModuleActive || false === redirect) {
 			next();
 		} else {
-			page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
+			page.redirect('string' === typeof redirect ? redirect : '/stats');
 		}
 	};
 }
 
-export function navigation( context, next ) {
+export function navigation(context, next) {
 	// Render the My Sites navigation in #secondary
-	context.secondary = createNavigation( context );
+	context.secondary = createNavigation(context);
 	next();
 }
 
@@ -451,8 +447,8 @@ export function navigation( context, next ) {
  * @param {object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
-export function sites( context, next ) {
-	if ( context.query.verified === '1' ) {
+export function sites(context, next) {
+	if (context.query.verified === '1') {
 		notices.success(
 			i18n.translate(
 				"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
@@ -460,19 +456,19 @@ export function sites( context, next ) {
 		);
 	}
 
-	context.store.dispatch( setLayoutFocus( 'content' ) );
-	removeSidebar( context );
+	context.store.dispatch(setLayoutFocus('content'));
+	removeSidebar(context);
 
-	context.primary = createSitesComponent( context );
+	context.primary = createSitesComponent(context);
 	next();
 }
 
-export function redirectWithoutSite( redirectPath ) {
-	return ( context, next ) => {
+export function redirectWithoutSite(redirectPath) {
+	return (context, next) => {
 		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		if ( ! siteId ) {
-			return page.redirect( redirectPath );
+		const siteId = getSelectedSiteId(state);
+		if (!siteId) {
+			return page.redirect(redirectPath);
 		}
 
 		return next();

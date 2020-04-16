@@ -12,15 +12,15 @@ import { withSchemaValidation } from 'state/utils';
 
 const EMPTY = {};
 
-function reducer( state = EMPTY, action ) {
-	switch ( action.type ) {
+function reducer(state = EMPTY, action) {
+	switch (action.type) {
 		case SIGNUP_DEPENDENCY_STORE_UPDATE:
 			return { ...state, ...action.dependencies };
 
 		case SIGNUP_PROGRESS_SUBMIT_STEP:
 		case SIGNUP_PROGRESS_COMPLETE_STEP: {
 			const { providedDependencies } = action.step;
-			if ( ! providedDependencies ) {
+			if (!providedDependencies) {
 				return state;
 			}
 			return { ...state, ...providedDependencies };
@@ -34,4 +34,4 @@ function reducer( state = EMPTY, action ) {
 	}
 }
 
-export default withSchemaValidation( dependencyStoreSchema, reducer );
+export default withSchemaValidation(dependencyStoreSchema, reducer);

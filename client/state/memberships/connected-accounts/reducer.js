@@ -7,8 +7,8 @@ import {
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 
-const accounts = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const accounts = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE:
 			return {
 				...state,
@@ -17,10 +17,10 @@ const accounts = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
-const isFetching = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+const isFetching = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE:
 			return false;
 		case MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST:
@@ -28,9 +28,9 @@ const isFetching = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	accounts,
 	isFetching,
-} );
+});

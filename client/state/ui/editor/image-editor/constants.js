@@ -18,4 +18,4 @@ export const MinimumImageDimensions = {
 	HEIGHT: 50,
 };
 
-export const AspectRatiosValues = objectValues( AspectRatios );
+export const AspectRatiosValues = objectValues(AspectRatios);

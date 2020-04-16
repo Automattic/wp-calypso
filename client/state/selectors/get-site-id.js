@@ -19,13 +19,13 @@ import { getSite } from 'state/sites/selectors';
  * @param  {number|string|null}  siteIdOrSlug Site ID
  * @returns {?object}             Site object
  */
-export default function getSiteId( state, siteIdOrSlug ) {
-	if ( ! siteIdOrSlug ) {
+export default function getSiteId(state, siteIdOrSlug) {
+	if (!siteIdOrSlug) {
 		return null;
 	}
 
-	const site = getSite( state, siteIdOrSlug );
-	if ( ! site ) {
+	const site = getSite(state, siteIdOrSlug);
+	if (!site) {
 		return null;
 	}
 

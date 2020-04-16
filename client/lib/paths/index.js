@@ -3,8 +3,8 @@
  */
 export { login } from './login';
 
-function editorPathFromSite( site ) {
-	if ( ! site ) {
+function editorPathFromSite(site) {
+	if (!site) {
 		return '';
 	}
 
@@ -18,8 +18,8 @@ function editorPathFromSite( site ) {
  * @param  {object|string} site Site object or site slug
  * @returns {string}      URL to post editor
  */
-export function newPost( site ) {
-	const sitePath = editorPathFromSite( site );
+export function newPost(site) {
+	const sitePath = editorPathFromSite(site);
 	return '/post' + sitePath;
 }
 
@@ -29,8 +29,8 @@ export function newPost( site ) {
  * @param  {object|string} site Site object or site slug
  * @returns {string}      URL to page editor
  */
-export function newPage( site ) {
-	const sitePath = editorPathFromSite( site );
+export function newPage(site) {
+	const sitePath = editorPathFromSite(site);
 	return '/page' + sitePath;
 }
 
@@ -40,10 +40,10 @@ export function newPage( site ) {
  * @param  {object} site Site object
  * @returns {string}      URL to manage Publicize connections
  */
-export function publicizeConnections( site ) {
+export function publicizeConnections(site) {
 	let url = '/marketing/connections';
 
-	if ( site ) {
+	if (site) {
 		url += '/' + site.slug;
 	}
 

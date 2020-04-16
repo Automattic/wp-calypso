@@ -38,8 +38,8 @@ import themeSetup from './theme-setup/reducers';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function selectedSiteId( state = null, action ) {
-	switch ( action.type ) {
+export function selectedSiteId(state = null, action) {
+	switch (action.type) {
 		case SELECTED_SITE_SET:
 			return action.siteId || null;
 	}
@@ -47,33 +47,33 @@ export function selectedSiteId( state = null, action ) {
 	return state;
 }
 
-export const siteSelectionInitialized = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const siteSelectionInitialized = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case SELECTED_SITE_SET:
 			return true;
 	}
 
 	return state;
-} );
+});
 
-export function hasSidebar( state = true, action ) {
-	switch ( action.type ) {
+export function hasSidebar(state = true, action) {
+	switch (action.type) {
 		case SECTION_SET:
 			return action.hasSidebar !== undefined ? action.hasSidebar : state;
 	}
 	return state;
 }
 
-export function isLoading( state = false, action ) {
-	switch ( action.type ) {
+export function isLoading(state = false, action) {
+	switch (action.type) {
 		case SECTION_SET:
 			return action.isLoading !== undefined ? action.isLoading : state;
 	}
 	return state;
 }
 
-export const isPreviewShowing = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isPreviewShowing = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case PREVIEW_IS_SHOWING: {
 			const { isShowing } = action;
 			return isShowing !== undefined ? isShowing : state;
@@ -81,7 +81,7 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
 	}
 
 	return state;
-} );
+});
 
 /**
  * Tracks if the notifications panel is open
@@ -90,14 +90,14 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const isNotificationsOpen = function( state = false, { type } ) {
-	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
-		return ! state;
+export const isNotificationsOpen = function (state = false, { type }) {
+	if (type === NOTIFICATIONS_PANEL_TOGGLE) {
+		return !state;
 	}
 	return state;
 };
 
-const reducer = combineReducers( {
+const reducer = combineReducers({
 	actionLog,
 	billingTransactions,
 	checkout,
@@ -126,6 +126,6 @@ const reducer = combineReducers( {
 	selectedSiteId,
 	siteSelectionInitialized,
 	themeSetup,
-} );
+});
 
 export default reducer;

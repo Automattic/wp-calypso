@@ -32,20 +32,20 @@ export default class extends React.Component {
 		return (
 			<div className="media-library__list-item-file-details media-library__list-item-centered">
 				<div className="media-library__list-item-icon">
-					<Gridicon icon={ this.props.icon } />
+					<Gridicon icon={this.props.icon} />
 				</div>
 				<div
 					className="media-library__list-item-file-name"
-					style={ { fontSize: 12 * ( 1 + this.props.scale ) } }
+					style={{ fontSize: 12 * (1 + this.props.scale) }}
 				>
-					{ this.props.media.title }
+					{this.props.media.title}
 				</div>
 				<hr className="media-library__list-item-details-separator" />
 				<div
 					className="media-library__list-item-file-extension"
-					style={ { fontSize: 9 * ( 1 + this.props.scale ) } }
+					style={{ fontSize: 9 * (1 + this.props.scale) }}
 				>
-					{ ( this.props.media.extension || '' ).toUpperCase() }
+					{(this.props.media.extension || '').toUpperCase()}
 				</div>
 			</div>
 		);

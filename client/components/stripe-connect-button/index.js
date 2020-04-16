@@ -18,16 +18,16 @@ export default class StripeConnectButton extends PureComponent {
 	};
 
 	render() {
-		const className = classNames( 'stripe-connect', this.props.className );
+		const className = classNames('stripe-connect', this.props.className);
 
 		// block referrers when external link
 		const rel = this.props.target
-			? ( this.props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
+			? (this.props.rel || '').replace(/noopener|noreferrer/g, '') + ' noopener noreferrer'
 			: this.props.rel;
 
 		return (
-			<a { ...this.props } rel={ rel } className={ className }>
-				<span>{ this.props.children }</span>
+			<a {...this.props} rel={rel} className={className}>
+				<span>{this.props.children}</span>
 			</a>
 		);
 	}

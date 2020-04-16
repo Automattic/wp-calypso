@@ -15,76 +15,76 @@ import {
 	getSettingsSaveStatus,
 } from '../selectors';
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	describe( 'isRequestingSettings()', () => {
-		test( 'should return false if no state exists', () => {
+	describe('isRequestingSettings()', () => {
+		test('should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
 				},
 			};
-			const isRequesting = isRequestingSettings( state, primarySiteId );
+			const isRequesting = isRequestingSettings(state, primarySiteId);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if the site is not attached', () => {
+		test('should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							requesting: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isRequesting = isRequestingSettings( state, secondarySiteId );
+			const isRequesting = isRequestingSettings(state, secondarySiteId);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if the settings are not being fetched', () => {
+		test('should return false if the settings are not being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							requesting: {
-								[ primarySiteId ]: false,
+								[primarySiteId]: false,
 							},
 						},
 					},
 				},
 			};
-			const isRequesting = isRequestingSettings( state, primarySiteId );
+			const isRequesting = isRequestingSettings(state, primarySiteId);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if the settings are being fetched', () => {
+		test('should return true if the settings are being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							requesting: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isRequesting = isRequestingSettings( state, primarySiteId );
+			const isRequesting = isRequestingSettings(state, primarySiteId);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( 'isRestoringSettings()', () => {
-		test( 'should return false if no state exists', () => {
+	describe('isRestoringSettings()', () => {
+		test('should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -92,285 +92,285 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const isRestoring = isRestoringSettings( state, primarySiteId );
+			const isRestoring = isRestoringSettings(state, primarySiteId);
 
-			expect( isRestoring ).to.be.false;
-		} );
+			expect(isRestoring).to.be.false;
+		});
 
-		test( 'should return false if the site is not attached', () => {
+		test('should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							restoring: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isRestoring = isRestoringSettings( state, secondarySiteId );
+			const isRestoring = isRestoringSettings(state, secondarySiteId);
 
-			expect( isRestoring ).to.be.false;
-		} );
+			expect(isRestoring).to.be.false;
+		});
 
-		test( 'should return false if the settings are not being restored', () => {
+		test('should return false if the settings are not being restored', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							restoring: {
-								[ primarySiteId ]: false,
+								[primarySiteId]: false,
 							},
 						},
 					},
 				},
 			};
-			const isRestoring = isRestoringSettings( state, primarySiteId );
+			const isRestoring = isRestoringSettings(state, primarySiteId);
 
-			expect( isRestoring ).to.be.false;
-		} );
+			expect(isRestoring).to.be.false;
+		});
 
-		test( 'should return true if the settings are being restored', () => {
+		test('should return true if the settings are being restored', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							restoring: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isRestoring = isRestoringSettings( state, primarySiteId );
+			const isRestoring = isRestoringSettings(state, primarySiteId);
 
-			expect( isRestoring ).to.be.true;
-		} );
-	} );
+			expect(isRestoring).to.be.true;
+		});
+	});
 
-	describe( 'isSavingSettings()', () => {
-		test( 'should return false if the site is not attached', () => {
+	describe('isSavingSettings()', () => {
+		test('should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: true, status: 'pending' },
+								[primarySiteId]: { saving: true, status: 'pending' },
 							},
 						},
 					},
 				},
 			};
-			const isSaving = isSavingSettings( state, secondarySiteId );
+			const isSaving = isSavingSettings(state, secondarySiteId);
 
-			expect( isSaving ).to.be.false;
-		} );
+			expect(isSaving).to.be.false;
+		});
 
-		test( 'should return false if the site settings are not saving', () => {
+		test('should return false if the site settings are not saving', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: false, status: 'success' },
+								[primarySiteId]: { saving: false, status: 'success' },
 							},
 						},
 					},
 				},
 			};
-			const isSaving = isSavingSettings( state, primarySiteId );
+			const isSaving = isSavingSettings(state, primarySiteId);
 
-			expect( isSaving ).to.be.false;
-		} );
+			expect(isSaving).to.be.false;
+		});
 
-		test( 'should return true if the site settings are saving', () => {
+		test('should return true if the site settings are saving', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: true, status: 'pending' },
+								[primarySiteId]: { saving: true, status: 'pending' },
 							},
 						},
 					},
 				},
 			};
-			const isSaving = isSavingSettings( state, primarySiteId );
+			const isSaving = isSavingSettings(state, primarySiteId);
 
-			expect( isSaving ).to.be.true;
-		} );
-	} );
+			expect(isSaving).to.be.true;
+		});
+	});
 
-	describe( 'isSettingsSaveSuccessful()', () => {
-		test( 'should return false if the site is not attached', () => {
+	describe('isSettingsSaveSuccessful()', () => {
+		test('should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: true, status: 'pending' },
+								[primarySiteId]: { saving: true, status: 'pending' },
 							},
 						},
 					},
 				},
 			};
-			const isSuccessful = isSettingsSaveSuccessful( state, secondarySiteId );
+			const isSuccessful = isSettingsSaveSuccessful(state, secondarySiteId);
 
-			expect( isSuccessful ).to.be.false;
-		} );
+			expect(isSuccessful).to.be.false;
+		});
 
-		test( 'should return true if the save request status is success', () => {
+		test('should return true if the save request status is success', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: false, status: 'success' },
+								[primarySiteId]: { saving: false, status: 'success' },
 							},
 						},
 					},
 				},
 			};
-			const isSuccessful = isSettingsSaveSuccessful( state, primarySiteId );
+			const isSuccessful = isSettingsSaveSuccessful(state, primarySiteId);
 
-			expect( isSuccessful ).to.be.true;
-		} );
+			expect(isSuccessful).to.be.true;
+		});
 
-		test( 'should return false if the save request status is error', () => {
+		test('should return false if the save request status is error', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: false, status: 'error' },
+								[primarySiteId]: { saving: false, status: 'error' },
 							},
 						},
 					},
 				},
 			};
-			const isSuccessful = isSettingsSaveSuccessful( state, primarySiteId );
+			const isSuccessful = isSettingsSaveSuccessful(state, primarySiteId);
 
-			expect( isSuccessful ).to.be.false;
-		} );
-	} );
+			expect(isSuccessful).to.be.false;
+		});
+	});
 
-	describe( 'getSettings()', () => {
+	describe('getSettings()', () => {
 		const primarySettings = { is_cache_enabled: true };
 
-		test( 'should return null if no state exists', () => {
+		test('should return null if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
 				},
 			};
-			const settings = getSettings( state, primarySiteId );
+			const settings = getSettings(state, primarySiteId);
 
-			expect( settings ).to.be.null;
-		} );
+			expect(settings).to.be.null;
+		});
 
-		test( 'should return null if the site is not attached', () => {
+		test('should return null if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							items: {
-								[ primarySiteId ]: primarySettings,
+								[primarySiteId]: primarySettings,
 							},
 						},
 					},
 				},
 			};
-			const settings = getSettings( state, secondarySiteId );
+			const settings = getSettings(state, secondarySiteId);
 
-			expect( settings ).to.be.null;
-		} );
+			expect(settings).to.be.null;
+		});
 
-		test( 'should return the settings for a siteId', () => {
+		test('should return the settings for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							items: {
-								[ primarySiteId ]: primarySettings,
+								[primarySiteId]: primarySettings,
 							},
 						},
 					},
 				},
 			};
-			const settings = getSettings( state, primarySiteId );
+			const settings = getSettings(state, primarySiteId);
 
-			expect( settings ).to.eql( primarySettings );
-		} );
-	} );
+			expect(settings).to.eql(primarySettings);
+		});
+	});
 
-	describe( 'getSettingsSaveStatus()', () => {
-		test( 'should return undefined if the site is not attached', () => {
+	describe('getSettingsSaveStatus()', () => {
+		test('should return undefined if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: true, status: 'pending' },
+								[primarySiteId]: { saving: true, status: 'pending' },
 							},
 						},
 					},
 				},
 			};
-			const status = getSettingsSaveStatus( state, secondarySiteId );
+			const status = getSettingsSaveStatus(state, secondarySiteId);
 
-			expect( status ).to.be.undefined;
-		} );
+			expect(status).to.be.undefined;
+		});
 
-		test( 'should return success if the save request status is success', () => {
+		test('should return success if the save request status is success', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: false, status: 'success' },
+								[primarySiteId]: { saving: false, status: 'success' },
 							},
 						},
 					},
 				},
 			};
-			const status = getSettingsSaveStatus( state, primarySiteId );
+			const status = getSettingsSaveStatus(state, primarySiteId);
 
-			expect( status ).to.eql( 'success' );
-		} );
+			expect(status).to.eql('success');
+		});
 
-		test( 'should return error if the save request status is error', () => {
+		test('should return error if the save request status is error', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: false, status: 'error' },
+								[primarySiteId]: { saving: false, status: 'error' },
 							},
 						},
 					},
 				},
 			};
-			const status = getSettingsSaveStatus( state, primarySiteId );
+			const status = getSettingsSaveStatus(state, primarySiteId);
 
-			expect( status ).to.eql( 'error' );
-		} );
+			expect(status).to.eql('error');
+		});
 
-		test( 'should return pending if the save request status is pending', () => {
+		test('should return pending if the save request status is pending', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						settings: {
 							saveStatus: {
-								[ primarySiteId ]: { saving: true, status: 'pending' },
+								[primarySiteId]: { saving: true, status: 'pending' },
 							},
 						},
 					},
 				},
 			};
-			const status = getSettingsSaveStatus( state, primarySiteId );
+			const status = getSettingsSaveStatus(state, primarySiteId);
 
-			expect( status ).to.eql( 'pending' );
-		} );
-	} );
-} );
+			expect(status).to.eql('pending');
+		});
+	});
+});

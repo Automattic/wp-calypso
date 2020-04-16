@@ -17,8 +17,8 @@ class TermTreeSelectorNoResults extends React.PureComponent {
 		const { createLink } = this.props;
 		let createMessage;
 
-		if ( createLink ) {
-			createMessage = this.props.translate( 'You may want to {{a}}create a new item{{/a}}.', {
+		if (createLink) {
+			createMessage = this.props.translate('You may want to {{a}}create a new item{{/a}}.', {
 				context: 'Term Selector: term search/listing results',
 				comment:
 					'This is used when no terms match the given search, or if there are no terms at all.',
@@ -26,23 +26,23 @@ class TermTreeSelectorNoResults extends React.PureComponent {
 					a: (
 						<a
 							className="create-link"
-							href={ createLink }
+							href={createLink}
 							target="_blank"
 							rel="noopener noreferrer"
 						/>
 					),
 				},
-			} );
+			});
 		}
 
 		return (
 			<span className="is-empty-content">
-				{ this.props.translate( 'No results. Please try a different search.' ) }
+				{this.props.translate('No results. Please try a different search.')}
 				&nbsp;
-				{ createMessage }
+				{createMessage}
 			</span>
 		);
 	}
 }
 
-export default localize( TermTreeSelectorNoResults );
+export default localize(TermTreeSelectorNoResults);

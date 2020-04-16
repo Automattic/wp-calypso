@@ -17,6 +17,6 @@ import 'state/reader/init';
  * @param  {object} params Params including siteId and postId
  * @returns {string|null} Conversation follow status (F for following, M for muting, or null)
  */
-export default function getReaderConversationFollowStatus( state, { siteId, postId } ) {
-	return get( state, [ 'reader', 'conversations', 'items', key( siteId, postId ) ], null );
+export default function getReaderConversationFollowStatus(state, { siteId, postId }) {
+	return get(state, ['reader', 'conversations', 'items', key(siteId, postId)], null);
 }

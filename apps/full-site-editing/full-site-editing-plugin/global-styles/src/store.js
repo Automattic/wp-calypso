@@ -8,7 +8,7 @@ let cache = {};
 let alreadyFetchedOptions = false;
 
 const actions = {
-	*publishOptions( options ) {
+	*publishOptions(options) {
 		yield {
 			type: 'IO_PUBLISH_OPTIONS',
 			options,
@@ -18,7 +18,7 @@ const actions = {
 			options,
 		};
 	},
-	updateOptions( options ) {
+	updateOptions(options) {
 		return {
 			type: 'UPDATE_OPTIONS',
 			options,
@@ -54,10 +54,10 @@ const actions = {
  * @param {string} storeName Name of the store.
  * @param {string} optionsPath REST path used to interact with the options API.
  */
-export default ( storeName, optionsPath ) => {
-	registerStore( storeName, {
-		reducer( state, action ) {
-			switch ( action.type ) {
+export default (storeName, optionsPath) => {
+	registerStore(storeName, {
+		reducer(state, action) {
+			switch (action.type) {
 				case 'UPDATE_OPTIONS':
 				case 'RESET_OPTIONS':
 				case 'PUBLISH_OPTIONS':
@@ -73,18 +73,18 @@ export default ( storeName, optionsPath ) => {
 		actions,
 
 		selectors: {
-			getOption( state, key ) {
-				return state ? state[ key ] : undefined;
+			getOption(state, key) {
+				return state ? state[key] : undefined;
 			},
-			hasLocalChanges( state ) {
-				return !! state && Object.keys( cache ).some( key => cache[ key ] !== state[ key ] );
+			hasLocalChanges(state) {
+				return !!state && Object.keys(cache).some((key) => cache[key] !== state[key]);
 			},
 		},
 
 		resolvers: {
 			// eslint-disable-next-line no-unused-vars
-			*getOption( key ) {
-				if ( alreadyFetchedOptions ) {
+			*getOption(key) {
+				if (alreadyFetchedOptions) {
 					return; // do nothing
 				}
 
@@ -92,7 +92,7 @@ export default ( storeName, optionsPath ) => {
 				try {
 					alreadyFetchedOptions = true;
 					options = yield actions.fetchOptions();
-				} catch ( error ) {
+				} catch (error) {
 					options = {};
 				}
 				cache = options;
@@ -105,18 +105,18 @@ export default ( storeName, optionsPath ) => {
 
 		controls: {
 			IO_FETCH_OPTIONS() {
-				return apiFetch( { path: optionsPath } );
+				return apiFetch({ path: optionsPath });
 			},
-			IO_PUBLISH_OPTIONS( { options } ) {
+			IO_PUBLISH_OPTIONS({ options }) {
 				cache = options; // optimistically update the cache
-				return apiFetch( {
+				return apiFetch({
 					path: optionsPath,
 					method: 'POST',
 					data: {
 						...options,
 					},
-				} );
+				});
 			},
 		},
-	} );
+	});
 };

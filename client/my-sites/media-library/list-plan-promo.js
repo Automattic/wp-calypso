@@ -27,37 +27,37 @@ class MediaLibraryListPlanPromo extends React.Component {
 	};
 
 	getTitle = () => {
-		switch ( this.props.filter ) {
+		switch (this.props.filter) {
 			case 'videos':
-				return this.props.translate( 'Upload Videos', {
+				return this.props.translate('Upload Videos', {
 					textOnly: true,
 					context: 'Media upload plan needed',
-				} );
+				});
 
 			case 'audio':
-				return this.props.translate( 'Upload Audio', {
+				return this.props.translate('Upload Audio', {
 					textOnly: true,
 					context: 'Media upload plan needed',
-				} );
+				});
 
 			default:
-				return this.props.translate( 'Upload Media', {
+				return this.props.translate('Upload Media', {
 					textOnly: true,
 					context: 'Media upload plan needed',
-				} );
+				});
 		}
 	};
 
 	getSummary = () => {
-		switch ( this.props.filter ) {
+		switch (this.props.filter) {
 			case 'videos':
 				return preventWidows(
 					this.props.canUpgrade
-						? this.props.translate( 'To upload video files to your site, upgrade your plan.', {
+						? this.props.translate('To upload video files to your site, upgrade your plan.', {
 								textOnly: true,
 								context: 'Media upgrade promo',
-						  } )
-						: this.props.translate( 'Uploading video requires a paid plan.' ) +
+						  })
+						: this.props.translate('Uploading video requires a paid plan.') +
 								' ' +
 								this.props.translate(
 									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
@@ -68,11 +68,11 @@ class MediaLibraryListPlanPromo extends React.Component {
 			case 'audio':
 				return preventWidows(
 					this.props.canUpgrade
-						? this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
+						? this.props.translate('To upload audio files to your site, upgrade your plan.', {
 								textOnly: true,
 								context: 'Media upgrade promo',
-						  } )
-						: this.props.translate( 'Uploading audio requires a paid plan.' ) +
+						  })
+						: this.props.translate('Uploading audio requires a paid plan.') +
 								' ' +
 								this.props.translate(
 									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
@@ -82,13 +82,10 @@ class MediaLibraryListPlanPromo extends React.Component {
 
 			default:
 				return preventWidows(
-					this.props.translate(
-						'To upload audio and video files to your site, upgrade your plan.',
-						{
-							textOnly: true,
-							context: 'Media upgrade promo',
-						}
-					),
+					this.props.translate('To upload audio and video files to your site, upgrade your plan.', {
+						textOnly: true,
+						context: 'Media upgrade promo',
+					}),
 					2
 				);
 		}
@@ -97,31 +94,31 @@ class MediaLibraryListPlanPromo extends React.Component {
 	viewPlansPage = () => {
 		const { slug = '' } = this.props.site;
 
-		analytics.tracks.recordEvent( 'calypso_media_plans_button_click' );
+		analytics.tracks.recordEvent('calypso_media_plans_button_click');
 
-		page( `/plans/${ slug }` );
+		page(`/plans/${slug}`);
 	};
 
 	render() {
 		const action = (
-			<Button className="button is-primary" onClick={ this.viewPlansPage }>
-				{ this.props.translate( 'See Plans' ) }
+			<Button className="button is-primary" onClick={this.viewPlansPage}>
+				{this.props.translate('See Plans')}
 			</Button>
 		);
 
 		return (
 			<EmptyContent
-				title={ this.getTitle() }
-				line={ this.getSummary() }
-				action={ this.props.children || action }
-				illustration={ '' }
+				title={this.getTitle()}
+				line={this.getSummary()}
+				action={this.props.children || action}
+				illustration={''}
 			/>
 		);
 	}
 }
 
-export default connect( state => {
+export default connect((state) => {
 	return {
-		canUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+		canUpgrade: canCurrentUser(state, getSelectedSiteId(state), 'manage_options'),
 	};
-} )( localize( MediaLibraryListPlanPromo ) );
+})(localize(MediaLibraryListPlanPromo));

@@ -25,13 +25,13 @@ class PostTypeListMaxPagesNotice extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.props.recordTracksEvent( 'calypso_post_type_list_max_pages_view' );
+		this.props.recordTracksEvent('calypso_post_type_list_max_pages_view');
 	}
 
-	focusSiteSelector = event => {
+	focusSiteSelector = (event) => {
 		event.preventDefault();
 
-		this.props.setLayoutFocus( 'sites' );
+		this.props.setLayoutFocus('sites');
 	};
 
 	render() {
@@ -39,7 +39,7 @@ class PostTypeListMaxPagesNotice extends Component {
 
 		return (
 			<div className="post-type-list__max-pages-notice">
-				{ translate(
+				{translate(
 					'Showing %(displayedPosts)d post of %(totalPosts)d.',
 					'Showing %(displayedPosts)d posts of %(totalPosts)d.',
 					{
@@ -48,25 +48,25 @@ class PostTypeListMaxPagesNotice extends Component {
 							totalPosts,
 						},
 					}
-				) }
+				)}
 				<br />
-				{ translate( 'To view more posts, {{a}}switch to a specific site{{/a}}.', {
+				{translate('To view more posts, {{a}}switch to a specific site{{/a}}.', {
 					components: {
 						a: (
 							/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 							<a
 								className="post-type-list__max-pages-notice-link"
-								onClick={ this.focusSiteSelector }
+								onClick={this.focusSiteSelector}
 							/>
 							/* eslint-enable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 						),
 					},
-				} ) }
+				})}
 			</div>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent, setLayoutFocus } )(
-	localize( PostTypeListMaxPagesNotice )
+export default connect(null, { recordTracksEvent, setLayoutFocus })(
+	localize(PostTypeListMaxPagesNotice)
 );

@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {string} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
  * @returns {string} interval 'week' | 'month' | 'quarter'
  */
-export function getStatsInterval( state, siteId, statType ) {
-	return get( state.ui.googleMyBusiness, [ siteId, 'statsInterval', statType ], 'week' );
+export function getStatsInterval(state, siteId, statType) {
+	return get(state.ui.googleMyBusiness, [siteId, 'statsInterval', statType], 'week');
 }

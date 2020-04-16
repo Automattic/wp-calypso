@@ -45,37 +45,37 @@ class ImportURLOnboardingStepComponent extends Component {
 	};
 
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep({ stepName: this.props.stepName });
 		this.setInputValueFromProps();
 		this.focusInput();
 	}
 
-	handleHaveFileClick = event => {
+	handleHaveFileClick = (event) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_signup_import_have_file_click', {
+		this.props.recordTracksEvent('calypso_signup_import_have_file_click', {
 			flow: this.props.flowName,
 			step: this.props.stepName,
-		} );
+		});
 
-		this.setState( { displayFallbackEngines: true } );
+		this.setState({ displayFallbackEngines: true });
 	};
 
-	handleEngineSelect = siteEngine => event => {
+	handleEngineSelect = (siteEngine) => (event) => {
 		event.preventDefault();
 
 		const { stepName } = this.props;
 		const { siteFavicon, siteTitle, siteUrl } = this.state.fallbackSiteDetails;
 
-		this.props.setImportOriginSiteDetails( {
-			importerTypes: [ 'file' ],
+		this.props.setImportOriginSiteDetails({
+			importerTypes: ['file'],
 			importSiteUrl: siteUrl,
 			siteEngine,
 			siteFavicon,
 			siteTitle,
-		} );
+		});
 
-		this.props.setSiteTitle( siteTitle );
+		this.props.setSiteTitle(siteTitle);
 
 		this.props.submitSignupStep(
 			{ stepName },
@@ -84,7 +84,7 @@ class ImportURLOnboardingStepComponent extends Component {
 				importSiteFavicon: siteFavicon,
 				importSiteUrl: siteUrl,
 				siteTitle,
-				suggestedDomain: suggestDomainFromImportUrl( siteUrl ),
+				suggestedDomain: suggestDomainFromImportUrl(siteUrl),
 				themeSlugWithRepo: 'pub/modern-business',
 			}
 		);
@@ -92,39 +92,39 @@ class ImportURLOnboardingStepComponent extends Component {
 		this.props.goToNextStep();
 	};
 
-	handleInputChange = event => {
-		this.props.setNuxUrlInputValue( event.target.value );
+	handleInputChange = (event) => {
+		this.props.setNuxUrlInputValue(event.target.value);
 	};
 
-	handleInputBlur = event => {
-		if ( event.target.value ) {
+	handleInputBlur = (event) => {
+		if (event.target.value) {
 			this.validateUrl();
 		}
 	};
 
-	handleInputRef = el => ( this.inputRef = el );
+	handleInputRef = (el) => (this.inputRef = el);
 
-	focusInput = () => invoke( this.inputRef, 'focus' );
+	focusInput = () => invoke(this.inputRef, 'focus');
 
-	setUrlError = urlValidationMessage => this.setState( { urlValidationMessage }, this.focusInput );
+	setUrlError = (urlValidationMessage) => this.setState({ urlValidationMessage }, this.focusInput);
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 
 		const { flowName, stepName, translate, urlInputValue } = this.props;
 		const isValid = this.validateUrl();
 
-		this.props.recordTracksEvent( 'calypso_signup_import_url_submit', {
+		this.props.recordTracksEvent('calypso_signup_import_url_submit', {
 			flow: flowName,
 			url: urlInputValue,
 			isvalid: isValid,
-		} );
+		});
 
-		if ( ! isValid ) {
+		if (!isValid) {
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			fallbackSiteDetails: {
 				siteFavion: '',
 				siteTitle: '',
@@ -132,53 +132,53 @@ class ImportURLOnboardingStepComponent extends Component {
 			},
 			isLoading: true,
 			urlValidationMessage: '',
-		} );
+		});
 
 		wpcom
 			.undocumented()
-			.isSiteImportable( urlInputValue )
+			.isSiteImportable(urlInputValue)
 			.then(
-				( {
+				({
 					site_engine: siteEngine,
 					site_favicon: siteFavicon,
 					site_status: siteStatus,
 					site_title: siteTitle,
 					site_url: siteUrl,
 					importer_types: importerTypes,
-				} ) => {
-					if ( 404 === siteStatus ) {
+				}) => {
+					if (404 === siteStatus) {
 						return this.setUrlError(
-							translate( 'That site was not found. Please check the URL and try again.' )
+							translate('That site was not found. Please check the URL and try again.')
 						);
 					}
 
 					// We need a successful response for url importers to work.
-					if ( includes( importerTypes, 'url' ) && 200 !== siteStatus ) {
+					if (includes(importerTypes, 'url') && 200 !== siteStatus) {
 						return this.setUrlError(
-							translate( 'That site responded with an error. Please check the URL and try again.' )
+							translate('That site responded with an error. Please check the URL and try again.')
 						);
 					}
 
-					if ( 'unknown' === siteEngine || isEmpty( importerTypes ) ) {
-						return this.setState( {
+					if ('unknown' === siteEngine || isEmpty(importerTypes)) {
+						return this.setState({
 							displayFallbackEngines: true,
 							fallbackSiteDetails: {
 								siteFavicon,
 								siteTitle,
 								siteUrl,
 							},
-						} );
+						});
 					}
 
-					this.props.setImportOriginSiteDetails( {
+					this.props.setImportOriginSiteDetails({
 						importerTypes,
 						siteUrl,
 						siteEngine,
 						siteFavicon,
 						siteTitle,
-					} );
+					});
 
-					this.props.setSiteTitle( siteTitle );
+					this.props.setSiteTitle(siteTitle);
 
 					this.props.submitSignupStep(
 						{ stepName },
@@ -187,43 +187,43 @@ class ImportURLOnboardingStepComponent extends Component {
 							importSiteFavicon: siteFavicon,
 							importSiteUrl: siteUrl,
 							siteTitle,
-							suggestedDomain: suggestDomainFromImportUrl( siteUrl ),
+							suggestedDomain: suggestDomainFromImportUrl(siteUrl),
 							themeSlugWithRepo: 'pub/modern-business',
 						}
 					);
 					this.props.goToNextStep();
 				},
-				error => {
-					switch ( error.code ) {
+				(error) => {
+					switch (error.code) {
 						case 'rest_invalid_param':
 							return this.setUrlError(
-								translate( "We couldn't reach that site. Please check the URL and try again." )
+								translate("We couldn't reach that site. Please check the URL and try again.")
 							);
 					}
 					return this.setUrlError(
-						translate( 'Something went wrong. Please check the URL and try again.' )
+						translate('Something went wrong. Please check the URL and try again.')
 					);
 				}
 			)
-			.finally( () =>
-				this.setState( {
+			.finally(() =>
+				this.setState({
 					isLoading: false,
-				} )
+				})
 			);
 	};
 
 	setInputValueFromProps = () => {
 		const { queryObject, urlInputValue } = this.props;
-		const inputValue = urlInputValue || get( queryObject, 'url', '' );
-		this.props.setNuxUrlInputValue( inputValue );
+		const inputValue = urlInputValue || get(queryObject, 'url', '');
+		this.props.setNuxUrlInputValue(inputValue);
 	};
 
 	validateUrl = () => {
-		const validationMessage = validateImportUrl( this.props.urlInputValue );
-		const isValid = ! validationMessage;
+		const validationMessage = validateImportUrl(this.props.urlInputValue);
+		const isValid = !validationMessage;
 
-		if ( ! isValid ) {
-			this.setUrlError( validationMessage );
+		if (!isValid) {
+			this.setUrlError(validationMessage);
 		}
 
 		return isValid;
@@ -231,27 +231,27 @@ class ImportURLOnboardingStepComponent extends Component {
 
 	exitFlow = () => {
 		const target = '/start';
-		this.props.recordTracksEvent( 'calypso_signup_flow_exit', {
+		this.props.recordTracksEvent('calypso_signup_flow_exit', {
 			flow: this.props.flowName,
 			step: this.props.stepName,
 			target,
-		} );
+		});
 
 		// Exit to main signup flow. Skip to the about step.
-		this.props.goToStep( 'about', '', 'main' );
+		this.props.goToStep('about', '', 'main');
 	};
 
 	renderNotice = () => {
 		const { urlValidationMessage } = this.state;
 
-		if ( urlValidationMessage ) {
+		if (urlValidationMessage) {
 			return (
 				<Notice
 					className="import-url-onboarding__url-input-message"
 					status="is-error"
-					showDismiss={ false }
+					showDismiss={false}
 				>
-					{ urlValidationMessage }
+					{urlValidationMessage}
 				</Notice>
 			);
 		}
@@ -266,24 +266,24 @@ class ImportURLOnboardingStepComponent extends Component {
 		return (
 			<Fragment>
 				<div className="import-url-onboarding__fallback">
-					{ fallbackEngines.map( ( { engine, icon, title } ) => (
+					{fallbackEngines.map(({ engine, icon, title }) => (
 						<Card
-							key={ engine }
+							key={engine}
 							className="import-url-onboarding__engine"
 							compact
 							displayAsLink
-							onClick={ this.handleEngineSelect( engine ) }
+							onClick={this.handleEngineSelect(engine)}
 						>
-							<ImporterLogo icon={ icon } size={ 48 } />
+							<ImporterLogo icon={icon} size={48} />
 							<div className="import-url-onboarding__service-info">
-								<h1 className="import-url-onboarding__service-title">{ title }</h1>
+								<h1 className="import-url-onboarding__service-title">{title}</h1>
 							</div>
 						</Card>
-					) ) }
+					))}
 				</div>
 				<div className="import-url-onboarding__secondary-button">
-					<Button borderless onClick={ this.exitFlow }>
-						{ translate( "Don't see your service?" ) }
+					<Button borderless onClick={this.exitFlow}>
+						{translate("Don't see your service?")}
 					</Button>
 				</div>
 			</Fragment>
@@ -296,9 +296,9 @@ class ImportURLOnboardingStepComponent extends Component {
 
 		return (
 			<Fragment>
-				{ this.renderNotice() }
+				{this.renderNotice()}
 				<Card className="import-url-onboarding__url-card">
-					<form className="import-url-onboarding__form" onSubmit={ this.handleSubmit }>
+					<form className="import-url-onboarding__form" onSubmit={this.handleSubmit}>
 						<ScreenReaderText>
 							<FormLabel htmlFor="url-input">Site URL</FormLabel>
 						</ScreenReaderText>
@@ -306,33 +306,33 @@ class ImportURLOnboardingStepComponent extends Component {
 						<FormTextInput
 							id="url-input"
 							className="import-url-onboarding__url-input"
-							placeholder={ translate( 'Website URL' ) }
-							disabled={ isLoading }
-							defaultValue={ urlInputValue }
-							onChange={ this.handleInputChange }
-							onBlur={ this.handleInputBlur }
-							inputRef={ this.handleInputRef }
-							isError={ !! urlValidationMessage }
+							placeholder={translate('Website URL')}
+							disabled={isLoading}
+							defaultValue={urlInputValue}
+							onChange={this.handleInputChange}
+							onBlur={this.handleInputBlur}
+							inputRef={this.handleInputRef}
+							isError={!!urlValidationMessage}
 						/>
 
 						<FormButton
 							className="import-url-onboarding__submit-button"
-							disabled={ isLoading }
-							busy={ isLoading }
+							disabled={isLoading}
+							busy={isLoading}
 							type="submit"
 						>
-							{ isLoading
-								? translate( 'Checking{{ellipsis/}}', {
+							{isLoading
+								? translate('Checking{{ellipsis/}}', {
 										components: { ellipsis: <Fragment>&hellip;</Fragment> },
 										comment: 'Indicates user input is being processed.',
-								  } )
-								: translate( 'Continue' ) }
+								  })
+								: translate('Continue')}
 						</FormButton>
 					</form>
 				</Card>
 				<div className="import-url-onboarding__secondary-button">
-					<Button borderless onClick={ this.handleHaveFileClick }>
-						{ translate( 'Have an import file?' ) }
+					<Button borderless onClick={this.handleHaveFileClick}>
+						{translate('Have an import file?')}
 					</Button>
 				</div>
 			</Fragment>
@@ -344,10 +344,10 @@ class ImportURLOnboardingStepComponent extends Component {
 		const { displayFallbackEngines } = this.state;
 
 		const headerText = displayFallbackEngines
-			? translate( 'Where did you get your import file?' )
-			: translate( 'Where can we find your website?' );
+			? translate('Where did you get your import file?')
+			: translate('Where can we find your website?');
 		const subHeaderText =
-			! displayFallbackEngines &&
+			!displayFallbackEngines &&
 			translate(
 				"We'll check your website to see what content we can bring to your new WordPress site."
 			);
@@ -356,14 +356,14 @@ class ImportURLOnboardingStepComponent extends Component {
 		return (
 			<StepWrapper
 				className="import-url-onboarding"
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ headerText }
-				fallbackHeaderText={ headerText }
-				subHeaderText={ subHeaderText }
-				fallbackSubHeaderText={ subHeaderText }
-				stepContent={ content }
+				flowName={flowName}
+				stepName={stepName}
+				positionInFlow={positionInFlow}
+				headerText={headerText}
+				fallbackHeaderText={headerText}
+				subHeaderText={subHeaderText}
+				fallbackSubHeaderText={subHeaderText}
+				stepContent={content}
 			/>
 		);
 	}
@@ -371,9 +371,9 @@ class ImportURLOnboardingStepComponent extends Component {
 
 export default flow(
 	connect(
-		state => ( {
-			urlInputValue: getNuxUrlInputValue( state ),
-		} ),
+		(state) => ({
+			urlInputValue: getNuxUrlInputValue(state),
+		}),
 		{
 			recordTracksEvent,
 			saveSignupStep,
@@ -383,4 +383,4 @@ export default flow(
 		}
 	),
 	localize
-)( ImportURLOnboardingStepComponent );
+)(ImportURLOnboardingStepComponent);

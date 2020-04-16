@@ -7,8 +7,8 @@
  * @returns {boolean}        Whether post formats are being requested
  */
 
-export function isRequestingPostFormats( state, siteId ) {
-	return !! state.postFormats.requesting[ siteId ];
+export function isRequestingPostFormats(state, siteId) {
+	return !!state.postFormats.requesting[siteId];
 }
 
 /**
@@ -18,6 +18,6 @@ export function isRequestingPostFormats( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {?object}        Site post formats
  */
-export function getPostFormats( state, siteId ) {
-	return state.postFormats.items[ siteId ] || null;
+export function getPostFormats(state, siteId) {
+	return state.postFormats.items[siteId] || null;
 }

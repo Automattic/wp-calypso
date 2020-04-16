@@ -8,6 +8,6 @@
  * @returns {MediaView}       Current media view
  */
 
-export function getMediaModalView( state ) {
+export function getMediaModalView(state) {
 	return state.ui.mediaModal.view;
 }

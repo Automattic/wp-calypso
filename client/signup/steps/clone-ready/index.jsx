@@ -33,9 +33,9 @@ class CloneReadyStep extends Component {
 	goToNextStep = () => {
 		const { originBlogId, clonePoint } = this.props.payload;
 
-		this.props.submitSignupStep( { stepName: this.props.stepName } );
+		this.props.submitSignupStep({ stepName: this.props.stepName });
 
-		this.props.initRewind( originBlogId, clonePoint, this.props.payload );
+		this.props.initRewind(originBlogId, clonePoint, this.props.payload);
 		this.props.goToNextStep();
 	};
 
@@ -126,14 +126,14 @@ class CloneReadyStep extends Component {
 					</g>
 				</svg>
 				<p className="clone-ready__description">
-					{ translate(
+					{translate(
 						'Any content on %(destinationSiteName)s, where you want to clone your content, ' +
 							'will be overridden. Is this okay?',
 						{ args: { destinationSiteName } }
-					) }
+					)}
 				</p>
-				<Button primary className="clone-ready__button" onClick={ this.goToNextStep }>
-					{ translate( 'Yep! Begin cloning' ) }
+				<Button primary className="clone-ready__button" onClick={this.goToNextStep}>
+					{translate('Yep! Begin cloning')}
 				</Button>
 			</Card>
 		);
@@ -142,35 +142,35 @@ class CloneReadyStep extends Component {
 	render() {
 		const { flowName, stepName, positionInFlow, translate } = this.props;
 
-		const headerText = translate( 'Ready to clone!' );
+		const headerText = translate('Ready to clone!');
 
 		return (
 			<StepWrapper
 				className="clone-ready"
-				flowName={ flowName }
-				stepName={ stepName }
-				headerText={ headerText }
-				fallbackHeaderText={ headerText }
-				subHeaderText={ '' }
-				fallbackSubHeaderText={ '' }
-				positionInFlow={ positionInFlow }
-				stepContent={ this.renderStepContent() }
+				flowName={flowName}
+				stepName={stepName}
+				headerText={headerText}
+				fallbackHeaderText={headerText}
+				subHeaderText={''}
+				fallbackSubHeaderText={''}
+				positionInFlow={positionInFlow}
+				stepContent={this.renderStepContent()}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		destinationSiteName: get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] ),
-		payload: get( ownProps, [ 'signupDependencies' ], {} ),
-	} ),
+	(state, ownProps) => ({
+		destinationSiteName: get(ownProps, ['signupDependencies', 'destinationSiteName']),
+		payload: get(ownProps, ['signupDependencies'], {}),
+	}),
 	{
 		submitSignupStep,
-		initRewind: ( blogId, timestamp, payload ) =>
+		initRewind: (blogId, timestamp, payload) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_clone_request' ),
-				rewindClone( blogId, timestamp, payload )
+				recordTracksEvent('calypso_activitylog_clone_request'),
+				rewindClone(blogId, timestamp, payload)
 			),
 	}
-)( localize( CloneReadyStep ) );
+)(localize(CloneReadyStep));

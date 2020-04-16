@@ -54,59 +54,59 @@ class SharingButtons extends Component {
 		translate: PropTypes.func,
 	};
 
-	saveChanges = event => {
+	saveChanges = (event) => {
 		const { isJetpack, isLikesModuleActive, siteId, path } = this.props;
 
 		event.preventDefault();
 
-		this.props.saveSiteSettings( this.props.siteId, this.state.values );
-		if ( this.state.buttonsPendingSave ) {
-			this.props.saveSharingButtons( this.props.siteId, this.state.buttonsPendingSave );
+		this.props.saveSiteSettings(this.props.siteId, this.state.values);
+		if (this.state.buttonsPendingSave) {
+			this.props.saveSharingButtons(this.props.siteId, this.state.buttonsPendingSave);
 		}
-		this.props.recordTracksEvent( 'calypso_sharing_buttons_save_changes_click', { path } );
-		this.props.recordGoogleEvent( 'Sharing', 'Clicked Save Changes Button' );
+		this.props.recordTracksEvent('calypso_sharing_buttons_save_changes_click', { path });
+		this.props.recordGoogleEvent('Sharing', 'Clicked Save Changes Button');
 
-		if ( ! isJetpack || isLikesModuleActive !== false ) {
+		if (!isJetpack || isLikesModuleActive !== false) {
 			return;
 		}
 
 		const updatedSettings = this.getUpdatedSettings();
-		if ( updatedSettings.disabled_likes ) {
+		if (updatedSettings.disabled_likes) {
 			return;
 		}
 
-		this.props.activateModule( siteId, 'likes', true );
+		this.props.activateModule(siteId, 'likes', true);
 	};
 
-	handleChange = ( option, value ) => {
-		const pairs = undefined === value ? option : { [ option ]: value };
+	handleChange = (option, value) => {
+		const pairs = undefined === value ? option : { [option]: value };
 		this.props.markChanged();
-		this.setState( {
-			values: Object.assign( {}, this.state.values, pairs ),
-		} );
+		this.setState({
+			values: Object.assign({}, this.state.values, pairs),
+		});
 	};
 
-	handleButtonsChange = buttons => {
+	handleButtonsChange = (buttons) => {
 		this.props.markChanged();
-		this.setState( { buttonsPendingSave: buttons } );
+		this.setState({ buttonsPendingSave: buttons });
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		// Save request has been performed
-		if ( this.props.isSaving && ! nextProps.isSaving ) {
+		if (this.props.isSaving && !nextProps.isSaving) {
 			if (
 				nextProps.isSaveSettingsSuccessful &&
-				( nextProps.isSaveButtonsSuccessful || ! this.state.buttonsPendingSave )
+				(nextProps.isSaveButtonsSuccessful || !this.state.buttonsPendingSave)
 			) {
-				nextProps.successNotice( nextProps.translate( 'Settings saved successfully!' ) );
+				nextProps.successNotice(nextProps.translate('Settings saved successfully!'));
 				nextProps.markSaved();
-				this.setState( {
+				this.setState({
 					values: {},
 					buttonsPendingSave: null,
-				} );
+				});
 			} else {
 				nextProps.errorNotice(
-					nextProps.translate( 'There was a problem saving your changes. Please, try again.' )
+					nextProps.translate('There was a problem saving your changes. Please, try again.')
 				);
 			}
 		}
@@ -122,7 +122,7 @@ class SharingButtons extends Component {
 				  }
 				: {};
 
-		return Object.assign( {}, settings, disabledSettings, this.state.values );
+		return Object.assign({}, settings, disabledSettings, this.state.values);
 	}
 
 	render() {
@@ -132,7 +132,7 @@ class SharingButtons extends Component {
 
 		return (
 			<form
-				onSubmit={ this.saveChanges }
+				onSubmit={this.saveChanges}
 				id="sharing-buttons"
 				className="buttons__sharing-settings buttons__sharing-buttons"
 			>
@@ -140,39 +140,35 @@ class SharingButtons extends Component {
 					path="/marketing/sharing-buttons/:site"
 					title="Marketing > Sharing Buttons"
 				/>
-				<QuerySiteSettings siteId={ siteId } />
-				<QuerySharingButtons siteId={ siteId } />
-				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				<QuerySiteSettings siteId={siteId} />
+				<QuerySharingButtons siteId={siteId} />
+				{isJetpack && <QueryJetpackModules siteId={siteId} />}
 				<ButtonsAppearance
-					buttons={ updatedButtons }
-					values={ updatedSettings }
-					onChange={ this.handleChange }
-					onButtonsChange={ this.handleButtonsChange }
-					initialized={ !! buttons && !! settings }
-					saving={ isSaving }
+					buttons={updatedButtons}
+					values={updatedSettings}
+					onChange={this.handleChange}
+					onButtonsChange={this.handleButtonsChange}
+					initialized={!!buttons && !!settings}
+					saving={isSaving}
 				/>
-				<ButtonsOptions
-					settings={ updatedSettings }
-					onChange={ this.handleChange }
-					saving={ isSaving }
-				/>
+				<ButtonsOptions settings={updatedSettings} onChange={this.handleChange} saving={isSaving} />
 			</form>
 		);
 	}
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const settings = getSiteSettings( state, siteId );
-		const buttons = getSharingButtons( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
-		const isSavingSettings = isSavingSiteSettings( state, siteId );
-		const isSavingButtons = isSavingSharingButtons( state, siteId );
-		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
-		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
-		const path = getCurrentRouteParameterized( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const settings = getSiteSettings(state, siteId);
+		const buttons = getSharingButtons(state, siteId);
+		const isJetpack = isJetpackSite(state, siteId);
+		const isLikesModuleActive = isJetpackModuleActive(state, siteId, 'likes');
+		const isSavingSettings = isSavingSiteSettings(state, siteId);
+		const isSavingButtons = isSavingSharingButtons(state, siteId);
+		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful(state, siteId);
+		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful(state, siteId);
+		const path = getCurrentRouteParameterized(state, siteId);
 
 		return {
 			isJetpack,
@@ -197,4 +193,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, protectForm, localize )( SharingButtons );
+export default flowRight(connectComponent, protectForm, localize)(SharingButtons);

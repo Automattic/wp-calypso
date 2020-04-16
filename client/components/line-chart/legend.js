@@ -23,12 +23,12 @@ class LineChartLegend extends Component {
 		onDataSeriesSelected: noop,
 	};
 
-	handleMouseOver = dataSeriesIndex => {
-		this.props.onDataSeriesSelected( dataSeriesIndex );
+	handleMouseOver = (dataSeriesIndex) => {
+		this.props.onDataSeriesSelected(dataSeriesIndex);
 	};
 
 	handleMouseOut = () => {
-		this.props.onDataSeriesSelected( -1 );
+		this.props.onDataSeriesSelected(-1);
 	};
 
 	render() {
@@ -36,20 +36,20 @@ class LineChartLegend extends Component {
 
 		return (
 			<span className="line-chart__legend">
-				{ data.map( ( dataSeries, index ) => {
+				{data.map((dataSeries, index) => {
 					return (
 						// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 						<LegendItem
-							key={ dataSeries.name }
-							name={ dataSeries.name }
-							circleClassName={ `line-chart__legend-sample-${ index % NUM_SERIES }-fill` }
-							description={ dataSeries.description }
-							seriesIndex={ index }
-							onMouseOver={ this.handleMouseOver }
-							onMouseOut={ this.handleMouseOut }
+							key={dataSeries.name}
+							name={dataSeries.name}
+							circleClassName={`line-chart__legend-sample-${index % NUM_SERIES}-fill`}
+							description={dataSeries.description}
+							seriesIndex={index}
+							onMouseOver={this.handleMouseOver}
+							onMouseOut={this.handleMouseOut}
 						/>
 					);
-				} ) }
+				})}
 			</span>
 		);
 	}

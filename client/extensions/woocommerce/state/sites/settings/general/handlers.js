@@ -13,7 +13,7 @@ import {
 	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 } from 'woocommerce/state/action-types';
 
-export const handleSettingsGeneralSuccess = ( action, { data } ) => {
+export const handleSettingsGeneralSuccess = (action, { data }) => {
 	const { siteId } = action;
 	return {
 		type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
@@ -22,7 +22,7 @@ export const handleSettingsGeneralSuccess = ( action, { data } ) => {
 	};
 };
 
-export const handleSettingsGeneralError = ( action, error ) => {
+export const handleSettingsGeneralError = (action, error) => {
 	const { siteId } = action;
 	return {
 		type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
@@ -31,14 +31,14 @@ export const handleSettingsGeneralError = ( action, error ) => {
 	};
 };
 
-export const handleSettingsGeneral = action => ( dispatch, getState ) => {
+export const handleSettingsGeneral = (action) => (dispatch, getState) => {
 	const { siteId } = action;
 
-	if ( areSettingsGeneralLoaded( getState(), siteId ) ) {
+	if (areSettingsGeneralLoaded(getState(), siteId)) {
 		return;
 	}
 
-	dispatch( request( siteId, action ).get( 'settings/general' ) );
+	dispatch(request(siteId, action).get('settings/general'));
 };
 
 /**
@@ -46,7 +46,7 @@ export const handleSettingsGeneral = action => ( dispatch, getState ) => {
  *
  * @param {object} action - and action with the following fields: siteId, currency, successAction, failureAction
  */
-export const handleCurrencyUpdate = ( { dispatch }, action ) => {
+export const handleCurrencyUpdate = ({ dispatch }, action) => {
 	const { siteId, currency, successAction, failureAction } = action;
 
 	const payload = {
@@ -60,23 +60,23 @@ export const handleCurrencyUpdate = ( { dispatch }, action ) => {
 	 * @param {Function} getState - getState function
 	 * @param {object} data - data returned by the server
 	 */
-	const updatedAction = ( localDispatch, getState, { data } ) => {
-		localDispatch( saveCurrencySuccess( siteId, data, action ) );
-		localDispatch( successAction );
+	const updatedAction = (localDispatch, getState, { data }) => {
+		localDispatch(saveCurrencySuccess(siteId, data, action));
+		localDispatch(successAction);
 	};
 
 	dispatch(
-		put( siteId, 'settings/general/woocommerce_currency', payload, updatedAction, failureAction )
+		put(siteId, 'settings/general/woocommerce_currency', payload, updatedAction, failureAction)
 	);
 };
 
 export default {
-	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: [
-		dispatchRequest( {
+	[WOOCOMMERCE_SETTINGS_GENERAL_REQUEST]: [
+		dispatchRequest({
 			fetch: handleSettingsGeneral,
 			onSuccess: handleSettingsGeneralSuccess,
 			onError: handleSettingsGeneralError,
-		} ),
+		}),
 	],
-	[ WOOCOMMERCE_CURRENCY_UPDATE ]: [ handleCurrencyUpdate ],
+	[WOOCOMMERCE_CURRENCY_UPDATE]: [handleCurrencyUpdate],
 };

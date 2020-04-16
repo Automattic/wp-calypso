@@ -18,28 +18,28 @@ import 'state/jetpack-connect/init';
  *
  * @returns {Promise}                         Resolves to { username, bearerToken }
  */
-export function createSocialAccount( socialInfo ) {
-	return async dispatch => {
-		dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount' ) );
+export function createSocialAccount(socialInfo) {
+	return async (dispatch) => {
+		dispatch(recordTracksEvent('calypso_jpc_social_createaccount'));
 
 		try {
-			const { username, bearer_token } = await wpcom.undocumented().usersSocialNew( {
+			const { username, bearer_token } = await wpcom.undocumented().usersSocialNew({
 				...socialInfo,
 				signup_flow_name: 'jetpack-connect',
-			} );
-			dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
+			});
+			dispatch(recordTracksEvent('calypso_jpc_social_createaccount_success'));
 			return { username, bearerToken: bearer_token };
-		} catch ( error ) {
+		} catch (error) {
 			const err = {
 				code: error.error,
 				message: error.message,
 				data: error.data,
 			};
 			dispatch(
-				recordTracksEvent( 'calypso_jpc_social_createaccount_error', {
-					error: JSON.stringify( err ),
+				recordTracksEvent('calypso_jpc_social_createaccount_error', {
+					error: JSON.stringify(err),
 					error_code: err.code,
-				} )
+				})
 			);
 			throw err;
 		}

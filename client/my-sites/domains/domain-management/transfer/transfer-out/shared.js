@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
-export const displayResponseError = responseError => {
+export const displayResponseError = (responseError) => {
 	const errorMessages = {
 		unlock_domain_and_disable_private_reg_failed: translate(
 			'The domain could not be unlocked. ' +
@@ -26,16 +26,16 @@ export const displayResponseError = responseError => {
 		),
 	};
 
-	if ( responseError.error && Object.keys( errorMessages ).indexOf( responseError.error ) !== -1 ) {
+	if (responseError.error && Object.keys(errorMessages).indexOf(responseError.error) !== -1) {
 		notices.error(
 			translate(
 				'An error occurred while trying to send the Domain Transfer code: {{strong}}%s{{/strong}} ' +
 					'Please {{a}}Contact Support{{/a}}.',
 				{
-					args: errorMessages[ responseError.error ],
+					args: errorMessages[responseError.error],
 					components: {
 						strong: <strong />,
-						a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+						a: <a href={CALYPSO_CONTACT} target="_blank" rel="noopener noreferrer" />,
 					},
 				}
 			)
@@ -48,7 +48,7 @@ export const displayResponseError = responseError => {
 					'to have trouble.',
 				{
 					components: {
-						a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+						a: <a href={CALYPSO_CONTACT} target="_blank" rel="noopener noreferrer" />,
 					},
 				}
 			)
@@ -56,13 +56,13 @@ export const displayResponseError = responseError => {
 	}
 };
 
-export const displayRequestTransferCodeResponseNotice = ( responseError, domainStatus ) => {
-	if ( responseError ) {
-		displayResponseError( responseError );
+export const displayRequestTransferCodeResponseNotice = (responseError, domainStatus) => {
+	if (responseError) {
+		displayResponseError(responseError);
 		return;
 	}
 
-	if ( domainStatus.manualTransferRequired ) {
+	if (domainStatus.manualTransferRequired) {
 		notices.success(
 			translate(
 				'The registry for your domain requires a special process for transfers. ' +

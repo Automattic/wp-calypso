@@ -22,15 +22,15 @@ import './continue-as-user.scss';
 
 // Validate redirect URL using the REST endpoint.
 // Return validated URL in case of success, `null` in case of failure.
-async function validateUrl( redirectUrl ) {
-	if ( ! redirectUrl ) {
+async function validateUrl(redirectUrl) {
+	if (!redirectUrl) {
 		return null;
 	}
 
 	try {
-		const response = await wpcom.req.get( '/me/validate-redirect', { redirect_url: redirectUrl } );
+		const response = await wpcom.req.get('/me/validate-redirect', { redirect_url: redirectUrl });
 
-		if ( ! response || ! response.redirect_to ) {
+		if (!response || !response.redirect_to) {
 			return null;
 		}
 
@@ -41,13 +41,13 @@ async function validateUrl( redirectUrl ) {
 	}
 }
 
-function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } ) {
+function ContinueAsUser({ currentUser, redirectUrlFromQuery, onChangeAccount }) {
 	const translate = useTranslate();
-	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
+	const [validatedRedirectUrl, setValidatedRedirectUrl] = useState(null);
 
-	useEffect( () => {
-		validateUrl( redirectUrlFromQuery ).then( setValidatedRedirectUrl );
-	}, [ redirectUrlFromQuery ] );
+	useEffect(() => {
+		validateUrl(redirectUrlFromQuery).then(setValidatedRedirectUrl);
+	}, [redirectUrlFromQuery]);
 
 	const userName = currentUser.display_name || currentUser.username;
 
@@ -58,20 +58,20 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 
 	return (
 		<div className="continue-as-user">
-			<a href={ validatedRedirectUrl || '/' } className="continue-as-user__gravatar-link">
+			<a href={validatedRedirectUrl || '/'} className="continue-as-user__gravatar-link">
 				<Gravatar
-					user={ currentUser }
+					user={currentUser}
 					className="continue-as-user__gravatar"
-					imgSize={ 400 }
-					size={ 110 }
+					imgSize={400}
+					size={110}
 				/>
-				<div>{ userName }</div>
+				<div>{userName}</div>
 			</a>
-			<Button primary href={ validatedRedirectUrl || '/' }>
-				{ translate( 'Continue' ) }
+			<Button primary href={validatedRedirectUrl || '/'}>
+				{translate('Continue')}
 			</Button>
 			<p>
-				{ translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
+				{translate('Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
 					components: {
 						br: <br />,
 						link: (
@@ -79,19 +79,19 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 								type="button"
 								id="loginAsAnotherUser"
 								className="continue-as-user__change-user-link"
-								onClick={ onChangeAccount }
+								onClick={onChangeAccount}
 							/>
 						),
 					},
 					args: { userName },
 					comment: 'Link to continue login as different user',
-				} ) }
+				})}
 			</p>
 		</div>
 	);
 }
 
-export default connect( state => ( {
-	currentUser: getCurrentUser( state ),
-	redirectUrlFromQuery: get( getCurrentQueryArguments( state ), 'redirect_to', null ),
-} ) )( ContinueAsUser );
+export default connect((state) => ({
+	currentUser: getCurrentUser(state),
+	redirectUrlFromQuery: get(getCurrentQueryArguments(state), 'redirect_to', null),
+}))(ContinueAsUser);

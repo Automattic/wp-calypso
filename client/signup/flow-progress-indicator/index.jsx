@@ -11,21 +11,21 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-const FlowProgressIndicator = ( { flowLength, positionInFlow, translate, flowName } ) => {
-	if ( flowLength > 1 ) {
+const FlowProgressIndicator = ({ flowLength, positionInFlow, translate, flowName }) => {
+	if (flowLength > 1) {
 		const flowClassName = classNames(
 			'flow-progress-indicator',
-			`flow-progress-indicator__${ flowName }`
+			`flow-progress-indicator__${flowName}`
 		);
 
 		return (
-			<div className={ flowClassName }>
-				{ translate( 'Step %(stepNumber)d of %(stepTotal)d', {
+			<div className={flowClassName}>
+				{translate('Step %(stepNumber)d of %(stepTotal)d', {
 					args: {
 						stepNumber: positionInFlow + 1,
 						stepTotal: flowLength,
 					},
-				} ) }
+				})}
 			</div>
 		);
 	}
@@ -33,4 +33,4 @@ const FlowProgressIndicator = ( { flowLength, positionInFlow, translate, flowNam
 	return null;
 };
 
-export default localize( FlowProgressIndicator );
+export default localize(FlowProgressIndicator);

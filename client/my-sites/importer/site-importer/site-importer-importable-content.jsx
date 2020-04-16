@@ -11,18 +11,18 @@ import { isEmpty, map } from 'lodash';
  */
 import './site-importer-importable-content.scss';
 
-const SiteImporterImportableContent = ( { translate, importData = {} } ) => (
+const SiteImporterImportableContent = ({ translate, importData = {} }) => (
 	<div className="site-importer__site-preview-import-content">
-		{ ! isEmpty( importData.supported ) && (
+		{!isEmpty(importData.supported) && (
 			<Fragment>
-				<p>{ translate( 'We will import:' ) }</p>
+				<p>{translate('We will import:')}</p>
 				<ul>
-					{ map( importData.supported, ( supportedApp, index ) => (
-						<li key={ index + supportedApp }>{ supportedApp }</li>
-					) ) }
+					{map(importData.supported, (supportedApp, index) => (
+						<li key={index + supportedApp}>{supportedApp}</li>
+					))}
 				</ul>
 			</Fragment>
-		) }
+		)}
 	</div>
 );
 
@@ -31,4 +31,4 @@ SiteImporterImportableContent.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default localize( SiteImporterImportableContent );
+export default localize(SiteImporterImportableContent);

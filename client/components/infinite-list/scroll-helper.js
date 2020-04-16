@@ -2,13 +2,13 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:infinite-list:helper' );
+const debug = debugFactory('calypso:infinite-list:helper');
 
 // Scrolling algorithm extracted as separate object
 // The purpose of extracting it is to make it testable and help the methods
 // to be shorter and readable.
 class ScrollHelper {
-	constructor( boundsForRef, getTopPlaceholderBounds, getBottomPlaceholderBounds ) {
+	constructor(boundsForRef, getTopPlaceholderBounds, getBottomPlaceholderBounds) {
 		this.boundsForRef = boundsForRef;
 		this.getTopPlaceholderBounds = getTopPlaceholderBounds;
 		this.getBottomPlaceholderBounds = getBottomPlaceholderBounds;
@@ -37,92 +37,92 @@ class ScrollHelper {
 		this.lastRenderedIndex = null;
 	}
 
-	storedItemHeight( itemKey ) {
+	storedItemHeight(itemKey) {
 		let height = this.props.guessedItemHeight;
 
-		if ( itemKey in this.itemHeights ) {
-			height = this.itemHeights[ itemKey ];
+		if (itemKey in this.itemHeights) {
+			height = this.itemHeights[itemKey];
 		}
 
 		return height;
 	}
 
-	forEachInRow( index, callback ) {
+	forEachInRow(index, callback) {
 		const { itemsPerRow } = this.props;
 
-		const firstIndexInRow = index - ( index % itemsPerRow );
-		const lastIndexInRow = Math.min( firstIndexInRow + itemsPerRow, this.props.items.length ) - 1;
+		const firstIndexInRow = index - (index % itemsPerRow);
+		const lastIndexInRow = Math.min(firstIndexInRow + itemsPerRow, this.props.items.length) - 1;
 
-		for ( let i = firstIndexInRow; i <= lastIndexInRow; i++ ) {
-			callback( this.props.items[ i ], i );
+		for (let i = firstIndexInRow; i <= lastIndexInRow; i++) {
+			callback(this.props.items[i], i);
 		}
 	}
 
-	storeRowItemHeights( fromDirection, index ) {
-		this.forEachInRow( index, item => {
-			const itemKey = this.props.getItemRef( item );
-			const itemBounds = this.boundsForRef( itemKey );
+	storeRowItemHeights(fromDirection, index) {
+		this.forEachInRow(index, (item) => {
+			const itemKey = this.props.getItemRef(item);
+			const itemBounds = this.boundsForRef(itemKey);
 			let height;
 
-			if ( itemBounds ) {
-				if ( 'bottom' === fromDirection ) {
+			if (itemBounds) {
+				if ('bottom' === fromDirection) {
 					height = this.containerBottom - this.bottomPlaceholderHeight - itemBounds.top;
 				} else {
-					height = itemBounds.bottom - ( this.containerTop + this.topPlaceholderHeight );
+					height = itemBounds.bottom - (this.containerTop + this.topPlaceholderHeight);
 				}
 			} else {
 				height = this.props.guessedItemHeight;
 			}
 
-			this.itemHeights[ itemKey ] = height;
-		} );
+			this.itemHeights[itemKey] = height;
+		});
 	}
 
-	deleteRowItemHeights( index ) {
-		this.forEachInRow( index, item => {
-			const itemKey = this.props.getItemRef( item );
-			delete this.itemHeights[ itemKey ];
-		} );
+	deleteRowItemHeights(index) {
+		this.forEachInRow(index, (item) => {
+			const itemKey = this.props.getItemRef(item);
+			delete this.itemHeights[itemKey];
+		});
 	}
 
-	getRowHeight( index ) {
+	getRowHeight(index) {
 		let maxHeight = 0;
 
-		this.forEachInRow( index, item => {
-			const itemKey = this.props.getItemRef( item );
-			const height = this.storedItemHeight( itemKey );
+		this.forEachInRow(index, (item) => {
+			const itemKey = this.props.getItemRef(item);
+			const height = this.storedItemHeight(itemKey);
 
-			maxHeight = Math.max( maxHeight, height );
-		} );
+			maxHeight = Math.max(maxHeight, height);
+		});
 
 		return maxHeight;
 	}
 
-	updateContextHeight( contextHeight ) {
-		if ( this.contextHeight === contextHeight ) {
+	updateContextHeight(contextHeight) {
+		if (this.contextHeight === contextHeight) {
 			return;
 		}
 
 		this.contextHeight = contextHeight;
 
-		this.topHideLevelHard = Math.min( -1 * contextHeight, -5 * this.props.guessedItemHeight );
+		this.topHideLevelHard = Math.min(-1 * contextHeight, -5 * this.props.guessedItemHeight);
 
-		this.topHideLevelSoft = Math.min( -2 * contextHeight, -10 * this.props.guessedItemHeight );
+		this.topHideLevelSoft = Math.min(-2 * contextHeight, -10 * this.props.guessedItemHeight);
 
 		this.bottomHideLevelHard =
-			contextHeight + Math.max( contextHeight, 5 * this.props.guessedItemHeight );
+			contextHeight + Math.max(contextHeight, 5 * this.props.guessedItemHeight);
 
 		this.bottomHideLevelSoft =
-			contextHeight + Math.max( 2 * contextHeight, 10 * this.props.guessedItemHeight );
+			contextHeight + Math.max(2 * contextHeight, 10 * this.props.guessedItemHeight);
 
 		this.bottomHideLevelUltraSoft =
-			contextHeight + Math.max( 3 * contextHeight, 15 * this.props.guessedItemHeight );
+			contextHeight + Math.max(3 * contextHeight, 15 * this.props.guessedItemHeight);
 	}
 
 	initialLastRenderedIndex() {
 		return Math.min(
 			this.props.items.length - 1,
-			Math.floor( this.bottomHideLevelSoft / this.props.guessedItemHeight ) - 1
+			Math.floor(this.bottomHideLevelSoft / this.props.guessedItemHeight) - 1
 		);
 	}
 
@@ -130,7 +130,7 @@ class ScrollHelper {
 		const topPlaceholderRect = this.getTopPlaceholderBounds();
 		const bottomPlaceholderRect = this.getBottomPlaceholderBounds();
 
-		if ( ! topPlaceholderRect || ! bottomPlaceholderRect ) {
+		if (!topPlaceholderRect || !bottomPlaceholderRect) {
 			return;
 		}
 
@@ -143,29 +143,29 @@ class ScrollHelper {
 		this.containerBottom = bottomPlaceholderRect.bottom;
 	}
 
-	scrollChecks( state ) {
-		this.reset( state );
+	scrollChecks(state) {
+		this.reset(state);
 
 		this.adjustLastRenderedIndex();
 
-		if ( this.shouldHideItemsAbove() ) {
+		if (this.shouldHideItemsAbove()) {
 			this.hideItemsAbove();
-		} else if ( this.shouldShowItemsAbove() ) {
+		} else if (this.shouldShowItemsAbove()) {
 			this.showItemsAbove();
 		}
 
-		if ( this.shouldHideItemsBelow() ) {
+		if (this.shouldHideItemsBelow()) {
 			this.hideItemsBelow();
-		} else if ( this.shouldShowItemsBelow() ) {
+		} else if (this.shouldShowItemsBelow()) {
 			this.showItemsBelow();
 		}
 
-		if ( this.shouldLoadNextPage() ) {
+		if (this.shouldLoadNextPage()) {
 			this.loadNextPage();
 		}
 	}
 
-	reset( state ) {
+	reset(state) {
 		this.stateUpdated = false;
 		this.firstRenderedIndex = state.firstRenderedIndex;
 		this.lastRenderedIndex = state.lastRenderedIndex;
@@ -180,19 +180,19 @@ class ScrollHelper {
 			itemCount = this.props.items.length;
 		let newIndex = lastIndex;
 
-		if ( itemCount === 0 ) {
+		if (itemCount === 0) {
 			newIndex = -1;
 		}
 
-		if ( lastIndex >= itemCount ) {
-			newIndex = Math.min( firstIndex + offset, itemCount - 1 );
+		if (lastIndex >= itemCount) {
+			newIndex = Math.min(firstIndex + offset, itemCount - 1);
 		}
 
-		if ( newIndex === -1 && itemCount > 0 && firstIndex === 0 ) {
+		if (newIndex === -1 && itemCount > 0 && firstIndex === 0) {
 			newIndex = offset;
 		}
 
-		if ( newIndex !== this.lastRenderedIndex ) {
+		if (newIndex !== this.lastRenderedIndex) {
 			this.stateUpdated = true;
 			this.lastRenderedIndex = newIndex;
 		}
@@ -240,20 +240,20 @@ class ScrollHelper {
 	hideItemsAbove() {
 		let rowHeight, rowBottom;
 
-		while ( this.firstRenderedIndex < this.props.items.length ) {
-			this.storeRowItemHeights( 'top', this.firstRenderedIndex );
-			rowHeight = this.getRowHeight( this.firstRenderedIndex );
+		while (this.firstRenderedIndex < this.props.items.length) {
+			this.storeRowItemHeights('top', this.firstRenderedIndex);
+			rowHeight = this.getRowHeight(this.firstRenderedIndex);
 			rowBottom = this.containerTop + this.topPlaceholderHeight + rowHeight;
 
-			if ( rowBottom > this.topHideLevelHard ) {
-				this.deleteRowItemHeights( this.firstRenderedIndex );
+			if (rowBottom > this.topHideLevelHard) {
+				this.deleteRowItemHeights(this.firstRenderedIndex);
 				break;
 			}
 
 			this.topPlaceholderHeight += rowHeight;
 			this.firstRenderedIndex += this.props.itemsPerRow;
 			this.stateUpdated = true;
-			debug( 'hiding top item', rowHeight, this.topPlaceholderHeight );
+			debug('hiding top item', rowHeight, this.topPlaceholderHeight);
 		}
 	}
 
@@ -291,26 +291,26 @@ class ScrollHelper {
 	showItemsAbove() {
 		let rowHeight, newPlaceholderBottom;
 
-		while ( this.firstRenderedIndex > 0 ) {
-			rowHeight = this.getRowHeight( this.firstRenderedIndex - this.props.itemsPerRow );
+		while (this.firstRenderedIndex > 0) {
+			rowHeight = this.getRowHeight(this.firstRenderedIndex - this.props.itemsPerRow);
 			newPlaceholderBottom = this.containerTop + this.topPlaceholderHeight - rowHeight;
 
-			if ( newPlaceholderBottom < this.topHideLevelSoft ) {
+			if (newPlaceholderBottom < this.topHideLevelSoft) {
 				break;
 			}
 
-			this.deleteRowItemHeights( this.firstRenderedIndex - this.props.itemsPerRow );
+			this.deleteRowItemHeights(this.firstRenderedIndex - this.props.itemsPerRow);
 			this.firstRenderedIndex -= this.props.itemsPerRow;
-			this.firstRenderedIndex = Math.max( 0, this.firstRenderedIndex );
-			if ( this.firstRenderedIndex <= 0 ) {
+			this.firstRenderedIndex = Math.max(0, this.firstRenderedIndex);
+			if (this.firstRenderedIndex <= 0) {
 				// never allow top placeholder when everything is shown
 				this.topPlaceholderHeight = 0;
 			} else {
-				this.topPlaceholderHeight = Math.max( 0, this.topPlaceholderHeight - rowHeight );
+				this.topPlaceholderHeight = Math.max(0, this.topPlaceholderHeight - rowHeight);
 			}
 
 			this.stateUpdated = true;
-			debug( 'showing top item', rowHeight, this.topPlaceholderHeight );
+			debug('showing top item', rowHeight, this.topPlaceholderHeight);
 		}
 	}
 
@@ -361,20 +361,20 @@ class ScrollHelper {
 	hideItemsBelow() {
 		let rowTop, rowHeight;
 
-		while ( this.lastRenderedIndex >= 0 ) {
-			this.storeRowItemHeights( 'bottom', this.lastRenderedIndex );
-			rowHeight = this.getRowHeight( this.lastRenderedIndex );
+		while (this.lastRenderedIndex >= 0) {
+			this.storeRowItemHeights('bottom', this.lastRenderedIndex);
+			rowHeight = this.getRowHeight(this.lastRenderedIndex);
 			rowTop = this.containerBottom - this.bottomPlaceholderHeight - rowHeight;
 
-			if ( rowTop < this.bottomHideLevelHard ) {
-				this.deleteRowItemHeights( this.lastRenderedIndex );
+			if (rowTop < this.bottomHideLevelHard) {
+				this.deleteRowItemHeights(this.lastRenderedIndex);
 				break;
 			}
 
 			this.bottomPlaceholderHeight += rowHeight;
 			this.lastRenderedIndex -= this.props.itemsPerRow;
 			this.stateUpdated = true;
-			debug( 'hiding bottom item', rowHeight, this.bottomPlaceholderHeight );
+			debug('hiding bottom item', rowHeight, this.bottomPlaceholderHeight);
 		}
 	}
 
@@ -386,8 +386,8 @@ class ScrollHelper {
 	showItemsBelow() {
 		let rowHeight, itemTop, placeholderTop;
 
-		while ( this.lastRenderedIndex < this.props.items.length - 1 ) {
-			rowHeight = this.getRowHeight( this.lastRenderedIndex + this.props.itemsPerRow );
+		while (this.lastRenderedIndex < this.props.items.length - 1) {
+			rowHeight = this.getRowHeight(this.lastRenderedIndex + this.props.itemsPerRow);
 			placeholderTop = this.containerBottom - this.bottomPlaceholderHeight;
 			itemTop = placeholderTop + rowHeight;
 
@@ -399,28 +399,28 @@ class ScrollHelper {
 				break;
 			}
 
-			this.deleteRowItemHeights( this.lastRenderedIndex + this.props.itemsPerRow );
-			if ( this.bottomPlaceholderHeight - rowHeight < 0 ) {
+			this.deleteRowItemHeights(this.lastRenderedIndex + this.props.itemsPerRow);
+			if (this.bottomPlaceholderHeight - rowHeight < 0) {
 				this.containerBottom += rowHeight - this.bottomPlaceholderHeight;
 				this.bottomPlaceholderHeight = 0;
 			} else {
 				this.bottomPlaceholderHeight -= rowHeight;
 			}
 			this.lastRenderedIndex += this.props.itemsPerRow;
-			this.lastRenderedIndex = Math.min( this.lastRenderedIndex, this.props.items.length - 1 );
+			this.lastRenderedIndex = Math.min(this.lastRenderedIndex, this.props.items.length - 1);
 
 			// if everything is shown, then there should be no placeholder
-			if ( this.lastRenderedIndex >= this.props.items.length - 1 ) {
+			if (this.lastRenderedIndex >= this.props.items.length - 1) {
 				this.bottomPlaceholderHeight = 0;
 			}
 
 			this.stateUpdated = true;
-			debug( 'showing bottom item', rowHeight, this.bottomPlaceholderHeight );
+			debug('showing bottom item', rowHeight, this.bottomPlaceholderHeight);
 		}
 	}
 
 	shouldLoadNextPage() {
-		if ( this.props.fetchingNextPage || this.props.lastPage ) {
+		if (this.props.fetchingNextPage || this.props.lastPage) {
 			return false;
 		}
 
@@ -428,31 +428,31 @@ class ScrollHelper {
 	}
 
 	loadNextPage() {
-		if ( this.queuedFetchNextPage ) {
+		if (this.queuedFetchNextPage) {
 			return;
 		}
 		let triggeredByScroll = this.triggeredByScroll;
 
-		debug( 'fetching next page', this.containerBottom, this.bottomPlaceholderHeight );
+		debug('fetching next page', this.containerBottom, this.bottomPlaceholderHeight);
 
 		// Consider all page fetches once user starts scrolling as triggered by scroll
 		// Same condition check is in components/infinite-scroll checkScrollPosition
-		if ( this.scrollPosition > this.contextHeight ) {
+		if (this.scrollPosition > this.contextHeight) {
 			triggeredByScroll = true;
 		}
 
 		// scroll check may be triggered while dispatching an action,
 		// we cannot create new action while dispatching old one
-		this.queuedFetchNextPage = Promise.resolve().then( () => {
+		this.queuedFetchNextPage = Promise.resolve().then(() => {
 			this.queuedFetchNextPage = null;
 			// checking these values again because we shifted the fetch to the next stack
-			if ( this.props.fetchingNextPage || this.props.lastPage ) {
+			if (this.props.fetchingNextPage || this.props.lastPage) {
 				return false;
 			}
-			this.props.fetchNextPage( {
+			this.props.fetchNextPage({
 				triggeredByScroll: triggeredByScroll,
-			} );
-		} );
+			});
+		});
 	}
 }
 

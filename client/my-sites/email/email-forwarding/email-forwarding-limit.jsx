@@ -17,15 +17,15 @@ class EmailForwardingLimit extends React.Component {
 
 		return (
 			<div className="email-forwarding__limit">
-				{ this.props.translate( 'You are using %(used)s out of %(available)s email forwards.', {
+				{this.props.translate('You are using %(used)s out of %(available)s email forwards.', {
 					args: {
 						used: emailForwardingCount,
 						available: emailForwardingLimit,
 					},
-				} ) }
+				})}
 			</div>
 		);
 	}
 }
 
-export default localize( EmailForwardingLimit );
+export default localize(EmailForwardingLimit);

@@ -13,9 +13,9 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is VIP
  */
-export default function isVipSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site || ! site.hasOwnProperty( 'is_vip' ) ) {
+export default function isVipSite(state, siteId) {
+	const site = getRawSite(state, siteId);
+	if (!site || !site.hasOwnProperty('is_vip')) {
 		return null;
 	}
 

@@ -4,12 +4,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const WooCommerceLogo = ( { height = 32, width = 120 } ) => {
+const WooCommerceLogo = ({ height = 32, width = 120 }) => {
 	return (
 		<svg
 			className="woocommerce-logo"
-			height={ height }
-			width={ width }
+			height={height}
+			width={width}
 			viewBox="0 0 723 146"
 			version="1.1"
 		>

@@ -12,10 +12,10 @@ import { next } from 'lib/shortcode';
 import GalleryShortcode from 'components/gallery-shortcode';
 
 class GalleryView extends Component {
-	static match( content ) {
-		const nextMatch = next( 'gallery', content );
+	static match(content) {
+		const nextMatch = next('gallery', content);
 
-		if ( nextMatch ) {
+		if (nextMatch) {
 			return {
 				index: nextMatch.index,
 				content: nextMatch.content,
@@ -26,16 +26,16 @@ class GalleryView extends Component {
 		}
 	}
 
-	static serialize( content ) {
-		return encodeURIComponent( content );
+	static serialize(content) {
+		return encodeURIComponent(content);
 	}
 
-	static edit( editor, content ) {
-		editor.execCommand( 'wpcomEditGallery', content );
+	static edit(editor, content) {
+		editor.execCommand('wpcomEditGallery', content);
 	}
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			wrapper: null,
@@ -43,34 +43,34 @@ class GalleryView extends Component {
 	}
 
 	componentDidMount() {
-		this.setState( {
-			wrapper: ReactDom.findDOMNode( this.refs.view ),
-		} );
+		this.setState({
+			wrapper: ReactDom.findDOMNode(this.refs.view),
+		});
 
-		if ( window.MutationObserver ) {
-			this.observer = new MutationObserver( this.props.onResize );
-			this.observer.observe( ReactDom.findDOMNode( this.refs.view ), {
+		if (window.MutationObserver) {
+			this.observer = new MutationObserver(this.props.onResize);
+			this.observer.observe(ReactDom.findDOMNode(this.refs.view), {
 				attributes: true,
 				childList: true,
 				subtree: true,
-			} );
+			});
 		}
 	}
 
 	componentWillUnmount() {
-		if ( this.observer ) {
+		if (this.observer) {
 			this.observer.disconnect();
 		}
 	}
 
 	renderShortcode() {
-		if ( ! this.state.wrapper ) {
+		if (!this.state.wrapper) {
 			return;
 		}
 
 		return (
-			<GalleryShortcode siteId={ this.props.siteId } width={ this.state.wrapper.clientWidth }>
-				{ this.props.content }
+			<GalleryShortcode siteId={this.props.siteId} width={this.state.wrapper.clientWidth}>
+				{this.props.content}
 			</GalleryShortcode>
 		);
 	}
@@ -78,7 +78,7 @@ class GalleryView extends Component {
 	render() {
 		return (
 			<div ref="view" className="wpview-content wpview-type-gallery">
-				{ this.renderShortcode() }
+				{this.renderShortcode()}
 			</div>
 		);
 	}

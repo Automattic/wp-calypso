@@ -16,19 +16,15 @@ export default class extends React.PureComponent {
 		value: 'Hello World!',
 	};
 
-	onChange = event => {
-		this.setState( {
+	onChange = (event) => {
+		this.setState({
 			value: event.target.value,
-		} );
+		});
 	};
 
 	render() {
 		return (
-			<CountedTextarea
-				value={ this.state.value }
-				onChange={ this.onChange }
-				acceptableLength={ 20 }
-			/>
+			<CountedTextarea value={this.state.value} onChange={this.onChange} acceptableLength={20} />
 		);
 	}
 }

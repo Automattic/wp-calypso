@@ -38,10 +38,10 @@ export class PurchasePlanDetails extends Component {
 		hasLoadedSites: PropTypes.bool,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool,
 		pluginList: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				slug: PropTypes.string.isRequired,
 				key: PropTypes.string,
-			} ).isRequired
+			}).isRequired
 		).isRequired,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -59,12 +59,12 @@ export class PurchasePlanDetails extends Component {
 		);
 	}
 
-	renderPluginLabel( slug ) {
-		switch ( slug ) {
+	renderPluginLabel(slug) {
+		switch (slug) {
 			case 'vaultpress':
-				return this.props.translate( 'Backups and security scanning API key' );
+				return this.props.translate('Backups and security scanning API key');
 			case 'akismet':
-				return this.props.translate( 'Anti-spam API key' );
+				return this.props.translate('Anti-spam API key');
 		}
 	}
 
@@ -72,43 +72,41 @@ export class PurchasePlanDetails extends Component {
 		const { pluginList, purchase, site, siteId, translate } = this.props;
 
 		// Short out as soon as we know it's not a Jetpack plan
-		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
+		if (purchase && (!isJetpackPlan(purchase) || isFreeJetpackPlan(purchase))) {
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) || this.props.isPlaceholder ) {
+		if (isDataLoading(this.props) || this.props.isPlaceholder) {
 			return this.renderPlaceholder();
 		}
 
-		if ( isExpired( purchase ) ) {
+		if (isExpired(purchase)) {
 			return null;
 		}
 
-		const headerText = translate( '%(planName)s Plan', {
+		const headerText = translate('%(planName)s Plan', {
 			args: {
-				planName: getName( purchase ),
+				planName: getName(purchase),
 			},
-		} );
+		});
 
 		return (
 			<div className="plan-details">
-				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
-				<SectionHeader label={ headerText } />
+				{siteId && <QueryPluginKeys siteId={siteId} />}
+				<SectionHeader label={headerText} />
 				<Card>
-					{ ! isPartnerPurchase( purchase ) && (
-						<PlanBillingPeriod purchase={ purchase } site={ site } />
-					) }
+					{!isPartnerPurchase(purchase) && <PlanBillingPeriod purchase={purchase} site={site} />}
 
-					{ pluginList.map( ( plugin, i ) => {
+					{pluginList.map((plugin, i) => {
 						return (
-							<FormFieldset key={ i }>
-								<FormLabel htmlFor={ `plugin-${ plugin.slug }` }>
-									{ this.renderPluginLabel( plugin.slug ) }
+							<FormFieldset key={i}>
+								<FormLabel htmlFor={`plugin-${plugin.slug}`}>
+									{this.renderPluginLabel(plugin.slug)}
 								</FormLabel>
-								<ClipboardButtonInput id={ `plugin-${ plugin.slug }` } value={ plugin.key } />
+								<ClipboardButtonInput id={`plugin-${plugin.slug}`} value={plugin.key} />
 							</FormFieldset>
 						);
-					} ) }
+					})}
 				</Card>
 			</div>
 		);
@@ -116,15 +114,15 @@ export class PurchasePlanDetails extends Component {
 }
 
 // hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
-export default connect( ( state, props ) => {
-	const purchase = getByPurchaseId( state, props.purchaseId );
+export default connect((state, props) => {
+	const purchase = getByPurchaseId(state, props.purchaseId);
 	const siteId = purchase ? purchase.siteId : null;
 	return {
-		hasLoadedSites: ! isRequestingSites( state ),
-		site: purchase ? getSite( state, purchase.siteId ) : null,
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedSites: !isRequestingSites(state),
+		site: purchase ? getSite(state, purchase.siteId) : null,
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer(state),
 		purchase,
-		pluginList: getPluginsForSite( state, siteId ),
+		pluginList: getPluginsForSite(state, siteId),
 		siteId,
 	};
-} )( localize( PurchasePlanDetails ) );
+})(localize(PurchasePlanDetails));

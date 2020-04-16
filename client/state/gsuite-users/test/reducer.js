@@ -10,7 +10,7 @@ import { usersReducer } from '../reducer';
 
 import { GSUITE_USERS_REQUEST_SUCCESS } from 'state/action-types';
 
-describe( "gsuiteUsersReducer's", () => {
+describe("gsuiteUsersReducer's", () => {
 	const account = {
 		mailbox: 'a',
 		domain: 'test.blog',
@@ -23,20 +23,20 @@ describe( "gsuiteUsersReducer's", () => {
 		agreed_to_terms: false,
 	};
 
-	describe( 'users sub-reducer', () => {
-		test( 'should default to null', () => {
-			const state = usersReducer( undefined, {} );
+	describe('users sub-reducer', () => {
+		test('should default to null', () => {
+			const state = usersReducer(undefined, {});
 
-			expect( state ).to.eql( null );
-		} );
+			expect(state).to.eql(null);
+		});
 
-		test( 'should return new items received', () => {
-			const state = usersReducer( null, {
+		test('should return new items received', () => {
+			const state = usersReducer(null, {
 				type: GSUITE_USERS_REQUEST_SUCCESS,
-				response: { accounts: [ account ] },
-			} );
+				response: { accounts: [account] },
+			});
 
-			expect( state ).to.eql( [ account ] );
-		} );
-	} );
-} );
+			expect(state).to.eql([account]);
+		});
+	});
+});

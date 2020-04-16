@@ -121,8 +121,8 @@ const darkColorSchemeLogo = (
 	</g>
 );
 
-function JetpackBluehostLogo( { darkColorScheme } ) {
-	if ( darkColorScheme ) {
+function JetpackBluehostLogo({ darkColorScheme }) {
+	if (darkColorScheme) {
 		return darkColorSchemeLogo;
 	}
 

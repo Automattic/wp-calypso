@@ -27,7 +27,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  */
 import './style.scss';
 
-const WPAdminLink = props => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
+const WPAdminLink = (props) => <ExternalLink icon iconSize={12} target="_blank" {...props} />;
 
 class SiteIndicator extends Component {
 	static propTypes = {
@@ -45,7 +45,7 @@ class SiteIndicator extends Component {
 
 	hasUpdate() {
 		const { siteUpdates } = this.props;
-		return siteUpdates && ! this.hasError() && siteUpdates.total > 0;
+		return siteUpdates && !this.hasError() && siteUpdates.total > 0;
 	}
 
 	hasError() {
@@ -59,69 +59,65 @@ class SiteIndicator extends Component {
 		return (
 			userCanManage &&
 			siteIsJetpack &&
-			! siteIsAutomatedTransfer &&
-			( this.hasUpdate() || this.hasError() )
+			!siteIsAutomatedTransfer &&
+			(this.hasUpdate() || this.hasError())
 		);
 	}
 
 	toggleExpand = () => {
-		this.setState( {
-			expand: ! this.state.expand,
-		} );
+		this.setState({
+			expand: !this.state.expand,
+		});
 
-		const action = ! this.state.expand ? 'Expand' : 'Collapse';
-		this.props.recordGoogleEvent( 'Site-Indicator', `Clicked to ${ action } the Site Indicator` );
+		const action = !this.state.expand ? 'Expand' : 'Collapse';
+		this.props.recordGoogleEvent('Site-Indicator', `Clicked to ${action} the Site Indicator`);
 	};
 
 	updatesAvailable() {
 		const { site, siteUpdates, translate } = this.props;
 		const activityLogPath = '/activity-log/' + site.slug;
 
-		if ( siteUpdates.wordpress === siteUpdates.total && site.canUpdateFiles ) {
+		if (siteUpdates.wordpress === siteUpdates.total && site.canUpdateFiles) {
 			return (
 				<span>
-					{ translate(
+					{translate(
 						'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}',
 						{
 							components: {
-								link: <a href={ activityLogPath } onClick={ this.handleCoreUpdate } />,
+								link: <a href={activityLogPath} onClick={this.handleCoreUpdate} />,
 							},
 							args: {
 								version: siteUpdates.wp_update_version,
 							},
 						}
-					) }
+					)}
 				</span>
 			);
 		}
 
-		if ( siteUpdates.plugins === siteUpdates.total && site.canUpdateFiles ) {
+		if (siteUpdates.plugins === siteUpdates.total && site.canUpdateFiles) {
 			return (
 				<span>
-					<a onClick={ this.handlePluginsUpdate } href={ activityLogPath }>
-						{ translate(
+					<a onClick={this.handlePluginsUpdate} href={activityLogPath}>
+						{translate(
 							'There is a plugin update available.',
 							'There are plugin updates available.',
 							{
 								count: siteUpdates.total,
 							}
-						) }
+						)}
 					</a>
 				</span>
 			);
 		}
 
-		if ( siteUpdates.themes === siteUpdates.total && site.canUpdateFiles ) {
+		if (siteUpdates.themes === siteUpdates.total && site.canUpdateFiles) {
 			return (
 				<span>
-					<a onClick={ this.handleThemesUpdate } href={ activityLogPath }>
-						{ translate(
-							'There is a theme update available.',
-							'There are theme updates available.',
-							{
-								count: siteUpdates.total,
-							}
-						) }
+					<a onClick={this.handleThemesUpdate} href={activityLogPath}>
+						{translate('There is a theme update available.', 'There are theme updates available.', {
+							count: siteUpdates.total,
+						})}
 					</a>
 				</span>
 			);
@@ -133,8 +129,8 @@ class SiteIndicator extends Component {
 		) {
 			return (
 				<span>
-					<a onClick={ this.handleMultipleUpdate } href={ activityLogPath }>
-						{ translate( 'There are updates available.' ) }
+					<a onClick={this.handleMultipleUpdate} href={activityLogPath}>
+						{translate('There are updates available.')}
 					</a>
 				</span>
 			);
@@ -143,21 +139,21 @@ class SiteIndicator extends Component {
 		return (
 			<span>
 				<WPAdminLink
-					onClick={ this.handleGenericUpdate }
-					href={ site.options.admin_url + 'update-core.php' }
+					onClick={this.handleGenericUpdate}
+					href={site.options.admin_url + 'update-core.php'}
 				>
-					{ translate( 'There is an update available.', 'There are updates available.', {
+					{translate('There is an update available.', 'There are updates available.', {
 						count: siteUpdates.total,
-					} ) }
+					})}
 				</WPAdminLink>
 			</span>
 		);
 	}
 
-	recordEvent( event, total ) {
-		window.scrollTo( 0, 0 );
-		this.setState( { expand: false } );
-		this.props.recordGoogleEvent( 'Site-Indicator', event, 'Total Updates', total );
+	recordEvent(event, total) {
+		window.scrollTo(0, 0);
+		this.setState({ expand: false });
+		this.props.recordGoogleEvent('Site-Indicator', event, 'Total Updates', total);
 	}
 
 	handlePluginsUpdate = () => {
@@ -177,7 +173,7 @@ class SiteIndicator extends Component {
 	};
 
 	handleCoreUpdate = () => {
-		this.recordEvent( 'Clicked updates available link to WordPress updates', 1 );
+		this.recordEvent('Clicked updates available link to WordPress updates', 1);
 	};
 
 	handleMultipleUpdate = () => {
@@ -204,34 +200,34 @@ class SiteIndicator extends Component {
 		let accessFailedMessage;
 
 		// Don't show the button if the site is not defined.
-		if ( site ) {
+		if (site) {
 			accessFailedMessage = (
 				<span>
-					{ translate( 'This site cannot be accessed.' ) }
+					{translate('This site cannot be accessed.')}
 					<Button
 						borderless
 						compact
 						scary
-						href={ `/settings/disconnect-site/${ site.slug }` }
-						onClick={ this.props.trackSiteDisconnect }
+						href={`/settings/disconnect-site/${site.slug}`}
+						onClick={this.props.trackSiteDisconnect}
 					>
-						{ translate( 'Remove Site' ) }
+						{translate('Remove Site')}
 					</Button>
 				</span>
 			);
 		} else {
-			accessFailedMessage = <span>{ translate( 'This site cannot be accessed.' ) }</span>;
+			accessFailedMessage = <span>{translate('This site cannot be accessed.')}</span>;
 		}
 
 		return accessFailedMessage;
 	}
 
 	getText() {
-		if ( this.hasUpdate() ) {
+		if (this.hasUpdate()) {
 			return this.updatesAvailable();
 		}
 
-		if ( this.hasError() ) {
+		if (this.hasError()) {
 			return this.errorAccessing();
 		}
 
@@ -239,45 +235,45 @@ class SiteIndicator extends Component {
 	}
 
 	getIcon() {
-		if ( this.hasUpdate() ) {
+		if (this.hasUpdate()) {
 			return 'sync';
 		}
 
-		if ( this.hasError() ) {
+		if (this.hasError()) {
 			return 'notice';
 		}
 	}
 
 	renderIndicator() {
-		const indicatorClass = classNames( {
+		const indicatorClass = classNames({
 			'is-expanded': this.state.expand,
 			'is-update': this.hasUpdate(),
 			'is-error': this.hasError(),
 			'is-action': true,
 			'site-indicator__main': true,
-		} );
+		});
 
 		return (
-			<div className={ indicatorClass }>
-				{ ! this.state.expand && (
+			<div className={indicatorClass}>
+				{!this.state.expand && (
 					<Animate type="appear">
-						<button className="site-indicator__button" onClick={ this.toggleExpand }>
-							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-							<Gridicon icon={ this.getIcon() } size={ 16 } />
-							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+						<button className="site-indicator__button" onClick={this.toggleExpand}>
+							{/* eslint-disable wpcalypso/jsx-gridicon-size */}
+							<Gridicon icon={this.getIcon()} size={16} />
+							{/* eslint-enable wpcalypso/jsx-gridicon-size */}
 						</button>
 					</Animate>
-				) }
-				{ this.state.expand && (
+				)}
+				{this.state.expand && (
 					<div className="site-indicator__message">
-						<div className="site-indicator__action">{ this.getText() }</div>
-						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+						<div className="site-indicator__action">{this.getText()}</div>
+						<button className="site-indicator__button" onClick={this.toggleExpand}>
 							<Animate type="appear">
-								<Gridicon icon="cross" size={ 18 } />
+								<Gridicon icon="cross" size={18} />
 							</Animate>
 						</button>
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -288,9 +284,9 @@ class SiteIndicator extends Component {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className="site-indicator__wrapper">
-				{ siteIsJetpack && <QuerySiteConnectionStatus siteId={ site.ID } /> }
+				{siteIsJetpack && <QuerySiteConnectionStatus siteId={site.ID} />}
 
-				{ this.showIndicator() && this.renderIndicator() }
+				{this.showIndicator() && this.renderIndicator()}
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
@@ -298,13 +294,13 @@ class SiteIndicator extends Component {
 }
 
 export default connect(
-	( state, { site } ) => {
+	(state, { site }) => {
 		return {
-			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
-			siteIsJetpack: site && isJetpackSite( state, site.ID ),
-			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
-			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
-			userCanManage: site && canCurrentUser( state, site.ID, 'manage_options' ),
+			siteIsConnected: site && getSiteConnectionStatus(state, site.ID),
+			siteIsJetpack: site && isJetpackSite(state, site.ID),
+			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer(state, site.ID),
+			siteUpdates: site && getUpdatesBySiteId(state, site.ID),
+			userCanManage: site && canCurrentUser(state, site.ID, 'manage_options'),
 		};
 	},
 	{
@@ -312,11 +308,8 @@ export default connect(
 		recordTracksEvent,
 		trackSiteDisconnect: () =>
 			composeAnalytics(
-				recordGoogleEvent(
-					'Jetpack',
-					'Clicked in site indicator to start Jetpack Disconnect flow'
-				),
-				recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
+				recordGoogleEvent('Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow'),
+				recordTracksEvent('calypso_jetpack_site_indicator_disconnect_start')
 			),
 	}
-)( localize( SiteIndicator ) );
+)(localize(SiteIndicator));

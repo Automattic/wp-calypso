@@ -17,31 +17,31 @@ import { useLocalizedMoment } from 'components/localized-moment';
  */
 import './style.scss';
 
-const ContactFormNotice = ( { showAt, hideAt, heading, message, compact } ) => {
+const ContactFormNotice = ({ showAt, hideAt, heading, message, compact }) => {
 	const moment = useLocalizedMoment();
 	const currentDate = moment();
 
-	if ( ! currentDate.isBetween( showAt, hideAt ) ) {
+	if (!currentDate.isBetween(showAt, hideAt)) {
 		return null;
 	}
 
-	if ( compact ) {
+	if (compact) {
 		return (
 			<FoldableCard
 				className="contact-form-notice"
-				clickableHeader={ true }
-				compact={ true }
-				header={ heading }
+				clickableHeader={true}
+				compact={true}
+				header={heading}
 			>
-				{ message }
+				{message}
 			</FoldableCard>
 		);
 	}
 
 	return (
 		<div className="contact-form-notice">
-			<FormSectionHeading>{ heading }</FormSectionHeading>
-			<div>{ message }</div>
+			<FormSectionHeading>{heading}</FormSectionHeading>
+			<div>{message}</div>
 			<hr />
 		</div>
 	);

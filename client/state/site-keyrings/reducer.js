@@ -22,24 +22,24 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_KEYRINGS_REQUEST: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case SITE_KEYRINGS_REQUEST_SUCCESS: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 		case SITE_KEYRINGS_REQUEST_FAILURE: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the save Request status after an action has been dispatched. The
@@ -49,14 +49,14 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const saveRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const saveRequests = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_KEYRINGS_SAVE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: { saving: true, status: 'pending', error: false },
+				[siteId]: { saving: true, status: 'pending', error: false },
 			};
 		}
 		case SITE_KEYRINGS_SAVE_SUCCESS: {
@@ -64,7 +64,7 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: { saving: false, status: 'success', error: false },
+				[siteId]: { saving: false, status: 'success', error: false },
 			};
 		}
 		case SITE_KEYRINGS_SAVE_FAILURE: {
@@ -72,13 +72,13 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: { saving: false, status: 'error', error },
+				[siteId]: { saving: false, status: 'error', error },
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -88,14 +88,14 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+const items = withSchemaValidation(siteKeyringsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case SITE_KEYRINGS_REQUEST_SUCCESS: {
 			const { siteId, keyrings } = action;
 
 			return {
 				...state,
-				[ siteId ]: keyrings,
+				[siteId]: keyrings,
 			};
 		}
 		case SITE_KEYRINGS_SAVE_SUCCESS: {
@@ -103,7 +103,7 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 
 			return {
 				...state,
-				[ siteId ]: ( state[ siteId ] || [] ).concat( [ keyring ] ),
+				[siteId]: (state[siteId] || []).concat([keyring]),
 			};
 		}
 		case SITE_KEYRINGS_UPDATE_SUCCESS: {
@@ -111,7 +111,7 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].map( keyring =>
+				[siteId]: state[siteId].map((keyring) =>
 					keyring.keyring_id === keyringId
 						? { ...keyring, external_user_id: externalUserId }
 						: keyring
@@ -123,11 +123,11 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 
 			return {
 				...state,
-				[ siteId ]: ( state[ siteId ] || [] ).filter(
-					keyring =>
-						! (
+				[siteId]: (state[siteId] || []).filter(
+					(keyring) =>
+						!(
 							keyring.keyring_id === keyringId &&
-							( ! externalUserId || keyring.external_user_id === externalUserId )
+							(!externalUserId || keyring.external_user_id === externalUserId)
 						)
 				),
 			};
@@ -135,10 +135,10 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
 	saveRequests,
-} );
+});

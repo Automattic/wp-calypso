@@ -26,14 +26,14 @@ export default class DocsSelectors extends PureComponent {
 		return (
 			<Main className="devdocs docs-selectors">
 				<DocumentHead title="State Selectors" />
-				{ selector ? (
-					<DocsSelectorsSingle { ...{ selector, search } } />
+				{selector ? (
+					<DocsSelectorsSingle {...{ selector, search }} />
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/docs-selectors/README.md" />
-						<DocsSelectorsSearch search={ search } />
+						<DocsSelectorsSearch search={search} />
 					</div>
-				) }
+				)}
 			</Main>
 		);
 	}

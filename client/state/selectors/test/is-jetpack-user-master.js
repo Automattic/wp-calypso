@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
 import { dataItems } from './fixtures/jetpack-connection';
 
-describe( 'isJetpackUserMaster()', () => {
-	test( "should return true if the user is the master user of the site's connection", () => {
+describe('isJetpackUserMaster()', () => {
+	test("should return true if the user is the master user of the site's connection", () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -19,11 +19,11 @@ describe( 'isJetpackUserMaster()', () => {
 				},
 			},
 			siteId = 12345678;
-		const output = isJetpackUserMaster( stateIn, siteId );
-		expect( output ).to.be.true;
-	} );
+		const output = isJetpackUserMaster(stateIn, siteId);
+		expect(output).to.be.true;
+	});
 
-	test( "should return false if the user is not the master user of the site's connection", () => {
+	test("should return false if the user is not the master user of the site's connection", () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -32,11 +32,11 @@ describe( 'isJetpackUserMaster()', () => {
 				},
 			},
 			siteId = 87654321;
-		const output = isJetpackUserMaster( stateIn, siteId );
-		expect( output ).to.be.false;
-	} );
+		const output = isJetpackUserMaster(stateIn, siteId);
+		expect(output).to.be.false;
+	});
 
-	test( 'should return null if the information is not known yet', () => {
+	test('should return null if the information is not known yet', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -45,7 +45,7 @@ describe( 'isJetpackUserMaster()', () => {
 				},
 			},
 			siteId = 88888888;
-		const output = isJetpackUserMaster( stateIn, siteId );
-		expect( output ).to.be.null;
-	} );
-} );
+		const output = isJetpackUserMaster(stateIn, siteId);
+		expect(output).to.be.null;
+	});
+});

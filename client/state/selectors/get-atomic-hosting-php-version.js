@@ -5,6 +5,6 @@
  * @param  {number}  siteId The ID of the site we're querying
  * @returns {string} PHP Version used, or ''
  */
-export function getAtomicHostingPhpVersion( state, siteId ) {
-	return state.atomicHosting?.[ siteId ]?.phpVersion ?? '';
+export function getAtomicHostingPhpVersion(state, siteId) {
+	return state.atomicHosting?.[siteId]?.phpVersion ?? '';
 }

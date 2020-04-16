@@ -19,18 +19,18 @@ import ExternalLink from 'components/external-link';
  */
 import './style.scss';
 
-const LegalUpdateBanner = props => {
+const LegalUpdateBanner = (props) => {
 	const translate = useTranslate();
 
-	useEffect( () => {
+	useEffect(() => {
 		props.requestLegalData();
-	}, [] );
+	}, []);
 
-	if ( props.needsAcceptTos ) {
+	if (props.needsAcceptTos) {
 		return (
 			<Card className="legal-updates-banner">
 				<div className="legal-updates-banner__content">
-					{ translate(
+					{translate(
 						"We've updated our {{a}}Terms of Service{{/a}}. Please take a few moments to read them. By accepting, " +
 							'you agree to the new Terms of Service.',
 						{
@@ -39,20 +39,20 @@ const LegalUpdateBanner = props => {
 									<ExternalLink
 										icon
 										target="_blank"
-										href={ localizeUrl( 'https://wordpress.com/tos' ) }
+										href={localizeUrl('https://wordpress.com/tos')}
 									/>
 								),
 							},
 						}
-					) }
+					)}
 				</div>
 				<div className="legal-updates-banner__actions">
 					<Button
 						primary
 						className="legal-updates-banner__accept"
-						onClick={ () => props.acceptTos() }
+						onClick={() => props.acceptTos()}
 					>
-						{ translate( 'Accept' ) }
+						{translate('Accept')}
 					</Button>
 				</div>
 			</Card>
@@ -63,11 +63,11 @@ const LegalUpdateBanner = props => {
 };
 
 export default connect(
-	state => ( {
-		needsAcceptTos: shouldDisplayTosUpdateBanner( state ),
-	} ),
+	(state) => ({
+		needsAcceptTos: shouldDisplayTosUpdateBanner(state),
+	}),
 	{
 		acceptTos,
 		requestLegalData,
 	}
-)( LegalUpdateBanner );
+)(LegalUpdateBanner);

@@ -26,30 +26,28 @@ class AuthCaptureToggle extends Component {
 
 		return (
 			<FormFieldset className="auth-capture-toggle__container">
-				<FormLegend>{ translate( 'Payment authorization' ) }</FormLegend>
+				<FormLegend>{translate('Payment authorization')}</FormLegend>
 				<FormLabel>
 					<FormRadio
 						name="capture"
 						value="yes"
-						checked={ ! isAuthOnlyMode }
-						onChange={ onSelectCapture }
+						checked={!isAuthOnlyMode}
+						onChange={onSelectCapture}
 					/>
-					<span>
-						{ translate( 'Authorize and charge the customers credit card automatically' ) }
-					</span>
+					<span>{translate('Authorize and charge the customers credit card automatically')}</span>
 				</FormLabel>
 				<FormLabel>
 					<FormRadio
 						name="capture"
 						value="no"
-						checked={ isAuthOnlyMode }
-						onChange={ onSelectAuthOnly }
+						checked={isAuthOnlyMode}
+						onChange={onSelectAuthOnly}
 					/>
-					<span>{ translate( "Authorize the customer's credit card but charge manually" ) }</span>
+					<span>{translate("Authorize the customer's credit card but charge manually")}</span>
 				</FormLabel>
 			</FormFieldset>
 		);
 	};
 }
 
-export default localize( AuthCaptureToggle );
+export default localize(AuthCaptureToggle);

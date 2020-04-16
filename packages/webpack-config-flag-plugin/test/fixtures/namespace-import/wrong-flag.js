@@ -1,5 +1,5 @@
 import * as config from 'config';
 
 // Should NOT be replaced with true.
-if ( config.isEnabled( 'bar' ) ) {
+if (config.isEnabled('bar')) {
 }

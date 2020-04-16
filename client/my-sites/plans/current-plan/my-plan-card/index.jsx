@@ -15,42 +15,42 @@ import { Card, ProductIcon } from '@automattic/components';
  */
 import './style.scss';
 
-const MyPlanCard = ( { action, isError, isPlaceholder, details, product, tagline, title } ) => {
-	const cardClassNames = classNames( 'my-plan-card', {
+const MyPlanCard = ({ action, isError, isPlaceholder, details, product, tagline, title }) => {
+	const cardClassNames = classNames('my-plan-card', {
 		'is-placeholder': isPlaceholder,
-		'has-action-only': action && ! details && ! isPlaceholder,
-	} );
-	const detailsClassNames = classNames( 'my-plan-card__details', { 'is-error': isError } );
+		'has-action-only': action && !details && !isPlaceholder,
+	});
+	const detailsClassNames = classNames('my-plan-card__details', { 'is-error': isError });
 
 	return (
-		<Card className={ cardClassNames } compact>
+		<Card className={cardClassNames} compact>
 			<div className="my-plan-card__primary">
 				<div className="my-plan-card__icon">
-					{ ! isPlaceholder && product && <ProductIcon slug={ product } /> }
+					{!isPlaceholder && product && <ProductIcon slug={product} />}
 				</div>
 				<div className="my-plan-card__header">
-					{ title && <h2 className="my-plan-card__title">{ title }</h2> }
-					{ tagline && <p className="my-plan-card__tagline">{ tagline }</p> }
+					{title && <h2 className="my-plan-card__title">{title}</h2>}
+					{tagline && <p className="my-plan-card__tagline">{tagline}</p>}
 				</div>
 			</div>
-			{ ( details || action || isPlaceholder ) && (
+			{(details || action || isPlaceholder) && (
 				<div className="my-plan-card__secondary">
-					<div className={ detailsClassNames }>{ isPlaceholder ? null : details }</div>
-					<div className="my-plan-card__action">{ isPlaceholder ? null : action }</div>
+					<div className={detailsClassNames}>{isPlaceholder ? null : details}</div>
+					<div className="my-plan-card__action">{isPlaceholder ? null : action}</div>
 				</div>
-			) }
+			)}
 		</Card>
 	);
 };
 
 MyPlanCard.propTypes = {
-	action: PropTypes.oneOfType( [ PropTypes.node, PropTypes.element ] ),
+	action: PropTypes.oneOfType([PropTypes.node, PropTypes.element]),
 	isError: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
-	details: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+	details: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
 	product: PropTypes.string,
-	tagline: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
+	tagline: PropTypes.oneOfType([PropTypes.string, PropTypes.node, PropTypes.element]),
+	title: PropTypes.oneOfType([PropTypes.string, PropTypes.node, PropTypes.element]),
 };
 
 export default MyPlanCard;

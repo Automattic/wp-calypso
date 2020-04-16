@@ -29,14 +29,14 @@ import 'state/data-layer/wpcom/sites/exports/media';
  * @param  {object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
  * @returns {object}            Action object
  */
-export function setPostType( postType ) {
+export function setPostType(postType) {
 	return {
 		type: EXPORT_POST_TYPE_SET,
 		postType,
 	};
 }
 
-export function setPostTypeFieldValue( siteId, postType, fieldName, value ) {
+export function setPostTypeFieldValue(siteId, postType, fieldName, value) {
 	return {
 		type: EXPORT_POST_TYPE_FIELD_SET,
 		siteId,
@@ -52,35 +52,34 @@ export function setPostTypeFieldValue( siteId, postType, fieldName, value ) {
  * @param {number} siteId The ID of the site to fetch
  * @returns {thunk}        An action thunk for fetching the advanced settings
  */
-export function advancedSettingsFetch( siteId ) {
-	return ( dispatch, getState ) => {
-		if ( siteId === null || typeof siteId === 'undefined' ) {
+export function advancedSettingsFetch(siteId) {
+	return (dispatch, getState) => {
+		if (siteId === null || typeof siteId === 'undefined') {
 			return;
 		}
 
-		if ( getState().exporter.fetchingAdvancedSettings[ siteId ] === true ) {
+		if (getState().exporter.fetchingAdvancedSettings[siteId] === true) {
 			return;
 		}
 
-		dispatch( {
+		dispatch({
 			type: EXPORT_ADVANCED_SETTINGS_FETCH,
 			siteId,
-		} );
+		});
 
-		const updateExportSettings = settings =>
-			dispatch( advancedSettingsReceive( siteId, settings ) );
+		const updateExportSettings = (settings) => dispatch(advancedSettingsReceive(siteId, settings));
 
-		const fetchFail = error => dispatch( advancedSettingsFail( siteId, error ) );
+		const fetchFail = (error) => dispatch(advancedSettingsFail(siteId, error));
 
 		return wpcom
 			.undocumented()
-			.getExportSettings( siteId )
-			.then( updateExportSettings )
-			.catch( fetchFail );
+			.getExportSettings(siteId)
+			.then(updateExportSettings)
+			.catch(fetchFail);
 	};
 }
 
-export function advancedSettingsReceive( siteId, advancedSettings ) {
+export function advancedSettingsReceive(siteId, advancedSettings) {
 	return {
 		type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 		siteId,
@@ -88,7 +87,7 @@ export function advancedSettingsReceive( siteId, advancedSettings ) {
 	};
 }
 
-export function advancedSettingsFail( siteId, error ) {
+export function advancedSettingsFail(siteId, error) {
 	return {
 		type: EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 		siteId,
@@ -102,70 +101,62 @@ export function advancedSettingsFail( siteId, error ) {
  * @param  {number}   siteId  The ID of the site to export
  * @returns {Function}         Action thunk
  */
-export function startExport( siteId, { exportAll = true } = {} ) {
-	return ( dispatch, getState ) => {
-		if ( ! siteId ) {
+export function startExport(siteId, { exportAll = true } = {}) {
+	return (dispatch, getState) => {
+		if (!siteId) {
 			return;
 		}
 
-		dispatch( {
+		dispatch({
 			type: EXPORT_START_REQUEST,
 			siteId,
 			exportAll,
-		} );
+		});
 
-		const advancedSettings = prepareExportRequest( getState(), siteId, { exportAll } );
+		const advancedSettings = prepareExportRequest(getState(), siteId, { exportAll });
 
-		const success = () => dispatch( exportStarted( siteId ) );
+		const success = () => dispatch(exportStarted(siteId));
 
-		const failure = error => dispatch( exportFailed( siteId, error ) );
+		const failure = (error) => dispatch(exportFailed(siteId, error));
 
-		return wpcom
-			.undocumented()
-			.startExport( siteId, advancedSettings )
-			.then( success )
-			.catch( failure );
+		return wpcom.undocumented().startExport(siteId, advancedSettings).then(success).catch(failure);
 	};
 }
 
-export function exportStarted( siteId ) {
+export function exportStarted(siteId) {
 	return {
 		type: EXPORT_STARTED,
 		siteId,
 	};
 }
 
-export function exportStatusFetch( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function exportStatusFetch(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: EXPORT_STATUS_FETCH,
 			siteId,
-		} );
+		});
 
-		const failure = error => {
-			dispatch( exportFailed( siteId, error ) );
+		const failure = (error) => {
+			dispatch(exportFailed(siteId, error));
 		};
 
-		const success = ( response = {} ) => {
-			switch ( response.status ) {
+		const success = (response = {}) => {
+			switch (response.status) {
 				case 'finished':
-					return dispatch( exportComplete( siteId, response.attachment_url ) );
+					return dispatch(exportComplete(siteId, response.attachment_url));
 				case 'running':
 					return;
 			}
 
-			return failure( response );
+			return failure(response);
 		};
 
-		return wpcom
-			.undocumented()
-			.getExport( siteId, 0 )
-			.then( success )
-			.catch( failure );
+		return wpcom.undocumented().getExport(siteId, 0).then(success).catch(failure);
 	};
 }
 
-export function exportFailed( siteId, error ) {
+export function exportFailed(siteId, error) {
 	return {
 		type: EXPORT_FAILURE,
 		siteId,
@@ -173,7 +164,7 @@ export function exportFailed( siteId, error ) {
 	};
 }
 
-export function exportComplete( siteId, downloadURL ) {
+export function exportComplete(siteId, downloadURL) {
 	return {
 		type: EXPORT_COMPLETE,
 		siteId,
@@ -181,21 +172,21 @@ export function exportComplete( siteId, downloadURL ) {
 	};
 }
 
-export function clearExport( siteId ) {
+export function clearExport(siteId) {
 	return {
 		type: EXPORT_CLEAR,
 		siteId,
 	};
 }
 
-export function requestMediaExport( siteId ) {
+export function requestMediaExport(siteId) {
 	return {
 		type: EXPORT_MEDIA_REQUEST,
 		siteId,
 	};
 }
 
-export function setMediaExportData( mediaExportUrl ) {
+export function setMediaExportData(mediaExportUrl) {
 	return {
 		type: SET_MEDIA_EXPORT_DATA,
 		mediaExportUrl,

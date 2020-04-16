@@ -31,7 +31,7 @@ const defaultAddress = {
 	phone: '123',
 };
 
-function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
+function createGetStateFn(newProps = { origin: {}, destination: {} }) {
 	const defaultProps = {
 		ignoreValidation: false,
 		selectNormalized: false,
@@ -41,17 +41,17 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 		values: defaultAddress,
 	};
 
-	const origin = Object.assign( {}, defaultProps, newProps.origin );
-	const destination = Object.assign( {}, defaultProps, newProps.destination );
+	const origin = Object.assign({}, defaultProps, newProps.origin);
+	const destination = Object.assign({}, defaultProps, newProps.destination);
 
-	return function() {
+	return function () {
 		return {
 			extensions: {
 				woocommerce: {
 					woocommerceServices: {
-						[ siteId ]: {
+						[siteId]: {
 							shippingLabel: {
-								[ orderId ]: {
+								[orderId]: {
 									form: {
 										origin,
 										destination,
@@ -72,16 +72,16 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 	};
 }
 
-const mockNormalizationRequest = ( valid = true, persist = false ) => {
+const mockNormalizationRequest = (valid = true, persist = false) => {
 	const status = valid ? 200 : 500;
 
-	let request = nock( 'https://public-api.wordpress.com:443' );
+	let request = nock('https://public-api.wordpress.com:443');
 
-	if ( persist ) {
+	if (persist) {
 		request = request.persist();
 	}
 
-	return request.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` ).reply( status, {
+	return request.post(`/rest/v1.1/jetpack-blogs/${siteId}/rest-api/`).reply(status, {
 		data: {
 			status,
 			body: {
@@ -89,178 +89,178 @@ const mockNormalizationRequest = ( valid = true, persist = false ) => {
 				is_trivial_normalization: valid,
 			},
 		},
-	} );
+	});
 };
 
-describe( 'Shipping label Actions', () => {
-	describe( '#openPrintingFlow', () => {
-		mockNormalizationRequest( true, true );
+describe('Shipping label Actions', () => {
+	describe('#openPrintingFlow', () => {
+		mockNormalizationRequest(true, true);
 
-		describe( 'origin validation ignored', () => {
+		describe('origin validation ignored', () => {
 			const dispatchSpy = sinon.spy();
 
-			openPrintingFlow( orderId, siteId )(
+			openPrintingFlow(orderId, siteId)(
 				dispatchSpy,
-				createGetStateFn( { origin: { ignoreValidation: true } } )
+				createGetStateFn({ origin: { ignoreValidation: true } })
 			);
 
-			it( 'toggle origin', () => {
+			it('toggle origin', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						stepName: 'origin',
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
-			it( 'do not toggle destination', () => {
+					})
+				).to.equal(true);
+			});
+			it('do not toggle destination', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						stepName: 'destination',
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						orderId,
 						siteId,
-					} )
-				).to.equal( false );
-			} );
-			it( 'open printing flow', () => {
+					})
+				).to.equal(false);
+			});
+			it('open printing flow', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
-		} );
+					})
+				).to.equal(true);
+			});
+		});
 
-		describe( 'origin errors exist', () => {
+		describe('origin errors exist', () => {
 			const dispatchSpy = sinon.spy();
 
-			const errorStub = sinon.stub( selectors, 'getFormErrors' ).returns( { origin: true } );
+			const errorStub = sinon.stub(selectors, 'getFormErrors').returns({ origin: true });
 
-			openPrintingFlow( orderId, siteId )( dispatchSpy, createGetStateFn() );
+			openPrintingFlow(orderId, siteId)(dispatchSpy, createGetStateFn());
 
-			it( 'toggles origin', () => {
+			it('toggles origin', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						stepName: 'origin',
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
-			it( 'do not toggle destination', () => {
+					})
+				).to.equal(true);
+			});
+			it('do not toggle destination', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						stepName: 'destination',
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						orderId,
 						siteId,
-					} )
-				).to.equal( false );
-			} );
-			it( 'open printing flow', () => {
+					})
+				).to.equal(false);
+			});
+			it('open printing flow', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
+					})
+				).to.equal(true);
+			});
 
 			errorStub.restore();
-		} );
+		});
 
-		describe( 'destination validation ignored', () => {
+		describe('destination validation ignored', () => {
 			const dispatchSpy = sinon.spy();
 
-			openPrintingFlow( orderId, siteId )(
+			openPrintingFlow(orderId, siteId)(
 				dispatchSpy,
-				createGetStateFn( {
+				createGetStateFn({
 					destination: { ignoreValidation: true },
-				} )
+				})
 			);
 
-			it( 'toggle destination', () => {
+			it('toggle destination', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						stepName: 'destination',
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
-			it( 'do not toggle origin', () => {
+					})
+				).to.equal(true);
+			});
+			it('do not toggle origin', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						stepName: 'origin',
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						orderId,
 						siteId,
-					} )
-				).to.equal( false );
-			} );
-			it( 'open printing flow', () => {
+					})
+				).to.equal(false);
+			});
+			it('open printing flow', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
-		} );
+					})
+				).to.equal(true);
+			});
+		});
 
-		describe( 'destination errors exist', () => {
+		describe('destination errors exist', () => {
 			const dispatchSpy = sinon.spy();
 
-			const errorStub = sinon.stub( selectors, 'getFormErrors' ).returns( { destination: true } );
+			const errorStub = sinon.stub(selectors, 'getFormErrors').returns({ destination: true });
 
-			openPrintingFlow( orderId, siteId )( dispatchSpy, createGetStateFn() );
+			openPrintingFlow(orderId, siteId)(dispatchSpy, createGetStateFn());
 
-			it( 'toggle destination', () => {
+			it('toggle destination', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						stepName: 'destination',
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
-			it( 'do not toggle origin', () => {
+					})
+				).to.equal(true);
+			});
+			it('do not toggle origin', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						stepName: 'origin',
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						orderId,
 						siteId,
-					} )
-				).to.equal( false );
-			} );
-			it( 'open printing flow', () => {
+					})
+				).to.equal(false);
+			});
+			it('open printing flow', () => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
+					})
+				).to.equal(true);
+			});
 
 			errorStub.restore();
-		} );
+		});
 
 		nock.cleanAll();
-	} );
+	});
 
-	describe( '#convertToApiPackage', () => {
-		it( 'totals value correctly (by quantity)', () => {
+	describe('#convertToApiPackage', () => {
+		it('totals value correctly (by quantity)', () => {
 			const pckg = {
 				id: 'id',
 				box_id: 'box_id',
@@ -288,7 +288,7 @@ describe( 'Shipping label Actions', () => {
 				},
 			};
 
-			expect( convertToApiPackage( pckg, customsItems ) ).to.deep.equal( {
+			expect(convertToApiPackage(pckg, customsItems)).to.deep.equal({
 				id: 'id',
 				box_id: 'box_id',
 				service_id: 'service_id',
@@ -312,11 +312,11 @@ describe( 'Shipping label Actions', () => {
 						origin_country: 'US',
 					},
 				],
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#submitAddressForNormalization', () => {
+	describe('#submitAddressForNormalization', () => {
 		/**
 		 * `values` and `normalized` contain the same address.
 		 *
@@ -325,64 +325,64 @@ describe( 'Shipping label Actions', () => {
 		 * is set to false, and blindly call the success callback afterwards,
 		 * assuming that `normalizeAddress` has already changed the flag.
 		 */
-		const getState = createGetStateFn( {
+		const getState = createGetStateFn({
 			destination: {
 				values: defaultAddress,
 				normalized: defaultAddress,
 			},
-		} );
+		});
 
-		it( 'Verifying a valid address proceeds to the next step', () => {
+		it('Verifying a valid address proceeds to the next step', () => {
 			const dispatchSpy = sinon.spy();
 
 			// Mock a successful response
-			mockNormalizationRequest( true );
+			mockNormalizationRequest(true);
 
 			return submitAddressForNormalization(
 				orderId,
 				siteId,
 				'destination'
-			)( dispatchSpy, getState ).then( () => {
+			)(dispatchSpy, getState).then(() => {
 				expect(
-					dispatchSpy.calledWith( {
+					dispatchSpy.calledWith({
 						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 						stepName: 'destination',
 						orderId,
 						siteId,
-					} )
-				).to.equal( true );
-			} );
-		} );
+					})
+				).to.equal(true);
+			});
+		});
 
-		it( 'Validation request failure returns a false promise', () => {
+		it('Validation request failure returns a false promise', () => {
 			// Mock an unsuccessful response
-			mockNormalizationRequest( false );
+			mockNormalizationRequest(false);
 
-			return new Promise( resolve => {
+			return new Promise((resolve) => {
 				submitAddressForNormalization(
 					orderId,
 					siteId,
 					'destination'
-				)( () => {}, getState ).catch( resolve );
-			} );
-		} );
-	} );
+				)(() => {}, getState).catch(resolve);
+			});
+		});
+	});
 
-	describe( '#confirmAddressSuggestion', () => {
-		it( 'dispatches the correct action', () => {
+	describe('#confirmAddressSuggestion', () => {
+		it('dispatches the correct action', () => {
 			const dispatchSpy = sinon.spy();
 			const group = 'destination';
 
-			confirmAddressSuggestion( orderId, siteId, group )( dispatchSpy, createGetStateFn() );
+			confirmAddressSuggestion(orderId, siteId, group)(dispatchSpy, createGetStateFn());
 
 			expect(
-				dispatchSpy.calledWith( {
+				dispatchSpy.calledWith({
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
 					orderId,
 					siteId,
 					group,
-				} )
-			).to.equal( true );
-		} );
-	} );
-} );
+				})
+			).to.equal(true);
+		});
+	});
+});

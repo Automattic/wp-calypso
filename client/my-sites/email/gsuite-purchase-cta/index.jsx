@@ -29,40 +29,40 @@ import QueryProductsList from 'components/data/query-products-list';
  */
 import './style.scss';
 
-export const GSuitePurchaseCta = ( {
+export const GSuitePurchaseCta = ({
 	currencyCode,
 	domainName,
 	product,
 	recordTracksEvent: recordEvent,
 	selectedSiteSlug,
-} ) => {
-	useEffect( () => {
-		recordEvent( 'calypso_email_gsuite_purchase_cta_view', {
+}) => {
+	useEffect(() => {
+		recordEvent('calypso_email_gsuite_purchase_cta_view', {
 			domain_name: domainName,
-		} );
-	}, [ domainName ] );
+		});
+	}, [domainName]);
 
-	const goToAddGSuiteUsers = planType => {
-		recordEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
+	const goToAddGSuiteUsers = (planType) => {
+		recordEvent('calypso_email_gsuite_purchase_cta_get_gsuite_click', {
 			domain_name: domainName,
 			plan_type: planType,
-		} );
+		});
 
-		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domainName, planType ) );
+		page(emailManagementNewGSuiteAccount(selectedSiteSlug, domainName, planType));
 	};
 
 	const handleLearnMoreClick = () => {
-		recordEvent( 'calypso_email_gsuite_purchase_cta_learn_more_click', {
+		recordEvent('calypso_email_gsuite_purchase_cta_learn_more_click', {
 			domain_name: domainName,
-		} );
+		});
 	};
 
 	const translate = useTranslate();
-	const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
+	const upgradeAvailable = config.isEnabled('upgrades/checkout');
 
 	return (
 		<EmailVerificationGate
-			noticeText={ translate( 'You must verify your email to purchase G Suite.' ) }
+			noticeText={translate('You must verify your email to purchase G Suite.')}
 			noticeStatus="is-info"
 		>
 			<QueryProductsList />
@@ -70,7 +70,7 @@ export const GSuitePurchaseCta = ( {
 			<CompactCard>
 				<header>
 					<h3 className="gsuite-purchase-cta__product-logo">
-						{ /* Intentionally not translated */ }
+						{/* Intentionally not translated */}
 						<strong>G Suite</strong>
 					</h3>
 				</header>
@@ -79,30 +79,30 @@ export const GSuitePurchaseCta = ( {
 			<CompactCard className="gsuite-purchase-cta__header">
 				<div className="gsuite-purchase-cta__header-description">
 					<h2 className="gsuite-purchase-cta__header-description-title">
-						{ translate( 'Professional email and so much more.' ) }
+						{translate('Professional email and so much more.')}
 					</h2>
 
 					<p className="gsuite-purchase-cta__header-description-sub-title">
-						{ translate(
+						{translate(
 							"We've partnered with Google to offer you email, " +
 								'storage, docs, calendars, and more integrated with your site.'
-						) }
+						)}
 					</p>
 
 					<div>
-						<GSuitePrice product={ product } currencyCode={ currencyCode } />
+						<GSuitePrice product={product} currencyCode={currencyCode} />
 
-						{ upgradeAvailable && (
+						{upgradeAvailable && (
 							<Button
 								className="gsuite-purchase-cta__get-gsuite-button"
-								onClick={ () => {
-									goToAddGSuiteUsers( 'basic' );
-								} }
+								onClick={() => {
+									goToAddGSuiteUsers('basic');
+								}}
 								primary
 							>
-								{ translate( 'Add G Suite' ) }
+								{translate('Add G Suite')}
 							</Button>
-						) }
+						)}
 					</div>
 				</div>
 
@@ -112,9 +112,9 @@ export const GSuitePurchaseCta = ( {
 			</CompactCard>
 
 			<CompactCard className="gsuite-purchase-cta__info">
-				<GSuiteFeatures domainName={ domainName } productSlug={ GSUITE_BASIC_SLUG } />
+				<GSuiteFeatures domainName={domainName} productSlug={GSUITE_BASIC_SLUG} />
 
-				<GSuiteLearnMore onLearnMoreClick={ handleLearnMoreClick } />
+				<GSuiteLearnMore onLearnMoreClick={handleLearnMoreClick} />
 			</CompactCard>
 		</EmailVerificationGate>
 	);
@@ -129,10 +129,10 @@ GSuitePurchaseCta.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		product: getProductBySlug( state, GSUITE_BASIC_SLUG ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ),
+	(state) => ({
+		currencyCode: getCurrentUserCurrencyCode(state),
+		product: getProductBySlug(state, GSUITE_BASIC_SLUG),
+		selectedSiteSlug: getSelectedSiteSlug(state),
+	}),
 	{ recordTracksEvent }
-)( GSuitePurchaseCta );
+)(GSuitePurchaseCta);

@@ -10,7 +10,7 @@ import GravatarCaterpillar from 'components/gravatar-caterpillar';
 import { users } from './fixtures';
 
 function GravatarCaterpillarExample() {
-	return <GravatarCaterpillar users={ users } />;
+	return <GravatarCaterpillar users={users} />;
 }
 GravatarCaterpillarExample.displayName = 'GravatarCaterpillarExample';
 

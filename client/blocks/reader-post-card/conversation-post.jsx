@@ -19,8 +19,8 @@ class ConversationPost extends React.Component {
 	render() {
 		return (
 			<div className="reader-post-card__conversation-post">
-				<CompactPostCard { ...this.props } />
-				<ConversationPostList post={ this.props.post } commentIds={ this.props.commentIds } />
+				<CompactPostCard {...this.props} />
+				<ConversationPostList post={this.props.post} commentIds={this.props.commentIds} />
 			</div>
 		);
 	}

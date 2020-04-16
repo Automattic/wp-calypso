@@ -3,14 +3,14 @@
  */
 import getOrderTransactionError from 'state/selectors/get-order-transaction-error';
 
-describe( 'getOrderTransactionError()', () => {
+describe('getOrderTransactionError()', () => {
 	const orderId = 123;
 
-	test( 'should default to null', () => {
-		expect( getOrderTransactionError( {}, orderId ) ).toBeNull();
-	} );
+	test('should default to null', () => {
+		expect(getOrderTransactionError({}, orderId)).toBeNull();
+	});
 
-	test( 'should return the expected stored error.', () => {
+	test('should return the expected stored error.', () => {
 		const error = {
 			message: 'error handling and profit!',
 		};
@@ -20,12 +20,12 @@ describe( 'getOrderTransactionError()', () => {
 				{
 					orderTransactions: {
 						errors: {
-							[ orderId ]: error,
+							[orderId]: error,
 						},
 					},
 				},
 				orderId
 			)
-		).toEqual( error );
-	} );
-} );
+		).toEqual(error);
+	});
+});

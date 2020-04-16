@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param {string} url .org site URL
  * @returns {?string} Error code, if any
  */
-export default function getJetpackRemoteInstallError( state, url ) {
-	return get( state.jetpackRemoteInstall.errorCode, url, null );
+export default function getJetpackRemoteInstallError(state, url) {
+	return get(state.jetpackRemoteInstall.errorCode, url, null);
 }

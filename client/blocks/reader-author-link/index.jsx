@@ -18,41 +18,41 @@ import Emojify from 'components/emojify';
  */
 import './style.scss';
 
-const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
+const ReaderAuthorLink = ({ author, post, siteUrl, children, className, onClick }) => {
 	const recordAuthorClick = () => {
-		stats.recordAction( 'click_author' );
-		stats.recordGaEvent( 'Clicked Author Link' );
-		if ( post ) {
-			stats.recordTrackForPost( 'calypso_reader_author_link_clicked', post );
+		stats.recordAction('click_author');
+		stats.recordGaEvent('Clicked Author Link');
+		if (post) {
+			stats.recordTrackForPost('calypso_reader_author_link_clicked', post);
 		}
 		onClick();
 	};
 
-	if ( ! siteUrl ) {
+	if (!siteUrl) {
 		siteUrl = author.URL;
 	}
 
-	const authorName = get( author, 'name', null );
+	const authorName = get(author, 'name', null);
 
 	// If the author name is blocked, don't return anything
-	if ( ! authorName || isAuthorNameBlocked( authorName ) ) {
+	if (!authorName || isAuthorNameBlocked(authorName)) {
 		return null;
 	}
 
-	const classes = classnames( 'reader-author-link', className );
+	const classes = classnames('reader-author-link', className);
 
 	// If we have neither author.URL or siteUrl, just return children in a wrapper
-	if ( ! siteUrl ) {
+	if (!siteUrl) {
 		return (
-			<span className={ classes }>
-				<Emojify>{ children }</Emojify>
+			<span className={classes}>
+				<Emojify>{children}</Emojify>
 			</span>
 		);
 	}
 
 	return (
-		<a className={ classes } href={ siteUrl } onClick={ recordAuthorClick }>
-			<Emojify>{ children }</Emojify>
+		<a className={classes} href={siteUrl} onClick={recordAuthorClick}>
+			<Emojify>{children}</Emojify>
 		</a>
 	);
 };

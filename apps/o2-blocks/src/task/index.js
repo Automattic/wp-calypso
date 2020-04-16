@@ -12,12 +12,12 @@ import save from './save';
 import icon from './icon';
 
 export function registerBlock() {
-	registerBlockType( 'a8c/task', {
-		title: __( 'Task' ),
-		description: __( 'Create task items and check them when completed.' ),
+	registerBlockType('a8c/task', {
+		title: __('Task'),
+		description: __('Create task items and check them when completed.'),
 		icon,
 		category: 'a8c',
-		keywords: [ __( 'todo' ), __( 'task' ) ],
+		keywords: [__('todo'), __('task')],
 		supports: {
 			className: false,
 			anchor: true,
@@ -53,7 +53,7 @@ export function registerBlock() {
 
 		edit,
 		save,
-	} );
+	});
 }
 
 registerBlock();

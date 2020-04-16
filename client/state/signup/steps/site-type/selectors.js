@@ -10,13 +10,13 @@ import { get } from 'lodash';
 
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
-export function getSiteType( state ) {
-	return get( state, 'signup.steps.siteType', '' );
+export function getSiteType(state) {
+	return get(state, 'signup.steps.siteType', '');
 }
 
-export function getSiteTypeId( state, siteType = null ) {
-	if ( ! siteType ) {
-		siteType = getSiteType( state );
+export function getSiteTypeId(state, siteType = null) {
+	if (!siteType) {
+		siteType = getSiteType(state);
 	}
-	return getSiteTypePropertyValue( 'slug', siteType, 'id' );
+	return getSiteTypePropertyValue('slug', siteType, 'id');
 }

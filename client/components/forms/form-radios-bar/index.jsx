@@ -17,24 +17,24 @@ import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
  */
 import './style.scss';
 
-const FormRadiosBar = ( { isThumbnail, checked, onChange, items } ) => {
+const FormRadiosBar = ({ isThumbnail, checked, onChange, items }) => {
 	return (
-		<div className={ classnames( 'form-radios-bar', { 'is-thumbnail': isThumbnail } ) }>
-			{ items.map( ( item, i ) =>
+		<div className={classnames('form-radios-bar', { 'is-thumbnail': isThumbnail })}>
+			{items.map((item, i) =>
 				isThumbnail ? (
 					<FormRadioWithThumbnail
-						key={ item.value + i }
-						checked={ checked === item.value }
-						onChange={ onChange }
-						{ ...item }
+						key={item.value + i}
+						checked={checked === item.value}
+						onChange={onChange}
+						{...item}
 					/>
 				) : (
-					<FormLabel key={ item.value + i }>
-						<FormRadio checked={ checked === item.value } onChange={ onChange } { ...item } />
-						<span>{ item.label }</span>
+					<FormLabel key={item.value + i}>
+						<FormRadio checked={checked === item.value} onChange={onChange} {...item} />
+						<span>{item.label}</span>
 					</FormLabel>
 				)
-			) }
+			)}
 		</div>
 	);
 };

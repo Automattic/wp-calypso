@@ -35,7 +35,7 @@ export class LoginLinks extends React.Component {
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
-		query: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		query: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -44,31 +44,31 @@ export class LoginLinks extends React.Component {
 	};
 
 	recordBackToWpcomLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
+		this.props.recordTracksEvent('calypso_login_back_to_wpcom_link_click');
 	};
 
 	recordHelpLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_help_link_click' );
+		this.props.recordTracksEvent('calypso_login_help_link_click');
 	};
 
-	handleLostPhoneLinkClick = event => {
+	handleLostPhoneLinkClick = (event) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
+		this.props.recordTracksEvent('calypso_login_lost_phone_link_click');
 
 		page(
-			login( {
+			login({
 				isNative: true,
 				twoFactorAuthType: 'backup',
 				isGutenboarding: this.props.isGutenboarding,
-			} )
+			})
 		);
 	};
 
-	handleMagicLoginLinkClick = event => {
+	handleMagicLoginLinkClick = (event) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
+		this.props.recordTracksEvent('calypso_login_magic_login_request_click');
 		this.props.resetMagicLoginRequestForm();
 
 		const loginParameters = {
@@ -76,57 +76,57 @@ export class LoginLinks extends React.Component {
 			locale: this.props.locale,
 			twoFactorAuthType: 'link',
 		};
-		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
-		if ( emailAddress ) {
+		const emailAddress = get(this.props, ['query', 'email_address']);
+		if (emailAddress) {
 			loginParameters.emailAddress = emailAddress;
 		}
 
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+		if (this.props.currentRoute === '/log-in/jetpack') {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = `${ GUTENBOARDING_BASE_NAME }/link`;
+		} else if (this.props.isGutenboarding) {
+			loginParameters.twoFactorAuthType = `${GUTENBOARDING_BASE_NAME}/link`;
 		}
 
-		page( login( loginParameters ) );
+		page(login(loginParameters));
 	};
 
 	recordResetPasswordLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+		this.props.recordTracksEvent('calypso_login_reset_password_link_click');
 	};
 
 	recordSignUpLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click' );
+		this.props.recordTracksEvent('calypso_login_sign_up_link_click');
 	};
 
 	renderBackLink() {
-		const redirectTo = get( this.props, [ 'query', 'redirect_to' ] );
-		if ( redirectTo ) {
-			const { pathname, query: redirectToQuery } = parseUrl( redirectTo, true );
+		const redirectTo = get(this.props, ['query', 'redirect_to']);
+		if (redirectTo) {
+			const { pathname, query: redirectToQuery } = parseUrl(redirectTo, true);
 
 			// If we are in a Domain Connect authorization flow, don't show the back link
 			// since this page was loaded by a redirect from a third party service provider.
-			if ( isDomainConnectAuthorizePath( redirectTo ) ) {
+			if (isDomainConnectAuthorizePath(redirectTo)) {
 				return null;
 			}
 
 			// If we seem to be in a Jetpack connection flow, provide some special handling
 			// so users can go back to their site rather than WordPress.com
-			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.client_id ) {
+			if (pathname === '/jetpack/connect/authorize' && redirectToQuery.client_id) {
 				const returnToSiteUrl = addQueryArgs(
 					{ client_id: redirectToQuery.client_id },
 					'https://jetpack.wordpress.com/jetpack.returntosite/1/'
 				);
 
-				const { hostname } = parseUrl( redirectToQuery.site_url );
+				const { hostname } = parseUrl(redirectToQuery.site_url);
 				const linkText = hostname
 					? // translators: hostname is a the hostname part of the URL. eg "google.com"
-					  this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
-					: this.props.translate( 'Back' );
+					  this.props.translate('Back to %(hostname)s', { args: { hostname } })
+					: this.props.translate('Back');
 
 				return (
-					<ExternalLink className="wp-login__site-return-link" href={ returnToSiteUrl }>
-						<Gridicon icon="arrow-left" size={ 18 } />
-						{ linkText }
+					<ExternalLink className="wp-login__site-return-link" href={returnToSiteUrl}>
+						<Gridicon icon="arrow-left" size={18} />
+						{linkText}
 					</ExternalLink>
 				);
 			}
@@ -134,33 +134,33 @@ export class LoginLinks extends React.Component {
 
 		return (
 			<LoggedOutFormBackLink
-				classes={ { 'logged-out-form__link-item': false } }
-				oauth2Client={ this.props.oauth2Client }
-				recordClick={ this.recordBackToWpcomLinkClick }
+				classes={{ 'logged-out-form__link-item': false }}
+				oauth2Client={this.props.oauth2Client}
+				recordClick={this.recordBackToWpcomLinkClick}
 			/>
 		);
 	}
 
 	renderHelpLink() {
-		if ( ! this.props.twoFactorAuthType ) {
+		if (!this.props.twoFactorAuthType) {
 			return null;
 		}
 
 		return (
 			<ExternalLink
 				key="help-link"
-				icon={ true }
-				onClick={ this.recordHelpLinkClick }
+				icon={true}
+				onClick={this.recordHelpLinkClick}
 				target="_blank"
 				href="https://wordpress.com/support/security/two-step-authentication/"
 			>
-				{ this.props.translate( 'Get help' ) }
+				{this.props.translate('Get help')}
 			</ExternalLink>
 		);
 	}
 
 	renderLostPhoneLink() {
-		if ( ! this.props.twoFactorAuthType || this.props.twoFactorAuthType === 'backup' ) {
+		if (!this.props.twoFactorAuthType || this.props.twoFactorAuthType === 'backup') {
 			return null;
 		}
 
@@ -168,34 +168,31 @@ export class LoginLinks extends React.Component {
 			<button
 				key="lost-phone-link"
 				data-e2e-link="lost-phone-link"
-				onClick={ this.handleLostPhoneLinkClick }
+				onClick={this.handleLostPhoneLinkClick}
 			>
-				{ this.props.translate( "I can't access my phone" ) }
+				{this.props.translate("I can't access my phone")}
 			</button>
 		);
 	}
 
 	renderMagicLoginLink() {
-		if ( ! isEnabled( 'login/magic-login' ) || this.props.twoFactorAuthType ) {
+		if (!isEnabled('login/magic-login') || this.props.twoFactorAuthType) {
 			return null;
 		}
 
-		if ( this.props.isLoggedIn ) {
+		if (this.props.isLoggedIn) {
 			return null;
 		}
 
 		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
 		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( this.props.oauth2Client ) &&
+			config.isEnabled('woocommerce/onboarding-oauth') &&
+			isWooOAuth2Client(this.props.oauth2Client) &&
 			this.props.wccomFrom
 		) {
 			return null;
 		}
-		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			this.props.isJetpackWooCommerceFlow
-		) {
+		if (config.isEnabled('jetpack/connect/woocommerce') && this.props.isJetpackWooCommerceFlow) {
 			return null;
 		}
 
@@ -209,37 +206,37 @@ export class LoginLinks extends React.Component {
 			twoFactorAuthType: 'link',
 		};
 
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+		if (this.props.currentRoute === '/log-in/jetpack') {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = `${ GUTENBOARDING_BASE_NAME }/link`;
+		} else if (this.props.isGutenboarding) {
+			loginParameters.twoFactorAuthType = `${GUTENBOARDING_BASE_NAME}/link`;
 		}
 
 		return (
 			<a
-				href={ login( loginParameters ) }
+				href={login(loginParameters)}
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
-				onClick={ this.handleMagicLoginLinkClick }
+				onClick={this.handleMagicLoginLinkClick}
 			>
-				{ this.props.translate( 'Email me a login link' ) }
+				{this.props.translate('Email me a login link')}
 			</a>
 		);
 	}
 
 	renderResetPasswordLink() {
-		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
+		if (this.props.twoFactorAuthType || this.props.privateSite) {
 			return null;
 		}
 
 		return (
 			<a
-				href={ addQueryArgs( { action: 'lostpassword' }, login( { locale: this.props.locale } ) ) }
+				href={addQueryArgs({ action: 'lostpassword' }, login({ locale: this.props.locale }))}
 				key="lost-password-link"
-				onClick={ this.recordResetPasswordLinkClick }
+				onClick={this.recordResetPasswordLinkClick}
 				rel="external"
 			>
-				{ this.props.translate( 'Lost your password?' ) }
+				{this.props.translate('Lost your password?')}
 			</a>
 		);
 	}
@@ -257,16 +254,16 @@ export class LoginLinks extends React.Component {
 			locale,
 		} = this.props;
 
-		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
+		let signupUrl = config('signup_url');
+		const signupFlow = get(currentQuery, 'signup_flow');
 		if (
 			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
+			startsWith(currentRoute, '/log-in/jetpack')
 		) {
 			// Basic validation that we're in a valid Jetpack Authorization flow
 			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
+				includes(get(currentQuery, 'redirect_to'), '/jetpack/connect/authorize') &&
+				includes(get(currentQuery, 'redirect_to'), '_wp_nonce')
 			) {
 				/**
 				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
@@ -277,52 +274,47 @@ export class LoginLinks extends React.Component {
 			} else {
 				signupUrl = '/jetpack/new';
 			}
-		} else if ( '/jetpack-connect' === pathname ) {
+		} else if ('/jetpack-connect' === pathname) {
 			signupUrl = '/jetpack/new';
-		} else if ( signupFlow ) {
+		} else if (signupFlow) {
 			signupUrl += '/' + signupFlow;
 		}
 
-		if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
+		if (config.isEnabled('signup/wpcc') && isCrowdsignalOAuth2Client(oauth2Client)) {
 			const oauth2Flow = 'crowdsignal';
-			const redirectTo = get( currentQuery, 'redirect_to', '' );
+			const redirectTo = get(currentQuery, 'redirect_to', '');
 			const oauth2Params = {
 				oauth2_client_id: oauth2Client.id,
 				oauth2_redirect: redirectTo,
 			};
 
-			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+			signupUrl = `${signupUrl}/${oauth2Flow}?${stringify(oauth2Params)}`;
 		}
 
 		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			config.isEnabled('woocommerce/onboarding-oauth') &&
 			oauth2Client &&
-			isWooOAuth2Client( oauth2Client ) &&
+			isWooOAuth2Client(oauth2Client) &&
 			wccomFrom
 		) {
-			const redirectTo = get( currentQuery, 'redirect_to', '' );
+			const redirectTo = get(currentQuery, 'redirect_to', '');
 			const oauth2Params = {
 				oauth2_client_id: oauth2Client.id,
 				'wccom-from': wccomFrom,
 				oauth2_redirect: redirectTo,
 			};
 
-			signupUrl = `${ signupUrl }/wpcc?${ stringify( oauth2Params ) }`;
+			signupUrl = `${signupUrl}/wpcc?${stringify(oauth2Params)}`;
 		}
 
-		if ( isGutenboarding ) {
-			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-			signupUrl = this.props.signupUrl || `/${ GUTENBOARDING_BASE_NAME }` + langFragment;
+		if (isGutenboarding) {
+			const langFragment = locale && locale !== 'en' ? `/${locale}` : '';
+			signupUrl = this.props.signupUrl || `/${GUTENBOARDING_BASE_NAME}` + langFragment;
 		}
 
 		return (
-			<a
-				href={ signupUrl }
-				key="sign-up-link"
-				onClick={ this.recordSignUpLinkClick }
-				rel="external"
-			>
-				{ translate( 'Create a new account' ) }
+			<a href={signupUrl} key="sign-up-link" onClick={this.recordSignUpLinkClick} rel="external">
+				{translate('Create a new account')}
 			</a>
 		);
 	}
@@ -330,32 +322,32 @@ export class LoginLinks extends React.Component {
 	render() {
 		return (
 			<div className="wp-login__links">
-				{ this.renderSignUpLink() }
-				{ this.renderLostPhoneLink() }
-				{ this.renderHelpLink() }
-				{ this.renderMagicLoginLink() }
-				{ this.renderResetPasswordLink() }
-				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) &&
-					! this.props.isGutenboarding &&
-					this.renderBackLink() }
+				{this.renderSignUpLink()}
+				{this.renderLostPhoneLink()}
+				{this.renderHelpLink()}
+				{this.renderMagicLoginLink()}
+				{this.renderResetPasswordLink()}
+				{!isCrowdsignalOAuth2Client(this.props.oauth2Client) &&
+					!this.props.isGutenboarding &&
+					this.renderBackLink()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		currentQuery: getCurrentQueryArguments( state ),
-		currentRoute: getCurrentRoute( state ),
-		isLoggedIn: Boolean( getCurrentUserId( state ) ),
-		oauth2Client: getCurrentOAuth2Client( state ),
-		query: getCurrentQueryArguments( state ),
+	(state) => ({
+		currentQuery: getCurrentQueryArguments(state),
+		currentRoute: getCurrentRoute(state),
+		isLoggedIn: Boolean(getCurrentUserId(state)),
+		oauth2Client: getCurrentOAuth2Client(state),
+		query: getCurrentQueryArguments(state),
 		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-	} ),
+			'woocommerce-onboarding' === get(getCurrentQueryArguments(state), 'from'),
+		wccomFrom: get(getCurrentQueryArguments(state), 'wccom-from'),
+	}),
 	{
 		recordTracksEvent,
 		resetMagicLoginRequestForm,
 	}
-)( localize( LoginLinks ) );
+)(localize(LoginLinks));

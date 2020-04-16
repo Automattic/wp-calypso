@@ -17,18 +17,18 @@ import { CURRENT_USER_RECEIVE } from 'state/action-types';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
+export function items(state = {}, action) {
+	switch (action.type) {
 		case CURRENT_USER_RECEIVE:
-			return Object.assign( {}, state, {
-				[ action.user.ID ]: action.user,
-			} );
+			return Object.assign({}, state, {
+				[action.user.ID]: action.user,
+			});
 	}
 
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	suggestions,
-} );
+});

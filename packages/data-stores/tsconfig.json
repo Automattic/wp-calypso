@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
-		"lib": [ "DOM", "ES2015", "ScriptHost" ],
+		"lib": ["DOM", "ES2015", "ScriptHost"],
 		"module": "ESNEXT",
 		"allowJs": false,
 		"jsx": "react",
@@ -22,7 +22,7 @@
 
 		"forceConsistentCasingInFileNames": true,
 
-		"typeRoots": [ "../../node_modules/@types" ],
+		"typeRoots": ["../../node_modules/@types"],
 		"types": [],
 
 		"noEmitHelpers": true,
@@ -31,6 +31,6 @@
 		"composite": true,
 		"tsBuildInfoFile": "../../.tsc-cache/packages__data-stores"
 	},
-	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/test/*" ]
+	"include": ["src"],
+	"exclude": ["**/docs/*", "**/test/*"]
 }

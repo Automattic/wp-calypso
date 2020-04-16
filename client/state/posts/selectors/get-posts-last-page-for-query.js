@@ -14,16 +14,16 @@ import 'state/posts/init';
  * @param   {object}  query  Post query object
  * @returns {?number}        Last posts page
  */
-export function getPostsLastPageForQuery( state, siteId, query ) {
-	const manager = getQueryManager( state, siteId );
-	if ( ! manager ) {
+export function getPostsLastPageForQuery(state, siteId, query) {
+	const manager = getQueryManager(state, siteId);
+	if (!manager) {
 		return null;
 	}
 
-	const pages = manager.getNumberOfPages( query );
-	if ( null === pages ) {
+	const pages = manager.getNumberOfPages(query);
+	if (null === pages) {
 		return null;
 	}
 
-	return Math.max( pages, 1 );
+	return Math.max(pages, 1);
 }

@@ -40,50 +40,49 @@ export class PlanStorageBar extends Component {
 			translate,
 		} = this.props;
 
-		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
+		if (planHasFeature(sitePlanSlug, FEATURE_UNLIMITED_STORAGE)) {
 			return null;
 		}
 
-		if ( ! mediaStorage || mediaStorage.max_storage_bytes === -1 ) {
+		if (!mediaStorage || mediaStorage.max_storage_bytes === -1) {
 			return null;
 		}
 
 		const percent = Math.min(
-			Math.round( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) /
-				10,
+			Math.round((mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes) * 1000) / 10,
 			100
 		);
 
-		const classes = classNames( className, 'plan-storage__bar', {
+		const classes = classNames(className, 'plan-storage__bar', {
 			'is-alert': percent > ALERT_PERCENT,
 			'is-warn': percent > WARN_PERCENT && percent <= ALERT_PERCENT,
-		} );
+		});
 
-		const max = filesize( mediaStorage.max_storage_bytes );
+		const max = filesize(mediaStorage.max_storage_bytes);
 
 		return (
-			<div className={ classes }>
-				<ProgressBar value={ percent } total={ 100 } compact={ true } />
+			<div className={classes}>
+				<ProgressBar value={percent} total={100} compact={true} />
 
 				<span className="plan-storage__storage-label">
-					{ translate( '%(percent)f%% of %(max)s used', {
+					{translate('%(percent)f%% of %(max)s used', {
 						args: {
 							percent: percent,
 							max: max,
 						},
-					} ) }
+					})}
 				</span>
 
-				{ displayUpgradeLink && (
-					<a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
-						{ translate( 'Upgrade' ) }
+				{displayUpgradeLink && (
+					<a className="plan-storage__storage-link" href={`/plans/${siteSlug}`}>
+						{translate('Upgrade')}
 					</a>
-				) }
+				)}
 
-				{ this.props.children }
+				{this.props.children}
 			</div>
 		);
 	}
 }
 
-export default localize( PlanStorageBar );
+export default localize(PlanStorageBar);

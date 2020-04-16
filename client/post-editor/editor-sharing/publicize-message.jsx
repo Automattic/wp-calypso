@@ -47,22 +47,22 @@ class PublicizeMessage extends Component {
 
 	userHasEditedMessage = false;
 
-	onChange = event => {
+	onChange = (event) => {
 		this.userHasEditedMessage = true;
-		this.props.onChange( event.target.value );
+		this.props.onChange(event.target.value);
 	};
 
 	recordStats = () => {
-		this.props.recordEditorStat( 'sharing_message_changed' );
-		this.props.recordEditorEvent( 'Publicize Sharing Message Changed' );
+		this.props.recordEditorStat('sharing_message_changed');
+		this.props.recordEditorEvent('Publicize Sharing Message Changed');
 	};
 
 	shouldPreFillMessage() {
-		return ! this.userHasEditedMessage && '' === this.props.message;
+		return !this.userHasEditedMessage && '' === this.props.message;
 	}
 
 	getMessage() {
-		if ( this.shouldPreFillMessage() ) {
+		if (this.shouldPreFillMessage()) {
 			return this.props.preFilledMessage;
 		}
 		return this.props.message;
@@ -76,39 +76,39 @@ class PublicizeMessage extends Component {
 				gaEventCategory="Editor"
 				popoverName="SharingMessage"
 			>
-				{ this.props.translate(
+				{this.props.translate(
 					'The length includes space for the link to your post and an attached image.',
 					{ context: 'Post editor sharing message counter explanation' }
-				) }
+				)}
 			</InfoPopover>
 		);
 	}
 
 	renderTextarea() {
 		const placeholder =
-			this.props.preview || this.props.translate( 'Write a message for your audience here.' );
-		if ( this.props.requireCount ) {
+			this.props.preview || this.props.translate('Write a message for your audience here.');
+		if (this.props.requireCount) {
 			return (
 				<CountedTextarea
-					disabled={ this.props.disabled }
-					placeholder={ placeholder }
-					countPlaceholderLength={ true }
-					value={ this.getMessage() }
-					onChange={ this.onChange }
-					showRemainingCharacters={ true }
-					acceptableLength={ this.props.acceptableLength }
+					disabled={this.props.disabled}
+					placeholder={placeholder}
+					countPlaceholderLength={true}
+					value={this.getMessage()}
+					onChange={this.onChange}
+					showRemainingCharacters={true}
+					acceptableLength={this.props.acceptableLength}
 					className="editor-sharing__message-input"
 				>
-					{ this.renderInfoPopover() }
+					{this.renderInfoPopover()}
 				</CountedTextarea>
 			);
 		}
 		return (
 			<FormTextarea
-				disabled={ this.props.disabled }
-				value={ this.getMessage() }
-				placeholder={ placeholder }
-				onChange={ this.onChange }
+				disabled={this.props.disabled}
+				value={this.getMessage()}
+				placeholder={placeholder}
+				onChange={this.onChange}
 				className="editor-sharing__message-input"
 			/>
 		);
@@ -118,24 +118,20 @@ class PublicizeMessage extends Component {
 		const { displayMessageHeading, translate } = this.props;
 		return (
 			<div className="editor-sharing__publicize-message">
-				{ displayMessageHeading && (
+				{displayMessageHeading && (
 					<EditorDrawerLabel
-						helpText={ translate(
+						helpText={translate(
 							'The following text will be shared along with a link to your post.'
-						) }
-						labelText={ translate( 'Customize the message', {
+						)}
+						labelText={translate('Customize the message', {
 							context: 'Post editor sharing message heading',
-						} ) }
+						})}
 					/>
-				) }
-				<TrackInputChanges onNewValue={ this.recordStats }>
-					{ this.renderTextarea() }
-				</TrackInputChanges>
+				)}
+				<TrackInputChanges onNewValue={this.recordStats}>{this.renderTextarea()}</TrackInputChanges>
 			</div>
 		);
 	}
 }
 
-export default connect( null, { recordEditorStat, recordEditorEvent } )(
-	localize( PublicizeMessage )
-);
+export default connect(null, { recordEditorStat, recordEditorEvent })(localize(PublicizeMessage));

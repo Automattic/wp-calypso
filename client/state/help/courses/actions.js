@@ -11,7 +11,7 @@ import { HELP_COURSES_RECEIVE } from 'state/action-types';
  * @param  {object[]} courses Array of course objects
  * @returns {object}           Action object
  */
-export function receiveHelpCourses( courses ) {
+export function receiveHelpCourses(courses) {
 	return {
 		type: HELP_COURSES_RECEIVE,
 		courses,

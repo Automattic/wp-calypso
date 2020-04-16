@@ -24,27 +24,27 @@ import 'state/themes/init';
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @returns {Function}          Action thunk
  */
-export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
-	return ( dispatch, getState ) => {
+export function activate(themeId, siteId, source = 'unknown', purchased = false) {
+	return (dispatch, getState) => {
 		/**
 		 * Let's check if the theme will change the homepage of the site,
 		 * before to definitely start the theme-activating process,
 		 * allowing cancel it if it's desired.
 		 */
 		if (
-			themeHasAutoLoadingHomepage( getState(), themeId ) &&
-			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
+			themeHasAutoLoadingHomepage(getState(), themeId) &&
+			!hasAutoLoadingHomepageModalAccepted(getState(), themeId)
 		) {
-			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
+			return dispatch(showAutoLoadingHomepageWarning(themeId));
 		}
 
-		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+		if (isJetpackSite(getState(), siteId) && !getTheme(getState(), siteId, themeId)) {
+			const installId = suffixThemeIdForInstall(getState(), siteId, themeId);
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
-			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
+			return dispatch(installAndActivateTheme(installId, siteId, source, purchased));
 		}
 
-		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
+		return dispatch(activateTheme(themeId, siteId, source, purchased));
 	};
 }

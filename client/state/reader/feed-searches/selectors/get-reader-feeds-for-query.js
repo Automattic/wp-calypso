@@ -12,7 +12,7 @@ import 'state/reader/init';
  * @param  {string}  query query
  * @returns {Array} list of feeds that are the result of that query
  */
-export default function getReaderFeedsForQuery( state, query ) {
-	const key = queryKey( query );
-	return state.reader.feedSearches.items[ key ];
+export default function getReaderFeedsForQuery(state, query) {
+	const key = queryKey(query);
+	return state.reader.feedSearches.items[key];
 }

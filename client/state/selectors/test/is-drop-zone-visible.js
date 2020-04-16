@@ -8,18 +8,18 @@ import { expect } from 'chai';
  */
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 
-describe( 'isDropZoneVisible()', () => {
-	test( 'should return false as a default state', () => {
+describe('isDropZoneVisible()', () => {
+	test('should return false as a default state', () => {
 		expect(
-			isDropZoneVisible( {
+			isDropZoneVisible({
 				ui: {
 					dropZone: undefined,
 				},
-			} )
+			})
 		).to.be.false;
-	} );
+	});
 
-	test( 'should return isVisible state', () => {
+	test('should return isVisible state', () => {
 		expect(
 			isDropZoneVisible(
 				{
@@ -33,6 +33,6 @@ describe( 'isDropZoneVisible()', () => {
 				},
 				'myTestZone'
 			)
-		).to.be.eql( 'myTest' );
-	} );
-} );
+		).to.be.eql('myTest');
+	});
+});

@@ -20,12 +20,12 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Action to request the product install status.
  * @returns {object}        The dispatched action.
  */
-export const requestJetpackProductInstallStatus = action =>
+export const requestJetpackProductInstallStatus = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
 			method: 'GET',
-			path: `/jetpack-blogs/${ action.siteId }/product-install-status`,
+			path: `/jetpack-blogs/${action.siteId}/product-install-status`,
 		},
 		action
 	);
@@ -37,16 +37,16 @@ export const requestJetpackProductInstallStatus = action =>
  * @param   {object} status Status as returned from the endpoint
  * @returns {object} Dispatched product install status receive action
  */
-export const handleRequestSuccess = ( { siteId }, status ) =>
-	receiveJetpackProductInstallStatus( siteId, status );
+export const handleRequestSuccess = ({ siteId }, status) =>
+	receiveJetpackProductInstallStatus(siteId, status);
 
-registerHandlers( 'state/data-layer/wpcom/jetpack-blogs/product-install-status', {
-	[ JETPACK_PRODUCT_INSTALL_STATUS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/jetpack-blogs/product-install-status', {
+	[JETPACK_PRODUCT_INSTALL_STATUS_REQUEST]: [
+		dispatchRequest({
 			fetch: requestJetpackProductInstallStatus,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
-			fromApi: makeJsonSchemaParser( schema ),
-		} ),
+			fromApi: makeJsonSchemaParser(schema),
+		}),
 	],
-} );
+});

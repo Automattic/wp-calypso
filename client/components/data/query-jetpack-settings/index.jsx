@@ -21,21 +21,21 @@ class QueryJetpackSettings extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.requestingSettings || ! props.siteId ) {
+	request(props) {
+		if (props.requestingSettings || !props.siteId) {
 			return;
 		}
 
-		props.requestJetpackSettings( props.siteId, props.query );
+		props.requestJetpackSettings(props.siteId, props.query);
 	}
 
 	render() {
@@ -44,8 +44,8 @@ class QueryJetpackSettings extends Component {
 }
 
 export default connect(
-	( state, { query, siteId } ) => ( {
-		requestingSettings: isRequestingJetpackSettings( state, siteId, query ),
-	} ),
+	(state, { query, siteId }) => ({
+		requestingSettings: isRequestingJetpackSettings(state, siteId, query),
+	}),
 	{ requestJetpackSettings }
-)( QueryJetpackSettings );
+)(QueryJetpackSettings);

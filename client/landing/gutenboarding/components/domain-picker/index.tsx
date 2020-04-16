@@ -37,7 +37,7 @@ export interface Props {
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
+	onDomainSelect: (domainSuggestion: DomainSuggestion) => void;
 
 	/**
 	 * Callback that will be invoked when a close button is clicked
@@ -47,14 +47,14 @@ export interface Props {
 	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
-	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
+	queryParameters?: Partial<DomainSuggestions.DomainSuggestionQuery>;
 
 	currentDomain?: DomainSuggestion;
 }
 
 const SearchIcon = () => (
 	<Icon
-		icon={ () => (
+		icon={() => (
 			<svg
 				width="24"
 				height="24"
@@ -65,24 +65,21 @@ const SearchIcon = () => (
 				<path d="M6 18L10 14.5" stroke="black" strokeWidth="1.5" />
 				<circle cx="13.5" cy="11.5" r="4.75" stroke="black" strokeWidth="1.5" />
 			</svg>
-		) }
+		)}
 	/>
 );
 
-const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, currentDomain } ) => {
+const DomainPicker: FunctionComponent<Props> = ({ onDomainSelect, onClose, currentDomain }) => {
 	const { __, i18nLocale } = useI18n();
-	const label = __( 'Search for a domain' );
+	const label = __('Search for a domain');
 
-	const { domainSearch } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setDomainSearch } = useDispatch( STORE_KEY );
+	const { domainSearch } = useSelect((select) => select(STORE_KEY).getState());
+	const { setDomainSearch } = useDispatch(STORE_KEY);
 
-	const allSuggestions = useDomainSuggestions( { locale: i18nLocale } );
-	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
-		0,
-		PAID_DOMAINS_TO_SHOW
-	);
-	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
+	const allSuggestions = useDomainSuggestions({ locale: i18nLocale });
+	const freeSuggestions = getFreeDomainSuggestions(allSuggestions);
+	const paidSuggestions = getPaidDomainSuggestions(allSuggestions)?.slice(0, PAID_DOMAINS_TO_SHOW);
+	const recommendedSuggestion = getRecommendedDomainSuggestion(paidSuggestions);
 
 	return (
 		<Panel className="domain-picker">
@@ -90,55 +87,55 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 				<PanelRow className="domain-picker__panel-row-main">
 					<div className="domain-picker__header">
 						<div className="domain-picker__header-group">
-							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
-							<p>{ __( 'Free for the first year with any paid plan' ) }</p>
+							<div className="domain-picker__header-title">{__('Choose a domain')}</div>
+							<p>{__('Free for the first year with any paid plan')}</p>
 						</div>
 						<CloseButton
-							onClose={ onClose }
+							onClose={onClose}
 							// removing from tab flow as discussed in p1586489720342200-slack-gutenboarding
 							// @wordpress/popover finds and focuses on the first found focusable element which will be TextControl
 							// footer-button serve the same purpose and also ESC key in closing the popover
-							tabIndex={ -1 }
+							tabIndex={-1}
 						/>
 					</div>
 					<div className="domain-picker__search">
 						<SearchIcon />
 						<TextControl
 							hideLabelFromVision
-							label={ label }
-							placeholder={ label }
-							onChange={ setDomainSearch }
-							value={ domainSearch }
+							label={label}
+							placeholder={label}
+							onChange={setDomainSearch}
+							value={domainSearch}
 						/>
 					</div>
 					<div className="domain-picker__suggestion-item-group">
-						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
-						{ freeSuggestions &&
-							( freeSuggestions.length ? (
+						{!freeSuggestions && <SuggestionItemPlaceholder />}
+						{freeSuggestions &&
+							(freeSuggestions.length ? (
 								<SuggestionItem
-									suggestion={ freeSuggestions[ 0 ] }
-									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
-									onSelect={ onDomainSelect }
+									suggestion={freeSuggestions[0]}
+									isSelected={currentDomain?.domain_name === freeSuggestions[0].domain_name}
+									onSelect={onDomainSelect}
 								/>
 							) : (
 								<SuggestionNone />
-							) ) }
-						{ ! paidSuggestions &&
-							times( PAID_DOMAINS_TO_SHOW - 1, i => <SuggestionItemPlaceholder key={ i } /> ) }
-						{ paidSuggestions &&
-							( paidSuggestions?.length ? (
-								paidSuggestions.map( suggestion => (
+							))}
+						{!paidSuggestions &&
+							times(PAID_DOMAINS_TO_SHOW - 1, (i) => <SuggestionItemPlaceholder key={i} />)}
+						{paidSuggestions &&
+							(paidSuggestions?.length ? (
+								paidSuggestions.map((suggestion) => (
 									<SuggestionItem
-										suggestion={ suggestion }
-										isRecommended={ suggestion === recommendedSuggestion }
-										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
-										onSelect={ onDomainSelect }
-										key={ suggestion.domain_name }
+										suggestion={suggestion}
+										isRecommended={suggestion === recommendedSuggestion}
+										isSelected={currentDomain?.domain_name === suggestion.domain_name}
+										onSelect={onDomainSelect}
+										key={suggestion.domain_name}
 									/>
-								) )
+								))
 							) : (
 								<SuggestionNone />
-							) ) }
+							))}
 					</div>
 				</PanelRow>
 				<PanelRow className="domain-picker__panel-row-footer">
@@ -146,11 +143,11 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 						<div className="domain-picker__footer-options"></div>
 						<Button
 							className="domain-picker__footer-button"
-							disabled={ ! freeSuggestions?.length && ! paidSuggestions?.length }
+							disabled={!freeSuggestions?.length && !paidSuggestions?.length}
 							isPrimary
-							onClick={ onClose }
+							onClick={onClose}
 						>
-							{ __( 'Confirm' ) }
+							{__('Confirm')}
 						</Button>
 					</div>
 				</PanelRow>

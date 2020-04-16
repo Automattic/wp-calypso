@@ -3,12 +3,12 @@
  */
 import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
 
-describe( '#getPartnerIdFromQuery', () => {
-	test( 'should return null when no argument', () => {
-		expect( getPartnerIdFromQuery() ).toBeNull();
-	} );
+describe('#getPartnerIdFromQuery', () => {
+	test('should return null when no argument', () => {
+		expect(getPartnerIdFromQuery()).toBeNull();
+	});
 
-	test( 'should return null if no partner_id query present', () => {
+	test('should return null if no partner_id query present', () => {
 		const state = {
 			ui: {
 				route: {
@@ -20,10 +20,10 @@ describe( '#getPartnerIdFromQuery', () => {
 				},
 			},
 		};
-		expect( getPartnerIdFromQuery( state ) ).toBeNull();
-	} );
+		expect(getPartnerIdFromQuery(state)).toBeNull();
+	});
 
-	test( 'should return null when partner_id present but not integer', () => {
+	test('should return null when partner_id present but not integer', () => {
 		const state = {
 			ui: {
 				route: {
@@ -37,10 +37,10 @@ describe( '#getPartnerIdFromQuery', () => {
 			},
 		};
 
-		expect( getPartnerIdFromQuery( state ) ).toBeNull();
-	} );
+		expect(getPartnerIdFromQuery(state)).toBeNull();
+	});
 
-	test( 'should return partner ID as integer when partner_id query present', () => {
+	test('should return partner ID as integer when partner_id query present', () => {
 		const state = {
 			ui: {
 				route: {
@@ -55,6 +55,6 @@ describe( '#getPartnerIdFromQuery', () => {
 		};
 
 		// toBe is a strict equality check here.
-		expect( getPartnerIdFromQuery( state ) ).toBe( 49640 );
-	} );
-} );
+		expect(getPartnerIdFromQuery(state)).toBe(49640);
+	});
+});

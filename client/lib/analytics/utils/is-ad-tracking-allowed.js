@@ -21,11 +21,11 @@ import { getDoNotTrack } from '@automattic/calypso-analytics';
  */
 export default function isAdTrackingAllowed() {
 	const result =
-		config.isEnabled( 'ad-tracking' ) &&
-		! getDoNotTrack() &&
-		! isUrlBlacklistedForPerformance() &&
-		! isPiiUrl() &&
+		config.isEnabled('ad-tracking') &&
+		!getDoNotTrack() &&
+		!isUrlBlacklistedForPerformance() &&
+		!isPiiUrl() &&
 		mayWeTrackCurrentUserGdpr();
-	debug( `isAdTrackingAllowed: ${ result }` );
+	debug(`isAdTrackingAllowed: ${result}`);
 	return result;
 }

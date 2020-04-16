@@ -11,11 +11,11 @@ import getSelectedSiteId from './get-selected-site-id';
  * @param  {object}  state Global state tree
  * @returns {?string}       Selected site slug
  */
-export default function getSelectedSiteSlug( state ) {
-	const siteId = getSelectedSiteId( state );
-	if ( ! siteId ) {
+export default function getSelectedSiteSlug(state) {
+	const siteId = getSelectedSiteId(state);
+	if (!siteId) {
 		return null;
 	}
 
-	return getSiteSlug( state, siteId );
+	return getSiteSlug(state, siteId);
 }

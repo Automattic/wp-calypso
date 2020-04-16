@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {string} settingName - setting name
  * @returns {*} setting key value
  */
-export default function getOriginalUserSetting( state, settingName ) {
-	return get( state, [ 'userSettings', 'settings', settingName ], null );
+export default function getOriginalUserSetting(state, settingName) {
+	return get(state, ['userSettings', 'settings', settingName], null);
 }

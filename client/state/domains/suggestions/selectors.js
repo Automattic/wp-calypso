@@ -15,10 +15,10 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
  * @param   {?boolean} queryObject.includeSubdomain         adds wordpress subdomain suggestions when true
  * @returns {?Array}   domain suggestions array
  */
-export function getDomainsSuggestions( state, queryObject ) {
-	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
-	if ( serializedQuery ) {
-		return state.domains.suggestions.items[ serializedQuery ];
+export function getDomainsSuggestions(state, queryObject) {
+	const serializedQuery = getSerializedDomainsSuggestionsQuery(queryObject);
+	if (serializedQuery) {
+		return state.domains.suggestions.items[serializedQuery];
 	}
 	return null;
 }
@@ -34,10 +34,10 @@ export function getDomainsSuggestions( state, queryObject ) {
  * @param   {?boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {boolean}   true if requesting
  */
-export function isRequestingDomainsSuggestions( state, queryObject ) {
-	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
-	if ( serializedQuery ) {
-		return !! state.domains.suggestions.requesting[ serializedQuery ];
+export function isRequestingDomainsSuggestions(state, queryObject) {
+	const serializedQuery = getSerializedDomainsSuggestionsQuery(queryObject);
+	if (serializedQuery) {
+		return !!state.domains.suggestions.requesting[serializedQuery];
 	}
 	return false;
 }
@@ -53,10 +53,10 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
  * @param   {?boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {?object}    error or null
  */
-export function getDomainsSuggestionsError( state, queryObject ) {
-	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
-	if ( serializedQuery ) {
-		return state.domains.suggestions.errors[ serializedQuery ] || null;
+export function getDomainsSuggestionsError(state, queryObject) {
+	const serializedQuery = getSerializedDomainsSuggestionsQuery(queryObject);
+	if (serializedQuery) {
+		return state.domains.suggestions.errors[serializedQuery] || null;
 	}
 	return null;
 }

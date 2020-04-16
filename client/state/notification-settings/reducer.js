@@ -13,16 +13,16 @@ import {
 	NOTIFICATION_SETTINGS_SAVE_FAILED,
 } from 'state/action-types';
 
-function toggleSetting( state, source ) {
-	if ( toggleState[ source ] ) {
-		return toggleState[ source ].apply( this, arguments );
+function toggleSetting(state, source) {
+	if (toggleState[source]) {
+		return toggleState[source].apply(this, arguments);
 	}
 
-	return toggleState.blog.apply( this, arguments );
+	return toggleState.blog.apply(this, arguments);
 }
 
-export const isFetching = ( state = false, action ) => {
-	switch ( action.type ) {
+export const isFetching = (state = false, action) => {
+	switch (action.type) {
 		case NOTIFICATION_SETTINGS_FETCH:
 		case NOTIFICATION_SETTINGS_SAVE: {
 			return true;
@@ -38,8 +38,8 @@ export const isFetching = ( state = false, action ) => {
 	return state;
 };
 
-export const settings = ( state = { clean: null, dirty: null }, action ) => {
-	switch ( action.type ) {
+export const settings = (state = { clean: null, dirty: null }, action) => {
+	switch (action.type) {
 		case NOTIFICATION_SETTINGS_FETCH_COMPLETE:
 		case NOTIFICATION_SETTINGS_SAVE_COMPLETE: {
 			return {
@@ -54,7 +54,7 @@ export const settings = ( state = { clean: null, dirty: null }, action ) => {
 				...state,
 				dirty: {
 					...state.dirty,
-					...toggleSetting( state, source, stream, setting ),
+					...toggleSetting(state, source, stream, setting),
 				},
 			};
 		}
@@ -63,7 +63,7 @@ export const settings = ( state = { clean: null, dirty: null }, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	isFetching,
 	settings,
-} );
+});

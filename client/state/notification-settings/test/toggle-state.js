@@ -3,102 +3,102 @@
  */
 import toggleState from '../toggle-state';
 
-describe( 'toggleState.wpcom', () => {
-	describe( 'when setting does not yet have a value', () => {
-		test( 'should assign the value of `true` to that setting', () => {
+describe('toggleState.wpcom', () => {
+	describe('when setting does not yet have a value', () => {
+		test('should assign the value of `true` to that setting', () => {
 			const settingToToggle = 'exampleSetting';
 			const startingState = {
 				dirty: {},
 			};
 
-			const actual = toggleState.wpcom( startingState, null, null, settingToToggle );
+			const actual = toggleState.wpcom(startingState, null, null, settingToToggle);
 			const expected = {
 				wpcom: {
-					[ settingToToggle ]: true,
+					[settingToToggle]: true,
 				},
 			};
 
-			expect( actual ).toEqual( expected );
-		} );
-	} );
+			expect(actual).toEqual(expected);
+		});
+	});
 
-	describe( 'when setting already has a value', () => {
-		test( 'should toggle the value of that setting', () => {
+	describe('when setting already has a value', () => {
+		test('should toggle the value of that setting', () => {
 			const settingToToggle = 'exampleSetting';
 			const startingState = {
 				dirty: {
 					wpcom: {
-						[ settingToToggle ]: true,
+						[settingToToggle]: true,
 					},
 				},
 			};
 
-			const actual = toggleState.wpcom( startingState, null, null, settingToToggle );
+			const actual = toggleState.wpcom(startingState, null, null, settingToToggle);
 			const expected = {
 				wpcom: {
-					[ settingToToggle ]: false,
+					[settingToToggle]: false,
 				},
 			};
 
-			expect( actual ).toEqual( expected );
-		} );
-	} );
-} );
+			expect(actual).toEqual(expected);
+		});
+	});
+});
 
-describe( 'toggleState.other', () => {
-	describe( 'when `stream` is not a number', () => {
-		describe( 'when setting does not yet have a value', () => {
-			test( 'should toggle the value of that setting under that stream', () => {
+describe('toggleState.other', () => {
+	describe('when `stream` is not a number', () => {
+		describe('when setting does not yet have a value', () => {
+			test('should toggle the value of that setting under that stream', () => {
 				const stream = 'exampleStream';
 				const settingToToggle = 'exampleSetting';
 				const startingState = {
 					dirty: {},
 				};
 
-				const actual = toggleState.other( startingState, null, stream, settingToToggle );
+				const actual = toggleState.other(startingState, null, stream, settingToToggle);
 				const expected = {
 					other: {
-						[ stream ]: {
-							[ settingToToggle ]: true,
+						[stream]: {
+							[settingToToggle]: true,
 						},
 					},
 				};
 
-				expect( actual ).toEqual( expected );
-			} );
-		} );
+				expect(actual).toEqual(expected);
+			});
+		});
 
-		describe( 'when setting already has a value', () => {
-			test( 'should toggle the value of that setting', () => {
+		describe('when setting already has a value', () => {
+			test('should toggle the value of that setting', () => {
 				const stream = 'exampleStream';
 				const settingToToggle = 'exampleSetting';
 				const startingState = {
 					dirty: {
 						other: {
-							[ stream ]: {
-								[ settingToToggle ]: true,
+							[stream]: {
+								[settingToToggle]: true,
 							},
 						},
 					},
 				};
 
-				const actual = toggleState.other( startingState, null, stream, settingToToggle );
+				const actual = toggleState.other(startingState, null, stream, settingToToggle);
 				const expected = {
 					other: {
-						[ stream ]: {
-							[ settingToToggle ]: false,
+						[stream]: {
+							[settingToToggle]: false,
 						},
 					},
 				};
 
-				expect( actual ).toEqual( expected );
-			} );
-		} );
-	} );
+				expect(actual).toEqual(expected);
+			});
+		});
+	});
 
-	describe( 'when `stream` is a device ID (number)', () => {
-		describe( 'when setting does not yet have a value', () => {
-			test( 'should assign the value of `true` to that setting for the target device', () => {
+	describe('when `stream` is a device ID (number)', () => {
+		describe('when setting does not yet have a value', () => {
+			test('should assign the value of `true` to that setting for the target device', () => {
 				const deviceId = 123456;
 				const settingToToggle = 'exampleSetting';
 				const device = {
@@ -107,60 +107,60 @@ describe( 'toggleState.other', () => {
 				const startingState = {
 					dirty: {
 						other: {
-							devices: [ device ],
+							devices: [device],
 						},
 					},
 				};
 
-				const actual = toggleState.other( startingState, null, deviceId, settingToToggle );
+				const actual = toggleState.other(startingState, null, deviceId, settingToToggle);
 				const expected = {
 					other: {
 						devices: [
 							{
 								device_id: deviceId,
-								[ settingToToggle ]: true,
+								[settingToToggle]: true,
 							},
 						],
 					},
 				};
 
-				expect( actual ).toEqual( expected );
-			} );
-		} );
+				expect(actual).toEqual(expected);
+			});
+		});
 
-		describe( 'when setting already has a value', () => {
-			test( 'should toggle the value of that setting for the target device', () => {
+		describe('when setting already has a value', () => {
+			test('should toggle the value of that setting for the target device', () => {
 				const deviceId = 123456;
 				const settingToToggle = 'exampleSetting';
 				const device = {
 					device_id: deviceId,
-					[ settingToToggle ]: true,
+					[settingToToggle]: true,
 				};
 				const startingState = {
 					dirty: {
 						other: {
-							devices: [ device ],
+							devices: [device],
 						},
 					},
 				};
 
-				const actual = toggleState.other( startingState, null, deviceId, settingToToggle );
+				const actual = toggleState.other(startingState, null, deviceId, settingToToggle);
 				const expected = {
 					other: {
 						devices: [
 							{
 								device_id: deviceId,
-								[ settingToToggle ]: false,
+								[settingToToggle]: false,
 							},
 						],
 					},
 				};
 
-				expect( actual ).toEqual( expected );
-			} );
-		} );
+				expect(actual).toEqual(expected);
+			});
+		});
 
-		test( 'should maintain device order when multiple devices are present', () => {
+		test('should maintain device order when multiple devices are present', () => {
 			const deviceId = 123456;
 			const settingToToggle = 'exampleSetting';
 			const device = {
@@ -172,33 +172,33 @@ describe( 'toggleState.other', () => {
 			const startingState = {
 				dirty: {
 					other: {
-						devices: [ device, secondDevice ],
+						devices: [device, secondDevice],
 					},
 				},
 			};
 
-			const actual = toggleState.other( startingState, null, deviceId, settingToToggle );
+			const actual = toggleState.other(startingState, null, deviceId, settingToToggle);
 			const expected = {
 				other: {
 					devices: [
 						{
 							device_id: deviceId,
-							[ settingToToggle ]: true,
+							[settingToToggle]: true,
 						},
 						secondDevice,
 					],
 				},
 			};
 
-			expect( actual ).toEqual( expected );
-		} );
-	} );
-} );
+			expect(actual).toEqual(expected);
+		});
+	});
+});
 
-describe( 'toggleState.blog', () => {
-	describe( 'when `stream` is not a number', () => {
-		describe( 'when setting does not yet have a value', () => {
-			test( 'should toggle the value of that setting under that stream', () => {
+describe('toggleState.blog', () => {
+	describe('when `stream` is not a number', () => {
+		describe('when setting does not yet have a value', () => {
+			test('should toggle the value of that setting under that stream', () => {
 				const blogId = 54321;
 				const stream = 'exampleStream';
 				const settingToToggle = 'exampleSetting';
@@ -207,60 +207,60 @@ describe( 'toggleState.blog', () => {
 				};
 				const startingState = {
 					dirty: {
-						blogs: [ blog ],
+						blogs: [blog],
 					},
 				};
 
-				const actual = toggleState.blog( startingState, blogId, stream, settingToToggle );
+				const actual = toggleState.blog(startingState, blogId, stream, settingToToggle);
 				const expected = {
 					blogs: [
 						{
 							blog_id: blogId,
-							[ stream ]: {
-								[ settingToToggle ]: true,
+							[stream]: {
+								[settingToToggle]: true,
 							},
 						},
 					],
 				};
 
-				expect( actual ).toEqual( expected );
-			} );
-		} );
+				expect(actual).toEqual(expected);
+			});
+		});
 
-		describe( 'when setting already has a value', () => {
-			test( 'should toggle the value of that setting under that stream', () => {
+		describe('when setting already has a value', () => {
+			test('should toggle the value of that setting under that stream', () => {
 				const blogId = 54321;
 				const stream = 'exampleStream';
 				const settingToToggle = 'exampleSetting';
 				const blog = {
 					blog_id: blogId,
-					[ stream ]: {
-						[ settingToToggle ]: true,
+					[stream]: {
+						[settingToToggle]: true,
 					},
 				};
 				const startingState = {
 					dirty: {
-						blogs: [ blog ],
+						blogs: [blog],
 					},
 				};
 
-				const actual = toggleState.blog( startingState, blogId, stream, settingToToggle );
+				const actual = toggleState.blog(startingState, blogId, stream, settingToToggle);
 				const expected = {
 					blogs: [
 						{
 							blog_id: blogId,
-							[ stream ]: {
-								[ settingToToggle ]: false,
+							[stream]: {
+								[settingToToggle]: false,
 							},
 						},
 					],
 				};
 
-				expect( actual ).toEqual( expected );
-			} );
-		} );
+				expect(actual).toEqual(expected);
+			});
+		});
 
-		test( 'should maintain device and blog order when multiple devices & blogs are present', () => {
+		test('should maintain device and blog order when multiple devices & blogs are present', () => {
 			const blogId = 54321;
 			const stream = 'exampleStream';
 			const settingToToggle = 'exampleSetting';
@@ -273,30 +273,30 @@ describe( 'toggleState.blog', () => {
 			};
 			const startingState = {
 				dirty: {
-					blogs: [ blog, secondBlog ],
+					blogs: [blog, secondBlog],
 				},
 			};
 
-			const actual = toggleState.blog( startingState, blogId, stream, settingToToggle );
+			const actual = toggleState.blog(startingState, blogId, stream, settingToToggle);
 			const expected = {
 				blogs: [
 					{
 						blog_id: blogId,
-						[ stream ]: {
-							[ settingToToggle ]: true,
+						[stream]: {
+							[settingToToggle]: true,
 						},
 					},
 					secondBlog,
 				],
 			};
 
-			expect( actual ).toEqual( expected );
-		} );
-	} );
+			expect(actual).toEqual(expected);
+		});
+	});
 
-	describe( 'when `stream` is a device ID (number)', () => {
-		describe( 'when setting does not yet have a value', () => {
-			test( 'should assign the value of `true` to that setting for the target device', () => {
+	describe('when `stream` is a device ID (number)', () => {
+		describe('when setting does not yet have a value', () => {
+			test('should assign the value of `true` to that setting for the target device', () => {
 				const deviceId = 123456;
 				const blogId = 54321;
 				const settingToToggle = 'exampleSetting';
@@ -305,15 +305,15 @@ describe( 'toggleState.blog', () => {
 				};
 				const blog = {
 					blog_id: blogId,
-					devices: [ device ],
+					devices: [device],
 				};
 				const startingState = {
 					dirty: {
-						blogs: [ blog ],
+						blogs: [blog],
 					},
 				};
 
-				const actual = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
+				const actual = toggleState.blog(startingState, blogId, deviceId, settingToToggle);
 				const expected = {
 					blogs: [
 						{
@@ -321,37 +321,37 @@ describe( 'toggleState.blog', () => {
 							devices: [
 								{
 									device_id: deviceId,
-									[ settingToToggle ]: true,
+									[settingToToggle]: true,
 								},
 							],
 						},
 					],
 				};
 
-				expect( actual ).toEqual( expected );
-			} );
-		} );
+				expect(actual).toEqual(expected);
+			});
+		});
 
-		describe( 'when setting already has a value', () => {
-			test( 'should toggle the value of that setting for the target device', () => {
+		describe('when setting already has a value', () => {
+			test('should toggle the value of that setting for the target device', () => {
 				const deviceId = 123456;
 				const blogId = 54321;
 				const settingToToggle = 'exampleSetting';
 				const device = {
 					device_id: deviceId,
-					[ settingToToggle ]: true,
+					[settingToToggle]: true,
 				};
 				const blog = {
 					blog_id: blogId,
-					devices: [ device ],
+					devices: [device],
 				};
 				const startingState = {
 					dirty: {
-						blogs: [ blog ],
+						blogs: [blog],
 					},
 				};
 
-				const actual = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
+				const actual = toggleState.blog(startingState, blogId, deviceId, settingToToggle);
 				const expected = {
 					blogs: [
 						{
@@ -359,18 +359,18 @@ describe( 'toggleState.blog', () => {
 							devices: [
 								{
 									device_id: deviceId,
-									[ settingToToggle ]: false,
+									[settingToToggle]: false,
 								},
 							],
 						},
 					],
 				};
 
-				expect( actual ).toEqual( expected );
-			} );
-		} );
+				expect(actual).toEqual(expected);
+			});
+		});
 
-		test( 'should maintain device and blog order when multiple devices & blogs are present', () => {
+		test('should maintain device and blog order when multiple devices & blogs are present', () => {
 			const deviceId = 123456;
 			const blogId = 54321;
 			const settingToToggle = 'exampleSetting';
@@ -382,7 +382,7 @@ describe( 'toggleState.blog', () => {
 			};
 			const blog = {
 				blog_id: blogId,
-				devices: [ device, secondDevice ],
+				devices: [device, secondDevice],
 			};
 			const secondBlog = {
 				blog_id: 23456,
@@ -390,11 +390,11 @@ describe( 'toggleState.blog', () => {
 			};
 			const startingState = {
 				dirty: {
-					blogs: [ blog, secondBlog ],
+					blogs: [blog, secondBlog],
 				},
 			};
 
-			const actual = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
+			const actual = toggleState.blog(startingState, blogId, deviceId, settingToToggle);
 			const expected = {
 				blogs: [
 					{
@@ -402,7 +402,7 @@ describe( 'toggleState.blog', () => {
 						devices: [
 							{
 								device_id: deviceId,
-								[ settingToToggle ]: true,
+								[settingToToggle]: true,
 							},
 							secondDevice,
 						],
@@ -411,7 +411,7 @@ describe( 'toggleState.blog', () => {
 				],
 			};
 
-			expect( actual ).toEqual( expected );
-		} );
-	} );
-} );
+			expect(actual).toEqual(expected);
+		});
+	});
+});

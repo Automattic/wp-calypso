@@ -3,36 +3,36 @@
  */
 import shouldNewSiteBePrivateByDefault from '../should-new-site-be-private-by-default';
 
-describe( 'shouldNewSiteBePrivateByDefault()', () => {
-	test( 'should be true with no input', () => {
-		expect( shouldNewSiteBePrivateByDefault() ).toBe( true );
-	} );
+describe('shouldNewSiteBePrivateByDefault()', () => {
+	test('should be true with no input', () => {
+		expect(shouldNewSiteBePrivateByDefault()).toBe(true);
+	});
 
-	test( 'should return `true` for invalid plan', () => {
+	test('should return `true` for invalid plan', () => {
 		const mockState = { signup: { dependencyStore: { cartItem: 'notARealPlan' } } };
-		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( true );
-	} );
+		expect(shouldNewSiteBePrivateByDefault(mockState)).toBe(true);
+	});
 
-	test( 'should return `true` for free site', () => {
+	test('should return `true` for free site', () => {
 		const mockState = { signup: { dependencyStore: { cartItem: null } } };
-		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( true );
-	} );
+		expect(shouldNewSiteBePrivateByDefault(mockState)).toBe(true);
+	});
 
-	test( 'should return `true` for business plan', () => {
+	test('should return `true` for business plan', () => {
 		const mockState = {
 			signup: {
 				dependencyStore: { cartItem: { product_slug: 'business-bundle', free_trial: false } },
 			},
 		};
-		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( true );
-	} );
+		expect(shouldNewSiteBePrivateByDefault(mockState)).toBe(true);
+	});
 
-	test( 'should return `false` for ecommerce plan', () => {
+	test('should return `false` for ecommerce plan', () => {
 		const mockState = {
 			signup: {
 				dependencyStore: { cartItem: { product_slug: 'ecommerce-bundle', free_trial: false } },
 			},
 		};
-		expect( shouldNewSiteBePrivateByDefault( mockState ) ).toBe( false );
-	} );
-} );
+		expect(shouldNewSiteBePrivateByDefault(mockState)).toBe(false);
+	});
+});

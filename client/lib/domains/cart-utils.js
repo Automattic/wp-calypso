@@ -18,18 +18,18 @@ import { isDomainRegistration } from 'lib/products-values';
  *
  * @returns {?string} the name of the first domain for the transaction.
  */
-export function getDomainNameFromReceiptOrCart( receipt, cart ) {
+export function getDomainNameFromReceiptOrCart(receipt, cart) {
 	let domainRegistration;
 
-	if ( receipt && ! isEmpty( receipt.purchases ) ) {
-		domainRegistration = find( values( receipt.purchases ), isDomainRegistration );
+	if (receipt && !isEmpty(receipt.purchases)) {
+		domainRegistration = find(values(receipt.purchases), isDomainRegistration);
 	}
 
-	if ( hasDomainRegistration( cart ) ) {
-		domainRegistration = getDomainRegistrations( cart )[ 0 ];
+	if (hasDomainRegistration(cart)) {
+		domainRegistration = getDomainRegistrations(cart)[0];
 	}
 
-	if ( domainRegistration ) {
+	if (domainRegistration) {
 		return domainRegistration.meta;
 	}
 

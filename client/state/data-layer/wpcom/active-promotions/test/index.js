@@ -10,13 +10,13 @@ import {
 } from 'state/active-promotions/actions';
 import { WPCOM_RESPONSE } from 'state/active-promotions/test/fixture';
 
-describe( 'wpcom-api', () => {
-	describe( 'active promotions request', () => {
-		describe( '#requestActivePromotions', () => {
-			test( 'should return HTTP request to active-promotions endpoint', () => {
+describe('wpcom-api', () => {
+	describe('active promotions request', () => {
+		describe('#requestActivePromotions', () => {
+			test('should return HTTP request to active-promotions endpoint', () => {
 				const action = { type: 'DUMMY' };
 
-				expect( requestActivePromotions( action ) ).toEqual(
+				expect(requestActivePromotions(action)).toEqual(
 					http(
 						{
 							apiVersion: '1.1',
@@ -26,32 +26,28 @@ describe( 'wpcom-api', () => {
 						action
 					)
 				);
-			} );
-		} );
+			});
+		});
 
-		describe( '#receiveActivePromotions', () => {
-			test( 'should return active promotions', () => {
+		describe('#receiveActivePromotions', () => {
+			test('should return active promotions', () => {
 				const activePromotions = WPCOM_RESPONSE;
-				const action = activePromotionsReceiveAction( activePromotions );
+				const action = activePromotionsReceiveAction(activePromotions);
 
-				expect(
-					receiveActivePromotions( action, { active_promotions: activePromotions } )
-				).toEqual( [
+				expect(receiveActivePromotions(action, { active_promotions: activePromotions })).toEqual([
 					activePromotionsRequestSuccessAction(),
-					activePromotionsReceiveAction( activePromotions ),
-				] );
-			} );
-		} );
+					activePromotionsReceiveAction(activePromotions),
+				]);
+			});
+		});
 
-		describe( '#receiveError', () => {
-			test( 'should return error', () => {
+		describe('#receiveError', () => {
+			test('should return error', () => {
 				const error = 'could not find active promotions';
-				const action = activePromotionsRequestFailureAction( error );
+				const action = activePromotionsRequestFailureAction(error);
 
-				expect( receiveError( action, error ) ).toEqual(
-					activePromotionsRequestFailureAction( error )
-				);
-			} );
-		} );
-	} );
-} );
+				expect(receiveError(action, error)).toEqual(activePromotionsRequestFailureAction(error));
+			});
+		});
+	});
+});

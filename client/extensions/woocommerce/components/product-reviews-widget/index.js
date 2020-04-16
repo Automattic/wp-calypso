@@ -14,8 +14,8 @@ import Rating from 'components/rating';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
-const ProductReviewsWidget = ( { site, product, translate } ) => {
-	if ( ! product.rating_count ) {
+const ProductReviewsWidget = ({ site, product, translate }) => {
+	if (!product.rating_count) {
 		return null;
 	}
 
@@ -32,13 +32,11 @@ const ProductReviewsWidget = ( { site, product, translate } ) => {
 
 	return (
 		<div className="product-reviews-widget">
-			<div className="product-reviews-widget__label">{ translate( 'Average rating' ) }</div>
+			<div className="product-reviews-widget__label">{translate('Average rating')}</div>
 
 			<div className="product-reviews-widget__container">
-				<Rating rating={ product.average_rating * 20 } size={ 16 } />
-				<a href={ getLink( `/store/reviews/${ product.id }/approved/:site`, site ) }>
-					{ reviewLabel }
-				</a>
+				<Rating rating={product.average_rating * 20} size={16} />
+				<a href={getLink(`/store/reviews/${product.id}/approved/:site`, site)}>{reviewLabel}</a>
 			</div>
 		</div>
 	);
@@ -46,17 +44,17 @@ const ProductReviewsWidget = ( { site, product, translate } ) => {
 
 ProductReviewsWidget.propTypes = {
 	site: PropTypes.object,
-	product: PropTypes.shape( {
+	product: PropTypes.shape({
 		id: PropTypes.isRequired,
 		name: PropTypes.string,
 		average_rating: PropTypes.string,
 		rating_count: PropTypes.number,
-	} ),
+	}),
 };
 
-export default connect( state => {
-	const site = getSelectedSiteWithFallback( state );
+export default connect((state) => {
+	const site = getSelectedSiteWithFallback(state);
 	return {
 		site,
 	};
-} )( localize( ProductReviewsWidget ) );
+})(localize(ProductReviewsWidget));

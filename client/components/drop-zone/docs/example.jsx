@@ -15,10 +15,10 @@ const DropZoneExample = localize(
 	class extends React.PureComponent {
 		state = {};
 
-		onFilesDrop = files => {
-			this.setState( {
+		onFilesDrop = (files) => {
+			this.setState({
 				lastDroppedFiles: files,
-			} );
+			});
 		};
 
 		renderContainerContent = () => {
@@ -28,19 +28,19 @@ const DropZoneExample = localize(
 			};
 			let fileNames;
 
-			if ( this.state.lastDroppedFiles ) {
+			if (this.state.lastDroppedFiles) {
 				fileNames = this.state.lastDroppedFiles
-					.map( function( file ) {
+					.map(function (file) {
 						return file.name;
-					} )
-					.join( ', ' );
+					})
+					.join(', ');
 			}
 
 			return (
-				<Card style={ style }>
-					{ fileNames
-						? this.props.translate( 'You dropped: %s', { args: fileNames } )
-						: this.props.translate( 'This is a droppable area' ) }
+				<Card style={style}>
+					{fileNames
+						? this.props.translate('You dropped: %s', { args: fileNames })
+						: this.props.translate('This is a droppable area')}
 				</Card>
 			);
 		};
@@ -52,9 +52,9 @@ const DropZoneExample = localize(
 			};
 
 			return (
-				<div style={ style }>
-					{ this.renderContainerContent() }
-					<DropZone onFilesDrop={ this.onFilesDrop } />
+				<div style={style}>
+					{this.renderContainerContent()}
+					<DropZone onFilesDrop={this.onFilesDrop} />
 				</div>
 			);
 		};

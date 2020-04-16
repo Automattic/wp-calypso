@@ -24,18 +24,18 @@ class PostsList extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	addPost = ( { push } ) => post =>
-		push( {
+	addPost = ({ push }) => (post) =>
+		push({
 			id: post.ID,
 			siteId: post.site_ID,
 			title: post.title,
 			url: post.URL,
-		} );
+		});
 
-	removePost = ( { remove }, index ) => () => remove( index );
+	removePost = ({ remove }, index) => () => remove(index);
 
-	changePostOrder = ( { move } ) => newOrder => {
-		if ( newOrder.length < 2 ) {
+	changePostOrder = ({ move }) => (newOrder) => {
+		if (newOrder.length < 2) {
 			return;
 		}
 
@@ -44,12 +44,9 @@ class PostsList extends Component {
 		// Moved forward: newIndex < index.
 		// Moved backward by less than one position: same as moving the next item forward.
 		// Moved backward by more than one position: newIndex > index + 1.
-		const from = findIndex(
-			newOrder,
-			( newIndex, index ) => newIndex < index || newIndex > index + 1
-		);
+		const from = findIndex(newOrder, (newIndex, index) => newIndex < index || newIndex > index + 1);
 
-		move( from, newOrder[ from ] );
+		move(from, newOrder[from]);
 	};
 
 	render() {
@@ -61,47 +58,47 @@ class PostsList extends Component {
 		return (
 			<div>
 				<FormFieldset>
-					<p className={ explanationTextClass }>
-						{ translate(
+					<p className={explanationTextClass}>
+						{translate(
 							'Add content to the zone by using search or by selecting it from the recent posts list below.'
-						) }
+						)}
 					</p>
 					<SearchAutocomplete
-						onSelect={ this.addPost( fields ) }
-						exclude={ map( posts, post => post.id ) }
+						onSelect={this.addPost(fields)}
+						exclude={map(posts, (post) => post.id)}
 					>
 						<RecentPostsDropdown
-							onSelect={ this.addPost( fields ) }
-							exclude={ map( posts, post => post.id ) }
+							onSelect={this.addPost(fields)}
+							exclude={map(posts, (post) => post.id)}
 						/>
 					</SearchAutocomplete>
 				</FormFieldset>
 
-				{ !! posts.length && ! requesting && (
+				{!!posts.length && !requesting && (
 					<FormFieldset>
-						<p className={ explanationTextClass }>
-							{ translate(
+						<p className={explanationTextClass}>
+							{translate(
 								"You can reorder the zone's content by dragging it to a different location on the list."
-							) }
+							)}
 						</p>
-						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
-							{ posts.map( ( post, index ) => (
+						<SortableList direction="vertical" onChange={this.changePostOrder(fields)}>
+							{posts.map((post, index) => (
 								<PostCard
-									key={ post.id }
-									postId={ post.id }
-									postTitle={ post.title }
-									siteId={ post.siteId }
-									remove={ this.removePost( fields, index ) }
+									key={post.id}
+									postId={post.id}
+									postTitle={post.title}
+									siteId={post.siteId}
+									remove={this.removePost(fields, index)}
 								/>
-							) ) }
+							))}
 						</SortableList>
 					</FormFieldset>
-				) }
+				)}
 
-				{ requesting && times( 3, index => <PostPlaceholder key={ index } /> ) }
+				{requesting && times(3, (index) => <PostPlaceholder key={index} />)}
 			</div>
 		);
 	}
 }
 
-export default localize( PostsList );
+export default localize(PostsList);

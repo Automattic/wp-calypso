@@ -8,12 +8,12 @@ import { expect } from 'chai';
  */
 import { getPlugins, isRequestingPlugins, isTogglingPlugin } from '../selectors';
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	describe( 'isRequestingPlugins()', () => {
-		test( 'should return false if no state exists', () => {
+	describe('isRequestingPlugins()', () => {
+		test('should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -21,117 +21,117 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const isRequesting = isRequestingPlugins( state, primarySiteId );
+			const isRequesting = isRequestingPlugins(state, primarySiteId);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if the site is not attached', () => {
+		test('should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						plugins: {
 							requesting: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isRequesting = isRequestingPlugins( state, secondarySiteId );
+			const isRequesting = isRequestingPlugins(state, secondarySiteId);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if the plugins are not being fetched', () => {
+		test('should return false if the plugins are not being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						plugins: {
 							requesting: {
-								[ primarySiteId ]: false,
+								[primarySiteId]: false,
 							},
 						},
 					},
 				},
 			};
-			const isRequesting = isRequestingPlugins( state, primarySiteId );
+			const isRequesting = isRequestingPlugins(state, primarySiteId);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if the plugins are being fetched', () => {
+		test('should return true if the plugins are being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						plugins: {
 							requesting: {
-								[ primarySiteId ]: true,
+								[primarySiteId]: true,
 							},
 						},
 					},
 				},
 			};
-			const isRequesting = isRequestingPlugins( state, primarySiteId );
+			const isRequesting = isRequestingPlugins(state, primarySiteId);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( 'isTogglingPlugin()', () => {
-		test( 'should return false if the site is not attached', () => {
+	describe('isTogglingPlugin()', () => {
+		test('should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						plugins: {
 							toggling: {
-								[ primarySiteId ]: { no_adverts_for_friends: true },
+								[primarySiteId]: { no_adverts_for_friends: true },
 							},
 						},
 					},
 				},
 			};
-			const isToggling = isTogglingPlugin( state, secondarySiteId, 'no_adverts_for_friends' );
+			const isToggling = isTogglingPlugin(state, secondarySiteId, 'no_adverts_for_friends');
 
-			expect( isToggling ).to.be.false;
-		} );
+			expect(isToggling).to.be.false;
+		});
 
-		test( 'should return false if the plugin is not being enabled or disabled', () => {
+		test('should return false if the plugin is not being enabled or disabled', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						plugins: {
 							toggling: {
-								[ primarySiteId ]: { no_adverts_for_friends: false },
+								[primarySiteId]: { no_adverts_for_friends: false },
 							},
 						},
 					},
 				},
 			};
-			const isToggling = isTogglingPlugin( state, primarySiteId, 'no_adverts_for_friends' );
+			const isToggling = isTogglingPlugin(state, primarySiteId, 'no_adverts_for_friends');
 
-			expect( isToggling ).to.be.false;
-		} );
+			expect(isToggling).to.be.false;
+		});
 
-		test( 'should return true if the plugin is being enabled or disabled', () => {
+		test('should return true if the plugin is being enabled or disabled', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						plugins: {
 							toggling: {
-								[ primarySiteId ]: { no_adverts_for_friends: true },
+								[primarySiteId]: { no_adverts_for_friends: true },
 							},
 						},
 					},
 				},
 			};
-			const isToggling = isTogglingPlugin( state, primarySiteId, 'no_adverts_for_friends' );
+			const isToggling = isTogglingPlugin(state, primarySiteId, 'no_adverts_for_friends');
 
-			expect( isToggling ).to.be.true;
-		} );
-	} );
+			expect(isToggling).to.be.true;
+		});
+	});
 
-	describe( 'getPlugins()', () => {
+	describe('getPlugins()', () => {
 		const primaryPlugins = {
 			awaitingmoderation: {
 				url: '',
@@ -149,7 +149,7 @@ describe( 'selectors', () => {
 			},
 		};
 
-		test( 'should return null if no state exists', () => {
+		test('should return null if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -157,43 +157,43 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const plugins = getPlugins( state, primarySiteId );
+			const plugins = getPlugins(state, primarySiteId);
 
-			expect( plugins ).to.be.null;
-		} );
+			expect(plugins).to.be.null;
+		});
 
-		test( 'should return null if the site is not attached', () => {
+		test('should return null if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						plugins: {
 							items: {
-								[ primarySiteId ]: primaryPlugins,
+								[primarySiteId]: primaryPlugins,
 							},
 						},
 					},
 				},
 			};
-			const plugins = getPlugins( state, secondarySiteId );
+			const plugins = getPlugins(state, secondarySiteId);
 
-			expect( plugins ).to.be.null;
-		} );
+			expect(plugins).to.be.null;
+		});
 
-		test( 'should return the plugins for a siteId', () => {
+		test('should return the plugins for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						plugins: {
 							items: {
-								[ primarySiteId ]: primaryPlugins,
+								[primarySiteId]: primaryPlugins,
 							},
 						},
 					},
 				},
 			};
-			const plugins = getPlugins( state, primarySiteId );
+			const plugins = getPlugins(state, primarySiteId);
 
-			expect( plugins ).to.eql( primaryPlugins );
-		} );
-	} );
-} );
+			expect(plugins).to.eql(primaryPlugins);
+		});
+	});
+});

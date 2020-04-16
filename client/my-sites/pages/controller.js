@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Pages from './main';
 
-export function pages( context, next ) {
-	context.primary = <Pages status={ context.params.status } search={ context.query.s } />;
+export function pages(context, next) {
+	context.primary = <Pages status={context.params.status} search={context.query.s} />;
 	next();
 }

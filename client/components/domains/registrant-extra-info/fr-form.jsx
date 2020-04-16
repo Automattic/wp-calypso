@@ -23,22 +23,22 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import validateContactDetails from './fr-validate-contact-details';
 import { disableSubmitButton } from './with-contact-details-validation';
 
-const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
+const debug = debugFactory('calypso:domains:registrant-extra-info');
 let defaultRegistrantType;
 
 /*
  * Sanitize a string by removing everything except digits
  */
-function onlyNumericCharacters( string ) {
-	return isString( string ) ? string.replace( /[^0-9]/g, '' ) : '';
+function onlyNumericCharacters(string) {
+	return isString(string) ? string.replace(/[^0-9]/g, '') : '';
 }
 
 /*
  * Sanitize a VAT string by removing everything except digits,
  * letters, plus or star symbols.
  */
-export function sanitizeVat( string ) {
-	return isString( string ) ? toUpper( string ).replace( /[^0-9A-Z+*]/g, '' ) : '';
+export function sanitizeVat(string) {
+	return isString(string) ? toUpper(string).replace(/[^0-9A-Z+*]/g, '') : '';
 }
 
 // If we set a field to null, react decides it's uncontrolled and complains
@@ -50,8 +50,8 @@ const emptyValues = {
 	trademarkNumber: '',
 };
 
-function renderValidationError( message ) {
-	return <FormInputValidation isError key={ message } text={ message } />;
+function renderValidationError(message) {
+	return <FormInputValidation isError key={message} text={message} />;
 }
 
 class RegistrantExtraInfoFrForm extends React.PureComponent {
@@ -90,64 +90,64 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			},
 		};
 
-		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+		this.props.updateContactDetailsCache(payload);
+		this.props.onContactDetailsChange?.(payload);
 	}
 
-	updateContactDetails( field, value ) {
-		const sanitizedValue = this.sanitizeField( field, value );
-		debug( 'Setting ' + field + ' to ' + value );
-		const payload = set( {}, field, sanitizedValue );
-		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+	updateContactDetails(field, value) {
+		const sanitizedValue = this.sanitizeField(field, value);
+		debug('Setting ' + field + ' to ' + value);
+		const payload = set({}, field, sanitizedValue);
+		this.props.updateContactDetailsCache(payload);
+		this.props.onContactDetailsChange?.(payload);
 	}
 
-	handleChangeContactEvent = event => {
-		this.updateContactDetails( event.target.id, event.target.value );
+	handleChangeContactEvent = (event) => {
+		this.updateContactDetails(event.target.id, event.target.value);
 	};
 
-	handleChangeContactExtraEvent = event => {
-		this.updateContactDetails( `extra.fr.${ event.target.id }`, event.target.value );
+	handleChangeContactExtraEvent = (event) => {
+		this.updateContactDetails(`extra.fr.${event.target.id}`, event.target.value);
 	};
 
 	render() {
 		const { ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
-		const registrantType = get( ccTldDetails, 'registrantType', defaultRegistrantType );
-		const formIsValid = isEmpty( contactDetailsValidationErrors );
+		const registrantType = get(ccTldDetails, 'registrantType', defaultRegistrantType);
+		const formIsValid = isEmpty(contactDetailsValidationErrors);
 
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
-					{ translate( 'Almost done! We need some extra details to register your %(tld)s domain.', {
+					{translate('Almost done! We need some extra details to register your %(tld)s domain.', {
 						args: { tld: '.fr' },
-					} ) }
+					})}
 				</p>
 				<FormFieldset>
-					<FormLegend>{ translate( "Who's this domain for?" ) }</FormLegend>
+					<FormLegend>{translate("Who's this domain for?")}</FormLegend>
 					<FormLabel>
 						<FormRadio
 							value="individual"
 							id="registrantType"
-							checked={ 'individual' === registrantType }
-							onChange={ this.handleChangeContactExtraEvent }
+							checked={'individual' === registrantType}
+							onChange={this.handleChangeContactExtraEvent}
 						/>
-						<span>{ translate( 'An individual' ) }</span>
+						<span>{translate('An individual')}</span>
 					</FormLabel>
 
 					<FormLabel>
 						<FormRadio
 							value="organization"
 							id="registrantType"
-							checked={ 'organization' === registrantType }
-							onChange={ this.handleChangeContactExtraEvent }
+							checked={'organization' === registrantType}
+							onChange={this.handleChangeContactExtraEvent}
 						/>
-						<span>{ translate( 'A company or organization' ) }</span>
+						<span>{translate('A company or organization')}</span>
 					</FormLabel>
 				</FormFieldset>
 
-				{ 'organization' === registrantType && this.renderOrganizationFields() }
+				{'organization' === registrantType && this.renderOrganizationFields()}
 
-				{ formIsValid ? this.props.children : disableSubmitButton( this.props.children ) }
+				{formIsValid ? this.props.children : disableSubmitButton(this.props.children)}
 			</form>
 		);
 	}
@@ -159,7 +159,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			ccTldDetails,
 			emptyValues
 		);
-		const validationErrors = get( contactDetailsValidationErrors, 'extra.fr', {} );
+		const validationErrors = get(contactDetailsValidationErrors, 'extra.fr', {});
 		const registrantVatIdValidationMessage =
 			validationErrors.registrantVatId &&
 			renderValidationError(
@@ -180,124 +180,125 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			);
 
 		const trademarkNumberStrings = {
-			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
-			oneOf: this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
-			pattern: this.props.translate( 'An EU Trademark number uses only digits.' ),
+			maxLength: this.props.translate('Too long. An EU Trademark number has 9 digits.'),
+			oneOf: this.props.translate('Too short. An EU Trademark number has 9 digits.'),
+			pattern: this.props.translate('An EU Trademark number uses only digits.'),
 		};
 
-		const trademarkNumberValidationMessage = map( validationErrors.trademarkNumber, error =>
-			renderValidationError( trademarkNumberStrings[ error ] )
+		const trademarkNumberValidationMessage = map(validationErrors.trademarkNumber, (error) =>
+			renderValidationError(trademarkNumberStrings[error])
 		);
 
 		// Note organization is the level above the other extra fields
 		const organizationValidationStrings = {
-			maxLength: translate( 'Too long, please limit the organization name to 100 characters.' ),
-			not: translate( 'Please use only the characters “%(validCharacters)s”', {
+			maxLength: translate('Too long, please limit the organization name to 100 characters.'),
+			not: translate('Please use only the characters “%(validCharacters)s”', {
 				args: { validCharacters: "a-z A-Z 0-9 . , ( ) @ & ' - [space]" },
-			} ),
-			$ref: translate( 'Organization field is required' ),
+			}),
+			$ref: translate('Organization field is required'),
 		};
 
-		const organizationValidationMessage = map( contactDetailsValidationErrors.organization, error =>
-			renderValidationError( organizationValidationStrings[ error ] )
+		const organizationValidationMessage = map(
+			contactDetailsValidationErrors.organization,
+			(error) => renderValidationError(organizationValidationStrings[error])
 		);
 
 		return (
 			<div>
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__organization" htmlFor="organization">
-						{ translate( 'Organization Name' ) }
+						{translate('Organization Name')}
 					</FormLabel>
 					<FormTextInput
 						id="organization"
-						value={ contactDetails.organization }
+						value={contactDetails.organization}
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
-						onChange={ this.handleChangeContactEvent }
-						isError={ Boolean( ! isEmpty( organizationValidationMessage ) ) }
+						placeholder={''}
+						onChange={this.handleChangeContactEvent}
+						isError={Boolean(!isEmpty(organizationValidationMessage))}
 					/>
-					{ organizationValidationMessage }
+					{organizationValidationMessage}
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel htmlFor="registrantVatId" optional>
-						{ translate( 'VAT Number' ) }
+						{translate('VAT Number')}
 					</FormLabel>
 					<FormTextInput
 						id="registrantVatId"
-						value={ registrantVatId }
+						value={registrantVatId}
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ translate( 'ex. FRXX123456789' ) }
-						onChange={ this.handleChangeContactExtraEvent }
-						isError={ Boolean( registrantVatIdValidationMessage ) }
+						placeholder={translate('ex. FRXX123456789')}
+						onChange={this.handleChangeContactExtraEvent}
+						isError={Boolean(registrantVatIdValidationMessage)}
 					/>
-					{ registrantVatIdValidationMessage }
+					{registrantVatIdValidationMessage}
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel htmlFor="sirenSiret" optional>
-						{ translate( 'SIREN or SIRET Number' ) }
+						{translate('SIREN or SIRET Number')}
 					</FormLabel>
 					<FormTextInput
 						id="sirenSiret"
-						value={ sirenSiret }
+						value={sirenSiret}
 						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
-						placeholder={ translate( 'ex. 123 456 789 or 123 456 789 01234', {
+						placeholder={translate('ex. 123 456 789 or 123 456 789 01234', {
 							comment: 'ex is short for "example". The numbers are examples of the EU VAT format',
-						} ) }
+						})}
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						isError={ Boolean( sirenSiretValidationMessage ) }
-						onChange={ this.handleChangeContactExtraEvent }
+						isError={Boolean(sirenSiretValidationMessage)}
+						onChange={this.handleChangeContactExtraEvent}
 					/>
-					{ sirenSiretValidationMessage }
+					{sirenSiretValidationMessage}
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel htmlFor="trademarkNumber" optional>
-						{ translate( 'EU Trademark Number' ) }
+						{translate('EU Trademark Number')}
 					</FormLabel>
 					<FormTextInput
 						id="trademarkNumber"
-						value={ trademarkNumber }
+						value={trademarkNumber}
 						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ translate( 'ex. 012345678', {
+						placeholder={translate('ex. 012345678', {
 							comment: 'ex is short for example. The number is the EU trademark number format.',
-						} ) }
-						isError={ ! isEmpty( trademarkNumberValidationMessage ) }
-						onChange={ this.handleChangeContactExtraEvent }
+						})}
+						isError={!isEmpty(trademarkNumberValidationMessage)}
+						onChange={this.handleChangeContactExtraEvent}
 					/>
-					{ trademarkNumberValidationMessage }
+					{trademarkNumberValidationMessage}
 				</FormFieldset>
 			</div>
 		);
 	}
 
-	sanitizeField( field, value ) {
-		return ( this.sanitizeFunctions[ field ] || identity )( value );
+	sanitizeField(field, value) {
+		return (this.sanitizeFunctions[field] || identity)(value);
 	}
 }
 
 export default connect(
-	state => {
-		const contactDetails = getContactDetailsCache( state );
+	(state) => {
+		const contactDetails = getContactDetailsCache(state);
 		return {
 			contactDetails,
-			ccTldDetails: get( contactDetails, 'extra.fr', {} ),
-			contactDetailsValidationErrors: validateContactDetails( contactDetails ),
+			ccTldDetails: get(contactDetails, 'extra.fr', {}),
+			contactDetailsValidationErrors: validateContactDetails(contactDetails),
 		};
 	},
 	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoFrForm ) );
+)(localize(RegistrantExtraInfoFrForm));

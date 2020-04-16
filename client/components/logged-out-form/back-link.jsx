@@ -18,39 +18,39 @@ import Gridicon from 'components/gridicon';
  */
 import './link-item.scss';
 
-function LoggedOutFormBackLink( props ) {
+function LoggedOutFormBackLink(props) {
 	const { locale, oauth2Client, translate, recordClick } = props;
 
-	let url = localizeUrl( 'https://wordpress.com', locale );
-	let message = translate( 'Back to WordPress.com' );
+	let url = localizeUrl('https://wordpress.com', locale);
+	let message = translate('Back to WordPress.com');
 
-	if ( oauth2Client ) {
-		url = safeProtocolUrl( oauth2Client.url );
-		if ( ! url || url === 'http:' ) {
+	if (oauth2Client) {
+		url = safeProtocolUrl(oauth2Client.url);
+		if (!url || url === 'http:') {
 			return null;
 		}
 
-		message = translate( 'Back to %(clientTitle)s', {
+		message = translate('Back to %(clientTitle)s', {
 			args: {
 				clientTitle: oauth2Client.title,
 			},
-		} );
+		});
 	}
 
 	return (
 		<a
-			href={ url }
+			href={url}
 			key="return-to-wpcom-link"
-			onClick={ recordClick }
+			onClick={recordClick}
 			rel="external"
-			className={ classnames( {
+			className={classnames({
 				'logged-out-form__link-item': true,
 				'logged-out-form__back-link': true,
 				...props.classes,
-			} ) }
+			})}
 		>
-			<Gridicon icon="arrow-left" size={ 18 } />
-			{ message }
+			<Gridicon icon="arrow-left" size={18} />
+			{message}
 		</a>
 	);
 }
@@ -62,4 +62,4 @@ LoggedOutFormBackLink.propTypes = {
 	oauth2Client: PropTypes.object,
 };
 
-export default localize( LoggedOutFormBackLink );
+export default localize(LoggedOutFormBackLink);

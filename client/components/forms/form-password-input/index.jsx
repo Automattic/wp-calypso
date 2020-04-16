@@ -27,7 +27,7 @@ export default class extends React.Component {
 	textFieldRef = React.createRef();
 
 	componentDidMount() {
-		if ( isMobile() ) {
+		if (isMobile()) {
 			this.state = { hidePassword: false };
 			return;
 		}
@@ -36,11 +36,11 @@ export default class extends React.Component {
 	}
 
 	togglePasswordVisibility = () => {
-		this.setState( { hidePassword: ! this.state.hidePassword } );
+		this.setState({ hidePassword: !this.state.hidePassword });
 	};
 
 	hidden() {
-		if ( this.props.hideToggle ) {
+		if (this.props.hideToggle) {
 			return true;
 		}
 		return this.props.submitting || this.state.hidePassword;
@@ -51,23 +51,23 @@ export default class extends React.Component {
 	};
 
 	render() {
-		const toggleVisibilityClasses = classNames( {
+		const toggleVisibilityClasses = classNames({
 			'form-password-input__toggle': true,
-			'form-password-input__toggle-visibility': ! this.props.hideToggle,
-		} );
+			'form-password-input__toggle-visibility': !this.props.hideToggle,
+		});
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 		return (
 			<div className="form-password-input">
 				<FormTextInput
-					{ ...omit( this.props, 'hideToggle', 'submitting' ) }
+					{...omit(this.props, 'hideToggle', 'submitting')}
 					autoComplete="off"
-					ref={ this.textFieldRef }
-					type={ this.hidden() ? 'password' : 'text' }
+					ref={this.textFieldRef}
+					type={this.hidden() ? 'password' : 'text'}
 				/>
 
-				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>
-					{ this.hidden() ? <Gridicon icon="not-visible" /> : <Gridicon icon="visible" /> }
+				<span className={toggleVisibilityClasses} onClick={this.togglePasswordVisibility}>
+					{this.hidden() ? <Gridicon icon="not-visible" /> : <Gridicon icon="visible" />}
 				</span>
 			</div>
 		);

@@ -26,9 +26,9 @@ class TransferRestrictionMessage extends React.PureComponent {
 		transferRestrictionStatus: PropTypes.string,
 	};
 
-	goToMapDomainStep = event => {
+	goToMapDomainStep = (event) => {
 		event.preventDefault();
-		page( this.props.mapDomainUrl );
+		page(this.props.mapDomainUrl);
 	};
 
 	render() {
@@ -43,14 +43,14 @@ class TransferRestrictionMessage extends React.PureComponent {
 			moment,
 		} = this.props;
 
-		const transferEligibleMoment = moment( transferEligibleDate );
+		const transferEligibleMoment = moment(transferEligibleDate);
 
 		const heading = translate(
 			'{{strong}}%(domain)s{{/strong}} can be transferred in %(transferDelayInDays)s days.',
 			{
 				args: {
 					domain,
-					transferDelayInDays: transferEligibleMoment.diff( moment(), 'days' ),
+					transferDelayInDays: transferEligibleMoment.diff(moment(), 'days'),
 				},
 				components: {
 					strong: <strong />,
@@ -63,33 +63,33 @@ class TransferRestrictionMessage extends React.PureComponent {
 				'{{a}}Learn how{{/a}}.',
 			{
 				components: {
-					a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+					a: <a href={MAP_EXISTING_DOMAIN} rel="noopener noreferrer" target="_blank" />,
 				},
 			}
 		);
 
 		let reason = null;
 
-		if ( 'max_term' === transferRestrictionStatus ) {
+		if ('max_term' === transferRestrictionStatus) {
 			reason = translate(
 				'Transferring this domain would extend the registration period beyond the maximum allowed term ' +
 					'of %(termMaximumInYears)d years. It can be transferred starting %(transferEligibleDate)s.',
 				{
 					args: {
 						termMaximumInYears: termMaximumInYears,
-						transferEligibleDate: transferEligibleMoment.format( 'LL' ),
+						transferEligibleDate: transferEligibleMoment.format('LL'),
 					},
 				}
 			);
-		} else if ( 'initial_registration_period' === transferRestrictionStatus ) {
+		} else if ('initial_registration_period' === transferRestrictionStatus) {
 			reason = translate(
 				'Newly-registered domains are not eligible for transfer. {{strong}}%(domain)s{{/strong}} was registered ' +
 					'%(daysAgoRegistered)s days ago, and can be transferred starting %(transferEligibleDate)s.',
 				{
 					args: {
 						domain,
-						daysAgoRegistered: this.props.moment().diff( creationDate, 'days' ),
-						transferEligibleDate: transferEligibleMoment.format( 'LL' ),
+						daysAgoRegistered: this.props.moment().diff(creationDate, 'days'),
+						transferEligibleDate: transferEligibleMoment.format('LL'),
 					},
 					components: {
 						strong: <strong />,
@@ -103,29 +103,29 @@ class TransferRestrictionMessage extends React.PureComponent {
 				<div className="transfer-domain-step__section is-expanded">
 					<div className="transfer-domain-step__section-text">
 						<div className="transfer-domain-step__section-heading">
-							<FormattedHeader headerText={ heading } />
+							<FormattedHeader headerText={heading} />
 						</div>
 						<div>
 							<div className="transfer-domain-step__section-message">
-								{ message }
+								{message}
 								<br />
 								<br />
-								{ reason }
+								{reason}
 							</div>
 							<div className="transfer-domain-step__section-action">
 								<Button
 									className="transfer-domain-step__section-action-button"
 									compact
-									onClick={ this.goToMapDomainStep }
+									onClick={this.goToMapDomainStep}
 								>
-									{ translate( 'Connect domain without transferring' ) }
+									{translate('Connect domain without transferring')}
 								</Button>
 								<Button
 									className="transfer-domain-step__section-action-button"
 									compact
-									onClick={ goBack }
+									onClick={goBack}
 								>
-									{ translate( 'Transfer different domain' ) }
+									{translate('Transfer different domain')}
 								</Button>
 							</div>
 						</div>
@@ -136,4 +136,4 @@ class TransferRestrictionMessage extends React.PureComponent {
 	}
 }
 
-export default localize( withLocalizedMoment( TransferRestrictionMessage ) );
+export default localize(withLocalizedMoment(TransferRestrictionMessage));

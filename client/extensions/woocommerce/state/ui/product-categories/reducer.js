@@ -7,7 +7,7 @@ import edits from './edits-reducer';
 
 export default keyedReducer(
 	'siteId',
-	combineReducers( {
+	combineReducers({
 		edits,
-	} )
+	})
 );

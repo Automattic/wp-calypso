@@ -19,7 +19,7 @@ import { getPostTotalCommentsCount } from 'state/comments/selectors';
  */
 import './style.scss';
 
-function CommentButton( props ) {
+function CommentButton(props) {
 	const { commentCount, href, onClick, showLabel, tagName, target } = props;
 	const translate = useTranslate();
 
@@ -34,17 +34,17 @@ function CommentButton( props ) {
 			},
 			isNull
 		),
-		<Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
+		<Gridicon icon="comment" size={props.size} className="comment-button__icon" />,
 		<span className="comment-button__label">
-			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
-			{ showLabel && commentCount > 0 && (
+			{commentCount > 0 && <span className="comment-button__label-count">{commentCount}</span>}
+			{showLabel && commentCount > 0 && (
 				<span className="comment-button__label-status">
-					{ translate( 'Comment', 'Comments', {
+					{translate('Comment', 'Comments', {
 						context: 'noun',
 						count: commentCount,
-					} ) }
+					})}
 				</span>
-			) }
+			)}
 		</span>
 	);
 }
@@ -68,12 +68,12 @@ CommentButton.defaultProps = {
 	target: null,
 };
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = (state, ownProps) => {
 	const { post: { site_ID: siteId, ID: postId } = {}, commentCount } = ownProps;
 
 	return {
-		commentCount: getPostTotalCommentsCount( state, siteId, postId ) || commentCount,
+		commentCount: getPostTotalCommentsCount(state, siteId, postId) || commentCount,
 	};
 };
 
-export default connect( mapStateToProps )( CommentButton );
+export default connect(mapStateToProps)(CommentButton);

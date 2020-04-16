@@ -52,8 +52,8 @@ class Plans extends React.Component {
 		this.redirectIfInvalidPlanInterval();
 
 		// Scroll to the top
-		if ( typeof window !== 'undefined' ) {
-			window.scrollTo( 0, 0 );
+		if (typeof window !== 'undefined') {
+			window.scrollTo(0, 0);
 		}
 	}
 
@@ -64,39 +64,39 @@ class Plans extends React.Component {
 	isInvalidPlanInterval() {
 		const { displayJetpackPlans, intervalType, selectedSite } = this.props;
 		const isJetpack2Yearly = displayJetpackPlans && intervalType === '2yearly';
-		const isWpcomMonthly = ! displayJetpackPlans && intervalType === 'monthly';
+		const isWpcomMonthly = !displayJetpackPlans && intervalType === 'monthly';
 
-		return selectedSite && ( isJetpack2Yearly || isWpcomMonthly );
+		return selectedSite && (isJetpack2Yearly || isWpcomMonthly);
 	}
 
 	redirectIfInvalidPlanInterval() {
 		const { selectedSite } = this.props;
 
-		if ( this.isInvalidPlanInterval() ) {
-			page.redirect( '/plans/yearly/' + selectedSite.slug );
+		if (this.isInvalidPlanInterval()) {
+			page.redirect('/plans/yearly/' + selectedSite.slug);
 		}
 	}
 
 	renderPlanWithPartner = () => {
 		const { context, purchase, translate } = this.props;
 
-		const partnerName = getPartnerName( purchase );
+		const partnerName = getPartnerName(purchase);
 
 		return (
 			<div>
-				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
-				<Main wideLayout={ true }>
+				<DocumentHead title={translate('Plans', { textOnly: true })} />
+				<Main wideLayout={true}>
 					<SidebarNavigation />
 					<div id="plans" className="plans plans__has-sidebar">
-						<PlansNavigation path={ context.path } />
+						<PlansNavigation path={context.path} />
 						<EmptyContent
 							illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-							title={ translate( 'Your plan is managed by %(partnerName)s', {
+							title={translate('Your plan is managed by %(partnerName)s', {
 								args: { partnerName },
-							} ) }
-							line={ translate(
+							})}
+							line={translate(
 								'You purchased this plan as part of an all inclusive package with your website host.'
-							) }
+							)}
 						/>
 					</div>
 				</Main>
@@ -107,8 +107,8 @@ class Plans extends React.Component {
 	renderPlaceholder = () => {
 		return (
 			<div>
-				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
-				<Main wideLayout={ true }>
+				<DocumentHead title={this.props.translate('Plans', { textOnly: true })} />
+				<Main wideLayout={true}>
 					<SidebarNavigation />
 
 					<div id="plans" className="plans plans__has-sidebar" />
@@ -120,71 +120,71 @@ class Plans extends React.Component {
 	render() {
 		const { selectedSite, translate, displayJetpackPlans, canAccessPlans, purchase } = this.props;
 
-		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
+		if (!selectedSite || this.isInvalidPlanInterval()) {
 			return this.renderPlaceholder();
 		}
 
-		if ( purchase && isPartnerPurchase( purchase ) ) {
+		if (purchase && isPartnerPurchase(purchase)) {
 			return this.renderPlanWithPartner();
 		}
 
 		return (
 			<div>
-				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				{selectedSite.ID && <QuerySitePurchases siteId={selectedSite.ID} />}
+				<DocumentHead title={translate('Plans', { textOnly: true })} />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				<QueryContactDetailsCache />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<Main wideLayout={ true }>
+				<Main wideLayout={true}>
 					<SidebarNavigation />
-					{ ! canAccessPlans && (
+					{!canAccessPlans && (
 						<EmptyContent
 							illustration="/calypso/images/illustrations/illustration-404.svg"
-							title={ translate( 'You are not authorized to view this page' ) }
+							title={translate('You are not authorized to view this page')}
 						/>
-					) }
-					{ canAccessPlans && (
+					)}
+					{canAccessPlans && (
 						<div id="plans" className="plans plans__has-sidebar">
 							<FormattedHeader
 								className="plans__page-heading"
-								headerText={ translate( 'Plans' ) }
+								headerText={translate('Plans')}
 								align="left"
 							/>
 							<CartData>
-								<PlansNavigation path={ this.props.context.path } />
+								<PlansNavigation path={this.props.context.path} />
 							</CartData>
 							<PlansFeaturesMain
-								displayJetpackPlans={ displayJetpackPlans }
-								hideFreePlan={ true }
-								customerType={ this.props.customerType }
-								intervalType={ this.props.intervalType }
-								selectedFeature={ this.props.selectedFeature }
-								selectedPlan={ this.props.selectedPlan }
-								redirectTo={ this.props.redirectTo }
-								withDiscount={ this.props.withDiscount }
-								discountEndDate={ this.props.discountEndDate }
-								site={ selectedSite }
-								plansWithScroll={ false }
+								displayJetpackPlans={displayJetpackPlans}
+								hideFreePlan={true}
+								customerType={this.props.customerType}
+								intervalType={this.props.intervalType}
+								selectedFeature={this.props.selectedFeature}
+								selectedPlan={this.props.selectedPlan}
+								redirectTo={this.props.redirectTo}
+								withDiscount={this.props.withDiscount}
+								discountEndDate={this.props.discountEndDate}
+								site={selectedSite}
+								plansWithScroll={false}
 							/>
 						</div>
-					) }
+					)}
 				</Main>
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
-	const jetpackSite = isJetpackSite( state, selectedSiteId );
-	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
-	const currentPlan = getCurrentPlan( state, selectedSiteId );
+	const jetpackSite = isJetpackSite(state, selectedSiteId);
+	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector(state, selectedSiteId);
+	const currentPlan = getCurrentPlan(state, selectedSiteId);
 
 	return {
-		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
-		selectedSite: getSelectedSite( state ),
-		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
-		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+		purchase: currentPlan ? getByPurchaseId(state, currentPlan.id) : null,
+		selectedSite: getSelectedSite(state),
+		displayJetpackPlans: !isSiteAutomatedTransfer && jetpackSite,
+		canAccessPlans: canCurrentUser(state, getSelectedSiteId(state), 'manage_options'),
 	};
-} )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
+})(localize(withTrackingTool('HotJar')(Plans)));

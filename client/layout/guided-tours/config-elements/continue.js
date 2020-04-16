@@ -27,8 +27,8 @@ export default class Continue extends Component {
 		when: PropTypes.func,
 	};
 
-	constructor( props, context ) {
-		super( props, context );
+	constructor(props, context) {
+		super(props, context);
 	}
 
 	componentDidMount() {
@@ -39,8 +39,8 @@ export default class Continue extends Component {
 		this.removeTargetListener();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps, nextContext ) {
-		nextProps.when && nextContext.isValid( nextProps.when ) && this.onContinue();
+	UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
+		nextProps.when && nextContext.isValid(nextProps.when) && this.onContinue();
 	}
 
 	UNSAFE_componentWillUpdate() {
@@ -54,45 +54,45 @@ export default class Continue extends Component {
 	onContinue = () => {
 		const { next, tour, tourVersion, step } = this.context;
 		const { step: nextStepName } = this.props;
-		next( { tour, tourVersion, step, nextStepName } );
+		next({ tour, tourVersion, step, nextStepName });
 	};
 
 	addTargetListener() {
 		const { target = false, click, when } = this.props;
-		const targetNode = targetForSlug( target );
+		const targetNode = targetForSlug(target);
 
-		if ( click && ! when && targetNode && targetNode.addEventListener ) {
-			targetNode.addEventListener( 'click', this.onContinue );
-			targetNode.addEventListener( 'touchstart', this.onContinue );
+		if (click && !when && targetNode && targetNode.addEventListener) {
+			targetNode.addEventListener('click', this.onContinue);
+			targetNode.addEventListener('touchstart', this.onContinue);
 		}
 	}
 
 	removeTargetListener() {
 		const { target = false, click, when } = this.props;
-		const targetNode = targetForSlug( target );
+		const targetNode = targetForSlug(target);
 
-		if ( click && ! when && targetNode && targetNode.removeEventListener ) {
-			targetNode.removeEventListener( 'click', this.onContinue );
-			targetNode.removeEventListener( 'touchstart', this.onContinue );
+		if (click && !when && targetNode && targetNode.removeEventListener) {
+			targetNode.removeEventListener('click', this.onContinue);
+			targetNode.removeEventListener('touchstart', this.onContinue);
 		}
 	}
 
 	defaultMessage() {
 		return this.props.icon
-			? translate( 'Click the {{icon/}} to continue.', {
-					components: { icon: <Gridicon icon={ this.props.icon } /> },
-			  } )
-			: translate( 'Click to continue.' );
+			? translate('Click the {{icon/}} to continue.', {
+					components: { icon: <Gridicon icon={this.props.icon} /> },
+			  })
+			: translate('Click to continue.');
 	}
 
 	render() {
-		if ( this.props.hidden ) {
+		if (this.props.hidden) {
 			return null;
 		}
 
 		return (
 			<p className="guided-tours__actionstep-instructions">
-				<em>{ this.props.children || this.defaultMessage() }</em>
+				<em>{this.props.children || this.defaultMessage()}</em>
 			</p>
 		);
 	}

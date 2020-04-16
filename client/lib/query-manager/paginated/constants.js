@@ -3,4 +3,4 @@ export const DEFAULT_PAGINATED_QUERY = {
 	page: 1,
 };
 
-export const PAGINATION_QUERY_KEYS = [ 'number', 'offset', 'page' ];
+export const PAGINATION_QUERY_KEYS = ['number', 'offset', 'page'];

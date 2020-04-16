@@ -41,7 +41,7 @@ class StatModuleFollowersPage extends Component {
 			siteId,
 			translate,
 		} = this.props;
-		const noData = ! get( data, 'posts' );
+		const noData = !get(data, 'posts');
 		const isLoading = requestingFollowers && noData;
 		const classes = [
 			'stats-module',
@@ -54,13 +54,13 @@ class StatModuleFollowersPage extends Component {
 			},
 		];
 
-		const total = get( data, 'total' );
+		const total = get(data, 'total');
 
 		let paginationSummary;
-		if ( total ) {
-			const startIndex = perPage * ( page - 1 ) + 1;
+		if (total) {
+			const startIndex = perPage * (page - 1) + 1;
 			let endIndex = perPage * page;
-			if ( endIndex > total ) {
+			if (endIndex > total) {
 				endIndex = total;
 			}
 
@@ -71,64 +71,64 @@ class StatModuleFollowersPage extends Component {
 					comment:
 						'"Showing [start index] - [end index] of [total] [item]" Example: Showing 21 - 40 of 300 WordPress.com followers',
 					args: {
-						startIndex: numberFormat( startIndex ),
-						endIndex: numberFormat( endIndex ),
-						total: numberFormat( total ),
-						itemType: translate( 'Comments' ),
+						startIndex: numberFormat(startIndex),
+						endIndex: numberFormat(endIndex),
+						total: numberFormat(total),
+						itemType: translate('Comments'),
 					},
 				}
 			);
 
 			paginationSummary = (
 				<div className="module-content-text module-content-text-stat">
-					<p>{ paginationSummary }</p>
+					<p>{paginationSummary}</p>
 				</div>
 			);
 		}
 
 		const pagination = (
-			<Pagination page={ page } perPage={ perPage } total={ total } pageClick={ pageClick } />
+			<Pagination page={page} perPage={perPage} total={total} pageClick={pageClick} />
 		);
 
 		let followers;
 		let labelLegend;
 		let valueLegend;
-		if ( data && data.posts ) {
-			followers = <StatsList data={ data.posts } moduleName="Followers" />;
-			labelLegend = translate( 'Post', {
+		if (data && data.posts) {
+			followers = <StatsList data={data.posts} moduleName="Followers" />;
+			labelLegend = translate('Post', {
 				context: 'noun',
-			} );
-			valueLegend = translate( 'Followers' );
-		} else if ( data && data.subscribers ) {
+			});
+			valueLegend = translate('Followers');
+		} else if (data && data.subscribers) {
 			followers = (
-				<StatsList data={ data.subscribers } followList={ followList } moduleName="Followers" />
+				<StatsList data={data.subscribers} followList={followList} moduleName="Followers" />
 			);
-			labelLegend = translate( 'Follower' );
-			valueLegend = translate( 'Since' );
+			labelLegend = translate('Follower');
+			valueLegend = translate('Since');
 		}
 		return (
 			<div className="followers">
-				<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ query } />
-				<SectionHeader label={ translate( 'Comments Followers' ) } />
-				<Card className={ classNames( classes ) }>
+				<QuerySiteStats statType="statsCommentFollowers" siteId={siteId} query={query} />
+				<SectionHeader label={translate('Comments Followers')} />
+				<Card className={classNames(classes)}>
 					<div className="module-content">
-						{ noData && ! hasError && ! isLoading && (
-							<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
-						) }
+						{noData && !hasError && !isLoading && (
+							<ErrorPanel className="is-empty-message" message={translate('No followers')} />
+						)}
 
-						{ paginationSummary }
+						{paginationSummary}
 
-						{ pagination }
+						{pagination}
 
-						<StatsListLegend value={ valueLegend } label={ labelLegend } />
+						<StatsListLegend value={valueLegend} label={labelLegend} />
 
-						{ followers }
+						{followers}
 
-						{ hasError ? <ErrorPanel className="network-error" /> : null }
+						{hasError ? <ErrorPanel className="network-error" /> : null}
 
-						<StatsModulePlaceholder isLoading={ isLoading } />
+						<StatsModulePlaceholder isLoading={isLoading} />
 
-						{ pagination }
+						{pagination}
 					</div>
 				</Card>
 			</div>
@@ -136,12 +136,12 @@ class StatModuleFollowersPage extends Component {
 	}
 }
 
-const connectComponent = connect( ( state, { page, perPage } ) => {
+const connectComponent = connect((state, { page, perPage }) => {
 	const query = {
 		max: perPage,
 		page,
 	};
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId(state);
 
 	return {
 		requestingFollowers: isRequestingSiteStatsForQuery(
@@ -150,11 +150,11 @@ const connectComponent = connect( ( state, { page, perPage } ) => {
 			'statsCommentFollowers',
 			query
 		),
-		data: getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', query ),
-		hasError: hasSiteStatsQueryFailed( state, siteId, 'statsCommentFollowers', query ),
+		data: getSiteStatsNormalizedData(state, siteId, 'statsCommentFollowers', query),
+		hasError: hasSiteStatsQueryFailed(state, siteId, 'statsCommentFollowers', query),
 		query,
 		siteId,
 	};
-} );
+});
 
-export default flowRight( connectComponent, localize )( StatModuleFollowersPage );
+export default flowRight(connectComponent, localize)(StatModuleFollowersPage);

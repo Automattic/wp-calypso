@@ -16,27 +16,25 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import OrdersList from './orders-list';
 
-function Orders( { className, params, site, translate } ) {
+function Orders({ className, params, site, translate }) {
 	let addButton = null;
 
-	if ( config.isEnabled( 'woocommerce/extension-orders-create' ) ) {
+	if (config.isEnabled('woocommerce/extension-orders-create')) {
 		addButton = (
-			<Button primary href={ getLink( '/store/order/:site/', site ) }>
-				{ translate( 'New order' ) }
+			<Button primary href={getLink('/store/order/:site/', site)}>
+				{translate('New order')}
 			</Button>
 		);
 	}
 
 	return (
-		<Main className={ className } wideLayout>
-			<ActionHeader breadcrumbs={ <span>{ translate( 'Orders' ) }</span> }>
-				{ addButton }
-			</ActionHeader>
-			<OrdersList currentStatus={ params && params.filter } />
+		<Main className={className} wideLayout>
+			<ActionHeader breadcrumbs={<span>{translate('Orders')}</span>}>{addButton}</ActionHeader>
+			<OrdersList currentStatus={params && params.filter} />
 		</Main>
 	);
 }
 
-export default connect( state => ( {
-	site: getSelectedSiteWithFallback( state ),
-} ) )( localize( Orders ) );
+export default connect((state) => ({
+	site: getSelectedSiteWithFallback(state),
+}))(localize(Orders));

@@ -17,29 +17,29 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @returns {Function} Action thunk
  */
 export function requestKeyringServices() {
-	return ( dispatch, getState ) => {
-		dispatch( {
+	return (dispatch, getState) => {
+		dispatch({
 			type: KEYRING_SERVICES_REQUEST,
-		} );
+		});
 
-		const siteId = getSelectedSiteId( getState() );
+		const siteId = getSelectedSiteId(getState());
 		return wpcom
 			.undocumented()
-			.sitesExternalServices( siteId )
-			.then( response => {
-				dispatch( {
+			.sitesExternalServices(siteId)
+			.then((response) => {
+				dispatch({
 					type: KEYRING_SERVICES_RECEIVE,
 					services: response.services,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: KEYRING_SERVICES_REQUEST_SUCCESS,
-				} );
-			} )
-			.catch( error =>
-				dispatch( {
+				});
+			})
+			.catch((error) =>
+				dispatch({
 					type: KEYRING_SERVICES_REQUEST_FAILURE,
 					error,
-				} )
+				})
 			);
 	};
 }

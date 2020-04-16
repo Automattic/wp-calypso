@@ -18,59 +18,59 @@ type FontPair = import('../../constants').FontPair;
 type State = import('.').State;
 type Template = VerticalsTemplates.Template;
 
-export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
+export const setDomain = (domain: DomainSuggestion | undefined) => ({
 	type: 'SET_DOMAIN' as const,
 	domain,
-} );
+});
 
-export const setDomainSearch = ( domainSearch: string ) => ( {
+export const setDomainSearch = (domainSearch: string) => ({
 	type: 'SET_DOMAIN_SEARCH_TERM' as const,
 	domainSearch,
-} );
+});
 
-export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
+export const setSelectedDesign = (selectedDesign: Design | undefined) => ({
 	type: 'SET_SELECTED_DESIGN' as const,
 	selectedDesign,
-} );
+});
 
-export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
+export const setSiteVertical = (siteVertical: SiteVertical) => ({
 	type: 'SET_SITE_VERTICAL' as const,
 	siteVertical,
-} );
+});
 
-export const resetSiteVertical = () => ( {
+export const resetSiteVertical = () => ({
 	type: 'RESET_SITE_VERTICAL' as const,
-} );
+});
 
-export const setSiteTitle = ( siteTitle: string ) => ( {
+export const setSiteTitle = (siteTitle: string) => ({
 	type: 'SET_SITE_TITLE' as const,
 	siteTitle,
-} );
+});
 
-export const togglePageLayout = ( pageLayout: Template ) => ( {
+export const togglePageLayout = (pageLayout: Template) => ({
 	type: 'TOGGLE_PAGE_LAYOUT' as const,
 	pageLayout,
-} );
+});
 
-export const resetFonts = () => ( {
+export const resetFonts = () => ({
 	type: 'RESET_FONTS' as const,
-} );
+});
 
-export const setFonts = ( fonts: FontPair | undefined ) => {
+export const setFonts = (fonts: FontPair | undefined) => {
 	return {
 		type: 'SET_FONTS' as const,
 		fonts: fonts,
 	};
 };
 
-export const resetOnboardStore = () => ( {
+export const resetOnboardStore = () => ({
 	type: 'RESET_ONBOARD_STORE' as const,
-} );
+});
 
-export const setSelectedSite = ( selectedSite: number ) => ( {
+export const setSelectedSite = (selectedSite: number) => ({
 	type: 'SET_SELECTED_SITE' as const,
 	selectedSite,
-} );
+});
 
 export function* createSite(
 	username: string,
@@ -86,7 +86,7 @@ export function* createSite(
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
 
 	const params: CreateSiteParams = {
-		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+		blog_name: siteUrl?.split('.wordpress')[0],
 		blog_title: siteTitle,
 		options: {
 			site_vertical: siteVertical?.id,
@@ -100,18 +100,18 @@ export function* createSite(
 				title: siteTitle,
 			},
 			site_creation_flow: 'gutenboarding',
-			theme: `pub/${ selectedDesign?.theme || 'twentytwenty' }`,
+			theme: `pub/${selectedDesign?.theme || 'twentytwenty'}`,
 			timezone_string: guessTimezone(),
-			...( selectedDesign?.template && { template: selectedDesign.template } ),
-			...( selectedFonts && {
+			...(selectedDesign?.template && { template: selectedDesign.template }),
+			...(selectedFonts && {
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
-			} ),
+			}),
 		},
-		...( bearerToken && { authToken: bearerToken } ),
+		...(bearerToken && { authToken: bearerToken }),
 	};
 
-	const success = yield dispatch( SITE_STORE, 'createSite', params );
+	const success = yield dispatch(SITE_STORE, 'createSite', params);
 
 	return success;
 }

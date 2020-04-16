@@ -25,21 +25,21 @@ import 'state/themes/init';
  * @returns {boolean}        Whether themes are being requested
  */
 export const isRequestingThemesForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const normalizedQueryWithoutPage = omit( getNormalizedThemesQuery( query ), 'page' );
-		return some( state.themes.queryRequests, ( isRequesting, serializedQuery ) => {
-			if ( ! isRequesting ) {
+	(state, siteId, query) => {
+		const normalizedQueryWithoutPage = omit(getNormalizedThemesQuery(query), 'page');
+		return some(state.themes.queryRequests, (isRequesting, serializedQuery) => {
+			if (!isRequesting) {
 				return false;
 			}
 
-			const queryDetails = getDeserializedThemesQueryDetails( serializedQuery );
-			if ( queryDetails.siteId !== siteId ) {
+			const queryDetails = getDeserializedThemesQueryDetails(serializedQuery);
+			if (queryDetails.siteId !== siteId) {
 				return false;
 			}
 
-			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
-		} );
+			return isEqual(normalizedQueryWithoutPage, omit(queryDetails.query, 'page'));
+		});
 	},
-	state => state.themes.queryRequests,
-	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
+	(state) => state.themes.queryRequests,
+	(state, siteId, query) => getSerializedThemesQuery(query, siteId)
 );

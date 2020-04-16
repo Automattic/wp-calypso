@@ -22,22 +22,22 @@ import CheckoutTerms from './checkout-terms';
 export class CreditsPaymentBox extends React.Component {
 	content = () => {
 		const { cart, transactionStep, presaleChatAvailable } = this.props;
-		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
-			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
+		const hasBusinessPlanInCart = some(cart.products, ({ product_slug }) =>
+			overSome(isWpComBusinessPlan, isWpComEcommercePlan)(product_slug)
 		);
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
 			<React.Fragment>
-				<form onSubmit={ this.props.onSubmit }>
-					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<form onSubmit={this.props.onSubmit}>
+					{/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */}
 					<div className="payment-box-section">
-						<WordPressLogo size={ 52 } />
+						<WordPressLogo size={52} />
 						<div className="checkout__payment-box-section-content">
-							<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
+							<h6>{this.props.translate('WordPress.com Credits')}</h6>
 
 							<span>
-								{ this.props.translate(
+								{this.props.translate(
 									'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
 									{
 										args: {
@@ -48,30 +48,30 @@ export class CreditsPaymentBox extends React.Component {
 											strong: <strong />,
 										},
 									}
-								) }
+								)}
 							</span>
 						</div>
 					</div>
 
-					{ this.props.children }
+					{this.props.children}
 
-					<RecentRenewals cart={ cart } />
-					<CheckoutTerms cart={ cart } />
+					<RecentRenewals cart={cart} />
+					<CheckoutTerms cart={cart} />
 
-					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					{/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */}
 					<div className="payment-box-actions">
-						<PayButton cart={ this.props.cart } transactionStep={ transactionStep } />
-						{ showPaymentChatButton && (
+						<PayButton cart={this.props.cart} transactionStep={transactionStep} />
+						{showPaymentChatButton && (
 							<PaymentChatButton
 								paymentType="credits"
-								cart={ cart }
-								transactionStep={ transactionStep }
+								cart={cart}
+								transactionStep={transactionStep}
 							/>
-						) }
+						)}
 					</div>
 				</form>
 
-				<CartCoupon cart={ cart } />
+				<CartCoupon cart={cart} />
 				<CartToggle />
 			</React.Fragment>
 		);
@@ -79,11 +79,11 @@ export class CreditsPaymentBox extends React.Component {
 
 	render() {
 		return (
-			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
-				{ this.content() }
+			<PaymentBox classSet="credits-payment-box" title={this.props.translate('Secure Payment')}>
+				{this.content()}
 			</PaymentBox>
 		);
 	}
 }
 
-export default localize( CreditsPaymentBox );
+export default localize(CreditsPaymentBox);

@@ -19,49 +19,49 @@ import { getNormalizedPost } from 'state/posts/selectors';
  */
 import './style.scss';
 
-export function PostStatus( { translate, post, showAll, showIcon = true } ) {
-	if ( ! post ) {
+export function PostStatus({ translate, post, showAll, showIcon = true }) {
+	if (!post) {
 		return null;
 	}
 
 	const { sticky, status } = post;
 	let text, classModifier, icon;
-	if ( sticky ) {
-		text = translate( 'Sticky' );
+	if (sticky) {
+		text = translate('Sticky');
 		classModifier = 'is-sticky';
 		icon = 'bookmark-outline';
-	} else if ( 'pending' === status ) {
-		text = translate( 'Pending Review' );
+	} else if ('pending' === status) {
+		text = translate('Pending Review');
 		classModifier = 'is-pending';
 		icon = 'aside';
-	} else if ( showAll && 'future' === status ) {
-		text = translate( 'Scheduled' );
+	} else if (showAll && 'future' === status) {
+		text = translate('Scheduled');
 		classModifier = 'is-scheduled';
 		icon = 'calendar';
-	} else if ( showAll && 'trash' === status ) {
-		text = translate( 'Trashed' );
+	} else if (showAll && 'trash' === status) {
+		text = translate('Trashed');
 		classModifier = 'is-trash';
 		icon = 'trash';
-	} else if ( showAll && 'draft' === status ) {
-		text = translate( 'Draft' );
+	} else if (showAll && 'draft' === status) {
+		text = translate('Draft');
 		classModifier = 'is-draft';
 		icon = 'aside';
-	} else if ( showAll && 'publish' === status ) {
-		text = translate( 'Published' );
+	} else if (showAll && 'publish' === status) {
+		text = translate('Published');
 		classModifier = 'is-published';
 		icon = 'aside';
 	}
 
-	if ( ! text ) {
+	if (!text) {
 		return null;
 	}
 
-	const classes = classNames( 'post-status', classModifier );
+	const classes = classNames('post-status', classModifier);
 
 	return (
-		<span className={ classes }>
-			{ showIcon && <Gridicon icon={ icon } size={ 18 } className="post-status__icon" /> }
-			<span className="post-status__text">{ text }</span>
+		<span className={classes}>
+			{showIcon && <Gridicon icon={icon} size={18} className="post-status__icon" />}
+			<span className="post-status__text">{text}</span>
 		</span>
 	);
 }
@@ -76,6 +76,6 @@ PostStatus.propTypes = {
 	showIcon: PropTypes.bool,
 };
 
-export default connect( ( state, { globalId } ) => ( {
-	post: getNormalizedPost( state, globalId ),
-} ) )( localize( PostStatus ) );
+export default connect((state, { globalId }) => ({
+	post: getNormalizedPost(state, globalId),
+}))(localize(PostStatus));

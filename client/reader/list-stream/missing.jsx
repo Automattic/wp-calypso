@@ -20,15 +20,15 @@ class ListMissing extends React.Component {
 	};
 
 	recordAction = () => {
-		recordAction( 'clicked_following_on_empty' );
-		recordGaEvent( 'Clicked Following on EmptyContent' );
-		recordTrack( 'calypso_reader_following_on_missing_list_clicked' );
+		recordAction('clicked_following_on_empty');
+		recordGaEvent('Clicked Following on EmptyContent');
+		recordTrack('calypso_reader_following_on_missing_list_clicked');
 	};
 
 	recordSecondaryAction = () => {
-		recordAction( 'clicked_discover_on_empty' );
-		recordGaEvent( 'Clicked Discover on EmptyContent' );
-		recordTrack( 'calypso_reader_discover_on_missing_list_clicked' );
+		recordAction('clicked_discover_on_empty');
+		recordGaEvent('Clicked Discover on EmptyContent');
+		recordTrack('calypso_reader_discover_on_missing_list_clicked');
 	};
 
 	render() {
@@ -36,32 +36,32 @@ class ListMissing extends React.Component {
 		const action = (
 				<a
 					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
+					onClick={this.recordAction}
 					href="/read"
 				>
-					{ this.props.translate( 'Back to Followed Sites' ) }
+					{this.props.translate('Back to Followed Sites')}
 				</a>
 			),
 			secondaryAction = isDiscoverEnabled() ? (
 				<a
 					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
+					onClick={this.recordSecondaryAction}
 					href="/discover"
 				>
-					{ this.props.translate( 'Explore' ) }
+					{this.props.translate('Explore')}
 				</a>
 			) : null;
 
 		return (
 			<div>
-				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
+				<QueryReaderList owner={this.props.owner} slug={this.props.slug} />
 				<EmptyContent
-					title={ this.props.translate( 'List not found' ) }
-					line={ this.props.translate( "Sorry, we couldn't find that list." ) }
-					action={ action }
-					secondaryAction={ secondaryAction }
-					illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
-					illustrationWidth={ 500 }
+					title={this.props.translate('List not found')}
+					line={this.props.translate("Sorry, we couldn't find that list.")}
+					action={action}
+					secondaryAction={secondaryAction}
+					illustration={'/calypso/images/illustrations/illustration-empty-results.svg'}
+					illustrationWidth={500}
 				/>
 			</div>
 		);
@@ -69,4 +69,4 @@ class ListMissing extends React.Component {
 	}
 }
 
-export default localize( ListMissing );
+export default localize(ListMissing);

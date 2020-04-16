@@ -13,7 +13,7 @@ import 'state/posts/init';
  * @param   {number}  postId Post ID
  * @returns {boolean}        Result of the check
  */
-export function isEditedPostPasswordProtected( state, siteId, postId ) {
-	const password = getEditedPostValue( state, siteId, postId, 'password' );
-	return !! ( password && password.length > 0 );
+export function isEditedPostPasswordProtected(state, siteId, postId) {
+	const password = getEditedPostValue(state, siteId, postId, 'password');
+	return !!(password && password.length > 0);
 }

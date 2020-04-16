@@ -69,54 +69,54 @@ class BackupsPage extends Component {
 	componentDidMount() {
 		const { queryDate, moment, timezone, gmtOffset } = this.props;
 
-		if ( queryDate ) {
-			const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+		if (queryDate) {
+			const today = applySiteOffset(moment(), { timezone, gmtOffset });
 
-			const dateToSelect = moment( queryDate, INDEX_FORMAT );
+			const dateToSelect = moment(queryDate, INDEX_FORMAT);
 
 			// If we don't have dateToSelect or it's greater than today, force null
-			if ( ! dateToSelect.isValid() || dateToSelect > today ) {
-				this.onDateChange( null );
+			if (!dateToSelect.isValid() || dateToSelect > today) {
+				this.onDateChange(null);
 			} else {
-				this.onDateChange( dateToSelect );
+				this.onDateChange(dateToSelect);
 			}
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId !== this.props.siteId ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId !== this.props.siteId) {
 			//If we switch the site, reset the current state to default
 			this.resetState();
 		}
 	}
 
 	resetState() {
-		this.setState( this.getDefaultState() );
+		this.setState(this.getDefaultState());
 	}
 
-	onDateChange = date => {
+	onDateChange = (date) => {
 		const { siteSlug } = this.props;
 
-		this.setState( { selectedDate: date } );
+		this.setState({ selectedDate: date });
 
-		if ( date && date.isValid() ) {
+		if (date && date.isValid()) {
 			page(
-				backupMainPath( siteSlug, {
-					date: date.format( INDEX_FORMAT ),
-				} )
+				backupMainPath(siteSlug, {
+					date: date.format(INDEX_FORMAT),
+				})
 			);
 		} else {
-			page( backupMainPath( siteSlug ) );
+			page(backupMainPath(siteSlug));
 		}
 	};
 
 	getSelectedDate() {
 		const { timezone, gmtOffset, moment } = this.props;
 
-		const today = applySiteOffset( moment(), {
+		const today = applySiteOffset(moment(), {
 			timezone: timezone,
 			gmtOffset: gmtOffset,
-		} );
+		});
 
 		return this.state.selectedDate || today;
 	}
@@ -126,41 +126,38 @@ class BackupsPage extends Component {
 	 *
 	 * @param date {Date} The current selected date
 	 */
-	getBackupLogsFor = date => {
+	getBackupLogsFor = (date) => {
 		const { moment } = this.props;
 
-		const index = moment( date ).format( INDEX_FORMAT );
+		const index = moment(date).format(INDEX_FORMAT);
 
 		const backupsOnSelectedDate = {
 			lastBackup: null,
 			activities: [],
 		};
 
-		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
-			this.props.indexedLog[ index ].forEach( log => {
+		if (index in this.props.indexedLog && this.props.indexedLog[index].length > 0) {
+			this.props.indexedLog[index].forEach((log) => {
 				// Looking for the last backup on the date
-				if (
-					! backupsOnSelectedDate.lastBackup &&
-					includes( backupStatusNames, log.activityName )
-				) {
+				if (!backupsOnSelectedDate.lastBackup && includes(backupStatusNames, log.activityName)) {
 					backupsOnSelectedDate.lastBackup = log;
 				} else {
-					backupsOnSelectedDate.activities.push( log );
+					backupsOnSelectedDate.activities.push(log);
 				}
-			} );
+			});
 		}
 
 		return backupsOnSelectedDate;
 	};
 
-	isEmptyFilter = filter => {
-		if ( ! filter ) {
+	isEmptyFilter = (filter) => {
+		if (!filter) {
 			return true;
 		}
-		if ( filter.group || filter.on || filter.before || filter.after ) {
+		if (filter.group || filter.on || filter.before || filter.after) {
 			return false;
 		}
-		if ( filter.page !== 1 ) {
+		if (filter.page !== 1) {
 			return false;
 		}
 		return true;
@@ -169,7 +166,7 @@ class BackupsPage extends Component {
 	TO_REMOVE_getSelectedDateString = () => {
 		const { moment } = this.props;
 		const { selectedDate } = this.state;
-		return moment.parseZone( selectedDate ).toISOString( true );
+		return moment.parseZone(selectedDate).toISOString(true);
 	};
 
 	renderMain() {
@@ -189,53 +186,53 @@ class BackupsPage extends Component {
 			gmtOffset,
 		} = this.props;
 
-		const backupsOnSelectedDate = this.getBackupLogsFor( this.getSelectedDate() );
+		const backupsOnSelectedDate = this.getBackupLogsFor(this.getSelectedDate());
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
-		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
-		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
-		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
-		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
-		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
+		const today = applySiteOffset(moment(), { timezone, gmtOffset });
+		const backupAttempts = getBackupAttemptsForDate(logs, selectedDateString);
+		const deltas = getDailyBackupDeltas(logs, selectedDateString);
+		const realtimeEvents = getEventsInDailyBackup(logs, selectedDateString);
+		const metaDiff = getMetaDiffForDailyBackup(logs, selectedDateString);
+		const hasRealtimeBackups = includes(siteCapabilities, 'backup-realtime');
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Backups' ) } />
+				<DocumentHead title={translate('Backups')} />
 				<SidebarNavigation />
 
-				<QueryRewindState siteId={ siteId } />
-				<QuerySitePurchases siteId={ siteId } />
-				<QuerySiteSettings siteId={ siteId } />
-				<QueryRewindCapabilities siteId={ siteId } />
+				<QueryRewindState siteId={siteId} />
+				<QuerySitePurchases siteId={siteId} />
+				<QuerySiteSettings siteId={siteId} />
+				<QueryRewindCapabilities siteId={siteId} />
 
 				<DatePicker
-					onDateChange={ this.onDateChange }
-					selectedDate={ this.getSelectedDate() }
-					siteId={ siteId }
-					oldestDateAvailable={ oldestDateAvailable }
-					today={ today }
-					siteSlug={ siteSlug }
+					onDateChange={this.onDateChange}
+					selectedDate={this.getSelectedDate()}
+					siteId={siteId}
+					oldestDateAvailable={oldestDateAvailable}
+					today={today}
+					siteSlug={siteSlug}
 				/>
 
-				{ isLoadingBackups && <div className="backups__is-loading" /> }
+				{isLoadingBackups && <div className="backups__is-loading" />}
 
-				{ ! isLoadingBackups && (
+				{!isLoadingBackups && (
 					<>
 						<DailyBackupStatus
-							allowRestore={ allowRestore }
-							siteSlug={ siteSlug }
-							backup={ backupsOnSelectedDate.lastBackup }
-							lastDateAvailable={ lastDateAvailable }
-							selectedDate={ this.getSelectedDate() }
-							timezone={ timezone }
-							gmtOffset={ gmtOffset }
-							onDateChange={ this.onDateChange }
+							allowRestore={allowRestore}
+							siteSlug={siteSlug}
+							backup={backupsOnSelectedDate.lastBackup}
+							lastDateAvailable={lastDateAvailable}
+							selectedDate={this.getSelectedDate()}
+							timezone={timezone}
+							gmtOffset={gmtOffset}
+							onDateChange={this.onDateChange}
 						/>
-						{ doesRewindNeedCredentials && (
-							<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
-						) }
+						{doesRewindNeedCredentials && (
+							<MissingCredentialsWarning settingsLink={`/settings/${siteSlug}`} />
+						)}
 						<BackupDelta
-							{ ...{
+							{...{
 								deltas,
 								backupAttempts,
 								hasRealtimeBackups,
@@ -244,10 +241,10 @@ class BackupsPage extends Component {
 								moment,
 								siteSlug,
 								metaDiff,
-							} }
+							}}
 						/>
 					</>
-				) }
+				)}
 			</Main>
 		);
 	}
@@ -256,19 +253,17 @@ class BackupsPage extends Component {
 		const { logs, siteSlug, translate } = this.props;
 
 		// Filter out anything that is not restorable
-		const restorablePoints = logs.filter( event => !! event.activityIsRewindable );
+		const restorablePoints = logs.filter((event) => !!event.activityIsRewindable);
 
 		return (
 			<div className="backups__search">
-				<div className="backups__search-header">
-					{ translate( 'Find a backup or restore point' ) }
-				</div>
+				<div className="backups__search-header">{translate('Find a backup or restore point')}</div>
 				<div className="backups__search-description">
-					{ translate(
+					{translate(
 						'This is the complete event history for your site. Filter by date range and/ or activity type.'
-					) }
+					)}
 				</div>
-				<ActivityCardList logs={ restorablePoints } pageSize={ 10 } siteSlug={ siteSlug } />
+				<ActivityCardList logs={restorablePoints} pageSize={10} siteSlug={siteSlug} />
 			</div>
 		);
 	}
@@ -278,7 +273,7 @@ class BackupsPage extends Component {
 
 		return (
 			<div className="backups__page">
-				{ ! this.isEmptyFilter( filter ) ? this.renderBackupSearch() : this.renderMain() }
+				{!this.isEmptyFilter(filter) ? this.renderBackupSearch() : this.renderMain()}
 			</div>
 		);
 	}
@@ -291,42 +286,42 @@ class BackupsPage extends Component {
  * @param {string} timezone The site time zone
  * @param {number} gmtOffset The site offset from the GMT
  */
-const createIndexedLog = ( logs, timezone, gmtOffset ) => {
+const createIndexedLog = (logs, timezone, gmtOffset) => {
 	const indexedLog = {};
-	let oldestDateAvailable = applySiteOffset( momentDate(), {
+	let oldestDateAvailable = applySiteOffset(momentDate(), {
 		timezone,
 		gmtOffset,
-	} );
+	});
 	let lastDateAvailable = null;
 
-	if ( 'success' === logs.state ) {
-		logs.data.forEach( log => {
+	if ('success' === logs.state) {
+		logs.data.forEach((log) => {
 			//Move the backup date to the site timezone
-			const backupDate = applySiteOffset( momentDate( log.activityTs ), {
+			const backupDate = applySiteOffset(momentDate(log.activityTs), {
 				timezone,
 				gmtOffset,
-			} );
+			});
 
 			//Get the index for this backup, index format: YYYYMMDD
-			const index = backupDate.format( INDEX_FORMAT );
+			const index = backupDate.format(INDEX_FORMAT);
 
-			if ( ! ( index in indexedLog ) ) {
+			if (!(index in indexedLog)) {
 				//The first time we create the index for this date
-				indexedLog[ index ] = [];
+				indexedLog[index] = [];
 			}
 
 			// Check for the oldest and the last backup dates
-			if ( isActivityBackup( log ) ) {
-				if ( backupDate < oldestDateAvailable ) {
+			if (isActivityBackup(log)) {
+				if (backupDate < oldestDateAvailable) {
 					oldestDateAvailable = backupDate;
 				}
-				if ( backupDate > lastDateAvailable ) {
+				if (backupDate > lastDateAvailable) {
 					lastDateAvailable = backupDate;
 				}
 			}
 
-			indexedLog[ index ].push( log );
-		} );
+			indexedLog[index].push(log);
+		});
 	}
 
 	return {
@@ -336,19 +331,19 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	};
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const filter = getActivityLogFilter( state, siteId );
-	const logs = requestActivityLogs( siteId, filter );
-	const gmtOffset = getSiteGmtOffset( state, siteId );
-	const timezone = getSiteTimezoneValue( state, siteId );
-	const rewind = getRewindState( state, siteId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const filter = getActivityLogFilter(state, siteId);
+	const logs = requestActivityLogs(siteId, filter);
+	const gmtOffset = getSiteGmtOffset(state, siteId);
+	const timezone = getSiteTimezoneValue(state, siteId);
+	const rewind = getRewindState(state, siteId);
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
-	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
-	const siteCapabilities = getRewindCapabilities( state, siteId );
+	const doesRewindNeedCredentials = getDoesRewindNeedCredentials(state, siteId);
+	const siteCapabilities = getRewindCapabilities(state, siteId);
 
 	const allowRestore =
-		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
+		'active' === rewind.state && !('queued' === restoreStatus || 'running' === restoreStatus);
 
 	const { indexedLog, oldestDateAvailable, lastDateAvailable } = createIndexedLog(
 		logs,
@@ -356,7 +351,7 @@ const mapStateToProps = state => {
 		gmtOffset
 	);
 
-	const isLoadingBackups = ! ( logs.state === 'success' );
+	const isLoadingBackups = !(logs.state === 'success');
 
 	return {
 		allowRestore,
@@ -366,7 +361,7 @@ const mapStateToProps = state => {
 		logs: logs?.data ?? [],
 		rewind,
 		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
+		siteSlug: getSelectedSiteSlug(state),
 		timezone,
 		gmtOffset,
 		indexedLog,
@@ -376,11 +371,11 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
-} );
+const mapDispatchToProps = (dispatch) => ({
+	selectPage: (siteId, pageNumber) => dispatch(updateFilter(siteId, { page: pageNumber })),
+});
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( withLocalizedMoment( BackupsPage ) ) );
+)(localize(withLocalizedMoment(BackupsPage)));

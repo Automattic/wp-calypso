@@ -15,7 +15,7 @@ import { identity } from 'lodash';
 import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
 const defaultProps = {
 	countryCode: 'BR',
@@ -32,34 +32,24 @@ const defaultProps = {
 	translate: identity,
 };
 
-describe( '<CountrySpecificPaymentFields />', () => {
-	test( 'should render', () => {
-		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-	} );
+describe('<CountrySpecificPaymentFields />', () => {
+	test('should render', () => {
+		const wrapper = shallow(<CountrySpecificPaymentFields {...defaultProps} />);
+		expect(wrapper).toMatchSnapshot();
+	});
 
-	test( 'should call this.props.handleFieldChange when updating field', () => {
-		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
-		const documentInput = wrapper.find( '[name="document"]' );
+	test('should call this.props.handleFieldChange when updating field', () => {
+		const wrapper = shallow(<CountrySpecificPaymentFields {...defaultProps} />);
+		const documentInput = wrapper.find('[name="document"]');
 		const event = { target: { name: 'document', value: 'spam' } };
-		documentInput.simulate( 'change', event );
-		expect( defaultProps.handleFieldChange ).toBeCalledWith( 'document', 'spam' );
-	} );
+		documentInput.simulate('change', event);
+		expect(defaultProps.handleFieldChange).toBeCalledWith('document', 'spam');
+	});
 
-	test( 'should disable fields', () => {
-		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
-		expect(
-			wrapper
-				.find( 'Input' )
-				.first()
-				.props().disabled
-		).toEqual( false );
-		wrapper.setProps( { disableFields: true } );
-		expect(
-			wrapper
-				.find( 'Input' )
-				.first()
-				.props().disabled
-		).toEqual( true );
-	} );
-} );
+	test('should disable fields', () => {
+		const wrapper = shallow(<CountrySpecificPaymentFields {...defaultProps} />);
+		expect(wrapper.find('Input').first().props().disabled).toEqual(false);
+		wrapper.setProps({ disableFields: true });
+		expect(wrapper.find('Input').first().props().disabled).toEqual(true);
+	});
+});

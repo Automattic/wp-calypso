@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-const MiniCssExtractPluginWithRTL = require( '@automattic/mini-css-extract-plugin-with-rtl' );
-const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
+const MiniCssExtractPluginWithRTL = require('@automattic/mini-css-extract-plugin-with-rtl');
+const WebpackRTLPlugin = require('webpack-rtl-plugin');
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
@@ -14,24 +14,24 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
  *
  * @returns {object}                                  webpack loader object
  */
-module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
+module.exports.loader = ({ includePaths, prelude, postCssConfig = {} }) => ({
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
 		{
-			loader: require.resolve( 'css-loader' ),
+			loader: require.resolve('css-loader'),
 			options: {
 				importLoaders: 2,
 			},
 		},
 		{
-			loader: require.resolve( 'postcss-loader' ),
+			loader: require.resolve('postcss-loader'),
 			options: {
 				config: postCssConfig,
 			},
 		},
 		{
-			loader: require.resolve( 'sass-loader' ),
+			loader: require.resolve('sass-loader'),
 			options: {
 				prependData: prelude,
 				sassOptions: {
@@ -40,7 +40,7 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 			},
 		},
 	],
-} );
+});
 
 /**
  * Return an array of styling relevant webpack plugin objects.
@@ -52,14 +52,14 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
  *
  * @returns {object[]}                 styling relevant webpack plugin objects
  */
-module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
-	new MiniCssExtractPluginWithRTL( {
+module.exports.plugins = ({ chunkFilename, filename, minify }) => [
+	new MiniCssExtractPluginWithRTL({
 		chunkFilename,
 		filename,
 		ignoreOrder: true, // suppress conflicting order warnings from mini-css-extract-plugin
 		rtlEnabled: true,
-	} ),
-	new WebpackRTLPlugin( {
+	}),
+	new WebpackRTLPlugin({
 		minify,
-	} ),
+	}),
 ];

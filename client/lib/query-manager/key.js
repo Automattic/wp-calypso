@@ -33,23 +33,23 @@ export default class QueryKey {
 	 * @param  {object} query Query object
 	 * @returns {object}       Pruned query object
 	 */
-	static omit( query ) {
+	static omit(query) {
 		const { OMIT_NULL_VALUES, DEFAULT_QUERY } = this;
-		if ( ! OMIT_NULL_VALUES && ! DEFAULT_QUERY ) {
+		if (!OMIT_NULL_VALUES && !DEFAULT_QUERY) {
 			return query;
 		}
 
-		return omitBy( query, ( value, key ) => {
-			if ( OMIT_NULL_VALUES && null === value ) {
+		return omitBy(query, (value, key) => {
+			if (OMIT_NULL_VALUES && null === value) {
 				return true;
 			}
 
-			if ( DEFAULT_QUERY && DEFAULT_QUERY[ key ] === value ) {
+			if (DEFAULT_QUERY && DEFAULT_QUERY[key] === value) {
 				return true;
 			}
 
 			return false;
-		} );
+		});
 	}
 
 	/**
@@ -58,16 +58,16 @@ export default class QueryKey {
 	 * @param  {object} query Query object
 	 * @returns {string}       Serialized query
 	 */
-	static stringify( query ) {
-		const prunedQuery = this.omit( query );
+	static stringify(query) {
+		const prunedQuery = this.omit(query);
 
 		// A stable query is one which produces the same result regardless of
 		// key ordering in the original object, to ensure that:
 		//
 		// QueryKey.stringify( { a: 1, b: 2 } ) === QueryKey.stringify( { b: 2, a: 1 } )
-		const stableQuery = sortBy( toPairs( prunedQuery ), pair => pair[ 0 ] );
+		const stableQuery = sortBy(toPairs(prunedQuery), (pair) => pair[0]);
 
-		return JSON.stringify( stableQuery );
+		return JSON.stringify(stableQuery);
 	}
 
 	/**
@@ -76,7 +76,7 @@ export default class QueryKey {
 	 * @param  {string} key Serialized query
 	 * @returns {object}     Query object
 	 */
-	static parse( key ) {
-		return this.omit( fromPairs( JSON.parse( key ) ) );
+	static parse(key) {
+		return this.omit(fromPairs(JSON.parse(key)));
 	}
 }

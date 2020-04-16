@@ -28,20 +28,20 @@ import UsersStore from 'lib/users/store';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import { fetchWapiDomainInfo } from 'lib/domains/wapi-domain-info/actions';
 
-function getStateFromStores( props ) {
+function getStateFromStores(props) {
 	return {
 		cart: CartStore.get(),
 		context: props.context,
 		domains: props.selectedSite ? props.domains : null,
 		isRequestingSiteDomains: props.isRequestingSiteDomains,
-		nameservers: NameserversStore.getByDomainName( props.selectedDomainName ),
+		nameservers: NameserversStore.getByDomainName(props.selectedDomainName),
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
 		sitePlans: props.sitePlans,
 		user: props.currentUser,
-		users: UsersStore.getUsers( { siteId: get( props.selectedSite, 'ID' ) } ),
-		wapiDomainInfo: WapiDomainInfoStore.getByDomainName( props.selectedDomainName ),
+		users: UsersStore.getUsers({ siteId: get(props.selectedSite, 'ID') }),
+		wapiDomainInfo: WapiDomainInfoStore.getByDomainName(props.selectedDomainName),
 	};
 }
 
@@ -68,29 +68,29 @@ class DomainManagementData extends React.Component {
 	};
 
 	componentDidMount() {
-		this.loadData( {} );
+		this.loadData({});
 	}
 
-	componentDidUpdate( prevProps ) {
-		this.loadData( prevProps );
+	componentDidUpdate(prevProps) {
+		this.loadData(prevProps);
 	}
 
-	loadData( prevProps ) {
+	loadData(prevProps) {
 		const { needsUsers, selectedDomainName, selectedSite } = this.props;
 
-		if ( this.props.needsDomainInfo ) {
-			fetchWapiDomainInfo( selectedDomainName );
+		if (this.props.needsDomainInfo) {
+			fetchWapiDomainInfo(selectedDomainName);
 		}
 
-		if ( this.props.needsNameservers ) {
-			fetchNameservers( selectedDomainName );
+		if (this.props.needsNameservers) {
+			fetchNameservers(selectedDomainName);
 		}
 
 		if (
 			needsUsers &&
-			( prevProps.needsUsers !== needsUsers || prevProps.selectedSite !== selectedSite )
+			(prevProps.needsUsers !== needsUsers || prevProps.selectedSite !== selectedSite)
 		) {
-			fetchUsers( { siteId: selectedSite.ID, number: 1000 } );
+			fetchUsers({ siteId: selectedSite.ID, number: 1000 });
 		}
 	}
 
@@ -108,55 +108,55 @@ class DomainManagementData extends React.Component {
 		} = this.props;
 
 		const stores = [];
-		if ( needsCart ) {
-			stores.push( CartStore );
+		if (needsCart) {
+			stores.push(CartStore);
 		}
-		if ( needsDomainInfo ) {
-			stores.push( WapiDomainInfoStore );
+		if (needsDomainInfo) {
+			stores.push(WapiDomainInfoStore);
 		}
-		if ( needsNameservers ) {
-			stores.push( NameserversStore );
+		if (needsNameservers) {
+			stores.push(NameserversStore);
 		}
-		if ( needsUsers ) {
-			stores.push( UsersStore );
+		if (needsUsers) {
+			stores.push(UsersStore);
 		}
 
 		return (
 			<div>
-				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
-				{ selectedSite && needsContactDetails && <QueryContactDetailsCache /> }
-				{ selectedSite && needsDomains && <QuerySiteDomains siteId={ selectedSite.ID } /> }
-				{ selectedSite && needsPlans && <QuerySitePlans siteId={ selectedSite.ID } /> }
-				{ needsProductsList && <QueryProductsList /> }
+				<PageViewTracker path={this.props.analyticsPath} title={this.props.analyticsTitle} />
+				{selectedSite && needsContactDetails && <QueryContactDetailsCache />}
+				{selectedSite && needsDomains && <QuerySiteDomains siteId={selectedSite.ID} />}
+				{selectedSite && needsPlans && <QuerySitePlans siteId={selectedSite.ID} />}
+				{needsProductsList && <QueryProductsList />}
 
 				<StoreConnection
-					component={ this.props.component }
-					context={ this.props.context }
-					currentUser={ this.props.currentUser }
-					domains={ this.props.domains }
-					getStateFromStores={ getStateFromStores }
-					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-					products={ this.props.productsList }
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ selectedSite }
-					sitePlans={ this.props.sitePlans }
-					stores={ stores }
+					component={this.props.component}
+					context={this.props.context}
+					currentUser={this.props.currentUser}
+					domains={this.props.domains}
+					getStateFromStores={getStateFromStores}
+					isRequestingSiteDomains={this.props.isRequestingSiteDomains}
+					products={this.props.productsList}
+					selectedDomainName={this.props.selectedDomainName}
+					selectedSite={selectedSite}
+					sitePlans={this.props.sitePlans}
+					stores={stores}
 				/>
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const selectedSite = getSelectedSite( state );
-	const siteId = get( selectedSite, 'ID', null );
+export default connect((state) => {
+	const selectedSite = getSelectedSite(state);
+	const siteId = get(selectedSite, 'ID', null);
 
 	return {
-		currentUser: getCurrentUser( state ),
-		domains: getDomainsBySiteId( state, siteId ),
-		isRequestingSiteDomains: isRequestingSiteDomains( state, siteId ),
-		productsList: getProductsList( state ),
-		sitePlans: getPlansBySite( state, selectedSite ),
+		currentUser: getCurrentUser(state),
+		domains: getDomainsBySiteId(state, siteId),
+		isRequestingSiteDomains: isRequestingSiteDomains(state, siteId),
+		productsList: getProductsList(state),
+		sitePlans: getPlansBySite(state, selectedSite),
 		selectedSite,
 	};
-} )( DomainManagementData );
+})(DomainManagementData);

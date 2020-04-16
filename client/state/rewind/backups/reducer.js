@@ -11,5 +11,4 @@ import { REWIND_BACKUPS_SET } from 'state/action-types';
  * @param   {object} action Action payload
  * @returns {object}        Updated state
  */
-export default ( state = {}, { type, backups } ) =>
-	type === REWIND_BACKUPS_SET ? backups : state;
+export default (state = {}, { type, backups }) => (type === REWIND_BACKUPS_SET ? backups : state);

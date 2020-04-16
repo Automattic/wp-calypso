@@ -12,7 +12,7 @@ import {
 	WOOCOMMERCE_CUSTOMERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const searchCustomers = ( siteId, searchTerm ) => {
+export const searchCustomers = (siteId, searchTerm) => {
 	return {
 		type: WOOCOMMERCE_CUSTOMERS_REQUEST,
 		siteId,
@@ -20,7 +20,7 @@ export const searchCustomers = ( siteId, searchTerm ) => {
 	};
 };
 
-export const customersFailure = ( siteId, searchTerm, error = false ) => {
+export const customersFailure = (siteId, searchTerm, error = false) => {
 	return {
 		type: WOOCOMMERCE_CUSTOMERS_REQUEST_FAILURE,
 		siteId,
@@ -29,10 +29,10 @@ export const customersFailure = ( siteId, searchTerm, error = false ) => {
 	};
 };
 
-export const customersReceive = ( siteId, searchTerm, customers ) => {
+export const customersReceive = (siteId, searchTerm, customers) => {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( ! isArray( customers ) ) {
-		return customersFailure( siteId, searchTerm, customers );
+	if (!isArray(customers)) {
+		return customersFailure(siteId, searchTerm, customers);
 	}
 	return {
 		type: WOOCOMMERCE_CUSTOMERS_REQUEST_SUCCESS,

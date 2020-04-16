@@ -11,13 +11,13 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  * @param {object} siteId Site ID
  * @returns {boolean} True if site is hidden
  */
-export default function isHiddenSite( state, siteId ) {
-	const settings = getSiteSettings( state, siteId );
+export default function isHiddenSite(state, siteId) {
+	const settings = getSiteSettings(state, siteId);
 
-	if ( ! settings ) {
+	if (!settings) {
 		return null;
 	}
 
 	// Site settings returns a numerical value for blog_public.
-	return parseInt( settings.blog_public, 10 ) === 0;
+	return parseInt(settings.blog_public, 10) === 0;
 }

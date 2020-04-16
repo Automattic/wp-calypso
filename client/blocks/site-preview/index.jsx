@@ -17,7 +17,7 @@ import { addQueryArgs } from 'lib/route';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import WebPreview from 'components/web-preview';
 
-const debug = debugFactory( 'calypso:site-preview' );
+const debug = debugFactory('calypso:site-preview');
 
 class SitePreview extends Component {
 	static propTypes = {
@@ -37,21 +37,21 @@ class SitePreview extends Component {
 
 	previewCounter = 0;
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId) {
 			this.previewCounter = 0;
 		}
 
-		if ( ! this.props.showPreview && nextProps.showPreview ) {
-			debug( 'forcing refresh' );
-			this.previewCounter > 0 && this.setState( { previewCount: this.previewCounter } );
+		if (!this.props.showPreview && nextProps.showPreview) {
+			debug('forcing refresh');
+			this.previewCounter > 0 && this.setState({ previewCount: this.previewCounter });
 			this.previewCounter += 1;
 		}
 	}
 
 	getPreviewUrl() {
-		if ( ! this.props.selectedSiteUrl && ! this.props.previewUrl ) {
-			debug( 'no preview url and no site url were found for this site' );
+		if (!this.props.selectedSiteUrl && !this.props.previewUrl) {
+			debug('no preview url and no site url were found for this site');
 			return null;
 		}
 		const previewUrl = addQueryArgs(
@@ -63,7 +63,7 @@ class SitePreview extends Component {
 			},
 			this.getBasePreviewUrl()
 		);
-		debug( 'using this preview url', previewUrl );
+		debug('using this preview url', previewUrl);
 		return previewUrl;
 	}
 
@@ -72,40 +72,40 @@ class SitePreview extends Component {
 	}
 
 	render() {
-		if ( ! this.props.selectedSite || ! this.props.selectedSite.is_previewable ) {
-			debug( 'a preview is not available for this site' );
+		if (!this.props.selectedSite || !this.props.selectedSite.is_previewable) {
+			debug('a preview is not available for this site');
 			return null;
 		}
 
 		return (
 			<WebPreview
-				className={ this.props.className }
-				previewUrl={ this.getPreviewUrl() }
-				externalUrl={ this.getBasePreviewUrl() }
-				showExternal={ true }
-				showClose={ true }
-				showPreview={ this.props.showPreview }
-				onClose={ this.props.closePreview }
-				showSEO={ ! this.props.isDomainOnlySite }
+				className={this.props.className}
+				previewUrl={this.getPreviewUrl()}
+				externalUrl={this.getBasePreviewUrl()}
+				showExternal={true}
+				showClose={true}
+				showPreview={this.props.showPreview}
+				onClose={this.props.closePreview}
+				showSEO={!this.props.isDomainOnlySite}
 			/>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const selectedSiteId = getPreviewSiteId( state );
+function mapStateToProps(state) {
+	const selectedSiteId = getPreviewSiteId(state);
 	// Force https to prevent mixed content errors in the iframe
-	const siteUrl = 'https://' + getSiteSlug( state, selectedSiteId );
+	const siteUrl = 'https://' + getSiteSlug(state, selectedSiteId);
 
 	return {
-		showPreview: getCurrentLayoutFocus( state ) === 'preview',
-		selectedSite: getPreviewSite( state ),
+		showPreview: getCurrentLayoutFocus(state) === 'preview',
+		selectedSite: getPreviewSite(state),
 		selectedSiteId,
-		selectedSiteUrl: siteUrl.replace( /::/g, '/' ),
-		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
-		previewUrl: getPreviewUrl( state ),
-		isDomainOnlySite: isDomainOnlySite( state, selectedSiteId ),
+		selectedSiteUrl: siteUrl.replace(/::/g, '/'),
+		selectedSiteNonce: getSiteOption(state, selectedSiteId, 'frame_nonce') || '',
+		previewUrl: getPreviewUrl(state),
+		isDomainOnlySite: isDomainOnlySite(state, selectedSiteId),
 	};
 }
 
-export default connect( mapStateToProps, { closePreview } )( SitePreview );
+export default connect(mapStateToProps, { closePreview })(SitePreview);

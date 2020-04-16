@@ -47,39 +47,39 @@ class SiteImporterSitePreview extends React.Component {
 	}
 
 	loadSitePreview = () => {
-		this.setState( { loadingPreviewImage: true, previewStartTime: Date.now() } );
+		this.setState({ loadingPreviewImage: true, previewStartTime: Date.now() });
 
-		loadmShotsPreview( {
+		loadmShotsPreview({
 			url: this.props.siteURL,
 			maxRetries: 30,
 			retryTimeout: 1000,
-		} )
-			.then( imageBlob => {
-				this.setState( {
+		})
+			.then((imageBlob) => {
+				this.setState({
 					loadingPreviewImage: false,
 					sitePreviewImage: imageBlob,
 					sitePreviewFailed: false,
-				} );
+				});
 
-				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_success', {
+				this.props.recordTracksEvent('calypso_site_importer_site_preview_success', {
 					blog_id: this.props.site.ID,
 					site_url: this.props.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
-				} );
-			} )
-			.catch( () => {
-				this.setState( {
+				});
+			})
+			.catch(() => {
+				this.setState({
 					loadingPreviewImage: false,
 					sitePreviewImage: '',
 					sitePreviewFailed: true,
-				} );
+				});
 
-				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_fail', {
+				this.props.recordTracksEvent('calypso_site_importer_site_preview_fail', {
 					blog_id: this.props.site.ID,
 					site_url: this.props.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
-				} );
-			} );
+				});
+			});
 	};
 
 	render = () => {
@@ -87,77 +87,77 @@ class SiteImporterSitePreview extends React.Component {
 		const isLoading = this.props.isLoading || this.state.loadingPreviewImage;
 		const isError = this.state.sitePreviewFailed;
 
-		const containerClass = classNames( 'site-importer__site-preview-overlay-container', {
+		const containerClass = classNames('site-importer__site-preview-overlay-container', {
 			isLoading,
-		} );
+		});
 
 		return (
 			<div>
-				{ ! isError ? (
+				{!isError ? (
 					<React.Fragment>
-						{ ! isLoading && (
+						{!isLoading && (
 							<React.Fragment>
 								<div className="site-importer__site-importer-confirm-site-pane-container">
 									<div className="site-importer__site-importer-confirm-site-label">
-										{ this.props.translate( 'Is this your site?' ) }
+										{this.props.translate('Is this your site?')}
 										<div className="site-importer__source-url">
-											<ExternalLink href={ siteURL } target="_blank">
-												{ siteURL }
+											<ExternalLink href={siteURL} target="_blank">
+												{siteURL}
 											</ExternalLink>
 										</div>
 									</div>
 								</div>
-								<div className={ containerClass }>
+								<div className={containerClass}>
 									<div className="site-importer__site-preview-column-container">
 										<img
 											className="site-importer__site-preview"
-											src={ this.state.sitePreviewImage }
-											alt={ this.props.translate( 'Screenshot of your site.' ) }
+											src={this.state.sitePreviewImage}
+											alt={this.props.translate('Screenshot of your site.')}
 										/>
-										<ImportableContent importData={ this.props.importData } />
+										<ImportableContent importData={this.props.importData} />
 									</div>
 								</div>
 								<ImporterActionButtonContainer>
-									<ImporterActionButton disabled={ isLoading } onClick={ this.props.resetImport }>
-										{ this.props.translate( 'Cancel' ) }
+									<ImporterActionButton disabled={isLoading} onClick={this.props.resetImport}>
+										{this.props.translate('Cancel')}
 									</ImporterActionButton>
 									<ImporterActionButton
-										disabled={ isLoading }
+										disabled={isLoading}
 										className="site-importer__site-preview-confirm-button"
 										primary
-										onClick={ this.props.startImport }
+										onClick={this.props.startImport}
 									>
-										{ this.props.translate( 'Yes! Start import' ) }
+										{this.props.translate('Yes! Start import')}
 									</ImporterActionButton>
 								</ImporterActionButtonContainer>
 							</React.Fragment>
-						) }
-						{ isLoading && (
+						)}
+						{isLoading && (
 							<div className="site-importer__site-preview-loading-overlay">
 								<Spinner />
 							</div>
-						) }
+						)}
 					</React.Fragment>
 				) : (
 					<React.Fragment>
 						<div className="site-importer__site-preview-error">
 							<ErrorPane
 								type="importError"
-								description={ this.props.translate(
+								description={this.props.translate(
 									'Unable to load site preview. Please try again later.'
-								) }
+								)}
 							/>
 						</div>
 						<ImporterActionButtonContainer>
-							<ImporterActionButton disabled={ isLoading } onClick={ this.props.resetImport }>
-								{ this.props.translate( 'Cancel' ) }
+							<ImporterActionButton disabled={isLoading} onClick={this.props.resetImport}>
+								{this.props.translate('Cancel')}
 							</ImporterActionButton>
 						</ImporterActionButtonContainer>
 					</React.Fragment>
-				) }
+				)}
 			</div>
 		);
 	};
 }
 
-export default connect( null, { recordTracksEvent } )( localize( SiteImporterSitePreview ) );
+export default connect(null, { recordTracksEvent })(localize(SiteImporterSitePreview));

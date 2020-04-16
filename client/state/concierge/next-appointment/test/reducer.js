@@ -4,7 +4,7 @@
 import { nextAppointment } from '../reducer';
 import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'state/action-types';
 
-describe( 'concierge/nextAppointment/reducer', () => {
+describe('concierge/nextAppointment/reducer', () => {
 	const mockAppointmentDetails = {
 		nextAppointment: {
 			id: 1,
@@ -22,21 +22,19 @@ describe( 'concierge/nextAppointment/reducer', () => {
 		initial: mockAppointmentDetails,
 	};
 
-	describe( 'nextAppointment', () => {
-		test( 'should default to null.', () => {
-			expect( nextAppointment( undefined, {} ) ).toBeNull();
-		} );
+	describe('nextAppointment', () => {
+		test('should default to null.', () => {
+			expect(nextAppointment(undefined, {})).toBeNull();
+		});
 
-		test( 'should be null on receiving the request action.', () => {
+		test('should be null on receiving the request action.', () => {
 			const state = mockAppointmentDetails;
-			expect( nextAppointment( state, requestAction ) ).toBeNull();
-		} );
+			expect(nextAppointment(state, requestAction)).toBeNull();
+		});
 
-		test( 'should be the next appointment data on receiving the update action.', () => {
+		test('should be the next appointment data on receiving the update action.', () => {
 			const state = [];
-			expect( nextAppointment( state, updateAction ) ).toEqual(
-				mockAppointmentDetails.nextAppointment
-			);
-		} );
-	} );
-} );
+			expect(nextAppointment(state, updateAction)).toEqual(mockAppointmentDetails.nextAppointment);
+		});
+	});
+});

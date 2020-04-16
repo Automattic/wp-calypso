@@ -18,24 +18,24 @@ import { getReaderFollowForBlog } from 'state/reader/follows/selectors';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export function requestUpdatePostEmailSubscription( action ) {
-	return ( dispatch, getState ) => {
-		const actionWithRevert = merge( {}, action, {
+export function requestUpdatePostEmailSubscription(action) {
+	return (dispatch, getState) => {
+		const actionWithRevert = merge({}, action, {
 			meta: {
-				previousState: get( getReaderFollowForBlog( getState(), action.payload.blogId ), [
+				previousState: get(getReaderFollowForBlog(getState(), action.payload.blogId), [
 					'delivery_methods',
 					'email',
 					'post_delivery_frequency',
-				] ),
+				]),
 			},
-		} );
+		});
 		dispatch(
 			http(
 				{
 					method: 'POST',
-					path: `/read/site/${ action.payload.blogId }/post_email_subscriptions/update`,
+					path: `/read/site/${action.payload.blogId}/post_email_subscriptions/update`,
 					apiVersion: '1.2',
-					body: buildBody( get( action, [ 'payload', 'deliveryFrequency' ] ) ),
+					body: buildBody(get(action, ['payload', 'deliveryFrequency'])),
 				},
 				actionWithRevert
 			)
@@ -43,31 +43,29 @@ export function requestUpdatePostEmailSubscription( action ) {
 	};
 }
 
-export function receiveUpdatePostEmailSubscription( action, response ) {
-	if ( ! ( response && response.success ) ) {
+export function receiveUpdatePostEmailSubscription(action, response) {
+	if (!(response && response.success)) {
 		// revert
-		return receiveUpdatePostEmailSubscriptionError( action );
+		return receiveUpdatePostEmailSubscriptionError(action);
 	}
 }
 
-export function receiveUpdatePostEmailSubscriptionError( {
+export function receiveUpdatePostEmailSubscriptionError({
 	payload: { blogId },
 	meta: { previousState },
-} ) {
+}) {
 	return [
-		errorNotice(
-			translate( 'Sorry, we had a problem updating that subscription. Please try again.' )
-		),
-		bypassDataLayer( updateNewPostEmailSubscription( blogId, previousState ) ),
+		errorNotice(translate('Sorry, we had a problem updating that subscription. Please try again.')),
+		bypassDataLayer(updateNewPostEmailSubscription(blogId, previousState)),
 	];
 }
 
-registerHandlers( 'state/data-layer/wpcom/read/site/post-email-subscriptions/update/index.js', {
-	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/read/site/post-email-subscriptions/update/index.js', {
+	[READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION]: [
+		dispatchRequest({
 			fetch: requestUpdatePostEmailSubscription,
 			onSuccess: receiveUpdatePostEmailSubscription,
 			onError: receiveUpdatePostEmailSubscriptionError,
-		} ),
+		}),
 	],
-} );
+});

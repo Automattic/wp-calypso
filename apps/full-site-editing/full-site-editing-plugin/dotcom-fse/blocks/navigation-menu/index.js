@@ -18,16 +18,16 @@ const icon = (
 	</svg>
 );
 
-registerBlockType( 'a8c/navigation-menu', {
-	title: __( 'Navigation Menu' ),
-	description: __( 'Visual placeholder for site-wide navigation and menus.' ),
+registerBlockType('a8c/navigation-menu', {
+	title: __('Navigation Menu'),
+	description: __('Visual placeholder for site-wide navigation and menus.'),
 	icon,
 	category: 'layout',
 	supports: {
-		align: [ 'wide', 'full', 'right', 'left' ],
+		align: ['wide', 'full', 'right', 'left'],
 		html: false,
 		reusable: false,
 	},
 	edit,
 	save: () => null,
-} );
+});

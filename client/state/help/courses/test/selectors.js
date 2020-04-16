@@ -9,22 +9,22 @@ import deepFreeze from 'deep-freeze';
  */
 import { getHelpCourses } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#getHelpCourses()', () => {
-		test( 'should return null for default state', () => {
-			const state = deepFreeze( {
+describe('selectors', () => {
+	describe('#getHelpCourses()', () => {
+		test('should return null for default state', () => {
+			const state = deepFreeze({
 				help: {
 					courses: {
 						items: null,
 					},
 				},
-			} );
+			});
 
-			expect( getHelpCourses( state ) ).to.be.null;
-		} );
+			expect(getHelpCourses(state)).to.be.null;
+		});
 
-		test( 'should return courses for given state', () => {
-			const state = deepFreeze( {
+		test('should return courses for given state', () => {
+			const state = deepFreeze({
 				help: {
 					courses: {
 						items: [
@@ -37,9 +37,9 @@ describe( 'selectors', () => {
 						],
 					},
 				},
-			} );
+			});
 
-			expect( getHelpCourses( state ) ).to.eql( state.help.courses.items );
-		} );
-	} );
-} );
+			expect(getHelpCourses(state)).to.eql(state.help.courses.items);
+		});
+	});
+});

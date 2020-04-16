@@ -15,11 +15,11 @@ export default class extends React.Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'is-document' );
+		const classes = classNames(this.props.className, 'is-document');
 
 		return (
-			<div className={ classes }>
-				<Gridicon icon="pages" size={ 120 } />
+			<div className={classes}>
+				<Gridicon icon="pages" size={120} />
 			</div>
 		);
 	}

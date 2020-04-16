@@ -8,10 +8,10 @@ import { expect } from 'chai';
  */
 import getPosterUrl from 'state/selectors/get-poster-url';
 
-describe( 'getPosterUrl()', () => {
-	test( 'should return the current video editor poster', () => {
+describe('getPosterUrl()', () => {
+	test('should return the current video editor poster', () => {
 		const url = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
-		const poster = getPosterUrl( {
+		const poster = getPosterUrl({
 			ui: {
 				editor: {
 					videoEditor: {
@@ -19,8 +19,8 @@ describe( 'getPosterUrl()', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		expect( poster ).to.eql( url );
-	} );
-} );
+		expect(poster).to.eql(url);
+	});
+});

@@ -20,7 +20,7 @@ import userFactory from 'lib/user';
 import { setupLocale } from 'boot/locale';
 import { setStore } from 'state/redux-store';
 
-const debug = debugFactory( 'calypso' );
+const debug = debugFactory('calypso');
 
 import 'assets/stylesheets/style.scss';
 // goofy import for environment badge, which is SSR'd
@@ -28,30 +28,30 @@ import 'components/environment-badge/style.scss';
 
 // Create Redux store
 const store = createStore();
-setStore( store );
+setStore(store);
 
-const boot = currentUser => {
-	debug( "Starting Calypso. Let's do this." );
+const boot = (currentUser) => {
+	debug("Starting Calypso. Let's do this.");
 
-	configureReduxStore( currentUser, store );
-	setupMiddlewares( currentUser, store );
-	setupLocale( currentUser.get(), store );
+	configureReduxStore(currentUser, store);
+	setupMiddlewares(currentUser, store);
+	setupLocale(currentUser.get(), store);
 
-	page( '*', ( context, next ) => {
+	page('*', (context, next) => {
 		context.store = store;
 		next();
-	} );
+	});
 
-	page.exit( '*', ( context, next ) => {
+	page.exit('*', (context, next) => {
 		context.store = store;
 		next();
-	} );
+	});
 
-	initLoginSection( ( route, ...handlers ) => page( route, ...handlers, render ) );
-	page.start( { decodeURLComponents: false } );
+	initLoginSection((route, ...handlers) => page(route, ...handlers, render));
+	page.start({ decodeURLComponents: false });
 };
 
 window.AppBoot = () => {
 	const user = userFactory();
-	user.initialize().then( () => boot( user ) );
+	user.initialize().then(() => boot(user));
 };

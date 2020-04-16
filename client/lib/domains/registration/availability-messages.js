@@ -24,8 +24,8 @@ import {
 	domainTransferIn,
 } from 'my-sites/domains/paths';
 
-function getAvailabilityNotice( domain, error, errorData ) {
-	const tld = domain ? getTld( domain ) : null;
+function getAvailabilityNotice(domain, error, errorData) {
+	const tld = domain ? getTld(domain) : null;
 	const { site, maintenanceEndTime, availabilityPreCheck } = errorData || {};
 
 	// The message is set only when there is a valid error
@@ -36,7 +36,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 	let message,
 		severity = 'error';
 
-	switch ( error ) {
+	switch (error) {
 		case domainAvailability.REGISTERED:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to a WordPress.com site.',
@@ -49,12 +49,12 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 		case domainAvailability.REGISTERED_SAME_SITE:
-			message = translate( '{{strong}}%(domain)s{{/strong}} is already registered on this site.', {
+			message = translate('{{strong}}%(domain)s{{/strong}} is already registered on this site.', {
 				args: { domain },
 				components: {
 					strong: <strong />,
 				},
-			} );
+			});
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			message = translate(
@@ -67,7 +67,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 						a: (
 							<a
 								rel="noopener noreferrer"
-								href={ domainManagementTransferToOtherSite( site, domain ) }
+								href={domainManagementTransferToOtherSite(site, domain)}
 							/>
 						),
 					},
@@ -106,18 +106,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainTransferIn( site, domain ) } />,
+						a: <a rel="noopener noreferrer" href={domainTransferIn(site, domain)} />,
 					},
 				}
 			);
 			break;
 		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
-			message = translate( '{{strong}}%(domain)s{{/strong}} is already connected to this site.', {
+			message = translate('{{strong}}%(domain)s{{/strong}} is already connected to this site.', {
 				args: { domain },
 				components: {
 					strong: <strong />,
 				},
-			} );
+			});
 			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER:
 			message = translate(
@@ -127,7 +127,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain, site },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
+						a: <a rel="noopener noreferrer" href={CALYPSO_CONTACT} />,
 					},
 				}
 			);
@@ -139,7 +139,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainManagementTransferIn( site, domain ) } />,
+						a: <a rel="noopener noreferrer" href={domainManagementTransferIn(site, domain)} />,
 					},
 				}
 			);
@@ -152,22 +152,20 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: (
-							<a rel="noopener noreferrer" href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } />
-						),
+						a: <a rel="noopener noreferrer" href={INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS} />,
 					},
 				}
 			);
 			break;
 		case domainAvailability.NOT_REGISTRABLE:
-			if ( tld ) {
+			if (tld) {
 				message = translate(
 					'To use this domain on your site, you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
 					{
 						args: { tld },
 						components: {
 							strong: <strong />,
-							a: <a rel="noopener noreferrer" href={ MAP_EXISTING_DOMAIN } />,
+							a: <a rel="noopener noreferrer" href={MAP_EXISTING_DOMAIN} />,
 						},
 					}
 				);
@@ -175,12 +173,12 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			}
 			break;
 		case domainAvailability.MAINTENANCE:
-			if ( tld ) {
-				let maintenanceEnd = translate( 'shortly', {
+			if (tld) {
+				let maintenanceEnd = translate('shortly', {
 					comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
-				} );
-				if ( maintenanceEndTime ) {
-					maintenanceEnd = moment.unix( maintenanceEndTime ).fromNow();
+				});
+				if (maintenanceEndTime) {
+					maintenanceEnd = moment.unix(maintenanceEndTime).fromNow();
 				}
 
 				message = translate(
@@ -200,11 +198,11 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			}
 			break;
 		case domainAvailability.PURCHASES_DISABLED:
-			let maintenanceEnd = translate( 'shortly', {
+			let maintenanceEnd = translate('shortly', {
 				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
-			} );
-			if ( maintenanceEndTime ) {
-				maintenanceEnd = moment.unix( maintenanceEndTime ).fromNow();
+			});
+			if (maintenanceEndTime) {
+				maintenanceEnd = moment.unix(maintenanceEndTime).fromNow();
 			}
 
 			message = translate(
@@ -234,7 +232,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			break;
 
 		case domainAvailability.BLACKLISTED:
-			if ( domain && domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
+			if (domain && domain.toLowerCase().indexOf('wordpress') > -1) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
 						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
@@ -248,7 +246,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 									href="http://wordpressfoundation.org/trademark-policy/"
 								/>
 							),
-							a2: <a href={ CALYPSO_CONTACT } />,
+							a2: <a href={CALYPSO_CONTACT} />,
 						},
 					}
 				);
@@ -266,22 +264,22 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			break;
 
 		case domainAvailability.FORBIDDEN:
-			message = translate( 'Only the owner of the domain can map its subdomains.' );
+			message = translate('Only the owner of the domain can map its subdomains.');
 			break;
 
 		case domainAvailability.WPCOM_STAGING_DOMAIN:
-			message = translate( 'This domain is a reserved WordPress.com staging domain' );
+			message = translate('This domain is a reserved WordPress.com staging domain');
 			break;
 
 		case domainAvailability.INVALID_TLD:
 		case domainAvailability.INVALID:
-			message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
+			message = translate('Sorry, %(domain)s does not appear to be a valid domain name.', {
 				args: { domain: domain },
-			} );
+			});
 			break;
 
 		case domainAvailability.MAPPED:
-			message = translate( 'This domain is already mapped to a WordPress.com site.' );
+			message = translate('This domain is already mapped to a WordPress.com site.');
 			break;
 
 		case domainAvailability.DOTBLOG_SUBDOMAIN:
@@ -303,7 +301,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				'This domain expired recently. To get it back please {{a}}contact support{{/a}}.',
 				{
 					components: {
-						a: <a href={ CALYPSO_CONTACT } />,
+						a: <a href={CALYPSO_CONTACT} />,
 					},
 				}
 			);
@@ -317,7 +315,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			break;
 
 		case domainAvailability.EMPTY_QUERY:
-			message = translate( 'Please enter a domain name or keyword.' );
+			message = translate('Please enter a domain name or keyword.');
 			break;
 
 		case domainAvailability.INVALID_QUERY:
@@ -339,7 +337,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			break;
 
 		case domainAvailability.TRANSFERRABLE:
-			if ( availabilityPreCheck ) {
+			if (availabilityPreCheck) {
 				message = translate(
 					'Sorry, the domain name you selected is not available. Please choose another domain.'
 				);
@@ -353,7 +351,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
+						a: <a rel="noopener noreferrer" href={domainMapping(site, domain)} />,
 					},
 				}
 			);
@@ -366,7 +364,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
+						a: <a rel="noopener noreferrer" href={domainMapping(site, domain)} />,
 					},
 				}
 			);

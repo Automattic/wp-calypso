@@ -45,7 +45,7 @@ import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from 'lib/plan
 import ThemeQueryManager from 'lib/query-manager/theme';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
 const twentyfifteen = {
 	id: 'twentyfifteen',
@@ -85,16 +85,16 @@ const sidekick = {
 	template: 'superhero',
 };
 
-describe( 'themes selectors', () => {
-	beforeEach( () => {
+describe('themes selectors', () => {
+	beforeEach(() => {
 		getTheme.memoizedSelector.cache.clear();
 		getThemesForQuery.memoizedSelector.cache.clear();
 		getThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isRequestingThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
-	} );
+	});
 
-	describe( '#getTheme()', () => {
-		test( 'should return null if the theme is not known for the site', () => {
+	describe('#getTheme()', () => {
+		test('should return null if the theme is not known for the site', () => {
 			const theme = getTheme(
 				{
 					themes: {
@@ -105,17 +105,17 @@ describe( 'themes selectors', () => {
 				413
 			);
 
-			expect( theme ).to.be.null;
-		} );
+			expect(theme).to.be.null;
+		});
 
-		test( 'should return the object for the site ID, theme ID pair', () => {
+		test('should return the object for the site ID, theme ID pair', () => {
 			const theme = getTheme(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 					},
 				},
@@ -123,19 +123,19 @@ describe( 'themes selectors', () => {
 				'twentysixteen'
 			);
 
-			expect( theme ).to.equal( twentysixteen );
-		} );
-	} );
+			expect(theme).to.equal(twentysixteen);
+		});
+	});
 
-	describe( '#getCanonicalTheme()', () => {
-		test( 'with a theme found on WP.com, should return the object fetched from there', () => {
+	describe('#getCanonicalTheme()', () => {
+		test('with a theme found on WP.com, should return the object fetched from there', () => {
 			const theme = getCanonicalTheme(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 					},
 				},
@@ -143,10 +143,10 @@ describe( 'themes selectors', () => {
 				'twentysixteen'
 			);
 
-			expect( theme ).to.deep.equal( twentysixteen );
-		} );
+			expect(theme).to.deep.equal(twentysixteen);
+		});
 
-		test( 'with a theme found on WP.org but not on WP.com, should return the object fetched from there', () => {
+		test('with a theme found on WP.org but not on WP.com, should return the object fetched from there', () => {
 			const wporgTheme = {
 				id: 'twentyseventeen',
 				name: 'Twenty Seventeen',
@@ -163,9 +163,9 @@ describe( 'themes selectors', () => {
 				{
 					themes: {
 						queries: {
-							wporg: new ThemeQueryManager( {
+							wporg: new ThemeQueryManager({
 								items: { twentyseventeen: wporgTheme },
-							} ),
+							}),
 						},
 					},
 				},
@@ -173,10 +173,10 @@ describe( 'themes selectors', () => {
 				'twentyseventeen'
 			);
 
-			expect( theme ).to.deep.equal( wporgTheme );
-		} );
+			expect(theme).to.deep.equal(wporgTheme);
+		});
 
-		test( 'with a theme not found on WP.com nor on WP.org, should return the theme object from the given siteId', () => {
+		test('with a theme not found on WP.com nor on WP.org, should return the theme object from the given siteId', () => {
 			const jetpackTheme = {
 				id: 'twentyseventeen',
 				name: 'Twenty Seventeen',
@@ -187,9 +187,9 @@ describe( 'themes selectors', () => {
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: { twentyseventeen: jetpackTheme },
-							} ),
+							}),
 						},
 					},
 				},
@@ -197,12 +197,12 @@ describe( 'themes selectors', () => {
 				'twentyseventeen'
 			);
 
-			expect( theme ).to.deep.equal( jetpackTheme );
-		} );
-	} );
+			expect(theme).to.deep.equal(jetpackTheme);
+		});
+	});
 
-	describe( '#getThemesRequestError()', () => {
-		test( 'should return null if thre is not request error storred for that theme on site', () => {
+	describe('#getThemesRequestError()', () => {
+		test('should return null if thre is not request error storred for that theme on site', () => {
 			const error = getThemeRequestErrors(
 				{
 					themes: {
@@ -213,10 +213,10 @@ describe( 'themes selectors', () => {
 				413
 			);
 
-			expect( error ).to.be.null;
-		} );
+			expect(error).to.be.null;
+		});
 
-		test( 'should return the error object for the site ID, theme ID pair', () => {
+		test('should return the error object for the site ID, theme ID pair', () => {
 			const error = getThemeRequestErrors(
 				{
 					themes: {
@@ -231,12 +231,12 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( error ).to.equal( 'Request error' );
-		} );
-	} );
+			expect(error).to.equal('Request error');
+		});
+	});
 
-	describe( '#isRequestingTheme()', () => {
-		test( 'should return false if there are no active requests for site', () => {
+	describe('#isRequestingTheme()', () => {
+		test('should return false if there are no active requests for site', () => {
 			const isRequesting = isRequestingTheme(
 				{
 					themes: {
@@ -247,10 +247,10 @@ describe( 'themes selectors', () => {
 				'twentyfifteen'
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if there is no active request for theme for site', () => {
+		test('should return false if there is no active request for theme for site', () => {
 			const isRequesting = isRequestingTheme(
 				{
 					themes: {
@@ -265,10 +265,10 @@ describe( 'themes selectors', () => {
 				'twentyfifteen'
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if there is request ongoing for theme for site', () => {
+		test('should return true if there is request ongoing for theme for site', () => {
 			const isRequesting = isRequestingTheme(
 				{
 					themes: {
@@ -283,12 +283,12 @@ describe( 'themes selectors', () => {
 				'twentysixteen'
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( '#getThemesForQuery()', () => {
-		test( 'should return null if the site query is not tracked', () => {
+	describe('#getThemesForQuery()', () => {
+		test('should return null if the site query is not tracked', () => {
 			const siteThemes = getThemesForQuery(
 				{
 					themes: {
@@ -299,18 +299,18 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( siteThemes ).to.be.null;
-		} );
+			expect(siteThemes).to.be.null;
+		});
 
-		test( 'should return null if the query is not tracked to the query manager', () => {
+		test('should return null if the query is not tracked to the query manager', () => {
 			const siteThemes = getThemesForQuery(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {},
 								queries: {},
-							} ),
+							}),
 						},
 					},
 				},
@@ -318,24 +318,24 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( siteThemes ).to.be.null;
-		} );
+			expect(siteThemes).to.be.null;
+		});
 
-		test( 'should return an array of normalized known queried themes', () => {
+		test('should return an array of normalized known queried themes', () => {
 			const siteThemes = getThemesForQuery(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Sixteen"]]': {
-										itemKeys: [ 'twentysixteen' ],
+										itemKeys: ['twentysixteen'],
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -343,25 +343,25 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( siteThemes ).to.eql( [ twentysixteen ] );
-		} );
+			expect(siteThemes).to.eql([twentysixteen]);
+		});
 
-		test( "should return null if we know the number of found items but the requested set hasn't been received", () => {
+		test("should return null if we know the number of found items but the requested set hasn't been received", () => {
 			const siteThemes = getThemesForQuery(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentyfifteen,
 								},
 								queries: {
 									'[["search","Fifteen"]]': {
-										itemKeys: [ 'twentyfifteen', undefined ],
+										itemKeys: ['twentyfifteen', undefined],
 										found: 2,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -369,22 +369,22 @@ describe( 'themes selectors', () => {
 				{ search: 'Fifteen', number: 1, page: 2 }
 			);
 
-			expect( siteThemes ).to.be.null;
-		} );
-	} );
+			expect(siteThemes).to.be.null;
+		});
+	});
 
-	describe( '#getLastThemeQuery', () => {
-		test( 'given no site, should return empty object', () => {
-			const query = getLastThemeQuery( {
+	describe('#getLastThemeQuery', () => {
+		test('given no site, should return empty object', () => {
+			const query = getLastThemeQuery({
 				themes: {
 					lastQuery: {},
 				},
-			} );
+			});
 
-			expect( query ).to.deep.equal( {} );
-		} );
+			expect(query).to.deep.equal({});
+		});
 
-		test( 'given a site, should return last used query', () => {
+		test('given a site, should return last used query', () => {
 			const query = getLastThemeQuery(
 				{
 					themes: {
@@ -396,14 +396,14 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( query ).to.deep.equal( {
+			expect(query).to.deep.equal({
 				search: 'theme that has this thing and does not have the other one',
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#isRequestingThemesForQuery()', () => {
-		test( 'should return false if the site has not been queried', () => {
+	describe('#isRequestingThemesForQuery()', () => {
+		test('should return false if the site has not been queried', () => {
 			const isRequesting = isRequestingThemesForQuery(
 				{
 					themes: {
@@ -414,10 +414,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if the site has not been queried for the specific query', () => {
+		test('should return false if the site has not been queried for the specific query', () => {
 			const isRequesting = isRequestingThemesForQuery(
 				{
 					themes: {
@@ -430,10 +430,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if the site has been queried for the specific query', () => {
+		test('should return true if the site has been queried for the specific query', () => {
 			const isRequesting = isRequestingThemesForQuery(
 				{
 					themes: {
@@ -446,10 +446,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
+			expect(isRequesting).to.be.true;
+		});
 
-		test( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
+		test('should return false if the site has previously, but is not currently, querying for the specified query', () => {
 			const isRequesting = isRequestingThemesForQuery(
 				{
 					themes: {
@@ -462,12 +462,12 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
-	} );
+			expect(isRequesting).to.be.false;
+		});
+	});
 
-	describe( '#getThemesFoundForQuery()', () => {
-		test( 'should return null if the site query is not tracked', () => {
+	describe('#getThemesFoundForQuery()', () => {
+		test('should return null if the site query is not tracked', () => {
 			const found = getThemesFoundForQuery(
 				{
 					themes: {
@@ -478,25 +478,25 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( found ).to.be.null;
-		} );
+			expect(found).to.be.null;
+		});
 
-		test( 'should return the found items for a site query', () => {
+		test('should return the found items for a site query', () => {
 			const found = getThemesFoundForQuery(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Sixteen"]]': {
-										itemKeys: [ 'twentysixteen' ],
+										itemKeys: ['twentysixteen'],
 										found: 1,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -504,15 +504,15 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( found ).to.equal( 1 );
-		} );
+			expect(found).to.equal(1);
+		});
 
-		test( 'should return zero if in-fact there are zero items', () => {
+		test('should return zero if in-fact there are zero items', () => {
 			const found = getThemesFoundForQuery(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {},
 								queries: {
 									'[["search","Umpteen"]]': {
@@ -520,7 +520,7 @@ describe( 'themes selectors', () => {
 										found: 0,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -528,12 +528,12 @@ describe( 'themes selectors', () => {
 				{ search: 'Umpteen' }
 			);
 
-			expect( found ).to.equal( 0 );
-		} );
-	} );
+			expect(found).to.equal(0);
+		});
+	});
 
-	describe( '#getThemesLastPageForQuery()', () => {
-		test( 'should return null if the site query is not tracked', () => {
+	describe('#getThemesLastPageForQuery()', () => {
+		test('should return null if the site query is not tracked', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -547,10 +547,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( lastPage ).to.be.null;
-		} );
+			expect(lastPage).to.be.null;
+		});
 
-		test( 'should return the last page value for a site query', () => {
+		test('should return the last page value for a site query', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -558,17 +558,17 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Sixteen"]]': {
-										itemKeys: [ 'sixteen' ],
+										itemKeys: ['sixteen'],
 										found: 1,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -576,10 +576,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen' }
 			);
 
-			expect( lastPage ).to.equal( 1 );
-		} );
+			expect(lastPage).to.equal(1);
+		});
 
-		test( 'should return the last page value for a site query, even if including page param', () => {
+		test('should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -587,17 +587,17 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Twenty"]]': {
-										itemKeys: [ 'twentysixteen' ],
+										itemKeys: ['twentysixteen'],
 										found: 7,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -605,10 +605,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Twenty', page: 3, number: 1 }
 			);
 
-			expect( lastPage ).to.equal( 7 );
-		} );
+			expect(lastPage).to.equal(7);
+		});
 
-		test( 'should return 1 if there are no found themes', () => {
+		test('should return 1 if there are no found themes', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -616,7 +616,7 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {},
 								queries: {
 									'[["search","Umpteen"]]': {
@@ -624,7 +624,7 @@ describe( 'themes selectors', () => {
 										found: 0,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -632,10 +632,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Umpteen' }
 			);
 
-			expect( lastPage ).to.equal( 1 );
-		} );
+			expect(lastPage).to.equal(1);
+		});
 
-		test( 'should return 1 for a Jetpack site', () => {
+		test('should return 1 for a Jetpack site', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -649,17 +649,17 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Twenty"]]': {
-										itemKeys: [ 'twentysixteen' ],
+										itemKeys: ['twentysixteen'],
 										found: 7,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -667,12 +667,12 @@ describe( 'themes selectors', () => {
 				{ search: 'Twenty' }
 			);
 
-			expect( lastPage ).to.equal( 1 );
-		} );
-	} );
+			expect(lastPage).to.equal(1);
+		});
+	});
 
-	describe( '#isThemesLastPageForQuery()', () => {
-		test( 'should return null if the last page is not known', () => {
+	describe('#isThemesLastPageForQuery()', () => {
+		test('should return null if the last page is not known', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					themes: {
@@ -683,10 +683,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Umpteen' }
 			);
 
-			expect( isLastPage ).to.be.null;
-		} );
+			expect(isLastPage).to.be.null;
+		});
 
-		test( 'should return false if the query explicit value is not the last page', () => {
+		test('should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					sites: {
@@ -694,17 +694,17 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Twenty"]]': {
-										itemKeys: [ 'twentysixteen' ],
+										itemKeys: ['twentysixteen'],
 										found: 7,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -712,10 +712,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Twenty', page: 6, number: 1 }
 			);
 
-			expect( isLastPage ).to.be.false;
-		} );
+			expect(isLastPage).to.be.false;
+		});
 
-		test( 'should return true if the query explicit value is the last page', () => {
+		test('should return true if the query explicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					sites: {
@@ -723,17 +723,17 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Twenty"]]': {
-										itemKeys: [ 'twentysixteen' ],
+										itemKeys: ['twentysixteen'],
 										found: 7,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -741,10 +741,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Twenty', page: 7, number: 1 }
 			);
 
-			expect( isLastPage ).to.be.true;
-		} );
+			expect(isLastPage).to.be.true;
+		});
 
-		test( 'should return true if the query implicit value is the last page', () => {
+		test('should return true if the query implicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					sites: {
@@ -752,17 +752,17 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Sixteen"]]': {
-										itemKeys: [ 'twentysixteen' ],
+										itemKeys: ['twentysixteen'],
 										found: 1,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -770,10 +770,10 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen', number: 1 }
 			);
 
-			expect( isLastPage ).to.be.true;
-		} );
+			expect(isLastPage).to.be.true;
+		});
 
-		test( 'should return true for a Jetpack site', () => {
+		test('should return true for a Jetpack site', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					sites: {
@@ -787,17 +787,17 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Twenty"]]': {
-										itemKeys: [ 'twentysixteen' ],
+										itemKeys: ['twentysixteen'],
 										found: 7,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -805,12 +805,12 @@ describe( 'themes selectors', () => {
 				{ search: 'Twenty' }
 			);
 
-			expect( isLastPage ).to.be.true;
-		} );
-	} );
+			expect(isLastPage).to.be.true;
+		});
+	});
 
-	describe( '#getThemesForQueryIgnoringPage()', () => {
-		test( 'should return null if the query is not tracked', () => {
+	describe('#getThemesForQueryIgnoringPage()', () => {
+		test('should return null if the query is not tracked', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -821,18 +821,18 @@ describe( 'themes selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( themes ).to.be.null;
-		} );
+			expect(themes).to.be.null;
+		});
 
-		test( 'should return null if the query manager has not received items for query', () => {
+		test('should return null if the query manager has not received items for query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {},
 								queries: {},
-							} ),
+							}),
 						},
 					},
 				},
@@ -840,25 +840,25 @@ describe( 'themes selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( themes ).to.be.null;
-		} );
+			expect(themes).to.be.null;
+		});
 
-		test( 'should return a concatenated array of all site themes ignoring page', () => {
+		test('should return a concatenated array of all site themes ignoring page', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentyfifteen,
 									twentysixteen,
 								},
 								queries: {
 									'[]': {
-										itemKeys: [ 'twentyfifteen', 'twentysixteen' ],
+										itemKeys: ['twentyfifteen', 'twentysixteen'],
 									},
 								},
-							} ),
+							}),
 						},
 						recommendedThemes: {
 							themes: [],
@@ -869,53 +869,53 @@ describe( 'themes selectors', () => {
 				{ search: '', number: 1 }
 			);
 
-			expect( themes ).to.eql( [ twentyfifteen, twentysixteen ] );
-		} );
+			expect(themes).to.eql([twentyfifteen, twentysixteen]);
+		});
 
-		test( 'should remove recommendedThemes with no filter and no search in query', () => {
+		test('should remove recommendedThemes with no filter and no search in query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentyfifteen,
 									twentysixteen,
 								},
 								queries: {
 									'[]': {
-										itemKeys: [ 'twentyfifteen', 'twentysixteen' ],
+										itemKeys: ['twentyfifteen', 'twentysixteen'],
 									},
 								},
-							} ),
+							}),
 						},
 						recommendedThemes: {
-							themes: [ { id: 'twentyfifteen' } ],
+							themes: [{ id: 'twentyfifteen' }],
 						},
 					},
 				},
 				2916284,
 				{ search: '', number: 1 }
 			);
-			expect( themes ).to.eql( [ twentysixteen ] );
-		} );
+			expect(themes).to.eql([twentysixteen]);
+		});
 
-		test( "should omit found items for which the requested result hasn't been received", () => {
+		test("should omit found items for which the requested result hasn't been received", () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
 						queries: {
-							2916284: new ThemeQueryManager( {
+							2916284: new ThemeQueryManager({
 								items: {
 									twentysixteen,
 								},
 								queries: {
 									'[["search","Sixteen"]]': {
-										itemKeys: [ 'twentysixteen', undefined ],
+										itemKeys: ['twentysixteen', undefined],
 										found: 2,
 									},
 								},
-							} ),
+							}),
 						},
 					},
 				},
@@ -923,12 +923,12 @@ describe( 'themes selectors', () => {
 				{ search: 'Sixteen', number: 1 }
 			);
 
-			expect( themes ).to.eql( [ twentysixteen ] );
-		} );
-	} );
+			expect(themes).to.eql([twentysixteen]);
+		});
+	});
 
-	describe( '#isRequestingThemesForQueryIgnoringPage()', () => {
-		test( 'should return false if not requesting for query', () => {
+	describe('#isRequestingThemesForQueryIgnoringPage()', () => {
+		test('should return false if not requesting for query', () => {
 			const isRequesting = isRequestingThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -939,10 +939,10 @@ describe( 'themes selectors', () => {
 				{ search: 'twen' }
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true requesting for query at exact page', () => {
+		test('should return true requesting for query at exact page', () => {
 			const isRequesting = isRequestingThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -955,10 +955,10 @@ describe( 'themes selectors', () => {
 				{ search: 'twen', page: 4 }
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
+			expect(isRequesting).to.be.true;
+		});
 
-		test( 'should return true requesting for query without page specified', () => {
+		test('should return true requesting for query without page specified', () => {
 			const isRequesting = isRequestingThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -971,12 +971,12 @@ describe( 'themes selectors', () => {
 				{ search: 'twen' }
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( '#getThemeDetailsUrl', () => {
-		test( 'given a theme and no site ID, should return the Calypso theme sheet URL', () => {
+	describe('#getThemeDetailsUrl', () => {
+		test('given a theme and no site ID, should return the Calypso theme sheet URL', () => {
 			const detailsUrl = getThemeDetailsUrl(
 				{
 					sites: {
@@ -990,10 +990,10 @@ describe( 'themes selectors', () => {
 				},
 				'twentysixteen'
 			);
-			expect( detailsUrl ).to.equal( '/theme/twentysixteen' );
-		} );
+			expect(detailsUrl).to.equal('/theme/twentysixteen');
+		});
 
-		test( 'given a theme and wpcom site ID, should return the Calypso theme sheet URL', () => {
+		test('given a theme and wpcom site ID, should return the Calypso theme sheet URL', () => {
 			const detailsUrl = getThemeDetailsUrl(
 				{
 					sites: {
@@ -1008,12 +1008,12 @@ describe( 'themes selectors', () => {
 				'twentysixteen',
 				2916284
 			);
-			expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.wordpress.com' );
-		} );
+			expect(detailsUrl).to.equal('/theme/twentysixteen/example.wordpress.com');
+		});
 
-		describe( 'given a theme and a Jetpack site ID', () => {
-			describe( 'with JP version < 4.7', () => {
-				test( "should return the site's wp-admin theme details URL", () => {
+		describe('given a theme and a Jetpack site ID', () => {
+			describe('with JP version < 4.7', () => {
+				test("should return the site's wp-admin theme details URL", () => {
 					const detailsUrl = getThemeDetailsUrl(
 						{
 							sites: {
@@ -1033,15 +1033,15 @@ describe( 'themes selectors', () => {
 						'twentysixteen',
 						77203074
 					);
-					expect( detailsUrl ).to.equal(
+					expect(detailsUrl).to.equal(
 						'https://example.net/wp-admin/themes.php?theme=twentysixteen'
 					);
-				} );
-			} );
+				});
+			});
 
-			describe( 'with JP version >= 4.7', () => {
-				describe( 'with Jetpack Manage not explicitly turned off', () => {
-					test( 'should return the Calypso theme sheet URL', () => {
+			describe('with JP version >= 4.7', () => {
+				describe('with Jetpack Manage not explicitly turned off', () => {
+					test('should return the Calypso theme sheet URL', () => {
 						const detailsUrl = getThemeDetailsUrl(
 							{
 								sites: {
@@ -1061,16 +1061,16 @@ describe( 'themes selectors', () => {
 							'twentysixteen',
 							77203074
 						);
-						expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.net' );
-					} );
-				} );
-			} );
-		} );
-	} );
+						expect(detailsUrl).to.equal('/theme/twentysixteen/example.net');
+					});
+				});
+			});
+		});
+	});
 
-	describe( '#getThemeSupportUrl', () => {
-		describe( 'for a premium theme', () => {
-			test( 'given no site ID, should return the support URL', () => {
+	describe('#getThemeSupportUrl', () => {
+		describe('for a premium theme', () => {
+			test('given no site ID, should return the support URL', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1083,18 +1083,18 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { mood },
-								} ),
+								}),
 							},
 						},
 					},
 					'mood'
 				);
-				expect( supportUrl ).to.equal( '/theme/mood/setup' );
-			} );
+				expect(supportUrl).to.equal('/theme/mood/setup');
+			});
 
-			test( 'given a wpcom site ID, should return the support URL', () => {
+			test('given a wpcom site ID, should return the support URL', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1107,21 +1107,21 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { mood },
-								} ),
+								}),
 							},
 						},
 					},
 					'mood',
 					2916284
 				);
-				expect( supportUrl ).to.equal( '/theme/mood/setup/example.wordpress.com' );
-			} );
-		} );
+				expect(supportUrl).to.equal('/theme/mood/setup/example.wordpress.com');
+			});
+		});
 
-		describe( 'for a free theme', () => {
-			test( 'given no site ID, should return null', () => {
+		describe('for a free theme', () => {
+			test('given no site ID, should return null', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1134,18 +1134,18 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { twentysixteen },
-								} ),
+								}),
 							},
 						},
 					},
 					'twentysixteen'
 				);
-				expect( supportUrl ).to.be.null;
-			} );
+				expect(supportUrl).to.be.null;
+			});
 
-			test( 'given a wpcom site ID, should return null', () => {
+			test('given a wpcom site ID, should return null', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1158,19 +1158,19 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { twentysixteen },
-								} ),
+								}),
 							},
 						},
 					},
 					'twentysixteen',
 					2916284
 				);
-				expect( supportUrl ).to.be.null;
-			} );
+				expect(supportUrl).to.be.null;
+			});
 
-			test( 'given a Jetpack site ID, should return null', () => {
+			test('given a Jetpack site ID, should return null', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1187,22 +1187,22 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { twentysixteen },
-								} ),
+								}),
 							},
 						},
 					},
 					'twentysixteen',
 					77203074
 				);
-				expect( supportUrl ).to.be.null;
-			} );
-		} );
-	} );
+				expect(supportUrl).to.be.null;
+			});
+		});
+	});
 
-	describe( '#getThemeHelpUrl', () => {
-		test( 'given a theme and no site ID, should return the help URL', () => {
+	describe('#getThemeHelpUrl', () => {
+		test('given a theme and no site ID, should return the help URL', () => {
 			const helpUrl = getThemeHelpUrl(
 				{
 					sites: {
@@ -1216,10 +1216,10 @@ describe( 'themes selectors', () => {
 				},
 				'mood'
 			);
-			expect( helpUrl ).to.equal( '/theme/mood/support' );
-		} );
+			expect(helpUrl).to.equal('/theme/mood/support');
+		});
 
-		test( 'given a theme and a wpcom site ID, should return the correct help URL', () => {
+		test('given a theme and a wpcom site ID, should return the correct help URL', () => {
 			const helpUrl = getThemeHelpUrl(
 				{
 					sites: {
@@ -1232,19 +1232,19 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { mood },
-							} ),
+							}),
 						},
 					},
 				},
 				'mood',
 				2916284
 			);
-			expect( helpUrl ).to.equal( '/theme/mood/support/example.wordpress.com' );
-		} );
+			expect(helpUrl).to.equal('/theme/mood/support/example.wordpress.com');
+		});
 
-		test( 'given a theme and Jetpack site ID, should return the help url', () => {
+		test('given a theme and Jetpack site ID, should return the help url', () => {
 			const helpUrl = getThemeHelpUrl(
 				{
 					sites: {
@@ -1263,12 +1263,12 @@ describe( 'themes selectors', () => {
 				'twentysixteen',
 				77203074
 			);
-			expect( helpUrl ).to.be.equal( '/theme/twentysixteen/support/example.net' );
-		} );
-	} );
+			expect(helpUrl).to.be.equal('/theme/twentysixteen/support/example.net');
+		});
+	});
 
-	describe( '#getThemePurchaseUrl', () => {
-		test( 'given a free theme and a wpcom site ID, should return null', () => {
+	describe('#getThemePurchaseUrl', () => {
+		test('given a free theme and a wpcom site ID, should return null', () => {
 			const purchaseUrl = getThemePurchaseUrl(
 				{
 					sites: {
@@ -1281,19 +1281,19 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentysixteen',
 				2916284
 			);
-			expect( purchaseUrl ).to.be.null;
-		} );
+			expect(purchaseUrl).to.be.null;
+		});
 
-		test( 'given a premium theme and a wpcom site ID, should return the purchase URL', () => {
+		test('given a premium theme and a wpcom site ID, should return the purchase URL', () => {
 			const purchaseUrl = getThemePurchaseUrl(
 				{
 					sites: {
@@ -1306,30 +1306,30 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { mood },
-							} ),
+							}),
 						},
 					},
 				},
 				'mood',
 				2916284
 			);
-			expect( purchaseUrl ).to.equal( '/checkout/example.wordpress.com/theme:mood' );
-		} );
-	} );
+			expect(purchaseUrl).to.equal('/checkout/example.wordpress.com/theme:mood');
+		});
+	});
 
-	describe( '#getThemeCustomizeUrl', () => {
-		test( 'given no theme and no site ID, should return the correct customize URL', () => {
-			const customizeUrl = getThemeCustomizeUrl( {
+	describe('#getThemeCustomizeUrl', () => {
+		test('given no theme and no site ID, should return the correct customize URL', () => {
+			const customizeUrl = getThemeCustomizeUrl({
 				sites: {
 					items: {},
 				},
-			} );
-			expect( customizeUrl ).to.equal( '/customize' );
-		} );
+			});
+			expect(customizeUrl).to.equal('/customize');
+		});
 
-		test( 'given a theme and no site ID, should return the correct customize URL', () => {
+		test('given a theme and no site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
 				{
 					sites: {
@@ -1338,10 +1338,10 @@ describe( 'themes selectors', () => {
 				},
 				'twentysixteen'
 			);
-			expect( customizeUrl ).to.equal( '/customize' );
-		} );
+			expect(customizeUrl).to.equal('/customize');
+		});
 
-		test( 'given a theme and wpcom site ID, should return the correct customize URL', () => {
+		test('given a theme and wpcom site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
 				{
 					sites: {
@@ -1354,9 +1354,9 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 						activeThemes: {},
 					},
@@ -1364,10 +1364,10 @@ describe( 'themes selectors', () => {
 				'twentysixteen',
 				2916284
 			);
-			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
-		} );
+			expect(customizeUrl).to.equal('/customize/example.wordpress.com?theme=pub/twentysixteen');
+		});
 
-		test( 'given a theme and wpcom site ID on which that theme is active, should return the correct customize URL', () => {
+		test('given a theme and wpcom site ID on which that theme is active, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
 				{
 					sites: {
@@ -1380,9 +1380,9 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 						activeThemes: {
 							2916284: 'twentysixteen',
@@ -1392,11 +1392,11 @@ describe( 'themes selectors', () => {
 				'twentysixteen',
 				2916284
 			);
-			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com' );
-		} );
+			expect(customizeUrl).to.equal('/customize/example.wordpress.com');
+		});
 
-		describe( 'on a Jetpack site', () => {
-			describe( 'with a non-WP.com theme', () => {
+		describe('on a Jetpack site', () => {
+			describe('with a non-WP.com theme', () => {
 				const state = {
 					sites: {
 						items: {
@@ -1412,46 +1412,46 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							77203074: new ThemeQueryManager( {
+							77203074: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 						activeThemes: {},
 					},
 				};
 
-				describe( 'in the browser', () => {
-					beforeEach( () => {
+				describe('in the browser', () => {
+					beforeEach(() => {
 						global.window = {
 							location: {
 								href: 'https://wordpress.com',
 							},
 						};
-					} );
+					});
 
-					afterEach( () => {
+					afterEach(() => {
 						global.window = undefined;
-					} );
+					});
 
-					test( 'should return customizer URL with return arg and un-suffixed theme ID', () => {
-						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
-						expect( customizeUrl ).to.equal(
+					test('should return customizer URL with return arg and un-suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl(state, 'twentysixteen', 77203074);
+						expect(customizeUrl).to.equal(
 							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
 						);
-					} );
-				} );
+					});
+				});
 
-				describe( 'on the server', () => {
-					test( 'should return customizer URL with un-suffixed theme ID', () => {
-						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
-						expect( customizeUrl ).to.equal(
+				describe('on the server', () => {
+					test('should return customizer URL with un-suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl(state, 'twentysixteen', 77203074);
+						expect(customizeUrl).to.equal(
 							'https://example.net/wp-admin/customize.php?theme=twentysixteen'
 						);
-					} );
-				} );
-			} );
+					});
+				});
+			});
 
-			describe( 'with a WP.com theme', () => {
+			describe('with a WP.com theme', () => {
 				const state = {
 					sites: {
 						items: {
@@ -1467,85 +1467,85 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 						activeThemes: {},
 					},
 				};
 
-				describe( 'in the browser', () => {
-					beforeEach( () => {
+				describe('in the browser', () => {
+					beforeEach(() => {
 						global.window = {
 							location: {
 								href: 'https://wordpress.com',
 							},
 						};
-					} );
+					});
 
-					afterEach( () => {
+					afterEach(() => {
 						global.window = undefined;
-					} );
+					});
 
-					test( 'should return customizer URL with return arg and unsuffixed theme ID', () => {
-						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
-						expect( customizeUrl ).to.equal(
+					test('should return customizer URL with return arg and unsuffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl(state, 'twentysixteen', 77203074);
+						expect(customizeUrl).to.equal(
 							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
 						);
-					} );
-				} );
+					});
+				});
 
-				describe( 'on the server', () => {
-					test( 'should return customizer URL with unsuffixed theme ID', () => {
-						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
-						expect( customizeUrl ).to.equal(
+				describe('on the server', () => {
+					test('should return customizer URL with unsuffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl(state, 'twentysixteen', 77203074);
+						expect(customizeUrl).to.equal(
 							'https://example.net/wp-admin/customize.php?theme=twentysixteen'
 						);
-					} );
-				} );
-			} );
-		} );
-	} );
+					});
+				});
+			});
+		});
+	});
 
-	describe( '#getThemeSignupUrl', () => {
-		test( 'given a free theme, should return the correct signup URL', () => {
+	describe('#getThemeSignupUrl', () => {
+		test('given a free theme, should return the correct signup URL', () => {
 			const signupUrl = getThemeSignupUrl(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentysixteen'
 			);
 
-			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=twentysixteen' );
-		} );
+			expect(signupUrl).to.equal('/start/with-theme?ref=calypshowcase&theme=twentysixteen');
+		});
 
-		test( 'given a premium theme, should return the correct signup URL', () => {
+		test('given a premium theme, should return the correct signup URL', () => {
 			const signupUrl = getThemeSignupUrl(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { mood },
-							} ),
+							}),
 						},
 					},
 				},
 				'mood'
 			);
 
-			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=mood&premium=true' );
-		} );
-	} );
+			expect(signupUrl).to.equal('/start/with-theme?ref=calypshowcase&theme=mood&premium=true');
+		});
+	});
 
-	describe( '#getThemeDemoUrl', () => {
-		test( 'with a theme not found on WP.com nor on WP.org, should return null', () => {
+	describe('#getThemeDemoUrl', () => {
+		test('with a theme not found on WP.com nor on WP.org, should return null', () => {
 			const demoUrl = getThemeDemoUrl(
 				{
 					themes: {
@@ -1556,17 +1556,17 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( demoUrl ).to.be.undefined;
-		} );
+			expect(demoUrl).to.be.undefined;
+		});
 
-		test( "with a theme found on WP.com, should return that object's demo_uri field", () => {
+		test("with a theme found on WP.com, should return that object's demo_uri field", () => {
 			const demoUrl = getThemeDemoUrl(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 					},
 				},
@@ -1574,10 +1574,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( demoUrl ).to.deep.equal( 'https://twentysixteendemo.wordpress.com/' );
-		} );
+			expect(demoUrl).to.deep.equal('https://twentysixteendemo.wordpress.com/');
+		});
 
-		test( "with a theme found on WP.org but not on WP.com, should return that object's demo_uri field", () => {
+		test("with a theme found on WP.org but not on WP.com, should return that object's demo_uri field", () => {
 			const wporgTheme = {
 				id: 'twentyseventeen',
 				name: 'Twenty Seventeen',
@@ -1594,9 +1594,9 @@ describe( 'themes selectors', () => {
 				{
 					themes: {
 						queries: {
-							wporg: new ThemeQueryManager( {
+							wporg: new ThemeQueryManager({
 								items: { twentyseventeen: wporgTheme },
-							} ),
+							}),
 						},
 					},
 				},
@@ -1604,13 +1604,13 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( demoUrl ).to.deep.equal( 'https://wp-themes.com/twentyseventeen' );
-		} );
-	} );
+			expect(demoUrl).to.deep.equal('https://wp-themes.com/twentyseventeen');
+		});
+	});
 
-	describe( '#getThemeForumUrl', () => {
-		describe( 'on a WP.com site', () => {
-			test( 'given a free theme, should return the general themes forum URL', () => {
+	describe('#getThemeForumUrl', () => {
+		describe('on a WP.com site', () => {
+			test('given a free theme, should return the general themes forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1618,19 +1618,19 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { twentysixteen },
-								} ),
+								}),
 							},
 						},
 					},
 					'twentysixteen'
 				);
 
-				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
-			} );
+				expect(forumUrl).to.equal('//en.forums.wordpress.com/forum/themes');
+			});
 
-			test( 'given a premium theme, should return the specific theme forum URL', () => {
+			test('given a premium theme, should return the specific theme forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1638,21 +1638,21 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { mood },
-								} ),
+								}),
 							},
 						},
 					},
 					'mood'
 				);
 
-				expect( forumUrl ).to.equal( '//premium-themes.forums.wordpress.com/forum/mood' );
-			} );
-		} );
+				expect(forumUrl).to.equal('//premium-themes.forums.wordpress.com/forum/mood');
+			});
+		});
 
-		describe( 'on a Jetpack site', () => {
-			test( "given a theme that's found on neither WP.com nor WP.org, should return null", () => {
+		describe('on a Jetpack site', () => {
+			test("given a theme that's found on neither WP.com nor WP.org, should return null", () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1672,10 +1672,10 @@ describe( 'themes selectors', () => {
 					77203074
 				);
 
-				expect( forumUrl ).to.be.null;
-			} );
+				expect(forumUrl).to.be.null;
+			});
 
-			test( "given a theme that's found on WP.com, should return the generic WP.com themes support forum URL", () => {
+			test("given a theme that's found on WP.com, should return the generic WP.com themes support forum URL", () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1689,9 +1689,9 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { twentysixteen },
-								} ),
+								}),
 							},
 						},
 					},
@@ -1699,10 +1699,10 @@ describe( 'themes selectors', () => {
 					77203074
 				);
 
-				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
-			} );
+				expect(forumUrl).to.equal('//en.forums.wordpress.com/forum/themes');
+			});
 
-			test( "given a theme that's found on WP.org, should return the correspoding WP.org theme forum URL", () => {
+			test("given a theme that's found on WP.org, should return the correspoding WP.org theme forum URL", () => {
 				const jetpackTheme = {
 					id: 'twentyseventeen',
 					name: 'Twenty Seventeen',
@@ -1731,12 +1731,12 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								77203074: new ThemeQueryManager( {
+								77203074: new ThemeQueryManager({
 									items: { twentyseventeen: jetpackTheme },
-								} ),
-								wporg: new ThemeQueryManager( {
+								}),
+								wporg: new ThemeQueryManager({
 									items: { twentyseventeen: wporgTheme },
-								} ),
+								}),
 							},
 						},
 					},
@@ -1744,23 +1744,23 @@ describe( 'themes selectors', () => {
 					77203074
 				);
 
-				expect( forumUrl ).to.equal( '//wordpress.org/support/theme/twentyseventeen' );
-			} );
-		} );
-	} );
+				expect(forumUrl).to.equal('//wordpress.org/support/theme/twentyseventeen');
+			});
+		});
+	});
 
-	describe( '#getActiveTheme', () => {
-		test( 'given no site, should return null', () => {
-			const activeTheme = getActiveTheme( {
+	describe('#getActiveTheme', () => {
+		test('given no site, should return null', () => {
+			const activeTheme = getActiveTheme({
 				themes: {
 					activeThemes: {},
 				},
-			} );
+			});
 
-			expect( activeTheme ).to.be.null;
-		} );
+			expect(activeTheme).to.be.null;
+		});
 
-		test( 'given a site, should return its currently active theme', () => {
+		test('given a site, should return its currently active theme', () => {
 			const activeTheme = getActiveTheme(
 				{
 					themes: {
@@ -1772,10 +1772,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( activeTheme ).to.equal( 'twentysixteen' );
-		} );
+			expect(activeTheme).to.equal('twentysixteen');
+		});
 
-		test( 'given a site, should return its currently active theme without -wpcom suffix', () => {
+		test('given a site, should return its currently active theme without -wpcom suffix', () => {
 			const activeTheme = getActiveTheme(
 				{
 					themes: {
@@ -1787,27 +1787,27 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( activeTheme ).to.equal( 'twentysixteen' );
-		} );
-	} );
+			expect(activeTheme).to.equal('twentysixteen');
+		});
+	});
 
-	describe( '#isThemeActive', () => {
-		test( 'given no theme and no site, should return false', () => {
-			const isActive = isThemeActive( {
+	describe('#isThemeActive', () => {
+		test('given no theme and no site, should return false', () => {
+			const isActive = isThemeActive({
 				themes: {
 					activeThemes: {
 						2916284: 'twentysixteen',
 					},
 					queries: {
-						wpcom: new ThemeQueryManager( {} ),
+						wpcom: new ThemeQueryManager({}),
 					},
 				},
-			} );
+			});
 
-			expect( isActive ).to.be.false;
-		} );
+			expect(isActive).to.be.false;
+		});
 
-		test( 'given a theme but no site, should return false', () => {
+		test('given a theme but no site, should return false', () => {
 			const isActive = isThemeActive(
 				{
 					themes: {
@@ -1815,17 +1815,17 @@ describe( 'themes selectors', () => {
 							2916284: 'twentysixteen',
 						},
 						queries: {
-							wpcom: new ThemeQueryManager( {} ),
+							wpcom: new ThemeQueryManager({}),
 						},
 					},
 				},
 				'mood'
 			);
 
-			expect( isActive ).to.be.false;
-		} );
+			expect(isActive).to.be.false;
+		});
 
-		test( "given a theme and a site on which it isn't active, should return false", () => {
+		test("given a theme and a site on which it isn't active, should return false", () => {
 			const isActive = isThemeActive(
 				{
 					themes: {
@@ -1833,7 +1833,7 @@ describe( 'themes selectors', () => {
 							2916284: 'twentysixteen',
 						},
 						queries: {
-							wpcom: new ThemeQueryManager( {} ),
+							wpcom: new ThemeQueryManager({}),
 						},
 					},
 					sites: {
@@ -1846,10 +1846,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isActive ).to.be.false;
-		} );
+			expect(isActive).to.be.false;
+		});
 
-		test( 'given a theme and a site on which it is active, should return true', () => {
+		test('given a theme and a site on which it is active, should return true', () => {
 			const isActive = isThemeActive(
 				{
 					themes: {
@@ -1857,7 +1857,7 @@ describe( 'themes selectors', () => {
 							2916284: 'mood',
 						},
 						queries: {
-							wpcom: new ThemeQueryManager( {} ),
+							wpcom: new ThemeQueryManager({}),
 						},
 					},
 					sites: {
@@ -1870,10 +1870,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isActive ).to.be.true;
-		} );
+			expect(isActive).to.be.true;
+		});
 
-		test( 'given a wpcom theme and a jetpack site on which it is active, should return true', () => {
+		test('given a wpcom theme and a jetpack site on which it is active, should return true', () => {
 			const isActive = isThemeActive(
 				{
 					themes: {
@@ -1881,9 +1881,9 @@ describe( 'themes selectors', () => {
 							77203074: 'karuna-wpcom',
 						},
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { karuna: { id: 'karuna' } },
-							} ),
+							}),
 						},
 					},
 					sites: {
@@ -1896,22 +1896,22 @@ describe( 'themes selectors', () => {
 				77203074
 			);
 
-			expect( isActive ).to.be.true;
-		} );
-	} );
+			expect(isActive).to.be.true;
+		});
+	});
 
-	describe( '#isActivatingTheme', () => {
-		test( 'given no site, should return false', () => {
-			const activating = isActivatingTheme( {
+	describe('#isActivatingTheme', () => {
+		test('given no site, should return false', () => {
+			const activating = isActivatingTheme({
 				themes: {
 					activationRequests: {},
 				},
-			} );
+			});
 
-			expect( activating ).to.be.false;
-		} );
+			expect(activating).to.be.false;
+		});
 
-		test( 'given a site, should return true if theme is currently activated', () => {
+		test('given a site, should return true if theme is currently activated', () => {
 			const activating = isActivatingTheme(
 				{
 					themes: {
@@ -1923,22 +1923,22 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( activating ).to.be.true;
-		} );
-	} );
+			expect(activating).to.be.true;
+		});
+	});
 
-	describe( '#hasActivatedTheme', () => {
-		test( 'given no site, should return false', () => {
-			const activated = hasActivatedTheme( {
+	describe('#hasActivatedTheme', () => {
+		test('given no site, should return false', () => {
+			const activated = hasActivatedTheme({
 				themes: {
 					completedActivationRequests: {},
 				},
-			} );
+			});
 
-			expect( activated ).to.be.false;
-		} );
+			expect(activated).to.be.false;
+		});
 
-		test( 'given a site, should return true if theme has been activated', () => {
+		test('given a site, should return true if theme has been activated', () => {
 			const activated = hasActivatedTheme(
 				{
 					themes: {
@@ -1950,22 +1950,22 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( activated ).to.be.true;
-		} );
-	} );
+			expect(activated).to.be.true;
+		});
+	});
 
-	describe( '#isRequestingActiveTheme', () => {
-		test( 'given empty state, should return false', () => {
-			const isRequesting = isRequestingActiveTheme( {
+	describe('#isRequestingActiveTheme', () => {
+		test('given empty state, should return false', () => {
+			const isRequesting = isRequestingActiveTheme({
 				themes: {
 					activeThemeRequests: {},
 				},
-			} );
+			});
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'given no active request, should return false', () => {
+		test('given no active request, should return false', () => {
 			const isRequesting = isRequestingActiveTheme(
 				{
 					themes: {
@@ -1977,10 +1977,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'given pending action request, should return true', () => {
+		test('given pending action request, should return true', () => {
 			const isRequesting = isRequestingActiveTheme(
 				{
 					themes: {
@@ -1992,22 +1992,22 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( '#isInstallingTheme', () => {
-		test( 'given no site, should return false', () => {
-			const installing = isInstallingTheme( {
+	describe('#isInstallingTheme', () => {
+		test('given no site, should return false', () => {
+			const installing = isInstallingTheme({
 				themes: {
 					themeInstalls: {},
 				},
-			} );
+			});
 
-			expect( installing ).to.be.false;
-		} );
+			expect(installing).to.be.false;
+		});
 
-		test( 'given a site, should return true if theme is currently being installed', () => {
+		test('given a site, should return true if theme is currently being installed', () => {
 			const installing = isInstallingTheme(
 				{
 					themes: {
@@ -2017,7 +2017,7 @@ describe( 'themes selectors', () => {
 							},
 						},
 						queries: {
-							wpcom: new ThemeQueryManager( {} ),
+							wpcom: new ThemeQueryManager({}),
 						},
 					},
 					sites: {
@@ -2030,10 +2030,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( installing ).to.be.true;
-		} );
+			expect(installing).to.be.true;
+		});
 
-		test( 'given a jetpack site and wpcom theme, should return true if theme is currently being installed', () => {
+		test('given a jetpack site and wpcom theme, should return true if theme is currently being installed', () => {
 			const installing = isInstallingTheme(
 				{
 					themes: {
@@ -2043,9 +2043,9 @@ describe( 'themes selectors', () => {
 							},
 						},
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { karuna: { id: 'karuna' } },
-							} ),
+							}),
 						},
 					},
 					sites: {
@@ -2058,12 +2058,12 @@ describe( 'themes selectors', () => {
 				77203074
 			);
 
-			expect( installing ).to.be.true;
-		} );
-	} );
+			expect(installing).to.be.true;
+		});
+	});
 
-	describe( '#isWporgTheme()', () => {
-		test( 'should return false if theme is not found on WP.org', () => {
+	describe('#isWporgTheme()', () => {
+		test('should return false if theme is not found on WP.org', () => {
 			const isWporg = isWporgTheme(
 				{
 					themes: {
@@ -2073,10 +2073,10 @@ describe( 'themes selectors', () => {
 				'twentyseventeen'
 			);
 
-			expect( isWporg ).to.be.false;
-		} );
+			expect(isWporg).to.be.false;
+		});
 
-		test( 'should return true if theme is found on WP.org', () => {
+		test('should return true if theme is found on WP.org', () => {
 			const wporgTheme = {
 				id: 'twentyseventeen',
 				name: 'Twenty Seventeen',
@@ -2093,21 +2093,21 @@ describe( 'themes selectors', () => {
 				{
 					themes: {
 						queries: {
-							wporg: new ThemeQueryManager( {
+							wporg: new ThemeQueryManager({
 								items: { twentyseventeen: wporgTheme },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentyseventeen'
 			);
 
-			expect( isWporg ).to.be.true;
-		} );
-	} );
+			expect(isWporg).to.be.true;
+		});
+	});
 
-	describe( '#isWpcomTheme()', () => {
-		test( 'should return false if theme is not found on WP.com', () => {
+	describe('#isWpcomTheme()', () => {
+		test('should return false if theme is not found on WP.com', () => {
 			const isWpcom = isWporgTheme(
 				{
 					themes: {
@@ -2117,89 +2117,89 @@ describe( 'themes selectors', () => {
 				'twentysixteen'
 			);
 
-			expect( isWpcom ).to.be.false;
-		} );
+			expect(isWpcom).to.be.false;
+		});
 
-		test( 'should return true if theme is found on WP.com', () => {
+		test('should return true if theme is found on WP.com', () => {
 			const isWpcom = isWpcomTheme(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentysixteen'
 			);
 
-			expect( isWpcom ).to.be.true;
-		} );
-	} );
+			expect(isWpcom).to.be.true;
+		});
+	});
 
-	describe( '#isPremium()', () => {
-		test( 'given no theme object, should return false', () => {
-			const premium = isThemePremium( {
+	describe('#isPremium()', () => {
+		test('given no theme object, should return false', () => {
+			const premium = isThemePremium({
 				themes: {
 					queries: {},
 				},
-			} );
-			expect( premium ).to.be.false;
-		} );
+			});
+			expect(premium).to.be.false;
+		});
 
-		test( "given the ID of a theme that doesn't exist, should return false", () => {
+		test("given the ID of a theme that doesn't exist, should return false", () => {
 			const premium = isThemePremium(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentyumpteen'
 			);
-			expect( premium ).to.be.false;
-		} );
+			expect(premium).to.be.false;
+		});
 
-		test( 'given the ID of a free theme, should return false', () => {
+		test('given the ID of a free theme, should return false', () => {
 			const premium = isThemePremium(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentysixteen },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentysixteen'
 			);
-			expect( premium ).to.be.false;
-		} );
+			expect(premium).to.be.false;
+		});
 
-		test( 'given the ID of a premium theme, should return true', () => {
+		test('given the ID of a premium theme, should return true', () => {
 			const premium = isThemePremium(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { mood },
-							} ),
+							}),
 						},
 					},
 				},
 				'mood'
 			);
-			expect( premium ).to.be.true;
-		} );
-	} );
+			expect(premium).to.be.true;
+		});
+	});
 
-	describe( '#isThemePurchased', () => {
-		test( 'given no theme and no site, should return false', () => {
-			const isPurchased = isThemePurchased( {
+	describe('#isThemePurchased', () => {
+		test('given no theme and no site, should return false', () => {
+			const isPurchased = isThemePurchased({
 				purchases: {
 					data: [
 						{
@@ -2210,12 +2210,12 @@ describe( 'themes selectors', () => {
 						},
 					],
 				},
-			} );
+			});
 
-			expect( isPurchased ).to.be.false;
-		} );
+			expect(isPurchased).to.be.false;
+		});
 
-		test( 'given a theme but no site, should return false', () => {
+		test('given a theme but no site, should return false', () => {
 			const isPurchased = isThemePurchased(
 				{
 					purchases: {
@@ -2232,10 +2232,10 @@ describe( 'themes selectors', () => {
 				'mood'
 			);
 
-			expect( isPurchased ).to.be.false;
-		} );
+			expect(isPurchased).to.be.false;
+		});
 
-		test( 'given a theme that has not been purchased on a given site, should return false', () => {
+		test('given a theme that has not been purchased on a given site, should return false', () => {
 			const isPurchased = isThemePurchased(
 				{
 					purchases: {
@@ -2253,10 +2253,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isPurchased ).to.be.false;
-		} );
+			expect(isPurchased).to.be.false;
+		});
 
-		test( 'given a theme that has been purchased on a given site, should return true', () => {
+		test('given a theme that has been purchased on a given site, should return true', () => {
 			const isPurchased = isThemePurchased(
 				{
 					purchases: {
@@ -2274,13 +2274,13 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isPurchased ).to.be.true;
-		} );
-	} );
+			expect(isPurchased).to.be.true;
+		});
+	});
 
-	describe( '#isPremiumThemeAvailable', () => {
-		test( 'given no theme and no site, should return false', () => {
-			const isAvailable = isPremiumThemeAvailable( {
+	describe('#isPremiumThemeAvailable', () => {
+		test('given no theme and no site, should return false', () => {
+			const isAvailable = isPremiumThemeAvailable({
 				themes: {
 					queries: {},
 				},
@@ -2294,12 +2294,12 @@ describe( 'themes selectors', () => {
 						},
 					],
 				},
-			} );
+			});
 
-			expect( isAvailable ).to.be.false;
-		} );
+			expect(isAvailable).to.be.false;
+		});
 
-		test( 'given a theme but no site, should return false', () => {
+		test('given a theme but no site, should return false', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					themes: {
@@ -2319,10 +2319,10 @@ describe( 'themes selectors', () => {
 				'espresso'
 			);
 
-			expect( isAvailable ).to.be.false;
-		} );
+			expect(isAvailable).to.be.false;
+		});
 
-		test( 'given a theme that has not been purchased on a given site, should return false', () => {
+		test('given a theme that has not been purchased on a given site, should return false', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2339,9 +2339,9 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { mood },
-							} ),
+							}),
 						},
 					},
 					purchases: {
@@ -2359,10 +2359,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isAvailable ).to.be.false;
-		} );
+			expect(isAvailable).to.be.false;
+		});
 
-		test( 'given a premium squared theme and a site without the premium upgrade, should return false', () => {
+		test('given a premium squared theme and a site without the premium upgrade, should return false', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2382,9 +2382,9 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { mood },
-							} ),
+							}),
 						},
 					},
 					purchases: {
@@ -2395,10 +2395,10 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isAvailable ).to.be.false;
-		} );
+			expect(isAvailable).to.be.false;
+		});
 
-		test( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
+		test('given a premium squared theme and a site with the premium upgrade, should return true', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2418,9 +2418,9 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { mood },
-							} ),
+							}),
 						},
 					},
 					purchases: {
@@ -2431,11 +2431,11 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 
-			expect( isAvailable ).to.be.true;
-		} );
+			expect(isAvailable).to.be.true;
+		});
 
-		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
-			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( plan => {
+		test('given a site with the unlimited premium themes bundle, should return true', () => {
+			[PLAN_BUSINESS, PLAN_ECOMMERCE].forEach((plan) => {
 				const isAvailable = isPremiumThemeAvailable(
 					{
 						sites: {
@@ -2455,9 +2455,9 @@ describe( 'themes selectors', () => {
 						},
 						themes: {
 							queries: {
-								wpcom: new ThemeQueryManager( {
+								wpcom: new ThemeQueryManager({
 									items: { mood },
-								} ),
+								}),
 							},
 						},
 						purchases: {
@@ -2468,13 +2468,13 @@ describe( 'themes selectors', () => {
 					2916284
 				);
 
-				expect( isAvailable ).to.be.true;
-			} );
-		} );
-	} );
+				expect(isAvailable).to.be.true;
+			});
+		});
+	});
 
-	describe( '#isThemeAvailableOnJetpackSite', () => {
-		test( 'should return true if theme is already installed on Jetpack site', () => {
+	describe('#isThemeAvailableOnJetpackSite', () => {
+		test('should return true if theme is already installed on Jetpack site', () => {
 			const isAvailable = isThemeAvailableOnJetpackSite(
 				{
 					sites: {
@@ -2488,19 +2488,19 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							77203074: new ThemeQueryManager( {
+							77203074: new ThemeQueryManager({
 								items: { twentyfifteen },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentyfifteen',
 				77203074
 			);
-			expect( isAvailable ).to.be.true;
-		} );
+			expect(isAvailable).to.be.true;
+		});
 
-		test( "should return false if theme is a WP.com theme but Jetpack site doesn't support WP.com theme installation", () => {
+		test("should return false if theme is a WP.com theme but Jetpack site doesn't support WP.com theme installation", () => {
 			const isAvailable = isThemeAvailableOnJetpackSite(
 				{
 					sites: {
@@ -2517,19 +2517,19 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentyfifteen },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentyfifteen',
 				77203074
 			);
-			expect( isAvailable ).to.be.false;
-		} );
+			expect(isAvailable).to.be.false;
+		});
 
-		test( 'should return true if theme is a WP.com theme and Jetpack site supports WP.com theme installation', () => {
+		test('should return true if theme is a WP.com theme and Jetpack site supports WP.com theme installation', () => {
 			const isAvailable = isThemeAvailableOnJetpackSite(
 				{
 					sites: {
@@ -2546,21 +2546,21 @@ describe( 'themes selectors', () => {
 					},
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { twentyfifteen },
-							} ),
+							}),
 						},
 					},
 				},
 				'twentyfifteen',
 				77203074
 			);
-			expect( isAvailable ).to.be.true;
-		} );
-	} );
+			expect(isAvailable).to.be.true;
+		});
+	});
 
-	describe( 'getWpcomParentThemeId', () => {
-		test( 'should return null for non-existent theme', () => {
+	describe('getWpcomParentThemeId', () => {
+		test('should return null for non-existent theme', () => {
 			const parentId = getWpcomParentThemeId(
 				{
 					themes: {
@@ -2569,39 +2569,39 @@ describe( 'themes selectors', () => {
 				},
 				'blah'
 			);
-			expect( parentId ).to.be.null;
-		} );
+			expect(parentId).to.be.null;
+		});
 
-		test( 'should return null for theme with no parent', () => {
+		test('should return null for theme with no parent', () => {
 			const parentId = getWpcomParentThemeId(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { mood },
-							} ),
+							}),
 						},
 					},
 				},
 				'mood'
 			);
-			expect( parentId ).to.be.null;
-		} );
+			expect(parentId).to.be.null;
+		});
 
-		test( 'should return parent id', () => {
+		test('should return parent id', () => {
 			const parentId = getWpcomParentThemeId(
 				{
 					themes: {
 						queries: {
-							wpcom: new ThemeQueryManager( {
+							wpcom: new ThemeQueryManager({
 								items: { sidekick },
-							} ),
+							}),
 						},
 					},
 				},
 				'sidekick'
 			);
-			expect( parentId ).to.equal( 'superhero' );
-		} );
-	} );
-} );
+			expect(parentId).to.equal('superhero');
+		});
+	});
+});

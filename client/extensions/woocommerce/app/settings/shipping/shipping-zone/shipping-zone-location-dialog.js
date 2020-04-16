@@ -23,21 +23,21 @@ import {
 	areCurrentlyEditingShippingZoneLocationsValid,
 } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
-const ShippingZoneLocationDialog = ( {
+const ShippingZoneLocationDialog = ({
 	siteId,
 	isVisible,
 	isAdding,
 	translate,
 	actions,
 	canSave,
-} ) => {
-	if ( ! isVisible ) {
+}) => {
+	if (!isVisible) {
 		return null;
 	}
 
 	const onCancel = () => actions.cancelEditLocations();
 	const onClose = () => {
-		if ( ! canSave ) {
+		if (!canSave) {
 			return;
 		}
 
@@ -45,12 +45,12 @@ const ShippingZoneLocationDialog = ( {
 	};
 
 	const buttons = [
-		{ action: 'cancel', label: translate( 'Cancel' ) },
+		{ action: 'cancel', label: translate('Cancel') },
 		{
 			action: 'add',
-			label: isAdding ? translate( 'Add' ) : translate( 'Done' ),
+			label: isAdding ? translate('Add') : translate('Done'),
 			onClick: onClose,
-			disabled: ! canSave,
+			disabled: !canSave,
 			isPrimary: true,
 		},
 	];
@@ -58,13 +58,13 @@ const ShippingZoneLocationDialog = ( {
 	return (
 		<Dialog
 			additionalClassNames="shipping-zone__location-dialog woocommerce"
-			isVisible={ isVisible }
-			buttons={ buttons }
-			onClose={ onCancel }
+			isVisible={isVisible}
+			buttons={buttons}
+			onClose={onCancel}
 		>
-			<div className="shipping-zone__location-dialog-header">{ translate( 'Edit location' ) }</div>
-			<ShippingZoneLocationDialogCountries siteId={ siteId } />
-			<ShippingZoneLocationDialogSettings siteId={ siteId } />
+			<div className="shipping-zone__location-dialog-header">{translate('Edit location')}</div>
+			<ShippingZoneLocationDialogCountries siteId={siteId} />
+			<ShippingZoneLocationDialogSettings siteId={siteId} />
 		</Dialog>
 	);
 };
@@ -75,11 +75,11 @@ ShippingZoneLocationDialog.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		isVisible: isEditLocationsModalOpen( state ),
-		canSave: areCurrentlyEditingShippingZoneLocationsValid( state ),
-	} ),
-	( dispatch, ownProps ) => ( {
+	(state) => ({
+		isVisible: isEditLocationsModalOpen(state),
+		canSave: areCurrentlyEditingShippingZoneLocationsValid(state),
+	}),
+	(dispatch, ownProps) => ({
 		actions: bindActionCreatorsWithSiteId(
 			{
 				closeEditLocations,
@@ -88,5 +88,5 @@ export default connect(
 			dispatch,
 			ownProps.siteId
 		),
-	} )
-)( localize( ShippingZoneLocationDialog ) );
+	})
+)(localize(ShippingZoneLocationDialog));

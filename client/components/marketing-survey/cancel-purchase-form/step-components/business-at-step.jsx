@@ -27,51 +27,51 @@ export class BusinessATStep extends Component {
 	};
 
 	onClickPluginSupport = () => {
-		this.props.recordTracksEvent( 'calypso_cancellation_business_at_plugin_support_click' );
+		this.props.recordTracksEvent('calypso_cancellation_business_at_plugin_support_click');
 	};
 
 	onClickThemeSupport = () => {
-		this.props.recordTracksEvent( 'calypso_cancellation_business_at_theme_support_click' );
+		this.props.recordTracksEvent('calypso_cancellation_business_at_theme_support_click');
 	};
 
 	render() {
 		const { translate } = this.props;
 		const pluginLink = (
 			<a
-				onClick={ this.onClickPluginSupport }
+				onClick={this.onClickPluginSupport}
 				target="_blank"
 				rel="noopener noreferrer"
-				href={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
+				href={localizeUrl('https://wordpress.com/support/plugins/')}
 			/>
 		);
 		const themeLink = (
 			<a
-				onClick={ this.onClickThemeSupport }
+				onClick={this.onClickThemeSupport}
 				target="_blank"
 				rel="noopener noreferrer"
-				href={ localizeUrl( 'https://wordpress.com/support/themes/adding-new-themes/' ) }
+				href={localizeUrl('https://wordpress.com/support/themes/adding-new-themes/')}
 			/>
 		);
 
 		return (
 			<div>
 				<FormSectionHeading>
-					{ translate( 'New! Install Custom Plugins and Themes' ) }
+					{translate('New! Install Custom Plugins and Themes')}
 				</FormSectionHeading>
 				<FormFieldset>
 					<p>
-						{ translate(
+						{translate(
 							'Have a theme or plugin you need to install to build the site you want? ' +
 								'Now you can! ' +
 								'Learn more about {{pluginLink}}installing plugins{{/pluginLink}} and ' +
 								'{{themeLink}}uploading themes{{/themeLink}} today.',
 							{ components: { pluginLink, themeLink } }
-						) }
+						)}
 					</p>
 					<p>
-						{ translate(
+						{translate(
 							'Are you sure you want to cancel your subscription and lose access to these new features?'
-						) }
+						)}
 					</p>
 				</FormFieldset>
 			</div>
@@ -82,4 +82,4 @@ export class BusinessATStep extends Component {
 const mapStateToProps = null;
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( BusinessATStep ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(BusinessATStep));

@@ -16,9 +16,9 @@ import { getPreference } from 'state/preferences/selectors';
  * @param  {number}  siteId The Id of the site
  * @returns {boolean} True if the nudge has been dismissed
  */
-export default function isECommerceManageNudgeDismissed( state, siteId ) {
-	const preference = getPreference( state, 'ecommerce-manage-dismissible-nudge' ) || {};
-	const sitePreference = preference[ siteId ] || [];
-	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
+export default function isECommerceManageNudgeDismissed(state, siteId) {
+	const preference = getPreference(state, 'ecommerce-manage-dismissible-nudge') || {};
+	const sitePreference = preference[siteId] || [];
+	const lastEvent = last(sitePreference.filter((event) => 'dismiss' === event.type));
 	return lastEvent ? true : false;
 }

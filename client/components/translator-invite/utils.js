@@ -12,7 +12,7 @@ import { getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
 /**
  * Module variables
  */
-const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
+const defaultLanguageSlug = config('i18n_default_locale_slug');
 
 /**
  * Checks a locale against the default. Returns true if the
@@ -22,8 +22,8 @@ const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
  * @param {string} locale An language slug
  * @returns {boolean} The locale slug of the language, if any found.
  */
-export function isDefaultLocale( locale ) {
-	return startsWith( locale, defaultLanguageSlug );
+export function isDefaultLocale(locale) {
+	return startsWith(locale, defaultLanguageSlug);
 }
 
 /**
@@ -34,28 +34,28 @@ export function isDefaultLocale( locale ) {
  * @param {string} urlPath Current path
  * @returns {string|null} The locale slug of the language, if any found.
  */
-export function getCurrentNonDefaultLocale( locale, urlPath ) {
+export function getCurrentNonDefaultLocale(locale, urlPath) {
 	// First try the locale passed as props.
-	let languageLocale = ! isDefaultLocale( locale ) ? locale : null;
+	let languageLocale = !isDefaultLocale(locale) ? locale : null;
 
 	// Then the locale in the path, if any.
-	if ( ! languageLocale && urlPath ) {
-		languageLocale = getLocaleFromPath( urlPath );
-		languageLocale = ! isDefaultLocale( languageLocale ) ? languageLocale : null;
+	if (!languageLocale && urlPath) {
+		languageLocale = getLocaleFromPath(urlPath);
+		languageLocale = !isDefaultLocale(languageLocale) ? languageLocale : null;
 	}
 
 	// Then navigator.languages.
-	if ( ! languageLocale && typeof navigator === 'object' && 'languages' in navigator ) {
-		for ( const langSlug of navigator.languages ) {
-			const language = getLanguage( langSlug.toLowerCase() );
-			if ( language && ! isDefaultLocale( language.langSlug ) ) {
+	if (!languageLocale && typeof navigator === 'object' && 'languages' in navigator) {
+		for (const langSlug of navigator.languages) {
+			const language = getLanguage(langSlug.toLowerCase());
+			if (language && !isDefaultLocale(language.langSlug)) {
 				languageLocale = language.langSlug;
 				break;
 			}
 		}
 	}
 
-	if ( languageLocale ) {
+	if (languageLocale) {
 		return languageLocale;
 	}
 

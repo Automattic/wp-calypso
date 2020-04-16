@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param {?number|string} siteId the site ID
  * @returns {?object} Progress object, null if no data
  */
-export default function getRestoreProgress( state, siteId ) {
-	return get( state, [ 'activityLog', 'restoreProgress', siteId ], null );
+export default function getRestoreProgress(state, siteId) {
+	return get(state, ['activityLog', 'restoreProgress', siteId], null);
 }

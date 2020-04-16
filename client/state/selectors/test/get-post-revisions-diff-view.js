@@ -8,10 +8,10 @@ import { expect } from 'chai';
  */
 import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-view';
 
-describe( 'getPostRevisionsDiffView', () => {
-	test( 'should return "unified" if the revisions UI diffView state is not set', () => {
+describe('getPostRevisionsDiffView', () => {
+	test('should return "unified" if the revisions UI diffView state is not set', () => {
 		expect(
-			getPostRevisionsDiffView( {
+			getPostRevisionsDiffView({
 				posts: {
 					revisions: {
 						ui: {
@@ -19,13 +19,13 @@ describe( 'getPostRevisionsDiffView', () => {
 						},
 					},
 				},
-			} )
-		).to.eql( 'unified' );
-	} );
+			})
+		).to.eql('unified');
+	});
 
-	test( 'should return "split" if the revisions UI diffView state is split', () => {
+	test('should return "split" if the revisions UI diffView state is split', () => {
 		expect(
-			getPostRevisionsDiffView( {
+			getPostRevisionsDiffView({
 				posts: {
 					revisions: {
 						ui: {
@@ -34,7 +34,7 @@ describe( 'getPostRevisionsDiffView', () => {
 						},
 					},
 				},
-			} )
-		).to.eql( 'split' );
-	} );
-} );
+			})
+		).to.eql('split');
+	});
+});

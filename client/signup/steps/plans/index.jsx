@@ -35,34 +35,34 @@ import './style.scss';
 
 export class PlansStep extends Component {
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep({ stepName: this.props.stepName });
 	}
 
-	onSelectPlan = cartItem => {
+	onSelectPlan = (cartItem) => {
 		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
 
-		if ( cartItem ) {
-			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
+		if (cartItem) {
+			this.props.recordTracksEvent('calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
-			} );
+			});
 
 			// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
 			// set a flag on it. It will trigger Automated Transfer when the product is being
 			// activated at the end of the checkout process.
 			if (
 				flowName === 'ecommerce' &&
-				planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
+				planHasFeature(cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS)
 			) {
-				cartItem.extra = Object.assign( cartItem.extra || {}, {
+				cartItem.extra = Object.assign(cartItem.extra || {}, {
 					is_store_signup: true,
-				} );
+				});
 			}
 		} else {
-			this.props.recordTracksEvent( 'calypso_signup_free_plan_select', {
+			this.props.recordTracksEvent('calypso_signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
-			} );
+			});
 		}
 
 		const step = {
@@ -72,15 +72,15 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, {
+		this.props.submitSignupStep(step, {
 			cartItem,
 			// dependencies used only for 'plans-with-domain' step in Gutenboarding pre-launch flow
-			...( this.isGutenboarding() &&
-				! this.props.isLaunchPage && {
+			...(this.isGutenboarding() &&
+				!this.props.isLaunchPage && {
 					isPreLaunch: true,
 					isGutenboardingCreate: true,
-				} ),
-		} );
+				}),
+		});
 		this.props.goToNextStep();
 	};
 
@@ -91,20 +91,20 @@ export class PlansStep extends Component {
 	}
 
 	getCustomerType() {
-		if ( this.props.customerType ) {
+		if (this.props.customerType) {
 			return this.props.customerType;
 		}
 
-		const siteGoals = this.props.siteGoals.split( ',' );
+		const siteGoals = this.props.siteGoals.split(',');
 		const customerType =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
-			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
+			getSiteTypePropertyValue('slug', this.props.siteType, 'customerType') ||
+			(intersection(siteGoals, ['sell', 'promote']).length > 0 ? 'business' : 'personal');
 
 		return customerType;
 	}
 
 	handleFreePlanButtonClick = () => {
-		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+		this.onSelectPlan(null); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
 	isGutenboarding = () =>
@@ -112,21 +112,21 @@ export class PlansStep extends Component {
 
 	isEligibleForPlanStepTest() {
 		return (
-			! this.props.isLaunchPage &&
-			! this.isGutenboarding() &&
-			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
+			!this.props.isLaunchPage &&
+			!this.isGutenboarding() &&
+			'variantCopyUpdates' === abtest('planStepCopyUpdates')
 		);
 	}
 
 	getGutenboardingHeader() {
-		if ( this.isGutenboarding() ) {
+		if (this.isGutenboarding()) {
 			const { headerText, subHeaderText } = this.props;
 
 			return (
 				<GutenboardingHeader
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					onFreePlanSelect={ this.handleFreePlanButtonClick }
+					headerText={headerText}
+					subHeaderText={subHeaderText}
+					onFreePlanSelect={this.handleFreePlanButtonClick}
 				/>
 			);
 		}
@@ -149,28 +149,28 @@ export class PlansStep extends Component {
 				<QueryPlans />
 
 				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
-					isInSignup={ true }
-					isLaunchPage={ isLaunchPage }
-					isEligibleForPlanStepTest={ this.isEligibleForPlanStepTest() }
-					onUpgradeClick={ this.onSelectPlan }
-					showFAQ={ false }
-					displayJetpackPlans={ false }
-					domainName={ this.getDomainName() }
-					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-					plansWithScroll={ true }
-					planTypes={ planTypes }
-					flowName={ flowName }
-					customHeader={ this.getGutenboardingHeader() }
+					site={selectedSite || {}} // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					hideFreePlan={hideFreePlan}
+					isInSignup={true}
+					isLaunchPage={isLaunchPage}
+					isEligibleForPlanStepTest={this.isEligibleForPlanStepTest()}
+					onUpgradeClick={this.onSelectPlan}
+					showFAQ={false}
+					displayJetpackPlans={false}
+					domainName={this.getDomainName()}
+					customerType={this.getCustomerType()}
+					disableBloggerPlanWithNonBlogDomain={disableBloggerPlanWithNonBlogDomain}
+					plansWithScroll={true}
+					planTypes={planTypes}
+					flowName={flowName}
+					customHeader={this.getGutenboardingHeader()}
 				/>
 			</div>
 		);
 	}
 
 	getHeaderTextAB() {
-		if ( this.isEligibleForPlanStepTest() ) {
+		if (this.isEligibleForPlanStepTest()) {
 			return 'Select your WordPress.com plan';
 		}
 
@@ -178,7 +178,7 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderTextAB() {
-		if ( this.isEligibleForPlanStepTest() ) {
+		if (this.isEligibleForPlanStepTest()) {
 			return 'All plans include blazing-fast WordPress hosting.';
 		}
 
@@ -191,47 +191,47 @@ export class PlansStep extends Component {
 		const headerText =
 			this.getHeaderTextAB() ||
 			this.props.headerText ||
-			translate( "Pick a plan that's right for you." );
+			translate("Pick a plan that's right for you.");
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText =
 			this.getSubHeaderTextAB() ||
 			this.props.subHeaderText ||
-			translate( 'Choose a plan. Upgrade as you grow.' );
+			translate('Choose a plan. Upgrade as you grow.');
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
 		let backUrl, backLabelText;
 
-		if ( 0 === positionInFlow && selectedSite ) {
+		if (0 === positionInFlow && selectedSite) {
 			backUrl = '/view/' + siteSlug;
-			backLabelText = translate( 'Back to Site' );
+			backLabelText = translate('Back to Site');
 		}
 
 		return (
 			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ headerText }
-				fallbackHeaderText={ fallbackHeaderText }
-				subHeaderText={ subHeaderText }
-				fallbackSubHeaderText={ fallbackSubHeaderText }
-				isWideLayout={ true }
-				stepContent={ this.plansFeaturesList() }
-				allowBackFirstStep={ !! selectedSite }
-				backUrl={ backUrl }
-				backLabelText={ backLabelText }
-				hideFormattedHeader={ this.isGutenboarding() }
+				flowName={flowName}
+				stepName={stepName}
+				positionInFlow={positionInFlow}
+				headerText={headerText}
+				fallbackHeaderText={fallbackHeaderText}
+				subHeaderText={subHeaderText}
+				fallbackSubHeaderText={fallbackSubHeaderText}
+				isWideLayout={true}
+				stepContent={this.plansFeaturesList()}
+				allowBackFirstStep={!!selectedSite}
+				backUrl={backUrl}
+				backLabelText={backLabelText}
+				hideFormattedHeader={this.isGutenboarding()}
 			/>
 		);
 	}
 
 	render() {
-		const classes = classNames( 'plans plans-step', {
+		const classes = classNames('plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
-		} );
+		});
 
-		return <div className={ classes }>{ this.plansFeaturesSelection() }</div>;
+		return <div className={classes}>{this.plansFeaturesSelection()}</div>;
 	}
 }
 
@@ -256,28 +256,28 @@ PlansStep.propTypes = {
  * @param {object} domainItem domainItem object stored in the "choose domain" step
  * @returns {boolean} is .blog domain registration
  */
-export const isDotBlogDomainRegistration = domainItem => {
-	if ( ! domainItem ) {
+export const isDotBlogDomainRegistration = (domainItem) => {
+	if (!domainItem) {
 		return false;
 	}
 	const { is_domain_registration, meta } = domainItem;
 
-	return is_domain_registration && getTld( meta ) === 'blog';
+	return is_domain_registration && getTld(meta) === 'blog';
 };
 
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	(state, { path, signupDependencies: { siteSlug, domainItem } }) => ({
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
-			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
+			domainItem && !isSubdomain(domainItem.meta) && !isDotBlogDomainRegistration(domainItem),
 		// This step could be used to set up an existing site, in which case
 		// some descendants of this component may display discounted prices if
 		// they apply to the given site.
-		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
-		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		siteGoals: getSiteGoals( state ) || '',
-		siteType: getSiteType( state ),
+		selectedSite: siteSlug ? getSiteBySlug(state, siteSlug) : null,
+		customerType: parseQs(path.split('?').pop()).customerType,
+		siteGoals: getSiteGoals(state) || '',
+		siteType: getSiteType(state),
 		siteSlug,
-	} ),
+	}),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
-)( localize( PlansStep ) );
+)(localize(PlansStep));

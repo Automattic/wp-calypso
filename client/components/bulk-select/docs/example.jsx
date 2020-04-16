@@ -20,38 +20,38 @@ export default class extends React.Component {
 		],
 	};
 
-	handleToggleAll = checkedState => {
+	handleToggleAll = (checkedState) => {
 		let newElements = [];
-		this.state.elements.forEach( element => {
-			if ( typeof checkedState !== 'undefined' ) {
+		this.state.elements.forEach((element) => {
+			if (typeof checkedState !== 'undefined') {
 				element.selected = checkedState;
 			} else {
-				element.selected = ! element.selected;
+				element.selected = !element.selected;
 			}
-			newElements.push( element );
-		} );
-		this.setState( { elements: newElements } );
+			newElements.push(element);
+		});
+		this.setState({ elements: newElements });
 	};
 
 	getSelectedElementsNumber = () => {
-		return this.state.elements.filter( function( element ) {
+		return this.state.elements.filter(function (element) {
 			return element.selected;
-		} ).length;
+		}).length;
 	};
 
 	renderElements = () => {
-		return this.state.elements.map( ( element, index ) => {
-			const onClick = function() {
-				element.selected = ! element.selected;
+		return this.state.elements.map((element, index) => {
+			const onClick = function () {
+				element.selected = !element.selected;
 				this.forceUpdate();
-			}.bind( this );
+			}.bind(this);
 			return (
-				<label key={ index }>
-					<input type="checkbox" onClick={ onClick } checked={ element.selected } readOnly />
-					<span>{ element.title }</span>
+				<label key={index}>
+					<input type="checkbox" onClick={onClick} checked={element.selected} readOnly />
+					<span>{element.title}</span>
 				</label>
 			);
-		} );
+		});
 	};
 
 	render() {
@@ -59,12 +59,12 @@ export default class extends React.Component {
 			<Card>
 				<div>
 					<BulkSelect
-						totalElements={ this.state.elements.length }
-						selectedElements={ this.getSelectedElementsNumber() }
-						onToggle={ this.handleToggleAll }
+						totalElements={this.state.elements.length}
+						selectedElements={this.getSelectedElementsNumber()}
+						onToggle={this.handleToggleAll}
 					/>
 				</div>
-				{ this.renderElements() }
+				{this.renderElements()}
 			</Card>
 		);
 	}

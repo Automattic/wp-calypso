@@ -13,8 +13,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @returns {Array} An array of jitms
  */
-export const getJITM = ( state, messagePath ) =>
-	get( state, [ 'jitm', 'sitePathJITM', messagePath + getSelectedSiteId( state ) ], [] );
+export const getJITM = (state, messagePath) =>
+	get(state, ['jitm', 'sitePathJITM', messagePath + getSelectedSiteId(state)], []);
 
 /**
  * Get the top jitm available for the current site/section
@@ -23,12 +23,12 @@ export const getJITM = ( state, messagePath ) =>
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @returns {object} A jitm
  */
-export const getTopJITM = ( state, messagePath ) => {
-	const jitms = getJITM( state, messagePath );
+export const getTopJITM = (state, messagePath) => {
+	const jitms = getJITM(state, messagePath);
 
-	if ( jitms.length === 0 ) {
+	if (jitms.length === 0) {
 		return null;
 	}
 
-	return jitms[ 0 ];
+	return jitms[0];
 };

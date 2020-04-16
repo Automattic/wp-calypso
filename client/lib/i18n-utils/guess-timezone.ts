@@ -67,15 +67,15 @@ const linkedTimezones = {
  *
  * @returns A potentially rewritten timezone string, like Asia/Kolkata.
  */
-function maybeRewriteTimezone( timezone: string ): string {
-	if ( isLinkedTimezone( timezone ) ) {
-		return linkedTimezones[ timezone ];
+function maybeRewriteTimezone(timezone: string): string {
+	if (isLinkedTimezone(timezone)) {
+		return linkedTimezones[timezone];
 	}
 
 	return timezone;
 }
 
-function isLinkedTimezone( timezone: string ): timezone is keyof typeof linkedTimezones {
+function isLinkedTimezone(timezone: string): timezone is keyof typeof linkedTimezones {
 	return timezone in linkedTimezones;
 }
 
@@ -83,8 +83,8 @@ export default function guessTimezone(): string | undefined {
 	// use Intl API when available and returning valid time zone
 	try {
 		const intlName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		return maybeRewriteTimezone( intlName );
-	} catch ( e ) {
+		return maybeRewriteTimezone(intlName);
+	} catch (e) {
 		// Intl unavailable, don't guess timezone.
 		return undefined;
 	}

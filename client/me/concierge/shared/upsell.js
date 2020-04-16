@@ -20,7 +20,7 @@ class Upsell extends Component {
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_concierge_book_upsell_step' );
+		this.props.recordTracksEvent('calypso_concierge_book_upsell_step');
 	}
 
 	render() {
@@ -29,14 +29,12 @@ class Upsell extends Component {
 			<div>
 				<PrimaryHeader />
 				<CompactCard className="shared__site-block">
-					<Site siteId={ this.props.site.ID } />
+					<Site siteId={this.props.site.ID} />
 				</CompactCard>
 				<CompactCard>
-					<p>
-						{ translate( 'Only sites on a Business or higher plan are eligible for a session.' ) }
-					</p>
-					<Button href={ `/plans/${ this.props.site.slug }` } primary>
-						{ translate( 'Upgrade to Business' ) }
+					<p>{translate('Only sites on a Business or higher plan are eligible for a session.')}</p>
+					<Button href={`/plans/${this.props.site.slug}`} primary>
+						{translate('Upgrade to Business')}
 					</Button>
 				</CompactCard>
 			</div>
@@ -44,4 +42,4 @@ class Upsell extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( Upsell ) );
+export default connect(null, { recordTracksEvent })(localize(Upsell));

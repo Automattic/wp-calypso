@@ -16,46 +16,46 @@ import GSuiteUpsellCard from './gsuite-upsell-card';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
-	const handleAddEmailClick = cartItems => {
-		addItems( cartItems );
+const GSuiteUpgrade = ({ cart, domain, selectedSiteSlug }) => {
+	const handleAddEmailClick = (cartItems) => {
+		addItems(cartItems);
 
-		page( `/checkout/${ selectedSiteSlug }` );
+		page(`/checkout/${selectedSiteSlug}`);
 	};
 
 	const handleGoBack = () => {
-		page( `/domains/add/${ selectedSiteSlug }` );
+		page(`/domains/add/${selectedSiteSlug}`);
 	};
 
 	const handleSkipClick = () => {
-		page( `/checkout/${ selectedSiteSlug }` );
+		page(`/checkout/${selectedSiteSlug}`);
 	};
 
-	useEffect( () => {
-		if ( cart && cart.hasLoadedFromServer && ! hasDomainInCart( cart, domain ) ) {
+	useEffect(() => {
+		if (cart && cart.hasLoadedFromServer && !hasDomainInCart(cart, domain)) {
 			// Should we handle this more gracefully?
-			page( `/domains/add/${ selectedSiteSlug }` );
+			page(`/domains/add/${selectedSiteSlug}`);
 		}
-	}, [ cart, domain, selectedSiteSlug ] );
+	}, [cart, domain, selectedSiteSlug]);
 
 	const translate = useTranslate();
 
 	return (
 		<div>
-			<HeaderCake onClick={ handleGoBack }>
-				{ translate( 'Register %(domain)s', { args: { domain } } ) }
+			<HeaderCake onClick={handleGoBack}>
+				{translate('Register %(domain)s', { args: { domain } })}
 			</HeaderCake>
 
 			<GSuiteUpsellCard
-				domain={ domain }
-				productSlug={ GSUITE_BASIC_SLUG }
-				onSkipClick={ handleSkipClick }
-				onAddEmailClick={ handleAddEmailClick }
+				domain={domain}
+				productSlug={GSUITE_BASIC_SLUG}
+				onSkipClick={handleSkipClick}
+				onAddEmailClick={handleAddEmailClick}
 			/>
 		</div>
 	);
 };
 
-export default connect( state => ( {
-	selectedSiteSlug: getSelectedSiteSlug( state ),
-} ) )( GSuiteUpgrade );
+export default connect((state) => ({
+	selectedSiteSlug: getSelectedSiteSlug(state),
+}))(GSuiteUpgrade);

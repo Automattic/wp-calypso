@@ -11,8 +11,8 @@ import { get, filter, find } from 'lodash';
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether site keyrings is being requested
  */
-export function isRequestingSiteKeyrings( state, siteId ) {
-	return get( state.siteKeyrings.requesting, [ siteId ], false );
+export function isRequestingSiteKeyrings(state, siteId) {
+	return get(state.siteKeyrings.requesting, [siteId], false);
 }
 
 /**
@@ -22,8 +22,8 @@ export function isRequestingSiteKeyrings( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether site keyrings is being requested
  */
-export function isSavingSiteKeyrings( state, siteId ) {
-	return get( state.siteKeyrings.saveRequests, [ siteId, 'saving' ], false );
+export function isSavingSiteKeyrings(state, siteId) {
+	return get(state.siteKeyrings.saveRequests, [siteId, 'saving'], false);
 }
 
 /**
@@ -33,8 +33,8 @@ export function isSavingSiteKeyrings( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {string|undefined} The request status (pending, success or error) it will return undefined if no requests were issued yet.
  */
-export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
-	return get( state.siteKeyrings.saveRequests, [ siteId, 'status' ] );
+export function getSiteKeyringsSaveRequestStatus(state, siteId) {
+	return get(state.siteKeyrings.saveRequests, [siteId, 'status']);
 }
 
 /**
@@ -44,8 +44,8 @@ export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {object}  Site keyrings indexed by keyring ids
  */
-export function getSiteKeyrings( state, siteId ) {
-	return get( state.siteKeyrings.items, [ siteId ], [] );
+export function getSiteKeyrings(state, siteId) {
+	return get(state.siteKeyrings.items, [siteId], []);
 }
 
 /**
@@ -56,8 +56,8 @@ export function getSiteKeyrings( state, siteId ) {
  * @param  {string}  service The service name to filter with
  * @returns {Array}   Site keyrings list
  */
-export function getSiteKeyringsForService( state, siteId, service ) {
-	return filter( getSiteKeyrings( state, siteId ), { service } );
+export function getSiteKeyringsForService(state, siteId, service) {
+	return filter(getSiteKeyrings(state, siteId), { service });
 }
 
 /**
@@ -70,10 +70,10 @@ export function getSiteKeyringsForService( state, siteId, service ) {
  *
  * @returns {?object}                Site Keyring connection
  */
-export function getSiteKeyringConnection( state, siteId, keyringId, externalUserId = null ) {
-	return find( getSiteKeyrings( state, siteId ), siteKeyring => {
+export function getSiteKeyringConnection(state, siteId, keyringId, externalUserId = null) {
+	return find(getSiteKeyrings(state, siteId), (siteKeyring) => {
 		return externalUserId === null
 			? siteKeyring.keyring_id === keyringId
 			: siteKeyring.keyring_id === keyringId && siteKeyring.external_user_id === externalUserId;
-	} );
+	});
 }

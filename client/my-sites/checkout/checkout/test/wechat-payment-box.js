@@ -34,18 +34,18 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 
-jest.mock( 'lib/cart-values', () => ( {
-	isPaymentMethodEnabled: jest.fn( false ),
-	paymentMethodName: jest.fn( false ),
+jest.mock('lib/cart-values', () => ({
+	isPaymentMethodEnabled: jest.fn(false),
+	paymentMethodName: jest.fn(false),
 	cartItems: {
-		hasRenewableSubscription: jest.fn( false ),
-		hasRenewalItem: jest.fn( false ),
+		hasRenewableSubscription: jest.fn(false),
+		hasRenewalItem: jest.fn(false),
 	},
-} ) );
+}));
 
 const defaultProps = {
 	cart: { total_cost: 100, products: [] },
-	translate: x => x,
+	translate: (x) => x,
 	countriesList: [
 		{
 			code: 'US',
@@ -58,22 +58,22 @@ const defaultProps = {
 	],
 	paymentType: 'default',
 	transaction: {},
-	redirectTo: x => x,
+	redirectTo: (x) => x,
 	selectedSite: { slug: 'example.com' },
-	showErrorNotice: x => x,
-	showInfoNotice: x => x,
-	createRedirect: x => x,
+	showErrorNotice: (x) => x,
+	showInfoNotice: (x) => x,
+	createRedirect: (x) => x,
 	pending: false,
 	failure: false,
-	reset: x => x,
+	reset: (x) => x,
 	redirectUrl: null,
 	orderId: null,
 	isMobile: false,
 };
 
-describe( 'WechatPaymentBox', () => {
-	describe( 'contains', () => {
-		const wrapper = shallow( <WechatPaymentBox { ...defaultProps } /> );
+describe('WechatPaymentBox', () => {
+	describe('contains', () => {
+		const wrapper = shallow(<WechatPaymentBox {...defaultProps} />);
 
 		// Tests correct usage of classes we've borrowed and depend on from CreditCardPaymentBox
 		const rules = [
@@ -87,14 +87,14 @@ describe( 'WechatPaymentBox', () => {
 			'Connect(Localized(CartCoupon))',
 		];
 
-		rules.forEach( rule => {
-			test( rule, () => {
-				expect( wrapper.find( rule ) ).toHaveLength( 1 );
-			} );
-		} );
-	} );
+		rules.forEach((rule) => {
+			test(rule, () => {
+				expect(wrapper.find(rule)).toHaveLength(1);
+			});
+		});
+	});
 
-	describe( 'PaymentChatButton', () => {
+	describe('PaymentChatButton', () => {
 		const otherPlans = [
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
@@ -112,18 +112,18 @@ describe( 'WechatPaymentBox', () => {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 		];
 
-		otherPlans.forEach( product_slug => {
-			test( 'renders if only non-business plan products are in the cart', () => {
+		otherPlans.forEach((product_slug) => {
+			test('renders if only non-business plan products are in the cart', () => {
 				const props = {
 					...defaultProps,
 					cart: {
-						products: [ { product_slug } ],
+						products: [{ product_slug }],
 					},
 				};
-				const wrapper = shallow( <WechatPaymentBox { ...props } /> );
-				expect( wrapper.find( 'Connect(Localized(PaymentChatButton))' ) ).toHaveLength( 0 );
-			} );
-		} );
+				const wrapper = shallow(<WechatPaymentBox {...props} />);
+				expect(wrapper.find('Connect(Localized(PaymentChatButton))')).toHaveLength(0);
+			});
+		});
 
 		const eligiblePlans = [
 			PLAN_BUSINESS_MONTHLY,
@@ -133,76 +133,76 @@ describe( 'WechatPaymentBox', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 		];
 
-		eligiblePlans.forEach( product_slug => {
-			test( 'renders if any eligible WP.com plan is in the cart', () => {
+		eligiblePlans.forEach((product_slug) => {
+			test('renders if any eligible WP.com plan is in the cart', () => {
 				const props = {
 					...defaultProps,
 					presaleChatAvailable: true,
 					cart: {
-						products: [ { product_slug } ],
+						products: [{ product_slug }],
 					},
 				};
-				const wrapper = shallow( <WechatPaymentBox { ...props } /> );
+				const wrapper = shallow(<WechatPaymentBox {...props} />);
 
-				expect( wrapper.find( 'Connect(Localized(PaymentChatButton))' ) ).toHaveLength( 1 );
-			} );
-		} );
+				expect(wrapper.find('Connect(Localized(PaymentChatButton))')).toHaveLength(1);
+			});
+		});
 
-		eligiblePlans.forEach( product_slug => {
-			test( 'does not render if presaleChatAvailable is false', () => {
+		eligiblePlans.forEach((product_slug) => {
+			test('does not render if presaleChatAvailable is false', () => {
 				const props = {
 					...defaultProps,
 					presaleChatAvailable: false,
 					cart: {
-						products: [ { product_slug } ],
+						products: [{ product_slug }],
 					},
 				};
-				const wrapper = shallow( <WechatPaymentBox { ...props } /> );
-				expect( wrapper.find( 'Connect(Localized(PaymentChatButton))' ) ).toHaveLength( 0 );
-			} );
-		} );
-	} );
+				const wrapper = shallow(<WechatPaymentBox {...props} />);
+				expect(wrapper.find('Connect(Localized(PaymentChatButton))')).toHaveLength(0);
+			});
+		});
+	});
 
-	describe( '#componentDidUpdate', () => {
-		test( 'redirects on mobile', () => {
+	describe('#componentDidUpdate', () => {
+		test('redirects on mobile', () => {
 			// https://github.com/facebook/jest/issues/890#issuecomment-295939071
 			window.location.assign = jest.fn();
 
 			const redirectUrl = 'https://redirect';
 
 			const instance = shallow(
-				<WechatPaymentBox { ...defaultProps } redirectUrl={ redirectUrl } isMobile={ true } />
+				<WechatPaymentBox {...defaultProps} redirectUrl={redirectUrl} isMobile={true} />
 			).instance();
 
-			instance.componentDidUpdate( Object.assign( {}, defaultProps, { pending: true } ) );
+			instance.componentDidUpdate(Object.assign({}, defaultProps, { pending: true }));
 
-			expect( window.location.assign ).toHaveBeenCalledWith( redirectUrl );
-		} );
+			expect(window.location.assign).toHaveBeenCalledWith(redirectUrl);
+		});
 
-		test( 'does not redirect on desktop', () => {
+		test('does not redirect on desktop', () => {
 			window.location.assign = jest.fn();
 
 			const redirectUrl = 'https://redirect';
 
 			const instance = shallow(
-				<WechatPaymentBox { ...defaultProps } redirectUrl={ redirectUrl } isMobile={ false } />
+				<WechatPaymentBox {...defaultProps} redirectUrl={redirectUrl} isMobile={false} />
 			).instance();
 
-			instance.componentDidUpdate( Object.assign( {}, defaultProps, { pending: true } ) );
+			instance.componentDidUpdate(Object.assign({}, defaultProps, { pending: true }));
 
-			expect( window.location.assign ).not.toHaveBeenCalledWith( redirectUrl );
-		} );
+			expect(window.location.assign).not.toHaveBeenCalledWith(redirectUrl);
+		});
 
-		test( 'displays a qr code on desktop', () => {
+		test('displays a qr code on desktop', () => {
 			window.location.assign = jest.fn();
 
 			const redirectUrl = 'https://redirect';
 
 			const wrapper = shallow(
-				<WechatPaymentBox { ...defaultProps } redirectUrl={ redirectUrl } isMobile={ false } />
+				<WechatPaymentBox {...defaultProps} redirectUrl={redirectUrl} isMobile={false} />
 			);
 
-			expect( wrapper.find( 'Connect(Localized(WechatPaymentQRCode))' ) ).toHaveLength( 1 );
-		} );
-	} );
-} );
+			expect(wrapper.find('Connect(Localized(WechatPaymentQRCode))')).toHaveLength(1);
+		});
+	});
+});

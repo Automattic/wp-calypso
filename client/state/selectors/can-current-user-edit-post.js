@@ -17,7 +17,7 @@ import 'state/posts/init';
  * @param  {string}  globalId Post global ID
  * @returns {boolean}          Whether the current user can edit the given post
  */
-export default function canCurrentUserEditPost( state, globalId ) {
-	const post = getPost( state, globalId );
-	return get( post, [ 'capabilities', 'edit_post' ], null );
+export default function canCurrentUserEditPost(state, globalId) {
+	const post = getPost(state, globalId);
+	return get(post, ['capabilities', 'edit_post'], null);
 }

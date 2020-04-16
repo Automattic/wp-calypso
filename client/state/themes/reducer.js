@@ -62,14 +62,14 @@ import { decodeEntities } from 'lib/formatting';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const activeThemes = withSchemaValidation(activeThemesSchema, (state = {}, action) => {
+	switch (action.type) {
 		case THEME_ACTIVATE_SUCCESS: {
 			const { siteId, themeStylesheet } = action;
 
 			return {
 				...state,
-				[ siteId ]: getThemeIdFromStylesheet( themeStylesheet ),
+				[siteId]: getThemeIdFromStylesheet(themeStylesheet),
 			};
 		}
 		case ACTIVE_THEME_REQUEST_SUCCESS: {
@@ -77,13 +77,13 @@ export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = 
 
 			return {
 				...state,
-				[ siteId ]: theme.id,
+				[siteId]: theme.id,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated theme activation state after an action has been
@@ -94,14 +94,14 @@ export const activeThemes = withSchemaValidation( activeThemesSchema, ( state = 
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function activationRequests( state = {}, action ) {
-	switch ( action.type ) {
+export function activationRequests(state = {}, action) {
+	switch (action.type) {
 		case THEME_ACTIVATE:
 		case THEME_ACTIVATE_SUCCESS:
 		case THEME_ACTIVATE_FAILURE:
 			return {
 				...state,
-				[ action.siteId ]: THEME_ACTIVATE === action.type,
+				[action.siteId]: THEME_ACTIVATE === action.type,
 			};
 	}
 
@@ -117,14 +117,14 @@ export function activationRequests( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const completedActivationRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const completedActivationRequests = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEME_ACTIVATE_SUCCESS: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: true,
+				[siteId]: true,
 			};
 		}
 		case THEME_CLEAR_ACTIVATED: {
@@ -132,13 +132,13 @@ export const completedActivationRequests = withoutPersistence( ( state = {}, act
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated active theme request state after an action has been
@@ -149,14 +149,14 @@ export const completedActivationRequests = withoutPersistence( ( state = {}, act
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function activeThemeRequests( state = {}, action ) {
-	switch ( action.type ) {
+export function activeThemeRequests(state = {}, action) {
+	switch (action.type) {
 		case ACTIVE_THEME_REQUEST:
 		case ACTIVE_THEME_REQUEST_SUCCESS:
 		case ACTIVE_THEME_REQUEST_FAILURE:
 			return {
 				...state,
-				[ action.siteId ]: ACTIVE_THEME_REQUEST === action.type,
+				[action.siteId]: ACTIVE_THEME_REQUEST === action.type,
 			};
 	}
 
@@ -172,16 +172,16 @@ export function activeThemeRequests( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function themeRequests( state = {}, action ) {
-	switch ( action.type ) {
+export function themeRequests(state = {}, action) {
+	switch (action.type) {
 		case THEME_REQUEST:
 		case THEME_REQUEST_SUCCESS:
 		case THEME_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
-					[ action.themeId ]: THEME_REQUEST === action.type,
-				} ),
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: Object.assign({}, state[action.siteId], {
+					[action.themeId]: THEME_REQUEST === action.type,
+				}),
+			});
 	}
 
 	return state;
@@ -196,16 +196,16 @@ export function themeRequests( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function themeInstalls( state = {}, action ) {
-	switch ( action.type ) {
+export function themeInstalls(state = {}, action) {
+	switch (action.type) {
 		case THEME_INSTALL:
 		case THEME_INSTALL_SUCCESS:
 		case THEME_INSTALL_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
-					[ action.themeId ]: THEME_INSTALL === action.type,
-				} ),
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: Object.assign({}, state[action.siteId], {
+					[action.themeId]: THEME_INSTALL === action.type,
+				}),
+			});
 	}
 
 	return state;
@@ -222,16 +222,16 @@ export function themeInstalls( state = {}, action ) {
  */
 export const themeRequestErrors = withSchemaValidation(
 	themeRequestErrorsSchema,
-	( state = {}, action ) => {
-		switch ( action.type ) {
+	(state = {}, action) => {
+		switch (action.type) {
 			case THEME_REQUEST_FAILURE: {
 				const { siteId, themeId, error } = action;
 
 				return {
 					...state,
-					[ siteId ]: {
-						...state[ siteId ],
-						[ themeId ]: error,
+					[siteId]: {
+						...state[siteId],
+						[themeId]: error,
 					},
 				};
 			}
@@ -240,7 +240,7 @@ export const themeRequestErrors = withSchemaValidation(
 
 				return {
 					...state,
-					[ siteId ]: omit( state[ siteId ], themeId ),
+					[siteId]: omit(state[siteId], themeId),
 				};
 			}
 		}
@@ -258,17 +258,17 @@ export const themeRequestErrors = withSchemaValidation(
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function queryRequests( state = {}, action ) {
+export function queryRequests(state = {}, action) {
 	let serializedQuery;
 
-	switch ( action.type ) {
+	switch (action.type) {
 		case THEMES_REQUEST:
 		case THEMES_REQUEST_SUCCESS:
 		case THEMES_REQUEST_FAILURE:
-			serializedQuery = getSerializedThemesQuery( action.query, action.siteId );
-			return Object.assign( {}, state, {
-				[ serializedQuery ]: THEMES_REQUEST === action.type,
-			} );
+			serializedQuery = getSerializedThemesQuery(action.query, action.siteId);
+			return Object.assign({}, state, {
+				[serializedQuery]: THEMES_REQUEST === action.type,
+			});
 	}
 
 	return state;
@@ -283,31 +283,31 @@ export function queryRequests( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const queryRequestErrors = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEMES_REQUEST_FAILURE: {
 			const { siteId, query, error } = action;
-			const serializedQuery = getSerializedThemesQuery( query, siteId );
+			const serializedQuery = getSerializedThemesQuery(query, siteId);
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ serializedQuery ]: error,
+				[siteId]: {
+					...state[siteId],
+					[serializedQuery]: error,
 				},
 			};
 		}
 		case THEMES_REQUEST_SUCCESS: {
 			const { siteId, query } = action;
-			const serializedQuery = getSerializedThemesQuery( query, siteId );
+			const serializedQuery = getSerializedThemesQuery(query, siteId);
 			return {
 				...state,
-				[ siteId ]: omit( state[ siteId ], serializedQuery ),
+				[siteId]: omit(state[siteId], serializedQuery),
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated theme query state after an action has been dispatched.
@@ -318,44 +318,44 @@ export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => 
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const queries = ( () => {
-	function applyToManager( state, siteId, method, createDefault, ...args ) {
-		if ( ! state[ siteId ] ) {
-			if ( ! createDefault ) {
+export const queries = (() => {
+	function applyToManager(state, siteId, method, createDefault, ...args) {
+		if (!state[siteId]) {
+			if (!createDefault) {
 				return state;
 			}
 
 			return {
 				...state,
-				[ siteId ]: new ThemeQueryManager( null, { itemKey: 'id' } )[ method ]( ...args ),
+				[siteId]: new ThemeQueryManager(null, { itemKey: 'id' })[method](...args),
 			};
 		}
 
-		const nextManager = state[ siteId ][ method ]( ...args );
-		if ( nextManager === state[ siteId ] ) {
+		const nextManager = state[siteId][method](...args);
+		if (nextManager === state[siteId]) {
 			return state;
 		}
 
 		return {
 			...state,
-			[ siteId ]: nextManager,
+			[siteId]: nextManager,
 		};
 	}
 
-	function fromApi( theme ) {
-		if ( ! theme || ! theme.description ) {
+	function fromApi(theme) {
+		if (!theme || !theme.description) {
 			return theme;
 		}
 
-		return { ...theme, description: decodeEntities( theme.description ) };
+		return { ...theme, description: decodeEntities(theme.description) };
 	}
 
 	// Time after which queries stored in IndexedDb will be invalidated.
 	// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
 	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
 
-	return withSchemaValidation( queriesSchema, ( state = {}, action ) => {
-		switch ( action.type ) {
+	return withSchemaValidation(queriesSchema, (state = {}, action) => {
+		switch (action.type) {
 			case THEMES_REQUEST_SUCCESS: {
 				const { siteId, query, themes, found } = action;
 				return applyToManager(
@@ -365,33 +365,33 @@ export const queries = ( () => {
 					siteId,
 					'receive',
 					true,
-					map( themes, fromApi ),
+					map(themes, fromApi),
 					{ query, found, patch: true }
 				);
 			}
 			case THEME_DELETE_SUCCESS: {
 				const { siteId, themeId } = action;
-				return applyToManager( state, siteId, 'removeItem', false, themeId );
+				return applyToManager(state, siteId, 'removeItem', false, themeId);
 			}
 			case SERIALIZE: {
-				const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
+				const serializedState = mapValues(state, ({ data, options }) => ({ data, options }));
 				serializedState._timestamp = Date.now();
 				return serializedState;
 			}
 			case DESERIALIZE: {
-				if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
+				if (state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now()) {
 					return {};
 				}
-				const noTimestampState = omit( state, '_timestamp' );
-				return mapValues( noTimestampState, ( { data, options } ) => {
-					return new ThemeQueryManager( data, options );
-				} );
+				const noTimestampState = omit(state, '_timestamp');
+				return mapValues(noTimestampState, ({ data, options }) => {
+					return new ThemeQueryManager(data, options);
+				});
 			}
 		}
 
 		return state;
-	} );
-} )();
+	});
+})();
 
 /**
  * Returns the updated themes last query state.
@@ -401,20 +401,20 @@ export const queries = ( () => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const lastQuery = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const lastQuery = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEMES_REQUEST_SUCCESS: {
 			const { siteId, query } = action;
 
 			return {
 				...state,
-				[ siteId ]: query,
+				[siteId]: query,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated previewing theme state
@@ -424,8 +424,8 @@ export const lastQuery = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const themePreviewOptions = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const themePreviewOptions = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case THEME_PREVIEW_OPTIONS: {
 			const { primary, secondary } = action;
 
@@ -437,7 +437,7 @@ export const themePreviewOptions = withoutPersistence( ( state = {}, action ) =>
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated previewing theme state
@@ -447,8 +447,8 @@ export const themePreviewOptions = withoutPersistence( ( state = {}, action ) =>
  * @param  {object} action Action payload
  * @returns {boolean}          Updated state
  */
-export const themePreviewVisibility = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const themePreviewVisibility = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case THEME_PREVIEW_STATE: {
 			const { themeId } = action;
 			return themeId;
@@ -456,10 +456,10 @@ export const themePreviewVisibility = withoutPersistence( ( state = null, action
 	}
 
 	return state;
-} );
+});
 
-export const themeHasAutoLoadingHomepageWarning = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const themeHasAutoLoadingHomepageWarning = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING: {
 			return {
 				themeId: action.themeId,
@@ -485,10 +485,10 @@ export const themeHasAutoLoadingHomepageWarning = withoutPersistence( ( state = 
 	}
 
 	return state;
-} );
+});
 
-export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const themeFilters = withSchemaValidation(themeFiltersSchema, (state = {}, action) => {
+	switch (action.type) {
 		case THEME_FILTERS_ADD: {
 			const { filters } = action;
 			return filters;
@@ -496,7 +496,7 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns updated state for recommended themes after
@@ -506,8 +506,8 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function recommendedThemes( state = { isLoading: true, themes: [] }, action ) {
-	switch ( action.type ) {
+export function recommendedThemes(state = { isLoading: true, themes: [] }, action) {
+	switch (action.type) {
 		case RECOMMENDED_THEMES_FETCH:
 			return { ...state, isLoading: true };
 		case RECOMMENDED_THEMES_SUCCESS:
@@ -519,7 +519,7 @@ export function recommendedThemes( state = { isLoading: true, themes: [] }, acti
 	return state;
 }
 
-const combinedReducer = combineReducers( {
+const combinedReducer = combineReducers({
 	queries,
 	queryRequests,
 	queryRequestErrors,
@@ -538,7 +538,7 @@ const combinedReducer = combineReducers( {
 	themeFilters,
 	recommendedThemes,
 	themeHasAutoLoadingHomepageWarning,
-} );
-const themesReducer = withStorageKey( 'themes', combinedReducer );
+});
+const themesReducer = withStorageKey('themes', combinedReducer);
 
 export default themesReducer;

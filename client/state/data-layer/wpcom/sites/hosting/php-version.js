@@ -15,18 +15,18 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 
 const updateNoticeId = 'hosting-php-version';
 
-const getPhpVersion = action =>
+const getPhpVersion = (action) =>
 	http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/hosting/php-version`,
+			path: `/sites/${action.siteId}/hosting/php-version`,
 			apiNamespace: 'wpcom/v2',
 			body: {},
 		},
 		action
 	);
 
-const getPhpVersionSuccess = ( action, version ) => {
+const getPhpVersionSuccess = (action, version) => {
 	return {
 		type: HOSTING_PHP_VERSION_SET,
 		siteId: action.siteId,
@@ -34,11 +34,11 @@ const getPhpVersionSuccess = ( action, version ) => {
 	};
 };
 
-const updatePhpVersion = action =>
+const updatePhpVersion = (action) =>
 	http(
 		{
 			method: 'POST',
-			path: `/sites/${ action.siteId }/hosting/php-version`,
+			path: `/sites/${action.siteId}/hosting/php-version`,
 			apiNamespace: 'wpcom/v2',
 			body: {
 				version: action.version,
@@ -47,34 +47,34 @@ const updatePhpVersion = action =>
 		action
 	);
 
-export const hostingPhpVersionUpdateTracking = ( version, result ) =>
+export const hostingPhpVersionUpdateTracking = (version, result) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Hosting Configuration',
 			'Clicked "Update PHP Version" Button in PHP Version box',
-			`PHP Version Update ${ result }`,
+			`PHP Version Update ${result}`,
 			version
 		),
-		recordTracksEvent( 'calypso_hosting_configuration_php_version_update', {
+		recordTracksEvent('calypso_hosting_configuration_php_version_update', {
 			result,
 			version,
-		} )
+		})
 	);
 
-const updatePhpVersionSuccess = action => {
+const updatePhpVersionSuccess = (action) => {
 	return [
-		hostingPhpVersionUpdateTracking( action.version, true ),
+		hostingPhpVersionUpdateTracking(action.version, true),
 		{
 			type: HOSTING_PHP_VERSION_SET,
 			siteId: action.siteId,
 			version: action.version,
 		},
 		successNotice(
-			translate( 'PHP version successfully set to %(version)s.', {
+			translate('PHP version successfully set to %(version)s.', {
 				args: {
 					version: action.version,
 				},
-			} ),
+			}),
 			{
 				id: updateNoticeId,
 				showDismiss: false,
@@ -84,27 +84,27 @@ const updatePhpVersionSuccess = action => {
 	];
 };
 
-const updatePhpVersionError = action => {
+const updatePhpVersionError = (action) => {
 	return [
-		hostingPhpVersionUpdateTracking( action.version, false ),
-		errorNotice( translate( 'Failed to set PHP version.' ), {
+		hostingPhpVersionUpdateTracking(action.version, false),
+		errorNotice(translate('Failed to set PHP version.'), {
 			id: updateNoticeId,
-		} ),
+		}),
 	];
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/hosting/php-version.js', {
-	[ HOSTING_PHP_VERSION_SET_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/hosting/php-version.js', {
+	[HOSTING_PHP_VERSION_SET_REQUEST]: [
+		dispatchRequest({
 			fetch: updatePhpVersion,
 			onSuccess: updatePhpVersionSuccess,
 			onError: updatePhpVersionError,
-		} ),
+		}),
 	],
-	[ HOSTING_PHP_VERSION_REQUEST ]: [
-		dispatchRequest( {
+	[HOSTING_PHP_VERSION_REQUEST]: [
+		dispatchRequest({
 			fetch: getPhpVersion,
 			onSuccess: getPhpVersionSuccess,
-		} ),
+		}),
 	],
-} );
+});

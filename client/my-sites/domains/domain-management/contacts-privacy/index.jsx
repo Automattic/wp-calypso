@@ -34,16 +34,16 @@ class ContactsPrivacy extends React.PureComponent {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 	};
 
 	render() {
-		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
+		if (this.isDataLoading()) {
+			return <DomainMainPlaceholder goBack={this.goToEdit} />;
 		}
 
 		const { translate } = this.props;
-		const domain = getSelectedDomain( this.props );
+		const domain = getSelectedDomain(this.props);
 		const {
 			privateDomain,
 			privacyAvailable,
@@ -53,60 +53,60 @@ class ContactsPrivacy extends React.PureComponent {
 		} = domain;
 
 		const canManageConsent =
-			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
+			config.isEnabled('domains/gdpr-consent-page') && domain.supportsGdprConsentManagement;
 
 		return (
 			<Main className="contacts-privacy">
-				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ translate( 'Contacts and Privacy' ) }
+				<Header onClick={this.goToEdit} selectedDomainName={this.props.selectedDomainName}>
+					{translate('Contacts and Privacy')}
 				</Header>
 
 				<VerticalNav>
 					<ContactsPrivacyCard
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite }
-						privateDomain={ privateDomain }
-						privacyAvailable={ privacyAvailable }
-						contactInfoDisclosed={ contactInfoDisclosed }
-						contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
-						isPendingIcannVerification={ isPendingIcannVerification }
+						selectedDomainName={this.props.selectedDomainName}
+						selectedSite={this.props.selectedSite}
+						privateDomain={privateDomain}
+						privacyAvailable={privacyAvailable}
+						contactInfoDisclosed={contactInfoDisclosed}
+						contactInfoDisclosureAvailable={contactInfoDisclosureAvailable}
+						isPendingIcannVerification={isPendingIcannVerification}
 					/>
 
 					<VerticalNavItem
-						path={ domainManagementEditContactInfo(
+						path={domainManagementEditContactInfo(
 							this.props.selectedSite.slug,
 							this.props.selectedDomainName
-						) }
+						)}
 					>
-						{ translate( 'Edit contact info' ) }
+						{translate('Edit contact info')}
 					</VerticalNavItem>
 
-					{ canManageConsent && (
+					{canManageConsent && (
 						<VerticalNavItem
-							path={ domainManagementManageConsent(
+							path={domainManagementManageConsent(
 								this.props.selectedSite.slug,
 								this.props.selectedDomainName
-							) }
+							)}
 						>
-							{ translate( 'Manage Consent for Personal Data Use' ) }
+							{translate('Manage Consent for Personal Data Use')}
 						</VerticalNavItem>
-					) }
+					)}
 				</VerticalNav>
 			</Main>
 		);
 	}
 
 	isDataLoading() {
-		return ! getSelectedDomain( this.props ) || this.props.isRequestingWhois;
+		return !getSelectedDomain(this.props) || this.props.isRequestingWhois;
 	}
 
 	goToEdit = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(domainManagementEdit(this.props.selectedSite.slug, this.props.selectedDomainName));
 	};
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	return {
-		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
+		isRequestingWhois: isRequestingWhois(state, ownProps.selectedDomainName),
 	};
-} )( localize( ContactsPrivacy ) );
+})(localize(ContactsPrivacy));

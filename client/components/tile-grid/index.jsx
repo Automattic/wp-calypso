@@ -17,8 +17,8 @@ export default class extends React.PureComponent {
 
 	render() {
 		const { children, className } = this.props;
-		const gridClassName = classNames( 'tile-grid', className );
+		const gridClassName = classNames('tile-grid', className);
 
-		return <div className={ gridClassName }>{ children }</div>;
+		return <div className={gridClassName}>{children}</div>;
 	}
 }

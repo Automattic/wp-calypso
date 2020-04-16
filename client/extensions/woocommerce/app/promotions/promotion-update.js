@@ -45,13 +45,13 @@ class PromotionUpdate extends React.Component {
 		currency: PropTypes.string,
 		hasEdits: PropTypes.bool.isRequired,
 		products: PropTypes.array,
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			ID: PropTypes.number,
 			slug: PropTypes.string,
-		} ),
-		promotion: PropTypes.shape( {
+		}),
+		promotion: PropTypes.shape({
 			id: PropTypes.isRequired,
-		} ),
+		}),
 		editPromotion: PropTypes.func.isRequired,
 		clearPromotionEdits: PropTypes.func.isRequired,
 		fetchSettingsGeneral: PropTypes.func.isRequired,
@@ -61,8 +61,8 @@ class PromotionUpdate extends React.Component {
 		deletePromotion: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			busy: false,
@@ -73,80 +73,80 @@ class PromotionUpdate extends React.Component {
 	componentDidMount() {
 		const { site } = this.props;
 
-		if ( site && site.ID ) {
-			this.props.fetchProductCategories( site.ID, { offset: 0 } );
-			this.props.fetchPromotions( site.ID );
-			this.props.fetchSettingsGeneral( site.ID );
+		if (site && site.ID) {
+			this.props.fetchProductCategories(site.ID, { offset: 0 });
+			this.props.fetchPromotions(site.ID);
+			this.props.fetchSettingsGeneral(site.ID);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { site } = this.props;
-		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-		const oldSiteId = ( site && site.ID ) || null;
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchProductCategories( newSiteId, { offset: 0 } );
-			this.props.fetchPromotions( newSiteId );
-			this.props.fetchSettingsGeneral( newSiteId );
+		const newSiteId = (newProps.site && newProps.site.ID) || null;
+		const oldSiteId = (site && site.ID) || null;
+		if (oldSiteId !== newSiteId) {
+			this.props.fetchProductCategories(newSiteId, { offset: 0 });
+			this.props.fetchPromotions(newSiteId);
+			this.props.fetchSettingsGeneral(newSiteId);
 		}
 
 		// Track user starting to edit this promotion.
-		if ( ! this.props.edits && newProps.edits ) {
-			const editedFields = difference( Object.keys( newProps.edits ), [ 'id', 'name', 'type' ] );
-			const initial_field = 1 === editedFields.length ? editedFields[ 0 ] : 'multiple';
+		if (!this.props.edits && newProps.edits) {
+			const editedFields = difference(Object.keys(newProps.edits), ['id', 'name', 'type']);
+			const initial_field = 1 === editedFields.length ? editedFields[0] : 'multiple';
 
-			recordTrack( 'calypso_woocommerce_promotion_existing_edit_start', { initial_field } );
+			recordTrack('calypso_woocommerce_promotion_existing_edit_start', { initial_field });
 		}
 	}
 
 	componentWillUnmount() {
 		const { site } = this.props;
-		if ( site ) {
-			this.props.clearPromotionEdits( site.ID );
+		if (site) {
+			this.props.clearPromotionEdits(site.ID);
 		}
 	}
 
 	onTrash = () => {
 		const { translate, site, promotion, deletePromotion: dispatchDelete } = this.props;
-		const areYouSure = translate( 'Are you sure you want to permanently delete this promotion?' );
-		accept( areYouSure, accepted => {
-			if ( ! accepted ) {
+		const areYouSure = translate('Are you sure you want to permanently delete this promotion?');
+		accept(areYouSure, (accepted) => {
+			if (!accepted) {
 				return;
 			}
 
-			const successAction = dispatch => {
-				this.props.clearPromotionEdits( site.ID );
+			const successAction = (dispatch) => {
+				this.props.clearPromotionEdits(site.ID);
 
-				dispatch( successNotice( translate( 'Promotion successfully deleted.' ) ) );
-				debounce( () => {
-					page.redirect( getLink( '/store/promotions/:site/', site ) );
-				}, 1000 )();
+				dispatch(successNotice(translate('Promotion successfully deleted.')));
+				debounce(() => {
+					page.redirect(getLink('/store/promotions/:site/', site));
+				}, 1000)();
 			};
 			const failureAction = () => {
 				return errorNotice(
-					translate( 'There was a problem deleting the promotion. Please try again.' )
+					translate('There was a problem deleting the promotion. Please try again.')
 				);
 			};
-			dispatchDelete( site.ID, promotion, successAction, failureAction );
+			dispatchDelete(site.ID, promotion, successAction, failureAction);
 
-			recordTrack( 'calypso_woocommerce_promotion_delete', {
+			recordTrack('calypso_woocommerce_promotion_delete', {
 				type: promotion.type,
 				sale_price: promotion.salePrice,
 				percent_discount: promotion.percentDiscount,
 				fixed_discount: promotion.fixedDiscount,
 				start_date: promotion.startDate,
 				end_date: promotion.endDate,
-			} );
-		} );
+			});
+		});
 	};
 
 	onSave = () => {
 		const { site, promotion, edits, currency, translate } = this.props;
 		const validatingPromotion = promotion || { type: 'fixed_product' };
-		const errors = validateAll( validatingPromotion, currency, true );
+		const errors = validateAll(validatingPromotion, currency, true);
 
-		if ( errors ) {
-			this.setState( () => ( { busy: false, saveAttempted: true } ) );
+		if (errors) {
+			this.setState(() => ({ busy: false, saveAttempted: true }));
 			this.props.errorNotice(
 				translate(
 					'There is missing or invalid information. Please correct the highlighted fields and try again.'
@@ -158,38 +158,38 @@ class PromotionUpdate extends React.Component {
 			return;
 		}
 
-		this.setState( () => ( { busy: true, saveAttempted: true } ) );
+		this.setState(() => ({ busy: true, saveAttempted: true }));
 
 		const getSuccessNotice = () => {
 			return successNotice(
-				translate( '%(promotion)s promotion successfully updated.', {
+				translate('%(promotion)s promotion successfully updated.', {
 					args: { promotion: promotion.name },
-				} ),
+				}),
 				{
 					duration: 8000,
 				}
 			);
 		};
 
-		const successAction = dispatch => {
-			this.props.clearPromotionEdits( site.ID );
-			dispatch( getSuccessNotice( promotion ) );
-			this.setState( () => ( { busy: false, saveAttempted: false } ) );
+		const successAction = (dispatch) => {
+			this.props.clearPromotionEdits(site.ID);
+			dispatch(getSuccessNotice(promotion));
+			this.setState(() => ({ busy: false, saveAttempted: false }));
 		};
 
-		const failureAction = error => {
-			this.setState( () => ( { busy: false } ) );
-			const errorSlug = ( error && error.error ) || undefined;
+		const failureAction = (error) => {
+			this.setState(() => ({ busy: false }));
+			const errorSlug = (error && error.error) || undefined;
 
-			return errorNotice( getSaveErrorMessage( errorSlug, promotion.name, translate ), {
+			return errorNotice(getSaveErrorMessage(errorSlug, promotion.name, translate), {
 				duration: 8000,
-			} );
+			});
 		};
 
-		this.props.updatePromotion( site.ID, promotion, successAction, failureAction );
+		this.props.updatePromotion(site.ID, promotion, successAction, failureAction);
 
-		const edited_fields = difference( Object.keys( edits || {} ), [ 'id', 'name', 'type' ] ).join();
-		recordTrack( 'calypso_woocommerce_promotion_update', {
+		const edited_fields = difference(Object.keys(edits || {}), ['id', 'name', 'type']).join();
+		recordTrack('calypso_woocommerce_promotion_update', {
 			edited_fields,
 			type: promotion.type,
 			sale_price: promotion.salePrice,
@@ -197,7 +197,7 @@ class PromotionUpdate extends React.Component {
 			fixed_discount: promotion.fixedDiscount,
 			start_date: promotion.startDate,
 			end_date: promotion.endDate,
-		} );
+		});
 	};
 
 	render() {
@@ -205,38 +205,38 @@ class PromotionUpdate extends React.Component {
 		const { saveAttempted, busy } = this.state;
 
 		return (
-			<Main className={ className } wideLayout>
+			<Main className={className} wideLayout>
 				<PromotionHeader
-					site={ site }
-					promotion={ promotion }
-					onTrash={ this.onTrash }
-					onSave={ this.onSave }
-					isBusy={ busy }
+					site={site}
+					promotion={promotion}
+					onTrash={this.onTrash}
+					onSave={this.onSave}
+					isBusy={busy}
 				/>
-				<ProtectFormGuard isChanged={ hasEdits } />
+				<ProtectFormGuard isChanged={hasEdits} />
 				<PromotionForm
-					siteId={ site && site.ID }
-					currency={ currency }
-					promotion={ promotion }
-					editPromotion={ this.props.editPromotion }
-					products={ products }
-					showEmptyValidationErrors={ saveAttempted }
+					siteId={site && site.ID}
+					currency={currency}
+					promotion={promotion}
+					editPromotion={this.props.editPromotion}
+					products={products}
+					showEmptyValidationErrors={saveAttempted}
 				/>
 			</Main>
 		);
 	}
 }
 
-function mapStateToProps( state, ownProps ) {
-	const site = getSelectedSiteWithFallback( state );
-	const currencySettings = getPaymentCurrencySettings( state );
+function mapStateToProps(state, ownProps) {
+	const site = getSelectedSiteWithFallback(state);
+	const currencySettings = getPaymentCurrencySettings(state);
 	const currency = currencySettings ? currencySettings.value : null;
 	const promotionId = ownProps.params.promotion_id;
-	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
-	const productsLoading = areProductsLoading( state, site.ID );
-	const products = productsLoading ? null : getAllProducts( state, site.ID );
-	const edits = getPromotionEdits( state, promotionId, site.ID );
-	const hasEdits = Boolean( edits );
+	const promotion = promotionId ? getPromotionWithLocalEdits(state, promotionId, site.ID) : null;
+	const productsLoading = areProductsLoading(state, site.ID);
+	const products = productsLoading ? null : getAllProducts(state, site.ID);
+	const edits = getPromotionEdits(state, promotionId, site.ID);
+	const hasEdits = Boolean(edits);
 
 	return {
 		edits,
@@ -248,7 +248,7 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			editPromotion,
@@ -264,4 +264,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PromotionUpdate ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(PromotionUpdate));

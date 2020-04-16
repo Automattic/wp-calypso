@@ -16,8 +16,8 @@ const initialState = {
 	},
 };
 
-describe( 'reducer', () => {
-	test( 'should track the reply edits for more than one site', () => {
+describe('reducer', () => {
+	test('should track the reply edits for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
 			siteId: 234,
@@ -27,15 +27,15 @@ describe( 'reducer', () => {
 				content: 'World',
 			},
 		};
-		const originalState = deepFreeze( initialState );
-		const newState = reducer( originalState, action );
-		expect( newState ).to.eql( {
+		const originalState = deepFreeze(initialState);
+		const newState = reducer(originalState, action);
+		expect(newState).to.eql({
 			123: {
 				edits: { currentlyEditingId: 1, reviewId: 12, changes: { content: 'Hello' } },
 			},
 			234: {
 				edits: { currentlyEditingId: 2, reviewId: 55, changes: { content: 'World' } },
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

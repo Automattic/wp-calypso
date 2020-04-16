@@ -31,48 +31,48 @@ class ReaderImportButton extends React.Component {
 
 	state = { disabled: false };
 
-	onClick = event => {
+	onClick = (event) => {
 		// Don't allow picking of a new file if there's an import in progress
-		if ( this.state.disabled ) {
+		if (this.state.disabled) {
 			event.preventDefault();
 		}
 	};
 
-	onPick = files => {
+	onPick = (files) => {
 		// We only care about the first file in the list
-		const file = files[ 0 ];
-		if ( ! file ) {
+		const file = files[0];
+		if (!file) {
 			return;
 		}
 
 		this.fileName = file.name;
-		const req = wpcom.undocumented().importReaderFeed( file, this.onImport );
+		const req = wpcom.undocumented().importReaderFeed(file, this.onImport);
 		req.upload.onprogress = this.onImportProgress;
 
-		this.setState( {
+		this.setState({
 			disabled: true,
-		} );
+		});
 	};
 
-	onImport = ( err, data ) => {
-		this.setState( {
+	onImport = (err, data) => {
+		this.setState({
 			disabled: false,
-		} );
+		});
 
-		if ( err ) {
-			this.onImportFailure( err );
+		if (err) {
+			this.onImportFailure(err);
 		} else {
 			// Tack on the file name since it will be displayed in the UI
 			data.fileName = this.fileName;
-			this.onImportSuccess( data );
+			this.onImportSuccess(data);
 		}
 	};
 
-	onImportProgress = event => {
-		this.props.onProgress( event );
+	onImportProgress = (event) => {
+		this.props.onProgress(event);
 	};
 
-	onImportSuccess = feedImport => {
+	onImportSuccess = (feedImport) => {
 		const message = this.props.translate(
 			"{{em}}%(name)s{{/em}} has been received. You'll get an email when your import is complete.",
 			{
@@ -80,11 +80,11 @@ class ReaderImportButton extends React.Component {
 				components: { em: <em /> },
 			}
 		);
-		this.props.successNotice( message );
+		this.props.successNotice(message);
 	};
 
-	onImportFailure = error => {
-		if ( ! error ) {
+	onImportFailure = (error) => {
+		if (!error) {
 			return null;
 		}
 
@@ -94,19 +94,19 @@ class ReaderImportButton extends React.Component {
 				args: { message: error.message ? error.message + '.' : null },
 			}
 		);
-		this.props.errorNotice( message );
+		this.props.errorNotice(message);
 	};
 
 	render() {
 		return (
 			<div className="reader-import-button">
-				<FilePicker accept=".xml,.opml" onClick={ this.onClick } onPick={ this.onPick }>
+				<FilePicker accept=".xml,.opml" onClick={this.onClick} onPick={this.onPick}>
 					<Gridicon icon="cloud-upload" className="reader-import-button__icon" />
-					<span className="reader-import-button__label">{ this.props.translate( 'Import' ) }</span>
+					<span className="reader-import-button__label">{this.props.translate('Import')}</span>
 				</FilePicker>
 			</div>
 		);
 	}
 }
 
-export default connect( null, { successNotice, errorNotice } )( localize( ReaderImportButton ) );
+export default connect(null, { successNotice, errorNotice })(localize(ReaderImportButton));

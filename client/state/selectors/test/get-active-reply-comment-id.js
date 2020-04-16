@@ -3,8 +3,8 @@
  */
 import { getActiveReplyCommentId } from 'state/comments/selectors';
 
-describe( 'getActiveReplyCommentId()', () => {
-	test( 'should return the active reply comment ID for a known site and post', () => {
+describe('getActiveReplyCommentId()', () => {
+	test('should return the active reply comment ID for a known site and post', () => {
 		const prevState = {
 			comments: {
 				activeReplies: {
@@ -14,11 +14,11 @@ describe( 'getActiveReplyCommentId()', () => {
 		};
 		const siteId = 1;
 		const postId = 2;
-		const nextState = getActiveReplyCommentId( { state: prevState, siteId, postId } );
-		expect( nextState ).toEqual( 124 );
-	} );
+		const nextState = getActiveReplyCommentId({ state: prevState, siteId, postId });
+		expect(nextState).toEqual(124);
+	});
 
-	test( 'should return null for an unknown site and post', () => {
+	test('should return null for an unknown site and post', () => {
 		const prevState = {
 			comments: {
 				activeReplies: {
@@ -28,7 +28,7 @@ describe( 'getActiveReplyCommentId()', () => {
 		};
 		const siteId = 1;
 		const postId = 3;
-		const nextState = getActiveReplyCommentId( { state: prevState, siteId, postId } );
-		expect( nextState ).toEqual( null );
-	} );
-} );
+		const nextState = getActiveReplyCommentId({ state: prevState, siteId, postId });
+		expect(nextState).toEqual(null);
+	});
+});

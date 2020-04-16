@@ -10,13 +10,13 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-export default props => (
+export default (props) => (
 	<div
-		className={ classNames( {
+		className={classNames({
 			ribbon: true,
 			'is-green': props.color === 'green',
-		} ) }
+		})}
 	>
-		<span className="ribbon__title">{ props.children }</span>
+		<span className="ribbon__title">{props.children}</span>
 	</div>
 );

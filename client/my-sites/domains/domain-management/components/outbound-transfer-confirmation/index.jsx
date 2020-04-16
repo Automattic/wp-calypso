@@ -29,8 +29,8 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this._isMounted = false;
 	}
 
@@ -42,9 +42,9 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		this._isMounted = false;
 	}
 
-	setStateIfMounted( ...args ) {
-		if ( this._isMounted ) {
-			this.setState( ...args );
+	setStateIfMounted(...args) {
+		if (this._isMounted) {
+			this.setState(...args);
 		}
 	}
 
@@ -59,11 +59,11 @@ class OutboundTransferConfirmation extends React.PureComponent {
 
 	onAcceptTransferClick = () => {
 		const { domain, translate } = this.props;
-		this.setState( { isAccepting: true } );
-		acceptTransfer( domain.name, error => {
-			this.setStateIfMounted( { isAccepting: false } );
-			if ( error ) {
-				notices.error( this.getErrorMessage( error ) );
+		this.setState({ isAccepting: true });
+		acceptTransfer(domain.name, (error) => {
+			this.setStateIfMounted({ isAccepting: false });
+			if (error) {
+				notices.error(this.getErrorMessage(error));
 			} else {
 				notices.success(
 					translate(
@@ -71,23 +71,23 @@ class OutboundTransferConfirmation extends React.PureComponent {
 					)
 				);
 			}
-		} );
-		this.props.recordTracksEvent( 'calypso_outbound_transfer_accept_click' );
+		});
+		this.props.recordTracksEvent('calypso_outbound_transfer_accept_click');
 	};
 
 	onCancelTransferClick = () => {
 		const { domain, siteId, translate } = this.props;
-		this.setState( { isCanceling: true } );
+		this.setState({ isCanceling: true });
 		cancelTransferRequest(
 			{
 				domainName: domain.name,
 				siteId: siteId,
 				declineTransfer: true,
 			},
-			error => {
-				this.setStateIfMounted( { isCanceling: false } );
-				if ( error ) {
-					notices.error( this.getErrorMessage( error ) );
+			(error) => {
+				this.setStateIfMounted({ isCanceling: false });
+				if (error) {
+					notices.error(this.getErrorMessage(error));
 				} else {
 					notices.success(
 						translate(
@@ -97,13 +97,13 @@ class OutboundTransferConfirmation extends React.PureComponent {
 				}
 			}
 		);
-		this.props.recordTracksEvent( 'calypso_outbound_transfer_cancel_click' );
+		this.props.recordTracksEvent('calypso_outbound_transfer_cancel_click');
 	};
 
-	getErrorMessage( error ) {
+	getErrorMessage(error) {
 		const { translate } = this.props;
 
-		switch ( error.error ) {
+		switch (error.error) {
 			case 'no_pending_transfer':
 				return translate(
 					'This domain is no longer awaiting transfer. If your transfer has completed successfully or ' +
@@ -111,7 +111,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 				);
 			case 'domain_registration_unavailable':
 			case 'tld-in-maintenance':
-				return getMaintenanceMessageFromError( error, translate );
+				return getMaintenanceMessageFromError(error, translate);
 			default:
 				return error.message;
 		}
@@ -121,12 +121,12 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		return (
 			<Button
 				primary
-				busy={ this.state.isAccepting }
-				disabled={ this.isRequesting() }
+				busy={this.state.isAccepting}
+				disabled={this.isRequesting()}
 				className="outbound-transfer-confirmation__accept-transfer"
-				onClick={ this.onAcceptTransferClick }
+				onClick={this.onAcceptTransferClick}
 			>
-				{ this.props.translate( 'Accept transfer' ) }
+				{this.props.translate('Accept transfer')}
 			</Button>
 		);
 	}
@@ -134,11 +134,11 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	renderCancelButton() {
 		return (
 			<Button
-				busy={ this.state.isCanceling }
-				disabled={ this.isRequesting() }
-				onClick={ this.onCancelTransferClick }
+				busy={this.state.isCanceling}
+				disabled={this.isRequesting()}
+				onClick={this.onCancelTransferClick}
 			>
-				{ this.props.translate( 'Cancel transfer' ) }
+				{this.props.translate('Cancel transfer')}
 			</Button>
 		);
 	}
@@ -146,19 +146,19 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	renderWithCancelButtonOnly() {
 		const { domain, translate } = this.props;
 
-		if ( domain.currentUserCanManage ) {
+		if (domain.currentUserCanManage) {
 			return (
 				<>
 					<p>
-						{ translate(
+						{translate(
 							'We received a notification that you would like to transfer this domain to another registrar. ' +
 								'You can cancel the transfer if you want to keep your domain with ' +
 								'WordPress.com. If you take no action, the transfer will automatically process 7 days ' +
 								'from when it was started at your new provider.'
-						) }
+						)}
 					</p>
 
-					<p>{ this.renderCancelButton() }</p>
+					<p>{this.renderCancelButton()}</p>
 				</>
 			);
 		}
@@ -166,7 +166,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		return (
 			<>
 				<p>
-					{ translate(
+					{translate(
 						'We received a notification that you would like to transfer this domain to another registrar. ' +
 							'Please contact the owner, %(owner)s, if you want to cancel it. ' +
 							'If you take no action, the transfer will automatically process 7 days from when it was ' +
@@ -176,7 +176,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 								owner: domain.owner,
 							},
 						}
-					) }
+					)}
 				</p>
 			</>
 		);
@@ -184,21 +184,21 @@ class OutboundTransferConfirmation extends React.PureComponent {
 
 	renderWithAcceptButton() {
 		const { domain, translate } = this.props;
-		if ( domain.currentUserCanManage ) {
+		if (domain.currentUserCanManage) {
 			return (
 				<>
 					<p>
-						{ translate(
+						{translate(
 							'We received a notification that you would like to transfer this domain to another registrar. ' +
 								'Accept the transfer to complete the process or cancel it to keep your domain with ' +
 								'WordPress.com. If you take no action, the transfer will automatically process 7 days ' +
 								'from when it was started at your new provider.'
-						) }
+						)}
 					</p>
 
 					<p>
-						{ this.renderAcceptButton() }
-						{ this.renderCancelButton() }
+						{this.renderAcceptButton()}
+						{this.renderCancelButton()}
 					</p>
 				</>
 			);
@@ -207,7 +207,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		return (
 			<>
 				<p>
-					{ translate(
+					{translate(
 						'We received a notification that you would like to transfer this domain to another registrar. ' +
 							'Please contact the owner, %(owner)s, to complete the process or cancel it. ' +
 							'If you take no action, the transfer will automatically process 7 days from when it was ' +
@@ -217,7 +217,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 								owner: domain.owner,
 							},
 						}
-					) }
+					)}
 				</p>
 			</>
 		);
@@ -226,11 +226,11 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	render() {
 		const { domain } = this.props;
 
-		if ( ! domain.pendingTransfer ) {
+		if (!domain.pendingTransfer) {
 			return null;
 		}
 
-		if ( domain.supportsTransferApproval ) {
+		if (domain.supportsTransferApproval) {
 			return this.renderWithAcceptButton();
 		}
 
@@ -238,4 +238,4 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( OutboundTransferConfirmation ) );
+export default connect(null, { recordTracksEvent })(localize(OutboundTransferConfirmation));

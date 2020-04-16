@@ -17,24 +17,24 @@ import { socket } from '../socket';
 let channel = null;
 
 const channelTopicPrefix = 'private:push:wp_post:';
-const debug = debugFactory( 'lasagna:channel:private:push:wp_post' );
+const debug = debugFactory('lasagna:channel:private:push:wp_post');
 
-const joinChannel = ( store, site, post, postKey ) => {
-	if ( ! socket || ! site.is_private ) {
+const joinChannel = (store, site, post, postKey) => {
+	if (!socket || !site.is_private) {
 		return;
 	}
 
-	channel = socket.channel( channelTopicPrefix + post.global_ID, { post_key: postKey } );
-	registerEventHandlers( channel, store );
+	channel = socket.channel(channelTopicPrefix + post.global_ID, { post_key: postKey });
+	registerEventHandlers(channel, store);
 
 	channel
 		.join()
-		.receive( 'ok', () => debug( 'channel join ok' ) )
-		.receive( 'error', ( { reason } ) => {
-			debug( 'channel join error', reason );
+		.receive('ok', () => debug('channel join ok'))
+		.receive('error', ({ reason }) => {
+			debug('channel join error', reason);
 			channel.leave();
 			channel = null;
-		} );
+		});
 };
 
 const leaveChannel = () => {
@@ -42,30 +42,30 @@ const leaveChannel = () => {
 	channel = null;
 };
 
-export default store => next => action => {
-	switch ( action.type ) {
+export default (store) => (next) => (action) => {
+	switch (action.type) {
 		case LASAGNA_SOCKET_CONNECTED: {
 			const state = store.getState();
-			const postKey = getReaderFullViewPostKey( state );
-			const post = getPostByKey( state, postKey );
+			const postKey = getReaderFullViewPostKey(state);
+			const post = getPostByKey(state, postKey);
 
-			if ( ! post ) {
+			if (!post) {
 				break;
 			}
 
-			const site = getSite( state, post.site_ID );
+			const site = getSite(state, post.site_ID);
 
-			if ( ! site ) {
+			if (!site) {
 				break;
 			}
 
-			joinChannel( store, site, post, postKey );
+			joinChannel(store, site, post, postKey);
 			break;
 		}
 
 		case READER_POST_SEEN: {
-			const postKey = getReaderFullViewPostKey( store.getState() );
-			joinChannel( store, action.payload.site, action.payload.post, postKey );
+			const postKey = getReaderFullViewPostKey(store.getState());
+			joinChannel(store, action.payload.site, action.payload.post, postKey);
 			break;
 		}
 
@@ -74,5 +74,5 @@ export default store => next => action => {
 			break;
 	}
 
-	return next( action );
+	return next(action);
 };

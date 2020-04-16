@@ -10,11 +10,11 @@ import tax from './tax/reducer';
 import mailchimp from './mailchimp/reducer';
 import email from './email/reducer';
 
-export default combineReducers( {
+export default combineReducers({
 	general,
 	products,
 	stripeConnectAccount,
 	tax,
 	mailchimp,
 	email,
-} );
+});

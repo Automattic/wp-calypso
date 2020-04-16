@@ -35,71 +35,71 @@ export class PaymentBox extends PureComponent {
 		// Useful when some methods may be dropped based on payment option, like subscription length.
 		if (
 			this.props.paymentMethods &&
-			! includes( this.props.paymentMethods, this.props.currentPaymentMethod )
+			!includes(this.props.paymentMethods, this.props.currentPaymentMethod)
 		) {
-			this.props.onSelectPaymentMethod( this.props.paymentMethods[ 0 ] );
+			this.props.onSelectPaymentMethod(this.props.paymentMethods[0]);
 		}
 	}
 
-	handlePaymentMethodChange = paymentMethod => {
+	handlePaymentMethodChange = (paymentMethod) => {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
-		return function() {
-			gaRecordEvent( 'Upgrades', 'Switch Payment Method' );
-			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
-			onSelectPaymentMethod( paymentMethod );
+		return function () {
+			gaRecordEvent('Upgrades', 'Switch Payment Method');
+			analytics.tracks.recordEvent('calypso_checkout_switch_to_' + snakeCase(paymentMethod));
+			onSelectPaymentMethod(paymentMethod);
 		};
 	};
 
-	getPaymentProviderLabel( method ) {
+	getPaymentProviderLabel(method) {
 		let labelLogo = (
 			<img
-				src={ `/calypso/images/upgrades/${ method }.svg` }
-				alt={ paymentMethodName( method ) }
-				className={ `checkout__${ method }` }
+				src={`/calypso/images/upgrades/${method}.svg`}
+				alt={paymentMethodName(method)}
+				className={`checkout__${method}`}
 			/>
 		);
 
 		let labelAdditionalText = '',
 			webPaymentMethod = '';
 
-		switch ( method ) {
+		switch (method) {
 			case 'credit-card':
 				labelLogo = <Gridicon icon="credit-card" className="checkout__credit-card" />;
-				labelAdditionalText = paymentMethodName( method );
+				labelAdditionalText = paymentMethodName(method);
 				break;
 			case 'ideal':
 			case 'brazil-tef':
 			case 'wechat':
-				labelAdditionalText = paymentMethodName( method );
+				labelAdditionalText = paymentMethodName(method);
 				break;
 			case 'id_wallet':
 				labelLogo = (
 					<img
 						src="/calypso/images/upgrades/ovo.svg"
-						alt={ paymentMethodName( method ) }
+						alt={paymentMethodName(method)}
 						className="checkout__ovo"
 					/>
 				);
 				break;
 			case 'netbanking':
 				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
-				labelAdditionalText = paymentMethodName( method );
+				labelAdditionalText = paymentMethodName(method);
 				break;
 
 			case 'web-payment':
 				webPaymentMethod = detectWebPaymentMethod();
 
-				switch ( webPaymentMethod ) {
+				switch (webPaymentMethod) {
 					case WEB_PAYMENT_BASIC_CARD_METHOD:
 						labelLogo = <Gridicon icon="folder" />;
-						labelAdditionalText = getWebPaymentMethodName( webPaymentMethod, this.props.translate );
+						labelAdditionalText = getWebPaymentMethodName(webPaymentMethod, this.props.translate);
 						break;
 
 					case WEB_PAYMENT_APPLE_PAY_METHOD:
 						labelLogo = (
 							<img
 								src="/calypso/images/upgrades/apple-pay.svg"
-								alt={ getWebPaymentMethodName( webPaymentMethod, this.props.translate ) }
+								alt={getWebPaymentMethodName(webPaymentMethod, this.props.translate)}
 								className="checkout__apple-pay"
 							/>
 						);
@@ -111,44 +111,44 @@ export class PaymentBox extends PureComponent {
 
 		return (
 			<div className="checkout__provider">
-				{ labelLogo }
-				{ labelAdditionalText }
+				{labelLogo}
+				{labelAdditionalText}
 			</div>
 		);
 	}
 
-	paymentMethod( method ) {
-		if ( ! isPaymentMethodEnabled( this.props.cart, method ) ) {
+	paymentMethod(method) {
+		if (!isPaymentMethodEnabled(this.props.cart, method)) {
 			return null;
 		}
 
 		return (
 			<NavItem
-				key={ method }
+				key={method}
 				href=""
-				onClick={ this.handlePaymentMethodChange( method ) }
-				selected={ this.props.currentPaymentMethod === method }
-				onKeyPress={ event => this.choosePaymentMethodWithKeyboard( event, method ) }
+				onClick={this.handlePaymentMethodChange(method)}
+				selected={this.props.currentPaymentMethod === method}
+				onKeyPress={(event) => this.choosePaymentMethodWithKeyboard(event, method)}
 			>
-				{ this.getPaymentProviderLabel( method ) }
+				{this.getPaymentProviderLabel(method)}
 			</NavItem>
 		);
 	}
 
 	getPaymentMethods() {
-		if ( ! this.props.paymentMethods ) {
+		if (!this.props.paymentMethods) {
 			return null;
 		}
-		return this.props.paymentMethods.map( method => {
-			return this.paymentMethod( method );
-		} );
+		return this.props.paymentMethods.map((method) => {
+			return this.paymentMethod(method);
+		});
 	}
 
-	renderPaymentMethod = ( paymentMethods, titleText ) => {
-		if ( paymentMethods ) {
+	renderPaymentMethod = (paymentMethods, titleText) => {
+		if (paymentMethods) {
 			return (
-				<SectionNav selectedText={ titleText }>
-					<NavTabs>{ paymentMethods }</NavTabs>
+				<SectionNav selectedText={titleText}>
+					<NavTabs>{paymentMethods}</NavTabs>
 				</SectionNav>
 			);
 		}
@@ -156,36 +156,36 @@ export class PaymentBox extends PureComponent {
 		return null;
 	};
 
-	choosePaymentMethodWithKeyboard = ( event, method ) => {
+	choosePaymentMethodWithKeyboard = (event, method) => {
 		const code = event.keyCode || event.which;
-		if ( code === 13 ) {
+		if (code === 13) {
 			//13 is the enter keycode
-			this.props.onSelectPaymentMethod( method );
+			this.props.onSelectPaymentMethod(method);
 		}
 	};
 
 	render() {
 		const paymentMethods = this.getPaymentMethods();
-		const cardClass = classNames( 'payment-box', this.props.classSet ),
-			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
+		const cardClass = classNames('payment-box', this.props.classSet),
+			contentClass = classNames('payment-box__content', this.props.contentClassSet);
 
 		const titleText = this.props.currentPaymentMethod
-			? this.props.translate( 'Pay with %(paymentMethod)s', {
+			? this.props.translate('Pay with %(paymentMethod)s', {
 					args: {
-						paymentMethod: paymentMethodName( this.props.currentPaymentMethod ),
+						paymentMethod: paymentMethodName(this.props.currentPaymentMethod),
 					},
-			  } )
-			: this.props.translate( 'Loading…' );
+			  })
+			: this.props.translate('Loading…');
 
 		return (
-			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
-				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
+			<div className="checkout__payment-box-container" key={this.props.currentPage}>
+				{this.props.title ? <SectionHeader label={this.props.title} /> : null}
 
-				{ this.renderPaymentMethod( paymentMethods, titleText ) }
+				{this.renderPaymentMethod(paymentMethods, titleText)}
 
-				<Card className={ cardClass }>
+				<Card className={cardClass}>
 					<div className="checkout__box-padding">
-						<div className={ contentClass }>{ this.props.children }</div>
+						<div className={contentClass}>{this.props.children}</div>
 					</div>
 				</Card>
 			</div>
@@ -195,4 +195,4 @@ export class PaymentBox extends PureComponent {
 
 PaymentBox.displayName = 'PaymentBox';
 
-export default localize( PaymentBox );
+export default localize(PaymentBox);

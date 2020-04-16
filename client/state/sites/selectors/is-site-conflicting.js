@@ -15,6 +15,6 @@ import getSiteCollisions from './get-site-collisions';
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether collision exists
  */
-export default function isSiteConflicting( state, siteId ) {
-	return includes( getSiteCollisions( state ), siteId );
+export default function isSiteConflicting(state, siteId) {
+	return includes(getSiteCollisions(state), siteId);
 }

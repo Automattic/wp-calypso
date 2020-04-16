@@ -18,8 +18,8 @@ import './features/tracking';
 
 import InserterMenuTrackingEvent from './features/tracking/wpcom-navigation-menu-search-handler';
 
-registerPlugin( 'track-inserter-menu-events', {
+registerPlugin('track-inserter-menu-events', {
 	render() {
 		return <InserterMenuTrackingEvent />;
 	},
-} );
+});

@@ -2,21 +2,21 @@
  * External dependencies
  */
 
-const lodash = require( 'lodash' );
+const lodash = require('lodash');
 const camelCase = lodash.camelCase;
 const forEach = lodash.forEach;
-const fs = require( 'fs' );
-const path = require( 'path' );
-const express = require( 'express' );
-const Fuse = require( 'fuse.js' );
-const doctrine = require( 'doctrine' );
+const fs = require('fs');
+const path = require('path');
+const express = require('express');
+const Fuse = require('fuse.js');
+const doctrine = require('doctrine');
 
 /**
  * Constants
  */
 
 const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
-const SELECTORS_DIR = path.resolve( __dirname, '../../../../client/state/selectors' );
+const SELECTORS_DIR = path.resolve(__dirname, '../../../../client/state/selectors');
 
 /**
  * Module variables
@@ -25,50 +25,50 @@ const SELECTORS_DIR = path.resolve( __dirname, '../../../../client/state/selecto
 const router = express.Router();
 let prepareFuse;
 
-function parseSelectorFile( file ) {
-	return new Promise( ( resolve, reject ) => {
-		fs.readFile( path.join( SELECTORS_DIR, file ), 'utf8', ( error, contents ) => {
-			if ( error ) {
-				return reject( error );
+function parseSelectorFile(file) {
+	return new Promise((resolve, reject) => {
+		fs.readFile(path.join(SELECTORS_DIR, file), 'utf8', (error, contents) => {
+			if (error) {
+				return reject(error);
 			}
 
 			const selector = {
-				name: camelCase( path.basename( file, '.js' ) ),
+				name: camelCase(path.basename(file, '.js')),
 			};
 
-			forEach( contents.match( REGEXP_DOCBLOCKS ), docblock => {
-				const doc = doctrine.parse( docblock, { unwrap: true } );
-				if ( doc.tags.length > 0 ) {
-					Object.assign( selector, doc );
+			forEach(contents.match(REGEXP_DOCBLOCKS), (docblock) => {
+				const doc = doctrine.parse(docblock, { unwrap: true });
+				if (doc.tags.length > 0) {
+					Object.assign(selector, doc);
 					return false;
 				}
-			} );
+			});
 
-			resolve( selector );
-		} );
-	} );
+			resolve(selector);
+		});
+	});
 }
 
 function prime() {
-	if ( prepareFuse ) {
+	if (prepareFuse) {
 		return;
 	}
 
-	prepareFuse = new Promise( resolve => {
-		fs.readdir( SELECTORS_DIR, ( error, files ) => {
-			if ( error ) {
+	prepareFuse = new Promise((resolve) => {
+		fs.readdir(SELECTORS_DIR, (error, files) => {
+			if (error) {
 				files = [];
 			}
 
 			// Omit index, system files, and subdirectories
-			files = files.filter( file => 'index.js' !== file && /\.js$/.test( file ) );
+			files = files.filter((file) => 'index.js' !== file && /\.js$/.test(file));
 
-			Promise.all( files.map( parseSelectorFile ) ).then( selectors => {
+			Promise.all(files.map(parseSelectorFile)).then((selectors) => {
 				// Sort selectors by name alphabetically
-				selectors.sort( ( a, b ) => a.name > b.name );
+				selectors.sort((a, b) => a.name > b.name);
 
 				resolve(
-					new Fuse( selectors, {
+					new Fuse(selectors, {
 						keys: [
 							{
 								name: 'name',
@@ -81,32 +81,32 @@ function prime() {
 						],
 						threshold: 0.4,
 						distance: 20,
-					} )
+					})
 				);
-			} );
-		} );
-	} ).then( fuse => {
-		prepareFuse = Promise.resolve( fuse );
+			});
+		});
+	}).then((fuse) => {
+		prepareFuse = Promise.resolve(fuse);
 		return fuse;
-	} );
+	});
 }
 
-router.get( '/', ( request, response ) => {
+router.get('/', (request, response) => {
 	prepareFuse
-		.then( fuse => {
+		.then((fuse) => {
 			let results;
-			if ( request.query.search ) {
-				results = fuse.search( request.query.search );
+			if (request.query.search) {
+				results = fuse.search(request.query.search);
 			} else {
 				results = fuse.list;
 			}
 
-			response.json( results );
-		} )
-		.catch( error => {
-			response.status( 500 ).json( error );
-		} );
-} );
+			response.json(results);
+		})
+		.catch((error) => {
+			response.status(500).json(error);
+		});
+});
 
 module.exports.prime = prime;
 module.exports.router = router;

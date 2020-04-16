@@ -12,27 +12,27 @@ import TableItem from 'woocommerce/components/table/table-item';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
 import StoreStatsReferrerWidgetBase from '../store-stats-referrer-widget-base';
 
-const StoreStatsReferrerConvWidget = props => {
+const StoreStatsReferrerConvWidget = (props) => {
 	const { translate } = props;
 	const header = (
 		<TableRow isHeader>
 			<TableItem isHeader className="store-stats-referrer-conv-widget__referrer">
-				{ translate( 'Source' ) }
+				{translate('Source')}
 			</TableItem>
 			<TableItem isHeader className="store-stats-referrer-conv-widget__views">
-				{ translate( 'Views' ) }
+				{translate('Views')}
 			</TableItem>
 			<TableItem isHeader className="store-stats-referrer-conv-widget__delta">
-				{ '→' }
+				{'→'}
 			</TableItem>
 			<TableItem isHeader className="store-stats-referrer-conv-widget__carts">
-				{ translate( 'Carts' ) }
+				{translate('Carts')}
 			</TableItem>
 			<TableItem isHeader className="store-stats-referrer-conv-widget__delta">
-				{ '→' }
+				{'→'}
 			</TableItem>
 			<TableItem isHeader className="store-stats-referrer-conv-widget__purchases">
-				{ translate( 'Purchases' ) }
+				{translate('Purchases')}
 			</TableItem>
 		</TableRow>
 	);
@@ -40,41 +40,39 @@ const StoreStatsReferrerConvWidget = props => {
 	return (
 		<StoreStatsReferrerWidgetBase
 			className="store-stats-referrer-conv-widget"
-			header={ header }
-			{ ...props }
+			header={header}
+			{...props}
 		>
-			{ d => (
+			{(d) => (
 				<Fragment>
-					<TableItem className="store-stats-referrer-conv-widget__referrer">
-						{ d.referrer }
-					</TableItem>
+					<TableItem className="store-stats-referrer-conv-widget__referrer">{d.referrer}</TableItem>
 					<TableItem className="store-stats-referrer-conv-widget__views">
-						{ formatValue( d.product_views, 'number', 0 ) }
+						{formatValue(d.product_views, 'number', 0)}
 					</TableItem>
 					<TableItem className="store-stats-referrer-conv-widget__delta">
-						{ `${
+						{`${
 							d.product_views !== 0
-								? Math.abs( Math.round( ( d.add_to_carts / d.product_views ) * 100 ) )
+								? Math.abs(Math.round((d.add_to_carts / d.product_views) * 100))
 								: '-'
-						}%` }
+						}%`}
 					</TableItem>
 					<TableItem className="store-stats-referrer-conv-widget__carts">
-						{ formatValue( d.add_to_carts, 'number', 0 ) }
+						{formatValue(d.add_to_carts, 'number', 0)}
 					</TableItem>
 					<TableItem className="store-stats-referrer-conv-widget__delta">
-						{ `${
+						{`${
 							d.add_to_carts !== 0
-								? Math.abs( Math.round( ( d.product_purchases / d.add_to_carts ) * 100 ) )
+								? Math.abs(Math.round((d.product_purchases / d.add_to_carts) * 100))
 								: '-'
-						}%` }
+						}%`}
 					</TableItem>
 					<TableItem className="store-stats-referrer-conv-widget__purchases">
-						{ formatValue( d.product_purchases, 'number', 0 ) }
+						{formatValue(d.product_purchases, 'number', 0)}
 					</TableItem>
 				</Fragment>
-			) }
+			)}
 		</StoreStatsReferrerWidgetBase>
 	);
 };
 
-export default localize( StoreStatsReferrerConvWidget );
+export default localize(StoreStatsReferrerConvWidget);

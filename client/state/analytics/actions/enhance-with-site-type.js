@@ -18,18 +18,18 @@ import { getSelectedSite } from 'state/ui/selectors';
  * @returns {object} the new Redux action
  * @see client/state/utils/withEnhancers
  */
-export default function enhanceWithSiteType( action, getState ) {
-	const site = getSelectedSite( getState() );
+export default function enhanceWithSiteType(action, getState) {
+	const site = getSelectedSite(getState());
 
-	if ( site !== null ) {
-		if ( action.type === ANALYTICS_EVENT_RECORD ) {
+	if (site !== null) {
+		if (action.type === ANALYTICS_EVENT_RECORD) {
 			set(
 				action,
 				'meta.analytics[0].payload.properties.site_type',
 				site.jetpack ? 'jetpack' : 'wpcom'
 			);
 		} else {
-			set( action, 'meta.analytics[0].payload.site_type', site.jetpack ? 'jetpack' : 'wpcom' );
+			set(action, 'meta.analytics[0].payload.site_type', site.jetpack ? 'jetpack' : 'wpcom');
 		}
 	}
 

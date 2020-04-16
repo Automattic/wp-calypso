@@ -22,29 +22,29 @@ class FormStateExamples extends React.Component {
 	}
 
 	list() {
-		const items = Object.keys( COMPONENTS ).map( componentName => {
+		const items = Object.keys(COMPONENTS).map((componentName) => {
 			return (
-				<li key={ componentName }>
-					<a href={ 'form-state-examples/' + kebabCase( componentName ) }>{ componentName }</a>
+				<li key={componentName}>
+					<a href={'form-state-examples/' + kebabCase(componentName)}>{componentName}</a>
 				</li>
 			);
-		} );
+		});
 
 		return (
 			<div>
 				<h1>Form State Examples</h1>
-				<ul>{ items }</ul>
+				<ul>{items}</ul>
 			</div>
 		);
 	}
 
 	component() {
-		const componentName = upperFirst( camelCase( this.props.component ) ),
-			ComponentClass = COMPONENTS[ componentName ];
+		const componentName = upperFirst(camelCase(this.props.component)),
+			ComponentClass = COMPONENTS[componentName];
 
 		return (
 			<div>
-				<h1>{ componentName }</h1>
+				<h1>{componentName}</h1>
 				<ComponentClass />
 			</div>
 		);

@@ -11,6 +11,6 @@ import 'state/comments/init';
  * @param {number} postId site identification
  * @returns {Array} comment items
  */
-export function getPostCommentItems( state, siteId, postId ) {
-	return state.comments.items[ `${ siteId }-${ postId }` ];
+export function getPostCommentItems(state, siteId, postId) {
+	return state.comments.items[`${siteId}-${postId}`];
 }

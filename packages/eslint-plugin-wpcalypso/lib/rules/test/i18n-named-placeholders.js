@@ -9,15 +9,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-named-placeholders' ),
+const rule = require('../../../lib/rules/i18n-named-placeholders'),
 	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-named-placeholders', rule, {
+new RuleTester(config).run('i18n-named-placeholders', rule, {
 	valid: [
 		{
 			code: 'translate( /* zero args */ );',
@@ -73,4 +73,4 @@ new RuleTester( config ).run( 'i18n-named-placeholders', rule, {
 			],
 		},
 	],
-} );
+});

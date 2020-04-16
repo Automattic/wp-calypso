@@ -31,22 +31,22 @@ class MediaLibraryDropZone extends React.Component {
 		trackStats: true,
 	};
 
-	uploadFiles = files => {
-		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
+	uploadFiles = (files) => {
+		if (!this.props.site || !userCan('upload_files', this.props.site)) {
 			return;
 		}
 
-		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site, files );
+		MediaActions.clearValidationErrors(this.props.site.ID);
+		MediaActions.add(this.props.site, files);
 		this.props.onAddMedia();
 
-		if ( this.props.trackStats ) {
-			bumpStat( 'editor_upload_via', 'drop' );
+		if (this.props.trackStats) {
+			bumpStat('editor_upload_via', 'drop');
 		}
 	};
 
-	isValidTransfer = transfer => {
-		if ( ! transfer ) {
+	isValidTransfer = (transfer) => {
+		if (!transfer) {
 			return false;
 		}
 
@@ -55,7 +55,7 @@ class MediaLibraryDropZone extends React.Component {
 		// This value will be `null` for files dragged from outside the page.
 		//
 		// See: https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/mozSourceNode
-		if ( transfer.mozSourceNode ) {
+		if (transfer.mozSourceNode) {
 			return false;
 		}
 
@@ -65,30 +65,30 @@ class MediaLibraryDropZone extends React.Component {
 		// makes detection impossible, so we err on allowing the transfer.
 		//
 		// See: http://www.w3.org/html/wg/drafts/html/master/editing.html#the-datatransfer-interface
-		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
+		return !transfer.types || -1 !== Array.prototype.indexOf.call(transfer.types, 'Files');
 	};
 
 	render() {
 		const { site, fullScreen, translate } = this.props;
-		const canUploadFiles = userCan( 'upload_files', site );
-		const textLabel = ! canUploadFiles
-			? translate( 'You are not authorized to upload files to this site' )
+		const canUploadFiles = userCan('upload_files', site);
+		const textLabel = !canUploadFiles
+			? translate('You are not authorized to upload files to this site')
 			: null;
-		const icon = ! canUploadFiles ? (
-			<Gridicon icon="cross" size={ 48 } />
+		const icon = !canUploadFiles ? (
+			<Gridicon icon="cross" size={48} />
 		) : (
-			<Gridicon icon="cloud-upload" size={ 48 } />
+			<Gridicon icon="cloud-upload" size={48} />
 		);
 		return (
 			<DropZone
-				fullScreen={ fullScreen }
-				onVerifyValidTransfer={ this.isValidTransfer }
-				onFilesDrop={ this.uploadFiles }
-				textLabel={ textLabel }
-				icon={ icon }
+				fullScreen={fullScreen}
+				onVerifyValidTransfer={this.isValidTransfer}
+				onFilesDrop={this.uploadFiles}
+				textLabel={textLabel}
+				icon={icon}
 			/>
 		);
 	}
 }
 
-export default localize( MediaLibraryDropZone );
+export default localize(MediaLibraryDropZone);

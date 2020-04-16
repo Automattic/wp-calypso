@@ -35,71 +35,71 @@ import './style.scss';
 /**
  * Module Variables
  */
-const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
+const debug = debugModule('calypso:my-sites:people:edit-team-member-form');
 
 class EditUserForm extends Component {
-	state = this.getStateObject( this.props );
+	state = this.getStateObject(this.props);
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.setState( this.getStateObject( nextProps ) );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.setState(this.getStateObject(nextProps));
 	}
 
-	getRole( roles ) {
-		return roles && roles[ 0 ] ? roles[ 0 ] : null;
+	getRole(roles) {
+		return roles && roles[0] ? roles[0] : null;
 	}
 
-	getStateObject( props ) {
-		const role = this.getRole( props.roles );
-		return assign( omit( props, 'site' ), {
+	getStateObject(props) {
+		const role = this.getRole(props.roles);
+		return assign(omit(props, 'site'), {
 			roles: role,
 			isExternalContributor: props.isExternalContributor,
-		} );
+		});
 	}
 
 	getChangedSettings() {
-		const originalUser = this.getStateObject( this.props );
+		const originalUser = this.getStateObject(this.props);
 
-		const changedKeys = filter( this.getAllowedSettingsToChange(), setting => {
+		const changedKeys = filter(this.getAllowedSettingsToChange(), (setting) => {
 			return (
-				'undefined' !== typeof originalUser[ setting ] &&
-				'undefined' !== typeof this.state[ setting ] &&
-				originalUser[ setting ] !== this.state[ setting ]
+				'undefined' !== typeof originalUser[setting] &&
+				'undefined' !== typeof this.state[setting] &&
+				originalUser[setting] !== this.state[setting]
 			);
-		} );
-		return pick( this.state, changedKeys );
+		});
+		return pick(this.state, changedKeys);
 	}
 
 	getAllowedSettingsToChange() {
 		const currentUser = this.props.currentUser;
 		const allowedSettings = [];
 
-		if ( ! this.state.ID ) {
+		if (!this.state.ID) {
 			return allowedSettings;
 		}
 
 		// On WP.com sites, a user should only be able to update role.
 		// A user should not be able to update own role.
-		if ( this.props.isJetpack ) {
-			if ( ! this.state.linked_user_ID || this.state.linked_user_ID !== currentUser.ID ) {
-				allowedSettings.push( 'roles', 'isExternalContributor' );
+		if (this.props.isJetpack) {
+			if (!this.state.linked_user_ID || this.state.linked_user_ID !== currentUser.ID) {
+				allowedSettings.push('roles', 'isExternalContributor');
 			}
-			allowedSettings.push( 'first_name', 'last_name', 'name' );
-		} else if ( this.state.ID !== currentUser.ID ) {
-			allowedSettings.push( 'roles', 'isExternalContributor' );
+			allowedSettings.push('first_name', 'last_name', 'name');
+		} else if (this.state.ID !== currentUser.ID) {
+			allowedSettings.push('roles', 'isExternalContributor');
 		}
 
 		return allowedSettings;
 	}
 
 	hasUnsavedSettings() {
-		return Object.keys( this.getChangedSettings() ).length;
+		return Object.keys(this.getChangedSettings()).length;
 	}
 
-	updateUser = event => {
+	updateUser = (event) => {
 		event.preventDefault();
 
 		const changedSettings = this.getChangedSettings();
-		debug( 'Changed settings: ' + JSON.stringify( changedSettings ) );
+		debug('Changed settings: ' + JSON.stringify(changedSettings));
 
 		this.props.markSaved();
 
@@ -110,60 +110,60 @@ class EditUserForm extends Component {
 			this.props.siteId,
 			this.state.ID,
 			changedSettings.roles
-				? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
+				? Object.assign(changedSettings, { roles: [changedSettings.roles] })
 				: changedSettings
 		);
 
-		if ( true === changedSettings.isExternalContributor ) {
+		if (true === changedSettings.isExternalContributor) {
 			requestExternalContributorsAddition(
 				this.props.siteId,
 				undefined !== this.state.linked_user_ID ? this.state.linked_user_ID : this.state.ID
 			);
-		} else if ( false === changedSettings.isExternalContributor ) {
+		} else if (false === changedSettings.isExternalContributor) {
 			requestExternalContributorsRemoval(
 				this.props.siteId,
 				undefined !== this.state.linked_user_ID ? this.state.linked_user_ID : this.state.ID
 			);
 		}
 
-		this.props.recordGoogleEvent( 'People', 'Clicked Save Changes Button on User Edit' );
+		this.props.recordGoogleEvent('People', 'Clicked Save Changes Button on User Edit');
 	};
 
-	recordFieldFocus = fieldId => () =>
-		this.props.recordGoogleEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
+	recordFieldFocus = (fieldId) => () =>
+		this.props.recordGoogleEvent('People', 'Focused on field on User Edit', 'Field', fieldId);
 
-	handleChange = event => {
-		const stateChange = { [ event.target.name ]: event.target.value };
-		this.setState( stateChange );
+	handleChange = (event) => {
+		const stateChange = { [event.target.name]: event.target.value };
+		this.setState(stateChange);
 	};
 
-	handleExternalChange = event => this.setState( { isExternalContributor: event.target.checked } );
+	handleExternalChange = (event) => this.setState({ isExternalContributor: event.target.checked });
 
-	isExternalRole = role => {
-		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
-		return includes( roles, role );
+	isExternalRole = (role) => {
+		const roles = ['administrator', 'editor', 'author', 'contributor'];
+		return includes(roles, role);
 	};
 
-	renderField( fieldId ) {
+	renderField(fieldId) {
 		let returnField = null;
-		switch ( fieldId ) {
+		switch (fieldId) {
 			case 'roles':
 				returnField = (
 					<Fragment key="roles">
 						<RoleSelect
 							id="roles"
 							name="roles"
-							siteId={ this.props.siteId }
-							value={ this.state.roles }
-							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'roles' ) }
+							siteId={this.props.siteId}
+							value={this.state.roles}
+							onChange={this.handleChange}
+							onFocus={this.recordFieldFocus('roles')}
 						/>
-						{ ! this.props.isVip && this.isExternalRole( this.state.roles ) && (
+						{!this.props.isVip && this.isExternalRole(this.state.roles) && (
 							<ContractorSelect
-								onChange={ this.handleExternalChange }
-								checked={ this.state.isExternalContributor }
+								onChange={this.handleExternalChange}
+								checked={this.state.isExternalContributor}
 							/>
-						) }
+						)}
 					</Fragment>
 				);
 				break;
@@ -171,16 +171,16 @@ class EditUserForm extends Component {
 				returnField = (
 					<FormFieldset key="first_name">
 						<FormLabel htmlFor="first_name">
-							{ this.props.translate( 'First Name', {
+							{this.props.translate('First Name', {
 								context: 'Text that is displayed in a label of a form.',
-							} ) }
+							})}
 						</FormLabel>
 						<FormTextInput
 							id="first_name"
 							name="first_name"
-							defaultValue={ this.state.first_name }
-							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'first_name' ) }
+							defaultValue={this.state.first_name}
+							onChange={this.handleChange}
+							onFocus={this.recordFieldFocus('first_name')}
 						/>
 					</FormFieldset>
 				);
@@ -189,16 +189,16 @@ class EditUserForm extends Component {
 				returnField = (
 					<FormFieldset key="last_name">
 						<FormLabel htmlFor="last_name">
-							{ this.props.translate( 'Last Name', {
+							{this.props.translate('Last Name', {
 								context: 'Text that is displayed in a label of a form.',
-							} ) }
+							})}
 						</FormLabel>
 						<FormTextInput
 							id="last_name"
 							name="last_name"
-							defaultValue={ this.state.last_name }
-							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'last_name' ) }
+							defaultValue={this.state.last_name}
+							onChange={this.handleChange}
+							onFocus={this.recordFieldFocus('last_name')}
 						/>
 					</FormFieldset>
 				);
@@ -207,16 +207,16 @@ class EditUserForm extends Component {
 				returnField = (
 					<FormFieldset key="name">
 						<FormLabel htmlFor="name">
-							{ this.props.translate( 'Public Display Name', {
+							{this.props.translate('Public Display Name', {
 								context: 'Text that is displayed in a label of a form.',
-							} ) }
+							})}
 						</FormLabel>
 						<FormTextInput
 							id="name"
 							name="name"
-							defaultValue={ this.state.name }
-							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'name' ) }
+							defaultValue={this.state.name}
+							onChange={this.handleChange}
+							onFocus={this.recordFieldFocus('name')}
 						/>
 					</FormFieldset>
 				);
@@ -228,33 +228,33 @@ class EditUserForm extends Component {
 
 	render() {
 		let editableFields;
-		if ( ! this.state.ID ) {
+		if (!this.state.ID) {
 			return null;
 		}
 
 		editableFields = this.getAllowedSettingsToChange();
 
-		if ( ! editableFields.length ) {
+		if (!editableFields.length) {
 			return null;
 		}
 
-		editableFields = editableFields.map( fieldId => {
-			return this.renderField( fieldId );
-		} );
+		editableFields = editableFields.map((fieldId) => {
+			return this.renderField(fieldId);
+		});
 
 		return (
 			<form
 				className="edit-team-member-form__form" // eslint-disable-line
-				disabled={ this.props.disabled }
-				onSubmit={ this.updateUser }
-				onChange={ this.props.markChanged }
+				disabled={this.props.disabled}
+				onSubmit={this.updateUser}
+				onChange={this.props.markChanged}
 			>
-				{ editableFields }
+				{editableFields}
 				<FormButtonsBar>
-					<FormButton disabled={ ! this.hasUnsavedSettings() }>
-						{ this.props.translate( 'Save changes', {
+					<FormButton disabled={!this.hasUnsavedSettings()}>
+						{this.props.translate('Save changes', {
 							context: 'Button label that prompts user to save form',
-						} ) }
+						})}
 					</FormButton>
 				</FormButtonsBar>
 			</form>
@@ -264,18 +264,18 @@ class EditUserForm extends Component {
 
 export default localize(
 	connect(
-		( state, { siteId, ID: userId, linked_user_ID: linkedUserId } ) => {
-			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
+		(state, { siteId, ID: userId, linked_user_ID: linkedUserId }) => {
+			const externalContributors = (siteId && requestExternalContributors(siteId).data) || [];
 			return {
-				currentUser: getCurrentUser( state ),
+				currentUser: getCurrentUser(state),
 				isExternalContributor: externalContributors.includes(
 					undefined !== linkedUserId ? linkedUserId : userId
 				),
-				isVip: isVipSite( state, siteId ),
+				isVip: isVipSite(state, siteId),
 			};
 		},
 		{
 			recordGoogleEvent,
 		}
-	)( EditUserForm )
+	)(EditUserForm)
 );

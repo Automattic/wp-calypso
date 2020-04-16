@@ -23,30 +23,30 @@ class FollowersCount extends Component {
 
 		return (
 			<div className="followers-count">
-				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
-				{ isNumber( followers ) && (
+				{siteId && <QuerySiteStats statType="stats" siteId={siteId} />}
+				{isNumber(followers) && (
 					<Button
 						borderless
-						href={ '/people/followers/' + slug }
-						title={ translate( 'Total of WordPress and Email Followers' ) }
+						href={'/people/followers/' + slug}
+						title={translate('Total of WordPress and Email Followers')}
 					>
-						{ translate( 'Followers' ) } <Count count={ followers } />
+						{translate('Followers')} <Count count={followers} />
 					</Button>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = get( site, 'ID' );
-	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );
-	const siteFollowers = get( site, 'subscribers_count' );
+export default connect((state) => {
+	const site = getSelectedSite(state);
+	const siteId = get(site, 'ID');
+	const data = getSiteStatsNormalizedData(state, siteId, 'stats');
+	const siteFollowers = get(site, 'subscribers_count');
 
 	return {
-		slug: getSiteSlug( state, siteId ),
-		followers: get( data, 'followersBlog', siteFollowers ),
+		slug: getSiteSlug(state, siteId),
+		followers: get(data, 'followersBlog', siteFollowers),
 		siteId,
 	};
-} )( localize( FollowersCount ) );
+})(localize(FollowersCount));

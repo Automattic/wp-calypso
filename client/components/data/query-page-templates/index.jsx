@@ -15,23 +15,23 @@ import { requestPageTemplates } from 'state/page-templates/actions';
 
 class QueryPageTemplates extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId, themeSlug } = this.props;
 		const { siteId: nextSiteId, themeSlug: nextThemeSlug } = nextProps;
 		const hasSiteOrThemeChanged =
-			siteId !== nextSiteId || ( themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug );
+			siteId !== nextSiteId || (themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug);
 
-		if ( hasSiteOrThemeChanged ) {
-			this.request( nextProps );
+		if (hasSiteOrThemeChanged) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestPageTemplates( props.siteId );
+	request(props) {
+		if (!props.isRequesting) {
+			props.requestPageTemplates(props.siteId);
 		}
 	}
 
@@ -47,11 +47,11 @@ QueryPageTemplates.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	(state, { siteId }) => {
 		return {
-			isRequesting: isRequestingPageTemplates( state, siteId ),
-			themeSlug: getSiteOption( state, siteId, 'theme_slug' ),
+			isRequesting: isRequestingPageTemplates(state, siteId),
+			themeSlug: getSiteOption(state, siteId, 'theme_slug'),
 		};
 	},
 	{ requestPageTemplates }
-)( QueryPageTemplates );
+)(QueryPageTemplates);

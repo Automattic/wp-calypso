@@ -19,31 +19,31 @@ import 'state/jetpack-connect/init';
  *
  * @returns {Promise}                  Resolves to { username, bearerToken }
  */
-export function createAccount( userData ) {
-	return async dispatch => {
-		dispatch( recordTracksEvent( 'calypso_jpc_create_account' ) );
+export function createAccount(userData) {
+	return async (dispatch) => {
+		dispatch(recordTracksEvent('calypso_jpc_create_account'));
 
 		try {
-			const data = await wpcom.undocumented().usersNew( userData );
+			const data = await wpcom.undocumented().usersNew(userData);
 			const bearerToken = makeJsonSchemaParser(
 				{
 					type: 'object',
-					required: [ 'bearer_token' ],
+					required: ['bearer_token'],
 					properties: {
 						bearer_token: { type: 'string' },
 					},
 				},
-				( { bearer_token } ) => bearer_token
-			)( data );
+				({ bearer_token }) => bearer_token
+			)(data);
 
-			dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
+			dispatch(recordTracksEvent('calypso_jpc_create_account_success'));
 			return { username: userData.username, bearerToken };
-		} catch ( error ) {
+		} catch (error) {
 			dispatch(
-				recordTracksEvent( 'calypso_jpc_create_account_error', {
+				recordTracksEvent('calypso_jpc_create_account_error', {
 					error_code: error.code,
-					error: JSON.stringify( error ),
-				} )
+					error: JSON.stringify(error),
+				})
 			);
 			throw error;
 		}

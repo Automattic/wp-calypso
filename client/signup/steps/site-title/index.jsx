@@ -40,29 +40,29 @@ class SiteTitleStep extends Component {
 	};
 
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep({ stepName: this.props.stepName });
 	}
 
-	handleInputChange = ( { currentTarget: { value = '' } } ) => this.props.setSiteTitle( value );
+	handleInputChange = ({ currentTarget: { value = '' } }) => this.props.setSiteTitle(value);
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 
 		const { flowName, siteTitle, stepName } = this.props;
 
-		this.props.setSiteTitle( siteTitle );
-		this.props.submitSignupStep( { stepName, flowName }, { siteTitle } );
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_title', {
+		this.props.setSiteTitle(siteTitle);
+		this.props.submitSignupStep({ stepName, flowName }, { siteTitle });
+		this.props.recordTracksEvent('calypso_signup_actions_submit_site_title', {
 			value: siteTitle,
-		} );
+		});
 		this.props.goToNextStep();
 	};
 
 	renderSiteTitleStep = () => {
 		const { siteTitle, siteType } = this.props;
-		const fieldLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '';
+		const fieldLabel = getSiteTypePropertyValue('slug', siteType, 'siteTitleLabel') || '';
 		const fieldPlaceholder =
-			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
+			getSiteTypePropertyValue('slug', siteType, 'siteTitlePlaceholder') || '';
 		return (
 			<div className="site-title__wrapper">
 				<form>
@@ -71,16 +71,16 @@ class SiteTitleStep extends Component {
 							<FormTextInput
 								id="title"
 								name="title"
-								placeholder={ fieldPlaceholder }
-								onChange={ this.handleInputChange }
-								value={ siteTitle }
-								maxLength={ 100 }
+								placeholder={fieldPlaceholder}
+								onChange={this.handleInputChange}
+								value={siteTitle}
+								maxLength={100}
 								autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-								aria-label={ fieldLabel }
+								aria-label={fieldLabel}
 							/>
-							<Button primary type="submit" onClick={ this.handleSubmit }>
-								{ this.props.translate( 'Continue' ) }
-							</Button>{ ' ' }
+							<Button primary type="submit" onClick={this.handleSubmit}>
+								{this.props.translate('Continue')}
+							</Button>{' '}
 						</FormFieldset>
 					</div>
 				</form>
@@ -90,21 +90,21 @@ class SiteTitleStep extends Component {
 
 	render() {
 		const { flowName, positionInFlow, showSiteMockups, siteType, stepName } = this.props;
-		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' );
-		const subHeaderText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleSubheader' );
+		const headerText = getSiteTypePropertyValue('slug', siteType, 'siteTitleLabel');
+		const subHeaderText = getSiteTypePropertyValue('slug', siteType, 'siteTitleSubheader');
 
 		return (
 			<div>
 				<StepWrapper
-					flowName={ flowName }
-					stepName={ stepName }
-					positionInFlow={ positionInFlow }
-					headerText={ headerText }
-					fallbackHeaderText={ headerText }
-					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ subHeaderText }
-					stepContent={ this.renderSiteTitleStep() }
-					showSiteMockups={ showSiteMockups }
+					flowName={flowName}
+					stepName={stepName}
+					positionInFlow={positionInFlow}
+					headerText={headerText}
+					fallbackHeaderText={headerText}
+					subHeaderText={subHeaderText}
+					fallbackSubHeaderText={subHeaderText}
+					stepContent={this.renderSiteTitleStep()}
+					showSiteMockups={showSiteMockups}
 				/>
 			</div>
 		);
@@ -112,14 +112,14 @@ class SiteTitleStep extends Component {
 }
 
 export default connect(
-	state => ( {
-		siteTitle: getSiteTitle( state ),
-		siteType: getSiteType( state ),
-	} ),
+	(state) => ({
+		siteTitle: getSiteTitle(state),
+		siteType: getSiteType(state),
+	}),
 	{
 		recordTracksEvent,
 		setSiteTitle,
 		saveSignupStep,
 		submitSignupStep,
 	}
-)( localize( SiteTitleStep ) );
+)(localize(SiteTitleStep));

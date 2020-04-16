@@ -30,13 +30,13 @@ class PrecancellationChatButton extends Component {
 	handleClick = () => {
 		const { purchase, surveyStep, onClick } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_precancellation_chat_click', {
+		this.props.recordTracksEvent('calypso_precancellation_chat_click', {
 			survey_step: surveyStep,
 			purchase: purchase.productSlug,
-			is_plan: isPlan( purchase ),
-			is_domain_registration: isDomainRegistration( purchase ),
-			has_included_domain: hasIncludedDomain( purchase ),
-		} );
+			is_plan: isPlan(purchase),
+			is_domain_registration: isDomainRegistration(purchase),
+			has_included_domain: hasIncludedDomain(purchase),
+		});
 
 		onClick();
 	};
@@ -47,14 +47,14 @@ class PrecancellationChatButton extends Component {
 		return (
 			<HappychatButton
 				className="precancellation-chat-button__main-button"
-				onClick={ this.handleClick }
+				onClick={this.handleClick}
 			>
-				{ translate( 'Need help? Chat with us' ) }
+				{translate('Need help? Chat with us')}
 			</HappychatButton>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( PrecancellationChatButton ) );
+})(localize(PrecancellationChatButton));

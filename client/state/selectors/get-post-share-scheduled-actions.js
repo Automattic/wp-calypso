@@ -10,11 +10,11 @@ import { get, orderBy } from 'lodash';
 import { enrichPublicizeActionsWithConnections } from 'state/selectors/utils/';
 import createSelector from 'lib/create-selector';
 
-const getScheduledActions = ( state, siteId, postId ) =>
+const getScheduledActions = (state, siteId, postId) =>
 	orderBy(
-		get( state, [ 'sharing', 'publicize', 'sharePostActions', 'scheduled', siteId, postId ], [] ),
-		[ 'ID' ],
-		[ 'desc' ]
+		get(state, ['sharing', 'publicize', 'sharePostActions', 'scheduled', siteId, postId], []),
+		['ID'],
+		['desc']
 	);
 
 /**
@@ -26,11 +26,11 @@ const getScheduledActions = ( state, siteId, postId ) =>
  * @returns {Array} share publihed actions array
  */
 const getPostShareScheduledActions = createSelector(
-	( state, siteId, postId ) => {
-		const postShareActions = getScheduledActions( state, siteId, postId );
-		return enrichPublicizeActionsWithConnections( state, postShareActions );
+	(state, siteId, postId) => {
+		const postShareActions = getScheduledActions(state, siteId, postId);
+		return enrichPublicizeActionsWithConnections(state, postShareActions);
 	},
-	( state, siteId, postId ) => getScheduledActions( state, siteId, postId )
+	(state, siteId, postId) => getScheduledActions(state, siteId, postId)
 );
 
 export default getPostShareScheduledActions;

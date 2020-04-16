@@ -20,28 +20,28 @@ import {
 } from 'state/reader/action-types';
 import useNock from 'test/helpers/use-nock';
 
-describe( 'actions', () => {
+describe('actions', () => {
 	const spy = sinon.spy();
 
-	beforeEach( () => {
+	beforeEach(() => {
 		spy.resetHistory();
-	} );
+	});
 
-	describe( '#receiveThumbnail', () => {
-		test( 'should return an action object', () => {
+	describe('#receiveThumbnail', () => {
+		test('should return an action object', () => {
 			const embedUrl = 'embedUrl';
 			const thumbnailUrl = 'thumbnailUrl';
-			const action = receiveThumbnail( embedUrl, thumbnailUrl );
+			const action = receiveThumbnail(embedUrl, thumbnailUrl);
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: READER_THUMBNAIL_RECEIVE,
 				embedUrl,
 				thumbnailUrl,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#requestThumbnail', () => {
+	describe('#requestThumbnail', () => {
 		const unsupportedEmbedUrl = 'not-a-real-url';
 		const thumbnailUrl = 'https://i.vimeocdn.com/video/459553940_640.webp';
 		const successfulEmbedUrl = 'https://vimeo.com/6999927';
@@ -49,90 +49,88 @@ describe( 'actions', () => {
 		const youtubeEmbedUrl = 'https://youtube.com/?v=UoOCrbV3ZQ';
 		const youtubeThumbnailUrl = 'https://img.youtube.com/vi/UoOCrbV3ZQ/mqdefault.jpg';
 
-		useNock( nock => {
-			nock( 'https://vimeo.com' )
-				.get( '/api/v2/video/6999927.json' )
-				.reply( 200, deepFreeze( sampleVimeoResponse ) );
-			nock( 'https://vimeo.com' )
-				.get( '/api/v2/video/6999928.json' )
-				.reply( 500, deepFreeze( {} ) );
-		} );
+		useNock((nock) => {
+			nock('https://vimeo.com')
+				.get('/api/v2/video/6999927.json')
+				.reply(200, deepFreeze(sampleVimeoResponse));
+			nock('https://vimeo.com').get('/api/v2/video/6999928.json').reply(500, deepFreeze({}));
+		});
 
-		test( 'vimeo: should dispatch properly when receiving a valid response', () => {
+		test('vimeo: should dispatch properly when receiving a valid response', () => {
 			const dispatchSpy = sinon.spy();
-			const request = requestThumbnail( successfulEmbedUrl )( dispatchSpy );
+			const request = requestThumbnail(successfulEmbedUrl)(dispatchSpy);
 
-			expect( dispatchSpy ).to.have.been.calledWith( {
+			expect(dispatchSpy).to.have.been.calledWith({
 				type: READER_THUMBNAIL_REQUEST,
 				embedUrl: successfulEmbedUrl,
-			} );
+			});
 
 			return request
-				.then( () => {
-					expect( dispatchSpy ).to.have.been.calledWith( {
+				.then(() => {
+					expect(dispatchSpy).to.have.been.calledWith({
 						type: READER_THUMBNAIL_REQUEST_SUCCESS,
 						embedUrl: successfulEmbedUrl,
-					} );
+					});
 
-					expect( dispatchSpy ).to.have.been.calledWith( {
+					expect(dispatchSpy).to.have.been.calledWith({
 						type: READER_THUMBNAIL_RECEIVE,
 						embedUrl: successfulEmbedUrl,
 						thumbnailUrl,
-					} );
+					});
 
-					expect( dispatchSpy ).to.have.been.calledThrice;
-				} )
-				.catch( err => {
-					assert.fail( err, undefined, 'errback should not have been called' );
-				} );
-		} );
+					expect(dispatchSpy).to.have.been.calledThrice;
+				})
+				.catch((err) => {
+					assert.fail(err, undefined, 'errback should not have been called');
+				});
+		});
 
-		test( 'youtube: should dispatch action with thumbnail instantly', () => {
+		test('youtube: should dispatch action with thumbnail instantly', () => {
 			const dispatchSpy = sinon.spy();
-			requestThumbnail( youtubeEmbedUrl )( dispatchSpy );
+			requestThumbnail(youtubeEmbedUrl)(dispatchSpy);
 
-			expect( dispatchSpy ).to.have.been.calledWith( {
+			expect(dispatchSpy).to.have.been.calledWith({
 				type: READER_THUMBNAIL_RECEIVE,
 				embedUrl: youtubeEmbedUrl,
 				thumbnailUrl: youtubeThumbnailUrl,
-			} );
-			expect( dispatchSpy ).to.have.been.calledOnce;
-		} );
+			});
+			expect(dispatchSpy).to.have.been.calledOnce;
+		});
 
-		test( 'should dispatch the right actions if network request fails', () => {
+		test('should dispatch the right actions if network request fails', () => {
 			const dispatchSpy = sinon.spy();
-			const request = requestThumbnail( failureEmbedUrl )( dispatchSpy );
+			const request = requestThumbnail(failureEmbedUrl)(dispatchSpy);
 
-			expect( dispatchSpy ).to.have.been.calledWith( {
+			expect(dispatchSpy).to.have.been.calledWith({
 				type: READER_THUMBNAIL_REQUEST,
 				embedUrl: failureEmbedUrl,
-			} );
+			});
 
 			return request
-				.then( () => {
-					expect( dispatchSpy ).to.have.been.calledWithMatch( {
+				.then(() => {
+					expect(dispatchSpy).to.have.been.calledWithMatch({
 						type: READER_THUMBNAIL_REQUEST_FAILURE,
 						embedUrl: failureEmbedUrl,
-					} );
+					});
 
-					expect( dispatchSpy ).to.have.been.calledTwice;
-				} )
-				.catch( err => {
-					assert.fail( err, undefined, 'errback should not have been called' );
-				} );
-		} );
+					expect(dispatchSpy).to.have.been.calledTwice;
+				})
+				.catch((err) => {
+					assert.fail(err, undefined, 'errback should not have been called');
+				});
+		});
 
-		test( 'should dispatch a failure action instantly if unsupported', () => {
+		test('should dispatch a failure action instantly if unsupported', () => {
 			const dispatchSpy = sinon.spy();
-			requestThumbnail( unsupportedEmbedUrl )( dispatchSpy );
+			requestThumbnail(unsupportedEmbedUrl)(dispatchSpy);
 
-			expect( dispatchSpy ).to.have.been.calledWith( {
+			expect(dispatchSpy).to.have.been.calledWith({
 				type: READER_THUMBNAIL_REQUEST_FAILURE,
 				embedUrl: unsupportedEmbedUrl,
 				error: { type: 'UNSUPPORTED_EMBED' },
-			} );
+			});
 
-			expect( dispatchSpy ).to.have.been.calledOnce;
-		} );
-	} );
-} );
+			expect(dispatchSpy).to.have.been.calledOnce;
+		});
+	});
+});

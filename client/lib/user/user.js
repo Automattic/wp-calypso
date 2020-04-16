@@ -5,7 +5,7 @@
 import { entries, isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:user' );
+const debug = debugFactory('calypso:user');
 import config from 'config';
 import { stringify } from 'qs';
 
@@ -32,7 +32,7 @@ import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility'
  * @class
  */
 function User() {
-	if ( ! ( this instanceof User ) ) {
+	if (!(this instanceof User)) {
 		return new User();
 	}
 }
@@ -45,38 +45,38 @@ const VERIFICATION_POLL_INTERVAL = 15000;
 /**
  * Mixins
  */
-Emitter( User.prototype );
+Emitter(User.prototype);
 
 /**
  * Initialize the user data depending on the configuration
  **/
-User.prototype.initialize = async function() {
-	debug( 'Initializing User' );
+User.prototype.initialize = async function () {
+	debug('Initializing User');
 	this.fetching = false;
 	this.data = false;
 
-	this.on( 'change', this.checkVerification.bind( this ) );
+	this.on('change', this.checkVerification.bind(this));
 
 	let skipBootstrap = false;
 
-	if ( isSupportUserSession() ) {
+	if (isSupportUserSession()) {
 		// boot the support session and skip the user bootstrap: the server sent the unwanted
 		// user info there (me) instead of the target SU user.
 		supportUserBoot();
 		skipBootstrap = true;
 	}
 
-	if ( isSupportNextSession() ) {
+	if (isSupportNextSession()) {
 		// boot the support session and proceed with user bootstrap (unlike the SupportUserSession,
 		// the initial GET request includes the right cookies and header and returns a server-generated
 		// page with the right window.currentUser value)
 		supportNextBoot();
 	}
 
-	if ( ! skipBootstrap && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		debug( 'Bootstrapping user data:', this.data );
-		if ( window.currentUser ) {
-			this.handleFetchSuccess( window.currentUser );
+	if (!skipBootstrap && config.isEnabled('wpcom-user-bootstrap')) {
+		debug('Bootstrapping user data:', this.data);
+		if (window.currentUser) {
+			this.handleFetchSuccess(window.currentUser);
 		}
 		return;
 	}
@@ -91,11 +91,11 @@ User.prototype.initialize = async function() {
  *
  * @param {number} userId The new user ID.
  **/
-User.prototype.clearStoreIfChanged = function( userId ) {
-	const storedUserId = store.get( 'wpcom_user_id' );
+User.prototype.clearStoreIfChanged = function (userId) {
+	const storedUserId = store.get('wpcom_user_id');
 
-	if ( storedUserId != null && storedUserId !== userId ) {
-		debug( 'Clearing localStorage because user changed' );
+	if (storedUserId != null && storedUserId !== userId) {
+		debug('Clearing localStorage because user changed');
 		store.clearAll();
 	}
 };
@@ -105,7 +105,7 @@ User.prototype.clearStoreIfChanged = function( userId ) {
  *
  * @returns {object} The user data.
  */
-User.prototype.get = function() {
+User.prototype.get = function () {
 	return this.data;
 };
 
@@ -115,32 +115,32 @@ User.prototype.get = function() {
  *
  * @returns {Promise<void>} Promise that resolves (with no value) when fetching is finished
  */
-User.prototype.fetch = function() {
-	if ( this.fetching ) {
+User.prototype.fetch = function () {
+	if (this.fetching) {
 		// if already fetching, return the in-flight promise
 		return this.fetching;
 	}
 
 	// Request current user info
-	debug( 'Getting user from api' );
+	debug('Getting user from api');
 	this.fetching = wpcom
 		.me()
-		.get( {
+		.get({
 			meta: 'flags',
-			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
-		} )
-		.then( data => {
-			debug( 'User successfully retrieved from api:', data );
-			const userData = filterUserObject( data );
-			this.handleFetchSuccess( userData );
-		} )
-		.catch( error => {
-			debug( 'Failed to retrieve user from api:', error );
-			this.handleFetchFailure( error );
-		} )
-		.finally( () => {
+			abtests: getActiveTestNames({ appendDatestamp: true, asCSV: true }),
+		})
+		.then((data) => {
+			debug('User successfully retrieved from api:', data);
+			const userData = filterUserObject(data);
+			this.handleFetchSuccess(userData);
+		})
+		.catch((error) => {
+			debug('Failed to retrieve user from api:', error);
+			this.handleFetchFailure(error);
+		})
+		.finally(() => {
 			this.fetching = false;
-		} );
+		});
 
 	return this.fetching;
 };
@@ -151,14 +151,14 @@ User.prototype.fetch = function() {
  *
  * @param {Error} error network response error
  */
-User.prototype.handleFetchFailure = function( error ) {
-	if ( error.error === 'authorization_required' ) {
-		debug( 'The user is not logged in.' );
+User.prototype.handleFetchFailure = function (error) {
+	if (error.error === 'authorization_required') {
+		debug('The user is not logged in.');
 		this.data = false;
-		this.emit( 'change' );
+		this.emit('change');
 	} else {
 		// eslint-disable-next-line no-console
-		console.error( 'Failed to fetch the user from /me endpoint:', error );
+		console.error('Failed to fetch the user from /me endpoint:', error);
 	}
 };
 
@@ -169,33 +169,33 @@ User.prototype.handleFetchFailure = function( error ) {
  *
  * @param {object} userData an object containing the user's information.
  */
-User.prototype.handleFetchSuccess = function( userData ) {
-	this.clearStoreIfChanged( userData.ID );
+User.prototype.handleFetchSuccess = function (userData) {
+	this.clearStoreIfChanged(userData.ID);
 
 	// Store user ID in local storage so that we can detect a change and clear the storage
-	store.set( 'wpcom_user_id', userData.ID );
+	store.set('wpcom_user_id', userData.ID);
 
-	if ( userData.abtests ) {
-		if ( config.isEnabled( 'dev/test-helper' ) || isE2ETest() ) {
+	if (userData.abtests) {
+		if (config.isEnabled('dev/test-helper') || isE2ETest()) {
 			// This section will preserve the existing localStorage A/B variation values,
 			// This is necessary for the A/B test helper component and e2e tests..
-			const initialVariationsFromStore = store.get( ABTEST_LOCALSTORAGE_KEY );
+			const initialVariationsFromStore = store.get(ABTEST_LOCALSTORAGE_KEY);
 			const initialVariations =
 				typeof initialVariationsFromStore === 'object' ? initialVariationsFromStore : undefined;
-			store.set( ABTEST_LOCALSTORAGE_KEY, {
+			store.set(ABTEST_LOCALSTORAGE_KEY, {
 				...userData.abtests,
 				...initialVariations,
-			} );
+			});
 		} else {
-			store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
+			store.set(ABTEST_LOCALSTORAGE_KEY, userData.abtests);
 		}
 	}
 	this.data = userData;
-	this.emit( 'change' );
+	this.emit('change');
 };
 
-User.prototype.getLanguage = function() {
-	return getLanguage( this.data.localeSlug );
+User.prototype.getLanguage = function () {
+	return getLanguage(this.data.localeSlug);
 };
 
 /**
@@ -207,32 +207,32 @@ User.prototype.getLanguage = function() {
  *
  * @returns {string} The user's avatar URL based on the options parameter.
  */
-User.prototype.getAvatarUrl = function( options ) {
+User.prototype.getAvatarUrl = function (options) {
 	const default_options = {
 		s: 80,
 		d: 'mm',
 		r: 'G',
 	};
 	const avatar_URL = this.get().avatar_URL;
-	const avatar = typeof avatar_URL === 'string' ? avatar_URL.split( '?' )[ 0 ] : '';
+	const avatar = typeof avatar_URL === 'string' ? avatar_URL.split('?')[0] : '';
 
 	options = options || {};
-	options = Object.assign( {}, options, default_options );
+	options = Object.assign({}, options, default_options);
 
-	return avatar + '?' + stringify( options );
+	return avatar + '?' + stringify(options);
 };
 
 /**
  * Clear any user data.
  */
-User.prototype.clear = async function() {
+User.prototype.clear = async function () {
 	/**
 	 * Clear internal user data and empty localStorage cache
 	 * to discard any user reference that the application may hold
 	 */
 	this.data = false;
 	store.clearAll();
-	if ( config.isEnabled( 'persist-redux' ) ) {
+	if (config.isEnabled('persist-redux')) {
 		await clearStorage();
 	}
 };
@@ -246,49 +246,46 @@ User.prototype.clear = async function() {
  * @returns {(Promise|object)} If a callback is provided, this is an object representing an XMLHttpRequest.
  *                             If no callback is provided, this is a Promise.
  */
-User.prototype.sendVerificationEmail = function( fn ) {
-	return wpcom
-		.undocumented()
-		.me()
-		.sendVerificationEmail( fn );
+User.prototype.sendVerificationEmail = function (fn) {
+	return wpcom.undocumented().me().sendVerificationEmail(fn);
 };
 
-User.prototype.set = function( attributes ) {
+User.prototype.set = function (attributes) {
 	let changed = false;
 
-	for ( const [ attrName, attrValue ] of entries( attributes ) ) {
-		if ( ! isEqual( attrValue, this.data[ attrName ] ) ) {
-			this.data[ attrName ] = attrValue;
+	for (const [attrName, attrValue] of entries(attributes)) {
+		if (!isEqual(attrValue, this.data[attrName])) {
+			this.data[attrName] = attrValue;
 			changed = true;
 		}
 	}
 
-	if ( changed ) {
-		Object.assign( this.data, getComputedAttributes( this.data ) );
-		this.emit( 'change' );
+	if (changed) {
+		Object.assign(this.data, getComputedAttributes(this.data));
+		this.emit('change');
 	}
 
 	return changed;
 };
 
-User.prototype.decrementSiteCount = function() {
+User.prototype.decrementSiteCount = function () {
 	const user = this.get();
-	if ( user ) {
-		this.set( {
+	if (user) {
+		this.set({
 			visible_site_count: user.visible_site_count - 1,
 			site_count: user.site_count - 1,
-		} );
+		});
 	}
 	this.fetch();
 };
 
-User.prototype.incrementSiteCount = function() {
+User.prototype.incrementSiteCount = function () {
 	const user = this.get();
-	if ( user ) {
-		return this.set( {
+	if (user) {
+		return this.set({
 			visible_site_count: user.visible_site_count + 1,
 			site_count: user.site_count + 1,
-		} );
+		});
 	}
 	this.fetch();
 };
@@ -303,24 +300,24 @@ User.prototype.incrementSiteCount = function() {
  * @private
  */
 
-User.prototype.verificationPollerCallback = function( signal ) {
+User.prototype.verificationPollerCallback = function (signal) {
 	// skip server poll if page is hidden or there are no listeners
 	// and this was not triggered by a localStorage signal
-	if ( ( document.hidden || this.listeners( 'verify' ).length === 0 ) && ! signal ) {
+	if ((document.hidden || this.listeners('verify').length === 0) && !signal) {
 		return;
 	}
 
-	debug( 'Verification: POLL' );
+	debug('Verification: POLL');
 
-	this.once( 'change', () => {
-		if ( this.get().email_verified ) {
+	this.once('change', () => {
+		if (this.get().email_verified) {
 			// email is verified, stop polling
-			clearInterval( this.verificationPoller );
+			clearInterval(this.verificationPoller);
 			this.verificationPoller = null;
-			debug( 'Verification: VERIFIED' );
-			this.emit( 'verify' );
+			debug('Verification: VERIFIED');
+			this.emit('verify');
 		}
-	} );
+	});
 
 	this.fetch();
 };
@@ -334,35 +331,35 @@ User.prototype.verificationPollerCallback = function( signal ) {
  * @private
  */
 
-User.prototype.checkVerification = function() {
-	if ( ! this.get() ) {
+User.prototype.checkVerification = function () {
+	if (!this.get()) {
 		// not loaded, do nothing
 		return;
 	}
 
-	if ( this.get().email_verified ) {
+	if (this.get().email_verified) {
 		// email already verified, do nothing
 		return;
 	}
 
-	if ( this.verificationPoller ) {
+	if (this.verificationPoller) {
 		// already polling, do nothing
 		return;
 	}
 
 	this.verificationPoller = setInterval(
-		this.verificationPollerCallback.bind( this ),
+		this.verificationPollerCallback.bind(this),
 		VERIFICATION_POLL_INTERVAL
 	);
 
 	// wait for localStorage event (from other windows)
-	window.addEventListener( 'storage', e => {
-		if ( e.key === '__email_verified_signal__' && e.newValue ) {
-			debug( 'Verification: RECEIVED SIGNAL' );
-			window.localStorage.removeItem( '__email_verified_signal__' );
-			this.verificationPollerCallback( true );
+	window.addEventListener('storage', (e) => {
+		if (e.key === '__email_verified_signal__' && e.newValue) {
+			debug('Verification: RECEIVED SIGNAL');
+			window.localStorage.removeItem('__email_verified_signal__');
+			this.verificationPollerCallback(true);
 		}
-	} );
+	});
 };
 
 /**
@@ -373,11 +370,11 @@ User.prototype.checkVerification = function() {
  * message, so that all the windows update instantaneously
  */
 
-User.prototype.signalVerification = function() {
-	if ( window.localStorage ) {
+User.prototype.signalVerification = function () {
+	if (window.localStorage) {
 		// use localStorage to signal to other browser windows that the user's email was verified
-		window.localStorage.setItem( '__email_verified_signal__', 1 );
-		debug( 'Verification: SENT SIGNAL' );
+		window.localStorage.setItem('__email_verified_signal__', 1);
+		debug('Verification: SENT SIGNAL');
 	}
 };
 

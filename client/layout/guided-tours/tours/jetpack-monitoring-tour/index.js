@@ -20,24 +20,24 @@ import {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackMonitoringTour = makeTour(
-	<Tour { ...meta }>
+	<Tour {...meta}>
 		<Step
 			name="init"
 			target=".jetpack-monitor-settings .form-toggle__switch"
 			arrow="top-left"
 			placement="below"
-			style={ {
+			style={{
 				animationDelay: '0.7s',
 				zIndex: 1,
-			} }
+			}}
 		>
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
 					<p>
-						{ translate(
+						{translate(
 							"Let's enable monitoring of your site's uptime " +
 								'by activating the toggle switch for Jetpack Monitor.'
-						) }
+						)}
 					</p>
 					<ButtonRow>
 						<Continue
@@ -46,36 +46,34 @@ export const JetpackMonitoringTour = makeTour(
 							click
 							hidden
 						/>
-						<SiteLink href="/plans/my-plan/:site">
-							{ translate( 'Return to the checklist' ) }
-						</SiteLink>
+						<SiteLink href="/plans/my-plan/:site">{translate('Return to the checklist')}</SiteLink>
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 
 		<Step name="finish" placement="right">
-			{ ( { translate } ) => (
+			{({ translate }) => (
 				<Fragment>
 					<h1 className="tours__title">
 						<span className="tours__completed-icon-wrapper">
 							<Gridicon icon="checkmark" className="tours__completed-icon" />
 						</span>
-						{ translate( 'Excellent, you’re done!' ) }
+						{translate('Excellent, you’re done!')}
 					</h1>
 					<p>
-						{ translate(
+						{translate(
 							'Downtime Monitoring has been enabled. Would you like to continue setting up the security essential features for your site?'
-						) }
+						)}
 					</p>
 					<ButtonRow>
 						<SiteLink isButton href="/plans/my-plan/:site">
-							{ translate( "Yes, let's do it." ) }
+							{translate("Yes, let's do it.")}
 						</SiteLink>
-						<Quit>{ translate( 'No, thanks.' ) }</Quit>
+						<Quit>{translate('No, thanks.')}</Quit>
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 	</Tour>
 );

@@ -11,7 +11,7 @@ import { submitSignupStep } from 'state/signup/progress/actions';
  * @param {object} siteVerticalData An object containing `isUserInput`, `name`, `preview` and `slug` vertical values.
  * @returns {object} The action object.
  */
-export function setSiteVertical( siteVerticalData ) {
+export function setSiteVertical(siteVerticalData) {
 	return {
 		type: SIGNUP_STEPS_SITE_VERTICAL_SET,
 		...siteVerticalData,
@@ -32,15 +32,15 @@ export const submitSiteVertical = (
 	siteVerticalData,
 	stepName = 'site-topic',
 	suggestedTheme = undefined
-) => dispatch => {
-	dispatch( setSiteVertical( siteVerticalData ) );
+) => (dispatch) => {
+	dispatch(setSiteVertical(siteVerticalData));
 	dispatch(
 		submitSignupStep(
 			{ stepName },
 			{
 				siteTopic: siteVerticalData.name,
-				...( 'site-topic-with-theme' !== stepName &&
-					suggestedTheme && { themeSlugWithRepo: suggestedTheme } ),
+				...('site-topic-with-theme' !== stepName &&
+					suggestedTheme && { themeSlugWithRepo: suggestedTheme }),
 			}
 		)
 	);

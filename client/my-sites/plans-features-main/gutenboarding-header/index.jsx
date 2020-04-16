@@ -15,17 +15,17 @@ import FormattedHeader from 'components/formatted-header';
  */
 import './style.scss';
 
-const GutenboardingHeader = ( { headerText, subHeaderText, onFreePlanSelect, translate } ) => {
+const GutenboardingHeader = ({ headerText, subHeaderText, onFreePlanSelect, translate }) => {
 	return (
 		<div className="gutenboarding-header">
 			<FormattedHeader
-				headerText={ headerText }
-				subHeaderText={ subHeaderText }
+				headerText={headerText}
+				subHeaderText={subHeaderText}
 				isSecondary
 				align="left"
 			/>
-			<button className="gutenboarding-header__select-free-plan" onClick={ onFreePlanSelect }>
-				{ translate( 'Start with a free plan' ) }
+			<button className="gutenboarding-header__select-free-plan" onClick={onFreePlanSelect}>
+				{translate('Start with a free plan')}
 			</button>
 		</div>
 	);
@@ -38,4 +38,4 @@ GutenboardingHeader.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default localize( GutenboardingHeader );
+export default localize(GutenboardingHeader);

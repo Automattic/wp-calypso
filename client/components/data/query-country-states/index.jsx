@@ -14,18 +14,18 @@ import { requestCountryStates } from 'state/country-states/actions';
 
 class QueryCountryStates extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.countryCode !== nextProps.countryCode ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.countryCode !== nextProps.countryCode) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestCountryStates( props.countryCode );
+	request(props) {
+		if (!props.isRequesting) {
+			props.requestCountryStates(props.countryCode);
 		}
 	}
 
@@ -41,8 +41,8 @@ QueryCountryStates.propTypes = {
 };
 
 export default connect(
-	( state, { countryCode } ) => ( {
-		isRequesting: isCountryStatesFetching( state, countryCode ),
-	} ),
+	(state, { countryCode }) => ({
+		isRequesting: isCountryStatesFetching(state, countryCode),
+	}),
 	{ requestCountryStates }
-)( QueryCountryStates );
+)(QueryCountryStates);

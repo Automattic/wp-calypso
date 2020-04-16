@@ -61,7 +61,7 @@ class SectionNavigation extends PureComponent {
 			'Drafts',
 			'Trashed',
 		],
-		siblingSegmented: [ 'Only Me', 'Everyone' ],
+		siblingSegmented: ['Only Me', 'Everyone'],
 	};
 
 	state = {
@@ -75,76 +75,76 @@ class SectionNavigation extends PureComponent {
 		var demoSections = {};
 
 		forEach(
-			omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ),
-			function( prop, key ) {
-				demoSections[ key ] = [];
+			omit(this.props, 'isolated', 'uniqueInstance', 'readmeFilePath'),
+			function (prop, key) {
+				demoSections[key] = [];
 
-				prop.forEach( function( item, index ) {
-					demoSections[ key ].push(
+				prop.forEach(function (item, index) {
+					demoSections[key].push(
 						<NavItem
-							key={ key + '-' + index }
-							count={ item.count }
-							selected={ this.state[ key + 'SelectedIndex' ] === index }
-							onClick={ this.handleNavItemClick( key, index ) }
+							key={key + '-' + index}
+							count={item.count}
+							selected={this.state[key + 'SelectedIndex'] === index}
+							onClick={this.handleNavItemClick(key, index)}
 						>
-							{ 'object' === typeof item ? item.name : item }
+							{'object' === typeof item ? item.name : item}
 						</NavItem>
 					);
-				}, this );
-			}.bind( this )
+				}, this);
+			}.bind(this)
 		);
 
 		return (
 			<div>
 				<h3>Basic Tabs</h3>
 				<SectionNav
-					selectedText={ this.getSelectedText( 'basicTabs' ) }
-					selectedCount={ this.getSelectedCount( 'basicTabs' ) }
+					selectedText={this.getSelectedText('basicTabs')}
+					selectedCount={this.getSelectedCount('basicTabs')}
 				>
-					<NavTabs>{ demoSections.basicTabs }</NavTabs>
+					<NavTabs>{demoSections.basicTabs}</NavTabs>
 				</SectionNav>
 
 				<h3>Many Tabs</h3>
 				<SectionNav
-					selectedText={ this.getSelectedText( 'manyTabs' ) }
-					selectedCount={ this.getSelectedCount( 'manyTabs' ) }
+					selectedText={this.getSelectedText('manyTabs')}
+					selectedCount={this.getSelectedCount('manyTabs')}
 				>
-					<NavTabs>{ demoSections.manyTabs }</NavTabs>
+					<NavTabs>{demoSections.manyTabs}</NavTabs>
 				</SectionNav>
 
 				<h3>Sibling Control Groups</h3>
-				<SectionNav selectedText={ this.getSiblingDemoSelectedText() }>
+				<SectionNav selectedText={this.getSiblingDemoSelectedText()}>
 					<NavTabs
 						label="Status"
-						selectedText={ this.getSelectedText( 'siblingTabs' ) }
-						selectedCount={ this.getSelectedCount( 'siblingTabs' ) }
+						selectedText={this.getSelectedText('siblingTabs')}
+						selectedCount={this.getSelectedCount('siblingTabs')}
 					>
-						{ demoSections.siblingTabs }
+						{demoSections.siblingTabs}
 					</NavTabs>
 
-					<NavSegmented label="author">{ demoSections.siblingSegmented }</NavSegmented>
+					<NavSegmented label="author">{demoSections.siblingSegmented}</NavSegmented>
 
 					<Search
 						pinned
 						fitsContainer
-						onSearch={ this.demoSearch }
-						placeholder={ 'Search ' + this.getSelectedText( 'siblingTabs' ) + '...' }
+						onSearch={this.demoSearch}
+						placeholder={'Search ' + this.getSelectedText('siblingTabs') + '...'}
 					/>
 				</SectionNav>
 			</div>
 		);
 	}
 
-	getSelectedText = section => {
-		var selected = this.state[ section + 'SelectedIndex' ],
-			text = this.props[ section ][ selected ];
+	getSelectedText = (section) => {
+		var selected = this.state[section + 'SelectedIndex'],
+			text = this.props[section][selected];
 
 		return 'object' === typeof text ? text.name : text;
 	};
 
-	getSelectedCount = section => {
-		var selected = this.state[ section + 'SelectedIndex' ],
-			selectedItem = this.props[ section ][ selected ];
+	getSelectedCount = (section) => {
+		var selected = this.state[section + 'SelectedIndex'],
+			selectedItem = this.props[section][selected];
 
 		return 'object' === typeof selectedItem ? selectedItem.count || null : null;
 	};
@@ -152,23 +152,23 @@ class SectionNavigation extends PureComponent {
 	getSiblingDemoSelectedText = () => {
 		return (
 			<span>
-				<span>{ this.getSelectedText( 'siblingTabs' ) }</span>
-				<small>{ this.getSelectedText( 'siblingSegmented' ) }</small>
+				<span>{this.getSelectedText('siblingTabs')}</span>
+				<small>{this.getSelectedText('siblingSegmented')}</small>
 			</span>
 		);
 	};
 
-	handleNavItemClick = ( section, index ) => {
-		return function() {
+	handleNavItemClick = (section, index) => {
+		return function () {
 			var stateUpdate = {};
 
-			stateUpdate[ section + 'SelectedIndex' ] = index;
-			this.setState( stateUpdate );
-		}.bind( this );
+			stateUpdate[section + 'SelectedIndex'] = index;
+			this.setState(stateUpdate);
+		}.bind(this);
 	};
 
-	demoSearch = keywords => {
-		console.log( 'Section Nav Search (keywords):', keywords );
+	demoSearch = (keywords) => {
+		console.log('Section Nav Search (keywords):', keywords);
 	};
 }
 

@@ -17,8 +17,8 @@ import {
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
 } from 'state/themes/action-types';
 
-export const status = ( state = null, action ) => {
-	switch ( action.type ) {
+export const status = (state = null, action) => {
+	switch (action.type) {
 		case ELIGIBILITY_UPDATE:
 			return state || transferStates.INQUIRING;
 		case INITIATE:
@@ -35,8 +35,8 @@ export const status = ( state = null, action ) => {
 };
 status.hasCustomPersistence = true;
 
-export const fetchingStatus = ( state = false, action ) => {
-	switch ( action.type ) {
+export const fetchingStatus = (state = false, action) => {
+	switch (action.type) {
 		case REQUEST_STATUS:
 			return true;
 
@@ -48,16 +48,16 @@ export const fetchingStatus = ( state = false, action ) => {
 	}
 };
 
-export const siteReducer = combineReducers( {
+export const siteReducer = combineReducers({
 	eligibility,
 	status,
 	fetchingStatus,
-} );
+});
 
 // state is a map of transfer sub-states
 // keyed by the associated site id
-const validatedReducer = withSchemaValidation( schema, keyedReducer( 'siteId', siteReducer ) );
+const validatedReducer = withSchemaValidation(schema, keyedReducer('siteId', siteReducer));
 
-const automatedTransferReducer = withStorageKey( 'automatedTransfer', validatedReducer );
+const automatedTransferReducer = withStorageKey('automatedTransfer', validatedReducer);
 
 export default automatedTransferReducer;

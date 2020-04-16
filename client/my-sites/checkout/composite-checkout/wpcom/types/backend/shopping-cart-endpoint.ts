@@ -129,12 +129,12 @@ interface RequestCartOptions {
 	is_update?: boolean;
 }
 
-export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
+export const prepareRequestCartProduct: (ResponseCartProduct) => RequestCartProduct = ({
 	product_slug,
 	meta,
 	product_id,
 	extra,
-}: ResponseCartProduct ) => {
+}: ResponseCartProduct) => {
 	return {
 		product_slug,
 		meta,
@@ -143,12 +143,12 @@ export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartPr
 	} as RequestCartProduct;
 };
 
-export const prepareRequestCart: ( ResponseCart, RequestCartOptions ) => RequestCart = (
+export const prepareRequestCart: (ResponseCart, RequestCartOptions) => RequestCart = (
 	{ products, currency, locale, coupon, is_coupon_applied, tax }: ResponseCart,
 	{ is_update = false }: RequestCartOptions
 ) => {
 	return {
-		products: products.map( prepareRequestCartProduct ),
+		products: products.map(prepareRequestCartProduct),
 		currency,
 		locale,
 		coupon,
@@ -160,19 +160,16 @@ export const prepareRequestCart: ( ResponseCart, RequestCartOptions ) => Request
 	} as RequestCart;
 };
 
-export function removeItemFromResponseCart(
-	cart: ResponseCart,
-	uuidToRemove: string
-): ResponseCart {
+export function removeItemFromResponseCart(cart: ResponseCart, uuidToRemove: string): ResponseCart {
 	return {
 		...cart,
-		products: cart.products.filter( product => {
+		products: cart.products.filter((product) => {
 			return product.uuid !== uuidToRemove;
-		} ),
+		}),
 	};
 }
 
-export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string ): ResponseCart {
+export function addCouponToResponseCart(cart: ResponseCart, couponToAdd: string): ResponseCart {
 	return {
 		...cart,
 		coupon: couponToAdd,
@@ -180,7 +177,7 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 	};
 }
 
-export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart {
+export function removeCouponFromResponseCart(cart: ResponseCart): ResponseCart {
 	return {
 		...cart,
 		coupon: '',
@@ -210,13 +207,13 @@ export function doesCartLocationDifferFromResponseCartLocation(
 	location: CartLocation
 ): boolean {
 	const { countryCode, postalCode, subdivisionCode } = location;
-	if ( countryCode && cart.tax.location.country_code !== countryCode ) {
+	if (countryCode && cart.tax.location.country_code !== countryCode) {
 		return true;
 	}
-	if ( postalCode && cart.tax.location.postal_code !== postalCode ) {
+	if (postalCode && cart.tax.location.postal_code !== postalCode) {
 		return true;
 	}
-	if ( subdivisionCode && cart.tax.location.subdivision_code !== subdivisionCode ) {
+	if (subdivisionCode && cart.tax.location.subdivision_code !== subdivisionCode) {
 		return true;
 	}
 	return false;
@@ -228,21 +225,21 @@ export interface CartLocation {
 	subdivisionCode: string | null;
 }
 
-export function processRawResponse( rawResponseCart ): ResponseCart {
+export function processRawResponse(rawResponseCart): ResponseCart {
 	return {
 		...rawResponseCart,
 		// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}
 		tax: {
-			location: Array.isArray( rawResponseCart.tax.location ) ? {} : rawResponseCart.tax.location,
+			location: Array.isArray(rawResponseCart.tax.location) ? {} : rawResponseCart.tax.location,
 			display_taxes: rawResponseCart.tax.display_taxes,
 		},
 		// Add uuid to products returned by the server
-		products: rawResponseCart.products.map( ( product, index ) => {
+		products: rawResponseCart.products.map((product, index) => {
 			return {
 				...product,
 				uuid: index.toString(),
 			};
-		} ),
+		}),
 	};
 }
 
@@ -250,18 +247,18 @@ export function addItemToResponseCart(
 	responseCart: ResponseCart,
 	product: ResponseCartProduct
 ): ResponseCart {
-	const uuid = getFreshCartItemUUID( responseCart );
-	const newProductItem = addUUIDToResponseCartProduct( product, uuid );
+	const uuid = getFreshCartItemUUID(responseCart);
+	const newProductItem = addUUIDToResponseCartProduct(product, uuid);
 	return {
 		...responseCart,
-		products: [ ...responseCart.products, newProductItem ],
+		products: [...responseCart.products, newProductItem],
 	};
 }
 
-function getFreshCartItemUUID( responseCart: ResponseCart ): string {
+function getFreshCartItemUUID(responseCart: ResponseCart): string {
 	const maxUUID = responseCart.products
-		.map( product => product.uuid )
-		.reduce( ( accum, current ) => ( accum > current ? accum : current ), '' );
+		.map((product) => product.uuid)
+		.reduce((accum, current) => (accum > current ? accum : current), '');
 	return maxUUID + '1';
 }
 
@@ -283,12 +280,12 @@ export function replaceItemInResponseCart(
 ) {
 	return {
 		...responseCart,
-		products: responseCart.products.map( item => {
-			if ( item.uuid === uuidToReplace ) {
+		products: responseCart.products.map((item) => {
+			if (item.uuid === uuidToReplace) {
 				item.product_id = newProductId;
 				item.product_slug = newProductSlug;
 			}
 			return item;
-		} ),
+		}),
 	};
 }

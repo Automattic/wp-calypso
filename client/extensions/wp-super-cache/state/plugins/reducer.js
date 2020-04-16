@@ -22,18 +22,18 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated requesting state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_REQUEST_PLUGINS: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS: {
@@ -41,13 +41,13 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated plugin toggling state after an action has been dispatched.
@@ -57,15 +57,15 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated saving state
  */
-export const toggling = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const toggling = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_TOGGLE_PLUGIN: {
 			const { siteId, plugin } = action;
 
 			return {
 				...state,
-				[ siteId ]: {
-					[ plugin ]: true,
+				[siteId]: {
+					[plugin]: true,
 				},
 			};
 		}
@@ -74,8 +74,8 @@ export const toggling = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
-					[ plugin ]: false,
+				[siteId]: {
+					[plugin]: false,
 				},
 			};
 		}
@@ -84,15 +84,15 @@ export const toggling = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
-					[ plugin ]: false,
+				[siteId]: {
+					[plugin]: false,
 				},
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Tracks the plugins for a particular site.
@@ -101,23 +101,23 @@ export const toggling = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated plugins
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_RECEIVE_PLUGINS: {
 			const { siteId, plugins } = action;
 
 			return {
 				...state,
-				[ siteId ]: plugins,
+				[siteId]: plugins,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
 	toggling,
-} );
+});

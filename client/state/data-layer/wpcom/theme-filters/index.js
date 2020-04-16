@@ -14,7 +14,7 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fetchFilters = action =>
+const fetchFilters = (action) =>
 	http(
 		{
 			method: 'GET',
@@ -24,16 +24,16 @@ const fetchFilters = action =>
 		action
 	);
 
-const storeFilters = ( action, data ) => ( { type: THEME_FILTERS_ADD, filters: data } );
+const storeFilters = (action, data) => ({ type: THEME_FILTERS_ADD, filters: data });
 
-const reportError = () => errorNotice( i18n.translate( 'Problem fetching theme filters.' ) );
+const reportError = () => errorNotice(i18n.translate('Problem fetching theme filters.'));
 
-registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
-	[ THEME_FILTERS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/theme-filters/index.js', {
+	[THEME_FILTERS_REQUEST]: [
+		dispatchRequest({
 			fetch: fetchFilters,
 			onSuccess: storeFilters,
 			onError: reportError,
-		} ),
+		}),
 	],
-} );
+});

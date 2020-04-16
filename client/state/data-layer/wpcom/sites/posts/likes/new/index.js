@@ -13,16 +13,16 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetch = action => {
+export const fetch = (action) => {
 	const query = {};
-	if ( action.source ) {
+	if (action.source) {
 		query.source = action.source;
 	}
 
 	return http(
 		{
 			method: 'POST',
-			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/new`,
+			path: `/sites/${action.siteId}/posts/${action.postId}/likes/new`,
 			body: {},
 			apiVersion: '1.1',
 			query,
@@ -31,14 +31,14 @@ export const fetch = action => {
 	);
 };
 
-export const onSuccess = ( { siteId, postId }, { likeCount, liker } ) =>
-	addLiker( siteId, postId, likeCount, liker );
+export const onSuccess = ({ siteId, postId }, { likeCount, liker }) =>
+	addLiker(siteId, postId, likeCount, liker);
 
-export const onError = ( { siteId, postId } ) => bypassDataLayer( unlike( siteId, postId ) );
+export const onError = ({ siteId, postId }) => bypassDataLayer(unlike(siteId, postId));
 
-export function fromApi( response ) {
-	if ( ! response.success ) {
-		throw new Error( 'Unsuccessful like API call' );
+export function fromApi(response) {
+	if (!response.success) {
+		throw new Error('Unsuccessful like API call');
 	}
 	return {
 		likeCount: +response.like_count,
@@ -46,15 +46,15 @@ export function fromApi( response ) {
 	};
 }
 
-registerHandlers( 'state/data-layer/wpcom/sites/posts/likes/new/index.js', {
-	[ POST_LIKE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/posts/likes/new/index.js', {
+	[POST_LIKE]: [
+		dispatchRequest({
 			fetch,
 			onSuccess,
 			onError,
 			fromApi,
-		} ),
+		}),
 	],
-} );
+});
 
 export default {};

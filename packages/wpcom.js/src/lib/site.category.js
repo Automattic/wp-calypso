@@ -6,13 +6,13 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {null} null
  */
-export default function Category( slug, sid, wpcom ) {
-	if ( ! sid ) {
-		throw new Error( '`site id` is not correctly defined' );
+export default function Category(slug, sid, wpcom) {
+	if (!sid) {
+		throw new Error('`site id` is not correctly defined');
 	}
 
-	if ( ! ( this instanceof Category ) ) {
-		return new Category( slug, sid, wpcom );
+	if (!(this instanceof Category)) {
+		return new Category(slug, sid, wpcom);
 	}
 
 	this.wpcom = wpcom;
@@ -25,7 +25,7 @@ export default function Category( slug, sid, wpcom ) {
  *
  * @param {string} slug - category slug
  */
-Category.prototype.slug = function( slug ) {
+Category.prototype.slug = function (slug) {
 	this._slug = slug;
 };
 
@@ -36,9 +36,9 @@ Category.prototype.slug = function( slug ) {
  * @param {Function} fn - callback function - callback
  * @returns {Function} request handler
  */
-Category.prototype.get = function( query, fn ) {
+Category.prototype.get = function (query, fn) {
 	var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-	return this.wpcom.req.get( path, query, fn );
+	return this.wpcom.req.get(path, query, fn);
 };
 
 /**
@@ -49,9 +49,9 @@ Category.prototype.get = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Category.prototype.add = function( query, body, fn ) {
+Category.prototype.add = function (query, body, fn) {
 	var path = '/sites/' + this._sid + '/categories/new';
-	return this.wpcom.req.post( path, query, body, fn );
+	return this.wpcom.req.post(path, query, body, fn);
 };
 
 /**
@@ -62,9 +62,9 @@ Category.prototype.add = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Category.prototype.update = function( query, body, fn ) {
+Category.prototype.update = function (query, body, fn) {
 	var path = '/sites/' + this._sid + '/categories/slug:' + this._slug;
-	return this.wpcom.req.put( path, query, body, fn );
+	return this.wpcom.req.put(path, query, body, fn);
 };
 
 /**
@@ -74,7 +74,7 @@ Category.prototype.update = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Category.prototype.delete = Category.prototype.del = function( query, fn ) {
+Category.prototype.delete = Category.prototype.del = function (query, fn) {
 	var path = '/sites/' + this._sid + '/categories/slug:' + this._slug + '/delete';
-	return this.wpcom.req.del( path, query, fn );
+	return this.wpcom.req.del(path, query, fn);
 };

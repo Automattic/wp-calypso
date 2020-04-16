@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import signupSurveyReducer from '../reducer';
 import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( 'should update the survey', () => {
+describe('reducer', () => {
+	test('should update the survey', () => {
 		expect(
 			signupSurveyReducer(
 				{},
@@ -23,14 +23,14 @@ describe( 'reducer', () => {
 					},
 				}
 			)
-		).to.be.eql( {
+		).to.be.eql({
 			vertical: 'test-survey',
 			otherText: 'test-other-text',
 			siteType: 'test-site-type',
-		} );
-	} );
+		});
+	});
 
-	test( 'should reset the survey on signup complete', () => {
+	test('should reset the survey on signup complete', () => {
 		expect(
 			signupSurveyReducer(
 				{
@@ -43,6 +43,6 @@ describe( 'reducer', () => {
 					action: {},
 				}
 			)
-		).to.be.eql( {} );
-	} );
-} );
+		).to.be.eql({});
+	});
+});

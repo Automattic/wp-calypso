@@ -8,57 +8,57 @@ import { expect } from 'chai';
  */
 import isSurveyFilledIn from '../is-survey-filled-in';
 
-describe( 'isSurveyFilledIn', () => {
-	test( 'should return false when no questions are answered', () => {
-		expect( isSurveyFilledIn( {} ) ).to.equal( false );
-	} );
+describe('isSurveyFilledIn', () => {
+	test('should return false when no questions are answered', () => {
+		expect(isSurveyFilledIn({})).to.equal(false);
+	});
 
-	test( 'should return true when question one and two are answered', () => {
+	test('should return true when question one and two are answered', () => {
 		expect(
-			isSurveyFilledIn( {
+			isSurveyFilledIn({
 				questionOneRadio: 'tooHard',
 				questionTwoRadio: 'tooHard',
-			} )
-		).to.equal( true );
-	} );
+			})
+		).to.equal(true);
+	});
 
-	test( 'should return true when question one is answered and there are no options for question two', () => {
+	test('should return true when question one is answered and there are no options for question two', () => {
 		expect(
-			isSurveyFilledIn( {
+			isSurveyFilledIn({
 				questionOneRadio: 'tooHard',
 				questionTwoOrder: [],
-			} )
-		).to.equal( true );
-	} );
+			})
+		).to.equal(true);
+	});
 
-	test( 'should return false when question one is another reason and there is no text', () => {
+	test('should return false when question one is another reason and there is no text', () => {
 		expect(
-			isSurveyFilledIn( {
+			isSurveyFilledIn({
 				questionOneRadio: 'anotherReasonOne',
 				questionOneText: '',
 				questionTwoRadio: 'tooHard',
-			} )
-		).to.equal( false );
-	} );
+			})
+		).to.equal(false);
+	});
 
-	test( 'should return false when question two is another reason and there is no text', () => {
+	test('should return false when question two is another reason and there is no text', () => {
 		expect(
-			isSurveyFilledIn( {
+			isSurveyFilledIn({
 				questionOneRadio: 'tooHard',
 				questionTwoRadio: 'anotherReasonTwo',
 				questionTwoText: '',
-			} )
-		).to.equal( false );
-	} );
+			})
+		).to.equal(false);
+	});
 
-	test( 'should return true when question one and two are another reason and both have text', () => {
+	test('should return true when question one and two are another reason and both have text', () => {
 		expect(
-			isSurveyFilledIn( {
+			isSurveyFilledIn({
 				questionOneRadio: 'anotherReasonOne',
 				questionOneText: 'the reason',
 				questionTwoRadio: 'anotherReasonTwo',
 				questionTwoText: 'the reason',
-			} )
-		).to.equal( true );
-	} );
-} );
+			})
+		).to.equal(true);
+	});
+});

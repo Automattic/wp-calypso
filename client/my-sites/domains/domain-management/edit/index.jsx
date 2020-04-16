@@ -34,35 +34,35 @@ import './style.scss';
 
 class Edit extends React.Component {
 	render() {
-		const domain = this.props.domains && getSelectedDomain( this.props );
+		const domain = this.props.domains && getSelectedDomain(this.props);
 
-		const Details = this.getDetailsForType( domain && domain.type );
+		const Details = this.getDetailsForType(domain && domain.type);
 
-		if ( ! domain || ! Details ) {
-			return <DomainMainPlaceholder goBack={ this.goToDomainManagement } />;
+		if (!domain || !Details) {
+			return <DomainMainPlaceholder goBack={this.goToDomainManagement} />;
 		}
 
 		return (
 			<Main>
 				<Header
-					onClick={ this.goToDomainManagement }
-					selectedDomainName={ this.props.selectedDomainName }
+					onClick={this.goToDomainManagement}
+					selectedDomainName={this.props.selectedDomainName}
 				>
-					{ this.props.translate( '%(domainType)s Settings', {
+					{this.props.translate('%(domainType)s Settings', {
 						args: {
-							domainType: getDomainTypeText( domain ),
+							domainType: getDomainTypeText(domain),
 						},
-					} ) }
+					})}
 				</Header>
-				{ this.renderDetails( domain, Details ) }
+				{this.renderDetails(domain, Details)}
 			</Main>
 		);
 	}
 
-	getDetailsForType = type => {
-		const newStatusDesign = config.isEnabled( 'domains/new-status-design' );
+	getDetailsForType = (type) => {
+		const newStatusDesign = config.isEnabled('domains/new-status-design');
 
-		switch ( type ) {
+		switch (type) {
 			case domainTypes.MAPPED:
 				return newStatusDesign ? MappedDomainType : MappedDomain;
 
@@ -83,25 +83,25 @@ class Edit extends React.Component {
 		}
 	};
 
-	renderDetails = ( domain, Details ) => {
+	renderDetails = (domain, Details) => {
 		const { MAINTENANCE } = registrarNames;
 		const { REGISTERED, TRANSFER } = domainTypes;
 
-		if ( includes( [ REGISTERED, TRANSFER ], domain.type ) && domain.registrar === MAINTENANCE ) {
+		if (includes([REGISTERED, TRANSFER], domain.type) && domain.registrar === MAINTENANCE) {
 			return (
 				<MaintenanceCard
-					selectedDomainName={ this.props.selectedDomainName }
-					tldMaintenanceEndTime={ domain.tldMaintenanceEndTime }
+					selectedDomainName={this.props.selectedDomainName}
+					tldMaintenanceEndTime={domain.tldMaintenanceEndTime}
 				/>
 			);
 		}
 
-		return <Details domain={ domain } selectedSite={ this.props.selectedSite } />;
+		return <Details domain={domain} selectedSite={this.props.selectedSite} />;
 	};
 
 	goToDomainManagement = () => {
-		page( domainManagementList( this.props.selectedSite.slug ) );
+		page(domainManagementList(this.props.selectedSite.slug));
 	};
 }
 
-export default localize( Edit );
+export default localize(Edit);

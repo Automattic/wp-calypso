@@ -51,10 +51,10 @@ import './post-comment-list.scss';
 
 class PostCommentList extends React.Component {
 	static propTypes = {
-		post: PropTypes.shape( {
+		post: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
 			site_ID: PropTypes.number.isRequired,
-		} ).isRequired,
+		}).isRequired,
 		pageSize: PropTypes.number,
 		initialSize: PropTypes.number,
 		showCommentCount: PropTypes.bool,
@@ -91,17 +91,17 @@ class PostCommentList extends React.Component {
 		activeEditCommentId: null,
 	};
 
-	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
-		return !! ( startingCommentId && ! initialComment );
+	shouldFetchInitialComment = ({ startingCommentId, initialComment }) => {
+		return !!(startingCommentId && !initialComment);
 	};
 
-	shouldFetchInitialPages = ( { startingCommentId, commentsTree } ) =>
+	shouldFetchInitialPages = ({ startingCommentId, commentsTree }) =>
 		startingCommentId &&
-		commentsTree[ startingCommentId ] &&
-		this.props.commentsTree[ startingCommentId ] &&
-		! this.alreadyLoadedInitialSet;
+		commentsTree[startingCommentId] &&
+		this.props.commentsTree[startingCommentId] &&
+		!this.alreadyLoadedInitialSet;
 
-	shouldNormalFetchAfterPropsChange = nextProps => {
+	shouldNormalFetchAfterPropsChange = (nextProps) => {
 		// this next check essentially looks out for whether we've ever requested comments for the post
 		if (
 			nextProps.commentsFetchingStatus.haveEarlierCommentsToFetch &&
@@ -110,13 +110,13 @@ class PostCommentList extends React.Component {
 			return true;
 		}
 
-		const currentSiteId = get( this.props, 'post.site_ID' );
-		const currentPostId = get( this.props, 'post.ID' );
+		const currentSiteId = get(this.props, 'post.site_ID');
+		const currentPostId = get(this.props, 'post.ID');
 		const currentCommentsFilter = this.props.commentsFilter;
 		const currentInitialComment = this.props.initialComment;
 
-		const nextSiteId = get( nextProps, 'post.site_ID' );
-		const nextPostId = get( nextProps, 'post.ID' );
+		const nextSiteId = get(nextProps, 'post.site_ID');
+		const nextPostId = get(nextProps, 'post.ID');
 		const nextCommentsFilter = nextProps.commentsFilter;
 		const nextInitialComment = nextProps.initialComment;
 
@@ -134,30 +134,30 @@ class PostCommentList extends React.Component {
 		const commentIdBail =
 			currentInitialComment !== nextInitialComment &&
 			nextInitialComment &&
-			( nextInitialComment.error ||
-				( nextInitialComment.post && nextInitialComment.post.ID !== nextPostId ) );
+			(nextInitialComment.error ||
+				(nextInitialComment.post && nextInitialComment.post.ID !== nextPostId));
 
-		return ( propsExist && propChanged ) || commentIdBail;
+		return (propsExist && propChanged) || commentIdBail;
 	};
 
-	initialFetches = ( props = this.props ) => {
+	initialFetches = (props = this.props) => {
 		const { postId, siteId, commentsFilter: status } = props;
 
-		if ( this.shouldFetchInitialComment( props ) ) {
+		if (this.shouldFetchInitialComment(props)) {
 			// there is an edgecase the initialComment can change while on the same post
 			// in this case we can't just load the exact comment in question because
 			// we could create a gap in the list.
-			if ( this.props.commentsTree ) {
+			if (this.props.commentsTree) {
 				this.viewEarlierCommentsHandler();
 			} else {
-				props.requestComment( { siteId, commentId: props.startingCommentId } );
+				props.requestComment({ siteId, commentId: props.startingCommentId });
 			}
-		} else if ( this.shouldFetchInitialPages( props ) ) {
+		} else if (this.shouldFetchInitialPages(props)) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else if ( this.shouldNormalFetchAfterPropsChange( props ) ) {
-			props.requestPostComments( { siteId, postId, status } );
+		} else if (this.shouldNormalFetchAfterPropsChange(props)) {
+			props.requestPostComments({ siteId, postId, status });
 		}
 	};
 
@@ -170,8 +170,8 @@ class PostCommentList extends React.Component {
 		this.resetActiveReplyComment();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.initialFetches( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.initialFetches(nextProps);
 		if (
 			this.props.siteId !== nextProps.siteId ||
 			this.props.postId !== nextProps.postId ||
@@ -182,120 +182,118 @@ class PostCommentList extends React.Component {
 		}
 	}
 
-	commentIsOnDOM = commentId => !! window.document.getElementById( `comment-${ commentId }` );
+	commentIsOnDOM = (commentId) => !!window.document.getElementById(`comment-${commentId}`);
 
 	scrollWhenDOMReady = () => {
-		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
-			if ( this.commentIsOnDOM( this.props.startingCommentId ) ) {
-				delay( () => this.scrollToComment(), 50 );
+		if (this.props.startingCommentId && !this.hasScrolledToComment) {
+			if (this.commentIsOnDOM(this.props.startingCommentId)) {
+				delay(() => this.scrollToComment(), 50);
 			}
-			delay( this.scrollWhenDOMReady, 100 );
+			delay(this.scrollWhenDOMReady, 100);
 		}
 	};
 
-	renderComment = commentId => {
-		if ( ! commentId ) {
+	renderComment = (commentId) => {
+		if (!commentId) {
 			return null;
 		}
 
 		// TODO Should not need to bind here
-		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
+		const onEditCommentClick = this.onEditCommentClick.bind(this, commentId);
 
 		return (
 			<PostComment
-				post={ this.props.post }
-				commentsTree={ this.props.commentsTree }
-				commentId={ commentId }
-				key={ commentId }
-				showModerationTools={ this.props.showModerationTools }
-				activeEditCommentId={ this.state.activeEditCommentId }
-				activeReplyCommentId={ this.props.activeReplyCommentId }
-				onEditCommentClick={ onEditCommentClick }
-				onEditCommentCancel={ this.onEditCommentCancel }
-				onReplyClick={ this.onReplyClick }
-				onReplyCancel={ this.onReplyCancel }
-				commentText={ this.commentText }
-				onUpdateCommentText={ this.onUpdateCommentText }
-				onCommentSubmit={ this.resetActiveReplyComment }
-				depth={ 0 }
-				maxDepth={ this.props.maxDepth }
-				showNestingReplyArrow={ this.props.showNestingReplyArrow }
+				post={this.props.post}
+				commentsTree={this.props.commentsTree}
+				commentId={commentId}
+				key={commentId}
+				showModerationTools={this.props.showModerationTools}
+				activeEditCommentId={this.state.activeEditCommentId}
+				activeReplyCommentId={this.props.activeReplyCommentId}
+				onEditCommentClick={onEditCommentClick}
+				onEditCommentCancel={this.onEditCommentCancel}
+				onReplyClick={this.onReplyClick}
+				onReplyCancel={this.onReplyCancel}
+				commentText={this.commentText}
+				onUpdateCommentText={this.onUpdateCommentText}
+				onCommentSubmit={this.resetActiveReplyComment}
+				depth={0}
+				maxDepth={this.props.maxDepth}
+				showNestingReplyArrow={this.props.showNestingReplyArrow}
 			/>
 		);
 	};
 
-	onEditCommentClick = commentId => {
-		this.setState( { activeEditCommentId: commentId } );
+	onEditCommentClick = (commentId) => {
+		this.setState({ activeEditCommentId: commentId });
 	};
 
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
+	onEditCommentCancel = () => this.setState({ activeEditCommentId: null });
 
-	onReplyClick = commentId => {
-		this.setActiveReplyComment( commentId );
-		recordAction( 'comment_reply_click' );
-		recordGaEvent( 'Clicked Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_click', {
+	onReplyClick = (commentId) => {
+		this.setActiveReplyComment(commentId);
+		recordAction('comment_reply_click');
+		recordGaEvent('Clicked Reply to Comment');
+		recordTrack('calypso_reader_comment_reply_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: commentId,
-		} );
+		});
 	};
 
 	onReplyCancel = () => {
-		this.setState( { commentText: null } );
-		recordAction( 'comment_reply_cancel_click' );
-		recordGaEvent( 'Clicked Cancel Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
+		this.setState({ commentText: null });
+		recordAction('comment_reply_cancel_click');
+		recordGaEvent('Clicked Cancel Reply to Comment');
+		recordTrack('calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: this.state.activeReplyCommentId,
-		} );
+		});
 		this.resetActiveReplyComment();
 	};
 
-	onUpdateCommentText = commentText => {
-		this.setState( { commentText: commentText } );
+	onUpdateCommentText = (commentText) => {
+		this.setState({ commentText: commentText });
 	};
 
-	setActiveReplyComment = commentId => {
-		const siteId = get( this.props, 'post.site_ID' );
-		const postId = get( this.props, 'post.ID' );
+	setActiveReplyComment = (commentId) => {
+		const siteId = get(this.props, 'post.site_ID');
+		const postId = get(this.props, 'post.ID');
 
-		if ( ! siteId || ! postId ) {
+		if (!siteId || !postId) {
 			return;
 		}
 
-		this.props.setActiveReply( {
+		this.props.setActiveReply({
 			siteId,
 			postId,
 			commentId,
-		} );
+		});
 	};
 
 	resetActiveReplyComment = () => {
-		this.setActiveReplyComment( null );
+		this.setActiveReplyComment(null);
 	};
 
-	renderCommentsList = commentIds => {
+	renderCommentsList = (commentIds) => {
 		return (
 			<ol className="comments__list is-root">
-				{ commentIds.map( commentId => this.renderComment( commentId ) ) }
+				{commentIds.map((commentId) => this.renderComment(commentId))}
 			</ol>
 		);
 	};
 
 	scrollToComment = () => {
-		const comment = window.document.getElementById( window.location.hash.substring( 1 ) );
+		const comment = window.document.getElementById(window.location.hash.substring(1));
 		comment.scrollIntoView();
-		window.scrollBy( 0, -50 );
+		window.scrollBy(0, -50);
 		this.hasScrolledToComment = true;
 	};
 
-	getCommentsCount = commentIds => {
+	getCommentsCount = (commentIds) => {
 		// we always count prevSum, children sum, and +1 for the current processed comment
 		return commentIds.reduce(
-			( prevSum, commentId ) =>
-				prevSum +
-				this.getCommentsCount( get( this.props.commentsTree, [ commentId, 'children' ] ) ) +
-				1,
+			(prevSum, commentId) =>
+				prevSum + this.getCommentsCount(get(this.props.commentsTree, [commentId, 'children'])) + 1,
 			0
 		);
 	};
@@ -307,16 +305,16 @@ class PostCommentList extends React.Component {
 	 * @param {number} numberToTake How many top level comments to take
 	 * @returns {object} that has the displayed comments + total displayed count including children
 	 */
-	getDisplayedComments = ( commentIds, numberToTake ) => {
-		if ( ! commentIds ) {
+	getDisplayedComments = (commentIds, numberToTake) => {
+		if (!commentIds) {
 			return null;
 		}
 
-		const displayedComments = takeRight( commentIds, numberToTake );
+		const displayedComments = takeRight(commentIds, numberToTake);
 
 		return {
 			displayedComments,
-			displayedCommentsCount: this.getCommentsCount( displayedComments ),
+			displayedCommentsCount: this.getCommentsCount(displayedComments),
 		};
 	};
 
@@ -324,31 +322,31 @@ class PostCommentList extends React.Component {
 		const direction = this.props.commentsFetchingStatus.haveEarlierCommentsToFetch
 			? 'before'
 			: 'after';
-		this.loadMoreCommentsHandler( direction );
+		this.loadMoreCommentsHandler(direction);
 	};
 
 	viewLaterCommentsHandler = () => {
 		const direction = this.props.commentsFetchingStatus.haveLaterCommentsToFetch
 			? 'after'
 			: 'before';
-		this.loadMoreCommentsHandler( direction );
+		this.loadMoreCommentsHandler(direction);
 	};
 
-	loadMoreCommentsHandler = direction => {
+	loadMoreCommentsHandler = (direction) => {
 		const {
 			post: { ID: postId, site_ID: siteId },
 			commentsFilter: status,
 		} = this.props;
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
-		this.setState( { amountOfCommentsToTake } );
-		this.props.requestPostComments( { siteId, postId, status, direction } );
+		this.setState({ amountOfCommentsToTake });
+		this.props.requestPostComments({ siteId, postId, status, direction });
 	};
 
-	handleFilterClick = commentsFilter => () => this.props.onFilterChange( commentsFilter );
+	handleFilterClick = (commentsFilter) => () => this.props.onFilterChange(commentsFilter);
 
 	render() {
-		if ( ! this.props.commentsTree ) {
+		if (!this.props.commentsTree) {
 			return null;
 		}
 
@@ -377,7 +375,7 @@ class PostCommentList extends React.Component {
 		// Note: we might show fewer comments than commentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
-			size( commentsTree.children ) > amountOfCommentsToTake ||
+			size(commentsTree.children) > amountOfCommentsToTake ||
 			haveEarlierCommentsToFetch ||
 			haveLaterCommentsToFetch;
 
@@ -386,89 +384,89 @@ class PostCommentList extends React.Component {
 		const actualCommentsCount =
 			haveEarlierCommentsToFetch || haveLaterCommentsToFetch
 				? commentCount
-				: this.getCommentsCount( commentsTree.children );
+				: this.getCommentsCount(commentsTree.children);
 
 		const showConversationFollowButton =
 			this.props.showConversationFollowButton &&
-			shouldShowConversationFollowButton( this.props.post );
+			shouldShowConversationFollowButton(this.props.post);
 
 		return (
 			<div className="comments__comment-list">
-				{ showConversationFollowButton && (
+				{showConversationFollowButton && (
 					<ConversationFollowButton
 						className="comments__conversation-follow-button"
-						siteId={ siteId }
-						postId={ postId }
-						post={ this.props.post }
-						followSource={ followSource }
+						siteId={siteId}
+						postId={postId}
+						post={this.props.post}
+						followSource={followSource}
 					/>
-				) }
-				{ ( this.props.showCommentCount || showViewMoreComments ) && (
+				)}
+				{(this.props.showCommentCount || showViewMoreComments) && (
 					<div className="comments__info-bar">
-						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
-						{ showViewMoreComments && (
-							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
-								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+						{this.props.showCommentCount && <CommentCount count={actualCommentsCount} />}
+						{showViewMoreComments && (
+							<button className="comments__view-more" onClick={this.viewEarlierCommentsHandler}>
+								{translate('Load more comments (Showing %(shown)d of %(total)d)', {
 									args: {
 										shown: displayedCommentsCount,
 										total: actualCommentsCount,
 									},
-								} ) }
+								})}
 							</button>
-						) }
+						)}
 					</div>
-				) }
-				{ showFilters && (
+				)}
+				{showFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
-							selected={ commentsFilter === 'all' }
-							onClick={ this.handleFilterClick( 'all' ) }
+							selected={commentsFilter === 'all'}
+							onClick={this.handleFilterClick('all')}
 						>
-							{ translate( 'All' ) }
+							{translate('All')}
 						</SegmentedControl.Item>
 						<SegmentedControl.Item
-							selected={ commentsFilter === 'approved' }
-							onClick={ this.handleFilterClick( 'approved' ) }
+							selected={commentsFilter === 'approved'}
+							onClick={this.handleFilterClick('approved')}
 						>
-							{ translate( 'Approved', { context: 'comment status' } ) }
+							{translate('Approved', { context: 'comment status' })}
 						</SegmentedControl.Item>
 						<SegmentedControl.Item
-							selected={ commentsFilter === 'unapproved' }
-							onClick={ this.handleFilterClick( 'unapproved' ) }
+							selected={commentsFilter === 'unapproved'}
+							onClick={this.handleFilterClick('unapproved')}
 						>
-							{ translate( 'Pending', { context: 'comment status' } ) }
+							{translate('Pending', { context: 'comment status' })}
 						</SegmentedControl.Item>
 						<SegmentedControl.Item
-							selected={ commentsFilter === 'spam' }
-							onClick={ this.handleFilterClick( 'spam' ) }
+							selected={commentsFilter === 'spam'}
+							onClick={this.handleFilterClick('spam')}
 						>
-							{ translate( 'Spam', { context: 'comment status' } ) }
+							{translate('Spam', { context: 'comment status' })}
 						</SegmentedControl.Item>
 						<SegmentedControl.Item
-							selected={ commentsFilter === 'trash' }
-							onClick={ this.handleFilterClick( 'trash' ) }
+							selected={commentsFilter === 'trash'}
+							onClick={this.handleFilterClick('trash')}
 						>
-							{ translate( 'Trash', { context: 'comment status' } ) }
+							{translate('Trash', { context: 'comment status' })}
 						</SegmentedControl.Item>
 					</SegmentedControl>
-				) }
-				{ this.renderCommentsList( displayedComments ) }
-				{ showViewMoreComments && this.props.startingCommentId && (
-					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
-						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+				)}
+				{this.renderCommentsList(displayedComments)}
+				{showViewMoreComments && this.props.startingCommentId && (
+					<button className="comments__view-more" onClick={this.viewLaterCommentsHandler}>
+						{translate('Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {
 								shown: displayedCommentsCount,
 								total: actualCommentsCount,
 							},
-						} ) }
+						})}
 					</button>
-				) }
+				)}
 				<PostCommentFormRoot
-					post={ this.props.post }
-					commentsTree={ this.props.commentsTree }
-					commentText={ this.state.commentText }
-					onUpdateCommentText={ this.onUpdateCommentText }
-					activeReplyCommentId={ this.props.activeReplyCommentId }
+					post={this.props.post}
+					commentsTree={this.props.commentsTree}
+					commentText={this.state.commentText}
+					onUpdateCommentText={this.onUpdateCommentText}
+					activeReplyCommentId={this.props.activeReplyCommentId}
 				/>
 			</div>
 		);
@@ -476,8 +474,8 @@ class PostCommentList extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const authorId = getCurrentUserId( state );
+	(state, ownProps) => {
+		const authorId = getCurrentUserId(state);
 		const siteId = ownProps.post.site_ID;
 		const postId = ownProps.post.ID;
 
@@ -491,23 +489,18 @@ export default connect(
 				ownProps.commentsFilterDisplay ? ownProps.commentsFilterDisplay : ownProps.commentsFilter,
 				authorId
 			),
-			commentsFetchingStatus: commentsFetchingStatus(
-				state,
-				siteId,
-				postId,
-				ownProps.commentCount
-			),
-			initialComment: getCommentById( {
+			commentsFetchingStatus: commentsFetchingStatus(state, siteId, postId, ownProps.commentCount),
+			initialComment: getCommentById({
 				state,
 				siteId,
 				commentId: ownProps.startingCommentId,
-			} ),
-			activeReplyCommentId: getActiveReplyCommentId( {
+			}),
+			activeReplyCommentId: getActiveReplyCommentId({
 				state,
 				siteId,
 				postId,
-			} ),
+			}),
 		};
 	},
 	{ requestPostComments, requestComment, setActiveReply }
-)( PostCommentList );
+)(PostCommentList);

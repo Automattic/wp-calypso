@@ -21,26 +21,26 @@ const REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:
  * @param  {string} text A shortcode attribute string
  * @returns {object}      An object of attributes, split as named and numeric
  */
-export const parseAttributes = memoize( function( text ) {
+export const parseAttributes = memoize(function (text) {
 	const named = {};
 	const numeric = [];
 	let match;
 
 	// Map zero-width spaces to actual spaces.
-	text = text.replace( /[\u00a0\u200b]/g, ' ' );
+	text = text.replace(/[\u00a0\u200b]/g, ' ');
 
 	// Match and normalize attributes.
-	while ( ( match = REGEXP_ATTR_STRING.exec( text ) ) ) {
-		if ( match[ 1 ] ) {
-			named[ match[ 1 ].toLowerCase() ] = match[ 2 ];
-		} else if ( match[ 3 ] ) {
-			named[ match[ 3 ].toLowerCase() ] = match[ 4 ];
-		} else if ( match[ 5 ] ) {
-			named[ match[ 5 ].toLowerCase() ] = match[ 6 ];
-		} else if ( match[ 7 ] ) {
-			numeric.push( match[ 7 ] );
-		} else if ( match[ 8 ] ) {
-			numeric.push( match[ 8 ] );
+	while ((match = REGEXP_ATTR_STRING.exec(text))) {
+		if (match[1]) {
+			named[match[1].toLowerCase()] = match[2];
+		} else if (match[3]) {
+			named[match[3].toLowerCase()] = match[4];
+		} else if (match[5]) {
+			named[match[5].toLowerCase()] = match[6];
+		} else if (match[7]) {
+			numeric.push(match[7]);
+		} else if (match[8]) {
+			numeric.push(match[8]);
 		}
 	}
 
@@ -48,7 +48,7 @@ export const parseAttributes = memoize( function( text ) {
 		named: named,
 		numeric: numeric,
 	};
-} );
+});
 
 /**
  * Given a value of mixed type, returns a normalized object of named and
@@ -59,20 +59,20 @@ export const parseAttributes = memoize( function( text ) {
  * @param  {*}      attributes An object to normalize
  * @returns {object}            An object of attributes, split as named and numeric
  */
-export const normalizeAttributes = function( attributes ) {
+export const normalizeAttributes = function (attributes) {
 	let named;
 	let numeric;
 
-	if ( 'string' === typeof attributes ) {
-		return parseAttributes( attributes );
-	} else if ( Array.isArray( attributes ) ) {
+	if ('string' === typeof attributes) {
+		return parseAttributes(attributes);
+	} else if (Array.isArray(attributes)) {
 		numeric = attributes;
 	} else if (
 		'object' === typeof attributes &&
-		isEqual( Object.keys( attributes ), [ 'named', 'numeric' ] )
+		isEqual(Object.keys(attributes), ['named', 'numeric'])
 	) {
 		return attributes;
-	} else if ( 'object' === typeof attributes ) {
+	} else if ('object' === typeof attributes) {
 		named = attributes;
 	}
 
@@ -88,35 +88,35 @@ export const normalizeAttributes = function( attributes ) {
  * @param  {object} shortcode A shortcode object
  * @returns {string}           The string value of the shortcode
  */
-export const stringify = function( shortcode ) {
+export const stringify = function (shortcode) {
 	let text = '[' + shortcode.tag;
-	const attributes = normalizeAttributes( shortcode.attrs );
+	const attributes = normalizeAttributes(shortcode.attrs);
 
-	Object.keys( attributes.named ).forEach( function( name ) {
-		const value = attributes.named[ name ];
+	Object.keys(attributes.named).forEach(function (name) {
+		const value = attributes.named[name];
 		text += ' ' + name + '="' + value + '"';
-	} );
+	});
 
-	attributes.numeric.forEach( function( value ) {
-		if ( /\s/.test( value ) ) {
+	attributes.numeric.forEach(function (value) {
+		if (/\s/.test(value)) {
 			text += ' "' + value + '"';
 		} else {
 			text += ' ' + value;
 		}
-	} );
+	});
 
 	// If the tag is marked as `single` or `self-closing`, close the
 	// tag and ignore any additional content.
-	if ( 'single' === shortcode.type ) {
+	if ('single' === shortcode.type) {
 		return text + ']';
-	} else if ( 'self-closing' === shortcode.type ) {
+	} else if ('self-closing' === shortcode.type) {
 		return text + ' /]';
 	}
 
 	// Complete the opening tag.
 	text += ']';
 
-	if ( shortcode.content ) {
+	if (shortcode.content) {
 		text += shortcode.content;
 	}
 
@@ -130,33 +130,33 @@ export const stringify = function( shortcode ) {
  * @param  {string} shortcode A shortcode string
  * @returns {object}           The object value of the shortcode
  */
-export const parse = function( shortcode ) {
-	const match = shortcode.match( REGEXP_SHORTCODE );
+export const parse = function (shortcode) {
+	const match = shortcode.match(REGEXP_SHORTCODE);
 	let type;
 
-	if ( ! match ) {
+	if (!match) {
 		return null;
 	}
 
-	if ( match[ 4 ] ) {
+	if (match[4]) {
 		type = 'self-closing';
-	} else if ( match[ 6 ] ) {
+	} else if (match[6]) {
 		type = 'closed';
 	} else {
 		type = 'single';
 	}
 
 	const parsed = {
-		tag: match[ 2 ],
+		tag: match[2],
 		type: type,
 	};
 
-	if ( /\S/.test( match[ 3 ] ) ) {
-		parsed.attrs = parseAttributes( match[ 3 ] );
+	if (/\S/.test(match[3])) {
+		parsed.attrs = parseAttributes(match[3]);
 	}
 
-	if ( match[ 5 ] ) {
-		parsed.content = match[ 5 ];
+	if (match[5]) {
+		parsed.content = match[5];
 	}
 
 	return parsed;
@@ -181,14 +181,14 @@ export const parse = function( shortcode ) {
  * @param {string} tag - shortcode name
  * @returns {RegExp} regular expression
  */
-export const regexp = memoize( function( tag ) {
+export const regexp = memoize(function (tag) {
 	return new RegExp(
 		'\\[(\\[?)(' +
 			tag +
 			')(?![\\w-])([^\\]\\/]*(?:\\/(?!\\])[^\\]\\/]*)*?)(?:(\\/)\\]|\\](?:([^\\[]*(?:\\[(?!\\/\\2\\])[^\\[]*)*)(\\[\\/\\2\\]))?)(\\]?)',
 		'g'
 	);
-} );
+});
 
 /**
  * Find the next matching shortcode
@@ -205,37 +205,37 @@ export const regexp = memoize( function( tag ) {
  *
  * @returns {object|void} next match
  */
-export const next = function( tag, text, index = 0 ) {
-	const re = regexp( tag );
+export const next = function (tag, text, index = 0) {
+	const re = regexp(tag);
 
 	re.lastIndex = index || 0;
-	const match = re.exec( text );
+	const match = re.exec(text);
 
-	if ( ! match ) {
+	if (!match) {
 		return;
 	}
 
 	// If we matched an escaped shortcode, try again.
-	if ( '[' === match[ 1 ] && ']' === match[ 7 ] ) {
-		return next( tag, text, re.lastIndex );
+	if ('[' === match[1] && ']' === match[7]) {
+		return next(tag, text, re.lastIndex);
 	}
 
 	const result = {
 		index: match.index,
-		content: match[ 0 ],
-		shortcode: parse( match[ 0 ] ),
+		content: match[0],
+		shortcode: parse(match[0]),
 	};
 
 	// If we matched a leading `[`, strip it from the match
 	// and increment the index accordingly.
-	if ( match[ 1 ] ) {
-		result.content = result.content.slice( 1 );
+	if (match[1]) {
+		result.content = result.content.slice(1);
 		result.index++;
 	}
 
 	// If we matched a trailing `]`, strip it from the match.
-	if ( match[ 7 ] ) {
-		result.content = result.content.slice( 0, -1 );
+	if (match[7]) {
+		result.content = result.content.slice(0, -1);
 	}
 
 	return result;

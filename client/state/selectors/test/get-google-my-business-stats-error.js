@@ -8,12 +8,12 @@ import { expect } from 'chai';
  */
 import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
 
-describe( 'getGoogleMyBusinessStatsError', () => {
-	test( 'should return null if no error available', () => {
-		expect( getGoogleMyBusinessStatsError( {}, 123, 'actions', 'month' ) ).to.be.null;
-	} );
+describe('getGoogleMyBusinessStatsError', () => {
+	test('should return null if no error available', () => {
+		expect(getGoogleMyBusinessStatsError({}, 123, 'actions', 'month')).to.be.null;
+	});
 
-	test( 'should return stats error', () => {
+	test('should return stats error', () => {
 		const state = {
 			googleMyBusiness: {
 				123: {
@@ -36,11 +36,11 @@ describe( 'getGoogleMyBusinessStatsError', () => {
 			},
 		};
 
-		expect( getGoogleMyBusinessStatsError( state, 123, 'actions', 'month', 'total' ) ).to.eql( {
+		expect(getGoogleMyBusinessStatsError(state, 123, 'actions', 'month', 'total')).to.eql({
 			interval: 'month',
 			statType: 'actions',
 			aggregation: 'total',
 			data: { hello: 'world' },
-		} );
-	} );
-} );
+		});
+	});
+});

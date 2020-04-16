@@ -15,8 +15,8 @@ import 'state/themes/init';
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True if upload is in progress
  */
-export function isUploadInProgress( state, siteId ) {
-	return get( state.themes.uploadTheme.inProgress, siteId, false );
+export function isUploadInProgress(state, siteId) {
+	return get(state.themes.uploadTheme.inProgress, siteId, false);
 }
 
 /**
@@ -26,8 +26,8 @@ export function isUploadInProgress( state, siteId ) {
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True if upload has completed
  */
-export function isUploadComplete( state, siteId ) {
-	return !! ( ! isUploadInProgress( state, siteId ) && getUploadedThemeId( state, siteId ) );
+export function isUploadComplete(state, siteId) {
+	return !!(!isUploadInProgress(state, siteId) && getUploadedThemeId(state, siteId));
 }
 
 /**
@@ -37,8 +37,8 @@ export function isUploadComplete( state, siteId ) {
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True if upload has failed
  */
-export function hasUploadFailed( state, siteId ) {
-	return !! get( state.themes.uploadTheme.uploadError, siteId, false );
+export function hasUploadFailed(state, siteId) {
+	return !!get(state.themes.uploadTheme.uploadError, siteId, false);
 }
 
 /**
@@ -48,13 +48,13 @@ export function hasUploadFailed( state, siteId ) {
  * @param {number} siteId -- Site ID
  * @returns {?string} -- Uploaded theme ID
  */
-export function getUploadedThemeId( state, siteId ) {
-	const themeId = get( state.themes.uploadTheme.uploadedThemeId, siteId );
+export function getUploadedThemeId(state, siteId) {
+	const themeId = get(state.themes.uploadTheme.uploadedThemeId, siteId);
 	// When wpcom themes are uploaded, we will not be able to retrieve details
 	// from the site, since we filter out all wpcom themes. Remove the suffix
 	// so we can use details from wpcom.
-	if ( themeId ) {
-		return themeId.replace( /-wpcom$/, '' );
+	if (themeId) {
+		return themeId.replace(/-wpcom$/, '');
 	}
 	return null;
 }
@@ -66,8 +66,8 @@ export function getUploadedThemeId( state, siteId ) {
  * @param {number} siteId -- Site ID
  * @returns {?object} -- Error details
  */
-export function getUploadError( state, siteId ) {
-	return get( state.themes.uploadTheme.uploadError, siteId );
+export function getUploadError(state, siteId) {
+	return get(state.themes.uploadTheme.uploadError, siteId);
 }
 
 /**
@@ -77,8 +77,8 @@ export function getUploadError( state, siteId ) {
  * @param {number} siteId -- Site ID
  * @returns {?number} -- Total
  */
-export function getUploadProgressTotal( state, siteId ) {
-	return get( state.themes.uploadTheme.progressTotal, siteId );
+export function getUploadProgressTotal(state, siteId) {
+	return get(state.themes.uploadTheme.progressTotal, siteId);
 }
 
 /**
@@ -89,8 +89,8 @@ export function getUploadProgressTotal( state, siteId ) {
  * @param {number} siteId -- Site ID
  * @returns {?number} -- Loaded
  */
-export function getUploadProgressLoaded( state, siteId ) {
-	return get( state.themes.uploadTheme.progressLoaded, siteId );
+export function getUploadProgressLoaded(state, siteId) {
+	return get(state.themes.uploadTheme.progressLoaded, siteId);
 }
 
 /**
@@ -101,6 +101,6 @@ export function getUploadProgressLoaded( state, siteId ) {
  * @param {number} siteId -- Site ID
  * @returns {boolean} -- True install is in progress
  */
-export function isInstallInProgress( state, siteId ) {
-	return getUploadProgressTotal( state, siteId ) === getUploadProgressLoaded( state, siteId );
+export function isInstallInProgress(state, siteId) {
+	return getUploadProgressTotal(state, siteId) === getUploadProgressLoaded(state, siteId);
 }

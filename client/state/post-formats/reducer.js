@@ -18,24 +18,24 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case POST_FORMATS_REQUEST: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case POST_FORMATS_REQUEST_SUCCESS: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 		case POST_FORMATS_REQUEST_FAILURE: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -45,18 +45,18 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( postFormatsItemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(postFormatsItemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case POST_FORMATS_RECEIVE: {
 			const { siteId, formats } = action;
-			return { ...state, [ siteId ]: formats };
+			return { ...state, [siteId]: formats };
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	items,
-} );
+});

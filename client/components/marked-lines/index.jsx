@@ -21,9 +21,9 @@ import './style.scss';
  * @param {string} text the string to mark
  * @returns {Element} React <mark> Element
  */
-const mark = text => (
-	<mark key={ text } className="marked-lines__mark">
-		{ text }
+const mark = (text) => (
+	<mark key={text} className="marked-lines__mark">
+		{text}
 	</mark>
 );
 
@@ -40,63 +40,61 @@ const mark = text => (
  * @param {string} content the plaintext content to mark
  * @returns {Array|string} list of output text nodes and mark elements or plain string output
  */
-const markup = ( marks, content ) => {
-	const [ finalOutput, finalLast ] = marks.reduce(
-		( [ output, lastIndex ], [ markStart, markEnd ] ) => {
+const markup = (marks, content) => {
+	const [finalOutput, finalLast] = marks.reduce(
+		([output, lastIndex], [markStart, markEnd]) => {
 			// slice of input text specified by current mark ranges
-			const slice = content.slice( markStart, markEnd );
+			const slice = content.slice(markStart, markEnd);
 
 			// if we have text before the first index then prepend it as well
 			const next =
-				markStart > lastIndex
-					? [ content.slice( lastIndex, markStart ), mark( slice ) ]
-					: [ mark( slice ) ];
+				markStart > lastIndex ? [content.slice(lastIndex, markStart), mark(slice)] : [mark(slice)];
 
-			return [ [ ...output, ...next ], markEnd ];
+			return [[...output, ...next], markEnd];
 		},
-		[ [], 0 ]
+		[[], 0]
 	);
 
 	// we may also have text after the last mark
-	return finalLast < content.length ? [ ...finalOutput, content.slice( finalLast ) ] : finalOutput;
+	return finalLast < content.length ? [...finalOutput, content.slice(finalLast)] : finalOutput;
 };
 
-const MarkedLines = ( { context } ) => {
+const MarkedLines = ({ context }) => {
 	const { marks, ...lines } = context;
 
 	return (
 		<div className="marked-lines">
 			<div className="marked-lines__line-numbers">
-				{ map( lines, ( content, lineNumber ) => {
-					const hasMarks = marks.hasOwnProperty( lineNumber );
+				{map(lines, (content, lineNumber) => {
+					const hasMarks = marks.hasOwnProperty(lineNumber);
 
 					return (
 						<div
-							key={ content }
-							className={ classNames( 'marked-lines__line-number', {
+							key={content}
+							className={classNames('marked-lines__line-number', {
 								'marked-lines__marked-line': hasMarks,
-							} ) }
+							})}
 						>
-							{ lineNumber }
+							{lineNumber}
 						</div>
 					);
-				} ) }
+				})}
 			</div>
 			<div className="marked-lines__lines">
-				{ map( lines, ( content, lineNumber ) => {
-					const hasMarks = marks.hasOwnProperty( lineNumber );
+				{map(lines, (content, lineNumber) => {
+					const hasMarks = marks.hasOwnProperty(lineNumber);
 
 					return (
 						<div
-							key={ content }
-							className={ classNames( 'marked-lines__line', {
+							key={content}
+							className={classNames('marked-lines__line', {
 								'marked-lines__marked-line': hasMarks,
-							} ) }
+							})}
 						>
-							<Fragment>{ hasMarks ? markup( marks[ lineNumber ], content ) : content }</Fragment>
+							<Fragment>{hasMarks ? markup(marks[lineNumber], content) : content}</Fragment>
 						</div>
 					);
-				} ) }
+				})}
 			</div>
 		</div>
 	);

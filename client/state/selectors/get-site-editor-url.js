@@ -11,16 +11,16 @@ import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
  * @param {object} siteId Site ID
  * @returns {string} Url of site editor instance for calypso or wp-admin.
  */
-export const getSiteEditorUrl = ( state, siteId ) => {
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+export const getSiteEditorUrl = (state, siteId) => {
+	const siteAdminUrl = getSiteAdminUrl(state, siteId);
 
-	if ( shouldRedirectGutenberg( state, siteId ) ) {
-		return `${ siteAdminUrl }admin.php?page=gutenberg-edit-site`;
+	if (shouldRedirectGutenberg(state, siteId)) {
+		return `${siteAdminUrl}admin.php?page=gutenberg-edit-site`;
 	}
 
-	const siteSlug = getSiteSlug( state, siteId );
+	const siteSlug = getSiteSlug(state, siteId);
 
-	return `/site-editor/${ siteSlug }`;
+	return `/site-editor/${siteSlug}`;
 };
 
 export default getSiteEditorUrl;

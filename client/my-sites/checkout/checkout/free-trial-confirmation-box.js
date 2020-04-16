@@ -17,41 +17,41 @@ import TermsOfService from './terms-of-service';
 class FreeTrialConfirmationBox extends React.Component {
 	content = () => {
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+			<form onSubmit={this.props.onSubmit}>
 				<div className="payment-box-section">
 					<div className="checkout__payment-box-section-content">
 						<h6>
-							{ this.props.translate( 'Get started with %(productName)s', {
+							{this.props.translate('Get started with %(productName)s', {
 								args: { productName: this.getProductName() },
-							} ) }
+							})}
 						</h6>
 
 						<span>
-							{ this.props.translate(
+							{this.props.translate(
 								'Enjoy your free trial with no strings attached: your site will simply revert to the ' +
 									'free plan when the period is over.'
-							) }
+							)}
 						</span>
 					</div>
 				</div>
 
 				<TermsOfService />
 				<div className="payment-box-actions">
-					<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
+					<PayButton cart={this.props.cart} transactionStep={this.props.transactionStep} />
 				</div>
 			</form>
 		);
 	};
 
 	getProductName = () => {
-		const planProduct = find( this.props.cart.products, isPlan );
+		const planProduct = find(this.props.cart.products, isPlan);
 
-		return ( planProduct && planProduct.product_name ) || '';
+		return (planProduct && planProduct.product_name) || '';
 	};
 
 	render() {
-		return <PaymentBox classSet="credits-payment-box">{ this.content() }</PaymentBox>;
+		return <PaymentBox classSet="credits-payment-box">{this.content()}</PaymentBox>;
 	}
 }
 
-export default localize( FreeTrialConfirmationBox );
+export default localize(FreeTrialConfirmationBox);

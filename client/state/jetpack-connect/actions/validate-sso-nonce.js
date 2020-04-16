@@ -20,38 +20,38 @@ import 'state/jetpack-connect/init';
 /**
  * Module constants
  */
-const debug = debugFactory( 'calypso:jetpack-connect:actions' );
+const debug = debugFactory('calypso:jetpack-connect:actions');
 
-export function validateSSONonce( siteId, ssoNonce ) {
-	return dispatch => {
-		debug( 'Attempting to validate SSO for ' + siteId );
-		dispatch( {
+export function validateSSONonce(siteId, ssoNonce) {
+	return (dispatch) => {
+		debug('Attempting to validate SSO for ' + siteId);
+		dispatch({
 			type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.jetpackValidateSSONonce( siteId, ssoNonce )
-			.then( data => {
-				dispatch( recordTracksEvent( 'calypso_jpc_validate_sso_success' ) );
-				dispatch( {
+			.jetpackValidateSSONonce(siteId, ssoNonce)
+			.then((data) => {
+				dispatch(recordTracksEvent('calypso_jpc_validate_sso_success'));
+				dispatch({
 					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 					success: data.success,
 					blogDetails: data.blog_details,
 					sharedDetails: data.shared_details,
-				} );
-			} )
-			.catch( error => {
+				});
+			})
+			.catch((error) => {
 				dispatch(
-					recordTracksEvent( 'calypso_jpc_validate_sso_error', {
+					recordTracksEvent('calypso_jpc_validate_sso_error', {
 						error: error,
-					} )
+					})
 				);
-				dispatch( {
+				dispatch({
 					type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-					error: pick( error, [ 'error', 'status', 'message' ] ),
-				} );
-			} );
+					error: pick(error, ['error', 'status', 'message']),
+				});
+			});
 	};
 }

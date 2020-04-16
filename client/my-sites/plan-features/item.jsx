@@ -10,28 +10,28 @@ import Gridicon from 'components/gridicon';
  */
 import InfoPopover from 'components/info-popover';
 
-export default function PlanFeaturesItem( {
+export default function PlanFeaturesItem({
 	children,
 	description,
 	hideInfoPopover,
 	hideGridicon = false,
-} ) {
+}) {
 	const isMobile = useMobileBreakpoint();
 
 	return (
 		<div className="plan-features__item">
-			{ ! hideGridicon && (
-				<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
-			) }
-			{ children }
-			{ hideInfoPopover ? null : (
+			{!hideGridicon && (
+				<Gridicon className="plan-features__item-checkmark" size={18} icon="checkmark" />
+			)}
+			{children}
+			{hideInfoPopover ? null : (
 				<InfoPopover
 					className="plan-features__item-tip-info"
-					position={ isMobile ? 'left' : 'right' }
+					position={isMobile ? 'left' : 'right'}
 				>
-					{ description }
+					{description}
 				</InfoPopover>
-			) }
+			)}
 		</div>
 	);
 }

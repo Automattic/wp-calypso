@@ -12,7 +12,7 @@ import { listMembershipsConnectedAccounts } from 'state/memberships/actions';
 
 class QueryMembershipsConnectedAccounts extends Component {
 	componentDidMount() {
-		if ( ! this.props.isFetching ) {
+		if (!this.props.isFetching) {
 			this.props.listMembershipsConnectedAccounts();
 		}
 	}
@@ -23,8 +23,8 @@ class QueryMembershipsConnectedAccounts extends Component {
 }
 
 export default connect(
-	state => ( {
-		isFetching: get( state, [ 'memberships', 'connectedAccounts', 'isFetching' ], false ),
-	} ),
+	(state) => ({
+		isFetching: get(state, ['memberships', 'connectedAccounts', 'isFetching'], false),
+	}),
 	{ listMembershipsConnectedAccounts }
-)( QueryMembershipsConnectedAccounts );
+)(QueryMembershipsConnectedAccounts);

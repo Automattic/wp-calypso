@@ -17,14 +17,14 @@ import { DEFAULT_HEARTBEAT } from './constants';
 
 class QuerySiteStats extends Component {
 	componentDidMount() {
-		this.deferredTimer = defer( () => this.request() );
+		this.deferredTimer = defer(() => this.request());
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
 			this.props.siteId === prevProps.siteId &&
 			this.props.statType === prevProps.statType &&
-			isShallowEqual( this.props.query, prevProps.query )
+			isShallowEqual(this.props.query, prevProps.query)
 		) {
 			return;
 		}
@@ -34,32 +34,32 @@ class QuerySiteStats extends Component {
 
 	componentWillUnmount() {
 		this.clearInterval();
-		clearTimeout( this.deferredTimer );
+		clearTimeout(this.deferredTimer);
 	}
 
 	request() {
 		const { requesting, siteId, statType, query, heartbeat } = this.props;
-		if ( requesting ) {
+		if (requesting) {
 			return;
 		}
 
-		this.props.requestSiteStats( siteId, statType, query );
+		this.props.requestSiteStats(siteId, statType, query);
 		this.clearInterval();
-		if ( heartbeat && isAutoRefreshAllowedForQuery( query ) ) {
-			this.interval = setInterval( this.heartbeatRequest, heartbeat );
+		if (heartbeat && isAutoRefreshAllowedForQuery(query)) {
+			this.interval = setInterval(this.heartbeatRequest, heartbeat);
 		}
 	}
 
 	heartbeatRequest = () => {
 		const { requesting, siteId, statType, query } = this.props;
-		if ( ! requesting ) {
-			this.props.requestSiteStats( siteId, statType, query );
+		if (!requesting) {
+			this.props.requestSiteStats(siteId, statType, query);
 		}
 	};
 
 	clearInterval() {
-		if ( this.interval ) {
-			clearInterval( this.interval );
+		if (this.interval) {
+			clearInterval(this.interval);
 		}
 	}
 
@@ -83,8 +83,8 @@ QuerySiteStats.defaultProps = {
 };
 
 export default connect(
-	( state, { siteId, statType, query } ) => ( {
-		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
-	} ),
+	(state, { siteId, statType, query }) => ({
+		requesting: isRequestingSiteStatsForQuery(state, siteId, statType, query),
+	}),
 	{ requestSiteStats }
-)( QuerySiteStats );
+)(QuerySiteStats);

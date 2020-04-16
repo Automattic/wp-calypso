@@ -10,28 +10,28 @@ import {
 import { WOOCOMMERCE_COUNT_REQUEST } from 'woocommerce/state/action-types';
 import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
-export const fetch = action => {
+export const fetch = (action) => {
 	const { siteId } = action;
-	return request( siteId, action ).get( 'data/counts' );
+	return request(siteId, action).get('data/counts');
 };
 
-const onError = ( action, error ) => dispatch => {
+const onError = (action, error) => (dispatch) => {
 	const { siteId } = action;
-	dispatch( fetchCountsFailure( siteId, error ) );
+	dispatch(fetchCountsFailure(siteId, error));
 };
 
-const onSuccess = ( action, { data } ) => dispatch => {
+const onSuccess = (action, { data }) => (dispatch) => {
 	const { siteId } = action;
-	dispatch( fetchCountsSuccess( siteId, data ) );
+	dispatch(fetchCountsSuccess(siteId, data));
 };
 
 export default {
-	[ WOOCOMMERCE_COUNT_REQUEST ]: [
-		dispatchRequest( {
+	[WOOCOMMERCE_COUNT_REQUEST]: [
+		dispatchRequest({
 			fetch,
 			onSuccess,
 			onError,
 			fromApi: verifyResponseHasData,
-		} ),
+		}),
 	],
 };

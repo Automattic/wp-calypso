@@ -41,45 +41,45 @@ class PostRevisionsDialog extends PureComponent {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.toggleBodyClass( { isVisible: this.props.isVisible } );
-		this.props.selectPostRevision( null );
+		this.toggleBodyClass({ isVisible: this.props.isVisible });
+		this.props.selectPostRevision(null);
 	}
 
-	UNSAFE_componentWillUpdate( { isVisible } ) {
-		this.toggleBodyClass( { isVisible } );
+	UNSAFE_componentWillUpdate({ isVisible }) {
+		this.toggleBodyClass({ isVisible });
 	}
 
-	toggleBodyClass( { isVisible } ) {
-		if ( ! ( typeof document === 'object' && get( document, 'body.classList' ) ) ) {
+	toggleBodyClass({ isVisible }) {
+		if (!(typeof document === 'object' && get(document, 'body.classList'))) {
 			return;
 		}
 
 		const bodyClassName = 'showing-post-revisions-dialog';
 
-		if ( isVisible ) {
-			document.body.classList.add( bodyClassName );
+		if (isVisible) {
+			document.body.classList.add(bodyClassName);
 		} else {
-			document.body.classList.remove( bodyClassName );
+			document.body.classList.remove(bodyClassName);
 		}
 	}
 
 	onLoadClick = () => {
 		const { loadRevision, revision, closeDialog } = this.props;
-		loadRevision( revision );
+		loadRevision(revision);
 		closeDialog();
-		this.props.recordTracksEvent( 'calypso_editor_post_revisions_load_revision' );
+		this.props.recordTracksEvent('calypso_editor_post_revisions_load_revision');
 	};
 
 	dialogButtons = () => {
 		const { postId, revision, siteId, translate } = this.props;
 		return [
-			{ action: 'cancel', compact: true, label: translate( 'Cancel' ) },
+			{ action: 'cancel', compact: true, label: translate('Cancel') },
 			{
 				action: 'load',
 				compact: true,
-				disabled: ! ( revision && postId && siteId ),
+				disabled: !(revision && postId && siteId),
 				isPrimary: true,
-				label: translate( 'Load', { context: 'Load revision in editor' } ),
+				label: translate('Load', { context: 'Load revision in editor' }),
 				onClick: this.onLoadClick,
 			},
 		];
@@ -90,12 +90,12 @@ class PostRevisionsDialog extends PureComponent {
 
 		return (
 			<Dialog
-				buttons={ this.dialogButtons() }
+				buttons={this.dialogButtons()}
 				className="editor-revisions__dialog"
-				isVisible={ isVisible }
-				onClose={ closeDialog }
+				isVisible={isVisible}
+				onClose={closeDialog}
 			>
-				<CloseOnEscape onEscape={ closeDialog } />
+				<CloseOnEscape onEscape={closeDialog} />
 				<EditorRevisions />
 			</Dialog>
 		);
@@ -105,12 +105,12 @@ class PostRevisionsDialog extends PureComponent {
 export default flow(
 	localize,
 	connect(
-		state => ( {
-			isVisible: isPostRevisionsDialogVisible( state ),
-			postId: getEditorPostId( state ),
-			revision: getPostRevisionsSelectedRevision( state ),
-			siteId: getSelectedSiteId( state ),
-		} ),
+		(state) => ({
+			isVisible: isPostRevisionsDialogVisible(state),
+			postId: getEditorPostId(state),
+			revision: getPostRevisionsSelectedRevision(state),
+			siteId: getSelectedSiteId(state),
+		}),
 		{ recordTracksEvent, closeDialog: closePostRevisionsDialog, selectPostRevision }
 	)
-)( PostRevisionsDialog );
+)(PostRevisionsDialog);

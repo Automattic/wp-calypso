@@ -43,44 +43,44 @@ class BlogPostsPage extends React.Component {
 
 		return (
 			<span>
-				<Gridicon size={ 12 } icon="house" className="blog-posts-page__front-page-icon" />
-				{ translate( 'The homepage is showing your latest posts.' ) }
+				<Gridicon size={12} icon="house" className="blog-posts-page__front-page-icon" />
+				{translate('The homepage is showing your latest posts.')}
 			</span>
 		);
 	}
 
 	recordCalloutClick = () => {
-		this.props.recordCalloutClick( this.props.site.ID );
+		this.props.recordCalloutClick(this.props.site.ID);
 	};
 
 	render() {
 		const { isFullSiteEditing } = this.props;
 
-		if ( isFullSiteEditing ) {
+		if (isFullSiteEditing) {
 			return null;
 		}
 
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
 
-		if ( ! isCurrentlySetAsHomepage ) {
+		if (!isCurrentlySetAsHomepage) {
 			return null;
 		}
 
 		return (
 			<Card
-				href={ this.getPostsPageLink() }
+				href={this.getPostsPageLink()}
 				target="_blank"
 				rel="noopener noreferrer"
 				className="blog-posts-page"
-				onClick={ this.recordCalloutClick }
+				onClick={this.recordCalloutClick}
 			>
 				<div className="blog-posts-page__details">
 					<div
-						className={ classNames( {
+						className={classNames({
 							'blog-posts-page__info': true,
-						} ) }
+						})}
 					>
-						{ this.renderPostsPageInfo() }
+						{this.renderPostsPageInfo()}
 					</div>
 				</div>
 			</Card>
@@ -88,18 +88,18 @@ class BlogPostsPage extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	recordCalloutClick: siteId => {
-		dispatch( recordTracksEvent( 'calypso_pages_blog_posts_callout_click', { blog_id: siteId } ) );
+const mapDispatchToProps = (dispatch) => ({
+	recordCalloutClick: (siteId) => {
+		dispatch(recordTracksEvent('calypso_pages_blog_posts_callout_click', { blog_id: siteId }));
 	},
-} );
+});
 
-export default connect( ( state, props ) => {
+export default connect((state, props) => {
 	return {
-		frontPageType: getSiteFrontPageType( state, props.site.ID ),
-		isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
-		postsPage: getSitePostsPage( state, props.site.ID ),
-		frontPage: getSiteFrontPage( state, props.site.ID ),
-		isFullSiteEditing: isSiteUsingFullSiteEditing( state, props.site.ID ),
+		frontPageType: getSiteFrontPageType(state, props.site.ID),
+		isFrontPage: getSiteFrontPageType(state, props.site.ID) === 'posts',
+		postsPage: getSitePostsPage(state, props.site.ID),
+		frontPage: getSiteFrontPage(state, props.site.ID),
+		isFullSiteEditing: isSiteUsingFullSiteEditing(state, props.site.ID),
 	};
-}, mapDispatchToProps )( localize( BlogPostsPage ) );
+}, mapDispatchToProps)(localize(BlogPostsPage));

@@ -17,13 +17,13 @@ import { preventWidows } from 'lib/formatting';
  */
 import './style.scss';
 
-const validTypeSizes = [ 54, 47, 36, 32, 24, 21, 16, 14, 11 ];
+const validTypeSizes = [54, 47, 36, 32, 24, 21, 16, 14, 11];
 
-function CardHeading( { tagName = 'h1', size = 21, children } ) {
+function CardHeading({ tagName = 'h1', size = 21, children }) {
 	const classNameObject = {};
-	classNameObject[ 'card-heading-' + size ] = includes( validTypeSizes, size );
-	const classes = classNames( 'card-heading', classNameObject );
-	return React.createElement( tagName, { className: classes }, preventWidows( children, 2 ) );
+	classNameObject['card-heading-' + size] = includes(validTypeSizes, size);
+	const classes = classNames('card-heading', classNameObject);
+	return React.createElement(tagName, { className: classes }, preventWidows(children, 2));
 }
 
 CardHeading.propTypes = {

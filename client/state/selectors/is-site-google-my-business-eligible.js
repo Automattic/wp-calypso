@@ -18,12 +18,12 @@ import { FEATURE_GOOGLE_MY_BUSINESS, TYPE_BUSINESS, GROUP_JETPACK } from 'lib/pl
  * @returns {boolean} True if site has business plan
  */
 export const siteHasEligibleWpcomPlan = createSelector(
-	( state, siteId ) => {
-		const slug = getSitePlanSlug( state, siteId );
+	(state, siteId) => {
+		const slug = getSitePlanSlug(state, siteId);
 
-		return planHasFeature( slug, FEATURE_GOOGLE_MY_BUSINESS );
+		return planHasFeature(slug, FEATURE_GOOGLE_MY_BUSINESS);
 	},
-	( state, siteId ) => [ getSitePlanSlug( state, siteId ) ]
+	(state, siteId) => [getSitePlanSlug(state, siteId)]
 );
 
 /**
@@ -34,12 +34,12 @@ export const siteHasEligibleWpcomPlan = createSelector(
  * @returns {boolean} True if site has business plan
  */
 export const siteHasEligibleJetpackPlan = createSelector(
-	( state, siteId ) => {
-		const slug = getSitePlanSlug( state, siteId );
+	(state, siteId) => {
+		const slug = getSitePlanSlug(state, siteId);
 
-		return planMatches( slug, { group: GROUP_JETPACK, type: TYPE_BUSINESS } );
+		return planMatches(slug, { group: GROUP_JETPACK, type: TYPE_BUSINESS });
 	},
-	( state, siteId ) => [ getSitePlanSlug( state, siteId ) ]
+	(state, siteId) => [getSitePlanSlug(state, siteId)]
 );
 
 /**
@@ -52,6 +52,6 @@ export const siteHasEligibleJetpackPlan = createSelector(
  * @param  {string}  siteId The Site ID
  * @returns {boolean} True if we should show the nudge
  */
-export default function isSiteGoogleMyBusinessEligible( state, siteId ) {
-	return siteHasEligibleWpcomPlan( state, siteId ) || siteHasEligibleJetpackPlan( state, siteId );
+export default function isSiteGoogleMyBusinessEligible(state, siteId) {
+	return siteHasEligibleWpcomPlan(state, siteId) || siteHasEligibleJetpackPlan(state, siteId);
 }

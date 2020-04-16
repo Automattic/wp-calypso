@@ -16,35 +16,35 @@ class MurielTextControl extends Component {
 	};
 
 	handleClickOutside() {
-		this.setState( { isFocused: false } );
+		this.setState({ isFocused: false });
 	}
 
-	handleOnBlur( onBlur, e ) {
-		this.setState( { isFocused: false } );
-		if ( 'function' === typeof onBlur ) {
-			onBlur( e );
+	handleOnBlur(onBlur, e) {
+		this.setState({ isFocused: false });
+		if ('function' === typeof onBlur) {
+			onBlur(e);
 		}
 	}
 
-	handleOnClick( onClick, e ) {
-		this.setState( { isFocused: true } );
-		if ( 'function' === typeof onClick ) {
-			onClick( e );
+	handleOnClick(onClick, e) {
+		this.setState({ isFocused: true });
+		if ('function' === typeof onClick) {
+			onClick(e);
 		}
 	}
 
-	handleOnFocus( onFocus, e ) {
-		this.setState( { isFocused: true } );
-		if ( 'function' === typeof onFocus ) {
-			onFocus( e );
+	handleOnFocus(onFocus, e) {
+		this.setState({ isFocused: true });
+		if ('function' === typeof onFocus) {
+			onFocus(e);
 		}
 	}
 
-	getStatusClassName( disabled, isEmpty ) {
+	getStatusClassName(disabled, isEmpty) {
 		let className = 'with-value';
-		if ( isEmpty ) {
+		if (isEmpty) {
 			className = 'empty';
-		} else if ( disabled ) {
+		} else if (disabled) {
 			className = 'disabled';
 		}
 
@@ -55,33 +55,33 @@ class MurielTextControl extends Component {
 		const { isFocused } = this.state;
 		const { className, onClick, onFocus, onBlur, onChange, help, type, ...otherProps } = this.props;
 		const { label, value, disabled } = otherProps;
-		const isEmpty = ! value;
-		const isActive = isFocused && ! disabled;
+		const isEmpty = !value;
+		const isActive = isFocused && !disabled;
 
 		const classes = classNames(
 			'woocommerce-muriel-text-control',
 			className,
-			this.getStatusClassName( disabled, isEmpty ),
+			this.getStatusClassName(disabled, isEmpty),
 			{
 				active: isActive,
 			}
 		);
 
-		const onChangeValue = event => onChange( event.target.value );
+		const onChangeValue = (event) => onChange(event.target.value);
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<div className="text-control__field">
-					{ label && <label className="text-control__label">{ label }</label> }
+					{label && <label className="text-control__label">{label}</label>}
 					<input
 						className="text-control__input"
-						type={ type || 'text' }
-						value={ value }
-						onChange={ onChangeValue }
-						placeholder={ label }
-						onClick={ e => this.handleOnClick( onClick, e ) }
-						onFocus={ e => this.handleOnFocus( onFocus, e ) }
-						onBlur={ e => this.handleOnBlur( onBlur, e ) }
-						{ ...otherProps }
+						type={type || 'text'}
+						value={value}
+						onChange={onChangeValue}
+						placeholder={label}
+						onClick={(e) => this.handleOnClick(onClick, e)}
+						onFocus={(e) => this.handleOnFocus(onFocus, e)}
+						onBlur={(e) => this.handleOnBlur(onBlur, e)}
+						{...otherProps}
 					/>
 				</div>
 			</div>
@@ -89,4 +89,4 @@ class MurielTextControl extends Component {
 	}
 }
 
-export default wrapWithClickOutside( MurielTextControl );
+export default wrapWithClickOutside(MurielTextControl);

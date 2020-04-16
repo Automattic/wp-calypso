@@ -28,21 +28,21 @@ const eventMessage = {
 	HAPPYCHAT_FOCUS: 'Started looking at Happychat',
 };
 
-export const socketMiddleware = ( connection = null ) => {
+export const socketMiddleware = (connection = null) => {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
-	if ( connection == null ) {
+	if (connection == null) {
 		connection = buildConnection();
 	}
 
-	return store => next => action => {
-		switch ( action.type ) {
+	return (store) => (next) => (action) => {
+		switch (action.type) {
 			case HAPPYCHAT_IO_INIT:
-				connection.init( store.dispatch, action.auth );
+				connection.init(store.dispatch, action.auth);
 				break;
 
 			case HAPPYCHAT_IO_REQUEST_TRANSCRIPT:
-				connection.request( action, action.timeout );
+				connection.request(action, action.timeout);
 				break;
 
 			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:
@@ -51,21 +51,21 @@ export const socketMiddleware = ( connection = null ) => {
 			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 			case HAPPYCHAT_IO_SEND_PREFERENCES:
 			case HAPPYCHAT_IO_SEND_TYPING:
-				connection.send( action );
+				connection.send(action);
 				break;
 
 			case HAPPYCHAT_BLUR:
 			case HAPPYCHAT_FOCUS:
 				const state = store.getState();
-				isHappychatClientConnected( state ) &&
-				isHappychatChatAssigned( state ) &&
-				eventMessage[ action.type ]
-					? store.dispatch( sendEvent( eventMessage[ action.type ] ) )
+				isHappychatClientConnected(state) &&
+				isHappychatChatAssigned(state) &&
+				eventMessage[action.type]
+					? store.dispatch(sendEvent(eventMessage[action.type]))
 					: noop;
 				break;
 		}
 
-		return next( action );
+		return next(action);
 	};
 };
 

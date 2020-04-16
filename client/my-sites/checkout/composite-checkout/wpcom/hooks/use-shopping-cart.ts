@@ -28,7 +28,7 @@ import {
 } from '../types';
 import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
 
-const debug = debugFactory( 'composite-checkout-wpcom:shopping-cart-manager' );
+const debug = debugFactory('composite-checkout-wpcom:shopping-cart-manager');
 
 /**
  *     * responseCart
@@ -97,22 +97,22 @@ function shoppingCartHookReducer(
 	action: ShoppingCartHookAction
 ): ShoppingCartHookState {
 	const couponStatus = state.couponStatus;
-	switch ( action.type ) {
+	switch (action.type) {
 		case 'REMOVE_CART_ITEM': {
 			const uuidToRemove = action.uuidToRemove;
-			debug( 'removing item from cart with uuid', uuidToRemove );
+			debug('removing item from cart with uuid', uuidToRemove);
 			return {
 				...state,
-				responseCart: removeItemFromResponseCart( state.responseCart, uuidToRemove ),
+				responseCart: removeItemFromResponseCart(state.responseCart, uuidToRemove),
 				cacheStatus: 'invalid',
 			};
 		}
 		case 'ADD_CART_ITEM': {
 			const responseCartProductToAdd = action.responseCartProductToAdd;
-			debug( 'adding item to cart', responseCartProductToAdd );
+			debug('adding item to cart', responseCartProductToAdd);
 			return {
 				...state,
-				responseCart: addItemToResponseCart( state.responseCart, responseCartProductToAdd ),
+				responseCart: addItemToResponseCart(state.responseCart, responseCartProductToAdd),
 				cacheStatus: 'invalid',
 			};
 		}
@@ -120,13 +120,11 @@ function shoppingCartHookReducer(
 			const uuidToReplace = action.uuidToReplace;
 			const newProductId = action.newProductId;
 			const newProductSlug = action.newProductSlug;
-			if ( state.variantRequestStatus === 'pending' ) {
-				debug(
-					`variant request status is '${ state.variantRequestStatus }'; not submitting again`
-				);
+			if (state.variantRequestStatus === 'pending') {
+				debug(`variant request status is '${state.variantRequestStatus}'; not submitting again`);
 				return state;
 			}
-			debug( `replacing item with uuid ${ uuidToReplace } by product slug`, newProductSlug );
+			debug(`replacing item with uuid ${uuidToReplace} by product slug`, newProductSlug);
 
 			return {
 				...state,
@@ -139,7 +137,7 @@ function shoppingCartHookReducer(
 				cacheStatus: 'invalid',
 				variantRequestStatus: 'pending',
 				variantSelectOverride: [
-					...state.variantSelectOverride.filter( item => item.uuid !== action.uuidToReplace ),
+					...state.variantSelectOverride.filter((item) => item.uuid !== action.uuidToReplace),
 					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
 				],
 			};
@@ -150,16 +148,16 @@ function shoppingCartHookReducer(
 				variantSelectOverride: [],
 			};
 		case 'REMOVE_COUPON': {
-			if ( couponStatus !== 'applied' ) {
-				debug( `coupon status is '${ couponStatus }'; not removing` );
+			if (couponStatus !== 'applied') {
+				debug(`coupon status is '${couponStatus}'; not removing`);
 				return state;
 			}
 
-			debug( 'removing coupon' );
+			debug('removing coupon');
 
 			return {
 				...state,
-				responseCart: removeCouponFromResponseCart( state.responseCart ),
+				responseCart: removeCouponFromResponseCart(state.responseCart),
 				couponStatus: 'fresh',
 				cacheStatus: 'invalid',
 			};
@@ -167,16 +165,16 @@ function shoppingCartHookReducer(
 		case 'ADD_COUPON': {
 			const newCoupon = action.couponToAdd;
 
-			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
-				debug( `coupon status is '${ couponStatus }'; not submitting again` );
+			if (couponStatus === 'applied' || couponStatus === 'pending') {
+				debug(`coupon status is '${couponStatus}'; not submitting again`);
 				return state;
 			}
 
-			debug( 'adding coupon', newCoupon );
+			debug('adding coupon', newCoupon);
 
 			return {
 				...state,
-				responseCart: addCouponToResponseCart( state.responseCart, newCoupon ),
+				responseCart: addCouponToResponseCart(state.responseCart, newCoupon),
 				couponStatus: 'pending',
 				cacheStatus: 'invalid',
 			};
@@ -186,7 +184,7 @@ function shoppingCartHookReducer(
 			return {
 				...state,
 				responseCart: response,
-				couponStatus: getUpdatedCouponStatus( couponStatus, response ),
+				couponStatus: getUpdatedCouponStatus(couponStatus, response),
 				cacheStatus: 'valid',
 			};
 		}
@@ -197,7 +195,7 @@ function shoppingCartHookReducer(
 			};
 		case 'RECEIVE_UPDATED_RESPONSE_CART': {
 			const response = action.updatedResponseCart;
-			const newCouponStatus = getUpdatedCouponStatus( couponStatus, response );
+			const newCouponStatus = getUpdatedCouponStatus(couponStatus, response);
 			const didAddCoupon = newCouponStatus === 'applied';
 
 			return {
@@ -221,7 +219,7 @@ function shoppingCartHookReducer(
 				},
 			};
 		case 'RAISE_ERROR':
-			switch ( action.error ) {
+			switch (action.error) {
 				case 'GET_SERVER_CART_ERROR':
 				case 'SET_SERVER_CART_ERROR':
 					return {
@@ -232,36 +230,36 @@ function shoppingCartHookReducer(
 					return state;
 			}
 		case 'SET_LOCATION':
-			if ( doesCartLocationDifferFromResponseCartLocation( state.responseCart, action.location ) ) {
-				debug( 'setting location on cart', action.location );
+			if (doesCartLocationDifferFromResponseCartLocation(state.responseCart, action.location)) {
+				debug('setting location on cart', action.location);
 				return {
 					...state,
-					responseCart: addLocationToResponseCart( state.responseCart, action.location ),
+					responseCart: addLocationToResponseCart(state.responseCart, action.location),
 					cacheStatus: 'invalid',
 				};
 			}
-			debug( 'cart location is the same; not updating' );
+			debug('cart location is the same; not updating');
 			return state;
 	}
 
 	return state;
 }
 
-function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {
+function getUpdatedCouponStatus(currentCouponStatus: CouponStatus, responseCart: ResponseCart) {
 	const isCouponApplied = responseCart.is_coupon_applied;
 	const couponDiscounts = responseCart.coupon_discounts_integer.length;
 
-	switch ( currentCouponStatus ) {
+	switch (currentCouponStatus) {
 		case 'fresh':
 			return isCouponApplied ? 'applied' : currentCouponStatus;
 		case 'pending': {
-			if ( isCouponApplied ) {
+			if (isCouponApplied) {
 				return 'applied';
 			}
-			if ( ! isCouponApplied && couponDiscounts <= 0 ) {
+			if (!isCouponApplied && couponDiscounts <= 0) {
 				return 'invalid';
 			}
-			if ( ! isCouponApplied && couponDiscounts > 0 ) {
+			if (!isCouponApplied && couponDiscounts > 0) {
 				return 'rejected';
 			}
 			return 'error';
@@ -296,13 +294,13 @@ export interface ShoppingCartManager {
 	subtotal: CheckoutCartItem;
 	couponItem: WPCOMCartCouponItem;
 	credits: CheckoutCartItem;
-	addItem: ( ResponseCartProduct ) => void;
-	removeItem: ( string ) => void;
-	submitCoupon: ( string ) => void;
+	addItem: (ResponseCartProduct) => void;
+	removeItem: (string) => void;
+	submitCoupon: (string) => void;
 	removeCoupon: () => void;
 	couponStatus: CouponStatus;
 	couponCode: string | null;
-	updateLocation: ( CartLocation ) => void;
+	updateLocation: (CartLocation) => void;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	responseCart: ResponseCart;
@@ -400,20 +398,17 @@ export function useShoppingCart(
 	canInitializeCart: boolean,
 	productsToAdd: ResponseCartProduct[] | null,
 	couponToAdd: string | null,
-	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
-	getCart: ( string ) => Promise< ResponseCart >,
-	translate: ( string ) => string,
-	showAddCouponSuccessMessage: ( string ) => void,
-	onEvent?: ( ReactStandardAction ) => void
+	setCart: (string, RequestCart) => Promise<ResponseCart>,
+	getCart: (string) => Promise<ResponseCart>,
+	translate: (string) => string,
+	showAddCouponSuccessMessage: (string) => void,
+	onEvent?: (ReactStandardAction) => void
 ): ShoppingCartManager {
 	cartKey = cartKey || 'no-site';
-	const setServerCart = useCallback( cartParam => setCart( cartKey, cartParam ), [
-		cartKey,
-		setCart,
-	] );
-	const getServerCart = useCallback( () => getCart( cartKey ), [ cartKey, getCart ] );
+	const setServerCart = useCallback((cartParam) => setCart(cartKey, cartParam), [cartKey, setCart]);
+	const getServerCart = useCallback(() => getCart(cartKey), [cartKey, getCart]);
 
-	const [ hookState, hookDispatch ] = useReducer(
+	const [hookState, hookDispatch] = useReducer(
 		shoppingCartHookReducer,
 		getInitialShoppingCartHookState()
 	);
@@ -438,13 +433,13 @@ export function useShoppingCart(
 	);
 
 	// Asynchronously re-validate when the cache is dirty.
-	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
+	useCartUpdateAndRevalidate(cacheStatus, responseCart, setServerCart, hookDispatch, onEvent);
 
 	// Translate the responseCart into the format needed in checkout.
-	const cart: WPCOMCart = useMemo(
-		() => translateWpcomCartToCheckoutCart( translate, responseCart ),
-		[ translate, responseCart ]
-	);
+	const cart: WPCOMCart = useMemo(() => translateWpcomCartToCheckoutCart(translate, responseCart), [
+		translate,
+		responseCart,
+	]);
 
 	useShowAddCouponSuccessMessage(
 		shouldShowNotification.didAddCoupon,
@@ -453,33 +448,33 @@ export function useShoppingCart(
 		hookDispatch
 	);
 
-	const addItem: ( ResponseCartProduct ) => void = useCallback( responseCartProductToAdd => {
-		hookDispatch( { type: 'ADD_CART_ITEM', responseCartProductToAdd } );
-	}, [] );
+	const addItem: (ResponseCartProduct) => void = useCallback((responseCartProductToAdd) => {
+		hookDispatch({ type: 'ADD_CART_ITEM', responseCartProductToAdd });
+	}, []);
 
-	const removeItem: ( string ) => void = useCallback( uuidToRemove => {
-		hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
-	}, [] );
+	const removeItem: (string) => void = useCallback((uuidToRemove) => {
+		hookDispatch({ type: 'REMOVE_CART_ITEM', uuidToRemove });
+	}, []);
 
 	const changeItemVariant: (
 		uuidToReplace: string,
 		newProductSlug: string,
 		newProductId: number
-	) => void = useCallback( ( uuidToReplace, newProductSlug, newProductId ) => {
-		hookDispatch( { type: 'REPLACE_CART_ITEM', uuidToReplace, newProductSlug, newProductId } );
-	}, [] );
+	) => void = useCallback((uuidToReplace, newProductSlug, newProductId) => {
+		hookDispatch({ type: 'REPLACE_CART_ITEM', uuidToReplace, newProductSlug, newProductId });
+	}, []);
 
-	const updateLocation: ( CartLocation ) => void = useCallback( location => {
-		hookDispatch( { type: 'SET_LOCATION', location } );
-	}, [] );
+	const updateLocation: (CartLocation) => void = useCallback((location) => {
+		hookDispatch({ type: 'SET_LOCATION', location });
+	}, []);
 
-	const submitCoupon: ( string ) => void = useCallback( newCoupon => {
-		hookDispatch( { type: 'ADD_COUPON', couponToAdd: newCoupon } );
-	}, [] );
+	const submitCoupon: (string) => void = useCallback((newCoupon) => {
+		hookDispatch({ type: 'ADD_COUPON', couponToAdd: newCoupon });
+	}, []);
 
-	const removeCoupon: () => void = useCallback( () => {
-		hookDispatch( { type: 'REMOVE_COUPON' } );
-	}, [] );
+	const removeCoupon: () => void = useCallback(() => {
+		hookDispatch({ type: 'REMOVE_COUPON' });
+	}, []);
 
 	return {
 		isLoading: cacheStatus === 'fresh',
@@ -510,32 +505,32 @@ function useInitializeCartFromServer(
 	canInitializeCart: boolean,
 	productsToAdd: ResponseCartProduct[] | null,
 	couponToAdd: string | null,
-	getServerCart: () => Promise< ResponseCart >,
-	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
-	hookDispatch: ( ShoppingCartHookAction ) => void,
-	onEvent?: ( ReactStandardAction ) => void
+	getServerCart: () => Promise<ResponseCart>,
+	setServerCart: (RequestCart) => Promise<ResponseCart>,
+	hookDispatch: (ShoppingCartHookAction) => void,
+	onEvent?: (ReactStandardAction) => void
 ): void {
-	const isInitialized = useRef( false );
-	useEffect( () => {
-		if ( cacheStatus !== 'fresh' ) {
-			debug( 'not initializing cart; cacheStatus is not fresh' );
+	const isInitialized = useRef(false);
+	useEffect(() => {
+		if (cacheStatus !== 'fresh') {
+			debug('not initializing cart; cacheStatus is not fresh');
 			return;
 		}
-		if ( canInitializeCart !== true ) {
-			debug( 'not initializing cart; canInitializeCart is not true' );
+		if (canInitializeCart !== true) {
+			debug('not initializing cart; canInitializeCart is not true');
 			return;
 		}
 
-		if ( isInitialized.current ) {
-			debug( 'not initializing cart; already initialized' );
+		if (isInitialized.current) {
+			debug('not initializing cart; already initialized');
 			return;
 		}
 		isInitialized.current = true;
-		debug( `initializing the cart; cacheStatus is ${ cacheStatus }` );
+		debug(`initializing the cart; cacheStatus is ${cacheStatus}`);
 
 		getServerCart()
-			.then( response => {
-				if ( productsToAdd?.length || couponToAdd ) {
+			.then((response) => {
+				if (productsToAdd?.length || couponToAdd) {
 					debug(
 						'initialized cart is',
 						response,
@@ -544,41 +539,41 @@ function useInitializeCartFromServer(
 						' and coupons',
 						couponToAdd
 					);
-					let updatedResponseCart = processRawResponse( response );
-					if ( productsToAdd?.length ) {
+					let updatedResponseCart = processRawResponse(response);
+					if (productsToAdd?.length) {
 						updatedResponseCart = productsToAdd.reduce(
-							( updatedCart, productToAdd ) => addItemToResponseCart( updatedCart, productToAdd ),
+							(updatedCart, productToAdd) => addItemToResponseCart(updatedCart, productToAdd),
 							updatedResponseCart
 						);
 					}
-					if ( couponToAdd ) {
-						updatedResponseCart = addCouponToResponseCart( updatedResponseCart, couponToAdd );
+					if (couponToAdd) {
+						updatedResponseCart = addCouponToResponseCart(updatedResponseCart, couponToAdd);
 					}
-					return setServerCart( prepareRequestCart( updatedResponseCart, {} ) );
+					return setServerCart(prepareRequestCart(updatedResponseCart, {}));
 				}
 				return response;
-			} )
-			.then( response => {
-				debug( 'initialized cart is', response );
-				const initialResponseCart = processRawResponse( response );
-				hookDispatch( {
+			})
+			.then((response) => {
+				debug('initialized cart is', response);
+				const initialResponseCart = processRawResponse(response);
+				hookDispatch({
 					type: 'RECEIVE_INITIAL_RESPONSE_CART',
 					initialResponseCart,
-				} );
-				onEvent?.( {
+				});
+				onEvent?.({
 					type: 'CART_INIT_COMPLETE',
 					payload: initialResponseCart,
-				} );
-			} )
-			.catch( error => {
+				});
+			})
+			.catch((error) => {
 				// TODO: figure out what to do here
-				debug( 'error while initializing cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' } );
-				onEvent?.( {
+				debug('error while initializing cart', error);
+				hookDispatch({ type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR' });
+				onEvent?.({
 					type: 'CART_ERROR',
 					payload: { type: 'GET_SERVER_CART_ERROR', message: error },
-				} );
-			} );
+				});
+			});
 	}, [
 		cacheStatus,
 		canInitializeCart,
@@ -588,56 +583,56 @@ function useInitializeCartFromServer(
 		productsToAdd,
 		couponToAdd,
 		setServerCart,
-	] );
+	]);
 }
 
 function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
 	responseCart: ResponseCart,
-	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
-	hookDispatch: ( ShoppingCartHookAction ) => void,
-	onEvent?: ( ReactStandardAction ) => void
+	setServerCart: (RequestCart) => Promise<ResponseCart>,
+	hookDispatch: (ShoppingCartHookAction) => void,
+	onEvent?: (ReactStandardAction) => void
 ): void {
-	useEffect( () => {
-		if ( cacheStatus !== 'invalid' ) {
+	useEffect(() => {
+		if (cacheStatus !== 'invalid') {
 			return;
 		}
 
-		debug( 'sending edited cart to server', responseCart );
+		debug('sending edited cart to server', responseCart);
 
-		hookDispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
+		hookDispatch({ type: 'REQUEST_UPDATED_RESPONSE_CART' });
 
-		setServerCart( prepareRequestCart( responseCart, { is_update: true } ) )
-			.then( response => {
-				debug( 'updated cart is', response );
-				hookDispatch( {
+		setServerCart(prepareRequestCart(responseCart, { is_update: true }))
+			.then((response) => {
+				debug('updated cart is', response);
+				hookDispatch({
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
-					updatedResponseCart: processRawResponse( response ),
-				} );
-				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
-			} )
-			.catch( error => {
+					updatedResponseCart: processRawResponse(response),
+				});
+				hookDispatch({ type: 'CLEAR_VARIANT_SELECT_OVERRIDE' });
+			})
+			.catch((error) => {
 				// TODO: figure out what to do here
-				debug( 'error while fetching cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' } );
-				onEvent?.( {
+				debug('error while fetching cart', error);
+				hookDispatch({ type: 'RAISE_ERROR', error: 'SET_SERVER_CART_ERROR' });
+				onEvent?.({
 					type: 'CART_ERROR',
 					payload: { type: 'SET_SERVER_CART_ERROR', message: error },
-				} );
-			} );
-	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
+				});
+			});
+	}, [setServerCart, cacheStatus, responseCart, onEvent, hookDispatch]);
 }
 
 function useShowAddCouponSuccessMessage(
 	didAddCoupon: boolean,
 	responseCart: ResponseCart,
-	showAddCouponSuccessMessage: ( string ) => void,
-	hookDispatch: ( ShoppingCartHookAction ) => void
+	showAddCouponSuccessMessage: (string) => void,
+	hookDispatch: (ShoppingCartHookAction) => void
 ): void {
-	useEffect( () => {
-		if ( didAddCoupon ) {
-			showAddCouponSuccessMessage( responseCart.coupon );
-			hookDispatch( { type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' } );
+	useEffect(() => {
+		if (didAddCoupon) {
+			showAddCouponSuccessMessage(responseCart.coupon);
+			hookDispatch({ type: 'DID_SHOW_ADD_COUPON_SUCCESS_MESSAGE' });
 		}
-	}, [ didAddCoupon, responseCart.coupon, showAddCouponSuccessMessage, hookDispatch ] );
+	}, [didAddCoupon, responseCart.coupon, showAddCouponSuccessMessage, hookDispatch]);
 }

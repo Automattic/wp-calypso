@@ -8,10 +8,10 @@ export const readerSitesSchema = {
 	...sitesSchema,
 	patternProperties: {
 		...sitesSchema.patternProperties,
-		[ '^\\d+$' ]: {
-			...sitesSchema.patternProperties[ '^\\d+$' ],
+		['^\\d+$']: {
+			...sitesSchema.patternProperties['^\\d+$'],
 			properties: {
-				...sitesSchema.patternProperties[ '^\\d+$' ].properties,
+				...sitesSchema.patternProperties['^\\d+$'].properties,
 				feed_ID: { type: 'number' },
 				subscription: { type: 'object' },
 				is_blocked: { type: 'boolean' },

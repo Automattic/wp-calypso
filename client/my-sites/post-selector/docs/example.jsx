@@ -19,47 +19,47 @@ class PostSelectorExample extends Component {
 	};
 
 	toggleTypeLabels = () => {
-		this.setState( {
-			showTypeLabels: ! this.state.showTypeLabels,
-		} );
+		this.setState({
+			showTypeLabels: !this.state.showTypeLabels,
+		});
 	};
 
-	setSelected = post => {
-		this.setState( {
+	setSelected = (post) => {
+		this.setState({
 			selectedPostId: post.ID,
-		} );
+		});
 	};
 
 	render() {
 		const { primarySiteId } = this.props;
 
 		return (
-			<div style={ { width: 300 } }>
+			<div style={{ width: 300 }}>
 				<FormLabel>
 					<input
 						type="checkbox"
-						checked={ this.state.showTypeLabels }
-						onChange={ this.toggleTypeLabels }
+						checked={this.state.showTypeLabels}
+						onChange={this.toggleTypeLabels}
 					/>
 					<span>Show Type Labels</span>
 				</FormLabel>
 				<PostSelector
-					siteId={ primarySiteId ? primarySiteId : 3584907 }
+					siteId={primarySiteId ? primarySiteId : 3584907}
 					type="any"
 					orderBy="date"
 					order="DESC"
-					showTypeLabels={ this.state.showTypeLabels }
-					selected={ this.state.selectedPostId }
-					onChange={ this.setSelected }
+					showTypeLabels={this.state.showTypeLabels}
+					selected={this.state.selectedPostId}
+					onChange={this.setSelected}
 				/>
 			</div>
 		);
 	}
 }
 
-const ConnectedPostSelectorExample = connect( state => ( {
-	primarySiteId: getPrimarySiteId( state ),
-} ) )( PostSelectorExample );
+const ConnectedPostSelectorExample = connect((state) => ({
+	primarySiteId: getPrimarySiteId(state),
+}))(PostSelectorExample);
 
 ConnectedPostSelectorExample.displayName = 'PostSelector';
 

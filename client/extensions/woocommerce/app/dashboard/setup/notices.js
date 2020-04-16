@@ -24,15 +24,15 @@ class SetupNotices extends Component {
 	possiblyRenderEmailWarning = () => {
 		const { currentUserEmail, currentUserEmailVerified, translate } = this.props;
 
-		if ( ! currentUserEmail || currentUserEmailVerified ) {
+		if (!currentUserEmail || currentUserEmailVerified) {
 			return null;
 		}
 
 		return (
 			<Notice
 				status="is-warning"
-				showDismiss={ false }
-				text={ translate(
+				showDismiss={false}
+				text={translate(
 					"You need to confirm your email address to activate your account. We've sent " +
 						'an email to {{strong}}%(email)s{{/strong}} with instructions for you to follow.',
 					{
@@ -43,20 +43,20 @@ class SetupNotices extends Component {
 							email: currentUserEmail,
 						},
 					}
-				) }
+				)}
 			/>
 		);
 	};
 
 	render = () => {
-		return <div>{ this.possiblyRenderEmailWarning() }</div>;
+		return <div>{this.possiblyRenderEmailWarning()}</div>;
 	};
 }
 
-function mapStateToProps( state ) {
-	const currentUser = getCurrentUser( state );
-	const currentUserEmail = get( currentUser, 'email', '' );
-	const currentUserEmailVerified = isCurrentUserEmailVerified( state );
+function mapStateToProps(state) {
+	const currentUser = getCurrentUser(state);
+	const currentUserEmail = get(currentUser, 'email', '');
+	const currentUserEmailVerified = isCurrentUserEmailVerified(state);
 
 	return {
 		currentUserEmail,
@@ -64,4 +64,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( localize( SetupNotices ) );
+export default connect(mapStateToProps)(localize(SetupNotices));

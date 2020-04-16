@@ -10,8 +10,8 @@ import { get, isEmpty, isObject } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'shippingZoneLocations' ] );
+export const getRawShippingZoneLocations = (state, siteId = getSelectedSiteId(state)) => {
+	return get(state, ['extensions', 'woocommerce', 'sites', siteId, 'shippingZoneLocations']);
 };
 
 /**
@@ -23,10 +23,10 @@ export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( 
 export const areShippingZoneLocationsLoaded = (
 	state,
 	zoneId,
-	siteId = getSelectedSiteId( state )
+	siteId = getSelectedSiteId(state)
 ) => {
-	const rawLocations = getRawShippingZoneLocations( state, siteId );
-	return rawLocations && isObject( rawLocations[ zoneId ] );
+	const rawLocations = getRawShippingZoneLocations(state, siteId);
+	return rawLocations && isObject(rawLocations[zoneId]);
 };
 
 /**
@@ -38,10 +38,10 @@ export const areShippingZoneLocationsLoaded = (
 export const areShippingZoneLocationsLoading = (
 	state,
 	zoneId,
-	siteId = getSelectedSiteId( state )
+	siteId = getSelectedSiteId(state)
 ) => {
-	const rawLocations = getRawShippingZoneLocations( state, siteId );
-	return rawLocations && LOADING === getRawShippingZoneLocations( state, siteId )[ zoneId ];
+	const rawLocations = getRawShippingZoneLocations(state, siteId);
+	return rawLocations && LOADING === getRawShippingZoneLocations(state, siteId)[zoneId];
 };
 
 /**
@@ -55,80 +55,77 @@ export const areShippingZoneLocationsLoading = (
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the shipping zones have valid locations to be edited in Calypso
  */
-export const areShippingZonesLocationsValid = (
-	appState,
-	siteId = getSelectedSiteId( appState )
-) => {
+export const areShippingZonesLocationsValid = (appState, siteId = getSelectedSiteId(appState)) => {
 	const continentsSet = new Set();
 	const countriesSet = new Set();
 	const statesSet = new Set();
-	const allLocations = getRawShippingZoneLocations( appState, siteId );
-	for ( const zoneId of Object.keys( allLocations ) ) {
-		if ( ! areShippingZoneLocationsLoaded( appState, zoneId, siteId ) ) {
+	const allLocations = getRawShippingZoneLocations(appState, siteId);
+	for (const zoneId of Object.keys(allLocations)) {
+		if (!areShippingZoneLocationsLoaded(appState, zoneId, siteId)) {
 			continue;
 		}
 		// The "Locations not covered by your other zones" zone is always valid, it doesn't have any locations
-		if ( 0 === Number( zoneId ) ) {
+		if (0 === Number(zoneId)) {
 			continue;
 		}
 
-		const { continent, country, state, postcode } = allLocations[ zoneId ];
-		if ( ! isEmpty( continent ) ) {
+		const { continent, country, state, postcode } = allLocations[zoneId];
+		if (!isEmpty(continent)) {
 			// If the zone has one or more continents, then it must *not* have any other type of location
-			if ( ! isEmpty( country ) || ! isEmpty( state ) || ! isEmpty( postcode ) ) {
+			if (!isEmpty(country) || !isEmpty(state) || !isEmpty(postcode)) {
 				return false;
 			}
-			for ( const c of continent ) {
+			for (const c of continent) {
 				// 2 zones can't have the same continent
-				if ( continentsSet.has( c ) ) {
+				if (continentsSet.has(c)) {
 					return false;
 				}
-				continentsSet.add( c );
+				continentsSet.add(c);
 			}
-		} else if ( ! isEmpty( country ) ) {
+		} else if (!isEmpty(country)) {
 			// If the zone has one or more countries, then it must *not* have any states too
-			if ( ! isEmpty( state ) ) {
+			if (!isEmpty(state)) {
 				return false;
 			}
-			if ( ! isEmpty( postcode ) ) {
+			if (!isEmpty(postcode)) {
 				// Single country + postcode is allowed
 				// Only 1 postcode range is allowed in a zone
-				if ( 1 < country.length || 1 < postcode.length ) {
+				if (1 < country.length || 1 < postcode.length) {
 					return false;
 				}
 			} else {
 				// Whole country, or multiple countries
-				for ( const c of country ) {
+				for (const c of country) {
 					// 2 zones can't have the same country
-					if ( countriesSet.has( c ) ) {
+					if (countriesSet.has(c)) {
 						return false;
 					}
-					countriesSet.add( c );
+					countriesSet.add(c);
 				}
 			}
-		} else if ( ! isEmpty( state ) ) {
+		} else if (!isEmpty(state)) {
 			// If the zone has one or more states, then it must *not* have any other type of location
-			if ( ! isEmpty( postcode ) ) {
+			if (!isEmpty(postcode)) {
 				return false;
 			}
 			let countryCode;
-			for ( const s of state ) {
-				if ( countryCode ) {
+			for (const s of state) {
+				if (countryCode) {
 					// States are represented like "CountryCode:StateCode".
 					// Check that the zone doesn't have states from multiple countries.
-					if ( s.split( ':' )[ 0 ] !== countryCode ) {
+					if (s.split(':')[0] !== countryCode) {
 						return false;
 					}
 				} else {
-					countryCode = s.split( ':' )[ 0 ];
+					countryCode = s.split(':')[0];
 				}
 				// 2 zones can't have the same state
-				if ( statesSet.has( s ) ) {
+				if (statesSet.has(s)) {
 					return false;
 				}
-				statesSet.add( s );
+				statesSet.add(s);
 			}
-		} else if ( ! isEmpty( postcode ) ) {
+		} else if (!isEmpty(postcode)) {
 			// A postcode without a country is not valid
 			return false;
 		}

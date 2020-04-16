@@ -8,8 +8,8 @@ import {
 	ZONINATOR_UPDATE_LOCK,
 } from '../action-types';
 
-export const blocked = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const blocked = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case ZONINATOR_UPDATE_LOCK:
 			return false;
 		case ZONINATOR_REQUEST_LOCK_ERROR:
@@ -17,10 +17,10 @@ export const blocked = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const created = withoutPersistence( ( state = 0, action ) => {
-	switch ( action.type ) {
+export const created = withoutPersistence((state = 0, action) => {
+	switch (action.type) {
 		case ZONINATOR_RESET_LOCK: {
 			const { time } = action;
 			return time;
@@ -28,31 +28,31 @@ export const created = withoutPersistence( ( state = 0, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const expires = withoutPersistence( ( state = 0, action ) => {
-	switch ( action.type ) {
+export const expires = withoutPersistence((state = 0, action) => {
+	switch (action.type) {
 		case ZONINATOR_UPDATE_LOCK:
 			return action.expires;
 	}
 
 	return state;
-} );
+});
 
-export const maxLockPeriod = withoutPersistence( ( state = 0, action ) => {
-	switch ( action.type ) {
+export const maxLockPeriod = withoutPersistence((state = 0, action) => {
+	switch (action.type) {
 		case ZONINATOR_UPDATE_LOCK:
 			return action.maxLockPeriod;
 	}
 
 	return state;
-} );
+});
 
-export const items = combineReducers( {
+export const items = combineReducers({
 	blocked,
 	created,
 	expires,
 	maxLockPeriod,
-} );
+});
 
-export default keyedReducer( 'siteId', keyedReducer( 'zoneId', items ) );
+export default keyedReducer('siteId', keyedReducer('zoneId', items));

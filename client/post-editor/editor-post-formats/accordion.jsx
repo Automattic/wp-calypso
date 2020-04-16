@@ -31,13 +31,13 @@ class EditorPostFormatsAccordion extends Component {
 	getSubtitle() {
 		const { postFormats, formatValue } = this.props;
 
-		if ( has( postFormats, formatValue ) ) {
-			return postFormats[ formatValue ];
+		if (has(postFormats, formatValue)) {
+			return postFormats[formatValue];
 		}
 
-		return this.props.translate( 'Standard', {
+		return this.props.translate('Standard', {
 			context: 'Post format',
-		} );
+		});
 	}
 
 	render() {
@@ -45,29 +45,28 @@ class EditorPostFormatsAccordion extends Component {
 
 		return (
 			<Fragment>
-				{ siteId && <QueryPostFormats siteId={ siteId } /> }
-				{ ! isEmpty( postFormats ) && (
+				{siteId && <QueryPostFormats siteId={siteId} />}
+				{!isEmpty(postFormats) && (
 					<Accordion
-						title={ this.props.translate( 'Post Format' ) }
-						subtitle={ this.getSubtitle() }
+						title={this.props.translate('Post Format')}
+						subtitle={this.getSubtitle()}
 						className="editor-drawer__accordion editor-post-formats__accordion"
 						e2eTitle="post-format"
 					>
 						<EditorPostFormats />
 					</Accordion>
-				) }
+				)}
 			</Fragment>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const postFormats = getPostFormats( state, siteId );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const postFormats = getPostFormats(state, siteId);
 	const formatValue =
-		getEditedPostValue( state, siteId, postId, 'format' ) ||
-		getSiteDefaultPostFormat( state, siteId );
+		getEditedPostValue(state, siteId, postId, 'format') || getSiteDefaultPostFormat(state, siteId);
 
 	return { siteId, postFormats, formatValue };
-} )( localize( EditorPostFormatsAccordion ) );
+})(localize(EditorPostFormatsAccordion));

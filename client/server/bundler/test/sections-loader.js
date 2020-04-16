@@ -4,8 +4,8 @@
 import loader from '../sections-loader';
 const addModuleImportToSections = loader.addModuleImportToSections;
 
-describe( '#addModuleImportToSections', () => {
-	test( 'should insert a load fn to each section using import() if code splitting is turned on', () => {
+describe('#addModuleImportToSections', () => {
+	test('should insert a load fn to each section using import() if code splitting is turned on', () => {
 		const sections = [
 			{
 				name: 'moduleName',
@@ -21,10 +21,10 @@ describe( '#addModuleImportToSections', () => {
 	}
 ]`;
 		const options = { sections, shouldSplit: true, onlyIsomorphic: false };
-		expect( addModuleImportToSections( options ) ).toBe( expected );
-	} );
+		expect(addModuleImportToSections(options)).toBe(expected);
+	});
 
-	test( 'should insert a load fn to a section using require() if code splitting is turned off', () => {
+	test('should insert a load fn to a section using require() if code splitting is turned off', () => {
 		const sections = [
 			{
 				name: 'moduleName',
@@ -40,10 +40,10 @@ describe( '#addModuleImportToSections', () => {
 	}
 ]`;
 		const options = { sections, shouldSplit: false, onlyIsomorphic: false };
-		expect( addModuleImportToSections( options ) ).toBe( expected );
-	} );
+		expect(addModuleImportToSections(options)).toBe(expected);
+	});
 
-	test( 'should insert a load fn exclusively to isomorphic sections if onlyIsomorphic is enabled', () => {
+	test('should insert a load fn exclusively to isomorphic sections if onlyIsomorphic is enabled', () => {
 		const sections = [
 			{
 				name: 'moduleName',
@@ -77,6 +77,6 @@ describe( '#addModuleImportToSections', () => {
 	}
 ]`;
 		const options = { sections, shouldSplit: false, onlyIsomorphic: true };
-		expect( addModuleImportToSections( options ) ).toBe( expected );
-	} );
-} );
+		expect(addModuleImportToSections(options)).toBe(expected);
+	});
+});

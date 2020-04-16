@@ -96,8 +96,8 @@ const darkColorSchemeLogo = (
 	</g>
 );
 
-function JetpackDreamhostLogo( { darkColorScheme } ) {
-	if ( darkColorScheme ) {
+function JetpackDreamhostLogo({ darkColorScheme }) {
+	if (darkColorScheme) {
 		return darkColorSchemeLogo;
 	}
 

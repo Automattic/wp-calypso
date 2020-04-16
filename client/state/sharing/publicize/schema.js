@@ -3,7 +3,7 @@ export const connectionsSchema = {
 	patternProperties: {
 		'^\\d+$': {
 			type: 'object',
-			required: [ 'ID', 'site_ID' ],
+			required: ['ID', 'site_ID'],
 			properties: {
 				ID: { type: 'integer' },
 				site_ID: { type: 'integer' },
@@ -15,12 +15,12 @@ export const connectionsSchema = {
 				label: { type: 'string' },
 				issued: { type: 'string' },
 				expires: { type: 'string' },
-				external_ID: { type: [ 'string', 'null' ] },
-				external_name: { type: [ 'string', 'null' ] },
-				external_display: { type: [ 'string', 'null' ] },
-				external_profile_picture: { type: [ 'string', 'null' ] },
-				external_profile_URL: { type: [ 'string', 'null' ] },
-				external_follower_count: { type: [ 'integer', 'null' ] },
+				external_ID: { type: ['string', 'null'] },
+				external_name: { type: ['string', 'null'] },
+				external_display: { type: ['string', 'null'] },
+				external_profile_picture: { type: ['string', 'null'] },
+				external_profile_URL: { type: ['string', 'null'] },
+				external_follower_count: { type: ['integer', 'null'] },
 				status: { type: 'string' },
 				refresh_URL: { type: 'string' },
 				meta: { type: 'object' },

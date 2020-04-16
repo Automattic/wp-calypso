@@ -13,7 +13,7 @@ class QueryConciergeInitial extends Component {
 	componentDidMount() {
 		const { siteId } = this.props;
 
-		this.props.requestConciergeInitial( siteId );
+		this.props.requestConciergeInitial(siteId);
 	}
 
 	render() {
@@ -21,4 +21,4 @@ class QueryConciergeInitial extends Component {
 	}
 }
 
-export default connect( state => state, { requestConciergeInitial } )( QueryConciergeInitial );
+export default connect((state) => state, { requestConciergeInitial })(QueryConciergeInitial);

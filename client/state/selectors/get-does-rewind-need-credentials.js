@@ -10,6 +10,6 @@ import getRewindState from 'state/selectors/get-rewind-state';
  * @param {?number|string} siteId the site ID
  * @returns {object} Rewind state object
  */
-export default function getDoesRewindNeedCredentials( state, siteId ) {
-	return [ 'awaiting_credentials' ].includes( getRewindState( state, siteId ).state );
+export default function getDoesRewindNeedCredentials(state, siteId) {
+	return ['awaiting_credentials'].includes(getRewindState(state, siteId).state);
 }

@@ -20,21 +20,21 @@ class QueryJetpackConnection extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.requestingJetpackConnectionStatus ) {
+	request(props) {
+		if (props.requestingJetpackConnectionStatus) {
 			return;
 		}
 
-		props.requestJetpackConnectionStatus( props.siteId );
+		props.requestJetpackConnectionStatus(props.siteId);
 	}
 
 	render() {
@@ -43,7 +43,7 @@ class QueryJetpackConnection extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
 			requestingJetpackConnectionStatus: isRequestingJetpackConnectionStatus(
 				state,
@@ -52,4 +52,4 @@ export default connect(
 		};
 	},
 	{ requestJetpackConnectionStatus }
-)( QueryJetpackConnection );
+)(QueryJetpackConnection);

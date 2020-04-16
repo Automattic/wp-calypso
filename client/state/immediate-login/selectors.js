@@ -16,8 +16,8 @@ import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
  * @returns {bool} - Whether the client request indicates that an immediate
  *                  login attempt was made
  */
-export const wasImmediateLoginAttempted = state => {
-	return get( state, 'immediateLogin.attempt', false );
+export const wasImmediateLoginAttempted = (state) => {
+	return get(state, 'immediateLogin.attempt', false);
 };
 
 /**
@@ -34,8 +34,8 @@ export const wasImmediateLoginAttempted = state => {
  * @returns {bool} - Whether the client request indicates that an immediate
  *                  login attempt was successful
  */
-export const wasImmediateLoginSuccessfulAccordingToClient = state => {
-	return get( state, 'immediateLogin.success', false );
+export const wasImmediateLoginSuccessfulAccordingToClient = (state) => {
+	return get(state, 'immediateLogin.success', false);
 };
 
 /**
@@ -45,8 +45,8 @@ export const wasImmediateLoginSuccessfulAccordingToClient = state => {
  * @param  {object} state - Global state tree
  * @returns {?string} - Reason for immediate login, or null
  */
-export const getImmediateLoginReason = state => {
-	return get( state, 'immediateLogin.reason', null );
+export const getImmediateLoginReason = (state) => {
+	return get(state, 'immediateLogin.reason', null);
 };
 
 /**
@@ -57,8 +57,8 @@ export const getImmediateLoginReason = state => {
  * @returns {?string} - Email address used for the immediate login attempt, or
  *                     null
  */
-export const getImmediateLoginEmail = state => {
-	return get( state, 'immediateLogin.email', null );
+export const getImmediateLoginEmail = (state) => {
+	return get(state, 'immediateLogin.email', null);
 };
 
 /**
@@ -69,8 +69,8 @@ export const getImmediateLoginEmail = state => {
  * @returns {?string} - Two-letter code for the preferred language of the user
  *                     attempting to log in, or null
  */
-export const getImmediateLoginLocale = state => {
-	return get( state, 'immediateLogin.locale', null );
+export const getImmediateLoginLocale = (state) => {
+	return get(state, 'immediateLogin.locale', null);
 };
 
 /**
@@ -83,6 +83,6 @@ export const getImmediateLoginLocale = state => {
  * @returns {bool} - Whether the client request indicates that an immediate
  *                  login attempt was made from a manual renewal email
  */
-export const wasManualRenewalImmediateLoginAttempted = state => {
-	return includes( REASONS_FOR_MANUAL_RENEWAL, getImmediateLoginReason( state ) );
+export const wasManualRenewalImmediateLoginAttempted = (state) => {
+	return includes(REASONS_FOR_MANUAL_RENEWAL, getImmediateLoginReason(state));
 };

@@ -6,6 +6,6 @@
  * @returns {object}      Deserialized media object
  */
 
-export function deserialize( node ) {
+export function deserialize(node) {
 	return node;
 }

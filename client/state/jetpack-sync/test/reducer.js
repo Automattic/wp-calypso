@@ -154,229 +154,229 @@ const erroredFullSyncRequest = {
 	},
 };
 
-describe( 'reducer', () => {
-	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'syncStatus', 'fullSyncRequest' ] );
-	} );
+describe('reducer', () => {
+	test('should export expected reducer keys', () => {
+		expect(reducer(undefined, {})).to.have.keys(['syncStatus', 'fullSyncRequest']);
+	});
 
-	describe( '#syncStatus()', () => {
-		test( 'should default to an empty object', () => {
-			const state = syncStatus( undefined, {} );
-			expect( state ).to.eql( {} );
-		} );
+	describe('#syncStatus()', () => {
+		test('should default to an empty object', () => {
+			const state = syncStatus(undefined, {});
+			expect(state).to.eql({});
+		});
 
-		test( 'should add a property with key matching site ID', () => {
-			const state = syncStatus( undefined, { type: JETPACK_SYNC_STATUS_REQUEST, siteId: 123456 } );
-			expect( state ).to.have.property( '123456' );
-		} );
+		test('should add a property with key matching site ID', () => {
+			const state = syncStatus(undefined, { type: JETPACK_SYNC_STATUS_REQUEST, siteId: 123456 });
+			expect(state).to.have.property('123456');
+		});
 
-		test( 'should store more than one site as separate properties', () => {
+		test('should store more than one site as separate properties', () => {
 			const state = syncStatus(
-				syncStatus( undefined, successfulSyncStatusRequest ),
+				syncStatus(undefined, successfulSyncStatusRequest),
 				erroredSyncStatusRequest
 			);
-			expect( state ).to.have.all.keys(
-				String( successfulSyncStatusRequest.siteId ),
-				String( erroredSyncStatusRequest.siteId )
+			expect(state).to.have.all.keys(
+				String(successfulSyncStatusRequest.siteId),
+				String(erroredSyncStatusRequest.siteId)
 			);
-		} );
+		});
 
-		test( 'should set isRequesting to true when fetching for a site', () => {
-			const state = syncStatus( undefined, { type: JETPACK_SYNC_STATUS_REQUEST, siteId: 123456 } );
-			expect( state ).to.eql( {
+		test('should set isRequesting to true when fetching for a site', () => {
+			const state = syncStatus(undefined, { type: JETPACK_SYNC_STATUS_REQUEST, siteId: 123456 });
+			expect(state).to.eql({
 				123456: {
 					isRequesting: true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should set isRequesting to false when finished successfully fetching for a site', () => {
-			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state )
-				.to.have.property( String( successfulSyncStatusRequest.siteId ) )
-				.to.have.property( 'isRequesting' )
-				.to.be.eql( false );
-		} );
+		test('should set isRequesting to false when finished successfully fetching for a site', () => {
+			const state = syncStatus(undefined, successfulSyncStatusRequest);
+			expect(state)
+				.to.have.property(String(successfulSyncStatusRequest.siteId))
+				.to.have.property('isRequesting')
+				.to.be.eql(false);
+		});
 
-		test( 'should set error to false when finished fetching for a site', () => {
-			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state )
-				.to.have.property( String( successfulSyncStatusRequest.siteId ) )
-				.to.have.property( 'error' )
-				.to.be.eql( false );
-		} );
+		test('should set error to false when finished fetching for a site', () => {
+			const state = syncStatus(undefined, successfulSyncStatusRequest);
+			expect(state)
+				.to.have.property(String(successfulSyncStatusRequest.siteId))
+				.to.have.property('error')
+				.to.be.eql(false);
+		});
 
-		test( 'should set lastSuccessfulStatus to current time when finished fetching for a site', () => {
+		test('should set lastSuccessfulStatus to current time when finished fetching for a site', () => {
 			const startTime = Date.now();
-			const state = syncStatus( undefined, inProgressSyncStatusRequest );
-			expect( state )
-				.to.have.property( String( inProgressSyncStatusRequest.siteId ) )
-				.to.have.property( 'lastSuccessfulStatus' )
-				.to.be.at.least( startTime );
-		} );
+			const state = syncStatus(undefined, inProgressSyncStatusRequest);
+			expect(state)
+				.to.have.property(String(inProgressSyncStatusRequest.siteId))
+				.to.have.property('lastSuccessfulStatus')
+				.to.be.at.least(startTime);
+		});
 
-		test( 'should set lastSuccessfulStatus to current time when finished without progress for a site', () => {
-			let state = syncStatus( undefined, {} );
+		test('should set lastSuccessfulStatus to current time when finished without progress for a site', () => {
+			let state = syncStatus(undefined, {});
 			const startTime = Date.now();
-			state = syncStatus( state, successfulSyncStatusRequest );
-			expect( state )
-				.to.have.property( String( successfulSyncStatusRequest.siteId ) )
-				.to.have.property( 'lastSuccessfulStatus' )
-				.to.be.at.least( startTime );
-		} );
+			state = syncStatus(state, successfulSyncStatusRequest);
+			expect(state)
+				.to.have.property(String(successfulSyncStatusRequest.siteId))
+				.to.have.property('lastSuccessfulStatus')
+				.to.be.at.least(startTime);
+		});
 
-		test( 'should store expected response keys on success', () => {
-			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state )
-				.to.have.property( successfulSyncStatusRequest.siteId )
+		test('should store expected response keys on success', () => {
+			const state = syncStatus(undefined, successfulSyncStatusRequest);
+			expect(state)
+				.to.have.property(successfulSyncStatusRequest.siteId)
 				.to.have.all.keys(
 					without(
-						getExpectedResponseKeys().concat( [
+						getExpectedResponseKeys().concat([
 							'error',
 							'isRequesting',
 							'lastSuccessfulStatus',
 							'errorCounter',
-						] ),
+						]),
 						'progress'
 					) // legacy sync status will not have `progress` property.
 				);
-		} );
+		});
 
-		test( 'should set errorCounter to 0 after a successful request', () => {
-			const state = syncStatus( undefined, successfulSyncStatusRequest );
-			expect( state )
-				.to.have.property( String( successfulSyncStatusRequest.siteId ) )
-				.to.have.property( 'errorCounter' )
-				.to.be.eql( 0 );
-		} );
+		test('should set errorCounter to 0 after a successful request', () => {
+			const state = syncStatus(undefined, successfulSyncStatusRequest);
+			expect(state)
+				.to.have.property(String(successfulSyncStatusRequest.siteId))
+				.to.have.property('errorCounter')
+				.to.be.eql(0);
+		});
 
-		test( 'should set isRequesting to false when fetching for a site errors', () => {
-			const state = syncStatus( undefined, erroredSyncStatusRequest );
-			expect( state )
-				.to.have.property( String( erroredSyncStatusRequest.siteId ) )
-				.to.have.property( 'isRequesting' )
-				.to.be.eql( false );
-		} );
+		test('should set isRequesting to false when fetching for a site errors', () => {
+			const state = syncStatus(undefined, erroredSyncStatusRequest);
+			expect(state)
+				.to.have.property(String(erroredSyncStatusRequest.siteId))
+				.to.have.property('isRequesting')
+				.to.be.eql(false);
+		});
 
-		test( 'should set error when fetching for a site errors', () => {
-			const state = syncStatus( undefined, erroredSyncStatusRequest );
-			expect( state )
-				.to.have.property( String( erroredSyncStatusRequest.siteId ) )
-				.to.have.property( 'error' )
-				.to.be.eql( erroredSyncStatusRequest.error );
-		} );
+		test('should set error when fetching for a site errors', () => {
+			const state = syncStatus(undefined, erroredSyncStatusRequest);
+			expect(state)
+				.to.have.property(String(erroredSyncStatusRequest.siteId))
+				.to.have.property('error')
+				.to.be.eql(erroredSyncStatusRequest.error);
+		});
 
-		test( 'should set errorCounter to 1 when errorCounter previously undefined', () => {
-			const state = syncStatus( undefined, erroredSyncStatusRequest );
-			expect( state )
-				.to.have.property( String( erroredSyncStatusRequest.siteId ) )
-				.to.have.property( 'errorCounter' )
-				.to.be.eql( 1 );
-		} );
+		test('should set errorCounter to 1 when errorCounter previously undefined', () => {
+			const state = syncStatus(undefined, erroredSyncStatusRequest);
+			expect(state)
+				.to.have.property(String(erroredSyncStatusRequest.siteId))
+				.to.have.property('errorCounter')
+				.to.be.eql(1);
+		});
 
-		test( 'should increment errorCounter when multiple errors occur', () => {
+		test('should increment errorCounter when multiple errors occur', () => {
 			const state = syncStatus(
-				syncStatus( undefined, erroredSyncStatusRequest ),
+				syncStatus(undefined, erroredSyncStatusRequest),
 				erroredSyncStatusRequest
 			);
 
-			expect( state )
-				.to.have.property( String( erroredSyncStatusRequest.siteId ) )
-				.to.have.property( 'errorCounter' )
-				.to.be.eql( 2 );
-		} );
-	} );
+			expect(state)
+				.to.have.property(String(erroredSyncStatusRequest.siteId))
+				.to.have.property('errorCounter')
+				.to.be.eql(2);
+		});
+	});
 
-	describe( '#fullSyncRequest()', () => {
-		test( 'should default to an empty object', () => {
-			const state = fullSyncRequest( undefined, {} );
-			expect( state ).to.eql( {} );
-		} );
+	describe('#fullSyncRequest()', () => {
+		test('should default to an empty object', () => {
+			const state = fullSyncRequest(undefined, {});
+			expect(state).to.eql({});
+		});
 
-		test( 'should add a property with key matching site ID', () => {
-			const state = fullSyncRequest( undefined, {
+		test('should add a property with key matching site ID', () => {
+			const state = fullSyncRequest(undefined, {
 				type: JETPACK_SYNC_START_REQUEST,
 				siteId: 123456,
-			} );
-			expect( state ).to.have.property( '123456' );
-		} );
+			});
+			expect(state).to.have.property('123456');
+		});
 
-		test( 'should set isRequesting to true when fetching for a site', () => {
+		test('should set isRequesting to true when fetching for a site', () => {
 			const siteId = 123456;
-			const state = fullSyncRequest( undefined, { type: JETPACK_SYNC_START_REQUEST, siteId } );
-			expect( state )
-				.to.have.property( String( siteId ) )
-				.to.have.property( 'isRequesting' )
-				.to.be.eql( true );
-		} );
+			const state = fullSyncRequest(undefined, { type: JETPACK_SYNC_START_REQUEST, siteId });
+			expect(state)
+				.to.have.property(String(siteId))
+				.to.have.property('isRequesting')
+				.to.be.eql(true);
+		});
 
-		test( 'should set lastRequest when fetching for a site', () => {
+		test('should set lastRequest when fetching for a site', () => {
 			const siteId = 123456;
 			const startTime = Date.now();
-			const state = fullSyncRequest( undefined, { type: JETPACK_SYNC_START_REQUEST, siteId } );
-			expect( state )
-				.to.have.property( String( siteId ) )
-				.to.have.property( 'lastRequested' )
-				.to.be.at.least( startTime );
-		} );
+			const state = fullSyncRequest(undefined, { type: JETPACK_SYNC_START_REQUEST, siteId });
+			expect(state)
+				.to.have.property(String(siteId))
+				.to.have.property('lastRequested')
+				.to.be.at.least(startTime);
+		});
 
-		test( 'should store more than one site as separate properties', () => {
+		test('should store more than one site as separate properties', () => {
 			const state = fullSyncRequest(
-				fullSyncRequest( undefined, successfulFullSyncRequest ),
+				fullSyncRequest(undefined, successfulFullSyncRequest),
 				erroredFullSyncRequest
 			);
-			expect( state ).to.have.all.keys(
-				String( successfulFullSyncRequest.siteId ),
-				String( erroredFullSyncRequest.siteId )
+			expect(state).to.have.all.keys(
+				String(successfulFullSyncRequest.siteId),
+				String(erroredFullSyncRequest.siteId)
 			);
-		} );
+		});
 
-		test( 'should set isRequesting to false after successfully scheduling sync', () => {
-			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
-			expect( state )
-				.to.have.property( String( successfulFullSyncRequest.siteId ) )
-				.to.have.property( 'isRequesting' )
-				.to.be.eql( false );
-		} );
+		test('should set isRequesting to false after successfully scheduling sync', () => {
+			const state = fullSyncRequest(undefined, successfulFullSyncRequest);
+			expect(state)
+				.to.have.property(String(successfulFullSyncRequest.siteId))
+				.to.have.property('isRequesting')
+				.to.be.eql(false);
+		});
 
-		test( 'should set error to false after successfully scheduling sync', () => {
-			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
-			expect( state )
-				.to.have.property( String( successfulFullSyncRequest.siteId ) )
-				.to.have.property( 'error' )
-				.to.be.eql( false );
-		} );
+		test('should set error to false after successfully scheduling sync', () => {
+			const state = fullSyncRequest(undefined, successfulFullSyncRequest);
+			expect(state)
+				.to.have.property(String(successfulFullSyncRequest.siteId))
+				.to.have.property('error')
+				.to.be.eql(false);
+		});
 
-		test( 'should set scheduled after successfully scheduling sync', () => {
-			const state = fullSyncRequest( undefined, successfulFullSyncRequest );
-			expect( state )
-				.to.have.property( String( successfulFullSyncRequest.siteId ) )
-				.to.have.property( 'scheduled' )
-				.to.be.eql( successfulFullSyncRequest.data.scheduled );
-		} );
+		test('should set scheduled after successfully scheduling sync', () => {
+			const state = fullSyncRequest(undefined, successfulFullSyncRequest);
+			expect(state)
+				.to.have.property(String(successfulFullSyncRequest.siteId))
+				.to.have.property('scheduled')
+				.to.be.eql(successfulFullSyncRequest.data.scheduled);
+		});
 
-		test( 'should set isRequesting to false after scheduling sync errors', () => {
-			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
-			expect( state )
-				.to.have.property( String( erroredFullSyncRequest.siteId ) )
-				.to.have.property( 'isRequesting' )
-				.to.be.eql( false );
-		} );
+		test('should set isRequesting to false after scheduling sync errors', () => {
+			const state = fullSyncRequest(undefined, erroredFullSyncRequest);
+			expect(state)
+				.to.have.property(String(erroredFullSyncRequest.siteId))
+				.to.have.property('isRequesting')
+				.to.be.eql(false);
+		});
 
-		test( 'should set scheduled to false after scheduling sync errors', () => {
-			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
-			expect( state )
-				.to.have.property( String( erroredFullSyncRequest.siteId ) )
-				.to.have.property( 'scheduled' )
-				.to.be.eql( false );
-		} );
+		test('should set scheduled to false after scheduling sync errors', () => {
+			const state = fullSyncRequest(undefined, erroredFullSyncRequest);
+			expect(state)
+				.to.have.property(String(erroredFullSyncRequest.siteId))
+				.to.have.property('scheduled')
+				.to.be.eql(false);
+		});
 
-		test( 'should set error after scheduling sync errors', () => {
-			const state = fullSyncRequest( undefined, erroredFullSyncRequest );
-			expect( state )
-				.to.have.property( String( erroredFullSyncRequest.siteId ) )
-				.to.have.property( 'error' )
-				.to.be.eql( erroredFullSyncRequest.error );
-		} );
-	} );
-} );
+		test('should set error after scheduling sync errors', () => {
+			const state = fullSyncRequest(undefined, erroredFullSyncRequest);
+			expect(state)
+				.to.have.property(String(erroredFullSyncRequest.siteId))
+				.to.have.property('error')
+				.to.be.eql(erroredFullSyncRequest.error);
+		});
+	});
+});

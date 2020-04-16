@@ -19,7 +19,7 @@ import {
  * @returns {object} A new unique placeholder ID.
  */
 export function generateProductCategoryId() {
-	return { placeholder: uniqueId( 'productCategory_' ) };
+	return { placeholder: uniqueId('productCategory_') };
 }
 
 /**
@@ -30,7 +30,7 @@ export function generateProductCategoryId() {
  * @param {object} data An object containing the properties to be edited for the object, if null, the category will be removed.
  * @returns {object} The action object.
  */
-export function editProductCategory( siteId, category, data ) {
+export function editProductCategory(siteId, category, data) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 		siteId,
@@ -45,7 +45,7 @@ export function editProductCategory( siteId, category, data ) {
  * @param {number} siteId The site for which to clear all product category edits.
  * @returns {object} action
  */
-export function clearProductCategoryEdits( siteId ) {
+export function clearProductCategoryEdits(siteId) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR,
 		siteId,

@@ -8,6 +8,6 @@ import { get } from 'lodash';
  */
 import getSitePlan from './get-site-plan';
 
-export default function getSitePlanSlug( state, siteId ) {
-	return get( getSitePlan( state, siteId ), 'product_slug' );
+export default function getSitePlanSlug(state, siteId) {
+	return get(getSitePlan(state, siteId), 'product_slug');
 }

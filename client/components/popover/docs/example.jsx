@@ -14,14 +14,14 @@ import PopoverMenuItem from 'components/popover/menu-item';
 const customPosition = { top: 300, left: 500 };
 
 class PopoverExample extends PureComponent {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		this.changePopoverPosition = this.changePopoverPosition.bind( this );
-		this.swapPopoverVisibility = this.swapPopoverVisibility.bind( this );
-		this.closePopover = this.closePopover.bind( this );
-		this.showPopoverMenu = this.showPopoverMenu.bind( this );
-		this.closePopoverMenu = this.closePopoverMenu.bind( this );
+		this.changePopoverPosition = this.changePopoverPosition.bind(this);
+		this.swapPopoverVisibility = this.swapPopoverVisibility.bind(this);
+		this.closePopover = this.closePopover.bind(this);
+		this.showPopoverMenu = this.showPopoverMenu.bind(this);
+		this.closePopoverMenu = this.closePopoverMenu.bind(this);
 
 		this.state = {
 			popoverPosition: 'bottom left',
@@ -31,44 +31,44 @@ class PopoverExample extends PureComponent {
 	}
 
 	// set position for all popovers
-	changePopoverPosition( event ) {
-		this.setState( { popoverPosition: event.target.value } );
+	changePopoverPosition(event) {
+		this.setState({ popoverPosition: event.target.value });
 	}
 
 	swapPopoverVisibility() {
-		this.setState( { showPopover: ! this.state.showPopover } );
+		this.setState({ showPopover: !this.state.showPopover });
 	}
 
 	closePopover() {
-		this.setState( { showPopover: false } );
+		this.setState({ showPopover: false });
 	}
 
 	showPopoverMenu() {
-		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu,
-		} );
+		this.setState({
+			showPopoverMenu: !this.state.showPopoverMenu,
+		});
 	}
 
 	closePopoverMenu() {
-		this.setState( { showPopoverMenu: false } );
+		this.setState({ showPopoverMenu: false });
 	}
 
 	renderPopover() {
 		return (
 			<div>
-				<button className="button" ref="popoverButton" onClick={ this.swapPopoverVisibility }>
+				<button className="button" ref="popoverButton" onClick={this.swapPopoverVisibility}>
 					Show Popover
 				</button>
 
 				<Popover
 					id="popover__basic-example"
-					isVisible={ this.state.showPopover }
-					onClose={ this.closePopover }
-					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
-					context={ this.refs && this.refs.popoverButton }
-					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
+					isVisible={this.state.showPopover}
+					onClose={this.closePopover}
+					position={this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null}
+					context={this.refs && this.refs.popoverButton}
+					customPosition={this.state.popoverPosition === 'custom' ? customPosition : null}
 				>
-					<div style={ { padding: '10px' } }>Simple Popover Instance</div>
+					<div style={{ padding: '10px' }}>Simple Popover Instance</div>
 				</Popover>
 			</div>
 		);
@@ -77,7 +77,7 @@ class PopoverExample extends PureComponent {
 	renderMenuPopover() {
 		return (
 			<div>
-				<button className="button" ref="popoverMenuButton" onClick={ this.showPopoverMenu }>
+				<button className="button" ref="popoverMenuButton" onClick={this.showPopoverMenu}>
 					Show Popover Menu
 				</button>
 
@@ -85,11 +85,11 @@ class PopoverExample extends PureComponent {
 
 				<PopoverMenu
 					id="popover__menu-example"
-					isVisible={ this.state.showPopoverMenu }
-					onClose={ this.closePopoverMenu }
-					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
-					context={ this.refs && this.refs.popoverMenuButton }
-					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
+					isVisible={this.state.showPopoverMenu}
+					onClose={this.closePopoverMenu}
+					position={this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null}
+					context={this.refs && this.refs.popoverMenuButton}
+					customPosition={this.state.popoverPosition === 'custom' ? customPosition : null}
 				>
 					<PopoverMenuItem action="A">Item A</PopoverMenuItem>
 					<PopoverMenuItem action="B">Item B</PopoverMenuItem>
@@ -104,7 +104,7 @@ class PopoverExample extends PureComponent {
 			<div>
 				<label>
 					Position
-					<select value={ this.state.popoverPosition } onChange={ this.changePopoverPosition }>
+					<select value={this.state.popoverPosition} onChange={this.changePopoverPosition}>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
 						<option value="top right">top right</option>
@@ -119,11 +119,11 @@ class PopoverExample extends PureComponent {
 
 				<hr />
 
-				{ this.renderPopover() }
+				{this.renderPopover()}
 
 				<hr />
 
-				{ this.renderMenuPopover() }
+				{this.renderMenuPopover()}
 			</div>
 		);
 	}

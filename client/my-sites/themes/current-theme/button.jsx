@@ -22,14 +22,14 @@ export default class extends React.Component {
 		return (
 			<a
 				role="button"
-				className={ classNames( 'current-theme__button', 'current-theme__' + this.props.name, {
-					disabled: ! this.props.href,
-				} ) }
-				onClick={ this.props.onClick.bind( null, this.props.name ) }
-				href={ this.props.href }
+				className={classNames('current-theme__button', 'current-theme__' + this.props.name, {
+					disabled: !this.props.href,
+				})}
+				onClick={this.props.onClick.bind(null, this.props.name)}
+				href={this.props.href}
 			>
-				<Gridicon icon={ this.props.icon } size={ 18 } />
-				<span className="current-theme__button-label">{ this.props.label }</span>
+				<Gridicon icon={this.props.icon} size={18} />
+				<span className="current-theme__button-label">{this.props.label}</span>
 			</a>
 		);
 	}

@@ -17,7 +17,7 @@ import { receiveEmbed } from 'state/embeds/actions';
  * @param   {object} action Redux action
  * @returns {object}        Dispatched http action
  */
-const requestEmbed = action =>
+const requestEmbed = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -38,15 +38,15 @@ const requestEmbed = action =>
  * @param   {object} embed  Embed data
  * @returns {object}        Dispatched http action
  */
-const receiveSingleEmbed = ( { siteId, url }, embed ) => receiveEmbed( siteId, url, embed );
+const receiveSingleEmbed = ({ siteId, url }, embed) => receiveEmbed(siteId, url, embed);
 
 const renderEmbedHandler = {
-	[ EMBED_REQUEST ]: [
-		dispatchRequest( {
+	[EMBED_REQUEST]: [
+		dispatchRequest({
 			fetch: requestEmbed,
 			onSuccess: receiveSingleEmbed,
 			onError: noop,
-		} ),
+		}),
 	],
 };
 

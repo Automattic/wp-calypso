@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
 
-describe( 'isRequestingSharingButtons()', () => {
-	test( 'should return false if the site is not attached', () => {
+describe('isRequestingSharingButtons()', () => {
+	test('should return false if the site is not attached', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -19,12 +19,12 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isSuccessful = isSharingButtonsSaveSuccessful( state, 2916285 );
+		const isSuccessful = isSharingButtonsSaveSuccessful(state, 2916285);
 
-		expect( isSuccessful ).to.be.false;
-	} );
+		expect(isSuccessful).to.be.false;
+	});
 
-	test( 'should return true if the sharing buttons request status is "success"', () => {
+	test('should return true if the sharing buttons request status is "success"', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -34,12 +34,12 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isSuccessful = isSharingButtonsSaveSuccessful( state, 2916284 );
+		const isSuccessful = isSharingButtonsSaveSuccessful(state, 2916284);
 
-		expect( isSuccessful ).to.be.true;
-	} );
+		expect(isSuccessful).to.be.true;
+	});
 
-	test( 'should return false if the sharing buttons request status is not "success"', () => {
+	test('should return false if the sharing buttons request status is not "success"', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -49,8 +49,8 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isSuccessful = isSharingButtonsSaveSuccessful( state, 2916284 );
+		const isSuccessful = isSharingButtonsSaveSuccessful(state, 2916284);
 
-		expect( isSuccessful ).to.be.false;
-	} );
-} );
+		expect(isSuccessful).to.be.false;
+	});
+});

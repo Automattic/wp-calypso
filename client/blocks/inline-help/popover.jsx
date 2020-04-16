@@ -63,36 +63,36 @@ class InlineHelpPopover extends Component {
 		activeSecondaryView: '',
 	};
 
-	openResultView = event => {
+	openResultView = (event) => {
 		event.preventDefault();
-		this.openSecondaryView( VIEW_RICH_RESULT );
+		this.openSecondaryView(VIEW_RICH_RESULT);
 	};
 
 	moreHelpClicked = () => {
 		this.props.onClose();
-		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
+		this.props.recordTracksEvent('calypso_inlinehelp_morehelp_click');
 	};
 
-	setSecondaryViewKey = secondaryViewKey => {
-		this.setState( { activeSecondaryView: secondaryViewKey } );
+	setSecondaryViewKey = (secondaryViewKey) => {
+		this.setState({ activeSecondaryView: secondaryViewKey });
 	};
 
-	openSecondaryView = secondaryViewKey => {
-		this.setSecondaryViewKey( secondaryViewKey );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show` );
-		this.setState( { showSecondaryView: true } );
+	openSecondaryView = (secondaryViewKey) => {
+		this.setSecondaryViewKey(secondaryViewKey);
+		this.props.recordTracksEvent(`calypso_inlinehelp_${secondaryViewKey}_show`);
+		this.setState({ showSecondaryView: true });
 	};
 
 	closeSecondaryView = () => {
-		this.setSecondaryViewKey( '' );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
-		this.props.selectResult( -1 );
+		this.setSecondaryViewKey('');
+		this.props.recordTracksEvent(`calypso_inlinehelp_${this.state.activeSecondaryView}_hide`);
+		this.props.selectResult(-1);
 		this.props.resetContactForm();
-		this.setState( { showSecondaryView: false } );
+		this.setState({ showSecondaryView: false });
 	};
 
 	openContactView = () => {
-		this.openSecondaryView( VIEW_CONTACT );
+		this.openSecondaryView(VIEW_CONTACT);
 	};
 
 	renderPopoverFooter = () => {
@@ -100,28 +100,24 @@ class InlineHelpPopover extends Component {
 		return (
 			<div className="inline-help__footer">
 				<Button
-					onClick={ this.moreHelpClicked }
+					onClick={this.moreHelpClicked}
 					className="inline-help__more-button"
 					borderless
 					href="/help"
 				>
 					<Gridicon icon="help" className="inline-help__gridicon-left" />
-					{ translate( 'More help' ) }
+					{translate('More help')}
 				</Button>
 
-				<Button onClick={ this.openContactView } className="inline-help__contact-button" borderless>
+				<Button onClick={this.openContactView} className="inline-help__contact-button" borderless>
 					<Gridicon icon="chat" className="inline-help__gridicon-left" />
-					{ translate( 'Contact us' ) }
+					{translate('Contact us')}
 					<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
 				</Button>
 
-				<Button
-					onClick={ this.closeSecondaryView }
-					className="inline-help__cancel-button"
-					borderless
-				>
+				<Button onClick={this.closeSecondaryView} className="inline-help__cancel-button" borderless>
 					<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
-					{ translate( 'Back' ) }
+					{translate('Back')}
 				</Button>
 			</div>
 		);
@@ -132,17 +128,14 @@ class InlineHelpPopover extends Component {
 			<Fragment>
 				<QuerySupportTypes />
 				<div className="inline-help__search">
-					<InlineHelpSearchCard
-						openResult={ this.openResultView }
-						query={ this.props.searchQuery }
-					/>
+					<InlineHelpSearchCard openResult={this.openResultView} query={this.props.searchQuery} />
 					<InlineHelpSearchResults
-						openResult={ this.openResultView }
-						searchQuery={ this.props.searchQuery }
+						openResult={this.openResultView}
+						searchQuery={this.props.searchQuery}
 					/>
 				</div>
-				{ this.renderSecondaryView() }
-				{ ! this.state.showSecondaryView && this.renderPrimaryView() }
+				{this.renderSecondaryView()}
+				{!this.state.showSecondaryView && this.renderPrimaryView()}
 			</Fragment>
 		);
 	};
@@ -151,21 +144,21 @@ class InlineHelpPopover extends Component {
 		const { onClose, selectedResult, setDialogState } = this.props;
 		const classes = classNames(
 			'inline-help__secondary-view',
-			`inline-help__${ this.state.activeSecondaryView }`
+			`inline-help__${this.state.activeSecondaryView}`
 		);
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				{
 					{
-						[ VIEW_CONTACT ]: <InlineHelpContactView />,
-						[ VIEW_RICH_RESULT ]: (
+						[VIEW_CONTACT]: <InlineHelpContactView />,
+						[VIEW_RICH_RESULT]: (
 							<InlineHelpRichResult
-								result={ selectedResult }
-								setDialogState={ setDialogState }
-								closePopover={ onClose }
+								result={selectedResult}
+								setDialogState={setDialogState}
+								closePopover={onClose}
 							/>
 						),
-					}[ this.state.activeSecondaryView ]
+					}[this.state.activeSecondaryView]
 				}
 			</div>
 		);
@@ -175,30 +168,30 @@ class InlineHelpPopover extends Component {
 		const { translate, siteId, showOptIn, showOptOut, isCheckout } = this.props;
 
 		// Don't show additional items inside Checkout.
-		if ( isCheckout ) {
+		if (isCheckout) {
 			return null;
 		}
 
 		return (
 			<>
-				<QueryActiveTheme siteId={ siteId } />
-				{ showOptOut && (
+				<QueryActiveTheme siteId={siteId} />
+				{showOptOut && (
 					<Button
-						onClick={ this.switchToClassicEditor }
+						onClick={this.switchToClassicEditor}
 						className="inline-help__classic-editor-toggle"
 					>
-						{ translate( 'Switch to Classic Editor' ) }
+						{translate('Switch to Classic Editor')}
 					</Button>
-				) }
+				)}
 
-				{ showOptIn && (
+				{showOptIn && (
 					<Button
-						onClick={ this.switchToBlockEditor }
+						onClick={this.switchToBlockEditor}
 						className="inline-help__gutenberg-editor-toggle"
 					>
-						{ translate( 'Switch to Block Editor' ) }
+						{translate('Switch to Block Editor')}
 					</Button>
-				) }
+				)}
 			</>
 		);
 	};
@@ -207,16 +200,16 @@ class InlineHelpPopover extends Component {
 		const { siteId, onClose, optOut, classicUrl, translate } = this.props;
 		const proceed =
 			typeof window === 'undefined' ||
-			window.confirm( translate( 'Are you sure you wish to leave this page?' ) );
-		if ( proceed ) {
-			optOut( siteId, classicUrl );
+			window.confirm(translate('Are you sure you wish to leave this page?'));
+		if (proceed) {
+			optOut(siteId, classicUrl);
 			onClose();
 		}
 	};
 
 	switchToBlockEditor = () => {
 		const { siteId, onClose, optIn, gutenbergUrl } = this.props;
-		optIn( siteId, gutenbergUrl );
+		optIn(siteId, gutenbergUrl);
 		onClose();
 	};
 
@@ -228,19 +221,19 @@ class InlineHelpPopover extends Component {
 		return (
 			<Popover
 				isVisible
-				onClose={ this.props.onClose }
+				onClose={this.props.onClose}
 				position="top left"
-				context={ this.props.context }
-				className={ classNames( 'inline-help__popover', popoverClasses ) }
+				context={this.props.context}
+				className={classNames('inline-help__popover', popoverClasses)}
 			>
-				{ this.renderPopoverContent() }
-				{ this.renderPopoverFooter() }
+				{this.renderPopoverContent()}
+				{this.renderPopoverFooter()}
 			</Popover>
 		);
 	}
 }
 
-const optOut = ( siteId, classicUrl ) => {
+const optOut = (siteId, classicUrl) => {
 	return withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -249,16 +242,16 @@ const optOut = ( siteId, classicUrl ) => {
 				'Opt-In',
 				false
 			),
-			recordTracksEvent( 'calypso_gutenberg_opt_in', {
+			recordTracksEvent('calypso_gutenberg_opt_in', {
 				opt_in: false,
-			} ),
-			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt Out' )
+			}),
+			bumpStat('gutenberg-opt-in', 'Calypso Help Opt Out')
 		),
-		setSelectedEditor( siteId, 'classic', classicUrl )
+		setSelectedEditor(siteId, 'classic', classicUrl)
 	);
 };
 
-const optIn = ( siteId, gutenbergUrl ) => {
+const optIn = (siteId, gutenbergUrl) => {
 	return withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -267,35 +260,35 @@ const optIn = ( siteId, gutenbergUrl ) => {
 				'Opt-In',
 				true
 			),
-			recordTracksEvent( 'calypso_gutenberg_opt_in', {
+			recordTracksEvent('calypso_gutenberg_opt_in', {
 				opt_in: true,
-			} ),
-			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt In' )
+			}),
+			bumpStat('gutenberg-opt-in', 'Calypso Help Opt In')
 		),
-		setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
+		setSelectedEditor(siteId, 'gutenberg', gutenbergUrl)
 	);
 };
 
-function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const currentRoute = getCurrentRoute( state );
-	const classicRoute = currentRoute.replace( '/block-editor/', '' );
-	const section = getSection( state );
+function mapStateToProps(state) {
+	const siteId = getSelectedSiteId(state);
+	const currentRoute = getCurrentRoute(state);
+	const classicRoute = currentRoute.replace('/block-editor/', '');
+	const section = getSection(state);
 	const isCalypsoClassic = section.group && section.group === 'editor';
-	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
-	const postId = getEditorPostId( state );
-	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-	const showSwitchEditorButton = currentRoute.match( /^\/(block-editor|post|page)\// );
+	const optInEnabled = isGutenbergOptInEnabled(state, siteId);
+	const postId = getEditorPostId(state);
+	const postType = getEditedPostValue(state, siteId, postId, 'type');
+	const gutenbergUrl = getGutenbergEditorUrl(state, siteId, postId, postType);
+	const showSwitchEditorButton = currentRoute.match(/^\/(block-editor|post|page)\//);
 
 	return {
-		searchQuery: getSearchQuery( state ),
-		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
-		selectedSite: getHelpSelectedSite( state ),
-		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		classicUrl: `/${ classicRoute }`,
+		searchQuery: getSearchQuery(state),
+		isEligibleForChecklist: isEligibleForDotcomChecklist(state, siteId),
+		selectedSite: getHelpSelectedSite(state),
+		selectedResult: getInlineHelpCurrentlySelectedResult(state),
+		classicUrl: `/${classicRoute}`,
 		siteId,
-		showOptOut: showSwitchEditorButton && isGutenbergOptOutEnabled( state, siteId ),
+		showOptOut: showSwitchEditorButton && isGutenbergOptOutEnabled(state, siteId),
 		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 		isCheckout: section.name && section.name === 'checkout',
@@ -310,7 +303,4 @@ const mapDispatchToProps = {
 	resetContactForm: resetInlineHelpContactForm,
 };
 
-export default compose(
-	localize,
-	connect( mapStateToProps, mapDispatchToProps )
-)( InlineHelpPopover );
+export default compose(localize, connect(mapStateToProps, mapDispatchToProps))(InlineHelpPopover);

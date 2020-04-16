@@ -15,13 +15,13 @@ import { sameXPost } from 'reader/stream/utils';
  * @param {object} postKey2 Second (duplicate) post key
  * @returns {object} Post key
  */
-export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
+export const addDuplicateXPostToPostKey = (postKey1, postKey2) => {
 	return {
 		...postKey1,
 		// Add the URL from the second post key
-		xPostUrls: Array.isArray( postKey1.xPostUrls )
-			? [ ...postKey1.xPostUrls, postKey2.url ]
-			: [ postKey2.url ],
+		xPostUrls: Array.isArray(postKey1.xPostUrls)
+			? [...postKey1.xPostUrls, postKey2.url]
+			: [postKey2.url],
 	};
 };
 
@@ -31,13 +31,13 @@ export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
  * @param {Array} postKeys Array of post key objects
  * @returns {Array} Array of post key objects
  */
-export const combineXPosts = postKeys =>
-	postKeys.reduce( ( accumulator, postKey ) => {
-		const lastPostKey = last( accumulator );
-		if ( sameXPost( lastPostKey, postKey ) ) {
-			accumulator[ accumulator.length - 1 ] = addDuplicateXPostToPostKey( lastPostKey, postKey );
+export const combineXPosts = (postKeys) =>
+	postKeys.reduce((accumulator, postKey) => {
+		const lastPostKey = last(accumulator);
+		if (sameXPost(lastPostKey, postKey)) {
+			accumulator[accumulator.length - 1] = addDuplicateXPostToPostKey(lastPostKey, postKey);
 		} else {
-			accumulator.push( postKey );
+			accumulator.push(postKey);
 		}
 		return accumulator;
-	}, [] );
+	}, []);

@@ -13,13 +13,13 @@ import { useTranslate } from 'i18n-calypso';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-export default function JetpackConnectHelpButton( { label } ) {
+export default function JetpackConnectHelpButton({ label }) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const recordClick = React.useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jpc_help_link_click' ) );
-	}, [ dispatch ] );
+	const recordClick = React.useCallback(() => {
+		dispatch(recordTracksEvent('calypso_jpc_help_link_click'));
+	}, [dispatch]);
 
 	return (
 		<LoggedOutFormLinkItem
@@ -27,10 +27,9 @@ export default function JetpackConnectHelpButton( { label } ) {
 			href="https://jetpack.com/contact-support"
 			target="_blank"
 			rel="noopener noreferrer"
-			onClick={ recordClick }
+			onClick={recordClick}
 		>
-			<Gridicon icon="help-outline" size={ 18 } />{ ' ' }
-			{ label || translate( 'Get help setting up Jetpack' ) }
+			<Gridicon icon="help-outline" size={18} /> {label || translate('Get help setting up Jetpack')}
 		</LoggedOutFormLinkItem>
 	);
 }

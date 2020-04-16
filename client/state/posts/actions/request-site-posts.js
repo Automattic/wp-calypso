@@ -12,10 +12,10 @@ import 'state/posts/init';
  * @param  {string}   query  Post query
  * @returns {Function}        Action thunk
  */
-export function requestSitePosts( siteId, query = {} ) {
-	if ( ! siteId ) {
+export function requestSitePosts(siteId, query = {}) {
+	if (!siteId) {
 		return null;
 	}
 
-	return requestPosts( siteId, query );
+	return requestPosts(siteId, query);
 }

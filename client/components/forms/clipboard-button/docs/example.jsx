@@ -17,20 +17,20 @@ export default class extends React.PureComponent {
 	};
 
 	onCopy = () => {
-		this.setState( {
+		this.setState({
 			isCopied: true,
-		} );
+		});
 	};
 
 	render() {
 		return (
 			<div>
 				<ClipboardButton
-					onCopy={ this.onCopy }
+					onCopy={this.onCopy}
 					text="This text was copied via ClipboardButton"
-					style={ { float: 'none' } }
+					style={{ float: 'none' }}
 				>
-					{ this.state.isCopied ? 'Copied!' : 'Copy to clipboard' }
+					{this.state.isCopied ? 'Copied!' : 'Copy to clipboard'}
 				</ClipboardButton>
 			</div>
 		);

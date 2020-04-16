@@ -1,10 +1,10 @@
-const defaultGetCacheKey = ( ...args ) => args.join();
+const defaultGetCacheKey = (...args) => args.join();
 
-const isFunction = fn => {
+const isFunction = (fn) => {
 	return fn && typeof fn === 'function';
 };
 
-const isObject = o => {
+const isObject = (o) => {
 	return o && typeof o === 'object';
 };
 
@@ -19,9 +19,9 @@ const isObject = o => {
  *                                  Custom way to compute the cache key from the `args` list
  * @returns {Function}               Cached selector
  */
-export default function treeSelect( getDependents, selector, options = {} ) {
-	if ( process.env.NODE_ENV !== 'production' ) {
-		if ( ! isFunction( getDependents ) || ! isFunction( selector ) ) {
+export default function treeSelect(getDependents, selector, options = {}) {
+	if (process.env.NODE_ENV !== 'production') {
+		if (!isFunction(getDependents) || !isFunction(selector)) {
 			throw new TypeError(
 				'treeSelect: invalid arguments passed, selector and getDependents must both be functions'
 			);
@@ -32,27 +32,27 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 
 	const { getCacheKey = defaultGetCacheKey } = options;
 
-	const cachedSelector = function( state, ...args ) {
-		const dependents = getDependents( state, ...args );
+	const cachedSelector = function (state, ...args) {
+		const dependents = getDependents(state, ...args);
 
-		if ( process.env.NODE_ENV !== 'production' ) {
-			if ( getCacheKey === defaultGetCacheKey && args.some( isObject ) ) {
-				throw new Error( 'Do not pass objects as arguments to a treeSelector' );
+		if (process.env.NODE_ENV !== 'production') {
+			if (getCacheKey === defaultGetCacheKey && args.some(isObject)) {
+				throw new Error('Do not pass objects as arguments to a treeSelector');
 			}
 		}
 
 		// create a dependency tree for caching selector results.
 		// this is beneficial over standard memoization techniques so that we can
 		// garbage collect any values that are based on outdated dependents
-		const leafCache = dependents.reduce( insertDependentKey, cache );
+		const leafCache = dependents.reduce(insertDependentKey, cache);
 
-		const key = getCacheKey( ...args );
-		if ( leafCache.has( key ) ) {
-			return leafCache.get( key );
+		const key = getCacheKey(...args);
+		if (leafCache.has(key)) {
+			return leafCache.get(key);
 		}
 
-		const value = selector( dependents, ...args );
-		leafCache.set( key, value );
+		const value = selector(dependents, ...args);
+		leafCache.set(key, value);
 		return value;
 	};
 
@@ -76,18 +76,18 @@ const NULLISH_KEY = {};
  * Note: Inserts WeakMaps except for the last map which will be a regular Map.
  * The last map is a regular one because the the key for the last map is the string results of args.join().
  */
-function insertDependentKey( map, key, currentIndex, arr ) {
-	if ( key != null && Object( key ) !== key ) {
-		throw new TypeError( 'key must be an object, `null`, or `undefined`' );
+function insertDependentKey(map, key, currentIndex, arr) {
+	if (key != null && Object(key) !== key) {
+		throw new TypeError('key must be an object, `null`, or `undefined`');
 	}
 	const weakMapKey = key || NULLISH_KEY;
 
-	const existingMap = map.get( weakMapKey );
-	if ( existingMap ) {
+	const existingMap = map.get(weakMapKey);
+	if (existingMap) {
 		return existingMap;
 	}
 
 	const newMap = currentIndex === arr.length - 1 ? new Map() : new WeakMap();
-	map.set( weakMapKey, newMap );
+	map.set(weakMapKey, newMap);
 	return newMap;
 }

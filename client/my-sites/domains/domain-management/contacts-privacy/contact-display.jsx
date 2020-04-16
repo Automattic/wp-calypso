@@ -19,17 +19,17 @@ class ContactDisplay extends React.PureComponent {
 	};
 
 	fetchWhois = () => {
-		if ( isEmpty( this.props.whoisData ) && ! isEmpty( this.props.selectedDomainName ) ) {
-			this.props.requestWhois( this.props.selectedDomainName );
+		if (isEmpty(this.props.whoisData) && !isEmpty(this.props.selectedDomainName)) {
+			this.props.requestWhois(this.props.selectedDomainName);
 		}
 	};
 
 	render() {
 		const { whoisData } = this.props;
 
-		const contactInformation = findRegistrantWhois( whoisData );
+		const contactInformation = findRegistrantWhois(whoisData);
 
-		if ( isEmpty( contactInformation ) ) {
+		if (isEmpty(contactInformation)) {
 			this.fetchWhois();
 			return null;
 		}
@@ -38,20 +38,20 @@ class ContactDisplay extends React.PureComponent {
 			<div className="contact-display">
 				<div className="contact-display__content">
 					<p>
-						{ contactInformation.fname } { contactInformation.lname }
+						{contactInformation.fname} {contactInformation.lname}
 					</p>
-					{ contactInformation.org && <p>{ contactInformation.org }</p> }
-					<p>{ contactInformation.email }</p>
-					<p>{ contactInformation.sa1 }</p>
-					{ contactInformation.sa2 && <p>{ contactInformation.sa2 }</p> }
+					{contactInformation.org && <p>{contactInformation.org}</p>}
+					<p>{contactInformation.email}</p>
+					<p>{contactInformation.sa1}</p>
+					{contactInformation.sa2 && <p>{contactInformation.sa2}</p>}
 					<p>
-						{ contactInformation.city }
-						{ contactInformation.sp && <span>, { contactInformation.sp }</span> }
-						<span> { contactInformation.pc }</span>
+						{contactInformation.city}
+						{contactInformation.sp && <span>, {contactInformation.sp}</span>}
+						<span> {contactInformation.pc}</span>
 					</p>
-					<p>{ contactInformation.country_code }</p>
-					<p>{ contactInformation.phone }</p>
-					{ contactInformation.fax && <p>{ contactInformation.fax }</p> }
+					<p>{contactInformation.country_code}</p>
+					<p>{contactInformation.phone}</p>
+					{contactInformation.fax && <p>{contactInformation.fax}</p>}
 				</div>
 			</div>
 		);
@@ -59,12 +59,12 @@ class ContactDisplay extends React.PureComponent {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
+			whoisData: getWhoisData(state, ownProps.selectedDomainName),
 		};
 	},
 	{
 		requestWhois,
 	}
-)( ContactDisplay );
+)(ContactDisplay);

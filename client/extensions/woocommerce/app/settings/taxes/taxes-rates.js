@@ -42,24 +42,24 @@ class TaxesRates extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	maybeFetchRatesAndLocations = props => {
+	maybeFetchRatesAndLocations = (props) => {
 		const { address, loadedLocations, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
 
-		if ( ! loadedLocations ) {
-			this.props.fetchLocations( siteId );
+		if (!loadedLocations) {
+			this.props.fetchLocations(siteId);
 		}
 
-		if ( loadedSettingsGeneral && ! loadedTaxRates ) {
-			this.props.fetchTaxRates( siteId, address );
+		if (loadedSettingsGeneral && !loadedTaxRates) {
+			this.props.fetchTaxRates(siteId, address);
 		}
 	};
 
 	componentDidMount = () => {
-		this.maybeFetchRatesAndLocations( this.props );
+		this.maybeFetchRatesAndLocations(this.props);
 	};
 
 	componentDidUpdate = () => {
-		this.maybeFetchRatesAndLocations( this.props );
+		this.maybeFetchRatesAndLocations(this.props);
 	};
 
 	renderLocation = () => {
@@ -72,35 +72,35 @@ class TaxesRates extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! taxesEnabled || ! loadedSettingsGeneral || ! loadedLocations ) {
+		if (!taxesEnabled || !loadedSettingsGeneral || !loadedLocations) {
 			return null;
 		}
 
-		if ( isEmpty( stateName ) ) {
+		if (isEmpty(stateName)) {
 			return (
 				<p>
-					{ translate(
+					{translate(
 						"The following tax rates are in effect at your store's " +
 							'{{strong}}%(countryName)s{{/strong}} location',
 						{
 							args: { countryName },
 							components: { strong: <strong /> },
 						}
-					) }
+					)}
 				</p>
 			);
 		}
 
 		return (
 			<p>
-				{ translate(
+				{translate(
 					"The following tax rates are in effect at your store's " +
 						'{{strong}}%(stateName)s, %(countryName)s{{/strong}} location',
 					{
 						args: { stateName, countryName },
 						components: { strong: <strong /> },
 					}
-				) }
+				)}
 			</p>
 		);
 	};
@@ -108,17 +108,17 @@ class TaxesRates extends Component {
 	renderCalculationStatus = () => {
 		const { taxesEnabled, translate } = this.props;
 
-		if ( ! taxesEnabled ) {
+		if (!taxesEnabled) {
 			return (
-				<Notice showDismiss={ false } status="is-warning">
-					{ translate(
+				<Notice showDismiss={false} status="is-warning">
+					{translate(
 						'Sales taxes are not currently being charged. Unless ' +
 							'your store or products are exempt from sales tax we recommend that you ' +
 							'{{strong}}enable automatic tax calculation and charging{{/strong}}',
 						{
 							components: { strong: <strong /> },
 						}
-					) }
+					)}
 				</Notice>
 			);
 		}
@@ -126,69 +126,67 @@ class TaxesRates extends Component {
 		return (
 			<div className="taxes__taxes-calculate">
 				<Gridicon icon="checkmark" />
-				{ translate(
+				{translate(
 					"We'll automatically calculate and charge sales tax " + 'each time a customer checks out.'
-				) }
+				)}
 			</div>
 		);
 	};
 
 	possiblyRenderRates = () => {
 		const { taxesEnabled, taxRates, translate } = this.props;
-		if ( ! taxesEnabled ) {
+		if (!taxesEnabled) {
 			return null;
 		}
 
-		if ( isEmpty( taxRates ) ) {
+		if (isEmpty(taxRates)) {
 			return (
-				<Notice showDismiss={ false } status="is-error">
-					{ translate(
-						'The WordPress.com sales tax rate service is not available for this site.'
-					) }
+				<Notice showDismiss={false} status="is-error">
+					{translate('The WordPress.com sales tax rate service is not available for this site.')}
 				</Notice>
 			);
 		}
 
-		let state_rate = 'state_rate' in taxRates ? parseFloat( taxRates.state_rate ) : 0;
-		let combined_rate = 'combined_rate' in taxRates ? parseFloat( taxRates.combined_rate ) : 0;
+		let state_rate = 'state_rate' in taxRates ? parseFloat(taxRates.state_rate) : 0;
+		let combined_rate = 'combined_rate' in taxRates ? parseFloat(taxRates.combined_rate) : 0;
 		let local_rate = combined_rate - state_rate;
 
-		state_rate = round( state_rate * 100, 2 );
-		combined_rate = round( combined_rate * 100, 2 );
-		local_rate = round( local_rate * 100, 2 );
+		state_rate = round(state_rate * 100, 2);
+		combined_rate = round(combined_rate * 100, 2);
+		local_rate = round(local_rate * 100, 2);
 
 		const rates = [];
 
-		if ( 0 < state_rate ) {
-			rates.push( {
-				name: translate( 'State Tax' ),
+		if (0 < state_rate) {
+			rates.push({
+				name: translate('State Tax'),
 				rate: state_rate,
-			} );
-			if ( 0 < local_rate ) {
-				rates.push( {
-					name: translate( 'Local Tax' ),
+			});
+			if (0 < local_rate) {
+				rates.push({
+					name: translate('Local Tax'),
 					rate: local_rate,
-				} );
+				});
 			}
 		}
 
-		rates.push( {
-			name: translate( 'Total Tax' ),
+		rates.push({
+			name: translate('Total Tax'),
 			rate: combined_rate,
-		} );
+		});
 
 		return (
 			<Table className="taxes__taxes-rates-table">
 				<TableRow isHeader>
-					<TableItem isHeader>{ translate( 'Name' ) }</TableItem>
-					<TableItem isHeader>{ translate( 'Rate' ) }</TableItem>
+					<TableItem isHeader>{translate('Name')}</TableItem>
+					<TableItem isHeader>{translate('Rate')}</TableItem>
 				</TableRow>
-				{ rates.map( ( row, i ) => (
-					<TableRow key={ i }>
-						<TableItem key={ i }>{ row.name }</TableItem>
-						<TableItem key={ i + 1 }>{ row.rate }%</TableItem>
+				{rates.map((row, i) => (
+					<TableRow key={i}>
+						<TableItem key={i}>{row.name}</TableItem>
+						<TableItem key={i + 1}>{row.rate}%</TableItem>
 					</TableRow>
-				) ) }
+				))}
 			</Table>
 		);
 	};
@@ -198,17 +196,17 @@ class TaxesRates extends Component {
 
 		return (
 			<div className="taxes__taxes-taxjar-notice">
-				{ translate(
+				{translate(
 					'Sales tax calculations are provided by WooCommerce Services. When this option is enabled, ' +
 						'WooCommerce Services will share some of your data with a third party.'
-				) }
+				)}
 				<ExternalLink
 					icon
 					href="https://wordpress.com/support/taxjar/"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'Learn more' ) }
+					{translate('Learn more')}
 				</ExternalLink>
 			</div>
 		);
@@ -224,50 +222,50 @@ class TaxesRates extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! loadedSettingsGeneral ) {
-			return <QuerySettingsGeneral siteId={ siteId } />;
+		if (!loadedSettingsGeneral) {
+			return <QuerySettingsGeneral siteId={siteId} />;
 		}
 
-		if ( ! loadedTaxRates ) {
+		if (!loadedTaxRates) {
 			return null;
 		}
 
-		const toggleMessage = translate( 'Tax calculations enabled' );
+		const toggleMessage = translate('Tax calculations enabled');
 
 		return (
 			<div className="taxes__taxes-rates">
-				<ExtendedHeader label={ translate( 'Tax rates' ) }>
-					<FormToggle name="taxesEnabled" onChange={ onEnabledChange } checked={ taxesEnabled }>
-						<span className="taxes__taxes-calculate-label">{ toggleMessage }</span>
+				<ExtendedHeader label={translate('Tax rates')}>
+					<FormToggle name="taxesEnabled" onChange={onEnabledChange} checked={taxesEnabled}>
+						<span className="taxes__taxes-calculate-label">{toggleMessage}</span>
 					</FormToggle>
 				</ExtendedHeader>
 				<Card>
-					{ this.renderCalculationStatus() }
-					{ this.renderLocation() }
-					{ this.possiblyRenderRates() }
-					{ this.renderPolicyNotice() }
+					{this.renderCalculationStatus()}
+					{this.renderLocation()}
+					{this.possiblyRenderRates()}
+					{this.renderPolicyNotice()}
 				</Card>
 			</div>
 		);
 	};
 }
 
-function mapStateToProps( state, ownProps ) {
-	const address = getStoreLocation( state, ownProps.siteId );
-	const countries = getAllCountries( state, ownProps.siteId );
-	const loadedLocations = areLocationsLoaded( state, ownProps.siteId );
-	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
-	const loadedTaxRates = areTaxRatesLoaded( state, ownProps.siteId );
-	const storeLocation = getStoreLocation( state, ownProps.siteId );
-	const taxRates = getTaxRates( state, ownProps.siteId );
+function mapStateToProps(state, ownProps) {
+	const address = getStoreLocation(state, ownProps.siteId);
+	const countries = getAllCountries(state, ownProps.siteId);
+	const loadedLocations = areLocationsLoaded(state, ownProps.siteId);
+	const loadedSettingsGeneral = areSettingsGeneralLoaded(state, ownProps.siteId);
+	const loadedTaxRates = areTaxRatesLoaded(state, ownProps.siteId);
+	const storeLocation = getStoreLocation(state, ownProps.siteId);
+	const taxRates = getTaxRates(state, ownProps.siteId);
 
 	let countryName = '';
 	let stateName = '';
 
-	if ( loadedSettingsGeneral && loadedLocations ) {
-		countryName = getCountryName( state, storeLocation.country, ownProps.siteId );
-		const states = getStates( state, storeLocation.country, ownProps.siteId );
-		const storeState = find( states, { code: storeLocation.state } );
+	if (loadedSettingsGeneral && loadedLocations) {
+		countryName = getCountryName(state, storeLocation.country, ownProps.siteId);
+		const states = getStates(state, storeLocation.country, ownProps.siteId);
+		const storeState = find(states, { code: storeLocation.state });
 		stateName = storeState ? storeState.name : '';
 	}
 
@@ -283,7 +281,7 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			fetchLocations,
@@ -293,4 +291,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( TaxesRates ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(TaxesRates));

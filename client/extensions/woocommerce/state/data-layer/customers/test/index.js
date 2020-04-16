@@ -10,13 +10,13 @@ import { searchCustomers } from 'woocommerce/state/sites/customers/actions';
 import { fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'handlers', () => {
-	describe( '#fetch', () => {
-		test( 'should dispatch a get action with the search term', () => {
-			const action = searchCustomers( 123, 'example' );
-			const result = fetch( action );
+describe('handlers', () => {
+	describe('#fetch', () => {
+		test('should dispatch a get action with the search term', () => {
+			const action = searchCustomers(123, 'example');
+			const result = fetch(action);
 
-			expect( result ).to.eql(
+			expect(result).to.eql(
 				http(
 					{
 						method: 'GET',
@@ -31,6 +31,6 @@ describe( 'handlers', () => {
 					action
 				)
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

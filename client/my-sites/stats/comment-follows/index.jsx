@@ -30,41 +30,41 @@ class StatsCommentFollows extends Component {
 	};
 
 	goBack = () => {
-		page( '/stats/insights/' + this.props.slug );
+		page('/stats/insights/' + this.props.slug);
 	};
 
 	componentDidMount() {
-		window.scrollTo( 0, 0 );
+		window.scrollTo(0, 0);
 	}
 
-	paginationHandler = pageNum => {
+	paginationHandler = (pageNum) => {
 		let path = '/stats/follows/comment/';
-		if ( pageNum > 1 ) {
+		if (pageNum > 1) {
 			path += pageNum + '/';
 		}
 		path += this.props.slug;
-		this.props.recordGoogleEvent( 'Stats', 'Used Pagination on Followers Page', pageNum );
-		page( path );
+		this.props.recordGoogleEvent('Stats', 'Used Pagination on Followers Page', pageNum);
+		page(path);
 	};
 
 	render() {
 		const { followList, perPage, translate } = this.props;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout={true}>
 				<PageViewTracker
 					path="/stats/follows/comment/:site_id"
 					title="Stats > Followers > Comment"
 				/>
 
 				<div id="my-stats-content" className="follows-detail follows-detail-comment">
-					<HeaderCake onClick={ this.goBack }>{ translate( 'Comments Followers' ) }</HeaderCake>
+					<HeaderCake onClick={this.goBack}>{translate('Comments Followers')}</HeaderCake>
 					<Followers
 						path="comment-follow-summary"
-						followList={ followList }
-						page={ this.props.page }
-						perPage={ perPage }
-						pageClick={ this.paginationHandler }
+						followList={followList}
+						page={this.props.page}
+						perPage={perPage}
+						pageClick={this.paginationHandler}
 					/>
 				</div>
 			</Main>
@@ -73,14 +73,14 @@ class StatsCommentFollows extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			slug: getSiteSlug( state, siteId ),
+			slug: getSiteSlug(state, siteId),
 		};
 	},
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsCommentFollows );
+export default flowRight(connectComponent, localize)(StatsCommentFollows);

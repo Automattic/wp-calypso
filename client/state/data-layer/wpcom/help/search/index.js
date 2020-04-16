@@ -18,7 +18,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const requestHelpLinks = action =>
+export const requestHelpLinks = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -39,14 +39,14 @@ export const requestHelpLinks = action =>
  * @param   {object} helpLinks Help links
  * @returns {object} Dispatched help links receive action
  */
-export const handleRequestSuccess = ( action, helpLinks ) => receiveHelpLinks( helpLinks );
+export const handleRequestSuccess = (action, helpLinks) => receiveHelpLinks(helpLinks);
 
-registerHandlers( 'state/data-layer/wpcom/help/search/index.js', {
-	[ HELP_LINKS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/help/search/index.js', {
+	[HELP_LINKS_REQUEST]: [
+		dispatchRequest({
 			fetch: requestHelpLinks,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
-		} ),
+		}),
 	],
-} );
+});

@@ -6,10 +6,10 @@ import { withoutPersistence } from 'state/utils';
 import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/reader/action-types';
 import { keyToString } from 'reader/post-key';
 
-export default withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case READER_EXPAND_CARD: {
-			if ( ! action.payload.postKey ) {
+			if (!action.payload.postKey) {
 				return state;
 			}
 
@@ -17,7 +17,7 @@ export default withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ keyToString( postKey ) ]: true,
+				[keyToString(postKey)]: true,
 			};
 		}
 		case READER_RESET_CARD_EXPANSIONS:
@@ -25,4 +25,4 @@ export default withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});

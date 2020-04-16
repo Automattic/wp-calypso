@@ -12,19 +12,19 @@ import {
 } from 'woocommerce/state/action-types';
 import reducer from 'woocommerce/state/sites/reducer';
 
-describe( 'reducer', () => {
-	test( 'should mark the counts as being "loading"', () => {
+describe('reducer', () => {
+	test('should mark the counts as being "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_COUNT_REQUEST,
 			siteId,
 		};
 
-		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].data.counts.isLoading ).to.be.true;
-	} );
+		const newSiteData = reducer({}, action);
+		expect(newSiteData[siteId].data.counts.isLoading).to.be.true;
+	});
 
-	test( 'should store data from the action', () => {
+	test('should store data from the action', () => {
 		const siteId = 123;
 		const counts = {
 			orders: {
@@ -46,8 +46,8 @@ describe( 'reducer', () => {
 			siteId,
 			counts,
 		};
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].data.counts.items ).to.deep.equal( counts );
-	} );
-} );
+		const newState = reducer({}, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].data.counts.items).to.deep.equal(counts);
+	});
+});

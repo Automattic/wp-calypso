@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {number}  blogId  The ID of the site we're querying
  * @returns {Array} Blog stickers
  */
-export default function getBlogStickers( state, blogId ) {
-	return get( state.sites.blogStickers.items, blogId, null );
+export default function getBlogStickers(state, blogId) {
+	return get(state.sites.blogStickers.items, blogId, null);
 }

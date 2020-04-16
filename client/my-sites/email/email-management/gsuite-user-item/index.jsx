@@ -17,20 +17,20 @@ import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-war
  */
 import './style.scss';
 
-function GSuiteUserItem( props ) {
+function GSuiteUserItem(props) {
 	const translate = useTranslate();
-	const [ dialogVisible, setDialogVisible ] = useState( false );
-	const onFixClickHandler = e => {
+	const [dialogVisible, setDialogVisible] = useState(false);
+	const onFixClickHandler = (e) => {
 		e.preventDefault();
-		setDialogVisible( true );
+		setDialogVisible(true);
 	};
 	const onCloseClickHandler = () => {
-		setDialogVisible( false );
+		setDialogVisible(false);
 	};
 
 	const getLoginLink = () => {
 		const { email, domain } = props.user;
-		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https://admin.google.com/a/${ domain }`;
+		return `https://accounts.google.com/AccountChooser?Email=${email}&service=CPanel&continue=https://admin.google.com/a/${domain}`;
 	};
 
 	const renderManage = () => {
@@ -38,12 +38,12 @@ function GSuiteUserItem( props ) {
 			<ExternalLink
 				icon
 				className="gsuite-user-item"
-				href={ getLoginLink() }
-				onClick={ props.onClick }
+				href={getLoginLink()}
+				onClick={props.onClick}
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ translate( 'Manage', { context: 'Login to G Suite Manage' } ) }
+				{translate('Manage', { context: 'Login to G Suite Manage' })}
 			</ExternalLink>
 		);
 	};
@@ -51,27 +51,27 @@ function GSuiteUserItem( props ) {
 	const renderFix = () => {
 		return (
 			<Fragment>
-				<Button className="gsuite-user-item__fix" compact={ true } onClick={ onFixClickHandler }>
-					{ translate( 'Finish Setup' ) }
+				<Button className="gsuite-user-item__fix" compact={true} onClick={onFixClickHandler}>
+					{translate('Finish Setup')}
 				</Button>
-				{ props.siteSlug && (
+				{props.siteSlug && (
 					<PendingGSuiteTosNoticeDialog
-						domainName={ props.user.domain }
-						onClose={ onCloseClickHandler }
-						section={ 'gsuite-users-manage-user' }
-						siteSlug={ props.siteSlug }
-						user={ props.user.email }
-						visible={ dialogVisible }
+						domainName={props.user.domain}
+						onClose={onCloseClickHandler}
+						section={'gsuite-users-manage-user'}
+						siteSlug={props.siteSlug}
+						user={props.user.email}
+						visible={dialogVisible}
 					/>
-				) }
+				)}
 			</Fragment>
 		);
 	};
 
 	return (
 		<li>
-			<span className="gsuite-user-item__email">{ props.user.email }</span>
-			{ props.user.agreed_to_terms ? renderManage() : renderFix() }
+			<span className="gsuite-user-item__email">{props.user.email}</span>
+			{props.user.agreed_to_terms ? renderManage() : renderFix()}
 		</li>
 	);
 }

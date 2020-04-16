@@ -17,10 +17,10 @@ import {
 	isImageEditorImageLoaded,
 } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#getImageEditorTransform()', () => {
-		test( 'should return the current image editor transform', () => {
-			const transform = getImageEditorTransform( {
+describe('selectors', () => {
+	describe('#getImageEditorTransform()', () => {
+		test('should return the current image editor transform', () => {
+			const transform = getImageEditorTransform({
 				ui: {
 					editor: {
 						imageEditor: {
@@ -32,19 +32,19 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			expect( transform ).to.eql( {
+			expect(transform).to.eql({
 				degrees: 180,
 				scaleX: -1,
 				scaleY: 2,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#getImageEditorFileInfo()', () => {
-		test( 'should return the information about the current image', () => {
-			const fileInfo = getImageEditorFileInfo( {
+	describe('#getImageEditorFileInfo()', () => {
+		test('should return the information about the current image', () => {
+			const fileInfo = getImageEditorFileInfo({
 				ui: {
 					editor: {
 						imageEditor: {
@@ -55,18 +55,18 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			expect( fileInfo ).to.eql( {
+			expect(fileInfo).to.eql({
 				src: 'testSrc',
 				fileName: 'testFileName',
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#imageEditorHasChanges()', () => {
-		test( 'should return the editor changed state', () => {
-			const hasChanges = imageEditorHasChanges( {
+	describe('#imageEditorHasChanges()', () => {
+		test('should return the editor changed state', () => {
+			const hasChanges = imageEditorHasChanges({
 				ui: {
 					editor: {
 						imageEditor: {
@@ -74,15 +74,15 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			expect( hasChanges ).to.be.true;
-		} );
-	} );
+			expect(hasChanges).to.be.true;
+		});
+	});
 
-	describe( '#getImageEditorCropBounds()', () => {
-		test( 'should return the crop bounds', () => {
-			const bounds = getImageEditorCropBounds( {
+	describe('#getImageEditorCropBounds()', () => {
+		test('should return the crop bounds', () => {
+			const bounds = getImageEditorCropBounds({
 				ui: {
 					editor: {
 						imageEditor: {
@@ -95,20 +95,20 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			expect( bounds ).to.eql( {
+			expect(bounds).to.eql({
 				topBound: 100,
 				leftBound: 200,
 				bottomBound: 300,
 				rightBound: 400,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#getImageEditorCrop()', () => {
-		test( 'should return crop ratios', () => {
-			const hasChanges = getImageEditorCrop( {
+	describe('#getImageEditorCrop()', () => {
+		test('should return crop ratios', () => {
+			const hasChanges = getImageEditorCrop({
 				ui: {
 					editor: {
 						imageEditor: {
@@ -121,20 +121,20 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			expect( hasChanges ).to.eql( {
+			expect(hasChanges).to.eql({
 				topRatio: 0.2,
 				leftRatio: 0.3,
 				widthRatio: 0.4,
 				heightRatio: 0.5,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#getImageEditorAspectRatio()', () => {
-		test( 'should return the aspect ratio', () => {
-			const hasChanges = getImageEditorAspectRatio( {
+	describe('#getImageEditorAspectRatio()', () => {
+		test('should return the aspect ratio', () => {
+			const hasChanges = getImageEditorAspectRatio({
 				ui: {
 					editor: {
 						imageEditor: {
@@ -142,17 +142,17 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			expect( hasChanges ).to.eql( AspectRatios.FREE );
-		} );
-	} );
+			expect(hasChanges).to.eql(AspectRatios.FREE);
+		});
+	});
 
-	describe( '#isImageEditorImageLoaded()', () => {
-		test( 'should return whether the image is loaded or not', () => {
+	describe('#isImageEditorImageLoaded()', () => {
+		test('should return whether the image is loaded or not', () => {
 			const imageIsLoading = true;
 
-			const isImageLoaded = isImageEditorImageLoaded( {
+			const isImageLoaded = isImageEditorImageLoaded({
 				ui: {
 					editor: {
 						imageEditor: {
@@ -160,9 +160,9 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			expect( isImageLoaded ).to.eql( ! imageIsLoading );
-		} );
-	} );
-} );
+			expect(isImageLoaded).to.eql(!imageIsLoading);
+		});
+	});
+});

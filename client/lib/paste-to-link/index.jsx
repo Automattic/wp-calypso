@@ -18,23 +18,24 @@ import { resemblesUrl } from 'lib/url';
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} Enhanced component
  */
-export default WrappedComponent => {
+export default (WrappedComponent) => {
 	class WithPasteToLink extends React.Component {
-		static displayName = `withPasteToLink( ${ WrappedComponent.displayName ||
-			WrappedComponent.name } )`;
+		static displayName = `withPasteToLink( ${
+			WrappedComponent.displayName || WrappedComponent.name
+		} )`;
 		static propTypes = {};
 
-		constructor( props ) {
-			super( props );
+		constructor(props) {
+			super(props);
 
 			this.textareaRef = this.props.forwardedRef;
-			if ( ! this.textareaRef ) {
+			if (!this.textareaRef) {
 				this.textareaRef = React.createRef();
 			}
 		}
 
-		handlePaste = event => {
-			const clipboardText = event.clipboardData && event.clipboardData.getData( 'text/plain' );
+		handlePaste = (event) => {
+			const clipboardText = event.clipboardData && event.clipboardData.getData('text/plain');
 			const node = this.textareaRef.current;
 
 			// If we have a URL in the clipboard and a current selection, pass the URL to insertLink
@@ -44,34 +45,34 @@ export default WrappedComponent => {
 				clipboardText.length > 0 &&
 				node &&
 				node.selectionStart !== node.selectionEnd &&
-				resemblesUrl( clipboardText )
+				resemblesUrl(clipboardText)
 			) {
 				event.preventDefault();
-				this.insertLink( clipboardText );
+				this.insertLink(clipboardText);
 			}
 		};
 
 		// Insert a link from the clipboard into the textbox
-		insertLink( url ) {
+		insertLink(url) {
 			const node = this.textareaRef.current;
 
-			if ( ! node ) {
+			if (!node) {
 				return;
 			}
 
-			const textBeforeSelection = node.value.slice( 0, node.selectionStart );
-			const selectionText = node.value.slice( node.selectionStart, node.selectionEnd );
-			const textAfterSelectionEnd = node.value.slice( node.selectionEnd, node.value.length + 1 );
+			const textBeforeSelection = node.value.slice(0, node.selectionStart);
+			const selectionText = node.value.slice(node.selectionStart, node.selectionEnd);
+			const textAfterSelectionEnd = node.value.slice(node.selectionEnd, node.value.length + 1);
 
-			const newLink = '<a href="' + encodeURI( url ) + '">' + selectionText + '</a>';
+			const newLink = '<a href="' + encodeURI(url) + '">' + selectionText + '</a>';
 			const textLengthBefore = node.value.length;
 
 			// Replace the selected text. Uses execCommand to preserve undo history
-			document.execCommand( 'insertText', false, newLink );
+			document.execCommand('insertText', false, newLink);
 
 			// If the text length hasn't changed, try directly adjusting the value for Firefox's benefit
 			// see https://bugzilla.mozilla.org/show_bug.cgi?id=1220696
-			if ( textLengthBefore === node.value.length ) {
+			if (textLengthBefore === node.value.length) {
 				// Set the new text field value, including the link
 				node.value = textBeforeSelection + newLink + textAfterSelectionEnd;
 
@@ -81,13 +82,11 @@ export default WrappedComponent => {
 		}
 
 		render() {
-			return (
-				<WrappedComponent { ...this.props } onPaste={ this.handlePaste } ref={ this.textareaRef } />
-			);
+			return <WrappedComponent {...this.props} onPaste={this.handlePaste} ref={this.textareaRef} />;
 		}
 	}
 
-	return React.forwardRef( ( props, ref ) => {
-		return <WithPasteToLink { ...props } forwardedRef={ ref } />;
-	} );
+	return React.forwardRef((props, ref) => {
+		return <WithPasteToLink {...props} forwardedRef={ref} />;
+	});
 };

@@ -16,15 +16,15 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import SettingsNavigation from '../navigation';
 import ShippingSettingsSaveButton from './save-button';
 
-const ShippingHeader = ( { onSaveSuccess, translate, site, toSave } ) => {
+const ShippingHeader = ({ onSaveSuccess, translate, site, toSave }) => {
 	const breadcrumbs = [
-		<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
-		<span>{ translate( 'Shipping' ) }</span>,
+		<a href={getLink('/store/settings/:site/', site)}>{translate('Settings')}</a>,
+		<span>{translate('Shipping')}</span>,
 	];
 	return (
 		<div>
-			<ActionHeader breadcrumbs={ breadcrumbs }>
-				<ShippingSettingsSaveButton onSaveSuccess={ onSaveSuccess } toSave={ toSave } />
+			<ActionHeader breadcrumbs={breadcrumbs}>
+				<ShippingSettingsSaveButton onSaveSuccess={onSaveSuccess} toSave={toSave} />
 			</ActionHeader>
 			<SettingsNavigation activeSection="shipping" />
 		</div>
@@ -33,20 +33,20 @@ const ShippingHeader = ( { onSaveSuccess, translate, site, toSave } ) => {
 
 ShippingHeader.propTypes = {
 	onSaveSuccess: PropTypes.func.isRequired,
-	site: PropTypes.shape( {
+	site: PropTypes.shape({
 		slug: PropTypes.string,
-	} ),
-	toSave: PropTypes.shape( {
+	}),
+	toSave: PropTypes.shape({
 		units: PropTypes.bool,
 		shipping: PropTypes.bool,
-	} ),
+	}),
 };
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
 	return {
 		site,
 	};
 }
 
-export default connect( mapStateToProps )( localize( ShippingHeader ) );
+export default connect(mapStateToProps)(localize(ShippingHeader));

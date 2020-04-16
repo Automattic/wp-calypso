@@ -11,8 +11,8 @@ import {
 } from 'state/action-types';
 import { STATUS_UNINITIALIZED, STATUS_INITIALIZING, STATUS_READY, STATUS_ERROR } from './constants';
 
-export const questionAsked = ( state = null, action ) => {
-	switch ( action.type ) {
+export const questionAsked = (state = null, action) => {
+	switch (action.type) {
 		case DIRECTLY_ASK_QUESTION: {
 			const { questionText, name, email } = action;
 			return { questionText, name, email };
@@ -22,8 +22,8 @@ export const questionAsked = ( state = null, action ) => {
 	return state;
 };
 
-export const status = ( state = STATUS_UNINITIALIZED, action ) => {
-	switch ( action.type ) {
+export const status = (state = STATUS_UNINITIALIZED, action) => {
+	switch (action.type) {
 		case DIRECTLY_INITIALIZATION_START:
 			return STATUS_INITIALIZING;
 		case DIRECTLY_INITIALIZATION_SUCCESS:
@@ -35,7 +35,7 @@ export const status = ( state = STATUS_UNINITIALIZED, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	questionAsked,
 	status,
-} );
+});

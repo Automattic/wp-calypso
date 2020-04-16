@@ -10,32 +10,23 @@ import React from 'react';
 import './style.scss';
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-function rand( min, max ) {
-	return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+function rand(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export const emotions = [
-	'blush',
-	'wink',
-	'dreamy',
-	'somber',
-	'asleep',
-	'sad',
-	'cool',
-	'electric',
-];
+export const emotions = ['blush', 'wink', 'dreamy', 'somber', 'asleep', 'sad', 'cool', 'electric'];
 
-export function RandomAgentW( { exclude = [] } ) {
-	const filteredEmotions = emotions.filter( emotion => exclude.indexOf( emotion ) === -1 );
-	const index = rand( 0, filteredEmotions.length - 1 );
+export function RandomAgentW({ exclude = [] }) {
+	const filteredEmotions = emotions.filter((emotion) => exclude.indexOf(emotion) === -1);
+	const index = rand(0, filteredEmotions.length - 1);
 
-	return <AgentW classes={ filteredEmotions[ index ] } />;
+	return <AgentW classes={filteredEmotions[index]} />;
 }
 
-const AgentW = props => {
+const AgentW = (props) => {
 	return (
 		<div className="chat__gravatar chat__agent-w">
-			<div className={ props.classes }>
+			<div className={props.classes}>
 				<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
 					<g className="ears">
 						<path

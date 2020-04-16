@@ -20,7 +20,7 @@ import 'state/posts/init';
  * @param  {object} counts   Mapping of post status to count
  * @returns {object}          Action object
  */
-export function receivePostCounts( siteId, postType, counts ) {
+export function receivePostCounts(siteId, postType, counts) {
 	return {
 		type: POST_COUNTS_RECEIVE,
 		siteId,
@@ -37,35 +37,35 @@ export function receivePostCounts( siteId, postType, counts ) {
  * @param  {string}   postType Post type
  * @returns {Function}          Action thunk
  */
-export function requestPostCounts( siteId, postType ) {
-	return dispatch => {
-		dispatch( {
+export function requestPostCounts(siteId, postType) {
+	return (dispatch) => {
+		dispatch({
 			type: POST_COUNTS_REQUEST,
 			postType,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.site( siteId )
-			.postCounts( {
+			.site(siteId)
+			.postCounts({
 				type: postType,
-			} )
-			.then( data => {
-				dispatch( receivePostCounts( siteId, postType, data.counts ) );
-				dispatch( {
+			})
+			.then((data) => {
+				dispatch(receivePostCounts(siteId, postType, data.counts));
+				dispatch({
 					type: POST_COUNTS_REQUEST_SUCCESS,
 					siteId,
 					postType,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: POST_COUNTS_REQUEST_FAILURE,
 					siteId,
 					postType,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

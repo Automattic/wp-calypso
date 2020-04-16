@@ -47,16 +47,16 @@ class WordAdsUpsellComponent extends Component {
 		const { price, currentSitePlanSlug } = this.props;
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell__main">
-				{ ! price && (
+				{!price && (
 					<React.Fragment>
 						<QueryPlans />
-						<QuerySitePlans siteId={ this.props.selectedSiteId } />
+						<QuerySitePlans siteId={this.props.selectedSiteId} />
 						<QueryActivePromotions />
 					</React.Fragment>
-				) }
+				)}
 
-				<PageViewTracker path={ '/feature/ads/:site' } title="AdsUpsell" />
-				<DocumentHead title={ 'Ads' } />
+				<PageViewTracker path={'/feature/ads/:site'} title="AdsUpsell" />
+				<DocumentHead title={'Ads'} />
 
 				<div className="feature-upsell__text-content">
 					<header className="feature-upsell__header">
@@ -74,7 +74,7 @@ class WordAdsUpsellComponent extends Component {
 							className="feature-upsell__video-frame"
 							src="https://videopress.com/embed/kRaHRuHQ"
 							frameBorder="0"
-							allowFullScreen={ true }
+							allowFullScreen={true}
 						/>
 					</div>
 					<div className="feature-upsell__video-description">
@@ -83,7 +83,7 @@ class WordAdsUpsellComponent extends Component {
 							bid against each other to get their ads to your site.
 						</p>
 
-						{ this.renderCTA( 'is-in-video-box' ) }
+						{this.renderCTA('is-in-video-box')}
 					</div>
 				</div>
 
@@ -151,7 +151,7 @@ class WordAdsUpsellComponent extends Component {
 					</li>
 					<li className="feature-upsell__benefits-list-item">
 						<div className="feature-upsell__benefits-list-item-content">
-							{ this.renderCTA( 'is-in-benefit' ) }
+							{this.renderCTA('is-in-benefit')}
 						</div>
 					</li>
 				</ul>
@@ -163,28 +163,28 @@ class WordAdsUpsellComponent extends Component {
 				<div className="feature-upsell__features-list">
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="types" size={ 48 } /> }
-							title={ 'Unlimited access to premium themes' }
+							icon={<Gridicon icon="types" size={48} />}
+							title={'Unlimited access to premium themes'}
 							description={
 								'You don’t have to be a designer to make a beautiful site. Choose from a range of layouts created by pros.'
 							}
 						/>
 					</div>
-					{ isFreePlan( currentSitePlanSlug ) ? (
+					{isFreePlan(currentSitePlanSlug) ? (
 						<div className="feature-upsell__features-list-item">
 							<Feature
-								icon={ <Gridicon icon="domains" size={ 48 } /> }
-								title={ 'Custom site address' }
+								icon={<Gridicon icon="domains" size={48} />}
+								title={'Custom site address'}
 								description={
 									'Make your site memorable and professional - choose a .com, .shop, or any other dot.'
 								}
 							/>
 						</div>
-					) : null }
+					) : null}
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="customize" size={ 48 } /> }
-							title={ 'Advanced design customizations' }
+							icon={<Gridicon icon="customize" size={48} />}
+							title={'Advanced design customizations'}
 							description={
 								'Take creative control with additional customization features - like color schemes and, background designs, or add completely ' +
 								'personal touches with your CSS code.'
@@ -193,8 +193,8 @@ class WordAdsUpsellComponent extends Component {
 					</div>
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="money" size={ 48 } /> }
-							title={ 'Simple Payments' }
+							icon={<Gridicon icon="money" size={48} />}
+							title={'Simple Payments'}
 							description={
 								'Accept credit card payments on your site with the click of a button! Sell products, take donations, ' +
 								'sell tickets - add payment buttons to any page right from the WordPress editor'
@@ -203,8 +203,8 @@ class WordAdsUpsellComponent extends Component {
 					</div>
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="chat" size={ 48 } /> }
-							title={ 'Priority support' }
+							icon={<Gridicon icon="chat" size={48} />}
+							title={'Priority support'}
 							description={
 								'Unlimited access to our world-class live chat and email support. No question is too big or too small!'
 							}
@@ -216,30 +216,30 @@ class WordAdsUpsellComponent extends Component {
 		);
 	}
 
-	renderCTA( className = '' ) {
+	renderCTA(className = '') {
 		const { loadingPrice } = this.props;
 
 		return (
-			<div className={ 'feature-upsell__cta ' + className }>
-				{ loadingPrice ? (
+			<div className={'feature-upsell__cta ' + className}>
+				{loadingPrice ? (
 					<div className="feature-upsell__placeholder is-cta" />
 				) : (
 					<React.Fragment>
 						<p className="feature-upsell__cta-pitch">
 							<b>
-								Upgrade to a Premium plan for { this.renderPrice() } and start earning revenue from
+								Upgrade to a Premium plan for {this.renderPrice()} and start earning revenue from
 								your site
 							</b>
 						</p>
 						<button
-							onClick={ this.handleUpgradeButtonClick }
+							onClick={this.handleUpgradeButtonClick}
 							className="button is-primary feature-upsell__cta-button"
 						>
 							Upgrade now
 						</button>
 						<span className="feature-upsell__cta-guarantee">* 30-day money-back guarantee</span>
 					</React.Fragment>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -247,31 +247,31 @@ class WordAdsUpsellComponent extends Component {
 	handleUpgradeButtonClick = () => {
 		const { trackTracksEvent, selectedSiteSlug } = this.props;
 
-		trackTracksEvent( 'calypso_banner_cta_click', {
+		trackTracksEvent('calypso_banner_cta_click', {
 			cta_name: 'upsell-page-ads',
-		} );
+		});
 
-		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_PREMIUM ) || '' }` );
+		page(`/checkout/${selectedSiteSlug}/${getPlanPath(PLAN_PREMIUM) || ''}`);
 	};
 
 	renderPrice() {
-		if ( this.props.price === null ) {
+		if (this.props.price === null) {
 			return null;
 		}
-		const priceObject = getCurrencyObject( this.props.price, this.props.currencyCode );
-		let price = `${ priceObject.symbol }${ priceObject.integer }`;
-		if ( this.props.price.toFixed( 5 ).split( '.' )[ 1 ] !== '00000' ) {
+		const priceObject = getCurrencyObject(this.props.price, this.props.currencyCode);
+		let price = `${priceObject.symbol}${priceObject.integer}`;
+		if (this.props.price.toFixed(5).split('.')[1] !== '00000') {
 			price += priceObject.fraction;
 		}
 		return price;
 	}
 }
 
-const mapStateToProps = state => {
-	const selectedSite = getSelectedSite( state );
-	const selectedSiteId = getSelectedSiteId( state );
-	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-	const price = getUpsellPlanPrice( state, PLAN_PREMIUM, selectedSiteId );
+const mapStateToProps = (state) => {
+	const selectedSite = getSelectedSite(state);
+	const selectedSiteId = getSelectedSiteId(state);
+	const currentSitePlan = getCurrentPlan(state, selectedSiteId);
+	const price = getUpsellPlanPrice(state, PLAN_PREMIUM, selectedSiteId);
 
 	return {
 		price,
@@ -279,24 +279,24 @@ const mapStateToProps = state => {
 		currentSitePlan,
 		currentSitePlanSlug: currentSitePlan ? currentSitePlan.productSlug : '',
 		loadingPrice:
-			! price &&
-			( isRequestingPlans( state ) ||
-				isRequestingSitePlans( state ) ||
-				isRequestingActivePromotions( state ) ),
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
+			!price &&
+			(isRequestingPlans(state) ||
+				isRequestingSitePlans(state) ||
+				isRequestingActivePromotions(state)),
+		currencyCode: getCurrentUserCurrencyCode(state),
+		selectedSiteSlug: getSiteSlug(state, selectedSiteId),
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
-} );
+const mapDispatchToProps = (dispatch) => ({
+	trackTracksEvent: (name, props) => dispatch(recordTracksEvent(name, props)),
+});
 
 export default flowRight(
-	connect( mapStateToProps, mapDispatchToProps ),
+	connect(mapStateToProps, mapDispatchToProps),
 	localize,
 	redirectUnlessCanUpgradeSite,
-	redirectIf( state => canCurrentUserUseAds( state ), '/ads/settings' )
-)( WordAdsUpsellComponent );
+	redirectIf((state) => canCurrentUserUseAds(state), '/ads/settings')
+)(WordAdsUpsellComponent);
 
 /* eslint-enable wpcalypso/jsx-classname-namespace */

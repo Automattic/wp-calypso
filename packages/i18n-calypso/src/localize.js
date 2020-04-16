@@ -9,10 +9,10 @@ import React from 'react';
  * @param {object} i18n I18N instance to use for localization
  * @returns {Function} Component localization function
  */
-export default function( i18n ) {
+export default function (i18n) {
 	const i18nProps = {
-		numberFormat: i18n.numberFormat.bind( i18n ),
-		translate: i18n.translate.bind( i18n ),
+		numberFormat: i18n.numberFormat.bind(i18n),
+		translate: i18n.translate.bind(i18n),
 	};
 
 	/**
@@ -21,20 +21,20 @@ export default function( i18n ) {
 	 * @param  {React.Component} ComposedComponent React component to localize
 	 * @returns {React.Component}                   The localized component
 	 */
-	return function( ComposedComponent ) {
+	return function (ComposedComponent) {
 		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
 		return class extends React.Component {
 			static displayName = 'Localized(' + componentName + ')';
 
-			boundForceUpdate = this.forceUpdate.bind( this );
+			boundForceUpdate = this.forceUpdate.bind(this);
 
 			componentDidMount() {
-				i18n.on( 'change', this.boundForceUpdate );
+				i18n.on('change', this.boundForceUpdate);
 			}
 
 			componentWillUnmount() {
-				i18n.off( 'change', this.boundForceUpdate );
+				i18n.off('change', this.boundForceUpdate);
 			}
 
 			render() {
@@ -43,7 +43,7 @@ export default function( i18n ) {
 					...this.props,
 					...i18nProps,
 				};
-				return <ComposedComponent { ...props } />;
+				return <ComposedComponent {...props} />;
 			}
 		};
 	};

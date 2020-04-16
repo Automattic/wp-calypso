@@ -17,7 +17,7 @@ import SelectDropdown from 'components/select-dropdown';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-const possibleDevices = [ 'computer', 'tablet', 'phone' ];
+const possibleDevices = ['computer', 'tablet', 'phone'];
 
 class PreviewToolbar extends Component {
 	static propTypes = {
@@ -52,27 +52,27 @@ class PreviewToolbar extends Component {
 	};
 
 	handleEditorWebPreviewExternalClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_external_click' );
+		this.props.recordTracksEvent('calypso_editor_preview_toolbar_external_click');
 	};
 
 	handleEditorWebPreviewClose = () => {
-		this.props.recordTracksEvent( 'calypso_editor_preview_close_click' );
+		this.props.recordTracksEvent('calypso_editor_preview_close_click');
 		this.props.onClose();
 	};
 
 	handleEditorWebPreviewEdit = () => {
-		this.props.recordTracksEvent( 'calypso_editor_preview_edit_click' );
+		this.props.recordTracksEvent('calypso_editor_preview_edit_click');
 		this.props.onEdit();
 	};
 
-	constructor( props ) {
+	constructor(props) {
 		super();
 
 		this.devices = {
-			computer: { title: props.translate( 'Desktop' ), icon: 'computer' },
-			tablet: { title: props.translate( 'Tablet' ), icon: 'tablet' },
-			phone: { title: props.translate( 'Phone' ), icon: 'phone' },
-			seo: { title: props.translate( 'Search & Social' ), icon: 'globe' },
+			computer: { title: props.translate('Desktop'), icon: 'computer' },
+			tablet: { title: props.translate('Tablet'), icon: 'tablet' },
+			phone: { title: props.translate('Phone'), icon: 'phone' },
+			seo: { title: props.translate('Search & Social'), icon: 'globe' },
 		};
 	}
 
@@ -93,79 +93,79 @@ class PreviewToolbar extends Component {
 			translate,
 		} = this.props;
 
-		const selectedDevice = this.devices[ currentDevice ];
-		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
+		const selectedDevice = this.devices[currentDevice];
+		const devicesToShow = showSEO ? possibleDevices.concat('seo') : possibleDevices;
 
 		return (
 			<div className="web-preview__toolbar">
-				{ showClose && (
+				{showClose && (
 					<Button
 						borderless
-						aria-label={ translate( 'Close preview' ) }
+						aria-label={translate('Close preview')}
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
-						onClick={ this.handleEditorWebPreviewClose }
+						onClick={this.handleEditorWebPreviewClose}
 					>
-						{ translate( 'Close' ) }
+						{translate('Close')}
 					</Button>
-				) }
-				{ showDeviceSwitcher && (
+				)}
+				{showDeviceSwitcher && (
 					<SelectDropdown
 						compact
 						className="web-preview__device-switcher"
-						selectedText={ selectedDevice.title }
-						selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
-						ref={ this.setDropdown }
+						selectedText={selectedDevice.title}
+						selectedIcon={<Gridicon size={18} icon={selectedDevice.icon} />}
+						ref={this.setDropdown}
 					>
-						{ devicesToShow.map( device => (
+						{devicesToShow.map((device) => (
 							<SelectDropdown.Item
-								key={ device }
-								selected={ device === currentDevice }
-								onClick={ partial( setDeviceViewport, device ) }
-								icon={ <Gridicon size={ 18 } icon={ this.devices[ device ].icon } /> }
-								e2eTitle={ device }
+								key={device}
+								selected={device === currentDevice}
+								onClick={partial(setDeviceViewport, device)}
+								icon={<Gridicon size={18} icon={this.devices[device].icon} />}
+								e2eTitle={device}
 							>
-								{ this.devices[ device ].title }
+								{this.devices[device].title}
 							</SelectDropdown.Item>
-						) ) }
+						))}
 					</SelectDropdown>
-				) }
-				{ showUrl && (
+				)}
+				{showUrl && (
 					<ClipboardButtonInput
 						className="web-preview__url-clipboard-input"
-						value={ externalUrl || previewUrl }
+						value={externalUrl || previewUrl}
 						hideHttp
 					/>
-				) }
+				)}
 				<div className="web-preview__toolbar-actions">
-					{ showEdit && (
+					{showEdit && (
 						<Button
 							className="web-preview__edit"
-							href={ editUrl }
-							onClick={ this.handleEditorWebPreviewEdit }
+							href={editUrl}
+							onClick={this.handleEditorWebPreviewEdit}
 						>
-							{ translate( 'Edit' ) }
+							{translate('Edit')}
 						</Button>
-					) }
-					{ showExternal && (
+					)}
+					{showExternal && (
 						<Button
 							primary
 							className="web-preview__external"
-							href={ externalUrl || previewUrl }
-							target={ isModalWindow ? '_blank' : null }
+							href={externalUrl || previewUrl}
+							target={isModalWindow ? '_blank' : null}
 							rel="noopener noreferrer"
-							onClick={ this.handleEditorWebPreviewExternalClick }
+							onClick={this.handleEditorWebPreviewExternalClick}
 						>
-							{ translate( 'Visit site' ) }
+							{translate('Visit site')}
 						</Button>
-					) }
-					<div className="web-preview__toolbar-tray">{ this.props.children }</div>
+					)}
+					<div className="web-preview__toolbar-tray">{this.props.children}</div>
 				</div>
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( PreviewToolbar ) );
+})(localize(PreviewToolbar));

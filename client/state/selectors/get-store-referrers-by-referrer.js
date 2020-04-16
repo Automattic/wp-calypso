@@ -10,23 +10,23 @@ import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 
 import 'state/stats/init';
 
-export default function( state, { siteId, statType, query, selectedReferrer } ) {
-	const rawData = getSiteStatsNormalizedData( state, siteId, statType, query );
-	return rawData.map( d => {
+export default function (state, { siteId, statType, query, selectedReferrer }) {
+	const rawData = getSiteStatsNormalizedData(state, siteId, statType, query);
+	return rawData.map((d) => {
 		const { data, ...props } = d;
 		let referrerData;
-		if ( selectedReferrer ) {
-			referrerData = find( data, r => r.referrer === selectedReferrer ) || {};
+		if (selectedReferrer) {
+			referrerData = find(data, (r) => r.referrer === selectedReferrer) || {};
 		} else {
 			referrerData = data.reduce(
-				( all, r ) => {
-					return Object.assign( all, {
+				(all, r) => {
+					return Object.assign(all, {
 						add_to_carts: all.add_to_carts + r.add_to_carts,
 						product_purchases: all.product_purchases + r.product_purchases,
 						product_views: all.product_views + r.product_views,
 						sales: all.sales + r.sales,
 						currency: r.currency,
-					} );
+					});
 				},
 				{
 					referrer: 'All',
@@ -42,5 +42,5 @@ export default function( state, { siteId, statType, query, selectedReferrer } ) 
 			...referrerData,
 			period: props.date,
 		};
-	} );
+	});
 }

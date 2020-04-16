@@ -19,11 +19,11 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const JETPACK_REMOTE_INSTALL_RETRIES = 3;
 
-export const installJetpackPlugin = action =>
+export const installJetpackPlugin = (action) =>
 	http(
 		{
 			method: 'POST',
-			path: '/jetpack-install/' + encodeURIComponent( action.url ),
+			path: '/jetpack-install/' + encodeURIComponent(action.url),
 			query: {
 				user: action.user,
 				password: action.password,
@@ -32,17 +32,17 @@ export const installJetpackPlugin = action =>
 		action
 	);
 
-export const handleSuccess = ( { url } ) => {
+export const handleSuccess = ({ url }) => {
 	const logToTracks = withAnalytics(
-		recordTracksEvent( 'calypso_jpc_remoteinstall_api_success', {
+		recordTracksEvent('calypso_jpc_remoteinstall_api_success', {
 			url,
-		} )
+		})
 	);
 
-	return logToTracks( jetpackRemoteInstallComplete( url ) );
+	return logToTracks(jetpackRemoteInstallComplete(url));
 };
 
-export const handleError = ( action, error ) => {
+export const handleError = (action, error) => {
 	const {
 		url,
 		user,
@@ -52,16 +52,16 @@ export const handleError = ( action, error ) => {
 	const { retryCount = 0 } = dataLayer;
 
 	const logToTracks = withAnalytics(
-		recordTracksEvent( 'calypso_jpc_remoteinstall_api_fail', {
+		recordTracksEvent('calypso_jpc_remoteinstall_api_fail', {
 			url,
 			error: error.error,
 			error_message: error.message,
 			status: error.status,
-		} )
+		})
 	);
 
-	if ( includes( error.message, 'timed out' ) ) {
-		if ( retryCount < JETPACK_REMOTE_INSTALL_RETRIES ) {
+	if (includes(error.message, 'timed out')) {
+		if (retryCount < JETPACK_REMOTE_INSTALL_RETRIES) {
 			return {
 				type: JETPACK_REMOTE_INSTALL,
 				url,
@@ -77,17 +77,17 @@ export const handleError = ( action, error ) => {
 		}
 	}
 
-	return logToTracks( jetpackRemoteInstallUpdateError( url, error.error, error.message ) );
+	return logToTracks(jetpackRemoteInstallUpdateError(url, error.error, error.message));
 };
 
-registerHandlers( 'state/data-layer/wpcom/jetpack-install/index.js', {
-	[ JETPACK_REMOTE_INSTALL ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/jetpack-install/index.js', {
+	[JETPACK_REMOTE_INSTALL]: [
+		dispatchRequest({
 			fetch: installJetpackPlugin,
 			onSuccess: handleSuccess,
 			onError: handleError,
-		} ),
+		}),
 	],
-} );
+});
 
 export default {};

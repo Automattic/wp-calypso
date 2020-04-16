@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param {number} siteId - identifier of the site
  * @returns {?boolean} true if the list of G Suite users is being requested, false otherwise
  */
-export default function isRequestingGSuiteUsers( state, siteId ) {
-	return get( state, [ 'gsuiteUsers', siteId, 'requesting' ], false );
+export default function isRequestingGSuiteUsers(state, siteId) {
+	return get(state, ['gsuiteUsers', siteId, 'requesting'], false);
 }

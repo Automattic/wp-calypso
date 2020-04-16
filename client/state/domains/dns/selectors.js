@@ -3,6 +3,6 @@
  */
 import { initialState } from './reducer';
 
-export function getDomainDns( state, domain ) {
-	return state.domains.dns[ domain ] || initialState;
+export function getDomainDns(state, domain) {
+	return state.domains.dns[domain] || initialState;
 }

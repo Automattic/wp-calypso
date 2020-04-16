@@ -21,36 +21,36 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
-function ClipboardButtonInput( { value = '', className, disabled, hideHttp, dispatch, ...rest } ) {
+function ClipboardButtonInput({ value = '', className, disabled, hideHttp, dispatch, ...rest }) {
 	const translate = useTranslate();
 
-	const [ isCopied, setCopied ] = React.useState( false );
+	const [isCopied, setCopied] = React.useState(false);
 
 	// toggle the `isCopied` flag back to `false` after 4 seconds
-	React.useEffect( () => {
-		if ( isCopied ) {
-			const confirmationTimeout = setTimeout( () => setCopied( false ), 4000 );
-			return () => clearTimeout( confirmationTimeout );
+	React.useEffect(() => {
+		if (isCopied) {
+			const confirmationTimeout = setTimeout(() => setCopied(false), 4000);
+			return () => clearTimeout(confirmationTimeout);
 		}
-	}, [ isCopied ] );
+	}, [isCopied]);
 
 	const showConfirmation = () => {
-		setCopied( true );
-		dispatch( recordTracksEvent( 'calypso_editor_clipboard_url_button_click' ) );
+		setCopied(true);
+		dispatch(recordTracksEvent('calypso_editor_clipboard_url_button_click'));
 	};
 
 	return (
-		<span className={ classnames( 'clipboard-button-input', className ) }>
+		<span className={classnames('clipboard-button-input', className)}>
 			<FormTextInput
-				{ ...rest }
-				disabled={ disabled }
-				value={ hideHttp ? withoutHttp( value ) : value }
+				{...rest}
+				disabled={disabled}
+				value={hideHttp ? withoutHttp(value) : value}
 				type="text"
 				selectOnFocus
 				readOnly
 			/>
-			<ClipboardButton text={ value } onCopy={ showConfirmation } disabled={ disabled } compact>
-				{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+			<ClipboardButton text={value} onCopy={showConfirmation} disabled={disabled} compact>
+				{isCopied ? translate('Copied!') : translate('Copy', { context: 'verb' })}
 			</ClipboardButton>
 		</span>
 	);
@@ -63,4 +63,4 @@ ClipboardButtonInput.propTypes = {
 	hideHttp: PropTypes.bool,
 };
 
-export default connect()( ClipboardButtonInput );
+export default connect()(ClipboardButtonInput);

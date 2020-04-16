@@ -29,7 +29,7 @@ export const usersSchema = {
 			},
 			{
 				type: 'object',
-				required: [ 'domain', 'site_id', 'error' ],
+				required: ['domain', 'site_id', 'error'],
 				properties: {
 					error: { type: 'string' },
 					domain: { type: 'string' },

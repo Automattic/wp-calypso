@@ -29,28 +29,28 @@ export default class HeaderCake extends Component {
 			actionOnClick,
 			alwaysShowActionText,
 		} = this.props;
-		const classes = classNames( 'header-cake', this.props.className, {
+		const classes = classNames('header-cake', this.props.className, {
 			'is-compact': this.props.isCompact,
-		} );
+		});
 
 		return (
-			<Card className={ classes }>
-				<HeaderCakeBack text={ backText } href={ backHref } onClick={ this.props.onClick } />
+			<Card className={classes}>
+				<HeaderCakeBack text={backText} href={backHref} onClick={this.props.onClick} />
 
-				<div className="header-cake__title" role="presentation" onClick={ this.props.onTitleClick }>
-					{ this.props.children }
+				<div className="header-cake__title" role="presentation" onClick={this.props.onTitleClick}>
+					{this.props.children}
 				</div>
 
-				{ actionButton || (
+				{actionButton || (
 					<HeaderCakeBack
-						text={ actionText || backText }
-						href={ actionHref || backHref }
-						onClick={ actionOnClick }
-						icon={ actionIcon }
-						alwaysShowActionText={ alwaysShowActionText }
-						spacer={ ! actionOnClick }
+						text={actionText || backText}
+						href={actionHref || backHref}
+						onClick={actionOnClick}
+						icon={actionIcon}
+						alwaysShowActionText={alwaysShowActionText}
+						spacer={!actionOnClick}
 					/>
-				) }
+				)}
 			</Card>
 		);
 	}

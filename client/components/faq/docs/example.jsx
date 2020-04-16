@@ -22,12 +22,12 @@ export default class extends React.Component {
 				/>
 				<FAQItem
 					question="Can I cancel my subscription?"
-					answer={ [
+					answer={[
 						'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day refund on all of our plans. ',
 						<a href="#" key="manage-purchases">
 							Manage purchases
 						</a>,
-					] }
+					]}
 				/>
 				<FAQItem
 					question="Do you offer email accounts?"
@@ -47,12 +47,12 @@ export default class extends React.Component {
 				/>
 				<FAQItem
 					question="Can I cancel my subscription?"
-					answer={ [
+					answer={[
 						'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day refund on all of our plans. ',
 						<a href="#" key="manage-purchases-two">
 							Manage purchases
 						</a>,
-					] }
+					]}
 				/>
 				<FAQItem
 					question="Do you offer email accounts?"

@@ -7,14 +7,14 @@ import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 
 // TODO(biskobe) - Can be improved with `keyedReducer` instead of state spread.
-const isVisible = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const isVisible = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case DROPZONE_SHOW: {
 			const { dropZoneName } = action;
 
 			return {
 				...state,
-				[ dropZoneName ]: true,
+				[dropZoneName]: true,
 			};
 		}
 		case DROPZONE_HIDE: {
@@ -22,14 +22,14 @@ const isVisible = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ dropZoneName ]: false,
+				[dropZoneName]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	isVisible,
-} );
+});

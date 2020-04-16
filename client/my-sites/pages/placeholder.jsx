@@ -16,19 +16,19 @@ class PagePlaceholder extends React.Component {
 	render() {
 		return (
 			<CompactCard className="page is-placeholder">
-				{ this.props.multisite ? <SiteIcon size={ 34 } /> : null }
+				{this.props.multisite ? <SiteIcon size={34} /> : null}
 				<a className="page__title">
 					<span className="placeholder-text">
-						{ this.props.translate( 'Loading a page of Pages…' ) }
+						{this.props.translate('Loading a page of Pages…')}
 					</span>
 				</a>
-				{ this.props.multisite ? (
+				{this.props.multisite ? (
 					<span className="page__site-url ">
 						<span className="placeholder-text">
-							{ this.props.translate( 'A domain, quite soon…' ) }
+							{this.props.translate('A domain, quite soon…')}
 						</span>
 					</span>
-				) : null }
+				) : null}
 			</CompactCard>
 		);
 	}
@@ -47,6 +47,6 @@ class MarkerPlaceholder extends React.Component {
 }
 
 export default {
-	Page: localize( PagePlaceholder ),
-	Marker: localize( MarkerPlaceholder ),
+	Page: localize(PagePlaceholder),
+	Marker: localize(MarkerPlaceholder),
 };

@@ -27,7 +27,7 @@ import './style.scss';
 class CommentDisplaySettings extends Component {
 	shouldEnableSettings() {
 		const { isCommentsModuleActive, submittingForm } = this.props;
-		return !! submittingForm || ! isCommentsModuleActive;
+		return !!submittingForm || !isCommentsModuleActive;
 	}
 
 	render() {
@@ -36,49 +36,49 @@ class CommentDisplaySettings extends Component {
 		return (
 			<FormFieldset className="comment-display-settings">
 				<SupportInfo
-					text={ translate(
+					text={translate(
 						'Replaces the standard WordPress comment form with a new comment system ' +
 							'that includes social media login options.'
-					) }
+					)}
 					link="https://jetpack.com/support/comments/"
 				/>
 				<JetpackModuleToggle
-					siteId={ selectedSiteId }
+					siteId={selectedSiteId}
 					moduleSlug="comments"
-					label={ translate(
+					label={translate(
 						'Let visitors use a WordPress.com, Twitter, Facebook, or Google account to comment.'
-					) }
-					disabled={ !! submittingForm }
+					)}
+					disabled={!!submittingForm}
 				/>
 				<div className="comment-display-settings__module-setting is-indented">
 					<FormLabel htmlFor="highlander_comment_form_prompt">
-						{ translate( 'Comment form introduction' ) }
+						{translate('Comment form introduction')}
 					</FormLabel>
 					<FormTextInput
 						name="highlander_comment_form_prompt"
 						type="text"
 						id="highlander_comment_form_prompt"
-						value={ fields.highlander_comment_form_prompt || '' }
-						onChange={ onChangeField( 'highlander_comment_form_prompt' ) }
-						disabled={ this.shouldEnableSettings() }
+						value={fields.highlander_comment_form_prompt || ''}
+						onChange={onChangeField('highlander_comment_form_prompt')}
+						disabled={this.shouldEnableSettings()}
 					/>
 					<FormSettingExplanation>
-						{ translate( 'A few catchy words to motivate your readers to comment.' ) }
+						{translate('A few catchy words to motivate your readers to comment.')}
 					</FormSettingExplanation>
 				</div>
 				<div className="comment-display-settings__module-setting is-indented">
 					<FormLabel htmlFor="jetpack_comment_form_color_scheme">
-						{ translate( 'Color Scheme' ) }
+						{translate('Color Scheme')}
 					</FormLabel>
 					<FormSelect
 						name="jetpack_comment_form_color_scheme"
-						value={ fields.jetpack_comment_form_color_scheme || 'light' }
-						onChange={ onChangeField( 'jetpack_comment_form_color_scheme' ) }
-						disabled={ this.shouldEnableSettings() }
+						value={fields.jetpack_comment_form_color_scheme || 'light'}
+						onChange={onChangeField('jetpack_comment_form_color_scheme')}
+						disabled={this.shouldEnableSettings()}
 					>
-						<option value="light">{ translate( 'Light' ) }</option>
-						<option value="dark">{ translate( 'Dark' ) }</option>
-						<option value="transparent">{ translate( 'Transparent' ) }</option>
+						<option value="light">{translate('Light')}</option>
+						<option value="dark">{translate('Dark')}</option>
+						<option value="transparent">{translate('Transparent')}</option>
 					</FormSelect>
 				</div>
 			</FormFieldset>
@@ -86,11 +86,11 @@ class CommentDisplaySettings extends Component {
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
 		selectedSiteId,
-		isCommentsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'comments' ),
+		isCommentsModuleActive: !!isJetpackModuleActive(state, selectedSiteId, 'comments'),
 	};
-} )( localize( CommentDisplaySettings ) );
+})(localize(CommentDisplaySettings));

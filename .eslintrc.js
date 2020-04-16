@@ -1,5 +1,5 @@
-const { merge } = require( 'lodash' );
-const reactVersion = require( './client/package.json' ).dependencies.react;
+const { merge } = require('lodash');
+const reactVersion = require('./client/package.json').dependencies.react;
 
 module.exports = {
 	root: true,
@@ -12,7 +12,7 @@ module.exports = {
 	],
 	overrides: [
 		{
-			files: [ 'bin/**/*' ],
+			files: ['bin/**/*'],
 			rules: {
 				'import/no-nodejs-modules': 'off',
 				'no-console': 'off',
@@ -21,7 +21,7 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'test/e2e/**/*' ],
+			files: ['test/e2e/**/*'],
 			rules: {
 				'import/no-nodejs-modules': 'off',
 				'no-console': 'off',
@@ -38,18 +38,18 @@ module.exports = {
 			// the TypeScript config manually using internal bits from various plugins
 			{},
 			// base TypeScript config: parser options, add plugin with rules
-			require( '@typescript-eslint/eslint-plugin' ).configs.base,
+			require('@typescript-eslint/eslint-plugin').configs.base,
 			// basic recommended rules config from the TypeScript plugin
-			{ rules: require( '@typescript-eslint/eslint-plugin' ).configs.recommended.rules },
+			{ rules: require('@typescript-eslint/eslint-plugin').configs.recommended.rules },
 			// Prettier rules config
-			require( 'eslint-config-prettier/@typescript-eslint' ),
+			require('eslint-config-prettier/@typescript-eslint'),
 			// Our own overrides
 			{
-				files: [ '**/*.ts', '**/*.tsx' ],
+				files: ['**/*.ts', '**/*.tsx'],
 				rules: {
 					'@typescript-eslint/explicit-function-return-type': 'off',
 					'@typescript-eslint/explicit-member-accessibility': 'off',
-					'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
+					'@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
 					'@typescript-eslint/no-use-before-define': [
 						'error',
 						{ functions: false, typedefs: false },
@@ -82,7 +82,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'jest', 'jsx-a11y', 'import' ],
+	plugins: ['jest', 'jsx-a11y', 'import'],
 	settings: {
 		react: {
 			version: reactVersion,
@@ -99,7 +99,7 @@ module.exports = {
 		'jest/valid-expect': 'off',
 
 		// Only use known tag names plus `jest-environment`.
-		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
+		'jsdoc/check-tag-names': ['error', { definedTags: ['jest-environment'] }],
 
 		// Deprecated rule, fails in some valid cases with custom input components
 		'jsx-a11y/label-has-for': 'off',
@@ -121,7 +121,7 @@ module.exports = {
 					// Prevent importing Redux's combineReducers.
 					{
 						name: 'redux',
-						importNames: [ 'combineReducers' ],
+						importNames: ['combineReducers'],
 						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
 					},
 					// Use fetch instead of superagent.
@@ -161,7 +161,7 @@ module.exports = {
 		'wpcalypso/jsx-classname-namespace': [
 			2,
 			{
-				rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
+				rootFiles: ['index.js', 'index.jsx', 'main.js', 'main.jsx'],
 			},
 		],
 
@@ -169,6 +169,6 @@ module.exports = {
 		// - url because we use it all over the place to parse and build urls
 		// - events because we use it for some event emitters
 		// - path because we use it quite a bit
-		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
+		'import/no-nodejs-modules': ['error', { allow: ['url', 'events', 'path', 'config'] }],
 	},
 };

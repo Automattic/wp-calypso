@@ -14,24 +14,24 @@ import {
 	STATUS_UNINITIALIZED,
 } from 'state/help/directly/constants';
 
-describe( 'isDirectlyReady()', () => {
-	test( 'should be false when uninitialized', () => {
+describe('isDirectlyReady()', () => {
+	test('should be false when uninitialized', () => {
 		const state = { help: { directly: { status: STATUS_UNINITIALIZED } } };
-		expect( isDirectlyReady( state ) ).to.be.false;
-	} );
+		expect(isDirectlyReady(state)).to.be.false;
+	});
 
-	test( 'should be false when initializing', () => {
+	test('should be false when initializing', () => {
 		const state = { help: { directly: { status: STATUS_INITIALIZING } } };
-		expect( isDirectlyReady( state ) ).to.be.false;
-	} );
+		expect(isDirectlyReady(state)).to.be.false;
+	});
 
-	test( 'should be true when ready', () => {
+	test('should be true when ready', () => {
 		const state = { help: { directly: { status: STATUS_READY } } };
-		expect( isDirectlyReady( state ) ).to.be.true;
-	} );
+		expect(isDirectlyReady(state)).to.be.true;
+	});
 
-	test( 'should be false when failed', () => {
+	test('should be false when failed', () => {
 		const state = { help: { directly: { status: STATUS_ERROR } } };
-		expect( isDirectlyReady( state ) ).to.be.false;
-	} );
-} );
+		expect(isDirectlyReady(state)).to.be.false;
+	});
+});

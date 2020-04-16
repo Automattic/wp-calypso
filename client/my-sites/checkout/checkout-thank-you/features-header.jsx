@@ -18,38 +18,38 @@ import {
 	isGuidedTransfer,
 } from 'lib/products-values';
 
-const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
-	const classes = classNames( 'checkout-thank-you__features-header', {
-		'is-placeholder': ! isDataLoaded,
-	} );
+const FeaturesHeader = ({ isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases }) => {
+	const classes = classNames('checkout-thank-you__features-header', {
+		'is-placeholder': !isDataLoaded,
+	});
 
-	if ( ! isDataLoaded ) {
-		return <div className={ classes } />;
+	if (!isDataLoaded) {
+		return <div className={classes} />;
 	}
 
-	if ( isGenericReceipt ) {
+	if (isGenericReceipt) {
 		return <div />;
 	}
 
 	const shouldHideFeaturesHeading =
 		hasFailedPurchases ||
-		purchases.some( isGoogleApps ) ||
-		purchases.some( isDomainRegistration ) ||
-		purchases.some( isDomainMapping ) ||
-		purchases.some( isGuidedTransfer ) ||
-		purchases.some( isDomainTransfer );
+		purchases.some(isGoogleApps) ||
+		purchases.some(isDomainRegistration) ||
+		purchases.some(isDomainMapping) ||
+		purchases.some(isGuidedTransfer) ||
+		purchases.some(isDomainTransfer);
 
-	if ( shouldHideFeaturesHeading ) {
+	if (shouldHideFeaturesHeading) {
 		return <div />;
 	}
 
-	return <div className={ classes }>{ i18n.translate( 'What now?' ) }</div>;
+	return <div className={classes}>{i18n.translate('What now?')}</div>;
 };
 
 FeaturesHeader.propTypes = {
 	isDataLoaded: PropTypes.bool.isRequired,
 	isGenericReceipt: PropTypes.bool,
-	purchases: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.array ] ),
+	purchases: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]),
 };
 
 export default FeaturesHeader;

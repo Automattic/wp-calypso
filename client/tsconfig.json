@@ -12,7 +12,7 @@
 		"noEmit": false,
 		"emitDeclarationOnly": true,
 		"composite": true,
-		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ]
+		"typeRoots": ["../packages/calypso-build/typings", "../node_modules/@types"]
 	},
 	"references": [
 		{ "path": "../packages/calypso-analytics" },
@@ -21,7 +21,7 @@
 		{ "path": "../packages/media-library" },
 		{ "path": "../packages/react-i18n" }
 	],
-	"include": [ "**/*" ],
+	"include": ["**/*"],
 	"exclude": [
 		"../**/node_modules/**/*",
 		"**/test/**/*",

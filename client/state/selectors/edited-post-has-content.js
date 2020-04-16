@@ -21,10 +21,9 @@ const CONTENT_LENGTH_ASSUME_SET = 50;
  * @param  {string}  content Raw post content
  * @returns {boolean}         Whether it's considered empty
  */
-export function isEmptyContent( content ) {
+export function isEmptyContent(content) {
 	return (
-		! content ||
-		( content.length < CONTENT_LENGTH_ASSUME_SET && REGEXP_EMPTY_CONTENT.test( content ) )
+		!content || (content.length < CONTENT_LENGTH_ASSUME_SET && REGEXP_EMPTY_CONTENT.test(content))
 	);
 }
 
@@ -37,22 +36,22 @@ export function isEmptyContent( content ) {
  * @param  {number}  postId Post ID
  * @returns {boolean}        Whether the edited post has content or not
  */
-export default function editedPostHasContent( state, siteId, postId ) {
-	const editedPost = getEditedPost( state, siteId, postId );
+export default function editedPostHasContent(state, siteId, postId) {
+	const editedPost = getEditedPost(state, siteId, postId);
 
-	if ( ! editedPost ) {
+	if (!editedPost) {
 		return false;
 	}
 
-	if ( some( [ 'title', 'excerpt' ], field => trim( editedPost[ field ] ) ) ) {
+	if (some(['title', 'excerpt'], (field) => trim(editedPost[field]))) {
 		return true;
 	}
 
-	const rawContent = getEditorRawContent( state );
-	if ( rawContent ) {
+	const rawContent = getEditorRawContent(state);
+	if (rawContent) {
 		// Raw content contains the most up-to-date post content
-		return ! isEmptyContent( rawContent );
+		return !isEmptyContent(rawContent);
 	}
 
-	return ! isEmptyContent( editedPost.content );
+	return !isEmptyContent(editedPost.content);
 }

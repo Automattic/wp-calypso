@@ -18,18 +18,18 @@ import { STATS_RECENT_POST_VIEWS_RECEIVE } from 'state/action-types';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemsSchemas, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchemas, (state = {}, action) => {
+	switch (action.type) {
 		case STATS_RECENT_POST_VIEWS_RECEIVE: {
 			const viewsForState = {};
-			action.posts.forEach( post => {
-				viewsForState[ post.ID ] = { views: post.views };
-			} );
+			action.posts.forEach((post) => {
+				viewsForState[post.ID] = { views: post.views };
+			});
 
 			return {
 				...state,
-				[ action.siteId ]: {
-					...get( state, [ action.siteId ], {} ),
+				[action.siteId]: {
+					...get(state, [action.siteId], {}),
 					...viewsForState,
 				},
 			};
@@ -37,8 +37,8 @@ export const items = withSchemaValidation( itemsSchemas, ( state = {}, action ) 
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
-} );
+});

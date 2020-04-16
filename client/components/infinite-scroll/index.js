@@ -23,44 +23,44 @@ class InfiniteScrollWithIntersectionObserver extends React.Component {
 	hasScrolledPastBottom = false;
 
 	componentDidMount() {
-		if ( this.observedElement.current ) {
-			this.observer = new IntersectionObserver( this.handleIntersection, {
+		if (this.observedElement.current) {
+			this.observer = new IntersectionObserver(this.handleIntersection, {
 				rootMargin: '100%',
 				threshold: 1.0,
-			} );
-			this.observer.observe( this.observedElement.current );
+			});
+			this.observer.observe(this.observedElement.current);
 		}
 	}
 
 	componentWillUnmount() {
-		if ( this.observer ) {
+		if (this.observer) {
 			this.observer.disconnect();
 		}
-		clearTimeout( this.deferredPageFetch );
+		clearTimeout(this.deferredPageFetch);
 	}
 
 	getNextPage() {
-		this.props.nextPageMethod( { triggeredByScroll: this.hasScrolledPastBottom } );
+		this.props.nextPageMethod({ triggeredByScroll: this.hasScrolledPastBottom });
 	}
 
 	componentDidUpdate() {
-		if ( ! this.deferredPageFetch && ! this.hasScrolledPastBottom ) {
+		if (!this.deferredPageFetch && !this.hasScrolledPastBottom) {
 			// We still need more pages, so schedule a page fetch.
-			this.deferredPageFetch = defer( () => {
-				if ( ! this.hasScrolledPastBottom ) {
+			this.deferredPageFetch = defer(() => {
+				if (!this.hasScrolledPastBottom) {
 					this.getNextPage();
 				}
 				this.deferredPageFetch = null;
-			} );
+			});
 		}
 	}
 
-	handleIntersection = entries => {
-		if ( ! entries || ! entries[ 0 ] ) {
+	handleIntersection = (entries) => {
+		if (!entries || !entries[0]) {
 			return;
 		}
 
-		if ( entries[ 0 ].isIntersecting ) {
+		if (entries[0].isIntersecting) {
 			this.getNextPage();
 		} else {
 			// The observed element is no longer in view, so future changes must
@@ -70,7 +70,7 @@ class InfiniteScrollWithIntersectionObserver extends React.Component {
 	};
 
 	render() {
-		return <div ref={ this.observedElement } />;
+		return <div ref={this.observedElement} />;
 	}
 }
 
@@ -79,40 +79,40 @@ class InfiniteScrollWithScrollEvent extends React.Component {
 	static displayName = 'InfiniteScroll';
 
 	componentDidMount() {
-		window.addEventListener( 'scroll', this.checkScrollPositionHandler );
-		this.throttledCheckScrollPosition( false );
+		window.addEventListener('scroll', this.checkScrollPositionHandler);
+		this.throttledCheckScrollPosition(false);
 	}
 
 	componentDidUpdate() {
-		this.throttledCheckScrollPosition( false );
+		this.throttledCheckScrollPosition(false);
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'scroll', this.checkScrollPositionHandler );
+		window.removeEventListener('scroll', this.checkScrollPositionHandler);
 		this.throttledCheckScrollPosition.cancel();
 		this.pendingLayoutFlush.cancel();
 	}
 
-	checkScrollPosition = triggeredByScroll => {
+	checkScrollPosition = (triggeredByScroll) => {
 		const scrollPosition = window.pageYOffset;
 		const documentHeight = document.body.scrollHeight;
 		const viewportHeight = window.innerHeight;
 		const scrollOffset = 2 * viewportHeight;
 
-		if ( scrollPosition >= documentHeight - viewportHeight - scrollOffset ) {
+		if (scrollPosition >= documentHeight - viewportHeight - scrollOffset) {
 			// Consider all page fetches once user starts scrolling as triggered by scroll
 			// Same condition check is in components/infinite-list/scroll-helper loadNextPage
-			if ( scrollPosition > viewportHeight ) {
+			if (scrollPosition > viewportHeight) {
 				triggeredByScroll = true;
 			}
 
-			this.props.nextPageMethod( { triggeredByScroll } );
+			this.props.nextPageMethod({ triggeredByScroll });
 		}
 	};
 
-	pendingLayoutFlush = afterLayoutFlush( this.checkScrollPosition );
-	throttledCheckScrollPosition = throttle( this.pendingLayoutFlush, SCROLL_CHECK_RATE_IN_MS );
-	checkScrollPositionHandler = () => this.throttledCheckScrollPosition( true );
+	pendingLayoutFlush = afterLayoutFlush(this.checkScrollPosition);
+	throttledCheckScrollPosition = throttle(this.pendingLayoutFlush, SCROLL_CHECK_RATE_IN_MS);
+	checkScrollPositionHandler = () => this.throttledCheckScrollPosition(true);
 
 	render() {
 		// Should match render output for the IntersectionObserver version,

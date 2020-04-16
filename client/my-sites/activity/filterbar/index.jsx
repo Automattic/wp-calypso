@@ -32,47 +32,47 @@ export class Filterbar extends Component {
 
 	goBack = () => {
 		const { previousRoute } = this.props;
-		if ( previousRoute ) {
-			page.back( previousRoute );
+		if (previousRoute) {
+			page.back(previousRoute);
 			return;
 		}
-		page.back( 'activity-log' );
+		page.back('activity-log');
 	};
 
 	toggleDateRangeSelector = () => {
-		this.setState( {
-			showActivityDates: ! this.state.showActivityDates,
+		this.setState({
+			showActivityDates: !this.state.showActivityDates,
 			showActivityTypes: false,
-		} );
+		});
 		this.scrollIntoView();
 	};
 
 	closeDateRangeSelector = () => {
-		this.setState( { showActivityDates: false } );
+		this.setState({ showActivityDates: false });
 	};
 
 	toggleActivityTypesSelector = () => {
-		this.setState( {
-			showActivityTypes: ! this.state.showActivityTypes,
+		this.setState({
+			showActivityTypes: !this.state.showActivityTypes,
 			showActivityDates: false,
-		} );
+		});
 		this.scrollIntoView();
 	};
 
 	closeActivityTypes = () => {
-		this.setState( { showActivityTypes: false } );
+		this.setState({ showActivityTypes: false });
 	};
 
 	handleRemoveFilters = () => {
 		const { siteId, resetFilters } = this.props;
-		resetFilters( siteId );
+		resetFilters(siteId);
 	};
 
 	renderCloseButton = () => {
 		const { filter } = this.props;
-		if ( filter && ( filter.group || filter.before || filter.after ) ) {
+		if (filter && (filter.group || filter.before || filter.after)) {
 			return (
-				<Button onClick={ this.handleRemoveFilters } borderless className="filterbar__icon-reset">
+				<Button onClick={this.handleRemoveFilters} borderless className="filterbar__icon-reset">
 					<Gridicon icon="cross" />
 				</Button>
 			);
@@ -80,25 +80,25 @@ export class Filterbar extends Component {
 	};
 
 	scrollIntoView = () => {
-		if ( isWithinBreakpoint( '>660px' ) ) {
+		if (isWithinBreakpoint('>660px')) {
 			//  scroll into view only happends on mobile
 			return true;
 		}
-		const filterbar = document.getElementById( 'filterbar' );
-		if ( filterbar ) {
-			filterbar.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
-			window.scrollBy( 0, -50 );
+		const filterbar = document.getElementById('filterbar');
+		if (filterbar) {
+			filterbar.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+			window.scrollBy(0, -50);
 		}
 	};
 
-	isEmptyFilter = filter => {
-		if ( ! filter ) {
+	isEmptyFilter = (filter) => {
+		if (!filter) {
 			return true;
 		}
-		if ( filter.group || filter.on || filter.before || filter.after ) {
+		if (filter.group || filter.on || filter.before || filter.after) {
 			return false;
 		}
-		if ( filter.page !== 1 ) {
+		if (filter.page !== 1) {
 			return false;
 		}
 		return true;
@@ -107,19 +107,19 @@ export class Filterbar extends Component {
 	render() {
 		const { translate, siteId, filter, isLoading, isVisible } = this.props;
 
-		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
+		if (siteId && isLoading && this.isEmptyFilter(filter)) {
 			return <div className="filterbar is-loading" />;
 		}
 
-		if ( ! isVisible ) {
+		if (!isVisible) {
 			return null;
 		}
 
-		if ( filter.backButton ) {
+		if (filter.backButton) {
 			return (
 				<div className="filterbar" id="filterbar">
 					<div className="filterbar__wrap card">
-						<BackButton onClick={ this.goBack } />
+						<BackButton onClick={this.goBack} />
 					</div>
 				</div>
 			);
@@ -128,22 +128,22 @@ export class Filterbar extends Component {
 		return (
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
-					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
+					<span className="filterbar__label">{translate('Filter by:')}</span>
 					<DateRangeSelector
-						isVisible={ this.state.showActivityDates }
-						onButtonClick={ this.toggleDateRangeSelector }
-						onClose={ this.closeDateRangeSelector }
-						filter={ filter }
-						siteId={ siteId }
+						isVisible={this.state.showActivityDates}
+						onButtonClick={this.toggleDateRangeSelector}
+						onClose={this.closeDateRangeSelector}
+						filter={filter}
+						siteId={siteId}
 					/>
 					<ActionTypeSelector
-						filter={ filter }
-						siteId={ siteId }
-						isVisible={ this.state.showActivityTypes }
-						onButtonClick={ this.toggleActivityTypesSelector }
-						onClose={ this.closeActivityTypes }
+						filter={filter}
+						siteId={siteId}
+						isVisible={this.state.showActivityTypes}
+						onButtonClick={this.toggleActivityTypesSelector}
+						onClose={this.closeActivityTypes}
 					/>
-					{ this.renderCloseButton() }
+					{this.renderCloseButton()}
 				</div>
 				<div className="filterbar__mobile-wrap" />
 			</div>
@@ -151,18 +151,18 @@ export class Filterbar extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	previousRoute: getPreviousRoute( state ),
-} );
+const mapStateToProps = (state) => ({
+	previousRoute: getPreviousRoute(state),
+});
 
-const mapDispatchToProps = dispatch => ( {
-	resetFilters: siteId =>
+const mapDispatchToProps = (dispatch) => ({
+	resetFilters: (siteId) =>
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
-				updateFilter( siteId, { group: null, after: null, before: null, on: null, page: 1 } )
+				recordTracksEvent('calypso_activitylog_filterbar_reset'),
+				updateFilter(siteId, { group: null, after: null, before: null, on: null, page: 1 })
 			)
 		),
-} );
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Filterbar ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(Filterbar));

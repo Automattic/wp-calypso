@@ -21,22 +21,22 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
 } from 'woocommerce/state/action-types';
 
-describe( 'actions', () => {
-	describe( '#fetchProductCategories()', () => {
+describe('actions', () => {
+	describe('#fetchProductCategories()', () => {
 		const siteId = '123';
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			fetchProductCategories( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			fetchProductCategories(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 				siteId,
 				query: {},
-			} );
-		} );
-	} );
-	describe( 'createProductCategory()', () => {
+			});
+		});
+	});
+	describe('createProductCategory()', () => {
 		const siteId = 123;
 		const newCategory = {
 			id: { placeholder: 'productcat_1' },
@@ -44,36 +44,36 @@ describe( 'actions', () => {
 			description: 'Test',
 		};
 
-		test( 'should dispatch an action', () => {
-			const action = createProductCategory( siteId, newCategory, noop, noop );
-			expect( action ).to.eql( {
+		test('should dispatch an action', () => {
+			const action = createProductCategory(siteId, newCategory, noop, noop);
+			expect(action).to.eql({
 				type: WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 				siteId: 123,
 				category: newCategory,
 				successAction: noop,
 				failureAction: noop,
-			} );
-		} );
-	} );
-	describe( '#updateProductCategory()', () => {
+			});
+		});
+	});
+	describe('#updateProductCategory()', () => {
 		const siteId = 123;
 		const updatedCategory = {
 			id: 40,
 			description: 'Updated',
 		};
 
-		test( 'should dispatch an action', () => {
-			const action = updateProductCategory( siteId, updatedCategory, noop, noop );
-			expect( action ).to.eql( {
+		test('should dispatch an action', () => {
+			const action = updateProductCategory(siteId, updatedCategory, noop, noop);
+			expect(action).to.eql({
 				type: WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
 				siteId: 123,
 				category: updatedCategory,
 				successAction: noop,
 				failureAction: noop,
-			} );
-		} );
-	} );
-	describe( '#deleteProductCategory()', () => {
+			});
+		});
+	});
+	describe('#deleteProductCategory()', () => {
 		const siteId = 123;
 		const category = {
 			id: 40,
@@ -81,15 +81,15 @@ describe( 'actions', () => {
 			slug: 'test',
 		};
 
-		test( 'should dispatch an action', () => {
-			const action = deleteProductCategory( siteId, category, noop, noop );
-			expect( action ).to.eql( {
+		test('should dispatch an action', () => {
+			const action = deleteProductCategory(siteId, category, noop, noop);
+			expect(action).to.eql({
 				type: WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
 				siteId: 123,
 				category,
 				successAction: noop,
 				failureAction: noop,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

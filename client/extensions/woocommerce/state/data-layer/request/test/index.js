@@ -16,20 +16,20 @@ import {
 	WOOCOMMERCE_API_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
-describe( 'handlers', () => {
+describe('handlers', () => {
 	const siteId = 123;
 
-	describe( '#get', () => {
+	describe('#get', () => {
 		const getResponse = { name: 'placeholder get response', placeholder: true };
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=get', json: true } )
-				.reply( 200, { data: getResponse } );
-		} );
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
+				.get('/rest/v1.1/jetpack-blogs/123/rest-api/')
+				.query({ path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=get', json: true })
+				.reply(200, { data: getResponse });
+		});
 
-		test( 'should handle get success', () => {
+		test('should handle get success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -38,20 +38,20 @@ describe( 'handlers', () => {
 				type: '%%ON_SUCCESS_ACTION%%',
 			};
 
-			const action = get( siteId, 'placeholder_endpoint', onSuccessAction );
+			const action = get(siteId, 'placeholder_endpoint', onSuccessAction);
 
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledTwice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: getResponse } )
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledTwice;
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: getResponse })
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: onSuccessAction.type } ).and( match.has( 'data' ) )
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: onSuccessAction.type }).and(match.has('data'))
 				);
-			} );
-		} );
+			});
+		});
 
-		test( 'should handle get failure', () => {
+		test('should handle get failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -60,104 +60,96 @@ describe( 'handlers', () => {
 				type: '%%ON_FAILURE_ACTION%%',
 			};
 
-			const action = get( siteId, 'bad_placeholder_endpoint', null, onFailureAction );
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledThrice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_ERROR_SET } )
+			const action = get(siteId, 'bad_placeholder_endpoint', null, onFailureAction);
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledThrice;
+				expect(store.dispatch).to.have.been.calledWith(match({ type: WOOCOMMERCE_ERROR_SET }));
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } ).and(
-						match.has( 'error' )
-					)
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: onFailureAction.type }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: onFailureAction.type } ).and( match.has( 'error' ) )
-				);
-			} );
-		} );
+			});
+		});
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=get', json: true } )
-				.reply( 200, { data: getResponse } );
-		} );
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
+				.get('/rest/v1.1/jetpack-blogs/123/rest-api/')
+				.query({ path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=get', json: true })
+				.reply(200, { data: getResponse });
+		});
 
-		test( 'should dispatch a function for success', () => {
+		test('should dispatch a function for success', () => {
 			const store = {
 				dispatch: spy(),
 			};
 
-			const onSuccess = ( dispatch, getState, data ) => {
-				dispatch( {
+			const onSuccess = (dispatch, getState, data) => {
+				dispatch({
 					type: '%%ON_SUCCESS_FUNCTION%%',
 					data,
-				} );
+				});
 			};
 
-			const action = get( siteId, 'placeholder_endpoint', onSuccess );
+			const action = get(siteId, 'placeholder_endpoint', onSuccess);
 
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledTwice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: getResponse } )
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledTwice;
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: getResponse })
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: '%%ON_SUCCESS_FUNCTION%%' } ).and( match.has( 'data' ) )
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: '%%ON_SUCCESS_FUNCTION%%' }).and(match.has('data'))
 				);
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a function for failure', () => {
+		test('should dispatch a function for failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
 
-			const onFailure = ( dispatch, getState, error ) => {
-				dispatch( {
+			const onFailure = (dispatch, getState, error) => {
+				dispatch({
 					type: '%%ON_FAILURE_FUNCTION%%',
 					error,
-				} );
+				});
 			};
 
-			const action = get( siteId, 'bad_placeholder_endpoint', null, onFailure );
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledThrice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_ERROR_SET } )
+			const action = get(siteId, 'bad_placeholder_endpoint', null, onFailure);
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledThrice;
+				expect(store.dispatch).to.have.been.calledWith(match({ type: WOOCOMMERCE_ERROR_SET }));
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } ).and(
-						match.has( 'error' )
-					)
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: '%%ON_FAILURE_FUNCTION%%' }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: '%%ON_FAILURE_FUNCTION%%' } ).and( match.has( 'error' ) )
-				);
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#post', () => {
+	describe('#post', () => {
 		const postResponse = { name: 'placeholder post response', placeholder: true };
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=post',
-					body: JSON.stringify( {
+					body: JSON.stringify({
 						name: 'post request',
 						placeholder: true,
-					} ),
+					}),
 					json: true,
-				} )
-				.reply( 200, { data: postResponse } );
-		} );
+				})
+				.reply(200, { data: postResponse });
+		});
 
 		const body = { name: 'post request', placeholder: true };
 
-		test( 'should handle post success', () => {
+		test('should handle post success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -166,20 +158,20 @@ describe( 'handlers', () => {
 				type: '%%ON_SUCCESS_ACTION%%',
 			};
 
-			const action = post( siteId, 'placeholder_endpoint', body, onSuccessAction );
+			const action = post(siteId, 'placeholder_endpoint', body, onSuccessAction);
 
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledTwice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: postResponse } )
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledTwice;
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: postResponse })
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: onSuccessAction.type } ).and( match.has( 'data' ) )
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: onSuccessAction.type }).and(match.has('data'))
 				);
-			} );
-		} );
+			});
+		});
 
-		test( 'should handle post failure', () => {
+		test('should handle post failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -188,43 +180,39 @@ describe( 'handlers', () => {
 				type: '%%ON_FAILURE_ACTION%%',
 			};
 
-			const action = post( siteId, 'bad_placeholder_endpoint', body, null, onFailureAction );
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledThrice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_ERROR_SET } )
+			const action = post(siteId, 'bad_placeholder_endpoint', body, null, onFailureAction);
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledThrice;
+				expect(store.dispatch).to.have.been.calledWith(match({ type: WOOCOMMERCE_ERROR_SET }));
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } ).and(
-						match.has( 'error' )
-					)
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: onFailureAction.type }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: onFailureAction.type } ).and( match.has( 'error' ) )
-				);
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#put', () => {
+	describe('#put', () => {
 		const putResponse = { name: 'placeholder put response', placeholder: true };
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=put',
-					body: JSON.stringify( {
+					body: JSON.stringify({
 						name: 'put request',
 						placeholder: true,
-					} ),
+					}),
 					json: true,
-				} )
-				.reply( 200, { data: putResponse } );
-		} );
+				})
+				.reply(200, { data: putResponse });
+		});
 
 		const body = { name: 'put request', placeholder: true };
 
-		test( 'should handle put success', () => {
+		test('should handle put success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -233,20 +221,20 @@ describe( 'handlers', () => {
 				type: '%%ON_SUCCESS_ACTION%%',
 			};
 
-			const action = put( siteId, 'placeholder_endpoint', body, onSuccessAction );
+			const action = put(siteId, 'placeholder_endpoint', body, onSuccessAction);
 
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledTwice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: putResponse } )
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledTwice;
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: putResponse })
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: onSuccessAction.type } ).and( match.has( 'data' ) )
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: onSuccessAction.type }).and(match.has('data'))
 				);
-			} );
-		} );
+			});
+		});
 
-		test( 'should handle put failure', () => {
+		test('should handle put failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -255,37 +243,33 @@ describe( 'handlers', () => {
 				type: '%%ON_FAILURE_ACTION%%',
 			};
 
-			const action = put( siteId, 'bad_placeholder_endpoint', body, null, onFailureAction );
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledThrice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_ERROR_SET } )
+			const action = put(siteId, 'bad_placeholder_endpoint', body, null, onFailureAction);
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledThrice;
+				expect(store.dispatch).to.have.been.calledWith(match({ type: WOOCOMMERCE_ERROR_SET }));
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } ).and(
-						match.has( 'error' )
-					)
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: onFailureAction.type }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: onFailureAction.type } ).and( match.has( 'error' ) )
-				);
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#delete', () => {
+	describe('#delete', () => {
 		const deleteResponse = { name: 'placeholder delete response', placeholder: true };
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=delete',
 					json: true,
-				} )
-				.reply( 200, { data: deleteResponse } );
-		} );
+				})
+				.reply(200, { data: deleteResponse });
+		});
 
-		test( 'should handle delete success', () => {
+		test('should handle delete success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -294,20 +278,20 @@ describe( 'handlers', () => {
 				type: '%%ON_SUCCESS_ACTION%%',
 			};
 
-			const action = del( siteId, 'placeholder_endpoint', onSuccessAction );
+			const action = del(siteId, 'placeholder_endpoint', onSuccessAction);
 
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledTwice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: deleteResponse } )
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledTwice;
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: deleteResponse })
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: onSuccessAction.type } ).and( match.has( 'data' ) )
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: onSuccessAction.type }).and(match.has('data'))
 				);
-			} );
-		} );
+			});
+		});
 
-		test( 'should handle delete failure', () => {
+		test('should handle delete failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -316,21 +300,17 @@ describe( 'handlers', () => {
 				type: '%%ON_FAILURE_ACTION%%',
 			};
 
-			const action = del( siteId, 'bad_placeholder_endpoint', null, onFailureAction );
-			return handleRequest( store, action ).then( () => {
-				expect( store.dispatch ).to.have.been.calledThrice;
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_ERROR_SET } )
+			const action = del(siteId, 'bad_placeholder_endpoint', null, onFailureAction);
+			return handleRequest(store, action).then(() => {
+				expect(store.dispatch).to.have.been.calledThrice;
+				expect(store.dispatch).to.have.been.calledWith(match({ type: WOOCOMMERCE_ERROR_SET }));
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } ).and(
-						match.has( 'error' )
-					)
+				expect(store.dispatch).to.have.been.calledWith(
+					match({ type: onFailureAction.type }).and(match.has('error'))
 				);
-				expect( store.dispatch ).to.have.been.calledWith(
-					match( { type: onFailureAction.type } ).and( match.has( 'error' ) )
-				);
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

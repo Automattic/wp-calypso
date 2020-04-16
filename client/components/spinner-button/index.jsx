@@ -39,21 +39,15 @@ export default class extends React.Component {
 
 		// Pass any extra props down to the Button component, leaving out
 		// any SpinnerButton specific props
-		const buttonProps = omit( this.props, [
-			'loading',
-			'loadingText',
-			'text',
-			'size',
-			'disabled',
-		] );
+		const buttonProps = omit(this.props, ['loading', 'loadingText', 'text', 'size', 'disabled']);
 
 		return (
 			<div>
-				<Button disabled={ loading || disabled } { ...buttonProps }>
-					{ loading ? loadingText : text }
+				<Button disabled={loading || disabled} {...buttonProps}>
+					{loading ? loadingText : text}
 				</Button>
 
-				{ loading && <Spinner size={ size } className="spinner-button__spinner" /> }
+				{loading && <Spinner size={size} className="spinner-button__spinner" />}
 			</div>
 		);
 	}

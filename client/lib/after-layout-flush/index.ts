@@ -21,7 +21,7 @@ interface Cancelable {
  * @param func - The function to be invoked after the layout flush
  * @returns The new delayed function
  */
-export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >( func: T ) {
+export default function afterLayoutFlush<T extends (...args: any[]) => any>(func: T) {
 	let timeoutHandle: TimerHandle | undefined = undefined;
 	let rafHandle: number | undefined = undefined;
 
@@ -30,27 +30,27 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 	let lastThis: any;
 	let lastArgs: any[] | undefined;
 
-	const scheduleRAF = function( rafFunc: T ) {
-		return function( this: any, ...args: any[] ) {
+	const scheduleRAF = function (rafFunc: T) {
+		return function (this: any, ...args: any[]) {
 			lastThis = this;
 			lastArgs = args;
 
 			// if a RAF is already scheduled and not yet executed, don't schedule another one
-			if ( rafHandle !== undefined ) {
+			if (rafHandle !== undefined) {
 				return;
 			}
 
-			rafHandle = requestAnimationFrame( () => {
+			rafHandle = requestAnimationFrame(() => {
 				// clear the handle to signal that the scheduled RAF has been executed
 				rafHandle = undefined;
 				rafFunc();
-			} );
+			});
 		} as T;
 	};
 
-	const scheduleTimeout = function( timeoutFunc: T ) {
-		return function( this: any, ...args: any[] ) {
-			if ( ! hasRAF ) {
+	const scheduleTimeout = function (timeoutFunc: T) {
+		return function (this: any, ...args: any[]) {
+			if (!hasRAF) {
 				lastThis = this;
 				lastArgs = args;
 			}
@@ -58,11 +58,11 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 			// If a timeout is already scheduled and not yet executed, don't schedule another one.
 			// Multiple `requestAnimationFrame` handlers can be scheduled and executed before the
 			// browser decides to finally execute the timeout handler.
-			if ( timeoutHandle !== undefined ) {
+			if (timeoutHandle !== undefined) {
 				return;
 			}
 
-			timeoutHandle = setTimeout( () => {
+			timeoutHandle = setTimeout(() => {
 				const callArgs = lastArgs !== undefined ? lastArgs : [];
 				const callThis = lastThis;
 
@@ -71,16 +71,16 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 
 				// clear the handle to signal that the timeout handler has been executed
 				timeoutHandle = undefined;
-				timeoutFunc.apply( callThis, callArgs );
-			}, 0 );
+				timeoutFunc.apply(callThis, callArgs);
+			}, 0);
 		} as T;
 	};
 
 	// if RAF is not supported (in Node.js test environment), the wrapped function
 	// will only set a timeout.
-	let wrappedFunc: T = scheduleTimeout( func );
-	if ( hasRAF ) {
-		wrappedFunc = scheduleRAF( wrappedFunc );
+	let wrappedFunc: T = scheduleTimeout(func);
+	if (hasRAF) {
+		wrappedFunc = scheduleRAF(wrappedFunc);
 	}
 
 	const wrappedWithCancel = wrappedFunc as T & Cancelable;
@@ -88,13 +88,13 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 		lastThis = undefined;
 		lastArgs = undefined;
 
-		if ( rafHandle !== undefined ) {
-			cancelAnimationFrame( rafHandle );
+		if (rafHandle !== undefined) {
+			cancelAnimationFrame(rafHandle);
 			rafHandle = undefined;
 		}
 
-		if ( timeoutHandle !== undefined ) {
-			clearTimeout( timeoutHandle );
+		if (timeoutHandle !== undefined) {
+			clearTimeout(timeoutHandle);
 			timeoutHandle = undefined;
 		}
 	};

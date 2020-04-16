@@ -28,14 +28,14 @@ import { timelineSchema } from './schema';
 //
 // This will all be removed once the server-side is fully converted.
 const UNIX_TIMESTAMP_2023_IN_SECONDS = 1700000000;
-export const maybeUpscaleTimePrecision = time =>
+export const maybeUpscaleTimePrecision = (time) =>
 	time < UNIX_TIMESTAMP_2023_IN_SECONDS ? time * 1000 : time;
 
 const lastActivityTimestampSchema = { type: 'number' };
 export const lastActivityTimestamp = withSchemaValidation(
 	lastActivityTimestampSchema,
-	( state = null, action ) => {
-		switch ( action.type ) {
+	(state = null, action) => {
+		switch (action.type) {
 			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
 			case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 				return Date.now();
@@ -60,8 +60,8 @@ export const lastActivityTimestamp = withSchemaValidation(
  * @returns {object}        Updated state
  *
  */
-export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
-	switch ( action.type ) {
+export const status = (state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action) => {
+	switch (action.type) {
 		case HAPPYCHAT_IO_RECEIVE_STATUS:
 			return action.status;
 	}
@@ -76,8 +76,8 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
  * @returns {object}        Updated state
  *
  */
-const timelineEvent = ( state = {}, action ) => {
-	switch ( action.type ) {
+const timelineEvent = (state = {}, action) => {
+	switch (action.type) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			const { message } = action;
 			return {
@@ -86,16 +86,16 @@ const timelineEvent = ( state = {}, action ) => {
 				message: message.text,
 				name: message.user.name,
 				image: message.user.avatarURL,
-				timestamp: maybeUpscaleTimePrecision( message.timestamp ),
+				timestamp: maybeUpscaleTimePrecision(message.timestamp),
 				user_id: message.user.id,
-				type: get( message, 'type', 'message' ),
-				links: get( message, 'meta.links' ),
+				type: get(message, 'type', 'message'),
+				links: get(message, 'meta.links'),
 			};
 	}
 	return state;
 };
 
-const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
+const sortTimeline = (timeline) => sortBy(timeline, (event) => parseInt(event.timestamp, 10));
 
 /**
  * Adds timeline events for happychat
@@ -105,54 +105,54 @@ const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.time
  * @returns {object}        Updated state
  *
  */
-export const timeline = withSchemaValidation( timelineSchema, ( state = [], action ) => {
-	switch ( action.type ) {
+export const timeline = withSchemaValidation(timelineSchema, (state = [], action) => {
+	switch (action.type) {
 		case SERIALIZE:
-			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
+			return takeRight(state, HAPPYCHAT_MAX_STORED_MESSAGES);
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			// if meta.forOperator is set, skip so won't show to user
-			if ( get( action, 'message.meta.forOperator', false ) ) {
+			if (get(action, 'message.meta.forOperator', false)) {
 				return state;
 			}
-			const event = timelineEvent( {}, action );
-			const existing = find( state, ( { id } ) => event.id === id );
-			return existing ? state : concat( state, [ event ] );
+			const event = timelineEvent({}, action);
+			const existing = find(state, ({ id }) => event.id === id);
+			return existing ? state : concat(state, [event]);
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT:
 			return state;
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE:
-			const messages = filter( action.messages, message => {
-				if ( ! message.id ) {
+			const messages = filter(action.messages, (message) => {
+				if (!message.id) {
 					return false;
 				}
 
 				// if meta.forOperator is set, skip so won't show to user
-				if ( get( message, 'meta.forOperator', false ) ) {
+				if (get(message, 'meta.forOperator', false)) {
 					return false;
 				}
 
-				return ! find( state, { id: message.id } );
-			} );
+				return !find(state, { id: message.id });
+			});
 			return sortTimeline(
 				state.concat(
-					map( messages, message => ( {
+					map(messages, (message) => ({
 						id: message.id,
 						source: message.source,
 						message: message.text,
 						name: message.user.name,
 						image: message.user.picture,
-						timestamp: maybeUpscaleTimePrecision( message.timestamp ),
+						timestamp: maybeUpscaleTimePrecision(message.timestamp),
 						user_id: message.user.id,
-						type: get( message, 'type', 'message' ),
-						links: get( message, 'meta.links' ),
-					} ) )
+						type: get(message, 'type', 'message'),
+						links: get(message, 'meta.links'),
+					}))
 				)
 			);
 	}
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	status,
 	timeline,
 	lastActivityTimestamp,
-} );
+});

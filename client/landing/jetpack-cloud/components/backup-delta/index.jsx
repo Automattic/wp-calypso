@@ -26,39 +26,37 @@ class BackupDelta extends Component {
 	renderRealtime() {
 		const { allowRestore, timezone, gmtOffset, moment, siteSlug, translate } = this.props;
 
-		const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
+		const realtimeEvents = this.props.realtimeEvents.filter((event) => event.activityIsRewindable);
 
-		const cards = realtimeEvents.map( activity => (
+		const cards = realtimeEvents.map((activity) => (
 			<ActivityCard
-				key={ activity.activityId }
-				{ ...{
+				key={activity.activityId}
+				{...{
 					moment,
 					activity,
 					allowRestore,
 					timezone,
 					gmtOffset,
 					siteSlug,
-				} }
+				}}
 			/>
-		) );
+		));
 
 		return (
 			<div className="backup-delta__realtime">
-				<div className="backup-delta__realtime-header">
-					{ translate( 'More backups from today' ) }
-				</div>
+				<div className="backup-delta__realtime-header">{translate('More backups from today')}</div>
 				<div className="backup-delta__realtime-description">
-					{ translate(
+					{translate(
 						'Your site is backed up in real time (as you make changes) as well as in one daily backup.'
-					) }
+					)}
 				</div>
-				{ cards.length ? (
+				{cards.length ? (
 					cards
 				) : (
 					<div className="backup-delta__realtime-emptyday">
-						{ translate( 'There were no changes on this day. Your daily backup is above.' ) }
+						{translate('There were no changes on this day. Your daily backup is above.')}
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -67,96 +65,96 @@ class BackupDelta extends Component {
 		const { metaDiff } = this.props;
 		const metas = [];
 
-		metaDiff.forEach( meta => {
-			if ( meta.num > 0 || meta.num < 0 ) {
+		metaDiff.forEach((meta) => {
+			if (meta.num > 0 || meta.num < 0) {
 				const operator = meta.num < 0 ? '' : '+';
 				const plural = meta.num > 1 || meta.num < -1 ? 's' : '';
 				// TBD: How do we deal with translating these strings?
-				metas.push( `${ operator }${ meta.num } ${ meta.type }${ plural }` );
+				metas.push(`${operator}${meta.num} ${meta.type}${plural}`);
 			}
-		} );
+		});
 
-		return <div className="backup-delta__metas">{ metas.join( ', ' ) }</div>;
+		return <div className="backup-delta__metas">{metas.join(', ')}</div>;
 	}
 
 	renderDaily() {
 		const { backupAttempts, deltas, metaDiff, siteSlug, translate } = this.props;
-		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
+		const mainBackup = backupAttempts.complete && backupAttempts.complete[0];
 
-		const mediaCreated = deltas.mediaCreated.map( item => (
-			<div key={ item.activityId } className="backup-delta__media-image">
+		const mediaCreated = deltas.mediaCreated.map((item) => (
+			<div key={item.activityId} className="backup-delta__media-image">
 				<img
 					alt=""
-					src={ item.activityMedia.available ? item.activityMedia.thumbnail_url : mediaImage }
+					src={item.activityMedia.available ? item.activityMedia.thumbnail_url : mediaImage}
 				/>
 				<div className="backup-delta__media-title">
 					<Gridicon icon="plus" />
-					<div className="backup-delta__media-title-text">{ translate( 'Added' ) }</div>
+					<div className="backup-delta__media-title-text">{translate('Added')}</div>
 				</div>
 			</div>
-		) );
+		));
 
 		const mediaCount = deltas.mediaCreated.length - deltas.mediaDeleted.length;
 		const mediaOperator = mediaCount >= 0 ? '+' : '';
-		const mediaCountDisplay = `${ mediaOperator }${ mediaCount }`;
+		const mediaCountDisplay = `${mediaOperator}${mediaCount}`;
 
 		const deletedElement = [
 			<div className="backup-delta__media-image">
-				<img alt="" src={ mediaImage } />
-				<div className="backup-delta__deleted-count-bubble">-{ deltas.mediaDeleted.length }</div>
+				<img alt="" src={mediaImage} />
+				<div className="backup-delta__deleted-count-bubble">-{deltas.mediaDeleted.length}</div>
 				<div className="backup-delta__media-title">
 					<Gridicon icon="cross-small" />
-					<div className="backup-delta__media-title-text">{ translate( 'Removed' ) }</div>
+					<div className="backup-delta__media-title-text">{translate('Removed')}</div>
 				</div>
 			</div>,
 		];
 
 		const mediaItems =
 			deltas.mediaDeleted.length > 0
-				? mediaCreated.slice( 0, 2 ).concat( deletedElement )
-				: mediaCreated.slice( 0, 3 );
+				? mediaCreated.slice(0, 2).concat(deletedElement)
+				: mediaCreated.slice(0, 3);
 
 		const postsCount = deltas.postsCreated.length - deltas.postsDeleted.length;
 		const postsOperator = postsCount >= 0 ? '+' : '';
-		const postCountDisplay = `${ postsOperator }${ postsCount }`;
+		const postCountDisplay = `${postsOperator}${postsCount}`;
 
-		const posts = deltas.posts.map( item => {
-			if ( 'post__published' === item.activityName ) {
+		const posts = deltas.posts.map((item) => {
+			if ('post__published' === item.activityName) {
 				return (
-					<div key={ item.activityId } className="backup-delta__post-block">
+					<div key={item.activityId} className="backup-delta__post-block">
 						<Gridicon className="backup-delta__post-icon" icon="pencil" />
-						<a className="backup-delta__post-link" href={ item.activityDescription[ 0 ].url }>
-							{ item.activityDescription[ 0 ].children[ 0 ] }
+						<a className="backup-delta__post-link" href={item.activityDescription[0].url}>
+							{item.activityDescription[0].children[0]}
 						</a>
 					</div>
 				);
 			}
-			if ( 'post__trashed' === item.activityName ) {
+			if ('post__trashed' === item.activityName) {
 				return (
-					<div key={ item.activityId } className="backup-delta__post-block">
+					<div key={item.activityId} className="backup-delta__post-block">
 						<Gridicon className="backup-delta__post-icon" icon="cross" />
 						<div className="backup-delta__post-link">
-							{ item.activityDescription[ 0 ].children[ 0 ].text }
+							{item.activityDescription[0].children[0].text}
 						</div>
 					</div>
 				);
 			}
-		} );
+		});
 
-		const plugins = deltas.plugins.map( item => {
+		const plugins = deltas.plugins.map((item) => {
 			const className =
 				'plugin__installed' === item.activityName
 					? 'backup-delta__extension-block-installed'
 					: 'backup-delta__extension-block-removed';
 
 			return (
-				<div key={ item.activityId } className={ className }>
-					{ item.activityDescription[ 0 ].children[ 0 ] }
+				<div key={item.activityId} className={className}>
+					{item.activityDescription[0].children[0]}
 				</div>
 			);
-		} );
+		});
 
-		const themes = deltas.themes.map( item => {
+		const themes = deltas.themes.map((item) => {
 			const className =
 				'theme__installed' === item.activityName
 					? 'backup-delta__extension-block-installed'
@@ -170,70 +168,68 @@ class BackupDelta extends Component {
 				);
 
 			return (
-				<div key={ item.activityId } className={ className }>
-					{ icon }
+				<div key={item.activityId} className={className}>
+					{icon}
 					<div className="backup-delta__extension-block-text">
-						{ item.activityDescription[ 0 ].children[ 0 ] }
+						{item.activityDescription[0].children[0]}
 					</div>
 				</div>
 			);
-		} );
+		});
 
-		const hasChanges = !! (
+		const hasChanges = !!(
 			deltas.mediaCreated.length ||
 			deltas.posts.length ||
 			deltas.plugins.length ||
 			deltas.themes.length ||
-			!! metaDiff.filter( diff => 0 !== diff.num ).length
+			!!metaDiff.filter((diff) => 0 !== diff.num).length
 		);
 
 		return (
 			<div className="backup-delta__daily">
-				{ hasChanges && (
-					<div className="backup-delta__changes-header">
-						{ translate( 'Changes in this backup' ) }
-					</div>
-				) }
-				{ !! deltas.mediaCreated.length && (
+				{hasChanges && (
+					<div className="backup-delta__changes-header">{translate('Changes in this backup')}</div>
+				)}
+				{!!deltas.mediaCreated.length && (
 					<Fragment>
-						<div className="backup-delta__section-header">{ translate( 'Media' ) }</div>
+						<div className="backup-delta__section-header">{translate('Media')}</div>
 						<div className="backup-delta__section-media">
-							{ mediaItems }
+							{mediaItems}
 							<div>
-								<div className="backup-delta__count-bubble">{ mediaCountDisplay }</div>
+								<div className="backup-delta__count-bubble">{mediaCountDisplay}</div>
 							</div>
 						</div>
 					</Fragment>
-				) }
-				{ !! deltas.posts.length && (
+				)}
+				{!!deltas.posts.length && (
 					<Fragment>
-						<div className="backup-delta__section-header">{ translate( 'Posts' ) }</div>
-						<div className="backup-delta__section-posts">{ posts }</div>
-						<div className="backup-delta__count-bubble">{ postCountDisplay }</div>
+						<div className="backup-delta__section-header">{translate('Posts')}</div>
+						<div className="backup-delta__section-posts">{posts}</div>
+						<div className="backup-delta__count-bubble">{postCountDisplay}</div>
 					</Fragment>
-				) }
-				{ !! deltas.plugins.length && (
+				)}
+				{!!deltas.plugins.length && (
 					<Fragment>
-						<div className="backup-delta__section-header">{ translate( 'Plugins' ) }</div>
-						<div className="backup-delta__section-plugins">{ plugins }</div>
+						<div className="backup-delta__section-header">{translate('Plugins')}</div>
+						<div className="backup-delta__section-plugins">{plugins}</div>
 					</Fragment>
-				) }
-				{ !! deltas.themes.length && (
+				)}
+				{!!deltas.themes.length && (
 					<Fragment>
-						<div className="backup-delta__section-header">{ translate( 'Themes' ) }</div>
-						<div className="backup-delta__section-plugins">{ themes }</div>
+						<div className="backup-delta__section-header">{translate('Themes')}</div>
+						<div className="backup-delta__section-plugins">{themes}</div>
 					</Fragment>
-				) }
-				{ this.renderMetaDiff() }
-				{ mainBackup && (
+				)}
+				{this.renderMetaDiff()}
+				{mainBackup && (
 					<Button
-						isPrimary={ false }
+						isPrimary={false}
 						className="backup-delta__view-all-button"
-						href={ backupDetailPath( siteSlug, mainBackup.rewindId ) }
+						href={backupDetailPath(siteSlug, mainBackup.rewindId)}
 					>
-						{ translate( 'View all backup details' ) }
+						{translate('View all backup details')}
 					</Button>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -243,10 +239,10 @@ class BackupDelta extends Component {
 
 		return (
 			<div className="backup-delta">
-				{ hasRealtimeBackups ? this.renderRealtime() : this.renderDaily() }
+				{hasRealtimeBackups ? this.renderRealtime() : this.renderDaily()}
 			</div>
 		);
 	}
 }
 
-export default localize( BackupDelta );
+export default localize(BackupDelta);

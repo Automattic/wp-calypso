@@ -33,8 +33,8 @@ import rawContent from './raw-content/reducer';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function postId( state = null, action ) {
-	switch ( action.type ) {
+export function postId(state = null, action) {
+	switch (action.type) {
 		case EDITOR_START:
 			return action.postId;
 		case EDITOR_STOP:
@@ -46,26 +46,26 @@ export function postId( state = null, action ) {
 	return state;
 }
 
-export function loadingError( state = null, action ) {
-	switch ( action.type ) {
+export function loadingError(state = null, action) {
+	switch (action.type) {
 		case EDITOR_RESET:
-			return get( action, 'loadingError', null );
+			return get(action, 'loadingError', null);
 	}
 
 	return state;
 }
 
-export function isLoading( state = false, action ) {
-	switch ( action.type ) {
+export function isLoading(state = false, action) {
+	switch (action.type) {
 		case EDITOR_RESET:
-			return get( action, 'isLoading', false );
+			return get(action, 'isLoading', false);
 	}
 
 	return state;
 }
 
-export function isIframeLoaded( state = false, action ) {
-	switch ( action.type ) {
+export function isIframeLoaded(state = false, action) {
+	switch (action.type) {
 		case EDITOR_IFRAME_LOADED: {
 			const loaded = action.isIframeLoaded;
 			return loaded !== undefined ? loaded : state;
@@ -75,8 +75,8 @@ export function isIframeLoaded( state = false, action ) {
 	return state;
 }
 
-export function isAutosaving( state = false, action ) {
-	switch ( action.type ) {
+export function isAutosaving(state = false, action) {
+	switch (action.type) {
 		case EDITOR_AUTOSAVE:
 			return true;
 		case EDITOR_RESET:
@@ -89,8 +89,8 @@ export function isAutosaving( state = false, action ) {
 	return state;
 }
 
-function autosavePreviewUrl( state = null, action ) {
-	switch ( action.type ) {
+function autosavePreviewUrl(state = null, action) {
+	switch (action.type) {
 		case EDITOR_RESET:
 		case EDITOR_AUTOSAVE_RESET:
 			return null;
@@ -101,7 +101,7 @@ function autosavePreviewUrl( state = null, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	postId,
 	loadingError,
 	isLoading,
@@ -114,4 +114,4 @@ export default combineReducers( {
 	contactForm,
 	saveBlockers,
 	rawContent,
-} );
+});

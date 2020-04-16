@@ -23,26 +23,26 @@ import {
  * @param {string} method name of HTTP method for request
  * @returns {Function} the fetcher
  */
-const fetcherMap = method =>
+const fetcherMap = (method) =>
 	get(
 		{
-			GET: wpcom.req.get.bind( wpcom.req ),
-			POST: wpcom.req.post.bind( wpcom.req ),
+			GET: wpcom.req.get.bind(wpcom.req),
+			POST: wpcom.req.post.bind(wpcom.req),
 		},
 		method,
 		null
 	);
 
-export const successMeta = ( data, headers ) => ( { meta: { dataLayer: { data, headers } } } );
-export const failureMeta = ( error, headers ) => ( { meta: { dataLayer: { error, headers } } } );
-export const progressMeta = ( { total, loaded } ) => ( {
+export const successMeta = (data, headers) => ({ meta: { dataLayer: { data, headers } } });
+export const failureMeta = (error, headers) => ({ meta: { dataLayer: { error, headers } } });
+export const progressMeta = ({ total, loaded }) => ({
 	meta: { dataLayer: { progress: { total, loaded } } },
-} );
+});
 
-export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch }, rawAction ) => {
-	const action = processOutbound( rawAction, dispatch );
+export const queueRequest = (processOutbound, processInbound) => ({ dispatch }, rawAction) => {
+	const action = processOutbound(rawAction, dispatch);
 
-	if ( null === action ) {
+	if (null === action) {
 		return;
 	}
 
@@ -51,12 +51,12 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 
 	const method = rawMethod.toUpperCase();
 
-	const request = fetcherMap( method )(
-		...compact( [
+	const request = fetcherMap(method)(
+		...compact([
 			{ path, formData, responseType },
 			{ ...query }, // wpcom mutates the query so hand it a copy
 			method === 'POST' && body,
-			( error, data, headers ) => {
+			(error, data, headers) => {
 				const {
 					failures,
 					nextData,
@@ -64,29 +64,28 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 					nextHeaders,
 					shouldAbort,
 					successes,
-				} = processInbound( action, { dispatch }, data, error, headers );
+				} = processInbound(action, { dispatch }, data, error, headers);
 
-				if ( true === shouldAbort ) {
+				if (true === shouldAbort) {
 					return null;
 				}
 
 				return nextError
-					? failures.forEach( handler =>
-							dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) )
+					? failures.forEach((handler) =>
+							dispatch(extendAction(handler, failureMeta(nextError, nextHeaders)))
 					  )
-					: successes.forEach( handler =>
-							dispatch( extendAction( handler, successMeta( nextData, nextHeaders ) ) )
+					: successes.forEach((handler) =>
+							dispatch(extendAction(handler, successMeta(nextData, nextHeaders)))
 					  );
 			},
-		] )
+		])
 	);
 
-	if ( 'POST' === method && onProgress ) {
-		request.upload.onprogress = event =>
-			dispatch( extendAction( onProgress, progressMeta( event ) ) );
+	if ('POST' === method && onProgress) {
+		request.upload.onprogress = (event) => dispatch(extendAction(onProgress, progressMeta(event)));
 	}
 };
 
 export default {
-	[ WPCOM_HTTP_REQUEST ]: [ queueRequest( outboundProcessor, inboundProcessor ) ],
+	[WPCOM_HTTP_REQUEST]: [queueRequest(outboundProcessor, inboundProcessor)],
 };

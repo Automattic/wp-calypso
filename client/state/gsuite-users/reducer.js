@@ -14,8 +14,8 @@ import {
 } from 'state/action-types';
 import { usersSchema } from './schema';
 
-export const usersReducer = withSchemaValidation( usersSchema, ( state = null, action ) => {
-	switch ( action.type ) {
+export const usersReducer = withSchemaValidation(usersSchema, (state = null, action) => {
+	switch (action.type) {
 		case GSUITE_USERS_REQUEST_FAILURE:
 			return null;
 
@@ -29,10 +29,10 @@ export const usersReducer = withSchemaValidation( usersSchema, ( state = null, a
 	}
 
 	return state;
-} );
+});
 
-export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requestErrorReducer = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case GSUITE_USERS_REQUEST:
 			return false;
 
@@ -44,10 +44,10 @@ export const requestErrorReducer = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+});
 
-export const requestingReducer = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requestingReducer = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case GSUITE_USERS_REQUEST:
 			return true;
 
@@ -59,13 +59,13 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	}
 
 	return state;
-} );
+});
 
 export default keyedReducer(
 	'siteId',
-	combineReducers( {
+	combineReducers({
 		users: usersReducer,
 		requesting: requestingReducer,
 		requestError: requestErrorReducer,
-	} )
+	})
 );

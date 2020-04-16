@@ -34,32 +34,25 @@ class SettingsPaymentsMethodList extends Component {
 	componentDidMount = () => {
 		const { site } = this.props;
 
-		if ( site && site.ID ) {
-			this.props.fetchPaymentMethods( site.ID );
+		if (site && site.ID) {
+			this.props.fetchPaymentMethods(site.ID);
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = (newProps) => {
 		const { site } = this.props;
 
-		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-		const oldSiteId = ( site && site.ID ) || null;
+		const newSiteId = (newProps.site && newProps.site.ID) || null;
+		const oldSiteId = (site && site.ID) || null;
 
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchPaymentMethods( newSiteId );
+		if (oldSiteId !== newSiteId) {
+			this.props.fetchPaymentMethods(newSiteId);
 		}
 	};
 
-	renderMethodItem = method => {
+	renderMethodItem = (method) => {
 		const { onChange, site } = this.props;
-		return (
-			<PaymentMethodItem
-				method={ method }
-				key={ method.title }
-				onChange={ onChange }
-				site={ site }
-			/>
-		);
+		return <PaymentMethodItem method={method} key={method.title} onChange={onChange} site={site} />;
 	};
 
 	showPlaceholder = () => {
@@ -73,26 +66,26 @@ class SettingsPaymentsMethodList extends Component {
 			<List>
 				<ListHeader>
 					<ListItemField className="payments__methods-column-method">
-						{ translate( 'Method' ) }
+						{translate('Method')}
 					</ListItemField>
-					{ methodType !== 'offline' && (
+					{methodType !== 'offline' && (
 						<ListItemField className="payments__methods-column-fees">
-							{ translate( 'Fees' ) }
+							{translate('Fees')}
 						</ListItemField>
-					) }
+					)}
 					<ListItemField className="payments__methods-column-settings" />
 				</ListHeader>
-				{ isLoading && this.showPlaceholder() }
-				{ paymentMethods && paymentMethods.map( this.renderMethodItem ) }
+				{isLoading && this.showPlaceholder()}
+				{paymentMethods && paymentMethods.map(this.renderMethodItem)}
 			</List>
 		);
 	}
 }
 
-function mapStateToProps( state, ownProps ) {
-	const paymentMethods = getPaymentMethodsGroup( state, ownProps.methodType );
-	const site = getSelectedSiteWithFallback( state );
-	const isLoading = ! arePaymentMethodsLoaded( state );
+function mapStateToProps(state, ownProps) {
+	const paymentMethods = getPaymentMethodsGroup(state, ownProps.methodType);
+	const site = getSelectedSiteWithFallback(state);
+	const isLoading = !arePaymentMethodsLoaded(state);
 	return {
 		isLoading,
 		paymentMethods,
@@ -100,7 +93,7 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			fetchPaymentMethods,
@@ -109,6 +102,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsMethodList )
-);
+export default localize(connect(mapStateToProps, mapDispatchToProps)(SettingsPaymentsMethodList));

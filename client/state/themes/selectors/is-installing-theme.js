@@ -18,10 +18,10 @@ import 'state/themes/init';
  * @param {number} siteId	Site ID
  * @returns {string} 		Potentially suffixed theme ID
  */
-const getSuffixedThemeId = ( state, themeId, siteId ) => {
-	const siteIsJetpack = siteId && isJetpackSite( state, siteId );
-	if ( siteIsJetpack && ! getTheme( state, siteId, themeId ) ) {
-		return `${ themeId }-wpcom`;
+const getSuffixedThemeId = (state, themeId, siteId) => {
+	const siteIsJetpack = siteId && isJetpackSite(state, siteId);
+	if (siteIsJetpack && !getTheme(state, siteId, themeId)) {
+		return `${themeId}-wpcom`;
 	}
 	return themeId;
 };
@@ -34,7 +34,7 @@ const getSuffixedThemeId = ( state, themeId, siteId ) => {
  * @param  {number}  siteId  Site ID
  * @returns {boolean}         True if theme installation is ongoing
  */
-export function isInstallingTheme( state, themeId, siteId ) {
-	const suffixedThemeId = getSuffixedThemeId( state, themeId, siteId );
-	return state.themes.themeInstalls[ siteId ]?.[ suffixedThemeId ] ?? false;
+export function isInstallingTheme(state, themeId, siteId) {
+	const suffixedThemeId = getSuffixedThemeId(state, themeId, siteId);
+	return state.themes.themeInstalls[siteId]?.[suffixedThemeId] ?? false;
 }

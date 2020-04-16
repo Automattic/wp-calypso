@@ -22,18 +22,18 @@ class Alert extends React.Component {
 	};
 
 	splitMessage = () => {
-		const lines = this.props.message.split( '\n\n' );
-		return lines.map( ( line, i ) => <p key={ 'alert-' + i }>{ line }</p> );
+		const lines = this.props.message.split('\n\n');
+		return lines.map((line, i) => <p key={'alert-' + i}>{line}</p>);
 	};
 
 	getButtons = () => {
 		return [
 			<FormButton
-				isPrimary={ false }
-				aria-label={ this.props.translate( 'Dismiss alert message' ) }
-				onClick={ this.props.onClose }
+				isPrimary={false}
+				aria-label={this.props.translate('Dismiss alert message')}
+				onClick={this.props.onClose}
 			>
-				{ this.props.translate( 'OK' ) }
+				{this.props.translate('OK')}
 			</FormButton>,
 		];
 	};
@@ -41,15 +41,15 @@ class Alert extends React.Component {
 	render() {
 		return (
 			<Dialog
-				isVisible={ this.props.isVisible }
+				isVisible={this.props.isVisible}
 				additionalClassNames="editor-alert-modal"
-				onClose={ this.props.onClose }
-				buttons={ this.getButtons() }
+				onClose={this.props.onClose}
+				buttons={this.getButtons()}
 			>
-				{ this.splitMessage() }
+				{this.splitMessage()}
 			</Dialog>
 		);
 	}
 }
 
-export default localize( Alert );
+export default localize(Alert);

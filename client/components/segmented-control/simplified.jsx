@@ -10,31 +10,31 @@ import { noop } from 'lodash';
  */
 import SegmentedControl from '.';
 
-function SimplifiedSegmentedControl( {
+function SimplifiedSegmentedControl({
 	options,
-	initialSelected = options[ 0 ].value,
+	initialSelected = options[0].value,
 	onSelect = noop,
 	...props
-} ) {
-	const [ selected, setSelected ] = useState( initialSelected );
+}) {
+	const [selected, setSelected] = useState(initialSelected);
 
-	const renderedOptions = options.map( ( option, index ) => (
+	const renderedOptions = options.map((option, index) => (
 		<SegmentedControl.Item
-			index={ index }
-			key={ index }
-			onClick={ () => {
-				setSelected( option.value );
-				onSelect( option );
-			} }
-			path={ option.path }
-			selected={ selected === option.value }
-			value={ option.value }
+			index={index}
+			key={index}
+			onClick={() => {
+				setSelected(option.value);
+				onSelect(option);
+			}}
+			path={option.path}
+			selected={selected === option.value}
+			value={option.value}
 		>
-			{ option.label }
+			{option.label}
 		</SegmentedControl.Item>
-	) );
+	));
 
-	return <SegmentedControl { ...props }>{ renderedOptions }</SegmentedControl>;
+	return <SegmentedControl {...props}>{renderedOptions}</SegmentedControl>;
 }
 
 SimplifiedSegmentedControl.propTypes = {
@@ -45,11 +45,11 @@ SimplifiedSegmentedControl.propTypes = {
 	initialSelected: PropTypes.string,
 	onSelect: PropTypes.func,
 	options: PropTypes.arrayOf(
-		PropTypes.shape( {
+		PropTypes.shape({
 			value: PropTypes.string.isRequired,
 			label: PropTypes.string.isRequired,
 			path: PropTypes.string,
-		} )
+		})
 	).isRequired,
 };
 

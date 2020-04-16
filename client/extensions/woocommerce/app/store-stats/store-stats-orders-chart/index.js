@@ -34,43 +34,43 @@ class StoreStatsOrdersChart extends Component {
 		slug: PropTypes.string,
 	};
 
-	renderTabs = ( { chartData, selectedIndex, selectedTabIndex, selectedDate, unit, tabClick } ) => {
+	renderTabs = ({ chartData, selectedIndex, selectedTabIndex, selectedDate, unit, tabClick }) => {
 		const { deltas, moment } = this.props;
 		return (
-			<Tabs data={ chartData }>
-				{ tabs.map( ( tab, tabIndex ) => {
-					if ( tab.isHidden ) {
+			<Tabs data={chartData}>
+				{tabs.map((tab, tabIndex) => {
+					if (tab.isHidden) {
 						return null;
 					}
-					const itemChartData = chartData[ selectedIndex ];
-					const delta = getDelta( deltas, selectedDate, tab.attr );
+					const itemChartData = chartData[selectedIndex];
+					const delta = getDelta(deltas, selectedDate, tab.attr);
 					const deltaValue =
 						delta.direction === 'is-undefined-increase'
 							? '-'
-							: Math.abs( Math.round( delta.percentage_change * 100 ) );
-					const periodFormat = getPeriodFormat( unit, delta.reference_period );
-					const value = itemChartData.data[ tab.attr ];
+							: Math.abs(Math.round(delta.percentage_change * 100));
+					const periodFormat = getPeriodFormat(unit, delta.reference_period);
+					const value = itemChartData.data[tab.attr];
 					return (
 						<Tab
-							key={ tab.attr }
-							index={ tabIndex }
-							label={ tab.tabLabel || tab.label }
-							selected={ tabIndex === selectedTabIndex }
-							tabClick={ tabClick }
+							key={tab.attr}
+							index={tabIndex}
+							label={tab.tabLabel || tab.label}
+							selected={tabIndex === selectedTabIndex}
+							tabClick={tabClick}
 						>
 							<span className="store-stats-orders-chart__value value">
-								{ formatValue( value, tab.type, itemChartData.data.currency ) }
+								{formatValue(value, tab.type, itemChartData.data.currency)}
 							</span>
 							<Delta
-								value={ `${ deltaValue }%` }
-								className={ `${ delta.favorable } ${ delta.direction }` }
-								suffix={ `since ${ moment( delta.reference_period, periodFormat ).format(
-									UNITS[ unit ].shortFormat
-								) }` }
+								value={`${deltaValue}%`}
+								className={`${delta.favorable} ${delta.direction}`}
+								suffix={`since ${moment(delta.reference_period, periodFormat).format(
+									UNITS[unit].shortFormat
+								)}`}
 							/>
 						</Tab>
 					);
-				} ) }
+				})}
 			</Tabs>
 		);
 	};
@@ -80,23 +80,23 @@ class StoreStatsOrdersChart extends Component {
 		return (
 			<StoreStatsChart
 				className="store-stats-orders-chart"
-				data={ data }
-				selectedDate={ selectedDate }
-				unit={ unit }
-				renderTabs={ this.renderTabs }
-				slug={ slug }
-				basePath={ '/store/stats/orders' }
-				tabs={ tabs }
+				data={data}
+				selectedDate={selectedDate}
+				unit={unit}
+				renderTabs={this.renderTabs}
+				slug={slug}
+				basePath={'/store/stats/orders'}
+				tabs={tabs}
 			/>
 		);
 	}
 }
 
-export default connect( ( state, { query, siteId } ) => {
-	const statsData = getSiteStatsNormalizedData( state, siteId, 'statsOrders', query );
+export default connect((state, { query, siteId }) => {
+	const statsData = getSiteStatsNormalizedData(state, siteId, 'statsOrders', query);
 	return {
 		data: statsData.data,
 		deltas: statsData.deltas,
-		isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
+		isRequesting: isRequestingSiteStatsForQuery(state, siteId, 'statsOrders', query),
 	};
-} )( withLocalizedMoment( StoreStatsOrdersChart ) );
+})(withLocalizedMoment(StoreStatsOrdersChart));

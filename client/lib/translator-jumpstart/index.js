@@ -16,7 +16,7 @@ import User from 'lib/user';
 import analytics from 'lib/analytics';
 import { canBeTranslated } from 'lib/i18n-utils';
 
-const debug = debugModule( 'calypso:community-translator' );
+const debug = debugModule('calypso:community-translator');
 
 const user = new User(),
 	communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
@@ -57,29 +57,25 @@ const communityTranslatorJumpstart = {
 		const currentUser = user.get();
 
 		// disable for locales
-		if (
-			! currentUser ||
-			! currentUser.localeSlug ||
-			! canBeTranslated( currentUser.localeSlug )
-		) {
+		if (!currentUser || !currentUser.localeSlug || !canBeTranslated(currentUser.localeSlug)) {
 			return false;
 		}
 
 		// disable for locale variants with no official GP translation sets
-		if ( currentUser.localeVariant && ! canBeTranslated( currentUser.localeVariant ) ) {
+		if (currentUser.localeVariant && !canBeTranslated(currentUser.localeVariant)) {
 			return false;
 		}
 
-		if ( ! _isUserSettingsReady ) {
+		if (!_isUserSettingsReady) {
 			return false;
 		}
 
-		if ( ! _isTranslatorEnabled ) {
+		if (!_isTranslatorEnabled) {
 			return false;
 		}
 
 		// restrict mobile devices from translator for now while we refine touch interactions
-		if ( ! communityTranslatorJumpstart.isValidBrowser() ) {
+		if (!communityTranslatorJumpstart.isValidBrowser()) {
 			return false;
 		}
 
@@ -90,22 +86,22 @@ const communityTranslatorJumpstart = {
 		return _shouldWrapTranslations;
 	},
 
-	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		if ( ! this.isEnabled() || ! this.isActivated() || optionsFromPage.textOnly ) {
+	wrapTranslation(originalFromPage, displayedTranslationFromPage, optionsFromPage) {
+		if (!this.isEnabled() || !this.isActivated() || optionsFromPage.textOnly) {
 			return displayedTranslationFromPage;
 		}
 
-		if ( 'object' !== typeof optionsFromPage ) {
+		if ('object' !== typeof optionsFromPage) {
 			optionsFromPage = {};
 		}
 
-		if ( 'string' !== typeof originalFromPage ) {
-			debug( 'unknown original format' );
+		if ('string' !== typeof originalFromPage) {
+			debug('unknown original format');
 			return displayedTranslationFromPage;
 		}
 
-		if ( 'boolean' === typeof optionsFromPage.textOnly && optionsFromPage.textOnly ) {
-			debug( 'respecting textOnly for string "' + originalFromPage + '"' );
+		if ('boolean' === typeof optionsFromPage.textOnly && optionsFromPage.textOnly) {
+			debug('respecting textOnly for string "' + originalFromPage + '"');
 			return displayedTranslationFromPage;
 		}
 
@@ -115,106 +111,103 @@ const communityTranslatorJumpstart = {
 		};
 
 		// Has Context
-		if ( 'string' === typeof optionsFromPage.context ) {
-			props[ 'data-context' ] = optionsFromPage.context;
+		if ('string' === typeof optionsFromPage.context) {
+			props['data-context'] = optionsFromPage.context;
 		}
 
 		// Has Plural
-		if ( 'string' === typeof optionsFromPage.plural ) {
-			props[ 'data-plural' ] = optionsFromPage.plural;
+		if ('string' === typeof optionsFromPage.plural) {
+			props['data-plural'] = optionsFromPage.plural;
 		}
 
 		// <data> returns a frozen object, therefore we make a copy so that we can modify it below
-		const dataElement = Object.assign(
-			{},
-			<data { ...props }>{ displayedTranslationFromPage }</data>
-		);
+		const dataElement = Object.assign({}, <data {...props}>{displayedTranslationFromPage}</data>);
 
 		// now we can override the toString function which would otherwise return [object Object]
 		dataElement.toString = () => displayedTranslationFromPage;
 
 		// freeze the object again to certify the same behavior as the original ReactElement object
-		Object.freeze( dataElement );
+		Object.freeze(dataElement);
 
 		return dataElement;
 	},
 
-	init( isUserSettingsReady ) {
+	init(isUserSettingsReady) {
 		const languageJson = i18n.getLocale() || { '': {} };
-		const { localeSlug: localeCode, localeVariant } = languageJson[ '' ];
+		const { localeSlug: localeCode, localeVariant } = languageJson[''];
 
-		if ( localeCode && languageJson ) {
-			this.updateTranslationData( localeCode, languageJson, localeVariant );
+		if (localeCode && languageJson) {
+			this.updateTranslationData(localeCode, languageJson, localeVariant);
 		} else {
-			debug( 'trying to initialize translator without loaded language' );
+			debug('trying to initialize translator without loaded language');
 		}
 
-		if ( initialized ) {
+		if (initialized) {
 			return;
 		}
 
-		if ( ! isUndefined( isUserSettingsReady ) ) {
+		if (!isUndefined(isUserSettingsReady)) {
 			_isUserSettingsReady = isUserSettingsReady;
 		}
-		if ( ! _isUserSettingsReady ) {
-			debug( 'initialization failed because userSettings are not ready' );
+		if (!_isUserSettingsReady) {
+			debug('initialization failed because userSettings are not ready');
 			return;
 		}
 
-		if ( ! this.isEnabled() ) {
-			debug( 'not initializing, not enabled' );
+		if (!this.isEnabled()) {
+			debug('not initializing, not enabled');
 			return;
 		}
 
-		if ( ! localeCode || ! languageJson ) {
+		if (!localeCode || !languageJson) {
 			return;
 		}
 
-		debug( 'Successfully initialized' );
+		debug('Successfully initialized');
 		initialized = true;
 	},
 
-	updateTranslationData( localeCode, languageJson, localeVariant = null ) {
-		if ( translationDataFromPage.localeCode === localeCode ) {
+	updateTranslationData(localeCode, languageJson, localeVariant = null) {
+		if (translationDataFromPage.localeCode === localeCode) {
 			// if the locale code has already been assigned then assume it is up to date
-			debug( 'skipping updating translation data with same localeCode' );
+			debug('skipping updating translation data with same localeCode');
 			return true;
 		}
 
-		debug( 'Translator Jumpstart: loading locale file for ' + localeCode );
+		debug('Translator Jumpstart: loading locale file for ' + localeCode);
 		translationDataFromPage.localeCode = localeCode;
 		translationDataFromPage.pluralForms =
-			languageJson[ '' ].plural_forms ||
-			languageJson[ '' ][ 'Plural-Forms' ] ||
-			languageJson[ '' ][ 'plural-forms' ] ||
+			languageJson[''].plural_forms ||
+			languageJson['']['Plural-Forms'] ||
+			languageJson['']['plural-forms'] ||
 			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
-		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
-		if ( currentLocale ) {
+		const currentLocale = find(languages, (lang) => lang.langSlug === localeCode);
+		if (currentLocale) {
 			translationDataFromPage.languageName = currentLocale.name.replace(
 				/^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/,
 				''
 			);
 		}
 
-		this.setInjectionURL( 'community-translator.min.js' );
+		this.setInjectionURL('community-translator.min.js');
 
 		translationDataFromPage.glotPress.translation_set_slug =
-			translateSetSlugs[ localeVariant ] || 'default';
+			translateSetSlugs[localeVariant] || 'default';
 	},
 
-	setInjectionURL( jsFile ) {
+	setInjectionURL(jsFile) {
 		injectUrl = communityTranslatorBaseUrl + jsFile + '?v=' + communityTranslatorVersion;
-		debug( 'setting injection url', injectUrl );
+		debug('setting injection url', injectUrl);
 	},
 
 	toggle() {
 		let unregisteredHandleWarning = false;
 
 		translationDataFromPage.contentChangedCallback = () => {
-			if ( ! unregisteredHandleWarning ) {
-				debug( 'Translator notified of page change, but handler was not registered' );
+			if (!unregisteredHandleWarning) {
+				debug('Translator notified of page change, but handler was not registered');
 				unregisteredHandleWarning = true;
 			}
 		};
@@ -224,7 +217,7 @@ const communityTranslatorJumpstart = {
 			_shouldWrapTranslations = true;
 			i18n.reRenderTranslations();
 			window.communityTranslator.load();
-			debug( 'Translator activated' );
+			debug('Translator activated');
 			return true;
 		}
 
@@ -233,36 +226,36 @@ const communityTranslatorJumpstart = {
 			// Remove all the data tags from the DOM
 			_shouldWrapTranslations = false;
 			i18n.reRenderTranslations();
-			debug( 'Translator deactivated' );
+			debug('Translator deactivated');
 			return false;
 		}
 
 		window.translatorJumpstart = translationDataFromPage;
 
-		if ( 'undefined' === typeof window.communityTranslator ) {
-			if ( ! injectUrl ) {
-				debug( 'Community translator toggled before initialization' );
+		if ('undefined' === typeof window.communityTranslator) {
+			if (!injectUrl) {
+				debug('Community translator toggled before initialization');
 				_shouldWrapTranslations = false;
 				return false;
 			}
-			debug( 'loading community translator' );
-			loadjQueryDependentScriptDesktopWrapper( injectUrl, function( error ) {
-				if ( error ) {
-					debug( 'Script ' + error.src + ' failed to load.' );
+			debug('loading community translator');
+			loadjQueryDependentScriptDesktopWrapper(injectUrl, function (error) {
+				if (error) {
+					debug('Script ' + error.src + ' failed to load.');
 					return;
 				}
 
-				debug( 'Script loaded!' );
+				debug('Script loaded!');
 
 				window.communityTranslator.registerTranslatedCallback(
 					communityTranslatorJumpstart.updateTranslation
 				);
 				activate();
-			} );
+			});
 			return false;
 		}
 
-		if ( ! this.isActivated() ) {
+		if (!this.isActivated()) {
 			activate();
 		} else {
 			deactivate();
@@ -272,7 +265,7 @@ const communityTranslatorJumpstart = {
 	},
 
 	// Merge a Community Translator TranslationPair into the i18n locale
-	updateTranslation( newTranslation ) {
+	updateTranslation(newTranslation) {
 		const locale = i18n.getLocale(),
 			key = newTranslation.key,
 			plural = newTranslation.plural,
@@ -283,17 +276,17 @@ const communityTranslatorJumpstart = {
 			'Updating ',
 			newTranslation.singular,
 			'from',
-			locale[ key ],
+			locale[key],
 			'to',
-			[ plural ].concat( translations )
+			[plural].concat(translations)
 		);
-		locale[ key ] = [ plural ].concat( translations );
+		locale[key] = [plural].concat(translations);
 
-		i18n.setLocale( locale );
+		i18n.setLocale(locale);
 	},
 
 	isValidBrowser() {
-		if ( isMobile() ) {
+		if (isMobile()) {
 			return false;
 		}
 
@@ -302,34 +295,34 @@ const communityTranslatorJumpstart = {
 };
 
 // wrap translations from i18n
-i18n.registerTranslateHook( ( translation, options ) => {
-	return communityTranslatorJumpstart.wrapTranslation( options.original, translation, options );
-} );
+i18n.registerTranslateHook((translation, options) => {
+	return communityTranslatorJumpstart.wrapTranslation(options.original, translation, options);
+});
 
 // callback when translated component changes.
 // the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
-i18n.registerComponentUpdateHook( () => {
-	if ( typeof translationDataFromPage.contentChangedCallback === 'function' ) {
+i18n.registerComponentUpdateHook(() => {
+	if (typeof translationDataFromPage.contentChangedCallback === 'function') {
 		return translationDataFromPage.contentChangedCallback();
 	}
-} );
+});
 
-export function trackTranslatorStatus( isTranslatorEnabled ) {
+export function trackTranslatorStatus(isTranslatorEnabled) {
 	const newSetting = isTranslatorEnabled,
 		changed = _isTranslatorEnabled !== newSetting,
 		tracksEvent = newSetting
 			? 'calypso_community_translator_enabled'
 			: 'calypso_community_translator_disabled';
 
-	if ( changed && _isTranslatorEnabled !== undefined ) {
-		debug( tracksEvent );
-		analytics.tracks.recordEvent( tracksEvent, { locale: user.data.localeSlug } );
+	if (changed && _isTranslatorEnabled !== undefined) {
+		debug(tracksEvent);
+		analytics.tracks.recordEvent(tracksEvent, { locale: user.data.localeSlug });
 	}
 
 	_isTranslatorEnabled = newSetting;
 }
 
 // re-initialize when new locale data is loaded
-i18n.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
+i18n.on('change', communityTranslatorJumpstart.init.bind(communityTranslatorJumpstart));
 
 export default communityTranslatorJumpstart;

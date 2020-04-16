@@ -20,25 +20,25 @@ export default class WizardProgressBarExample extends Component {
 	};
 
 	handleNextButtonClick = () => {
-		this.setState( {
-			currentStep: Math.min( this.props.numberOfSteps, this.state.currentStep + 1 ),
-		} );
+		this.setState({
+			currentStep: Math.min(this.props.numberOfSteps, this.state.currentStep + 1),
+		});
 	};
 
 	handlePreviousButtonClick = () => {
-		this.setState( {
-			currentStep: Math.max( 1, this.state.currentStep - 1 ),
-		} );
+		this.setState({
+			currentStep: Math.max(1, this.state.currentStep - 1),
+		});
 	};
 
 	render() {
 		return (
 			<div>
 				<WizardProgressBar
-					currentStep={ this.state.currentStep }
-					nextButtonClick={ this.handleNextButtonClick }
-					numberOfSteps={ this.props.numberOfSteps }
-					previousButtonClick={ this.handlePreviousButtonClick }
+					currentStep={this.state.currentStep}
+					nextButtonClick={this.handleNextButtonClick}
+					numberOfSteps={this.props.numberOfSteps}
+					previousButtonClick={this.handlePreviousButtonClick}
 				/>
 			</div>
 		);

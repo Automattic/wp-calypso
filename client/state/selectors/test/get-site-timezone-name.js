@@ -8,19 +8,19 @@ import { expect } from 'chai';
  */
 import getSiteTimezoneName from 'state/selectors/get-site-timezone-name';
 
-describe( 'getSiteTimezoneName()', () => {
-	test( 'should return null if the site has never been fetched', () => {
+describe('getSiteTimezoneName()', () => {
+	test('should return null if the site has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {},
 			},
 		};
 
-		const timezone = getSiteTimezoneName( stateTree, 2916284 );
-		expect( timezone ).to.be.null;
-	} );
+		const timezone = getSiteTimezoneName(stateTree, 2916284);
+		expect(timezone).to.be.null;
+	});
 
-	test( 'should return null if the site-settings has never been fetched', () => {
+	test('should return null if the site-settings has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -29,11 +29,11 @@ describe( 'getSiteTimezoneName()', () => {
 			},
 		};
 
-		const timezone = getSiteTimezoneName( stateTree, 2916284 );
-		expect( timezone ).to.be.null;
-	} );
+		const timezone = getSiteTimezoneName(stateTree, 2916284);
+		expect(timezone).to.be.null;
+	});
 
-	test( 'should return site-settings timezone as the first priority', () => {
+	test('should return site-settings timezone as the first priority', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -45,11 +45,11 @@ describe( 'getSiteTimezoneName()', () => {
 			},
 		};
 
-		const timezone = getSiteTimezoneName( stateTree, 2916284 );
-		expect( timezone ).to.eql( 'Europe/Skopje' );
-	} );
+		const timezone = getSiteTimezoneName(stateTree, 2916284);
+		expect(timezone).to.eql('Europe/Skopje');
+	});
 
-	test( 'should return site-settings UTC offset if timezone_string is empty', () => {
+	test('should return site-settings UTC offset if timezone_string is empty', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -61,11 +61,11 @@ describe( 'getSiteTimezoneName()', () => {
 			},
 		};
 
-		const timezone = getSiteTimezoneName( stateTree, 2916284 );
-		expect( timezone ).to.eql( 'UTC+11' );
-	} );
+		const timezone = getSiteTimezoneName(stateTree, 2916284);
+		expect(timezone).to.eql('UTC+11');
+	});
 
-	test( 'should return site-settings UTC offset for negative value', () => {
+	test('should return site-settings UTC offset for negative value', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -77,7 +77,7 @@ describe( 'getSiteTimezoneName()', () => {
 			},
 		};
 
-		const timezone = getSiteTimezoneName( stateTree, 2916284 );
-		expect( timezone ).to.eql( 'UTC-11' );
-	} );
-} );
+		const timezone = getSiteTimezoneName(stateTree, 2916284);
+		expect(timezone).to.eql('UTC-11');
+	});
+});

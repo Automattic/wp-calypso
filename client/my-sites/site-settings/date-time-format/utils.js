@@ -18,10 +18,10 @@ import { has, startsWith } from 'lodash';
  * @param {string} timezoneString A timezone string.
  * @returns {object} The timezone-adjusted Moment.js object of the current date and time.
  */
-export function getLocalizedDate( timezoneString ) {
-	return startsWith( timezoneString, 'UTC' )
-		? moment().utcOffset( timezoneString.substring( 3 ) * 60 ) // E.g. "UTC+5" -> "+5" * 60 -> 300
-		: moment.tz( timezoneString );
+export function getLocalizedDate(timezoneString) {
+	return startsWith(timezoneString, 'UTC')
+		? moment().utcOffset(timezoneString.substring(3) * 60) // E.g. "UTC+5" -> "+5" * 60 -> 300
+		: moment.tz(timezoneString);
 }
 
 /**
@@ -92,62 +92,62 @@ const phpToMomentMapping = {
  * @param {string} formatString A PHP datetime format string
  * @returns {string} A Moment.js datetime format string
  */
-export function phpToMomentDatetimeFormat( momentDate, formatString ) {
+export function phpToMomentDatetimeFormat(momentDate, formatString) {
 	const mappedFormat = formatString
-		.split( '' )
-		.map( ( c, i, a ) => {
-			const prev = a[ i - 1 ];
-			const next = a[ i + 1 ];
+		.split('')
+		.map((c, i, a) => {
+			const prev = a[i - 1];
+			const next = a[i + 1];
 
 			// Check if character is escaped
-			if ( '\\' === prev ) {
-				return `[${ c }]`;
+			if ('\\' === prev) {
+				return `[${c}]`;
 			}
-			if ( '\\' === c ) {
+			if ('\\' === c) {
 				return '';
 			}
 
 			// Check if character is "jS", currently the only double-character token
-			if ( 'j' === c && 'S' === next ) {
+			if ('j' === c && 'S' === next) {
 				return 'Do';
 			}
-			if ( 'S' === c && 'j' === prev ) {
+			if ('S' === c && 'j' === prev) {
 				return '';
 			}
 
 			// Check if character is a token mapped as a function
-			switch ( c ) {
+			switch (c) {
 				case 'z':
 					// "DDD" is 1 based but "z" is 0 based
-					return `[${ momentDate.format( 'DDD' ) - 1 }]`;
+					return `[${momentDate.format('DDD') - 1}]`;
 				case 't':
-					return `[${ momentDate.daysInMonth() }]`;
+					return `[${momentDate.daysInMonth()}]`;
 				case 'L':
 					// 1 or 0
-					return `[${ momentDate.isLeapYear() | 0 }]`;
+					return `[${momentDate.isLeapYear() | 0}]`;
 				case 'B':
 					const utcDate = momentDate.clone().utc();
 					const swatchTime =
-						( ( utcDate.hours() + 1 ) % 24 ) + utcDate.minutes() / 60 + utcDate.seconds() / 3600;
-					return Math.floor( ( swatchTime * 1000 ) / 24 );
+						((utcDate.hours() + 1) % 24) + utcDate.minutes() / 60 + utcDate.seconds() / 3600;
+					return Math.floor((swatchTime * 1000) / 24);
 				case 'I':
 					// 1 or 0
-					return `[${ momentDate.isDST() | 0 }]`;
+					return `[${momentDate.isDST() | 0}]`;
 				case 'Z':
 					// Timezone offset in seconds
 					// E.g. "+0100" -> "3600"
-					return parseInt( momentDate.format( 'ZZ' ), 10 ) * 36;
+					return parseInt(momentDate.format('ZZ'), 10) * 36;
 			}
 
 			// Check if character is a recognized mapping token
-			if ( has( phpToMomentMapping, c ) ) {
-				return phpToMomentMapping[ c ];
+			if (has(phpToMomentMapping, c)) {
+				return phpToMomentMapping[c];
 			}
 
 			// Otherwise, return the character as-is, escaped for Moment.js
-			return `[${ c }]`;
-		} )
-		.join( '' );
+			return `[${c}]`;
+		})
+		.join('');
 
-	return momentDate.format( mappedFormat );
+	return momentDate.format(mappedFormat);
 }

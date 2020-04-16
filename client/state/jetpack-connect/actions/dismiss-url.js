@@ -5,7 +5,7 @@ import { JETPACK_CONNECT_DISMISS_URL_STATUS } from 'state/jetpack-connect/action
 
 import 'state/jetpack-connect/init';
 
-export function dismissUrl( url ) {
+export function dismissUrl(url) {
 	return {
 		type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 		url,

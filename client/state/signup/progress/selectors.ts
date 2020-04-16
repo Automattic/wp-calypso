@@ -9,6 +9,6 @@ import { get } from 'lodash';
 import { ProgressState } from './schema';
 
 const initialState: ProgressState = {};
-export function getSignupProgress( state: any ): ProgressState {
-	return get( state, 'signup.progress', initialState );
+export function getSignupProgress(state: any): ProgressState {
+	return get(state, 'signup.progress', initialState);
 }

@@ -1,3 +1,3 @@
 export const suggestedUsernameSchema = {
-	type: [ 'string', 'null' ],
+	type: ['string', 'null'],
 };

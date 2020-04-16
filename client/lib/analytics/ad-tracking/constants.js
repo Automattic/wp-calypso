@@ -32,7 +32,7 @@ export const isAdRollEnabled = false;
 /**
  * Module variables
  */
-export const debug = debugFactory( 'calypso:analytics:ad-tracking' );
+export const debug = debugFactory('calypso:analytics:ad-tracking');
 
 export const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js';
 export const GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=';
@@ -76,7 +76,7 @@ export const TRACKING_IDS = {
 	linkedInPartnerId: '195308',
 	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
-	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
+	wpcomGoogleAnalyticsGtag: config('google_analytics_key'),
 	wpcomFloodlightGtag: 'DC-6355556',
 	wpcomGoogleAdsGtag: 'AW-946162814',
 	wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"

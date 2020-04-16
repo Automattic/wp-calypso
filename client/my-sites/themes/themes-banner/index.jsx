@@ -50,11 +50,11 @@ class ThemesBanner extends PureComponent {
 			theme: themeId,
 			active_theme: activeThemeId,
 		};
-		recordTracksEvent( 'calypso_showcase_banner_click', tracksData );
+		recordTracksEvent('calypso_showcase_banner_click', tracksData);
 	};
 
 	// eslint-disable-next-line no-undef
-	handleBannerClose = e => {
+	handleBannerClose = (e) => {
 		this.props.hideThemesBanner();
 		e.preventDefault();
 	};
@@ -72,49 +72,49 @@ class ThemesBanner extends PureComponent {
 			themeUrl,
 			translate,
 		} = this.props;
-		if ( ! isBannerVisible ) {
+		if (!isBannerVisible) {
 			return null; // Do not show banner if the user has closed it.
 		}
 		const backgroundStyle = backgroundColor ? { backgroundColor } : {};
 		return (
-			<div className="themes-banner" style={ backgroundStyle }>
+			<div className="themes-banner" style={backgroundStyle}>
 				<Button
 					className="themes-banner__close"
-					onClick={ this.handleBannerClose }
-					aria-label={ translate( 'Close', {
+					onClick={this.handleBannerClose}
+					aria-label={translate('Close', {
 						comment: 'Aria label to close the Theme banner',
-					} ) }
+					})}
 				>
-					<Gridicon icon="cross-small" size={ 18 } />
+					<Gridicon icon="cross-small" size={18} />
 				</Button>
-				<a role="button" onClick={ this.recordEvent } href={ themeUrl }>
-					<h1 className="themes-banner__title">{ title }</h1>
-					<p className="themes-banner__description">{ description }</p>
+				<a role="button" onClick={this.recordEvent} href={themeUrl}>
+					<h1 className="themes-banner__title">{title}</h1>
+					<p className="themes-banner__description">{description}</p>
 					<Button className="themes-banner__cta" compact primary>
-						{ translate( 'See the theme' ) }
+						{translate('See the theme')}
 					</Button>
-					{ image && (
+					{image && (
 						<img
-							alt={ translate( '%(themeName)s Theme', {
+							alt={translate('%(themeName)s Theme', {
 								args: { themeName },
-							} ) }
-							width={ imageWidth }
+							})}
+							width={imageWidth}
 							className="themes-banner__image"
-							src={ safeImageUrl( image ) }
-							style={ { transform: imageTransform } }
+							src={safeImageUrl(image)}
+							style={{ transform: imageTransform }}
 						/>
-					) }
+					)}
 				</a>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { themeId } ) => {
-	const siteId = getSelectedSiteId( state );
-	const themeUrl = getThemeDetailsUrl( state, themeId, siteId );
-	const activeThemeId = getActiveTheme( state, siteId );
-	const isBannerVisible = isThemesBannerVisible( state );
+const mapStateToProps = (state, { themeId }) => {
+	const siteId = getSelectedSiteId(state);
+	const themeUrl = getThemeDetailsUrl(state, themeId, siteId);
+	const activeThemeId = getActiveTheme(state, siteId);
+	const isBannerVisible = isThemesBannerVisible(state);
 	return {
 		siteId,
 		themeUrl,
@@ -123,7 +123,7 @@ const mapStateToProps = ( state, { themeId } ) => {
 	};
 };
 
-export default connect( mapStateToProps, {
+export default connect(mapStateToProps, {
 	recordTracksEvent: recordTracksEventAction,
 	hideThemesBanner: hideThemesBannerAction,
-} )( localize( ThemesBanner ) );
+})(localize(ThemesBanner));

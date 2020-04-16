@@ -28,26 +28,26 @@ import SectionHeader from 'components/section-header';
  */
 import './style.scss';
 
-function handleSearch( query ) {
-	recordTrack( 'calypso_reader_search_from_following', {
+function handleSearch(query) {
+	recordTrack('calypso_reader_search_from_following', {
 		query,
-	} );
+	});
 
-	if ( trim( query ) !== '' ) {
-		page( '/read/search?q=' + encodeURIComponent( query ) + '&focus=1' );
+	if (trim(query) !== '') {
+		page('/read/search?q=' + encodeURIComponent(query) + '&focus=1');
 	}
 }
 
-const lastDayForVoteBanner = new Date( '2018-11-07T00:00:00' );
+const lastDayForVoteBanner = new Date('2018-11-07T00:00:00');
 
-const FollowingStream = props => {
+const FollowingStream = (props) => {
 	const suggestionList =
 		props.suggestions &&
 		initial(
-			flatMap( props.suggestions, query => [
-				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
+			flatMap(props.suggestions, (query) => [
+				<Suggestion suggestion={query.text} source="following" railcar={query.railcar} />,
 				', ',
-			] )
+			])
 		);
 	const placeholderText = getSearchPlaceholderText();
 	const now = new Date();
@@ -56,9 +56,9 @@ const FollowingStream = props => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Stream { ...props }>
-			{ ! showRegistrationMsg && <FollowingIntro /> }
-			{ showRegistrationMsg && (
+		<Stream {...props}>
+			{!showRegistrationMsg && <FollowingIntro />}
+			{showRegistrationMsg && (
 				<Banner
 					className="following__reader-vote"
 					title="Election Day: Tuesday November 6th"
@@ -69,19 +69,19 @@ const FollowingStream = props => {
 					href="https://www.usa.gov/election-office"
 					icon="star"
 				/>
-			) }
+			)}
 			<CompactCard className="following__search">
 				<SearchInput
-					onSearch={ handleSearch }
-					delaySearch={ true }
-					delayTimeout={ 500 }
-					placeholder={ placeholderText }
+					onSearch={handleSearch}
+					delaySearch={true}
+					delayTimeout={500}
+					placeholder={placeholderText}
 				/>
 			</CompactCard>
-			<BlankSuggestions suggestions={ suggestionList } />
-			<SectionHeader label={ translate( 'Followed Sites' ) }>
+			<BlankSuggestions suggestions={suggestionList} />
+			<SectionHeader label={translate('Followed Sites')}>
 				<Button primary compact className="following__manage" href="/following/manage">
-					{ translate( 'Manage' ) }
+					{translate('Manage')}
 				</Button>
 			</SectionHeader>
 		</Stream>
@@ -89,6 +89,6 @@ const FollowingStream = props => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default connect( state => ( {
-	userInUSA: getCurrentUserCountryCode( state ) === 'US',
-} ) )( SuggestionProvider( localize( FollowingStream ) ) );
+export default connect((state) => ({
+	userInUSA: getCurrentUserCountryCode(state) === 'US',
+}))(SuggestionProvider(localize(FollowingStream)));

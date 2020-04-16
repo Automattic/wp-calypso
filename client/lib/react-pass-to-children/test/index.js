@@ -14,23 +14,23 @@ import passToChildren from '../';
 /**
  * Module variables
  */
-let DUMMY_PROPS = { data: [ 1, 2, 3 ] },
+let DUMMY_PROPS = { data: [1, 2, 3] },
 	PassThrough;
 
 PassThrough = class extends React.Component {
 	render() {
-		return passToChildren( this, DUMMY_PROPS );
+		return passToChildren(this, DUMMY_PROPS);
 	}
 };
 
-describe( 'index', () => {
+describe('index', () => {
 	let renderer;
 
-	beforeEach( () => {
+	beforeEach(() => {
 		renderer = new ShallowRenderer();
-	} );
+	});
 
-	test( 'should accept a single child and pass along props', () => {
+	test('should accept a single child and pass along props', () => {
 		let result;
 
 		renderer.render(
@@ -40,27 +40,11 @@ describe( 'index', () => {
 		);
 		result = renderer.getRenderOutput();
 
-		expect( result.type ).to.equal( 'div' );
-		expect( result.props ).to.eql( DUMMY_PROPS );
-	} );
+		expect(result.type).to.equal('div');
+		expect(result.props).to.eql(DUMMY_PROPS);
+	});
 
-	test( 'should accept multiple children and wrap them in a div', () => {
-		let result;
-
-		renderer.render(
-			<PassThrough>
-				<div />
-				<div />
-			</PassThrough>
-		);
-		result = renderer.getRenderOutput();
-
-		expect( React.Children.count( result ) ).to.equal( 1 );
-		expect( result.type ).to.eql( 'div' );
-		expect( React.Children.count( result.props.children ) ).to.equal( 2 );
-	} );
-
-	test( 'should accept multiple children and pass along props to each', done => {
+	test('should accept multiple children and wrap them in a div', () => {
 		let result;
 
 		renderer.render(
@@ -71,32 +55,48 @@ describe( 'index', () => {
 		);
 		result = renderer.getRenderOutput();
 
-		React.Children.forEach( result.props.children, function( child, i ) {
-			expect( child.type ).to.equal( 'div' );
-			expect( child.props ).to.eql( DUMMY_PROPS );
+		expect(React.Children.count(result)).to.equal(1);
+		expect(result.type).to.eql('div');
+		expect(React.Children.count(result.props.children)).to.equal(2);
+	});
 
-			if ( 1 === i ) {
+	test('should accept multiple children and pass along props to each', (done) => {
+		let result;
+
+		renderer.render(
+			<PassThrough>
+				<div />
+				<div />
+			</PassThrough>
+		);
+		result = renderer.getRenderOutput();
+
+		React.Children.forEach(result.props.children, function (child, i) {
+			expect(child.type).to.equal('div');
+			expect(child.props).to.eql(DUMMY_PROPS);
+
+			if (1 === i) {
 				done();
 			}
-		} );
-	} );
+		});
+	});
 
-	test( 'should accept multiple children, including nulls', () => {
+	test('should accept multiple children, including nulls', () => {
 		let result;
 
 		renderer.render(
 			<PassThrough>
-				{ null }
+				{null}
 				<div />
 			</PassThrough>
 		);
 		result = renderer.getRenderOutput();
 
-		expect( React.Children.count( result.props.children ) ).to.equal( 1 );
-		expect( React.Children.toArray( result.props.children )[ 0 ].props ).to.eql( DUMMY_PROPS );
-	} );
+		expect(React.Children.count(result.props.children)).to.equal(1);
+		expect(React.Children.toArray(result.props.children)[0].props).to.eql(DUMMY_PROPS);
+	});
 
-	test( 'should preserve props passed to the children', () => {
+	test('should preserve props passed to the children', () => {
 		let result;
 
 		renderer.render(
@@ -106,15 +106,15 @@ describe( 'index', () => {
 		);
 		result = renderer.getRenderOutput();
 
-		expect( result.type ).to.equal( 'div' );
-		expect( result.props ).to.eql(
-			assign( {}, DUMMY_PROPS, {
+		expect(result.type).to.equal('div');
+		expect(result.props).to.eql(
+			assign({}, DUMMY_PROPS, {
 				'data-preserve': true,
-			} )
+			})
 		);
-	} );
+	});
 
-	test( 'should preserve props passed to the instance itself', () => {
+	test('should preserve props passed to the instance itself', () => {
 		let result;
 
 		renderer.render(
@@ -124,11 +124,11 @@ describe( 'index', () => {
 		);
 		result = renderer.getRenderOutput();
 
-		expect( result.type ).to.equal( 'div' );
-		expect( result.props ).to.eql(
-			assign( {}, DUMMY_PROPS, {
+		expect(result.type).to.equal('div');
+		expect(result.props).to.eql(
+			assign({}, DUMMY_PROPS, {
 				'data-preserve': true,
-			} )
+			})
 		);
-	} );
-} );
+	});
+});

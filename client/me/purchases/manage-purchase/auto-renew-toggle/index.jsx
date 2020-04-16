@@ -53,51 +53,51 @@ class AutoRenewToggle extends Component {
 	};
 
 	componentDidUpdate() {
-		if ( ! this.state.showAutoRenewDisablingDialog && this.state.pendingNotice ) {
-			this.props.createNotice( ...this.state.pendingNotice );
+		if (!this.state.showAutoRenewDisablingDialog && this.state.pendingNotice) {
+			this.props.createNotice(...this.state.pendingNotice);
 
 			// the blocking condition above will safely block this from causing infinite update loop.
 			/* eslint-disable-next-line react/no-did-update-set-state */
-			this.setState( {
+			this.setState({
 				pendingNotice: null,
-			} );
+			});
 		}
 	}
 
 	onCloseAutoRenewDisablingDialog = () => {
-		this.setState( {
+		this.setState({
 			showAutoRenewDisablingDialog: false,
-		} );
+		});
 	};
 
 	closeAutoRenewPaymentMethodDialog() {
-		this.setState( {
+		this.setState({
 			showPaymentMethodDialog: false,
-		} );
+		});
 	}
 
 	goToUpdatePaymentMethod = () => {
 		const { purchase, siteSlug, productSlug, isAtomicSite, toggleSource } = this.props;
 		this.closeAutoRenewPaymentMethodDialog();
 
-		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_add_click', {
+		this.props.recordTracksEvent('calypso_auto_renew_no_payment_method_dialog_add_click', {
 			product_slug: productSlug,
 			is_atomic: isAtomicSite,
 			toggle_source: toggleSource,
-		} );
+		});
 
-		page( getEditCardDetailsPath( siteSlug, purchase ) );
+		page(getEditCardDetailsPath(siteSlug, purchase));
 	};
 
 	onCloseAutoRenewPaymentMethodDialog = () => {
 		const { productSlug, isAtomicSite, toggleSource } = this.props;
 		this.closeAutoRenewPaymentMethodDialog();
 
-		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_close', {
+		this.props.recordTracksEvent('calypso_auto_renew_no_payment_method_dialog_close', {
 			product_slug: productSlug,
 			is_atomic: isAtomicSite,
 			toggle_source: toggleSource,
-		} );
+		});
 	};
 
 	toggleAutoRenew = () => {
@@ -110,60 +110,60 @@ class AutoRenewToggle extends Component {
 		} = this.props;
 
 		const updateAutoRenew = isEnabled ? disableAutoRenew : enableAutoRenew;
-		const isTogglingToward = ! isEnabled;
+		const isTogglingToward = !isEnabled;
 
 		const recordEvent = () => {
-			this.props.recordTracksEvent( 'calypso_purchases_manage_purchase_toggle_auto_renew', {
+			this.props.recordTracksEvent('calypso_purchases_manage_purchase_toggle_auto_renew', {
 				product_slug: productSlug,
 				is_atomic: isAtomicSite,
 				is_toggling_toward: isTogglingToward,
 				toggle_source: this.props.toggleSource,
-			} );
+			});
 		};
 
-		if ( isTogglingToward && ! isRechargeable( this.props.purchase ) ) {
-			this.setState( {
+		if (isTogglingToward && !isRechargeable(this.props.purchase)) {
+			this.setState({
 				showPaymentMethodDialog: true,
-			} );
+			});
 			recordEvent();
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			isTogglingToward,
 			isRequesting: true,
-		} );
+		});
 
-		updateAutoRenew( purchaseId, success => {
-			this.setState( {
+		updateAutoRenew(purchaseId, (success) => {
+			this.setState({
 				isRequesting: false,
-			} );
+			});
 
-			if ( success ) {
-				this.props.fetchUserPurchases( currentUserId );
+			if (success) {
+				this.props.fetchUserPurchases(currentUserId);
 
-				if ( isTogglingToward === false ) {
-					this.setState( {
+				if (isTogglingToward === false) {
+					this.setState({
 						pendingNotice: [
 							'is-success',
-							translate( 'Auto-renewal has been turned off successfully.' ),
+							translate('Auto-renewal has been turned off successfully.'),
 							{ duration: 4000 },
 						],
-					} );
+					});
 				}
 
 				return;
 			}
 
-			this.setState( {
+			this.setState({
 				pendingNotice: [
 					'is-error',
 					isTogglingToward
-						? translate( "We've failed to enable auto-renewal for you. Please try again." )
-						: translate( "We've failed to disable auto-renewal for you. Please try again." ),
+						? translate("We've failed to enable auto-renewal for you. Please try again.")
+						: translate("We've failed to disable auto-renewal for you. Please try again."),
 				],
-			} );
-		} );
+			});
+		});
 
 		recordEvent();
 	};
@@ -171,10 +171,10 @@ class AutoRenewToggle extends Component {
 	onToggleAutoRenew = () => {
 		const { isEnabled } = this.props;
 
-		if ( isEnabled ) {
-			this.setState( {
+		if (isEnabled) {
+			this.setState({
 				showAutoRenewDisablingDialog: true,
-			} );
+			});
 			return;
 		}
 
@@ -192,21 +192,21 @@ class AutoRenewToggle extends Component {
 	renderTextStatus() {
 		const { translate, isEnabled } = this.props;
 
-		if ( this.isUpdatingAutoRenew() ) {
-			return translate( 'Auto-renew (…)' );
+		if (this.isUpdatingAutoRenew()) {
+			return translate('Auto-renew (…)');
 		}
 
-		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
+		return isEnabled ? translate('Auto-renew (on)') : translate('Auto-renew (off)');
 	}
 
-	shouldRender( purchase ) {
-		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
+	shouldRender(purchase) {
+		return !isExpired(purchase) && !isOneTimePurchase(purchase);
 	}
 
 	render() {
 		const { planName, siteDomain, purchase, compact, withTextStatus } = this.props;
 
-		if ( ! this.shouldRender( purchase ) ) {
+		if (!this.shouldRender(purchase)) {
 			return null;
 		}
 
@@ -215,26 +215,26 @@ class AutoRenewToggle extends Component {
 		return (
 			<>
 				<ToggleComponent
-					checked={ this.getToggleUiStatus() }
-					disabled={ this.isUpdatingAutoRenew() }
-					toggling={ this.isUpdatingAutoRenew() }
-					onChange={ this.onToggleAutoRenew }
+					checked={this.getToggleUiStatus()}
+					disabled={this.isUpdatingAutoRenew()}
+					toggling={this.isUpdatingAutoRenew()}
+					onChange={this.onToggleAutoRenew}
 				>
-					{ withTextStatus && this.renderTextStatus() }
+					{withTextStatus && this.renderTextStatus()}
 				</ToggleComponent>
 				<AutoRenewDisablingDialog
-					isVisible={ this.state.showAutoRenewDisablingDialog }
-					planName={ planName }
-					purchase={ purchase }
-					siteDomain={ siteDomain }
-					onClose={ this.onCloseAutoRenewDisablingDialog }
-					onConfirm={ this.toggleAutoRenew }
+					isVisible={this.state.showAutoRenewDisablingDialog}
+					planName={planName}
+					purchase={purchase}
+					siteDomain={siteDomain}
+					onClose={this.onCloseAutoRenewDisablingDialog}
+					onConfirm={this.toggleAutoRenew}
 				/>
 				<AutoRenewPaymentMethodDialog
-					isVisible={ this.state.showPaymentMethodDialog }
-					purchase={ purchase }
-					onClose={ this.onCloseAutoRenewPaymentMethodDialog }
-					onAddClick={ this.goToUpdatePaymentMethod }
+					isVisible={this.state.showPaymentMethodDialog}
+					purchase={purchase}
+					onClose={this.onCloseAutoRenewPaymentMethodDialog}
+					onAddClick={this.goToUpdatePaymentMethod}
 				/>
 			</>
 		);
@@ -242,16 +242,16 @@ class AutoRenewToggle extends Component {
 }
 
 export default connect(
-	( state, { purchase } ) => ( {
-		fetchingUserPurchases: isFetchingUserPurchases( state ),
-		isEnabled: ! isExpiring( purchase ),
-		currentUserId: getCurrentUserId( state ),
-		isAtomicSite: isSiteAtomic( state, purchase.siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	(state, { purchase }) => ({
+		fetchingUserPurchases: isFetchingUserPurchases(state),
+		isEnabled: !isExpiring(purchase),
+		currentUserId: getCurrentUserId(state),
+		isAtomicSite: isSiteAtomic(state, purchase.siteId),
+		siteSlug: getSelectedSiteSlug(state),
+	}),
 	{
 		fetchUserPurchases,
 		recordTracksEvent,
 		createNotice,
 	}
-)( localize( AutoRenewToggle ) );
+)(localize(AutoRenewToggle));

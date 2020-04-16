@@ -13,7 +13,7 @@ import 'state/themes/init';
  * @param  {string}  siteId  Site ID
  * @returns {?string}         Theme forum URL
  */
-export function getThemeDemoUrl( state, themeId, siteId ) {
-	const theme = getCanonicalTheme( state, siteId, themeId );
+export function getThemeDemoUrl(state, themeId, siteId) {
+	const theme = getCanonicalTheme(state, siteId, themeId);
 	return theme?.demo_uri;
 }

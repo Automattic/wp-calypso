@@ -27,24 +27,24 @@ export class PluginAutoUpdateToggle extends Component {
 			recordTracksEvent: recordEvent,
 		} = this.props;
 
-		if ( isMock || disabled ) {
+		if (isMock || disabled) {
 			return;
 		}
 
-		PluginsActions.togglePluginAutoUpdate( site, plugin );
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+		PluginsActions.togglePluginAutoUpdate(site, plugin);
+		PluginsActions.removePluginsNotices('completed', 'error');
 
-		if ( plugin.autoupdate ) {
+		if (plugin.autoupdate) {
 			recordGAEvent(
 				'Plugins',
 				'Clicked Toggle Disable Autoupdates Plugin',
 				'Plugin Name',
 				plugin.slug
 			);
-			recordEvent( 'calypso_plugin_autoupdate_disable_click', {
+			recordEvent('calypso_plugin_autoupdate_disable_click', {
 				site: site.ID,
 				plugin: plugin.slug,
-			} );
+			});
 		} else {
 			recordGAEvent(
 				'Plugins',
@@ -52,27 +52,27 @@ export class PluginAutoUpdateToggle extends Component {
 				'Plugin Name',
 				plugin.slug
 			);
-			recordEvent( 'calypso_plugin_autoupdate_enable_click', {
+			recordEvent('calypso_plugin_autoupdate_enable_click', {
 				site: site.ID,
 				plugin: plugin.slug,
-			} );
+			});
 		}
 	};
 
 	getDisabledInfo() {
 		const { site, wporg, translate } = this.props;
-		if ( ! site ) {
+		if (!site) {
 			// we don't have enough info
 			return null;
 		}
 
-		if ( ! wporg ) {
+		if (!wporg) {
 			return translate(
 				"This plugin is not in the WordPress.org plugin repository, so we can't autoupdate it."
 			);
 		}
 
-		if ( site.options.is_multi_network ) {
+		if (site.options.is_multi_network) {
 			return translate(
 				'%(site)s is part of a multi-network installation, which is not currently supported.',
 				{
@@ -81,7 +81,7 @@ export class PluginAutoUpdateToggle extends Component {
 			);
 		}
 
-		if ( ! isMainNetworkSite( site ) ) {
+		if (!isMainNetworkSite(site)) {
 			return translate(
 				'Only the main site on a multi-site installation can enable autoupdates for plugins.',
 				{
@@ -90,43 +90,43 @@ export class PluginAutoUpdateToggle extends Component {
 			);
 		}
 
-		if ( ! site.canAutoupdateFiles && site.options.file_mod_disabled ) {
-			const reasons = getSiteFileModDisableReason( site, 'autoupdateFiles' );
+		if (!site.canAutoupdateFiles && site.options.file_mod_disabled) {
+			const reasons = getSiteFileModDisableReason(site, 'autoupdateFiles');
 			const html = [];
 
-			if ( reasons.length > 1 ) {
+			if (reasons.length > 1) {
 				html.push(
 					<p key="reason-shell">
-						{ translate( 'Autoupdates are not available for %(site)s:', {
+						{translate('Autoupdates are not available for %(site)s:', {
 							args: { site: site.title },
-						} ) }
+						})}
 					</p>
 				);
-				const list = reasons.map( ( reason, i ) => (
-					<li key={ 'reason-i' + i + '-' + site.ID }>{ reason }</li>
-				) );
+				const list = reasons.map((reason, i) => (
+					<li key={'reason-i' + i + '-' + site.ID}>{reason}</li>
+				));
 				html.push(
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
-						{ list }
+						{list}
 					</ul>
 				);
 			} else {
 				html.push(
 					<p key="reason-shell">
-						{ translate( 'Autoupdates are not available for %(site)s. %(reason)s', {
-							args: { site: site.title, reason: reasons[ 0 ] },
-						} ) }
+						{translate('Autoupdates are not available for %(site)s. %(reason)s', {
+							args: { site: site.title, reason: reasons[0] },
+						})}
 					</p>
 				);
 			}
 			html.push(
 				<ExternalLink
 					key="external-link"
-					onClick={ this.recordEvent }
+					onClick={this.recordEvent}
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
 				>
-					{ translate( 'How do I fix this?' ) }
+					{translate('How do I fix this?')}
 				</ExternalLink>
 			);
 
@@ -137,29 +137,29 @@ export class PluginAutoUpdateToggle extends Component {
 
 	render() {
 		const { site, plugin, translate, disabled } = this.props;
-		if ( ! site.jetpack ) {
+		if (!site.jetpack) {
 			return null;
 		}
 
-		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
+		const inProgress = PluginsLog.isInProgressAction(site.ID, plugin.slug, [
 				'ENABLE_AUTOUPDATE_PLUGIN',
 				'DISABLE_AUTOUPDATE_PLUGIN',
-			] ),
+			]),
 			getDisabledInfo = this.getDisabledInfo(),
-			label = translate( 'Autoupdates', {
+			label = translate('Autoupdates', {
 				comment:
 					'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
-			} );
+			});
 
 		return (
 			<PluginAction
-				disabled={ disabled }
-				label={ label }
-				status={ plugin.autoupdate }
-				action={ this.toggleAutoUpdates }
-				inProgress={ inProgress }
-				disabledInfo={ getDisabledInfo }
-				htmlFor={ 'autoupdates-' + plugin.slug + '-' + site.ID }
+				disabled={disabled}
+				label={label}
+				status={plugin.autoupdate}
+				action={this.toggleAutoUpdates}
+				inProgress={inProgress}
+				disabledInfo={getDisabledInfo}
+				htmlFor={'autoupdates-' + plugin.slug + '-' + site.ID}
 			/>
 		);
 	}
@@ -178,7 +178,7 @@ PluginAutoUpdateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
 	recordTracksEvent,
-} )( localize( PluginAutoUpdateToggle ) );
+})(localize(PluginAutoUpdateToggle));

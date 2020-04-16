@@ -11,10 +11,10 @@
  */
 import { createResolvers } from '../resolvers';
 
-const { getCurrentUser } = createResolvers( { client_id: '', client_secret: '' } );
+const { getCurrentUser } = createResolvers({ client_id: '', client_secret: '' });
 
-describe( 'getCurrentUser', () => {
-	it( 'should return a receiveCurrentUser action object on success', async () => {
+describe('getCurrentUser', () => {
+	it('should return a receiveCurrentUser action object on success', async () => {
 		const apiResponse = {
 			ID: 1,
 			username: 'testusername',
@@ -22,24 +22,24 @@ describe( 'getCurrentUser', () => {
 
 		const generator = getCurrentUser();
 
-		expect( generator.next().value ).toEqual( {
+		expect(generator.next().value).toEqual({
 			type: 'WPCOM_REQUEST',
 			request: {
 				path: '/me',
 				apiVersion: '1.1',
 			},
-		} );
+		});
 
-		const finalResult = generator.next( apiResponse );
-		expect( finalResult.value ).toEqual( {
+		const finalResult = generator.next(apiResponse);
+		expect(finalResult.value).toEqual({
 			type: 'RECEIVE_CURRENT_USER',
 			currentUser: apiResponse,
-		} );
+		});
 
-		expect( finalResult.done ).toBe( true );
-	} );
+		expect(finalResult.done).toBe(true);
+	});
 
-	it( 'should return a receiveCurrentUserFailed action object on fail', async () => {
+	it('should return a receiveCurrentUserFailed action object on fail', async () => {
 		const apiResponse = {
 			error: 'authorization_required',
 			status: 403,
@@ -50,19 +50,19 @@ describe( 'getCurrentUser', () => {
 
 		const generator = getCurrentUser();
 
-		expect( generator.next().value ).toEqual( {
+		expect(generator.next().value).toEqual({
 			type: 'WPCOM_REQUEST',
 			request: {
 				path: '/me',
 				apiVersion: '1.1',
 			},
-		} );
+		});
 
-		const finalResult = generator.throw( apiResponse );
-		expect( finalResult.value ).toEqual( {
+		const finalResult = generator.throw(apiResponse);
+		expect(finalResult.value).toEqual({
 			type: 'RECEIVE_CURRENT_USER_FAILED',
-		} );
+		});
 
-		expect( finalResult.done ).toBe( true );
-	} );
-} );
+		expect(finalResult.done).toBe(true);
+	});
+});

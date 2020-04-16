@@ -16,71 +16,71 @@ import {
 } from 'state/happychat/constants';
 import getHappychatConnectionStatus from '../get-happychat-connection-status';
 
-describe( '#getConnectionStatus', () => {
-	describe( 'should return proper connection status for', () => {
-		it( 'UNINITIALIZED', () => {
-			const stateUninitialized = deepFreeze( {
+describe('#getConnectionStatus', () => {
+	describe('should return proper connection status for', () => {
+		it('UNINITIALIZED', () => {
+			const stateUninitialized = deepFreeze({
 				happychat: {
 					connection: {
 						status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 					},
 				},
-			} );
-			expect( getHappychatConnectionStatus( stateUninitialized ) ).to.equal(
+			});
+			expect(getHappychatConnectionStatus(stateUninitialized)).to.equal(
 				HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED
 			);
-		} );
+		});
 
-		it( 'CONNECTED', () => {
-			const stateConnected = deepFreeze( {
+		it('CONNECTED', () => {
+			const stateConnected = deepFreeze({
 				happychat: {
 					connection: {
 						status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 					},
 				},
-			} );
-			expect( getHappychatConnectionStatus( stateConnected ) ).to.be.equals(
+			});
+			expect(getHappychatConnectionStatus(stateConnected)).to.be.equals(
 				HAPPYCHAT_CONNECTION_STATUS_CONNECTED
 			);
-		} );
+		});
 
-		it( 'DISCONNECTED', () => {
-			const stateDisconnected = deepFreeze( {
+		it('DISCONNECTED', () => {
+			const stateDisconnected = deepFreeze({
 				happychat: {
 					connection: {
 						status: HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
 					},
 				},
-			} );
-			expect( getHappychatConnectionStatus( stateDisconnected ) ).to.be.equals(
+			});
+			expect(getHappychatConnectionStatus(stateDisconnected)).to.be.equals(
 				HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED
 			);
-		} );
+		});
 
-		it( 'CONNECTING', () => {
-			const stateConnecting = deepFreeze( {
+		it('CONNECTING', () => {
+			const stateConnecting = deepFreeze({
 				happychat: {
 					connection: {
 						status: HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
 					},
 				},
-			} );
-			expect( getHappychatConnectionStatus( stateConnecting ) ).to.be.equals(
+			});
+			expect(getHappychatConnectionStatus(stateConnecting)).to.be.equals(
 				HAPPYCHAT_CONNECTION_STATUS_CONNECTING
 			);
-		} );
+		});
 
-		it( 'RECONNECTING', () => {
-			const stateReconnecting = deepFreeze( {
+		it('RECONNECTING', () => {
+			const stateReconnecting = deepFreeze({
 				happychat: {
 					connection: {
 						status: HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
 					},
 				},
-			} );
-			expect( getHappychatConnectionStatus( stateReconnecting ) ).to.be.equals(
+			});
+			expect(getHappychatConnectionStatus(stateReconnecting)).to.be.equals(
 				HAPPYCHAT_CONNECTION_STATUS_RECONNECTING
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

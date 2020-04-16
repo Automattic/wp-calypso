@@ -14,7 +14,7 @@ import {
 } from 'state/happychat/constants';
 import getSkills from 'state/happychat/selectors/get-skills';
 
-describe( '#getSkills()', () => {
+describe('#getSkills()', () => {
 	const uiState = {
 		ui: {
 			section: {
@@ -23,7 +23,7 @@ describe( '#getSkills()', () => {
 		},
 	};
 
-	test( 'should return default product for no sites', () => {
+	test('should return default product for no sites', () => {
 		const siteId = 1;
 		const state = {
 			...uiState,
@@ -39,13 +39,13 @@ describe( '#getSkills()', () => {
 				items: {},
 			},
 		};
-		expect( getSkills( state, siteId ) ).to.eql( {
-			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
-			[ HAPPYCHAT_SKILL_LANGUAGE ]: [ 'en' ],
-		} );
-	} );
+		expect(getSkills(state, siteId)).to.eql({
+			[HAPPYCHAT_SKILL_PRODUCT]: [HAPPYCHAT_GROUP_WPCOM],
+			[HAPPYCHAT_SKILL_LANGUAGE]: ['en'],
+		});
+	});
 
-	test( 'should ignore language if not set', () => {
+	test('should ignore language if not set', () => {
 		const siteId = 1;
 		const state = {
 			...uiState,
@@ -61,12 +61,12 @@ describe( '#getSkills()', () => {
 				items: {},
 			},
 		};
-		expect( getSkills( state, siteId ) ).to.eql( {
-			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
-		} );
-	} );
+		expect(getSkills(state, siteId)).to.eql({
+			[HAPPYCHAT_SKILL_PRODUCT]: [HAPPYCHAT_GROUP_WPCOM],
+		});
+	});
 
-	test( 'should return both product and language', () => {
+	test('should return both product and language', () => {
 		const siteId = 1;
 		const state = {
 			...uiState,
@@ -78,14 +78,14 @@ describe( '#getSkills()', () => {
 			currentUser: {
 				id: 1,
 				capabilities: {
-					[ siteId ]: {
+					[siteId]: {
 						manage_options: true,
 					},
 				},
 			},
 			sites: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						jetpack: true,
 						plan: {
 							product_id: 2005,
@@ -96,9 +96,9 @@ describe( '#getSkills()', () => {
 			},
 		};
 
-		expect( getSkills( state, siteId ) ).to.eql( {
-			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_JPOP ],
-			[ HAPPYCHAT_SKILL_LANGUAGE ]: [ 'fr' ],
-		} );
-	} );
-} );
+		expect(getSkills(state, siteId)).to.eql({
+			[HAPPYCHAT_SKILL_PRODUCT]: [HAPPYCHAT_GROUP_JPOP],
+			[HAPPYCHAT_SKILL_LANGUAGE]: ['fr'],
+		});
+	});
+});

@@ -39,64 +39,60 @@ class InlineHelpSearchResults extends Component {
 	};
 
 	renderSearchResults() {
-		if ( isEmpty( this.props.searchQuery ) ) {
+		if (isEmpty(this.props.searchQuery)) {
 			// not searching
 			return this.renderContextHelp();
 		}
 
-		if ( this.props.isSearching ) {
+		if (this.props.isSearching) {
 			// search, but no results so far
 			return <PlaceholderLines />;
 		}
 
-		if ( isEmpty( this.props.searchResults ) ) {
+		if (isEmpty(this.props.searchResults)) {
 			// search done, but nothing found
 			return (
 				<div>
 					<p className="inline-help__empty-results">No results.</p>
-					{ this.renderContextHelp() }
+					{this.renderContextHelp()}
 				</div>
 			);
 		}
 
 		// found something
 		const links = this.props.searchResults;
-		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-		);
+		return <ul className="inline-help__results-list">{links && links.map(this.renderHelpLink)}</ul>;
 	}
 
 	renderContextHelp() {
-		const section = pathToSection( this.props.lastRoute.path );
-		const links = getContextResults( section );
-		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-		);
+		const section = pathToSection(this.props.lastRoute.path);
+		const links = getContextResults(section);
+		return <ul className="inline-help__results-list">{links && links.map(this.renderHelpLink)}</ul>;
 	}
 
 	componentDidMount() {
-		const section = pathToSection( this.props.lastRoute.path );
-		this.props.setSearchResults( '', getContextResults( section ) );
+		const section = pathToSection(this.props.lastRoute.path);
+		this.props.setSearchResults('', getContextResults(section));
 	}
 
-	onHelpLinkClick = selectionIndex => event => {
-		this.props.selectResult( selectionIndex );
-		this.props.openResult( event );
+	onHelpLinkClick = (selectionIndex) => (event) => {
+		this.props.selectResult(selectionIndex);
+		this.props.openResult(event);
 	};
 
-	renderHelpLink = ( link, index ) => {
+	renderHelpLink = (link, index) => {
 		const classes = { 'is-selected': this.props.selectedResultIndex === index };
 		return (
 			<li
-				key={ link.link ? link.link : link.key }
-				className={ classNames( 'inline-help__results-item', classes ) }
+				key={link.link ? link.link : link.key}
+				className={classNames('inline-help__results-item', classes)}
 			>
 				<a
-					href={ localizeUrl( link.link ) }
-					onClick={ this.onHelpLinkClick( index ) }
-					title={ decodeEntities( link.description ) }
+					href={localizeUrl(link.link)}
+					onClick={this.onHelpLinkClick(index)}
+					title={decodeEntities(link.description)}
 				>
-					{ preventWidows( decodeEntities( link.title ) ) }
+					{preventWidows(decodeEntities(link.title))}
 				</a>
 			</li>
 		);
@@ -105,29 +101,23 @@ class InlineHelpSearchResults extends Component {
 	render() {
 		return (
 			<div>
-				<QueryInlineHelpSearch
-					query={ this.props.searchQuery }
-					requesting={ this.props.isSearching }
-				/>
-				{ this.renderSearchResults() }
+				<QueryInlineHelpSearch query={this.props.searchQuery} requesting={this.props.isSearching} />
+				{this.renderSearchResults()}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	lastRoute: getLastRouteAction( state ),
-	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	selectedResultIndex: getSelectedResultIndex( state ),
-} );
+const mapStateToProps = (state, ownProps) => ({
+	lastRoute: getLastRouteAction(state),
+	searchResults: getInlineHelpSearchResultsForQuery(state, ownProps.searchQuery),
+	isSearching: isRequestingInlineHelpSearchResultsForQuery(state, ownProps.searchQuery),
+	selectedResultIndex: getSelectedResultIndex(state),
+});
 const mapDispatchToProps = {
 	recordTracksEvent,
 	setSearchResults,
 	selectResult,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpSearchResults ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(InlineHelpSearchResults));

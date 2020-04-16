@@ -23,9 +23,9 @@ export default class WordPressWordmark extends PureComponent {
 	render() {
 		return (
 			<svg
-				className={ this.props.className }
-				width={ this.props.width }
-				height={ this.props.height }
+				className={this.props.className}
+				width={this.props.width}
+				height={this.props.height}
 				viewBox="0 0 1007.7 172.4"
 				xmlns="http://www.w3.org/2000/svg"
 			>

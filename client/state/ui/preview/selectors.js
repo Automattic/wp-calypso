@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  *
  * @see client/blocks/site-preview
  */
-export function getPreviewUrl( state ) {
+export function getPreviewUrl(state) {
 	return state.ui.preview.currentPreviewUrl;
 }
 
@@ -28,13 +28,13 @@ export function getPreviewUrl( state ) {
  * @param  {object}  state  Global state tree
  * @returns {?object}        Selected site
  */
-export function getPreviewSite( state ) {
-	const siteId = getPreviewSiteId( state );
-	if ( ! siteId ) {
+export function getPreviewSite(state) {
+	const siteId = getPreviewSiteId(state);
+	if (!siteId) {
 		return null;
 	}
 
-	return getSite( state, siteId );
+	return getSite(state, siteId);
 }
 
 /**
@@ -43,10 +43,10 @@ export function getPreviewSite( state ) {
  * @param  {object}  state Global state tree
  * @returns {?number}       Selected preview site ID
  */
-export function getPreviewSiteId( state ) {
-	const siteId = getSelectedSiteId( state );
+export function getPreviewSiteId(state) {
+	const siteId = getSelectedSiteId(state);
 
-	if ( siteId ) {
+	if (siteId) {
 		return siteId;
 	}
 

@@ -8,7 +8,7 @@ import {
 	WOOCOMMERCE_PROMOTIONS_SEARCH,
 } from 'woocommerce/state/action-types';
 
-export function editPromotion( siteId, promotion, data ) {
+export function editPromotion(siteId, promotion, data) {
 	return {
 		type: WOOCOMMERCE_PROMOTION_EDIT,
 		siteId,
@@ -17,14 +17,14 @@ export function editPromotion( siteId, promotion, data ) {
 	};
 }
 
-export function clearPromotionEdits( siteId ) {
+export function clearPromotionEdits(siteId) {
 	return {
 		type: WOOCOMMERCE_PROMOTION_EDIT_CLEAR,
 		siteId,
 	};
 }
 
-export function setPromotionsPage( currentPage, perPage = 10 ) {
+export function setPromotionsPage(currentPage, perPage = 10) {
 	return {
 		type: WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 		currentPage,
@@ -32,7 +32,7 @@ export function setPromotionsPage( currentPage, perPage = 10 ) {
 	};
 }
 
-export function setPromotionSearch( searchFilter ) {
+export function setPromotionSearch(searchFilter) {
 	return {
 		type: WOOCOMMERCE_PROMOTIONS_SEARCH,
 		searchFilter,

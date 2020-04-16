@@ -40,45 +40,45 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 		);
 
 		this.props
-			.connectGoogleMyBusinessLocation( siteId, location.keyringConnectionId, location.ID )
-			.then( () => {
-				onSelected( location );
-			} );
+			.connectGoogleMyBusinessLocation(siteId, location.keyringConnectionId, location.ID)
+			.then(() => {
+				onSelected(location);
+			});
 	};
 
 	render() {
 		const { location, translate } = this.props;
 
-		if ( location.isConnected ) {
+		if (location.isConnected) {
 			return (
 				<div className="gmb-select-location__status">
 					<Gridicon
 						className="gmb-select-location__connected-icon"
 						icon="checkmark-circle"
-						size={ 18 }
-					/>{ ' ' }
-					{ translate( 'Connected' ) }
+						size={18}
+					/>{' '}
+					{translate('Connected')}
 				</div>
 			);
 		}
 
 		return (
-			<Button onClick={ this.connectLocation } primary>
-				{ translate( 'Connect Location' ) }
+			<Button onClick={this.connectLocation} primary>
+				{translate('Connect Location')}
 			</Button>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-	} ),
+	(state) => ({
+		siteId: getSelectedSiteId(state),
+	}),
 	{
 		connectGoogleMyBusinessLocation,
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+		recordTracksEventWithLocationCounts: withEnhancers(recordTracksEvent, [
 			enhanceWithLocationCounts,
 			enhanceWithSiteType,
-		] ),
+		]),
 	}
-)( localize( GoogleMyBusinessSelectLocationButton ) );
+)(localize(GoogleMyBusinessSelectLocationButton));

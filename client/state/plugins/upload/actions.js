@@ -19,7 +19,7 @@ import 'state/data-layer/wpcom/sites/plugins/new';
  * @param {File} file the plugin zip to upload
  * @returns {object} action object
  */
-export function uploadPlugin( siteId, file ) {
+export function uploadPlugin(siteId, file) {
 	return {
 		type: PLUGIN_UPLOAD,
 		siteId,
@@ -34,7 +34,7 @@ export function uploadPlugin( siteId, file ) {
  * @param {number} progress percentage of file uploaded
  * @returns {object} action object
  */
-export function updatePluginUploadProgress( siteId, progress ) {
+export function updatePluginUploadProgress(siteId, progress) {
 	return {
 		type: PLUGIN_UPLOAD_PROGRESS,
 		siteId,
@@ -49,7 +49,7 @@ export function updatePluginUploadProgress( siteId, progress ) {
  * @param {string} pluginId plugin id
  * @returns {object} action object
  */
-export function completePluginUpload( siteId, pluginId ) {
+export function completePluginUpload(siteId, pluginId) {
 	return {
 		type: PLUGIN_UPLOAD_COMPLETE,
 		siteId,
@@ -64,7 +64,7 @@ export function completePluginUpload( siteId, pluginId ) {
  * @param {object} error the error
  * @returns {object} action object
  */
-export function pluginUploadError( siteId, error ) {
+export function pluginUploadError(siteId, error) {
 	return {
 		type: PLUGIN_UPLOAD_ERROR,
 		siteId,
@@ -78,7 +78,7 @@ export function pluginUploadError( siteId, error ) {
  * @param {number} siteId site ID
  * @returns {object} action object
  */
-export function clearPluginUpload( siteId ) {
+export function clearPluginUpload(siteId) {
 	return {
 		type: PLUGIN_UPLOAD_CLEAR,
 		siteId,

@@ -13,29 +13,29 @@ import { isRequestingSiteVouchers } from 'state/sites/vouchers/selectors';
 import { requestSiteVouchers as requestVouchers } from 'state/sites/vouchers/actions';
 
 class QuerySiteVouchers extends Component {
-	constructor( props ) {
-		super( props );
-		this.requestVouchers = this.requestVouchers.bind( this );
+	constructor(props) {
+		super(props);
+		this.requestVouchers = this.requestVouchers.bind(this);
 	}
 
 	UNSAFE_componentWillMount() {
 		this.requestVouchers();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (
 			nextProps.requestingSiteVouchers ||
-			! nextProps.siteId ||
+			!nextProps.siteId ||
 			this.props.siteId === nextProps.siteId
 		) {
 			return;
 		}
-		this.requestVouchers( nextProps );
+		this.requestVouchers(nextProps);
 	}
 
-	requestVouchers( props = this.props ) {
-		if ( ! props.requestingSiteVouchers && props.siteId ) {
-			props.requestVouchers( props.siteId );
+	requestVouchers(props = this.props) {
+		if (!props.requestingSiteVouchers && props.siteId) {
+			props.requestVouchers(props.siteId);
 		}
 	}
 
@@ -55,10 +55,10 @@ QuerySiteVouchers.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			requestingSiteVouchers: isRequestingSiteVouchers( state, ownProps.siteId ),
+			requestingSiteVouchers: isRequestingSiteVouchers(state, ownProps.siteId),
 		};
 	},
 	{ requestVouchers }
-)( QuerySiteVouchers );
+)(QuerySiteVouchers);

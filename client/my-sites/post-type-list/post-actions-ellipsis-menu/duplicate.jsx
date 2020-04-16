@@ -20,7 +20,7 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 
-function PostActionsEllipsisMenuDuplicate( {
+function PostActionsEllipsisMenuDuplicate({
 	translate,
 	canEdit,
 	status,
@@ -29,17 +29,17 @@ function PostActionsEllipsisMenuDuplicate( {
 	duplicateUrl,
 	onDuplicateClick,
 	siteId,
-} ) {
-	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
+}) {
+	const validStatus = includes(['draft', 'future', 'pending', 'private', 'publish'], status);
 
-	if ( ! canEdit || ! validStatus || 'post' !== type || ! copyPostIsActive ) {
-		return <QueryJetpackModules siteId={ siteId } />;
+	if (!canEdit || !validStatus || 'post' !== type || !copyPostIsActive) {
+		return <QueryJetpackModules siteId={siteId} />;
 	}
 
 	return (
-		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="clipboard">
-			<QueryJetpackModules siteId={ siteId } />
-			{ translate( 'Copy post' ) }
+		<PopoverMenuItem href={duplicateUrl} onClick={onDuplicateClick} icon="clipboard">
+			<QueryJetpackModules siteId={siteId} />
+			{translate('Copy post')}
 		</PopoverMenuItem>
 	);
 }
@@ -56,43 +56,39 @@ PostActionsEllipsisMenuDuplicate.propTypes = {
 	siteId: PropTypes.number,
 };
 
-const mapStateToProps = ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
+const mapStateToProps = (state, { globalId }) => {
+	const post = getPost(state, globalId);
+	if (!post) {
 		return {};
 	}
 
 	return {
-		canEdit: canCurrentUserEditPost( state, globalId ),
+		canEdit: canCurrentUserEditPost(state, globalId),
 		status: post.status,
 		type: post.type,
 		copyPostIsActive:
-			false === isJetpackSite( state, post.site_ID ) ||
-			isJetpackModuleActive( state, post.site_ID, 'copy-post' ),
-		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
+			false === isJetpackSite(state, post.site_ID) ||
+			isJetpackModuleActive(state, post.site_ID, 'copy-post'),
+		duplicateUrl: getEditorDuplicatePostPath(state, post.site_ID, post.ID),
 		siteId: post.site_ID,
 	};
 };
 
 const mapDispatchToProps = { bumpStat, recordTracksEvent };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpDuplicateStat = bumpStatGenerator(
-		stateProps.type,
-		'duplicate',
-		dispatchProps.bumpStat
-	);
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	const bumpDuplicateStat = bumpStatGenerator(stateProps.type, 'duplicate', dispatchProps.bumpStat);
 	const onDuplicateClick = () => {
 		bumpDuplicateStat();
-		dispatchProps.recordTracksEvent( 'calypso_post_type_list_duplicate', {
+		dispatchProps.recordTracksEvent('calypso_post_type_list_duplicate', {
 			post_type: stateProps.type,
-		} );
+		});
 	};
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onDuplicateClick } );
+	return Object.assign({}, ownProps, stateProps, dispatchProps, { onDuplicateClick });
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( PostActionsEllipsisMenuDuplicate ) );
+)(localize(PostActionsEllipsisMenuDuplicate));

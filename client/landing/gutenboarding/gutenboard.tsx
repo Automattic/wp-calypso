@@ -24,7 +24,7 @@ import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
 import GUTENARDING_BASE_NAME from './basename.json';
 
-registerBlockType( name, settings );
+registerBlockType(name, settings);
 
 interface BlockListProps extends OriginalBlockList.Props {
 	__experimentalUIParts: {
@@ -33,24 +33,24 @@ interface BlockListProps extends OriginalBlockList.Props {
 	};
 }
 
-const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } />;
+const BlockList = (props: BlockListProps) => <OriginalBlockList {...props} />;
 
 export function Gutenboard() {
 	const { __ } = useI18n();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
-	useEffect( () => {
-		fontPairings.forEach( ( { base, headings } ) => {
-			const linkBase = document.createElement( 'link' );
-			const linkHeadings = document.createElement( 'link' );
+	useEffect(() => {
+		fontPairings.forEach(({ base, headings }) => {
+			const linkBase = document.createElement('link');
+			const linkHeadings = document.createElement('link');
 
-			linkBase.href = `https://fonts.googleapis.com/css2?family=${ encodeURI(
-				base
-			) }&text=${ encodeURI( getFontTitle( base ) ) }&display=swap`;
-			linkHeadings.href = `https://fonts.googleapis.com/css2?family=${ encodeURI(
+			linkBase.href = `https://fonts.googleapis.com/css2?family=${encodeURI(base)}&text=${encodeURI(
+				getFontTitle(base)
+			)}&display=swap`;
+			linkHeadings.href = `https://fonts.googleapis.com/css2?family=${encodeURI(
 				headings
-			) }:wght@700&text=${ encodeURI( getFontTitle( headings ) ) }&display=swap`;
+			)}:wght@700&text=${encodeURI(getFontTitle(headings))}&display=swap`;
 
 			linkBase.rel = 'stylesheet';
 			linkHeadings.rel = 'stylesheet';
@@ -58,10 +58,10 @@ export function Gutenboard() {
 			linkBase.type = 'text/css';
 			linkHeadings.type = 'text/css';
 
-			document.head.appendChild( linkBase );
-			document.head.appendChild( linkHeadings );
-		} );
-	}, [] );
+			document.head.appendChild(linkBase);
+			document.head.appendChild(linkHeadings);
+		});
+	}, []);
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
 	// for the 'Back' and 'Next' buttons in the header. If we remove those (and move navigation
@@ -70,15 +70,15 @@ export function Gutenboard() {
 	// We're persisting the block via `useRef` in order to prevent re-renders
 	// which would collide with the routing done inside of the block
 	// (and would lead to weird mounting/unmounting behavior).
-	const onboardingBlock = useRef( createBlock( name, {} ) );
+	const onboardingBlock = useRef(createBlock(name, {}));
 
 	const {
 		location: { pathname },
 	} = useHistory();
 
-	useEffect( () => {
-		recordTracksPageViewWithPageParams( `/${ GUTENARDING_BASE_NAME }${ pathname }` );
-	}, [ pathname ] );
+	useEffect(() => {
+		recordTracksPageViewWithPageParams(`/${GUTENARDING_BASE_NAME}${pathname}`);
+	}, [pathname]);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -87,25 +87,25 @@ export function Gutenboard() {
 				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
 					<BlockEditorProvider
-						useSubRegistry={ false }
-						value={ [ onboardingBlock.current ] }
-						settings={ {
+						useSubRegistry={false}
+						value={[onboardingBlock.current]}
+						settings={{
 							templateLock: 'all',
 							alignWide: true,
-						} }
+						}}
 					>
 						<div className="gutenboarding__content edit-post-layout__content">
 							<div
 								className="gutenboarding__content-editor edit-post-visual-editor editor-styles-wrapper"
 								role="region"
-								aria-label={ __( 'Onboarding screen content' ) }
-								tabIndex={ -1 }
+								aria-label={__('Onboarding screen content')}
+								tabIndex={-1}
 							>
 								<BlockList
-									__experimentalUIParts={ {
+									__experimentalUIParts={{
 										hasPopover: false,
 										hasSelectedUI: false,
-									} }
+									}}
 								/>
 							</div>
 						</div>

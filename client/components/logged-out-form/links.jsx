@@ -21,10 +21,10 @@ export default class LoggedOutFormLinks extends React.Component {
 	render() {
 		return (
 			<div
-				{ ...omit( this.props, 'classNames' ) }
-				className={ classnames( 'logged-out-form__links', this.props.className ) }
+				{...omit(this.props, 'classNames')}
+				className={classnames('logged-out-form__links', this.props.className)}
 			>
-				{ this.props.children }
+				{this.props.children}
 			</div>
 		);
 	}

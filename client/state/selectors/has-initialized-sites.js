@@ -5,6 +5,6 @@
  * @returns {boolean}       Has site selection occurred
  */
 
-export default function hasInitializedSites( state ) {
+export default function hasInitializedSites(state) {
 	return state.ui.siteSelectionInitialized;
 }

@@ -12,11 +12,11 @@ import {
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 
-export default function( router ) {
+export default function (router) {
 	// Redirect interim showcase route to permanent one
-	router( [ '/design', '/design/*' ], ( { originalUrl, res } ) => {
-		res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
-	} );
+	router(['/design', '/design/*'], ({ originalUrl, res }) => {
+		res.redirect(301, '/themes' + originalUrl.slice('/design'.length));
+	});
 
 	const showcaseRoutes = [
 		'/themes/:tier(free|premium)?',
@@ -33,7 +33,7 @@ export default function( router ) {
 		loggedOut,
 		makeLayout
 	);
-	router( [ '/themes/upload', '/themes/upload/*' ], makeLayout );
+	router(['/themes/upload', '/themes/upload/*'], makeLayout);
 	// Redirect legacy (Atlas-based Theme Showcase v4) routes
 	router(
 		[
@@ -44,13 +44,13 @@ export default function( router ) {
 		redirectSearchAndType
 	);
 	router(
-		[ '/themes/:site?/filter/:filter', '/themes/:site?/filter/:filter/type/:tier(free|premium)' ],
+		['/themes/:site?/filter/:filter', '/themes/:site?/filter/:filter/type/:tier(free|premium)'],
 		redirectFilterAndType
 	);
 	router(
-		[ '/themes/:theme/:section(support)?', '/themes/:site/:theme/:section(support)?' ],
+		['/themes/:theme/:section(support)?', '/themes/:site/:theme/:section(support)?'],
 		redirectToThemeDetails
 	);
 	// The following route definition is needed so direct hits on `/themes/<mysite>` don't result in a 404.
-	router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
+	router('/themes/*', fetchThemeData, loggedOut, makeLayout);
 }

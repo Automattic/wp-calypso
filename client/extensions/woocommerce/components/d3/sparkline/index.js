@@ -14,7 +14,7 @@ import D3Base from 'woocommerce/components/d3/base';
  * Internal dependencies
  */
 
-const Sparkline = ( {
+const Sparkline = ({
 	aspectRatio,
 	className,
 	data,
@@ -22,34 +22,31 @@ const Sparkline = ( {
 	highlightRadius,
 	margin,
 	maxHeight,
-} ) => {
-	function drawSparkline( svg, params ) {
+}) => {
+	function drawSparkline(svg, params) {
 		const { xScale, yScale } = params;
 		const sparkline = d3Line()
-			.x( ( d, i ) => xScale( i ) )
-			.y( d => yScale( d ) );
-		return svg
-			.append( 'path' )
-			.attr( 'class', 'sparkline__line' )
-			.attr( 'd', sparkline( data ) );
+			.x((d, i) => xScale(i))
+			.y((d) => yScale(d));
+		return svg.append('path').attr('class', 'sparkline__line').attr('d', sparkline(data));
 	}
 
-	function drawHighlight( svg, params ) {
+	function drawHighlight(svg, params) {
 		const { xScale, yScale } = params;
 		return svg
-			.append( 'circle' )
-			.attr( 'class', 'sparkline__highlight' )
-			.attr( 'r', highlightRadius )
-			.attr( 'cx', xScale( highlightIndex ) )
-			.attr( 'cy', yScale( data[ highlightIndex ] ) );
+			.append('circle')
+			.attr('class', 'sparkline__highlight')
+			.attr('r', highlightRadius)
+			.attr('cx', xScale(highlightIndex))
+			.attr('cy', yScale(data[highlightIndex]));
 	}
 
-	function drawChart( svg, params ) {
-		drawSparkline( svg, params );
-		drawHighlight( svg, params );
+	function drawChart(svg, params) {
+		drawSparkline(svg, params);
+		drawHighlight(svg, params);
 	}
 
-	function getParams( node ) {
+	function getParams(node) {
 		const newWidth = node.offsetWidth;
 		const newHeight =
 			maxHeight && maxHeight < newWidth / aspectRatio ? maxHeight : newWidth / aspectRatio;
@@ -58,19 +55,19 @@ const Sparkline = ( {
 			width: newWidth,
 			height: newHeight,
 			xScale: d3ScaleLinear()
-				.domain( d3Extent( data, ( d, i ) => i ) )
-				.range( [ margin.left, newWidth - margin.right ] ),
+				.domain(d3Extent(data, (d, i) => i))
+				.range([margin.left, newWidth - margin.right]),
 			yScale: d3ScaleLinear()
-				.domain( d3Extent( data, d => d ) )
-				.range( [ newHeight - margin.bottom, margin.top ] ),
+				.domain(d3Extent(data, (d) => d))
+				.range([newHeight - margin.bottom, margin.top]),
 		};
 	}
 
 	return (
 		<D3Base
-			className={ classNames( 'sparkline', className ) }
-			drawChart={ drawChart }
-			getParams={ getParams }
+			className={classNames('sparkline', className)}
+			drawChart={drawChart}
+			getParams={getParams}
 		/>
 	);
 };

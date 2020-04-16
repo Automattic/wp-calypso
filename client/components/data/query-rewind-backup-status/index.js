@@ -21,11 +21,11 @@ class QueryRewindBackupStatus extends Component {
 		// We want to run this only once: when the page is loaded. In such case, there is not known download Id.
 		// If there's a download Id here it means this was mounted during an action requesting progress for a
 		// specific download Id, so we will do nothing here,since it will be handled by the <Interval /> below.
-		if ( ! this.props.downloadId ) {
+		if (!this.props.downloadId) {
 			const { siteId } = this.props;
 
-			if ( siteId ) {
-				this.props.getRewindBackupProgress( siteId );
+			if (siteId) {
+				this.props.getRewindBackupProgress(siteId);
 			}
 		}
 	}
@@ -33,14 +33,14 @@ class QueryRewindBackupStatus extends Component {
 	query = () => {
 		const { downloadId, siteId } = this.props;
 
-		if ( siteId && downloadId ) {
-			this.props.getRewindBackupProgress( siteId );
+		if (siteId && downloadId) {
+			this.props.getRewindBackupProgress(siteId);
 		}
 	};
 
 	render() {
-		return <Interval onTick={ this.query } period={ EVERY_SECOND } />;
+		return <Interval onTick={this.query} period={EVERY_SECOND} />;
 	}
 }
 
-export default connect( null, { getRewindBackupProgress } )( QueryRewindBackupStatus );
+export default connect(null, { getRewindBackupProgress })(QueryRewindBackupStatus);

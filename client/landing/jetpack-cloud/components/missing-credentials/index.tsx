@@ -18,7 +18,7 @@ interface Props {
 	settingsLink: string;
 }
 
-const JetpackCloudMissingCredentialsWarning: FunctionComponent< Props > = ( { settingsLink } ) => {
+const JetpackCloudMissingCredentialsWarning: FunctionComponent<Props> = ({ settingsLink }) => {
 	const translate = useTranslate();
 
 	return (
@@ -29,14 +29,12 @@ const JetpackCloudMissingCredentialsWarning: FunctionComponent< Props > = ( { se
 					alt="jetpack cloud disconnect warning"
 				/>
 			</div>
-			<h4>{ translate( 'Restores not available. Missing server credentials.' ) }</h4>
+			<h4>{translate('Restores not available. Missing server credentials.')}</h4>
 			<p>
-				{ translate(
-					'Enter your server credentials to enable one-click restores from your backups.'
-				) }
+				{translate('Enter your server credentials to enable one-click restores from your backups.')}
 			</p>
-			<Button className="missing-credentials__button" href={ settingsLink }>
-				{ translate( 'Enter your server credentials' ) }
+			<Button className="missing-credentials__button" href={settingsLink}>
+				{translate('Enter your server credentials')}
 			</Button>
 		</div>
 	);

@@ -9,19 +9,19 @@ import {
 
 import 'state/data-layer/wpcom/me/transactions/order';
 
-export const fetchOrderTransaction = orderId => ( {
+export const fetchOrderTransaction = (orderId) => ({
 	type: ORDER_TRANSACTION_FETCH,
 	orderId,
-} );
+});
 
-export const setOrderTransaction = ( orderId, transaction ) => ( {
+export const setOrderTransaction = (orderId, transaction) => ({
 	type: ORDER_TRANSACTION_SET,
 	orderId,
 	transaction,
-} );
+});
 
-export const setOrderTransactionError = ( orderId, error ) => ( {
+export const setOrderTransactionError = (orderId, error) => ({
 	type: ORDER_TRANSACTION_FETCH_ERROR,
 	orderId,
 	error,
-} );
+});

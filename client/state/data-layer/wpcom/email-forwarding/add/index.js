@@ -19,11 +19,11 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const addEmailForward = action => {
+export const addEmailForward = (action) => {
 	return http(
 		{
 			method: 'POST',
-			path: `/domains/${ encodeURIComponent( action.domainName ) }/email/new`,
+			path: `/domains/${encodeURIComponent(action.domainName)}/email/new`,
 			body: {
 				mailbox: action.mailbox,
 				destination: action.destination,
@@ -33,7 +33,7 @@ export const addEmailForward = action => {
 	);
 };
 
-export const addEmailForwardFailure = ( action, error ) => {
+export const addEmailForwardFailure = (action, error) => {
 	const { domainName, mailbox, destination } = action;
 
 	let failureMessage = translate(
@@ -42,12 +42,12 @@ export const addEmailForwardFailure = ( action, error ) => {
 			'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
 		{
 			components: {
-				contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+				contactSupportLink: <a href={CALYPSO_CONTACT} />,
 			},
 		}
 	);
 
-	if ( error && error.message ) {
+	if (error && error.message) {
 		failureMessage = translate(
 			'Failed to add email forwarding record ' +
 				'with message "%(message)s". ' +
@@ -58,29 +58,29 @@ export const addEmailForwardFailure = ( action, error ) => {
 					message: error.message,
 				},
 				components: {
-					contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+					contactSupportLink: <a href={CALYPSO_CONTACT} />,
 				},
 			}
 		);
 	}
 
 	return [
-		errorNotice( failureMessage ),
-		receiveAddEmailForwardFailure( domainName, mailbox, destination, error ),
+		errorNotice(failureMessage),
+		receiveAddEmailForwardFailure(domainName, mailbox, destination, error),
 	];
 };
 
-export const addEmailForwardSuccess = ( action, response ) => {
+export const addEmailForwardSuccess = (action, response) => {
 	const { domainName, mailbox, destination } = action;
 
-	if ( response && response.created ) {
-		let successMessage = translate( '%(email)s has been successfully added!', {
+	if (response && response.created) {
+		let successMessage = translate('%(email)s has been successfully added!', {
 			args: {
 				email: mailbox + '@' + domainName,
 			},
-		} );
+		});
 
-		if ( ! response.verified ) {
+		if (!response.verified) {
 			successMessage = translate(
 				'%(email)s has been successfully added! ' +
 					'You must confirm your email before it starts working. ' +
@@ -95,22 +95,22 @@ export const addEmailForwardSuccess = ( action, response ) => {
 		}
 
 		return [
-			successNotice( successMessage, {
+			successNotice(successMessage, {
 				duration: 5000,
-			} ),
-			receiveAddEmailForwardSuccess( domainName, mailbox, response.verified ),
+			}),
+			receiveAddEmailForwardSuccess(domainName, mailbox, response.verified),
 		];
 	}
 
-	return addEmailForwardFailure( action, true );
+	return addEmailForwardFailure(action, true);
 };
 
-registerHandlers( 'state/data-layer/wpcom/email-forwarding/create/index.js', {
-	[ EMAIL_FORWARDING_ADD_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/email-forwarding/create/index.js', {
+	[EMAIL_FORWARDING_ADD_REQUEST]: [
+		dispatchRequest({
 			fetch: addEmailForward,
 			onSuccess: addEmailForwardSuccess,
 			onError: addEmailForwardFailure,
-		} ),
+		}),
 	],
-} );
+});

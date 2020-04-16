@@ -29,11 +29,11 @@ export class CommentHtmlEditor extends Component {
 		showLinkDialog: false,
 	};
 
-	storeTextareaRef = textarea => ( this.textarea = textarea );
+	storeTextareaRef = (textarea) => (this.textarea = textarea);
 
-	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+	isTagOpen = (tag) => -1 !== this.state.openTags.indexOf(tag);
 
-	setCursorPosition = ( selectionEnd, insertedContentLength ) => {
+	setCursorPosition = (selectionEnd, insertedContentLength) => {
 		this.textarea.selectionEnd = this.textarea.selectionStart =
 			selectionEnd + insertedContentLength;
 	};
@@ -41,9 +41,9 @@ export class CommentHtmlEditor extends Component {
 	splitSelectedContent = () => {
 		const { selectionEnd, selectionStart, value } = this.textarea;
 		return {
-			before: value.substring( 0, selectionStart ),
-			inner: value.substring( selectionStart, selectionEnd ),
-			after: value.substring( selectionEnd, value.length ),
+			before: value.substring(0, selectionStart),
+			inner: value.substring(selectionStart, selectionEnd),
+			after: value.substring(selectionEnd, value.length),
 		};
 	};
 
@@ -59,123 +59,116 @@ export class CommentHtmlEditor extends Component {
 			text: null,
 		}
 	) => {
-		const element = document.createElement( tag );
-		each( attributes, ( value, key ) => element.setAttribute( key, value ) );
+		const element = document.createElement(tag);
+		each(attributes, (value, key) => element.setAttribute(key, value));
 		element.innerHTML = '<!---->';
-		const fragments = element.outerHTML.split( '<!---->' );
+		const fragments = element.outerHTML.split('<!---->');
 		const opener =
-			( options.paragraph ? '\n' : '' ) +
-			( options.indent ? '\t' : '' ) +
-			fragments[ 0 ] +
-			( options.paragraph ? '\n' : '' );
+			(options.paragraph ? '\n' : '') +
+			(options.indent ? '\t' : '') +
+			fragments[0] +
+			(options.paragraph ? '\n' : '');
 		const closer =
-			fragments[ 1 ] + ( options.newLineAfter ? '\n' : '' ) + ( options.paragraph ? '\n\n' : '' );
+			fragments[1] + (options.newLineAfter ? '\n' : '') + (options.paragraph ? '\n\n' : '');
 		const inner = options.text || this.splitSelectedContent().inner;
 
-		if ( inner.length || options.alsoClose ) {
+		if (inner.length || options.alsoClose) {
 			return this.insertContent(
-				fragments[ 1 ] ? opener + inner + closer : inner + opener,
+				fragments[1] ? opener + inner + closer : inner + opener,
 				options.adjustCursorPosition
 			);
 		}
 
-		if ( !! fragments[ 1 ] && this.isTagOpen( tag ) ) {
-			this.setState( ( { openTags } ) => ( {
-				openTags: reject( openTags, openTag => openTag === tag ),
-			} ) );
-			return this.insertContent( closer, options.adjustCursorPosition );
+		if (!!fragments[1] && this.isTagOpen(tag)) {
+			this.setState(({ openTags }) => ({
+				openTags: reject(openTags, (openTag) => openTag === tag),
+			}));
+			return this.insertContent(closer, options.adjustCursorPosition);
 		}
 
-		if ( !! fragments[ 1 ] ) {
-			this.setState( ( { openTags } ) => ( { openTags: openTags.concat( tag ) } ) );
+		if (!!fragments[1]) {
+			this.setState(({ openTags }) => ({ openTags: openTags.concat(tag) }));
 		}
-		return this.insertContent( opener, options.adjustCursorPosition );
+		return this.insertContent(opener, options.adjustCursorPosition);
 	};
 
-	insertContent = ( content, adjustCursorPosition = 0 ) => {
-		const userAgent = get( window, 'navigator.userAgent', '' );
+	insertContent = (content, adjustCursorPosition = 0) => {
+		const userAgent = get(window, 'navigator.userAgent', '');
 
 		// In Firefox, IE, and Edge, `document.execCommand( 'insertText' )` doesn't work.
 		// @see https://bugzilla.mozilla.org/show_bug.cgi?id=1220696
-		if (
-			/(?:firefox|fxios)/i.test( userAgent ) ||
-			/(?:edge|msie |trident.+?; rv:)/i.test( userAgent )
-		) {
+		if (/(?:firefox|fxios)/i.test(userAgent) || /(?:edge|msie |trident.+?; rv:)/i.test(userAgent)) {
 			const { selectionEnd, value } = this.textarea;
 			const { before, after } = this.splitSelectedContent();
 			const newContent = before + content + after;
 			const event = { target: { value: newContent } };
-			this.props.onChange( event, () => {
+			this.props.onChange(event, () => {
 				this.setCursorPosition(
 					selectionEnd,
 					newContent.length - value.length + adjustCursorPosition
 				);
 				this.textarea.focus();
-			} );
+			});
 			return;
 		}
 
 		this.textarea.focus();
-		document.execCommand( 'insertText', false, content );
+		document.execCommand('insertText', false, content);
 
-		if ( adjustCursorPosition ) {
-			this.setCursorPosition( this.textarea.selectionEnd, adjustCursorPosition );
+		if (adjustCursorPosition) {
+			this.setCursorPosition(this.textarea.selectionEnd, adjustCursorPosition);
 		}
 	};
 
-	insertStrongTag = () => this.insertHtmlTag( 'strong' );
+	insertStrongTag = () => this.insertHtmlTag('strong');
 
-	insertEmTag = () => this.insertHtmlTag( 'em' );
+	insertEmTag = () => this.insertHtmlTag('em');
 
-	insertATag = ( attributes, text ) => {
-		if ( text ) {
-			return this.insertHtmlTag( 'a', attributes, { text } );
+	insertATag = (attributes, text) => {
+		if (text) {
+			return this.insertHtmlTag('a', attributes, { text });
 		}
 		// Also move the cursor inside <a></a>
-		this.insertHtmlTag( 'a', attributes, { adjustCursorPosition: -4, alsoClose: true } );
+		this.insertHtmlTag('a', attributes, { adjustCursorPosition: -4, alsoClose: true });
 	};
 
-	insertBlockquoteTag = () => this.insertHtmlTag( 'blockquote', {}, { paragraph: true } );
+	insertBlockquoteTag = () => this.insertHtmlTag('blockquote', {}, { paragraph: true });
 
-	insertDelTag = () => this.insertHtmlTag( 'del', { datetime: this.props.moment().format() } );
+	insertDelTag = () => this.insertHtmlTag('del', { datetime: this.props.moment().format() });
 
-	insertInsTag = () => this.insertHtmlTag( 'ins', { datetime: this.props.moment().format() } );
+	insertInsTag = () => this.insertHtmlTag('ins', { datetime: this.props.moment().format() });
 
-	insertImgTag = attributes => this.insertHtmlTag( 'img', attributes );
+	insertImgTag = (attributes) => this.insertHtmlTag('img', attributes);
 
-	insertUlTag = () => this.insertHtmlTag( 'ul', {}, { paragraph: true } );
+	insertUlTag = () => this.insertHtmlTag('ul', {}, { paragraph: true });
 
-	insertOlTag = () => this.insertHtmlTag( 'ol', {}, { paragraph: true } );
+	insertOlTag = () => this.insertHtmlTag('ol', {}, { paragraph: true });
 
-	insertLiTag = () => this.insertHtmlTag( 'li', {}, { indent: true, newLineAfter: true } );
+	insertLiTag = () => this.insertHtmlTag('li', {}, { indent: true, newLineAfter: true });
 
-	insertCodeTag = () => this.insertHtmlTag( 'code' );
+	insertCodeTag = () => this.insertHtmlTag('code');
 
 	insertClosingTags = () => {
-		const closedTags = reduce(
-			this.state.openTags,
-			( tags, openTag ) => `</${ openTag }>${ tags }`,
-			''
-		);
-		this.insertContent( closedTags );
-		this.setState( { openTags: [] } );
+		const closedTags = reduce(this.state.openTags, (tags, openTag) => `</${openTag}>${tags}`, '');
+		this.insertContent(closedTags);
+		this.setState({ openTags: [] });
 	};
 
 	openLinkDialog = () => {
 		const { inner } = this.splitSelectedContent();
-		this.setState( { selectedText: inner, showLinkDialog: true } );
+		this.setState({ selectedText: inner, showLinkDialog: true });
 	};
 
 	closeLinkDialog = () => {
-		this.setState( { showLinkDialog: false } );
-		delay( () => this.textarea.focus(), 300 );
+		this.setState({ showLinkDialog: false });
+		delay(() => this.textarea.focus(), 300);
 	};
 
-	openImageDialog = () => this.setState( { showImageDialog: true } );
+	openImageDialog = () => this.setState({ showImageDialog: true });
 
 	closeImageDialog = () => {
-		this.setState( { showImageDialog: false } );
-		delay( () => this.textarea.focus(), 300 );
+		this.setState({ showImageDialog: false });
+		delay(() => this.textarea.focus(), 300);
 	};
 	render() {
 		const { commentContent, onChange } = this.props;
@@ -193,7 +186,7 @@ export class CommentHtmlEditor extends Component {
 			ol: { onClick: this.insertOlTag },
 			li: { onClick: this.insertLiTag },
 			closeTags: {
-				disabled: ! openTags.length,
+				disabled: !openTags.length,
 				label: 'close tags',
 				onClick: this.insertClosingTags,
 			},
@@ -202,45 +195,45 @@ export class CommentHtmlEditor extends Component {
 		return (
 			<div className="comment-html-editor">
 				<div className="comment-html-editor__toolbar">
-					{ map( buttons, ( { disabled, label, onClick }, tag ) => (
+					{map(buttons, ({ disabled, label, onClick }, tag) => (
 						<Button
 							borderless
-							className={ classNames( `comment-html-editor__toolbar-button-${ tag }`, {
-								'is-tag-open': this.isTagOpen( tag ),
-							} ) }
+							className={classNames(`comment-html-editor__toolbar-button-${tag}`, {
+								'is-tag-open': this.isTagOpen(tag),
+							})}
 							compact
-							disabled={ disabled }
-							key={ tag }
-							onClick={ onClick }
+							disabled={disabled}
+							key={tag}
+							onClick={onClick}
 						>
-							{ label || tag }
+							{label || tag}
 						</Button>
-					) ) }
+					))}
 				</div>
 
 				<textarea
 					className="comment-html-editor__textarea form-textarea"
-					disabled={ this.props.disabled }
-					onChange={ onChange }
-					ref={ this.storeTextareaRef }
-					value={ commentContent }
+					disabled={this.props.disabled}
+					onChange={onChange}
+					ref={this.storeTextareaRef}
+					value={commentContent}
 				/>
 
 				<AddImageDialog
-					onClose={ this.closeImageDialog }
-					onInsert={ this.insertImgTag }
-					shouldDisplay={ showImageDialog }
+					onClose={this.closeImageDialog}
+					onInsert={this.insertImgTag}
+					shouldDisplay={showImageDialog}
 				/>
 
 				<AddLinkDialog
-					onClose={ this.closeLinkDialog }
-					onInsert={ this.insertATag }
-					selectedText={ selectedText }
-					shouldDisplay={ showLinkDialog }
+					onClose={this.closeLinkDialog}
+					onInsert={this.insertATag}
+					selectedText={selectedText}
+					shouldDisplay={showLinkDialog}
 				/>
 			</div>
 		);
 	}
 }
 
-export default localize( withLocalizedMoment( CommentHtmlEditor ) );
+export default localize(withLocalizedMoment(CommentHtmlEditor));

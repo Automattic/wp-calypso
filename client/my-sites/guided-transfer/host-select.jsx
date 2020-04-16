@@ -18,11 +18,11 @@ class HostSelect extends React.Component {
 
 	static propTypes = {
 		hosts: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				showHost: PropTypes.func.isRequired,
 				label: PropTypes.string.isRequired,
 				logo: PropTypes.string.isRequired,
-			} )
+			})
 		).isRequired,
 	};
 
@@ -31,10 +31,10 @@ class HostSelect extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ this.props.translate( 'Set up Guided Transfer' ) } />
+				<SectionHeader label={this.props.translate('Set up Guided Transfer')} />
 				<Card>
 					<p>
-						{ this.props.translate(
+						{this.props.translate(
 							'{{strong}}Please choose{{/strong}} one of our Guided Transfer compatible ' +
 								'{{partner_link}}partner hosts{{/partner_link}}. Visit the {{lobby_link}}Guided ' +
 								'Transfer Lobby{{/lobby_link}} if you have any questions before starting, or ' +
@@ -45,26 +45,26 @@ class HostSelect extends React.Component {
 									partner_link: <a href="https://get.wp.com/gt-hosting/" />,
 									lobby_link: <a href="https://guidedtransfer.wordpress.com/" />,
 									learn_link: (
-										<a href={ localizeUrl( 'https://wordpress.com/support/guided-transfer/' ) } />
+										<a href={localizeUrl('https://wordpress.com/support/guided-transfer/')} />
 									),
 								},
 							}
-						) }
+						)}
 					</p>
 					<div>
-						{ hosts.map( ( host, index ) => {
+						{hosts.map((host, index) => {
 							const { showHost, label, logo } = host;
 							return (
 								<Button
 									className="guided-transfer__host-button"
-									onClick={ showHost }
-									key={ index }
-									aria-label={ label }
+									onClick={showHost}
+									key={index}
+									aria-label={label}
 								>
-									<img className="guided-transfer__host-button-image" src={ logo } alt="" />
+									<img className="guided-transfer__host-button-image" src={logo} alt="" />
 								</Button>
 							);
-						} ) }
+						})}
 					</div>
 				</Card>
 			</div>
@@ -72,4 +72,4 @@ class HostSelect extends React.Component {
 	}
 }
 
-export default localize( HostSelect );
+export default localize(HostSelect);

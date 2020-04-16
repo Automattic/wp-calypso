@@ -36,132 +36,130 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:me:profile' );
+const debug = debugFactory('calypso:me:profile');
 
 /* eslint-disable react/prefer-es6-class */
-const Profile = createReactClass( {
+const Profile = createReactClass({
 	displayName: 'Profile',
 
-	mixins: [ formBase, observe( 'userSettings' ) ],
+	mixins: [formBase, observe('userSettings')],
 
 	componentDidMount() {
-		debug( this.displayName + ' component is mounted.' );
+		debug(this.displayName + ' component is mounted.');
 	},
 
 	componentWillUnmount() {
-		debug( this.displayName + ' component is unmounting.' );
+		debug(this.displayName + ' component is unmounting.');
 	},
 
-	getClickHandler( action ) {
-		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	getClickHandler(action) {
+		return () => this.props.recordGoogleEvent('Me', 'Clicked on ' + action);
 	},
 
-	getFocusHandler( action ) {
-		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	getFocusHandler(action) {
+		return () => this.props.recordGoogleEvent('Me', 'Focused on ' + action);
 	},
 
 	render() {
 		const gravatarProfileLink =
-			'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
+			'https://gravatar.com/' + this.props.userSettings.getSetting('user_login');
 
 		return (
 			<Main className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<SectionHeader label={ this.props.translate( 'Profile' ) } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
+				<SectionHeader label={this.props.translate('Profile')} />
 				<Card className="profile__settings">
 					<EditGravatar />
 
-					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
+					<form onSubmit={this.submitForm} onChange={this.props.markChanged}>
 						<FormFieldset>
-							<FormLabel htmlFor="first_name">{ this.props.translate( 'First Name' ) }</FormLabel>
+							<FormLabel htmlFor="first_name">{this.props.translate('First Name')}</FormLabel>
 							<FormTextInput
-								disabled={ this.getDisabledState() }
+								disabled={this.getDisabledState()}
 								id="first_name"
 								name="first_name"
-								onChange={ this.updateSetting }
-								onFocus={ this.getFocusHandler( 'First Name Field' ) }
-								value={ this.getSetting( 'first_name' ) }
+								onChange={this.updateSetting}
+								onFocus={this.getFocusHandler('First Name Field')}
+								value={this.getSetting('first_name')}
 							/>
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last Name' ) }</FormLabel>
+							<FormLabel htmlFor="last_name">{this.props.translate('Last Name')}</FormLabel>
 							<FormTextInput
-								disabled={ this.getDisabledState() }
+								disabled={this.getDisabledState()}
 								id="last_name"
 								name="last_name"
-								onChange={ this.updateSetting }
-								onFocus={ this.getFocusHandler( 'Last Name Field' ) }
-								value={ this.getSetting( 'last_name' ) }
+								onChange={this.updateSetting}
+								onFocus={this.getFocusHandler('Last Name Field')}
+								value={this.getSetting('last_name')}
 							/>
 						</FormFieldset>
 
 						<FormFieldset>
 							<FormLabel htmlFor="display_name">
-								{ this.props.translate( 'Public Display Name' ) }
+								{this.props.translate('Public Display Name')}
 							</FormLabel>
 							<FormTextInput
-								disabled={ this.getDisabledState() }
+								disabled={this.getDisabledState()}
 								id="display_name"
 								name="display_name"
-								onChange={ this.updateSetting }
-								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
-								value={ this.getSetting( 'display_name' ) }
+								onChange={this.updateSetting}
+								onFocus={this.getFocusHandler('Display Name Field')}
+								value={this.getSetting('display_name')}
 							/>
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="description">{ this.props.translate( 'About Me' ) }</FormLabel>
+							<FormLabel htmlFor="description">{this.props.translate('About Me')}</FormLabel>
 							<FormTextarea
-								disabled={ this.getDisabledState() }
+								disabled={this.getDisabledState()}
 								id="description"
 								name="description"
-								onChange={ this.updateSetting }
-								onFocus={ this.getFocusHandler( 'About Me Field' ) }
-								value={ this.getSetting( 'description' ) }
+								onChange={this.updateSetting}
+								onFocus={this.getFocusHandler('About Me Field')}
+								value={this.getSetting('description')}
 							/>
 						</FormFieldset>
 
 						<p>
 							<FormButton
-								disabled={
-									! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState()
-								}
-								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
+								disabled={!this.props.userSettings.hasUnsavedSettings() || this.getDisabledState()}
+								onClick={this.getClickHandler('Save Profile Details Button')}
 							>
-								{ this.state.submittingForm
-									? this.props.translate( 'Saving…' )
-									: this.props.translate( 'Save profile details' ) }
+								{this.state.submittingForm
+									? this.props.translate('Saving…')
+									: this.props.translate('Save profile details')}
 							</FormButton>
 						</p>
 					</form>
 					<p className="profile__info-text">
-						{ this.props.translate(
+						{this.props.translate(
 							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
 								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
 							{
 								components: {
 									profilelink: (
 										<a
-											onClick={ this.getClickHandler( 'My Profile Link' ) }
-											href={ gravatarProfileLink }
+											onClick={this.getClickHandler('My Profile Link')}
+											href={gravatarProfileLink}
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
 									),
 									hovercardslink: (
 										<a
-											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
-											href={ localizeUrl( 'https://wordpress.com/support/gravatar-hovercards/' ) }
+											onClick={this.getClickHandler('Gravatar Hovercards Link')}
+											href={localizeUrl('https://wordpress.com/support/gravatar-hovercards/')}
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
 									),
 								},
 							}
-						) }
+						)}
 					</p>
 				</Card>
 
@@ -169,8 +167,8 @@ const Profile = createReactClass( {
 			</Main>
 		);
 	},
-} );
+});
 
-const connectComponent = connect( null, { recordGoogleEvent } );
+const connectComponent = connect(null, { recordGoogleEvent });
 
-export default flowRight( connectComponent, protectForm, localize )( Profile );
+export default flowRight(connectComponent, protectForm, localize)(Profile);

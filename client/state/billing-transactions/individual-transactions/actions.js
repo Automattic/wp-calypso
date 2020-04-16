@@ -10,37 +10,37 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-export const requestBillingTransaction = transactionId => dispatch => {
-	dispatch( {
+export const requestBillingTransaction = (transactionId) => (dispatch) => {
+	dispatch({
 		type: BILLING_TRANSACTION_REQUEST,
 		transactionId,
-	} );
+	});
 
 	return wp
 		.undocumented()
 		.me()
-		.getReceipt( transactionId, { format: 'display' } )
-		.then( receipt => {
-			dispatch( {
+		.getReceipt(transactionId, { format: 'display' })
+		.then((receipt) => {
+			dispatch({
 				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
 				transactionId,
-			} );
-			dispatch( {
+			});
+			dispatch({
 				type: BILLING_TRANSACTION_RECEIVE,
 				transactionId,
 				receipt: receipt,
-			} );
-		} )
-		.catch( error => {
-			dispatch( {
+			});
+		})
+		.catch((error) => {
+			dispatch({
 				type: BILLING_TRANSACTION_REQUEST_FAILURE,
 				transactionId,
 				error,
-			} );
-		} );
+			});
+		});
 };
 
-export const clearBillingTransactionError = transactionId => ( {
+export const clearBillingTransactionError = (transactionId) => ({
 	type: BILLING_TRANSACTION_ERROR_CLEAR,
 	transactionId,
-} );
+});

@@ -18,6 +18,6 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
  * @param  {number}  userId User ID
  * @returns {boolean}        Whether broken connection exists
  */
-export default function hasInvalidSiteUserConnection( state, siteId, userId ) {
-	return some( getSiteUserConnections( state, siteId, userId ), { status: 'invalid' } );
+export default function hasInvalidSiteUserConnection(state, siteId, userId) {
+	return some(getSiteUserConnections(state, siteId, userId), { status: 'invalid' });
 }

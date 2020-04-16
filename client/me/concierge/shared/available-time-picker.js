@@ -11,26 +11,23 @@ import moment from 'moment-timezone';
 import AvailableTimeCard from './available-time-card';
 import { isDefaultLocale } from 'lib/i18n-utils';
 
-const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
+const groupAvailableTimesByDate = (availableTimes, timezone) => {
 	const dates = {};
 
 	// Go through all available times and bundle them into each date object
-	availableTimes.forEach( beginTimestamp => {
-		const startOfDay = moment( beginTimestamp )
-			.tz( timezone )
-			.startOf( 'day' )
-			.valueOf();
-		if ( dates.hasOwnProperty( startOfDay ) ) {
-			dates[ startOfDay ].times.push( beginTimestamp );
+	availableTimes.forEach((beginTimestamp) => {
+		const startOfDay = moment(beginTimestamp).tz(timezone).startOf('day').valueOf();
+		if (dates.hasOwnProperty(startOfDay)) {
+			dates[startOfDay].times.push(beginTimestamp);
 		} else {
-			dates[ startOfDay ] = { date: startOfDay, times: [ beginTimestamp ] };
+			dates[startOfDay] = { date: startOfDay, times: [beginTimestamp] };
 		}
-	} );
+	});
 
 	// Convert the dates object into an array sorted by date and return it
-	return Object.keys( dates )
+	return Object.keys(dates)
 		.sort()
-		.map( date => dates[ date ] );
+		.map((date) => dates[date]);
 };
 
 class AvailableTimePicker extends Component {
@@ -53,23 +50,23 @@ class AvailableTimePicker extends Component {
 			onSubmit,
 			timezone,
 		} = this.props;
-		const availability = groupAvailableTimesByDate( availableTimes, timezone );
+		const availability = groupAvailableTimesByDate(availableTimes, timezone);
 
 		return (
 			<div>
-				{ availability.map( ( { date, times } ) => (
+				{availability.map(({ date, times }) => (
 					<AvailableTimeCard
-						actionText={ actionText }
-						appointmentTimespan={ appointmentTimespan }
-						date={ date }
-						disabled={ disabled }
-						isDefaultLocale={ isDefaultLocale( currentUserLocale ) }
-						key={ date }
-						onSubmit={ onSubmit }
-						times={ times }
-						timezone={ timezone }
+						actionText={actionText}
+						appointmentTimespan={appointmentTimespan}
+						date={date}
+						disabled={disabled}
+						isDefaultLocale={isDefaultLocale(currentUserLocale)}
+						key={date}
+						onSubmit={onSubmit}
+						times={times}
+						timezone={timezone}
 					/>
-				) ) }
+				))}
 			</div>
 		);
 	}

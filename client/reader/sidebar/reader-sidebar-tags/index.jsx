@@ -37,39 +37,39 @@ export class ReaderSidebarTags extends Component {
 		addTagCounter: 0,
 	};
 
-	followTag = tag => {
-		if ( startsWith( tag, '#' ) ) {
-			tag = tag.substring( 1 );
+	followTag = (tag) => {
+		if (startsWith(tag, '#')) {
+			tag = tag.substring(1);
 		}
 
-		this.props.followTag( decodeURIComponent( tag ) );
-		recordAction( 'followed_topic' );
-		recordGaEvent( 'Clicked Follow Topic', tag );
-		recordTrack( 'calypso_reader_reader_tag_followed', { tag } );
-		this.props.onFollowTag( tag );
+		this.props.followTag(decodeURIComponent(tag));
+		recordAction('followed_topic');
+		recordGaEvent('Clicked Follow Topic', tag);
+		recordTrack('calypso_reader_reader_tag_followed', { tag });
+		this.props.onFollowTag(tag);
 
 		// reset the FormTextInputWithAction field to empty by rerendering it with a new `key`
-		this.setState( state => ( { addTagCounter: state.addTagCounter + 1 } ) );
+		this.setState((state) => ({ addTagCounter: state.addTagCounter + 1 }));
 	};
 
 	render() {
 		const { tags, isOpen, translate, onClick } = this.props;
 		return (
 			<ul>
-				{ ! tags && <QueryReaderFollowedTags /> }
+				{!tags && <QueryReaderFollowedTags />}
 				<ExpandableSidebarMenu
-					expanded={ isOpen }
-					title={ translate( 'Tags' ) }
-					onClick={ onClick }
+					expanded={isOpen}
+					title={translate('Tags')}
+					onClick={onClick}
 					materialIcon="local_offer"
 				>
-					<ReaderSidebarTagsList { ...this.props } />
+					<ReaderSidebarTagsList {...this.props} />
 
 					<FormTextInputWithAction
-						key={ this.state.addTagCounter }
-						action={ translate( 'Add' ) }
-						placeholder={ translate( 'Add a tag' ) }
-						onAction={ this.followTag }
+						key={this.state.addTagCounter}
+						action={translate('Add')}
+						placeholder={translate('Add a tag')}
+						onAction={this.followTag}
 					/>
 				</ExpandableSidebarMenu>
 			</ul>
@@ -78,10 +78,10 @@ export class ReaderSidebarTags extends Component {
 }
 
 export default connect(
-	state => ( {
-		tags: getReaderFollowedTags( state ),
-	} ),
+	(state) => ({
+		tags: getReaderFollowedTags(state),
+	}),
 	{
 		followTag: requestFollowTag,
 	}
-)( localize( ReaderSidebarTags ) );
+)(localize(ReaderSidebarTags));

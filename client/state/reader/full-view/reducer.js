@@ -11,8 +11,8 @@ import { combineReducers } from 'state/utils';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function fullViewPostKey( state = null, action ) {
-	switch ( action.type ) {
+export function fullViewPostKey(state = null, action) {
+	switch (action.type) {
 		case READER_FULL_VIEW_POST_KEY_SET:
 			return action.postKey;
 
@@ -22,6 +22,6 @@ export function fullViewPostKey( state = null, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	fullViewPostKey,
-} );
+});

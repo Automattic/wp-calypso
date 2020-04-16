@@ -9,15 +9,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/post-message-no-wildcard-targets' ),
+const rule = require('../../../lib/rules/post-message-no-wildcard-targets'),
 	config = { env: { es6: true } },
-	RuleTester = require( 'eslint' ).RuleTester;
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'post-message-no-wildcard-targets', rule, {
+new RuleTester(config).run('post-message-no-wildcard-targets', rule, {
 	valid: [
 		{ code: 'foo()' },
 		{ code: "foo( 1, '*' )" },
@@ -30,31 +30,31 @@ new RuleTester( config ).run( 'post-message-no-wildcard-targets', rule, {
 	invalid: [
 		{
 			code: "postMessage( 'bob', '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 		},
 		{
 			code: "postMessage( false, '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 		},
 		{
 			code: 'postMessage( JSON.stringify( {} ), "*" )',
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 		},
 		{
 			code: 'postMessage( null, `*` )',
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 		},
 		{
 			code: "window.postMessage( null, '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 		},
 		{
 			code: "frame.postMessage( null, '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 		},
 		{
 			code: "a.contentWindow.postMessage( null, '*' )",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 		},
 	],
-} );
+});

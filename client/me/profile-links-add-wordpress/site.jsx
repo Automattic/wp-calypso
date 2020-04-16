@@ -23,19 +23,19 @@ class ProfileLinksAddWordPressSite extends Component {
 		checked: false,
 	};
 
-	onSelect = event => {
-		this.props.onSelect( event, this.getInputName() );
+	onSelect = (event) => {
+		this.props.onSelect(event, this.getInputName());
 	};
 
-	getCheckboxEventHandler = checkboxName => event => {
+	getCheckboxEventHandler = (checkboxName) => (event) => {
 		const action = 'Clicked ' + checkboxName + ' checkbox';
 		const value = event.target.checked ? 1 : 0;
 
-		this.props.recordGoogleEvent( 'Me', action, 'checked', value );
+		this.props.recordGoogleEvent('Me', action, 'checked', value);
 	};
 
 	getInputName() {
-		return `site-${ this.props.site.ID }`;
+		return `site-${this.props.site.ID}`;
 	}
 
 	render() {
@@ -43,23 +43,23 @@ class ProfileLinksAddWordPressSite extends Component {
 
 		return (
 			<li
-				key={ site.ID }
+				key={site.ID}
 				className="profile-links-add-wordpress__item"
-				onClick={ this.getCheckboxEventHandler( 'Add WordPress Site' ) }
+				onClick={this.getCheckboxEventHandler('Add WordPress Site')}
 			>
 				<input
 					className="profile-links-add-wordpress__checkbox"
 					type="checkbox"
-					name={ this.getInputName() }
-					onChange={ onChange }
-					checked={ checked }
+					name={this.getInputName()}
+					onChange={onChange}
+					checked={checked}
 				/>
-				<Site site={ site } indicator={ false } onSelect={ this.onSelect } />
+				<Site site={site} indicator={false} onSelect={this.onSelect} />
 			</li>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
-} )( ProfileLinksAddWordPressSite );
+})(ProfileLinksAddWordPressSite);

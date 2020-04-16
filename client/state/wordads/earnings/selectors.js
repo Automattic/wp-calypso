@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param   {number} siteId Site Id
  * @returns {object}        WordAds Error
  */
-export function getWordAdsEarnings( state, siteId ) {
-	return get( state, [ 'wordads', 'earnings', siteId ], null );
+export function getWordAdsEarnings(state, siteId) {
+	return get(state, ['wordads', 'earnings', siteId], null);
 }

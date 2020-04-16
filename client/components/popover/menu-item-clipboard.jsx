@@ -13,25 +13,25 @@ import Gridicon from 'components/gridicon';
  */
 import ClipboardButton from 'components/forms/clipboard-button';
 
-function PopoverMenuItemClipboard( {
+function PopoverMenuItemClipboard({
 	children,
 	className,
 	text,
 	onCopy = noop,
 	icon = 'clipboard',
 	...rest
-} ) {
+}) {
 	return (
 		<ClipboardButton
-			text={ text }
-			onCopy={ onCopy }
+			text={text}
+			onCopy={onCopy}
 			role="menuitem"
 			tabIndex="-1"
-			className={ classNames( 'popover__menu-item', className ) }
-			{ ...rest }
+			className={classNames('popover__menu-item', className)}
+			{...rest}
 		>
-			<Gridicon icon={ icon } size={ 18 } />
-			{ children }
+			<Gridicon icon={icon} size={18} />
+			{children}
 		</ClipboardButton>
 	);
 }

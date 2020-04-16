@@ -40,68 +40,68 @@ class MediaLibraryUploadUrl extends Component {
 		isError: false,
 	};
 
-	upload = event => {
+	upload = (event) => {
 		event.preventDefault();
 
-		const isError = ! event.target.checkValidity();
-		this.setState( { isError } );
+		const isError = !event.target.checkValidity();
+		this.setState({ isError });
 
-		if ( isError || ! this.props.site ) {
+		if (isError || !this.props.site) {
 			return;
 		}
 
-		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site, this.state.value );
+		MediaActions.clearValidationErrors(this.props.site.ID);
+		MediaActions.add(this.props.site, this.state.value);
 
-		this.setState( { value: '', isError: false } );
+		this.setState({ value: '', isError: false });
 		this.props.onAddMedia();
 		this.props.onClose();
-		bumpStat( 'editor_upload_via', 'url' );
+		bumpStat('editor_upload_via', 'url');
 	};
 
-	onChange = event => {
-		this.setState( {
+	onChange = (event) => {
+		this.setState({
 			isError: false,
 			value: event.target.value,
-		} );
+		});
 	};
 
-	onKeyDown = event => {
-		if ( event.key === 'Escape' ) {
-			return this.props.onClose( event );
+	onKeyDown = (event) => {
+		if (event.key === 'Escape') {
+			return this.props.onClose(event);
 		}
 
-		if ( event.key !== 'Enter' ) {
+		if (event.key !== 'Enter') {
 			return;
 		}
 
-		this.upload( event );
+		this.upload(event);
 	};
 
 	render() {
-		const classes = classNames( 'media-library__upload-url', this.props.className );
+		const classes = classNames('media-library__upload-url', this.props.className);
 		const { onClose, translate } = this.props;
 
 		return (
-			<form className={ classes } onSubmit={ this.upload } noValidate>
+			<form className={classes} onSubmit={this.upload} noValidate>
 				<FormTextInput
 					type="url"
-					value={ this.state.value }
+					value={this.state.value}
 					placeholder="https://"
-					onChange={ this.onChange }
-					onKeyDown={ this.onKeyDown }
-					isError={ this.state.isError }
+					onChange={this.onChange}
+					onKeyDown={this.onKeyDown}
+					isError={this.state.isError}
 					autoFocus
 					required
 				/>
 
 				<div className="media-library__upload-url-button-group">
 					<button type="submit" className="button is-primary">
-						{ translate( 'Upload', { context: 'verb' } ) }
+						{translate('Upload', { context: 'verb' })}
 					</button>
 
-					<button type="button" className="media-library__upload-url-cancel" onClick={ onClose }>
-						<ScreenReaderText>{ translate( 'Cancel' ) }</ScreenReaderText>
+					<button type="button" className="media-library__upload-url-cancel" onClick={onClose}>
+						<ScreenReaderText>{translate('Cancel')}</ScreenReaderText>
 						<Gridicon icon="cross" />
 					</button>
 				</div>
@@ -110,4 +110,4 @@ class MediaLibraryUploadUrl extends Component {
 	}
 }
 
-export default localize( MediaLibraryUploadUrl );
+export default localize(MediaLibraryUploadUrl);

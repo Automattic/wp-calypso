@@ -19,28 +19,28 @@ import {
 import analytics from 'lib/analytics';
 
 const trackUserInterest = () => {
-	analytics.tracks.recordEvent( 'calypso_editor_gdocs_tour_success' );
+	analytics.tracks.recordEvent('calypso_editor_gdocs_tour_success');
 };
 
 export const GDocsIntegrationTour = makeTour(
-	<Tour { ...meta }>
-		<Step name="init" placement="right" style={ { animationDelay: '2s' } }>
-			{ ( { translate } ) => (
+	<Tour {...meta}>
+		<Step name="init" placement="right" style={{ animationDelay: '2s' }}>
+			{({ translate }) => (
 				<Fragment>
-					<p>{ translate( 'Did you know you can create drafts from Google Docs?' ) }</p>
+					<p>{translate('Did you know you can create drafts from Google Docs?')}</p>
 					<ButtonRow>
 						<LinkQuit
 							primary
 							target="_blank"
-							onClick={ trackUserInterest }
+							onClick={trackUserInterest}
 							href="https://apps.wordpress.com/google-docs/"
 						>
-							{ translate( 'Learn more' ) }
+							{translate('Learn more')}
 						</LinkQuit>
-						<Quit>{ translate( 'No thanks' ) }</Quit>
+						<Quit>{translate('No thanks')}</Quit>
 					</ButtonRow>
 				</Fragment>
-			) }
+			)}
 		</Step>
 	</Tour>
 );

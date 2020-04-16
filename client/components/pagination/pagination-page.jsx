@@ -24,28 +24,28 @@ class PaginationPage extends Component {
 		totalPages: PropTypes.number.isRequired,
 	};
 
-	clickHandler = event => {
+	clickHandler = (event) => {
 		event.stopPropagation();
 		const { currentPage, pageClick, pageNumber, totalPages } = this.props;
 
-		switch ( pageNumber ) {
+		switch (pageNumber) {
 			case 'previous':
-				if ( currentPage - 1 < 1 ) {
+				if (currentPage - 1 < 1) {
 					return;
 				}
-				pageClick( currentPage - 1 );
+				pageClick(currentPage - 1);
 				break;
 			case 'next':
-				if ( currentPage + 1 > totalPages ) {
+				if (currentPage + 1 > totalPages) {
 					return;
 				}
-				pageClick( currentPage + 1 );
+				pageClick(currentPage + 1);
 				break;
 			default:
-				if ( currentPage === pageNumber ) {
+				if (currentPage === pageNumber) {
 					return;
 				}
-				pageClick( pageNumber );
+				pageClick(pageNumber);
 				break;
 		}
 	};
@@ -62,7 +62,7 @@ class PaginationPage extends Component {
 			compact,
 		} = this.props;
 
-		switch ( pageNumber ) {
+		switch (pageNumber) {
 			case 'more':
 				return (
 					<li className="pagination__list-item pagination__ellipsis" aria-hidden="true">
@@ -70,39 +70,39 @@ class PaginationPage extends Component {
 					</li>
 				);
 			case 'previous': {
-				const listClass = classNames( 'pagination__list-item pagination__arrow', 'is-left', {
+				const listClass = classNames('pagination__list-item pagination__arrow', 'is-left', {
 					'is-active': currentPage > 1,
-				} );
+				});
 				return (
-					<li className={ listClass }>
-						<Button borderless onClick={ this.clickHandler } disabled={ currentPage <= 1 }>
-							<Gridicon icon="arrow-left" size={ 18 } />
-							{ ! compact && ( prevLabel || translate( 'Previous' ) ) }
+					<li className={listClass}>
+						<Button borderless onClick={this.clickHandler} disabled={currentPage <= 1}>
+							<Gridicon icon="arrow-left" size={18} />
+							{!compact && (prevLabel || translate('Previous'))}
 						</Button>
 					</li>
 				);
 			}
 			case 'next': {
-				const listClass = classNames( 'pagination__list-item pagination__arrow', 'is-right', {
+				const listClass = classNames('pagination__list-item pagination__arrow', 'is-right', {
 					'is-active': currentPage < totalPages,
-				} );
+				});
 				return (
-					<li className={ listClass }>
-						<Button borderless onClick={ this.clickHandler } disabled={ currentPage >= totalPages }>
-							{ ! compact && ( nextLabel || translate( 'Next' ) ) }
-							<Gridicon icon="arrow-right" size={ 18 } />
+					<li className={listClass}>
+						<Button borderless onClick={this.clickHandler} disabled={currentPage >= totalPages}>
+							{!compact && (nextLabel || translate('Next'))}
+							<Gridicon icon="arrow-right" size={18} />
 						</Button>
 					</li>
 				);
 			}
 			default: {
-				const listClass = classNames( 'pagination__list-item pagination__page-number', {
+				const listClass = classNames('pagination__list-item pagination__page-number', {
 					'is-selected': currentPage === pageNumber,
-				} );
+				});
 				return (
-					<li className={ listClass }>
-						<Button borderless onClick={ this.clickHandler }>
-							{ numberFormat( pageNumber ) }
+					<li className={listClass}>
+						<Button borderless onClick={this.clickHandler}>
+							{numberFormat(pageNumber)}
 						</Button>
 					</li>
 				);
@@ -111,4 +111,4 @@ class PaginationPage extends Component {
 	}
 }
 
-export default localize( PaginationPage );
+export default localize(PaginationPage);

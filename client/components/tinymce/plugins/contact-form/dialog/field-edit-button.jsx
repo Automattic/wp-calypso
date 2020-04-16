@@ -21,25 +21,25 @@ class ContactFormDialogFieldEditButton extends PureComponent {
 	};
 
 	constructor() {
-		super( ...arguments );
+		super(...arguments);
 		this.state = { showTooltip: false };
-		this.handleMouseEnter = this.handleMouseEnter.bind( this );
-		this.handleMouseLeave = this.handleMouseLeave.bind( this );
+		this.handleMouseEnter = this.handleMouseEnter.bind(this);
+		this.handleMouseLeave = this.handleMouseLeave.bind(this);
 	}
 
 	handleMouseEnter() {
-		this.setState( { showTooltip: true } );
+		this.setState({ showTooltip: true });
 	}
 
 	handleMouseLeave() {
-		this.setState( { showTooltip: false } );
+		this.setState({ showTooltip: false });
 	}
 
 	render() {
 		const { expanded, translate } = this.props;
-		const classes = classNames( 'editor-contact-form-modal-field__edit', {
+		const classes = classNames('editor-contact-form-modal-field__edit', {
 			'is-expanded': expanded,
-		} );
+		});
 
 		return (
 			<div className="editor-contact-form-modal-field__edit-wrapper foldable-card__expand">
@@ -47,23 +47,23 @@ class ContactFormDialogFieldEditButton extends PureComponent {
 					className="editor-contact-form-modal-field__edit-wrapper-button"
 					ref="editField"
 					borderless
-					onMouseEnter={ this.handleMouseEnter }
-					onMouseLeave={ this.handleMouseLeave }
+					onMouseEnter={this.handleMouseEnter}
+					onMouseLeave={this.handleMouseLeave}
 				>
-					<Gridicon icon="pencil" className={ classes } />
+					<Gridicon icon="pencil" className={classes} />
 				</Button>
 				<Popover
-					isVisible={ this.state.showTooltip }
-					context={ this.refs && this.refs.editField }
-					onClose={ noop }
+					isVisible={this.state.showTooltip}
+					context={this.refs && this.refs.editField}
+					onClose={noop}
 					position="bottom"
 					className="popover tooltip is-dialog-visible"
 				>
-					{ translate( 'Edit Field', { context: 'button tooltip' } ) }
+					{translate('Edit Field', { context: 'button tooltip' })}
 				</Popover>
 			</div>
 		);
 	}
 }
 
-export default localize( ContactFormDialogFieldEditButton );
+export default localize(ContactFormDialogFieldEditButton);

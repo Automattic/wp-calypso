@@ -34,65 +34,65 @@ interface Props {
 	selectedSiteSlug: T.SiteSlug | null;
 }
 
-export const MarketingTools: FunctionComponent< Props > = ( {
+export const MarketingTools: FunctionComponent<Props> = ({
 	recordTracksEvent,
 	selectedSiteSlug,
-} ) => {
+}) => {
 	const translate = useTranslate();
 
 	const handleBoostMyTrafficClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_boost_my_traffic_button_click' );
+		recordTracksEvent('calypso_marketing_tools_boost_my_traffic_button_click');
 
-		page( marketingTraffic( selectedSiteSlug ) );
+		page(marketingTraffic(selectedSiteSlug));
 	};
 
 	const handleCreateALogoClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
+		recordTracksEvent('calypso_marketing_tools_create_a_logo_button_click');
 	};
 
 	const handleFindYourExpertClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_find_your_expert_button_click' );
+		recordTracksEvent('calypso_marketing_tools_find_your_expert_button_click');
 	};
 
 	const handleStartSharingClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_start_sharing_button_click' );
+		recordTracksEvent('calypso_marketing_tools_start_sharing_button_click');
 
-		page( marketingConnections( selectedSiteSlug ) );
+		page(marketingConnections(selectedSiteSlug));
 	};
 
 	return (
 		<Fragment>
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
-			<MarketingToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
+			<MarketingToolsHeader handleButtonClick={handleBoostMyTrafficClick} />
 
 			<div className="tools__feature-list">
 				<MarketingToolsFeature
-					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
-					description={ translate(
+					title={translate('Want to build a great brand? Start with a great logo')}
+					description={translate(
 						"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
-					) }
+					)}
 					imagePath="/calypso/images/marketing/looka-logo.svg"
 				>
 					<Button
 						compact
-						onClick={ handleCreateALogoClick }
+						onClick={handleCreateALogoClick}
 						href="https://wp.me/logo-maker"
 						target="_blank"
 					>
-						{ translate( 'Create a logo' ) }
+						{translate('Create a logo')}
 					</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
-					title={ translate( 'Get social, and share your blog posts where the people are' ) }
-					description={ translate(
+					title={translate('Get social, and share your blog posts where the people are')}
+					description={translate(
 						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
-					) }
+					)}
 					imagePath="/calypso/images/marketing/social-media-logos.svg"
 				>
-					<Button compact onClick={ handleStartSharingClick }>
-						{ translate( 'Start sharing' ) }
+					<Button compact onClick={handleStartSharingClick}>
+						{translate('Start sharing')}
 					</Button>
 				</MarketingToolsFeature>
 
@@ -101,19 +101,19 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				<MarketingToolsGoogleAdwordsFeature />
 
 				<MarketingToolsFeature
-					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
-					description={ translate(
+					title={translate('Need an expert to help realize your vision? Hire one!')}
+					description={translate(
 						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
-					) }
+					)}
 					imagePath="/calypso/images/marketing/upwork-logo.png"
 				>
 					<Button
 						compact
-						onClick={ handleFindYourExpertClick }
-						href={ '/experts/upwork?source=marketingtools' }
+						onClick={handleFindYourExpertClick}
+						href={'/experts/upwork?source=marketingtools'}
 						target="_blank"
 					>
-						{ translate( 'Find your expert' ) }
+						{translate('Find your expert')}
 					</Button>
 				</MarketingToolsFeature>
 			</div>
@@ -122,10 +122,10 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 };
 
 export default connect(
-	state => ( {
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ),
+	(state) => ({
+		selectedSiteSlug: getSelectedSiteSlug(state),
+	}),
 	{
 		recordTracksEvent: recordTracksEventAction,
 	}
-)( MarketingTools );
+)(MarketingTools);

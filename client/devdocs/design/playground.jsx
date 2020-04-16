@@ -73,58 +73,58 @@ export default class DesignAssets extends React.Component {
 	};
 
 	backToComponents = () => {
-		page( '/devdocs/design/' );
+		page('/devdocs/design/');
 	};
 
-	addComponent = exampleCode => () => {
-		this.setState( {
+	addComponent = (exampleCode) => () => {
+		this.setState({
 			code:
 				'<Main>' +
-				this.state.code.replace( /(^<Main>)/, '' ).replace( /(<\/Main>$)/, '' ) +
+				this.state.code.replace(/(^<Main>)/, '').replace(/(<\/Main>$)/, '') +
 				'\n\t' +
 				exampleCode +
 				'\n</Main>',
-		} );
+		});
 	};
 
-	handleChange = code => {
-		this.setState( {
+	handleChange = (code) => {
+		this.setState({
 			code: code,
-		} );
+		});
 	};
 
 	listOfExamples() {
 		return (
 			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
-				{ keys( componentExamples ).map( name => {
-					const ExampleComponentName = componentExamples[ name ];
+				{keys(componentExamples).map((name) => {
+					const ExampleComponentName = componentExamples[name];
 					const exampleComponent = <ExampleComponentName />;
-					const exampleCode = getExampleCodeFromComponent( exampleComponent );
+					const exampleCode = getExampleCodeFromComponent(exampleComponent);
 					return (
 						exampleCode && (
-							<SelectDropdown.Item key={ name } onClick={ this.addComponent( exampleCode ) }>
-								{ name }
+							<SelectDropdown.Item key={name} onClick={this.addComponent(exampleCode)}>
+								{name}
 							</SelectDropdown.Item>
 						)
 					);
-				} ) }
+				})}
 			</SelectDropdown>
 		);
 	}
 
 	render() {
-		const className = classnames( 'devdocs', 'devdocs__components', {
+		const className = classnames('devdocs', 'devdocs__components', {
 			'is-single': true,
-			'is-list': ! this.props.component,
-		} );
+			'is-list': !this.props.component,
+		});
 
 		return (
-			<Main className={ className }>
+			<Main className={className}>
 				<DocumentHead title="Playground" />
 				<LiveProvider
-					code={ this.state.code }
-					scope={ playgroundScope }
-					mountStylesheet={ false }
+					code={this.state.code}
+					scope={playgroundScope}
+					mountStylesheet={false}
 					className="design__playground"
 				>
 					<div className="design__editor">
@@ -134,7 +134,7 @@ export default class DesignAssets extends React.Component {
 						<LiveEditor />
 					</div>
 					<div className="design__preview">
-						{ this.listOfExamples() }
+						{this.listOfExamples()}
 						<LivePreview />
 					</div>
 				</LiveProvider>

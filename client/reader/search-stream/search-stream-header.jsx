@@ -19,7 +19,7 @@ class SearchStreamHeader extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		wideDisplay: PropTypes.bool,
-		selected: PropTypes.oneOf( values( SEARCH_TYPES ) ),
+		selected: PropTypes.oneOf(values(SEARCH_TYPES)),
 		onSelection: PropTypes.func,
 	};
 	static defaultProps = {
@@ -27,17 +27,17 @@ class SearchStreamHeader extends Component {
 		selected: SEARCH_TYPES.posts,
 	};
 
-	handlePostsSelected = () => this.props.onSelection( SEARCH_TYPES.POSTS );
-	handleSitesSelected = () => this.props.onSelection( SEARCH_TYPES.SITES );
+	handlePostsSelected = () => this.props.onSelection(SEARCH_TYPES.POSTS);
+	handleSitesSelected = () => this.props.onSelection(SEARCH_TYPES.SITES);
 
 	render() {
 		const { translate, wideDisplay, selected } = this.props;
 
-		if ( wideDisplay ) {
+		if (wideDisplay) {
 			return (
 				<ul className="search-stream__headers">
-					<li className="search-stream__post-header">{ translate( 'Posts' ) }</li>
-					<li className="search-stream__site-header">{ translate( 'Sites' ) }</li>
+					<li className="search-stream__post-header">{translate('Posts')}</li>
+					<li className="search-stream__site-header">{translate('Sites')}</li>
 				</ul>
 			);
 		}
@@ -47,18 +47,18 @@ class SearchStreamHeader extends Component {
 				<SectionNav>
 					<NavTabs>
 						<NavItem
-							key={ 'posts-nav' }
-							selected={ selected === SEARCH_TYPES.POSTS }
-							onClick={ this.handlePostsSelected }
+							key={'posts-nav'}
+							selected={selected === SEARCH_TYPES.POSTS}
+							onClick={this.handlePostsSelected}
 						>
-							{ translate( 'Posts' ) }
+							{translate('Posts')}
 						</NavItem>
 						<NavItem
-							key={ 'sites-nav' }
-							selected={ selected === SEARCH_TYPES.SITES }
-							onClick={ this.handleSitesSelected }
+							key={'sites-nav'}
+							selected={selected === SEARCH_TYPES.SITES}
+							onClick={this.handleSitesSelected}
 						>
-							{ translate( 'Sites' ) }
+							{translate('Sites')}
 						</NavItem>
 					</NavTabs>
 				</SectionNav>
@@ -67,4 +67,4 @@ class SearchStreamHeader extends Component {
 	}
 }
 
-export default localize( SearchStreamHeader );
+export default localize(SearchStreamHeader);

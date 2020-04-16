@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { isRequestingPageTemplates, getPageTemplates } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( 'isRequestingPageTemplates()', () => {
-		test( 'should return false if the site is not tracked', () => {
+describe('selectors', () => {
+	describe('isRequestingPageTemplates()', () => {
+		test('should return false if the site is not tracked', () => {
 			const isRequesting = isRequestingPageTemplates(
 				{
 					pageTemplates: {
@@ -20,10 +20,10 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if a request is in progress for the site', () => {
+		test('should return true if a request is in progress for the site', () => {
 			const isRequesting = isRequestingPageTemplates(
 				{
 					pageTemplates: {
@@ -35,10 +35,10 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
+			expect(isRequesting).to.be.true;
+		});
 
-		test( 'should return false if a request has completed for the site', () => {
+		test('should return false if a request has completed for the site', () => {
 			const isRequesting = isRequestingPageTemplates(
 				{
 					pageTemplates: {
@@ -50,12 +50,12 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
-	} );
+			expect(isRequesting).to.be.false;
+		});
+	});
 
-	describe( 'getPageTemplates()', () => {
-		test( 'should return null if the site is not tracked', () => {
+	describe('getPageTemplates()', () => {
+		test('should return null if the site is not tracked', () => {
 			const templates = getPageTemplates(
 				{
 					pageTemplates: {
@@ -65,22 +65,22 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( templates ).to.be.null;
-		} );
+			expect(templates).to.be.null;
+		});
 
-		test( 'should return the page templates for the site', () => {
+		test('should return the page templates for the site', () => {
 			const templates = getPageTemplates(
 				{
 					pageTemplates: {
 						items: {
-							2916284: [ { label: 'Full Width', file: 'fullwidth.php' } ],
+							2916284: [{ label: 'Full Width', file: 'fullwidth.php' }],
 						},
 					},
 				},
 				2916284
 			);
 
-			expect( templates ).to.eql( [ { label: 'Full Width', file: 'fullwidth.php' } ] );
-		} );
-	} );
-} );
+			expect(templates).to.eql([{ label: 'Full Width', file: 'fullwidth.php' }]);
+		});
+	});
+});

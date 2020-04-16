@@ -26,21 +26,20 @@ export default class extends React.Component {
 	static defaultProps = { isError: false, id: null };
 
 	render() {
-		const classes = classNames( this.props.className, {
+		const classes = classNames(this.props.className, {
 			'form-input-validation': true,
 			'is-warning': this.props.isWarning,
 			'is-error': this.props.isError,
 			'is-hidden': this.props.isHidden,
-		} );
+		});
 
 		const icon = this.props.isError || this.props.isWarning ? 'notice-outline' : 'checkmark';
 
 		return (
-			<div className={ classes } role="alert">
-				<span id={ this.props.id }>
-					<Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } />{ ' ' }
-					{ this.props.text }
-					{ this.props.children }
+			<div className={classes} role="alert">
+				<span id={this.props.id}>
+					<Gridicon size={24} icon={this.props.icon ? this.props.icon : icon} /> {this.props.text}
+					{this.props.children}
 				</span>
 			</div>
 		);

@@ -10,17 +10,17 @@ import 'state/posts/init';
  * @param   {string} globalId Post global ID
  * @returns {object}          Post object
  */
-export function getPost( state, globalId ) {
-	const path = state.posts.items[ globalId ];
-	if ( ! path ) {
+export function getPost(state, globalId) {
+	const path = state.posts.items[globalId];
+	if (!path) {
 		return null;
 	}
 
-	const [ siteId, postId ] = path;
-	const manager = state.posts.queries[ siteId ];
-	if ( ! manager ) {
+	const [siteId, postId] = path;
+	const manager = state.posts.queries[siteId];
+	if (!manager) {
 		return null;
 	}
 
-	return manager.getItem( postId );
+	return manager.getItem(postId);
 }

@@ -18,7 +18,7 @@ import {
  * @param  {object} suggestions User suggestions
  * @returns {object}         	Action object
  */
-export function receiveUserSuggestions( siteId, suggestions ) {
+export function receiveUserSuggestions(siteId, suggestions) {
 	return {
 		type: USER_SUGGESTIONS_RECEIVE,
 		suggestions,
@@ -33,30 +33,30 @@ export function receiveUserSuggestions( siteId, suggestions ) {
  * @param  {number}   siteId  Site ID
  * @returns {Function}         Action thunk
  */
-export function requestUserSuggestions( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function requestUserSuggestions(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: USER_SUGGESTIONS_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.users()
-			.suggest( { site_id: siteId } )
-			.then( data => {
-				dispatch( receiveUserSuggestions( siteId, data.suggestions ) );
-				dispatch( {
+			.suggest({ site_id: siteId })
+			.then((data) => {
+				dispatch(receiveUserSuggestions(siteId, data.suggestions));
+				dispatch({
 					type: USER_SUGGESTIONS_REQUEST_SUCCESS,
 					siteId,
 					data,
-				} );
-			} )
-			.catch( error =>
-				dispatch( {
+				});
+			})
+			.catch((error) =>
+				dispatch({
 					type: USER_SUGGESTIONS_REQUEST_FAILURE,
 					siteId,
 					error,
-				} )
+				})
 			);
 	};
 }

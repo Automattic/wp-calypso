@@ -39,13 +39,13 @@ import {
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'reducer', () => {
-	useSandbox( sandbox => {
-		sandbox.stub( console, 'warn' );
-	} );
+describe('reducer', () => {
+	useSandbox((sandbox) => {
+		sandbox.stub(console, 'warn');
+	});
 
-	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
+	test('should include expected keys in return value', () => {
+		expect(reducer(undefined, {})).to.have.keys([
 			'counts',
 			'items',
 			'siteRequests',
@@ -55,18 +55,18 @@ describe( 'reducer', () => {
 			'edits',
 			'likes',
 			'revisions',
-		] );
-	} );
+		]);
+	});
 
-	describe( '#items()', () => {
-		test( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
+	describe('#items()', () => {
+		test('should default to an empty object', () => {
+			const state = items(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should index received posts by global ID', () => {
-			const state = items( undefined, {
+		test('should index received posts by global ID', () => {
+			const state = items(undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
 					{
@@ -82,19 +82,19 @@ describe( 'reducer', () => {
 						title: 'Ribs & Chicken',
 					},
 				],
-			} );
+			});
 
-			expect( state ).to.eql( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-				'6c831c187ffef321eb43a67761a525a3': [ 2916284, 413 ],
-			} );
-		} );
+			expect(state).to.eql({
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
+				'6c831c187ffef321eb43a67761a525a3': [2916284, 413],
+			});
+		});
 
-		test( 'should accumulate posts', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-			} );
-			const state = items( original, {
+		test('should accumulate posts', () => {
+			const original = deepFreeze({
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
+			});
+			const state = items(original, {
 				type: POSTS_RECEIVE,
 				posts: [
 					{
@@ -104,109 +104,109 @@ describe( 'reducer', () => {
 						title: 'Ribs & Chicken',
 					},
 				],
-			} );
+			});
 
-			expect( state ).to.eql( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-				'6c831c187ffef321eb43a67761a525a3': [ 2916284, 413 ],
-			} );
-		} );
+			expect(state).to.eql({
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
+				'6c831c187ffef321eb43a67761a525a3': [2916284, 413],
+			});
+		});
 
-		test( 'should remove an item when delete action is dispatched', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-			} );
-			const state = items( original, {
+		test('should remove an item when delete action is dispatched', () => {
+			const original = deepFreeze({
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
+			});
+			const state = items(original, {
 				type: POST_DELETE_SUCCESS,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should persist state', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-			} );
-			const state = items( original, { type: SERIALIZE } );
+		test('should persist state', () => {
+			const original = deepFreeze({
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
+			});
+			const state = items(original, { type: SERIALIZE });
 
-			expect( state ).to.eql( original );
-		} );
+			expect(state).to.eql(original);
+		});
 
-		test( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-			} );
-			const state = items( original, { type: DESERIALIZE } );
+		test('should load valid persisted state', () => {
+			const original = deepFreeze({
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [2916284, 841],
+			});
+			const state = items(original, { type: DESERIALIZE });
 
-			expect( state ).to.eql( original );
-		} );
+			expect(state).to.eql(original);
+		});
 
-		test( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
+		test('should not load invalid persisted state', () => {
+			const original = deepFreeze({
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
 					ID: 841,
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 					title: 'Hello World',
 				},
-			} );
-			const state = items( original, { type: DESERIALIZE } );
+			});
+			const state = items(original, { type: DESERIALIZE });
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
+			expect(state).to.eql({});
+		});
+	});
 
-	describe( '#queryRequests()', () => {
-		test( 'should default to an empty object', () => {
-			const state = queryRequests( undefined, {} );
+	describe('#queryRequests()', () => {
+		test('should default to an empty object', () => {
+			const state = queryRequests(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should track post query request fetching', () => {
-			const state = queryRequests( deepFreeze( {} ), {
+		test('should track post query request fetching', () => {
+			const state = queryRequests(deepFreeze({}), {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello' },
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				'2916284:{"search":"Hello"}': true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should track post queries without specified site', () => {
-			const state = queryRequests( deepFreeze( {} ), {
+		test('should track post queries without specified site', () => {
+			const state = queryRequests(deepFreeze({}), {
 				type: POSTS_REQUEST,
 				query: { search: 'Hello' },
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				'{"search":"Hello"}': true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should accumulate queries', () => {
-			const original = deepFreeze( {
+		test('should accumulate queries', () => {
+			const original = deepFreeze({
 				'2916284:{"search":"Hello"}': true,
-			} );
+			});
 
-			const state = queryRequests( original, {
+			const state = queryRequests(original, {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
 				query: { search: 'Hello W' },
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				'2916284:{"search":"Hello"}': true,
 				'2916284:{"search":"Hello W"}': true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should track post query request success', () => {
-			const state = queryRequests( deepFreeze( {} ), {
+		test('should track post query request success', () => {
+			const state = queryRequests(deepFreeze({}), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -219,36 +219,36 @@ describe( 'reducer', () => {
 						title: 'Hello World',
 					},
 				],
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				'2916284:{"search":"Hello"}': false,
-			} );
-		} );
+			});
+		});
 
-		test( 'should track post query request failure', () => {
-			const state = queryRequests( deepFreeze( {} ), {
+		test('should track post query request failure', () => {
+			const state = queryRequests(deepFreeze({}), {
 				type: POSTS_REQUEST_FAILURE,
 				siteId: 2916284,
 				query: { search: 'Hello' },
 				error: new Error(),
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				'2916284:{"search":"Hello"}': false,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#queries()', () => {
-		test( 'should default to an empty object', () => {
-			const state = queries( undefined, {} );
+	describe('#queries()', () => {
+		test('should default to an empty object', () => {
+			const state = queries(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should track post query request success', () => {
-			const state = queries( deepFreeze( {} ), {
+		test('should track post query request success', () => {
+			const state = queries(deepFreeze({}), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -264,11 +264,11 @@ describe( 'reducer', () => {
 						},
 					},
 				],
-			} );
+			});
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.eql( [
+			expect(state).to.have.keys(['2916284']);
+			expect(state[2916284]).to.be.an.instanceof(PostQueryManager);
+			expect(state[2916284].getItems({ search: 'Hello' })).to.eql([
 				{
 					ID: 841,
 					site_ID: 2916284,
@@ -276,12 +276,12 @@ describe( 'reducer', () => {
 					title: 'Hello World',
 					meta: {},
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'should accumulate query request success', () => {
+		test('should accumulate query request success', () => {
 			const original = deepFreeze(
-				queries( deepFreeze( {} ), {
+				queries(deepFreeze({}), {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: { search: 'Hello' },
@@ -296,10 +296,10 @@ describe( 'reducer', () => {
 							type: 'post',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = queries( original, {
+			const state = queries(original, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello W' },
@@ -313,15 +313,15 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.have.length( 1 );
-			expect( state[ 2916284 ].getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
-		} );
+			expect(state).to.have.keys(['2916284']);
+			expect(state[2916284]).to.be.an.instanceof(PostQueryManager);
+			expect(state[2916284].getItems({ search: 'Hello' })).to.have.length(1);
+			expect(state[2916284].getItems({ search: 'Hello W' })).to.have.length(1);
+		});
 
-		test( 'should return the same state if successful request has no changes', () => {
+		test('should return the same state if successful request has no changes', () => {
 			const action = {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -338,32 +338,32 @@ describe( 'reducer', () => {
 					},
 				],
 			};
-			const original = deepFreeze( queries( deepFreeze( {} ), action ) );
-			const state = queries( original, action );
+			const original = deepFreeze(queries(deepFreeze({}), action));
+			const state = queries(original, action);
 
-			expect( state ).to.equal( original );
-		} );
+			expect(state).to.equal(original);
+		});
 
-		test( 'should track posts even if not associated with an existing site or query', () => {
+		test('should track posts even if not associated with an existing site or query', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Hello World',
 			};
-			const state = queries( deepFreeze( {} ), {
+			const state = queries(deepFreeze({}), {
 				type: POSTS_RECEIVE,
-				posts: [ postObject ],
-			} );
+				posts: [postObject],
+			});
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems() ).to.eql( [ postObject ] );
-		} );
+			expect(state).to.have.keys(['2916284']);
+			expect(state[2916284]).to.be.an.instanceof(PostQueryManager);
+			expect(state[2916284].getItems()).to.eql([postObject]);
+		});
 
-		test( 'should update received posts', () => {
+		test('should update received posts', () => {
 			const original = deepFreeze(
-				queries( deepFreeze( {} ), {
+				queries(deepFreeze({}), {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: { search: 'Hello' },
@@ -378,10 +378,10 @@ describe( 'reducer', () => {
 							type: 'post',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = queries( original, {
+			const state = queries(original, {
 				type: POSTS_RECEIVE,
 				posts: [
 					{
@@ -393,21 +393,21 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			expect( state[ 2916284 ].getItem( 841 ) ).to.eql( {
+			expect(state[2916284].getItem(841)).to.eql({
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Hello World',
 				status: 'draft',
 				type: 'post',
-			} );
-		} );
+			});
+		});
 
-		test( 'should apply pending restore status on restore actions', () => {
-			let original = deepFreeze( {} );
-			original = queries( original, {
+		test('should apply pending restore status on restore actions', () => {
+			let original = deepFreeze({});
+			original = queries(original, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { status: 'trash' },
@@ -422,21 +422,21 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			const state = queries( original, {
+			const state = queries(original, {
 				type: POST_RESTORE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__RESTORE_PENDING' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
-		} );
+			expect(state[2916284].getItem(841).status).to.equal('__RESTORE_PENDING');
+			expect(state[2916284].getItems({ status: 'trash' })).to.have.length(0);
+		});
 
-		test( 'should apply pending trash status on restore failure actions', () => {
-			let original = deepFreeze( {} );
-			original = queries( original, {
+		test('should apply pending trash status on restore failure actions', () => {
+			let original = deepFreeze({});
+			original = queries(original, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { status: 'trash' },
@@ -451,27 +451,27 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			original = queries( original, {
+			original = queries(original, {
 				type: POST_RESTORE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			const state = queries( original, {
+			const state = queries(original, {
 				type: POST_RESTORE_FAILURE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
-		} );
+			expect(state[2916284].getItem(841).status).to.equal('trash');
+			expect(state[2916284].getItems({ status: 'trash' })).to.have.length(1);
+		});
 
-		test( 'should apply save actions as partial received posts', () => {
+		test('should apply save actions as partial received posts', () => {
 			const original = deepFreeze(
-				queries( deepFreeze( {} ), {
+				queries(deepFreeze({}), {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: { search: 'Hello' },
@@ -486,31 +486,31 @@ describe( 'reducer', () => {
 							type: 'post',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = queries( original, {
+			const state = queries(original, {
 				type: POST_SAVE,
 				siteId: 2916284,
 				postId: 841,
 				post: {
 					status: 'trash',
 				},
-			} );
+			});
 
-			expect( state[ 2916284 ].getItem( 841 ) ).to.eql( {
+			expect(state[2916284].getItem(841)).to.eql({
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Hello World',
 				status: 'trash',
 				type: 'post',
-			} );
-		} );
+			});
+		});
 
-		test( 'should apply pending delete status on delete actions', () => {
-			let original = deepFreeze( {} );
-			original = queries( original, {
+		test('should apply pending delete status on delete actions', () => {
+			let original = deepFreeze({});
+			original = queries(original, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { status: 'trash' },
@@ -525,21 +525,21 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			const state = queries( original, {
+			const state = queries(original, {
 				type: POST_DELETE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__DELETE_PENDING' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
-		} );
+			expect(state[2916284].getItem(841).status).to.equal('__DELETE_PENDING');
+			expect(state[2916284].getItems({ status: 'trash' })).to.have.length(0);
+		});
 
-		test( 'should restore item when post delete fails', () => {
-			let original = deepFreeze( {} );
-			original = queries( original, {
+		test('should restore item when post delete fails', () => {
+			let original = deepFreeze({});
+			original = queries(original, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { status: 'trash' },
@@ -554,28 +554,28 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
-			original = queries( original, {
+			});
+			original = queries(original, {
 				type: POST_DELETE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( original[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+			expect(original[2916284].getItems({ status: 'trash' })).to.have.length(0);
 
-			const state = queries( original, {
+			const state = queries(original, {
 				type: POST_DELETE_FAILURE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
-		} );
+			expect(state[2916284].getItem(841).status).to.equal('trash');
+			expect(state[2916284].getItems({ status: 'trash' })).to.have.length(1);
+		});
 
-		test( 'should remove item when post delete action success dispatched', () => {
+		test('should remove item when post delete action success dispatched', () => {
 			const original = deepFreeze(
-				queries( deepFreeze( {} ), {
+				queries(deepFreeze({}), {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: { search: 'Hello' },
@@ -590,21 +590,21 @@ describe( 'reducer', () => {
 							type: 'post',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = queries( original, {
+			const state = queries(original, {
 				type: POST_DELETE_SUCCESS,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state[ 2916284 ].getItems() ).to.have.length( 0 );
-		} );
+			expect(state[2916284].getItems()).to.have.length(0);
+		});
 
-		test( 'should persist state', () => {
+		test('should persist state', () => {
 			const original = deepFreeze(
-				queries( deepFreeze( {} ), {
+				queries(deepFreeze({}), {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					query: { search: 'Hello' },
@@ -617,12 +617,12 @@ describe( 'reducer', () => {
 							title: 'Hello World',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = queries( original, { type: SERIALIZE } );
+			const state = queries(original, { type: SERIALIZE });
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					data: {
 						items: {
@@ -635,7 +635,7 @@ describe( 'reducer', () => {
 						},
 						queries: {
 							'[["search","Hello"]]': {
-								itemKeys: [ 841 ],
+								itemKeys: [841],
 								found: 1,
 							},
 						},
@@ -644,11 +644,11 @@ describe( 'reducer', () => {
 						itemKey: 'ID',
 					},
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
+		test('should load valid persisted state', () => {
+			const original = deepFreeze({
 				2916284: {
 					data: {
 						items: {
@@ -661,7 +661,7 @@ describe( 'reducer', () => {
 						},
 						queries: {
 							'[["search","Hello"]]': {
-								itemKeys: [ 841 ],
+								itemKeys: [841],
 								found: 1,
 							},
 						},
@@ -670,12 +670,12 @@ describe( 'reducer', () => {
 						itemKey: 'ID',
 					},
 				},
-			} );
+			});
 
-			const state = queries( original, { type: DESERIALIZE } );
+			const state = queries(original, { type: DESERIALIZE });
 
-			expect( state ).to.eql( {
-				2916284: new PostQueryManager( {
+			expect(state).to.eql({
+				2916284: new PostQueryManager({
 					items: {
 						841: {
 							ID: 841,
@@ -687,52 +687,52 @@ describe( 'reducer', () => {
 					queries: {
 						'[["search","Hello"]]': {
 							found: 1,
-							itemKeys: [ 841 ],
+							itemKeys: [841],
 						},
 					},
-				} ),
-			} );
-		} );
+				}),
+			});
+		});
 
-		test( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
+		test('should not load invalid persisted state', () => {
+			const original = deepFreeze({
 				2916284: '{INVALID',
-			} );
+			});
 
-			const state = queries( original, { type: DESERIALIZE } );
+			const state = queries(original, { type: DESERIALIZE });
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
+			expect(state).to.eql({});
+		});
+	});
 
-	describe( '#siteRequests()', () => {
-		test( 'should default to an empty object', () => {
-			const state = siteRequests( undefined, {} );
+	describe('#siteRequests()', () => {
+		test('should default to an empty object', () => {
+			const state = siteRequests(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should map site ID, post ID to true value if request in progress', () => {
-			const state = siteRequests( deepFreeze( {} ), {
+		test('should map site ID, post ID to true value if request in progress', () => {
+			const state = siteRequests(deepFreeze({}), {
 				type: POST_REQUEST,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should accumulate mappings', () => {
+		test('should accumulate mappings', () => {
 			const state = siteRequests(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: true,
 					},
-				} ),
+				}),
 				{
 					type: POST_REQUEST,
 					siteId: 2916284,
@@ -740,21 +740,21 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: true,
 					413: true,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should map site ID, post ID to false value if request finishes successfully', () => {
+		test('should map site ID, post ID to false value if request finishes successfully', () => {
 			const state = siteRequests(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: true,
 					},
-				} ),
+				}),
 				{
 					type: POST_REQUEST_SUCCESS,
 					siteId: 2916284,
@@ -762,20 +762,20 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: false,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should map site ID, post ID to false value if request finishes with failure', () => {
+		test('should map site ID, post ID to false value if request finishes with failure', () => {
 			const state = siteRequests(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: true,
 					},
-				} ),
+				}),
 				{
 					type: POST_REQUEST_FAILURE,
 					siteId: 2916284,
@@ -783,58 +783,58 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: false,
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#edits()', () => {
-		test( 'should default to an empty object', () => {
-			const state = edits( undefined, {} );
+	describe('#edits()', () => {
+		test('should default to an empty object', () => {
+			const state = edits(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should track new post draft revisions by site ID', () => {
-			const state = edits( deepFreeze( {} ), {
+		test('should track new post draft revisions by site ID', () => {
+			const state = edits(deepFreeze({}), {
 				type: POST_EDIT,
 				siteId: 2916284,
 				postId: null,
 				post: { title: 'Ribs & Chicken' },
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					'': [ { title: 'Ribs & Chicken' } ],
+					'': [{ title: 'Ribs & Chicken' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should track existing post revisions by site ID, post ID', () => {
-			const state = edits( deepFreeze( {} ), {
+		test('should track existing post revisions by site ID, post ID', () => {
+			const state = edits(deepFreeze({}), {
 				type: POST_EDIT,
 				siteId: 2916284,
 				postId: 841,
 				post: { title: 'Hello World' },
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					841: [ { title: 'Hello World' } ],
+					841: [{ title: 'Hello World' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should accumulate posts', () => {
+		test('should accumulate posts', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
-						'': [ { title: 'Ribs & Chicken' } ],
+						'': [{ title: 'Ribs & Chicken' }],
 					},
-				} ),
+				}),
 				{
 					type: POST_EDIT,
 					siteId: 2916284,
@@ -843,21 +843,21 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					'': [ { title: 'Ribs & Chicken' } ],
-					841: [ { title: 'Hello World' } ],
+					'': [{ title: 'Ribs & Chicken' }],
+					841: [{ title: 'Hello World' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should accumulate sites', () => {
+		test('should accumulate sites', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
-						'': [ { title: 'Ribs & Chicken' } ],
+						'': [{ title: 'Ribs & Chicken' }],
 					},
-				} ),
+				}),
 				{
 					type: POST_EDIT,
 					siteId: 77203074,
@@ -866,23 +866,23 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					'': [ { title: 'Ribs & Chicken' } ],
+					'': [{ title: 'Ribs & Chicken' }],
 				},
 				77203074: {
-					841: [ { title: 'Hello World' } ],
+					841: [{ title: 'Hello World' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should merge post revisions', () => {
+		test('should merge post revisions', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
-						'': [ { title: 'Ribs & Chicken' } ],
+						'': [{ title: 'Ribs & Chicken' }],
 					},
-				} ),
+				}),
 				{
 					type: POST_EDIT,
 					siteId: 2916284,
@@ -890,7 +890,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					'': [
 						{
@@ -899,12 +899,12 @@ describe( 'reducer', () => {
 						},
 					],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should merge nested post revisions', () => {
+		test('should merge nested post revisions', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						'': [
 							{
@@ -915,7 +915,7 @@ describe( 'reducer', () => {
 							},
 						],
 					},
-				} ),
+				}),
 				{
 					type: POST_EDIT,
 					siteId: 2916284,
@@ -927,7 +927,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					'': [
 						{
@@ -939,56 +939,56 @@ describe( 'reducer', () => {
 						},
 					],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should do nothing when received post has no active edits', () => {
+		test('should do nothing when received post has no active edits', () => {
 			const state = {
 				2916284: {
-					841: [ { title: 'Unrelated' } ],
+					841: [{ title: 'Unrelated' }],
 				},
 			};
 
-			const newState = edits( state, {
+			const newState = edits(state, {
 				type: POSTS_RECEIVE,
-				posts: [ { ID: 842, site_ID: 2916284, type: 'post' } ],
-			} );
+				posts: [{ ID: 842, site_ID: 2916284, type: 'post' }],
+			});
 
-			expect( newState ).to.equal( state );
-		} );
+			expect(newState).to.equal(state);
+		});
 
-		test( 'should eliminate redundant data on posts received', () => {
+		test('should eliminate redundant data on posts received', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
-						841: [ { title: 'Hello World', type: 'post' } ],
-						'': [ { title: 'Unrelated' } ],
+						841: [{ title: 'Hello World', type: 'post' }],
+						'': [{ title: 'Unrelated' }],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
-					posts: [ { ID: 841, site_ID: 2916284, type: 'post' } ],
+					posts: [{ ID: 841, site_ID: 2916284, type: 'post' }],
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					841: [ { title: 'Hello World' } ],
-					'': [ { title: 'Unrelated' } ],
+					841: [{ title: 'Hello World' }],
+					'': [{ title: 'Unrelated' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should handle term shape differences on posts received', () => {
+		test('should handle term shape differences on posts received', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: [
 							{
 								title: 'Hello World',
 								type: 'post',
 								terms: {
-									post_tag: [ 'chicken', 'ribs' ],
+									post_tag: ['chicken', 'ribs'],
 									category: [
 										{
 											ID: 1,
@@ -998,9 +998,9 @@ describe( 'reducer', () => {
 								},
 							},
 						],
-						'': [ { title: 'Unrelated' } ],
+						'': [{ title: 'Unrelated' }],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1032,24 +1032,24 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					841: [ { title: 'Hello World' } ],
-					'': [ { title: 'Unrelated' } ],
+					841: [{ title: 'Hello World' }],
+					'': [{ title: 'Unrelated' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should preserve term edit differences on posts received', () => {
+		test('should preserve term edit differences on posts received', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: [
 							{
 								title: 'Hello World',
 								type: 'post',
 								terms: {
-									post_tag: [ 'ribs' ],
+									post_tag: ['ribs'],
 									category: [
 										{
 											ID: 1,
@@ -1059,9 +1059,9 @@ describe( 'reducer', () => {
 								},
 							},
 						],
-						'': [ { title: 'Unrelated' } ],
+						'': [{ title: 'Unrelated' }],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1089,12 +1089,12 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: [
 						{
 							terms: {
-								post_tag: [ 'ribs' ],
+								post_tag: ['ribs'],
 								category: [
 									{
 										ID: 1,
@@ -1104,14 +1104,14 @@ describe( 'reducer', () => {
 							},
 						},
 					],
-					'': [ { title: 'Unrelated' } ],
+					'': [{ title: 'Unrelated' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should remove discussion edits after they are saved', () => {
+		test('should remove discussion edits after they are saved', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: [
 							{
@@ -1124,7 +1124,7 @@ describe( 'reducer', () => {
 							},
 						],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1144,16 +1144,16 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					841: [ { title: 'Hello World' } ],
+					841: [{ title: 'Hello World' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should keep discussion edits if they are not yet present in the saved post', () => {
+		test('should keep discussion edits if they are not yet present in the saved post', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: [
 							{
@@ -1166,7 +1166,7 @@ describe( 'reducer', () => {
 							},
 						],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1186,7 +1186,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: [
 						{
@@ -1198,12 +1198,12 @@ describe( 'reducer', () => {
 						},
 					],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should remove author edit after it is saved and user IDs are equal', () => {
+		test('should remove author edit after it is saved and user IDs are equal', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: [
 							{
@@ -1216,7 +1216,7 @@ describe( 'reducer', () => {
 							},
 						],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1234,16 +1234,16 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					841: [ { title: 'Hello World' } ],
+					841: [{ title: 'Hello World' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should remove featured image edit after it is saved', () => {
+		test('should remove featured image edit after it is saved', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: [
 							{
@@ -1251,7 +1251,7 @@ describe( 'reducer', () => {
 							},
 						],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1268,16 +1268,16 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: null,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should remove metadata edits after they are saved', () => {
+		test('should remove metadata edits after they are saved', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: [
 							{
@@ -1294,7 +1294,7 @@ describe( 'reducer', () => {
 							},
 						],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1312,7 +1312,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: [
 						{
@@ -1323,16 +1323,16 @@ describe( 'reducer', () => {
 						},
 					],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should remove date edits after they are saved', () => {
+		test('should remove date edits after they are saved', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
-						841: [ { date: '2018-05-01T10:36:41+02:00' } ],
+						841: [{ date: '2018-05-01T10:36:41+02:00' }],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1346,16 +1346,16 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: null,
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should consider date not edited after resetting draft date', () => {
+		test('should consider date not edited after resetting draft date', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						842: [
 							{
@@ -1364,7 +1364,7 @@ describe( 'reducer', () => {
 							},
 						],
 					},
-				} ),
+				}),
 				{
 					type: POSTS_RECEIVE,
 					posts: [
@@ -1378,28 +1378,28 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					842: [ { title: 'I like turtles' } ],
+					842: [{ title: 'I like turtles' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should remove status edits after they are saved', () => {
+		test('should remove status edits after they are saved', () => {
 			const emptyEditsState = {
 				2916284: {
 					841: null,
 				},
 			};
 
-			const editsStateWithStatus = status =>
-				deepFreeze( {
+			const editsStateWithStatus = (status) =>
+				deepFreeze({
 					2916284: {
-						841: [ { status } ],
+						841: [{ status }],
 					},
-				} );
+				});
 
-			const receivePostActionWithStatus = status => ( {
+			const receivePostActionWithStatus = (status) => ({
 				type: POSTS_RECEIVE,
 				posts: [
 					{
@@ -1409,41 +1409,41 @@ describe( 'reducer', () => {
 						status,
 					},
 				],
-			} );
+			});
 
-			expect(
-				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'future' ) )
-			).to.eql( emptyEditsState );
-			expect(
-				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'publish' ) )
-			).to.eql( emptyEditsState );
-			expect(
-				edits( editsStateWithStatus( 'future' ), receivePostActionWithStatus( 'publish' ) )
-			).to.eql( emptyEditsState );
-			expect(
-				edits( editsStateWithStatus( 'draft' ), receivePostActionWithStatus( 'draft' ) )
-			).to.eql( emptyEditsState );
-		} );
+			expect(edits(editsStateWithStatus('publish'), receivePostActionWithStatus('future'))).to.eql(
+				emptyEditsState
+			);
+			expect(edits(editsStateWithStatus('publish'), receivePostActionWithStatus('publish'))).to.eql(
+				emptyEditsState
+			);
+			expect(edits(editsStateWithStatus('future'), receivePostActionWithStatus('publish'))).to.eql(
+				emptyEditsState
+			);
+			expect(edits(editsStateWithStatus('draft'), receivePostActionWithStatus('draft'))).to.eql(
+				emptyEditsState
+			);
+		});
 
-		test( "should ignore reset edits action when discarded site doesn't exist", () => {
-			const original = deepFreeze( {} );
-			const state = edits( original, {
+		test("should ignore reset edits action when discarded site doesn't exist", () => {
+			const original = deepFreeze({});
+			const state = edits(original, {
 				type: POST_SAVE_SUCCESS,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state ).to.equal( original );
-		} );
+			expect(state).to.equal(original);
+		});
 
-		test( 'should copy edits when the post is saved and prior postId was null', () => {
+		test('should copy edits when the post is saved and prior postId was null', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
-						'': [ { title: 'Ribs & Chicken' } ],
-						842: [ { title: 'I like turtles' } ],
+						'': [{ title: 'Ribs & Chicken' }],
+						842: [{ title: 'I like turtles' }],
 					},
-				} ),
+				}),
 				{
 					type: POST_SAVE_SUCCESS,
 					siteId: 2916284,
@@ -1455,28 +1455,28 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
-					841: [ { title: 'Ribs & Chicken' } ],
-					842: [ { title: 'I like turtles' } ],
+					841: [{ title: 'Ribs & Chicken' }],
+					842: [{ title: 'I like turtles' }],
 				},
-			} );
-		} );
+			});
+		});
 
-		test( "should ignore stop editor action when site doesn't exist", () => {
-			const original = deepFreeze( {} );
-			const state = edits( original, {
+		test("should ignore stop editor action when site doesn't exist", () => {
+			const original = deepFreeze({});
+			const state = edits(original, {
 				type: EDITOR_STOP,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state ).to.equal( original );
-		} );
+			expect(state).to.equal(original);
+		});
 
-		test( 'should discard edits when we stop editing the post', () => {
+		test('should discard edits when we stop editing the post', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: {
 							title: 'Hello World',
@@ -1485,7 +1485,7 @@ describe( 'reducer', () => {
 							title: 'Ribs & Chicken',
 						},
 					},
-				} ),
+				}),
 				{
 					type: EDITOR_STOP,
 					siteId: 2916284,
@@ -1493,18 +1493,18 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					'': {
 						title: 'Ribs & Chicken',
 					},
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should reset edits when we start editing a post', () => {
+		test('should reset edits when we start editing a post', () => {
 			const state = edits(
-				deepFreeze( {
+				deepFreeze({
 					2916284: {
 						841: {
 							title: 'Hello World',
@@ -1513,7 +1513,7 @@ describe( 'reducer', () => {
 							title: 'Ribs & Chicken',
 						},
 					},
-				} ),
+				}),
 				{
 					type: EDITOR_START,
 					siteId: 2916284,
@@ -1522,28 +1522,28 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				2916284: {
 					841: null,
 					'': {
 						title: 'Ribs & Chicken',
 					},
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#allSitesQueries()', () => {
-		test( 'should default to a new PostQueryManager', () => {
-			const state = allSitesQueries( undefined, {} );
+	describe('#allSitesQueries()', () => {
+		test('should default to a new PostQueryManager', () => {
+			const state = allSitesQueries(undefined, {});
 
-			expect( state ).to.be.an.instanceof( PostQueryManager );
-			expect( state.data ).to.eql( { items: {}, queries: {} } );
-			expect( state.options ).to.eql( { itemKey: 'global_ID' } );
-		} );
+			expect(state).to.be.an.instanceof(PostQueryManager);
+			expect(state.data).to.eql({ items: {}, queries: {} });
+			expect(state.options).to.eql({ itemKey: 'global_ID' });
+		});
 
-		test( 'should track post query request success', () => {
-			const state = allSitesQueries( undefined, {
+		test('should track post query request success', () => {
+			const state = allSitesQueries(undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: null,
 				query: { search: 'Hello' },
@@ -1559,9 +1559,9 @@ describe( 'reducer', () => {
 						},
 					},
 				],
-			} );
+			});
 
-			expect( state.getItems( { search: 'Hello' } ) ).to.eql( [
+			expect(state.getItems({ search: 'Hello' })).to.eql([
 				{
 					ID: 841,
 					site_ID: 2916284,
@@ -1569,12 +1569,12 @@ describe( 'reducer', () => {
 					title: 'Hello World',
 					meta: {},
 				},
-			] );
-		} );
+			]);
+		});
 
-		test( 'should accumulate query request success', () => {
+		test('should accumulate query request success', () => {
 			const original = deepFreeze(
-				allSitesQueries( undefined, {
+				allSitesQueries(undefined, {
 					type: POSTS_REQUEST_SUCCESS,
 					query: { search: 'Hello' },
 					found: 1,
@@ -1588,10 +1588,10 @@ describe( 'reducer', () => {
 							type: 'post',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = allSitesQueries( original, {
+			const state = allSitesQueries(original, {
 				type: POSTS_REQUEST_SUCCESS,
 				query: { search: 'Hello W' },
 				posts: [
@@ -1604,14 +1604,14 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			expect( state.data.items ).to.have.keys( [ '3d097cb7c5473c169bba0eb8e3c6cb64' ] );
-			expect( state.getItems( { search: 'Hello' } ) ).to.have.length( 1 );
-			expect( state.getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
-		} );
+			expect(state.data.items).to.have.keys(['3d097cb7c5473c169bba0eb8e3c6cb64']);
+			expect(state.getItems({ search: 'Hello' })).to.have.length(1);
+			expect(state.getItems({ search: 'Hello W' })).to.have.length(1);
+		});
 
-		test( 'should return the same state if successful request has no changes', () => {
+		test('should return the same state if successful request has no changes', () => {
 			const action = {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: null,
@@ -1628,29 +1628,29 @@ describe( 'reducer', () => {
 					},
 				],
 			};
-			const original = deepFreeze( allSitesQueries( undefined, action ) );
-			const state = allSitesQueries( original, action );
+			const original = deepFreeze(allSitesQueries(undefined, action));
+			const state = allSitesQueries(original, action);
 
-			expect( state ).to.equal( original );
-		} );
+			expect(state).to.equal(original);
+		});
 
-		test( 'should track post items received from site-specific queries', () => {
+		test('should track post items received from site-specific queries', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Hello World',
 			};
-			const state = allSitesQueries( undefined, {
+			const state = allSitesQueries(undefined, {
 				type: POSTS_RECEIVE,
-				posts: [ postObject ],
-			} );
+				posts: [postObject],
+			});
 
-			expect( state.data.items ).to.have.keys( [ '3d097cb7c5473c169bba0eb8e3c6cb64' ] );
-		} );
+			expect(state.data.items).to.have.keys(['3d097cb7c5473c169bba0eb8e3c6cb64']);
+		});
 
-		test( 'should ignore query results of site-specific queries', () => {
-			const state = allSitesQueries( undefined, {
+		test('should ignore query results of site-specific queries', () => {
+			const state = allSitesQueries(undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: { search: 'Hello' },
@@ -1663,14 +1663,14 @@ describe( 'reducer', () => {
 						title: 'Hello World',
 					},
 				],
-			} );
+			});
 
-			expect( state.data ).to.eql( { items: {}, queries: {} } );
-		} );
+			expect(state.data).to.eql({ items: {}, queries: {} });
+		});
 
-		test( 'should update received posts', () => {
+		test('should update received posts', () => {
 			const original = deepFreeze(
-				allSitesQueries( undefined, {
+				allSitesQueries(undefined, {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: null,
 					query: { search: 'Hello' },
@@ -1685,10 +1685,10 @@ describe( 'reducer', () => {
 							type: 'post',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = allSitesQueries( original, {
+			const state = allSitesQueries(original, {
 				type: POSTS_RECEIVE,
 				posts: [
 					{
@@ -1700,20 +1700,20 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).to.eql( {
+			expect(state.getItem('3d097cb7c5473c169bba0eb8e3c6cb64')).to.eql({
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Hello World',
 				status: 'draft',
 				type: 'post',
-			} );
-		} );
+			});
+		});
 
-		test( 'should apply pending restore status on restore actions', () => {
-			const original = allSitesQueries( undefined, {
+		test('should apply pending restore status on restore actions', () => {
+			const original = allSitesQueries(undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: null,
 				query: { status: 'trash' },
@@ -1728,22 +1728,22 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			const state = allSitesQueries( original, {
+			const state = allSitesQueries(original, {
 				type: POST_RESTORE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal(
+			expect(state.getItem('48b6010b559efe6a77a429773e0cbf12').status).to.equal(
 				'__RESTORE_PENDING'
 			);
-			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 0 );
-		} );
+			expect(state.getItems({ status: 'trash' })).to.have.length(0);
+		});
 
-		test( 'should apply pending trash status on restore failure actions', () => {
-			let original = allSitesQueries( undefined, {
+		test('should apply pending trash status on restore failure actions', () => {
+			let original = allSitesQueries(undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: null,
 				query: { status: 'trash' },
@@ -1758,27 +1758,27 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			original = allSitesQueries( original, {
+			original = allSitesQueries(original, {
 				type: POST_RESTORE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			const state = allSitesQueries( original, {
+			const state = allSitesQueries(original, {
 				type: POST_RESTORE_FAILURE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( 'trash' );
-			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 1 );
-		} );
+			expect(state.getItem('48b6010b559efe6a77a429773e0cbf12').status).to.equal('trash');
+			expect(state.getItems({ status: 'trash' })).to.have.length(1);
+		});
 
-		test( 'should apply save actions as partial received posts', () => {
+		test('should apply save actions as partial received posts', () => {
 			const original = deepFreeze(
-				allSitesQueries( undefined, {
+				allSitesQueries(undefined, {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: null,
 					query: { search: 'Hello' },
@@ -1793,30 +1793,30 @@ describe( 'reducer', () => {
 							type: 'post',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = allSitesQueries( original, {
+			const state = allSitesQueries(original, {
 				type: POST_SAVE,
 				siteId: 2916284,
 				postId: 841,
 				post: {
 					status: 'trash',
 				},
-			} );
+			});
 
-			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).to.eql( {
+			expect(state.getItem('3d097cb7c5473c169bba0eb8e3c6cb64')).to.eql({
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Hello World',
 				status: 'trash',
 				type: 'post',
-			} );
-		} );
+			});
+		});
 
-		test( 'should apply pending delete status on delete actions', () => {
-			const original = allSitesQueries( undefined, {
+		test('should apply pending delete status on delete actions', () => {
+			const original = allSitesQueries(undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: null,
 				query: { status: 'trash' },
@@ -1831,22 +1831,20 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
+			});
 
-			const state = allSitesQueries( original, {
+			const state = allSitesQueries(original, {
 				type: POST_DELETE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal(
-				'__DELETE_PENDING'
-			);
-			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 0 );
-		} );
+			expect(state.getItem('48b6010b559efe6a77a429773e0cbf12').status).to.equal('__DELETE_PENDING');
+			expect(state.getItems({ status: 'trash' })).to.have.length(0);
+		});
 
-		test( 'should restore item when post delete fails', () => {
-			let original = allSitesQueries( undefined, {
+		test('should restore item when post delete fails', () => {
+			let original = allSitesQueries(undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: null,
 				query: { status: 'trash' },
@@ -1861,28 +1859,28 @@ describe( 'reducer', () => {
 						type: 'post',
 					},
 				],
-			} );
-			original = allSitesQueries( original, {
+			});
+			original = allSitesQueries(original, {
 				type: POST_DELETE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( original.getItems( { status: 'trash' } ) ).to.have.length( 0 );
+			expect(original.getItems({ status: 'trash' })).to.have.length(0);
 
-			const state = allSitesQueries( original, {
+			const state = allSitesQueries(original, {
 				type: POST_DELETE_FAILURE,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( 'trash' );
-			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 1 );
-		} );
+			expect(state.getItem('48b6010b559efe6a77a429773e0cbf12').status).to.equal('trash');
+			expect(state.getItems({ status: 'trash' })).to.have.length(1);
+		});
 
-		test( 'should remove item when post delete action success dispatched', () => {
+		test('should remove item when post delete action success dispatched', () => {
 			const original = deepFreeze(
-				allSitesQueries( undefined, {
+				allSitesQueries(undefined, {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: null,
 					query: { search: 'Hello' },
@@ -1897,21 +1895,21 @@ describe( 'reducer', () => {
 							type: 'post',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = allSitesQueries( original, {
+			const state = allSitesQueries(original, {
 				type: POST_DELETE_SUCCESS,
 				siteId: 2916284,
 				postId: 841,
-			} );
+			});
 
-			expect( state.getItems() ).to.have.length( 0 );
-		} );
+			expect(state.getItems()).to.have.length(0);
+		});
 
-		test( 'should persist state', () => {
+		test('should persist state', () => {
 			const original = deepFreeze(
-				allSitesQueries( undefined, {
+				allSitesQueries(undefined, {
 					type: POSTS_REQUEST_SUCCESS,
 					siteId: null,
 					query: { search: 'Hello' },
@@ -1924,12 +1922,12 @@ describe( 'reducer', () => {
 							title: 'Hello World',
 						},
 					],
-				} )
+				})
 			);
 
-			const state = allSitesQueries( original, { type: SERIALIZE } );
+			const state = allSitesQueries(original, { type: SERIALIZE });
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				data: {
 					items: {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -1941,7 +1939,7 @@ describe( 'reducer', () => {
 					},
 					queries: {
 						'[["search","Hello"]]': {
-							itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+							itemKeys: ['3d097cb7c5473c169bba0eb8e3c6cb64'],
 							found: 1,
 						},
 					},
@@ -1949,11 +1947,11 @@ describe( 'reducer', () => {
 				options: {
 					itemKey: 'global_ID',
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
+		test('should load valid persisted state', () => {
+			const original = deepFreeze({
 				data: {
 					items: {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -1965,7 +1963,7 @@ describe( 'reducer', () => {
 					},
 					queries: {
 						'[["search","Hello"]]': {
-							itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+							itemKeys: ['3d097cb7c5473c169bba0eb8e3c6cb64'],
 							found: 1,
 						},
 					},
@@ -1973,11 +1971,11 @@ describe( 'reducer', () => {
 				options: {
 					itemKey: 'global_ID',
 				},
-			} );
+			});
 
-			const state = allSitesQueries( original, { type: DESERIALIZE } );
+			const state = allSitesQueries(original, { type: DESERIALIZE });
 
-			expect( state ).to.eql(
+			expect(state).to.eql(
 				new PostQueryManager(
 					{
 						items: {
@@ -1991,23 +1989,23 @@ describe( 'reducer', () => {
 						queries: {
 							'[["search","Hello"]]': {
 								found: 1,
-								itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+								itemKeys: ['3d097cb7c5473c169bba0eb8e3c6cb64'],
 							},
 						},
 					},
 					{ itemKey: 'global_ID' }
 				)
 			);
-		} );
+		});
 
-		test( 'should not load invalid persisted state', () => {
+		test('should not load invalid persisted state', () => {
 			const original = '{INVALID';
 
-			const state = allSitesQueries( original, { type: DESERIALIZE } );
+			const state = allSitesQueries(original, { type: DESERIALIZE });
 
-			expect( state ).to.be.an.instanceof( PostQueryManager );
-			expect( state.data ).to.eql( { items: {}, queries: {} } );
-			expect( state.options ).to.eql( { itemKey: 'global_ID' } );
-		} );
-	} );
-} );
+			expect(state).to.be.an.instanceof(PostQueryManager);
+			expect(state.data).to.eql({ items: {}, queries: {} });
+			expect(state.options).to.eql({ itemKey: 'global_ID' });
+		});
+	});
+});

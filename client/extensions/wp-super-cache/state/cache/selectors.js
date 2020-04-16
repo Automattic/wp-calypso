@@ -4,7 +4,7 @@
 
 import { get } from 'lodash';
 
-function getCacheState( state ) {
+function getCacheState(state) {
 	return state.extensions.wpSuperCache.cache;
 }
 
@@ -15,10 +15,10 @@ function getCacheState( state ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether the cache is being deleted
  */
-export function isDeletingCache( state, siteId ) {
+export function isDeletingCache(state, siteId) {
 	return get(
 		state,
-		[ 'extensions', 'wpSuperCache', 'cache', 'deleteStatus', siteId, 'deleting' ],
+		['extensions', 'wpSuperCache', 'cache', 'deleteStatus', siteId, 'deleting'],
 		false
 	);
 }
@@ -30,8 +30,8 @@ export function isDeletingCache( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether the cache delete request was successful
  */
-export function isCacheDeleteSuccessful( state, siteId ) {
-	return getCacheDeleteStatus( state, siteId ) === 'success';
+export function isCacheDeleteSuccessful(state, siteId) {
+	return getCacheDeleteStatus(state, siteId) === 'success';
 }
 
 /**
@@ -41,8 +41,8 @@ export function isCacheDeleteSuccessful( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {string}  Delete request status (pending, success or error)
  */
-export function getCacheDeleteStatus( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'cache', 'deleteStatus', siteId, 'status' ] );
+export function getCacheDeleteStatus(state, siteId) {
+	return get(state, ['extensions', 'wpSuperCache', 'cache', 'deleteStatus', siteId, 'status']);
 }
 
 /**
@@ -52,8 +52,8 @@ export function getCacheDeleteStatus( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether the cache is being tested
  */
-export function isTestingCache( state, siteId ) {
-	return get( getCacheState( state ), [ 'testing', siteId ], false );
+export function isTestingCache(state, siteId) {
+	return get(getCacheState(state), ['testing', siteId], false);
 }
 
 /**
@@ -63,8 +63,8 @@ export function isTestingCache( state, siteId ) {
  * @param  {number} siteId Site ID
  * @returns {object} Cache test results
  */
-export function getCacheTestResults( state, siteId ) {
-	return get( getCacheState( state ), [ 'items', siteId ], {} );
+export function getCacheTestResults(state, siteId) {
+	return get(getCacheState(state), ['items', siteId], {});
 }
 
 /**
@@ -74,6 +74,6 @@ export function getCacheTestResults( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether the cache is being preloaded
  */
-export function isPreloadingCache( state, siteId ) {
-	return get( getCacheState( state ), [ 'preloading', siteId ], false );
+export function isPreloadingCache(state, siteId) {
+	return get(getCacheState(state), ['preloading', siteId], false);
 }

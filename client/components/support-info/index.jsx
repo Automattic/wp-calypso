@@ -21,7 +21,7 @@ class SupportInfo extends Component {
 		text: PropTypes.string,
 		link: PropTypes.string,
 		position: PropTypes.string,
-		privacyLink: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		privacyLink: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 	};
 
 	static defaultProps = {
@@ -33,30 +33,30 @@ class SupportInfo extends Component {
 	render() {
 		const { text, link, position, privacyLink, translate } = this.props;
 		const actualPrivacyLink =
-			! privacyLink && privacyLink !== false && link ? link + '#privacy' : privacyLink;
+			!privacyLink && privacyLink !== false && link ? link + '#privacy' : privacyLink;
 
 		return (
 			<div className="support-info">
-				<InfoPopover position={ position || 'left' } screenReaderText={ translate( 'Learn more' ) }>
-					{ text + ' ' }
-					{ link && (
+				<InfoPopover position={position || 'left'} screenReaderText={translate('Learn more')}>
+					{text + ' '}
+					{link && (
 						<span className="support-info__learn-more">
-							<ExternalLink href={ link } target="_blank" rel="noopener noreferrer">
-								{ translate( 'Learn more' ) }
+							<ExternalLink href={link} target="_blank" rel="noopener noreferrer">
+								{translate('Learn more')}
 							</ExternalLink>
 						</span>
-					) }
-					{ actualPrivacyLink && (
+					)}
+					{actualPrivacyLink && (
 						<span className="support-info__privacy">
-							<ExternalLink href={ actualPrivacyLink } target="_blank" rel="noopener noreferrer">
-								{ translate( 'Privacy Information' ) }
+							<ExternalLink href={actualPrivacyLink} target="_blank" rel="noopener noreferrer">
+								{translate('Privacy Information')}
 							</ExternalLink>
 						</span>
-					) }
+					)}
 				</InfoPopover>
 			</div>
 		);
 	}
 }
 
-export default localize( SupportInfo );
+export default localize(SupportInfo);

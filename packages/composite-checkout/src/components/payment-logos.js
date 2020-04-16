@@ -4,10 +4,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export function VisaLogo( { className } ) {
+export function VisaLogo({ className }) {
 	return (
 		<svg
-			className={ className }
+			className={className}
 			width="41"
 			height="17"
 			viewBox="0 0 41 17"
@@ -32,10 +32,10 @@ VisaLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function MastercardLogo( { className } ) {
+export function MastercardLogo({ className }) {
 	return (
 		<svg
-			className={ className }
+			className={className}
 			aria-hidden="true"
 			focusable="false"
 			width="41"
@@ -61,10 +61,10 @@ MastercardLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function AmexLogo( { className } ) {
+export function AmexLogo({ className }) {
 	return (
 		<svg
-			className={ className }
+			className={className}
 			width="42"
 			height="16"
 			viewBox="0 0 42 16"
@@ -85,10 +85,10 @@ AmexLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function JcbLogo( { className } ) {
+export function JcbLogo({ className }) {
 	return (
 		<svg
-			className={ className }
+			className={className}
 			aria-hidden="true"
 			focusable="false"
 			width="42"
@@ -121,10 +121,10 @@ JcbLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function DinersLogo( { className } ) {
+export function DinersLogo({ className }) {
 	return (
 		<svg
-			className={ className }
+			className={className}
 			aria-hidden="true"
 			focusable="false"
 			width="42"
@@ -157,10 +157,10 @@ DinersLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function UnionpayLogo( { className } ) {
+export function UnionpayLogo({ className }) {
 	return (
 		<svg
-			className={ className }
+			className={className}
 			aria-hidden="true"
 			focusable="false"
 			width="42"
@@ -189,10 +189,10 @@ UnionpayLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function DiscoverLogo( { className } ) {
+export function DiscoverLogo({ className }) {
 	return (
 		<svg
-			className={ className }
+			className={className}
 			aria-hidden="true"
 			focusable="false"
 			width="42"

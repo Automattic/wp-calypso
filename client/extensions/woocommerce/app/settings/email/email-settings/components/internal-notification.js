@@ -17,57 +17,57 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextValidation from 'components/forms/form-input-validation';
 import { checkEmails } from './helpers';
 
-const InternalNotification = ( { item, recipient, checked, onChange, loaded, translate } ) => {
+const InternalNotification = ({ item, recipient, checked, onChange, loaded, translate }) => {
 	//Add field name to returned value
-	const toggle = value => {
-		onChange( {
+	const toggle = (value) => {
+		onChange({
 			setting: item.field,
 			option: 'enabled',
 			value: value ? 'yes' : 'no',
-		} );
+		});
 	};
 
-	const change = ( { target: { value } } ) => {
-		onChange( {
+	const change = ({ target: { value } }) => {
+		onChange({
 			setting: item.field,
 			option: 'recipient',
 			value,
-		} );
+		});
 	};
 
-	const checkedEmails = checkEmails( recipient );
+	const checkedEmails = checkEmails(recipient);
 	const emailValidationError = checkedEmails.error;
 	const placeholderComponent = <p className="components__is-placeholder" />;
 
 	return (
 		<ListItem className="components__notification-component-item">
 			<ListItemField className="components__notification-component-title">
-				{ loaded ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
-				{ loaded ? (
-					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
+				{loaded ? <FormLabel>{item.title}</FormLabel> : placeholderComponent}
+				{loaded ? (
+					<FormSettingExplanation>{item.subtitle}</FormSettingExplanation>
 				) : (
 					placeholderComponent
-				) }
+				)}
 			</ListItemField>
 			<ListItemField className="components__notification-component-input">
 				<FormTextInput
-					className={ ! loaded ? 'components__is-placeholder' : null }
-					isError={ checked && emailValidationError }
-					name={ item.field }
-					onChange={ change }
-					value={ recipient }
-					placeholder={ translate( 'Recipient email address(es).' ) }
+					className={!loaded ? 'components__is-placeholder' : null}
+					isError={checked && emailValidationError}
+					name={item.field}
+					onChange={change}
+					value={recipient}
+					placeholder={translate('Recipient email address(es).')}
 				/>
-				{ emailValidationError && (
-					<FormTextValidation isError text={ checkedEmails.messages[ 0 ].msg } />
-				) }
+				{emailValidationError && (
+					<FormTextValidation isError text={checkedEmails.messages[0].msg} />
+				)}
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
-				{ loaded ? (
-					<CompactFormToggle checked={ checked } onChange={ toggle } id={ item.field } />
+				{loaded ? (
+					<CompactFormToggle checked={checked} onChange={toggle} id={item.field} />
 				) : (
 					placeholderComponent
-				) }
+				)}
 			</ListItemField>
 		</ListItem>
 	);
@@ -81,4 +81,4 @@ InternalNotification.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
-export default localize( InternalNotification );
+export default localize(InternalNotification);

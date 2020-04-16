@@ -9,13 +9,10 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-const getAllShippingZoneMethodSettingsLoadState = (
-	state,
-	siteId = getSelectedSiteId( state )
-) => {
+const getAllShippingZoneMethodSettingsLoadState = (state, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingZoneMethodSettings' ],
+		['extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingZoneMethodSettings'],
 		{}
 	);
 };
@@ -29,9 +26,9 @@ const getAllShippingZoneMethodSettingsLoadState = (
 export const isShippingZoneMethodSettingsLoaded = (
 	state,
 	instanceId,
-	siteId = getSelectedSiteId( state )
+	siteId = getSelectedSiteId(state)
 ) => {
-	return true === getAllShippingZoneMethodSettingsLoadState( state, siteId )[ instanceId ];
+	return true === getAllShippingZoneMethodSettingsLoadState(state, siteId)[instanceId];
 };
 
 /**
@@ -43,7 +40,7 @@ export const isShippingZoneMethodSettingsLoaded = (
 export const isShippingZoneMethodSettingsLoading = (
 	state,
 	instanceId,
-	siteId = getSelectedSiteId( state )
+	siteId = getSelectedSiteId(state)
 ) => {
-	return LOADING === getAllShippingZoneMethodSettingsLoadState( state, siteId )[ instanceId ];
+	return LOADING === getAllShippingZoneMethodSettingsLoadState(state, siteId)[instanceId];
 };

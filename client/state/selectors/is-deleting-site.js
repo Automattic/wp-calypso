@@ -7,6 +7,6 @@
  * @returns {boolean}        Whether deletion is in progress
  */
 
-export default function isDeletingSite( state, siteId ) {
-	return !! state.sites.deleting[ siteId ];
+export default function isDeletingSite(state, siteId) {
+	return !!state.sites.deleting[siteId];
 }

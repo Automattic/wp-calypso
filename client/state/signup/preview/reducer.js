@@ -7,8 +7,8 @@ const initialState = {
 	isVisible: false,
 };
 
-export default ( state = initialState, action ) => {
-	switch ( action.type ) {
+export default (state = initialState, action) => {
+	switch (action.type) {
 		case SIGNUP_SITE_PREVIEW_SHOW:
 			return {
 				...state,

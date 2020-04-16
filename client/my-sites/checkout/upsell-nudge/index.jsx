@@ -51,11 +51,11 @@ export class UpsellNudge extends React.Component {
 		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
 
 		return (
-			<Main className={ upsellType }>
-				<QuerySites siteId={ selectedSiteId } />
-				{ ! hasProductsList && <QueryProductsList /> }
-				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
-				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
+			<Main className={upsellType}>
+				<QuerySites siteId={selectedSiteId} />
+				{!hasProductsList && <QueryProductsList />}
+				{!hasSitePlans && <QuerySitePlans siteId={selectedSiteId} />}
+				{isLoading ? this.renderPlaceholders() : this.renderContent()}
 			</Main>
 		);
 	}
@@ -64,7 +64,7 @@ export class UpsellNudge extends React.Component {
 		const { receiptId } = this.props;
 		return (
 			<>
-				{ receiptId ? (
+				{receiptId ? (
 					<CompactCard>
 						<div className="upsell-nudge__header">
 							<div className="upsell-nudge__placeholders">
@@ -74,7 +74,7 @@ export class UpsellNudge extends React.Component {
 					</CompactCard>
 				) : (
 					''
-				) }
+				)}
 				<CompactCard>
 					<div className="upsell-nudge__placeholders">
 						<div>
@@ -120,47 +120,47 @@ export class UpsellNudge extends React.Component {
 			siteSlug,
 		} = this.props;
 
-		switch ( upsellType ) {
+		switch (upsellType) {
 			case 'concierge-quickstart-session':
 				return (
 					<ConciergeQuickstartSession
-						currencyCode={ currencyCode }
-						productCost={ productCost }
-						productDisplayCost={ productDisplayCost }
-						isLoggedIn={ isLoggedIn }
-						receiptId={ receiptId }
-						translate={ translate }
-						siteSlug={ siteSlug }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
+						currencyCode={currencyCode}
+						productCost={productCost}
+						productDisplayCost={productDisplayCost}
+						isLoggedIn={isLoggedIn}
+						receiptId={receiptId}
+						translate={translate}
+						siteSlug={siteSlug}
+						handleClickAccept={this.handleClickAccept}
+						handleClickDecline={this.handleClickDecline}
 					/>
 				);
 
 			case 'concierge-support-session':
 				return (
 					<ConciergeSupportSession
-						currencyCode={ currencyCode }
-						productCost={ productCost }
-						productDisplayCost={ productDisplayCost }
-						isLoggedIn={ isLoggedIn }
-						receiptId={ receiptId }
-						translate={ translate }
-						siteSlug={ siteSlug }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
+						currencyCode={currencyCode}
+						productCost={productCost}
+						productDisplayCost={productDisplayCost}
+						isLoggedIn={isLoggedIn}
+						receiptId={receiptId}
+						translate={translate}
+						siteSlug={siteSlug}
+						handleClickAccept={this.handleClickAccept}
+						handleClickDecline={this.handleClickDecline}
 					/>
 				);
 
 			case 'plan-upgrade-upsell':
 				return (
 					<PlanUpgradeUpsell
-						currencyCode={ currencyCode }
-						planRawPrice={ planRawPrice }
-						planDiscountedRawPrice={ planDiscountedRawPrice }
-						receiptId={ receiptId }
-						translate={ translate }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
+						currencyCode={currencyCode}
+						planRawPrice={planRawPrice}
+						planDiscountedRawPrice={planDiscountedRawPrice}
+						receiptId={receiptId}
+						translate={translate}
+						handleClickAccept={this.handleClickAccept}
+						handleClickDecline={this.handleClickDecline}
 					/>
 				);
 		}
@@ -169,53 +169,51 @@ export class UpsellNudge extends React.Component {
 	handleClickDecline = () => {
 		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
 
-		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
+		trackUpsellButtonClick(`calypso_${upsellType.replace(/-/g, '_')}_decline_button_click`);
 		handleCheckoutCompleteRedirect();
 	};
 
-	handleClickAccept = buttonAction => {
+	handleClickAccept = (buttonAction) => {
 		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
 
-		trackUpsellButtonClick(
-			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
-		);
+		trackUpsellButtonClick(`calypso_${upsellType.replace(/-/g, '_')}_${buttonAction}_button_click`);
 
 		return siteSlug
-			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
-			: page( `/checkout/${ upgradeItem }` );
+			? page(`/checkout/${upgradeItem}/${siteSlug}`)
+			: page(`/checkout/${upgradeItem}`);
 	};
 }
 
-const trackUpsellButtonClick = eventName => {
+const trackUpsellButtonClick = (eventName) => {
 	// Track upsell get started / accept / decline events
-	return recordTracksEvent( eventName, { section: 'checkout' } );
+	return recordTracksEvent(eventName, { section: 'checkout' });
 };
 
 export default connect(
-	( state, props ) => {
+	(state, props) => {
 		const { siteSlugParam } = props;
-		const selectedSiteId = getSelectedSiteId( state );
-		const productsList = getProductsList( state );
-		const sitePlans = getPlansBySiteId( state ).data;
-		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
-		const planSlug = getUpgradePlanSlugFromPath( state, selectedSiteId, props.upgradeItem );
-		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, {
+		const selectedSiteId = getSelectedSiteId(state);
+		const productsList = getProductsList(state);
+		const sitePlans = getPlansBySiteId(state).data;
+		const siteSlug = selectedSiteId ? getSiteSlug(state, selectedSiteId) : siteSlugParam;
+		const planSlug = getUpgradePlanSlugFromPath(state, selectedSiteId, props.upgradeItem);
+		const annualDiscountPrice = getPlanDiscountedRawPrice(state, selectedSiteId, planSlug, {
 			isMonthly: false,
-		} );
-		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+		});
+		const annualPrice = getSitePlanRawPrice(state, selectedSiteId, planSlug, {
 			isMonthly: false,
-		} );
+		});
 
 		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
-			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
-			hasProductsList: Object.keys( productsList ).length > 0,
+			currencyCode: getCurrentUserCurrencyCode(state),
+			isLoading: isProductsListFetching(state) || isRequestingSitePlans(state, selectedSiteId),
+			hasProductsList: Object.keys(productsList).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			productCost: getProductCost( state, 'concierge-session' ),
-			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			productCost: getProductCost(state, 'concierge-session'),
+			productDisplayCost: getProductDisplayCost(state, 'concierge-session'),
 			planRawPrice: annualPrice,
 			planDiscountedRawPrice: annualDiscountPrice,
-			isLoggedIn: isUserLoggedIn( state ),
+			isLoggedIn: isUserLoggedIn(state),
 			siteSlug,
 			selectedSiteId,
 		};
@@ -223,4 +221,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( localize( UpsellNudge ) );
+)(localize(UpsellNudge));

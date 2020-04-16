@@ -19,37 +19,37 @@ import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-d
 import SupportInfo from 'components/support-info';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
-const Masterbar = ( {
+const Masterbar = ({
 	isRequestingSettings,
 	isSavingSettings,
 	selectedSiteId,
 	masterbarModuleUnavailable,
 	translate,
-} ) => {
+}) => {
 	return (
 		<div>
-			<QueryJetpackConnection siteId={ selectedSiteId } />
+			<QueryJetpackConnection siteId={selectedSiteId} />
 
 			<Card className="masterbar__card site-settings__security-settings">
 				<FormFieldset>
 					<SupportInfo
-						text={ translate(
+						text={translate(
 							'Adds a toolbar with links to all your sites, notifications, ' +
 								'your WordPress.com profile, and the Reader.'
-						) }
+						)}
 						link="https://jetpack.com/support/masterbar/"
 					/>
 					<JetpackModuleToggle
-						siteId={ selectedSiteId }
+						siteId={selectedSiteId}
 						moduleSlug="masterbar"
-						label={ translate( 'Enable the WordPress.com toolbar' ) }
-						description={ translate(
+						label={translate('Enable the WordPress.com toolbar')}
+						description={translate(
 							'The WordPress.com toolbar replaces the default WordPress admin toolbar. ' +
 								'It offers one-click access to notifications, your WordPress.com profile and ' +
 								'your other Jetpack and WordPress.com websites. You can also catch up on the sites ' +
 								'you follow in the Reader.'
-						) }
-						disabled={ isRequestingSettings || isSavingSettings || masterbarModuleUnavailable }
+						)}
+						disabled={isRequestingSettings || isSavingSettings || masterbarModuleUnavailable}
 					/>
 				</FormFieldset>
 			</Card>
@@ -67,9 +67,9 @@ Masterbar.propTypes = {
 	isRequestingSettings: PropTypes.bool,
 };
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const siteInDevMode = isJetpackSiteInDevelopmentMode(state, selectedSiteId);
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 		state,
 		selectedSiteId,
@@ -80,4 +80,4 @@ export default connect( state => {
 		selectedSiteId,
 		masterbarModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 	};
-} )( localize( Masterbar ) );
+})(localize(Masterbar));

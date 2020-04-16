@@ -4,7 +4,7 @@
 
 import { get } from 'lodash';
 
-function getPluginsState( state ) {
+function getPluginsState(state) {
 	return state.extensions.wpSuperCache.plugins;
 }
 
@@ -15,8 +15,8 @@ function getPluginsState( state ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether plugins are being requested
  */
-export function isRequestingPlugins( state, siteId ) {
-	return get( getPluginsState( state ), [ 'requesting', siteId ], false );
+export function isRequestingPlugins(state, siteId) {
+	return get(getPluginsState(state), ['requesting', siteId], false);
 }
 
 /**
@@ -27,8 +27,8 @@ export function isRequestingPlugins( state, siteId ) {
  * @param  {string}  plugin WPSC Plugin ID
  * @returns {boolean} Whether plugin is being enabled/disabled
  */
-export function isTogglingPlugin( state, siteId, plugin ) {
-	return get( getPluginsState( state ), [ 'toggling', siteId, plugin ], false );
+export function isTogglingPlugin(state, siteId, plugin) {
+	return get(getPluginsState(state), ['toggling', siteId, plugin], false);
 }
 
 /**
@@ -38,6 +38,6 @@ export function isTogglingPlugin( state, siteId, plugin ) {
  * @param  {number} siteId Site ID
  * @returns {object} Plugins
  */
-export function getPlugins( state, siteId ) {
-	return get( getPluginsState( state ), [ 'items', siteId ], null );
+export function getPlugins(state, siteId) {
+	return get(getPluginsState(state), ['items', siteId], null);
 }

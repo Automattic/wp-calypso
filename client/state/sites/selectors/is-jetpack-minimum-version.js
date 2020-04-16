@@ -15,16 +15,16 @@ import getSiteOption from './get-site-option';
  * @param  {string}   version Minimum version
  * @returns {?boolean}         Whether running minimum version
  */
-export default function isJetpackMinimumVersion( state, siteId, version ) {
-	const isJetpack = isJetpackSite( state, siteId );
-	if ( ! isJetpack ) {
+export default function isJetpackMinimumVersion(state, siteId, version) {
+	const isJetpack = isJetpackSite(state, siteId);
+	if (!isJetpack) {
 		return null;
 	}
 
-	const siteVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	if ( ! siteVersion ) {
+	const siteVersion = getSiteOption(state, siteId, 'jetpack_version');
+	if (!siteVersion) {
 		return null;
 	}
 
-	return versionCompare( siteVersion, version, '>=' );
+	return versionCompare(siteVersion, version, '>=');
 }

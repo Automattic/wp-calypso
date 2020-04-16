@@ -17,50 +17,50 @@ import {
 import { filterStateToQuery } from 'state/activity-log/utils';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 
-export const navigationMiddleware = store => {
-	return next => action => {
-		switch ( action.type ) {
+export const navigationMiddleware = (store) => {
+	return (next) => (action) => {
+		switch (action.type) {
 			case ACTIVITY_LOG_FILTER_SET:
 			case ACTIVITY_LOG_FILTER_UPDATE:
 				/* eslint-disable no-case-declarations */
-				const afterFilter = next( action );
+				const afterFilter = next(action);
 
 				if (
-					get( action, [ 'meta', 'skipUrlUpdate' ] ) ||
-					! (
-						/^[/]activity-log[/]/.test( document.location.pathname ) ||
-						/^[/]backups[/]activity[/]/.test( document.location.pathname )
+					get(action, ['meta', 'skipUrlUpdate']) ||
+					!(
+						/^[/]activity-log[/]/.test(document.location.pathname) ||
+						/^[/]backups[/]activity[/]/.test(document.location.pathname)
 					)
 				) {
 					return afterFilter;
 				}
 
-				const filter = getActivityLogFilter( store.getState(), action.siteId );
-				const query = filterStateToQuery( filter );
+				const filter = getActivityLogFilter(store.getState(), action.siteId);
+				const query = filterStateToQuery(filter);
 
-				page( addQueryArgs( query, window.location.pathname + window.location.hash ) );
+				page(addQueryArgs(query, window.location.pathname + window.location.hash));
 				/* eslint-enable no-case-declarations */
 				return afterFilter;
 
 			case NAVIGATE:
-				if ( action.path ) {
-					page( action.path );
+				if (action.path) {
+					page(action.path);
 				}
 
-				return next( action );
+				return next(action);
 			case HISTORY_REPLACE:
-				if ( action.path ) {
-					if ( action.saveContext ) {
+				if (action.path) {
+					if (action.saveContext) {
 						// Replace the history entry, but don't dispatch a new navigation context.
 						//path, state, init, dispatch
-						page.replace( action.path, null, false, false );
+						page.replace(action.path, null, false, false);
 					} else {
-						page.replace( action.path );
+						page.replace(action.path);
 					}
 				}
-				return next( action );
+				return next(action);
 			default:
-				return next( action );
+				return next(action);
 		}
 	};
 };

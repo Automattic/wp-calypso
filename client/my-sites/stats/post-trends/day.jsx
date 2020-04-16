@@ -26,28 +26,28 @@ class PostTrendsDay extends React.PureComponent {
 	dayRef = React.createRef();
 
 	mouseEnter = () => {
-		this.setState( { showPopover: true } );
+		this.setState({ showPopover: true });
 	};
 
 	mouseLeave = () => {
-		this.setState( { showPopover: false } );
+		this.setState({ showPopover: false });
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	buildTooltipData = () => {
 		const { label, postCount } = this.props;
-		const content = this.props.translate( '%(posts)d post', '%(posts)d posts', {
+		const content = this.props.translate('%(posts)d post', '%(posts)d posts', {
 			count: postCount,
 			args: {
 				posts: postCount,
 			},
 			comment: 'How many posts published on a certain date.',
-		} );
+		});
 
 		return (
 			<span>
-				<span className="post-count">{ content } </span>
-				<span className="date">{ label }</span>
+				<span className="post-count">{content} </span>
+				<span className="date">{label}</span>
 			</span>
 		);
 	};
@@ -61,22 +61,22 @@ class PostTrendsDay extends React.PureComponent {
 		return (
 			<Fragment>
 				<div
-					className={ classNames( 'post-trends__day', hoveredClass, className ) }
-					onMouseEnter={ postCount > 0 ? this.mouseEnter : null }
-					onMouseLeave={ postCount > 0 ? this.mouseLeave : null }
-					ref={ this.dayRef }
+					className={classNames('post-trends__day', hoveredClass, className)}
+					onMouseEnter={postCount > 0 ? this.mouseEnter : null}
+					onMouseLeave={postCount > 0 ? this.mouseLeave : null}
+					ref={this.dayRef}
 				/>
-				{ postCount > 0 && (
+				{postCount > 0 && (
 					<Tooltip
 						className="chart__tooltip is-streak"
 						id="popover__chart-bar"
-						context={ this.dayRef.current }
-						isVisible={ this.state.showPopover }
+						context={this.dayRef.current}
+						isVisible={this.state.showPopover}
 						position="top"
 					>
-						{ this.buildTooltipData() }
+						{this.buildTooltipData()}
 					</Tooltip>
-				) }
+				)}
 			</Fragment>
 		);
 	}
@@ -84,4 +84,4 @@ class PostTrendsDay extends React.PureComponent {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-export default localize( PostTrendsDay );
+export default localize(PostTrendsDay);

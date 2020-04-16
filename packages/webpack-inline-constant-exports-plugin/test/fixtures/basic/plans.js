@@ -4,4 +4,4 @@
  */
 export const BLOGGER = 'BLOGGER_PLAN';
 export const PREMIUM = 'PREMIUM_PLAN';
-export default [ BLOGGER, PREMIUM ];
+export default [BLOGGER, PREMIUM];

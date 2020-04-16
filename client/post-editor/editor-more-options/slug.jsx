@@ -30,7 +30,7 @@ class EditorMoreOptionsSlug extends PureComponent {
 
 	getPopoverLabel() {
 		const { translate, postType } = this.props;
-		if ( 'page' === postType ) {
+		if ('page' === postType) {
 			return translate(
 				"The slug is the part of a web address that identifies a specific page within a site. It's often based on the page title."
 			);
@@ -46,17 +46,17 @@ class EditorMoreOptionsSlug extends PureComponent {
 
 		return (
 			<AccordionSection className="editor-more-options__slug">
-				<EditorDrawerLabel labelText={ translate( 'Slug' ) } helpText={ this.getPopoverLabel() } />
-				<Slug instanceName={ postType + '-sidebar' } className="editor-more-options__slug-field" />
+				<EditorDrawerLabel labelText={translate('Slug')} helpText={this.getPopoverLabel()} />
+				<Slug instanceName={postType + '-sidebar'} className="editor-more-options__slug-field" />
 			</AccordionSection>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
 
 	return {
-		postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),
+		postType: getEditedPostValue(state, siteId, getEditorPostId(state), 'type'),
 	};
-} )( localize( EditorMoreOptionsSlug ) );
+})(localize(EditorMoreOptionsSlug));

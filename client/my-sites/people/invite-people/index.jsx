@@ -54,23 +54,23 @@ import './style.scss';
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:my-sites:people:invite' );
+const debug = debugModule('calypso:my-sites:people:invite');
 
 class InvitePeople extends React.Component {
 	static displayName = 'InvitePeople';
 
 	componentDidMount() {
-		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
-		InvitesSentStore.on( 'change', this.refreshFormState );
+		InvitesCreateValidationStore.on('change', this.refreshValidation);
+		InvitesSentStore.on('change', this.refreshFormState);
 	}
 
 	componentWillUnmount() {
-		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
-		InvitesSentStore.off( 'change', this.refreshFormState );
+		InvitesCreateValidationStore.off('change', this.refreshValidation);
+		InvitesSentStore.off('change', this.refreshFormState);
 	}
 
 	UNSAFE_componentWillReceiveProps() {
-		this.setState( this.resetState() );
+		this.setState(this.resetState());
 	}
 
 	resetState = () => {
@@ -88,200 +88,192 @@ class InvitePeople extends React.Component {
 	};
 
 	refreshFormState = () => {
-		const sendInvitesSuccess = InvitesSentStore.getSuccess( this.state.formId );
+		const sendInvitesSuccess = InvitesSentStore.getSuccess(this.state.formId);
 
-		if ( sendInvitesSuccess ) {
-			this.setState( this.resetState() );
-			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_initial' );
-			debug( 'Submit successful. Resetting form.' );
+		if (sendInvitesSuccess) {
+			this.setState(this.resetState());
+			this.props.recordTracksEventAction('calypso_invite_people_form_refresh_initial');
+			debug('Submit successful. Resetting form.');
 		} else {
-			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId ),
-				errors = get( sendInvitesErrored, 'errors', {} ),
+			const sendInvitesErrored = InvitesSentStore.getErrors(this.state.formId),
+				errors = get(sendInvitesErrored, 'errors', {}),
 				updatedState = { sendingInvites: false };
-			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
-				const errorKeys = Object.keys( errors );
-				Object.assign( updatedState, {
+			if (!isEmpty(errors) && 'object' === typeof errors) {
+				const errorKeys = Object.keys(errors);
+				Object.assign(updatedState, {
 					usernamesOrEmails: errorKeys,
-					errorToDisplay: errorKeys[ 0 ],
+					errorToDisplay: errorKeys[0],
 					errors,
-				} );
+				});
 			}
 
-			debug( 'Submit errored. Updating state to:  ' + JSON.stringify( updatedState ) );
+			debug('Submit errored. Updating state to:  ' + JSON.stringify(updatedState));
 
-			this.setState( updatedState );
-			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_retry' );
+			this.setState(updatedState);
+			this.props.recordTracksEventAction('calypso_invite_people_form_refresh_retry');
 		}
 	};
 
-	onTokensChange = tokens => {
+	onTokensChange = (tokens) => {
 		const { role, errorToDisplay, usernamesOrEmails, errors, success } = this.state;
-		const filteredTokens = tokens.map( value => {
-			if ( 'object' === typeof value ) {
+		const filteredTokens = tokens.map((value) => {
+			if ('object' === typeof value) {
 				return value.value;
 			}
 			return value;
-		} );
+		});
 
-		const filteredErrors = pickBy( errors, ( error, key ) => {
-			return includes( filteredTokens, key );
-		} );
+		const filteredErrors = pickBy(errors, (error, key) => {
+			return includes(filteredTokens, key);
+		});
 
-		const filteredSuccess = filter( success, successfulValidation => {
-			return includes( filteredTokens, successfulValidation );
-		} );
+		const filteredSuccess = filter(success, (successfulValidation) => {
+			return includes(filteredTokens, successfulValidation);
+		});
 
-		this.setState( {
+		this.setState({
 			usernamesOrEmails: filteredTokens,
 			errors: filteredErrors,
 			success: filteredSuccess,
-			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay,
-		} );
-		createInviteValidation( this.props.siteId, filteredTokens, role );
+			errorToDisplay: includes(filteredTokens, errorToDisplay) && errorToDisplay,
+		});
+		createInviteValidation(this.props.siteId, filteredTokens, role);
 
-		if ( filteredTokens.length > usernamesOrEmails.length ) {
-			this.props.recordTracksEventAction( 'calypso_invite_people_token_added' );
+		if (filteredTokens.length > usernamesOrEmails.length) {
+			this.props.recordTracksEventAction('calypso_invite_people_token_added');
 		} else {
-			this.props.recordTracksEventAction( 'calypso_invite_people_token_removed' );
+			this.props.recordTracksEventAction('calypso_invite_people_token_removed');
 		}
 	};
 
-	onMessageChange = event => this.setState( { message: event.target.value } );
+	onMessageChange = (event) => this.setState({ message: event.target.value });
 
-	onRoleChange = event => {
+	onRoleChange = (event) => {
 		const role = event.target.value;
-		this.setState( { role } );
-		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
+		this.setState({ role });
+		createInviteValidation(this.props.siteId, this.state.usernamesOrEmails, role);
 	};
 
-	onExternalChange = event => {
+	onExternalChange = (event) => {
 		const isExternal = event.target.checked;
-		this.setState( { isExternal } );
+		this.setState({ isExternal });
 	};
 
 	refreshValidation = () => {
-		const errors =
-				InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {},
-			success = InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [],
-			errorsKeys = Object.keys( errors ),
-			errorToDisplay = this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
+		const errors = InvitesCreateValidationStore.getErrors(this.props.siteId, this.state.role) || {},
+			success = InvitesCreateValidationStore.getSuccess(this.props.siteId, this.state.role) || [],
+			errorsKeys = Object.keys(errors),
+			errorToDisplay = this.state.errorToDisplay || (errorsKeys.length > 0 && errorsKeys[0]);
 
-		this.setState( {
+		this.setState({
 			errorToDisplay,
 			errors,
 			success,
-		} );
+		});
 
-		if ( errorsKeys.length ) {
-			this.props.recordTracksEventAction( 'calypso_invite_people_validation_refreshed_with_error' );
+		if (errorsKeys.length) {
+			this.props.recordTracksEventAction('calypso_invite_people_validation_refreshed_with_error');
 		}
 	};
 
-	getTooltip = value => {
+	getTooltip = (value) => {
 		const { errors, errorToDisplay } = this.state;
-		if ( errorToDisplay && value !== errorToDisplay ) {
+		if (errorToDisplay && value !== errorToDisplay) {
 			return null;
 		}
-		return get( errors, [ value, 'message' ] );
+		return get(errors, [value, 'message']);
 	};
 
 	getTokensWithStatus = () => {
 		const { success, errors } = this.state;
 
-		const tokens = this.state.usernamesOrEmails.map( value => {
-			if ( errors && errors[ value ] ) {
+		const tokens = this.state.usernamesOrEmails.map((value) => {
+			if (errors && errors[value]) {
 				return {
 					status: 'error',
 					value,
-					tooltip: this.getTooltip( value ),
-					onMouseEnter: () => this.setState( { errorToDisplay: value } ),
+					tooltip: this.getTooltip(value),
+					onMouseEnter: () => this.setState({ errorToDisplay: value }),
 				};
 			}
-			if ( ! includes( success, value ) ) {
+			if (!includes(success, value)) {
 				return {
 					value,
 					status: 'validating',
 				};
 			}
 			return value;
-		} );
+		});
 
-		debug( 'Generated tokens: ' + JSON.stringify( tokens ) );
+		debug('Generated tokens: ' + JSON.stringify(tokens));
 		return tokens;
 	};
 
-	submitForm = event => {
+	submitForm = (event) => {
 		event.preventDefault();
-		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
+		debug('Submitting invite form. State: ' + JSON.stringify(this.state));
 
-		if ( this.isSubmitDisabled() ) {
+		if (this.isSubmitDisabled()) {
 			return false;
 		}
 
 		const formId = uniqueId();
 		const { usernamesOrEmails, message, role, isExternal } = this.state;
 
-		this.setState( { sendingInvites: true, formId } );
-		this.props.sendInvites(
-			this.props.siteId,
-			usernamesOrEmails,
-			role,
-			message,
-			formId,
-			isExternal
-		);
+		this.setState({ sendingInvites: true, formId });
+		this.props.sendInvites(this.props.siteId, usernamesOrEmails, role, message, formId, isExternal);
 
-		const groupedInvitees = groupBy( usernamesOrEmails, invitee => {
-			return includes( invitee, '@' ) ? 'email' : 'username';
-		} );
+		const groupedInvitees = groupBy(usernamesOrEmails, (invitee) => {
+			return includes(invitee, '@') ? 'email' : 'username';
+		});
 
-		this.props.recordTracksEventAction( 'calypso_invite_people_form_submit', {
+		this.props.recordTracksEventAction('calypso_invite_people_form_submit', {
 			role,
 			is_external: isExternal,
 			number_invitees: usernamesOrEmails.length,
 			number_username_invitees: groupedInvitees.username ? groupedInvitees.username.length : 0,
 			number_email_invitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
-			has_custom_message: 'string' === typeof message && !! message.length,
-		} );
+			has_custom_message: 'string' === typeof message && !!message.length,
+		});
 
-		if ( includes( [ 'administrator', 'editor', 'author', 'contributor' ], role ) ) {
-			page( `/people/new/${ this.props.site.slug }/sent` );
+		if (includes(['administrator', 'editor', 'author', 'contributor'], role)) {
+			page(`/people/new/${this.props.site.slug}/sent`);
 		}
 	};
 
 	isSubmitDisabled = () => {
 		const { success, usernamesOrEmails } = this.state;
-		const invitees = Array.isArray( usernamesOrEmails ) ? usernamesOrEmails : [];
+		const invitees = Array.isArray(usernamesOrEmails) ? usernamesOrEmails : [];
 
 		// If there are no invitees, then don't allow submitting the form
-		if ( this.state.sendingInvites || ! invitees.length ) {
+		if (this.state.sendingInvites || !invitees.length) {
 			return true;
 		}
 
-		if ( this.hasValidationErrors() ) {
+		if (this.hasValidationErrors()) {
 			return true;
 		}
 
 		// If there are invitees, and there are no errors, let's check
 		// if there are any pending validations.
-		return some( usernamesOrEmails, value => {
-			return ! includes( success, value );
-		} );
+		return some(usernamesOrEmails, (value) => {
+			return !includes(success, value);
+		});
 	};
 
 	hasValidationErrors = () => {
 		const { errors } = this.state;
-		const errorKeys = errors && Object.keys( errors );
+		const errorKeys = errors && Object.keys(errors);
 
-		return !! errorKeys.length;
+		return !!errorKeys.length;
 	};
 
 	goBack = () => {
-		const siteSlug = get( this.props, 'site.slug' );
+		const siteSlug = get(this.props, 'site.slug');
 		const fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
 
 		// Go back to last route with /people/team/$site as the fallback
-		page.back( fallback );
+		page.back(fallback);
 	};
 
 	renderRoleExplanation = () => {
@@ -291,18 +283,18 @@ class InvitePeople extends React.Component {
 				target="_blank"
 				rel="noopener noreferrer"
 				href="http://wordpress.com/support/user-roles/"
-				onClick={ onClickRoleExplanation }
+				onClick={onClickRoleExplanation}
 			>
-				{ translate( 'Learn more about roles' ) }
+				{translate('Learn more about roles')}
 			</a>
 		);
 	};
 
-	enableSSO = () => this.props.activateModule( this.props.siteId, 'sso' );
+	enableSSO = () => this.props.activateModule(this.props.siteId, 'sso');
 
-	isExternalRole = role => {
-		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
-		return includes( roles, role );
+	isExternalRole = (role) => {
+		const roles = ['administrator', 'editor', 'author', 'contributor'];
+		return includes(roles, role);
 	};
 
 	renderInviteForm = () => {
@@ -321,11 +313,9 @@ class InvitePeople extends React.Component {
 		const inviteForm = (
 			<Card>
 				<EmailVerificationGate>
-					<form onSubmit={ this.submitForm }>
+					<form onSubmit={this.submitForm}>
 						<div role="group" className="invite-people__token-field-wrapper">
-							<FormLabel htmlFor="usernamesOrEmails">
-								{ translate( 'Usernames or Emails' ) }
-							</FormLabel>
+							<FormLabel htmlFor="usernamesOrEmails">{translate('Usernames or Emails')}</FormLabel>
 							<TokenField
 								id="usernamesOrEmails"
 								isBorderless
@@ -334,16 +324,14 @@ class InvitePeople extends React.Component {
 								autoComplete="off"
 								autoCorrect="off"
 								spellCheck="false"
-								maxLength={ 10 }
-								value={ this.getTokensWithStatus() }
-								onChange={ this.onTokensChange }
-								onFocus={ onFocusTokenField }
-								disabled={ this.state.sendingInvites }
+								maxLength={10}
+								value={this.getTokensWithStatus()}
+								onChange={this.onTokensChange}
+								onFocus={onFocusTokenField}
+								disabled={this.state.sendingInvites}
 							/>
 							<FormSettingExplanation>
-								{ translate(
-									'Enter up to 10 WordPress.com usernames or email addresses at a time.'
-								) }
+								{translate('Enter up to 10 WordPress.com usernames or email addresses at a time.')}
 							</FormSettingExplanation>
 						</div>
 
@@ -351,46 +339,41 @@ class InvitePeople extends React.Component {
 							id="role"
 							name="role"
 							includeFollower
-							siteId={ this.props.siteId }
-							onChange={ this.onRoleChange }
-							onFocus={ onFocusRoleSelect }
-							value={ this.state.role }
-							disabled={ this.state.sendingInvites }
-							explanation={ this.renderRoleExplanation() }
+							siteId={this.props.siteId}
+							onChange={this.onRoleChange}
+							onFocus={onFocusRoleSelect}
+							value={this.state.role}
+							disabled={this.state.sendingInvites}
+							explanation={this.renderRoleExplanation()}
 						/>
 
-						{ this.isExternalRole( this.state.role ) && (
-							<ContractorSelect
-								onChange={ this.onExternalChange }
-								checked={ this.state.isExternal }
-							/>
-						) }
+						{this.isExternalRole(this.state.role) && (
+							<ContractorSelect onChange={this.onExternalChange} checked={this.state.isExternal} />
+						)}
 
 						<FormFieldset>
-							<FormLabel htmlFor="message">{ translate( 'Custom Message' ) }</FormLabel>
+							<FormLabel htmlFor="message">{translate('Custom Message')}</FormLabel>
 							<CountedTextarea
 								name="message"
 								id="message"
 								showRemainingCharacters
-								maxLength={ 500 }
-								acceptableLength={ 500 }
-								onChange={ this.onMessageChange }
-								onFocus={ onFocusCustomMessage }
-								value={ this.state.message }
-								disabled={ this.state.sendingInvites }
+								maxLength={500}
+								acceptableLength={500}
+								onChange={this.onMessageChange}
+								onFocus={onFocusCustomMessage}
+								value={this.state.message}
+								disabled={this.state.sendingInvites}
 							/>
 							<FormSettingExplanation>
-								{ translate(
-									'(Optional) Enter a custom message to be sent with your invitation.'
-								) }
+								{translate('(Optional) Enter a custom message to be sent with your invitation.')}
 							</FormSettingExplanation>
 						</FormFieldset>
 
-						<FormButton disabled={ this.isSubmitDisabled() } onClick={ onClickSendInvites }>
-							{ translate( 'Send invitation', 'Send invitations', {
+						<FormButton disabled={this.isSubmitDisabled()} onClick={onClickSendInvites}>
+							{translate('Send invitation', 'Send invitations', {
 								count: this.state.usernamesOrEmails.length || 1,
 								context: 'Button label',
-							} ) }
+							})}
 						</FormButton>
 					</form>
 				</EmailVerificationGate>
@@ -398,37 +381,37 @@ class InvitePeople extends React.Component {
 		);
 
 		// Return early for WPCOM or needs verification
-		if ( ! site || ! isJetpack || needsVerification ) {
+		if (!site || !isJetpack || needsVerification) {
 			return inviteForm;
 		}
 
-		const jetpackVersion = get( site, 'options.jetpack_version', 0 );
-		if ( ! this.props.isSiteAutomatedTransfer && versionCompare( jetpackVersion, '5.0', '<' ) ) {
+		const jetpackVersion = get(site, 'options.jetpack_version', 0);
+		if (!this.props.isSiteAutomatedTransfer && versionCompare(jetpackVersion, '5.0', '<')) {
 			return (
 				<div className="invite-people__action-required">
 					<Notice
 						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'Inviting users requires Jetpack 5.0 or higher' ) }
+						showDismiss={false}
+						text={translate('Inviting users requires Jetpack 5.0 or higher')}
 					>
-						<NoticeAction href={ `/plugins/jetpack/${ site.slug }` }>
-							{ translate( 'Update' ) }
+						<NoticeAction href={`/plugins/jetpack/${site.slug}`}>
+							{translate('Update')}
 						</NoticeAction>
 					</Notice>
-					<FeatureExample>{ inviteForm }</FeatureExample>
+					<FeatureExample>{inviteForm}</FeatureExample>
 				</div>
 			);
-		} else if ( showSSONotice ) {
+		} else if (showSSONotice) {
 			return (
 				<div className="invite-people__action-required">
 					<Notice
 						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'Inviting users requires WordPress.com sign in' ) }
+						showDismiss={false}
+						text={translate('Inviting users requires WordPress.com sign in')}
 					>
-						<NoticeAction onClick={ this.enableSSO }>{ translate( 'Enable' ) }</NoticeAction>
+						<NoticeAction onClick={this.enableSSO}>{translate('Enable')}</NoticeAction>
 					</Notice>
-					<FeatureExample>{ inviteForm }</FeatureExample>
+					<FeatureExample>{inviteForm}</FeatureExample>
 				</div>
 			);
 		}
@@ -440,14 +423,14 @@ class InvitePeople extends React.Component {
 
 	render() {
 		const { site, translate } = this.props;
-		if ( site && ! userCan( 'promote_users', site ) ) {
+		if (site && !userCan('promote_users', site)) {
 			return (
 				<Main>
 					<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 					<SidebarNavigation />
 					<EmptyContent
-						title={ translate( 'Oops, only administrators can invite other people' ) }
-						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+						title={translate('Oops, only administrators can invite other people')}
+						illustration={'/calypso/images/illustrations/illustration-empty-results.svg'}
 					/>
 				</Main>
 			);
@@ -457,30 +440,30 @@ class InvitePeople extends React.Component {
 			<Main className="invite-people">
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 				<SidebarNavigation />
-				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'Invite People' ) }
+				<HeaderCake isCompact onClick={this.goBack}>
+					{translate('Invite People')}
 				</HeaderCake>
-				{ this.renderInviteForm() }
+				{this.renderInviteForm()}
 			</Main>
 		);
 	}
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const activating = isActivatingJetpackModule( state, siteId, 'sso' );
-		const active = isJetpackModuleActive( state, siteId, 'sso' );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const activating = isActivatingJetpackModule(state, siteId, 'sso');
+		const active = isJetpackModuleActive(state, siteId, 'sso');
 
 		return {
 			siteId,
-			needsVerification: ! isCurrentUserEmailVerified( state ),
-			showSSONotice: !! ( activating || active ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+			needsVerification: !isCurrentUserEmailVerified(state),
+			showSSONotice: !!(activating || active),
+			isJetpack: isJetpackSite(state, siteId),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer(state, siteId),
 		};
 	},
-	dispatch => ( {
+	(dispatch) => ({
 		...bindActionCreators(
 			{
 				sendInvites,
@@ -490,20 +473,16 @@ const connectComponent = connect(
 		),
 		recordTracksEventAction,
 		onFocusTokenField: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_token_field_focus' ) ),
+			dispatch(recordTracksEventAction('calypso_invite_people_token_field_focus')),
 		onFocusRoleSelect: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_role_select_focus' ) ),
+			dispatch(recordTracksEventAction('calypso_invite_people_role_select_focus')),
 		onFocusCustomMessage: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_custom_message_focus' ) ),
+			dispatch(recordTracksEventAction('calypso_invite_people_custom_message_focus')),
 		onClickSendInvites: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_send_invite_button_click' ) ),
+			dispatch(recordTracksEventAction('calypso_invite_people_send_invite_button_click')),
 		onClickRoleExplanation: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_role_explanation_link_click' ) ),
-	} )
+			dispatch(recordTracksEventAction('calypso_invite_people_role_explanation_link_click')),
+	})
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( InvitePeople );
+export default flowRight(connectComponent, localize, withTrackingTool('HotJar'))(InvitePeople);

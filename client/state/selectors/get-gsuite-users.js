@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param {number} siteId - identifier of the site
  * @returns {?Array} the list of G Suite users, null otherwise
  */
-export default function getGSuiteUsers( state, siteId ) {
-	return get( state, [ 'gsuiteUsers', siteId, 'users' ], null );
+export default function getGSuiteUsers(state, siteId) {
+	return get(state, ['gsuiteUsers', siteId, 'users'], null);
 }

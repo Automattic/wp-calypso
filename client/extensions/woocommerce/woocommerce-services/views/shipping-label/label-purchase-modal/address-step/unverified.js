@@ -16,53 +16,53 @@ import Notice from 'components/notice';
 import AddressSummary from './summary';
 import { ACCEPTED_USPS_ORIGIN_COUNTRIES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
 
-const UnverifiedAddress = ( {
+const UnverifiedAddress = ({
 	values,
 	countryNames,
 	editUnverifiableAddress,
 	confirmAddressSuggestion,
 	translate,
 	fieldErrors,
-} ) => {
+}) => {
 	// Reduce the address verification errors object to a single error string.
 	const getVerificationError = () => {
-		if ( fieldErrors.general ) {
+		if (fieldErrors.general) {
 			return fieldErrors.general;
 		}
 
 		// Return the first field error if there is no general error.
-		for ( const field in fieldErrors ) {
-			return fieldErrors[ field ];
+		for (const field in fieldErrors) {
+			return fieldErrors[field];
 		}
 
 		return false;
 	};
 
 	const renderNotice = () => {
-		const verificationError = getVerificationError( fieldErrors );
+		const verificationError = getVerificationError(fieldErrors);
 
-		if ( verificationError ) {
+		if (verificationError) {
 			return (
-				<Notice status="is-error" showDismiss={ false }>
-					{ translate( 'We were unable to automatically verify the address — %(error)s.', {
+				<Notice status="is-error" showDismiss={false}>
+					{translate('We were unable to automatically verify the address — %(error)s.', {
 						args: {
 							error: verificationError,
 						},
-					} ) }
+					})}
 				</Notice>
 			);
 		}
 
 		return (
-			<Notice status="is-error" showDismiss={ false }>
-				{ translate( 'We were unable to automatically verify the address.' ) }
+			<Notice status="is-error" showDismiss={false}>
+				{translate('We were unable to automatically verify the address.')}
 			</Notice>
 		);
 	};
 
 	// USPS can only validate addresses that have a ZIP code. That limits it to the US and territories that have USPS presence
-	const uspsUrl = ACCEPTED_USPS_ORIGIN_COUNTRIES.includes( values.country )
-		? url.format( {
+	const uspsUrl = ACCEPTED_USPS_ORIGIN_COUNTRIES.includes(values.country)
+		? url.format({
 				scheme: 'https',
 				hostname: 'tools.usps.com',
 				pathname: '/zip-code-lookup.htm',
@@ -76,55 +76,53 @@ const UnverifiedAddress = ( {
 					state: 'US' === values.country ? values.state : values.country,
 					zip: values.postcode,
 				},
-		  } )
+		  })
 		: null;
 
 	const googleMapsAddressString = invokeMap(
-		[ values.address + ' ' + values.address_2, values.city, values.state + ' ' + values.postcode ],
+		[values.address + ' ' + values.address_2, values.city, values.state + ' ' + values.postcode],
 		'trim'
-	).join( ', ' );
+	).join(', ');
 
 	const googleMapsUrlProperties = {
 		scheme: 'https',
 		hostname: 'www.google.com',
-		pathname: '/maps/place/' + encodeURIComponent( googleMapsAddressString ),
+		pathname: '/maps/place/' + encodeURIComponent(googleMapsAddressString),
 	};
 
-	const googleMapsUrl = url.format( googleMapsUrlProperties );
+	const googleMapsUrl = url.format(googleMapsUrlProperties);
 
 	return (
 		<div>
-			{ renderNotice() }
+			{renderNotice()}
 			<div className="address-step__unverifiable-container">
 				<div className="address-step__unverifiable-info">
-					<span className="address-step__unverifiable-title">
-						{ translate( 'Address entered' ) }
-					</span>
-					<AddressSummary values={ values } countryNames={ countryNames } />
+					<span className="address-step__unverifiable-title">{translate('Address entered')}</span>
+					<AddressSummary values={values} countryNames={countryNames} />
 				</div>
 				<div className="address-step__unverifiable-info">
 					<p>
-						{ translate(
+						{translate(
 							'Automatic verification failed for this address. ' +
 								'It may still be a valid address — use the tools below to manually verify.'
-						) }
+						)}
 					</p>
-					{ uspsUrl && (
-						<ExternalLink icon={ true } href={ uspsUrl } target="_blank">
-							{ translate( 'Verify with USPS' ) }
+					{uspsUrl && (
+						<ExternalLink icon={true} href={uspsUrl} target="_blank">
+							{translate('Verify with USPS')}
 						</ExternalLink>
-					) }
-					<ExternalLink icon={ true } href={ googleMapsUrl } target="_blank">
-						{ translate( 'View on Google Maps' ) }
+					)}
+					<ExternalLink icon={true} href={googleMapsUrl} target="_blank">
+						{translate('View on Google Maps')}
 					</ExternalLink>
 				</div>
 			</div>
 			<div className="address-step__actions">
-				<FormButton type="button" onClick={ editUnverifiableAddress }>
-					{ translate( 'Edit address' ) }
+				<FormButton type="button" onClick={editUnverifiableAddress}>
+					{translate('Edit address')}
 				</FormButton>
-				<FormButton type="button" onClick={ confirmAddressSuggestion } borderless>
-					{ translate( 'Use address as entered' ) }
+				<FormButton type="button" onClick={confirmAddressSuggestion} borderless>
+					{translate('Use address as entered')}
 				</FormButton>
 			</div>
 		</div>
@@ -138,4 +136,4 @@ UnverifiedAddress.propTypes = {
 	countryNames: PropTypes.object.isRequired,
 };
 
-export default localize( UnverifiedAddress );
+export default localize(UnverifiedAddress);

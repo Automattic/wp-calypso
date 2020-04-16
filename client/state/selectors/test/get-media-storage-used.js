@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
 
-describe( 'getMediaStorageUsed()', () => {
-	test( 'should return null if the site is unknown', () => {
+describe('getMediaStorageUsed()', () => {
+	test('should return null if the site is unknown', () => {
 		const state = {
 			sites: {
 				mediaStorage: {
@@ -20,11 +20,11 @@ describe( 'getMediaStorageUsed()', () => {
 			},
 		};
 
-		expect( getMediaStorageUsed( state ) ).to.be.null;
-		expect( getMediaStorageUsed( state, 123 ) ).to.be.null;
-	} );
+		expect(getMediaStorageUsed(state)).to.be.null;
+		expect(getMediaStorageUsed(state, 123)).to.be.null;
+	});
 
-	test( 'should return null if usage is unknown', () => {
+	test('should return null if usage is unknown', () => {
 		const state = {
 			sites: {
 				mediaStorage: {
@@ -35,10 +35,10 @@ describe( 'getMediaStorageUsed()', () => {
 				},
 			},
 		};
-		expect( getMediaStorageUsed( state, 123 ) ).to.be.null;
-	} );
+		expect(getMediaStorageUsed(state, 123)).to.be.null;
+	});
 
-	test( 'should return the storage used for a site', () => {
+	test('should return the storage used for a site', () => {
 		const storage_used_bytes = 1029384756;
 		const result = getMediaStorageUsed(
 			{
@@ -55,6 +55,6 @@ describe( 'getMediaStorageUsed()', () => {
 			123
 		);
 
-		expect( result ).to.equal( storage_used_bytes );
-	} );
-} );
+		expect(result).to.equal(storage_used_bytes);
+	});
+});

@@ -10,29 +10,29 @@ import PropTypes from 'prop-types';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormField from './form-field';
 
-const PercentField = props => {
+const PercentField = (props) => {
 	const { fieldName, explanationText, placeholderText, value, edit } = props;
 	const renderedValue = 'undefined' !== typeof value ? value : '';
 
-	const onChange = e => {
+	const onChange = (e) => {
 		const newValue = e.target.value;
-		if ( newValue >= 0 && newValue <= 100 ) {
-			edit( fieldName, newValue );
+		if (newValue >= 0 && newValue <= 100) {
+			edit(fieldName, newValue);
 		}
 	};
 
 	return (
-		<FormField { ...props }>
+		<FormField {...props}>
 			<FormTextInputWithAffixes
-				id={ fieldName + '-label' }
-				aria-describedby={ explanationText && fieldName + '-description' }
+				id={fieldName + '-label'}
+				aria-describedby={explanationText && fieldName + '-description'}
 				type="number"
 				min="0"
 				max="100"
 				suffix="%"
-				placeholder={ placeholderText || '10' }
-				value={ renderedValue }
-				onChange={ onChange }
+				placeholder={placeholderText || '10'}
+				value={renderedValue}
+				onChange={onChange}
 			/>
 		</FormField>
 	);

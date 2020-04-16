@@ -15,10 +15,10 @@ export function closeAccount() {
 }
 
 export function closeAccountSuccess() {
-	return async dispatch => {
+	return async (dispatch) => {
 		await user.clear();
-		dispatch( {
+		dispatch({
 			type: ACCOUNT_CLOSE_SUCCESS,
-		} );
+		});
 	};
 }

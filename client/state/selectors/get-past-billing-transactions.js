@@ -16,6 +16,6 @@ import getBillingTransactions from 'state/selectors/get-billing-transactions';
  * @param  {object}  state   Global state tree
  * @returns {?Array}          An array of past transactions
  */
-export default function getPastBillingTransactions( state ) {
-	return get( getBillingTransactions( state ), 'past', null );
+export default function getPastBillingTransactions(state) {
+	return get(getBillingTransactions(state), 'past', null);
 }

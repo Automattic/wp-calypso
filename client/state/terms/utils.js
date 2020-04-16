@@ -16,8 +16,8 @@ import { DEFAULT_TERMS_QUERY } from './constants';
  * @param  {object} query Posts query
  * @returns {object}       Normalized terms query
  */
-export function getNormalizedTermsQuery( query ) {
-	return omitBy( query, ( value, key ) => DEFAULT_TERMS_QUERY[ key ] === value );
+export function getNormalizedTermsQuery(query) {
+	return omitBy(query, (value, key) => DEFAULT_TERMS_QUERY[key] === value);
 }
 
 /**
@@ -27,9 +27,9 @@ export function getNormalizedTermsQuery( query ) {
  * @param  {object} query    Terms query
  * @returns {string}          Serialized terms query
  */
-export function getSerializedTermsQuery( query = {} ) {
-	const normalizedQuery = getNormalizedTermsQuery( query );
-	return JSON.stringify( normalizedQuery ).toLocaleLowerCase();
+export function getSerializedTermsQuery(query = {}) {
+	const normalizedQuery = getNormalizedTermsQuery(query);
+	return JSON.stringify(normalizedQuery).toLocaleLowerCase();
 }
 
 /**
@@ -39,6 +39,6 @@ export function getSerializedTermsQuery( query = {} ) {
  * @param  {number} siteId Optional site ID
  * @returns {string}        Serialized terms query
  */
-export function getSerializedTermsQueryWithoutPage( query ) {
-	return getSerializedTermsQuery( omit( query, 'page' ) );
+export function getSerializedTermsQueryWithoutPage(query) {
+	return getSerializedTermsQuery(omit(query, 'page'));
 }

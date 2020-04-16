@@ -10,12 +10,12 @@ import PropTypes from 'prop-types';
 import Search from 'components/search';
 import urlSearch from 'lib/url-search';
 
-export const PeopleSearch = ( { doSearch, search } ) => (
+export const PeopleSearch = ({ doSearch, search }) => (
 	<Search
 		pinned
 		fitsContainer
-		onSearch={ doSearch }
-		initialValue={ search }
+		onSearch={doSearch}
+		initialValue={search}
 		delaySearch
 		analyticsGroup="People"
 	/>
@@ -26,4 +26,4 @@ PeopleSearch.propTypes = {
 	search: PropTypes.string,
 };
 
-export default urlSearch( PeopleSearch );
+export default urlSearch(PeopleSearch);

@@ -20,7 +20,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const removeApplicationPassword = action =>
+export const removeApplicationPassword = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -36,8 +36,8 @@ export const removeApplicationPassword = action =>
  * @param   {object} action Redux action
  * @returns {object} Dispatched user application passwords add action
  */
-export const handleRemoveSuccess = ( { appPasswordId } ) =>
-	deleteApplicationPasswordSuccess( appPasswordId );
+export const handleRemoveSuccess = ({ appPasswordId }) =>
+	deleteApplicationPasswordSuccess(appPasswordId);
 
 /**
  * Dispatches an error notice when the request failed.
@@ -46,18 +46,18 @@ export const handleRemoveSuccess = ( { appPasswordId } ) =>
  */
 export const handleRemoveError = () =>
 	errorNotice(
-		translate( 'The application password was not successfully deleted. Please try again.' ),
+		translate('The application password was not successfully deleted. Please try again.'),
 		{
 			duration: 8000,
 		}
 	);
 
-registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/delete/index.js', {
-	[ APPLICATION_PASSWORD_DELETE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/two-step/application-passwords/delete/index.js', {
+	[APPLICATION_PASSWORD_DELETE]: [
+		dispatchRequest({
 			fetch: removeApplicationPassword,
 			onSuccess: handleRemoveSuccess,
 			onError: handleRemoveError,
-		} ),
+		}),
 	],
-} );
+});

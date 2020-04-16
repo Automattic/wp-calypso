@@ -14,23 +14,23 @@ import { isRequestingPostTypeTaxonomies } from 'state/post-types/taxonomies/sele
 
 class QueryTaxonomies extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId && this.props.postType === nextProps.postType ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId && this.props.postType === nextProps.postType) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( props.requesting || ! props.siteId ) {
+	request(props) {
+		if (props.requesting || !props.siteId) {
 			return;
 		}
 
-		props.requestPostTypeTaxonomies( props.siteId, props.postType );
+		props.requestPostTypeTaxonomies(props.siteId, props.postType);
 	}
 
 	shouldComponentUpdate() {
@@ -50,12 +50,12 @@ QueryTaxonomies.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			requesting: isRequestingPostTypeTaxonomies( state, ownProps.siteId, ownProps.postType ),
+			requesting: isRequestingPostTypeTaxonomies(state, ownProps.siteId, ownProps.postType),
 		};
 	},
 	{
 		requestPostTypeTaxonomies,
 	}
-)( QueryTaxonomies );
+)(QueryTaxonomies);

@@ -32,7 +32,7 @@ class EditorMoreOptionsCopyPost extends Component {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func,
-		type: PropTypes.oneOf( [ 'page', 'post' ] ).isRequired,
+		type: PropTypes.oneOf(['page', 'post']).isRequired,
 	};
 
 	state = {
@@ -43,29 +43,29 @@ class EditorMoreOptionsCopyPost extends Component {
 	isPost = () => 'post' === this.props.type;
 
 	openDialog = () => {
-		this.setState( {
+		this.setState({
 			showDialog: true,
-		} );
+		});
 	};
 
 	closeDialog = () => {
-		this.setState( {
+		this.setState({
 			selectedPostId: null,
 			showDialog: false,
-		} );
+		});
 	};
 
-	setPostToCopy = post => {
-		this.setState( {
+	setPostToCopy = (post) => {
+		this.setState({
 			selectedPostId: post.ID,
-		} );
+		});
 	};
 
 	goToNewDraft = () => {
 		const { siteSlug, type } = this.props;
 		const { selectedPostId } = this.state;
-		if ( '' !== selectedPostId ) {
-			page.redirect( `/${ type }/${ siteSlug }?jetpack-copy=${ selectedPostId }` );
+		if ('' !== selectedPostId) {
+			page.redirect(`/${type}/${siteSlug}?jetpack-copy=${selectedPostId}`);
 			this.closeDialog();
 		}
 	};
@@ -76,13 +76,13 @@ class EditorMoreOptionsCopyPost extends Component {
 		const buttons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 			},
 			{
 				action: 'copy',
-				label: translate( 'Overwrite' ),
+				label: translate('Overwrite'),
 				isPrimary: true,
-				disabled: ! selectedPostId,
+				disabled: !selectedPostId,
 				onClick: this.goToNewDraft,
 			},
 		];
@@ -90,63 +90,61 @@ class EditorMoreOptionsCopyPost extends Component {
 		return (
 			<AccordionSection className="editor-more-options__copy-post">
 				<EditorDrawerLabel
-					labelText={ this.isPost() ? translate( 'Copy Post' ) : translate( 'Copy Page' ) }
+					labelText={this.isPost() ? translate('Copy Post') : translate('Copy Page')}
 					helpText={
 						this.isPost()
-							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
-							: translate( "Pick a page and we'll copy the title and content." )
+							? translate("Pick a post and we'll copy the title, content, tags and categories.")
+							: translate("Pick a page and we'll copy the title and content.")
 					}
 				/>
-				<Button borderless compact onClick={ this.openDialog }>
+				<Button borderless compact onClick={this.openDialog}>
 					<Gridicon icon="clipboard" />
-					{ this.isPost()
-						? translate( 'Select a post to copy' )
-						: translate( 'Select a page to copy' ) }
+					{this.isPost() ? translate('Select a post to copy') : translate('Select a page to copy')}
 				</Button>
 				<Dialog
-					isVisible={ showDialog }
-					buttons={ buttons }
-					onClose={ this.closeDialog }
+					isVisible={showDialog}
+					buttons={buttons}
+					onClose={this.closeDialog}
 					additionalClassNames="editor-more-options__copy-post-select-dialog"
 				>
 					<FormSectionHeading>
-						{ this.isPost()
-							? translate( 'Select a post to copy' )
-							: translate( 'Select a page to copy' ) }
+						{this.isPost()
+							? translate('Select a post to copy')
+							: translate('Select a page to copy')}
 					</FormSectionHeading>
 					<p>
-						{ this.isPost()
-							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
-							: translate( "Pick a page and we'll copy the title and content." ) }
+						{this.isPost()
+							? translate("Pick a post and we'll copy the title, content, tags and categories.")
+							: translate("Pick a page and we'll copy the title and content.")}
 					</p>
-					{ siteId && (
+					{siteId && (
 						<PostSelector
 							emptyMessage={
-								this.isPost() ? translate( 'No posts found' ) : translate( 'No pages found' )
+								this.isPost() ? translate('No posts found') : translate('No pages found')
 							}
-							onChange={ this.setPostToCopy }
+							onChange={this.setPostToCopy}
 							order="DESC"
 							orderBy="date"
-							selected={ selectedPostId }
-							siteId={ siteId }
+							selected={selectedPostId}
+							siteId={siteId}
 							status="draft,future,pending,private,publish"
-							type={ type }
+							type={type}
 						/>
-					) }
+					)}
 				</Dialog>
 			</AccordionSection>
 		);
 	}
 }
 
-export default connect( state => {
-	const postId = getEditorPostId( state );
-	const siteId = getSelectedSiteId( state );
-	const type = getEditedPostValue( state, siteId, postId, 'type' );
+export default connect((state) => {
+	const postId = getEditorPostId(state);
+	const siteId = getSelectedSiteId(state);
+	const type = getEditedPostValue(state, siteId, postId, 'type');
 
 	return {
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
+		siteSlug: getSiteSlug(state, siteId),
 		type,
 	};
-} )( localize( EditorMoreOptionsCopyPost ) );
+})(localize(EditorMoreOptionsCopyPost));

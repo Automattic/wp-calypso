@@ -38,11 +38,11 @@ import activityImage from 'assets/images/illustrations/site-activity.svg';
 
 class IntroBanner extends Component {
 	recordLearnMore = () =>
-		this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_learn_more' );
+		this.props.recordTracksEvent('calypso_activitylog_intro_banner_learn_more');
 
-	recordUpgrade = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_upgrade' );
+	recordUpgrade = () => this.props.recordTracksEvent('calypso_activitylog_intro_banner_upgrade');
 
-	recordDismiss = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_dismiss' );
+	recordDismiss = () => this.props.recordTracksEvent('calypso_activitylog_intro_banner_dismiss');
 
 	renderCardContent() {
 		const { siteIsJetpack, siteHasBackup, siteSlug, translate } = this.props;
@@ -54,12 +54,12 @@ class IntroBanner extends Component {
 		return (
 			<Fragment>
 				<p>
-					{ translate(
+					{translate(
 						'Activity tracks the events that occur on your site so that you don’t have to.'
-					) }
+					)}
 				</p>
 				<p>
-					{ ! siteHasBackup
+					{!siteHasBackup
 						? translate(
 								'With your free plan, you can monitor the 20 most recent ' +
 									'events. A paid plan unlocks more powerful features. ' +
@@ -70,26 +70,26 @@ class IntroBanner extends Component {
 						: translate(
 								'Explore the list below or filter events by type and ' +
 									'date range to quickly find the information you need. '
-						  ) }
+						  )}
 					<ExternalLink
 						href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
 						icon
-						onClick={ this.recordLearnMore }
+						onClick={this.recordLearnMore}
 						target="_blank"
 					>
-						{ translate( 'Learn more' ) }
+						{translate('Learn more')}
 					</ExternalLink>
 				</p>
 
-				{ ! siteHasBackup && (
+				{!siteHasBackup && (
 					<Button
 						className="activity-log-banner__intro-button"
-						href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
-						onClick={ this.recordUpgrade }
+						href={`/plans/${siteSlug}?feature=${upgradeFeature}&plan=${upgradePlan}`}
+						onClick={this.recordUpgrade}
 					>
-						{ translate( 'Upgrade now' ) }
+						{translate('Upgrade now')}
 					</Button>
-				) }
+				)}
 			</Fragment>
 		);
 	}
@@ -99,23 +99,23 @@ class IntroBanner extends Component {
 
 		return (
 			<Fragment>
-				<QuerySitePurchases siteId={ siteId } />
+				<QuerySitePurchases siteId={siteId} />
 
 				<DismissibleCard
 					preferenceName="activity-introduction-banner"
 					className="activity-log-banner__intro"
-					onClick={ this.recordDismiss }
+					onClick={this.recordDismiss}
 				>
 					<img
 						className="activity-log-banner__intro-image"
-						src={ activityImage }
-						alt={ translate( 'Activity' ) }
+						src={activityImage}
+						alt={translate('Activity')}
 					/>
 					<div className="activity-log-banner__intro-description">
-						<CardHeading tagName="h1" size={ 24 }>
-							{ translate( 'Welcome to your site’s activity' ) }
+						<CardHeading tagName="h1" size={24}>
+							{translate('Welcome to your site’s activity')}
 						</CardHeading>
-						{ this.renderCardContent() }
+						{this.renderCardContent()}
 					</div>
 				</DismissibleCard>
 			</Fragment>
@@ -124,18 +124,18 @@ class IntroBanner extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => {
-		const siteIsOnFreePlan = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
-		const hasBackupPurchase = siteHasBackupProductPurchase( state, siteId );
+	(state, { siteId }) => {
+		const siteIsOnFreePlan = isFreePlan(get(getCurrentPlan(state, siteId), 'productSlug'));
+		const hasBackupPurchase = siteHasBackupProductPurchase(state, siteId);
 
 		return {
 			siteId,
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteHasBackup: ! siteIsOnFreePlan || hasBackupPurchase,
-			siteSlug: getSiteSlug( state, siteId ),
+			siteIsJetpack: isJetpackSite(state, siteId),
+			siteHasBackup: !siteIsOnFreePlan || hasBackupPurchase,
+			siteSlug: getSiteSlug(state, siteId),
 		};
 	},
 	{
 		recordTracksEvent,
 	}
-)( localize( IntroBanner ) );
+)(localize(IntroBanner));

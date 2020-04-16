@@ -11,6 +11,6 @@ import 'state/reader/init';
  * @returns {boolean}        Whether specified site is blocked
  */
 
-export default function isSiteBlocked( state, siteId ) {
-	return !! state.reader.siteBlocks.items[ siteId ];
+export default function isSiteBlocked(state, siteId) {
+	return !!state.reader.siteBlocks.items[siteId];
 }

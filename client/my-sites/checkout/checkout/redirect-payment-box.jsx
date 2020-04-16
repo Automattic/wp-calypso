@@ -42,23 +42,23 @@ export class RedirectPaymentBox extends PureComponent {
 
 	eventFormName = 'Checkout Form';
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			errorMessages: [],
-			paymentDetails: this.setPaymentDetailsState( props.paymentType ),
+			paymentDetails: this.setPaymentDetailsState(props.paymentType),
 		};
 	}
 
-	setPaymentDetailsState( paymentType ) {
+	setPaymentDetailsState(paymentType) {
 		let paymentDetailsState = {};
-		switch ( paymentType ) {
+		switch (paymentType) {
 			case 'brazil-tef':
 				paymentDetailsState = {
 					'tef-bank': '',
 					...zipObject(
 						PAYMENT_PROCESSOR_COUNTRIES_FIELDS.BR.fields,
-						map( PAYMENT_PROCESSOR_COUNTRIES_FIELDS.BR.fields, () => '' )
+						map(PAYMENT_PROCESSOR_COUNTRIES_FIELDS.BR.fields, () => '')
 					),
 				};
 		}
@@ -68,23 +68,23 @@ export class RedirectPaymentBox extends PureComponent {
 		};
 	}
 
-	handleChange = event => this.updateFieldValues( event.target.name, event.target.value );
+	handleChange = (event) => this.updateFieldValues(event.target.name, event.target.value);
 
-	getErrorMessage = fieldName => this.state.errorMessages[ fieldName ];
+	getErrorMessage = (fieldName) => this.state.errorMessages[fieldName];
 
-	getFieldValue = fieldName => this.state.paymentDetails[ fieldName ];
+	getFieldValue = (fieldName) => this.state.paymentDetails[fieldName];
 
-	updateFieldValues = ( name, value ) => {
-		this.setState( {
+	updateFieldValues = (name, value) => {
+		this.setState({
 			paymentDetails: {
 				...this.state.paymentDetails,
-				[ name ]: maskField( name, this.state.paymentDetails[ name ], value ),
+				[name]: maskField(name, this.state.paymentDetails[name], value),
 			},
-		} );
+		});
 	};
 
-	createField = ( fieldName, componentClass, props ) => {
-		const errorMessage = this.getErrorMessage( fieldName ) || [];
+	createField = (fieldName, componentClass, props) => {
+		const errorMessage = this.getErrorMessage(fieldName) || [];
 		return React.createElement(
 			componentClass,
 			Object.assign(
@@ -92,12 +92,12 @@ export class RedirectPaymentBox extends PureComponent {
 				{
 					additionalClasses: 'checkout__checkout-field',
 					eventFormName: this.props.eventFormName,
-					isError: ! isEmpty( errorMessage ),
-					errorMessage: errorMessage[ 0 ],
+					isError: !isEmpty(errorMessage),
+					errorMessage: errorMessage[0],
 					name: fieldName,
 					onBlur: this.handleChange,
 					onChange: this.handleChange,
-					value: this.getFieldValue( fieldName ),
+					value: this.getFieldValue(fieldName),
 					autoComplete: 'off',
 					disabled: this.state.formDisabled,
 				},
@@ -106,70 +106,70 @@ export class RedirectPaymentBox extends PureComponent {
 		);
 	};
 
-	setSubmitState( submitState ) {
-		if ( submitState.error ) {
-			notices.error( submitState.error );
+	setSubmitState(submitState) {
+		if (submitState.error) {
+			notices.error(submitState.error);
 		}
-		if ( submitState.info ) {
-			notices.info( submitState.info );
+		if (submitState.info) {
+			notices.info(submitState.info);
 		}
 
-		this.setState( {
+		this.setState({
 			formDisabled: submitState.disabled,
-		} );
+		});
 	}
 
-	paymentMethodByType( paymentType ) {
-		return paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
+	paymentMethodByType(paymentType) {
+		return paymentMethodClassName(paymentType) || 'WPCOM_Billing_Stripe_Source';
 	}
 
-	redirectToPayment = event => {
-		const origin = getLocationOrigin( window.location );
+	redirectToPayment = (event) => {
+		const origin = getLocationOrigin(window.location);
 		event.preventDefault();
 
-		const validation = validatePaymentDetails( this.state.paymentDetails, this.props.paymentType );
+		const validation = validatePaymentDetails(this.state.paymentDetails, this.props.paymentType);
 
-		this.setState( {
+		this.setState({
 			errorMessages: validation.errors,
-		} );
+		});
 
-		if ( ! isEmpty( validation.errors ) ) {
+		if (!isEmpty(validation.errors)) {
 			return;
 		}
 
-		this.setSubmitState( {
-			info: this.props.translate( 'Setting up your %(paymentProvider)s payment', {
+		this.setSubmitState({
+			info: this.props.translate('Setting up your %(paymentProvider)s payment', {
 				args: { paymentProvider: this.getPaymentProviderName() },
-			} ),
+			}),
 			disabled: true,
-		} );
+		});
 
 		let cancelUrl = origin + '/checkout/',
 			successUrl;
 		const redirectTo = this.props.redirectTo();
-		const redirectPath = redirectTo.includes( 'https://' ) ? redirectTo : origin + redirectTo;
+		const redirectPath = redirectTo.includes('https://') ? redirectTo : origin + redirectTo;
 
-		if ( this.props.selectedSite ) {
+		if (this.props.selectedSite) {
 			cancelUrl += this.props.selectedSite.slug;
 			successUrl =
 				origin +
-				`/checkout/thank-you/${ this.props.selectedSite.slug }/pending?redirectTo=${ redirectPath }`;
+				`/checkout/thank-you/${this.props.selectedSite.slug}/pending?redirectTo=${redirectPath}`;
 		} else {
 			cancelUrl += 'no-site';
-			successUrl = origin + `/checkout/thank-you/no-site/pending?redirectTo=${ redirectPath }`;
+			successUrl = origin + `/checkout/thank-you/no-site/pending?redirectTo=${redirectPath}`;
 		}
 
 		// unmask form values
-		const paymentDetails = mapValues( this.state.paymentDetails, ( value, key ) =>
-			unmaskField( key, null, value )
+		const paymentDetails = mapValues(this.state.paymentDetails, (value, key) =>
+			unmaskField(key, null, value)
 		);
 
 		const dataForApi = {
-			payment: Object.assign( {}, paymentDetails, {
-				paymentMethod: this.paymentMethodByType( this.props.paymentType ),
+			payment: Object.assign({}, paymentDetails, {
+				paymentMethod: this.paymentMethodByType(this.props.paymentType),
 				successUrl: successUrl,
 				cancelUrl,
-			} ),
+			}),
 			cart: this.props.cart,
 			domainDetails: this.props.transaction.domainDetails,
 		};
@@ -177,25 +177,25 @@ export class RedirectPaymentBox extends PureComponent {
 		// get the redirect URL from rest endpoint
 		wpcom
 			.undocumented()
-			.transactions( dataForApi )
-			.then( result => {
-				if ( result.redirect_url ) {
-					this.setSubmitState( {
+			.transactions(dataForApi)
+			.then((result) => {
+				if (result.redirect_url) {
+					this.setSubmitState({
 						info: this.props.translate(
 							'Redirecting you to the payment partner to complete the payment.'
 						),
 						disabled: true,
-					} );
-					gaRecordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
+					});
+					gaRecordEvent('Upgrades', 'Clicked Checkout With Redirect Payment Button');
 					analytics.tracks.recordEvent(
-						'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
+						'calypso_checkout_with_redirect_' + snakeCase(this.props.paymentType)
 					);
 					window.location.href = result.redirect_url;
 				}
-			} )
-			.catch( error => {
+			})
+			.catch((error) => {
 				let errorMessage;
-				if ( error.message ) {
+				if (error.message) {
 					errorMessage = error.message;
 				} else {
 					errorMessage = this.props.translate(
@@ -203,32 +203,32 @@ export class RedirectPaymentBox extends PureComponent {
 					);
 				}
 
-				this.setSubmitState( {
+				this.setSubmitState({
 					error: errorMessage,
 					disabled: false,
-				} );
-			} );
+				});
+			});
 	};
 
 	renderButtonText() {
-		if ( hasRenewalItem( this.props.cart ) ) {
-			return this.props.translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
+		if (hasRenewalItem(this.props.cart)) {
+			return this.props.translate('Purchase %(price)s subscription with %(paymentProvider)s', {
 				args: {
 					price: this.props.cart.total_cost_display,
 					paymentProvider: this.getPaymentProviderName(),
 				},
-			} );
+			});
 		}
 
-		return this.props.translate( 'Pay %(price)s with %(paymentProvider)s', {
+		return this.props.translate('Pay %(price)s with %(paymentProvider)s', {
 			args: {
 				price: this.props.cart.total_cost_display,
 				paymentProvider: this.getPaymentProviderName(),
 			},
-		} );
+		});
 	}
 
-	getBankOptions( paymentType ) {
+	getBankOptions(paymentType) {
 		// Source https://stripe.com/docs/sources/ideal
 		const banks = {
 			ideal: [
@@ -251,61 +251,61 @@ export class RedirectPaymentBox extends PureComponent {
 			],
 		};
 		return [
-			{ value: '', label: this.props.translate( 'Please select your bank.' ) },
-			...banks[ paymentType ],
+			{ value: '', label: this.props.translate('Please select your bank.') },
+			...banks[paymentType],
 		];
 	}
 
 	renderAdditionalFields() {
-		switch ( this.props.paymentType ) {
+		switch (this.props.paymentType) {
 			case 'ideal':
-				return this.createField( 'ideal-bank', Select, {
-					label: this.props.translate( 'Bank' ),
-					options: this.getBankOptions( 'ideal' ),
-				} );
+				return this.createField('ideal-bank', Select, {
+					label: this.props.translate('Bank'),
+					options: this.getBankOptions('ideal'),
+				});
 			case 'p24':
-				return this.createField( 'email', Input, {
-					label: this.props.translate( 'Email Address' ),
-				} );
+				return this.createField('email', Input, {
+					label: this.props.translate('Email Address'),
+				});
 			case 'id_wallet':
 				return (
 					<CountrySpecificPaymentFields
 						countryCode="ID"
-						countriesList={ this.props.countriesList }
-						getErrorMessage={ this.getErrorMessage }
-						getFieldValue={ this.getFieldValue }
-						handleFieldChange={ this.updateFieldValues }
-						eventFormName={ this.eventFormName }
-						disableFields={ this.state.formDisabled }
+						countriesList={this.props.countriesList}
+						getErrorMessage={this.getErrorMessage}
+						getFieldValue={this.getFieldValue}
+						handleFieldChange={this.updateFieldValues}
+						eventFormName={this.eventFormName}
+						disableFields={this.state.formDisabled}
 					/>
 				);
 			case 'netbanking':
 				return (
 					<CountrySpecificPaymentFields
 						countryCode="IN"
-						countriesList={ this.props.countriesList }
-						getErrorMessage={ this.getErrorMessage }
-						getFieldValue={ this.getFieldValue }
-						handleFieldChange={ this.updateFieldValues }
-						eventFormName={ this.eventFormName }
-						disableFields={ this.state.formDisabled }
+						countriesList={this.props.countriesList}
+						getErrorMessage={this.getErrorMessage}
+						getFieldValue={this.getFieldValue}
+						handleFieldChange={this.updateFieldValues}
+						eventFormName={this.eventFormName}
+						disableFields={this.state.formDisabled}
 					/>
 				);
 			case 'brazil-tef':
 				return (
 					<Fragment>
-						{ this.createField( 'tef-bank', Select, {
-							label: this.props.translate( 'Bank' ),
-							options: this.getBankOptions( 'brazil-tef' ),
-						} ) }
+						{this.createField('tef-bank', Select, {
+							label: this.props.translate('Bank'),
+							options: this.getBankOptions('brazil-tef'),
+						})}
 						<CountrySpecificPaymentFields
 							countryCode="BR"
-							countriesList={ this.props.countriesList }
-							getErrorMessage={ this.getErrorMessage }
-							getFieldValue={ this.getFieldValue }
-							handleFieldChange={ this.updateFieldValues }
-							eventFormName={ this.eventFormName }
-							disableFields={ this.state.formDisabled }
+							countriesList={this.props.countriesList}
+							getErrorMessage={this.getErrorMessage}
+							getFieldValue={this.getFieldValue}
+							handleFieldChange={this.updateFieldValues}
+							eventFormName={this.eventFormName}
+							disableFields={this.state.formDisabled}
 						/>
 					</Fragment>
 				);
@@ -313,28 +313,26 @@ export class RedirectPaymentBox extends PureComponent {
 	}
 
 	render() {
-		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
-			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
+		const hasBusinessPlanInCart = some(this.props.cart.products, ({ product_slug }) =>
+			overSome(isWpComBusinessPlan, isWpComEcommercePlan)(product_slug)
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
 			<React.Fragment>
-				<form onSubmit={ this.redirectToPayment }>
+				<form onSubmit={this.redirectToPayment}>
 					<div className="checkout__payment-box-section">
-						{ this.createField( 'name', Input, {
-							label: this.props.translate( 'Your Name' ),
-						} ) }
-						{ this.renderAdditionalFields() }
+						{this.createField('name', Input, {
+							label: this.props.translate('Your Name'),
+						})}
+						{this.renderAdditionalFields()}
 					</div>
 
-					{ this.props.children }
+					{this.props.children}
 
-					<TermsOfService
-						hasRenewableSubscription={ hasRenewableSubscription( this.props.cart ) }
-					/>
-					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
-					<DomainRegistrationAgreement cart={ this.props.cart } />
+					<TermsOfService hasRenewableSubscription={hasRenewableSubscription(this.props.cart)} />
+					<DomainRegistrationRefundPolicy cart={this.props.cart} />
+					<DomainRegistrationAgreement cart={this.props.cart} />
 
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-box-buttons">
@@ -342,38 +340,35 @@ export class RedirectPaymentBox extends PureComponent {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary "
-									disabled={ this.state.formDisabled }
+									disabled={this.state.formDisabled}
 								>
-									{ this.renderButtonText() }
+									{this.renderButtonText()}
 								</button>
-								<SubscriptionText cart={ this.props.cart } />
+								<SubscriptionText cart={this.props.cart} />
 							</span>
 
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ this.props.translate( 'Secure Payment' ) }
+									{this.props.translate('Secure Payment')}
 								</div>
 							</div>
 
-							{ showPaymentChatButton && (
-								<PaymentChatButton
-									paymentType={ this.props.paymentType }
-									cart={ this.props.cart }
-								/>
-							) }
+							{showPaymentChatButton && (
+								<PaymentChatButton paymentType={this.props.paymentType} cart={this.props.cart} />
+							)}
 						</div>
 					</div>
 				</form>
-				<CartCoupon cart={ this.props.cart } />
+				<CartCoupon cart={this.props.cart} />
 				<CartToggle />
 			</React.Fragment>
 		);
 	}
 
 	getPaymentProviderName() {
-		return paymentMethodName( this.props.paymentType );
+		return paymentMethodName(this.props.paymentType);
 	}
 }
 
-export default localize( RedirectPaymentBox );
+export default localize(RedirectPaymentBox);

@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import { coerceValue } from '../coerce-values.js';
 
-describe( '#coerceValue', () => {
-	it( 'Returns null when value is null', () => {
+describe('#coerceValue', () => {
+	it('Returns null when value is null', () => {
 		const schema = {
 			$ref: '#/definitions/shipping_service',
 		};
@@ -31,7 +31,7 @@ describe( '#coerceValue', () => {
 					},
 					adjustment_type: {
 						type: 'string',
-						enum: [ 'flat', 'percentage' ],
+						enum: ['flat', 'percentage'],
 						default: 'flat',
 					},
 				},
@@ -53,8 +53,8 @@ describe( '#coerceValue', () => {
 			],
 		};
 
-		const result = coerceValue( schema, value, definitions );
+		const result = coerceValue(schema, value, definitions);
 
-		expect( result ).to.equal( null );
-	} );
-} );
+		expect(result).to.equal(null);
+	});
+});

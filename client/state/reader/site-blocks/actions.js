@@ -13,7 +13,7 @@ import 'state/data-layer/wpcom/me/blocks/sites';
 
 import 'state/reader/init';
 
-export function blockSite( siteId ) {
+export function blockSite(siteId) {
 	return {
 		type: READER_SITE_BLOCK,
 		payload: {
@@ -22,7 +22,7 @@ export function blockSite( siteId ) {
 	};
 }
 
-export function unblockSite( siteId ) {
+export function unblockSite(siteId) {
 	return {
 		type: READER_SITE_UNBLOCK,
 		payload: {
@@ -31,7 +31,7 @@ export function unblockSite( siteId ) {
 	};
 }
 
-export function requestSiteBlocks( { page } = {} ) {
+export function requestSiteBlocks({ page } = {}) {
 	return {
 		type: READER_SITE_BLOCKS_REQUEST,
 		payload: {

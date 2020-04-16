@@ -13,19 +13,19 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
-describe( 'reducer', () => {
-	test( 'should mark the locations tree as being "loading"', () => {
+describe('reducer', () => {
+	test('should mark the locations tree as being "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_LOCATIONS_REQUEST,
 			siteId,
 		};
 
-		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].data.locations ).to.eql( LOADING );
-	} );
+		const newSiteData = reducer({}, action);
+		expect(newSiteData[siteId].data.locations).to.eql(LOADING);
+	});
 
-	test( 'should store data from the action', () => {
+	test('should store data from the action', () => {
 		const siteId = 123;
 		const locations = [
 			{
@@ -61,8 +61,8 @@ describe( 'reducer', () => {
 			siteId,
 			data: locations,
 		};
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].data.locations ).to.deep.equal( locations );
-	} );
-} );
+		const newState = reducer({}, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].data.locations).to.deep.equal(locations);
+	});
+});

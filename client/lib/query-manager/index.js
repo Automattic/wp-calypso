@@ -35,7 +35,7 @@ export default class QueryManager {
 	 * @param {object} options         Manager options
 	 * @param {string} options.itemKey Field to key items by
 	 */
-	constructor( data, options ) {
+	constructor(data, options) {
 		this.data = Object.assign(
 			{
 				items: {},
@@ -63,13 +63,13 @@ export default class QueryManager {
 	 * @param  {boolean} patch       Use patching application
 	 * @returns {?object}             Item to track, or undefined to omit
 	 */
-	static mergeItem( item, revisedItem, patch = false ) {
-		if ( patch ) {
-			if ( revisedItem[ DELETE_PATCH_KEY ] ) {
+	static mergeItem(item, revisedItem, patch = false) {
+		if (patch) {
+			if (revisedItem[DELETE_PATCH_KEY]) {
 				return undefined;
 			}
 
-			return Object.assign( {}, item, revisedItem );
+			return Object.assign({}, item, revisedItem);
 		}
 
 		return revisedItem;
@@ -82,8 +82,8 @@ export default class QueryManager {
 	 * @param  {object}  item  Item to consider
 	 * @returns {boolean}       Whether item matches query
 	 */
-	static matches( query, item ) {
-		return !! item;
+	static matches(query, item) {
+		return !!item;
 	}
 
 	/**
@@ -96,8 +96,8 @@ export default class QueryManager {
 	 * @returns {number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	static compare( query, itemA, itemB ) {
-		if ( itemA === itemB ) {
+	static compare(query, itemA, itemB) {
+		if (itemA === itemB) {
 			return 0;
 		}
 
@@ -114,9 +114,9 @@ export default class QueryManager {
 	 * @param  {Array}  items Items by which to sort
 	 * @param  {object} query Query object
 	 */
-	static sort( keys, items, query ) {
-		keys.sort( ( keyA, keyB ) => {
-			if ( ! items[ keyA ] || ! items[ keyB ] ) {
+	static sort(keys, items, query) {
+		keys.sort((keyA, keyB) => {
+			if (!items[keyA] || !items[keyB]) {
 				// One of the items has yet to be removed from the
 				// set at this point in iteration, so don't bother
 				// trying to sort.
@@ -124,8 +124,8 @@ export default class QueryManager {
 				// method aren't required to implement this check.
 				return 0;
 			}
-			return this.compare( query, items[ keyA ], items[ keyB ] );
-		} );
+			return this.compare(query, items[keyA], items[keyB]);
+		});
 	}
 
 	/**
@@ -134,8 +134,8 @@ export default class QueryManager {
 	 * @param  {string} itemKey Item key
 	 * @returns {object}         Item
 	 */
-	getItem( itemKey ) {
-		return this.data.items[ itemKey ];
+	getItem(itemKey) {
+		return this.data.items[itemKey];
 	}
 
 	/**
@@ -146,18 +146,18 @@ export default class QueryManager {
 	 * @param  {?object}       query Optional query object
 	 * @returns {object[]|null}       Items tracked, if known
 	 */
-	getItems( query ) {
-		if ( ! query ) {
-			return values( this.data.items );
+	getItems(query) {
+		if (!query) {
+			return values(this.data.items);
 		}
 
-		const queryKey = this.constructor.QueryKey.stringify( query );
-		const itemKeys = get( this.data.queries, [ queryKey, 'itemKeys' ] );
-		if ( ! itemKeys ) {
+		const queryKey = this.constructor.QueryKey.stringify(query);
+		const itemKeys = get(this.data.queries, [queryKey, 'itemKeys']);
+		if (!itemKeys) {
 			return null;
 		}
 
-		return itemKeys.map( itemKey => this.getItem( itemKey ) );
+		return itemKeys.map((itemKey) => this.getItem(itemKey));
 	}
 
 	/**
@@ -168,9 +168,9 @@ export default class QueryManager {
 	 * @param  {object}  query Query object
 	 * @returns {?number}       Found items for query
 	 */
-	getFound( query ) {
-		const queryKey = this.constructor.QueryKey.stringify( query );
-		return get( this.data.queries, [ queryKey, 'found' ], null );
+	getFound(query) {
+		const queryKey = this.constructor.QueryKey.stringify(query);
+		return get(this.data.queries, [queryKey, 'found'], null);
 	}
 
 	/**
@@ -182,8 +182,8 @@ export default class QueryManager {
 	 * @returns {QueryManager}         New instance if changed, or same instance
 	 *                                otherwise
 	 */
-	removeItem( itemKey ) {
-		return this.removeItems( [ itemKey ] );
+	removeItem(itemKey) {
+		return this.removeItems([itemKey]);
 	}
 
 	/**
@@ -195,14 +195,14 @@ export default class QueryManager {
 	 * @returns {QueryManager}          New instance if changed, or same
 	 *                                 instance otherwise
 	 */
-	removeItems( itemKeys = [] ) {
+	removeItems(itemKeys = []) {
 		return this.receive(
-			itemKeys.map( itemKey => {
+			itemKeys.map((itemKey) => {
 				return {
-					[ this.options.itemKey ]: itemKey,
-					[ DELETE_PATCH_KEY ]: true,
+					[this.options.itemKey]: itemKey,
+					[DELETE_PATCH_KEY]: true,
 				};
-			} ),
+			}),
 			{ patch: true }
 		);
 	}
@@ -223,23 +223,23 @@ export default class QueryManager {
 	 * @returns {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
 	 */
-	receive( items = [], options = {} ) {
+	receive(items = [], options = {}) {
 		// Coerce received single item to array
-		if ( ! Array.isArray( items ) ) {
-			items = [ items ];
+		if (!Array.isArray(items)) {
+			items = [items];
 		}
 
 		const nextItems = reduce(
 			items,
-			( memo, receivedItem ) => {
-				const receivedItemKey = receivedItem[ this.options.itemKey ];
-				const item = this.getItem( receivedItemKey );
-				const mergedItem = this.constructor.mergeItem( item, receivedItem, options.patch );
+			(memo, receivedItem) => {
+				const receivedItemKey = receivedItem[this.options.itemKey];
+				const item = this.getItem(receivedItemKey);
+				const mergedItem = this.constructor.mergeItem(item, receivedItem, options.patch);
 
-				if ( undefined === mergedItem ) {
-					if ( item ) {
+				if (undefined === mergedItem) {
+					if (item) {
 						// `undefined` item is an intended omission from set
-						return omit( memo, receivedItemKey );
+						return omit(memo, receivedItemKey);
 					}
 
 					// Item never existed in set in the first place, skip and
@@ -247,14 +247,14 @@ export default class QueryManager {
 					return memo;
 				}
 
-				if ( ! item || ! isEqual( mergedItem, item ) ) {
+				if (!item || !isEqual(mergedItem, item)) {
 					// Did not exist previously or has changed
-					if ( memo === this.data.items ) {
+					if (memo === this.data.items) {
 						// Create a copy of memo, as we don't want to mutate the original items set
-						memo = clone( memo );
+						memo = clone(memo);
 					}
 
-					memo[ receivedItemKey ] = mergedItem;
+					memo[receivedItemKey] = mergedItem;
 				}
 
 				return memo;
@@ -269,26 +269,26 @@ export default class QueryManager {
 
 		// Skip if no items have been updated, added, or removed. If query
 		// specified with received items, we may need to update queries
-		if ( ! isModified && ! options.query ) {
+		if (!isModified && !options.query) {
 			return this;
 		}
 
-		if ( options.query ) {
-			const receivedItemKeys = map( items, this.options.itemKey );
-			receivedQueryKey = this.constructor.QueryKey.stringify( options.query );
-			isNewlyReceivedQueryKey = ! this.data.queries[ receivedQueryKey ];
+		if (options.query) {
+			const receivedItemKeys = map(items, this.options.itemKey);
+			receivedQueryKey = this.constructor.QueryKey.stringify(options.query);
+			isNewlyReceivedQueryKey = !this.data.queries[receivedQueryKey];
 
 			let nextQueryReceivedItemKeys;
 			if (
 				isNewlyReceivedQueryKey ||
-				! isEqual( this.data.queries[ receivedQueryKey ].itemKeys, receivedItemKeys )
+				!isEqual(this.data.queries[receivedQueryKey].itemKeys, receivedItemKeys)
 			) {
-				if ( options.mergeQuery && ! isNewlyReceivedQueryKey ) {
+				if (options.mergeQuery && !isNewlyReceivedQueryKey) {
 					// When merging into a query where items already exist,
 					// omit incoming keys from existing set. These keys will
 					// be restored below during match testing.
 					nextQueryReceivedItemKeys = difference(
-						this.data.queries[ receivedQueryKey ].itemKeys,
+						this.data.queries[receivedQueryKey].itemKeys,
 						receivedItemKeys
 					);
 				} else {
@@ -298,40 +298,37 @@ export default class QueryManager {
 			}
 
 			let nextQueryFound;
-			if (
-				options.found >= 0 &&
-				options.found !== get( nextQueries, [ receivedQueryKey, 'found' ] )
-			) {
+			if (options.found >= 0 && options.found !== get(nextQueries, [receivedQueryKey, 'found'])) {
 				nextQueryFound = options.found;
 			}
 
-			if ( nextQueryReceivedItemKeys || nextQueryFound >= 0 ) {
+			if (nextQueryReceivedItemKeys || nextQueryFound >= 0) {
 				// Consider modified if either the current query set is not
 				// tracked or if the keys differ from currently known set
 				isModified = true;
-				const nextReceivedQuery = Object.assign( {}, nextQueries[ receivedQueryKey ] );
+				const nextReceivedQuery = Object.assign({}, nextQueries[receivedQueryKey]);
 
-				if ( nextQueryReceivedItemKeys ) {
+				if (nextQueryReceivedItemKeys) {
 					nextReceivedQuery.itemKeys = nextQueryReceivedItemKeys;
 				}
 
-				if ( nextQueryFound >= 0 ) {
+				if (nextQueryFound >= 0) {
 					nextReceivedQuery.found = nextQueryFound;
 				}
 
-				nextQueries = Object.assign( {}, nextQueries, {
-					[ receivedQueryKey ]: nextReceivedQuery,
-				} );
+				nextQueries = Object.assign({}, nextQueries, {
+					[receivedQueryKey]: nextReceivedQuery,
+				});
 			}
 		}
 
 		nextQueries = reduce(
 			nextQueries,
-			( memo, queryDetails, queryKey ) => {
-				memo[ queryKey ] = queryDetails;
+			(memo, queryDetails, queryKey) => {
+				memo[queryKey] = queryDetails;
 
 				const isReceivedQueryKey = receivedQueryKey && receivedQueryKey === queryKey;
-				if ( isReceivedQueryKey && ( isNewlyReceivedQueryKey || ! options.mergeQuery ) ) {
+				if (isReceivedQueryKey && (isNewlyReceivedQueryKey || !options.mergeQuery)) {
 					// We can save the effort testing against received items in
 					// the current query, since we know they'll match
 					return memo;
@@ -339,79 +336,77 @@ export default class QueryManager {
 
 				// Found counts should not be adjusted for the received query if
 				// merging into existing items
-				const shouldAdjustFoundCount = ! isReceivedQueryKey;
+				const shouldAdjustFoundCount = !isReceivedQueryKey;
 
-				const query = this.constructor.QueryKey.parse( queryKey );
+				const query = this.constructor.QueryKey.parse(queryKey);
 				let needsSort = false;
-				items.forEach( receivedItem => {
+				items.forEach((receivedItem) => {
 					// Find item in known data for query
-					const receivedItemKey = receivedItem[ this.options.itemKey ];
-					const updatedItem = nextItems[ receivedItemKey ];
-					const index = memo[ queryKey ].itemKeys.indexOf( receivedItemKey );
+					const receivedItemKey = receivedItem[this.options.itemKey];
+					const updatedItem = nextItems[receivedItemKey];
+					const index = memo[queryKey].itemKeys.indexOf(receivedItemKey);
 
-					if ( -1 !== index ) {
+					if (-1 !== index) {
 						// Item already exists in query, check to see whether the
 						// updated item is being removed or no longer matches
-						if ( ! updatedItem || ! this.constructor.matches( query, updatedItem ) ) {
+						if (!updatedItem || !this.constructor.matches(query, updatedItem)) {
 							// Create a copy of the original details to avoid mutating
-							if ( memo[ queryKey ] === queryDetails ) {
-								memo[ queryKey ] = clone( queryDetails );
+							if (memo[queryKey] === queryDetails) {
+								memo[queryKey] = clone(queryDetails);
 							}
 
 							// Omit item by slicing previous and next
-							memo[ queryKey ].itemKeys = [
-								...memo[ queryKey ].itemKeys.slice( 0, index ),
-								...memo[ queryKey ].itemKeys.slice( index + 1 ),
+							memo[queryKey].itemKeys = [
+								...memo[queryKey].itemKeys.slice(0, index),
+								...memo[queryKey].itemKeys.slice(index + 1),
 							];
 
 							// Decrement found count for query
-							if ( shouldAdjustFoundCount && Number.isFinite( memo[ queryKey ].found ) ) {
-								memo[ queryKey ].found--;
+							if (shouldAdjustFoundCount && Number.isFinite(memo[queryKey].found)) {
+								memo[queryKey].found--;
 							}
 						}
-					} else if ( updatedItem && this.constructor.matches( query, updatedItem ) ) {
+					} else if (updatedItem && this.constructor.matches(query, updatedItem)) {
 						// Item doesn't currently exist in query but is a match, so
 						// insert item into set
 
 						// Create a copy of the original details to avoid mutating
-						if ( memo[ queryKey ] === queryDetails ) {
-							memo[ queryKey ] = clone( queryDetails );
+						if (memo[queryKey] === queryDetails) {
+							memo[queryKey] = clone(queryDetails);
 						}
 
 						// Increment found count for query
-						if ( shouldAdjustFoundCount && Number.isFinite( memo[ queryKey ].found ) ) {
-							memo[ queryKey ].found++;
+						if (shouldAdjustFoundCount && Number.isFinite(memo[queryKey].found)) {
+							memo[queryKey].found++;
 						}
 
 						// A matching item should be inserted into the query set
-						memo[ queryKey ].itemKeys = get( memo, [ queryKey, 'itemKeys' ], [] ).concat(
-							receivedItemKey
-						);
+						memo[queryKey].itemKeys = get(memo, [queryKey, 'itemKeys'], []).concat(receivedItemKey);
 
 						// The itemKeys will need to be re-sorted after all items are processed
 						needsSort = true;
 					}
-				} );
+				});
 
-				if ( needsSort ) {
-					this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
+				if (needsSort) {
+					this.constructor.sort(memo[queryKey].itemKeys, nextItems, query);
 				}
 
-				isModified = isModified || memo[ queryKey ] !== queryDetails;
+				isModified = isModified || memo[queryKey] !== queryDetails;
 				return memo;
 			},
 			{}
 		);
 
-		if ( ! isModified ) {
+		if (!isModified) {
 			return this;
 		}
 
 		return new this.constructor(
-			Object.assign( {}, this.data, {
+			Object.assign({}, this.data, {
 				items: nextItems,
 				queries: nextQueries,
-			} ),
+			}),
 			this.options
 		);
 	}

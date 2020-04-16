@@ -15,15 +15,13 @@ import Main from 'components/main';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
-const NoPermissionsError = ( { title, translate } ) => (
+const NoPermissionsError = ({ title, translate }) => (
 	<Main>
-		{ title && <DocumentHead title={ title } /> }
+		{title && <DocumentHead title={title} />}
 		<SidebarNavigation />
 		<EmptyContent
-			title={ preventWidows( translate( "Oops! You don't have permission to manage plugins." ) ) }
-			line={ preventWidows(
-				translate( "If you think you should, contact this site's administrator." )
-			) }
+			title={preventWidows(translate("Oops! You don't have permission to manage plugins."))}
+			line={preventWidows(translate("If you think you should, contact this site's administrator."))}
 			illustration="/calypso/images/illustrations/error.svg"
 		/>
 	</Main>
@@ -34,4 +32,4 @@ NoPermissionsError.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( NoPermissionsError );
+export default localize(NoPermissionsError);

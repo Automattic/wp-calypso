@@ -25,10 +25,10 @@ import PostActionsEllipsisMenuCopyLink from './copy-link';
  */
 import './style.scss';
 
-export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
+export default function PostActionsEllipsisMenu({ globalId, includeDefaultActions, children }) {
 	let actions = [];
 
-	if ( includeDefaultActions ) {
+	if (includeDefaultActions) {
 		actions.push(
 			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuView key="view" />,
@@ -43,19 +43,19 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 		);
 	}
 
-	children = Children.toArray( children );
-	if ( children.length ) {
-		if ( actions.length ) {
-			actions.push( <PopoverMenuSeparator key="separator" /> );
+	children = Children.toArray(children);
+	if (children.length) {
+		if (actions.length) {
+			actions.push(<PopoverMenuSeparator key="separator" />);
 		}
 
-		actions = actions.concat( children );
+		actions = actions.concat(children);
 	}
 
 	return (
 		<div className="post-actions-ellipsis-menu">
-			<EllipsisMenu position="bottom left" disabled={ ! globalId }>
-				{ actions.map( action => cloneElement( action, { globalId } ) ) }
+			<EllipsisMenu position="bottom left" disabled={!globalId}>
+				{actions.map((action) => cloneElement(action, { globalId }))}
 			</EllipsisMenu>
 		</div>
 	);

@@ -24,7 +24,7 @@ class CalendarButton extends Component {
 		closeOnEsc: PropTypes.bool,
 		disabledDays: PropTypes.array,
 		events: PropTypes.array,
-		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
+		ignoreContext: PropTypes.shape({ getDOMNode: PropTypes.function }),
 		isVisible: PropTypes.bool,
 		selectedDay: PropTypes.object,
 		showDelay: PropTypes.number,
@@ -50,32 +50,32 @@ class CalendarButton extends Component {
 
 	state = { showPopover: false };
 
-	setDate = date => {
-		this.setState( { date } );
-		this.props.onDateChange( date );
+	setDate = (date) => {
+		this.setState({ date });
+		this.props.onDateChange(date);
 	};
 
 	closePopover = () => {
-		this.setState( { showPopover: false } );
+		this.setState({ showPopover: false });
 		this.props.onClose();
 	};
 
 	togglePopover = () => {
-		if ( this.props.disabled ) {
+		if (this.props.disabled) {
 			return;
 		}
 
-		this.setState( { showPopover: ! this.state.showPopover } );
+		this.setState({ showPopover: !this.state.showPopover });
 	};
 
 	buttonRef = React.createRef();
 
 	renderCalendarPopover() {
-		if ( ! this.state.showPopover ) {
+		if (!this.state.showPopover) {
 			return null;
 		}
 
-		const calendarProperties = pick( this.props, [
+		const calendarProperties = pick(this.props, [
 			'autoPosition',
 			'closeOnEsc',
 			'disabledDays',
@@ -93,27 +93,27 @@ class CalendarButton extends Component {
 			'onDayMouseLeave',
 			'onShow',
 			'onClose',
-		] );
+		]);
 
 		return (
 			<AsyncLoad
-				{ ...calendarProperties }
+				{...calendarProperties}
 				require="blocks/calendar-popover"
-				placeholder={ null }
+				placeholder={null}
 				isVisible
-				context={ this.buttonRef.current }
-				position={ this.props.popoverPosition }
-				onClose={ this.closePopover }
+				context={this.buttonRef.current}
+				position={this.props.popoverPosition}
+				onClose={this.closePopover}
 			/>
 		);
 	}
 
 	renderCalendarContent() {
-		return this.props.children ? this.props.children : <Gridicon icon={ this.props.icon } />;
+		return this.props.children ? this.props.children : <Gridicon icon={this.props.icon} />;
 	}
 
 	render() {
-		const buttonsProperties = pick( this.props, [
+		const buttonsProperties = pick(this.props, [
 			'compact',
 			'disabled',
 			'primary',
@@ -123,19 +123,19 @@ class CalendarButton extends Component {
 			'borderless',
 			'target',
 			'rel',
-		] );
+		]);
 
 		return (
 			<Fragment>
 				<Button
-					{ ...buttonsProperties }
-					className={ classNames( 'calendar-button', this.props.className ) }
-					ref={ this.buttonRef }
-					onClick={ this.togglePopover }
+					{...buttonsProperties}
+					className={classNames('calendar-button', this.props.className)}
+					ref={this.buttonRef}
+					onClick={this.togglePopover}
 				>
-					{ this.renderCalendarContent() }
+					{this.renderCalendarContent()}
 				</Button>
-				{ this.renderCalendarPopover() }
+				{this.renderCalendarPopover()}
 			</Fragment>
 		);
 	}

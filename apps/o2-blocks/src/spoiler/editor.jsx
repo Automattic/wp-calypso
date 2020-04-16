@@ -14,31 +14,31 @@ const blockAttributes = {
 	},
 };
 
-const save = ( { attributes: { summary } }, className ) => {
+const save = ({ attributes: { summary } }, className) => {
 	return (
-		<details className={ className }>
-			<RichText.Content tagName="summary" value={ summary || 'Click to show/hide' } />
-			<div style={ { marginTop: '1em' } }>
+		<details className={className}>
+			<RichText.Content tagName="summary" value={summary || 'Click to show/hide'} />
+			<div style={{ marginTop: '1em' }}>
 				<InnerBlocks.Content />
 			</div>
 		</details>
 	);
 };
 
-const edit = ( { attributes: { summary }, className, isSelected, setAttributes } ) => {
+const edit = ({ attributes: { summary }, className, isSelected, setAttributes }) => {
 	return (
-		<div className={ className }>
-			{ isSelected || ! summary ? (
+		<div className={className}>
+			{isSelected || !summary ? (
 				<RichText
 					tagName="heading"
 					placeholder="Enter a preview or description of what's hidden inside"
-					keepPlaceholderOnFocus={ true }
-					value={ summary }
-					onChange={ newSummary => setAttributes( { summary: newSummary } ) }
+					keepPlaceholderOnFocus={true}
+					value={summary}
+					onChange={(newSummary) => setAttributes({ summary: newSummary })}
 				/>
 			) : (
-				<RichText.Content tagName="heading" value={ summary } />
-			) }
+				<RichText.Content tagName="heading" value={summary} />
+			)}
 			<hr />
 			<InnerBlocks />
 		</div>
@@ -58,22 +58,22 @@ const blockAttributes_v1 = {
 	},
 };
 
-const migrate_v1 = () => ( {} );
+const migrate_v1 = () => ({});
 
-const save_v1 = ( { attributes: { hideId, showId }, className } ) => {
+const save_v1 = ({ attributes: { hideId, showId }, className }) => {
 	return (
-		<div className={ className }>
+		<div className={className}>
 			<a
-				href={ `#spoiler_block_hide_${ hideId }` }
+				href={`#spoiler_block_hide_${hideId}`}
 				className="hide btn"
-				id={ `spoiler_block_hide_${ hideId }` }
+				id={`spoiler_block_hide_${hideId}`}
 			>
 				Reveal hidden content
 			</a>
 			<a
-				href={ `#spoiler_block_show_${ showId }` }
+				href={`#spoiler_block_show_${showId}`}
 				className="show btn"
-				id={ `spoiler_block_show_${ showId }` }
+				id={`spoiler_block_show_${showId}`}
 			>
 				Hide content
 			</a>
@@ -84,12 +84,12 @@ const save_v1 = ( { attributes: { hideId, showId }, className } ) => {
 	);
 };
 
-registerBlockType( 'a8c/spoiler', {
-	title: __( 'Spoiler!' ),
+registerBlockType('a8c/spoiler', {
+	title: __('Spoiler!'),
 	icon: 'warning',
 	category: 'a8c',
-	description: __( 'Hide content until the reader wants to see it.' ),
-	keywords: [ __( 'spoiler' ) ],
+	description: __('Hide content until the reader wants to see it.'),
+	keywords: [__('spoiler')],
 	attributes: blockAttributes,
 	edit,
 	save,
@@ -100,4 +100,4 @@ registerBlockType( 'a8c/spoiler', {
 			save: save_v1,
 		},
 	],
-} );
+});

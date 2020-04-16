@@ -10,12 +10,12 @@ import wpcom from 'lib/wp';
  * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
-export function createPasswordlessUser( callback, { email } ) {
+export function createPasswordlessUser(callback, { email }) {
 	wpcom
 		.undocumented()
-		.usersEmailNew( { email }, null )
-		.then( response => callback( null, response ) )
-		.catch( err => callback( err ) );
+		.usersEmailNew({ email }, null)
+		.then((response) => callback(null, response))
+		.catch((err) => callback(err));
 }
 
 /**
@@ -24,12 +24,12 @@ export function createPasswordlessUser( callback, { email } ) {
  * @param {Function} callback Callback function
  * @param {object}   data     POST data object
  */
-export function verifyPasswordlessUser( callback, { email, code } ) {
+export function verifyPasswordlessUser(callback, { email, code }) {
 	wpcom
 		.undocumented()
-		.usersEmailVerification( { email, code }, null )
-		.then( response =>
-			callback( null, { email, username: email, bearer_token: response.token.access_token } )
+		.usersEmailVerification({ email, code }, null)
+		.then((response) =>
+			callback(null, { email, username: email, bearer_token: response.token.access_token })
 		)
-		.catch( err => callback( err ) );
+		.catch((err) => callback(err));
 }

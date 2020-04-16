@@ -20,18 +20,18 @@ class OrderEventsByDay extends Component {
 	};
 
 	onClick = () => {
-		this.props.onClick( this.props.date );
+		this.props.onClick(this.props.date);
 	};
 
 	render() {
 		const { count, date, isOpen, moment, translate } = this.props;
-		const displayDate = moment( date, 'YYYYMMDD' ).format( 'll' );
+		const displayDate = moment(date, 'YYYYMMDD').format('ll');
 
 		const header = (
 			<div>
-				<h3>{ displayDate }</h3>
+				<h3>{displayDate}</h3>
 				<small>
-					{ translate( '%(count)s event', '%(count)s events', { count, args: { count } } ) }
+					{translate('%(count)s event', '%(count)s events', { count, args: { count } })}
 				</small>
 			</div>
 		);
@@ -39,19 +39,19 @@ class OrderEventsByDay extends Component {
 		return (
 			<div className="order-activity-log__day">
 				<FoldableCard
-					onClick={ this.onClick }
+					onClick={this.onClick}
 					className="order-activity-log__day-header"
-					expanded={ isOpen }
-					header={ header }
-					screenReaderText={ translate( 'Show notes from %(date)s', {
+					expanded={isOpen}
+					header={header}
+					screenReaderText={translate('Show notes from %(date)s', {
 						args: { date: displayDate },
-					} ) }
+					})}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</FoldableCard>
 			</div>
 		);
 	}
 }
 
-export default localize( withLocalizedMoment( OrderEventsByDay ) );
+export default localize(withLocalizedMoment(OrderEventsByDay));

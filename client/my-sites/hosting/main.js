@@ -48,14 +48,14 @@ class Hosting extends Component {
 		clickOutside: false,
 	};
 
-	handleClickOutside( event ) {
+	handleClickOutside(event) {
 		const { COMPLETE } = transferStates;
 		const { isTransferring, transferState } = this.props;
 
-		if ( isTransferring && COMPLETE !== transferState ) {
+		if (isTransferring && COMPLETE !== transferState) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
-			this.setState( { clickOutside: true } );
+			this.setState({ clickOutside: true });
 		}
 	}
 
@@ -73,17 +73,17 @@ class Hosting extends Component {
 			transferState,
 		} = this.props;
 
-		if ( ! canViewAtomicHosting ) {
+		if (!canViewAtomicHosting) {
 			return null;
 		}
 
 		const getUpgradeBanner = () => (
 			<UpsellNudge
-				title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
+				title={translate('Upgrade to the Business plan to access all hosting features')}
 				event="calypso_hosting_configuration_upgrade_click"
-				href={ `/checkout/${ siteId }/business` }
-				plan={ PLAN_BUSINESS }
-				showIcon={ true }
+				href={`/checkout/${siteId}/business`}
+				plan={PLAN_BUSINESS}
+				showIcon={true}
 			/>
 		);
 
@@ -92,16 +92,16 @@ class Hosting extends Component {
 
 			// Transfer in progress
 			if (
-				( isTransferring && COMPLETE !== transferState ) ||
-				( isDisabled && COMPLETE === transferState )
+				(isTransferring && COMPLETE !== transferState) ||
+				(isDisabled && COMPLETE === transferState)
 			) {
-				if ( COMPLETE === transferState ) {
-					requestSiteById( siteId );
+				if (COMPLETE === transferState) {
+					requestSiteById(siteId);
 				}
 
-				let activationText = translate( 'Please wait while we activate the hosting features.' );
-				if ( this.state.clickOutside ) {
-					activationText = translate( "Don't leave quite yet! Just a bit longer." );
+				let activationText = translate('Please wait while we activate the hosting features.');
+				if (this.state.clickOutside) {
+					activationText = translate("Don't leave quite yet! Just a bit longer.");
 				}
 
 				return (
@@ -109,8 +109,8 @@ class Hosting extends Component {
 						<Notice
 							className="hosting__activating-notice"
 							status="is-info"
-							showDismiss={ false }
-							text={ activationText }
+							showDismiss={false}
+							text={activationText}
 							icon="sync"
 						/>
 					</>
@@ -120,32 +120,25 @@ class Hosting extends Component {
 			const failureNotice = FAILURE === transferState && (
 				<Notice
 					status="is-error"
-					showDismiss={ false }
-					text={ translate( 'There was an error activating hosting features.' ) }
+					showDismiss={false}
+					text={translate('There was an error activating hosting features.')}
 					icon="bug"
 				/>
 			);
 
-			if ( isDisabled && ! isTransferring ) {
+			if (isDisabled && !isTransferring) {
 				return (
 					<>
-						{ failureNotice }
+						{failureNotice}
 						<Notice
 							status="is-info"
-							showDismiss={ false }
-							text={ translate(
-								'Please activate the hosting access to begin using these features.'
-							) }
+							showDismiss={false}
+							text={translate('Please activate the hosting access to begin using these features.')}
 							icon="globe"
 						>
-							<TrackComponentView
-								eventName={ 'calypso_hosting_configuration_activate_impression' }
-							/>
-							<NoticeAction
-								onClick={ clickActivate }
-								href={ `/hosting-config/activate/${ siteSlug }` }
-							>
-								{ translate( 'Activate' ) }
+							<TrackComponentView eventName={'calypso_hosting_configuration_activate_impression'} />
+							<NoticeAction onClick={clickActivate} href={`/hosting-config/activate/${siteSlug}`}>
+								{translate('Activate')}
 							</NoticeAction>
 						</Notice>
 					</>
@@ -160,13 +153,13 @@ class Hosting extends Component {
 				<WrapperComponent>
 					<div className="hosting__layout">
 						<div className="hosting__layout-col">
-							<SFTPCard disabled={ isDisabled } />
-							<PhpMyAdminCard disabled={ isDisabled } />
-							<PhpVersionCard disabled={ isDisabled } />
-							<MiscellaneousCard disabled={ isDisabled } />
+							<SFTPCard disabled={isDisabled} />
+							<PhpMyAdminCard disabled={isDisabled} />
+							<PhpVersionCard disabled={isDisabled} />
+							<MiscellaneousCard disabled={isDisabled} />
 						</div>
 						<div className="hosting__layout-col">
-							<SiteBackupCard disabled={ isDisabled } />
+							<SiteBackupCard disabled={isDisabled} />
 							<SupportCard />
 						</div>
 					</div>
@@ -177,36 +170,34 @@ class Hosting extends Component {
 		return (
 			<Main className="hosting is-wide-layout">
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
-				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
+				<DocumentHead title={translate('Hosting Configuration')} />
 				<SidebarNavigation />
 				<FormattedHeader
-					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={ translate(
-						'Access your website’s database and more advanced settings.'
-					) }
+					headerText={translate('Hosting Configuration')}
+					subHeaderText={translate('Access your website’s database and more advanced settings.')}
 					align="left"
 				/>
-				{ isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner() }
-				{ getContent() }
+				{isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner()}
+				{getContent()}
 			</Main>
 		);
 	}
 }
 
 export const clickActivate = () =>
-	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
+	recordTracksEvent('calypso_hosting_configuration_activate_click');
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			transferState: getAutomatedTransferStatus( state, siteId ),
-			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
-			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
-			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
-			siteSlug: getSelectedSiteSlug( state ),
+			transferState: getAutomatedTransferStatus(state, siteId),
+			isTransferring: isAutomatedTransferActive(state, siteId),
+			isDisabled: !isSiteAutomatedTransfer(state, siteId),
+			isOnAtomicPlan: isSiteOnAtomicPlan(state, siteId),
+			canViewAtomicHosting: canSiteViewAtomicHosting(state),
+			siteSlug: getSelectedSiteSlug(state),
 			siteId,
 		};
 	},
@@ -214,4 +205,4 @@ export default connect(
 		clickActivate,
 		requestSiteById: requestSite,
 	}
-)( localize( wrapWithClickOutside( Hosting ) ) );
+)(localize(wrapWithClickOutside(Hosting)));

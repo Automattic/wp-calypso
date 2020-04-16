@@ -15,15 +15,11 @@ class ViewersList extends React.PureComponent {
 
 	render() {
 		return (
-			<ViewersData
-				site={ this.props.site }
-				siteId={ this.props.site.ID }
-				label={ this.props.label }
-			>
+			<ViewersData site={this.props.site} siteId={this.props.site.ID} label={this.props.label}>
 				<Viewers />
 			</ViewersData>
 		);
 	}
 }
 
-export default localize( ViewersList );
+export default localize(ViewersList);

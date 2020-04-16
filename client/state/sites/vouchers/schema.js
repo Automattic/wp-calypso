@@ -14,7 +14,7 @@ export const itemsSchema = {
 					items: {
 						//state.sites.vouchers.items[ siteId ][ serviceType ] = [ {} ];
 						type: 'object',
-						required: [ 'assigned', 'assigned_by' ],
+						required: ['assigned', 'assigned_by'],
 						additionalProperties: false,
 						properties: {
 							assigned: { type: 'string' },

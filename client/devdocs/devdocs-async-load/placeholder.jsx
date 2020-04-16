@@ -20,11 +20,11 @@ export default class DevdocsAsyncLoadPlaceholder extends React.PureComponent {
 	render() {
 		return (
 			<Main className="devdocs devdocs-async-load__placeholder">
-				{ range( this.props.count ).map( ( element, index ) => (
-					<div key={ `devdocs-placeholder-index-${ index }` }>
+				{range(this.props.count).map((element, index) => (
+					<div key={`devdocs-placeholder-index-${index}`}>
 						<SitePlaceholder />
 					</div>
-				) ) }
+				))}
 			</Main>
 		);
 	}

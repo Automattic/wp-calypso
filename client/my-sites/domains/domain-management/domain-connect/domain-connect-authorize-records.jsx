@@ -39,12 +39,12 @@ class DomainConnectAuthorizeRecords extends Component {
 		);
 	};
 
-	renderDnsRecords = records => {
+	renderDnsRecords = (records) => {
 		return (
 			<DnsRecordsList>
-				{ records.map( ( record, index ) => (
-					<DomainConnectDnsRecord key={ index } domain={ this.props.domain } dnsRecord={ record } />
-				) ) }
+				{records.map((record, index) => (
+					<DomainConnectDnsRecord key={index} domain={this.props.domain} dnsRecord={record} />
+				))}
 			</DnsRecordsList>
 		);
 	};
@@ -52,17 +52,17 @@ class DomainConnectAuthorizeRecords extends Component {
 	renderConflictingRecords = () => {
 		const { dnsTemplateConflicts, translate } = this.props;
 
-		if ( dnsTemplateConflicts && dnsTemplateConflicts.length && this.state.recordsVisible ) {
+		if (dnsTemplateConflicts && dnsTemplateConflicts.length && this.state.recordsVisible) {
 			return (
 				<Card className="domain-connect__dns-records">
-					<p>{ translate( "We're going to remove or replace these records:" ) }</p>
-					{ this.renderDnsRecords( dnsTemplateConflicts ) }
+					<p>{translate("We're going to remove or replace these records:")}</p>
+					{this.renderDnsRecords(dnsTemplateConflicts)}
 					<p>
-						{ translate(
+						{translate(
 							'The services that these records were used for may no longer work if they ' +
 								'are removed. If you are trying to switch from one service provider to another ' +
 								'this is probably what you want to do.'
-						) }
+						)}
 					</p>
 				</Card>
 			);
@@ -74,11 +74,11 @@ class DomainConnectAuthorizeRecords extends Component {
 	renderDnsTemplateRecords = () => {
 		const { dnsTemplateRecords, translate } = this.props;
 
-		if ( this.state.recordsVisible ) {
+		if (this.state.recordsVisible) {
 			return (
 				<Card className="domain-connect__dns-records">
-					<p>{ translate( "We're going add these records:" ) }</p>
-					{ this.renderDnsRecords( dnsTemplateRecords ) }
+					<p>{translate("We're going add these records:")}</p>
+					{this.renderDnsRecords(dnsTemplateRecords)}
 				</Card>
 			);
 		}
@@ -87,20 +87,20 @@ class DomainConnectAuthorizeRecords extends Component {
 	};
 
 	toggleRecordsVisible = () => {
-		this.setState( { recordsVisible: ! this.state.recordsVisible } );
+		this.setState({ recordsVisible: !this.state.recordsVisible });
 	};
 
 	render() {
 		const { dnsTemplateRecords, isPlaceholder, translate } = this.props,
 			showRecordsLinkText = this.state.recordsVisible
-				? translate( 'Hide Changes.' )
-				: translate( 'View Changes.' );
+				? translate('Hide Changes.')
+				: translate('View Changes.');
 
-		if ( isPlaceholder ) {
+		if (isPlaceholder) {
 			return this.placeholder();
 		}
 
-		if ( ! ( dnsTemplateRecords && dnsTemplateRecords.length ) ) {
+		if (!(dnsTemplateRecords && dnsTemplateRecords.length)) {
 			return null;
 		}
 
@@ -109,20 +109,20 @@ class DomainConnectAuthorizeRecords extends Component {
 			<div>
 				<p>
 					<span>
-						{ translate(
+						{translate(
 							"To set up this service, we're going to make some changes to the " +
 								'the DNS records for your domain.'
-						) }
+						)}
 					</span>
 					&nbsp;
-					<a onClick={ this.toggleRecordsVisible }>{ showRecordsLinkText }</a>
+					<a onClick={this.toggleRecordsVisible}>{showRecordsLinkText}</a>
 				</p>
-				{ this.renderDnsTemplateRecords() }
-				{ this.renderConflictingRecords() }
+				{this.renderDnsTemplateRecords()}
+				{this.renderConflictingRecords()}
 			</div>
 		);
 		/* eslint-enable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 	}
 }
 
-export default localize( DomainConnectAuthorizeRecords );
+export default localize(DomainConnectAuthorizeRecords);

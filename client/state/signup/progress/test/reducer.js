@@ -12,24 +12,24 @@ import {
 } from 'state/action-types';
 
 // Mock necessary for testing certain utils
-jest.mock( 'signup/config/flows-pure', () => ( {
+jest.mock('signup/config/flows-pure', () => ({
 	'new-flow': {
-		steps: [ 'something', 'everything' ],
+		steps: ['something', 'everything'],
 	},
-} ) );
+}));
 
 // Mock necessary for testing step submission behavior
-jest.mock( 'signup/config/steps-pure', () => ( {
+jest.mock('signup/config/steps-pure', () => ({
 	stepWithAPI: { apiRequestFunction: () => {} },
 	stepWithoutAPI: {},
-} ) );
+}));
 
-describe( 'reducer', () => {
-	test( 'should return an empty object at first', () => {
-		expect( Object.keys( reducer( undefined, { type: 'init' } ) ) ).toHaveLength( 0 );
-	} );
+describe('reducer', () => {
+	test('should return an empty object at first', () => {
+		expect(Object.keys(reducer(undefined, { type: 'init' }))).toHaveLength(0);
+	});
 
-	test( 'should store a new step', () => {
+	test('should store a new step', () => {
 		const initialState = {};
 		const action = {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,
@@ -38,12 +38,12 @@ describe( 'reducer', () => {
 				formData: { url: 'my-site.wordpress.com' },
 			},
 		};
-		const finalState = reducer( initialState, action );
-		expect( Object.keys( finalState ) ).toHaveLength( 1 );
-		expect( finalState[ 'site-selection' ].stepName ).toBe( 'site-selection' );
-	} );
+		const finalState = reducer(initialState, action);
+		expect(Object.keys(finalState)).toHaveLength(1);
+		expect(finalState['site-selection'].stepName).toBe('site-selection');
+	});
 
-	test( 'should not store the same step twice', () => {
+	test('should not store the same step twice', () => {
 		const actions = [
 			{
 				type: SIGNUP_PROGRESS_SUBMIT_STEP,
@@ -60,17 +60,17 @@ describe( 'reducer', () => {
 			},
 		];
 
-		const state = actions.reduce( reducer, [] );
+		const state = actions.reduce(reducer, []);
 
-		expect( Object.keys( state ) ).toHaveLength( 1 );
-		expect( state[ 'site-selection' ] ).toMatchObject( {
+		expect(Object.keys(state)).toHaveLength(1);
+		expect(state['site-selection']).toMatchObject({
 			stepName: 'site-selection',
 			formData: { url: 'my-site.wordpress.com' },
 			status: 'completed',
-		} );
-	} );
+		});
+	});
 
-	test( 'should store multiple steps', () => {
+	test('should store multiple steps', () => {
 		const actions = [
 			{
 				type: SIGNUP_PROGRESS_SUBMIT_STEP,
@@ -82,14 +82,14 @@ describe( 'reducer', () => {
 			},
 		];
 
-		const state = actions.reduce( reducer, [] );
+		const state = actions.reduce(reducer, []);
 
-		expect( Object.keys( state ) ).toHaveLength( 2 );
-		expect( state[ 'site-selection' ].stepName ).toBe( 'site-selection' );
-		expect( state[ 'theme-selection' ].stepName ).toBe( 'theme-selection' );
-	} );
+		expect(Object.keys(state)).toHaveLength(2);
+		expect(state['site-selection'].stepName).toBe('site-selection');
+		expect(state['theme-selection'].stepName).toBe('theme-selection');
+	});
 
-	test( 'should mark only new saved steps as in-progress', () => {
+	test('should mark only new saved steps as in-progress', () => {
 		const actions = [
 			{
 				type: SIGNUP_PROGRESS_SUBMIT_STEP,
@@ -107,39 +107,39 @@ describe( 'reducer', () => {
 			},
 		];
 
-		const state = actions.reduce( reducer, [] );
+		const state = actions.reduce(reducer, []);
 
-		expect( state[ 'site-selection' ].status ).not.toBe( 'in-progress' );
-		expect( state[ 'last-step' ].status ).toBe( 'in-progress' );
-	} );
+		expect(state['site-selection'].status).not.toBe('in-progress');
+		expect(state['last-step'].status).toBe('in-progress');
+	});
 
-	test( 'should set the status of a signup step', () => {
+	test('should set the status of a signup step', () => {
 		let state = {};
 
-		state = reducer( state, {
+		state = reducer(state, {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,
 			step: { stepName: 'site-selection' },
-		} );
-		expect( state[ 'site-selection' ].status ).toBe( 'completed' );
+		});
+		expect(state['site-selection'].status).toBe('completed');
 
-		state = reducer( state, {
+		state = reducer(state, {
 			type: SIGNUP_PROGRESS_COMPLETE_STEP,
 			step: { stepName: 'site-selection' },
-		} );
-		expect( state[ 'site-selection' ].status ).toBe( 'completed' );
-	} );
+		});
+		expect(state['site-selection'].status).toBe('completed');
+	});
 
-	describe( 'setting and resetting the state', () => {
-		test( 'should handle resetting the state', () => {
+	describe('setting and resetting the state', () => {
+		test('should handle resetting the state', () => {
 			const initialState = { test: { test: 123 } };
 			const action = { type: SIGNUP_COMPLETE_RESET };
 			const finalState = {};
-			expect( reducer( initialState, action ) ).toEqual( finalState );
-		} );
-	} );
+			expect(reducer(initialState, action)).toEqual(finalState);
+		});
+	});
 
-	describe( 'completing a step', () => {
-		test( 'should mark the new step with the "completed" status', () => {
+	describe('completing a step', () => {
+		test('should mark the new step with the "completed" status', () => {
 			const initialState = { example: { stepName: 'example', status: 'something' } };
 			const action = {
 				type: SIGNUP_PROGRESS_COMPLETE_STEP,
@@ -148,38 +148,38 @@ describe( 'reducer', () => {
 			const finalState = {
 				example: { stepName: 'example', exampleValue: 'some value', status: 'completed' },
 			};
-			expect( reducer( initialState, action ) ).toEqual( finalState );
-		} );
-		test( 'should not add a new step if no steps match by name', () => {
+			expect(reducer(initialState, action)).toEqual(finalState);
+		});
+		test('should not add a new step if no steps match by name', () => {
 			const initialState = { example: { stepName: 'example', status: 'something' } };
 			const action = {
 				type: SIGNUP_PROGRESS_COMPLETE_STEP,
 				step: { stepName: 'differentName', exampleValue: 'some value' },
 			};
-			expect( reducer( initialState, action ) ).toEqual( initialState );
-		} );
-	} );
+			expect(reducer(initialState, action)).toEqual(initialState);
+		});
+	});
 
-	describe( 'invalidating a step', () => {
-		test( "should add a step with error data and 'invalid' status if the step's name is unique", () => {
+	describe('invalidating a step', () => {
+		test("should add a step with error data and 'invalid' status if the step's name is unique", () => {
 			const initialState = { whatever: { stepName: 'whatever' } };
 			const action = {
 				type: SIGNUP_PROGRESS_INVALIDATE_STEP,
 				step: { stepName: 'something' },
-				errors: [ new Error( 'something' ) ],
+				errors: [new Error('something')],
 			};
 			const finalState = {
 				whatever: { stepName: 'whatever' },
 				something: {
 					stepName: 'something',
 					status: 'invalid',
-					errors: [ new Error( 'something' ) ],
+					errors: [new Error('something')],
 				},
 			};
-			expect( reducer( initialState, action ) ).toEqual( finalState );
-		} );
+			expect(reducer(initialState, action)).toEqual(finalState);
+		});
 
-		test( "should update a step with error data and 'invalid' status if the step's name is not unique", () => {
+		test("should update a step with error data and 'invalid' status if the step's name is not unique", () => {
 			const initialState = {
 				something: {
 					stepName: 'something',
@@ -188,22 +188,22 @@ describe( 'reducer', () => {
 			const action = {
 				type: SIGNUP_PROGRESS_INVALIDATE_STEP,
 				step: { stepName: 'something', value: 'example' },
-				errors: [ new Error( 'something' ) ],
+				errors: [new Error('something')],
 			};
 			const finalState = {
 				something: {
-					errors: [ new Error( 'something' ) ],
+					errors: [new Error('something')],
 					status: 'invalid',
 					stepName: 'something',
 					value: 'example',
 				},
 			};
-			expect( reducer( initialState, action ) ).toEqual( finalState );
-		} );
-	} );
+			expect(reducer(initialState, action)).toEqual(finalState);
+		});
+	});
 
-	describe( 'processing a step', () => {
-		test( 'should update the step with a "processing" status', () => {
+	describe('processing a step', () => {
+		test('should update the step with a "processing" status', () => {
 			const initialState = {
 				example: {
 					stepName: 'example',
@@ -217,10 +217,10 @@ describe( 'reducer', () => {
 			const finalState = {
 				example: { stepName: 'example', exampleValue: 'some value', status: 'processing' },
 			};
-			expect( reducer( initialState, action ) ).toEqual( finalState );
-		} );
+			expect(reducer(initialState, action)).toEqual(finalState);
+		});
 
-		test( 'should not add a new step if no steps match by name', () => {
+		test('should not add a new step if no steps match by name', () => {
 			const initialState = {
 				example: {
 					stepName: 'example',
@@ -231,24 +231,24 @@ describe( 'reducer', () => {
 				type: SIGNUP_PROGRESS_PROCESS_STEP,
 				step: { stepName: 'differentName', exampleValue: 'some value' },
 			};
-			expect( reducer( initialState, action ) ).toEqual( initialState );
-		} );
-	} );
+			expect(reducer(initialState, action)).toEqual(initialState);
+		});
+	});
 
-	describe( 'saving a step', () => {
-		describe( 'saving a new step', () => {
-			test( 'should add a new step to the state if step name is unique', () => {
+	describe('saving a step', () => {
+		describe('saving a new step', () => {
+			test('should add a new step to the state if step name is unique', () => {
 				const initialState = { whatever: { stepName: 'whatever' } };
 				const action = {
 					type: SIGNUP_PROGRESS_SAVE_STEP,
 					step: { stepName: 'something' },
 				};
-				const state = reducer( initialState, action );
-				expect( Object.keys( state ) ).toHaveLength( 2 );
-				expect( state.something ).toBeTruthy();
-				expect( state.whatever ).toBeTruthy();
-			} );
-			test( 'should mark the new step with an "in-progress" status', () => {
+				const state = reducer(initialState, action);
+				expect(Object.keys(state)).toHaveLength(2);
+				expect(state.something).toBeTruthy();
+				expect(state.whatever).toBeTruthy();
+			});
+			test('should mark the new step with an "in-progress" status', () => {
 				const initialState = { whatever: { stepName: 'whatever' } };
 				const action = {
 					type: SIGNUP_PROGRESS_SAVE_STEP,
@@ -258,11 +258,11 @@ describe( 'reducer', () => {
 					whatever: { stepName: 'whatever' },
 					something: { stepName: 'something', status: 'in-progress' },
 				};
-				expect( reducer( initialState, action ) ).toEqual( finalState );
-			} );
-		} );
-		describe( 'saving an existing step', () => {
-			test( 'should update the existing step with the provided data', () => {
+				expect(reducer(initialState, action)).toEqual(finalState);
+			});
+		});
+		describe('saving an existing step', () => {
+			test('should update the existing step with the provided data', () => {
 				const initialState = { whatever: { stepName: 'whatever', oldValue: 'example' } };
 				const action = {
 					type: SIGNUP_PROGRESS_SAVE_STEP,
@@ -271,14 +271,14 @@ describe( 'reducer', () => {
 				const finalState = {
 					whatever: { newValue: 'example', oldValue: 'example', stepName: 'whatever' },
 				};
-				expect( reducer( initialState, action ) ).toEqual( finalState );
-			} );
-		} );
-	} );
+				expect(reducer(initialState, action)).toEqual(finalState);
+			});
+		});
+	});
 
-	describe( 'submitting a step', () => {
-		describe( 'saving a new step', () => {
-			test( 'should update the step with a "pending" status if the step has a corresponding API request function', () => {
+	describe('submitting a step', () => {
+		describe('saving a new step', () => {
+			test('should update the step with a "pending" status if the step has a corresponding API request function', () => {
 				const initialState = { 'some-step': { stepName: 'some-step' } };
 				const action = {
 					type: SIGNUP_PROGRESS_SUBMIT_STEP,
@@ -288,9 +288,9 @@ describe( 'reducer', () => {
 					'some-step': { stepName: 'some-step' },
 					stepWithAPI: { stepName: 'stepWithAPI', updateValue: 'some value', status: 'pending' },
 				};
-				expect( reducer( initialState, action ) ).toEqual( finalState );
-			} );
-			test( 'should update the step with a "completed" status if the step does not have a corresponding API request function', () => {
+				expect(reducer(initialState, action)).toEqual(finalState);
+			});
+			test('should update the step with a "completed" status if the step does not have a corresponding API request function', () => {
 				const initialState = { 'some-step': { stepName: 'some-step' } };
 				const action = {
 					type: SIGNUP_PROGRESS_SUBMIT_STEP,
@@ -304,11 +304,11 @@ describe( 'reducer', () => {
 						status: 'completed',
 					},
 				};
-				expect( reducer( initialState, action ) ).toEqual( finalState );
-			} );
-		} );
-		describe( 'saving an existing step', () => {
-			test( 'should update the step with a "pending" status if the step has a corresponding API request function', () => {
+				expect(reducer(initialState, action)).toEqual(finalState);
+			});
+		});
+		describe('saving an existing step', () => {
+			test('should update the step with a "pending" status if the step has a corresponding API request function', () => {
 				// It should also drop the wasSkipped value
 				const initialState = {
 					stepWithAPI: {
@@ -326,9 +326,9 @@ describe( 'reducer', () => {
 				const finalState = {
 					stepWithAPI: { stepName: 'stepWithAPI', updateValue: 'some value', status: 'pending' },
 				};
-				expect( reducer( initialState, action ) ).toEqual( finalState );
-			} );
-			test( 'should update the step with a "completed" status if the step does not have a corresponding API request function', () => {
+				expect(reducer(initialState, action)).toEqual(finalState);
+			});
+			test('should update the step with a "completed" status if the step does not have a corresponding API request function', () => {
 				// It should also drop the wasSkipped value
 				const initialState = {
 					stepWithoutAPI: {
@@ -347,8 +347,8 @@ describe( 'reducer', () => {
 						status: 'completed',
 					},
 				};
-				expect( reducer( initialState, action ) ).toEqual( finalState );
-			} );
-		} );
-	} );
-} );
+				expect(reducer(initialState, action)).toEqual(finalState);
+			});
+		});
+	});
+});

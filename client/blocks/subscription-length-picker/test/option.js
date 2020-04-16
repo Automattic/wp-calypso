@@ -1,8 +1,8 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock('lib/abtest', () => ({
 	abtest: () => '',
-} ) );
+}));
 
-const translate = x => x;
+const translate = (x) => x;
 
 /**
  * External dependencies
@@ -16,55 +16,55 @@ import { TERM_1_YEAR } from 'lib/plans/constants';
  */
 import { SubscriptionLengthOption } from '../option';
 
-describe( 'TermPickerOpton basic tests', () => {
-	test( 'should have term-picker-picker__option class', () => {
+describe('TermPickerOpton basic tests', () => {
+	test('should have term-picker-picker__option class', () => {
 		const option = shallow(
 			<SubscriptionLengthOption
-				term={ TERM_1_YEAR }
-				price={ 120 }
-				pricePerMonth={ 10 }
-				translate={ translate }
+				term={TERM_1_YEAR}
+				price={120}
+				pricePerMonth={10}
+				translate={translate}
 			/>
 		);
-		expect( option.find( '.subscription-length-picker__option' ) ).toHaveLength( 1 );
-	} );
-	test( 'should display save badge if savePercent is specified', () => {
+		expect(option.find('.subscription-length-picker__option')).toHaveLength(1);
+	});
+	test('should display save badge if savePercent is specified', () => {
 		const option = shallow(
 			<SubscriptionLengthOption
-				term={ TERM_1_YEAR }
-				price={ 120 }
-				pricePerMonth={ 10 }
-				savePercent={ 65 }
-				translate={ translate }
+				term={TERM_1_YEAR}
+				price={120}
+				pricePerMonth={10}
+				savePercent={65}
+				translate={translate}
 			/>
 		);
-		expect( option.find( 'Badge' ) ).toHaveLength( 1 );
-	} );
-	test( 'should say "{price} / month" if savePercent is not specified', () => {
+		expect(option.find('Badge')).toHaveLength(1);
+	});
+	test('should say "{price} / month" if savePercent is not specified', () => {
 		const option = shallow(
 			<SubscriptionLengthOption
-				term={ TERM_1_YEAR }
-				price={ 120 }
-				pricePerMonth={ 10 }
-				translate={ translate }
+				term={TERM_1_YEAR}
+				price={120}
+				pricePerMonth={10}
+				translate={translate}
 			/>
 		);
-		expect( option.find( '.subscription-length-picker__option-side-note' ).text() ).toEqual(
+		expect(option.find('.subscription-length-picker__option-side-note').text()).toEqual(
 			'%(price)s / month'
 		);
-	} );
-	test( 'should say "only {price} / month" if savePercent is specified', () => {
+	});
+	test('should say "only {price} / month" if savePercent is specified', () => {
 		const option = shallow(
 			<SubscriptionLengthOption
-				term={ TERM_1_YEAR }
-				price={ 120 }
-				pricePerMonth={ 10 }
-				savePercent={ 65 }
-				translate={ translate }
+				term={TERM_1_YEAR}
+				price={120}
+				pricePerMonth={10}
+				savePercent={65}
+				translate={translate}
 			/>
 		);
-		expect( option.find( '.subscription-length-picker__option-side-note' ).text() ).toEqual(
+		expect(option.find('.subscription-length-picker__option-side-note').text()).toEqual(
 			'only %(price)s / month'
 		);
-	} );
-} );
+	});
+});

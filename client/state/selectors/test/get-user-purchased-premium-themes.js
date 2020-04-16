@@ -8,9 +8,9 @@ import deepFreeze from 'deep-freeze';
  */
 import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
 
-describe( 'getUserPurchasedPremiumThemes', () => {
+describe('getUserPurchasedPremiumThemes', () => {
 	const targetUserId = 123;
-	const examplePurchases = deepFreeze( [
+	const examplePurchases = deepFreeze([
 		{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId },
 		{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId },
 		{
@@ -20,9 +20,9 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			blog_id: 1337,
 			user_id: targetUserId,
 		},
-	] );
+	]);
 
-	test( 'should return an empty array because there are no purchases', () => {
+	test('should return an empty array because there are no purchases', () => {
 		const state = {
 			purchases: {
 				data: [],
@@ -34,10 +34,10 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		expect( getUserPurchasedPremiumThemes( state, targetUserId ) ).toEqual( [] );
-	} );
+		expect(getUserPurchasedPremiumThemes(state, targetUserId)).toEqual([]);
+	});
 
-	test( 'should return false because the data is not ready', () => {
+	test('should return false because the data is not ready', () => {
 		const state = {
 			purchases: {
 				data: examplePurchases,
@@ -49,10 +49,10 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		expect( getUserPurchasedPremiumThemes( state, targetUserId ) ).toBe( false );
-	} );
+		expect(getUserPurchasedPremiumThemes(state, targetUserId)).toBe(false);
+	});
 
-	test( 'should return an array of themes because there is a theme purchase for the specified user', () => {
+	test('should return an array of themes because there is a theme purchase for the specified user', () => {
 		const state = {
 			purchases: {
 				data: examplePurchases,
@@ -64,13 +64,13 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, targetUserId );
-		expect( purchasedPremiumThemes.length ).toBe( 1 );
-		expect( purchasedPremiumThemes[ 0 ] ).toMatchObject( {
+		const purchasedPremiumThemes = getUserPurchasedPremiumThemes(state, targetUserId);
+		expect(purchasedPremiumThemes.length).toBe(1);
+		expect(purchasedPremiumThemes[0]).toMatchObject({
 			id: 3,
 			productName: 'premium theme',
 			productSlug: 'premium_theme',
 			userId: targetUserId,
-		} );
-	} );
-} );
+		});
+	});
+});

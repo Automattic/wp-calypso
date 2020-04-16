@@ -43,15 +43,15 @@ class ThemeSelectionStep extends Component {
 		translate: identity,
 	};
 
-	pickTheme = themeId => {
+	pickTheme = (themeId) => {
 		const { useHeadstart } = this.props;
-		const theme = find( themes, { slug: themeId } );
-		const repoSlug = `${ theme.repo }/${ theme.slug }`;
+		const theme = find(themes, { slug: themeId });
+		const repoSlug = `${theme.repo}/${theme.slug}`;
 
-		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
+		analytics.tracks.recordEvent('calypso_signup_theme_select', {
 			theme: repoSlug,
 			headstart: useHeadstart,
-		} );
+		});
 
 		this.props.submitSignupStep(
 			{
@@ -70,10 +70,10 @@ class ThemeSelectionStep extends Component {
 	renderThemesList() {
 		return (
 			<SignupThemesList
-				surveyQuestion={ this.props.chosenSurveyVertical }
-				designType={ this.props.designType || this.props.signupDependencies.designType }
-				handleScreenshotClick={ this.pickTheme }
-				quantity={ this.props.quantity }
+				surveyQuestion={this.props.chosenSurveyVertical}
+				designType={this.props.designType || this.props.signupDependencies.designType}
+				handleScreenshotClick={this.pickTheme}
+				quantity={this.props.quantity}
 			/>
 		);
 	}
@@ -81,7 +81,7 @@ class ThemeSelectionStep extends Component {
 	renderJetpackButton() {
 		return (
 			<Button compact href="/jetpack/connect">
-				{ this.props.translate( 'Or Install Jetpack on a Self-Hosted Site' ) }
+				{this.props.translate('Or Install Jetpack on a Self-Hosted Site')}
 			</Button>
 		);
 	}
@@ -90,27 +90,27 @@ class ThemeSelectionStep extends Component {
 		const { signupDependencies = {} } = this.props;
 
 		return (
-			isEnabled( 'signup/atomic-store-flow' ) &&
-			( this.props.designType === 'store' || signupDependencies.designType === 'store' )
+			isEnabled('signup/atomic-store-flow') &&
+			(this.props.designType === 'store' || signupDependencies.designType === 'store')
 		);
 	}
 
 	headerText() {
 		const { flowName, translate } = this.props;
 
-		if ( this.isStoreSignup() ) {
-			return translate( 'Choose a store theme.' );
-		} else if ( flowName === 'test-fse' ) {
-			return translate( 'Pick your site design' );
+		if (this.isStoreSignup()) {
+			return translate('Choose a store theme.');
+		} else if (flowName === 'test-fse') {
+			return translate('Pick your site design');
 		}
-		return translate( 'Choose a theme.' );
+		return translate('Choose a theme.');
 	}
 
 	headerTextIfFirstStep() {
 		const { flowName, translate } = this.props;
 
-		if ( flowName === 'test-fse' ) {
-			return translate( "Let's get started by picking your site design" );
+		if (flowName === 'test-fse') {
+			return translate("Let's get started by picking your site design");
 		}
 
 		// Use the default header text
@@ -120,12 +120,12 @@ class ThemeSelectionStep extends Component {
 	subHeaderText() {
 		const { flowName, translate } = this.props;
 
-		if ( this.isStoreSignup() ) {
-			return translate( 'Pick one of our store themes to start with. You can change this later.', {
+		if (this.isStoreSignup()) {
+			return translate('Pick one of our store themes to start with. You can change this later.', {
 				context: 'Themes step subheader in Signup',
-			} );
-		} else if ( flowName === 'test-fse' ) {
-			return translate( "You'll be able to customize your new site in hundreds of ways." );
+			});
+		} else if (flowName === 'test-fse') {
+			return translate("You'll be able to customize your new site in hundreds of ways.");
 		}
 		return translate(
 			'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
@@ -148,25 +148,25 @@ class ThemeSelectionStep extends Component {
 
 		return (
 			<StepWrapper
-				fallbackHeaderText={ headerText }
-				headerText={ headerTextIfFirstStep }
-				fallbackSubHeaderText={ subHeaderText }
-				subHeaderText={ subHeaderText }
-				stepContent={ this.renderThemesList() }
-				defaultDependencies={ defaultDependencies }
-				headerButton={ this.renderJetpackButton() }
-				{ ...this.props }
+				fallbackHeaderText={headerText}
+				headerText={headerTextIfFirstStep}
+				fallbackSubHeaderText={subHeaderText}
+				subHeaderText={subHeaderText}
+				stepContent={this.renderThemesList()}
+				defaultDependencies={defaultDependencies}
+				headerButton={this.renderJetpackButton()}
+				{...this.props}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => ( {
-		chosenSurveyVertical: getSurveyVertical( state ),
-		currentUser: getCurrentUser( state ),
-		designType: props.designType || getDesignType( state ),
-		dependencyStore: getSignupDependencyStore( state ),
-	} ),
+	(state, props) => ({
+		chosenSurveyVertical: getSurveyVertical(state),
+		currentUser: getCurrentUser(state),
+		designType: props.designType || getDesignType(state),
+		dependencyStore: getSignupDependencyStore(state),
+	}),
 	{ submitSignupStep }
-)( localize( ThemeSelectionStep ) );
+)(localize(ThemeSelectionStep));

@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {number}  siteId      The ID of the site we're querying
  * @returns {boolean}             Whether connection status is currently being requested for that site.
  */
-export default function isRequestingSiteConnectionStatus( state, siteId ) {
-	return get( state.sites.connection.requesting, siteId, false );
+export default function isRequestingSiteConnectionStatus(state, siteId) {
+	return get(state.sites.connection.requesting, siteId, false);
 }

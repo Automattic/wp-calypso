@@ -43,73 +43,73 @@ export class SiteStyleStep extends Component {
 	};
 
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep({ stepName: this.props.stepName });
 	}
 
-	handleStyleOptionChange = event =>
-		this.props.setSiteStyle( this.getSelectedStyleDataById( event.currentTarget.value ).id );
+	handleStyleOptionChange = (event) =>
+		this.props.setSiteStyle(this.getSelectedStyleDataById(event.currentTarget.value).id);
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
-		const selectedStyleData = this.getSelectedStyleDataById() || this.props.styleOptions[ 0 ];
-		this.submitSiteStyle( selectedStyleData.id, selectedStyleData.theme, selectedStyleData.label );
+		const selectedStyleData = this.getSelectedStyleDataById() || this.props.styleOptions[0];
+		this.submitSiteStyle(selectedStyleData.id, selectedStyleData.theme, selectedStyleData.label);
 	};
 
-	submitSiteStyle( siteStyle, themeSlugWithRepo, styleLabel ) {
+	submitSiteStyle(siteStyle, themeSlugWithRepo, styleLabel) {
 		const { flowName, stepName } = this.props;
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_style', {
+		this.props.recordTracksEvent('calypso_signup_actions_submit_site_style', {
 			// The untranslated 'product' name of the variation/theme
 			site_style: styleLabel,
-		} );
-		this.props.setSiteStyle( siteStyle );
-		this.props.submitSignupStep( { stepName }, { siteStyle, themeSlugWithRepo } );
-		this.props.goToNextStep( flowName );
+		});
+		this.props.setSiteStyle(siteStyle);
+		this.props.submitSignupStep({ stepName }, { siteStyle, themeSlugWithRepo });
+		this.props.goToNextStep(flowName);
 	}
 
-	getSelectedStyleDataById( id ) {
-		return find( this.props.styleOptions, [ 'id', id || this.props.siteStyle ] );
+	getSelectedStyleDataById(id) {
+		return find(this.props.styleOptions, ['id', id || this.props.siteStyle]);
 	}
 
 	renderStyleOptions() {
-		return this.props.styleOptions.map( ( siteStyleProperties, index ) => {
+		return this.props.styleOptions.map((siteStyleProperties, index) => {
 			const isChecked = this.props.siteStyle
 				? siteStyleProperties.id === this.props.siteStyle
 				: 0 === index;
-			const optionLabelClasses = classNames( 'site-style__option-label', {
+			const optionLabelClasses = classNames('site-style__option-label', {
 				'is-checked': isChecked,
-				[ `site-style__variation-${ siteStyleProperties.id }` ]: siteStyleProperties.id,
-			} );
+				[`site-style__variation-${siteStyleProperties.id}`]: siteStyleProperties.id,
+			});
 
 			return (
 				<FormLabel
-					htmlFor={ siteStyleProperties.id }
-					className={ optionLabelClasses }
-					key={ siteStyleProperties.id }
-					title={ siteStyleProperties.description || '' }
+					htmlFor={siteStyleProperties.id}
+					className={optionLabelClasses}
+					key={siteStyleProperties.id}
+					title={siteStyleProperties.description || ''}
 				>
 					<FormRadio
-						id={ siteStyleProperties.id }
-						value={ siteStyleProperties.id }
+						id={siteStyleProperties.id}
+						value={siteStyleProperties.id}
 						name="site-style-option"
-						checked={ isChecked }
-						onChange={ this.handleStyleOptionChange }
+						checked={isChecked}
+						onChange={this.handleStyleOptionChange}
 					/>
-					{ siteStyleProperties.buttonSvg }
+					{siteStyleProperties.buttonSvg}
 				</FormLabel>
 			);
-		} );
+		});
 	}
 
 	renderContent() {
 		return (
 			<div className="site-style__form-wrapper">
-				<form className="site-style__form" onSubmit={ this.handleSubmit }>
+				<form className="site-style__form" onSubmit={this.handleSubmit}>
 					<FormFieldset className="site-style__fieldset" role="radiogroup">
-						{ this.renderStyleOptions() }
+						{this.renderStyleOptions()}
 					</FormFieldset>
 					<div className="site-style__submit-wrapper">
 						<Button type="submit" primary>
-							{ this.props.translate( 'Continue' ) }
+							{this.props.translate('Continue')}
 						</Button>
 					</div>
 				</form>
@@ -119,23 +119,23 @@ export class SiteStyleStep extends Component {
 
 	render() {
 		const { flowName, positionInFlow, showSiteMockups, stepName, translate } = this.props;
-		const headerText = translate( 'Choose a style' );
+		const headerText = translate('Choose a style');
 		// for the time being we just want to fall back to the default value.
 		// If we come to add segment specific copy for this item, update the first 2 args.
-		const subHeaderText = getSiteTypePropertyValue( null, null, 'siteStyleSubheader' );
+		const subHeaderText = getSiteTypePropertyValue(null, null, 'siteStyleSubheader');
 
 		return (
 			<div>
 				<StepWrapper
-					flowName={ flowName }
-					stepName={ stepName }
-					positionInFlow={ positionInFlow }
-					headerText={ headerText }
-					fallbackHeaderText={ headerText }
-					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ subHeaderText }
-					stepContent={ this.renderContent() }
-					showSiteMockups={ showSiteMockups }
+					flowName={flowName}
+					stepName={stepName}
+					positionInFlow={positionInFlow}
+					headerText={headerText}
+					fallbackHeaderText={headerText}
+					subHeaderText={subHeaderText}
+					fallbackSubHeaderText={subHeaderText}
+					stepContent={this.renderContent()}
+					showSiteMockups={showSiteMockups}
 				/>
 			</div>
 		);
@@ -143,14 +143,14 @@ export class SiteStyleStep extends Component {
 }
 
 export default connect(
-	state => ( {
-		siteStyle: getSiteStyle( state ),
-		styleOptions: getSiteStyleOptions( getSiteType( state ) ),
-	} ),
+	(state) => ({
+		siteStyle: getSiteStyle(state),
+		styleOptions: getSiteStyleOptions(getSiteType(state)),
+	}),
 	{
 		setSiteStyle,
 		saveSignupStep,
 		submitSignupStep,
 		recordTracksEvent,
 	}
-)( localize( SiteStyleStep ) );
+)(localize(SiteStyleStep));

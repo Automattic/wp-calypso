@@ -11,9 +11,9 @@ import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeli
 import getLostFocusTimestamp from 'state/happychat/selectors/get-lostfocus-timestamp';
 
 export default createSelector(
-	state => {
-		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' );
-		const lostFocusAt = getLostFocusTimestamp( state );
+	(state) => {
+		const lastMessageTimestamp = get(last(getHappychatTimeline(state)), 'timestamp');
+		const lostFocusAt = getLostFocusTimestamp(state);
 
 		return (
 			typeof lastMessageTimestamp === 'number' &&
@@ -23,5 +23,5 @@ export default createSelector(
 			lastMessageTimestamp * 1000 >= lostFocusAt
 		);
 	},
-	[ getHappychatTimeline, getLostFocusTimestamp ]
+	[getHappychatTimeline, getLostFocusTimestamp]
 );

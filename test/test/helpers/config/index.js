@@ -3,18 +3,18 @@
  */
 import config from 'config';
 
-export const setFeatureFlag = ( feature, val ) => {
+export const setFeatureFlag = (feature, val) => {
 	const c = config;
 	let spy;
 
-	beforeAll( () => {
+	beforeAll(() => {
 		spy = jest
-			.spyOn( config, 'isEnabled' )
-			.mockImplementation( feat => ( feat === feature ? val : c.isEnabled( feat ) ) );
-	} );
+			.spyOn(config, 'isEnabled')
+			.mockImplementation((feat) => (feat === feature ? val : c.isEnabled(feat)));
+	});
 
-	afterAll( () => {
+	afterAll(() => {
 		spy.mockReset();
 		spy.mockRestore();
-	} );
+	});
 };

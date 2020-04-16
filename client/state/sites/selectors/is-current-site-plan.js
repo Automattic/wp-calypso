@@ -11,14 +11,14 @@ import getSitePlan from './get-site-plan';
  * @param  {number}   planProductId Plan product_id
  * @returns {?boolean}               Whether site's plan matches supplied plan
  */
-export default function isCurrentSitePlan( state, siteId, planProductId ) {
-	if ( planProductId === undefined ) {
+export default function isCurrentSitePlan(state, siteId, planProductId) {
+	if (planProductId === undefined) {
 		return null;
 	}
 
-	const sitePlan = getSitePlan( state, siteId );
+	const sitePlan = getSitePlan(state, siteId);
 
-	if ( ! sitePlan ) {
+	if (!sitePlan) {
 		return null;
 	}
 

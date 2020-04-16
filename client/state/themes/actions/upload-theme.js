@@ -20,36 +20,36 @@ import 'state/themes/init';
  *
  * @returns {Function} the action function
  */
-export function uploadTheme( siteId, file ) {
-	return dispatch => {
-		dispatch( {
+export function uploadTheme(siteId, file) {
+	return (dispatch) => {
+		dispatch({
 			type: THEME_UPLOAD_START,
 			siteId,
-		} );
+		});
 		return wpcom
 			.undocumented()
-			.uploadTheme( siteId, file, event => {
-				dispatch( {
+			.uploadTheme(siteId, file, (event) => {
+				dispatch({
 					type: THEME_UPLOAD_PROGRESS,
 					siteId,
 					loaded: event.loaded,
 					total: event.total,
-				} );
-			} )
-			.then( theme => {
-				dispatch( receiveTheme( theme, siteId ) );
-				dispatch( {
+				});
+			})
+			.then((theme) => {
+				dispatch(receiveTheme(theme, siteId));
+				dispatch({
 					type: THEME_UPLOAD_SUCCESS,
 					siteId,
 					themeId: theme.id,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: THEME_UPLOAD_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

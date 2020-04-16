@@ -16,10 +16,10 @@ import config from 'config';
  * @param data The result from the API
  * @returns {{variations: object, nextRefresh: number}} The transformed result
  */
-const transformApiRequest = data => ( {
+const transformApiRequest = (data) => ({
 	variations: data.variations,
 	nextRefresh: Date.now() + data.ttl * 1000,
-} );
+});
 
 /**
  * Performs the http request
@@ -27,7 +27,7 @@ const transformApiRequest = data => ( {
  * @param action The EXPERIMENT_FETCH action
  * @returns object The http request action
  */
-export const fetchExperiments = action =>
+export const fetchExperiments = (action) =>
 	http(
 		{
 			apiNamespace: 'wpcom',
@@ -47,19 +47,19 @@ export const fetchExperiments = action =>
  * @param experiments The result from 'transformApiRequest'
  * @returns function Dispatches the EXPERIMENT_ASSIGN action
  */
-export const experimentUpdate = ( action, experiments ) => assignToExperiments( experiments );
+export const experimentUpdate = (action, experiments) => assignToExperiments(experiments);
 
 /**
  * If the configuration is enabled, call the API to get assignment from the API
  */
-if ( config.isEnabled( 'ive/use-external-assignment' ) ) {
-	registerHandlers( 'state/data-layer/wpcom/experiments/index.js', {
-		[ EXPERIMENT_FETCH ]: [
-			dispatchRequest( {
+if (config.isEnabled('ive/use-external-assignment')) {
+	registerHandlers('state/data-layer/wpcom/experiments/index.js', {
+		[EXPERIMENT_FETCH]: [
+			dispatchRequest({
 				fetch: fetchExperiments,
 				onSuccess: experimentUpdate,
-				fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
-			} ),
+				fromApi: makeJsonSchemaParser(schema, transformApiRequest),
+			}),
 		],
-	} );
+	});
 }

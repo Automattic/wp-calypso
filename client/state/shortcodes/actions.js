@@ -10,39 +10,39 @@ import {
 	SHORTCODE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-export function fetchShortcode( siteId, shortcode ) {
-	return dispatch => {
-		dispatch( {
+export function fetchShortcode(siteId, shortcode) {
+	return (dispatch) => {
+		dispatch({
 			type: SHORTCODE_REQUEST,
 			siteId,
 			shortcode,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.site( siteId )
-			.shortcodes( { shortcode } )
-			.then( data => {
-				dispatch( {
+			.site(siteId)
+			.shortcodes({ shortcode })
+			.then((data) => {
+				dispatch({
 					type: SHORTCODE_REQUEST_SUCCESS,
 					siteId,
 					shortcode,
-				} );
+				});
 
-				dispatch( {
+				dispatch({
 					type: SHORTCODE_RECEIVE,
 					siteId,
 					shortcode,
 					data,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: SHORTCODE_REQUEST_FAILURE,
 					siteId,
 					shortcode,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

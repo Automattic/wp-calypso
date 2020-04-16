@@ -21,32 +21,32 @@ class DomainTransferFlag extends PureComponent {
 	render() {
 		const { domain, translate } = this.props;
 
-		if ( domain.type !== domainTypes.TRANSFER ) {
+		if (domain.type !== domainTypes.TRANSFER) {
 			return null;
 		}
 
 		let status = 'is-warning';
-		let message = translate( 'Transfer in Progress' );
+		let message = translate('Transfer in Progress');
 
-		switch ( domain.transferStatus ) {
+		switch (domain.transferStatus) {
 			case transferStatus.PENDING_OWNER:
-				message = translate( 'Email Confirmation Required' );
+				message = translate('Email Confirmation Required');
 				break;
 			case transferStatus.PENDING_START:
-				message = translate( 'Action Required' );
+				message = translate('Action Required');
 				break;
 			case transferStatus.CANCELLED:
 				status = 'is-error';
-				message = translate( 'Transfer Failed' );
+				message = translate('Transfer Failed');
 				break;
 		}
 
 		return (
-			<Notice isCompact status={ status }>
-				{ message }
+			<Notice isCompact status={status}>
+				{message}
 			</Notice>
 		);
 	}
 }
 
-export default localize( DomainTransferFlag );
+export default localize(DomainTransferFlag);

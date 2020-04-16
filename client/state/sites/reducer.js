@@ -54,17 +54,17 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
-	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
+export const items = withSchemaValidation(sitesSchema, (state = null, action) => {
+	if (state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE) {
 		return null;
 	}
-	switch ( action.type ) {
+	switch (action.type) {
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS: {
-			const prevSite = state[ action.siteId ];
-			if ( prevSite ) {
-				return Object.assign( {}, state, {
-					[ action.siteId ]: merge( {}, prevSite, { options: { wordads: true } } ),
-				} );
+			const prevSite = state[action.siteId];
+			if (prevSite) {
+				return Object.assign({}, state, {
+					[action.siteId]: merge({}, prevSite, { options: { wordads: true } }),
+				});
 			}
 			return state;
 		}
@@ -73,7 +73,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 		case SITES_RECEIVE: {
 			// Normalize incoming site(s) to array
 
-			const sites = action.site ? [ action.site ] : action.sites;
+			const sites = action.site ? [action.site] : action.sites;
 
 			// SITES_RECEIVE occurs when we receive the entire set of user
 			// sites (replace existing state). Otherwise merge into state.
@@ -82,18 +82,18 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 			return reduce(
 				sites,
-				( memo, site ) => {
+				(memo, site) => {
 					// Bypass if site object hasn't changed
-					if ( isEqual( memo[ site.ID ], site ) ) {
+					if (isEqual(memo[site.ID], site)) {
 						return memo;
 					}
 
 					// Avoid mutating state
-					if ( memo === state ) {
+					if (memo === state) {
 						memo = { ...state };
 					}
 
-					memo[ site.ID ] = site;
+					memo[site.ID] = site;
 					return memo;
 				},
 				initialNextState || {}
@@ -102,50 +102,50 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
-			return omit( state, action.siteId );
+			return omit(state, action.siteId);
 
 		case THEME_ACTIVATE_SUCCESS: {
 			const { siteId, themeStylesheet } = action;
-			const site = state[ siteId ];
-			if ( ! site ) {
+			const site = state[siteId];
+			if (!site) {
 				break;
 			}
 
 			return {
 				...state,
-				[ siteId ]: merge( {}, site, {
+				[siteId]: merge({}, site, {
 					options: {
 						theme_slug: themeStylesheet,
 					},
-				} ),
+				}),
 			};
 		}
 
 		case SITE_SETTINGS_UPDATE:
 		case SITE_SETTINGS_RECEIVE: {
 			const { siteId, settings } = action;
-			const site = state[ siteId ];
+			const site = state[siteId];
 
-			if ( ! site ) {
+			if (!site) {
 				return state;
 			}
 
 			let nextSite = site;
 
 			return reduce(
-				[ 'blog_public', 'wpcom_coming_soon', 'site_icon' ],
-				( memo, key ) => {
+				['blog_public', 'wpcom_coming_soon', 'site_icon'],
+				(memo, key) => {
 					// A site settings update may or may not include the icon or blog_public property.
 					// If not, we should simply return state unchanged.
-					if ( ! settings.hasOwnProperty( key ) ) {
+					if (!settings.hasOwnProperty(key)) {
 						return memo;
 					}
 
-					switch ( key ) {
+					switch (key) {
 						case 'blog_public': {
-							const isPrivate = parseInt( settings.blog_public, 10 ) === -1;
+							const isPrivate = parseInt(settings.blog_public, 10) === -1;
 
-							if ( site.is_private === isPrivate ) {
+							if (site.is_private === isPrivate) {
 								return memo;
 							}
 
@@ -156,9 +156,9 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 							break;
 						}
 						case 'wpcom_coming_soon': {
-							const isComingSoon = parseInt( settings.wpcom_coming_soon, 10 ) === 1;
+							const isComingSoon = parseInt(settings.wpcom_coming_soon, 10) === 1;
 
-							if ( site.is_coming_soon === isComingSoon ) {
+							if (site.is_coming_soon === isComingSoon) {
 								return memo;
 							}
 
@@ -174,15 +174,15 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 							// accounting for the fact that a non-existent icon property is
 							// equivalent to setting the media icon as null
 							if (
-								( ! site.icon && null === mediaId ) ||
-								( site.icon && site.icon.media_id === mediaId )
+								(!site.icon && null === mediaId) ||
+								(site.icon && site.icon.media_id === mediaId)
 							) {
 								return memo;
 							}
 
-							if ( null === mediaId ) {
+							if (null === mediaId) {
 								// Unset icon
-								nextSite = omit( nextSite, 'icon' );
+								nextSite = omit(nextSite, 'icon');
 							} else {
 								// Update icon, intentionally removing reference to the URL,
 								// shifting burden of URL lookup to selector
@@ -197,11 +197,11 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 						}
 					}
 
-					if ( memo === state ) {
+					if (memo === state) {
 						memo = { ...state };
 					}
 
-					memo[ siteId ] = nextSite;
+					memo[siteId] = nextSite;
 					return memo;
 				},
 				state
@@ -210,11 +210,11 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 		case MEDIA_DELETE: {
 			const { siteId, mediaIds } = action;
-			const siteIconId = get( state[ siteId ], 'icon.media_id' );
-			if ( siteIconId && includes( mediaIds, siteIconId ) ) {
+			const siteIconId = get(state[siteId], 'icon.media_id');
+			if (siteIconId && includes(mediaIds, siteIconId)) {
 				return {
 					...state,
-					[ siteId ]: omit( state[ siteId ], 'icon' ),
+					[siteId]: omit(state[siteId], 'icon'),
 				};
 			}
 
@@ -223,15 +223,15 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 		case SITE_PLUGIN_UPDATED: {
 			const { siteId } = action;
-			const siteUpdates = get( state[ siteId ], 'updates' );
-			if ( ! siteUpdates ) {
+			const siteUpdates = get(state[siteId], 'updates');
+			if (!siteUpdates) {
 				return state;
 			}
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
+				[siteId]: {
+					...state[siteId],
 					updates: {
 						...siteUpdates,
 						plugins: siteUpdates.plugins - 1,
@@ -243,46 +243,46 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 
 		case SITE_FRONT_PAGE_UPDATE: {
 			const { siteId, frontPageOptions } = action;
-			const site = state[ siteId ];
-			if ( ! site ) {
+			const site = state[siteId];
+			if (!site) {
 				break;
 			}
 
 			return {
 				...state,
-				[ siteId ]: merge( {}, site, {
+				[siteId]: merge({}, site, {
 					options: {
 						...frontPageOptions,
 					},
-				} ),
+				}),
 			};
 		}
 
 		case SITE_MIGRATION_STATUS_UPDATE: {
 			const { siteId, migrationStatus, lastModified } = action;
-			const site = state[ siteId ];
-			if ( ! site ) {
+			const site = state[siteId];
+			if (!site) {
 				return state;
 			}
 
-			const siteMigrationMeta = state[ siteId ].site_migration || {};
+			const siteMigrationMeta = state[siteId].site_migration || {};
 			const newMeta = { status: migrationStatus };
-			if ( lastModified ) {
+			if (lastModified) {
 				newMeta.last_modified = lastModified;
 			}
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					site_migration: merge( {}, siteMigrationMeta, newMeta ),
+				[siteId]: {
+					...state[siteId],
+					site_migration: merge({}, siteMigrationMeta, newMeta),
 				},
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -293,8 +293,8 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requestingAll = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requestingAll = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case SITES_REQUEST:
 			return true;
 		case SITES_REQUEST_FAILURE:
@@ -304,7 +304,7 @@ export const requestingAll = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -314,24 +314,24 @@ export const requestingAll = withoutPersistence( ( state = false, action ) => {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_REQUEST: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case SITE_REQUEST_FAILURE: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 		case SITE_REQUEST_SUCCESS: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
@@ -343,18 +343,18 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  */
 export const deleting = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case SITE_DELETE:
-				return stubTrue( state, action );
+				return stubTrue(state, action);
 			case SITE_DELETE_FAILURE:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 			case SITE_DELETE_SUCCESS:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 		}
 
 		return state;
-	} )
+	})
 );
 
 /**
@@ -366,8 +366,8 @@ export const deleting = keyedReducer(
  */
 export const hasAllSitesList = withSchemaValidation(
 	hasAllSitesListSchema,
-	( state = false, action ) => {
-		switch ( action.type ) {
+	(state = false, action) => {
+		switch (action.type) {
 			case SITES_RECEIVE:
 				return true;
 		}
@@ -376,7 +376,7 @@ export const hasAllSitesList = withSchemaValidation(
 	}
 );
 
-export default combineReducers( {
+export default combineReducers({
 	connection,
 	deleting,
 	domains,
@@ -392,4 +392,4 @@ export default combineReducers( {
 	sharingButtons,
 	blogStickers,
 	hasAllSitesList,
-} );
+});

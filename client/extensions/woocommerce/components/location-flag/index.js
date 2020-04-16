@@ -11,8 +11,8 @@ import classNames from 'classnames';
 import { flagUrl } from 'lib/flags';
 
 class LocationFlag extends Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			ready: false,
@@ -23,16 +23,16 @@ class LocationFlag extends Component {
 		const { code, className } = this.props;
 		const { ready } = this.state;
 		const style = ready ? {} : { visibility: 'hidden' };
-		const onLoad = () => this.setState( { ready: true } );
-		const onError = () => this.setState( { ready: false } );
+		const onLoad = () => this.setState({ ready: true });
+		const onError = () => this.setState({ ready: false });
 
 		return (
 			<img
-				onLoad={ onLoad }
-				onError={ onError }
-				className={ classNames( 'location-flag', className ) }
-				style={ style }
-				src={ flagUrl( code.toLowerCase() ) }
+				onLoad={onLoad}
+				onError={onError}
+				className={classNames('location-flag', className)}
+				style={style}
+				src={flagUrl(code.toLowerCase())}
 				alt=""
 			/>
 		);

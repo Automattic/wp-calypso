@@ -32,7 +32,7 @@ import './style.scss';
 class PopoverCart extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 		onToggle: PropTypes.func.isRequired,
 		closeSectionNavMobilePanel: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
@@ -47,11 +47,11 @@ class PopoverCart extends React.Component {
 	}
 
 	itemCount() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
+		if (!this.props.cart.hasLoadedFromServer) {
 			return;
 		}
 
-		return reject( this.props.cart.products, isCredits ).length;
+		return reject(this.props.cart.products, isCredits).length;
 	}
 
 	onToggle = () => {
@@ -62,12 +62,12 @@ class PopoverCart extends React.Component {
 	onClose = () => {
 		// Since this callback can fire after the user navigates off the page, we
 		// we need to check if it's mounted to prevent errors.
-		if ( this.hasUnmounted ) {
+		if (this.hasUnmounted) {
 			return;
 		}
 
 		// if the cart became pinned, ignore close event from Popover
-		if ( this.props.pinned ) {
+		if (this.props.pinned) {
 			return;
 		}
 
@@ -77,14 +77,14 @@ class PopoverCart extends React.Component {
 	render() {
 		const { cart, selectedSite } = this.props;
 		let countBadge;
-		const classes = classNames( 'popover-cart', {
+		const classes = classNames('popover-cart', {
 			pinned: this.props.pinned,
-		} );
+		});
 
-		if ( this.itemCount() ) {
+		if (this.itemCount()) {
 			countBadge = (
 				<div className="cart__count-badge count-badge-pulsing">
-					<Count primary count={ this.itemCount() } />
+					<Count primary count={this.itemCount()} />
 					<TrackComponentView eventName="calypso_popover_cart_badge_impression" />
 				</div>
 			);
@@ -92,49 +92,49 @@ class PopoverCart extends React.Component {
 
 		return (
 			<div>
-				<CartMessages cart={ cart } selectedSite={ selectedSite } />
-				<div className={ classes }>
+				<CartMessages cart={cart} selectedSite={selectedSite} />
+				<div className={classes}>
 					<HeaderButton
 						icon="cart"
-						label={ translate( 'Cart' ) }
-						ref={ this.toggleButtonRef }
-						onClick={ this.onToggle }
+						label={translate('Cart')}
+						ref={this.toggleButtonRef}
+						onClick={this.onToggle}
 					/>
-					{ countBadge }
+					{countBadge}
 				</div>
 
-				{ this.renderCartContent() }
+				{this.renderCartContent()}
 			</div>
 		);
 	}
 
 	renderCartContent() {
-		if ( ! this.props.pinned ) {
+		if (!this.props.pinned) {
 			return (
 				<Popover
 					className="popover-cart__popover popover"
-					isVisible={ this.props.visible }
+					isVisible={this.props.visible}
 					position="bottom left"
-					onClose={ this.onClose }
-					context={ this.toggleButtonRef.current }
+					onClose={this.onClose}
+					context={this.toggleButtonRef.current}
 				>
-					{ this.renderCartBody() }
+					{this.renderCartBody()}
 					<TrackComponentView
 						eventName="calypso_popover_cart_content_impression"
-						eventProperties={ { style: 'popover' } }
+						eventProperties={{ style: 'popover' }}
 					/>
 				</Popover>
 			);
 		}
 
-		if ( this.props.visible ) {
+		if (this.props.visible) {
 			return (
 				<div className="popover-cart__mobile-cart">
 					<div className="top-arrow" />
-					{ this.renderCartBody() }
+					{this.renderCartBody()}
 					<TrackComponentView
 						eventName="calypso_popover_cart_content_impression"
-						eventProperties={ { style: 'mobile-cart' } }
+						eventProperties={{ style: 'mobile-cart' }}
 					/>
 				</div>
 			);
@@ -142,21 +142,21 @@ class PopoverCart extends React.Component {
 	}
 
 	renderCartBody() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
+		if (!this.props.cart.hasLoadedFromServer) {
 			return <CartBodyLoadingPlaceholder />;
 		}
 
-		if ( ! this.props.cart.products.length ) {
-			return <CartEmpty selectedSite={ this.props.selectedSite } path={ this.props.path } />;
+		if (!this.props.cart.products.length) {
+			return <CartEmpty selectedSite={this.props.selectedSite} path={this.props.path} />;
 		}
 
 		return (
 			<div>
-				<CartBody collapse cart={ this.props.cart } selectedSite={ this.props.selectedSite } />
-				<CartButtons selectedSite={ this.props.selectedSite } />
+				<CartBody collapse cart={this.props.cart} selectedSite={this.props.selectedSite} />
+				<CartButtons selectedSite={this.props.selectedSite} />
 			</div>
 		);
 	}
 }
 
-export default localize( PopoverCart );
+export default localize(PopoverCart);

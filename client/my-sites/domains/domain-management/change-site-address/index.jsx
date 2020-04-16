@@ -28,36 +28,36 @@ class ChangeSiteAddress extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 	};
 
 	goBack = () => {
 		let path;
 
-		if ( isRegisteredDomain( getSelectedDomain( this.props ) ) ) {
+		if (isRegisteredDomain(getSelectedDomain(this.props))) {
 			path = domainManagementNameServers;
 		} else {
 			path = domainManagementEdit;
 		}
 
-		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(path(this.props.selectedSite.slug, this.props.selectedDomainName));
 	};
 
 	render() {
-		const domain = getSelectedDomain( this.props );
-		const dotblogSubdomain = get( domain, 'name', '' ).match( /\.\w+\.blog$/ );
-		const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
+		const domain = getSelectedDomain(this.props);
+		const dotblogSubdomain = get(domain, 'name', '').match(/\.\w+\.blog$/);
+		const domainSuffix = dotblogSubdomain ? dotblogSubdomain[0] : '.wordpress.com';
 
 		return (
 			<Main className="change-site-address">
-				<Header onClick={ this.goBack } selectedDomainName={ domain }>
-					{ translate( 'Change Site Address' ) }
+				<Header onClick={this.goBack} selectedDomainName={domain}>
+					{translate('Change Site Address')}
 				</Header>
 
-				<SiteAddressChanger currentDomain={ domain } currentDomainSuffix={ domainSuffix } />
+				<SiteAddressChanger currentDomain={domain} currentDomainSuffix={domainSuffix} />
 			</Main>
 		);
 	}
 }
 
-export default localize( ChangeSiteAddress );
+export default localize(ChangeSiteAddress);

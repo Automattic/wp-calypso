@@ -24,10 +24,10 @@ export default class MediaLibraryListItemImage extends React.Component {
 
 	static defaultProps = {
 		maxImageWidth: 450,
-		maxScale: SCALE_CHOICES[ SCALE_CHOICES.length - 1 ],
+		maxScale: SCALE_CHOICES[SCALE_CHOICES.length - 1],
 	};
 
-	static getDerivedStateFromProps( props, state ) {
+	static getDerivedStateFromProps(props, state) {
 		const maxSeenScale = state.maxSeenScale || 0;
 		return props.scale > maxSeenScale ? { maxSeenScale: props.scale } : null;
 	}
@@ -50,40 +50,40 @@ export default class MediaLibraryListItemImage extends React.Component {
 		};
 	};
 
-	setUnknownImageDimensions = event => {
+	setUnknownImageDimensions = (event) => {
 		let newState = null;
 
-		if ( ! this.props.media.width ) {
+		if (!this.props.media.width) {
 			newState = {
 				imageWidth: event.target.clientWidth,
 			};
 		}
 
-		if ( ! this.props.media.height ) {
+		if (!this.props.media.height) {
 			newState = newState || {};
 			newState.imageHeight = event.target.clientHeight;
 		}
 
-		if ( newState ) {
-			this.setState( newState );
+		if (newState) {
+			this.setState(newState);
 		}
 	};
 
 	render() {
 		const width = Math.round(
-			( 1 / this.props.maxScale ) * this.state.maxSeenScale * this.props.maxImageWidth
+			(1 / this.props.maxScale) * this.state.maxSeenScale * this.props.maxImageWidth
 		);
 
-		const url = mediaUrl( this.props.media, {
-			resize: `${ width },${ width }`,
+		const url = mediaUrl(this.props.media, {
+			resize: `${width},${width}`,
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
-		} );
+		});
 
-		if ( ! url ) {
+		if (!url) {
 			return (
 				<MediaLibraryListItemFileDetails
-					scale={ this.props.scale }
-					media={ this.props.media }
+					scale={this.props.scale}
+					media={this.props.media}
 					icon="image"
 				/>
 			);
@@ -91,10 +91,10 @@ export default class MediaLibraryListItemImage extends React.Component {
 
 		return (
 			<MediaImage
-				src={ url }
-				onLoad={ this.setUnknownImageDimensions }
-				alt={ this.props.media.alt || this.props.media.title }
-				style={ this.getImageStyle() }
+				src={url}
+				onLoad={this.setUnknownImageDimensions}
+				alt={this.props.media.alt || this.props.media.title}
+				style={this.getImageStyle()}
 				className="media-library__list-item-centered is-image"
 				draggable="false"
 			/>

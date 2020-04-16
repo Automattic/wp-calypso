@@ -30,15 +30,15 @@ class CredsPermissionStep extends Component {
 	};
 
 	autoConfigCredentials = () =>
-		this.props.autoConfigCredentials( this.props.initialContext.query.blogid );
+		this.props.autoConfigCredentials(this.props.initialContext.query.blogid);
 
 	skipStep = () => this.props.goToNextStep();
 
 	shareCredentials = () => {
 		this.autoConfigCredentials();
 
-		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_share', {} );
-		this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
+		this.props.recordTracksEvent('calypso_pressable_nux_credentials_share', {});
+		this.props.submitSignupStep({ stepName: this.props.stepName }, { rewindconfig: true });
 		this.props.goToStep(
 			'pressable-nux' === this.props.flowName ? 'creds-complete' : 'rewind-were-backing'
 		);
@@ -50,27 +50,27 @@ class CredsPermissionStep extends Component {
 		return (
 			<Card className="creds-permission__card">
 				<QuerySites />
-				<h3 className="creds-permission__title">{ translate( 'Start backing up your site' ) }</h3>
+				<h3 className="creds-permission__title">{translate('Start backing up your site')}</h3>
 				<img
 					className="creds-permission__image"
 					src="/calypso/images/illustrations/security.svg"
 					alt=""
 				/>
 				<p className="creds-permission__description">
-					{ translate(
+					{translate(
 						'Jetpack, a plugin already on your site, can back up and secure your site at no ' +
 							'extra cost to you thanks to our partnership with Pressable. To start backing up ' +
 							"your site, we need the credentials for your site's server. Do you want to give " +
 							"Jetpack access to your host's server to perform backups?"
-					) }
+					)}
 				</p>
 				<p className="creds-permission__description">
-					{ translate(
+					{translate(
 						'By adding credentials, you are providing us with access to your server to perform automatic actions (such as backing up or restoring your site), manually access your site in case of an emergency, and troubleshoot your support requests.'
-					) }
+					)}
 				</p>
-				<Button primary onClick={ this.shareCredentials }>
-					{ translate( 'Share credentials' ) }
+				<Button primary onClick={this.shareCredentials}>
+					{translate('Share credentials')}
 				</Button>
 			</Card>
 		);
@@ -79,21 +79,21 @@ class CredsPermissionStep extends Component {
 	render() {
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				stepContent={ this.renderStepContent() }
-				goToNextStep={ this.skipStep }
-				hideFormattedHeader={ true }
+				flowName={this.props.flowName}
+				stepName={this.props.stepName}
+				positionInFlow={this.props.positionInFlow}
+				stepContent={this.renderStepContent()}
+				goToNextStep={this.skipStep}
+				hideFormattedHeader={true}
 				skipLabelText="Skip"
-				hideBack={ true }
+				hideBack={true}
 			/>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	autoConfigCredentials,
 	recordTracksEvent,
 	submitSignupStep,
-} )( localize( CredsPermissionStep ) );
+})(localize(CredsPermissionStep));

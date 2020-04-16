@@ -16,13 +16,13 @@ export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
  *                    user's device supports Apple Pay, false otherwise.
  */
 export function isApplePayAvailable() {
-	if ( ! config.isEnabled( 'my-sites/checkout/web-payment/apple-pay' ) ) {
+	if (!config.isEnabled('my-sites/checkout/web-payment/apple-pay')) {
 		return false;
 	}
 
 	// Our Apple Pay implementation uses the Payment Request API, so check that
 	// first.
-	if ( ! window.PaymentRequest ) {
+	if (!window.PaymentRequest) {
 		return false;
 	}
 
@@ -30,7 +30,7 @@ export function isApplePayAvailable() {
 	// Safari versions due to a bug (https://trac.webkit.org/changeset/243447/webkit),
 	// and there is no way it can change during a page request, so cache the
 	// result.
-	if ( typeof isApplePayAvailable.canMakePayments === 'undefined' ) {
+	if (typeof isApplePayAvailable.canMakePayments === 'undefined') {
 		isApplePayAvailable.canMakePayments = Boolean(
 			window.ApplePaySession && window.ApplePaySession.canMakePayments()
 		);
@@ -52,11 +52,11 @@ export function isApplePayAvailable() {
  *                         if none can be detected.
  */
 export function detectWebPaymentMethod() {
-	if ( isApplePayAvailable() ) {
+	if (isApplePayAvailable()) {
 		return WEB_PAYMENT_APPLE_PAY_METHOD;
 	}
 
-	if ( config.isEnabled( 'my-sites/checkout/web-payment/basic-card' ) && window.PaymentRequest ) {
+	if (config.isEnabled('my-sites/checkout/web-payment/basic-card') && window.PaymentRequest) {
 		return WEB_PAYMENT_BASIC_CARD_METHOD;
 	}
 
@@ -75,10 +75,10 @@ export function detectWebPaymentMethod() {
  *                                        or the given payment method
  *                                        if none matches.
  */
-export function getWebPaymentMethodName( webPaymentMethod, translate ) {
-	switch ( webPaymentMethod ) {
+export function getWebPaymentMethodName(webPaymentMethod, translate) {
+	switch (webPaymentMethod) {
 		case WEB_PAYMENT_BASIC_CARD_METHOD:
-			return translate( 'Browser wallet' );
+			return translate('Browser wallet');
 
 		case WEB_PAYMENT_APPLE_PAY_METHOD:
 			// Not translated since it's a trademark.

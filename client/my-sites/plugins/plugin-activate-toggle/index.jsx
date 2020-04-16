@@ -31,45 +31,45 @@ export class PluginActivateToggle extends Component {
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
-		if ( isMock || disabled ) {
+		if (isMock || disabled) {
 			return;
 		}
 
-		PluginsActions.togglePluginActivation( site, plugin );
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+		PluginsActions.togglePluginActivation(site, plugin);
+		PluginsActions.removePluginsNotices('completed', 'error');
 
-		if ( plugin.active ) {
-			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_deactivate_click', {
+		if (plugin.active) {
+			recordGAEvent('Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug);
+			recordEvent('calypso_plugin_deactivate_click', {
 				site: site.ID,
 				plugin: plugin.slug,
-			} );
+			});
 		} else {
-			recordGAEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_activate_click', {
+			recordGAEvent('Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug);
+			recordEvent('calypso_plugin_activate_click', {
 				site: site.ID,
 				plugin: plugin.slug,
-			} );
+			});
 		}
 	};
 
 	trackManageConnectionLink = () => {
 		const { recordGoogleEvent: recordGAEvent } = this.props;
-		recordGAEvent( 'Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack' );
+		recordGAEvent('Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack');
 	};
 
 	manageConnectionLink() {
 		const { disabled, translate, site } = this.props;
-		if ( disabled ) {
+		if (disabled) {
 			return (
 				<span className="plugin-activate-toggle__disabled">
 					<span className="plugin-activate-toggle__icon">
-						<Gridicon icon="cog" size={ 18 } />
+						<Gridicon icon="cog" size={18} />
 					</span>
 					<span className="plugin-activate-toggle__label">
-						{ translate( 'Manage Connection', {
+						{translate('Manage Connection', {
 							comment: 'manage Jetpack connnection settings link',
-						} ) }
+						})}
 					</span>
 				</span>
 			);
@@ -79,19 +79,19 @@ export class PluginActivateToggle extends Component {
 			<span className="plugin-activate-toggle__link">
 				<a
 					className="plugin-activate-toggle__icon"
-					onClick={ this.trackManageConnectionLink }
-					href={ '/settings/manage-connection/' + site.slug }
+					onClick={this.trackManageConnectionLink}
+					href={'/settings/manage-connection/' + site.slug}
 				>
-					<Gridicon icon="cog" size={ 18 } />
+					<Gridicon icon="cog" size={18} />
 				</a>
 				<a
 					className="plugin-activate-toggle__label"
-					onClick={ this.trackManageConnectionLink }
-					href={ '/settings/manage-connection/' + site.slug }
+					onClick={this.trackManageConnectionLink}
+					href={'/settings/manage-connection/' + site.slug}
 				>
-					{ translate( 'Manage Connection', {
+					{translate('Manage Connection', {
 						comment: 'manage Jetpack connnection settings link',
-					} ) }
+					})}
 				</a>
 			</span>
 		);
@@ -100,34 +100,31 @@ export class PluginActivateToggle extends Component {
 	render() {
 		const { site, plugin, disabled, translate } = this.props;
 
-		if ( ! site ) {
+		if (!site) {
 			return null;
 		}
 
-		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
+		const inProgress = PluginsLog.isInProgressAction(site.ID, plugin.slug, [
 			'ACTIVATE_PLUGIN',
 			'DEACTIVATE_PLUGIN',
-		] );
+		]);
 
-		if ( plugin && 'jetpack' === plugin.slug ) {
+		if (plugin && 'jetpack' === plugin.slug) {
 			return (
-				<PluginAction
-					className="plugin-activate-toggle"
-					htmlFor={ 'disconnect-jetpack-' + site.ID }
-				>
-					{ this.manageConnectionLink() }
+				<PluginAction className="plugin-activate-toggle" htmlFor={'disconnect-jetpack-' + site.ID}>
+					{this.manageConnectionLink()}
 				</PluginAction>
 			);
 		}
 		return (
 			<PluginAction
-				disabled={ disabled }
+				disabled={disabled}
 				className="plugin-activate-toggle"
-				label={ translate( 'Active', { context: 'plugin status' } ) }
-				inProgress={ inProgress }
-				status={ plugin && plugin.active }
-				action={ this.toggleActivation }
-				htmlFor={ 'activate-' + plugin.slug + '-' + site.ID }
+				label={translate('Active', { context: 'plugin status' })}
+				inProgress={inProgress}
+				status={plugin && plugin.active}
+				action={this.toggleActivation}
+				htmlFor={'activate-' + plugin.slug + '-' + site.ID}
 			/>
 		);
 	}
@@ -145,7 +142,7 @@ PluginActivateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
 	recordTracksEvent,
-} )( localize( PluginActivateToggle ) );
+})(localize(PluginActivateToggle));

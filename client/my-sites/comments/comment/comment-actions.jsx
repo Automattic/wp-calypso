@@ -31,10 +31,10 @@ import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/comments/selectors';
 
 const commentActions = {
-	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
-	approved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
-	spam: [ 'approve', 'delete' ],
-	trash: [ 'approve', 'spam', 'delete' ],
+	unapproved: ['like', 'approve', 'edit', 'reply', 'spam', 'trash'],
+	approved: ['like', 'approve', 'edit', 'reply', 'spam', 'trash'],
+	spam: ['approve', 'delete'],
+	trash: ['approve', 'spam', 'delete'],
 };
 
 export class CommentActions extends Component {
@@ -55,110 +55,110 @@ export class CommentActions extends Component {
 		updateLastUndo: noop,
 	};
 
-	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+	shouldComponentUpdate = (nextProps) => !isEqual(this.props, nextProps);
 
 	delete = () => {
 		if (
-			isUndefined( window ) ||
-			window.confirm( this.props.translate( 'Delete this comment permanently?' ) )
+			isUndefined(window) ||
+			window.confirm(this.props.translate('Delete this comment permanently?'))
 		) {
 			this.props.deletePermanently();
 		}
 	};
 
-	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
+	hasAction = (action) => includes(commentActions[this.props.commentStatus], action);
 
-	setSpam = () => this.setStatus( 'spam' );
+	setSpam = () => this.setStatus('spam');
 
-	setStatus = status => {
+	setStatus = (status) => {
 		const { changeStatus, commentIsLiked, commentStatus, unlike, updateLastUndo } = this.props;
 
 		const alsoUnlike = commentIsLiked && 'approved' !== status;
 
-		updateLastUndo( null );
+		updateLastUndo(null);
 
-		changeStatus( status, {
+		changeStatus(status, {
 			alsoUnlike,
 			previousStatus: commentStatus,
-		} );
+		});
 
-		if ( alsoUnlike ) {
+		if (alsoUnlike) {
 			unlike();
 		}
 
-		this.showNotice( status );
+		this.showNotice(status);
 	};
 
-	setTrash = () => this.setStatus( 'trash' );
+	setTrash = () => this.setStatus('trash');
 
-	showNotice = status => {
+	showNotice = (status) => {
 		const { minimumComment, translate } = this.props;
 
-		this.props.removeNotice( 'comment-notice' );
+		this.props.removeNotice('comment-notice');
 
 		const message = get(
 			{
-				approved: translate( 'Comment approved.' ),
-				unapproved: translate( 'Comment unapproved.' ),
-				spam: translate( 'Comment marked as spam.' ),
-				trash: translate( 'Comment moved to trash.' ),
+				approved: translate('Comment approved.'),
+				unapproved: translate('Comment unapproved.'),
+				spam: translate('Comment marked as spam.'),
+				trash: translate('Comment moved to trash.'),
 			},
 			status
 		);
 
 		const noticeOptions = {
-			button: translate( 'Undo' ),
+			button: translate('Undo'),
 			id: 'comment-notice',
 			isPersistent: true,
-			onClick: this.undo( status, minimumComment ),
+			onClick: this.undo(status, minimumComment),
 		};
 
-		this.props.successNotice( message, noticeOptions );
+		this.props.successNotice(message, noticeOptions);
 	};
 
-	undo = ( status, previousCommentData ) => () => {
+	undo = (status, previousCommentData) => () => {
 		const { changeStatus, commentId, like, unlike, updateLastUndo } = this.props;
 		const { isLiked: wasLiked, status: previousStatus } = previousCommentData;
 		const alsoApprove = 'approved' !== status && 'approved' === previousStatus;
-		const alsoUnlike = ! wasLiked && 'approved' !== previousStatus;
+		const alsoUnlike = !wasLiked && 'approved' !== previousStatus;
 
-		updateLastUndo( commentId );
+		updateLastUndo(commentId);
 
-		changeStatus( previousStatus, {
+		changeStatus(previousStatus, {
 			alsoUnlike,
 			isUndo: true,
 			previousStatus: status,
-		} );
+		});
 
-		if ( wasLiked ) {
-			like( { alsoApprove } );
-		} else if ( alsoUnlike ) {
+		if (wasLiked) {
+			like({ alsoApprove });
+		} else if (alsoUnlike) {
 			unlike();
 		}
 
-		this.props.removeNotice( 'comment-notice' );
+		this.props.removeNotice('comment-notice');
 	};
 
-	toggleApproved = () => this.setStatus( this.props.commentIsApproved ? 'unapproved' : 'approved' );
+	toggleApproved = () => this.setStatus(this.props.commentIsApproved ? 'unapproved' : 'approved');
 
 	toggleEditMode = () => {
 		this.props.toggleEditMode();
-		scrollTo( { x: 0, y: this.props.getCommentOffsetTop() } );
+		scrollTo({ x: 0, y: this.props.getCommentOffsetTop() });
 	};
 
 	toggleLike = () => {
 		const { commentIsLiked, commentStatus, like, unlike } = this.props;
 
-		if ( commentIsLiked ) {
+		if (commentIsLiked) {
 			return unlike();
 		}
 
 		const alsoApprove = 'unapproved' === commentStatus;
 
-		like( { alsoApprove } );
+		like({ alsoApprove });
 
-		if ( alsoApprove ) {
-			this.setStatus( 'approved' );
+		if (alsoApprove) {
+			this.setStatus('approved');
 		}
 	};
 
@@ -173,168 +173,168 @@ export class CommentActions extends Component {
 
 		return (
 			<div className="comment__actions">
-				{ this.hasAction( 'approve' ) && (
+				{this.hasAction('approve') && (
 					<Button
 						borderless
-						className={ classNames( 'comment__action comment__action-approve', {
+						className={classNames('comment__action comment__action-approve', {
 							'is-approved': commentIsApproved,
-						} ) }
-						onClick={ this.toggleApproved }
+						})}
+						onClick={this.toggleApproved}
 						tabIndex="0"
-						disabled={ ! canModerateComment }
+						disabled={!canModerateComment}
 					>
-						<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
-						<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
+						<Gridicon icon={commentIsApproved ? 'checkmark-circle' : 'checkmark'} />
+						<span>{commentIsApproved ? translate('Approved') : translate('Approve')}</span>
 					</Button>
-				) }
+				)}
 
-				{ this.hasAction( 'spam' ) && (
+				{this.hasAction('spam') && (
 					<Button
 						borderless
 						className="comment__action comment__action-spam"
-						onClick={ this.setSpam }
+						onClick={this.setSpam}
 						tabIndex="0"
-						disabled={ ! canModerateComment }
+						disabled={!canModerateComment}
 					>
 						<Gridicon icon="spam" />
-						<span>{ translate( 'Spam' ) }</span>
+						<span>{translate('Spam')}</span>
 					</Button>
-				) }
+				)}
 
-				{ this.hasAction( 'trash' ) && (
+				{this.hasAction('trash') && (
 					<Button
 						borderless
 						className="comment__action comment__action-trash"
-						onClick={ this.setTrash }
+						onClick={this.setTrash}
 						tabIndex="0"
-						disabled={ ! canModerateComment }
+						disabled={!canModerateComment}
 					>
 						<Gridicon icon="trash" />
-						<span>{ translate( 'Trash' ) }</span>
+						<span>{translate('Trash')}</span>
 					</Button>
-				) }
+				)}
 
-				{ this.hasAction( 'delete' ) && (
+				{this.hasAction('delete') && (
 					<Button
 						borderless
 						className="comment__action comment__action-delete"
-						onClick={ this.delete }
+						onClick={this.delete}
 						tabIndex="0"
-						disabled={ ! canModerateComment }
+						disabled={!canModerateComment}
 					>
 						<Gridicon icon="trash" />
-						<span>{ translate( 'Delete Permanently' ) }</span>
+						<span>{translate('Delete Permanently')}</span>
 					</Button>
-				) }
+				)}
 
-				{ this.hasAction( 'like' ) && (
+				{this.hasAction('like') && (
 					<Button
 						borderless
-						className={ classNames( 'comment__action comment__action-like', {
+						className={classNames('comment__action comment__action-like', {
 							'is-liked': commentIsLiked,
-						} ) }
-						onClick={ this.toggleLike }
+						})}
+						onClick={this.toggleLike}
 						tabIndex="0"
-						disabled={ ! canModerateComment && ! commentIsApproved }
+						disabled={!canModerateComment && !commentIsApproved}
 					>
-						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
-						<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
+						<Gridicon icon={commentIsLiked ? 'star' : 'star-outline'} />
+						<span>{commentIsLiked ? translate('Liked') : translate('Like')}</span>
 					</Button>
-				) }
+				)}
 
-				{ this.hasAction( 'edit' ) && (
+				{this.hasAction('edit') && (
 					<Button
 						borderless
 						className="comment__action comment__action-pencil"
-						onClick={ this.toggleEditMode }
+						onClick={this.toggleEditMode}
 						tabIndex="0"
-						disabled={ ! canModerateComment }
+						disabled={!canModerateComment}
 					>
 						<Gridicon icon="pencil" />
-						<span>{ translate( 'Edit' ) }</span>
+						<span>{translate('Edit')}</span>
 					</Button>
-				) }
+				)}
 
-				{ this.hasAction( 'reply' ) && (
+				{this.hasAction('reply') && (
 					<Button
 						borderless
 						className="comment__action comment__action-reply"
-						onClick={ toggleReply }
+						onClick={toggleReply}
 						tabIndex="0"
-						disabled={ ! canModerateComment && ! commentIsApproved }
+						disabled={!canModerateComment && !commentIsApproved}
 					>
 						<Gridicon icon="reply" />
-						<span>{ translate( 'Reply' ) }</span>
+						<span>{translate('Reply')}</span>
 					</Button>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteId, commentId } ) => {
-	const comment = getSiteComment( state, siteId, commentId );
-	const commentStatus = get( comment, 'status' );
+const mapStateToProps = (state, { siteId, commentId }) => {
+	const comment = getSiteComment(state, siteId, commentId);
+	const commentStatus = get(comment, 'status');
 
 	return {
-		canModerateComment: get( comment, 'can_moderate', false ),
+		canModerateComment: get(comment, 'can_moderate', false),
 		commentIsApproved: 'approved' === commentStatus,
-		commentIsLiked: get( comment, 'i_like' ),
+		commentIsLiked: get(comment, 'i_like'),
 		commentStatus,
-		minimumComment: getMinimumComment( comment ),
+		minimumComment: getMinimumComment(comment),
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsListQuery } ) => ( {
-	changeStatus: ( status, analytics = { alsoUnlike: false, isUndo: false } ) =>
+const mapDispatchToProps = (dispatch, { siteId, postId, commentId, commentsListQuery }) => ({
+	changeStatus: (status, analytics = { alsoUnlike: false, isUndo: false }) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_change_status', {
+					recordTracksEvent('calypso_comment_management_change_status', {
 						also_unlike: analytics.alsoUnlike,
 						is_undo: analytics.isUndo,
 						previous_status: analytics.previousStatus,
 						status,
-					} ),
-					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
+					}),
+					bumpStat('calypso_comment_management', 'comment_status_changed_to_' + status)
 				),
-				changeCommentStatus( siteId, postId, commentId, status, commentsListQuery )
+				changeCommentStatus(siteId, postId, commentId, status, commentsListQuery)
 			)
 		),
 	deletePermanently: () =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_delete' ),
-					bumpStat( 'calypso_comment_management', 'comment_deleted' )
+					recordTracksEvent('calypso_comment_management_delete'),
+					bumpStat('calypso_comment_management', 'comment_deleted')
 				),
-				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
+				deleteComment(siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery)
 			)
 		),
-	like: ( analytics = { alsoApprove: false } ) =>
+	like: (analytics = { alsoApprove: false }) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_like', {
+					recordTracksEvent('calypso_comment_management_like', {
 						also_approve: analytics.alsoApprove,
-					} ),
-					bumpStat( 'calypso_comment_management', 'comment_liked' )
+					}),
+					bumpStat('calypso_comment_management', 'comment_liked')
 				),
-				likeComment( siteId, postId, commentId )
+				likeComment(siteId, postId, commentId)
 			)
 		),
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
-	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+	removeNotice: (noticeId) => dispatch(removeNotice(noticeId)),
+	successNotice: (text, options) => dispatch(successNotice(text, options)),
 	unlike: () =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_unlike' ),
-					bumpStat( 'calypso_comment_management', 'comment_unliked' )
+					recordTracksEvent('calypso_comment_management_unlike'),
+					bumpStat('calypso_comment_management', 'comment_unliked')
 				),
-				unlikeComment( siteId, postId, commentId )
+				unlikeComment(siteId, postId, commentId)
 			)
 		),
-} );
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentActions ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(CommentActions));

@@ -88,42 +88,42 @@ export class PlanFeatures extends Component {
 	state = { ...defaultState };
 
 	setDefaultState = () => {
-		this.setState( defaultState );
+		this.setState(defaultState);
 	};
 
-	onLaunchDialogClose = async action => {
+	onLaunchDialogClose = async (action) => {
 		const { currentSitePlanSlug, siteId } = this.props;
 		const { checkoutUrl, choosingPlanSlug } = this.state;
 
-		if ( action !== 'continue' ) {
+		if (action !== 'continue') {
 			this.setDefaultState();
 			return;
 		}
 
-		this.setState( { settingPublic: true } );
+		this.setState({ settingPublic: true });
 
-		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
+		this.props.recordTracksEvent('calypso_plan_upgrade_launch_dialog_confirmed', {
 			current_plan: currentSitePlanSlug,
 			upgrading_to: choosingPlanSlug,
-		} );
+		});
 
 		try {
-			const setPublicResult = await this.props.saveSiteSettings( siteId, {
+			const setPublicResult = await this.props.saveSiteSettings(siteId, {
 				blog_public: 1,
-			} );
-			if ( ! get( setPublicResult, [ 'updated', 'blog_public' ] ) ) {
-				this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_failed', {
+			});
+			if (!get(setPublicResult, ['updated', 'blog_public'])) {
+				this.props.recordTracksEvent('calypso_plan_upgrade_launch_dialog_failed', {
 					current_plan: currentSitePlanSlug,
 					upgrading_to: choosingPlanSlug,
-				} );
+				});
 			}
-		} catch ( e ) {}
+		} catch (e) {}
 
-		page( checkoutUrl );
+		page(checkoutUrl);
 	};
 
-	UNSAFE_componentWillReceiveProps( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
+	UNSAFE_componentWillReceiveProps({ siteId }) {
+		if (siteId !== this.props.siteId) {
 			this.setDefaultState();
 		}
 	}
@@ -138,61 +138,58 @@ export class PlanFeatures extends Component {
 			withScroll,
 			translate,
 		} = this.props;
-		const tableClasses = classNames(
-			'plan-features__table',
-			`has-${ planProperties.length }-cols`
-		);
-		const planClasses = classNames( 'plan-features', {
+		const tableClasses = classNames('plan-features__table', `has-${planProperties.length}-cols`);
+		const planClasses = classNames('plan-features', {
 			'plan-features--signup': isInSignup,
-		} );
-		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
-		const mobileView = ! withScroll && (
-			<div className="plan-features__mobile">{ this.renderMobileView() }</div>
+		});
+		const planWrapperClasses = classNames({ 'plans-wrapper': isInSignup });
+		const mobileView = !withScroll && (
+			<div className="plan-features__mobile">{this.renderMobileView()}</div>
 		);
 		let planDescriptions;
 		let bottomButtons = null;
 
-		if ( withScroll || ! isInSignup ) {
-			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
+		if (withScroll || !isInSignup) {
+			planDescriptions = <tr>{this.renderPlanDescriptions()}</tr>;
 
-			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
+			bottomButtons = <tr>{this.renderBottomButtons()}</tr>;
 		}
 
 		const initialSelectedIndex = selectedPlan
-			? plans.indexOf( selectedPlan )
-			: findIndex( planProperties, { popular: true } );
+			? plans.indexOf(selectedPlan)
+			: findIndex(planProperties, { popular: true });
 
 		return (
-			<div className={ planWrapperClasses }>
+			<div className={planWrapperClasses}>
 				<QueryActivePromotions />
-				<div className={ planClasses }>
-					{ this.renderNotice() }
-					{ this.renderSiteLaunchDialog() }
-					<div ref={ this.contentRef } className="plan-features__content">
-						{ mobileView }
+				<div className={planClasses}>
+					{this.renderNotice()}
+					{this.renderSiteLaunchDialog()}
+					<div ref={this.contentRef} className="plan-features__content">
+						{mobileView}
 						<PlanFeaturesScroller
-							withScroll={ withScroll }
-							planCount={ planProperties.length }
+							withScroll={withScroll}
+							planCount={planProperties.length}
 							cellSelector=".plan-features__table-item"
-							initialSelectedIndex={ initialSelectedIndex }
+							initialSelectedIndex={initialSelectedIndex}
 						>
-							<table className={ tableClasses }>
+							<table className={tableClasses}>
 								<caption className="plan-features__screen-reader-text screen-reader-text">
-									{ translate( 'Available plans to choose from' ) }
+									{translate('Available plans to choose from')}
 								</caption>
 								<tbody>
-									<tr>{ this.renderPlanHeaders() }</tr>
-									{ ! withScroll && planDescriptions }
-									{ isEligibleForPlanStepTest && (
+									<tr>{this.renderPlanHeaders()}</tr>
+									{!withScroll && planDescriptions}
+									{isEligibleForPlanStepTest && (
 										<>
-											{ withScroll && planDescriptions }
-											<tr>{ this.renderTopButtons() }</tr>
+											{withScroll && planDescriptions}
+											<tr>{this.renderTopButtons()}</tr>
 										</>
-									) }
-									<tr>{ ! isEligibleForPlanStepTest && this.renderTopButtons() }</tr>
-									{ ! isEligibleForPlanStepTest && withScroll && planDescriptions }
-									{ this.renderPlanFeatureRows() }
-									{ ! withScroll && ! isInSignup && bottomButtons }
+									)}
+									<tr>{!isEligibleForPlanStepTest && this.renderTopButtons()}</tr>
+									{!isEligibleForPlanStepTest && withScroll && planDescriptions}
+									{this.renderPlanFeatureRows()}
+									{!withScroll && !isInSignup && bottomButtons}
 								</tbody>
 							</table>
 						</PlanFeaturesScroller>
@@ -209,29 +206,29 @@ export class PlanFeatures extends Component {
 	}
 
 	renderDiscountNotice() {
-		if ( ! this.hasDiscountNotice() ) {
+		if (!this.hasDiscountNotice()) {
 			return false;
 		}
 
 		const bannerContainer = this.getBannerContainer();
-		if ( ! bannerContainer ) {
+		if (!bannerContainer) {
 			return false;
 		}
-		const activeDiscount = getDiscountByName( this.props.withDiscount, this.props.discountEndDate );
+		const activeDiscount = getDiscountByName(this.props.withDiscount, this.props.discountEndDate);
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
-				showDismiss={ false }
+				showDismiss={false}
 				icon="info-outline"
 				status="is-success"
 			>
-				{ activeDiscount.plansPageNoticeTextTitle && (
+				{activeDiscount.plansPageNoticeTextTitle && (
 					<strong>
-						{ activeDiscount.plansPageNoticeTextTitle }
-						{ <br /> }
+						{activeDiscount.plansPageNoticeTextTitle}
+						{<br />}
 					</strong>
-				) }
-				{ activeDiscount.plansPageNoticeText }
+				)}
+				{activeDiscount.plansPageNoticeText}
 			</Notice>,
 			bannerContainer
 		);
@@ -241,37 +238,37 @@ export class PlanFeatures extends Component {
 		const { currentSitePlanSlug, translate } = this.props;
 		const { choosingPlanSlug, settingPublic, showingSiteLaunchDialog } = this.state;
 
-		if ( ! showingSiteLaunchDialog ) {
+		if (!showingSiteLaunchDialog) {
 			return null;
 		}
 
-		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_shown', {
+		this.props.recordTracksEvent('calypso_plan_upgrade_launch_dialog_shown', {
 			current_plan: currentSitePlanSlug,
 			upgrading_to: choosingPlanSlug,
-		} );
+		});
 
 		return (
 			<Dialog
 				additionalClassNames="plan-features__upgrade-launch-dialog"
 				isVisible
-				buttons={ [
-					{ action: 'cancel', disabled: settingPublic, label: translate( 'Cancel' ) },
+				buttons={[
+					{ action: 'cancel', disabled: settingPublic, label: translate('Cancel') },
 					{
 						action: 'continue',
 						disabled: settingPublic,
-						label: translate( "Let's do it!" ),
+						label: translate("Let's do it!"),
 						isPrimary: true,
 					},
-				] }
-				onClose={ this.onLaunchDialogClose }
+				]}
+				onClose={this.onLaunchDialogClose}
 			>
-				<h1>{ translate( 'Site Privacy' ) }</h1>
-				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
-				<p>{ translate( 'Upgrading to this plan makes your site visible to the public.' ) }</p>
+				<h1>{translate('Site Privacy')}</h1>
+				<p>{translate('Your site is only visible to you and users you approve.')}</p>
+				<p>{translate('Upgrading to this plan makes your site visible to the public.')}</p>
 				<InlineSupportLink
-					showIcon={ false }
+					showIcon={false}
 					supportLink="https://wordpress.com/support/settings/privacy-settings/"
-					supportPostId={ 1507 }
+					supportPostId={1507}
 				/>
 			</Dialog>
 		);
@@ -280,12 +277,12 @@ export class PlanFeatures extends Component {
 	hasDiscountNotice() {
 		const { canPurchase, hasPlaceholders, withDiscount, discountEndDate } = this.props;
 		const bannerContainer = this.getBannerContainer();
-		if ( ! bannerContainer ) {
+		if (!bannerContainer) {
 			return false;
 		}
 
-		const activeDiscount = getDiscountByName( withDiscount, discountEndDate );
-		if ( ! activeDiscount || hasPlaceholders || ! canPurchase ) {
+		const activeDiscount = getDiscountByName(withDiscount, discountEndDate);
+		if (!activeDiscount || hasPlaceholders || !canPurchase) {
 			return false;
 		}
 
@@ -293,8 +290,8 @@ export class PlanFeatures extends Component {
 	}
 
 	higherPlanAvailable() {
-		const currentPlan = get( this.props, 'sitePlan.product_slug', '' );
-		const highestPlan = last( this.props.planProperties );
+		const currentPlan = get(this.props, 'sitePlan.product_slug', '');
+		const highestPlan = last(this.props.planProperties);
 		return currentPlan !== highestPlan.planName && highestPlan.availableForPurchase;
 	}
 
@@ -310,11 +307,11 @@ export class PlanFeatures extends Component {
 		const bannerContainer = this.getBannerContainer();
 		if (
 			hasPlaceholders ||
-			! canPurchase ||
-			! bannerContainer ||
-			! showPlanCreditsApplied ||
-			! planCredits ||
-			! this.higherPlanAvailable()
+			!canPurchase ||
+			!bannerContainer ||
+			!showPlanCreditsApplied ||
+			!planCredits ||
+			!this.higherPlanAvailable()
 		) {
 			return null;
 		}
@@ -322,47 +319,47 @@ export class PlanFeatures extends Component {
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
-				showDismiss={ false }
+				showDismiss={false}
 				icon="info-outline"
 				status="is-success"
 			>
-				{ translate(
+				{translate(
 					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
 						'Apply those credits towards an upgrade before they expire!',
 					{
 						args: {
-							amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
+							amountInCurrency: formatCurrency(planCredits, planProperties[0].currencyCode),
 						},
 						components: {
 							b: <strong />,
 						},
 					}
-				) }
+				)}
 			</Notice>,
 			bannerContainer
 		);
 	}
 
 	getBannerContainer() {
-		return document.querySelector( '.plans-features-main__notice' );
+		return document.querySelector('.plans-features-main__notice');
 	}
 
 	renderUpgradeDisabledNotice() {
 		const { canPurchase, hasPlaceholders, translate } = this.props;
 
-		if ( hasPlaceholders || canPurchase ) {
+		if (hasPlaceholders || canPurchase) {
 			return null;
 		}
 
 		const bannerContainer = this.getBannerContainer();
-		if ( ! bannerContainer ) {
+		if (!bannerContainer) {
 			return false;
 		}
 		return ReactDOM.createPortal(
-			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
-				{ translate(
+			<Notice className="plan-features__notice" showDismiss={false} status="is-info">
+				{translate(
 					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
-				) }
+				)}
 			</Notice>,
 			bannerContainer
 		);
@@ -384,19 +381,19 @@ export class PlanFeatures extends Component {
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
-		const reorderedPlans = planProperties.filter( properties => {
-			if ( isFreePlan( properties.planName ) ) {
+		const reorderedPlans = planProperties.filter((properties) => {
+			if (isFreePlan(properties.planName)) {
 				freePlanProperties = properties;
 				return false;
 			}
 			return true;
-		} );
+		});
 
-		if ( freePlanProperties ) {
-			reorderedPlans.push( freePlanProperties );
+		if (freePlanProperties) {
+			reorderedPlans.push(freePlanProperties);
 		}
 
-		return map( reorderedPlans, properties => {
+		return map(reorderedPlans, (properties) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -414,58 +411,58 @@ export class PlanFeatures extends Component {
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
-				<div className="plan-features__mobile-plan" key={ planName }>
+				<div className="plan-features__mobile-plan" key={planName}>
 					<PlanFeaturesHeader
-						availableForPurchase={ availableForPurchase }
-						current={ current }
-						currencyCode={ currencyCode }
-						isJetpack={ isJetpack }
-						popular={ popular }
-						newPlan={ newPlan }
-						bestValue={ bestValue }
-						title={ planConstantObj.getTitle() }
-						planType={ planName }
-						rawPrice={ rawPrice }
-						discountPrice={ discountPrice }
-						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
-						hideMonthly={ hideMonthly }
-						isPlaceholder={ isPlaceholder }
-						basePlansPath={ basePlansPath }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
-						isInSignup={ isInSignup }
-						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						availableForPurchase={availableForPurchase}
+						current={current}
+						currencyCode={currencyCode}
+						isJetpack={isJetpack}
+						popular={popular}
+						newPlan={newPlan}
+						bestValue={bestValue}
+						title={planConstantObj.getTitle()}
+						planType={planName}
+						rawPrice={rawPrice}
+						discountPrice={discountPrice}
+						billingTimeFrame={planConstantObj.getBillingTimeFrame()}
+						hideMonthly={hideMonthly}
+						isPlaceholder={isPlaceholder}
+						basePlansPath={basePlansPath}
+						relatedMonthlyPlan={relatedMonthlyPlan}
+						isInSignup={isInSignup}
+						selectedPlan={selectedPlan}
+						showPlanCreditsApplied={true === showPlanCreditsApplied && !this.hasDiscountNotice()}
 					/>
-					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
+					<p className="plan-features__description">{planConstantObj.getDescription(abtest)}</p>
 					<PlanFeaturesActions
-						availableForPurchase={ availableForPurchase }
-						canPurchase={ canPurchase }
-						className={ getPlanClass( planName ) }
-						current={ current }
-						freePlan={ isFreePlan( planName ) }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
-						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
-						selectedPlan={ selectedPlan }
+						availableForPurchase={availableForPurchase}
+						canPurchase={canPurchase}
+						className={getPlanClass(planName)}
+						current={current}
+						freePlan={isFreePlan(planName)}
+						isInSignup={isInSignup}
+						isLandingPage={isLandingPage}
+						isLaunchPage={isLaunchPage}
+						isPlaceholder={isPlaceholder}
+						isPopular={popular}
+						onUpgradeClick={() => this.handleUpgradeClick(properties)}
+						planName={planConstantObj.getTitle()}
+						planType={planName}
+						primaryUpgrade={primaryUpgrade}
+						selectedPlan={selectedPlan}
 					/>
-					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
-						{ this.renderMobileFeatures( features ) }
+					<FoldableCard header={translate('Show features')} clickableHeader compact>
+						{this.renderMobileFeatures(features)}
 					</FoldableCard>
 				</div>
 			);
-		} );
+		});
 	}
 
-	renderMobileFeatures( features ) {
-		return map( features, ( currentFeature, index ) => {
-			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
-		} );
+	renderMobileFeatures(features) {
+		return map(features, (currentFeature, index) => {
+			return currentFeature ? this.renderFeatureItem(currentFeature, index) : null;
+		});
 	}
 
 	renderPlanHeaders() {
@@ -483,7 +480,7 @@ export class PlanFeatures extends Component {
 			withScroll,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map(planProperties, (properties) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -500,25 +497,25 @@ export class PlanFeatures extends Component {
 				rawPriceAnnual,
 			} = properties;
 			let { discountPrice } = properties;
-			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
-			let audience = planConstantObj.getAudience( isEligibleForPlanStepTest );
+			const classes = classNames('plan-features__table-item', 'has-border-top');
+			let audience = planConstantObj.getAudience(isEligibleForPlanStepTest);
 
 			let annualPriceText;
-			if ( rawPriceAnnual ) {
-				const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
-				annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
+			if (rawPriceAnnual) {
+				const annualPriceObj = getCurrencyObject(rawPriceAnnual, currencyCode);
+				annualPriceText = `${annualPriceObj.symbol}${annualPriceObj.integer}`;
 			}
 
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame( annualPriceText );
+			let billingTimeFrame = planConstantObj.getBillingTimeFrame(annualPriceText);
 
-			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
+			if (disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0) {
+				if (planMatches(planName, { type: TYPE_BLOGGER })) {
 					discountPrice = 0;
 				}
 			}
 
-			if ( isInSignup && ! displayJetpackPlans ) {
-				switch ( siteType ) {
+			if (isInSignup && !displayJetpackPlans) {
+				switch (siteType) {
 					case 'blog':
 						audience = planConstantObj.getBlogAudience();
 						break;
@@ -529,74 +526,74 @@ export class PlanFeatures extends Component {
 						audience = planConstantObj.getStoreAudience();
 						break;
 					default:
-						audience = planConstantObj.getAudience( isEligibleForPlanStepTest );
+						audience = planConstantObj.getAudience(isEligibleForPlanStepTest);
 				}
 			}
 
-			if ( isInSignup && displayJetpackPlans ) {
+			if (isInSignup && displayJetpackPlans) {
 				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
 			return (
-				<th scope="col" key={ planName } className={ classes }>
+				<th scope="col" key={planName} className={classes}>
 					<PlanFeaturesHeader
-						audience={ audience }
-						availableForPurchase={ availableForPurchase }
-						basePlansPath={ basePlansPath }
-						billingTimeFrame={ billingTimeFrame }
-						current={ current }
-						currencyCode={ currencyCode }
-						discountPrice={ discountPrice }
-						hideMonthly={ hideMonthly }
-						isInSignup={ isInSignup }
-						isJetpack={ isJetpack }
-						isPlaceholder={ isPlaceholder }
-						newPlan={ newPlan }
-						bestValue={ bestValue }
-						planType={ planName }
-						popular={ popular }
-						rawPrice={ rawPrice }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
-						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
-						title={ planConstantObj.getTitle( isEligibleForPlanStepTest ) }
-						plansWithScroll={ withScroll }
-						isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
+						audience={audience}
+						availableForPurchase={availableForPurchase}
+						basePlansPath={basePlansPath}
+						billingTimeFrame={billingTimeFrame}
+						current={current}
+						currencyCode={currencyCode}
+						discountPrice={discountPrice}
+						hideMonthly={hideMonthly}
+						isInSignup={isInSignup}
+						isJetpack={isJetpack}
+						isPlaceholder={isPlaceholder}
+						newPlan={newPlan}
+						bestValue={bestValue}
+						planType={planName}
+						popular={popular}
+						rawPrice={rawPrice}
+						relatedMonthlyPlan={relatedMonthlyPlan}
+						selectedPlan={selectedPlan}
+						showPlanCreditsApplied={true === showPlanCreditsApplied && !this.hasDiscountNotice()}
+						title={planConstantObj.getTitle(isEligibleForPlanStepTest)}
+						plansWithScroll={withScroll}
+						isEligibleForPlanStepTest={isEligibleForPlanStepTest}
 					/>
 				</th>
 			);
-		} );
+		});
 	}
 
 	renderPlanDescriptions() {
 		const { planProperties, withScroll, isEligibleForPlanStepTest } = this.props;
 
-		return map( planProperties, properties => {
+		return map(planProperties, (properties) => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
 
-			const classes = classNames( 'plan-features__table-item', {
+			const classes = classNames('plan-features__table-item', {
 				'is-placeholder': isPlaceholder,
 				'is-description': withScroll,
-			} );
+			});
 
 			let description = null;
-			if ( withScroll ) {
-				description = planConstantObj.getShortDescription( isEligibleForPlanStepTest );
+			if (withScroll) {
+				description = planConstantObj.getShortDescription(isEligibleForPlanStepTest);
 			} else {
-				description = planConstantObj.getDescription( abtest );
+				description = planConstantObj.getDescription(abtest);
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
-					{ isPlaceholder ? <SpinnerLine /> : null }
+				<td key={planName} className={classes}>
+					{isPlaceholder ? <SpinnerLine /> : null}
 
-					<p className="plan-features__description">{ description }</p>
+					<p className="plan-features__description">{description}</p>
 				</td>
 			);
-		} );
+		});
 	}
 
-	handleUpgradeClick( singlePlanProperties ) {
+	handleUpgradeClick(singlePlanProperties) {
 		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
 
 		const {
@@ -607,36 +604,36 @@ export class PlanFeatures extends Component {
 			productSlug,
 		} = singlePlanProperties;
 
-		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
-			ownPropsOnUpgradeClick( cartItemForPlan );
+		if (ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan) {
+			ownPropsOnUpgradeClick(cartItemForPlan);
 			return;
 		}
 
-		if ( ! availableForPurchase ) {
+		if (!availableForPurchase) {
 			return;
 		}
 
-		const checkoutUrlWithArgs = addQueryArgs( { redirect_to: redirectTo }, checkoutUrl );
+		const checkoutUrlWithArgs = addQueryArgs({ redirect_to: redirectTo }, checkoutUrl);
 
-		if ( siteIsPrivateAndGoingAtomic ) {
-			if ( isInSignup ) {
+		if (siteIsPrivateAndGoingAtomic) {
+			if (isInSignup) {
 				// Let signup do its thing
 				return;
 			}
-			if ( 'variant' === abtest( 'ATPrivacy' ) ) {
+			if ('variant' === abtest('ATPrivacy')) {
 				// When coming soon feature is enabled, we don't want to show any warnings
-				page( checkoutUrlWithArgs );
+				page(checkoutUrlWithArgs);
 				return;
 			}
-			this.setState( {
+			this.setState({
 				checkoutUrl: checkoutUrlWithArgs,
 				choosingPlanSlug: productSlug,
 				showingSiteLaunchDialog: true,
-			} );
+			});
 			return;
 		}
 
-		page( checkoutUrlWithArgs );
+		page(checkoutUrlWithArgs);
 	}
 
 	renderTopButtons() {
@@ -653,7 +650,7 @@ export class PlanFeatures extends Component {
 			translate,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map(planProperties, (properties) => {
 			let { availableForPurchase } = properties;
 			const {
 				current,
@@ -673,40 +670,40 @@ export class PlanFeatures extends Component {
 			let forceDisplayButton = false,
 				buttonText = null;
 
-			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
+			if (disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0) {
+				if (planMatches(planName, { type: TYPE_BLOGGER })) {
 					availableForPurchase = false;
 					forceDisplayButton = true;
-					buttonText = translate( 'Only with .blog domains' );
+					buttonText = translate('Only with .blog domains');
 				}
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
+				<td key={planName} className={classes}>
 					<PlanFeaturesActions
-						availableForPurchase={ availableForPurchase }
-						buttonText={ buttonText }
-						canPurchase={ canPurchase }
-						className={ getPlanClass( planName ) }
-						current={ current }
-						freePlan={ isFreePlan( planName ) }
-						forceDisplayButton={ forceDisplayButton }
-						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
-						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
-						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
-						selectedPlan={ selectedPlan }
+						availableForPurchase={availableForPurchase}
+						buttonText={buttonText}
+						canPurchase={canPurchase}
+						className={getPlanClass(planName)}
+						current={current}
+						freePlan={isFreePlan(planName)}
+						forceDisplayButton={forceDisplayButton}
+						isPlaceholder={isPlaceholder}
+						isPopular={popular}
+						isInSignup={isInSignup}
+						isLandingPage={isLandingPage}
+						isLaunchPage={isLaunchPage}
+						isEligibleForPlanStepTest={isEligibleForPlanStepTest}
+						manageHref={`/plans/my-plan/${selectedSiteSlug}`}
+						onUpgradeClick={() => this.handleUpgradeClick(properties)}
+						planName={planConstantObj.getTitle()}
+						planType={planName}
+						primaryUpgrade={primaryUpgrade}
+						selectedPlan={selectedPlan}
 					/>
 				</td>
 			);
-		} );
+		});
 	}
 
 	getLongestFeaturesList() {
@@ -714,8 +711,8 @@ export class PlanFeatures extends Component {
 
 		return reduce(
 			planProperties,
-			( longest, properties ) => {
-				const currentFeatures = Object.keys( properties.features );
+			(longest, properties) => {
+				const currentFeatures = Object.keys(properties.features);
 				return currentFeatures.length > longest.length ? currentFeatures : longest;
 			},
 			[]
@@ -724,58 +721,58 @@ export class PlanFeatures extends Component {
 
 	renderPlanFeatureRows() {
 		const longestFeatures = this.getLongestFeaturesList();
-		return map( longestFeatures, ( featureKey, rowIndex ) => {
+		return map(longestFeatures, (featureKey, rowIndex) => {
 			return (
-				<tr key={ rowIndex } className="plan-features__row">
-					{ this.renderPlanFeatureColumns( rowIndex ) }
+				<tr key={rowIndex} className="plan-features__row">
+					{this.renderPlanFeatureColumns(rowIndex)}
 				</tr>
 			);
-		} );
+		});
 	}
 
-	renderFeatureItem( feature, index ) {
+	renderFeatureItem(feature, index) {
 		const description = feature.getDescription
-			? feature.getDescription( abtest, this.props.domainName )
+			? feature.getDescription(abtest, this.props.domainName)
 			: null;
 		return (
 			<PlanFeaturesItem
-				key={ index }
-				description={ description }
-				hideInfoPopover={ feature.hideInfoPopover }
-				hideGridicon={ this.props.withScroll }
+				key={index}
+				description={description}
+				hideInfoPopover={feature.hideInfoPopover}
+				hideGridicon={this.props.withScroll}
 			>
 				<span className="plan-features__item-info">
-					<span className="plan-features__item-title">{ feature.getTitle() }</span>
+					<span className="plan-features__item-title">{feature.getTitle()}</span>
 				</span>
 			</PlanFeaturesItem>
 		);
 	}
 
-	renderPlanFeatureColumns( rowIndex ) {
+	renderPlanFeatureColumns(rowIndex) {
 		const { planProperties, selectedFeature, withScroll } = this.props;
 
-		return map( planProperties, properties => {
+		return map(planProperties, (properties) => {
 			const { features, planName } = properties;
 
-			const featureKeys = Object.keys( features ),
-				key = featureKeys[ rowIndex ],
-				currentFeature = features[ key ];
+			const featureKeys = Object.keys(features),
+				key = featureKeys[rowIndex],
+				currentFeature = features[key];
 
-			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
-				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
+			const classes = classNames('plan-features__table-item', getPlanClass(planName), {
+				'has-partial-border': !withScroll && rowIndex + 1 < featureKeys.length,
 				'is-last-feature': rowIndex + 1 === featureKeys.length,
 				'is-highlighted':
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-			} );
+			});
 
 			return currentFeature ? (
-				<td key={ `${ planName }-${ key }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature ) }
+				<td key={`${planName}-${key}`} className={classes}>
+					{this.renderFeatureItem(currentFeature)}
 				</td>
 			) : (
-				<td key={ `${ planName }-none` } className="plan-features__table-item" />
+				<td key={`${planName}-none`} className="plan-features__table-item" />
 			);
-		} );
+		});
 	}
 
 	renderBottomButtons() {
@@ -790,7 +787,7 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 		} = this.props;
 
-		return map( planProperties, properties => {
+		return map(planProperties, (properties) => {
 			let { availableForPurchase } = properties;
 			const {
 				current,
@@ -806,39 +803,39 @@ export class PlanFeatures extends Component {
 				'is-bottom-buttons'
 			);
 
-			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
+			if (disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0) {
+				if (planMatches(planName, { type: TYPE_BLOGGER })) {
 					availableForPurchase = false;
 				}
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
+				<td key={planName} className={classes}>
 					<PlanFeaturesActions
-						availableForPurchase={ availableForPurchase }
-						canPurchase={ canPurchase }
-						className={ getPlanClass( planName ) }
-						current={ current }
-						freePlan={ isFreePlan( planName ) }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
-						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
-						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
-						selectedPlan={ selectedPlan }
+						availableForPurchase={availableForPurchase}
+						canPurchase={canPurchase}
+						className={getPlanClass(planName)}
+						current={current}
+						freePlan={isFreePlan(planName)}
+						isInSignup={isInSignup}
+						isLandingPage={isLandingPage}
+						isLaunchPage={isLaunchPage}
+						isPlaceholder={isPlaceholder}
+						isPopular={popular}
+						manageHref={`/plans/my-plan/${selectedSiteSlug}`}
+						planName={planConstantObj.getTitle()}
+						planType={planName}
+						primaryUpgrade={primaryUpgrade}
+						onUpgradeClick={() => this.handleUpgradeClick(properties)}
+						selectedPlan={selectedPlan}
 					/>
 				</td>
 			);
-		} );
+		});
 	}
 
 	UNSAFE_componentWillMount() {
-		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
+		this.props.recordTracksEvent('calypso_wp_plans_test_view');
 		retargetViewPlans();
 	}
 }
@@ -873,40 +870,40 @@ PlanFeatures.defaultProps = {
 	onUpgradeClick: noop,
 };
 
-export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
-	( planMatches( currentPlan, { type: TYPE_BLOGGER, group: GROUP_WPCOM } ) &&
-		planMatches( plan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) ) ||
-	( planMatches( currentPlan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) &&
-		planMatches( plan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) ) ||
-	( planMatches( currentPlan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) &&
-		planMatches( plan, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) );
+export const isPrimaryUpgradeByPlanDelta = (currentPlan, plan) =>
+	(planMatches(currentPlan, { type: TYPE_BLOGGER, group: GROUP_WPCOM }) &&
+		planMatches(plan, { type: TYPE_PERSONAL, group: GROUP_WPCOM })) ||
+	(planMatches(currentPlan, { type: TYPE_PERSONAL, group: GROUP_WPCOM }) &&
+		planMatches(plan, { type: TYPE_PREMIUM, group: GROUP_WPCOM })) ||
+	(planMatches(currentPlan, { type: TYPE_PREMIUM, group: GROUP_WPCOM }) &&
+		planMatches(plan, { type: TYPE_BUSINESS, group: GROUP_WPCOM }));
 
-export const calculatePlanCredits = ( state, siteId, planProperties ) =>
+export const calculatePlanCredits = (state, siteId, planProperties) =>
 	planProperties
-		.map( ( { planName, planConstantObj, availableForPurchase } ) => {
-			if ( ! availableForPurchase ) {
+		.map(({ planName, planConstantObj, availableForPurchase }) => {
+			if (!availableForPurchase) {
 				return 0;
 			}
 			const planProductId = planConstantObj.getProductId();
-			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName, {
+			const annualDiscountPrice = getPlanDiscountedRawPrice(state, siteId, planName, {
 				isMonthly: false,
-			} );
-			const annualRawPrice = getPlanRawPrice( state, planProductId, false );
+			});
+			const annualRawPrice = getPlanRawPrice(state, planProductId, false);
 
-			if ( typeof annualDiscountPrice !== 'number' || typeof annualDiscountPrice !== 'number' ) {
+			if (typeof annualDiscountPrice !== 'number' || typeof annualDiscountPrice !== 'number') {
 				return 0;
 			}
 
 			return annualRawPrice - annualDiscountPrice;
-		} )
-		.reduce( ( max, credits ) => Math.max( max, credits ), 0 );
+		})
+		.reduce((max, credits) => Math.max(max, credits), 0);
 
-const hasPlaceholders = planProperties =>
-	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
+const hasPlaceholders = (planProperties) =>
+	planProperties.filter((planProps) => planProps.isPlaceholder).length > 0;
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const {
 			isInSignup,
 			placeholder,
@@ -919,104 +916,100 @@ export default connect(
 			withDiscount,
 		} = ownProps;
 		const selectedSiteId = siteId;
-		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
+		const selectedSiteSlug = getSiteSlug(state, selectedSiteId);
 		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
-		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
-		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
-		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
-		const currentPlanObj = getCurrentPlan( state, selectedSiteId );
-		const sitePlan = getSitePlan( state, selectedSiteId );
-		const sitePlans = getPlansBySiteId( state, selectedSiteId );
-		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
-		const signupDependencies = getSignupDependencyStore( state );
+		const isJetpack = selectedSiteId ? isJetpackSite(state, selectedSiteId) : displayJetpackPlans;
+		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer(state, selectedSiteId) : false;
+		const siteIsPrivate = isPrivateSite(state, selectedSiteId);
+		const currentPlanObj = getCurrentPlan(state, selectedSiteId);
+		const sitePlan = getSitePlan(state, selectedSiteId);
+		const sitePlans = getPlansBySiteId(state, selectedSiteId);
+		const isPaid = isCurrentPlanPaid(state, selectedSiteId);
+		const signupDependencies = getSignupDependencyStore(state);
 		const siteType = signupDependencies.designType;
-		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
+		const canPurchase = !isPaid || isCurrentUserCurrentPlanOwner(state, selectedSiteId);
 
 		let planProperties = compact(
-			map( plans, plan => {
+			map(plans, (plan) => {
 				let isPlaceholder = false;
-				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
+				const planConstantObj = applyTestFiltersToPlansList(plan, abtest);
 				const planProductId = planConstantObj.getProductId();
-				const planObject = getPlan( state, planProductId );
-				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
-				const showMonthly = ! isMonthly( plan );
+				const planObject = getPlan(state, planProductId);
+				const isLoadingSitePlans = selectedSiteId && !sitePlans.hasLoadedFromServer;
+				const showMonthly = !isMonthly(plan);
 				const availableForPurchase = isInSignup
 					? true
-					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
+					: canUpgradeToPlan(state, selectedSiteId, plan) && canPurchase;
 				const relatedMonthlyPlan = showMonthly
-					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
+					? getPlanBySlug(state, getMonthlyPlanByYearly(plan))
 					: null;
-				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
-				const newPlan = isNew( plan ) && ! isPaid;
-				const bestValue = isBestValue( plan ) && ! isPaid;
+				const popular = popularPlanSpec && planMatches(plan, popularPlanSpec);
+				const newPlan = isNew(plan) && !isPaid;
+				const bestValue = isBestValue(plan) && !isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const planPath = getPlanPath( plan ) || '';
+				const planPath = getPlanPath(plan) || '';
 
 				const checkoutUrlArgs = {};
 				// Auto-apply the coupon code to the cart for WPCOM sites
-				if ( ! displayJetpackPlans && withDiscount ) {
+				if (!displayJetpackPlans && withDiscount) {
 					checkoutUrlArgs.coupon = withDiscount;
 				}
 				const checkoutUrl = addQueryArgs(
 					checkoutUrlArgs,
-					`/checkout/${ selectedSiteSlug }/${ planPath }`
+					`/checkout/${selectedSiteSlug}/${planPath}`
 				);
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
-				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
+				const showMonthlyPrice = !isJetpack || isSiteAT || (!relatedMonthlyPlan && showMonthly);
 
-				let planFeatures = getPlanFeaturesObject(
-					planConstantObj.getPlanCompareFeatures( abtest )
-				);
+				let planFeatures = getPlanFeaturesObject(planConstantObj.getPlanCompareFeatures(abtest));
 
-				if ( placeholder || ! planObject || isLoadingSitePlans ) {
+				if (placeholder || !planObject || isLoadingSitePlans) {
 					isPlaceholder = true;
 				}
 
-				if ( isInSignup ) {
-					switch ( siteType ) {
+				if (isInSignup) {
+					switch (siteType) {
 						case 'blog':
-							if ( planConstantObj.getBlogSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getBlogSignupFeatures( abtest )
-								);
+							if (planConstantObj.getBlogSignupFeatures) {
+								planFeatures = getPlanFeaturesObject(planConstantObj.getBlogSignupFeatures(abtest));
 							}
 
 							break;
 						case 'grid':
-							if ( planConstantObj.getPortfolioSignupFeatures ) {
+							if (planConstantObj.getPortfolioSignupFeatures) {
 								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getPortfolioSignupFeatures( abtest )
+									planConstantObj.getPortfolioSignupFeatures(abtest)
 								);
 							}
 
 							break;
 						default:
-							if ( planConstantObj.getSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+							if (planConstantObj.getSignupFeatures) {
+								planFeatures = getPlanFeaturesObject(planConstantObj.getSignupFeatures(abtest));
 							}
 					}
 				}
 
-				if ( displayJetpackPlans ) {
-					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+				if (displayJetpackPlans) {
+					planFeatures = getPlanFeaturesObject(planConstantObj.getSignupFeatures(abtest));
 				}
-				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
+				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan(plan);
 
 				const rawPriceAnnual =
 					showMonthlyPrice &&
 					ownProps.isEligibleForPlanStepTest &&
-					getPlanRawPrice( state, planProductId, false );
+					getPlanRawPrice(state, planProductId, false);
 
 				return {
 					availableForPurchase,
-					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
+					cartItemForPlan: getCartItemForPlan(getPlanSlug(state, planProductId)),
 					checkoutUrl,
-					currencyCode: getCurrentUserCurrencyCode( state ),
-					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
+					currencyCode: getCurrentUserCurrencyCode(state),
+					current: isCurrentSitePlan(state, selectedSiteId, planProductId),
+					discountPrice: getPlanDiscountedRawPrice(state, selectedSiteId, plan, {
 						isMonthly: showMonthlyPrice,
-					} ),
+					}),
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
@@ -1024,35 +1017,35 @@ export default connect(
 					planName: plan,
 					planObject: planObject,
 					popular: popular,
-					productSlug: get( planObject, 'product_slug' ),
+					productSlug: get(planObject, 'product_slug'),
 					newPlan: newPlan,
 					bestValue: bestValue,
 					hideMonthly: false,
 					primaryUpgrade:
-						isPrimaryUpgradeByPlanDelta( currentPlan, plan ) ||
+						isPrimaryUpgradeByPlanDelta(currentPlan, plan) ||
 						popular ||
 						newPlan ||
 						bestValue ||
 						plans.length === 1,
-					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
+					rawPrice: getPlanRawPrice(state, planProductId, showMonthlyPrice),
 					rawPriceAnnual,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 				};
-			} )
+			})
 		);
 
-		const planCredits = calculatePlanCredits( state, siteId, planProperties );
+		const planCredits = calculatePlanCredits(state, siteId, planProperties);
 
-		if ( Array.isArray( visiblePlans ) ) {
-			planProperties = planProperties.filter( p => visiblePlans.indexOf( p.planName ) !== -1 );
+		if (Array.isArray(visiblePlans)) {
+			planProperties = planProperties.filter((p) => visiblePlans.indexOf(p.planName) !== -1);
 		}
 
-		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
+		const isJetpackNotAtomic = isJetpack && !isSiteAT;
 
 		return {
 			canPurchase,
-			currentSitePlanSlug: get( currentPlanObj, 'productSlug', null ),
+			currentSitePlanSlug: get(currentPlanObj, 'productSlug', null),
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
@@ -1060,19 +1053,19 @@ export default connect(
 			sitePlan,
 			siteType,
 			planCredits,
-			hasPlaceholders: hasPlaceholders( planProperties ),
+			hasPlaceholders: hasPlaceholders(planProperties),
 			showPlanCreditsApplied:
 				sitePlan &&
 				sitePlan.product_slug !== PLAN_FREE &&
 				planCredits &&
-				! isJetpackNotAtomic &&
-				! isInSignup,
+				!isJetpackNotAtomic &&
+				!isInSignup,
 		};
 	},
 	{
 		recordTracksEvent,
 		saveSiteSettings,
 	}
-)( localize( PlanFeatures ) );
+)(localize(PlanFeatures));
 
 /* eslint-enable wpcalypso/redux-no-bound-selectors */

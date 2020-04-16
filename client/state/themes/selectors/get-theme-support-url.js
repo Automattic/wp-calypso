@@ -16,16 +16,16 @@ import 'state/themes/init';
  * @param  {?number} siteId  Site ID to optionally use as context
  * @returns {?string}         Theme setup instructions URL
  */
-export function getThemeSupportUrl( state, themeId, siteId ) {
-	if ( ! themeId || ! isThemePremium( state, themeId ) ) {
+export function getThemeSupportUrl(state, themeId, siteId) {
+	if (!themeId || !isThemePremium(state, themeId)) {
 		return null;
 	}
 
-	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
+	const sitePart = siteId ? `/${getSiteSlug(state, siteId)}` : '';
 
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		return `/theme/${ themeId }/setup${ sitePart }`;
+	if (config.isEnabled('manage/themes/details')) {
+		return `/theme/${themeId}/setup${sitePart}`;
 	}
 
-	return `${ oldShowcaseUrl }${ sitePart }${ themeId }/support`;
+	return `${oldShowcaseUrl}${sitePart}${themeId}/support`;
 }

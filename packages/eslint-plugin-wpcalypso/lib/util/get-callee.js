@@ -11,19 +11,19 @@
  * @param  {object} node CallExpression node
  * @returns {object}      First non-sequence callee
  */
-const getCallee = ( module.exports = function( node ) {
+const getCallee = (module.exports = function (node) {
 	const callee = node.callee;
-	if ( ! callee ) {
+	if (!callee) {
 		return node;
 	}
 
-	if ( 'SequenceExpression' === callee.type ) {
-		return getCallee( callee.expressions[ callee.expressions.length - 1 ] );
+	if ('SequenceExpression' === callee.type) {
+		return getCallee(callee.expressions[callee.expressions.length - 1]);
 	}
 
-	if ( 'MemberExpression' === callee.type ) {
-		return getCallee( callee.property );
+	if ('MemberExpression' === callee.type) {
+		return getCallee(callee.property);
 	}
 
 	return callee;
-} );
+});

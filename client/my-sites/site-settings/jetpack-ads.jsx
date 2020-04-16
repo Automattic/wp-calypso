@@ -49,26 +49,26 @@ class JetpackAds extends Component {
 
 		return (
 			<Banner
-				description={ translate(
+				description={translate(
 					'Add advertising to your site through our WordAds program and earn money from impressions.'
-				) }
-				event={ 'calypso_wordads_settings_upgrade_nudge' }
-				feature={ FEATURE_WORDADS_INSTANT }
-				plan={ PLAN_JETPACK_PREMIUM }
-				title={ translate( 'Enable WordAds by upgrading to Jetpack Premium' ) }
+				)}
+				event={'calypso_wordads_settings_upgrade_nudge'}
+				feature={FEATURE_WORDADS_INSTANT}
+				plan={PLAN_JETPACK_PREMIUM}
+				title={translate('Enable WordAds by upgrading to Jetpack Premium')}
 			/>
 		);
 	}
 
-	renderToggle( name, isDisabled, label ) {
+	renderToggle(name, isDisabled, label) {
 		const { fields, handleAutosavingToggle } = this.props;
 		return (
 			<CompactFormToggle
-				checked={ !! fields[ name ] }
-				disabled={ this.isFormPending() || isDisabled }
-				onChange={ handleAutosavingToggle( name ) }
+				checked={!!fields[name]}
+				disabled={this.isFormPending() || isDisabled}
+				onChange={handleAutosavingToggle(name)}
 			>
-				{ label }
+				{label}
 			</CompactFormToggle>
 		);
 	}
@@ -79,32 +79,30 @@ class JetpackAds extends Component {
 		return (
 			<div>
 				<SupportInfo
-					text={ translate(
-						'Displays high-quality ads on your site that allow you to earn income.'
-					) }
+					text={translate('Displays high-quality ads on your site that allow you to earn income.')}
 					link="https://jetpack.com/support/ads/"
 				/>
 				<div>
-					{ translate(
+					{translate(
 						'Show ads on the first article on your home page or at the end of every page and post. ' +
 							'Place additional ads at the top of your site and to any widget area to increase your earnings.'
-					) }
+					)}
 				</div>
 				<FormSettingExplanation>
-					{ translate(
+					{translate(
 						'By activating ads, you agree to the Automattic Ads {{link}}Terms of Service{{/link}}.',
 						{
 							components: {
 								link: (
 									<ExternalLink
 										href="https://wordpress.com/automattic-ads-tos/"
-										icon={ false }
+										icon={false}
 										target="_blank"
 									/>
 								),
 							},
 						}
-					) }
+					)}
 				</FormSettingExplanation>
 			</div>
 		);
@@ -118,32 +116,32 @@ class JetpackAds extends Component {
 			<div>
 				<Card className="site-settings__card site-settings__traffic-settings">
 					<FormFieldset>
-						{ this.renderContent() }
+						{this.renderContent()}
 
 						<br />
 
 						<JetpackModuleToggle
-							siteId={ selectedSiteId }
+							siteId={selectedSiteId}
 							moduleSlug="wordads"
-							label={ translate( 'Enable ads and display an ad below each post' ) }
-							disabled={ formPending }
+							label={translate('Enable ads and display an ad below each post')}
+							disabled={formPending}
 						/>
 
 						<div className="site-settings__child-settings">
-							{ this.renderToggle(
+							{this.renderToggle(
 								'enable_header_ad',
-								! wordadsModuleActive,
-								translate( 'Display an additional ad at the top of each page' )
-							) }
+								!wordadsModuleActive,
+								translate('Display an additional ad at the top of each page')
+							)}
 						</div>
 					</FormFieldset>
 				</Card>
 
-				{ wordadsModuleActive && (
-					<CompactCard href={ `/earn/ads-earnings/${ selectedSiteSlug }` }>
-						{ translate( 'View your earnings' ) }
+				{wordadsModuleActive && (
+					<CompactCard href={`/earn/ads-earnings/${selectedSiteSlug}`}>
+						{translate('View your earnings')}
 					</CompactCard>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -153,23 +151,23 @@ class JetpackAds extends Component {
 
 		return (
 			<div>
-				<SettingsSectionHeader title={ translate( 'Ads' ) } />
+				<SettingsSectionHeader title={translate('Ads')} />
 
-				{ hasWordadsFeature ? this.renderSettings() : this.renderUpgradeBanner() }
+				{hasWordadsFeature ? this.renderSettings() : this.renderUpgradeBanner()}
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const selectedSiteSlug = getSelectedSiteSlug( state );
-	const hasWordadsFeature = hasFeature( state, selectedSiteId, FEATURE_WORDADS_INSTANT );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const selectedSiteSlug = getSelectedSiteSlug(state);
+	const hasWordadsFeature = hasFeature(state, selectedSiteId, FEATURE_WORDADS_INSTANT);
 
 	return {
 		hasWordadsFeature,
 		selectedSiteId,
 		selectedSiteSlug,
-		wordadsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'wordads' ),
+		wordadsModuleActive: !!isJetpackModuleActive(state, selectedSiteId, 'wordads'),
 	};
-} )( localize( JetpackAds ) );
+})(localize(JetpackAds));

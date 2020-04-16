@@ -12,9 +12,9 @@ import { customize } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
-	if ( config.isEnabled( 'manage/customize' ) ) {
-		page( '/customize/:panel([^.]+)?', siteSelection, sites, makeLayout, clientRender );
+export default function () {
+	if (config.isEnabled('manage/customize')) {
+		page('/customize/:panel([^.]+)?', siteSelection, sites, makeLayout, clientRender);
 		page(
 			'/customize/:panel?/:domain',
 			siteSelection,

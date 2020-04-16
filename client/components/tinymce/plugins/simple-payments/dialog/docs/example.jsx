@@ -16,27 +16,27 @@ import { getCurrentUser } from 'state/current-user/selectors';
 class SimplePaymentsDialogExample extends PureComponent {
 	state = { showDialog: false };
 
-	openDialog = () => this.setState( { showDialog: true } );
-	handleClose = () => this.setState( { showDialog: false } );
+	openDialog = () => this.setState({ showDialog: true });
+	handleClose = () => this.setState({ showDialog: false });
 
 	render() {
 		return (
 			<Card>
-				<Button onClick={ this.openDialog }>Open Simple Payments Dialog</Button>
+				<Button onClick={this.openDialog}>Open Simple Payments Dialog</Button>
 				<SimplePaymentsDialog
-					siteId={ this.props.siteId }
-					showDialog={ this.state.showDialog }
-					onClose={ this.handleClose }
-					onInsert={ noop }
+					siteId={this.props.siteId}
+					showDialog={this.state.showDialog}
+					onClose={this.handleClose}
+					onInsert={noop}
 				/>
 			</Card>
 		);
 	}
 }
 
-const ConnectedSimplePaymentsDialogExample = connect( state => ( {
-	siteId: get( getCurrentUser( state ), 'primary_blog' ),
-} ) )( SimplePaymentsDialogExample );
+const ConnectedSimplePaymentsDialogExample = connect((state) => ({
+	siteId: get(getCurrentUser(state), 'primary_blog'),
+}))(SimplePaymentsDialogExample);
 
 ConnectedSimplePaymentsDialogExample.displayName = 'SimplePaymentsDialogExample';
 

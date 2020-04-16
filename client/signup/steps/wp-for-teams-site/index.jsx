@@ -30,7 +30,7 @@ import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions'
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:steps:wp-for-teams-site' );
+const debug = debugFactory('calypso:steps:wp-for-teams-site');
 
 /**
  * Constants
@@ -47,27 +47,27 @@ let siteUrlsSearched = [],
 class WpForTeamsSite extends React.Component {
 	static displayName = 'WpForTeamsSite';
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		let initialState;
 
-		if ( props?.step?.form ) {
+		if (props?.step?.form) {
 			initialState = props.step.form;
 
-			if ( ! isEmpty( props.step.errors ) ) {
+			if (!isEmpty(props.step.errors)) {
 				initialState = formState.setFieldErrors(
-					formState.setFieldsValidating( initialState ),
+					formState.setFieldsValidating(initialState),
 					{
-						site: props.step.errors[ 0 ].message,
+						site: props.step.errors[0].message,
 					},
 					true
 				);
 			}
 		}
 
-		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'site', 'siteTitle' ],
+		this.formStateController = new formState.Controller({
+			fieldNames: ['site', 'siteTitle'],
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
@@ -75,7 +75,7 @@ class WpForTeamsSite extends React.Component {
 			debounceWait: VALIDATION_DELAY_AFTER_FIELD_CHANGES,
 			hideFieldErrorsOnChange: true,
 			initialState: initialState,
-		} );
+		});
 
 		this.state = {
 			form: this.formStateController.getInitialState(),
@@ -87,26 +87,26 @@ class WpForTeamsSite extends React.Component {
 		this.save();
 	}
 
-	sanitizeSubdomain = domain => {
-		if ( ! domain ) {
+	sanitizeSubdomain = (domain) => {
+		if (!domain) {
 			return domain;
 		}
-		return domain.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
+		return domain.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 	};
 
-	sanitize = ( fields, onComplete ) => {
-		const sanitizedSubdomain = this.sanitizeSubdomain( fields.site );
-		if ( fields.site !== sanitizedSubdomain ) {
-			onComplete( { site: sanitizedSubdomain } );
+	sanitize = (fields, onComplete) => {
+		const sanitizedSubdomain = this.sanitizeSubdomain(fields.site);
+		if (fields.site !== sanitizedSubdomain) {
+			onComplete({ site: sanitizedSubdomain });
 		}
 	};
 
-	validate = ( fields, onComplete ) => {
+	validate = (fields, onComplete) => {
 		const messages = {};
 
-		if ( isEmpty( fields.siteTitle ) ) {
+		if (isEmpty(fields.siteTitle)) {
 			messages.siteTitle = {
-				[ ERROR_CODE_MISSING_SITE_TITLE ]: this.props.translate(
+				[ERROR_CODE_MISSING_SITE_TITLE]: this.props.translate(
 					'Please enter your team or project name.'
 				),
 			};
@@ -118,35 +118,32 @@ class WpForTeamsSite extends React.Component {
 				blog_title: fields.siteTitle,
 				validate: true,
 			},
-			function( error, response ) {
-				debug( error, response );
+			function (error, response) {
+				debug(error, response);
 
-				if ( error && error.message ) {
-					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
-						siteUrlsSearched.push( fields.site );
+				if (error && error.message) {
+					if (fields.site && !includes(siteUrlsSearched, fields.site)) {
+						siteUrlsSearched.push(fields.site);
 
-						analytics.tracks.recordEvent(
-							'calypso_signup_wp_for_teams_site_url_validation_failed',
-							{
-								error: error.error,
-								site_url: fields.site,
-							}
-						);
+						analytics.tracks.recordEvent('calypso_signup_wp_for_teams_site_url_validation_failed', {
+							error: error.error,
+							site_url: fields.site,
+						});
 					}
 
 					timesValidationFailed++;
 
 					messages.site = {
-						[ error.error ]: error.message,
+						[error.error]: error.message,
 					};
 				}
-				onComplete( null, messages );
+				onComplete(null, messages);
 			}
 		);
 	};
 
-	setFormState = state => {
-		this.setState( { form: state } );
+	setFormState = (state) => {
+		this.setState({ form: state });
 	};
 
 	resetAnalyticsData = () => {
@@ -154,37 +151,37 @@ class WpForTeamsSite extends React.Component {
 		timesValidationFailed = 0;
 	};
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
-		this.formStateController.handleSubmit( hasErrors => {
-			const site = formState.getFieldValue( this.state.form, 'site' );
-			const siteTitle = formState.getFieldValue( this.state.form, 'siteTitle' );
+		this.formStateController.handleSubmit((hasErrors) => {
+			const site = formState.getFieldValue(this.state.form, 'site');
+			const siteTitle = formState.getFieldValue(this.state.form, 'siteTitle');
 
-			this.setState( { submitting: false } );
+			this.setState({ submitting: false });
 
-			if ( hasErrors ) {
+			if (hasErrors) {
 				return;
 			}
 
-			analytics.tracks.recordEvent( 'calypso_signup_wp_for_teams_site_step_submit', {
+			analytics.tracks.recordEvent('calypso_signup_wp_for_teams_site_step_submit', {
 				unique_site_urls_searched: siteUrlsSearched.length,
 				times_validation_failed: timesValidationFailed,
-			} );
+			});
 
 			this.resetAnalyticsData();
 
-			this.props.submitSignupStep( {
+			this.props.submitSignupStep({
 				stepName: this.props.stepName,
 				form: this.state.form,
 				site,
 				siteTitle,
-			} );
+			});
 
 			this.props.goToNextStep();
-		} );
+		});
 	};
 
 	handleBlur = () => {
@@ -194,57 +191,57 @@ class WpForTeamsSite extends React.Component {
 	};
 
 	save = () => {
-		this.props.saveSignupStep( {
+		this.props.saveSignupStep({
 			stepName: 'wp-for-teams-site',
 			form: this.state.form,
-		} );
+		});
 	};
 
-	handleChangeEvent = event => {
-		this.formStateController.handleFieldChange( {
+	handleChangeEvent = (event) => {
+		this.formStateController.handleFieldChange({
 			name: event.target.name,
 			value: event.target.value,
-		} );
+		});
 	};
 
-	handleFormControllerError = error => {
-		if ( error ) {
+	handleFormControllerError = (error) => {
+		if (error) {
 			throw error;
 		}
 	};
 
-	getErrorMessagesWithLogin = fieldName => {
-		const link = login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
+	getErrorMessagesWithLogin = (fieldName) => {
+		const link = login({
+				isNative: config.isEnabled('login/native-login-links'),
 				redirectTo: window.location.href,
-			} ),
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+			}),
+			messages = formState.getFieldErrorMessages(this.state.form, fieldName);
 
-		if ( ! messages ) {
+		if (!messages) {
 			return;
 		}
 
-		return map( messages, ( message, error_code ) => {
-			if ( error_code === 'blog_name_reserved' ) {
+		return map(messages, (message, error_code) => {
+			if (error_code === 'blog_name_reserved') {
 				return (
 					<span>
 						<p>
-							{ message }
+							{message}
 							&nbsp;
-							{ this.props.translate(
+							{this.props.translate(
 								'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
 								{
 									components: {
-										a: <a href={ link } />,
+										a: <a href={link} />,
 									},
 								}
-							) }
+							)}
 						</p>
 					</span>
 				);
 			}
 			return message;
-		} );
+		});
 	};
 
 	formFields = () => {
@@ -253,41 +250,41 @@ class WpForTeamsSite extends React.Component {
 		return (
 			<>
 				<ValidationFieldset
-					errorMessages={ this.getErrorMessagesWithLogin( 'siteTitle' ) }
+					errorMessages={this.getErrorMessagesWithLogin('siteTitle')}
 					className="wp-for-teams-site__validation-site-title"
 				>
 					<FormLabel htmlFor="site-title">
-						{ this.props.translate( "What's the name of your team or project?" ) }
+						{this.props.translate("What's the name of your team or project?")}
 					</FormLabel>
 					<FormTextInput
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-						autoCapitalize={ 'off' }
+						autoFocus={true} // eslint-disable-line jsx-a11y/no-autofocus
+						autoCapitalize={'off'}
 						className="wp-for-teams-site__site-title"
-						disabled={ fieldDisabled }
+						disabled={fieldDisabled}
 						type="text"
 						name="site-title"
-						value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'siteTitle' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
+						value={formState.getFieldValue(this.state.form, 'siteTitle')}
+						isValid={formState.isFieldValid(this.state.form, 'siteTitle')}
+						onBlur={this.handleBlur}
+						onChange={this.handleChangeEvent}
 					/>
 				</ValidationFieldset>
 				<ValidationFieldset
-					errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }
+					errorMessages={this.getErrorMessagesWithLogin('site')}
 					className="wp-for-teams-site__validation-site"
 				>
-					<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
+					<FormLabel htmlFor="site">{this.props.translate('Choose a site address')}</FormLabel>
 					<FormTextInput
-						autoCapitalize={ 'off' }
+						autoCapitalize={'off'}
 						className="wp-for-teams-site__site-url"
-						disabled={ fieldDisabled }
+						disabled={fieldDisabled}
 						type="text"
 						name="site"
-						value={ formState.getFieldValue( this.state.form, 'site' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'site' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
+						value={formState.getFieldValue(this.state.form, 'site')}
+						isError={formState.isFieldInvalid(this.state.form, 'site')}
+						isValid={formState.isFieldValid(this.state.form, 'site')}
+						onBlur={this.handleBlur}
+						onChange={this.handleChangeEvent}
 					/>
 					<span className="wp-for-teams-site__wordpress-domain-suffix">.wordpress.com</span>
 				</ValidationFieldset>
@@ -296,27 +293,27 @@ class WpForTeamsSite extends React.Component {
 	};
 
 	buttonText = () => {
-		if ( this.props.step && 'completed' === this.props.step.status ) {
-			return this.props.translate( 'Site created - Go to next step' );
+		if (this.props.step && 'completed' === this.props.step.status) {
+			return this.props.translate('Site created - Go to next step');
 		}
 
-		if ( this.state.submitting ) {
-			return this.props.translate( 'Creating your site…' );
+		if (this.state.submitting) {
+			return this.props.translate('Creating your site…');
 		}
 
-		return this.props.translate( 'Continue' );
+		return this.props.translate('Continue');
 	};
 
 	formFooter = () => {
-		return <FormButton>{ this.buttonText() }</FormButton>;
+		return <FormButton>{this.buttonText()}</FormButton>;
 	};
 
 	renderSiteForm = () => {
 		return (
-			<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
-				{ this.formFields() }
+			<LoggedOutForm onSubmit={this.handleSubmit} noValidate>
+				{this.formFields()}
 
-				<LoggedOutFormFooter>{ this.formFooter() }</LoggedOutFormFooter>
+				<LoggedOutFormFooter>{this.formFooter()}</LoggedOutFormFooter>
 			</LoggedOutForm>
 		);
 	};
@@ -324,15 +321,15 @@ class WpForTeamsSite extends React.Component {
 	render() {
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
+				flowName={this.props.flowName}
+				stepName={this.props.stepName}
+				positionInFlow={this.props.positionInFlow}
 				subHeaderText=""
-				fallbackHeaderText={ this.props.translate( "Let's get started" ) }
-				stepContent={ this.renderSiteForm() }
+				fallbackHeaderText={this.props.translate("Let's get started")}
+				stepContent={this.renderSiteForm()}
 			/>
 		);
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep } )( localize( WpForTeamsSite ) );
+export default connect(null, { saveSignupStep, submitSignupStep })(localize(WpForTeamsSite));

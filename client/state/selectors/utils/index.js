@@ -17,11 +17,11 @@ import getPublicizeConnection from 'state/selectors/get-publicize-connection';
  * @param  {Array} postShareActions - share actions of a post
  * @returns {Array} richest post actions array
  */
-export function enrichPublicizeActionsWithConnections( state, postShareActions ) {
+export function enrichPublicizeActionsWithConnections(state, postShareActions) {
 	return map(
 		postShareActions,
-		( { ID, connection_id, message, result, share_date, status, external_url: url } ) => {
-			const connection = getPublicizeConnection( state, connection_id );
+		({ ID, connection_id, message, result, share_date, status, external_url: url }) => {
+			const connection = getPublicizeConnection(state, connection_id);
 
 			return {
 				ID,

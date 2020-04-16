@@ -16,12 +16,12 @@ export default class ActivityIcon extends PureComponent {
 		const { activityIcon, activityStatus } = this.props;
 		const classes = classNames(
 			'activity-log-item__activity-icon',
-			activityStatus && `is-${ activityStatus }`
+			activityStatus && `is-${activityStatus}`
 		);
 
 		return (
-			<div className={ classes }>
-				<Gridicon icon={ activityIcon } size={ 24 } />
+			<div className={classes}>
+				<Gridicon icon={activityIcon} size={24} />
 			</div>
 		);
 	}

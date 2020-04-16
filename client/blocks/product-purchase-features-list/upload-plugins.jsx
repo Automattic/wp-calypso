@@ -15,19 +15,19 @@ import PurchaseDetail from 'components/purchase-detail';
  */
 import updatesImage from 'assets/images/illustrations/updates.svg';
 
-export default localize( ( { selectedSite, translate } ) => {
+export default localize(({ selectedSite, translate }) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src={ updatesImage } /> }
-				title={ translate( 'Add a Plugin' ) }
-				description={ translate(
+				icon={<img alt="" src={updatesImage} />}
+				title={translate('Add a Plugin')}
+				description={translate(
 					'Search and add plugins right from your dashboard, or upload a plugin ' +
 						'from your computer with a drag-and-drop interface.'
-				) }
-				buttonText={ translate( 'Upload a plugin now' ) }
-				href={ '/plugins/manage/' + selectedSite.slug }
+				)}
+				buttonText={translate('Upload a plugin now')}
+				href={'/plugins/manage/' + selectedSite.slug}
 			/>
 		</div>
 	);
-} );
+});

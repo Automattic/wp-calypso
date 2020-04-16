@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
-		"lib": [ "DOM", "DOM.Iterable", "ESNext" ],
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
 		"baseUrl": ".",
 		"module": "esnext",
 		"allowJs": false,
@@ -22,8 +22,8 @@
 
 		"forceConsistentCasingInFileNames": true,
 
-		"typeRoots": [ "../../node_modules/@types" ],
-		"types": [ "node" ],
+		"typeRoots": ["../../node_modules/@types"],
+		"types": ["node"],
 
 		"noEmitHelpers": true,
 		"importHelpers": true,
@@ -31,6 +31,6 @@
 		"composite": true,
 		"tsBuildInfoFile": "../../.tsc-cache/packages__calypso-analytics"
 	},
-	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/test/*" ]
+	"include": ["src"],
+	"exclude": ["**/docs/*", "**/test/*"]
 }

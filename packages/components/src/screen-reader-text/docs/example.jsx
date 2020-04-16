@@ -15,11 +15,11 @@ export default function ScreenReaderTextExample() {
 		<div>
 			<p>
 				This text is followed by the JSX "&lt;ScreenReaderText&gt;
-				{ srText }
+				{srText}
 				&lt;/ScreenReaderText&gt;". It is invisible on screen, but read out to screen readers.
 				Inspect to see the example.
 			</p>
-			<ScreenReaderText>{ srText }</ScreenReaderText>
+			<ScreenReaderText>{srText}</ScreenReaderText>
 		</div>
 	);
 }

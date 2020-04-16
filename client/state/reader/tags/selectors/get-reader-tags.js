@@ -11,6 +11,6 @@ import 'state/reader/init';
  * @returns {Array}          Reader Tags
  */
 
-export default function getReaderTags( state ) {
+export default function getReaderTags(state) {
 	return state.reader.tags.items;
 }

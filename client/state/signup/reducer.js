@@ -12,7 +12,7 @@ import preview from './preview/reducer';
 
 export default withStorageKey(
 	'signup',
-	combineReducers( {
+	combineReducers({
 		dependencyStore,
 		optionalDependencies,
 		progress,
@@ -20,5 +20,5 @@ export default withStorageKey(
 		flow,
 		verticals,
 		preview,
-	} )
+	})
 );

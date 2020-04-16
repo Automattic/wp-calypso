@@ -8,16 +8,16 @@ import { expect } from 'chai';
  */
 import { getSurveyVertical, getSurveyOtherText, getSurveySiteType } from '../selectors';
 
-describe( 'selectors', () => {
-	test( 'should return empty string as a default state', () => {
-		expect( getSurveyVertical( { signup: undefined } ) ).to.be.eql( '' );
-		expect( getSurveyOtherText( { signup: undefined } ) ).to.be.eql( '' );
-		expect( getSurveySiteType( { signup: undefined } ) ).to.be.eql( 'site' );
-	} );
+describe('selectors', () => {
+	test('should return empty string as a default state', () => {
+		expect(getSurveyVertical({ signup: undefined })).to.be.eql('');
+		expect(getSurveyOtherText({ signup: undefined })).to.be.eql('');
+		expect(getSurveySiteType({ signup: undefined })).to.be.eql('site');
+	});
 
-	test( 'should return chosen vertical from the state', () => {
+	test('should return chosen vertical from the state', () => {
 		expect(
-			getSurveyVertical( {
+			getSurveyVertical({
 				signup: {
 					steps: {
 						survey: {
@@ -27,13 +27,13 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} )
-		).to.be.eql( 'test-survey' );
-	} );
+			})
+		).to.be.eql('test-survey');
+	});
 
-	test( 'should return typed other text from the state', () => {
+	test('should return typed other text from the state', () => {
 		expect(
-			getSurveyOtherText( {
+			getSurveyOtherText({
 				signup: {
 					steps: {
 						survey: {
@@ -43,13 +43,13 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} )
-		).to.be.eql( 'test-other-text' );
-	} );
+			})
+		).to.be.eql('test-other-text');
+	});
 
-	test( 'should return site type from the state', () => {
+	test('should return site type from the state', () => {
 		expect(
-			getSurveySiteType( {
+			getSurveySiteType({
 				signup: {
 					steps: {
 						survey: {
@@ -59,7 +59,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			} )
-		).to.be.eql( 'test-site-type' );
-	} );
-} );
+			})
+		).to.be.eql('test-site-type');
+	});
+});

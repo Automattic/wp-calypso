@@ -19,10 +19,10 @@ import {
 	getDimensionsUnitSetting,
 } from './selectors';
 
-export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
+export const fetchSettingsProducts = (siteId) => (dispatch, getState) => {
 	if (
-		areSettingsProductsLoaded( getState(), siteId ) ||
-		areSettingsProductsLoading( getState(), siteId )
+		areSettingsProductsLoaded(getState(), siteId) ||
+		areSettingsProductsLoading(getState(), siteId)
 	) {
 		return;
 	}
@@ -32,20 +32,20 @@ export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
 		siteId,
 	};
 
-	dispatch( getAction );
+	dispatch(getAction);
 
-	return request( siteId )
-		.get( 'settings/products' )
-		.then( data => {
-			dispatch( {
+	return request(siteId)
+		.get('settings/products')
+		.then((data) => {
+			dispatch({
 				type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 				siteId,
 				data,
-			} );
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, getAction, err ) );
-		} );
+			});
+		})
+		.catch((err) => {
+			dispatch(setError(siteId, getAction, err));
+		});
 };
 
 /**
@@ -55,14 +55,14 @@ export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
  * @param {Mixed}  setting, single setting object { id: '', value: '' }
  * @returns {object} Action object
  */
-export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => {
-	dispatch( {
+export const changeSettingsProductsSetting = (siteId, setting) => (dispatch) => {
+	dispatch({
 		type: WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
 		siteId,
 		data: {
-			update: [ setting ],
+			update: [setting],
 		},
-	} );
+	});
 };
 
 /**
@@ -79,39 +79,39 @@ export const updateSettingsProducts = (
 	settingsData,
 	successAction = null,
 	failureAction = null
-) => dispatch => {
-	const updateData = Array.isArray( settingsData ) ? settingsData : [ settingsData ];
+) => (dispatch) => {
+	const updateData = Array.isArray(settingsData) ? settingsData : [settingsData];
 	const updateAction = {
 		type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
 		data: updateData,
 		siteId,
 	};
 
-	dispatch( updateAction );
+	dispatch(updateAction);
 
-	return request( siteId )
-		.post( 'settings/products/batch', { update: updateData } )
-		.then( data => {
-			if ( successAction ) {
-				dispatch( successAction );
+	return request(siteId)
+		.post('settings/products/batch', { update: updateData })
+		.then((data) => {
+			if (successAction) {
+				dispatch(successAction);
 			}
-			dispatch( {
+			dispatch({
 				type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
 				siteId,
 				data,
-			} );
-		} )
-		.catch( err => {
-			if ( failureAction ) {
-				dispatch( failureAction );
+			});
+		})
+		.catch((err) => {
+			if (failureAction) {
+				dispatch(failureAction);
 			}
-			dispatch( {
+			dispatch({
 				type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
 				error: err,
 				data: updateData,
 				siteId,
-			} );
-		} );
+			});
+		});
 };
 
 /**
@@ -122,21 +122,18 @@ export const updateSettingsProducts = (
  * @param {object}  failureAction, failure action object
  * @returns {object} Action object
  */
-export const saveWeightAndDimensionsUnits = ( siteId, successAction, failureAction ) => (
+export const saveWeightAndDimensionsUnits = (siteId, successAction, failureAction) => (
 	dispatch,
 	getState
 ) => {
 	const state = getState();
-	if (
-		! areSettingsProductsLoaded( state, siteId ) ||
-		areSettingsProductsLoading( state, siteId )
-	) {
+	if (!areSettingsProductsLoaded(state, siteId) || areSettingsProductsLoading(state, siteId)) {
 		return;
 	}
 
-	const weight = getWeightUnitSetting( state, siteId );
-	const dimensions = getDimensionsUnitSetting( state, siteId );
+	const weight = getWeightUnitSetting(state, siteId);
+	const dimensions = getDimensionsUnitSetting(state, siteId);
 	return dispatch(
-		updateSettingsProducts( siteId, [ weight, dimensions ], successAction, failureAction )
+		updateSettingsProducts(siteId, [weight, dimensions], successAction, failureAction)
 	);
 };

@@ -3,8 +3,8 @@
  */
 import { getCategories, setCategories } from '@wordpress/blocks';
 
-setCategories( [
-	...getCategories().filter( ( { slug } ) => slug !== 'a8c' ),
+setCategories([
+	...getCategories().filter(({ slug }) => slug !== 'a8c'),
 	// Add Automattic block category to block picker
 	{
 		slug: 'a8c',
@@ -22,4 +22,4 @@ setCategories( [
 			</svg>
 		),
 	},
-] );
+]);

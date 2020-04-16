@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { receiveHelpCourses } from '../actions';
 import { HELP_COURSES_RECEIVE } from 'state/action-types';
 
-describe( 'actions', () => {
+describe('actions', () => {
 	const sampleCourseList = [
 		{
 			title: 'title',
@@ -19,14 +19,14 @@ describe( 'actions', () => {
 		},
 	];
 
-	describe( '#receiveHelpCourses()', () => {
-		test( 'should return an action object', () => {
-			const action = receiveHelpCourses( sampleCourseList );
+	describe('#receiveHelpCourses()', () => {
+		test('should return an action object', () => {
+			const action = receiveHelpCourses(sampleCourseList);
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: HELP_COURSES_RECEIVE,
 				courses: sampleCourseList,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

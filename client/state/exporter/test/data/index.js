@@ -7,21 +7,21 @@
 export const SAMPLE_ADVANCED_SETTINGS = {
 	feedback: [],
 	page: {
-		authors: [ { value: 95752520, label: 'Test User' } ],
+		authors: [{ value: 95752520, label: 'Test User' }],
 		dates: [
 			{ value: '2015-11', label: 'Nov 2015' },
 			{ value: '2015-10', label: 'Oct 2015' },
 		],
-		statuses: [ { label: 'Published', value: 'publish' } ],
+		statuses: [{ label: 'Published', value: 'publish' }],
 	},
 	post: {
-		categories: [ { label: 'Uncategorized', value: 1 } ],
-		authors: [ { value: 95752520, label: 'Test User' } ],
+		categories: [{ label: 'Uncategorized', value: 1 }],
+		authors: [{ value: 95752520, label: 'Test User' }],
 		dates: [
 			{ value: '2015-11', label: 'Nov 2015' },
 			{ value: '2015-10', label: 'Oct 2015' },
 		],
-		statuses: [ { label: 'Published', value: 'publish' } ],
+		statuses: [{ label: 'Published', value: 'publish' }],
 	},
 };
 
@@ -30,13 +30,13 @@ export const SAMPLE_ADVANCED_SETTINGS_EMPTY = {
 	page: {
 		authors: [],
 		dates: [],
-		statuses: [ { label: 'Published', value: 'publish' } ],
+		statuses: [{ label: 'Published', value: 'publish' }],
 	},
 	post: {
-		categories: [ { label: 'Uncategorized', value: 1 } ],
+		categories: [{ label: 'Uncategorized', value: 1 }],
 		authors: [],
 		dates: [],
-		statuses: [ { label: 'Published', value: 'publish' } ],
+		statuses: [{ label: 'Published', value: 'publish' }],
 	},
 };
 

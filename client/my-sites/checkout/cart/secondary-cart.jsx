@@ -32,32 +32,32 @@ import './style.scss';
 class SecondaryCart extends Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		selectedSite: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 	};
 
 	cartBodyRef = React.createRef();
 
-	componentDidUpdate( prevProps ) {
-		if ( ! prevProps.isShowingOnMobile && this.props.isShowingOnMobile ) {
-			scrollIntoViewport( this.cartBodyRef.current, {
+	componentDidUpdate(prevProps) {
+		if (!prevProps.isShowingOnMobile && this.props.isShowingOnMobile) {
+			scrollIntoViewport(this.cartBodyRef.current, {
 				behavior: 'smooth',
 				scrollMode: 'if-needed',
-			} );
+			});
 		}
 	}
 
 	render() {
 		const { cart, selectedSite, isJetpackNotAtomic, isShowingOnMobile } = this.props;
 
-		const cartClasses = classNames( 'secondary-cart', {
-			'secondary-cart__hidden': ! isShowingOnMobile,
-		} );
+		const cartClasses = classNames('secondary-cart', {
+			'secondary-cart__hidden': !isShowingOnMobile,
+		});
 
-		if ( ! cart.hasLoadedFromServer ) {
+		if (!cart.hasLoadedFromServer) {
 			return (
-				<div className={ cartClasses }>
+				<div className={cartClasses}>
 					<ul className="secondary-cart__item">
-						<CartMessages cart={ cart } selectedSite={ selectedSite } />
+						<CartMessages cart={cart} selectedSite={selectedSite} />
 						<CartSummaryBar additionalClasses="cart-header" />
 						<CartBodyLoadingPlaceholder />
 					</ul>
@@ -66,36 +66,36 @@ class SecondaryCart extends Component {
 		}
 
 		return (
-			<div className={ cartClasses }>
+			<div className={cartClasses}>
 				<ul className="secondary-cart__item">
-					<CartMessages cart={ cart } selectedSite={ selectedSite } />
+					<CartMessages cart={cart} selectedSite={selectedSite} />
 					<CartSummaryBar additionalClasses="cart-header" />
-					<CartPlanAdTheme selectedSite={ selectedSite } cart={ cart } />
+					<CartPlanAdTheme selectedSite={selectedSite} cart={cart} />
 					<CartBody
-						ref={ this.cartBodyRef }
-						cart={ cart }
-						selectedSite={ selectedSite }
-						showCoupon={ true }
+						ref={this.cartBodyRef}
+						cart={cart}
+						selectedSite={selectedSite}
+						showCoupon={true}
 					/>
-					<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
+					<CartPlanDiscountAd cart={cart} selectedSite={selectedSite} />
 
-					{ isJetpackNotAtomic && <JetpackLogo full /> }
+					{isJetpackNotAtomic && <JetpackLogo full />}
 				</ul>
 
 				<ul className="secondary-cart__item">
-					<CartFreeUserPlanUpsell cart={ cart } />
+					<CartFreeUserPlanUpsell cart={cart} />
 				</ul>
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
 		isJetpackNotAtomic:
-			isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
-		isShowingOnMobile: isShowingCartOnMobile( state ),
+			isJetpackSite(state, selectedSiteId) && !isAtomicSite(state, selectedSiteId),
+		isShowingOnMobile: isShowingCartOnMobile(state),
 	};
-} )( localize( SecondaryCart ) );
+})(localize(SecondaryCart));

@@ -19,13 +19,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @returns {object} the new Redux action
  * @see client/state/utils/withEnhancers
  */
-export const enhanceWithDismissCount = ( action, getState ) => {
-	const siteId = getSelectedSiteId( getState() );
+export const enhanceWithDismissCount = (action, getState) => {
+	const siteId = getSelectedSiteId(getState());
 
-	if ( siteId !== null ) {
-		const dismissCount = getGoogleMyBusinessStatsNudgeDismissCount( getState(), siteId );
+	if (siteId !== null) {
+		const dismissCount = getGoogleMyBusinessStatsNudgeDismissCount(getState(), siteId);
 
-		return merge( action, {
+		return merge(action, {
 			meta: {
 				analytics: [
 					{
@@ -37,7 +37,7 @@ export const enhanceWithDismissCount = ( action, getState ) => {
 					},
 				],
 			},
-		} );
+		});
 	}
 
 	return action;
@@ -52,17 +52,17 @@ export const enhanceWithDismissCount = ( action, getState ) => {
  * @returns {object} the new Redux action
  * @see client/state/utils/withEnhancers
  */
-export const enhanceWithLocationCounts = ( action, getState ) => {
-	const siteId = getSelectedSiteId( getState() );
+export const enhanceWithLocationCounts = (action, getState) => {
+	const siteId = getSelectedSiteId(getState());
 
-	if ( siteId !== null ) {
-		const locations = getGoogleMyBusinessLocations( getState(), siteId );
+	if (siteId !== null) {
+		const locations = getGoogleMyBusinessLocations(getState(), siteId);
 
-		const verifiedLocationCount = locations.filter( location =>
-			get( location, 'meta.state.isVerified', false )
+		const verifiedLocationCount = locations.filter((location) =>
+			get(location, 'meta.state.isVerified', false)
 		).length;
 
-		return merge( action, {
+		return merge(action, {
 			meta: {
 				analytics: [
 					{
@@ -75,7 +75,7 @@ export const enhanceWithLocationCounts = ( action, getState ) => {
 					},
 				],
 			},
-		} );
+		});
 	}
 
 	return action;

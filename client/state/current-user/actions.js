@@ -10,7 +10,7 @@ import { CURRENT_USER_RECEIVE } from 'state/action-types';
  * @param  {object} user user object
  * @returns {object}        Action object
  */
-export function setCurrentUser( user ) {
+export function setCurrentUser(user) {
 	return {
 		type: CURRENT_USER_RECEIVE,
 		user,

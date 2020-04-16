@@ -17,10 +17,10 @@ class BooleanPreference extends Component {
 
 		return (
 			<ul className="preferences-helper__list">
-				<li key={ name }>{ value ? translate( 'True' ) : translate( 'False' ) }</li>
+				<li key={name}>{value ? translate('True') : translate('False')}</li>
 			</ul>
 		);
 	}
 }
 
-export default connect( null, null )( localize( BooleanPreference ) );
+export default connect(null, null)(localize(BooleanPreference));

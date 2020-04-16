@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {number|string} siteId Site ID
  * @returns {?object}              Activity log item if found, otherwise null
  */
-export default function getRequestedBackup( state, siteId ) {
-	return get( state, [ 'activityLog', 'backupRequest', siteId ], null );
+export default function getRequestedBackup(state, siteId) {
+	return get(state, ['activityLog', 'backupRequest', siteId], null);
 }

@@ -20,31 +20,31 @@ import {
 import { withSchemaValidation } from 'state/utils';
 import { schema } from './schema';
 
-const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
+const debug = debugFactory('calypso:state:signup:progress:reducer');
 
 //
 // Helper Functions
 //
-const addStep = ( state, step ) => {
-	debug( `Adding step ${ step.stepName }` );
+const addStep = (state, step) => {
+	debug(`Adding step ${step.stepName}`);
 
 	return {
 		...state,
-		[ step.stepName ]: step,
+		[step.stepName]: step,
 	};
 };
 
-const updateStep = ( state, newStepState ) => {
+const updateStep = (state, newStepState) => {
 	const { stepName, status } = newStepState;
-	const stepState = get( state, stepName );
+	const stepState = get(state, stepName);
 
-	if ( ! stepState ) {
+	if (!stepState) {
 		return state;
 	}
 
-	debug( `Updating step ${ stepName }` );
+	debug(`Updating step ${stepName}`);
 
-	if ( status === 'pending' || status === 'completed' ) {
+	if (status === 'pending' || status === 'completed') {
 		// This can only happen when submitting a step
 		//
 		// Steps that are resubmitted may decide to omit the `wasSkipped` status of a step if e.g.
@@ -54,7 +54,7 @@ const updateStep = ( state, newStepState ) => {
 
 		return {
 			...state,
-			[ stepName ]: {
+			[stepName]: {
 				...commonStepArgs,
 				...newStepState,
 			},
@@ -63,7 +63,7 @@ const updateStep = ( state, newStepState ) => {
 
 	return {
 		...state,
-		[ stepName ]: {
+		[stepName]: {
 			...stepState,
 			...newStepState,
 		},
@@ -75,52 +75,50 @@ const updateStep = ( state, newStepState ) => {
 //
 
 // When called without action.steps, this is basically a state reset function.
-const overwriteSteps = ( state, { steps = {} } ) => keyBy( steps, 'stepName' );
+const overwriteSteps = (state, { steps = {} }) => keyBy(steps, 'stepName');
 
-const completeStep = ( state, { step } ) => updateStep( state, { ...step, status: 'completed' } );
+const completeStep = (state, { step }) => updateStep(state, { ...step, status: 'completed' });
 
-const invalidateStep = ( state, { step, errors } ) => {
+const invalidateStep = (state, { step, errors }) => {
 	const newStepState = { ...step, errors, status: 'invalid' };
 
-	return has( state, step.stepName )
-		? updateStep( state, newStepState )
-		: addStep( state, newStepState );
+	return has(state, step.stepName) ? updateStep(state, newStepState) : addStep(state, newStepState);
 };
 
-const processStep = ( state, { step } ) => updateStep( state, { ...step, status: 'processing' } );
+const processStep = (state, { step }) => updateStep(state, { ...step, status: 'processing' });
 
-const saveStep = ( state, { step } ) =>
-	has( state, step.stepName )
-		? updateStep( state, step )
-		: addStep( state, { ...step, status: 'in-progress' } );
+const saveStep = (state, { step }) =>
+	has(state, step.stepName)
+		? updateStep(state, step)
+		: addStep(state, { ...step, status: 'in-progress' });
 
-const submitStep = ( state, { step } ) => {
-	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
+const submitStep = (state, { step }) => {
+	const stepHasApiRequestFunction = get(stepsConfig, [step.stepName, 'apiRequestFunction']);
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
-	return has( state, step.stepName )
-		? updateStep( state, { ...step, status } )
-		: addStep( state, { ...step, status } );
+	return has(state, step.stepName)
+		? updateStep(state, { ...step, status })
+		: addStep(state, { ...step, status });
 };
 
-export default withSchemaValidation( schema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export default withSchemaValidation(schema, (state = {}, action) => {
+	switch (action.type) {
 		case SIGNUP_COMPLETE_RESET:
-			return overwriteSteps( state, action );
+			return overwriteSteps(state, action);
 		case SIGNUP_PROGRESS_COMPLETE_STEP:
-			return completeStep( state, action );
+			return completeStep(state, action);
 		case SIGNUP_PROGRESS_INVALIDATE_STEP:
-			return invalidateStep( state, action );
+			return invalidateStep(state, action);
 		case SIGNUP_PROGRESS_PROCESS_STEP:
-			return processStep( state, action );
+			return processStep(state, action);
 		case SIGNUP_PROGRESS_SAVE_STEP:
-			return saveStep( state, action );
+			return saveStep(state, action);
 		case SIGNUP_PROGRESS_SUBMIT_STEP:
-			return submitStep( state, action );
+			return submitStep(state, action);
 		case SIGNUP_STEPS_SITE_TYPE_SET:
-			delete state[ 'domains-with-preview' ];
+			delete state['domains-with-preview'];
 			return state;
 	}
 
 	return state;
-} );
+});

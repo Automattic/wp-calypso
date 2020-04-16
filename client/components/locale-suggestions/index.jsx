@@ -41,63 +41,63 @@ export class LocaleSuggestions extends Component {
 	UNSAFE_componentWillMount() {
 		let { locale } = this.props;
 
-		if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
-			for ( const langSlug of navigator.languages ) {
-				const language = getLanguage( langSlug.toLowerCase() );
-				if ( language ) {
+		if (!locale && typeof navigator === 'object' && 'languages' in navigator) {
+			for (const langSlug of navigator.languages) {
+				const language = getLanguage(langSlug.toLowerCase());
+				if (language) {
 					locale = language.langSlug;
 					break;
 				}
 			}
 		}
 
-		this.props.setLocale( locale );
+		this.props.setLocale(locale);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.locale !== nextProps.locale ) {
-			this.props.setLocale( nextProps.locale );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.locale !== nextProps.locale) {
+			this.props.setLocale(nextProps.locale);
 		}
 	}
 
-	dismiss = () => this.setState( { dismissed: true } );
+	dismiss = () => this.setState({ dismissed: true });
 
-	getPathWithLocale = locale => addLocaleToPath( this.props.path, locale );
+	getPathWithLocale = (locale) => addLocaleToPath(this.props.path, locale);
 
 	render() {
-		if ( this.state.dismissed ) {
+		if (this.state.dismissed) {
 			return null;
 		}
 
 		const { localeSuggestions } = this.props;
 
-		if ( ! localeSuggestions ) {
+		if (!localeSuggestions) {
 			return <QueryLocaleSuggestions />;
 		}
 
-		const usersOtherLocales = localeSuggestions.filter( function( locale ) {
-			return ! startsWith( getLocaleSlug(), locale.locale );
-		} );
+		const usersOtherLocales = localeSuggestions.filter(function (locale) {
+			return !startsWith(getLocaleSlug(), locale.locale);
+		});
 
-		if ( usersOtherLocales.length === 0 ) {
+		if (usersOtherLocales.length === 0) {
 			return null;
 		}
 
-		const localeMarkup = usersOtherLocales.map( locale => {
+		const localeMarkup = usersOtherLocales.map((locale) => {
 			return (
 				<LocaleSuggestionsListItem
-					key={ 'locale-' + locale.locale }
-					locale={ locale }
-					onLocaleSuggestionClick={ this.dismiss }
-					path={ this.getPathWithLocale( locale.locale ) }
+					key={'locale-' + locale.locale}
+					locale={locale}
+					onLocaleSuggestionClick={this.dismiss}
+					path={this.getPathWithLocale(locale.locale)}
 				/>
 			);
-		} );
+		});
 
 		return (
 			<div className="locale-suggestions">
-				<Notice icon="globe" showDismiss={ true } onDismissClick={ this.dismiss }>
-					<div className="locale-suggestions__list">{ localeMarkup }</div>
+				<Notice icon="globe" showDismiss={true} onDismissClick={this.dismiss}>
+					<div className="locale-suggestions__list">{localeMarkup}</div>
 				</Notice>
 			</div>
 		);
@@ -105,8 +105,8 @@ export class LocaleSuggestions extends Component {
 }
 
 export default connect(
-	state => ( {
-		localeSuggestions: getLocaleSuggestions( state ),
-	} ),
+	(state) => ({
+		localeSuggestions: getLocaleSuggestions(state),
+	}),
 	{ setLocale }
-)( LocaleSuggestions );
+)(LocaleSuggestions);

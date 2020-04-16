@@ -39,11 +39,11 @@ export class PostTypeFilter extends Component {
 	static propTypes = {
 		authorToggleHidden: PropTypes.bool,
 		siteId: PropTypes.number,
-		query: PropTypes.shape( {
+		query: PropTypes.shape({
 			author: PropTypes.number, // User ID
 			status: PropTypes.string,
 			type: PropTypes.string.isRequired,
-		} ),
+		}),
 		typeLabel: PropTypes.string,
 		jetpack: PropTypes.bool,
 		siteSlug: PropTypes.string,
@@ -55,70 +55,70 @@ export class PostTypeFilter extends Component {
 
 		return reduce(
 			counts,
-			( memo, count, status ) => {
+			(memo, count, status) => {
 				// * Always add 'publish' and 'draft' tabs
 				// * Add all tabs in all-sites mode
 				// * Add all tabs in JP mode, for CPTs
 				// * In all other cases, add status tabs only if there's at least one post/CPT with that status
 				if (
 					siteId &&
-					! ( jetpack && query.type !== 'post' ) &&
-					! count &&
-					! includes( [ 'publish', 'draft' ], status )
+					!(jetpack && query.type !== 'post') &&
+					!count &&
+					!includes(['publish', 'draft'], status)
 				) {
 					return memo;
 				}
 
 				let label, pathStatus;
-				switch ( status ) {
+				switch (status) {
 					case 'publish':
-						label = this.props.translate( 'Published', {
+						label = this.props.translate('Published', {
 							context: 'Filter label for posts list',
-						} );
+						});
 						break;
 
 					case 'draft':
-						label = this.props.translate( 'Drafts', {
+						label = this.props.translate('Drafts', {
 							context: 'Filter label for posts list',
-						} );
+						});
 						pathStatus = 'drafts';
 						break;
 
 					case 'future':
-						label = this.props.translate( 'Scheduled', {
+						label = this.props.translate('Scheduled', {
 							context: 'Filter label for posts list',
-						} );
+						});
 						pathStatus = 'scheduled';
 						break;
 
 					case 'trash':
-						label = this.props.translate( 'Trashed', {
+						label = this.props.translate('Trashed', {
 							context: 'Filter label for posts list',
-						} );
+						});
 						pathStatus = 'trashed';
 						break;
 				}
 
-				return memo.concat( {
-					key: `filter-${ status }`,
+				return memo.concat({
+					key: `filter-${status}`,
 					// Hide count in all sites mode; and in Jetpack mode for non-posts
-					count: ! siteId || ( jetpack && query.type !== 'post' ) ? null : count,
-					path: compact( [
+					count: !siteId || (jetpack && query.type !== 'post') ? null : count,
+					path: compact([
 						query.type === 'post' ? '/posts' : '/types/' + query.type,
 						query.type === 'post' && query.author && 'my',
 						pathStatus,
 						siteSlug,
-					] ).join( '/' ),
+					]).join('/'),
 					selected: pathStatus === statusSlug,
 					children: label,
-				} );
+				});
 			},
 			[]
 		);
 	}
 
 	renderMultiSelectButton() {
-		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) || ! this.props.siteId ) {
+		if (!isEnabled('posts/post-type-list/bulk-edit') || !this.props.siteId) {
 			return null;
 		}
 
@@ -128,12 +128,10 @@ export class PostTypeFilter extends Component {
 			<Button
 				className="post-type-filter__multi-select-button"
 				compact
-				onClick={ onMultiSelectClick }
+				onClick={onMultiSelectClick}
 			>
 				<Gridicon icon="list-checkmark" />
-				<span className="post-type-filter__multi-select-button-text">
-					{ translate( 'Bulk Edit' ) }
-				</span>
+				<span className="post-type-filter__multi-select-button-text">{translate('Bulk Edit')}</span>
 			</Button>
 		);
 	}
@@ -149,68 +147,64 @@ export class PostTypeFilter extends Component {
 			searchPagesPlaceholder,
 		} = this.props;
 
-		if ( ! query ) {
+		if (!query) {
 			return null;
 		}
 
-		if ( isMultiSelectButtonEnabled ) {
+		if (isMultiSelectButtonEnabled) {
 			return null;
 		}
 
-		const isSingleSite = !! siteId;
+		const isSingleSite = !!siteId;
 
 		const navItems = this.getNavItems();
-		const sortOrder = [ 'filter-publish', 'filter-draft', 'filter-future', 'filter-trash' ];
-		navItems.sort( ( a, b ) =>
-			sortOrder.indexOf( a.key ) > sortOrder.indexOf( b.key ) ? 1 : -1
-		);
+		const sortOrder = ['filter-publish', 'filter-draft', 'filter-future', 'filter-trash'];
+		navItems.sort((a, b) => (sortOrder.indexOf(a.key) > sortOrder.indexOf(b.key) ? 1 : -1));
 
-		const selectedItem = find( navItems, 'selected' ) || {};
+		const selectedItem = find(navItems, 'selected') || {};
 
 		const scopes = {
-			me: this.props.translate( 'Me', { context: 'Filter label for posts list' } ),
-			everyone: this.props.translate( 'Everyone', { context: 'Filter label for posts list' } ),
+			me: this.props.translate('Me', { context: 'Filter label for posts list' }),
+			everyone: this.props.translate('Everyone', { context: 'Filter label for posts list' }),
 		};
 
 		return (
 			<div className="post-type-filter">
-				{ siteId && false === jetpack && <QueryPostCounts siteId={ siteId } type={ query.type } /> }
+				{siteId && false === jetpack && <QueryPostCounts siteId={siteId} type={query.type} />}
 				<SectionNav
 					selectedText={
 						<span>
-							<span>{ selectedItem.children }</span>
-							{ ! authorToggleHidden && (
-								<small>{ query.author ? scopes.me : scopes.everyone }</small>
-							) }
+							<span>{selectedItem.children}</span>
+							{!authorToggleHidden && <small>{query.author ? scopes.me : scopes.everyone}</small>}
 						</span>
 					}
-					selectedCount={ selectedItem.count }
+					selectedCount={selectedItem.count}
 				>
 					<NavTabs
-						label={ this.props.translate( 'Status', { context: 'Filter group label for tabs' } ) }
-						selectedText={ selectedItem.children }
-						selectedCount={ selectedItem.count }
+						label={this.props.translate('Status', { context: 'Filter group label for tabs' })}
+						selectedText={selectedItem.children}
+						selectedCount={selectedItem.count}
 					>
-						{ navItems.map( props => (
-							<NavItem { ...props } />
-						) ) }
+						{navItems.map((props) => (
+							<NavItem {...props} />
+						))}
 					</NavTabs>
-					{ ! authorToggleHidden && (
-						<AuthorSegmented author={ query.author } siteId={ siteId } statusSlug={ statusSlug } />
-					) }
-					{ /* Disable search in all-sites mode because it doesn't work. */ }
-					{ isSingleSite && (
+					{!authorToggleHidden && (
+						<AuthorSegmented author={query.author} siteId={siteId} statusSlug={statusSlug} />
+					)}
+					{/* Disable search in all-sites mode because it doesn't work. */}
+					{isSingleSite && (
 						<Search
 							pinned
 							fitsContainer
-							initialValue={ query.search }
-							isOpen={ this.props.getSearchOpen() }
-							onSearch={ this.props.doSearch }
-							placeholder={ `${ searchPagesPlaceholder }…` }
-							delaySearch={ true }
+							initialValue={query.search}
+							isOpen={this.props.getSearchOpen()}
+							onSearch={this.props.doSearch}
+							placeholder={`${searchPagesPlaceholder}…`}
+							delaySearch={true}
 						/>
-					) }
-					{ this.renderMultiSelectButton() }
+					)}
+					{this.renderMultiSelectButton()}
 				</SectionNav>
 			</div>
 		);
@@ -221,14 +215,14 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		( state, { query } ) => {
-			const siteId = getSelectedSiteId( state );
+		(state, { query }) => {
+			const siteId = getSelectedSiteId(state);
 			let authorToggleHidden = false;
-			if ( query && query.type === 'post' ) {
-				if ( siteId ) {
-					authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
+			if (query && query.type === 'post') {
+				if (siteId) {
+					authorToggleHidden = isSingleUserSite(state, siteId) || isJetpackSite(state, siteId);
 				} else {
-					authorToggleHidden = areAllSitesSingleUser( state );
+					authorToggleHidden = areAllSitesSingleUser(state);
 				}
 			} else {
 				// Hide for Custom Post Types
@@ -238,16 +232,16 @@ export default flow(
 			const props = {
 				siteId,
 				authorToggleHidden,
-				jetpack: isJetpackSite( state, siteId ),
-				siteSlug: getSiteSlug( state, siteId ),
-				isMultiSelectEnabled: isMultiSelectEnabled( state ),
+				jetpack: isJetpackSite(state, siteId),
+				siteSlug: getSiteSlug(state, siteId),
+				isMultiSelectEnabled: isMultiSelectEnabled(state),
 			};
 
-			if ( ! query ) {
+			if (!query) {
 				return props;
 			}
 
-			const localeSlug = getLocaleSlug( state );
+			const localeSlug = getLocaleSlug(state);
 			const searchPagesPlaceholder = getPostTypeLabel(
 				state,
 				siteId,
@@ -260,12 +254,12 @@ export default flow(
 				...props,
 				searchPagesPlaceholder,
 				counts: query.author
-					? getNormalizedMyPostCounts( state, siteId, query.type )
-					: getNormalizedPostCounts( state, siteId, query.type ),
+					? getNormalizedMyPostCounts(state, siteId, query.type)
+					: getNormalizedPostCounts(state, siteId, query.type),
 			};
 		},
 		{
 			toggleMultiSelect,
 		}
 	)
-)( PostTypeFilter );
+)(PostTypeFilter);

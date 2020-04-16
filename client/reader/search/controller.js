@@ -16,16 +16,16 @@ import { SEARCH_TYPES } from 'reader/search-stream/search-stream-header';
 const analyticsPageTitle = 'Reader';
 
 // TODO: delete this after launching sites in search
-function replaceSearchUrl( newValue, sort ) {
+function replaceSearchUrl(newValue, sort) {
 	let searchUrl = '/read/search';
-	if ( newValue ) {
-		searchUrl += '?' + stringify( { q: newValue, sort } );
+	if (newValue) {
+		searchUrl += '?' + stringify({ q: newValue, sort });
 	}
-	page.replace( searchUrl );
+	page.replace(searchUrl);
 }
 
 const exported = {
-	search: function( context, next ) {
+	search: function (context, next) {
 		const basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
 			mcKey = 'search';
@@ -35,55 +35,55 @@ const exported = {
 
 		let streamKey;
 		let isQuerySuggestion = false;
-		if ( searchSlug ) {
-			streamKey = 'search:' + JSON.stringify( { sort, q } );
+		if (searchSlug) {
+			streamKey = 'search:' + JSON.stringify({ sort, q });
 			isQuerySuggestion = context.query.isSuggestion === '1';
 		} else {
 			streamKey = 'custom_recs_posts_with_images';
 		}
 
-		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		if ( searchSlug ) {
-			recordTrack( 'calypso_reader_search_performed', {
+		trackPageLoad(basePath, fullAnalyticsPageTitle, mcKey);
+		if (searchSlug) {
+			recordTrack('calypso_reader_search_performed', {
 				query: searchSlug,
 				sort,
-			} );
+			});
 		} else {
-			recordTrack( 'calypso_reader_search_loaded' );
+			recordTrack('calypso_reader_search_loaded');
 		}
 
-		const autoFocusInput = ! searchSlug || context.query.focus === '1';
+		const autoFocusInput = !searchSlug || context.query.focus === '1';
 
-		function reportQueryChange( query ) {
-			replaceSearchUrl( query, sort !== 'relevance' ? sort : undefined );
+		function reportQueryChange(query) {
+			replaceSearchUrl(query, sort !== 'relevance' ? sort : undefined);
 		}
 
-		function reportSortChange( newSort ) {
-			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
+		function reportSortChange(newSort) {
+			replaceSearchUrl(searchSlug, newSort !== 'relevance' ? newSort : undefined);
 		}
 
 		context.primary = (
 			<AsyncLoad
 				require="reader/search-stream"
 				key="search"
-				streamKey={ streamKey }
-				isSuggestion={ isQuerySuggestion }
-				query={ searchSlug }
-				sort={ sort }
-				trackScrollPage={ trackScrollPage.bind(
+				streamKey={streamKey}
+				isSuggestion={isQuerySuggestion}
+				query={searchSlug}
+				sort={sort}
+				trackScrollPage={trackScrollPage.bind(
 					null,
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
 					mcKey
-				) }
-				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-				showBack={ false }
-				showPrimaryFollowButtonOnCards={ true }
-				autoFocusInput={ autoFocusInput }
-				onQueryChange={ reportQueryChange }
-				onSortChange={ reportSortChange }
-				searchType={ show }
+				)}
+				onUpdatesShown={trackUpdatesLoaded.bind(null, mcKey)}
+				showBack={false}
+				showPrimaryFollowButtonOnCards={true}
+				autoFocusInput={autoFocusInput}
+				onQueryChange={reportQueryChange}
+				onSortChange={reportSortChange}
+				searchType={show}
 			/>
 		);
 		next();

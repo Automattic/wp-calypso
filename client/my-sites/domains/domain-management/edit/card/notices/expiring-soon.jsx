@@ -12,14 +12,14 @@ import { isExpiringSoon } from 'lib/domains/utils';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import { type as domainTypes } from 'lib/domains/constants';
 
-function ExpiringSoon( props ) {
+function ExpiringSoon(props) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const { domain, purchase, selectedSite } = props;
 	const { expiry } = domain;
 
-	if ( ! isExpiringSoon( domain, 30 ) ) {
+	if (!isExpiringSoon(domain, 30)) {
 		return null;
 	}
 
@@ -28,8 +28,8 @@ function ExpiringSoon( props ) {
 	let customLabel;
 	let tracksProps;
 
-	if ( domain.type === domainTypes.MAPPED ) {
-		if ( ! domain.currentUserCanManage ) {
+	if (domain.type === domainTypes.MAPPED) {
+		if (!domain.currentUserCanManage) {
 			noticeText = translate(
 				'{{strong}}The domain mapping will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please contact the domain mapping owner %(owner)s to renew it.',
 				{
@@ -37,12 +37,12 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment.utc(expiry).fromNow(true),
 						owner: domain.owner,
 					},
 				}
 			);
-		} else if ( domain.bundledPlanSubscriptionId ) {
+		} else if (domain.bundledPlanSubscriptionId) {
 			noticeText = translate(
 				'Your domain mapping will expire with your plan in {{strong}}%(days)s{{/strong}}. Please renew your plan before it expires or it will stop working.',
 				{
@@ -50,12 +50,12 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment.utc(expiry).fromNow(true),
 					},
 				}
 			);
 			subscriptionId = domain.bundledPlanSubscriptionId;
-			customLabel = translate( 'Renew your plan' );
+			customLabel = translate('Renew your plan');
 			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon-plan' };
 		} else {
 			noticeText = translate(
@@ -65,7 +65,7 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment.utc(expiry).fromNow(true),
 					},
 				}
 			);
@@ -73,8 +73,8 @@ function ExpiringSoon( props ) {
 			customLabel = null;
 			tracksProps = { source: 'mapped-domain-status', mapping_status: 'expiring-soon' };
 		}
-	} else if ( domain.type === domainTypes.REGISTERED ) {
-		if ( ! domain.currentUserCanManage ) {
+	} else if (domain.type === domainTypes.REGISTERED) {
+		if (!domain.currentUserCanManage) {
 			noticeText = translate(
 				'{{strong}}The domain will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please contact the domain owner %(owner)s to renew it.',
 				{
@@ -82,7 +82,7 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment.utc(expiry).fromNow(true),
 						owner: domain.owner,
 					},
 				}
@@ -95,7 +95,7 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment.utc(expiry).fromNow(true),
 					},
 				}
 			);
@@ -107,17 +107,17 @@ function ExpiringSoon( props ) {
 
 	return (
 		<div>
-			<p>{ noticeText }</p>
-			{ domain.currentUserCanManage && (
+			<p>{noticeText}</p>
+			{domain.currentUserCanManage && (
 				<RenewButton
-					primary={ true }
-					purchase={ purchase }
-					selectedSite={ selectedSite }
-					subscriptionId={ parseInt( subscriptionId, 10 ) }
-					customLabel={ customLabel }
-					tracksProps={ tracksProps }
+					primary={true}
+					purchase={purchase}
+					selectedSite={selectedSite}
+					subscriptionId={parseInt(subscriptionId, 10)}
+					customLabel={customLabel}
+					tracksProps={tracksProps}
 				/>
-			) }
+			)}
 		</div>
 	);
 }

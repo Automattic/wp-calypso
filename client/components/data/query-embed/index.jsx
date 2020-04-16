@@ -9,12 +9,12 @@ import { useDispatch } from 'react-redux';
  */
 import { requestEmbed } from 'state/embeds/actions';
 
-export default function QueryEmbed( { siteId, url } ) {
+export default function QueryEmbed({ siteId, url }) {
 	const dispatch = useDispatch();
 
-	React.useEffect( () => {
-		dispatch( requestEmbed( siteId, url ) );
-	}, [ dispatch, siteId, url ] );
+	React.useEffect(() => {
+		dispatch(requestEmbed(siteId, url));
+	}, [dispatch, siteId, url]);
 
 	return null;
 }

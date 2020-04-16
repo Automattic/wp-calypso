@@ -32,80 +32,80 @@ export class PlanBillingPeriod extends Component {
 
 	handleMonthlyToYearlyButtonClick = () => {
 		const { purchase } = this.props;
-		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
+		const yearlyPlanSlug = getYearlyPlanByMonthly(purchase.productSlug);
 
-		this.props.recordTracksEvent( 'calypso_purchase_details_plan_upgrade_click', {
+		this.props.recordTracksEvent('calypso_purchase_details_plan_upgrade_click', {
 			current_plan: purchase.productSlug,
 			upgrading_to: yearlyPlanSlug,
-		} );
-		addItem( planItem( yearlyPlanSlug ) );
-		page( '/checkout/' + purchase.domain );
+		});
+		addItem(planItem(yearlyPlanSlug));
+		page('/checkout/' + purchase.domain);
 	};
 
 	renderYearlyBillingInformation() {
 		const { purchase, translate, moment } = this.props;
 
-		if ( showCreditCardExpiringWarning( purchase ) ) {
-			return translate( 'Billed yearly, credit card expiring soon' );
+		if (showCreditCardExpiringWarning(purchase)) {
+			return translate('Billed yearly, credit card expiring soon');
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewDate ) {
-			const renewDate = moment( purchase.renewDate );
-			return translate( 'Billed yearly, renews on %s', {
-				args: renewDate.format( 'LL' ),
+		if (isRenewing(purchase) && purchase.renewDate) {
+			const renewDate = moment(purchase.renewDate);
+			return translate('Billed yearly, renews on %s', {
+				args: renewDate.format('LL'),
 				comment: '%s is the renewal date in format M DD, Y, for example: June 10, 2019',
-			} );
+			});
 		}
 
-		if ( isExpiring( purchase ) && purchase.expiryDate ) {
-			return translate( 'Billed yearly, expires on %s', {
-				args: moment( purchase.expiryDate ).format( 'LL' ),
+		if (isExpiring(purchase) && purchase.expiryDate) {
+			return translate('Billed yearly, expires on %s', {
+				args: moment(purchase.expiryDate).format('LL'),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
-			} );
+			});
 		}
 
-		if ( isExpired( purchase ) && purchase.expiryDate ) {
-			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
+		if (isExpired(purchase) && purchase.expiryDate) {
+			return translate('Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
-					timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
+					timeSinceExpiry: moment(purchase.expiryDate).fromNow(),
 				},
 				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-			} );
+			});
 		}
 
-		return translate( 'Billed yearly' );
+		return translate('Billed yearly');
 	}
 
 	renderBillingPeriod() {
 		const { purchase, site, translate } = this.props;
-		if ( ! purchase ) {
+		if (!purchase) {
 			return;
 		}
 
-		if ( ! isMonthly( purchase.productSlug ) ) {
+		if (!isMonthly(purchase.productSlug)) {
 			return (
-				<FormSettingExplanation>{ this.renderYearlyBillingInformation() }</FormSettingExplanation>
+				<FormSettingExplanation>{this.renderYearlyBillingInformation()}</FormSettingExplanation>
 			);
 		}
 
-		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
-		if ( ! yearlyPlanSlug ) {
+		const yearlyPlanSlug = getYearlyPlanByMonthly(purchase.productSlug);
+		if (!yearlyPlanSlug) {
 			return;
 		}
 
 		return (
 			<React.Fragment>
 				<FormSettingExplanation>
-					{ translate( 'Billed monthly' ) }
-					{ site && (
-						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
-							{ translate( 'Upgrade to yearly billing' ) }
+					{translate('Billed monthly')}
+					{site && (
+						<Button onClick={this.handleMonthlyToYearlyButtonClick} primary compact>
+							{translate('Upgrade to yearly billing')}
 						</Button>
-					) }
+					)}
 				</FormSettingExplanation>
-				{ ! site && (
+				{!site && (
 					<FormSettingExplanation>
-						{ translate(
+						{translate(
 							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',
 							{
 								components: {
@@ -118,9 +118,9 @@ export class PlanBillingPeriod extends Component {
 									),
 								},
 							}
-						) }
+						)}
 					</FormSettingExplanation>
-				) }
+				)}
 			</React.Fragment>
 		);
 	}
@@ -130,14 +130,14 @@ export class PlanBillingPeriod extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="plan-billing-period">{ translate( 'Billing period' ) }</FormLabel>
+				<FormLabel htmlFor="plan-billing-period">{translate('Billing period')}</FormLabel>
 
-				{ this.renderBillingPeriod() }
+				{this.renderBillingPeriod()}
 			</FormFieldset>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( withLocalizedMoment( PlanBillingPeriod ) ) );
+})(localize(withLocalizedMoment(PlanBillingPeriod)));

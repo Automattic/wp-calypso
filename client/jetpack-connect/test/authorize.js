@@ -17,7 +17,7 @@ import { JetpackAuthorize } from '../authorize';
 
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
-const DEFAULT_PROPS = deepFreeze( {
+const DEFAULT_PROPS = deepFreeze({
 	authAttempts: 0,
 	authorizationData: {
 		authorizeError: false,
@@ -35,18 +35,18 @@ const DEFAULT_PROPS = deepFreeze( {
 		clientId: CLIENT_ID,
 		closeWindowAfterLogin: false,
 		from: 'banner-44-slide-1-dashboard',
-		homeUrl: `http://${ SITE_SLUG }`,
+		homeUrl: `http://${SITE_SLUG}`,
 		jpVersion: '5.4',
 		nonce: 'fooBarNonce',
-		redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
-		redirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
+		redirectAfterAuth: `http://${SITE_SLUG}/wp-admin/admin.php?page=jetpack`,
+		redirectUri: `http://${SITE_SLUG}/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${SITE_SLUG}%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
 		scope: 'administrator:fooBarBaz',
 		secret: 'fooBarSecret',
-		site: `http://${ SITE_SLUG }`,
+		site: `http://${SITE_SLUG}`,
 		siteIcon: '',
-		siteUrl: `http://${ SITE_SLUG }`,
+		siteUrl: `http://${SITE_SLUG}`,
 		state: '1',
-		userEmail: `email@${ SITE_SLUG }`,
+		userEmail: `email@${SITE_SLUG}`,
 	},
 	calypsoStartedConnection: false,
 	hasExpiredSecretError: false,
@@ -62,48 +62,48 @@ const DEFAULT_PROPS = deepFreeze( {
 		display_name: "A User's Name",
 	},
 	userAlreadyConnected: false,
-} );
+});
 
-jest.mock( 'config', () => {
+jest.mock('config', () => {
 	const mock = () => 'development';
-	mock.isEnabled = jest.fn( () => true );
+	mock.isEnabled = jest.fn(() => true);
 	return mock;
-} );
+});
 
-describe( 'JetpackAuthorize', () => {
-	test( 'renders as expected', () => {
-		const wrapper = shallow( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
+describe('JetpackAuthorize', () => {
+	test('renders as expected', () => {
+		const wrapper = shallow(<JetpackAuthorize {...DEFAULT_PROPS} />);
 
-		expect( wrapper ).toMatchSnapshot();
-	} );
+		expect(wrapper).toMatchSnapshot();
+	});
 
-	describe( 'isSso', () => {
+	describe('isSso', () => {
 		const isSso = new JetpackAuthorize().isSso;
 		const queryDataSiteId = 12349876;
 
-		test( 'returns true for valid SSO', () => {
-			document.cookie = `jetpack_sso_approved=${ queryDataSiteId };`;
+		test('returns true for valid SSO', () => {
+			document.cookie = `jetpack_sso_approved=${queryDataSiteId};`;
 			const props = {
 				authQuery: {
 					from: 'sso',
 					clientId: queryDataSiteId,
 				},
 			};
-			expect( isSso( props ) ).toBe( true );
-		} );
+			expect(isSso(props)).toBe(true);
+		});
 
-		test( 'returns false with non-sso from', () => {
-			document.cookie = `jetpack_sso_approved=${ queryDataSiteId };`;
+		test('returns false with non-sso from', () => {
+			document.cookie = `jetpack_sso_approved=${queryDataSiteId};`;
 			const props = {
 				authQuery: {
 					from: 'elsewhere',
 					clientId: queryDataSiteId,
 				},
 			};
-			expect( isSso( props ) ).toBe( false );
-		} );
+			expect(isSso(props)).toBe(false);
+		});
 
-		test( 'returns false without approved cookie', () => {
+		test('returns false without approved cookie', () => {
 			document.cookie = 'jetpack_sso_approved=;';
 			const props = {
 				authQuery: {
@@ -111,10 +111,10 @@ describe( 'JetpackAuthorize', () => {
 					clientId: queryDataSiteId,
 				},
 			};
-			expect( isSso( props ) ).toBe( false );
-		} );
+			expect(isSso(props)).toBe(false);
+		});
 
-		test( 'returns false with no cookie or queryDataSiteId', () => {
+		test('returns false with no cookie or queryDataSiteId', () => {
 			document.cookie = 'jetpack_sso_approved=;';
 			const props = {
 				authQuery: {
@@ -122,84 +122,84 @@ describe( 'JetpackAuthorize', () => {
 					clientId: null,
 				},
 			};
-			expect( isSso( props ) ).toBe( false );
-		} );
-	} );
+			expect(isSso(props)).toBe(false);
+		});
+	});
 
-	describe( 'isWooRedirect', () => {
+	describe('isWooRedirect', () => {
 		const isWooRedirect = new JetpackAuthorize().isWooRedirect;
 
-		test( 'should return true for woo services', () => {
+		test('should return true for woo services', () => {
 			const props = { authQuery: { from: 'woocommerce-services-auto-authorize' } };
-			expect( isWooRedirect( props ) ).toBe( true );
-		} );
+			expect(isWooRedirect(props)).toBe(true);
+		});
 
-		test( 'should return true for old woo setup wizard', () => {
+		test('should return true for old woo setup wizard', () => {
 			const props = { authQuery: { from: 'woocommerce-setup-wizard' } };
-			expect( isWooRedirect( props ) ).toBe( true );
-		} );
+			expect(isWooRedirect(props)).toBe(true);
+		});
 
-		test( 'should return true for new woo onboarding', () => {
+		test('should return true for new woo onboarding', () => {
 			const props = { authQuery: { from: 'woocommerce-onboarding' } };
-			expect( isWooRedirect( props ) ).toBe( true );
-		} );
+			expect(isWooRedirect(props)).toBe(true);
+		});
 
-		test( 'returns false with non-woo from', () => {
+		test('returns false with non-woo from', () => {
 			const props = { authQuery: { from: 'elsewhere' } };
-			expect( isWooRedirect( props ) ).toBe( false );
-		} );
-	} );
+			expect(isWooRedirect(props)).toBe(false);
+		});
+	});
 
-	describe( 'shouldAutoAuthorize', () => {
-		test( 'should return true for sso', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
+	describe('shouldAutoAuthorize', () => {
+		test('should return true for sso', () => {
+			const renderableComponent = <JetpackAuthorize {...DEFAULT_PROPS} />;
+			const component = shallow(renderableComponent);
 			component.instance().isSso = () => true;
 			const result = component.instance().shouldAutoAuthorize();
 
-			expect( result ).toBe( true );
-		} );
+			expect(result).toBe(true);
+		});
 
-		test( 'should return true for woo services', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
+		test('should return true for woo services', () => {
+			const renderableComponent = <JetpackAuthorize {...DEFAULT_PROPS} />;
+			const component = shallow(renderableComponent);
+			component.setProps({
 				authQuery: {
 					...DEFAULT_PROPS.authQuery,
 					from: 'woocommerce-services-auto-authorize',
 				},
-			} );
+			});
 			const result = component.instance().shouldAutoAuthorize();
 
-			expect( result ).toBe( true );
-		} );
+			expect(result).toBe(true);
+		});
 
-		test( 'should return false for woocommerce onboarding', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
+		test('should return false for woocommerce onboarding', () => {
+			const renderableComponent = <JetpackAuthorize {...DEFAULT_PROPS} />;
+			const component = shallow(renderableComponent);
+			component.setProps({
 				authQuery: {
 					...DEFAULT_PROPS.authQuery,
 					from: 'woocommerce-onboarding',
 				},
-			} );
+			});
 			const result = component.instance().shouldAutoAuthorize();
 
-			expect( result ).toBe( false );
-		} );
+			expect(result).toBe(false);
+		});
 
-		test( 'should return true for the old woocommerc setup wizard', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
+		test('should return true for the old woocommerc setup wizard', () => {
+			const renderableComponent = <JetpackAuthorize {...DEFAULT_PROPS} />;
+			const component = shallow(renderableComponent);
+			component.setProps({
 				authQuery: {
 					...DEFAULT_PROPS.authQuery,
 					from: 'woocommerce-setup-wizard',
 				},
-			} );
+			});
 			const result = component.instance().shouldAutoAuthorize();
 
-			expect( result ).toBe( true );
-		} );
-	} );
-} );
+			expect(result).toBe(true);
+		});
+	});
+});

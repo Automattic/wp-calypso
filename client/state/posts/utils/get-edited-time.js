@@ -1,9 +1,9 @@
-export function getEditedTime( post ) {
-	if ( ! post ) {
+export function getEditedTime(post) {
+	if (!post) {
 		return;
 	}
 
-	if ( post.status === 'publish' || post.status === 'future' ) {
+	if (post.status === 'publish' || post.status === 'future') {
 		return post.date;
 	}
 

@@ -4,7 +4,6 @@
 const root = '/sites';
 
 class SiteWPComPlugin {
-
 	/**
 	 * `SiteWPComPlugin` constructor.
 	 *
@@ -13,21 +12,21 @@ class SiteWPComPlugin {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( slug, sid, wpcom ) {
-		if ( ! ( this instanceof SiteWPComPlugin ) ) {
-			return new SiteWPComPlugin( slug, sid, wpcom );
+	constructor(slug, sid, wpcom) {
+		if (!(this instanceof SiteWPComPlugin)) {
+			return new SiteWPComPlugin(slug, sid, wpcom);
 		}
 
-		if ( ! slug ) {
-			throw new Error( '`slug` is not correctly defined' );
+		if (!slug) {
+			throw new Error('`slug` is not correctly defined');
 		}
 
-		this._slug = encodeURIComponent( slug );
+		this._slug = encodeURIComponent(slug);
 		this._sid = sid;
 		this.wpcom = wpcom;
 
-		const path = `${root}/${ this._sid }/wpcom-plugins`;
-		this.pluginPath = `${ path }/${ this._slug }`;
+		const path = `${root}/${this._sid}/wpcom-plugins`;
+		this.pluginPath = `${path}/${this._slug}`;
 	}
 
 	/**
@@ -38,9 +37,9 @@ class SiteWPComPlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	update( query, body, fn ) {
-		return this.wpcom.req.put( this.pluginPath, query, body, fn );
-	};
+	update(query, body, fn) {
+		return this.wpcom.req.put(this.pluginPath, query, body, fn);
+	}
 
 	/**
 	 * Activate the plugin
@@ -50,9 +49,9 @@ class SiteWPComPlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	activate( query, fn ) {
-		return this.update( query, { active: true }, fn );
-	};
+	activate(query, fn) {
+		return this.update(query, { active: true }, fn);
+	}
 
 	/**
 	 * Deactivate the plugin
@@ -62,8 +61,8 @@ class SiteWPComPlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	deactivate( query, fn ) {
-		return this.update( query, { active: false }, fn );
+	deactivate(query, fn) {
+		return this.update(query, { active: false }, fn);
 	}
 }
 

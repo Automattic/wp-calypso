@@ -13,6 +13,6 @@ import 'state/themes/init';
  * @param {object} state   Global state tree
  * @returns {string} Theme ID,
  */
-export function getPreActivateThemeId( state ) {
+export function getPreActivateThemeId(state) {
 	return state.themes.themeHasAutoLoadingHomepageWarning?.themeId;
 }

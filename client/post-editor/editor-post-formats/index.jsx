@@ -41,8 +41,8 @@ const ICONS = {
 	chat: 'comment',
 };
 
-function getPostFormatIcon( postFormatSlug ) {
-	return get( ICONS, [ postFormatSlug ], 'posts' );
+function getPostFormatIcon(postFormatSlug) {
+	return get(ICONS, [postFormatSlug], 'posts');
 }
 
 class EditorPostFormats extends React.Component {
@@ -55,79 +55,79 @@ class EditorPostFormats extends React.Component {
 
 	getSelectedPostFormat() {
 		const { formatValue } = this.props;
-		const isSupportedFormat = !! this.getPostFormats()[ formatValue ];
+		const isSupportedFormat = !!this.getPostFormats()[formatValue];
 
 		return isSupportedFormat ? formatValue : 'standard';
 	}
 
 	getPostFormats() {
 		let formats = {
-			standard: this.props.translate( 'Standard', {
+			standard: this.props.translate('Standard', {
 				context: 'Post format',
-			} ),
+			}),
 		};
 
-		if ( this.props.postFormats ) {
-			formats = Object.assign( formats, this.props.postFormats );
+		if (this.props.postFormats) {
+			formats = Object.assign(formats, this.props.postFormats);
 		}
 
 		return formats;
 	}
 
-	onChange = event => {
+	onChange = (event) => {
 		const format = event.target.value;
 
-		this.props.editPost( this.props.siteId, this.props.postId, { format } );
-		this.props.recordEditorStat( 'post_format_changed' );
-		this.props.recordEditorEvent( 'Changed Post Format', format );
+		this.props.editPost(this.props.siteId, this.props.postId, { format });
+		this.props.recordEditorStat('post_format_changed');
+		this.props.recordEditorEvent('Changed Post Format', format);
 	};
 
 	renderPostFormats() {
 		const selectedFormat = this.getSelectedPostFormat();
 
-		return map( this.getPostFormats(), ( postFormatLabel, postFormatSlug ) => {
+		return map(this.getPostFormats(), (postFormatLabel, postFormatSlug) => {
 			return (
-				<li key={ postFormatSlug } className="editor-post-formats__format">
+				<li key={postFormatSlug} className="editor-post-formats__format">
 					<label>
 						<FormRadio
 							name="format"
-							value={ postFormatSlug }
-							checked={ postFormatSlug === selectedFormat }
-							onChange={ this.onChange }
+							value={postFormatSlug}
+							checked={postFormatSlug === selectedFormat}
+							onChange={this.onChange}
 						/>
 						<span className="editor-post-formats__format-label">
-							<span className={ 'editor-post-formats__format-icon' }>
-								<Gridicon icon={ getPostFormatIcon( postFormatSlug ) } size={ 18 } />
+							<span className={'editor-post-formats__format-icon'}>
+								<Gridicon icon={getPostFormatIcon(postFormatSlug)} size={18} />
 							</span>
-							{ postFormatLabel }
+							{postFormatLabel}
 						</span>
 					</label>
 				</li>
 			);
-		} );
+		});
 	}
 
 	render() {
 		return (
 			<AccordionSection>
 				<EditorThemeHelp className="editor-post-formats__help-link" />
-				<QueryPostFormats siteId={ this.props.siteId } />
-				<ul className="editor-post-formats">{ this.renderPostFormats() }</ul>
+				<QueryPostFormats siteId={this.props.siteId} />
+				<ul className="editor-post-formats">{this.renderPostFormats()}</ul>
 			</AccordionSection>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const postFormats = getPostFormats( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const postFormats = getPostFormats(state, siteId);
 		const formatValue =
-			getEditedPostValue( state, siteId, postId, 'format' ) ||
-			getSiteDefaultPostFormat( state, siteId );
+			getEditedPostValue(state, siteId, postId, 'format') ||
+			getSiteDefaultPostFormat(state, siteId);
 
 		return { siteId, postId, postFormats, formatValue };
 	},
 	{ editPost, recordEditorStat, recordEditorEvent }
-)( localize( EditorPostFormats ) );
+)(localize(EditorPostFormats));

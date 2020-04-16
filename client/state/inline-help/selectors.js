@@ -17,8 +17,8 @@ import { getContextResults } from 'blocks/inline-help/contextual-help';
  * @param  {object}  state  Global state tree
  * @returns {string}        The current search query
  */
-export function getSearchQuery( state ) {
-	return get( state, 'inlineHelp.searchResults.search.searchQuery', '' );
+export function getSearchQuery(state) {
+	return get(state, 'inlineHelp.searchResults.search.searchQuery', '');
 }
 
 /**
@@ -27,8 +27,8 @@ export function getSearchQuery( state ) {
  * @param  {object}  state  Global state tree
  * @returns {number}       The index of the currently selected search result, integer
  */
-export function getSelectedResultIndex( state ) {
-	return get( state, 'inlineHelp.searchResults.search.selectedResult', -1 );
+export function getSelectedResultIndex(state) {
+	return get(state, 'inlineHelp.searchResults.search.selectedResult', -1);
 }
 
 /**
@@ -39,9 +39,9 @@ export function getSelectedResultIndex( state ) {
  * @param  {number}  searchQuery Search query
  * @returns {boolean}        Whether search results are being requested
  */
-export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery ) {
-	const allRequesting = get( state, 'inlineHelp.searchResults.requesting' );
-	return !! get( allRequesting, [ searchQuery ] );
+export function isRequestingInlineHelpSearchResultsForQuery(state, searchQuery) {
+	const allRequesting = get(state, 'inlineHelp.searchResults.requesting');
+	return !!get(allRequesting, [searchQuery]);
 }
 
 /**
@@ -52,9 +52,9 @@ export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery 
  * @param  {number}  searchQuery Search query
  * @returns {?Array}         List of results for a given search query
  */
-export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
-	const allResults = get( state, 'inlineHelp.searchResults.search.items' );
-	return get( allResults, [ searchQuery ], null );
+export function getInlineHelpSearchResultsForQuery(state, searchQuery) {
+	const allResults = get(state, 'inlineHelp.searchResults.search.items');
+	return get(allResults, [searchQuery], null);
 }
 
 /**
@@ -65,10 +65,10 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
  */
 export const getContextualHelpResults = flow(
 	getLastRouteAction,
-	x => x.path,
+	(x) => x.path,
 	pathToSection,
 	getContextResults,
-	( x = [] ) => x
+	(x = []) => x
 );
 
 /**
@@ -77,12 +77,12 @@ export const getContextualHelpResults = flow(
  * @param  {object}  state  Global state tree
  * @returns {object}         The selected search result
  */
-export function getInlineHelpCurrentlySelectedResult( state ) {
-	const query = getSearchQuery( state );
-	const results = getInlineHelpSearchResultsForQuery( state, query );
-	const selectedIndex = getSelectedResultIndex( state );
+export function getInlineHelpCurrentlySelectedResult(state) {
+	const query = getSearchQuery(state);
+	const results = getInlineHelpSearchResultsForQuery(state, query);
+	const selectedIndex = getSelectedResultIndex(state);
 
-	return get( results, selectedIndex ) || getContextualHelpResults( state )[ selectedIndex ];
+	return get(results, selectedIndex) || getContextualHelpResults(state)[selectedIndex];
 }
 
 /**
@@ -91,9 +91,9 @@ export function getInlineHelpCurrentlySelectedResult( state ) {
  * @param  {object}  state  Global state tree
  * @returns {string}         The href of the selected link target
  */
-export function getInlineHelpCurrentlySelectedLink( state ) {
-	const result = getInlineHelpCurrentlySelectedResult( state );
-	return get( result, 'link', '' );
+export function getInlineHelpCurrentlySelectedLink(state) {
+	const result = getInlineHelpCurrentlySelectedResult(state);
+	return get(result, 'link', '');
 }
 
 /**
@@ -102,8 +102,8 @@ export function getInlineHelpCurrentlySelectedLink( state ) {
  * @param  {object}  state  Global state tree
  * @returns {boolean}        Is the contact form UI showing the questions
  */
-export function isShowingQandAInlineHelpContactForm( state ) {
-	return get( state, 'inlineHelp.contactForm.isShowingQandASuggestions', false );
+export function isShowingQandAInlineHelpContactForm(state) {
+	return get(state, 'inlineHelp.contactForm.isShowingQandASuggestions', false);
 }
 
 /**
@@ -112,6 +112,6 @@ export function isShowingQandAInlineHelpContactForm( state ) {
  * @param  {object}  state  Global state tree
  * @returns {boolean}        Is the inline help popover is showing.
  */
-export function isInlineHelpPopoverVisible( state ) {
-	return get( state, 'inlineHelp.popover.isVisible', false );
+export function isInlineHelpPopoverVisible(state) {
+	return get(state, 'inlineHelp.popover.isVisible', false);
 }

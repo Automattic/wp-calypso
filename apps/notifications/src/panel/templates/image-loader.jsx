@@ -30,9 +30,9 @@ export class ImageLoader extends Component {
 		this.createLoader();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.src !== this.props.src ) {
-			this.createLoader( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.src !== this.props.src) {
+			this.createLoader(nextProps);
 		}
 	}
 
@@ -40,8 +40,8 @@ export class ImageLoader extends Component {
 		this.destroyLoader();
 	}
 
-	createLoader = nextProps => {
-		const src = ( nextProps || this.props ).src;
+	createLoader = (nextProps) => {
+		const src = (nextProps || this.props).src;
 
 		this.destroyLoader();
 
@@ -50,13 +50,13 @@ export class ImageLoader extends Component {
 		this.image.onload = this.onLoadComplete;
 		this.image.onerror = this.onLoadComplete;
 
-		this.setState( {
+		this.setState({
 			status: LoadStatus.LOADING,
-		} );
+		});
 	};
 
 	destroyLoader = () => {
-		if ( ! this.image ) {
+		if (!this.image) {
 			return;
 		}
 
@@ -65,12 +65,12 @@ export class ImageLoader extends Component {
 		delete this.image;
 	};
 
-	onLoadComplete = event => {
+	onLoadComplete = (event) => {
 		this.destroyLoader();
 
-		this.setState( {
+		this.setState({
 			status: 'load' === event.type ? LoadStatus.LOADED : LoadStatus.FAILED,
-		} );
+		});
 	};
 
 	render() {
@@ -79,9 +79,9 @@ export class ImageLoader extends Component {
 
 		return (
 			<div className="image-preloader">
-				{ status === LoadStatus.LOADING && placeholder }
-				{ status === LoadStatus.LOADED && <img src={ src } /> }
-				{ status === LoadStatus.FAILED && children }
+				{status === LoadStatus.LOADING && placeholder}
+				{status === LoadStatus.LOADED && <img src={src} />}
+				{status === LoadStatus.FAILED && children}
 			</div>
 		);
 	}

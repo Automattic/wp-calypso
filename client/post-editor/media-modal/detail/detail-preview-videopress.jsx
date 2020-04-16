@@ -16,7 +16,7 @@ import { loadScript, removeScriptCallback } from '@automattic/load-script';
 /**
  * Module variables
  */
-const log = debug( 'calypso:post-editor:videopress' );
+const log = debug('calypso:post-editor:videopress');
 const videoPressUrl = 'https://wordpress.com/wp-content/plugins/video/assets/js/next/videopress.js';
 
 class EditorMediaModalDetailPreviewVideoPress extends Component {
@@ -38,48 +38,48 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 	componentDidMount() {
 		this.loadInitializeScript();
-		window.addEventListener( 'message', this.receiveMessage, false );
+		window.addEventListener('message', this.receiveMessage, false);
 	}
 
 	componentWillUnmount() {
-		removeScriptCallback( videoPressUrl, this.onScriptLoaded );
+		removeScriptCallback(videoPressUrl, this.onScriptLoaded);
 		this.destroy();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.isPlaying && !nextProps.isPlaying) {
 			this.pause();
-		} else if ( ! this.props.isPlaying && nextProps.isPlaying ) {
+		} else if (!this.props.isPlaying && nextProps.isPlaying) {
 			this.play();
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.item.videopress_guid !== prevProps.item.videopress_guid ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.item.videopress_guid !== prevProps.item.videopress_guid) {
 			this.destroy();
 			this.loadInitializeScript();
 		}
 	}
 
-	shouldComponentUpdate( nextProps ) {
-		if ( this.props.item.videopress_guid !== nextProps.item.videopress_guid ) {
+	shouldComponentUpdate(nextProps) {
+		if (this.props.item.videopress_guid !== nextProps.item.videopress_guid) {
 			return true;
 		}
 
 		return false;
 	}
 
-	setVideoInstance = ref => ( this.video = ref );
+	setVideoInstance = (ref) => (this.video = ref);
 
 	loadInitializeScript() {
-		loadScript( videoPressUrl, this.onScriptLoaded );
+		loadScript(videoPressUrl, this.onScriptLoaded);
 	}
 
-	onScriptLoaded = error => {
+	onScriptLoaded = (error) => {
 		const { isPlaying, item, onScriptLoadError } = this.props;
 
-		if ( error ) {
-			log( `Script${ get( error, 'src', '' ) } failed to load.` );
+		if (error) {
+			log(`Script${get(error, 'src', '')} failed to load.`);
 			onScriptLoadError();
 
 			return;
@@ -87,87 +87,87 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 		const { height = 480, videopress_guid, width = 854 } = item;
 
-		if ( ! videopress_guid ) {
+		if (!videopress_guid) {
 			return;
 		}
 
-		if ( typeof window !== 'undefined' && window.videopress ) {
-			this.player = window.videopress( videopress_guid, this.video, {
+		if (typeof window !== 'undefined' && window.videopress) {
+			this.player = window.videopress(videopress_guid, this.video, {
 				autoPlay: isPlaying,
 				height,
 				width,
-			} );
+			});
 		}
 	};
 
-	receiveMessage = event => {
-		if ( event.origin && event.origin !== location.origin ) {
+	receiveMessage = (event) => {
+		if (event.origin && event.origin !== location.origin) {
 			return;
 		}
 
 		const { data } = event;
 
 		if (
-			! data ||
+			!data ||
 			'videopress_loading_state' !== data.event ||
-			! ( 'state' in data ) ||
-			! ( 'converting' in data )
+			!('state' in data) ||
+			!('converting' in data)
 		) {
 			return;
 		}
 
-		if ( 'loaded' === data.state && ! data.converting ) {
+		if ('loaded' === data.state && !data.converting) {
 			this.props.onVideoLoaded();
 		}
 	};
 
 	destroy() {
-		window.removeEventListener( 'message', this.receiveMessage );
+		window.removeEventListener('message', this.receiveMessage);
 
-		if ( ! this.player ) {
+		if (!this.player) {
 			return;
 		}
 
-		invoke( this, 'player.destroy' );
+		invoke(this, 'player.destroy');
 
 		// Remove DOM created outside of React.
-		while ( this.video.firstChild ) {
-			this.video.removeChild( this.video.firstChild );
+		while (this.video.firstChild) {
+			this.video.removeChild(this.video.firstChild);
 		}
 	}
 
 	play() {
-		const playerState = get( this, 'player.state' );
+		const playerState = get(this, 'player.state');
 
-		if ( ! playerState ) {
+		if (!playerState) {
 			return;
 		}
 
-		invoke( this, 'player.state.play' );
+		invoke(this, 'player.state.play');
 	}
 
 	pause() {
-		const playerState = get( this, 'player.state' );
+		const playerState = get(this, 'player.state');
 
-		if ( ! playerState ) {
+		if (!playerState) {
 			return;
 		}
 
-		invoke( this, 'player.state.pause' );
+		invoke(this, 'player.state.pause');
 
-		const currentTime = invoke( this, 'player.state.videoAt' );
+		const currentTime = invoke(this, 'player.state.videoAt');
 
-		if ( ! currentTime ) {
+		if (!currentTime) {
 			return;
 		}
 
-		this.props.onPause( currentTime );
+		this.props.onPause(currentTime);
 	}
 
 	render() {
-		const classes = classNames( this.props.className, 'is-video' );
+		const classes = classNames(this.props.className, 'is-video');
 
-		return <div className={ classes } ref={ this.setVideoInstance } />;
+		return <div className={classes} ref={this.setVideoInstance} />;
 	}
 }
 

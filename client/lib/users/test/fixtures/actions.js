@@ -52,14 +52,14 @@ export default {
 		type: 'DELETE_SITE_USER',
 		action: 'DELETE_SITE_USER',
 		siteId: site.ID,
-		user: usersData.users[ 0 ],
+		user: usersData.users[0],
 	},
 
 	deleteUserError: {
 		type: 'RECEIVE_DELETE_SITE_USER_FAILURE',
 		action: 'DELETE_SITE_USER',
 		siteId: site.ID,
-		user: usersData.users[ 0 ],
+		user: usersData.users[0],
 		error: true,
 	},
 
@@ -67,14 +67,14 @@ export default {
 		type: 'RECEIVE_DELETE_SITE_USER_SUCCESS',
 		action: 'DELETE_SITE_USER',
 		siteId: site.ID,
-		user: usersData.users[ 0 ],
+		user: usersData.users[0],
 		data: { success: true },
 	},
 
 	updateUserError: {
 		type: 'RECEIVE_UPDATE_SITE_USER_FAILURE',
 		siteId: site.ID,
-		user: usersData.users[ 0 ],
+		user: usersData.users[0],
 		error: true,
 	},
 

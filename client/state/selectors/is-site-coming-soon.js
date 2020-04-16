@@ -13,22 +13,22 @@ import isPrivateSite from 'state/selectors/is-private-site';
  * @param {object} siteId Site ID
  * @returns {boolean} True if site is coming_soon
  */
-export default function isSiteComingSoon( state, siteId ) {
-	if ( ! isPrivateSite( state, siteId ) ) {
+export default function isSiteComingSoon(state, siteId) {
+	if (!isPrivateSite(state, siteId)) {
 		return false;
 	}
 
-	const site = getRawSite( state, siteId );
+	const site = getRawSite(state, siteId);
 
-	if ( site ) {
+	if (site) {
 		return site.is_coming_soon;
 	}
 
-	const settings = getSiteSettings( state, siteId );
+	const settings = getSiteSettings(state, siteId);
 
-	if ( settings ) {
+	if (settings) {
 		// Site settings returns a numerical value for wpcom_coming_soon.
-		return parseInt( settings.wpcom_coming_soon, 10 ) === 1;
+		return parseInt(settings.wpcom_coming_soon, 10) === 1;
 	}
 
 	return false;

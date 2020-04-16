@@ -18,22 +18,22 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
  * It accepts props that are compatible with what Redux Form `Field` passes down to renderers.
  * See the `Field` documentation for info about the props.
  */
-export const FieldsetRenderer = ( {
+export const FieldsetRenderer = ({
 	inputComponent: InputComponent,
 	input,
 	meta,
 	label,
 	explanation,
 	...props
-} ) => {
-	const isError = !! ( meta.touched && meta.error );
+}) => {
+	const isError = !!(meta.touched && meta.error);
 
 	return (
 		<FormFieldset>
-			{ label && <FormLabel htmlFor={ input.name }>{ label }</FormLabel> }
-			<InputComponent id={ input.name } isError={ isError } { ...input } { ...props } />
-			{ isError && <FormInputValidation isError text={ meta.error } /> }
-			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
+			{label && <FormLabel htmlFor={input.name}>{label}</FormLabel>}
+			<InputComponent id={input.name} isError={isError} {...input} {...props} />
+			{isError && <FormInputValidation isError text={meta.error} />}
+			{explanation && <FormSettingExplanation>{explanation}</FormSettingExplanation>}
 		</FormFieldset>
 	);
 };
@@ -42,8 +42,8 @@ export const FieldsetRenderer = ( {
  * Convenience wrapper around Redux Form `Field` to render a `FormFieldset`. Usage:
  *   <ReduxFormFieldset name="firstName" label="First Name" component={ FormTextInput } />
  */
-const ReduxFormFieldset = ( { component, ...props } ) => (
-	<Field component={ FieldsetRenderer } inputComponent={ component } { ...props } />
+const ReduxFormFieldset = ({ component, ...props }) => (
+	<Field component={FieldsetRenderer} inputComponent={component} {...props} />
 );
 
 ReduxFormFieldset.propTypes = {

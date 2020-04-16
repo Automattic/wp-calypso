@@ -15,34 +15,31 @@ import 'state/posts/init';
  * @param  {number}   postId Post ID
  * @returns {Function}        Action thunk
  */
-export function deletePost( siteId, postId ) {
-	return dispatch => {
-		dispatch( {
+export function deletePost(siteId, postId) {
+	return (dispatch) => {
+		dispatch({
 			type: POST_DELETE,
 			siteId,
 			postId,
-		} );
+		});
 
-		const deleteResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.delete();
+		const deleteResult = wpcom.site(siteId).post(postId).delete();
 
 		deleteResult.then(
 			() => {
-				dispatch( {
+				dispatch({
 					type: POST_DELETE_SUCCESS,
 					siteId,
 					postId,
-				} );
+				});
 			},
-			error => {
-				dispatch( {
+			(error) => {
+				dispatch({
 					type: POST_DELETE_FAILURE,
 					siteId,
 					postId,
 					error,
-				} );
+				});
 			}
 		);
 

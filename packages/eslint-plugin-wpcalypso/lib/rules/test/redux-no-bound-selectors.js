@@ -9,8 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/redux-no-bound-selectors' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require('../../../lib/rules/redux-no-bound-selectors'),
+	RuleTester = require('eslint').RuleTester;
 
 const REF = ' See wp-calypso#14024';
 const BIND_ERROR_MESSAGE = "Don't bind functions within `connect`." + REF;
@@ -20,7 +20,7 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester().run( 'redux-no-bound-selectors', rule, {
+new RuleTester().run('redux-no-bound-selectors', rule, {
 	valid: [
 		`createSelector( function( state ) {
 			return state.foos.map( function( foo ) {
@@ -144,7 +144,7 @@ new RuleTester().run( 'redux-no-bound-selectors', rule, {
 			};
 			connect( mapState );
 			`,
-			errors: [ { message: BIND_ERROR_MESSAGE }, { message: FUNC_ERROR_MESSAGE } ],
+			errors: [{ message: BIND_ERROR_MESSAGE }, { message: FUNC_ERROR_MESSAGE }],
 		},
 	],
-} );
+});

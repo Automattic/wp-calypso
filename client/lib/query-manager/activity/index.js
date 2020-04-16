@@ -12,11 +12,11 @@ import QueryManager from 'lib/query-manager';
  * ActivityQueryManager manages Activity which can be queried
  */
 export default class ActivityQueryManager extends QueryManager {
-	constructor( data, options ) {
-		super( data, {
+	constructor(data, options) {
+		super(data, {
 			itemKey: 'activityId',
 			...options,
-		} );
+		});
 	}
 
 	/**
@@ -28,8 +28,8 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @returns {number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	static compare( query, a, b ) {
-		if ( a.rewindId && b.rewindId ) {
+	static compare(query, a, b) {
+		if (a.rewindId && b.rewindId) {
 			return b.rewindId - a.rewindId;
 		}
 
@@ -45,10 +45,10 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {object}  item  Item to consider
 	 * @returns {boolean}       Whether item matches query
 	 */
-	static matches = overEvery( [
+	static matches = overEvery([
 		ActivityQueryManager.matchDateStart,
 		ActivityQueryManager.matchDateEnd,
-	] );
+	]);
 
 	/**
 	 * Returns true if the item matches query.dateStart if provided
@@ -57,8 +57,8 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {object}  item  Item to consider
 	 * @returns {boolean}       Whether item matches query.dateStart
 	 */
-	static matchDateStart( query, { activityTs } ) {
-		return get( query, 'dateStart', -Infinity ) <= activityTs;
+	static matchDateStart(query, { activityTs }) {
+		return get(query, 'dateStart', -Infinity) <= activityTs;
 	}
 
 	/**
@@ -68,7 +68,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {object}  item  Item to consider
 	 * @returns {boolean}       Whether item matches query.dateEnd
 	 */
-	static matchDateEnd( query, { activityTs } ) {
-		return activityTs <= get( query, 'dateEnd', Infinity );
+	static matchDateEnd(query, { activityTs }) {
+		return activityTs <= get(query, 'dateEnd', Infinity);
 	}
 }

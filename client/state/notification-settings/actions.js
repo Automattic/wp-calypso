@@ -26,7 +26,7 @@ import 'state/data-layer/wpcom/me/notification/settings';
  *
  * @returns {object} action object
  */
-export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS_REQUEST } );
+export const requestNotificationSettings = () => ({ type: NOTIFICATION_SETTINGS_REQUEST });
 
 /**
  * Returns an action object to signal the arrival of the requested notification settings.
@@ -34,45 +34,45 @@ export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS
  * @param  {object} settings User Notification Settings
  * @returns {object}          action object
  */
-export const updateNotificationSettings = settings => ( {
+export const updateNotificationSettings = (settings) => ({
 	type: NOTIFICATION_SETTINGS_UPDATE,
 	settings,
-} );
+});
 
-export const toggle = ( source, stream, setting ) => dispatch => {
-	dispatch( {
+export const toggle = (source, stream, setting) => (dispatch) => {
+	dispatch({
 		type: NOTIFICATION_SETTINGS_TOGGLE_SETTING,
 		source,
 		stream,
 		setting,
-	} );
+	});
 };
 
-export const toggleWPcomEmailSetting = setting => toggle( 'wpcom', 'email', setting );
+export const toggleWPcomEmailSetting = (setting) => toggle('wpcom', 'email', setting);
 
-export const fetchSettings = () => dispatch => {
-	dispatch( { type: NOTIFICATION_SETTINGS_FETCH } );
+export const fetchSettings = () => (dispatch) => {
+	dispatch({ type: NOTIFICATION_SETTINGS_FETCH });
 
 	wpcom
 		.undocumented()
 		.me()
 		.getNotificationSettings()
-		.then( data =>
-			dispatch( {
+		.then((data) =>
+			dispatch({
 				type: NOTIFICATION_SETTINGS_FETCH_COMPLETE,
 				data,
-			} )
+			})
 		)
-		.catch( error =>
-			dispatch( {
+		.catch((error) =>
+			dispatch({
 				type: NOTIFICATION_SETTINGS_FETCH_FAILED,
 				error,
-			} )
+			})
 		);
 };
 
-function buildSavePayload( source, settings ) {
-	switch ( source ) {
+function buildSavePayload(source, settings) {
+	switch (source) {
 		case 'wpcom':
 			return {
 				wpcom: settings,
@@ -83,47 +83,43 @@ function buildSavePayload( source, settings ) {
 			};
 		default:
 			return {
-				blogs: [].concat( settings ),
+				blogs: [].concat(settings),
 			};
 	}
 }
 
 export const showSaveSuccessNotice = () =>
-	successNotice( translate( 'Settings saved successfully!' ), {
+	successNotice(translate('Settings saved successfully!'), {
 		id: 'notif-settings-save',
 		duration: 4000,
-	} );
+	});
 
 export const showSaveErrorNotice = () =>
-	errorNotice( translate( 'There was a problem saving your changes. Please, try again.' ), {
+	errorNotice(translate('There was a problem saving your changes. Please, try again.'), {
 		id: 'notif-settings-save',
-	} );
+	});
 
-export const saveSettings = ( source, settings, applyToAll = false ) => dispatch => {
-	dispatch( { type: NOTIFICATION_SETTINGS_SAVE } );
+export const saveSettings = (source, settings, applyToAll = false) => (dispatch) => {
+	dispatch({ type: NOTIFICATION_SETTINGS_SAVE });
 
 	wpcom
 		.undocumented()
 		.me()
-		.updateNotificationSettings(
-			buildSavePayload( source, settings ),
-			applyToAll,
-			( error, data ) => {
-				if ( error ) {
-					dispatch( showSaveErrorNotice() );
-					dispatch( {
-						type: NOTIFICATION_SETTINGS_SAVE_FAILED,
-						error,
-						data,
-					} );
-				} else {
-					dispatch( showSaveSuccessNotice() );
-					dispatch( {
-						type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
-						error,
-						data,
-					} );
-				}
+		.updateNotificationSettings(buildSavePayload(source, settings), applyToAll, (error, data) => {
+			if (error) {
+				dispatch(showSaveErrorNotice());
+				dispatch({
+					type: NOTIFICATION_SETTINGS_SAVE_FAILED,
+					error,
+					data,
+				});
+			} else {
+				dispatch(showSaveSuccessNotice());
+				dispatch({
+					type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
+					error,
+					data,
+				});
 			}
-		);
+		});
 };

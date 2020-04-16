@@ -15,33 +15,33 @@ import {
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
 } from './types';
 
-const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
+const debug = debugFactory('calypso:composite-checkout:payment-method-helpers');
 
-export function useStoredCards( getStoredCards ) {
-	const [ state, dispatch ] = useReducer( storedCardsReducer, {
+export function useStoredCards(getStoredCards) {
+	const [state, dispatch] = useReducer(storedCardsReducer, {
 		storedCards: [],
 		isLoading: true,
-	} );
-	useEffect( () => {
+	});
+	useEffect(() => {
 		let isSubscribed = true;
 		async function fetchStoredCards() {
-			debug( 'fetching stored cards' );
+			debug('fetching stored cards');
 			return getStoredCards();
 		}
 
 		// TODO: handle errors
-		fetchStoredCards().then( cards => {
-			debug( 'stored cards fetched', cards );
-			isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
-		} );
+		fetchStoredCards().then((cards) => {
+			debug('stored cards fetched', cards);
+			isSubscribed && dispatch({ type: 'FETCH_END', payload: cards });
+		});
 
-		return () => ( isSubscribed = false );
-	}, [ getStoredCards ] );
+		return () => (isSubscribed = false);
+	}, [getStoredCards]);
 	return state;
 }
 
-function storedCardsReducer( state, action ) {
-	switch ( action.type ) {
+function storedCardsReducer(state, action) {
+	switch (action.type) {
 		case 'FETCH_END':
 			return { ...state, storedCards: action.payload, isLoading: false };
 		default:
@@ -49,81 +49,81 @@ function storedCardsReducer( state, action ) {
 	}
 }
 
-export async function submitExistingCardPayment( transactionData, submit ) {
-	debug( 'formatting existing card transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+export async function submitExistingCardPayment(transactionData, submit) {
+	debug('formatting existing card transaction', transactionData);
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems({
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
-	} );
-	debug( 'submitting existing card transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	});
+	debug('submitting existing card transaction', formattedTransactionData);
+	return submit(formattedTransactionData);
 }
 
-export async function submitApplePayPayment( transactionData, submit ) {
-	debug( 'formatting apple-pay transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+export async function submitApplePayPayment(transactionData, submit) {
+	debug('formatting apple-pay transaction', transactionData);
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems({
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
-	} );
-	debug( 'submitting apple-pay transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	});
+	debug('submitting apple-pay transaction', formattedTransactionData);
+	return submit(formattedTransactionData);
 }
 
-export async function makePayPalExpressRequest( transactionData, submit ) {
-	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
+export async function makePayPalExpressRequest(transactionData, submit) {
+	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems({
 		...transactionData,
-	} );
-	debug( 'sending paypal transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	});
+	debug('sending paypal transaction', formattedTransactionData);
+	return submit(formattedTransactionData);
 }
 
-export function getDomainDetails( select ) {
-	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
-	return prepareDomainContactDetails( managedContactDetails );
+export function getDomainDetails(select) {
+	const managedContactDetails = select('wpcom')?.getContactInfo?.() ?? {};
+	return prepareDomainContactDetails(managedContactDetails);
 }
 
-export async function fetchStripeConfiguration( requestArgs, wpcom ) {
-	return wpcom.stripeConfiguration( requestArgs );
+export async function fetchStripeConfiguration(requestArgs, wpcom) {
+	return wpcom.stripeConfiguration(requestArgs);
 }
 
-export async function sendStripeTransaction( transactionData, submit ) {
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+export async function sendStripeTransaction(transactionData, submit) {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems({
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
-	} );
-	debug( 'sending stripe transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	});
+	debug('sending stripe transaction', formattedTransactionData);
+	return submit(formattedTransactionData);
 }
 
-export function submitCreditsTransaction( transactionData, submit ) {
-	debug( 'formatting full credits transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+export function submitCreditsTransaction(transactionData, submit) {
+	debug('formatting full credits transaction', transactionData);
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems({
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
-	} );
-	debug( 'submitting full credits transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	});
+	debug('submitting full credits transaction', formattedTransactionData);
+	return submit(formattedTransactionData);
 }
 
-export function submitFreePurchaseTransaction( transactionData, submit ) {
-	debug( 'formatting free transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+export function submitFreePurchaseTransaction(transactionData, submit) {
+	debug('formatting free transaction', transactionData);
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems({
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
-	} );
-	debug( 'submitting free transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	});
+	debug('submitting free transaction', formattedTransactionData);
+	return submit(formattedTransactionData);
 }
 
-export function isPaymentMethodEnabled( method, allowedPaymentMethods ) {
+export function isPaymentMethodEnabled(method, allowedPaymentMethods) {
 	// By default, allow all payment methods
-	if ( ! allowedPaymentMethods?.length ) {
+	if (!allowedPaymentMethods?.length) {
 		return true;
 	}
-	return allowedPaymentMethods.includes( method );
+	return allowedPaymentMethods.includes(method);
 }
 
 export function WordPressFreePurchaseLabel() {
@@ -131,7 +131,7 @@ export function WordPressFreePurchaseLabel() {
 
 	return (
 		<React.Fragment>
-			<div>{ translate( 'Free Purchase' ) }</div>
+			<div>{translate('Free Purchase')}</div>
 			<WordPressLogo />
 		</React.Fragment>
 	);
@@ -139,18 +139,18 @@ export function WordPressFreePurchaseLabel() {
 
 export function WordPressFreePurchaseSummary() {
 	const translate = useTranslate();
-	return <div>{ translate( 'Free Purchase' ) }</div>;
+	return <div>{translate('Free Purchase')}</div>;
 }
 
-export function WordPressCreditsLabel( { credits } ) {
+export function WordPressCreditsLabel({ credits }) {
 	const translate = useTranslate();
 
 	return (
 		<React.Fragment>
 			<div>
-				{ translate( 'WordPress.com Credits: %(amount)s', {
+				{translate('WordPress.com Credits: %(amount)s', {
 					args: { amount: credits.amount.displayValue },
-				} ) }
+				})}
 			</div>
 			<WordPressLogo />
 		</React.Fragment>
@@ -159,7 +159,7 @@ export function WordPressCreditsLabel( { credits } ) {
 
 export function WordPressCreditsSummary() {
 	const translate = useTranslate();
-	return <div>{ translate( 'WordPress.com Credits' ) }</div>;
+	return <div>{translate('WordPress.com Credits')}</div>;
 }
 
 function WordPressLogo() {
@@ -173,46 +173,46 @@ function WordPressLogo() {
 	);
 }
 
-export async function wpcomTransaction( payload ) {
-	return wp.undocumented().transactions( payload );
+export async function wpcomTransaction(payload) {
+	return wp.undocumented().transactions(payload);
 }
 
-export async function wpcomPayPalExpress( payload ) {
-	return wp.undocumented().paypalExpressUrl( payload );
+export async function wpcomPayPalExpress(payload) {
+	return wp.undocumented().paypalExpressUrl(payload);
 }
 
-export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeError, items ) {
-	const [ canMakePayment, setCanMakePayment ] = useState( { isLoading: true, value: false } );
+export function useIsApplePayAvailable(stripe, stripeConfiguration, isStripeError, items) {
+	const [canMakePayment, setCanMakePayment] = useState({ isLoading: true, value: false });
 
-	useEffect( () => {
+	useEffect(() => {
 		let isSubscribed = true;
 		const unsubscribe = () => {
 			isSubscribed = false;
 		};
 
 		// Only calculate this once
-		if ( ! canMakePayment.isLoading ) {
+		if (!canMakePayment.isLoading) {
 			return unsubscribe;
 		}
 
 		// If stripe did not load, we will never load
-		if ( isStripeError ) {
-			debug( 'isApplePayAvailable giving up due to stripe error' );
-			setCanMakePayment( { isLoading: false, value: false } );
+		if (isStripeError) {
+			debug('isApplePayAvailable giving up due to stripe error');
+			setCanMakePayment({ isLoading: false, value: false });
 			return unsubscribe;
 		}
 
 		// We'll need the Stripe library so wait until it is loaded
-		if ( ! stripe || ! stripeConfiguration ) {
-			debug( 'isApplePayAvailable waiting on stripe' );
+		if (!stripe || !stripeConfiguration) {
+			debug('isApplePayAvailable waiting on stripe');
 			return unsubscribe;
 		}
 
 		// Our Apple Pay implementation uses the Payment Request API, so
 		// check that first.
-		if ( ! window.PaymentRequest ) {
-			debug( 'isApplePayAvailable giving up because there is no paymentRequest API' );
-			setCanMakePayment( { isLoading: false, value: false } );
+		if (!window.PaymentRequest) {
+			debug('isApplePayAvailable giving up because there is no paymentRequest API');
+			setCanMakePayment({ isLoading: false, value: false });
 			return unsubscribe;
 		}
 
@@ -220,15 +220,15 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeErr
 		// expensive on certain Safari versions due to a bug
 		// (https://trac.webkit.org/changeset/243447/webkit)
 		try {
-			const browserResponse = !! window.ApplePaySession?.canMakePayments();
-			if ( ! browserResponse ) {
-				debug( 'isApplePayAvailable giving up because apple pay is not available in browser' );
-				setCanMakePayment( { isLoading: false, value: false } );
+			const browserResponse = !!window.ApplePaySession?.canMakePayments();
+			if (!browserResponse) {
+				debug('isApplePayAvailable giving up because apple pay is not available in browser');
+				setCanMakePayment({ isLoading: false, value: false });
 				return unsubscribe;
 			}
-		} catch ( error ) {
-			debug( 'isApplePayAvailable giving up because apple pay is not available in browser' );
-			setCanMakePayment( { isLoading: false, value: false } );
+		} catch (error) {
+			debug('isApplePayAvailable giving up because apple pay is not available in browser');
+			setCanMakePayment({ isLoading: false, value: false });
 			return unsubscribe;
 		}
 
@@ -236,7 +236,7 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeErr
 		const countryCode =
 			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
 		const currency = items.reduce(
-			( firstCurrency, item ) => firstCurrency || item.amount.currency,
+			(firstCurrency, item) => firstCurrency || item.amount.currency,
 			'usd'
 		);
 		const paymentRequestOptions = {
@@ -253,54 +253,51 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeErr
 				amount: 0,
 			},
 		};
-		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( result => {
-			debug( 'applePay canMakePayment returned', result );
-			if ( ! isSubscribed ) {
-				debug( 'useIsApplePayAvailable not subscribed; not updating' );
+		const request = stripe.paymentRequest(paymentRequestOptions);
+		request.canMakePayment().then((result) => {
+			debug('applePay canMakePayment returned', result);
+			if (!isSubscribed) {
+				debug('useIsApplePayAvailable not subscribed; not updating');
 				return;
 			}
-			debug( 'isApplePayAvailable setting result from Stripe', !! result?.applePay );
-			setCanMakePayment( { isLoading: false, value: !! result?.applePay } );
-		} );
+			debug('isApplePayAvailable setting result from Stripe', !!result?.applePay);
+			setCanMakePayment({ isLoading: false, value: !!result?.applePay });
+		});
 
 		return unsubscribe;
-	}, [ canMakePayment, stripe, items, stripeConfiguration, isStripeError ] );
+	}, [canMakePayment, stripe, items, stripeConfiguration, isStripeError]);
 
-	debug( 'useIsApplePayAvailable', canMakePayment );
+	debug('useIsApplePayAvailable', canMakePayment);
 	return { canMakePayment: canMakePayment.value, isLoading: canMakePayment.isLoading };
 }
 
-export function filterAppropriatePaymentMethods( {
+export function filterAppropriatePaymentMethods({
 	paymentMethodObjects,
 	total,
 	credits,
 	subtotal,
 	allowedPaymentMethods,
 	serverAllowedPaymentMethods,
-} ) {
+}) {
 	const isPurchaseFree = total.amount.value === 0;
-	debug( 'is purchase free?', isPurchaseFree );
+	debug('is purchase free?', isPurchaseFree);
 
 	return paymentMethodObjects
-		.filter( methodObject => {
+		.filter((methodObject) => {
 			// If the purchase is free, only display the free-purchase method
-			if ( methodObject.id === 'free-purchase' ) {
+			if (methodObject.id === 'free-purchase') {
 				return isPurchaseFree ? true : false;
 			}
 			return isPurchaseFree ? false : true;
-		} )
-		.filter( methodObject => {
-			if ( methodObject.id === 'full-credits' ) {
+		})
+		.filter((methodObject) => {
+			if (methodObject.id === 'full-credits') {
 				return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
 			}
-			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
-				return isPaymentMethodEnabled(
-					'card',
-					allowedPaymentMethods || serverAllowedPaymentMethods
-				);
+			if (methodObject.id.startsWith('existingCard-')) {
+				return isPaymentMethodEnabled('card', allowedPaymentMethods || serverAllowedPaymentMethods);
 			}
-			if ( methodObject.id === 'free-purchase' ) {
+			if (methodObject.id === 'free-purchase') {
 				// If the free payment method still exists here (see above filter), it's enabled
 				return true;
 			}
@@ -308,5 +305,5 @@ export function filterAppropriatePaymentMethods( {
 				methodObject.id,
 				allowedPaymentMethods || serverAllowedPaymentMethods
 			);
-		} );
+		});
 }

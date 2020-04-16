@@ -20,28 +20,28 @@ class StatsTabsTab extends React.Component {
 		selected: PropTypes.bool,
 		tabClick: PropTypes.func,
 		compact: PropTypes.bool,
-		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		format: PropTypes.func,
 	};
 
-	clickHandler = event => {
-		if ( this.props.tabClick ) {
+	clickHandler = (event) => {
+		if (this.props.tabClick) {
 			event.preventDefault();
-			this.props.tabClick( this.props );
+			this.props.tabClick(this.props);
 		}
 	};
 
-	ensureValue = value => {
+	ensureValue = (value) => {
 		const { loading, children, numberFormat, format } = this.props;
-		if ( children ) {
+		if (children) {
 			return null;
 		}
 
-		if ( ! loading && ( value || value === 0 ) ) {
-			return format ? format( value ) : numberFormat( value );
+		if (!loading && (value || value === 0)) {
+			return format ? format(value) : numberFormat(value);
 		}
 
-		return String.fromCharCode( 8211 );
+		return String.fromCharCode(8211);
 	};
 
 	render() {
@@ -58,38 +58,38 @@ class StatsTabsTab extends React.Component {
 			value,
 		} = this.props;
 
-		const tabClass = classNames( 'stats-tab', className, {
+		const tabClass = classNames('stats-tab', className, {
 			'is-selected': selected,
 			'is-loading': loading,
-			'is-low': ! value,
+			'is-low': !value,
 			'is-compact': compact,
-		} );
+		});
 
-		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;
-		const tabLabel = <span className="label">{ label }</span>;
-		const tabValue = <span className="value">{ this.ensureValue( value ) }</span>;
+		const tabIcon = gridicon ? <Gridicon icon={gridicon} size={18} /> : null;
+		const tabLabel = <span className="label">{label}</span>;
+		const tabValue = <span className="value">{this.ensureValue(value)}</span>;
 		const hasClickAction = href || tabClick;
 
 		return (
-			<li className={ tabClass } onClick={ this.clickHandler }>
-				{ hasClickAction ? (
-					<a href={ href }>
-						{ tabIcon }
-						{ tabLabel }
-						{ tabValue }
-						{ children }
+			<li className={tabClass} onClick={this.clickHandler}>
+				{hasClickAction ? (
+					<a href={href}>
+						{tabIcon}
+						{tabLabel}
+						{tabValue}
+						{children}
 					</a>
 				) : (
 					<span className="no-link">
-						{ tabIcon }
-						{ tabLabel }
-						{ tabValue }
-						{ children }
+						{tabIcon}
+						{tabLabel}
+						{tabValue}
+						{children}
 					</span>
-				) }
+				)}
 			</li>
 		);
 	}
 }
 
-export default localize( StatsTabsTab );
+export default localize(StatsTabsTab);

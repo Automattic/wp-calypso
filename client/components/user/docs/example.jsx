@@ -10,21 +10,21 @@ import { connect } from 'react-redux';
 import UserItem from '../index';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-const UserItemExample = ( { currentUser } ) => {
-	return <UserItem user={ currentUser } />;
+const UserItemExample = ({ currentUser }) => {
+	return <UserItem user={currentUser} />;
 };
 
-const ConnectedUserItemExample = connect( state => {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
+const ConnectedUserItemExample = connect((state) => {
+	const user = getCurrentUser(state);
+	if (!user) {
 		return {};
 	}
-	const currentUser = Object.assign( {}, user, { name: user.display_name } );
+	const currentUser = Object.assign({}, user, { name: user.display_name });
 
 	return {
 		currentUser,
 	};
-} )( UserItemExample );
+})(UserItemExample);
 
 ConnectedUserItemExample.displayName = 'UserItem';
 

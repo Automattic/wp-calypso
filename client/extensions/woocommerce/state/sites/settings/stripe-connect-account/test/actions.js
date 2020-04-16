@@ -32,99 +32,99 @@ import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
 } from 'woocommerce/state/action-types';
 
-describe( 'actions', () => {
-	describe( '#clearCompletedNotification()', () => {
+describe('actions', () => {
+	describe('#clearCompletedNotification()', () => {
 		const siteId = '123';
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			clearCompletedNotification( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			clearCompletedNotification(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
 				siteId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#clearError()', () => {
+	describe('#clearError()', () => {
 		const siteId = '123';
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			clearError( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			clearError(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
 				siteId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#createAccount()', () => {
+	describe('#createAccount()', () => {
 		const siteId = '123';
 		const email = 'foo@bar.com';
 		const country = 'US';
 		const connectedUserID = 'acct_14qyt6Alijdnw0EA';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v1/connect/stripe/account&_via_calypso&_method=post',
-					body: JSON.stringify( {
+					body: JSON.stringify({
 						email,
 						country,
-					} ),
+					}),
 					json: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					data: {
 						success: true,
 						account_id: 'acct_14qyt6Alijdnw0EA',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = createAccount( siteId, 'foo@bar.com', 'US' )( dispatch, getState );
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			const response = createAccount(siteId, 'foo@bar.com', 'US')(dispatch, getState);
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 					country,
 					email,
 					siteId,
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should dispatch a success action with account details when the request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with account details when the request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = createAccount( siteId, 'foo@bar.com', 'US' )( dispatch, getState );
+			const response = createAccount(siteId, 'foo@bar.com', 'US')(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 					siteId,
 					connectedUserID,
 					email,
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#fetchAccountDetails()', () => {
+	describe('#fetchAccountDetails()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v1/connect/stripe/account&_via_calypso&_method=get', json: true } )
-				.reply( 200, {
+				.get('/rest/v1.1/jetpack-blogs/123/rest-api/')
+				.query({ path: '/wc/v1/connect/stripe/account&_via_calypso&_method=get', json: true })
+				.reply(200, {
 					data: {
 						success: true,
 						account_id: 'acct_14qyt6Alijdnw0EA',
@@ -137,26 +137,26 @@ describe( 'actions', () => {
 						payouts_enabled: true,
 						business_logo: 'https://foo.com/bar.png',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			fetchAccountDetails( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			fetchAccountDetails(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with account details when the request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with account details when the request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = fetchAccountDetails( siteId )( dispatch, getState );
+			const response = fetchAccountDetails(siteId)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
 					siteId,
 					connectedUserID: 'acct_14qyt6Alijdnw0EA',
@@ -166,142 +166,142 @@ describe( 'actions', () => {
 					isActivated: true,
 					logo: 'https://foo.com/bar.png',
 					lastName: 'Bar',
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#deauthorizeAccount()', () => {
+	describe('#deauthorizeAccount()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v1/connect/stripe/account/deauthorize&_via_calypso&_method=post',
-					body: JSON.stringify( {} ),
+					body: JSON.stringify({}),
 					json: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					data: {
 						success: true,
 						account_id: 'acct_14qyt6Alijdnw0EA',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			deauthorizeAccount( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			deauthorizeAccount(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action when the request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action when the request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = deauthorizeAccount( siteId )( dispatch, getState );
+			const response = deauthorizeAccount(siteId)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 					siteId,
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#oauthInit()', () => {
+	describe('#oauthInit()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v1/connect/stripe/oauth/init&_via_calypso&_method=post',
-					body: JSON.stringify( {
+					body: JSON.stringify({
 						returnUrl: 'https://return.url.com/',
-					} ),
+					}),
 					json: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					data: {
 						success: true,
 						oauthUrl:
 							'https://connect.stripe.com/oauth/authorize?response_type=code&client_id=xxx&scope=read_write&state=yyy',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			oauthInit( siteId, 'https://return.url.com/' )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			oauthInit(siteId, 'https://return.url.com/')(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
 				returnUrl: 'https://return.url.com/',
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with a Stripe URL when the request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with a Stripe URL when the request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = oauthInit( siteId, 'https://return.url.com/' )( dispatch, getState );
+			const response = oauthInit(siteId, 'https://return.url.com/')(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
 					siteId,
 					oauthUrl:
 						'https://connect.stripe.com/oauth/authorize?response_type=code&client_id=xxx&scope=read_write&state=yyy',
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#oauthConnect()', () => {
+	describe('#oauthConnect()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.reply( 200, {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/')
+				.reply(200, {
 					data: {
 						success: true,
 						account_id: 'acct_14qyt6Alijdnw0EA',
 					},
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			oauthConnect( siteId, 'STRIPECODE', 'STRIPESTATE' )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			oauthConnect(siteId, 'STRIPECODE', 'STRIPESTATE')(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT,
 				stripeCode: 'STRIPECODE',
 				stripeState: 'STRIPESTATE',
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with a Stripe account when the request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with a Stripe account when the request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = oauthConnect( siteId, 'STRIPECODE', 'STRIPESTATE' )( dispatch, getState );
+			const response = oauthConnect(siteId, 'STRIPECODE', 'STRIPESTATE')(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
 					connectedUserID: 'acct_14qyt6Alijdnw0EA',
 					siteId,
-				} );
-			} );
-		} );
-	} );
-} );
+				});
+			});
+		});
+	});
+});

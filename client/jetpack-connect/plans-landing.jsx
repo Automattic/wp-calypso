@@ -39,11 +39,11 @@ class PlansLanding extends Component {
 
 	componentDidMount() {
 		const { cta_id, cta_from } = this.props.context.query;
-		this.props.recordTracksEvent( 'calypso_jpc_plans_landing_view', {
+		this.props.recordTracksEvent('calypso_jpc_plans_landing_view', {
 			jpc_from: 'jetpack',
 			cta_id,
 			cta_from,
-		} );
+		});
 
 		this.goToPlansIfAlreadyConnected();
 	}
@@ -55,34 +55,34 @@ class PlansLanding extends Component {
 	goToPlansIfAlreadyConnected() {
 		const { site } = this.props;
 
-		if ( site ) {
-			page.redirect( '/plans/' + site.slug );
+		if (site) {
+			page.redirect('/plans/' + site.slug);
 		}
 	}
 
-	storeSelectedPlan = cartItem => {
+	storeSelectedPlan = (cartItem) => {
 		const { url } = this.props;
 		let redirectUrl = CALYPSO_JETPACK_CONNECT;
 
-		if ( url ) {
-			redirectUrl = addQueryArgs( { url }, redirectUrl );
+		if (url) {
+			redirectUrl = addQueryArgs({ url }, redirectUrl);
 		}
 
-		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
+		this.props.recordTracksEvent('calypso_jpc_plans_store_plan', {
 			plan: cartItem ? cartItem.product_slug : 'free',
-		} );
+		});
 
-		storePlan( cartItem ? cartItem.product_slug : PLAN_JETPACK_FREE );
+		storePlan(cartItem ? cartItem.product_slug : PLAN_JETPACK_FREE);
 
-		setTimeout( () => {
-			page.redirect( redirectUrl );
-		}, 25 );
+		setTimeout(() => {
+			page.redirect(redirectUrl);
+		}, 25);
 	};
 
-	handleInfoButtonClick = info => () => {
-		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
+	handleInfoButtonClick = (info) => () => {
+		this.props.recordTracksEvent('calypso_jpc_external_help_click', {
 			help_type: info,
-		} );
+		});
 	};
 
 	render() {
@@ -90,21 +90,21 @@ class PlansLanding extends Component {
 
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
-		if ( url && ( site || requestingSites ) ) {
+		if (url && (site || requestingSites)) {
 			return <Placeholder />;
 		}
 
 		return (
 			<Fragment>
-				<DocumentHead title={ translate( 'Plans' ) } />
+				<DocumentHead title={translate('Plans')} />
 				<QueryPlans />
 				<PlansGrid
-					basePlansPath={ '/jetpack/connect/store' }
-					calypsoStartedConnection={ true }
-					hideFreePlan={ true }
-					interval={ interval }
-					isLanding={ true }
-					onSelect={ this.storeSelectedPlan }
+					basePlansPath={'/jetpack/connect/store'}
+					calypsoStartedConnection={true}
+					hideFreePlan={true}
+					interval={interval}
+					isLanding={true}
+					onSelect={this.storeSelectedPlan}
 				>
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton eventName="calypso_jpc_planslanding_chat_initiated">
@@ -118,12 +118,12 @@ class PlansLanding extends Component {
 }
 
 const connectComponent = connect(
-	( state, { url } ) => {
-		const rawSite = url ? getJetpackSiteByUrl( state, url ) : null;
-		const site = rawSite ? getSite( state, rawSite.ID ) : null;
+	(state, { url }) => {
+		const rawSite = url ? getJetpackSiteByUrl(state, url) : null;
+		const site = rawSite ? getSite(state, rawSite.ID) : null;
 
 		return {
-			requestingSites: isRequestingSites( state ),
+			requestingSites: isRequestingSites(state),
 			site,
 		};
 	},
@@ -132,4 +132,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( PlansLanding );
+export default flowRight(connectComponent, localize)(PlansLanding);

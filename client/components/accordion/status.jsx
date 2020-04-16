@@ -25,7 +25,7 @@ const STATUS_GRIDICON = {
 
 export default class AccordionStatus extends PureComponent {
 	static propTypes = {
-		type: PropTypes.oneOf( [ 'info', 'warning', 'error' ] ),
+		type: PropTypes.oneOf(['info', 'warning', 'error']),
 		text: PropTypes.node,
 		url: PropTypes.string,
 		position: PropTypes.string,
@@ -41,8 +41,8 @@ export default class AccordionStatus extends PureComponent {
 		isTooltipVisible: false,
 	};
 
-	showTooltip = () => this.setState( { isTooltipVisible: true } );
-	hideTooltip = () => this.setState( { isTooltipVisible: false } );
+	showTooltip = () => this.setState({ isTooltipVisible: true });
+	hideTooltip = () => this.setState({ isTooltipVisible: false });
 
 	tooltipContextRef = React.createRef();
 
@@ -52,24 +52,24 @@ export default class AccordionStatus extends PureComponent {
 		return (
 			<Fragment>
 				<a
-					href={ url }
-					onClick={ this.props.onClick }
-					ref={ this.tooltipContextRef }
-					onMouseEnter={ this.showTooltip }
-					onMouseLeave={ this.hideTooltip }
-					className={ classNames( 'accordion__status', `is-${ type }` ) }
+					href={url}
+					onClick={this.props.onClick}
+					ref={this.tooltipContextRef}
+					onMouseEnter={this.showTooltip}
+					onMouseLeave={this.hideTooltip}
+					className={classNames('accordion__status', `is-${type}`)}
 				>
-					<Gridicon icon={ STATUS_GRIDICON[ type ] } />
+					<Gridicon icon={STATUS_GRIDICON[type]} />
 				</a>
-				{ text && (
+				{text && (
 					<Tooltip
-						position={ position }
-						isVisible={ this.state.isTooltipVisible }
-						context={ this.tooltipContextRef.current }
+						position={position}
+						isVisible={this.state.isTooltipVisible}
+						context={this.tooltipContextRef.current}
 					>
-						{ text }
+						{text}
 					</Tooltip>
-				) }
+				)}
 			</Fragment>
 		);
 	}

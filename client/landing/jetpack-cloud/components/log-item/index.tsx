@@ -23,17 +23,17 @@ export interface Props {
 	expandedSummary?: string | ReactNode;
 }
 
-class LogItem extends React.PureComponent< Props > {
+class LogItem extends React.PureComponent<Props> {
 	renderHeader() {
 		const { header, subheader, tag } = this.props;
 
 		return (
 			<div className="log-item__header-wrapper">
-				{ tag && <span className="log-item__tag">{ tag }</span> }
-				<CardHeading tagName="h2" size={ 18 }>
-					{ header }
+				{tag && <span className="log-item__tag">{tag}</span>}
+				<CardHeading tagName="h2" size={18}>
+					{header}
 				</CardHeading>
-				{ subheader && <div className="log-item__subheader">{ subheader }</div> }
+				{subheader && <div className="log-item__subheader">{subheader}</div>}
 			</div>
 		);
 	}
@@ -42,13 +42,13 @@ class LogItem extends React.PureComponent< Props > {
 		const { highlight, children, className, expandedSummary, summary } = this.props;
 		return (
 			<FoldableCard
-				header={ this.renderHeader() }
-				className={ classnames( 'log-item', className ) }
-				highlight={ highlight }
-				expandedSummary={ expandedSummary }
-				summary={ summary }
+				header={this.renderHeader()}
+				className={classnames('log-item', className)}
+				highlight={highlight}
+				expandedSummary={expandedSummary}
+				summary={summary}
 			>
-				{ children }
+				{children}
 			</FoldableCard>
 		);
 	}

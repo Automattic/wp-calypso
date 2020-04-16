@@ -9,9 +9,9 @@ import { get } from 'lodash';
 export const siteStyleOptions = {
 	business: [
 		{
-			description: i18n.translate( 'A gutenberg-ready business variation.', {
+			description: i18n.translate('A gutenberg-ready business variation.', {
 				comment: 'A description of a WordPress theme style.',
-			} ),
+			}),
 			id: 'modern',
 			label: 'Modern',
 			theme: 'pub/modern-business',
@@ -29,9 +29,9 @@ export const siteStyleOptions = {
 			),
 		},
 		{
-			description: i18n.translate( 'A gutenberg-ready business variation.', {
+			description: i18n.translate('A gutenberg-ready business variation.', {
 				comment: 'A description of a WordPress theme style.',
-			} ),
+			}),
 			id: 'sophisticated',
 			label: 'Sophisticated',
 			theme: 'pub/sophisticated-business',
@@ -50,9 +50,9 @@ export const siteStyleOptions = {
 			),
 		},
 		{
-			description: i18n.translate( 'Simple, yet sophisticated, with subtle, elegant typography.', {
+			description: i18n.translate('Simple, yet sophisticated, with subtle, elegant typography.', {
 				comment: 'A description of a WordPress theme style.',
-			} ),
+			}),
 			id: 'professional',
 			label: 'Professional',
 			theme: 'pub/professional-business',
@@ -70,9 +70,9 @@ export const siteStyleOptions = {
 			),
 		},
 		{
-			description: i18n.translate( 'A gutenberg-ready business variation.', {
+			description: i18n.translate('A gutenberg-ready business variation.', {
 				comment: 'A description of a WordPress theme style.',
-			} ),
+			}),
 			id: 'calm',
 			label: 'Calm',
 			theme: 'pub/calm-business',
@@ -99,5 +99,5 @@ export const siteStyleOptions = {
  * @param  {string} siteType A site type/segement as selected in the onboarding flow
  * @returns {object}          The site style definition object.
  */
-export const getSiteStyleOptions = siteType =>
-	get( siteStyleOptions, siteType, siteStyleOptions.business );
+export const getSiteStyleOptions = (siteType) =>
+	get(siteStyleOptions, siteType, siteStyleOptions.business);

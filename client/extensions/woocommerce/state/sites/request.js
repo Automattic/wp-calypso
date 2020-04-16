@@ -9,39 +9,39 @@ import { omit, mapValues, isArray, isObject } from 'lodash';
  */
 import wp from 'lib/wp';
 
-const omitDeep = ( input, props ) => {
-	if ( isArray( input ) ) {
-		return input.map( elem => omitDeep( elem, props ) );
+const omitDeep = (input, props) => {
+	if (isArray(input)) {
+		return input.map((elem) => omitDeep(elem, props));
 	}
 
-	if ( isObject( input ) ) {
-		return mapValues( omit( input, props ), value => omitDeep( value, props ) );
+	if (isObject(input)) {
+		return mapValues(omit(input, props), (value) => omitDeep(value, props));
 	}
 
 	return input;
 };
 
-const _request = ( method, path, siteId, body, namespace = 'wc/v3' ) => {
+const _request = (method, path, siteId, body, namespace = 'wc/v3') => {
 	// WPCOM API breaks if query parameters are passed after "?" instead of "&". Hide this hack from the calling code
-	path = path.replace( '?', '&' );
+	path = path.replace('?', '&');
 
-	return wp.req[ 'get' === method ? 'get' : 'post' ](
+	return wp.req['get' === method ? 'get' : 'post'](
 		{
-			path: `/jetpack-blogs/${ siteId }/rest-api/`,
+			path: `/jetpack-blogs/${siteId}/rest-api/`,
 		},
 		{
-			path: `/${ namespace }/${ path }&_via_calypso&_method=${ method }`,
-			body: body && JSON.stringify( body ),
+			path: `/${namespace}/${path}&_via_calypso&_method=${method}`,
+			body: body && JSON.stringify(body),
 			json: true,
 		}
-	).then( ( { data } ) => omitDeep( data, '_links' ) );
+	).then(({ data }) => omitDeep(data, '_links'));
 };
 
-const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3' ) => {
-	return _request( method, path + '&_envelope', siteId, sendBody, namespace ).then( response => {
+const _requestWithHeaders = (method, path, siteId, sendBody, namespace = 'wc/v3') => {
+	return _request(method, path + '&_envelope', siteId, sendBody, namespace).then((response) => {
 		const { headers, body, status } = response;
 
-		if ( status !== 200 ) {
+		if (status !== 200) {
 			throw {
 				status: body.data.status,
 				message: body.message,
@@ -50,7 +50,7 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
 		}
 
 		return { data: body, headers };
-	} );
+	});
 };
 
 /**
@@ -61,7 +61,7 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
  * @returns {object} An object with the properties "get", "post", "put" and "del", which are functions to
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
-export default siteId => ( {
+export default (siteId) => ({
 	/**
 	 * Sends a GET request to the API
 	 *
@@ -69,7 +69,7 @@ export default siteId => ( {
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @returns {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	get: ( path, namespace ) => _request( 'get', path, siteId, undefined, namespace ),
+	get: (path, namespace) => _request('get', path, siteId, undefined, namespace),
 
 	/**
 	 * Sends a GET request to the API and returns headers along with the body.
@@ -78,8 +78,8 @@ export default siteId => ( {
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @returns {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	getWithHeaders: ( path, namespace ) =>
-		_requestWithHeaders( 'get', path, siteId, undefined, namespace ),
+	getWithHeaders: (path, namespace) =>
+		_requestWithHeaders('get', path, siteId, undefined, namespace),
 
 	/**
 	 * Sends a POST request to the API
@@ -89,7 +89,7 @@ export default siteId => ( {
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @returns {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	post: ( path, body, namespace ) => _request( 'post', path, siteId, body || {}, namespace ),
+	post: (path, body, namespace) => _request('post', path, siteId, body || {}, namespace),
 
 	/**
 	 * Sends a PUT request to the API.
@@ -101,7 +101,7 @@ export default siteId => ( {
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @returns {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	put: ( path, body, namespace ) => _request( 'put', path, siteId, body || {}, namespace ),
+	put: (path, body, namespace) => _request('put', path, siteId, body || {}, namespace),
 
 	/**
 	 * Sends a DELETE request to the API.
@@ -112,5 +112,5 @@ export default siteId => ( {
 	 * @param {string} namespace URL namespace, defaults to 'wc/v3'
 	 * @returns {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	del: ( path, namespace ) => _request( 'delete', path, siteId, undefined, namespace ),
-} );
+	del: (path, namespace) => _request('delete', path, siteId, undefined, namespace),
+});

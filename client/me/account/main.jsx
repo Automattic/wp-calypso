@@ -65,14 +65,14 @@ const colorSchemeKey = 'calypso_preferences.colorScheme';
 /**
  * Debug instance
  */
-const debug = debugFactory( 'calypso:me:account' );
+const debug = debugFactory('calypso:me:account');
 
 /* eslint-disable react/prefer-es6-class */
-const Account = createReactClass( {
+const Account = createReactClass({
 	displayName: 'Account',
 
 	// form-base mixin is needed for getDisabledState() (and possibly other uses?)
-	mixins: [ formBase, observe( 'userSettings', 'username' ) ],
+	mixins: [formBase, observe('userSettings', 'username')],
 
 	propTypes: {
 		userSettings: PropTypes.object.isRequired,
@@ -83,118 +83,115 @@ const Account = createReactClass( {
 	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.props.username.clearValidation();
-		this.props.userSettings.removeUnsavedSetting( 'user_login' );
+		this.props.userSettings.removeUnsavedSetting('user_login');
 	},
 
 	componentDidMount() {
-		debug( this.constructor.displayName + ' component is mounted.' );
-		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
+		debug(this.constructor.displayName + ' component is mounted.');
+		this.debouncedUsernameValidate = debounce(this.validateUsername, 600);
 	},
 
 	componentWillUnmount() {
-		debug( this.constructor.displayName + ' component is unmounting.' );
+		debug(this.constructor.displayName + ' component is unmounting.');
 	},
 
-	getUserSetting( settingName ) {
-		return this.props.userSettings.getSetting( settingName );
+	getUserSetting(settingName) {
+		return this.props.userSettings.getSetting(settingName);
 	},
 
-	getUserOriginalSetting( settingName ) {
-		return this.props.userSettings.getOriginalSetting( settingName );
+	getUserOriginalSetting(settingName) {
+		return this.props.userSettings.getOriginalSetting(settingName);
 	},
 
-	updateUserSetting( settingName, value ) {
-		this.props.userSettings.updateSetting( settingName, value );
+	updateUserSetting(settingName, value) {
+		this.props.userSettings.updateSetting(settingName, value);
 	},
 
-	updateUserSettingInput( event ) {
-		this.updateUserSetting( event.target.name, event.target.value );
+	updateUserSettingInput(event) {
+		this.updateUserSetting(event.target.name, event.target.value);
 	},
 
-	updateUserSettingCheckbox( event ) {
-		this.updateUserSetting( event.target.name, event.target.checked );
+	updateUserSettingCheckbox(event) {
+		this.updateUserSetting(event.target.name, event.target.checked);
 	},
 
-	updateCommunityTranslatorSetting( event ) {
+	updateCommunityTranslatorSetting(event) {
 		const { name, checked } = event.target;
-		this.updateUserSetting( name, checked );
+		this.updateUserSetting(name, checked);
 		const redirect = '/me/account';
-		this.setState( { redirect } );
+		this.setState({ redirect });
 	},
 
-	updateLanguage( event ) {
+	updateLanguage(event) {
 		const { value } = event.target;
-		this.updateUserSetting( 'language', value );
+		this.updateUserSetting('language', value);
 		const redirect =
-			value !== this.getUserOriginalSetting( 'language' ) ||
-			value !== this.getUserOriginalSetting( 'locale_variant' )
+			value !== this.getUserOriginalSetting('language') ||
+			value !== this.getUserOriginalSetting('locale_variant')
 				? '/me/account'
 				: false;
 		// store any selected locale variant so we can test it against those with no GP translation sets
-		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
-		this.setState( { redirect, localeVariantSelected } );
+		const localeVariantSelected = isLocaleVariant(value) ? value : '';
+		this.setState({ redirect, localeVariantSelected });
 	},
 
-	updateColorScheme( colorScheme ) {
+	updateColorScheme(colorScheme) {
 		// Set a fallback color scheme if no default value is provided by the API.
 		// This is a workaround that allows us to use userSettings.updateSetting() without an
 		// existing value. Without this workaround the save button wouldn't become active.
 		// TODO: the API should provide a default value, which would make this line obsolete
-		update( this.props.userSettings.settings, colorSchemeKey, value => value || 'default' );
+		update(this.props.userSettings.settings, colorSchemeKey, (value) => value || 'default');
 
-		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
-		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
-		this.updateUserSetting( colorSchemeKey, colorScheme );
+		this.props.recordTracksEvent('calypso_color_schemes_select', { color_scheme: colorScheme });
+		this.props.recordGoogleEvent('Me', 'Selected Color Scheme', 'scheme', colorScheme);
+		this.updateUserSetting(colorSchemeKey, colorScheme);
 	},
 
 	getEmailAddress() {
 		return this.hasPendingEmailChange()
-			? this.getUserSetting( 'new_user_email' )
-			: this.getUserSetting( 'user_email' );
+			? this.getUserSetting('new_user_email')
+			: this.getUserSetting('user_email');
 	},
 
-	updateEmailAddress( event ) {
+	updateEmailAddress(event) {
 		const { value } = event.target;
 		const emailValidationError =
-			( '' === value && 'empty' ) || ( ! emailValidator.validate( value ) && 'invalid' ) || false;
-		this.setState( { emailValidationError } );
-		this.updateUserSetting( 'user_email', value );
+			('' === value && 'empty') || (!emailValidator.validate(value) && 'invalid') || false;
+		this.setState({ emailValidationError });
+		this.updateUserSetting('user_email', value);
 	},
 
-	updateUserLoginConfirm( event ) {
-		this.setState( { userLoginConfirm: event.target.value } );
+	updateUserLoginConfirm(event) {
+		this.setState({ userLoginConfirm: event.target.value });
 	},
 
 	validateUsername() {
-		const username = this.getUserSetting( 'user_login' );
-		debug( 'Validating username ' + username );
-		this.props.username.validate( username );
+		const username = this.getUserSetting('user_login');
+		debug('Validating username ' + username);
+		this.props.username.validate(username);
 	},
 
 	hasEmailValidationError() {
-		return !! this.state.emailValidationError;
+		return !!this.state.emailValidationError;
 	},
 
 	shouldDisplayCommunityTranslator() {
-		const locale = this.getUserSetting( 'language' );
+		const locale = this.getUserSetting('language');
 
 		// disable for locales
-		if ( ! locale || ! canBeTranslated( locale ) ) {
+		if (!locale || !canBeTranslated(locale)) {
 			return false;
 		}
 
 		// disable for locale variants with no official GP translation sets
-		if (
-			this.state.localeVariantSelected &&
-			! canBeTranslated( this.state.localeVariantSelected )
-		) {
+		if (this.state.localeVariantSelected && !canBeTranslated(this.state.localeVariantSelected)) {
 			return false;
 		}
 
 		// if the user hasn't yet selected a language, and the locale variants has no official GP translation set
 		if (
 			typeof this.state.localeVariantSelected !== 'string' &&
-			! canBeTranslated( this.getUserSetting( 'locale_variant' ) )
+			!canBeTranslated(this.getUserSetting('locale_variant'))
 		) {
 			return false;
 		}
@@ -203,35 +200,35 @@ const Account = createReactClass( {
 	},
 
 	communityTranslator() {
-		if ( ! this.shouldDisplayCommunityTranslator() ) {
+		if (!this.shouldDisplayCommunityTranslator()) {
 			return;
 		}
 		const { translate } = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
-				<FormLabel htmlFor={ ENABLE_TRANSLATOR_KEY }>
+				<FormLegend>{translate('Community Translator')}</FormLegend>
+				<FormLabel htmlFor={ENABLE_TRANSLATOR_KEY}>
 					<FormCheckbox
-						checked={ this.getUserSetting( ENABLE_TRANSLATOR_KEY ) }
-						onChange={ this.updateCommunityTranslatorSetting }
-						disabled={ this.getDisabledState() }
-						id={ ENABLE_TRANSLATOR_KEY }
-						name={ ENABLE_TRANSLATOR_KEY }
-						onClick={ this.getCheckboxHandler( 'Community Translator' ) }
+						checked={this.getUserSetting(ENABLE_TRANSLATOR_KEY)}
+						onChange={this.updateCommunityTranslatorSetting}
+						disabled={this.getDisabledState()}
+						id={ENABLE_TRANSLATOR_KEY}
+						name={ENABLE_TRANSLATOR_KEY}
+						onClick={this.getCheckboxHandler('Community Translator')}
 					/>
 					<span>
-						{ translate( 'Enable the in-page translator where available. {{a}}Learn more{{/a}}', {
+						{translate('Enable the in-page translator where available. {{a}}Learn more{{/a}}', {
 							components: {
 								a: (
 									<a
 										target="_blank"
 										rel="noopener noreferrer"
 										href="https://translate.wordpress.com/community-translator/"
-										onClick={ this.getClickHandler( 'Community Translator Learn More Link' ) }
+										onClick={this.getClickHandler('Community Translator Learn More Link')}
 									/>
 								),
 							},
-						} ) }
+						})}
 					</span>
 				</FormLabel>
 			</FormFieldset>
@@ -239,13 +236,13 @@ const Account = createReactClass( {
 	},
 
 	thankTranslationContributors() {
-		if ( ! this.shouldDisplayCommunityTranslator() ) {
+		if (!this.shouldDisplayCommunityTranslator()) {
 			return;
 		}
 
-		const locale = this.getUserSetting( 'language' );
-		const language = getLanguage( locale );
-		if ( ! language ) {
+		const locale = this.getUserSetting('language');
+		const language = getLanguage(locale);
+		if (!language) {
 			return;
 		}
 		const { translate } = this.props;
@@ -253,60 +250,59 @@ const Account = createReactClass( {
 
 		return (
 			<FormSettingExplanation>
-				{ ' ' }
-				{ translate(
+				{' '}
+				{translate(
 					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
 					{
 						components: {
-							a: <a target="_blank" rel="noopener noreferrer" href={ url } />,
-							language: <span>{ language.name }</span>,
+							a: <a target="_blank" rel="noopener noreferrer" href={url} />,
+							language: <span>{language.name}</span>,
 						},
 					}
-				) }
+				)}
 			</FormSettingExplanation>
 		);
 	},
 
 	cancelEmailChange() {
 		const { translate, userSettings } = this.props;
-		userSettings.cancelPendingEmailChange( ( error, response ) => {
-			if ( error ) {
-				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
+		userSettings.cancelPendingEmailChange((error, response) => {
+			if (error) {
+				debug('Error canceling email change: ' + JSON.stringify(error));
 				this.props.errorNotice(
-					translate( 'There was a problem canceling the email change. Please, try again.' )
+					translate('There was a problem canceling the email change. Please, try again.')
 				);
 			} else {
-				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
-				this.props.successNotice( translate( 'The email change has been successfully canceled.' ) );
+				debug(JSON.stringify('Email change canceled successfully' + response));
+				this.props.successNotice(translate('The email change has been successfully canceled.'));
 			}
-		} );
+		});
 	},
 
-	handleRadioChange( event ) {
+	handleRadioChange(event) {
 		const { name, value } = event.currentTarget;
-		this.setState( { [ name ]: value } );
+		this.setState({ [name]: value });
 	},
 
 	handleSubmitButtonClick() {
 		const { unsavedSettings } = this.props.userSettings;
-		this.recordClickEvent( 'Save Account Settings Button' );
-		if ( has( unsavedSettings, colorSchemeKey ) ) {
-			const colorScheme = get( unsavedSettings, colorSchemeKey );
-			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
+		this.recordClickEvent('Save Account Settings Button');
+		if (has(unsavedSettings, colorSchemeKey)) {
+			const colorScheme = get(unsavedSettings, colorSchemeKey);
+			this.props.recordTracksEvent('calypso_color_schemes_save', {
 				color_scheme: colorScheme,
-			} );
-			this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
-			this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
+			});
+			this.props.recordGoogleEvent('Me', 'Saved Color Scheme', 'scheme', colorScheme);
+			this.props.bumpStat('calypso_changed_color_scheme', colorScheme);
 		}
 
-		if ( has( unsavedSettings, 'language' ) ) {
-			this.props.recordTracksEvent( 'calypso_user_language_switch', {
-				new_language: this.getUserSetting( 'language' ),
+		if (has(unsavedSettings, 'language')) {
+			this.props.recordTracksEvent('calypso_user_language_switch', {
+				new_language: this.getUserSetting('language'),
 				previous_language:
-					this.getUserOriginalSetting( 'locale_variant' ) ||
-					this.getUserOriginalSetting( 'language' ),
+					this.getUserOriginalSetting('locale_variant') || this.getUserOriginalSetting('language'),
 				country_code: this.props.countryCode,
-			} );
+			});
 		}
 	},
 
@@ -316,40 +312,40 @@ const Account = createReactClass( {
 	 *
 	 * @param {object} event Event from onChange of user_login input
 	 */
-	handleUsernameChange( event ) {
+	handleUsernameChange(event) {
 		this.debouncedUsernameValidate();
-		this.updateUserSetting( 'user_login', event.currentTarget.value );
-		this.setState( { usernameAction: null } );
+		this.updateUserSetting('user_login', event.currentTarget.value);
+		this.setState({ usernameAction: null });
 	},
 
-	recordClickEvent( action ) {
-		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	recordClickEvent(action) {
+		this.props.recordGoogleEvent('Me', 'Clicked on ' + action);
 	},
 
-	getClickHandler( action, callback ) {
+	getClickHandler(action, callback) {
 		return () => {
-			this.recordClickEvent( action );
+			this.recordClickEvent(action);
 
-			if ( callback ) {
+			if (callback) {
 				callback();
 			}
 		};
 	},
 
-	getFocusHandler( action ) {
-		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	getFocusHandler(action) {
+		return () => this.props.recordGoogleEvent('Me', 'Focused on ' + action);
 	},
 
-	getCheckboxHandler( checkboxName ) {
-		return event => {
+	getCheckboxHandler(checkboxName) {
+		return (event) => {
 			const action = 'Clicked ' + checkboxName + ' checkbox';
 			const value = event.target.checked ? 1 : 0;
 
-			this.props.recordGoogleEvent( 'Me', action, 'checked', value );
+			this.props.recordGoogleEvent('Me', action, 'checked', value);
 		};
 	},
 
-	handleUsernameChangeBlogRadio( event ) {
+	handleUsernameChangeBlogRadio(event) {
 		this.props.recordGoogleEvent(
 			'Me',
 			'Clicked Username Change Blog Action radio',
@@ -359,28 +355,28 @@ const Account = createReactClass( {
 	},
 
 	cancelUsernameChange() {
-		this.setState( {
+		this.setState({
 			userLoginConfirm: null,
 			usernameAction: null,
-		} );
+		});
 
 		this.props.username.clearValidation();
-		this.props.userSettings.removeUnsavedSetting( 'user_login' );
+		this.props.userSettings.removeUnsavedSetting('user_login');
 
-		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
+		if (!this.props.userSettings.hasUnsavedSettings()) {
 			this.props.markSaved();
 		}
 	},
 
 	submitUsernameForm() {
-		const username = this.getUserSetting( 'user_login' );
+		const username = this.getUserSetting('user_login');
 		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
-		this.setState( { submittingForm: true } );
-		this.props.username.change( username, action, error => {
-			this.setState( { submittingForm: false } );
-			if ( error ) {
-				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
+		this.setState({ submittingForm: true });
+		this.props.username.change(username, action, (error) => {
+			this.setState({ submittingForm: false });
+			if (error) {
+				this.props.errorNotice(this.props.username.getValidationFailureMessage());
 			} else {
 				this.props.markSaved();
 
@@ -388,27 +384,27 @@ const Account = createReactClass( {
 				// @TODO: Do not require reload here.
 				window.location.reload();
 			}
-		} );
+		});
 	},
 
-	onSiteSelect( siteId ) {
-		if ( siteId ) {
-			this.updateUserSetting( 'primary_site_ID', siteId );
+	onSiteSelect(siteId) {
+		if (siteId) {
+			this.updateUserSetting('primary_site_ID', siteId);
 		}
 	},
 
 	renderJoinDate() {
 		const { translate, moment } = this.props;
-		const dateMoment = moment( user.get().date );
+		const dateMoment = moment(user.get().date);
 
 		return (
 			<span>
-				{ translate( 'Joined %(month)s %(year)s', {
+				{translate('Joined %(month)s %(year)s', {
 					args: {
-						month: dateMoment.format( 'MMMM' ),
-						year: dateMoment.format( 'YYYY' ),
+						month: dateMoment.format('MMMM'),
+						year: dateMoment.format('YYYY'),
 					},
-				} ) }
+				})}
 			</span>
 		);
 	},
@@ -420,24 +416,24 @@ const Account = createReactClass( {
 	renderPendingEmailChange() {
 		const { translate } = this.props;
 
-		if ( ! this.hasPendingEmailChange() ) {
+		if (!this.hasPendingEmailChange()) {
 			return null;
 		}
 
 		return (
 			<Notice
-				showDismiss={ false }
+				showDismiss={false}
 				status="is-info"
-				text={ translate(
+				text={translate(
 					'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.',
 					{
 						args: {
-							email: this.getUserSetting( 'new_user_email' ),
+							email: this.getUserSetting('new_user_email'),
 						},
 					}
-				) }
+				)}
 			>
-				<NoticeAction onClick={ this.cancelEmailChange }>{ translate( 'Cancel' ) }</NoticeAction>
+				<NoticeAction onClick={this.cancelEmailChange}>{translate('Cancel')}</NoticeAction>
 			</Notice>
 		);
 	},
@@ -445,28 +441,28 @@ const Account = createReactClass( {
 	renderUsernameValidation() {
 		const { translate, username, userSettings } = this.props;
 
-		if ( ! userSettings.isSettingUnsaved( 'user_login' ) ) {
+		if (!userSettings.isSettingUnsaved('user_login')) {
 			return null;
 		}
 
-		if ( username.isUsernameValid() ) {
+		if (username.isUsernameValid()) {
 			return (
 				<Notice
-					showDismiss={ false }
+					showDismiss={false}
 					status="is-success"
-					text={ translate( '%(username)s is a valid username.', {
+					text={translate('%(username)s is a valid username.', {
 						args: {
 							username: username.getValidatedUsername(),
 						},
-					} ) }
+					})}
 				/>
 			);
-		} else if ( null !== username.getValidationFailureMessage() ) {
+		} else if (null !== username.getValidationFailureMessage()) {
 			return (
 				<Notice
-					showDismiss={ false }
+					showDismiss={false}
 					status="is-error"
-					text={ username.getValidationFailureMessage() }
+					text={username.getValidationFailureMessage()}
 				/>
 			);
 		}
@@ -474,41 +470,41 @@ const Account = createReactClass( {
 
 	renderUsernameConfirmNotice() {
 		const { translate, username } = this.props;
-		const usernameMatch = this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm;
+		const usernameMatch = this.getUserSetting('user_login') === this.state.userLoginConfirm;
 		const status = usernameMatch ? 'is-success' : 'is-error';
 		const text = usernameMatch
-			? translate( 'Thanks for confirming your new username!' )
-			: translate( 'Please re-enter your new username to confirm it.' );
+			? translate('Thanks for confirming your new username!')
+			: translate('Please re-enter your new username to confirm it.');
 
-		if ( ! username.isUsernameValid() ) {
+		if (!username.isUsernameValid()) {
 			return null;
 		}
 
-		return <Notice showDismiss={ false } status={ status } text={ text } />;
+		return <Notice showDismiss={false} status={status} text={text} />;
 	},
 
 	renderPrimarySite() {
 		const { requestingMissingSites, translate } = this.props;
 
-		if ( ! user.get().visible_site_count ) {
+		if (!user.get().visible_site_count) {
 			return (
 				<Button
-					href={ config( 'signup_url' ) }
-					onClick={ this.getClickHandler( 'Primary Site Add New WordPress Button' ) }
+					href={config('signup_url')}
+					onClick={this.getClickHandler('Primary Site Add New WordPress Button')}
 				>
-					{ translate( 'Add New Site' ) }
+					{translate('Add New Site')}
 				</Button>
 			);
 		}
 
-		const primarySiteId = this.getUserSetting( 'primary_site_ID' );
+		const primarySiteId = this.getUserSetting('primary_site_ID');
 
 		return (
 			<SitesDropdown
-				key={ primarySiteId }
-				isPlaceholder={ ! primarySiteId || requestingMissingSites }
-				selectedSiteId={ primarySiteId }
-				onSiteSelect={ this.onSiteSelect }
+				key={primarySiteId}
+				isPlaceholder={!primarySiteId || requestingMissingSites}
+				selectedSiteId={primarySiteId}
+				onSiteSelect={this.onSiteSelect}
 			/>
 		);
 	},
@@ -516,26 +512,26 @@ const Account = createReactClass( {
 	renderEmailValidation() {
 		const { translate, userSettings } = this.props;
 
-		if ( ! userSettings.isSettingUnsaved( 'user_email' ) ) {
+		if (!userSettings.isSettingUnsaved('user_email')) {
 			return null;
 		}
 
-		if ( ! this.state.emailValidationError ) {
+		if (!this.state.emailValidationError) {
 			return null;
 		}
 		let notice;
-		switch ( this.state.emailValidationError ) {
+		switch (this.state.emailValidationError) {
 			case 'invalid':
-				notice = translate( '%(email)s is not a valid email address.', {
-					args: { email: this.getUserSetting( 'user_email' ) },
-				} );
+				notice = translate('%(email)s is not a valid email address.', {
+					args: { email: this.getUserSetting('user_email') },
+				});
 				break;
 			case 'empty':
-				notice = translate( 'Email address can not be empty.' );
+				notice = translate('Email address can not be empty.');
 				break;
 		}
 
-		return <FormTextValidation isError={ true } text={ notice } />;
+		return <FormTextValidation isError={true} text={notice} />;
 	},
 
 	/*
@@ -545,89 +541,85 @@ const Account = createReactClass( {
 		const { translate, userSettings } = this.props;
 
 		const isSubmitButtonDisabled =
-			! userSettings.hasUnsavedSettings() ||
+			!userSettings.hasUnsavedSettings() ||
 			this.getDisabledState() ||
 			this.hasEmailValidationError();
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
-					<FormLabel htmlFor="user_email">{ translate( 'Email Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_email">{translate('Email Address')}</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
+						disabled={this.getDisabledState() || this.hasPendingEmailChange()}
 						id="user_email"
 						name="user_email"
-						isError={ !! this.state.emailValidationError }
-						onFocus={ this.getFocusHandler( 'Email Address Field' ) }
-						value={ this.getEmailAddress() || '' }
-						onChange={ this.updateEmailAddress }
+						isError={!!this.state.emailValidationError}
+						onFocus={this.getFocusHandler('Email Address Field')}
+						value={this.getEmailAddress() || ''}
+						onChange={this.updateEmailAddress}
 					/>
-					{ this.renderEmailValidation() }
-					{ this.renderPendingEmailChange() }
+					{this.renderEmailValidation()}
+					{this.renderPendingEmailChange()}
 					<FormSettingExplanation>
-						{ translate( 'Will not be publicly displayed' ) }
+						{translate('Will not be publicly displayed')}
 					</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary Site' ) }</FormLabel>
-					{ this.renderPrimarySite() }
+					<FormLabel htmlFor="primary_site_ID">{translate('Primary Site')}</FormLabel>
+					{this.renderPrimarySite()}
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="user_URL">{ translate( 'Web Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_URL">{translate('Web Address')}</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() }
+						disabled={this.getDisabledState()}
 						id="user_URL"
 						name="user_URL"
 						type="url"
-						onFocus={ this.getFocusHandler( 'Web Address Field' ) }
-						value={ this.getUserSetting( 'user_URL' ) || '' }
-						onChange={ this.updateUserSettingInput }
+						onFocus={this.getFocusHandler('Web Address Field')}
+						value={this.getUserSetting('user_URL') || ''}
+						onChange={this.updateUserSettingInput}
 					/>
 					<FormSettingExplanation>
-						{ translate( 'Shown publicly when you comment on blogs.' ) }
+						{translate('Shown publicly when you comment on blogs.')}
 					</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
+					<FormLabel htmlFor="language">{translate('Interface Language')}</FormLabel>
 					<LanguagePicker
-						disabled={ this.getDisabledState() }
-						languages={ languages }
-						onClick={ this.getClickHandler( 'Interface Language Field' ) }
+						disabled={this.getDisabledState()}
+						languages={languages}
+						onClick={this.getClickHandler('Interface Language Field')}
 						valueKey="langSlug"
-						value={
-							this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
-						}
-						onChange={ this.updateLanguage }
+						value={this.getUserSetting('locale_variant') || this.getUserSetting('language') || ''}
+						onChange={this.updateLanguage}
 					/>
 					<FormSettingExplanation>
-						{ translate(
+						{translate(
 							'This is the language of the interface you see across WordPress.com as a whole.'
-						) }
+						)}
 					</FormSettingExplanation>
-					{ this.thankTranslationContributors() }
+					{this.thankTranslationContributors()}
 				</FormFieldset>
 
-				{ canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) &&
-					this.communityTranslator() }
+				{canDisplayCommunityTranslator(this.getUserSetting('language')) &&
+					this.communityTranslator()}
 
-				{ config.isEnabled( 'me/account/color-scheme-picker' ) && supportsCssCustomProperties() && (
+				{config.isEnabled('me/account/color-scheme-picker') && supportsCssCustomProperties() && (
 					<FormFieldset>
-						<FormLabel htmlFor="color_scheme">{ translate( 'Dashboard Color Scheme' ) }</FormLabel>
-						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
+						<FormLabel htmlFor="color_scheme">{translate('Dashboard Color Scheme')}</FormLabel>
+						<ColorSchemePicker temporarySelection onSelection={this.updateColorScheme} />
 					</FormFieldset>
-				) }
+				)}
 
 				<FormButton
-					isSubmitting={ this.state.submittingForm }
-					disabled={ isSubmitButtonDisabled }
-					onClick={ this.handleSubmitButtonClick }
+					isSubmitting={this.state.submittingForm}
+					disabled={isSubmitButtonDisabled}
+					onClick={this.handleSubmitButtonClick}
 				>
-					{ this.state.submittingForm
-						? translate( 'Saving…' )
-						: translate( 'Save account settings' ) }
+					{this.state.submittingForm ? translate('Saving…') : translate('Save account settings')}
 				</FormButton>
 			</div>
 		);
@@ -641,26 +633,28 @@ const Account = createReactClass( {
 		 * If there are no actions or if there is only one action,
 		 * which we assume is the 'none' action, we ignore the actions.
 		 */
-		if ( size( actions ) <= 1 ) {
+		if (size(actions) <= 1) {
 			return;
 		}
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Would you like a matching blog address too?' ) }</FormLegend>
-				{ // message is translated in the API
-				map( actions, ( message, key ) => (
-					<FormLabel key={ key }>
-						<FormRadio
-							name="usernameAction"
-							onChange={ this.handleRadioChange }
-							onClick={ this.handleUsernameChangeBlogRadio }
-							value={ key }
-							checked={ key === this.state.usernameAction }
-						/>
-						<span>{ message }</span>
-					</FormLabel>
-				) ) }
+				<FormLegend>{translate('Would you like a matching blog address too?')}</FormLegend>
+				{
+					// message is translated in the API
+					map(actions, (message, key) => (
+						<FormLabel key={key}>
+							<FormRadio
+								name="usernameAction"
+								onChange={this.handleRadioChange}
+								onClick={this.handleUsernameChangeBlogRadio}
+								value={key}
+								checked={key === this.state.usernameAction}
+							/>
+							<span>{message}</span>
+						</FormLabel>
+					))
+				}
 			</FormFieldset>
 		);
 	},
@@ -672,17 +666,17 @@ const Account = createReactClass( {
 		const { translate, username } = this.props;
 
 		const isSaveButtonDisabled =
-			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
-			! username.isUsernameValid() ||
+			this.getUserSetting('user_login') !== this.state.userLoginConfirm ||
+			!username.isUsernameValid() ||
 			this.state.submittingForm;
 
 		return (
 			<div className="account__username-form" key="usernameForm">
 				<FormFieldset>
 					<FormLabel htmlFor="username_confirm">
-						{ translate( 'Confirm Username', {
+						{translate('Confirm Username', {
 							context: 'User is being prompted to re-enter a string for verification.',
-						} ) }
+						})}
 					</FormLabel>
 					<FormTextInput
 						autoCapitalize="off"
@@ -690,20 +684,20 @@ const Account = createReactClass( {
 						autoCorrect="off"
 						id="username_confirm"
 						name="username_confirm"
-						onFocus={ this.getFocusHandler( 'Username Confirm Field' ) }
-						value={ this.state.userLoginConfirm }
-						onChange={ this.updateUserLoginConfirm }
+						onFocus={this.getFocusHandler('Username Confirm Field')}
+						value={this.state.userLoginConfirm}
+						onChange={this.updateUserLoginConfirm}
 					/>
-					{ this.renderUsernameConfirmNotice() }
-					<FormSettingExplanation>{ translate( 'Confirm new username' ) }</FormSettingExplanation>
+					{this.renderUsernameConfirmNotice()}
+					<FormSettingExplanation>{translate('Confirm new username')}</FormSettingExplanation>
 				</FormFieldset>
 
-				{ this.renderBlogActionFields() }
+				{this.renderBlogActionFields()}
 
-				<FormSectionHeading>{ translate( 'Please Read Carefully' ) }</FormSectionHeading>
+				<FormSectionHeading>{translate('Please Read Carefully')}</FormSectionHeading>
 
 				<p>
-					{ translate(
+					{translate(
 						'You are about to change your username, which is currently {{strong}}%(username)s{{/strong}}. ' +
 							'You will not be able to change your username back.',
 						{
@@ -714,11 +708,11 @@ const Account = createReactClass( {
 								strong: <strong />,
 							},
 						}
-					) }
+					)}
 				</p>
 
 				<p>
-					{ translate(
+					{translate(
 						'If you just want to change your display name, which is currently {{strong}}%(displayName)s{{/strong}}, ' +
 							'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
 						{
@@ -729,48 +723,48 @@ const Account = createReactClass( {
 								myProfileLink: (
 									<a
 										href="/me"
-										onClick={ this.getClickHandler(
+										onClick={this.getClickHandler(
 											'My Profile Link in Username Change',
 											this.props.markSaved
-										) }
+										)}
 									/>
 								),
 								strong: <strong />,
 							},
 						}
-					) }
+					)}
 				</p>
 
 				<p>
-					{ translate(
+					{translate(
 						'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
-					) }
+					)}
 				</p>
 
 				<p>
-					{ translate(
+					{translate(
 						'If you would still like to change your username, please save your changes. Otherwise, hit the cancel button below.'
-					) }
+					)}
 				</p>
 
 				<FormButtonsBar>
 					<FormButton
-						disabled={ isSaveButtonDisabled }
+						disabled={isSaveButtonDisabled}
 						type="button"
-						onClick={ this.getClickHandler( 'Change Username Button', this.submitUsernameForm ) }
+						onClick={this.getClickHandler('Change Username Button', this.submitUsernameForm)}
 					>
-						{ translate( 'Save username' ) }
+						{translate('Save username')}
 					</FormButton>
 
 					<FormButton
-						isPrimary={ false }
+						isPrimary={false}
 						type="button"
-						onClick={ this.getClickHandler(
+						onClick={this.getClickHandler(
 							'Cancel Username Change Button',
 							this.cancelUsernameChange
-						) }
+						)}
 					>
-						{ translate( 'Cancel' ) }
+						{translate('Cancel')}
 					</FormButton>
 				</FormButtonsBar>
 			</div>
@@ -780,63 +774,63 @@ const Account = createReactClass( {
 	render() {
 		const { markChanged, translate, userSettings } = this.props;
 		// Is a username change in progress?
-		const renderUsernameForm = userSettings.isSettingUnsaved( 'user_login' );
+		const renderUsernameForm = userSettings.isSettingUnsaved('user_login');
 
 		return (
 			<Main className="account">
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 				<Card className="account__settings">
-					<form onChange={ markChanged } onSubmit={ this.submitForm }>
+					<form onChange={markChanged} onSubmit={this.submitForm}>
 						<FormFieldset>
-							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
+							<FormLabel htmlFor="user_login">{translate('Username')}</FormLabel>
 							<FormTextInput
 								autoCapitalize="off"
 								autoComplete="off"
 								autoCorrect="off"
 								className="account__username"
 								disabled={
-									this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' )
+									this.getDisabledState() || !this.getUserSetting('user_login_can_be_changed')
 								}
 								id="user_login"
 								name="user_login"
-								onFocus={ this.getFocusHandler( 'Username Field' ) }
-								onChange={ this.handleUsernameChange }
-								value={ this.getUserSetting( 'user_login' ) || '' }
+								onFocus={this.getFocusHandler('Username Field')}
+								onChange={this.handleUsernameChange}
+								value={this.getUserSetting('user_login') || ''}
 							/>
-							{ this.renderUsernameValidation() }
-							<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>
+							{this.renderUsernameValidation()}
+							<FormSettingExplanation>{this.renderJoinDate()}</FormSettingExplanation>
 						</FormFieldset>
 
-						{ /* This is how we animate showing/hiding the form field sections */ }
+						{/* This is how we animate showing/hiding the form field sections */}
 						<TransitionGroup>
 							<CSSTransition
-								key={ renderUsernameForm ? 'username' : 'account' }
+								key={renderUsernameForm ? 'username' : 'account'}
 								classNames="account__username-form-toggle"
-								timeout={ { enter: 500, exit: 10 } }
+								timeout={{ enter: 500, exit: 10 }}
 							>
-								{ renderUsernameForm ? this.renderUsernameFields() : this.renderAccountFields() }
+								{renderUsernameForm ? this.renderUsernameFields() : this.renderAccountFields()}
 							</CSSTransition>
 						</TransitionGroup>
 					</form>
 				</Card>
 
-				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsCloseLink /> }
+				{config.isEnabled('me/account-close') && <AccountSettingsCloseLink />}
 			</Main>
 		);
 	},
-} );
+});
 
 export default compose(
 	connect(
-		state => ( {
-			requestingMissingSites: isRequestingMissingSites( state ),
+		(state) => ({
+			requestingMissingSites: isRequestingMissingSites(state),
 			countryCode: requestGeoLocation().data,
-		} ),
+		}),
 		{ bumpStat, errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),
 	localize,
 	withLocalizedMoment,
 	protectForm
-)( Account );
+)(Account);

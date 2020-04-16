@@ -17,12 +17,12 @@ import { Button } from '@automattic/components';
  */
 import './style.scss';
 
-const BackButton = ( { onClick, translate } ) => {
+const BackButton = ({ onClick, translate }) => {
 	return (
 		<div className="back-button">
-			<Button borderless compact onClick={ onClick }>
+			<Button borderless compact onClick={onClick}>
 				<Gridicon icon="arrow-left" />
-				<span className="back-button__label">{ translate( 'Back' ) }</span>
+				<span className="back-button__label">{translate('Back')}</span>
 			</Button>
 		</div>
 	);
@@ -36,4 +36,4 @@ BackButton.defaultProps = {
 	onClick: noop,
 };
 
-export default localize( BackButton );
+export default localize(BackButton);

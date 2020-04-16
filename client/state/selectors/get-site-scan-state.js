@@ -11,6 +11,6 @@ import 'state/data-layer/wpcom/sites/scan';
  * @param {number} siteId	The ID of the site we're querying
  * @returns {?object}		An object describing the current scan state
  */
-export default function getSiteScanState( state, siteId ) {
-	return state.jetpackScan.scan?.[ siteId ];
+export default function getSiteScanState(state, siteId) {
+	return state.jetpackScan.scan?.[siteId];
 }

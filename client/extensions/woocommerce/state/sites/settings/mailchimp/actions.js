@@ -44,141 +44,141 @@ import {
  * redux action objects. Used to make actions functions more concise.
  */
 
-const mailchimpSettingsRequest = siteId => ( {
+const mailchimpSettingsRequest = (siteId) => ({
 	type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
 	siteId,
-} );
+});
 
-const mailchimpSettingsRequestSuccess = ( siteId, settings ) => ( {
+const mailchimpSettingsRequestSuccess = (siteId, settings) => ({
 	type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
 	siteId,
 	settings,
-} );
+});
 
-const mailchimpSettingsRequestFailure = ( siteId, { error } ) => ( {
+const mailchimpSettingsRequestFailure = (siteId, { error }) => ({
 	type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE,
 	siteId,
 	error,
-} );
+});
 
-const mailchimpApiKeySubmit = siteId => ( {
+const mailchimpApiKeySubmit = (siteId) => ({
 	type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
 	siteId,
-} );
+});
 
-const mailchimpApiKeySubmitSuccess = ( siteId, settings ) => ( {
+const mailchimpApiKeySubmitSuccess = (siteId, settings) => ({
 	type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 	siteId,
 	settings,
-} );
+});
 
-const mailchimpApiKeySubmitFailure = ( siteId, { error } ) => ( {
+const mailchimpApiKeySubmitFailure = (siteId, { error }) => ({
 	type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
 	siteId,
 	error,
-} );
+});
 
-const mailchimpStoreInfoSubmit = siteId => ( {
+const mailchimpStoreInfoSubmit = (siteId) => ({
 	type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
 	siteId,
-} );
+});
 
-const mailchimpStoreInfoSubmitSuccess = ( siteId, settings ) => ( {
+const mailchimpStoreInfoSubmitSuccess = (siteId, settings) => ({
 	type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
 	siteId,
 	settings,
-} );
+});
 
-const mailchimpStoreInfoSubmitFailure = ( siteId, { error } ) => ( {
+const mailchimpStoreInfoSubmitFailure = (siteId, { error }) => ({
 	type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE,
 	siteId,
 	error,
-} );
+});
 
-const mailchimpCampaignDefaultsSubmit = siteId => ( {
+const mailchimpCampaignDefaultsSubmit = (siteId) => ({
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
 	siteId,
-} );
+});
 
-const mailchimpCampaignDefaultsSubmitSuccess = ( siteId, settings ) => ( {
+const mailchimpCampaignDefaultsSubmitSuccess = (siteId, settings) => ({
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
 	siteId,
 	settings,
-} );
+});
 
-const mailchimpCampaignDefaultsSubmitFailure = ( siteId, { error } ) => ( {
+const mailchimpCampaignDefaultsSubmitFailure = (siteId, { error }) => ({
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_FAILURE,
 	siteId,
 	error,
-} );
+});
 
-const mailchimpListsRequest = siteId => ( {
+const mailchimpListsRequest = (siteId) => ({
 	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST,
 	siteId,
-} );
+});
 
-const mailchimpListsRequestSuccess = ( siteId, lists ) => ( {
+const mailchimpListsRequestSuccess = (siteId, lists) => ({
 	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS,
 	siteId,
 	lists,
-} );
+});
 
-const mailchimpListsRequestFailure = ( siteId, { error } ) => ( {
+const mailchimpListsRequestFailure = (siteId, { error }) => ({
 	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE,
 	siteId,
 	error,
-} );
+});
 
-const mailchimpSyncStatusRequest = siteId => ( {
+const mailchimpSyncStatusRequest = (siteId) => ({
 	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
 	siteId,
-} );
+});
 
-const mailchimpSyncStatusRequestSuccess = ( siteId, syncStatus ) => ( {
+const mailchimpSyncStatusRequestSuccess = (siteId, syncStatus) => ({
 	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
 	siteId,
 	syncStatus,
-} );
+});
 
-const mailchimpSyncStatusRequestFailure = ( siteId, { error } ) => ( {
+const mailchimpSyncStatusRequestFailure = (siteId, { error }) => ({
 	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
 	siteId,
 	error,
-} );
+});
 
-const mailchimpResyncRequest = siteId => ( {
+const mailchimpResyncRequest = (siteId) => ({
 	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST,
 	siteId,
-} );
+});
 
-const mailchimpResyncRequestSuccess = ( siteId, syncStatus ) => ( {
+const mailchimpResyncRequestSuccess = (siteId, syncStatus) => ({
 	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS,
 	siteId,
 	syncStatus,
-} );
+});
 
-const mailchimpResyncRequestFailure = ( siteId, { error } ) => ( {
+const mailchimpResyncRequestFailure = (siteId, { error }) => ({
 	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE,
 	siteId,
 	error,
-} );
+});
 
-const mailchimpNewsletterSettingsSubmit = siteId => ( {
+const mailchimpNewsletterSettingsSubmit = (siteId) => ({
 	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
 	siteId,
-} );
+});
 
-const mailchimpNewsletterSettingsSubmitSuccess = ( siteId, settings ) => ( {
+const mailchimpNewsletterSettingsSubmitSuccess = (siteId, settings) => ({
 	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
 	siteId,
 	settings,
-} );
+});
 
-const mailchimpNewsletterSettingsSubmitFailure = ( siteId, { error } ) => ( {
+const mailchimpNewsletterSettingsSubmitFailure = (siteId, { error }) => ({
 	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE,
 	siteId,
 	error,
-} );
+});
 
 /**
  * Triggers a network request to fetch current MailChimp plugin settings.
@@ -186,22 +186,22 @@ const mailchimpNewsletterSettingsSubmitFailure = ( siteId, { error } ) => ( {
  * @param  {number|string} siteId        Jetpack site ID
  * @returns {Function}                    Action thunk
  */
-export const requestSettings = siteId => ( dispatch, getState ) => {
+export const requestSettings = (siteId) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
-	dispatch( mailchimpSettingsRequest( siteId ) );
+	dispatch(mailchimpSettingsRequest(siteId));
 
-	return request( siteId )
-		.get( 'mailchimp' )
-		.then( settings => {
-			dispatch( mailchimpSettingsRequestSuccess( siteId, settings ) );
-		} )
-		.catch( error => {
-			dispatch( mailchimpSettingsRequestFailure( siteId, error ) );
-		} );
+	return request(siteId)
+		.get('mailchimp')
+		.then((settings) => {
+			dispatch(mailchimpSettingsRequestSuccess(siteId, settings));
+		})
+		.catch((error) => {
+			dispatch(mailchimpSettingsRequestFailure(siteId, error));
+		});
 };
 
 /**
@@ -211,21 +211,21 @@ export const requestSettings = siteId => ( dispatch, getState ) => {
  * @param  {string}        apiKey        MailChimp api key
  * @returns {Function}                    Action thunk
  */
-export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
-	if ( null == siteId || null == apiKey ) {
+export const submitMailChimpApiKey = (siteId, apiKey) => (dispatch) => {
+	if (null == siteId || null == apiKey) {
 		return;
 	}
 
-	dispatch( mailchimpApiKeySubmit( siteId ) );
+	dispatch(mailchimpApiKeySubmit(siteId));
 
-	return request( siteId )
-		.put( 'mailchimp/api_key', { mailchimp_api_key: apiKey } )
-		.then( settings => {
-			dispatch( mailchimpApiKeySubmitSuccess( siteId, settings ) );
-		} )
-		.catch( error => {
-			dispatch( mailchimpApiKeySubmitFailure( siteId, error ) );
-		} );
+	return request(siteId)
+		.put('mailchimp/api_key', { mailchimp_api_key: apiKey })
+		.then((settings) => {
+			dispatch(mailchimpApiKeySubmitSuccess(siteId, settings));
+		})
+		.catch((error) => {
+			dispatch(mailchimpApiKeySubmitFailure(siteId, error));
+		});
 };
 
 /**
@@ -235,21 +235,21 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
  * @param  {object}        storeInfo     MailChimp store info settings object
  * @returns {Function}                    Action thunk
  */
-export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
-	if ( null == siteId || null == storeInfo ) {
+export const submitMailChimpStoreInfo = (siteId, storeInfo) => (dispatch) => {
+	if (null == siteId || null == storeInfo) {
 		return;
 	}
 
-	dispatch( mailchimpStoreInfoSubmit( siteId ) );
+	dispatch(mailchimpStoreInfoSubmit(siteId));
 
-	return request( siteId )
-		.put( 'mailchimp/store_info', storeInfo )
-		.then( settings => {
-			dispatch( mailchimpStoreInfoSubmitSuccess( siteId, settings ) );
-		} )
-		.catch( error => {
-			dispatch( mailchimpStoreInfoSubmitFailure( siteId, error ) );
-		} );
+	return request(siteId)
+		.put('mailchimp/store_info', storeInfo)
+		.then((settings) => {
+			dispatch(mailchimpStoreInfoSubmitSuccess(siteId, settings));
+		})
+		.catch((error) => {
+			dispatch(mailchimpStoreInfoSubmitFailure(siteId, error));
+		});
 };
 
 /**
@@ -260,21 +260,21 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
  * @param  {object}        campaignDefaults MailChimp campaign defaults settings object
  * @returns {Function}                       Action thunk
  */
-export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => dispatch => {
-	if ( null == siteId || null == campaignDefaults ) {
+export const submitMailChimpCampaignDefaults = (siteId, campaignDefaults) => (dispatch) => {
+	if (null == siteId || null == campaignDefaults) {
 		return;
 	}
 
-	dispatch( mailchimpCampaignDefaultsSubmit( siteId ) );
+	dispatch(mailchimpCampaignDefaultsSubmit(siteId));
 
-	return request( siteId )
-		.put( 'mailchimp/campaign_defaults', campaignDefaults )
-		.then( settings => {
-			dispatch( mailchimpCampaignDefaultsSubmitSuccess( siteId, settings ) );
-		} )
-		.catch( error => {
-			dispatch( mailchimpCampaignDefaultsSubmitFailure( siteId, error ) );
-		} );
+	return request(siteId)
+		.put('mailchimp/campaign_defaults', campaignDefaults)
+		.then((settings) => {
+			dispatch(mailchimpCampaignDefaultsSubmitSuccess(siteId, settings));
+		})
+		.catch((error) => {
+			dispatch(mailchimpCampaignDefaultsSubmitFailure(siteId, error));
+		});
 };
 
 /**
@@ -284,22 +284,22 @@ export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => d
  * @param  {number|string} siteId        Jetpack site ID
  * @returns {Function}                    Action thunk
  */
-export const requestLists = siteId => ( dispatch, getState ) => {
+export const requestLists = (siteId) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
-	dispatch( mailchimpListsRequest( siteId ) );
+	dispatch(mailchimpListsRequest(siteId));
 
-	return request( siteId )
-		.get( 'mailchimp/newsletter_setting' )
-		.then( lists => {
-			dispatch( mailchimpListsRequestSuccess( siteId, lists ) );
-		} )
-		.catch( error => {
-			dispatch( mailchimpListsRequestFailure( siteId, error ) );
-		} );
+	return request(siteId)
+		.get('mailchimp/newsletter_setting')
+		.then((lists) => {
+			dispatch(mailchimpListsRequestSuccess(siteId, lists));
+		})
+		.catch((error) => {
+			dispatch(mailchimpListsRequestFailure(siteId, error));
+		});
 };
 
 /**
@@ -308,21 +308,21 @@ export const requestLists = siteId => ( dispatch, getState ) => {
  * @param  {number|string} siteId        Jetpack site ID
  * @returns {Function}                    Action thunk
  */
-export const requestSyncStatus = siteId => ( dispatch, getState ) => {
+export const requestSyncStatus = (siteId) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
-	dispatch( mailchimpSyncStatusRequest( siteId ) );
+	dispatch(mailchimpSyncStatusRequest(siteId));
 
-	return request( siteId )
-		.get( 'mailchimp/sync' )
-		.then( sync_status => {
-			dispatch( mailchimpSyncStatusRequestSuccess( siteId, sync_status ) );
-		} )
-		.catch( error => {
-			dispatch( mailchimpSyncStatusRequestFailure( siteId, error ) );
-		} );
+	return request(siteId)
+		.get('mailchimp/sync')
+		.then((sync_status) => {
+			dispatch(mailchimpSyncStatusRequestSuccess(siteId, sync_status));
+		})
+		.catch((error) => {
+			dispatch(mailchimpSyncStatusRequestFailure(siteId, error));
+		});
 };
 
 /**
@@ -331,21 +331,21 @@ export const requestSyncStatus = siteId => ( dispatch, getState ) => {
  * @param  {number|string} siteId        Jetpack site ID
  * @returns {Function}                    Action thunk
  */
-export const requestResync = siteId => ( dispatch, getState ) => {
+export const requestResync = (siteId) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
-	dispatch( mailchimpResyncRequest( siteId ) );
+	dispatch(mailchimpResyncRequest(siteId));
 
-	return request( siteId )
-		.put( 'mailchimp/sync' )
-		.then( sync_status => {
-			dispatch( mailchimpResyncRequestSuccess( siteId, sync_status ) );
-		} )
-		.catch( error => {
-			dispatch( mailchimpResyncRequestFailure( siteId, error ) );
-		} );
+	return request(siteId)
+		.put('mailchimp/sync')
+		.then((sync_status) => {
+			dispatch(mailchimpResyncRequestSuccess(siteId, sync_status));
+		})
+		.catch((error) => {
+			dispatch(mailchimpResyncRequestFailure(siteId, error));
+		});
 };
 
 /**
@@ -356,21 +356,21 @@ export const requestResync = siteId => ( dispatch, getState ) => {
  * @param  {object}        newsLetter  MailChimp newsletter settings object
  * @returns {Function}                  Action thunk
  */
-export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispatch => {
-	if ( null == siteId || null == newsLetter ) {
+export const submitMailChimpNewsletterSettings = (siteId, newsLetter) => (dispatch) => {
+	if (null == siteId || null == newsLetter) {
 		return;
 	}
 
-	dispatch( mailchimpNewsletterSettingsSubmit( siteId ) );
+	dispatch(mailchimpNewsletterSettingsSubmit(siteId));
 
-	return request( siteId )
-		.put( 'mailchimp/newsletter_setting', newsLetter )
-		.then( settings => {
-			dispatch( mailchimpNewsletterSettingsSubmitSuccess( siteId, settings ) );
-		} )
-		.catch( error => {
-			dispatch( mailchimpNewsletterSettingsSubmitFailure( siteId, error ) );
-		} );
+	return request(siteId)
+		.put('mailchimp/newsletter_setting', newsLetter)
+		.then((settings) => {
+			dispatch(mailchimpNewsletterSettingsSubmitSuccess(siteId, settings));
+		})
+		.catch((error) => {
+			dispatch(mailchimpNewsletterSettingsSubmitFailure(siteId, error));
+		});
 };
 
 /**
@@ -381,20 +381,20 @@ export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispa
  * @param  {number|string} siteId      Jetpack site ID
  * @returns {Function}                  Action thunk
  */
-export const mailChimpSaveSettings = siteId => ( dispatch, getState ) => {
-	if ( null == siteId ) {
+export const mailChimpSaveSettings = (siteId) => (dispatch, getState) => {
+	if (null == siteId) {
 		return;
 	}
 
-	const settings = mailChimpSettings( getState(), siteId );
+	const settings = mailChimpSettings(getState(), siteId);
 
-	const validSettings = 'sync' === get( settings, 'active_tab', false );
-	if ( ! validSettings ) {
+	const validSettings = 'sync' === get(settings, 'active_tab', false);
+	if (!validSettings) {
 		return;
 	}
 
-	dispatch( {
+	dispatch({
 		type: WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
 		siteId,
-	} );
+	});
 };

@@ -9,7 +9,7 @@ import React from 'react';
  */
 import EmptyContent from 'components/empty-content';
 
-const EmptyContentExample = props => {
+const EmptyContentExample = (props) => {
 	return props.exampleCode;
 };
 
@@ -32,8 +32,8 @@ EmptyContentExample.defaultProps = {
 							Secondary action
 						</a>
 					}
-					illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
-					illustrationWidth={ 400 }
+					illustration={'/calypso/images/illustrations/illustration-empty-results.svg'}
+					illustrationWidth={400}
 				/>
 			</div>
 		</div>

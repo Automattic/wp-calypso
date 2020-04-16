@@ -40,7 +40,7 @@ import 'state/reader/init';
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:redux:reader-follows' );
+const debug = debugModule('calypso:redux:reader-follows');
 
 /**
  * Extended information about a reader follow
@@ -64,18 +64,18 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
  * @param {object} followInfo		A subscription, optional
  * @returns {object}              The action
  */
-export function follow( feedUrl, followInfo ) {
+export function follow(feedUrl, followInfo) {
 	const action = {
 		type: READER_FOLLOW,
 		payload: { feedUrl },
 	};
-	if ( followInfo ) {
+	if (followInfo) {
 		action.payload.follow = followInfo;
 	}
 	return action;
 }
 
-export function unfollow( feedUrl ) {
+export function unfollow(feedUrl) {
 	return {
 		type: READER_UNFOLLOW,
 		payload: { feedUrl },
@@ -90,7 +90,7 @@ export function unfollow( feedUrl ) {
  * @param  {object} error Error response (contains keys 'info' and 'subscribed')
  * @returns {object} Action
  */
-export function recordFollowError( feedUrl, error ) {
+export function recordFollowError(feedUrl, error) {
 	const action = {
 		type: READER_FOLLOW_ERROR,
 		payload: { feedUrl, error },
@@ -105,13 +105,13 @@ export function recordFollowError( feedUrl, error ) {
  * @param  {string} url Followed URL
  * @returns {Function} Action thunk
  */
-export function recordFollow( url ) {
-	return dispatch => {
-		debug( 'User followed ' + url );
-		dispatch( {
+export function recordFollow(url) {
+	return (dispatch) => {
+		debug('User followed ' + url);
+		dispatch({
 			type: READER_RECORD_FOLLOW,
 			payload: { url },
-		} );
+		});
 	};
 }
 
@@ -121,13 +121,13 @@ export function recordFollow( url ) {
  * @param  {string} url Unfollowed URL
  * @returns {Function} Action thunk
  */
-export function recordUnfollow( url ) {
-	return dispatch => {
-		debug( 'User unfollowed ' + url );
-		dispatch( {
+export function recordUnfollow(url) {
+	return (dispatch) => {
+		debug('User unfollowed ' + url);
+		dispatch({
 			type: READER_RECORD_UNFOLLOW,
 			payload: { url },
-		} );
+		});
 	};
 }
 
@@ -137,7 +137,7 @@ export function recordUnfollow( url ) {
  * @param  {Array}  follows Follows received
  * @returns {object} 		Action object
  */
-export function receiveFollows( { follows, totalCount } ) {
+export function receiveFollows({ follows, totalCount }) {
 	return {
 		type: READER_FOLLOWS_RECEIVE,
 		payload: { follows, totalCount },
@@ -161,14 +161,14 @@ export function requestFollows() {
  * @param  {Array} followedUrls An array of all the feed URLS seen during the sync
  * @returns {object}              The action
  */
-export function syncComplete( followedUrls ) {
+export function syncComplete(followedUrls) {
 	return {
 		type: READER_FOLLOWS_SYNC_COMPLETE,
 		payload: followedUrls,
 	};
 }
 
-export function subscribeToNewPostEmail( blogId ) {
+export function subscribeToNewPostEmail(blogId) {
 	return {
 		type: READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 		payload: {
@@ -177,7 +177,7 @@ export function subscribeToNewPostEmail( blogId ) {
 	};
 }
 
-export function unsubscribeToNewPostEmail( blogId ) {
+export function unsubscribeToNewPostEmail(blogId) {
 	return {
 		type: READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
 		payload: {
@@ -186,7 +186,7 @@ export function unsubscribeToNewPostEmail( blogId ) {
 	};
 }
 
-export function updateNewPostEmailSubscription( blogId, deliveryFrequency ) {
+export function updateNewPostEmailSubscription(blogId, deliveryFrequency) {
 	return {
 		type: READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 		payload: {
@@ -196,7 +196,7 @@ export function updateNewPostEmailSubscription( blogId, deliveryFrequency ) {
 	};
 }
 
-export function subscribeToNewCommentEmail( blogId ) {
+export function subscribeToNewCommentEmail(blogId) {
 	return {
 		type: READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 		payload: {
@@ -205,7 +205,7 @@ export function subscribeToNewCommentEmail( blogId ) {
 	};
 }
 
-export function unsubscribeToNewCommentEmail( blogId ) {
+export function unsubscribeToNewCommentEmail(blogId) {
 	return {
 		type: READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 		payload: {
@@ -214,7 +214,7 @@ export function unsubscribeToNewCommentEmail( blogId ) {
 	};
 }
 
-export function subscribeToNewPostNotifications( blogId ) {
+export function subscribeToNewPostNotifications(blogId) {
 	return {
 		type: READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 		payload: {
@@ -223,7 +223,7 @@ export function subscribeToNewPostNotifications( blogId ) {
 	};
 }
 
-export function unsubscribeToNewPostNotifications( blogId ) {
+export function unsubscribeToNewPostNotifications(blogId) {
 	return {
 		type: READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 		payload: {

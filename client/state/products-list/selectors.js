@@ -14,16 +14,16 @@ import { getPlanRawPrice } from 'state/plans/selectors';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
 
-export function isProductsListFetching( state ) {
+export function isProductsListFetching(state) {
 	return state.productsList.isFetching;
 }
 
-export function getProductsList( state ) {
+export function getProductsList(state) {
 	return state.productsList.items;
 }
 
-export function getAvailableProductsList( state ) {
-	return pickBy( state.productsList.items, product => product.available );
+export function getAvailableProductsList(state) {
+	return pickBy(state.productsList.items, (product) => product.available);
 }
 
 /**
@@ -33,8 +33,8 @@ export function getAvailableProductsList( state ) {
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
  * @returns {?object} the corresponding product, or null if not found
  */
-export function getProductBySlug( state, productSlug ) {
-	return get( state, [ 'productsList', 'items', productSlug ], null );
+export function getProductBySlug(state, productSlug) {
+	return get(state, ['productsList', 'items', productSlug], null);
 }
 
 /**
@@ -44,10 +44,10 @@ export function getProductBySlug( state, productSlug ) {
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
  * @returns {?string} the display price formatted in the user's currency (eg 'A$29.00'), or null otherwise
  */
-export function getProductDisplayCost( state, productSlug ) {
-	const product = getProductBySlug( state, productSlug );
+export function getProductDisplayCost(state, productSlug) {
+	const product = getProductBySlug(state, productSlug);
 
-	if ( ! product ) {
+	if (!product) {
 		return null;
 	}
 
@@ -61,10 +61,10 @@ export function getProductDisplayCost( state, productSlug ) {
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
  * @returns {?number} the price formatted in the user's currency (e.g. '29.15'), or null otherwise
  */
-export function getProductCost( state, productSlug ) {
-	const product = getProductBySlug( state, productSlug );
+export function getProductCost(state, productSlug) {
+	const product = getProductBySlug(state, productSlug);
 
-	if ( ! product ) {
+	if (!product) {
 		return null;
 	}
 
@@ -80,10 +80,10 @@ export function getProductCost( state, productSlug ) {
  * @param {boolean} isMonthly Flag - should return a monthly price?
  * @returns {number} Requested price
  */
-export const getPlanPrice = ( state, siteId, planObject, isMonthly ) => {
+export const getPlanPrice = (state, siteId, planObject, isMonthly) => {
 	return (
-		getPlanDiscountedRawPrice( state, siteId, planObject.getStoreSlug(), { isMonthly } ) ||
-		getPlanRawPrice( state, planObject.getProductId(), isMonthly )
+		getPlanDiscountedRawPrice(state, siteId, planObject.getStoreSlug(), { isMonthly }) ||
+		getPlanRawPrice(state, planObject.getProductId(), isMonthly)
 	);
 };
 
@@ -94,13 +94,13 @@ export const getPlanPrice = ( state, siteId, planObject, isMonthly ) => {
  * @param {string} planSlug Plan constant/slug
  * @returns {object} Object with a related plan and product objects
  */
-export const planSlugToPlanProduct = ( products, planSlug ) => {
-	const plan = getPlan( planSlug );
-	const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
+export const planSlugToPlanProduct = (products, planSlug) => {
+	const plan = getPlan(planSlug);
+	const planConstantObj = applyTestFiltersToPlansList(plan, abtest);
 	return {
 		planSlug,
 		plan: planConstantObj,
-		product: products[ planSlug ],
+		product: products[planSlug],
 	};
 };
 
@@ -121,16 +121,13 @@ export const computeFullAndMonthlyPricesForPlan = (
 	credits,
 	couponDiscounts
 ) => {
-	const couponDiscount = couponDiscounts[ planObject.getProductId() ] || 0;
+	const couponDiscount = couponDiscounts[planObject.getProductId()] || 0;
 
 	return {
-		priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
-		priceFull: getPlanPrice( state, siteId, planObject, false ),
-		priceFinal: max( [
-			getPlanPrice( state, siteId, planObject, false ) - credits - couponDiscount,
-			0,
-		] ),
-		priceMonthly: getPlanPrice( state, siteId, planObject, true ),
+		priceFullBeforeDiscount: getPlanRawPrice(state, planObject.getProductId(), false),
+		priceFull: getPlanPrice(state, siteId, planObject, false),
+		priceFinal: max([getPlanPrice(state, siteId, planObject, false) - credits - couponDiscount, 0]),
+		priceMonthly: getPlanPrice(state, siteId, planObject, true),
 	};
 };
 
@@ -145,13 +142,13 @@ export const computeFullAndMonthlyPricesForPlan = (
  * @param {object} couponDiscounts Absolute values of any discounts coming from a discount coupon
  * @returns {Array} A list of objects as described above
  */
-export const computeProductsWithPrices = ( state, siteId, planSlugs, credits, couponDiscounts ) => {
-	const products = getProductsList( state );
+export const computeProductsWithPrices = (state, siteId, planSlugs, credits, couponDiscounts) => {
+	const products = getProductsList(state);
 
 	return planSlugs
-		.map( plan => planSlugToPlanProduct( products, plan ) )
-		.filter( planProduct => planProduct.plan && get( planProduct, [ 'product', 'available' ] ) )
-		.map( availablePlanProduct => ( {
+		.map((plan) => planSlugToPlanProduct(products, plan))
+		.filter((planProduct) => planProduct.plan && get(planProduct, ['product', 'available']))
+		.map((availablePlanProduct) => ({
 			...availablePlanProduct,
 			...computeFullAndMonthlyPricesForPlan(
 				state,
@@ -160,7 +157,7 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs, credits, co
 				credits,
 				couponDiscounts
 			),
-		} ) )
-		.filter( availablePlanProduct => availablePlanProduct.priceFull )
-		.sort( ( a, b ) => getTermDuration( a.plan.term ) - getTermDuration( b.plan.term ) );
+		}))
+		.filter((availablePlanProduct) => availablePlanProduct.priceFull)
+		.sort((a, b) => getTermDuration(a.plan.term) - getTermDuration(b.plan.term));
 };

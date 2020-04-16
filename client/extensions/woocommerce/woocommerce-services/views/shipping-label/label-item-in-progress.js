@@ -18,14 +18,14 @@ class LabelItemInProgress extends LabelItem {
 		return (
 			<div className="shipping-label__item">
 				<p className="shipping-label__item-detail">
-					{ translate( '%(service)s label (#%(labelIndex)d)', {
+					{translate('%(service)s label (#%(labelIndex)d)', {
 						args: {
 							service: serviceName,
 							labelIndex: labelIndex + 1,
 						},
-					} ) }
+					})}
 					<br />
-					{ translate( 'Purchasing…' ) }
+					{translate('Purchasing…')}
 				</p>
 			</div>
 		);
@@ -36,4 +36,4 @@ LabelItem.propTypes = {
 	label: PropTypes.object.isRequired,
 };
 
-export default localize( LabelItemInProgress );
+export default localize(LabelItemInProgress);

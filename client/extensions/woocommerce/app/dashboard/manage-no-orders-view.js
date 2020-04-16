@@ -27,22 +27,22 @@ class ManageNoOrdersView extends Component {
 	static propTypes = {
 		hasProducts: PropTypes.bool.isRequired,
 		shopPageId: PropTypes.string,
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			slug: PropTypes.string.isRequired,
 			URL: PropTypes.string.isRequired,
-		} ),
+		}),
 	};
 
 	renderShareWidget = () => {
 		const { site, translate } = this.props;
 		return (
 			<ShareWidget
-				text={ translate(
+				text={translate(
 					'Your store is ready to take orders - congratulations! ' +
 						'Spread the word to get orders rolling in.'
-				) }
-				title={ translate( 'Your store is ready, the world awaits!' ) }
-				urlToShare={ site.URL }
+				)}
+				title={translate('Your store is ready, the world awaits!')}
+				urlToShare={site.URL}
 			/>
 		);
 	};
@@ -50,15 +50,15 @@ class ManageNoOrdersView extends Component {
 	renderStatsWidget = () => {
 		const { site, translate } = this.props;
 
-		if ( config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) ) {
+		if (config.isEnabled('woocommerce/extension-dashboard-stats-widget')) {
 			return null;
 		}
 
 		const trackClick = () => {
-			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
+			recordTrack('calypso_woocommerce_dashboard_action_click', {
 				action: 'view-stats',
-			} );
-			page.redirect( getLink( '/store/stats/orders/week/:site', site ) );
+			});
+			page.redirect(getLink('/store/stats/orders/week/:site', site));
 		};
 		return (
 			<DashboardWidget
@@ -66,16 +66,16 @@ class ManageNoOrdersView extends Component {
 				image="/calypso/images/extensions/woocommerce/woocommerce-sample-graph.svg"
 				imagePosition="bottom"
 				imageFlush
-				title={ translate( 'Looking for stats?' ) }
+				title={translate('Looking for stats?')}
 				width="half"
 			>
 				<p>
-					{ translate(
+					{translate(
 						'Store statistics and reports can be found on the site stats screen.' +
 							' Keep an eye on revenue, order totals, popular products, and more.'
-					) }
+					)}
 				</p>
-				<Button onClick={ trackClick }>{ translate( 'View stats' ) }</Button>
+				<Button onClick={trackClick}>{translate('View stats')}</Button>
 			</DashboardWidget>
 		);
 	};
@@ -87,9 +87,9 @@ class ManageNoOrdersView extends Component {
 	renderViewAndTestWidget = () => {
 		const { site, translate, shopPageId } = this.props;
 		const trackClick = () => {
-			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
+			recordTrack('calypso_woocommerce_dashboard_action_click', {
 				action: 'view-and-test',
-			} );
+			});
 		};
 
 		const shopUrl = shopPageId && site.URL + '?p=' + shopPageId;
@@ -97,23 +97,23 @@ class ManageNoOrdersView extends Component {
 		return (
 			<DashboardWidget
 				className="dashboard__view-and-test-widget"
-				title={ translate( 'Test all the things' ) }
+				title={translate('Test all the things')}
 				width="half"
 			>
 				<p>
-					{ translate(
+					{translate(
 						'Your store is live! It’s a good idea to double check' +
 							' your tax, shipping, and payment configurations are set up correctly.'
-					) }
+					)}
 				</p>
 				<p>
-					{ translate(
+					{translate(
 						'The easiest way to do this is to view your store, add' +
 							' a product to your cart, and attempt to check out using different addresses.'
-					) }
+					)}
 				</p>
-				<Button onClick={ trackClick } href={ shopUrl } disabled={ ! shopUrl }>
-					{ translate( 'View & test your store' ) }
+				<Button onClick={trackClick} href={shopUrl} disabled={!shopUrl}>
+					{translate('View & test your store')}
 				</Button>
 			</DashboardWidget>
 		);
@@ -123,19 +123,19 @@ class ManageNoOrdersView extends Component {
 		const { hasProducts, site } = this.props;
 		return (
 			<div className="dashboard__manage-no-orders">
-				<QuerySettingsProducts siteId={ site && site.ID } />
-				{ this.renderShareWidget() }
+				<QuerySettingsProducts siteId={site && site.ID} />
+				{this.renderShareWidget()}
 				<DashboardWidgetRow>
-					{ hasProducts ? this.renderInventoryWidget() : this.renderStatsWidget() }
-					{ this.renderViewAndTestWidget() }
+					{hasProducts ? this.renderInventoryWidget() : this.renderStatsWidget()}
+					{this.renderViewAndTestWidget()}
 				</DashboardWidgetRow>
-				{ config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) && <StatsWidget /> }
+				{config.isEnabled('woocommerce/extension-dashboard-stats-widget') && <StatsWidget />}
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	hasProducts: getCountProducts( state ) > 0,
-	shopPageId: getProductsSettingValue( state, 'woocommerce_shop_page_id' ),
-} ) )( localize( ManageNoOrdersView ) );
+export default connect((state) => ({
+	hasProducts: getCountProducts(state) > 0,
+	shopPageId: getProductsSettingValue(state, 'woocommerce_shop_page_id'),
+}))(localize(ManageNoOrdersView));

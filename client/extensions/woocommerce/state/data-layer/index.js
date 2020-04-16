@@ -30,7 +30,7 @@ import shippingZones from './shipping-zones';
 import ui from './ui';
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'woocommerce:errors' );
+const debug = debugFactory('woocommerce:errors');
 
 const handlers = mergeHandlers(
 	actionList,
@@ -60,8 +60,8 @@ const handlers = mergeHandlers(
 );
 
 export default function installActionHandlers() {
-	const added = registerHandlers( 'woocommerce', handlers );
-	if ( ! added ) {
-		debug( 'Failed to add action handlers for "woocommerce"' );
+	const added = registerHandlers('woocommerce', handlers);
+	if (!added) {
+		debug('Failed to add action handlers for "woocommerce"');
 	}
 }

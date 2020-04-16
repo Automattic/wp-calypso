@@ -13,8 +13,8 @@ import validUrl from 'valid-url';
  * @param {string} tagName name of tag under inspection
  * @returns {boolean} whether the tag is allowed
  */
-const isAllowedTag = tagName => {
-	switch ( tagName ) {
+const isAllowedTag = (tagName) => {
+	switch (tagName) {
 		case '#text':
 		case 'a':
 		case 'b':
@@ -55,13 +55,13 @@ const isAllowedTag = tagName => {
  * @param {string} attrName name of attribute under inspection
  * @returns {boolean} whether the attribute is allowed
  */
-const isAllowedAttr = ( tagName, attrName ) => {
-	switch ( tagName ) {
+const isAllowedAttr = (tagName, attrName) => {
+	switch (tagName) {
 		case 'a':
 			return 'href' === attrName;
 
 		case 'iframe':
-			switch ( attrName ) {
+			switch (attrName) {
 				case 'class':
 				case 'type':
 				case 'height':
@@ -73,7 +73,7 @@ const isAllowedAttr = ( tagName, attrName ) => {
 			}
 
 		case 'img':
-			switch ( attrName ) {
+			switch (attrName) {
 				case 'alt':
 				case 'src':
 					return true;
@@ -86,32 +86,32 @@ const isAllowedAttr = ( tagName, attrName ) => {
 	}
 };
 
-const isValidYoutubeEmbed = node => {
-	if ( node.nodeName.toLowerCase() !== 'iframe' ) {
+const isValidYoutubeEmbed = (node) => {
+	if (node.nodeName.toLowerCase() !== 'iframe') {
 		return false;
 	}
 
-	if ( node.getAttribute( 'class' ) !== 'youtube-player' ) {
+	if (node.getAttribute('class') !== 'youtube-player') {
 		return false;
 	}
 
-	if ( node.getAttribute( 'type' ) !== 'text/html' ) {
+	if (node.getAttribute('type') !== 'text/html') {
 		return false;
 	}
 
-	const link = document.createElement( 'a' );
-	link.href = node.getAttribute( 'src' );
+	const link = document.createElement('a');
+	link.href = node.getAttribute('src');
 
 	return (
-		validUrl.isWebUri( node.getAttribute( 'src' ) ) &&
-		( link.hostname === 'youtube.com' || link.hostname === 'www.youtube.com' )
+		validUrl.isWebUri(node.getAttribute('src')) &&
+		(link.hostname === 'youtube.com' || link.hostname === 'www.youtube.com')
 	);
 };
 
-const replacementFor = node => {
+const replacementFor = (node) => {
 	const tagName = node.nodeName.toLocaleLowerCase();
 
-	switch ( tagName ) {
+	switch (tagName) {
 		case 'h1':
 		case 'h2':
 			return 'h3';
@@ -127,13 +127,13 @@ const replacementFor = node => {
  * @param {string} content unverified HTML
  * @returns {string} sanitized HTML
  */
-export const sanitizeSectionContent = content => {
+export const sanitizeSectionContent = (content) => {
 	const parser = new DOMParser();
-	const doc = parser.parseFromString( content, 'text/html' );
+	const doc = parser.parseFromString(content, 'text/html');
 
 	// this will let us visit every single DOM node programmatically
 	// the third & fourth arguments are required by IE 11
-	const walker = doc.createTreeWalker( doc.body, NodeFilter.SHOW_ALL, null, false );
+	const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ALL, null, false);
 
 	/**
 	 * we don't want to remove nodes while walking the tree
@@ -153,19 +153,19 @@ export const sanitizeSectionContent = content => {
 	const replacements = [];
 
 	// walk over every DOM node
-	while ( walker.nextNode() ) {
+	while (walker.nextNode()) {
 		const node = walker.currentNode;
 		const tagName = node.nodeName.toLowerCase();
-		const isYoutube = isValidYoutubeEmbed( node );
+		const isYoutube = isValidYoutubeEmbed(node);
 
-		if ( ! isAllowedTag( tagName ) && ! isYoutube ) {
-			removeList.push( node );
+		if (!isAllowedTag(tagName) && !isYoutube) {
+			removeList.push(node);
 			continue;
 		}
 
-		const replacement = replacementFor( node );
-		if ( replacement ) {
-			replacements.push( [ node, document.createElement( replacement ) ] );
+		const replacement = replacementFor(node);
+		if (replacement) {
+			replacements.push([node, document.createElement(replacement)]);
 		}
 
 		// strip out anything not explicitly allowed
@@ -185,56 +185,56 @@ export const sanitizeSectionContent = content => {
 		// @see https://developer.mozilla.org/en-US/docs/Web/API/Element/attributes
 		filter(
 			node.attributes,
-			( { name, value } ) =>
-				! isAllowedAttr( tagName, name ) ||
+			({ name, value }) =>
+				!isAllowedAttr(tagName, name) ||
 				// only valid http(s) URLs are allowed
-				( ( 'href' === name || 'src' === name ) && ! validUrl.isWebUri( value ) )
-		).forEach( ( { name } ) => node.removeAttribute( name ) );
+				(('href' === name || 'src' === name) && !validUrl.isWebUri(value))
+		).forEach(({ name }) => node.removeAttribute(name));
 
 		// of course, all links need to be normalized since
 		// they now exist inside of the Calypso context
-		if ( 'a' === tagName && node.getAttribute( 'href' ) ) {
-			node.setAttribute( 'target', '_blank' );
-			node.setAttribute( 'rel', 'external noopener noreferrer' );
+		if ('a' === tagName && node.getAttribute('href')) {
+			node.setAttribute('target', '_blank');
+			node.setAttribute('rel', 'external noopener noreferrer');
 		}
 
 		// prevent mixed-content issues from blocking Youtube embeds
-		if ( isYoutube ) {
-			node.setAttribute( 'src', node.getAttribute( 'src' ).replace( 'http://', 'https://' ) );
+		if (isYoutube) {
+			node.setAttribute('src', node.getAttribute('src').replace('http://', 'https://'));
 		}
 	}
 
 	// swap out any nodes that need replacements
-	replacements.forEach( ( [ node, newNode ] ) => {
+	replacements.forEach(([node, newNode]) => {
 		let child;
 
-		while ( ( child = node.firstChild ) ) {
-			newNode.appendChild( child );
+		while ((child = node.firstChild)) {
+			newNode.appendChild(child);
 		}
 
-		node.parentNode.replaceChild( newNode, node );
-	} );
+		node.parentNode.replaceChild(newNode, node);
+	});
 
 	// remove the unwanted tags and transfer
 	// their children up a level in their place
-	removeList.forEach( node => {
+	removeList.forEach((node) => {
 		const parent = node.parentNode;
 		let child;
 
 		try {
 			// eslint-disable-next-line no-cond-assign
-			while ( ( child = node.firstChild ) ) {
-				parent.insertBefore( child, node );
+			while ((child = node.firstChild)) {
+				parent.insertBefore(child, node);
 			}
 
-			parent.removeChild( node );
-		} catch ( e ) {
+			parent.removeChild(node);
+		} catch (e) {
 			// this one could have originally existed
 			// under a node that we already removed,
 			// which would lead to a failure right now
 			// this is fine, just continue along
 		}
-	} );
+	});
 
 	return doc.body.innerHTML;
 };

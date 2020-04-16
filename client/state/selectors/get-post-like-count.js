@@ -16,6 +16,6 @@ import 'state/posts/init';
  * @param  {number}  postId Post ID
  * @returns {Array}          Post Likes
  */
-export default function getPostLikeCount( state, siteId, postId ) {
-	return get( state.posts.likes.items, [ siteId, postId, 'found' ], 0 );
+export default function getPostLikeCount(state, siteId, postId) {
+	return get(state.posts.likes.items, [siteId, postId, 'found'], 0);
 }

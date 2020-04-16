@@ -3,25 +3,25 @@
  */
 import isFetchingOrderTransaction from 'state/selectors/is-fetching-order-transaction';
 
-describe( 'isFetchingOrderTransaction', () => {
+describe('isFetchingOrderTransaction', () => {
 	const orderId = 123;
 
-	test( 'should be defaulted to false.', () => {
-		expect( isFetchingOrderTransaction( {}, orderId ) ).toEqual( false );
-	} );
+	test('should be defaulted to false.', () => {
+		expect(isFetchingOrderTransaction({}, orderId)).toEqual(false);
+	});
 
-	test( 'should return the stored true.', () => {
+	test('should return the stored true.', () => {
 		expect(
 			isFetchingOrderTransaction(
 				{
 					orderTransactions: {
 						isFetching: {
-							[ orderId ]: true,
+							[orderId]: true,
 						},
 					},
 				},
 				orderId
 			)
-		).toEqual( true );
-	} );
-} );
+		).toEqual(true);
+	});
+});

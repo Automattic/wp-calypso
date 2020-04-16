@@ -18,8 +18,8 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isSaving( state = null, action ) {
-	switch ( action.type ) {
+export function isSaving(state = null, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_REFUND_CREATE:
 		case WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS:
 		case WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE:
@@ -29,12 +29,12 @@ export function isSaving( state = null, action ) {
 	}
 }
 
-export function items( state = [], action ) {
-	switch ( action.type ) {
+export function items(state = [], action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS:
 			return action.refunds;
 		case WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS:
-			return [ ...state, action.refund ];
+			return [...state, action.refund];
 		default:
 			return state;
 	}
@@ -42,8 +42,8 @@ export function items( state = [], action ) {
 
 export default keyedReducer(
 	'orderId',
-	combineReducers( {
+	combineReducers({
 		isSaving,
 		items,
-	} )
+	})
 );

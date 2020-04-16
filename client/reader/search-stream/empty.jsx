@@ -22,15 +22,15 @@ class SearchEmptyContent extends React.Component {
 	}
 
 	recordAction = () => {
-		recordAction( 'clicked_following_on_empty' );
-		recordGaEvent( 'Clicked Following on EmptyContent' );
-		recordTrack( 'calypso_reader_following_on_empty_search_stream_clicked' );
+		recordAction('clicked_following_on_empty');
+		recordGaEvent('Clicked Following on EmptyContent');
+		recordTrack('calypso_reader_following_on_empty_search_stream_clicked');
 	};
 
 	recordSecondaryAction = () => {
-		recordAction( 'clicked_discover_on_empty' );
-		recordGaEvent( 'Clicked Discover on EmptyContent' );
-		recordTrack( 'calypso_reader_discover_on_empty_search_stream_clicked' );
+		recordAction('clicked_discover_on_empty');
+		recordGaEvent('Clicked Discover on EmptyContent');
+		recordTrack('calypso_reader_discover_on_empty_search_stream_clicked');
 	};
 
 	render() {
@@ -38,41 +38,41 @@ class SearchEmptyContent extends React.Component {
 		const action = (
 			<a
 				className="empty-content__action button is-primary"
-				onClick={ this.recordAction }
+				onClick={this.recordAction}
 				href="/read"
 			>
-				{ this.props.translate( 'Back to Following' ) }
+				{this.props.translate('Back to Following')}
 			</a>
 		);
 
 		const secondaryAction = isDiscoverEnabled() ? (
 			<a
 				className="empty-content__action button"
-				onClick={ this.recordSecondaryAction }
+				onClick={this.recordSecondaryAction}
 				href="/discover"
 			>
-				{ this.props.translate( 'Explore' ) }
+				{this.props.translate('Explore')}
 			</a>
 		) : null;
 
-		const message = this.props.translate( 'No posts found for {{query /}} for your language.', {
+		const message = this.props.translate('No posts found for {{query /}} for your language.', {
 			components: {
-				query: <em>{ this.props.query }</em>,
+				query: <em>{this.props.query}</em>,
 			},
-		} );
+		});
 
 		return (
 			<EmptyContent
-				title={ this.props.translate( 'No results' ) }
-				line={ message }
-				action={ action }
-				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
-				illustrationWidth={ 400 }
+				title={this.props.translate('No results')}
+				line={message}
+				action={action}
+				secondaryAction={secondaryAction}
+				illustration={'/calypso/images/illustrations/illustration-empty-results.svg'}
+				illustrationWidth={400}
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default localize( SearchEmptyContent );
+export default localize(SearchEmptyContent);

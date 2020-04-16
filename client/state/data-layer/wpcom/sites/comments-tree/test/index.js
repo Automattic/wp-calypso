@@ -9,13 +9,13 @@ import { fetchCommentsTreeForSite, addCommentsTree, announceFailure } from '../'
 import { COMMENTS_TREE_SITE_ADD, NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'comments-tree', () => {
+describe('comments-tree', () => {
 	const action = { type: 'DUMMY_ACTION', query: { status: 'approved', siteId: 77203074 } };
 
-	describe( 'fetchCommentsTreeForSite()', () => {
-		test( 'should dispatch HTTP request to comments-tree endpoint', () => {
-			fetchCommentsTreeForSite( action );
-			expect( fetchCommentsTreeForSite( action ) ).toEqual(
+	describe('fetchCommentsTreeForSite()', () => {
+		test('should dispatch HTTP request to comments-tree endpoint', () => {
+			fetchCommentsTreeForSite(action);
+			expect(fetchCommentsTreeForSite(action)).toEqual(
 				http(
 					{
 						method: 'GET',
@@ -26,17 +26,17 @@ describe( 'comments-tree', () => {
 					action
 				)
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'addCommentsTree', () => {
-		test( 'should dispatch comment tree updates', () => {
-			const result = addCommentsTree( action, {
-				comments_tree: { 1: [ [ 2 ], [] ] },
-				pingbacks_tree: { 1: [ [ 3 ], [] ] },
-				trackbacks_tree: { 1: [ [ 4 ], [] ] },
-			} );
-			expect( result ).toEqual( {
+	describe('addCommentsTree', () => {
+		test('should dispatch comment tree updates', () => {
+			const result = addCommentsTree(action, {
+				comments_tree: { 1: [[2], []] },
+				pingbacks_tree: { 1: [[3], []] },
+				trackbacks_tree: { 1: [[4], []] },
+			});
+			expect(result).toEqual({
 				type: COMMENTS_TREE_SITE_ADD,
 				siteId: 77203074,
 				status: 'approved',
@@ -63,18 +63,18 @@ describe( 'comments-tree', () => {
 						type: 'trackback',
 					},
 				],
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'announceFailure', () => {
-		test( 'should dispatch an error notice', () => {
+	describe('announceFailure', () => {
+		test('should dispatch an error notice', () => {
 			const dispatch = jest.fn();
-			const getState = () => ( { sites: { items: [] } } );
-			announceFailure( action )( dispatch, getState );
+			const getState = () => ({ sites: { items: [] } });
+			announceFailure(action)(dispatch, getState);
 
-			expect( dispatch ).toHaveBeenCalledTimes( 1 );
-			expect( dispatch ).toHaveBeenCalledWith( expect.objectContaining( { type: NOTICE_CREATE } ) );
-		} );
-	} );
-} );
+			expect(dispatch).toHaveBeenCalledTimes(1);
+			expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: NOTICE_CREATE }));
+		});
+	});
+});

@@ -11,28 +11,28 @@ import tinymce from 'tinymce/tinymce';
 import { inIframe, sendMessage } from '../../utils';
 
 function replaceMediaModalOnClassicBlocks() {
-	if ( ! inIframe() ) {
+	if (!inIframe()) {
 		return;
 	}
 
-	tinymce.PluginManager.add( 'gutenberg-wpcom-iframe-media-modal', editor => {
-		editor.addCommand( 'WP_Medialib', () => {
-			sendMessage( {
+	tinymce.PluginManager.add('gutenberg-wpcom-iframe-media-modal', (editor) => {
+		editor.addCommand('WP_Medialib', () => {
+			sendMessage({
 				action: 'classicBlockOpenMediaModal',
 				editorId: editor.id,
-			} );
-		} );
+			});
+		});
 
 		editor.buttons.wp_img_edit.onclick = () => {
 			const img = editor.selection.getNode();
-			const imageId = img.className.match( /wp-image-(\d+)/ )[ 1 ];
-			sendMessage( {
+			const imageId = img.className.match(/wp-image-(\d+)/)[1];
+			sendMessage({
 				action: 'classicBlockOpenMediaModal',
 				editorId: editor.id,
 				imageId: imageId,
-			} );
+			});
 		};
-	} );
+	});
 }
 
 replaceMediaModalOnClassicBlocks();

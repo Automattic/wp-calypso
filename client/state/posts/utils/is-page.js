@@ -1,5 +1,5 @@
-export function isPage( post ) {
-	if ( ! post ) {
+export function isPage(post) {
+	if (!post) {
 		return false;
 	}
 

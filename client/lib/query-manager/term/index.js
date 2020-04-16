@@ -24,15 +24,15 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	 * @param  {object}  term  Item to consider
 	 * @returns {boolean}       Whether term matches query
 	 */
-	static matches( query, term ) {
-		if ( ! query.search ) {
+	static matches(query, term) {
+		if (!query.search) {
 			return true;
 		}
 
 		const search = query.search.toLowerCase();
 		return (
-			( term.name && includes( term.name.toLowerCase(), search ) ) ||
-			( term.slug && includes( term.slug.toLowerCase(), search ) )
+			(term.name && includes(term.name.toLowerCase(), search)) ||
+			(term.slug && includes(term.slug.toLowerCase(), search))
 		);
 	}
 
@@ -46,21 +46,21 @@ export default class TermQueryManager extends PaginatedQueryManager {
 	 * @returns {number}       0 if equal, less than 0 if termA is first,
 	 *                        greater than 0 if termB is first.
 	 */
-	static compare( query, termA, termB ) {
+	static compare(query, termA, termB) {
 		let order;
 
-		switch ( query.order_by ) {
+		switch (query.order_by) {
 			case 'count':
 				order = termA.post_count - termB.post_count;
 				break;
 			case 'name':
 			default:
-				order = termA.name.localeCompare( termB.name );
+				order = termA.name.localeCompare(termB.name);
 				break;
 		}
 
 		// Default to ascending order. When descending, reverse order.
-		if ( /^desc$/i.test( query.order ) ) {
+		if (/^desc$/i.test(query.order)) {
 			order *= -1;
 		}
 

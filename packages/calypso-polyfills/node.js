@@ -3,6 +3,6 @@
 /**
  * External dependencies
  */
-require( 'core-js/stable' );
-require( 'regenerator-runtime/runtime' );
-require( 'isomorphic-fetch' );
+require('core-js/stable');
+require('regenerator-runtime/runtime');
+require('isomorphic-fetch');

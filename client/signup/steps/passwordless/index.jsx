@@ -47,83 +47,83 @@ export class PasswordlessStep extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.formStore = createFormStore( {
+		this.formStore = createFormStore({
 			syncInitialize: {
-				fieldNames: [ 'email', 'code' ],
+				fieldNames: ['email', 'code'],
 			},
-		} );
+		});
 	}
 
-	handleFieldChange = event => {
+	handleFieldChange = (event) => {
 		event.preventDefault();
 
-		this.setState( {
+		this.setState({
 			errorMessages: null,
-		} );
+		});
 
-		this.formStore.handleFieldChange( {
+		this.formStore.handleFieldChange({
 			name: event.target.name,
 			value: event.target.value,
-		} );
+		});
 	};
 
-	createUser = event => {
+	createUser = (event) => {
 		event.preventDefault();
-		const data = { email: getFieldValue( this.formStore.get(), 'email' ) };
+		const data = { email: getFieldValue(this.formStore.get(), 'email') };
 
-		this.setState( {
+		this.setState({
 			submitting: true,
-		} );
+		});
 
-		createPasswordlessUser( this.handleUserCreationRequest, data );
+		createPasswordlessUser(this.handleUserCreationRequest, data);
 	};
 
-	handleUserCreationRequest = ( error, response ) => {
-		if ( error ) {
-			this.setState( {
-				errorMessages: [ error.message ],
+	handleUserCreationRequest = (error, response) => {
+		if (error) {
+			this.setState({
+				errorMessages: [error.message],
 				submitting: false,
-			} );
+			});
 
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			errorMessages: null,
 			noticeMessage: response && response.message,
 			noticeStatus: response && response.warning ? 'is-warning' : 'is-info',
 			showVerificationCode: true,
 			submitting: false,
-		} );
+		});
 	};
 
-	verifyUser = event => {
+	verifyUser = (event) => {
 		event.preventDefault();
-		this.setState( {
+		this.setState({
 			errorMessages: null,
 			submitting: true,
-		} );
+		});
 
-		verifyPasswordlessUser( this.handleUserVerificationRequest, {
-			email: getFieldValue( this.formStore.get(), 'email' ),
-			code: getFieldValue( this.formStore.get(), 'code' ),
-		} );
+		verifyPasswordlessUser(this.handleUserVerificationRequest, {
+			email: getFieldValue(this.formStore.get(), 'email'),
+			code: getFieldValue(this.formStore.get(), 'code'),
+		});
 	};
 
-	handleUserVerificationRequest = ( error, providedDependencies ) => {
-		if ( error ) {
-			this.setState( {
-				errorMessages: [ error && error.message ],
+	handleUserVerificationRequest = (error, providedDependencies) => {
+		if (error) {
+			this.setState({
+				errorMessages: [error && error.message],
 				submitting: false,
-			} );
+			});
 
 			return;
 		}
 
-		this.submitStep( providedDependencies );
+		this.submitStep(providedDependencies);
 	};
 
-	submitStep = providedDependencies => {
+	submitStep = (providedDependencies) => {
 		const { flowName, stepName } = this.props;
 
 		this.props.submitSignupStep(
@@ -140,28 +140,28 @@ export class PasswordlessStep extends Component {
 	createUserButtonText() {
 		const { translate } = this.props;
 
-		if ( this.state.submitting ) {
-			return translate( 'Creating your account…' );
+		if (this.state.submitting) {
+			return translate('Creating your account…');
 		}
 
-		return translate( 'Create your account' );
+		return translate('Create your account');
 	}
 
 	validateButtonText() {
 		const { translate } = this.props;
 
-		if ( this.state.submitting ) {
-			return translate( 'Verifying your code…' );
+		if (this.state.submitting) {
+			return translate('Verifying your code…');
 		}
 
-		return translate( 'Verify your code' );
+		return translate('Verify your code');
 	}
 
 	renderNotice() {
 		return (
 			this.state.noticeMessage && (
-				<Notice showDismiss={ false } status={ this.state.noticeStatus }>
-					{ this.state.noticeMessage }
+				<Notice showDismiss={false} status={this.state.noticeStatus}>
+					{this.state.noticeMessage}
 				</Notice>
 			)
 		);
@@ -169,27 +169,27 @@ export class PasswordlessStep extends Component {
 
 	renderVerificationForm() {
 		return (
-			<LoggedOutForm onSubmit={ this.verifyUser } noValidate>
-				{ this.renderNotice() }
-				<ValidationFieldset errorMessages={ this.state.errorMessages }>
-					<FormLabel htmlFor="code">{ this.props.translate( 'Verification code' ) }</FormLabel>
+			<LoggedOutForm onSubmit={this.verifyUser} noValidate>
+				{this.renderNotice()}
+				<ValidationFieldset errorMessages={this.state.errorMessages}>
+					<FormLabel htmlFor="code">{this.props.translate('Verification code')}</FormLabel>
 					<FormTextInput
-						autoCapitalize={ 'off' }
+						autoCapitalize={'off'}
 						className="passwordless__code"
 						type="text"
 						name="code"
-						onChange={ this.handleFieldChange }
-						disabled={ this.state.submitting }
+						onChange={this.handleFieldChange}
+						disabled={this.state.submitting}
 					/>
 				</ValidationFieldset>
 				<LoggedOutFormFooter>
 					<Button
 						type="submit"
 						primary
-						busy={ this.state.submitting }
-						disabled={ this.state.submitting }
+						busy={this.state.submitting}
+						disabled={this.state.submitting}
 					>
-						{ this.validateButtonText() }
+						{this.validateButtonText()}
 					</Button>
 				</LoggedOutFormFooter>
 			</LoggedOutForm>
@@ -198,35 +198,35 @@ export class PasswordlessStep extends Component {
 
 	renderSignupForm() {
 		return (
-			<LoggedOutForm onSubmit={ this.createUser } noValidate>
-				{ this.renderNotice() }
-				<ValidationFieldset errorMessages={ this.state.errorMessages }>
-					<FormLabel htmlFor="email">{ this.props.translate( 'Email address' ) }</FormLabel>
+			<LoggedOutForm onSubmit={this.createUser} noValidate>
+				{this.renderNotice()}
+				<ValidationFieldset errorMessages={this.state.errorMessages}>
+					<FormLabel htmlFor="email">{this.props.translate('Email address')}</FormLabel>
 					<FormTextInput
-						autoCapitalize={ 'off' }
+						autoCapitalize={'off'}
 						className="passwordless__code"
 						type="hidden"
 						name="code"
-						onChange={ this.handleFieldChange }
-						disabled={ this.state.submitting }
+						onChange={this.handleFieldChange}
+						disabled={this.state.submitting}
 					/>
 					<FormTextInput
-						autoCapitalize={ 'off' }
+						autoCapitalize={'off'}
 						className="passwordless__email"
 						type="email"
 						name="email"
-						onChange={ this.handleFieldChange }
-						disabled={ this.state.submitting }
+						onChange={this.handleFieldChange}
+						disabled={this.state.submitting}
 					/>
 				</ValidationFieldset>
 				<LoggedOutFormFooter>
 					<Button
 						type="submit"
 						primary
-						busy={ this.state.submitting }
-						disabled={ this.state.submitting }
+						busy={this.state.submitting}
+						disabled={this.state.submitting}
 					>
-						{ this.createUserButtonText() }
+						{this.createUserButtonText()}
 					</Button>
 				</LoggedOutFormFooter>
 			</LoggedOutForm>
@@ -242,15 +242,15 @@ export class PasswordlessStep extends Component {
 	render() {
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				headerText={ this.props.headerText }
-				subHeaderText={ this.props.translate( 'Create a WordPress.com account' ) }
-				positionInFlow={ this.props.positionInFlow }
-				stepContent={ this.renderStepContent() }
+				flowName={this.props.flowName}
+				stepName={this.props.stepName}
+				headerText={this.props.headerText}
+				subHeaderText={this.props.translate('Create a WordPress.com account')}
+				positionInFlow={this.props.positionInFlow}
+				stepContent={this.renderStepContent()}
 			/>
 		);
 	}
 }
 
-export default connect( null, { submitSignupStep } )( localize( PasswordlessStep ) );
+export default connect(null, { submitSignupStep })(localize(PasswordlessStep));

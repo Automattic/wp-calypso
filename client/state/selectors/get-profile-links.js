@@ -4,6 +4,6 @@
  * @param {object}  state  Global state tree
  * @returns {?Array}        Profile links
  */
-export default function getProfileLinks( state ) {
+export default function getProfileLinks(state) {
 	return state.userProfileLinks.items;
 }

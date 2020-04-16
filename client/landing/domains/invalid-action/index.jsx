@@ -14,12 +14,12 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 class InvalidActionPage extends Component {
 	render() {
 		const { translate } = this.props;
-		const title = translate( 'Uh oh. Page not found.' );
+		const title = translate('Uh oh. Page not found.');
 		const message = translate(
 			"If you've arrived here after clicking a link from a WordPress.com email, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.",
 			{
 				components: {
-					a: <a href={ CALYPSO_CONTACT } />,
+					a: <a href={CALYPSO_CONTACT} />,
 					strong: <strong />,
 				},
 			}
@@ -27,10 +27,10 @@ class InvalidActionPage extends Component {
 		return (
 			<Fragment>
 				<DomainsLandingHeader />
-				<DomainsLandingContentCard title={ title } message={ message } />
+				<DomainsLandingContentCard title={title} message={message} />
 			</Fragment>
 		);
 	}
 }
 
-export default localize( InvalidActionPage );
+export default localize(InvalidActionPage);

@@ -13,6 +13,6 @@ import 'state/themes/init';
  *
  * @returns {?string} Parent theme id if it exists
  */
-export function getWpcomParentThemeId( state, themeId ) {
-	return getTheme( state, 'wpcom', themeId )?.template ?? null;
+export function getWpcomParentThemeId(state, themeId) {
+	return getTheme(state, 'wpcom', themeId)?.template ?? null;
 }

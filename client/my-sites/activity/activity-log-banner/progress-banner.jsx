@@ -28,12 +28,12 @@ import { useLocalizedMoment } from 'components/localized-moment';
  * @param {number} ts timestamp in 's' or 'ms'
  * @returns {number} timestamp in 'ms'
  */
-const ms = ts =>
+const ms = (ts) =>
 	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
 		? ts * 1000 // convert s -> ms
 		: ts;
 
-function ProgressBanner( {
+function ProgressBanner({
 	applySiteOffset,
 	percent,
 	status,
@@ -43,7 +43,7 @@ function ProgressBanner( {
 	downloadId,
 	action,
 	context,
-} ) {
+}) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
@@ -51,61 +51,57 @@ function ProgressBanner( {
 	let description = '';
 	let statusMessage = '';
 
-	const dateTime = applySiteOffset( moment( ms( timestamp ) ) ).format( 'LLLL' );
+	const dateTime = applySiteOffset(moment(ms(timestamp))).format('LLLL');
 
-	switch ( action ) {
+	switch (action) {
 		case 'restore':
-			if ( 'alternate' === context ) {
-				title = translate( 'Currently cloning your site' );
+			if ('alternate' === context) {
+				title = translate('Currently cloning your site');
 				description = translate(
 					"We're cloning your site to %(dateTime)s. You'll be notified once it's complete.",
 					{ args: { dateTime } }
 				);
 				statusMessage =
 					'queued' === status
-						? translate( 'The cloning process will start in a moment.' )
-						: translate( 'Away we go! Your site is being cloned.' );
+						? translate('The cloning process will start in a moment.')
+						: translate('Away we go! Your site is being cloned.');
 			} else {
-				title = translate( 'Currently restoring your site' );
+				title = translate('Currently restoring your site');
 				description = translate(
 					"We're restoring your site back to %(dateTime)s. You'll be notified once it's complete.",
 					{ args: { dateTime } }
 				);
 				statusMessage =
 					'queued' === status
-						? translate( 'Your restore will start in a moment.' )
-						: translate( 'Away we go! Your site is being restored.' );
+						? translate('Your restore will start in a moment.')
+						: translate('Away we go! Your site is being restored.');
 			}
 			break;
 
 		case 'backup':
-			title = translate( 'Currently creating a downloadable backup of your site' );
+			title = translate('Currently creating a downloadable backup of your site');
 			description = translate(
 				"We're creating a downloadable backup of your site at %(dateTime)s. You'll be notified once it's complete.",
 				{ args: { dateTime } }
 			);
 			statusMessage =
 				0 < percent
-					? translate( 'Away we go! Your download is being created.' )
-					: translate( 'The creation of your backup will start in a moment.' );
+					? translate('Away we go! Your download is being created.')
+					: translate('The creation of your backup will start in a moment.');
 			break;
 	}
 
 	return (
-		<ActivityLogBanner status="info" title={ title }>
+		<ActivityLogBanner status="info" title={title}>
 			<div>
-				{ 'restore' === action && (
-					<QueryRewindRestoreStatus restoreId={ restoreId } siteId={ siteId } />
-				) }
-				{ 'backup' === action && (
-					<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
-				) }
-				<p>{ description }</p>
-				<em>{ statusMessage }</em>
+				{'restore' === action && <QueryRewindRestoreStatus restoreId={restoreId} siteId={siteId} />}
+				{'backup' === action && <QueryRewindBackupStatus downloadId={downloadId} siteId={siteId} />}
+				<p>{description}</p>
+				<em>{statusMessage}</em>
 			</div>
-			{ ( 'running' === status || ( 0 <= percent && percent <= 100 ) ) && (
-				<ProgressBar isPulsing value={ percent || 0 } />
-			) }
+			{('running' === status || (0 <= percent && percent <= 100)) && (
+				<ProgressBar isPulsing value={percent || 0} />
+			)}
 		</ActivityLogBanner>
 	);
 }
@@ -114,9 +110,9 @@ ProgressBanner.propTypes = {
 	applySiteOffset: PropTypes.func.isRequired,
 	percent: PropTypes.number,
 	siteId: PropTypes.number,
-	status: PropTypes.oneOf( [ 'queued', 'running', 'fail' ] ),
+	status: PropTypes.oneOf(['queued', 'running', 'fail']),
 	timestamp: PropTypes.string,
-	action: PropTypes.oneOf( [ 'restore', 'backup' ] ),
+	action: PropTypes.oneOf(['restore', 'backup']),
 };
 
 export default ProgressBanner;

@@ -1,4 +1,4 @@
-jest.mock( 'lib/plans/constants', () => ( {
+jest.mock('lib/plans/constants', () => ({
 	GROUP_WPCOM: 'GROUP_WPCOM',
 	GROUP_JETPACK: 'GROUP_JETPACK',
 
@@ -22,7 +22,7 @@ jest.mock( 'lib/plans/constants', () => ( {
 			term: 'TERM_BIENNIALLY',
 		},
 	},
-} ) );
+}));
 
 /**
  * Internal dependencies
@@ -30,20 +30,20 @@ jest.mock( 'lib/plans/constants', () => ( {
 import { getActivePromotions, isRequestingActivePromotions } from '../selectors';
 import { ACTIVE_PROMOTIONS, getStateInstance } from './fixture';
 
-describe( 'selectors', () => {
-	describe( '#getActivePromotions()', () => {
-		test( 'should return WordPress ActivePromotions array', () => {
+describe('selectors', () => {
+	describe('#getActivePromotions()', () => {
+		test('should return WordPress ActivePromotions array', () => {
 			const state = getStateInstance();
-			const activePromotions = getActivePromotions( state );
-			expect( activePromotions ).toEqual( ACTIVE_PROMOTIONS );
-		} );
-	} );
+			const activePromotions = getActivePromotions(state);
+			expect(activePromotions).toEqual(ACTIVE_PROMOTIONS);
+		});
+	});
 
-	describe( '#isRequestingActivePromotions()', () => {
-		test( 'should return requesting state of ActivePromotions', () => {
+	describe('#isRequestingActivePromotions()', () => {
+		test('should return requesting state of ActivePromotions', () => {
 			const state = getStateInstance();
-			const isRequesting = isRequestingActivePromotions( state );
-			expect( isRequesting ).toEqual( false );
-		} );
-	} );
-} );
+			const isRequesting = isRequestingActivePromotions(state);
+			expect(isRequesting).toEqual(false);
+		});
+	});
+});

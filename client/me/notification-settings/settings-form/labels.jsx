@@ -16,7 +16,7 @@ class NotificationSettingsFormLabels extends React.Component {
 	static displayName = 'NotificationSettingsFormLabels';
 
 	static propTypes = {
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		settingKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
 	};
 
 	shouldComponentUpdate() {
@@ -26,11 +26,11 @@ class NotificationSettingsFormLabels extends React.Component {
 	render() {
 		return (
 			<div className="notification-settings-form-labels">
-				<StreamHeader title={ this.props.translate( 'notifications' ) } />
-				<LabelsList settingKeys={ this.props.settingKeys } />
+				<StreamHeader title={this.props.translate('notifications')} />
+				<LabelsList settingKeys={this.props.settingKeys} />
 			</div>
 		);
 	}
 }
 
-export default localize( NotificationSettingsFormLabels );
+export default localize(NotificationSettingsFormLabels);

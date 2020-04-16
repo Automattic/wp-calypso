@@ -19,17 +19,17 @@ export default class PlanCompareCardItem extends React.Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'plan-compare-card-item', {
+		const classes = classNames(this.props.className, 'plan-compare-card-item', {
 			'is-highlight': this.props.highlight,
 			'is-unavailable': this.props.unavailable,
-		} );
-		const showCheckmark = this.props.highlight || ! this.props.unavailable;
+		});
+		const showCheckmark = this.props.highlight || !this.props.unavailable;
 		return (
-			<li className={ classes }>
-				{ showCheckmark && (
-					<Gridicon size={ 18 } icon="checkmark" className="plan-compare-card__item-checkmark" />
-				) }
-				{ this.props.children }
+			<li className={classes}>
+				{showCheckmark && (
+					<Gridicon size={18} icon="checkmark" className="plan-compare-card__item-checkmark" />
+				)}
+				{this.props.children}
 			</li>
 		);
 	}

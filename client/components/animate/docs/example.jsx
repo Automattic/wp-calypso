@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Animate from '../index';
 
-function AnimateExample( props ) {
+function AnimateExample(props) {
 	return props.exampleCode;
 }
 

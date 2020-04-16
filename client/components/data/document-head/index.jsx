@@ -23,46 +23,46 @@ class DocumentHead extends Component {
 	UNSAFE_componentWillMount() {
 		const { title, unreadCount } = this.props;
 
-		if ( this.props.title !== undefined ) {
-			this.props.setTitle( title );
+		if (this.props.title !== undefined) {
+			this.props.setTitle(title);
 		}
 
-		if ( this.props.unreadCount !== undefined ) {
-			this.props.setUnreadCount( unreadCount );
+		if (this.props.unreadCount !== undefined) {
+			this.props.setUnreadCount(unreadCount);
 		}
 
-		if ( this.props.link !== undefined ) {
-			this.props.setLink( this.props.link );
+		if (this.props.link !== undefined) {
+			this.props.setLink(this.props.link);
 		}
 
-		if ( this.props.meta !== undefined ) {
-			this.props.setMeta( this.props.meta );
+		if (this.props.meta !== undefined) {
+			this.props.setMeta(this.props.meta);
 		}
 	}
 
 	componentDidMount() {
-		this.setFormattedTitle( this.props.formattedTitle );
+		this.setFormattedTitle(this.props.formattedTitle);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.title !== undefined && this.props.title !== nextProps.title ) {
-			this.props.setTitle( nextProps.title );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.title !== undefined && this.props.title !== nextProps.title) {
+			this.props.setTitle(nextProps.title);
 		}
 
-		if ( nextProps.unreadCount !== undefined && this.props.unreadCount !== nextProps.unreadCount ) {
-			this.props.setUnreadCount( nextProps.unreadCount );
+		if (nextProps.unreadCount !== undefined && this.props.unreadCount !== nextProps.unreadCount) {
+			this.props.setUnreadCount(nextProps.unreadCount);
 		}
 
-		if ( nextProps.link !== undefined && ! isEqual( this.props.link, nextProps.link ) ) {
-			this.props.setLink( nextProps.link );
+		if (nextProps.link !== undefined && !isEqual(this.props.link, nextProps.link)) {
+			this.props.setLink(nextProps.link);
 		}
 
-		if ( nextProps.meta !== undefined && ! isEqual( this.props.meta, nextProps.meta ) ) {
-			this.props.setMeta( nextProps.meta );
+		if (nextProps.meta !== undefined && !isEqual(this.props.meta, nextProps.meta)) {
+			this.props.setMeta(nextProps.meta);
 		}
 
-		if ( nextProps.formattedTitle !== this.props.formattedTitle ) {
-			this.setFormattedTitle( nextProps.formattedTitle );
+		if (nextProps.formattedTitle !== this.props.formattedTitle) {
+			this.setFormattedTitle(nextProps.formattedTitle);
 		}
 	}
 
@@ -70,9 +70,9 @@ class DocumentHead extends Component {
 		this.setFormattedTitle.cancel();
 	}
 
-	setFormattedTitle = debounce( title => {
+	setFormattedTitle = debounce((title) => {
 		document.title = title;
-	} );
+	});
 
 	render() {
 		return null;
@@ -91,13 +91,13 @@ DocumentHead.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		formattedTitle: getDocumentHeadFormattedTitle( state ),
-	} ),
+	(state) => ({
+		formattedTitle: getDocumentHeadFormattedTitle(state),
+	}),
 	{
 		setTitle,
 		setLink,
 		setMeta,
 		setUnreadCount,
 	}
-)( DocumentHead );
+)(DocumentHead);

@@ -35,90 +35,90 @@ class PieChartExample extends Component {
 		showDataControls: false,
 	};
 
-	titleFunc = ( translate, dataTotal ) => {
-		return translate( '%(dataTotal)d Total Searches', {
+	titleFunc = (translate, dataTotal) => {
+		return translate('%(dataTotal)d Total Searches', {
 			args: {
 				dataTotal,
 			},
-		} );
+		});
 	};
 
-	changeShow = event => {
-		this.setState( {
-			[ event.target.name ]: {
-				name: this.state[ event.target.name ].name,
-				value: parseInt( this.state[ event.target.name ].value, 10 ),
-				description: this.state[ event.target.name ].description,
+	changeShow = (event) => {
+		this.setState({
+			[event.target.name]: {
+				name: this.state[event.target.name].name,
+				value: parseInt(this.state[event.target.name].value, 10),
+				description: this.state[event.target.name].description,
 				show: event.target.checked,
 			},
-		} );
+		});
 	};
 
-	changeValue = event => {
-		this.setState( {
-			[ event.target.name ]: {
-				name: this.state[ event.target.name ].name,
-				value: parseInt( event.target.value, 10 ),
-				description: this.state[ event.target.name ].description,
-				show: this.state[ event.target.name ].show,
+	changeValue = (event) => {
+		this.setState({
+			[event.target.name]: {
+				name: this.state[event.target.name].name,
+				value: parseInt(event.target.value, 10),
+				description: this.state[event.target.name].description,
+				show: this.state[event.target.name].show,
 			},
-		} );
+		});
 	};
 
 	changeShowDataControls = () => {
-		this.setState( {
-			showDataControls: ! this.state.showDataControls,
-		} );
+		this.setState({
+			showDataControls: !this.state.showDataControls,
+		});
 	};
 
 	render() {
 		const data = [];
 
-		for ( const seriesName of [ 'direct', 'discovery', 'referral' ] ) {
-			if ( this.state[ seriesName ].show ) {
-				data.push( {
-					value: this.state[ seriesName ].value || 0,
-					name: this.state[ seriesName ].name,
-					description: this.state[ seriesName ].description,
-				} );
+		for (const seriesName of ['direct', 'discovery', 'referral']) {
+			if (this.state[seriesName].show) {
+				data.push({
+					value: this.state[seriesName].value || 0,
+					name: this.state[seriesName].name,
+					description: this.state[seriesName].description,
+				});
 			}
 		}
 
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.changeShowDataControls }>
-					{ this.state.showDataControls ? 'Hide Data Controls' : 'Show Data Controls' }
+				<a className="docs__design-toggle button" onClick={this.changeShowDataControls}>
+					{this.state.showDataControls ? 'Hide Data Controls' : 'Show Data Controls'}
 				</a>
 
 				<Card>
-					<PieChart data={ data } title={ this.titleFunc } />
-					<PieChartLegend data={ data } />
+					<PieChart data={data} title={this.titleFunc} />
+					<PieChartLegend data={data} />
 				</Card>
 
-				{ this.state.showDataControls && (
+				{this.state.showDataControls && (
 					<Card>
-						{ [ 'direct', 'discovery', 'referral' ].map( seriesName => {
+						{['direct', 'discovery', 'referral'].map((seriesName) => {
 							return (
-								<div key={ seriesName }>
-									<h2>{ this.state[ seriesName ].name }</h2>
+								<div key={seriesName}>
+									<h2>{this.state[seriesName].name}</h2>
 									<input
-										name={ seriesName }
+										name={seriesName}
 										type="number"
-										value={ this.state[ seriesName ].value }
-										onChange={ this.changeValue }
+										value={this.state[seriesName].value}
+										onChange={this.changeValue}
 									/>
-									<label>{ 'Show' }</label>{ ' ' }
+									<label>{'Show'}</label>{' '}
 									<input
-										name={ seriesName }
+										name={seriesName}
 										type="checkbox"
-										checked={ this.state[ seriesName ].show }
-										onChange={ this.changeShow }
+										checked={this.state[seriesName].show}
+										onChange={this.changeShow}
 									/>
 								</div>
 							);
-						} ) }
+						})}
 					</Card>
-				) }
+				)}
 			</div>
 		);
 	}

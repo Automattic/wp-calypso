@@ -14,7 +14,7 @@ import 'state/posts/init';
  * @param  {object}   post       Post attributes
  * @returns {object}              Action thunk
  */
-export function savePostSuccess( siteId, postId = null, savedPost, post ) {
+export function savePostSuccess(siteId, postId = null, savedPost, post) {
 	return {
 		type: POST_SAVE_SUCCESS,
 		siteId,

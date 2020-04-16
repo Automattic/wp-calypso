@@ -18,24 +18,24 @@ class QueryFeed extends PureComponent {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.requestFeed( this.props );
+		this.requestFeed(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId && this.props.zoneId === nextProps.zoneId) {
 			return;
 		}
 
-		this.requestFeed( nextProps );
+		this.requestFeed(nextProps);
 	}
 
-	requestFeed = props => props.requestFeed( props.siteId, props.zoneId );
+	requestFeed = (props) => props.requestFeed(props.siteId, props.zoneId);
 
 	render() {
 		return null;
 	}
 }
 
-const connectComponent = connect( null, { requestFeed } );
+const connectComponent = connect(null, { requestFeed });
 
-export default connectComponent( QueryFeed );
+export default connectComponent(QueryFeed);

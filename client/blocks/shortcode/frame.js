@@ -35,41 +35,41 @@ export default class extends React.Component {
 	};
 
 	componentDidMount() {
-		this.updateHtmlState( this.props );
+		this.updateHtmlState(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props, nextProps ) ) {
-			this.updateHtmlState( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!isEqual(this.props, nextProps)) {
+			this.updateHtmlState(nextProps);
 		}
 	}
 
-	shouldComponentUpdate( nextProps, nextState ) {
+	shouldComponentUpdate(nextProps, nextState) {
 		return nextState.html !== this.state.html;
 	}
 
-	updateHtmlState = props => {
-		this.setState( {
-			html: generateEmbedFrameMarkup( props ),
-		} );
+	updateHtmlState = (props) => {
+		this.setState({
+			html: generateEmbedFrameMarkup(props),
+		});
 	};
 
-	onFrameLoad = event => {
+	onFrameLoad = (event) => {
 		// Transmit message to assign frame markup
 		event.target.contentWindow.postMessage(
-			JSON.stringify( {
+			JSON.stringify({
 				content: this.state.html,
-			} ),
+			}),
 			'*'
 		);
 
-		this.props.onLoad( event );
+		this.props.onLoad(event);
 	};
 
 	render() {
-		const classes = classNames( 'shortcode-frame', this.props.className );
+		const classes = classNames('shortcode-frame', this.props.className);
 
-		if ( ! this.state.html ) {
+		if (!this.state.html) {
 			return null;
 		}
 
@@ -78,20 +78,20 @@ export default class extends React.Component {
 		// `shouldComponentUpdate`
 		const key = Math.random();
 
-		const sandbox = classNames( {
+		const sandbox = classNames({
 			'allow-scripts': true,
 			'allow-same-origin': this.props.allowSameOrigin,
-		} );
+		});
 
 		return (
 			<ResizableIframe
-				key={ key }
-				{ ...omit( this.props, 'body', 'scripts', 'styles', 'allowSameOrigin' ) }
+				key={key}
+				{...omit(this.props, 'body', 'scripts', 'styles', 'allowSameOrigin')}
 				src="https://wpcomwidgets.com/render/"
-				onLoad={ this.onFrameLoad }
+				onLoad={this.onFrameLoad}
 				frameBorder="0"
-				sandbox={ sandbox }
-				className={ classes }
+				sandbox={sandbox}
+				className={classes}
 			/>
 		);
 	}

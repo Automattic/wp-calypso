@@ -27,7 +27,7 @@ import { HTTP_REQUEST } from 'state/action-types';
 export const http = (
 	{ url, method, headers, queryParams, body, withCredentials, onSuccess, onFailure, ...options },
 	action = null
-) => ( {
+) => ({
 	type: HTTP_REQUEST,
 	url,
 	method,
@@ -38,4 +38,4 @@ export const http = (
 	onSuccess: onSuccess || action,
 	onFailure: onFailure || action,
 	options,
-} );
+});

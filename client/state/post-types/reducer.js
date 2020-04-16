@@ -22,17 +22,17 @@ import { POST_TYPES_RECEIVE } from 'state/action-types';
  */
 export const items = withSchemaValidation(
 	itemsSchema,
-	keyedReducer( 'siteId', ( state = null, action ) => {
-		switch ( action.type ) {
+	keyedReducer('siteId', (state = null, action) => {
+		switch (action.type) {
 			case POST_TYPES_RECEIVE:
-				return keyBy( action.types, 'name' );
+				return keyBy(action.types, 'name');
 			default:
 				return state;
 		}
-	} )
+	})
 );
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	taxonomies,
-} );
+});

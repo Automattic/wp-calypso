@@ -21,7 +21,7 @@ import { SimplePaymentsTour } from './tours/simple-payments-tour';
 import { TutorialSitePreviewTour } from './tours/tutorial-site-preview-tour';
 import combineTours from './config-elements/combine-tours';
 
-export default combineTours( {
+export default combineTours({
 	checklistSiteTitle: ChecklistSiteTitleTour,
 	editorBasicsTour: EditorBasicsTour,
 	gdocsIntegrationTour: GDocsIntegrationTour,
@@ -39,4 +39,4 @@ export default combineTours( {
 	simplePaymentsEmailTour: SimplePaymentsEmailTour,
 	simplePaymentsTour: SimplePaymentsTour,
 	tutorialSitePreview: TutorialSitePreviewTour,
-} );
+});

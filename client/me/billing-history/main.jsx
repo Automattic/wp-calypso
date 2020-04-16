@@ -23,18 +23,18 @@ import QueryBillingTransactions from 'components/data/query-billing-transactions
  */
 import './style.scss';
 
-const BillingHistory = ( { translate } ) => (
+const BillingHistory = ({ translate }) => (
 	<Main className="billing-history">
-		<DocumentHead title={ translate( 'Billing History' ) } />
+		<DocumentHead title={translate('Billing History')} />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 		<MeSidebarNavigation />
 		<QueryBillingTransactions />
-		<PurchasesHeader section={ 'billing' } />
+		<PurchasesHeader section={'billing'} />
 		<Card className="billing-history__receipts">
 			<BillingHistoryTable />
 		</Card>
-		{ config.isEnabled( 'upgrades/credit-cards' ) && <CreditCards /> }
+		{config.isEnabled('upgrades/credit-cards') && <CreditCards />}
 	</Main>
 );
 
-export default localize( BillingHistory );
+export default localize(BillingHistory);

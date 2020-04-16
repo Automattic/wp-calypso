@@ -7,23 +7,23 @@ import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
 import httpHandlers from 'state/http';
 
-registerHandlers( 'declarative resource loader', httpData );
-registerHandlers( 'raw HTTP request loader', httpHandlers );
-registerHandlers( 'WordPress API request loader', wpcomHttpHandlers );
+registerHandlers('declarative resource loader', httpData);
+registerHandlers('raw HTTP request loader', httpHandlers);
+registerHandlers('WordPress API request loader', wpcomHttpHandlers);
 
-const shouldNext = action => {
+const shouldNext = (action) => {
 	const meta = action.meta;
-	if ( ! meta ) {
+	if (!meta) {
 		return true;
 	}
 
 	const data = meta.dataLayer;
-	if ( ! data ) {
+	if (!data) {
 		return true;
 	}
 
 	// is a network response, don't reissue
-	if ( data.data || data.error || data.headers || data.progress ) {
+	if (data.data || data.error || data.headers || data.progress) {
 		return false;
 	}
 
@@ -54,7 +54,7 @@ const shouldNext = action => {
  * @param {Function} handlersFor returns list of handlers for given action type
  * @returns {Function} middleware handler
  */
-export const middleware = handlersFor => store => next => {
+export const middleware = (handlersFor) => (store) => (next) => {
 	/**
 	 * Middleware handler
 	 *
@@ -62,33 +62,33 @@ export const middleware = handlersFor => store => next => {
 	 * @param {object} action Redux action
 	 * @returns {undefined} please do not use
 	 */
-	return action => {
-		const handlerChain = handlersFor( action.type );
+	return (action) => {
+		const handlerChain = handlersFor(action.type);
 
 		// if no handler is defined for the action type
 		// then pass it along the chain untouched
-		if ( ! handlerChain ) {
-			return next( action );
+		if (!handlerChain) {
+			return next(action);
 		}
 
 		const meta = action.meta;
-		if ( meta ) {
+		if (meta) {
 			const dataLayer = meta.dataLayer;
 
 			// if the action indicates that we should
 			// bypass the data layer, then pass it
 			// along the chain untouched
-			if ( dataLayer && true === dataLayer.doBypass ) {
-				return next( action );
+			if (dataLayer && true === dataLayer.doBypass) {
+				return next(action);
 			}
 		}
 
-		handlerChain.forEach( handler => handler( store, action ) );
+		handlerChain.forEach((handler) => handler(store, action));
 
-		if ( shouldNext( action ) ) {
-			next( bypassDataLayer( action ) );
+		if (shouldNext(action)) {
+			next(bypassDataLayer(action));
 		}
 	};
 };
 
-export default middleware( getHandlers );
+export default middleware(getHandlers);

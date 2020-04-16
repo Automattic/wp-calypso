@@ -9,8 +9,8 @@ import { setPosterUrl, showError, showUploadProgress } from 'state/ui/editor/vid
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fetch = action => {
-	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {
+const fetch = (action) => {
+	if (!('file' in action.params || 'atTime' in action.params)) {
 		return;
 	}
 
@@ -19,30 +19,30 @@ const fetch = action => {
 		{
 			apiVersion: '1.1',
 			method: 'POST',
-			path: `/videos/${ action.videoId }/poster`,
+			path: `/videos/${action.videoId}/poster`,
 		},
-		file && { formData: [ [ 'poster', file ] ] },
+		file && { formData: [['poster', file]] },
 		atTime !== undefined && { body: { at_time: atTime } }
 	);
 
-	return http( params, action );
+	return http(params, action);
 };
 
-const onSuccess = ( action, { poster: posterUrl } ) => setPosterUrl( posterUrl );
+const onSuccess = (action, { poster: posterUrl }) => setPosterUrl(posterUrl);
 
 const onError = () => showError();
 
-const onProgress = ( action, progress ) => {
+const onProgress = (action, progress) => {
 	const hasProgressData = 'loaded' in progress && 'total' in progress;
 	const percentage = hasProgressData
-		? Math.min( Math.round( ( progress.loaded / ( Number.EPSILON + progress.total ) ) * 100 ), 100 )
+		? Math.min(Math.round((progress.loaded / (Number.EPSILON + progress.total)) * 100), 100)
 		: 0;
 
-	return showUploadProgress( percentage );
+	return showUploadProgress(percentage);
 };
 
-const dispatchUpdatePosterRequest = dispatchRequest( { fetch, onSuccess, onError, onProgress } );
+const dispatchUpdatePosterRequest = dispatchRequest({ fetch, onSuccess, onError, onProgress });
 
-registerHandlers( 'state/data-layer/wpcom/videos/poster/index.js', {
-	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchUpdatePosterRequest ],
-} );
+registerHandlers('state/data-layer/wpcom/videos/poster/index.js', {
+	[VIDEO_EDITOR_UPDATE_POSTER]: [dispatchUpdatePosterRequest],
+});

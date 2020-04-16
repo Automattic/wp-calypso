@@ -10,6 +10,6 @@ import getGSuiteUsers from 'state/selectors/get-gsuite-users';
  * @param {number} siteId - identifier of the site
  * @returns {?boolean} true if the list of G Suite users has loaded, false otherwise
  */
-export default function hasLoadedGSuiteUsers( state, siteId ) {
-	return getGSuiteUsers( state, siteId ) !== null;
+export default function hasLoadedGSuiteUsers(state, siteId) {
+	return getGSuiteUsers(state, siteId) !== null;
 }

@@ -36,17 +36,17 @@ class CurrentSite extends Component {
 		anySiteSelected: PropTypes.array,
 	};
 
-	switchSites = event => {
+	switchSites = (event) => {
 		event.preventDefault();
 		event.stopPropagation();
-		this.props.setLayoutFocus( 'sites' );
-		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
+		this.props.setLayoutFocus('sites');
+		this.props.recordGoogleEvent('Sidebar', 'Clicked Switch Site');
 	};
 
 	render() {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
-		if ( ! anySiteSelected.length || ( ! selectedSite && ! this.props.hasAllSitesList ) ) {
+		if (!anySiteSelected.length || (!selectedSite && !this.props.hasAllSitesList)) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 			return (
 				<Card className="current-site is-loading">
@@ -54,7 +54,7 @@ class CurrentSite extends Component {
 						<a className="site__content">
 							<div className="site-icon" />
 							<div className="site__info">
-								<span className="site__title">{ translate( 'Loading My Sites…' ) }</span>
+								<span className="site__title">{translate('Loading My Sites…')}</span>
 							</div>
 						</a>
 					</div>
@@ -65,48 +65,46 @@ class CurrentSite extends Component {
 
 		return (
 			<Card className="current-site">
-				{ this.props.siteCount > 1 && (
+				{this.props.siteCount > 1 && (
 					<span className="current-site__switch-sites">
-						<Button borderless onClick={ this.switchSites }>
+						<Button borderless onClick={this.switchSites}>
 							<Gridicon icon="chevron-left" />
-							<span className="current-site__switch-sites-label">
-								{ translate( 'Switch Site' ) }
-							</span>
+							<span className="current-site__switch-sites-label">{translate('Switch Site')}</span>
 						</Button>
 					</span>
-				) }
+				)}
 
-				{ selectedSite ? (
+				{selectedSite ? (
 					<div>
-						<Site site={ selectedSite } homeLink={ true } />
+						<Site site={selectedSite} homeLink={true} />
 					</div>
 				) : (
 					<AllSites />
-				) }
-				{ isEnabled( 'current-site/domain-warning' ) && (
-					<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
-				) }
-				{ isEnabled( 'current-site/stale-cart-notice' ) && (
-					<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
-				) }
-				{ isEnabled( 'current-site/notice' ) && (
+				)}
+				{isEnabled('current-site/domain-warning') && (
+					<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={null} />
+				)}
+				{isEnabled('current-site/stale-cart-notice') && (
+					<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={null} />
+				)}
+				{isEnabled('current-site/notice') && (
 					<AsyncLoad
 						require="my-sites/current-site/notice"
-						placeholder={ null }
-						site={ selectedSite }
+						placeholder={null}
+						site={selectedSite}
 					/>
-				) }
+				)}
 			</Card>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		selectedSite: getSelectedSite( state ),
-		anySiteSelected: getSelectedOrAllSites( state ),
-		siteCount: getCurrentUserSiteCount( state ),
-		hasAllSitesList: hasAllSitesList( state ),
-	} ),
+	(state) => ({
+		selectedSite: getSelectedSite(state),
+		anySiteSelected: getSelectedOrAllSites(state),
+		siteCount: getCurrentUserSiteCount(state),
+		hasAllSitesList: hasAllSitesList(state),
+	}),
 	{ recordGoogleEvent, setLayoutFocus }
-)( localize( CurrentSite ) );
+)(localize(CurrentSite));

@@ -8,11 +8,11 @@ import { ANALYTICS_MULTI_TRACK } from 'state/action-types';
  */
 import { flatMap, property } from 'lodash';
 
-export default function composeAnalytics( ...analytics ) {
+export default function composeAnalytics(...analytics) {
 	return {
 		type: ANALYTICS_MULTI_TRACK,
 		meta: {
-			analytics: flatMap( analytics, property( 'meta.analytics' ) ),
+			analytics: flatMap(analytics, property('meta.analytics')),
 		},
 	};
 }

@@ -17,7 +17,7 @@ import 'state/data-layer/wpcom/read/feed';
 
 import 'state/reader/init';
 
-export function requestFeed( feedId ) {
+export function requestFeed(feedId) {
 	return {
 		type: READER_FEED_REQUEST,
 		payload: {
@@ -26,14 +26,14 @@ export function requestFeed( feedId ) {
 	};
 }
 
-export function receiveReaderFeedRequestSuccess( data ) {
+export function receiveReaderFeedRequestSuccess(data) {
 	return {
 		type: READER_FEED_REQUEST_SUCCESS,
 		payload: data,
 	};
 }
 
-export function receiveReaderFeedRequestFailure( feedId, error ) {
+export function receiveReaderFeedRequestFailure(feedId, error) {
 	return {
 		type: READER_FEED_REQUEST_FAILURE,
 		payload: { feed_ID: feedId },
@@ -41,9 +41,9 @@ export function receiveReaderFeedRequestFailure( feedId, error ) {
 	};
 }
 
-export function updateFeeds( feeds ) {
-	if ( ! isArray( feeds ) ) {
-		feeds = [ feeds ];
+export function updateFeeds(feeds) {
+	if (!isArray(feeds)) {
+		feeds = [feeds];
 	}
 
 	return {

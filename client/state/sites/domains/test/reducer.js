@@ -38,31 +38,31 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
-describe( 'reducer', () => {
+describe('reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox((newSandbox) => {
 		sandbox = newSandbox;
-		sandbox.stub( console, 'warn' );
-	} );
+		sandbox.stub(console, 'warn');
+	});
 
-	test( 'should export expected reducer keys', () => {
-		expect( domainsReducer( undefined, {} ) ).to.have.keys( [
+	test('should export expected reducer keys', () => {
+		expect(domainsReducer(undefined, {})).to.have.keys([
 			'items',
 			'requesting',
 			'errors',
 			'updatingPrivacy',
-		] );
-	} );
+		]);
+	});
 
-	describe( '#items()', () => {
-		test( 'should default to an empty object', () => {
-			expect( itemsReducer( undefined, {} ) ).to.eql( {} );
-		} );
+	describe('#items()', () => {
+		test('should default to an empty object', () => {
+			expect(itemsReducer(undefined, {})).to.eql({});
+		});
 
-		test( 'should index items state by site ID', () => {
+		test('should index items state by site ID', () => {
 			const newState = undefined;
 			const action = {
 				type: SITE_DOMAINS_RECEIVE,
@@ -70,144 +70,144 @@ describe( 'reducer', () => {
 				domains: siteDomains,
 			};
 			const expectedState = {
-				[ siteId ]: siteDomains,
+				[siteId]: siteDomains,
 			};
 
-			deepFreeze( action );
+			deepFreeze(action);
 
-			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
-		} );
+			expect(itemsReducer(newState, action)).to.eql(expectedState);
+		});
 
-		test( 'should override domains for same site', () => {
+		test('should override domains for same site', () => {
 			const newState = {
-				[ siteId ]: [ firstDomain, secondDomain ],
+				[siteId]: [firstDomain, secondDomain],
 			};
 			const action = {
 				type: SITE_DOMAINS_RECEIVE,
 				siteId,
-				domains: [ secondDomain ],
+				domains: [secondDomain],
 			};
 			const expectedState = {
-				[ siteId ]: [ secondDomain ],
+				[siteId]: [secondDomain],
 			};
 
-			deepFreeze( newState );
-			deepFreeze( action );
+			deepFreeze(newState);
+			deepFreeze(action);
 
-			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
-		} );
+			expect(itemsReducer(newState, action)).to.eql(expectedState);
+		});
 
-		test( 'should enable privacy for given site and domain', () => {
+		test('should enable privacy for given site and domain', () => {
 			const state = {
-				[ siteId ]: [ firstDomain ],
+				[siteId]: [firstDomain],
 			};
 			const action = {
 				type: DOMAIN_PRIVACY_ENABLE_SUCCESS,
 				siteId,
 				domain: firstDomain.domain,
 			};
-			const expectedDomain = Object.assign( {}, firstDomain, {
+			const expectedDomain = Object.assign({}, firstDomain, {
 				contactInfoDisclosed: false,
 				privateDomain: true,
-			} );
+			});
 			const expectedState = {
-				[ siteId ]: [ expectedDomain ],
+				[siteId]: [expectedDomain],
 			};
 
-			deepFreeze( state );
-			deepFreeze( action );
+			deepFreeze(state);
+			deepFreeze(action);
 
-			expect( itemsReducer( state, action ) ).to.eql( expectedState );
-		} );
+			expect(itemsReducer(state, action)).to.eql(expectedState);
+		});
 
-		test( 'should disable privacy for given site and domain', () => {
+		test('should disable privacy for given site and domain', () => {
 			const state = {
-				[ siteId ]: [ firstDomain ],
+				[siteId]: [firstDomain],
 			};
 			const action = {
 				type: DOMAIN_PRIVACY_DISABLE_SUCCESS,
 				siteId,
 				domain: firstDomain.domain,
 			};
-			const expectedDomain = Object.assign( {}, firstDomain, {
+			const expectedDomain = Object.assign({}, firstDomain, {
 				contactInfoDisclosed: false,
 				privateDomain: false,
-			} );
+			});
 			const expectedState = {
-				[ siteId ]: [ expectedDomain ],
+				[siteId]: [expectedDomain],
 			};
 
-			deepFreeze( state );
-			deepFreeze( action );
+			deepFreeze(state);
+			deepFreeze(action);
 
-			expect( itemsReducer( state, action ) ).to.eql( expectedState );
-		} );
+			expect(itemsReducer(state, action)).to.eql(expectedState);
+		});
 
-		test( 'should accumulate domains for different sites', () => {
+		test('should accumulate domains for different sites', () => {
 			const newState = {
-				[ firstSiteId ]: [ firstDomain ],
+				[firstSiteId]: [firstDomain],
 			};
 			const action = {
 				type: SITE_DOMAINS_RECEIVE,
 				siteId: secondSiteId,
-				domains: [ secondDomain ],
+				domains: [secondDomain],
 			};
 			const expectedState = {
-				[ firstSiteId ]: [ firstDomain ],
-				[ secondSiteId ]: [ secondDomain ],
+				[firstSiteId]: [firstDomain],
+				[secondSiteId]: [secondDomain],
 			};
 
-			deepFreeze( newState );
-			deepFreeze( action );
+			deepFreeze(newState);
+			deepFreeze(action);
 
-			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
-		} );
+			expect(itemsReducer(newState, action)).to.eql(expectedState);
+		});
 
-		test( 'should persist state', () => {
-			const state = deepFreeze( {
-				[ firstSiteId ]: [ firstDomain ],
-				[ secondSiteId ]: [ secondDomain ],
-			} );
-			expect( itemsReducer( state, { type: 'SERIALIZE' } ) ).to.eql( state );
-		} );
+		test('should persist state', () => {
+			const state = deepFreeze({
+				[firstSiteId]: [firstDomain],
+				[secondSiteId]: [secondDomain],
+			});
+			expect(itemsReducer(state, { type: 'SERIALIZE' })).to.eql(state);
+		});
 
-		test( 'should load persisted state', () => {
-			const state = deepFreeze( {
-				[ firstSiteId ]: [ firstDomain ],
-				[ secondSiteId ]: [ secondDomain ],
-			} );
-			expect( itemsReducer( state, { type: 'DESERIALIZE' } ) ).to.eql( state );
-		} );
+		test('should load persisted state', () => {
+			const state = deepFreeze({
+				[firstSiteId]: [firstDomain],
+				[secondSiteId]: [secondDomain],
+			});
+			expect(itemsReducer(state, { type: 'DESERIALIZE' })).to.eql(state);
+		});
 
-		test( 'should not load invalid persisted state', () => {
-			const state = deepFreeze( {
-				[ 77203074 ]: [ { domain: 1234 } ],
-			} );
-			expect( itemsReducer( state, { type: 'DESERIALIZE' } ) ).to.eql( {} );
-		} );
-	} );
+		test('should not load invalid persisted state', () => {
+			const state = deepFreeze({
+				[77203074]: [{ domain: 1234 }],
+			});
+			expect(itemsReducer(state, { type: 'DESERIALIZE' })).to.eql({});
+		});
+	});
 
-	describe( '#requesting()', () => {
-		test( 'should default to an empty object', () => {
-			expect( requestReducer( undefined, {} ) ).to.eql( {} );
-		} );
+	describe('#requesting()', () => {
+		test('should default to an empty object', () => {
+			expect(requestReducer(undefined, {})).to.eql({});
+		});
 
-		test( 'should index `requesting` state by site ID', () => {
+		test('should index `requesting` state by site ID', () => {
 			const newState = undefined;
 			const action = {
 				type: SITE_DOMAINS_REQUEST,
 				siteId,
 			};
 			const expectedState = {
-				[ siteId ]: true,
+				[siteId]: true,
 			};
 
-			deepFreeze( action );
+			deepFreeze(action);
 
-			expect( requestReducer( newState, action ) ).to.eql( expectedState );
-		} );
+			expect(requestReducer(newState, action)).to.eql(expectedState);
+		});
 
-		test( 'should update `requesting` state by site ID on SUCCESS', () => {
+		test('should update `requesting` state by site ID on SUCCESS', () => {
 			const newState = {
 				2916284: true,
 			};
@@ -217,16 +217,16 @@ describe( 'reducer', () => {
 			};
 
 			const expectedState = {
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 
-			deepFreeze( newState );
-			deepFreeze( action );
+			deepFreeze(newState);
+			deepFreeze(action);
 
-			expect( requestReducer( newState, action ) ).to.eql( expectedState );
-		} );
+			expect(requestReducer(newState, action)).to.eql(expectedState);
+		});
 
-		test( 'should update `requesting` state by site ID on FAILURE', () => {
+		test('should update `requesting` state by site ID on FAILURE', () => {
 			const newState = {
 				2916284: true,
 			};
@@ -236,61 +236,61 @@ describe( 'reducer', () => {
 			};
 
 			const expectedState = {
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 
-			deepFreeze( newState );
-			deepFreeze( action );
+			deepFreeze(newState);
+			deepFreeze(action);
 
-			expect( requestReducer( newState, action ) ).to.eql( expectedState );
-		} );
-	} );
+			expect(requestReducer(newState, action)).to.eql(expectedState);
+		});
+	});
 
-	describe( '#errors()', () => {
-		test( 'should default to an empty object', () => {
-			expect( errorsReducer( undefined, {} ) ).to.eql( {} );
-		} );
+	describe('#errors()', () => {
+		test('should default to an empty object', () => {
+			expect(errorsReducer(undefined, {})).to.eql({});
+		});
 
-		test( 'should clean `errors` state by site ID on REQUEST', () => {
+		test('should clean `errors` state by site ID on REQUEST', () => {
 			const newState = {
-				[ siteId ]: errorMessageResponse,
+				[siteId]: errorMessageResponse,
 			};
-			const action = domainsRequestAction( siteId );
+			const action = domainsRequestAction(siteId);
 			const expectedState = {
-				[ siteId ]: null,
+				[siteId]: null,
 			};
 
-			deepFreeze( newState );
-			deepFreeze( action );
+			deepFreeze(newState);
+			deepFreeze(action);
 
-			expect( errorsReducer( newState, action ) ).to.eql( expectedState );
-		} );
+			expect(errorsReducer(newState, action)).to.eql(expectedState);
+		});
 
-		test( 'should clean `errors` state by site ID on SUCCESS', () => {
+		test('should clean `errors` state by site ID on SUCCESS', () => {
 			const newState = {
-				[ siteId ]: errorMessageResponse,
+				[siteId]: errorMessageResponse,
 			};
-			const action = domainsRequestSuccessAction( siteId, errorMessageResponse );
+			const action = domainsRequestSuccessAction(siteId, errorMessageResponse);
 			const expectedState = {
-				[ siteId ]: null,
+				[siteId]: null,
 			};
 
-			deepFreeze( newState );
-			deepFreeze( action );
+			deepFreeze(newState);
+			deepFreeze(action);
 
-			expect( errorsReducer( newState, action ) ).to.eql( expectedState );
-		} );
+			expect(errorsReducer(newState, action)).to.eql(expectedState);
+		});
 
-		test( 'should index `errors` state by site ID on FAILURE', () => {
+		test('should index `errors` state by site ID on FAILURE', () => {
 			const newState = undefined;
-			const action = domainsRequestFailureAction( siteId, errorMessageResponse );
+			const action = domainsRequestFailureAction(siteId, errorMessageResponse);
 			const expectedState = {
-				[ siteId ]: errorMessageResponse,
+				[siteId]: errorMessageResponse,
 			};
 
-			deepFreeze( action );
+			deepFreeze(action);
 
-			expect( errorsReducer( newState, action ) ).to.eql( expectedState );
-		} );
-	} );
-} );
+			expect(errorsReducer(newState, action)).to.eql(expectedState);
+		});
+	});
+});

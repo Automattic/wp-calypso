@@ -15,27 +15,27 @@ export function toggleDialog() {
 	};
 }
 
-export function runThemeSetup( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function runThemeSetup(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: THEME_SETUP_REQUEST,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.site( siteId )
+			.site(siteId)
 			.runThemeSetup()
-			.then( response => {
-				dispatch( {
+			.then((response) => {
+				dispatch({
 					type: THEME_SETUP_RESULT,
 					data: response,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: THEME_SETUP_RESULT,
 					data: error,
-				} );
-			} );
+				});
+			});
 	};
 }

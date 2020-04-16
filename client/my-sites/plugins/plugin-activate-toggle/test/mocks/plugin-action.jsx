@@ -8,6 +8,6 @@ export default class extends React.Component {
 	static displayName = 'MockPluginAction';
 
 	render() {
-		return <div className="plugin-action" onClick={ this.props.action } />;
+		return <div className="plugin-action" onClick={this.props.action} />;
 	}
 }

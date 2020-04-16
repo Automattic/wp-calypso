@@ -9,30 +9,30 @@ import {
 } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 
-export const setHappyChatEligibility = isEligible => ( {
+export const setHappyChatEligibility = (isEligible) => ({
 	type: HAPPYCHAT_ELIGIBILITY_SET,
 	isEligible,
-} );
+});
 
-export const setPresalePrecancellationAvailability = availability => ( {
+export const setPresalePrecancellationAvailability = (availability) => ({
 	type: PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
 	availability,
-} );
+});
 
-export const requestHappychatEligibility = () => dispatch => {
-	const clientSlug = config( 'client_slug' );
+export const requestHappychatEligibility = () => (dispatch) => {
+	const clientSlug = config('client_slug');
 	wpcom
 		.undocumented()
-		.getOlarkConfiguration( clientSlug )
-		.then( configuration => {
-			dispatch( setHappyChatEligibility( configuration.isUserEligible ) );
-			dispatch( setPresalePrecancellationAvailability( configuration.availability ) );
-		} )
-		.catch( error => {
+		.getOlarkConfiguration(clientSlug)
+		.then((configuration) => {
+			dispatch(setHappyChatEligibility(configuration.isUserEligible));
+			dispatch(setPresalePrecancellationAvailability(configuration.availability));
+		})
+		.catch((error) => {
 			// Hides notices for authorization errors as they should be legitimate (e.g. we use this error code to check
 			// whether the user is logged in when fetching the user profile)
-			if ( error && error.message && error.error !== 'authorization_required' ) {
-				dispatch( errorNotice( error.message ) );
+			if (error && error.message && error.error !== 'authorization_required') {
+				dispatch(errorNotice(error.message));
 			}
-		} );
+		});
 };

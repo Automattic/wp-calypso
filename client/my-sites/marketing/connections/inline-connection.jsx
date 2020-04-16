@@ -27,12 +27,12 @@ class InlineConnection extends Component {
 				<QueryPublicizeConnections selectedSite />
 				<QueryKeyringServices />
 
-				{ service && <InlineConnectionAction service={ service } /> }
+				{service && <InlineConnectionAction service={service} />}
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, props ) => ( {
-	service: getKeyringServiceByName( state, props.serviceName ),
-} ) )( InlineConnection );
+export default connect((state, props) => ({
+	service: getKeyringServiceByName(state, props.serviceName),
+}))(InlineConnection);

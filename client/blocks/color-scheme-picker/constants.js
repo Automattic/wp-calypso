@@ -23,10 +23,10 @@ import contrastImg from 'assets/images/color-schemes/color-scheme-thumbnail-cont
  * `client/state/preferences/schema.js` or preferences state persistence may be invalidated.
  */
 
-export default function( translate ) {
-	return compact( [
+export default function (translate) {
+	return compact([
 		{
-			label: translate( 'Classic Bright' ),
+			label: translate('Classic Bright'),
 			value: 'classic-bright',
 			thumbnail: {
 				cssClass: 'is-classic-bright',
@@ -34,7 +34,7 @@ export default function( translate ) {
 			},
 		},
 		{
-			label: translate( 'Classic Blue' ),
+			label: translate('Classic Blue'),
 			value: 'classic-blue',
 			thumbnail: {
 				cssClass: 'is-classic-blue',
@@ -42,7 +42,7 @@ export default function( translate ) {
 			},
 		},
 		{
-			label: translate( 'Powder Snow' ),
+			label: translate('Powder Snow'),
 			value: 'powder-snow',
 			thumbnail: {
 				cssClass: 'is-powder-snow',
@@ -50,7 +50,7 @@ export default function( translate ) {
 			},
 		},
 		{
-			label: translate( 'Nightfall' ),
+			label: translate('Nightfall'),
 			value: 'nightfall',
 			thumbnail: {
 				cssClass: 'is-nightfall',
@@ -58,7 +58,7 @@ export default function( translate ) {
 			},
 		},
 		{
-			label: translate( 'Sakura' ),
+			label: translate('Sakura'),
 			value: 'sakura',
 			thumbnail: {
 				cssClass: 'is-sakura',
@@ -66,7 +66,7 @@ export default function( translate ) {
 			},
 		},
 		{
-			label: translate( 'Ocean' ),
+			label: translate('Ocean'),
 			value: 'ocean',
 			thumbnail: {
 				cssClass: 'is-ocean',
@@ -74,7 +74,7 @@ export default function( translate ) {
 			},
 		},
 		{
-			label: translate( 'Sunset' ),
+			label: translate('Sunset'),
 			value: 'sunset',
 			thumbnail: {
 				cssClass: 'is-sunset',
@@ -82,7 +82,7 @@ export default function( translate ) {
 			},
 		},
 		{
-			label: translate( 'Midnight' ),
+			label: translate('Midnight'),
 			value: 'midnight',
 			thumbnail: {
 				cssClass: 'is-midnight',
@@ -90,12 +90,12 @@ export default function( translate ) {
 			},
 		},
 		{
-			label: translate( 'Contrast' ),
+			label: translate('Contrast'),
 			value: 'contrast',
 			thumbnail: {
 				cssClass: 'is-contrast',
 				imageUrl: contrastImg,
 			},
 		},
-	] );
+	]);
 }

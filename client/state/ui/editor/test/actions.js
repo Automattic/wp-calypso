@@ -11,12 +11,12 @@ import { MODAL_VIEW_STAT_MAPPING, setEditorMediaModalView } from '../actions';
 import { ANALYTICS_STAT_BUMP } from 'state/action-types';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 
-describe( 'actions', () => {
-	describe( 'setEditorMediaModalView()', () => {
-		test( 'should dispatch setMediaModalView with analytics', () => {
-			forEach( MODAL_VIEW_STAT_MAPPING, ( stat, view ) => {
-				expect( setEditorMediaModalView( view ) ).to.eql( {
-					...setMediaModalView( view ),
+describe('actions', () => {
+	describe('setEditorMediaModalView()', () => {
+		test('should dispatch setMediaModalView with analytics', () => {
+			forEach(MODAL_VIEW_STAT_MAPPING, (stat, view) => {
+				expect(setEditorMediaModalView(view)).to.eql({
+					...setMediaModalView(view),
 					meta: {
 						analytics: [
 							{
@@ -28,8 +28,8 @@ describe( 'actions', () => {
 							},
 						],
 					},
-				} );
-			} );
-		} );
-	} );
-} );
+				});
+			});
+		});
+	});
+});

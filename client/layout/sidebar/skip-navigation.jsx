@@ -15,11 +15,11 @@ class SkipNavigation extends React.Component {
 		skipToElementId: PropTypes.string,
 	};
 
-	onClick = event => {
+	onClick = (event) => {
 		event.preventDefault();
-		const element = document.getElementById( this.props.skipToElementId );
+		const element = document.getElementById(this.props.skipToElementId);
 		// Make the element focusable
-		if ( ! /^(?:a|select|input|button|textarea)$/i.test( element.tagName ) ) {
+		if (!/^(?:a|select|input|button|textarea)$/i.test(element.tagName)) {
 			element.tabIndex = -1;
 		}
 
@@ -28,11 +28,11 @@ class SkipNavigation extends React.Component {
 
 	render() {
 		return (
-			<Button onClick={ this.onClick } className="sidebar__skip-navigation">
-				{ this.props.translate( 'Skip navigation' ) }
+			<Button onClick={this.onClick} className="sidebar__skip-navigation">
+				{this.props.translate('Skip navigation')}
 			</Button>
 		);
 	}
 }
 
-export default localize( SkipNavigation );
+export default localize(SkipNavigation);

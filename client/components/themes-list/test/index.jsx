@@ -17,7 +17,7 @@ import EmptyContent from 'components/empty-content';
 import Theme from 'components/theme';
 import { ThemesList } from '../';
 
-const defaultProps = deepFreeze( {
+const defaultProps = deepFreeze({
 	themes: [
 		{
 			id: '1',
@@ -36,27 +36,27 @@ const defaultProps = deepFreeze( {
 	getButtonOptions: noop,
 	onScreenshotClick: noop,
 	translate: identity,
-} );
+});
 
-describe( 'ThemesList', () => {
-	test( 'should declare propTypes', () => {
-		expect( ThemesList ).toHaveProperty( 'propTypes' );
-	} );
+describe('ThemesList', () => {
+	test('should declare propTypes', () => {
+		expect(ThemesList).toHaveProperty('propTypes');
+	});
 
-	test( 'should render a div with a className of "themes-list"', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
-		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
-	} );
+	test('should render a div with a className of "themes-list"', () => {
+		const wrapper = shallow(<ThemesList {...defaultProps} />);
+		expect(wrapper).toMatchSnapshot();
+		expect(wrapper.hasClass('themes-list')).toBe(true);
+		expect(wrapper.find(Theme)).toHaveLength(defaultProps.themes.length);
+	});
 
-	test( 'should render a <Theme /> child for each provided theme', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
-	} );
+	test('should render a <Theme /> child for each provided theme', () => {
+		const wrapper = shallow(<ThemesList {...defaultProps} />);
+		expect(wrapper.find(Theme)).toHaveLength(defaultProps.themes.length);
+	});
 
-	test( 'should display the EmptyContent component when no themes are found', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
-		expect( wrapper.type() ).toBe( EmptyContent );
-	} );
-} );
+	test('should display the EmptyContent component when no themes are found', () => {
+		const wrapper = shallow(<ThemesList {...defaultProps} themes={[]} />);
+		expect(wrapper.type()).toBe(EmptyContent);
+	});
+});

@@ -28,8 +28,8 @@ import 'state/reader/init';
  * @param  {string} streamKey The stream to fetch posts for
  * @returns {object}          The action object
  */
-export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null } ) {
-	const streamType = getStreamType( streamKey );
+export function requestPage({ streamKey, pageHandle, isPoll = false, gap = null }) {
+	const streamType = getStreamType(streamKey);
 
 	return {
 		type: READER_STREAMS_PAGE_REQUEST,
@@ -43,7 +43,7 @@ export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null
 	};
 }
 
-export function receivePage( { streamKey, pageHandle, streamItems, gap } ) {
+export function receivePage({ streamKey, pageHandle, streamItems, gap }) {
 	return {
 		type: READER_STREAMS_PAGE_RECEIVE,
 		payload: {
@@ -55,53 +55,53 @@ export function receivePage( { streamKey, pageHandle, streamItems, gap } ) {
 	};
 }
 
-export const showUpdates = ( { streamKey } ) => ( dispatch, getState ) => {
-	const items = getStream( getState(), streamKey ).pendingItems.items;
-	return dispatch( {
+export const showUpdates = ({ streamKey }) => (dispatch, getState) => {
+	const items = getStream(getState(), streamKey).pendingItems.items;
+	return dispatch({
 		type: READER_STREAMS_SHOW_UPDATES,
 		payload: { streamKey, items },
-	} );
+	});
 };
 
-export function receiveUpdates( { streamKey, streamItems } ) {
+export function receiveUpdates({ streamKey, streamItems }) {
 	return {
 		type: READER_STREAMS_UPDATES_RECEIVE,
 		payload: { streamKey, streamItems },
 	};
 }
 
-export function selectItem( { streamKey, postKey } ) {
+export function selectItem({ streamKey, postKey }) {
 	return {
 		type: READER_STREAMS_SELECT_ITEM,
 		payload: { streamKey, postKey },
 	};
 }
 
-export function selectFirstItem( { streamKey, items } ) {
+export function selectFirstItem({ streamKey, items }) {
 	return {
 		type: READER_STREAMS_SELECT_FIRST_ITEM,
 		payload: { streamKey, items },
 	};
 }
 
-export function selectNextItem( { streamKey, items } ) {
+export function selectNextItem({ streamKey, items }) {
 	return {
 		type: READER_STREAMS_SELECT_NEXT_ITEM,
 		payload: { streamKey, items },
 	};
 }
 
-export function selectPrevItem( { streamKey, items } ) {
+export function selectPrevItem({ streamKey, items }) {
 	return {
 		type: READER_STREAMS_SELECT_PREV_ITEM,
 		payload: { streamKey, items },
 	};
 }
 
-export function fillGap( { streamKey, gap } ) {
-	return requestPage( {
+export function fillGap({ streamKey, gap }) {
+	return requestPage({
 		streamKey,
 		pageHandle: { before: gap.to.toISOString(), after: gap.from.toISOString() },
 		gap,
-	} );
+	});
 }

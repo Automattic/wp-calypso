@@ -24,7 +24,7 @@ import smartSetState from 'lib/react-smart-set-state';
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:infinite-list' );
+const debug = debugFactory('calypso:infinite-list');
 
 export default class InfiniteList extends React.Component {
 	static propTypes = {
@@ -38,7 +38,7 @@ export default class InfiniteList extends React.Component {
 		renderItem: PropTypes.func.isRequired,
 		renderLoadingPlaceholders: PropTypes.func.isRequired,
 		renderTrailingItems: PropTypes.func,
-		context: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		context: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 	};
 
 	static defaultProps = {
@@ -59,13 +59,13 @@ export default class InfiniteList extends React.Component {
 		const url = page.current;
 		let newState, scrollTop;
 
-		if ( detectHistoryNavigation.loadedViaHistory() ) {
-			newState = ScrollStore.getPositions( url );
-			scrollTop = ScrollStore.getScrollTop( url );
+		if (detectHistoryNavigation.loadedViaHistory()) {
+			newState = ScrollStore.getPositions(url);
+			scrollTop = ScrollStore.getScrollTop(url);
 		}
 
-		if ( newState && scrollTop ) {
-			debug( 'overriding scrollTop:', scrollTop );
+		if (newState && scrollTop) {
+			debug('overriding scrollTop:', scrollTop);
 			newState.scrollTop = scrollTop;
 		}
 
@@ -75,17 +75,17 @@ export default class InfiniteList extends React.Component {
 			this.getBottomPlaceholderBounds
 		);
 		this.scrollHelper.props = this.props;
-		if ( this._contextLoaded() ) {
+		if (this._contextLoaded()) {
 			this._scrollContainer = this.props.context || window;
-			this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
+			this.scrollHelper.updateContextHeight(this.getCurrentContextHeight());
 		}
 
 		this.isScrolling = false;
 
-		if ( newState ) {
-			debug( 'infinite-list positions loaded from store' );
+		if (newState) {
+			debug('infinite-list positions loaded from store');
 		} else {
-			debug( 'infinite-list positions reset for new list' );
+			debug('infinite-list positions reset for new list');
 			newState = {
 				firstRenderedIndex: 0,
 				topPlaceholderHeight: 0,
@@ -94,79 +94,79 @@ export default class InfiniteList extends React.Component {
 				scrollTop: 0,
 			};
 		}
-		debug( 'infinite list mounting', newState );
-		this.setState( newState );
+		debug('infinite list mounting', newState);
+		this.setState(newState);
 	}
 
 	componentDidMount() {
 		this._isMounted = true;
-		if ( this._contextLoaded() ) {
-			this._setContainerY( this.state.scrollTop );
+		if (this._contextLoaded()) {
+			this._setContainerY(this.state.scrollTop);
 		}
 
 		// only override browser history scroll if navigated via history
-		if ( detectHistoryNavigation.loadedViaHistory() ) {
+		if (detectHistoryNavigation.loadedViaHistory()) {
 			this._overrideHistoryScroll();
 		}
-		debug( 'setting scrollTop:', this.state.scrollTop );
-		this.updateScroll( {
+		debug('setting scrollTop:', this.state.scrollTop);
+		this.updateScroll({
 			triggeredByScroll: false,
-		} );
-		if ( this._contextLoaded() ) {
-			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
+		});
+		if (this._contextLoaded()) {
+			this._scrollContainer.addEventListener('scroll', this.onScroll);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		this.scrollHelper.props = newProps;
 
 		// New item may have arrived, should we change the rendered range?
-		if ( ! this.isScrolling ) {
+		if (!this.isScrolling) {
 			this.cancelAnimationFrame();
-			this.updateScroll( {
+			this.updateScroll({
 				triggeredByScroll: false,
-			} );
+			});
 		}
 
 		// if the context changes, remove our scroll listener
-		if ( newProps.context === this.props.context ) {
+		if (newProps.context === this.props.context) {
 			return;
 		}
-		if ( this._contextLoaded() ) {
-			this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
+		if (this._contextLoaded()) {
+			this._scrollContainer.removeEventListener('scroll', this._resetScroll);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( ! this._contextLoaded() ) {
+	componentDidUpdate(prevProps) {
+		if (!this._contextLoaded()) {
 			return;
 		}
 
-		if ( this.props.context !== prevProps.context ) {
+		if (this.props.context !== prevProps.context) {
 			// remove old listener
-			if ( this._scrollContainer ) {
-				this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
+			if (this._scrollContainer) {
+				this._scrollContainer.removeEventListener('scroll', this.onScroll);
 			}
 
 			// add new listeners
 			this._scrollContainer = this.props.context || window;
-			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
+			this._scrollContainer.addEventListener('scroll', this.onScroll);
 
 			// only override browser history scroll if navigated via history
-			if ( detectHistoryNavigation.loadedViaHistory() ) {
+			if (detectHistoryNavigation.loadedViaHistory()) {
 				this._overrideHistoryScroll();
 			}
 		}
 
 		// we may have guessed item heights wrong - now we have real heights
-		if ( ! this.isScrolling ) {
-			this.scrollUpdate = setTimeout( () => {
+		if (!this.isScrolling) {
+			this.scrollUpdate = setTimeout(() => {
 				this.cancelAnimationFrame();
-				this.updateScroll( {
+				this.updateScroll({
 					triggeredByScroll: false,
-				} );
+				});
 				this.scrollUpdate = false;
-			} );
+			});
 		}
 	}
 
@@ -180,51 +180,51 @@ export default class InfiniteList extends React.Component {
 			this.getBottomPlaceholderBounds
 		);
 		this.scrollHelper.props = this.props;
-		if ( this._contextLoaded() ) {
+		if (this._contextLoaded()) {
 			this._scrollContainer = this.props.context || window;
-			this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
+			this.scrollHelper.updateContextHeight(this.getCurrentContextHeight());
 		}
 
 		this.isScrolling = false;
 
-		this.setState( {
+		this.setState({
 			firstRenderedIndex: 0,
 			topPlaceholderHeight: 0,
 			lastRenderedIndex: this.scrollHelper.initialLastRenderedIndex(),
 			bottomPlaceholderHeight: 0,
 			scrollTop: 0,
-		} );
+		});
 	}
 
 	componentWillUnmount() {
-		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
-		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
+		this._scrollContainer.removeEventListener('scroll', this.onScroll);
+		this._scrollContainer.removeEventListener('scroll', this._resetScroll);
 		this.cancelAnimationFrame();
 		this.cancelScrollUpdate();
 		this._isMounted = false;
 	}
 
 	cancelAnimationFrame() {
-		if ( this.scrollRAFHandle ) {
-			window.cancelAnimationFrame( this.scrollRAFHandle );
+		if (this.scrollRAFHandle) {
+			window.cancelAnimationFrame(this.scrollRAFHandle);
 			this.scrollRAFHandle = null;
 		}
 		this.lastScrollTop = -1;
 	}
 
 	cancelScrollUpdate() {
-		if ( this.scrollUpdate ) {
-			clearTimeout( this.scrollUpdate );
+		if (this.scrollUpdate) {
+			clearTimeout(this.scrollUpdate);
 			this.scrollUpdate = false;
 		}
 	}
 
 	onScroll = () => {
-		if ( this.isScrolling ) {
+		if (this.isScrolling) {
 			return;
 		}
-		if ( ! this.scrollRAFHandle && this.getCurrentScrollTop() !== this.lastScrollTop ) {
-			this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
+		if (!this.scrollRAFHandle && this.getCurrentScrollTop() !== this.lastScrollTop) {
+			this.scrollRAFHandle = window.requestAnimationFrame(this.scrollChecks);
 		}
 	};
 
@@ -234,8 +234,8 @@ export default class InfiniteList extends React.Component {
 	}
 
 	getCurrentScrollTop() {
-		if ( this.props.context ) {
-			debug( 'getting scrollTop from context' );
+		if (this.props.context) {
+			debug('getting scrollTop from context');
 			return this.props.context.scrollTop;
 		}
 		return window.pageYOffset;
@@ -244,56 +244,56 @@ export default class InfiniteList extends React.Component {
 	scrollChecks = () => {
 		// isMounted is necessary to prevent running this before it is mounted,
 		// which could be triggered by data-observe mixin.
-		if ( ! this._isMounted || this.getCurrentScrollTop() === this.lastScrollTop ) {
+		if (!this._isMounted || this.getCurrentScrollTop() === this.lastScrollTop) {
 			this.scrollRAFHandle = null;
 			return;
 		}
-		this.updateScroll( {
+		this.updateScroll({
 			triggeredByScroll: true,
-		} );
+		});
 	};
 
 	// Instance method that is called externally (via a ref) by a parent component
 	scrollToTop() {
 		this.cancelAnimationFrame();
 		this.isScrolling = true;
-		if ( this.props.context && this.props.context !== window ) {
+		if (this.props.context && this.props.context !== window) {
 			this.props.context.scrollTop = 0;
-			this.updateScroll( { triggeredByScroll: false } );
+			this.updateScroll({ triggeredByScroll: false });
 			this.isScrolling = false;
 		} else {
-			scrollTo( {
+			scrollTo({
 				x: 0,
 				y: 0,
 				duration: 250,
 				onComplete: () => {
-					if ( this._isMounted ) {
-						this.updateScroll( { triggeredByScroll: false } );
+					if (this._isMounted) {
+						this.updateScroll({ triggeredByScroll: false });
 					}
 					this.isScrolling = false;
 				},
-			} );
+			});
 		}
 	}
 
-	updateScroll( options ) {
+	updateScroll(options) {
 		const url = page.current;
 		let newState;
 
-		if ( ! this._contextLoaded() ) {
+		if (!this._contextLoaded()) {
 			return;
 		}
 
 		this.lastScrollTop = this.getCurrentScrollTop();
-		ScrollStore.storeScrollTop( url, this.lastScrollTop );
-		this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
+		ScrollStore.storeScrollTop(url, this.lastScrollTop);
+		this.scrollHelper.updateContextHeight(this.getCurrentContextHeight());
 		this.scrollHelper.scrollPosition = this.lastScrollTop;
 		this.scrollHelper.triggeredByScroll = options.triggeredByScroll;
 		this.scrollHelper.updatePlaceholderDimensions();
 
-		this.scrollHelper.scrollChecks( this.state );
+		this.scrollHelper.scrollChecks(this.state);
 
-		if ( this.scrollHelper.stateUpdated ) {
+		if (this.scrollHelper.stateUpdated) {
 			newState = {
 				firstRenderedIndex: this.scrollHelper.firstRenderedIndex,
 				topPlaceholderHeight: this.scrollHelper.topPlaceholderHeight,
@@ -306,17 +306,17 @@ export default class InfiniteList extends React.Component {
 			// item heights may have been guessed wrong.
 			this.lastScrollTop = -1;
 
-			debug( 'new scroll positions', newState, this.state );
-			this.smartSetState( newState );
-			ScrollStore.storePositions( url, newState );
+			debug('new scroll positions', newState, this.state);
+			this.smartSetState(newState);
+			ScrollStore.storePositions(url, newState);
 		}
 
-		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
+		this.scrollRAFHandle = window.requestAnimationFrame(this.scrollChecks);
 	}
 
-	boundsForRef = ref => {
-		if ( ref in this.refs ) {
-			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
+	boundsForRef = (ref) => {
+		if (ref in this.refs) {
+			return ReactDom.findDOMNode(this.refs[ref]).getBoundingClientRect();
 		}
 		return null;
 	};
@@ -338,8 +338,8 @@ export default class InfiniteList extends React.Component {
 	 * @param {number} options.offsetBottom - in pixels, 0 if unspecified
 	 * @returns {Array} This list of indexes
 	 */
-	getVisibleItemIndexes( options ) {
-		const container = ReactDom.findDOMNode( this ),
+	getVisibleItemIndexes(options) {
+		const container = ReactDom.findDOMNode(this),
 			visibleItemIndexes = [],
 			firstIndex = this.state.firstRenderedIndex,
 			lastIndex = this.state.lastRenderedIndex,
@@ -351,22 +351,22 @@ export default class InfiniteList extends React.Component {
 			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
 
 		offsetBottom = offsetBottom || 0;
-		if ( lastIndex > -1 ) {
+		if (lastIndex > -1) {
 			// stored item heights are not reliable at all in scroll helper,
 			// for this first pass, do bounds checks on children
 			children = container.children;
 			// skip over first and last child since these are spacers.
-			for ( i = 1; i < children.length - 1; i++ ) {
-				rect = container.children[ i ].getBoundingClientRect();
+			for (i = 1; i < children.length - 1; i++) {
+				rect = container.children[i].getBoundingClientRect();
 				windowHeight = window.innerHeight || document.documentElement.clientHeight;
 				if (
-					( rect.top < 0 && Math.abs( rect.top ) < rect.height - offsetTop ) ||
-					( rect.top > 0 && rect.top < windowHeight - offsetBottom )
+					(rect.top < 0 && Math.abs(rect.top) < rect.height - offsetTop) ||
+					(rect.top > 0 && rect.top < windowHeight - offsetBottom)
 				) {
-					visibleItemIndexes.push( {
+					visibleItemIndexes.push({
 						index: firstIndex + i - 1,
 						bounds: rect,
-					} );
+					});
 				}
 			}
 		}
@@ -393,7 +393,7 @@ export default class InfiniteList extends React.Component {
 			lastRenderedIndex = this.state.lastRenderedIndex,
 			itemsToRender = [];
 
-		if ( lastRenderedIndex === -1 || lastRenderedIndex > items.length - 1 ) {
+		if (lastRenderedIndex === -1 || lastRenderedIndex > items.length - 1) {
 			debug(
 				'resetting lastRenderedIndex, currently at %s, %d items',
 				lastRenderedIndex,
@@ -403,43 +403,43 @@ export default class InfiniteList extends React.Component {
 				this.state.firstRenderedIndex + this.scrollHelper.initialLastRenderedIndex(),
 				items.length - 1
 			);
-			debug( 'reset lastRenderedIndex to %s', lastRenderedIndex );
+			debug('reset lastRenderedIndex to %s', lastRenderedIndex);
 		}
 
-		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
+		debug('rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex);
 
-		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
-			itemsToRender.push( renderItem( items[ i ], i ) );
+		for (i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++) {
+			itemsToRender.push(renderItem(items[i], i));
 		}
 
-		if ( fetchingNextPage ) {
-			itemsToRender = itemsToRender.concat( renderLoadingPlaceholders() );
+		if (fetchingNextPage) {
+			itemsToRender = itemsToRender.concat(renderLoadingPlaceholders());
 		}
 
 		return (
-			<div { ...propsToTransfer }>
+			<div {...propsToTransfer}>
 				<div
-					ref={ this.topPlaceholderRef }
-					className={ spacerClassName }
-					style={ { height: this.state.topPlaceholderHeight } }
+					ref={this.topPlaceholderRef}
+					className={spacerClassName}
+					style={{ height: this.state.topPlaceholderHeight }}
 				/>
-				{ itemsToRender }
-				{ renderTrailingItems() }
+				{itemsToRender}
+				{renderTrailingItems()}
 				<div
-					ref={ this.bottomPlaceholderRef }
-					className={ spacerClassName }
-					style={ { height: this.state.bottomPlaceholderHeight } }
+					ref={this.bottomPlaceholderRef}
+					className={spacerClassName}
+					style={{ height: this.state.bottomPlaceholderHeight }}
 				/>
 			</div>
 		);
 	}
 
-	_setContainerY( position ) {
-		if ( this.props.context && this.props.context !== window ) {
+	_setContainerY(position) {
+		if (this.props.context && this.props.context !== window) {
 			this.props.context.scrollTop = position;
 			return;
 		}
-		window.scrollTo( 0, position );
+		window.scrollTo(0, position);
 	}
 
 	/**
@@ -448,21 +448,21 @@ export default class InfiniteList extends React.Component {
 	 * HTML5 history.
 	 */
 	_overrideHistoryScroll() {
-		if ( ! this._contextLoaded() ) {
+		if (!this._contextLoaded()) {
 			return;
 		}
-		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
+		this._scrollContainer.addEventListener('scroll', this._resetScroll);
 	}
 
-	_resetScroll = event => {
+	_resetScroll = (event) => {
 		const position = this.state.scrollTop;
-		if ( ! this._contextLoaded() ) {
+		if (!this._contextLoaded()) {
 			return;
 		}
-		debug( 'history setting scroll position:', event );
-		this._setContainerY( position );
-		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
-		debug( 'override scroll position from HTML5 history popstate:', position );
+		debug('history setting scroll position:', event);
+		this._setContainerY(position);
+		this._scrollContainer.removeEventListener('scroll', this._resetScroll);
+		debug('override scroll position from HTML5 history popstate:', position);
 	};
 
 	/**
@@ -471,6 +471,6 @@ export default class InfiniteList extends React.Component {
 	 * @returns {boolean} whether context is available
 	 */
 	_contextLoaded() {
-		return this.props.context || this.props.context === false || ! ( 'context' in this.props );
+		return this.props.context || this.props.context === false || !('context' in this.props);
 	}
 }

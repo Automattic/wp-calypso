@@ -10,16 +10,16 @@ import reducer from '../reducer';
 import { ROUTE_SET, COMMENTS_LIKE } from 'state/action-types';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
-describe( 'reducer', () => {
-	useFakeTimers( 1337 );
+describe('reducer', () => {
+	useFakeTimers(1337);
 
-	test( 'should default to an empty list', () => {
-		const state = reducer( undefined, {} );
+	test('should default to an empty list', () => {
+		const state = reducer(undefined, {});
 
-		expect( state ).to.eql( [] );
-	} );
+		expect(state).to.eql([]);
+	});
 
-	test( 'should add actions to the log', () => {
+	test('should add actions to the log', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
@@ -30,15 +30,15 @@ describe( 'reducer', () => {
 				path: '/themes/foobar',
 			},
 		];
-		const state = actions.reduce( reducer, undefined );
+		const state = actions.reduce(reducer, undefined);
 
-		expect( state ).to.eql( [
-			{ ...actions[ 0 ], timestamp: 1337 },
-			{ ...actions[ 1 ], timestamp: 1337 },
-		] );
-	} );
+		expect(state).to.eql([
+			{ ...actions[0], timestamp: 1337 },
+			{ ...actions[1], timestamp: 1337 },
+		]);
+	});
 
-	test( 'should discard them if payload is irrelevant', () => {
+	test('should discard them if payload is irrelevant', () => {
 		const actions = [
 			{
 				type: COMMENTS_LIKE,
@@ -49,12 +49,12 @@ describe( 'reducer', () => {
 				path: '/menus/foobar',
 			},
 		];
-		const state = actions.reduce( reducer, undefined );
+		const state = actions.reduce(reducer, undefined);
 
-		expect( state ).to.eql( [] );
-	} );
+		expect(state).to.eql([]);
+	});
 
-	test( 'should log actions with relevant analytics meta', () => {
+	test('should log actions with relevant analytics meta', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
@@ -89,15 +89,15 @@ describe( 'reducer', () => {
 				},
 			},
 		];
-		const state = actions.reduce( reducer, undefined );
+		const state = actions.reduce(reducer, undefined);
 
-		expect( state ).to.eql( [
-			{ ...actions[ 0 ], timestamp: 1337 },
-			{ ...actions[ 1 ], timestamp: 1337 },
-		] );
-	} );
+		expect(state).to.eql([
+			{ ...actions[0], timestamp: 1337 },
+			{ ...actions[1], timestamp: 1337 },
+		]);
+	});
 
-	test( 'should discard actions with irrelevant analytics meta', () => {
+	test('should discard actions with irrelevant analytics meta', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
@@ -132,8 +132,8 @@ describe( 'reducer', () => {
 				},
 			},
 		];
-		const state = actions.reduce( reducer, undefined );
+		const state = actions.reduce(reducer, undefined);
 
-		expect( state ).to.eql( [ { ...actions[ 0 ], timestamp: 1337 } ] );
-	} );
-} );
+		expect(state).to.eql([{ ...actions[0], timestamp: 1337 }]);
+	});
+});

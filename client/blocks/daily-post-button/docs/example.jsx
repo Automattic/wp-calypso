@@ -12,7 +12,7 @@ const DailyPostButtonExample = () => {
 	return (
 		<div className="design-assets__group">
 			<DailyPostButton
-				post={ {
+				post={{
 					site_ID: 489937,
 					tags: {
 						'daily prompts': {
@@ -23,7 +23,7 @@ const DailyPostButtonExample = () => {
 					title: 'Crisis',
 					URL: 'https://dailypost.wordpress.com/2016/07/27/crisis/',
 					short_url: 'http://wp.me/p23sd-12Mf',
-				} }
+				}}
 			/>
 		</div>
 	);

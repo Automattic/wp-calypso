@@ -10,12 +10,12 @@ import React, { PureComponent } from 'react';
 import TooltipComponent from 'components/tooltip';
 
 class Tooltip extends PureComponent {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		this.open = this.open.bind( this );
-		this.close = this.close.bind( this );
-		this.changePosition = this.changePosition.bind( this );
+		this.open = this.open.bind(this);
+		this.close = this.close.bind(this);
+		this.changePosition = this.changePosition.bind(this);
 
 		this.state = {
 			position: 'bottom right',
@@ -24,15 +24,15 @@ class Tooltip extends PureComponent {
 	}
 
 	open() {
-		this.setState( { show: true } );
+		this.setState({ show: true });
 	}
 
 	close() {
-		this.setState( { show: false } );
+		this.setState({ show: false });
 	}
 
-	changePosition( event ) {
-		this.setState( { position: event.target.value } );
+	changePosition(event) {
+		this.setState({ position: event.target.value });
 	}
 
 	render() {
@@ -42,7 +42,7 @@ class Tooltip extends PureComponent {
 			<div>
 				<label>
 					Position
-					<select value={ this.state.position } onChange={ this.changePosition }>
+					<select value={this.state.position} onChange={this.changePosition}>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
 						<option value="top right">top right</option>
@@ -59,33 +59,33 @@ class Tooltip extends PureComponent {
 				<div>
 					Tooltip context&nbsp;
 					<span
-						style={ {
+						style={{
 							width: size,
 							height: size,
-							lineHeight: `${ size }px`,
+							lineHeight: `${size}px`,
 							display: 'inline-block',
-							borderRadius: parseInt( size / 2 ),
+							borderRadius: parseInt(size / 2),
 							backgroundColor: '#444',
 							color: 'white',
 							fontSize: '12px',
 							cursor: 'pointer',
 							textAlign: 'center',
-						} }
-						onMouseEnter={ this.open }
-						onMouseLeave={ this.close }
-						onClick={ this.close }
+						}}
+						onMouseEnter={this.open}
+						onMouseLeave={this.close}
+						onClick={this.close}
 						ref="tooltip-reference"
 					>
 						T
 					</span>
 					<TooltipComponent
 						id="tooltip__example"
-						isVisible={ this.state.show }
-						onClose={ this.close }
-						position={ this.state.position }
-						context={ this.refs && this.refs[ 'tooltip-reference' ] }
+						isVisible={this.state.show}
+						onClose={this.close}
+						position={this.state.position}
+						context={this.refs && this.refs['tooltip-reference']}
 					>
-						<div style={ { padding: '10px' } }>Simple Tooltip Instance</div>
+						<div style={{ padding: '10px' }}>Simple Tooltip Instance</div>
 					</TooltipComponent>
 				</div>
 			</div>

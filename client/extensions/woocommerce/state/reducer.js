@@ -10,11 +10,11 @@ import woocommerceServices from 'woocommerce/woocommerce-services/state/reducer'
 
 export default withStorageKey(
 	'woocommerce',
-	combineReducers( {
+	combineReducers({
 		ui,
 		sites,
 		actionList,
 		wcApi,
 		woocommerceServices,
-	} )
+	})
 );

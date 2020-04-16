@@ -29,13 +29,13 @@ import { getCurrentUser } from 'state/current-user/selectors';
  */
 import './style.scss';
 
-function getPingbackAttributes( post ) {
+function getPingbackAttributes(post) {
 	const typeTitles = {
-		prompt: translate( 'Daily Prompt: ' ),
-		photo: translate( 'Photo Challenge: ' ),
-		discover: translate( 'Discover Challenge: ' ),
+		prompt: translate('Daily Prompt: '),
+		photo: translate('Photo Challenge: '),
+		discover: translate('Discover Challenge: '),
 	};
-	const title = typeTitles[ getDailyPostType( post ) ] + post.title;
+	const title = typeTitles[getDailyPostType(post)] + post.title;
 
 	return {
 		title,
@@ -44,7 +44,7 @@ function getPingbackAttributes( post ) {
 }
 
 function preloadEditor() {
-	preload( 'post-editor' );
+	preload('post-editor');
 }
 
 export class DailyPostButton extends React.Component {
@@ -80,55 +80,55 @@ export class DailyPostButton extends React.Component {
 
 	componentWillUnmount() {
 		this._isMounted = false;
-		if ( this._closeTimerId ) {
-			clearTimeout( this._closeTimerId );
+		if (this._closeTimerId) {
+			clearTimeout(this._closeTimerId);
 			this._closeDefer = null;
 		}
 	}
 
-	deferMenuChange( showingMenu ) {
-		if ( this._closeTimerId ) {
-			clearTimeout( this._closeTimerId );
+	deferMenuChange(showingMenu) {
+		if (this._closeTimerId) {
+			clearTimeout(this._closeTimerId);
 		}
-		this._closeTimerId = defer( () => {
+		this._closeTimerId = defer(() => {
 			this._closeTimerId = null;
-			this.setState( { showingMenu } );
-		} );
+			this.setState({ showingMenu });
+		});
 	}
 
-	openEditorWithSite = siteSlug => {
-		const pingbackAttributes = getPingbackAttributes( this.props.post );
+	openEditorWithSite = (siteSlug) => {
+		const pingbackAttributes = getPingbackAttributes(this.props.post);
 
-		recordAction( 'daily_post_challenge' );
-		recordGaEvent( 'Clicked on Daily Post challenge' );
-		recordTrackForPost( 'calypso_reader_daily_post_challenge_site_picked', this.props.post );
+		recordAction('daily_post_challenge');
+		recordGaEvent('Clicked on Daily Post challenge');
+		recordTrackForPost('calypso_reader_daily_post_challenge_site_picked', this.props.post);
 
-		this.props.markPostSeen( this.props.post, this.props.site );
+		this.props.markPostSeen(this.props.post, this.props.site);
 
-		page( `/post/${ siteSlug }?${ stringify( pingbackAttributes ) }` );
+		page(`/post/${siteSlug}?${stringify(pingbackAttributes)}`);
 		return true;
 	};
 
-	toggle = event => {
+	toggle = (event) => {
 		event.preventDefault();
-		if ( ! this.state.showingMenu ) {
-			recordAction( 'open_daily_post_challenge' );
-			recordGaEvent( 'Opened Daily Post Challenge' );
-			recordTrackForPost( 'calypso_reader_daily_post_challenge_opened', this.props.post );
+		if (!this.state.showingMenu) {
+			recordAction('open_daily_post_challenge');
+			recordGaEvent('Opened Daily Post Challenge');
+			recordTrackForPost('calypso_reader_daily_post_challenge_opened', this.props.post);
 
-			if ( this.props.onlyOneSite ) {
-				return this.openEditorWithSite( this.props.primarySiteSlug );
+			if (this.props.onlyOneSite) {
+				return this.openEditorWithSite(this.props.primarySiteSlug);
 			}
 		}
-		this.deferMenuChange( ! this.state.showingMenu );
+		this.deferMenuChange(!this.state.showingMenu);
 	};
 
 	closeMenu = () => {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
 		// Chrome (at least) will not fire the click
-		if ( this._isMounted ) {
-			this.deferMenuChange( false );
+		if (this._isMounted) {
+			this.deferMenuChange(false);
 		}
 	};
 
@@ -137,14 +137,14 @@ export class DailyPostButton extends React.Component {
 		return (
 			<AsyncLoad
 				require="components/sites-popover"
-				placeholder={ null }
+				placeholder={null}
 				key="menu"
-				header={ <div> { translate( 'Post on' ) } </div> }
-				context={ this.dailyPostButtonRef.current }
-				visible={ this.state.showingMenu }
-				groups={ true }
-				onSiteSelect={ this.openEditorWithSite }
-				onClose={ this.closeMenu }
+				header={<div> {translate('Post on')} </div>}
+				context={this.dailyPostButtonRef.current}
+				visible={this.state.showingMenu}
+				groups={true}
+				onSiteSelect={this.openEditorWithSite}
+				onClose={this.closeMenu}
 				position="top"
 				className="is-reader"
 			/>
@@ -153,14 +153,14 @@ export class DailyPostButton extends React.Component {
 	};
 
 	render() {
-		const title = get( this.props, 'post.title' );
-		const buttonClasses = classnames( {
+		const title = get(this.props, 'post.title');
+		const buttonClasses = classnames({
 			'daily-post-button__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,
-		} );
+		});
 
-		if ( ! this.props.canParticipate ) {
+		if (!this.props.canParticipate) {
 			return null;
 		}
 
@@ -174,14 +174,14 @@ export class DailyPostButton extends React.Component {
 			},
 			[
 				<Button
-					ref={ this.dailyPostButtonRef }
+					ref={this.dailyPostButtonRef}
 					key="button"
 					compact
 					primary
-					className={ buttonClasses }
+					className={buttonClasses}
 				>
 					<Gridicon icon="create" />
-					<span>{ translate( 'Post about %(title)s', { args: { title } } ) } </span>
+					<span>{translate('Post about %(title)s', { args: { title } })} </span>
 				</Button>,
 				this.state.showingMenu ? this.renderSitesPopover() : null,
 			]
@@ -190,15 +190,15 @@ export class DailyPostButton extends React.Component {
 }
 
 export default connect(
-	state => {
-		const primarySiteId = getPrimarySiteId( state );
-		const user = getCurrentUser( state );
-		const visibleSiteCount = get( user, 'visible_site_count', 0 );
+	(state) => {
+		const primarySiteId = getPrimarySiteId(state);
+		const user = getCurrentUser(state);
+		const visibleSiteCount = get(user, 'visible_site_count', 0);
 		return {
-			canParticipate: !! primarySiteId,
-			primarySiteSlug: getSiteSlug( state, primarySiteId ),
+			canParticipate: !!primarySiteId,
+			primarySiteSlug: getSiteSlug(state, primarySiteId),
 			onlyOneSite: visibleSiteCount === 1,
 		};
 	},
 	{ markPostSeen }
-)( DailyPostButton );
+)(DailyPostButton);

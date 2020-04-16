@@ -11,7 +11,7 @@ import getBackupProgressForRewindId from './get-backup-progress-for-rewind-id';
  * @param {?number|string} rewindId the rewindId of the backup we are interested in
  * @returns {?string} the url of the download, otherwise null
  */
-export default function getBackupDownloadUrl( state, siteId, rewindId ) {
-	const maybeProgress = getBackupProgressForRewindId( state, siteId, rewindId );
+export default function getBackupDownloadUrl(state, siteId, rewindId) {
+	const maybeProgress = getBackupProgressForRewindId(state, siteId, rewindId);
 	return maybeProgress && maybeProgress.url ? maybeProgress.url : null;
 }

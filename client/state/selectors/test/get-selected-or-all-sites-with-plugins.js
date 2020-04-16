@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 import { userState } from './fixtures/user-state';
 
-describe( 'getSelectedOrAllSitesWithPlugins()', () => {
-	test( 'should return an empty array if no sites exist in state', () => {
+describe('getSelectedOrAllSitesWithPlugins()', () => {
+	test('should return an empty array if no sites exist in state', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -18,11 +18,11 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			},
 			ui: { selectedSiteId: 2916284 },
 		};
-		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getSelectedOrAllSitesWithPlugins(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return an empty array if the sites existing are not able to contain plugins', () => {
+	test('should return an empty array if the sites existing are not able to contain plugins', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -35,11 +35,11 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			},
 			ui: {},
 		};
-		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getSelectedOrAllSitesWithPlugins(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return an array with one site if just one site exists and the user is able to manage plugins there', () => {
+	test('should return an array with one site if just one site exists and the user is able to manage plugins there', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -61,12 +61,12 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			},
 			ui: {},
 		};
-		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.have.length( 1 );
-		expect( sites[ 0 ].ID ).to.eql( 2916288 );
-	} );
+		const sites = getSelectedOrAllSitesWithPlugins(state);
+		expect(sites).to.have.length(1);
+		expect(sites[0].ID).to.eql(2916288);
+	});
 
-	test( 'should return an array with all the sites able to have plugins', () => {
+	test('should return an array with all the sites able to have plugins', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -100,13 +100,13 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			},
 			ui: {},
 		};
-		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.have.length( 2 );
-		expect( sites[ 0 ].ID ).to.eql( 2916286 );
-		expect( sites[ 1 ].ID ).to.eql( 2916289 );
-	} );
+		const sites = getSelectedOrAllSitesWithPlugins(state);
+		expect(sites).to.have.length(2);
+		expect(sites[0].ID).to.eql(2916286);
+		expect(sites[1].ID).to.eql(2916289);
+	});
 
-	test( 'should return an array with the selected site if it is able to have plugins', () => {
+	test('should return an array with the selected site if it is able to have plugins', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -136,12 +136,12 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			},
 			ui: { selectedSiteId: 2916289 },
 		};
-		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.have.length( 1 );
-		expect( sites[ 0 ].ID ).to.eql( 2916289 );
-	} );
+		const sites = getSelectedOrAllSitesWithPlugins(state);
+		expect(sites).to.have.length(1);
+		expect(sites[0].ID).to.eql(2916289);
+	});
 
-	test( 'should return an empty array if the selected site is not able to have plugins', () => {
+	test('should return an empty array if the selected site is not able to have plugins', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -173,7 +173,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			},
 			ui: { selectedSiteId: 2916287 },
 		};
-		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.eql( [] );
-	} );
-} );
+		const sites = getSelectedOrAllSitesWithPlugins(state);
+		expect(sites).to.eql([]);
+	});
+});

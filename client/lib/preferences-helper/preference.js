@@ -22,20 +22,20 @@ class Preference extends Component {
 
 		let preferenceHandler = (
 			<ul>
-				<li key={ name }>{ value.toString() } </li>
+				<li key={name}>{value.toString()} </li>
 			</ul>
 		);
 
-		if ( isArray( value ) ) {
-			preferenceHandler = <ArrayPreference name={ name } value={ value } />;
-		} else if ( isPlainObject( value ) ) {
-			preferenceHandler = <ObjectPreference name={ name } value={ value } />;
-		} else if ( 'string' === typeof value ) {
-			preferenceHandler = <StringPreference name={ name } value={ value } />;
-		} else if ( 'boolean' === typeof value ) {
-			preferenceHandler = <BooleanPreference name={ name } value={ value } />;
-		} else if ( 'number' === typeof value ) {
-			preferenceHandler = <NumberPreference name={ name } value={ value } />;
+		if (isArray(value)) {
+			preferenceHandler = <ArrayPreference name={name} value={value} />;
+		} else if (isPlainObject(value)) {
+			preferenceHandler = <ObjectPreference name={name} value={value} />;
+		} else if ('string' === typeof value) {
+			preferenceHandler = <StringPreference name={name} value={value} />;
+		} else if ('boolean' === typeof value) {
+			preferenceHandler = <BooleanPreference name={name} value={value} />;
+		} else if ('number' === typeof value) {
+			preferenceHandler = <NumberPreference name={name} value={value} />;
 		}
 
 		return (
@@ -43,19 +43,19 @@ class Preference extends Component {
 				<div className="preferences-helper__preference-header">
 					<button
 						className="preferences-helper__unset"
-						onClick={ partial( unsetPreference, name, null ) }
-						title={ translate( 'Unset Preference' ) }
+						onClick={partial(unsetPreference, name, null)}
+						title={translate('Unset Preference')}
 					>
-						{ 'X' }
+						{'X'}
 					</button>
-					<span>{ name }</span>
+					<span>{name}</span>
 				</div>
-				{ preferenceHandler }
+				{preferenceHandler}
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	unsetPreference: savePreference,
-} )( localize( Preference ) );
+})(localize(Preference));

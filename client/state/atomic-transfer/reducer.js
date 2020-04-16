@@ -15,8 +15,8 @@ import {
 	ATOMIC_TRANSFER_COMPLETE,
 } from 'state/action-types';
 
-export const atomicTransfer = withSchemaValidation( schema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const atomicTransfer = withSchemaValidation(schema, (state = {}, action) => {
+	switch (action.type) {
 		case ATOMIC_TRANSFER_SET: {
 			const { transfer } = action;
 			return { ...state, ...transfer };
@@ -24,10 +24,10 @@ export const atomicTransfer = withSchemaValidation( schema, ( state = {}, action
 	}
 
 	return state;
-} );
+});
 
-export const fetchingTransfer = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const fetchingTransfer = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case ATOMIC_TRANSFER_REQUEST:
 			return true;
 		case ATOMIC_TRANSFER_REQUEST_FAILURE:
@@ -37,12 +37,12 @@ export const fetchingTransfer = withoutPersistence( ( state = false, action ) =>
 	}
 
 	return state;
-} );
+});
 
-export const atomicTransferReducers = combineReducers( {
+export const atomicTransferReducers = combineReducers({
 	atomicTransfer,
 	fetchingTransfer,
-} );
+});
 
 //export default atomicTransferReducers;
-export default keyedReducer( 'siteId', atomicTransferReducers );
+export default keyedReducer('siteId', atomicTransferReducers);

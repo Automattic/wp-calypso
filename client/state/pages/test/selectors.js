@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { isFrontPage, isPostsPage } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( 'isFrontPage()', () => {
-		test( 'should return true if the page is set as the front page', () => {
+describe('selectors', () => {
+	describe('isFrontPage()', () => {
+		test('should return true if the page is set as the front page', () => {
 			const result = isFrontPage(
 				{
 					sites: {
@@ -28,10 +28,10 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( true );
-		} );
+			expect(result).to.eql(true);
+		});
 
-		test( 'should return false if the page is not set as the front page', () => {
+		test('should return false if the page is not set as the front page', () => {
 			const result = isFrontPage(
 				{
 					sites: {
@@ -49,10 +49,10 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( false );
-		} );
+			expect(result).to.eql(false);
+		});
 
-		test( 'should return false if a static page is not set as the front page', () => {
+		test('should return false if a static page is not set as the front page', () => {
 			const result = isFrontPage(
 				{
 					sites: {
@@ -70,10 +70,10 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( false );
-		} );
+			expect(result).to.eql(false);
+		});
 
-		test( 'should return false if the site is not known', () => {
+		test('should return false if the site is not known', () => {
 			const result = isFrontPage(
 				{
 					sites: {
@@ -84,12 +84,12 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.equal( false );
-		} );
-	} );
+			expect(result).to.equal(false);
+		});
+	});
 
-	describe( 'isPostsPage()', () => {
-		test( 'should return true if the page is set as the posts page', () => {
+	describe('isPostsPage()', () => {
+		test('should return true if the page is set as the posts page', () => {
 			const result = isPostsPage(
 				{
 					sites: {
@@ -106,10 +106,10 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( true );
-		} );
+			expect(result).to.eql(true);
+		});
 
-		test( 'should return false if the page is not set as the posts page', () => {
+		test('should return false if the page is not set as the posts page', () => {
 			const result = isPostsPage(
 				{
 					sites: {
@@ -126,10 +126,10 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.eql( false );
-		} );
+			expect(result).to.eql(false);
+		});
 
-		test( 'should return false if the site is not known', () => {
+		test('should return false if the site is not known', () => {
 			const result = isPostsPage(
 				{
 					sites: {
@@ -140,7 +140,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( result ).to.equal( false );
-		} );
-	} );
-} );
+			expect(result).to.equal(false);
+		});
+	});
+});

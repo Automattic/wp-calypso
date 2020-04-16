@@ -12,7 +12,7 @@ export const countsSchema = {
 					type: 'array',
 					items: {
 						type: 'object',
-						required: [ 'period', 'labelDay' ],
+						required: ['period', 'labelDay'],
 						properties: {
 							classNames: { type: 'array', items: { type: 'string' } },
 							comments: 'number',

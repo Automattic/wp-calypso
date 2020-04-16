@@ -23,14 +23,14 @@ class PodcastingLink extends Component {
 	render() {
 		const { isPodcastingEnabled, translate } = this.props;
 
-		const classes = classnames( 'podcasting-details__link', {
+		const classes = classnames('podcasting-details__link', {
 			'is-enabled': isPodcastingEnabled,
-		} );
+		});
 
 		return (
-			<div className={ classes }>
-				<SettingsSectionHeader title={ translate( 'Podcasting' ) } />
-				<Card className="podcasting-details__link-card">{ this.renderCardBody() }</Card>
+			<div className={classes}>
+				<SettingsSectionHeader title={translate('Podcasting')} />
+				<Card className="podcasting-details__link-card">{this.renderCardBody()}</Card>
 			</div>
 		);
 	}
@@ -44,22 +44,20 @@ class PodcastingLink extends Component {
 			translate,
 		} = this.props;
 
-		if ( isPrivate ) {
+		if (isPrivate) {
 			return <PodcastingPrivateSiteMessage />;
 		}
 
-		if ( ! isPodcastingEnabled ) {
+		if (!isPodcastingEnabled) {
 			return (
 				<div className="podcasting-details__link-action-container">
 					<div className="podcasting-details__link-info">
-						{ translate(
-							'Publish a podcast feed to Apple Podcasts and other podcasting services.'
-						) }
+						{translate('Publish a podcast feed to Apple Podcasts and other podcasting services.')}
 						<br />
 						<PodcastingSupportLink />
 					</div>
-					<Button className="podcasting-details__link-button" href={ detailsLink }>
-						{ translate( 'Set up' ) }
+					<Button className="podcasting-details__link-button" href={detailsLink}>
+						{translate('Set up')}
 					</Button>
 				</div>
 			);
@@ -68,36 +66,36 @@ class PodcastingLink extends Component {
 		return (
 			<Fragment>
 				<div className="podcasting-details__link-action-container">
-					<PodcastingPublishNotice podcastingCategoryId={ podcastingCategoryId } />
-					<Button className="podcasting-details__link-button" href={ detailsLink }>
-						{ translate( 'Manage Details' ) }
+					<PodcastingPublishNotice podcastingCategoryId={podcastingCategoryId} />
+					<Button className="podcasting-details__link-button" href={detailsLink}>
+						{translate('Manage Details')}
 					</Button>
 				</div>
 				<div className="podcasting-details__link-feed">
-					<PodcastFeedUrl categoryId={ podcastingCategoryId } />
+					<PodcastFeedUrl categoryId={podcastingCategoryId} />
 				</div>
 			</Fragment>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const { fields } = ownProps;
 
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSelectedSiteSlug(state);
 
-	const podcastingCategoryId = Number( fields && fields.podcasting_category_id );
+	const podcastingCategoryId = Number(fields && fields.podcasting_category_id);
 	const podcastingCategory =
-		podcastingCategoryId > 0 && getTerm( state, siteId, 'category', podcastingCategoryId );
+		podcastingCategoryId > 0 && getTerm(state, siteId, 'category', podcastingCategoryId);
 
-	const detailsLink = `/settings/podcasting/${ siteSlug }`;
+	const detailsLink = `/settings/podcasting/${siteSlug}`;
 
 	return {
 		siteSlug,
-		isPrivate: isPrivateSite( state, siteId ),
-		isPodcastingEnabled: !! podcastingCategory,
+		isPrivate: isPrivateSite(state, siteId),
+		isPodcastingEnabled: !!podcastingCategory,
 		podcastingCategoryId,
 		detailsLink,
 	};
-} )( localize( PodcastingLink ) );
+})(localize(PodcastingLink));

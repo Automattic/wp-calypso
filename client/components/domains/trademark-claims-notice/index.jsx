@@ -48,58 +48,58 @@ class TrademarkClaimsNotice extends React.Component {
 			hasScrolledToBottom: false,
 			showFullNotice: false,
 			trademarkClaimsNoticeInfo: this.props.trademarkClaimsNoticeInfo,
-			finishedFetching: ! isEmpty( this.props.trademarkClaimsNoticeInfo ),
+			finishedFetching: !isEmpty(this.props.trademarkClaimsNoticeInfo),
 		};
 	}
 
 	UNSAFE_componentWillMount() {
-		if ( isEmpty( this.props.trademarkClaimsNoticeInfo ) && ! this.state.finishedFetching ) {
-			this.checkDomainAvailability().then( ( { trademarkClaimsNoticeInfo } ) => {
-				this.setState( {
+		if (isEmpty(this.props.trademarkClaimsNoticeInfo) && !this.state.finishedFetching) {
+			this.checkDomainAvailability().then(({ trademarkClaimsNoticeInfo }) => {
+				this.setState({
 					trademarkClaimsNoticeInfo,
 					finishedFetching: true,
-				} );
-			} );
+				});
+			});
 		}
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'scroll', this.handleScroll );
+		window.removeEventListener('scroll', this.handleScroll);
 	}
 
 	checkDomainAvailability = () => {
 		const { domain } = this.props;
 
-		return new Promise( resolve => {
+		return new Promise((resolve) => {
 			checkDomainAvailability(
 				{
 					domainName: domain,
-					blogId: get( this.props, 'selectedSite.ID', null ),
+					blogId: get(this.props, 'selectedSite.ID', null),
 					isCartPreCheck: false,
 				},
-				( error, result ) => {
-					resolve( {
-						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
-					} );
+				(error, result) => {
+					resolve({
+						trademarkClaimsNoticeInfo: get(result, 'trademark_claims_notice_info', null),
+					});
 				}
 			);
-		} );
+		});
 	};
 
 	enableActionButtons = () => {
-		this.setState( { hasScrolledToBottom: true } );
-		window.removeEventListener( 'scroll', this.handleScroll );
+		this.setState({ hasScrolledToBottom: true });
+		window.removeEventListener('scroll', this.handleScroll);
 	};
 
 	handleScroll = () => {
 		const { hasScrolledToBottom } = this.state;
-		if ( hasScrolledToBottom ) {
+		if (hasScrolledToBottom) {
 			return;
 		}
 
 		const element = document.scrollingElement;
 
-		if ( element.scrollHeight - element.scrollTop < element.clientHeight + 100 ) {
+		if (element.scrollHeight - element.scrollTop < element.clientHeight + 100) {
 			this.enableActionButtons();
 		}
 	};
@@ -108,8 +108,8 @@ class TrademarkClaimsNotice extends React.Component {
 		const { onGoBack, domain, translate } = this.props;
 
 		return (
-			<HeaderCake onClick={ onGoBack }>
-				{ translate( 'Register %(domain)s', { args: { domain } } ) }
+			<HeaderCake onClick={onGoBack}>
+				{translate('Register %(domain)s', { args: { domain } })}
 			</HeaderCake>
 		);
 	};
@@ -119,11 +119,11 @@ class TrademarkClaimsNotice extends React.Component {
 
 		return (
 			<CompactCard>
-				<h2>{ translate( '%(domain)s matches a trademark.', { args: { domain } } ) }</h2>
+				<h2>{translate('%(domain)s matches a trademark.', { args: { domain } })}</h2>
 				<p>
-					{ translate(
+					{translate(
 						"To continue, you must agree not to infringe on the trademark holders' rights. Please review and acknowledge the following notice."
-					) }
+					)}
 				</p>
 			</CompactCard>
 		);
@@ -132,37 +132,37 @@ class TrademarkClaimsNotice extends React.Component {
 	checkWindowIsScrollable = () => {
 		const element = document.scrollingElement;
 
-		if ( ! element || element.scrollHeight <= element.clientHeight ) {
+		if (!element || element.scrollHeight <= element.clientHeight) {
 			this.enableActionButtons();
 		}
 	};
 
 	showNotice = () => {
 		const { domain } = this.props;
-		this.setState( { showFullNotice: true } );
-		window.addEventListener( 'scroll', this.handleScroll );
-		defer( this.checkWindowIsScrollable );
-		this.props.recordShowTrademarkNoticeButtonClickInTrademarkNotice( domain );
+		this.setState({ showFullNotice: true });
+		window.addEventListener('scroll', this.handleScroll);
+		defer(this.checkWindowIsScrollable);
+		this.props.recordShowTrademarkNoticeButtonClickInTrademarkNotice(domain);
 	};
 
 	renderShowNoticeLink = () => {
 		const { translate } = this.props;
 		return (
 			<CompactCard>
-				<Button onClick={ this.showNotice }>{ translate( 'Show Trademark Notice' ) }</Button>
+				<Button onClick={this.showNotice}>{translate('Show Trademark Notice')}</Button>
 			</CompactCard>
 		);
 	};
 
 	onAccept = () => {
 		const { domain } = this.props;
-		this.props.recordAcknowledgeTrademarkButtonClickInTrademarkNotice( domain );
+		this.props.recordAcknowledgeTrademarkButtonClickInTrademarkNotice(domain);
 		this.props.onAccept();
 	};
 
 	onReject = () => {
 		const { domain } = this.props;
-		this.props.recordChooseAnotherDomainButtonClickInTrademarkNotice( domain );
+		this.props.recordChooseAnotherDomainButtonClickInTrademarkNotice(domain);
 		this.props.onReject();
 	};
 
@@ -171,13 +171,11 @@ class TrademarkClaimsNotice extends React.Component {
 
 		return (
 			<CompactCard>
-				<h2>
-					{ translate( 'Checking for trademark claims on %(domain)s', { args: { domain } } ) }
-				</h2>
+				<h2>{translate('Checking for trademark claims on %(domain)s', { args: { domain } })}</h2>
 				<p>
-					{ translate(
+					{translate(
 						'Please wait a moment while we check for any trademark claims that affect the registration of this domain name.'
-					) }
+					)}
 				</p>
 			</CompactCard>
 		);
@@ -188,18 +186,18 @@ class TrademarkClaimsNotice extends React.Component {
 
 		return (
 			<Fragment>
-				{ this.renderPreamble() }
-				{ /*{ showFullNotice ? this.renderNotice() : this.renderShowNoticeLink() }*/ }
-				{ showFullNotice ? (
+				{this.renderPreamble()}
+				{/*{ showFullNotice ? this.renderNotice() : this.renderShowNoticeLink() }*/}
+				{showFullNotice ? (
 					<TrademarkNotice
-						buttonsEnabled={ hasScrolledToBottom }
-						onAccept={ this.onAccept }
-						onReject={ this.onReject }
-						trademarkClaimsInfo={ trademarkClaimsNoticeInfo }
+						buttonsEnabled={hasScrolledToBottom}
+						onAccept={this.onAccept}
+						onReject={this.onReject}
+						trademarkClaimsInfo={trademarkClaimsNoticeInfo}
 					/>
 				) : (
 					this.renderShowNoticeLink()
-				) }
+				)}
 			</Fragment>
 		);
 	};
@@ -209,13 +207,13 @@ class TrademarkClaimsNotice extends React.Component {
 
 		return (
 			<CompactCard>
-				<h2>{ translate( '%(domain)s has no trademark claims', { args: { domain } } ) }</h2>
+				<h2>{translate('%(domain)s has no trademark claims', { args: { domain } })}</h2>
 				<p>
-					{ translate(
+					{translate(
 						"We didn't find any trademark claims for this domain. Click the button below to continue with domain registration."
-					) }
+					)}
 				</p>
-				<Button onClick={ this.onAccept() }>{ translate( 'Register this domain' ) }</Button>
+				<Button onClick={this.onAccept()}>{translate('Register this domain')}</Button>
 			</CompactCard>
 		);
 	};
@@ -223,7 +221,7 @@ class TrademarkClaimsNotice extends React.Component {
 	renderContent = () => {
 		const { trademarkClaimsNoticeInfo } = this.state;
 
-		return isEmpty( trademarkClaimsNoticeInfo )
+		return isEmpty(trademarkClaimsNoticeInfo)
 			? this.renderNoClaimsMessage()
 			: this.renderTrademarkClaimsNotice();
 	};
@@ -231,19 +229,19 @@ class TrademarkClaimsNotice extends React.Component {
 	render() {
 		const { isSignupStep } = this.props;
 		const { finishedFetching, trademarkClaimsNoticeInfo } = this.state;
-		const showPlaceholder = isEmpty( trademarkClaimsNoticeInfo ) && ! finishedFetching;
+		const showPlaceholder = isEmpty(trademarkClaimsNoticeInfo) && !finishedFetching;
 		const content = showPlaceholder ? this.renderPlaceholder() : this.renderContent();
 
 		return (
 			<div className="trademark-claims-notice">
-				{ ! isSignupStep && this.renderHeader() }
-				<div className="trademark-claims-notice__content">{ content }</div>
+				{!isSignupStep && this.renderHeader()}
+				<div className="trademark-claims-notice__content">{content}</div>
 			</div>
 		);
 	}
 }
 
-export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = domainName =>
+export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = (domainName) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -251,13 +249,13 @@ export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = domainName 
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_show_trademark_notice_click', {
+		recordTracksEvent('calypso_show_trademark_notice_click', {
 			domain_name: domainName,
 			section: 'domains',
-		} )
+		})
 	);
 
-export const recordChooseAnotherDomainButtonClickInTrademarkNotice = domainName =>
+export const recordChooseAnotherDomainButtonClickInTrademarkNotice = (domainName) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -265,13 +263,13 @@ export const recordChooseAnotherDomainButtonClickInTrademarkNotice = domainName 
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_choose_another_domain_trademark_notice_click', {
+		recordTracksEvent('calypso_choose_another_domain_trademark_notice_click', {
 			domain_name: domainName,
 			section: 'domains',
-		} )
+		})
 	);
 
-export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName =>
+export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = (domainName) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -279,14 +277,14 @@ export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_acknowledge_trademark_notice_click', {
+		recordTracksEvent('calypso_acknowledge_trademark_notice_click', {
 			domain_name: domainName,
 			section: 'domains',
-		} )
+		})
 	);
 
-export default connect( state => ( { selectedSite: getSelectedSite( state ) } ), {
+export default connect((state) => ({ selectedSite: getSelectedSite(state) }), {
 	recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
 	recordChooseAnotherDomainButtonClickInTrademarkNotice,
 	recordShowTrademarkNoticeButtonClickInTrademarkNotice,
-} )( localize( TrademarkClaimsNotice ) );
+})(localize(TrademarkClaimsNotice));

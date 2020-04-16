@@ -16,6 +16,6 @@ import getSection from './get-section';
  *
  * @see client/sections
  */
-export default function isSectionIsomorphic( state ) {
-	return get( getSection( state ), 'isomorphic', false );
+export default function isSectionIsomorphic(state) {
+	return get(getSection(state), 'isomorphic', false);
 }

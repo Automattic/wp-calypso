@@ -12,27 +12,27 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 const siteId = 123;
 
-const dispatchFn = action => action;
+const dispatchFn = (action) => action;
 
-const getState = () => ( {
+const getState = () => ({
 	extensions: {
 		woocommerce: {
 			sites: {
-				[ siteId ]: {
+				[siteId]: {
 					shippingClasses: false,
 				},
 			},
 		},
 	},
-} );
+});
 
-describe( 'handlers', () => {
-	describe( '#fetch', () => {
-		test( 'should dispatch a get action for the shipping classes', () => {
-			const action = fetchShippingClasses( siteId )( dispatchFn, getState );
-			const result = fetch( action );
+describe('handlers', () => {
+	describe('#fetch', () => {
+		test('should dispatch a get action for the shipping classes', () => {
+			const action = fetchShippingClasses(siteId)(dispatchFn, getState);
+			const result = fetch(action);
 
-			expect( result ).to.eql(
+			expect(result).to.eql(
 				http(
 					{
 						method: 'GET',
@@ -48,6 +48,6 @@ describe( 'handlers', () => {
 					action
 				)
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

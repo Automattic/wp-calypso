@@ -38,21 +38,21 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 	};
 
 	toggleConfirmationChecked = () => {
-		this.setState( {
-			isConfirmationChecked: ! this.state.isConfirmationChecked,
-		} );
+		this.setState({
+			isConfirmationChecked: !this.state.isConfirmationChecked,
+		});
 	};
 
-	onConfirm = closeDialog => {
+	onConfirm = (closeDialog) => {
 		this.onClose();
-		this.props.onConfirm( this.props.targetSite, closeDialog );
+		this.props.onConfirm(this.props.targetSite, closeDialog);
 	};
 
 	onClose = () => {
 		this.props.onClose();
-		this.setState( {
+		this.setState({
 			isConfirmationChecked: false,
-		} );
+		});
 	};
 
 	render() {
@@ -68,13 +68,13 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 		const buttons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 			},
 			{
 				action: 'confirm',
-				label: translate( 'Change site address' ),
+				label: translate('Change site address'),
 				onClick: this.onConfirm,
-				disabled: ! this.state.isConfirmationChecked,
+				disabled: !this.state.isConfirmationChecked,
 				isPrimary: true,
 			},
 		];
@@ -82,28 +82,24 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 		return (
 			<Dialog
 				className="site-address-changer__dialog"
-				isVisible={ isVisible }
-				buttons={ buttons }
-				onClose={ this.onClose }
+				isVisible={isVisible}
+				buttons={buttons}
+				onClose={this.onClose}
 			>
 				<TrackComponentView
 					eventName="calypso_siteaddresschange_areyousure_view"
-					eventProperties={ {
+					eventProperties={{
 						blog_id: siteId,
 						new_domain: newDomainName,
-					} }
+					}}
 				/>
 				<h1 className="site-address-changer__dialog-heading">
-					{ translate( 'Confirm Site Address Change' ) }
+					{translate('Confirm Site Address Change')}
 				</h1>
 				<div className="site-address-changer__confirmation-detail">
-					<Gridicon
-						icon="cross-circle"
-						size={ 18 }
-						className="site-address-changer__copy-deletion"
-					/>
+					<Gridicon icon="cross-circle" size={18} className="site-address-changer__copy-deletion" />
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
-						{ translate(
+						{translate(
 							'{{strong}}%(currentDomainName)s{{/strong}}%(currentDomainSuffix)s will be removed and unavailable for use.',
 							{
 								components: {
@@ -114,17 +110,17 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 									currentDomainSuffix: currentDomainSuffix,
 								},
 							}
-						) }
+						)}
 					</p>
 				</div>
 				<div className="site-address-changer__confirmation-detail">
 					<Gridicon
 						icon="checkmark-circle"
-						size={ 18 }
+						size={18}
 						className="site-address-changer__copy-addition"
 					/>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
-						{ translate(
+						{translate(
 							'{{strong}}%(newDomainName)s{{/strong}}%(newDomainSuffix)s will be your new site address.',
 							{
 								components: {
@@ -135,19 +131,17 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 									newDomainSuffix: newDomainSuffix,
 								},
 							}
-						) }
+						)}
 					</p>
 				</div>
-				<h2>{ translate( 'Check the box to confirm' ) }</h2>
+				<h2>{translate('Check the box to confirm')}</h2>
 				<FormLabel>
 					<FormInputCheckbox
-						checked={ this.state.isConfirmationChecked }
-						onChange={ this.toggleConfirmationChecked }
+						checked={this.state.isConfirmationChecked}
+						onChange={this.toggleConfirmationChecked}
 					/>
 					<span>
-						{ translate(
-							"I understand that I won't be able to undo this change to my site address."
-						) }
+						{translate("I understand that I won't be able to undo this change to my site address.")}
 					</span>
 				</FormLabel>
 			</Dialog>
@@ -155,4 +149,4 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 	}
 }
 
-export default localize( SiteAddressChangerConfirmationDialog );
+export default localize(SiteAddressChangerConfirmationDialog);

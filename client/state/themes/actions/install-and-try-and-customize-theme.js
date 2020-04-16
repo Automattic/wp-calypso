@@ -16,10 +16,10 @@ import 'state/themes/init';
  * @param  {string}   siteId       Jetpack Site ID
  * @returns {Function}              Action thunk
  */
-export function installAndTryAndCustomizeTheme( themeId, siteId ) {
-	return dispatch => {
-		return dispatch( installTheme( themeId, siteId ) ).then( () => {
-			dispatch( tryAndCustomizeTheme( themeId, siteId ) );
-		} );
+export function installAndTryAndCustomizeTheme(themeId, siteId) {
+	return (dispatch) => {
+		return dispatch(installTheme(themeId, siteId)).then(() => {
+			dispatch(tryAndCustomizeTheme(themeId, siteId));
+		});
 	};
 }

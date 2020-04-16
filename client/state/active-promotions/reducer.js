@@ -19,14 +19,14 @@ import { itemsSchema } from './schema';
  * @param {object} action - activePromotions action
  * @returns {object} updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = [], action) => {
+	switch (action.type) {
 		case ACTIVE_PROMOTIONS_RECEIVE:
-			return [ ...action.activePromotions ];
+			return [...action.activePromotions];
 	}
 
 	return state;
-} );
+});
 
 /**
  * `Reducer` function which handles request/response actions
@@ -36,8 +36,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
  * @param {object} action - activePromotions action
  * @returns {object} updated state
  */
-export const requesting = ( state = false, action ) => {
-	switch ( action.type ) {
+export const requesting = (state = false, action) => {
+	switch (action.type) {
 		case ACTIVE_PROMOTIONS_REQUEST:
 			return true;
 
@@ -56,8 +56,8 @@ export const requesting = ( state = false, action ) => {
  * @param {object} action - activePromotions action
  * @returns {object} updated state
  */
-export const error = ( state = false, action ) => {
-	switch ( action.type ) {
+export const error = (state = false, action) => {
+	switch (action.type) {
 		case ACTIVE_PROMOTIONS_REQUEST:
 		case ACTIVE_PROMOTIONS_REQUEST_SUCCESS:
 			return false;
@@ -69,8 +69,8 @@ export const error = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
 	error,
-} );
+});

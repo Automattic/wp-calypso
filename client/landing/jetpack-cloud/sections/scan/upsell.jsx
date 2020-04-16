@@ -17,28 +17,28 @@ import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-function ScanUpsellPage( props ) {
+function ScanUpsellPage(props) {
 	return (
 		<Main wideLayout className="scan__main">
 			<DocumentHead title="Scanner" />
 			<SidebarNavigation />
 			<div className="scan__content">
 				<SecurityIcon icon="info" />
-				<h1 className="scan__header">{ translate( 'Your site does not have scan' ) }</h1>
+				<h1 className="scan__header">{translate('Your site does not have scan')}</h1>
 				<p>
-					{ translate(
+					{translate(
 						'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
-					) }
+					)}
 				</p>
 				<Button
 					primary
 					// TODO: Use Jetpack redirect.
-					href={ `https://wordpress.com/checkout/jetpack_scan/${ props.siteSlug }` }
+					href={`https://wordpress.com/checkout/jetpack_scan/${props.siteSlug}`}
 					className="scan__button"
 					target="_blank"
-					onClick={ () => props.recordTracksEvent( 'cloud_scan_upsell_click' ) }
+					onClick={() => props.recordTracksEvent('cloud_scan_upsell_click')}
 				>
-					{ translate( 'Upgrade now' ) }
+					{translate('Upgrade now')}
 				</Button>
 			</div>
 			<StatsFooter
@@ -50,8 +50,8 @@ function ScanUpsellPage( props ) {
 }
 
 export default connect(
-	state => ( {
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	(state) => ({
+		siteSlug: getSelectedSiteSlug(state),
+	}),
 	{ recordTracksEvent }
-)( ScanUpsellPage );
+)(ScanUpsellPage);

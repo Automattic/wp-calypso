@@ -19,12 +19,12 @@ import getTimezonesLabel from 'state/selectors/get-timezones-label';
  * @param {string} continent - continent value
  * @returns {Array} Continent timezones array
  */
-export default function getTimezonesLabelsByContinent( state, continent ) {
-	const timezones = getTimezonesByContinent( state, continent );
+export default function getTimezonesLabelsByContinent(state, continent) {
+	const timezones = getTimezonesByContinent(state, continent);
 
-	if ( ! timezones ) {
+	if (!timezones) {
 		return null;
 	}
 
-	return fromPairs( map( timezones, value => [ value, getTimezonesLabel( state, value ) ] ) );
+	return fromPairs(map(timezones, (value) => [value, getTimezonesLabel(state, value)]));
 }

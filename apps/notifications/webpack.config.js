@@ -6,10 +6,10 @@
 /**
  * External dependencies
  */
-const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
-const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-const path = require( 'path' );
-const spawnSync = require( 'child_process' ).spawnSync;
+const getBaseWebpackConfig = require('@automattic/calypso-build/webpack.config.js');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const spawnSync = require('child_process').spawnSync;
 
 /**
  * Return a webpack config object
@@ -31,52 +31,52 @@ const spawnSync = require( 'child_process' ).spawnSync;
 function getWebpackConfig(
 	env = {},
 	{
-		entry = path.join( __dirname, 'src', 'standalone' ),
-		'output-path': outputPath = path.join( __dirname, 'dist' ),
+		entry = path.join(__dirname, 'src', 'standalone'),
+		'output-path': outputPath = path.join(__dirname, 'dist'),
 		'output-filename': outputFilename = 'build.min.js',
 	}
 ) {
-	const webpackConfig = getBaseWebpackConfig( env, {
+	const webpackConfig = getBaseWebpackConfig(env, {
 		entry,
 		'output-filename': outputFilename,
 		'output-path': outputPath,
-	} );
+	});
 
 	const pageMeta = {
 		nodePlatform: process.platform,
 		nodeVersion: process.version,
-		gitDescribe: spawnSync( 'git', [ 'describe', '--always', '--dirty', '--long' ], {
+		gitDescribe: spawnSync('git', ['describe', '--always', '--dirty', '--long'], {
 			encoding: 'utf8',
-		} ).stdout.replace( '\n', '' ),
+		}).stdout.replace('\n', ''),
 	};
 
 	return {
 		...webpackConfig,
 		plugins: [
 			...webpackConfig.plugins,
-			new HtmlWebpackPlugin( {
-				filename: path.join( outputPath, 'index.html' ),
-				template: path.join( __dirname, 'src', 'index.ejs' ),
+			new HtmlWebpackPlugin({
+				filename: path.join(outputPath, 'index.html'),
+				template: path.join(__dirname, 'src', 'index.ejs'),
 				title: 'Notifications',
 				hash: true,
 				inject: false,
 				isRTL: false,
 				...pageMeta,
-			} ),
-			new HtmlWebpackPlugin( {
-				filename: path.join( outputPath, 'rtl.html' ),
-				template: path.join( __dirname, 'src', 'index.ejs' ),
+			}),
+			new HtmlWebpackPlugin({
+				filename: path.join(outputPath, 'rtl.html'),
+				template: path.join(__dirname, 'src', 'index.ejs'),
 				title: 'Notifications',
 				hash: true,
 				inject: false,
 				isRTL: true,
 				...pageMeta,
-			} ),
-			new HtmlWebpackPlugin( {
-				filename: path.join( outputPath, 'cache-buster.txt' ),
+			}),
+			new HtmlWebpackPlugin({
+				filename: path.join(outputPath, 'cache-buster.txt'),
 				templateContent: () => pageMeta.gitDescribe,
 				inject: false,
-			} ),
+			}),
 		],
 	};
 }

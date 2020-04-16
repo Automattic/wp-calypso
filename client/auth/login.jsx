@@ -35,48 +35,48 @@ export class Auth extends Component {
 	};
 
 	componentDidMount() {
-		AuthStore.on( 'change', this.refreshData );
+		AuthStore.on('change', this.refreshData);
 	}
 
 	componentWillUnmount() {
-		AuthStore.off( 'change', this.refreshData );
+		AuthStore.off('change', this.refreshData);
 	}
 
-	getClickHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	getClickHandler = (action) => () => this.props.recordGoogleEvent('Me', 'Clicked on ' + action);
 
-	getFocusHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	getFocusHandler = (action) => () => this.props.recordGoogleEvent('Me', 'Focused on ' + action);
 
 	refreshData = () => {
-		this.setState( AuthStore.get() );
+		this.setState(AuthStore.get());
 	};
 
-	focusInput = input => {
-		if ( this.state.requires2fa && this.state.inProgress === false ) {
+	focusInput = (input) => {
+		if (this.state.requires2fa && this.state.inProgress === false) {
 			input.focus();
 		}
 	};
 
-	submitForm = event => {
+	submitForm = (event) => {
 		event.preventDefault();
 		event.stopPropagation();
 
-		login( this.state.login, this.state.password, this.state.auth_code );
+		login(this.state.login, this.state.password, this.state.auth_code);
 	};
 
 	toggleSelfHostedInstructions = () => {
-		const isShowing = ! this.state.showInstructions;
-		this.setState( { showInstructions: isShowing } );
+		const isShowing = !this.state.showInstructions;
+		this.setState({ showInstructions: isShowing });
 	};
 
-	handleChange = event => {
+	handleChange = (event) => {
 		const { name, value } = event.currentTarget;
 
-		this.setState( { [ name ]: value } );
+		this.setState({ [name]: value });
 	};
 
 	canSubmitForm() {
 		// No submission until the ajax has finished
-		return ! this.state.inProgress;
+		return !this.state.inProgress;
 	}
 
 	render() {
@@ -87,88 +87,86 @@ export class Auth extends Component {
 			<Main className="auth">
 				<div className="auth__content">
 					<WordPressLogo />
-					<form className="auth__form" onSubmit={ this.submitForm }>
+					<form className="auth__form" onSubmit={this.submitForm}>
 						<FormFieldset>
 							<div className="auth__input-wrapper">
 								<Gridicon icon="user" />
 								<FormTextInput
 									name="login"
-									disabled={ requires2fa || inProgress }
-									placeholder={ translate( 'Email address or username' ) }
-									onFocus={ this.getFocusHandler( 'Username or email address' ) }
-									value={ this.state.login }
-									onChange={ this.handleChange }
+									disabled={requires2fa || inProgress}
+									placeholder={translate('Email address or username')}
+									onFocus={this.getFocusHandler('Username or email address')}
+									value={this.state.login}
+									onChange={this.handleChange}
 								/>
 							</div>
 							<div className="auth__input-wrapper">
 								<Gridicon icon="lock" />
 								<FormPasswordInput
 									name="password"
-									disabled={ requires2fa || inProgress }
-									placeholder={ translate( 'Password' ) }
-									onFocus={ this.getFocusHandler( 'Password' ) }
-									hideToggle={ requires2fa }
-									submitting={ inProgress }
-									value={ this.state.password }
-									onChange={ this.handleChange }
+									disabled={requires2fa || inProgress}
+									placeholder={translate('Password')}
+									onFocus={this.getFocusHandler('Password')}
+									hideToggle={requires2fa}
+									submitting={inProgress}
+									value={this.state.password}
+									onChange={this.handleChange}
 								/>
 							</div>
-							{ requires2fa && (
+							{requires2fa && (
 								<FormFieldset>
 									<FormTextInput
 										autoComplete="off"
 										name="auth_code"
 										type="tel"
-										ref={ this.focusInput }
-										disabled={ inProgress }
-										placeholder={ translate( 'Verification code' ) }
-										onFocus={ this.getFocusHandler( 'Verification code' ) }
-										value={ this.state.auth_code }
-										onChange={ this.handleChange }
+										ref={this.focusInput}
+										disabled={inProgress}
+										placeholder={translate('Verification code')}
+										onFocus={this.getFocusHandler('Verification code')}
+										value={this.state.auth_code}
+										onChange={this.handleChange}
 									/>
 								</FormFieldset>
-							) }
+							)}
 						</FormFieldset>
 						<FormButtonsBar>
 							<FormButton
-								disabled={ ! this.canSubmitForm() }
-								onClick={ this.getClickHandler( 'Sign in' ) }
+								disabled={!this.canSubmitForm()}
+								onClick={this.getClickHandler('Sign in')}
 							>
-								{ requires2fa ? translate( 'Verify' ) : translate( 'Sign in' ) }
+								{requires2fa ? translate('Verify') : translate('Sign in')}
 							</FormButton>
 						</FormButtonsBar>
-						{ ! requires2fa && <LostPassword /> }
-						{ errorMessage && (
-							<Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } />
-						) }
-						{ requires2fa && (
-							<AuthCodeButton username={ this.state.login } password={ this.state.password } />
-						) }
+						{!requires2fa && <LostPassword />}
+						{errorMessage && <Notice text={errorMessage} status={errorLevel} showDismiss={false} />}
+						{requires2fa && (
+							<AuthCodeButton username={this.state.login} password={this.state.password} />
+						)}
 					</form>
 					<a
 						className="auth__help"
 						target="_blank"
 						rel="noopener noreferrer"
-						title={ translate( 'Visit the WordPress.com support site for help' ) }
-						href={ localizeUrl( 'https://wordpress.com/support/' ) }
+						title={translate('Visit the WordPress.com support site for help')}
+						href={localizeUrl('https://wordpress.com/support/')}
 					>
 						<Gridicon icon="help" />
 					</a>
 					<div className="auth__links">
-						<button onClick={ this.toggleSelfHostedInstructions }>
-							{ translate( 'Add self-hosted site' ) }
+						<button onClick={this.toggleSelfHostedInstructions}>
+							{translate('Add self-hosted site')}
 						</button>
-						<a href={ config( 'signup_url' ) }>{ translate( 'Create account' ) }</a>
+						<a href={config('signup_url')}>{translate('Create account')}</a>
 					</div>
-					{ showInstructions && (
-						<SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } />
-					) }
+					{showInstructions && (
+						<SelfHostedInstructions onClickClose={this.toggleSelfHostedInstructions} />
+					)}
 				</div>
 			</Main>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
-} )( localize( Auth ) );
+})(localize(Auth));

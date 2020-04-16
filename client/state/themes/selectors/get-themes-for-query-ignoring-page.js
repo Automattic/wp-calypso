@@ -21,32 +21,32 @@ import 'state/themes/init';
  * @returns {?Array}         Themes for the theme query
  */
 export const getThemesForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const themes = state.themes.queries[ siteId ];
-		if ( ! themes ) {
+	(state, siteId, query) => {
+		const themes = state.themes.queries[siteId];
+		if (!themes) {
 			return null;
 		}
 
-		let themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
-		if ( ! themesForQueryIgnoringPage ) {
+		let themesForQueryIgnoringPage = themes.getItemsIgnoringPage(query);
+		if (!themesForQueryIgnoringPage) {
 			return null;
 		}
 
 		// If query is default, filter out recommended themes.
-		if ( ! ( query.search || query.filter || query.tier ) ) {
+		if (!(query.search || query.filter || query.tier)) {
 			const recommendedThemes = state.themes.recommendedThemes.themes;
-			const themeIds = flatMap( recommendedThemes, theme => {
+			const themeIds = flatMap(recommendedThemes, (theme) => {
 				return theme.id;
-			} );
-			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( theme => {
-				return ! themeIds.includes( theme.id );
-			} );
+			});
+			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter((theme) => {
+				return !themeIds.includes(theme.id);
+			});
 		}
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
 		// over different pages) which we need to remove manually here for now.
-		return uniq( themesForQueryIgnoringPage );
+		return uniq(themesForQueryIgnoringPage);
 	},
-	state => state.themes.queries,
-	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
+	(state) => state.themes.queries,
+	(state, siteId, query) => getSerializedThemesQueryWithoutPage(query, siteId)
 );

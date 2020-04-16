@@ -6,6 +6,6 @@
 		"emitDeclarationOnly": false,
 		"tsBuildInfoFile": null
 	},
-	"files": [ "index.tsx" ],
+	"files": ["index.tsx"],
 	"include": []
 }

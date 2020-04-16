@@ -18,8 +18,8 @@ import {
 import { recordGoogleEvent } from 'state/analytics/actions';
 import requestExternalAccess from 'lib/sharing';
 
-export const getNamedConnectedService = ( state, name ) =>
-	getKeyringConnections( state ).filter( item => item.service === name );
+export const getNamedConnectedService = (state, name) =>
+	getKeyringConnections(state).filter((item) => item.service === name);
 
 const STATUS_UNKNOWN = 'unknown';
 const STATUS_NOT_CONNECTED = 'not-connected';
@@ -33,26 +33,26 @@ class InlineConnectButton extends Component {
 		connectedService: PropTypes.object,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		this.handleAction = this.onAction.bind( this );
+		this.handleAction = this.onAction.bind(this);
 		this.state = {
 			isConnecting: false,
 			isRefreshing: false,
 		};
 	}
 
-	getConnectionStatus( service, isFetching ) {
-		if ( isFetching ) {
+	getConnectionStatus(service, isFetching) {
+		if (isFetching) {
 			return STATUS_UNKNOWN;
 		}
 
-		if ( ! service ) {
+		if (!service) {
 			return STATUS_NOT_CONNECTED;
 		}
 
-		if ( service.status === 'broken' ) {
+		if (service.status === 'broken') {
 			return STATUS_RECONNECT;
 		}
 
@@ -66,38 +66,38 @@ class InlineConnectButton extends Component {
 			this.state.isFetching
 		);
 
-		if ( STATUS_RECONNECT === connectionStatus ) {
-			this.refresh( service );
+		if (STATUS_RECONNECT === connectionStatus) {
+			this.refresh(service);
 		} else {
-			this.addConnection( service );
+			this.addConnection(service);
 		}
 	}
 
-	refresh( service ) {
-		this.setState( { isRefreshing: true } );
-		this.requestAccess( service.refresh_URL );
-		this.trackEvent( service.ID, 'Clicked Connect Button' );
+	refresh(service) {
+		this.setState({ isRefreshing: true });
+		this.requestAccess(service.refresh_URL);
+		this.trackEvent(service.ID, 'Clicked Connect Button');
 	}
 
-	addConnection( service ) {
-		this.setState( { isConnecting: true } );
-		this.requestAccess( service.connect_URL );
-		this.trackEvent( service.ID, 'Clicked Reconnect Button' );
+	addConnection(service) {
+		this.setState({ isConnecting: true });
+		this.requestAccess(service.connect_URL);
+		this.trackEvent(service.ID, 'Clicked Reconnect Button');
 	}
 
-	requestAccess( url ) {
-		requestExternalAccess( url, () => {
+	requestAccess(url) {
+		requestExternalAccess(url, () => {
 			this.props.requestKeyringConnections();
-		} );
+		});
 	}
 
-	trackEvent( id, eventName ) {
-		this.props.recordGoogleEvent( 'Sharing', eventName, id );
+	trackEvent(id, eventName) {
+		this.props.recordGoogleEvent('Sharing', eventName, id);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isFetching === true ) {
-			this.setState( { isConnecting: false, isRefreshing: false } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.isFetching === true) {
+			this.setState({ isConnecting: false, isRefreshing: false });
 		}
 	}
 
@@ -111,28 +111,28 @@ class InlineConnectButton extends Component {
 
 		return (
 			<ServiceAction
-				status={ connectionStatus }
-				service={ service }
-				onAction={ this.handleAction }
-				isConnecting={ isConnecting }
-				isRefreshing={ isRefreshing }
-				isDisconnecting={ false }
+				status={connectionStatus}
+				service={service}
+				onAction={this.handleAction}
+				isConnecting={isConnecting}
+				isRefreshing={isRefreshing}
+				isDisconnecting={false}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => {
-		const named = getNamedConnectedService( state, props.serviceName );
+	(state, props) => {
+		const named = getNamedConnectedService(state, props.serviceName);
 
 		return {
-			isFetching: isKeyringConnectionsFetching( state ),
-			connectedService: named.length > 0 ? named[ 0 ] : null,
+			isFetching: isKeyringConnectionsFetching(state),
+			connectedService: named.length > 0 ? named[0] : null,
 		};
 	},
 	{
 		requestKeyringConnections,
 		recordGoogleEvent,
 	}
-)( InlineConnectButton );
+)(InlineConnectButton);

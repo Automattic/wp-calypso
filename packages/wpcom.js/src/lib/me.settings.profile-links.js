@@ -9,9 +9,9 @@ const root = '/me/settings/profile-links';
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {null} null
  */
-export default function ProfileLinks( wpcom ) {
-	if ( ! ( this instanceof ProfileLinks ) ) {
-		return new ProfileLinks( wpcom );
+export default function ProfileLinks(wpcom) {
+	if (!(this instanceof ProfileLinks)) {
+		return new ProfileLinks(wpcom);
 	}
 
 	this.wpcom = wpcom;
@@ -34,8 +34,8 @@ export default function ProfileLinks( wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-ProfileLinks.prototype.get = function( query, fn ) {
-	return this.wpcom.req.get( root, query, fn );
+ProfileLinks.prototype.get = function (query, fn) {
+	return this.wpcom.req.get(root, query, fn);
 };
 
 // Create `mine` alias
@@ -62,23 +62,23 @@ ProfileLinks.prototype.mine = ProfileLinks.prototype.get;
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-ProfileLinks.prototype.add = function( links, query, fn ) {
+ProfileLinks.prototype.add = function (links, query, fn) {
 	// query object is optional
-	if ( 'function' === typeof query ) {
+	if ('function' === typeof query) {
 		fn = query;
 		query = {};
 	}
 
 	// links can be Array or an Object
-	if ( ! ( links instanceof Array ) ) {
-		links = [ links ];
+	if (!(links instanceof Array)) {
+		links = [links];
 	}
 
 	// Set api version 1.2 for this endpoint
 	query.apiVersion = '1.2';
 
 	let path = root + '/new';
-	return this.wpcom.req.post( path, query, { links: links }, fn );
+	return this.wpcom.req.post(path, query, { links: links }, fn);
 };
 
 /**
@@ -99,9 +99,9 @@ ProfileLinks.prototype.add = function( links, query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-ProfileLinks.prototype.del = function( slug, query, fn ) {
+ProfileLinks.prototype.del = function (slug, query, fn) {
 	let path = root + '/' + slug + '/delete';
-	return this.wpcom.req.del( path, query, fn );
+	return this.wpcom.req.del(path, query, fn);
 };
 
 // Create `delete` alias

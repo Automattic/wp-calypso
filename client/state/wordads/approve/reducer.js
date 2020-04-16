@@ -18,14 +18,14 @@ import { combineReducers } from 'state/utils';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
+export function requesting(state = {}, action) {
+	switch (action.type) {
 		case WORDADS_SITE_APPROVE_REQUEST:
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.type === WORDADS_SITE_APPROVE_REQUEST,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: action.type === WORDADS_SITE_APPROVE_REQUEST,
+			});
 	}
 	return state;
 }
@@ -37,18 +37,18 @@ export function requesting( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function requestErrors( state = {}, action ) {
-	switch ( action.type ) {
+export function requestErrors(state = {}, action) {
+	switch (action.type) {
 		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.error,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: action.error,
+			});
 		case WORDADS_SITE_APPROVE_REQUEST:
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: null,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: null,
+			});
 	}
 	return state;
 }
@@ -60,24 +60,24 @@ export function requestErrors( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function requestSuccess( state = {}, action ) {
-	switch ( action.type ) {
+export function requestSuccess(state = {}, action) {
+	switch (action.type) {
 		case WORDADS_SITE_APPROVE_REQUEST:
 		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS:
 		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: null,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: null,
+			});
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: true,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: true,
+			});
 	}
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	requestSuccess,
 	requestErrors,
-} );
+});

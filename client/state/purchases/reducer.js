@@ -39,14 +39,14 @@ const initialState = {
  * @param {Array} newPurchases - an array of purchases fetched from the API
  * @returns {Array} An array of purchases
  */
-function overwriteExistingPurchases( existingPurchases, newPurchases ) {
+function overwriteExistingPurchases(existingPurchases, newPurchases) {
 	let purchases = newPurchases;
 
-	existingPurchases.forEach( purchase => {
-		if ( ! find( purchases, { ID: purchase.ID } ) ) {
-			purchases = purchases.concat( purchase );
+	existingPurchases.forEach((purchase) => {
+		if (!find(purchases, { ID: purchase.ID })) {
+			purchases = purchases.concat(purchase);
 		}
-	} );
+	});
 
 	return purchases;
 }
@@ -59,36 +59,33 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
  * @param {object} predicate - the predicate to check before removing the item from the array.
  * @returns {Array} An array of purchases
  */
-function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
+function removeMissingPurchasesByPredicate(existingPurchases, newPurchases, predicate) {
 	return existingPurchases.filter(
-		purchase => ! matches( predicate )( purchase ) || find( newPurchases, { ID: purchase.ID } )
+		(purchase) => !matches(predicate)(purchase) || find(newPurchases, { ID: purchase.ID })
 	);
 }
 
-function updatePurchases( existingPurchases, action ) {
+function updatePurchases(existingPurchases, action) {
 	let purchases, predicate;
 
-	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
-		predicate = { blog_id: String( action.siteId ) };
+	if (PURCHASES_SITE_FETCH_COMPLETED === action.type) {
+		predicate = { blog_id: String(action.siteId) };
 	}
 
-	if (
-		PURCHASES_USER_FETCH_COMPLETED === action.type ||
-		PURCHASE_REMOVE_COMPLETED === action.type
-	) {
-		predicate = { user_id: String( action.userId ) };
+	if (PURCHASES_USER_FETCH_COMPLETED === action.type || PURCHASE_REMOVE_COMPLETED === action.type) {
+		predicate = { user_id: String(action.userId) };
 	}
 
-	purchases = removeMissingPurchasesByPredicate( existingPurchases, action.purchases, predicate );
-	purchases = overwriteExistingPurchases( purchases, action.purchases );
+	purchases = removeMissingPurchasesByPredicate(existingPurchases, action.purchases, predicate);
+	purchases = overwriteExistingPurchases(purchases, action.purchases);
 
 	return purchases;
 }
 
-const assignError = ( state, action ) => ( { ...state, error: action.error } );
+const assignError = (state, action) => ({ ...state, error: action.error });
 
-export default withoutPersistence( ( state = initialState, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = initialState, action) => {
+	switch (action.type) {
 		case PURCHASES_REMOVE:
 			return {
 				...state,
@@ -103,7 +100,7 @@ export default withoutPersistence( ( state = initialState, action ) => {
 		case PURCHASE_REMOVE_COMPLETED:
 			return {
 				...state,
-				data: updatePurchases( state.data, action ),
+				data: updatePurchases(state.data, action),
 				error: null,
 				isFetchingSitePurchases: false,
 				isFetchingUserPurchases: false,
@@ -113,7 +110,7 @@ export default withoutPersistence( ( state = initialState, action ) => {
 		case PURCHASES_SITE_FETCH_COMPLETED:
 			return {
 				...state,
-				data: updatePurchases( state.data, action ),
+				data: updatePurchases(state.data, action),
 				error: null,
 				isFetchingSitePurchases: false,
 				hasLoadedSitePurchasesFromServer: true,
@@ -121,18 +118,18 @@ export default withoutPersistence( ( state = initialState, action ) => {
 		case PURCHASES_USER_FETCH_COMPLETED:
 			return {
 				...state,
-				data: updatePurchases( state.data, action ),
+				data: updatePurchases(state.data, action),
 				error: null,
 				isFetchingUserPurchases: false,
 				hasLoadedUserPurchasesFromServer: true,
 			};
 		case PURCHASE_REMOVE_FAILED:
-			return assignError( state, action );
+			return assignError(state, action);
 		case PURCHASES_SITE_FETCH_FAILED:
-			return assignError( state, action );
+			return assignError(state, action);
 		case PURCHASES_USER_FETCH_FAILED:
-			return assignError( state, action );
+			return assignError(state, action);
 	}
 
 	return state;
-} );
+});

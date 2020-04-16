@@ -15,8 +15,8 @@ import connectToWebpackServer, { BuildState } from './webpack-client';
  */
 import './style.scss';
 
-function getMessage( buildState: BuildState ) {
-	switch ( buildState ) {
+function getMessage(buildState: BuildState) {
+	switch (buildState) {
 		case BuildState.DISCONNECTED:
 			return 'Disconnected';
 		case BuildState.BUILDING:
@@ -34,12 +34,12 @@ function getMessage( buildState: BuildState ) {
 }
 
 const WebpackBuildMonitor: FunctionComponent = () => {
-	const [ buildState, setBuildState ] = useState( BuildState.INITIAL );
+	const [buildState, setBuildState] = useState(BuildState.INITIAL);
 
-	useEffect( () => connectToWebpackServer( setBuildState ), [] );
+	useEffect(() => connectToWebpackServer(setBuildState), []);
 
-	const msg = getMessage( buildState );
-	if ( ! msg ) {
+	const msg = getMessage(buildState);
+	if (!msg) {
 		return null;
 	}
 
@@ -47,15 +47,15 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 	const isWarning = buildState === BuildState.NEEDS_RELOAD;
 	const isSpinning = buildState === BuildState.BUILDING || buildState === BuildState.UPDATING;
 
-	const className = classNames( 'webpack-build-monitor', {
+	const className = classNames('webpack-build-monitor', {
 		'is-error': isError,
 		'is-warning': isWarning,
-	} );
+	});
 
 	return (
-		<div className={ className }>
-			{ isSpinning && <Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
-			{ msg }
+		<div className={className}>
+			{isSpinning && <Spinner size={11} className="webpack-build-monitor__spinner" />}
+			{msg}
 		</div>
 	);
 };

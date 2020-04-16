@@ -18,4 +18,4 @@ const reducers = {
 	productList,
 };
 
-export default combineReducers( reducers );
+export default combineReducers(reducers);

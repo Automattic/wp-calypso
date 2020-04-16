@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * @param {number} postId Post ID
  * @returns {boolean} true if we are scheduling publicize share action for a post
  */
-export default function isSchedulingPublicizeShareAction( state, siteId, postId ) {
+export default function isSchedulingPublicizeShareAction(state, siteId, postId) {
 	return (
 		get(
 			state,

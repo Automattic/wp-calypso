@@ -18,15 +18,15 @@ import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customi
  * @param  {number}   siteId  Site ID to open the customizer or block editor for
  * @returns {string}           Customizer or Block Editor URL
  */
-export default function getCustomizeOrEditFrontPageUrl( state, themeId, siteId ) {
+export default function getCustomizeOrEditFrontPageUrl(state, themeId, siteId) {
 	const shouldUseGutenberg =
-		shouldCustomizeHomepageWithGutenberg( state, siteId ) ||
-		isSiteUsingFullSiteEditing( state, siteId );
+		shouldCustomizeHomepageWithGutenberg(state, siteId) ||
+		isSiteUsingFullSiteEditing(state, siteId);
 
 	// If the theme is not active, use the other function to preview customization with the theme.
-	if ( shouldUseGutenberg && isThemeActive( state, themeId, siteId ) ) {
-		return getFrontPageEditorUrl( state, siteId );
+	if (shouldUseGutenberg && isThemeActive(state, themeId, siteId)) {
+		return getFrontPageEditorUrl(state, siteId);
 	}
 
-	return getThemeCustomizeUrl( state, themeId, siteId );
+	return getThemeCustomizeUrl(state, themeId, siteId);
 }

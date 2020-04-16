@@ -10,8 +10,8 @@ import 'state/reader/init';
  * @param  {string}  iframeSrc iframeSrc
  * @returns {string}  url you can find the thumbnail at
  */
-export function getThumbnailForIframe( state, iframeSrc ) {
-	return state.reader.thumbnails.items[ iframeSrc ];
+export function getThumbnailForIframe(state, iframeSrc) {
+	return state.reader.thumbnails.items[iframeSrc];
 }
 
 /**
@@ -22,6 +22,6 @@ export function getThumbnailForIframe( state, iframeSrc ) {
  * @param  {string}  iframeSrc iframeSrc
  * @returns {boolean} Whether a request is in progress
  */
-export function isRequestingThumbnailUrl( state, iframeSrc ) {
-	return !! state.reader.thumbnails.requesting[ iframeSrc ];
+export function isRequestingThumbnailUrl(state, iframeSrc) {
+	return !!state.reader.thumbnails.requesting[iframeSrc];
 }

@@ -26,7 +26,7 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT,
 } from 'state/action-types';
 
-const saveDomainPrivacySettings = verb => action =>
+const saveDomainPrivacySettings = (verb) => (action) =>
 	http(
 		{
 			apiVersion: '1',
@@ -36,23 +36,23 @@ const saveDomainPrivacySettings = verb => action =>
 		action
 	);
 
-const getSuccessMessage = type => {
-	switch ( type ) {
+const getSuccessMessage = (type) => {
+	switch (type) {
 		case DOMAIN_PRIVACY_DISABLE_SUCCESS:
-			return translate( 'Privacy has been successfully disabled!' );
+			return translate('Privacy has been successfully disabled!');
 		case DOMAIN_PRIVACY_ENABLE_SUCCESS:
-			return translate( 'Yay, privacy has been successfully enabled!' );
+			return translate('Yay, privacy has been successfully enabled!');
 		case DOMAIN_CONTACT_INFO_DISCLOSE_SUCCESS:
-			return translate( 'Your contact information is now publicly visible!' );
+			return translate('Your contact information is now publicly visible!');
 		case DOMAIN_CONTACT_INFO_REDACT_SUCCESS:
-			return translate( 'Your contact information is now redacted!' );
+			return translate('Your contact information is now redacted!');
 		default:
 			return '';
 	}
 };
 
-const handleDomainPrivacySettingsSuccess = type => ( { siteId, domain } ) => {
-	const notice = getSuccessMessage( type );
+const handleDomainPrivacySettingsSuccess = (type) => ({ siteId, domain }) => {
+	const notice = getSuccessMessage(type);
 
 	return [
 		{
@@ -60,15 +60,15 @@ const handleDomainPrivacySettingsSuccess = type => ( { siteId, domain } ) => {
 			siteId,
 			domain,
 		},
-		successNotice( notice, { duration: 5000 } ),
+		successNotice(notice, { duration: 5000 }),
 	];
 };
 
-const handleDomainPrivacySettingsFailure = type => ( { siteId, domain }, data ) => {
+const handleDomainPrivacySettingsFailure = (type) => ({ siteId, domain }, data) => {
 	const notice = get(
 		data,
 		'message',
-		translate( 'Unknown error when updating the domain privacy settings' )
+		translate('Unknown error when updating the domain privacy settings')
 	);
 	return [
 		{
@@ -76,44 +76,44 @@ const handleDomainPrivacySettingsFailure = type => ( { siteId, domain }, data ) 
 			siteId,
 			domain,
 		},
-		errorNotice( notice, {
+		errorNotice(notice, {
 			duration: 20000,
 			id: 'domain-privacy-settings-save-failure-notice',
 			isPersistent: true,
 			href: 'https://wordpress.com/help/contact',
-			button: translate( 'Get Help' ),
+			button: translate('Get Help'),
 			showDismiss: false,
-		} ),
+		}),
 	];
 };
 
-registerHandlers( 'state/data-layer/wpcom/domains/privacy/index.js', {
-	[ DOMAIN_PRIVACY_ENABLE ]: [
-		dispatchRequest( {
-			fetch: saveDomainPrivacySettings( 'enable' ),
-			onSuccess: handleDomainPrivacySettingsSuccess( DOMAIN_PRIVACY_ENABLE_SUCCESS ),
-			onError: handleDomainPrivacySettingsFailure( DOMAIN_PRIVACY_ENABLE_FAILURE ),
-		} ),
+registerHandlers('state/data-layer/wpcom/domains/privacy/index.js', {
+	[DOMAIN_PRIVACY_ENABLE]: [
+		dispatchRequest({
+			fetch: saveDomainPrivacySettings('enable'),
+			onSuccess: handleDomainPrivacySettingsSuccess(DOMAIN_PRIVACY_ENABLE_SUCCESS),
+			onError: handleDomainPrivacySettingsFailure(DOMAIN_PRIVACY_ENABLE_FAILURE),
+		}),
 	],
-	[ DOMAIN_PRIVACY_DISABLE ]: [
-		dispatchRequest( {
-			fetch: saveDomainPrivacySettings( 'disable' ),
-			onSuccess: handleDomainPrivacySettingsSuccess( DOMAIN_PRIVACY_DISABLE_SUCCESS ),
-			onError: handleDomainPrivacySettingsFailure( DOMAIN_PRIVACY_DISABLE_FAILURE ),
-		} ),
+	[DOMAIN_PRIVACY_DISABLE]: [
+		dispatchRequest({
+			fetch: saveDomainPrivacySettings('disable'),
+			onSuccess: handleDomainPrivacySettingsSuccess(DOMAIN_PRIVACY_DISABLE_SUCCESS),
+			onError: handleDomainPrivacySettingsFailure(DOMAIN_PRIVACY_DISABLE_FAILURE),
+		}),
 	],
-	[ DOMAIN_CONTACT_INFO_DISCLOSE ]: [
-		dispatchRequest( {
-			fetch: saveDomainPrivacySettings( 'disclose' ),
-			onSuccess: handleDomainPrivacySettingsSuccess( DOMAIN_CONTACT_INFO_DISCLOSE_SUCCESS ),
-			onError: handleDomainPrivacySettingsFailure( DOMAIN_CONTACT_INFO_DISCLOSE_FAILURE ),
-		} ),
+	[DOMAIN_CONTACT_INFO_DISCLOSE]: [
+		dispatchRequest({
+			fetch: saveDomainPrivacySettings('disclose'),
+			onSuccess: handleDomainPrivacySettingsSuccess(DOMAIN_CONTACT_INFO_DISCLOSE_SUCCESS),
+			onError: handleDomainPrivacySettingsFailure(DOMAIN_CONTACT_INFO_DISCLOSE_FAILURE),
+		}),
 	],
-	[ DOMAIN_CONTACT_INFO_REDACT ]: [
-		dispatchRequest( {
-			fetch: saveDomainPrivacySettings( 'redact' ),
-			onSuccess: handleDomainPrivacySettingsSuccess( DOMAIN_CONTACT_INFO_REDACT_SUCCESS ),
-			onError: handleDomainPrivacySettingsFailure( DOMAIN_CONTACT_INFO_REDACT_FAILURE ),
-		} ),
+	[DOMAIN_CONTACT_INFO_REDACT]: [
+		dispatchRequest({
+			fetch: saveDomainPrivacySettings('redact'),
+			onSuccess: handleDomainPrivacySettingsSuccess(DOMAIN_CONTACT_INFO_REDACT_SUCCESS),
+			onError: handleDomainPrivacySettingsFailure(DOMAIN_CONTACT_INFO_REDACT_FAILURE),
+		}),
 	],
-} );
+});

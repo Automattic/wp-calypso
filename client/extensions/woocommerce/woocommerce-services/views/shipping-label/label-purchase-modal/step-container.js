@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import Spinner from 'components/spinner';
 import FoldableCard from 'components/foldable-card';
 
-const StepContainer = ( {
+const StepContainer = ({
 	isSuccess,
 	isWarning,
 	isError,
@@ -24,55 +24,55 @@ const StepContainer = ( {
 	expanded,
 	toggleStep,
 	translate,
-} ) => {
+}) => {
 	const getIcon = () => {
-		if ( isSuccess ) {
+		if (isSuccess) {
 			return 'checkmark-circle';
 		}
-		if ( isWarning ) {
+		if (isWarning) {
 			return 'notice-outline';
 		}
-		if ( isError ) {
+		if (isError) {
 			return 'notice-outline';
 		}
 		return '';
 	};
-	const className = classNames( {
+	const className = classNames({
 		'is-success': isSuccess,
 		'is-warning': isWarning,
 		'is-error': isError,
-	} );
+	});
 
 	summary = (
-		<span className={ className }>
-			<span>{ summary }</span>
+		<span className={className}>
+			<span>{summary}</span>
 			<div className="label-purchase-modal__step-status">
-				{ isProgress ? (
-					<Spinner size={ 18 } />
+				{isProgress ? (
+					<Spinner size={18} />
 				) : (
-					<Gridicon icon={ getIcon() } className={ className } size={ 18 } />
-				) }
+					<Gridicon icon={getIcon()} className={className} size={18} />
+				)}
 			</div>
 		</span>
 	);
 	const header = (
 		<div>
-			<div className="label-purchase-modal__step-title">{ title }</div>
+			<div className="label-purchase-modal__step-title">{title}</div>
 		</div>
 	);
 
 	return (
 		<FoldableCard
-			header={ header }
-			summary={ summary }
-			expandedSummary={ summary }
-			clickableHeader={ true }
+			header={header}
+			summary={summary}
+			expandedSummary={summary}
+			clickableHeader={true}
 			compact
-			screenReaderText={ translate( 'Expand' ) }
-			expanded={ expanded }
-			onClick={ toggleStep }
+			screenReaderText={translate('Expand')}
+			expanded={expanded}
+			onClick={toggleStep}
 		>
-			{ children }
+			{children}
 		</FoldableCard>
 	);
 };
@@ -87,4 +87,4 @@ StepContainer.propTypes = {
 	expanded: PropTypes.bool,
 };
 
-export default localize( StepContainer );
+export default localize(StepContainer);

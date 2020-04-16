@@ -4,7 +4,7 @@
 
 import getRawSite from 'state/selectors/get-raw-site';
 
-const EMPTY_OPTIONS = Object.freeze( {} );
+const EMPTY_OPTIONS = Object.freeze({});
 
 /**
  * Returns the site options
@@ -13,9 +13,9 @@ const EMPTY_OPTIONS = Object.freeze( {} );
  * @param    {number}    siteId   Site ID
  * @returns  {?object}            Site options or null
  */
-export default ( state, siteId ) => {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
+export default (state, siteId) => {
+	const site = getRawSite(state, siteId);
+	if (!site) {
 		return null;
 	}
 	return site.options || EMPTY_OPTIONS;

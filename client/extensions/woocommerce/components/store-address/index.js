@@ -35,64 +35,64 @@ class StoreAddress extends Component {
 		showLabel: true,
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
-		this.setState( { address: newProps.address } );
+	UNSAFE_componentWillReceiveProps = (newProps) => {
+		this.setState({ address: newProps.address });
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			showDialog: false,
 			address: props.address,
 		};
 	}
 
-	onChange = event => {
+	onChange = (event) => {
 		const addressEdits = { ...this.state.addressEdits };
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
-		addressEdits[ addressKey ] = newValue;
+		addressEdits[addressKey] = newValue;
 
 		// Users of AddressView isEditable must always update the state prop
 		// passed to AddressView in the event of country changes
-		if ( 'country' === addressKey ) {
-			const countryData = find( this.props.countries, { code: newValue } );
-			if ( ! isEmpty( countryData.states ) ) {
-				addressEdits.state = countryData.states[ 0 ].code;
+		if ('country' === addressKey) {
+			const countryData = find(this.props.countries, { code: newValue });
+			if (!isEmpty(countryData.states)) {
+				addressEdits.state = countryData.states[0].code;
 			} else {
 				addressEdits.state = '';
 			}
 		}
 
-		this.setState( { addressEdits } );
+		this.setState({ addressEdits });
 	};
 
 	onShowDialog = () => {
-		this.setState( {
+		this.setState({
 			showDialog: true,
 			addressEdits: { ...this.props.address },
-		} );
+		});
 	};
 
-	onCloseDialog = action => {
+	onCloseDialog = (action) => {
 		const { translate, siteId, onSetAddress } = this.props;
-		if ( 'save' === action ) {
+		if ('save' === action) {
 			const onFailure = () => {
-				this.setState( { showDialog: false } );
+				this.setState({ showDialog: false });
 				return errorNotice(
-					translate( 'There was a problem saving the store address. Please try again.' )
+					translate('There was a problem saving the store address. Please try again.')
 				);
 			};
 			const onSuccess = () => {
-				if ( onSetAddress ) {
-					onSetAddress( this.state.addressEdits );
+				if (onSetAddress) {
+					onSetAddress(this.state.addressEdits);
 				}
-				return successNotice( translate( 'Address saved.' ), { duration: 4000 } );
+				return successNotice(translate('Address saved.'), { duration: 4000 });
 			};
-			this.setState( {
+			this.setState({
 				showDialog: false,
 				address: { ...this.state.addressEdits },
-			} );
+			});
 			this.props.setAddress(
 				siteId,
 				this.state.addressEdits.street,
@@ -105,9 +105,9 @@ class StoreAddress extends Component {
 				onFailure
 			);
 		} else {
-			this.setState( {
+			this.setState({
 				showDialog: false,
-			} );
+			});
 		}
 	};
 
@@ -115,12 +115,12 @@ class StoreAddress extends Component {
 		const { className, countries, siteId, loaded, fetchError, translate, showLabel } = this.props;
 
 		const buttons = [
-			{ action: 'close', label: translate( 'Close' ) },
-			{ action: 'save', label: translate( 'Save' ), isPrimary: true },
+			{ action: 'close', label: translate('Close') },
+			{ action: 'save', label: translate('Save'), isPrimary: true },
 		];
 
 		let display;
-		if ( ! siteId || ! loaded || fetchError ) {
+		if (!siteId || !loaded || fetchError) {
 			display = (
 				<div>
 					<p />
@@ -132,10 +132,10 @@ class StoreAddress extends Component {
 		} else {
 			display = (
 				<div>
-					{ showLabel && <FormLabel>{ translate( 'Store location' ) }</FormLabel> }
-					<AddressView address={ this.state.address } countries={ countries } />
-					<Button compact onClick={ this.onShowDialog }>
-						{ translate( 'Edit address' ) }
+					{showLabel && <FormLabel>{translate('Store location')}</FormLabel>}
+					<AddressView address={this.state.address} countries={countries} />
+					<Button compact onClick={this.onShowDialog}>
+						{translate('Edit address')}
 					</Button>
 				</div>
 			);
@@ -143,44 +143,44 @@ class StoreAddress extends Component {
 
 		const classes = classNames(
 			'store-address',
-			{ 'is-placeholder': ! siteId || ! loaded },
+			{ 'is-placeholder': !siteId || !loaded },
 			className
 		);
 		return (
-			<Card className={ classes }>
-				<QuerySettingsGeneral siteId={ siteId } />
-				<QueryLocations siteId={ siteId } />
+			<Card className={classes}>
+				<QuerySettingsGeneral siteId={siteId} />
+				<QueryLocations siteId={siteId} />
 				<Dialog
-					buttons={ buttons }
-					isVisible={ this.state.showDialog }
-					onClose={ this.onCloseDialog }
+					buttons={buttons}
+					isVisible={this.state.showDialog}
+					onClose={this.onCloseDialog}
 					additionalClassNames="woocommerce store-location__edit-dialog"
 				>
 					<AddressView
-						address={ this.state.addressEdits }
-						countries={ countries }
+						address={this.state.addressEdits}
+						countries={countries}
 						isEditable
-						onChange={ this.onChange }
+						onChange={this.onChange}
 					/>
 				</Dialog>
-				{ display }
+				{display}
 			</Card>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
 	const siteId = site ? site.ID : false;
 
-	const loadedLocations = areLocationsLoaded( state, siteId );
-	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, siteId );
+	const loadedLocations = areLocationsLoaded(state, siteId);
+	const loadedSettingsGeneral = areSettingsGeneralLoaded(state, siteId);
 	const loaded = loadedLocations && loadedSettingsGeneral;
 
-	const fetchError = areSettingsGeneralLoadError( state );
-	const countries = getAllCountries( state, siteId );
+	const fetchError = areSettingsGeneralLoadError(state);
+	const countries = getAllCountries(state, siteId);
 
-	const address = getStoreLocation( state, siteId );
+	const address = getStoreLocation(state, siteId);
 	return {
 		address,
 		countries,
@@ -191,7 +191,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			setAddress,
@@ -200,4 +200,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize( connect( mapStateToProps, mapDispatchToProps )( StoreAddress ) );
+export default localize(connect(mapStateToProps, mapDispatchToProps)(StoreAddress));

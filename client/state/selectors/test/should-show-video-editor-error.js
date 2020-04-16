@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import shouldShowVideoEditorError from 'state/selectors/should-show-video-editor-error';
 
-describe( 'shouldShowVideoEditorError()', () => {
-	test( 'should return the poster error state', () => {
-		const showError = shouldShowVideoEditorError( {
+describe('shouldShowVideoEditorError()', () => {
+	test('should return the poster error state', () => {
+		const showError = shouldShowVideoEditorError({
 			ui: {
 				editor: {
 					videoEditor: {
@@ -18,8 +18,8 @@ describe( 'shouldShowVideoEditorError()', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		expect( showError ).to.be.true;
-	} );
-} );
+		expect(showError).to.be.true;
+	});
+});

@@ -23,37 +23,37 @@ class IssuesNotices extends Component {
 
 		return (
 			<div className="guided-transfer__issues-notices">
-				{ premiumThemeIssue && ! premiumThemeIssue.prevents_transfer && (
-					<Notice status="is-warning" showDismiss={ false }>
-						{ translate(
+				{premiumThemeIssue && !premiumThemeIssue.prevents_transfer && (
+					<Notice status="is-warning" showDismiss={false}>
+						{translate(
 							"Your site uses a Premium Theme that can't be transferred. Continuing will automatically activate the default theme, or you can {{a}}choose a free theme{{/a}}.",
-							{ components: { a: <a href={ `/themes/free/${ siteSlug }` } /> } }
-						) }
+							{ components: { a: <a href={`/themes/free/${siteSlug}`} /> } }
+						)}
 					</Notice>
-				) }
+				)}
 
-				{ customFontIssue && ! customFontIssue.prevents_transfer && (
-					<Notice status="is-warning" showDismiss={ false }>
-						{ translate(
+				{customFontIssue && !customFontIssue.prevents_transfer && (
+					<Notice status="is-warning" showDismiss={false}>
+						{translate(
 							"Your site uses a custom font that can't be transferred. Continuing will automatically activate the default font, or you can {{a}}choose a free theme{{/a}}.",
-							{ components: { a: <a href={ `/themes/free/${ siteSlug }` } /> } }
-						) }
+							{ components: { a: <a href={`/themes/free/${siteSlug}`} /> } }
+						)}
 					</Notice>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	premiumThemeIssue: getGuidedTransferIssue( state, ownProps.siteId, {
+const mapStateToProps = (state, ownProps) => ({
+	premiumThemeIssue: getGuidedTransferIssue(state, ownProps.siteId, {
 		reason: 'premium-theme',
 		prevents_transfer: false,
-	} ),
-	customFontIssue: getGuidedTransferIssue( state, ownProps.siteId, {
+	}),
+	customFontIssue: getGuidedTransferIssue(state, ownProps.siteId, {
 		reason: 'custom-font',
 		prevents_transfer: false,
-	} ),
-} );
+	}),
+});
 
-export default connect( mapStateToProps )( localize( IssuesNotices ) );
+export default connect(mapStateToProps)(localize(IssuesNotices));

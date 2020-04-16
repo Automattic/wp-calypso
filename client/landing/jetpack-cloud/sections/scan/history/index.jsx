@@ -113,28 +113,28 @@ class ScanHistoryPage extends Component {
 	getCurrentFilter = () => {
 		const { filter } = this.props;
 
-		if ( filter ) {
-			return filterOptions.find( ( { value } ) => value === filter ) || filterOptions[ 0 ];
+		if (filter) {
+			return filterOptions.find(({ value }) => value === filter) || filterOptions[0];
 		}
-		return filterOptions[ 0 ];
+		return filterOptions[0];
 	};
 
-	handleOnFilterChange = filter => {
+	handleOnFilterChange = (filter) => {
 		const { siteSlug } = this.props;
 		let filterValue = filter.value;
-		if ( 'all' === filterValue ) {
+		if ('all' === filterValue) {
 			filterValue = '';
 		}
-		page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
+		page.show(`/scan/history/${siteSlug}/${filterValue}`);
 	};
 
 	filteredEntries() {
 		const { logEntries } = this.props;
 		const { value: filter } = this.getCurrentFilter();
-		if ( filter === 'all' ) {
+		if (filter === 'all') {
 			return logEntries;
 		}
-		return logEntries.filter( entry => entry.action === filter );
+		return logEntries.filter((entry) => entry.action === filter);
 	}
 
 	render() {
@@ -142,42 +142,42 @@ class ScanHistoryPage extends Component {
 		const { value: filter } = this.getCurrentFilter();
 		return (
 			<Main wideLayout className="history">
-				<QueryJetpackScanHistory siteId={ this.props.siteId } />
-				<DocumentHead title={ translate( 'History' ) } />
+				<QueryJetpackScanHistory siteId={this.props.siteId} />
+				<DocumentHead title={translate('History')} />
 				<SidebarNavigation />
-				<h1 className="history__header">{ translate( 'History' ) }</h1>
+				<h1 className="history__header">{translate('History')}</h1>
 				<p className="history__description">
-					{ translate(
+					{translate(
 						'The scanning history contains a record of all previously active threats on your site.'
-					) }
+					)}
 				</p>
 				<div className="history__filters-wrapper">
 					<SimplifiedSegmentedControl
 						className="history__filters"
-						options={ filterOptions }
-						onSelect={ this.handleOnFilterChange }
-						initialSelected={ filter }
+						options={filterOptions}
+						onSelect={this.handleOnFilterChange}
+						initialSelected={filter}
 					/>
 				</div>
 				<div className="history__entries">
-					{ logEntries.map( entry => (
-						<ScanHistoryItem entry={ entry } key={ entry.id } />
-					) ) }
+					{logEntries.map((entry) => (
+						<ScanHistoryItem entry={entry} key={entry.id} />
+					))}
 				</div>
 			</Main>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
 
 	// TODO: Get state from actual API.
 	const scanHistoryLogEntries = scanEntries;
 
 	return {
 		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
+		siteSlug: getSelectedSiteSlug(state),
 		logEntries: scanHistoryLogEntries,
 	};
-} )( ScanHistoryPage );
+})(ScanHistoryPage);

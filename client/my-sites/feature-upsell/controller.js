@@ -16,41 +16,41 @@ import {
 } from './main';
 import { getSiteFragment } from 'lib/route';
 
-const featurePageController = ( url, callback ) => {
-	return function( context, next ) {
+const featurePageController = (url, callback) => {
+	return function (context, next) {
 		// Upsell is site-specific so site fragment is required
-		const siteFragment = getSiteFragment( context.path );
-		if ( ! siteFragment ) {
-			return page.redirect( url );
+		const siteFragment = getSiteFragment(context.path);
+		if (!siteFragment) {
+			return page.redirect(url);
 		}
 
-		return callback( context, next, siteFragment );
+		return callback(context, next, siteFragment);
 	};
 };
 
 export default {
-	features: featurePageController( '/feature', function( context, next ) {
-		context.primary = React.createElement( FeaturesComponent );
+	features: featurePageController('/feature', function (context, next) {
+		context.primary = React.createElement(FeaturesComponent);
 		next();
-	} ),
+	}),
 
-	storeUpsell: featurePageController( '/feature/store', function( context, next ) {
-		context.primary = React.createElement( StoreUpsellComponent );
+	storeUpsell: featurePageController('/feature/store', function (context, next) {
+		context.primary = React.createElement(StoreUpsellComponent);
 		next();
-	} ),
+	}),
 
-	pluginsUpsell: featurePageController( '/feature/plugins', function( context, next ) {
-		context.primary = React.createElement( PluginsUpsellComponent );
+	pluginsUpsell: featurePageController('/feature/plugins', function (context, next) {
+		context.primary = React.createElement(PluginsUpsellComponent);
 		next();
-	} ),
+	}),
 
-	themesUpsell: featurePageController( '/feature/themes', function( context, next ) {
-		context.primary = React.createElement( ThemesUpsellComponent );
+	themesUpsell: featurePageController('/feature/themes', function (context, next) {
+		context.primary = React.createElement(ThemesUpsellComponent);
 		next();
-	} ),
+	}),
 
-	wordAdsUpsell: featurePageController( '/feature/ads', function( context, next ) {
-		context.primary = React.createElement( WordAdsUpsellComponent );
+	wordAdsUpsell: featurePageController('/feature/ads', function (context, next) {
+		context.primary = React.createElement(WordAdsUpsellComponent);
 		next();
-	} ),
+	}),
 };

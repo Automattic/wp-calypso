@@ -8,18 +8,18 @@ import { expect } from 'chai';
  */
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 
-describe( 'getCurrentLocaleVariant()', () => {
-	test( 'should return null as default', () => {
+describe('getCurrentLocaleVariant()', () => {
+	test('should return null as default', () => {
 		const state = {
 			ui: {
 				language: {},
 			},
 		};
 
-		expect( getCurrentLocaleVariant( state ) ).to.be.null;
-	} );
+		expect(getCurrentLocaleVariant(state)).to.be.null;
+	});
 
-	test( 'should return the locale variant slug stored', () => {
+	test('should return the locale variant slug stored', () => {
 		const localeVariant = 'awesome_variant';
 		const state = {
 			ui: {
@@ -29,6 +29,6 @@ describe( 'getCurrentLocaleVariant()', () => {
 			},
 		};
 
-		expect( getCurrentLocaleVariant( state ) ).to.eql( localeVariant );
-	} );
-} );
+		expect(getCurrentLocaleVariant(state)).to.eql(localeVariant);
+	});
+});

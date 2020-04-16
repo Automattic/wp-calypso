@@ -19,14 +19,14 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  */
 export const items = keyedReducer(
 	'seed',
-	withoutPersistence( ( state = [], action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = [], action) => {
+		switch (action.type) {
 			case READER_RECOMMENDED_SITES_RECEIVE:
-				return uniqBy( state.concat( action.payload.sites ), 'feedId' );
+				return uniqBy(state.concat(action.payload.sites), 'feedId');
 		}
 
 		return state;
-	} )
+	})
 );
 
 /**
@@ -39,17 +39,17 @@ export const items = keyedReducer(
  */
 export const pagingOffset = keyedReducer(
 	'seed',
-	withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = null, action) => {
+		switch (action.type) {
 			case READER_RECOMMENDED_SITES_RECEIVE:
-				return Math.max( action.payload.offset, state );
+				return Math.max(action.payload.offset, state);
 		}
 
 		return state;
-	} )
+	})
 );
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	pagingOffset,
-} );
+});

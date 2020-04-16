@@ -58,13 +58,13 @@ const getRandomPromo = () => {
 		},
 	];
 
-	return sample( promoOptions );
+	return sample(promoOptions);
 };
 
-export const getPromoLink = ( location, promoDetails ) => {
+export const getPromoLink = (location, promoDetails) => {
 	const { type, promoCode } = promoDetails;
 
-	return `https://apps.wordpress.com/${ type }/?ref=promo_${ location }_${ promoCode }`;
+	return `https://apps.wordpress.com/${type}/?ref=promo_${location}_${promoCode}`;
 };
 
 export class AppPromo extends React.Component {
@@ -74,8 +74,8 @@ export class AppPromo extends React.Component {
 		location: PropTypes.string.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		const promoItem = props.promoItem || getRandomPromo();
 
 		this.state = {
@@ -86,45 +86,45 @@ export class AppPromo extends React.Component {
 	}
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_desktop_promo_view', {
+		this.props.recordTracksEvent('calypso_desktop_promo_view', {
 			promo_location: this.props.location,
 			promo_code: this.state.promoItem.promoCode,
-		} );
+		});
 	}
 
 	recordClickEvent = () => {
-		this.props.recordTracksEvent( 'calypso_desktop_promo_click', {
+		this.props.recordTracksEvent('calypso_desktop_promo_click', {
 			promo_location: this.props.location,
 			promo_code: this.state.promoItem.promoCode,
-		} );
+		});
 	};
 
 	dismiss = () => {
-		this.setState( { showPromo: false } );
+		this.setState({ showPromo: false });
 		this.props.saveDismissal();
-		this.props.recordTracksEvent( 'calypso_desktop_promo_dismiss', {
+		this.props.recordTracksEvent('calypso_desktop_promo_dismiss', {
 			promo_location: this.props.location,
 			promo_code: this.state.promoItem.promoCode,
-		} );
+		});
 	};
 
 	sendMagicLink = () => {
 		this.recordClickEvent();
 		const email = this.props.userSettings.user_email;
-		this.props.sendEmailLogin( email, { showGlobalNotices: false, isMobileAppLogin: true } );
+		this.props.sendEmailLogin(email, { showGlobalNotices: false, isMobileAppLogin: true });
 		this.onShowDialog();
 		return false;
 	};
 
 	onShowDialog = () => {
-		this.setState( { showDialog: true } );
+		this.setState({ showDialog: true });
 	};
 
 	onCloseDialog = () => {
-		this.setState( { showDialog: false } );
+		this.setState({ showDialog: false });
 	};
 
-	desktopPromo = promoItem => {
+	desktopPromo = (promoItem) => {
 		const { location, translate } = this.props;
 
 		return (
@@ -132,27 +132,27 @@ export class AppPromo extends React.Component {
 				<button
 					tabIndex="0"
 					className="app-promo__dismiss"
-					onClick={ this.dismiss }
-					aria-label={ translate( 'Dismiss' ) }
+					onClick={this.dismiss}
+					aria-label={translate('Dismiss')}
 				>
-					<Gridicon icon="cross" size={ 24 } />
+					<Gridicon icon="cross" size={24} />
 				</button>
 				<a
-					onClick={ this.recordClickEvent }
+					onClick={this.recordClickEvent}
 					className="app-promo__link"
 					title="Try the desktop app!"
-					href={ this.props.getPromoLink( location, promoItem ) }
+					href={this.props.getPromoLink(location, promoItem)}
 					target="_blank"
 					rel="noopener noreferrer"
 				>
 					<img
 						className="app-promo__icon"
-						src={ wordpressLogoImage }
+						src={wordpressLogoImage}
 						width="32"
 						height="32"
 						alt="WordPress Desktop Icon"
 					/>
-					{ promoItem.message }
+					{promoItem.message}
 				</a>
 			</div>
 		);
@@ -160,43 +160,43 @@ export class AppPromo extends React.Component {
 
 	mobilePromo = () => {
 		const { translate } = this.props;
-		const buttons = [ { action: 'cancel', label: translate( 'OK' ) } ];
+		const buttons = [{ action: 'cancel', label: translate('OK') }];
 
 		return (
 			<div className="app-promo">
 				<button
 					tabIndex="0"
 					className="app-promo__dismiss"
-					onClick={ this.dismiss }
-					aria-label={ translate( 'Dismiss' ) }
+					onClick={this.dismiss}
+					aria-label={translate('Dismiss')}
 				>
-					<Gridicon icon="cross" size={ 24 } />
+					<Gridicon icon="cross" size={24} />
 				</button>
 				<button
-					onClick={ this.sendMagicLink }
+					onClick={this.sendMagicLink}
 					className="app-promo__link"
 					title="Try the mobile app!"
 				>
 					<img
 						className="app-promo__icon"
-						src={ wordpressLogoImage }
+						src={wordpressLogoImage}
 						width="32"
 						height="32"
 						alt="WordPress App Icon"
 					/>
-					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
+					{'WordPress.com in the palm of your hands — download the mobile app.'}
 				</button>
 				<Dialog
 					className="app-promo__dialog"
-					isVisible={ this.state.showDialog }
-					buttons={ buttons }
-					onClose={ this.onCloseDialog }
+					isVisible={this.state.showDialog}
+					buttons={buttons}
+					onClose={this.onCloseDialog}
 				>
-					<h1>{ translate( 'Check your mail!' ) }</h1>
+					<h1>{translate('Check your mail!')}</h1>
 					<p>
-						{ translate(
+						{translate(
 							"We've sent you an email with links to download and effortlessly log in to the mobile app. Be sure to use them from your mobile device!"
-						) }
+						)}
 					</p>
 				</Dialog>
 			</div>
@@ -204,24 +204,24 @@ export class AppPromo extends React.Component {
 	};
 
 	render() {
-		if ( ! this.state.showPromo ) {
+		if (!this.state.showPromo) {
 			return null;
 		}
 		const { promoItem } = this.state;
-		return promoItem.type === 'mobile' ? this.mobilePromo() : this.desktopPromo( promoItem );
+		return promoItem.type === 'mobile' ? this.mobilePromo() : this.desktopPromo(promoItem);
 	}
 }
 
 AppPromo.defaultProps = {
 	translate: identity,
 	recordTracksEvent: noop,
-	saveDismissal: () => store.set( 'desktop_promo_disabled', true ),
+	saveDismissal: () => store.set('desktop_promo_disabled', true),
 	getPromoLink,
 };
 
 export default connect(
-	state => ( {
-		userSettings: getUserSettings( state ),
-	} ),
+	(state) => ({
+		userSettings: getUserSettings(state),
+	}),
 	{ fetchUserSettings, recordTracksEvent, sendEmailLogin }
-)( localize( AppPromo ) );
+)(localize(AppPromo));

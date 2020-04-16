@@ -16,8 +16,8 @@ import {
 	WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_SETTINGS_TAX_REQUEST: {
 			return LOADING;
 		}
@@ -34,24 +34,24 @@ export default withoutPersistence( ( state = null, action ) => {
 
 			// go through each existing setting
 			// if an update is present in data, replace the setting with the update
-			const newSettings = settings.map( setting => {
-				const update = find( data.update, { id: setting.id } );
-				if ( update ) {
+			const newSettings = settings.map((setting) => {
+				const update = find(data.update, { id: setting.id });
+				if (update) {
 					return update;
 				}
 				return setting;
-			} );
+			});
 
 			// if update adds adds a new setting, append it to settings
-			data.update.forEach( update => {
-				if ( ! find( settings, { id: update.id } ) ) {
-					newSettings.push( update );
+			data.update.forEach((update) => {
+				if (!find(settings, { id: update.id })) {
+					newSettings.push(update);
 				}
-			} );
+			});
 
 			return newSettings;
 		}
 	}
 
 	return state;
-} );
+});

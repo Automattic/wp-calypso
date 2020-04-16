@@ -11,15 +11,15 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { closeAccount } from 'state/account/actions';
 import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
 
-jest.mock( 'lib/user', () => () => {
+jest.mock('lib/user', () => () => {
 	return { clear: jest.fn() };
-} );
+});
 
-describe( 'account-close', () => {
-	describe( 'requestAccountClose', () => {
-		test( 'should dispatch a HTTP request', () => {
+describe('account-close', () => {
+	describe('requestAccountClose', () => {
+		test('should dispatch a HTTP request', () => {
 			const action = closeAccount();
-			expect( requestAccountClose( action ) ).toEqual(
+			expect(requestAccountClose(action)).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -30,42 +30,42 @@ describe( 'account-close', () => {
 					action
 				)
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'fromApi', () => {
-		it( 'should throw an error for an unsuccessful closure', () => {
-			expect( () => fromApi( { success: false } ) ).toThrow();
-		} );
-		it( 'should return original response for an successful closure', () => {
-			expect( fromApi( { success: true } ) ).toEqual( { success: true } );
-		} );
-	} );
+	describe('fromApi', () => {
+		it('should throw an error for an unsuccessful closure', () => {
+			expect(() => fromApi({ success: false })).toThrow();
+		});
+		it('should return original response for an successful closure', () => {
+			expect(fromApi({ success: true })).toEqual({ success: true });
+		});
+	});
 
-	describe( 'receiveAccountCloseSuccess', () => {
-		test( 'should dispatch a success action', async () => {
+	describe('receiveAccountCloseSuccess', () => {
+		test('should dispatch a success action', async () => {
 			const spy = jest.fn();
-			await receiveAccountCloseSuccess()( spy );
+			await receiveAccountCloseSuccess()(spy);
 
-			expect( spy ).toHaveBeenCalledWith( {
+			expect(spy).toHaveBeenCalledWith({
 				type: ACCOUNT_CLOSE_SUCCESS,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'receiveAccountCloseError', () => {
-		test( 'should fire an error notice', () => {
-			const result = receiveAccountCloseError( closeAccount(), {
+	describe('receiveAccountCloseError', () => {
+		test('should fire an error notice', () => {
+			const result = receiveAccountCloseError(closeAccount(), {
 				success: false,
-			} );
+			});
 
-			expect( result ).toEqual(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
+			expect(result).toEqual(
+				expect.objectContaining({
+					notice: expect.objectContaining({
 						status: 'is-error',
-					} ),
-				} )
+					}),
+				})
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

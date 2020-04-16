@@ -1,13 +1,13 @@
-export function getVisibility( post ) {
-	if ( ! post ) {
+export function getVisibility(post) {
+	if (!post) {
 		return null;
 	}
 
-	if ( post.password ) {
+	if (post.password) {
 		return 'password';
 	}
 
-	if ( 'private' === post.status ) {
+	if ('private' === post.status) {
 		return 'private';
 	}
 

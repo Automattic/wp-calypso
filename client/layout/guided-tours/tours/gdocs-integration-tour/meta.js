@@ -9,5 +9,5 @@ export default {
 	name: 'gdocsIntegrationTour',
 	version: '20170227',
 	path: '/post',
-	when: and( isCurrentUserEmailVerified, hasUserPastedFromGoogleDocs ),
+	when: and(isCurrentUserEmailVerified, hasUserPastedFromGoogleDocs),
 };

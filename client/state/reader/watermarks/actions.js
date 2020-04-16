@@ -15,7 +15,7 @@ import 'state/reader/init';
  * @returns {object} action object for dispatch
  */
 
-export const viewStream = ( { mark, streamKey } ) => {
+export const viewStream = ({ mark, streamKey }) => {
 	return {
 		type: READER_VIEW_STREAM,
 		mark,

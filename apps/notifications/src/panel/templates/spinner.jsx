@@ -21,7 +21,7 @@ export default class Spinner extends PureComponent {
 	};
 
 	render() {
-		const className = classNames( 'wpnc__spinner', this.props.className );
+		const className = classNames('wpnc__spinner', this.props.className);
 
 		const style = {
 			width: this.props.size,
@@ -30,8 +30,8 @@ export default class Spinner extends PureComponent {
 		};
 
 		return (
-			<div className={ className }>
-				<div className="wpnc__spinner__outer" style={ style }>
+			<div className={className}>
+				<div className="wpnc__spinner__outer" style={style}>
 					<div className="wpnc__spinner__inner" />
 				</div>
 			</div>

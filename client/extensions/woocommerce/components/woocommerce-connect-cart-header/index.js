@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 
 import './style.scss';
 
-const WooCommercConnectCartHeader = ( { translate } ) => {
+const WooCommercConnectCartHeader = ({ translate }) => {
 	return (
 		<div className="woocommerce-connect-cart-header is-stepper">
 			<div className="woocommerce-connect-cart-header__stepper">
@@ -45,7 +45,7 @@ const WooCommercConnectCartHeader = ( { translate } ) => {
 						</div>
 						<div className="woocommerce-connect-cart-header__stepper-step-text">
 							<span className="woocommerce-connect-cart-header__stepper-step-label">
-								{ translate( 'Cart' ) }
+								{translate('Cart')}
 							</span>
 						</div>
 					</div>
@@ -56,7 +56,7 @@ const WooCommercConnectCartHeader = ( { translate } ) => {
 						</div>
 						<div className="woocommerce-connect-cart-header__stepper-step-text">
 							<span className="woocommerce-connect-cart-header__stepper-step-label">
-								{ translate( 'Payment' ) }
+								{translate('Payment')}
 							</span>
 						</div>
 					</div>
@@ -67,7 +67,7 @@ const WooCommercConnectCartHeader = ( { translate } ) => {
 						</div>
 						<div className="woocommerce-connect-cart-header__stepper-step-text">
 							<span className="woocommerce-connect-cart-header__stepper-step-label">
-								{ translate( 'Installation', { context: 'Navigation item' } ) }
+								{translate('Installation', { context: 'Navigation item' })}
 							</span>
 						</div>
 					</div>
@@ -77,4 +77,4 @@ const WooCommercConnectCartHeader = ( { translate } ) => {
 	);
 };
 
-export default localize( WooCommercConnectCartHeader );
+export default localize(WooCommercConnectCartHeader);

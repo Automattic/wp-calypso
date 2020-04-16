@@ -15,19 +15,19 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 export class PaymentChatButton extends Component {
 	chatButtonClicked = () => {
-		this.props.recordTracksEvent( 'calypso_presales_chat_click' );
+		this.props.recordTracksEvent('calypso_presales_chat_click');
 	};
 
 	render() {
 		const { translate } = this.props;
 
 		return (
-			<HappychatButton className="checkout__payment-chat-button" onClick={ this.chatButtonClicked }>
+			<HappychatButton className="checkout__payment-chat-button" onClick={this.chatButtonClicked}>
 				<Gridicon icon="chat" className="checkout__payment-chat-button-icon" />
-				{ translate( 'Need help? Chat with us' ) }
+				{translate('Need help? Chat with us')}
 			</HappychatButton>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( PaymentChatButton ) );
+export default connect(null, { recordTracksEvent })(localize(PaymentChatButton));

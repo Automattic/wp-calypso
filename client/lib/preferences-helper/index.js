@@ -15,9 +15,9 @@ import PreferenceList from './preference-list';
  */
 import './style.scss';
 
-export default function injectPreferenceHelper( element, store ) {
+export default function injectPreferenceHelper(element, store) {
 	ReactDom.render(
-		<Provider store={ store }>
+		<Provider store={store}>
 			<PreferenceList />
 		</Provider>,
 		element

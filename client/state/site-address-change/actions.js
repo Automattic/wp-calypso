@@ -25,81 +25,77 @@ import { requestSite } from 'state/sites/actions';
 import { fetchSiteDomains } from 'state/sites/domains/actions';
 
 // @TODO proper redux data layer stuff for the nonce
-function fetchNonce( siteId ) {
-	return wpcom.undocumented().getRequestSiteAddressChangeNonce( siteId );
+function fetchNonce(siteId) {
+	return wpcom.undocumented().getRequestSiteAddressChangeNonce(siteId);
 }
 
-export const getErrorNotice = message =>
-	errorNotice( message, {
+export const getErrorNotice = (message) =>
+	errorNotice(message, {
 		id: 'siteAddressChangeUnsuccessful',
 		duration: 5000,
 		showDismiss: true,
 		isPersistent: true,
-	} );
+	});
 
-const dispatchErrorNotice = ( dispatch, error ) =>
+const dispatchErrorNotice = (dispatch, error) =>
 	dispatch(
 		getErrorNotice(
 			error.message ||
-				translate( 'Sorry, we were unable to change your site address. Please try again.' )
+				translate('Sorry, we were unable to change your site address. Please try again.')
 		)
 	);
 
-export const requestSiteAddressAvailability = (
-	siteId,
-	siteAddress,
-	domain,
-	siteType,
-	testBool
-) => dispatch => {
-	dispatch( {
+export const requestSiteAddressAvailability = (siteId, siteAddress, domain, siteType, testBool) => (
+	dispatch
+) => {
+	dispatch({
 		type: SITE_ADDRESS_AVAILABILITY_REQUEST,
 		siteId,
 		siteAddress,
-	} );
+	});
 
 	return wpcom
 		.undocumented()
-		.checkSiteAddressValidation( siteId, siteAddress, domain, siteType, testBool )
-		.then( data => {
-			const errorType = get( data, 'error' );
-			const message = get( data, 'message' );
+		.checkSiteAddressValidation(siteId, siteAddress, domain, siteType, testBool)
+		.then((data) => {
+			const errorType = get(data, 'error');
+			const message = get(data, 'message');
 
-			if ( errorType ) {
-				dispatch( {
+			if (errorType) {
+				dispatch({
 					type: SITE_ADDRESS_AVAILABILITY_ERROR,
 					siteId,
 					errorType,
 					message,
-				} );
+				});
 
 				return;
 			}
 
-			dispatch( {
+			dispatch({
 				type: SITE_ADDRESS_AVAILABILITY_SUCCESS,
 				siteId,
 				siteAddress,
-			} );
-		} )
-		.catch( error => {
-			const errorType = get( error, 'error' );
-			const message = get( error, 'message' );
+			});
+		})
+		.catch((error) => {
+			const errorType = get(error, 'error');
+			const message = get(error, 'message');
 
-			dispatch( {
+			dispatch({
 				type: SITE_ADDRESS_AVAILABILITY_ERROR,
 				siteId,
 				errorType,
 				message,
-			} );
-		} );
+			});
+		});
 };
 
-export const clearValidationError = siteId => dispatch => {
-	dispatch( {
+export const clearValidationError = (siteId) => (dispatch) => {
+	dispatch({
 		type: SITE_ADDRESS_AVAILABILITY_ERROR_CLEAR,
 		siteId,
-	} );
+	});
 };
 
 export const requestSiteAddressChange = (
@@ -109,11 +105,11 @@ export const requestSiteAddressChange = (
 	oldDomain,
 	siteType,
 	discard = true
-) => dispatch => {
-	dispatch( {
+) => (dispatch) => {
+	dispatch({
 		type: SITE_ADDRESS_CHANGE_REQUEST,
 		siteId,
-	} );
+	});
 
 	const eventProperties = {
 		blog_id: siteId,
@@ -124,58 +120,58 @@ export const requestSiteAddressChange = (
 		discard,
 	};
 
-	const errorHandler = error => {
+	const errorHandler = (error) => {
 		dispatch(
-			recordTracksEvent( 'calypso_siteaddresschange_error', {
+			recordTracksEvent('calypso_siteaddresschange_error', {
 				...eventProperties,
 				error_code: error.code,
-			} )
+			})
 		);
-		dispatchErrorNotice( dispatch, error );
-		dispatch( {
+		dispatchErrorNotice(dispatch, error);
+		dispatch({
 			type: SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 			error: error.message,
 			siteId,
-		} );
+		});
 	};
 
-	dispatch( recordTracksEvent( 'calypso_siteaddresschange_request', eventProperties ) );
+	dispatch(recordTracksEvent('calypso_siteaddresschange_request', eventProperties));
 
-	return fetchNonce( siteId )
-		.then( nonce => {
+	return fetchNonce(siteId)
+		.then((nonce) => {
 			wpcom
 				.undocumented()
-				.updateSiteAddress( siteId, newBlogName, domain, oldDomain, siteType, discard, nonce )
-				.then( data => {
-					const newSlug = get( data, 'new_slug' );
+				.updateSiteAddress(siteId, newBlogName, domain, oldDomain, siteType, discard, nonce)
+				.then((data) => {
+					const newSlug = get(data, 'new_slug');
 
-					if ( newSlug ) {
-						dispatch( recordTracksEvent( 'calypso_siteaddresschange_success', eventProperties ) );
+					if (newSlug) {
+						dispatch(recordTracksEvent('calypso_siteaddresschange_success', eventProperties));
 
 						const newAddress = newSlug + '.' + domain;
-						dispatch( requestSite( siteId ) ).then( () => {
+						dispatch(requestSite(siteId)).then(() => {
 							// Re-fetch domains, as we changed the primary domain name
-							dispatch( fetchSiteDomains( siteId ) ).then( () =>
-								page( domainManagementEdit( newAddress, newAddress ) )
+							dispatch(fetchSiteDomains(siteId)).then(() =>
+								page(domainManagementEdit(newAddress, newAddress))
 							);
 
-							dispatch( {
+							dispatch({
 								type: SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 								siteId,
-							} );
+							});
 
 							dispatch(
-								successNotice( translate( 'Your new site address is ready to go!' ), {
+								successNotice(translate('Your new site address is ready to go!'), {
 									id: 'siteAddressChangeSuccessful',
 									duration: 5000,
 									showDismiss: true,
 									isPersistent: true,
-								} )
+								})
 							);
-						} );
+						});
 					}
-				} )
-				.catch( errorHandler );
-		} )
-		.catch( errorHandler );
+				})
+				.catch(errorHandler);
+		})
+		.catch(errorHandler);
 };

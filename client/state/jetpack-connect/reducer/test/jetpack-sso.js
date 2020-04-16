@@ -43,31 +43,31 @@ const successfulSSOValidation = {
 	},
 };
 
-const falseSSOValidation = Object.assign( successfulSSOValidation, { success: false } );
+const falseSSOValidation = Object.assign(successfulSSOValidation, { success: false });
 
-describe( '#jetpackSSO()', () => {
-	test( 'should default to an empty object', () => {
-		const state = jetpackSSO( undefined, {} );
-		expect( state ).toEqual( {} );
-	} );
+describe('#jetpackSSO()', () => {
+	test('should default to an empty object', () => {
+		const state = jetpackSSO(undefined, {});
+		expect(state).toEqual({});
+	});
 
-	test( 'should set isValidating to true when validating', () => {
-		const state = jetpackSSO( undefined, {
+	test('should set isValidating to true when validating', () => {
+		const state = jetpackSSO(undefined, {
 			type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
-		} );
+		});
 
-		expect( state ).toHaveProperty( 'isValidating', true );
-	} );
+		expect(state).toHaveProperty('isValidating', true);
+	});
 
-	test( 'should set isAuthorizing to true when authorizing', () => {
-		const state = jetpackSSO( undefined, {
+	test('should set isAuthorizing to true when authorizing', () => {
+		const state = jetpackSSO(undefined, {
 			type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
-		} );
+		});
 
-		expect( state ).toHaveProperty( 'isAuthorizing', true );
-	} );
+		expect(state).toHaveProperty('isAuthorizing', true);
+	});
 
-	test( 'should set isValidating to false after validation', () => {
+	test('should set isValidating to false after validation', () => {
 		const actions = [
 			successfulSSOValidation,
 			{
@@ -78,35 +78,35 @@ describe( '#jetpackSSO()', () => {
 			},
 		];
 
-		actions.forEach( action => {
-			const state = jetpackSSO( undefined, action );
-			expect( state ).toHaveProperty( 'isValidating', false );
-		} );
-	} );
+		actions.forEach((action) => {
+			const state = jetpackSSO(undefined, action);
+			expect(state).toHaveProperty('isValidating', false);
+		});
+	});
 
-	test( 'should store boolean nonceValid after validation', () => {
-		const actions = [ successfulSSOValidation, falseSSOValidation ];
+	test('should store boolean nonceValid after validation', () => {
+		const actions = [successfulSSOValidation, falseSSOValidation];
 
-		actions.forEach( action => {
-			const originalAction = deepFreeze( action );
-			const state = jetpackSSO( undefined, originalAction );
-			expect( state ).toHaveProperty( 'nonceValid', originalAction.success );
-		} );
-	} );
+		actions.forEach((action) => {
+			const originalAction = deepFreeze(action);
+			const state = jetpackSSO(undefined, originalAction);
+			expect(state).toHaveProperty('nonceValid', originalAction.success);
+		});
+	});
 
-	test( 'should store blog details after validation', () => {
-		const successState = jetpackSSO( undefined, successfulSSOValidation );
-		expect( successState ).toMatchObject( { blogDetails: successfulSSOValidation.blogDetails } );
-	} );
+	test('should store blog details after validation', () => {
+		const successState = jetpackSSO(undefined, successfulSSOValidation);
+		expect(successState).toMatchObject({ blogDetails: successfulSSOValidation.blogDetails });
+	});
 
-	test( 'should store shared details after validation', () => {
-		const successState = jetpackSSO( undefined, successfulSSOValidation );
-		expect( successState ).toMatchObject( {
+	test('should store shared details after validation', () => {
+		const successState = jetpackSSO(undefined, successfulSSOValidation);
+		expect(successState).toMatchObject({
 			sharedDetails: successfulSSOValidation.sharedDetails,
-		} );
-	} );
+		});
+	});
 
-	test( 'should set isAuthorizing to false after authorization', () => {
+	test('should set isAuthorizing to false after authorization', () => {
 		const actions = [
 			{
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
@@ -121,21 +121,21 @@ describe( '#jetpackSSO()', () => {
 			},
 		];
 
-		actions.forEach( action => {
-			const state = jetpackSSO( undefined, action );
-			expect( state ).toHaveProperty( 'isAuthorizing', false );
-		} );
-	} );
+		actions.forEach((action) => {
+			const state = jetpackSSO(undefined, action);
+			expect(state).toHaveProperty('isAuthorizing', false);
+		});
+	});
 
-	test( 'should store sso_url after authorization', () => {
-		const action = deepFreeze( {
+	test('should store sso_url after authorization', () => {
+		const action = deepFreeze({
 			type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 			ssoUrl: 'http://example.wordpress.com',
 			siteUrl: 'http://example.wordpress.com',
-		} );
+		});
 
-		const state = jetpackSSO( undefined, action );
+		const state = jetpackSSO(undefined, action);
 
-		expect( state ).toHaveProperty( 'ssoUrl', action.ssoUrl );
-	} );
-} );
+		expect(state).toHaveProperty('ssoUrl', action.ssoUrl);
+	});
+});

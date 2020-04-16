@@ -23,33 +23,33 @@ class ContactFormDialogFieldList extends React.Component {
 	};
 
 	render() {
-		if ( this.props.fields.length > 0 ) {
+		if (this.props.fields.length > 0) {
 			return (
 				<div className="editor-contact-form-modal-fields">
-					{ this.props.fields.map( ( field, index ) => {
+					{this.props.fields.map((field, index) => {
 						return (
 							<Field
-								key={ index }
-								{ ...field }
-								onRemove={ () => this.props.onFieldRemove( index ) }
-								onUpdate={ newField => this.props.onFieldUpdate( index, newField ) }
+								key={index}
+								{...field}
+								onRemove={() => this.props.onFieldRemove(index)}
+								onUpdate={(newField) => this.props.onFieldUpdate(index, newField)}
 							/>
 						);
-					} ) }
+					})}
 				</div>
 			);
 		}
 
 		return (
 			<EmptyContent
-				title={ null }
-				line={ this.props.translate( 'An empty form is no fun! Go ahead and add some fields!' ) }
-				action={ this.props.translate( 'Add New Field' ) }
-				actionCallback={ this.props.onFieldAdd }
-				isCompact={ true }
+				title={null}
+				line={this.props.translate('An empty form is no fun! Go ahead and add some fields!')}
+				action={this.props.translate('Add New Field')}
+				actionCallback={this.props.onFieldAdd}
+				isCompact={true}
 			/>
 		);
 	}
 }
 
-export default localize( ContactFormDialogFieldList );
+export default localize(ContactFormDialogFieldList);

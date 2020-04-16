@@ -16,13 +16,13 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID for which to purchase the plan
  * @returns {?string}         Plan purchase URL
  */
-export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
+export function getJetpackUpgradeUrlIfPremiumTheme(state, themeId, siteId) {
 	if (
-		isJetpackSite( state, siteId ) &&
-		isThemePremium( state, themeId ) &&
-		! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		isJetpackSite(state, siteId) &&
+		isThemePremium(state, themeId) &&
+		!hasFeature(state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES)
 	) {
-		return `/checkout/${ getSiteSlug( state, siteId ) }/professional`;
+		return `/checkout/${getSiteSlug(state, siteId)}/professional`;
 	}
 	return null;
 }

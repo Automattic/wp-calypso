@@ -12,18 +12,18 @@ import { PendingListItem } from '../pending-list-item';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import * as localizedMoment from 'components/localized-moment';
 
-jest.mock( 'components/localized-moment' );
-localizedMoment.useLocalizedMoment.mockReturnValue( moment );
+jest.mock('components/localized-moment');
+localizedMoment.useLocalizedMoment.mockReturnValue(moment);
 
-describe( 'PendingListItem', () => {
+describe('PendingListItem', () => {
 	const defaultProps = {
-		translate: x => x,
-		products: [ { productName: 'WordPress.com Business Plan', productSlug: PLAN_BUSINESS } ],
+		translate: (x) => x,
+		products: [{ productName: 'WordPress.com Business Plan', productSlug: PLAN_BUSINESS }],
 		paymentType: 'Sofort',
 		totalCostDisplay: '€204',
 	};
 
-	const wrapper = shallow( <PendingListItem { ...defaultProps } /> );
+	const wrapper = shallow(<PendingListItem {...defaultProps} />);
 
 	const assertions = [
 		// Check nesting
@@ -35,9 +35,9 @@ describe( 'PendingListItem', () => {
 		'.pending-payments__list-item-actions Button[href="/help/contact"]',
 	];
 
-	assertions.forEach( rule => {
-		test( rule, () => {
-			expect( wrapper.find( rule ) ).toHaveLength( 1 );
-		} );
-	} );
-} );
+	assertions.forEach((rule) => {
+		test(rule, () => {
+			expect(wrapper.find(rule)).toHaveLength(1);
+		});
+	});
+});

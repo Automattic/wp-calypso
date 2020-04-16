@@ -26,40 +26,40 @@ class MasterbarDraftsPopover extends Component {
 		return (
 			<Popover
 				isVisible
-				onClose={ this.props.closeDrafts }
+				onClose={this.props.closeDrafts}
 				position="bottom left"
-				context={ this.props.context }
+				context={this.props.context}
 				className="masterbar__recent-drafts"
 			>
-				<QueryPosts siteId={ this.props.site.ID } query={ this.props.draftsQuery } />
+				<QueryPosts siteId={this.props.site.ID} query={this.props.draftsQuery} />
 
 				<div className="masterbar__recent-drafts-heading">
-					<h3>{ translate( 'Recent Drafts' ) }</h3>
+					<h3>{translate('Recent Drafts')}</h3>
 
 					<Button
 						compact
 						className="masterbar__recent-drafts-add-new"
-						href={ newPost( this.props.site ) }
-						onClick={ this.props.newDraftClicked }
+						href={newPost(this.props.site)}
+						onClick={this.props.newDraftClicked}
 					>
-						{ translate( 'New Draft' ) }
+						{translate('New Draft')}
 					</Button>
 				</div>
 
 				<div className="masterbar__recent-drafts-list">
-					{ this.renderDrafts() }
+					{this.renderDrafts()}
 
-					{ this.props.loadingDrafts && <Draft isPlaceholder /> }
+					{this.props.loadingDrafts && <Draft isPlaceholder />}
 
 					<Button
 						compact
 						borderless
 						className="masterbar__recent-drafts-see-all"
-						href={ `/posts/drafts/${ this.props.site.slug }` }
-						onClick={ this.props.seeAllDraftsClicked }
+						href={`/posts/drafts/${this.props.site.slug}`}
+						onClick={this.props.seeAllDraftsClicked}
 					>
-						{ translate( 'See All' ) }
-						{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
+						{translate('See All')}
+						{this.props.draftCount ? <Count count={this.props.draftCount} /> : null}
 					</Button>
 				</div>
 			</Popover>
@@ -69,47 +69,47 @@ class MasterbarDraftsPopover extends Component {
 	renderDrafts() {
 		const { site, drafts } = this.props;
 
-		if ( ! drafts ) {
+		if (!drafts) {
 			return null;
 		}
 
-		return drafts.map( draft => (
+		return drafts.map((draft) => (
 			<Draft
-				key={ draft.global_ID }
-				post={ draft }
-				siteId={ site.ID }
-				showAuthor={ ! site.single_user_site && ! this.props.userId }
-				onTitleClick={ this.props.draftClicked }
+				key={draft.global_ID}
+				post={draft}
+				siteId={site.ID}
+				showAuthor={!site.single_user_site && !this.props.userId}
+				onTitleClick={this.props.draftClicked}
 			/>
-		) );
+		));
 	}
 }
 
 // Memoizes the last value of the `draftsQuery` object if the dependencies (userId and siteId)
 // didn't change. Prevents rerenders of the component.
 const getDraftsQuery = createSelector(
-	( state, siteId ) => {
-		const userId = getCurrentUserId( state );
-		const site = getSite( state, siteId );
+	(state, siteId) => {
+		const userId = getCurrentUserId(state);
+		const site = getSite(state, siteId);
 
 		return {
 			type: 'post',
 			status: 'draft',
 			number: 5,
 			order_by: 'modified',
-			author: ! site.jetpack && ! site.single_user_site ? userId : null,
+			author: !site.jetpack && !site.single_user_site ? userId : null,
 		};
 	},
-	( state, siteId ) => [ getCurrentUserId( state ), getSite( state, siteId ) ]
+	(state, siteId) => [getCurrentUserId(state), getSite(state, siteId)]
 );
 
-export default connect( ( state, { siteId } ) => {
-	const draftsQuery = getDraftsQuery( state, siteId );
+export default connect((state, { siteId }) => {
+	const draftsQuery = getDraftsQuery(state, siteId);
 
 	return {
-		site: getSite( state, siteId ),
+		site: getSite(state, siteId),
 		draftsQuery,
-		drafts: getPostsForQueryIgnoringPage( state, siteId, draftsQuery ),
-		loadingDrafts: isRequestingPostsForQuery( state, siteId, draftsQuery ),
+		drafts: getPostsForQueryIgnoringPage(state, siteId, draftsQuery),
+		loadingDrafts: isRequestingPostsForQuery(state, siteId, draftsQuery),
 	};
-} )( localize( MasterbarDraftsPopover ) );
+})(localize(MasterbarDraftsPopover));

@@ -15,58 +15,53 @@ interface Props {
 	errorNotifications: ReactNode;
 }
 
-const EnterPasswordForm = ( props: Props ) => {
+const EnterPasswordForm = (props: Props) => {
 	const { __ } = useI18n();
 
-	const [ passwordVal, setPasswordVal ] = useState( '' );
-	const { reset } = useDispatch( AUTH_STORE );
-	const { submitPassword } = useDispatch( AUTH_STORE );
-	const usernameOrEmail = useSelect( select => select( AUTH_STORE ).getUsernameOrEmail() );
+	const [passwordVal, setPasswordVal] = useState('');
+	const { reset } = useDispatch(AUTH_STORE);
+	const { submitPassword } = useDispatch(AUTH_STORE);
+	const usernameOrEmail = useSelect((select) => select(AUTH_STORE).getUsernameOrEmail());
 
-	const onSubmitPassword = ( event: React.FormEvent< HTMLFormElement > ) => {
+	const onSubmitPassword = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		submitPassword( passwordVal );
+		submitPassword(passwordVal);
 	};
 
-	const changeEmailAddress = ( e: React.MouseEvent< HTMLElement > ) => {
+	const changeEmailAddress = (e: React.MouseEvent<HTMLElement>) => {
 		reset();
 		e.preventDefault;
 	};
 
-	const changeEmailOrUsernameLinkText = includes( usernameOrEmail, '@' )
-		? __( 'Change Email Address' )
-		: __( 'Change Username' );
+	const changeEmailOrUsernameLinkText = includes(usernameOrEmail, '@')
+		? __('Change Email Address')
+		: __('Change Username');
 
 	return (
-		<form onSubmit={ onSubmitPassword }>
+		<form onSubmit={onSubmitPassword}>
 			<Button
 				className="enter-password__change-username"
-				isLink={ true }
-				onClick={ changeEmailAddress }
+				isLink={true}
+				onClick={changeEmailAddress}
 			>
-				<Icon icon="arrow-left-alt" size={ 18 } />
-				{ changeEmailOrUsernameLinkText }
+				<Icon icon="arrow-left-alt" size={18} />
+				{changeEmailOrUsernameLinkText}
 			</Button>
+			<TextControl label={''} value={usernameOrEmail} disabled={true} onChange={setPasswordVal} />
 			<TextControl
-				label={ '' }
-				value={ usernameOrEmail }
-				disabled={ true }
-				onChange={ setPasswordVal }
-			/>
-			<TextControl
-				label={ __( 'Password' ) }
+				label={__('Password')}
 				type="password"
 				// focusing on the field causes 1password to autofill the password.
 				// eslint-disable-next-line
-				autoFocus={ true }
-				value={ passwordVal }
-				onChange={ setPasswordVal }
+				autoFocus={true}
+				value={passwordVal}
+				onChange={setPasswordVal}
 			/>
-			{ props.errorNotifications }
+			{props.errorNotifications}
 			<div>
-				{ props.tos }
+				{props.tos}
 
-				<ModalSubmitButton>{ __( 'Login' ) }</ModalSubmitButton>
+				<ModalSubmitButton>{__('Login')}</ModalSubmitButton>
 			</div>
 		</form>
 	);

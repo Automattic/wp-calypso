@@ -36,11 +36,7 @@ class RenewButton extends React.Component {
 	};
 
 	handleRenew = () => {
-		handleRenewNowClick(
-			this.props.purchase,
-			this.props.selectedSite.slug,
-			this.props.tracksProps
-		);
+		handleRenewNowClick(this.props.purchase, this.props.selectedSite.slug, this.props.tracksProps);
 	};
 
 	render() {
@@ -54,48 +50,48 @@ class RenewButton extends React.Component {
 			subscriptionId,
 		} = this.props;
 
-		if ( ! subscriptionId ) {
+		if (!subscriptionId) {
 			return null;
 		}
 
 		let formattedPrice = '...';
 		let loading = true;
 
-		if ( purchase && selectedSite.ID ) {
+		if (purchase && selectedSite.ID) {
 			const renewalPrice =
-				getRenewalPrice( purchase ) + ( redemptionProduct ? redemptionProduct.cost : 0 );
+				getRenewalPrice(purchase) + (redemptionProduct ? redemptionProduct.cost : 0);
 			const currencyCode = purchase.currencyCode;
-			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } );
+			formattedPrice = formatCurrency(renewalPrice, currencyCode, { stripZeros: true });
 			loading = false;
 		}
 
-		const buttonClasses = classNames( 'renew-button', { 'is-loading': loading } );
-		let buttonLabel = translate( 'Renew for {{strong}}%(price)s{{/strong}}', {
+		const buttonClasses = classNames('renew-button', { 'is-loading': loading });
+		let buttonLabel = translate('Renew for {{strong}}%(price)s{{/strong}}', {
 			components: { strong: <strong /> },
 			args: { price: formattedPrice },
-		} );
-		if ( reactivate ) {
-			buttonLabel = translate( 'Reactivate for {{strong}}%(price)s{{/strong}}', {
+		});
+		if (reactivate) {
+			buttonLabel = translate('Reactivate for {{strong}}%(price)s{{/strong}}', {
 				components: { strong: <strong /> },
 				args: { price: formattedPrice },
-			} );
-		} else if ( customLabel ) {
+			});
+		} else if (customLabel) {
 			buttonLabel = customLabel;
 		}
 
 		return (
 			<React.Fragment>
 				<Button
-					compact={ this.props.compact }
-					primary={ this.props.primary }
-					className={ buttonClasses }
-					onClick={ this.handleRenew }
+					compact={this.props.compact}
+					primary={this.props.primary}
+					className={buttonClasses}
+					onClick={this.handleRenew}
 				>
-					{ buttonLabel }
+					{buttonLabel}
 				</Button>
 			</React.Fragment>
 		);
 	}
 }
 
-export default localize( RenewButton );
+export default localize(RenewButton);

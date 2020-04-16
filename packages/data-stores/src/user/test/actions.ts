@@ -14,11 +14,11 @@ import { createActions } from '../actions';
 const client_id = 'magic_client_id';
 const client_secret = 'magic_client_secret';
 
-describe( 'createAccount', () => {
-	const { createAccount } = createActions( {
+describe('createAccount', () => {
+	const { createAccount } = createActions({
 		client_id,
 		client_secret,
-	} );
+	});
 
 	const params = {
 		email: 'test@example.com',
@@ -44,10 +44,10 @@ describe( 'createAccount', () => {
 		locale: 'en',
 	};
 
-	it( 'requests a new passwordless account to be created', () => {
-		const generator = createAccount( params );
+	it('requests a new passwordless account to be created', () => {
+		const generator = createAccount(params);
 
-		expect( generator.next().value ).toEqual( { type: 'FETCH_NEW_USER' } );
+		expect(generator.next().value).toEqual({ type: 'FETCH_NEW_USER' });
 
 		const apiResponse = {
 			success: true,
@@ -56,33 +56,33 @@ describe( 'createAccount', () => {
 			user_id: 12345,
 		};
 
-		expect( generator.next().value ).toEqual( {
+		expect(generator.next().value).toEqual({
 			type: 'WPCOM_REQUEST',
-			request: expect.objectContaining( {
+			request: expect.objectContaining({
 				body: {
 					...defaults,
 					...params,
 					validate: false,
 				},
-			} ),
-		} );
+			}),
+		});
 
-		expect( generator.next( apiResponse ).value ).toEqual( { type: 'RELOAD_PROXY' } );
-		expect( generator.next().value ).toEqual( { type: 'REQUEST_ALL_BLOGS_ACCESS' } );
+		expect(generator.next(apiResponse).value).toEqual({ type: 'RELOAD_PROXY' });
+		expect(generator.next().value).toEqual({ type: 'REQUEST_ALL_BLOGS_ACCESS' });
 
 		const finalResult = generator.next();
 
-		expect( finalResult.value ).toEqual( {
+		expect(finalResult.value).toEqual({
 			type: 'RECEIVE_NEW_USER',
 			response: apiResponse,
-		} );
-		expect( finalResult.done ).toBe( true );
-	} );
+		});
+		expect(finalResult.done).toBe(true);
+	});
 
-	it( 'receives an error object and returns false', () => {
-		const generator = createAccount( params );
+	it('receives an error object and returns false', () => {
+		const generator = createAccount(params);
 
-		expect( generator.next().value ).toEqual( { type: 'FETCH_NEW_USER' } );
+		expect(generator.next().value).toEqual({ type: 'FETCH_NEW_USER' });
 
 		const apiResponse = {
 			error: 'email_exists',
@@ -92,32 +92,32 @@ describe( 'createAccount', () => {
 			message: 'Invalid email input',
 		};
 
-		expect( generator.next().value ).toEqual( {
+		expect(generator.next().value).toEqual({
 			type: 'WPCOM_REQUEST',
-			request: expect.objectContaining( {
+			request: expect.objectContaining({
 				body: {
 					...defaults,
 					...params,
 					validate: false,
 				},
-			} ),
-		} );
+			}),
+		});
 
-		expect( generator.throw( apiResponse ).value ).toEqual( {
+		expect(generator.throw(apiResponse).value).toEqual({
 			type: 'RECEIVE_NEW_USER_FAILED',
 			error: apiResponse,
-		} );
+		});
 
 		const finalResult = generator.next();
 
-		expect( finalResult.value ).toBe( false );
-		expect( finalResult.done ).toBe( true );
-	} );
+		expect(finalResult.value).toBe(false);
+		expect(finalResult.done).toBe(true);
+	});
 
-	it( 'requests a passwordful account to be created with French locale set in query', () => {
-		const generator = createAccount( paramsWithPasswordAndLocale );
+	it('requests a passwordful account to be created with French locale set in query', () => {
+		const generator = createAccount(paramsWithPasswordAndLocale);
 
-		expect( generator.next().value ).toEqual( { type: 'FETCH_NEW_USER' } );
+		expect(generator.next().value).toEqual({ type: 'FETCH_NEW_USER' });
 
 		const apiResponse = {
 			success: true,
@@ -126,27 +126,27 @@ describe( 'createAccount', () => {
 			user_id: 12345,
 		};
 
-		expect( generator.next().value ).toEqual( {
+		expect(generator.next().value).toEqual({
 			type: 'WPCOM_REQUEST',
-			request: expect.objectContaining( {
+			request: expect.objectContaining({
 				body: {
 					...defaults,
 					...paramsWithPasswordAndLocale,
 					validate: false,
 				},
 				query: 'locale=fr',
-			} ),
-		} );
+			}),
+		});
 
-		expect( generator.next( apiResponse ).value ).toEqual( { type: 'RELOAD_PROXY' } );
-		expect( generator.next().value ).toEqual( { type: 'REQUEST_ALL_BLOGS_ACCESS' } );
+		expect(generator.next(apiResponse).value).toEqual({ type: 'RELOAD_PROXY' });
+		expect(generator.next().value).toEqual({ type: 'REQUEST_ALL_BLOGS_ACCESS' });
 
 		const finalResult = generator.next();
 
-		expect( finalResult.value ).toEqual( {
+		expect(finalResult.value).toEqual({
 			type: 'RECEIVE_NEW_USER',
 			response: apiResponse,
-		} );
-		expect( finalResult.done ).toBe( true );
-	} );
-} );
+		});
+		expect(finalResult.done).toBe(true);
+	});
+});

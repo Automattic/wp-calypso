@@ -18,31 +18,31 @@ interface Props {
 	title: ReactNode;
 }
 
-const MarketingToolsFeature: FunctionComponent< Props > = ( {
+const MarketingToolsFeature: FunctionComponent<Props> = ({
 	children,
 	description,
 	disclaimer,
 	imageAlt,
 	imagePath,
 	title,
-} ) => {
+}) => {
 	return (
 		<Card className="tools__feature-list-item">
 			<div className="tools__feature-list-item-body">
-				{ imagePath && (
-					<img alt={ imageAlt } className="tools__feature-list-item-body-image" src={ imagePath } />
-				) }
+				{imagePath && (
+					<img alt={imageAlt} className="tools__feature-list-item-body-image" src={imagePath} />
+				)}
 
 				<div className="tools__feature-list-item-body-text">
-					<CardHeading>{ title }</CardHeading>
+					<CardHeading>{title}</CardHeading>
 
-					<p>{ description }</p>
+					<p>{description}</p>
 
-					{ disclaimer && <p className="tools__feature-list-item-disclaimer">{ disclaimer }</p> }
+					{disclaimer && <p className="tools__feature-list-item-disclaimer">{disclaimer}</p>}
 				</div>
 			</div>
 
-			<div className="tools__feature-list-item-child-row">{ children }</div>
+			<div className="tools__feature-list-item-child-row">{children}</div>
 		</Card>
 	);
 };

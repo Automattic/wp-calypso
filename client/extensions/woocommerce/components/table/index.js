@@ -11,14 +11,14 @@ import classnames from 'classnames';
  */
 import { Card } from '@automattic/components';
 
-const Table = ( {
+const Table = ({
 	className,
 	compact = false,
 	horizontalScroll = false,
 	header,
 	children,
 	...props
-} ) => {
+}) => {
 	const classes = classnames(
 		{
 			table: true,
@@ -28,12 +28,12 @@ const Table = ( {
 		className
 	);
 	return (
-		<Card className={ classes }>
+		<Card className={classes}>
 			<div className="table__wrapper-shadow">
 				<div className="table__wrapper">
-					<table { ...props }>
-						{ header && <thead>{ header }</thead> }
-						<tbody>{ children }</tbody>
+					<table {...props}>
+						{header && <thead>{header}</thead>}
+						<tbody>{children}</tbody>
 					</table>
 				</div>
 			</div>

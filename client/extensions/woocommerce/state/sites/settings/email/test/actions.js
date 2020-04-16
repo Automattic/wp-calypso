@@ -26,8 +26,8 @@ import {
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
-describe( 'actions', () => {
-	describe( '#fetchEmailSettings()', () => {
+describe('actions', () => {
+	describe('#fetchEmailSettings()', () => {
 		const siteId = '123';
 
 		const data = [
@@ -98,44 +98,44 @@ describe( 'actions', () => {
 			},
 		];
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/settings_email_groups&_via_calypso&_method=get', json: true } )
-				.reply( 200, { data } );
-		} );
+				.get('/rest/v1.1/jetpack-blogs/123/rest-api/')
+				.query({ path: '/wc/v3/settings_email_groups&_via_calypso&_method=get', json: true })
+				.reply(200, { data });
+		});
 
-		test( 'should dispatch an request action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an request action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			fetchEmailSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			fetchEmailSettings(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with settings information when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with settings information when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = fetchEmailSettings( siteId )( dispatch, getState );
+			const response = fetchEmailSettings(siteId)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 					siteId,
 					data,
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should not dispatch if settings are already loading for this site', () => {
-			const getState = () => ( {
+		test('should not dispatch if settings are already loading for this site', () => {
+			const getState = () => ({
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
+							[siteId]: {
 								settings: {
 									email: LOADING,
 								},
@@ -143,18 +143,18 @@ describe( 'actions', () => {
 						},
 					},
 				},
-			} );
+			});
 			const dispatch = spy();
-			fetchEmailSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.been.called;
-		} );
+			fetchEmailSettings(siteId)(dispatch, getState);
+			expect(dispatch).to.not.have.been.called;
+		});
 
-		test( 'should not dispatch if settings are already fetched for this site', () => {
-			const getState = () => ( {
+		test('should not dispatch if settings are already fetched for this site', () => {
+			const getState = () => ({
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
+							[siteId]: {
 								settings: {
 									email: data,
 								},
@@ -162,42 +162,42 @@ describe( 'actions', () => {
 						},
 					},
 				},
-			} );
+			});
 			const dispatch = spy();
-			fetchEmailSettings( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.been.called;
-		} );
-	} );
+			fetchEmailSettings(siteId)(dispatch, getState);
+			expect(dispatch).to.not.have.been.called;
+		});
+	});
 
-	describe( '#emailSettingChange()', () => {
-		test( 'should dispatch a action with changed setting', () => {
+	describe('#emailSettingChange()', () => {
+		test('should dispatch a action with changed setting', () => {
 			const dispatch = spy();
 			const siteId = 123;
 			const setting = { option: true };
-			emailSettingChange( siteId, setting )( dispatch );
+			emailSettingChange(siteId, setting)(dispatch);
 
-			expect( dispatch ).to.have.been.calledWith( {
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
 				siteId,
 				setting,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#emailSettingsSaveSettings()', () => {
-		test( 'should dispatch a action that will trigger saving settings', () => {
+	describe('#emailSettingsSaveSettings()', () => {
+		test('should dispatch a action that will trigger saving settings', () => {
 			const dispatch = spy();
 			const siteId = 123;
-			emailSettingsSaveSettings( siteId )( dispatch );
+			emailSettingsSaveSettings(siteId)(dispatch);
 
-			expect( dispatch ).to.have.been.calledWith( {
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
 				siteId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#emailSettingsSubmitSettings()', () => {
+	describe('#emailSettingsSubmitSettings()', () => {
 		const siteId = '123';
 
 		const settings = {
@@ -228,54 +228,54 @@ describe( 'actions', () => {
 
 		const data = { update };
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/settings/batch&_via_calypso&_method=post',
-					body: JSON.stringify( {
+					body: JSON.stringify({
 						update,
-					} ),
+					}),
 					json: true,
-				} )
-				.reply( 200, { data } );
-		} );
+				})
+				.reply(200, { data });
+		});
 
-		test( 'should dispatch an request action', () => {
+		test('should dispatch an request action', () => {
 			const dispatch = spy();
-			emailSettingsSubmitSettings( siteId, settings )( dispatch );
-			expect( dispatch ).to.have.been.calledWith( {
+			emailSettingsSubmitSettings(siteId, settings)(dispatch);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch an success action', () => {
+		test('should dispatch an success action', () => {
 			const dispatch = spy();
 			return emailSettingsSubmitSettings(
 				siteId,
 				settings
-			)( dispatch ).then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			)(dispatch).then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
 					siteId,
 					update: data,
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#emailSettingsInvalidValue()', () => {
-		test( 'should dispatch a action that will inform that settings are not valid', () => {
+	describe('#emailSettingsInvalidValue()', () => {
+		test('should dispatch a action that will inform that settings are not valid', () => {
 			const dispatch = spy();
 			const siteId = 123;
-			emailSettingsInvalidValue( siteId, 'Something is wrong!' )( dispatch );
+			emailSettingsInvalidValue(siteId, 'Something is wrong!')(dispatch);
 
-			expect( dispatch ).to.have.been.calledWith( {
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 				siteId,
 				reason: 'Something is wrong!',
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

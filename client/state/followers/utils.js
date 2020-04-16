@@ -11,8 +11,8 @@ import { omit } from 'lodash';
  * @param  {object} query A list of query parameters
  * @returns {string}       Alphabetically ordered string of query parameters and values
  */
-export function getSerializedQuery( query ) {
-	return deterministicStringify( omit( query, [ 'page', 'max' ] ) );
+export function getSerializedQuery(query) {
+	return deterministicStringify(omit(query, ['page', 'max']));
 }
 
 /**
@@ -22,7 +22,7 @@ export function getSerializedQuery( query ) {
  * @param  {object} follower A follower ojbect
  * @returns {object}          A normalized follower object
  */
-export function normalizeFollower( follower ) {
+export function normalizeFollower(follower) {
 	follower.avatar_URL = follower.avatar;
 	return follower;
 }

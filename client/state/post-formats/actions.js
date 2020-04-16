@@ -17,35 +17,35 @@ import {
  * @param  {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */
-export function requestPostFormats( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function requestPostFormats(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: POST_FORMATS_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.site( siteId )
+			.site(siteId)
 			.postFormatsList()
-			.then( ( { formats } ) => {
-				dispatch( {
+			.then(({ formats }) => {
+				dispatch({
 					type: POST_FORMATS_RECEIVE,
 					siteId,
 					formats,
-				} );
+				});
 
-				dispatch( {
+				dispatch({
 					type: POST_FORMATS_REQUEST_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: POST_FORMATS_REQUEST_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

@@ -19,36 +19,36 @@ import getSiteUrl from 'state/selectors/get-site-url';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, translate } ) => (
+const Troubleshoot = ({ isFreePlan, siteUrl, trackDebugClick, translate }) => (
 	<LoggedOutFormLinks>
 		<LoggedOutFormLinkItem
-			href={ addQueryArgs( { url: siteUrl }, 'https://jetpack.com/support/debug/' ) }
-			onClick={ trackDebugClick }
+			href={addQueryArgs({ url: siteUrl }, 'https://jetpack.com/support/debug/')}
+			onClick={trackDebugClick}
 		>
-			<Gridicon size={ 18 } icon="offline" /> { translate( 'Diagnose a connection problem' ) }
+			<Gridicon size={18} icon="offline" /> {translate('Diagnose a connection problem')}
 		</LoggedOutFormLinkItem>
-		{ isFreePlan ? (
-			<HelpButton label={ translate( 'Get help from our Happiness Engineers' ) } />
+		{isFreePlan ? (
+			<HelpButton label={translate('Get help from our Happiness Engineers')} />
 		) : (
 			<JetpackConnectHappychatButton
-				label={ translate( 'Get help from our Happiness Engineers' ) }
+				label={translate('Get help from our Happiness Engineers')}
 				eventName="calypso_jetpack_disconnect_chat_initiated"
 			>
-				<HelpButton label={ translate( 'Get help from our Happiness Engineers' ) } />
+				<HelpButton label={translate('Get help from our Happiness Engineers')} />
 			</JetpackConnectHappychatButton>
-		) }
+		)}
 	</LoggedOutFormLinks>
 );
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 		return {
-			siteUrl: getSiteUrl( state, siteId ),
-			isFreePlan: isSiteOnFreePlan( state, siteId ),
+			siteUrl: getSiteUrl(state, siteId),
+			isFreePlan: isSiteOnFreePlan(state, siteId),
 		};
 	},
 	{
-		trackDebugClick: withAnalytics( recordTracksEvent( 'calypso_jetpack_disconnect_debug_click' ) ),
+		trackDebugClick: withAnalytics(recordTracksEvent('calypso_jetpack_disconnect_debug_click')),
 	}
-)( localize( Troubleshoot ) );
+)(localize(Troubleshoot));

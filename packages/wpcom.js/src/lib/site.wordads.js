@@ -14,9 +14,9 @@ import SiteWordAdsTOS from './site.wordads.tos';
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {null} null
  */
-export default function SiteWordAds( sid, wpcom ) {
-	if ( ! ( this instanceof SiteWordAds ) ) {
-		return new SiteWordAds( sid, wpcom );
+export default function SiteWordAds(sid, wpcom) {
+	if (!(this instanceof SiteWordAds)) {
+		return new SiteWordAds(sid, wpcom);
 	}
 
 	this._sid = sid;
@@ -36,8 +36,8 @@ export default function SiteWordAds( sid, wpcom ) {
  *
  * @returns {SiteWordAdsSettings} site WordAds settings instance
  */
-SiteWordAds.prototype.settings = function() {
-	return new SiteWordAdsSettings( this._sid, this.wpcom );
+SiteWordAds.prototype.settings = function () {
+	return new SiteWordAdsSettings(this._sid, this.wpcom);
 };
 
 /**
@@ -53,8 +53,8 @@ SiteWordAds.prototype.settings = function() {
  *
  * @returns {SiteWordAdsEarnings} site WordAds earnings instance
  */
-SiteWordAds.prototype.earnings = function() {
-	return new SiteWordAdsEarnings( this._sid, this.wpcom );
+SiteWordAds.prototype.earnings = function () {
+	return new SiteWordAdsEarnings(this._sid, this.wpcom);
 };
 
 /**
@@ -72,6 +72,6 @@ SiteWordAds.prototype.earnings = function() {
  *
  * @returns {SiteWordAdsTOS} site wordAds TOS instance
  */
-SiteWordAds.prototype.tos = function() {
-	return new SiteWordAdsTOS( this._sid, this.wpcom );
+SiteWordAds.prototype.tos = function () {
+	return new SiteWordAdsTOS(this._sid, this.wpcom);
 };

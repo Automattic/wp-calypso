@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 
-describe( 'getCurrentRouteParameterized()', () => {
+describe('getCurrentRouteParameterized()', () => {
 	const ui = {
 		route: {
 			path: {
@@ -21,34 +21,34 @@ describe( 'getCurrentRouteParameterized()', () => {
 		items: { '12345': { URL: 'http://testsite.blog' } },
 	};
 
-	test( 'it returns null when state is missing the path', () => {
+	test('it returns null when state is missing the path', () => {
 		const state = {
 			ui: {},
 			sites: sites,
 		};
 
-		expect( getCurrentRouteParameterized( state, 12345 ) ).to.be.null;
-	} );
+		expect(getCurrentRouteParameterized(state, 12345)).to.be.null;
+	});
 
-	test( 'it returns null when state is missing the site', () => {
+	test('it returns null when state is missing the site', () => {
 		const state = {
 			ui: ui,
 			sites: { items: {} },
 		};
 
-		expect( getCurrentRouteParameterized( state, 12345 ) ).to.be.null;
-	} );
+		expect(getCurrentRouteParameterized(state, 12345)).to.be.null;
+	});
 
-	test( 'it replaces the site slug with :site', () => {
+	test('it replaces the site slug with :site', () => {
 		const state = {
 			ui,
 			sites,
 		};
 
-		expect( getCurrentRouteParameterized( state, 12345 ) ).to.equal( '/test/url/:site' );
-	} );
+		expect(getCurrentRouteParameterized(state, 12345)).to.equal('/test/url/:site');
+	});
 
-	test( 'it replaces the site ID with :siteid', () => {
+	test('it replaces the site ID with :siteid', () => {
 		const state = {
 			ui: {
 				route: {
@@ -60,6 +60,6 @@ describe( 'getCurrentRouteParameterized()', () => {
 			sites: sites,
 		};
 
-		expect( getCurrentRouteParameterized( state, 12345 ) ).to.equal( '/test/url/:siteid' );
-	} );
-} );
+		expect(getCurrentRouteParameterized(state, 12345)).to.equal('/test/url/:siteid');
+	});
+});

@@ -38,8 +38,8 @@ import TaxSettingsSaveButton from './save-button';
 import { updateTaxesEnabledSetting } from 'woocommerce/state/sites/settings/general/actions';
 
 class SettingsTaxesWooCommerceServices extends Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			isSaving: false,
 			pricesIncludeTaxes: props.pricesIncludeTaxes,
@@ -57,84 +57,82 @@ class SettingsTaxesWooCommerceServices extends Component {
 		siteSlug: PropTypes.string.isRequired,
 		siteId: PropTypes.number.isRequired,
 		taxesEnabled: PropTypes.bool,
-		shipToCountry: PropTypes.shape( {
+		shipToCountry: PropTypes.shape({
 			value: PropTypes.string,
-		} ),
+		}),
 	};
 
 	componentDidMount = () => {
 		const { siteId } = this.props;
 
-		if ( siteId ) {
-			this.props.fetchTaxSettings( siteId );
+		if (siteId) {
+			this.props.fetchTaxSettings(siteId);
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = (newProps) => {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		const oldSiteId = siteId || null;
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchTaxSettings( newSiteId );
+		if (oldSiteId !== newSiteId) {
+			this.props.fetchTaxSettings(newSiteId);
 		}
 
-		this.setState( {
+		this.setState({
 			pricesIncludeTaxes: newProps.pricesIncludeTaxes,
 			shippingIsTaxable: newProps.shippingIsTaxable,
 			taxesEnabled: newProps.taxesEnabled,
-		} );
+		});
 	};
 
 	onEnabledChange = () => {
-		this.setState( { taxesEnabled: ! this.state.taxesEnabled, pristine: false } );
+		this.setState({ taxesEnabled: !this.state.taxesEnabled, pristine: false });
 	};
 
-	onCheckboxChange = event => {
+	onCheckboxChange = (event) => {
 		const option = event.target.name;
 		const value = event.target.checked;
-		this.setState( { [ option ]: value, pristine: false } );
+		this.setState({ [option]: value, pristine: false });
 	};
 
-	onSave = ( event, onSuccessExtra ) => {
+	onSave = (event, onSuccessExtra) => {
 		const { siteId, translate } = this.props;
 
 		event.preventDefault();
-		this.setState( { isSaving: true } );
+		this.setState({ isSaving: true });
 
 		const onSuccess = () => {
-			this.setState( { isSaving: false, pristine: true } );
-			if ( onSuccessExtra ) {
+			this.setState({ isSaving: false, pristine: true });
+			if (onSuccessExtra) {
 				onSuccessExtra();
 			}
-			return successNotice( translate( 'Settings updated successfully.' ), {
+			return successNotice(translate('Settings updated successfully.'), {
 				duration: 4000,
 				displayOnNextPage: true,
-			} );
+			});
 		};
 
 		const onFailure = () => {
-			this.setState( { isSaving: false } );
-			return errorNotice(
-				translate( 'There was a problem saving your changes. Please try again.' )
-			);
+			this.setState({ isSaving: false });
+			return errorNotice(translate('There was a problem saving your changes. Please try again.'));
 		};
 
 		// TODO - batch these
 
-		this.props.updateTaxesEnabledSetting( siteId, this.state.taxesEnabled );
+		this.props.updateTaxesEnabledSetting(siteId, this.state.taxesEnabled);
 
 		this.props.updateTaxSettings(
 			siteId,
 			this.state.pricesIncludeTaxes || false,
-			! this.state.shippingIsTaxable, // note the inversion
+			!this.state.shippingIsTaxable, // note the inversion
 			onSuccess,
 			onFailure
 		);
 	};
 
-	onAddressChange = address => {
+	onAddressChange = (address) => {
 		const { siteId } = this.props;
-		this.props.fetchTaxRates( siteId, address, true );
+		this.props.fetchTaxRates(siteId, address, true);
 	};
 
 	renderAddress = () => {
@@ -143,15 +141,13 @@ class SettingsTaxesWooCommerceServices extends Component {
 		return (
 			<div className="taxes__nexus">
 				<ExtendedHeader
-					label={ translate( 'Store address' ) }
-					description={ translate(
-						'The address of where your business is located for tax purposes.'
-					) }
+					label={translate('Store address')}
+					description={translate('The address of where your business is located for tax purposes.')}
 				/>
 				<StoreAddress
 					className="taxes__store-address"
-					onSetAddress={ this.onAddressChange }
-					showLabel={ false }
+					onSetAddress={this.onAddressChange}
+					showLabel={false}
 				/>
 			</div>
 		);
@@ -162,9 +158,9 @@ class SettingsTaxesWooCommerceServices extends Component {
 
 		return (
 			<TaxesRates
-				taxesEnabled={ this.state.taxesEnabled }
-				onEnabledChange={ this.onEnabledChange }
-				siteId={ siteId }
+				taxesEnabled={this.state.taxesEnabled}
+				onEnabledChange={this.onEnabledChange}
+				siteId={siteId}
 			/>
 		);
 	};
@@ -172,10 +168,10 @@ class SettingsTaxesWooCommerceServices extends Component {
 	renderOptions = () => {
 		return (
 			<TaxesOptions
-				onCheckboxChange={ this.onCheckboxChange }
-				pricesIncludeTaxes={ this.state.pricesIncludeTaxes }
-				shippingIsTaxable={ this.state.shippingIsTaxable }
-				shipToCountry={ this.props.shipToCountry }
+				onCheckboxChange={this.onCheckboxChange}
+				pricesIncludeTaxes={this.state.pricesIncludeTaxes}
+				shippingIsTaxable={this.state.shippingIsTaxable}
+				shipToCountry={this.props.shipToCountry}
 			/>
 		);
 	};
@@ -184,34 +180,32 @@ class SettingsTaxesWooCommerceServices extends Component {
 		const { loaded, siteId, siteSlug, translate } = this.props;
 
 		const breadcrumbs = [
-			<a href={ getLink( '/store/settings/:site/', { slug: siteSlug } ) }>
-				{ translate( 'Settings' ) }
-			</a>,
-			<span>{ translate( 'Taxes' ) }</span>,
+			<a href={getLink('/store/settings/:site/', { slug: siteSlug })}>{translate('Settings')}</a>,
+			<span>{translate('Taxes')}</span>,
 		];
 
 		return (
 			<div>
-				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<TaxSettingsSaveButton onSave={ this.onSave } />
+				<ActionHeader breadcrumbs={breadcrumbs}>
+					<TaxSettingsSaveButton onSave={this.onSave} />
 				</ActionHeader>
 				<SettingsNavigation activeSection="taxes" />
-				<QuerySettingsGeneral siteId={ siteId } />
-				{ loaded && this.renderAddress() }
-				{ loaded && this.renderRates() }
-				{ loaded && this.renderOptions() }
-				<ProtectFormGuard isChanged={ ! this.state.pristine } />
+				<QuerySettingsGeneral siteId={siteId} />
+				{loaded && this.renderAddress()}
+				{loaded && this.renderRates()}
+				{loaded && this.renderOptions()}
+				<ProtectFormGuard isChanged={!this.state.pristine} />
 			</div>
 		);
 	};
 }
 
-function mapStateToProps( state ) {
-	const loaded = areTaxSettingsLoaded( state ) && areSettingsGeneralLoaded( state );
-	const pricesIncludeTaxes = getPricesIncludeTax( state );
-	const shipToCountry = getShipToCountrySetting( state );
-	const shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
-	const taxesEnabled = areTaxCalculationsEnabled( state );
+function mapStateToProps(state) {
+	const loaded = areTaxSettingsLoaded(state) && areSettingsGeneralLoaded(state);
+	const pricesIncludeTaxes = getPricesIncludeTax(state);
+	const shipToCountry = getShipToCountrySetting(state);
+	const shippingIsTaxable = !getShippingIsTaxFree(state); // note the inversion
+	const taxesEnabled = areTaxCalculationsEnabled(state);
 
 	return {
 		loaded,
@@ -222,7 +216,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			fetchTaxRates,
@@ -236,4 +230,4 @@ function mapDispatchToProps( dispatch ) {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( SettingsTaxesWooCommerceServices ) );
+)(localize(SettingsTaxesWooCommerceServices));

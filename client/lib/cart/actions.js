@@ -31,98 +31,98 @@ import './store';
 /**
  * Constants
  */
-const debug = debugModule( 'calypso:signup:cart' );
+const debug = debugModule('calypso:signup:cart');
 
 export function disableCart() {
-	Dispatcher.handleViewAction( { type: CART_DISABLE } );
+	Dispatcher.handleViewAction({ type: CART_DISABLE });
 }
 
 export function addPrivacyToAllDomains() {
-	Dispatcher.handleViewAction( {
+	Dispatcher.handleViewAction({
 		type: CART_PRIVACY_PROTECTION_ADD,
-	} );
+	});
 }
 
 export function removePrivacyFromAllDomains() {
-	Dispatcher.handleViewAction( {
+	Dispatcher.handleViewAction({
 		type: CART_PRIVACY_PROTECTION_REMOVE,
-	} );
+	});
 }
 
-export function addItem( item ) {
-	addItems( [ item ] );
+export function addItem(item) {
+	addItems([item]);
 }
 
-export function addItems( items ) {
-	const extendedItems = items.map( item => {
-		const extra = assign( {}, item.extra, {
+export function addItems(items) {
+	const extendedItems = items.map((item) => {
+		const extra = assign({}, item.extra, {
 			context: 'calypstore',
-		} );
-		return assign( {}, item, { extra } );
-	} );
+		});
+		return assign({}, item, { extra });
+	});
 
-	Dispatcher.handleViewAction( {
+	Dispatcher.handleViewAction({
 		type: CART_ITEMS_ADD,
 		cartItems: extendedItems,
-	} );
+	});
 }
 
-export function replaceCartWithItems( items ) {
-	const extendedItems = items.map( item => {
-		const extra = assign( {}, item.extra, {
+export function replaceCartWithItems(items) {
+	const extendedItems = items.map((item) => {
+		const extra = assign({}, item.extra, {
 			context: 'calypstore',
-		} );
-		return assign( {}, item, { extra } );
-	} );
+		});
+		return assign({}, item, { extra });
+	});
 
-	Dispatcher.handleViewAction( {
+	Dispatcher.handleViewAction({
 		type: CART_ITEMS_REPLACE_ALL,
 		cartItems: extendedItems,
-	} );
+	});
 }
 
-export function removeItem( item, domainsWithPlansOnly ) {
-	Dispatcher.handleViewAction( {
+export function removeItem(item, domainsWithPlansOnly) {
+	Dispatcher.handleViewAction({
 		type: CART_ITEM_REMOVE,
 		cartItem: item,
 		domainsWithPlansOnly,
-	} );
+	});
 }
 
-export function replaceItem( oldItem, newItem ) {
-	Dispatcher.handleViewAction( {
+export function replaceItem(oldItem, newItem) {
+	Dispatcher.handleViewAction({
 		type: CART_ITEM_REPLACE,
 		oldItem,
 		newItem,
-	} );
+	});
 }
 
-export function addGoogleAppsRegistrationData( registrationData ) {
-	Dispatcher.handleViewAction( {
+export function addGoogleAppsRegistrationData(registrationData) {
+	Dispatcher.handleViewAction({
 		type: CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 		registrationData: registrationData,
-	} );
+	});
 }
 
-export function applyCoupon( coupon ) {
-	Dispatcher.handleViewAction( {
+export function applyCoupon(coupon) {
+	Dispatcher.handleViewAction({
 		type: CART_COUPON_APPLY,
 		coupon,
-	} );
+	});
 }
 
 export function removeCoupon() {
-	Dispatcher.handleViewAction( {
+	Dispatcher.handleViewAction({
 		type: CART_COUPON_REMOVE,
-	} );
+	});
 }
 
 export function getRememberedCoupon() {
 	// read coupon list from localStorage, return early if it's not there
-	const couponsJson = localStorage.getItem( MARKETING_COUPONS_KEY );
-	const coupons = JSON.parse( couponsJson );
-	if ( ! coupons ) {
-		debug( 'No coupons found in localStorage: ', coupons );
+	const couponsJson = localStorage.getItem(MARKETING_COUPONS_KEY);
+	const coupons = JSON.parse(couponsJson);
+	if (!coupons) {
+		debug('No coupons found in localStorage: ', coupons);
 		return null;
 	}
 	const COUPON_CODE_WHITELIST = [
@@ -141,47 +141,47 @@ export function getRememberedCoupon() {
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();
-	debug( 'Found coupons in localStorage: ', coupons );
+	debug('Found coupons in localStorage: ', coupons);
 
 	// delete coupons if they're older than thirty days; find the most recent one
 	let mostRecentTimestamp = 0;
 	let mostRecentCouponCode = null;
-	Object.keys( coupons ).forEach( key => {
-		if ( now > coupons[ key ] + THIRTY_DAYS_MILLISECONDS ) {
-			delete coupons[ key ];
-		} else if ( coupons[ key ] > mostRecentTimestamp ) {
+	Object.keys(coupons).forEach((key) => {
+		if (now > coupons[key] + THIRTY_DAYS_MILLISECONDS) {
+			delete coupons[key];
+		} else if (coupons[key] > mostRecentTimestamp) {
 			mostRecentCouponCode = key;
-			mostRecentTimestamp = coupons[ key ];
+			mostRecentTimestamp = coupons[key];
 		}
-	} );
+	});
 
 	// write remembered coupons back to localStorage
-	debug( 'Storing coupons in localStorage: ', coupons );
-	localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
+	debug('Storing coupons in localStorage: ', coupons);
+	localStorage.setItem(MARKETING_COUPONS_KEY, JSON.stringify(coupons));
 	if (
 		COUPON_CODE_WHITELIST.includes(
-			-1 !== mostRecentCouponCode.indexOf( '_' )
-				? mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
+			-1 !== mostRecentCouponCode.indexOf('_')
+				? mostRecentCouponCode.substring(0, mostRecentCouponCode.indexOf('_'))
 				: mostRecentCouponCode
 		)
 	) {
-		debug( 'returning coupon code:', mostRecentCouponCode );
+		debug('returning coupon code:', mostRecentCouponCode);
 		return mostRecentCouponCode;
 	}
-	debug( 'not returning any coupon code.' );
+	debug('not returning any coupon code.');
 	return null;
 }
 
-export function setTaxCountryCode( countryCode ) {
-	Dispatcher.handleViewAction( {
+export function setTaxCountryCode(countryCode) {
+	Dispatcher.handleViewAction({
 		type: CART_TAX_COUNTRY_CODE_SET,
 		countryCode,
-	} );
+	});
 }
 
-export function setTaxPostalCode( postalCode ) {
-	Dispatcher.handleViewAction( {
+export function setTaxPostalCode(postalCode) {
+	Dispatcher.handleViewAction({
 		type: CART_TAX_POSTAL_CODE_SET,
 		postalCode,
-	} );
+	});
 }

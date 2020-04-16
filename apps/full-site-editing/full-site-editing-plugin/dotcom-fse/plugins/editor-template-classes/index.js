@@ -12,43 +12,39 @@ import { endsWith, get, map } from 'lodash';
 import { withSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 
-const EditorTemplateClasses = withSelect( select => {
-	const { getEntityRecord } = select( 'core' );
-	const { getEditedPostAttribute } = select( 'core/editor' );
-	const templateClasses = map( getEditedPostAttribute( 'template_part_types' ), typeId => {
-		const typeName = get(
-			getEntityRecord( 'taxonomy', 'wp_template_part_type', typeId ),
-			'name',
-			''
-		);
-		if ( endsWith( typeName, '-header' ) ) {
+const EditorTemplateClasses = withSelect((select) => {
+	const { getEntityRecord } = select('core');
+	const { getEditedPostAttribute } = select('core/editor');
+	const templateClasses = map(getEditedPostAttribute('template_part_types'), (typeId) => {
+		const typeName = get(getEntityRecord('taxonomy', 'wp_template_part_type', typeId), 'name', '');
+		if (endsWith(typeName, '-header')) {
 			return 'fse-header';
 		}
-		if ( endsWith( typeName, '-footer' ) ) {
+		if (endsWith(typeName, '-footer')) {
 			return 'fse-footer';
 		}
-	} );
+	});
 	return { templateClasses };
-} )( ( { templateClasses } ) => {
-	const blockListInception = setInterval( () => {
-		const blockListParent = document.querySelector( '.block-editor__typewriter > div' );
+})(({ templateClasses }) => {
+	const blockListInception = setInterval(() => {
+		const blockListParent = document.querySelector('.block-editor__typewriter > div');
 
-		if ( ! blockListParent ) {
+		if (!blockListParent) {
 			return;
 		}
-		clearInterval( blockListInception );
+		clearInterval(blockListInception);
 
 		blockListParent.className = classNames(
 			'a8c-template-editor fse-template-part',
 			...templateClasses
 		);
-	} );
+	});
 
 	return null;
-} );
+});
 
-if ( 'wp_template_part' === fullSiteEditing.editorPostType ) {
-	registerPlugin( 'fse-editor-template-classes', {
+if ('wp_template_part' === fullSiteEditing.editorPostType) {
+	registerPlugin('fse-editor-template-classes', {
 		render: EditorTemplateClasses,
-	} );
+	});
 }

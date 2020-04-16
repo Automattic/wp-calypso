@@ -1,4 +1,4 @@
-export const createProductObject = product => {
-	product.cost = Number( product.cost );
+export const createProductObject = (product) => {
+	product.cost = Number(product.cost);
 	return product;
 };

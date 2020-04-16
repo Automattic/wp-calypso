@@ -35,10 +35,10 @@
 /**
  * External dependencies
  */
-const { po } = require( 'gettext-parser' );
-const { merge, isEmpty, forEach } = require( 'lodash' );
-const { relative, sep } = require( 'path' );
-const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
+const { po } = require('gettext-parser');
+const { merge, isEmpty, forEach } = require('lodash');
+const { relative, sep } = require('path');
+const { existsSync, mkdirSync, writeFileSync } = require('fs');
 
 /**
  * Default output headers if none specified in plugin options.
@@ -64,10 +64,10 @@ const DEFAULT_DIR = 'build/';
  */
 const DEFAULT_FUNCTIONS_ARGUMENTS_ORDER = {
 	__: [],
-	_n: [ 'msgid_plural' ],
-	_x: [ 'msgctxt' ],
-	_nx: [ 'msgid_plural', null, 'msgctxt' ],
-	translate: [ 'msgid_plural', 'options_object' ],
+	_n: ['msgid_plural'],
+	_x: ['msgctxt'],
+	_nx: ['msgid_plural', null, 'msgctxt'],
+	translate: ['msgid_plural', 'options_object'],
 };
 
 /**
@@ -86,47 +86,47 @@ const REGEXP_TRANSLATOR_COMMENT = /^\s*translators:\s*([\s\S]+)/im;
  *
  * @returns {?string} Extracted comment.
  */
-function getExtractedComment( path, _originalNodeLine ) {
+function getExtractedComment(path, _originalNodeLine) {
 	const { node, parent, parentPath } = path;
 
 	// Assign original node line so we can keep track in recursion whether a
 	// matched comment or parent occurs on the same or previous line
-	if ( ! _originalNodeLine ) {
+	if (!_originalNodeLine) {
 		_originalNodeLine = node.loc.start.line;
 	}
 
 	let comment;
-	forEach( node.leadingComments, commentNode => {
+	forEach(node.leadingComments, (commentNode) => {
 		const { line } = commentNode.loc.end;
-		if ( line < _originalNodeLine - 1 || line > _originalNodeLine ) {
+		if (line < _originalNodeLine - 1 || line > _originalNodeLine) {
 			return;
 		}
 
-		const match = commentNode.value.match( REGEXP_TRANSLATOR_COMMENT );
-		if ( match ) {
+		const match = commentNode.value.match(REGEXP_TRANSLATOR_COMMENT);
+		if (match) {
 			// Extract text from matched translator prefix
-			comment = match[ 1 ]
-				.split( '\n' )
-				.map( text => text.trim() )
-				.join( ' ' );
+			comment = match[1]
+				.split('\n')
+				.map((text) => text.trim())
+				.join(' ');
 
 			// False return indicates to Lodash to break iteration
 			return false;
 		}
-	} );
+	});
 
-	if ( comment ) {
+	if (comment) {
 		return comment;
 	}
 
-	if ( ! parent || ! parent.loc || ! parentPath ) {
+	if (!parent || !parent.loc || !parentPath) {
 		return;
 	}
 
 	// Only recurse as long as parent node is on the same or previous line
 	const { line } = parent.loc.start;
-	if ( line >= _originalNodeLine - 1 && line <= _originalNodeLine ) {
-		return getExtractedComment( parentPath, _originalNodeLine );
+	if (line >= _originalNodeLine - 1 && line <= _originalNodeLine) {
+		return getExtractedComment(parentPath, _originalNodeLine);
 	}
 }
 
@@ -138,22 +138,22 @@ function getExtractedComment( path, _originalNodeLine ) {
  *
  * @returns {string} String value.
  */
-function getNodeAsString( node ) {
-	if ( undefined === node ) {
+function getNodeAsString(node) {
+	if (undefined === node) {
 		return '';
 	}
 
-	switch ( node.type ) {
+	switch (node.type) {
 		case 'BinaryExpression':
-			return getNodeAsString( node.left ) + getNodeAsString( node.right );
+			return getNodeAsString(node.left) + getNodeAsString(node.right);
 
 		case 'StringLiteral':
 			return node.value;
 
 		case 'TemplateLiteral':
-			return ( node.quasis || [] ).reduce( ( string, element ) => {
-				return ( string += element.value.cooked );
-			}, '' );
+			return (node.quasis || []).reduce((string, element) => {
+				return (string += element.value.cooked);
+			}, '');
 
 		default:
 			return '';
@@ -167,8 +167,8 @@ function getNodeAsString( node ) {
  *
  * @returns {boolean} Whether function name is valid translate function name.
  */
-function isValidFunctionName( name ) {
-	return Object.keys( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).includes( name );
+function isValidFunctionName(name) {
+	return Object.keys(DEFAULT_FUNCTIONS_ARGUMENTS_ORDER).includes(name);
 }
 
 /**
@@ -179,11 +179,11 @@ function isValidFunctionName( name ) {
  *
  * @returns {boolean} Whether key is valid for assignment.
  */
-function isValidTranslationKey( key ) {
-	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some( args => args.includes( key ) );
+function isValidTranslationKey(key) {
+	return Object.values(DEFAULT_FUNCTIONS_ARGUMENTS_ORDER).some((args) => args.includes(key));
 }
 
-module.exports = function() {
+module.exports = function () {
 	let strings = {},
 		nplurals = 2,
 		baseData,
@@ -191,48 +191,48 @@ module.exports = function() {
 
 	return {
 		visitor: {
-			ImportDeclaration( path ) {
+			ImportDeclaration(path) {
 				// If `translate` from  `i18n-calypso` is imported with an
 				// alias, set the specified alias as a reference to translate.
-				if ( 'i18n-calypso' !== path.node.source.value ) {
+				if ('i18n-calypso' !== path.node.source.value) {
 					return;
 				}
 
-				path.node.specifiers.forEach( specifier => {
-					if ( specifier.imported && 'translate' === specifier.imported.name && specifier.local ) {
-						functions[ specifier.local.name ] = functions.translate;
+				path.node.specifiers.forEach((specifier) => {
+					if (specifier.imported && 'translate' === specifier.imported.name && specifier.local) {
+						functions[specifier.local.name] = functions.translate;
 					}
-				} );
+				});
 			},
 
-			CallExpression( path, state ) {
+			CallExpression(path, state) {
 				const { callee } = path.node;
 
 				// Determine function name by direct invocation or property name
 				let name;
-				if ( 'MemberExpression' === callee.type ) {
+				if ('MemberExpression' === callee.type) {
 					name = callee.property.loc ? callee.property.loc.identifierName : callee.property.name;
 				} else {
 					name = callee.loc ? callee.loc.identifierName : callee.name;
 				}
-				if ( ! isValidFunctionName( name ) ) {
+				if (!isValidFunctionName(name)) {
 					return;
 				}
 				let i = 0;
 
 				const translation = {
-					msgid: getNodeAsString( path.node.arguments[ i++ ] ),
+					msgid: getNodeAsString(path.node.arguments[i++]),
 					msgstr: '',
 					comments: {},
 				};
 
-				if ( ! translation.msgid.length ) {
+				if (!translation.msgid.length) {
 					return;
 				}
 
 				// At this point we assume we'll save data, so initialize if
 				// we haven't already
-				if ( ! baseData ) {
+				if (!baseData) {
 					baseData = {
 						charset: 'utf-8',
 						headers: state.opts.headers || DEFAULT_HEADERS,
@@ -246,79 +246,73 @@ module.exports = function() {
 						},
 					};
 
-					for ( const key in baseData.headers ) {
-						baseData.translations[ '' ][ '' ].msgstr.push(
-							`${ key }: ${ baseData.headers[ key ] };\n`
-						);
+					for (const key in baseData.headers) {
+						baseData.translations[''][''].msgstr.push(`${key}: ${baseData.headers[key]};\n`);
 					}
 
 					// Attempt to exract nplurals from header
-					const pluralsMatch = ( baseData.headers[ 'plural-forms' ] || '' ).match(
+					const pluralsMatch = (baseData.headers['plural-forms'] || '').match(
 						/nplurals\s*=\s*(\d+);/
 					);
-					if ( pluralsMatch ) {
-						nplurals = pluralsMatch[ 1 ];
+					if (pluralsMatch) {
+						nplurals = pluralsMatch[1];
 					}
 				}
 
 				// If exists, also assign translator comment
-				const translator = getExtractedComment( path );
-				if ( translator ) {
+				const translator = getExtractedComment(path);
+				if (translator) {
 					translation.comments.extracted = translator;
 				}
 
 				const { filename } = this.file.opts;
 				const base = state.opts.base || '.';
-				const pathname = relative( base, filename )
-					.split( sep )
-					.join( '/' );
+				const pathname = relative(base, filename).split(sep).join('/');
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
 
-				const functionKeys = state.opts.functions || functions[ name ];
+				const functionKeys = state.opts.functions || functions[name];
 
-				if ( functionKeys ) {
-					path.node.arguments.slice( i ).forEach( ( arg, index ) => {
-						const key = functionKeys[ index ];
+				if (functionKeys) {
+					path.node.arguments.slice(i).forEach((arg, index) => {
+						const key = functionKeys[index];
 
-						if ( 'ObjectExpression' === arg.type ) {
-							arg.properties.forEach( property => {
-								if ( 'ObjectProperty' !== property.type ) {
+						if ('ObjectExpression' === arg.type) {
+							arg.properties.forEach((property) => {
+								if ('ObjectProperty' !== property.type) {
 									return;
 								}
 
-								if ( 'context' === property.key.name ) {
+								if ('context' === property.key.name) {
 									translation.msgctxt = property.value.value;
 								}
 
-								if ( 'comment' === property.key.name ) {
+								if ('comment' === property.key.name) {
 									translation.comments.extracted = property.value.value;
 								}
-							} );
-						} else if ( isValidTranslationKey( key ) ) {
-							translation[ key ] = getNodeAsString( arg );
+							});
+						} else if (isValidTranslationKey(key)) {
+							translation[key] = getNodeAsString(arg);
 						}
-					} );
+					});
 				}
 
 				// For plurals, create an empty mgstr array
-				if ( ( translation.msgid_plural || '' ).length ) {
-					translation.msgstr = Array.from( Array( nplurals ) ).map( () => '' );
+				if ((translation.msgid_plural || '').length) {
+					translation.msgstr = Array.from(Array(nplurals)).map(() => '');
 				}
 
 				// Create context grouping for translation if not yet exists
 				const { msgctxt = '', msgid } = translation;
-				if ( ! strings.hasOwnProperty( msgctxt ) ) {
-					strings[ msgctxt ] = {};
+				if (!strings.hasOwnProperty(msgctxt)) {
+					strings[msgctxt] = {};
 				}
 
-				if ( ! strings[ msgctxt ].hasOwnProperty( msgid ) ) {
-					strings[ msgctxt ][ msgid ] = translation;
+				if (!strings[msgctxt].hasOwnProperty(msgid)) {
+					strings[msgctxt][msgid] = translation;
 				} else if (
-					! strings[ msgctxt ][ msgid ].comments.reference.includes(
-						translation.comments.reference
-					)
+					!strings[msgctxt][msgid].comments.reference.includes(translation.comments.reference)
 				) {
-					strings[ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
+					strings[msgctxt][msgid].comments.reference += '\n' + translation.comments.reference;
 				}
 			},
 			Program: {
@@ -326,24 +320,22 @@ module.exports = function() {
 					strings = {};
 					functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
 				},
-				exit( path, state ) {
-					if ( isEmpty( strings ) ) {
+				exit(path, state) {
+					if (isEmpty(strings)) {
 						return;
 					}
 
-					const data = merge( {}, baseData, { translations: strings } );
+					const data = merge({}, baseData, { translations: strings });
 
-					const compiled = po.compile( data );
+					const compiled = po.compile(data);
 
 					const dir = state.opts.dir || DEFAULT_DIR;
-					! existsSync( dir ) && mkdirSync( dir, { recursive: true } );
+					!existsSync(dir) && mkdirSync(dir, { recursive: true });
 
 					const { filename } = this.file.opts;
 					const base = state.opts.base || '.';
-					const pathname = relative( base, filename )
-						.split( sep )
-						.join( '-' );
-					writeFileSync( dir + pathname + '.pot', compiled );
+					const pathname = relative(base, filename).split(sep).join('-');
+					writeFileSync(dir + pathname + '.pot', compiled);
 				},
 			},
 		},

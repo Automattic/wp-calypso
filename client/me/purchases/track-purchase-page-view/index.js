@@ -20,10 +20,10 @@ export class TrackPurchasePageView extends Component {
 	};
 
 	track() {
-		if ( this.props.productSlug && this.props.eventName ) {
-			this.props.recordTracksEvent( this.props.eventName, {
+		if (this.props.productSlug && this.props.eventName) {
+			this.props.recordTracksEvent(this.props.eventName, {
 				product_slug: this.props.productSlug,
-			} );
+			});
 		}
 	}
 
@@ -31,7 +31,7 @@ export class TrackPurchasePageView extends Component {
 		this.track();
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
 			this.props.eventName !== prevProps.eventName ||
 			this.props.productSlug !== prevProps.productSlug
@@ -46,11 +46,11 @@ export class TrackPurchasePageView extends Component {
 }
 
 export default connect(
-	( state, { purchaseId } ) => {
-		const purchase = getByPurchaseId( state, purchaseId );
+	(state, { purchaseId }) => {
+		const purchase = getByPurchaseId(state, purchaseId);
 		return {
 			productSlug: purchase ? purchase.productSlug : null,
 		};
 	},
 	{ recordTracksEvent }
-)( TrackPurchasePageView );
+)(TrackPurchasePageView);

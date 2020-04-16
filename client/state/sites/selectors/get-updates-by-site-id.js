@@ -15,6 +15,6 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param {number} siteId Site ID
  * @returns {object} Available updates for the site
  */
-export default function getUpdatesBySiteId( state, siteId ) {
-	return get( getRawSite( state, siteId ), 'updates', null );
+export default function getUpdatesBySiteId(state, siteId) {
+	return get(getRawSite(state, siteId), 'updates', null);
 }

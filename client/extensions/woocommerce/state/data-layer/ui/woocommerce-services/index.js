@@ -30,25 +30,25 @@ import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
 
-const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
-	const labelFormMeta = getLabelSettingsFormMeta( state, siteId );
+const getSaveLabelSettingsActionListSteps = (state, siteId) => {
+	const labelFormMeta = getLabelSettingsFormMeta(state, siteId);
 	if (
-		! labelFormMeta ||
+		!labelFormMeta ||
 		labelFormMeta.pristine ||
-		( ! labelFormMeta.can_edit_settings && labelFormMeta.can_manage_payments )
+		(!labelFormMeta.can_edit_settings && labelFormMeta.can_manage_payments)
 	) {
 		return [];
 	}
 
 	return [
 		{
-			description: translate( 'Saving label settings' ),
-			onStep: ( dispatch, actionList ) => {
+			description: translate('Saving label settings'),
+			onStep: (dispatch, actionList) => {
 				dispatch(
 					submitLabels(
 						siteId,
-						() => dispatch( actionListStepSuccess( actionList ) ),
-						() => dispatch( actionListStepFailure( actionList ) )
+						() => dispatch(actionListStepSuccess(actionList)),
+						() => dispatch(actionListStepFailure(actionList))
 					)
 				);
 			},
@@ -56,21 +56,21 @@ const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
 	];
 };
 
-const getSavePackagesActionListSteps = ( state, siteId ) => {
-	const packagesForm = getPackagesForm( state, siteId );
-	if ( ! packagesForm || packagesForm.pristine ) {
+const getSavePackagesActionListSteps = (state, siteId) => {
+	const packagesForm = getPackagesForm(state, siteId);
+	if (!packagesForm || packagesForm.pristine) {
 		return [];
 	}
 
 	return [
 		{
-			description: translate( 'Saving label settings' ),
-			onStep: ( dispatch, actionList ) => {
+			description: translate('Saving label settings'),
+			onStep: (dispatch, actionList) => {
 				dispatch(
 					submitPackages(
 						siteId,
-						() => dispatch( actionListStepSuccess( actionList ) ),
-						() => dispatch( actionListStepFailure( actionList ) )
+						() => dispatch(actionListStepSuccess(actionList)),
+						() => dispatch(actionListStepFailure(actionList))
 					)
 				);
 			},
@@ -78,29 +78,29 @@ const getSavePackagesActionListSteps = ( state, siteId ) => {
 	];
 };
 
-const getSaveSettingsActionListSteps = state => {
-	const siteId = getSelectedSiteId( state );
+const getSaveSettingsActionListSteps = (state) => {
+	const siteId = getSelectedSiteId(state);
 
 	return [
-		...getSaveLabelSettingsActionListSteps( state, siteId ),
-		...getSavePackagesActionListSteps( state, siteId ),
+		...getSaveLabelSettingsActionListSteps(state, siteId),
+		...getSavePackagesActionListSteps(state, siteId),
 	];
 };
 
 export default {
-	[ WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE ]: [
+	[WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE]: [
 		/**
 		 * Creates and executes a WCS shipping settings action list
 		 *
 		 * @param {object} store -
 		 * @param {object} action - an action containing successAction and failureAction
 		 */
-		( store, action ) => {
+		(store, action) => {
 			const { successAction, failureAction, noLabelsPaymentAction } = action;
 
 			const state = store.getState();
-			if ( areLabelsEnabled( state ) && ! getSelectedPaymentMethodId( state ) ) {
-				store.dispatch( noLabelsPaymentAction );
+			if (areLabelsEnabled(state) && !getSelectedPaymentMethodId(state)) {
+				store.dispatch(noLabelsPaymentAction);
 				return;
 			}
 
@@ -109,47 +109,47 @@ export default {
 			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onSuccess = dispatch => {
-				dispatch( successAction );
-				dispatch( actionListClear() );
+			const onSuccess = (dispatch) => {
+				dispatch(successAction);
+				dispatch(actionListClear());
 			};
 			/**
 			 * A callback issued after a failed request
 			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onFailure = dispatch => {
-				dispatch( failureAction );
-				dispatch( actionListClear() );
+			const onFailure = (dispatch) => {
+				dispatch(failureAction);
+				dispatch(actionListClear());
 			};
-			const nextSteps = getSaveSettingsActionListSteps( store.getState() );
+			const nextSteps = getSaveSettingsActionListSteps(store.getState());
 
 			store.dispatch(
-				isEmpty( nextSteps ) ? onSuccess : actionListStepNext( { nextSteps, onSuccess, onFailure } )
+				isEmpty(nextSteps) ? onSuccess : actionListStepNext({ nextSteps, onSuccess, onFailure })
 			);
 		},
 	],
 
-	[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE ]: [
-		( { dispatch, getState }, action ) => {
+	[WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE]: [
+		({ dispatch, getState }, action) => {
 			const { siteId, methodId, methodType, method, successAction, failureAction } = action;
-			const methodSchema = getShippingMethodSchema( getState(), methodType, siteId ).formSchema;
-			const methodValues = coerceFormValues( methodSchema, method );
+			const methodSchema = getShippingMethodSchema(getState(), methodType, siteId).formSchema;
+			const methodValues = coerceFormValues(methodSchema, method);
 
-			const updatedAction = data => {
-				dispatch( shippingZoneMethodUpdated( siteId, data, action ) );
+			const updatedAction = (data) => {
+				dispatch(shippingZoneMethodUpdated(siteId, data, action));
 
 				const props = {
 					sentData: methodValues,
 					receivedData: data,
 				};
-				dispatchWithProps( dispatch, getState, successAction, props );
+				dispatchWithProps(dispatch, getState, successAction, props);
 			};
 
 			api
-				.post( siteId, api.url.serviceSettings( methodType, methodId ), methodValues )
-				.then( updatedAction )
-				.catch( error => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
+				.post(siteId, api.url.serviceSettings(methodType, methodId), methodValues)
+				.then(updatedAction)
+				.catch((error) => dispatchWithProps(dispatch, getState, failureAction, { error }));
 		},
 	],
 };

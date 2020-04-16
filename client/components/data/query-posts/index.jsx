@@ -16,42 +16,42 @@ import { requestSitePosts, requestSitePost, requestAllSitesPosts } from 'state/p
 /**
  * Module variables
  */
-const log = debug( 'calypso:query-posts' );
+const log = debug('calypso:query-posts');
 
 class QueryPosts extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
-			isShallowEqual( this.props.query, nextProps.query )
+			isShallowEqual(this.props.query, nextProps.query)
 		) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		const singleSite = !! props.siteId;
-		const singlePost = !! props.postId;
+	request(props) {
+		const singleSite = !!props.siteId;
+		const singlePost = !!props.postId;
 
-		if ( singleSite ) {
-			if ( ! singlePost && ! props.requestingPosts ) {
-				log( 'Request post list for site %d using query %o', props.siteId, props.query );
-				props.requestSitePosts( props.siteId, props.query );
+		if (singleSite) {
+			if (!singlePost && !props.requestingPosts) {
+				log('Request post list for site %d using query %o', props.siteId, props.query);
+				props.requestSitePosts(props.siteId, props.query);
 			}
 
-			if ( singlePost && ! props.requestingPost ) {
-				log( 'Request single post for site %d post %d', props.siteId, props.postId );
-				props.requestSitePost( props.siteId, props.postId );
+			if (singlePost && !props.requestingPost) {
+				log('Request single post for site %d post %d', props.siteId, props.postId);
+				props.requestSitePost(props.siteId, props.postId);
 			}
-		} else if ( ! props.requestingPosts ) {
-			log( 'Request post list for all sites using query %o', props.query );
-			props.requestAllSitesPosts( props.query );
+		} else if (!props.requestingPosts) {
+			log('Request post list for all sites using query %o', props.query);
+			props.requestAllSitesPosts(props.query);
 		}
 	}
 
@@ -61,14 +61,14 @@ class QueryPosts extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { siteId, postId, query } = ownProps;
 		return {
-			requestingPost: siteId && postId && isRequestingSitePost( state, siteId, postId ),
-			requestingPosts: isRequestingPostsForQuery( state, siteId, query ),
+			requestingPost: siteId && postId && isRequestingSitePost(state, siteId, postId),
+			requestingPosts: isRequestingPostsForQuery(state, siteId, query),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				requestSitePosts,
@@ -78,4 +78,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( QueryPosts );
+)(QueryPosts);

@@ -14,7 +14,7 @@ import 'state/posts/init';
  * @param {Array} users Users received
  * @returns {object} Action object
  */
-export function receivePostRevisionAuthors( users ) {
+export function receivePostRevisionAuthors(users) {
 	return {
 		type: POST_REVISION_AUTHORS_RECEIVE,
 		users,
@@ -28,8 +28,8 @@ export function receivePostRevisionAuthors( users ) {
  * @param {Array}  ids of the users (array of integers)
  * @returns {object} action object
  */
-export const requestPostRevisionAuthors = ( siteId, ids ) => ( {
+export const requestPostRevisionAuthors = (siteId, ids) => ({
 	type: POST_REVISIONS_AUTHORS_REQUEST,
 	ids,
 	siteId,
-} );
+});

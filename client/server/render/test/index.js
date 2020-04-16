@@ -22,7 +22,7 @@ let mockReturnValues = {};
  *
  * @param {{object}} newReturnValues A key value set of properties that are combined with the defaults.
  */
-function remock( newReturnValues ) {
+function remock(newReturnValues) {
 	mockReturnValues = Object.assign(
 		{
 			isDefaultLocale: true,
@@ -33,24 +33,24 @@ function remock( newReturnValues ) {
 	);
 }
 
-jest.mock( 'lib/i18n-utils', () => {
+jest.mock('lib/i18n-utils', () => {
 	return {
 		isDefaultLocale: () => mockReturnValues.isDefaultLocale,
 	};
-} );
+});
 
-jest.mock( 'state/ui/selectors', () => {
+jest.mock('state/ui/selectors', () => {
 	return {
 		isSectionIsomorphic: () => mockReturnValues.isSectionIsomorphic,
 	};
-} );
+});
 
-jest.mock( 'config', () => {
+jest.mock('config', () => {
 	const fn = () => {};
-	fn.isEnabled = feature_key =>
+	fn.isEnabled = (feature_key) =>
 		feature_key === 'server-side-rendering' ? mockReturnValues.configServerSideRender : false;
 	return fn;
-} );
+});
 
 const ssrCompatibleContext = {
 	layout: 'hello',
@@ -71,36 +71,36 @@ const ssrDisabledContext = {
 	serverSideRender: false,
 };
 
-describe( 'shouldServerSideRender', () => {
-	beforeEach( () => remock() );
+describe('shouldServerSideRender', () => {
+	beforeEach(() => remock());
 
-	test( 'feature-flag server-side-render should enable SSR (default behavior)', () => {
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );
-	} );
+	test('feature-flag server-side-render should enable SSR (default behavior)', () => {
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(true);
+	});
 
-	test( 'feature-flag server-side-render should disable SSR', () => {
-		remock( { configServerSideRender: false } );
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( false );
-	} );
+	test('feature-flag server-side-render should disable SSR', () => {
+		remock({ configServerSideRender: false });
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(false);
+	});
 
-	test( 'context.serverSideRender should alter the result', () => {
-		expect( shouldServerSideRender( ssrCompatibleContext ) ).toBe( false ); // due to undefined
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );
-		expect( shouldServerSideRender( ssrDisabledContext ) ).toBe( false );
-	} );
+	test('context.serverSideRender should alter the result', () => {
+		expect(shouldServerSideRender(ssrCompatibleContext)).toBe(false); // due to undefined
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(true);
+		expect(shouldServerSideRender(ssrDisabledContext)).toBe(false);
+	});
 
-	test( 'context.layout should alter the result', () => {
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );
+	test('context.layout should alter the result', () => {
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(true);
 
 		const SsrEnabledContextWithoutLayout = {
 			...ssrEnabledContext,
 			layout: undefined,
 		};
-		expect( shouldServerSideRender( SsrEnabledContextWithoutLayout ) ).toBe( false );
-	} );
+		expect(shouldServerSideRender(SsrEnabledContextWithoutLayout)).toBe(false);
+	});
 
-	test( 'context.user should alter the result', () => {
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );
+	test('context.user should alter the result', () => {
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(true);
 
 		const ssrEnabledContextWithUser = {
 			...ssrEnabledContext,
@@ -108,37 +108,37 @@ describe( 'shouldServerSideRender', () => {
 				name: 'hello-world',
 			},
 		};
-		expect( shouldServerSideRender( ssrEnabledContextWithUser ) ).toBe( false );
-	} );
+		expect(shouldServerSideRender(ssrEnabledContextWithUser)).toBe(false);
+	});
 
-	test( 'isSectionIsomorphic should alter the result', () => {
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );
+	test('isSectionIsomorphic should alter the result', () => {
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(true);
 
-		remock( { isSectionIsomorphic: false } );
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( false );
-	} );
+		remock({ isSectionIsomorphic: false });
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(false);
+	});
 
-	test( 'isDefaultLocale should alter the result', () => {
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );
+	test('isDefaultLocale should alter the result', () => {
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(true);
 
-		remock( { isDefaultLocale: false } );
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( false );
-	} );
-} );
+		remock({ isDefaultLocale: false });
+		expect(shouldServerSideRender(ssrEnabledContext)).toBe(false);
+	});
+});
 
-describe( 'setShouldServerSideRender', () => {
-	test( 'when query is empty, then sets context.serverSideRender to TRUE - and calls next()', () => {
+describe('setShouldServerSideRender', () => {
+	test('when query is empty, then sets context.serverSideRender to TRUE - and calls next()', () => {
 		const next = jest.fn();
 		const contextWithoutQueryKeys = {
 			query: {},
 		};
 
-		setShouldServerSideRender( contextWithoutQueryKeys, next );
-		expect( contextWithoutQueryKeys.serverSideRender ).toBe( true );
-		expect( next ).toHaveBeenCalledTimes( 1 );
-	} );
+		setShouldServerSideRender(contextWithoutQueryKeys, next);
+		expect(contextWithoutQueryKeys.serverSideRender).toBe(true);
+		expect(next).toHaveBeenCalledTimes(1);
+	});
 
-	test( 'when query has values, then sets context.serverSideRender to FALSE - and calls next()', () => {
+	test('when query has values, then sets context.serverSideRender to FALSE - and calls next()', () => {
 		const next = jest.fn();
 		const contextWithQueryKeys = {
 			query: {
@@ -146,8 +146,8 @@ describe( 'setShouldServerSideRender', () => {
 			},
 		};
 
-		setShouldServerSideRender( contextWithQueryKeys, next );
-		expect( contextWithQueryKeys.serverSideRender ).toBe( false );
-		expect( next ).toHaveBeenCalledTimes( 1 );
-	} );
-} );
+		setShouldServerSideRender(contextWithQueryKeys, next);
+		expect(contextWithQueryKeys.serverSideRender).toBe(false);
+		expect(next).toHaveBeenCalledTimes(1);
+	});
+});

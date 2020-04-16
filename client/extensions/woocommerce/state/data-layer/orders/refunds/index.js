@@ -17,62 +17,62 @@ import {
 } from 'woocommerce/state/action-types';
 import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
-export const create = action => {
+export const create = (action) => {
 	const { siteId, orderId, refund } = action;
-	return request( siteId, action ).post( `orders/${ orderId }/refunds`, refund );
+	return request(siteId, action).post(`orders/${orderId}/refunds`, refund);
 };
 
-const onCreateError = ( action, error ) => dispatch => {
+const onCreateError = (action, error) => (dispatch) => {
 	const { siteId, orderId } = action;
-	dispatch( createRefundFailure( siteId, orderId, error ) );
-	if ( action.onFailure ) {
-		dispatch( action.onFailure );
+	dispatch(createRefundFailure(siteId, orderId, error));
+	if (action.onFailure) {
+		dispatch(action.onFailure);
 	}
 };
 
-const onCreateSuccess = ( action, { data } ) => dispatch => {
+const onCreateSuccess = (action, { data }) => (dispatch) => {
 	const { siteId, orderId } = action;
-	dispatch( createRefundSuccess( siteId, orderId, data ) );
+	dispatch(createRefundSuccess(siteId, orderId, data));
 	// Success! Re-fetch order & notes
-	dispatch( fetchOrder( siteId, orderId ) );
-	dispatch( fetchNotes( siteId, orderId ) );
-	if ( action.onSuccess ) {
-		dispatch( action.onSuccess );
+	dispatch(fetchOrder(siteId, orderId));
+	dispatch(fetchNotes(siteId, orderId));
+	if (action.onSuccess) {
+		dispatch(action.onSuccess);
 	}
 };
 
-export const fetch = action => {
+export const fetch = (action) => {
 	const { siteId, orderId } = action;
-	return request( siteId, action ).get( `orders/${ orderId }/refunds` );
+	return request(siteId, action).get(`orders/${orderId}/refunds`);
 };
 
-const onError = ( action, error ) => dispatch => {
+const onError = (action, error) => (dispatch) => {
 	const { siteId, orderId } = action;
-	dispatch( fetchRefundsFailure( siteId, orderId, error ) );
+	dispatch(fetchRefundsFailure(siteId, orderId, error));
 };
 
-const onSuccess = ( action, { data } ) => dispatch => {
+const onSuccess = (action, { data }) => (dispatch) => {
 	const { siteId, orderId } = action;
-	dispatch( fetchRefundsSuccess( siteId, orderId, data ) );
+	dispatch(fetchRefundsSuccess(siteId, orderId, data));
 };
 
 export default {
-	[ WOOCOMMERCE_ORDER_REFUND_CREATE ]: [
-		dispatchRequest( {
+	[WOOCOMMERCE_ORDER_REFUND_CREATE]: [
+		dispatchRequest({
 			// fetch used in dispatchRequest to create the http request
 			fetch: create,
 			onSuccess: onCreateSuccess,
 			onError: onCreateError,
 			fromApi: verifyResponseHasData,
-		} ),
+		}),
 	],
-	[ WOOCOMMERCE_ORDER_REFUNDS_REQUEST ]: [
-		dispatchRequest( {
+	[WOOCOMMERCE_ORDER_REFUNDS_REQUEST]: [
+		dispatchRequest({
 			// fetch used in dispatchRequest to create the http request
 			fetch,
 			onSuccess,
 			onError,
 			fromApi: verifyResponseHasData,
-		} ),
+		}),
 	],
 };

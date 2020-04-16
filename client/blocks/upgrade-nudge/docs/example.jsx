@@ -14,7 +14,7 @@ const UpgradeNudgeExample = () => {
 	return (
 		<div>
 			<div>
-				<UpgradeNudge feature={ FEATURE_CUSTOM_DOMAIN } href="#" forceDisplay />
+				<UpgradeNudge feature={FEATURE_CUSTOM_DOMAIN} href="#" forceDisplay />
 			</div>
 			<div>
 				<UpgradeNudge

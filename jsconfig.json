@@ -5,7 +5,7 @@
 		"target": "ES6",
 		"baseUrl": ".",
 		"paths": {
-			"*": [ "test/*", "client/*" ]
+			"*": ["test/*", "client/*"]
 		}
 	},
 	"exclude": [

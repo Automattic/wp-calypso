@@ -8,12 +8,12 @@ import debugFactory from 'debug';
  */
 import Emitter from 'lib/mixins/emitter';
 
-const debug = debugFactory( 'calypso:notices' );
+const debug = debugFactory('calypso:notices');
 
-debug( 'initializing notices' );
+debug('initializing notices');
 
 const list = { containerNames: {} };
-Emitter( list );
+Emitter(list);
 let delayedNotices = [];
 
 const notices = {
@@ -28,16 +28,16 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	new: function( text, options, status ) {
+	new: function (text, options, status) {
 		// Set container
 		const container = options.overlay ? 'overlay-notices' : 'notices';
 
 		// keep track of container
-		list.containerNames[ container ] = container;
+		list.containerNames[container] = container;
 
-		debug( 'creating notice', text, options, status );
+		debug('creating notice', text, options, status);
 
-		list[ container ] = [];
+		list[container] = [];
 		const noticeObject = {
 			type: options.type || 'message',
 			status: status,
@@ -46,13 +46,13 @@ const notices = {
 			container: container,
 			button: options.button,
 			href: options.href,
-			onClick: event => {
-				if ( typeof options.onClick === 'function' ) {
-					const closeFn = notices.removeNotice.bind( notices, noticeObject );
-					return options.onClick( event, closeFn );
+			onClick: (event) => {
+				if (typeof options.onClick === 'function') {
+					const closeFn = notices.removeNotice.bind(notices, noticeObject);
+					return options.onClick(event, closeFn);
 				}
 			},
-			onRemoveCallback: options.onRemoveCallback || function() {},
+			onRemoveCallback: options.onRemoveCallback || function () {},
 			arrow: options.arrow,
 			isCompact: options.isCompact,
 			showDismiss: options.showDismiss,
@@ -60,13 +60,13 @@ const notices = {
 		};
 
 		// if requested, delay the notice until the next page load
-		if ( options.displayOnNextPage ) {
-			delayedNotices.push( noticeObject );
+		if (options.displayOnNextPage) {
+			delayedNotices.push(noticeObject);
 		} else {
-			list[ container ].push( noticeObject );
+			list[container].push(noticeObject);
 		}
 
-		list.emit( 'change' );
+		list.emit('change');
 
 		return noticeObject;
 	},
@@ -81,9 +81,9 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	success: function( text, options ) {
+	success: function (text, options) {
 		options = options || {};
-		return this.new( text, options, 'is-success' );
+		return this.new(text, options, 'is-success');
 	},
 
 	/**
@@ -96,9 +96,9 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	error: function( text, options ) {
+	error: function (text, options) {
 		options = options || {};
-		return this.new( text, options, 'is-error' );
+		return this.new(text, options, 'is-error');
 	},
 
 	/**
@@ -111,9 +111,9 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	info: function( text, options ) {
+	info: function (text, options) {
 		options = options || {};
-		return this.new( text, options, 'is-info' );
+		return this.new(text, options, 'is-info');
 	},
 
 	/**
@@ -126,9 +126,9 @@ const notices = {
 	 *
 	 * @returns {object} notice
 	 */
-	warning: function( text, options ) {
+	warning: function (text, options) {
 		options = options || {};
-		return this.new( text, options, 'is-warning' );
+		return this.new(text, options, 'is-warning');
 	},
 
 	/**
@@ -141,18 +141,18 @@ const notices = {
 	 *
 	 * @param  {object} notice The data that was originally used to create the notice
 	 */
-	removeNotice: function( notice ) {
-		if ( ! notice.container ) {
+	removeNotice: function (notice) {
+		if (!notice.container) {
 			return;
 		}
-		const containerList = list[ notice.container ],
-			index = containerList.indexOf( notice );
+		const containerList = list[notice.container],
+			index = containerList.indexOf(notice);
 
-		if ( -1 === index ) {
+		if (-1 === index) {
 			return;
 		}
-		containerList.splice( index, 1 );
-		list.emit( 'change' );
+		containerList.splice(index, 1);
+		list.emit('change');
 	},
 
 	/**
@@ -162,33 +162,33 @@ const notices = {
 	 * @param {object} context The page context
 	 * @param {Function} next The continuation
 	 */
-	clearNoticesOnNavigation: function( context, next ) {
-		debug( 'clearNoticesOnNavigation' );
+	clearNoticesOnNavigation: function (context, next) {
+		debug('clearNoticesOnNavigation');
 		let changed = false;
-		const isNoticePersistent = function( notice ) {
+		const isNoticePersistent = function (notice) {
 			return notice.persistent;
 		};
 
-		for ( const container in list.containerNames ) {
-			const { length } = list[ container ];
-			list[ container ] = list[ container ].filter( isNoticePersistent );
-			if ( length !== list[ container ].length ) {
+		for (const container in list.containerNames) {
+			const { length } = list[container];
+			list[container] = list[container].filter(isNoticePersistent);
+			if (length !== list[container].length) {
 				changed = true;
 			}
 		}
 
 		// Rotate in any delayed notices
-		if ( delayedNotices.length ) {
-			delayedNotices.forEach( function( noticeObject ) {
-				list[ noticeObject.container ] = [];
-				list[ noticeObject.container ].push( noticeObject );
-			} );
+		if (delayedNotices.length) {
+			delayedNotices.forEach(function (noticeObject) {
+				list[noticeObject.container] = [];
+				list[noticeObject.container].push(noticeObject);
+			});
 			delayedNotices = [];
 			changed = true;
 		}
 
-		if ( changed ) {
-			list.emit( 'change' );
+		if (changed) {
+			list.emit('change');
 		}
 		next();
 	},
@@ -200,25 +200,25 @@ const notices = {
 	 *
 	 * @param  {string} container DOM ID of notices container to clear
 	 */
-	clearNotices: function( container ) {
-		list[ container ] = [];
-		list.emit( 'change' );
+	clearNotices: function (container) {
+		list[container] = [];
+		list.emit('change');
 	},
 
-	getStatusHelper: function( noticeObject ) {
-		if ( noticeObject.error ) {
+	getStatusHelper: function (noticeObject) {
+		if (noticeObject.error) {
 			return 'is-error';
 		}
 
-		if ( noticeObject.warning ) {
+		if (noticeObject.warning) {
 			return 'is-warning';
 		}
 
-		if ( noticeObject.info ) {
+		if (noticeObject.info) {
 			return 'is-info';
 		}
 
-		if ( noticeObject.success ) {
+		if (noticeObject.success) {
 			return 'is-success';
 		}
 	},

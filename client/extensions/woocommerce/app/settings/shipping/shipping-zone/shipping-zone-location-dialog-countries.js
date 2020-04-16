@@ -24,81 +24,81 @@ import {
 } from 'woocommerce/state/ui/shipping/zones/locations/actions';
 import { getCurrentlyEditingShippingZoneCountries } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
-const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, actions } ) => {
-	const renderCountryLocation = ( location, index ) => {
+const ShippingZoneLocationDialogCountries = ({ continentCountries, translate, actions }) => {
+	const renderCountryLocation = (location, index) => {
 		const { type, code, name, selected, disabled } = location;
 		const isCountry = 'country' === type;
 		//show continents as selected if all countries have been selected
 		const uiSelected =
-			selected || ( ! isCountry && location.countryCount === location.selectedCountryCount );
+			selected || (!isCountry && location.countryCount === location.selectedCountryCount);
 
-		const onToggle = event => {
+		const onToggle = (event) => {
 			event.stopPropagation && event.stopPropagation();
-			if ( disabled ) {
+			if (disabled) {
 				return;
 			}
 
-			( isCountry ? actions.toggleCountrySelected : actions.toggleContinentSelected )(
+			(isCountry ? actions.toggleCountrySelected : actions.toggleContinentSelected)(
 				code,
-				! uiSelected
+				!uiSelected
 			);
 		};
 
-		const checkboxClass = classNames( 'shipping-zone__location-dialog-list-item-checkbox', {
+		const checkboxClass = classNames('shipping-zone__location-dialog-list-item-checkbox', {
 			'is-country': isCountry,
-		} );
+		});
 
 		const listItemClass = disabled
 			? 'shipping-zone__location-dialog-list-item is-disabled'
 			: 'shipping-zone__location-dialog-list-item';
 
-		const inputId = uniqueId( 'location-' );
+		const inputId = uniqueId('location-');
 
 		return (
-			<li key={ index } className={ listItemClass }>
-				<label htmlFor={ inputId }>
-					{ isCountry ? (
+			<li key={index} className={listItemClass}>
+				<label htmlFor={inputId}>
+					{isCountry ? (
 						<FormCheckbox
-							id={ inputId }
-							onChange={ onToggle }
-							className={ checkboxClass }
-							checked={ uiSelected }
-							disabled={ disabled }
+							id={inputId}
+							onChange={onToggle}
+							className={checkboxClass}
+							checked={uiSelected}
+							disabled={disabled}
 						/>
 					) : (
 						<BulkSelect
-							id={ inputId }
-							totalElements={ location.countryCount }
-							selectedElements={ location.selectedCountryCount }
-							onToggle={ onToggle }
-							className={ checkboxClass }
-							disabled={ disabled }
+							id={inputId}
+							totalElements={location.countryCount}
+							selectedElements={location.selectedCountryCount}
+							onToggle={onToggle}
+							className={checkboxClass}
+							disabled={disabled}
 						/>
-					) }
-					{ isCountry ? <LocationFlag code={ code } /> : null }
-					<span>{ name }</span>
-					{ disabled && <small>{ translate( '(An existing zone covers this location)' ) }</small> }
+					)}
+					{isCountry ? <LocationFlag code={code} /> : null}
+					<span>{name}</span>
+					{disabled && <small>{translate('(An existing zone covers this location)')}</small>}
 				</label>
 			</li>
 		);
 	};
 
-	const countryFilter = ( item, filter ) => {
-		if ( 'continent' === item.type ) {
+	const countryFilter = (item, filter) => {
+		if ('continent' === item.type) {
 			return true;
 		}
 
-		return startsWith( item.name.toLowerCase(), filter.toLowerCase() );
+		return startsWith(item.name.toLowerCase(), filter.toLowerCase());
 	};
 
 	return (
 		<FormFieldSet>
-			<FormLabel>{ translate( 'Location' ) }</FormLabel>
+			<FormLabel>{translate('Location')}</FormLabel>
 			<FilteredList
-				items={ continentCountries }
-				customFilter={ countryFilter }
-				renderItem={ renderCountryLocation }
-				placeholder={ translate( 'Filter by country from the list below' ) }
+				items={continentCountries}
+				customFilter={countryFilter}
+				renderItem={renderCountryLocation}
+				placeholder={translate('Filter by country from the list below')}
 			/>
 		</FormFieldSet>
 	);
@@ -109,10 +109,10 @@ ShippingZoneLocationDialogCountries.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		continentCountries: getCurrentlyEditingShippingZoneCountries( state ),
-	} ),
-	( dispatch, ownProps ) => ( {
+	(state) => ({
+		continentCountries: getCurrentlyEditingShippingZoneCountries(state),
+	}),
+	(dispatch, ownProps) => ({
 		actions: bindActionCreatorsWithSiteId(
 			{
 				toggleContinentSelected,
@@ -121,5 +121,5 @@ export default connect(
 			dispatch,
 			ownProps.siteId
 		),
-	} )
-)( localize( ShippingZoneLocationDialogCountries ) );
+	})
+)(localize(ShippingZoneLocationDialogCountries));

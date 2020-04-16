@@ -25,45 +25,45 @@ class FreeCartPaymentBox extends React.Component {
 	content = () => {
 		const { cart, onSubmit, translate } = this.props;
 
-		const isUsingDomainCredit = cart.has_bundle_credit && ! hasOnlyProductsOf( cart, 'domain_map' );
+		const isUsingDomainCredit = cart.has_bundle_credit && !hasOnlyProductsOf(cart, 'domain_map');
 
 		return (
 			<React.Fragment>
-				<form onSubmit={ onSubmit }>
-					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<form onSubmit={onSubmit}>
+					{/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */}
 					<div className="payment-box-section checkout__free-cart-payment-box">
 						<div className="checkout__payment-box-section-content">
-							{ this.getDomainCreditIllustration() }
+							{this.getDomainCreditIllustration()}
 
 							<h6>
-								{ isUsingDomainCredit
-									? translate( 'You have a free domain credit!' )
-									: translate( "Woohoo! You don't owe us anything!" ) }
+								{isUsingDomainCredit
+									? translate('You have a free domain credit!')
+									: translate("Woohoo! You don't owe us anything!")}
 							</h6>
 
 							<span>
-								{ isUsingDomainCredit
+								{isUsingDomainCredit
 									? translate(
 											'You get a free domain for one year with your subscription to %(productName)s. Time to celebrate!',
 											{ args: { productName: this.getProductName() } }
 									  )
-									: translate( 'Just complete checkout to add these upgrades to your site.' ) }
+									: translate('Just complete checkout to add these upgrades to your site.')}
 							</span>
 						</div>
 					</div>
 
-					<CheckoutTerms cart={ cart } />
+					<CheckoutTerms cart={cart} />
 
-					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					{/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */}
 					<div className="payment-box-actions">
 						<PayButton
-							cart={ cart }
-							transactionStep={ this.props.transactionStep }
-							beforeSubmitText={ translate( 'Complete Checkout' ) }
+							cart={cart}
+							transactionStep={this.props.transactionStep}
+							beforeSubmitText={translate('Complete Checkout')}
 						/>
 					</div>
 				</form>
-				<CartCoupon cart={ cart } />
+				<CartCoupon cart={cart} />
 				<CartToggle />
 			</React.Fragment>
 		);
@@ -73,8 +73,8 @@ class FreeCartPaymentBox extends React.Component {
 		const cart = this.props.cart;
 		let product;
 
-		if ( cart.has_bundle_credit && this.props.selectedSite.plan ) {
-			product = this.props.products[ this.props.selectedSite.plan.product_slug ];
+		if (cart.has_bundle_credit && this.props.selectedSite.plan) {
+			product = this.props.products[this.props.selectedSite.plan.product_slug];
 		}
 
 		return product ? product.product_name : '';
@@ -83,15 +83,15 @@ class FreeCartPaymentBox extends React.Component {
 	getDomainCreditIllustration = () => {
 		const cart = this.props.cart;
 
-		if ( ! cart.has_bundle_credit ) {
+		if (!cart.has_bundle_credit) {
 			return (
 				<span className="checkout__free-stand-alone-domain-mapping-illustration">
-					<img src={ '/calypso/images/upgrades/custom-domain.svg' } alt="" />
+					<img src={'/calypso/images/upgrades/custom-domain.svg'} alt="" />
 				</span>
 			);
 		}
 
-		const isRestrictedToBlogDomains = isBlogger( this.props.selectedSite.plan );
+		const isRestrictedToBlogDomains = isBlogger(this.props.selectedSite.plan);
 
 		return (
 			<span className="checkout__free-domain-credit-illustration">
@@ -109,11 +109,11 @@ class FreeCartPaymentBox extends React.Component {
 
 	render() {
 		return (
-			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
-				{ this.content() }
+			<PaymentBox classSet="credits-payment-box" title={this.props.translate('Secure Payment')}>
+				{this.content()}
 			</PaymentBox>
 		);
 	}
 }
 
-export default localize( FreeCartPaymentBox );
+export default localize(FreeCartPaymentBox);

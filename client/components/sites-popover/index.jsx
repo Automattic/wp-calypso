@@ -40,19 +40,19 @@ class SitesPopover extends React.Component {
 	};
 
 	renderHeader() {
-		return <div className="sites-popover__header">{ this.props.header }</div>;
+		return <div className="sites-popover__header">{this.props.header}</div>;
 	}
 
 	renderSiteSelector() {
 		return (
 			<SiteSelector
 				siteBasePath="/post"
-				onSiteSelect={ this.props.onSiteSelect }
-				showAddNewSite={ false }
-				indicator={ false }
-				autoFocus={ ! hasTouch() } // eslint-disable-line jsx-a11y/no-autofocus
-				groups={ true }
-				onClose={ this.props.onClose }
+				onSiteSelect={this.props.onSiteSelect}
+				showAddNewSite={false}
+				indicator={false}
+				autoFocus={!hasTouch()} // eslint-disable-line jsx-a11y/no-autofocus
+				groups={true}
+				onClose={this.props.onClose}
 			/>
 		);
 	}
@@ -66,16 +66,16 @@ class SitesPopover extends React.Component {
 
 		return (
 			<Popover
-				id={ this.props.id }
-				showDelay={ this.props.showDelay }
-				isVisible={ this.props.visible }
-				context={ this.props.context }
-				onClose={ this.props.onClose }
-				position={ this.props.position }
-				className={ classes }
+				id={this.props.id}
+				showDelay={this.props.showDelay}
+				isVisible={this.props.visible}
+				context={this.props.context}
+				onClose={this.props.onClose}
+				position={this.props.position}
+				className={classes}
 			>
-				{ this.renderHeader() }
-				{ this.renderSiteSelector() }
+				{this.renderHeader()}
+				{this.renderSiteSelector()}
 			</Popover>
 		);
 	}

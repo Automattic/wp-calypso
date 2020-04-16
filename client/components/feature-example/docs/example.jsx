@@ -40,21 +40,21 @@ export default class FeatureExampleExample extends React.Component {
 			name: 'Not a real site',
 		};
 
-		return plugins.map( plugin => {
+		return plugins.map((plugin) => {
 			return (
 				<PluginItem
-					key={ `plugin-item-mock-${ plugin.slug }` }
-					plugin={ plugin }
-					sites={ [] }
-					hasUpdate={ () => false }
-					selectedSite={ selectedSite }
-					progress={ [] }
+					key={`plugin-item-mock-${plugin.slug}`}
+					plugin={plugin}
+					sites={[]}
+					hasUpdate={() => false}
+					selectedSite={selectedSite}
+					progress={[]}
 				/>
 			);
-		} );
+		});
 	};
 
 	render() {
-		return <FeatureExample>{ this.getContent() }</FeatureExample>;
+		return <FeatureExample>{this.getContent()}</FeatureExample>;
 	}
 }

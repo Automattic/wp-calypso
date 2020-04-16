@@ -9,19 +9,19 @@ import {
 import wpcom from 'lib/wp';
 
 export function listMembershipsConnectedAccounts() {
-	return dispatch => {
-		dispatch( { type: MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST } );
+	return (dispatch) => {
+		dispatch({ type: MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST });
 
-		return wpcom.req.get( '/me/connected_accounts/list' ).then( endpointResponse => {
-			const accounts = endpointResponse.accounts.reduce( ( accumulator, item ) => {
-				accumulator[ item.connected_destination_account_id ] = item;
+		return wpcom.req.get('/me/connected_accounts/list').then((endpointResponse) => {
+			const accounts = endpointResponse.accounts.reduce((accumulator, item) => {
+				accumulator[item.connected_destination_account_id] = item;
 				return accumulator;
-			}, {} );
-			dispatch( {
+			}, {});
+			dispatch({
 				type: MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE,
 				accounts,
-			} );
-			return Promise.resolve( accounts );
-		} );
+			});
+			return Promise.resolve(accounts);
+		});
 	};
 }

@@ -15,21 +15,20 @@ import { getThemesForQuery, isRequestingThemesForQuery } from 'state/themes/sele
 
 class QueryThemes extends Component {
 	static propTypes = {
-		siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] )
-			.isRequired,
+		siteId: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['wpcom', 'wporg'])]).isRequired,
 		// A theme query. Note that on Jetpack sites, only the `search` argument is supported.
-		query: PropTypes.shape( {
+		query: PropTypes.shape({
 			// The search string
 			search: PropTypes.string,
 			// The tier to look for -- 'free', 'premium', or '' (for all themes)
-			tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
+			tier: PropTypes.oneOf(['', 'free', 'premium']),
 			// Comma-separated list of filters; see my-sites/themes/theme-filters
 			filter: PropTypes.string,
 			// Which page of the results list to display
 			page: PropTypes.number,
 			// How many results per page
 			number: PropTypes.number,
-		} ),
+		}),
 		// Connected props
 		hasThemes: PropTypes.bool.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
@@ -40,8 +39,8 @@ class QueryThemes extends Component {
 		this.request();
 	}
 
-	shouldComponentUpdate( nextProps ) {
-		return this.props.siteId !== nextProps.siteId || ! isEqual( this.props.query, nextProps.query );
+	shouldComponentUpdate(nextProps) {
+		return this.props.siteId !== nextProps.siteId || !isEqual(this.props.query, nextProps.query);
 	}
 
 	componentDidUpdate() {
@@ -49,8 +48,8 @@ class QueryThemes extends Component {
 	}
 
 	request() {
-		if ( ! this.props.isRequesting && ! this.props.hasThemes ) {
-			this.props.requestThemes( this.props.siteId, this.props.query );
+		if (!this.props.isRequesting && !this.props.hasThemes) {
+			this.props.requestThemes(this.props.siteId, this.props.query);
 		}
 	}
 
@@ -60,9 +59,9 @@ class QueryThemes extends Component {
 }
 
 export default connect(
-	( state, { query, siteId } ) => ( {
-		hasThemes: ! isEmpty( getThemesForQuery( state, siteId, query ) ),
-		isRequesting: isRequestingThemesForQuery( state, siteId, query ),
-	} ),
+	(state, { query, siteId }) => ({
+		hasThemes: !isEmpty(getThemesForQuery(state, siteId, query)),
+		isRequesting: isRequestingThemesForQuery(state, siteId, query),
+	}),
 	{ requestThemes }
-)( QueryThemes );
+)(QueryThemes);

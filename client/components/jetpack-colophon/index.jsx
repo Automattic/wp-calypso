@@ -15,18 +15,18 @@ import JetpackLogo from 'components/jetpack-logo';
  */
 import './style.scss';
 
-const JetpackColophon = ( { className, translate } ) => {
+const JetpackColophon = ({ className, translate }) => {
 	return (
-		<div className={ classNames( 'jetpack-colophon', className ) }>
+		<div className={classNames('jetpack-colophon', className)}>
 			<span className="jetpack-colophon__power">
-				{ translate( 'Powered by {{jetpackLogo /}}', {
+				{translate('Powered by {{jetpackLogo /}}', {
 					components: {
-						jetpackLogo: <JetpackLogo size={ 32 } full />,
+						jetpackLogo: <JetpackLogo size={32} full />,
 					},
-				} ) }
+				})}
 			</span>
 		</div>
 	);
 };
 
-export default localize( JetpackColophon );
+export default localize(JetpackColophon);

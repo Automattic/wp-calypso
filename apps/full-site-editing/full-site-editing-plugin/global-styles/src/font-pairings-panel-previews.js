@@ -50,8 +50,8 @@ const PlayRoboto = () => (
 	</SVG>
 );
 
-export default ( preview, headings, base ) => {
-	switch ( preview ) {
+export default (preview, headings, base) => {
+	switch (preview) {
 		case 'SPACE_LORA':
 			return SpaceLora();
 		case 'SYSTEM_BASKER':
@@ -63,8 +63,8 @@ export default ( preview, headings, base ) => {
 		default:
 			return (
 				<div className="font-pairings-panel__preview">
-					<h1 style={ { fontFamily: headings } }>Lorem Ipsum</h1>
-					<p style={ { fontFamily: base } }>
+					<h1 style={{ fontFamily: headings }}>Lorem Ipsum</h1>
+					<p style={{ fontFamily: base }}>
 						Etiam tempor orci eu lobortis elementum nibh tellus molestie.
 					</p>
 				</div>

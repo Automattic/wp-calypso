@@ -13,71 +13,71 @@ import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
 import { useLocalizedMoment } from 'components/localized-moment';
 
-function getPromotionTypeText( promotionType, translate ) {
-	switch ( promotionType ) {
+function getPromotionTypeText(promotionType, translate) {
+	switch (promotionType) {
 		case 'fixed_product':
-			return translate( 'Product discount coupon' );
+			return translate('Product discount coupon');
 		case 'fixed_cart':
-			return translate( 'Cart discount coupon' );
+			return translate('Cart discount coupon');
 		case 'percent':
-			return translate( 'Percent cart discount coupon' );
+			return translate('Percent cart discount coupon');
 		case 'product_sale':
-			return translate( 'Individual product sale' );
+			return translate('Individual product sale');
 		case 'free_shipping':
-			return translate( 'Free shipping' );
+			return translate('Free shipping');
 	}
 }
 
-function getTimeframeText( promotion, translate, moment ) {
+function getTimeframeText(promotion, translate, moment) {
 	// TODO: Use humanDate when it supports future dates.
 
-	if ( promotion.startDate && promotion.endDate ) {
-		return translate( '%(startDate)s - %(endDate)s', {
+	if (promotion.startDate && promotion.endDate) {
+		return translate('%(startDate)s - %(endDate)s', {
 			args: {
-				startDate: moment( promotion.startDate ).format( 'll' ),
-				endDate: moment( promotion.endDate ).format( 'll' ),
+				startDate: moment(promotion.startDate).format('ll'),
+				endDate: moment(promotion.endDate).format('ll'),
 			},
-		} );
+		});
 	}
-	if ( promotion.endDate ) {
-		return translate( 'Ends on %(endDate)s', {
+	if (promotion.endDate) {
+		return translate('Ends on %(endDate)s', {
 			args: {
-				endDate: moment( promotion.endDate ).format( 'll' ),
+				endDate: moment(promotion.endDate).format('ll'),
 			},
-		} );
+		});
 	}
-	if ( promotion.startDate ) {
-		return translate( '%(startDate)s - No end date', {
+	if (promotion.startDate) {
+		return translate('%(startDate)s - No end date', {
 			args: {
-				startDate: moment( promotion.startDate ).format( 'll' ),
+				startDate: moment(promotion.startDate).format('ll'),
 			},
-		} );
+		});
 	}
-	return translate( 'No end date' );
+	return translate('No end date');
 }
 
-function PromotionsListRow( { site, promotion } ) {
+function PromotionsListRow({ site, promotion }) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	return (
-		<TableRow href={ getLink( '/store/promotion/:site/' + promotion.id, site ) }>
+		<TableRow href={getLink('/store/promotion/:site/' + promotion.id, site)}>
 			<TableItem isTitle className="promotions__list-promotion">
-				<span className="promotions__list-name">{ promotion.name }</span>
+				<span className="promotions__list-name">{promotion.name}</span>
 			</TableItem>
 
-			<TableItem>{ getPromotionTypeText( promotion.type, translate ) }</TableItem>
+			<TableItem>{getPromotionTypeText(promotion.type, translate)}</TableItem>
 
-			<TableItem>{ getTimeframeText( promotion, translate, moment ) }</TableItem>
+			<TableItem>{getTimeframeText(promotion, translate, moment)}</TableItem>
 		</TableRow>
 	);
 }
 
 PromotionsListRow.propTypes = {
-	site: PropTypes.shape( {
+	site: PropTypes.shape({
 		slug: PropTypes.string,
-	} ),
-	promotion: PropTypes.shape( {} ),
+	}),
+	promotion: PropTypes.shape({}),
 };
 
 export default PromotionsListRow;

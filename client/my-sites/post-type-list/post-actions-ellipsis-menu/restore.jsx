@@ -31,42 +31,42 @@ class PostActionsEllipsisMenuRestore extends Component {
 	};
 
 	constructor() {
-		super( ...arguments );
+		super(...arguments);
 
-		this.restorePost = this.restorePost.bind( this );
+		this.restorePost = this.restorePost.bind(this);
 	}
 
 	restorePost() {
 		const { siteId, postId } = this.props;
-		if ( ! siteId || ! postId ) {
+		if (!siteId || !postId) {
 			return;
 		}
 
 		this.props.bumpStat();
-		this.props.restorePost( siteId, postId );
+		this.props.restorePost(siteId, postId);
 	}
 
 	render() {
 		const { translate, canRestore, status } = this.props;
-		if ( 'trash' !== status || ! canRestore ) {
+		if ('trash' !== status || !canRestore) {
 			return null;
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.restorePost } icon="undo">
-				{ translate( 'Restore' ) }
+			<PopoverMenuItem onClick={this.restorePost} icon="undo">
+				{translate('Restore')}
 			</PopoverMenuItem>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
+const mapStateToProps = (state, { globalId }) => {
+	const post = getPost(state, globalId);
+	if (!post) {
 		return {};
 	}
 
-	const userId = getCurrentUserId( state );
+	const userId = getCurrentUserId(state);
 	const isAuthor = post.author && post.author.ID === userId;
 
 	return {
@@ -84,13 +84,13 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 const mapDispatchToProps = { restorePost, bumpAnalyticsStat };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator( stateProps.type, 'restore', dispatchProps.bumpAnalyticsStat );
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	const bumpStat = bumpStatGenerator(stateProps.type, 'restore', dispatchProps.bumpAnalyticsStat);
+	return Object.assign({}, ownProps, stateProps, dispatchProps, { bumpStat });
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( PostActionsEllipsisMenuRestore ) );
+)(localize(PostActionsEllipsisMenuRestore));

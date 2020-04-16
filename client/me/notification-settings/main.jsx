@@ -32,45 +32,45 @@ class NotificationSettings extends Component {
 	onChange = () => {
 		const { error, status } = this.props;
 
-		if ( error ) {
+		if (error) {
 			this.props.errorNotice(
-				this.props.translate( 'There was a problem saving your changes. Please, try again.' ),
+				this.props.translate('There was a problem saving your changes. Please, try again.'),
 				{
 					id: 'notif-settings-save',
 				}
 			);
 		}
 
-		if ( status === 'success' ) {
-			this.props.successNotice( this.props.translate( 'Settings saved successfully!' ), {
+		if (status === 'success') {
+			this.props.successNotice(this.props.translate('Settings saved successfully!'), {
 				id: 'notif-settings-save',
 				duration: 4000,
-			} );
+			});
 		}
 	};
 
 	render() {
 		// TODO: We should avoid creating functions in the render method
-		const findSettingsForBlog = blogId =>
-			find( this.props.settings, { blog_id: parseInt( blogId, 10 ) } );
-		const onSave = blogId => this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ) );
-		const onSaveToAll = blogId =>
-			this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
+		const findSettingsForBlog = (blogId) =>
+			find(this.props.settings, { blog_id: parseInt(blogId, 10) });
+		const onSave = (blogId) => this.props.saveSettings('blogs', findSettingsForBlog(blogId));
+		const onSaveToAll = (blogId) =>
+			this.props.saveSettings('blogs', findSettingsForBlog(blogId), true);
 
 		return (
 			<Main className="notification-settings">
 				<PageViewTracker path="/me/notifications" title="Me > Notifications" />
 				<QueryUserDevices />
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<Navigation path={ this.props.path } />
-				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
+				<Navigation path={this.props.path} />
+				<PushNotificationSettings pushNotifications={this.props.pushNotifications} />
 				<BlogsSettings
-					settings={ this.props.settings }
-					hasUnsavedChanges={ this.props.hasUnsavedChanges }
-					onToggle={ this.props.toggle }
-					onSave={ onSave }
-					onSaveToAll={ onSaveToAll }
+					settings={this.props.settings}
+					hasUnsavedChanges={this.props.hasUnsavedChanges}
+					onToggle={this.props.toggle}
+					onSave={onSave}
+					onSaveToAll={onSaveToAll}
 				/>
 			</Main>
 		);
@@ -78,9 +78,9 @@ class NotificationSettings extends Component {
 }
 
 export default connect(
-	state => ( {
-		settings: getNotificationSettings( state, 'blogs' ),
-		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'blogs' ),
-	} ),
+	(state) => ({
+		settings: getNotificationSettings(state, 'blogs'),
+		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges(state, 'blogs'),
+	}),
 	{ fetchSettings, toggle, saveSettings }
-)( localize( NotificationSettings ) );
+)(localize(NotificationSettings));

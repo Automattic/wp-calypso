@@ -17,9 +17,9 @@ import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 export type State = import('./reducer').State;
 export { STORE_KEY };
 
-use( plugins.persistence, persistOptions );
+use(plugins.persistence, persistOptions);
 
-registerStore< State >( STORE_KEY, {
+registerStore<State>(STORE_KEY, {
 	actions,
 	controls,
 	reducer: reducer as any,
@@ -33,9 +33,9 @@ registerStore< State >( STORE_KEY, {
 		'selectedFonts',
 		'selectedSite',
 	],
-} );
+});
 
 declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
+	function dispatch(key: typeof STORE_KEY): DispatchFromMap<typeof actions>;
+	function select(key: typeof STORE_KEY): SelectFromMap<typeof selectors>;
 }

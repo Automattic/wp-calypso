@@ -1,4 +1,4 @@
-function createDomainObject( status ) {
+function createDomainObject(status) {
 	return {
 		locked: status.locked,
 		pendingTransfer: status.pending_transfer,

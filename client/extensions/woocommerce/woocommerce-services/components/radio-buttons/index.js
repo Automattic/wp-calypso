@@ -15,33 +15,33 @@ import FormRadio from 'components/forms/form-radio';
 import sanitizeHTML from 'woocommerce/woocommerce-services/lib/utils/sanitize-html';
 import FieldDescription from 'woocommerce/woocommerce-services/components/field-description';
 
-const RadioButton = ( { value, currentValue, setValue, description } ) => {
-	const onChange = () => setValue( value );
+const RadioButton = ({ value, currentValue, setValue, description }) => {
+	const onChange = () => setValue(value);
 
 	return (
 		<FormLabel>
-			<FormRadio value={ value } checked={ value === currentValue } onChange={ onChange } />
-			<span dangerouslySetInnerHTML={ sanitizeHTML( description ) } />
+			<FormRadio value={value} checked={value === currentValue} onChange={onChange} />
+			<span dangerouslySetInnerHTML={sanitizeHTML(description)} />
 		</FormLabel>
 	);
 };
 
-const RadioButtons = ( { valuesMap, title, description, value, setValue, className } ) => {
+const RadioButtons = ({ valuesMap, title, description, value, setValue, className }) => {
 	return (
-		<FormFieldset className={ className }>
-			<FormLegend dangerouslySetInnerHTML={ sanitizeHTML( title ) } />
-			<FieldDescription text={ description } />
-			{ Object.keys( valuesMap ).map( key => {
+		<FormFieldset className={className}>
+			<FormLegend dangerouslySetInnerHTML={sanitizeHTML(title)} />
+			<FieldDescription text={description} />
+			{Object.keys(valuesMap).map((key) => {
 				return (
 					<RadioButton
-						key={ key }
-						value={ key }
-						currentValue={ value }
-						setValue={ setValue }
-						description={ valuesMap[ key ] }
+						key={key}
+						value={key}
+						currentValue={value}
+						setValue={setValue}
+						description={valuesMap[key]}
 					/>
 				);
-			} ) }
+			})}
 		</FormFieldset>
 	);
 };

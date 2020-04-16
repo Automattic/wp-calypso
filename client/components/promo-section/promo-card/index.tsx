@@ -33,30 +33,30 @@ export interface Props {
 	badge?: string;
 }
 
-const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children, badge } ) => {
-	const classes = classNames( {
+const PromoCard: FunctionComponent<Props> = ({ title, image, isPrimary, children, badge }) => {
+	const classes = classNames({
 		'promo-card': true,
 		'is-primary': isPrimary,
-	} );
+	});
 	return (
-		<ActionPanel className={ classes }>
-			{ image && (
-				<ActionPanelFigure inlineBodyText={ false } align={ image.align || 'left' }>
-					<img src={ image.path } alt={ image.alt } />
+		<ActionPanel className={classes}>
+			{image && (
+				<ActionPanelFigure inlineBodyText={false} align={image.align || 'left'}>
+					<img src={image.path} alt={image.alt} />
 				</ActionPanelFigure>
-			) }
+			)}
 			<ActionPanelBody>
-				<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
-					{ title }
-					{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
+				<ActionPanelTitle className={classNames({ 'is-primary': isPrimary })}>
+					{title}
+					{badge && <Badge className="promo-card__title-badge">{badge}</Badge>}
 				</ActionPanelTitle>
-				{ isPrimary
-					? React.Children.map( children, child => {
+				{isPrimary
+					? React.Children.map(children, (child) => {
 							return child && PromoCardCta === child.type
-								? React.cloneElement( child, { isPrimary } )
+								? React.cloneElement(child, { isPrimary })
 								: child;
-					  } )
-					: children }
+					  })
+					: children}
 			</ActionPanelBody>
 		</ActionPanel>
 	);

@@ -17,12 +17,12 @@ import { getEditURL } from 'state/posts/utils';
  */
 import './style.scss';
 
-const PostEditButton = ( { post, site, iconSize, onClick, translate } ) => {
-	const editUrl = getEditURL( post, site );
+const PostEditButton = ({ post, site, iconSize, onClick, translate }) => {
+	const editUrl = getEditURL(post, site);
 	return (
-		<a className="post-edit-button" href={ editUrl } onClick={ onClick }>
-			<Gridicon icon="pencil" size={ iconSize } className="post-edit-button__icon" />
-			<span className="post-edit-button__label">{ translate( 'Edit' ) }</span>
+		<a className="post-edit-button" href={editUrl} onClick={onClick}>
+			<Gridicon icon="pencil" size={iconSize} className="post-edit-button__icon" />
+			<span className="post-edit-button__label">{translate('Edit')}</span>
 		</a>
 	);
 };
@@ -38,4 +38,4 @@ PostEditButton.defaultProps = {
 	iconSize: 24,
 };
 
-export default localize( PostEditButton );
+export default localize(PostEditButton);

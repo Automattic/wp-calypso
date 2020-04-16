@@ -28,9 +28,9 @@ class ManageConnection extends Component {
 
 		return (
 			<Main className="manage-connection site-settings">
-				<DocumentHead title={ translate( 'Site Settings' ) } />
+				<DocumentHead title={translate('Site Settings')} />
 
-				<HeaderCake onClick={ redirect }>{ translate( 'Manage Connection' ) }</HeaderCake>
+				<HeaderCake onClick={redirect}>{translate('Manage Connection')}</HeaderCake>
 
 				<SiteOwnership />
 				<DataSynchronization />
@@ -40,4 +40,4 @@ class ManageConnection extends Component {
 	}
 }
 
-export default flowRight( localize, redirectNonJetpack() )( ManageConnection );
+export default flowRight(localize, redirectNonJetpack())(ManageConnection);

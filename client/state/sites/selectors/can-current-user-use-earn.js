@@ -12,10 +12,10 @@ import getSite from './get-site';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether user can access the Earn section.
  */
-export default function canCurrentUserUseEarn( state, siteId = null ) {
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export default function canCurrentUserUseEarn(state, siteId = null) {
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
-	const site = getSite( state, siteId );
-	return site && !! canCurrentUser( state, siteId, 'manage_options' );
+	const site = getSite(state, siteId);
+	return site && !!canCurrentUser(state, siteId, 'manage_options');
 }

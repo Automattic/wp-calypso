@@ -10,8 +10,8 @@ import getPluginUploadProgress from 'state/selectors/get-plugin-upload-progress'
 
 const siteId = 77203074;
 
-describe( 'getPluginUploadProgress', () => {
-	test( 'should return 0 by default', () => {
+describe('getPluginUploadProgress', () => {
+	test('should return 0 by default', () => {
 		const state = {
 			plugins: {
 				upload: {
@@ -19,19 +19,19 @@ describe( 'getPluginUploadProgress', () => {
 				},
 			},
 		};
-		expect( getPluginUploadProgress( state, siteId ) ).to.equal( 0 );
-	} );
+		expect(getPluginUploadProgress(state, siteId)).to.equal(0);
+	});
 
-	test( 'should return current value for site', () => {
+	test('should return current value for site', () => {
 		const state = {
 			plugins: {
 				upload: {
 					progressPercent: {
-						[ siteId ]: 73,
+						[siteId]: 73,
 					},
 				},
 			},
 		};
-		expect( getPluginUploadProgress( state, siteId ) ).to.equal( 73 );
-	} );
-} );
+		expect(getPluginUploadProgress(state, siteId)).to.equal(73);
+	});
+});

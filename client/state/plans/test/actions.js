@@ -21,26 +21,26 @@ import {
 	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
 
-describe( 'actions', () => {
-	describe( 'creators functions', () => {
-		test( '#plansReceiveAction()', () => {
+describe('actions', () => {
+	describe('creators functions', () => {
+		test('#plansReceiveAction()', () => {
 			const plans = wpcomResponse;
-			const action = plansReceiveAction( plans );
-			expect( action ).to.eql( ACTION_PLANS_RECEIVE );
-		} );
+			const action = plansReceiveAction(plans);
+			expect(action).to.eql(ACTION_PLANS_RECEIVE);
+		});
 
-		test( '#plansRequestSuccessAction()', () => {
+		test('#plansRequestSuccessAction()', () => {
 			const action = plansRequestSuccessAction();
-			expect( action ).to.eql( ACTION_PLANS_REQUEST_SUCCESS );
-		} );
+			expect(action).to.eql(ACTION_PLANS_REQUEST_SUCCESS);
+		});
 
-		test( '#plansRequestFailureAction()', () => {
-			const action = plansRequestFailureAction( errorResponse );
-			expect( action ).to.eql( ACTION_PLANS_REQUEST_FAILURE );
-		} );
+		test('#plansRequestFailureAction()', () => {
+			const action = plansRequestFailureAction(errorResponse);
+			expect(action).to.eql(ACTION_PLANS_REQUEST_FAILURE);
+		});
 
-		test( '#requestPlans()', () => {
-			expect( requestPlans() ).to.eql( ACTION_PLANS_REQUEST );
-		} );
-	} );
-} );
+		test('#requestPlans()', () => {
+			expect(requestPlans()).to.eql(ACTION_PLANS_REQUEST);
+		});
+	});
+});

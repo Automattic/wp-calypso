@@ -28,105 +28,105 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 const user = userFactory();
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-function setTitle( context, ...title ) {
-	context.store.dispatch( setDocumentHeadTitle( concatTitle( titles.purchases, ...title ) ) );
+function setTitle(context, ...title) {
+	context.store.dispatch(setDocumentHeadTitle(concatTitle(titles.purchases, ...title)));
 }
 
 const userHasNoSites = () => user.get().site_count <= 0;
 
-function noSites( context, analyticsPath ) {
-	setTitle( context );
+function noSites(context, analyticsPath) {
+	setTitle(context);
 	context.primary = (
 		<Main>
-			<PageViewTracker path={ analyticsPath } title="Purchases > No Sites" />
-			<PurchasesHeader section={ 'purchases' } />
+			<PageViewTracker path={analyticsPath} title="Purchases > No Sites" />
+			<PurchasesHeader section={'purchases'} />
 			<NoSitesMessage />
 		</Main>
 	);
-	makeLayout( context, noop );
-	clientRender( context );
+	makeLayout(context, noop);
+	clientRender(context);
 }
 
-export function addCardDetails( context, next ) {
-	if ( userHasNoSites() ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment/add' );
+export function addCardDetails(context, next) {
+	if (userHasNoSites()) {
+		return noSites(context, '/me/purchases/:site/:purchaseId/payment/add');
 	}
 
-	setTitle( context, titles.addCardDetails );
+	setTitle(context, titles.addCardDetails);
 
 	context.primary = (
 		<AddCardDetails
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
+			purchaseId={parseInt(context.params.purchaseId, 10)}
+			siteSlug={context.params.site}
 		/>
 	);
 	next();
 }
 
-export function addCreditCard( context, next ) {
+export function addCreditCard(context, next) {
 	context.primary = <AddCreditCard />;
 	next();
 }
 
-export function cancelPurchase( context, next ) {
-	setTitle( context, titles.cancelPurchase );
+export function cancelPurchase(context, next) {
+	setTitle(context, titles.cancelPurchase);
 
 	context.primary = (
 		<CancelPurchase
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
+			purchaseId={parseInt(context.params.purchaseId, 10)}
+			siteSlug={context.params.site}
 		/>
 	);
 	next();
 }
 
-export function confirmCancelDomain( context, next ) {
-	if ( userHasNoSites() ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain' );
+export function confirmCancelDomain(context, next) {
+	if (userHasNoSites()) {
+		return noSites(context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain');
 	}
 
-	setTitle( context, titles.confirmCancelDomain );
+	setTitle(context, titles.confirmCancelDomain);
 
 	context.primary = (
 		<ConfirmCancelDomain
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
+			purchaseId={parseInt(context.params.purchaseId, 10)}
+			siteSlug={context.params.site}
 		/>
 	);
 	next();
 }
 
-export function editCardDetails( context, next ) {
-	if ( userHasNoSites() ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
+export function editCardDetails(context, next) {
+	if (userHasNoSites()) {
+		return noSites(context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId');
 	}
 
-	setTitle( context, titles.editCardDetails );
+	setTitle(context, titles.editCardDetails);
 
 	context.primary = (
 		<EditCardDetails
-			cardId={ context.params.cardId }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
+			cardId={context.params.cardId}
+			purchaseId={parseInt(context.params.purchaseId, 10)}
+			siteSlug={context.params.site}
 		/>
 	);
 	next();
 }
 
-export function list( context, next ) {
-	setTitle( context );
+export function list(context, next) {
+	setTitle(context);
 
-	context.primary = <PurchasesList noticeType={ context.params.noticeType } />;
+	context.primary = <PurchasesList noticeType={context.params.noticeType} />;
 	next();
 }
 
-export function managePurchase( context, next ) {
-	setTitle( context, titles.managePurchase );
+export function managePurchase(context, next) {
+	setTitle(context, titles.managePurchase);
 
 	context.primary = (
 		<ManagePurchase
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
+			purchaseId={parseInt(context.params.purchaseId, 10)}
+			siteSlug={context.params.site}
 		/>
 	);
 	next();

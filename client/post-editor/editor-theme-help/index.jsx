@@ -20,30 +20,30 @@ class EditorThemeHelp extends PureComponent {
 		classname: PropTypes.string,
 	};
 
-	recordClick = () => this.props.recordEditorStat( 'clicked_theme_help_link' );
+	recordClick = () => this.props.recordEditorStat('clicked_theme_help_link');
 
 	render() {
 		const { translate, themeHelpPath, className } = this.props;
 
-		if ( ! themeHelpPath ) {
+		if (!themeHelpPath) {
 			return null;
 		}
 
 		return (
-			<a className={ className } href={ themeHelpPath } onClick={ this.recordClick }>
-				{ translate( 'Need help setting up your site?' ) }
+			<a className={className} href={themeHelpPath} onClick={this.recordClick}>
+				{translate('Need help setting up your site?')}
 			</a>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			themeHelpPath: getSiteThemeShowcasePath( state, siteId ),
+			themeHelpPath: getSiteThemeShowcasePath(state, siteId),
 		};
 	},
 	{ recordEditorStat }
-)( localize( EditorThemeHelp ) );
+)(localize(EditorThemeHelp));

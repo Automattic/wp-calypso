@@ -11,6 +11,6 @@ import { get } from 'lodash';
  *
  * @see client/components/web-preview
  */
-export default function isPreviewShowing( state ) {
-	return get( state.ui, 'isPreviewShowing', false );
+export default function isPreviewShowing(state) {
+	return get(state.ui, 'isPreviewShowing', false);
 }

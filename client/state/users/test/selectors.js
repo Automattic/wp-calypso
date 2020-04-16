@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { getUser } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#getUser()', () => {
-		test( 'should return the object for the user ID', () => {
+describe('selectors', () => {
+	describe('#getUser()', () => {
+		test('should return the object for the user ID', () => {
 			const user = getUser(
 				{
 					users: {
@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 				73705554
 			);
 
-			expect( user ).to.eql( { ID: 73705554, login: 'testonesite2014' } );
-		} );
-	} );
-} );
+			expect(user).to.eql({ ID: 73705554, login: 'testonesite2014' });
+		});
+	});
+});

@@ -79,12 +79,12 @@ const DEFAULT_POST = {
 	],
 };
 
-const makeComparator = query => ( a, b ) => PostQueryManager.compare( query, a, b );
+const makeComparator = (query) => (a, b) => PostQueryManager.compare(query, a, b);
 
-describe( 'PostQueryManager', () => {
-	describe( '#matches()', () => {
-		describe( 'query.search', () => {
-			test( 'should return false for a non-matching search', () => {
+describe('PostQueryManager', () => {
+	describe('#matches()', () => {
+		describe('query.search', () => {
+			test('should return false for a non-matching search', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						search: 'disgusting',
@@ -92,10 +92,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true for a matching title search', () => {
+			test('should return true for a matching title search', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						search: 'Ribs',
@@ -103,10 +103,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true for a falsey title search', () => {
+			test('should return true for a falsey title search', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						search: null,
@@ -114,10 +114,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true for a matching content search', () => {
+			test('should return true for a matching content search', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						search: 'delicious',
@@ -125,10 +125,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should search case-insensitive', () => {
+			test('should search case-insensitive', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						search: 'ribs',
@@ -136,10 +136,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should separately test title and content fields', () => {
+			test('should separately test title and content fields', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						search: 'ChickenAre',
@@ -147,12 +147,12 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
-		} );
+				expect(isMatch).toBe(false);
+			});
+		});
 
-		describe( 'query.after', () => {
-			test( 'should return false if query is not ISO 8601', () => {
+		describe('query.after', () => {
+			test('should return false if query is not ISO 8601', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						after: '2014',
@@ -160,10 +160,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if post is not after date', () => {
+			test('should return false if post is not after date', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						after: '2018-04-25T15:47:33-04:00',
@@ -171,10 +171,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if post is after date', () => {
+			test('should return true if post is after date', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						after: '2014-04-25T15:47:33-04:00',
@@ -182,12 +182,12 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.before', () => {
-			test( 'should return false if query is not ISO 8601', () => {
+		describe('query.before', () => {
+			test('should return false if query is not ISO 8601', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						before: '2018',
@@ -195,10 +195,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if post is not before date', () => {
+			test('should return false if post is not before date', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						before: '2014-04-25T15:47:33-04:00',
@@ -206,10 +206,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if post is before date', () => {
+			test('should return true if post is before date', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						before: '2018-04-25T15:47:33-04:00',
@@ -217,12 +217,12 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.modified_after', () => {
-			test( 'should return false if query is not ISO 8601', () => {
+		describe('query.modified_after', () => {
+			test('should return false if query is not ISO 8601', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						modified_after: '2014',
@@ -230,10 +230,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if post is not modified after date', () => {
+			test('should return false if post is not modified after date', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						modified_after: '2018-04-25T15:47:33-04:00',
@@ -241,10 +241,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if post is modified after date', () => {
+			test('should return true if post is modified after date', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						modified_after: '2014-04-25T15:47:33-04:00',
@@ -252,12 +252,12 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.modified_before', () => {
-			test( 'should return false if query is not ISO 8601', () => {
+		describe('query.modified_before', () => {
+			test('should return false if query is not ISO 8601', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						modified_before: '2018',
@@ -265,10 +265,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if post is not modified before date', () => {
+			test('should return false if post is not modified before date', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						modified_before: '2014-04-25T15:47:33-04:00',
@@ -276,10 +276,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if post is modified before date', () => {
+			test('should return true if post is modified before date', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						modified_before: '2018-04-25T15:47:33-04:00',
@@ -287,12 +287,12 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.tag', () => {
-			test( 'should return false if post does not include tag', () => {
+		describe('query.tag', () => {
+			test('should return false if post does not include tag', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						tag: 'Nottag',
@@ -300,10 +300,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false on a partial match', () => {
+			test('should return false on a partial match', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						tag: 'agg',
@@ -311,10 +311,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if post includes tag by name', () => {
+			test('should return true if post includes tag by name', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						tag: 'Tagged!',
@@ -322,10 +322,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if post includes tag by slug', () => {
+			test('should return true if post includes tag by slug', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						tag: 'tagged',
@@ -333,10 +333,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should search case-insensitive', () => {
+			test('should search case-insensitive', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						tag: 'taGgEd',
@@ -344,12 +344,12 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.category', () => {
-			test( 'should return false if post does not include category', () => {
+		describe('query.category', () => {
+			test('should return false if post does not include category', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						category: 'Notcategory',
@@ -357,10 +357,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false on a partial match', () => {
+			test('should return false on a partial match', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						category: 'egori',
@@ -368,10 +368,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if post includes category by name', () => {
+			test('should return true if post includes category by name', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						category: 'Categorized!',
@@ -379,10 +379,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if post includes category by slug', () => {
+			test('should return true if post includes category by slug', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						category: 'categorized',
@@ -390,10 +390,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should search case-insensitive', () => {
+			test('should search case-insensitive', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						category: 'caTegoriZed',
@@ -401,12 +401,12 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.term', () => {
-			test( 'should return false if post does not include term', () => {
+		describe('query.term', () => {
+			test('should return false if post does not include term', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						term: {
@@ -416,10 +416,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if one but not both term slug queries match', () => {
+			test('should return false if one but not both term slug queries match', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						term: {
@@ -430,10 +430,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if post includes term by slug', () => {
+			test('should return true if post includes term by slug', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						term: {
@@ -443,10 +443,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if post includes one of comma-separated term slugs', () => {
+			test('should return true if post includes one of comma-separated term slugs', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						term: {
@@ -456,10 +456,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if post includes both of comma-separated term slugs', () => {
+			test('should return true if post includes both of comma-separated term slugs', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						term: {
@@ -469,15 +469,15 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.type', () => {
-			test( 'should return true if type is any', () => {
-				const post = Object.assign( {}, DEFAULT_POST, {
+		describe('query.type', () => {
+			test('should return true if type is any', () => {
+				const post = Object.assign({}, DEFAULT_POST, {
 					type: 'cpt-book',
-				} );
+				});
 				const isMatch = PostQueryManager.matches(
 					{
 						type: 'any',
@@ -485,10 +485,10 @@ describe( 'PostQueryManager', () => {
 					post
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false if type does not match', () => {
+			test('should return false if type does not match', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						type: 'page',
@@ -496,10 +496,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if type matches', () => {
+			test('should return true if type matches', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						type: 'post',
@@ -507,12 +507,12 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.parent_id', () => {
-			test( 'should return false if parent does not match', () => {
+		describe('query.parent_id', () => {
+			test('should return false if parent does not match', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						parent_id: 10,
@@ -520,13 +520,13 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if numeric parent matches', () => {
-				const post = Object.assign( {}, DEFAULT_POST, {
+			test('should return true if numeric parent matches', () => {
+				const post = Object.assign({}, DEFAULT_POST, {
 					parent: 10,
-				} );
+				});
 				const isMatch = PostQueryManager.matches(
 					{
 						parent_id: 10,
@@ -534,15 +534,15 @@ describe( 'PostQueryManager', () => {
 					post
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if object parent matches', () => {
-				const post = Object.assign( {}, DEFAULT_POST, {
+			test('should return true if object parent matches', () => {
+				const post = Object.assign({}, DEFAULT_POST, {
 					parent: {
 						ID: 10,
 					},
-				} );
+				});
 				const isMatch = PostQueryManager.matches(
 					{
 						parent_id: 10,
@@ -550,12 +550,12 @@ describe( 'PostQueryManager', () => {
 					post
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.exclude', () => {
-			test( 'should return false if ID matches single exclude', () => {
+		describe('query.exclude', () => {
+			test('should return false if ID matches single exclude', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						exclude: 144,
@@ -563,21 +563,21 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if ID matches array of excludes', () => {
+			test('should return false if ID matches array of excludes', () => {
 				const isMatch = PostQueryManager.matches(
 					{
-						exclude: [ 144, 152 ],
+						exclude: [144, 152],
 					},
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if ID does not match single exclude', () => {
+			test('should return true if ID does not match single exclude', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						exclude: 152,
@@ -585,27 +585,27 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if ID does not match array of excludes', () => {
+			test('should return true if ID does not match array of excludes', () => {
 				const isMatch = PostQueryManager.matches(
 					{
-						exclude: [ 152, 160 ],
+						exclude: [152, 160],
 					},
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.sticky', () => {
-			const stickyPost = Object.assign( {}, DEFAULT_POST, {
+		describe('query.sticky', () => {
+			const stickyPost = Object.assign({}, DEFAULT_POST, {
 				sticky: true,
-			} );
+			});
 
-			test( 'should return true if "include" and sticky', () => {
+			test('should return true if "include" and sticky', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						sticky: 'include',
@@ -613,10 +613,10 @@ describe( 'PostQueryManager', () => {
 					stickyPost
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if "include" and not sticky', () => {
+			test('should return true if "include" and not sticky', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						sticky: 'include',
@@ -624,10 +624,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if "require" and sticky', () => {
+			test('should return true if "require" and sticky', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						sticky: 'require',
@@ -635,10 +635,10 @@ describe( 'PostQueryManager', () => {
 					stickyPost
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false if "require" and not sticky', () => {
+			test('should return false if "require" and not sticky', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						sticky: 'require',
@@ -646,10 +646,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if "exclude" and sticky', () => {
+			test('should return false if "exclude" and sticky', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						sticky: 'exclude',
@@ -657,10 +657,10 @@ describe( 'PostQueryManager', () => {
 					stickyPost
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if "exclude" and not sticky', () => {
+			test('should return true if "exclude" and not sticky', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						sticky: 'exclude',
@@ -668,16 +668,16 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.author', () => {
-			const postWithScalarAuthor = Object.assign( {}, DEFAULT_POST, {
+		describe('query.author', () => {
+			const postWithScalarAuthor = Object.assign({}, DEFAULT_POST, {
 				author: 73705554,
-			} );
+			});
 
-			test( 'should return false if author does not match by nested object', () => {
+			test('should return false if author does not match by nested object', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						author: 73705672,
@@ -685,10 +685,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if author matches by nested object', () => {
+			test('should return true if author matches by nested object', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						author: 73705554,
@@ -696,10 +696,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false if author does not match by scalar value', () => {
+			test('should return false if author does not match by scalar value', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						author: 73705672,
@@ -707,10 +707,10 @@ describe( 'PostQueryManager', () => {
 					postWithScalarAuthor
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if author matches by scalar value', () => {
+			test('should return true if author matches by scalar value', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						author: 73705554,
@@ -718,12 +718,12 @@ describe( 'PostQueryManager', () => {
 					postWithScalarAuthor
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.status', () => {
-			test( 'should return false if status is "any"', () => {
+		describe('query.status', () => {
+			test('should return false if status is "any"', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						status: 'any',
@@ -731,10 +731,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false if status does not match', () => {
+			test('should return false if status does not match', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						status: 'draft',
@@ -742,10 +742,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if status matches', () => {
+			test('should return true if status matches', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						status: 'publish',
@@ -753,10 +753,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false if none of comma-separated values match', () => {
+			test('should return false if none of comma-separated values match', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						status: 'draft,trash',
@@ -764,10 +764,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if one of comma-separated values match', () => {
+			test('should return true if one of comma-separated values match', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						status: 'draft,publish',
@@ -775,10 +775,10 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should gracefully handle non-string search values', () => {
+			test('should gracefully handle non-string search values', () => {
 				const isMatch = PostQueryManager.matches(
 					{
 						status: undefined,
@@ -786,131 +786,131 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
-		} );
-	} );
+				expect(isMatch).toBe(false);
+			});
+		});
+	});
 
-	describe( '#compare()', () => {
-		describe( 'query.order', () => {
-			test( 'should sort descending by default', () => {
-				const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-					makeComparator( {
+	describe('#compare()', () => {
+		describe('query.order', () => {
+			test('should sort descending by default', () => {
+				const sorted = [{ ID: 200 }, { ID: 400 }].sort(
+					makeComparator({
 						order_by: 'ID',
-					} )
+					})
 				);
 
-				expect( sorted ).toEqual( [ { ID: 400 }, { ID: 200 } ] );
-			} );
+				expect(sorted).toEqual([{ ID: 400 }, { ID: 200 }]);
+			});
 
-			test( 'should reverse order when specified as ascending', () => {
-				const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-					makeComparator( {
+			test('should reverse order when specified as ascending', () => {
+				const sorted = [{ ID: 200 }, { ID: 400 }].sort(
+					makeComparator({
 						order_by: 'ID',
 						order: 'ASC',
-					} )
+					})
 				);
 
-				expect( sorted ).toEqual( [ { ID: 200 }, { ID: 400 } ] );
-			} );
-		} );
+				expect(sorted).toEqual([{ ID: 200 }, { ID: 400 }]);
+			});
+		});
 
-		describe( 'query.order_by', () => {
-			describe( 'date', () => {
-				const olderPost = Object.assign( {}, DEFAULT_POST, {
+		describe('query.order_by', () => {
+			describe('date', () => {
+				const olderPost = Object.assign({}, DEFAULT_POST, {
 					date: '2016-04-25T11:40:52-04:00',
-				} );
+				});
 
-				const newerPost = Object.assign( {}, DEFAULT_POST, {
+				const newerPost = Object.assign({}, DEFAULT_POST, {
 					ID: 152,
 					date: '2016-04-25T15:47:33-04:00',
-				} );
+				});
 
-				test( 'should order by date', () => {
-					const sorted = [ olderPost, newerPost ].sort( makeComparator( {} ) );
+				test('should order by date', () => {
+					const sorted = [olderPost, newerPost].sort(makeComparator({}));
 
-					expect( sorted ).toEqual( [ newerPost, olderPost ] );
-				} );
-			} );
+					expect(sorted).toEqual([newerPost, olderPost]);
+				});
+			});
 
-			describe( 'modified', () => {
-				const olderPost = Object.assign( {}, DEFAULT_POST, {
+			describe('modified', () => {
+				const olderPost = Object.assign({}, DEFAULT_POST, {
 					modified: '2016-04-25T11:40:52-04:00',
-				} );
+				});
 
-				const newerPost = Object.assign( {}, DEFAULT_POST, {
+				const newerPost = Object.assign({}, DEFAULT_POST, {
 					ID: 152,
 					modified: '2016-04-25T15:47:33-04:00',
-				} );
+				});
 
-				test( 'should order by modified', () => {
-					const sorted = [ olderPost, newerPost ].sort(
-						makeComparator( {
+				test('should order by modified', () => {
+					const sorted = [olderPost, newerPost].sort(
+						makeComparator({
 							order_by: 'modified',
-						} )
+						})
 					);
 
-					expect( sorted ).toEqual( [ newerPost, olderPost ] );
-				} );
-			} );
+					expect(sorted).toEqual([newerPost, olderPost]);
+				});
+			});
 
-			describe( 'title', () => {
-				const aPost = Object.assign( {}, DEFAULT_POST, {
+			describe('title', () => {
+				const aPost = Object.assign({}, DEFAULT_POST, {
 					title: 'a',
-				} );
+				});
 
-				const zPost = Object.assign( {}, DEFAULT_POST, {
+				const zPost = Object.assign({}, DEFAULT_POST, {
 					ID: 152,
 					title: 'z',
-				} );
+				});
 
-				test( 'should sort by title', () => {
-					const sorted = [ aPost, zPost ].sort(
-						makeComparator( {
+				test('should sort by title', () => {
+					const sorted = [aPost, zPost].sort(
+						makeComparator({
 							order_by: 'title',
-						} )
+						})
 					);
 
-					expect( sorted ).toEqual( [ zPost, aPost ] );
-				} );
-			} );
+					expect(sorted).toEqual([zPost, aPost]);
+				});
+			});
 
-			describe( 'comment_count', () => {
-				const unpopularPost = Object.assign( {}, DEFAULT_POST, {
+			describe('comment_count', () => {
+				const unpopularPost = Object.assign({}, DEFAULT_POST, {
 					discussion: {
 						comment_count: 2,
 					},
-				} );
+				});
 
-				const popularPost = Object.assign( {}, DEFAULT_POST, {
+				const popularPost = Object.assign({}, DEFAULT_POST, {
 					ID: 152,
 					discussion: {
 						comment_count: 97,
 					},
-				} );
+				});
 
-				test( 'should sort by comment count', () => {
-					const sorted = [ unpopularPost, popularPost ].sort(
-						makeComparator( {
+				test('should sort by comment count', () => {
+					const sorted = [unpopularPost, popularPost].sort(
+						makeComparator({
 							order_by: 'comment_count',
-						} )
+						})
 					);
 
-					expect( sorted ).toEqual( [ popularPost, unpopularPost ] );
-				} );
-			} );
+					expect(sorted).toEqual([popularPost, unpopularPost]);
+				});
+			});
 
-			describe( 'ID', () => {
-				test( 'should sort by ID', () => {
-					const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-						makeComparator( {
+			describe('ID', () => {
+				test('should sort by ID', () => {
+					const sorted = [{ ID: 200 }, { ID: 400 }].sort(
+						makeComparator({
 							order_by: 'ID',
-						} )
+						})
 					);
 
-					expect( sorted ).toEqual( [ { ID: 400 }, { ID: 200 } ] );
-				} );
-			} );
-		} );
-	} );
-} );
+					expect(sorted).toEqual([{ ID: 400 }, { ID: 200 }]);
+				});
+			});
+		});
+	});
+});

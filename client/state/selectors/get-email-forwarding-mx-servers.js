@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {string} domainName domainName to request email forwards for
  * @returns {?Array} mxServers list or null
  */
-export default function getEmailForwardingMXServers( state, domainName ) {
-	return get( state.emailForwarding, [ domainName, 'mxServers' ], null );
+export default function getEmailForwardingMXServers(state, domainName) {
+	return get(state.emailForwarding, [domainName, 'mxServers'], null);
 }

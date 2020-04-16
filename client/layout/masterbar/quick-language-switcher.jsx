@@ -13,35 +13,35 @@ import { languages } from 'languages';
 import { setLocale } from 'state/ui/language/actions';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
-function QuickLanguageSwitcher( props ) {
-	const [ isShowingModal, toggleLanguagesModal ] = useReducer( toggled => ! toggled, false );
-	const onSelected = languageSlug => props.setLocale( languageSlug );
+function QuickLanguageSwitcher(props) {
+	const [isShowingModal, toggleLanguagesModal] = useReducer((toggled) => !toggled, false);
+	const onSelected = (languageSlug) => props.setLocale(languageSlug);
 
 	return (
 		<Fragment>
 			<MasterbarItem
 				icon="globe"
 				className="masterbar__quick-language-switcher"
-				onClick={ toggleLanguagesModal }
+				onClick={toggleLanguagesModal}
 			>
-				{ props.selectedLanguageSlug }
+				{props.selectedLanguageSlug}
 			</MasterbarItem>
-			{ isShowingModal && (
+			{isShowingModal && (
 				<LanguagePickerModal
 					isVisible
-					languages={ languages }
-					selected={ props.selectedLanguageSlug }
-					onSelected={ onSelected }
-					onClose={ toggleLanguagesModal }
+					languages={languages}
+					selected={props.selectedLanguageSlug}
+					onSelected={onSelected}
+					onClose={toggleLanguagesModal}
 				/>
-			) }
+			)}
 		</Fragment>
 	);
 }
 
 export default connect(
-	state => ( {
-		selectedLanguageSlug: getCurrentLocaleSlug( state ),
-	} ),
+	(state) => ({
+		selectedLanguageSlug: getCurrentLocaleSlug(state),
+	}),
 	{ setLocale }
-)( QuickLanguageSwitcher );
+)(QuickLanguageSwitcher);

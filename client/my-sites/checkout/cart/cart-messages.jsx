@@ -26,16 +26,16 @@ class CartMessages extends PureComponent {
 	componentDidMount() {
 		// Makes sure that we display any messages from the current cart
 		// that might have been delivered when the cart was unmounted
-		this.displayCartMessages( this.props.cart );
+		this.displayCartMessages(this.props.cart);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.cart.hasLoadedFromServer ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!nextProps.cart.hasLoadedFromServer) {
 			return;
 		}
 
-		if ( this.props.cart.messages !== nextProps.cart.messages ) {
-			this.displayCartMessages( nextProps.cart );
+		if (this.props.cart.messages !== nextProps.cart.messages) {
+			this.displayCartMessages(nextProps.cart);
 		}
 	}
 
@@ -47,7 +47,7 @@ class CartMessages extends PureComponent {
 			{
 				components: {
 					strong: <strong />,
-					a: <a href={ '/checkout/' + this.props.selectedSite.slug } />,
+					a: <a href={'/checkout/' + this.props.selectedSite.slug} />,
 				},
 			}
 		);
@@ -72,45 +72,45 @@ class CartMessages extends PureComponent {
 		);
 	}
 
-	getPrettyErrorMessages( messages ) {
-		if ( ! messages ) {
+	getPrettyErrorMessages(messages) {
+		if (!messages) {
 			return [];
 		}
 
-		return messages.map( error => {
-			switch ( error.code ) {
+		return messages.map((error) => {
+			switch (error.code) {
 				case 'chargeback':
-					return Object.assign( error, { message: this.getChargebackErrorMessage() } );
+					return Object.assign(error, { message: this.getChargebackErrorMessage() });
 
 				case 'blocked':
-					return Object.assign( error, { message: this.getBlockedPurchaseErrorMessage() } );
+					return Object.assign(error, { message: this.getBlockedPurchaseErrorMessage() });
 
 				default:
 					return error;
 			}
-		} );
+		});
 	}
 
-	displayCartMessages( newCart ) {
+	displayCartMessages(newCart) {
 		const { previousCart } = this.state;
-		const messages = getNewMessages( previousCart, newCart );
+		const messages = getNewMessages(previousCart, newCart);
 
-		messages.errors = this.getPrettyErrorMessages( messages.errors );
+		messages.errors = this.getPrettyErrorMessages(messages.errors);
 
-		this.setState( { previousCart: newCart } );
+		this.setState({ previousCart: newCart });
 
-		if ( ! isEmpty( messages.errors ) ) {
+		if (!isEmpty(messages.errors)) {
 			notices.error(
-				messages.errors.map( ( error, index ) => (
-					<p key={ `${ error.code }-${ index }` }>{ error.message }</p>
-				) ),
+				messages.errors.map((error, index) => (
+					<p key={`${error.code}-${index}`}>{error.message}</p>
+				)),
 				{ persistent: true }
 			);
-		} else if ( ! isEmpty( messages.success ) ) {
+		} else if (!isEmpty(messages.success)) {
 			notices.success(
-				messages.success.map( ( success, index ) => (
-					<p key={ `${ success.code }-${ index }` }>{ success.message }</p>
-				) )
+				messages.success.map((success, index) => (
+					<p key={`${success.code}-${index}`}>{success.message}</p>
+				))
 			);
 		}
 	}
@@ -120,4 +120,4 @@ class CartMessages extends PureComponent {
 	}
 }
 
-export default localize( CartMessages );
+export default localize(CartMessages);

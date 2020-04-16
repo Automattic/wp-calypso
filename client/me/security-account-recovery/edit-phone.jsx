@@ -22,12 +22,12 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 
 	static propTypes = {
 		countriesList: PropTypes.array.isRequired,
-		storedPhone: PropTypes.shape( {
+		storedPhone: PropTypes.shape({
 			countryCode: PropTypes.string,
 			countryNumericCode: PropTypes.string,
 			number: PropTypes.string,
 			numberFull: PropTypes.string,
-		} ),
+		}),
 		onSave: PropTypes.func,
 		onCancel: PropTypes.func,
 		onDelete: PropTypes.func,
@@ -38,45 +38,43 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	};
 
 	render() {
-		const havePhone = ! isEmpty( this.props.storedPhone );
+		const havePhone = !isEmpty(this.props.storedPhone);
 
 		return (
 			<div>
 				<FormFieldset>
 					<QuerySmsCountries />
 					<FormPhoneInput
-						countriesList={ this.props.countriesList }
-						initialCountryCode={ havePhone ? this.props.storedPhone.countryCode : null }
-						initialPhoneNumber={ havePhone ? this.props.storedPhone.number : null }
-						phoneInputProps={ {
+						countriesList={this.props.countriesList}
+						initialCountryCode={havePhone ? this.props.storedPhone.countryCode : null}
+						initialPhoneNumber={havePhone ? this.props.storedPhone.number : null}
+						phoneInputProps={{
 							onKeyUp: this.onKeyUp,
-						} }
-						onChange={ this.onChange }
+						}}
+						onChange={this.onChange}
 					/>
 
-					{ this.state.validation && (
-						<FormInputValidation isError text={ this.state.validation } />
-					) }
+					{this.state.validation && <FormInputValidation isError text={this.state.validation} />}
 				</FormFieldset>
 
 				<Buttons
-					isSavable={ this.isSavable() }
-					isDeletable={ havePhone }
-					saveText={ this.props.translate( 'Save Number' ) }
-					onSave={ this.onSave }
-					onDelete={ this.onDelete }
-					onCancel={ this.onCancel }
+					isSavable={this.isSavable()}
+					isDeletable={havePhone}
+					saveText={this.props.translate('Save Number')}
+					onSave={this.onSave}
+					onDelete={this.onDelete}
+					onCancel={this.onCancel}
 				/>
 			</div>
 		);
 	}
 
 	isSavable = () => {
-		if ( ! this.state.phoneNumber ) {
+		if (!this.state.phoneNumber) {
 			return false;
 		}
 
-		if ( ! this.state.phoneNumber.phoneNumberFull ) {
+		if (!this.state.phoneNumber.phoneNumberFull) {
 			return false;
 		}
 
@@ -91,12 +89,12 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 		return true;
 	};
 
-	onChange = phoneNumber => {
-		this.setState( { phoneNumber } );
+	onChange = (phoneNumber) => {
+		this.setState({ phoneNumber });
 	};
 
-	onKeyUp = event => {
-		if ( event.key === 'Enter' ) {
+	onKeyUp = (event) => {
+		if (event.key === 'Enter') {
 			this.onSave();
 		}
 	};
@@ -104,22 +102,22 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	onSave = () => {
 		const phoneNumber = this.state.phoneNumber;
 
-		if ( ! phoneNumber.isValid ) {
-			this.setState( {
-				validation: this.props.translate( 'Please enter a valid phone number.' ),
-			} );
+		if (!phoneNumber.isValid) {
+			this.setState({
+				validation: this.props.translate('Please enter a valid phone number.'),
+			});
 
 			return;
 		}
 
-		this.setState( { isInvalid: null } );
+		this.setState({ isInvalid: null });
 
-		this.props.onSave( {
+		this.props.onSave({
 			countryCode: phoneNumber.countryData.code,
 			countryNumericCode: phoneNumber.countryData.numericCode,
 			number: phoneNumber.phoneNumber,
 			numberFull: phoneNumber.phoneNumberFull,
-		} );
+		});
 	};
 
 	onCancel = () => {
@@ -131,6 +129,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	};
 }
 
-export default connect( state => ( {
-	countriesList: getCountries( state, 'sms' ),
-} ) )( localize( SecurityAccountRecoveryRecoveryPhoneEdit ) );
+export default connect((state) => ({
+	countriesList: getCountries(state, 'sms'),
+}))(localize(SecurityAccountRecoveryRecoveryPhoneEdit));

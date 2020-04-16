@@ -11,13 +11,13 @@ import GeneralForm from 'my-sites/site-settings/form-general';
 import SiteTools from './site-tools';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const SiteSettingsGeneral = ( { site } ) => (
+const SiteSettingsGeneral = ({ site }) => (
 	<div className="site-settings__main general-settings">
-		<GeneralForm site={ site } />
+		<GeneralForm site={site} />
 		<SiteTools />
 	</div>
 );
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-} ) )( SiteSettingsGeneral );
+export default connect((state) => ({
+	site: getSelectedSite(state),
+}))(SiteSettingsGeneral);

@@ -17,10 +17,10 @@ class NumberPreference extends Component {
 
 		return (
 			<ul className="preferences-helper__list">
-				<li key={ name }>{ value.toString() }</li>
+				<li key={name}>{value.toString()}</li>
 			</ul>
 		);
 	}
 }
 
-export default connect( null, null )( localize( NumberPreference ) );
+export default connect(null, null)(localize(NumberPreference));

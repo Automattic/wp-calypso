@@ -33,9 +33,9 @@ export default {
 			4: true,
 		},
 		plugins: {
-			1: [ woocommerce, woocommerceServices, woocommerceStripe ],
-			2: [ woocommerce, woocommerceStripe, { ...woocommerceServices, active: false } ],
-			3: [ woocommerce, woocommerceStripe ],
+			1: [woocommerce, woocommerceServices, woocommerceStripe],
+			2: [woocommerce, woocommerceStripe, { ...woocommerceServices, active: false }],
+			3: [woocommerce, woocommerceStripe],
 		},
 	},
 };

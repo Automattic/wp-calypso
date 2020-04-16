@@ -15,14 +15,14 @@ const successfulPostRevisionsDiffsResponse = {
 					{ op: 'add', value: 'Things and ' },
 					{ op: 'copy', value: 'stuff' },
 				],
-				post_title: [ { op: 'copy', value: 'A REALLY big fan of yours' } ],
+				post_title: [{ op: 'copy', value: 'A REALLY big fan of yours' }],
 			},
 		},
 		{
 			from: 4,
 			to: 5,
 			diff: {
-				post_content: [ { op: 'copy', value: 'stuff' } ],
+				post_content: [{ op: 'copy', value: 'stuff' }],
 				post_title: [
 					{ op: 'copy', value: 'A ' },
 					{ op: 'add', value: 'REALLY ' },
@@ -62,11 +62,11 @@ const successfulPostRevisionsDiffsResponse = {
 	],
 };
 
-describe( '#fetchPostRevisionsDiffs', () => {
-	test( 'should dispatch HTTP request to post revisions diffs endpoint', () => {
-		const action = requestPostRevisions( 12345678, 10, 'post' );
+describe('#fetchPostRevisionsDiffs', () => {
+	test('should dispatch HTTP request to post revisions diffs endpoint', () => {
+		const action = requestPostRevisions(12345678, 10, 'post');
 
-		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
+		expect(fetchPostRevisionsDiffs(action)).toMatchObject(
 			http(
 				{
 					apiVersion: '1.2',
@@ -79,12 +79,12 @@ describe( '#fetchPostRevisionsDiffs', () => {
 				action
 			)
 		);
-	} );
+	});
 
-	test( 'should dispatch HTTP request to page diffs endpoint for pages', () => {
-		const action = requestPostRevisions( 12345678, 10, 'page' );
+	test('should dispatch HTTP request to page diffs endpoint for pages', () => {
+		const action = requestPostRevisions(12345678, 10, 'page');
 
-		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
+		expect(fetchPostRevisionsDiffs(action)).toMatchObject(
 			http(
 				{
 					apiVersion: '1.2',
@@ -97,12 +97,12 @@ describe( '#fetchPostRevisionsDiffs', () => {
 				action
 			)
 		);
-	} );
+	});
 
-	test( 'should dispatch HTTP request to post diffs endpoint for other post types', () => {
-		const action = requestPostRevisions( 12345678, 10, 'jetpack-portfolio' );
+	test('should dispatch HTTP request to post diffs endpoint for other post types', () => {
+		const action = requestPostRevisions(12345678, 10, 'jetpack-portfolio');
 
-		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
+		expect(fetchPostRevisionsDiffs(action)).toMatchObject(
 			http(
 				{
 					apiVersion: '1.2',
@@ -115,19 +115,19 @@ describe( '#fetchPostRevisionsDiffs', () => {
 				action
 			)
 		);
-	} );
-} );
+	});
+});
 
-describe( '#receiveSuccess', () => {
-	test( 'should dispatch `receivePostRevisions` and `receivePostRevisionsSuccess`', () => {
-		const action = requestPostRevisions( 12345678, 10, 'post' );
+describe('#receiveSuccess', () => {
+	test('should dispatch `receivePostRevisions` and `receivePostRevisionsSuccess`', () => {
+		const action = requestPostRevisions(12345678, 10, 'post');
 
-		expect( receiveSuccess( action, successfulPostRevisionsDiffsResponse ) ).toEqual(
-			receivePostRevisions( {
+		expect(receiveSuccess(action, successfulPostRevisionsDiffsResponse)).toEqual(
+			receivePostRevisions({
 				siteId: 12345678,
 				postId: 10,
 				...successfulPostRevisionsDiffsResponse,
-			} )
+			})
 		);
-	} );
-} );
+	});
+});

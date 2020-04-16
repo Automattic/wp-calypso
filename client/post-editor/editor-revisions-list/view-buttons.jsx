@@ -16,24 +16,24 @@ import {
 } from 'state/posts/revisions/actions';
 import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-view';
 
-const EditorRevisionsListViewButtons = ( { diffView, viewSplit, viewUnified } ) => {
+const EditorRevisionsListViewButtons = ({ diffView, viewSplit, viewUnified }) => {
 	const translate = useTranslate();
 
 	return (
 		<SegmentedControl compact className="editor-revisions-list__view-buttons">
 			<SegmentedControl.Item
 				className="editor-revisions-list__unified-button"
-				onClick={ viewUnified }
-				selected={ diffView === 'unified' }
+				onClick={viewUnified}
+				selected={diffView === 'unified'}
 			>
-				{ translate( 'Unified' ) }
+				{translate('Unified')}
 			</SegmentedControl.Item>
 			<SegmentedControl.Item
 				className="editor-revisions-list__split-button"
-				onClick={ viewSplit }
-				selected={ diffView === 'split' }
+				onClick={viewSplit}
+				selected={diffView === 'split'}
 			>
-				{ translate( 'Split' ) }
+				{translate('Split')}
 			</SegmentedControl.Item>
 		</SegmentedControl>
 	);
@@ -45,13 +45,13 @@ EditorRevisionsListViewButtons.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ( {
-	diffView: getPostRevisionsDiffView( state ),
-} );
+const mapStateToProps = (state) => ({
+	diffView: getPostRevisionsDiffView(state),
+});
 
 const mapDispatchToProps = {
 	viewUnified: unifyPostRevisionsDiffView,
 	viewSplit: splitPostRevisionsDiffView,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( EditorRevisionsListViewButtons );
+export default connect(mapStateToProps, mapDispatchToProps)(EditorRevisionsListViewButtons);

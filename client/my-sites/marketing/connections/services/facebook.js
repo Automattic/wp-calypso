@@ -20,9 +20,9 @@ export class Facebook extends SharingService {
 		...SharingService.defaultProps,
 	};
 
-	didKeyringConnectionSucceed( availableExternalAccounts ) {
-		if ( availableExternalAccounts.length === 0 ) {
-			this.props.failCreateConnection( {
+	didKeyringConnectionSucceed(availableExternalAccounts) {
+		if (availableExternalAccounts.length === 0) {
+			this.props.failCreateConnection({
 				message: [
 					this.props.translate(
 						'The Facebook connection could not be made because this account does not have access to any Pages.',
@@ -39,9 +39,7 @@ export class Facebook extends SharingService {
 							components: {
 								a: (
 									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/publicize/#facebook-pages'
-										) }
+										href={localizeUrl('https://wordpress.com/support/publicize/#facebook-pages')}
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -50,13 +48,13 @@ export class Facebook extends SharingService {
 						}
 					),
 				],
-			} );
-			this.setState( { isConnecting: false } );
+			});
+			this.setState({ isConnecting: false });
 			return false;
 		}
 
-		return super.didKeyringConnectionSucceed( availableExternalAccounts );
+		return super.didKeyringConnectionSucceed(availableExternalAccounts);
 	}
 }
 
-export default connectFor( Facebook, ( state, props ) => props );
+export default connectFor(Facebook, (state, props) => props);

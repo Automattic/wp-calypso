@@ -12,14 +12,14 @@ import 'state/posts/init';
  * @param   {number}  postId Post ID
  * @returns {boolean}        Whether request is in progress
  */
-export function isRequestingSitePost( state, siteId, postId ) {
-	if ( ! siteId ) {
+export function isRequestingSitePost(state, siteId, postId) {
+	if (!siteId) {
 		return null;
 	}
 
-	if ( ! state.posts.siteRequests[ siteId ] ) {
+	if (!state.posts.siteRequests[siteId]) {
 		return false;
 	}
 
-	return !! state.posts.siteRequests[ siteId ][ postId ];
+	return !!state.posts.siteRequests[siteId][postId];
 }

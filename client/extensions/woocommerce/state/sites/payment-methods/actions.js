@@ -14,15 +14,15 @@ import {
 } from 'woocommerce/state/action-types';
 import { arePaymentMethodsLoaded, arePaymentMethodsLoading } from './selectors';
 
-const addPaymentMethodDetails = method => {
+const addPaymentMethodDetails = (method) => {
 	return {
 		...method,
-		...getPaymentMethodDetails( method.id ),
+		...getPaymentMethodDetails(method.id),
 	};
 };
 
-const fetchPaymentMethodsSuccess = ( siteId, data ) => {
-	const paymentMethods = data.map( addPaymentMethodDetails );
+const fetchPaymentMethodsSuccess = (siteId, data) => {
+	const paymentMethods = data.map(addPaymentMethodDetails);
 	return {
 		type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 		siteId,
@@ -30,12 +30,12 @@ const fetchPaymentMethodsSuccess = ( siteId, data ) => {
 	};
 };
 
-export const fetchPaymentMethods = siteId => ( dispatch, getState ) => {
+export const fetchPaymentMethods = (siteId) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
-	if ( arePaymentMethodsLoaded( state, siteId ) || arePaymentMethodsLoading( state, siteId ) ) {
+	if (arePaymentMethodsLoaded(state, siteId) || arePaymentMethodsLoading(state, siteId)) {
 		return;
 	}
 
@@ -44,20 +44,20 @@ export const fetchPaymentMethods = siteId => ( dispatch, getState ) => {
 		siteId,
 	};
 
-	dispatch( getAction );
+	dispatch(getAction);
 
-	return request( siteId )
-		.get( 'payment_gateways' )
-		.then( data => {
-			dispatch( fetchPaymentMethodsSuccess( siteId, data ) );
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, getAction, err ) );
-		} );
+	return request(siteId)
+		.get('payment_gateways')
+		.then((data) => {
+			dispatch(fetchPaymentMethodsSuccess(siteId, data));
+		})
+		.catch((err) => {
+			dispatch(setError(siteId, getAction, err));
+		});
 };
 
-export const savePaymentMethodSuccess = ( siteId, data ) => {
-	const paymentMethod = addPaymentMethodDetails( data );
+export const savePaymentMethodSuccess = (siteId, data) => {
+	const paymentMethod = addPaymentMethodDetails(data);
 	return {
 		type: WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
 		siteId,
@@ -65,7 +65,7 @@ export const savePaymentMethodSuccess = ( siteId, data ) => {
 	};
 };
 
-export const savePaymentMethod = ( siteId, method, successAction = null, failureAction = null ) => {
+export const savePaymentMethod = (siteId, method, successAction = null, failureAction = null) => {
 	return {
 		type: WOOCOMMERCE_PAYMENT_METHOD_UPDATE,
 		siteId,

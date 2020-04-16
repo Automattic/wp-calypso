@@ -10,12 +10,12 @@ import {
 } from 'woocommerce/state/action-types';
 import wp from 'lib/wp';
 
-export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispatch, getState ) => {
-	if ( areTaxRatesLoading( getState(), siteId ) ) {
+export const fetchTaxRates = (siteId, address, forceReload = false) => (dispatch, getState) => {
+	if (areTaxRatesLoading(getState(), siteId)) {
 		return;
 	}
 
-	if ( false === forceReload && areTaxRatesLoaded( getState(), siteId ) ) {
+	if (false === forceReload && areTaxRatesLoaded(getState(), siteId)) {
 		return;
 	}
 
@@ -24,18 +24,18 @@ export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispa
 		siteId,
 	};
 
-	dispatch( getAction );
+	dispatch(getAction);
 
 	return wp.req
-		.get( { path: `/sites/${ siteId }/tax-rates` }, { ...address } )
-		.then( data => {
-			dispatch( {
+		.get({ path: `/sites/${siteId}/tax-rates` }, { ...address })
+		.then((data) => {
+			dispatch({
 				type: WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 				siteId,
 				data,
-			} );
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, getAction, err ) );
-		} );
+			});
+		})
+		.catch((err) => {
+			dispatch(setError(siteId, getAction, err));
+		});
 };

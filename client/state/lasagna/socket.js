@@ -14,38 +14,38 @@ import { socketConnected, socketDisconnected } from 'state/lasagna/actions';
  */
 export let socket = null;
 
-const debug = createDebug( 'lasagna:socket' );
-const url = config( 'lasagna_url' );
+const debug = createDebug('lasagna:socket');
+const url = config('lasagna_url');
 
-export const socketConnect = ( store, jwt, userId ) => {
-	if ( socket !== null ) {
+export const socketConnect = (store, jwt, userId) => {
+	if (socket !== null) {
 		return;
 	}
 
-	import( /* webpackChunkName: "phoenix" */ 'phoenix' ).then( ( { Socket } ) => {
-		socket = new Socket( url, { params: { jwt, user_id: userId } } );
+	import(/* webpackChunkName: "phoenix" */ 'phoenix').then(({ Socket }) => {
+		socket = new Socket(url, { params: { jwt, user_id: userId } });
 
-		socket.onOpen( () => {
-			debug( 'socket opened' );
-			store.dispatch( socketConnected() );
-		} );
+		socket.onOpen(() => {
+			debug('socket opened');
+			store.dispatch(socketConnected());
+		});
 
-		socket.onClose( () => {
-			debug( 'socket closed' );
+		socket.onClose(() => {
+			debug('socket closed');
 			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
-		} );
+		});
 
-		socket.onError( () => {
-			debug( 'socket error' );
+		socket.onError(() => {
+			debug('socket error');
 			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
-		} );
+		});
 
 		socket.connect();
-	} );
+	});
 };
 
-export const socketDisconnect = store => {
+export const socketDisconnect = (store) => {
 	socket && socket.disconnect();
 	socket = null;
-	store.dispatch( socketDisconnected() );
+	store.dispatch(socketDisconnected());
 };

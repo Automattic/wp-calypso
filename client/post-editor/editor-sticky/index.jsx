@@ -42,7 +42,7 @@ class EditorSticky extends React.Component {
 		let stickyStat;
 		let stickyEventLabel;
 
-		if ( ! this.props.sticky ) {
+		if (!this.props.sticky) {
 			stickyStat = 'advanced_sticky_enabled_toolbar';
 			stickyEventLabel = 'On';
 		} else {
@@ -50,35 +50,35 @@ class EditorSticky extends React.Component {
 			stickyEventLabel = 'Off';
 		}
 
-		this.props.recordEditorStat( stickyStat );
-		this.props.recordEditorEvent( 'Changed Sticky Setting', stickyEventLabel );
+		this.props.recordEditorStat(stickyStat);
+		this.props.recordEditorEvent('Changed Sticky Setting', stickyEventLabel);
 
-		this.props.editPost( this.props.siteId, this.props.postId, {
-			sticky: ! this.props.sticky,
-		} );
-		this.setState( { tooltip: false } );
+		this.props.editPost(this.props.siteId, this.props.postId, {
+			sticky: !this.props.sticky,
+		});
+		this.setState({ tooltip: false });
 	};
 
 	enableTooltip = () => {
-		this.setState( { tooltip: true } );
+		this.setState({ tooltip: true });
 	};
 
 	disableTooltip = () => {
-		this.setState( { tooltip: false } );
+		this.setState({ tooltip: false });
 	};
 
 	stickyPostButtonRef = React.createRef();
 
 	render() {
 		const { sticky, translate } = this.props;
-		const classes = classnames( 'editor-sticky', { 'is-sticky': sticky } );
+		const classes = classnames('editor-sticky', { 'is-sticky': sticky });
 		const tooltipLabel = sticky ? (
-			<span>{ translate( 'Marked as sticky' ) }</span>
+			<span>{translate('Marked as sticky')}</span>
 		) : (
 			<div>
-				{ translate( 'Mark as sticky' ) }
+				{translate('Mark as sticky')}
 				<span className="editor-sticky__explanation">
-					{ translate( 'Stick post to the front page' ) }
+					{translate('Stick post to the front page')}
 				</span>
 			</div>
 		);
@@ -87,22 +87,22 @@ class EditorSticky extends React.Component {
 			<Fragment>
 				<Button
 					borderless
-					className={ classes }
-					onClick={ this.toggleStickyStatus }
-					onMouseEnter={ this.enableTooltip }
-					onMouseLeave={ this.disableTooltip }
-					aria-label={ translate( 'Stick post to the front page' ) }
-					ref={ this.stickyPostButtonRef }
+					className={classes}
+					onClick={this.toggleStickyStatus}
+					onMouseEnter={this.enableTooltip}
+					onMouseLeave={this.disableTooltip}
+					aria-label={translate('Stick post to the front page')}
+					ref={this.stickyPostButtonRef}
 				>
 					<Gridicon icon="bookmark" />
 				</Button>
 				<Tooltip
 					className="editor-sticky__tooltip"
-					context={ this.stickyPostButtonRef.current }
-					isVisible={ this.state.tooltip }
+					context={this.stickyPostButtonRef.current}
+					isVisible={this.state.tooltip}
 					position="bottom left"
 				>
-					{ tooltipLabel }
+					{tooltipLabel}
 				</Tooltip>
 			</Fragment>
 		);
@@ -110,12 +110,12 @@ class EditorSticky extends React.Component {
 }
 
 export default connect(
-	state => {
-		const postId = getEditorPostId( state );
-		const siteId = getSelectedSiteId( state );
-		const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );
+	(state) => {
+		const postId = getEditorPostId(state);
+		const siteId = getSelectedSiteId(state);
+		const sticky = getEditedPostValue(state, siteId, postId, 'sticky');
 
 		return { postId, siteId, sticky };
 	},
 	{ editPost, recordEditorStat, recordEditorEvent }
-)( localize( EditorSticky ) );
+)(localize(EditorSticky));

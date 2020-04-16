@@ -21,15 +21,15 @@ import { getSiteComment } from 'state/comments/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
-const CommentDeleteWarning = ( { isLoading, destroyComment, translate } ) =>
-	! isLoading && (
+const CommentDeleteWarning = ({ isLoading, destroyComment, translate }) =>
+	!isLoading && (
 		<Notice
 			status="is-warning"
-			showDismiss={ false }
-			text={ translate( 'Delete this comment permanently?' ) }
+			showDismiss={false}
+			text={translate('Delete this comment permanently?')}
 		>
-			<NoticeAction icon="trash" onClick={ destroyComment }>
-				{ 'Delete Permanently' }
+			<NoticeAction icon="trash" onClick={destroyComment}>
+				{'Delete Permanently'}
 			</NoticeAction>
 		</Notice>
 	);
@@ -43,28 +43,28 @@ CommentDeleteWarning.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { siteId, commentId } ) => {
-	const comment = getSiteComment( state, siteId, commentId );
+const mapStateToProps = (state, { siteId, commentId }) => {
+	const comment = getSiteComment(state, siteId, commentId);
 
 	return {
-		isLoading: isUndefined( comment ),
+		isLoading: isUndefined(comment),
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, redirectToPostView } ) => ( {
+const mapDispatchToProps = (dispatch, { siteId, postId, commentId, redirectToPostView }) => ({
 	destroyComment: () => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_delete' ),
-					bumpStat( 'calypso_comment_management', 'comment_deleted' )
+					recordTracksEvent('calypso_comment_management_delete'),
+					bumpStat('calypso_comment_management', 'comment_deleted')
 				),
-				deleteComment( siteId, postId, commentId )
+				deleteComment(siteId, postId, commentId)
 			)
 		);
 
 		redirectToPostView();
 	},
-} );
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDeleteWarning ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(CommentDeleteWarning));

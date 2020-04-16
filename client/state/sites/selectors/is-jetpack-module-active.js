@@ -18,11 +18,11 @@ import getSiteOption from './get-site-option';
  * @param  {string}   slug   Module slug
  * @returns {?boolean}        Whether site has Jetpack module active
  */
-export default function isJetpackModuleActive( state, siteId, slug ) {
-	const modules = getSiteOption( state, siteId, 'active_modules' );
-	if ( ! modules ) {
+export default function isJetpackModuleActive(state, siteId, slug) {
+	const modules = getSiteOption(state, siteId, 'active_modules');
+	if (!modules) {
 		return null;
 	}
 
-	return includes( modules, slug );
+	return includes(modules, slug);
 }

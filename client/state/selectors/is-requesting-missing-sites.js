@@ -11,8 +11,8 @@ import getSites from 'state/selectors/get-sites';
  * @param {object}    state  Global state tree
  * @returns {boolean}        Request State
  */
-export default function isRequestingMissingSites( state ) {
-	const user = getCurrentUser( state );
-	const sites = getSites( state );
-	return !! state.sites.requestingAll && sites.length !== user.site_count;
+export default function isRequestingMissingSites(state) {
+	const user = getCurrentUser(state);
+	const sites = getSites(state);
+	return !!state.sites.requestingAll && sites.length !== user.site_count;
 }

@@ -13,10 +13,10 @@
  * @returns {string}        Media mime type prefix
  */
 
-export default function( filter ) {
+export default function (filter) {
 	let mimePrefix;
 
-	switch ( filter ) {
+	switch (filter) {
 		case 'images':
 			mimePrefix = 'image';
 			break;

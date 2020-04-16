@@ -5,9 +5,9 @@ import { decodeEntities } from 'lib/formatting';
 import { getLanguage } from 'lib/i18n-utils/utils';
 import { withoutHttp } from 'lib/url';
 
-function getSiteSlug( url ) {
-	const slug = withoutHttp( url );
-	return slug.replace( /\//g, '::' );
+function getSiteSlug(url) {
+	const slug = withoutHttp(url);
+	return slug.replace(/\//g, '::');
 }
 
 const allowedKeys = [
@@ -34,36 +34,36 @@ const allowedKeys = [
 	'social_login_connections',
 	'abtests',
 ];
-const requiredKeys = [ 'ID' ];
-const decodedKeys = [ 'display_name', 'description', 'user_URL' ];
+const requiredKeys = ['ID'];
+const decodedKeys = ['display_name', 'description', 'user_URL'];
 
-export function filterUserObject( obj ) {
-	if ( typeof obj !== 'object' ) {
-		throw new Error( 'the /me response is not an object' );
+export function filterUserObject(obj) {
+	if (typeof obj !== 'object') {
+		throw new Error('the /me response is not an object');
 	}
 
-	for ( const key of requiredKeys ) {
-		if ( ! obj.hasOwnProperty( key ) ) {
-			throw new Error( `the /me response misses a required field '${ key }'` );
+	for (const key of requiredKeys) {
+		if (!obj.hasOwnProperty(key)) {
+			throw new Error(`the /me response misses a required field '${key}'`);
 		}
 	}
 
 	const user = {};
-	for ( const key of allowedKeys ) {
-		const value = obj[ key ];
-		user[ key ] = value && decodedKeys.includes( key ) ? decodeEntities( value ) : value;
+	for (const key of allowedKeys) {
+		const value = obj[key];
+		user[key] = value && decodedKeys.includes(key) ? decodeEntities(value) : value;
 	}
 
-	return Object.assign( user, getComputedAttributes( obj ) );
+	return Object.assign(user, getComputedAttributes(obj));
 }
 
-export function getComputedAttributes( attributes ) {
-	const language = getLanguage( attributes.language );
+export function getComputedAttributes(attributes) {
+	const language = getLanguage(attributes.language);
 	const primaryBlogUrl = attributes.primary_blog_url || '';
 	return {
-		primarySiteSlug: getSiteSlug( primaryBlogUrl ),
+		primarySiteSlug: getSiteSlug(primaryBlogUrl),
 		localeSlug: attributes.language,
 		localeVariant: attributes.locale_variant,
-		isRTL: !! ( language && language.rtl ),
+		isRTL: !!(language && language.rtl),
 	};
 }

@@ -13,16 +13,16 @@ import { CompactCard } from '@automattic/components';
 import { recordGoogleEvent } from '../../state/analytics/actions';
 import Security2faDeleteButton from './delete-item-button';
 
-function Security2faKeyItem( props ) {
+function Security2faKeyItem(props) {
 	return (
 		<CompactCard>
 			<div className="security-2fa-key__item">
 				<div className="security-2fa-key__item-information">
 					<h2 className="security-2fa-key__item-title">
-						{ props.securityKey.name === '' ? 'Key' : props.securityKey.name }
+						{props.securityKey.name === '' ? 'Key' : props.securityKey.name}
 					</h2>
 				</div>
-				<Security2faDeleteButton securityKey={ props.securityKey } onDelete={ props.onDelete } />
+				<Security2faDeleteButton securityKey={props.securityKey} onDelete={props.onDelete} />
 			</div>
 		</CompactCard>
 	);
@@ -33,6 +33,6 @@ Security2faKeyItem.propTypes = {
 	securityKey: PropTypes.object.isRequired,
 };
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
-} )( localize( Security2faKeyItem ) );
+})(localize(Security2faKeyItem));

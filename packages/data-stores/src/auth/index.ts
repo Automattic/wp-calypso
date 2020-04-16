@@ -20,16 +20,16 @@ export * from './types';
 export { State };
 
 let isRegistered = false;
-export function register( config: ActionsConfig ): typeof STORE_KEY {
-	if ( ! isRegistered ) {
+export function register(config: ActionsConfig): typeof STORE_KEY {
+	if (!isRegistered) {
 		isRegistered = true;
 
-		requestAllBlogsAccess().catch( () => {
-			throw new Error( 'Could not get all blog access.' );
-		} );
+		requestAllBlogsAccess().catch(() => {
+			throw new Error('Could not get all blog access.');
+		});
 
-		registerStore< State >( STORE_KEY, {
-			actions: createActions( config ),
+		registerStore<State>(STORE_KEY, {
+			actions: createActions(config),
 			controls: {
 				...controls,
 				...dataControls,
@@ -37,12 +37,12 @@ export function register( config: ActionsConfig ): typeof STORE_KEY {
 			} as any,
 			reducer,
 			selectors,
-		} );
+		});
 	}
 	return STORE_KEY;
 }
 
 declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< ReturnType< typeof createActions > >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
+	function dispatch(key: typeof STORE_KEY): DispatchFromMap<ReturnType<typeof createActions>>;
+	function select(key: typeof STORE_KEY): SelectFromMap<typeof selectors>;
 }

@@ -18,16 +18,16 @@ class PostSelectorSearch extends React.Component {
 	render() {
 		return (
 			<div className="post-selector__search">
-				<Gridicon icon="search" size={ 18 } />
+				<Gridicon icon="search" size={18} />
 				<input
 					type="search"
-					placeholder={ this.props.translate( 'Search…', { textOnly: true } ) }
-					value={ this.props.searchTerm }
-					onChange={ this.props.onSearch }
+					placeholder={this.props.translate('Search…', { textOnly: true })}
+					value={this.props.searchTerm}
+					onChange={this.props.onSearch}
 				/>
 			</div>
 		);
 	}
 }
 
-export default localize( PostSelectorSearch );
+export default localize(PostSelectorSearch);

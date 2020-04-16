@@ -29,13 +29,13 @@ import 'state/posts/init';
  * 					Optional. If not provided, the API will return a set of sequential diffs
  * @returns {object} action object
  */
-export const requestPostRevisions = ( siteId, postId, postType = 'posts', comparisons = [] ) => ( {
+export const requestPostRevisions = (siteId, postId, postType = 'posts', comparisons = []) => ({
 	type: POST_REVISIONS_REQUEST,
 	comparisons,
 	postId,
 	postType,
 	siteId,
-} );
+});
 
 /**
  * Action creator function: POST_REVISIONS_RECEIVE
@@ -43,31 +43,31 @@ export const requestPostRevisions = ( siteId, postId, postType = 'posts', compar
  * @param {object} response diffs, postId, revisions, siteId,
  * @returns {object} action object
  */
-export const receivePostRevisions = ( { diffs, postId, revisions, siteId } ) => ( {
+export const receivePostRevisions = ({ diffs, postId, revisions, siteId }) => ({
 	type: POST_REVISIONS_RECEIVE,
 	diffs,
 	postId,
 	revisions,
 	siteId,
-} );
+});
 
-export const selectPostRevision = revisionId => ( {
+export const selectPostRevision = (revisionId) => ({
 	type: POST_REVISIONS_SELECT,
 	revisionId,
-} );
+});
 
-export const closePostRevisionsDialog = () => ( {
+export const closePostRevisionsDialog = () => ({
 	type: POST_REVISIONS_DIALOG_CLOSE,
-} );
+});
 
-export const openPostRevisionsDialog = () => ( {
+export const openPostRevisionsDialog = () => ({
 	type: POST_REVISIONS_DIALOG_OPEN,
-} );
+});
 
-export const splitPostRevisionsDiffView = () => ( {
+export const splitPostRevisionsDiffView = () => ({
 	type: POST_REVISIONS_DIFF_SPLIT_VIEW,
-} );
+});
 
-export const unifyPostRevisionsDiffView = () => ( {
+export const unifyPostRevisionsDiffView = () => ({
 	type: POST_REVISIONS_DIFF_UNIFY_VIEW,
-} );
+});

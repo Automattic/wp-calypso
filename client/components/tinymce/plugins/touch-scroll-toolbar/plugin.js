@@ -5,7 +5,7 @@
 import tinymce from 'tinymce/tinymce';
 import { throttle } from 'lodash';
 
-function touchScrollToolbar( editor ) {
+function touchScrollToolbar(editor) {
 	/**
 	 * Capture and stop propagation on toolbar touch events. TinyMCE registers
 	 * the `touchstart` event on buttons, redirecting them as `click` events to
@@ -14,11 +14,11 @@ function touchScrollToolbar( editor ) {
 	 * @see https://github.com/tinymce/tinymce/blob/abffb85/js/tinymce/classes/ui/Button.js#L57-L60
 	 */
 	function disableToolbarTouchEvents() {
-		editor.$( '.mce-toolbar:not(.mce-menubar)', document.body ).each( ( i, toolbar ) => {
-			toolbar.addEventListener( 'touchstart', event => {
+		editor.$('.mce-toolbar:not(.mce-menubar)', document.body).each((i, toolbar) => {
+			toolbar.addEventListener('touchstart', (event) => {
 				event.stopImmediatePropagation();
-			} );
-		} );
+			});
+		});
 	}
 
 	/**
@@ -28,32 +28,32 @@ function touchScrollToolbar( editor ) {
 	 */
 	function hideToolbarFadeOnFullScroll() {
 		editor
-			.$( [
-				editor.$( '.mce-inline-toolbar-grp .mce-container-body', document.body ),
-				editor.$( '.mce-toolbar-grp', editor.theme.panel.getEl() ),
-			] )
-			.each( ( i, toolbar ) => {
+			.$([
+				editor.$('.mce-inline-toolbar-grp .mce-container-body', document.body),
+				editor.$('.mce-toolbar-grp', editor.theme.panel.getEl()),
+			])
+			.each((i, toolbar) => {
 				toolbar.on(
 					'scroll',
-					throttle( ( { target } ) => {
+					throttle(({ target }) => {
 						let action;
-						if ( target.scrollLeft === target.scrollWidth - target.clientWidth ) {
+						if (target.scrollLeft === target.scrollWidth - target.clientWidth) {
 							action = 'add';
-						} else if ( tinymce.DOM.hasClass( target, 'is-scrolled-full' ) ) {
+						} else if (tinymce.DOM.hasClass(target, 'is-scrolled-full')) {
 							action = 'remove';
 						}
 
-						if ( action ) {
-							const elements = editor.$( target );
-							if ( ! elements.hasClass( 'mce-container-body' ) ) {
-								elements.add( tinymce.DOM.getParent( target, '.mce-container-body' ) );
+						if (action) {
+							const elements = editor.$(target);
+							if (!elements.hasClass('mce-container-body')) {
+								elements.add(tinymce.DOM.getParent(target, '.mce-container-body'));
 							}
 
-							elements[ action + 'Class' ]( 'is-scrolled-full' );
+							elements[action + 'Class']('is-scrolled-full');
 						}
-					}, 200 )
+					}, 200)
 				);
-			} );
+			});
 	}
 
 	/**
@@ -62,23 +62,23 @@ function touchScrollToolbar( editor ) {
 	 */
 	function toggleToolbarsScrollableOnResize() {
 		function toggleToolbarsScrollableClass() {
-			editor.$( '.mce-toolbar-grp', editor.theme.panel.getEl() ).each( ( i, toolbar ) => {
+			editor.$('.mce-toolbar-grp', editor.theme.panel.getEl()).each((i, toolbar) => {
 				const isScrollable = toolbar.scrollWidth > toolbar.clientWidth;
-				editor.$( toolbar ).toggleClass( 'is-scrollable', isScrollable );
-			} );
+				editor.$(toolbar).toggleClass('is-scrollable', isScrollable);
+			});
 		}
 
-		window.addEventListener( 'resize', throttle( toggleToolbarsScrollableClass, 200 ) );
+		window.addEventListener('resize', throttle(toggleToolbarsScrollableClass, 200));
 		toggleToolbarsScrollableClass();
 
 		// Since some toolbars are hidden by default and report inaccurate
 		// dimensions when forced to be shown, we instead bind to the event
 		// when it's expected that they'll be visible
-		editor.on( 'wptoolbar', event => {
+		editor.on('wptoolbar', (event) => {
 			// Since an event handler is expected to set the toolbar property,
 			// set a timeout to wait until the toolbar has been assigned
-			setTimeout( () => {
-				if ( ! event.toolbar || ! event.toolbar.visible() ) {
+			setTimeout(() => {
+				if (!event.toolbar || !event.toolbar.visible()) {
 					return;
 				}
 
@@ -86,18 +86,18 @@ function touchScrollToolbar( editor ) {
 				// of the toolbar, so we compare its width against the parent
 				const toolbar = event.toolbar.getEl();
 				const isScrollable = toolbar.firstChild.scrollWidth > toolbar.clientWidth;
-				editor.dom.toggleClass( toolbar, 'is-scrollable', isScrollable );
-			}, 0 );
-		} );
+				editor.dom.toggleClass(toolbar, 'is-scrollable', isScrollable);
+			}, 0);
+		});
 	}
 
-	editor.on( 'init', function() {
+	editor.on('init', function () {
 		disableToolbarTouchEvents();
 		hideToolbarFadeOnFullScroll();
 		toggleToolbarsScrollableOnResize();
-	} );
+	});
 }
 
-export default function() {
-	tinymce.PluginManager.add( 'wpcom/touchscrolltoolbar', touchScrollToolbar );
+export default function () {
+	tinymce.PluginManager.add('wpcom/touchscrolltoolbar', touchScrollToolbar);
 }

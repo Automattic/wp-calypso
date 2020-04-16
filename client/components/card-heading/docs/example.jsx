@@ -17,22 +17,22 @@ export default class CardHeadingExample extends PureComponent {
 		return (
 			<Card>
 				<CardHeading>This is a default CardHeading</CardHeading>
-				<CardHeading tagName="h1" size={ 54 }>
+				<CardHeading tagName="h1" size={54}>
 					This is a CardHeading, H1 at 54px
 				</CardHeading>
-				<CardHeading tagName="h2" size={ 47 }>
+				<CardHeading tagName="h2" size={47}>
 					This is a CardHeading, H2 at 47px
 				</CardHeading>
-				<CardHeading tagName="h3" size={ 36 }>
+				<CardHeading tagName="h3" size={36}>
 					This is a CardHeading, H3 at 36px
 				</CardHeading>
-				<CardHeading tagName="h4" size={ 32 }>
+				<CardHeading tagName="h4" size={32}>
 					This is a CardHeading, H4 at 32px
 				</CardHeading>
-				<CardHeading tagName="h5" size={ 24 }>
+				<CardHeading tagName="h5" size={24}>
 					This is a CardHeading, H5 at 24px
 				</CardHeading>
-				<CardHeading tagName="h6" size={ 21 }>
+				<CardHeading tagName="h6" size={21}>
 					This is a CardHeading, H6 at 21px
 				</CardHeading>
 			</Card>

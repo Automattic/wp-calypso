@@ -28,7 +28,7 @@ class EditorMediaModalGalleryPreview extends Component {
 	};
 
 	static defaultProps = {
-		settings: Object.freeze( {} ),
+		settings: Object.freeze({}),
 		onUpdateSetting: noop,
 		invalidItemDropped: false,
 		onDismissInvalidItemDropped: noop,
@@ -44,16 +44,16 @@ class EditorMediaModalGalleryPreview extends Component {
 		return (
 			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact>
 				<SegmentedControl.Item
-					selected={ ! this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: false } ) }
+					selected={!this.state.isEditing}
+					onClick={() => this.setState({ isEditing: false })}
 				>
-					{ translate( 'Preview' ) }
+					{translate('Preview')}
 				</SegmentedControl.Item>
 				<SegmentedControl.Item
-					selected={ this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: true } ) }
+					selected={this.state.isEditing}
+					onClick={() => this.setState({ isEditing: true })}
 				>
-					{ translate( 'Edit' ) }
+					{translate('Edit')}
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
@@ -62,25 +62,25 @@ class EditorMediaModalGalleryPreview extends Component {
 	renderPreview() {
 		const { site, settings, onUpdateSetting } = this.props;
 
-		if ( ! site || ! settings.items ) {
+		if (!site || !settings.items) {
 			return;
 		}
 
-		if ( this.state.isEditing ) {
+		if (this.state.isEditing) {
 			return (
 				<EditorMediaModalGalleryEdit
-					site={ site }
-					settings={ settings }
-					onUpdateSetting={ onUpdateSetting }
+					site={site}
+					settings={settings}
+					onUpdateSetting={onUpdateSetting}
 				/>
 			);
 		}
 
-		if ( 'individual' === settings.type ) {
-			return <EditorMediaModalGalleryPreviewIndividual items={ settings.items } />;
+		if ('individual' === settings.type) {
+			return <EditorMediaModalGalleryPreviewIndividual items={settings.items} />;
 		}
 
-		return <EditorMediaModalGalleryPreviewShortcode siteId={ site.ID } settings={ settings } />;
+		return <EditorMediaModalGalleryPreviewShortcode siteId={site.ID} settings={settings} />;
 	}
 
 	render() {
@@ -88,22 +88,22 @@ class EditorMediaModalGalleryPreview extends Component {
 
 		return (
 			<div className="editor-media-modal-gallery__preview">
-				{ this.props.invalidItemDropped && (
+				{this.props.invalidItemDropped && (
 					<Notice
 						status="is-warning"
-						onDismissClick={ this.props.onDismissInvalidItemDropped }
+						onDismissClick={this.props.onDismissInvalidItemDropped}
 						isCompact
 					>
-						{ translate(
+						{translate(
 							'Galleries can only include images. All other uploads will be added to your media library.'
-						) }
+						)}
 					</Notice>
-				) }
-				<div className="editor-media-modal-gallery__preview-wrapper">{ this.renderPreview() }</div>
-				{ this.renderPreviewModeToggle() }
+				)}
+				<div className="editor-media-modal-gallery__preview-wrapper">{this.renderPreview()}</div>
+				{this.renderPreviewModeToggle()}
 			</div>
 		);
 	}
 }
 
-export default localize( EditorMediaModalGalleryPreview );
+export default localize(EditorMediaModalGalleryPreview);

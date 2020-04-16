@@ -15,11 +15,11 @@ import React from 'react';
 import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-jest.mock( 'post-editor/media-modal/detail/detail-fields', () =>
-	require( 'components/empty-component' )
+jest.mock('post-editor/media-modal/detail/detail-fields', () =>
+	require('components/empty-component')
 );
-jest.mock( 'post-editor/media-modal/detail/detail-file-info', () =>
-	require( 'components/empty-component' )
+jest.mock('post-editor/media-modal/detail/detail-file-info', () =>
+	require('components/empty-component')
 );
 
 /**
@@ -47,60 +47,60 @@ const DUMMY_VIDEO_MEDIA = {
 const SHARED_PROPS = {
 	site: DUMMY_SITE,
 	canUserUploadFiles: true,
-	translate: str => str,
+	translate: (str) => str,
 };
 
-describe( 'EditorMediaModalDetailItem', () => {
+describe('EditorMediaModalDetailItem', () => {
 	let isVideoPressEnabled;
 
-	useSandbox( sandbox => {
-		isVideoPressEnabled = sandbox.stub().returns( true );
-	} );
+	useSandbox((sandbox) => {
+		isVideoPressEnabled = sandbox.stub().returns(true);
+	});
 
-	test( 'should display at least one edit button for a VideoPress video on a public site', () => {
+	test('should display at least one edit button for a VideoPress video on a public site', () => {
 		const tree = shallow(
 			<DetailItem
-				item={ DUMMY_VIDEO_MEDIA }
-				isVideoPressEnabled={ isVideoPressEnabled }
-				{ ...SHARED_PROPS }
+				item={DUMMY_VIDEO_MEDIA}
+				isVideoPressEnabled={isVideoPressEnabled}
+				{...SHARED_PROPS}
 			/>
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
+		const editButton = tree.find('.editor-media-modal-detail__edit');
 
-		expect( editButton ).to.have.length.at.least( 1 );
-	} );
+		expect(editButton).to.have.length.at.least(1);
+	});
 
-	test( 'should display at least one edit button for a VideoPress video on a private site', () => {
+	test('should display at least one edit button for a VideoPress video on a private site', () => {
 		const tree = shallow(
 			<DetailItem
-				item={ DUMMY_VIDEO_MEDIA }
-				isVideoPressEnabled={ isVideoPressEnabled }
-				isSitePrivate={ true }
-				{ ...SHARED_PROPS }
+				item={DUMMY_VIDEO_MEDIA}
+				isVideoPressEnabled={isVideoPressEnabled}
+				isSitePrivate={true}
+				{...SHARED_PROPS}
 			/>
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
+		const editButton = tree.find('.editor-media-modal-detail__edit');
 
-		expect( editButton ).to.have.length.at.least( 1 );
-	} );
+		expect(editButton).to.have.length.at.least(1);
+	});
 
-	test( 'should display at least one edit button for an image on a public site', () => {
-		const tree = shallow( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
+	test('should display at least one edit button for an image on a public site', () => {
+		const tree = shallow(<DetailItem item={DUMMY_IMAGE_MEDIA} {...SHARED_PROPS} />);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
+		const editButton = tree.find('.editor-media-modal-detail__edit');
 
-		expect( editButton ).to.have.length.at.least( 1 );
-	} );
+		expect(editButton).to.have.length.at.least(1);
+	});
 
-	test( 'should not display edit button for an image on a private site', () => {
+	test('should not display edit button for an image on a private site', () => {
 		const tree = shallow(
-			<DetailItem item={ DUMMY_IMAGE_MEDIA } isSitePrivate={ true } { ...SHARED_PROPS } />
+			<DetailItem item={DUMMY_IMAGE_MEDIA} isSitePrivate={true} {...SHARED_PROPS} />
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
+		const editButton = tree.find('.editor-media-modal-detail__edit');
 
-		expect( editButton ).to.have.length( 0 );
-	} );
-} );
+		expect(editButton).to.have.length(0);
+	});
+});

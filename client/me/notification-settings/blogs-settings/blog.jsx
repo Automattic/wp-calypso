@@ -30,8 +30,8 @@ class BlogSettings extends Component {
 	state = { isExpanded: false };
 
 	onToggle = () => {
-		const isExpanded = ! this.state.isExpanded;
-		this.setState( { isExpanded } );
+		const isExpanded = !this.state.isExpanded;
+		this.setState({ isExpanded });
 	};
 
 	render() {
@@ -48,10 +48,10 @@ class BlogSettings extends Component {
 
 		const { isExpanded } = this.state;
 
-		const styles = classNames( 'notification-settings-blog-settings', {
-			'is-compact': ! isExpanded,
+		const styles = classNames('notification-settings-blog-settings', {
+			'is-compact': !isExpanded,
 			'is-expanded': isExpanded,
-		} );
+		});
 
 		const settingKeys = [
 			'new_comment',
@@ -63,38 +63,38 @@ class BlogSettings extends Component {
 			'scheduled_publicize',
 		];
 
-		if ( site.options.woocommerce_is_active ) {
-			settingKeys.push( 'store_order' );
+		if (site.options.woocommerce_is_active) {
+			settingKeys.push('store_order');
 		}
 
 		return (
-			<Card className={ styles }>
-				<Header { ...{ site, settings, disableToggle } } onToggle={ this.onToggle } />
-				{ ( () => {
-					if ( isExpanded || disableToggle ) {
+			<Card className={styles}>
+				<Header {...{ site, settings, disableToggle }} onToggle={this.onToggle} />
+				{(() => {
+					if (isExpanded || disableToggle) {
 						return (
 							<SettingsForm
-								{ ...{
+								{...{
 									sourceId,
 									settings,
 									hasUnsavedChanges,
-									isApplyAllVisible: ! disableToggle,
+									isApplyAllVisible: !disableToggle,
 									onToggle,
 									onSave,
 									onSaveToAll,
-								} }
-								settingKeys={ settingKeys }
+								}}
+								settingKeys={settingKeys}
 							/>
 						);
 					}
-				} )() }
+				})()}
 			</Card>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	site: getSite( state, siteId ),
-} );
+const mapStateToProps = (state, { siteId }) => ({
+	site: getSite(state, siteId),
+});
 
-export default connect( mapStateToProps )( BlogSettings );
+export default connect(mapStateToProps)(BlogSettings);

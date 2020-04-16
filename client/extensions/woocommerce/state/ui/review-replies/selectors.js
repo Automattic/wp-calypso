@@ -15,10 +15,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number|object} The ID of the review reply (or object placeholder, if a new reply)
  */
-export const getCurrentlyEditingReviewReplyId = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getCurrentlyEditingReviewReplyId = (state, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'currentlyEditingId' ],
+		['extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'currentlyEditingId'],
 		null
 	);
 };
@@ -28,10 +28,10 @@ export const getCurrentlyEditingReviewReplyId = ( state, siteId = getSelectedSit
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number|object} The ID of the review that a reply edit is associated with.
  */
-export const getCurrentlyEditingReviewId = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getCurrentlyEditingReviewId = (state, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'reviewId' ],
+		['extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'reviewId'],
 		null
 	);
 };
@@ -41,10 +41,10 @@ export const getCurrentlyEditingReviewId = ( state, siteId = getSelectedSiteId( 
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object} The local edits made to the reply.
  */
-export const getReviewReplyEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getReviewReplyEdits = (state, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'changes' ],
+		['extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'changes'],
 		{}
 	);
 };
@@ -54,21 +54,21 @@ export const getReviewReplyEdits = ( state, siteId = getSelectedSiteId( state ) 
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object} The reply merged with changes, or just the changes if a new reply
  */
-export const getReviewReplyWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const reviewId = getCurrentlyEditingReviewId( state, siteId );
-	const replyId = getCurrentlyEditingReviewReplyId( state, siteId );
-	const reviewEdits = getReviewReplyEdits( state, siteId );
+export const getReviewReplyWithEdits = (state, siteId = getSelectedSiteId(state)) => {
+	const reviewId = getCurrentlyEditingReviewId(state, siteId);
+	const replyId = getCurrentlyEditingReviewReplyId(state, siteId);
+	const reviewEdits = getReviewReplyEdits(state, siteId);
 
-	if ( isObject( replyId ) ) {
+	if (isObject(replyId)) {
 		return { ...reviewEdits, id: replyId, parent: reviewId };
 	}
 
-	const review = getReviewReply( state, reviewId, replyId, siteId );
-	if ( ! review ) {
+	const review = getReviewReply(state, reviewId, replyId, siteId);
+	if (!review) {
 		return reviewEdits;
 	}
 
-	return merge( {}, review, reviewEdits );
+	return merge({}, review, reviewEdits);
 };
 
 /**
@@ -76,6 +76,6 @@ export const getReviewReplyWithEdits = ( state, siteId = getSelectedSiteId( stat
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} True if there is a reply ID tracked as "editing"
  */
-export const isCurrentlyEditingReviewReply = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return !! getCurrentlyEditingReviewReplyId( state, siteId );
+export const isCurrentlyEditingReviewReply = (state, siteId = getSelectedSiteId(state)) => {
+	return !!getCurrentlyEditingReviewReplyId(state, siteId);
 };

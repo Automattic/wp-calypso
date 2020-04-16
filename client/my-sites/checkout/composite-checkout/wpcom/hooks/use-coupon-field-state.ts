@@ -6,50 +6,50 @@ import { useEvents } from '@automattic/composite-checkout';
 
 export type CouponFieldStateProps = {
 	couponFieldValue: string;
-	setCouponFieldValue: ( string ) => void;
+	setCouponFieldValue: (string) => void;
 	isApplyButtonActive: boolean;
 	isFreshOrEdited: boolean;
-	setIsFreshOrEdited: ( boolean ) => void;
+	setIsFreshOrEdited: (boolean) => void;
 	handleCouponSubmit: () => void;
 };
 
-export default function useCouponFieldState( submitCoupon ): CouponFieldStateProps {
+export default function useCouponFieldState(submitCoupon): CouponFieldStateProps {
 	const onEvent = useEvents();
-	const [ couponFieldValue, setCouponFieldValue ] = useState< string >( '' );
+	const [couponFieldValue, setCouponFieldValue] = useState<string>('');
 
 	// Used to hide the `Apply` button
-	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState< boolean >( false );
+	const [isApplyButtonActive, setIsApplyButtonActive] = useState<boolean>(false);
 
 	// Used to hide error messages if the user has edited the form field
-	const [ isFreshOrEdited, setIsFreshOrEdited ] = useState< boolean >( true );
+	const [isFreshOrEdited, setIsFreshOrEdited] = useState<boolean>(true);
 
-	useEffect( () => {
-		if ( couponFieldValue.length > 0 ) {
-			setIsApplyButtonActive( true );
+	useEffect(() => {
+		if (couponFieldValue.length > 0) {
+			setIsApplyButtonActive(true);
 			return;
 		}
-		setIsApplyButtonActive( false );
-	}, [ couponFieldValue ] );
+		setIsApplyButtonActive(false);
+	}, [couponFieldValue]);
 
-	const handleCouponSubmit = useCallback( () => {
+	const handleCouponSubmit = useCallback(() => {
 		const trimmedValue = couponFieldValue.trim();
 
-		if ( isCouponValid( trimmedValue ) ) {
-			onEvent( {
+		if (isCouponValid(trimmedValue)) {
+			onEvent({
 				type: 'a8c_checkout_add_coupon',
 				payload: { coupon: trimmedValue },
-			} );
+			});
 
-			submitCoupon( trimmedValue );
+			submitCoupon(trimmedValue);
 
 			return;
 		}
 
-		onEvent( {
+		onEvent({
 			type: 'a8c_checkout_add_coupon_error',
 			payload: { type: 'Invalid code' },
-		} );
-	}, [ couponFieldValue, onEvent, submitCoupon ] );
+		});
+	}, [couponFieldValue, onEvent, submitCoupon]);
 
 	return {
 		couponFieldValue,
@@ -61,7 +61,7 @@ export default function useCouponFieldState( submitCoupon ): CouponFieldStatePro
 	};
 }
 
-function isCouponValid( coupon ) {
+function isCouponValid(coupon) {
 	// TODO: figure out some basic validation here
-	return coupon.match( /^[a-zA-Z0-9_-]+$/ );
+	return coupon.match(/^[a-zA-Z0-9_-]+$/);
 }

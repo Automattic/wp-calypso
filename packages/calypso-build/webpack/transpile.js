@@ -11,7 +11,7 @@
  *
  * @returns {object} Webpack loader object
  */
-module.exports.loader = ( {
+module.exports.loader = ({
 	workerCount,
 	configFile,
 	cacheDirectory,
@@ -19,19 +19,19 @@ module.exports.loader = ( {
 	exclude,
 	include,
 	presets,
-} ) => ( {
+}) => ({
 	test: /\.[jt]sx?$/,
 	include,
 	exclude,
 	use: [
 		{
-			loader: require.resolve( 'thread-loader' ),
+			loader: require.resolve('thread-loader'),
 			options: {
 				workers: workerCount,
 			},
 		},
 		{
-			loader: require.resolve( 'babel-loader' ),
+			loader: require.resolve('babel-loader'),
 			options: {
 				configFile,
 				babelrc: false,
@@ -41,4 +41,4 @@ module.exports.loader = ( {
 			},
 		},
 	],
-} );
+});

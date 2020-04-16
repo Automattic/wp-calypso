@@ -21,30 +21,30 @@ import {
  * @param  {?string}  searchQuery Search query
  * @returns {Function}        Action thunk
  */
-export function requestInlineHelpSearchResults( searchQuery ) {
-	return dispatch => {
-		dispatch( {
+export function requestInlineHelpSearchResults(searchQuery) {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_SEARCH_REQUEST,
 			searchQuery,
-		} );
+		});
 
 		wpcom
 			.undocumented()
-			.getHelpLinks( searchQuery )
-			.then( ( { wordpress_support_links: searchResults } ) => {
-				dispatch( {
+			.getHelpLinks(searchQuery)
+			.then(({ wordpress_support_links: searchResults }) => {
+				dispatch({
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
 					searchResults,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
 					searchQuery,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }
 /**
@@ -53,12 +53,12 @@ export function requestInlineHelpSearchResults( searchQuery ) {
  * @param  {number}  resultIndex Index of the result to select
  * @returns {Function}        Action thunk
  */
-export function selectResult( resultIndex ) {
-	return dispatch => {
-		dispatch( {
+export function selectResult(resultIndex) {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_SELECT_RESULT,
 			resultIndex,
-		} );
+		});
 	};
 }
 
@@ -68,10 +68,10 @@ export function selectResult( resultIndex ) {
  * @returns {Function}  Action thunk
  */
 export function resetInlineHelpContactForm() {
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_CONTACT_FORM_RESET,
-		} );
+		});
 	};
 }
 
@@ -81,10 +81,10 @@ export function resetInlineHelpContactForm() {
  * @returns {Function}  Action thunk
  */
 export function showQandAOnInlineHelpContactForm() {
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
-		} );
+		});
 	};
 }
 
@@ -94,10 +94,10 @@ export function showQandAOnInlineHelpContactForm() {
  * @returns {Function}        Action thunk
  */
 export function selectNextResult() {
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_SELECT_NEXT_RESULT,
-		} );
+		});
 	};
 }
 
@@ -107,35 +107,35 @@ export function selectNextResult() {
  * @returns {Function}        Action thunk
  */
 export function selectPreviousResult() {
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_SELECT_PREVIOUS_RESULT,
-		} );
+		});
 	};
 }
 
-export function setSearchResults( searchQuery, searchResults ) {
-	return dispatch => {
-		dispatch( {
+export function setSearchResults(searchQuery, searchResults) {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 			searchQuery,
 			searchResults,
-		} );
+		});
 	};
 }
 
 export function showInlineHelpPopover() {
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_POPOVER_SHOW,
-		} );
+		});
 	};
 }
 
 export function hideInlineHelpPopover() {
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: INLINE_HELP_POPOVER_HIDE,
-		} );
+		});
 	};
 }

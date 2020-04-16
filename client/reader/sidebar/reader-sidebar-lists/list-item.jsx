@@ -28,56 +28,56 @@ export class ReaderSidebarListsListItem extends Component {
 			this.props.list.slug === this.props.currentListSlug &&
 			this.props.list.owner === this.props.currentListOwner
 		) {
-			const node = ReactDom.findDOMNode( this );
+			const node = ReactDom.findDOMNode(this);
 			node.scrollIntoView();
 		}
 	}
 
 	handleListSidebarClick = () => {
-		recordAction( 'clicked_reader_sidebar_list_item' );
-		recordGaEvent( 'Clicked Reader Sidebar List Item' );
-		recordTrack( 'calypso_reader_sidebar_list_item_clicked', {
-			list: decodeURIComponent( this.props.list.slug ),
-		} );
+		recordAction('clicked_reader_sidebar_list_item');
+		recordGaEvent('Clicked Reader Sidebar List Item');
+		recordTrack('calypso_reader_sidebar_list_item_clicked', {
+			list: decodeURIComponent(this.props.list.slug),
+		});
 	};
 
 	render() {
 		const { list, translate } = this.props;
-		const listRelativeUrl = `/read/list/${ list.owner }/${ list.slug }`;
+		const listRelativeUrl = `/read/list/${list.owner}/${list.slug}`;
 		const listManagementUrls = [
 			listRelativeUrl + '/tags',
 			listRelativeUrl + '/edit',
 			listRelativeUrl + '/sites',
 		];
 
-		const lastPathSegment = last( this.props.path.split( '/' ) );
+		const lastPathSegment = last(this.props.path.split('/'));
 		const isCurrentList =
 			lastPathSegment &&
 			lastPathSegment.toLowerCase() === list.slug.toLowerCase() &&
-			ReaderSidebarHelper.pathStartsWithOneOf( [ listRelativeUrl ], this.props.path );
+			ReaderSidebarHelper.pathStartsWithOneOf([listRelativeUrl], this.props.path);
 		const isActionButtonSelected = ReaderSidebarHelper.pathStartsWithOneOf(
 			listManagementUrls,
 			this.props.path
 		);
 
-		const classes = classNames( {
+		const classes = classNames({
 			selected: isCurrentList || isActionButtonSelected,
-		} );
+		});
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className={ classes } key={ list.ID }>
+			<li className={classes} key={list.ID}>
 				<a
 					className="sidebar__menu-link"
-					href={ listRelativeUrl }
-					onClick={ this.handleListSidebarClick }
-					title={ translate( "View list '%(currentListName)s'", {
+					href={listRelativeUrl}
+					onClick={this.handleListSidebarClick}
+					title={translate("View list '%(currentListName)s'", {
 						args: {
 							currentListName: list.title,
 						},
-					} ) }
+					})}
 				>
-					<div className="sidebar__menu-item-listname">{ list.title }</div>
+					<div className="sidebar__menu-item-listname">{list.title}</div>
 				</a>
 			</li>
 		);
@@ -85,4 +85,4 @@ export class ReaderSidebarListsListItem extends Component {
 	}
 }
 
-export default localize( ReaderSidebarListsListItem );
+export default localize(ReaderSidebarListsListItem);

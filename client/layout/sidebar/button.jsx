@@ -27,39 +27,39 @@ class SidebarButton extends React.Component {
 	_preloaded = false;
 
 	preload = () => {
-		if ( ! this._preloaded && this.props.preloadSectionName ) {
+		if (!this._preloaded && this.props.preloadSectionName) {
 			this._preloaded = true;
-			preload( this.props.preloadSectionName );
+			preload(this.props.preloadSectionName);
 		}
 	};
 
 	getTarget = () => {
-		if ( this.props.forceTargetInternal ) {
+		if (this.props.forceTargetInternal) {
 			return null;
 		}
 
-		return isExternal( this.props.href ) ? '_blank' : null;
+		return isExternal(this.props.href) ? '_blank' : null;
 	};
 
 	render() {
-		if ( ! this.props.href ) {
+		if (!this.props.href) {
 			return null;
 		}
 
 		return (
 			<a
-				rel={ isExternal( this.props.href ) ? 'external' : null }
-				onClick={ this.props.onClick }
-				href={ this.props.href }
-				target={ this.getTarget() }
+				rel={isExternal(this.props.href) ? 'external' : null}
+				onClick={this.props.onClick}
+				href={this.props.href}
+				target={this.getTarget()}
 				className="sidebar__button"
-				onMouseEnter={ this.preload }
-				data-tip-target={ this.props.tipTarget }
+				onMouseEnter={this.preload}
+				data-tip-target={this.props.tipTarget}
 			>
-				{ this.props.children || this.props.translate( 'Add' ) }
+				{this.props.children || this.props.translate('Add')}
 			</a>
 		);
 	}
 }
 
-export default localize( SidebarButton );
+export default localize(SidebarButton);

@@ -13,39 +13,39 @@ import {
 	ATOMIC_TRANSFER_SET as SET_TRANSFER,
 } from 'state/action-types';
 
-describe( 'action', () => {
-	describe( 'fetchAtomicTransfer', () => {
-		test( 'should return a transfer request action', () => {
-			const requestAction = fetchAtomicTransfer( 1 );
+describe('action', () => {
+	describe('fetchAtomicTransfer', () => {
+		test('should return a transfer request action', () => {
+			const requestAction = fetchAtomicTransfer(1);
 
-			expect( requestAction ).to.eql( {
+			expect(requestAction).to.eql({
 				type: TRANSFER_REQUEST,
 				siteId: 1,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'setAtomicTransfer', () => {
-		test( 'should return a the a set transfer action object', () => {
+	describe('setAtomicTransfer', () => {
+		test('should return a the a set transfer action object', () => {
 			const transfer = { status: 'pending' };
-			const setTransferAction = setAtomicTransfer( 1, transfer );
+			const setTransferAction = setAtomicTransfer(1, transfer);
 
-			expect( setTransferAction ).to.eql( {
+			expect(setTransferAction).to.eql({
 				type: SET_TRANSFER,
 				siteId: 1,
 				transfer,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'atomicTransferFetchingFailure', () => {
-		describe( 'should return a failed transfer request action object', () => {
-			const failedRequestAction = atomicTransferFetchingFailure( 1 );
+	describe('atomicTransferFetchingFailure', () => {
+		describe('should return a failed transfer request action object', () => {
+			const failedRequestAction = atomicTransferFetchingFailure(1);
 
-			expect( failedRequestAction ).to.eql( {
+			expect(failedRequestAction).to.eql({
 				type: TRANSFER_REQUEST_FAILURE,
 				siteId: 1,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

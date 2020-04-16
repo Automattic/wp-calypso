@@ -28,13 +28,13 @@ import 'state/themes/init';
  *
  * @returns {Promise} for testing purposes only
  */
-export function initiateThemeTransfer( siteId, file, plugin ) {
+export function initiateThemeTransfer(siteId, file, plugin) {
 	let context = plugin ? 'plugins' : 'themes';
-	if ( ! plugin && ! file ) {
+	if (!plugin && !file) {
 		context = 'hosting';
 	}
 
-	return dispatch => {
+	return (dispatch) => {
 		const themeInitiateRequest = {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
 			siteId,
@@ -42,24 +42,24 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_automated_transfer_initiate_transfer', { plugin, context } ),
+				recordTracksEvent('calypso_automated_transfer_initiate_transfer', { plugin, context }),
 				themeInitiateRequest
 			)
 		);
 		return wpcom
 			.undocumented()
-			.initiateTransfer( siteId, plugin, file, event => {
-				dispatch( {
+			.initiateTransfer(siteId, plugin, file, (event) => {
+				dispatch({
 					type: THEME_TRANSFER_INITIATE_PROGRESS,
 					siteId,
 					loaded: event.loaded,
 					total: event.total,
-				} );
-			} )
-			.then( ( { transfer_id } ) => {
-				if ( ! transfer_id ) {
+				});
+			})
+			.then(({ transfer_id }) => {
+				if (!transfer_id) {
 					return dispatch(
-						transferInitiateFailure( siteId, { error: 'initiate_failure' }, plugin, context )
+						transferInitiateFailure(siteId, { error: 'initiate_failure' }, plugin, context)
 					);
 				}
 				const themeInitiateSuccessAction = {
@@ -69,20 +69,20 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 				};
 				dispatch(
 					withAnalytics(
-						recordTracksEvent( 'calypso_automated_transfer_initiate_success', { plugin, context } ),
+						recordTracksEvent('calypso_automated_transfer_initiate_success', { plugin, context }),
 						themeInitiateSuccessAction
 					)
 				);
-				dispatch( pollThemeTransferStatus( siteId, transfer_id, context ) );
-			} )
-			.catch( error => {
-				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );
-			} );
+				dispatch(pollThemeTransferStatus(siteId, transfer_id, context));
+			})
+			.catch((error) => {
+				dispatch(transferInitiateFailure(siteId, error, plugin, context));
+			});
 	};
 }
 
 // receive a transfer status
-function transferStatus( siteId, transferId, status, message, themeId ) {
+function transferStatus(siteId, transferId, status, message, themeId) {
 	return {
 		type: THEME_TRANSFER_STATUS_RECEIVE,
 		siteId,
@@ -94,7 +94,7 @@ function transferStatus( siteId, transferId, status, message, themeId ) {
 }
 
 // receive a transfer status error
-function transferStatusFailure( siteId, transferId, error ) {
+function transferStatusFailure(siteId, transferId, error) {
 	return {
 		type: THEME_TRANSFER_STATUS_FAILURE,
 		siteId,
@@ -104,8 +104,8 @@ function transferStatusFailure( siteId, transferId, error ) {
 }
 
 // receive a transfer initiation failure
-function transferInitiateFailure( siteId, error, plugin, context ) {
-	return dispatch => {
+function transferInitiateFailure(siteId, error, plugin, context) {
+	return (dispatch) => {
 		const themeInitiateFailureAction = {
 			type: THEME_TRANSFER_INITIATE_FAILURE,
 			siteId,
@@ -113,7 +113,7 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
 		};
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_automated_transfer_initiate_failure', { plugin, context } ),
+				recordTracksEvent('calypso_automated_transfer_initiate_failure', { plugin, context }),
 				themeInitiateFailureAction
 			)
 		);
@@ -142,37 +142,37 @@ export function pollThemeTransferStatus(
 	timeout = 180000
 ) {
 	const endTime = Date.now() + timeout;
-	return dispatch => {
-		const pollStatus = ( resolve, reject ) => {
-			if ( Date.now() > endTime ) {
+	return (dispatch) => {
+		const pollStatus = (resolve, reject) => {
+			if (Date.now() > endTime) {
 				// timed-out, stop polling
-				dispatch( transferStatusFailure( siteId, transferId, 'client timeout' ) );
+				dispatch(transferStatusFailure(siteId, transferId, 'client timeout'));
 				return resolve();
 			}
 			return wpcom
 				.undocumented()
-				.transferStatus( siteId, transferId )
-				.then( ( { status, message, uploaded_theme_slug } ) => {
-					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
-					if ( status === 'complete' ) {
+				.transferStatus(siteId, transferId)
+				.then(({ status, message, uploaded_theme_slug }) => {
+					dispatch(transferStatus(siteId, transferId, status, message, uploaded_theme_slug));
+					if (status === 'complete') {
 						// finished, stop polling
 						dispatch(
-							recordTracksEvent( 'calypso_automated_transfer_complete', {
+							recordTracksEvent('calypso_automated_transfer_complete', {
 								transfer_id: transferId,
 								context,
-							} )
+							})
 						);
 						return resolve();
 					}
 					// poll again
-					return delay( pollStatus, interval, resolve, reject );
-				} )
-				.catch( error => {
-					dispatch( transferStatusFailure( siteId, transferId, error ) );
+					return delay(pollStatus, interval, resolve, reject);
+				})
+				.catch((error) => {
+					dispatch(transferStatusFailure(siteId, transferId, error));
 					// error, stop polling
 					return resolve();
-				} );
+				});
 		};
-		return new Promise( pollStatus );
+		return new Promise(pollStatus);
 	};
 }

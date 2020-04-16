@@ -11,8 +11,8 @@ import {
 
 export const items = keyedReducer(
 	'orderId',
-	withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = null, action) => {
+		switch (action.type) {
 			case ORDER_TRANSACTION_FETCH:
 				return null;
 			case ORDER_TRANSACTION_FETCH_ERROR:
@@ -24,13 +24,13 @@ export const items = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
 export const isFetching = keyedReducer(
 	'orderId',
-	withoutPersistence( ( state = false, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = false, action) => {
+		switch (action.type) {
 			case ORDER_TRANSACTION_FETCH:
 				return true;
 			case ORDER_TRANSACTION_FETCH_ERROR:
@@ -40,13 +40,13 @@ export const isFetching = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
 export const errors = keyedReducer(
 	'orderId',
-	withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = null, action) => {
+		switch (action.type) {
 			case ORDER_TRANSACTION_FETCH:
 				return null;
 			case ORDER_TRANSACTION_FETCH_ERROR:
@@ -56,11 +56,11 @@ export const errors = keyedReducer(
 		}
 
 		return state;
-	} )
+	})
 );
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	isFetching,
 	errors,
-} );
+});

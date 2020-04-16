@@ -38,74 +38,74 @@ import {
 import { bumpStat } from 'woocommerce/lib/analytics';
 
 export default {
-	[ WOOCOMMERCE_PRODUCT_EDIT ]: [ actionAppendProductVariations ],
-	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: [ actionAppendProductVariations ],
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],
-	[ WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE ]: [ handleProductActionListCreate ],
+	[WOOCOMMERCE_PRODUCT_EDIT]: [actionAppendProductVariations],
+	[WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT]: [actionAppendProductVariations],
+	[WOOCOMMERCE_PRODUCT_CATEGORY_EDIT]: [handleProductCategoryEdit],
+	[WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE]: [handleProductActionListCreate],
 };
 
-export function actionAppendProductVariations( { getState }, action ) {
+export function actionAppendProductVariations({ getState }, action) {
 	const { siteId } = action;
 	const productId = action.product && action.product.id;
 
-	action.productVariations = getVariationsForProduct( getState(), productId, siteId );
+	action.productVariations = getVariationsForProduct(getState(), productId, siteId);
 }
 
-export function handleProductCategoryEdit( { dispatch, getState }, action ) {
+export function handleProductCategoryEdit({ dispatch, getState }, action) {
 	const rootState = getState();
 	const { siteId, category, data } = action;
 
-	if ( null === data ) {
+	if (null === data) {
 		// It's removing a category from edits.
-		const categoryCreates = getAllProductCategoryEdits( rootState, siteId ).creates;
-		if ( find( categoryCreates, { id: category.id } ) ) {
+		const categoryCreates = getAllProductCategoryEdits(rootState, siteId).creates;
+		if (find(categoryCreates, { id: category.id })) {
 			// It's a create, it needs to be removed from any product edits as well.
-			const productEdits = getAllProductEdits( rootState, siteId );
+			const productEdits = getAllProductEdits(rootState, siteId);
 
 			productEdits.creates &&
-				productEdits.creates.forEach( product => {
-					dispatch( editProductRemoveCategory( siteId, product, category.id ) );
-				} );
+				productEdits.creates.forEach((product) => {
+					dispatch(editProductRemoveCategory(siteId, product, category.id));
+				});
 
 			productEdits.updates &&
-				productEdits.updates.forEach( product => {
-					dispatch( editProductRemoveCategory( siteId, product, category.id ) );
-				} );
+				productEdits.updates.forEach((product) => {
+					dispatch(editProductRemoveCategory(siteId, product, category.id));
+				});
 		}
 	}
 }
 
-export function handleProductActionListCreate( store, action ) {
+export function handleProductActionListCreate(store, action) {
 	const { successAction, failureAction } = action;
 	const rootState = store.getState();
-	const siteId = getSelectedSiteId( rootState );
-	const onSuccess = ( dispatch, { updatedProductIds } ) => {
-		const products = Object.values( updatedProductIds ).map( productId =>
-			getProduct( store.getState(), productId )
+	const siteId = getSelectedSiteId(rootState);
+	const onSuccess = (dispatch, { updatedProductIds }) => {
+		const products = Object.values(updatedProductIds).map((productId) =>
+			getProduct(store.getState(), productId)
 		);
-		if ( isFunction( successAction ) ) {
-			return dispatch( successAction( products, updatedProductIds ) );
+		if (isFunction(successAction)) {
+			return dispatch(successAction(products, updatedProductIds));
 		}
-		return dispatch( successAction );
+		return dispatch(successAction);
 	};
-	const onFailure = ( dispatch, { productError } ) => {
-		if ( isFunction( failureAction ) ) {
-			dispatch( failureAction( productError ) );
+	const onFailure = (dispatch, { productError }) => {
+		if (isFunction(failureAction)) {
+			dispatch(failureAction(productError));
 		} else {
-			dispatch( failureAction );
+			dispatch(failureAction);
 		}
-		dispatch( actionListClear() );
+		dispatch(actionListClear());
 	};
 	const actionList = makeProductActionList(
 		rootState,
 		siteId,
-		getAllProductEdits( rootState, siteId ),
-		getAllVariationEdits( rootState, siteId ),
+		getAllProductEdits(rootState, siteId),
+		getAllVariationEdits(rootState, siteId),
 		onSuccess,
 		onFailure
 	);
 
-	store.dispatch( actionListStepNext( actionList ) );
+	store.dispatch(actionListStepNext(actionList));
 }
 
 /**
@@ -132,22 +132,22 @@ export function makeProductActionList(
 ) {
 	return {
 		nextSteps: [
-			...makeProductCategorySteps( rootState, siteId, productEdits ),
-			...makeProductSteps( rootState, siteId, productEdits ),
-			...makeProductVariationSteps( rootState, siteId, productEdits, variationEdits ),
+			...makeProductCategorySteps(rootState, siteId, productEdits),
+			...makeProductSteps(rootState, siteId, productEdits),
+			...makeProductVariationSteps(rootState, siteId, productEdits, variationEdits),
 		],
-		onSuccess: ( dispatch, actionList ) => {
-			dispatch( onSuccess( dispatch, actionList ) );
-			dispatch( actionListClear() );
+		onSuccess: (dispatch, actionList) => {
+			dispatch(onSuccess(dispatch, actionList));
+			dispatch(actionListClear());
 		},
 		onFailure,
 	};
 }
 
-const categoryCreated = actionList => ( dispatch, getState, { sentData, receivedData } ) => {
+const categoryCreated = (actionList) => (dispatch, getState, { sentData, receivedData }) => {
 	const categoryIdMapping = {
 		...actionList.categoryIdMapping,
-		[ sentData.id.placeholder ]: receivedData.id,
+		[sentData.id.placeholder]: receivedData.id,
 	};
 
 	const newActionList = {
@@ -155,84 +155,80 @@ const categoryCreated = actionList => ( dispatch, getState, { sentData, received
 		categoryIdMapping,
 	};
 
-	dispatch( actionListStepSuccess( newActionList ) );
+	dispatch(actionListStepSuccess(newActionList));
 };
 
-export function makeProductCategorySteps( rootState, siteId, productEdits ) {
-	if ( ! productEdits ) {
+export function makeProductCategorySteps(rootState, siteId, productEdits) {
+	if (!productEdits) {
 		return [];
 	}
 
 	const creates = productEdits.creates || [];
 	const updates = productEdits.updates || [];
-	const categoryEdits = getAllProductCategoryEdits( rootState, siteId );
+	const categoryEdits = getAllProductCategoryEdits(rootState, siteId);
 
 	// Collect all the IDs of all new categories that are referenced by a product edit.
-	const newCategoryIds = getNewCategoryIdsForEdits( [ ...creates, ...updates ] );
+	const newCategoryIds = getNewCategoryIdsForEdits([...creates, ...updates]);
 
 	// Construct a step for each new category to be created.
-	const createSteps = newCategoryIds.map( categoryId => {
-		const category = find( categoryEdits.creates, { id: categoryId } );
+	const createSteps = newCategoryIds.map((categoryId) => {
+		const category = find(categoryEdits.creates, { id: categoryId });
 
 		return {
-			description: translate( 'Creating product category: ' ) + category.name,
-			onStep: ( dispatch, actionList ) => {
+			description: translate('Creating product category: ') + category.name,
+			onStep: (dispatch, actionList) => {
 				dispatch(
 					createProductCategory(
 						siteId,
 						category,
-						categoryCreated( actionList ),
-						actionListStepFailure( actionList )
+						categoryCreated(actionList),
+						actionListStepFailure(actionList)
 					)
 				);
 			},
 		};
-	} );
+	});
 
-	return [ ...createSteps ];
+	return [...createSteps];
 }
 
-function getNewCategoryIdsForEdits( edits ) {
-	return edits.reduce( ( categoryIds, product ) => {
-		return getCategoryIdsForProduct( product ).filter( id => {
-			return isObject( id ) && categoryIds.indexOf( id ) === -1;
-		} );
-	}, [] );
+function getNewCategoryIdsForEdits(edits) {
+	return edits.reduce((categoryIds, product) => {
+		return getCategoryIdsForProduct(product).filter((id) => {
+			return isObject(id) && categoryIds.indexOf(id) === -1;
+		});
+	}, []);
 }
 
-function getCategoryIdsForProduct( product ) {
+function getCategoryIdsForProduct(product) {
 	const categories = product.categories || [];
 
-	return categories.map( category => {
+	return categories.map((category) => {
 		return category.id;
-	} );
+	});
 }
 
-const variationSuccess = ( actionList, productId ) => dispatch => {
-	const productIds = ( actionList.updatedProductIds && [ ...actionList.updatedProductIds ] ) || [];
-	productIds.push( productId );
+const variationSuccess = (actionList, productId) => (dispatch) => {
+	const productIds = (actionList.updatedProductIds && [...actionList.updatedProductIds]) || [];
+	productIds.push(productId);
 
 	const newActionList = {
 		...actionList,
 		updatedProductIds: productIds,
 	};
 
-	dispatch( actionListStepSuccess( newActionList ) );
+	dispatch(actionListStepSuccess(newActionList));
 };
 
-const productSuccess = ( actionList, type ) => (
-	dispatch,
-	getState,
-	{ sentData, receivedData }
-) => {
+const productSuccess = (actionList, type) => (dispatch, getState, { sentData, receivedData }) => {
 	const productIdMapping = {
 		...actionList.productIdMapping,
-		[ sentData.id.placeholder || receivedData.id ]: receivedData.id,
+		[sentData.id.placeholder || receivedData.id]: receivedData.id,
 	};
 
 	const updatedProductIds =
-		( actionList.updatedProductIds && [ ...actionList.updatedProductIds ] ) || [];
-	updatedProductIds.push( receivedData.id );
+		(actionList.updatedProductIds && [...actionList.updatedProductIds]) || [];
+	updatedProductIds.push(receivedData.id);
 
 	const newActionList = {
 		...actionList,
@@ -240,85 +236,85 @@ const productSuccess = ( actionList, type ) => (
 		updatedProductIds,
 	};
 
-	dispatch( bumpStat( 'wpcom-store-products', type + '-calypso' ) );
-	dispatch( actionListStepSuccess( newActionList ) );
+	dispatch(bumpStat('wpcom-store-products', type + '-calypso'));
+	dispatch(actionListStepSuccess(newActionList));
 };
 
-const productFailure = actionList => ( dispatch, getState, { error } ) => {
+const productFailure = (actionList) => (dispatch, getState, { error }) => {
 	const newActionList = {
 		...actionList,
 		productError: error,
 	};
 
-	dispatch( actionListStepFailure( newActionList ) );
+	dispatch(actionListStepFailure(newActionList));
 };
 
-export function makeProductSteps( rootState, siteId, productEdits ) {
-	if ( ! productEdits ) {
+export function makeProductSteps(rootState, siteId, productEdits) {
+	if (!productEdits) {
 		return [];
 	}
 
 	let createSteps = [];
 	let updateSteps = [];
 
-	if ( productEdits.creates ) {
+	if (productEdits.creates) {
 		// TODO: Consider making these parallel actions.
-		createSteps = productEdits.creates.map( product => {
+		createSteps = productEdits.creates.map((product) => {
 			return {
-				description: translate( 'Creating product' ),
-				onStep: ( dispatch, actionList ) => {
+				description: translate('Creating product'),
+				onStep: (dispatch, actionList) => {
 					const { categoryIdMapping } = actionList;
 
 					dispatch(
 						createProduct(
 							siteId,
-							getCorrectedProduct( product, categoryIdMapping ),
-							productSuccess( actionList, 'create' ),
-							productFailure( actionList )
+							getCorrectedProduct(product, categoryIdMapping),
+							productSuccess(actionList, 'create'),
+							productFailure(actionList)
 						)
 					);
 				},
 			};
-		} );
+		});
 	}
 
-	if ( productEdits.updates ) {
+	if (productEdits.updates) {
 		updateSteps = compact(
-			productEdits.updates.map( product => {
+			productEdits.updates.map((product) => {
 				// TODO: When we no longer have to edit a product just to set
 				// the currently editing id, remove this.
-				if ( isEqual( { id: product.id }, product ) ) {
+				if (isEqual({ id: product.id }, product)) {
 					return undefined;
 				}
 
 				return {
-					description: translate( 'Updating product' ),
-					onStep: ( dispatch, actionList ) => {
+					description: translate('Updating product'),
+					onStep: (dispatch, actionList) => {
 						const { categoryIdMapping } = actionList;
 
 						dispatch(
 							updateProduct(
 								siteId,
-								getCorrectedProduct( product, categoryIdMapping ),
-								productSuccess( actionList, 'update' ),
-								productFailure( actionList )
+								getCorrectedProduct(product, categoryIdMapping),
+								productSuccess(actionList, 'update'),
+								productFailure(actionList)
 							)
 						);
 					},
 				};
-			} )
+			})
 		);
 	}
 
-	return [ ...createSteps, ...updateSteps ];
+	return [...createSteps, ...updateSteps];
 }
 
-function getCorrectedProduct( product, categoryIdMapping ) {
+function getCorrectedProduct(product, categoryIdMapping) {
 	const { categories } = product;
 
-	if ( categories ) {
-		const newCategories = categories.map( category =>
-			getCorrectedCategory( category, categoryIdMapping )
+	if (categories) {
+		const newCategories = categories.map((category) =>
+			getCorrectedCategory(category, categoryIdMapping)
 		);
 
 		return {
@@ -330,10 +326,10 @@ function getCorrectedProduct( product, categoryIdMapping ) {
 	return product;
 }
 
-function getCorrectedCategory( category, categoryIdMapping ) {
-	const updatedId = isObject( category.id ) && categoryIdMapping[ category.id.placeholder ];
+function getCorrectedCategory(category, categoryIdMapping) {
+	const updatedId = isObject(category.id) && categoryIdMapping[category.id.placeholder];
 
-	if ( updatedId ) {
+	if (updatedId) {
 		return {
 			...category,
 			id: updatedId,
@@ -342,8 +338,8 @@ function getCorrectedCategory( category, categoryIdMapping ) {
 	return category;
 }
 
-export function makeProductVariationSteps( rootState, siteId, productEdits, variationEdits ) {
-	if ( ! variationEdits ) {
+export function makeProductVariationSteps(rootState, siteId, productEdits, variationEdits) {
+	if (!variationEdits) {
 		return [];
 	}
 
@@ -351,28 +347,28 @@ export function makeProductVariationSteps( rootState, siteId, productEdits, vari
 	let variationUpdates = [];
 	let variationDeletes = [];
 
-	variationEdits.map( ( { productId, creates, updates, deletes } ) => {
-		variationCreates = ( creates || [] ).map( variation => {
-			return variationCreateStep( siteId, productId, variation );
-		} );
-		variationUpdates = ( updates || [] ).map( variation => {
-			return variationUpdateStep( siteId, productId, variation );
-		} );
-		variationDeletes = ( deletes || [] ).map( variationId => {
-			return variationDeleteStep( siteId, productId, variationId );
-		} );
-	} );
+	variationEdits.map(({ productId, creates, updates, deletes }) => {
+		variationCreates = (creates || []).map((variation) => {
+			return variationCreateStep(siteId, productId, variation);
+		});
+		variationUpdates = (updates || []).map((variation) => {
+			return variationUpdateStep(siteId, productId, variation);
+		});
+		variationDeletes = (deletes || []).map((variationId) => {
+			return variationDeleteStep(siteId, productId, variationId);
+		});
+	});
 
-	return [ ...variationCreates, ...variationUpdates, ...variationDeletes ];
+	return [...variationCreates, ...variationUpdates, ...variationDeletes];
 }
 
-function variationCreateStep( siteId, productId, variation ) {
+function variationCreateStep(siteId, productId, variation) {
 	return {
-		description: translate( 'Creating variation' ),
-		onStep: ( dispatch, actionList ) => {
-			const newProduct = isObject( productId );
+		description: translate('Creating variation'),
+		onStep: (dispatch, actionList) => {
+			const newProduct = isObject(productId);
 			const realProductId = newProduct
-				? actionList.productIdMapping[ productId.placeholder ]
+				? actionList.productIdMapping[productId.placeholder]
 				: productId;
 
 			dispatch(
@@ -380,42 +376,42 @@ function variationCreateStep( siteId, productId, variation ) {
 					siteId,
 					realProductId,
 					variation,
-					variationSuccess( actionList, realProductId ),
-					actionListStepFailure( actionList )
+					variationSuccess(actionList, realProductId),
+					actionListStepFailure(actionList)
 				)
 			);
 		},
 	};
 }
 
-function variationUpdateStep( siteId, productId, variation ) {
+function variationUpdateStep(siteId, productId, variation) {
 	return {
-		description: translate( 'Updating variation' ),
-		onStep: ( dispatch, actionList ) => {
+		description: translate('Updating variation'),
+		onStep: (dispatch, actionList) => {
 			dispatch(
 				updateProductVariation(
 					siteId,
 					productId,
 					variation,
-					variationSuccess( actionList, productId ),
-					actionListStepFailure( actionList )
+					variationSuccess(actionList, productId),
+					actionListStepFailure(actionList)
 				)
 			);
 		},
 	};
 }
 
-function variationDeleteStep( siteId, productId, variationId ) {
+function variationDeleteStep(siteId, productId, variationId) {
 	return {
-		description: translate( 'Deleting variation' ),
-		onStep: ( dispatch, actionList ) => {
+		description: translate('Deleting variation'),
+		onStep: (dispatch, actionList) => {
 			dispatch(
 				deleteProductVariation(
 					siteId,
 					productId,
 					variationId,
-					actionListStepSuccess( actionList ),
-					actionListStepFailure( actionList )
+					actionListStepSuccess(actionList),
+					actionListStepFailure(actionList)
 				)
 			);
 		},

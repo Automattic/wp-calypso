@@ -23,38 +23,38 @@ import './style.scss';
  * @param {object} product - G Suite product
  * @returns {boolean} - true if a discount can be applied, false otherwise
  */
-const hasDiscount = product => {
+const hasDiscount = (product) => {
 	if (
-		! product ||
-		! product.sale_cost ||
-		! product.sale_coupon ||
-		! product.sale_coupon.start_date ||
-		! product.sale_coupon.expires
+		!product ||
+		!product.sale_cost ||
+		!product.sale_coupon ||
+		!product.sale_coupon.start_date ||
+		!product.sale_coupon.expires
 	) {
 		return false;
 	}
 
 	const currentTime = Date.now();
-	const startDate = new Date( product.sale_coupon.start_date );
-	const endDate = new Date( product.sale_coupon.expires );
+	const startDate = new Date(product.sale_coupon.start_date);
+	const endDate = new Date(product.sale_coupon.expires);
 
 	return currentTime >= startDate && currentTime <= endDate;
 };
 
-const GSuitePrice = ( { currencyCode, product } ) => {
+const GSuitePrice = ({ currencyCode, product }) => {
 	const translate = useTranslate();
 
 	const cost = product?.cost ?? null;
 
-	const annualPrice = getAnnualPrice( cost, currencyCode );
-	const monthlyPrice = getMonthlyPrice( cost, currencyCode );
+	const annualPrice = getAnnualPrice(cost, currencyCode);
+	const monthlyPrice = getMonthlyPrice(cost, currencyCode);
 
-	const isDiscounted = hasDiscount( product );
+	const isDiscounted = hasDiscount(product);
 
 	return (
 		<div className="gsuite-price">
 			<h4 className="gsuite-price__monthly-price">
-				{ translate( '{{strong}}%(price)s{{/strong}} per user/month', {
+				{translate('{{strong}}%(price)s{{/strong}} per user/month', {
 					args: {
 						price: monthlyPrice,
 					},
@@ -62,33 +62,33 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 						strong: <strong />,
 					},
 					comment: "Monthly price per user formatted with the currency (e.g. '$8.40')",
-				} ) }
+				})}
 			</h4>
 
 			<h5
-				className={ classNames( {
+				className={classNames({
 					'gsuite-price__annual-price': true,
 					discounted: isDiscounted,
-				} ) }
+				})}
 			>
-				{ translate( '%(price)s billed annually', {
+				{translate('%(price)s billed annually', {
 					args: {
 						price: annualPrice,
 					},
 					comment: "Annual price formatted with the currency (e.g. '$99.99')",
-				} ) }
+				})}
 			</h5>
 
-			{ isDiscounted && (
+			{isDiscounted && (
 				<Badge type="success">
-					{ translate( '%(price)s for your first year', {
+					{translate('%(price)s for your first year', {
 						args: {
-							price: getAnnualPrice( product.sale_cost, currencyCode ),
+							price: getAnnualPrice(product.sale_cost, currencyCode),
 						},
 						comment: "Discounted annual price formatted with the currency (e.g. '$80')",
-					} ) }
+					})}
 				</Badge>
-			) }
+			)}
 		</div>
 	);
 };

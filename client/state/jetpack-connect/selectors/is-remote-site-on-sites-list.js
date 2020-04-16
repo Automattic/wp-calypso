@@ -6,16 +6,16 @@ import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors/get-jetpack
 
 import 'state/jetpack-connect/init';
 
-export const isRemoteSiteOnSitesList = ( state, remoteUrl ) => {
-	const authorizationData = getAuthorizationData( state );
+export const isRemoteSiteOnSitesList = (state, remoteUrl) => {
+	const authorizationData = getAuthorizationData(state);
 
-	if ( ! remoteUrl ) {
+	if (!remoteUrl) {
 		return false;
 	}
 
-	if ( authorizationData.clientNotResponding ) {
+	if (authorizationData.clientNotResponding) {
 		return false;
 	}
 
-	return !! getJetpackSiteByUrl( state, remoteUrl );
+	return !!getJetpackSiteByUrl(state, remoteUrl);
 };

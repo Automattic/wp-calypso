@@ -28,8 +28,8 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 		optInEnabled: PropTypes.bool,
 	};
 
-	handleKeyPress = event => {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
+	handleKeyPress = (event) => {
+		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
 			this.props.showDialog();
 		}
@@ -38,7 +38,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 	render() {
 		const { showDialog, translate, optInEnabled } = this.props;
 
-		if ( ! optInEnabled ) {
+		if (!optInEnabled) {
 			return null;
 		}
 
@@ -47,24 +47,21 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 				tabIndex="0"
 				role="button"
 				className="editor-gutenberg-opt-in-sidebar"
-				onClick={ showDialog }
-				onKeyPress={ this.handleKeyPress }
+				onClick={showDialog}
+				onKeyPress={this.handleKeyPress}
 			>
 				<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
-				<p>{ translate( 'Try the new block editor and level up your layout.' ) }</p>
-				<Button tabIndex="-1">{ translate( 'Learn more' ) }</Button>
+				<p>{translate('Try the new block editor and level up your layout.')}</p>
+				<Button tabIndex="-1">{translate('Learn more')}</Button>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => ( {
-	optInEnabled: isGutenbergOptInEnabled( state, getSelectedSiteId( state ) ),
-} );
+const mapStateToProps = (state) => ({
+	optInEnabled: isGutenbergOptInEnabled(state, getSelectedSiteId(state)),
+});
 
 const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( EditorGutenbergOptInSidebar ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(EditorGutenbergOptInSidebar));

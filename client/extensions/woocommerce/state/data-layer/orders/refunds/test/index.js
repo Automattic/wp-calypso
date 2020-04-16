@@ -10,18 +10,18 @@ import { fetchRefunds, sendRefund } from 'woocommerce/state/sites/orders/refunds
 import { create, fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'handlers', () => {
-	describe( '#create', () => {
-		test( 'should dispatch a post action to the API via the jetpack proxy for this siteId & orderId', () => {
+describe('handlers', () => {
+	describe('#create', () => {
+		test('should dispatch a post action to the API via the jetpack proxy for this siteId & orderId', () => {
 			const refund = {
 				amount: 10,
 				reason: 'Testing',
 				api_refund: false,
 			};
-			const action = sendRefund( 123, 74, refund );
-			const result = create( action );
+			const action = sendRefund(123, 74, refund);
+			const result = create(action);
 
-			expect( result ).to.eql(
+			expect(result).to.eql(
 				http(
 					{
 						method: 'POST',
@@ -30,7 +30,7 @@ describe( 'handlers', () => {
 						body: {
 							json: true,
 							path: '/wc/v3/orders/74/refunds&_method=POST',
-							body: JSON.stringify( refund ),
+							body: JSON.stringify(refund),
 						},
 						query: {
 							json: true,
@@ -39,15 +39,15 @@ describe( 'handlers', () => {
 					action
 				)
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#fetch', () => {
-		test( 'should dispatch a get action to the API via the jetpack proxy for this siteId & orderId', () => {
-			const action = fetchRefunds( 123, 74 );
-			const result = fetch( action );
+	describe('#fetch', () => {
+		test('should dispatch a get action to the API via the jetpack proxy for this siteId & orderId', () => {
+			const action = fetchRefunds(123, 74);
+			const result = fetch(action);
 
-			expect( result ).to.eql(
+			expect(result).to.eql(
 				http(
 					{
 						method: 'GET',
@@ -62,6 +62,6 @@ describe( 'handlers', () => {
 					action
 				)
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

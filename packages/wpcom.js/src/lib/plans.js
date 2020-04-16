@@ -7,9 +7,9 @@ export default class Plans {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( wpcom ) {
-		if ( ! ( this instanceof Plans ) ) {
-			return new Plans( wpcom );
+	constructor(wpcom) {
+		if (!(this instanceof Plans)) {
+			return new Plans(wpcom);
 		}
 		this.wpcom = wpcom;
 	}
@@ -21,8 +21,8 @@ export default class Plans {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	list( query, fn ) {
-		return this.wpcom.req.get( root, query, fn );
+	list(query, fn) {
+		return this.wpcom.req.get(root, query, fn);
 	}
 
 	/**
@@ -32,7 +32,7 @@ export default class Plans {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	features( query, fn ) {
-		return this.wpcom.req.get( `${ root }/features`, query, fn );
+	features(query, fn) {
+		return this.wpcom.req.get(`${root}/features`, query, fn);
 	}
 }

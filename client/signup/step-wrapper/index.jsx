@@ -40,38 +40,38 @@ class StepWrapper extends Component {
 	};
 
 	renderBack() {
-		if ( this.props.shouldHideNavButtons ) {
+		if (this.props.shouldHideNavButtons) {
 			return null;
 		}
 		return (
 			<NavigationLink
 				direction="back"
-				flowName={ this.props.flowName }
-				positionInFlow={ this.props.positionInFlow }
-				stepName={ this.props.stepName }
-				stepSectionName={ this.props.stepSectionName }
-				backUrl={ this.props.backUrl }
-				labelText={ this.props.backLabelText }
-				allowBackFirstStep={ this.props.allowBackFirstStep }
+				flowName={this.props.flowName}
+				positionInFlow={this.props.positionInFlow}
+				stepName={this.props.stepName}
+				stepSectionName={this.props.stepSectionName}
+				backUrl={this.props.backUrl}
+				labelText={this.props.backLabelText}
+				allowBackFirstStep={this.props.allowBackFirstStep}
 			/>
 		);
 	}
 
 	renderSkip() {
-		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
+		if (!this.props.shouldHideNavButtons && this.props.goToNextStep) {
 			return (
 				<div className="step-wrapper__skip-wrapper">
-					{ this.props.skipHeadingText && (
-						<div className="step-wrapper__skip-heading">{ this.props.skipHeadingText }</div>
-					) }
+					{this.props.skipHeadingText && (
+						<div className="step-wrapper__skip-heading">{this.props.skipHeadingText}</div>
+					)}
 					<NavigationLink
 						direction="forward"
-						goToNextStep={ this.props.goToNextStep }
-						defaultDependencies={ this.props.defaultDependencies }
-						flowName={ this.props.flowName }
-						stepName={ this.props.stepName }
-						labelText={ this.props.skipLabelText }
-						cssClass={ this.props.skipHeadingText && 'navigation-link--has-skip-heading' }
+						goToNextStep={this.props.goToNextStep}
+						defaultDependencies={this.props.defaultDependencies}
+						flowName={this.props.flowName}
+						stepName={this.props.stepName}
+						labelText={this.props.skipLabelText}
+						cssClass={this.props.skipHeadingText && 'navigation-link--has-skip-heading'}
 					/>
 				</div>
 			);
@@ -79,29 +79,29 @@ class StepWrapper extends Component {
 	}
 
 	headerText() {
-		if ( this.props.positionInFlow === 0 ) {
-			if ( this.props.headerText !== undefined ) {
+		if (this.props.positionInFlow === 0) {
+			if (this.props.headerText !== undefined) {
 				return this.props.headerText;
 			}
 
-			return this.props.translate( "Let's get started" );
+			return this.props.translate("Let's get started");
 		}
 
-		if ( this.props.fallbackHeaderText !== undefined ) {
+		if (this.props.fallbackHeaderText !== undefined) {
 			return this.props.fallbackHeaderText;
 		}
 	}
 
 	subHeaderText() {
-		if ( this.props.positionInFlow === 0 ) {
-			if ( this.props.subHeaderText !== undefined ) {
+		if (this.props.positionInFlow === 0) {
+			if (this.props.subHeaderText !== undefined) {
 				return this.props.subHeaderText;
 			}
 
-			return this.props.translate( 'Welcome to the best place for your WordPress website.' );
+			return this.props.translate('Welcome to the best place for your WordPress website.');
 		}
 
-		if ( this.props.fallbackSubHeaderText !== undefined ) {
+		if (this.props.fallbackSubHeaderText !== undefined) {
 			return this.props.fallbackSubHeaderText;
 		}
 	}
@@ -117,42 +117,42 @@ class StepWrapper extends Component {
 			isWideLayout,
 			isTopButtons,
 		} = this.props;
-		const classes = classNames( 'step-wrapper', this.props.className, {
+		const classes = classNames('step-wrapper', this.props.className, {
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
-		} );
+		});
 
 		return (
 			<>
-				<div className={ classes }>
-					{ ! hideBack && this.renderBack() }
+				<div className={classes}>
+					{!hideBack && this.renderBack()}
 
-					{ ! hideFormattedHeader && (
+					{!hideFormattedHeader && (
 						<FormattedHeader
-							id={ 'step-header' }
-							headerText={ this.headerText() }
-							subHeaderText={ this.subHeaderText() }
+							id={'step-header'}
+							headerText={this.headerText()}
+							subHeaderText={this.subHeaderText()}
 						>
-							{ headerButton }
+							{headerButton}
 						</FormattedHeader>
-					) }
+					)}
 
-					{ ! hideSkip && isTopButtons && (
-						<div className="step-wrapper__buttons is-top-buttons">{ this.renderSkip() }</div>
-					) }
+					{!hideSkip && isTopButtons && (
+						<div className="step-wrapper__buttons is-top-buttons">{this.renderSkip()}</div>
+					)}
 
-					<div className="step-wrapper__content">{ stepContent }</div>
+					<div className="step-wrapper__content">{stepContent}</div>
 
-					{ ! hideSkip && ! isTopButtons && (
+					{!hideSkip && !isTopButtons && (
 						<div className="step-wrapper__buttons">
-							{ isLargeSkipLayout && <hr className="step-wrapper__skip-hr" /> }
-							{ this.renderSkip() }
+							{isLargeSkipLayout && <hr className="step-wrapper__skip-hr" />}
+							{this.renderSkip()}
 						</div>
-					) }
+					)}
 				</div>
 			</>
 		);
 	}
 }
 
-export default localize( StepWrapper );
+export default localize(StepWrapper);

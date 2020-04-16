@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const jetpackOnly = WrappedComponent => {
+const jetpackOnly = (WrappedComponent) => {
 	class JetpackOnlyWrapper extends Component {
 		componentDidMount() {
 			this.verifyJetpackSite();
@@ -27,35 +27,35 @@ const jetpackOnly = WrappedComponent => {
 		verifyJetpackSite() {
 			const { notJetpack, siteId, siteSlug } = this.props;
 
-			if ( notJetpack ) {
+			if (notJetpack) {
 				// Redirect to My Plan page if this is not a Jetpack site
-				page.redirect( `/plans/my-plan/${ siteSlug }` );
-			} else if ( ! siteId ) {
+				page.redirect(`/plans/my-plan/${siteSlug}`);
+			} else if (!siteId) {
 				// Redirect to /jetpack/connect if this is not a valid connected site
-				page.redirect( `/jetpack/connect` );
+				page.redirect(`/jetpack/connect`);
 			}
 		}
 
 		render() {
 			const { notJetpack, siteId } = this.props;
 
-			if ( notJetpack || ! siteId ) {
+			if (notJetpack || !siteId) {
 				return null;
 			}
 
-			return <WrappedComponent { ...this.props } />;
+			return <WrappedComponent {...this.props} />;
 		}
 	}
 
-	return connect( state => {
-		const siteId = getSelectedSiteId( state );
+	return connect((state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			notJetpack: siteId && ! isJetpackSite( state, siteId ),
+			notJetpack: siteId && !isJetpackSite(state, siteId),
 			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
+			siteSlug: getSelectedSiteSlug(state),
 		};
-	} )( JetpackOnlyWrapper );
+	})(JetpackOnlyWrapper);
 };
 
 export default jetpackOnly;

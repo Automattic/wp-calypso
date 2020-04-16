@@ -26,24 +26,24 @@ class FormButton extends React.Component {
 
 	getDefaultButtonAction = () => {
 		return this.props.isSubmitting
-			? this.props.translate( 'Saving…' )
-			: this.props.translate( 'Save Settings' );
+			? this.props.translate('Saving…')
+			: this.props.translate('Save Settings');
 	};
 
 	render() {
 		const { children, className, isPrimary, ...props } = this.props,
-			buttonClasses = classNames( className, 'form-button' );
+			buttonClasses = classNames(className, 'form-button');
 
 		return (
 			<Button
-				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
-				primary={ isPrimary }
-				className={ buttonClasses }
+				{...omit(props, ['isSubmitting', 'moment', 'numberFormat', 'translate'])}
+				primary={isPrimary}
+				className={buttonClasses}
 			>
-				{ Children.count( children ) ? children : this.getDefaultButtonAction() }
+				{Children.count(children) ? children : this.getDefaultButtonAction()}
 			</Button>
 		);
 	}
 }
 
-export default localize( FormButton );
+export default localize(FormButton);

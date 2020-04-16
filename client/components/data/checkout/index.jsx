@@ -11,7 +11,7 @@ import StoreConnection from 'components/data/store-connection';
 import CartStore from 'lib/cart/store';
 import TransactionStore from 'lib/transaction/store';
 
-const stores = [ TransactionStore, CartStore ];
+const stores = [TransactionStore, CartStore];
 
 function getStateFromStores() {
 	return {
@@ -23,8 +23,8 @@ function getStateFromStores() {
 class CheckoutData extends React.Component {
 	render() {
 		return (
-			<StoreConnection stores={ stores } getStateFromStores={ getStateFromStores }>
-				{ this.props.children }
+			<StoreConnection stores={stores} getStateFromStores={getStateFromStores}>
+				{this.props.children}
 			</StoreConnection>
 		);
 	}

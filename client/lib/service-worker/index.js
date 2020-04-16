@@ -1,6 +1,6 @@
-export function registerServerWorker( options = {} ) {
+export function registerServerWorker(options = {}) {
 	const path = options.path || '/service-worker.js';
-	return window.navigator.serviceWorker.register( path );
+	return window.navigator.serviceWorker.register(path);
 }
 
 export function isServiceWorkerSupported() {

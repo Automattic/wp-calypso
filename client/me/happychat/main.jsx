@@ -68,27 +68,27 @@ export class HappychatPage extends Component {
 			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
 				<HappychatConnection />
 				<Timeline
-					currentUserEmail={ currentUserEmail }
-					isCurrentUser={ isCurrentUser }
-					isExternalUrl={ isExternalUrl }
-					timeline={ timeline }
-					translate={ translate }
-					twemojiUrl={ twemojiUrl }
+					currentUserEmail={currentUserEmail}
+					isCurrentUser={isCurrentUser}
+					isExternalUrl={isExternalUrl}
+					timeline={timeline}
+					translate={translate}
+					twemojiUrl={twemojiUrl}
 				/>
 				<Notices
-					chatStatus={ chatStatus }
-					connectionStatus={ connectionStatus }
-					isServerReachable={ isServerReachable }
-					translate={ translate }
+					chatStatus={chatStatus}
+					connectionStatus={connectionStatus}
+					isServerReachable={isServerReachable}
+					translate={translate}
 				/>
 				<Composer
-					disabled={ disabled }
-					message={ message }
-					onSendMessage={ onSendMessage }
-					onSendNotTyping={ onSendNotTyping }
-					onSendTyping={ onSendTyping }
-					onSetCurrentMessage={ onSetCurrentMessage }
-					translate={ translate }
+					disabled={disabled}
+					message={message}
+					onSendMessage={onSendMessage}
+					onSendNotTyping={onSendNotTyping}
+					onSendTyping={onSendTyping}
+					onSetCurrentMessage={onSetCurrentMessage}
+					translate={translate}
 				/>
 			</div>
 		);
@@ -115,23 +115,23 @@ HappychatPage.propTypes = {
 	twemojiUrl: PropTypes.string,
 };
 
-const isMessageFromCurrentUser = currentUser => ( { user_id, source } ) => {
+const isMessageFromCurrentUser = (currentUser) => ({ user_id, source }) => {
 	return user_id.toString() === currentUser.ID.toString() && source === 'customer';
 };
 
-const mapState = state => {
-	const currentUser = getCurrentUser( state );
+const mapState = (state) => {
+	const currentUser = getCurrentUser(state);
 	return {
-		chatStatus: getHappychatChatStatus( state ),
-		connectionStatus: getHappychatConnectionStatus( state ),
+		chatStatus: getHappychatChatStatus(state),
+		connectionStatus: getHappychatConnectionStatus(state),
 		currentUserEmail: currentUser.email,
-		disabled: ! canUserSendMessages( state ),
-		isCurrentUser: isMessageFromCurrentUser( currentUser ), // see redux-no-bound-selectors eslint-rule
+		disabled: !canUserSendMessages(state),
+		isCurrentUser: isMessageFromCurrentUser(currentUser), // see redux-no-bound-selectors eslint-rule
 		isExternalUrl: isOutsideCalypso,
-		isServerReachable: isHappychatServerReachable( state ),
-		message: getCurrentMessage( state ),
-		timeline: getHappychatTimeline( state ),
-		twemojiUrl: config( 'twemoji_cdn_url' ),
+		isServerReachable: isHappychatServerReachable(state),
+		message: getCurrentMessage(state),
+		timeline: getHappychatTimeline(state),
+		twemojiUrl: config('twemoji_cdn_url'),
 	};
 };
 
@@ -144,4 +144,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect( mapState, mapDispatch )( localize( HappychatPage ) );
+export default connect(mapState, mapDispatch)(localize(HappychatPage));

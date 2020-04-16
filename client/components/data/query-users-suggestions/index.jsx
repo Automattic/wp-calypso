@@ -25,23 +25,23 @@ class QueryUsersSuggestions extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( props.isRequesting || ! props.siteId ) {
+	request(props) {
+		if (props.isRequesting || !props.siteId) {
 			return;
 		}
 
-		props.requestUserSuggestions( props.siteId );
+		props.requestUserSuggestions(props.siteId);
 	}
 
 	render() {
@@ -50,10 +50,10 @@ class QueryUsersSuggestions extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			isRequesting: isRequesting( state, ownProps.siteId ),
+			isRequesting: isRequesting(state, ownProps.siteId),
 		};
 	},
 	{ requestUserSuggestions }
-)( QueryUsersSuggestions );
+)(QueryUsersSuggestions);

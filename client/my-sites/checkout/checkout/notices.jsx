@@ -12,20 +12,20 @@ import i18n from 'i18n-calypso';
 import notices from 'notices';
 import ValidationErrorList from 'notices/validation-error-list';
 
-function getErrorFromApi( errorMessage ) {
-	if ( errorMessage ) {
-		const errorArray = errorMessage.split( /<a href="(.+)">(.+)<\/a>/ );
+function getErrorFromApi(errorMessage) {
+	if (errorMessage) {
+		const errorArray = errorMessage.split(/<a href="(.+)">(.+)<\/a>/);
 
-		if ( errorArray.length === 4 ) {
+		if (errorArray.length === 4) {
 			// This assumes we have only one link
-			const errorText1 = errorArray[ 0 ],
-				errorUrl = errorArray[ 1 ],
-				errorLinkText = errorArray[ 2 ],
-				errorText2 = errorArray[ 3 ];
+			const errorText1 = errorArray[0],
+				errorUrl = errorArray[1],
+				errorLinkText = errorArray[2],
+				errorText2 = errorArray[3];
 
 			return (
 				<span>
-					{ errorText1 } <a href={ errorUrl }>{ errorLinkText }</a> { errorText2 }
+					{errorText1} <a href={errorUrl}>{errorLinkText}</a> {errorText2}
 				</span>
 			);
 		}
@@ -33,18 +33,18 @@ function getErrorFromApi( errorMessage ) {
 		return errorMessage;
 	}
 
-	return i18n.translate( 'There was a problem completing the checkout. Please try again.' );
+	return i18n.translate('There was a problem completing the checkout. Please try again.');
 }
 
-export function displayError( error ) {
-	const message = get( error, 'message' );
-	if ( typeof message === 'object' ) {
-		notices.error( <ValidationErrorList messages={ flatten( values( message ) ) } /> );
+export function displayError(error) {
+	const message = get(error, 'message');
+	if (typeof message === 'object') {
+		notices.error(<ValidationErrorList messages={flatten(values(message))} />);
 	} else {
-		notices.error( getErrorFromApi( message ) );
+		notices.error(getErrorFromApi(message));
 	}
 }
 
 export function clear() {
-	notices.clearNotices( 'notices' );
+	notices.clearNotices('notices');
 }

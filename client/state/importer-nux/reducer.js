@@ -12,10 +12,10 @@ import {
 
 import { registerActionForward } from 'lib/redux-bridge';
 
-registerActionForward( IMPORTS_IMPORT_CANCEL );
+registerActionForward(IMPORTS_IMPORT_CANCEL);
 
-export const urlInputValue = withoutPersistence( ( state = '', action ) => {
-	switch ( action.type ) {
+export const urlInputValue = withoutPersistence((state = '', action) => {
+	switch (action.type) {
 		case IMPORTER_NUX_URL_INPUT_SET: {
 			const { value = '' } = action;
 			return value;
@@ -25,10 +25,10 @@ export const urlInputValue = withoutPersistence( ( state = '', action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const isFromSignupFlow = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isFromSignupFlow = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case IMPORTER_NUX_FROM_SIGNUP_SET:
 			return true;
 		case IMPORTER_NUX_FROM_SIGNUP_CLEAR:
@@ -36,10 +36,10 @@ export const isFromSignupFlow = withoutPersistence( ( state = false, action ) =>
 	}
 
 	return state;
-} );
+});
 
-export const siteDetails = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const siteDetails = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case IMPORTER_NUX_SITE_DETAILS_SET: {
 			const { siteEngine, siteFavicon, siteTitle, siteUrl, importerTypes } = action;
 
@@ -56,10 +56,10 @@ export const siteDetails = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	isFromSignupFlow,
 	siteDetails,
 	urlInputValue,
-} );
+});

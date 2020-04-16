@@ -59,11 +59,11 @@ export class LanguagePickerModal extends PureComponent {
 		countryCode: '',
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
-			filter: getLanguageGroupByCountryCode( this.props.countryCode ),
+			filter: getLanguageGroupByCountryCode(this.props.countryCode),
 			showingDefaultFilter: true,
 			search: false,
 			isSearchOpen: false,
@@ -76,55 +76,55 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	componentDidMount() {
-		window.addEventListener( 'keydown', this.handleKeyDown );
+		window.addEventListener('keydown', this.handleKeyDown);
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'keydown', this.handleKeyDown );
+		window.removeEventListener('keydown', this.handleKeyDown);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selected !== this.state.selectedLanguageSlug ) {
-			this.setState( {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.selected !== this.state.selectedLanguageSlug) {
+			this.setState({
 				selectedLanguageSlug: nextProps.selected,
-			} );
+			});
 		}
 
-		if ( nextProps.languages !== this.props.languages ) {
-			this.setState( {
+		if (nextProps.languages !== this.props.languages) {
+			this.setState({
 				suggestedLanguages: this.getSuggestedLanguages(),
-			} );
+			});
 		}
 
-		if ( this.state.showingDefaultFilter && nextProps.countryCode !== this.props.countryCode ) {
-			this.setState( {
-				filter: getLanguageGroupByCountryCode( nextProps.countryCode ),
-			} );
+		if (this.state.showingDefaultFilter && nextProps.countryCode !== this.props.countryCode) {
+			this.setState({
+				filter: getLanguageGroupByCountryCode(nextProps.countryCode),
+			});
 		}
 	}
 
-	getLocalizedLanguageTitle( languageSlug ) {
+	getLocalizedLanguageTitle(languageSlug) {
 		const { localizedLanguageNames } = this.props;
-		return localizedLanguageNames?.[ languageSlug ]?.localized ?? languageSlug;
+		return localizedLanguageNames?.[languageSlug]?.localized ?? languageSlug;
 	}
 
-	getEnglishLanguageTitle( languageSlug ) {
+	getEnglishLanguageTitle(languageSlug) {
 		const { localizedLanguageNames } = this.props;
-		return localizedLanguageNames?.[ languageSlug ]?.en ?? languageSlug;
+		return localizedLanguageNames?.[languageSlug]?.en ?? languageSlug;
 	}
 
-	getFilterLabel( filter ) {
+	getFilterLabel(filter) {
 		const { translate } = this.props;
 
-		const languageGroup = getLanguageGroupById( filter );
-		if ( ! languageGroup ) {
+		const languageGroup = getLanguageGroupById(filter);
+		if (!languageGroup) {
 			return undefined;
 		}
 		// `languageGroup.name` is a lambda that takes the `translate` function
-		return languageGroup.name( translate );
+		return languageGroup.name(translate);
 	}
 
-	getLanguageSearchableFields( language ) {
+	getLanguageSearchableFields(language) {
 		// We are getting the fields that will be used for language searching.
 		// For example, German will return:
 		// 1. language autonym (e.g., Deutsch)
@@ -132,10 +132,10 @@ export class LanguagePickerModal extends PureComponent {
 		// 3. localized name (e.g., Tedesco) or
 		// 4. English name (German).
 		return [
-			deburr( language.name ).toLowerCase(),
+			deburr(language.name).toLowerCase(),
 			language.langSlug.toLowerCase(),
-			deburr( this.getLocalizedLanguageTitle( language.langSlug ) ).toLowerCase(),
-			this.getEnglishLanguageTitle( language.langSlug ).toLowerCase(),
+			deburr(this.getLocalizedLanguageTitle(language.langSlug)).toLowerCase(),
+			this.getEnglishLanguageTitle(language.langSlug).toLowerCase(),
 		];
 	}
 
@@ -143,26 +143,26 @@ export class LanguagePickerModal extends PureComponent {
 		const { languages } = this.props;
 		const { search, filter } = this.state;
 
-		if ( search ) {
-			const searchString = deburr( search ).toLowerCase();
-			return languages.filter( language => {
-				const names = this.getLanguageSearchableFields( language );
-				return some( names, name => includes( name, searchString ) );
-			} );
+		if (search) {
+			const searchString = deburr(search).toLowerCase();
+			return languages.filter((language) => {
+				const names = this.getLanguageSearchableFields(language);
+				return some(names, (name) => includes(name, searchString));
+			});
 		}
 
-		if ( filter ) {
-			switch ( filter ) {
+		if (filter) {
+			switch (filter) {
 				case 'popular':
 					return languages
-						.filter( language => language.popular )
-						.sort( ( a, b ) => a.popular - b.popular );
+						.filter((language) => language.popular)
+						.sort((a, b) => a.popular - b.popular);
 				default: {
-					const languageGroup = getLanguageGroupById( filter );
+					const languageGroup = getLanguageGroupById(filter);
 					const subTerritories = languageGroup ? languageGroup.subTerritories : null;
 					return languages
-						.filter( language => some( language.territories, t => includes( subTerritories, t ) ) )
-						.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+						.filter((language) => some(language.territories, (t) => includes(subTerritories, t)))
+						.sort((a, b) => a.name.localeCompare(b.name));
 				}
 			}
 		}
@@ -172,29 +172,29 @@ export class LanguagePickerModal extends PureComponent {
 	}
 
 	getSuggestedLanguages() {
-		if ( ! ( typeof window.navigator === 'object' && 'languages' in window.navigator ) ) {
+		if (!(typeof window.navigator === 'object' && 'languages' in window.navigator)) {
 			return null;
 		}
 
 		const { languages, currentUserLocale } = this.props;
 		const suggestedLanguages = [];
 
-		for ( const langSlug of window.navigator.languages ) {
+		for (const langSlug of window.navigator.languages) {
 			// Find the language first by its full code (e.g. en-US), and when it fails
 			// try only the base code (en). Don't add duplicates.
 			const lcLangSlug = langSlug.toLowerCase();
-			let language = find( languages, lang => lang.langSlug === lcLangSlug );
+			let language = find(languages, (lang) => lang.langSlug === lcLangSlug);
 
-			if ( ! language ) {
-				language = find( languages, lang => startsWith( lcLangSlug, lang.langSlug + '-' ) );
+			if (!language) {
+				language = find(languages, (lang) => startsWith(lcLangSlug, lang.langSlug + '-'));
 			}
 
 			if (
 				language &&
 				currentUserLocale !== language.langSlug &&
-				! includes( suggestedLanguages, language )
+				!includes(suggestedLanguages, language)
 			) {
-				suggestedLanguages.push( language );
+				suggestedLanguages.push(language);
 			}
 		}
 
@@ -205,163 +205,163 @@ export class LanguagePickerModal extends PureComponent {
 		const wrapper = this.languagesList.current;
 		const wrapperWidth = wrapper.getBoundingClientRect().width;
 		const wrapperChildWidth =
-			wrapper.children.length > 0 ? wrapper.children[ 0 ].getBoundingClientRect().width : 0;
+			wrapper.children.length > 0 ? wrapper.children[0].getBoundingClientRect().width : 0;
 
-		if ( wrapperChildWidth === 0 ) {
+		if (wrapperChildWidth === 0) {
 			return 0;
 		}
 
-		return Math.floor( wrapperWidth / wrapperChildWidth );
+		return Math.floor(wrapperWidth / wrapperChildWidth);
 	}
 
-	selectLanguageFromSearch( search ) {
+	selectLanguageFromSearch(search) {
 		const filteredLanguages = this.getFilteredLanguages();
-		const exactMatch = filteredLanguages.find( ( { langSlug } ) => langSlug === search );
+		const exactMatch = filteredLanguages.find(({ langSlug }) => langSlug === search);
 
-		if ( exactMatch ) {
-			this.setState( { selectedLanguageSlug: exactMatch.langSlug } );
+		if (exactMatch) {
+			this.setState({ selectedLanguageSlug: exactMatch.langSlug });
 			return;
 		}
 
-		const closeMatch = filteredLanguages.reduce( ( currentCloseMatch, language ) => {
+		const closeMatch = filteredLanguages.reduce((currentCloseMatch, language) => {
 			// If current match is already matching the beginning of a language name,
 			// we can skip next steps of matching
-			if ( currentCloseMatch && currentCloseMatch.matchIndex === 0 ) {
+			if (currentCloseMatch && currentCloseMatch.matchIndex === 0) {
 				return currentCloseMatch;
 			}
 
-			const languageNames = this.getLanguageSearchableFields( language );
-			const searchString = deburr( search ).toLowerCase();
-			const matchIndex = languageNames.reduce( ( currentMatchIndex, languageName ) => {
-				const languageNameMatchIndex = languageName.indexOf( searchString );
+			const languageNames = this.getLanguageSearchableFields(language);
+			const searchString = deburr(search).toLowerCase();
+			const matchIndex = languageNames.reduce((currentMatchIndex, languageName) => {
+				const languageNameMatchIndex = languageName.indexOf(searchString);
 				return languageNameMatchIndex > -1
-					? Math.max( currentMatchIndex, languageNameMatchIndex )
+					? Math.max(currentMatchIndex, languageNameMatchIndex)
 					: currentMatchIndex;
-			}, -1 );
+			}, -1);
 
-			if ( matchIndex === -1 ) {
+			if (matchIndex === -1) {
 				return currentCloseMatch;
 			}
 
-			if ( ! currentCloseMatch || currentCloseMatch.matchIndex > matchIndex ) {
+			if (!currentCloseMatch || currentCloseMatch.matchIndex > matchIndex) {
 				return { language, matchIndex };
 			}
 
 			return currentCloseMatch;
-		}, null );
+		}, null);
 
-		if ( closeMatch ) {
-			this.setState( { selectedLanguageSlug: closeMatch.language.langSlug } );
+		if (closeMatch) {
+			this.setState({ selectedLanguageSlug: closeMatch.language.langSlug });
 		}
 	}
 
-	navigateByArrowKey( arrowKey ) {
+	navigateByArrowKey(arrowKey) {
 		const { selectedLanguageSlug } = this.state;
 		const filteredLanguages = this.getFilteredLanguages();
 		const selectedIndex = filteredLanguages.findIndex(
-			( { langSlug } ) => langSlug === selectedLanguageSlug
+			({ langSlug }) => langSlug === selectedLanguageSlug
 		);
 
 		let navigateStep = 0;
 
-		if ( arrowKey === 'ArrowUp' ) {
+		if (arrowKey === 'ArrowUp') {
 			navigateStep = -this.getLanguagesListColumnsCount();
-		} else if ( arrowKey === 'ArrowDown' ) {
+		} else if (arrowKey === 'ArrowDown') {
 			// If selected language is not included in the filtered languages list
 			// arrow down key should select first item in the first column
 			navigateStep = selectedIndex === -1 ? 1 : this.getLanguagesListColumnsCount();
-		} else if ( arrowKey === 'ArrowLeft' ) {
+		} else if (arrowKey === 'ArrowLeft') {
 			navigateStep = -1;
-		} else if ( arrowKey === 'ArrowRight' ) {
+		} else if (arrowKey === 'ArrowRight') {
 			navigateStep = 1;
 		}
 
-		if ( navigateStep === 0 ) {
+		if (navigateStep === 0) {
 			return;
 		}
 
 		const nextIndex = selectedIndex + navigateStep;
 
-		if ( nextIndex < 0 || nextIndex >= filteredLanguages.length ) {
+		if (nextIndex < 0 || nextIndex >= filteredLanguages.length) {
 			return;
 		}
 
-		this.setState( { selectedLanguageSlug: filteredLanguages[ nextIndex ].langSlug }, () => {
-			if ( this.selectedLanguageItem.current ) {
+		this.setState({ selectedLanguageSlug: filteredLanguages[nextIndex].langSlug }, () => {
+			if (this.selectedLanguageItem.current) {
 				this.selectedLanguageItem.current.focus();
 			}
-		} );
+		});
 	}
 
-	handleKeyDown = event => {
+	handleKeyDown = (event) => {
 		const { isSearchOpen } = this.state;
 
 		// A key press of a printable character should only have a single character
 		const isPrintableCharacter = event.key && event.key.length === 1;
 
 		// Prevent search expand with space key as it's used for language select
-		if ( event.key === ' ' && ! isSearchOpen ) {
+		if (event.key === ' ' && !isSearchOpen) {
 			return;
 		}
 
 		// Handle enter key language selection
-		if ( event.key === 'Enter' ) {
+		if (event.key === 'Enter') {
 			event.preventDefault();
 			this.handleSelectLanguage();
 			return;
 		}
 
 		// Handle character input
-		if ( isPrintableCharacter && ! isSearchOpen ) {
+		if (isPrintableCharacter && !isSearchOpen) {
 			event.preventDefault();
 
-			this.handleSearch( event.key );
+			this.handleSearch(event.key);
 			this.handleSearchOpen();
 
 			return;
 		}
 
 		// Handle arrow keys navigation
-		const arrowKeys = [ 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight' ];
+		const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
 
-		if ( arrowKeys.includes( event.key ) ) {
+		if (arrowKeys.includes(event.key)) {
 			event.preventDefault();
-			this.navigateByArrowKey( event.key );
+			this.navigateByArrowKey(event.key);
 		}
 	};
 
-	handleSearch = search => {
-		this.setState( { search }, () => {
-			if ( search ) {
-				this.selectLanguageFromSearch( search );
+	handleSearch = (search) => {
+		this.setState({ search }, () => {
+			if (search) {
+				this.selectLanguageFromSearch(search);
 			}
-		} );
+		});
 	};
 
 	handleSearchOpen = () => {
-		this.setState( { isSearchOpen: true } );
+		this.setState({ isSearchOpen: true });
 	};
 
 	handleSearchClose = () => {
-		this.setState( { isSearchOpen: false } );
+		this.setState({ isSearchOpen: false });
 	};
 
-	handleLanguageItemClick = ( selectedLanguageSlug, event ) => {
+	handleLanguageItemClick = (selectedLanguageSlug, event) => {
 		event.preventDefault();
-		this.setState( { selectedLanguageSlug } );
+		this.setState({ selectedLanguageSlug });
 	};
 
-	handleLanguageItemKeyPress = ( selectedLanguageSlug, event ) => {
+	handleLanguageItemKeyPress = (selectedLanguageSlug, event) => {
 		event.preventDefault();
-		if ( event.key === 'Enter' || event.key === ' ' ) {
+		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
-			this.setState( { selectedLanguageSlug } );
+			this.setState({ selectedLanguageSlug });
 		}
 	};
 
 	handleSelectLanguage = () => {
 		const langSlug = this.state.selectedLanguageSlug;
-		this.props.onSelected( langSlug );
+		this.props.onSelected(langSlug);
 		this.handleClose();
 	};
 
@@ -370,53 +370,53 @@ export class LanguagePickerModal extends PureComponent {
 	};
 
 	renderTabItems() {
-		return map( LANGUAGE_GROUPS, languageGroup => {
+		return map(LANGUAGE_GROUPS, (languageGroup) => {
 			const filter = languageGroup.id;
 			const selected = this.state.filter === filter;
 
 			const onClick = () =>
-				this.setState( {
+				this.setState({
 					filter,
 					showingDefaultFilter: filter === DEFAULT_LANGUAGE_GROUP,
-				} );
+				});
 
 			return (
-				<SectionNavTabItem key={ filter } selected={ selected } onClick={ onClick }>
-					{ this.getFilterLabel( filter ) }
+				<SectionNavTabItem key={filter} selected={selected} onClick={onClick}>
+					{this.getFilterLabel(filter)}
 				</SectionNavTabItem>
 			);
-		} );
+		});
 	}
 
 	renderLanguageList() {
 		const languages = this.getFilteredLanguages();
 
 		return (
-			<div className="language-picker__modal-list" ref={ this.languagesList }>
-				{ map( languages, this.renderLanguageItem ) }
+			<div className="language-picker__modal-list" ref={this.languagesList}>
+				{map(languages, this.renderLanguageItem)}
 			</div>
 		);
 	}
 
-	renderLanguageItem = language => {
+	renderLanguageItem = (language) => {
 		const isSelected = language.langSlug === this.state.selectedLanguageSlug;
-		const classes = classNames( 'language-picker__modal-text', {
+		const classes = classNames('language-picker__modal-text', {
 			'is-selected': isSelected,
-		} );
-		const titleText = capitalize( this.getLocalizedLanguageTitle( language.langSlug ) );
+		});
+		const titleText = capitalize(this.getLocalizedLanguageTitle(language.langSlug));
 		return (
 			<div
-				ref={ isSelected && this.selectedLanguageItem }
+				ref={isSelected && this.selectedLanguageItem}
 				className="language-picker__modal-item"
-				key={ language.langSlug }
-				onClick={ partial( this.handleLanguageItemClick, language.langSlug ) }
-				title={ titleText }
+				key={language.langSlug}
+				onClick={partial(this.handleLanguageItemClick, language.langSlug)}
+				title={titleText}
 				tabIndex="0"
 				role="button"
-				onKeyPress={ partial( this.handleLanguageItemKeyPress, language.langSlug ) }
+				onKeyPress={partial(this.handleLanguageItemKeyPress, language.langSlug)}
 			>
-				<span className={ classes } lang={ language.langSlug }>
-					{ language.name }
+				<span className={classes} lang={language.langSlug}>
+					{language.name}
 				</span>
 			</div>
 		);
@@ -425,7 +425,7 @@ export class LanguagePickerModal extends PureComponent {
 	renderSuggestedLanguages() {
 		const { suggestedLanguages } = this.state;
 
-		if ( isEmpty( suggestedLanguages ) ) {
+		if (isEmpty(suggestedLanguages)) {
 			return null;
 		}
 
@@ -433,11 +433,11 @@ export class LanguagePickerModal extends PureComponent {
 			<div className="language-picker__modal-suggested">
 				<div className="language-picker__modal-suggested-inner">
 					<div className="language-picker__modal-suggested-label">
-						{ this.props.translate( 'Suggested languages:' ) }
+						{this.props.translate('Suggested languages:')}
 					</div>
 					<div className="language-picker__modal-suggested-list">
 						<div className="language-picker__modal-suggested-list-inner">
-							{ map( suggestedLanguages, this.renderLanguageItem ) }
+							{map(suggestedLanguages, this.renderLanguageItem)}
 						</div>
 					</div>
 				</div>
@@ -449,18 +449,18 @@ export class LanguagePickerModal extends PureComponent {
 		const { isVisible, translate } = this.props;
 		const { filter, search, isSearchOpen } = this.state;
 
-		if ( ! isVisible ) {
+		if (!isVisible) {
 			return null;
 		}
 
 		const buttons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 			},
 			{
 				action: 'confirm',
-				label: translate( 'Select Language' ),
+				label: translate('Select Language'),
 				isPrimary: true,
 				onClick: this.handleSelectLanguage,
 			},
@@ -469,32 +469,32 @@ export class LanguagePickerModal extends PureComponent {
 		return (
 			<Dialog
 				isVisible
-				buttons={ buttons }
-				onClose={ this.handleClose }
+				buttons={buttons}
+				onClose={this.handleClose}
 				additionalClassNames="language-picker__modal"
 			>
 				<QueryLanguageNames />
-				<SectionNav selectedText={ this.getFilterLabel( filter ) }>
-					<SectionNavTabs>{ this.renderTabItems() }</SectionNavTabs>
+				<SectionNav selectedText={this.getFilterLabel(filter)}>
+					<SectionNavTabs>{this.renderTabItems()}</SectionNavTabs>
 					<Search
 						pinned
 						fitsContainer
-						value={ search || '' }
-						isOpen={ isSearchOpen }
-						onSearch={ this.handleSearch }
-						onSearchOpen={ this.handleSearchOpen }
-						onSearchClose={ this.handleSearchClose }
-						placeholder={ translate( 'Search languages…' ) }
+						value={search || ''}
+						isOpen={isSearchOpen}
+						onSearch={this.handleSearch}
+						onSearchOpen={this.handleSearchOpen}
+						onSearchClose={this.handleSearchClose}
+						placeholder={translate('Search languages…')}
 					/>
 				</SectionNav>
-				{ this.renderLanguageList() }
-				{ this.renderSuggestedLanguages() }
+				{this.renderLanguageList()}
+				{this.renderSuggestedLanguages()}
 			</Dialog>
 		);
 	}
 }
 
-export default connect( state => ( {
-	localizedLanguageNames: getLocalizedLanguageNames( state ),
-	currentUserLocale: getCurrentUserLocale( state ),
-} ) )( localize( LanguagePickerModal ) );
+export default connect((state) => ({
+	localizedLanguageNames: getLocalizedLanguageNames(state),
+	currentUserLocale: getCurrentUserLocale(state),
+}))(localize(LanguagePickerModal));

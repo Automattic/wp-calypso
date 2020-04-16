@@ -3,16 +3,16 @@
  */
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 
-describe( 'isSiteWpcomAtomic()', () => {
-	test( 'should default to false', () => {
-		expect( isSiteWpcomAtomic( {}, 123 ) ).toBe( false );
-	} );
+describe('isSiteWpcomAtomic()', () => {
+	test('should default to false', () => {
+		expect(isSiteWpcomAtomic({}, 123)).toBe(false);
+	});
 
-	test( 'should return the correct wpcom atomic field', () => {
+	test('should return the correct wpcom atomic field', () => {
 		const state = {
 			sites: {
 				items: {
-					[ 123 ]: {
+					[123]: {
 						options: {
 							is_wpcom_atomic: true,
 						},
@@ -21,6 +21,6 @@ describe( 'isSiteWpcomAtomic()', () => {
 			},
 		};
 
-		expect( isSiteWpcomAtomic( state, 123 ) ).toBe( true );
-	} );
-} );
+		expect(isSiteWpcomAtomic(state, 123)).toBe(true);
+	});
+});

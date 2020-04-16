@@ -21,12 +21,12 @@ import DataSource from './data-source';
 // These source supply very large images, and there are instances such as
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
-const largeImageSources = [ 'pexels', 'google_photos' ];
+const largeImageSources = ['pexels', 'google_photos'];
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
 		basePath: PropTypes.string,
-		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
+		enabledFilters: PropTypes.arrayOf(PropTypes.string),
 		filter: PropTypes.string,
 		filterRequiresUpgrade: PropTypes.bool,
 		search: PropTypes.string,
@@ -38,7 +38,7 @@ export class MediaLibraryFilterBar extends Component {
 		post: PropTypes.bool,
 		isConnected: PropTypes.bool,
 		disableLargeImageSources: PropTypes.bool,
-		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
+		disabledDataSources: PropTypes.arrayOf(PropTypes.string),
 	};
 
 	static defaultProps = {
@@ -58,89 +58,89 @@ export class MediaLibraryFilterBar extends Component {
 	getSearchPlaceholderText() {
 		const { filter, source, translate } = this.props;
 
-		if ( 'pexels' === source ) {
-			return translate( 'Search for free photos…' );
+		if ('pexels' === source) {
+			return translate('Search for free photos…');
 		}
 
-		switch ( filter ) {
+		switch (filter) {
 			case 'this-post':
-				return translate( 'Search media uploaded to this post…' );
+				return translate('Search media uploaded to this post…');
 			case 'images':
-				return translate( 'Search images…' );
+				return translate('Search images…');
 			case 'audio':
-				return translate( 'Search audio files…' );
+				return translate('Search audio files…');
 			case 'videos':
-				return translate( 'Search videos…' );
+				return translate('Search videos…');
 			case 'documents':
-				return translate( 'Search documents…' );
+				return translate('Search documents…');
 			default:
-				return translate( 'Search all media…' );
+				return translate('Search all media…');
 		}
 	}
 
-	getFilterLabel( filter ) {
+	getFilterLabel(filter) {
 		const { translate } = this.props;
 
-		switch ( filter ) {
+		switch (filter) {
 			case 'this-post':
-				return translate( 'This Post', { comment: 'Filter label for media list' } );
+				return translate('This Post', { comment: 'Filter label for media list' });
 			case 'images':
-				return translate( 'Images', { comment: 'Filter label for media list' } );
+				return translate('Images', { comment: 'Filter label for media list' });
 			case 'audio':
-				return translate( 'Audio', { comment: 'Filter label for media list' } );
+				return translate('Audio', { comment: 'Filter label for media list' });
 			case 'videos':
-				return translate( 'Videos', { comment: 'Filter label for media list' } );
+				return translate('Videos', { comment: 'Filter label for media list' });
 			case 'documents':
-				return translate( 'Documents', { comment: 'Filter label for media list' } );
+				return translate('Documents', { comment: 'Filter label for media list' });
 			default:
-				return translate( 'All', { comment: 'Filter label for media list' } );
+				return translate('All', { comment: 'Filter label for media list' });
 		}
 	}
 
-	isFilterDisabled( filter ) {
+	isFilterDisabled(filter) {
 		const { enabledFilters } = this.props;
-		return enabledFilters && ( ! filter.length || ! includes( enabledFilters, filter ) );
+		return enabledFilters && (!filter.length || !includes(enabledFilters, filter));
 	}
 
-	changeFilter = filter => () => {
-		this.props.onFilterChange( filter );
+	changeFilter = (filter) => () => {
+		this.props.onFilterChange(filter);
 	};
 
-	getFiltersForSource( source ) {
-		if ( source === 'pexels' ) {
+	getFiltersForSource(source) {
+		if (source === 'pexels') {
 			return [];
 		}
 
-		if ( source === 'google_photos' ) {
-			return [ '', 'images', 'videos' ];
+		if (source === 'google_photos') {
+			return ['', 'images', 'videos'];
 		}
 
-		return [ '', 'this-post', 'images', 'documents', 'videos', 'audio' ];
+		return ['', 'this-post', 'images', 'documents', 'videos', 'audio'];
 	}
 
 	renderTabItems() {
-		const tabs = this.getFiltersForSource( this.props.source );
+		const tabs = this.getFiltersForSource(this.props.source);
 
-		if ( ! this.props.post ) {
-			pull( tabs, 'this-post' );
+		if (!this.props.post) {
+			pull(tabs, 'this-post');
 		}
 
-		if ( tabs.length === 0 ) {
+		if (tabs.length === 0) {
 			return null;
 		}
 
 		return (
 			<SectionNavTabs>
-				{ tabs.map( filter => (
+				{tabs.map((filter) => (
 					<SectionNavTabItem
-						key={ 'filter-tab-' + filter }
-						selected={ this.props.filter === filter }
-						onClick={ this.changeFilter( filter ) }
-						disabled={ this.isFilterDisabled( filter ) }
+						key={'filter-tab-' + filter}
+						selected={this.props.filter === filter}
+						onClick={this.changeFilter(filter)}
+						disabled={this.isFilterDisabled(filter)}
 					>
-						{ this.getFilterLabel( filter ) }
+						{this.getFilterLabel(filter)}
 					</SectionNavTabItem>
-				) ) }
+				))}
 			</SectionNavTabs>
 		);
 	}
@@ -148,11 +148,11 @@ export class MediaLibraryFilterBar extends Component {
 	renderSearchSection() {
 		const { source, onSearch, search, filterRequiresUpgrade, isConnected } = this.props;
 
-		if ( filterRequiresUpgrade || ! isConnected ) {
+		if (filterRequiresUpgrade || !isConnected) {
 			return null;
 		}
 
-		if ( source === 'google_photos' ) {
+		if (source === 'google_photos') {
 			return null;
 		}
 
@@ -161,60 +161,60 @@ export class MediaLibraryFilterBar extends Component {
 		// Set the 'key' value so if the source is changed the component is refreshed, forcing it to clear the existing state
 		return (
 			<Search
-				key={ source }
+				key={source}
 				analyticsGroup="Media"
-				pinned={ isPinned }
+				pinned={isPinned}
 				fitsContainer
-				onSearch={ onSearch }
-				initialValue={ search }
-				placeholder={ this.getSearchPlaceholderText() }
-				delaySearch={ true }
+				onSearch={onSearch}
+				initialValue={search}
+				placeholder={this.getSearchPlaceholderText()}
+				delaySearch={true}
 			/>
 		);
 	}
 
 	renderPlanStorage() {
 		//hide the plan storage when viewing external sources
-		if ( this.props.source ) {
+		if (this.props.source) {
 			return null;
 		}
 
 		const eventName = 'calypso_upgrade_nudge_impression';
 		const eventProperties = { cta_name: 'plan-media-storage' };
 		return (
-			<PlanStorage siteId={ this.props.site.ID }>
-				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+			<PlanStorage siteId={this.props.site.ID}>
+				<TrackComponentView eventName={eventName} eventProperties={eventProperties} />
 			</PlanStorage>
 		);
 	}
 
 	render() {
 		const disabledSources = this.props.disableLargeImageSources
-			? union( this.props.disabledDataSources, largeImageSources )
+			? union(this.props.disabledDataSources, largeImageSources)
 			: this.props.disabledDataSources;
 
 		// Dropdown is disabled when viewing any external data source
 		return (
 			<div className="media-library__filter-bar">
 				<DataSource
-					source={ this.props.source }
-					onSourceChange={ this.props.onSourceChange }
-					disabledSources={ disabledSources }
+					source={this.props.source}
+					onSourceChange={this.props.onSourceChange}
+					disabledSources={disabledSources}
 				/>
 
 				<SectionNav
-					selectedText={ this.getFilterLabel( this.props.filter ) }
-					hasSearch={ true }
-					allowDropdown={ ! this.props.source }
+					selectedText={this.getFilterLabel(this.props.filter)}
+					hasSearch={true}
+					allowDropdown={!this.props.source}
 				>
-					{ this.renderTabItems() }
-					{ this.renderSearchSection() }
+					{this.renderTabItems()}
+					{this.renderSearchSection()}
 				</SectionNav>
 
-				{ this.renderPlanStorage() }
+				{this.renderPlanStorage()}
 			</div>
 		);
 	}
 }
 
-export default localize( MediaLibraryFilterBar );
+export default localize(MediaLibraryFilterBar);

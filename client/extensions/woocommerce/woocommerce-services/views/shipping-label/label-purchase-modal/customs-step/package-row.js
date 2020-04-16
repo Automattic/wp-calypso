@@ -31,7 +31,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import ExternalLink from 'components/external-link';
 
-const PackageRow = props => {
+const PackageRow = (props) => {
 	const {
 		siteId,
 		orderId,
@@ -46,100 +46,100 @@ const PackageRow = props => {
 		itn,
 		items,
 	} = props;
-	const abandonHandler = () => props.setAbandonOnNonDelivery( ! abandonOnNonDelivery );
+	const abandonHandler = () => props.setAbandonOnNonDelivery(!abandonOnNonDelivery);
 
 	return (
 		<div className="customs-step__package">
 			<FormLabel
-				htmlFor={ packageId + '_abandonOnNonDelivery' }
+				htmlFor={packageId + '_abandonOnNonDelivery'}
 				className="customs-step__abandon-on-non-delivery"
 			>
 				<Checkbox
-					id={ packageId + '_abandonOnNonDelivery' }
-					checked={ ! abandonOnNonDelivery }
-					onChange={ abandonHandler }
+					id={packageId + '_abandonOnNonDelivery'}
+					checked={!abandonOnNonDelivery}
+					onChange={abandonHandler}
 				/>
-				<span>{ translate( 'Return to sender if package is unable to be delivered' ) }</span>
+				<span>{translate('Return to sender if package is unable to be delivered')}</span>
 			</FormLabel>
 
 			<div className="customs-step__restrictions-row">
 				<div className="customs-step__contents-type">
 					<Dropdown
-						id={ packageId + '_contentsType' }
-						title={ translate( 'Contents type' ) }
-						value={ contentsType || 'merchandise' }
-						updateValue={ props.setContentsType }
-						valuesMap={ {
-							merchandise: translate( 'Merchandise' ),
-							documents: translate( 'Documents' ),
-							gift: translate( 'Gift' ),
-							sample: translate( 'Sample' ),
-							other: translate( 'Other…' ),
-						} }
+						id={packageId + '_contentsType'}
+						title={translate('Contents type')}
+						value={contentsType || 'merchandise'}
+						updateValue={props.setContentsType}
+						valuesMap={{
+							merchandise: translate('Merchandise'),
+							documents: translate('Documents'),
+							gift: translate('Gift'),
+							sample: translate('Sample'),
+							other: translate('Other…'),
+						}}
 					/>
-					{ 'other' === contentsType && (
+					{'other' === contentsType && (
 						<TextField
-							id={ packageId + '_contentsExplanation' }
-							title={ translate( 'Details' ) }
-							value={ contentsExplanation || '' }
-							updateValue={ props.setContentsExplanation }
-							error={ errors.contentsExplanation }
+							id={packageId + '_contentsExplanation'}
+							title={translate('Details')}
+							value={contentsExplanation || ''}
+							updateValue={props.setContentsExplanation}
+							error={errors.contentsExplanation}
 						/>
-					) }
+					)}
 				</div>
 
 				<div className="customs-step__restriction-type">
 					<Dropdown
-						id={ packageId + '_restrictionType' }
-						title={ translate( 'Restriction type' ) }
-						value={ restrictionType || 'none' }
-						updateValue={ props.setRestrictionType }
-						valuesMap={ {
-							none: translate( 'None' ),
-							quarantine: translate( 'Quarantine' ),
-							sanitary_phytosanitary_inspection: translate( 'Sanitary / Phytosanitary inspection' ),
-							other: translate( 'Other…' ),
-						} }
+						id={packageId + '_restrictionType'}
+						title={translate('Restriction type')}
+						value={restrictionType || 'none'}
+						updateValue={props.setRestrictionType}
+						valuesMap={{
+							none: translate('None'),
+							quarantine: translate('Quarantine'),
+							sanitary_phytosanitary_inspection: translate('Sanitary / Phytosanitary inspection'),
+							other: translate('Other…'),
+						}}
 					/>
-					{ 'other' === restrictionType && (
+					{'other' === restrictionType && (
 						<TextField
-							id={ packageId + '_restrictionComments' }
-							title={ translate( 'Details' ) }
-							value={ restrictionComments || '' }
-							updateValue={ props.setRestrictionExplanation }
-							error={ errors.restrictionComments }
+							id={packageId + '_restrictionComments'}
+							title={translate('Details')}
+							value={restrictionComments || ''}
+							updateValue={props.setRestrictionExplanation}
+							error={errors.restrictionComments}
 						/>
-					) }
+					)}
 				</div>
 			</div>
 
 			<TextField
-				id={ packageId + '_itn' }
+				id={packageId + '_itn'}
 				title={
 					<span>
-						{ translate( 'ITN' ) } (
+						{translate('ITN')} (
 						<ExternalLink icon href="https://pe.usps.com/text/imm/immc5_010.htm" target="_blank">
-							{ translate( 'more info' ) }
+							{translate('more info')}
 						</ExternalLink>
 						)
 					</span>
 				}
-				value={ itn || '' }
-				updateValue={ props.setITN }
-				error={ errors.itn }
+				value={itn || ''}
+				updateValue={props.setITN}
+				error={errors.itn}
 			/>
 
 			<div className="customs-step__item-rows">
-				<ItemRowHeader siteId={ siteId } orderId={ orderId } />
-				{ uniq( map( items, 'product_id' ) ).map( productId => (
+				<ItemRowHeader siteId={siteId} orderId={orderId} />
+				{uniq(map(items, 'product_id')).map((productId) => (
 					<ItemRow
-						key={ productId }
-						productId={ productId }
-						packageId={ packageId }
-						siteId={ siteId }
-						orderId={ orderId }
+						key={productId}
+						productId={productId}
+						packageId={packageId}
+						siteId={siteId}
+						orderId={orderId}
 					/>
-				) ) }
+				))}
 			</div>
 		</div>
 	);
@@ -150,21 +150,21 @@ PackageRow.propTypes = {
 	orderId: PropTypes.number.isRequired,
 	packageId: PropTypes.string.isRequired,
 	errors: PropTypes.object,
-	contentsType: PropTypes.oneOf( [ 'merchandise', 'documents', 'gift', 'sample', 'other' ] ),
+	contentsType: PropTypes.oneOf(['merchandise', 'documents', 'gift', 'sample', 'other']),
 	contentsExplanation: PropTypes.string,
-	restrictionType: PropTypes.oneOf( [
+	restrictionType: PropTypes.oneOf([
 		'none',
 		'quarantine',
 		'sanitary_phytosanitary_inspection',
 		'other',
-	] ),
+	]),
 	restrictionComments: PropTypes.string,
 	abandonOnNonDelivery: PropTypes.bool,
 	itn: PropTypes.string,
 	items: PropTypes.arrayOf(
-		PropTypes.shape( {
+		PropTypes.shape({
 			product_id: PropTypes.number.isRequired,
-		} )
+		})
 	).isRequired,
 	setContentsType: PropTypes.func.isRequired,
 	setContentsExplanation: PropTypes.func.isRequired,
@@ -174,9 +174,9 @@ PackageRow.propTypes = {
 	setITN: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { orderId, siteId, packageId } ) => {
-	const loaded = isLoaded( state, orderId, siteId );
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+const mapStateToProps = (state, { orderId, siteId, packageId }) => {
+	const loaded = isLoaded(state, orderId, siteId);
+	const shippingLabel = getShippingLabel(state, orderId, siteId);
 	const {
 		contentsType,
 		contentsExplanation,
@@ -185,7 +185,7 @@ const mapStateToProps = ( state, { orderId, siteId, packageId } ) => {
 		abandonOnNonDelivery,
 		itn,
 		items,
-	} = shippingLabel.form.packages.selected[ packageId ];
+	} = shippingLabel.form.packages.selected[packageId];
 
 	return {
 		contentsType,
@@ -195,20 +195,20 @@ const mapStateToProps = ( state, { orderId, siteId, packageId } ) => {
 		abandonOnNonDelivery,
 		itn,
 		items,
-		errors: loaded ? getFormErrors( state, orderId, siteId ).customs.packages[ packageId ] : {},
+		errors: loaded ? getFormErrors(state, orderId, siteId).customs.packages[packageId] : {},
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { orderId, siteId, packageId } ) => ( {
-	setContentsType: value => dispatch( setContentsType( orderId, siteId, packageId, value ) ),
-	setContentsExplanation: value =>
-		dispatch( setContentsExplanation( orderId, siteId, packageId, value ) ),
-	setRestrictionType: value => dispatch( setRestrictionType( orderId, siteId, packageId, value ) ),
-	setRestrictionExplanation: value =>
-		dispatch( setRestrictionExplanation( orderId, siteId, packageId, value ) ),
-	setAbandonOnNonDelivery: value =>
-		dispatch( setAbandonOnNonDelivery( orderId, siteId, packageId, value ) ),
-	setITN: value => dispatch( setITN( orderId, siteId, packageId, value ) ),
-} );
+const mapDispatchToProps = (dispatch, { orderId, siteId, packageId }) => ({
+	setContentsType: (value) => dispatch(setContentsType(orderId, siteId, packageId, value)),
+	setContentsExplanation: (value) =>
+		dispatch(setContentsExplanation(orderId, siteId, packageId, value)),
+	setRestrictionType: (value) => dispatch(setRestrictionType(orderId, siteId, packageId, value)),
+	setRestrictionExplanation: (value) =>
+		dispatch(setRestrictionExplanation(orderId, siteId, packageId, value)),
+	setAbandonOnNonDelivery: (value) =>
+		dispatch(setAbandonOnNonDelivery(orderId, siteId, packageId, value)),
+	setITN: (value) => dispatch(setITN(orderId, siteId, packageId, value)),
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageRow ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(PackageRow));

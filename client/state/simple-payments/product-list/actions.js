@@ -13,18 +13,18 @@ import {
 
 import 'state/data-layer/wpcom/sites/simple-payments';
 
-export const requestProducts = siteId => ( {
+export const requestProducts = (siteId) => ({
 	siteId,
 	type: SIMPLE_PAYMENTS_PRODUCTS_LIST,
-} );
+});
 
-export const requestProduct = ( siteId, productId ) => ( {
+export const requestProduct = (siteId, productId) => ({
 	siteId,
 	productId,
 	type: SIMPLE_PAYMENTS_PRODUCT_GET,
-} );
+});
 
-export function receiveProductsList( siteId, posts ) {
+export function receiveProductsList(siteId, posts) {
 	return {
 		type: SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 		siteId,
@@ -32,7 +32,7 @@ export function receiveProductsList( siteId, posts ) {
 	};
 }
 
-export function receiveProduct( siteId, product ) {
+export function receiveProduct(siteId, product) {
 	return {
 		siteId,
 		product,
@@ -40,7 +40,7 @@ export function receiveProduct( siteId, product ) {
 	};
 }
 
-export function receiveUpdateProduct( siteId, product ) {
+export function receiveUpdateProduct(siteId, product) {
 	return {
 		siteId,
 		type: SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
@@ -48,7 +48,7 @@ export function receiveUpdateProduct( siteId, product ) {
 	};
 }
 
-export function receiveDeleteProduct( siteId, productId ) {
+export function receiveDeleteProduct(siteId, productId) {
 	return {
 		siteId,
 		productId,

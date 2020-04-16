@@ -30,14 +30,14 @@ import { inviteItemsSchema } from './schema';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
+export function requesting(state = {}, action) {
+	switch (action.type) {
 		case INVITES_REQUEST:
 		case INVITES_REQUEST_SUCCESS:
 		case INVITES_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: INVITES_REQUEST === action.type,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: INVITES_REQUEST === action.type,
+			});
 	}
 
 	return state;
@@ -51,17 +51,17 @@ export function requesting( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(inviteItemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case INVITES_REQUEST_SUCCESS: {
 			// Invites are returned from the API in descending order by
 			// `invite_date`, which is what we want here.
 
 			const siteInvites = { pending: [], accepted: [] };
-			action.invites.forEach( invite => {
+			action.invites.forEach((invite) => {
 				// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
-				const user = pick( invite.user, 'login', 'email', 'name', 'avatar_URL' );
-				const invitedBy = pick( invite.invited_by, 'name', 'login', 'avatar_URL' );
+				const user = pick(invite.user, 'login', 'email', 'name', 'avatar_URL');
+				const invitedBy = pick(invite.invited_by, 'name', 'login', 'avatar_URL');
 				const inviteForState = {
 					key: invite.invite_key,
 					role: invite.role,
@@ -72,31 +72,31 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
 					invitedBy,
 				};
 
-				if ( inviteForState.isPending ) {
-					siteInvites.pending.push( inviteForState );
+				if (inviteForState.isPending) {
+					siteInvites.pending.push(inviteForState);
 				} else {
-					siteInvites.accepted.push( inviteForState );
+					siteInvites.accepted.push(inviteForState);
 				}
-			} );
+			});
 
 			return {
 				...state,
-				[ action.siteId ]: siteInvites,
+				[action.siteId]: siteInvites,
 			};
 		}
 		case INVITES_DELETE_REQUEST_SUCCESS: {
 			return {
 				...state,
-				[ action.siteId ]: {
-					accepted: deleteInvites( state[ action.siteId ].accepted, action.inviteIds ),
-					pending: deleteInvites( state[ action.siteId ].pending, action.inviteIds ),
+				[action.siteId]: {
+					accepted: deleteInvites(state[action.siteId].accepted, action.inviteIds),
+					pending: deleteInvites(state[action.siteId].pending, action.inviteIds),
 				},
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns an array of site invites, without the deleted invite objects.
@@ -105,8 +105,8 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
  * @param  {Array} invitesToDelete  Array of invite keys to remove.
  * @returns {Array}                  Updated array of invite objects.
  */
-function deleteInvites( siteInvites, invitesToDelete ) {
-	return siteInvites.filter( siteInvite => ! includes( invitesToDelete, siteInvite.key ) );
+function deleteInvites(siteInvites, invitesToDelete) {
+	return siteInvites.filter((siteInvite) => !includes(invitesToDelete, siteInvite.key));
 }
 
 /**
@@ -117,24 +117,24 @@ function deleteInvites( siteInvites, invitesToDelete ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const counts = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const counts = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case INVITES_REQUEST_SUCCESS: {
 			return {
 				...state,
-				[ action.siteId ]: action.found,
+				[action.siteId]: action.found,
 			};
 		}
 		case INVITES_DELETE_REQUEST_SUCCESS: {
 			return {
 				...state,
-				[ action.siteId ]: state[ action.siteId ] - action.inviteIds.length,
+				[action.siteId]: state[action.siteId] - action.inviteIds.length,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated site invites resend requests state after an action has been
@@ -145,23 +145,23 @@ export const counts = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function requestingResend( state = {}, action ) {
-	switch ( action.type ) {
+export function requestingResend(state = {}, action) {
+	switch (action.type) {
 		case INVITE_RESEND_REQUEST:
-			const inviteResendRequests = Object.assign( {}, state[ action.siteId ], {
-				[ action.inviteId ]: 'requesting',
-			} );
-			return Object.assign( {}, state, { [ action.siteId ]: inviteResendRequests } );
+			const inviteResendRequests = Object.assign({}, state[action.siteId], {
+				[action.inviteId]: 'requesting',
+			});
+			return Object.assign({}, state, { [action.siteId]: inviteResendRequests });
 		case INVITE_RESEND_REQUEST_SUCCESS:
-			const inviteResendSuccesses = Object.assign( {}, state[ action.siteId ], {
-				[ action.inviteId ]: 'success',
-			} );
-			return Object.assign( {}, state, { [ action.siteId ]: inviteResendSuccesses } );
+			const inviteResendSuccesses = Object.assign({}, state[action.siteId], {
+				[action.inviteId]: 'success',
+			});
+			return Object.assign({}, state, { [action.siteId]: inviteResendSuccesses });
 		case INVITE_RESEND_REQUEST_FAILURE: {
-			const inviteResendFailures = Object.assign( {}, state[ action.siteId ], {
-				[ action.inviteId ]: 'failure',
-			} );
-			return Object.assign( {}, state, { [ action.siteId ]: inviteResendFailures } );
+			const inviteResendFailures = Object.assign({}, state[action.siteId], {
+				[action.inviteId]: 'failure',
+			});
+			return Object.assign({}, state, { [action.siteId]: inviteResendFailures });
 		}
 	}
 
@@ -177,41 +177,41 @@ export function requestingResend( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function deleting( state = {}, action ) {
-	switch ( action.type ) {
+export function deleting(state = {}, action) {
+	switch (action.type) {
 		case INVITES_DELETE_REQUEST:
 			const inviteDeletionRequests = Object.assign(
 				{},
-				state[ action.siteId ],
+				state[action.siteId],
 				zipObject(
 					action.inviteIds,
-					map( action.inviteIds, () => 'requesting' )
+					map(action.inviteIds, () => 'requesting')
 				)
 			);
-			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionRequests } );
+			return Object.assign({}, state, { [action.siteId]: inviteDeletionRequests });
 		case INVITES_DELETE_REQUEST_FAILURE:
 			const inviteDeletionFailures = Object.assign(
 				{},
-				state[ action.siteId ],
+				state[action.siteId],
 				zipObject(
 					action.inviteIds,
-					map( action.inviteIds, () => 'failure' )
+					map(action.inviteIds, () => 'failure')
 				)
 			);
-			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionFailures } );
+			return Object.assign({}, state, { [action.siteId]: inviteDeletionFailures });
 		case INVITES_DELETE_REQUEST_SUCCESS:
 			const inviteDeletionSuccesses = Object.assign(
 				{},
-				state[ action.siteId ],
+				state[action.siteId],
 				zipObject(
 					action.inviteIds,
-					map( action.inviteIds, () => 'success' )
+					map(action.inviteIds, () => 'success')
 				)
 			);
-			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionSuccesses } );
+			return Object.assign({}, state, { [action.siteId]: inviteDeletionSuccesses });
 	}
 
 	return state;
 }
 
-export default combineReducers( { requesting, items, counts, requestingResend, deleting } );
+export default combineReducers({ requesting, items, counts, requestingResend, deleting });

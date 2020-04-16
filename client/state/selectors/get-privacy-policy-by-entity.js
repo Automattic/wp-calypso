@@ -15,6 +15,6 @@ import { get } from 'lodash';
  * @param {string} entity - the entity to get the privacy policy, for instance, `automattic`.
  * @returns {object} Privacy policy object
  */
-export default function getPrivacyPolicyByEntity( state, entity ) {
-	return get( state, [ 'privacyPolicy', 'entities', entity ], {} );
+export default function getPrivacyPolicyByEntity(state, entity) {
+	return get(state, ['privacyPolicy', 'entities', entity], {});
 }

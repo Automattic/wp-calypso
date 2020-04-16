@@ -4,25 +4,25 @@
 import { translate } from 'i18n-calypso';
 
 export const intervals = [
-	{ value: 'day', label: translate( 'Days' ) },
-	{ value: 'week', label: translate( 'Weeks' ) },
-	{ value: 'month', label: translate( 'Months' ) },
-	{ value: 'year', label: translate( 'Years' ) },
+	{ value: 'day', label: translate('Days') },
+	{ value: 'week', label: translate('Weeks') },
+	{ value: 'month', label: translate('Months') },
+	{ value: 'year', label: translate('Years') },
 ];
 
 export const navItems = {
 	traffic: {
-		label: translate( 'Traffic' ),
+		label: translate('Traffic'),
 		path: '/stats',
 		showIntervals: true,
 	},
 	insights: {
-		label: translate( 'Insights' ),
+		label: translate('Insights'),
 		path: '/stats/insights',
 		showIntervals: false,
 	},
 	store: {
-		label: translate( 'Store' ),
+		label: translate('Store'),
 		path: '/store/stats/orders',
 		showIntervals: true,
 	},
@@ -32,7 +32,7 @@ export const navItems = {
 		showIntervals: true,
 	},
 	googleMyBusiness: {
-		label: translate( 'Google My Business' ),
+		label: translate('Google My Business'),
 		path: '/google-my-business/stats',
 		showIntervals: false,
 	},

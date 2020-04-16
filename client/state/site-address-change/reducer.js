@@ -26,18 +26,18 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated rename request state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_ADDRESS_CHANGE_REQUEST: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case SITE_ADDRESS_CHANGE_REQUEST_SUCCESS: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case SITE_ADDRESS_CHANGE_REQUEST_FAILURE: {
@@ -45,13 +45,13 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated site-rename state after an action has been dispatched.
@@ -61,14 +61,14 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action 	Action object
  * @returns {object} 		Updated rename request state
  */
-export const status = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const status = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_ADDRESS_CHANGE_REQUEST: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					status: 'pending',
 					error: false,
 				},
@@ -79,7 +79,7 @@ export const status = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					status: 'success',
 					error: false,
 				},
@@ -90,7 +90,7 @@ export const status = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					status: 'error',
 					error,
 				},
@@ -99,17 +99,17 @@ export const status = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export const validation = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const validation = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_ADDRESS_AVAILABILITY_REQUEST: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: {
-					...get( state, siteId, {} ),
+				[siteId]: {
+					...get(state, siteId, {}),
 					pending: true,
 					error: null,
 					isAvailable: null,
@@ -121,8 +121,8 @@ export const validation = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
-					...get( state, siteId, {} ),
+				[siteId]: {
+					...get(state, siteId, {}),
 					pending: false,
 					error: null,
 					isAvailable: true,
@@ -134,8 +134,8 @@ export const validation = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
-					...get( state, siteId, {} ),
+				[siteId]: {
+					...get(state, siteId, {}),
 					isAvailable: false,
 					pending: false,
 					error: {
@@ -150,8 +150,8 @@ export const validation = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
-					...get( state, siteId, {} ),
+				[siteId]: {
+					...get(state, siteId, {}),
 					error: null,
 					isAvailable: null,
 				},
@@ -160,10 +160,10 @@ export const validation = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	validation,
 	status,
 	requesting,
-} );
+});

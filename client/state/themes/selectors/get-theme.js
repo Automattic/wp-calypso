@@ -17,13 +17,13 @@ import 'state/themes/init';
  * @returns {?object}         Theme object
  */
 export const getTheme = createSelector(
-	( state, siteId, themeId ) => {
-		const manager = state.themes.queries[ siteId ];
-		if ( ! manager ) {
+	(state, siteId, themeId) => {
+		const manager = state.themes.queries[siteId];
+		if (!manager) {
 			return null;
 		}
 
-		return manager.getItem( themeId );
+		return manager.getItem(themeId);
 	},
-	state => state.themes.queries
+	(state) => state.themes.queries
 );

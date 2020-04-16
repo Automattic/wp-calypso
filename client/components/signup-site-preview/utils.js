@@ -5,7 +5,7 @@
 // Detect IE 11 and below
 export function isIE() {
 	const ua = window.navigator.userAgent;
-	return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
+	return -1 !== ua.indexOf('MSIE') || -1 !== ua.indexOf('Trident/');
 }
 
 /**
@@ -14,8 +14,8 @@ export function isIE() {
  * @param  {string} url 	The css file path
  * @returns {string}         The HTML source or an empty string if `url` is absent.
  */
-export function getCSSLinkHtml( url ) {
-	return url ? `<link type="text/css" media="all" rel="stylesheet" href="${ url }" />` : '';
+export function getCSSLinkHtml(url) {
+	return url ? `<link type="text/css" media="all" rel="stylesheet" href="${url}" />` : '';
 }
 
 /**
@@ -25,9 +25,9 @@ export function getCSSLinkHtml( url ) {
  * @param  {boolean} isRtl	If the current locale is a right-to-left language
  * @returns {string}			The Gutenberg theme.css URL
  */
-export const getGutenbergThemeCssUrl = ( url, isRtl = false ) => {
-	const themeCss = 'theme' + ( isRtl ? '-rtl.css' : '.css' );
-	return url.replace( 'style.css', themeCss );
+export const getGutenbergThemeCssUrl = (url, isRtl = false) => {
+	const themeCss = 'theme' + (isRtl ? '-rtl.css' : '.css');
+	return url.replace('style.css', themeCss);
 };
 
 /**
@@ -36,8 +36,8 @@ export const getGutenbergThemeCssUrl = ( url, isRtl = false ) => {
  *
  * @param  {string} objectUrl A DOMString containing a URL representing an object
  */
-export function revokeObjectURL( objectUrl ) {
-	URL.revokeObjectURL( objectUrl );
+export function revokeObjectURL(objectUrl) {
+	URL.revokeObjectURL(objectUrl);
 }
 
 /**
@@ -62,17 +62,17 @@ export function getIframeSource(
 	scrolling = true
 ) {
 	const source = `
-		<html lang="${ langSlug }" dir="${ isRtl ? 'rtl' : 'ltr' }">
+		<html lang="${langSlug}" dir="${isRtl ? 'rtl' : 'ltr'}">
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
 			<title></title>
-			${ getCSSLinkHtml( gutenbergStylesUrl ) }
-			${ getCSSLinkHtml( getGutenbergThemeCssUrl( gutenbergStylesUrl, isRtl ) ) }
-			${ getCSSLinkHtml( cssUrl ) }
-			${ getCSSLinkHtml( fontUrl ) }
+			${getCSSLinkHtml(gutenbergStylesUrl)}
+			${getCSSLinkHtml(getGutenbergThemeCssUrl(gutenbergStylesUrl, isRtl))}
+			${getCSSLinkHtml(cssUrl)}
+			${getCSSLinkHtml(fontUrl)}
 			<style type="text/css">
 				body {
 					padding-bottom: 50px;
@@ -167,7 +167,7 @@ export function getIframeSource(
 						<main id="main" class="site-main">
 							<article class="page type-page status-publish hentry entry">
 								<div class="entry-content">
-									${ content.body }
+									${content.body}
 								</div>
 							</article>
 						</div>
@@ -177,19 +177,19 @@ export function getIframeSource(
 		</body>
 	</html>`;
 
-	if ( isIE() ) {
+	if (isIE()) {
 		return source;
 	}
 
-	return URL.createObjectURL( new Blob( [ source ], { type: 'text/html' } ) );
+	return URL.createObjectURL(new Blob([source], { type: 'text/html' }));
 }
 
 /**
  * @param {string} paramName e.g. "Vertical", "CompanyName"
  * @returns {string} CSS class that will wrap the parameter in the preview DOM
  */
-export function getPreviewParamClass( paramName ) {
-	return `signup-site-preview__${ paramName }`;
+export function getPreviewParamClass(paramName) {
+	return `signup-site-preview__${paramName}`;
 }
 
 /**
@@ -197,6 +197,6 @@ export function getPreviewParamClass( paramName ) {
  * @param {string} tagline site tagline
  * @returns {string} String to be used as <title> in preview
  */
-export function createPreviewDocumentTitle( title, tagline ) {
-	return `${ title } – ${ tagline }`;
+export function createPreviewDocumentTitle(title, tagline) {
+	return `${title} – ${tagline}`;
 }

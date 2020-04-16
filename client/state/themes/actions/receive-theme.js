@@ -13,6 +13,6 @@ import 'state/themes/init';
  * @param  {number} siteId ID of site for which themes have been received
  * @returns {object}        Action object
  */
-export function receiveTheme( theme, siteId ) {
-	return receiveThemes( [ theme ], siteId );
+export function receiveTheme(theme, siteId) {
+	return receiveThemes([theme], siteId);
 }

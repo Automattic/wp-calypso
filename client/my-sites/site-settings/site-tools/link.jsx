@@ -12,16 +12,16 @@ import { noop } from 'lodash';
  */
 import { CompactCard } from '@automattic/components';
 
-const SiteToolsLink = ( { description, href, isWarning, onClick, title } ) => {
-	const titleClasses = classNames( 'site-tools__section-title', {
+const SiteToolsLink = ({ description, href, isWarning, onClick, title }) => {
+	const titleClasses = classNames('site-tools__section-title', {
 		'is-warning': isWarning,
-	} );
+	});
 
 	return (
-		<CompactCard href={ href } onClick={ onClick } className="site-tools__link">
+		<CompactCard href={href} onClick={onClick} className="site-tools__link">
 			<div className="site-tools__content">
-				<p className={ titleClasses }>{ title }</p>
-				<p className="site-tools__section-desc">{ description }</p>
+				<p className={titleClasses}>{title}</p>
+				<p className="site-tools__section-desc">{description}</p>
 			</div>
 		</CompactCard>
 	);

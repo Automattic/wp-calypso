@@ -24,17 +24,17 @@ class LoadingPlaceholder extends React.Component {
 	};
 
 	goBack = () => {
-		page.back( this.props.path || '/' );
+		page.back(this.props.path || '/');
 	};
 
 	render() {
 		return (
 			<Main className="loading-placeholder">
-				<HeaderCake className="loading-placeholder__header" onClick={ this.goBack }>
-					{ this.props.title }
+				<HeaderCake className="loading-placeholder__header" onClick={this.goBack}>
+					{this.props.title}
 				</HeaderCake>
 
-				{ this.props.children }
+				{this.props.children}
 			</Main>
 		);
 	}

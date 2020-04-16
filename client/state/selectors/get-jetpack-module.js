@@ -13,6 +13,6 @@ import { get } from 'lodash';
  * @param  {string}  moduleSlug  Slug of the module
  * @returns {?object}             Module data
  */
-export default function getJetpackModule( state, siteId, moduleSlug ) {
-	return get( state.jetpack.modules.items, [ siteId, moduleSlug ], null );
+export default function getJetpackModule(state, siteId, moduleSlug) {
+	return get(state.jetpack.modules.items, [siteId, moduleSlug], null);
 }

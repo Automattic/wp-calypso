@@ -19,7 +19,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const apiTransformer = data => data.application_password;
+export const apiTransformer = (data) => data.application_password;
 
 /**
  * Dispatches a request to add an application password for the current user
@@ -27,7 +27,7 @@ export const apiTransformer = data => data.application_password;
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const addApplicationPassword = action =>
+export const addApplicationPassword = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -49,8 +49,8 @@ export const addApplicationPassword = action =>
  * @param   {Array}  appPassword Response from the endpoint
  * @returns {Array}              Dispatched actions
  */
-export const handleAddSuccess = ( action, appPassword ) => [
-	createApplicationPasswordSuccess( appPassword ),
+export const handleAddSuccess = (action, appPassword) => [
+	createApplicationPasswordSuccess(appPassword),
 	requestApplicationPasswords(),
 ];
 
@@ -61,19 +61,19 @@ export const handleAddSuccess = ( action, appPassword ) => [
  */
 export const handleAddError = () =>
 	errorNotice(
-		translate( 'There was a problem creating your application password. Please try again.' ),
+		translate('There was a problem creating your application password. Please try again.'),
 		{
 			duration: 8000,
 		}
 	);
 
-registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/new/index.js', {
-	[ APPLICATION_PASSWORD_CREATE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/two-step/application-passwords/new/index.js', {
+	[APPLICATION_PASSWORD_CREATE]: [
+		dispatchRequest({
 			fetch: addApplicationPassword,
 			onSuccess: handleAddSuccess,
 			onError: handleAddError,
-			fromApi: makeJsonSchemaParser( schema, apiTransformer ),
-		} ),
+			fromApi: makeJsonSchemaParser(schema, apiTransformer),
+		}),
 	],
-} );
+});

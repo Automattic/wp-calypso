@@ -39,9 +39,9 @@ class RewindMigrate extends Component {
 	 *
 	 * @param {object} nextProps Props received by component for next update.
 	 */
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( this.props.rewindIsNowActive !== nextProps.rewindIsNowActive ) {
-			this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
+	UNSAFE_componentWillUpdate(nextProps) {
+		if (this.props.rewindIsNowActive !== nextProps.rewindIsNowActive) {
+			this.props.submitSignupStep({ stepName: this.props.stepName }, { rewindconfig: true });
 			this.props.goToNextStep();
 		}
 	}
@@ -53,29 +53,29 @@ class RewindMigrate extends Component {
 			<div className="rewind-migrate__card rewind-switch__card">
 				<Card className="rewind-migrate__content rewind-switch__content">
 					<h3 className="rewind-migrate__title rewind-switch__heading">
-						{ translate( 'Migrate credentials' ) }
+						{translate('Migrate credentials')}
 					</h3>
 					<img src="/calypso/images/illustrations/almost-there.svg" alt="" />
 					<p className="rewind-migrate__description rewind-switch__description">
-						{ translate(
+						{translate(
 							"You've already configured VaultPress correctly, " +
 								"so we're ready to migrate your credentials over to Jetpack with just one click. " +
 								"Are you ready to switch to our faster, more powerful system? Let's go!"
-						) }
+						)}
 					</p>
 					<ActivityLogRewindToggle
-						siteId={ siteId }
-						label={ translate( 'Migrate your credentials' ) }
-						isVpMigrate={ true }
+						siteId={siteId}
+						label={translate('Migrate your credentials')}
+						isVpMigrate={true}
 					/>
 				</Card>
 				<div className="rewind-migrate__warning">
 					<p>
-						{ translate(
+						{translate(
 							'Note: Moving to Jetpack backups and security is final, ' +
 								'and the VaultPress backups previously generated will not be migrated to the new system. ' +
 								'We will retain the data in case you need to restore to a backup made before you switched.'
-						) }
+						)}
 					</p>
 				</div>
 			</div>
@@ -85,26 +85,26 @@ class RewindMigrate extends Component {
 	render() {
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				stepContent={ this.stepContent() }
-				hideFormattedHeader={ true }
-				hideSkip={ true }
-				hideBack={ true }
+				flowName={this.props.flowName}
+				stepName={this.props.stepName}
+				positionInFlow={this.props.positionInFlow}
+				stepContent={this.stepContent()}
+				hideFormattedHeader={true}
+				hideSkip={true}
+				hideBack={true}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
-		const rewindState = getRewindState( state, siteId );
+	(state, ownProps) => {
+		const siteId = parseInt(get(ownProps, ['initialContext', 'query', 'siteId'], 0));
+		const rewindState = getRewindState(state, siteId);
 		return {
 			siteId,
 			rewindIsNowActive: 'provisioning' === rewindState.state,
 		};
 	},
 	{ submitSignupStep }
-)( localize( RewindMigrate ) );
+)(localize(RewindMigrate));

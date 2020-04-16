@@ -26,5 +26,5 @@ const RefundAsterisk = () => (
 	</div>
 );
 
-export default localize( RefundAsterisk );
+export default localize(RefundAsterisk);
 /* eslint-enable wpcalypso/jsx-classname-namespace */

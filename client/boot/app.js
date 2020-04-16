@@ -12,5 +12,5 @@ import { bootApp } from './common';
 import 'assets/stylesheets/style.scss';
 
 window.AppBoot = () => {
-	bootApp( 'Calypso' );
+	bootApp('Calypso');
 };

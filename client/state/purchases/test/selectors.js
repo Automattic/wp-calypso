@@ -14,15 +14,15 @@ import {
 } from '../selectors';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
-describe( 'selectors', () => {
-	describe( 'getPurchases', () => {
-		test( 'should return different purchases when the purchase data changes', () => {
-			const initialPurchases = Object.freeze( [
+describe('selectors', () => {
+	describe('getPurchases', () => {
+		test('should return different purchases when the purchase data changes', () => {
+			const initialPurchases = Object.freeze([
 				{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
 				{ ID: 2, product_name: 'premium plan', blog_id: 1337 },
-			] );
+			]);
 
 			const state = {
 				purchases: {
@@ -35,26 +35,24 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPurchases( state ) ).toEqual( createPurchasesArray( initialPurchases ) );
+			expect(getPurchases(state)).toEqual(createPurchasesArray(initialPurchases));
 
-			const newPurchases = Object.freeze( [
-				{ ID: 3, product_name: 'business plan', blog_id: 3117 },
-			] );
+			const newPurchases = Object.freeze([{ ID: 3, product_name: 'business plan', blog_id: 3117 }]);
 
 			expect(
 				getPurchases(
-					Object.assign( state, {
+					Object.assign(state, {
 						purchases: {
 							data: newPurchases,
 						},
-					} )
+					})
 				)
-			).toEqual( createPurchasesArray( newPurchases ) );
-		} );
-	} );
+			).toEqual(createPurchasesArray(newPurchases));
+		});
+	});
 
-	describe( 'getByPurchaseId', () => {
-		test( 'should return a purchase by its ID', () => {
+	describe('getByPurchaseId', () => {
+		test('should return a purchase by its ID', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -69,7 +67,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getByPurchaseId( state, 2 ) ).toEqual( {
+			expect(getByPurchaseId(state, 2)).toEqual({
 				id: 2,
 				productName: 'premium plan',
 				siteId: 1337,
@@ -119,12 +117,12 @@ describe( 'selectors', () => {
 				taxAmount: undefined,
 				taxText: undefined,
 				userId: NaN,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'isFetchingUserPurchases', () => {
-		test( 'should return the current state of the user purchases request', () => {
+	describe('isFetchingUserPurchases', () => {
+		test('should return the current state of the user purchases request', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -136,12 +134,12 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isFetchingUserPurchases( state ) ).toBe( true );
-		} );
-	} );
+			expect(isFetchingUserPurchases(state)).toBe(true);
+		});
+	});
 
-	describe( 'isFetchingSitePurchases', () => {
-		test( 'should return the current state of the site purchases request', () => {
+	describe('isFetchingSitePurchases', () => {
+		test('should return the current state of the site purchases request', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -153,12 +151,12 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isFetchingSitePurchases( state ) ).toBe( true );
-		} );
-	} );
+			expect(isFetchingSitePurchases(state)).toBe(true);
+		});
+	});
 
-	describe( 'getSitePurchases', () => {
-		test( 'should return purchases of specific site', () => {
+	describe('getSitePurchases', () => {
+		test('should return purchases of specific site', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -183,16 +181,16 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const result = getSitePurchases( state, 1234 );
+			const result = getSitePurchases(state, 1234);
 
-			expect( result ).toHaveLength( 2 );
-			expect( result[ 0 ].siteId ).toBe( 1234 );
-			expect( result[ 1 ].siteId ).toBe( 1234 );
-		} );
-	} );
+			expect(result).toHaveLength(2);
+			expect(result[0].siteId).toBe(1234);
+			expect(result[1].siteId).toBe(1234);
+		});
+	});
 
-	describe( 'siteHasBackupProductPurchase', () => {
-		test( 'should return true if a site has a Jetpack Backup purchase, false otherwise', () => {
+	describe('siteHasBackupProductPurchase', () => {
+		test('should return true if a site has a Jetpack Backup purchase, false otherwise', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -223,13 +221,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( siteHasBackupProductPurchase( state, 1234 ) ).toBe( false );
-			expect( siteHasBackupProductPurchase( state, 123 ) ).toBe( true );
-		} );
-	} );
+			expect(siteHasBackupProductPurchase(state, 1234)).toBe(false);
+			expect(siteHasBackupProductPurchase(state, 123)).toBe(true);
+		});
+	});
 
-	describe( 'getIncludedDomainPurchase', () => {
-		test( 'should return included domain with subscription', () => {
+	describe('getIncludedDomainPurchase', () => {
+		test('should return included domain with subscription', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -261,14 +259,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const subscriptionPurchase = getPurchases( state ).find(
-				purchase => purchase.productSlug === 'value_bundle'
+			const subscriptionPurchase = getPurchases(state).find(
+				(purchase) => purchase.productSlug === 'value_bundle'
 			);
 
-			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).toBe( 'dev.live' );
-		} );
+			expect(getIncludedDomainPurchase(state, subscriptionPurchase).meta).toBe('dev.live');
+		});
 
-		test( 'should not return included domain with subscription if the domain has a non-zero amount', () => {
+		test('should not return included domain with subscription if the domain has a non-zero amount', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -301,22 +299,22 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const subscriptionPurchase = getPurchases( state ).find(
-				purchase => purchase.productSlug === 'value_bundle'
+			const subscriptionPurchase = getPurchases(state).find(
+				(purchase) => purchase.productSlug === 'value_bundle'
 			);
 
-			expect( getIncludedDomainPurchase( state, subscriptionPurchase ) ).toBeFalsy();
-		} );
-	} );
+			expect(getIncludedDomainPurchase(state, subscriptionPurchase)).toBeFalsy();
+		});
+	});
 
-	describe( 'isUserPaid', () => {
+	describe('isUserPaid', () => {
 		const targetUserId = 123;
-		const examplePurchases = Object.freeze( [
+		const examplePurchases = Object.freeze([
 			{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId },
 			{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId },
-		] );
+		]);
 
-		test( 'should return false because there is no purchases', () => {
+		test('should return false because there is no purchases', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -328,10 +326,10 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( false );
-		} );
+			expect(isUserPaid(state, targetUserId)).toBe(false);
+		});
 
-		test( 'should return true because there are purchases from the target user', () => {
+		test('should return true because there are purchases from the target user', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,
@@ -343,10 +341,10 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( true );
-		} );
+			expect(isUserPaid(state, targetUserId)).toBe(true);
+		});
 
-		test( 'should return false because there are no purchases from this user', () => {
+		test('should return false because there are no purchases from this user', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,
@@ -358,10 +356,10 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, 65535 ) ).toBe( false );
-		} );
+			expect(isUserPaid(state, 65535)).toBe(false);
+		});
 
-		test( 'should return false because the data is not ready.', () => {
+		test('should return false because the data is not ready.', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,
@@ -373,7 +371,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( false );
-		} );
-	} );
-} );
+			expect(isUserPaid(state, targetUserId)).toBe(false);
+		});
+	});
+});

@@ -25,18 +25,18 @@ import './style.scss';
 
 const guidedTransferHosts = {
 	bluehost: {
-		label: i18n.translate( 'Bluehost' ),
+		label: i18n.translate('Bluehost'),
 		logo: '/calypso/images/guided-transfer/bluehost-logo.png',
 		url: 'https://bluehost.com/track/wpgt?page=/web-hosting/signup',
 	},
 	siteground: {
 		logo: '/calypso/images/guided-transfer/siteground-logo.png',
-		label: i18n.translate( 'SiteGround' ),
+		label: i18n.translate('SiteGround'),
 		url: 'https://www.siteground.com/wordpress-hosting.htm?afcode=134c903505c0a2296bd25772edebf669',
 	},
 	pressable: {
 		logo: '/calypso/images/guided-transfer/pressable-logo.png',
-		label: i18n.translate( 'Pressable' ),
+		label: i18n.translate('Pressable'),
 		url: 'https://pressable.com',
 	},
 };
@@ -51,19 +51,19 @@ class GuidedTransfer extends React.Component {
 	};
 
 	showExporter = () => {
-		page( `/export/${ this.props.siteSlug }` );
+		page(`/export/${this.props.siteSlug}`);
 	};
 
 	showHostSelection = () => {
-		page( `/export/guided/${ this.props.siteSlug }` );
+		page(`/export/guided/${this.props.siteSlug}`);
 	};
 
-	showHost = hostSlug => {
-		page( `/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
+	showHost = (hostSlug) => {
+		page(`/export/guided/${hostSlug}/${this.props.siteSlug}`);
 	};
 
 	goBack = () => {
-		if ( this.props.hostSlug ) {
+		if (this.props.hostSlug) {
 			this.showHostSelection();
 		} else {
 			this.showExporter();
@@ -72,43 +72,43 @@ class GuidedTransfer extends React.Component {
 
 	render() {
 		const { siteId, siteSlug } = this.props;
-		const hostInfo = get( guidedTransferHosts, this.props.hostSlug );
-		const hosts = Object.keys( guidedTransferHosts ).map( hostSlug => {
+		const hostInfo = get(guidedTransferHosts, this.props.hostSlug);
+		const hosts = Object.keys(guidedTransferHosts).map((hostSlug) => {
 			return {
-				...guidedTransferHosts[ hostSlug ],
-				showHost: () => this.showHost( hostSlug ),
+				...guidedTransferHosts[hostSlug],
+				showHost: () => this.showHost(hostSlug),
 			};
-		} );
+		});
 
 		return (
 			<Main className="guided-transfer__main site-settings">
-				<QuerySiteGuidedTransfer siteId={ siteId } />
+				<QuerySiteGuidedTransfer siteId={siteId} />
 				<div className="guided-transfer__header-nav">
-					<HeaderCake onClick={ this.goBack } isCompact={ true }>
-						{ this.props.translate( 'Guided Transfer' ) }
+					<HeaderCake onClick={this.goBack} isCompact={true}>
+						{this.props.translate('Guided Transfer')}
 					</HeaderCake>
 				</div>
 
-				<IssuesNotices siteId={ siteId } siteSlug={ siteSlug } />
+				<IssuesNotices siteId={siteId} siteSlug={siteSlug} />
 
-				{ this.props.isEligibleForGuidedTransfer ? (
+				{this.props.isEligibleForGuidedTransfer ? (
 					<div className="guided-transfer__content">
-						{ hostInfo ? (
+						{hostInfo ? (
 							<HostCredentialsPage
-								siteId={ this.props.siteId }
-								hostSlug={ this.props.hostSlug }
-								hostInfo={ hostInfo }
+								siteId={this.props.siteId}
+								hostSlug={this.props.hostSlug}
+								hostInfo={hostInfo}
 							/>
 						) : (
-							<HostSelect hosts={ hosts } />
-						) }
+							<HostSelect hosts={hosts} />
+						)}
 					</div>
 				) : (
-					<TransferUnavailableCard siteId={ siteId } siteSlug={ siteSlug } />
-				) }
+					<TransferUnavailableCard siteId={siteId} siteSlug={siteSlug} />
+				)}
 			</Main>
 		);
 	}
 }
 
-export default localize( GuidedTransfer );
+export default localize(GuidedTransfer);

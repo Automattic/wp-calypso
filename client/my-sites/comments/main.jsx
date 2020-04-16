@@ -36,7 +36,7 @@ export class CommentsManagement extends Component {
 		postId: PropTypes.number,
 		showPermissionError: PropTypes.bool,
 		siteId: PropTypes.number,
-		siteFragment: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		siteFragment: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 		status: PropTypes.string,
 		translate: PropTypes.func,
 	};
@@ -50,7 +50,7 @@ export class CommentsManagement extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	setOrder = order => () => this.setState( { order } );
+	setOrder = (order) => () => this.setState({ order });
 
 	render() {
 		const {
@@ -70,66 +70,64 @@ export class CommentsManagement extends Component {
 
 		return (
 			<Main className="comments" wideLayout>
-				<PageViewTracker path={ analyticsPath } title="Comments" />
-				<DocumentHead title={ translate( 'Comments' ) } />
+				<PageViewTracker path={analyticsPath} title="Comments" />
+				<DocumentHead title={translate('Comments')} />
 				<SidebarNavigation />
-				{ ! showPermissionError && (
+				{!showPermissionError && (
 					<FormattedHeader
 						className="comments__page-heading"
-						headerText={ translate( 'Comments' ) }
+						headerText={translate('Comments')}
 						align="left"
 					/>
-				) }
-				{ showPermissionError && (
+				)}
+				{showPermissionError && (
 					<EmptyContent
-						title={ preventWidows(
-							translate( "Oops! You don't have permission to manage comments." )
-						) }
-						line={ preventWidows(
-							translate( "If you think you should, contact this site's administrator." )
-						) }
+						title={preventWidows(translate("Oops! You don't have permission to manage comments."))}
+						line={preventWidows(
+							translate("If you think you should, contact this site's administrator.")
+						)}
 						illustration="/calypso/images/illustrations/error.svg"
 					/>
-				) }
-				{ showCommentList && (
+				)}
+				{showCommentList && (
 					<CommentList
-						changePage={ changePage }
-						order={ order }
-						page={ page }
-						postId={ postId }
-						setOrder={ this.setOrder }
-						siteId={ siteId }
-						siteFragment={ siteFragment }
-						status={ status }
+						changePage={changePage}
+						order={order}
+						page={page}
+						postId={postId}
+						setOrder={this.setOrder}
+						siteId={siteId}
+						siteFragment={siteFragment}
+						status={status}
 					/>
-				) }
-				{ showCommentTree && (
+				)}
+				{showCommentTree && (
 					<CommentTree
-						changePage={ changePage }
-						order={ order }
-						page={ page }
-						postId={ postId }
-						setOrder={ this.setOrder }
-						siteId={ siteId }
-						siteFragment={ siteFragment }
-						status={ status }
+						changePage={changePage}
+						order={order}
+						page={page}
+						postId={postId}
+						setOrder={this.setOrder}
+						siteId={siteId}
+						siteFragment={siteFragment}
+						status={status}
 					/>
-				) }
+				)}
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { postId, siteFragment } ) => {
-	const siteId = getSiteId( state, siteFragment );
-	const isPostView = !! postId;
-	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
+const mapStateToProps = (state, { postId, siteFragment }) => {
+	const siteId = getSiteId(state, siteFragment);
+	const isPostView = !!postId;
+	const canModerateComments = canCurrentUser(state, siteId, 'edit_posts');
 	const showPermissionError = false === canModerateComments;
 
 	const showCommentTree =
-		! showPermissionError && isPostView && isEnabled( 'comments/management/threaded-view' );
+		!showPermissionError && isPostView && isEnabled('comments/management/threaded-view');
 
-	const showCommentList = ! showCommentTree && ! showPermissionError;
+	const showCommentList = !showCommentTree && !showPermissionError;
 
 	return {
 		siteId,
@@ -139,4 +137,4 @@ const mapStateToProps = ( state, { postId, siteFragment } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentsManagement ) );
+export default connect(mapStateToProps)(localize(CommentsManagement));

@@ -15,7 +15,7 @@ import {
  * @param {boolean} isTaxable Whether the shipping cost must be subject to taxes or not.
  * @returns {object} Action object.
  */
-export const setShippingIsTaxable = ( siteId, methodId, isTaxable ) => {
+export const setShippingIsTaxable = (siteId, methodId, isTaxable) => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE,
 		siteId,
@@ -33,7 +33,7 @@ export const setShippingIsTaxable = ( siteId, methodId, isTaxable ) => {
  * @param {number} cost Fixed cost the customer will pay for shipping.
  * @returns {object} Action object.
  */
-export const setShippingCost = ( siteId, methodId, cost ) => {
+export const setShippingCost = (siteId, methodId, cost) => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST,
 		siteId,

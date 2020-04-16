@@ -8,6 +8,6 @@
  * @returns {boolean}        Whether a question has been asked
  */
 
-export default function hasUserAskedADirectlyQuestion( state ) {
+export default function hasUserAskedADirectlyQuestion(state) {
 	return state.help.directly.questionAsked !== null;
 }

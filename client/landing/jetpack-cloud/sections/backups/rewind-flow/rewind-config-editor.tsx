@@ -18,45 +18,42 @@ import './style.scss';
 
 interface Props {
 	currentConfig: RewindConfig;
-	onConfigChange: ( config: RewindConfig ) => void;
+	onConfigChange: (config: RewindConfig) => void;
 }
 
-const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
-	currentConfig,
-	onConfigChange,
-} ) => {
+const BackupRewindConfigEditor: FunctionComponent<Props> = ({ currentConfig, onConfigChange }) => {
 	const translate = useTranslate();
 
-	const onChange = ( { target: { name, checked } }: ChangeEvent< HTMLInputElement > ) =>
-		onConfigChange( {
+	const onChange = ({ target: { name, checked } }: ChangeEvent<HTMLInputElement>) =>
+		onConfigChange({
 			...currentConfig,
-			[ name ]: checked,
-		} );
+			[name]: checked,
+		});
 
 	const checkboxes = [
 		{
 			name: 'themes',
-			label: translate( '{{strong}}WordPress Themes{{/strong}}', {
+			label: translate('{{strong}}WordPress Themes{{/strong}}', {
 				components: {
 					strong: <strong />,
 				},
-			} ),
+			}),
 		},
 		{
 			name: 'plugins',
-			label: translate( '{{strong}}WordPress Plugins{{/strong}}', {
+			label: translate('{{strong}}WordPress Plugins{{/strong}}', {
 				components: {
 					strong: <strong />,
 				},
-			} ),
+			}),
 		},
 		{
 			name: 'uploads',
-			label: translate( '{{strong}}Media Uploads{{/strong}}', {
+			label: translate('{{strong}}Media Uploads{{/strong}}', {
 				components: {
 					strong: <strong />,
 				},
-			} ),
+			}),
 		},
 		{
 			name: 'roots',
@@ -82,32 +79,32 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 		},
 		{
 			name: 'sqls',
-			label: translate( '{{strong}}Site database{{/strong}} (SQL)', {
+			label: translate('{{strong}}Site database{{/strong}} (SQL)', {
 				components: {
 					strong: <strong />,
 				},
-			} ),
+			}),
 		},
 	];
 
 	return (
 		<div className="rewind-flow__rewind-config-editor">
-			{ checkboxes.map( ( { name, label } ) => (
+			{checkboxes.map(({ name, label }) => (
 				<FormLabel
 					className="rewind-flow__rewind-config-editor-label"
-					key={ name }
-					optional={ false }
-					required={ false }
+					key={name}
+					optional={false}
+					required={false}
 				>
 					<FormCheckbox
-						checked={ currentConfig[ name ] }
+						checked={currentConfig[name]}
 						className="rewind-flow__rewind-config-editor-checkbox"
-						name={ name }
-						onChange={ onChange }
+						name={name}
+						onChange={onChange}
 					/>
-					<span className="rewind-flow__rewind-config-editor-label-text">{ label }</span>
+					<span className="rewind-flow__rewind-config-editor-label-text">{label}</span>
 				</FormLabel>
-			) ) }
+			))}
 		</div>
 	);
 };

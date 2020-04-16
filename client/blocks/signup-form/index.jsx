@@ -65,7 +65,7 @@ import TextControl from 'extensions/woocommerce/components/text-control';
 import './style.scss';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 2000,
-	debug = debugModule( 'calypso:signup-form:form' );
+	debug = debugModule('calypso:signup-form:form');
 
 let usernamesSearched = [],
 	timesUsernameValidationFailed = 0,
@@ -139,22 +139,22 @@ class SignupForm extends Component {
 		};
 	}
 
-	autoFillUsername( form ) {
-		if ( formState.getFieldValue( form, 'username' ) ) {
+	autoFillUsername(form) {
+		if (formState.getFieldValue(form, 'username')) {
 			return form;
 		}
 
 		const value = this.props.suggestedUsername || '';
-		return merge( form, { username: { value } } );
+		return merge(form, { username: { value } });
 	}
 
 	recordBackLinkClick = () => {
-		analytics.tracks.recordEvent( 'calypso_signup_back_link_click' );
+		analytics.tracks.recordEvent('calypso_signup_back_link_click');
 	};
 
 	UNSAFE_componentWillMount() {
-		debug( 'Mounting the SignupForm React component.' );
-		this.formStateController = new formState.Controller( {
+		debug('Mounting the SignupForm React component.');
+		this.formStateController = new formState.Controller({
 			initialFields: this.getInitialFields(),
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
@@ -164,24 +164,24 @@ class SignupForm extends Component {
 			hideFieldErrorsOnChange: true,
 			initialState: this.props.step ? this.props.step.form : undefined,
 			skipSanitizeAndValidateOnFieldChange: true,
-		} );
+		});
 
 		const initialState = this.formStateController.getInitialState();
-		const stateWithFilledUsername = this.autoFillUsername( initialState );
+		const stateWithFilledUsername = this.autoFillUsername(initialState);
 
-		this.maybeRedirectToSocialConnect( this.props );
+		this.maybeRedirectToSocialConnect(this.props);
 
-		this.setState( { form: stateWithFilledUsername } );
+		this.setState({ form: stateWithFilledUsername });
 	}
 
-	getUserExistsError( props ) {
+	getUserExistsError(props) {
 		const { step } = props;
 
-		if ( ! step || step.status !== 'invalid' ) {
+		if (!step || step.status !== 'invalid') {
 			return null;
 		}
 
-		const userExistsError = find( step.errors, error => error.error === 'user_exists' );
+		const userExistsError = find(step.errors, (error) => error.error === 'user_exists');
 
 		return userExistsError;
 	}
@@ -193,156 +193,156 @@ class SignupForm extends Component {
 	 *
 	 * @param {object} props react component props that has step info
 	 */
-	maybeRedirectToSocialConnect( props ) {
-		const userExistsError = this.getUserExistsError( props );
+	maybeRedirectToSocialConnect(props) {
+		const userExistsError = this.getUserExistsError(props);
 
-		if ( userExistsError ) {
+		if (userExistsError) {
 			const { service, id_token, access_token } = props.step;
 			const socialInfo = { service, id_token, access_token };
 
-			this.props.createSocialUserFailed( socialInfo, userExistsError );
+			this.props.createSocialUserFailed(socialInfo, userExistsError);
 			page(
-				login( {
-					isNative: config.isEnabled( 'login/native-login-links' ),
+				login({
+					isNative: config.isEnabled('login/native-login-links'),
 					redirectTo: this.props.redirectToAfterLoginUrl,
-				} )
+				})
 			);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.step && nextProps.step && this.props.step.status !== nextProps.step.status ) {
-			this.maybeRedirectToSocialConnect( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.step && nextProps.step && this.props.step.status !== nextProps.step.status) {
+			this.maybeRedirectToSocialConnect(nextProps);
 		}
 	}
 
-	sanitizeEmail( email ) {
-		return email && email.replace( /\s+/g, '' ).toLowerCase();
+	sanitizeEmail(email) {
+		return email && email.replace(/\s+/g, '').toLowerCase();
 	}
 
-	sanitizeUsername( username ) {
-		return username && username.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
+	sanitizeUsername(username) {
+		return username && username.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 	}
 
-	sanitize = ( fields, onComplete ) => {
-		const sanitizedEmail = this.sanitizeEmail( fields.email );
-		const sanitizedUsername = this.sanitizeUsername( fields.username );
+	sanitize = (fields, onComplete) => {
+		const sanitizedEmail = this.sanitizeEmail(fields.email);
+		const sanitizedUsername = this.sanitizeUsername(fields.username);
 
-		if ( fields.email !== sanitizedEmail || fields.username !== sanitizedUsername ) {
-			const sanitizedFormValues = Object.assign( fields, {
+		if (fields.email !== sanitizedEmail || fields.username !== sanitizedUsername) {
+			const sanitizedFormValues = Object.assign(fields, {
 				email: sanitizedEmail,
 				username: sanitizedUsername,
-			} );
-			onComplete( sanitizedFormValues );
+			});
+			onComplete(sanitizedFormValues);
 		}
 	};
 
-	validate = ( fields, onComplete ) => {
-		const fieldsForValidation = filter( [
+	validate = (fields, onComplete) => {
+		const fieldsForValidation = filter([
 			'email',
 			this.state.focusPassword && 'password',
 			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
-		] );
+		]);
 
-		const data = mapKeys( pick( fields, fieldsForValidation ), ( value, key ) => snakeCase( key ) );
-		wpcom.undocumented().validateNewUser( data, ( error, response ) => {
-			if ( this.props.submitting ) {
+		const data = mapKeys(pick(fields, fieldsForValidation), (value, key) => snakeCase(key));
+		wpcom.undocumented().validateNewUser(data, (error, response) => {
+			if (this.props.submitting) {
 				// this is a stale callback, we have already signed up or are logging in
 				return;
 			}
 
-			if ( error || ! response ) {
-				return debug( error || 'User validation failed.' );
+			if (error || !response) {
+				return debug(error || 'User validation failed.');
 			}
 
 			let messages = response.success
 				? {}
-				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
+				: mapKeys(response.messages, (value, key) => camelCase(key));
 
-			forEach( messages, ( fieldError, field ) => {
-				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
+			forEach(messages, (fieldError, field) => {
+				if (!formState.isFieldInvalid(this.state.form, field)) {
 					return;
 				}
 
-				if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
-					analytics.tracks.recordEvent( 'calypso_signup_username_validation_failed', {
-						error: head( keys( fieldError ) ),
+				if (field === 'username' && !includes(usernamesSearched, fields.username)) {
+					analytics.tracks.recordEvent('calypso_signup_username_validation_failed', {
+						error: head(keys(fieldError)),
 						username: fields.username,
-					} );
+					});
 
 					timesUsernameValidationFailed++;
 				}
 
-				if ( field === 'password' ) {
-					analytics.tracks.recordEvent( 'calypso_signup_password_validation_failed', {
-						error: head( keys( fieldError ) ),
-					} );
+				if (field === 'password') {
+					analytics.tracks.recordEvent('calypso_signup_password_validation_failed', {
+						error: head(keys(fieldError)),
+					});
 
 					timesPasswordValidationFailed++;
 				}
-			} );
+			});
 
-			if ( fields.email ) {
-				if ( this.props.signupDependencies && this.props.signupDependencies.domainItem ) {
-					const domainInEmail = fields.email.split( '@' )[ 1 ];
-					if ( this.props.signupDependencies.domainItem.meta === domainInEmail ) {
+			if (fields.email) {
+				if (this.props.signupDependencies && this.props.signupDependencies.domainItem) {
+					const domainInEmail = fields.email.split('@')[1];
+					if (this.props.signupDependencies.domainItem.meta === domainInEmail) {
 						// if the user tries to use an email address from the domain they're trying to register,
 						// show an error message.
-						messages = Object.assign( {}, messages, {
+						messages = Object.assign({}, messages, {
 							email: {
 								invalid: this.props.translate(
 									'Use a working email address, so you can receive our messages.'
 								),
 							},
-						} );
+						});
 					}
 				}
 			}
 
-			onComplete( error, messages );
-			if ( ! this.state.validationInitialized ) {
-				this.setState( { validationInitialized: true } );
+			onComplete(error, messages);
+			if (!this.state.validationInitialized) {
+				this.setState({ validationInitialized: true });
 			}
-		} );
+		});
 	};
 
-	setFormState = state => {
-		this.setState( { form: state } );
+	setFormState = (state) => {
+		this.setState({ form: state });
 	};
 
-	handleFormControllerError( error ) {
-		if ( error ) {
+	handleFormControllerError(error) {
+		if (error) {
 			throw error;
 		}
 	}
 
-	handleChangeEvent = event => {
+	handleChangeEvent = (event) => {
 		const name = event.target.name,
 			value = event.target.value;
 
-		this.setState( { notice: null } );
+		this.setState({ notice: null });
 
-		this.formStateController.handleFieldChange( {
+		this.formStateController.handleFieldChange({
 			name: name,
 			value: value,
-		} );
+		});
 	};
 
-	handleBlur = event => {
+	handleBlur = (event) => {
 		const fieldId = event.target.id;
 		// Ensure that username and password field validation does not trigger prematurely
-		if ( fieldId === 'password' ) {
-			this.setState( { focusPassword: true }, () => {
+		if (fieldId === 'password') {
+			this.setState({ focusPassword: true }, () => {
 				this.validateAndSaveForm();
-			} );
+			});
 			return;
 		}
-		if ( fieldId === 'username' ) {
-			this.setState( { focusUsername: true }, () => {
+		if (fieldId === 'username') {
+			this.setState({ focusUsername: true }, () => {
 				this.validateAndSaveForm();
-			} );
+			});
 			return;
 		}
 
@@ -353,25 +353,25 @@ class SignupForm extends Component {
 		const data = this.getUserData();
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
-		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
+		if (data.username.length === 0 && data.password.length === 0 && data.email.length === 0) {
 			return;
 		}
 
 		this.formStateController.sanitize();
 		this.formStateController.validate();
-		this.props.save && this.props.save( this.state.form );
+		this.props.save && this.props.save(this.state.form);
 	};
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 
-		if ( this.state.submitting ) {
+		if (this.state.submitting) {
 			return;
 		}
 
-		this.setState( { submitting: true } );
+		this.setState({ submitting: true });
 
-		if ( this.props.submitting ) {
+		if (this.props.submitting) {
 			resetAnalyticsData();
 
 			// the user was already created, so skip validation continue
@@ -379,9 +379,9 @@ class SignupForm extends Component {
 			return;
 		}
 
-		this.formStateController.handleSubmit( hasErrors => {
-			if ( hasErrors ) {
-				this.setState( { submitting: false } );
+		this.formStateController.handleSubmit((hasErrors) => {
+			if (hasErrors) {
+				this.setState({ submitting: false });
 				return;
 			}
 
@@ -391,12 +391,12 @@ class SignupForm extends Component {
 				times_password_validation_failed: timesPasswordValidationFailed,
 			};
 
-			this.props.submitForm( this.state.form, this.getUserData(), analyticsData, () => {
-				this.setState( { submitting: false } );
-			} );
+			this.props.submitForm(this.state.form, this.getUserData(), analyticsData, () => {
+				this.setState({ submitting: false });
+			});
 
 			resetAnalyticsData();
-		} );
+		});
 	};
 
 	isJetpack() {
@@ -404,32 +404,31 @@ class SignupForm extends Component {
 	}
 
 	getLoginLink() {
-		return login( {
+		return login({
 			isJetpack: this.isJetpack(),
-			isWoo:
-				config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
-			isNative: config.isEnabled( 'login/native-login-links' ),
+			isWoo: config.isEnabled('jetpack/connect/woocommerce') && this.props.isJetpackWooCommerceFlow,
+			isNative: config.isEnabled('login/native-login-links'),
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 			wccomFrom: this.props.wccomFrom,
-		} );
+		});
 	}
 
-	getNoticeMessageWithLogin( notice ) {
+	getNoticeMessageWithLogin(notice) {
 		const link = this.getLoginLink();
 
-		if ( notice.error === '2FA_enabled' ) {
+		if (notice.error === '2FA_enabled') {
 			return (
 				<span>
 					<p>
-						{ notice.message }
+						{notice.message}
 						&nbsp;
-						{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+						{this.props.translate('{{a}}Log in now{{/a}} to finish signing up.', {
 							components: {
-								a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,
+								a: <a href={link} onClick={this.props.trackLoginMidFlow} />,
 							},
-						} ) }
+						})}
 					</p>
 				</span>
 			);
@@ -437,295 +436,293 @@ class SignupForm extends Component {
 		return notice.message;
 	}
 
-	globalNotice( notice ) {
+	globalNotice(notice) {
 		return (
 			<Notice
 				className="signup-form__notice"
-				showDismiss={ false }
-				status={ notices.getStatusHelper( notice ) }
-				text={ this.getNoticeMessageWithLogin( notice ) }
+				showDismiss={false}
+				status={notices.getStatusHelper(notice)}
+				text={this.getNoticeMessageWithLogin(notice)}
 			/>
 		);
 	}
 
 	getUserData() {
 		return {
-			username: formState.getFieldValue( this.state.form, 'username' ),
-			password: formState.getFieldValue( this.state.form, 'password' ),
-			email: formState.getFieldValue( this.state.form, 'email' ),
+			username: formState.getFieldValue(this.state.form, 'username'),
+			password: formState.getFieldValue(this.state.form, 'password'),
+			email: formState.getFieldValue(this.state.form, 'email'),
 			extra: {
-				first_name: formState.getFieldValue( this.state.form, 'firstName' ),
-				last_name: formState.getFieldValue( this.state.form, 'lastName' ),
+				first_name: formState.getFieldValue(this.state.form, 'firstName'),
+				last_name: formState.getFieldValue(this.state.form, 'lastName'),
 			},
 		};
 	}
 
-	getErrorMessagesWithLogin( fieldName ) {
-		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
-		if ( ! messages ) {
+	getErrorMessagesWithLogin(fieldName) {
+		const messages = formState.getFieldErrorMessages(this.state.form, fieldName);
+		if (!messages) {
 			return;
 		}
 
 		let link = this.getLoginLink();
 
-		return map( messages, ( message, error_code ) => {
-			if ( error_code === 'taken' ) {
+		return map(messages, (message, error_code) => {
+			if (error_code === 'taken') {
 				link +=
 					'&email_address=' +
-					encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );
+					encodeURIComponent(formState.getFieldValue(this.state.form, fieldName));
 				return (
-					<span key={ error_code }>
+					<span key={error_code}>
 						<p>
-							{ message }
+							{message}
 							&nbsp;
-							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
+							{this.props.translate('If this is you {{a}}log in now{{/a}}.', {
 								components: {
-									a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,
+									a: <a href={link} onClick={this.props.trackLoginMidFlow} />,
 								},
-							} ) }
+							})}
 						</p>
 					</span>
 				);
 			}
 			return message;
-		} );
+		});
 	}
 
 	formFields() {
 		const isEmailValid =
-			! this.props.disableEmailInput && formState.isFieldValid( this.state.form, 'email' );
+			!this.props.disableEmailInput && formState.isFieldValid(this.state.form, 'email');
 
 		return (
 			<div>
-				{ this.props.displayNameInput && (
+				{this.props.displayNameInput && (
 					<>
-						<FormLabel htmlFor="firstName">{ this.props.translate( 'Your first name' ) }</FormLabel>
+						<FormLabel htmlFor="firstName">{this.props.translate('Your first name')}</FormLabel>
 						<FormTextInput
 							autoCorrect="off"
 							className="signup-form__input"
-							disabled={ this.state.submitting || !! this.props.disabled }
+							disabled={this.state.submitting || !!this.props.disabled}
 							id="firstName"
 							name="firstName"
-							value={ formState.getFieldValue( this.state.form, 'firstName' ) }
-							isError={ formState.isFieldInvalid( this.state.form, 'firstName' ) }
-							isValid={ formState.isFieldValid( this.state.form, 'firstName' ) }
-							onBlur={ this.handleBlur }
-							onChange={ this.handleChangeEvent }
+							value={formState.getFieldValue(this.state.form, 'firstName')}
+							isError={formState.isFieldInvalid(this.state.form, 'firstName')}
+							isValid={formState.isFieldValid(this.state.form, 'firstName')}
+							onBlur={this.handleBlur}
+							onChange={this.handleChangeEvent}
 						/>
 
-						{ formState.isFieldInvalid( this.state.form, 'firstName' ) && (
-							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'firstName' ) } />
-						) }
+						{formState.isFieldInvalid(this.state.form, 'firstName') && (
+							<FormInputValidation isError text={this.getErrorMessagesWithLogin('firstName')} />
+						)}
 
-						<FormLabel htmlFor="lastName">{ this.props.translate( 'Your last name' ) }</FormLabel>
+						<FormLabel htmlFor="lastName">{this.props.translate('Your last name')}</FormLabel>
 						<FormTextInput
 							autoCorrect="off"
 							className="signup-form__input"
-							disabled={ this.state.submitting || !! this.props.disabled }
+							disabled={this.state.submitting || !!this.props.disabled}
 							id="lastName"
 							name="lastName"
-							value={ formState.getFieldValue( this.state.form, 'lastName' ) }
-							isError={ formState.isFieldInvalid( this.state.form, 'lastName' ) }
-							isValid={ formState.isFieldValid( this.state.form, 'lastName' ) }
-							onBlur={ this.handleBlur }
-							onChange={ this.handleChangeEvent }
+							value={formState.getFieldValue(this.state.form, 'lastName')}
+							isError={formState.isFieldInvalid(this.state.form, 'lastName')}
+							isValid={formState.isFieldValid(this.state.form, 'lastName')}
+							onBlur={this.handleBlur}
+							onChange={this.handleChangeEvent}
 						/>
 
-						{ formState.isFieldInvalid( this.state.form, 'lastName' ) && (
-							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'lastName' ) } />
-						) }
+						{formState.isFieldInvalid(this.state.form, 'lastName') && (
+							<FormInputValidation isError text={this.getErrorMessagesWithLogin('lastName')} />
+						)}
 					</>
-				) }
+				)}
 
-				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
+				<FormLabel htmlFor="email">{this.props.translate('Your email address')}</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
 					className="signup-form__input"
 					disabled={
-						this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput
+						this.state.submitting || !!this.props.disabled || !!this.props.disableEmailInput
 					}
 					id="email"
 					name="email"
 					type="email"
-					value={ formState.getFieldValue( this.state.form, 'email' ) }
-					isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
-					isValid={ this.state.validationInitialized && isEmailValid }
-					onBlur={ this.handleBlur }
-					onChange={ this.handleChangeEvent }
+					value={formState.getFieldValue(this.state.form, 'email')}
+					isError={formState.isFieldInvalid(this.state.form, 'email')}
+					isValid={this.state.validationInitialized && isEmailValid}
+					onBlur={this.handleBlur}
+					onChange={this.handleChangeEvent}
 				/>
-				{ this.emailDisableExplanation() }
+				{this.emailDisableExplanation()}
 
-				{ formState.isFieldInvalid( this.state.form, 'email' ) && (
-					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
-				) }
+				{formState.isFieldInvalid(this.state.form, 'email') && (
+					<FormInputValidation isError text={this.getErrorMessagesWithLogin('email')} />
+				)}
 
-				{ this.props.displayUsernameInput && (
+				{this.props.displayUsernameInput && (
 					<>
-						<FormLabel htmlFor="username">
-							{ this.props.translate( 'Choose a username' ) }
-						</FormLabel>
+						<FormLabel htmlFor="username">{this.props.translate('Choose a username')}</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							autoCorrect="off"
 							className="signup-form__input"
-							disabled={ this.state.submitting || this.props.disabled }
+							disabled={this.state.submitting || this.props.disabled}
 							id="username"
 							name="username"
-							value={ formState.getFieldValue( this.state.form, 'username' ) }
-							isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
-							isValid={ formState.isFieldValid( this.state.form, 'username' ) }
-							onBlur={ this.handleBlur }
-							onChange={ this.handleChangeEvent }
+							value={formState.getFieldValue(this.state.form, 'username')}
+							isError={formState.isFieldInvalid(this.state.form, 'username')}
+							isValid={formState.isFieldValid(this.state.form, 'username')}
+							onBlur={this.handleBlur}
+							onChange={this.handleChangeEvent}
 						/>
 
-						{ formState.isFieldInvalid( this.state.form, 'username' ) && (
-							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
-						) }
+						{formState.isFieldInvalid(this.state.form, 'username') && (
+							<FormInputValidation isError text={this.getErrorMessagesWithLogin('username')} />
+						)}
 					</>
-				) }
+				)}
 
-				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
+				<FormLabel htmlFor="password">{this.props.translate('Choose a password')}</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
-					disabled={ this.state.submitting || this.props.disabled }
+					disabled={this.state.submitting || this.props.disabled}
 					id="password"
 					name="password"
-					value={ formState.getFieldValue( this.state.form, 'password' ) }
-					isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
-					isValid={ formState.isFieldValid( this.state.form, 'password' ) }
-					onBlur={ this.handleBlur }
-					onChange={ this.handleChangeEvent }
-					submitting={ this.state.submitting || this.props.submitting }
+					value={formState.getFieldValue(this.state.form, 'password')}
+					isError={formState.isFieldInvalid(this.state.form, 'password')}
+					isValid={formState.isFieldValid(this.state.form, 'password')}
+					onBlur={this.handleBlur}
+					onChange={this.handleChangeEvent}
+					submitting={this.state.submitting || this.props.submitting}
 				/>
-				{ this.passwordValidationExplanation() }
+				{this.passwordValidationExplanation()}
 			</div>
 		);
 	}
 
-	recordWooCommerceSignupTracks( method ) {
+	recordWooCommerceSignupTracks(method) {
 		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
-			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
+		if (config.isEnabled('jetpack/connect/woocommerce') && isJetpackWooCommerceFlow) {
+			analytics.tracks.recordEvent('wcadmin_storeprofiler_create_jetpack_account', {
 				signup_method: method,
-			} );
+			});
 		} else if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
+			config.isEnabled('woocommerce/onboarding-oauth') &&
+			isWooOAuth2Client(oauth2Client) &&
 			'cart' === wccomFrom
 		) {
-			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_payment_create_account', {
+			analytics.tracks.recordEvent('wcadmin_storeprofiler_payment_create_account', {
 				signup_method: method,
-			} );
+			});
 		}
 	}
 
-	handleWooCommerceSocialConnect = ( ...args ) => {
-		this.recordWooCommerceSignupTracks( 'social' );
-		this.props.handleSocialResponse( args );
+	handleWooCommerceSocialConnect = (...args) => {
+		this.recordWooCommerceSignupTracks('social');
+		this.props.handleSocialResponse(args);
 	};
 
-	handleWooCommerceSubmit = event => {
+	handleWooCommerceSubmit = (event) => {
 		event.preventDefault();
 		document.activeElement.blur();
-		this.recordWooCommerceSignupTracks( 'email' );
+		this.recordWooCommerceSignupTracks('email');
 
-		this.formStateController.handleSubmit( hasErrors => {
-			if ( hasErrors ) {
-				this.setState( { submitting: false } );
+		this.formStateController.handleSubmit((hasErrors) => {
+			if (hasErrors) {
+				this.setState({ submitting: false });
 				return;
 			}
-		} );
-		this.handleSubmit( event );
+		});
+		this.handleSubmit(event);
 	};
 
 	renderWooCommerce() {
 		return (
 			<div>
 				<TextControl
-					label={ this.props.translate( 'Your email address' ) }
+					label={this.props.translate('Your email address')}
 					disabled={
-						this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput
+						this.state.submitting || !!this.props.disabled || !!this.props.disableEmailInput
 					}
 					id="email"
 					name="email"
 					type="email"
-					value={ formState.getFieldValue( this.state.form, 'email' ) }
-					onBlur={ this.handleBlur }
-					onChange={ value => {
-						this.setState( { notice: null } );
-						this.formStateController.handleFieldChange( {
+					value={formState.getFieldValue(this.state.form, 'email')}
+					onBlur={this.handleBlur}
+					onChange={(value) => {
+						this.setState({ notice: null });
+						this.formStateController.handleFieldChange({
 							name: 'email',
 							value,
-						} );
-					} }
+						});
+					}}
 				/>
-				{ this.emailDisableExplanation() }
+				{this.emailDisableExplanation()}
 
-				{ formState.isFieldInvalid( this.state.form, 'email' ) && (
-					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
-				) }
+				{formState.isFieldInvalid(this.state.form, 'email') && (
+					<FormInputValidation isError text={this.getErrorMessagesWithLogin('email')} />
+				)}
 
-				{ this.props.displayUsernameInput && (
+				{this.props.displayUsernameInput && (
 					<>
 						<TextControl
-							label={ this.props.translate( 'Choose a username' ) }
-							disabled={ this.state.submitting || this.props.disabled }
+							label={this.props.translate('Choose a username')}
+							disabled={this.state.submitting || this.props.disabled}
 							id="username"
 							name="username"
-							value={ formState.getFieldValue( this.state.form, 'username' ) }
-							onBlur={ this.handleBlur }
-							onChange={ value => {
-								this.setState( { notice: null } );
-								this.formStateController.handleFieldChange( {
+							value={formState.getFieldValue(this.state.form, 'username')}
+							onBlur={this.handleBlur}
+							onChange={(value) => {
+								this.setState({ notice: null });
+								this.formStateController.handleFieldChange({
 									name: 'username',
 									value,
-								} );
-							} }
+								});
+							}}
 						/>
 
-						{ formState.isFieldInvalid( this.state.form, 'username' ) && (
-							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
-						) }
+						{formState.isFieldInvalid(this.state.form, 'username') && (
+							<FormInputValidation isError text={this.getErrorMessagesWithLogin('username')} />
+						)}
 					</>
-				) }
+				)}
 
 				<TextControl
-					label={ this.props.translate( 'Choose a password' ) }
-					disabled={ this.state.submitting || this.props.disabled }
+					label={this.props.translate('Choose a password')}
+					disabled={this.state.submitting || this.props.disabled}
 					id="password"
 					name="password"
 					type="password"
-					value={ formState.getFieldValue( this.state.form, 'password' ) }
-					onBlur={ this.handleBlur }
-					onChange={ value => {
-						this.formStateController.handleFieldChange( {
+					value={formState.getFieldValue(this.state.form, 'password')}
+					onBlur={this.handleBlur}
+					onChange={(value) => {
+						this.formStateController.handleFieldChange({
 							name: 'password',
 							value,
-						} );
-					} }
+						});
+					}}
 				/>
 
-				{ this.passwordValidationExplanation() }
+				{this.passwordValidationExplanation()}
 
-				{ this.props.formFooter || this.formFooter() }
+				{this.props.formFooter || this.formFooter()}
 			</div>
 		);
 	}
 
 	handleOnClickTos = () => {
-		analytics.tracks.recordEvent.bind( analytics, 'calypso_signup_tos_link_click' );
+		analytics.tracks.recordEvent.bind(analytics, 'calypso_signup_tos_link_click');
 	};
 
 	getTermsOfServiceUrl() {
-		return localizeUrl( 'https://wordpress.com/tos/' );
+		return localizeUrl('https://wordpress.com/tos/');
 	}
 
 	termsOfServiceLink = () => {
 		const tosLink = (
 			<a
-				href={ this.getTermsOfServiceUrl() }
-				onClick={ this.handleOnClickTos }
+				href={this.getTermsOfServiceUrl()}
+				onClick={this.handleOnClickTos}
 				target="_blank"
 				rel="noopener noreferrer"
 			/>
@@ -739,40 +736,40 @@ class SignupForm extends Component {
 			}
 		);
 
-		if ( this.props.isSocialSignupEnabled ) {
+		if (this.props.isSocialSignupEnabled) {
 			return (
 				<p className="signup-form__terms-of-service-link">
-					{ this.props.translate(
+					{this.props.translate(
 						'By creating an account, you agree to our {{a}}Terms of Service{{/a}}.',
 						{
 							components: {
 								a: tosLink,
 							},
 						}
-					) }
+					)}
 				</p>
 			);
 		}
 
-		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
+		return <p className="signup-form__terms-of-service-link">{tosText}</p>;
 	};
 
 	getNotice() {
-		if ( this.props.step && 'invalid' === this.props.step.status ) {
-			return this.globalNotice( this.props.step.errors[ 0 ] );
+		if (this.props.step && 'invalid' === this.props.step.status) {
+			return this.globalNotice(this.props.step.errors[0]);
 		}
-		if ( this.state.notice ) {
-			return this.globalNotice( this.state.notice );
+		if (this.state.notice) {
+			return this.globalNotice(this.state.notice);
 		}
-		if ( this.userCreationComplete() ) {
+		if (this.userCreationComplete()) {
 			return (
 				<TrackRender eventName="calypso_signup_account_already_created_show">
-					{ this.globalNotice( {
+					{this.globalNotice({
 						info: true,
 						message: this.props.translate(
 							'Your account has already been created. You can change your email, username, and password later.'
 						),
-					} ) }
+					})}
 				</TrackRender>
 			);
 		}
@@ -780,26 +777,26 @@ class SignupForm extends Component {
 	}
 
 	emailDisableExplanation() {
-		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
+		if (this.props.disableEmailInput && this.props.disableEmailExplanation) {
 			return (
-				<FormSettingExplanation noValidate={ true }>
-					{ this.props.disableEmailExplanation }
+				<FormSettingExplanation noValidate={true}>
+					{this.props.disableEmailExplanation}
 				</FormSettingExplanation>
 			);
 		}
 	}
 
 	passwordValidationExplanation() {
-		const passwordValue = formState.getFieldValue( this.state.form, 'password' );
+		const passwordValue = formState.getFieldValue(this.state.form, 'password');
 
-		if ( formState.isFieldInvalid( this.state.form, 'password' ) ) {
-			return <FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'password' ) } />;
+		if (formState.isFieldInvalid(this.state.form, 'password')) {
+			return <FormInputValidation isError text={this.getErrorMessagesWithLogin('password')} />;
 		}
 
-		if ( passwordValue && passwordValue < 6 ) {
+		if (passwordValue && passwordValue < 6) {
 			return (
 				<FormSettingExplanation>
-					{ this.props.translate( 'Your password must be at least six characters long.' ) }
+					{this.props.translate('Your password must be at least six characters long.')}
 				</FormSettingExplanation>
 			);
 		}
@@ -808,25 +805,23 @@ class SignupForm extends Component {
 	}
 
 	formFooter() {
-		if ( this.userCreationComplete() ) {
+		if (this.userCreationComplete()) {
 			return (
 				<LoggedOutFormFooter>
-					<Button primary onClick={ () => this.props.goToNextStep() }>
-						{ this.props.translate( 'Continue' ) }
+					<Button primary onClick={() => this.props.goToNextStep()}>
+						{this.props.translate('Continue')}
 					</Button>
 				</LoggedOutFormFooter>
 			);
 		}
 		return (
-			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
-				{ this.termsOfServiceLink() }
+			<LoggedOutFormFooter isBlended={this.props.isSocialSignupEnabled}>
+				{this.termsOfServiceLink()}
 				<FormButton
 					className="signup-form__submit"
-					disabled={
-						this.state.submitting || this.props.disabled || this.props.disableSubmitButton
-					}
+					disabled={this.state.submitting || this.props.disabled || this.props.disableSubmitButton}
 				>
-					{ this.props.submitButtonText }
+					{this.props.submitButtonText}
 				</FormButton>
 			</LoggedOutFormFooter>
 		);
@@ -835,30 +830,30 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, showRecaptchaToS, translate } = this.props;
 
-		const logInUrl = config.isEnabled( 'login/native-login-links' )
+		const logInUrl = config.isEnabled('login/native-login-links')
 			? this.getLoginLink()
-			: localizeUrl( config( 'login_url' ), this.props.locale );
+			: localizeUrl(config('login_url'), this.props.locale);
 
 		return (
 			<>
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ flowName === 'onboarding'
-							? translate( 'Log in to create a site for your existing account.' )
-							: translate( 'Already have a WordPress.com account?' ) }
+					<LoggedOutFormLinkItem href={logInUrl}>
+						{flowName === 'onboarding'
+							? translate('Log in to create a site for your existing account.')
+							: translate('Already have a WordPress.com account?')}
 					</LoggedOutFormLinkItem>
-					{ this.props.oauth2Client && (
+					{this.props.oauth2Client && (
 						<LoggedOutFormBackLink
-							oauth2Client={ this.props.oauth2Client }
-							recordClick={ this.recordBackLinkClick }
+							oauth2Client={this.props.oauth2Client}
+							recordClick={this.recordBackLinkClick}
 						/>
-					) }
+					)}
 				</LoggedOutFormLinks>
-				{ showRecaptchaToS && (
+				{showRecaptchaToS && (
 					<div className="signup-form__recaptcha-tos">
 						<LoggedOutFormLinks>
 							<p>
-								{ translate(
+								{translate(
 									'This site is protected by reCAPTCHA and the Google {{a1}}Privacy Policy{{/a1}} and {{a2}}Terms of Service{{/a2}} apply.',
 									{
 										components: {
@@ -868,11 +863,11 @@ class SignupForm extends Component {
 										comment:
 											'English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed',
 									}
-								) }
+								)}
 							</p>
 						</LoggedOutFormLinks>
 					</div>
-				) }
+				)}
 			</>
 		);
 	}
@@ -882,67 +877,66 @@ class SignupForm extends Component {
 	}
 
 	render() {
-		if ( this.getUserExistsError( this.props ) ) {
+		if (this.getUserExistsError(this.props)) {
 			return null;
 		}
 
-		if ( isCrowdsignalOAuth2Client( this.props.oauth2Client ) ) {
-			const socialProps = pick( this.props, [
+		if (isCrowdsignalOAuth2Client(this.props.oauth2Client)) {
+			const socialProps = pick(this.props, [
 				'isSocialSignupEnabled',
 				'handleSocialResponse',
 				'socialService',
 				'socialServiceResponse',
-			] );
+			]);
 
-			const logInUrl = config.isEnabled( 'login/native-login-links' )
+			const logInUrl = config.isEnabled('login/native-login-links')
 				? this.getLoginLink()
-				: localizeUrl( config( 'login_url' ), this.props.locale );
+				: localizeUrl(config('login_url'), this.props.locale);
 
 			return (
 				<CrowdsignalSignupForm
-					disabled={ this.props.disabled }
-					formFields={ this.formFields() }
-					handleSubmit={ this.handleSubmit }
-					loginLink={ logInUrl }
-					oauth2Client={ this.props.oauth2Client }
-					recordBackLinkClick={ this.recordBackLinkClick }
-					submitting={ this.props.submitting }
-					{ ...socialProps }
+					disabled={this.props.disabled}
+					formFields={this.formFields()}
+					handleSubmit={this.handleSubmit}
+					loginLink={logInUrl}
+					oauth2Client={this.props.oauth2Client}
+					recordBackLinkClick={this.recordBackLinkClick}
+					submitting={this.props.submitting}
+					{...socialProps}
 				/>
 			);
 		}
 
 		if (
-			( config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-				this.props.isJetpackWooCommerceFlow ) ||
-			( config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-				isWooOAuth2Client( this.props.oauth2Client ) &&
-				this.props.wccomFrom )
+			(config.isEnabled('jetpack/connect/woocommerce') && this.props.isJetpackWooCommerceFlow) ||
+			(config.isEnabled('woocommerce/onboarding-oauth') &&
+				isWooOAuth2Client(this.props.oauth2Client) &&
+				this.props.wccomFrom)
 		) {
-			const logInUrl = config.isEnabled( 'login/native-login-links' )
+			const logInUrl = config.isEnabled('login/native-login-links')
 				? this.getLoginLink()
-				: localizeUrl( config( 'login_url' ), this.props.locale );
+				: localizeUrl(config('login_url'), this.props.locale);
 
 			return (
-				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
-					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>
-						{ this.props.formHeader && (
-							<header className="signup-form__header">{ this.props.formHeader }</header>
-						) }
+				<div className={classNames('signup-form__woocommerce', this.props.className)}>
+					<LoggedOutForm onSubmit={this.handleWooCommerceSubmit} noValidate={true}>
+						{this.props.formHeader && (
+							<header className="signup-form__header">{this.props.formHeader}</header>
+						)}
 
-						{ this.renderWooCommerce() }
+						{this.renderWooCommerce()}
 
-						{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+						{this.props.isSocialSignupEnabled && !this.userCreationComplete() && (
 							<SocialSignupForm
-								handleResponse={ this.handleWooCommerceSocialConnect }
-								socialService={ this.props.socialService }
-								socialServiceResponse={ this.props.socialServiceResponse }
+								handleResponse={this.handleWooCommerceSocialConnect}
+								socialService={this.props.socialService}
+								socialServiceResponse={this.props.socialServiceResponse}
 							/>
-						) }
+						)}
 					</LoggedOutForm>
 
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
+					<LoggedOutFormLinkItem href={logInUrl}>
+						{this.props.translate('Log in with an existing WordPress.com account')}
 					</LoggedOutFormLinkItem>
 				</div>
 			);
@@ -957,94 +951,94 @@ class SignupForm extends Component {
 			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
 		if (
-			( this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse' ) &&
-			'passwordless' === abtest( 'passwordlessSignup' )
+			(this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse') &&
+			'passwordless' === abtest('passwordlessSignup')
 		) {
-			const logInUrl = config.isEnabled( 'login/native-login-links' )
+			const logInUrl = config.isEnabled('login/native-login-links')
 				? this.getLoginLink()
-				: localizeUrl( config( 'login_url' ), this.props.locale );
+				: localizeUrl(config('login_url'), this.props.locale);
 
 			return (
 				<div
-					className={ classNames( 'signup-form', this.props.className, {
+					className={classNames('signup-form', this.props.className, {
 						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
-					} ) }
+					})}
 				>
-					{ this.getNotice() }
+					{this.getNotice()}
 					<PasswordlessSignupForm
-						step={ this.props.step }
-						stepName={ this.props.stepName }
-						flowName={ this.props.flowName }
-						goToNextStep={ this.props.goToNextStep }
-						renderTerms={ this.termsOfServiceLink }
-						logInUrl={ logInUrl }
-						disabled={ this.props.disabled }
-						disableSubmitButton={ this.props.disableSubmitButton }
-						recaptchaClientId={ this.props.recaptchaClientId }
+						step={this.props.step}
+						stepName={this.props.stepName}
+						flowName={this.props.flowName}
+						goToNextStep={this.props.goToNextStep}
+						renderTerms={this.termsOfServiceLink}
+						logInUrl={logInUrl}
+						disabled={this.props.disabled}
+						disableSubmitButton={this.props.disableSubmitButton}
+						recaptchaClientId={this.props.recaptchaClientId}
 					/>
-					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+					{this.props.isSocialSignupEnabled && !this.userCreationComplete() && (
 						<SocialSignupForm
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
+							handleResponse={this.props.handleSocialResponse}
+							socialService={this.props.socialService}
+							socialServiceResponse={this.props.socialServiceResponse}
 						/>
-					) }
+					)}
 
-					{ this.props.footerLink || this.footerLink() }
+					{this.props.footerLink || this.footerLink()}
 				</div>
 			);
 		}
 
 		return (
 			<div
-				className={ classNames( 'signup-form', this.props.className, {
+				className={classNames('signup-form', this.props.className, {
 					'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
-				} ) }
+				})}
 			>
-				{ this.getNotice() }
+				{this.getNotice()}
 
-				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
-					{ this.props.formHeader && (
-						<header className="signup-form__header">{ this.props.formHeader }</header>
-					) }
+				<LoggedOutForm onSubmit={this.handleSubmit} noValidate={true}>
+					{this.props.formHeader && (
+						<header className="signup-form__header">{this.props.formHeader}</header>
+					)}
 
-					{ this.formFields() }
+					{this.formFields()}
 
-					{ this.props.formFooter || this.formFooter() }
+					{this.props.formFooter || this.formFooter()}
 				</LoggedOutForm>
 
-				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+				{this.props.isSocialSignupEnabled && !this.userCreationComplete() && (
 					<SocialSignupForm
-						handleResponse={ this.props.handleSocialResponse }
-						socialService={ this.props.socialService }
-						socialServiceResponse={ this.props.socialServiceResponse }
+						handleResponse={this.props.handleSocialResponse}
+						socialService={this.props.socialService}
+						socialServiceResponse={this.props.socialServiceResponse}
 					/>
-				) }
+				)}
 
-				{ this.props.footerLink || this.footerLink() }
+				{this.props.footerLink || this.footerLink()}
 			</div>
 		);
 	}
 }
 
-function TrackRender( { children, eventName } ) {
-	useEffect( () => {
-		analytics.tracks.recordEvent( eventName );
-	}, [ eventName ] );
+function TrackRender({ children, eventName }) {
+	useEffect(() => {
+		analytics.tracks.recordEvent(eventName);
+	}, [eventName]);
 
 	return children;
 }
 
 export default connect(
-	state => ( {
-		oauth2Client: getCurrentOAuth2Client( state ),
-		sectionName: getSectionName( state ),
+	(state) => ({
+		oauth2Client: getCurrentOAuth2Client(state),
+		sectionName: getSectionName(state),
 		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-	} ),
+			'woocommerce-onboarding' === get(getCurrentQueryArguments(state), 'from'),
+		wccomFrom: get(getCurrentQueryArguments(state), 'wccom-from'),
+	}),
 	{
-		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
+		trackLoginMidFlow: () => recordTracksEvent('calypso_signup_login_midflow'),
 		createSocialUserFailed,
 	}
-)( localize( SignupForm ) );
+)(localize(SignupForm));

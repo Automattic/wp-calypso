@@ -8,8 +8,8 @@ import React, { Component } from 'react';
  */
 import addUserMentions from '../add';
 
-const UserMentionsExampleInput = React.forwardRef( ( props, ref ) => (
-	<textarea ref={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />
-) );
+const UserMentionsExampleInput = React.forwardRef((props, ref) => (
+	<textarea ref={ref} onKeyUp={props.onKeyUp} onKeyDown={props.onKeyDown} />
+));
 
-export default addUserMentions( UserMentionsExampleInput );
+export default addUserMentions(UserMentionsExampleInput);

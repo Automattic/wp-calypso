@@ -23,27 +23,27 @@ class FormattedDateExample extends PureComponent {
 		format: 'lll',
 	};
 
-	handleDateChange = evt => {
-		const val = moment( evt.target.value );
-		if ( val.isValid() ) {
-			this.setState( {
+	handleDateChange = (evt) => {
+		const val = moment(evt.target.value);
+		if (val.isValid()) {
+			this.setState({
 				currentDate: val.toDate(),
 				currentDateString: evt.target.value,
-			} );
+			});
 		}
 	};
 
-	handleLocaleChange = evt => {
+	handleLocaleChange = (evt) => {
 		const val = evt.target.value;
-		if ( val.length === 2 || val.length === 5 ) {
-			this.props.setLocale( evt.target.value );
+		if (val.length === 2 || val.length === 5) {
+			this.props.setLocale(evt.target.value);
 		}
 	};
 
-	handleFormatChange = evt => {
+	handleFormatChange = (evt) => {
 		const val = evt.target.value;
-		if ( val ) {
-			this.setState( { format: val } );
+		if (val) {
+			this.setState({ format: val });
 		}
 	};
 
@@ -56,8 +56,8 @@ class FormattedDateExample extends PureComponent {
 					<input
 						type="text"
 						name="theDate"
-						onChange={ this.handleDateChange }
-						defaultValue={ this.state.currentDateString }
+						onChange={this.handleDateChange}
+						defaultValue={this.state.currentDateString}
 					/>
 				</label>
 				<label>
@@ -66,8 +66,8 @@ class FormattedDateExample extends PureComponent {
 					<input
 						type="text"
 						name="locale"
-						onChange={ this.handleLocaleChange }
-						defaultValue={ this.props.currentLocale }
+						onChange={this.handleLocaleChange}
+						defaultValue={this.props.currentLocale}
 					/>
 				</label>
 				<label>
@@ -76,22 +76,22 @@ class FormattedDateExample extends PureComponent {
 					<input
 						type="text"
 						name="format"
-						onChange={ this.handleFormatChange }
-						defaultValue={ this.state.format }
+						onChange={this.handleFormatChange}
+						defaultValue={this.state.format}
 					/>
 				</label>
-				<FormattedDate date={ this.state.currentDate } format={ this.state.format } />
+				<FormattedDate date={this.state.currentDate} format={this.state.format} />
 			</div>
 		);
 	}
 }
 
 const exported = connect(
-	state => ( {
-		currentLocale: getCurrentLocaleSlug( state ),
-	} ),
+	(state) => ({
+		currentLocale: getCurrentLocaleSlug(state),
+	}),
 	{ setLocale }
-)( FormattedDateExample );
+)(FormattedDateExample);
 exported.displayName = 'FormattedDateExample';
 
 export default exported;

@@ -12,17 +12,17 @@ import {
 
 // TODO: Handle error
 
-export default withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS: {
 			const { data } = action;
 			const methods = state || [];
-			const newMethods = methods.map( method => {
-				if ( method.id === data.id ) {
+			const newMethods = methods.map((method) => {
+				if (method.id === data.id) {
 					return data;
 				}
 				return method;
-			} );
+			});
 			return newMethods;
 		}
 		case WOOCOMMERCE_PAYMENT_METHODS_REQUEST: {
@@ -35,4 +35,4 @@ export default withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});

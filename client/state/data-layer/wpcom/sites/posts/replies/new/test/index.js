@@ -10,7 +10,7 @@ import { spy } from 'sinon';
 import { writePostComment } from '../';
 import * as Utils from 'state/data-layer/wpcom/sites/utils';
 
-describe( '#writePostComment()', () => {
+describe('#writePostComment()', () => {
 	const action = {
 		type: 'DUMMY',
 		siteId: 2916284,
@@ -18,17 +18,17 @@ describe( '#writePostComment()', () => {
 		commentText: 'comment text',
 	};
 
-	test( 'should dispatch a http request action to the new post replies endpoint', () => {
-		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
+	test('should dispatch a http request action to the new post replies endpoint', () => {
+		const dispatchNewCommentRequestSpy = spy(Utils, 'dispatchNewCommentRequest');
 
-		writePostComment( action );
+		writePostComment(action);
 
-		expect( dispatchNewCommentRequestSpy ).to.have.been.calledOnce;
-		expect( dispatchNewCommentRequestSpy ).to.have.been.calledWith(
+		expect(dispatchNewCommentRequestSpy).to.have.been.calledOnce;
+		expect(dispatchNewCommentRequestSpy).to.have.been.calledWith(
 			action,
 			'/sites/2916284/posts/1010/replies/new'
 		);
 
 		dispatchNewCommentRequestSpy.restore();
-	} );
-} );
+	});
+});

@@ -14,15 +14,15 @@ import { getCreditCardType } from 'lib/checkout';
  * @param {string} cardNumber unformatted field value
  * @returns {string} formatted value
  */
-export function formatCreditCard( cardNumber ) {
-	if ( getCreditCardType( cardNumber ) === 'amex' ) {
-		return formatAmexCreditCard( cardNumber );
+export function formatCreditCard(cardNumber) {
+	if (getCreditCardType(cardNumber) === 'amex') {
+		return formatAmexCreditCard(cardNumber);
 	}
-	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 19 );
-	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 8 ) } ${ digits.slice(
+	const digits = cardNumber.replace(/[^0-9]/g, '').slice(0, 19);
+	const formattedNumber = `${digits.slice(0, 4)} ${digits.slice(4, 8)} ${digits.slice(
 		8,
 		12
-	) } ${ digits.slice( 12 ) }`;
+	)} ${digits.slice(12)}`;
 	return formattedNumber.trim();
 }
 
@@ -32,21 +32,18 @@ export function formatCreditCard( cardNumber ) {
  * @param {string} cardNumber unformatted field value
  * @returns {string} formatted value
  */
-export function formatAmexCreditCard( cardNumber ) {
-	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 15 );
-	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 10 ) } ${ digits.slice(
-		10,
-		15
-	) }`;
+export function formatAmexCreditCard(cardNumber) {
+	const digits = cardNumber.replace(/[^0-9]/g, '').slice(0, 15);
+	const formattedNumber = `${digits.slice(0, 4)} ${digits.slice(4, 10)} ${digits.slice(10, 15)}`;
 	return formattedNumber.trim();
 }
 
 const fieldMasks = {};
 
-fieldMasks[ 'expiration-date' ] = {
-	mask: function( previousValue, nextValue ) {
+fieldMasks['expiration-date'] = {
+	mask: function (previousValue, nextValue) {
 		// If the user is deleting from the value then don't modify it
-		if ( previousValue && previousValue.length > nextValue.length ) {
+		if (previousValue && previousValue.length > nextValue.length) {
 			return nextValue;
 		}
 
@@ -55,37 +52,37 @@ fieldMasks[ 'expiration-date' ] = {
 			previousValue &&
 			previousValue.length === 2 &&
 			nextValue.length === 3 &&
-			nextValue[ 2 ] === '/'
+			nextValue[2] === '/'
 		) {
 			return nextValue;
 		}
 
 		// Remove anything except digits and slashes
-		nextValue = nextValue.replace( /[^\d]/g, '' );
+		nextValue = nextValue.replace(/[^\d]/g, '');
 
-		if ( nextValue.length <= 2 ) {
+		if (nextValue.length <= 2) {
 			return nextValue;
 		}
 
-		return nextValue.substring( 0, 2 ) + '/' + nextValue.substring( 2, 4 );
+		return nextValue.substring(0, 2) + '/' + nextValue.substring(2, 4);
 	},
 
 	unmask: identity,
 };
 
 fieldMasks.number = {
-	mask: function( previousValue, nextValue ) {
-		return formatCreditCard( nextValue );
+	mask: function (previousValue, nextValue) {
+		return formatCreditCard(nextValue);
 	},
 
-	unmask: function( value ) {
-		return value.replace( / /g, '' );
+	unmask: function (value) {
+		return value.replace(/ /g, '');
 	},
 };
 
 fieldMasks.cvv = {
-	mask: function( previousValue, nextValue ) {
-		return nextValue.replace( /[^\d]/g, '' ).substring( 0, 4 );
+	mask: function (previousValue, nextValue) {
+		return nextValue.replace(/[^\d]/g, '').substring(0, 4);
 	},
 
 	unmask: identity,
@@ -94,36 +91,36 @@ fieldMasks.cvv = {
 // `document` is an EBANX field. Currently used for Brazilian CPF numbers
 // See isValidCPF()/isValidCNPJ() / ebanx.js
 fieldMasks.document = {
-	mask: function( previousValue, nextValue ) {
+	mask: function (previousValue, nextValue) {
 		let string = nextValue;
 
-		const digits = nextValue.replace( /[^0-9]/g, '' );
+		const digits = nextValue.replace(/[^0-9]/g, '');
 
-		if ( digits.length > 11 ) {
+		if (digits.length > 11) {
 			// CNPJ
 			string =
-				digits.slice( 0, 2 ) +
+				digits.slice(0, 2) +
 				'.' +
-				digits.slice( 2, 5 ) +
+				digits.slice(2, 5) +
 				'.' +
-				digits.slice( 5, 8 ) +
+				digits.slice(5, 8) +
 				'/' +
-				digits.slice( 8, 12 ) +
+				digits.slice(8, 12) +
 				'-' +
-				digits.slice( 12, 14 );
+				digits.slice(12, 14);
 		} else {
 			// CPF
 			string =
-				digits.slice( 0, 3 ) +
+				digits.slice(0, 3) +
 				'.' +
-				digits.slice( 3, 6 ) +
+				digits.slice(3, 6) +
 				'.' +
-				digits.slice( 6, 9 ) +
+				digits.slice(6, 9) +
 				'-' +
-				digits.slice( 9, 11 );
+				digits.slice(9, 11);
 		}
 
-		return string.replace( /^[\s\.\-]+|[\s\.\-]+$/g, '' );
+		return string.replace(/^[\s\.\-]+|[\s\.\-]+$/g, '');
 	},
 
 	unmask: identity,
@@ -137,13 +134,13 @@ fieldMasks.document = {
  * @param {string} nextValue the new, incoming value of the field on change
  * @returns {string} formatted value
  */
-export function maskField( fieldName, previousValue, nextValue ) {
-	const fieldMask = fieldMasks[ fieldName ];
-	if ( ! fieldMask ) {
+export function maskField(fieldName, previousValue, nextValue) {
+	const fieldMask = fieldMasks[fieldName];
+	if (!fieldMask) {
 		return nextValue;
 	}
 
-	return fieldMask.mask( previousValue, nextValue );
+	return fieldMask.mask(previousValue, nextValue);
 }
 
 /**
@@ -154,11 +151,11 @@ export function maskField( fieldName, previousValue, nextValue ) {
  * @param {string} nextValue the new, incoming value of the field on change
  * @returns {string} deformatted value
  */
-export function unmaskField( fieldName, previousValue, nextValue ) {
-	const fieldMask = fieldMasks[ fieldName ];
-	if ( ! fieldMask ) {
+export function unmaskField(fieldName, previousValue, nextValue) {
+	const fieldMask = fieldMasks[fieldName];
+	if (!fieldMask) {
 		return nextValue;
 	}
 
-	return fieldMask.unmask( fieldMask.mask( previousValue, nextValue ) );
+	return fieldMask.unmask(fieldMask.mask(previousValue, nextValue));
 }

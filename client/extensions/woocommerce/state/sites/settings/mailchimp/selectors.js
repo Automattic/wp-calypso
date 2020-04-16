@@ -9,7 +9,7 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 // path to MailChimp setting state branch
-const basePath = siteId => [
+const basePath = (siteId) => [
 	'extensions',
 	'woocommerce',
 	'sites',
@@ -25,10 +25,10 @@ const basePath = siteId => [
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether settings are being requested
  */
-export const isRequestingSettings = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'settingsRequest' ];
+export const isRequestingSettings = (state, siteId) => {
+	const path = [...basePath(siteId), 'settingsRequest'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };
 
 /**
@@ -38,10 +38,10 @@ export const isRequestingSettings = ( state, siteId ) => {
  * @param  {number}  siteId  Site ID
  * @returns {object}          error object if present or null otherwise
  */
-export const requestingSettingsError = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'settingsRequestError' ];
+export const requestingSettingsError = (state, siteId) => {
+	const path = [...basePath(siteId), 'settingsRequestError'];
 
-	return get( state, path, null );
+	return get(state, path, null);
 };
 
 /**
@@ -51,10 +51,10 @@ export const requestingSettingsError = ( state, siteId ) => {
  * @param  {number}  siteId  Site ID
  * @returns {object}          MailChimp settings
  */
-export const mailChimpSettings = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'settings' ];
+export const mailChimpSettings = (state, siteId) => {
+	const path = [...basePath(siteId), 'settings'];
 
-	return get( state, path, {} );
+	return get(state, path, {});
 };
 
 /**
@@ -64,10 +64,10 @@ export const mailChimpSettings = ( state, siteId ) => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether api key is being submitted
  */
-export const isSubmittingApiKey = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'apiKeySubmit' ];
+export const isSubmittingApiKey = (state, siteId) => {
+	const path = [...basePath(siteId), 'apiKeySubmit'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };
 
 /**
@@ -77,10 +77,10 @@ export const isSubmittingApiKey = ( state, siteId ) => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether newsletter settings are being submitted
  */
-export const isSubmittingNewsletterSetting = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'newsletterSettingsSubmit' ];
+export const isSubmittingNewsletterSetting = (state, siteId) => {
+	const path = [...basePath(siteId), 'newsletterSettingsSubmit'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };
 
 /**
@@ -90,10 +90,10 @@ export const isSubmittingNewsletterSetting = ( state, siteId ) => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether store informations are being submitted
  */
-export const isSubmittingStoreInfo = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'storeInfoSubmit' ];
+export const isSubmittingStoreInfo = (state, siteId) => {
+	const path = [...basePath(siteId), 'storeInfoSubmit'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };
 
 /**
@@ -103,10 +103,10 @@ export const isSubmittingStoreInfo = ( state, siteId ) => {
  * @param  {number}  siteId  Site ID
  * @returns {object}          error object if present or null otherwise
  */
-export const newsletterSettingsSubmitError = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'newsletterSettingsSubmitError' ];
+export const newsletterSettingsSubmitError = (state, siteId) => {
+	const path = [...basePath(siteId), 'newsletterSettingsSubmitError'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };
 
 /**
@@ -118,10 +118,10 @@ export const newsletterSettingsSubmitError = ( state, siteId ) => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether api key is correct
  */
-export const isApiKeyCorrect = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'settings', 'mailchimp_account_info_id' ];
+export const isApiKeyCorrect = (state, siteId) => {
+	const path = [...basePath(siteId), 'settings', 'mailchimp_account_info_id'];
 
-	return !! get( state, path, true );
+	return !!get(state, path, true);
 };
 
 /**
@@ -131,10 +131,10 @@ export const isApiKeyCorrect = ( state, siteId ) => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether lists are being requested
  */
-export const isRequestingLists = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'listsRequest' ];
+export const isRequestingLists = (state, siteId) => {
+	const path = [...basePath(siteId), 'listsRequest'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };
 
 /**
@@ -144,10 +144,10 @@ export const isRequestingLists = ( state, siteId ) => {
  * @param  {number}  siteId  Site ID
  * @returns {object}          Sync status
  */
-export const syncStatus = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'syncStatus' ];
+export const syncStatus = (state, siteId) => {
+	const path = [...basePath(siteId), 'syncStatus'];
 
-	return get( state, path, null );
+	return get(state, path, null);
 };
 
 /**
@@ -157,10 +157,10 @@ export const syncStatus = ( state, siteId ) => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether sync status is being requested
  */
-export const isRequestingSyncStatus = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'syncStatusRequest' ];
+export const isRequestingSyncStatus = (state, siteId) => {
+	const path = [...basePath(siteId), 'syncStatusRequest'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };
 
 /**
@@ -170,14 +170,14 @@ export const isRequestingSyncStatus = ( state, siteId ) => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Wheter setup is compleate
  */
-export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const path = [ ...basePath( siteId ), 'syncStatus', 'mailchimp_list_name' ];
-	const list = get( state, path, false );
-	if ( false === list ) {
+export const hasMailChimpConnection = (state, siteId = getSelectedSiteId(state)) => {
+	const path = [...basePath(siteId), 'syncStatus', 'mailchimp_list_name'];
+	const list = get(state, path, false);
+	if (false === list) {
 		return false;
 	}
 
-	if ( 'n/a' !== list ) {
+	if ('n/a' !== list) {
 		return true;
 	}
 
@@ -191,10 +191,10 @@ export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether resync procedure is being requested
  */
-export const isRequestingResync = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'resyncRequest' ];
+export const isRequestingResync = (state, siteId) => {
+	const path = [...basePath(siteId), 'resyncRequest'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };
 
 /**
@@ -204,8 +204,8 @@ export const isRequestingResync = ( state, siteId ) => {
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether user requested save action.
  */
-export const isSavingMailChimpSettings = ( state, siteId ) => {
-	const path = [ ...basePath( siteId ), 'saveSettings' ];
+export const isSavingMailChimpSettings = (state, siteId) => {
+	const path = [...basePath(siteId), 'saveSettings'];
 
-	return get( state, path, false );
+	return get(state, path, false);
 };

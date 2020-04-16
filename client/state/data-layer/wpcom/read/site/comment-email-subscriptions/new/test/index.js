@@ -18,12 +18,12 @@ import {
 	unsubscribeToNewCommentEmail,
 } from 'state/reader/follows/actions';
 
-describe( 'comment-email-subscriptions', () => {
-	describe( 'requestCommentEmailSubscription', () => {
-		test( 'should dispatch an http request and call through next', () => {
-			const action = subscribeToNewCommentEmail( 1234 );
-			const result = requestCommentEmailSubscription( action );
-			expect( result ).to.eql(
+describe('comment-email-subscriptions', () => {
+	describe('requestCommentEmailSubscription', () => {
+		test('should dispatch an http request and call through next', () => {
+			const action = subscribeToNewCommentEmail(1234);
+			const result = requestCommentEmailSubscription(action);
+			expect(result).to.eql(
 				http(
 					{
 						method: 'POST',
@@ -34,34 +34,34 @@ describe( 'comment-email-subscriptions', () => {
 					action
 				)
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'receiveCommentEmailSubscription', () => {
-		test( 'should do nothing if successful', () => {
-			const result = receiveCommentEmailSubscription( null, { subscribed: true } );
-			expect( result ).to.be.undefined;
-		} );
+	describe('receiveCommentEmailSubscription', () => {
+		test('should do nothing if successful', () => {
+			const result = receiveCommentEmailSubscription(null, { subscribed: true });
+			expect(result).to.be.undefined;
+		});
 
-		test( 'should dispatch an unsubscribe if it fails using next', () => {
+		test('should dispatch an unsubscribe if it fails using next', () => {
 			const result = receiveCommentEmailSubscription(
 				{ payload: { blogId: 1234 } },
 				{ subscribed: false }
 			);
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect(result[0].notice.text).to.eql(
 				'Sorry, we had a problem subscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( unsubscribeToNewCommentEmail( 1234 ) ) );
-		} );
-	} );
+			expect(result[1]).to.eql(bypassDataLayer(unsubscribeToNewCommentEmail(1234)));
+		});
+	});
 
-	describe( 'receiveCommentEmailSubscriptionError', () => {
-		test( 'should dispatch an error notice and unsubscribe action using next', () => {
-			const result = receiveCommentEmailSubscriptionError( { payload: { blogId: 1234 } }, null );
-			expect( result[ 0 ].notice.text ).to.eql(
+	describe('receiveCommentEmailSubscriptionError', () => {
+		test('should dispatch an error notice and unsubscribe action using next', () => {
+			const result = receiveCommentEmailSubscriptionError({ payload: { blogId: 1234 } }, null);
+			expect(result[0].notice.text).to.eql(
 				'Sorry, we had a problem subscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( unsubscribeToNewCommentEmail( 1234 ) ) );
-		} );
-	} );
-} );
+			expect(result[1]).to.eql(bypassDataLayer(unsubscribeToNewCommentEmail(1234)));
+		});
+	});
+});

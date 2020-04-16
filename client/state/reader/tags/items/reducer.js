@@ -15,27 +15,27 @@ import { withoutPersistence } from 'state/utils';
  *
  * the shape of a tag is { id, url, title, displayName, isFollowing }.
  */
-export const items = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const items = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case READER_TAGS_RECEIVE: {
 			const tags = action.payload;
 			const resetFollowingData = action.meta.resetFollowingData;
 
-			if ( ! resetFollowingData ) {
-				return merge( {}, state, keyBy( tags, 'id' ) );
+			if (!resetFollowingData) {
+				return merge({}, state, keyBy(tags, 'id'));
 			}
 
-			const allTagsUnfollowed = mapValues( state, tag => ( { ...tag, isFollowing: false } ) );
+			const allTagsUnfollowed = mapValues(state, (tag) => ({ ...tag, isFollowing: false }));
 
-			return merge( {}, allTagsUnfollowed, keyBy( tags, 'id' ) );
+			return merge({}, allTagsUnfollowed, keyBy(tags, 'id'));
 		}
 		case READER_UNFOLLOW_TAG_RECEIVE: {
 			const removedTag = action.payload;
-			return merge( {}, state, { [ removedTag ]: { isFollowing: false } } );
+			return merge({}, state, { [removedTag]: { isFollowing: false } });
 		}
 	}
 
 	return state;
-} );
+});
 
 export default items;

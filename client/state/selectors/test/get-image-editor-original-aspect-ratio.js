@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import getImageEditorOriginalAspectRatio from 'state/selectors/get-image-editor-original-aspect-ratio';
 
-describe( 'getImageEditorOriginalAspectRatio()', () => {
-	test( 'should return null if the image has not loaded yet', () => {
-		const originalAspectRatio = getImageEditorOriginalAspectRatio( {
+describe('getImageEditorOriginalAspectRatio()', () => {
+	test('should return null if the image has not loaded yet', () => {
+		const originalAspectRatio = getImageEditorOriginalAspectRatio({
 			ui: {
 				editor: {
 					imageEditor: {
@@ -18,13 +18,13 @@ describe( 'getImageEditorOriginalAspectRatio()', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		expect( originalAspectRatio ).to.equal( null );
-	} );
+		expect(originalAspectRatio).to.equal(null);
+	});
 
-	test( 'should return the original aspect ratio', () => {
-		const originalAspectRatio = getImageEditorOriginalAspectRatio( {
+	test('should return the original aspect ratio', () => {
+		const originalAspectRatio = getImageEditorOriginalAspectRatio({
 			ui: {
 				editor: {
 					imageEditor: {
@@ -32,8 +32,8 @@ describe( 'getImageEditorOriginalAspectRatio()', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		expect( originalAspectRatio ).to.eql( { width: 100, height: 200 } );
-	} );
-} );
+		expect(originalAspectRatio).to.eql({ width: 100, height: 200 });
+	});
+});

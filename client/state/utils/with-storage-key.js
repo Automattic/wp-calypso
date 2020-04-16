@@ -1,4 +1,4 @@
-export const withStorageKey = ( storageKey, reducer ) => {
+export const withStorageKey = (storageKey, reducer) => {
 	reducer.storageKey = storageKey;
 	return reducer;
 };

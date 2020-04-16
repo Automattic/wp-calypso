@@ -21,18 +21,18 @@ class QuerySiteMonitorSettings extends Component {
 	};
 
 	componentDidMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.siteId && ! props.requestingSiteMonitorSettings ) {
-			props.requestSiteMonitorSettings( props.siteId );
+	request(props) {
+		if (props.siteId && !props.requestingSiteMonitorSettings) {
+			props.requestSiteMonitorSettings(props.siteId);
 		}
 	}
 
@@ -42,8 +42,8 @@ class QuerySiteMonitorSettings extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		requestingSiteMonitorSettings: isRequestingSiteMonitorSettings( state, siteId ),
-	} ),
+	(state, { siteId }) => ({
+		requestingSiteMonitorSettings: isRequestingSiteMonitorSettings(state, siteId),
+	}),
 	{ requestSiteMonitorSettings }
-)( QuerySiteMonitorSettings );
+)(QuerySiteMonitorSettings);

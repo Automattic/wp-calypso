@@ -19,15 +19,15 @@ import {
 	rangeOfPeriod,
 } from '../utils';
 
-describe( 'utils', () => {
+describe('utils', () => {
 	const orderPayload = {
 		date: '2017',
 		unit: 'year',
 		quantity: '10',
-		fields: [ 'period', 'orders', 'currency' ],
+		fields: ['period', 'orders', 'currency'],
 		data: [
-			[ 2016, 0, 'NZD' ],
-			[ 2017, 14, 'NZD' ],
+			[2016, 0, 'NZD'],
+			[2017, 14, 'NZD'],
 		],
 		delta_fields: [
 			'period',
@@ -41,17 +41,17 @@ describe( 'utils', () => {
 		deltas: [
 			{
 				period: 2016,
-				orders: [ 2016, 0, 0, 2015, '', 'is-neutral', 'NZD' ],
+				orders: [2016, 0, 0, 2015, '', 'is-neutral', 'NZD'],
 			},
 			{
 				period: 2017,
-				orders: [ 2017, 14, 0, 2016, 'is-favorable', 'is-undefined-increase', 'NZD' ],
+				orders: [2017, 14, 0, 2016, 'is-favorable', 'is-undefined-increase', 'NZD'],
 			},
 		],
 		total_orders: 14,
 	};
 
-	describe( 'parseOrderDeltas', () => {
+	describe('parseOrderDeltas', () => {
 		const expectedDeltas = [
 			{
 				period: '2016-12-31',
@@ -79,33 +79,33 @@ describe( 'utils', () => {
 			},
 		];
 
-		test( 'should return empty array if payload is null', () => {
-			expect( parseOrderDeltas( null ) ).toEqual( [] );
-		} );
+		test('should return empty array if payload is null', () => {
+			expect(parseOrderDeltas(null)).toEqual([]);
+		});
 
-		test( 'should return empty array if payload.deltas has no keys', () => {
+		test('should return empty array if payload.deltas has no keys', () => {
 			expect(
-				parseOrderDeltas( {
+				parseOrderDeltas({
 					date: '2017',
 					deltas: {},
-					delta_fields: [ 'period' ],
-				} )
-			).toEqual( [] );
-		} );
+					delta_fields: ['period'],
+				})
+			).toEqual([]);
+		});
 
-		test( 'should return empty array if payload.deltas or delta_fields are missing', () => {
-			expect( parseOrderDeltas( { date: '2017' } ) ).toEqual( [] );
-		} );
+		test('should return empty array if payload.deltas or delta_fields are missing', () => {
+			expect(parseOrderDeltas({ date: '2017' })).toEqual([]);
+		});
 
-		test( 'should return a well formed array of delta objects', () => {
-			expect( parseOrderDeltas( orderPayload ) ).toHaveProperty( '0.orders' );
-		} );
+		test('should return a well formed array of delta objects', () => {
+			expect(parseOrderDeltas(orderPayload)).toHaveProperty('0.orders');
+		});
 
-		test( 'should return an array of delta objects as expected', () => {
-			expect( parseOrderDeltas( orderPayload ) ).toEqual( expectedDeltas );
-		} );
-	} );
-	describe( 'parseOrdersChartData', () => {
+		test('should return an array of delta objects as expected', () => {
+			expect(parseOrderDeltas(orderPayload)).toEqual(expectedDeltas);
+		});
+	});
+	describe('parseOrdersChartData', () => {
 		const expectedOrders = [
 			{
 				period: '2016-12-31',
@@ -123,81 +123,81 @@ describe( 'utils', () => {
 			},
 		];
 
-		test( 'should return empty array if payload.data is missing', () => {
-			expect( parseOrdersChartData( { date: '2017' } ) ).toEqual( [] );
-		} );
+		test('should return empty array if payload.data is missing', () => {
+			expect(parseOrdersChartData({ date: '2017' })).toEqual([]);
+		});
 
-		test( 'should return a well-formed array of objects', () => {
-			const actualOrders = parseOrdersChartData( orderPayload );
-			expect( actualOrders ).toBeInstanceOf( Array );
-			actualOrders.forEach( item => expect( typeof item ).toBe( 'object' ) );
-		} );
+		test('should return a well-formed array of objects', () => {
+			const actualOrders = parseOrdersChartData(orderPayload);
+			expect(actualOrders).toBeInstanceOf(Array);
+			actualOrders.forEach((item) => expect(typeof item).toBe('object'));
+		});
 
-		test( 'should return an array of objects as expected', () => {
-			expect( parseOrdersChartData( orderPayload ) ).toEqual( expectedOrders );
-		} );
-	} );
+		test('should return an array of objects as expected', () => {
+			expect(parseOrdersChartData(orderPayload)).toEqual(expectedOrders);
+		});
+	});
 
-	describe( 'getPeriodFormat', () => {
-		test( 'should return correctly day format for long formats', () => {
-			expect( getPeriodFormat( 'day', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
-		} );
+	describe('getPeriodFormat', () => {
+		test('should return correctly day format for long formats', () => {
+			expect(getPeriodFormat('day', '2017-07-07')).toBe('YYYY-MM-DD');
+		});
 
-		test( 'should return correctly week format for long formats', () => {
-			expect( getPeriodFormat( 'week', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
-		} );
+		test('should return correctly week format for long formats', () => {
+			expect(getPeriodFormat('week', '2017-07-07')).toBe('YYYY-MM-DD');
+		});
 
-		test( 'should return correctly month format for long formats', () => {
-			expect( getPeriodFormat( 'month', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
-		} );
+		test('should return correctly month format for long formats', () => {
+			expect(getPeriodFormat('month', '2017-07-07')).toBe('YYYY-MM-DD');
+		});
 
-		test( 'should return correctly year format for long formats', () => {
-			expect( getPeriodFormat( 'year', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
-		} );
+		test('should return correctly year format for long formats', () => {
+			expect(getPeriodFormat('year', '2017-07-07')).toBe('YYYY-MM-DD');
+		});
 
-		test( 'should return correctly day format for short (new) formats', () => {
-			expect( getPeriodFormat( 'day', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
-		} );
+		test('should return correctly day format for short (new) formats', () => {
+			expect(getPeriodFormat('day', '2017-07-07')).toBe('YYYY-MM-DD');
+		});
 
-		test( 'should return correctly week format for short (new) formats', () => {
-			expect( getPeriodFormat( 'week', '2017-W27' ) ).toBe( 'YYYY-[W]WW' );
-		} );
+		test('should return correctly week format for short (new) formats', () => {
+			expect(getPeriodFormat('week', '2017-W27')).toBe('YYYY-[W]WW');
+		});
 
-		test( 'should return correctly month format for short (new) formats', () => {
-			expect( getPeriodFormat( 'month', '2017-07' ) ).toBe( 'YYYY-MM' );
-		} );
+		test('should return correctly month format for short (new) formats', () => {
+			expect(getPeriodFormat('month', '2017-07')).toBe('YYYY-MM');
+		});
 
-		test( 'should return correctly year format for short (new) formats', () => {
-			expect( getPeriodFormat( 'year', '2017' ) ).toBe( 'YYYY' );
-		} );
-	} );
+		test('should return correctly year format for short (new) formats', () => {
+			expect(getPeriodFormat('year', '2017')).toBe('YYYY');
+		});
+	});
 
-	describe( 'buildExportArray()', () => {
-		test( 'should an empty array if data not supplied', () => {
-			expect( buildExportArray( {} ) ).toEqual( [] );
-		} );
+	describe('buildExportArray()', () => {
+		test('should an empty array if data not supplied', () => {
+			expect(buildExportArray({})).toEqual([]);
+		});
 
-		test( 'should parse simple object to csv', () => {
+		test('should parse simple object to csv', () => {
 			expect(
-				buildExportArray( {
+				buildExportArray({
 					label: 'Chicken',
 					value: 10,
-				} )
-			).toEqual( [ [ '"Chicken"', 10 ] ] );
-		} );
+				})
+			).toEqual([['"Chicken"', 10]]);
+		});
 
-		test( 'should escape simple object to csv', () => {
+		test('should escape simple object to csv', () => {
 			expect(
-				buildExportArray( {
+				buildExportArray({
 					label: 'Chicken and "Ribs"',
 					value: 10,
-				} )
-			).toEqual( [ [ '"Chicken and ""Ribs""', 10 ] ] );
-		} );
+				})
+			).toEqual([['"Chicken and ""Ribs""', 10]]);
+		});
 
-		test( 'should recurse child data', () => {
+		test('should recurse child data', () => {
 			expect(
-				buildExportArray( {
+				buildExportArray({
 					label: 'BBQ',
 					value: 10,
 					children: [
@@ -216,117 +216,115 @@ describe( 'utils', () => {
 							],
 						},
 					],
-				} )
-			).toEqual( [
-				[ '"BBQ"', 10 ],
-				[ '"BBQ > Chicken"', 5 ],
-				[ '"BBQ > Ribs"', 2 ],
-				[ '"BBQ > Ribs > Babyback"', 1 ],
-			] );
-		} );
-	} );
+				})
+			).toEqual([
+				['"BBQ"', 10],
+				['"BBQ > Chicken"', 5],
+				['"BBQ > Ribs"', 2],
+				['"BBQ > Ribs > Babyback"', 1],
+			]);
+		});
+	});
 
-	describe( 'rangeOfPeriod()', () => {
-		test( 'should return a period object for day', () => {
-			expect( rangeOfPeriod( 'day', '2016-06-01' ) ).toEqual( {
+	describe('rangeOfPeriod()', () => {
+		test('should return a period object for day', () => {
+			expect(rangeOfPeriod('day', '2016-06-01')).toEqual({
 				startOf: '2016-06-01',
 				endOf: '2016-06-01',
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a period object for week', () => {
-			expect( rangeOfPeriod( 'week', '2016-06-01' ) ).toEqual( {
+		test('should return a period object for week', () => {
+			expect(rangeOfPeriod('week', '2016-06-01')).toEqual({
 				startOf: '2016-05-30',
 				endOf: '2016-06-05',
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a period object for month', () => {
-			expect( rangeOfPeriod( 'month', '2016-06-05' ) ).toEqual( {
+		test('should return a period object for month', () => {
+			expect(rangeOfPeriod('month', '2016-06-05')).toEqual({
 				startOf: '2016-06-01',
 				endOf: '2016-06-30',
-			} );
-		} );
+			});
+		});
 
-		test( 'should return a period object for year', () => {
-			expect( rangeOfPeriod( 'year', '2016-06-05' ) ).toEqual( {
+		test('should return a period object for year', () => {
+			expect(rangeOfPeriod('year', '2016-06-05')).toEqual({
 				startOf: '2016-01-01',
 				endOf: '2016-12-31',
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'getSerializedStatsQuery()', () => {
-		test( 'should return a JSON string of a query', () => {
+	describe('getSerializedStatsQuery()', () => {
+		test('should return a JSON string of a query', () => {
 			expect(
-				getSerializedStatsQuery( {
+				getSerializedStatsQuery({
 					startDate: '2016-06-01',
 					endDate: '2016-07-01',
-				} )
-			).toBe( '[["endDate","2016-07-01"],["startDate","2016-06-01"]]' );
-		} );
+				})
+			).toBe('[["endDate","2016-07-01"],["startDate","2016-06-01"]]');
+		});
 
-		test( 'should return the same JSON string of a query regardless of query object order', () => {
+		test('should return the same JSON string of a query regardless of query object order', () => {
 			expect(
-				getSerializedStatsQuery( {
+				getSerializedStatsQuery({
 					startDate: '2016-06-01',
 					endDate: '2016-07-01',
-				} )
+				})
 			).toEqual(
-				getSerializedStatsQuery( {
+				getSerializedStatsQuery({
 					endDate: '2016-07-01',
 					startDate: '2016-06-01',
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'isAutoRefreshAllowedForQuery()', () => {
-		test( 'should return true if not query specified', () => {
-			expect( isAutoRefreshAllowedForQuery() ).toBe( true );
-		} );
+	describe('isAutoRefreshAllowedForQuery()', () => {
+		test('should return true if not query specified', () => {
+			expect(isAutoRefreshAllowedForQuery()).toBe(true);
+		});
 
-		test( 'should return true for empty queries', () => {
-			expect( isAutoRefreshAllowedForQuery( {} ) ).toBe( true );
-		} );
+		test('should return true for empty queries', () => {
+			expect(isAutoRefreshAllowedForQuery({})).toBe(true);
+		});
 
-		test( 'should return true for queries without date', () => {
-			expect( isAutoRefreshAllowedForQuery( { quantity: 3 } ) ).toBe( true );
-		} );
+		test('should return true for queries without date', () => {
+			expect(isAutoRefreshAllowedForQuery({ quantity: 3 })).toBe(true);
+		});
 
-		test( 'should return true for queries without period', () => {
-			expect( isAutoRefreshAllowedForQuery( { date: '2016-06-01' } ) ).toBe( true );
-		} );
+		test('should return true for queries without period', () => {
+			expect(isAutoRefreshAllowedForQuery({ date: '2016-06-01' })).toBe(true);
+		});
 
-		test( "should return false for a period that doesn't include today", () => {
-			expect( isAutoRefreshAllowedForQuery( { period: 'week', date: '2016-06-01' } ) ).toBe(
-				false
-			);
-		} );
+		test("should return false for a period that doesn't include today", () => {
+			expect(isAutoRefreshAllowedForQuery({ period: 'week', date: '2016-06-01' })).toBe(false);
+		});
 
-		test( 'should return true for a period that includes today', () => {
+		test('should return true for a period that includes today', () => {
 			expect(
-				isAutoRefreshAllowedForQuery( {
+				isAutoRefreshAllowedForQuery({
 					period: 'day',
-					date: moment().format( 'YYYY-MM-DD' ),
-				} )
-			).toBe( true );
-		} );
-	} );
+					date: moment().format('YYYY-MM-DD'),
+				})
+			).toBe(true);
+		});
+	});
 
-	describe( 'normalizers', () => {
-		describe( 'stats()', () => {
-			test( 'should return null if no data is passed', () => {
-				expect( normalizers.stats() ).toBeNull();
-			} );
+	describe('normalizers', () => {
+		describe('stats()', () => {
+			test('should return null if no data is passed', () => {
+				expect(normalizers.stats()).toBeNull();
+			});
 
-			test( 'should return null if data object is missing stats attribute', () => {
-				expect( normalizers.stats( { foo: false } ) ).toBeNull();
-			} );
+			test('should return null if data object is missing stats attribute', () => {
+				expect(normalizers.stats({ foo: false })).toBeNull();
+			});
 
-			test( 'should return parsed camelCased stats object', () => {
+			test('should return parsed camelCased stats object', () => {
 				expect(
-					normalizers.stats( {
+					normalizers.stats({
 						stats: {
 							posts: 2,
 							views: 300,
@@ -334,25 +332,25 @@ describe( 'utils', () => {
 							views_best_day: '2010-09-29',
 							views_best_day_total: 100,
 						},
-					} )
-				).toEqual( {
+					})
+				).toEqual({
 					posts: 2,
 					views: 300,
 					visitors: 400,
 					viewsBestDay: '2010-09-29',
 					viewsBestDayTotal: 100,
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		describe( 'statsFollowers()', () => {
-			test( 'should return null if no data is provided', () => {
-				expect( normalizers.statsFollowers() ).toBeNull();
-			} );
+		describe('statsFollowers()', () => {
+			test('should return null if no data is provided', () => {
+				expect(normalizers.statsFollowers()).toBeNull();
+			});
 
-			test( 'should properly parse followers response', () => {
+			test('should properly parse followers response', () => {
 				expect(
-					normalizers.statsFollowers( {
+					normalizers.statsFollowers({
 						page: 1,
 						pages: 1,
 						total: 1,
@@ -368,8 +366,8 @@ describe( 'utils', () => {
 								date_subscribed: '2015-04-07T18:53:05+00:00',
 							},
 						],
-					} )
-				).toEqual( {
+					})
+				).toEqual({
 					total_email: 5,
 					total_wpcom: 120,
 					subscribers: [
@@ -390,18 +388,18 @@ describe( 'utils', () => {
 							],
 						},
 					],
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		describe( 'statsCommentFollowers()', () => {
-			test( 'should return null if no data is provided', () => {
-				expect( normalizers.statsCommentFollowers() ).toBeNull();
-			} );
+		describe('statsCommentFollowers()', () => {
+			test('should return null if no data is provided', () => {
+				expect(normalizers.statsCommentFollowers()).toBeNull();
+			});
 
-			test( 'should properly parse followers response', () => {
+			test('should properly parse followers response', () => {
 				expect(
-					normalizers.statsCommentFollowers( {
+					normalizers.statsCommentFollowers({
 						page: 1,
 						pages: 1,
 						total: 1,
@@ -417,8 +415,8 @@ describe( 'utils', () => {
 								url: 'https://en.blog.wordpress.com/chicken',
 							},
 						],
-					} )
-				).toEqual( {
+					})
+				).toEqual({
 					page: 1,
 					pages: 1,
 					total: 1,
@@ -434,18 +432,18 @@ describe( 'utils', () => {
 							value: 10,
 						},
 					],
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		describe( 'statsComments()', () => {
-			test( 'should return null if no data is provided', () => {
-				expect( normalizers.statsComments() ).toBeNull();
-			} );
+		describe('statsComments()', () => {
+			test('should return null if no data is provided', () => {
+				expect(normalizers.statsComments()).toBeNull();
+			});
 
-			test( 'should properly parse comments stats response', () => {
+			test('should properly parse comments stats response', () => {
 				expect(
-					normalizers.statsComments( {
+					normalizers.statsComments({
 						authors: [
 							{
 								name: 'John',
@@ -464,8 +462,8 @@ describe( 'utils', () => {
 								link: 'https://en.blog.wordpress.com/chicken',
 							},
 						],
-					} )
-				).toEqual( {
+					})
+				).toEqual({
 					posts: [
 						{
 							actions: [
@@ -495,24 +493,24 @@ describe( 'utils', () => {
 							value: 12,
 						},
 					],
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		describe( 'statsTopPosts()', () => {
-			test( 'should return an empty array if data is null', () => {
-				expect( normalizers.statsTopPosts() ).toEqual( [] );
-			} );
+		describe('statsTopPosts()', () => {
+			test('should return an empty array if data is null', () => {
+				expect(normalizers.statsTopPosts()).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsTopPosts( {}, { date: '2016-12-25' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.period is null', () => {
+				expect(normalizers.statsTopPosts({}, { date: '2016-12-25' })).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsTopPosts( {}, { period: 'day' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.date is null', () => {
+				expect(normalizers.statsTopPosts({}, { period: 'day' })).toEqual([]);
+			});
 
-			test( 'should properly parse day period response', () => {
+			test('should properly parse day period response', () => {
 				expect(
 					normalizers.statsTopPosts(
 						{
@@ -542,7 +540,7 @@ describe( 'utils', () => {
 							slug: 'en.blog.wordpress.com',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: 'Home Page / Archives',
 						value: 3939,
@@ -557,10 +555,10 @@ describe( 'utils', () => {
 						children: null,
 						className: null,
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should properly add published className for posts published in period', () => {
+			test('should properly add published className for posts published in period', () => {
 				expect(
 					normalizers.statsTopPosts(
 						{
@@ -590,7 +588,7 @@ describe( 'utils', () => {
 							slug: 'en.blog.wordpress.com',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: 'New WordPress.com for Lightroom Makes Publishing Your Photos Easy',
 						value: 774,
@@ -605,10 +603,10 @@ describe( 'utils', () => {
 						children: null,
 						className: 'published',
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should properly parse summarized response', () => {
+			test('should properly parse summarized response', () => {
 				expect(
 					normalizers.statsTopPosts(
 						{
@@ -637,7 +635,7 @@ describe( 'utils', () => {
 							slug: 'en.blog.wordpress.com',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: 'Home Page / Archives',
 						value: 3939,
@@ -652,24 +650,24 @@ describe( 'utils', () => {
 						children: null,
 						className: null,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsCountryViews()', () => {
-			test( 'should return null if data is null', () => {
-				expect( normalizers.statsCountryViews() ).toBeNull();
-			} );
+		describe('statsCountryViews()', () => {
+			test('should return null if data is null', () => {
+				expect(normalizers.statsCountryViews()).toBeNull();
+			});
 
-			test( 'should return null if query.period is null', () => {
-				expect( normalizers.statsCountryViews( {}, { date: '2016-12-25' } ) ).toBeNull();
-			} );
+			test('should return null if query.period is null', () => {
+				expect(normalizers.statsCountryViews({}, { date: '2016-12-25' })).toBeNull();
+			});
 
-			test( 'should return null if query.date is null', () => {
-				expect( normalizers.statsCountryViews( {}, { period: 'day' } ) ).toBeNull();
-			} );
+			test('should return null if query.date is null', () => {
+				expect(normalizers.statsCountryViews({}, { period: 'day' })).toBeNull();
+			});
 
-			test( 'should properly parse day period response', () => {
+			test('should properly parse day period response', () => {
 				expect(
 					normalizers.statsCountryViews(
 						{
@@ -702,17 +700,17 @@ describe( 'utils', () => {
 							date: '2015-12-25',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 1,
 						region: '021',
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should properly parse week period response', () => {
+			test('should properly parse week period response', () => {
 				expect(
 					normalizers.statsCountryViews(
 						{
@@ -745,17 +743,17 @@ describe( 'utils', () => {
 							date: '2015-12-25',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 10,
 						region: '021',
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should properly parse summarized response', () => {
+			test('should properly parse summarized response', () => {
 				expect(
 					normalizers.statsCountryViews(
 						{
@@ -787,17 +785,17 @@ describe( 'utils', () => {
 							date: '2015-12-25',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 100,
 						region: '021',
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should properly parse month period response', () => {
+			test('should properly parse month period response', () => {
 				expect(
 					normalizers.statsCountryViews(
 						{
@@ -830,17 +828,17 @@ describe( 'utils', () => {
 							date: '2015-12-25',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 100,
 						region: '021',
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should sanitize ’ from country names', () => {
+			test('should sanitize ’ from country names', () => {
 				expect(
 					normalizers.statsCountryViews(
 						{
@@ -872,17 +870,17 @@ describe( 'utils', () => {
 							date: '2015-12-25',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: "US'A",
 						countryCode: 'US',
 						value: 100,
 						region: '021',
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should ignore country_codes with no country-info', () => {
+			test('should ignore country_codes with no country-info', () => {
 				expect(
 					normalizers.statsCountryViews(
 						{
@@ -919,59 +917,59 @@ describe( 'utils', () => {
 							date: '2015-12-25',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 100,
 						region: '021',
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsInsights()', () => {
-			test( 'should return an empty object if no data is passed', () => {
-				expect( normalizers.statsInsights() ).toEqual( {} );
-			} );
+		describe('statsInsights()', () => {
+			test('should return an empty object if no data is passed', () => {
+				expect(normalizers.statsInsights()).toEqual({});
+			});
 
-			test( 'should return null if data.highest_day_of_week is not numeric', () => {
-				expect( normalizers.statsInsights( { highest_day_of_week: false } ) ).toEqual( {} );
-			} );
+			test('should return null if data.highest_day_of_week is not numeric', () => {
+				expect(normalizers.statsInsights({ highest_day_of_week: false })).toEqual({});
+			});
 
-			test( 'should return properly formatted data if matching data exists', () => {
+			test('should return properly formatted data if matching data exists', () => {
 				expect(
-					normalizers.statsInsights( {
+					normalizers.statsInsights({
 						highest_hour: 11,
 						highest_day_percent: 10,
 						highest_day_of_week: 6,
 						highest_hour_percent: 5,
 						hourly_views: [],
 						years: [],
-					} )
-				).toEqual( {
+					})
+				).toEqual({
 					day: 'Sunday',
 					hour: '11:00 AM',
 					hourPercent: 5,
 					percent: 10,
 					hourlyViews: [],
 					years: [],
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		describe( 'statsPublicize()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsPublicize() ).toEqual( [] );
-			} );
+		describe('statsPublicize()', () => {
+			test('should return an empty array if not data is passed', () => {
+				expect(normalizers.statsPublicize()).toEqual([]);
+			});
 
-			test( 'should return an empty array if not data has no services attribute', () => {
-				expect( normalizers.statsPublicize( { bad: [] } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if not data has no services attribute', () => {
+				expect(normalizers.statsPublicize({ bad: [] })).toEqual([]);
+			});
 
-			test( 'should return an a properly parsed services array', () => {
+			test('should return an a properly parsed services array', () => {
 				expect(
-					normalizers.statsPublicize( {
+					normalizers.statsPublicize({
 						services: [
 							{
 								service: 'twitter',
@@ -982,8 +980,8 @@ describe( 'utils', () => {
 								followers: 282,
 							},
 						],
-					} )
-				).toEqual( [
+					})
+				).toEqual([
 					{
 						label: 'Twitter',
 						icon: 'https://secure.gravatar.com/blavatar/7905d1c4e12c54933a44d19fcd5f9356?s=48',
@@ -994,24 +992,24 @@ describe( 'utils', () => {
 						icon: 'https://secure.gravatar.com/blavatar/2343ec78a04c6ea9d80806345d31fd78?s=48',
 						value: 282,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsVideoPlays()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsVideoPlays() ).toEqual( [] );
-			} );
+		describe('statsVideoPlays()', () => {
+			test('should return an empty array if not data is passed', () => {
+				expect(normalizers.statsVideoPlays()).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsVideoPlays( {}, { date: '2016-12-25' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.period is null', () => {
+				expect(normalizers.statsVideoPlays({}, { date: '2016-12-25' })).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsVideoPlays( {}, { period: 'day' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.date is null', () => {
+				expect(normalizers.statsVideoPlays({}, { period: 'day' })).toEqual([]);
+			});
 
-			test( 'should properly parse day period response', () => {
+			test('should properly parse day period response', () => {
 				expect(
 					normalizers.statsVideoPlays(
 						{
@@ -1039,7 +1037,7 @@ describe( 'utils', () => {
 							slug: 'en.blog.wordpress.com',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						actions: [
 							{
@@ -1052,29 +1050,29 @@ describe( 'utils', () => {
 						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
 						value: 32,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsVideo()', () => {
-			test( 'should return null if not data is passed', () => {
-				expect( normalizers.statsVideo() ).toBeNull();
-			} );
+		describe('statsVideo()', () => {
+			test('should return null if not data is passed', () => {
+				expect(normalizers.statsVideo()).toBeNull();
+			});
 
-			test( 'should return an a properly parsed data array', () => {
+			test('should return an a properly parsed data array', () => {
 				expect(
-					normalizers.statsVideo( {
+					normalizers.statsVideo({
 						data: [
-							[ '2016-11-12', 1 ],
-							[ '2016-11-13', 0 ],
+							['2016-11-12', 1],
+							['2016-11-13', 0],
 						],
 						pages: [
 							'https://vip.wordpress.com/category/themes/',
 							'http://freewordpressthemes.ru/p2-theme-for-the-blog-inspired-twitter.html',
 							'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
 						],
-					} )
-				).toEqual( {
+					})
+				).toEqual({
 					data: [
 						{
 							period: '2016-11-13',
@@ -1097,24 +1095,24 @@ describe( 'utils', () => {
 								'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
 						},
 					],
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		describe( 'statsTopAuthors()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsTopAuthors() ).toEqual( [] );
-			} );
+		describe('statsTopAuthors()', () => {
+			test('should return an empty array if not data is passed', () => {
+				expect(normalizers.statsTopAuthors()).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsTopAuthors( {}, { date: '2016-12-25' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.period is null', () => {
+				expect(normalizers.statsTopAuthors({}, { date: '2016-12-25' })).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsTopAuthors( {}, { period: 'day' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.date is null', () => {
+				expect(normalizers.statsTopAuthors({}, { period: 'day' })).toEqual([]);
+			});
 
-			test( 'should return an a properly parsed data array', () => {
+			test('should return an a properly parsed data array', () => {
 				expect(
 					normalizers.statsTopAuthors(
 						{
@@ -1155,7 +1153,7 @@ describe( 'utils', () => {
 							slug: 'en.blog.wordpress.com',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						children: [
 							{
@@ -1189,22 +1187,22 @@ describe( 'utils', () => {
 						label: 'Timmy Crawford',
 						value: undefined,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsTags()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsTags() ).toEqual( [] );
-			} );
+		describe('statsTags()', () => {
+			test('should return an empty array if not data is passed', () => {
+				expect(normalizers.statsTags()).toEqual([]);
+			});
 
-			test( 'should return an empty array if not data has no tags attribute', () => {
-				expect( normalizers.statsTags( { bad: [] } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if not data has no tags attribute', () => {
+				expect(normalizers.statsTags({ bad: [] })).toEqual([]);
+			});
 
-			test( 'should return an a properly parsed data array', () => {
+			test('should return an a properly parsed data array', () => {
 				expect(
-					normalizers.statsTags( {
+					normalizers.statsTags({
 						date: '2014-10-01',
 						tags: [
 							{
@@ -1233,8 +1231,8 @@ describe( 'utils', () => {
 								views: 740,
 							},
 						],
-					} )
-				).toEqual( [
+					})
+				).toEqual([
 					{
 						children: undefined,
 						label: [
@@ -1279,24 +1277,24 @@ describe( 'utils', () => {
 						link: null,
 						value: 740,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsClicks()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsClicks() ).toEqual( [] );
-			} );
+		describe('statsClicks()', () => {
+			test('should return an empty array if not data is passed', () => {
+				expect(normalizers.statsClicks()).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsClicks( {}, { date: '2016-12-25' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.period is null', () => {
+				expect(normalizers.statsClicks({}, { date: '2016-12-25' })).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsClicks( {}, { period: 'day' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.date is null', () => {
+				expect(normalizers.statsClicks({}, { period: 'day' })).toEqual([]);
+			});
 
-			test( 'should return an a properly parsed data array', () => {
+			test('should return an a properly parsed data array', () => {
 				expect(
 					normalizers.statsClicks(
 						{
@@ -1335,7 +1333,7 @@ describe( 'utils', () => {
 							date: '2017-01-12',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						children: [
 							{
@@ -1360,10 +1358,10 @@ describe( 'utils', () => {
 						link: 'https://en.forums.wordpress.com/',
 						value: 6,
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should return an a properly parsed summary data array', () => {
+			test('should return an a properly parsed summary data array', () => {
 				expect(
 					normalizers.statsClicks(
 						{
@@ -1401,7 +1399,7 @@ describe( 'utils', () => {
 							summarize: 1,
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						children: [
 							{
@@ -1426,24 +1424,24 @@ describe( 'utils', () => {
 						link: 'https://en.forums.wordpress.com/',
 						value: 10,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsReferrers()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsReferrers() ).toEqual( [] );
-			} );
+		describe('statsReferrers()', () => {
+			test('should return an empty array if not data is passed', () => {
+				expect(normalizers.statsReferrers()).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsReferrers( {}, { date: '2016-12-25' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.period is null', () => {
+				expect(normalizers.statsReferrers({}, { date: '2016-12-25' })).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsReferrers( {}, { period: 'day' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.date is null', () => {
+				expect(normalizers.statsReferrers({}, { period: 'day' })).toEqual([]);
+			});
 
-			test( 'should return an a properly parsed summary data array', () => {
+			test('should return an a properly parsed summary data array', () => {
 				expect(
 					normalizers.statsReferrers(
 						{
@@ -1483,7 +1481,7 @@ describe( 'utils', () => {
 						},
 						100
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						actionMenu: 0,
 						actions: [],
@@ -1527,10 +1525,10 @@ describe( 'utils', () => {
 						link: undefined,
 						value: 300,
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should return an a properly parsed data array', () => {
+			test('should return an a properly parsed data array', () => {
 				expect(
 					normalizers.statsReferrers(
 						{
@@ -1575,7 +1573,7 @@ describe( 'utils', () => {
 						},
 						100
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						actionMenu: 0,
 						actions: [],
@@ -1619,24 +1617,24 @@ describe( 'utils', () => {
 						link: undefined,
 						value: 207,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsSearchTerms()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsSearchTerms() ).toEqual( [] );
-			} );
+		describe('statsSearchTerms()', () => {
+			test('should return an empty array if not data is passed', () => {
+				expect(normalizers.statsSearchTerms()).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsSearchTerms( {}, { date: '2016-12-25' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.period is null', () => {
+				expect(normalizers.statsSearchTerms({}, { date: '2016-12-25' })).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsSearchTerms( {}, { period: 'day' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.date is null', () => {
+				expect(normalizers.statsSearchTerms({}, { period: 'day' })).toEqual([]);
+			});
 
-			test( 'should return an a properly parsed data array', () => {
+			test('should return an a properly parsed data array', () => {
 				expect(
 					normalizers.statsSearchTerms(
 						{
@@ -1662,7 +1660,7 @@ describe( 'utils', () => {
 							date: '2017-01-12',
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						className: 'user-selectable',
 						label: 'chicken',
@@ -1679,10 +1677,10 @@ describe( 'utils', () => {
 						link: 'http://wordpress.com/support/stats/#search-engine-terms',
 						value: 221,
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should return an a properly parsed summarized data array', () => {
+			test('should return an a properly parsed summarized data array', () => {
 				expect(
 					normalizers.statsSearchTerms(
 						{
@@ -1708,7 +1706,7 @@ describe( 'utils', () => {
 							num: 90,
 						}
 					)
-				).toEqual( [
+				).toEqual([
 					{
 						className: 'user-selectable',
 						label: 'chicken',
@@ -1725,30 +1723,30 @@ describe( 'utils', () => {
 						link: 'http://wordpress.com/support/stats/#search-engine-terms',
 						value: 400,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsVisits()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsVisits() ).toEqual( [] );
-			} );
+		describe('statsVisits()', () => {
+			test('should return an empty array if not data is passed', () => {
+				expect(normalizers.statsVisits()).toEqual([]);
+			});
 
-			test( 'should return an empty array if the payload no data attribute', () => {
-				expect( normalizers.statsVisits( { bad: [] } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if the payload no data attribute', () => {
+				expect(normalizers.statsVisits({ bad: [] })).toEqual([]);
+			});
 
-			test( 'should return an a properly parsed data array', () => {
+			test('should return an a properly parsed data array', () => {
 				expect(
-					normalizers.statsVisits( {
-						fields: [ 'period', 'views', 'visitors' ],
+					normalizers.statsVisits({
+						fields: ['period', 'views', 'visitors'],
 						data: [
-							[ '2016-12-22', 0, 0 ],
-							[ '2016-12-23', 10, 6 ],
+							['2016-12-22', 0, 0],
+							['2016-12-23', 10, 6],
 						],
 						unit: 'week',
-					} )
-				).toEqual( [
+					})
+				).toEqual([
 					{
 						classNames: [],
 						comments: null,
@@ -1771,20 +1769,20 @@ describe( 'utils', () => {
 						visitors: 6,
 						visits: null,
 					},
-				] );
-			} );
+				]);
+			});
 
-			test( 'should parse the weekends properly', () => {
+			test('should parse the weekends properly', () => {
 				expect(
-					normalizers.statsVisits( {
-						fields: [ 'period', 'views', 'visitors' ],
+					normalizers.statsVisits({
+						fields: ['period', 'views', 'visitors'],
 						data: [
-							[ '2016W11W07', 0, 0 ],
-							[ '2016W10W31', 10, 6 ],
+							['2016W11W07', 0, 0],
+							['2016W10W31', 10, 6],
 						],
 						unit: 'day',
-					} )
-				).toEqual( [
+					})
+				).toEqual([
 					{
 						classNames: [],
 						comments: null,
@@ -1807,24 +1805,24 @@ describe( 'utils', () => {
 						visitors: 6,
 						visits: null,
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'statsFileDownloads()', () => {
-			test( 'should return an empty array if data is null', () => {
-				expect( normalizers.statsFileDownloads() ).toEqual( [] );
-			} );
+		describe('statsFileDownloads()', () => {
+			test('should return an empty array if data is null', () => {
+				expect(normalizers.statsFileDownloads()).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsFileDownloads( {}, { date: '2016-12-25' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.period is null', () => {
+				expect(normalizers.statsFileDownloads({}, { date: '2016-12-25' })).toEqual([]);
+			});
 
-			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsFileDownloads( {}, { period: 'day' } ) ).toEqual( [] );
-			} );
+			test('should return an empty array if query.date is null', () => {
+				expect(normalizers.statsFileDownloads({}, { period: 'day' })).toEqual([]);
+			});
 
-			test( 'should properly parse day period response', () => {
+			test('should properly parse day period response', () => {
 				expect(
 					normalizers.statsFileDownloads(
 						{
@@ -1850,130 +1848,127 @@ describe( 'utils', () => {
 							slug: 'en.blog.wordpress.com',
 						}
 					)
-				).toMatchObject( [
+				).toMatchObject([
 					{
 						value: 3939,
 						label: '/2019/01/awesome.mov',
 						shortLabel: 'awesome.mov',
 						labelIcon: 'external',
 					},
-				] );
-			} );
-		} );
+				]);
+			});
+		});
 
-		describe( 'parseStoreStatsReferrers', () => {
+		describe('parseStoreStatsReferrers', () => {
 			const validData = {
 				data: [
 					{
 						date: '2018-04-10',
 						data: [
-							[ 'green', 4 ],
-							[ 'red', 8 ],
+							['green', 4],
+							['red', 8],
 						],
 					},
 					{
 						date: '2018-04-09',
 						data: [
-							[ 'orange', 12 ],
-							[ 'blue', 16 ],
+							['orange', 12],
+							['blue', 16],
 						],
 					},
 				],
-				fields: [ 'color', 'age' ],
+				fields: ['color', 'age'],
 			};
 
-			test( 'should return empty array for malformed payload', () => {
-				const noPayload = parseStoreStatsReferrers( undefined );
-				const noData = parseStoreStatsReferrers( {} );
-				const dataNotArray = parseStoreStatsReferrers( { data: {} } );
+			test('should return empty array for malformed payload', () => {
+				const noPayload = parseStoreStatsReferrers(undefined);
+				const noData = parseStoreStatsReferrers({});
+				const dataNotArray = parseStoreStatsReferrers({ data: {} });
 
-				expect( noPayload ).toEqual( [] );
-				expect( noData ).toEqual( [] );
-				expect( dataNotArray ).toEqual( [] );
-			} );
+				expect(noPayload).toEqual([]);
+				expect(noData).toEqual([]);
+				expect(dataNotArray).toEqual([]);
+			});
 
-			test( 'should an array of objects with all fields', () => {
-				const parsedData = parseStoreStatsReferrers( validData );
+			test('should an array of objects with all fields', () => {
+				const parsedData = parseStoreStatsReferrers(validData);
 
-				expect( parsedData ).toHaveLength( validData.data.length );
+				expect(parsedData).toHaveLength(validData.data.length);
 
 				const { fields } = validData;
-				const firstRecord = parsedData[ 0 ];
+				const firstRecord = parsedData[0];
 
 				// Make sure all fields are present
-				firstRecord.data.forEach( d => {
-					expect( d[ fields[ 0 ] ] ).toBeDefined();
-					expect( d[ fields[ 1 ] ] ).toBeDefined();
-				} );
+				firstRecord.data.forEach((d) => {
+					expect(d[fields[0]]).toBeDefined();
+					expect(d[fields[1]]).toBeDefined();
+				});
 
 				// Make sure values are correctly lined up
-				firstRecord.data.forEach( ( d, idx ) => {
-					expect( d.color ).toBe( validData.data[ 0 ].data[ idx ][ 0 ] );
-					expect( d.age ).toBe( validData.data[ 0 ].data[ idx ][ 1 ] );
-				} );
+				firstRecord.data.forEach((d, idx) => {
+					expect(d.color).toBe(validData.data[0].data[idx][0]);
+					expect(d.age).toBe(validData.data[0].data[idx][1]);
+				});
 
-				expect( firstRecord ).toHaveProperty( 'date', '2018-04-10' );
-			} );
-		} );
-	} );
+				expect(firstRecord).toHaveProperty('date', '2018-04-10');
+			});
+		});
+	});
 
-	describe( 'getChartLabels', () => {
-		test( 'should return empty object on missing unit parameter', () => {
-			expect( getChartLabels( undefined, moment(), moment() ) ).toEqual( {} );
-		} );
+	describe('getChartLabels', () => {
+		test('should return empty object on missing unit parameter', () => {
+			expect(getChartLabels(undefined, moment(), moment())).toEqual({});
+		});
 
-		test( 'should return empty object on missing date parameter', () => {
-			expect( getChartLabels( 'day', undefined, moment() ) ).toEqual( {} );
-		} );
+		test('should return empty object on missing date parameter', () => {
+			expect(getChartLabels('day', undefined, moment())).toEqual({});
+		});
 
-		test( 'should return empty object on missing localizedDate parameter', () => {
-			expect( getChartLabels( 'day', moment(), undefined ) ).toEqual( {} );
-		} );
+		test('should return empty object on missing localizedDate parameter', () => {
+			expect(getChartLabels('day', moment(), undefined)).toEqual({});
+		});
 
-		test( 'should return a correct property label', () => {
-			const label = getChartLabels( 'day', moment(), moment() );
-			expect( Object.keys( label )[ 0 ] ).toBe( 'labelDay' );
-		} );
+		test('should return a correct property label', () => {
+			const label = getChartLabels('day', moment(), moment());
+			expect(Object.keys(label)[0]).toBe('labelDay');
+		});
 
-		test( 'should return an "is-weekend" className for a weekend date', () => {
-			const sunday = moment( '2018-04-08' );
-			expect( getChartLabels( 'day', sunday, sunday ) ).toHaveProperty(
-				'classNames.0',
-				'is-weekend'
-			);
-		} );
+		test('should return an "is-weekend" className for a weekend date', () => {
+			const sunday = moment('2018-04-08');
+			expect(getChartLabels('day', sunday, sunday)).toHaveProperty('classNames.0', 'is-weekend');
+		});
 
-		test( 'should not return an "is-weekend" className a weekday', () => {
-			const monday = moment( '2018-04-09' );
-			expect( getChartLabels( 'day', monday, monday ) ).toHaveProperty( 'classNames', [] );
-		} );
+		test('should not return an "is-weekend" className a weekday', () => {
+			const monday = moment('2018-04-09');
+			expect(getChartLabels('day', monday, monday)).toHaveProperty('classNames', []);
+		});
 
-		test( 'should return a correctly formatted date', () => {
-			const april9 = moment( '2018-04-09' );
-			expect( getChartLabels( 'day', april9, april9.locale( 'en' ) ) ).toHaveProperty(
+		test('should return a correctly formatted date', () => {
+			const april9 = moment('2018-04-09');
+			expect(getChartLabels('day', april9, april9.locale('en'))).toHaveProperty(
 				'labelDay',
 				'Apr 9'
 			);
-			expect( getChartLabels( 'week', april9, april9.locale( 'en' ) ) ).toHaveProperty(
+			expect(getChartLabels('week', april9, april9.locale('en'))).toHaveProperty(
 				'labelWeek',
 				'Apr 9'
 			);
-			expect( getChartLabels( 'month', april9, april9.locale( 'en' ) ) ).toHaveProperty(
+			expect(getChartLabels('month', april9, april9.locale('en'))).toHaveProperty(
 				'labelMonth',
 				'Apr'
 			);
-			expect( getChartLabels( 'year', april9, april9.locale( 'en' ) ) ).toHaveProperty(
+			expect(getChartLabels('year', april9, april9.locale('en'))).toHaveProperty(
 				'labelYear',
 				'2018'
 			);
-		} );
+		});
 
-		test( 'should return a correctly formatted localized date', () => {
-			const april9 = moment( '2018-04-09' );
-			expect( getChartLabels( 'day', april9, april9.locale( 'fr' ) ) ).toHaveProperty(
+		test('should return a correctly formatted localized date', () => {
+			const april9 = moment('2018-04-09');
+			expect(getChartLabels('day', april9, april9.locale('fr'))).toHaveProperty(
 				'labelDay',
 				'avr. 9'
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

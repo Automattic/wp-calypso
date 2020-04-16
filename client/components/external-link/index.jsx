@@ -37,51 +37,44 @@ class ExternalLink extends Component {
 	};
 
 	render() {
-		const classes = classnames( 'external-link', this.props.className, {
+		const classes = classnames('external-link', this.props.className, {
 			'icon-first': this.props.showIconFirst,
 			'has-icon': this.props.icon,
-		} );
+		});
 
-		const props = assign(
-			omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
-			{
-				className: classes,
-				rel: 'external',
-			}
-		);
+		const props = assign(omit(this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName'), {
+			className: classes,
+			rel: 'external',
+		});
 
-		if ( this.props.icon ) {
+		if (this.props.icon) {
 			props.target = '_blank';
 		}
 
-		if ( props.target ) {
-			props.rel = props.rel.concat( ' noopener noreferrer' );
+		if (props.target) {
+			props.rel = props.rel.concat(' noopener noreferrer');
 		}
 
-		if ( props.href ) {
-			props.href = localizeUrl( props.href );
+		if (props.href) {
+			props.href = localizeUrl(props.href);
 		}
 
 		const iconComponent = (
-			<Gridicon
-				className={ this.props.iconClassName }
-				icon="external"
-				size={ this.props.iconSize }
-			/>
+			<Gridicon className={this.props.iconClassName} icon="external" size={this.props.iconSize} />
 		);
 
 		return (
-			<a { ...props }>
-				{ this.props.icon && this.props.showIconFirst && iconComponent }
-				{ this.props.children }
-				{ this.props.icon && ! this.props.showIconFirst && iconComponent }
-				{ this.props.icon && (
+			<a {...props}>
+				{this.props.icon && this.props.showIconFirst && iconComponent}
+				{this.props.children}
+				{this.props.icon && !this.props.showIconFirst && iconComponent}
+				{this.props.icon && (
 					<ScreenReaderText>
-						{ translate( '(opens in a new tab)', {
+						{translate('(opens in a new tab)', {
 							comment: 'accessibility label for an external link',
-						} ) }
+						})}
 					</ScreenReaderText>
-				) }
+				)}
 			</a>
 		);
 	}

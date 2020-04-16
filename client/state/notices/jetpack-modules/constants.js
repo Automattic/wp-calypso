@@ -16,9 +16,9 @@ import {
 
 export const MODULE_NOTICES = {
 	'infinite-scroll': {
-		[ ACTIVATE_SUCCESS ]: translate( 'Infinite scroll is now on.' ),
-		[ DEACTIVATE_SUCCESS ]: translate( 'Infinite scroll is now off.' ),
-		[ ACTIVATE_FAILURE ]: translate( 'Infinite scroll could not be switched on.' ),
-		[ DEACTIVATE_FAILURE ]: translate( 'Infinite scroll could not be switched off.' ),
+		[ACTIVATE_SUCCESS]: translate('Infinite scroll is now on.'),
+		[DEACTIVATE_SUCCESS]: translate('Infinite scroll is now off.'),
+		[ACTIVATE_FAILURE]: translate('Infinite scroll could not be switched on.'),
+		[DEACTIVATE_FAILURE]: translate('Infinite scroll could not be switched off.'),
 	},
 };

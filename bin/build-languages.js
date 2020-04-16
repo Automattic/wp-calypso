@@ -1,11 +1,11 @@
-const _ = require( 'lodash' );
-const fs = require( 'fs' );
-const glob = require( 'glob' );
-const path = require( 'path' );
-const https = require( 'https' );
-const mkdirp = require( 'mkdirp' );
-const readline = require( 'readline' );
-const parse = require( 'gettext-parser' ).po.parse;
+const _ = require('lodash');
+const fs = require('fs');
+const glob = require('glob');
+const path = require('path');
+const https = require('https');
+const mkdirp = require('mkdirp');
+const readline = require('readline');
+const parse = require('gettext-parser').po.parse;
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
@@ -118,71 +118,69 @@ const languages = [
 	'tr',
 ]; // todo: can we use `../client/languages`?
 
-const chunksMaps = glob.sync( CHUNKS_MAP_PATTERN );
+const chunksMaps = glob.sync(CHUNKS_MAP_PATTERN);
 const languagesPaths = chunksMaps
-	.map( chunksMapPath => {
-		const [ , extraPath ] = path.basename( chunksMapPath ).match( /.+\.(\w+)\.json/, '' );
+	.map((chunksMapPath) => {
+		const [, extraPath] = path.basename(chunksMapPath).match(/.+\.(\w+)\.json/, '');
 
-		if ( ! extraPath ) {
+		if (!extraPath) {
 			return;
 		}
 
 		return {
 			chunksMapPath,
 			extraPath,
-			publicPath: `./public/${ extraPath }/languages`,
+			publicPath: `./public/${extraPath}/languages`,
 		};
-	} )
-	.filter( Boolean );
+	})
+	.filter(Boolean);
 
-function logUpdate( text ) {
-	readline.clearLine( process.stdout, 0 );
-	readline.cursorTo( process.stdout, 0 );
-	process.stdout.write( text );
+function logUpdate(text) {
+	readline.clearLine(process.stdout, 0);
+	readline.cursorTo(process.stdout, 0);
+	process.stdout.write(text);
 }
 
 // Create languages directory
 function createLanguagesDir() {
-	return languagesPaths.forEach( ( { publicPath } ) => mkdirp.sync( publicPath ) );
+	return languagesPaths.forEach(({ publicPath }) => mkdirp.sync(publicPath));
 }
 
 // Download languages revisions
 function downloadLanguagesRevions() {
-	return new Promise( resolve => {
-		function log( status ) {
-			logUpdate(
-				`Downloading ${ LANGUAGES_REVISIONS_FILENAME }${ status ? ` ${ status }.` : '...' }`
-			);
+	return new Promise((resolve) => {
+		function log(status) {
+			logUpdate(`Downloading ${LANGUAGES_REVISIONS_FILENAME}${status ? ` ${status}.` : '...'}`);
 		}
 
-		const files = languagesPaths.map( ( { publicPath } ) =>
-			fs.createWriteStream( `${ publicPath }/${ LANGUAGES_REVISIONS_FILENAME }` )
+		const files = languagesPaths.map(({ publicPath }) =>
+			fs.createWriteStream(`${publicPath}/${LANGUAGES_REVISIONS_FILENAME}`)
 		);
 
-		https.get( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }`, response => {
-			files.forEach( file => response.pipe( file ) );
-			response.on( 'end', () => {
-				if ( response.statusCode !== 200 ) {
-					log( 'failed' );
-					resolve( false );
+		https.get(`${LANGUAGES_BASE_URL}/${LANGUAGES_REVISIONS_FILENAME}`, (response) => {
+			files.forEach((file) => response.pipe(file));
+			response.on('end', () => {
+				if (response.statusCode !== 200) {
+					log('failed');
+					resolve(false);
 					return;
 				}
 
-				log( 'completed' );
-				resolve( true );
-			} );
-		} );
-	} );
+				log('completed');
+				resolve(true);
+			});
+		});
+	});
 }
 
 // Request and write language files
 async function downloadLanguages() {
 	let downloadedLanguagesCount = 0;
 
-	function log( status ) {
+	function log(status) {
 		logUpdate(
-			`Downloading languages${ status ? ` ${ status }.` : '...' } ` +
-				`(${ downloadedLanguagesCount }/${ languages.length })`
+			`Downloading languages${status ? ` ${status}.` : '...'} ` +
+				`(${downloadedLanguagesCount}/${languages.length})`
 		);
 	}
 
@@ -190,109 +188,106 @@ async function downloadLanguages() {
 
 	const downloadedLanguages = await Promise.all(
 		languages.map(
-			langSlug =>
-				new Promise( resolve => {
-					const filename = `${ langSlug }-v1.1.json`;
-					const files = languagesPaths.map( ( { publicPath } ) =>
-						fs.createWriteStream( `${ publicPath }/${ filename }` )
+			(langSlug) =>
+				new Promise((resolve) => {
+					const filename = `${langSlug}-v1.1.json`;
+					const files = languagesPaths.map(({ publicPath }) =>
+						fs.createWriteStream(`${publicPath}/${filename}`)
 					);
-					const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
+					const translationUrl = `${LANGUAGES_BASE_URL}/${filename}`;
 
-					https.get( translationUrl, response => {
+					https.get(translationUrl, (response) => {
 						let body = '';
 
-						files.forEach( file => response.pipe( file ) );
-						response.on( 'data', chunk => ( body += chunk ) );
-						response.on( 'end', () => {
-							if ( response.statusCode === 200 ) {
+						files.forEach((file) => response.pipe(file));
+						response.on('data', (chunk) => (body += chunk));
+						response.on('end', () => {
+							if (response.statusCode === 200) {
 								downloadedLanguagesCount++;
 								log();
 							}
 
-							resolve( {
+							resolve({
 								langSlug,
-								languageTranslations: JSON.parse( body ),
-							} );
-						} );
-					} );
-				} )
+								languageTranslations: JSON.parse(body),
+							});
+						});
+					});
+				})
 		)
 	);
 
-	log( 'completed' );
+	log('completed');
 
 	return downloadedLanguages;
 }
 
 // Split language translations into chunks
-function buildLanguageChunks( downloadedLanguages ) {
-	logUpdate( 'Building language chunks...' );
+function buildLanguageChunks(downloadedLanguages) {
+	logUpdate('Building language chunks...');
 
-	if ( fs.existsSync( CALYPSO_STRINGS ) ) {
-		const { translations } = parse( fs.readFileSync( CALYPSO_STRINGS ) );
+	if (fs.existsSync(CALYPSO_STRINGS)) {
+		const { translations } = parse(fs.readFileSync(CALYPSO_STRINGS));
 		const translationsFlatten = _.reduce(
 			translations,
-			( result, contextTranslations, context ) => {
+			(result, contextTranslations, context) => {
 				const mappedTranslations = context
-					? _.mapKeys(
-							contextTranslations,
-							( value, key ) => context + String.fromCharCode( 4 ) + key
-					  )
+					? _.mapKeys(contextTranslations, (value, key) => context + String.fromCharCode(4) + key)
 					: contextTranslations;
 
-				return _.merge( result, mappedTranslations );
+				return _.merge(result, mappedTranslations);
 			},
 			{}
 		);
 
-		languagesPaths.map( ( { chunksMapPath, publicPath } ) => {
-			const chunksMap = require( path.join( '..', chunksMapPath ) );
-			const chunks = _.mapValues( chunksMap, modules => {
-				return _.chain( translationsFlatten )
-					.pickBy( ( { comments } ) =>
-						modules.some( module => ( comments.reference || '' ).includes( module ) )
+		languagesPaths.map(({ chunksMapPath, publicPath }) => {
+			const chunksMap = require(path.join('..', chunksMapPath));
+			const chunks = _.mapValues(chunksMap, (modules) => {
+				return _.chain(translationsFlatten)
+					.pickBy(({ comments }) =>
+						modules.some((module) => (comments.reference || '').includes(module))
 					)
 					.keys()
 					.value();
-			} );
+			});
 
-			downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
-				const languageChunks = _.chain( chunks )
-					.mapValues( stringIds => _.pick( languageTranslations, stringIds ) )
-					.omitBy( _.isEmpty )
+			downloadedLanguages.forEach(({ langSlug, languageTranslations }) => {
+				const languageChunks = _.chain(chunks)
+					.mapValues((stringIds) => _.pick(languageTranslations, stringIds))
+					.omitBy(_.isEmpty)
 					.value();
 
 				// Write language translated chunks map
-				const translatedChunksKeys = Object.keys( languageChunks ).map(
-					chunk => path.parse( chunk ).name
+				const translatedChunksKeys = Object.keys(languageChunks).map(
+					(chunk) => path.parse(chunk).name
 				);
 				fs.writeFileSync(
-					path.join( publicPath, `${ langSlug }-${ LANGUAGE_MANIFEST_FILENAME }` ),
-					JSON.stringify( {
-						locale: _.pick( languageTranslations, [ '' ] ),
+					path.join(publicPath, `${langSlug}-${LANGUAGE_MANIFEST_FILENAME}`),
+					JSON.stringify({
+						locale: _.pick(languageTranslations, ['']),
 						translatedChunks: translatedChunksKeys,
-					} )
+					})
 				);
 
 				// Write language translation chunks
-				_.forEach( languageChunks, ( chunkTranslations, chunkId ) => {
-					const chunkFilename = path.basename( chunkId, path.extname( chunkId ) ) + '.json';
-					const chunkFilepath = path.join( publicPath, `${ langSlug }-${ chunkFilename }` );
+				_.forEach(languageChunks, (chunkTranslations, chunkId) => {
+					const chunkFilename = path.basename(chunkId, path.extname(chunkId)) + '.json';
+					const chunkFilepath = path.join(publicPath, `${langSlug}-${chunkFilename}`);
 
-					fs.writeFileSync( chunkFilepath, JSON.stringify( chunkTranslations ) );
-				} );
-			} );
-		} );
+					fs.writeFileSync(chunkFilepath, JSON.stringify(chunkTranslations));
+				});
+			});
+		});
 	}
 
-	logUpdate( 'Building language chunks completed.\n' );
+	logUpdate('Building language chunks completed.\n');
 }
 
 async function run() {
 	createLanguagesDir();
 	await downloadLanguagesRevions();
 	const downloadedLanguages = await downloadLanguages();
-	buildLanguageChunks( downloadedLanguages );
+	buildLanguageChunks(downloadedLanguages);
 }
 
 run();

@@ -14,11 +14,8 @@ import { Button } from '@automattic/components';
  */
 import './action-button.scss';
 
-const ImporterActionButton = ( { className, ...props } ) => (
-	<Button
-		className={ classnames( 'importer-action-buttons__action-button', className ) }
-		{ ...props }
-	/>
+const ImporterActionButton = ({ className, ...props }) => (
+	<Button className={classnames('importer-action-buttons__action-button', className)} {...props} />
 );
 
 ImporterActionButton.displayName = 'ImporterActionButton';

@@ -37,7 +37,7 @@ class SiteStream extends React.Component {
 	};
 
 	goBack = () => {
-		if ( typeof window !== 'undefined' ) {
+		if (typeof window !== 'undefined') {
 			window.history.back();
 		}
 	};
@@ -45,50 +45,50 @@ class SiteStream extends React.Component {
 	render() {
 		const { site, feed, isBlocked, siteId } = this.props;
 		// check for redirect
-		if ( site && site.prefer_feed && site.feed_ID ) {
-			page.replace( '/read/feeds/' + site.feed_ID );
+		if (site && site.prefer_feed && site.feed_ID) {
+			page.replace('/read/feeds/' + site.feed_ID);
 		}
 
 		const emptyContent = <EmptyContent />;
-		const title = site ? site.name : this.props.translate( 'Loading Site' );
+		const title = site ? site.name : this.props.translate('Loading Site');
 
-		if ( isBlocked ) {
-			return <SiteBlocked title={ title } siteId={ siteId } />;
+		if (isBlocked) {
+			return <SiteBlocked title={title} siteId={siteId} />;
 		}
 
-		if ( ( site && site.is_error ) || ( feed && feed.is_error ) ) {
-			return <FeedError sidebarTitle={ title } />;
+		if ((site && site.is_error) || (feed && feed.is_error)) {
+			return <FeedError sidebarTitle={title} />;
 		}
 
 		return (
 			<Stream
-				{ ...this.props }
-				listName={ title }
-				emptyContent={ emptyContent }
-				showPostHeader={ false }
-				showSiteNameOnCards={ false }
-				isDiscoverStream={ this.props.isDiscoverStream }
-				shouldCombineCards={ false }
+				{...this.props}
+				listName={title}
+				emptyContent={emptyContent}
+				showPostHeader={false}
+				showSiteNameOnCards={false}
+				isDiscoverStream={this.props.isDiscoverStream}
+				shouldCombineCards={false}
 			>
 				<DocumentHead
-					title={ this.props.translate( '%s ‹ Reader', {
+					title={this.props.translate('%s ‹ Reader', {
 						args: title,
 						comment: '%s is the section name. For example: "My Likes"',
-					} ) }
+					})}
 				/>
-				<ReaderFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
-				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
-				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
+				<ReaderFeedHeader site={site} feed={feed} showBack={this.props.showBack} />
+				{!site && <QueryReaderSite siteId={this.props.siteId} />}
+				{!feed && site && site.feed_ID && <QueryReaderFeed feedId={site.feed_ID} />}
 			</Stream>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const site = getSite( state, ownProps.siteId );
+export default connect((state, ownProps) => {
+	const site = getSite(state, ownProps.siteId);
 	return {
 		site: site,
-		feed: site && site.feed_ID && getFeed( state, site.feed_ID ),
-		isBlocked: isSiteBlocked( state, ownProps.siteId ),
+		feed: site && site.feed_ID && getFeed(state, site.feed_ID),
+		isBlocked: isSiteBlocked(state, ownProps.siteId),
 	};
-} )( localize( SiteStream ) );
+})(localize(SiteStream));

@@ -13,7 +13,7 @@ import { SelectControl } from '@wordpress/components';
  */
 import NoSupport from './no-support';
 
-export default ( {
+export default ({
 	fontBase,
 	fontBaseDefault,
 	fontHeadings,
@@ -22,26 +22,26 @@ export default ( {
 	fontHeadingsOptions,
 	updateBaseFont,
 	updateHeadingsFont,
-} ) => {
-	if ( ! fontBaseOptions || ! fontHeadingsOptions ) {
-		return <NoSupport unsupportedFeature={ __( 'custom font selection' ) } />;
+}) => {
+	if (!fontBaseOptions || !fontHeadingsOptions) {
+		return <NoSupport unsupportedFeature={__('custom font selection')} />;
 	}
 
 	return (
 		<>
 			<SelectControl
-				label={ __( 'Heading Font' ) }
-				value={ fontHeadings }
-				options={ fontHeadingsOptions }
-				onChange={ newValue => updateHeadingsFont( newValue ) }
-				style={ { fontFamily: fontHeadings !== 'unset' ? fontHeadings : fontHeadingsDefault } }
+				label={__('Heading Font')}
+				value={fontHeadings}
+				options={fontHeadingsOptions}
+				onChange={(newValue) => updateHeadingsFont(newValue)}
+				style={{ fontFamily: fontHeadings !== 'unset' ? fontHeadings : fontHeadingsDefault }}
 			/>
 			<SelectControl
-				label={ __( 'Base Font' ) }
-				value={ fontBase }
-				options={ fontBaseOptions }
-				onChange={ newValue => updateBaseFont( newValue ) }
-				style={ { fontFamily: fontBase !== 'unset' ? fontBase : fontBaseDefault } }
+				label={__('Base Font')}
+				value={fontBase}
+				options={fontBaseOptions}
+				onChange={(newValue) => updateBaseFont(newValue)}
+				style={{ fontFamily: fontBase !== 'unset' ? fontBase : fontBaseDefault }}
 			/>
 			<hr />
 		</>

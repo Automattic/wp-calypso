@@ -19,18 +19,18 @@ class PeopleNavTabs extends React.Component {
 
 	render() {
 		return (
-			<NavTabs selectedText={ this.props.selectedText }>
-				{ this.props.filters.map( function( filterItem ) {
+			<NavTabs selectedText={this.props.selectedText}>
+				{this.props.filters.map(function (filterItem) {
 					return (
 						<NavItem
-							key={ filterItem.id }
-							path={ filterItem.path }
-							selected={ filterItem.id === this.props.filter }
+							key={filterItem.id}
+							path={filterItem.path}
+							selected={filterItem.id === this.props.filter}
 						>
-							{ filterItem.title }
+							{filterItem.title}
 						</NavItem>
 					);
-				}, this ) }
+				}, this)}
 			</NavTabs>
 		);
 	}
@@ -39,13 +39,13 @@ class PeopleNavTabs extends React.Component {
 class PeopleSectionNav extends Component {
 	canSearch() {
 		const { filter } = this.props;
-		if ( ! this.props.site ) {
+		if (!this.props.site) {
 			return false;
 		}
 
 		// Disable search for wpcom followers, viewers, and invites
-		if ( filter ) {
-			if ( 'followers' === filter || 'viewers' === filter || 'invites' === filter ) {
+		if (filter) {
+			if ('followers' === filter || 'viewers' === filter || 'invites' === filter) {
 				return false;
 			}
 		}
@@ -54,31 +54,31 @@ class PeopleSectionNav extends Component {
 	}
 
 	getFilters() {
-		const siteFilter = get( this.props.site, 'slug', '' );
+		const siteFilter = get(this.props.site, 'slug', '');
 		const { translate } = this.props;
 		const filters = [
 			{
-				title: translate( 'Team', { context: 'Filter label for people list' } ),
+				title: translate('Team', { context: 'Filter label for people list' }),
 				path: '/people/team/' + siteFilter,
 				id: 'team',
 			},
 			{
-				title: translate( 'Followers', { context: 'Filter label for people list' } ),
+				title: translate('Followers', { context: 'Filter label for people list' }),
 				path: '/people/followers/' + siteFilter,
 				id: 'followers',
 			},
 			{
-				title: translate( 'Email Followers', { context: 'Filter label for people list' } ),
+				title: translate('Email Followers', { context: 'Filter label for people list' }),
 				path: '/people/email-followers/' + siteFilter,
 				id: 'email-followers',
 			},
 			{
-				title: translate( 'Viewers', { context: 'Filter label for people list' } ),
+				title: translate('Viewers', { context: 'Filter label for people list' }),
 				path: '/people/viewers/' + siteFilter,
 				id: 'viewers',
 			},
 			{
-				title: translate( 'Invites' ),
+				title: translate('Invites'),
 				path: '/people/invites/' + siteFilter,
 				id: 'invites',
 			},
@@ -88,23 +88,23 @@ class PeopleSectionNav extends Component {
 	}
 
 	getNavigableFilters() {
-		const allowedFilterIds = [ 'team', 'followers', 'email-followers', 'invites' ];
+		const allowedFilterIds = ['team', 'followers', 'email-followers', 'invites'];
 
-		if ( this.shouldDisplayViewers() ) {
-			allowedFilterIds.push( 'viewers' );
+		if (this.shouldDisplayViewers()) {
+			allowedFilterIds.push('viewers');
 		}
 
 		return this.getFilters().filter(
-			filter => this.props.filter === filter.id || includes( allowedFilterIds, filter.id )
+			(filter) => this.props.filter === filter.id || includes(allowedFilterIds, filter.id)
 		);
 	}
 
 	shouldDisplayViewers() {
-		if ( ! this.props.site ) {
+		if (!this.props.site) {
 			return false;
 		}
 
-		if ( 'viewers' === this.props.filter || ( ! this.props.isJetpack && this.props.isPrivate ) ) {
+		if ('viewers' === this.props.filter || (!this.props.isJetpack && this.props.isPrivate)) {
 			return true;
 		}
 		return false;
@@ -114,23 +114,23 @@ class PeopleSectionNav extends Component {
 		let hasPinnedItems = false;
 		let search = null;
 
-		if ( this.canSearch() ) {
+		if (this.canSearch()) {
 			hasPinnedItems = true;
-			search = <PeopleSearch { ...this.props } />;
+			search = <PeopleSearch {...this.props} />;
 		}
 
-		const selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
+		const selectedText = find(this.getFilters(), { id: this.props.filter }).title;
 		return (
-			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
+			<SectionNav selectedText={selectedText} hasPinnedItems={hasPinnedItems}>
 				<PeopleNavTabs
-					{ ...this.props }
-					selectedText={ selectedText }
-					filters={ this.getNavigableFilters() }
+					{...this.props}
+					selectedText={selectedText}
+					filters={this.getNavigableFilters()}
 				/>
-				{ search }
+				{search}
 			</SectionNav>
 		);
 	}
 }
 
-export default localize( PeopleSectionNav );
+export default localize(PeopleSectionNav);

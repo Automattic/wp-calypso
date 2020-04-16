@@ -17,17 +17,15 @@ import getHappychatConnectionStatus from 'state/happychat/selectors/get-happycha
  * @param {object} state Global state tree
  * @returns {boolean} Have each of the required async checks been made?
  */
-export default function isSupportVariationDetermined( state ) {
+export default function isSupportVariationDetermined(state) {
 	const ticketReadyOrError =
-		isTicketSupportConfigurationReady( state ) || getTicketSupportRequestError( state ) !== null;
+		isTicketSupportConfigurationReady(state) || getTicketSupportRequestError(state) !== null;
 
-	const isHappyChatConnecting = getHappychatConnectionStatus( state ) === 'connecting';
+	const isHappyChatConnecting = getHappychatConnectionStatus(state) === 'connecting';
 	const happychatReadyOrDisabled =
-		! config.isEnabled( 'happychat' ) ||
-		! isHappychatUserEligible( state ) ||
-		! isHappyChatConnecting;
+		!config.isEnabled('happychat') || !isHappychatUserEligible(state) || !isHappyChatConnecting;
 
-	const directlyIsReadyOrFailed = isDirectlyFailed( state ) || isDirectlyReady( state );
+	const directlyIsReadyOrFailed = isDirectlyFailed(state) || isDirectlyReady(state);
 
 	return ticketReadyOrError && happychatReadyOrDisabled && directlyIsReadyOrFailed;
 }

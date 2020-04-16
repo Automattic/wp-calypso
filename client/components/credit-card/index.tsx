@@ -15,36 +15,36 @@ import StoredCard from './stored-card';
 import './style.scss';
 
 type SelectHandler = React.EventHandler<
-	React.MouseEvent< HTMLDivElement > | React.KeyboardEvent< HTMLDivElement >
+	React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>
 >;
 
 interface Props {
-	card: ComponentProps< typeof StoredCard >;
+	card: ComponentProps<typeof StoredCard>;
 	selected: boolean;
 	onSelect?: SelectHandler;
 	className?: string;
 }
 
-const CreditCard: FunctionComponent< Props > = ( {
+const CreditCard: FunctionComponent<Props> = ({
 	card,
 	selected,
 	onSelect,
 	className,
 	children,
-} ) => {
-	const handleKeyPress: React.KeyboardEventHandler< HTMLDivElement > = useCallback(
-		event => {
-			if ( event.key === 'Enter' || event.key === ' ' ) {
-				( onSelect as SelectHandler )( event );
+}) => {
+	const handleKeyPress: React.KeyboardEventHandler<HTMLDivElement> = useCallback(
+		(event) => {
+			if (event.key === 'Enter' || event.key === ' ') {
+				(onSelect as SelectHandler)(event);
 			}
 		},
-		[ onSelect ]
+		[onSelect]
 	);
 
-	const classes = classNames( 'credit-card', className, {
+	const classes = classNames('credit-card', className, {
 		'is-selected': selected,
 		'is-selectable': onSelect,
-	} );
+	});
 
 	const selectionProps = onSelect && {
 		tabIndex: -1,
@@ -55,8 +55,8 @@ const CreditCard: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div className={ classes } { ...selectionProps }>
-			{ card ? <StoredCard { ...card } selected={ selected } /> : children }
+		<div className={classes} {...selectionProps}>
+			{card ? <StoredCard {...card} selected={selected} /> : children}
 		</div>
 	);
 };

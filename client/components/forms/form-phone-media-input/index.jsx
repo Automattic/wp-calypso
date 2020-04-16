@@ -11,7 +11,7 @@ import PhoneInput from 'components/phone-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 
-export default function FormPhoneMediaInput( {
+export default function FormPhoneMediaInput({
 	additionalClasses,
 	label,
 	name,
@@ -26,26 +26,26 @@ export default function FormPhoneMediaInput( {
 	enableStickyCountry,
 	inputRef,
 	children,
-} ) {
+}) {
 	return (
-		<div className={ classnames( additionalClasses, 'phone' ) }>
+		<div className={classnames(additionalClasses, 'phone')}>
 			<div>
-				<FormLabel htmlFor={ name }>{ label }</FormLabel>
+				<FormLabel htmlFor={name}>{label}</FormLabel>
 				<PhoneInput
-					inputRef={ inputRef }
-					name={ name }
-					onChange={ onChange }
-					value={ value }
-					countriesList={ countriesList }
-					enableStickyCountry={ enableStickyCountry }
-					countryCode={ countryCode.toUpperCase() }
-					className={ className }
-					isError={ isError }
-					disabled={ disabled }
+					inputRef={inputRef}
+					name={name}
+					onChange={onChange}
+					value={value}
+					countriesList={countriesList}
+					enableStickyCountry={enableStickyCountry}
+					countryCode={countryCode.toUpperCase()}
+					className={className}
+					isError={isError}
+					disabled={disabled}
 				/>
-				{ children }
+				{children}
 			</div>
-			{ errorMessage && <FormInputValidation text={ errorMessage } isError /> }
+			{errorMessage && <FormInputValidation text={errorMessage} isError />}
 		</div>
 	);
 }

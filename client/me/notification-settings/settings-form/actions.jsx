@@ -28,18 +28,18 @@ class NotificationSettingsFormActions extends React.PureComponent {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className="notification-settings-form-actions">
-				{ this.props.isApplyAllVisible && (
+				{this.props.isApplyAllVisible && (
 					<FormButton
 						className="notification-settings-form-actions__save-to-all"
-						disabled={ this.props.disabled }
-						onClick={ this.props.onSaveToAll }
-						isPrimary={ false }
+						disabled={this.props.disabled}
+						onClick={this.props.onSaveToAll}
+						isPrimary={false}
 					>
-						{ this.props.translate( 'Save to all sites' ) }
+						{this.props.translate('Save to all sites')}
 					</FormButton>
-				) }
-				<FormButton disabled={ this.props.disabled } onClick={ this.props.onSave }>
-					{ this.props.translate( 'Save settings' ) }
+				)}
+				<FormButton disabled={this.props.disabled} onClick={this.props.onSave}>
+					{this.props.translate('Save settings')}
 				</FormButton>
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -47,4 +47,4 @@ class NotificationSettingsFormActions extends React.PureComponent {
 	}
 }
 
-export default localize( NotificationSettingsFormActions );
+export default localize(NotificationSettingsFormActions);

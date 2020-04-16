@@ -13,7 +13,7 @@ import 'state/data-layer/wpcom/sites/blog-stickers';
 import 'state/data-layer/wpcom/sites/blog-stickers/add';
 import 'state/data-layer/wpcom/sites/blog-stickers/remove';
 
-export function addBlogSticker( blogId, stickerName ) {
+export function addBlogSticker(blogId, stickerName) {
 	return {
 		type: SITES_BLOG_STICKER_ADD,
 		payload: {
@@ -23,7 +23,7 @@ export function addBlogSticker( blogId, stickerName ) {
 	};
 }
 
-export function removeBlogSticker( blogId, stickerName ) {
+export function removeBlogSticker(blogId, stickerName) {
 	return {
 		type: SITES_BLOG_STICKER_REMOVE,
 		payload: {
@@ -33,7 +33,7 @@ export function removeBlogSticker( blogId, stickerName ) {
 	};
 }
 
-export function listBlogStickers( blogId ) {
+export function listBlogStickers(blogId) {
 	return {
 		type: SITES_BLOG_STICKER_LIST,
 		payload: {
@@ -42,7 +42,7 @@ export function listBlogStickers( blogId ) {
 	};
 }
 
-export function receiveBlogStickers( blogId, stickers ) {
+export function receiveBlogStickers(blogId, stickers) {
 	return {
 		type: SITES_BLOG_STICKER_LIST_RECEIVE,
 		payload: { blogId, stickers },

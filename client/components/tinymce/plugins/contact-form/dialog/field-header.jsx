@@ -22,17 +22,17 @@ class ContactFormDialogFieldHeader extends React.Component {
 	};
 
 	getLegend = () => {
-		if ( this.props.options ) {
-			const count = this.props.options.split( ',' ).length;
+		if (this.props.options) {
+			const count = this.props.options.split(',').length;
 
-			if ( this.props.required ) {
+			if (this.props.required) {
 				return this.props.translate(
 					'Required field "%(fieldName)s" with %(numOption)d option',
 					'Required field "%(fieldName)s" with %(numOption)d options',
 					{
 						count,
 						args: {
-							fieldName: getLabel( this.props.type ),
+							fieldName: getLabel(this.props.type),
 							numOption: count,
 						},
 						comment:
@@ -47,7 +47,7 @@ class ContactFormDialogFieldHeader extends React.Component {
 				{
 					count,
 					args: {
-						fieldName: getLabel( this.props.type ),
+						fieldName: getLabel(this.props.type),
 						numOption: count,
 					},
 					comment:
@@ -56,32 +56,32 @@ class ContactFormDialogFieldHeader extends React.Component {
 			);
 		}
 
-		if ( this.props.required ) {
-			return this.props.translate( 'Required field "%(fieldName)s"', {
+		if (this.props.required) {
+			return this.props.translate('Required field "%(fieldName)s"', {
 				args: {
-					fieldName: getLabel( this.props.type ),
+					fieldName: getLabel(this.props.type),
 				},
 				comment:
 					'Explain to the user the field settings for fields other than dropdown and select list.',
-			} );
+			});
 		}
 
-		return this.props.translate( 'Optional field "%(fieldName)s"', {
+		return this.props.translate('Optional field "%(fieldName)s"', {
 			args: {
-				fieldName: getLabel( this.props.type ),
+				fieldName: getLabel(this.props.type),
 			},
 			comment:
 				'Explain to the user the field settings for fields other than dropdown and select list.',
-		} );
+		});
 	};
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="editor-contact-form-modal-field-header">
-				<div>{ this.props.label }</div>
+				<div>{this.props.label}</div>
 				<div>
-					<small>{ this.getLegend() }</small>
+					<small>{this.getLegend()}</small>
 				</div>
 			</div>
 		);
@@ -89,4 +89,4 @@ class ContactFormDialogFieldHeader extends React.Component {
 	}
 }
 
-export default localize( ContactFormDialogFieldHeader );
+export default localize(ContactFormDialogFieldHeader);

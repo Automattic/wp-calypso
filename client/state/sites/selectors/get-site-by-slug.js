@@ -18,7 +18,7 @@ import getSiteSlug from './get-site-slug';
  * @returns {?object}           Site object
  */
 export default createSelector(
-	( state, siteSlug ) =>
-		find( getSitesItems( state ), site => getSiteSlug( state, site.ID ) === siteSlug ) || null,
+	(state, siteSlug) =>
+		find(getSitesItems(state), (site) => getSiteSlug(state, site.ID) === siteSlug) || null,
 	getSitesItems
 );

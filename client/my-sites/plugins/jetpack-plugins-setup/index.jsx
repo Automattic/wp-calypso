@@ -64,67 +64,67 @@ class PlansSetup extends React.Component {
 	static displayName = 'PlanSetup';
 	sentTracks = false;
 
-	trackConfigFinished = ( eventName, options = {} ) => {
-		if ( ! this.sentTracks ) {
-			analytics.tracks.recordEvent( eventName, {
+	trackConfigFinished = (eventName, options = {}) => {
+		if (!this.sentTracks) {
+			analytics.tracks.recordEvent(eventName, {
 				location: 'jetpackPluginSetup',
 				...options,
-			} );
+			});
 		}
 		this.sentTracks = true;
 	};
 
 	trackManualInstall = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manual_error' );
+		analytics.tracks.recordEvent('calypso_plans_autoconfig_click_manual_error');
 	};
 
 	trackManagePlans = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manage_plans' );
+		analytics.tracks.recordEvent('calypso_plans_autoconfig_click_manage_plans');
 	};
 
 	trackContactSupport = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_contact_support' );
+		analytics.tracks.recordEvent('calypso_plans_autoconfig_click_contact_support');
 	};
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
-	addWporgDataToPlugins = plugins => {
-		return plugins.map( plugin => {
-			const pluginData = getPlugin( this.props.wporg, plugin.slug );
-			if ( ! pluginData ) {
-				this.props.fetchPluginData( plugin.slug );
+	addWporgDataToPlugins = (plugins) => {
+		return plugins.map((plugin) => {
+			const pluginData = getPlugin(this.props.wporg, plugin.slug);
+			if (!pluginData) {
+				this.props.fetchPluginData(plugin.slug);
 			}
-			return Object.assign( {}, plugin, pluginData );
-		} );
+			return Object.assign({}, plugin, pluginData);
+		});
 	};
 
 	allPluginsHaveWporgData = () => {
-		const plugins = this.addWporgDataToPlugins( this.props.plugins );
-		return plugins.length === filter( plugins, { wporg: true } ).length;
+		const plugins = this.addWporgDataToPlugins(this.props.plugins);
+		return plugins.length === filter(plugins, { wporg: true }).length;
 	};
 
 	componentDidMount() {
-		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
+		window.addEventListener('beforeunload', this.warnIfNotFinished);
 		this.props.requestSites();
 
-		page.exit( '/plugins/setup/*', ( context, next ) => {
-			const confirmText = this.warnIfNotFinished( {} );
-			if ( ! confirmText ) {
+		page.exit('/plugins/setup/*', (context, next) => {
+			const confirmText = this.warnIfNotFinished({});
+			if (!confirmText) {
 				return next();
 			}
-			if ( window.confirm( confirmText ) ) {
+			if (window.confirm(confirmText)) {
 				next();
 			} else {
 				// save off the current path just in case context changes after this call
 				const currentPath = context.canonicalPath;
-				setTimeout( function() {
-					page.replace( currentPath, null, false, false );
-				}, 0 );
+				setTimeout(function () {
+					page.replace(currentPath, null, false, false);
+				}, 0);
 			}
-		} );
+		});
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'beforeunload', this.warnIfNotFinished );
+		window.removeEventListener('beforeunload', this.warnIfNotFinished);
 	}
 
 	componentDidUpdate() {
@@ -134,27 +134,27 @@ class PlansSetup extends React.Component {
 			site.jetpack &&
 			site.canUpdateFiles &&
 			this.allPluginsHaveWporgData() &&
-			! this.props.isInstalling &&
+			!this.props.isInstalling &&
 			this.props.nextPlugin
 		) {
-			this.startNextPlugin( this.props.nextPlugin );
+			this.startNextPlugin(this.props.nextPlugin);
 		}
 	}
 
-	warnIfNotFinished = event => {
+	warnIfNotFinished = (event) => {
 		const site = this.props.selectedSite;
-		if ( ! site || ! site.jetpack || ! site.canUpdateFiles || this.props.isFinished ) {
+		if (!site || !site.jetpack || !site.canUpdateFiles || this.props.isFinished) {
 			return;
 		}
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_user_interrupt' );
-		const beforeUnloadText = this.props.translate( "We haven't finished installing your plugins." );
-		( event || window.event ).returnValue = beforeUnloadText;
+		analytics.tracks.recordEvent('calypso_plans_autoconfig_user_interrupt');
+		const beforeUnloadText = this.props.translate("We haven't finished installing your plugins.");
+		(event || window.event).returnValue = beforeUnloadText;
 		return beforeUnloadText;
 	};
 
-	startNextPlugin = plugin => {
+	startNextPlugin = (plugin) => {
 		// We're already installing.
-		if ( this.props.isInstalling ) {
+		if (this.props.isInstalling) {
 			return;
 		}
 
@@ -162,34 +162,34 @@ class PlansSetup extends React.Component {
 		const site = this.props.selectedSite;
 
 		// Merge wporg info into the plugin object
-		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
+		plugin = Object.assign({}, plugin, getPlugin(this.props.wporg, plugin.slug));
 
-		const getPluginFromStore = function() {
-			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
-			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
+		const getPluginFromStore = function () {
+			const sitePlugin = PluginsStore.getSitePlugin(site, plugin.slug);
+			if (!sitePlugin && PluginsStore.isFetchingSite(site)) {
 				// if the Plugins are still being fetched, we wait. We are not using flux
 				// store events because it would be more messy to handle the one-time-only
 				// callback with bound parameters than to do it this way.
-				return setTimeout( getPluginFromStore, 500 );
+				return setTimeout(getPluginFromStore, 500);
 			}
 			// Merge any site-specific info into the plugin object, setting a default plugin ID if needed
-			plugin = Object.assign( { id: plugin.slug }, plugin, sitePlugin );
-			install( plugin, site );
+			plugin = Object.assign({ id: plugin.slug }, plugin, sitePlugin);
+			install(plugin, site);
 		};
 		getPluginFromStore();
 	};
 
 	renderNoJetpackSiteSelected = () => {
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+		this.trackConfigFinished('calypso_plans_autoconfig_error', {
 			error: 'wordpresscom',
-		} );
+		});
 		return (
 			<JetpackManageErrorPage
-				siteId={ this.props.siteId }
-				title={ this.props.translate(
+				siteId={this.props.siteId}
+				title={this.props.translate(
 					'Oh no! You need to select a Jetpack site to be able to setup your plan'
-				) }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
+				)}
+				illustration={'/calypso/images/jetpack/jetpack-manage.svg'}
 			/>
 		);
 	};
@@ -197,35 +197,35 @@ class PlansSetup extends React.Component {
 	renderCantInstallPlugins = () => {
 		const { translate } = this.props;
 		const site = this.props.selectedSite;
-		const reasons = getSiteFileModDisableReason( site, 'modifyFiles' );
+		const reasons = getSiteFileModDisableReason(site, 'modifyFiles');
 		let reason;
 
-		if ( reasons && reasons.length > 0 ) {
-			reason = reasons[ 0 ];
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+		if (reasons && reasons.length > 0) {
+			reason = reasons[0];
+			this.trackConfigFinished('calypso_plans_autoconfig_error', {
 				error: 'cannot_update_files',
 				reason,
-			} );
-		} else if ( ! site.isMainNetworkSite ) {
-			reason = translate( "We can't install plugins on multisite sites." );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+			});
+		} else if (!site.isMainNetworkSite) {
+			reason = translate("We can't install plugins on multisite sites.");
+			this.trackConfigFinished('calypso_plans_autoconfig_error', {
 				error: 'secondary_network_site',
-			} );
-		} else if ( site.options.is_multi_network ) {
-			reason = translate( "We can't install plugins on multi-network sites." );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+			});
+		} else if (site.options.is_multi_network) {
+			reason = translate("We can't install plugins on multi-network sites.");
+			this.trackConfigFinished('calypso_plans_autoconfig_error', {
 				error: 'multinetwork',
-			} );
+			});
 		}
 
 		return (
 			<JetpackManageErrorPage
-				siteId={ this.props.siteId }
-				action={ translate( 'Contact Support' ) }
-				actionURL={ JETPACK_CONTACT_SUPPORT }
-				title={ translate( "Oh no! We can't install plugins on this site." ) }
-				line={ reason }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
+				siteId={this.props.siteId}
+				action={translate('Contact Support')}
+				actionURL={JETPACK_CONTACT_SUPPORT}
+				title={translate("Oh no! We can't install plugins on this site.")}
+				line={reason}
+				illustration={'/calypso/images/jetpack/jetpack-manage.svg'}
 			/>
 		);
 	};
@@ -234,7 +234,7 @@ class PlansSetup extends React.Component {
 		return (
 			<div>
 				<h1 className="jetpack-plugins-setup__header">
-					{ this.props.translate( 'Nothing to do here…' ) }
+					{this.props.translate('Nothing to do here…')}
 				</h1>
 			</div>
 		);
@@ -242,55 +242,55 @@ class PlansSetup extends React.Component {
 
 	renderPluginsPlaceholders = () => {
 		const placeholderCount = this.props.whitelist ? 1 : 2;
-		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
+		return range(placeholderCount).map((i) => <PluginItem key={'placeholder-' + i} />);
 	};
 
-	renderPlugins = ( hidden = false ) => {
+	renderPlugins = (hidden = false) => {
 		const site = this.props.selectedSite;
-		if ( this.props.isRequesting || PluginsStore.isFetchingSite( site ) ) {
+		if (this.props.isRequesting || PluginsStore.isFetchingSite(site)) {
 			return this.renderPluginsPlaceholders();
 		}
 
-		const plugins = this.addWporgDataToPlugins( this.props.plugins );
+		const plugins = this.addWporgDataToPlugins(this.props.plugins);
 
-		return plugins.map( ( item, i ) => {
-			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
+		return plugins.map((item, i) => {
+			const plugin = Object.assign({}, item, getPlugin(this.props.wporg, item.slug));
 
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
-				<CompactCard className="plugin-item" key={ i }>
+				<CompactCard className="plugin-item" key={i}>
 					<span className="plugin-item__link">
-						<PluginIcon image={ plugin.icon } />
+						<PluginIcon image={plugin.icon} />
 						<div className="plugin-item__info">
-							<div className="plugin-item__title">{ plugin.name }</div>
-							{ hidden ? (
+							<div className="plugin-item__title">{plugin.name}</div>
+							{hidden ? (
 								<Notice
-									key={ 0 }
-									isCompact={ true }
-									showDismiss={ false }
+									key={0}
+									isCompact={true}
+									showDismiss={false}
 									icon="plugins"
-									text={ this.props.translate( 'Waiting to install' ) }
+									text={this.props.translate('Waiting to install')}
 								/>
 							) : (
-								this.renderStatus( plugin )
-							) }
+								this.renderStatus(plugin)
+							)}
 						</div>
 					</span>
-					{ this.renderActions( plugin ) }
+					{this.renderActions(plugin)}
 				</CompactCard>
 			);
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
-		} );
+		});
 	};
 
-	renderStatus = plugin => {
-		if ( plugin.error ) {
-			return this.renderStatusError( plugin );
+	renderStatus = (plugin) => {
+		if (plugin.error) {
+			return this.renderStatusError(plugin);
 		}
 
-		if ( 'done' === plugin.status ) {
+		if ('done' === plugin.status) {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			return <div className="plugin-item__finished">{ this.getStatusText( plugin ) }</div>;
+			return <div className="plugin-item__finished">{this.getStatusText(plugin)}</div>;
 		}
 
 		const statusProps = {
@@ -300,39 +300,39 @@ class PlansSetup extends React.Component {
 			icon: 'plugins',
 		};
 
-		return <Notice { ...statusProps } text={ this.getStatusText( plugin ) } />;
+		return <Notice {...statusProps} text={this.getStatusText(plugin)} />;
 	};
 
-	getStatusText = plugin => {
+	getStatusText = (plugin) => {
 		const { translate } = this.props;
-		switch ( plugin.status ) {
+		switch (plugin.status) {
 			case 'done':
-				return translate( 'Successfully installed & configured.' );
+				return translate('Successfully installed & configured.');
 			case 'activate':
 			case 'configure':
-				return translate( 'Almost done' );
+				return translate('Almost done');
 			case 'install':
-				return translate( 'Working…' );
+				return translate('Working…');
 			case 'wait':
 			default:
-				return translate( 'Waiting to install' );
+				return translate('Waiting to install');
 		}
 	};
 
-	renderStatusError = plugin => {
+	renderStatusError = (plugin) => {
 		const { translate } = this.props;
 
 		// This state isn't quite an error
-		if ( plugin.error.code === 'already_registered' ) {
+		if (plugin.error.code === 'already_registered') {
 			return (
 				<Notice
-					showDismiss={ false }
-					isCompact={ true }
+					showDismiss={false}
+					isCompact={true}
 					status="is-info"
-					text={ translate( 'This plugin is already registered with another plan.' ) }
+					text={translate('This plugin is already registered with another plan.')}
 				>
-					<NoticeAction key="notice_action" href="/me/purchases" onClick={ this.trackManagePlans }>
-						{ translate( 'Manage Plans' ) }
+					<NoticeAction key="notice_action" href="/me/purchases" onClick={this.trackManagePlans}>
+						{translate('Manage Plans')}
 					</NoticeAction>
 				</Notice>
 			);
@@ -346,63 +346,63 @@ class PlansSetup extends React.Component {
 		statusProps.children = (
 			<NoticeAction
 				key="notice_action"
-				href={ helpLinks[ plugin.slug ] }
-				onClick={ this.trackManualInstall }
+				href={helpLinks[plugin.slug]}
+				onClick={this.trackManualInstall}
 			>
-				{ translate( 'Manual Installation' ) }
+				{translate('Manual Installation')}
 			</NoticeAction>
 		);
 
-		const errorMessage = get( plugin, 'error.message', '' );
+		const errorMessage = get(plugin, 'error.message', '');
 
-		switch ( plugin.status ) {
+		switch (plugin.status) {
 			case 'install':
 				return (
 					<Notice
-						{ ...statusProps }
-						text={ translate( 'An error occurred when installing %(plugin)s.', {
+						{...statusProps}
+						text={translate('An error occurred when installing %(plugin)s.', {
 							args: { plugin: plugin.name },
-						} ) }
+						})}
 					/>
 				);
 			case 'activate':
 				return (
 					<Notice
-						{ ...statusProps }
-						text={ translate( 'An error occurred when activating %(plugin)s.', {
+						{...statusProps}
+						text={translate('An error occurred when activating %(plugin)s.', {
 							args: { plugin: plugin.name },
-						} ) }
+						})}
 					/>
 				);
 			case 'configure':
 				return (
 					<Notice
-						{ ...statusProps }
-						text={ translate( 'An error occurred when configuring %(plugin)s.', {
+						{...statusProps}
+						text={translate('An error occurred when configuring %(plugin)s.', {
 							args: { plugin: plugin.name },
-						} ) }
+						})}
 					/>
 				);
 			default:
 				return (
 					<Notice
-						{ ...statusProps }
+						{...statusProps}
 						text={
 							errorMessage
-								? errorMessage.replace( /<.[^<>]*?>/g, '' )
-								: translate( 'An error occured.' )
+								? errorMessage.replace(/<.[^<>]*?>/g, '')
+								: translate('An error occured.')
 						}
 					/>
 				);
 		}
 	};
 
-	renderActions = plugin => {
-		if ( plugin.status === 'wait' ) {
+	renderActions = (plugin) => {
+		if (plugin.status === 'wait') {
 			return null;
-		} else if ( plugin.error !== null ) {
+		} else if (plugin.error !== null) {
 			return null;
-		} else if ( plugin.status !== 'done' ) {
+		} else if (plugin.status !== 'done') {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="plugin-item__actions">
@@ -415,31 +415,31 @@ class PlansSetup extends React.Component {
 		return null;
 	};
 
-	renderErrorMessage = plugins => {
+	renderErrorMessage = (plugins) => {
 		let noticeText;
 		const { translate } = this.props;
-		const pluginsWithErrors = this.addWporgDataToPlugins( plugins );
+		const pluginsWithErrors = this.addWporgDataToPlugins(plugins);
 
 		const tracksData = {};
-		pluginsWithErrors.map( item => {
-			tracksData[ item.slug ] = item.error.name + ': ' + item.error.message;
-		} );
+		pluginsWithErrors.map((item) => {
+			tracksData[item.slug] = item.error.name + ': ' + item.error.message;
+		});
 
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
+		this.trackConfigFinished('calypso_plans_autoconfig_error', {
 			...tracksData,
 			error: 'plugin',
-		} );
+		});
 
-		if ( pluginsWithErrors.length === 1 ) {
+		if (pluginsWithErrors.length === 1) {
 			noticeText = translate(
 				'There was an issue installing %(plugin)s. ' +
 					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugin.',
 				{
 					args: {
-						plugin: pluginsWithErrors[ 0 ].name,
+						plugin: pluginsWithErrors[0].name,
 					},
 					components: {
-						a: <a href={ JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+						a: <a href={JETPACK_SUPPORT} onClick={this.trackManualInstall} />,
 					},
 				}
 			);
@@ -449,15 +449,15 @@ class PlansSetup extends React.Component {
 					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
 				{
 					components: {
-						a: <a href={ JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+						a: <a href={JETPACK_SUPPORT} onClick={this.trackManualInstall} />,
 					},
 				}
 			);
 		}
 		return (
-			<Notice status="is-error" text={ noticeText } showDismiss={ false }>
-				<NoticeAction href={ JETPACK_CONTACT_SUPPORT } onClick={ this.trackContactSupport }>
-					{ translate( 'Contact Support' ) }
+			<Notice status="is-error" text={noticeText} showDismiss={false}>
+				<NoticeAction href={JETPACK_CONTACT_SUPPORT} onClick={this.trackContactSupport}>
+					{translate('Contact Support')}
 				</NoticeAction>
 			</Notice>
 		);
@@ -466,20 +466,20 @@ class PlansSetup extends React.Component {
 	renderSuccess = () => {
 		const { translate } = this.props;
 		const site = this.props.selectedSite;
-		if ( ! this.props.hasRequested || ! this.props.isFinished ) {
+		if (!this.props.hasRequested || !this.props.isFinished) {
 			return null;
 		}
 
-		const pluginsWithErrors = filter( this.props.plugins, item => {
-			const errorCode = get( item, 'error.code', null );
+		const pluginsWithErrors = filter(this.props.plugins, (item) => {
+			const errorCode = get(item, 'error.code', null);
 			return errorCode && errorCode !== 'already_registered';
-		} );
+		});
 
-		if ( pluginsWithErrors.length ) {
-			return this.renderErrorMessage( pluginsWithErrors );
+		if (pluginsWithErrors.length) {
+			return this.renderErrorMessage(pluginsWithErrors);
 		}
 
-		this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
+		this.trackConfigFinished('calypso_plans_autoconfig_success');
 
 		const noticeText = translate(
 			"We've set up your plugin, your site is powered up!",
@@ -487,10 +487,8 @@ class PlansSetup extends React.Component {
 			{ count: this.props.plugins.length }
 		);
 		return (
-			<Notice status="is-success" text={ noticeText } showDismiss={ false }>
-				<NoticeAction href={ `/plans/my-plan/${ site.slug }` }>
-					{ translate( 'Continue' ) }
-				</NoticeAction>
+			<Notice status="is-success" text={noticeText} showDismiss={false}>
+				<NoticeAction href={`/plans/my-plan/${site.slug}`}>{translate('Continue')}</NoticeAction>
 			</Notice>
 		);
 	};
@@ -500,12 +498,12 @@ class PlansSetup extends React.Component {
 		return (
 			<div className="jetpack-plugins-setup">
 				<h1 className="jetpack-plugins-setup__header is-placeholder">
-					{ translate( 'Setting up your plan' ) }
+					{translate('Setting up your plan')}
 				</h1>
 				<p className="jetpack-plugins-setup__description is-placeholder">
-					{ translate( "We need to install a few plugins for you. It won't take long!" ) }
+					{translate("We need to install a few plugins for you. It won't take long!")}
 				</p>
-				{ this.renderPluginsPlaceholders() }
+				{this.renderPluginsPlaceholders()}
 			</div>
 		);
 	};
@@ -514,24 +512,24 @@ class PlansSetup extends React.Component {
 		const { sitesInitialized, translate } = this.props;
 		const site = this.props.selectedSite;
 
-		if ( ! site && ( this.props.isRequestingSites || ! sitesInitialized ) ) {
+		if (!site && (this.props.isRequestingSites || !sitesInitialized)) {
 			return this.renderPlaceholder();
 		}
 
-		if ( ! site || ! site.jetpack ) {
+		if (!site || !site.jetpack) {
 			return this.renderNoJetpackSiteSelected();
 		}
 
-		if ( ! site.canUpdateFiles ) {
+		if (!site.canUpdateFiles) {
 			return this.renderCantInstallPlugins();
 		}
 
 		if (
 			site &&
-			! this.props.isRequestingSites &&
-			! this.props.isRequesting &&
-			! PluginsStore.isFetchingSite( site ) &&
-			! this.props.plugins.length
+			!this.props.isRequestingSites &&
+			!this.props.isRequesting &&
+			!PluginsStore.isFetchingSite(site) &&
+			!this.props.plugins.length
 		) {
 			return this.renderNoJetpackPlan();
 		}
@@ -539,42 +537,42 @@ class PlansSetup extends React.Component {
 		return (
 			<div className="jetpack-plugins-setup">
 				<PageViewTracker path="/plugins/setup/:site" title="Jetpack Plugins Setup" />
-				<QueryPluginKeys siteId={ site.ID } />
+				<QueryPluginKeys siteId={site.ID} />
 				<h1 className="jetpack-plugins-setup__header">
-					{ translate( 'Setting up your %(plan)s Plan', {
+					{translate('Setting up your %(plan)s Plan', {
 						args: { plan: site.plan.product_name_short },
-					} ) }
+					})}
 				</h1>
 				<p className="jetpack-plugins-setup__description">
-					{ translate( "We need to install a few plugins for you. It won't take long!" ) }
+					{translate("We need to install a few plugins for you. It won't take long!")}
 				</p>
-				{ this.renderSuccess() }
-				{ this.renderPlugins( false ) }
+				{this.renderSuccess()}
+				{this.renderPlugins(false)}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
-		const selectedSite = getSelectedSite( state );
+	(state, ownProps) => {
+		const siteId = getSelectedSiteId(state);
+		const selectedSite = getSelectedSite(state);
 		const whitelist = ownProps.whitelist || false;
 
 		return {
 			wporg: state.plugins.wporg.items,
-			isRequesting: isRequesting( state, siteId ),
-			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId, whitelist ),
-			isFinished: isFinished( state, siteId, whitelist ),
-			plugins: getPluginsForSite( state, siteId, whitelist ),
-			activePlugin: getActivePlugin( state, siteId, whitelist ),
-			nextPlugin: getNextPlugin( state, siteId, whitelist ),
+			isRequesting: isRequesting(state, siteId),
+			hasRequested: hasRequested(state, siteId),
+			isInstalling: isInstalling(state, siteId, whitelist),
+			isFinished: isFinished(state, siteId, whitelist),
+			plugins: getPluginsForSite(state, siteId, whitelist),
+			activePlugin: getActivePlugin(state, siteId, whitelist),
+			nextPlugin: getNextPlugin(state, siteId, whitelist),
 			selectedSite: selectedSite,
-			isRequestingSites: isRequestingSites( state ),
-			sitesInitialized: hasInitializedSites( state ),
+			isRequestingSites: isRequestingSites(state),
+			sitesInitialized: hasInitializedSites(state),
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
-)( localize( PlansSetup ) );
+	(dispatch) => bindActionCreators({ requestSites, fetchPluginData, installPlugin }, dispatch)
+)(localize(PlansSetup));

@@ -23,54 +23,54 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
-const book = ( context, next ) => {
+const book = (context, next) => {
 	context.primary = (
 		<ConciergeMain
 			analyticsPath="/me/concierge/:site/book"
 			analyticsTitle="Concierge > Book"
-			skeleton={ BookSkeleton }
-			siteSlug={ context.params.siteSlug }
-			steps={ [ BookInfoStep, BookCalendarStep, BookConfirmationStep ] }
-			rescheduling={ false }
+			skeleton={BookSkeleton}
+			siteSlug={context.params.siteSlug}
+			steps={[BookInfoStep, BookCalendarStep, BookConfirmationStep]}
+			rescheduling={false}
 		/>
 	);
 	next();
 };
 
-const cancel = ( context, next ) => {
+const cancel = (context, next) => {
 	context.primary = (
 		<ConciergeCancel
 			analyticsPath="/me/concierge/:site/:appointment/cancel"
 			analyticsTitle="Concierge > Cancel"
-			appointmentId={ context.params.appointmentId }
-			siteSlug={ context.params.siteSlug }
+			appointmentId={context.params.appointmentId}
+			siteSlug={context.params.siteSlug}
 		/>
 	);
 	next();
 };
 
-const reschedule = ( context, next ) => {
+const reschedule = (context, next) => {
 	context.primary = (
 		<ConciergeMain
 			analyticsPath="/me/concierge/:site/:appointment/reschedule"
 			analyticsTitle="Concierge > Reschedule"
-			appointmentId={ context.params.appointmentId }
-			skeleton={ RescheduleSkeleton }
-			siteSlug={ context.params.siteSlug }
-			steps={ [ RescheduleCalendarStep, RescheduleConfirmationStep ] }
-			rescheduling={ true }
+			appointmentId={context.params.appointmentId}
+			skeleton={RescheduleSkeleton}
+			siteSlug={context.params.siteSlug}
+			steps={[RescheduleCalendarStep, RescheduleConfirmationStep]}
+			rescheduling={true}
 		/>
 	);
 	next();
 };
 
-const siteSelector = ( context, next ) => {
-	context.store.dispatch( recordTracksEvent( 'calypso_concierge_site_selection_step' ) );
+const siteSelector = (context, next) => {
+	context.store.dispatch(recordTracksEvent('calypso_concierge_site_selection_step'));
 
 	context.getSiteSelectionHeaderText = () =>
-		i18n.translate( 'Select a site for your {{strong}}Quick Start Session{{/strong}}', {
+		i18n.translate('Select a site for your {{strong}}Quick Start Session{{/strong}}', {
 			components: { strong: <strong /> },
-		} );
+		});
 	next();
 };
 

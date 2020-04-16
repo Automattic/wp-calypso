@@ -23,26 +23,26 @@ import './credit-card-delete.scss';
 class CreditCardDelete extends React.Component {
 	handleClick = () => {
 		this.props
-			.deleteStoredCard( this.props.card )
-			.then( () => {
-				this.props.successNotice( this.props.translate( 'Card deleted successfully' ) );
-			} )
-			.catch( error => {
-				this.props.errorNotice( error.message );
-			} );
+			.deleteStoredCard(this.props.card)
+			.then(() => {
+				this.props.successNotice(this.props.translate('Card deleted successfully'));
+			})
+			.catch((error) => {
+				this.props.errorNotice(error.message);
+			});
 	};
 
 	renderDeleteButton() {
 		const { isDeleting, translate } = this.props;
-		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete' );
+		const text = isDeleting ? translate('Deleting…') : translate('Delete');
 
 		return (
 			<Button
 				className="credit-cards__delete-button"
-				disabled={ isDeleting }
-				onClick={ this.handleClick }
+				disabled={isDeleting}
+				onClick={this.handleClick}
 			>
-				{ text }
+				{text}
 			</Button>
 		);
 	}
@@ -52,24 +52,24 @@ class CreditCardDelete extends React.Component {
 		return (
 			<div className="credit-cards__credit-card-delete">
 				<StoredCard
-					lastDigits={ card.card }
-					cardType={ card.card_type }
-					name={ card.name }
-					expiry={ card.expiry }
+					lastDigits={card.card}
+					cardType={card.card_type}
+					name={card.name}
+					expiry={card.expiry}
 				/>
-				{ this.renderDeleteButton() }
+				{this.renderDeleteButton()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => ( {
-		isDeleting: isDeletingStoredCard( state, props.card.stored_details_id ),
-	} ),
+	(state, props) => ({
+		isDeleting: isDeletingStoredCard(state, props.card.stored_details_id),
+	}),
 	{
 		deleteStoredCard,
 		errorNotice,
 		successNotice,
 	}
-)( localize( CreditCardDelete ) );
+)(localize(CreditCardDelete));

@@ -16,14 +16,14 @@ import isCurrentUserMaybeInGdprZone from './is-current-user-maybe-in-gdpr-zone';
  */
 export default function mayWeTrackCurrentUserGdpr() {
 	let result = false;
-	const cookies = cookie.parse( document.cookie );
-	if ( cookies.sensitive_pixel_option === 'yes' ) {
+	const cookies = cookie.parse(document.cookie);
+	if (cookies.sensitive_pixel_option === 'yes') {
 		result = true;
-	} else if ( cookies.sensitive_pixel_option === 'no' ) {
+	} else if (cookies.sensitive_pixel_option === 'no') {
 		result = false;
 	} else {
-		result = ! isCurrentUserMaybeInGdprZone();
+		result = !isCurrentUserMaybeInGdprZone();
 	}
-	debug( `mayWeTrackCurrentUserGdpr: ${ result }` );
+	debug(`mayWeTrackCurrentUserGdpr: ${result}`);
 	return result;
 }

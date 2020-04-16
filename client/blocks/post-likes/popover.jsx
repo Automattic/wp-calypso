@@ -19,7 +19,7 @@ import countPostLikes from 'state/selectors/count-post-likes';
  */
 import './popover.scss';
 
-function PostLikesPopover( props ) {
+function PostLikesPopover(props) {
 	const {
 		className,
 		siteId,
@@ -45,7 +45,7 @@ function PostLikesPopover( props ) {
 		showDisplayNames ? 'large' : 'small',
 		likes ? likes.length : 0,
 		likeCount,
-	].join( '-' );
+	].join('-');
 
 	const popoverProps = omit(
 		props,
@@ -59,28 +59,28 @@ function PostLikesPopover( props ) {
 		'onMouseEnter',
 		'onMouseLeave'
 	);
-	const classes = classnames( 'post-likes-popover', className );
+	const classes = classnames('post-likes-popover', className);
 	const postLikesProps = { siteId, postId, showDisplayNames, onMouseEnter, onMouseLeave };
 
 	return (
 		<Popover
-			{ ...popoverProps }
-			className={ classes }
-			isVisible={ true }
-			context={ context }
-			onClose={ onClose }
-			key={ popoverKey }
+			{...popoverProps}
+			className={classes}
+			isVisible={true}
+			context={context}
+			onClose={onClose}
+			key={popoverKey}
 		>
-			<PostLikes { ...postLikesProps } />
+			<PostLikes {...postLikesProps} />
 		</Popover>
 	);
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const { siteId, postId } = ownProps;
 
 	return {
-		likeCount: countPostLikes( state, siteId, postId ),
-		likes: getPostLikes( state, siteId, postId ),
+		likeCount: countPostLikes(state, siteId, postId),
+		likes: getPostLikes(state, siteId, postId),
 	};
-} )( PostLikesPopover );
+})(PostLikesPopover);

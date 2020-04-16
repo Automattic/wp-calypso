@@ -25,21 +25,21 @@ export class FormCountrySelect extends Component {
 	getOptions() {
 		const { countriesList, translate } = this.props;
 
-		if ( isEmpty( countriesList ) ) {
+		if (isEmpty(countriesList)) {
 			return [
 				{
 					key: '',
-					label: translate( 'Loading…' ),
+					label: translate('Loading…'),
 				},
 			];
 		}
 
-		return countriesList.map( ( { code, name }, idx ) => ( {
+		return countriesList.map(({ code, name }, idx) => ({
 			key: idx,
 			label: name,
 			code,
-			disabled: ! code,
-		} ) );
+			disabled: !code,
+		}));
 	}
 
 	render() {
@@ -47,28 +47,22 @@ export class FormCountrySelect extends Component {
 
 		return (
 			<select
-				{ ...omit( this.props, [
-					'className',
-					'countriesList',
-					'translate',
-					'moment',
-					'numberFormat',
-				] ) }
-				className={ classnames( this.props.className, 'form-country-select' ) }
-				onChange={ this.props.onChange }
-				disabled={ this.props.disabled }
+				{...omit(this.props, ['className', 'countriesList', 'translate', 'moment', 'numberFormat'])}
+				className={classnames(this.props.className, 'form-country-select')}
+				onChange={this.props.onChange}
+				disabled={this.props.disabled}
 			>
-				{ options.map( function( option ) {
+				{options.map(function (option) {
 					return (
-						<option key={ option.key } value={ option.code } disabled={ option.disabled }>
-							{ option.label }
+						<option key={option.key} value={option.code} disabled={option.disabled}>
+							{option.label}
 						</option>
 					);
-				} ) }
+				})}
 			</select>
 		);
 	}
 }
 /* eslint-enable jsx-a11y/no-onchange */
 
-export default localize( FormCountrySelect );
+export default localize(FormCountrySelect);

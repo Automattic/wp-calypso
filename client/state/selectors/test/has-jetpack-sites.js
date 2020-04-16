@@ -8,32 +8,32 @@ import { expect } from 'chai';
  */
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 
-describe( 'hasJetpackSites()', () => {
-	test( 'it should return false if sites are empty', () => {
+describe('hasJetpackSites()', () => {
+	test('it should return false if sites are empty', () => {
 		expect(
-			hasJetpackSites( {
+			hasJetpackSites({
 				sites: {
 					items: {},
 				},
-			} )
+			})
 		).to.be.false;
-	} );
+	});
 
-	test( 'it should return false if one site exists and the site is not a Jetpack site', () => {
+	test('it should return false if one site exists and the site is not a Jetpack site', () => {
 		expect(
-			hasJetpackSites( {
+			hasJetpackSites({
 				sites: {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', jetpack: false },
 					},
 				},
-			} )
+			})
 		).to.be.false;
-	} );
+	});
 
-	test( 'it should return false if several sites exist and none of them is a Jetpack site', () => {
+	test('it should return false if several sites exist and none of them is a Jetpack site', () => {
 		expect(
-			hasJetpackSites( {
+			hasJetpackSites({
 				sites: {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', jetpack: false },
@@ -41,13 +41,13 @@ describe( 'hasJetpackSites()', () => {
 						32203074: { ID: 32203074, URL: 'https://test.wordpress.com', jetpack: false },
 					},
 				},
-			} )
+			})
 		).to.be.false;
-	} );
+	});
 
-	test( 'it should return true if one site is a Jetpack site and the others are not', () => {
+	test('it should return true if one site is a Jetpack site and the others are not', () => {
 		expect(
-			hasJetpackSites( {
+			hasJetpackSites({
 				sites: {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', jetpack: false },
@@ -55,13 +55,13 @@ describe( 'hasJetpackSites()', () => {
 						32203074: { ID: 32203074, URL: 'https://test.wordpress.com', jetpack: false },
 					},
 				},
-			} )
+			})
 		).to.be.true;
-	} );
+	});
 
-	test( 'it should return true if several sites exist and all of them are Jetpack sites', () => {
+	test('it should return true if several sites exist and all of them are Jetpack sites', () => {
 		expect(
-			hasJetpackSites( {
+			hasJetpackSites({
 				sites: {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.jetpack.com', jetpack: true },
@@ -69,7 +69,7 @@ describe( 'hasJetpackSites()', () => {
 						32203074: { ID: 32203074, URL: 'https://test.jetpack.com', jetpack: true },
 					},
 				},
-			} )
+			})
 		).to.be.true;
-	} );
-} );
+	});
+});

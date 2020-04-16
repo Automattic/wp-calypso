@@ -18,32 +18,32 @@ import EmptyContent from 'components/empty-content';
 import { preload } from 'sections-helper';
 
 function preloadEditor() {
-	preload( 'post-editor' );
+	preload('post-editor');
 }
 
-function PostTypeListEmptyContent( { siteId, translate, status, typeObject, editPath } ) {
+function PostTypeListEmptyContent({ siteId, translate, status, typeObject, editPath }) {
 	let title, action;
 
-	if ( 'draft' === status ) {
-		title = translate( "You don't have any drafts." );
-	} else if ( typeObject ) {
+	if ('draft' === status) {
+		title = translate("You don't have any drafts.");
+	} else if (typeObject) {
 		title = typeObject.labels.not_found;
 	}
 
-	if ( typeObject ) {
+	if (typeObject) {
 		action = typeObject.labels.add_new_item;
 	}
 
 	return (
 		<div>
-			{ siteId && <QueryPostTypes siteId={ siteId } /> }
+			{siteId && <QueryPostTypes siteId={siteId} />}
 			<EmptyContent
-				title={ title }
-				action={ action }
-				actionURL={ editPath }
-				actionHoverCallback={ preloadEditor }
+				title={title}
+				action={action}
+				actionURL={editPath}
+				actionHoverCallback={preloadEditor}
 				illustration="/calypso/images/pages/illustration-pages.svg"
-				illustrationWidth={ 150 }
+				illustrationWidth={150}
 			/>
 		</div>
 	);
@@ -58,12 +58,12 @@ PostTypeListEmptyContent.propTypes = {
 	editPath: PropTypes.string,
 };
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state, ownProps) => {
+	const siteId = getSelectedSiteId(state);
 
 	return {
 		siteId,
-		typeObject: getPostType( state, siteId, ownProps.type ),
-		editPath: getEditorUrl( state, siteId, null, ownProps.type ),
+		typeObject: getPostType(state, siteId, ownProps.type),
+		editPath: getEditorUrl(state, siteId, null, ownProps.type),
 	};
-} )( localize( PostTypeListEmptyContent ) );
+})(localize(PostTypeListEmptyContent));

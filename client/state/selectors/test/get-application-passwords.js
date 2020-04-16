@@ -3,8 +3,8 @@
  */
 import getApplicationPasswords from 'state/selectors/get-application-passwords';
 
-describe( 'getApplicationPasswords()', () => {
-	test( 'should return application passwords of the current user', () => {
+describe('getApplicationPasswords()', () => {
+	test('should return application passwords of the current user', () => {
 		const appPasswords = [
 			{
 				ID: 12345,
@@ -22,12 +22,12 @@ describe( 'getApplicationPasswords()', () => {
 				items: appPasswords,
 			},
 		};
-		const result = getApplicationPasswords( state );
-		expect( result ).toBe( appPasswords );
-	} );
+		const result = getApplicationPasswords(state);
+		expect(result).toBe(appPasswords);
+	});
 
-	test( 'should return an empty array with an empty state', () => {
-		const result = getApplicationPasswords( undefined );
-		expect( result ).toEqual( [] );
-	} );
-} );
+	test('should return an empty array with an empty state', () => {
+		const result = getApplicationPasswords(undefined);
+		expect(result).toEqual([]);
+	});
+});

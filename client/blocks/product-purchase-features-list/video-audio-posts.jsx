@@ -16,21 +16,21 @@ import { isWpComBusinessPlan, isWpComEcommercePlan, isWpComPremiumPlan } from 'l
  */
 import videoImage from 'assets/images/illustrations/video-hosting.svg';
 
-function getDescription( plan, translate ) {
-	if ( isWpComBusinessPlan( plan ) ) {
+function getDescription(plan, translate) {
+	if (isWpComBusinessPlan(plan)) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
 				'directly to your site — the Business Plan has 200 GB storage.'
 		);
 	}
-	if ( isWpComEcommercePlan( plan ) ) {
+	if (isWpComEcommercePlan(plan)) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
 				'directly to your site — the Ecommerce Plan has 200 GB storage.'
 		);
 	}
 
-	if ( isWpComPremiumPlan( plan ) ) {
+	if (isWpComPremiumPlan(plan)) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload up to 13GB of media directly to your site.'
 		);
@@ -39,18 +39,18 @@ function getDescription( plan, translate ) {
 	return '';
 }
 
-export const VideoAudioPosts = ( { selectedSite, plan, translate } ) => {
+export const VideoAudioPosts = ({ selectedSite, plan, translate }) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src={ videoImage } /> }
-				title={ translate( 'Video and audio posts' ) }
-				description={ getDescription( plan, translate ) }
-				buttonText={ translate( 'Start a new post' ) }
-				href={ newPost( selectedSite ) }
+				icon={<img alt="" src={videoImage} />}
+				title={translate('Video and audio posts')}
+				description={getDescription(plan, translate)}
+				buttonText={translate('Start a new post')}
+				href={newPost(selectedSite)}
 			/>
 		</div>
 	);
 };
 
-export default localize( VideoAudioPosts );
+export default localize(VideoAudioPosts);

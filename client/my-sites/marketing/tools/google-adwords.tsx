@@ -36,7 +36,7 @@ interface ConnectedProps {
 	siteSlug: string | null;
 }
 
-export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedProps > = ( {
+export const MarketingToolsGoogleAdwordsFeature: FunctionComponent<ConnectedProps> = ({
 	isAtomic,
 	isJetpack,
 	isPremiumOrHigher,
@@ -44,64 +44,64 @@ export const MarketingToolsGoogleAdwordsFeature: FunctionComponent< ConnectedPro
 	showCard,
 	siteId,
 	siteSlug,
-} ) => {
+}) => {
 	const translate = useTranslate();
-	if ( ! showCard || ( isJetpack && ! isAtomic ) || ! siteId || ! siteSlug ) {
+	if (!showCard || (isJetpack && !isAtomic) || !siteId || !siteSlug) {
 		return null;
 	}
 
 	const handleUpgradeClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_adwords_plan_upgrade_button_click' );
-		page( addQueryArgs( { plan: PLAN_PREMIUM }, `/plans/${ siteSlug }` ) );
+		recordTracksEvent('calypso_marketing_tools_adwords_plan_upgrade_button_click');
+		page(addQueryArgs({ plan: PLAN_PREMIUM }, `/plans/${siteSlug}`));
 	};
 
 	const renderButton = () => {
-		if ( isPremiumOrHigher ) {
+		if (isPremiumOrHigher) {
 			return <GoogleVoucherDetails />;
 		}
 		return (
-			<Button className="tools__upgrade-button" compact onClick={ handleUpgradeClick }>
-				{ translate( 'Upgrade to Premium' ) }
+			<Button className="tools__upgrade-button" compact onClick={handleUpgradeClick}>
+				{translate('Upgrade to Premium')}
 			</Button>
 		);
 	};
 
 	return (
 		<Fragment>
-			<QuerySiteVouchers siteId={ siteId } />
+			<QuerySiteVouchers siteId={siteId} />
 			<MarketingToolsFeature
-				title={ translate( 'Advertise with your %(cost)s Google Adwords credit', {
+				title={translate('Advertise with your %(cost)s Google Adwords credit', {
 					args: {
 						cost: '$100',
 					},
-				} ) }
-				description={ translate(
+				})}
+				description={translate(
 					"Advertise your site where most people are searching: Google. You've got a %(cost)s credit with Google Adwords to drive traffic to your most important pages.",
 					{
 						args: {
 							cost: '$100',
 						},
 					}
-				) }
+				)}
 				imagePath="/calypso/images/marketing/google-ads-logo.png"
 			>
-				{ renderButton() }
+				{renderButton()}
 			</MarketingToolsFeature>
 		</Fragment>
 	);
 };
 
 export default connect(
-	state => {
-		const userInUsa = getCurrentUserCountryCode( state ) === 'US';
-		const userInCa = getCurrentUserCountryCode( state ) === 'CA';
-		const site = getSelectedSite( state );
-		const isAtomic = isSiteAtomic( state, site.ID ) || false;
+	(state) => {
+		const userInUsa = getCurrentUserCountryCode(state) === 'US';
+		const userInCa = getCurrentUserCountryCode(state) === 'CA';
+		const site = getSelectedSite(state);
+		const isAtomic = isSiteAtomic(state, site.ID) || false;
 		const isPremiumOrHigher =
-			isPremium( site.plan ) ||
-			isBusiness( site.plan ) ||
-			isEcommerce( site.plan ) ||
-			isEnterprise( site.plan );
+			isPremium(site.plan) ||
+			isBusiness(site.plan) ||
+			isEcommerce(site.plan) ||
+			isEnterprise(site.plan);
 		return {
 			isAtomic,
 			isJetpack: site && site.jetpack,
@@ -114,4 +114,4 @@ export default connect(
 	{
 		recordTracksEvent: recordTracksEventAction,
 	}
-)( MarketingToolsGoogleAdwordsFeature );
+)(MarketingToolsGoogleAdwordsFeature);

@@ -95,12 +95,12 @@ import './style.scss';
  * - run the callback at most every `throttleMs` milliseconds (don't autosave too often)
  * - wait for at least `debounceMs` before first call (don't autosave while still typing)
  */
-function throttleAndDebounce( fn, throttleMs, debounceMs ) {
-	const throttled = throttle( fn, throttleMs );
-	const debounced = debounce( throttled, debounceMs );
+function throttleAndDebounce(fn, throttleMs, debounceMs) {
+	const throttled = throttle(fn, throttleMs);
+	const debounced = debounce(throttled, debounceMs);
 
-	const throttledAndDebounced = function() {
-		return debounced.apply( this, arguments );
+	const throttledAndDebounced = function () {
+		return debounced.apply(this, arguments);
 	};
 
 	throttledAndDebounced.cancel = () => {
@@ -153,21 +153,21 @@ export class PostEditor extends React.Component {
 	}
 
 	UNSAFE_componentWillMount() {
-		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
-		this.debouncedAutosave = throttleAndDebounce( this.doAutosave, 20000, 3000 );
-		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
-		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
-		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
+		this.debouncedSaveRawContent = debounce(this.saveRawContent, 200);
+		this.debouncedAutosave = throttleAndDebounce(this.doAutosave, 20000, 3000);
+		this.switchEditorVisualMode = this.switchEditorMode.bind(this, 'tinymce');
+		this.switchEditorHtmlMode = this.switchEditorMode.bind(this, 'html');
+		this.debouncedCopySelectedText = debounce(this.copySelectedText, 200);
 		this.useDefaultSidebarFocus();
-		bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
+		bumpStat('calypso_default_sidebar_mode', this.props.editorSidebarPreference);
 
-		this.setState( {
+		this.setState({
 			isEditorInitialized: false,
-		} );
+		});
 	}
 
 	componentDidUpdate() {
-		if ( this.props.isDirty ) {
+		if (this.props.isDirty) {
 			this.props.markChanged();
 		} else {
 			this.props.markSaved();
@@ -176,13 +176,13 @@ export class PostEditor extends React.Component {
 
 	componentDidMount() {
 		// if post and content is already available on mount, e.g., "Press This" or a post copy
-		if ( this.props.post && this.props.post.content ) {
-			this.editor.setEditorContent( this.props.post.content, { initial: true } );
+		if (this.props.post && this.props.post.content) {
+			this.editor.setEditorContent(this.props.post.content, { initial: true });
 		}
 
 		// record the initial value of the editor mode preference
-		if ( this.props.editorModePreference ) {
-			bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
+		if (this.props.editorModePreference) {
+			bumpStat('calypso_default_editor_mode', this.props.editorModePreference);
 		}
 	}
 
@@ -191,66 +191,66 @@ export class PostEditor extends React.Component {
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
-		this.props.setEditorIframeLoaded( false );
-		clearTimeout( this._switchEditorTimeout );
+		this.props.setEditorIframeLoaded(false);
+		clearTimeout(this._switchEditorTimeout);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId, postId } = this.props;
 
-		if ( nextProps.siteId !== siteId || nextProps.postId !== postId ) {
-			this.useDefaultSidebarFocus( nextProps );
+		if (nextProps.siteId !== siteId || nextProps.postId !== postId) {
+			this.useDefaultSidebarFocus(nextProps);
 		}
 
-		this.onEditedPostChange( nextProps );
+		this.onEditedPostChange(nextProps);
 	}
 
-	storeEditor = ref => {
+	storeEditor = (ref) => {
 		this.editor = ref;
 	};
 
-	useDefaultSidebarFocus( nextProps ) {
+	useDefaultSidebarFocus(nextProps) {
 		const props = nextProps || this.props;
 		if (
-			isWithinBreakpoint( '>660px' ) &&
-			( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection )
+			isWithinBreakpoint('>660px') &&
+			(props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection)
 		) {
-			this.props.setLayoutFocus( 'sidebar' );
+			this.props.setLayoutFocus('sidebar');
 		}
 	}
 
 	hideNotice = () => {
-		this.setState( { notice: null } );
+		this.setState({ notice: null });
 	};
 
-	setConfirmationSidebar = ( { status, context = null } ) => {
-		const allowedStatuses = [ 'closed', 'open', 'publishing' ];
-		const confirmationSidebar = allowedStatuses.indexOf( status ) > -1 ? status : 'closed';
+	setConfirmationSidebar = ({ status, context = null }) => {
+		const allowedStatuses = ['closed', 'open', 'publishing'];
+		const confirmationSidebar = allowedStatuses.indexOf(status) > -1 ? status : 'closed';
 		const editorSidebarPreference =
 			this.props.editorSidebarPreference === 'open' ? 'sidebar' : 'content';
-		this.setState( { confirmationSidebar } );
+		this.setState({ confirmationSidebar });
 
-		switch ( confirmationSidebar ) {
+		switch (confirmationSidebar) {
 			case 'closed':
-				this.props.setLayoutFocus( editorSidebarPreference );
-				this.props.recordTracksEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
+				this.props.setLayoutFocus(editorSidebarPreference);
+				this.props.recordTracksEvent('calypso_editor_confirmation_sidebar_close', { context });
 				break;
 			case 'open':
-				this.props.setLayoutFocus( 'editor-confirmation-sidebar' );
-				this.props.recordTracksEvent( 'calypso_editor_confirmation_sidebar_open' );
+				this.props.setLayoutFocus('editor-confirmation-sidebar');
+				this.props.recordTracksEvent('calypso_editor_confirmation_sidebar_open');
 				break;
 		}
 	};
 
 	copySelectedText = () => {
 		const selectedText = tinyMce.activeEditor.selection.getContent() || null;
-		if ( this.state.selectedText !== selectedText ) {
-			this.setState( { selectedText: selectedText || null } );
+		if (this.state.selectedText !== selectedText) {
+			this.setState({ selectedText: selectedText || null });
 		}
 	};
 
-	handleConfirmationSidebarPreferenceChange = event => {
-		this.setState( { confirmationSidebarPreference: event.target.checked } );
+	handleConfirmationSidebarPreferenceChange = (event) => {
+		this.setState({ confirmationSidebarPreference: event.target.checked });
 	};
 
 	toggleSidebar = () => {
@@ -259,14 +259,14 @@ export class PostEditor extends React.Component {
 			: this.props.openEditorSidebar();
 	};
 
-	loadRevision = revision => {
-		this.restoreRevision( {
+	loadRevision = (revision) => {
+		this.restoreRevision({
 			content: revision.post_content,
 			excerpt: revision.post_excerpt,
 			title: revision.post_title,
-		} );
-		if ( isWithinBreakpoint( '<660px' ) ) {
-			this.props.setLayoutFocus( 'content' );
+		});
+		if (isWithinBreakpoint('<660px')) {
+			this.props.setLayoutFocus('content');
 		}
 	};
 
@@ -275,91 +275,85 @@ export class PostEditor extends React.Component {
 		const mode = this.state.mode;
 		const isInvalidURL = this.props.loadingError;
 
-		const isTrashed = get( this.props.post, 'status' ) === 'trash';
-		const hasAutosave = get( this.props.post, 'meta.data.autosave' );
+		const isTrashed = get(this.props.post, 'status') === 'trash';
+		const hasAutosave = get(this.props.post, 'meta.data.autosave');
 
-		const classes = classNames( 'post-editor', {
-			'is-loading': ! this.state.isEditorInitialized,
-		} );
+		const classes = classNames('post-editor', {
+			'is-loading': !this.state.isEditorInitialized,
+		});
 
 		return (
-			<div className={ classes }>
-				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+			<div className={classes}>
+				<PageViewTracker path={this.props.analyticsPath} title={this.props.analyticsTitle} />
 				<QueryPreferences />
 				<EditorGutenbergOptInNotice />
 				<EditorConfirmationSidebar
-					handlePreferenceChange={ this.handleConfirmationSidebarPreferenceChange }
-					onPrivatePublish={ this.onPublish }
-					onPublish={ this.onPublish }
-					setPostDate={ this.setPostDate }
-					setStatus={ this.setConfirmationSidebar }
-					status={ this.state.confirmationSidebar }
+					handlePreferenceChange={this.handleConfirmationSidebarPreferenceChange}
+					onPrivatePublish={this.onPublish}
+					onPublish={this.onPublish}
+					setPostDate={this.setPostDate}
+					setStatus={this.setConfirmationSidebar}
+					status={this.state.confirmationSidebar}
 				/>
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
-				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
+				<EditorRevisionsDialog loadRevision={this.loadRevision} />
 				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
-						setPostDate={ this.setPostDate }
-						hasContent={ this.props.hasContent }
-						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
-						confirmationSidebarStatus={ this.state.confirmationSidebar }
-						isDirty={ this.props.isDirty }
-						isSaveBlocked={ this.isSaveBlocked() }
-						isPublishing={ this.state.isPublishing }
-						isSaving={ this.state.isSaving }
-						onPreview={ this.onPreview }
-						onPublish={ this.onPublish }
-						onSave={ this.onSave }
-						onSaveDraft={ this.props.onSaveDraft }
-						site={ site }
-						toggleSidebar={ this.toggleSidebar }
-						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
-						allPostsUrl={ this.getAllPostsUrl() }
-						isSidebarOpened={ this.props.layoutFocus === 'sidebar' }
+						setPostDate={this.setPostDate}
+						hasContent={this.props.hasContent}
+						isConfirmationSidebarEnabled={this.props.isConfirmationSidebarEnabled}
+						confirmationSidebarStatus={this.state.confirmationSidebar}
+						isDirty={this.props.isDirty}
+						isSaveBlocked={this.isSaveBlocked()}
+						isPublishing={this.state.isPublishing}
+						isSaving={this.state.isSaving}
+						onPreview={this.onPreview}
+						onPublish={this.onPublish}
+						onSave={this.onSave}
+						onSaveDraft={this.props.onSaveDraft}
+						site={site}
+						toggleSidebar={this.toggleSidebar}
+						onMoreInfoAboutEmailVerify={this.onMoreInfoAboutEmailVerify}
+						allPostsUrl={this.getAllPostsUrl()}
+						isSidebarOpened={this.props.layoutFocus === 'sidebar'}
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
 							<EditorActionBar />
 							<div className="post-editor__site">
-								<Site
-									compact
-									site={ site }
-									indicator={ false }
-									homeLink={ true }
-									externalLink={ true }
-								/>
-								{ this.props.isDirty ? (
+								<Site compact site={site} indicator={false} homeLink={true} externalLink={true} />
+								{this.props.isDirty ? (
 									<QuickSaveButtons
-										isSaving={ this.state.isSaving }
-										isSaveBlocked={ this.isSaveBlocked() }
-										isDirty={ this.props.isDirty }
-										hasContent={ this.props.hasContent }
-										onSave={ this.onSave }
+										isSaving={this.state.isSaving}
+										isSaveBlocked={this.isSaveBlocked()}
+										isDirty={this.props.isDirty}
+										hasContent={this.props.hasContent}
+										onSave={this.onSave}
 									/>
 								) : (
 									<EditorStatusLabel />
-								) }
+								)}
 							</div>
 							<div className="post-editor__inner-content">
-								<FeaturedImage maxWidth={ 1462 } hasDropZone />
+								<FeaturedImage maxWidth={1462} hasDropZone />
 								<div className="post-editor__header">
-									<EditorTitle onChange={ this.onEditorTitleChange } />
+									<EditorTitle onChange={this.onEditorTitleChange} />
 									<EditorPageSlug />
-									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
+									<SegmentedControl className="post-editor__switch-mode" compact={true}>
 										<SegmentedControl.Item
-											selected={ mode === 'tinymce' }
-											onClick={ this.switchEditorVisualMode }
-											title={ this.props.translate( 'Edit with a visual editor' ) }
+											selected={mode === 'tinymce'}
+											onClick={this.switchEditorVisualMode}
+											title={this.props.translate('Edit with a visual editor')}
 										>
-											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
+											{this.props.translate('Visual', { context: 'Editor writing mode' })}
 										</SegmentedControl.Item>
 										<SegmentedControl.Item
-											selected={ mode === 'html' }
-											onClick={ this.switchEditorHtmlMode }
-											title={ this.props.translate( 'Edit the raw HTML code' ) }
+											selected={mode === 'html'}
+											onClick={this.switchEditorHtmlMode}
+											title={this.props.translate('Edit the raw HTML code')}
 										>
 											HTML
 										</SegmentedControl.Item>
@@ -367,122 +361,119 @@ export class PostEditor extends React.Component {
 								</div>
 								<hr className="post-editor__header-divider" />
 								<TinyMCE
-									ref={ this.storeEditor }
-									mode={ mode }
-									isNew={ this.props.isNew }
-									isVipSite={ this.props.isVipSite }
-									onSetContent={ this.debouncedSaveRawContent }
-									onInit={ this.onEditorInitialized }
-									onChange={ this.onEditorContentChange }
-									onKeyUp={ this.onEditorKeyUp }
-									onFocus={ this.onEditorFocus }
-									onMouseUp={ this.copySelectedText }
-									onBlur={ this.copySelectedText }
-									onTextEditorChange={ this.onEditorTextContentChange }
+									ref={this.storeEditor}
+									mode={mode}
+									isNew={this.props.isNew}
+									isVipSite={this.props.isVipSite}
+									onSetContent={this.debouncedSaveRawContent}
+									onInit={this.onEditorInitialized}
+									onChange={this.onEditorContentChange}
+									onKeyUp={this.onEditorKeyUp}
+									onFocus={this.onEditorFocus}
+									onMouseUp={this.copySelectedText}
+									onBlur={this.copySelectedText}
+									onTextEditorChange={this.onEditorTextContentChange}
 								/>
-								<EditorWordCount selectedText={ this.state.selectedText } />
+								<EditorWordCount selectedText={this.state.selectedText} />
 							</div>
 						</div>
 					</div>
 					<EditorSidebar
-						onPublish={ this.onPublish }
-						onTrashingPost={ this.onTrashingPost }
-						site={ site }
-						setPostDate={ this.setPostDate }
-						onSave={ this.onSave }
-						confirmationSidebarStatus={ this.state.confirmationSidebar }
+						onPublish={this.onPublish}
+						onTrashingPost={this.onTrashingPost}
+						site={site}
+						setPostDate={this.setPostDate}
+						onSave={this.onSave}
+						confirmationSidebarStatus={this.state.confirmationSidebar}
 					/>
-					{ this.props.isSitePreviewable ? (
+					{this.props.isSitePreviewable ? (
 						<EditorPreview
-							showPreview={ this.state.showPreview }
-							onClose={ this.onPreviewClose }
-							onEdit={ this.onPreviewEdit }
-							isSaving={ this.state.isSaving || this.props.isAutosaving }
-							isLoading={ this.props.isLoading }
-							isFullScreen={ this.state.isPostPublishPreview }
-							previewUrl={ this.props.previewUrl }
-							postId={ this.props.postId }
-							externalUrl={ this.getExternalUrl() }
-							revision={ get( this.props.post, 'revisions.length', 0 ) }
+							showPreview={this.state.showPreview}
+							onClose={this.onPreviewClose}
+							onEdit={this.onPreviewEdit}
+							isSaving={this.state.isSaving || this.props.isAutosaving}
+							isLoading={this.props.isLoading}
+							isFullScreen={this.state.isPostPublishPreview}
+							previewUrl={this.props.previewUrl}
+							postId={this.props.postId}
+							externalUrl={this.getExternalUrl()}
+							revision={get(this.props.post, 'revisions.length', 0)}
 						/>
-					) : null }
-					<EditorNotice { ...this.state.notice } onDismissClick={ this.hideNotice } />
+					) : null}
+					<EditorNotice {...this.state.notice} onDismissClick={this.hideNotice} />
 				</div>
-				{ isTrashed ? (
-					<RestorePostDialog onClose={ this.onClose } onRestore={ this.restoreTrashed } />
-				) : null }
-				{ this.state.showVerifyEmailDialog ? (
-					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
-				) : null }
-				{ isInvalidURL && <InvalidURLDialog onClose={ this.onClose } /> }
-				{ hasAutosave && this.state.showAutosaveDialog ? (
+				{isTrashed ? (
+					<RestorePostDialog onClose={this.onClose} onRestore={this.restoreTrashed} />
+				) : null}
+				{this.state.showVerifyEmailDialog ? (
+					<VerifyEmailDialog onClose={this.closeVerifyEmailDialog} />
+				) : null}
+				{isInvalidURL && <InvalidURLDialog onClose={this.onClose} />}
+				{hasAutosave && this.state.showAutosaveDialog ? (
 					<RestorePostDialog
-						onRestore={ this.restoreAutosave }
-						onClose={ this.closeAutosaveDialog }
-						isAutosave={ true }
+						onRestore={this.restoreAutosave}
+						onClose={this.closeAutosaveDialog}
+						isAutosave={true}
 					/>
-				) : null }
+				) : null}
 			</div>
 		);
 	}
 
 	restoreTrashed = () => {
-		this.onSave( 'draft' );
+		this.onSave('draft');
 	};
 
 	restoreAutosave = () => {
-		this.setState( { showAutosaveDialog: false } );
-		this.restoreRevision( get( this.props.post, 'meta.data.autosave' ) );
+		this.setState({ showAutosaveDialog: false });
+		this.restoreRevision(get(this.props.post, 'meta.data.autosave'));
 	};
 
-	restoreRevision = revision => {
-		this.props.editPost( this.props.siteId, this.props.postId, {
+	restoreRevision = (revision) => {
+		this.props.editPost(this.props.siteId, this.props.postId, {
 			excerpt: revision.excerpt,
 			title: revision.title,
 			content: revision.content,
-		} );
-		if ( this.editor ) {
-			this.editor.setEditorContent( revision.content, { initial: true } );
+		});
+		if (this.editor) {
+			this.editor.setEditorContent(revision.content, { initial: true });
 		}
 	};
 
 	closeAutosaveDialog = () => {
-		this.setState( { showAutosaveDialog: false } );
+		this.setState({ showAutosaveDialog: false });
 	};
 
 	closeVerifyEmailDialog = () => {
-		this.setState( { showVerifyEmailDialog: false } );
+		this.setState({ showVerifyEmailDialog: false });
 	};
 
-	onEditedPostChange = nextProps => {
-		if ( nextProps.loadingError ) {
+	onEditedPostChange = (nextProps) => {
+		if (nextProps.loadingError) {
 			return;
 		}
 
-		if ( ( nextProps.isNew && ! this.props.isNew ) || nextProps.isLoading ) {
+		if ((nextProps.isNew && !this.props.isNew) || nextProps.isLoading) {
 			// is new or loading
-			this.setState(
-				this.getDefaultState(),
-				() => this.editor && this.editor.setEditorContent( '' )
-			);
-		} else if ( this.editor && this.props.isLoading && ! nextProps.isLoading ) {
-			this.editor.setEditorContent( nextProps.post.content, { initial: true } );
+			this.setState(this.getDefaultState(), () => this.editor && this.editor.setEditorContent(''));
+		} else if (this.editor && this.props.isLoading && !nextProps.isLoading) {
+			this.editor.setEditorContent(nextProps.post.content, { initial: true });
 		}
 	};
 
 	isSaveBlocked = () => {
-		return this.props.isSaveBlocked || ! this.state.isEditorInitialized;
+		return this.props.isSaveBlocked || !this.state.isEditorInitialized;
 	};
 
 	onEditorInitialized = () => {
-		this.setState( { isEditorInitialized: true } );
+		this.setState({ isEditorInitialized: true });
 		// Notify external listeners that the iframe has loaded
 		this.props.setEditorIframeLoaded();
 	};
 
 	onEditorTitleChange = () => {
-		if ( 'open' === this.state.confirmationSidebar ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
+		if ('open' === this.state.confirmationSidebar) {
+			this.setConfirmationSidebar({ status: 'closed', context: 'content_edit' });
 		}
 
 		this.debouncedAutosave();
@@ -494,8 +485,8 @@ export class PostEditor extends React.Component {
 	};
 
 	onEditorTextContentChange = () => {
-		if ( 'open' === this.state.confirmationSidebar ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
+		if ('open' === this.state.confirmationSidebar) {
+			this.setConfirmationSidebar({ status: 'closed', context: 'content_edit' });
 		}
 
 		this.debouncedSaveRawContent();
@@ -503,8 +494,8 @@ export class PostEditor extends React.Component {
 	};
 
 	onEditorKeyUp = () => {
-		if ( 'open' === this.state.confirmationSidebar ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
+		if ('open' === this.state.confirmationSidebar) {
+			this.setConfirmationSidebar({ status: 'closed', context: 'content_edit' });
 		}
 
 		this.debouncedCopySelectedText();
@@ -514,11 +505,11 @@ export class PostEditor extends React.Component {
 	onEditorFocus = () => {
 		// Fire a click when the editor is focused so that any global handlers have an opportunity to do their thing.
 		// In particular, this ensures that open popovers are closed when a user clicks into the editor.
-		ReactDom.findDOMNode( this.editor ).click();
+		ReactDom.findDOMNode(this.editor).click();
 	};
 
 	saveRawContent = () => {
-		this.props.editorEditRawContent( this.editor.getContent( { format: 'raw' } ) );
+		this.props.editorEditRawContent(this.editor.getContent({ format: 'raw' }));
 
 		// If debounced save raw content was pending, consider it flushed
 		this.debouncedSaveRawContent.cancel();
@@ -527,21 +518,21 @@ export class PostEditor extends React.Component {
 	// Sync content from the TinyMCE editor to the Redux state. Because it's expensive to serialize
 	// the content when TinyMCE is the active mode, we don't sync on every keystroke, but only
 	// immediately before save/publish and after switching editor mode.
-	syncEditorContent( options ) {
-		const resetRawContent = get( options, 'resetRawContent', false );
-		const content = get( options, 'content', this.editor.getContent() );
+	syncEditorContent(options) {
+		const resetRawContent = get(options, 'resetRawContent', false);
+		const content = get(options, 'content', this.editor.getContent());
 
-		if ( resetRawContent ) {
+		if (resetRawContent) {
 			this.props.editorResetRawContent();
 		}
 		this.saveRawContent();
-		if ( content !== get( this.props.post, 'content', null ) ) {
-			this.props.editPost( this.props.siteId, this.props.postId, { content } );
+		if (content !== get(this.props.post, 'content', null)) {
+			this.props.editPost(this.props.siteId, this.props.postId, { content });
 		}
 	}
 
 	async doAutosave() {
-		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
+		if (this.state.isSaving === true || this.isSaveBlocked()) {
 			return;
 		}
 
@@ -549,20 +540,20 @@ export class PostEditor extends React.Component {
 
 		// The post is either already published or the current modifications are going to publish it
 		const savingPublishedPost =
-			utils.isPublished( this.props.savedPost ) || utils.isPublished( this.props.post );
+			utils.isPublished(this.props.savedPost) || utils.isPublished(this.props.post);
 
-		if ( ! savingPublishedPost ) {
-			this.setState( { isSaving: true } );
+		if (!savingPublishedPost) {
+			this.setState({ isSaving: true });
 		}
 
 		try {
 			const saveResult = await this.props.autosave();
-			if ( ! savingPublishedPost ) {
-				this.onSaveDraftSuccess( saveResult );
+			if (!savingPublishedPost) {
+				this.onSaveDraftSuccess(saveResult);
 			}
-		} catch ( error ) {
-			if ( ! savingPublishedPost ) {
-				this.onSaveDraftFailure( error );
+		} catch (error) {
+			if (!savingPublishedPost) {
+				this.onSaveDraftFailure(error);
 			}
 		}
 	}
@@ -575,15 +566,15 @@ export class PostEditor extends React.Component {
 
 	onClose = () => {
 		// go back if we can, if not, hit all posts
-		page.back( this.getAllPostsUrl() );
+		page.back(this.getAllPostsUrl());
 	};
 
-	getAllPostsUrl = context => {
+	getAllPostsUrl = (context) => {
 		const { type, selectedSite } = this.props;
 		const site = selectedSite;
 
 		let path;
-		switch ( type ) {
+		switch (type) {
 			case 'page':
 				path = '/pages';
 				break;
@@ -591,49 +582,46 @@ export class PostEditor extends React.Component {
 				path = '/posts';
 				break;
 			default:
-				path = `/types/${ type }`;
+				path = `/types/${type}`;
 		}
 
-		if ( type === 'post' && site && ! site.jetpack && ! site.single_user_site ) {
+		if (type === 'post' && site && !site.jetpack && !site.single_user_site) {
 			path += '/my';
 		}
 
-		if ( context === 'trashed' ) {
+		if (context === 'trashed') {
 			path += '/trashed';
 		}
 
-		if ( site ) {
-			path = addSiteFragment( path, site.slug );
+		if (site) {
+			path = addSiteFragment(path, site.slug);
 		}
 
 		return path;
 	};
 
 	onMoreInfoAboutEmailVerify = () => {
-		this.setState( {
+		this.setState({
 			showVerifyEmailDialog: true,
-		} );
+		});
 	};
 
 	onTrashingPost = () => {
 		const { type } = this.props;
 
-		this.props.recordEditorStat( type + '_trashed' );
+		this.props.recordEditorStat(type + '_trashed');
 		this.props.recordEditorEvent(
 			'page' === type ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button'
 		);
 		this.props.markSaved();
 
-		page( this.getAllPostsUrl( 'trashed' ) );
+		page(this.getAllPostsUrl('trashed'));
 	};
 
-	onSave = status => {
+	onSave = (status) => {
 		// Refuse to save if the current edits would mean that an unpublished post gets published.
 		// That's an exclusive resposibility of the `onPublish` method.
-		if (
-			! utils.isPublished( this.props.savedPost ) &&
-			utils.isPublished( this.props.post, status )
-		) {
+		if (!utils.isPublished(this.props.savedPost) && utils.isPublished(this.props.post, status)) {
 			return;
 		}
 
@@ -641,22 +629,22 @@ export class PostEditor extends React.Component {
 		// The changes will be reflected in the save payload.
 		this.debouncedAutosave.cancel();
 
-		this.setState( { isSaving: true } );
+		this.setState({ isSaving: true });
 
-		if ( status ) {
-			this.props.editPost( this.props.siteId, this.props.postId, { status } );
+		if (status) {
+			this.props.editPost(this.props.siteId, this.props.postId, { status });
 		}
 
 		// Flush any pending raw content saves
 		this.syncEditorContent();
 
-		this.props.saveEdited().then( this.onSaveDraftSuccess, this.onSaveDraftFailure );
+		this.props.saveEdited().then(this.onSaveDraftSuccess, this.onSaveDraftFailure);
 	};
 
 	getExternalUrl() {
 		const { post } = this.props;
 
-		if ( post ) {
+		if (post) {
 			return post.URL;
 		}
 
@@ -678,99 +666,99 @@ export class PostEditor extends React.Component {
 		);
 	}
 
-	onPreview = async event => {
+	onPreview = async (event) => {
 		this.recordPreviewButtonClick();
 
-		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
+		if (this.props.isSitePreviewable && !event.metaKey && !event.ctrlKey) {
 			return this.iframePreview();
 		}
 
-		if ( ! this._previewWindow || this._previewWindow.closed ) {
-			this._previewWindow = window.open( 'about:blank', 'WordPress.com Post Preview' );
+		if (!this._previewWindow || this._previewWindow.closed) {
+			this._previewWindow = window.open('about:blank', 'WordPress.com Post Preview');
 		}
 
-		if ( this.props.isDirty ) {
+		if (this.props.isDirty) {
 			await this.autosave();
 		}
 
 		const { previewUrl } = this.props;
-		if ( this._previewWindow ) {
+		if (this._previewWindow) {
 			this._previewWindow.location = previewUrl;
 			this._previewWindow.focus();
 		} else {
-			this._previewWindow = window.open( previewUrl, 'WordPress.com Post Preview' );
+			this._previewWindow = window.open(previewUrl, 'WordPress.com Post Preview');
 		}
 	};
 
 	iframePreview = async () => {
-		if ( this.props.isDirty ) {
+		if (this.props.isDirty) {
 			await this.autosave();
 		}
 
-		this.setState( { showPreview: true } );
+		this.setState({ showPreview: true });
 	};
 
 	onPreviewClose = () => {
-		if ( this.state.isPostPublishPreview ) {
-			page.back( this.getAllPostsUrl() );
+		if (this.state.isPostPublishPreview) {
+			page.back(this.getAllPostsUrl());
 		} else {
-			this.setState( {
+			this.setState({
 				showPreview: false,
 				isPostPublishPreview: false,
-			} );
+			});
 		}
 	};
 
 	onPreviewEdit = () => {
-		if ( this.props.editorSidebarPreference === 'open' ) {
+		if (this.props.editorSidebarPreference === 'open') {
 			// When returning to the editor from the preview, set the "next
 			// layout focus" to the sidebar if the editor sidebar should be
 			// visible.  Otherwise, according to its default behavior, the
 			// LAYOUT_NEXT_FOCUS_ACTIVATE action will cause the 'content'
 			// layout area to be activated, which hides the editor sidebar.
-			this.props.setNextLayoutFocus( 'sidebar' );
+			this.props.setNextLayoutFocus('sidebar');
 		}
 
 		this.hideNotice();
 
-		this.setState( {
+		this.setState({
 			showPreview: false,
 			isPostPublishPreview: false,
-		} );
+		});
 
 		return false;
 	};
 
-	onSaveDraftFailure = error => {
-		this.onSaveFailure( error, 'saveFailure' );
+	onSaveDraftFailure = (error) => {
+		this.onSaveFailure(error, 'saveFailure');
 	};
 
-	onSaveDraftSuccess = saveResult => {
-		this.onSaveSuccess( saveResult, 'save' );
+	onSaveDraftSuccess = (saveResult) => {
+		this.onSaveSuccess(saveResult, 'save');
 	};
 
 	// determine if publish is private, future or normal
 	getPublishStatus() {
-		if ( utils.isPrivate( this.props.post ) ) {
+		if (utils.isPrivate(this.props.post)) {
 			return 'private';
 		}
 
-		if ( utils.isFutureDated( this.props.post ) ) {
+		if (utils.isFutureDated(this.props.post)) {
 			return 'future';
 		}
 
 		return 'publish';
 	}
 
-	onPublish = ( isConfirmed = false ) => {
-		if ( this.props.isConfirmationSidebarEnabled ) {
-			if ( isConfirmed === false ) {
-				this.setConfirmationSidebar( { status: 'open' } );
+	onPublish = (isConfirmed = false) => {
+		if (this.props.isConfirmationSidebarEnabled) {
+			if (isConfirmed === false) {
+				this.setConfirmationSidebar({ status: 'open' });
 				return;
 			}
 
-			if ( this.state.confirmationSidebar === 'open' ) {
-				this.setConfirmationSidebar( { status: 'publishing' } );
+			if (this.state.confirmationSidebar === 'open') {
+				this.setConfirmationSidebar({ status: 'publishing' });
 			}
 		}
 
@@ -778,40 +766,40 @@ export class PostEditor extends React.Component {
 		// The changes will be reflected in the save payload.
 		this.debouncedAutosave.cancel();
 
-		this.setState( {
+		this.setState({
 			isSaving: true,
 			isPublishing: true,
-		} );
+		});
 
 		const status = this.getPublishStatus();
-		this.props.editPost( this.props.siteId, this.props.postId, { status } );
+		this.props.editPost(this.props.siteId, this.props.postId, { status });
 		this.syncEditorContent();
 
-		this.props.saveEdited().then( this.onPublishSuccess, this.onPublishFailure );
+		this.props.saveEdited().then(this.onPublishSuccess, this.onPublishFailure);
 	};
 
-	onPublishFailure = error => {
-		if ( this.props.isConfirmationSidebarEnabled ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
+	onPublishFailure = (error) => {
+		if (this.props.isConfirmationSidebarEnabled) {
+			this.setConfirmationSidebar({ status: 'closed', context: 'publish_failure' });
 		}
 
-		this.onSaveFailure( error, 'publishFailure' );
+		this.onSaveFailure(error, 'publishFailure');
 	};
 
-	onPublishSuccess = saveResult => {
-		if ( ! this.state.confirmationSidebarPreference ) {
-			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
+	onPublishSuccess = (saveResult) => {
+		if (!this.state.confirmationSidebarPreference) {
+			this.props.saveConfirmationSidebarPreference(this.props.siteId, false);
 		}
 
-		if ( this.props.isConfirmationSidebarEnabled ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
+		if (this.props.isConfirmationSidebarEnabled) {
+			this.setConfirmationSidebar({ status: 'closed', context: 'publish_success' });
 		}
 
-		this.onSaveSuccess( saveResult, 'publish' );
+		this.onSaveSuccess(saveResult, 'publish');
 	};
 
-	onSaveFailure = ( error, message ) => {
-		this.setState( {
+	onSaveFailure = (error, message) => {
+		this.setState({
 			isSaving: false,
 			isPublishing: false,
 			notice: {
@@ -819,34 +807,34 @@ export class PostEditor extends React.Component {
 				error,
 				message,
 			},
-		} );
+		});
 	};
 
-	setPostDate = date => {
+	setPostDate = (date) => {
 		const { siteId, postId } = this.props;
 		const dateValue = date ? date.format() : false;
 
-		this.props.editPost( siteId, postId, { date: dateValue } );
+		this.props.editPost(siteId, postId, { date: dateValue });
 
-		this.props.recordTracksEvent( 'calypso_editor_publish_date_change', {
+		this.props.recordTracksEvent('calypso_editor_publish_date_change', {
 			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
-		} );
+		});
 	};
 
-	onSaveSuccess = ( saveResult, type ) => {
+	onSaveSuccess = (saveResult, type) => {
 		let message = null;
 
-		if ( saveResult ) {
+		if (saveResult) {
 			const { receivedPost } = saveResult;
 
-			if ( type === 'save' ) {
-				if ( utils.isPublished( receivedPost ) ) {
+			if (type === 'save') {
+				if (utils.isPublished(receivedPost)) {
 					message = 'updated';
 				}
-			} else if ( type === 'publish' ) {
-				if ( utils.isPrivate( receivedPost ) ) {
+			} else if (type === 'publish') {
+				if (utils.isPrivate(receivedPost)) {
 					message = 'publishedPrivately';
-				} else if ( utils.isFutureDated( receivedPost ) ) {
+				} else if (utils.isFutureDated(receivedPost)) {
 					message = 'scheduled';
 				} else {
 					message = 'published';
@@ -859,54 +847,54 @@ export class PostEditor extends React.Component {
 			isPublishing: false,
 		};
 
-		if ( message ) {
+		if (message) {
 			nextState.notice = {
 				status: 'is-success',
 				message,
 			};
 
-			window.scrollTo( 0, 0 );
+			window.scrollTo(0, 0);
 
-			if ( this.props.isSitePreviewable && message === 'published' ) {
-				this.setState( { isPostPublishPreview: true } );
+			if (this.props.isSitePreviewable && message === 'published') {
+				this.setState({ isPostPublishPreview: true });
 				this.iframePreview();
 			}
 		} else {
 			nextState.notice = null;
 		}
 
-		this.setState( nextState );
+		this.setState(nextState);
 
 		// make sure the history entry has the post ID in it, but don't dispatch
-		if ( saveResult && saveResult.idAssigned ) {
-			const editUrl = utils.getEditURL( saveResult.receivedPost, this.props.selectedSite );
-			page.replace( editUrl, null, false, false );
+		if (saveResult && saveResult.idAssigned) {
+			const editUrl = utils.getEditURL(saveResult.receivedPost, this.props.selectedSite);
+			page.replace(editUrl, null, false, false);
 		}
 
 		// The saveEdited() action will return a result of `null` if the post is unchanged
 		// so we hide any guided tours
-		if ( ! saveResult ) {
+		if (!saveResult) {
 			this.props.pauseGuidedTour();
 		}
 	};
 
-	getContainingTagInfo = ( content, cursorPosition ) => {
-		const lastLtPos = content.lastIndexOf( '<', cursorPosition );
-		const lastGtPos = content.lastIndexOf( '>', cursorPosition );
+	getContainingTagInfo = (content, cursorPosition) => {
+		const lastLtPos = content.lastIndexOf('<', cursorPosition);
+		const lastGtPos = content.lastIndexOf('>', cursorPosition);
 
-		if ( lastLtPos > lastGtPos ) {
+		if (lastLtPos > lastGtPos) {
 			// inside a tag that was opened, but not closed
 
 			// find what the tag is
-			const tagContent = content.substr( lastLtPos );
-			const tagMatch = tagContent.match( /<\s*(\/)?(\w+)/ );
-			if ( ! tagMatch ) {
+			const tagContent = content.substr(lastLtPos);
+			const tagMatch = tagContent.match(/<\s*(\/)?(\w+)/);
+			if (!tagMatch) {
 				return null;
 			}
 
-			const tagType = tagMatch[ 2 ];
-			const closingGt = tagContent.indexOf( '>' );
-			const isClosingTag = !! tagMatch[ 1 ];
+			const tagType = tagMatch[2];
+			const closingGt = tagContent.indexOf('>');
+			const isClosingTag = !!tagMatch[1];
 
 			return {
 				ltPos: lastLtPos,
@@ -918,12 +906,12 @@ export class PostEditor extends React.Component {
 		return null;
 	};
 
-	getCursorMarkerSpan = type => {
+	getCursorMarkerSpan = (type) => {
 		const tagType = type ? type : 'start';
 
 		return `<span
 				data-mce-type="bookmark"
-				id="mce_SELREST_${ tagType }"
+				id="mce_SELREST_${tagType}"
 				data-mce-style="overflow:hidden;line-height:0"
 				style="overflow:hidden;line-height:0"
 			>&#65279;</span>`;
@@ -940,12 +928,12 @@ export class PostEditor extends React.Component {
 			textArea.value,
 			htmlModeCursorStartPosition
 		);
-		if ( isCursorStartInTag ) {
+		if (isCursorStartInTag) {
 			htmlModeCursorStartPosition = isCursorStartInTag.ltPos;
 		}
 
-		const isCursorEndInTag = this.getContainingTagInfo( textArea.value, htmlModeCursorEndPosition );
-		if ( isCursorEndInTag ) {
+		const isCursorEndInTag = this.getContainingTagInfo(textArea.value, htmlModeCursorEndPosition);
+		if (isCursorEndInTag) {
 			htmlModeCursorEndPosition = isCursorEndInTag.gtPos;
 		}
 
@@ -953,49 +941,49 @@ export class PostEditor extends React.Component {
 
 		let selectedText = null;
 
-		if ( mode === 'range' ) {
-			const bookMarkEnd = this.getCursorMarkerSpan( 'end' );
+		if (mode === 'range') {
+			const bookMarkEnd = this.getCursorMarkerSpan('end');
 
 			selectedText = [
-				textArea.value.slice( htmlModeCursorStartPosition, htmlModeCursorEndPosition ),
+				textArea.value.slice(htmlModeCursorStartPosition, htmlModeCursorEndPosition),
 				bookMarkEnd,
-			].join( '' );
+			].join('');
 		}
 
 		textArea.value = [
-			textArea.value.slice( 0, htmlModeCursorStartPosition ), // text until the cursor/selection position
-			this.getCursorMarkerSpan( 'start' ), // cursor/selection start marker
+			textArea.value.slice(0, htmlModeCursorStartPosition), // text until the cursor/selection position
+			this.getCursorMarkerSpan('start'), // cursor/selection start marker
 			selectedText, // selected text with end cursor/position marker
-			textArea.value.slice( htmlModeCursorEndPosition ), // text from last cursor/selection position to end
-		].join( '' );
+			textArea.value.slice(htmlModeCursorEndPosition), // text from last cursor/selection position to end
+		].join('');
 
-		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
+		this.editor.onTextAreaChange({ target: { value: textArea.value } });
 	};
 
-	focusHTMLBookmarkInVisualEditor = ed => {
-		const startNode = ed.target.getDoc().getElementById( 'mce_SELREST_start' );
-		const endNode = ed.target.getDoc().getElementById( 'mce_SELREST_end' );
+	focusHTMLBookmarkInVisualEditor = (ed) => {
+		const startNode = ed.target.getDoc().getElementById('mce_SELREST_start');
+		const endNode = ed.target.getDoc().getElementById('mce_SELREST_end');
 
-		if ( ! startNode ) {
+		if (!startNode) {
 			return;
 		}
 
 		ed.target.focus();
 
-		if ( ! endNode ) {
-			ed.target.selection.select( startNode );
+		if (!endNode) {
+			ed.target.selection.select(startNode);
 		} else {
 			const selection = document.createRange();
-			selection.setStart( startNode, 0 );
-			selection.setEnd( endNode, 0 );
+			selection.setStart(startNode, 0);
+			selection.setEnd(endNode, 0);
 
-			ed.target.selection.setRng( selection );
-			endNode.parentNode.removeChild( endNode );
+			ed.target.selection.setRng(selection);
+			endNode.parentNode.removeChild(endNode);
 		}
 
-		startNode.parentNode.removeChild( startNode );
+		startNode.parentNode.removeChild(startNode);
 
-		ed.target.off( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
+		ed.target.off('SetContent', this.focusHTMLBookmarkInVisualEditor);
 	};
 
 	/**
@@ -1006,13 +994,13 @@ export class PostEditor extends React.Component {
 	 * @param {object} editor The editor where we must find the selection
 	 * @returns {null | object} The selection range position in the editor
 	 */
-	findBookmarkedPosition = editor => {
+	findBookmarkedPosition = (editor) => {
 		// Get the TinyMCE `window` reference, since we need to access the raw selection.
 		const TinyMCEWIndow = editor.getWin();
 
 		const selection = TinyMCEWIndow.getSelection();
 
-		if ( selection.rangeCount <= 0 ) {
+		if (selection.rangeCount <= 0) {
 			// no selection, no need to continue.
 			return;
 		}
@@ -1031,7 +1019,7 @@ export class PostEditor extends React.Component {
 		 * The elements have hardcoded style that makes them invisible. This is done to avoid seeing
 		 * random content flickering in the editor when switching between modes.
 		 */
-		const startElement = document.createElement( 'span' );
+		const startElement = document.createElement('span');
 		startElement.className = 'mce_SELRES_start';
 		startElement.style.display = 'inline-block';
 		startElement.style.width = 0;
@@ -1039,7 +1027,7 @@ export class PostEditor extends React.Component {
 		startElement.style.lineHeight = '0px';
 		startElement.innerHTML = selectionID;
 
-		const endElement = document.createElement( 'span' );
+		const endElement = document.createElement('span');
 		endElement.className = 'mce_SELRES_end';
 		endElement.style.display = 'inline-block';
 		endElement.style.width = 0;
@@ -1076,21 +1064,21 @@ export class PostEditor extends React.Component {
 		 * This helps us not break the content and also gives us the option to work with multi-node selections without
 		 * breaking the markup.
 		 */
-		const range = selection.getRangeAt( 0 );
+		const range = selection.getRangeAt(0);
 		const startNode = range.startContainer;
 		const startOffset = range.startOffset;
 		const boundaryRange = range.cloneRange();
 
-		boundaryRange.collapse( false );
-		boundaryRange.insertNode( endElement );
-		boundaryRange.setStart( startNode, startOffset );
-		boundaryRange.collapse( true );
-		boundaryRange.insertNode( startElement );
+		boundaryRange.collapse(false);
+		boundaryRange.insertNode(endElement);
+		boundaryRange.setStart(startNode, startOffset);
+		boundaryRange.collapse(true);
+		boundaryRange.insertNode(startElement);
 
-		range.setStartAfter( startElement );
-		range.setEndBefore( endElement );
+		range.setStartAfter(startElement);
+		range.setEndBefore(endElement);
 		selection.removeAllRanges();
-		selection.addRange( range );
+		selection.addRange(range);
 
 		/**
 		 * Now the editor's content has the start/end nodes.
@@ -1098,7 +1086,7 @@ export class PostEditor extends React.Component {
 		 * Unfortunately the content goes through some more changes after this step, before it gets inserted
 		 * in the `textarea`. This means that we have to do some minor cleanup on our own here.
 		 */
-		const content = removep( editor.getContent() );
+		const content = removep(editor.getContent());
 
 		const startRegex = new RegExp(
 			'<span[^>]*\\s*class="mce_SELRES_start"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
@@ -1108,9 +1096,9 @@ export class PostEditor extends React.Component {
 			'<span[^>]*\\s*class="mce_SELRES_end"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
 		);
 
-		const startMatch = content.match( startRegex );
-		const endMatch = content.match( endRegex );
-		if ( ! startMatch ) {
+		const startMatch = content.match(startRegex);
+		const endMatch = content.match(endRegex);
+		if (!startMatch) {
 			return null;
 		}
 
@@ -1118,39 +1106,39 @@ export class PostEditor extends React.Component {
 			start: startMatch.index,
 
 			// We need to adjust the end position to discard the length of the range start marker
-			end: endMatch ? endMatch.index - startMatch[ 0 ].length : null,
+			end: endMatch ? endMatch.index - startMatch[0].length : null,
 		};
 	};
 
-	switchEditorMode = mode => {
+	switchEditorMode = (mode) => {
 		const content = this.editor.getContent();
 
-		if ( mode === 'html' ) {
-			const selectionRange = this.findBookmarkedPosition( this.editor._editor );
+		if (mode === 'html') {
+			const selectionRange = this.findBookmarkedPosition(this.editor._editor);
 
 			// `this.findBookmarkedPosition` inserted some markup into the TinyMCE content.
 			// Reset it back to the original.
-			this.editor.setEditorContent( content );
+			this.editor.setEditorContent(content);
 
-			if ( this.state.selectedText ) {
+			if (this.state.selectedText) {
 				// Word count is not available in the HTML mode
 				// This resets the word count if it exists
 				this.copySelectedText();
 			}
 
-			this.editor.setSelection( selectionRange );
-		} else if ( mode === 'tinymce' ) {
+			this.editor.setSelection(selectionRange);
+		} else if (mode === 'tinymce') {
 			this.addHTMLBookmarkInTextAreaContent();
-			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
+			this.editor._editor.on('SetContent', this.focusHTMLBookmarkInVisualEditor);
 		}
 
-		this.props.setEditorModePreference( mode );
-		this.setState( { mode }, () => {
-			this.syncEditorContent( {
+		this.props.setEditorModePreference(mode);
+		this.setState({ mode }, () => {
+			this.syncEditorContent({
 				resetRawContent: true,
 				content,
-			} );
-		} );
+			});
+		});
 	};
 }
 
@@ -1158,40 +1146,40 @@ const enhance = flow(
 	localize,
 	protectForm,
 	connect(
-		state => {
-			const siteId = getSelectedSiteId( state );
-			const postId = getEditorPostId( state );
-			const userId = getCurrentUserId( state );
+		(state) => {
+			const siteId = getSelectedSiteId(state);
+			const postId = getEditorPostId(state);
+			const userId = getCurrentUserId(state);
 
 			return {
 				siteId,
 				postId,
-				savedPost: getSitePost( state, siteId, postId ),
-				post: getEditedPost( state, siteId, postId ),
-				type: getEditedPostValue( state, siteId, postId, 'type' ),
-				selectedSite: getSelectedSite( state ),
-				editorModePreference: getPreference( state, 'editor-mode' ),
-				editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
-				isNew: isEditorNewPost( state ),
-				isDirty: isEditedPostDirty( state, siteId, postId ),
-				hasContent: editedPostHasContent( state, siteId, postId ),
-				layoutFocus: getCurrentLayoutFocus( state ),
-				hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
-				isSitePreviewable: isSitePreviewable( state, siteId ),
-				isVipSite: isVipSite( state, siteId ),
-				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
-				isSaveBlocked: isEditorSaveBlocked( state ),
-				previewUrl: getEditorPostPreviewUrl( state ),
-				isAutosaving: isEditorAutosaving( state ),
-				isLoading: isEditorLoading( state ),
-				loadingError: getEditorLoadingError( state ),
+				savedPost: getSitePost(state, siteId, postId),
+				post: getEditedPost(state, siteId, postId),
+				type: getEditedPostValue(state, siteId, postId, 'type'),
+				selectedSite: getSelectedSite(state),
+				editorModePreference: getPreference(state, 'editor-mode'),
+				editorSidebarPreference: getPreference(state, 'editor-sidebar') || 'open',
+				isNew: isEditorNewPost(state),
+				isDirty: isEditedPostDirty(state, siteId, postId),
+				hasContent: editedPostHasContent(state, siteId, postId),
+				layoutFocus: getCurrentLayoutFocus(state),
+				hasBrokenPublicizeConnection: hasBrokenSiteUserConnection(state, siteId, userId),
+				isSitePreviewable: isSitePreviewable(state, siteId),
+				isVipSite: isVipSite(state, siteId),
+				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled(state, siteId),
+				isSaveBlocked: isEditorSaveBlocked(state),
+				previewUrl: getEditorPostPreviewUrl(state),
+				isAutosaving: isEditorAutosaving(state),
+				isLoading: isEditorLoading(state),
+				loadingError: getEditorLoadingError(state),
 			};
 		},
 		{
 			autosave,
 			saveEdited,
 			editPost,
-			setEditorModePreference: partial( savePreference, 'editor-mode' ),
+			setEditorModePreference: partial(savePreference, 'editor-mode'),
 			setLayoutFocus,
 			setNextLayoutFocus,
 			saveConfirmationSidebarPreference,
@@ -1209,4 +1197,4 @@ const enhance = flow(
 	)
 );
 
-export default enhance( PostEditor );
+export default enhance(PostEditor);

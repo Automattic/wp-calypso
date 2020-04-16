@@ -40,70 +40,70 @@ class StoreStatsReferrerWidgetBase extends Component {
 		page: 1,
 	};
 
-	isPreCollection( date ) {
+	isPreCollection(date) {
 		const { moment } = this.props;
-		return moment( date ).isBefore( moment( '2018-02-01' ) );
+		return moment(date).isBefore(moment('2018-02-01'));
 	}
 
-	hasNosaraJobRun( date ) {
+	hasNosaraJobRun(date) {
 		const { moment } = this.props;
 		const nowUtc = moment().utc();
 		const daysOffsetFromUtc = nowUtc.hour() >= 10 ? 1 : 2;
-		const lastValidDay = nowUtc.subtract( daysOffsetFromUtc, 'days' );
-		return lastValidDay.isAfter( moment( date ) );
+		const lastValidDay = nowUtc.subtract(daysOffsetFromUtc, 'days');
+		return lastValidDay.isAfter(moment(date));
 	}
 
-	getEmptyDataMessage( date ) {
+	getEmptyDataMessage(date) {
 		const { translate, slug, queryParams, pageType } = this.props;
-		if ( ! this.hasNosaraJobRun( date ) ) {
-			const href = `/store/stats/${ pageType }${ getWidgetPath( 'week', slug, queryParams ) }`;
-			const primary = translate( 'Data is being processed – check back soon' );
+		if (!this.hasNosaraJobRun(date)) {
+			const href = `/store/stats/${pageType}${getWidgetPath('week', slug, queryParams)}`;
+			const primary = translate('Data is being processed – check back soon');
 			const secondary = translate(
 				'Expand to a {{a}}wider{{/a}} view to see your latest referrers',
 				{
 					components: {
-						a: <a href={ href } />,
+						a: <a href={href} />,
 					},
 				}
 			);
-			return [ primary, <p key="link">{ secondary }</p> ];
+			return [primary, <p key="link">{secondary}</p>];
 		}
-		return this.isPreCollection( date )
-			? [ translate( 'Referral data isn’t available before Jetpack v5.9 (March 2018)' ) ]
-			: [ translate( 'No referral activity on this date' ) ];
+		return this.isPreCollection(date)
+			? [translate('Referral data isn’t available before Jetpack v5.9 (March 2018)')]
+			: [translate('No referral activity on this date')];
 	}
 
-	paginate = data => {
+	paginate = (data) => {
 		const { paginate, limit } = this.props;
-		if ( ! paginate ) {
-			return data.slice( 0, limit || data.length );
+		if (!paginate) {
+			return data.slice(0, limit || data.length);
 		}
 		const { page } = this.state;
-		const start = ( page - 1 ) * limit;
+		const start = (page - 1) * limit;
 		const end = start + limit;
-		return data.slice( start, end );
+		return data.slice(start, end);
 	};
 
-	onPageClick = pageNumber => {
-		this.setState( {
+	onPageClick = (pageNumber) => {
+		this.setState({
 			page: pageNumber,
-		} );
+		});
 	};
 
-	setPage( { selectedIndex, limit } ) {
-		if ( this.props.paginate ) {
-			this.setState( {
-				page: Math.floor( selectedIndex / limit ) + 1,
-			} );
+	setPage({ selectedIndex, limit }) {
+		if (this.props.paginate) {
+			this.setState({
+				page: Math.floor(selectedIndex / limit) + 1,
+			});
 		}
 	}
 
 	UNSAFE_componentWillMount() {
-		this.setPage( this.props );
+		this.setPage(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.setPage( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.setPage(nextProps);
 	}
 
 	render() {
@@ -121,57 +121,55 @@ class StoreStatsReferrerWidgetBase extends Component {
 		} = this.props;
 		const { page } = this.state;
 		const basePath = '/store/stats/referrers';
-		if ( data.length === 0 ) {
-			const messages = this.getEmptyDataMessage( endSelectedDate );
+		if (data.length === 0) {
+			const messages = this.getEmptyDataMessage(endSelectedDate);
 			return (
-				<Card
-					className={ classnames( className, 'stats-module', 'is-showing-error', 'has-no-data' ) }
-				>
-					<ErrorPanel message={ messages.shift() }>{ messages }</ErrorPanel>
+				<Card className={classnames(className, 'stats-module', 'is-showing-error', 'has-no-data')}>
+					<ErrorPanel message={messages.shift()}>{messages}</ErrorPanel>
 				</Card>
 			);
 		}
-		const paginatedData = this.paginate( data );
+		const paginatedData = this.paginate(data);
 		return (
-			<Card className={ className }>
-				<Table className={ `${ className }__table` } header={ header } compact>
-					{ paginatedData.map( d => {
+			<Card className={className}>
+				<Table className={`${className}__table`} header={header} compact>
+					{paginatedData.map((d) => {
 						const widgetPath = getWidgetPath(
 							unit,
 							slug,
-							Object.assign( {}, queryParams, { referrer: d.referrer } )
+							Object.assign({}, queryParams, { referrer: d.referrer })
 						);
-						const href = `${ basePath }${ widgetPath }`;
+						const href = `${basePath}${widgetPath}`;
 						return (
 							<TableRow
-								key={ d.referrer }
-								href={ href }
-								className={ classnames( {
+								key={d.referrer}
+								href={href}
+								className={classnames({
 									'is-selected': selectedReferrer === d.referrer,
-								} ) }
+								})}
 							>
-								{ this.props.children( d ) }
+								{this.props.children(d)}
 							</TableRow>
 						);
-					} ) }
+					})}
 				</Table>
-				{ paginate && (
+				{paginate && (
 					<Pagination
 						compact
-						page={ page }
-						perPage={ limit }
-						total={ data.length }
-						pageClick={ this.onPageClick }
+						page={page}
+						perPage={limit}
+						total={data.length}
+						pageClick={this.onPageClick}
 					/>
-				) }
+				)}
 			</Card>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const { fetchedData } = ownProps;
 	return {
-		data: fetchedData || getStoreReferrersByDate( state, ownProps ),
+		data: fetchedData || getStoreReferrersByDate(state, ownProps),
 	};
-} )( localize( withLocalizedMoment( StoreStatsReferrerWidgetBase ) ) );
+})(localize(withLocalizedMoment(StoreStatsReferrerWidgetBase)));

@@ -16,55 +16,55 @@ import {
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'actions', () => {
+describe('actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox((sandbox) => (spy = sandbox.spy()));
 
-	describe( '#fetchShortcode()', () => {
+	describe('#fetchShortcode()', () => {
 		const siteId = 12345678;
 		const shortcode = '[gallery ids="1,2,3"]';
 
-		describe( 'success', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com' )
+		describe('success', () => {
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com')
 					.persist()
-					.get( `/rest/v1.1/sites/${ siteId }/shortcodes/render` )
-					.query( {
+					.get(`/rest/v1.1/sites/${siteId}/shortcodes/render`)
+					.query({
 						shortcode,
-					} )
-					.reply( 200, {
+					})
+					.reply(200, {
 						result: '<html></html>',
 						shortcode: '[gallery ids="1,2,3"]',
 						scripts: {},
 						styles: {},
-					} );
-			} );
+					});
+			});
 
-			test( 'should return a fetch action object when called', () => {
+			test('should return a fetch action object when called', () => {
 				return fetchShortcode(
 					siteId,
 					shortcode
-				)( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: SHORTCODE_REQUEST,
 						siteId,
 						shortcode,
-					} );
-				} );
-			} );
+					});
+				});
+			});
 
-			test( 'should return a receive action when request successfully completes', () => {
+			test('should return a receive action when request successfully completes', () => {
 				return fetchShortcode(
 					siteId,
 					shortcode
-				)( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: SHORTCODE_REQUEST_SUCCESS,
 						siteId,
 						shortcode,
-					} );
+					});
 
-					expect( spy ).to.have.been.calledWith( {
+					expect(spy).to.have.been.calledWith({
 						type: SHORTCODE_RECEIVE,
 						siteId,
 						shortcode,
@@ -74,37 +74,37 @@ describe( 'actions', () => {
 							scripts: {},
 							styles: {},
 						},
-					} );
-				} );
-			} );
-		} );
+					});
+				});
+			});
+		});
 
-		describe( 'failure', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com' )
+		describe('failure', () => {
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com')
 					.persist()
-					.get( `/rest/v1.1/sites/${ siteId }/shortcodes/render` )
-					.query( {
+					.get(`/rest/v1.1/sites/${siteId}/shortcodes/render`)
+					.query({
 						shortcode,
-					} )
-					.reply( 400, {
+					})
+					.reply(400, {
 						error: 'The requested shortcode does not exist.',
-					} );
-			} );
+					});
+			});
 
-			test( 'should return a receive action when an error occurs', () => {
+			test('should return a receive action when an error occurs', () => {
 				return fetchShortcode(
 					siteId,
 					shortcode
-				)( spy ).catch( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).catch(() => {
+					expect(spy).to.have.been.calledWith({
 						type: SHORTCODE_REQUEST_FAILURE,
 						siteId,
 						shortcode,
 						error: 'The requested shortcode does not exist.',
-					} );
-				} );
-			} );
-		} );
-	} );
-} );
+					});
+				});
+			});
+		});
+	});
+});

@@ -24,7 +24,7 @@ import settings from './settings/reducer';
 import status from './status/reducer';
 import shippingClasses from './shipping-classes/reducers';
 
-const reducer = combineReducers( {
+const reducer = combineReducers({
 	coupons,
 	customers,
 	data,
@@ -45,6 +45,6 @@ const reducer = combineReducers( {
 	shippingZoneMethods,
 	shippingZones,
 	status,
-} );
+});
 
-export default keyedReducer( 'siteId', reducer );
+export default keyedReducer('siteId', reducer);

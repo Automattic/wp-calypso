@@ -9,13 +9,13 @@
  * @private
  */
 
-function jsSlashEncoder( charStr ) {
-	const code = charStr.charCodeAt( 0 ),
-		hex = code.toString( 16 ).toUpperCase();
+function jsSlashEncoder(charStr) {
+	const code = charStr.charCodeAt(0),
+		hex = code.toString(16).toUpperCase();
 
-	if ( code < 0x80 ) {
+	if (code < 0x80) {
 		// ASCII
-		if ( hex.length === 1 ) {
+		if (hex.length === 1) {
 			return '\\x0' + hex;
 		}
 
@@ -23,7 +23,7 @@ function jsSlashEncoder( charStr ) {
 	}
 
 	// Unicode
-	switch ( hex.length ) {
+	switch (hex.length) {
 		case 2:
 			return '\\u00' + hex;
 		case 3:
@@ -44,14 +44,14 @@ function jsSlashEncoder( charStr ) {
  * @param {mixed} value The variable to be serialized
  * @returns {string} JSON serialized string
  **/
-exports.jsonStringifyForHtml = function( value ) {
+exports.jsonStringifyForHtml = function (value) {
 	const jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;
 	const cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
 	return (
-		JSON.stringify( value )
-			.replace( jsonInHtmlBlacklist, jsSlashEncoder )
+		JSON.stringify(value)
+			.replace(jsonInHtmlBlacklist, jsSlashEncoder)
 			// prevent breaking out of CDATA context.  Escaping < below is sufficient
 			// to prevent opening a CDATA context.
-			.replace( cdataClose, '\\x5D\\x5D\\x3E' )
+			.replace(cdataClose, '\\x5D\\x5D\\x3E')
 	);
 };

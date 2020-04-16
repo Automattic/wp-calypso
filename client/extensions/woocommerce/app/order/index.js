@@ -33,53 +33,53 @@ class Order extends Component {
 	componentDidMount() {
 		const { siteId, orderId } = this.props;
 
-		if ( siteId ) {
-			this.props.fetchOrder( siteId, orderId );
-			this.props.fetchNotes( siteId, orderId );
-			this.props.fetchRefunds( siteId, orderId );
+		if (siteId) {
+			this.props.fetchOrder(siteId, orderId);
+			this.props.fetchNotes(siteId, orderId);
+			this.props.fetchRefunds(siteId, orderId);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const { orderId: oldOrderId, siteId: oldSiteId } = prevProps;
 		const { orderId: newOrderId, siteId: newSiteId } = this.props;
-		if ( newOrderId !== oldOrderId || newSiteId !== oldSiteId ) {
+		if (newOrderId !== oldOrderId || newSiteId !== oldSiteId) {
 			// New order or site should clear any pending edits
-			this.props.clearOrderEdits( oldSiteId );
+			this.props.clearOrderEdits(oldSiteId);
 			// And fetch the new order's info
-			this.props.fetchOrder( newSiteId, newOrderId );
-			this.props.fetchNotes( newSiteId, newOrderId );
-			this.props.fetchRefunds( newSiteId, newOrderId );
+			this.props.fetchOrder(newSiteId, newOrderId);
+			this.props.fetchNotes(newSiteId, newOrderId);
+			this.props.fetchRefunds(newSiteId, newOrderId);
 			return;
 		}
 
-		if ( prevProps.isEditing && ! this.props.isEditing ) {
+		if (prevProps.isEditing && !this.props.isEditing) {
 			// Leaving edit state should re-fetch notes
-			this.props.fetchNotes( newSiteId, newOrderId );
+			this.props.fetchNotes(newSiteId, newOrderId);
 		}
 	}
 
 	componentWillUnmount() {
 		// Removing this component should clear any pending edits
-		this.props.clearOrderEdits( this.props.siteId );
+		this.props.clearOrderEdits(this.props.siteId);
 	}
 
 	render() {
 		const { className, hasOrder, hasOrderEdits, isEditing, orderId, siteId } = this.props;
-		if ( ! hasOrder ) {
+		if (!hasOrder) {
 			return null;
 		}
 
 		return (
-			<Main className={ className } wideLayout>
-				<OrderActionHeader orderId={ orderId } />
+			<Main className={className} wideLayout>
+				<OrderActionHeader orderId={orderId} />
 
 				<div className="order__container">
 					<LabelsSetupNotice />
-					{ isEditing && <ProtectFormGuard isChanged={ hasOrderEdits } /> }
-					<OrderDetails orderId={ orderId } />
-					<OrderCustomer orderId={ orderId } />
-					<OrderActivityLog orderId={ orderId } siteId={ siteId } />
+					{isEditing && <ProtectFormGuard isChanged={hasOrderEdits} />}
+					<OrderDetails orderId={orderId} />
+					<OrderCustomer orderId={orderId} />
+					<OrderActivityLog orderId={orderId} siteId={siteId} />
 				</div>
 			</Main>
 		);
@@ -87,14 +87,14 @@ class Order extends Component {
 }
 
 export default connect(
-	( state, props ) => {
-		const site = getSelectedSiteWithFallback( state );
+	(state, props) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site ? site.ID : false;
-		const orderId = parseInt( props.params.order_id );
-		const isEditing = isCurrentlyEditingOrder( state );
-		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, orderId );
-		const hasOrder = ! isEmpty( order );
-		const hasOrderEdits = ! isEmpty( getOrderEdits( state ) );
+		const orderId = parseInt(props.params.order_id);
+		const isEditing = isCurrentlyEditingOrder(state);
+		const order = isEditing ? getOrderWithEdits(state) : getOrder(state, orderId);
+		const hasOrder = !isEmpty(order);
+		const hasOrderEdits = !isEmpty(getOrderEdits(state));
 
 		return {
 			hasOrderEdits,
@@ -104,6 +104,6 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
-		bindActionCreators( { clearOrderEdits, fetchNotes, fetchOrder, fetchRefunds }, dispatch )
-)( localize( Order ) );
+	(dispatch) =>
+		bindActionCreators({ clearOrderEdits, fetchNotes, fetchOrder, fetchRefunds }, dispatch)
+)(localize(Order));

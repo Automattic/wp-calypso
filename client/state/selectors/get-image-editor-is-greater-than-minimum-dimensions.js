@@ -23,17 +23,12 @@ export default function getImageEditorIsGreaterThanMinimumDimensions(
 	minimumWidth = MinimumImageDimensions.WIDTH,
 	minimumHeight = MinimumImageDimensions.HEIGHT
 ) {
-	const originalAspectRatio = getImageEditorOriginalAspectRatio( state );
+	const originalAspectRatio = getImageEditorOriginalAspectRatio(state);
 
-	if ( originalAspectRatio ) {
+	if (originalAspectRatio) {
 		const { width, height } = originalAspectRatio;
 
-		if (
-			isInteger( width ) &&
-			isInteger( height ) &&
-			width > minimumWidth &&
-			height > minimumHeight
-		) {
+		if (isInteger(width) && isInteger(height) && width > minimumWidth && height > minimumHeight) {
 			return true;
 		}
 	}

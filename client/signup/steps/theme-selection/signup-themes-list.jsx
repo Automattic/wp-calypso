@@ -35,7 +35,7 @@ class SignupThemesList extends Component {
 		translate: identity,
 	};
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return (
 			nextProps.surveyQuestion !== this.props.surveyQuestion ||
 			nextProps.designType !== this.props.designType
@@ -43,37 +43,37 @@ class SignupThemesList extends Component {
 	}
 
 	getComputedThemes() {
-		return getThemes( this.props.surveyQuestion, this.props.designType, this.props.quantity );
+		return getThemes(this.props.surveyQuestion, this.props.designType, this.props.quantity);
 	}
 
-	getScreenshotUrl( theme ) {
-		return `https://i1.wp.com/s0.wp.com/wp-content/themes/${ theme.repo }/${ theme.slug }/screenshot.png?w=660`;
+	getScreenshotUrl(theme) {
+		return `https://i1.wp.com/s0.wp.com/wp-content/themes/${theme.repo}/${theme.slug}/screenshot.png?w=660`;
 	}
 
 	render() {
-		const actionLabel = this.props.translate( 'Pick' );
+		const actionLabel = this.props.translate('Pick');
 		const getActionLabel = () => actionLabel;
 
-		const themes = this.getComputedThemes().map( theme => {
+		const themes = this.getComputedThemes().map((theme) => {
 			return {
 				...theme,
 				id: theme.slug,
-				screenshot: this.getScreenshotUrl( theme ),
+				screenshot: this.getScreenshotUrl(theme),
 			};
-		} );
+		});
 
 		return (
 			<div className="signup-themes-list">
 				<ThemesList
-					getButtonOptions={ noop }
-					onScreenshotClick={ this.props.handleScreenshotClick }
-					onMoreButtonClick={ noop }
-					getActionLabel={ getActionLabel }
-					themes={ themes }
+					getButtonOptions={noop}
+					onScreenshotClick={this.props.handleScreenshotClick}
+					onMoreButtonClick={noop}
+					getActionLabel={getActionLabel}
+					themes={themes}
 				/>
 			</div>
 		);
 	}
 }
 
-export default localize( SignupThemesList );
+export default localize(SignupThemesList);

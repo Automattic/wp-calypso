@@ -12,7 +12,7 @@ import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
  * @param  {number} postId Post ID
  * @returns {object} Action object
  */
-export function setEditorLastDraft( siteId, postId ) {
+export function setEditorLastDraft(siteId, postId) {
 	return {
 		type: EDITOR_LAST_DRAFT_SET,
 		siteId,
@@ -27,5 +27,5 @@ export function setEditorLastDraft( siteId, postId ) {
  * @returns {object} Action object
  */
 export function resetEditorLastDraft() {
-	return setEditorLastDraft( null, null );
+	return setEditorLastDraft(null, null);
 }

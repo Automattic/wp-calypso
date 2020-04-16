@@ -16,38 +16,38 @@ import {
 } from './fixture';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
-describe( 'selectors', () => {
-	describe( '#getDomainsBySite()', () => {
-		test( 'should return domains by site', () => {
+describe('selectors', () => {
+	describe('#getDomainsBySite()', () => {
+		test('should return domains by site', () => {
 			const state = getStateInstance();
 
-			const firstDomains = getDomainsBySite( state, { ID: firstSiteId } );
+			const firstDomains = getDomainsBySite(state, { ID: firstSiteId });
 
-			expect( firstDomains ).to.eql( [ DOMAIN_PRIMARY ] );
+			expect(firstDomains).to.eql([DOMAIN_PRIMARY]);
 
-			const secondDomains = getDomainsBySite( state, { ID: secondSiteId } );
+			const secondDomains = getDomainsBySite(state, { ID: secondSiteId });
 
-			expect( secondDomains ).to.eql( [ DOMAIN_NOT_PRIMARY ] );
-		} );
-	} );
+			expect(secondDomains).to.eql([DOMAIN_NOT_PRIMARY]);
+		});
+	});
 
-	describe( '#getDomainsBySiteId()', () => {
-		test( 'should return domains by site id', () => {
+	describe('#getDomainsBySiteId()', () => {
+		test('should return domains by site id', () => {
 			const state = getStateInstance();
-			const domains = getDomainsBySiteId( state, firstSiteId );
-			expect( domains ).to.eql( [ DOMAIN_PRIMARY ] );
-		} );
-	} );
+			const domains = getDomainsBySiteId(state, firstSiteId);
+			expect(domains).to.eql([DOMAIN_PRIMARY]);
+		});
+	});
 
-	describe( '#isRequestingSiteDomains()', () => {
-		test( 'should return true if we are fetching domains', () => {
+	describe('#isRequestingSiteDomains()', () => {
+		test('should return true if we are fetching domains', () => {
 			const state = getStateInstance();
 
-			expect( isRequestingSiteDomains( state, firstSiteId ) ).to.equal( false );
-			expect( isRequestingSiteDomains( state, secondSiteId ) ).to.equal( true );
-			expect( isRequestingSiteDomains( state, 'unknown' ) ).to.equal( false );
-		} );
-	} );
-} );
+			expect(isRequestingSiteDomains(state, firstSiteId)).to.equal(false);
+			expect(isRequestingSiteDomains(state, secondSiteId)).to.equal(true);
+			expect(isRequestingSiteDomains(state, 'unknown')).to.equal(false);
+		});
+	});
+});

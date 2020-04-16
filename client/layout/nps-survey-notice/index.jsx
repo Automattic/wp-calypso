@@ -59,24 +59,24 @@ class NpsSurveyNotice extends Component {
 			return;
 		}
 
-		if ( ! hasAnswered && ! hasAnsweredWithNoScore ) {
+		if (!hasAnswered && !hasAnsweredWithNoScore) {
 			// the dialog was dismised by clicking outside it
 			// and the survey was never answered, so track it
-			this.props.submitNpsSurveyWithNoScore( SURVEY_NAME );
+			this.props.submitNpsSurveyWithNoScore(SURVEY_NAME);
 		}
 
-		this.props.setNpsSurveyDialogShowing( false );
+		this.props.setNpsSurveyDialogShowing(false);
 	};
 
-	handleSurveyClose = afterClose => {
-		this.props.setNpsSurveyDialogShowing( false );
+	handleSurveyClose = (afterClose) => {
+		this.props.setNpsSurveyDialogShowing(false);
 
 		// slightly delay the showing of the thank you notice
-		setTimeout( afterClose, 500 );
+		setTimeout(afterClose, 500);
 	};
 
-	handleSurveyFormChange = currentForm => {
-		this.setState( { currentForm } );
+	handleSurveyFormChange = (currentForm) => {
+		this.setState({ currentForm });
 	};
 
 	componentDidMount() {
@@ -85,63 +85,63 @@ class NpsSurveyNotice extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.props.isSectionAndSessionEligible && ! this.props.wasShownThisSession ) {
+		if (this.props.isSectionAndSessionEligible && !this.props.wasShownThisSession) {
 			// wait a little bit before showing the notice, so that
 			// (1) the user gets a chance to look briefly at the uncluttered screen, and
 			// (2) the user notices the notice more, since it will cause a change to the
 			//     screen they are already looking at
-			this.props.setNpsSurveyDialogShowing( true );
+			this.props.setNpsSurveyDialogShowing(true);
 			this.props.markNpsSurveyShownThisSession();
 
-			bumpStat( 'calypso_nps_survey', 'notice_displayed' );
-			analytics.tracks.recordEvent( 'calypso_nps_notice_displayed' );
+			bumpStat('calypso_nps_survey', 'notice_displayed');
+			analytics.tracks.recordEvent('calypso_nps_notice_displayed');
 		}
 	}
 
 	render() {
-		if ( this.props.isSupportSession || ! this.props.isSectionAndSessionEligible ) {
+		if (this.props.isSupportSession || !this.props.isSectionAndSessionEligible) {
 			return null;
 		}
 
 		return (
 			<Dialog
 				additionalClassNames="nps-survey-notice"
-				isVisible={ this.props.isNpsSurveyDialogShowing }
-				onClose={ this.handleDialogClose }
+				isVisible={this.props.isNpsSurveyDialogShowing}
+				onClose={this.handleDialogClose}
 			>
 				<QuerySites allSites />
 				<NpsSurvey
-					name={ SURVEY_NAME }
-					isBusinessUser={ this.props.isBusinessUser }
-					onClose={ this.handleSurveyClose }
-					onChangeForm={ this.handleSurveyFormChange }
+					name={SURVEY_NAME}
+					isBusinessUser={this.props.isBusinessUser}
+					onClose={this.handleSurveyClose}
+					onChangeForm={this.handleSurveyFormChange}
 				/>
 			</Dialog>
 		);
 	}
 }
 
-function isOwnBusinessSite( site ) {
-	return isBusinessPlan( get( site, 'plan.product_slug' ) ) && get( site, 'plan.user_is_owner' );
+function isOwnBusinessSite(site) {
+	return isBusinessPlan(get(site, 'plan.product_slug')) && get(site, 'plan.user_is_owner');
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	return {
-		isSupportSession: isSupportSession( state ),
-		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
-		hasAnswered: hasAnsweredNpsSurvey( state ),
-		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
-		isSectionAndSessionEligible: isSectionAndSessionEligibleForNpsSurvey( state ),
-		wasShownThisSession: wasNpsSurveyShownThisSession( state ),
-		npsSurveyScore: getNpsSurveyScore( state ),
-		isBusinessUser: getSites( state ).some( isOwnBusinessSite ),
+		isSupportSession: isSupportSession(state),
+		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing(state),
+		hasAnswered: hasAnsweredNpsSurvey(state),
+		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore(state),
+		isSectionAndSessionEligible: isSectionAndSessionEligibleForNpsSurvey(state),
+		wasShownThisSession: wasNpsSurveyShownThisSession(state),
+		npsSurveyScore: getNpsSurveyScore(state),
+		isBusinessUser: getSites(state).some(isOwnBusinessSite),
 	};
 };
 
-export default connect( mapStateToProps, {
+export default connect(mapStateToProps, {
 	setNpsSurveyDialogShowing,
 	submitNpsSurveyWithNoScore,
 	setupNpsSurveyDevTrigger,
 	setupNpsSurveyEligibility,
 	markNpsSurveyShownThisSession,
-} )( NpsSurveyNotice );
+})(NpsSurveyNotice);

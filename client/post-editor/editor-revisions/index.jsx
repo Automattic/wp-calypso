@@ -29,7 +29,7 @@ import './style.scss';
 
 class EditorRevisions extends Component {
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open' );
+		this.props.recordTracksEvent('calypso_editor_post_revisions_open');
 	}
 
 	render() {
@@ -46,23 +46,23 @@ class EditorRevisions extends Component {
 		return (
 			<div className="editor-revisions">
 				<QueryPostRevisions
-					postId={ postId }
-					siteId={ siteId }
-					selectedRevisionId={ selectedRevisionId }
+					postId={postId}
+					siteId={siteId}
+					selectedRevisionId={selectedRevisionId}
 				/>
-				<QueryPostRevisionAuthors siteId={ siteId } userIds={ authorsIds } />
+				<QueryPostRevisionAuthors siteId={siteId} userIds={authorsIds} />
 				<EditorDiffViewer
-					diff={ selectedDiff }
-					postId={ postId }
-					selectedRevisionId={ selectedRevisionId }
-					siteId={ siteId }
+					diff={selectedDiff}
+					postId={postId}
+					selectedRevisionId={selectedRevisionId}
+					siteId={siteId}
 				/>
 				<EditorRevisionsList
-					comparisons={ comparisons }
-					postId={ postId }
-					revisions={ revisions }
-					selectedRevisionId={ selectedRevisionId }
-					siteId={ siteId }
+					comparisons={comparisons}
+					postId={postId}
+					revisions={revisions}
+					selectedRevisionId={selectedRevisionId}
+					siteId={siteId}
 				/>
 			</div>
 		);
@@ -89,17 +89,17 @@ EditorRevisions.propTypes = {
 export default flow(
 	localize,
 	connect(
-		state => {
-			const postId = getEditorPostId( state );
-			const siteId = getSelectedSiteId( state );
+		(state) => {
+			const postId = getEditorPostId(state);
+			const siteId = getSelectedSiteId(state);
 
-			const revisions = getPostRevisions( state, siteId, postId );
-			const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
-			const comparisons = getPostRevisionsComparisons( state, siteId, postId );
-			const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
+			const revisions = getPostRevisions(state, siteId, postId);
+			const selectedRevisionId = getPostRevisionsSelectedRevisionId(state);
+			const comparisons = getPostRevisionsComparisons(state, siteId, postId);
+			const selectedDiff = get(comparisons, [selectedRevisionId, 'diff'], {});
 
 			return {
-				authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
+				authorsIds: getPostRevisionsAuthorsId(state, siteId, postId),
 				comparisons,
 				postId,
 				revisions,
@@ -110,4 +110,4 @@ export default flow(
 		},
 		{ recordTracksEvent }
 	)
-)( EditorRevisions );
+)(EditorRevisions);

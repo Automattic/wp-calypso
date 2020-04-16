@@ -19,13 +19,13 @@ export class GlobalNotice extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		const { notice } = this.props.displayNotice( this.props.text, { isPersistent: true } );
+		const { notice } = this.props.displayNotice(this.props.text, { isPersistent: true });
 		this.notice = notice;
 	}
 
 	componentWillUnmount() {
-		if ( this.notice ) {
-			this.props.removeNotice( this.notice.noticeId );
+		if (this.notice) {
+			this.props.removeNotice(this.notice.noticeId);
 		}
 	}
 
@@ -34,7 +34,7 @@ export class GlobalNotice extends Component {
 	}
 }
 
-export const InfoNotice = connect( null, {
+export const InfoNotice = connect(null, {
 	displayNotice: infoNotice,
 	removeNotice,
-} )( GlobalNotice );
+})(GlobalNotice);

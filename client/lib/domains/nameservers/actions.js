@@ -11,46 +11,46 @@ import {
 } from './action-types';
 import NameserversStore from './store';
 
-export function fetchNameservers( domainName ) {
-	const nameservers = NameserversStore.getByDomainName( domainName );
+export function fetchNameservers(domainName) {
+	const nameservers = NameserversStore.getByDomainName(domainName);
 
-	if ( nameservers.isFetching || nameservers.hasLoadedFromServer ) {
+	if (nameservers.isFetching || nameservers.hasLoadedFromServer) {
 		return;
 	}
 
-	Dispatcher.handleViewAction( {
+	Dispatcher.handleViewAction({
 		type: NAMESERVERS_FETCH,
 		domainName,
-	} );
+	});
 
-	wpcom.undocumented().nameservers( domainName, ( error, data ) => {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
+	wpcom.undocumented().nameservers(domainName, (error, data) => {
+		if (error) {
+			Dispatcher.handleServerAction({
 				type: NAMESERVERS_FETCH_FAILED,
 				domainName,
-			} );
+			});
 		} else {
-			Dispatcher.handleServerAction( {
+			Dispatcher.handleServerAction({
 				type: NAMESERVERS_FETCH_COMPLETED,
 				domainName,
 				nameservers: data,
-			} );
+			});
 		}
-	} );
+	});
 }
 
-export function updateNameservers( domainName, nameservers, onComplete ) {
-	const postData = nameservers.map( nameserver => ( { nameserver } ) );
+export function updateNameservers(domainName, nameservers, onComplete) {
+	const postData = nameservers.map((nameserver) => ({ nameserver }));
 
-	wpcom.undocumented().updateNameservers( domainName, { nameservers: postData }, error => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
+	wpcom.undocumented().updateNameservers(domainName, { nameservers: postData }, (error) => {
+		if (!error) {
+			Dispatcher.handleServerAction({
 				type: NAMESERVERS_UPDATE_COMPLETED,
 				domainName,
 				nameservers,
-			} );
+			});
 		}
 
-		onComplete( error );
-	} );
+		onComplete(error);
+	});
 }

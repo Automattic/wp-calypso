@@ -29,10 +29,10 @@ class QuerySharePostActions extends Component {
 	};
 
 	componentDidMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
@@ -44,16 +44,16 @@ class QuerySharePostActions extends Component {
 	}
 
 	componentDidUpdate() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	request( props ) {
-		if ( props.status === 'scheduled' && ! props.isRequestingScheduled ) {
-			props.fetchPostShareActionsScheduled( props.siteId, props.postId );
+	request(props) {
+		if (props.status === 'scheduled' && !props.isRequestingScheduled) {
+			props.fetchPostShareActionsScheduled(props.siteId, props.postId);
 		}
 
-		if ( props.status === 'published' && ! props.isRequestingPublished ) {
-			props.fetchPostShareActionsPublished( props.siteId, props.postId );
+		if (props.status === 'published' && !props.isRequestingPublished) {
+			props.fetchPostShareActionsPublished(props.siteId, props.postId);
 		}
 	}
 
@@ -63,9 +63,9 @@ class QuerySharePostActions extends Component {
 }
 
 export default connect(
-	( state, { siteId, postId } ) => ( {
-		isRequestingScheduled: isFetchingPublicizeShareActionsScheduled( state, siteId, postId ),
-		isRequestingPublished: isFetchingPublicizeShareActionsPublished( state, siteId, postId ),
-	} ),
+	(state, { siteId, postId }) => ({
+		isRequestingScheduled: isFetchingPublicizeShareActionsScheduled(state, siteId, postId),
+		isRequestingPublished: isFetchingPublicizeShareActionsPublished(state, siteId, postId),
+	}),
 	{ fetchPostShareActionsScheduled, fetchPostShareActionsPublished }
-)( QuerySharePostActions );
+)(QuerySharePostActions);

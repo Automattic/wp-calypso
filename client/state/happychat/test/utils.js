@@ -6,7 +6,7 @@ import config from 'config';
 import * as wpcom from 'lib/wp';
 import * as selectedSite from 'state/help/selectors';
 
-describe( 'auth promise', () => {
+describe('auth promise', () => {
 	const state = {
 		currentUser: {
 			id: 3,
@@ -23,57 +23,55 @@ describe( 'auth promise', () => {
 		},
 	};
 
-	describe( 'upon request success', () => {
-		beforeEach( () => {
+	describe('upon request success', () => {
+		beforeEach(() => {
 			wpcom.default.request = jest.fn();
-			wpcom.default.request.mockImplementation( ( args, callback ) =>
-				callback( null, {
+			wpcom.default.request.mockImplementation((args, callback) =>
+				callback(null, {
 					jwt: 'jwt',
 					geo_location: {
 						city: 'Lugo',
 					},
-				} )
+				})
 			);
 
 			// mock getHelpSelectedSite to return null
 			selectedSite.getHelpSelectedSite = jest.fn();
-			selectedSite.getHelpSelectedSite.mockReturnValue( null );
-		} );
+			selectedSite.getHelpSelectedSite.mockReturnValue(null);
+		});
 
-		test( 'should return a fulfilled Promise', () => {
-			return expect( getHappychatAuth( state )() ).resolves.toMatchObject( {
-				url: config( 'happychat_url' ),
+		test('should return a fulfilled Promise', () => {
+			return expect(getHappychatAuth(state)()).resolves.toMatchObject({
+				url: config('happychat_url'),
 				user: {
-					signer_user_id: state.users.items[ 3 ].ID,
-					locale: state.users.items[ 3 ].localeSlug,
-					groups: [ 'jpop' ],
+					signer_user_id: state.users.items[3].ID,
+					locale: state.users.items[3].localeSlug,
+					groups: ['jpop'],
 					jwt: 'jwt',
 					geoLocation: { city: 'Lugo' },
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'upon request failure', () => {
-		beforeEach( () => {
+	describe('upon request failure', () => {
+		beforeEach(() => {
 			wpcom.default.request = jest.fn();
-			wpcom.default.request.mockImplementation( ( args, callback ) =>
-				callback( 'failed request', {} )
-			);
+			wpcom.default.request.mockImplementation((args, callback) => callback('failed request', {}));
 
 			// mock getHelpSelectedSite to return null
 			selectedSite.getHelpSelectedSite = jest.fn();
-			selectedSite.getHelpSelectedSite.mockReturnValue( null );
-		} );
+			selectedSite.getHelpSelectedSite.mockReturnValue(null);
+		});
 
-		test( 'should return a rejected Promise', () => {
-			return expect( getHappychatAuth( state )() ).rejects.toMatch(
+		test('should return a rejected Promise', () => {
+			return expect(getHappychatAuth(state)()).rejects.toMatch(
 				'Failed to start an authenticated Happychat session: failed request'
 			);
-		} );
-	} );
+		});
+	});
 
-	test( 'should return a rejected promise if there is no current user', () => {
+	test('should return a rejected promise if there is no current user', () => {
 		const noUserState = {
 			currentUser: {},
 			users: {},
@@ -83,8 +81,8 @@ describe( 'auth promise', () => {
 				},
 			},
 		};
-		return expect( getHappychatAuth( noUserState )() ).rejects.toMatch(
+		return expect(getHappychatAuth(noUserState)()).rejects.toMatch(
 			'Failed to start an authenticated Happychat session: No current user found'
 		);
-	} );
-} );
+	});
+});

@@ -27,7 +27,7 @@ import PostCommentFormTextarea from './form-textarea';
 import './form.scss';
 
 class PostCommentForm extends React.Component {
-	constructor( props ) {
+	constructor(props) {
 		super();
 
 		this.state = {
@@ -36,35 +36,35 @@ class PostCommentForm extends React.Component {
 		};
 
 		// bind event handlers to this instance
-		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( prop => prop.indexOf( 'handle' ) === 0 )
-			.filter( prop => typeof this[ prop ] === 'function' )
-			.forEach( prop => ( this[ prop ] = this[ prop ].bind( this ) ) );
+		Object.getOwnPropertyNames(PostCommentForm.prototype)
+			.filter((prop) => prop.indexOf('handle') === 0)
+			.filter((prop) => typeof this[prop] === 'function')
+			.forEach((prop) => (this[prop] = this[prop].bind(this)));
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.setState( {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.setState({
 			commentText: nextProps.commentText || '',
-		} );
+		});
 	}
 
-	handleSubmit( event ) {
+	handleSubmit(event) {
 		event.preventDefault();
 		this.submit();
 	}
 
-	handleKeyDown( event ) {
+	handleKeyDown(event) {
 		// Use Ctrl+Enter to submit comment
-		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
+		if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
 			event.preventDefault();
 			this.submit();
 		}
 
 		// Use ESC to remove the erroneous comment placeholder and just start over
-		if ( event.keyCode === 27 ) {
-			if ( this.props.placeholderId ) {
+		if (event.keyCode === 27) {
+			if (this.props.placeholderId) {
 				// sync the text to the upper level so it won't be lost
-				this.props.onUpdateCommentText( this.props.commentText );
+				this.props.onUpdateCommentText(this.props.commentText);
 				// remove the comment
 				this.props.deleteComment(
 					this.props.post.site_ID,
@@ -76,23 +76,23 @@ class PostCommentForm extends React.Component {
 	}
 
 	handleFocus() {
-		this.setState( { haveFocus: true } );
+		this.setState({ haveFocus: true });
 	}
 
-	handleTextChange( event ) {
+	handleTextChange(event) {
 		const commentText = event.target.value;
 
-		this.setState( { commentText } );
+		this.setState({ commentText });
 
 		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( commentText );
+		this.props.onUpdateCommentText(commentText);
 	}
 
 	resetCommentText() {
-		this.setState( { commentText: '' } );
+		this.setState({ commentText: '' });
 
 		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( '' );
+		this.props.onUpdateCommentText('');
 	}
 
 	hasCommentText() {
@@ -103,26 +103,26 @@ class PostCommentForm extends React.Component {
 		const post = this.props.post;
 		const commentText = this.state.commentText.trim();
 
-		if ( ! commentText ) {
+		if (!commentText) {
 			this.resetCommentText(); // Clean up any newlines
 			return false;
 		}
 
-		if ( this.props.placeholderId ) {
-			this.props.deleteComment( post.site_ID, post.ID, this.props.placeholderId );
+		if (this.props.placeholderId) {
+			this.props.deleteComment(post.site_ID, post.ID, this.props.placeholderId);
 		}
 
-		if ( this.props.parentCommentId ) {
-			this.props.replyComment( commentText, post.site_ID, post.ID, this.props.parentCommentId );
+		if (this.props.parentCommentId) {
+			this.props.replyComment(commentText, post.site_ID, post.ID, this.props.parentCommentId);
 		} else {
-			this.props.writeComment( commentText, post.site_ID, post.ID );
+			this.props.writeComment(commentText, post.site_ID, post.ID);
 		}
 
-		recordAction( 'posted_comment' );
-		recordGaEvent( 'Clicked Post Comment Button' );
-		recordTrackForPost( 'calypso_reader_article_commented_on', post, {
+		recordAction('posted_comment');
+		recordGaEvent('Clicked Post Comment Button');
+		recordTrackForPost('calypso_reader_article_commented_on', post, {
 			parent_post_id: this.props.parentCommentId ? this.props.parentCommentId : undefined,
-		} );
+		});
 
 		this.resetCommentText();
 
@@ -136,23 +136,21 @@ class PostCommentForm extends React.Component {
 		const error = this.props.error;
 		let message;
 
-		if ( ! error ) {
+		if (!error) {
 			return null;
 		}
 
-		switch ( this.props.errorType ) {
+		switch (this.props.errorType) {
 			case 'comment_duplicate':
-				message = translate(
-					"Duplicate comment detected. It looks like you've already said that!"
-				);
+				message = translate("Duplicate comment detected. It looks like you've already said that!");
 				break;
 
 			default:
-				message = translate( 'Sorry - there was a problem posting your comment.' );
+				message = translate('Sorry - there was a problem posting your comment.');
 				break;
 		}
 
-		return <FormInputValidation isError text={ message } />;
+		return <FormInputValidation isError text={message} />;
 	}
 
 	render() {
@@ -163,62 +161,62 @@ class PostCommentForm extends React.Component {
 			post &&
 			post.discussion &&
 			post.discussion.comments_open === false &&
-			! isCommentableDiscoverPost( post )
+			!isCommentableDiscoverPost(post)
 		) {
 			// If we already have some comments, show a 'comments closed message'
-			if ( post.discussion.comment_count && post.discussion.comment_count > 0 ) {
-				return <p className="comments__form-closed">{ translate( 'Comments closed.' ) }</p>;
+			if (post.discussion.comment_count && post.discussion.comment_count > 0) {
+				return <p className="comments__form-closed">{translate('Comments closed.')}</p>;
 			}
 
 			return null;
 		}
 
-		const buttonClasses = classNames( {
+		const buttonClasses = classNames({
 			'is-active': this.hasCommentText(),
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
-		} );
+		});
 
-		const expandingAreaClasses = classNames( {
+		const expandingAreaClasses = classNames({
 			focused: this.state.haveFocus,
 			'expanding-area': true,
-		} );
+		});
 
-		const isReply = !! this.props.parentCommentId;
+		const isReply = !!this.props.parentCommentId;
 
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__form">
-				<ProtectFormGuard isChanged={ this.hasCommentText() } />
+				<ProtectFormGuard isChanged={this.hasCommentText()} />
 				<fieldset>
-					<Gravatar user={ this.props.currentUser } />
-					<div className={ expandingAreaClasses }>
+					<Gravatar user={this.props.currentUser} />
+					<div className={expandingAreaClasses}>
 						<pre>
-							<span>{ this.state.commentText }</span>
+							<span>{this.state.commentText}</span>
 							<br />
 						</pre>
 						<AutoDirection>
 							<PostCommentFormTextarea
-								value={ this.state.commentText }
-								placeholder={ translate( 'Enter your comment here…' ) }
-								onKeyUp={ this.handleKeyUp }
-								onKeyDown={ this.handleKeyDown }
-								onFocus={ this.handleFocus }
-								onBlur={ this.handleBlur }
-								onChange={ this.handleTextChange }
-								siteId={ post.site_ID }
-								enableAutoFocus={ isReply }
+								value={this.state.commentText}
+								placeholder={translate('Enter your comment here…')}
+								onKeyUp={this.handleKeyUp}
+								onKeyDown={this.handleKeyDown}
+								onFocus={this.handleFocus}
+								onBlur={this.handleBlur}
+								onChange={this.handleTextChange}
+								siteId={post.site_ID}
+								enableAutoFocus={isReply}
 							/>
 						</AutoDirection>
 					</div>
 					<button
-						className={ buttonClasses }
-						disabled={ this.state.commentText.length === 0 }
-						onClick={ this.handleSubmit }
+						className={buttonClasses}
+						disabled={this.state.commentText.length === 0}
+						onClick={this.handleSubmit}
 					>
-						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
+						{this.props.error ? translate('Resend') : translate('Send')}
 					</button>
-					{ this.renderError() }
+					{this.renderError()}
 				</fieldset>
 			</form>
 		);
@@ -245,8 +243,8 @@ PostCommentForm.defaultProps = {
 };
 
 export default connect(
-	state => ( {
-		currentUser: getCurrentUser( state ),
-	} ),
+	(state) => ({
+		currentUser: getCurrentUser(state),
+	}),
 	{ writeComment, deleteComment, replyComment }
-)( PostCommentForm );
+)(PostCommentForm);

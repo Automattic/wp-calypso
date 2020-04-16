@@ -17,7 +17,7 @@ import { MediaTypes } from '../constants';
  * @param  {*}      node Media object to parse
  * @returns {object}      Normalized object
  */
-export function deserialize( node ) {
+export function deserialize(node) {
 	const normalized = {
 		media: assign(
 			{
@@ -29,7 +29,7 @@ export function deserialize( node ) {
 	};
 
 	// Infer media type
-	switch ( getMimePrefix( node ) ) {
+	switch (getMimePrefix(node)) {
 		case 'image':
 			normalized.type = MediaTypes.IMAGE;
 			break;

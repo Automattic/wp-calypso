@@ -7,10 +7,10 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 const action = { type: 'DUMMY_ACTION' };
 
-test( 'should return an action for an HTTP request to the site blocks endpoint', () => {
-	const result = handleSiteBlocksRequest( action );
+test('should return an action for an HTTP request to the site blocks endpoint', () => {
+	const result = handleSiteBlocksRequest(action);
 
-	expect( result ).toMatchObject(
+	expect(result).toMatchObject(
 		http(
 			{
 				method: 'GET',
@@ -20,19 +20,19 @@ test( 'should return an action for an HTTP request to the site blocks endpoint',
 			action
 		)
 	);
-} );
+});
 
-test( 'should return a SITE_BLOCKS_RECEIVE action with error when request errors', () => {
-	const result = siteBlocksRequestFailure( action );
+test('should return a SITE_BLOCKS_RECEIVE action with error when request errors', () => {
+	const result = siteBlocksRequestFailure(action);
 
-	expect( result ).toEqual( {
+	expect(result).toEqual({
 		type: READER_SITE_BLOCKS_RECEIVE,
 		payload: action,
 		error: true,
-	} );
-} );
+	});
+});
 
-test( 'should return a SITE_BLOCKS_RECEIVE action without error when request succeeds', () => {
+test('should return a SITE_BLOCKS_RECEIVE action without error when request succeeds', () => {
 	const apiResponse = {
 		sites: [
 			{
@@ -42,10 +42,10 @@ test( 'should return a SITE_BLOCKS_RECEIVE action without error when request suc
 			},
 		],
 	};
-	const result = siteBlocksRequestReceived( action, apiResponse );
+	const result = siteBlocksRequestReceived(action, apiResponse);
 
-	expect( result ).toEqual( {
+	expect(result).toEqual({
 		type: READER_SITE_BLOCKS_RECEIVE,
 		payload: apiResponse,
-	} );
-} );
+	});
+});

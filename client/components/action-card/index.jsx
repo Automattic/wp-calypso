@@ -16,7 +16,7 @@ import { Card, Button } from '@automattic/components';
  */
 import './style.scss';
 
-const ActionCard = ( {
+const ActionCard = ({
 	headerText,
 	mainText,
 	buttonPrimary,
@@ -30,31 +30,31 @@ const ActionCard = ( {
 	classNames,
 	buttonDisabled,
 	illustration,
-} ) => (
-	<Card className={ classnames( 'action-card', classNames ) } compact={ compact }>
-		{ illustration && (
+}) => (
+	<Card className={classnames('action-card', classNames)} compact={compact}>
+		{illustration && (
 			<img
 				className="action-card__illustration"
 				alt="concierge session signup form header"
-				src={ illustration }
+				src={illustration}
 			/>
-		) }
+		)}
 		<div className="action-card__main">
-			<h2 className="action-card__heading">{ headerText }</h2>
-			<p>{ mainText }</p>
+			<h2 className="action-card__heading">{headerText}</h2>
+			<p>{mainText}</p>
 		</div>
 		<div className="action-card__button-container">
-			{ children || (
+			{children || (
 				<Button
-					primary={ buttonPrimary }
-					href={ buttonHref }
-					target={ buttonTarget }
-					onClick={ buttonOnClick }
-					disabled={ buttonDisabled }
+					primary={buttonPrimary}
+					href={buttonHref}
+					target={buttonTarget}
+					onClick={buttonOnClick}
+					disabled={buttonDisabled}
 				>
-					{ buttonText } { buttonIcon && <Gridicon icon={ buttonIcon } /> }
+					{buttonText} {buttonIcon && <Gridicon icon={buttonIcon} />}
 				</Button>
-			) }
+			)}
 		</div>
 	</Card>
 );

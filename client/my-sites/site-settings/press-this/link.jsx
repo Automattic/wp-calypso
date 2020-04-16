@@ -15,7 +15,7 @@ import { newPost } from 'lib/paths';
  * open new editor window with contents
  * @param  {string} postURL Editor URL for selected site
  */
-const pressThis = function( postURL ) {
+const pressThis = function (postURL) {
 	const doc = document;
 	const win = window;
 	const winGetSel = win.getSelection;
@@ -24,9 +24,9 @@ const pressThis = function( postURL ) {
 	const loc = doc.location;
 	let sel;
 
-	if ( winGetSel ) {
+	if (winGetSel) {
 		sel = winGetSel();
-	} else if ( docGetSel ) {
+	} else if (docGetSel) {
 		sel = docGetSel();
 	} else {
 		sel = docSel ? docSel.createRange().text : 0;
@@ -35,23 +35,21 @@ const pressThis = function( postURL ) {
 	const url =
 		postURL +
 		'?url=' +
-		encodeURIComponent( loc.href ) +
+		encodeURIComponent(loc.href) +
 		'&title=' +
-		encodeURIComponent( doc.title ) +
+		encodeURIComponent(doc.title) +
 		'&text=' +
-		encodeURIComponent( sel ) +
+		encodeURIComponent(sel) +
 		'&v=5';
 
-	const redirect = function() {
-		if (
-			! win.open( url, 't', 'toolbar=0,resizable=1,scrollbars=1,status=1,width=660,height=570' )
-		) {
+	const redirect = function () {
+		if (!win.open(url, 't', 'toolbar=0,resizable=1,scrollbars=1,status=1,width=660,height=570')) {
 			loc.href = url;
 		}
 	};
 
-	if ( /Firefox/.test( navigator.userAgent ) ) {
-		setTimeout( redirect, 0 );
+	if (/Firefox/.test(navigator.userAgent)) {
+		setTimeout(redirect, 0);
 	} else {
 		redirect();
 	}
@@ -72,20 +70,20 @@ class PressThisLink extends React.Component {
 		// IE does not reliably support window.location.origin
 		let postDomain =
 			typeof window !== 'undefined' && window.location
-				? `${ window.location.protocol }//${ window.location.hostname }`
+				? `${window.location.protocol}//${window.location.hostname}`
 				: 'https://wordpress.com';
-		if ( window.location.port ) {
-			postDomain += `:${ window.location.port }`;
+		if (window.location.port) {
+			postDomain += `:${window.location.port}`;
 		}
-		const postURL = postDomain + newPost( this.props.site );
-		return `javascript:( ${ functionText } )( '${ postURL }' )`;
+		const postURL = postDomain + newPost(this.props.site);
+		return `javascript:( ${functionText} )( '${postURL}' )`;
 	}
 
 	render() {
-		const omitProps = [ 'site' ];
+		const omitProps = ['site'];
 		return (
-			<a { ...omit( this.props, omitProps ) } href={ this.buildPressThisLink() }>
-				{ this.props.children }
+			<a {...omit(this.props, omitProps)} href={this.buildPressThisLink()}>
+				{this.props.children}
 			</a>
 		);
 	}

@@ -37,18 +37,18 @@ import { itemsSchema } from './schema';
  * @param {object} modifyDomainProperties - object with modified site domain properties
  * @returns {any} - new copy of the state
  */
-const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainProperties ) => {
+const modifySiteDomainObjectImmutable = (state, siteId, domain, modifyDomainProperties) => {
 	// Find the domain we want to update
-	const targetDomain = find( state[ siteId ], { domain: domain } );
-	const domainIndex = indexOf( state[ siteId ], targetDomain );
+	const targetDomain = find(state[siteId], { domain: domain });
+	const domainIndex = indexOf(state[siteId], targetDomain);
 	// Copy as we shouldn't mutate original state
-	const newDomains = [ ...state[ siteId ] ];
+	const newDomains = [...state[siteId]];
 	// Update privacy
-	newDomains.splice( domainIndex, 1, Object.assign( {}, targetDomain, modifyDomainProperties ) );
+	newDomains.splice(domainIndex, 1, Object.assign({}, targetDomain, modifyDomainProperties));
 
-	return Object.assign( {}, state, {
-		[ siteId ]: newDomains,
-	} );
+	return Object.assign({}, state, {
+		[siteId]: newDomains,
+	});
 };
 
 /**
@@ -58,37 +58,37 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
  * @param {object} action - domains action
  * @returns {object} updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+export const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
 	const { siteId } = action;
-	switch ( action.type ) {
+	switch (action.type) {
 		case SITE_DOMAINS_RECEIVE:
-			return Object.assign( {}, state, {
-				[ siteId ]: action.domains,
-			} );
+			return Object.assign({}, state, {
+				[siteId]: action.domains,
+			});
 		case DOMAIN_PRIVACY_ENABLE_SUCCESS:
-			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+			return modifySiteDomainObjectImmutable(state, siteId, action.domain, {
 				privateDomain: true,
 				contactInfoDisclosed: false,
-			} );
+			});
 		case DOMAIN_PRIVACY_DISABLE_SUCCESS:
-			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+			return modifySiteDomainObjectImmutable(state, siteId, action.domain, {
 				privateDomain: false,
 				contactInfoDisclosed: false,
-			} );
+			});
 		case DOMAIN_CONTACT_INFO_DISCLOSE_SUCCESS:
-			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+			return modifySiteDomainObjectImmutable(state, siteId, action.domain, {
 				privateDomain: false,
 				contactInfoDisclosed: true,
-			} );
+			});
 		case DOMAIN_CONTACT_INFO_REDACT_SUCCESS:
-			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+			return modifySiteDomainObjectImmutable(state, siteId, action.domain, {
 				privateDomain: false,
 				contactInfoDisclosed: false,
-			} );
+			});
 	}
 
 	return state;
-} );
+});
 
 /**
  * Updating privacy reducer
@@ -99,8 +99,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * @param {object} action - action
  * @returns {any} - new state
  */
-export const updatingPrivacy = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const updatingPrivacy = (state = {}, action) => {
+	switch (action.type) {
 		case DOMAIN_PRIVACY_ENABLE:
 		case DOMAIN_PRIVACY_ENABLE_SUCCESS:
 		case DOMAIN_PRIVACY_ENABLE_FAILURE:
@@ -113,17 +113,17 @@ export const updatingPrivacy = ( state = {}, action ) => {
 		case DOMAIN_CONTACT_INFO_REDACT:
 		case DOMAIN_CONTACT_INFO_REDACT_SUCCESS:
 		case DOMAIN_CONTACT_INFO_REDACT_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: {
-					[ action.domain ]:
+			return Object.assign({}, state, {
+				[action.siteId]: {
+					[action.domain]:
 						[
 							DOMAIN_PRIVACY_ENABLE,
 							DOMAIN_PRIVACY_DISABLE,
 							DOMAIN_CONTACT_INFO_DISCLOSE,
 							DOMAIN_CONTACT_INFO_REDACT,
-						].indexOf( action.type ) !== -1,
+						].indexOf(action.type) !== -1,
 				},
-			} );
+			});
 	}
 
 	return state;
@@ -137,14 +137,14 @@ export const updatingPrivacy = ( state = {}, action ) => {
  * @param {object} action - domains action
  * @returns {object} updated state
  */
-export const requesting = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requesting = (state = {}, action) => {
+	switch (action.type) {
 		case SITE_DOMAINS_REQUEST:
 		case SITE_DOMAINS_REQUEST_SUCCESS:
 		case SITE_DOMAINS_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.type === SITE_DOMAINS_REQUEST,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: action.type === SITE_DOMAINS_REQUEST,
+			});
 	}
 
 	return state;
@@ -157,26 +157,26 @@ export const requesting = ( state = {}, action ) => {
  * @param {object} action - domains action
  * @returns {object} updated state
  */
-export const errors = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const errors = (state = {}, action) => {
+	switch (action.type) {
 		case SITE_DOMAINS_REQUEST:
 		case SITE_DOMAINS_REQUEST_SUCCESS:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: null,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: null,
+			});
 
 		case SITE_DOMAINS_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.error,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: action.error,
+			});
 	}
 
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	errors,
 	items,
 	requesting,
 	updatingPrivacy,
-} );
+});

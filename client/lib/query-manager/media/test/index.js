@@ -27,12 +27,12 @@ const DEFAULT_MEDIA = {
 	exif: {},
 };
 
-const makeComparator = query => ( a, b ) => MediaQueryManager.compare( query, a, b );
+const makeComparator = (query) => (a, b) => MediaQueryManager.compare(query, a, b);
 
-describe( 'MediaQueryManager', () => {
-	describe( '#matches()', () => {
-		describe( 'query.search', () => {
-			test( 'should return false for a non-matching search', () => {
+describe('MediaQueryManager', () => {
+	describe('#matches()', () => {
+		describe('query.search', () => {
+			test('should return false for a non-matching search', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						search: 'Cars',
@@ -40,10 +40,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true for an empty search', () => {
+			test('should return true for an empty search', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						search: '',
@@ -51,10 +51,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true for a matching title search', () => {
+			test('should return true for a matching title search', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						search: 'lower',
@@ -62,10 +62,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should search case-insensitive', () => {
+			test('should search case-insensitive', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						search: 'fLoWeR',
@@ -73,12 +73,12 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.mime_type', () => {
-			test( 'should return true for an empty mime type', () => {
+		describe('query.mime_type', () => {
+			test('should return true for an empty mime type', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: '',
@@ -86,10 +86,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true an exact match', () => {
+			test('should return true an exact match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: 'image/gif',
@@ -97,10 +97,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true for mime subgroup exact match', () => {
+			test('should return true for mime subgroup exact match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: 'image',
@@ -108,10 +108,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true for mime subgroup exact match with trailing slash', () => {
+			test('should return true for mime subgroup exact match with trailing slash', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: 'image/',
@@ -119,10 +119,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false for mime subgroup partial match', () => {
+			test('should return false for mime subgroup partial match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: 'imag',
@@ -130,10 +130,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false for mime group partial match', () => {
+			test('should return false for mime group partial match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: 'image/gi',
@@ -141,10 +141,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true for wildcard match', () => {
+			test('should return true for wildcard match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: '%',
@@ -152,10 +152,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false for mime subgroup wildcard match', () => {
+			test('should return false for mime subgroup wildcard match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: '%/gif',
@@ -163,10 +163,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true for mime group wildcard match', () => {
+			test('should return true for mime group wildcard match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: 'image/%',
@@ -174,10 +174,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false for mime subgroup partial wildcard match', () => {
+			test('should return false for mime subgroup partial wildcard match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: 'ima%/%',
@@ -185,10 +185,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false for mime group partial wildcard match', () => {
+			test('should return false for mime group partial wildcard match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						mime_type: 'image/gi%',
@@ -196,12 +196,12 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
-		} );
+				expect(isMatch).toBe(false);
+			});
+		});
 
-		describe( 'query.post_ID', () => {
-			test( 'should return false if post ID does not match', () => {
+		describe('query.post_ID', () => {
+			test('should return false if post ID does not match', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						post_ID: 0,
@@ -209,10 +209,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if post ID matches', () => {
+			test('should return true if post ID matches', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						post_ID: 41,
@@ -220,12 +220,12 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.before', () => {
-			test( 'should return false if query is not ISO 8601', () => {
+		describe('query.before', () => {
+			test('should return false if query is not ISO 8601', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						before: '2018',
@@ -233,10 +233,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if media is not before date', () => {
+			test('should return false if media is not before date', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						before: '2010-04-25T15:47:33-04:00',
@@ -244,10 +244,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if media is before date', () => {
+			test('should return true if media is before date', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						before: '2018-04-25T15:47:33-04:00',
@@ -255,12 +255,12 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'query.after', () => {
-			test( 'should return false if query is not ISO 8601', () => {
+		describe('query.after', () => {
+			test('should return false if query is not ISO 8601', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						after: '2010',
@@ -268,10 +268,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if media is not after date', () => {
+			test('should return false if media is not after date', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						after: '2018-04-25T15:47:33-04:00',
@@ -279,10 +279,10 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if media is after date', () => {
+			test('should return true if media is after date', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
 						after: '2010-04-25T15:47:33-04:00',
@@ -290,37 +290,37 @@ describe( 'MediaQueryManager', () => {
 					DEFAULT_MEDIA
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
-	} );
+				expect(isMatch).toBe(true);
+			});
+		});
+	});
 
-	describe( '#compare()', () => {
-		describe( 'query.order', () => {
-			test( 'should sort descending by default', () => {
-				const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-					makeComparator( {
+	describe('#compare()', () => {
+		describe('query.order', () => {
+			test('should sort descending by default', () => {
+				const sorted = [{ ID: 200 }, { ID: 400 }].sort(
+					makeComparator({
 						order_by: 'ID',
-					} )
+					})
 				);
 
-				expect( sorted ).toEqual( [ { ID: 400 }, { ID: 200 } ] );
-			} );
+				expect(sorted).toEqual([{ ID: 400 }, { ID: 200 }]);
+			});
 
-			test( 'should reverse order when specified as ascending', () => {
-				const sorted = [ { ID: 400 }, { ID: 200 } ].sort(
-					makeComparator( {
+			test('should reverse order when specified as ascending', () => {
+				const sorted = [{ ID: 400 }, { ID: 200 }].sort(
+					makeComparator({
 						order_by: 'ID',
 						order: 'ASC',
-					} )
+					})
 				);
 
-				expect( sorted ).toEqual( [ { ID: 200 }, { ID: 400 } ] );
-			} );
-		} );
+				expect(sorted).toEqual([{ ID: 200 }, { ID: 400 }]);
+			});
+		});
 
-		describe( 'query.order_by', () => {
-			describe( 'date', () => {
+		describe('query.order_by', () => {
+			describe('date', () => {
 				const olderMedia = {
 					...DEFAULT_MEDIA,
 					date: '2016-04-25T11:40:52-04:00',
@@ -332,14 +332,14 @@ describe( 'MediaQueryManager', () => {
 					date: '2016-04-25T15:47:33-04:00',
 				};
 
-				test( 'should order by date', () => {
-					const sorted = [ olderMedia, newerMedia ].sort( makeComparator( {} ) );
+				test('should order by date', () => {
+					const sorted = [olderMedia, newerMedia].sort(makeComparator({}));
 
-					expect( sorted ).toEqual( [ newerMedia, olderMedia ] );
-				} );
-			} );
+					expect(sorted).toEqual([newerMedia, olderMedia]);
+				});
+			});
 
-			describe( 'title', () => {
+			describe('title', () => {
 				const abMedia = {
 					...DEFAULT_MEDIA,
 					title: 'AB',
@@ -351,28 +351,28 @@ describe( 'MediaQueryManager', () => {
 					title: 'Aa',
 				};
 
-				test( 'should sort by title', () => {
-					const sorted = [ aaMedia, abMedia ].sort(
-						makeComparator( {
+				test('should sort by title', () => {
+					const sorted = [aaMedia, abMedia].sort(
+						makeComparator({
 							order_by: 'title',
-						} )
+						})
 					);
 
-					expect( sorted ).toEqual( [ abMedia, aaMedia ] );
-				} );
-			} );
+					expect(sorted).toEqual([abMedia, aaMedia]);
+				});
+			});
 
-			describe( 'ID', () => {
-				test( 'should sort by ID', () => {
-					const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-						makeComparator( {
+			describe('ID', () => {
+				test('should sort by ID', () => {
+					const sorted = [{ ID: 200 }, { ID: 400 }].sort(
+						makeComparator({
 							order_by: 'ID',
-						} )
+						})
 					);
 
-					expect( sorted ).toEqual( [ { ID: 400 }, { ID: 200 } ] );
-				} );
-			} );
-		} );
-	} );
-} );
+					expect(sorted).toEqual([{ ID: 400 }, { ID: 200 }]);
+				});
+			});
+		});
+	});
+});

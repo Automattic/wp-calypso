@@ -16,61 +16,61 @@ import {
 } from 'lib/i18n-utils/switch-locale';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
-const setupTranslationChunks = async localeSlug => {
-	const { translatedChunks, locale } = await getLanguageManifestFile( localeSlug );
+const setupTranslationChunks = async (localeSlug) => {
+	const { translatedChunks, locale } = await getLanguageManifestFile(localeSlug);
 
-	i18n.setLocale( locale );
+	i18n.setLocale(locale);
 
 	const loadedTranslationChunks = {};
-	const loadTranslationForChunkIfNeeded = chunkId => {
-		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
+	const loadTranslationForChunkIfNeeded = (chunkId) => {
+		if (!translatedChunks.includes(chunkId) || loadedTranslationChunks[chunkId]) {
 			return;
 		}
 
-		return getTranslationChunkFile( chunkId, localeSlug ).then( translations => {
-			i18n.addTranslations( translations );
-			loadedTranslationChunks[ chunkId ] = true;
-		} );
+		return getTranslationChunkFile(chunkId, localeSlug).then((translations) => {
+			i18n.addTranslations(translations);
+			loadedTranslationChunks[chunkId] = true;
+		});
 	};
 	const installedChunks = new Set(
-		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
+		(window.installedChunks || []).concat(window.__requireChunkCallback__.getInstalledChunks())
 	);
 
-	installedChunks.forEach( chunkId => {
-		loadTranslationForChunkIfNeeded( chunkId );
-	} );
+	installedChunks.forEach((chunkId) => {
+		loadTranslationForChunkIfNeeded(chunkId);
+	});
 
-	window.__requireChunkCallback__.add( ( { publicPath, scriptSrc }, promises ) => {
-		const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
+	window.__requireChunkCallback__.add(({ publicPath, scriptSrc }, promises) => {
+		const chunkId = scriptSrc.replace(publicPath, '').replace(/\.js$/, '');
 
-		promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
-	} );
+		promises.push(loadTranslationForChunkIfNeeded(chunkId));
+	});
 };
 
-export const setupLocale = ( currentUser, reduxStore ) => {
-	if ( window.i18nLocaleStrings ) {
+export const setupLocale = (currentUser, reduxStore) => {
+	if (window.i18nLocaleStrings) {
 		// Use the locale translation data that were boostrapped by the server
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
-		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
-		if ( languageSlug ) {
-			loadUserUndeployedTranslations( languageSlug );
+		const i18nLocaleStringsObject = JSON.parse(window.i18nLocaleStrings);
+		reduxStore.dispatch(setLocaleRawData(i18nLocaleStringsObject));
+		const languageSlug = get(i18nLocaleStringsObject, ['', 'localeSlug']);
+		if (languageSlug) {
+			loadUserUndeployedTranslations(languageSlug);
 		}
-	} else if ( currentUser && currentUser.localeSlug ) {
+	} else if (currentUser && currentUser.localeSlug) {
 		// Use the current user's and load traslation data with a fetch request
-		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
+		reduxStore.dispatch(setLocale(currentUser.localeSlug, currentUser.localeVariant));
 	}
 
-	if ( config.isEnabled( 'use-translation-chunks' ) && '__requireChunkCallback__' in window ) {
+	if (config.isEnabled('use-translation-chunks') && '__requireChunkCallback__' in window) {
 		const userLocaleSlug = currentUser && currentUser.localeSlug;
 		const lastPathSegment = window.location.pathname.substr(
-			window.location.pathname.lastIndexOf( '/' ) + 1
+			window.location.pathname.lastIndexOf('/') + 1
 		);
-		const pathLocaleSlug = getLanguageSlugs().includes( lastPathSegment ) && lastPathSegment;
+		const pathLocaleSlug = getLanguageSlugs().includes(lastPathSegment) && lastPathSegment;
 		const localeSlug = userLocaleSlug || pathLocaleSlug;
 
-		if ( localeSlug ) {
-			setupTranslationChunks( localeSlug );
+		if (localeSlug) {
+			setupTranslationChunks(localeSlug);
 		}
 	}
 

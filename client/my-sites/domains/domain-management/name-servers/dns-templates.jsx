@@ -15,8 +15,8 @@ import DnsTemplateSelector from './dns-template-selector';
 import EmailProvider from '../dns/email-provider';
 
 class DnsTemplates extends React.Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		const { translate } = this.props;
 
@@ -55,14 +55,14 @@ class DnsTemplates extends React.Component {
 					validationPattern: /^MS=ms\d{8}$/,
 					dnsTemplateProvider: dnsTemplates.MICROSOFT_OFFICE365.PROVIDER,
 					dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
-					modifyVariables: variables =>
-						Object.assign( {}, variables, {
-							mxdata: replace( variables.domain, '.', '-' ) + '.mail.protection.outlook.com',
-						} ),
+					modifyVariables: (variables) =>
+						Object.assign({}, variables, {
+							mxdata: replace(variables.domain, '.', '-') + '.mail.protection.outlook.com',
+						}),
 				},
 				{
 					name: 'Zoho Mail',
-					label: translate( 'Zoho Mail CNAME zb code' ),
+					label: translate('Zoho Mail CNAME zb code'),
 					placeholder: 'zb...',
 					validationPattern: /^zb\w{1,100}$/,
 					dnsTemplateProvider: dnsTemplates.ZOHO_MAIL.PROVIDER,
@@ -72,26 +72,26 @@ class DnsTemplates extends React.Component {
 		};
 	}
 
-	onTemplateClick = name => {
-		this.setState( { currentComponentName: name } );
+	onTemplateClick = (name) => {
+		this.setState({ currentComponentName: name });
 	};
 
 	showCurrentTemplate() {
-		if ( ! this.state.currentComponentName ) {
+		if (!this.state.currentComponentName) {
 			return;
 		}
 
 		const componentName = this.state.currentComponentName;
 		const template = find(
 			this.state.templates,
-			dnsTemplate => dnsTemplate.name === componentName
+			(dnsTemplate) => dnsTemplate.name === componentName
 		);
 
 		return (
 			<EmailProvider
-				key={ `dns-templates-email-provider-${ template.dnsTemplate }` }
-				template={ template }
-				domain={ this.props.selectedDomainName }
+				key={`dns-templates-email-provider-${template.dnsTemplate}`}
+				template={template}
+				domain={this.props.selectedDomainName}
 			/>
 		);
 	}
@@ -103,22 +103,22 @@ class DnsTemplates extends React.Component {
 			<div>
 				<Card compact className="name-servers__dns-templates">
 					<span className="name-servers__title">
-						{ translate(
+						{translate(
 							'If you have already bought an e-mail service for the domain, ' +
 								'you can set it up with us easily:'
-						) }
+						)}
 					</span>
 					<div className="name-servers__dns-templates-buttons">
 						<DnsTemplateSelector
-							templates={ this.state.templates }
-							onTemplateClick={ this.onTemplateClick }
+							templates={this.state.templates}
+							onTemplateClick={this.onTemplateClick}
 						/>
 					</div>
-					<div className="name-servers__dns-templates-forms">{ this.showCurrentTemplate() }</div>
+					<div className="name-servers__dns-templates-forms">{this.showCurrentTemplate()}</div>
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default localize( DnsTemplates );
+export default localize(DnsTemplates);

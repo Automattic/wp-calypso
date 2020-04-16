@@ -27,30 +27,30 @@ import SectionHeader from 'components/section-header';
 
 class OrderDetails extends Component {
 	static propTypes = {
-		orderId: PropTypes.oneOfType( [
+		orderId: PropTypes.oneOfType([
 			PropTypes.number, // A number indicates an existing order
-			PropTypes.shape( { id: PropTypes.string } ), // Placeholders have format { id: 'order_1' }
-		] ).isRequired,
+			PropTypes.shape({ id: PropTypes.string }), // Placeholders have format { id: 'order_1' }
+		]).isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			status: this.props.order.status || false,
 		};
 	}
 
-	updateStatus = event => {
+	updateStatus = (event) => {
 		const { siteId, order } = this.props;
-		if ( siteId ) {
-			this.props.editOrder( siteId, { id: order.id, status: event.target.value } );
+		if (siteId) {
+			this.props.editOrder(siteId, { id: order.id, status: event.target.value });
 		}
 	};
 
-	updateOrder = newOrder => {
+	updateOrder = (newOrder) => {
 		const { siteId, order } = this.props;
-		if ( siteId ) {
-			this.props.editOrder( siteId, { id: order.id, ...newOrder } );
+		if (siteId) {
+			this.props.editOrder(siteId, { id: order.id, ...newOrder });
 		}
 	};
 
@@ -58,60 +58,60 @@ class OrderDetails extends Component {
 		const { isEditing, order } = this.props;
 
 		return isEditing ? (
-			<OrderStatusSelect value={ order.status } onChange={ this.updateStatus } />
+			<OrderStatusSelect value={order.status} onChange={this.updateStatus} />
 		) : (
-			<OrderStatus order={ order } showShipping={ false } />
+			<OrderStatus order={order} showShipping={false} />
 		);
 	};
 
 	renderDetails = () => {
 		const { isEditing, order, site } = this.props;
-		if ( isEditing ) {
+		if (isEditing) {
 			return (
 				<OrderDetailsTable
-					order={ order }
-					site={ site }
-					isEditing={ isOrderEditable( order ) }
-					onChange={ this.updateOrder }
+					order={order}
+					site={site}
+					isEditing={isOrderEditable(order)}
+					onChange={this.updateOrder}
 				/>
 			);
 		}
 
 		return [
-			<OrderCreated key="order-date" order={ order } site={ site } />,
-			<OrderDetailsTable key="order-details" order={ order } site={ site } />,
-			<OrderPaymentCard key="order-payment" order={ order } siteId={ site.ID || null } />,
-			<OrderFulfillment key="order-fulfillment" order={ order } site={ site } />,
+			<OrderCreated key="order-date" order={order} site={site} />,
+			<OrderDetailsTable key="order-details" order={order} site={site} />,
+			<OrderPaymentCard key="order-payment" order={order} siteId={site.ID || null} />,
+			<OrderFulfillment key="order-fulfillment" order={order} site={site} />,
 		];
 	};
 
 	render() {
 		const { order, translate } = this.props;
-		if ( ! order ) {
+		if (!order) {
 			return null;
 		}
 
 		return (
 			<div className="order-details">
 				<SectionHeader
-					label={ translate( 'Order %(orderId)s details', {
-						args: { orderId: isObject( order.id ) ? '' : `#${ order.id }` },
-					} ) }
+					label={translate('Order %(orderId)s details', {
+						args: { orderId: isObject(order.id) ? '' : `#${order.id}` },
+					})}
 				>
-					<span>{ this.renderStatus() }</span>
+					<span>{this.renderStatus()}</span>
 				</SectionHeader>
-				<Card className="order-details__card">{ this.renderDetails() }</Card>
+				<Card className="order-details__card">{this.renderDetails()}</Card>
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => {
-		const site = getSelectedSiteWithFallback( state );
+	(state, props) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site ? site.ID : false;
-		const isEditing = isCurrentlyEditingOrder( state );
-		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, props.orderId );
+		const isEditing = isCurrentlyEditingOrder(state);
+		const order = isEditing ? getOrderWithEdits(state) : getOrder(state, props.orderId);
 
 		return {
 			isEditing,
@@ -120,5 +120,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder }, dispatch )
-)( localize( OrderDetails ) );
+	(dispatch) => bindActionCreators({ editOrder }, dispatch)
+)(localize(OrderDetails));

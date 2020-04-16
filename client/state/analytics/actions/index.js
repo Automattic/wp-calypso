@@ -24,7 +24,7 @@ export { default as withAnalytics } from './with-analytics';
 export { default as enhanceWithSiteType } from './enhance-with-site-type';
 export { default as composeAnalytics } from './compose-analytics';
 
-export function bumpStat( group, name ) {
+export function bumpStat(group, name) {
 	return {
 		type: ANALYTICS_STAT_BUMP,
 		meta: {
@@ -38,14 +38,14 @@ export function bumpStat( group, name ) {
 	};
 }
 
-export function loadTrackingTool( trackingTool ) {
+export function loadTrackingTool(trackingTool) {
 	return {
 		type: ANALYTICS_TRACKING_ON,
 		trackingTool,
 	};
 }
 
-export function setTracksOptOut( isOptingOut ) {
+export function setTracksOptOut(isOptingOut) {
 	return {
 		type: ANALYTICS_TRACKS_OPT_OUT,
 		isOptingOut,

@@ -11,8 +11,8 @@ import getRewindState from './get-rewind-state';
  * @param {string} rewindId the id of the rewind to get the status of
  * @returns {?string} the url of the download, otherwise null
  */
-export default function getInProgressRewindStatus( state, siteId, rewindId ) {
-	const maybeRewindState = getRewindState( state, siteId );
+export default function getInProgressRewindStatus(state, siteId, rewindId) {
+	const maybeRewindState = getRewindState(state, siteId);
 	return maybeRewindState.state === 'active' &&
 		maybeRewindState.rewind &&
 		maybeRewindState.rewind.rewindId === rewindId

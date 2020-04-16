@@ -11,8 +11,8 @@ import { cloneBlock } from '@wordpress/blocks';
  * @param {Array} blocks an array of block objects
  * @param {Function} modifier a callback function used to modify the blocks
  */
-function mapBlocksRecursively( blocks, modifier = identity ) {
-	return blocks.map( block => {
+function mapBlocksRecursively(blocks, modifier = identity) {
+	return blocks.map((block) => {
 		// `blocks` is an object. Therefore any changes made here will
 		// be reflected across all references to the blocks object. To ensure we
 		// only modify the blocks when needed, we return a new object reference
@@ -20,15 +20,15 @@ function mapBlocksRecursively( blocks, modifier = identity ) {
 		// particular contexts. For example we may wish to show blocks
 		// differently in the preview than we do when they are inserted into the
 		// editor itself.
-		block = modifier( cloneBlock( block ) );
+		block = modifier(cloneBlock(block));
 
 		// Recurse into nested Blocks
-		if ( block.innerBlocks && block.innerBlocks.length ) {
-			block.innerBlocks = mapBlocksRecursively( block.innerBlocks, modifier );
+		if (block.innerBlocks && block.innerBlocks.length) {
+			block.innerBlocks = mapBlocksRecursively(block.innerBlocks, modifier);
 		}
 
 		return block;
-	} );
+	});
 }
 
 export default mapBlocksRecursively;

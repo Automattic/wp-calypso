@@ -10,9 +10,9 @@ import React from 'react';
  */
 import './style.scss';
 
-const Masterbar = ( { children, className } ) => (
-	<header id="header" className={ classNames( 'masterbar', className ) }>
-		{ children }
+const Masterbar = ({ children, className }) => (
+	<header id="header" className={classNames('masterbar', className)}>
+		{children}
 	</header>
 );
 

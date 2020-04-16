@@ -6,7 +6,7 @@ export const itemsSchema = {
 			type: 'array',
 			items: {
 				type: 'object',
-				required: [ 'label', 'file' ],
+				required: ['label', 'file'],
 				properties: {
 					label: { type: 'string' },
 					file: { type: 'string' },

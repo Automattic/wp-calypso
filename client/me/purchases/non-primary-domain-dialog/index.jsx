@@ -36,32 +36,32 @@ class NonPrimaryDomainDialog extends Component {
 		const buttons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 			},
 			{
 				action: 'remove',
 				isPrimary: true,
-				label: translate( 'Remove Plan' ),
+				label: translate('Remove Plan'),
 				onClick: this.removePlan,
 			},
 		];
 
 		return (
 			<Dialog
-				buttons={ buttons }
+				buttons={buttons}
 				className="non-primary-domain-dialog"
-				isVisible={ this.props.isDialogVisible }
-				onClose={ this.close }
+				isVisible={this.props.isDialogVisible}
+				onClose={this.close}
 			>
 				<Fragment>
 					<FormSectionHeading>
-						{ translate( 'Remove %(plan)s', {
+						{translate('Remove %(plan)s', {
 							args: { plan: planName },
-						} ) }
+						})}
 					</FormSectionHeading>
 
 					<p>
-						{ translate(
+						{translate(
 							'When you downgrade your plan, {{strong}}%(oldDomain)s{{/strong}} will immediately start ' +
 								'forwarding to {{strong}}%(newDomain)s{{/strong}}.',
 							{
@@ -73,9 +73,9 @@ class NonPrimaryDomainDialog extends Component {
 									strong: <strong />,
 								},
 							}
-						) }
+						)}
 						<br />
-						{ translate(
+						{translate(
 							'{{strong}}%(newDomain)s{{/strong}} will be the address that people see when they visit ' +
 								'your site. Would you still like to downgrade your plan?',
 							{
@@ -86,7 +86,7 @@ class NonPrimaryDomainDialog extends Component {
 									strong: <strong />,
 								},
 							}
-						) }
+						)}
 					</p>
 				</Fragment>
 			</Dialog>
@@ -94,4 +94,4 @@ class NonPrimaryDomainDialog extends Component {
 	}
 }
 
-export default localize( NonPrimaryDomainDialog );
+export default localize(NonPrimaryDomainDialog);

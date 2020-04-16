@@ -12,9 +12,9 @@ import { unescape } from 'lodash';
  * @param  {object} response Response from an API call
  * @returns {object}          Verified response
  */
-export function verifyResponseHasData( response ) {
-	if ( ! response.data ) {
-		throw new Error( 'Failure at remote site.', response );
+export function verifyResponseHasData(response) {
+	if (!response.data) {
+		throw new Error('Failure at remote site.', response);
 	}
 	return response;
 }
@@ -25,9 +25,9 @@ export function verifyResponseHasData( response ) {
  * @param  {Array} categories List of categories from the remote site API
  * @returns {boolean}          True if the categories are valid.
  */
-function isValidCategoriesArray( categories ) {
-	for ( let i = 0; i < categories.length; i++ ) {
-		if ( ! isValidProductCategory( categories[ i ] ) ) {
+function isValidCategoriesArray(categories) {
+	for (let i = 0; i < categories.length; i++) {
+		if (!isValidProductCategory(categories[i])) {
 			// Short-circuit the loop and return now.
 			return false;
 		}
@@ -41,7 +41,7 @@ function isValidCategoriesArray( categories ) {
  * @param  {object} category A single category from the remote site API
  * @returns {boolean}         True if the category is valid.
  */
-function isValidProductCategory( category ) {
+function isValidProductCategory(category) {
 	return (
 		category &&
 		category.id &&
@@ -62,22 +62,22 @@ function isValidProductCategory( category ) {
  * @param  {object} response Response from an API call
  * @returns {object}          Verified response
  */
-export function verifyResponseHasValidCategories( response ) {
-	if ( ! response.data ) {
-		throw new Error( 'Failure at remote site.', response );
+export function verifyResponseHasValidCategories(response) {
+	if (!response.data) {
+		throw new Error('Failure at remote site.', response);
 	}
 	const { body = [], status = 400 } = response.data;
-	if ( status !== 200 || ! isValidCategoriesArray( body ) ) {
-		throw new Error( 'Invalid categories.', response );
+	if (status !== 200 || !isValidCategoriesArray(body)) {
+		throw new Error('Invalid categories.', response);
 	}
 
-	const unescapedBody = body.map( cat => {
+	const unescapedBody = body.map((cat) => {
 		return {
 			...cat,
-			name: unescape( cat.name ),
-			description: cat.description ? unescape( cat.description ) : '',
+			name: unescape(cat.name),
+			description: cat.description ? unescape(cat.description) : '',
 		};
-	} );
+	});
 
 	return {
 		data: {

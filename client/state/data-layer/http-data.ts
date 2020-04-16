@@ -30,72 +30,72 @@ interface ResourceData {
 }
 
 type Resource =
-	| ( ResourceData & {
+	| (ResourceData & {
 			state: DataState.Uninitialized;
 			data: undefined;
 			error: undefined;
 			pendingSince: undefined;
-	  } )
-	| ( ResourceData & { state: DataState.Pending; error: undefined; pendingSince: TimestampMS } )
-	| ( ResourceData & { state: DataState.Failure; pendingSince: undefined } )
-	| ( ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined } );
+	  })
+	| (ResourceData & { state: DataState.Pending; error: undefined; pendingSince: TimestampMS })
+	| (ResourceData & { state: DataState.Failure; pendingSince: undefined })
+	| (ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined });
 
 type DataId = string;
 
-export const httpData = new Map< DataId, Resource >();
-export const listeners = new Set< () => void >();
+export const httpData = new Map<DataId, Resource>();
+export const listeners = new Set<() => void>();
 
-export const empty: Readonly< Resource > = Object.freeze( {
+export const empty: Readonly<Resource> = Object.freeze({
 	state: DataState.Uninitialized,
 	data: undefined,
 	error: undefined,
 	lastUpdated: -Infinity,
 	pendingSince: undefined,
-} );
+});
 
-export const getHttpData = ( id: DataId ) => httpData.get( id ) || empty;
+export const getHttpData = (id: DataId) => httpData.get(id) || empty;
 
-export const subscribe = ( f: () => void ): ( () => void ) => {
-	listeners.add( f );
+export const subscribe = (f: () => void): (() => void) => {
+	listeners.add(f);
 
-	return () => void listeners.delete( f );
+	return () => void listeners.delete(f);
 };
 
-export const updateData = ( id: DataId, state: DataState, data: unknown ): typeof httpData => {
+export const updateData = (id: DataId, state: DataState, data: unknown): typeof httpData => {
 	const lastUpdated: TimestampMS = Date.now();
-	const item = httpData.get( id ) || empty;
+	const item = httpData.get(id) || empty;
 
 	// We could have left out the keys for
 	// the previous properties if they didn't
 	// exist but I wanted to make sure we can
 	// get our hidden classes to optimize here.
-	switch ( state ) {
+	switch (state) {
 		case DataState.Failure:
-			return httpData.set( id, {
+			return httpData.set(id, {
 				state,
 				data: item.data,
 				error: data,
 				lastUpdated: item.lastUpdated,
 				pendingSince: undefined,
-			} );
+			});
 
 		case DataState.Pending:
-			return httpData.set( id, {
+			return httpData.set(id, {
 				state,
 				data: item.data,
 				error: undefined,
 				lastUpdated: item.lastUpdated,
 				pendingSince: lastUpdated,
-			} );
+			});
 
 		case DataState.Success:
-			return httpData.set( id, {
+			return httpData.set(id, {
 				state,
 				data,
 				error: undefined,
 				lastUpdated,
 				pendingSince: undefined,
-			} );
+			});
 
 		// We do not expect to hit this case, it is included for exhaustiveness.
 		case DataState.Uninitialized:
@@ -103,18 +103,18 @@ export const updateData = ( id: DataId, state: DataState, data: unknown ): typeo
 	}
 };
 
-export const resetHttpData = ( id: DataId ) => httpData.set( id, empty );
+export const resetHttpData = (id: DataId) => httpData.set(id, empty);
 
-export const update = ( id: DataId, state: DataState, data?: unknown ) => {
-	const updated = updateData( id, state, data );
+export const update = (id: DataId, state: DataState, data?: unknown) => {
+	const updated = updateData(id, state, data);
 
-	listeners.forEach( f => f() );
+	listeners.forEach((f) => f());
 
 	return updated;
 };
 
-const fetch = ( action: HttpDataAction ) => {
-	update( action.id, DataState.Pending );
+const fetch = (action: HttpDataAction) => {
+	update(action.id, DataState.Pending);
 
 	return [
 		{
@@ -127,14 +127,14 @@ const fetch = ( action: HttpDataAction ) => {
 	];
 };
 
-const onError = ( action: HttpDataAction, error: unknown ) => {
-	update( action.id, DataState.Failure, error );
+const onError = (action: HttpDataAction, error: unknown) => {
+	update(action.id, DataState.Failure, error);
 
 	return { type: HTTP_DATA_TICK };
 };
 
-type SuccessfulParse = [ undefined, ReturnType< ResponseParser > ];
-type FailedParse = [ unknown, undefined ];
+type SuccessfulParse = [undefined, ReturnType<ResponseParser>];
+type FailedParse = [unknown, undefined];
 type ParseResult = SuccessfulParse | FailedParse;
 
 /**
@@ -158,55 +158,53 @@ type ParseResult = SuccessfulParse | FailedParse;
  * @returns output data to store
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parseResponse = ( data: any, fromApi: ResponseParser ): ParseResult => {
+const parseResponse = (data: any, fromApi: ResponseParser): ParseResult => {
 	try {
-		return [ undefined, fromApi( data ) ];
-	} catch ( error ) {
-		return [ error, undefined ];
+		return [undefined, fromApi(data)];
+	} catch (error) {
+		return [error, undefined];
 	}
 };
 
-const onSuccess = ( action: HttpDataAction, apiData: unknown ) => {
-	const [ error, data ] = parseResponse( apiData, action.fromApi() );
+const onSuccess = (action: HttpDataAction, apiData: unknown) => {
+	const [error, data] = parseResponse(apiData, action.fromApi());
 
-	if ( undefined === data ) {
-		return onError( action, error );
+	if (undefined === data) {
+		return onError(action, error);
 	}
 
-	update( action.id, DataState.Success, apiData );
-	data.forEach( ( [ id, resource ] ) => update( id, DataState.Success, resource ) );
+	update(action.id, DataState.Success, apiData);
+	data.forEach(([id, resource]) => update(id, DataState.Success, resource));
 
 	return { type: HTTP_DATA_TICK };
 };
 
 export default {
-	[ HTTP_DATA_REQUEST ]: [
-		dispatchRequest( {
+	[HTTP_DATA_REQUEST]: [
+		dispatchRequest({
 			fetch,
 			onSuccess,
 			onError,
-		} ),
+		}),
 	],
 };
 
-export const reducer: Reducer< number, Action< typeof HTTP_DATA_TICK > > = (
-	state = 0,
-	{ type }
-) => ( HTTP_DATA_TICK === type ? state + 1 : state );
+export const reducer: Reducer<number, Action<typeof HTTP_DATA_TICK>> = (state = 0, { type }) =>
+	HTTP_DATA_TICK === type ? state + 1 : state;
 
-interface HttpDataAction extends Action< typeof HTTP_DATA_REQUEST > {
+interface HttpDataAction extends Action<typeof HTTP_DATA_REQUEST> {
 	id: DataId;
 	fetch: AnyAction;
-	fromApi: Lazy< ResponseParser >;
+	fromApi: Lazy<ResponseParser>;
 }
 
-let dispatch: Dispatch< AnyAction >;
+let dispatch: Dispatch<AnyAction>;
 let dispatchQueue: HttpDataAction[] = [];
 
-export const enhancer = ( next: StoreEnhancerStoreCreator ) => (
-	...args: Parameters< StoreEnhancerStoreCreator >
+export const enhancer = (next: StoreEnhancerStoreCreator) => (
+	...args: Parameters<StoreEnhancerStoreCreator>
 ) => {
-	const store = next( ...args );
+	const store = next(...args);
 
 	dispatch = store.dispatch;
 
@@ -214,19 +212,19 @@ export const enhancer = ( next: StoreEnhancerStoreCreator ) => (
 	// to load then dispatch all queued actions
 	// delay picked to allow for initialization
 	// to occur while remaining "instant"
-	setTimeout( () => {
-		dispatchQueue.forEach( dispatch );
+	setTimeout(() => {
+		dispatchQueue.forEach(dispatch);
 		dispatchQueue = [];
-	}, 50 );
+	}, 50);
 
 	return store;
 };
 
-type ResourcePair = [ DataId, any ]; // eslint-disable-line @typescript-eslint/no-explicit-any
-type ResponseParser = ( apiData: any ) => ResourcePair[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+type ResourcePair = [DataId, any]; // eslint-disable-line @typescript-eslint/no-explicit-any
+type ResponseParser = (apiData: any) => ResourcePair[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 interface RequestHttpDataOptions {
-	fromApi?: Lazy< ResponseParser >;
+	fromApi?: Lazy<ResponseParser>;
 	freshness?: number;
 }
 
@@ -242,18 +240,18 @@ interface RequestHttpDataOptions {
  */
 export const requestHttpData = (
 	requestId: DataId,
-	fetchAction: Lazy< AnyAction > | AnyAction,
+	fetchAction: Lazy<AnyAction> | AnyAction,
 	{ fromApi, freshness = Infinity }: RequestHttpDataOptions
 ): Resource => {
-	const data = getHttpData( requestId );
+	const data = getHttpData(requestId);
 	const { state, lastUpdated } = data;
 
 	if (
 		DataState.Uninitialized === state ||
-		( DataState.Pending !== state && Date.now() - lastUpdated > freshness )
+		(DataState.Pending !== state && Date.now() - lastUpdated > freshness)
 	) {
-		if ( 'development' === process.env.NODE_ENV && 'function' !== typeof dispatch ) {
-			throw new Error( 'Cannot use HTTP data without injecting Redux store enhancer!' );
+		if ('development' === process.env.NODE_ENV && 'function' !== typeof dispatch) {
+			throw new Error('Cannot use HTTP data without injecting Redux store enhancer!');
 		}
 
 		const action: HttpDataAction = {
@@ -261,20 +259,20 @@ export const requestHttpData = (
 			id: requestId,
 			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			fromApi: 'function' === typeof fromApi ? fromApi : () => ( a: any ) => a,
+			fromApi: 'function' === typeof fromApi ? fromApi : () => (a: any) => a,
 		};
 
-		dispatch ? dispatch( action ) : dispatchQueue.push( action );
+		dispatch ? dispatch(action) : dispatchQueue.push(action);
 	}
 
 	return data;
 };
 
 interface Query {
-	[ key: string ]: Lazy< Resource >;
+	[key: string]: Lazy<Resource>;
 }
 
-type Results< T extends Query > = { [ P in keyof T ]: ReturnType< T[ P ] > };
+type Results<T extends Query> = { [P in keyof T]: ReturnType<T[P]> };
 
 /**
  * Blocks execution until requested data has been fulfilled
@@ -300,53 +298,53 @@ type Results< T extends Query > = { [ P in keyof T ]: ReturnType< T[ P ] > };
  * @param timeout - how many ms to wait until giving up on requests
  * @returns fulfilled data of request (or partial if could not fulfill)
  */
-export const waitForData = < T extends Query >(
+export const waitForData = <T extends Query>(
 	query: T,
 	{ timeout }: { timeout?: number } = {}
-): Promise< Results< T > > =>
-	new Promise( ( resolve, reject ) => {
+): Promise<Results<T>> =>
+	new Promise((resolve, reject) => {
 		let unsubscribe = () => {};
 		let timer: TimerHandle;
-		const names = Object.keys( query );
+		const names = Object.keys(query);
 
 		const getValues = () =>
 			names.reduce(
-				( [ values, allBad, allDone ], name ) => {
-					const value = query[ name ]();
+				([values, allBad, allDone], name) => {
+					const value = query[name]();
 
 					return [
-						{ ...values, [ name ]: value },
+						{ ...values, [name]: value },
 						allBad && value.state === DataState.Failure,
-						allDone && ( value.state === DataState.Success || value.state === DataState.Failure ),
+						allDone && (value.state === DataState.Success || value.state === DataState.Failure),
 					];
 				},
-				[ {}, true, true ] as [ Results< T >, boolean, boolean ]
+				[{}, true, true] as [Results<T>, boolean, boolean]
 			);
 
 		const listener = () => {
-			const [ values, allBad, allDone ] = getValues();
+			const [values, allBad, allDone] = getValues();
 
-			if ( allDone ) {
-				clearTimeout( timer );
+			if (allDone) {
+				clearTimeout(timer);
 				unsubscribe();
-				allBad ? reject( values ) : resolve( values );
+				allBad ? reject(values) : resolve(values);
 			}
 		};
 
-		if ( timeout ) {
-			timer = setTimeout( () => {
-				const [ values ] = getValues();
+		if (timeout) {
+			timer = setTimeout(() => {
+				const [values] = getValues();
 
 				unsubscribe();
-				reject( values );
-			}, timeout );
+				reject(values);
+			}, timeout);
 		}
 
-		unsubscribe = subscribe( listener );
+		unsubscribe = subscribe(listener);
 		listener();
-	} );
+	});
 
-if ( 'object' === typeof window && window.app && window.app.isDebug ) {
+if ('object' === typeof window && window.app && window.app.isDebug) {
 	window.getHttpData = getHttpData;
 	window.httpData = httpData;
 	window.requestHttpData = requestHttpData;

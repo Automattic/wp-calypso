@@ -14,10 +14,10 @@ import userModule from 'lib/user';
  * Module Variables
  */
 const user = userModule();
-const debug = debugModule( 'calypso:user:utilities' );
+const debug = debugModule('calypso:user:utilities');
 
 const userUtils = {
-	getLogoutUrl( redirect ) {
+	getLogoutUrl(redirect) {
 		const userData = user.get();
 		let url = '/logout',
 			subdomain = '';
@@ -25,34 +25,34 @@ const userUtils = {
 		// If logout_URL isn't set, then go ahead and return the logout URL
 		// without a proper nonce as a fallback.
 		// Note: we never want to use logout_URL in the desktop app
-		if ( ! userData.logout_URL || config.isEnabled( 'always_use_logout_url' ) ) {
+		if (!userData.logout_URL || config.isEnabled('always_use_logout_url')) {
 			// Use localized version of the homepage in the redirect
-			if ( userData.localeSlug && userData.localeSlug !== '' && userData.localeSlug !== 'en' ) {
+			if (userData.localeSlug && userData.localeSlug !== '' && userData.localeSlug !== 'en') {
 				subdomain = userData.localeSlug + '.';
 			}
 
-			url = config( 'logout_url' ).replace( '|subdomain|', subdomain );
+			url = config('logout_url').replace('|subdomain|', subdomain);
 		} else {
 			url = userData.logout_URL;
 		}
 
-		if ( 'string' === typeof redirect ) {
-			redirect = '&redirect_to=' + encodeURIComponent( redirect );
+		if ('string' === typeof redirect) {
+			redirect = '&redirect_to=' + encodeURIComponent(redirect);
 			url += redirect;
 		}
 
-		debug( 'Logout Url: ' + url );
+		debug('Logout Url: ' + url);
 
 		return url;
 	},
 
-	logout( redirect ) {
-		const logoutUrl = userUtils.getLogoutUrl( redirect );
+	logout(redirect) {
+		const logoutUrl = userUtils.getLogoutUrl(redirect);
 
 		// Clear any data stored locally within the user data module or localStorage
-		user.clear().then( () => {
+		user.clear().then(() => {
 			window.location.href = logoutUrl;
-		} );
+		});
 	},
 
 	getLocaleSlug() {
@@ -60,7 +60,7 @@ const userUtils = {
 	},
 
 	isLoggedIn() {
-		return Boolean( user.data );
+		return Boolean(user.data);
 	},
 };
 

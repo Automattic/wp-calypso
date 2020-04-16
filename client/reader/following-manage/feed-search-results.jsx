@@ -30,19 +30,19 @@ class FollowingManageSearchFeedsResults extends React.Component {
 		width: PropTypes.number,
 	};
 
-	hasNextPage = offset => {
-		if ( this.props.showMoreResults ) {
+	hasNextPage = (offset) => {
+		if (this.props.showMoreResults) {
 			return offset < this.props.searchResultsCount;
 		}
 		return false;
 	};
 
-	fetchNextPage = offset =>
-		this.props.requestFeedSearch( {
+	fetchNextPage = (offset) =>
+		this.props.requestFeedSearch({
 			query: this.props.query,
 			offset,
 			excludeFollowed: true,
-		} );
+		});
 
 	render() {
 		const {
@@ -54,60 +54,58 @@ class FollowingManageSearchFeedsResults extends React.Component {
 			searchResultsCount,
 			query,
 		} = this.props;
-		const isEmpty = !! ( query && query.length > 0 && searchResults && searchResults.length === 0 );
-		const classNames = classnames( 'following-manage__search-results', {
+		const isEmpty = !!(query && query.length > 0 && searchResults && searchResults.length === 0);
+		const classNames = classnames('following-manage__search-results', {
 			'is-empty': isEmpty,
-		} );
+		});
 
-		if ( ! searchResults ) {
+		if (!searchResults) {
 			return (
-				<div className={ classNames }>
-					{ times( 10, i => (
-						<ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />
-					) ) }
+				<div className={classNames}>
+					{times(10, (i) => (
+						<ReaderSubscriptionListItemPlaceholder key={`placeholder-${i}`} />
+					))}
 				</div>
 			);
-		} else if ( isEmpty ) {
+		} else if (isEmpty) {
 			return (
-				<div className={ classNames }>
-					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
+				<div className={classNames}>
+					{translate('Sorry, no sites match {{italic}}%s.{{/italic}}', {
 						components: { italic: <i /> },
 						args: query,
-					} ) }
+					})}
 				</div>
 			);
 		}
 
 		return (
-			<div className={ classNames }>
+			<div className={classNames}>
 				<InfiniteStream
-					extraRenderItemProps={ {
+					extraRenderItemProps={{
 						showLastUpdatedDate: false,
 						followSource: READER_FOLLOWING_MANAGE_SEARCH_RESULT,
-					} }
-					items={ showMoreResults ? searchResults : take( searchResults, 10 ) }
-					width={ width }
-					fetchNextPage={ this.fetchNextPage }
-					hasNextPage={ showMoreResults ? this.hasNextPage : undefined }
-					rowRenderer={ siteRowRenderer }
+					}}
+					items={showMoreResults ? searchResults : take(searchResults, 10)}
+					width={width}
+					fetchNextPage={this.fetchNextPage}
+					hasNextPage={showMoreResults ? this.hasNextPage : undefined}
+					rowRenderer={siteRowRenderer}
 				/>
-				{ ! showMoreResults && searchResultsCount > 10 && (
+				{!showMoreResults && searchResultsCount > 10 && (
 					<div className="following-manage__show-more">
 						<Button
 							compact
-							onClick={ onShowMoreResultsClicked }
+							onClick={onShowMoreResultsClicked}
 							className="following-manage__show-more-button button"
 						>
 							<Gridicon icon="chevron-down" />
-							{ translate( 'Show more' ) }
+							{translate('Show more')}
 						</Button>
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( null, { requestFeedSearch } )(
-	localize( FollowingManageSearchFeedsResults )
-);
+export default connect(null, { requestFeedSearch })(localize(FollowingManageSearchFeedsResults));

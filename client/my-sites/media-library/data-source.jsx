@@ -36,15 +36,15 @@ export class MediaLibraryDataSource extends Component {
 
 	state = { popover: false };
 
-	storeButtonRef = ref => ( this.buttonRef = ref );
+	storeButtonRef = (ref) => (this.buttonRef = ref);
 
 	togglePopover = () => {
-		this.setState( { popover: ! this.state.popover } );
+		this.setState({ popover: !this.state.popover });
 	};
 
-	changeSource = newSource => () => {
-		if ( newSource !== this.props.source ) {
-			this.props.onSourceChange( newSource );
+	changeSource = (newSource) => () => {
+		if (newSource !== this.props.source) {
+			this.props.onSourceChange(newSource);
 		}
 	};
 
@@ -54,86 +54,86 @@ export class MediaLibraryDataSource extends Component {
 		const sources = [
 			{
 				value: '',
-				label: translate( 'WordPress library' ),
-				icon: <Gridicon icon="image" size={ 24 } />,
+				label: translate('WordPress library'),
+				icon: <Gridicon icon="image" size={24} />,
 			},
 		];
-		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
-			sources.push( {
+		if (config.isEnabled('external-media/google-photos') && includeExternalMedia) {
+			sources.push({
 				value: 'google_photos',
-				label: translate( 'Google Photos library' ),
+				label: translate('Google Photos library'),
 				icon: <GooglePhotosIcon />,
-			} );
+			});
 		}
-		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
-			sources.push( {
+		if (config.isEnabled('external-media/free-photo-library') && includeExternalMedia) {
+			sources.push({
 				value: 'pexels',
-				label: translate( 'Free photo library' ),
-				icon: <Gridicon icon="image-multiple" size={ 24 } />,
-			} );
+				label: translate('Free photo library'),
+				icon: <Gridicon icon="image-multiple" size={24} />,
+			});
 		}
-		return sources.filter( ( { value } ) => ! includes( disabledSources, value ) );
+		return sources.filter(({ value }) => !includes(disabledSources, value));
 	};
 
-	renderScreenReader( selected ) {
-		return <ScreenReaderText>{ selected && selected.label }</ScreenReaderText>;
+	renderScreenReader(selected) {
+		return <ScreenReaderText>{selected && selected.label}</ScreenReaderText>;
 	}
 
-	renderMenuItems( sources ) {
-		return sources.map( ( { icon, label, value } ) => (
-			<PopoverMenuItem key={ value } data-source={ value } onClick={ this.changeSource( value ) }>
-				{ icon }
-				{ label }
+	renderMenuItems(sources) {
+		return sources.map(({ icon, label, value }) => (
+			<PopoverMenuItem key={value} data-source={value} onClick={this.changeSource(value)}>
+				{icon}
+				{label}
 			</PopoverMenuItem>
-		) );
+		));
 	}
 
 	render() {
 		const { translate, source } = this.props;
 		const sources = this.getSources();
-		const currentSelected = find( sources, item => item.value === source );
-		const classes = classnames( 'media-library__datasource', {
+		const currentSelected = find(sources, (item) => item.value === source);
+		const classes = classnames('media-library__datasource', {
 			'is-single-source': 1 === sources.length,
-		} );
-		const buttonClasses = classnames( 'button media-library__source-button', {
+		});
+		const buttonClasses = classnames('button media-library__source-button', {
 			'is-open': this.state.popover,
-		} );
+		});
 
-		if ( ! config.isEnabled( 'external-media' ) && ! sources.length ) {
+		if (!config.isEnabled('external-media') && !sources.length) {
 			return null;
 		}
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<Button
 					borderless
-					ref={ this.storeButtonRef }
-					className={ buttonClasses }
-					onClick={ this.togglePopover }
-					title={ translate( 'Choose media library source' ) }
+					ref={this.storeButtonRef}
+					className={buttonClasses}
+					onClick={this.togglePopover}
+					title={translate('Choose media library source')}
 				>
-					{ currentSelected && currentSelected.icon }
-					{ this.renderScreenReader( currentSelected ) }
-					<Gridicon icon="chevron-down" size={ 18 } />
+					{currentSelected && currentSelected.icon}
+					{this.renderScreenReader(currentSelected)}
+					<Gridicon icon="chevron-down" size={18} />
 				</Button>
-				{ sources.length > 1 && (
+				{sources.length > 1 && (
 					<PopoverMenu
-						context={ this.buttonRef }
-						isVisible={ this.state.popover }
+						context={this.buttonRef}
+						isVisible={this.state.popover}
 						position="bottom right"
-						onClose={ this.togglePopover }
+						onClose={this.togglePopover}
 						className="is-dialog-visible media-library__header-popover"
 					>
-						{ this.renderMenuItems( sources ) }
+						{this.renderMenuItems(sources)}
 					</PopoverMenu>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => ( {
-	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
-} );
+const mapStateToProps = (state) => ({
+	canUserUploadFiles: canCurrentUser(state, getSelectedSiteId(state), 'upload_files'),
+});
 
-export default connect( mapStateToProps )( localize( MediaLibraryDataSource ) );
+export default connect(mapStateToProps)(localize(MediaLibraryDataSource));

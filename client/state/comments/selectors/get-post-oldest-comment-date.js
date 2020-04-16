@@ -20,9 +20,9 @@ import 'state/comments/init';
  * @returns {Date} earliest comment date
  */
 export const getPostOldestCommentDate = treeSelect(
-	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
-	( [ comments ] ) => {
-		const lastContiguousComment = findLast( comments, 'contiguous' );
-		return lastContiguousComment ? new Date( lastContiguousComment.date ) : undefined;
+	(state, siteId, postId) => [getPostCommentItems(state, siteId, postId)],
+	([comments]) => {
+		const lastContiguousComment = findLast(comments, 'contiguous');
+		return lastContiguousComment ? new Date(lastContiguousComment.date) : undefined;
 	}
 );

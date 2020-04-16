@@ -48,31 +48,31 @@ export class PlansAtomicStoreStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSelectPlan = cartItem => {
+	onSelectPlan = (cartItem) => {
 		const { additionalStepData, stepSectionName, stepName, goToNextStep, designType } = this.props;
 
-		if ( cartItem ) {
-			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
+		if (cartItem) {
+			this.props.recordTracksEvent('calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
-			} );
+			});
 
 			// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
 			// set a flag on it. It will trigger Automated Transfer when the product is being
 			// activated at the end of the checkout process.
 			if (
 				designType === DESIGN_TYPE_STORE &&
-				planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
+				planHasFeature(cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS)
 			) {
-				cartItem.extra = Object.assign( cartItem.extra || {}, {
+				cartItem.extra = Object.assign(cartItem.extra || {}, {
 					is_store_signup: true,
-				} );
+				});
 			}
 		} else {
-			this.props.recordTracksEvent( 'calypso_signup_free_plan_select', {
+			this.props.recordTracksEvent('calypso_signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
-			} );
+			});
 		}
 
 		const step = {
@@ -84,7 +84,7 @@ export class PlansAtomicStoreStep extends Component {
 
 		const providedDependencies = { cartItem };
 
-		this.props.submitSignupStep( step, providedDependencies );
+		this.props.submitSignupStep(step, providedDependencies);
 
 		goToNextStep();
 	};
@@ -98,7 +98,7 @@ export class PlansAtomicStoreStep extends Component {
 	plansFeaturesList() {
 		const { hideFreePlan, siteId, designType } = this.props;
 
-		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
+		const isPersonalPlanEnabled = isEnabled('plans/personal-plan');
 
 		let plans = filter(
 			[
@@ -108,25 +108,25 @@ export class PlansAtomicStoreStep extends Component {
 				PLAN_BUSINESS,
 				PLAN_ECOMMERCE,
 			],
-			value => !! value
+			(value) => !!value
 		);
 
-		if ( designType === DESIGN_TYPE_STORE ) {
-			plans = [ PLAN_BUSINESS ];
+		if (designType === DESIGN_TYPE_STORE) {
+			plans = [PLAN_BUSINESS];
 		}
 
 		return (
 			<div>
 				<QueryPlans />
-				<QuerySitePlans siteId={ siteId } />
+				<QuerySitePlans siteId={siteId} />
 
 				<PlanFeatures
-					plans={ plans }
-					onUpgradeClick={ this.onSelectPlan }
-					isInSignup={ true }
-					siteId={ siteId }
-					domainName={ this.getDomainName() }
-					displayJetpackPlans={ false }
+					plans={plans}
+					onUpgradeClick={this.onSelectPlan}
+					isInSignup={true}
+					siteId={siteId}
+					domainName={this.getDomainName()}
+					displayJetpackPlans={false}
 				/>
 			</div>
 		);
@@ -135,21 +135,21 @@ export class PlansAtomicStoreStep extends Component {
 	plansFeaturesSelection() {
 		const { flowName, stepName, positionInFlow, translate, designType } = this.props;
 
-		let headerText = translate( "Pick a plan that's right for you." );
+		let headerText = translate("Pick a plan that's right for you.");
 
-		if ( designType === DESIGN_TYPE_STORE ) {
-			headerText = translate( "You'll need the eCommerce plan." );
+		if (designType === DESIGN_TYPE_STORE) {
+			headerText = translate("You'll need the eCommerce plan.");
 		}
 
 		return (
 			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ headerText }
-				fallbackHeaderText={ headerText }
-				isWideLayout={ true }
-				stepContent={ this.plansFeaturesList() }
+				flowName={flowName}
+				stepName={stepName}
+				positionInFlow={positionInFlow}
+				headerText={headerText}
+				fallbackHeaderText={headerText}
+				isWideLayout={true}
+				stepContent={this.plansFeaturesList()}
 			/>
 		);
 	}
@@ -157,20 +157,20 @@ export class PlansAtomicStoreStep extends Component {
 	render() {
 		const { designType } = this.props;
 
-		const classes = classNames( 'plans plans-step', {
+		const classes = classNames('plans plans-step', {
 			'is-store-flow': designType === DESIGN_TYPE_STORE,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
-		} );
+		});
 
-		return <div className={ classes }>{ this.plansFeaturesSelection() }</div>;
+		return <div className={classes}>{this.plansFeaturesSelection()}</div>;
 	}
 }
 
 export default connect(
-	( state, { signupDependencies: { siteSlug } } ) => ( {
-		siteId: getSiteId( state, siteSlug ),
-		designType: getDesignType( state ),
-	} ),
+	(state, { signupDependencies: { siteSlug } }) => ({
+		siteId: getSiteId(state, siteSlug),
+		designType: getDesignType(state),
+	}),
 	{ recordTracksEvent, submitSignupStep }
-)( localize( PlansAtomicStoreStep ) );
+)(localize(PlansAtomicStoreStep));

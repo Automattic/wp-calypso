@@ -17,7 +17,7 @@ export function hideActiveLikesPopover() {
 	};
 }
 
-export function toggleLikesPopover( postGlobalId ) {
+export function toggleLikesPopover(postGlobalId) {
 	return {
 		type: POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
 		postGlobalId,
@@ -30,7 +30,7 @@ export function hideActiveSharePanel() {
 	};
 }
 
-export function toggleSharePanel( postGlobalId ) {
+export function toggleSharePanel(postGlobalId) {
 	return {
 		type: POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
 		postGlobalId,
@@ -43,7 +43,7 @@ export function toggleMultiSelect() {
 	};
 }
 
-export function togglePostSelection( postGlobalId ) {
+export function togglePostSelection(postGlobalId) {
 	return {
 		type: POST_TYPE_LIST_SELECTION_TOGGLE,
 		postGlobalId,

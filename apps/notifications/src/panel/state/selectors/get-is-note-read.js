@@ -1,10 +1,10 @@
 import getNotes from './get-notes';
 
-export const getIsNoteRead = ( notesState, note ) => {
+export const getIsNoteRead = (notesState, note) => {
 	const localReads = notesState.noteReads;
 
-	if ( localReads.hasOwnProperty( note.id ) ) {
-		return localReads[ note.id ];
+	if (localReads.hasOwnProperty(note.id)) {
+		return localReads[note.id];
 	}
 
 	// this absolutely needs to be redone but is not happening at
@@ -13,13 +13,13 @@ export const getIsNoteRead = ( notesState, note ) => {
 	// Redux middleware instead of operating at such a granular
 	// layer but introducing serializers is enough for its own PR
 	try {
-		const storedRead = localStorage.getItem( `note_read_status_${ note.id }` );
-		if ( null !== storedRead && '1' === storedRead ) {
+		const storedRead = localStorage.getItem(`note_read_status_${note.id}`);
+		if (null !== storedRead && '1' === storedRead) {
 			return true;
 		}
-	} catch ( e ) {}
+	} catch (e) {}
 
-	return !! note.read;
+	return !!note.read;
 };
 
-export default ( state, note ) => getIsNoteRead( getNotes( state ), note );
+export default (state, note) => getIsNoteRead(getNotes(state), note);

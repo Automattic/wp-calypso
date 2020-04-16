@@ -59,10 +59,10 @@ import { get as webauthn_auth } from '@github/webauthn-json';
  * @param {int} ms amount of milliseconds till reject the promise
  * @returns {Promise} a promise that will be rejected after ms milliseconds
  */
-export const createTimingOutPromise = ms =>
-	new Promise( ( _, reject ) => {
-		setTimeout( () => reject( new Error( `timeout of ${ ms } reached` ) ), ms );
-	} );
+export const createTimingOutPromise = (ms) =>
+	new Promise((_, reject) => {
+		setTimeout(() => reject(new Error(`timeout of ${ms} reached`)), ms);
+	});
 
 /**
  * Makes a request to a given link in an iframe
@@ -71,22 +71,22 @@ export const createTimingOutPromise = ms =>
  * @param {int} requestTimeout amount of time to allow the link to load, default 25s
  * @returns {Promise} a promise that will be resolved if the link was successfully loaded
  */
-export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
+export const makeRemoteLoginRequest = (loginLink, requestTimeout = 25000) => {
 	let iframe;
-	const iframeLoadPromise = new Promise( resolve => {
-		iframe = document.createElement( 'iframe' );
+	const iframeLoadPromise = new Promise((resolve) => {
+		iframe = document.createElement('iframe');
 		iframe.style.display = 'none';
-		iframe.setAttribute( 'scrolling', 'no' );
+		iframe.setAttribute('scrolling', 'no');
 		iframe.onload = resolve;
 		iframe.src = loginLink;
-		document.body.appendChild( iframe );
-	} );
+		document.body.appendChild(iframe);
+	});
 
 	const removeIframe = () => {
-		iframe.parentElement.removeChild( iframe );
+		iframe.parentElement.removeChild(iframe);
 	};
 
-	return Promise.race( [ iframeLoadPromise, createTimingOutPromise( requestTimeout ) ] ).then(
+	return Promise.race([iframeLoadPromise, createTimingOutPromise(requestTimeout)]).then(
 		removeIframe,
 		removeIframe
 	);
@@ -98,12 +98,12 @@ export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
  * @param  {Array}   loginLinks     Array of urls
  * @returns {Promise}                A promise that always resolve
  */
-export const remoteLoginUser = loginLinks => {
+export const remoteLoginUser = (loginLinks) => {
 	return Promise.all(
 		loginLinks
-			.map( loginLink => makeRemoteLoginRequest( loginLink ) )
+			.map((loginLink) => makeRemoteLoginRequest(loginLink))
 			// make sure we continue even when a remote login fails
-			.map( promise => promise.catch( () => {} ) )
+			.map((promise) => promise.catch(() => {}))
 	);
 };
 
@@ -116,120 +116,120 @@ export const remoteLoginUser = loginLinks => {
  * @param  {string}   domain          A domain to reverse login to
  * @returns {Function}                 A thunk that can be dispatched
  */
-export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => dispatch => {
-	dispatch( {
+export const loginUser = (usernameOrEmail, password, redirectTo, domain) => (dispatch) => {
+	dispatch({
 		type: LOGIN_REQUEST,
-	} );
+	});
 
-	return postLoginRequest( 'login-endpoint', {
+	return postLoginRequest('login-endpoint', {
 		username: usernameOrEmail,
 		password,
 		remember_me: true,
 		redirect_to: redirectTo,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
+		client_id: config('wpcom_signup_id'),
+		client_secret: config('wpcom_signup_key'),
 		domain: domain,
-	} )
-		.then( response => {
-			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
-				dispatch( {
+	})
+		.then((response) => {
+			if (get(response, 'body.data.two_step_notification_sent') === 'sms') {
+				dispatch({
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 					notice: {
-						message: getSMSMessageFromResponse( response ),
+						message: getSMSMessageFromResponse(response),
 						status: 'is-success',
 					},
-					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
-				} );
+					twoStepNonce: get(response, 'body.data.two_step_nonce_sms'),
+				});
 			}
 
 			// if the user has 2FA, in this stage he's not yet logged in.
-			if ( ! get( response, 'body.data.two_step_notification_sent' ) ) {
-				return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
-					dispatch( {
+			if (!get(response, 'body.data.two_step_notification_sent')) {
+				return remoteLoginUser(get(response, 'body.data.token_links', [])).then(() => {
+					dispatch({
 						type: LOGIN_REQUEST_SUCCESS,
 						data: response.body && response.body.data,
-					} );
-				} );
+					});
+				});
 			}
 
-			return dispatch( {
+			return dispatch({
 				type: LOGIN_REQUEST_SUCCESS,
 				data: response.body && response.body.data,
-			} );
-		} )
-		.catch( httpError => {
-			const error = getErrorFromHTTPError( httpError );
+			});
+		})
+		.catch((httpError) => {
+			const error = getErrorFromHTTPError(httpError);
 
-			dispatch( {
+			dispatch({
 				type: LOGIN_REQUEST_FAILURE,
 				error,
-			} );
+			});
 
-			return Promise.reject( error );
-		} );
+			return Promise.reject(error);
+		});
 };
 
-export const updateNonce = ( nonceType, twoStepNonce ) => ( {
+export const updateNonce = (nonceType, twoStepNonce) => ({
 	type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	nonceType,
 	twoStepNonce,
-} );
+});
 
-export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
+export const loginUserWithSecurityKey = () => (dispatch, getState) => {
 	const twoFactorAuthType = 'webauthn';
-	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+	dispatch({ type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST });
 	const loginParams = {
-		user_id: getTwoFactorUserId( getState() ),
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
+		user_id: getTwoFactorUserId(getState()),
+		client_id: config('wpcom_signup_id'),
+		client_secret: config('wpcom_signup_key'),
 		auth_type: twoFactorAuthType,
 	};
-	return postLoginRequest( 'webauthn-challenge-endpoint', {
+	return postLoginRequest('webauthn-challenge-endpoint', {
 		...loginParams,
-		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
-	} )
-		.then( response => {
-			const parameters = get( response, 'body.data', [] );
-			const twoStepNonce = get( parameters, 'two_step_nonce' );
+		two_step_nonce: getTwoFactorAuthNonce(getState(), twoFactorAuthType),
+	})
+		.then((response) => {
+			const parameters = get(response, 'body.data', []);
+			const twoStepNonce = get(parameters, 'two_step_nonce');
 
-			if ( twoStepNonce ) {
-				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
+			if (twoStepNonce) {
+				dispatch(updateNonce(twoFactorAuthType, twoStepNonce));
 			}
-			return webauthn_auth( { publicKey: parameters } );
-		} )
-		.then( assertion => {
+			return webauthn_auth({ publicKey: parameters });
+		})
+		.then((assertion) => {
 			const response = assertion.response;
-			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
+			if (typeof response.userHandle !== 'undefined' && null === response.userHandle) {
 				delete response.userHandle;
 			}
-			return postLoginRequest( 'webauthn-authentication-endpoint', {
+			return postLoginRequest('webauthn-authentication-endpoint', {
 				...loginParams,
-				client_data: JSON.stringify( assertion ),
-				two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
+				client_data: JSON.stringify(assertion),
+				two_step_nonce: getTwoFactorAuthNonce(getState(), twoFactorAuthType),
 				remember_me: true,
-			} );
-		} )
-		.then( response => {
-			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
-				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
-			} );
-		} )
-		.catch( httpError => {
-			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
+			});
+		})
+		.then((response) => {
+			return remoteLoginUser(get(response, 'body.data.token_links', [])).then(() => {
+				dispatch({ type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS });
+			});
+		})
+		.catch((httpError) => {
+			const twoStepNonce = get(httpError, 'response.body.data.two_step_nonce');
 
-			if ( twoStepNonce ) {
-				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
+			if (twoStepNonce) {
+				dispatch(updateNonce(twoFactorAuthType, twoStepNonce));
 			}
 
-			const error = getErrorFromHTTPError( httpError );
+			const error = getErrorFromHTTPError(httpError);
 
-			dispatch( {
+			dispatch({
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 				error,
-			} );
+			});
 
-			return Promise.reject( error );
-		} );
+			return Promise.reject(error);
+		});
 };
 
 /**
@@ -239,42 +239,42 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
  * @param  {string}   twoFactorAuthType Two factor authentication method (sms, push ...)
  * @returns {Function}                   A thunk that can be dispatched
  */
-export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => (
+export const loginUserWithTwoFactorVerificationCode = (twoStepCode, twoFactorAuthType) => (
 	dispatch,
 	getState
 ) => {
-	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+	dispatch({ type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST });
 
-	return postLoginRequest( 'two-step-authentication-endpoint', {
-		user_id: getTwoFactorUserId( getState() ),
+	return postLoginRequest('two-step-authentication-endpoint', {
+		user_id: getTwoFactorUserId(getState()),
 		auth_type: twoFactorAuthType,
-		two_step_code: replace( twoStepCode, /\s/g, '' ),
-		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
+		two_step_code: replace(twoStepCode, /\s/g, ''),
+		two_step_nonce: getTwoFactorAuthNonce(getState(), twoFactorAuthType),
 		remember_me: true,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	} )
-		.then( response => {
-			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
-				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
-			} );
-		} )
-		.catch( httpError => {
-			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
+		client_id: config('wpcom_signup_id'),
+		client_secret: config('wpcom_signup_key'),
+	})
+		.then((response) => {
+			return remoteLoginUser(get(response, 'body.data.token_links', [])).then(() => {
+				dispatch({ type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS });
+			});
+		})
+		.catch((httpError) => {
+			const twoStepNonce = get(httpError, 'response.body.data.two_step_nonce');
 
-			if ( twoStepNonce ) {
-				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
+			if (twoStepNonce) {
+				dispatch(updateNonce(twoFactorAuthType, twoStepNonce));
 			}
 
-			const error = getErrorFromHTTPError( httpError );
+			const error = getErrorFromHTTPError(httpError);
 
-			dispatch( {
+			dispatch({
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 				error,
-			} );
+			});
 
-			return Promise.reject( error );
-		} );
+			return Promise.reject(error);
+		});
 };
 
 /**
@@ -287,47 +287,47 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
  * @param  {string}   redirectTo     Url to redirect the user to upon successful login
  * @returns {Function}                A thunk that can be dispatched
  */
-export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
-	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
+export const loginSocialUser = (socialInfo, redirectTo) => (dispatch) => {
+	dispatch({ type: SOCIAL_LOGIN_REQUEST });
 
-	return postLoginRequest( 'social-login-endpoint', {
+	return postLoginRequest('social-login-endpoint', {
 		...socialInfo,
 		redirect_to: redirectTo,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	} )
-		.then( response => {
-			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
-				dispatch( {
+		client_id: config('wpcom_signup_id'),
+		client_secret: config('wpcom_signup_key'),
+	})
+		.then((response) => {
+			if (get(response, 'body.data.two_step_notification_sent') === 'sms') {
+				dispatch({
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 					notice: {
-						message: getSMSMessageFromResponse( response ),
+						message: getSMSMessageFromResponse(response),
 						status: 'is-success',
 					},
-					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' ),
-				} );
+					twoStepNonce: get(response, 'body.data.two_step_nonce_sms'),
+				});
 			}
 
-			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
-				dispatch( {
+			return remoteLoginUser(get(response, 'body.data.token_links', [])).then(() => {
+				dispatch({
 					type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-					data: get( response, 'body.data' ),
-				} );
-			} );
-		} )
-		.catch( httpError => {
-			const error = getErrorFromHTTPError( httpError );
-			error.email = get( httpError, 'response.body.data.email' );
+					data: get(response, 'body.data'),
+				});
+			});
+		})
+		.catch((httpError) => {
+			const error = getErrorFromHTTPError(httpError);
+			error.email = get(httpError, 'response.body.data.email');
 
-			dispatch( {
+			dispatch({
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
 				authInfo: socialInfo,
-				data: get( httpError, 'response.body.data' ),
-			} );
+				data: get(httpError, 'response.body.data'),
+			});
 
-			return Promise.reject( error );
-		} );
+			return Promise.reject(error);
+		});
 };
 
 /**
@@ -340,35 +340,35 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
  * @param  {string}   flowName       The name of the current signup flow
  * @returns {Function}                A thunk that can be dispatched
  */
-export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
-	dispatch( {
+export const createSocialUser = (socialInfo, flowName) => (dispatch) => {
+	dispatch({
 		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
 		notice: {
-			message: translate( 'Creating your account' ),
+			message: translate('Creating your account'),
 		},
-	} );
+	});
 
 	return wpcom
 		.undocumented()
-		.usersSocialNew( { ...socialInfo, signup_flow_name: flowName } )
+		.usersSocialNew({ ...socialInfo, signup_flow_name: flowName })
 		.then(
-			wpcomResponse => {
+			(wpcomResponse) => {
 				const data = {
 					username: wpcomResponse.username,
 					bearerToken: wpcomResponse.bearer_token,
 				};
-				dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS, data } );
+				dispatch({ type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS, data });
 				return data;
 			},
-			wpcomError => {
-				const error = getErrorFromWPCOMError( wpcomError );
+			(wpcomError) => {
+				const error = getErrorFromWPCOMError(wpcomError);
 
-				dispatch( {
+				dispatch({
 					type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 					error,
-				} );
+				});
 
-				return Promise.reject( error );
+				return Promise.reject(error);
 			}
 		);
 };
@@ -383,34 +383,34 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
  * @param  {string}   redirectTo     Url to redirect the user to upon successful login
  * @returns {Function}                A thunk that can be dispatched
  */
-export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
-	dispatch( {
+export const connectSocialUser = (socialInfo, redirectTo) => (dispatch) => {
+	dispatch({
 		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
 		notice: {
-			message: translate( 'Creating your account' ),
+			message: translate('Creating your account'),
 		},
-	} );
+	});
 
 	return wpcom
 		.undocumented()
 		.me()
-		.socialConnect( { ...socialInfo, redirect_to: redirectTo } )
+		.socialConnect({ ...socialInfo, redirect_to: redirectTo })
 		.then(
-			wpcomResponse => {
-				dispatch( {
+			(wpcomResponse) => {
+				dispatch({
 					type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 					redirect_to: wpcomResponse.redirect_to,
-				} );
+				});
 			},
-			wpcomError => {
-				const error = getErrorFromWPCOMError( wpcomError );
+			(wpcomError) => {
+				const error = getErrorFromWPCOMError(wpcomError);
 
-				dispatch( {
+				dispatch({
 					type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 					error,
-				} );
+				});
 
-				return Promise.reject( error );
+				return Promise.reject(error);
 			}
 		);
 };
@@ -421,88 +421,88 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
  * @param  {string}   socialService The social service name
  * @returns {Function}               A thunk that can be dispatched
  */
-export const disconnectSocialUser = socialService => dispatch => {
-	dispatch( {
+export const disconnectSocialUser = (socialService) => (dispatch) => {
+	dispatch({
 		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 		notice: {
-			message: translate( 'Creating your account' ),
+			message: translate('Creating your account'),
 		},
-	} );
+	});
 
 	return wpcom
 		.undocumented()
 		.me()
-		.socialDisconnect( socialService )
+		.socialDisconnect(socialService)
 		.then(
 			() => {
-				dispatch( {
+				dispatch({
 					type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
-				} );
+				});
 			},
-			wpcomError => {
-				const error = getErrorFromWPCOMError( wpcomError );
+			(wpcomError) => {
+				const error = getErrorFromWPCOMError(wpcomError);
 
-				dispatch( {
+				dispatch({
 					type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
 					error,
-				} );
+				});
 
-				return Promise.reject( error );
+				return Promise.reject(error);
 			}
 		);
 };
 
-export const createSocialUserFailed = ( socialInfo, error ) => ( {
+export const createSocialUserFailed = (socialInfo, error) => ({
 	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	authInfo: socialInfo,
-	error: error.field ? error : getErrorFromWPCOMError( error ),
-} );
+	error: error.field ? error : getErrorFromWPCOMError(error),
+});
 
 /**
  * Sends a two factor authentication recovery code to a user.
  *
  * @returns {Function} A thunk that can be dispatched
  */
-export const sendSmsCode = () => ( dispatch, getState ) => {
-	dispatch( {
+export const sendSmsCode = () => (dispatch, getState) => {
+	dispatch({
 		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 		notice: {
-			message: translate( 'Sending you a text message…' ),
+			message: translate('Sending you a text message…'),
 		},
-	} );
+	});
 
-	return postLoginRequest( 'send-sms-code-endpoint', {
-		user_id: getTwoFactorUserId( getState() ),
-		two_step_nonce: getTwoFactorAuthNonce( getState(), 'sms' ),
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	} )
-		.then( response => {
-			const message = getSMSMessageFromResponse( response );
+	return postLoginRequest('send-sms-code-endpoint', {
+		user_id: getTwoFactorUserId(getState()),
+		two_step_nonce: getTwoFactorAuthNonce(getState(), 'sms'),
+		client_id: config('wpcom_signup_id'),
+		client_secret: config('wpcom_signup_key'),
+	})
+		.then((response) => {
+			const message = getSMSMessageFromResponse(response);
 
-			dispatch( {
+			dispatch({
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				notice: {
 					message,
 					status: 'is-success',
 				},
-				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
-			} );
-		} )
-		.catch( httpError => {
-			const error = getErrorFromHTTPError( httpError );
+				twoStepNonce: get(response, 'body.data.two_step_nonce'),
+			});
+		})
+		.catch((httpError) => {
+			const error = getErrorFromHTTPError(httpError);
 
-			dispatch( {
+			dispatch({
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 				error,
-				twoStepNonce: get( httpError, 'response.body.data.two_step_nonce' ),
-			} );
-		} );
+				twoStepNonce: get(httpError, 'response.body.data.two_step_nonce'),
+			});
+		});
 };
 
-export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
-export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
-export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
+export const startPollAppPushAuth = () => ({ type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START });
+export const stopPollAppPushAuth = () => ({ type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP });
+export const formUpdate = () => ({ type: LOGIN_FORM_UPDATE });
 
 /**
  * Retrieves the type of authentication of the account (regular, passwordless ...) of the specified user.
@@ -510,42 +510,42 @@ export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
  * @param  {string}   usernameOrEmail Identifier of the user
  * @returns {Function}                 A thunk that can be dispatched
  */
-export const getAuthAccountType = usernameOrEmail => dispatch => {
-	dispatch( recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' ) );
+export const getAuthAccountType = (usernameOrEmail) => (dispatch) => {
+	dispatch(recordTracksEvent('calypso_login_block_login_form_get_auth_type'));
 
-	dispatch( {
+	dispatch({
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 		usernameOrEmail,
-	} );
+	});
 
-	if ( usernameOrEmail === '' ) {
+	if (usernameOrEmail === '') {
 		const error = {
 			code: 'empty_username',
-			message: translate( 'Please enter a username or email address.' ),
+			message: translate('Please enter a username or email address.'),
 			field: 'usernameOrEmail',
 		};
 
 		dispatch(
-			recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
+			recordTracksEvent('calypso_login_block_login_form_get_auth_type_failure', {
 				error_code: error.code,
 				error_message: error.message,
-			} )
+			})
 		);
 
-		defer( () => {
-			dispatch( {
+		defer(() => {
+			dispatch({
 				type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 				error,
-			} );
-		} );
+			});
+		});
 
 		return;
 	}
 
-	dispatch( {
+	dispatch({
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 		usernameOrEmail,
-	} );
+	});
 };
 
 /**
@@ -553,9 +553,9 @@ export const getAuthAccountType = usernameOrEmail => dispatch => {
  *
  * @returns {object} An action that can be dispatched
  */
-export const resetAuthAccountType = () => ( {
+export const resetAuthAccountType = () => ({
 	type: LOGIN_AUTH_ACCOUNT_TYPE_RESET,
-} );
+});
 
 /**
  * Creates an action that indicates that the push poll is completed
@@ -563,12 +563,12 @@ export const resetAuthAccountType = () => ( {
  * @param {Array<string>} tokenLinks token links array
  * @returns {Function} a thunk
  */
-export const receivedTwoFactorPushNotificationApproved = tokenLinks => dispatch => {
-	if ( ! Array.isArray( tokenLinks ) ) {
-		return dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
+export const receivedTwoFactorPushNotificationApproved = (tokenLinks) => (dispatch) => {
+	if (!Array.isArray(tokenLinks)) {
+		return dispatch({ type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED });
 	}
 
-	remoteLoginUser( tokenLinks ).then( () =>
-		dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } )
+	remoteLoginUser(tokenLinks).then(() =>
+		dispatch({ type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED })
 	);
 };

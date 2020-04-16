@@ -10,10 +10,10 @@ import getSitePlan from './get-site-plan';
  * @param  {number}   siteId        Site ID
  * @returns {?boolean}               Whether the current plan is paid
  */
-export default function isCurrentPlanPaid( state, siteId ) {
-	const sitePlan = getSitePlan( state, siteId );
+export default function isCurrentPlanPaid(state, siteId) {
+	const sitePlan = getSitePlan(state, siteId);
 
-	if ( ! sitePlan ) {
+	if (!sitePlan) {
 		return null;
 	}
 

@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getPostRevisionsAuthorsId from 'state/selectors/get-post-revisions-authors-id';
 
-describe( 'getPostRevisionsAuthorsId', () => {
-	test( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {
+describe('getPostRevisionsAuthorsId', () => {
+	test('should return an empty array if there is no revision in the state for `siteId, postId`', () => {
 		expect(
 			getPostRevisionsAuthorsId(
 				{
@@ -28,10 +28,10 @@ describe( 'getPostRevisionsAuthorsId', () => {
 				12345678,
 				10
 			)
-		).to.eql( [] );
-	} );
+		).to.eql([]);
+	});
 
-	test( 'should return an array of post revisions authors ID', () => {
+	test('should return an array of post revisions authors ID', () => {
 		expect(
 			getPostRevisionsAuthorsId(
 				{
@@ -54,6 +54,6 @@ describe( 'getPostRevisionsAuthorsId', () => {
 				12345678,
 				10
 			)
-		).to.eql( [ 123 ] );
-	} );
-} );
+		).to.eql([123]);
+	});
+});

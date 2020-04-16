@@ -12,25 +12,25 @@ import toApi from './to-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const rescheduleConciergeAppointment = action => {
+export const rescheduleConciergeAppointment = (action) => {
 	return [
-		updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ),
+		updateConciergeBookingStatus(CONCIERGE_STATUS_BOOKING),
 		http(
 			{
 				method: 'POST',
-				path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/reschedule`,
+				path: `/concierge/schedules/${action.scheduleId}/appointments/${action.appointmentId}/reschedule`,
 				apiNamespace: 'wpcom/v2',
-				body: toApi( action ),
+				body: toApi(action),
 			},
 			action
 		),
 	];
 };
 
-registerHandlers( 'state/data-layer/wpcom/concierge/schedules/appointments/reschedule/index.js', {
-	[ CONCIERGE_APPOINTMENT_RESCHEDULE ]: [
-		dispatchRequest( { fetch: rescheduleConciergeAppointment, onSuccess, onError, fromApi } ),
+registerHandlers('state/data-layer/wpcom/concierge/schedules/appointments/reschedule/index.js', {
+	[CONCIERGE_APPOINTMENT_RESCHEDULE]: [
+		dispatchRequest({ fetch: rescheduleConciergeAppointment, onSuccess, onError, fromApi }),
 	],
-} );
+});
 
 export default {};

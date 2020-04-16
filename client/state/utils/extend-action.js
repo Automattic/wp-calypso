@@ -12,13 +12,13 @@ import { merge } from 'lodash';
  * @returns {(Function|object)}        Augmented action object or thunk
  * @see client/state/utils/withEnhancers for a more advanced alternative
  */
-export function extendAction( action, data ) {
-	if ( 'function' !== typeof action ) {
-		return merge( {}, action, data );
+export function extendAction(action, data) {
+	if ('function' !== typeof action) {
+		return merge({}, action, data);
 	}
 
-	return ( dispatch, getState ) => {
-		const newDispatch = a => dispatch( extendAction( a, data ) );
-		return action( newDispatch, getState );
+	return (dispatch, getState) => {
+		const newDispatch = (a) => dispatch(extendAction(a, data));
+		return action(newDispatch, getState);
 	};
 }

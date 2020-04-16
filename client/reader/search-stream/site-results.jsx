@@ -27,7 +27,7 @@ import withDimensions from 'lib/with-dimensions';
 class SiteResults extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
-		sort: PropTypes.oneOf( [ SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE ] ),
+		sort: PropTypes.oneOf([SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE]),
 		requestFeedSearch: PropTypes.func,
 		searchResults: PropTypes.array,
 		searchResultsCount: PropTypes.number,
@@ -35,33 +35,33 @@ class SiteResults extends React.Component {
 		showLastUpdatedDate: PropTypes.bool,
 	};
 
-	fetchNextPage = offset => {
-		this.props.requestFeedSearch( {
+	fetchNextPage = (offset) => {
+		this.props.requestFeedSearch({
 			query: this.props.query,
 			offset,
 			excludeFollowed: false,
 			sort: this.props.sort,
-		} );
+		});
 	};
 
-	hasNextPage = offset => offset < this.props.searchResultsCount;
+	hasNextPage = (offset) => offset < this.props.searchResultsCount;
 
 	render() {
 		const { query, searchResults, width, sort, showLastUpdatedDate } = this.props;
 
 		return (
 			<div>
-				<QueryReaderFeedsSearch query={ query } excludeFollowed={ false } sort={ sort } />
+				<QueryReaderFeedsSearch query={query} excludeFollowed={false} sort={sort} />
 				<ReaderInfiniteStream
-					items={ searchResults || [ {}, {}, {}, {}, {} ] }
-					width={ width }
-					fetchNextPage={ this.fetchNextPage }
-					hasNextPage={ this.hasNextPage }
-					rowRenderer={ siteRowRenderer }
-					extraRenderItemProps={ {
+					items={searchResults || [{}, {}, {}, {}, {}]}
+					width={width}
+					fetchNextPage={this.fetchNextPage}
+					hasNextPage={this.hasNextPage}
+					rowRenderer={siteRowRenderer}
+					extraRenderItemProps={{
 						showLastUpdatedDate,
 						followSource: SEARCH_RESULTS_SITES,
-					} }
+					}}
 				/>
 			</div>
 		);
@@ -69,17 +69,17 @@ class SiteResults extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		searchResults: getReaderFeedsForQuery( state, {
+	(state, ownProps) => ({
+		searchResults: getReaderFeedsForQuery(state, {
 			query: ownProps.query,
 			excludeFollowed: false,
 			sort: ownProps.sort,
-		} ),
-		searchResultsCount: getReaderFeedsCountForQuery( state, {
+		}),
+		searchResultsCount: getReaderFeedsCountForQuery(state, {
 			query: ownProps.query,
 			excludeFollowed: false,
 			sort: ownProps.sort,
-		} ),
-	} ),
+		}),
+	}),
 	{ requestFeedSearch }
-)( localize( withDimensions( SiteResults ) ) );
+)(localize(withDimensions(SiteResults)));

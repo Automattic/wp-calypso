@@ -16,10 +16,10 @@ let socketConnecting = false;
  *
  * @param m middlewares to compose
  */
-const combineMiddleware = ( ...m ) => {
-	return store => {
-		const initialized = m.map( middleware => middleware( store ) );
-		return next => initialized.reduce( ( chain, mw ) => mw( chain ), next );
+const combineMiddleware = (...m) => {
+	return (store) => {
+		const initialized = m.map((middleware) => middleware(store));
+		return (next) => initialized.reduce((chain, mw) => mw(chain), next);
 	};
 };
 
@@ -28,35 +28,35 @@ const combineMiddleware = ( ...m ) => {
  *
  * @param store middleware store
  */
-const connectMiddleware = store => next => action => {
+const connectMiddleware = (store) => (next) => (action) => {
 	// bail unless this is a section set with the section definition
-	if ( action.type !== 'SECTION_SET' || ! action.section ) {
-		return next( action );
+	if (action.type !== 'SECTION_SET' || !action.section) {
+		return next(action);
 	}
 
 	// connect if we are going to the reader without a socket
-	if ( ! socket && ! socketConnecting && action.section.name === 'reader' ) {
+	if (!socket && !socketConnecting && action.section.name === 'reader') {
 		socketConnecting = true;
-		const user = getCurrentUser( store.getState() );
+		const user = getCurrentUser(store.getState());
 
 		wpcom
-			.request( {
+			.request({
 				method: 'POST',
 				path: '/jwt/sign',
-				body: { payload: JSON.stringify( { user } ) },
-			} )
-			.then( ( { jwt } ) => {
-				socketConnect( store, jwt, user.ID );
+				body: { payload: JSON.stringify({ user }) },
+			})
+			.then(({ jwt }) => {
+				socketConnect(store, jwt, user.ID);
 				socketConnecting = false;
-			} );
+			});
 	}
 
 	// disconnect if we are leaving the reader with a socket
-	else if ( socket && action.section.name !== 'reader' ) {
-		socketDisconnect( store );
+	else if (socket && action.section.name !== 'reader') {
+		socketDisconnect(store);
 	}
 
-	return next( action );
+	return next(action);
 };
 
 export default combineMiddleware(

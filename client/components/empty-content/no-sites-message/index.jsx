@@ -11,16 +11,16 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import EmptyContent from 'components/empty-content';
 
-const NoSitesMessage = ( { translate } ) => {
+const NoSitesMessage = ({ translate }) => {
 	return (
 		<EmptyContent
-			title={ translate( "You don't have any WordPress sites yet." ) }
-			line={ translate( 'Would you like to start one?' ) }
-			action={ translate( 'Create Site' ) }
-			actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
-			illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+			title={translate("You don't have any WordPress sites yet.")}
+			line={translate('Would you like to start one?')}
+			action={translate('Create Site')}
+			actionURL={config('signup_url') + '?ref=calypso-nosites'}
+			illustration={'/calypso/images/illustrations/illustration-nosites.svg'}
 		/>
 	);
 };
 
-export default localize( NoSitesMessage );
+export default localize(NoSitesMessage);

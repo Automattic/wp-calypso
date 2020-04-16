@@ -14,32 +14,32 @@ import { localize } from 'i18n-calypso';
  */
 import './comment-count.scss';
 
-const CommentCount = ( { count, translate } ) => {
+const CommentCount = ({ count, translate }) => {
 	let countPhrase;
-	if ( count > 0 ) {
+	if (count > 0) {
 		countPhrase = (
 			<span className="comments__comment-count-phrase">
-				{ translate( '%(commentCount)d comment', '%(commentCount)d comments', {
+				{translate('%(commentCount)d comment', '%(commentCount)d comments', {
 					count,
 					args: {
 						commentCount: count,
 					},
-				} ) }
+				})}
 			</span>
 		);
 	} else {
-		countPhrase = translate( '{{span}}No comments{{/span}} - add the first!', {
+		countPhrase = translate('{{span}}No comments{{/span}} - add the first!', {
 			components: {
 				span: <span className="comments__comment-count-phrase" />,
 			},
-		} );
+		});
 	}
 
-	return <div className="comments__comment-count">{ countPhrase }</div>;
+	return <div className="comments__comment-count">{countPhrase}</div>;
 };
 
 CommentCount.propTypes = {
 	count: PropTypes.number.isRequired,
 };
 
-export default localize( CommentCount );
+export default localize(CommentCount);

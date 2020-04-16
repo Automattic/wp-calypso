@@ -4,14 +4,14 @@
  * @param   {string} countryCode  A two-letter ISO_3166-1_country code
  * @returns {string}              Flag SVG file path
  */
-export function flagUrl( countryCode ) {
+export function flagUrl(countryCode) {
 	try {
-		const x = require( `flag-icon-css/flags/4x3/${ countryCode }.svg` );
-		if ( x.default ) {
+		const x = require(`flag-icon-css/flags/4x3/${countryCode}.svg`);
+		if (x.default) {
 			return x.default;
 		}
 		return x;
-	} catch ( e ) {
+	} catch (e) {
 		// As a fallback, return a 'globe' SVG.
 		// Unfortunately, we're not shipping SVGs with the `gridicons` npm --
 		// instead, they're inlined inside React components.

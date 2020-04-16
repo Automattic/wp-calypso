@@ -31,15 +31,15 @@ class ReaderVisitLink extends React.Component {
 		return (
 			<ExternalLink
 				className="reader-visit-link"
-				href={ this.props.href }
+				href={this.props.href}
 				target="_blank"
-				icon={ true }
-				showIconFirst={ true }
-				iconSize={ this.props.iconSize }
+				icon={true}
+				showIconFirst={true}
+				iconSize={this.props.iconSize}
 				iconClassName="reader-visit-link__icon"
-				onClick={ this.props.onClick }
+				onClick={this.props.onClick}
 			>
-				<span className="reader-visit-link__label">{ this.props.children }</span>
+				<span className="reader-visit-link__label">{this.props.children}</span>
 			</ExternalLink>
 		);
 	}

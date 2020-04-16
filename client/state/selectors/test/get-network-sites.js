@@ -9,18 +9,18 @@ import { expect } from 'chai';
 import getNetworkSites from 'state/selectors/get-network-sites';
 import { userState } from './fixtures/user-state';
 
-describe( 'getNetworkSites()', () => {
-	test( 'should return null if no sites exist in state', () => {
+describe('getNetworkSites()', () => {
+	test('should return null if no sites exist in state', () => {
 		const state = {
 			...userState,
 			sites: {
 				items: {},
 			},
 		};
-		expect( getNetworkSites( state, 1 ) ).to.be.null;
-	} );
+		expect(getNetworkSites(state, 1)).to.be.null;
+	});
 
-	test( 'should return null if main site is not found', () => {
+	test('should return null if main site is not found', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -37,10 +37,10 @@ describe( 'getNetworkSites()', () => {
 				},
 			},
 		};
-		expect( getNetworkSites( state, 2 ) ).to.be.null;
-	} );
+		expect(getNetworkSites(state, 2)).to.be.null;
+	});
 
-	test( 'should return null if site is not a main site', () => {
+	test('should return null if site is not a main site', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -54,10 +54,10 @@ describe( 'getNetworkSites()', () => {
 				},
 			},
 		};
-		expect( getNetworkSites( state, 1 ) ).to.be.null;
-	} );
+		expect(getNetworkSites(state, 1)).to.be.null;
+	});
 
-	test( 'should return only the main site if no secondary sites exist', () => {
+	test('should return only the main site if no secondary sites exist', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -76,14 +76,12 @@ describe( 'getNetworkSites()', () => {
 				},
 			},
 		};
-		const networkSites = getNetworkSites( state, 1 );
-		expect( networkSites )
-			.to.be.an( 'array' )
-			.that.has.lengthOf( 1 );
-		expect( networkSites[ 0 ].ID ).to.eql( 1 );
-	} );
+		const networkSites = getNetworkSites(state, 1);
+		expect(networkSites).to.be.an('array').that.has.lengthOf(1);
+		expect(networkSites[0].ID).to.eql(1);
+	});
 
-	test( 'should return an array with secondary sites if they exist', () => {
+	test('should return an array with secondary sites if they exist', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -118,12 +116,10 @@ describe( 'getNetworkSites()', () => {
 				},
 			},
 		};
-		const networkSites = getNetworkSites( state, 1 );
-		expect( networkSites )
-			.to.be.an( 'array' )
-			.that.has.lengthOf( 3 );
-		expect( networkSites[ 0 ].ID ).to.eql( 1 );
-		expect( networkSites[ 1 ].ID ).to.eql( 2 );
-		expect( networkSites[ 2 ].ID ).to.eql( 3 );
-	} );
-} );
+		const networkSites = getNetworkSites(state, 1);
+		expect(networkSites).to.be.an('array').that.has.lengthOf(3);
+		expect(networkSites[0].ID).to.eql(1);
+		expect(networkSites[1].ID).to.eql(2);
+		expect(networkSites[2].ID).to.eql(3);
+	});
+});

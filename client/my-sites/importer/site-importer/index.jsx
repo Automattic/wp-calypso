@@ -28,7 +28,7 @@ import './style.scss';
 /**
  * Module variables
  */
-const compactStates = [ appStates.DISABLED, appStates.INACTIVE ];
+const compactStates = [appStates.DISABLED, appStates.INACTIVE];
 const importingStates = [
 	appStates.IMPORT_FAILURE,
 	appStates.IMPORT_SUCCESS,
@@ -45,27 +45,27 @@ const uploadingStates = [
 
 class SiteImporter extends React.PureComponent {
 	static propTypes = {
-		importerData: PropTypes.shape( {
+		importerData: PropTypes.shape({
 			title: PropTypes.string.isRequired,
 			icon: PropTypes.string.isRequired,
-			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
-			uploadDescription: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-		} ).isRequired,
-		importerStatus: PropTypes.shape( {
-			errorData: PropTypes.shape( {
+			description: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+			uploadDescription: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+		}).isRequired,
+		importerStatus: PropTypes.shape({
+			errorData: PropTypes.shape({
 				type: PropTypes.string.isRequired,
 				description: PropTypes.string.isRequired,
-			} ),
+			}),
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
 			siteTitle: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			statusMessage: PropTypes.string,
 			type: PropTypes.string.isRequired,
-		} ),
-		site: PropTypes.shape( {
+		}),
+		site: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
-		} ),
+		}),
 	};
 
 	handleClick = () => {
@@ -74,12 +74,12 @@ class SiteImporter extends React.PureComponent {
 			site: { ID: siteId },
 		} = this.props;
 
-		startImport( siteId, type );
+		startImport(siteId, type);
 
-		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
+		this.props.recordTracksEvent('calypso_importer_main_start_clicked', {
 			blog_id: siteId,
 			importer_id: type,
-		} );
+		});
 	};
 
 	render() {
@@ -87,11 +87,11 @@ class SiteImporter extends React.PureComponent {
 		const site = this.props.site;
 		const state = this.props.importerStatus;
 		const isEnabled = appStates.DISABLED !== state.importerState;
-		const showStart = includes( compactStates, state.importerState );
-		const cardClasses = classNames( 'importer__site-importer-card', {
+		const showStart = includes(compactStates, state.importerState);
+		const cardClasses = classNames('importer__site-importer-card', {
 			'is-compact': showStart,
-			'is-disabled': ! isEnabled,
-		} );
+			'is-disabled': !isEnabled,
+		});
 		const cardProps = {
 			displayAsLink: true,
 			onClick: this.handleClick,
@@ -99,31 +99,28 @@ class SiteImporter extends React.PureComponent {
 		};
 
 		return (
-			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
-				<ImporterHeader
-					importerStatus={ state }
-					{ ...{ icon, title, description, isEnabled, site } }
-				/>
-				{ includes( importingStates, state.importerState ) && (
+			<Card className={cardClasses} {...(showStart ? cardProps : undefined)}>
+				<ImporterHeader importerStatus={state} {...{ icon, title, description, isEnabled, site }} />
+				{includes(importingStates, state.importerState) && (
 					<ImportingPane
-						{ ...this.props }
-						importerStatus={ state }
-						sourceType={ title }
-						site={ this.props.site }
+						{...this.props}
+						importerStatus={state}
+						sourceType={title}
+						site={this.props.site}
 					/>
-				) }
-				{ includes( uploadingStates, state.importerState ) && (
+				)}
+				{includes(uploadingStates, state.importerState) && (
 					<SiteImporterInputPane
-						{ ...this.props }
-						description={ uploadDescription }
-						importerStatus={ state }
-						onStartImport={ this.validateSite }
-						isEnabled={ isEnabled }
+						{...this.props}
+						description={uploadDescription}
+						importerStatus={state}
+						onStartImport={this.validateSite}
+						isEnabled={isEnabled}
 					/>
-				) }
+				)}
 			</Card>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( SiteImporter );
+export default connect(null, { recordTracksEvent })(SiteImporter);

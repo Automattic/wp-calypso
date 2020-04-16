@@ -17,74 +17,74 @@ import {
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'actions', () => {
+describe('actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox((sandbox) => (spy = sandbox.spy()));
 
-	describe( 'receiveHappinessEngineers()', () => {
-		test( 'should return an action object', () => {
-			const action = receiveHappinessEngineers( [
+	describe('receiveHappinessEngineers()', () => {
+		test('should return an action object', () => {
+			const action = receiveHappinessEngineers([
 				{ avatar_URL: 'test 1' },
 				{ avatar_URL: 'test 2' },
-			] );
+			]);
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: HAPPINESS_ENGINEERS_RECEIVE,
-				happinessEngineers: [ { avatar_URL: 'test 1' }, { avatar_URL: 'test 2' } ],
-			} );
-		} );
-	} );
+				happinessEngineers: [{ avatar_URL: 'test 1' }, { avatar_URL: 'test 2' }],
+			});
+		});
+	});
 
-	describe( 'fetchHappinessEngineers()', () => {
-		describe( 'success', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
+	describe('fetchHappinessEngineers()', () => {
+		describe('success', () => {
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
 					.persist()
-					.get( '/rest/v1.1/meta/happiness-engineers/' )
-					.reply( 200, [ { avatar_URL: 'test 1' } ] );
-			} );
+					.get('/rest/v1.1/meta/happiness-engineers/')
+					.reply(200, [{ avatar_URL: 'test 1' }]);
+			});
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				fetchHappinessEngineers()( spy );
+			test('should dispatch fetch action when thunk triggered', () => {
+				fetchHappinessEngineers()(spy);
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					type: HAPPINESS_ENGINEERS_FETCH,
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch receive action when request completes', () => {
-				return fetchHappinessEngineers()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith(
-						receiveHappinessEngineers( [ { avatar_URL: 'test 1' } ] )
+			test('should dispatch receive action when request completes', () => {
+				return fetchHappinessEngineers()(spy).then(() => {
+					expect(spy).to.have.been.calledWith(
+						receiveHappinessEngineers([{ avatar_URL: 'test 1' }])
 					);
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch request success action when request completes', () => {
-				return fetchHappinessEngineers()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+			test('should dispatch request success action when request completes', () => {
+				return fetchHappinessEngineers()(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: HAPPINESS_ENGINEERS_FETCH_SUCCESS,
-					} );
-				} );
-			} );
-		} );
+					});
+				});
+			});
+		});
 
-		describe( 'failed', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
+		describe('failed', () => {
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
 					.persist()
-					.get( '/rest/v1.1/meta/happiness-engineers/' )
-					.reply( 500, { error: 'Server Error' } );
-			} );
+					.get('/rest/v1.1/meta/happiness-engineers/')
+					.reply(500, { error: 'Server Error' });
+			});
 
-			test( 'should dispatch request failoure when request erorred', () => {
-				return fetchHappinessEngineers()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+			test('should dispatch request failoure when request erorred', () => {
+				return fetchHappinessEngineers()(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: HAPPINESS_ENGINEERS_FETCH_FAILURE,
-						error: match( { error: 'Server Error' } ),
-					} );
-				} );
-			} );
-		} );
-	} );
-} );
+						error: match({ error: 'Server Error' }),
+					});
+				});
+			});
+		});
+	});
+});

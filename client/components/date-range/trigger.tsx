@@ -22,12 +22,12 @@ interface Props {
 	buttonRef: object;
 	onTriggerClick: () => void;
 	onClearClick: () => void;
-	triggerText: ( startDateText: string, endDateText: string ) => string;
+	triggerText: (startDateText: string, endDateText: string) => string;
 	showClearBtn: boolean;
 	isCompact: boolean;
 }
 
-const DateRangeTrigger: FunctionComponent< Props > = ( {
+const DateRangeTrigger: FunctionComponent<Props> = ({
 	onTriggerClick = noop,
 	onClearClick = noop,
 	isCompact = false,
@@ -38,49 +38,49 @@ const DateRangeTrigger: FunctionComponent< Props > = ( {
 	endDateText,
 	triggerText,
 	buttonRef,
-} ) => {
+}) => {
 	const translate = useTranslate();
 
-	const canReset = Boolean( startDate || endDate );
+	const canReset = Boolean(startDate || endDate);
 
 	let dateRangeText;
-	if ( triggerText ) {
-		dateRangeText = triggerText( startDateText, endDateText );
+	if (triggerText) {
+		dateRangeText = triggerText(startDateText, endDateText);
 	} else {
-		dateRangeText = translate( '%(startDateText)s - %(endDateText)s', {
+		dateRangeText = translate('%(startDateText)s - %(endDateText)s', {
 			context: 'Date range text for DateRange input trigger',
 			args: {
 				startDateText,
 				endDateText,
 			},
-		} );
+		});
 	}
 
 	return (
 		<ButtonGroup className="date-range__trigger">
 			<Button
 				className="date-range__trigger-btn"
-				ref={ buttonRef }
-				onClick={ onTriggerClick }
-				compact={ isCompact }
-				aria-haspopup={ true }
+				ref={buttonRef}
+				onClick={onTriggerClick}
+				compact={isCompact}
+				aria-haspopup={true}
 			>
 				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" aria-hidden="true" />
-				<span className="date-range__trigger-btn-text">{ dateRangeText }</span>
-				{ ! showClearBtn && <Gridicon aria-hidden="true" icon="chevron-down" /> }
+				<span className="date-range__trigger-btn-text">{dateRangeText}</span>
+				{!showClearBtn && <Gridicon aria-hidden="true" icon="chevron-down" />}
 			</Button>
-			{ showClearBtn && (
+			{showClearBtn && (
 				<Button
 					className="date-range__clear-btn"
-					compact={ isCompact }
-					onClick={ onClearClick }
-					disabled={ ! canReset }
+					compact={isCompact}
+					onClick={onClearClick}
+					disabled={!canReset}
 					title="Clear date selection"
 				>
-					<ScreenReaderText>{ translate( 'Clear date selection' ) }</ScreenReaderText>
+					<ScreenReaderText>{translate('Clear date selection')}</ScreenReaderText>
 					<Gridicon aria-hidden="true" icon="cross" />
 				</Button>
-			) }
+			)}
 		</ButtonGroup>
 	);
 };

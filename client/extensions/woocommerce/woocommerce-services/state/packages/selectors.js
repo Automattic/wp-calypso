@@ -12,20 +12,16 @@ import { ACCEPTED_USPS_ORIGIN_COUNTRIES } from 'woocommerce/woocommerce-services
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 import { getForm } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-export const getPackagesForm = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get(
-		state,
-		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'packages' ],
-		null
-	);
+export const getPackagesForm = (state, siteId = getSelectedSiteId(state)) => {
+	return get(state, ['extensions', 'woocommerce', 'woocommerceServices', siteId, 'packages'], null);
 };
 
-const getPredefinedPackageServices = form => {
-	if ( ! form || ! form.predefinedSchema ) {
+const getPredefinedPackageServices = (form) => {
+	if (!form || !form.predefinedSchema) {
 		return [];
 	}
 
-	return Object.keys( form.predefinedSchema );
+	return Object.keys(form.predefinedSchema);
 };
 
 /**
@@ -36,49 +32,49 @@ const getPredefinedPackageServices = form => {
  * @returns {Array} selected packages
  */
 export const getAllSelectedPackages = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.predefinedSchema || ! form.packages ) {
+	(state, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.predefinedSchema || !form.packages) {
 			return null;
 		}
 
 		const packageList = [];
-		forEach( form.predefinedSchema, ( serviceGroups, serviceId ) => {
-			const serviceSelectedIds = ( form.packages.predefined || {} )[ serviceId ] || [];
+		forEach(form.predefinedSchema, (serviceGroups, serviceId) => {
+			const serviceSelectedIds = (form.packages.predefined || {})[serviceId] || [];
 
-			forEach( serviceGroups, group => {
+			forEach(serviceGroups, (group) => {
 				const definitions = group.definitions;
 
-				forEach( definitions, pckg => {
-					if ( ! includes( serviceSelectedIds, pckg.id ) ) {
+				forEach(definitions, (pckg) => {
+					if (!includes(serviceSelectedIds, pckg.id)) {
 						return;
 					}
 
-					packageList.push( {
+					packageList.push({
 						...pckg,
 						serviceId,
-					} );
-				} );
-			} );
-		} );
+					});
+				});
+			});
+		});
 
-		const customPackages = ( form.packages.custom || [] ).map( ( pckg, index ) => ( {
+		const customPackages = (form.packages.custom || []).map((pckg, index) => ({
 			...pckg,
 			index,
-		} ) );
+		}));
 
-		return orderBy( packageList.concat( customPackages ), 'name' );
+		return orderBy(packageList.concat(customPackages), 'name');
 	},
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.packages ) {
+	(state, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.packages) {
 			return [];
 		}
 
-		const serviceIds = getPredefinedPackageServices( form );
+		const serviceIds = getPredefinedPackageServices(form);
 		return [
-			...( form.packages.custom || [] ),
-			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+			...(form.packages.custom || []),
+			...serviceIds.map((serviceId) => (form.packages.predefined || {})[serviceId]),
 		];
 	}
 );
@@ -92,64 +88,64 @@ export const getAllSelectedPackages = createSelector(
  * @returns {object} packages grouped by services
  */
 export const getPackageGroupsForLabelPurchase = createSelector(
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.predefinedSchema || ! form.packages ) {
+	(state, orderId, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.predefinedSchema || !form.packages) {
 			return null;
 		}
 
-		const shippingLabelForm = getForm( state, orderId, siteId );
-		const originCountryCode = getAddressValues( shippingLabelForm.origin ).country;
-		const destinationCountryCode = getAddressValues( shippingLabelForm.destination ).country;
+		const shippingLabelForm = getForm(state, orderId, siteId);
+		const originCountryCode = getAddressValues(shippingLabelForm.origin).country;
+		const destinationCountryCode = getAddressValues(shippingLabelForm.destination).country;
 		const isInternationalOrder =
-			ACCEPTED_USPS_ORIGIN_COUNTRIES.includes( originCountryCode ) &&
-			! ACCEPTED_USPS_ORIGIN_COUNTRIES.includes( destinationCountryCode );
+			ACCEPTED_USPS_ORIGIN_COUNTRIES.includes(originCountryCode) &&
+			!ACCEPTED_USPS_ORIGIN_COUNTRIES.includes(destinationCountryCode);
 
 		const result = {
-			custom: { title: translate( 'Custom Packages' ), definitions: form.packages.custom },
+			custom: { title: translate('Custom Packages'), definitions: form.packages.custom },
 		};
 
-		forEach( form.predefinedSchema, ( serviceGroups, serviceId ) => {
-			const serviceSelectedIds = ( form.packages.predefined || {} )[ serviceId ] || [];
+		forEach(form.predefinedSchema, (serviceGroups, serviceId) => {
+			const serviceSelectedIds = (form.packages.predefined || {})[serviceId] || [];
 
-			forEach( serviceGroups, ( group, groupId ) => {
+			forEach(serviceGroups, (group, groupId) => {
 				const definitions = group.definitions;
 				const resultGroup = { title: group.title, definitions: [] };
 
-				forEach( definitions, pckg => {
-					if ( isInternationalOrder && false === pckg.can_ship_international ) {
+				forEach(definitions, (pckg) => {
+					if (isInternationalOrder && false === pckg.can_ship_international) {
 						return;
 					}
 
-					if ( ! pckg.is_flat_rate && ! includes( serviceSelectedIds, pckg.id ) ) {
+					if (!pckg.is_flat_rate && !includes(serviceSelectedIds, pckg.id)) {
 						return;
 					}
 
-					resultGroup.definitions.push( pckg );
-				} );
+					resultGroup.definitions.push(pckg);
+				});
 
-				if ( resultGroup.definitions.length ) {
-					result[ groupId ] = resultGroup;
+				if (resultGroup.definitions.length) {
+					result[groupId] = resultGroup;
 				}
-			} );
-		} );
+			});
+		});
 
 		return result;
 	},
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.packages ) {
+	(state, orderId, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.packages) {
 			return [];
 		}
 
-		const serviceIds = getPredefinedPackageServices( form );
+		const serviceIds = getPredefinedPackageServices(form);
 
-		const shippingLabelForm = getForm( state, orderId, siteId );
-		const originCountryCode = getAddressValues( shippingLabelForm.origin ).country;
-		const destinationCountryCode = getAddressValues( shippingLabelForm.destination ).country;
+		const shippingLabelForm = getForm(state, orderId, siteId);
+		const originCountryCode = getAddressValues(shippingLabelForm.origin).country;
+		const destinationCountryCode = getAddressValues(shippingLabelForm.destination).country;
 		return [
-			...( form.packages.custom || [] ),
-			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+			...(form.packages.custom || []),
+			...serviceIds.map((serviceId) => (form.packages.predefined || {})[serviceId]),
 			originCountryCode,
 			destinationCountryCode,
 		];
@@ -164,38 +160,38 @@ export const getPackageGroupsForLabelPurchase = createSelector(
  * @returns {object} packages keyed by id
  */
 export const getAllPackageDefinitions = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.predefinedSchema || ! form.packages ) {
+	(state, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.predefinedSchema || !form.packages) {
 			return null;
 		}
 
 		const result = {};
-		forEach( form.packages.custom, pckg => {
-			result[ pckg.name ] = pckg;
-		} );
+		forEach(form.packages.custom, (pckg) => {
+			result[pckg.name] = pckg;
+		});
 
-		forEach( form.predefinedSchema, serviceGroups => {
-			forEach( serviceGroups, group => {
+		forEach(form.predefinedSchema, (serviceGroups) => {
+			forEach(serviceGroups, (group) => {
 				const definitions = group.definitions;
-				forEach( definitions, pckg => {
-					result[ pckg.id ] = pckg;
-				} );
-			} );
-		} );
+				forEach(definitions, (pckg) => {
+					result[pckg.id] = pckg;
+				});
+			});
+		});
 
 		return result;
 	},
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.packages ) {
+	(state, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.packages) {
 			return [];
 		}
 
-		const serviceIds = getPredefinedPackageServices( form );
+		const serviceIds = getPredefinedPackageServices(form);
 		return [
-			...( form.packages.custom || [] ),
-			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+			...(form.packages.custom || []),
+			...serviceIds.map((serviceId) => (form.packages.predefined || {})[serviceId]),
 		];
 	}
 );
@@ -209,21 +205,21 @@ export const getAllPackageDefinitions = createSelector(
  * @returns {object} an object containing package groups and their definitions
  */
 export const getCurrentlyEditingPredefinedPackages = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.currentlyEditingPredefinedPackages ) {
+	(state, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.currentlyEditingPredefinedPackages) {
 			return null;
 		}
 
 		const result = {};
 		const { predefinedSchema, currentlyEditingPredefinedPackages } = form;
-		forEach( predefinedSchema, ( serviceGroups, serviceId ) => {
-			const serviceSelectedIds = currentlyEditingPredefinedPackages[ serviceId ] || [];
+		forEach(predefinedSchema, (serviceGroups, serviceId) => {
+			const serviceSelectedIds = currentlyEditingPredefinedPackages[serviceId] || [];
 
-			forEach( serviceGroups, ( group, groupId ) => {
+			forEach(serviceGroups, (group, groupId) => {
 				const definitions = group.definitions;
-				const nonFlatRateDefinitions = reject( group.definitions, 'is_flat_rate' );
-				if ( ! nonFlatRateDefinitions.length ) {
+				const nonFlatRateDefinitions = reject(group.definitions, 'is_flat_rate');
+				if (!nonFlatRateDefinitions.length) {
 					return;
 				}
 
@@ -236,35 +232,33 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
 					selected: 0,
 				};
 
-				forEach( definitions, pckg => {
-					const selected = includes( serviceSelectedIds, pckg.id );
-					if ( selected ) {
+				forEach(definitions, (pckg) => {
+					const selected = includes(serviceSelectedIds, pckg.id);
+					if (selected) {
 						groupResult.selected++;
 					}
 
-					groupResult.packages.push( {
+					groupResult.packages.push({
 						...pckg,
 						selected,
 						serviceId,
-					} );
-				} );
+					});
+				});
 
-				result[ `${ serviceId }-${ groupId }` ] = groupResult;
-			} );
-		} );
+				result[`${serviceId}-${groupId}`] = groupResult;
+			});
+		});
 
 		return result;
 	},
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.currentlyEditingPredefinedPackages ) {
+	(state, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.currentlyEditingPredefinedPackages) {
 			return [];
 		}
 
-		const serviceIds = getPredefinedPackageServices( form );
-		return [
-			...serviceIds.map( serviceId => form.currentlyEditingPredefinedPackages[ serviceId ] ),
-		];
+		const serviceIds = getPredefinedPackageServices(form);
+		return [...serviceIds.map((serviceId) => form.currentlyEditingPredefinedPackages[serviceId])];
 	}
 );
 
@@ -276,80 +270,80 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
  * @returns {object} an object containing the changes summary
  */
 export const getPredefinedPackagesChangesSummary = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
+	(state, siteId = getSelectedSiteId(state)) => {
 		let added = 0;
 		let removed = 0;
 
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.currentlyEditingPredefinedPackages ) {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.currentlyEditingPredefinedPackages) {
 			return { added, removed };
 		}
 
 		const existingPackages =
 			form.packages && form.packages.predefined ? form.packages.predefined : {};
 		const editedPackages = form.currentlyEditingPredefinedPackages;
-		Object.keys( editedPackages ).forEach( key => {
-			const existing = existingPackages[ key ];
-			const edited = editedPackages[ key ];
+		Object.keys(editedPackages).forEach((key) => {
+			const existing = existingPackages[key];
+			const edited = editedPackages[key];
 
-			if ( ! existing ) {
+			if (!existing) {
 				added += edited.length;
 				return;
 			}
 
-			edited.forEach( packageId => {
-				if ( ! includes( existing, packageId ) ) {
+			edited.forEach((packageId) => {
+				if (!includes(existing, packageId)) {
 					added++;
 				}
-			} );
-		} );
+			});
+		});
 
-		Object.keys( existingPackages ).forEach( key => {
-			const existing = existingPackages[ key ];
-			const edited = editedPackages[ key ];
+		Object.keys(existingPackages).forEach((key) => {
+			const existing = existingPackages[key];
+			const edited = editedPackages[key];
 
-			if ( ! edited ) {
+			if (!edited) {
 				removed += existing.length;
 				return;
 			}
 
-			existing.forEach( packageId => {
-				if ( ! includes( edited, packageId ) ) {
+			existing.forEach((packageId) => {
+				if (!includes(edited, packageId)) {
 					removed++;
 				}
-			} );
-		} );
+			});
+		});
 
 		return { added, removed };
 	},
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.currentlyEditingPredefinedPackages ) {
+	(state, siteId = getSelectedSiteId(state)) => {
+		const form = getPackagesForm(state, siteId);
+		if (!form || !form.currentlyEditingPredefinedPackages) {
 			return [];
 		}
 
-		const serviceIds = getPredefinedPackageServices( form );
+		const serviceIds = getPredefinedPackageServices(form);
 		return [
 			...serviceIds.map(
-				serviceId =>
-					form.packages && form.packages.predefined && form.packages.predefined[ serviceId ]
+				(serviceId) =>
+					form.packages && form.packages.predefined && form.packages.predefined[serviceId]
 			),
-			...serviceIds.map( serviceId => form.currentlyEditingPredefinedPackages[ serviceId ] ),
+			...serviceIds.map((serviceId) => form.currentlyEditingPredefinedPackages[serviceId]),
 		];
 	}
 );
 
-export const isLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const form = getPackagesForm( state, siteId );
+export const isLoaded = (state, siteId = getSelectedSiteId(state)) => {
+	const form = getPackagesForm(state, siteId);
 	return form && form.isLoaded;
 };
 
-export const isFetching = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const form = getPackagesForm( state, siteId );
+export const isFetching = (state, siteId = getSelectedSiteId(state)) => {
+	const form = getPackagesForm(state, siteId);
 	return form && form.isFetching;
 };
 
-export const isFetchError = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const form = getPackagesForm( state, siteId );
+export const isFetchError = (state, siteId = getSelectedSiteId(state)) => {
+	const form = getPackagesForm(state, siteId);
 	return form && form.isFetchError;
 };

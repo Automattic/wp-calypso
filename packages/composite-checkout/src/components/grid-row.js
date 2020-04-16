@@ -5,10 +5,10 @@ import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
-export default function GridRow( { gap, columnWidths, className, children } ) {
+export default function GridRow({ gap, columnWidths, className, children }) {
 	return (
-		<Row gap={ gap } columnWidths={ columnWidths } className={ className }>
-			{ children }
+		<Row gap={gap} columnWidths={columnWidths} className={className}>
+			{children}
 		</Row>
 	);
 }
@@ -23,8 +23,8 @@ const Row = styled.div`
 	display: -ms-grid;
 	display: grid;
 	width: 100%;
-	-ms-grid-columns: ${props => props.columnWidths.replace( ' ', ' ' + props.gap + ' ' )};
-	grid-template-columns: ${props => props.columnWidths};
-	grid-column-gap: ${props => props.gap};
+	-ms-grid-columns: ${(props) => props.columnWidths.replace(' ', ' ' + props.gap + ' ')};
+	grid-template-columns: ${(props) => props.columnWidths};
+	grid-column-gap: ${(props) => props.gap};
 	justify-items: stretch;
 `;

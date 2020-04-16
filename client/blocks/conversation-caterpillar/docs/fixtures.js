@@ -177,6 +177,6 @@ export const comments = [
 ];
 
 export const commentsTree = {
-	...keyBy( comments, 'ID' ),
-	children: map( comments, 'ID' ),
+	...keyBy(comments, 'ID'),
+	children: map(comments, 'ID'),
 };

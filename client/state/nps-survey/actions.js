@@ -24,16 +24,16 @@ import {
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 } from 'state/action-types';
 
-const debug = debugFactory( 'calypso:nps-survey' );
+const debug = debugFactory('calypso:nps-survey');
 
-export function setNpsSurveyEligibility( isEligible ) {
+export function setNpsSurveyEligibility(isEligible) {
 	return {
 		type: NPS_SURVEY_SET_ELIGIBILITY,
 		isSessionPicked: isEligible,
 	};
 }
 
-export function setNpsConciergeSessionAvailaibility( isAvailableForConciergeSession ) {
+export function setNpsConciergeSessionAvailaibility(isAvailableForConciergeSession) {
 	return {
 		type: NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
 		isAvailableForConciergeSession,
@@ -41,22 +41,22 @@ export function setNpsConciergeSessionAvailaibility( isAvailableForConciergeSess
 }
 
 export function setupNpsSurveyEligibility() {
-	return dispatch => {
-		debug( 'Checking NPS eligibility...' );
+	return (dispatch) => {
+		debug('Checking NPS eligibility...');
 
 		return wpcom
 			.undocumented()
 			.checkNPSSurveyEligibility()
-			.then( data => {
-				debug( '...Eligibility returned from endpoint.', data );
-				dispatch( setNpsSurveyEligibility( data.display_survey ) );
-				dispatch( setNpsConciergeSessionAvailaibility( data.has_available_concierge_sessions ) );
-			} )
-			.catch( err => {
-				debug( '...Error querying NPS survey eligibility.', err );
-				dispatch( setNpsSurveyEligibility( false ) );
-				dispatch( setNpsConciergeSessionAvailaibility( false ) );
-			} );
+			.then((data) => {
+				debug('...Eligibility returned from endpoint.', data);
+				dispatch(setNpsSurveyEligibility(data.display_survey));
+				dispatch(setNpsConciergeSessionAvailaibility(data.has_available_concierge_sessions));
+			})
+			.catch((err) => {
+				debug('...Error querying NPS survey eligibility.', err);
+				dispatch(setNpsSurveyEligibility(false));
+				dispatch(setNpsConciergeSessionAvailaibility(false));
+			});
 	};
 }
 
@@ -66,73 +66,73 @@ export function markNpsSurveyShownThisSession() {
 	};
 }
 
-export function submitNpsSurvey( surveyName, score ) {
-	return dispatch => {
-		debug( 'Submitting NPS survey...' );
-		dispatch( submitNpsSurveyRequesting( surveyName, score ) );
+export function submitNpsSurvey(surveyName, score) {
+	return (dispatch) => {
+		debug('Submitting NPS survey...');
+		dispatch(submitNpsSurveyRequesting(surveyName, score));
 
-		bumpStat( 'calypso_nps_survey', 'survey_submitted' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_submitted' );
-
-		return wpcom
-			.undocumented()
-			.submitNPSSurvey( surveyName, score )
-			.then( () => {
-				debug( '...Successfully submitted NPS survey.' );
-				dispatch( submitNpsSurveyRequestSuccess() );
-			} )
-			.catch( err => {
-				debug( '...Error submitting NPS survey.', err );
-				dispatch( submitNpsSurveyRequestFailure( err ) );
-			} );
-	};
-}
-
-export function submitNpsSurveyWithNoScore( surveyName ) {
-	return dispatch => {
-		debug( 'Submitting NPS survey with no score...' );
-		dispatch( submitNpsSurveyWithNoScoreRequesting( surveyName ) );
-
-		bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_dismissed' );
+		bumpStat('calypso_nps_survey', 'survey_submitted');
+		analytics.tracks.recordEvent('calypso_nps_survey_submitted');
 
 		return wpcom
 			.undocumented()
-			.dismissNPSSurvey( surveyName )
-			.then( () => {
-				debug( '...Successfully submitted NPS survey with no score.' );
-				dispatch( submitNpsSurveyWithNoScoreRequestSuccess() );
-			} )
-			.catch( err => {
-				debug( '...Error submitting NPS survey with no score.', err );
-				dispatch( submitNpsSurveyWithNoScoreRequestFailure( err ) );
-			} );
+			.submitNPSSurvey(surveyName, score)
+			.then(() => {
+				debug('...Successfully submitted NPS survey.');
+				dispatch(submitNpsSurveyRequestSuccess());
+			})
+			.catch((err) => {
+				debug('...Error submitting NPS survey.', err);
+				dispatch(submitNpsSurveyRequestFailure(err));
+			});
 	};
 }
 
-export function sendNpsSurveyFeedback( surveyName, feedback ) {
-	return dispatch => {
-		debug( 'Sending NPS survey feedback...' );
-		dispatch( sendNpsSurveyFeedbackRequesting( surveyName, feedback ) );
+export function submitNpsSurveyWithNoScore(surveyName) {
+	return (dispatch) => {
+		debug('Submitting NPS survey with no score...');
+		dispatch(submitNpsSurveyWithNoScoreRequesting(surveyName));
 
-		bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_feedback_submitted' );
+		bumpStat('calypso_nps_survey', 'survey_dismissed');
+		analytics.tracks.recordEvent('calypso_nps_survey_dismissed');
 
 		return wpcom
 			.undocumented()
-			.sendNPSSurveyFeedback( surveyName, feedback )
-			.then( () => {
-				debug( '...Successfully sent NPS survey feedback.' );
-				dispatch( sendNpsSurveyFeedbackSuccess() );
-			} )
-			.catch( err => {
-				debug( '...Error sending NPS survey feedback.' );
-				dispatch( sendNpsSurveyFeedbackFailure( err ) );
-			} );
+			.dismissNPSSurvey(surveyName)
+			.then(() => {
+				debug('...Successfully submitted NPS survey with no score.');
+				dispatch(submitNpsSurveyWithNoScoreRequestSuccess());
+			})
+			.catch((err) => {
+				debug('...Error submitting NPS survey with no score.', err);
+				dispatch(submitNpsSurveyWithNoScoreRequestFailure(err));
+			});
 	};
 }
 
-export function submitNpsSurveyRequesting( surveyName, score ) {
+export function sendNpsSurveyFeedback(surveyName, feedback) {
+	return (dispatch) => {
+		debug('Sending NPS survey feedback...');
+		dispatch(sendNpsSurveyFeedbackRequesting(surveyName, feedback));
+
+		bumpStat('calypso_nps_survey', 'feedback_submitted');
+		analytics.tracks.recordEvent('calypso_nps_survey_feedback_submitted');
+
+		return wpcom
+			.undocumented()
+			.sendNPSSurveyFeedback(surveyName, feedback)
+			.then(() => {
+				debug('...Successfully sent NPS survey feedback.');
+				dispatch(sendNpsSurveyFeedbackSuccess());
+			})
+			.catch((err) => {
+				debug('...Error sending NPS survey feedback.');
+				dispatch(sendNpsSurveyFeedbackFailure(err));
+			});
+	};
+}
+
+export function submitNpsSurveyRequesting(surveyName, score) {
 	return {
 		type: NPS_SURVEY_SUBMIT_REQUESTING,
 		surveyName,
@@ -146,14 +146,14 @@ export function submitNpsSurveyRequestSuccess() {
 	};
 }
 
-export function submitNpsSurveyRequestFailure( err ) {
+export function submitNpsSurveyRequestFailure(err) {
 	return {
 		type: NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 		error: err,
 	};
 }
 
-export function submitNpsSurveyWithNoScoreRequesting( surveyName ) {
+export function submitNpsSurveyWithNoScoreRequesting(surveyName) {
 	return {
 		type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 		surveyName,
@@ -166,14 +166,14 @@ export function submitNpsSurveyWithNoScoreRequestSuccess() {
 	};
 }
 
-export function submitNpsSurveyWithNoScoreRequestFailure( err ) {
+export function submitNpsSurveyWithNoScoreRequestFailure(err) {
 	return {
 		type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 		error: err,
 	};
 }
 
-export function sendNpsSurveyFeedbackRequesting( surveyName, feedback ) {
+export function sendNpsSurveyFeedbackRequesting(surveyName, feedback) {
 	return {
 		type: NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
 		surveyName,
@@ -187,7 +187,7 @@ export function sendNpsSurveyFeedbackSuccess() {
 	};
 }
 
-export function sendNpsSurveyFeedbackFailure( error ) {
+export function sendNpsSurveyFeedbackFailure(error) {
 	return {
 		type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 		error,

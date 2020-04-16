@@ -16,9 +16,9 @@ import 'state/data-layer/wpcom/me/connected-applications/delete';
  *
  * @returns {object} Action object
  */
-export const requestConnectedApplications = () => ( {
+export const requestConnectedApplications = () => ({
 	type: CONNECTED_APPLICATIONS_REQUEST,
-} );
+});
 
 /**
  * Returns an action object to signal the receiving of connected applications.
@@ -26,10 +26,10 @@ export const requestConnectedApplications = () => ( {
  * @param  {Array}  apps Array containing the connected applications of the current user.
  * @returns {object} Action object.
  */
-export const receiveConnectedApplications = apps => ( {
+export const receiveConnectedApplications = (apps) => ({
 	type: CONNECTED_APPLICATIONS_RECEIVE,
 	apps,
-} );
+});
 
 /**
  * Returns an action object to signal the deletion of a connected application.
@@ -37,10 +37,10 @@ export const receiveConnectedApplications = apps => ( {
  * @param  {string} appId ID of the connected application.
  * @returns {object} Action object.
  */
-export const deleteConnectedApplication = appId => ( {
+export const deleteConnectedApplication = (appId) => ({
 	type: CONNECTED_APPLICATION_DELETE,
 	appId,
-} );
+});
 
 /**
  * Returns an action object to signal the successful deletion of a connected application.
@@ -48,7 +48,7 @@ export const deleteConnectedApplication = appId => ( {
  * @param  {string} appId ID of the connected application.
  * @returns {object} Action object.
  */
-export const deleteConnectedApplicationSuccess = appId => ( {
+export const deleteConnectedApplicationSuccess = (appId) => ({
 	type: CONNECTED_APPLICATION_DELETE_SUCCESS,
 	appId,
-} );
+});

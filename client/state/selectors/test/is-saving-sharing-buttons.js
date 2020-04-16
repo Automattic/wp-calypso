@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import isSavingSharingButtons from 'state/selectors/is-saving-sharing-buttons';
 
-describe( 'isRequestingSharingButtons()', () => {
-	test( 'should return false if the site is not attached', () => {
+describe('isRequestingSharingButtons()', () => {
+	test('should return false if the site is not attached', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -19,12 +19,12 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isSaving = isSavingSharingButtons( state, 2916285 );
+		const isSaving = isSavingSharingButtons(state, 2916285);
 
-		expect( isSaving ).to.be.false;
-	} );
+		expect(isSaving).to.be.false;
+	});
 
-	test( 'should return false if the sharing buttons are not being saved', () => {
+	test('should return false if the sharing buttons are not being saved', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -34,12 +34,12 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isSaving = isSavingSharingButtons( state, 2916284 );
+		const isSaving = isSavingSharingButtons(state, 2916284);
 
-		expect( isSaving ).to.be.false;
-	} );
+		expect(isSaving).to.be.false;
+	});
 
-	test( 'should return true if the sharing buttons are being saved', () => {
+	test('should return true if the sharing buttons are being saved', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -49,8 +49,8 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isSaving = isSavingSharingButtons( state, 2916284 );
+		const isSaving = isSavingSharingButtons(state, 2916284);
 
-		expect( isSaving ).to.be.true;
-	} );
-} );
+		expect(isSaving).to.be.true;
+	});
+});

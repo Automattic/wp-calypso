@@ -14,17 +14,15 @@ import ActionHeader from 'woocommerce/components/action-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import SettingsNavigation from '../navigation';
 
-const SettingsTaxesPlaceholder = ( { siteSlug, translate } ) => {
+const SettingsTaxesPlaceholder = ({ siteSlug, translate }) => {
 	const breadcrumbs = [
-		<a href={ getLink( '/store/settings/:site/', { slug: siteSlug } ) }>
-			{ translate( 'Settings' ) }
-		</a>,
-		<span>{ translate( 'Taxes' ) }</span>,
+		<a href={getLink('/store/settings/:site/', { slug: siteSlug })}>{translate('Settings')}</a>,
+		<span>{translate('Taxes')}</span>,
 	];
 
 	return (
 		<div>
-			<ActionHeader breadcrumbs={ breadcrumbs } />
+			<ActionHeader breadcrumbs={breadcrumbs} />
 			<SettingsNavigation activeSection="taxes" />
 			<div className="taxes__placeholder card" />
 		</div>
@@ -36,4 +34,4 @@ SettingsTaxesPlaceholder.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( SettingsTaxesPlaceholder );
+export default localize(SettingsTaxesPlaceholder);

@@ -11,9 +11,9 @@ import { setupGtag } from './setup-gtag';
 // Ensure setup has run.
 import './setup';
 
-export function setupGoogleAnalyticsGtag( options ) {
+export function setupGoogleAnalyticsGtag(options) {
 	setupGtag();
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, options );
+	window.gtag('config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, options);
 }
 
 /**
@@ -34,9 +34,9 @@ export function setupGoogleAnalyticsGtag( options ) {
 export function isGoogleAnalyticsAllowed() {
 	return (
 		isGoogleAnalyticsEnabled &&
-		config.isEnabled( 'ad-tracking' ) &&
-		! getDoNotTrack() &&
-		! isPiiUrl() &&
+		config.isEnabled('ad-tracking') &&
+		!getDoNotTrack() &&
+		!isPiiUrl() &&
 		mayWeTrackCurrentUserGdpr()
 	);
 }
@@ -50,7 +50,7 @@ export function getGoogleAnalyticsDefaultConfig() {
 	const currentUser = getCurrentUser();
 
 	return {
-		...( currentUser && { user_id: currentUser.hashedPii.ID } ),
+		...(currentUser && { user_id: currentUser.hashedPii.ID }),
 		anonymize_ip: true,
 		transport_type: 'function' === typeof window.navigator.sendBeacon ? 'beacon' : 'xhr',
 		use_amp_client_id: true,
@@ -66,12 +66,12 @@ export function getGoogleAnalyticsDefaultConfig() {
  * @param {string} urlPath The path of the current page
  * @param {string} pageTitle The title of the current page
  */
-export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
+export function fireGoogleAnalyticsPageView(urlPath, pageTitle) {
+	window.gtag('config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
 		...getGoogleAnalyticsDefaultConfig(),
 		page_path: urlPath,
 		page_title: pageTitle,
-	} );
+	});
 }
 
 /**
@@ -82,12 +82,12 @@ export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
  * @param {string} label Is the string that will appear as the event label.
  * @param {number} value Is a non-negative integer that will appear as the event value.
  */
-export function fireGoogleAnalyticsEvent( category, action, label, value ) {
-	window.gtag( 'event', action, {
+export function fireGoogleAnalyticsEvent(category, action, label, value) {
+	window.gtag('event', action, {
 		event_category: category,
 		event_label: label,
 		value: value,
-	} );
+	});
 }
 
 /**
@@ -98,11 +98,11 @@ export function fireGoogleAnalyticsEvent( category, action, label, value ) {
  * @param {string} event_category A string for categorizing all user timing variables into logical groups (e.g. 'JS Dependencies').
  * @param {string} event_label A string that can be used to add flexibility in visualizing user timings in the reports (e.g. 'Google CDN').
  */
-export function fireGoogleAnalyticsTiming( name, value, event_category, event_label ) {
-	window.gtag( 'event', 'timing_complete', {
+export function fireGoogleAnalyticsTiming(name, value, event_category, event_label) {
+	window.gtag('event', 'timing_complete', {
 		name: name,
 		value: value,
 		event_category: event_category,
 		event_label: event_label,
-	} );
+	});
 }

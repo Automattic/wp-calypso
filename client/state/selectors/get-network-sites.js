@@ -21,15 +21,15 @@ import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
  * @returns {?Array}              Array of network sites (the main one and the secondary ones)
  */
 export default createSelector(
-	( state, mainSiteId ) => {
-		if ( ! isJetpackSiteMainNetworkSite( state, mainSiteId ) ) {
+	(state, mainSiteId) => {
+		if (!isJetpackSiteMainNetworkSite(state, mainSiteId)) {
 			return null;
 		}
 
 		return filter(
-			getSitesItems( state ),
-			site => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID )
-		).map( site => getSite( state, site.ID ) );
+			getSitesItems(state),
+			(site) => mainSiteId === site.ID || isMainSiteOf(state, mainSiteId, site.ID)
+		).map((site) => getSite(state, site.ID));
 	},
-	state => [ getSitesItems( state ), state.currentUser.capabilities ]
+	(state) => [getSitesItems(state), state.currentUser.capabilities]
 );

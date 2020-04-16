@@ -30,7 +30,7 @@ class IcannVerificationCard extends React.Component {
 	getExplanation() {
 		const { translate, explanationContext, contactDetails } = this.props;
 
-		if ( 'new-status' === explanationContext ) {
+		if ('new-status' === explanationContext) {
 			return translate(
 				'We sent {{strong}}%(email)s{{/strong}} an email to verify your contact information. Please complete the verification or your domain will stop working in {{strong}}10 days{{/strong}}.',
 				{
@@ -41,7 +41,7 @@ class IcannVerificationCard extends React.Component {
 				}
 			);
 		}
-		if ( explanationContext === 'name-servers' ) {
+		if (explanationContext === 'name-servers') {
 			return translate(
 				'You have to verify the email address used to register this domain before you ' +
 					'are able to update the name servers for your domain. ' +
@@ -56,11 +56,7 @@ class IcannVerificationCard extends React.Component {
 			{
 				components: {
 					learnMoreLink: (
-						<a
-							href={ EMAIL_VALIDATION_AND_VERIFICATION }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
+						<a href={EMAIL_VALIDATION_AND_VERIFICATION} target="_blank" rel="noopener noreferrer" />
 					),
 				},
 			}
@@ -69,34 +65,34 @@ class IcannVerificationCard extends React.Component {
 
 	render() {
 		const { contactDetails, selectedDomainName, selectedSiteSlug, translate, compact } = this.props;
-		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
+		const changeEmailHref = domainManagementEditContactInfo(selectedSiteSlug, selectedDomainName);
 
-		if ( ! contactDetails ) {
-			return <QueryWhois domain={ selectedDomainName } />;
+		if (!contactDetails) {
+			return <QueryWhois domain={selectedDomainName} />;
 		}
 		const verificationExplanation = this.getExplanation();
 
 		return (
 			<EmailVerificationCard
-				changeEmailHref={ changeEmailHref }
-				contactEmail={ contactDetails.email }
-				errorMessage={ translate( 'Unable to resend ICANN verification email.' ) }
-				headerText={ translate( 'Important: Verify Your Email Address' ) }
-				verificationExplanation={ verificationExplanation }
-				resendVerification={ resendIcannVerification }
-				selectedDomainName={ selectedDomainName }
-				selectedSiteSlug={ selectedSiteSlug }
-				compact={ compact }
+				changeEmailHref={changeEmailHref}
+				contactEmail={contactDetails.email}
+				errorMessage={translate('Unable to resend ICANN verification email.')}
+				headerText={translate('Important: Verify Your Email Address')}
+				verificationExplanation={verificationExplanation}
+				resendVerification={resendIcannVerification}
+				selectedDomainName={selectedDomainName}
+				selectedSiteSlug={selectedSiteSlug}
+				compact={compact}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
+			contactDetails: getRegistrantWhois(state, ownProps.selectedDomainName),
 		};
 	},
 	{ errorNotice }
-)( localize( IcannVerificationCard ) );
+)(localize(IcannVerificationCard));

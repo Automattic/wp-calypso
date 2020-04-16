@@ -15,13 +15,13 @@ import isVipSite from 'state/selectors/is-vip-site';
  * @param {number} siteId Site ID
  * @returns {?boolean} True if the user can participate in the domain to paid plan upsell
  */
-const isEligibleForDomainToPaidPlanUpsell = ( state, siteId ) => {
-	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
-	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
-	const siteIsVipSite = isVipSite( state, siteId );
+const isEligibleForDomainToPaidPlanUpsell = (state, siteId) => {
+	const userCanManageOptions = canCurrentUser(state, siteId, 'manage_options');
+	const siteIsOnFreePlan = isSiteOnFreePlan(state, siteId);
+	const siteHasMappedDomain = isMappedDomainSite(state, siteId);
+	const siteIsVipSite = isVipSite(state, siteId);
 
-	return userCanManageOptions && siteHasMappedDomain && ! siteIsVipSite && siteIsOnFreePlan;
+	return userCanManageOptions && siteHasMappedDomain && !siteIsVipSite && siteIsOnFreePlan;
 };
 
 export default isEligibleForDomainToPaidPlanUpsell;

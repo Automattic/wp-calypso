@@ -24,24 +24,24 @@ export default class RootChild extends React.Component {
 
 	componentDidMount() {
 		// create the container element and immediately trigger a rerender
-		const containerEl = document.createElement( 'div' );
-		document.body.appendChild( containerEl );
-		this.setState( { containerEl } ); // eslint-disable-line react/no-did-mount-set-state
+		const containerEl = document.createElement('div');
+		document.body.appendChild(containerEl);
+		this.setState({ containerEl }); // eslint-disable-line react/no-did-mount-set-state
 	}
 
 	componentWillUnmount() {
-		if ( this.state.containerEl ) {
-			document.body.removeChild( this.state.containerEl );
+		if (this.state.containerEl) {
+			document.body.removeChild(this.state.containerEl);
 		}
 	}
 
 	render() {
 		// don't render anything until the `containerEl` is created. That's the correct behavior
 		// in SSR (no portals there, `RootChild` renders as empty).
-		if ( ! this.state.containerEl ) {
+		if (!this.state.containerEl) {
 			return null;
 		}
 
-		return ReactDOM.createPortal( this.props.children, this.state.containerEl );
+		return ReactDOM.createPortal(this.props.children, this.state.containerEl);
 	}
 }

@@ -16,29 +16,29 @@ import 'state/themes/init';
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @returns {Function}           Action thunk
  */
-export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
-	return dispatch => {
-		dispatch( {
+export function activateTheme(themeId, siteId, source = 'unknown', purchased = false) {
+	return (dispatch) => {
+		dispatch({
 			type: THEME_ACTIVATE,
 			themeId,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.activateTheme( themeId, siteId )
-			.then( theme => {
+			.activateTheme(themeId, siteId)
+			.then((theme) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
 				const themeStylesheet = theme.stylesheet || themeId;
-				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
-			} )
-			.catch( error => {
-				dispatch( {
+				dispatch(themeActivated(themeStylesheet, siteId, source, purchased));
+			})
+			.catch((error) => {
+				dispatch({
 					type: THEME_ACTIVATE_FAILURE,
 					themeId,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

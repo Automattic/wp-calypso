@@ -14,20 +14,20 @@ import Head from 'components/head';
 import EmptyContent from 'components/empty-content';
 import { chunkCssLinks } from './utils';
 
-function ServerError( { faviconURL, entrypoint } ) {
-	const theme = config( 'theme' );
+function ServerError({ faviconURL, entrypoint }) {
+	const theme = config('theme');
 
 	return (
 		<html lang="en">
-			<Head faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-				{ chunkCssLinks( entrypoint ) }
+			<Head faviconURL={faviconURL} cdn={'//s1.wp.com'}>
+				{chunkCssLinks(entrypoint)}
 			</Head>
 			<body
-				className={ classNames( {
-					[ 'theme-' + theme ]: theme,
-				} ) }
+				className={classNames({
+					['theme-' + theme]: theme,
+				})}
 			>
-				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }
+				{/* eslint-disable wpcalypso/jsx-classname-namespace*/}
 				<div id="wpcom" className="wpcom-site">
 					<div className="wp has-no-sidebar">
 						<div className="layout__content" id="content">
@@ -40,7 +40,7 @@ function ServerError( { faviconURL, entrypoint } ) {
 						</div>
 					</div>
 				</div>
-				{ /* eslint-enable wpcalypso/jsx-classname-namespace*/ }
+				{/* eslint-enable wpcalypso/jsx-classname-namespace*/}
 			</body>
 		</html>
 	);

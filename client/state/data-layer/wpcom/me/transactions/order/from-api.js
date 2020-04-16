@@ -5,8 +5,8 @@ import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import responseSchema from './schema';
 import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 
-export const convertProcessingStatus = responseStatus => {
-	switch ( responseStatus ) {
+export const convertProcessingStatus = (responseStatus) => {
+	switch (responseStatus) {
 		case 'processing':
 			return ORDER_TRANSACTION_STATUS.PROCESSING;
 		case 'async-pending':
@@ -22,11 +22,11 @@ export const convertProcessingStatus = responseStatus => {
 	}
 };
 
-export const transform = ( { order_id, user_id, receipt_id, processing_status } ) => ( {
+export const transform = ({ order_id, user_id, receipt_id, processing_status }) => ({
 	orderId: order_id,
 	userId: user_id,
 	receiptId: receipt_id,
-	processingStatus: convertProcessingStatus( processing_status ),
-} );
+	processingStatus: convertProcessingStatus(processing_status),
+});
 
-export default makeJsonSchemaParser( responseSchema, transform );
+export default makeJsonSchemaParser(responseSchema, transform);

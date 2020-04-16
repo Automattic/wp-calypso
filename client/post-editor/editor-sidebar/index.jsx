@@ -43,15 +43,15 @@ export class EditorSidebar extends Component {
 			<div className="editor-sidebar">
 				<EditorSidebarHeader />
 				<EditorDrawer
-					site={ site }
-					setPostDate={ setPostDate }
-					onPrivatePublish={ onPublish }
-					onSave={ onSave }
-					confirmationSidebarStatus={ confirmationSidebarStatus }
+					site={site}
+					setPostDate={setPostDate}
+					onPrivatePublish={onPublish}
+					onSave={onSave}
+					confirmationSidebarStatus={confirmationSidebarStatus}
 				/>
 				<EditorGutenbergOptInSidebar />
 				<SidebarFooter>
-					<EditorDeletePost onTrashingPost={ onTrashingPost } />
+					<EditorDeletePost onTrashingPost={onTrashingPost} />
 				</SidebarFooter>
 			</div>
 		);

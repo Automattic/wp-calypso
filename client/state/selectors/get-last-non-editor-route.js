@@ -17,8 +17,8 @@ import createSelector from 'lib/create-selector';
  * @returns {string} The last non editor route -- empty string if none.
  */
 const getLastNonEditorRoute = createSelector(
-	state => {
-		const previousPath = getPreviousPath( state );
+	(state) => {
+		const previousPath = getPreviousPath(state);
 
 		/**
 		 * Include paths which start in the classic editor because it is common
@@ -28,23 +28,18 @@ const getLastNonEditorRoute = createSelector(
 		 */
 		const editorPattern = /^\/(block-editor|page[^s]|post[^s])/;
 
-		if ( previousPath && ! editorPattern.test( previousPath ) ) {
+		if (previousPath && !editorPattern.test(previousPath)) {
 			return previousPath;
 		}
 
 		// Fall back to reading from the action log
 		return get(
-			last(
-				dropRightWhile(
-					getRouteHistory( state ),
-					( { path } ) => path && editorPattern.test( path )
-				)
-			),
+			last(dropRightWhile(getRouteHistory(state), ({ path }) => path && editorPattern.test(path))),
 			'path',
 			''
 		);
 	},
-	state => [ getPreviousPath( state ), getRouteHistory( state ) ]
+	(state) => [getPreviousPath(state), getRouteHistory(state)]
 );
 
 export default getLastNonEditorRoute;

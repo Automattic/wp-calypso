@@ -19,8 +19,8 @@ import Popover from 'components/popover';
 import Tooltip from 'components/tooltip';
 
 class DashboardWidget extends Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			showDialog: false,
 			showTooltip: false,
@@ -28,26 +28,26 @@ class DashboardWidget extends Component {
 	}
 
 	hideTooltip = () => {
-		this.setState( { showTooltip: false } );
+		this.setState({ showTooltip: false });
 	};
 
 	onSettingsPanelClose = () => {
-		this.setState( { showDialog: false } );
+		this.setState({ showDialog: false });
 		this.props.onSettingsClose();
 	};
 
 	settingsToggleRef = React.createRef();
 
 	showTooltip = () => {
-		this.setState( { showTooltip: true } );
+		this.setState({ showTooltip: true });
 	};
 
 	toggleSettingsPanel = () => {
 		const { showDialog } = this.state;
-		if ( showDialog ) {
+		if (showDialog) {
 			this.props.onSettingsClose();
 		}
-		this.setState( { showDialog: ! showDialog } );
+		this.setState({ showDialog: !showDialog });
 	};
 
 	render() {
@@ -63,58 +63,58 @@ class DashboardWidget extends Component {
 		} = this.props;
 		const { showDialog, showTooltip } = this.state;
 		const isTopImage = image && 'top' === imagePosition;
-		const imageClassName = image ? `is-${ imagePosition }` : null;
-		const widthClassName = `is-${ width }-width`;
+		const imageClassName = image ? `is-${imagePosition}` : null;
+		const widthClassName = `is-${width}-width`;
 		const SettingsPanel = this.props.settingsPanel;
-		const hasSettingsPanel = ! isUndefined( SettingsPanel );
+		const hasSettingsPanel = !isUndefined(SettingsPanel);
 
-		const classes = classNames( 'dashboard-widget', className, imageClassName, widthClassName, {
+		const classes = classNames('dashboard-widget', className, imageClassName, widthClassName, {
 			'is-flush-image': imageFlush,
 			'has-settings-panel': hasSettingsPanel,
-		} );
+		});
 
-		const imageComponent = <img className="dashboard-widget__image" src={ image } alt="" />;
+		const imageComponent = <img className="dashboard-widget__image" src={image} alt="" />;
 
 		return (
-			<Card className={ classes }>
+			<Card className={classes}>
 				<Gridicon
 					className="dashboard-widget__settings-toggle"
 					icon="cog"
-					onClick={ this.toggleSettingsPanel }
-					onMouseEnter={ this.showTooltip }
-					onMouseLeave={ this.hideTooltip }
-					ref={ this.settingsToggleRef }
-					size={ 18 }
+					onClick={this.toggleSettingsPanel}
+					onMouseEnter={this.showTooltip}
+					onMouseLeave={this.hideTooltip}
+					ref={this.settingsToggleRef}
+					size={18}
 				/>
 				<Tooltip
 					baseClassName="dashboard-widget__settings-tooltip"
-					context={ this.settingsToggleRef.current }
-					isVisible={ showTooltip }
+					context={this.settingsToggleRef.current}
+					isVisible={showTooltip}
 				>
-					{ translate( 'Settings', {
+					{translate('Settings', {
 						comment: 'Tooltip shown to toggle settings panel in dashboard',
-					} ) }
+					})}
 				</Tooltip>
-				{ hasSettingsPanel && (
+				{hasSettingsPanel && (
 					<Popover
 						className="woocommerce dashboard-widget__settings-popover"
-						context={ this.settingsToggleRef.current }
-						isVisible={ showDialog }
-						onClose={ this.onSettingsPanelClose }
+						context={this.settingsToggleRef.current}
+						isVisible={showDialog}
+						onClose={this.onSettingsPanelClose}
 						position="bottom left"
 					>
-						<SettingsPanel close={ this.onSettingsPanelClose } />
+						<SettingsPanel close={this.onSettingsPanelClose} />
 					</Popover>
-				) }
+				)}
 				<div className="dashboard-widget__content">
-					{ isTopImage && imageComponent }
-					{ image && 'left' === imagePosition && imageComponent }
+					{isTopImage && imageComponent}
+					{image && 'left' === imagePosition && imageComponent}
 					<div className="dashboard-widget__children">
-						{ title && <h2 className="dashboard-widget__title">{ title }</h2> }
-						{ children }
+						{title && <h2 className="dashboard-widget__title">{title}</h2>}
+						{children}
 					</div>
-					{ image && 'right' === imagePosition && imageComponent }
-					{ image && 'bottom' === imagePosition && imageComponent }
+					{image && 'right' === imagePosition && imageComponent}
+					{image && 'bottom' === imagePosition && imageComponent}
 				</div>
 			</Card>
 		);
@@ -125,11 +125,11 @@ DashboardWidget.propTypes = {
 	className: PropTypes.string,
 	image: PropTypes.string,
 	imageFlush: PropTypes.bool,
-	imagePosition: PropTypes.oneOf( [ 'bottom', 'left', 'right', 'top' ] ),
+	imagePosition: PropTypes.oneOf(['bottom', 'left', 'right', 'top']),
 	onSettingsClose: PropTypes.func,
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 	settingsPanel: PropTypes.func,
-	width: PropTypes.oneOf( [ 'half', 'full', 'third', 'two-thirds' ] ),
+	width: PropTypes.oneOf(['half', 'full', 'third', 'two-thirds']),
 };
 
 DashboardWidget.defaultProps = {
@@ -139,4 +139,4 @@ DashboardWidget.defaultProps = {
 	width: 'full',
 };
 
-export default localize( DashboardWidget );
+export default localize(DashboardWidget);

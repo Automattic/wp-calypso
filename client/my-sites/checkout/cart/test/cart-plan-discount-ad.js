@@ -8,14 +8,14 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 
-jest.mock( 'page' );
-jest.mock( 'state/sites/plans/actions' );
-jest.mock( 'state/analytics/actions' );
+jest.mock('page');
+jest.mock('state/sites/plans/actions');
+jest.mock('state/analytics/actions');
 
 import { CartPlanDiscountAd } from '../cart-plan-discount-ad';
 import CartAd from '../cart-ad';
 
-describe( 'cart-plan-discount-ad', () => {
+describe('cart-plan-discount-ad', () => {
 	const BLOGGER_PLAN = {
 		expired: false,
 		is_free: false,
@@ -28,12 +28,12 @@ describe( 'cart-plan-discount-ad', () => {
 	const CART = {
 		hasLoadedFromServer: true,
 		hasPendingServerUpdates: false,
-		products: [ BLOGGER_PLAN ],
+		products: [BLOGGER_PLAN],
 	};
 
 	const props = {
 		cart: CART,
-		translate: str => str,
+		translate: (str) => str,
 		sitePlans: {
 			hasLoadedFromServer: true,
 			data: [
@@ -50,27 +50,27 @@ describe( 'cart-plan-discount-ad', () => {
 		trackPlanDiscountAd: () => {},
 	};
 
-	test( 'Should call trackPlanDiscountAd() when the nudge appears', () => {
+	test('Should call trackPlanDiscountAd() when the nudge appears', () => {
 		const trackPlanDiscountAd = jest.fn();
 		const wrapper = shallow(
-			<CartPlanDiscountAd { ...props } trackPlanDiscountAd={ trackPlanDiscountAd } />
+			<CartPlanDiscountAd {...props} trackPlanDiscountAd={trackPlanDiscountAd} />
 		);
 
-		expect( wrapper.type() ).toBe( CartAd );
-		expect( trackPlanDiscountAd ).toHaveBeenCalled();
-	} );
+		expect(wrapper.type()).toBe(CartAd);
+		expect(trackPlanDiscountAd).toHaveBeenCalled();
+	});
 
-	test( 'Should not call trackPlanDiscountAd() when the nudge is not rendered', () => {
+	test('Should not call trackPlanDiscountAd() when the nudge is not rendered', () => {
 		const trackPlanDiscountAd = jest.fn();
 		const wrapper = shallow(
 			<CartPlanDiscountAd
-				{ ...props }
-				cart={ { hasLoadedFromServer: false } }
-				trackPlanDiscountAd={ trackPlanDiscountAd }
+				{...props}
+				cart={{ hasLoadedFromServer: false }}
+				trackPlanDiscountAd={trackPlanDiscountAd}
 			/>
 		);
 
-		expect( wrapper.type() ).toBe( null );
-		expect( trackPlanDiscountAd ).not.toHaveBeenCalled();
-	} );
-} );
+		expect(wrapper.type()).toBe(null);
+		expect(trackPlanDiscountAd).not.toHaveBeenCalled();
+	});
+});

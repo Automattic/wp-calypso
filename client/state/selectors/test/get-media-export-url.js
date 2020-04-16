@@ -3,19 +3,19 @@
  */
 import getMediaExportUrl from 'state/selectors/get-media-export-url';
 
-describe( 'getMediaExportUrl()', () => {
-	test( 'should return the stored media export url field.', () => {
+describe('getMediaExportUrl()', () => {
+	test('should return the stored media export url field.', () => {
 		const mediaExportUrl = 'https://examples.com/profit';
 		expect(
-			getMediaExportUrl( {
+			getMediaExportUrl({
 				exporter: {
 					mediaExportUrl,
 				},
-			} )
-		).toEqual( mediaExportUrl );
-	} );
+			})
+		).toEqual(mediaExportUrl);
+	});
 
-	test( 'should default to null.', () => {
-		expect( getMediaExportUrl( {} ) ).toBeNull();
-	} );
-} );
+	test('should default to null.', () => {
+		expect(getMediaExportUrl({})).toBeNull();
+	});
+});

@@ -11,13 +11,13 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/site-credit', {
-	title: __( 'WordPress.com Credit' ),
-	description: __( "This block tells the world that you're using WordPress.com." ),
+registerBlockType('a8c/site-credit', {
+	title: __('WordPress.com Credit'),
+	description: __("This block tells the world that you're using WordPress.com."),
 	icon: 'wordpress-alt',
 	category: 'layout',
 	supports: {
-		align: [ 'wide', 'full' ],
+		align: ['wide', 'full'],
 		html: false,
 		multiple: false,
 		reusable: false,
@@ -35,4 +35,4 @@ registerBlockType( 'a8c/site-credit', {
 	},
 	edit,
 	save: () => null,
-} );
+});

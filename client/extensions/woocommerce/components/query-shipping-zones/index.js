@@ -21,29 +21,29 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryLocations from 'woocommerce/components/query-locations';
 
 class QueryShippingZones extends Component {
-	fetch( siteId ) {
-		this.props.actions.fetchShippingZones( siteId );
-		this.props.actions.fetchShippingMethods( siteId );
-		this.props.actions.fetchShippingClasses( siteId );
+	fetch(siteId) {
+		this.props.actions.fetchShippingZones(siteId);
+		this.props.actions.fetchShippingMethods(siteId);
+		this.props.actions.fetchShippingClasses(siteId);
 	}
 
 	UNSAFE_componentWillMount() {
 		const { siteId, loaded } = this.props;
 
-		if ( siteId && ! loaded ) {
-			this.fetch( siteId );
+		if (siteId && !loaded) {
+			this.fetch(siteId);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( { siteId, loaded } ) {
+	UNSAFE_componentWillReceiveProps({ siteId, loaded }) {
 		//site ID changed, fetch new settings
-		if ( siteId !== this.props.siteId && ! loaded ) {
-			this.fetch( siteId );
+		if (siteId !== this.props.siteId && !loaded) {
+			this.fetch(siteId);
 		}
 	}
 
 	render() {
-		return <QueryLocations siteId={ this.props.siteId } />;
+		return <QueryLocations siteId={this.props.siteId} />;
 	}
 }
 
@@ -51,20 +51,20 @@ QueryShippingZones.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export const areShippingZonesFullyLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const areShippingZonesFullyLoaded = (state, siteId = getSelectedSiteId(state)) => {
 	return (
-		areShippingMethodsLoaded( state, siteId ) &&
-		areShippingZonesLoaded( state, siteId ) &&
-		areLocationsLoaded( state, siteId ) &&
-		areShippingClassesLoaded( state, siteId )
+		areShippingMethodsLoaded(state, siteId) &&
+		areShippingZonesLoaded(state, siteId) &&
+		areLocationsLoaded(state, siteId) &&
+		areShippingClassesLoaded(state, siteId)
 	);
 };
 
 export default connect(
-	( state, ownProps ) => ( {
-		loaded: areShippingZonesFullyLoaded( state, ownProps.siteId ),
-	} ),
-	dispatch => ( {
+	(state, ownProps) => ({
+		loaded: areShippingZonesFullyLoaded(state, ownProps.siteId),
+	}),
+	(dispatch) => ({
 		actions: bindActionCreators(
 			{
 				fetchShippingZones,
@@ -73,5 +73,5 @@ export default connect(
 			},
 			dispatch
 		),
-	} )
-)( QueryShippingZones );
+	})
+)(QueryShippingZones);

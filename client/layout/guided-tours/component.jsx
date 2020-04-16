@@ -29,59 +29,59 @@ import {
 import './style.scss';
 
 class GuidedToursComponent extends Component {
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return this.props.tourState !== nextProps.tourState;
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset' ) {
-			this.props.dispatch( resetGuidedToursHistory() );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset') {
+			this.props.dispatch(resetGuidedToursHistory());
 		}
 	}
 
-	start = ( { step, tour, tourVersion: tour_version } ) => {
-		if ( tour && tour_version ) {
-			this.props.dispatch( nextGuidedTourStep( { step, tour } ) );
-			tracks.recordEvent( 'calypso_guided_tours_start', { tour, tour_version } );
+	start = ({ step, tour, tourVersion: tour_version }) => {
+		if (tour && tour_version) {
+			this.props.dispatch(nextGuidedTourStep({ step, tour }));
+			tracks.recordEvent('calypso_guided_tours_start', { tour, tour_version });
 		}
 	};
 
-	next = ( { step, tour, tourVersion, nextStepName, skipping = false } ) => {
-		if ( ! skipping && step ) {
-			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+	next = ({ step, tour, tourVersion, nextStepName, skipping = false }) => {
+		if (!skipping && step) {
+			tracks.recordEvent('calypso_guided_tours_seen_step', {
 				tour,
 				step,
 				tour_version: tourVersion,
-			} );
+			});
 		}
 
-		defer( () => {
-			this.props.dispatch( nextGuidedTourStep( { tour, stepName: nextStepName } ) );
-		} );
+		defer(() => {
+			this.props.dispatch(nextGuidedTourStep({ tour, stepName: nextStepName }));
+		});
 	};
 
-	quit = ( { step, tour, tourVersion: tour_version, isLastStep } ) => {
-		if ( step ) {
-			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+	quit = ({ step, tour, tourVersion: tour_version, isLastStep }) => {
+		if (step) {
+			tracks.recordEvent('calypso_guided_tours_seen_step', {
 				tour,
 				step,
 				tour_version,
-			} );
+			});
 		}
 
-		tracks.recordEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit' }`, {
+		tracks.recordEvent(`calypso_guided_tours_${isLastStep ? 'finished' : 'quit'}`, {
 			step,
 			tour,
 			tour_version,
-		} );
+		});
 
-		this.props.dispatch( quitGuidedTour( { tour, stepName: step, finished: isLastStep } ) );
+		this.props.dispatch(quitGuidedTour({ tour, stepName: step, finished: isLastStep }));
 	};
 
 	render() {
 		const { tour: tourName, stepName = 'init', shouldShow } = this.props.tourState;
 
-		if ( ! shouldShow ) {
+		if (!shouldShow) {
 			return null;
 		}
 
@@ -90,16 +90,16 @@ class GuidedToursComponent extends Component {
 				<div className="guided-tours__root">
 					<QueryPreferences />
 					<AllTours
-						sectionName={ this.props.sectionName }
-						shouldPause={ this.props.shouldPause }
-						tourName={ tourName }
-						stepName={ stepName }
-						lastAction={ this.props.lastAction }
-						isValid={ this.props.isValid }
-						next={ this.next }
-						quit={ this.quit }
-						start={ this.start }
-						dispatch={ this.props.dispatch }
+						sectionName={this.props.sectionName}
+						shouldPause={this.props.shouldPause}
+						tourName={tourName}
+						stepName={stepName}
+						lastAction={this.props.lastAction}
+						isValid={this.props.isValid}
+						next={this.next}
+						quit={this.quit}
+						start={this.start}
+						dispatch={this.props.dispatch}
 					/>
 				</div>
 			</RootChild>
@@ -107,17 +107,17 @@ class GuidedToursComponent extends Component {
 	}
 }
 
-const getTourWhenState = state => when => !! when( state );
+const getTourWhenState = (state) => (when) => !!when(state);
 
-export default connect( state => {
-	const tourState = getGuidedTourState( state );
-	const shouldPause = isSectionLoading( state ) || tourState.isPaused;
+export default connect((state) => {
+	const tourState = getGuidedTourState(state);
+	const shouldPause = isSectionLoading(state) || tourState.isPaused;
 	return {
-		sectionName: getSectionName( state ),
+		sectionName: getSectionName(state),
 		shouldPause,
 		tourState,
-		isValid: getTourWhenState( state ),
-		lastAction: getLastAction( state ),
-		requestedTour: getInitialQueryArguments( state ).tour,
+		isValid: getTourWhenState(state),
+		lastAction: getLastAction(state),
+		requestedTour: getInitialQueryArguments(state).tour,
 	};
-} )( GuidedToursComponent );
+})(GuidedToursComponent);

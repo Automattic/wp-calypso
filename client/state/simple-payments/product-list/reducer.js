@@ -18,17 +18,17 @@ import {
  * @param {object} newProduct to update list with
  * @returns {Array} updated array of products
  */
-function addOrEditProduct( list = [], newProduct ) {
+function addOrEditProduct(list = [], newProduct) {
 	let found = 0;
-	const products = list.map( product => {
-		if ( product.ID === newProduct.ID ) {
+	const products = list.map((product) => {
+		if (product.ID === newProduct.ID) {
 			found = 1;
 			return newProduct;
 		}
 		return product;
-	} );
-	if ( ! found ) {
-		return [ newProduct, ...products ];
+	});
+	if (!found) {
+		return [newProduct, ...products];
 	}
 	return products;
 }
@@ -41,14 +41,14 @@ function addOrEditProduct( list = [], newProduct ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( productListSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(productListSchema, (state = {}, action) => {
+	switch (action.type) {
 		case SIMPLE_PAYMENTS_PRODUCT_RECEIVE: {
 			const { siteId, product } = action;
 
 			return {
 				...state,
-				[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+				[siteId]: addOrEditProduct(state[siteId], product),
 			};
 		}
 		case SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE: {
@@ -56,7 +56,7 @@ export const items = withSchemaValidation( productListSchema, ( state = {}, acti
 
 			return {
 				...state,
-				[ siteId ]: products,
+				[siteId]: products,
 			};
 		}
 		case SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE: {
@@ -64,7 +64,7 @@ export const items = withSchemaValidation( productListSchema, ( state = {}, acti
 
 			return {
 				...state,
-				[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+				[siteId]: addOrEditProduct(state[siteId], product),
 			};
 		}
 		case SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE: {
@@ -72,14 +72,14 @@ export const items = withSchemaValidation( productListSchema, ( state = {}, acti
 
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].filter( product => product.ID !== productId ),
+				[siteId]: state[siteId].filter((product) => product.ID !== productId),
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
-} );
+});

@@ -50,13 +50,13 @@ import { getSaveErrorMessage } from './save-error-message';
 class ProductCreate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			ID: PropTypes.number,
 			slug: PropTypes.string,
-		} ),
-		product: PropTypes.shape( {
+		}),
+		product: PropTypes.shape({
 			id: PropTypes.isRequired,
-		} ),
+		}),
 		fetchProductCategories: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
 		editProductCategory: PropTypes.func.isRequired,
@@ -71,111 +71,111 @@ class ProductCreate extends React.Component {
 	componentDidMount() {
 		const { site } = this.props;
 
-		if ( site && site.ID ) {
-			this.props.editProduct( site.ID, null, {} );
-			this.props.fetchProductCategories( site.ID, { offset: 0 } );
+		if (site && site.ID) {
+			this.props.editProduct(site.ID, null, {});
+			this.props.fetchProductCategories(site.ID, { offset: 0 });
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { site } = this.props;
-		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-		const oldSiteId = ( site && site.ID ) || null;
-		if ( oldSiteId !== newSiteId ) {
-			this.props.editProduct( newSiteId, null, {} );
-			this.props.fetchProductCategories( newSiteId, { offset: 0 } );
+		const newSiteId = (newProps.site && newProps.site.ID) || null;
+		const oldSiteId = (site && site.ID) || null;
+		if (oldSiteId !== newSiteId) {
+			this.props.editProduct(newSiteId, null, {});
+			this.props.fetchProductCategories(newSiteId, { offset: 0 });
 		}
 	}
 
 	componentWillUnmount() {
 		const { site } = this.props;
 
-		if ( site ) {
-			this.props.clearProductEdits( site.ID );
-			this.props.clearProductCategoryEdits( site.ID );
-			this.props.clearProductVariationEdits( site.ID );
+		if (site) {
+			this.props.clearProductEdits(site.ID);
+			this.props.clearProductCategoryEdits(site.ID);
+			this.props.clearProductVariationEdits(site.ID);
 		}
 	}
 
 	onUploadStart = () => {
-		this.setState( prevState => ( {
-			isUploading: [ ...prevState.isUploading, [ true ] ],
-		} ) );
+		this.setState((prevState) => ({
+			isUploading: [...prevState.isUploading, [true]],
+		}));
 	};
 
 	onUploadFinish = () => {
-		this.setState( prevState => ( {
-			isUploading: prevState.isUploading.slice( 1 ),
-		} ) );
+		this.setState((prevState) => ({
+			isUploading: prevState.isUploading.slice(1),
+		}));
 	};
 
 	onSave = () => {
 		const { site, product, finishedInitialSetup, translate } = this.props;
 
-		const getSuccessNotice = newProduct => {
-			if ( ! finishedInitialSetup ) {
+		const getSuccessNotice = (newProduct) => {
+			if (!finishedInitialSetup) {
 				return successNotice(
-					translate( '%(product)s successfully created. {{productLink}}View{{/productLink}}', {
+					translate('%(product)s successfully created. {{productLink}}View{{/productLink}}', {
 						args: {
 							product: newProduct.name,
 						},
 						components: {
 							productLink: (
-								<a href={ newProduct.permalink } target="_blank" rel="noopener noreferrer" />
+								<a href={newProduct.permalink} target="_blank" rel="noopener noreferrer" />
 							),
 						},
-					} ),
+					}),
 					{
 						displayOnNextPage: true,
 						showDismiss: false,
-						button: translate( 'Back to dashboard' ),
-						href: getLink( '/store/:site', site ),
+						button: translate('Back to dashboard'),
+						href: getLink('/store/:site', site),
 					}
 				);
 			}
 
 			return successNotice(
-				translate( '%(product)s successfully created.', {
+				translate('%(product)s successfully created.', {
 					args: { product: product.name },
-				} ),
+				}),
 				{
 					displayOnNextPage: true,
 					duration: 8000,
-					button: translate( 'View' ),
+					button: translate('View'),
 					onClick: () => {
-						window.open( newProduct.permalink );
+						window.open(newProduct.permalink);
 					},
 				}
 			);
 		};
 
-		const successAction = products => {
-			const newProduct = head( products );
-			page.redirect( getLink( '/store/products/:site', site ) );
-			return getSuccessNotice( newProduct );
+		const successAction = (products) => {
+			const newProduct = head(products);
+			page.redirect(getLink('/store/products/:site', site));
+			return getSuccessNotice(newProduct);
 		};
 
-		const failureAction = error => {
-			const errorSlug = ( error && error.error ) || undefined;
+		const failureAction = (error) => {
+			const errorSlug = (error && error.error) || undefined;
 
-			return errorNotice( getSaveErrorMessage( errorSlug, product.name, translate ), {
+			return errorNotice(getSaveErrorMessage(errorSlug, product.name, translate), {
 				duration: 8000,
-			} );
+			});
 		};
 
-		if ( ! product.type ) {
+		if (!product.type) {
 			// Product type was never switched, so set it before we save.
-			this.props.editProduct( site.ID, product, { type: 'simple' } );
+			this.props.editProduct(site.ID, product, { type: 'simple' });
 		}
 
-		if ( ! product.regular_price ) {
-			this.props.editProduct( site.ID, product, { regular_price: '0' } );
+		if (!product.regular_price) {
+			this.props.editProduct(site.ID, product, { regular_price: '0' });
 		}
 
-		this.props.createProductActionList( successAction, failureAction );
+		this.props.createProductActionList(successAction, failureAction);
 	};
 
-	isProductValid( product = this.props.product ) {
+	isProductValid(product = this.props.product) {
 		return product && product.name && product.name.length > 0;
 	}
 
@@ -191,49 +191,49 @@ class ProductCreate extends React.Component {
 		} = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
-		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
-		const saveEnabled = isValid && ! isBusy && 0 === this.state.isUploading.length;
+		const isBusy = Boolean(actionList); // If there's an action list present, we're trying to save.
+		const saveEnabled = isValid && !isBusy && 0 === this.state.isUploading.length;
 
-		if ( ! product || isNumber( product.id ) ) {
+		if (!product || isNumber(product.id)) {
 			return null;
 		}
 
 		return (
-			<Main className={ className } wideLayout>
+			<Main className={className} wideLayout>
 				<ProductHeader
-					site={ site }
-					product={ product }
-					onSave={ saveEnabled ? this.onSave : false }
-					isBusy={ isBusy }
+					site={site}
+					product={product}
+					onSave={saveEnabled ? this.onSave : false}
+					isBusy={isBusy}
 				/>
-				<ProtectFormGuard isChanged={ hasEdits } />
+				<ProtectFormGuard isChanged={hasEdits} />
 				<ProductForm
-					siteId={ site && site.ID }
-					product={ product || { type: 'simple' } }
-					variations={ variations }
-					productCategories={ productCategories }
-					editProduct={ this.props.editProduct }
-					editProductCategory={ this.props.editProductCategory }
-					editProductAttribute={ this.props.editProductAttribute }
-					editProductVariation={ this.props.editProductVariation }
-					onUploadStart={ this.onUploadStart }
-					onUploadFinish={ this.onUploadFinish }
+					siteId={site && site.ID}
+					product={product || { type: 'simple' }}
+					variations={variations}
+					productCategories={productCategories}
+					editProduct={this.props.editProduct}
+					editProductCategory={this.props.editProductCategory}
+					editProductAttribute={this.props.editProductAttribute}
+					editProductVariation={this.props.editProductVariation}
+					onUploadStart={this.onUploadStart}
+					onUploadFinish={this.onUploadFinish}
 				/>
 			</Main>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
-	const productId = getCurrentlyEditingId( state );
-	const combinedProduct = getProductWithLocalEdits( state, productId );
-	const product = combinedProduct || ( productId && { id: productId } );
-	const hasEdits = Boolean( getProductEdits( state, productId ) );
-	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
-	const productCategories = getProductCategoriesWithLocalEdits( state );
-	const actionList = getActionList( state );
-	const finishedInitialSetup = getFinishedInitialSetup( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
+	const productId = getCurrentlyEditingId(state);
+	const combinedProduct = getProductWithLocalEdits(state, productId);
+	const product = combinedProduct || (productId && { id: productId });
+	const hasEdits = Boolean(getProductEdits(state, productId));
+	const variations = product && getProductVariationsWithLocalEdits(state, product.id);
+	const productCategories = getProductCategoriesWithLocalEdits(state);
+	const actionList = getActionList(state);
+	const finishedInitialSetup = getFinishedInitialSetup(state);
 
 	return {
 		site,
@@ -246,13 +246,13 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
-			createProductActionList: ( ...args ) =>
+			createProductActionList: (...args) =>
 				withAnalytics(
-					recordTracksEvent( 'calypso_woocommerce_ui_product_create' ),
-					createProductActionList( ...args )
+					recordTracksEvent('calypso_woocommerce_ui_product_create'),
+					createProductActionList(...args)
 				),
 			editProduct,
 			editProductCategory,
@@ -267,4 +267,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCreate ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(ProductCreate));

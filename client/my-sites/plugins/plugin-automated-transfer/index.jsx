@@ -53,39 +53,39 @@ class PluginAutomatedTransfer extends Component {
 		const { COMPLETE } = transferStates;
 		const { isTransferring, isFailedTransfer, transferState } = this.props;
 
-		if ( COMPLETE === transferState ) {
-			this.setState( { transferComplete: true } );
-		} else if ( isTransferring || isFailedTransfer ) {
-			this.setState( { shouldDisplay: true } );
+		if (COMPLETE === transferState) {
+			this.setState({ transferComplete: true });
+		} else if (isTransferring || isFailedTransfer) {
+			this.setState({ shouldDisplay: true });
 		}
 	}
 
 	componentWillUnmount() {
-		clearInterval( this.interval );
+		clearInterval(this.interval);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId } = this.props;
 		const { COMPLETE } = transferStates;
 		const { transferComplete } = this.state;
 		const newState = {};
 
-		if ( this.props.transferState !== nextProps.transferState ) {
+		if (this.props.transferState !== nextProps.transferState) {
 			newState.clickOutside = false;
 		}
 
-		if ( COMPLETE === nextProps.transferState ) {
-			this.interval = this.interval || setInterval( () => this.props.requestSite( siteId ), 1000 );
+		if (COMPLETE === nextProps.transferState) {
+			this.interval = this.interval || setInterval(() => this.props.requestSite(siteId), 1000);
 
 			newState.transferComplete = true;
-			if ( ! transferComplete ) {
+			if (!transferComplete) {
 				newState.shouldDisplay = true;
 			}
-		} else if ( ! transferComplete ) {
+		} else if (!transferComplete) {
 			newState.shouldDisplay = nextProps.isTransferring || nextProps.isFailedTransfer;
 		}
 
-		this.setState( newState );
+		this.setState(newState);
 	}
 
 	getNoticeText = () => {
@@ -93,17 +93,17 @@ class PluginAutomatedTransfer extends Component {
 		const { plugin, transferState, translate } = this.props;
 		const { clickOutside, transferComplete } = this.state;
 
-		if ( clickOutside ) {
-			return translate( "Don't leave quite yet! Just a bit longer." );
+		if (clickOutside) {
+			return translate("Don't leave quite yet! Just a bit longer.");
 		}
-		if ( transferComplete ) {
-			return translate( 'Activating %(plugin)s…', { args: { plugin: plugin.name } } );
+		if (transferComplete) {
+			return translate('Activating %(plugin)s…', { args: { plugin: plugin.name } });
 		}
-		switch ( transferState ) {
+		switch (transferState) {
 			case START:
-				return translate( 'Installing %(plugin)s…', { args: { plugin: plugin.name } } );
+				return translate('Installing %(plugin)s…', { args: { plugin: plugin.name } });
 			case CONFLICTS:
-				return translate( 'Sorry, we found some conflicts to fix before proceeding.' );
+				return translate('Sorry, we found some conflicts to fix before proceeding.');
 			case FAILURE:
 				return translate(
 					'There was a problem installing the plugin. Please try again in a few minutes.'
@@ -115,10 +115,10 @@ class PluginAutomatedTransfer extends Component {
 		const { isFailedTransfer } = this.props;
 		const { clickOutside } = this.state;
 
-		if ( clickOutside ) {
+		if (clickOutside) {
 			return 'is-info';
 		}
-		if ( isFailedTransfer ) {
+		if (isFailedTransfer) {
 			return 'is-error';
 		}
 		return 'is-info';
@@ -128,20 +128,20 @@ class PluginAutomatedTransfer extends Component {
 		const { isFailedTransfer } = this.props;
 		const { clickOutside } = this.state;
 
-		if ( clickOutside ) {
+		if (clickOutside) {
 			return 'sync';
 		}
-		if ( isFailedTransfer ) {
+		if (isFailedTransfer) {
 			return 'notice';
 		}
 		return 'sync';
 	};
 
-	handleClickOutside( event ) {
-		if ( this.props.isTransferring && ! this.state.transferComplete ) {
+	handleClickOutside(event) {
+		if (this.props.isTransferring && !this.state.transferComplete) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
-			this.setState( { clickOutside: true } );
+			this.setState({ clickOutside: true });
 		}
 	}
 
@@ -150,45 +150,45 @@ class PluginAutomatedTransfer extends Component {
 		const { transferState, translate } = this.props;
 		const { shouldDisplay, transferComplete } = this.state;
 
-		if ( ! shouldDisplay ) {
+		if (!shouldDisplay) {
 			return null;
 		}
 
 		return (
 			<div>
 				<Notice
-					icon={ this.getIcon() }
+					icon={this.getIcon()}
 					className="plugin-automated-transfer__notice"
-					showDismiss={ false }
-					status={ this.getStatus() }
-					text={ this.getNoticeText() }
+					showDismiss={false}
+					status={this.getStatus()}
+					text={this.getNoticeText()}
 				>
-					{ ! transferComplete && CONFLICTS === transferState && (
+					{!transferComplete && CONFLICTS === transferState && (
 						<NoticeAction href="#">
-							{ translate( 'View Conflicts', {
+							{translate('View Conflicts', {
 								comment:
 									'Conflicts arose during an Automated Transfer started by a plugin install.',
-							} ) }
+							})}
 						</NoticeAction>
-					) }
+					)}
 				</Notice>
-				{ this.state.transferComplete && <WpAdminAutoLogin site={ this.props.site } /> }
+				{this.state.transferComplete && <WpAdminAutoLogin site={this.props.site} />}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
 	return {
 		siteId,
-		transferState: getAutomatedTransferStatus( state, siteId ),
-		isTransferring: isAutomatedTransferActive( state, siteId ),
-		isFailedTransfer: isAutomatedTransferFailed( state, siteId ),
-		site: getSite( state, siteId ),
+		transferState: getAutomatedTransferStatus(state, siteId),
+		isTransferring: isAutomatedTransferActive(state, siteId),
+		isFailedTransfer: isAutomatedTransferFailed(state, siteId),
+		site: getSite(state, siteId),
 	};
 };
 
-export default connect( mapStateToProps, {
+export default connect(mapStateToProps, {
 	requestSite,
-} )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
+})(localize(wrapWithClickOutside(PluginAutomatedTransfer)));

@@ -11,8 +11,8 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { hasPendingPayment } from 'lib/cart-values';
 
-export const PendingPaymentNotice = ( { translate, cart = {} } ) => {
-	if ( ! hasPendingPayment( cart ) ) {
+export const PendingPaymentNotice = ({ translate, cart = {} }) => {
+	if (!hasPendingPayment(cart)) {
 		return null;
 	}
 
@@ -21,15 +21,15 @@ export const PendingPaymentNotice = ( { translate, cart = {} } ) => {
 			icon="info-outline"
 			isCompact
 			status="is-warning"
-			text={ translate( 'Processing your payment…', {
+			text={translate('Processing your payment…', {
 				comment: 'Notice to user that a payment is pending',
-			} ) }
+			})}
 		>
 			<NoticeAction href="/me/purchases/pending">
-				{ translate( 'View', { context: 'verb' } ) }
+				{translate('View', { context: 'verb' })}
 			</NoticeAction>
 		</Notice>
 	);
 };
 
-export default localize( PendingPaymentNotice );
+export default localize(PendingPaymentNotice);

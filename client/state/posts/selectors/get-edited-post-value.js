@@ -19,6 +19,6 @@ import 'state/posts/init';
  * @param   {string} field  Field value to retrieve
  * @returns {*}             Field value
  */
-export function getEditedPostValue( state, siteId, postId, field ) {
-	return get( getEditedPost( state, siteId, postId ), field );
+export function getEditedPostValue(state, siteId, postId, field) {
+	return get(getEditedPost(state, siteId, postId), field);
 }

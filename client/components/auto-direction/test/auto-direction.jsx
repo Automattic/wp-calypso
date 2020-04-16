@@ -15,29 +15,29 @@ import React from 'react';
 import AutoDirection from '..';
 import Emojify from 'components/emojify';
 
-describe( 'AutoDirection', () => {
-	describe( 'component rendering', () => {
-		test( 'adds a direction to RTL text', () => {
+describe('AutoDirection', () => {
+	describe('component rendering', () => {
+		test('adds a direction to RTL text', () => {
 			const wrapper = shallow(
 				<AutoDirection>
 					<div>השנה היא 2017.</div>
 				</AutoDirection>
 			);
 
-			expect( wrapper.getElement().props.direction ).to.equal( 'rtl' );
-		} );
+			expect(wrapper.getElement().props.direction).to.equal('rtl');
+		});
 
-		test( "doesn't add a direction to LTR text", () => {
+		test("doesn't add a direction to LTR text", () => {
 			const wrapper = shallow(
 				<AutoDirection>
 					<div>The year is 2017.</div>
 				</AutoDirection>
 			);
 
-			expect( wrapper.getElement().props ).to.not.have.property( 'direction' );
-		} );
+			expect(wrapper.getElement().props).to.not.have.property('direction');
+		});
 
-		test( 'adds a direction to the parent of an inline component', () => {
+		test('adds a direction to the parent of an inline component', () => {
 			const wrapper = shallow(
 				<AutoDirection>
 					<div>
@@ -46,10 +46,10 @@ describe( 'AutoDirection', () => {
 				</AutoDirection>
 			);
 
-			expect( wrapper.getElement().props.direction ).to.equal( 'rtl' );
+			expect(wrapper.getElement().props.direction).to.equal('rtl');
 
 			// Things get weird when mounting a stateless component, so just check for the HTML, instead.
-			expect( wrapper.html() ).to.include( '<div class="emojify">השנה היא 2017.</div>' );
-		} );
-	} );
-} );
+			expect(wrapper.html()).to.include('<div class="emojify">השנה היא 2017.</div>');
+		});
+	});
+});

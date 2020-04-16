@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import isRequestingMedia from 'state/selectors/is-requesting-media';
 import MediaQueryManager from 'lib/query-manager/media';
 
-describe( 'isRequestingMedia()', () => {
+describe('isRequestingMedia()', () => {
 	const query = {
 		search: 'flower',
 	};
@@ -18,29 +18,29 @@ describe( 'isRequestingMedia()', () => {
 		media: {
 			queryRequests: {
 				2916284: {
-					[ MediaQueryManager.QueryKey.stringify( query ) ]: true,
+					[MediaQueryManager.QueryKey.stringify(query)]: true,
 				},
 			},
 		},
 	};
 
-	test( 'should return false if the site is not attached', () => {
-		const isRequesting = isRequestingMedia( state, 2916285, query );
+	test('should return false if the site is not attached', () => {
+		const isRequesting = isRequestingMedia(state, 2916285, query);
 
-		expect( isRequesting ).to.be.false;
-	} );
+		expect(isRequesting).to.be.false;
+	});
 
-	test( 'should return false if media are not being requested', () => {
-		const isRequesting = isRequestingMedia( state, 2916284, {
+	test('should return false if media are not being requested', () => {
+		const isRequesting = isRequestingMedia(state, 2916284, {
 			search: 'flowers',
-		} );
+		});
 
-		expect( isRequesting ).to.be.false;
-	} );
+		expect(isRequesting).to.be.false;
+	});
 
-	test( 'should return true if media are being requested', () => {
-		const isRequesting = isRequestingMedia( state, 2916284, query );
+	test('should return true if media are being requested', () => {
+		const isRequesting = isRequestingMedia(state, 2916284, query);
 
-		expect( isRequesting ).to.be.true;
-	} );
-} );
+		expect(isRequesting).to.be.true;
+	});
+});

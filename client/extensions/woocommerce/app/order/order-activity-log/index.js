@@ -24,14 +24,14 @@ class OrderActivityLog extends Component {
 
 		return (
 			<div className="order-activity-log">
-				<SectionHeader label={ translate( 'Activity log' ) } />
+				<SectionHeader label={translate('Activity log')} />
 				<Card>
-					<OrderEvents orderId={ orderId } siteId={ siteId } />
-					<CreateOrderNote orderId={ orderId } siteId={ siteId } />
+					<OrderEvents orderId={orderId} siteId={siteId} />
+					<CreateOrderNote orderId={orderId} siteId={siteId} />
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default localize( OrderActivityLog );
+export default localize(OrderActivityLog);

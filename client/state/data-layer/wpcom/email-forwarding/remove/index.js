@@ -19,20 +19,20 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const removeEmailForward = action => {
+export const removeEmailForward = (action) => {
 	return http(
 		{
 			method: 'POST',
-			path: `/domains/${ encodeURIComponent( action.domainName ) }/email/${ encodeURIComponent(
+			path: `/domains/${encodeURIComponent(action.domainName)}/email/${encodeURIComponent(
 				action.mailbox
-			) }/delete`,
+			)}/delete`,
 			body: {},
 		},
 		action
 	);
 };
 
-export const removeEmailForwardFailure = ( action, error ) => {
+export const removeEmailForwardFailure = (action, error) => {
 	const { domainName, mailbox } = action;
 
 	let failureMessage = translate(
@@ -44,12 +44,12 @@ export const removeEmailForwardFailure = ( action, error ) => {
 				email: mailbox + '@' + domainName,
 			},
 			components: {
-				contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+				contactSupportLink: <a href={CALYPSO_CONTACT} />,
 			},
 		}
 	);
 
-	if ( error && error.message ) {
+	if (error && error.message) {
 		failureMessage = translate(
 			'Failed to remove email forward %(email)s ' +
 				'with message "%(message)s". ' +
@@ -61,45 +61,45 @@ export const removeEmailForwardFailure = ( action, error ) => {
 					email: mailbox + '@' + domainName,
 				},
 				components: {
-					contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+					contactSupportLink: <a href={CALYPSO_CONTACT} />,
 				},
 			}
 		);
 	}
 
 	return [
-		errorNotice( failureMessage ),
-		receiveRemoveEmailForwardFailure( domainName, mailbox, error ),
+		errorNotice(failureMessage),
+		receiveRemoveEmailForwardFailure(domainName, mailbox, error),
 	];
 };
 
-export const removeEmailForwardSuccess = ( action, response ) => {
+export const removeEmailForwardSuccess = (action, response) => {
 	const { domainName, mailbox } = action;
 
-	if ( response && response.deleted ) {
-		const successMessage = translate( 'Email forward %(email)s has been successfully removed.', {
+	if (response && response.deleted) {
+		const successMessage = translate('Email forward %(email)s has been successfully removed.', {
 			args: {
 				email: mailbox + '@' + domainName,
 			},
-		} );
+		});
 
 		return [
-			successNotice( successMessage, {
+			successNotice(successMessage, {
 				duration: 5000,
-			} ),
-			receiveRemoveEmailForwardSuccess( domainName, mailbox ),
+			}),
+			receiveRemoveEmailForwardSuccess(domainName, mailbox),
 		];
 	}
 
-	return removeEmailForwardFailure( action, true );
+	return removeEmailForwardFailure(action, true);
 };
 
-registerHandlers( 'state/data-layer/wpcom/email-forwarding/remove/index.js', {
-	[ EMAIL_FORWARDING_REMOVE_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/email-forwarding/remove/index.js', {
+	[EMAIL_FORWARDING_REMOVE_REQUEST]: [
+		dispatchRequest({
 			fetch: removeEmailForward,
 			onSuccess: removeEmailForwardSuccess,
 			onError: removeEmailForwardFailure,
-		} ),
+		}),
 	],
-} );
+});

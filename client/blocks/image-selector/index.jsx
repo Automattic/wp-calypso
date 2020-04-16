@@ -58,45 +58,45 @@ export class ImageSelector extends Component {
 	showMediaModal = () => {
 		const { siteId, imageIds } = this.props;
 
-		if ( imageIds ) {
-			const images = imageIds.map( imageId => MediaStore.get( siteId, imageId ) );
-			MediaActions.setLibrarySelectedItems( siteId, images );
+		if (imageIds) {
+			const images = imageIds.map((imageId) => MediaStore.get(siteId, imageId));
+			MediaActions.setLibrarySelectedItems(siteId, images);
 		}
 
-		this.setState( {
+		this.setState({
 			isSelecting: true,
-		} );
+		});
 	};
 
 	hideMediaModal = () => {
-		this.setState( {
+		this.setState({
 			isSelecting: false,
-		} );
+		});
 	};
 
-	setImage = value => {
-		if ( value ) {
-			this.props.onImageSelected( value );
+	setImage = (value) => {
+		if (value) {
+			this.props.onImageSelected(value);
 		}
 		this.hideMediaModal();
 	};
 
-	removeImage = image => {
-		this.props.onRemoveImage( image );
+	removeImage = (image) => {
+		this.props.onRemoveImage(image);
 	};
 
-	addImage = image => {
-		this.props.onAddImage( image );
+	addImage = (image) => {
+		this.props.onAddImage(image);
 	};
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
 	// after creating an item by uploading or selecting from Google library.
-	onImageChange = images => {
-		this.props.onImageChange( images );
+	onImageChange = (images) => {
+		this.props.onImageChange(images);
 	};
 
 	renderMediaModal() {
-		if ( ! this.props.siteId ) {
+		if (!this.props.siteId) {
 			return;
 		}
 
@@ -104,15 +104,15 @@ export class ImageSelector extends Component {
 		const { isSelecting } = this.state;
 
 		return (
-			<MediaLibrarySelectedData siteId={ siteId }>
+			<MediaLibrarySelectedData siteId={siteId}>
 				<MediaModal
-					visible={ selecting || isSelecting }
-					onClose={ this.setImage }
-					siteId={ siteId }
-					labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
-					enabledFilters={ [ 'images' ] }
-					galleryViewEnabled={ false }
-					{ ...( ! multiple && { single: true } ) }
+					visible={selecting || isSelecting}
+					onClose={this.setImage}
+					siteId={siteId}
+					labels={{ confirm: multiple ? translate('Set images') : translate('Set image') }}
+					enabledFilters={['images']}
+					galleryViewEnabled={false}
+					{...(!multiple && { single: true })}
 				/>
 			</MediaLibrarySelectedData>
 		);
@@ -131,46 +131,46 @@ export class ImageSelector extends Component {
 
 		return (
 			<ImageSelectorPreview
-				className={ previewClassName }
-				compact={ compact }
-				itemIds={ imageIds }
-				maxWidth={ maxWidth }
-				multiple={ multiple }
-				onImageChange={ this.onImageChange }
-				onImageClick={ this.showMediaModal }
-				onRemoveImage={ this.removeImage }
-				showEditIcon={ showEditIcon }
-				siteId={ siteId }
+				className={previewClassName}
+				compact={compact}
+				itemIds={imageIds}
+				maxWidth={maxWidth}
+				multiple={multiple}
+				onImageChange={this.onImageChange}
+				onImageClick={this.showMediaModal}
+				onRemoveImage={this.removeImage}
+				showEditIcon={showEditIcon}
+				siteId={siteId}
 			/>
 		);
 	}
 
 	render() {
 		const { className, imageIds, isImageSelectorDropZoneVisible, siteId } = this.props;
-		const classes = classnames( 'image-selector', className, {
-			'is-assigned': !! imageIds && imageIds.length,
+		const classes = classnames('image-selector', className, {
+			'is-assigned': !!imageIds && imageIds.length,
 			'has-active-drop-zone': isImageSelectorDropZoneVisible,
-		} );
+		});
 
 		return (
-			<div className={ classes }>
-				{ this.renderMediaModal() }
-				<div className="image-selector__inner-content">{ this.renderSelectedImages() }</div>
-				<ImageSelectorDropZone onDroppedImage={ this.addImage } siteId={ siteId } />
+			<div className={classes}>
+				{this.renderMediaModal()}
+				<div className="image-selector__inner-content">{this.renderSelectedImages()}</div>
+				<ImageSelectorDropZone onDroppedImage={this.addImage} siteId={siteId} />
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const { siteId } = ownProps;
 	const props = {
-		siteId: getSelectedSiteId( state ),
-		isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
+		siteId: getSelectedSiteId(state),
+		isImageSelectorDropZoneVisible: isDropZoneVisible(state, 'imageSelector'),
 	};
 
-	if ( siteId ) {
+	if (siteId) {
 		props.siteId = siteId;
 	}
 	return props;
-} )( localize( ImageSelector ) );
+})(localize(ImageSelector));

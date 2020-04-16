@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
 
-describe( 'isSiteSupportingImageEditor()', () => {
-	test( 'should return true if site is not tracked', () => {
+describe('isSiteSupportingImageEditor()', () => {
+	test('should return true if site is not tracked', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -22,10 +22,10 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.true;
-	} );
+		expect(siteSupportsImageEditor).to.be.true;
+	});
 
-	test( 'should return true if site is public and not jetpack site', () => {
+	test('should return true if site is public and not jetpack site', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -42,10 +42,10 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.true;
-	} );
+		expect(siteSupportsImageEditor).to.be.true;
+	});
 
-	test( 'should return false if site is private', () => {
+	test('should return false if site is private', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -62,10 +62,10 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.false;
-	} );
+		expect(siteSupportsImageEditor).to.be.false;
+	});
 
-	test( 'should return true if site is public and jetpack and has photon enabled', () => {
+	test('should return true if site is public and jetpack and has photon enabled', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -76,7 +76,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 							is_private: false,
 							jetpack: true,
 							options: {
-								active_modules: [ 'publicize', 'photon' ],
+								active_modules: ['publicize', 'photon'],
 							},
 						},
 					},
@@ -85,10 +85,10 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.true;
-	} );
+		expect(siteSupportsImageEditor).to.be.true;
+	});
 
-	test( 'should return false if site is public and jetpack but has photon disabled', () => {
+	test('should return false if site is public and jetpack but has photon disabled', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -99,7 +99,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 							is_private: false,
 							jetpack: true,
 							options: {
-								active_modules: [ 'publicize' ],
+								active_modules: ['publicize'],
 							},
 						},
 					},
@@ -108,6 +108,6 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.false;
-	} );
-} );
+		expect(siteSupportsImageEditor).to.be.false;
+	});
+});

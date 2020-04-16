@@ -11,6 +11,6 @@ import canJetpackSiteAutoUpdateFiles from './can-jetpack-site-auto-update-files'
  * @param {number} siteId Site ID
  * @returns {?boolean} true if the site can auto update WordPress
  */
-export default function canJetpackSiteAutoUpdateCore( state, siteId ) {
-	return canJetpackSiteAutoUpdateFiles( state, siteId );
+export default function canJetpackSiteAutoUpdateCore(state, siteId) {
+	return canJetpackSiteAutoUpdateFiles(state, siteId);
 }

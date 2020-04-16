@@ -13,22 +13,22 @@ import { requestZones } from '../../../state/zones/actions';
 
 class QueryZones extends Component {
 	UNSAFE_componentWillMount() {
-		this.requestZones( this.props );
+		this.requestZones(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!nextProps.siteId || this.props.siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.requestZones( nextProps );
+		this.requestZones(nextProps);
 	}
 
-	requestZones( props ) {
+	requestZones(props) {
 		const { fetchingZones, siteId } = props;
 
-		if ( ! fetchingZones && siteId ) {
-			props.requestZones( siteId );
+		if (!fetchingZones && siteId) {
+			props.requestZones(siteId);
 		}
 	}
 
@@ -38,8 +38,8 @@ class QueryZones extends Component {
 }
 
 const connectComponent = connect(
-	( state, { siteId } ) => ( { fetchingZones: isRequestingZones( state, siteId ) } ),
+	(state, { siteId }) => ({ fetchingZones: isRequestingZones(state, siteId) }),
 	{ requestZones }
 );
 
-export default connectComponent( QueryZones );
+export default connectComponent(QueryZones);

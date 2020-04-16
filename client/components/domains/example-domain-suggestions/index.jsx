@@ -35,30 +35,30 @@ class DomainSuggestionsExample extends React.Component {
 		return (
 			<div className="example-domain-suggestions">
 				<p className="example-domain-suggestions__explanation">
-					{ translate(
+					{translate(
 						'A domain name is the site address people type into their browser to visit your site.'
-					) }
+					)}
 				</p>
-				{ showDomainOption && (
+				{showDomainOption && (
 					<p className="example-domain-suggestions__mapping-information">
-						<a onClick={ this.props.recordClick } href={ this.props.url }>
-							{ translate( 'Already own a domain?' ) }
+						<a onClick={this.props.recordClick} href={this.props.url}>
+							{translate('Already own a domain?')}
 						</a>
 					</p>
-				) }
+				)}
 				<ExampleDomainBrowser className="example-domain-suggestions__browser" />
 			</div>
 		);
 	}
 }
 
-const recordClick = () => recordTracksEvent( 'calypso_example_domain_suggestions_link_click' );
+const recordClick = () => recordTracksEvent('calypso_example_domain_suggestions_link_click');
 
 export default connect(
-	state => ( {
-		siteDesignType: getDesignType( state ),
-	} ),
+	(state) => ({
+		siteDesignType: getDesignType(state),
+	}),
 	{
 		recordClick,
 	}
-)( localize( DomainSuggestionsExample ) );
+)(localize(DomainSuggestionsExample));

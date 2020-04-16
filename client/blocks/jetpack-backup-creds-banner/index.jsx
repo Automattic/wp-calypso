@@ -31,39 +31,39 @@ class JetpackBackupCredsBanner extends Component {
 	render() {
 		const { event, isJetpack, rewindState, siteId, siteSlug, translate } = this.props;
 
-		if ( ! isJetpack ) {
+		if (!isJetpack) {
 			return null;
 		}
 		return (
 			<Fragment>
-				{ siteId && <QueryRewindState siteId={ siteId } /> }
-				{ 'awaitingCredentials' === rewindState.state && (
+				{siteId && <QueryRewindState siteId={siteId} />}
+				{'awaitingCredentials' === rewindState.state && (
 					<Banner
-						event={ event }
+						event={event}
 						icon="history"
 						href={
 							rewindState.canAutoconfigure
-								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-								: `/settings/security/${ siteSlug }#credentials`
+								? `/start/rewind-auto-config/?blogid=${siteId}&siteSlug=${siteSlug}`
+								: `/settings/security/${siteSlug}#credentials`
 						}
-						title={ translate( 'Add your server credentials' ) }
-						description={ translate(
+						title={translate('Add your server credentials')}
+						description={translate(
 							"Enter your site's server credentials to set up site restores from your backups."
-						) }
+						)}
 					/>
-				) }
+				)}
 			</Fragment>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
 
 	return {
-		isJetpack: isJetpackSite( state, siteId ),
+		isJetpack: isJetpackSite(state, siteId),
 		siteId,
-		rewindState: getRewindState( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
+		rewindState: getRewindState(state, siteId),
+		siteSlug: getSiteSlug(state, siteId),
 	};
-} )( localize( JetpackBackupCredsBanner ) );
+})(localize(JetpackBackupCredsBanner));

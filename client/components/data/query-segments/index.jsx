@@ -19,7 +19,7 @@ export class QuerySegments extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.segments ) {
+		if (!this.props.segments) {
 			this.props.requestSegments();
 		}
 	}
@@ -30,8 +30,8 @@ export class QuerySegments extends Component {
 }
 
 export default connect(
-	state => ( {
-		segments: getSegments( state ),
-	} ),
+	(state) => ({
+		segments: getSegments(state),
+	}),
 	{ requestSegments }
-)( QuerySegments );
+)(QuerySegments);

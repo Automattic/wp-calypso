@@ -18,13 +18,13 @@ import { makeLayout, render as clientRender } from 'controller';
  */
 import './style.scss';
 
-export default function() {
-	const validPeriods = [ 'day', 'week', 'month', 'year' ];
+export default function () {
+	const validPeriods = ['day', 'week', 'month', 'year'];
 
-	if ( config.isEnabled( 'manage/stats' ) ) {
+	if (config.isEnabled('manage/stats')) {
 		// Redirect this to default /stats/day/ view in order to keep
 		// the paths and page view reporting consistent.
-		page( '/stats', () => page.redirect( getStatsDefaultSitePage() ) );
+		page('/stats', () => page.redirect(getStatsDefaultSitePage()));
 
 		// Stat Overview Page
 		page(
@@ -60,7 +60,7 @@ export default function() {
 			clientRender
 		);
 
-		page( '/stats/insights', siteSelection, navigation, sites, makeLayout, clientRender );
+		page('/stats/insights', siteSelection, navigation, sites, makeLayout, clientRender);
 
 		// Stat Insights Page
 		page(
@@ -122,13 +122,13 @@ export default function() {
 		// Redirect this to default /stats/day/:module/:site view to
 		// keep the paths and page view reporting consistent.
 		page(
-			`/stats/:module(${ validModules.join( '|' ) })/:site`,
+			`/stats/:module(${validModules.join('|')})/:site`,
 			statsController.redirectToDefaultModulePage
 		);
 
 		// Stat Summary Pages
 		page(
-			`/stats/day/:module(${ validModules.join( '|' ) })/:site`,
+			`/stats/day/:module(${validModules.join('|')})/:site`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -136,7 +136,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			`/stats/week/:module(${ validModules.join( '|' ) })/:site`,
+			`/stats/week/:module(${validModules.join('|')})/:site`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -144,7 +144,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			`/stats/month/:module(${ validModules.join( '|' ) })/:site`,
+			`/stats/month/:module(${validModules.join('|')})/:site`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -152,7 +152,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			`/stats/year/:module(${ validModules.join( '|' ) })/:site`,
+			`/stats/year/:module(${validModules.join('|')})/:site`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -196,7 +196,7 @@ export default function() {
 			clientRender
 		);
 
-		page( '/stats/activity', siteSelection, sites, redirectToAcivity, makeLayout, clientRender );
+		page('/stats/activity', siteSelection, sites, redirectToAcivity, makeLayout, clientRender);
 
 		page(
 			'/stats/activity/:site',
@@ -208,7 +208,7 @@ export default function() {
 		);
 
 		page(
-			`/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`,
+			`/stats/ads/:period(${validPeriods.join('|')})/:site`,
 			siteSelection,
 			navigation,
 			statsController.wordAds,
@@ -217,10 +217,10 @@ export default function() {
 		);
 
 		// Anything else should redirect to default WordAds stats page
-		page( '/stats/wordads/(.*)', statsController.redirectToDefaultWordAdsPeriod );
-		page( '/stats/ads/(.*)', statsController.redirectToDefaultWordAdsPeriod );
+		page('/stats/wordads/(.*)', statsController.redirectToDefaultWordAdsPeriod);
+		page('/stats/ads/(.*)', statsController.redirectToDefaultWordAdsPeriod);
 
 		// Anything else should redirect to default stats page
-		page( '/stats/(.*)', statsController.redirectToDefaultSitePage );
+		page('/stats/(.*)', statsController.redirectToDefaultSitePage);
 	}
 }

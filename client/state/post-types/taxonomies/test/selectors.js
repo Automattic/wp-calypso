@@ -12,9 +12,9 @@ import {
 	getPostTypeTaxonomy,
 } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( 'isRequestingPostTypeTaxonomies()', () => {
-		test( 'should return false if no request has been made for site', () => {
+describe('selectors', () => {
+	describe('isRequestingPostTypeTaxonomies()', () => {
+		test('should return false if no request has been made for site', () => {
 			const isRequesting = isRequestingPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -27,10 +27,10 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if no request has been made for site post type', () => {
+		test('should return false if no request has been made for site post type', () => {
 			const isRequesting = isRequestingPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -47,10 +47,10 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if request has finished for site post type', () => {
+		test('should return false if request has finished for site post type', () => {
 			const isRequesting = isRequestingPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -68,10 +68,10 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if requesting for site post type', () => {
+		test('should return true if requesting for site post type', () => {
 			const isRequesting = isRequestingPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -89,12 +89,12 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( 'getPostTypeTaxonomies()', () => {
-		test( 'should return null if taxonomies are not known', () => {
+	describe('getPostTypeTaxonomies()', () => {
+		test('should return null if taxonomies are not known', () => {
 			const taxonomies = getPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -107,10 +107,10 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( taxonomies ).to.be.null;
-		} );
+			expect(taxonomies).to.be.null;
+		});
 
-		test( 'should return an array of known taxonomies', () => {
+		test('should return an array of known taxonomies', () => {
 			const taxonomies = getPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -136,15 +136,15 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( taxonomies ).to.eql( [
+			expect(taxonomies).to.eql([
 				{ name: 'category', label: 'Categories' },
 				{ name: 'post_tag', label: 'Tags' },
-			] );
-		} );
-	} );
+			]);
+		});
+	});
 
-	describe( 'getPostTypeTaxonomy', () => {
-		test( 'should return null if taxonomies are not known', () => {
+	describe('getPostTypeTaxonomy', () => {
+		test('should return null if taxonomies are not known', () => {
 			const taxonomy = getPostTypeTaxonomy(
 				{
 					postTypes: {
@@ -158,10 +158,10 @@ describe( 'selectors', () => {
 				'post_tag'
 			);
 
-			expect( taxonomy ).to.be.null;
-		} );
+			expect(taxonomy).to.be.null;
+		});
 
-		test( 'should return null if post type is not known', () => {
+		test('should return null if post type is not known', () => {
 			const taxonomy = getPostTypeTaxonomy(
 				{
 					postTypes: {
@@ -188,10 +188,10 @@ describe( 'selectors', () => {
 				'post_tag'
 			);
 
-			expect( taxonomy ).to.be.null;
-		} );
+			expect(taxonomy).to.be.null;
+		});
 
-		test( 'should return null if taxonomy is not known', () => {
+		test('should return null if taxonomy is not known', () => {
 			const taxonomy = getPostTypeTaxonomy(
 				{
 					postTypes: {
@@ -218,10 +218,10 @@ describe( 'selectors', () => {
 				'not_a_taxonomy'
 			);
 
-			expect( taxonomy ).to.be.null;
-		} );
+			expect(taxonomy).to.be.null;
+		});
 
-		test( 'should return a known taxonomy', () => {
+		test('should return a known taxonomy', () => {
 			const taxonomy = getPostTypeTaxonomy(
 				{
 					postTypes: {
@@ -248,10 +248,10 @@ describe( 'selectors', () => {
 				'post_tag'
 			);
 
-			expect( taxonomy ).to.eql( {
+			expect(taxonomy).to.eql({
 				name: 'post_tag',
 				label: 'Tags',
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

@@ -19,10 +19,10 @@ import CartStore from 'lib/cart/store';
  * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {boolean} Whether the country code requires ebanx payment processing
  */
-export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' ) {
+export function isEbanxCreditCardProcessingEnabledForCountry(countryCode = '') {
 	return (
-		! isUndefined( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] ) &&
-		isPaymentMethodEnabled( CartStore.get(), 'ebanx' )
+		!isUndefined(PAYMENT_PROCESSOR_COUNTRIES_FIELDS[countryCode]) &&
+		isPaymentMethodEnabled(CartStore.get(), 'ebanx')
 	);
 }
 
@@ -32,10 +32,10 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' )
  * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {boolean} Whether the country requires additional fields
  */
-export function shouldRenderAdditionalCountryFields( countryCode = '' ) {
+export function shouldRenderAdditionalCountryFields(countryCode = '') {
 	return (
-		isEbanxCreditCardProcessingEnabledForCountry( countryCode ) &&
-		! isEmpty( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ].fields )
+		isEbanxCreditCardProcessingEnabledForCountry(countryCode) &&
+		!isEmpty(PAYMENT_PROCESSOR_COUNTRIES_FIELDS[countryCode].fields)
 	);
 }
 
@@ -46,8 +46,8 @@ export function shouldRenderAdditionalCountryFields( countryCode = '' ) {
  * @param {string} cpf - a Brazilian tax identification number
  * @returns {boolean} Whether the cpf is valid or not
  */
-export function isValidCPF( cpf = '' ) {
-	return CPF.isValid( cpf );
+export function isValidCPF(cpf = '') {
+	return CPF.isValid(cpf);
 }
 
 /**
@@ -57,35 +57,35 @@ export function isValidCPF( cpf = '' ) {
  * @param {string} cnpj - a Brazilian company tax identification number
  * @returns {boolean} Whether the cnpj is valid or not
  */
-export function isValidCNPJ( cnpj = '' ) {
-	return CNPJ.isValid( cnpj );
+export function isValidCNPJ(cnpj = '') {
+	return CNPJ.isValid(cnpj);
 }
 
 export function fullAddressFieldsRules() {
 	return {
 		'street-number': {
-			description: i18n.translate( 'Street Number' ),
-			rules: [ 'required', 'validStreetNumber' ],
+			description: i18n.translate('Street Number'),
+			rules: ['required', 'validStreetNumber'],
 		},
 
 		'address-1': {
-			description: i18n.translate( 'Address' ),
-			rules: [ 'required' ],
+			description: i18n.translate('Address'),
+			rules: ['required'],
 		},
 
 		state: {
-			description: i18n.translate( 'State' ),
-			rules: [ 'required' ],
+			description: i18n.translate('State'),
+			rules: ['required'],
 		},
 
 		city: {
-			description: i18n.translate( 'City' ),
-			rules: [ 'required' ],
+			description: i18n.translate('City'),
+			rules: ['required'],
 		},
 
 		'postal-code': {
-			description: i18n.translate( 'Postal Code' ),
-			rules: [ 'required' ],
+			description: i18n.translate('Postal Code'),
+			rules: ['required'],
 		},
 	};
 }
@@ -96,46 +96,46 @@ export function fullAddressFieldsRules() {
  * @param {string} country two-letter country code to determine the required fields
  * @returns {object} the ruleset
  */
-export function countrySpecificFieldRules( country ) {
-	const countryFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ].fields || [];
+export function countrySpecificFieldRules(country) {
+	const countryFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[country].fields || [];
 
 	return pick(
 		Object.assign(
 			{
 				document: {
-					description: i18n.translate( 'Taxpayer Identification Number' ),
-					rules: [ 'validBrazilTaxId' ],
+					description: i18n.translate('Taxpayer Identification Number'),
+					rules: ['validBrazilTaxId'],
 				},
 
 				'phone-number': {
-					description: i18n.translate( 'Phone Number' ),
-					rules: [ 'required' ],
+					description: i18n.translate('Phone Number'),
+					rules: ['required'],
 				},
 				name: {
-					description: i18n.translate( 'Your Name' ),
-					rules: [ 'required' ],
+					description: i18n.translate('Your Name'),
+					rules: ['required'],
 				},
 				nik: {
-					description: i18n.translate( 'NIK - Indonesia Identity Card Number', {
+					description: i18n.translate('NIK - Indonesia Identity Card Number', {
 						comment:
 							'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
-					} ),
-					rules: [ 'validIndonesiaNik' ],
+					}),
+					rules: ['validIndonesiaNik'],
 				},
 
 				pan: {
-					description: i18n.translate( 'PAN - Permanent account number' ),
-					rules: [ 'validIndiaPan' ],
+					description: i18n.translate('PAN - Permanent account number'),
+					rules: ['validIndiaPan'],
 				},
 				gstin: {
-					description: i18n.translate( 'GSTIN - GST identification number', {
+					description: i18n.translate('GSTIN - GST identification number', {
 						comment: 'GSTIN: India specific tax id number',
-					} ),
-					rules: [ 'validIndiaGstin' ],
+					}),
+					rules: ['validIndiaGstin'],
 				},
 				'postal-code': {
-					description: i18n.translate( 'Postal Code' ),
-					rules: [ 'required' ],
+					description: i18n.translate('Postal Code'),
+					rules: ['required'],
 				},
 			},
 			fullAddressFieldsRules()
@@ -144,18 +144,18 @@ export function countrySpecificFieldRules( country ) {
 	);
 }
 
-export function translatedEbanxError( error ) {
+export function translatedEbanxError(error) {
 	let errorMessage = i18n.translate(
 		'Your payment was not processed this time due to an error, please try to submit it again.'
 	);
 
-	switch ( error.status_code ) {
+	switch (error.status_code) {
 		case 'BP-DR-55':
-			errorMessage = { message: { cvv: i18n.translate( 'Invalid credit card CVV number' ) } };
+			errorMessage = { message: { cvv: i18n.translate('Invalid credit card CVV number') } };
 			break;
 		case 'BP-DR-51':
 		case 'BP-DR-95':
-			errorMessage = { message: { name: i18n.translate( 'Please enter your name.' ) } };
+			errorMessage = { message: { name: i18n.translate('Please enter your name.') } };
 			break;
 	}
 

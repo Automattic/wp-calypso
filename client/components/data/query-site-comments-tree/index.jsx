@@ -24,20 +24,20 @@ export class QuerySiteCommentsTree extends Component {
 		this.request();
 	}
 
-	componentDidUpdate( { siteId, status } ) {
-		if ( siteId !== this.props.siteId || status !== this.props.status ) {
+	componentDidUpdate({ siteId, status }) {
+		if (siteId !== this.props.siteId || status !== this.props.status) {
 			this.request();
 		}
 	}
 
 	request() {
 		const { siteId, status } = this.props;
-		if ( siteId ) {
-			if ( 'all' !== status ) {
-				return this.props.requestCommentsTreeForSite( { siteId, status } );
+		if (siteId) {
+			if ('all' !== status) {
+				return this.props.requestCommentsTreeForSite({ siteId, status });
 			}
-			this.props.requestCommentsTreeForSite( { siteId, status: 'approved' } );
-			this.props.requestCommentsTreeForSite( { siteId, status: 'unapproved' } );
+			this.props.requestCommentsTreeForSite({ siteId, status: 'approved' });
+			this.props.requestCommentsTreeForSite({ siteId, status: 'unapproved' });
 		}
 	}
 
@@ -46,4 +46,4 @@ export class QuerySiteCommentsTree extends Component {
 	}
 }
 
-export default connect( null, { requestCommentsTreeForSite } )( QuerySiteCommentsTree );
+export default connect(null, { requestCommentsTreeForSite })(QuerySiteCommentsTree);

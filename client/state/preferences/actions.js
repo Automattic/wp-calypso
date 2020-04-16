@@ -22,7 +22,7 @@ import { USER_SETTING_KEY } from './constants';
  * @param  {object} values Preference values
  * @returns {object}        Action object
  */
-export function receivePreferences( values ) {
+export function receivePreferences(values) {
 	return {
 		type: PREFERENCES_RECEIVE,
 		values,
@@ -35,24 +35,24 @@ export function receivePreferences( values ) {
  * @returns { Function }                      Action thunk
  */
 export function fetchPreferences() {
-	return dispatch => {
-		dispatch( { type: PREFERENCES_FETCH } );
+	return (dispatch) => {
+		dispatch({ type: PREFERENCES_FETCH });
 
 		return wpcom
 			.undocumented()
 			.me()
 			.preferences()
 			.get()
-			.then( data => {
-				dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
-				dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
-			} )
-			.catch( ( data, error ) => {
-				dispatch( {
+			.then((data) => {
+				dispatch(receivePreferences(data[USER_SETTING_KEY]));
+				dispatch({ type: PREFERENCES_FETCH_SUCCESS });
+			})
+			.catch((data, error) => {
+				dispatch({
 					type: PREFERENCES_FETCH_FAILURE,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }
 
@@ -65,11 +65,11 @@ export function fetchPreferences() {
  * @param   {string|number|object}      value User preference value
  * @returns {object}                        Action object
  */
-export const setPreference = ( key, value ) => ( {
+export const setPreference = (key, value) => ({
 	type: PREFERENCES_SET,
 	key,
 	value,
-} );
+});
 
 /**
  * Returns an action thunk that stores a preference and saves it to API.
@@ -78,17 +78,17 @@ export const setPreference = ( key, value ) => ( {
  * @param   {string|number|object}      value User preference value
  * @returns { Function }                      Action thunk
  */
-export const savePreference = ( key, value ) => dispatch => {
-	dispatch( setPreference( key, value ) );
-	dispatch( {
+export const savePreference = (key, value) => (dispatch) => {
+	dispatch(setPreference(key, value));
+	dispatch({
 		type: PREFERENCES_SAVE,
 		key,
 		value,
-	} );
+	});
 
 	const payload = {
-		[ USER_SETTING_KEY ]: {
-			[ key ]: value,
+		[USER_SETTING_KEY]: {
+			[key]: value,
 		},
 	};
 
@@ -96,19 +96,19 @@ export const savePreference = ( key, value ) => dispatch => {
 		.undocumented()
 		.me()
 		.preferences()
-		.update( payload )
-		.then( data => {
-			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
-			dispatch( {
+		.update(payload)
+		.then((data) => {
+			dispatch(receivePreferences(data[USER_SETTING_KEY]));
+			dispatch({
 				type: PREFERENCES_SAVE_SUCCESS,
 				key,
 				value,
-			} );
-		} )
-		.catch( error => {
-			dispatch( {
+			});
+		})
+		.catch((error) => {
+			dispatch({
 				type: PREFERENCES_SAVE_FAILURE,
 				error,
-			} );
-		} );
+			});
+		});
 };

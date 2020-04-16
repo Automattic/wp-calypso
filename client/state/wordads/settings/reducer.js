@@ -19,14 +19,14 @@ import {
  * @param  {object}  action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case WORDADS_SETTINGS_RECEIVE: {
 			const { siteId, settings } = action;
 
 			return {
 				...state,
-				[ siteId ]: settings,
+				[siteId]: settings,
 			};
 		}
 		case WORDADS_SETTINGS_UPDATE: {
@@ -34,8 +34,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
+				[siteId]: {
+					...state[siteId],
 					...settings,
 				},
 			};
@@ -43,7 +43,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated request state after an action has been dispatched. The
@@ -53,14 +53,14 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * @param  {object}  action Action payload
  * @returns {object}        Updated state
  */
-export const requests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const requests = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WORDADS_SETTINGS_SAVE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: true,
+				[siteId]: true,
 			};
 		}
 		case WORDADS_SETTINGS_SAVE_FAILURE:
@@ -69,15 +69,15 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requests,
-} );
+});

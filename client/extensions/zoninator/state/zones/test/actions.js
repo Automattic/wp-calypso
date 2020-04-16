@@ -25,7 +25,7 @@ import {
 	saveZone,
 } from '../actions';
 
-describe( 'actions', () => {
+describe('actions', () => {
 	const siteId = 123456;
 	const siteSlug = 'test.dev';
 	const zones = {
@@ -41,91 +41,91 @@ describe( 'actions', () => {
 		},
 	};
 
-	describe( '#updateZones()', () => {
-		test( 'should return an action object', () => {
-			const action = updateZones( siteId, zones );
+	describe('#updateZones()', () => {
+		test('should return an action object', () => {
+			const action = updateZones(siteId, zones);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_UPDATE_ZONES,
 				data: zones,
 				siteId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#requestZones()', () => {
-		test( 'should return an action object', () => {
-			const action = requestZones( siteId );
+	describe('#requestZones()', () => {
+		test('should return an action object', () => {
+			const action = requestZones(siteId);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_REQUEST_ZONES,
 				siteId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#requestError()', () => {
-		test( 'should return an action object', () => {
-			const action = requestError( siteId );
+	describe('#requestError()', () => {
+		test('should return an action object', () => {
+			const action = requestError(siteId);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_REQUEST_ERROR,
 				siteId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#updateZone()', () => {
-		test( 'should return an action object', () => {
-			const action = updateZone( siteId, 1, zones[ 1 ] );
+	describe('#updateZone()', () => {
+		test('should return an action object', () => {
+			const action = updateZone(siteId, 1, zones[1]);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_UPDATE_ZONE,
-				data: zones[ 1 ],
+				data: zones[1],
 				zoneId: 1,
 				siteId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#addZone()', () => {
-		test( 'should return an action object', () => {
-			const action = addZone( siteId, siteSlug, 'form', zones[ 1 ] );
+	describe('#addZone()', () => {
+		test('should return an action object', () => {
+			const action = addZone(siteId, siteSlug, 'form', zones[1]);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_ADD_ZONE,
-				data: zones[ 1 ],
+				data: zones[1],
 				form: 'form',
 				siteId,
 				siteSlug,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#saveZone', () => {
-		test( 'should return an action object', () => {
-			const action = saveZone( siteId, zones[ 1 ].id, 'form', zones[ 1 ] );
+	describe('#saveZone', () => {
+		test('should return an action object', () => {
+			const action = saveZone(siteId, zones[1].id, 'form', zones[1]);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_SAVE_ZONE,
-				data: zones[ 1 ],
+				data: zones[1],
 				form: 'form',
 				zoneId: 1,
 				siteId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#deleteZone', () => {
-		test( 'should return an action object', () => {
-			const action = deleteZone( siteId, siteSlug, zones[ 1 ].id );
+	describe('#deleteZone', () => {
+		test('should return an action object', () => {
+			const action = deleteZone(siteId, siteSlug, zones[1].id);
 
-			expect( action ).to.deep.equal( {
+			expect(action).to.deep.equal({
 				type: ZONINATOR_DELETE_ZONE,
 				zoneId: 1,
 				siteId,
 				siteSlug,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

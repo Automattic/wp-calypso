@@ -1,7 +1,7 @@
-const argv = require( 'yargs' ).argv;
-const _ = require( 'lodash' );
+const argv = require('yargs').argv;
+const _ = require('lodash');
 
-const [ baseName, colorName ] = argv._;
+const [baseName, colorName] = argv._;
 
 const suffixes = [
 	'',
@@ -21,18 +21,16 @@ const suffixes = [
 	'100',
 ];
 
-suffixes.forEach( suffix => {
-	const propertyName = _.compact( [ '--color', baseName, suffix ] ).join( '-' );
-	const variableName = _.compact( [ '--studio', colorName, determineShadeIndex( suffix ) ] ).join(
-		'-'
-	);
+suffixes.forEach((suffix) => {
+	const propertyName = _.compact(['--color', baseName, suffix]).join('-');
+	const variableName = _.compact(['--studio', colorName, determineShadeIndex(suffix)]).join('-');
 
-	printEntry( propertyName, variableName );
-	printEntry( propertyName + '-rgb', variableName + '-rgb' );
-} );
+	printEntry(propertyName, variableName);
+	printEntry(propertyName + '-rgb', variableName + '-rgb');
+});
 
-function determineShadeIndex( suffix ) {
-	switch ( suffix ) {
+function determineShadeIndex(suffix) {
+	switch (suffix) {
 		case '':
 			return '50';
 		case 'dark':
@@ -40,10 +38,10 @@ function determineShadeIndex( suffix ) {
 		case 'light':
 			return '30';
 		default:
-			return String( suffix );
+			return String(suffix);
 	}
 }
 
-function printEntry( propertyName, variableName ) {
-	console.log( `${ propertyName }: var( ${ variableName } );` );
+function printEntry(propertyName, variableName) {
+	console.log(`${propertyName}: var( ${variableName} );`);
 }

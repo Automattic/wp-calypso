@@ -21,9 +21,9 @@ import { receiveVerticals } from './actions';
  */
 export function* getVerticals() {
 	const url = 'https://public-api.wordpress.com/wpcom/v2/verticals';
-	const verticals = yield apiFetch( { url } );
+	const verticals = yield apiFetch({ url });
 
 	// @TODO: validate and normalize verticals?
 
-	return receiveVerticals( verticals );
+	return receiveVerticals(verticals);
 }

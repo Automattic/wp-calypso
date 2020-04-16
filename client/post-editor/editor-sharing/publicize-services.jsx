@@ -20,21 +20,21 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
  */
 import './publicize-services.scss';
 
-export const EditorSharingPublicizeServices = ( { connections, newConnectionPopup } ) => (
+export const EditorSharingPublicizeServices = ({ connections, newConnectionPopup }) => (
 	<ul className="editor-sharing__publicize-services">
-		{ map( groupBy( connections, 'label' ), ( groupedConnections, label ) => (
-			<li key={ label } className="editor-sharing__publicize-service">
-				<h5 className="editor-sharing__publicize-service-heading">{ label }</h5>
-				{ groupedConnections.map( connection => (
+		{map(groupBy(connections, 'label'), (groupedConnections, label) => (
+			<li key={label} className="editor-sharing__publicize-service">
+				<h5 className="editor-sharing__publicize-service-heading">{label}</h5>
+				{groupedConnections.map((connection) => (
 					<EditorSharingPublicizeConnection
-						key={ connection.ID }
-						connection={ connection }
-						onRefresh={ newConnectionPopup }
-						label={ label }
+						key={connection.ID}
+						connection={connection}
+						onRefresh={newConnectionPopup}
+						label={label}
 					/>
-				) ) }
+				))}
 			</li>
-		) ) }
+		))}
 	</ul>
 );
 
@@ -43,11 +43,11 @@ EditorSharingPublicizeServices.propTypes = {
 	newConnectionPopup: PropTypes.func.isRequired,
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const userId = getCurrentUserId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const userId = getCurrentUserId(state);
 
 	return {
-		connections: getSiteUserConnections( state, siteId, userId ),
+		connections: getSiteUserConnections(state, siteId, userId),
 	};
-} )( EditorSharingPublicizeServices );
+})(EditorSharingPublicizeServices);

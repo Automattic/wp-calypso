@@ -24,13 +24,13 @@ class TestLiveToggle extends Component {
 
 		return (
 			<div className="test-live-toggle__container">
-				<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
+				<FormLabel>{translate('Payment Mode')}</FormLabel>
 				<SegmentedControl primary>
-					<SegmentedControl.Item selected={ isTestMode } onClick={ onSelectTest }>
-						{ translate( 'Test Mode' ) }
+					<SegmentedControl.Item selected={isTestMode} onClick={onSelectTest}>
+						{translate('Test Mode')}
 					</SegmentedControl.Item>
-					<SegmentedControl.Item selected={ ! isTestMode } onClick={ onSelectLive }>
-						{ translate( 'Live Mode' ) }
+					<SegmentedControl.Item selected={!isTestMode} onClick={onSelectLive}>
+						{translate('Live Mode')}
 					</SegmentedControl.Item>
 				</SegmentedControl>
 			</div>
@@ -38,4 +38,4 @@ class TestLiveToggle extends Component {
 	}
 }
 
-export default localize( TestLiveToggle );
+export default localize(TestLiveToggle);

@@ -24,47 +24,47 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const bookConciergeAppointment = action => {
+export const bookConciergeAppointment = (action) => {
 	return [
-		updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ),
+		updateConciergeBookingStatus(CONCIERGE_STATUS_BOOKING),
 		http(
 			{
 				method: 'POST',
-				path: `/concierge/schedules/${ action.scheduleId }/appointments`,
+				path: `/concierge/schedules/${action.scheduleId}/appointments`,
 				apiNamespace: 'wpcom/v2',
-				body: toApi( action ),
+				body: toApi(action),
 			},
 			action
 		),
 	];
 };
 
-export const errorMessage = code => {
-	switch ( code ) {
+export const errorMessage = (code) => {
+	switch (code) {
 		case CONCIERGE_ERROR_NO_AVAILABLE_STAFF:
-			return translate( 'This session is no longer available. Please select a different time.' );
+			return translate('This session is no longer available. Please select a different time.');
 		case CONCIERGE_ERROR_ALREADY_HAS_APPOINTMENT:
 			return translate(
 				'You already have an upcoming appointment. A second can not be scheduled yet.'
 			);
 		default:
-			return translate( 'We could not book your appointment. Please try again later.' );
+			return translate('We could not book your appointment. Please try again later.');
 	}
 };
 
-export const onSuccess = ( { type } ) => {
+export const onSuccess = ({ type }) => {
 	const trackEvent =
 		CONCIERGE_APPOINTMENT_RESCHEDULE === type
 			? 'calypso_concierge_appointment_rescheduling_successful'
 			: 'calypso_concierge_appointment_booking_successful';
 
 	return withAnalytics(
-		recordTracksEvent( trackEvent ),
-		updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKED )
+		recordTracksEvent(trackEvent),
+		updateConciergeBookingStatus(CONCIERGE_STATUS_BOOKED)
 	);
 };
 
-export const onError = ( { type }, error ) => {
+export const onError = ({ type }, error) => {
 	const trackEvent =
 		CONCIERGE_APPOINTMENT_RESCHEDULE === type
 			? 'calypso_concierge_appointment_rescheduling_error'
@@ -72,17 +72,17 @@ export const onError = ( { type }, error ) => {
 
 	return [
 		withAnalytics(
-			recordTracksEvent( trackEvent ),
-			updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR )
+			recordTracksEvent(trackEvent),
+			updateConciergeBookingStatus(CONCIERGE_STATUS_BOOKING_ERROR)
 		),
-		errorNotice( errorMessage( error.code ) ),
+		errorNotice(errorMessage(error.code)),
 	];
 };
 
-registerHandlers( 'state/data-layer/wpcom/concierge/schedules/appointments/book/index.js', {
-	[ CONCIERGE_APPOINTMENT_CREATE ]: [
-		dispatchRequest( { fetch: bookConciergeAppointment, onSuccess, onError, fromApi } ),
+registerHandlers('state/data-layer/wpcom/concierge/schedules/appointments/book/index.js', {
+	[CONCIERGE_APPOINTMENT_CREATE]: [
+		dispatchRequest({ fetch: bookConciergeAppointment, onSuccess, onError, fromApi }),
 	],
-} );
+});
 
 export default {};

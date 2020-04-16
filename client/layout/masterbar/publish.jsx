@@ -41,103 +41,99 @@ class MasterbarItemNew extends React.Component {
 	postButtonRef = React.createRef();
 
 	toggleSitesPopover = () => {
-		this.setState( state => ( {
-			isShowingPopover: ! state.isShowingPopover,
-		} ) );
+		this.setState((state) => ({
+			isShowingPopover: !state.isShowingPopover,
+		}));
 	};
 
 	closeSitesPopover = () => {
-		this.setState( { isShowingPopover: false } );
+		this.setState({ isShowingPopover: false });
 	};
 
-	onClick = event => {
+	onClick = (event) => {
 		// if the user has multiple sites and none is selected, show site selector
-		if ( this.props.shouldOpenSiteSelector ) {
+		if (this.props.shouldOpenSiteSelector) {
 			this.toggleSitesPopover();
 			event.preventDefault();
 		}
 	};
 
-	preloadPostEditor = () => preload( 'post-editor' );
+	preloadPostEditor = () => preload('post-editor');
 
 	getPopoverPosition() {
 		return isMobile() ? 'bottom' : 'bottom left';
 	}
 
-	onSiteSelect = siteId => {
-		const redirectUrl = getEditorUrl( reduxGetState(), siteId, null, 'post' );
-		this.props.openEditor( redirectUrl );
+	onSiteSelect = (siteId) => {
+		const redirectUrl = getEditorUrl(reduxGetState(), siteId, null, 'post');
+		this.props.openEditor(redirectUrl);
 		return true; // handledByHost = true, don't let the component nav
 	};
 
 	renderPopover() {
-		if ( ! this.state.isShowingPopover ) {
+		if (!this.state.isShowingPopover) {
 			return null;
 		}
 
 		return (
 			<AsyncLoad
 				require="components/sites-popover"
-				placeholder={ null }
+				placeholder={null}
 				id="popover__sites-popover-masterbar"
 				visible
 				groups
-				context={ this.postButtonRef.current }
-				onClose={ this.closeSitesPopover }
-				onSiteSelect={ this.onSiteSelect }
-				position={ this.getPopoverPosition() }
+				context={this.postButtonRef.current}
+				onClose={this.closeSitesPopover}
+				onSiteSelect={this.onSiteSelect}
+				position={this.getPopoverPosition()}
 				isGutenbergOverride
 			/>
 		);
 	}
 
 	render() {
-		const classes = classNames( this.props.className );
+		const classes = classNames(this.props.className);
 
 		return (
 			<div className="masterbar__publish">
 				<MasterbarItem
-					ref={ this.postButtonRef }
-					url={ this.props.editorUrl }
+					ref={this.postButtonRef}
+					url={this.props.editorUrl}
 					icon="create"
-					onClick={ this.onClick }
-					isActive={ this.props.isActive }
-					tooltip={ this.props.tooltip }
-					className={ classes }
-					preloadSection={ this.preloadPostEditor }
+					onClick={this.onClick}
+					isActive={this.props.isActive}
+					tooltip={this.props.tooltip}
+					className={classes}
+					preloadSection={this.preloadPostEditor}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</MasterbarItem>
 				<MasterbarDrafts />
-				{ this.renderPopover() }
+				{this.renderPopover()}
 			</div>
 		);
 	}
 }
 
-const openEditor = editorUrl =>
-	withAnalytics(
-		recordTracksEvent( 'calypso_masterbar_write_button_clicked' ),
-		navigate( editorUrl )
-	);
+const openEditor = (editorUrl) =>
+	withAnalytics(recordTracksEvent('calypso_masterbar_write_button_clicked'), navigate(editorUrl));
 
 export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const isSitesGroup = getSectionGroup( state ) === 'sites';
-		const hasMoreThanOneVisibleSite = getCurrentUserVisibleSiteCount( state ) > 1;
+	(state) => {
+		const selectedSiteId = getSelectedSiteId(state);
+		const isSitesGroup = getSectionGroup(state) === 'sites';
+		const hasMoreThanOneVisibleSite = getCurrentUserVisibleSiteCount(state) > 1;
 
 		// the selector is shown only if it's not 100% clear which site we are on.
 		// I.e, when user has more than one site, is outside the My Sites group,
 		// or has one of the All Sites views selected.
-		const shouldOpenSiteSelector =
-			! ( selectedSiteId && isSitesGroup ) && hasMoreThanOneVisibleSite;
+		const shouldOpenSiteSelector = !(selectedSiteId && isSitesGroup) && hasMoreThanOneVisibleSite;
 
 		// otherwise start posting to the selected or primary site right away
-		const siteId = selectedSiteId || getPrimarySiteId( state );
-		const editorUrl = getEditorUrl( state, siteId, null, 'post' );
+		const siteId = selectedSiteId || getPrimarySiteId(state);
+		const editorUrl = getEditorUrl(state, siteId, null, 'post');
 
 		return { shouldOpenSiteSelector, editorUrl };
 	},
 	{ openEditor }
-)( MasterbarItemNew );
+)(MasterbarItemNew);

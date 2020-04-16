@@ -35,50 +35,50 @@ class StatsSiteOverview extends Component {
 		title: PropTypes.string,
 	};
 
-	isValueLow = value => {
-		return ! value || 0 === value;
+	isValueLow = (value) => {
+		return !value || 0 === value;
 	};
 
 	render() {
 		const { siteId, siteSlug, path, summaryData, query, title } = this.props;
 		const { views, visitors, likes, comments } = summaryData;
-		const siteStatsPath = [ path, siteSlug ].join( '/' );
+		const siteStatsPath = [path, siteSlug].join('/');
 		const headerPath = siteStatsPath;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<div>
-				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsSummary" query={ query } /> }
-				<SectionHeader label={ title } href={ headerPath } />
+				{siteId && <QuerySiteStats siteId={siteId} statType="statsSummary" query={query} />}
+				<SectionHeader label={title} href={headerPath} />
 				<Card className="stats__overview stats-module is-site-overview">
 					<StatsTabs borderless>
 						<StatsTab
-							className={ this.isValueLow( views ) ? 'is-low' : null }
-							href={ siteStatsPath }
+							className={this.isValueLow(views) ? 'is-low' : null}
+							href={siteStatsPath}
 							gridicon="visible"
-							label={ this.props.translate( 'Views', { context: 'noun' } ) }
-							value={ views }
+							label={this.props.translate('Views', { context: 'noun' })}
+							value={views}
 						/>
 						<StatsTab
-							className={ this.isValueLow( visitors ) ? 'is-low' : null }
-							href={ siteStatsPath + '?tab=visitors' }
+							className={this.isValueLow(visitors) ? 'is-low' : null}
+							href={siteStatsPath + '?tab=visitors'}
 							gridicon="user"
-							label={ this.props.translate( 'Visitors', { context: 'noun' } ) }
-							value={ visitors }
+							label={this.props.translate('Visitors', { context: 'noun' })}
+							value={visitors}
 						/>
 						<StatsTab
-							className={ this.isValueLow( likes ) ? 'is-low' : null }
-							href={ siteStatsPath + '?tab=likes' }
+							className={this.isValueLow(likes) ? 'is-low' : null}
+							href={siteStatsPath + '?tab=likes'}
 							gridicon="star"
-							label={ this.props.translate( 'Likes', { context: 'noun' } ) }
-							value={ likes }
+							label={this.props.translate('Likes', { context: 'noun' })}
+							value={likes}
 						/>
 						<StatsTab
-							className={ this.isValueLow( comments ) ? 'is-low' : null }
-							href={ siteStatsPath + '?tab=comments' }
+							className={this.isValueLow(comments) ? 'is-low' : null}
+							href={siteStatsPath + '?tab=comments'}
 							gridicon="comment"
-							label={ this.props.translate( 'Comments', { context: 'noun' } ) }
-							value={ comments }
+							label={this.props.translate('Comments', { context: 'noun' })}
+							value={comments}
 						/>
 					</StatsTabs>
 				</Card>
@@ -87,18 +87,18 @@ class StatsSiteOverview extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const { siteId, date, period, siteSlug } = ownProps;
 	const query = {
 		date,
 		period,
 	};
 	// It seems not all sites are in the sites/items subtree consistently
-	const slug = getSiteSlug( state, siteId ) || siteSlug;
+	const slug = getSiteSlug(state, siteId) || siteSlug;
 
 	return {
-		summaryData: getSiteStatsForQuery( state, siteId, 'statsSummary', query ) || {},
+		summaryData: getSiteStatsForQuery(state, siteId, 'statsSummary', query) || {},
 		siteSlug: slug,
 		query,
 	};
-} )( localize( StatsSiteOverview ) );
+})(localize(StatsSiteOverview));

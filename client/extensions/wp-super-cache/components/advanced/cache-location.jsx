@@ -15,7 +15,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const CacheLocation = ( {
+const CacheLocation = ({
 	fields: { cache_path = '', default_cache_path = '' },
 	handleChange,
 	handleSubmitForm,
@@ -23,34 +23,34 @@ const CacheLocation = ( {
 	isRequesting,
 	isSaving,
 	translate,
-} ) => {
+}) => {
 	const isDisabled = isRequesting || isSaving || isReadOnly;
 
 	return (
 		<div>
-			<SectionHeader label={ translate( 'Cache Location' ) }>
-				<Button compact primary disabled={ isDisabled } onClick={ handleSubmitForm }>
-					{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+			<SectionHeader label={translate('Cache Location')}>
+				<Button compact primary disabled={isDisabled} onClick={handleSubmitForm}>
+					{isSaving ? translate('Saving…') : translate('Save Settings')}
 				</Button>
 			</SectionHeader>
 			<Card>
 				<form>
 					<FormFieldset>
 						<FormTextInput
-							disabled={ isDisabled }
-							onChange={ handleChange( 'cache_path' ) }
-							value={ cache_path }
+							disabled={isDisabled}
+							onChange={handleChange('cache_path')}
+							value={cache_path}
 						/>
 						<FormSettingExplanation>
-							{ translate(
+							{translate(
 								'Change the location of your cache files. The default is WP_CONTENT_DIR . ' +
 									'/cache/ which translates to {{cacheLocation/}}',
 								{
 									components: {
-										cacheLocation: <span>{ default_cache_path }</span>,
+										cacheLocation: <span>{default_cache_path}</span>,
 									},
 								}
-							) }
+							)}
 						</FormSettingExplanation>
 					</FormFieldset>
 				</form>
@@ -59,8 +59,8 @@ const CacheLocation = ( {
 	);
 };
 
-const getFormSettings = settings => {
-	return pick( settings, [ 'cache_path', 'default_cache_path' ] );
+const getFormSettings = (settings) => {
+	return pick(settings, ['cache_path', 'default_cache_path']);
 };
 
-export default WrapSettingsForm( getFormSettings )( CacheLocation );
+export default WrapSettingsForm(getFormSettings)(CacheLocation);

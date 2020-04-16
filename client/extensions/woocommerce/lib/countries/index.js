@@ -11,8 +11,8 @@ import { filter, includes, sortBy } from 'lodash';
  * @param {string} country Country (code) to check
  * @returns {bool} whether store management in calypso is supported
  */
-export const isStoreManagementSupportedInCalypsoForCountry = country => {
-	return includes( [ 'US', 'CA' ], country );
+export const isStoreManagementSupportedInCalypsoForCountry = (country) => {
+	return includes(['US', 'CA'], country);
 };
 
 /**
@@ -22,14 +22,14 @@ export const isStoreManagementSupportedInCalypsoForCountry = country => {
  * @param {Array} list  List of countries to sort
  * @returns {Array} sorted list of countries
  */
-export function sortPopularCountriesToTop( list ) {
-	const popularCodes = [ 'AU', 'BR', 'CA', 'FR', 'DE', 'IT', 'ES', 'SE', 'GB', 'US' ];
-	const popularCountries = filter( list, item => -1 !== popularCodes.indexOf( item.code ) );
-	const otherCountries = filter( list, item => -1 === popularCodes.indexOf( item.code ) );
+export function sortPopularCountriesToTop(list) {
+	const popularCodes = ['AU', 'BR', 'CA', 'FR', 'DE', 'IT', 'ES', 'SE', 'GB', 'US'];
+	const popularCountries = filter(list, (item) => -1 !== popularCodes.indexOf(item.code));
+	const otherCountries = filter(list, (item) => -1 === popularCodes.indexOf(item.code));
 
 	return [
-		...sortBy( popularCountries, 'name' ),
+		...sortBy(popularCountries, 'name'),
 		{ code: '', continent: '', name: '' }, // Spacer option
-		...sortBy( otherCountries, 'name' ),
+		...sortBy(otherCountries, 'name'),
 	];
 }

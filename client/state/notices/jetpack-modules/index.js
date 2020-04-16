@@ -16,8 +16,8 @@ import {
 import { MODULE_NOTICES } from './constants';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-export const onJetpackModuleActivationActionMessage = ( { type, moduleSlug, silent } ) => {
-	if ( silent ) {
+export const onJetpackModuleActivationActionMessage = ({ type, moduleSlug, silent }) => {
+	if (silent) {
 		return null;
 	}
 
@@ -25,37 +25,35 @@ export const onJetpackModuleActivationActionMessage = ( { type, moduleSlug, sile
 		duration: 10000,
 		id: 'site-settings-save',
 	};
-	let message = MODULE_NOTICES[ moduleSlug ] && MODULE_NOTICES[ moduleSlug ][ type ];
+	let message = MODULE_NOTICES[moduleSlug] && MODULE_NOTICES[moduleSlug][type];
 	let messageType;
 
-	switch ( type ) {
+	switch (type) {
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
-			message = message || translate( 'Settings saved successfully!' );
+			message = message || translate('Settings saved successfully!');
 			messageType = 'success';
 			break;
 		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
-			message = message || translate( 'Settings saved successfully!' );
+			message = message || translate('Settings saved successfully!');
 			messageType = 'success';
 			break;
 		case JETPACK_MODULE_ACTIVATE_FAILURE:
-			message =
-				message || translate( 'There was a problem saving your changes. Please try again.' );
+			message = message || translate('There was a problem saving your changes. Please try again.');
 			messageType = 'error';
 			break;
 		case JETPACK_MODULE_DEACTIVATE_FAILURE:
-			message =
-				message || translate( 'There was a problem saving your changes. Please try again.' );
+			message = message || translate('There was a problem saving your changes. Please try again.');
 			messageType = 'error';
 			break;
 	}
 
-	if ( ! message ) {
+	if (!message) {
 		return null;
 	}
 
-	if ( messageType === 'success' ) {
-		return successNotice( message, noticeSettings );
-	} else if ( messageType === 'error' ) {
-		return errorNotice( message, noticeSettings );
+	if (messageType === 'success') {
+		return successNotice(message, noticeSettings);
+	} else if (messageType === 'error') {
+		return errorNotice(message, noticeSettings);
 	}
 };

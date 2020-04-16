@@ -18,7 +18,7 @@ import { defaultTimeFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
 import { localizeUrl } from 'lib/i18n-utils';
 
-export const TimeFormatOption = ( {
+export const TimeFormatOption = ({
 	disabled,
 	isCustom,
 	localizedDate,
@@ -26,58 +26,58 @@ export const TimeFormatOption = ( {
 	setTimeFormat,
 	timeFormat,
 	translate,
-} ) => (
+}) => (
 	<FormFieldset>
-		<FormLabel>{ translate( 'Time Format' ) }</FormLabel>
-		{ defaultTimeFormats.map( format => (
-			<FormLabel key={ format }>
+		<FormLabel>{translate('Time Format')}</FormLabel>
+		{defaultTimeFormats.map((format) => (
+			<FormLabel key={format}>
 				<FormRadio
-					checked={ ! isCustom && format === timeFormat }
-					disabled={ disabled }
+					checked={!isCustom && format === timeFormat}
+					disabled={disabled}
 					name="time_format"
-					onChange={ setTimeFormat }
-					value={ format }
+					onChange={setTimeFormat}
+					value={format}
 				/>
-				<span>{ phpToMomentDatetimeFormat( localizedDate, format ) }</span>
+				<span>{phpToMomentDatetimeFormat(localizedDate, format)}</span>
 			</FormLabel>
-		) ) }
+		))}
 		<FormLabel className="date-time-format__custom-field">
 			<FormRadio
-				checked={ isCustom }
-				disabled={ disabled }
+				checked={isCustom}
+				disabled={disabled}
 				name="time_format"
-				onChange={ setCustomTimeFormat }
-				value={ timeFormat }
+				onChange={setCustomTimeFormat}
+				value={timeFormat}
 			/>
 			<span>
-				{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
+				{translate('Custom', { comment: 'Custom date/time format field' })}
 				<FormInput
-					disabled={ disabled }
+					disabled={disabled}
 					name="time_format_custom"
-					onChange={ setCustomTimeFormat }
+					onChange={setCustomTimeFormat}
 					type="text"
-					value={ timeFormat || '' }
+					value={timeFormat || ''}
 				/>
 				<FormSettingExplanation>
-					{ isCustom &&
+					{isCustom &&
 						timeFormat &&
-						translate( 'Preview: %s', {
-							args: phpToMomentDatetimeFormat( localizedDate, timeFormat ),
+						translate('Preview: %s', {
+							args: phpToMomentDatetimeFormat(localizedDate, timeFormat),
 							comment: 'Date/time format preview',
-						} ) }
+						})}
 				</FormSettingExplanation>
 			</span>
 			<FormSettingExplanation>
 				<ExternalLink
-					href={ localizeUrl( 'https://wordpress.com/support/settings/time-settings/' ) }
+					href={localizeUrl('https://wordpress.com/support/settings/time-settings/')}
 					icon
 					target="_blank"
 				>
-					{ translate( 'Learn more about date and time formatting.' ) }
+					{translate('Learn more about date and time formatting.')}
 				</ExternalLink>
 			</FormSettingExplanation>
 		</FormLabel>
 	</FormFieldset>
 );
 
-export default localize( TimeFormatOption );
+export default localize(TimeFormatOption);

@@ -1,22 +1,22 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock('lib/abtest', () => ({
 	abtest: () => '',
-} ) );
+}));
 
-jest.mock( 'lib/analytics/index', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock('lib/analytics/index', () => ({}));
+jest.mock('lib/analytics/page-view-tracker', () => 'PageViewTracker');
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+jest.mock('i18n-calypso', () => ({
+	localize: (Comp) => (props) => (
 		<Comp
-			{ ...props }
-			translate={ function( x ) {
+			{...props}
+			translate={function (x) {
 				return x;
-			} }
+			}}
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
-} ) );
+	numberFormat: (x) => x,
+	translate: (x) => x,
+}));
 
 /**
  * External dependencies
@@ -67,13 +67,13 @@ const props = {
 	},
 };
 
-describe( 'TransferToOtherSite.isSiteEligible()', () => {
-	[ PLAN_FREE ].forEach( plan => {
-		test( `Should return false for plan ${ plan }`, () => {
-			const instance = new TransferToOtherSite( props );
-			expect( instance.isSiteEligible( { ...site, plan: { product_slug: plan } } ) ).toBe( false );
-		} );
-	} );
+describe('TransferToOtherSite.isSiteEligible()', () => {
+	[PLAN_FREE].forEach((plan) => {
+		test(`Should return false for plan ${plan}`, () => {
+			const instance = new TransferToOtherSite(props);
+			expect(instance.isSiteEligible({ ...site, plan: { product_slug: plan } })).toBe(false);
+		});
+	});
 
 	[
 		PLAN_JETPACK_FREE,
@@ -94,10 +94,10 @@ describe( 'TransferToOtherSite.isSiteEligible()', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( plan => {
-		test( `Should return true for plan ${ plan }`, () => {
-			const instance = new TransferToOtherSite( props );
-			expect( instance.isSiteEligible( { ...site, plan: { product_slug: plan } } ) ).toBe( true );
-		} );
-	} );
-} );
+	].forEach((plan) => {
+		test(`Should return true for plan ${plan}`, () => {
+			const instance = new TransferToOtherSite(props);
+			expect(instance.isSiteEligible({ ...site, plan: { product_slug: plan } })).toBe(true);
+		});
+	});
+});

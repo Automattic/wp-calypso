@@ -15,7 +15,7 @@ import fromApi from './from-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchConciergeInitial = action =>
+export const fetchConciergeInitial = (action) =>
 	http(
 		{
 			method: 'GET',
@@ -28,21 +28,20 @@ export const fetchConciergeInitial = action =>
 		action
 	);
 
-export const storeFetchedConciergeInitial = ( action, initial ) =>
-	updateConciergeInitial( initial );
+export const storeFetchedConciergeInitial = (action, initial) => updateConciergeInitial(initial);
 
 export const conciergeInitialFetchError = () =>
-	errorNotice( translate( "We couldn't load our Concierge schedule. Please try again later." ) );
+	errorNotice(translate("We couldn't load our Concierge schedule. Please try again later."));
 
 export const showConciergeInitialFetchError = () => conciergeInitialFetchError();
 
-registerHandlers( 'state/data-layer/wpcom/concierge/schedules/initial/index.js', {
-	[ CONCIERGE_INITIAL_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/concierge/schedules/initial/index.js', {
+	[CONCIERGE_INITIAL_REQUEST]: [
+		dispatchRequest({
 			fetch: fetchConciergeInitial,
 			onSuccess: storeFetchedConciergeInitial,
 			onError: showConciergeInitialFetchError,
 			fromApi,
-		} ),
+		}),
 	],
-} );
+});

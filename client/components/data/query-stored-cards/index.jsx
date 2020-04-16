@@ -14,7 +14,7 @@ import { fetchStoredCards } from 'state/stored-cards/actions';
 
 class QueryStoredCards extends Component {
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.isRequesting ) {
+		if (!this.props.isRequesting) {
 			this.props.fetchStoredCards();
 		}
 	}
@@ -30,10 +30,10 @@ QueryStoredCards.propTypes = {
 };
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			isRequesting: isFetchingStoredCards( state ),
+			isRequesting: isFetchingStoredCards(state),
 		};
 	},
 	{ fetchStoredCards }
-)( QueryStoredCards );
+)(QueryStoredCards);

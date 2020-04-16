@@ -22,7 +22,7 @@ export const GetApps = () => {
 		<div className="get-apps__wrapper">
 			<GetAppsIllustration />
 			<MobileDownloadCard />
-			{ ! config( 'env_id' ).startsWith( 'desktop' ) && <DesktopDownloadCard /> }
+			{!config('env_id').startsWith('desktop') && <DesktopDownloadCard />}
 		</div>
 	);
 };

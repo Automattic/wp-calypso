@@ -1,10 +1,10 @@
 export const idSchema = {
-	type: [ 'integer', 'null' ],
+	type: ['integer', 'null'],
 	minimum: 0,
 };
 
 export const currencyCodeSchema = {
-	type: [ 'string', 'null' ],
+	type: ['string', 'null'],
 };
 
 export const capabilitiesSchema = {

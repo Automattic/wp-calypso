@@ -34,11 +34,11 @@ export class UpsellRedirectWrapper extends React.Component {
 
 	goToUpsellPageIfRequired() {
 		const props = this.props;
-		if ( this.shouldRedirect() ) {
-			if ( ! this.redirected ) {
-				setTimeout( () => {
-					page.redirect( `${ props.upsellPageURL }/${ props.siteSlug }` );
-				} );
+		if (this.shouldRedirect()) {
+			if (!this.redirected) {
+				setTimeout(() => {
+					page.redirect(`${props.upsellPageURL}/${props.siteSlug}`);
+				});
 				this.redirected = true;
 			}
 		}
@@ -46,28 +46,26 @@ export class UpsellRedirectWrapper extends React.Component {
 
 	shouldRedirect() {
 		const props = this.props;
-		return props.shouldRedirect && ! props.loadingPlan;
+		return props.shouldRedirect && !props.loadingPlan;
 	}
 
 	render() {
 		const { ComponentClass, loadingPlan, shouldRedirect, ...props } = this.props;
-		if ( loadingPlan || this.shouldRedirect() ) {
+		if (loadingPlan || this.shouldRedirect()) {
 			return false;
 		}
 
-		return <ComponentClass { ...props } />;
+		return <ComponentClass {...props} />;
 	}
 }
 
-export const createMapStateToProps = (
-	ComponentClass,
-	shouldRedirectCallback,
-	upsellPageURL
-) => state => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
-	const currentPlan = getCurrentPlan( state, siteId );
-	const shouldRedirect = !! ( currentPlan && siteSlug && shouldRedirectCallback( state, siteId ) );
+export const createMapStateToProps = (ComponentClass, shouldRedirectCallback, upsellPageURL) => (
+	state
+) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSiteSlug(state, siteId);
+	const currentPlan = getCurrentPlan(state, siteId);
+	const shouldRedirect = !!(currentPlan && siteSlug && shouldRedirectCallback(state, siteId));
 
 	return {
 		siteId,
@@ -75,18 +73,18 @@ export const createMapStateToProps = (
 		ComponentClass,
 		upsellPageURL,
 		shouldRedirect,
-		loadingPlan: ! currentPlan,
+		loadingPlan: !currentPlan,
 	};
 };
 
-export const redirectIf = ( shouldRedirectCallback, upsellPageURL ) => {
-	return ComponentClass => {
+export const redirectIf = (shouldRedirectCallback, upsellPageURL) => {
+	return (ComponentClass) => {
 		const mapStateToProps = createMapStateToProps(
 			ComponentClass,
 			shouldRedirectCallback,
 			upsellPageURL
 		);
-		return connect( mapStateToProps )( UpsellRedirectWrapper );
+		return connect(mapStateToProps)(UpsellRedirectWrapper);
 	};
 };
 

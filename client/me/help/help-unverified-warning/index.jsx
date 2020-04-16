@@ -26,8 +26,8 @@ const RESEND_IDLE = 0,
 	RESEND_ERROR = 3;
 
 class HelpUnverifiedWarning extends Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			resendState: RESEND_IDLE,
@@ -37,8 +37,8 @@ class HelpUnverifiedWarning extends Component {
 	render() {
 		const { resendState } = this.state;
 
-		const resendStateToMessage = val => {
-			switch ( val ) {
+		const resendStateToMessage = (val) => {
+			switch (val) {
 				case RESEND_IDLE:
 					return this.props.translate(
 						'Trouble activating your account? ' +
@@ -47,33 +47,33 @@ class HelpUnverifiedWarning extends Component {
 				case RESEND_IN_PROGRESS:
 					return '';
 				case RESEND_SUCCESS:
-					return this.props.translate( 'Activation email sent. Please check your inbox.' );
+					return this.props.translate('Activation email sent. Please check your inbox.');
 				case RESEND_ERROR:
-					return this.props.translate( "There's been an error. Please try again later." );
+					return this.props.translate("There's been an error. Please try again later.");
 				default:
 					return 'Unknown activation email resending state.';
 			}
 		};
 
 		const resendEmail = () => {
-			this.setState( {
+			this.setState({
 				resendState: RESEND_IN_PROGRESS,
-			} );
+			});
 
 			user
 				.sendVerificationEmail()
-				.then( () => {
+				.then(() => {
 					const nextResendState = RESEND_SUCCESS;
 
-					this.setState( { resendState: nextResendState } );
-					notices.success( resendStateToMessage( nextResendState ) );
-				} )
-				.catch( () => {
+					this.setState({ resendState: nextResendState });
+					notices.success(resendStateToMessage(nextResendState));
+				})
+				.catch(() => {
 					const nextResendState = RESEND_ERROR;
 
-					this.setState( { resendState: nextResendState } );
-					notices.error( resendStateToMessage( nextResendState ) );
-				} );
+					this.setState({ resendState: nextResendState });
+					notices.error(resendStateToMessage(nextResendState));
+				});
 		};
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -82,11 +82,11 @@ class HelpUnverifiedWarning extends Component {
 				<Notice
 					className="help-unverified-warning"
 					status="is-warning"
-					showDismiss={ false }
-					text={ resendStateToMessage( resendState ) }
+					showDismiss={false}
+					text={resendStateToMessage(resendState)}
 				>
-					<NoticeAction href="#" onClick={ resendEmail }>
-						{ this.props.translate( 'Resend Email' ) }
+					<NoticeAction href="#" onClick={resendEmail}>
+						{this.props.translate('Resend Email')}
 					</NoticeAction>
 				</Notice>
 			)
@@ -94,4 +94,4 @@ class HelpUnverifiedWarning extends Component {
 	}
 }
 
-export default localize( HelpUnverifiedWarning );
+export default localize(HelpUnverifiedWarning);

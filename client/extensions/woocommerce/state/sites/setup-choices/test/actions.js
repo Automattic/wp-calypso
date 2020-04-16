@@ -29,15 +29,15 @@ import {
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
-describe( 'actions', () => {
-	describe( '#fetchSetupChoices()', () => {
+describe('actions', () => {
+	describe('#fetchSetupChoices()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.get( '/rest/v1.1/sites/123/calypso-preferences/woocommerce' )
-				.reply( 200, {
+				.get('/rest/v1.1/sites/123/calypso-preferences/woocommerce')
+				.reply(200, {
 					finished_initial_setup: true,
 					opted_out_of_shipping_setup: true,
 					opted_out_of_taxes_setup: true,
@@ -45,26 +45,26 @@ describe( 'actions', () => {
 					created_default_shipping_zone: true,
 					finished_initial_install_of_required_plugins: true,
 					set_store_address_during_initial_setup: true,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			fetchSetupChoices( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			fetchSetupChoices(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICES_REQUEST,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = fetchSetupChoices( siteId )( dispatch, getState );
+			const response = fetchSetupChoices(siteId)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -76,38 +76,38 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: true,
 						set_store_address_during_initial_setup: true,
 					},
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should not dispatch if setup choices are already loading for this site', () => {
-			const getState = () => ( {
+		test('should not dispatch if setup choices are already loading for this site', () => {
+			const getState = () => ({
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
+							[siteId]: {
 								setupChoices: LOADING,
 							},
 						},
 					},
 				},
-			} );
+			});
 			const dispatch = spy();
-			fetchSetupChoices( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.been.called;
-		} );
-	} );
+			fetchSetupChoices(siteId)(dispatch, getState);
+			expect(dispatch).to.not.have.been.called;
+		});
+	});
 
-	describe( '#setFinishedInitialSetup', () => {
+	describe('#setFinishedInitialSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+				.post('/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
 					finished_initial_setup: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					finished_initial_setup: true,
 					opted_out_of_shipping_setup: false,
 					opted_out_of_taxes_setup: false,
@@ -115,28 +115,28 @@ describe( 'actions', () => {
 					created_default_shipping_zone: false,
 					finished_initial_install_of_required_plugins: false,
 					set_store_address_during_initial_setup: false,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setFinishedInitialSetup( siteId, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setFinishedInitialSetup(siteId, true)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 				siteId,
 				key: 'finished_initial_setup',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setFinishedInitialSetup( siteId, true )( dispatch, getState );
+			const response = setFinishedInitialSetup(siteId, true)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -148,21 +148,21 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: false,
 						set_store_address_during_initial_setup: false,
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#setOptedOutOfShippingSetup', () => {
+	describe('#setOptedOutOfShippingSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+				.post('/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
 					opted_out_of_shipping_setup: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					finished_initial_setup: false,
 					opted_out_of_shipping_setup: true,
 					opted_out_of_taxes_setup: false,
@@ -170,28 +170,28 @@ describe( 'actions', () => {
 					created_default_shipping_zone: false,
 					finished_initial_install_of_required_plugins: false,
 					set_store_address_during_initial_setup: false,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setOptedOutOfShippingSetup( siteId, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setOptedOutOfShippingSetup(siteId, true)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 				siteId,
 				key: 'opted_out_of_shipping_setup',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setOptedOutOfShippingSetup( siteId, true )( dispatch, getState );
+			const response = setOptedOutOfShippingSetup(siteId, true)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -203,21 +203,21 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: false,
 						set_store_address_during_initial_setup: false,
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#setOptedOutOfTaxesSetup', () => {
+	describe('#setOptedOutOfTaxesSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+				.post('/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
 					opted_out_of_taxes_setup: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					finished_initial_setup: false,
 					opted_out_of_shipping_setup: false,
 					opted_out_of_taxes_setup: true,
@@ -225,28 +225,28 @@ describe( 'actions', () => {
 					created_default_shipping_zone: false,
 					finished_initial_install_of_required_plugins: false,
 					set_store_address_during_initial_setup: false,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setOptedOutOfTaxesSetup( siteId, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setOptedOutOfTaxesSetup(siteId, true)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 				siteId,
 				key: 'opted_out_of_taxes_setup',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setOptedOutOfTaxesSetup( siteId, true )( dispatch, getState );
+			const response = setOptedOutOfTaxesSetup(siteId, true)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -258,21 +258,21 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: false,
 						set_store_address_during_initial_setup: false,
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#setTriedCustomizerDuringInitialSetup', () => {
+	describe('#setTriedCustomizerDuringInitialSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+				.post('/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
 					tried_customizer_during_initial_setup: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					finished_initial_setup: false,
 					opted_out_of_shipping_setup: false,
 					opted_out_of_taxes_setup: false,
@@ -280,28 +280,28 @@ describe( 'actions', () => {
 					created_default_shipping_zone: false,
 					finished_initial_install_of_required_plugins: false,
 					set_store_address_during_initial_setup: false,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setTriedCustomizerDuringInitialSetup( siteId, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setTriedCustomizerDuringInitialSetup(siteId, true)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 				siteId,
 				key: 'tried_customizer_during_initial_setup',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setTriedCustomizerDuringInitialSetup( siteId, true )( dispatch, getState );
+			const response = setTriedCustomizerDuringInitialSetup(siteId, true)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -313,21 +313,21 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: false,
 						set_store_address_during_initial_setup: false,
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#setCreatedDefaultShippingZone', () => {
+	describe('#setCreatedDefaultShippingZone', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+				.post('/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
 					created_default_shipping_zone: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					finished_initial_setup: false,
 					opted_out_of_shipping_setup: false,
 					opted_out_of_taxes_setup: false,
@@ -335,28 +335,28 @@ describe( 'actions', () => {
 					created_default_shipping_zone: true,
 					finished_initial_install_of_required_plugins: false,
 					set_store_address_during_initial_setup: false,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setCreatedDefaultShippingZone( siteId, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setCreatedDefaultShippingZone(siteId, true)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 				siteId,
 				key: 'created_default_shipping_zone',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setCreatedDefaultShippingZone( siteId, true )( dispatch, getState );
+			const response = setCreatedDefaultShippingZone(siteId, true)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -368,21 +368,21 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: false,
 						set_store_address_during_initial_setup: false,
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#setFinishedInstallOfRequiredPlugins', () => {
+	describe('#setFinishedInstallOfRequiredPlugins', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+				.post('/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
 					finished_initial_install_of_required_plugins: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					finished_initial_setup: false,
 					opted_out_of_shipping_setup: false,
 					opted_out_of_taxes_setup: false,
@@ -390,28 +390,28 @@ describe( 'actions', () => {
 					created_default_shipping_zone: false,
 					finished_initial_install_of_required_plugins: true,
 					set_store_address_during_initial_setup: false,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setFinishedInstallOfRequiredPlugins( siteId, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setFinishedInstallOfRequiredPlugins(siteId, true)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 				siteId,
 				key: 'finished_initial_install_of_required_plugins',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setFinishedInstallOfRequiredPlugins( siteId, true )( dispatch, getState );
+			const response = setFinishedInstallOfRequiredPlugins(siteId, true)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -423,12 +423,12 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: true,
 						set_store_address_during_initial_setup: false,
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#setUpStorePages', () => {
+	describe('#setUpStorePages', () => {
 		const siteId = '123';
 
 		const data = {
@@ -440,53 +440,53 @@ describe( 'actions', () => {
 			message: 'All missing WooCommerce pages successfully installed',
 		};
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+				.post('/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/system_status/tools/install_pages&_via_calypso&_method=post',
-					body: JSON.stringify( {} ),
+					body: JSON.stringify({}),
 					json: true,
-				} )
-				.reply( 200, { data } );
-		} );
+				})
+				.reply(200, { data });
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setUpStorePages( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setUpStorePages(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a setup choice update request action with request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a setup choice update request action with request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setUpStorePages( siteId )( dispatch, getState );
+			const response = setUpStorePages(siteId)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 					siteId,
 					key: 'finished_page_setup',
 					value: true,
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#setCheckedTaxSetup', () => {
+	describe('#setCheckedTaxSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+				.post('/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
 					checked_tax_setup: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					finished_initial_setup: false,
 					opted_out_of_shipping_setup: false,
 					opted_out_of_taxes_setup: false,
@@ -495,28 +495,28 @@ describe( 'actions', () => {
 					finished_initial_install_of_required_plugins: false,
 					set_store_address_during_initial_setup: false,
 					checked_tax_setup: true,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setCheckedTaxSetup( siteId, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setCheckedTaxSetup(siteId, true)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 				siteId,
 				key: 'checked_tax_setup',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setCheckedTaxSetup( siteId, true )( dispatch, getState );
+			const response = setCheckedTaxSetup(siteId, true)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -529,21 +529,21 @@ describe( 'actions', () => {
 						set_store_address_during_initial_setup: false,
 						checked_tax_setup: true,
 					},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#setSetStoreAddressDuringInitialSetup', () => {
+	describe('#setSetStoreAddressDuringInitialSetup', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+				.post('/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
 					set_store_address_during_initial_setup: true,
-				} )
-				.reply( 200, {
+				})
+				.reply(200, {
 					finished_initial_setup: false,
 					opted_out_of_shipping_setup: false,
 					opted_out_of_taxes_setup: false,
@@ -551,28 +551,28 @@ describe( 'actions', () => {
 					created_default_shipping_zone: false,
 					finished_initial_install_of_required_plugins: false,
 					set_store_address_during_initial_setup: true,
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			setSetStoreAddressDuringInitialSetup( siteId, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			setSetStoreAddressDuringInitialSetup(siteId, true)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 				siteId,
 				key: 'set_store_address_during_initial_setup',
 				value: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with setup choices when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = setSetStoreAddressDuringInitialSetup( siteId, true )( dispatch, getState );
+			const response = setSetStoreAddressDuringInitialSetup(siteId, true)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 					siteId,
 					data: {
@@ -584,8 +584,8 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: false,
 						set_store_address_during_initial_setup: true,
 					},
-				} );
-			} );
-		} );
-	} );
-} );
+				});
+			});
+		});
+	});
+});

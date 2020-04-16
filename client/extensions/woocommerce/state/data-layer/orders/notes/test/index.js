@@ -10,13 +10,13 @@ import { createNote, fetchNotes } from 'woocommerce/state/sites/orders/notes/act
 import { create, fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'handlers', () => {
-	describe( '#fetch', () => {
-		test( 'should dispatch a get action to the API via the jetpack proxy for this siteId & orderId', () => {
-			const action = fetchNotes( 123, 74 );
-			const result = fetch( action );
+describe('handlers', () => {
+	describe('#fetch', () => {
+		test('should dispatch a get action to the API via the jetpack proxy for this siteId & orderId', () => {
+			const action = fetchNotes(123, 74);
+			const result = fetch(action);
 
-			expect( result ).to.eql(
+			expect(result).to.eql(
 				http(
 					{
 						method: 'GET',
@@ -31,18 +31,18 @@ describe( 'handlers', () => {
 					action
 				)
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#create', () => {
-		test( 'should dispatch a post action to the API via the jetpack proxy for this siteId & orderId', () => {
+	describe('#create', () => {
+		test('should dispatch a post action to the API via the jetpack proxy for this siteId & orderId', () => {
 			const note = {
 				note: 'Testing',
 			};
-			const action = createNote( 123, 74, note );
-			const result = create( action );
+			const action = createNote(123, 74, note);
+			const result = create(action);
 
-			expect( result ).to.eql(
+			expect(result).to.eql(
 				http(
 					{
 						method: 'POST',
@@ -51,7 +51,7 @@ describe( 'handlers', () => {
 						body: {
 							json: true,
 							path: '/wc/v3/orders/74/notes&_method=POST',
-							body: JSON.stringify( note ),
+							body: JSON.stringify(note),
 						},
 						query: {
 							json: true,
@@ -60,6 +60,6 @@ describe( 'handlers', () => {
 					action
 				)
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

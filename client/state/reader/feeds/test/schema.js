@@ -9,24 +9,24 @@ import validate from 'is-my-json-valid';
  */
 import { itemsSchema } from '../schema';
 
-describe( 'schema', () => {
+describe('schema', () => {
 	let validator;
-	beforeEach( () => {
-		validator = validate( itemsSchema );
-	} );
+	beforeEach(() => {
+		validator = validate(itemsSchema);
+	});
 
-	test( 'should validate the basic object', () => {
-		const isValid = validator( {
+	test('should validate the basic object', () => {
+		const isValid = validator({
 			1234: {
 				feed_ID: 1,
 				blog_ID: 2,
 			},
-		} );
-		assert.isTrue( isValid, validator.error );
-	} );
+		});
+		assert.isTrue(isValid, validator.error);
+	});
 
-	test( 'should validate a full object', () => {
-		const isValid = validator( {
+	test('should validate a full object', () => {
+		const isValid = validator({
 			1234: {
 				feed_ID: 1,
 				blog_ID: 2,
@@ -37,12 +37,12 @@ describe( 'schema', () => {
 				subscribers_count: 10,
 				meta: {},
 			},
-		} );
-		assert.isTrue( isValid, validator.error );
-	} );
+		});
+		assert.isTrue(isValid, validator.error);
+	});
 
-	test( 'should allow null props', () => {
-		const isValid = validator( {
+	test('should allow null props', () => {
+		const isValid = validator({
 			1234: {
 				feed_ID: 1,
 				blog_ID: 2,
@@ -53,13 +53,13 @@ describe( 'schema', () => {
 				subscribers_count: null,
 				meta: null,
 			},
-		} );
-		assert.isTrue( isValid, validator.error );
-	} );
+		});
+		assert.isTrue(isValid, validator.error);
+	});
 
-	test( 'shall not let bad data pass', () => {
+	test('shall not let bad data pass', () => {
 		assert.isFalse(
-			validator( {
+			validator({
 				1234: {
 					feed_ID: '1', // feed_ID should be an actual integer, not a string
 					blog_ID: 2,
@@ -70,7 +70,7 @@ describe( 'schema', () => {
 					subscribers_count: null,
 					meta: null,
 				},
-			} )
+			})
 		);
-	} );
-} );
+	});
+});

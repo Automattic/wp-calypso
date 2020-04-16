@@ -25,135 +25,135 @@ import {
 	isSettingsSaveSuccessful,
 } from '../state/settings/selectors';
 
-const wrapSettingsForm = getFormSettings => SettingsForm => {
+const wrapSettingsForm = (getFormSettings) => (SettingsForm) => {
 	class WrappedSettingsForm extends Component {
 		UNSAFE_componentWillMount() {
-			if ( getFormSettings ) {
-				this.props.replaceFields( getFormSettings( this.props.settings ) );
+			if (getFormSettings) {
+				this.props.replaceFields(getFormSettings(this.props.settings));
 			}
 		}
 
-		componentDidUpdate( prevProps ) {
-			if ( prevProps.siteId !== this.props.siteId ) {
-				const newSiteFields = getFormSettings( this.props.settings );
+		componentDidUpdate(prevProps) {
+			if (prevProps.siteId !== this.props.siteId) {
+				const newSiteFields = getFormSettings(this.props.settings);
 
 				this.props.clearDirtyFields();
-				this.props.replaceFields( newSiteFields );
+				this.props.replaceFields(newSiteFields);
 			} else if (
-				! isEqual( prevProps.settings, this.props.settings ) ||
-				! isEqual( prevProps.fields, this.props.fields )
+				!isEqual(prevProps.settings, this.props.settings) ||
+				!isEqual(prevProps.fields, this.props.fields)
 			) {
 				this.updateDirtyFields();
 			}
 
-			if ( ! this.props.isSaving && prevProps.isSaving ) {
-				if ( this.props.isSaveSuccessful ) {
-					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
+			if (!this.props.isSaving && prevProps.isSaving) {
+				if (this.props.isSaveSuccessful) {
+					this.props.successNotice(this.props.translate('Settings saved!'), {
 						id: 'wpsc-settings-save',
-					} );
+					});
 				} else {
 					this.props.errorNotice(
-						this.props.translate( 'There was a problem saving your changes. Please try again.' ),
+						this.props.translate('There was a problem saving your changes. Please try again.'),
 						{ id: 'wpsc-settings-save' }
 					);
 				}
 			}
 
-			this.showCacheDeleteNotice( prevProps );
+			this.showCacheDeleteNotice(prevProps);
 		}
 
 		updateDirtyFields() {
 			const currentFields = this.props.fields;
-			const persistedFields = getFormSettings( this.props.settings );
+			const persistedFields = getFormSettings(this.props.settings);
 
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
 			const nextDirtyFields = previousDirtyFields.filter(
-				field => ! isEqual( currentFields[ field ], persistedFields[ field ] )
+				(field) => !isEqual(currentFields[field], persistedFields[field])
 			);
 
 			// Update the dirty fields state without updating their values
-			if ( 0 === nextDirtyFields.length ) {
+			if (0 === nextDirtyFields.length) {
 				this.props.markSaved();
 			} else {
 				this.props.markChanged();
 			}
 
 			this.props.clearDirtyFields();
-			this.props.updateFields( pick( currentFields, nextDirtyFields ) );
+			this.props.updateFields(pick(currentFields, nextDirtyFields));
 
 			// Set the new non dirty fields
-			const nextNonDirtyFields = omit( persistedFields, nextDirtyFields );
-			this.props.replaceFields( nextNonDirtyFields );
+			const nextNonDirtyFields = omit(persistedFields, nextDirtyFields);
+			this.props.replaceFields(nextNonDirtyFields);
 		}
 
-		showCacheDeleteNotice = prevProps => {
-			if ( this.props.isDeleting || ! prevProps.isDeleting ) {
+		showCacheDeleteNotice = (prevProps) => {
+			if (this.props.isDeleting || !prevProps.isDeleting) {
 				return;
 			}
 
 			const { isDeleteSuccessful, site, translate } = this.props;
 
-			this.props.removeNotice( 'wpsc-settings-save' );
+			this.props.removeNotice('wpsc-settings-save');
 
-			if ( isDeleteSuccessful ) {
+			if (isDeleteSuccessful) {
 				this.props.successNotice(
-					translate( 'Cache successfully deleted on %(site)s.', {
+					translate('Cache successfully deleted on %(site)s.', {
 						args: { site: site && site.title },
-					} ),
+					}),
 					{ id: 'wpsc-cache-delete' }
 				);
 			} else {
 				this.props.errorNotice(
-					translate( 'There was a problem deleting the cache. Please try again.' ),
+					translate('There was a problem deleting the cache. Please try again.'),
 					{ id: 'wpsc-cache-delete' }
 				);
 			}
 		};
 
-		handleChange = field => event => {
-			this.props.updateFields( { [ field ]: event.target.value } );
+		handleChange = (field) => (event) => {
+			this.props.updateFields({ [field]: event.target.value });
 		};
 
-		handleRadio = event => {
+		handleRadio = (event) => {
 			const name = event.currentTarget.name;
 			const value = event.currentTarget.value;
 
-			this.props.updateFields( { [ name ]: value } );
+			this.props.updateFields({ [name]: value });
 		};
 
-		handleSelect = event => {
+		handleSelect = (event) => {
 			const { name, value } = event.currentTarget;
 			// Attempt to cast numeric fields value to int.
-			const parsedValue = parseInt( value, 10 );
+			const parsedValue = parseInt(value, 10);
 
-			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
+			this.props.updateFields({ [name]: isNaN(parsedValue) ? value : parsedValue });
 		};
 
-		handleAutosavingToggle = name => () => {
-			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
+		handleAutosavingToggle = (name) => () => {
+			this.props.updateFields({ [name]: !this.props.fields[name] }, () => {
 				this.submitForm();
-			} );
+			});
 		};
 
-		handleToggle = name => () => {
-			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
+		handleToggle = (name) => () => {
+			this.props.updateFields({ [name]: !this.props.fields[name] });
 		};
 
-		setFieldValue = ( field, value, autosave = false ) => {
-			this.props.updateFields( { [ field ]: value }, () => {
+		setFieldValue = (field, value, autosave = false) => {
+			this.props.updateFields({ [field]: value }, () => {
 				autosave && this.submitForm();
-			} );
+			});
 		};
 
 		// Delete an element from an array field.
-		deleteFieldArrayValue = ( name, index ) => () => {
-			const currentValue = this.props.fields[ name ];
-			const newValue = [ ...currentValue.slice( 0, index ), ...currentValue.slice( index + 1 ) ];
+		deleteFieldArrayValue = (name, index) => () => {
+			const currentValue = this.props.fields[name];
+			const newValue = [...currentValue.slice(0, index), ...currentValue.slice(index + 1)];
 
 			this.props.updateFields(
 				{
-					[ name ]: newValue,
+					[name]: newValue,
 				},
 				() => {
 					this.submitForm();
@@ -161,7 +161,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			);
 		};
 
-		handleSubmitForm = event => {
+		handleSubmitForm = (event) => {
 			event.preventDefault();
 			this.submitForm();
 		};
@@ -169,14 +169,14 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		submitForm = () => {
 			const { fields, siteId } = this.props;
 
-			this.props.removeNotice( 'wpsc-cache-delete' );
-			this.props.removeNotice( 'wpsc-settings-save' );
-			this.props.saveSettings( siteId, fields );
+			this.props.removeNotice('wpsc-cache-delete');
+			this.props.removeNotice('wpsc-settings-save');
+			this.props.saveSettings(siteId, fields);
 		};
 
-		handleDeleteCache = ( deleteAll, deleteExpired ) => {
-			this.props.removeNotice( 'wpsc-cache-delete' );
-			this.props.deleteCache( this.props.siteId, deleteAll, deleteExpired );
+		handleDeleteCache = (deleteAll, deleteExpired) => {
+			this.props.removeNotice('wpsc-cache-delete');
+			this.props.deleteCache(this.props.siteId, deleteAll, deleteExpired);
 		};
 
 		render() {
@@ -194,23 +194,23 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			return (
 				<div>
-					<QuerySettings siteId={ this.props.siteId } />
-					<SettingsForm { ...this.props } { ...utils } />
+					<QuerySettings siteId={this.props.siteId} />
+					<SettingsForm {...this.props} {...utils} />
 				</div>
 			);
 		}
 	}
 
 	const connectComponent = connect(
-		state => {
-			const site = getSelectedSite( state ) || {};
-			const siteId = getSelectedSiteId( state );
-			const isSaving = isSavingSettings( state, siteId );
-			const isSaveSuccessful = isSettingsSaveSuccessful( state, siteId );
-			const settings = getSettings( state, siteId );
-			const isRequesting = isRequestingSettings( state, siteId ) && ! settings;
-			const isDeleting = isDeletingCache( state, siteId );
-			const isDeleteSuccessful = isCacheDeleteSuccessful( state, siteId );
+		(state) => {
+			const site = getSelectedSite(state) || {};
+			const siteId = getSelectedSiteId(state);
+			const isSaving = isSavingSettings(state, siteId);
+			const isSaveSuccessful = isSettingsSaveSuccessful(state, siteId);
+			const settings = getSettings(state, siteId);
+			const isRequesting = isRequestingSettings(state, siteId) && !settings;
+			const isDeleting = isDeletingCache(state, siteId);
+			const isDeleteSuccessful = isCacheDeleteSuccessful(state, siteId);
 
 			return {
 				isDeleteSuccessful,
@@ -232,7 +232,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 	);
 
-	return flowRight( connectComponent, localize, trackForm, protectForm )( WrappedSettingsForm );
+	return flowRight(connectComponent, localize, trackForm, protectForm)(WrappedSettingsForm);
 };
 
 export default wrapSettingsForm;

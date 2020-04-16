@@ -14,15 +14,15 @@ import { isSupportSession } from 'state/support/selectors';
 
 class SupportUser extends Component {
 	componentDidMount() {
-		KeyboardShortcuts.on( 'exit-support-user', this.onKeyboardShortcut );
+		KeyboardShortcuts.on('exit-support-user', this.onKeyboardShortcut);
 	}
 
 	componentWillUnmount() {
-		KeyboardShortcuts.off( 'exit-support-user', this.onKeyboardShortcut );
+		KeyboardShortcuts.off('exit-support-user', this.onKeyboardShortcut);
 	}
 
 	onKeyboardShortcut = () => {
-		if ( this.props.isSupportSession ) {
+		if (this.props.isSupportSession) {
 			rebootNormally();
 		}
 	};
@@ -32,6 +32,6 @@ class SupportUser extends Component {
 	}
 }
 
-export default connect( state => ( {
-	isSupportSession: isSupportSession( state ),
-} ) )( SupportUser );
+export default connect((state) => ({
+	isSupportSession: isSupportSession(state),
+}))(SupportUser);

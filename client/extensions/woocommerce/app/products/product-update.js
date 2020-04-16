@@ -55,9 +55,9 @@ class ProductUpdate extends React.Component {
 	static propTypes = {
 		params: PropTypes.object,
 		className: PropTypes.string,
-		product: PropTypes.shape( {
+		product: PropTypes.shape({
 			id: PropTypes.isRequired,
-		} ),
+		}),
 		fetchProduct: PropTypes.func.isRequired,
 		fetchProductVariations: PropTypes.func.isRequired,
 		fetchProductCategories: PropTypes.func.isRequired,
@@ -73,117 +73,117 @@ class ProductUpdate extends React.Component {
 
 	componentDidMount() {
 		const { params, product, site, variations } = this.props;
-		const productId = Number( params.product_id );
+		const productId = Number(params.product_id);
 
-		if ( site && site.ID ) {
-			if ( ! product ) {
-				this.props.fetchProduct( site.ID, productId );
-				this.props.editProduct( site.ID, { id: productId }, {} );
+		if (site && site.ID) {
+			if (!product) {
+				this.props.fetchProduct(site.ID, productId);
+				this.props.editProduct(site.ID, { id: productId }, {});
 			}
-			if ( ! variations ) {
-				this.props.fetchProductVariations( site.ID, productId );
+			if (!variations) {
+				this.props.fetchProductVariations(site.ID, productId);
 			}
-			this.props.fetchProductCategories( site.ID, { offset: 0 } );
+			this.props.fetchProductCategories(site.ID, { offset: 0 });
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { params, site } = this.props;
-		const productId = Number( params.product_id );
-		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-		const oldSiteId = ( site && site.ID ) || null;
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchProduct( newSiteId, productId );
-			this.props.fetchProductVariations( newSiteId, productId );
-			this.props.editProduct( newSiteId, { id: productId }, {} );
-			this.props.fetchProductCategories( newSiteId, { offset: 0 } );
+		const productId = Number(params.product_id);
+		const newSiteId = (newProps.site && newProps.site.ID) || null;
+		const oldSiteId = (site && site.ID) || null;
+		if (oldSiteId !== newSiteId) {
+			this.props.fetchProduct(newSiteId, productId);
+			this.props.fetchProductVariations(newSiteId, productId);
+			this.props.editProduct(newSiteId, { id: productId }, {});
+			this.props.fetchProductCategories(newSiteId, { offset: 0 });
 		}
 	}
 
 	componentWillUnmount() {
 		const { site } = this.props;
 
-		if ( site ) {
-			this.props.clearProductEdits( site.ID );
-			this.props.clearProductCategoryEdits( site.ID );
-			this.props.clearProductVariationEdits( site.ID );
+		if (site) {
+			this.props.clearProductEdits(site.ID);
+			this.props.clearProductCategoryEdits(site.ID);
+			this.props.clearProductVariationEdits(site.ID);
 		}
 	}
 
 	onUploadStart = () => {
-		this.setState( prevState => ( {
-			isUploading: [ ...prevState.isUploading, [ true ] ],
-		} ) );
+		this.setState((prevState) => ({
+			isUploading: [...prevState.isUploading, [true]],
+		}));
 	};
 
 	onUploadFinish = () => {
-		this.setState( prevState => ( {
-			isUploading: prevState.isUploading.slice( 1 ),
-		} ) );
+		this.setState((prevState) => ({
+			isUploading: prevState.isUploading.slice(1),
+		}));
 	};
 
 	// TODO: In v1, this deletes a product, as we don't have trash management.
 	// Once we have trashing management, we can introduce 'trash' instead.
 	onTrash = () => {
 		const { translate, site, product, deleteProduct } = this.props;
-		const areYouSure = translate( "Are you sure you want to permanently delete '%(name)s'?", {
+		const areYouSure = translate("Are you sure you want to permanently delete '%(name)s'?", {
 			args: { name: product.name },
-		} );
-		accept( areYouSure, function( accepted ) {
-			if ( ! accepted ) {
+		});
+		accept(areYouSure, function (accepted) {
+			if (!accepted) {
 				return;
 			}
 			const successAction = () => {
-				debounce( () => {
-					page.redirect( getLink( '/store/products/:site/', site ) );
-				}, 1000 )();
+				debounce(() => {
+					page.redirect(getLink('/store/products/:site/', site));
+				}, 1000)();
 				return successNotice(
-					translate( '%(product)s successfully deleted.', {
+					translate('%(product)s successfully deleted.', {
 						args: { product: product.name },
-					} )
+					})
 				);
 			};
 			const failureAction = () => {
 				return errorNotice(
-					translate( 'There was a problem deleting %(product)s. Please try again.', {
+					translate('There was a problem deleting %(product)s. Please try again.', {
 						args: { product: product.name },
-					} )
+					})
 				);
 			};
-			deleteProduct( site.ID, product.id, successAction, failureAction );
-		} );
+			deleteProduct(site.ID, product.id, successAction, failureAction);
+		});
 	};
 
 	onSave = () => {
 		const { product, translate, site, fetchProductCategories: fetch } = this.props;
 		const successAction = () => {
-			fetch( site.ID, { offset: 0 } );
+			fetch(site.ID, { offset: 0 });
 			return successNotice(
-				translate( '%(product)s successfully updated.', {
+				translate('%(product)s successfully updated.', {
 					args: { product: product.name },
-				} ),
+				}),
 				{
 					duration: 8000,
-					button: translate( 'View' ),
+					button: translate('View'),
 					onClick: () => {
-						window.open( product.permalink );
+						window.open(product.permalink);
 					},
 				}
 			);
 		};
 
-		const failureAction = error => {
-			const errorSlug = ( error && error.error ) || undefined;
+		const failureAction = (error) => {
+			const errorSlug = (error && error.error) || undefined;
 
-			return errorNotice( getSaveErrorMessage( errorSlug, product.name, translate ), {
+			return errorNotice(getSaveErrorMessage(errorSlug, product.name, translate), {
 				duration: 8000,
-			} );
+			});
 		};
 
-		this.props.createProductActionList( successAction, failureAction );
+		this.props.createProductActionList(successAction, failureAction);
 	};
 
-	isProductValid( product = this.props.product ) {
+	isProductValid(product = this.props.product) {
 		return product && product.type && product.name && product.name.length > 0;
 	}
 
@@ -199,48 +199,48 @@ class ProductUpdate extends React.Component {
 		} = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
-		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
-		const saveEnabled = isValid && ! isBusy && hasEdits && 0 === this.state.isUploading.length;
+		const isBusy = Boolean(actionList); // If there's an action list present, we're trying to save.
+		const saveEnabled = isValid && !isBusy && hasEdits && 0 === this.state.isUploading.length;
 
 		return (
-			<Main className={ className } wideLayout>
+			<Main className={className} wideLayout>
 				<ProductHeader
-					site={ site }
-					product={ product }
-					viewEnabled={ true }
-					onTrash={ this.onTrash }
-					onSave={ saveEnabled ? this.onSave : false }
-					isBusy={ isBusy }
+					site={site}
+					product={product}
+					viewEnabled={true}
+					onTrash={this.onTrash}
+					onSave={saveEnabled ? this.onSave : false}
+					isBusy={isBusy}
 				/>
-				<ProtectFormGuard isChanged={ hasEdits } />
+				<ProtectFormGuard isChanged={hasEdits} />
 				<ProductForm
-					siteId={ site && site.ID }
-					product={ product || { type: 'simple' } }
-					variations={ variations }
-					productCategories={ productCategories }
-					editProduct={ this.props.editProduct }
-					editProductCategory={ this.props.editProductCategory }
-					editProductAttribute={ this.props.editProductAttribute }
-					editProductVariation={ this.props.editProductVariation }
-					onUploadStart={ this.onUploadStart }
-					onUploadFinish={ this.onUploadFinish }
+					siteId={site && site.ID}
+					product={product || { type: 'simple' }}
+					variations={variations}
+					productCategories={productCategories}
+					editProduct={this.props.editProduct}
+					editProductCategory={this.props.editProductCategory}
+					editProductAttribute={this.props.editProductAttribute}
+					editProductVariation={this.props.editProductVariation}
+					onUploadStart={this.onUploadStart}
+					onUploadFinish={this.onUploadFinish}
 				/>
 			</Main>
 		);
 	}
 }
 
-function mapStateToProps( state, ownProps ) {
-	const productId = Number( ownProps.params.product_id );
+function mapStateToProps(state, ownProps) {
+	const productId = Number(ownProps.params.product_id);
 
-	const site = getSelectedSiteWithFallback( state );
-	const product = getProductWithLocalEdits( state, productId );
+	const site = getSelectedSiteWithFallback(state);
+	const product = getProductWithLocalEdits(state, productId);
 	const hasEdits =
-		Boolean( getProductEdits( state, productId ) ) ||
-		Boolean( getVariationEditsStateForProduct( state, productId ) );
-	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
-	const productCategories = getProductCategoriesWithLocalEdits( state );
-	const actionList = getActionList( state );
+		Boolean(getProductEdits(state, productId)) ||
+		Boolean(getVariationEditsStateForProduct(state, productId));
+	const variations = product && getProductVariationsWithLocalEdits(state, product.id);
+	const productCategories = getProductCategoriesWithLocalEdits(state);
+	const actionList = getActionList(state);
 
 	return {
 		site,
@@ -252,13 +252,13 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
-			createProductActionList: ( ...args ) =>
+			createProductActionList: (...args) =>
 				withAnalytics(
-					recordTracksEvent( 'calypso_woocommerce_ui_product_update' ),
-					createProductActionList( ...args )
+					recordTracksEvent('calypso_woocommerce_ui_product_update'),
+					createProductActionList(...args)
 				),
 			deleteProduct: deleteProductAction,
 			editProduct,
@@ -276,4 +276,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductUpdate ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(ProductUpdate));

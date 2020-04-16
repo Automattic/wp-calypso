@@ -28,56 +28,56 @@ class SortedGrid extends PureComponent {
 	getItems() {
 		const items = [];
 
-		for ( let i = 0; i < this.props.items.length; i += this.props.itemsPerRow ) {
-			const row = slice( this.props.items, i, i + this.props.itemsPerRow );
+		for (let i = 0; i < this.props.items.length; i += this.props.itemsPerRow) {
+			const row = slice(this.props.items, i, i + this.props.itemsPerRow);
 			const groups = reduce(
-				map( row, this.props.getItemGroup ),
-				( results, group ) => {
-					results[ group ] = get( results, group, 0 ) + 1;
+				map(row, this.props.getItemGroup),
+				(results, group) => {
+					results[group] = get(results, group, 0) + 1;
 					return results;
 				},
 				{}
 			);
 
-			items.push( { isGridLabel: true, id: i, groups }, ...row );
+			items.push({ isGridLabel: true, id: i, groups }, ...row);
 		}
 
 		return items;
 	}
 
-	renderLabels( row ) {
+	renderLabels(row) {
 		return (
-			<div key={ `header_${ row.id }` } className="sorted-grid__header">
-				{ map( row.groups, ( count, group ) => {
-					const labelText = this.props.getGroupLabel( group );
+			<div key={`header_${row.id}`} className="sorted-grid__header">
+				{map(row.groups, (count, group) => {
+					const labelText = this.props.getGroupLabel(group);
 					return (
 						'' !== labelText && (
 							<Label
-								key={ `group_${ group }` }
-								text={ this.props.getGroupLabel( group ) }
-								itemsCount={ count }
-								itemsPerRow={ this.props.itemsPerRow }
-								lastInRow={ last( keys( row.groups ) ) === group }
+								key={`group_${group}`}
+								text={this.props.getGroupLabel(group)}
+								itemsCount={count}
+								itemsPerRow={this.props.itemsPerRow}
+								lastInRow={last(keys(row.groups)) === group}
 							/>
 						)
 					);
-				} ) }
+				})}
 			</div>
 		);
 	}
 
-	renderItem = item => {
-		if ( item.isGridLabel ) {
-			return this.renderLabels( item );
+	renderItem = (item) => {
+		if (item.isGridLabel) {
+			return this.renderLabels(item);
 		}
 
-		return this.props.renderItem( item );
+		return this.props.renderItem(item);
 	};
 
 	render() {
-		const props = omit( this.props, 'getGroupLabel', 'getItemGroup', 'items', 'renderItem' );
+		const props = omit(this.props, 'getGroupLabel', 'getItemGroup', 'items', 'renderItem');
 
-		return <InfiniteList items={ this.getItems() } renderItem={ this.renderItem } { ...props } />;
+		return <InfiniteList items={this.getItems()} renderItem={this.renderItem} {...props} />;
 	}
 }
 

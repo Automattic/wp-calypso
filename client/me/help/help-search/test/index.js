@@ -38,36 +38,34 @@ const helpLinks = {
 
 const searchQuery = 'maplesyrup';
 
-describe( 'HelpSearch', () => {
-	test( 'should render ', () => {
-		const wrapper = shallow( <HelpSearch { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-	} );
+describe('HelpSearch', () => {
+	test('should render ', () => {
+		const wrapper = shallow(<HelpSearch {...defaultProps} />);
+		expect(wrapper).toMatchSnapshot();
+	});
 
-	test( 'should prioritize and pass localized forum search results if available ', () => {
-		const wrapper = shallow( <HelpSearch { ...defaultProps } helpLinks={ helpLinks } /> );
-		wrapper.setState( { searchQuery } );
+	test('should prioritize and pass localized forum search results if available ', () => {
+		const wrapper = shallow(<HelpSearch {...defaultProps} helpLinks={helpLinks} />);
+		wrapper.setState({ searchQuery });
 		wrapper.update();
-		const HelpResultsElements = wrapper.find( 'HelpResults' );
-		expect( HelpResultsElements ).toHaveLength( 3 );
-		expect( HelpResultsElements.at( 1 ).props().helpLinks ).toEqual(
+		const HelpResultsElements = wrapper.find('HelpResults');
+		expect(HelpResultsElements).toHaveLength(3);
+		expect(HelpResultsElements.at(1).props().helpLinks).toEqual(
 			helpLinks.wordpress_forum_links_localized
 		);
-	} );
+	});
 
-	test( 'should display `en` forum search results localized not available', () => {
+	test('should display `en` forum search results localized not available', () => {
 		const wrapper = shallow(
 			<HelpSearch
-				{ ...defaultProps }
-				helpLinks={ { wordpress_forum_links: helpLinks.wordpress_forum_links } }
+				{...defaultProps}
+				helpLinks={{ wordpress_forum_links: helpLinks.wordpress_forum_links }}
 			/>
 		);
-		wrapper.setState( { searchQuery } );
+		wrapper.setState({ searchQuery });
 		wrapper.update();
-		const HelpResultsElements = wrapper.find( 'HelpResults' );
-		expect( HelpResultsElements ).toHaveLength( 3 );
-		expect( HelpResultsElements.at( 1 ).props().helpLinks ).toEqual(
-			helpLinks.wordpress_forum_links
-		);
-	} );
-} );
+		const HelpResultsElements = wrapper.find('HelpResults');
+		expect(HelpResultsElements).toHaveLength(3);
+		expect(HelpResultsElements.at(1).props().helpLinks).toEqual(helpLinks.wordpress_forum_links);
+	});
+});

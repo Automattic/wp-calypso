@@ -20,7 +20,7 @@ import {
 } from 'state/happychat/constants';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 
-describe( '#hasActiveHappychatSession', () => {
+describe('#hasActiveHappychatSession', () => {
 	const inactiveChatStatuses = [
 		HAPPYCHAT_CHAT_STATUS_BLOCKED,
 		HAPPYCHAT_CHAT_STATUS_CLOSED,
@@ -35,17 +35,17 @@ describe( '#hasActiveHappychatSession', () => {
 		HAPPYCHAT_CHAT_STATUS_PENDING,
 	];
 
-	test( 'should be false when chat.status indicates the user has no active session', () => {
-		inactiveChatStatuses.forEach( status => {
-			const state = deepFreeze( { happychat: { chat: { status } } } );
-			expect( hasActiveHappychatSession( state ) ).to.be.false;
-		} );
-	} );
+	test('should be false when chat.status indicates the user has no active session', () => {
+		inactiveChatStatuses.forEach((status) => {
+			const state = deepFreeze({ happychat: { chat: { status } } });
+			expect(hasActiveHappychatSession(state)).to.be.false;
+		});
+	});
 
-	test( 'should be true when chat.status indicates the user has an active session', () => {
-		activeChatStatuses.forEach( status => {
-			const state = deepFreeze( { happychat: { chat: { status } } } );
-			expect( hasActiveHappychatSession( state ) ).to.be.true;
-		} );
-	} );
-} );
+	test('should be true when chat.status indicates the user has an active session', () => {
+		activeChatStatuses.forEach((status) => {
+			const state = deepFreeze({ happychat: { chat: { status } } });
+			expect(hasActiveHappychatSession(state)).to.be.true;
+		});
+	});
+});

@@ -11,8 +11,8 @@ import { LOADING } from 'woocommerce/state/constants';
 
 // TODO: Handle error
 
-export default withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_CURRENCIES_REQUEST: {
 			return LOADING;
 		}
@@ -23,4 +23,4 @@ export default withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});

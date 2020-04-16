@@ -35,47 +35,47 @@ class StepConfirmMigration extends Component {
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_site_migration_confirm_viewed', {} );
+		this.props.recordTracksEvent('calypso_site_migration_confirm_viewed', {});
 	}
 
 	handleClick = () => {
 		const { sourceSite, startMigration, targetSiteSlug } = this.props;
-		const sourceSiteId = get( sourceSite, 'ID' );
-		const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
+		const sourceSiteId = get(sourceSite, 'ID');
+		const sourceSiteSlug = get(sourceSite, 'slug', sourceSiteId);
 
 		const hasCompatiblePlan = this.isTargetSitePlanCompatible();
 
-		this.props.recordTracksEvent( 'calypso_site_migration_confirm_clicked', {
+		this.props.recordTracksEvent('calypso_site_migration_confirm_clicked', {
 			plan_compatible: hasCompatiblePlan,
-		} );
+		});
 
-		if ( hasCompatiblePlan ) {
+		if (hasCompatiblePlan) {
 			return startMigration();
 		}
 
-		page( `/migrate/upgrade/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
+		page(`/migrate/upgrade/from/${sourceSiteSlug}/to/${targetSiteSlug}`);
 	};
 
 	isTargetSitePlanCompatible() {
 		const { targetSite } = this.props;
-		const planSlug = get( targetSite, 'plan.product_slug' );
+		const planSlug = get(targetSite, 'plan.product_slug');
 
-		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
+		return planSlug && planHasFeature(planSlug, FEATURE_UPLOAD_THEMES_PLUGINS);
 	}
 
 	renderCardBusinessFooter() {
 		const { translate } = this.props;
 
 		// If the site is has an appropriate plan, no upgrade footer is required
-		if ( this.isTargetSitePlanCompatible() ) {
+		if (this.isTargetSitePlanCompatible()) {
 			return null;
 		}
 
 		return (
 			<CompactCard className="migrate__card-footer">
-				<Gridicon className="migrate__card-footer-gridicon" icon="info-outline" size={ 12 } />
+				<Gridicon className="migrate__card-footer-gridicon" icon="info-outline" size={12} />
 				<span className="migrate__card-footer-text">
-					{ translate( 'A Business Plan is required to import everything.' ) }
+					{translate('A Business Plan is required to import everything.')}
 				</span>
 			</CompactCard>
 		);
@@ -83,19 +83,19 @@ class StepConfirmMigration extends Component {
 
 	renderMigrationButton() {
 		const { targetSite, translate } = this.props;
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const targetSiteDomain = get(targetSite, 'domain');
 
-		if ( this.isTargetSitePlanCompatible() ) {
+		if (this.isTargetSitePlanCompatible()) {
 			return (
-				<MigrateButton onClick={ this.handleClick } targetSiteDomain={ targetSiteDomain }>
-					{ translate( 'Import Everything' ) }
+				<MigrateButton onClick={this.handleClick} targetSiteDomain={targetSiteDomain}>
+					{translate('Import Everything')}
 				</MigrateButton>
 			);
 		}
 
 		return (
-			<Button primary onClick={ this.handleClick }>
-				{ translate( 'Import Everything' ) }
+			<Button primary onClick={this.handleClick}>
+				{translate('Import Everything')}
 			</Button>
 		);
 	}
@@ -103,21 +103,17 @@ class StepConfirmMigration extends Component {
 	render() {
 		const { sourceSite, targetSite, targetSiteSlug, translate } = this.props;
 
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
-		const backHref = `/migrate/${ targetSiteSlug }`;
+		const sourceSiteDomain = get(sourceSite, 'domain');
+		const targetSiteDomain = get(targetSite, 'domain');
+		const backHref = `/migrate/${targetSiteSlug}`;
 
 		return (
 			<>
-				<HeaderCake backHref={ backHref }>Import { sourceSiteDomain }</HeaderCake>
-				<SitesBlock
-					sourceSite={ sourceSite }
-					loadingSourceSite={ false }
-					targetSite={ targetSite }
-				/>
+				<HeaderCake backHref={backHref}>Import {sourceSiteDomain}</HeaderCake>
+				<SitesBlock sourceSite={sourceSite} loadingSourceSite={false} targetSite={targetSite} />
 				<CompactCard>
 					<CardHeading>
-						{ translate(
+						{translate(
 							'Import everything from %(sourceSiteDomain)s and overwrite everything on %(targetSiteDomain)s?',
 							{
 								args: {
@@ -125,35 +121,35 @@ class StepConfirmMigration extends Component {
 									targetSiteDomain,
 								},
 							}
-						) }
+						)}
 					</CardHeading>
 					<div className="migrate__confirmation">
 						<ul className="migrate__list">
 							<li>
 								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								{ translate( 'All posts, pages, comments, and media' ) }
+								{translate('All posts, pages, comments, and media')}
 							</li>
 							<li>
 								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								{ translate( 'All users and roles' ) }
+								{translate('All users and roles')}
 							</li>
 							<li>
 								<Gridicon icon="checkmark" size="12" className="migrate__checkmark" />
-								{ translate( 'Theme, plugins, and settings' ) }
+								{translate('Theme, plugins, and settings')}
 							</li>
 						</ul>
 						<div>
-							{ translate(
+							{translate(
 								'Your site will keep working, but your WordPress.com dashboard will be locked during importing.'
-							) }
+							)}
 						</div>
 					</div>
-					{ this.renderMigrationButton() }
+					{this.renderMigrationButton()}
 				</CompactCard>
-				{ this.renderCardBusinessFooter() }
+				{this.renderCardBusinessFooter()}
 			</>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( StepConfirmMigration ) );
+export default connect(null, { recordTracksEvent })(localize(StepConfirmMigration));

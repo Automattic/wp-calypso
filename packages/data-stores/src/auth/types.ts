@@ -42,10 +42,10 @@ export interface WpLoginSuccessResponse {
 export interface WpLoginErrorResponse {
 	success: false;
 	data: {
-		errors: Array< {
+		errors: Array<{
 			code: string;
 			message: string;
-		} >;
+		}>;
 		two_step_nonce?: string;
 	};
 }

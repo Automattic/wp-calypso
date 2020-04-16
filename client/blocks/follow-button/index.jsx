@@ -28,8 +28,8 @@ class FollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = following => {
-		if ( following ) {
+	handleFollowToggle = (following) => {
+		if (following) {
 			const followData = omitBy(
 				{
 					feed_ID: this.props.feedId,
@@ -38,35 +38,35 @@ class FollowButtonContainer extends Component {
 				isUndefined
 			);
 
-			this.props.follow( this.props.siteUrl, followData );
+			this.props.follow(this.props.siteUrl, followData);
 		} else {
-			this.props.unfollow( this.props.siteUrl );
+			this.props.unfollow(this.props.siteUrl);
 		}
-		this.props.onFollowToggle( following );
+		this.props.onFollowToggle(following);
 	};
 
 	render() {
 		return (
 			<FollowButton
-				following={ this.props.following }
-				onFollowToggle={ this.handleFollowToggle }
-				iconSize={ this.props.iconSize }
-				tagName={ this.props.tagName }
-				disabled={ this.props.disabled }
-				followLabel={ this.props.followLabel }
-				followingLabel={ this.props.followingLabel }
-				className={ this.props.className }
+				following={this.props.following}
+				onFollowToggle={this.handleFollowToggle}
+				iconSize={this.props.iconSize}
+				tagName={this.props.tagName}
+				disabled={this.props.disabled}
+				followLabel={this.props.followLabel}
+				followingLabel={this.props.followingLabel}
+				className={this.props.className}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		following: isFollowing( state, { feedUrl: ownProps.siteUrl } ),
-	} ),
+	(state, ownProps) => ({
+		following: isFollowing(state, { feedUrl: ownProps.siteUrl }),
+	}),
 	{
 		follow,
 		unfollow,
 	}
-)( FollowButtonContainer );
+)(FollowButtonContainer);

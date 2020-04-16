@@ -8,11 +8,11 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 import { MARKETING_CLICK_UPGRADE_NUDGE } from 'state/action-types';
 
-export const notifyUpgradeNudgeClick = action =>
+export const notifyUpgradeNudgeClick = (action) =>
 	http(
 		{
 			method: 'POST',
-			path: `/sites/${ action.siteId }/nudge/click`,
+			path: `/sites/${action.siteId}/nudge/click`,
 			apiNamespace: 'wpcom/v2',
 			body: {
 				nudge_name: action.nudgeName,
@@ -21,12 +21,12 @@ export const notifyUpgradeNudgeClick = action =>
 		action
 	);
 
-registerHandlers( 'state/data-layer/wpcom/marketing/index.js', {
-	[ MARKETING_CLICK_UPGRADE_NUDGE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/marketing/index.js', {
+	[MARKETING_CLICK_UPGRADE_NUDGE]: [
+		dispatchRequest({
 			fetch: notifyUpgradeNudgeClick,
 			onSuccess: noop,
 			onError: noop,
-		} ),
+		}),
 	],
-} );
+});

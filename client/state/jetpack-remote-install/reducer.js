@@ -8,8 +8,8 @@ import {
 	JETPACK_REMOTE_INSTALL_SUCCESS,
 } from 'state/action-types';
 
-export const isComplete = keyedReducer( 'url', ( state = false, { type } ) => {
-	switch ( type ) {
+export const isComplete = keyedReducer('url', (state = false, { type }) => {
+	switch (type) {
 		case JETPACK_REMOTE_INSTALL_SUCCESS:
 			return true;
 		case JETPACK_REMOTE_INSTALL:
@@ -17,10 +17,10 @@ export const isComplete = keyedReducer( 'url', ( state = false, { type } ) => {
 		default:
 			return state;
 	}
-} );
+});
 
-export const errorCodeReducer = keyedReducer( 'url', ( state = null, { type, errorCode } ) => {
-	switch ( type ) {
+export const errorCodeReducer = keyedReducer('url', (state = null, { type, errorCode }) => {
+	switch (type) {
 		case JETPACK_REMOTE_INSTALL_FAILURE:
 			return errorCode;
 		case JETPACK_REMOTE_INSTALL_SUCCESS:
@@ -29,25 +29,22 @@ export const errorCodeReducer = keyedReducer( 'url', ( state = null, { type, err
 		default:
 			return state;
 	}
-} );
+});
 
-export const errorMessageReducer = keyedReducer(
-	'url',
-	( state = null, { type, errorMessage } ) => {
-		switch ( type ) {
-			case JETPACK_REMOTE_INSTALL_FAILURE:
-				return errorMessage;
-			case JETPACK_REMOTE_INSTALL_SUCCESS:
-			case JETPACK_REMOTE_INSTALL:
-				return null;
-			default:
-				return state;
-		}
+export const errorMessageReducer = keyedReducer('url', (state = null, { type, errorMessage }) => {
+	switch (type) {
+		case JETPACK_REMOTE_INSTALL_FAILURE:
+			return errorMessage;
+		case JETPACK_REMOTE_INSTALL_SUCCESS:
+		case JETPACK_REMOTE_INSTALL:
+			return null;
+		default:
+			return state;
 	}
-);
+});
 
-export default combineReducers( {
+export default combineReducers({
 	errorCode: errorCodeReducer,
 	errorMessage: errorMessageReducer,
 	isComplete,
-} );
+});

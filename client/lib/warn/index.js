@@ -8,10 +8,10 @@
  */
 
 let warn;
-if ( process.env.NODE_ENV === 'production' || 'function' !== typeof console.warn ) {
+if (process.env.NODE_ENV === 'production' || 'function' !== typeof console.warn) {
 	warn = () => {};
 } else {
-	warn = ( ...args ) => console.warn( ...args );
+	warn = (...args) => console.warn(...args);
 }
 
 export default warn;

@@ -24,24 +24,24 @@ export { CURRENCIES } from './currencies';
  * @param   {boolean}    options.stripZeros  whether to remove trailing zero cents
  * @returns {?string}                        A formatted string.
  */
-export default function formatCurrency( number, code, options = {} ) {
-	const currencyDefaults = getCurrencyDefaults( code );
-	if ( ! currencyDefaults || isNaN( number ) ) {
+export default function formatCurrency(number, code, options = {}) {
+	const currencyDefaults = getCurrencyDefaults(code);
+	if (!currencyDefaults || isNaN(number)) {
 		return null;
 	}
 	const { decimal, grouping, precision, symbol } = { ...currencyDefaults, ...options };
 	const sign = number < 0 ? '-' : '';
-	let value = numberFormat( Math.abs( number ), {
+	let value = numberFormat(Math.abs(number), {
 		decimals: precision,
 		thousandsSep: grouping,
 		decPoint: decimal,
-	} );
+	});
 
-	if ( options.stripZeros ) {
-		value = stripZeros( value, decimal );
+	if (options.stripZeros) {
+		value = stripZeros(value, decimal);
 	}
 
-	return `${ sign }${ symbol }${ value }`;
+	return `${sign}${symbol}${value}`;
 }
 
 /**
@@ -56,27 +56,27 @@ export default function formatCurrency( number, code, options = {} ) {
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
  * @returns {?string}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
-export function getCurrencyObject( number, code, options = {} ) {
-	const currencyDefaults = getCurrencyDefaults( code );
-	if ( ! currencyDefaults || isNaN( number ) ) {
+export function getCurrencyObject(number, code, options = {}) {
+	const currencyDefaults = getCurrencyDefaults(code);
+	if (!currencyDefaults || isNaN(number)) {
 		return null;
 	}
 	const { decimal, grouping, precision, symbol } = { ...currencyDefaults, ...options };
 	const sign = number < 0 ? '-' : '';
-	const absNumber = Math.abs( number );
-	const rawInteger = Math.floor( absNumber );
-	const integer = numberFormat( rawInteger, {
+	const absNumber = Math.abs(number);
+	const rawInteger = Math.floor(absNumber);
+	const integer = numberFormat(rawInteger, {
 		decimals: 0,
 		thousandsSep: grouping,
 		decPoint: decimal,
-	} );
+	});
 	const fraction =
 		precision > 0
-			? numberFormat( absNumber - rawInteger, {
+			? numberFormat(absNumber - rawInteger, {
 					decimals: precision,
 					thousandsSep: grouping,
 					decPoint: decimal,
-			  } ).slice( 1 )
+			  }).slice(1)
 			: '';
 	return {
 		sign,
@@ -94,7 +94,7 @@ export function getCurrencyObject( number, code, options = {} ) {
  * @returns {string}
  */
 
-function stripZeros( number, decimal ) {
-	const regex = new RegExp( `\\${ decimal }0+$` );
-	return number.replace( regex, '' );
+function stripZeros(number, decimal) {
+	const regex = new RegExp(`\\${decimal}0+$`);
+	return number.replace(regex, '');
 }

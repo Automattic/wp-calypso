@@ -6,8 +6,8 @@ import { fetchSuggestions } from '../../../rest-client/wpcom';
 
 let isFetchingSuggestions = false;
 
-const getUsersSuggestions = ( { dispatch, getState }, { siteId } ) => {
-	if ( isFetchingSuggestions || hasSiteSuggestions( getState(), siteId ) ) {
+const getUsersSuggestions = ({ dispatch, getState }, { siteId }) => {
+	if (isFetchingSuggestions || hasSiteSuggestions(getState(), siteId)) {
 		return;
 	}
 
@@ -17,25 +17,25 @@ const getUsersSuggestions = ( { dispatch, getState }, { siteId } ) => {
 		{
 			site_id: siteId,
 		},
-		( error, data ) => {
+		(error, data) => {
 			isFetchingSuggestions = false;
 
-			if ( error ) {
+			if (error) {
 				return;
 			}
 
 			// Create a composite index to search against of; username + real name
 			// This will also determine ordering of results, so username matches will appear on top
-			const newSuggestions = data.suggestions.map( suggestion => ( {
+			const newSuggestions = data.suggestions.map((suggestion) => ({
 				...suggestion,
-				name: suggestion.name || `${ suggestion.user_login } ${ suggestion.display_name }`,
-			} ) );
+				name: suggestion.name || `${suggestion.user_login} ${suggestion.display_name}`,
+			}));
 
-			dispatch( actions.suggestions.storeSuggestions( siteId, newSuggestions ) );
+			dispatch(actions.suggestions.storeSuggestions(siteId, newSuggestions));
 		}
 	);
 };
 
 export default {
-	[ types.SUGGESTIONS_FETCH ]: [ getUsersSuggestions ],
+	[types.SUGGESTIONS_FETCH]: [getUsersSuggestions],
 };

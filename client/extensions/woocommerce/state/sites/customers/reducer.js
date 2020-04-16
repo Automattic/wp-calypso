@@ -23,14 +23,14 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isSearching( state = {}, action ) {
-	switch ( action.type ) {
+export function isSearching(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_CUSTOMERS_REQUEST:
 		case WOOCOMMERCE_CUSTOMERS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_CUSTOMERS_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.searchTerm ]: WOOCOMMERCE_CUSTOMERS_REQUEST === action.type,
-			} );
+			return Object.assign({}, state, {
+				[action.searchTerm]: WOOCOMMERCE_CUSTOMERS_REQUEST === action.type,
+			});
 		default:
 			return state;
 	}
@@ -43,11 +43,11 @@ export function isSearching( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
+export function items(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_CUSTOMERS_REQUEST_SUCCESS:
-			const customers = keyBy( action.customers, 'id' );
-			return Object.assign( {}, state, customers );
+			const customers = keyBy(action.customers, 'id');
+			return Object.assign({}, state, customers);
 		default:
 			return state;
 	}
@@ -61,18 +61,18 @@ export function items( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function queries( state = {}, action ) {
-	switch ( action.type ) {
+export function queries(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_CUSTOMERS_REQUEST_SUCCESS:
-			const idList = action.customers.map( item => item.id );
-			return Object.assign( {}, state, { [ action.searchTerm ]: idList } );
+			const idList = action.customers.map((item) => item.id);
+			return Object.assign({}, state, { [action.searchTerm]: idList });
 		default:
 			return state;
 	}
 }
 
-export default combineReducers( {
+export default combineReducers({
 	isSearching,
 	items,
 	queries,
-} );
+});

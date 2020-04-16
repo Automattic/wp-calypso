@@ -12,27 +12,27 @@ import { expect } from 'chai';
  */
 import PopupMonitor from '../';
 
-describe( 'PopupMonitor', () => {
+describe('PopupMonitor', () => {
 	let popupMonitor;
 
-	beforeAll( () => {
-		Object.assign( global.window, {
+	beforeAll(() => {
+		Object.assign(global.window, {
 			screenTop: 0,
 			screenLeft: 0,
 			innerWidth: 1280,
 			innerHeight: 720,
-		} );
-	} );
+		});
+	});
 
-	beforeEach( () => {
+	beforeEach(() => {
 		popupMonitor = new PopupMonitor();
-	} );
+	});
 
-	describe( '#getScreenCenterSpecs()', () => {
-		test( 'should generate a popup specification string given the desired width and height', () => {
-			const specs = popupMonitor.getScreenCenterSpecs( 650, 500 );
+	describe('#getScreenCenterSpecs()', () => {
+		test('should generate a popup specification string given the desired width and height', () => {
+			const specs = popupMonitor.getScreenCenterSpecs(650, 500);
 
-			expect( specs ).to.equal( 'width=650,height=500,top=110,left=315' );
-		} );
-	} );
-} );
+			expect(specs).to.equal('width=650,height=500,top=110,left=315');
+		});
+	});
+});

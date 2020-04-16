@@ -60,140 +60,139 @@ class DomainSearch extends Component {
 		domainRegistrationMaintenanceEndTime: null,
 	};
 
-	handleDomainsAvailabilityChange = ( isAvailable, maintenanceEndTime = null ) => {
-		this.setState( {
+	handleDomainsAvailabilityChange = (isAvailable, maintenanceEndTime = null) => {
+		this.setState({
 			domainRegistrationAvailable: isAvailable,
 			domainRegistrationMaintenanceEndTime: maintenanceEndTime,
-		} );
+		});
 	};
 
-	handleAddRemoveDomain = suggestion => {
-		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			this.addDomain( suggestion );
+	handleAddRemoveDomain = (suggestion) => {
+		if (!hasDomainInCart(this.props.cart, suggestion.domain_name)) {
+			this.addDomain(suggestion);
 		} else {
-			this.removeDomain( suggestion );
+			this.removeDomain(suggestion);
 		}
 	};
 
-	handleAddMapping = domain => {
-		addItem( domainMapping( { domain } ) );
-		page( '/checkout/' + this.props.selectedSiteSlug );
+	handleAddMapping = (domain) => {
+		addItem(domainMapping({ domain }));
+		page('/checkout/' + this.props.selectedSiteSlug);
 	};
 
-	handleAddTransfer = domain => {
-		addItem( domainTransfer( { domain } ) );
-		page( '/checkout/' + this.props.selectedSiteSlug );
+	handleAddTransfer = (domain) => {
+		addItem(domainTransfer({ domain }));
+		page('/checkout/' + this.props.selectedSiteSlug);
 	};
 
 	UNSAFE_componentWillMount() {
-		this.checkSiteIsUpgradeable( this.props );
+		this.checkSiteIsUpgradeable(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
-			this.checkSiteIsUpgradeable( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.selectedSiteId !== this.props.selectedSiteId) {
+			this.checkSiteIsUpgradeable(nextProps);
 		}
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
-			page.redirect( '/domains/add' );
+	checkSiteIsUpgradeable(props) {
+		if (props.selectedSite && !props.isSiteUpgradeable) {
+			page.redirect('/domains/add');
 		}
 	}
 
-	addDomain( suggestion ) {
+	addDomain(suggestion) {
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
 			supports_privacy: supportsPrivacy,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains' );
+		this.props.recordAddDomainButtonClick(domain, 'domains');
 
-		let registration = domainRegistration( {
+		let registration = domainRegistration({
 			domain,
 			productSlug,
 			extra: { privacy_available: supportsPrivacy },
-		} );
+		});
 
-		if ( supportsPrivacy ) {
-			registration = updatePrivacyForDomain( registration, true );
+		if (supportsPrivacy) {
+			registration = updatePrivacyForDomain(registration, true);
 		}
 
-		addItem( registration );
+		addItem(registration);
 
-		if ( ! isGSuiteRestricted() && canDomainAddGSuite( domain ) ) {
-			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
+		if (!isGSuiteRestricted() && canDomainAddGSuite(domain)) {
+			page('/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug);
 		} else {
-			page( '/checkout/' + this.props.selectedSiteSlug );
+			page('/checkout/' + this.props.selectedSiteSlug);
 		}
 	}
 
-	removeDomain( suggestion ) {
-		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
+	removeDomain(suggestion) {
+		this.props.recordRemoveDomainButtonClick(suggestion.domain_name);
 		removeItem(
-			domainRegistration( {
+			domainRegistration({
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug,
-			} )
+			})
 		);
 	}
 
 	render() {
 		const { selectedSite, selectedSiteSlug, translate } = this.props;
-		const classes = classnames( 'main-column', {
+		const classes = classnames('main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
-		} );
+		});
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
 		let content;
 
-		if ( ! this.state.domainRegistrationAvailable ) {
-			let maintenanceEndTime = translate( 'shortly', {
+		if (!this.state.domainRegistrationAvailable) {
+			let maintenanceEndTime = translate('shortly', {
 				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
-			} );
-			if ( domainRegistrationMaintenanceEndTime ) {
-				maintenanceEndTime = moment.unix( domainRegistrationMaintenanceEndTime ).fromNow();
+			});
+			if (domainRegistrationMaintenanceEndTime) {
+				maintenanceEndTime = moment.unix(domainRegistrationMaintenanceEndTime).fromNow();
 			}
 
 			content = (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'Domain registration is unavailable' ) }
-					line={ translate( "We're hard at work on the issue. Please check back %(timePeriod)s.", {
+					title={translate('Domain registration is unavailable')}
+					line={translate("We're hard at work on the issue. Please check back %(timePeriod)s.", {
 						args: {
 							timePeriod: maintenanceEndTime,
 						},
-					} ) }
-					action={ translate( 'Back to Plans' ) }
-					actionURL={ '/plans/' + selectedSiteSlug }
+					})}
+					action={translate('Back to Plans')}
+					actionURL={'/plans/' + selectedSiteSlug}
 				/>
 			);
 		} else {
-			const suggestion =
-				this.props.context.query.suggestion ?? selectedSite.domain.split( '.' )[ 0 ];
+			const suggestion = this.props.context.query.suggestion ?? selectedSite.domain.split('.')[0];
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+						<PlansNavigation cart={this.props.cart} path={this.props.context.path} />
 
 						<EmailVerificationGate
-							noticeText={ translate( 'You must verify your email to register new domains.' ) }
+							noticeText={translate('You must verify your email to register new domains.')}
 							noticeStatus="is-info"
 						>
 							<RegisterDomainStep
-								suggestion={ suggestion }
-								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
-								onAddDomain={ this.handleAddRemoveDomain }
-								onAddMapping={ this.handleAddMapping }
-								onAddTransfer={ this.handleAddTransfer }
-								cart={ this.props.cart }
+								suggestion={suggestion}
+								domainsWithPlansOnly={this.props.domainsWithPlansOnly}
+								onDomainsAvailabilityChange={this.handleDomainsAvailabilityChange}
+								onAddDomain={this.handleAddRemoveDomain}
+								onAddMapping={this.handleAddMapping}
+								onAddTransfer={this.handleAddTransfer}
+								cart={this.props.cart}
 								offerUnavailableOption
-								selectedSite={ selectedSite }
-								basePath={ this.props.basePath }
-								products={ this.props.productsList }
-								vendor={ getSuggestionsVendor() }
+								selectedSite={selectedSite}
+								basePath={this.props.basePath}
+								products={this.props.productsList}
+								vendor={getSuggestionsVendor()}
 							/>
 						</EmailVerificationGate>
 					</div>
@@ -202,32 +201,32 @@ class DomainSearch extends Component {
 		}
 
 		return (
-			<Main className={ classes } wideLayout>
+			<Main className={classes} wideLayout>
 				<QueryProductsList />
-				<QuerySiteDomains siteId={ this.props.selectedSiteId } />
+				<QuerySiteDomains siteId={this.props.selectedSiteId} />
 				<SidebarNavigation />
-				{ content }
+				{content}
 			</Main>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			domains: getDomainsBySiteId( state, siteId ),
-			selectedSite: getSelectedSite( state ),
+			domains: getDomainsBySiteId(state, siteId),
+			selectedSite: getSelectedSite(state),
 			selectedSiteId: siteId,
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
-			productsList: getProductsList( state ),
+			selectedSiteSlug: getSelectedSiteSlug(state),
+			domainsWithPlansOnly: currentUserHasFlag(state, DOMAINS_WITH_PLANS_ONLY),
+			isSiteUpgradeable: isSiteUpgradeable(state, siteId),
+			productsList: getProductsList(state),
 		};
 	},
 	{
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
 	}
-)( localize( DomainSearch ) );
+)(localize(DomainSearch));

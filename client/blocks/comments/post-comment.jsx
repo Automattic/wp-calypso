@@ -56,10 +56,10 @@ import './post-comment.scss';
 class PostComment extends React.PureComponent {
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
-		commentId: PropTypes.oneOfType( [
+		commentId: PropTypes.oneOfType([
 			PropTypes.string, // can be 'placeholder-123'
 			PropTypes.number,
-		] ).isRequired,
+		]).isRequired,
 		onReplyClick: PropTypes.func,
 		depth: PropTypes.number,
 		post: PropTypes.object,
@@ -106,26 +106,26 @@ class PostComment extends React.PureComponent {
 	};
 
 	handleToggleRepliesClick = () => {
-		this.setState( { showReplies: ! this.state.showReplies } );
+		this.setState({ showReplies: !this.state.showReplies });
 	};
 
 	handleReply = () => {
-		this.props.onReplyClick( this.props.commentId );
-		this.setState( { showReplies: true } ); // show the comments when replying
+		this.props.onReplyClick(this.props.commentId);
+		this.setState({ showReplies: true }); // show the comments when replying
 	};
 
-	handleAuthorClick = event => {
-		recordAction( 'comment_author_click' );
-		recordGaEvent( 'Clicked Author Name' );
-		recordTrack( 'calypso_reader_comment_author_click', {
+	handleAuthorClick = (event) => {
+		recordAction('comment_author_click');
+		recordGaEvent('Clicked Author Name');
+		recordTrack('calypso_reader_comment_author_click', {
 			blog_id: this.props.post.site_ID,
 			post_id: this.props.post.ID,
 			comment_id: this.props.commentId,
 			author_url: event.target.href,
-		} );
+		});
 	};
 
-	handleCommentPermalinkClick = event => {
+	handleCommentPermalinkClick = (event) => {
 		recordPermalinkClick(
 			'timestamp_comment',
 			{},
@@ -138,33 +138,33 @@ class PostComment extends React.PureComponent {
 		);
 	};
 
-	getAllChildrenIds = id => {
+	getAllChildrenIds = (id) => {
 		const { commentsTree } = this.props;
 
-		if ( ! id ) {
+		if (!id) {
 			return [];
 		}
 
-		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
+		const immediateChildren = get(commentsTree, [id, 'children'], []);
 		return immediateChildren.concat(
-			flatMap( immediateChildren, childId => this.getAllChildrenIds( childId ) )
+			flatMap(immediateChildren, (childId) => this.getAllChildrenIds(childId))
 		);
 	};
 
 	// has hidden child --> true
 	shouldRenderCaterpillar = () => {
 		const { enableCaterpillar, commentsToShow, commentId } = this.props;
-		const childIds = this.getAllChildrenIds( commentId );
+		const childIds = this.getAllChildrenIds(commentId);
 
-		return enableCaterpillar && commentsToShow && some( childIds, id => ! commentsToShow[ id ] );
+		return enableCaterpillar && commentsToShow && some(childIds, (id) => !commentsToShow[id]);
 	};
 
 	// has visisble child --> true
 	shouldRenderReplies = () => {
 		const { commentsToShow, commentId } = this.props;
-		const childIds = this.getAllChildrenIds( commentId );
+		const childIds = this.getAllChildrenIds(commentId);
 
-		return commentsToShow && some( childIds, id => commentsToShow[ id ] );
+		return commentsToShow && some(childIds, (id) => commentsToShow[id]);
 	};
 
 	renderRepliesList() {
@@ -179,15 +179,15 @@ class PostComment extends React.PureComponent {
 			maxDepth,
 		} = this.props;
 
-		const commentChildrenIds = get( commentsTree, [ commentId, 'children' ] );
+		const commentChildrenIds = get(commentsTree, [commentId, 'children']);
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
 		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow || enableCaterpillar;
-		const childDepth = ! commentsToShow || commentsToShow[ commentId ] ? depth + 1 : depth;
+		const childDepth = !commentsToShow || commentsToShow[commentId] ? depth + 1 : depth;
 
 		// No children to show
-		if ( ! commentChildrenIds || commentChildrenIds.length < 1 ) {
+		if (!commentChildrenIds || commentChildrenIds.length < 1) {
 			return null;
 		}
 
@@ -210,116 +210,116 @@ class PostComment extends React.PureComponent {
 		);
 
 		let replyVisibilityText = null;
-		if ( ! exceedsMaxChildrenToShow && ! enableCaterpillar ) {
+		if (!exceedsMaxChildrenToShow && !enableCaterpillar) {
 			replyVisibilityText = this.state.showReplies ? hideRepliesText : showRepliesText;
 		}
 
 		return (
 			<div>
-				{ !! replyVisibilityText && (
-					<button className="comments__view-replies-btn" onClick={ this.handleToggleRepliesClick }>
-						<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
+				{!!replyVisibilityText && (
+					<button className="comments__view-replies-btn" onClick={this.handleToggleRepliesClick}>
+						<Gridicon icon="reply" size={18} /> {replyVisibilityText}
 					</button>
-				) }
-				{ showReplies && (
+				)}
+				{showReplies && (
 					<ol className="comments__list">
-						{ commentChildrenIds.map( childId => (
+						{commentChildrenIds.map((childId) => (
 							<ConnectedPostComment
-								showNestingReplyArrow={ this.props.showNestingReplyArrow }
-								showReadMoreInActions={ this.props.showReadMoreInActions }
-								enableCaterpillar={ enableCaterpillar }
-								depth={ childDepth }
-								maxDepth={ maxDepth }
-								key={ childId }
-								commentId={ childId }
-								commentsTree={ commentsTree }
-								commentsToShow={ commentsToShow }
-								post={ post }
-								onReplyClick={ this.props.onReplyClick }
-								onReplyCancel={ this.props.onReplyCancel }
-								activeReplyCommentId={ this.props.activeReplyCommentId }
-								onEditCommentClick={ this.props.onEditCommentClick }
-								onEditCommentCancel={ this.props.onEditCommentCancel }
-								activeEditCommentId={ this.props.activeEditCommentId }
-								onUpdateCommentText={ this.props.onUpdateCommentText }
-								onCommentSubmit={ this.props.onCommentSubmit }
+								showNestingReplyArrow={this.props.showNestingReplyArrow}
+								showReadMoreInActions={this.props.showReadMoreInActions}
+								enableCaterpillar={enableCaterpillar}
+								depth={childDepth}
+								maxDepth={maxDepth}
+								key={childId}
+								commentId={childId}
+								commentsTree={commentsTree}
+								commentsToShow={commentsToShow}
+								post={post}
+								onReplyClick={this.props.onReplyClick}
+								onReplyCancel={this.props.onReplyCancel}
+								activeReplyCommentId={this.props.activeReplyCommentId}
+								onEditCommentClick={this.props.onEditCommentClick}
+								onEditCommentCancel={this.props.onEditCommentCancel}
+								activeEditCommentId={this.props.activeEditCommentId}
+								onUpdateCommentText={this.props.onUpdateCommentText}
+								onCommentSubmit={this.props.onCommentSubmit}
 							/>
-						) ) }
+						))}
 					</ol>
-				) }
+				)}
 			</div>
 		);
 	}
 
 	renderCommentForm() {
-		if ( this.props.activeReplyCommentId !== this.props.commentId ) {
+		if (this.props.activeReplyCommentId !== this.props.commentId) {
 			return null;
 		}
 
 		// If a comment save is pending, don't show the form
-		const placeholderState = get( this.props.commentsTree, [
+		const placeholderState = get(this.props.commentsTree, [
 			this.props.commentId,
 			'data',
 			'placeholderState',
-		] );
-		if ( placeholderState === PLACEHOLDER_STATE.PENDING ) {
+		]);
+		if (placeholderState === PLACEHOLDER_STATE.PENDING) {
 			return null;
 		}
 
 		return (
 			<PostCommentForm
-				post={ this.props.post }
-				parentCommentId={ this.props.commentId }
-				commentText={ this.props.commentText }
-				onUpdateCommentText={ this.props.onUpdateCommentText }
-				onCommentSubmit={ this.props.onCommentSubmit }
+				post={this.props.post}
+				parentCommentId={this.props.commentId}
+				commentText={this.props.commentText}
+				onUpdateCommentText={this.props.onUpdateCommentText}
+				onCommentSubmit={this.props.onCommentSubmit}
 			/>
 		);
 	}
 
-	getAuthorDetails = commentId => {
-		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
-		const commentAuthor = get( comment, 'author', {} );
-		const commentAuthorName = decodeEntities( commentAuthor.name );
+	getAuthorDetails = (commentId) => {
+		const comment = get(this.props.commentsTree, [commentId, 'data'], {});
+		const commentAuthor = get(comment, 'author', {});
+		const commentAuthorName = decodeEntities(commentAuthor.name);
 		const commentAuthorUrl = commentAuthor.site_ID
-			? getStreamUrl( null, commentAuthor.site_ID )
+			? getStreamUrl(null, commentAuthor.site_ID)
 			: commentAuthor && commentAuthor.URL;
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
 	};
 
-	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
+	renderAuthorTag = ({ authorName, authorUrl, commentId, className }) => {
 		return authorUrl ? (
 			<a
-				href={ authorUrl }
-				className={ className }
-				onClick={ this.handleAuthorClick }
-				id={ `comment-${ commentId }` }
+				href={authorUrl}
+				className={className}
+				onClick={this.handleAuthorClick}
+				id={`comment-${commentId}`}
 			>
-				<Emojify>{ authorName }</Emojify>
+				<Emojify>{authorName}</Emojify>
 			</a>
 		) : (
-			<strong className={ className } id={ `comment-${ commentId }` }>
-				<Emojify>{ authorName }</Emojify>
+			<strong className={className} id={`comment-${commentId}`}>
+				<Emojify>{authorName}</Emojify>
 			</strong>
 		);
 	};
 
 	onReadMore = () => {
-		this.setState( { showFull: true } );
+		this.setState({ showFull: true });
 		this.props.post &&
-			this.props.expandComments( {
+			this.props.expandComments({
 				siteId: this.props.post.site_ID,
-				commentIds: [ this.props.commentId ],
+				commentIds: [this.props.commentId],
 				postId: this.props.post.ID,
 				displayType: POST_COMMENT_DISPLAY_TYPES.full,
-			} );
-		recordAction( 'comment_read_more_click' );
-		recordGaEvent( 'Clicked Comment Read More' );
-		recordTrack( 'calypso_reader_comment_read_more_click', {
+			});
+		recordAction('comment_read_more_click');
+		recordGaEvent('Clicked Comment Read More');
+		recordTrack('calypso_reader_comment_read_more_click', {
 			blog_id: this.props.post.site_ID,
 			post_id: this.props.post.ID,
 			comment_id: this.props.commentId,
-		} );
+		});
 	};
 
 	render() {
@@ -336,159 +336,159 @@ class PostComment extends React.PureComponent {
 			hidePingbacksAndTrackbacks,
 		} = this.props;
 
-		const comment = get( commentsTree, [ commentId, 'data' ] );
+		const comment = get(commentsTree, [commentId, 'data']);
 		const isPingbackOrTrackback = comment.type === 'trackback' || comment.type === 'pingback';
 
-		if ( ! comment || ( hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
+		if (!comment || (hidePingbacksAndTrackbacks && isPingbackOrTrackback)) {
 			return null;
-		} else if ( commentsToShow && ! commentsToShow[ commentId ] ) {
+		} else if (commentsToShow && !commentsToShow[commentId]) {
 			// this comment should be hidden so just render children
-			return this.shouldRenderReplies() && <div>{ this.renderRepliesList() }</div>;
+			return this.shouldRenderReplies() && <div>{this.renderRepliesList()}</div>;
 		}
 
 		const displayType =
-			this.state.showFull || ! enableCaterpillar
+			this.state.showFull || !enableCaterpillar
 				? POST_COMMENT_DISPLAY_TYPES.full
-				: commentsToShow[ commentId ];
+				: commentsToShow[commentId];
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
-			get( commentsTree, [ this.props.commentId, 'children' ] ),
-			childId =>
-				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR
+			get(commentsTree, [this.props.commentId, 'children']),
+			(childId) =>
+				get(commentsTree, [childId, 'data', 'placeholderState']) === PLACEHOLDER_STATE.ERROR
 		);
 
 		// If it's a pending comment, use the current user as the author
-		if ( comment.isPlaceholder ) {
+		if (comment.isPlaceholder) {
 			comment.author = this.props.currentUser;
 			comment.author.name = this.props.currentUser.display_name;
 		} else {
-			comment.author.name = decodeEntities( comment.author.name );
+			comment.author.name = decodeEntities(comment.author.name);
 		}
 
 		// If we have an error, render the error component instead
-		if ( comment.isPlaceholder && comment.placeholderState === PLACEHOLDER_STATE.ERROR ) {
-			return <PostCommentWithError { ...this.props } repliesList={ this.renderRepliesList() } />;
+		if (comment.isPlaceholder && comment.placeholderState === PLACEHOLDER_STATE.ERROR) {
+			return <PostCommentWithError {...this.props} repliesList={this.renderRepliesList()} />;
 		}
 
 		// Trackback / Pingback
-		if ( isPingbackOrTrackback ) {
-			return <PostTrackback { ...this.props } />;
+		if (isPingbackOrTrackback) {
+			return <PostTrackback {...this.props} />;
 		}
 
 		// Author Details
-		const parentCommentId = get( comment, 'parent.ID' );
-		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
+		const parentCommentId = get(comment, 'parent.ID');
+		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails(commentId);
 		const {
 			commentAuthorUrl: parentAuthorUrl,
 			commentAuthorName: parentAuthorName,
-		} = this.getAuthorDetails( parentCommentId );
+		} = this.getAuthorDetails(parentCommentId);
 
-		const postCommentClassnames = classnames( 'comments__comment', {
-			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
-		} );
+		const postCommentClassnames = classnames('comments__comment', {
+			['depth-' + depth]: depth <= maxDepth && depth <= 3, // only indent up to 3
+		});
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
-			<li className={ postCommentClassnames }>
+			<li className={postCommentClassnames}>
 				<div className="comments__comment-author">
-					{ commentAuthorUrl ? (
-						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick }>
-							<Gravatar user={ comment.author } />
+					{commentAuthorUrl ? (
+						<a href={commentAuthorUrl} onClick={this.handleAuthorClick}>
+							<Gravatar user={comment.author} />
 						</a>
 					) : (
-						<Gravatar user={ comment.author } />
-					) }
+						<Gravatar user={comment.author} />
+					)}
 
-					{ this.renderAuthorTag( {
+					{this.renderAuthorTag({
 						authorUrl: commentAuthorUrl,
 						authorName: commentAuthorName,
 						commentId,
 						className: 'comments__comment-username',
-					} ) }
-					{ this.props.showNestingReplyArrow && parentAuthorName && (
+					})}
+					{this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
-							<Gridicon icon="chevron-right" size={ 16 } />
-							{ this.renderAuthorTag( {
+							<Gridicon icon="chevron-right" size={16} />
+							{this.renderAuthorTag({
 								className: 'comments__comment-respondee-link',
 								authorName: parentAuthorName,
 								authorUrl: parentAuthorUrl,
 								commentId: parentCommentId,
-							} ) }
+							})}
 						</span>
-					) }
+					)}
 					<div className="comments__comment-timestamp">
 						<a
-							href={ comment.URL }
+							href={comment.URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={ this.handleCommentPermalinkClick }
+							onClick={this.handleCommentPermalinkClick}
 						>
-							<TimeSince date={ comment.date } />
+							<TimeSince date={comment.date} />
 						</a>
 					</div>
 				</div>
 
-				{ comment.status && comment.status === 'unapproved' ? (
+				{comment.status && comment.status === 'unapproved' ? (
 					<p className="comments__comment-moderation">
-						{ translate( 'Your comment is awaiting moderation.' ) }
+						{translate('Your comment is awaiting moderation.')}
 					</p>
-				) : null }
+				) : null}
 
-				{ this.props.activeEditCommentId !== this.props.commentId && (
+				{this.props.activeEditCommentId !== this.props.commentId && (
 					<PostCommentContent
-						content={ comment.content }
-						setWithDimensionsRef={ this.props.setWithDimensionsRef }
-						isPlaceholder={ comment.isPlaceholder }
-						className={ displayType }
+						content={comment.content}
+						setWithDimensionsRef={this.props.setWithDimensionsRef}
+						isPlaceholder={comment.isPlaceholder}
+						className={displayType}
 					/>
-				) }
+				)}
 
-				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
+				{isEnabled('comments/moderation-tools-in-posts') &&
 					this.props.activeEditCommentId === this.props.commentId && (
 						<CommentEditForm
-							post={ this.props.post }
-							commentId={ this.props.commentId }
-							commentText={ comment.content }
-							onCommentSubmit={ this.props.onEditCommentCancel }
+							post={this.props.post}
+							commentId={this.props.commentId}
+							commentText={comment.content}
+							onCommentSubmit={this.props.onEditCommentCancel}
 						/>
-					) }
+					)}
 
 				<CommentActions
-					post={ this.props.post || {} }
-					comment={ comment }
-					showModerationTools={ this.props.showModerationTools }
-					activeEditCommentId={ this.props.activeEditCommentId }
-					activeReplyCommentId={ this.props.activeReplyCommentId }
-					commentId={ this.props.commentId }
-					editComment={ this.props.onEditCommentClick }
-					editCommentCancel={ this.props.onEditCommentCancel }
-					handleReply={ this.handleReply }
-					onReplyCancel={ this.props.onReplyCancel }
-					showReadMore={ overflowY && ! this.state.showFull && showReadMoreInActions }
-					onReadMore={ this.onReadMore }
+					post={this.props.post || {}}
+					comment={comment}
+					showModerationTools={this.props.showModerationTools}
+					activeEditCommentId={this.props.activeEditCommentId}
+					activeReplyCommentId={this.props.activeReplyCommentId}
+					commentId={this.props.commentId}
+					editComment={this.props.onEditCommentClick}
+					editCommentCancel={this.props.onEditCommentCancel}
+					handleReply={this.handleReply}
+					onReplyCancel={this.props.onReplyCancel}
+					showReadMore={overflowY && !this.state.showFull && showReadMoreInActions}
+					onReadMore={this.onReadMore}
 				/>
 
-				{ haveReplyWithError ? null : this.renderCommentForm() }
-				{ this.shouldRenderCaterpillar() && (
+				{haveReplyWithError ? null : this.renderCommentForm()}
+				{this.shouldRenderCaterpillar() && (
 					<ConversationCaterpillar
-						blogId={ post.site_ID }
-						postId={ post.ID }
-						parentCommentId={ commentId }
-						commentsToShow={ commentsToShow }
+						blogId={post.site_ID}
+						postId={post.ID}
+						parentCommentId={commentId}
+						commentsToShow={commentsToShow}
 					/>
-				) }
-				{ this.renderRepliesList() }
+				)}
+				{this.renderRepliesList()}
 			</li>
 		);
 	}
 }
 
 const ConnectedPostComment = connect(
-	state => ( {
-		currentUser: getCurrentUser( state ),
-	} ),
+	(state) => ({
+		currentUser: getCurrentUser(state),
+	}),
 	{ expandComments }
-)( withDimensions( PostComment ) );
+)(withDimensions(PostComment));
 
 export default ConnectedPostComment;

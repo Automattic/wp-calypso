@@ -14,40 +14,40 @@ import initialState from './data/initial-state';
 
 const siteId = 123;
 
-const dispatchFn = action => action;
+const dispatchFn = (action) => action;
 
-const getState = () => ( {
+const getState = () => ({
 	extensions: {
 		woocommerce: {
 			sites: {
-				[ siteId ]: {
+				[siteId]: {
 					shippingClasses: false,
 				},
 			},
 		},
 	},
-} );
+});
 
-describe( 'Shipping classes form reducer', () => {
-	const expectedEndState = cloneDeep( initialState );
+describe('Shipping classes form reducer', () => {
+	const expectedEndState = cloneDeep(initialState);
 
-	afterEach( () => {
+	afterEach(() => {
 		// make sure the state hasn't been mutated
 		// after each test
-		expect( initialState ).to.eql( expectedEndState );
-	} );
+		expect(initialState).to.eql(expectedEndState);
+	});
 
-	test( 'WOOCOMMERCE_SHIPPING_CLASSES_REQUEST enters loading state', () => {
-		const action = fetchShippingClasses( siteId )( dispatchFn, getState );
-		const state = reducer( false, action );
+	test('WOOCOMMERCE_SHIPPING_CLASSES_REQUEST enters loading state', () => {
+		const action = fetchShippingClasses(siteId)(dispatchFn, getState);
+		const state = reducer(false, action);
 
-		expect( state ).to.equal( LOADING );
-	} );
+		expect(state).to.equal(LOADING);
+	});
 
-	test( 'WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS saves data', () => {
-		const action = fetchShippingClassesSuccess( siteId, initialState );
-		const state = reducer( false, action );
+	test('WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS saves data', () => {
+		const action = fetchShippingClassesSuccess(siteId, initialState);
+		const state = reducer(false, action);
 
-		expect( state ).to.eql( initialState );
-	} );
-} );
+		expect(state).to.eql(initialState);
+	});
+});

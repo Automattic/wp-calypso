@@ -27,30 +27,30 @@ export class CommentHeader extends PureComponent {
 
 		return (
 			<div className="comment__header">
-				{ isBulkMode && (
+				{isBulkMode && (
 					<span className="comment__bulk-select">
-						<FormCheckbox checked={ isSelected } disabled={ isDisabled } readOnly tabIndex="0" />
+						<FormCheckbox checked={isSelected} disabled={isDisabled} readOnly tabIndex="0" />
 					</span>
-				) }
+				)}
 
-				<CommentAuthor { ...{ commentId, isBulkMode, isPostView } } />
+				<CommentAuthor {...{ commentId, isBulkMode, isPostView }} />
 
-				{ showAuthorMoreInfo && <CommentAuthorMoreInfo { ...{ commentId } } /> }
+				{showAuthorMoreInfo && <CommentAuthorMoreInfo {...{ commentId }} />}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { commentId, isBulkMode } ) => {
-	const siteId = getSelectedSiteId( state );
-	const comment = getSiteComment( state, siteId, commentId );
-	const commentType = get( comment, 'type', 'comment' );
-	const canModerateComment = get( comment, 'can_moderate', false );
+const mapStateToProps = (state, { commentId, isBulkMode }) => {
+	const siteId = getSelectedSiteId(state);
+	const comment = getSiteComment(state, siteId, commentId);
+	const commentType = get(comment, 'type', 'comment');
+	const canModerateComment = get(comment, 'can_moderate', false);
 
 	return {
-		showAuthorMoreInfo: ! isBulkMode && 'comment' === commentType,
-		isDisabled: ! canModerateComment,
+		showAuthorMoreInfo: !isBulkMode && 'comment' === commentType,
+		isDisabled: !canModerateComment,
 	};
 };
 
-export default connect( mapStateToProps )( CommentHeader );
+export default connect(mapStateToProps)(CommentHeader);

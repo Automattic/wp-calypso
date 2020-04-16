@@ -37,18 +37,18 @@ class ConnectedReaderListItem extends React.Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.railcar ) {
-			this.props.onComponentMountWithNewRailcar( this.props.railcar );
+		if (this.props.railcar) {
+			this.props.onComponentMountWithNewRailcar(this.props.railcar);
 		}
 		this.props.onShouldMeasure();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props !== prevProps ) {
+	componentDidUpdate(prevProps) {
+		if (this.props !== prevProps) {
 			this.props.onShouldMeasure();
 		}
-		if ( this.props.railcar && this.props.railcar !== prevProps.railcar ) {
-			this.props.onComponentMountWithNewRailcar( this.props.railcar );
+		if (this.props.railcar && this.props.railcar !== prevProps.railcar) {
+			this.props.onComponentMountWithNewRailcar(this.props.railcar);
 		}
 	}
 
@@ -68,24 +68,24 @@ class ConnectedReaderListItem extends React.Component {
 
 		return (
 			<ReaderListItem
-				feedId={ feedId }
-				siteId={ siteId }
-				site={ site }
-				feed={ feed }
-				url={ url }
-				showNotificationSettings={ showNotificationSettings }
-				showLastUpdatedDate={ showLastUpdatedDate }
-				isFollowing={ isFollowing }
-				followSource={ followSource }
-				railcar={ railcar }
+				feedId={feedId}
+				siteId={siteId}
+				site={site}
+				feed={feed}
+				url={url}
+				showNotificationSettings={showNotificationSettings}
+				showLastUpdatedDate={showLastUpdatedDate}
+				isFollowing={isFollowing}
+				followSource={followSource}
+				railcar={railcar}
 			/>
 		);
 	}
 }
 
 export default compose(
-	connect( ( state, ownProps ) => ( {
-		isFollowing: isFollowingSelector( state, { feedId: ownProps.feedId, blogId: ownProps.siteId } ),
-	} ) ),
+	connect((state, ownProps) => ({
+		isFollowing: isFollowingSelector(state, { feedId: ownProps.feedId, blogId: ownProps.siteId }),
+	})),
 	connectSite
-)( ConnectedReaderListItem );
+)(ConnectedReaderListItem);

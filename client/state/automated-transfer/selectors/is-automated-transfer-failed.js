@@ -17,7 +17,7 @@ import 'state/automated-transfer/init';
  * @param {string} status name of current state in automated transfer
  * @returns {?boolean} is transfer currently failed? null if unknown
  */
-export const isFailed = status =>
+export const isFailed = (status) =>
 	status ? status === transferStates.CONFLICTS || status === transferStates.FAILURE : null;
 
 /**
@@ -27,6 +27,6 @@ export const isFailed = status =>
  * @param {number} siteId site of interest
  * @returns {?boolean} whether or not transfer is failed, or null if not known
  */
-export const isAutomatedTransferFailed = compose( isFailed, getAutomatedTransferStatus );
+export const isAutomatedTransferFailed = compose(isFailed, getAutomatedTransferStatus);
 
 export default isAutomatedTransferFailed;

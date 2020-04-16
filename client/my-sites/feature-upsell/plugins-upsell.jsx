@@ -44,29 +44,29 @@ class PluginsUpsellComponent extends Component {
 	handleUpgradeButtonClick = () => {
 		const { trackTracksEvent, selectedSiteSlug } = this.props;
 
-		trackTracksEvent( 'calypso_banner_cta_click', {
+		trackTracksEvent('calypso_banner_cta_click', {
 			cta_name: 'upsell-page-plugins',
-		} );
+		});
 
-		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
+		page(`/checkout/${selectedSiteSlug}/${getPlanPath(PLAN_BUSINESS) || ''}`);
 	};
 
-	formatPrice( price ) {
-		const priceObject = getCurrencyObject( price, this.props.currencyCode );
-		if ( price.toFixed( 5 ).split( '.' )[ 1 ] !== '00000' ) {
-			return `${ priceObject.symbol }${ priceObject.integer }${ priceObject.fraction }`;
+	formatPrice(price) {
+		const priceObject = getCurrencyObject(price, this.props.currencyCode);
+		if (price.toFixed(5).split('.')[1] !== '00000') {
+			return `${priceObject.symbol}${priceObject.integer}${priceObject.fraction}`;
 		}
-		return `${ priceObject.symbol }${ priceObject.integer }`;
+		return `${priceObject.symbol}${priceObject.integer}`;
 	}
 
 	getPlanMonthlyPrice() {
 		const { price } = this.props;
-		return price ? this.formatPrice( price / 12 ) : '';
+		return price ? this.formatPrice(price / 12) : '';
 	}
 
 	getPlanDailyPrice() {
 		const { price } = this.props;
-		return price ? this.formatPrice( price / 366 ) : '';
+		return price ? this.formatPrice(price / 366) : '';
 	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -74,16 +74,16 @@ class PluginsUpsellComponent extends Component {
 		const { price } = this.props;
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell__main is-plugins">
-				{ ! price && (
+				{!price && (
 					<React.Fragment>
 						<QueryPlans />
-						<QuerySitePlans siteId={ this.props.selectedSiteId } />
+						<QuerySitePlans siteId={this.props.selectedSiteId} />
 						<QueryActivePromotions />
 					</React.Fragment>
-				) }
+				)}
 
-				<PageViewTracker path={ '/feature/plugins/:site' } title="PluginsUpsell" />
-				<DocumentHead title={ 'Plugins' } />
+				<PageViewTracker path={'/feature/plugins/:site'} title="PluginsUpsell" />
+				<DocumentHead title={'Plugins'} />
 
 				<div className="feature-upsell__card">
 					<h1 className="feature-upsell__card-header is-capital is-main">
@@ -96,7 +96,7 @@ class PluginsUpsellComponent extends Component {
 
 					<div className="feature-upsell__cta">
 						<button
-							onClick={ this.handleUpgradeButtonClick }
+							onClick={this.handleUpgradeButtonClick}
 							className="button is-primary feature-upsell__cta-button"
 						>
 							Click here to upgrade your site to the Business plan now!
@@ -113,7 +113,7 @@ class PluginsUpsellComponent extends Component {
 				<div className="feature-upsell__features-list">
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="plugins" size={ 48 } /> }
+							icon={<Gridicon icon="plugins" size={48} />}
 							title="Install as Many WordPress Plugins as You Want"
 							description="Plugins are like smartphone apps for WordPress. They improve your site with features like: SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and Mailchimp integration, Google Analytics, and much, much more."
 						/>
@@ -121,7 +121,7 @@ class PluginsUpsellComponent extends Component {
 
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="types" size={ 48 } /> }
+							icon={<Gridicon icon="types" size={48} />}
 							title="Access our Entire Library of Premium Themes"
 							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of premium themes for no additional fee."
 						/>
@@ -129,7 +129,7 @@ class PluginsUpsellComponent extends Component {
 
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="user" size={ 48 } /> }
+							icon={<Gridicon icon="user" size={48} />}
 							title="A Free 30 minute Consultation with a Website Expert"
 							description="One of our highly-trained specialists will join you for a 30 minute call to help you get started. Whether you have questions about marketing, design, or anything in between, you’ll get plenty of guidance during this free call."
 						/>
@@ -137,7 +137,7 @@ class PluginsUpsellComponent extends Component {
 
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="chat" size={ 48 } /> }
+							icon={<Gridicon icon="chat" size={48} />}
 							title="Unlimited 24/7 Design and Tech Support"
 							description="In addition to the 30 minute call, the Business plan upgrade includes unlimited access to our world-class live chat and email support. No matter how complicated your question, our team will find you an answer, guaranteed."
 						/>
@@ -145,7 +145,7 @@ class PluginsUpsellComponent extends Component {
 
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="money" size={ 48 } /> }
+							icon={<Gridicon icon="money" size={48} />}
 							title="Easily Accept Credit Card Payments with Simple Payments"
 							description={
 								<span>
@@ -160,7 +160,7 @@ class PluginsUpsellComponent extends Component {
 
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="domains" size={ 48 } /> }
+							icon={<Gridicon icon="domains" size={48} />}
 							title="World-class SEO Tools Built-In"
 							description="The Business plan comes with advanced search engine optimization (SEO) tools that automatically “bake in” the most important SEO best practices. If you want to get as much search engine traffic as possible, the Business plan is for you"
 						/>
@@ -169,11 +169,11 @@ class PluginsUpsellComponent extends Component {
 
 				<div className="feature-upsell__card">
 					<h2 className="feature-upsell__card-header is-title is-main">
-						Upgrade to the Business plan today for just { this.getPlanMonthlyPrice() } per month.
+						Upgrade to the Business plan today for just {this.getPlanMonthlyPrice()} per month.
 					</h2>
 
 					<h3 className="feature-upsell__card-header is-sub">
-						For less than { this.getPlanDailyPrice() } per day, you’ll gain access to all of the
+						For less than {this.getPlanDailyPrice()} per day, you’ll gain access to all of the
 						features described above. And that list includes just a few of the highlights.
 					</h3>
 
@@ -259,7 +259,7 @@ class PluginsUpsellComponent extends Component {
 
 				<div className="feature-upsell__cta is-centered is-large-gap">
 					<button
-						onClick={ this.handleUpgradeButtonClick }
+						onClick={this.handleUpgradeButtonClick}
 						className="button is-primary feature-upsell__cta-button"
 					>
 						Click here to upgrade your site to the Business plan now!
@@ -273,24 +273,24 @@ class PluginsUpsellComponent extends Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-const mapStateToProps = state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const price = getUpsellPlanPrice( state, PLAN_BUSINESS, selectedSiteId );
+const mapStateToProps = (state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const price = getUpsellPlanPrice(state, PLAN_BUSINESS, selectedSiteId);
 
 	return {
-		currencyCode: getCurrentUserCurrencyCode( state ),
+		currencyCode: getCurrentUserCurrencyCode(state),
 		price,
-		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
+		selectedSiteSlug: getSiteSlug(state, selectedSiteId),
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
-} );
+const mapDispatchToProps = (dispatch) => ({
+	trackTracksEvent: (name, props) => dispatch(recordTracksEvent(name, props)),
+});
 
 export default flowRight(
-	connect( mapStateToProps, mapDispatchToProps ),
+	connect(mapStateToProps, mapDispatchToProps),
 	localize,
 	redirectUnlessCanUpgradeSite,
-	redirectIf( ( state, siteId ) => hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ), '/plugins' )
-)( PluginsUpsellComponent );
+	redirectIf((state, siteId) => hasFeature(state, siteId, FEATURE_UPLOAD_PLUGINS), '/plugins')
+)(PluginsUpsellComponent);

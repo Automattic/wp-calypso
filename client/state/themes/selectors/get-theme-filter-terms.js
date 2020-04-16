@@ -17,6 +17,6 @@ import 'state/themes/init';
  * @param  {string}  filter The filter slug
  * @returns {object}         A list of filter terms, keyed by term slug
  */
-export function getThemeFilterTerms( state, filter ) {
-	return get( getThemeFilters( state ), filter );
+export function getThemeFilterTerms(state, filter) {
+	return get(getThemeFilters(state), filter);
 }

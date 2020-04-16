@@ -15,19 +15,19 @@ import getSite from './get-site';
  * @param  {?number}  siteId Site ID
  * @returns {?boolean}        Whether the site can use the customer home screen
  */
-export default function canCurrentUserUseCustomerHome( state, siteId = null ) {
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export default function canCurrentUserUseCustomerHome(state, siteId = null) {
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
-	if ( isVipSite( state, siteId ) ) {
+	if (isVipSite(state, siteId)) {
 		return false;
 	}
 
-	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
+	if (isJetpackSite(state, siteId) && !isAtomicSite(state, siteId)) {
 		return false;
 	}
 
-	const site = getSite( state, siteId );
-	return site && !! canCurrentUser( state, siteId, 'manage_options' );
+	const site = getSite(state, siteId);
+	return site && !!canCurrentUser(state, siteId, 'manage_options');
 }

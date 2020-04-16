@@ -32,11 +32,11 @@ import { getSiteTitle } from 'state/sites/selectors';
  * @param  {object} settings Settings object
  * @returns {object} Action object
  */
-export const receiveSettings = ( siteId, settings ) => ( {
+export const receiveSettings = (siteId, settings) => ({
 	type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
 	siteId,
 	settings,
-} );
+});
 
 /*
  * Retrieves settings for a site.
@@ -44,32 +44,29 @@ export const receiveSettings = ( siteId, settings ) => ( {
  * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests settings for a given site
  */
-export const requestSettings = siteId => {
-	return dispatch => {
-		dispatch( {
+export const requestSettings = (siteId) => {
+	return (dispatch) => {
+		dispatch({
 			type: WP_SUPER_CACHE_REQUEST_SETTINGS,
 			siteId,
-		} );
+		});
 
 		return wp.req
-			.get(
-				{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
-				{ path: '/wp-super-cache/v1/settings' }
-			)
-			.then( ( { data } ) => {
-				dispatch( receiveSettings( siteId, normalizeSettings( data ) || {} ) );
-				dispatch( {
+			.get({ path: `/jetpack-blogs/${siteId}/rest-api/` }, { path: '/wp-super-cache/v1/settings' })
+			.then(({ data }) => {
+				dispatch(receiveSettings(siteId, normalizeSettings(data) || {}));
+				dispatch({
 					type: WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 };
 
@@ -80,27 +77,27 @@ export const requestSettings = siteId => {
  * @param  {object} settings Updated settings
  * @returns {Function} Action thunk that updates the settings for a given site
  */
-export const saveSettings = ( siteId, settings ) => {
-	return dispatch => {
-		dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS, siteId } );
+export const saveSettings = (siteId, settings) => {
+	return (dispatch) => {
+		dispatch({ type: WP_SUPER_CACHE_SAVE_SETTINGS, siteId });
 
 		return wp.req
 			.post(
-				{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+				{ path: `/jetpack-blogs/${siteId}/rest-api/` },
 				{
 					path: '/wp-super-cache/v1/settings',
-					body: JSON.stringify( sanitizeSettings( settings ) ),
+					body: JSON.stringify(sanitizeSettings(settings)),
 					json: true,
 				}
 			)
-			.then( ( { data } ) => {
-				dispatch( receiveSettings( siteId, normalizeSettings( data ) || {} ) );
-				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS, siteId } );
-				dispatch( requestStatus( siteId ) );
-			} )
-			.catch( error => {
-				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE, siteId, error } );
-			} );
+			.then(({ data }) => {
+				dispatch(receiveSettings(siteId, normalizeSettings(data) || {}));
+				dispatch({ type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS, siteId });
+				dispatch(requestStatus(siteId));
+			})
+			.catch((error) => {
+				dispatch({ type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE, siteId, error });
+			});
 	};
 };
 
@@ -110,38 +107,36 @@ export const saveSettings = ( siteId, settings ) => {
  * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that restores the settings for a given site
  */
-export const restoreSettings = siteId => {
-	return ( dispatch, getState ) => {
-		dispatch( { type: WP_SUPER_CACHE_RESTORE_SETTINGS, siteId } );
-		dispatch( removeNotice( 'wpsc-restore-defaults' ) );
+export const restoreSettings = (siteId) => {
+	return (dispatch, getState) => {
+		dispatch({ type: WP_SUPER_CACHE_RESTORE_SETTINGS, siteId });
+		dispatch(removeNotice('wpsc-restore-defaults'));
 
 		return wp.req
 			.post(
-				{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
-				{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( { reset: true } ), json: true }
+				{ path: `/jetpack-blogs/${siteId}/rest-api/` },
+				{ path: '/wp-super-cache/v1/settings', body: JSON.stringify({ reset: true }), json: true }
 			)
-			.then( ( { data } ) => {
-				dispatch( receiveSettings( siteId, normalizeSettings( data ) || {} ) );
-				dispatch( { type: WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS, siteId } );
+			.then(({ data }) => {
+				dispatch(receiveSettings(siteId, normalizeSettings(data) || {}));
+				dispatch({ type: WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS, siteId });
 				dispatch(
 					successNotice(
-						translate( 'Default configuration restored successfully on %(siteTitle)s.', {
-							args: { siteTitle: getSiteTitle( getState(), siteId ) },
-						} ),
+						translate('Default configuration restored successfully on %(siteTitle)s.', {
+							args: { siteTitle: getSiteTitle(getState(), siteId) },
+						}),
 						{ id: 'wpsc-restore-defaults' }
 					)
 				);
-			} )
-			.catch( () => {
-				dispatch( { type: WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE, siteId } );
+			})
+			.catch(() => {
+				dispatch({ type: WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE, siteId });
 				dispatch(
 					errorNotice(
-						translate(
-							'There was a problem restoring the default configuration. Please try again.'
-						),
+						translate('There was a problem restoring the default configuration. Please try again.'),
 						{ id: 'wpsc-restore-defaults' }
 					)
 				);
-			} );
+			});
 	};
 };

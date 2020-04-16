@@ -6,6 +6,6 @@
  * @returns {boolean} true if an error should be shown.
  */
 
-export default function shouldShowVideoEditorError( state ) {
+export default function shouldShowVideoEditorError(state) {
 	return state.ui.editor.videoEditor.showError;
 }

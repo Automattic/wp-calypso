@@ -37,7 +37,7 @@ import {
 	areSettingsGeneralLoadError,
 } from 'woocommerce/state/sites/settings/general/selectors';
 
-const ShippingZoneMethodList = ( {
+const ShippingZoneMethodList = ({
 	siteId,
 	loaded,
 	fetchError,
@@ -47,11 +47,11 @@ const ShippingZoneMethodList = ( {
 	currency,
 	translate,
 	actions,
-} ) => {
-	const renderMethod = ( method, index ) => {
-		if ( ! loaded ) {
+}) => {
+	const renderMethod = (method, index) => {
+		if (!loaded) {
 			return (
-				<ListItem key={ index } className="shipping-zone__method is-placeholder">
+				<ListItem key={index} className="shipping-zone__method is-placeholder">
 					<ListItemField className="shipping-zone__method-title">
 						<span />
 					</ListItemField>
@@ -63,30 +63,30 @@ const ShippingZoneMethodList = ( {
 						<span />
 					</ListItemField>
 					<ListItemField className="shipping-zone__method-actions">
-						<Button compact>{ translate( 'Edit' ) }</Button>
+						<Button compact>{translate('Edit')}</Button>
 					</ListItemField>
 				</ListItem>
 			);
 		}
 
-		const onEditClick = () => actions.openShippingZoneMethod( method.id );
+		const onEditClick = () => actions.openShippingZoneMethod(method.id);
 		const onEnabledToggle = () =>
-			actions.toggleShippingZoneMethodEnabled( method.id, ! method.enabled );
+			actions.toggleShippingZoneMethodEnabled(method.id, !method.enabled);
 
 		return (
-			<ListItem key={ index } className="shipping-zone__method">
-				<ListItemField className="shipping-zone__method-title">{ method.title }</ListItemField>
+			<ListItem key={index} className="shipping-zone__method">
+				<ListItemField className="shipping-zone__method-title">{method.title}</ListItemField>
 				<ListItemField className="shipping-zone__method-summary">
-					{ getMethodSummary( method, currency ) }
+					{getMethodSummary(method, currency)}
 				</ListItemField>
 				<ListItemField className="shipping-zone__enable-container">
-					<FormToggle checked={ method.enabled } onChange={ onEnabledToggle }>
-						{ translate( 'Enabled' ) }
+					<FormToggle checked={method.enabled} onChange={onEnabledToggle}>
+						{translate('Enabled')}
 					</FormToggle>
 				</ListItemField>
 				<ListItemField className="shipping-zone__method-actions">
-					<Button compact onClick={ onEditClick }>
-						{ translate( 'Edit' ) }
+					<Button compact onClick={onEditClick}>
+						{translate('Edit')}
 					</Button>
 				</ListItemField>
 			</ListItem>
@@ -94,45 +94,45 @@ const ShippingZoneMethodList = ( {
 	};
 
 	const onAddMethod = () => {
-		if ( ! loaded ) {
+		if (!loaded) {
 			return;
 		}
 
-		const newType = newMethodTypeOptions[ 0 ];
-		actions.addMethodToShippingZone( newType, methodNamesMap( newType ) );
+		const newType = newMethodTypeOptions[0];
+		actions.addMethodToShippingZone(newType, methodNamesMap(newType));
 	};
 
-	let methodsToRender = loaded ? methods : [ {}, {}, {} ];
-	if ( fetchError ) {
+	let methodsToRender = loaded ? methods : [{}, {}, {}];
+	if (fetchError) {
 		methodsToRender = [];
 	}
 
 	return (
 		<div className="shipping-zone__methods-container">
 			<ExtendedHeader
-				label={ translate( 'Shipping methods' ) }
-				description={ translate(
+				label={translate('Shipping methods')}
+				description={translate(
 					'These are the shipping methods available ' + 'to customers in the zone defined above.'
-				) }
+				)}
 			>
-				<Button onClick={ onAddMethod } disabled={ ! loaded }>
-					{ translate( 'Add method' ) }
+				<Button onClick={onAddMethod} disabled={!loaded}>
+					{translate('Add method')}
 				</Button>
 			</ExtendedHeader>
 			<List>
-				{ methodsToRender.length ? (
+				{methodsToRender.length ? (
 					<ListHeader>
 						<ListItemField className="shipping-zone__methods-column-title">
-							{ translate( 'Method' ) }
+							{translate('Method')}
 						</ListItemField>
 						<ListItemField className="shipping-zone__methods-column-summary">
-							{ translate( 'Cost' ) }
+							{translate('Cost')}
 						</ListItemField>
 					</ListHeader>
-				) : null }
-				{ methodsToRender.map( renderMethod ) }
+				) : null}
+				{methodsToRender.map(renderMethod)}
 			</List>
-			<ShippingZoneMethodDialog siteId={ siteId } />
+			<ShippingZoneMethodDialog siteId={siteId} />
 		</div>
 	);
 };
@@ -142,17 +142,17 @@ ShippingZoneMethodList.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => ( {
-		methods: getCurrentlyEditingShippingZoneMethods( state, ownProps.siteId ),
-		methodNamesMap: getShippingMethodNameMap( state, ownProps.siteId ),
-		newMethodTypeOptions: getNewMethodTypeOptions( state, ownProps.siteId ),
-		currency: getCurrencyWithEdits( state, ownProps.siteId ),
+	(state, ownProps) => ({
+		methods: getCurrentlyEditingShippingZoneMethods(state, ownProps.siteId),
+		methodNamesMap: getShippingMethodNameMap(state, ownProps.siteId),
+		newMethodTypeOptions: getNewMethodTypeOptions(state, ownProps.siteId),
+		currency: getCurrencyWithEdits(state, ownProps.siteId),
 		loaded:
-			areShippingZonesFullyLoaded( state, ownProps.siteId ) &&
-			areSettingsGeneralLoaded( state, ownProps.siteId ),
-		fetchError: areSettingsGeneralLoadError( state, ownProps.siteId ), // TODO: add shipping zones/methods fetch errors too
-	} ),
-	( dispatch, ownProps ) => ( {
+			areShippingZonesFullyLoaded(state, ownProps.siteId) &&
+			areSettingsGeneralLoaded(state, ownProps.siteId),
+		fetchError: areSettingsGeneralLoadError(state, ownProps.siteId), // TODO: add shipping zones/methods fetch errors too
+	}),
+	(dispatch, ownProps) => ({
 		actions: bindActionCreatorsWithSiteId(
 			{
 				openShippingZoneMethod,
@@ -162,5 +162,5 @@ export default connect(
 			dispatch,
 			ownProps.siteId
 		),
-	} )
-)( localize( ShippingZoneMethodList ) );
+	})
+)(localize(ShippingZoneMethodList));

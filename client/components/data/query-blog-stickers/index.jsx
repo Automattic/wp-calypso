@@ -19,14 +19,14 @@ class QueryBlogStickers extends Component {
 	};
 
 	componentDidMount() {
-		if ( ! this.props.stickersLoaded ) {
-			this.props.listBlogStickers( this.props.blogId );
+		if (!this.props.stickersLoaded) {
+			this.props.listBlogStickers(this.props.blogId);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.blogId !== this.props.blogId && ! this.props.stickersLoaded ) {
-			this.props.listBlogStickers( this.props.blogId );
+	componentDidUpdate(prevProps) {
+		if (prevProps.blogId !== this.props.blogId && !this.props.stickersLoaded) {
+			this.props.listBlogStickers(this.props.blogId);
 		}
 	}
 
@@ -36,8 +36,8 @@ class QueryBlogStickers extends Component {
 }
 
 export default connect(
-	( state, { blogId } ) => ( {
-		stickersLoaded: !! getBlogStickers( state, blogId ),
-	} ),
+	(state, { blogId }) => ({
+		stickersLoaded: !!getBlogStickers(state, blogId),
+	}),
 	{ listBlogStickers }
-)( QueryBlogStickers );
+)(QueryBlogStickers);

@@ -8,17 +8,17 @@ import React from 'react';
  */
 import CustomDomainPurchaseDetail from 'my-sites/checkout/checkout-thank-you/custom-domain-purchase-detail';
 
-export default function CustomDomainPurchaseDetailItem( {
+export default function CustomDomainPurchaseDetailItem({
 	hasDomainCredit,
 	selectedSite,
 	onlyBlogDomain,
-} ) {
+}) {
 	return (
 		<div className="product-purchase-features-list__item">
 			<CustomDomainPurchaseDetail
-				selectedSite={ selectedSite }
-				hasDomainCredit={ hasDomainCredit }
-				onlyBlogDomain={ onlyBlogDomain }
+				selectedSite={selectedSite}
+				hasDomainCredit={hasDomainCredit}
+				onlyBlogDomain={onlyBlogDomain}
 			/>
 		</div>
 	);

@@ -35,26 +35,26 @@ class EditorPageOrder extends Component {
 	};
 
 	constructor() {
-		super( ...arguments );
+		super(...arguments);
 
-		this.editMenuOrder = this.editMenuOrder.bind( this );
+		this.editMenuOrder = this.editMenuOrder.bind(this);
 		this.statTracked = false;
 	}
 
-	editMenuOrder( event ) {
+	editMenuOrder(event) {
 		const { menuOrder, siteId, postId } = this.props;
-		const newOrder = parseInt( event.target.value, 10 ) || 0;
-		if ( newOrder === menuOrder ) {
+		const newOrder = parseInt(event.target.value, 10) || 0;
+		if (newOrder === menuOrder) {
 			return;
 		}
 
-		if ( ! this.statTracked ) {
+		if (!this.statTracked) {
 			this.statTracked = true;
-			this.props.recordEditorStat( 'advanced_menu_order_changed' );
-			this.props.recordEditorEvent( 'Changed page menu order' );
+			this.props.recordEditorStat('advanced_menu_order_changed');
+			this.props.recordEditorEvent('Changed page menu order');
 		}
 
-		this.props.editPost( siteId, postId, { menu_order: newOrder } );
+		this.props.editPost(siteId, postId, { menu_order: newOrder });
 	}
 
 	render() {
@@ -64,14 +64,14 @@ class EditorPageOrder extends Component {
 			<AccordionSection className="editor-page-order">
 				<label>
 					<span className="editor-page-order__label-text">
-						{ translate( 'Order', { context: 'Editor: Field label for menu order.' } ) }
+						{translate('Order', { context: 'Editor: Field label for menu order.' })}
 					</span>
 					<TextInput
 						type="number"
-						value={ menuOrder }
+						value={menuOrder}
 						pattern="[0-9]*"
-						onChange={ this.editMenuOrder }
-						onBlur={ this.editMenuOrder }
+						onChange={this.editMenuOrder}
+						onBlur={this.editMenuOrder}
 						className="editor-page-order__input"
 					/>
 				</label>
@@ -81,12 +81,12 @@ class EditorPageOrder extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const menuOrder = getEditedPostValue( state, siteId, postId, 'menu_order' );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const menuOrder = getEditedPostValue(state, siteId, postId, 'menu_order');
 
 		return { siteId, postId, menuOrder };
 	},
 	{ editPost, recordEditorStat, recordEditorEvent }
-)( localize( EditorPageOrder ) );
+)(localize(EditorPageOrder));

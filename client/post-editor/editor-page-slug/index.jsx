@@ -24,12 +24,12 @@ class EditorPageSlug extends PureComponent {
 	};
 
 	render() {
-		if ( ! this.props.isDisplayed ) {
+		if (!this.props.isDisplayed) {
 			return null;
 		}
 
 		return (
-			<EditorSlug path={ this.props.path } instanceName="page-permalink">
+			<EditorSlug path={this.props.path} instanceName="page-permalink">
 				<Gridicon icon="link" />
 			</EditorSlug>
 		);
@@ -39,24 +39,24 @@ class EditorPageSlug extends PureComponent {
 // Determine the page base path, i.e., without the last component.
 // Don't remove components beyond the site URL.
 // TODO: merge with utils.getPagePath and add unit tests for the site URL behavior.
-function getPagePath( site, post ) {
+function getPagePath(site, post) {
 	const siteURL = site ? site.URL + '/' : null;
-	if ( post && post.URL && post.URL !== siteURL ) {
-		return utils.getPagePath( post );
+	if (post && post.URL && post.URL !== siteURL) {
+		return utils.getPagePath(post);
 	}
 
 	return siteURL;
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const site = getSite( state, siteId );
-	const post = getEditedPost( state, siteId, postId );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const site = getSite(state, siteId);
+	const post = getEditedPost(state, siteId, postId);
 
 	// display only when both site and post are available (i.e., not null) and the post is a page
-	const isDisplayed = siteId && utils.isPage( post );
-	const path = getPagePath( site, post );
+	const isDisplayed = siteId && utils.isPage(post);
+	const path = getPagePath(site, post);
 
 	return { isDisplayed, path };
-} )( EditorPageSlug );
+})(EditorPageSlug);

@@ -26,44 +26,42 @@ class CnameRecord extends React.Component {
 
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
-		const classes = classnames( { 'is-hidden': ! show } );
-		const isNameValid = isValid( 'name' );
-		const isDataValid = isValid( 'data' );
+		const classes = classnames({ 'is-hidden': !show });
+		const isNameValid = isValid('name');
+		const isDataValid = isValid('data');
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{translate('Name', { context: 'Dns Record' })}</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={ translate( 'Enter subdomain (required)', {
+						placeholder={translate('Enter subdomain (required)', {
 							context:
 								'Placeholder shown when entering the required subdomain part of a new DNS record',
-						} ) }
-						isError={ ! isNameValid }
-						onChange={ onChange }
-						value={ fieldValues.name }
-						suffix={ '.' + selectedDomainName }
+						})}
+						isError={!isNameValid}
+						onChange={onChange}
+						value={fieldValues.name}
+						suffix={'.' + selectedDomainName}
 					/>
-					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
+					{!isNameValid && <FormInputValidation text={translate('Invalid Name')} isError />}
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Alias Of' ) }</FormLabel>
+					<FormLabel>{translate('Alias Of')}</FormLabel>
 					<FormTextInput
 						name="data"
-						isError={ ! isDataValid }
-						onChange={ onChange }
-						value={ fieldValues.data }
-						placeholder={ translate( 'e.g. %(example)s', { args: { example: 'example.com' } } ) }
+						isError={!isDataValid}
+						onChange={onChange}
+						value={fieldValues.data}
+						placeholder={translate('e.g. %(example)s', { args: { example: 'example.com' } })}
 					/>
-					{ ! isDataValid && (
-						<FormInputValidation text={ translate( 'Invalid Target Host' ) } isError />
-					) }
+					{!isDataValid && <FormInputValidation text={translate('Invalid Target Host')} isError />}
 				</FormFieldset>
 			</div>
 		);
 	}
 }
 
-export default localize( CnameRecord );
+export default localize(CnameRecord);

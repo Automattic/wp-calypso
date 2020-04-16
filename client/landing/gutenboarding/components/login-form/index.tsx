@@ -18,18 +18,18 @@ import './style.scss';
 interface Props {
 	onRequestClose: () => void;
 	onOpenSignup: () => void;
-	onLogin: ( username: string ) => void;
+	onLogin: (username: string) => void;
 }
 
-const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
+const LoginForm = ({ onRequestClose, onOpenSignup, onLogin }: Props) => {
 	const { __ } = useI18n();
-	const loginFlowState = useSelect( select => select( AUTH_STORE ).getLoginFlowState() );
-	const errors = useSelect( select => select( AUTH_STORE ).getErrors() );
-	const { reset } = useDispatch( AUTH_STORE );
+	const loginFlowState = useSelect((select) => select(AUTH_STORE).getLoginFlowState());
+	const errors = useSelect((select) => select(AUTH_STORE).getErrors());
+	const { reset } = useDispatch(AUTH_STORE);
 
-	const usernameOrEmail = useSelect( select => select( AUTH_STORE ).getUsernameOrEmail() );
+	const usernameOrEmail = useSelect((select) => select(AUTH_STORE).getUsernameOrEmail());
 
-	const openSignup = ( e: React.MouseEvent< HTMLElement > ) => {
+	const openSignup = (e: React.MouseEvent<HTMLElement>) => {
 		reset();
 		onOpenSignup();
 		e.preventDefault();
@@ -40,57 +40,57 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 		onRequestClose();
 	};
 
-	useEffect( () => {
+	useEffect(() => {
 		// this is triggered on successful submitPassword
-		if ( loginFlowState === 'LOGGED_IN' ) {
+		if (loginFlowState === 'LOGGED_IN') {
 			closeModal();
-			onLogin( usernameOrEmail );
+			onLogin(usernameOrEmail);
 		}
 		// todo: handle users with passwordless login.
-	}, [ loginFlowState ] );
+	}, [loginFlowState]);
 
 	const tos = (
 		<p className="login-form__terms-of-service-link">
-			{ createInterpolateElement(
-				__( 'By continuing you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
+			{createInterpolateElement(
+				__('By continuing you agree to our <link_to_tos>Terms of Service</link_to_tos>.'),
 				{
 					link_to_tos: <ExternalLink href="https://wordpress.com/tos/" />,
 				}
-			) }
+			)}
 		</p>
 	);
 
-	const errorNotifications = errors.map( ( error, i ) => (
+	const errorNotifications = errors.map((error, i) => (
 		<Notice
 			className="login-form__error-notice"
 			status="error"
-			isDismissible={ false }
-			key={ error.code + i }
+			isDismissible={false}
+			key={error.code + i}
 		>
-			{ error.message }
+			{error.message}
 		</Notice>
-	) );
+	));
 	// todo: may need to be updated as more states are handled
 
 	return (
 		<Modal
 			className="login-form"
-			isDismissible={ true }
+			isDismissible={true}
 			// set to false so that 1password's autofill doesn't automatically close the modal
-			shouldCloseOnClickOutside={ false }
-			title={ __( 'Log in to save your changes' ) }
-			onRequestClose={ closeModal }
+			shouldCloseOnClickOutside={false}
+			title={__('Log in to save your changes')}
+			onRequestClose={closeModal}
 		>
-			{ loginFlowState === 'ENTER_USERNAME_OR_EMAIL' && (
-				<EnterUsernameOrEmailForm tos={ tos } errorNotifications={ errorNotifications } />
-			) }
-			{ loginFlowState === 'ENTER_PASSWORD' && (
-				<EnterPasswordForm tos={ tos } errorNotifications={ errorNotifications } />
-			) }
+			{loginFlowState === 'ENTER_USERNAME_OR_EMAIL' && (
+				<EnterUsernameOrEmailForm tos={tos} errorNotifications={errorNotifications} />
+			)}
+			{loginFlowState === 'ENTER_PASSWORD' && (
+				<EnterPasswordForm tos={tos} errorNotifications={errorNotifications} />
+			)}
 
 			<div className="login-form__signup-links">
-				<Button isLink={ true } onClick={ openSignup }>
-					{ __( 'Create account.' ) }
+				<Button isLink={true} onClick={openSignup}>
+					{__('Create account.')}
 				</Button>
 			</div>
 		</Modal>

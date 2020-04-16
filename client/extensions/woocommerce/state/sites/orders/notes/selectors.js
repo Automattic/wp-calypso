@@ -15,8 +15,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the note list for a given order has been successfully loaded from the server.
  */
-export const areOrderNotesLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const isLoading = get( state, [
+export const areOrderNotesLoaded = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const isLoading = get(state, [
 		'extensions',
 		'woocommerce',
 		'sites',
@@ -25,7 +25,7 @@ export const areOrderNotesLoaded = ( state, orderId, siteId = getSelectedSiteId(
 		'notes',
 		'isLoading',
 		orderId,
-	] );
+	]);
 	// Strict check because it could also be undefined.
 	return false === isLoading;
 };
@@ -36,8 +36,8 @@ export const areOrderNotesLoaded = ( state, orderId, siteId = getSelectedSiteId(
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the note list for a given order is currently being retrieved from the server.
  */
-export const areOrderNotesLoading = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const isLoading = get( state, [
+export const areOrderNotesLoading = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const isLoading = get(state, [
 		'extensions',
 		'woocommerce',
 		'sites',
@@ -46,7 +46,7 @@ export const areOrderNotesLoading = ( state, orderId, siteId = getSelectedSiteId
 		'notes',
 		'isLoading',
 		orderId,
-	] );
+	]);
 	// Strict check because it could also be undefined.
 	return true === isLoading;
 };
@@ -57,22 +57,22 @@ export const areOrderNotesLoading = ( state, orderId, siteId = getSelectedSiteId
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {Array} List of order notes
  */
-export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areOrderNotesLoaded( state, orderId, siteId ) ) {
+export const getOrderNotes = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	if (!areOrderNotesLoaded(state, orderId, siteId)) {
 		return [];
 	}
 
 	const notes = get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'items' ],
+		['extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'items'],
 		{}
 	);
 	const notesForOrder = get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'orders', orderId ],
+		['extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'orders', orderId],
 		[]
 	);
-	return notesForOrder.map( id => notes[ id ] );
+	return notesForOrder.map((id) => notes[id]);
 };
 
 /**
@@ -81,8 +81,8 @@ export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether we're currently saving a note for a given order on a site.
  */
-export const isOrderNoteSaving = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const isSaving = get( state, [
+export const isOrderNoteSaving = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const isSaving = get(state, [
 		'extensions',
 		'woocommerce',
 		'sites',
@@ -91,6 +91,6 @@ export const isOrderNoteSaving = ( state, orderId, siteId = getSelectedSiteId( s
 		'notes',
 		'isSaving',
 		orderId,
-	] );
-	return !! isSaving;
+	]);
+	return !!isSaving;
 };

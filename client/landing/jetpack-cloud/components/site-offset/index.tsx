@@ -10,16 +10,16 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  */
 import { SiteOffsetContext } from './context';
 
-export const withApplySiteOffset = createHigherOrderComponent( WrappedComponent => {
-	return function WithApplySiteOffset( props ) {
+export const withApplySiteOffset = createHigherOrderComponent((WrappedComponent) => {
+	return function WithApplySiteOffset(props) {
 		return (
 			<SiteOffsetContext.Consumer>
-				{ applySiteOffset => <WrappedComponent { ...props } applySiteOffset={ applySiteOffset } /> }
+				{(applySiteOffset) => <WrappedComponent {...props} applySiteOffset={applySiteOffset} />}
 			</SiteOffsetContext.Consumer>
 		);
 	};
-}, 'WithApplySiteOffset' );
+}, 'WithApplySiteOffset');
 
 export const useApplySiteOffset = () => {
-	return React.useContext( SiteOffsetContext );
+	return React.useContext(SiteOffsetContext);
 };

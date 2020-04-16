@@ -36,48 +36,48 @@ const hasDocument = typeof document !== 'undefined';
 
 function shouldShowBanner() {
 	// Don't render banner in SSR.
-	if ( ! hasDocument ) {
+	if (!hasDocument) {
 		return false;
 	}
-	const cookies = cookie.parse( document.cookie );
-	if ( cookies.sensitive_pixel_option === 'yes' || cookies.sensitive_pixel_option === 'no' ) {
+	const cookies = cookie.parse(document.cookie);
+	if (cookies.sensitive_pixel_option === 'yes' || cookies.sensitive_pixel_option === 'no') {
 		return false;
 	}
-	if ( isWpMobileApp() ) {
+	if (isWpMobileApp()) {
 		return false;
 	}
-	if ( isCurrentUserMaybeInGdprZone() ) {
+	if (isCurrentUserMaybeInGdprZone()) {
 		return true;
 	}
 	return false;
 }
 
-function GdprBanner( props ) {
-	const [ bannerStatus, setBannerStatus ] = useState( STATUS.NOT_RENDERED );
+function GdprBanner(props) {
+	const [bannerStatus, setBannerStatus] = useState(STATUS.NOT_RENDERED);
 	const translate = useTranslate();
 
 	const { recordCookieBannerOk, recordCookieBannerView } = props;
 
 	const acknowledgeClicked = () => {
-		document.cookie = cookie.serialize( 'sensitive_pixel_option', 'yes', {
+		document.cookie = cookie.serialize('sensitive_pixel_option', 'yes', {
 			path: '/',
 			maxAge: SIX_MONTHS,
-		} );
+		});
 		recordCookieBannerOk();
-		setBannerStatus( STATUS.RENDERED_BUT_HIDDEN );
+		setBannerStatus(STATUS.RENDERED_BUT_HIDDEN);
 	};
 
 	// We want to ensure that the first render is always empty, to match the server.
 	// This avoids potential hydration issues.
-	useEffect( () => {
-		shouldShowBanner() && setBannerStatus( STATUS.RENDERED );
-	}, [] );
+	useEffect(() => {
+		shouldShowBanner() && setBannerStatus(STATUS.RENDERED);
+	}, []);
 
-	useEffect( () => {
+	useEffect(() => {
 		bannerStatus === STATUS.RENDERED && recordCookieBannerView();
-	}, [ bannerStatus, recordCookieBannerView ] );
+	}, [bannerStatus, recordCookieBannerView]);
 
-	if ( bannerStatus === STATUS.NOT_RENDERED ) {
+	if (bannerStatus === STATUS.NOT_RENDERED) {
 		return null;
 	}
 
@@ -86,21 +86,21 @@ function GdprBanner( props ) {
 			'{{a}}Learn more{{/a}}, including how to control cookies.',
 		{
 			components: {
-				a: <a href={ localizeUrl( 'https://automattic.com/cookies' ) } />,
+				a: <a href={localizeUrl('https://automattic.com/cookies')} />,
 			},
 		}
 	);
 	return (
 		<Card
 			compact
-			className={ classNames( 'gdpr-banner', {
+			className={classNames('gdpr-banner', {
 				'gdpr-banner__hiding': bannerStatus === STATUS.RENDERED_BUT_HIDDEN,
-			} ) }
+			})}
 		>
-			<div className="gdpr-banner__text-content">{ preventWidows( decodeEntities( copy ) ) }</div>
+			<div className="gdpr-banner__text-content">{preventWidows(decodeEntities(copy))}</div>
 			<div className="gdpr-banner__buttons">
-				<Button className="gdpr-banner__acknowledge-button" onClick={ acknowledgeClicked }>
-					{ translate( 'Got it!' ) }
+				<Button className="gdpr-banner__acknowledge-button" onClick={acknowledgeClicked}>
+					{translate('Got it!')}
 				</Button>
 			</div>
 		</Card>
@@ -118,12 +118,9 @@ GdprBanner.defaultProps = {
 };
 
 const mapDispatchToProps = {
-	recordCookieBannerOk: () => recordTracksEvent( 'a8c_cookie_banner_ok', { site: 'Calypso' } ),
+	recordCookieBannerOk: () => recordTracksEvent('a8c_cookie_banner_ok', { site: 'Calypso' }),
 	recordCookieBannerView: () =>
-		bumpStat(
-			'cookie-banner-view',
-			'total,' + document.location.host.replace( /[^a-zA-Z0-9]/g, '-' )
-		),
+		bumpStat('cookie-banner-view', 'total,' + document.location.host.replace(/[^a-zA-Z0-9]/g, '-')),
 };
 
-export default connect( null, mapDispatchToProps )( GdprBanner );
+export default connect(null, mapDispatchToProps)(GdprBanner);

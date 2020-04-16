@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-function JetpackLiquidWebLogo( { darkColorScheme } ) {
+function JetpackLiquidWebLogo({ darkColorScheme }) {
 	const color1 = darkColorScheme ? '#fff' : '#58595b';
 	const color2 = darkColorScheme ? '#fff' : '#e6e7e8';
 	const color3 = darkColorScheme ? '#fff' : '#414042';
@@ -11,13 +11,13 @@ function JetpackLiquidWebLogo( { darkColorScheme } ) {
 		<svg id="jetpack-header__liquidweb-logo" viewBox="120 200 326.592 198.288">
 			<defs>
 				<style>
-					{ '.jetpack-header__liquidweb-logo-cls-1{fill:none}.jetpack-header__liquidweb-logo-cls-2{fill:#fff}.jetpack-header__liquidweb-logo-cls-3{fill:' +
+					{'.jetpack-header__liquidweb-logo-cls-1{fill:none}.jetpack-header__liquidweb-logo-cls-2{fill:#fff}.jetpack-header__liquidweb-logo-cls-3{fill:' +
 						color2 +
 						'}.jetpack-header__liquidweb-logo-cls-14{fill:' +
 						color1 +
 						'}.jetpack-header__liquidweb-logo-cls-15{fill:' +
 						color3 +
-						'}' }
+						'}'}
 				</style>
 				<clipPath id="jetpack-header__liquidweb-logo-clip-path">
 					<path
@@ -27,16 +27,16 @@ function JetpackLiquidWebLogo( { darkColorScheme } ) {
 				</clipPath>
 				<linearGradient
 					id="jetpack-header__liquidweb-logo-linear-gradient"
-					x1={ 1.12 }
-					y1={ 610.64 }
-					x2={ 1.97 }
-					y2={ 610.64 }
+					x1={1.12}
+					y1={610.64}
+					x2={1.97}
+					y2={610.64}
 					gradientTransform="matrix(-188.58 0 0 188.58 440.24 -114878.11)"
 					gradientUnits="userSpaceOnUse"
 				>
-					<stop offset={ 0 } stopColor="#2ac3f2" />
-					<stop offset={ 0.5 } stopColor="#02b3e2" />
-					<stop offset={ 1 } stopColor="#0096da" />
+					<stop offset={0} stopColor="#2ac3f2" />
+					<stop offset={0.5} stopColor="#02b3e2" />
+					<stop offset={1} stopColor="#0096da" />
 				</linearGradient>
 				<clipPath id="jetpack-header__liquidweb-logo-clip-path-2">
 					<path
@@ -46,10 +46,10 @@ function JetpackLiquidWebLogo( { darkColorScheme } ) {
 				</clipPath>
 				<linearGradient
 					id="jetpack-header__liquidweb-logo-linear-gradient-2"
-					x1={ 1.12 }
-					y1={ 610.55 }
-					x2={ 1.97 }
-					y2={ 610.55 }
+					x1={1.12}
+					y1={610.55}
+					x2={1.97}
+					y2={610.55}
 					gradientTransform="matrix(-188.58 0 0 188.58 425.65 -114911.05)"
 					xlinkHref="#jetpack-header__liquidweb-logo-linear-gradient"
 				/>
@@ -61,10 +61,10 @@ function JetpackLiquidWebLogo( { darkColorScheme } ) {
 				</clipPath>
 				<linearGradient
 					id="jetpack-header__liquidweb-logo-linear-gradient-3"
-					x1={ 1.12 }
-					y1={ 610.56 }
-					x2={ 1.97 }
-					y2={ 610.56 }
+					x1={1.12}
+					y1={610.56}
+					x2={1.97}
+					y2={610.56}
 					gradientTransform="matrix(-188.58 0 0 188.58 500.49 -114861.71)"
 					xlinkHref="#jetpack-header__liquidweb-logo-linear-gradient"
 				/>
@@ -76,10 +76,10 @@ function JetpackLiquidWebLogo( { darkColorScheme } ) {
 				</clipPath>
 				<linearGradient
 					id="jetpack-header__liquidweb-logo-linear-gradient-4"
-					x1={ 1.12 }
-					y1={ 610.63 }
-					x2={ 1.97 }
-					y2={ 610.63 }
+					x1={1.12}
+					y1={610.63}
+					x2={1.97}
+					y2={610.63}
 					gradientTransform="matrix(-188.58 0 0 188.58 535.92 -114805.47)"
 					xlinkHref="#jetpack-header__liquidweb-logo-linear-gradient"
 				/>
@@ -91,10 +91,10 @@ function JetpackLiquidWebLogo( { darkColorScheme } ) {
 				</clipPath>
 				<linearGradient
 					id="jetpack-header__liquidweb-logo-linear-gradient-5"
-					x1={ 1.12 }
-					y1={ 610.6 }
-					x2={ 1.97 }
-					y2={ 610.6 }
+					x1={1.12}
+					y1={610.6}
+					x2={1.97}
+					y2={610.6}
 					gradientTransform="matrix(-188.58 0 0 188.58 544.41 -114791.63)"
 					xlinkHref="#jetpack-header__liquidweb-logo-linear-gradient"
 				/>

@@ -11,26 +11,22 @@ import PropTypes from 'prop-types';
 import { Dialog } from '@automattic/components';
 import DisconnectJetpack from './';
 
-const DisconnectJetpackDialog = ( {
+const DisconnectJetpackDialog = ({
 	disconnectHref,
 	isBroken,
 	isVisible,
 	onClose,
 	siteId,
 	stayConnectedHref,
-} ) => (
-	<Dialog
-		isVisible={ isVisible }
-		additionalClassNames="disconnect-jetpack-dialog"
-		onClose={ onClose }
-	>
+}) => (
+	<Dialog isVisible={isVisible} additionalClassNames="disconnect-jetpack-dialog" onClose={onClose}>
 		<DisconnectJetpack
-			disconnectHref={ disconnectHref }
-			isBroken={ isBroken }
-			onDisconnectClick={ onClose }
-			onStayConnectedClick={ onClose }
-			siteId={ siteId }
-			stayConnectedHref={ stayConnectedHref }
+			disconnectHref={disconnectHref}
+			isBroken={isBroken}
+			onDisconnectClick={onClose}
+			onStayConnectedClick={onClose}
+			siteId={siteId}
+			stayConnectedHref={stayConnectedHref}
 		/>
 	</Dialog>
 );

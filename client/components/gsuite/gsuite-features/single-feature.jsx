@@ -4,15 +4,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const GSuiteSingleFeature = ( { compact, description, imagePath, imageAlt, title } ) => {
+const GSuiteSingleFeature = ({ compact, description, imagePath, imageAlt, title }) => {
 	return (
-		<div className={ compact ? 'gsuite-features__compact-feature' : 'gsuite-features__feature' }>
+		<div className={compact ? 'gsuite-features__compact-feature' : 'gsuite-features__feature'}>
 			<div className="gsuite-features__feature-image">
-				<img alt={ imageAlt } src={ imagePath } />
+				<img alt={imageAlt} src={imagePath} />
 			</div>
 			<div className="gsuite-features__feature-block">
-				<h5 className="gsuite-features__feature-header">{ title }</h5>
-				{ description && <p>{ description }</p> }
+				<h5 className="gsuite-features__feature-header">{title}</h5>
+				{description && <p>{description}</p>}
 			</div>
 		</div>
 	);

@@ -8,9 +8,9 @@ import earnings from './earnings/reducer';
 import settings from './settings/reducer';
 import status from './status/reducer';
 
-export default combineReducers( {
+export default combineReducers({
 	approve,
 	earnings,
 	settings,
 	status,
-} );
+});

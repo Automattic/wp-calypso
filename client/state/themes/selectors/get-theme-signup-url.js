@@ -12,14 +12,14 @@ import 'state/themes/init';
  * @param  {string}  themeId Theme ID
  * @returns {?string}         Signup URL
  */
-export function getThemeSignupUrl( state, themeId ) {
-	if ( ! themeId ) {
+export function getThemeSignupUrl(state, themeId) {
+	if (!themeId) {
 		return null;
 	}
 
 	let url = '/start/with-theme?ref=calypshowcase&theme=' + themeId;
 
-	if ( isThemePremium( state, themeId ) ) {
+	if (isThemePremium(state, themeId)) {
 		url += '&premium=true';
 	}
 

@@ -11,7 +11,7 @@ import url from 'url';
  * @param  {object} iframe the iframe to check
  * @returns {boolean} true if whitelisted
  */
-export function iframeIsWhitelisted( iframe ) {
+export function iframeIsWhitelisted(iframe) {
 	const iframeWhitelist = [
 		'youtube.com',
 		'youtube-nocookie.com',
@@ -45,9 +45,9 @@ export function iframeIsWhitelisted( iframe ) {
 		'icloud.com',
 		'read.amazon.com',
 	];
-	const hostName = iframe.src && url.parse( iframe.src ).hostname;
+	const hostName = iframe.src && url.parse(iframe.src).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
-	return some( iframeWhitelist, function( whitelistedSuffix ) {
-		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
-	} );
+	return some(iframeWhitelist, function (whitelistedSuffix) {
+		return endsWith('.' + iframeSrc, '.' + whitelistedSuffix);
+	});
 }

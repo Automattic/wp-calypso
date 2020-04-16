@@ -19,34 +19,34 @@ import SettingsNavigation from '../navigation';
 class SettingsTaxesTaxJar extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		site: PropTypes.shape( {
-			options: PropTypes.shape( {
+		site: PropTypes.shape({
+			options: PropTypes.shape({
 				admin_url: PropTypes.string.isRequired,
-			} ),
-		} ).isRequired,
+			}),
+		}).isRequired,
 	};
 
 	render = () => {
 		const { site, translate } = this.props;
 
 		const breadcrumbs = [
-			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
-			<span>{ translate( 'Taxes' ) }</span>,
+			<a href={getLink('/store/settings/:site/', site)}>{translate('Settings')}</a>,
+			<span>{translate('Taxes')}</span>,
 		];
 
 		const adminUrl =
 			site.options.admin_url +
 			'admin.php?page=wc-settings&tab=integration&section=taxjar-integration';
-		const pluginUrl = getLink( '/plugins/taxjar-simplified-taxes-for-woocommerce/:site', site );
+		const pluginUrl = getLink('/plugins/taxjar-simplified-taxes-for-woocommerce/:site', site);
 
 		return (
 			<div>
-				<ActionHeader breadcrumbs={ breadcrumbs } />
+				<ActionHeader breadcrumbs={breadcrumbs} />
 				<SettingsNavigation activeSection="taxes" />
 				<div>
 					<Card className="taxes__tax-jar-info">
 						<p>
-							{ translate(
+							{translate(
 								"Your store's taxes are being managed by the {{b}}TaxJar - Sales Tax Automation " +
 									'for WooCommerce{{/b}} plugin. This optional plugin provides features such as:',
 								{
@@ -54,28 +54,28 @@ class SettingsTaxesTaxJar extends Component {
 										b: <strong />,
 									},
 								}
-							) }
+							)}
 						</p>
 						<ul>
-							<li>{ translate( 'Automated reporting & filing' ) }</li>
-							<li>{ translate( 'Multi-nexus support' ) }</li>
+							<li>{translate('Automated reporting & filing')}</li>
+							<li>{translate('Multi-nexus support')}</li>
 						</ul>
 						<p>
-							{ translate(
+							{translate(
 								"If you don't need these features we recommend {{a}}removing this plugin{{/a}}. Don't worry, " +
 									"{{b}}we'll still handle sales tax calculations for you{{/b}}.",
 								{
 									components: {
-										a: <a href={ pluginUrl } />,
+										a: <a href={pluginUrl} />,
 										b: <strong />,
 									},
 								}
-							) }
+							)}
 						</p>
 						<p>
-							{ translate( "You can manage this plugin's settings in wp-admin. " ) }
-							<ExternalLink icon href={ adminUrl } rel="noopener noreferrer">
-								{ translate( 'Plugin settings' ) }
+							{translate("You can manage this plugin's settings in wp-admin. ")}
+							<ExternalLink icon href={adminUrl} rel="noopener noreferrer">
+								{translate('Plugin settings')}
 							</ExternalLink>
 						</p>
 					</Card>
@@ -84,4 +84,4 @@ class SettingsTaxesTaxJar extends Component {
 		);
 	};
 }
-export default localize( SettingsTaxesTaxJar );
+export default localize(SettingsTaxesTaxJar);

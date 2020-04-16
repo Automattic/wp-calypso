@@ -20,53 +20,53 @@ const DEFAULT_ATTR = 'any';
 class ProductVariations extends Component {
 	static propTypes = {
 		onChange: PropTypes.func,
-		product: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		product: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {};
-		const attributes = filter( props.product.attributes, { variation: true } );
-		forEach( attributes, attr => {
-			this.state[ attr.name ] = DEFAULT_ATTR;
-		} );
+		const attributes = filter(props.product.attributes, { variation: true });
+		forEach(attributes, (attr) => {
+			this.state[attr.name] = DEFAULT_ATTR;
+		});
 	}
 
-	onChange = name => event => {
-		this.setState( { [ name ]: event.target.value }, () => {
-			this.props.onChange( this.state, this.resetAttrs );
-		} );
+	onChange = (name) => (event) => {
+		this.setState({ [name]: event.target.value }, () => {
+			this.props.onChange(this.state, this.resetAttrs);
+		});
 	};
 
 	resetAttrs = () => {
-		this.setState( prevState => {
+		this.setState((prevState) => {
 			const newState = {};
-			keys( prevState ).map( name => {
-				newState[ name ] = DEFAULT_ATTR;
-			} );
+			keys(prevState).map((name) => {
+				newState[name] = DEFAULT_ATTR;
+			});
 			return newState;
-		} );
+		});
 	};
 
-	renderAttribute = attribute => {
+	renderAttribute = (attribute) => {
 		const { translate } = this.props;
-		const fieldId = kebabCase( attribute.name );
+		const fieldId = kebabCase(attribute.name);
 		return (
-			<div className="product-search__variation-field" key={ fieldId }>
-				<FormLabel htmlFor={ `select-${ fieldId }` }>{ attribute.name }</FormLabel>
+			<div className="product-search__variation-field" key={fieldId}>
+				<FormLabel htmlFor={`select-${fieldId}`}>{attribute.name}</FormLabel>
 				<FormSelect
-					id={ `select-${ fieldId }` }
-					onChange={ this.onChange( attribute.name ) }
-					value={ this.state[ attribute.name ] }
+					id={`select-${fieldId}`}
+					onChange={this.onChange(attribute.name)}
+					value={this.state[attribute.name]}
 				>
-					<option key={ `${ attribute.name }-${ DEFAULT_ATTR }` } value={ DEFAULT_ATTR }>
-						{ translate( 'Select one' ) }
+					<option key={`${attribute.name}-${DEFAULT_ATTR}`} value={DEFAULT_ATTR}>
+						{translate('Select one')}
 					</option>
-					{ attribute.options.map( ( opt, i ) => (
-						<option key={ `${ attribute.name }-${ i }` } value={ opt }>
-							{ opt }
+					{attribute.options.map((opt, i) => (
+						<option key={`${attribute.name}-${i}`} value={opt}>
+							{opt}
 						</option>
-					) ) }
+					))}
 				</FormSelect>
 			</div>
 		);
@@ -75,22 +75,22 @@ class ProductVariations extends Component {
 	render() {
 		const { product, translate } = this.props;
 
-		if ( ! product || 'variable' !== product.type ) {
+		if (!product || 'variable' !== product.type) {
 			return null;
 		}
 
-		const attributes = sortBy( filter( product.attributes, { variation: true } ), 'position' );
+		const attributes = sortBy(filter(product.attributes, { variation: true }), 'position');
 
 		return (
 			<div className="product-search__variations">
 				<FormFieldset>
 					<FormLegend>
-						{ translate( '%(product)s has variations. Choose a specific variation to add.', {
+						{translate('%(product)s has variations. Choose a specific variation to add.', {
 							args: { product: product.name },
-						} ) }
+						})}
 					</FormLegend>
 					<div className="product-search__variation-fields">
-						{ attributes.map( this.renderAttribute ) }
+						{attributes.map(this.renderAttribute)}
 					</div>
 				</FormFieldset>
 			</div>
@@ -98,4 +98,4 @@ class ProductVariations extends Component {
 	}
 }
 
-export default localize( ProductVariations );
+export default localize(ProductVariations);

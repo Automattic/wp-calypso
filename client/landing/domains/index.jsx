@@ -30,17 +30,13 @@ class DomainsLandingPage extends Component {
 
 	renderRegistrantVerificationContent() {
 		const { domain, email, token } = this.props.query;
-		return <RegistrantVerificationPage domain={ domain } email={ email } token={ token } />;
+		return <RegistrantVerificationPage domain={domain} email={email} token={token} />;
 	}
 
 	renderTransferAwayConfirmation() {
 		const { domain, recipient_id, token } = this.props.query;
 		return (
-			<TransferAwayConfirmationPage
-				domain={ domain }
-				recipientId={ recipient_id }
-				token={ token }
-			/>
+			<TransferAwayConfirmationPage domain={domain} recipientId={recipient_id} token={token} />
 		);
 	}
 
@@ -49,7 +45,7 @@ class DomainsLandingPage extends Component {
 	}
 
 	renderContent() {
-		switch ( this.props.action ) {
+		switch (this.props.action) {
 			case 'registrant-verification':
 				return this.renderRegistrantVerificationContent();
 
@@ -63,7 +59,7 @@ class DomainsLandingPage extends Component {
 	}
 
 	render() {
-		return <Main className="domains">{ this.renderContent() }</Main>;
+		return <Main className="domains">{this.renderContent()}</Main>;
 	}
 }
 
@@ -71,17 +67,17 @@ class DomainsLandingPage extends Component {
  * Default export. Boots up the landing page.
  */
 function boot() {
-	if ( window.i18nLocaleStrings ) {
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		i18n.setLocale( i18nLocaleStringsObject );
+	if (window.i18nLocaleStrings) {
+		const i18nLocaleStringsObject = JSON.parse(window.i18nLocaleStrings);
+		i18n.setLocale(i18nLocaleStringsObject);
 	}
 
 	RenderDom.render(
 		<DomainsLandingPage
-			action={ window.domainsLandingData.action }
-			query={ window.domainsLandingData.query }
+			action={window.domainsLandingData.action}
+			query={window.domainsLandingData.query}
 		/>,
-		document.getElementById( 'primary' )
+		document.getElementById('primary')
 	);
 }
 

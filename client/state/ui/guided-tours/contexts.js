@@ -28,7 +28,7 @@ export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
  * @param {string} sectionName Name of section
  * @returns {Function} Selector function
  */
-export const inSection = sectionName => state => getSectionName( state ) === sectionName;
+export const inSection = (sectionName) => (state) => getSectionName(state) === sectionName;
 
 /**
  * Returns a selector that tests if a feature is enabled in config
@@ -36,7 +36,7 @@ export const inSection = sectionName => state => getSectionName( state ) === sec
  * @param {string} feature Name of feature
  * @returns {Function} Selector function
  */
-export const isEnabled = feature => () => config.isEnabled( feature );
+export const isEnabled = (feature) => () => config.isEnabled(feature);
 
 /**
  * Returns milliseconds since registration date of the current user
@@ -44,9 +44,9 @@ export const isEnabled = feature => () => config.isEnabled( feature );
  * @param {object} state Global state tree
  * @returns {number|boolean} Milliseconds since registration, false if cannot be determined
  */
-const timeSinceUserRegistration = state => {
-	const user = getCurrentUser( state );
-	const registrationDate = user && Date.parse( user.date );
+const timeSinceUserRegistration = (state) => {
+	const user = getCurrentUser(state);
+	const registrationDate = user && Date.parse(user.date);
 	return registrationDate ? Date.now() - registrationDate : false;
 };
 
@@ -56,8 +56,8 @@ const timeSinceUserRegistration = state => {
  * @param {number} age Number of milliseconds
  * @returns {Function} Selector function
  */
-export const isUserNewerThan = age => state => {
-	const userAge = timeSinceUserRegistration( state );
+export const isUserNewerThan = (age) => (state) => {
+	const userAge = timeSinceUserRegistration(state);
 	return userAge !== false ? userAge <= age : false;
 };
 
@@ -67,8 +67,8 @@ export const isUserNewerThan = age => state => {
  * @param {object} state Global state tree
  * @returns {boolean} True if user is new, false otherwise
  */
-export const isNewUser = state => {
-	return isUserNewerThan( WEEK_IN_MILLISECONDS )( state );
+export const isNewUser = (state) => {
+	return isUserNewerThan(WEEK_IN_MILLISECONDS)(state);
 };
 
 /**
@@ -77,8 +77,8 @@ export const isNewUser = state => {
  * @param {object} state Global state tree
  * @returns {boolean} True if user is NOT new, false otherwise
  */
-export const isNotNewUser = state => {
-	return ! isNewUser( state );
+export const isNotNewUser = (state) => {
+	return !isNewUser(state);
 };
 
 /**
@@ -87,8 +87,8 @@ export const isNotNewUser = state => {
  * @param {number} age Number of milliseconds
  * @returns {Function} Selector function
  */
-export const isUserOlderThan = age => state => {
-	const userAge = timeSinceUserRegistration( state );
+export const isUserOlderThan = (age) => (state) => {
+	const userAge = timeSinceUserRegistration(state);
 	return userAge !== false ? userAge >= age : false;
 };
 
@@ -98,10 +98,10 @@ export const isUserOlderThan = age => state => {
  * @param {Date} date Date of registration
  * @returns {Function} Selector function
  */
-export const hasUserRegisteredBefore = date => state => {
-	const compareDate = date && Date.parse( date );
-	const user = getCurrentUser( state );
-	const registrationDate = user && Date.parse( user.date );
+export const hasUserRegisteredBefore = (date) => (state) => {
+	const compareDate = date && Date.parse(date);
+	const user = getCurrentUser(state);
+	const registrationDate = user && Date.parse(user.date);
 	return registrationDate < compareDate;
 };
 
@@ -119,11 +119,11 @@ export const hasUserInteractedWithComponent = () => () => false;
  * @param {string} eventName Name of analytics event
  * @returns {Function} Selector function
  */
-export const hasAnalyticsEventFired = eventName => state => {
-	const last = getLastAction( state );
+export const hasAnalyticsEventFired = (eventName) => (state) => {
+	const last = getLastAction(state);
 	return (
 		last.type === ANALYTICS_EVENT_RECORD &&
-		last.meta.analytics.some( record => record.payload.name === eventName )
+		last.meta.analytics.some((record) => record.payload.name === eventName)
 	);
 };
 
@@ -133,8 +133,8 @@ export const hasAnalyticsEventFired = eventName => state => {
  * @param {object} state Global state tree
  * @returns {boolean} True if selected site can be previewed, false otherwise.
  */
-export const isSelectedSitePreviewable = state =>
-	get( getSelectedSite( state ), 'is_previewable', false );
+export const isSelectedSitePreviewable = (state) =>
+	get(getSelectedSite(state), 'is_previewable', false);
 
 /**
  * Returns true if the current user can run customizer for the selected site
@@ -142,8 +142,8 @@ export const isSelectedSitePreviewable = state =>
  * @param {object} state Global state tree
  * @returns {boolean} True if user can run customizer, false otherwise.
  */
-export const isSelectedSiteCustomizable = state =>
-	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
+export const isSelectedSiteCustomizable = (state) =>
+	getSelectedSite(state) && getSelectedSite(state).is_customizable;
 
 /**
  * Returns true if the selected site has any media files.
@@ -151,12 +151,12 @@ export const isSelectedSiteCustomizable = state =>
  * @param {object} state Global state tree
  * @returns {boolean} True if site has any media files, false otherwise.
  */
-export const doesSelectedSiteHaveMediaFiles = state => {
-	const siteId = getSelectedSiteId( state );
-	if ( ! siteId ) {
+export const doesSelectedSiteHaveMediaFiles = (state) => {
+	const siteId = getSelectedSiteId(state);
+	if (!siteId) {
 		return false;
 	}
-	const media = getAllMedia( siteId );
+	const media = getAllMedia(siteId);
 	return media && media.length && media.length > 0;
 };
 
@@ -169,7 +169,7 @@ export const doesSelectedSiteHaveMediaFiles = state => {
  * @param {string} variant Variant identifier
  * @returns {Function} Selector function
  */
-export const isAbTestInVariant = ( testName, variant ) => () => abtest( testName ) === variant;
+export const isAbTestInVariant = (testName, variant) => () => abtest(testName) === variant;
 
 /**
  * Returns true if the selected site has an unchanged site title
@@ -177,9 +177,9 @@ export const isAbTestInVariant = ( testName, variant ) => () => abtest( testName
  * @param {object} state Global state tree
  * @returns {boolean} True if site title is default, false otherwise.
  */
-export const hasSelectedSiteDefaultSiteTitle = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? hasDefaultSiteTitle( state, siteId ) : false;
+export const hasSelectedSiteDefaultSiteTitle = (state) => {
+	const siteId = getSelectedSiteId(state);
+	return siteId ? hasDefaultSiteTitle(state, siteId) : false;
 };
 
 /**
@@ -188,9 +188,9 @@ export const hasSelectedSiteDefaultSiteTitle = state => {
  * @param {object} state Global state tree
  * @returns {boolean} True if selected site is on a paid plan, false otherwise.
  */
-export const isSelectedSitePlanPaid = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? isCurrentPlanPaid( state, siteId ) : false;
+export const isSelectedSitePlanPaid = (state) => {
+	const siteId = getSelectedSiteId(state);
+	return siteId ? isCurrentPlanPaid(state, siteId) : false;
 };
 
 /**
@@ -199,9 +199,9 @@ export const isSelectedSitePlanPaid = state => {
  * @param {object} state Global state tree
  * @returns {boolean} True if selected site is on a free plan, false otherwise.
  */
-export const isSelectedSitePlanFree = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? ! isCurrentPlanPaid( state, siteId ) : false;
+export const isSelectedSitePlanFree = (state) => {
+	const siteId = getSelectedSiteId(state);
+	return siteId ? !isCurrentPlanPaid(state, siteId) : false;
 };
 
 /**
@@ -210,8 +210,8 @@ export const isSelectedSitePlanFree = state => {
  * @param {object} state Global state tree
  * @returns {boolean} True if user has just pasted something from Google Docs, false otherwise.
  */
-export const hasUserPastedFromGoogleDocs = state => {
-	const action = getLastAction( state ) || false;
+export const hasUserPastedFromGoogleDocs = (state) => {
+	const action = getLastAction(state) || false;
 	return action && action.type === EDITOR_PASTE_EVENT && action.source === SOURCE_GOOGLE_DOCS;
 };
 
@@ -222,9 +222,9 @@ export const hasUserPastedFromGoogleDocs = state => {
  * @param {object} state Global state tree
  * @returns {boolean} True if user can edit settings, false otherwise.
  */
-export const canUserEditSettingsOfSelectedSite = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? canCurrentUser( state, siteId, 'manage_options' ) : false;
+export const canUserEditSettingsOfSelectedSite = (state) => {
+	const siteId = getSelectedSiteId(state);
+	return siteId ? canCurrentUser(state, siteId, 'manage_options') : false;
 };
 
 /**
@@ -234,9 +234,9 @@ export const canUserEditSettingsOfSelectedSite = state => {
  * @param {object} state Global state tree
  * @returns {boolean} True if site is Jetpack, false otherwise.
  */
-export const isSelectedSiteJetpack = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? isJetpackSite( state, siteId ) : false;
+export const isSelectedSiteJetpack = (state) => {
+	const siteId = getSelectedSiteId(state);
+	return siteId ? isJetpackSite(state, siteId) : false;
 };
 
 /**
@@ -246,7 +246,7 @@ export const isSelectedSiteJetpack = state => {
  * @param {object} state Global state tree
  * @returns {boolean} True is not Jetpack, false otherwise.
  */
-export const isSelectedSiteNotJetpack = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? ! isJetpackSite( state, siteId ) : false;
+export const isSelectedSiteNotJetpack = (state) => {
+	const siteId = getSelectedSiteId(state);
+	return siteId ? !isJetpackSite(state, siteId) : false;
 };

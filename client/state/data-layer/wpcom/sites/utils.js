@@ -28,7 +28,7 @@ import { errorNotice } from 'state/notices/actions';
  * @param   {number|undefined} parentCommentId parent comment identifier
  * @returns {object}                           comment placeholder
  */
-export const createPlaceholderComment = ( commentText, postId, parentCommentId ) => ( {
+export const createPlaceholderComment = (commentText, postId, parentCommentId) => ({
 	ID: 'placeholder-' + new Date().getTime(),
 	parent: parentCommentId ? { ID: parentCommentId } : false,
 	date: new Date().toISOString(),
@@ -38,7 +38,7 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
 	post: { ID: postId },
 	isPlaceholder: true,
 	placeholderState: 'PENDING',
-} );
+});
 
 /**
  * Creates a placeholder comment for a given text and postId
@@ -49,9 +49,9 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
  * @param {string}   path     comments resource path
  * @returns {Array}	actions
  */
-export const dispatchNewCommentRequest = ( action, path ) => {
+export const dispatchNewCommentRequest = (action, path) => {
 	const { siteId, postId, parentCommentId, commentText } = action;
-	const placeholder = createPlaceholderComment( commentText, postId, parentCommentId );
+	const placeholder = createPlaceholderComment(commentText, postId, parentCommentId);
 
 	// Insert a placeholder
 	return [
@@ -59,11 +59,11 @@ export const dispatchNewCommentRequest = ( action, path ) => {
 			type: COMMENTS_RECEIVE,
 			siteId,
 			postId,
-			comments: [ placeholder ],
-			skipSort: !! parentCommentId,
+			comments: [placeholder],
+			skipSort: !!parentCommentId,
 		},
 
-		http( {
+		http({
 			method: 'POST',
 			apiVersion: '1.1',
 			path,
@@ -75,7 +75,7 @@ export const dispatchNewCommentRequest = ( action, path ) => {
 				placeholderId: placeholder.ID,
 			},
 			onFailure: { ...action, placeholderId: placeholder.ID },
-		} ),
+		}),
 	];
 };
 
@@ -92,14 +92,14 @@ export const updatePlaceholderComment = (
 ) => {
 	const actions = [
 		// remove placeholder from state
-		bypassDataLayer( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } ),
+		bypassDataLayer({ type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId }),
 		// add new comment to state with updated values from server
 		{
 			type: COMMENTS_RECEIVE,
 			siteId,
 			postId,
-			comments: [ comment ],
-			skipSort: !! parentCommentId,
+			comments: [comment],
+			skipSort: !!parentCommentId,
 			meta: {
 				comment: {
 					context: 'add', //adds a hint for the counts reducer.
@@ -110,8 +110,8 @@ export const updatePlaceholderComment = (
 		{ type: COMMENTS_COUNT_INCREMENT, siteId, postId },
 	];
 
-	if ( !! refreshCommentListQuery ) {
-		actions.push( requestCommentsList( refreshCommentListQuery ) );
+	if (!!refreshCommentListQuery) {
+		actions.push(requestCommentsList(refreshCommentListQuery));
 	}
 
 	return actions;
@@ -127,23 +127,16 @@ export const updatePlaceholderComment = (
 export const handleWriteCommentFailure = (
 	{ siteId, postId, parentCommentId, placeholderId },
 	rawError
-) => ( dispatch, getState ) => {
+) => (dispatch, getState) => {
 	// Dispatch error notice
-	const post = getSitePost( getState(), siteId, postId );
-	const postTitle =
-		post &&
-		post.title &&
-		post.title
-			.trim()
-			.slice( 0, 20 )
-			.trim()
-			.concat( '…' );
+	const post = getSitePost(getState(), siteId, postId);
+	const postTitle = post && post.title && post.title.trim().slice(0, 20).trim().concat('…');
 	const error = postTitle
-		? translate( 'Could not add a reply to “%(postTitle)s”', { args: { postTitle } } )
-		: translate( 'Could not add a reply to this post' );
+		? translate('Could not add a reply to “%(postTitle)s”', { args: { postTitle } })
+		: translate('Could not add a reply to this post');
 
 	// Dispatch an error so we can record the failed comment placeholder in state
-	dispatch( {
+	dispatch({
 		type: COMMENTS_WRITE_ERROR,
 		siteId,
 		postId,
@@ -151,7 +144,7 @@ export const handleWriteCommentFailure = (
 		parentCommentId,
 		error,
 		errorType: rawError && rawError.error,
-	} );
+	});
 
-	dispatch( errorNotice( error, { duration: 5000 } ) );
+	dispatch(errorNotice(error, { duration: 5000 }));
 };

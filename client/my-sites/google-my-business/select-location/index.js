@@ -40,7 +40,7 @@ import './style.scss';
 
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
-		locations: PropTypes.arrayOf( PropTypes.object ).isRequired,
+		locations: PropTypes.arrayOf(PropTypes.object).isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		recordTracksEventWithLocationCounts: PropTypes.func.isRequired,
 		requestKeyringConnections: PropTypes.func.isRequired,
@@ -50,11 +50,11 @@ class GoogleMyBusinessSelectLocation extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/google-my-business/new/${ this.props.siteSlug }` );
+		page.back(`/google-my-business/new/${this.props.siteSlug}`);
 	};
 
 	handleLocationSelected = () => {
-		page.redirect( `/google-my-business/stats/${ this.props.siteSlug }` );
+		page.redirect(`/google-my-business/stats/${this.props.siteSlug}`);
 	};
 
 	trackAddYourBusinessClick = () => {
@@ -63,14 +63,14 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = (keyringConnection) => {
 		const { siteId } = this.props;
 
-		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
+		this.props.connectGoogleMyBusinessAccount(siteId, keyringConnection.ID).then(() => {
 			this.props.recordTracksEventWithLocationCounts(
 				'calypso_google_my_business_select_location_connect'
 			);
-		} );
+		});
 	};
 
 	trackUseAnotherGoogleAccountClick = () => {
@@ -80,7 +80,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 	};
 
 	componentDidMount() {
-		this.props.requestKeyringConnections( true );
+		this.props.requestKeyringConnections(true);
 	}
 
 	render() {
@@ -93,48 +93,46 @@ class GoogleMyBusinessSelectLocation extends Component {
 					title="Google My Business > Select Location"
 				/>
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={translate('Google My Business')} />
 
 				<QueryKeyringServices />
-				<QuerySiteKeyrings siteId={ siteId } />
+				<QuerySiteKeyrings siteId={siteId} />
 				<QueryKeyringConnections />
 
-				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+				<HeaderCake isCompact={false} alwaysShowActionText={false} onClick={this.goBack}>
+					{translate('Google My Business')}
 				</HeaderCake>
 
-				<CompactCard>
-					{ translate( 'Select the listing you would like to connect to:' ) }
-				</CompactCard>
+				<CompactCard>{translate('Select the listing you would like to connect to:')}</CompactCard>
 
-				{ locations.map( location => (
-					<GoogleMyBusinessLocation key={ location.ID } location={ location } isCompact>
+				{locations.map((location) => (
+					<GoogleMyBusinessLocation key={location.ID} location={location} isCompact>
 						<GoogleMyBusinessSelectLocationButton
-							location={ location }
-							onSelected={ this.handleLocationSelected }
+							location={location}
+							onSelected={this.handleLocationSelected}
 						/>
 					</GoogleMyBusinessLocation>
-				) ) }
+				))}
 
 				<Card className="gmb-select-location__help">
-					<p>{ translate( "Don't see the listing you are trying to connect?" ) }</p>
+					<p>{translate("Don't see the listing you are trying to connect?")}</p>
 
 					<div className="gmb-select-location__help-actions">
 						<Button
-							href={ 'https://business.google.com/create' }
+							href={'https://business.google.com/create'}
 							target="_blank"
-							onClick={ this.trackAddYourBusinessClick }
+							onClick={this.trackAddYourBusinessClick}
 						>
-							{ translate( 'Add your Business' ) } <Gridicon icon="external" />
+							{translate('Add your Business')} <Gridicon icon="external" />
 						</Button>
 
 						<KeyringConnectButton
 							serviceId="google_my_business"
-							forceReconnect={ true }
-							onClick={ this.trackUseAnotherGoogleAccountClick }
-							onConnect={ this.handleConnect }
+							forceReconnect={true}
+							onClick={this.trackUseAnotherGoogleAccountClick}
+							onConnect={this.handleConnect}
 						>
-							{ translate( 'Use another Google Account' ) }
+							{translate('Use another Google Account')}
 						</KeyringConnectButton>
 					</div>
 				</Card>
@@ -144,24 +142,24 @@ class GoogleMyBusinessSelectLocation extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const locations = getGoogleMyBusinessLocations( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const locations = getGoogleMyBusinessLocations(state, siteId);
 
 		return {
 			locations,
 			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
+			siteSlug: getSelectedSiteSlug(state),
 		};
 	},
 	{
 		connectGoogleMyBusinessLocation,
 		connectGoogleMyBusinessAccount,
-		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+		recordTracksEvent: withEnhancers(recordTracksEvent, enhanceWithSiteType),
+		recordTracksEventWithLocationCounts: withEnhancers(recordTracksEvent, [
 			enhanceWithLocationCounts,
 			enhanceWithSiteType,
-		] ),
+		]),
 		requestKeyringConnections,
 	}
-)( localize( GoogleMyBusinessSelectLocation ) );
+)(localize(GoogleMyBusinessSelectLocation));

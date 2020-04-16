@@ -49,19 +49,19 @@ import {
 	MIN_IMAGE_HEIGHT,
 } from './sizes';
 
-function getCharacterCount( post ) {
-	if ( ! post || ! post.content_no_html ) {
+function getCharacterCount(post) {
+	if (!post || !post.content_no_html) {
 		return 0;
 	}
 
 	return post.content_no_html.length;
 }
 
-export function imageIsBigEnoughForGallery( image ) {
+export function imageIsBigEnoughForGallery(image) {
 	return image.width >= GALLERY_MIN_IMAGE_WIDTH && image.height >= MIN_IMAGE_HEIGHT;
 }
 
-const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
+const hasShortContent = (post) => getCharacterCount(post) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
 
 /**
  * Attempt to classify the post into a display type
@@ -69,26 +69,26 @@ const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHAR
  * @param  {object}   post     A post to classify
  * @returns {object}            The classified post
  */
-export function classifyPost( post ) {
-	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
+export function classifyPost(post) {
+	const imagesForGallery = filter(post.content_images, imageIsBigEnoughForGallery);
 	let displayType = DISPLAY_TYPES.UNCLASSIFIED;
 
-	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
+	if (imagesForGallery.length >= GALLERY_MIN_IMAGES) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
 	} else if (
 		post.canonical_media &&
 		post.canonical_media.mediaType === 'image' &&
 		post.canonical_media.width >= PHOTO_ONLY_MIN_WIDTH &&
-		hasShortContent( post )
+		hasShortContent(post)
 	) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
-	if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
+	if (post.canonical_media && post.canonical_media.mediaType === 'video') {
 		displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
 	}
 
-	if ( post.tags && post.tags[ 'p2-xpost' ] ) {
+	if (post.tags && post.tags['p2-xpost']) {
 		displayType ^= DISPLAY_TYPES.X_POST;
 	}
 
@@ -97,15 +97,15 @@ export function classifyPost( post ) {
 	return post;
 }
 
-const fastPostNormalizationRules = flow( [
+const fastPostNormalizationRules = flow([
 	decodeEntities,
 	stripHtml,
 	preventWidows,
 	makeSiteIdSafeForApi,
 	pickPrimaryTag,
-	safeImageProperties( READER_CONTENT_WIDTH ),
+	safeImageProperties(READER_CONTENT_WIDTH),
 	makeLinksSafe,
-	withContentDom( [
+	withContentDom([
 		removeStyles,
 		removeElementsBySelector,
 		makeImagesSafe(),
@@ -117,31 +117,31 @@ const fastPostNormalizationRules = flow( [
 		detectPolls,
 		detectSurveys,
 		linkJetpackCarousels,
-	] ),
+	]),
 	createBetterExcerpt,
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
 	addDiscoverProperties,
-] );
+]);
 
-export function runFastRules( post ) {
-	if ( ! post ) {
+export function runFastRules(post) {
+	if (!post) {
 		return post;
 	}
-	post = Object.assign( {}, post );
-	fastPostNormalizationRules( post );
+	post = Object.assign({}, post);
+	fastPostNormalizationRules(post);
 	return post;
 }
 
-const slowSyncRules = flow( [
-	keepValidImages( MIN_IMAGE_WIDTH, MIN_IMAGE_HEIGHT ),
+const slowSyncRules = flow([
+	keepValidImages(MIN_IMAGE_WIDTH, MIN_IMAGE_HEIGHT),
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
-] );
+]);
 
-export function runSlowRules( post ) {
-	post = Object.assign( {}, post );
-	return waitForImagesToLoad( post ).then( slowSyncRules );
+export function runSlowRules(post) {
+	post = Object.assign({}, post);
+	return waitForImagesToLoad(post).then(slowSyncRules);
 }

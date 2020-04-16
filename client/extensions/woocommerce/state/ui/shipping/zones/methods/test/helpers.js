@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import { mergeMethodEdits } from '../helpers';
 
-describe( 'mergeMethodEdits', () => {
-	test( 'should return the current edits when there are no saved edits', () => {
+describe('mergeMethodEdits', () => {
+	test('should return the current edits when there are no saved edits', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],
@@ -19,24 +19,22 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 		const currentMethodEdits = {
-			creates: [ { id: { index: 0 } } ],
-			updates: [ { id: 1, title: 'Wololo' } ],
-			deletes: [ { id: 2 } ],
+			creates: [{ id: { index: 0 } }],
+			updates: [{ id: 1, title: 'Wololo' }],
+			deletes: [{ id: 2 }],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
-			currentMethodEdits
-		);
-	} );
+		expect(mergeMethodEdits(zoneMethodEdits, currentMethodEdits)).to.deep.equal(currentMethodEdits);
+	});
 
-	test( 'should return the saved edits when there are no current edits', () => {
+	test('should return the saved edits when there are no current edits', () => {
 		const zoneMethodEdits = {
-			creates: [ { id: { index: 0 } } ],
-			updates: [ { id: 1, title: 'Wololo' } ],
-			deletes: [ { id: 2 } ],
+			creates: [{ id: { index: 0 } }],
+			updates: [{ id: 1, title: 'Wololo' }],
+			deletes: [{ id: 2 }],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
@@ -50,74 +48,72 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
-			zoneMethodEdits
-		);
-	} );
+		expect(mergeMethodEdits(zoneMethodEdits, currentMethodEdits)).to.deep.equal(zoneMethodEdits);
+	});
 
-	test( 'should return the union of all the edits', () => {
+	test('should return the union of all the edits', () => {
 		const zoneMethodEdits = {
-			creates: [ { id: { index: 0 } } ],
-			updates: [ { id: 1, title: 'Wololo' } ],
-			deletes: [ { id: 2 } ],
+			creates: [{ id: { index: 0 } }],
+			updates: [{ id: 1, title: 'Wololo' }],
+			deletes: [{ id: 2 }],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
 		};
 		const currentMethodEdits = {
-			creates: [ { id: { index: 1 } } ],
-			updates: [ { id: 3, title: 'Wololo' } ],
-			deletes: [ { id: 4 } ],
+			creates: [{ id: { index: 1 } }],
+			updates: [{ id: 3, title: 'Wololo' }],
+			deletes: [{ id: 4 }],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( {
-			creates: [ { id: { index: 0 } }, { id: { index: 1 } } ],
+		expect(mergeMethodEdits(zoneMethodEdits, currentMethodEdits)).to.deep.equal({
+			creates: [{ id: { index: 0 } }, { id: { index: 1 } }],
 			updates: [
 				{ id: 1, title: 'Wololo' },
 				{ id: 3, title: 'Wololo' },
 			],
-			deletes: [ { id: 2 }, { id: 4 } ],
+			deletes: [{ id: 2 }, { id: 4 }],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
-		} );
-	} );
+		});
+	});
 
-	test( 'should merge edits for the same shipping zone method', () => {
+	test('should merge edits for the same shipping zone method', () => {
 		const zoneMethodEdits = {
-			creates: [ { id: { index: 0 }, key: 'value', title: 'Wololo' } ],
-			updates: [ { id: 1, key: 'value', title: 'Wololo' } ],
+			creates: [{ id: { index: 0 }, key: 'value', title: 'Wololo' }],
+			updates: [{ id: 1, key: 'value', title: 'Wololo' }],
 			deletes: [],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
 		};
 		const currentMethodEdits = {
-			creates: [ { id: { index: 0 }, title: 'NewCreateTitle' } ],
-			updates: [ { id: 1, title: 'NewUpdateTitle' } ],
+			creates: [{ id: { index: 0 }, title: 'NewCreateTitle' }],
+			updates: [{ id: 1, title: 'NewUpdateTitle' }],
 			deletes: [],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( {
-			creates: [ { id: { index: 0 }, key: 'value', title: 'NewCreateTitle' } ],
-			updates: [ { id: 1, key: 'value', title: 'NewUpdateTitle' } ],
+		expect(mergeMethodEdits(zoneMethodEdits, currentMethodEdits)).to.deep.equal({
+			creates: [{ id: { index: 0 }, key: 'value', title: 'NewCreateTitle' }],
+			updates: [{ id: 1, key: 'value', title: 'NewUpdateTitle' }],
 			deletes: [],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
-		} );
-	} );
+		});
+	});
 
-	test( 'should remove previous updates or creates for a method that has been deleted', () => {
+	test('should remove previous updates or creates for a method that has been deleted', () => {
 		const zoneMethodEdits = {
-			creates: [ { id: { index: 0 }, title: 'Wololo' } ],
-			updates: [ { id: 1, title: 'Wololo' } ],
+			creates: [{ id: { index: 0 }, title: 'Wololo' }],
+			updates: [{ id: 1, title: 'Wololo' }],
 			deletes: [],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
@@ -126,23 +122,23 @@ describe( 'mergeMethodEdits', () => {
 		const currentMethodEdits = {
 			creates: [],
 			updates: [],
-			deletes: [ { id: { index: 0 } }, { id: 1 } ],
+			deletes: [{ id: { index: 0 } }, { id: 1 }],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( {
+		expect(mergeMethodEdits(zoneMethodEdits, currentMethodEdits)).to.deep.equal({
 			creates: [],
 			updates: [],
-			deletes: [ { id: 1 } ],
+			deletes: [{ id: 1 }],
 			currentlyEditingId: null,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
-		} );
-	} );
+		});
+	});
 
-	test( 'should preserve the open method id', () => {
+	test('should preserve the open method id', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],
@@ -152,20 +148,18 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 		const currentMethodEdits = {
-			creates: [ { id: { index: 0 } } ],
-			updates: [ { id: 1, title: 'Wololo' } ],
-			deletes: [ { id: 2 } ],
+			creates: [{ id: { index: 0 } }],
+			updates: [{ id: 1, title: 'Wololo' }],
+			deletes: [{ id: 2 }],
 			currentlyEditingId: 7,
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
-			currentMethodEdits
-		);
-	} );
+		expect(mergeMethodEdits(zoneMethodEdits, currentMethodEdits)).to.deep.equal(currentMethodEdits);
+	});
 
-	test( 'should preserve the isNew state', () => {
+	test('should preserve the isNew state', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],
@@ -175,20 +169,18 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 		const currentMethodEdits = {
-			creates: [ { id: { index: 0 } } ],
-			updates: [ { id: 1, title: 'Wololo' } ],
-			deletes: [ { id: 2 } ],
+			creates: [{ id: { index: 0 } }],
+			updates: [{ id: 1, title: 'Wololo' }],
+			deletes: [{ id: 2 }],
 			currentlyEditingId: { index: 1 },
 			currentlyEditingNew: true,
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
-			currentMethodEdits
-		);
-	} );
+		expect(mergeMethodEdits(zoneMethodEdits, currentMethodEdits)).to.deep.equal(currentMethodEdits);
+	});
 
-	test( 'should preserve the changed type state', () => {
+	test('should preserve the changed type state', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],
@@ -198,16 +190,14 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 		const currentMethodEdits = {
-			creates: [ { id: { index: 0 } } ],
-			updates: [ { id: 1, title: 'Wololo' } ],
-			deletes: [ { id: 2 } ],
+			creates: [{ id: { index: 0 } }],
+			updates: [{ id: 1, title: 'Wololo' }],
+			deletes: [{ id: 2 }],
 			currentlyEditingId: { index: 0 },
 			currentlyEditingNew: false,
 			currentlyEditingChangedType: true,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
-			currentMethodEdits
-		);
-	} );
-} );
+		expect(mergeMethodEdits(zoneMethodEdits, currentMethodEdits)).to.deep.equal(currentMethodEdits);
+	});
+});

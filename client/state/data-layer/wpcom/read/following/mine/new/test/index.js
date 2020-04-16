@@ -11,12 +11,12 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
 
-describe( 'requestFollow', () => {
-	test( 'should dispatch a http request', () => {
-		const action = follow( 'http://example.com' );
-		const result = requestFollow( action );
+describe('requestFollow', () => {
+	test('should dispatch a http request', () => {
+		const action = follow('http://example.com');
+		const result = requestFollow(action);
 
-		expect( result ).toEqual(
+		expect(result).toEqual(
 			http(
 				{
 					method: 'POST',
@@ -30,12 +30,12 @@ describe( 'requestFollow', () => {
 				action
 			)
 		);
-	} );
-} );
+	});
+});
 
-describe( 'receiveFollow', () => {
-	test( 'should dispatch updateFollow with new subscription info', () => {
-		const action = follow( 'http://example.com' );
+describe('receiveFollow', () => {
+	test('should dispatch updateFollow with new subscription info', () => {
+		const action = follow('http://example.com');
 		const response = {
 			subscribed: true,
 			subscription: {
@@ -48,10 +48,10 @@ describe( 'receiveFollow', () => {
 				is_owner: false,
 			},
 		};
-		const result = receiveFollow( action, response );
-		expect( result ).toEqual(
+		const result = receiveFollow(action, response);
+		expect(result).toEqual(
 			bypassDataLayer(
-				follow( 'http://example.com', {
+				follow('http://example.com', {
 					ID: 1,
 					URL: 'http://example.com',
 					feed_URL: 'http://example.com',
@@ -60,34 +60,34 @@ describe( 'receiveFollow', () => {
 					date_subscribed: 211636800000,
 					delivery_methods: {},
 					is_owner: false,
-				} )
+				})
 			)
 		);
-	} );
+	});
 
-	test( 'should dispatch an error notice when subscribed is false', () => {
-		const action = follow( 'http://example.com' );
+	test('should dispatch an error notice when subscribed is false', () => {
+		const action = follow('http://example.com');
 		const response = {
 			subscribed: false,
 		};
 
-		const result = receiveFollow( action, response );
-		expect( result[ 0 ] ).toMatchObject( {
+		const result = receiveFollow(action, response);
+		expect(result[0]).toMatchObject({
 			type: NOTICE_CREATE,
 			notice: {
 				status: 'is-error',
 			},
-		} );
-		expect( result[ 1 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
-	} );
-} );
+		});
+		expect(result[1]).toEqual(bypassDataLayer(unfollow('http://example.com')));
+	});
+});
 
-describe( 'followError', () => {
-	test( 'should dispatch an error notice', () => {
-		const action = follow( 'http://example.com' );
+describe('followError', () => {
+	test('should dispatch an error notice', () => {
+		const action = follow('http://example.com');
 
-		const result = followError( action );
-		expect( result[ 0 ] ).toMatchObject( { type: NOTICE_CREATE } );
-		expect( result[ 1 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
-	} );
-} );
+		const result = followError(action);
+		expect(result[0]).toMatchObject({ type: NOTICE_CREATE });
+		expect(result[1]).toEqual(bypassDataLayer(unfollow('http://example.com')));
+	});
+});

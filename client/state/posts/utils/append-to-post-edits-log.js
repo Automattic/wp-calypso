@@ -18,18 +18,18 @@ import { mergePostEdits } from 'state/posts/utils/merge-post-edits';
  * @param {object} newPostEdits New edits to be appended to the log
  * @returns {Array<object>} Merged edits log
  */
-export function appendToPostEditsLog( postEditsLog, newPostEdits ) {
-	if ( isEmpty( postEditsLog ) ) {
-		return [ newPostEdits ];
+export function appendToPostEditsLog(postEditsLog, newPostEdits) {
+	if (isEmpty(postEditsLog)) {
+		return [newPostEdits];
 	}
 
-	const lastEdits = last( postEditsLog );
+	const lastEdits = last(postEditsLog);
 
-	if ( isString( lastEdits ) ) {
-		return [ ...postEditsLog, newPostEdits ];
+	if (isString(lastEdits)) {
+		return [...postEditsLog, newPostEdits];
 	}
 
-	const newEditsLog = initial( postEditsLog );
-	newEditsLog.push( mergePostEdits( lastEdits, newPostEdits ) );
+	const newEditsLog = initial(postEditsLog);
+	newEditsLog.push(mergePostEdits(lastEdits, newPostEdits));
 	return newEditsLog;
 }

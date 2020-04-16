@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import getJetpackModule from 'state/selectors/get-jetpack-module';
 import { moduleData as MODULE_DATA_FIXTURE } from './fixtures/jetpack-modules';
 
-describe( 'getJetpackModule()', () => {
-	test( 'should return data for a specified module for a known site', () => {
+describe('getJetpackModule()', () => {
+	test('should return data for a specified module for a known site', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -21,11 +21,11 @@ describe( 'getJetpackModule()', () => {
 				},
 			},
 			siteId = 123456;
-		const output = getJetpackModule( stateIn, siteId, 'module-a' );
-		expect( output ).to.eql( MODULE_DATA_FIXTURE[ 'module-a' ] );
-	} );
+		const output = getJetpackModule(stateIn, siteId, 'module-a');
+		expect(output).to.eql(MODULE_DATA_FIXTURE['module-a']);
+	});
 
-	test( 'should return null for an unknown site', () => {
+	test('should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -36,11 +36,11 @@ describe( 'getJetpackModule()', () => {
 				},
 			},
 			siteId = 123456;
-		const output = getJetpackModule( stateIn, siteId, 'module-a' );
-		expect( output ).to.be.null;
-	} );
+		const output = getJetpackModule(stateIn, siteId, 'module-a');
+		expect(output).to.be.null;
+	});
 
-	test( 'should return null for an unknown module', () => {
+	test('should return null for an unknown module', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -51,7 +51,7 @@ describe( 'getJetpackModule()', () => {
 				},
 			},
 			siteId = 123456;
-		const output = getJetpackModule( stateIn, siteId, 'module-z' );
-		expect( output ).to.be.null;
-	} );
-} );
+		const output = getJetpackModule(stateIn, siteId, 'module-z');
+		expect(output).to.be.null;
+	});
+});

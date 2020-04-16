@@ -19,23 +19,23 @@ class QueryFeedSearch extends Component {
 	static propTypes = {
 		query: PropTypes.string,
 		excludeFollowed: PropTypes.bool,
-		sort: PropTypes.oneOf( [ SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE ] ),
+		sort: PropTypes.oneOf([SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE]),
 	};
 
 	UNSAFE_componentWillMount() {
-		this.props.requestFeedSearch( {
+		this.props.requestFeedSearch({
 			query: this.props.query,
 			excludeFollowed: this.props.excludeFollowed,
 			sort: this.props.sort,
-		} );
+		});
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		nextProps.requestFeedSearch( {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		nextProps.requestFeedSearch({
 			query: nextProps.query,
 			excludeFollowed: nextProps.excludeFollowed,
 			sort: nextProps.sort,
-		} );
+		});
 	}
 
 	render() {
@@ -43,4 +43,4 @@ class QueryFeedSearch extends Component {
 	}
 }
 
-export default connect( null, { requestFeedSearch } )( QueryFeedSearch );
+export default connect(null, { requestFeedSearch })(QueryFeedSearch);

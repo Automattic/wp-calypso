@@ -21,7 +21,7 @@ import sendRequest from './lib/util/send-request';
 /**
  * Local module constants
  */
-const debug = debugModule( 'wpcom' );
+const debug = debugModule('wpcom');
 const DEFAULT_ASYNC_TIMEOUT = 30000;
 
 /**
@@ -36,34 +36,34 @@ const DEFAULT_ASYNC_TIMEOUT = 30000;
  * @param {Function} [reqHandler] - function Request Handler
  * @returns {WPCOM} wpcom instance
  */
-export default function WPCOM( token, reqHandler ) {
-	if ( ! ( this instanceof WPCOM ) ) {
-		return new WPCOM( token, reqHandler );
+export default function WPCOM(token, reqHandler) {
+	if (!(this instanceof WPCOM)) {
+		return new WPCOM(token, reqHandler);
 	}
 
 	// `token` is optional
-	if ( 'function' === typeof token ) {
+	if ('function' === typeof token) {
 		reqHandler = token;
 		token = null;
 	}
 
-	if ( token ) {
-		debug( 'Token defined: %s…', token.substring( 0, 6 ) );
+	if (token) {
+		debug('Token defined: %s…', token.substring(0, 6));
 		this.token = token;
 	}
 
-	const noHandler = ( params, fn ) => {
-		debug( 'No request handler. Failing.' );
-		fn( new Error( 'No request handler provided' ) );
+	const noHandler = (params, fn) => {
+		debug('No request handler. Failing.');
+		fn(new Error('No request handler provided'));
 	};
 
 	this.request = reqHandler || noHandler;
 
 	// Add Req instance
-	this.req = new Request( this );
+	this.req = new Request(this);
 
 	// Add Pinghub instance
-	this.pinghub = new Pinghub( this );
+	this.pinghub = new Pinghub(this);
 
 	// Default api version;
 	this.apiVersion = '1.1';
@@ -74,8 +74,8 @@ export default function WPCOM( token, reqHandler ) {
  *
  * @returns {Marketing} Marketing instance
  */
-WPCOM.prototype.marketing = function() {
-	return new Marketing( this );
+WPCOM.prototype.marketing = function () {
+	return new Marketing(this);
 };
 
 /**
@@ -83,8 +83,8 @@ WPCOM.prototype.marketing = function() {
  *
  * @returns {Me} Me instance
  */
-WPCOM.prototype.me = function() {
-	return new Me( this );
+WPCOM.prototype.me = function () {
+	return new Me(this);
 };
 
 /**
@@ -92,8 +92,8 @@ WPCOM.prototype.me = function() {
  *
  * @returns {Domains} Domains instance
  */
-WPCOM.prototype.domains = function() {
-	return new Domains( this );
+WPCOM.prototype.domains = function () {
+	return new Domains(this);
 };
 
 /**
@@ -102,8 +102,8 @@ WPCOM.prototype.domains = function() {
  * @param {string} domainId - domain identifier
  * @returns {Domain} Domain instance
  */
-WPCOM.prototype.domain = function( domainId ) {
-	return new Domain( domainId, this );
+WPCOM.prototype.domain = function (domainId) {
+	return new Domain(domainId, this);
 };
 
 /**
@@ -112,8 +112,8 @@ WPCOM.prototype.domain = function( domainId ) {
  * @param {string} id - site identifier
  * @returns {Site} Site instance
  */
-WPCOM.prototype.site = function( id ) {
-	return new Site( id, this );
+WPCOM.prototype.site = function (id) {
+	return new Site(id, this);
 };
 
 /**
@@ -121,8 +121,8 @@ WPCOM.prototype.site = function( id ) {
  *
  * @returns {Users} Users instance
  */
-WPCOM.prototype.users = function() {
-	return new Users( this );
+WPCOM.prototype.users = function () {
+	return new Users(this);
 };
 
 /**
@@ -130,8 +130,8 @@ WPCOM.prototype.users = function() {
  *
  * @returns {Plans} Plans instance
  */
-WPCOM.prototype.plans = function() {
-	return new Plans( this );
+WPCOM.prototype.plans = function () {
+	return new Plans(this);
 };
 
 /**
@@ -139,8 +139,8 @@ WPCOM.prototype.plans = function() {
  *
  * @returns {Batch} Batch instance
  */
-WPCOM.prototype.batch = function() {
-	return new Batch( this );
+WPCOM.prototype.batch = function () {
+	return new Batch(this);
 };
 
 /**
@@ -150,24 +150,24 @@ WPCOM.prototype.batch = function() {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-WPCOM.prototype.freshlyPressed = function( query, fn ) {
-	return this.req.get( '/freshly-pressed', query, fn );
+WPCOM.prototype.freshlyPressed = function (query, fn) {
+	return this.req.get('/freshly-pressed', query, fn);
 };
 
 // Expose send-request
 // TODO: use `this.req` instead of this method
-WPCOM.prototype.sendRequest = function( params, query, body, fn ) {
+WPCOM.prototype.sendRequest = function (params, query, body, fn) {
 	const msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
 
 	/* eslint-disable no-console */
-	if ( console && console.warn ) {
-		console.warn( msg );
+	if (console && console.warn) {
+		console.warn(msg);
 	} else {
-		console.log( msg );
+		console.log(msg);
 	}
 	/* eslint-enable no-console */
 
-	return sendRequest.call( this, params, query, body, fn );
+	return sendRequest.call(this, params, query, body, fn);
 };
 
 /**
@@ -184,7 +184,7 @@ WPCOM.Request = Request;
 WPCOM.Site = Site;
 WPCOM.Users = Users;
 
-if ( ! Promise.prototype.timeout ) {
+if (!Promise.prototype.timeout) {
 	/**
 	 * Returns a new promise with a deadline
 	 *
@@ -195,20 +195,20 @@ if ( ! Promise.prototype.timeout ) {
 	 * @param {number} delay how many ms to wait
 	 * @returns {Promise} promise
 	 */
-	Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
+	Promise.prototype.timeout = function (delay = DEFAULT_ASYNC_TIMEOUT) {
 		let timer;
 
-		const timeout = new Promise( ( resolve, reject ) => {
-			timer = setTimeout( () => {
-				reject( new Error( 'Action timed out while waiting for response.' ) );
-			}, delay );
-		} );
+		const timeout = new Promise((resolve, reject) => {
+			timer = setTimeout(() => {
+				reject(new Error('Action timed out while waiting for response.'));
+			}, delay);
+		});
 
 		const cancelTimeout = () => {
-			clearTimeout( timer );
+			clearTimeout(timer);
 			return this;
 		};
 
-		return Promise.race( [ this.then( cancelTimeout ).catch( cancelTimeout ), timeout ] );
+		return Promise.race([this.then(cancelTimeout).catch(cancelTimeout), timeout]);
 	};
 }

@@ -17,8 +17,8 @@ import './style.scss';
 
 class NotificationSettingsForm extends Component {
 	static propTypes = {
-		sourceId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		sourceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+		settingKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
 		settings: PropTypes.object,
 		isApplyAllVisible: PropTypes.bool,
 		hasUnsavedChanges: PropTypes.bool.isRequired,
@@ -31,18 +31,18 @@ class NotificationSettingsForm extends Component {
 		return (
 			<div>
 				<Settings
-					blogId={ this.props.sourceId }
-					settingKeys={ this.props.settingKeys }
-					settings={ this.props.settings }
-					onToggle={ this.props.onToggle }
+					blogId={this.props.sourceId}
+					settingKeys={this.props.settingKeys}
+					settings={this.props.settings}
+					onToggle={this.props.onToggle}
 				/>
 				<Actions
-					sourceId={ this.props.sourceId }
-					settings={ this.props.settings }
-					isApplyAllVisible={ this.props.isApplyAllVisible }
-					disabled={ ! this.props.hasUnsavedChanges }
-					onSave={ this.props.onSave }
-					onSaveToAll={ this.props.onSaveToAll }
+					sourceId={this.props.sourceId}
+					settings={this.props.settings}
+					isApplyAllVisible={this.props.isApplyAllVisible}
+					disabled={!this.props.hasUnsavedChanges}
+					onSave={this.props.onSave}
+					onSaveToAll={this.props.onSaveToAll}
 				/>
 			</div>
 		);

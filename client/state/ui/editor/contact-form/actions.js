@@ -17,7 +17,7 @@ export function formClear() {
 	};
 }
 
-export function formLoad( contactForm ) {
+export function formLoad(contactForm) {
 	return {
 		type: EDITOR_CONTACT_FORM_LOAD,
 		contactForm,
@@ -28,14 +28,14 @@ export function fieldAdd() {
 	return { type: EDITOR_CONTACT_FORM_FIELD_ADD };
 }
 
-export function fieldRemove( index ) {
+export function fieldRemove(index) {
 	return {
 		type: EDITOR_CONTACT_FORM_FIELD_REMOVE,
 		index,
 	};
 }
 
-export function fieldUpdate( index, field ) {
+export function fieldUpdate(index, field) {
 	return {
 		type: EDITOR_CONTACT_FORM_FIELD_UPDATE,
 		index,
@@ -43,7 +43,7 @@ export function fieldUpdate( index, field ) {
 	};
 }
 
-export function settingsUpdate( settings ) {
+export function settingsUpdate(settings) {
 	return {
 		type: EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
 		settings,

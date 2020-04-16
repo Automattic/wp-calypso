@@ -29,29 +29,29 @@ class CreateOrderNote extends Component {
 		type: 'internal',
 	};
 
-	setNote = event => {
-		this.setState( {
+	setNote = (event) => {
+		this.setState({
 			note: event.target.value,
-		} );
+		});
 	};
 
-	setType = event => {
-		this.setState( {
+	setType = (event) => {
+		this.setState({
 			type: event.target.value,
-		} );
+		});
 	};
 
 	saveNote = () => {
 		const { orderId, siteId } = this.props;
-		if ( ! this.state.note ) {
+		if (!this.state.note) {
 			return;
 		}
 		const note = {
 			note: this.state.note,
 			customer_note: 'email' === this.state.type,
 		};
-		this.props.createNote( siteId, orderId, note );
-		this.setState( { note: '' } );
+		this.props.createNote(siteId, orderId, note);
+		this.setState({ note: '' });
 	};
 
 	render() {
@@ -61,22 +61,22 @@ class CreateOrderNote extends Component {
 			<div className="order-activity-log__new-note">
 				<FormFieldSet className="order-activity-log__new-note-content">
 					<ScreenReaderText>
-						<FormLabel htmlFor="note">{ translate( 'Add a note' ) }</FormLabel>
+						<FormLabel htmlFor="note">{translate('Add a note')}</FormLabel>
 					</ScreenReaderText>
 					<FormTextarea
 						id="note"
-						value={ this.state.note }
-						onChange={ this.setNote }
-						placeholder={ translate( 'Add a note' ) }
+						value={this.state.note}
+						onChange={this.setNote}
+						placeholder={translate('Add a note')}
 					/>
 				</FormFieldSet>
 				<div className="order-activity-log__new-note-type">
-					<FormSelect onChange={ this.setType } value={ this.state.type }>
-						<option value={ 'internal' }>{ translate( 'Private note' ) }</option>
-						<option value={ 'email' }>{ translate( 'Send to customer' ) }</option>
+					<FormSelect onChange={this.setType} value={this.state.type}>
+						<option value={'internal'}>{translate('Private note')}</option>
+						<option value={'email'}>{translate('Send to customer')}</option>
 					</FormSelect>
-					<Button primary onClick={ this.saveNote } busy={ isNoteSaving } disabled={ isNoteSaving }>
-						{ translate( 'Add note' ) }
+					<Button primary onClick={this.saveNote} busy={isNoteSaving} disabled={isNoteSaving}>
+						{translate('Add note')}
 					</Button>
 				</div>
 			</div>
@@ -85,8 +85,8 @@ class CreateOrderNote extends Component {
 }
 
 export default connect(
-	( state, props ) => ( {
-		isNoteSaving: isOrderNoteSaving( state, props.orderId ),
-	} ),
-	dispatch => bindActionCreators( { createNote }, dispatch )
-)( localize( CreateOrderNote ) );
+	(state, props) => ({
+		isNoteSaving: isOrderNoteSaving(state, props.orderId),
+	}),
+	(dispatch) => bindActionCreators({ createNote }, dispatch)
+)(localize(CreateOrderNote));

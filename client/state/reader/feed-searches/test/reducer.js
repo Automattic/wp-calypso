@@ -11,7 +11,7 @@ import { receiveFeedSearch } from '../actions';
 import { items } from '../reducer';
 
 const queryKey = 'macrumor-F-ASC';
-const feeds = freeze( [
+const feeds = freeze([
 	{
 		URL: 'http://www.macrumors.com/macrumors.xml',
 		feed_URL: 'http://www.macrumors.com/macrumors.xml',
@@ -28,35 +28,35 @@ const feeds = freeze( [
 		title: null,
 		railcar: {},
 	},
-] );
+]);
 
-describe( 'reducer', () => {
-	describe( '#items()', () => {
-		test( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
-		} );
+describe('reducer', () => {
+	describe('#items()', () => {
+		test('should default to an empty object', () => {
+			const state = items(undefined, {});
+			expect(state).to.eql({});
+		});
 
-		test( 'should add query results to an empty object', () => {
+		test('should add query results to an empty object', () => {
 			const prevState = {};
-			const action = receiveFeedSearch( queryKey, feeds );
-			const nextState = items( prevState, action );
+			const action = receiveFeedSearch(queryKey, feeds);
+			const nextState = items(prevState, action);
 
-			expect( nextState ).to.eql( {
-				[ queryKey ]: feeds,
-			} );
-		} );
+			expect(nextState).to.eql({
+				[queryKey]: feeds,
+			});
+		});
 
-		test( 'should add query results to an already populated object', () => {
+		test('should add query results to an already populated object', () => {
 			const prevState = {
-				chickens: [ { blogName: 'chickens R us' } ],
+				chickens: [{ blogName: 'chickens R us' }],
 			};
-			const action = receiveFeedSearch( queryKey, feeds );
-			const nextState = items( prevState, action );
-			expect( nextState ).to.eql( {
+			const action = receiveFeedSearch(queryKey, feeds);
+			const nextState = items(prevState, action);
+			expect(nextState).to.eql({
 				...prevState,
-				[ queryKey ]: feeds,
-			} );
-		} );
-	} );
-} );
+				[queryKey]: feeds,
+			});
+		});
+	});
+});

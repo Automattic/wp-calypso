@@ -15,15 +15,15 @@ import { requestSiteAlerts } from 'state/data-getters';
 
 const emptyList = [];
 
-export default WrappedComponent => {
+export default (WrappedComponent) => {
 	class ToUpdate extends Component {
 		static propTypes = {
 			siteId: PropTypes.number,
 
 			// Connected
-			plugins: PropTypes.arrayOf( PropTypes.object ),
-			themes: PropTypes.arrayOf( PropTypes.object ),
-			core: PropTypes.arrayOf( PropTypes.object ),
+			plugins: PropTypes.arrayOf(PropTypes.object),
+			themes: PropTypes.arrayOf(PropTypes.object),
+			core: PropTypes.arrayOf(PropTypes.object),
 		};
 
 		state = {
@@ -32,11 +32,11 @@ export default WrappedComponent => {
 			siteId: this.props.siteId,
 		};
 
-		static getDerivedStateFromProps( nextProps, prevState ) {
+		static getDerivedStateFromProps(nextProps, prevState) {
 			return {
 				plugins:
 					nextProps.siteId === prevState.siteId
-						? unionBy( nextProps.plugins, prevState.plugins, 'slug' )
+						? unionBy(nextProps.plugins, prevState.plugins, 'slug')
 						: emptyList,
 				siteId: nextProps.siteId,
 			};
@@ -45,25 +45,25 @@ export default WrappedComponent => {
 		render() {
 			return (
 				<WrappedComponent
-					{ ...this.props }
-					siteId={ this.props.siteId }
-					plugins={ this.state.plugins }
-					themes={ this.props.themes }
-					core={ this.props.core }
+					{...this.props}
+					siteId={this.props.siteId}
+					plugins={this.state.plugins}
+					themes={this.props.themes}
+					core={this.props.core}
 				/>
 			);
 		}
 	}
-	return connect( ( state, { siteId } ) => {
-		const alertsData = requestSiteAlerts( siteId );
+	return connect((state, { siteId }) => {
+		const alertsData = requestSiteAlerts(siteId);
 		let pluginsWithUpdates = null;
-		if ( ! isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
-			pluginsWithUpdates = getPluginsWithUpdates( state, [ siteId ] );
+		if (!isJetpackSiteSecondaryNetworkSite(state, siteId)) {
+			pluginsWithUpdates = getPluginsWithUpdates(state, [siteId]);
 		}
 		return {
 			plugins: pluginsWithUpdates,
-			themes: get( alertsData, 'data.updates.themes', emptyList ),
-			core: get( alertsData, 'data.updates.core', emptyList ),
+			themes: get(alertsData, 'data.updates.themes', emptyList),
+			core: get(alertsData, 'data.updates.core', emptyList),
 		};
-	} )( ToUpdate );
+	})(ToUpdate);
 };

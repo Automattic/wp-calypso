@@ -16,8 +16,8 @@ import { combineReducers, keyedReducer } from 'state/utils';
  * @param  {object} action Action payload
  * @returns {string}        Updated state
  */
-export const app = ( state = null, action ) => {
-	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_APP ) {
+export const app = (state = null, action) => {
+	if (action.type === BILLING_TRANSACTIONS_FILTER_SET_APP) {
 		return action.app;
 	}
 	return state;
@@ -30,8 +30,8 @@ export const app = ( state = null, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const date = ( state = { month: null, operator: null }, { type, month, operator } ) => {
-	if ( type === BILLING_TRANSACTIONS_FILTER_SET_MONTH ) {
+export const date = (state = { month: null, operator: null }, { type, month, operator }) => {
+	if (type === BILLING_TRANSACTIONS_FILTER_SET_MONTH) {
 		return {
 			month,
 			operator,
@@ -47,8 +47,8 @@ export const date = ( state = { month: null, operator: null }, { type, month, op
  * @param  {object} action Action payload
  * @returns {number}        Updated state
  */
-export const page = ( state = 1, action ) => {
-	switch ( action.type ) {
+export const page = (state = 1, action) => {
+	switch (action.type) {
 		case BILLING_TRANSACTIONS_FILTER_SET_PAGE:
 			return action.page;
 		case BILLING_TRANSACTIONS_FILTER_SET_APP:
@@ -67,8 +67,8 @@ export const page = ( state = 1, action ) => {
  * @param  {object} action Action payload
  * @returns {string}        Updated state
  */
-export const query = ( state = '', action ) => {
-	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_QUERY ) {
+export const query = (state = '', action) => {
+	if (action.type === BILLING_TRANSACTIONS_FILTER_SET_QUERY) {
 		return action.query;
 	}
 	return state;
@@ -76,10 +76,10 @@ export const query = ( state = '', action ) => {
 
 export default keyedReducer(
 	'transactionType',
-	combineReducers( {
+	combineReducers({
 		app,
 		date,
 		page,
 		query,
-	} )
+	})
 );

@@ -50,13 +50,13 @@ class StatsComments extends Component {
 		activeFilter: 'top-authors',
 	};
 
-	changeFilter = selection => {
+	changeFilter = (selection) => {
 		const filter = selection.value;
-		if ( filter === this.state.activeFilter ) {
+		if (filter === this.state.activeFilter) {
 			return;
 		}
 		let gaEvent;
-		switch ( filter ) {
+		switch (filter) {
 			case 'top-authors':
 				gaEvent = 'Clicked By Authors Comments Toggle';
 				break;
@@ -65,19 +65,19 @@ class StatsComments extends Component {
 				break;
 		}
 
-		if ( gaEvent ) {
-			this.props.recordGoogleEvent( 'Stats', gaEvent );
+		if (gaEvent) {
+			this.props.recordGoogleEvent('Stats', gaEvent);
 		}
 
-		this.setState( {
+		this.setState({
 			activeFilter: filter,
-		} );
+		});
 	};
 
 	renderCommentFollowers() {
 		const { commentFollowersTotal, siteSlug, translate, numberFormat } = this.props;
 
-		if ( ! siteSlug || ! commentFollowersTotal ) {
+		if (!siteSlug || !commentFollowersTotal) {
 			return null;
 		}
 
@@ -86,24 +86,24 @@ class StatsComments extends Component {
 		return (
 			<StatsModuleContent className="module-content-text-stat">
 				<p>
-					{ translate( 'Total posts with comment followers:' ) }{ ' ' }
-					<a href={ commentFollowURL }>{ numberFormat( commentFollowersTotal ) }</a>
+					{translate('Total posts with comment followers:')}{' '}
+					<a href={commentFollowURL}>{numberFormat(commentFollowersTotal)}</a>
 				</p>
 			</StatsModuleContent>
 		);
 	}
 
 	renderSummary() {
-		const data = get( this.props.commentsStatsData, 'authors' );
-		if ( ! data || ! data.monthly_comments ) {
+		const data = get(this.props.commentsStatsData, 'authors');
+		if (!data || !data.monthly_comments) {
 			return null;
 		}
 
 		return (
 			<StatsModuleContent>
 				<p>
-					{ this.props.translate( 'Average comments per month:' ) }{ ' ' }
-					{ this.props.numberFormat( data.monthly_comments ) }
+					{this.props.translate('Average comments per month:')}{' '}
+					{this.props.numberFormat(data.monthly_comments)}
 				</p>
 			</StatsModuleContent>
 		);
@@ -119,62 +119,62 @@ class StatsComments extends Component {
 			siteId,
 			translate,
 		} = this.props;
-		const commentsAuthors = get( commentsStatsData, 'authors' );
-		const commentsPosts = get( commentsStatsData, 'posts' );
-		const noData = ! commentsAuthors;
+		const commentsAuthors = get(commentsStatsData, 'authors');
+		const commentsPosts = get(commentsStatsData, 'posts');
+		const noData = !commentsAuthors;
 		const selectOptions = [
-			{ value: 'top-authors', label: translate( 'Comments By Authors' ) },
-			{ value: 'top-content', label: translate( 'Comments By Posts & Pages' ) },
+			{ value: 'top-authors', label: translate('Comments By Authors') },
+			{ value: 'top-content', label: translate('Comments By Posts & Pages') },
 		];
 
-		const classes = classNames( 'stats-module', {
-			'is-loading': ! commentsAuthors,
+		const classes = classNames('stats-module', {
+			'is-loading': !commentsAuthors,
 			'has-no-data': noData,
 			'is-showing-error': hasError || noData,
-		} );
+		});
 
 		return (
 			<div>
-				{ siteId && <QuerySiteStats statType="statsComments" siteId={ siteId } /> }
-				{ siteId && (
-					<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } />
-				) }
-				<SectionHeader label={ translate( 'Comments' ) } />
-				<Card className={ classes }>
+				{siteId && <QuerySiteStats statType="statsComments" siteId={siteId} />}
+				{siteId && (
+					<QuerySiteStats statType="statsCommentFollowers" siteId={siteId} query={{ max: 7 }} />
+				)}
+				<SectionHeader label={translate('Comments')} />
+				<Card className={classes}>
 					<div className="module-content">
-						{ noData && ! hasError && ! requestingCommentsStats && (
+						{noData && !hasError && !requestingCommentsStats && (
 							<StatsErrorPanel
 								className="is-empty-message"
-								message={ translate( 'No comments posted' ) }
+								message={translate('No comments posted')}
 							/>
-						) }
+						)}
 
-						<StatsModuleSelectDropdown options={ selectOptions } onSelect={ this.changeFilter } />
+						<StatsModuleSelectDropdown options={selectOptions} onSelect={this.changeFilter} />
 
-						{ this.renderCommentFollowers() }
+						{this.renderCommentFollowers()}
 
-						{ hasError ? <StatsErrorPanel className="network-error" /> : null }
+						{hasError ? <StatsErrorPanel className="network-error" /> : null}
 
 						<CommentTab
 							name="Top Commenters"
-							value={ translate( 'Comments' ) }
-							label={ translate( 'Author' ) }
-							data={ commentsAuthors }
-							followList={ followList }
-							isActive={ 'top-authors' === activeFilter }
+							value={translate('Comments')}
+							label={translate('Author')}
+							data={commentsAuthors}
+							followList={followList}
+							isActive={'top-authors' === activeFilter}
 						/>
 
 						<CommentTab
 							name="Most Commented"
-							value={ translate( 'Comments' ) }
-							label={ translate( 'Title' ) }
-							data={ commentsPosts }
-							followList={ followList }
-							isActive={ 'top-content' === activeFilter }
+							value={translate('Comments')}
+							label={translate('Title')}
+							data={commentsPosts}
+							followList={followList}
+							isActive={'top-content' === activeFilter}
 						/>
 
-						{ this.renderSummary() }
-						<StatsModulePlaceholder isLoading={ requestingCommentsStats && ! commentsAuthors } />
+						{this.renderSummary()}
+						<StatsModulePlaceholder isLoading={requestingCommentsStats && !commentsAuthors} />
 					</div>
 				</Card>
 			</div>
@@ -183,18 +183,18 @@ class StatsComments extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSiteSlug( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const siteSlug = getSiteSlug(state, siteId);
 
 		return {
 			commentFollowersTotal: get(
-				getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', { max: 7 } ),
+				getSiteStatsNormalizedData(state, siteId, 'statsCommentFollowers', { max: 7 }),
 				'total'
 			),
-			commentsStatsData: getSiteStatsNormalizedData( state, siteId, 'statsComments', {} ),
-			hasCommentsStatsQueryFailed: hasSiteStatsQueryFailed( state, siteId, 'statsComments', {} ),
-			requestingCommentsStats: isRequestingSiteStatsForQuery( state, siteId, 'statsComments', {} ),
+			commentsStatsData: getSiteStatsNormalizedData(state, siteId, 'statsComments', {}),
+			hasCommentsStatsQueryFailed: hasSiteStatsQueryFailed(state, siteId, 'statsComments', {}),
+			requestingCommentsStats: isRequestingSiteStatsForQuery(state, siteId, 'statsComments', {}),
 			siteId,
 			siteSlug,
 		};
@@ -202,4 +202,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsComments );
+export default flowRight(connectComponent, localize)(StatsComments);

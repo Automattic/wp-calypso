@@ -4,7 +4,7 @@
 
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:stats-data:local-list' );
+const debug = debugFactory('calypso:stats-data:local-list');
 import store from 'store';
 import { find } from 'lodash';
 
@@ -17,16 +17,16 @@ import { find } from 'lodash';
  *
  * @api public
  */
-function StatsDataLocalList( options ) {
-	if ( ! ( this instanceof StatsDataLocalList ) ) {
-		return new StatsDataLocalList( options );
+function StatsDataLocalList(options) {
+	if (!(this instanceof StatsDataLocalList)) {
+		return new StatsDataLocalList(options);
 	}
 
-	if ( 'string' !== typeof options.localStoreKey ) {
-		throw new TypeError( 'a options.localStoreKey must be passed in' );
+	if ('string' !== typeof options.localStoreKey) {
+		throw new TypeError('a options.localStoreKey must be passed in');
 	}
 
-	debug( 'creating new local list' );
+	debug('creating new local list');
 	this.localStoreKey = options.localStoreKey;
 	this.limit = options.limit || 10;
 	return this;
@@ -38,8 +38,8 @@ function StatsDataLocalList( options ) {
  * @returns [Array]
  * @api public
  */
-StatsDataLocalList.prototype.getData = function() {
-	const localStoreData = store.get( this.localStoreKey ) || [];
+StatsDataLocalList.prototype.getData = function () {
+	const localStoreData = store.get(this.localStoreKey) || [];
 	return localStoreData;
 };
 
@@ -49,8 +49,8 @@ StatsDataLocalList.prototype.getData = function() {
  * @returns true
  * @api public
  */
-StatsDataLocalList.prototype.clear = function() {
-	store.set( this.localStoreKey, [] );
+StatsDataLocalList.prototype.clear = function () {
+	store.set(this.localStoreKey, []);
 	return true;
 };
 
@@ -62,24 +62,24 @@ StatsDataLocalList.prototype.clear = function() {
  * @returns { Record } object
  * @api public
  */
-StatsDataLocalList.prototype.set = function( key, value ) {
+StatsDataLocalList.prototype.set = function (key, value) {
 	let record = { key: key, createdAt: new Date().getTime(), data: value },
 		localData = this.getData(),
 		newLocalData;
 
-	debug( 'storing data locally ' + key, value );
-	newLocalData = localData.filter( function( cachedRecord ) {
+	debug('storing data locally ' + key, value);
+	newLocalData = localData.filter(function (cachedRecord) {
 		return cachedRecord && cachedRecord.key !== key;
-	} );
+	});
 
-	newLocalData.push( record );
+	newLocalData.push(record);
 
 	// Limit the number of records
-	if ( newLocalData.length > this.limit ) {
-		newLocalData = newLocalData.slice( newLocalData.length - this.limit );
+	if (newLocalData.length > this.limit) {
+		newLocalData = newLocalData.slice(newLocalData.length - this.limit);
 	}
 
-	store.set( this.localStoreKey, newLocalData );
+	store.set(this.localStoreKey, newLocalData);
 	return record;
 };
 
@@ -90,8 +90,8 @@ StatsDataLocalList.prototype.set = function( key, value ) {
  * @returns { Record } object || false if not found
  * @api public
  */
-StatsDataLocalList.prototype.find = function( key ) {
-	return find( this.getData(), { key } ) || false;
+StatsDataLocalList.prototype.find = function (key) {
+	return find(this.getData(), { key }) || false;
 };
 
 /**

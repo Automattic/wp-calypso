@@ -3,7 +3,7 @@
  */
 import getWordadsSettings from 'state/selectors/get-wordads-settings';
 
-describe( 'getWordadsSettings()', () => {
+describe('getWordadsSettings()', () => {
 	const settings = {
 		paypal: 'support@wordpress.com',
 		addr1: '123 streetname street',
@@ -12,14 +12,14 @@ describe( 'getWordadsSettings()', () => {
 	const sitesState = {
 		sites: {
 			items: {
-				[ siteId ]: {
+				[siteId]: {
 					jetpack: false,
 				},
 			},
 		},
 	};
 
-	test( 'should return null for an unknown site', () => {
+	test('should return null for an unknown site', () => {
 		const state = {
 			wordads: {
 				settings: {
@@ -29,31 +29,31 @@ describe( 'getWordadsSettings()', () => {
 				},
 			},
 		};
-		const output = getWordadsSettings( state, siteId );
-		expect( output ).toBeNull();
-	} );
+		const output = getWordadsSettings(state, siteId);
+		expect(output).toBeNull();
+	});
 
-	test( 'should return all stored Wordads settings for a known site', () => {
+	test('should return all stored Wordads settings for a known site', () => {
 		const state = {
 			wordads: {
 				settings: {
 					items: {
-						[ siteId ]: settings,
+						[siteId]: settings,
 					},
 				},
 			},
 			...sitesState,
 		};
-		const output = getWordadsSettings( state, siteId );
-		expect( output ).toMatchObject( settings );
-	} );
+		const output = getWordadsSettings(state, siteId);
+		expect(output).toMatchObject(settings);
+	});
 
-	test( 'should return a truthy normalized us_checked field when us_resident is "yes"', () => {
+	test('should return a truthy normalized us_checked field when us_resident is "yes"', () => {
 		const state = {
 			wordads: {
 				settings: {
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							us_resident: 'yes',
 						},
 					},
@@ -61,16 +61,16 @@ describe( 'getWordadsSettings()', () => {
 			},
 			...sitesState,
 		};
-		const output = getWordadsSettings( state, siteId );
-		expect( output ).toHaveProperty( 'us_checked', true );
-	} );
+		const output = getWordadsSettings(state, siteId);
+		expect(output).toHaveProperty('us_checked', true);
+	});
 
-	test( 'should return a falsy normalized us_checked field when us_resident is "no"', () => {
+	test('should return a falsy normalized us_checked field when us_resident is "no"', () => {
 		const state = {
 			wordads: {
 				settings: {
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							us_resident: 'no',
 						},
 					},
@@ -78,16 +78,16 @@ describe( 'getWordadsSettings()', () => {
 			},
 			...sitesState,
 		};
-		const output = getWordadsSettings( state, siteId );
-		expect( output ).toHaveProperty( 'us_checked', false );
-	} );
+		const output = getWordadsSettings(state, siteId);
+		expect(output).toHaveProperty('us_checked', false);
+	});
 
-	test( 'should force "yes" for the show_to_logged_in field for a Jetpack site', () => {
+	test('should force "yes" for the show_to_logged_in field for a Jetpack site', () => {
 		const state = {
 			wordads: {
 				settings: {
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							show_to_logged_in: 'no',
 						},
 					},
@@ -95,13 +95,13 @@ describe( 'getWordadsSettings()', () => {
 			},
 			sites: {
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						jetpack: true,
 					},
 				},
 			},
 		};
-		const output = getWordadsSettings( state, siteId );
-		expect( output ).toHaveProperty( 'show_to_logged_in', 'yes' );
-	} );
-} );
+		const output = getWordadsSettings(state, siteId);
+		expect(output).toHaveProperty('show_to_logged_in', 'yes');
+	});
+});

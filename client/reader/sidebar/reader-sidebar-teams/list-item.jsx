@@ -12,12 +12,12 @@ import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import SidebarItem from 'layout/sidebar/item';
 
-const handleReaderSidebarTeamsListItemClicked = team => () => {
-	recordAction( 'clicked_reader_sidebar_teams_list_item' );
-	recordGaEvent( 'Clicked Reader Sidebar Teams List Item' );
-	recordTrack( 'calypso_reader_sidebar_teams_list_item_clicked', {
-		team: decodeURIComponent( team.slug ),
-	} );
+const handleReaderSidebarTeamsListItemClicked = (team) => () => {
+	recordAction('clicked_reader_sidebar_teams_list_item');
+	recordGaEvent('Clicked Reader Sidebar Teams List Item');
+	recordTrack('calypso_reader_sidebar_teams_list_item_clicked', {
+		team: decodeURIComponent(team.slug),
+	});
 };
 
 const renderA8CLogo = () => {
@@ -40,20 +40,20 @@ const renderA8CLogo = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 };
 
-export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
-	const teamUri = '/read/' + encodeURIComponent( team.slug );
+export const ReaderSidebarTeamsListItem = ({ path, team }) => {
+	const teamUri = '/read/' + encodeURIComponent(team.slug);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<SidebarItem
-			link={ teamUri }
-			key={ team.slug }
-			onNavigate={ handleReaderSidebarTeamsListItemClicked( team ) }
-			label={ team.title }
-			customIcon={ renderA8CLogo() }
-			className={ ReaderSidebarHelper.itemLinkClass( teamUri, path, {
+			link={teamUri}
+			key={team.slug}
+			onNavigate={handleReaderSidebarTeamsListItemClicked(team)}
+			label={team.title}
+			customIcon={renderA8CLogo()}
+			className={ReaderSidebarHelper.itemLinkClass(teamUri, path, {
 				'sidebar-streams__team': true,
-			} ) }
+			})}
 		/>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -64,4 +64,4 @@ ReaderSidebarTeamsListItem.propTypes = {
 	path: PropTypes.string.isRequired,
 };
 
-export default localize( ReaderSidebarTeamsListItem );
+export default localize(ReaderSidebarTeamsListItem);

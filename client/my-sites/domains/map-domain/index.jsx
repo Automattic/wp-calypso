@@ -51,108 +51,108 @@ export class MapDomain extends Component {
 	goBack = () => {
 		const { selectedSite, selectedSiteSlug } = this.props;
 
-		if ( ! selectedSite ) {
-			page( '/domains/add' );
+		if (!selectedSite) {
+			page('/domains/add');
 			return;
 		}
 
-		if ( selectedSite.is_vip ) {
-			page( domainManagementList( selectedSiteSlug ) );
+		if (selectedSite.is_vip) {
+			page(domainManagementList(selectedSiteSlug));
 			return;
 		}
 
-		page( '/domains/add/' + selectedSiteSlug );
+		page('/domains/add/' + selectedSiteSlug);
 	};
 
-	addDomainToCart = suggestion => {
+	addDomainToCart = (suggestion) => {
 		const { selectedSiteSlug } = this.props;
 
 		addItem(
-			domainRegistration( {
+			domainRegistration({
 				productSlug: suggestion.product_slug,
 				domain: suggestion.domain_name,
-			} )
+			})
 		);
 
-		page( '/checkout/' + selectedSiteSlug );
+		page('/checkout/' + selectedSiteSlug);
 	};
 
-	handleRegisterDomain = suggestion => {
-		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
-		if ( ! isEmpty( trademarkClaimsNoticeInfo ) ) {
-			this.setState( {
+	handleRegisterDomain = (suggestion) => {
+		const trademarkClaimsNoticeInfo = get(suggestion, 'trademark_claims_notice_info');
+		if (!isEmpty(trademarkClaimsNoticeInfo)) {
+			this.setState({
 				suggestion,
 				showTrademarkClaimsNotice: true,
-			} );
+			});
 			return;
 		}
 
-		this.addDomainToCart( suggestion );
+		this.addDomainToCart(suggestion);
 	};
 
-	handleMapDomain = domain => {
+	handleMapDomain = (domain) => {
 		const { selectedSite, selectedSiteSlug } = this.props;
 
-		this.setState( { errorMessage: null } );
+		this.setState({ errorMessage: null });
 
 		// For VIP sites we handle domain mappings differently
 		// We don't go through the usual checkout process
 		// Instead, we add the mapping directly
-		if ( selectedSite.is_vip ) {
-			wpcom.addVipDomainMapping( selectedSite.ID, domain ).then(
-				() => page( domainManagementList( selectedSiteSlug ) ),
-				error => this.setState( { errorMessage: error.message } )
+		if (selectedSite.is_vip) {
+			wpcom.addVipDomainMapping(selectedSite.ID, domain).then(
+				() => page(domainManagementList(selectedSiteSlug)),
+				(error) => this.setState({ errorMessage: error.message })
 			);
 			return;
 		}
 
-		addItem( domainMapping( { domain } ) );
+		addItem(domainMapping({ domain }));
 
-		page( '/checkout/' + selectedSiteSlug );
+		page('/checkout/' + selectedSiteSlug);
 	};
 
 	UNSAFE_componentWillMount() {
-		this.checkSiteIsUpgradeable( this.props );
+		this.checkSiteIsUpgradeable(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.checkSiteIsUpgradeable( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.checkSiteIsUpgradeable(nextProps);
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
-			page.redirect( '/domains/add/mapping' );
+	checkSiteIsUpgradeable(props) {
+		if (props.selectedSite && !props.isSiteUpgradeable) {
+			page.redirect('/domains/add/mapping');
 		}
 	}
 
 	rejectTrademarkClaim = () => {
-		this.setState( { showTrademarkClaimsNotice: false } );
+		this.setState({ showTrademarkClaimsNotice: false });
 	};
 
 	acceptTrademarkClaim = () => {
 		const { suggestion } = this.state;
-		this.addDomainToCart( suggestion );
+		this.addDomainToCart(suggestion);
 	};
 
 	trademarkClaimsNotice = () => {
 		const { suggestion } = this.state;
-		const domain = get( suggestion, 'domain_name' );
-		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
+		const domain = get(suggestion, 'domain_name');
+		const trademarkClaimsNoticeInfo = get(suggestion, 'trademark_claims_notice_info');
 
 		return (
 			<TrademarkClaimsNotice
-				basePath={ this.props.path }
-				domain={ domain }
-				onGoBack={ this.rejectTrademarkClaim }
-				onAccept={ this.acceptTrademarkClaim }
-				onReject={ this.rejectTrademarkClaim }
-				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
+				basePath={this.props.path}
+				domain={domain}
+				onGoBack={this.rejectTrademarkClaim}
+				onAccept={this.acceptTrademarkClaim}
+				onReject={this.rejectTrademarkClaim}
+				trademarkClaimsNoticeInfo={trademarkClaimsNoticeInfo}
 			/>
 		);
 	};
 
 	render() {
-		if ( this.state.showTrademarkClaimsNotice ) {
+		if (this.state.showTrademarkClaimsNotice) {
 			return this.trademarkClaimsNotice();
 		}
 
@@ -171,18 +171,18 @@ export class MapDomain extends Component {
 			<span>
 				<QueryProductsList />
 
-				<HeaderCake onClick={ this.goBack }>{ translate( 'Map a Domain' ) }</HeaderCake>
+				<HeaderCake onClick={this.goBack}>{translate('Map a Domain')}</HeaderCake>
 
-				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
+				{errorMessage && <Notice status="is-error" text={errorMessage} />}
 
 				<MapDomainStep
-					cart={ cart }
-					domainsWithPlansOnly={ domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-					products={ productsList }
-					selectedSite={ selectedSite }
-					onRegisterDomain={ this.handleRegisterDomain }
-					onMapDomain={ this.handleMapDomain }
+					cart={cart}
+					domainsWithPlansOnly={domainsWithPlansOnly}
+					initialQuery={initialQuery}
+					products={productsList}
+					selectedSite={selectedSite}
+					onRegisterDomain={this.handleRegisterDomain}
+					onMapDomain={this.handleMapDomain}
 					analyticsSection="domains"
 				/>
 			</span>
@@ -190,11 +190,11 @@ export class MapDomain extends Component {
 	}
 }
 
-export default connect( state => ( {
-	selectedSite: getSelectedSite( state ),
-	selectedSiteId: getSelectedSiteId( state ),
-	selectedSiteSlug: getSelectedSiteSlug( state ),
-	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-	productsList: getProductsList( state ),
-} ) )( localize( MapDomain ) );
+export default connect((state) => ({
+	selectedSite: getSelectedSite(state),
+	selectedSiteId: getSelectedSiteId(state),
+	selectedSiteSlug: getSelectedSiteSlug(state),
+	domainsWithPlansOnly: currentUserHasFlag(state, DOMAINS_WITH_PLANS_ONLY),
+	isSiteUpgradeable: isSiteUpgradeable(state, getSelectedSiteId(state)),
+	productsList: getProductsList(state),
+}))(localize(MapDomain));

@@ -4,7 +4,7 @@
 
 import { get } from 'lodash';
 
-function getSettingsState( state ) {
+function getSettingsState(state) {
 	return state.extensions.wpSuperCache.settings;
 }
 
@@ -15,8 +15,8 @@ function getSettingsState( state ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether settings are being requested
  */
-export function isRequestingSettings( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'requesting', siteId ], false );
+export function isRequestingSettings(state, siteId) {
+	return get(state, ['extensions', 'wpSuperCache', 'settings', 'requesting', siteId], false);
 }
 
 /**
@@ -26,8 +26,8 @@ export function isRequestingSettings( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether settings are being restored
  */
-export function isRestoringSettings( state, siteId ) {
-	return get( getSettingsState( state ), [ 'restoring', siteId ], false );
+export function isRestoringSettings(state, siteId) {
+	return get(getSettingsState(state), ['restoring', siteId], false);
 }
 
 /**
@@ -37,10 +37,10 @@ export function isRestoringSettings( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether settings are being saved
  */
-export function isSavingSettings( state, siteId ) {
+export function isSavingSettings(state, siteId) {
 	return get(
 		state,
-		[ 'extensions', 'wpSuperCache', 'settings', 'saveStatus', siteId, 'saving' ],
+		['extensions', 'wpSuperCache', 'settings', 'saveStatus', siteId, 'saving'],
 		false
 	);
 }
@@ -52,8 +52,8 @@ export function isSavingSettings( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {boolean} Whether settings were saved successfully
  */
-export function isSettingsSaveSuccessful( state, siteId ) {
-	return getSettingsSaveStatus( state, siteId ) === 'success';
+export function isSettingsSaveSuccessful(state, siteId) {
+	return getSettingsSaveStatus(state, siteId) === 'success';
 }
 
 /**
@@ -63,8 +63,8 @@ export function isSettingsSaveSuccessful( state, siteId ) {
  * @param  {number} siteId Site ID
  * @returns {object} Settings
  */
-export function getSettings( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'items', siteId ], null );
+export function getSettings(state, siteId) {
+	return get(state, ['extensions', 'wpSuperCache', 'settings', 'items', siteId], null);
 }
 
 /**
@@ -74,6 +74,6 @@ export function getSettings( state, siteId ) {
  * @param  {number}  siteId Site ID
  * @returns {string}  Save request status (pending, success or error)
  */
-export function getSettingsSaveStatus( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'saveStatus', siteId, 'status' ] );
+export function getSettingsSaveStatus(state, siteId) {
+	return get(state, ['extensions', 'wpSuperCache', 'settings', 'saveStatus', siteId, 'status']);
 }

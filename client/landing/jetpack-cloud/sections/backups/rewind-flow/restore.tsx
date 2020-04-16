@@ -38,48 +38,48 @@ interface RewindState {
 	};
 }
 
-const BackupRestoreFlow: FunctionComponent< Props > = ( {
+const BackupRestoreFlow: FunctionComponent<Props> = ({
 	backupDisplayDate,
 	rewindId,
 	siteId,
 	siteSlug,
-} ) => {
+}) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
-	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
+	const [rewindConfig, setRewindConfig] = useState<RewindConfig>(defaultRewindConfig);
+	const [userHasRequestedRestore, setUserHasRequestedRestore] = useState<boolean>(false);
 
-	const siteUrl = useSelector( state => getSiteUrl( state, siteId ) );
-	const rewindState = useSelector( state => getRewindState( state, siteId ) ) as RewindState;
+	const siteUrl = useSelector((state) => getSiteUrl(state, siteId));
+	const rewindState = useSelector((state) => getRewindState(state, siteId)) as RewindState;
 
 	const loading = rewindState.state === 'uninitialized';
 
-	const inProgressRewindStatus = useSelector( state =>
-		getInProgressRewindStatus( state, siteId, rewindId )
+	const inProgressRewindStatus = useSelector((state) =>
+		getInProgressRewindStatus(state, siteId, rewindId)
 	);
-	const inProgressRewindPercentComplete = useSelector( state =>
-		getInProgressRewindPercentComplete( state, siteId, rewindId )
+	const inProgressRewindPercentComplete = useSelector((state) =>
+		getInProgressRewindPercentComplete(state, siteId, rewindId)
 	);
 
 	const requestRestore = useCallback(
-		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
-		[ dispatch, rewindConfig, rewindId, siteId ]
+		() => dispatch(rewindRestore(siteId, rewindId, rewindConfig)),
+		[dispatch, rewindConfig, rewindId, siteId]
 	);
 
 	const onConfirm = () => {
-		setUserHasRequestedRestore( true );
+		setUserHasRequestedRestore(true);
 		requestRestore();
 	};
 
 	const renderConfirm = () => (
 		<>
 			<div className="rewind-flow__header">
-				<Gridicon icon="history" size={ 48 } />
+				<Gridicon icon="history" size={48} />
 			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Restore site' ) }</h3>
+			<h3 className="rewind-flow__title">{translate('Restore site')}</h3>
 			<p className="rewind-flow__info">
-				{ translate(
+				{translate(
 					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore. ',
 					{
 						args: {
@@ -89,22 +89,22 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 							strong: <strong />,
 						},
 					}
-				) }
+				)}
 			</p>
-			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
-			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
+			<h4 className="rewind-flow__cta">{translate('Choose the items you wish to restore:')}</h4>
+			<RewindConfigEditor currentConfig={rewindConfig} onConfigChange={setRewindConfig} />
 			<RewindFlowNotice
 				gridicon="notice"
-				title={ translate( 'This will override and remove all content after this point' ) }
-				type={ RewindFlowNoticeLevel.WARNING }
+				title={translate('This will override and remove all content after this point')}
+				type={RewindFlowNoticeLevel.WARNING}
 			/>
 			<Button
 				className="rewind-flow__primary-button"
 				primary
-				onClick={ onConfirm }
-				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
+				onClick={onConfirm}
+				disabled={Object.values(rewindConfig).every((setting) => !setting)}
 			>
-				{ translate( 'Confirm restore' ) }
+				{translate('Confirm restore')}
 			</Button>
 		</>
 	);
@@ -112,12 +112,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const renderInProgress = () => (
 		<>
 			<div className="rewind-flow__header">
-				<Gridicon icon="history" size={ 48 } />
+				<Gridicon icon="history" size={48} />
 			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
-			<ProgressBar percent={ inProgressRewindPercentComplete } />
+			<h3 className="rewind-flow__title">{translate('Currently restoring your site')}</h3>
+			<ProgressBar percent={inProgressRewindPercentComplete} />
 			<p className="rewind-flow__info">
-				{ translate(
+				{translate(
 					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
@@ -127,12 +127,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 							strong: <strong />,
 						},
 					}
-				) }
+				)}
 			</p>
 			<CheckYourEmail
-				message={ translate(
+				message={translate(
 					"Don't want to wait? For your convenience, we'll email you when your site has been fully restored."
-				) }
+				)}
 			/>
 		</>
 	);
@@ -146,10 +146,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				/>
 			</div>
 			<h3 className="rewind-flow__title">
-				{ translate( 'Your site has been successfully restored.' ) }
+				{translate('Your site has been successfully restored.')}
 			</h3>
 			<p className="rewind-flow__info">
-				{ translate(
+				{translate(
 					'All of your selected files are now restored back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
@@ -159,10 +159,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 							strong: <strong />,
 						},
 					}
-				) }
+				)}
 			</p>
-			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
-				{ translate( 'View your website' ) }
+			<Button primary href={siteUrl} className="rewind-flow__primary-button">
+				{translate('View your website')}
 			</Button>
 		</>
 	);
@@ -176,18 +176,18 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				/>
 			</div>
 			<h3 className="rewind-flow__title">
-				{ translate( 'An error occurred while restoring your site' ) }
+				{translate('An error occurred while restoring your site')}
 			</h3>
 			<Button
 				className="rewind-flow__primary-button"
-				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				href={`https://jetpack.com/contact-support/?scan-state=error&site-slug=${siteSlug}`}
 				primary
 				rel="noopener noreferrer"
 				target="_blank"
 			>
-				{ translate( 'Contact Support {{externalIcon/}}', {
-					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
-				} ) }
+				{translate('Contact Support {{externalIcon/}}', {
+					components: { externalIcon: <Gridicon icon="external" size={24} /> },
+				})}
 			</Button>
 		</>
 	);
@@ -195,23 +195,23 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const renderLoading = () => (
 		<>
 			<div className="rewind-flow__header">
-				<Spinner size={ 48 } />
+				<Spinner size={48} />
 			</div>
-			<h3 className="rewind-flow__title-placeholder">{ translate( 'Loading restore status…' ) }</h3>
+			<h3 className="rewind-flow__title-placeholder">{translate('Loading restore status…')}</h3>
 		</>
 	);
 
 	const render = () => {
-		if ( loading ) {
+		if (loading) {
 			return renderLoading();
-		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
+		} else if (!inProgressRewindStatus && !userHasRequestedRestore) {
 			return renderConfirm();
 		} else if (
-			( ! inProgressRewindStatus && userHasRequestedRestore ) ||
-			( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) )
+			(!inProgressRewindStatus && userHasRequestedRestore) ||
+			(inProgressRewindStatus && ['queued', 'running'].includes(inProgressRewindStatus))
 		) {
 			return renderInProgress();
-		} else if ( inProgressRewindStatus !== null && inProgressRewindStatus === 'finished' ) {
+		} else if (inProgressRewindStatus !== null && inProgressRewindStatus === 'finished') {
 			return renderFinished();
 		}
 
@@ -220,8 +220,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			<QueryRewindState siteId={ siteId } />
-			{ render() }
+			<QueryRewindState siteId={siteId} />
+			{render()}
 		</>
 	);
 };

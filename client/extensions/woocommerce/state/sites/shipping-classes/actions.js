@@ -14,7 +14,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { areShippingClassesLoaded, areShippingClassesLoading } from './selectors';
 
-export const fetchShippingClassesSuccess = ( siteId, data ) => {
+export const fetchShippingClassesSuccess = (siteId, data) => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
 		siteId,
@@ -22,38 +22,38 @@ export const fetchShippingClassesSuccess = ( siteId, data ) => {
 	};
 };
 
-export const fetchShippingClassesFailure = ( action, error, dispatch ) => {
+export const fetchShippingClassesFailure = (action, error, dispatch) => {
 	const { siteId } = action;
 	const noticeId = 'query-shipping-classes-retry';
 
-	const onRetryClick = e => {
+	const onRetryClick = (e) => {
 		e.preventDefault();
 
-		dispatch( {
+		dispatch({
 			type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 			siteId,
-		} );
+		});
 
-		dispatch( removeNotice( noticeId ) );
+		dispatch(removeNotice(noticeId));
 	};
 
-	return errorNotice( translate( 'Could not retrieve the shipping classes.' ), {
+	return errorNotice(translate('Could not retrieve the shipping classes.'), {
 		id: noticeId,
-		button: translate( 'Try again' ),
+		button: translate('Try again'),
 		onClick: onRetryClick,
-	} );
+	});
 };
 
-export const fetchShippingClasses = siteId => ( dispatch, getState ) => {
+export const fetchShippingClasses = (siteId) => (dispatch, getState) => {
 	if (
-		areShippingClassesLoaded( getState(), siteId ) ||
-		areShippingClassesLoading( getState(), siteId )
+		areShippingClassesLoaded(getState(), siteId) ||
+		areShippingClassesLoading(getState(), siteId)
 	) {
 		return;
 	}
 
-	return dispatch( {
+	return dispatch({
 		type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 		siteId,
-	} );
+	});
 };

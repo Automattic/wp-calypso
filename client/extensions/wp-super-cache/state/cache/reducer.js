@@ -23,14 +23,14 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated deleting state
  */
-const deleteStatus = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const deleteStatus = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_DELETE_CACHE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					deleting: true,
 					status: 'pending',
 				},
@@ -41,7 +41,7 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					deleting: false,
 					status: 'success',
 				},
@@ -52,7 +52,7 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					deleting: false,
 					status: 'error',
 				},
@@ -61,7 +61,7 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated preloading state after an action has been dispatched.
@@ -71,18 +71,18 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated preloading state
  */
-const preloading = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const preloading = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_PRELOAD_CACHE: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case WP_SUPER_CACHE_PRELOAD_CACHE_FAILURE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS: {
@@ -90,13 +90,13 @@ const preloading = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated cache testing state after an action has been dispatched.
@@ -106,18 +106,18 @@ const preloading = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated cache testing state
  */
-const testing = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const testing = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_TEST_CACHE: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case WP_SUPER_CACHE_TEST_CACHE_FAILURE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case WP_SUPER_CACHE_TEST_CACHE_SUCCESS: {
@@ -125,13 +125,13 @@ const testing = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Tracks the cache test results for a particular site.
@@ -140,24 +140,24 @@ const testing = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated cache test results
  */
-const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const items = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_TEST_CACHE_SUCCESS: {
 			const { siteId, data } = action;
 
 			return {
 				...state,
-				[ siteId ]: data,
+				[siteId]: data,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	deleteStatus,
 	items,
 	preloading,
 	testing,
-} );
+});

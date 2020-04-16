@@ -1,13 +1,13 @@
-export function isCandidateForCanonicalImage( image ) {
-	if ( ! image ) {
+export function isCandidateForCanonicalImage(image) {
+	if (!image) {
 		return false;
 	}
 
-	if ( image.width < 100 ) {
+	if (image.width < 100) {
 		return false;
 	}
 
-	if ( image.width * image.height < 100 * 75 ) {
+	if (image.width * image.height < 100 * 75) {
 		return false;
 	}
 	return true;

@@ -17,18 +17,18 @@ const adTrackingMocks = [
 	'trackCustomFacebookConversionEvent',
 ];
 
-const mcMocks = [ 'bumpStat', 'bumpStatWithPageView' ];
+const mcMocks = ['bumpStat', 'bumpStatWithPageView'];
 
-const gaMocks = [ 'gaRecordEvent', 'gaRecordPageView', 'gaRecordTiming' ];
+const gaMocks = ['gaRecordEvent', 'gaRecordPageView', 'gaRecordTiming'];
 
-const mockIt = spy => mock => set( {}, mock, ( ...args ) => spy( mock, ...args ) );
+const mockIt = (spy) => (mock) => set({}, mock, (...args) => spy(mock, ...args));
 
-export const moduleMock = moduleMocks => spy =>
-	moduleMocks.map( mockIt( spy ) ).reduce( ( mocks, mock ) => merge( mocks, mock ), {} );
+export const moduleMock = (moduleMocks) => (spy) =>
+	moduleMocks.map(mockIt(spy)).reduce((mocks, mock) => merge(mocks, mock), {});
 
-export const analyticsMock = moduleMock( analyticsMocks );
-export const adTrackingMock = moduleMock( adTrackingMocks );
-export const mcMock = moduleMock( mcMocks );
-export const gaMock = moduleMock( gaMocks );
+export const analyticsMock = moduleMock(analyticsMocks);
+export const adTrackingMock = moduleMock(adTrackingMocks);
+export const mcMock = moduleMock(mcMocks);
+export const gaMock = moduleMock(gaMocks);
 
 export default analyticsMock;

@@ -16,19 +16,19 @@ class DnsDetails extends React.PureComponent {
 
 		return (
 			<p className="dns__details">
-				{ translate(
+				{translate(
 					'DNS records are special settings that change how your domain works. ' +
 						'They let you connect to third-party services, like an email provider. ' +
 						'{{customDnsLink}}Learn more{{/customDnsLink}}.',
 					{
 						components: {
-							customDnsLink: <a href={ CUSTOM_DNS } target="_blank" rel="noopener noreferrer" />,
+							customDnsLink: <a href={CUSTOM_DNS} target="_blank" rel="noopener noreferrer" />,
 						},
 					}
-				) }
+				)}
 			</p>
 		);
 	}
 }
 
-export default localize( DnsDetails );
+export default localize(DnsDetails);

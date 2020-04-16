@@ -6,7 +6,7 @@ export const items = {
 			type: 'object',
 			additionalProperties: {
 				type: 'object',
-				required: [ 'name' ],
+				required: ['name'],
 				properties: {
 					name: { type: 'string' },
 					label: { type: 'string' },

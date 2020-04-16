@@ -4,12 +4,12 @@ let lastRequestParams = null;
 let deactivatedCallbacks = false;
 let mockedNumberOfReturnedPages = 10;
 
-export function setInternalState( state ) {
-	if ( state.mockedNumberOfReturnedPages !== undefined ) {
+export function setInternalState(state) {
+	if (state.mockedNumberOfReturnedPages !== undefined) {
 		mockedNumberOfReturnedPages = state.mockedNumberOfReturnedPages;
 	}
 
-	if ( state.deactivatedCallbacks !== undefined ) {
+	if (state.deactivatedCallbacks !== undefined) {
 		deactivatedCallbacks = state.deactivatedCallbacks;
 	}
 }
@@ -28,13 +28,13 @@ export function getActivity() {
 	};
 }
 
-export function fetchPluginsList( options, callback ) {
+export function fetchPluginsList(options, callback) {
 	fetchPluginsListCalls++;
 	lastRequestParams = options;
-	if ( ! deactivatedCallbacks ) {
-		callback( null, {
+	if (!deactivatedCallbacks) {
+		callback(null, {
 			plugins: [],
 			info: { pages: mockedNumberOfReturnedPages },
-		} );
+		});
 	}
 }

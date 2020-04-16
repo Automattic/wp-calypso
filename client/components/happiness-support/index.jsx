@@ -51,16 +51,14 @@ export class HappinessSupport extends Component {
 	};
 
 	onLiveChatButtonClick = () => {
-		if ( this.props.liveChatButtonEventName ) {
-			this.props.recordTracksEvent( this.props.liveChatButtonEventName );
+		if (this.props.liveChatButtonEventName) {
+			this.props.recordTracksEvent(this.props.liveChatButtonEventName);
 		}
 	};
 
 	getHeadingText() {
 		const { isJetpackFreePlan, translate } = this.props;
-		return isJetpackFreePlan
-			? translate( 'Support documentation' )
-			: translate( 'Priority support' );
+		return isJetpackFreePlan ? translate('Support documentation') : translate('Priority support');
 	}
 
 	getSupportText() {
@@ -84,22 +82,22 @@ export class HappinessSupport extends Component {
 	getSupportButtons() {
 		const { isJetpackFreePlan, liveChatAvailable, showLiveChatButton } = this.props;
 
-		if ( isJetpackFreePlan ) {
+		if (isJetpackFreePlan) {
 			return (
 				<div className="happiness-support__buttons">
-					{ this.renderSupportButton() }
-					{ this.renderContactButton() }
+					{this.renderSupportButton()}
+					{this.renderContactButton()}
 				</div>
 			);
 		}
 
 		return (
 			<div className="happiness-support__buttons">
-				{ showLiveChatButton && <HappychatConnection /> }
-				{ showLiveChatButton && liveChatAvailable
+				{showLiveChatButton && <HappychatConnection />}
+				{showLiveChatButton && liveChatAvailable
 					? this.renderLiveChatButton()
-					: this.renderContactButton() }
-				{ this.renderSupportButton() }
+					: this.renderContactButton()}
+				{this.renderSupportButton()}
 			</div>
 		);
 	}
@@ -108,14 +106,14 @@ export class HappinessSupport extends Component {
 		let url = CALYPSO_CONTACT,
 			target = '';
 
-		if ( this.props.isJetpack ) {
+		if (this.props.isJetpack) {
 			url = JETPACK_CONTACT_SUPPORT;
 			target = '_blank';
 		}
 
 		return (
-			<Button href={ url } target={ target } className="happiness-support__contact-button">
-				{ this.props.translate( 'Ask a question' ) }
+			<Button href={url} target={target} className="happiness-support__contact-button">
+				{this.props.translate('Ask a question')}
 			</Button>
 		);
 	}
@@ -123,11 +121,11 @@ export class HappinessSupport extends Component {
 	renderLiveChatButton() {
 		return (
 			<HappychatButton
-				borderless={ false }
-				onClick={ this.onLiveChatButtonClick }
+				borderless={false}
+				onClick={this.onLiveChatButtonClick}
 				className="happiness-support__livechat-button"
 			>
-				{ this.props.translate( 'Ask a question' ) }
+				{this.props.translate('Ask a question')}
 			</HappychatButton>
 		);
 	}
@@ -136,7 +134,7 @@ export class HappinessSupport extends Component {
 		return (
 			<div className="happiness-support__image">
 				<div className="happiness-support__icon">
-					<img alt="" src={ supportImage } />
+					<img alt="" src={supportImage} />
 				</div>
 			</div>
 		);
@@ -145,20 +143,20 @@ export class HappinessSupport extends Component {
 	renderSupportButton() {
 		let url = SUPPORT_ROOT;
 
-		if ( this.props.isJetpack ) {
+		if (this.props.isJetpack) {
 			url = JETPACK_SUPPORT;
 		}
 
 		return (
 			<Button
 				borderless
-				href={ url }
+				href={url}
 				target="_blank"
 				rel="noopener noreferrer"
 				className="happiness-support__support-button"
 			>
 				<Gridicon icon="external" />
-				<span>{ this.props.translate( 'Support documentation' ) }</span>
+				<span>{this.props.translate('Support documentation')}</span>
 			</Button>
 		);
 	}
@@ -169,13 +167,13 @@ export class HappinessSupport extends Component {
 		};
 
 		return (
-			<div className={ classNames( 'happiness-support', classes ) }>
-				{ this.renderIllustration() }
+			<div className={classNames('happiness-support', classes)}>
+				{this.renderIllustration()}
 
 				<div className="happiness-support__text">
-					<h3 className="happiness-support__heading">{ this.getHeadingText() }</h3>
-					<p className="happiness-support__description">{ this.getSupportText() }</p>
-					{ this.getSupportButtons() }
+					<h3 className="happiness-support__heading">{this.getHeadingText()}</h3>
+					<p className="happiness-support__description">{this.getSupportText()}</p>
+					{this.getSupportButtons()}
 				</div>
 			</div>
 		);
@@ -183,8 +181,8 @@ export class HappinessSupport extends Component {
 }
 
 export default connect(
-	state => ( {
-		liveChatAvailable: isHappychatAvailable( state ),
-	} ),
+	(state) => ({
+		liveChatAvailable: isHappychatAvailable(state),
+	}),
 	{ recordTracksEvent }
-)( localize( HappinessSupport ) );
+)(localize(HappinessSupport));

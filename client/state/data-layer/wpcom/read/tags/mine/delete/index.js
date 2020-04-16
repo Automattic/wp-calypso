@@ -14,14 +14,14 @@ import { translate } from 'i18n-calypso';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export function requestUnfollow( action ) {
-	return http( {
-		path: `/read/tags/${ action.payload.slug }/mine/delete`,
+export function requestUnfollow(action) {
+	return http({
+		path: `/read/tags/${action.payload.slug}/mine/delete`,
 		method: 'POST',
 		apiVersion: '1.1',
 		onSuccess: action,
 		onFailure: action,
-	} );
+	});
 }
 
 /**
@@ -30,40 +30,38 @@ export function requestUnfollow( action ) {
  * @param  {RemovedTag} apiResponse api response from the unfollow
  * @returns {number} the ID of the tag that was removed
  */
-export const fromApi = apiResponse => {
-	if ( apiResponse.subscribed ) {
-		throw new Error(
-			`failed to unsubscribe to tag with response: ${ JSON.stringify( apiResponse ) }`
-		);
+export const fromApi = (apiResponse) => {
+	if (apiResponse.subscribed) {
+		throw new Error(`failed to unsubscribe to tag with response: ${JSON.stringify(apiResponse)}`);
 	}
 
 	return apiResponse.removed_tag;
 };
 
-export function receiveUnfollowTag( action, removedTagId ) {
-	return receiveUnfollowTagAction( {
+export function receiveUnfollowTag(action, removedTagId) {
+	return receiveUnfollowTagAction({
 		payload: removedTagId,
-	} );
+	});
 }
 
-export function receiveError( action, error ) {
-	const errorText = translate( 'Could not unfollow tag: %(tag)s', {
+export function receiveError(action, error) {
+	const errorText = translate('Could not unfollow tag: %(tag)s', {
 		args: { tag: action.payload.slug },
-	} );
+	});
 
-	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( errorText, error ); // eslint-disable-line no-console
+	if (process.env.NODE_ENV === 'development') {
+		console.error(errorText, error); // eslint-disable-line no-console
 	}
-	return errorNotice( errorText );
+	return errorNotice(errorText);
 }
 
-registerHandlers( 'state/data-layer/wpcom/read/tags/mine/delete/index.js', {
-	[ READER_UNFOLLOW_TAG_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/read/tags/mine/delete/index.js', {
+	[READER_UNFOLLOW_TAG_REQUEST]: [
+		dispatchRequest({
 			fetch: requestUnfollow,
 			onSuccess: receiveUnfollowTag,
 			onError: receiveError,
 			fromApi,
-		} ),
+		}),
 	],
-} );
+});

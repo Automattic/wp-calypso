@@ -18,23 +18,23 @@ class QueryMembershipsSettings extends Component {
 	};
 
 	request() {
-		if ( this.props.requesting ) {
+		if (this.props.requesting) {
 			return;
 		}
 
-		if ( ! this.props.siteId ) {
+		if (!this.props.siteId) {
 			return;
 		}
 
-		this.props.requestSettings( this.props.siteId );
+		this.props.requestSettings(this.props.siteId);
 	}
 
 	componentDidMount() {
 		this.request();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.siteId !== prevProps.siteId ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.siteId !== prevProps.siteId) {
 			this.request();
 		}
 	}
@@ -44,4 +44,4 @@ class QueryMembershipsSettings extends Component {
 	}
 }
 
-export default connect( null, { requestSettings } )( QueryMembershipsSettings );
+export default connect(null, { requestSettings })(QueryMembershipsSettings);

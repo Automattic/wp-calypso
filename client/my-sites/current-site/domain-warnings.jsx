@@ -32,30 +32,30 @@ const ruleWhiteList = [
 	'pendingConsent',
 ];
 
-const CurrentSiteDomainWarnings = ( {
+const CurrentSiteDomainWarnings = ({
 	domains,
 	isAtomic,
 	isJetpack,
 	selectedSite,
 	siteIsUnlaunched,
 	isSiteEligibleForFSE,
-} ) => {
-	if ( ! selectedSite || ( isJetpack && ! isAtomic ) ) {
+}) => {
+	if (!selectedSite || (isJetpack && !isAtomic)) {
 		// Simple and Atomic sites. Not Jetpack sites.
 		return null;
 	}
 
 	return (
 		<div>
-			<QuerySiteDomains siteId={ selectedSite.ID } />
+			<QuerySiteDomains siteId={selectedSite.ID} />
 
 			<DomainWarnings
 				isCompact
-				selectedSite={ selectedSite }
-				domains={ domains }
-				ruleWhiteList={ ruleWhiteList }
-				isSiteEligibleForFSE={ isSiteEligibleForFSE }
-				siteIsUnlaunched={ siteIsUnlaunched }
+				selectedSite={selectedSite}
+				domains={domains}
+				ruleWhiteList={ruleWhiteList}
+				isSiteEligibleForFSE={isSiteEligibleForFSE}
+				siteIsUnlaunched={siteIsUnlaunched}
 			/>
 		</div>
 	);
@@ -68,15 +68,15 @@ CurrentSiteDomainWarnings.propTypes = {
 	selectedSite: PropTypes.object,
 };
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
-		domains: getDomainsBySiteId( state, selectedSiteId ),
-		isJetpack: isJetpackSite( state, selectedSiteId ),
-		isAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
-		selectedSite: getSelectedSite( state ),
-		siteIsUnlaunched: isUnlaunchedSite( state, selectedSiteId ),
-		isSiteEligibleForFSE: isSiteEligibleForFullSiteEditing( state, selectedSiteId ),
+		domains: getDomainsBySiteId(state, selectedSiteId),
+		isJetpack: isJetpackSite(state, selectedSiteId),
+		isAtomic: isSiteAutomatedTransfer(state, selectedSiteId),
+		selectedSite: getSelectedSite(state),
+		siteIsUnlaunched: isUnlaunchedSite(state, selectedSiteId),
+		isSiteEligibleForFSE: isSiteEligibleForFullSiteEditing(state, selectedSiteId),
 	};
-} )( CurrentSiteDomainWarnings );
+})(CurrentSiteDomainWarnings);

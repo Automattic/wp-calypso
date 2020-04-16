@@ -14,8 +14,8 @@ import ticket from './ticket/reducer';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const selectedSiteId = ( state = null, action ) => {
-	switch ( action.type ) {
+export const selectedSiteId = (state = null, action) => {
+	switch (action.type) {
 		case HELP_CONTACT_FORM_SITE_SELECT:
 			return action.siteId;
 	}
@@ -30,8 +30,8 @@ export const selectedSiteId = ( state = null, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const links = ( state = {}, action ) => {
-	switch ( action.type ) {
+export const links = (state = {}, action) => {
+	switch (action.type) {
 		case HELP_LINKS_RECEIVE:
 			return action.helpLinks;
 		default:
@@ -39,10 +39,10 @@ export const links = ( state = {}, action ) => {
 	}
 };
 
-export default combineReducers( {
+export default combineReducers({
 	courses,
 	directly,
 	links,
 	ticket,
 	selectedSiteId,
-} );
+});

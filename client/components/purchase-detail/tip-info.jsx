@@ -11,12 +11,12 @@ import classNames from 'classnames';
  */
 import './tip-info.scss';
 
-const TipInfo = ( { info = '', className } ) => {
-	const classes = classNames( 'purchase-detail__info', className );
+const TipInfo = ({ info = '', className }) => {
+	const classes = classNames('purchase-detail__info', className);
 	return (
-		<div className={ classes }>
-			<Gridicon size={ 12 } icon="info-outline" className="purchase-detail__info-icon" />
-			{ info }
+		<div className={classes}>
+			<Gridicon size={12} icon="info-outline" className="purchase-detail__info-icon" />
+			{info}
 		</div>
 	);
 };

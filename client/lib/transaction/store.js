@@ -27,16 +27,16 @@ import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
 let _transaction = createInitialTransaction();
 
 const TransactionStore = {
-	get: function() {
+	get: function () {
 		return _transaction;
 	},
 };
 
-Emitter( TransactionStore );
+Emitter(TransactionStore);
 
-function replaceData( newData ) {
-	_transaction = cloneDeep( newData );
-	TransactionStore.emit( 'change' );
+function replaceData(newData) {
+	_transaction = cloneDeep(newData);
+	TransactionStore.emit('change');
 }
 
 function createInitialTransaction() {
@@ -50,31 +50,31 @@ function createInitialTransaction() {
 }
 
 function reset() {
-	replaceData( createInitialTransaction() );
+	replaceData(createInitialTransaction());
 }
 
-function setDomainDetails( domainDetails ) {
-	replaceData( merge( _transaction, { domainDetails: domainDetails } ) );
+function setDomainDetails(domainDetails) {
+	replaceData(merge(_transaction, { domainDetails: domainDetails }));
 }
 
-function setPayment( payment ) {
-	replaceData( assign( {}, _transaction, { payment: payment } ) );
+function setPayment(payment) {
+	replaceData(assign({}, _transaction, { payment: payment }));
 }
 
-function setStripeObject( stripe, stripeConfiguration ) {
-	replaceData( assign( {}, _transaction, { stripe, stripeConfiguration } ) );
+function setStripeObject(stripe, stripeConfiguration) {
+	replaceData(assign({}, _transaction, { stripe, stripeConfiguration }));
 }
 
-function setStep( step ) {
+function setStep(step) {
 	replaceData(
-		assign( {}, _transaction, {
+		assign({}, _transaction, {
 			step: step,
 			errors: step.error ? step.error.message : {},
-		} )
+		})
 	);
 }
 
-function setNewCreditCardDetails( options ) {
+function setNewCreditCardDetails(options) {
 	// Store the card details on the transaction object. These can be used to
 	// repopulate the new credit card form and payment object with the correct
 	// default values if the credit card form ever needs to be built again.
@@ -88,40 +88,40 @@ function setNewCreditCardDetails( options ) {
 	// method is responsible for using the above data to populate the payment
 	// object correctly, e.g. by calling newCardPayment() and passing in the
 	// transaction.newCardRawDetails object from above.)
-	if ( get( _transaction, [ 'payment', 'newCardDetails' ] ) ) {
+	if (get(_transaction, ['payment', 'newCardDetails'])) {
 		transactionUpdates.payment = { newCardDetails: { $merge: options.rawDetails } };
 	}
 
-	const newTransaction = update( _transaction, transactionUpdates );
+	const newTransaction = update(_transaction, transactionUpdates);
 
-	replaceData( newTransaction );
+	replaceData(newTransaction);
 }
 
-TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
+TransactionStore.dispatchToken = Dispatcher.register(function (payload) {
 	const action = payload.action;
 
-	switch ( action.type ) {
+	switch (action.type) {
 		case TRANSACTION_DOMAIN_DETAILS_SET:
-			setDomainDetails( action.domainDetails );
+			setDomainDetails(action.domainDetails);
 			break;
 
 		case TRANSACTION_PAYMENT_SET:
-			setPayment( action.payment );
+			setPayment(action.payment);
 			break;
 
 		case TRANSACTION_STRIPE_SET:
-			setStripeObject( action.stripe, action.stripeConfiguration );
+			setStripeObject(action.stripe, action.stripeConfiguration);
 			break;
 
 		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
-			setNewCreditCardDetails( {
+			setNewCreditCardDetails({
 				rawDetails: action.rawDetails,
 				maskedDetails: action.maskedDetails,
-			} );
+			});
 			break;
 
 		case TRANSACTION_STEP_SET:
-			setStep( action.step );
+			setStep(action.step);
 			break;
 
 		case TRANSACTION_RESET:
@@ -129,16 +129,13 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case CART_ITEM_REMOVE:
-			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
+			Dispatcher.waitFor([CartStore.dispatchToken]);
 
-			if (
-				! hasDomainRegistration( CartStore.get() ) &&
-				hasDomainDetails( TransactionStore.get() )
-			) {
-				setDomainDetails( null );
+			if (!hasDomainRegistration(CartStore.get()) && hasDomainDetails(TransactionStore.get())) {
+				setDomainDetails(null);
 			}
 			break;
 	}
-} );
+});
 
 export default TransactionStore;

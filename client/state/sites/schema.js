@@ -4,7 +4,7 @@ export const sitesSchema = {
 		//be careful to escape regexes properly
 		'^\\d+$': {
 			type: 'object',
-			required: [ 'ID', 'name' ],
+			required: ['ID', 'name'],
 			properties: {
 				ID: { type: 'number' },
 				name: { type: 'string' },
@@ -32,11 +32,11 @@ export const sitesSchema = {
 				},
 				plan: {
 					type: 'object',
-					required: [ 'product_id', 'product_slug' ],
+					required: ['product_id', 'product_slug'],
 					properties: {
-						product_id: { type: [ 'number', 'string' ] },
+						product_id: { type: ['number', 'string'] },
 						product_slug: { type: 'string' },
-						product_name_short: { type: [ 'string', 'null' ] },
+						product_name_short: { type: ['string', 'null'] },
 						expired: { type: 'boolean' },
 						user_is_owner: { type: 'boolean' },
 						is_free: { type: 'boolean' },
@@ -63,5 +63,5 @@ export const sitesSchema = {
 };
 
 export const hasAllSitesListSchema = {
-	type: [ 'boolean', 'null' ],
+	type: ['boolean', 'null'],
 };

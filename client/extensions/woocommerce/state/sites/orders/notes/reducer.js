@@ -26,14 +26,14 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isLoading( state = {}, action ) {
-	switch ( action.type ) {
+export function isLoading(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST:
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.orderId ]: WOOCOMMERCE_ORDER_NOTES_REQUEST === action.type,
-			} );
+			return Object.assign({}, state, {
+				[action.orderId]: WOOCOMMERCE_ORDER_NOTES_REQUEST === action.type,
+			});
 		default:
 			return state;
 	}
@@ -48,14 +48,14 @@ export function isLoading( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isSaving( state = {}, action ) {
-	switch ( action.type ) {
+export function isSaving(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_NOTE_CREATE:
 		case WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE:
 		case WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS:
-			return Object.assign( {}, state, {
-				[ action.orderId ]: WOOCOMMERCE_ORDER_NOTE_CREATE === action.type,
-			} );
+			return Object.assign({}, state, {
+				[action.orderId]: WOOCOMMERCE_ORDER_NOTE_CREATE === action.type,
+			});
 		default:
 			return state;
 	}
@@ -68,14 +68,14 @@ export function isSaving( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
+export function items(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS:
-			const notes = keyBy( action.notes, 'id' );
-			return Object.assign( {}, state, notes );
+			const notes = keyBy(action.notes, 'id');
+			return Object.assign({}, state, notes);
 		case WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS:
 			const note = action.note;
-			return Object.assign( {}, state, { [ note.id ]: note } );
+			return Object.assign({}, state, { [note.id]: note });
 		default:
 			return state;
 	}
@@ -89,25 +89,25 @@ export function items( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function orders( state = {}, action ) {
-	switch ( action.type ) {
+export function orders(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS: {
-			const idList = action.notes.map( note => note.id );
-			return Object.assign( {}, state, { [ action.orderId ]: idList } );
+			const idList = action.notes.map((note) => note.id);
+			return Object.assign({}, state, { [action.orderId]: idList });
 		}
 		case WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS: {
 			const { note, orderId } = action;
-			const idList = [ ...state[ orderId ], note.id ];
-			return Object.assign( {}, state, { [ orderId ]: idList } );
+			const idList = [...state[orderId], note.id];
+			return Object.assign({}, state, { [orderId]: idList });
 		}
 		default:
 			return state;
 	}
 }
 
-export default combineReducers( {
+export default combineReducers({
 	isLoading,
 	isSaving,
 	items,
 	orders,
-} );
+});

@@ -9,10 +9,10 @@ import { expect } from 'chai';
 import { state } from './fixtures/theme-filters';
 import { getThemeFilterTermsTable } from 'state/themes/selectors';
 
-describe( 'getThemeFilterTermsTable()', () => {
-	test( 'should return a dictionary mapping terms to taxonomies', () => {
-		const table = getThemeFilterTermsTable( state );
-		expect( table ).to.deep.equal( {
+describe('getThemeFilterTermsTable()', () => {
+	test('should return a dictionary mapping terms to taxonomies', () => {
+		const table = getThemeFilterTermsTable(state);
+		expect(table).to.deep.equal({
 			artwork: 'subject',
 			blog: 'subject',
 			business: 'subject',
@@ -24,6 +24,6 @@ describe( 'getThemeFilterTermsTable()', () => {
 			minimal: 'style',
 			'feature:video': 'feature',
 			wordads: 'feature',
-		} );
-	} );
-} );
+		});
+	});
+});

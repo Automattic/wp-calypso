@@ -16,7 +16,7 @@ import 'state/automated-transfer/init';
  * @param {object} state automated transfer state sub-tree for a site
  * @returns {string} status of transfer
  */
-export const getStatusData = state => get( state, 'status', null );
+export const getStatusData = (state) => get(state, 'status', null);
 
 /**
  * Returns status info for transfer
@@ -25,4 +25,4 @@ export const getStatusData = state => get( state, 'status', null );
  * @param {number} siteId requested site for transfer info
  * @returns {string|null} status if available else `null`
  */
-export const getAutomatedTransferStatus = compose( getStatusData, getAutomatedTransfer );
+export const getAutomatedTransferStatus = compose(getStatusData, getAutomatedTransfer);

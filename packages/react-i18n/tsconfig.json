@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
-		"lib": [ "DOM", "ES2015" ],
+		"lib": ["DOM", "ES2015"],
 
 		"baseUrl": ".",
 		"module": "esnext",
@@ -23,13 +23,13 @@
 
 		"forceConsistentCasingInFileNames": true,
 
-		"typeRoots": [ "../../node_modules/@types" ],
+		"typeRoots": ["../../node_modules/@types"],
 		"types": [],
 
 		"importHelpers": true,
 		"composite": true,
 		"tsBuildInfoFile": "../../.tsc-cache/packages__react-i18n"
 	},
-	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/test/*" ]
+	"include": ["src"],
+	"exclude": ["**/docs/*", "**/test/*"]
 }

@@ -10,14 +10,14 @@ import { useDispatch } from 'react-redux';
  */
 import { requestSelectedEditor } from 'state/selected-editor/actions';
 
-export default function QuerySiteSelectedEditor( { siteId } ) {
+export default function QuerySiteSelectedEditor({ siteId }) {
 	const dispatch = useDispatch();
 
-	useEffect( () => {
-		if ( siteId ) {
-			dispatch( requestSelectedEditor( siteId ) );
+	useEffect(() => {
+		if (siteId) {
+			dispatch(requestSelectedEditor(siteId));
 		}
-	}, [ dispatch, siteId ] );
+	}, [dispatch, siteId]);
 
 	return null;
 }

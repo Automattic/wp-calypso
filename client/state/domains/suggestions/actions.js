@@ -18,7 +18,7 @@ import {
  * @param   {object}   queryObject              domain suggestions queryObject
  * @returns {object}   Action object
  */
-export function receiveDomainsSuggestions( suggestions, queryObject ) {
+export function receiveDomainsSuggestions(suggestions, queryObject) {
 	return {
 		type: DOMAINS_SUGGESTIONS_RECEIVE,
 		queryObject,
@@ -36,28 +36,28 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
  * @param   {?boolean} queryObject.include_wordpressdotcom  adds wordpress subdomain suggestions when true
  * @returns {Function}                                      Action thunk
  */
-export function requestDomainsSuggestions( queryObject ) {
-	return dispatch => {
-		dispatch( {
+export function requestDomainsSuggestions(queryObject) {
+	return (dispatch) => {
+		dispatch({
 			type: DOMAINS_SUGGESTIONS_REQUEST,
 			queryObject,
-		} );
+		});
 		return wpcom
 			.domains()
-			.suggestions( queryObject )
-			.then( suggestions => {
-				dispatch( receiveDomainsSuggestions( suggestions, queryObject ) );
-				dispatch( {
+			.suggestions(queryObject)
+			.then((suggestions) => {
+				dispatch(receiveDomainsSuggestions(suggestions, queryObject));
+				dispatch({
 					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 					queryObject,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 					queryObject,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

@@ -24,7 +24,7 @@ import { submitSurvey } from 'lib/purchases/actions';
 class ConfirmDisconnection extends PureComponent {
 	static propTypes = {
 		reason: PropTypes.string,
-		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
+		text: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
 		// Provided by HOCs
 		purchase: PropTypes.object,
 		siteId: PropTypes.number,
@@ -47,8 +47,8 @@ class ConfirmDisconnection extends PureComponent {
 
 		const surveyData = {
 			'why-cancel': {
-				response: find( this.constructor.reasonWhitelist, r => r === reason ),
-				text: isArray( text ) ? text.join() : text,
+				response: find(this.constructor.reasonWhitelist, (r) => r === reason),
+				text: isArray(text) ? text.join() : text,
 			},
 			source: {
 				from: 'Calypso',
@@ -58,7 +58,7 @@ class ConfirmDisconnection extends PureComponent {
 		submitSurvey(
 			'calypso-disconnect-jetpack-july2019',
 			siteId,
-			enrichedSurveyData( surveyData, purchase )
+			enrichedSurveyData(surveyData, purchase)
 		);
 	};
 
@@ -67,41 +67,37 @@ class ConfirmDisconnection extends PureComponent {
 
 		return (
 			<Main className="disconnect-site__confirm">
-				<DocumentHead title={ translate( 'Site Settings' ) } />
+				<DocumentHead title={translate('Site Settings')} />
 				<FormattedHeader
-					headerText={ translate( 'Confirm Disconnection' ) }
-					subHeaderText={ translate(
+					headerText={translate('Confirm Disconnection')}
+					subHeaderText={translate(
 						'Confirm that you want to disconnect your site from WordPress.com.'
-					) }
+					)}
 				/>
 				<DisconnectJetpack
 					disconnectHref="/stats"
-					isBroken={ false }
-					onDisconnectClick={ this.submitSurvey }
-					showTitle={ false }
-					siteId={ siteId }
-					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
+					isBroken={false}
+					onDisconnectClick={this.submitSurvey}
+					showTitle={false}
+					siteId={siteId}
+					stayConnectedHref={'/settings/manage-connection/' + siteSlug}
 				/>
 				<div className="disconnect-site__navigation-links">
-					<NavigationLink href={ '/settings/disconnect-site/' + siteSlug } direction="back" />
+					<NavigationLink href={'/settings/disconnect-site/' + siteSlug} direction="back" />
 				</div>
 			</Main>
 		);
 	}
 }
 
-const connectComponent = connect( state => {
-	const siteId = getSelectedSiteId( state );
+const connectComponent = connect((state) => {
+	const siteId = getSelectedSiteId(state);
 	return {
-		purchase: getCurrentPlan( state, siteId ),
-		site: getSelectedSite( state ),
+		purchase: getCurrentPlan(state, siteId),
+		site: getSelectedSite(state),
 		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
+		siteSlug: getSelectedSiteSlug(state),
 	};
-} );
+});
 
-export default flowRight(
-	connectComponent,
-	localize,
-	redirectNonJetpack()
-)( ConfirmDisconnection );
+export default flowRight(connectComponent, localize, redirectNonJetpack())(ConfirmDisconnection);

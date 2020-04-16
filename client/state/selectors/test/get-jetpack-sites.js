@@ -9,19 +9,19 @@ import { expect } from 'chai';
 import getJetpackSites from 'state/selectors/get-jetpack-sites';
 import { userState } from './fixtures/user-state';
 
-describe( 'getJetpackSites()', () => {
-	test( 'should return an empty array if no sites exist in state', () => {
+describe('getJetpackSites()', () => {
+	test('should return an empty array if no sites exist in state', () => {
 		const state = {
 			...userState,
 			sites: {
 				items: {},
 			},
 		};
-		const sites = getJetpackSites( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getJetpackSites(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return an empty array if the sites existing are not Jetpack sites', () => {
+	test('should return an empty array if the sites existing are not Jetpack sites', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -31,11 +31,11 @@ describe( 'getJetpackSites()', () => {
 				},
 			},
 		};
-		const sites = getJetpackSites( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getJetpackSites(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return one Jetpack site if only one site exists and it is a Jetpack site', () => {
+	test('should return one Jetpack site if only one site exists and it is a Jetpack site', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -50,12 +50,12 @@ describe( 'getJetpackSites()', () => {
 				},
 			},
 		};
-		const sites = getJetpackSites( state );
-		expect( sites ).to.have.length( 1 );
-		expect( sites[ 0 ].ID ).to.eql( 2916289 );
-	} );
+		const sites = getJetpackSites(state);
+		expect(sites).to.have.length(1);
+		expect(sites[0].ID).to.eql(2916289);
+	});
 
-	test( 'should return all the sites in state if all of them are Jetpack sites', () => {
+	test('should return all the sites in state if all of them are Jetpack sites', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -77,13 +77,13 @@ describe( 'getJetpackSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getJetpackSites( state );
-		expect( sites ).to.have.length( 2 );
-		expect( sites[ 0 ].ID ).to.eql( 2916288 );
-		expect( sites[ 1 ].ID ).to.eql( 2916289 );
-	} );
+		const sites = getJetpackSites(state);
+		expect(sites).to.have.length(2);
+		expect(sites[0].ID).to.eql(2916288);
+		expect(sites[1].ID).to.eql(2916289);
+	});
 
-	test( 'should return only the Jetpack sites if the state contains Jetpack and non Jetpack sites', () => {
+	test('should return only the Jetpack sites if the state contains Jetpack and non Jetpack sites', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -110,9 +110,9 @@ describe( 'getJetpackSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getJetpackSites( state );
-		expect( sites ).to.have.length( 2 );
-		expect( sites[ 0 ].ID ).to.eql( 2916288 );
-		expect( sites[ 1 ].ID ).to.eql( 2916289 );
-	} );
-} );
+		const sites = getJetpackSites(state);
+		expect(sites).to.have.length(2);
+		expect(sites[0].ID).to.eql(2916288);
+		expect(sites[1].ID).to.eql(2916289);
+	});
+});

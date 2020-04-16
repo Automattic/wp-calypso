@@ -19,7 +19,7 @@ export default class extends React.PureComponent {
 		value: PropTypes.string.isRequired,
 		displayTransform: PropTypes.func.isRequired,
 		onClickRemove: PropTypes.func,
-		status: PropTypes.oneOf( [ 'error', 'success', 'validating' ] ),
+		status: PropTypes.oneOf(['error', 'success', 'validating']),
 		isBorderless: PropTypes.bool,
 		tooltip: PropTypes.string,
 		disabled: PropTypes.bool,
@@ -33,46 +33,40 @@ export default class extends React.PureComponent {
 
 	render() {
 		const { value, status, isBorderless, tooltip, displayTransform } = this.props;
-		const tokenClasses = classNames( 'token-field__token', {
+		const tokenClasses = classNames('token-field__token', {
 			'is-error': 'error' === status,
 			'is-success': 'success' === status,
 			'is-validating': 'validating' === status,
 			'is-borderless': isBorderless,
 			'is-disabled': this.props.disabled,
-		} );
+		});
 
 		return (
 			<span
-				className={ tokenClasses }
+				className={tokenClasses}
 				tabIndex="-1"
-				onMouseEnter={ this.props.onMouseEnter }
-				onMouseLeave={ this.props.onMouseLeave }
+				onMouseEnter={this.props.onMouseEnter}
+				onMouseLeave={this.props.onMouseLeave}
 			>
-				<span className="token-field__token-text">{ displayTransform( value ) }</span>
+				<span className="token-field__token-text">{displayTransform(value)}</span>
 				<Gridicon
 					icon="cross-small"
-					size={ 24 }
+					size={24}
 					className="token-field__remove-token"
-					onClick={ ! this.props.disabled ? this._onClickRemove : null }
+					onClick={!this.props.disabled ? this._onClickRemove : null}
 				/>
-				{ tooltip && (
-					<Tooltip
-						showOnMobile
-						context={ this }
-						status={ status }
-						isVisible={ true }
-						position="bottom"
-					>
-						{ tooltip }
+				{tooltip && (
+					<Tooltip showOnMobile context={this} status={status} isVisible={true} position="bottom">
+						{tooltip}
 					</Tooltip>
-				) }
+				)}
 			</span>
 		);
 	}
 
 	_onClickRemove = () => {
-		this.props.onClickRemove( {
+		this.props.onClickRemove({
 			value: this.props.value,
-		} );
+		});
 	};
 }

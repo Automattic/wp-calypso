@@ -33,8 +33,8 @@ class PluginSections extends React.Component {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT = 140;
 
-	recordEvent = eventAction => {
-		gaRecordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
+	recordEvent = (eventAction) => {
+		gaRecordEvent('Plugins', eventAction, 'Plugin Name', this.props.plugin.slug);
 	};
 
 	componentDidMount() {
@@ -46,54 +46,54 @@ class PluginSections extends React.Component {
 	}
 
 	calculateDescriptionHeight() {
-		if ( this.refs.content ) {
+		if (this.refs.content) {
 			const node = this.refs.content;
-			if ( node && node.offsetHeight && node.offsetHeight !== this.state.descriptionHeight ) {
-				this.setState( { descriptionHeight: node.offsetHeight } );
+			if (node && node.offsetHeight && node.offsetHeight !== this.state.descriptionHeight) {
+				this.setState({ descriptionHeight: node.offsetHeight });
 			}
 		}
 	}
 
 	getFilteredSections = () => {
-		if ( this.props.isWpcom ) {
+		if (this.props.isWpcom) {
 			return this.getWpcomFilteredSections();
 		}
 
 		return [
 			{
 				key: 'description',
-				title: this.props.translate( 'Description', {
+				title: this.props.translate('Description', {
 					context: 'Navigation item',
 					textOnly: true,
-				} ),
+				}),
 			},
 			{
 				key: 'installation',
-				title: this.props.translate( 'Installation', {
+				title: this.props.translate('Installation', {
 					context: 'Navigation item',
 					textOnly: true,
-				} ),
+				}),
 			},
 			{
 				key: 'changelog',
-				title: this.props.translate( 'Changelog', {
+				title: this.props.translate('Changelog', {
 					context: 'Navigation item',
 					textOnly: true,
-				} ),
+				}),
 			},
 			{
 				key: 'faq',
-				title: this.props.translate( 'FAQs', {
+				title: this.props.translate('FAQs', {
 					context: 'Navigation item',
 					textOnly: true,
-				} ),
+				}),
 			},
 			{
 				key: 'other_notes',
-				title: this.props.translate( 'Other Notes', {
+				title: this.props.translate('Other Notes', {
 					context: 'Navigation item',
 					textOnly: true,
-				} ),
+				}),
 			},
 		];
 	};
@@ -102,10 +102,10 @@ class PluginSections extends React.Component {
 		return [
 			{
 				key: 'description',
-				title: this.props.translate( 'Description', {
+				title: this.props.translate('Description', {
 					context: 'Navigation item',
 					textOnly: true,
-				} ),
+				}),
 			},
 		];
 	};
@@ -116,68 +116,68 @@ class PluginSections extends React.Component {
 
 	getDefaultSection = () => {
 		const sections = this.props.plugin.sections;
-		return find( this.getFilteredSections(), function( section ) {
-			return sections[ section.key ];
-		} ).key;
+		return find(this.getFilteredSections(), function (section) {
+			return sections[section.key];
+		}).key;
 	};
 
 	getAvailableSections = () => {
 		const sections = this.props.plugin.sections;
-		return filter( this.getFilteredSections(), function( section ) {
-			return sections[ section.key ];
-		} );
+		return filter(this.getFilteredSections(), function (section) {
+			return sections[section.key];
+		});
 	};
 
-	getNavTitle = sectionKey => {
-		const titleSection = find( this.getFilteredSections(), function( section ) {
+	getNavTitle = (sectionKey) => {
+		const titleSection = find(this.getFilteredSections(), function (section) {
 			return section.key === sectionKey;
-		} );
+		});
 
-		return titleSection && titleSection.title ? titleSection.title : titleCase( sectionKey );
+		return titleSection && titleSection.title ? titleSection.title : titleCase(sectionKey);
 	};
 
-	setSelectedSection = ( section, event ) => {
-		this.setState( {
+	setSelectedSection = (section, event) => {
+		this.setState({
 			readMore: false !== this.state.readMore || this.getSelected() !== section,
 			selectedSection: section,
-		} );
-		if ( event ) {
-			this.recordEvent( 'Clicked Section Tab: ' + section );
+		});
+		if (event) {
+			this.recordEvent('Clicked Section Tab: ' + section);
 		}
 	};
 
 	toggleReadMore = () => {
-		this.setState( { readMore: ! this.state.readMore } );
+		this.setState({ readMore: !this.state.readMore });
 	};
 
 	renderReadMore = () => {
-		if ( this.props.isWpcom || this.state.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
+		if (this.props.isWpcom || this.state.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT) {
 			return null;
 		}
 		const button = (
-			<button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
-				<span className="plugin-sections__read-more-text">
-					{ this.props.translate( 'Read More' ) }
-				</span>
-				<Gridicon icon="chevron-down" size={ 18 } />
+			<button className="plugin-sections__read-more-link" onClick={this.toggleReadMore}>
+				<span className="plugin-sections__read-more-text">{this.props.translate('Read More')}</span>
+				<Gridicon icon="chevron-down" size={18} />
 			</button>
 		);
 		return (
 			<div className="plugin-sections__read-more">
-				{ // We remove the link but leave the plugin-sections__read-more container
-				// in order to minimize jump on small sections.
-				this.state.readMore ? null : button }
+				{
+					// We remove the link but leave the plugin-sections__read-more container
+					// in order to minimize jump on small sections.
+					this.state.readMore ? null : button
+				}
 			</div>
 		);
 	};
 
 	render() {
-		const contentClasses = classNames( 'plugin-sections__content', {
-			trimmed: ! this.props.isWpcom && ! this.state.readMore,
-		} );
+		const contentClasses = classNames('plugin-sections__content', {
+			trimmed: !this.props.isWpcom && !this.state.readMore,
+		});
 
 		// Defensively check if this plugin has sections. If not, don't render anything.
-		if ( ! this.props.plugin || ! this.props.plugin.sections || ! this.getAvailableSections() ) {
+		if (!this.props.plugin || !this.props.plugin.sections || !this.getAvailableSections()) {
 			return null;
 		}
 
@@ -185,32 +185,32 @@ class PluginSections extends React.Component {
 		return (
 			<div className="plugin-sections">
 				<div className="plugin-sections__header">
-					<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
+					<SectionNav selectedText={this.getNavTitle(this.getSelected())}>
 						<NavTabs>
-							{ this.getAvailableSections().map( function( section ) {
+							{this.getAvailableSections().map(function (section) {
 								return (
 									<NavItem
-										key={ section.key }
-										onClick={ this.setSelectedSection.bind( this, section.key ) }
-										selected={ this.getSelected() === section.key }
+										key={section.key}
+										onClick={this.setSelectedSection.bind(this, section.key)}
+										selected={this.getSelected() === section.key}
 									>
-										{ section.title }
+										{section.title}
 									</NavItem>
 								);
-							}, this ) }
+							}, this)}
 						</NavTabs>
 					</SectionNav>
 				</div>
 				<Card>
 					<div
 						ref="content"
-						className={ contentClasses }
+						className={contentClasses}
 						// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
-						dangerouslySetInnerHTML={ {
-							__html: this.props.plugin.sections[ this.getSelected() ],
-						} }
+						dangerouslySetInnerHTML={{
+							__html: this.props.plugin.sections[this.getSelected()],
+						}}
 					/>
-					{ this.renderReadMore() }
+					{this.renderReadMore()}
 				</Card>
 			</div>
 		);
@@ -218,4 +218,4 @@ class PluginSections extends React.Component {
 	}
 }
 
-export default localize( PluginSections );
+export default localize(PluginSections);

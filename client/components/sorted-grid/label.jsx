@@ -11,16 +11,16 @@ import { connect } from 'react-redux';
  */
 import { getPreference } from 'state/preferences/selectors';
 
-const Label = ( { itemsCount, itemsPerRow, lastInRow, scale, text } ) => {
-	const margin = ( ( 1 % scale ) / ( itemsPerRow - 1 ) ) * 100 || 0;
+const Label = ({ itemsCount, itemsPerRow, lastInRow, scale, text }) => {
+	const margin = ((1 % scale) / (itemsPerRow - 1)) * 100 || 0;
 	const style = {
-		marginRight: `${ lastInRow ? 0 : margin }%`,
-		width: `${ scale * itemsCount * 100 + margin * ( itemsCount - 1 ) }%`,
+		marginRight: `${lastInRow ? 0 : margin}%`,
+		width: `${scale * itemsCount * 100 + margin * (itemsCount - 1)}%`,
 	};
 
 	return (
-		<div className="sorted-grid__label" style={ style }>
-			{ text }
+		<div className="sorted-grid__label" style={style}>
+			{text}
 		</div>
 	);
 };
@@ -38,12 +38,12 @@ Label.defaultProps = {
 };
 
 const connectComponent = connect(
-	state => ( {
-		scale: getPreference( state, 'mediaScale' ),
-	} ),
+	(state) => ({
+		scale: getPreference(state, 'mediaScale'),
+	}),
 	null,
 	null,
 	{ pure: false }
 );
 
-export default connectComponent( Label );
+export default connectComponent(Label);

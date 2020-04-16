@@ -29,10 +29,10 @@ import { getStatsInterval } from 'state/ui/google-my-business/selectors';
 import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { withEnhancers } from 'state/utils';
 
-const withToolTip = WrappedComponent => props => {
+const withToolTip = (WrappedComponent) => (props) => {
 	// inject interval props to renderTooltipForDatanum
 	const renderTooltipForDatanum = props.renderTooltipForDatanum
-		? partialRight( props.renderTooltipForDatanum, props.tooltipInterval )
+		? partialRight(props.renderTooltipForDatanum, props.tooltipInterval)
 		: null;
 
 	const newProps = {
@@ -40,58 +40,58 @@ const withToolTip = WrappedComponent => props => {
 		renderTooltipForDatanum,
 	};
 
-	return <WrappedComponent { ...newProps } />;
+	return <WrappedComponent {...newProps} />;
 };
 
-const LineChartWithTooltip = withToolTip( LineChart );
+const LineChartWithTooltip = withToolTip(LineChart);
 
-function transformData( props ) {
+function transformData(props) {
 	const { data } = props;
 
-	if ( ! data ) {
+	if (!data) {
 		return data;
 	}
 
-	const aggregation = getAggregation( props );
+	const aggregation = getAggregation(props);
 
-	if ( aggregation === 'total' ) {
-		return data.metricValues.map( metric => ( {
+	if (aggregation === 'total') {
+		return data.metricValues.map((metric) => ({
 			value: metric.totalValue.value,
-			description: props.dataSeriesInfo?.[ metric.metric ]?.description ?? '',
-			name: props.dataSeriesInfo?.[ metric.metric ]?.name ?? metric.metric,
-		} ) );
+			description: props.dataSeriesInfo?.[metric.metric]?.description ?? '',
+			name: props.dataSeriesInfo?.[metric.metric]?.name ?? metric.metric,
+		}));
 	}
 
-	return data.metricValues.map( metric => {
-		return metric.dimensionalValues.map( datum => {
-			const datumDate = new Date( datum.time );
+	return data.metricValues.map((metric) => {
+		return metric.dimensionalValues.map((datum) => {
+			const datumDate = new Date(datum.time);
 			/* lock date to midnight for all values to better align with ticks */
-			datumDate.setHours( 0 );
-			datumDate.setMinutes( 0 );
-			datumDate.setSeconds( 0 );
-			datumDate.setMilliseconds( 0 );
+			datumDate.setHours(0);
+			datumDate.setMinutes(0);
+			datumDate.setSeconds(0);
+			datumDate.setMilliseconds(0);
 			return {
 				date: datumDate.getTime(),
 				value: datum.value || 0,
 			};
-		} );
-	} );
+		});
+	});
 }
 
-function createLegendInfo( props ) {
+function createLegendInfo(props) {
 	const { data } = props;
 
-	if ( ! data ) {
+	if (!data) {
 		return data;
 	}
 
-	return data.metricValues.map( metric => ( {
-		description: props.dataSeriesInfo?.[ metric.metric ]?.description ?? '',
-		name: props.dataSeriesInfo?.[ metric.metric ]?.name ?? metric.metric,
-	} ) );
+	return data.metricValues.map((metric) => ({
+		description: props.dataSeriesInfo?.[metric.metric]?.description ?? '',
+		name: props.dataSeriesInfo?.[metric.metric]?.name ?? metric.metric,
+	}));
 }
 
-function getAggregation( props ) {
+function getAggregation(props) {
 	return props.chartType === 'pie' ? 'total' : 'daily';
 }
 
@@ -101,12 +101,12 @@ function getAggregation( props ) {
 class GoogleMyBusinessStatsChart extends Component {
 	static propTypes = {
 		changeGoogleMyBusinessStatsInterval: PropTypes.func.isRequired,
-		chartTitle: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
-		chartType: PropTypes.oneOf( [ 'pie', 'line' ] ),
-		data: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		chartTitle: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+		chartType: PropTypes.oneOf(['pie', 'line']),
+		data: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 		dataSeriesInfo: PropTypes.object,
 		description: PropTypes.string,
-		interval: PropTypes.oneOf( [ 'week', 'month', 'quarter' ] ),
+		interval: PropTypes.oneOf(['week', 'month', 'quarter']),
 		recordTracksEvent: PropTypes.func.isRequired,
 		renderTooltipForDatanum: PropTypes.func,
 		requestGoogleMyBusinessStats: PropTypes.func.isRequired,
@@ -124,12 +124,12 @@ class GoogleMyBusinessStatsChart extends Component {
 		data: null,
 	};
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( nextProps.data !== prevState.data ) {
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (nextProps.data !== prevState.data) {
 			return {
 				data: nextProps.data,
-				transformedData: transformData( nextProps ),
-				legendInfo: createLegendInfo( nextProps ),
+				transformedData: transformData(nextProps),
+				legendInfo: createLegendInfo(nextProps),
 			};
 		}
 
@@ -137,12 +137,12 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 
 	componentDidMount() {
-		if ( this.props.siteId ) {
+		if (this.props.siteId) {
 			this.requestGoogleMyBusinessStats();
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
 			this.props.chartType !== prevProps.chartType ||
 			this.props.interval !== prevProps.interval ||
@@ -158,31 +158,31 @@ class GoogleMyBusinessStatsChart extends Component {
 			this.props.siteId,
 			this.props.statType,
 			this.props.interval,
-			getAggregation( this.props )
+			getAggregation(this.props)
 		);
 	}
 
-	handleIntervalChange = event => {
+	handleIntervalChange = (event) => {
 		const { interval, statType, siteId } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_google_my_business_stats_chart_interval_change', {
+		this.props.recordTracksEvent('calypso_google_my_business_stats_chart_interval_change', {
 			previous_interval: interval,
 			new_interval: event.target.value,
 			stat_type: statType,
-		} );
+		});
 
-		this.props.changeGoogleMyBusinessStatsInterval( siteId, statType, event.target.value );
+		this.props.changeGoogleMyBusinessStatsInterval(siteId, statType, event.target.value);
 	};
 
 	renderPieChart() {
 		const { chartTitle, dataSeriesInfo } = this.props;
 		const { transformedData } = this.state;
 
-		if ( ! transformedData ) {
+		if (!transformedData) {
 			return (
 				<Fragment>
-					<PieChartPlaceholder title={ chartTitle } />
-					<PieChartLegendPlaceholder dataSeriesInfo={ Object.values( dataSeriesInfo ) } />
+					<PieChartPlaceholder title={chartTitle} />
+					<PieChartLegendPlaceholder dataSeriesInfo={Object.values(dataSeriesInfo)} />
 				</Fragment>
 			);
 		}
@@ -190,11 +190,11 @@ class GoogleMyBusinessStatsChart extends Component {
 		return (
 			<Fragment>
 				<div className="gmb-stats__pie-chart">
-					<PieChart data={ transformedData } title={ chartTitle } />
+					<PieChart data={transformedData} title={chartTitle} />
 
-					{ this.renderChartNotice() }
+					{this.renderChartNotice()}
 				</div>
-				<PieChartLegend data={ transformedData } />
+				<PieChartLegend data={transformedData} />
 			</Fragment>
 		);
 	}
@@ -203,7 +203,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		const { renderTooltipForDatanum, interval } = this.props;
 		const { transformedData, legendInfo } = this.state;
 
-		if ( ! transformedData ) {
+		if (!transformedData) {
 			return <LineChartPlaceholder />;
 		}
 
@@ -212,13 +212,13 @@ class GoogleMyBusinessStatsChart extends Component {
 				<div className="gmb-stats__line-chart">
 					<LineChartWithTooltip
 						fillArea
-						data={ transformedData }
-						legendInfo={ legendInfo }
-						renderTooltipForDatanum={ renderTooltipForDatanum }
-						tooltipInterval={ interval }
+						data={transformedData}
+						legendInfo={legendInfo}
+						renderTooltipForDatanum={renderTooltipForDatanum}
+						tooltipInterval={interval}
 					/>
 
-					{ this.renderChartNotice() }
+					{this.renderChartNotice()}
 				</div>
 			</Fragment>
 		);
@@ -233,11 +233,11 @@ class GoogleMyBusinessStatsChart extends Component {
 	isChartEmpty() {
 		const { transformedData } = this.state;
 
-		if ( ! transformedData ) {
+		if (!transformedData) {
 			return false;
 		}
 
-		return sumBy( flatten( transformedData ), 'value' ) === 0;
+		return sumBy(flatten(transformedData), 'value') === 0;
 	}
 
 	renderChartNotice() {
@@ -245,22 +245,22 @@ class GoogleMyBusinessStatsChart extends Component {
 
 		const isEmptyChart = this.isChartEmpty();
 
-		if ( ! isEmptyChart && ! statsError ) {
+		if (!isEmptyChart && !statsError) {
 			return;
 		}
 
-		let text = translate( 'Error loading data', {
+		let text = translate('Error loading data', {
 			context: 'Message on a chart in Stats where an error was occured while loading data',
 			comment: 'Should be limited to 32 characters to prevent wrapping',
-		} );
+		});
 
 		let status = 'is-error';
 
-		if ( isEmptyChart ) {
-			text = translate( 'No activity this period', {
+		if (isEmptyChart) {
+			text = translate('No activity this period', {
 				context: 'Message on empty bar chart in Stats',
 				comment: 'Should be limited to 32 characters to prevent wrapping',
-			} );
+			});
 
 			status = 'is-warning';
 		}
@@ -269,10 +269,10 @@ class GoogleMyBusinessStatsChart extends Component {
 			<div className="chart__empty">
 				<Notice
 					className="chart__empty-notice"
-					status={ status }
+					status={status}
 					isCompact
-					text={ text }
-					showDismiss={ false }
+					text={text}
+					showDismiss={false}
 				/>
 			</div>
 		);
@@ -283,27 +283,27 @@ class GoogleMyBusinessStatsChart extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ title } />
+				<SectionHeader label={title} />
 
 				<Card>
-					{ description && (
+					{description && (
 						<div>
-							<CardHeading tagName={ 'h2' } size={ 16 }>
-								{ description }
+							<CardHeading tagName={'h2'} size={16}>
+								{description}
 							</CardHeading>
 						</div>
-					) }
+					)}
 					<select
 						className="gmb-stats__chart-interval"
-						onChange={ this.handleIntervalChange }
-						value={ interval }
+						onChange={this.handleIntervalChange}
+						value={interval}
 					>
-						<option value="week">{ translate( 'Week' ) }</option>
-						<option value="month">{ translate( 'Month' ) }</option>
-						<option value="quarter">{ translate( 'Quarter' ) }</option>
+						<option value="week">{translate('Week')}</option>
+						<option value="month">{translate('Month')}</option>
+						<option value="quarter">{translate('Quarter')}</option>
 					</select>
 
-					<div className="gmb-stats__chart">{ this.renderChart() }</div>
+					<div className="gmb-stats__chart">{this.renderChart()}</div>
 				</Card>
 			</div>
 		);
@@ -313,15 +313,15 @@ class GoogleMyBusinessStatsChart extends Component {
 /* eslint-enable jsx-a11y/no-onchange */
 
 export default connect(
-	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
-		const interval = getStatsInterval( state, siteId, ownProps.statType );
-		const aggregation = getAggregation( ownProps );
+	(state, ownProps) => {
+		const siteId = getSelectedSiteId(state);
+		const interval = getStatsInterval(state, siteId, ownProps.statType);
+		const aggregation = getAggregation(ownProps);
 
 		return {
 			siteId,
 			interval,
-			data: getGoogleMyBusinessStats( state, siteId, ownProps.statType, interval, aggregation ),
+			data: getGoogleMyBusinessStats(state, siteId, ownProps.statType, interval, aggregation),
 			statsError: getGoogleMyBusinessStatsError(
 				state,
 				siteId,
@@ -333,7 +333,7 @@ export default connect(
 	},
 	{
 		changeGoogleMyBusinessStatsInterval,
-		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
+		recordTracksEvent: withEnhancers(recordTracksEvent, enhanceWithSiteType),
 		requestGoogleMyBusinessStats,
 	}
-)( localize( GoogleMyBusinessStatsChart ) );
+)(localize(GoogleMyBusinessStatsChart));

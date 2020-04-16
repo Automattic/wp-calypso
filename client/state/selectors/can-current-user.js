@@ -17,12 +17,12 @@ import { isValidCapability } from 'state/current-user/selectors';
  * @param  {string}   capability Capability label
  * @returns {?boolean}            Whether current user has capability
  */
-export const canCurrentUser = ( state, siteId, capability ) => {
-	if ( ! isValidCapability( state, siteId, capability ) ) {
+export const canCurrentUser = (state, siteId, capability) => {
+	if (!isValidCapability(state, siteId, capability)) {
 		return null;
 	}
 
-	return state.currentUser.capabilities[ siteId ][ capability ];
+	return state.currentUser.capabilities[siteId][capability];
 };
 
 export default canCurrentUser;

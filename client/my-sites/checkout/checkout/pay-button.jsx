@@ -25,19 +25,19 @@ import {
 
 export class PayButton extends React.Component {
 	buttonState = () => {
-		if ( this.isRecalculatingCart() ) {
+		if (this.isRecalculatingCart()) {
 			return this.recalculating();
 		}
 
 		let state;
 
-		switch ( this.props.transactionStep.name ) {
+		switch (this.props.transactionStep.name) {
 			case BEFORE_SUBMIT:
 				state = this.beforeSubmit();
 				break;
 
 			case INPUT_VALIDATION:
-				if ( this.props.transactionStep.error ) {
+				if (this.props.transactionStep.error) {
 					state = this.beforeSubmit();
 				} else {
 					state = this.sending();
@@ -50,7 +50,7 @@ export class PayButton extends React.Component {
 
 			case REDIRECTING_FOR_AUTHORIZATION:
 			case RECEIVED_PAYMENT_KEY_RESPONSE:
-				if ( this.props.transactionStep.error ) {
+				if (this.props.transactionStep.error) {
 					state = this.beforeSubmit();
 				} else {
 					state = this.sending();
@@ -64,7 +64,7 @@ export class PayButton extends React.Component {
 
 			case RECEIVED_AUTHORIZATION_RESPONSE:
 			case RECEIVED_WPCOM_RESPONSE:
-				if ( this.props.transactionStep.error || ! this.props.transactionStep.data.success ) {
+				if (this.props.transactionStep.error || !this.props.transactionStep.data.success) {
 					state = this.beforeSubmit();
 				} else {
 					state = this.completing();
@@ -72,7 +72,7 @@ export class PayButton extends React.Component {
 				break;
 
 			default:
-				throw new Error( 'Unknown transaction step: ' + this.props.transactionStep.name );
+				throw new Error('Unknown transaction step: ' + this.props.transactionStep.name);
 		}
 
 		return state;
@@ -81,46 +81,46 @@ export class PayButton extends React.Component {
 	beforeSubmitText = () => {
 		const cart = this.props.cart;
 
-		if ( this.props.beforeSubmitText ) {
+		if (this.props.beforeSubmitText) {
 			return this.props.beforeSubmitText;
 		}
 
-		if ( hasOnlyFreeTrial( cart ) ) {
-			return this.props.translate( 'Start %(days)s Day Free Trial', {
+		if (hasOnlyFreeTrial(cart)) {
+			return this.props.translate('Start %(days)s Day Free Trial', {
 				args: { days: '14' },
 				context: 'Pay button for free trials on /checkout',
-			} );
+			});
 		}
 
-		if ( cart.total_cost_display ) {
-			if ( isPaidForFullyInCredits( cart ) ) {
-				if ( hasRenewalItem( this.props.cart ) ) {
-					return this.props.translate( 'Purchase %(price)s subscription with Credits', {
+		if (cart.total_cost_display) {
+			if (isPaidForFullyInCredits(cart)) {
+				if (hasRenewalItem(this.props.cart)) {
+					return this.props.translate('Purchase %(price)s subscription with Credits', {
 						args: { price: cart.total_cost_display },
 						context: 'Renew button on /checkout',
-					} );
+					});
 				}
 
-				return this.props.translate( 'Pay %(price)s with Credits', {
+				return this.props.translate('Pay %(price)s with Credits', {
 					args: { price: cart.total_cost_display },
 					context: 'Pay button on /checkout',
-				} );
+				});
 			}
 
-			if ( hasRenewalItem( this.props.cart ) ) {
-				return this.props.translate( 'Renew subscription - %(price)s', {
+			if (hasRenewalItem(this.props.cart)) {
+				return this.props.translate('Renew subscription - %(price)s', {
 					args: { price: cart.total_cost_display },
 					context: 'Renew button on /checkout',
-				} );
+				});
 			}
 
-			return this.props.translate( 'Pay %(price)s', {
+			return this.props.translate('Pay %(price)s', {
 				args: { price: cart.total_cost_display },
 				context: 'Pay button on /checkout',
-			} );
+			});
 		}
 
-		return this.props.translate( 'Pay now', { context: 'Pay button on /checkout' } );
+		return this.props.translate('Pay now', { context: 'Pay button on /checkout' });
 	};
 
 	beforeSubmit = () => {
@@ -133,29 +133,29 @@ export class PayButton extends React.Component {
 	recalculating = () => {
 		return {
 			disabled: true,
-			text: this.props.translate( 'Calculating price' ),
+			text: this.props.translate('Calculating price'),
 		};
 	};
 
 	sending = () => {
 		return {
 			disabled: true,
-			text: this.props.translate( 'Sending your purchase', {
+			text: this.props.translate('Sending your purchase', {
 				context: 'Loading state on /checkout',
-			} ),
+			}),
 		};
 	};
 
 	completing = () => {
 		let text;
-		if ( hasFreeTrial( this.props.cart ) ) {
-			text = this.props.translate( 'Starting your free trial…', {
+		if (hasFreeTrial(this.props.cart)) {
+			text = this.props.translate('Starting your free trial…', {
 				context: 'Loading state on /checkout',
-			} );
+			});
 		} else {
-			text = this.props.translate( 'Completing your purchase', {
+			text = this.props.translate('Completing your purchase', {
 				context: 'Loading state on /checkout',
-			} );
+			});
 		}
 		return {
 			disabled: true,
@@ -175,15 +175,15 @@ export class PayButton extends React.Component {
 				<Button
 					type="submit"
 					className="checkout__pay-button-button button is-primary button-pay pay-button__button"
-					busy={ buttonState.disabled }
-					disabled={ buttonState.disabled }
+					busy={buttonState.disabled}
+					disabled={buttonState.disabled}
 				>
-					{ buttonState.text }
+					{buttonState.text}
 				</Button>
-				<SubscriptionText cart={ this.props.cart } />
+				<SubscriptionText cart={this.props.cart} />
 			</span>
 		);
 	}
 }
 
-export default localize( PayButton );
+export default localize(PayButton);

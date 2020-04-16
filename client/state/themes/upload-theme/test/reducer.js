@@ -35,13 +35,13 @@ const error = {
 
 const siteId = 2916284;
 
-describe( 'uploadedThemeId', () => {
-	test( 'should default to an empty object', () => {
-		const state = uploadedThemeId( undefined, {} );
-		expect( state ).to.deep.equal( {} );
-	} );
+describe('uploadedThemeId', () => {
+	test('should default to an empty object', () => {
+		const state = uploadedThemeId(undefined, {});
+		expect(state).to.deep.equal({});
+	});
 
-	test( 'should contain theme id after successful upload', () => {
+	test('should contain theme id after successful upload', () => {
 		const state = uploadedThemeId(
 			{},
 			{
@@ -50,10 +50,10 @@ describe( 'uploadedThemeId', () => {
 				themeId,
 			}
 		);
-		expect( state[ siteId ] ).to.deep.equal( themeId );
-	} );
+		expect(state[siteId]).to.deep.equal(themeId);
+	});
 
-	test( 'should be empty after failed upload', () => {
+	test('should be empty after failed upload', () => {
 		const state = uploadedThemeId(
 			{},
 			{
@@ -62,10 +62,10 @@ describe( 'uploadedThemeId', () => {
 				error,
 			}
 		);
-		expect( state[ siteId ] ).to.be.undefined;
-	} );
+		expect(state[siteId]).to.be.undefined;
+	});
 
-	test( 'should be empty after clear', () => {
+	test('should be empty after clear', () => {
 		const state = uploadedThemeId(
 			{
 				siteId: themeId,
@@ -75,10 +75,10 @@ describe( 'uploadedThemeId', () => {
 				siteId,
 			}
 		);
-		expect( state[ siteId ] ).to.be.undefined;
-	} );
+		expect(state[siteId]).to.be.undefined;
+	});
 
-	test( 'should contain theme id after successful transfer with theme', () => {
+	test('should contain theme id after successful transfer with theme', () => {
 		const state = uploadedThemeId(
 			{},
 			{
@@ -90,17 +90,17 @@ describe( 'uploadedThemeId', () => {
 				themeId,
 			}
 		);
-		expect( state[ siteId ] ).to.deep.equal( themeId );
-	} );
-} );
+		expect(state[siteId]).to.deep.equal(themeId);
+	});
+});
 
-describe( 'uploadError', () => {
-	test( 'should default to an empty object', () => {
-		const state = uploadError( undefined, {} );
-		expect( state ).to.deep.equal( {} );
-	} );
+describe('uploadError', () => {
+	test('should default to an empty object', () => {
+		const state = uploadError(undefined, {});
+		expect(state).to.deep.equal({});
+	});
 
-	test( 'should contain error after failed upload', () => {
+	test('should contain error after failed upload', () => {
 		const state = uploadError(
 			{},
 			{
@@ -109,10 +109,10 @@ describe( 'uploadError', () => {
 				error,
 			}
 		);
-		expect( state[ siteId ] ).to.deep.equal( error );
-	} );
+		expect(state[siteId]).to.deep.equal(error);
+	});
 
-	test( 'should be empty after successful upload', () => {
+	test('should be empty after successful upload', () => {
 		const state = uploadError(
 			{},
 			{
@@ -121,10 +121,10 @@ describe( 'uploadError', () => {
 				themeId,
 			}
 		);
-		expect( state[ siteId ] ).to.be.undefined;
-	} );
+		expect(state[siteId]).to.be.undefined;
+	});
 
-	test( 'should be empty on clear', () => {
+	test('should be empty on clear', () => {
 		const state = uploadError(
 			{
 				siteId: error,
@@ -134,10 +134,10 @@ describe( 'uploadError', () => {
 				siteId,
 			}
 		);
-		expect( state[ siteId ] ).to.be.undefined;
-	} );
+		expect(state[siteId]).to.be.undefined;
+	});
 
-	test( 'should contain error after failed transfer request', () => {
+	test('should contain error after failed transfer request', () => {
 		const state = uploadError(
 			{},
 			{
@@ -146,10 +146,10 @@ describe( 'uploadError', () => {
 				error,
 			}
 		);
-		expect( state[ siteId ] ).to.deep.equal( error );
-	} );
+		expect(state[siteId]).to.deep.equal(error);
+	});
 
-	test( 'should contain error after failed transfer status request', () => {
+	test('should contain error after failed transfer status request', () => {
 		const state = uploadError(
 			{},
 			{
@@ -159,17 +159,17 @@ describe( 'uploadError', () => {
 				error,
 			}
 		);
-		expect( state[ siteId ] ).to.deep.equal( error );
-	} );
-} );
+		expect(state[siteId]).to.deep.equal(error);
+	});
+});
 
-describe( 'progressLoaded', () => {
-	test( 'should default to an empty object', () => {
-		const state = progressLoaded( undefined, {} );
-		expect( state ).to.deep.equal( {} );
-	} );
+describe('progressLoaded', () => {
+	test('should default to an empty object', () => {
+		const state = progressLoaded(undefined, {});
+		expect(state).to.deep.equal({});
+	});
 
-	test( 'should contain loaded amount after progress action', () => {
+	test('should contain loaded amount after progress action', () => {
 		const state = progressLoaded(
 			{},
 			{
@@ -179,10 +179,10 @@ describe( 'progressLoaded', () => {
 				loaded: 50,
 			}
 		);
-		expect( state[ siteId ] ).to.equal( 50 );
-	} );
+		expect(state[siteId]).to.equal(50);
+	});
 
-	test( 'should be empty on clear', () => {
+	test('should be empty on clear', () => {
 		const state = progressLoaded(
 			{
 				siteId: 50,
@@ -192,10 +192,10 @@ describe( 'progressLoaded', () => {
 				siteId,
 			}
 		);
-		expect( state[ siteId ] ).to.be.undefined;
-	} );
+		expect(state[siteId]).to.be.undefined;
+	});
 
-	test( 'should contain loaded amount after transfer progress action', () => {
+	test('should contain loaded amount after transfer progress action', () => {
 		const state = progressLoaded(
 			{},
 			{
@@ -205,17 +205,17 @@ describe( 'progressLoaded', () => {
 				loaded: 50,
 			}
 		);
-		expect( state[ siteId ] ).to.equal( 50 );
-	} );
-} );
+		expect(state[siteId]).to.equal(50);
+	});
+});
 
-describe( 'progressTotal', () => {
-	test( 'should default to an empty object', () => {
-		const state = progressLoaded( undefined, {} );
-		expect( state ).to.deep.equal( {} );
-	} );
+describe('progressTotal', () => {
+	test('should default to an empty object', () => {
+		const state = progressLoaded(undefined, {});
+		expect(state).to.deep.equal({});
+	});
 
-	test( 'should contain total amount after progress action', () => {
+	test('should contain total amount after progress action', () => {
 		const state = progressTotal(
 			{},
 			{
@@ -225,10 +225,10 @@ describe( 'progressTotal', () => {
 				loaded: 50,
 			}
 		);
-		expect( state[ siteId ] ).to.equal( 100 );
-	} );
+		expect(state[siteId]).to.equal(100);
+	});
 
-	test( 'should be empty on clear', () => {
+	test('should be empty on clear', () => {
 		const state = progressLoaded(
 			{
 				siteId: 100,
@@ -238,10 +238,10 @@ describe( 'progressTotal', () => {
 				siteId,
 			}
 		);
-		expect( state[ siteId ] ).to.be.undefined;
-	} );
+		expect(state[siteId]).to.be.undefined;
+	});
 
-	test( 'should contain total amount after transfer progress action', () => {
+	test('should contain total amount after transfer progress action', () => {
 		const state = progressTotal(
 			{},
 			{
@@ -251,17 +251,17 @@ describe( 'progressTotal', () => {
 				loaded: 50,
 			}
 		);
-		expect( state[ siteId ] ).to.equal( 100 );
-	} );
-} );
+		expect(state[siteId]).to.equal(100);
+	});
+});
 
-describe( 'inProgress', () => {
-	test( 'should default to an empty object', () => {
-		const state = inProgress( undefined, {} );
-		expect( state ).to.deep.equal( {} );
-	} );
+describe('inProgress', () => {
+	test('should default to an empty object', () => {
+		const state = inProgress(undefined, {});
+		expect(state).to.deep.equal({});
+	});
 
-	test( 'should be true on upload start', () => {
+	test('should be true on upload start', () => {
 		const state = inProgress(
 			{},
 			{
@@ -269,10 +269,10 @@ describe( 'inProgress', () => {
 				siteId,
 			}
 		);
-		expect( state[ siteId ] ).to.be.true;
-	} );
+		expect(state[siteId]).to.be.true;
+	});
 
-	test( 'should not be true on upload success', () => {
+	test('should not be true on upload success', () => {
 		const state = inProgress(
 			{},
 			{
@@ -281,10 +281,10 @@ describe( 'inProgress', () => {
 				themeId,
 			}
 		);
-		expect( state[ siteId ] ).to.not.be.true;
-	} );
+		expect(state[siteId]).to.not.be.true;
+	});
 
-	test( 'should not be true on upload failure', () => {
+	test('should not be true on upload failure', () => {
 		const state = inProgress(
 			{},
 			{
@@ -293,10 +293,10 @@ describe( 'inProgress', () => {
 				error,
 			}
 		);
-		expect( state[ siteId ] ).to.not.be.true;
-	} );
+		expect(state[siteId]).to.not.be.true;
+	});
 
-	test( 'should not be true on clear', () => {
+	test('should not be true on clear', () => {
 		const state = inProgress(
 			{},
 			{
@@ -304,10 +304,10 @@ describe( 'inProgress', () => {
 				siteId,
 			}
 		);
-		expect( state[ siteId ] ).to.not.be.true;
-	} );
+		expect(state[siteId]).to.not.be.true;
+	});
 
-	test( 'should be true on transfer initiate', () => {
+	test('should be true on transfer initiate', () => {
 		const state = inProgress(
 			{},
 			{
@@ -315,10 +315,10 @@ describe( 'inProgress', () => {
 				siteId,
 			}
 		);
-		expect( state[ siteId ] ).to.be.true;
-	} );
+		expect(state[siteId]).to.be.true;
+	});
 
-	test( 'should not be true on transfer status complete', () => {
+	test('should not be true on transfer status complete', () => {
 		const state = inProgress(
 			{},
 			{
@@ -328,10 +328,10 @@ describe( 'inProgress', () => {
 				status: 'complete',
 			}
 		);
-		expect( state[ siteId ] ).to.not.be.true;
-	} );
+		expect(state[siteId]).to.not.be.true;
+	});
 
-	test( 'should be true on transfer status not-complete', () => {
+	test('should be true on transfer status not-complete', () => {
 		const state = inProgress(
 			{},
 			{
@@ -341,10 +341,10 @@ describe( 'inProgress', () => {
 				status: 'uploading',
 			}
 		);
-		expect( state[ siteId ] ).to.be.true;
-	} );
+		expect(state[siteId]).to.be.true;
+	});
 
-	test( 'should not be true on transfer status failure', () => {
+	test('should not be true on transfer status failure', () => {
 		const state = inProgress(
 			{},
 			{
@@ -353,6 +353,6 @@ describe( 'inProgress', () => {
 				error,
 			}
 		);
-		expect( state[ siteId ] ).to.not.be.true;
-	} );
-} );
+		expect(state[siteId]).to.not.be.true;
+	});
+});

@@ -54,40 +54,40 @@ export class Notice extends Component {
 		isLoading: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		showDismiss: PropTypes.bool,
-		status: PropTypes.oneOf( [ 'is-error', 'is-info', 'is-success', 'is-warning', 'is-plain' ] ),
-		text: PropTypes.oneOfType( [
-			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),
-			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-		] ),
+		status: PropTypes.oneOf(['is-error', 'is-info', 'is-success', 'is-warning', 'is-plain']),
+		text: PropTypes.oneOfType([
+			PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.node])),
+			PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+		]),
 		translate: PropTypes.func.isRequired,
 	};
 
 	dismissTimeout = null;
 
 	componentDidMount() {
-		if ( this.props.duration > 0 ) {
-			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
+		if (this.props.duration > 0) {
+			this.dismissTimeout = setTimeout(this.props.onDismissClick, this.props.duration);
 		}
 	}
 
 	componentWillUnmount() {
-		if ( this.dismissTimeout ) {
-			clearTimeout( this.dismissTimeout );
+		if (this.dismissTimeout) {
+			clearTimeout(this.dismissTimeout);
 		}
 	}
 
 	componentDidUpdate() {
-		clearTimeout( this.dismissTimeout );
+		clearTimeout(this.dismissTimeout);
 
-		if ( this.props.duration > 0 ) {
-			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
+		if (this.props.duration > 0) {
+			this.dismissTimeout = setTimeout(this.props.onDismissClick, this.props.duration);
 		}
 	}
 
 	getIcon() {
 		let icon;
 
-		switch ( this.props.status ) {
+		switch (this.props.status) {
 			case 'is-info':
 				icon = 'info';
 				break;
@@ -116,42 +116,42 @@ export class Notice extends Component {
 			isCompact,
 			isLoading,
 			onDismissClick,
-			showDismiss = ! isCompact, // by default, show on normal notices, don't show on compact ones
+			showDismiss = !isCompact, // by default, show on normal notices, don't show on compact ones
 			status,
 			text,
 			translate,
 		} = this.props;
-		const classes = classnames( 'notice', status, className, {
+		const classes = classnames('notice', status, className, {
 			'is-compact': isCompact,
 			'is-loading': isLoading,
 			'is-dismissable': showDismiss,
-		} );
+		});
 
 		const iconName = icon || this.getIcon();
-		const iconNeedsDrop = GRIDICONS_WITH_DROP.includes( iconName );
+		const iconNeedsDrop = GRIDICONS_WITH_DROP.includes(iconName);
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<span className="notice__icon-wrapper">
-					{ iconNeedsDrop && <span className="notice__icon-wrapper-drop" /> }
-					<Gridicon className="notice__icon" icon={ iconName } size={ 24 } />
+					{iconNeedsDrop && <span className="notice__icon-wrapper-drop" />}
+					<Gridicon className="notice__icon" icon={iconName} size={24} />
 				</span>
 				<span className="notice__content">
-					<span className="notice__text">{ text ? text : children }</span>
+					<span className="notice__text">{text ? text : children}</span>
 				</span>
-				{ text ? children : null }
-				{ showDismiss && (
+				{text ? children : null}
+				{showDismiss && (
 					<button
 						className="notice__dismiss"
-						onClick={ onDismissClick }
-						aria-label={ translate( 'Dismiss' ) }
+						onClick={onDismissClick}
+						aria-label={translate('Dismiss')}
 					>
-						<Gridicon icon="cross" size={ 24 } />
+						<Gridicon icon="cross" size={24} />
 					</button>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default localize( Notice );
+export default localize(Notice);

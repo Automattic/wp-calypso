@@ -21,20 +21,20 @@ class CheckoutTerms extends React.Component {
 			<Fragment>
 				<div className="checkout__terms">
 					<strong>
-						{ this.props.translate( 'By checking out:', {
+						{this.props.translate('By checking out:', {
 							comment:
 								'Headline before a list of terms the customer is agreeing to on checkout. Screenshot: https://user-images.githubusercontent.com/1379730/55166390-66c09080-5145-11e9-9c13-6c1b3b693786.png',
-						} ) }
+						})}
 					</strong>
 				</div>
-				<TermsOfService hasRenewableSubscription={ hasRenewableSubscription( cart ) } />
-				<DomainRegistrationAgreement cart={ cart } />
-				<DomainRegistrationHsts cart={ cart } />
-				<DomainRegistrationRefundPolicy cart={ cart } />
-				<ConciergeRefundPolicy cart={ cart } />
+				<TermsOfService hasRenewableSubscription={hasRenewableSubscription(cart)} />
+				<DomainRegistrationAgreement cart={cart} />
+				<DomainRegistrationHsts cart={cart} />
+				<DomainRegistrationRefundPolicy cart={cart} />
+				<ConciergeRefundPolicy cart={cart} />
 			</Fragment>
 		);
 	}
 }
 
-export default localize( CheckoutTerms );
+export default localize(CheckoutTerms);

@@ -17,12 +17,12 @@ class ObjectPreference extends Component {
 
 		return (
 			<ul className="preferences-helper__list">
-				{ Object.keys( value ).map( property => (
-					<li key={ property }>{ property + ': ' + JSON.stringify( value[ property ] ) }</li>
-				) ) }
+				{Object.keys(value).map((property) => (
+					<li key={property}>{property + ': ' + JSON.stringify(value[property])}</li>
+				))}
 			</ul>
 		);
 	}
 }
 
-export default connect( null, null )( localize( ObjectPreference ) );
+export default connect(null, null)(localize(ObjectPreference));

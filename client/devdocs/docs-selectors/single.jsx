@@ -23,26 +23,26 @@ export default class DocsSelectorsSingle extends Component {
 	state = {};
 
 	componentDidMount() {
-		this.request( this.props.selector );
+		this.request(this.props.selector);
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.selector !== this.props.selector ) {
-			this.request( this.props.selector );
+	componentDidUpdate(prevProps) {
+		if (prevProps.selector !== this.props.selector) {
+			this.request(this.props.selector);
 		}
 	}
 
-	request = async selector => {
-		const query = stringify( { search: selector } );
+	request = async (selector) => {
+		const query = stringify({ search: selector });
 
 		try {
-			const res = await fetch( `/devdocs/service/selectors?${ query }` );
-			if ( res.ok ) {
+			const res = await fetch(`/devdocs/service/selectors?${query}`);
+			if (res.ok) {
 				const results = await res.json();
-				const result = find( results, { name: selector } );
-				this.setState( { result } );
+				const result = find(results, { name: selector });
+				this.setState({ result });
 			}
-		} catch ( error ) {
+		} catch (error) {
 			// Do nothing.
 		}
 	};
@@ -51,11 +51,11 @@ export default class DocsSelectorsSingle extends Component {
 		const { search } = this.props;
 
 		let url = '/devdocs/selectors';
-		if ( search ) {
-			url = addQueryArgs( { search }, url );
+		if (search) {
+			url = addQueryArgs({ search }, url);
 		}
 
-		page( url );
+		page(url);
 	};
 
 	render() {
@@ -64,13 +64,13 @@ export default class DocsSelectorsSingle extends Component {
 
 		return (
 			<div>
-				<HeaderCake onClick={ this.onReturnToSearch }>{ selector }</HeaderCake>
-				{ 'result' in this.state &&
-					( this.state.result ? (
-						<DocsSelectorsResult { ...{ name, description, tags } } expanded />
+				<HeaderCake onClick={this.onReturnToSearch}>{selector}</HeaderCake>
+				{'result' in this.state &&
+					(this.state.result ? (
+						<DocsSelectorsResult {...{ name, description, tags }} expanded />
 					) : (
 						'No selector found'
-					) ) }
+					))}
 			</div>
 		);
 	}

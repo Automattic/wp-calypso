@@ -36,12 +36,12 @@ class EditorPermalink extends Component {
 	permalinkToggleReference = React.createRef();
 
 	constructor() {
-		super( ...arguments );
-		this.showPopover = this.showPopover.bind( this );
-		this.showTooltip = this.showTooltip.bind( this );
-		this.onCopy = this.onCopy.bind( this );
-		this.hideTooltip = this.hideTooltip.bind( this );
-		this.closePopover = this.closePopover.bind( this );
+		super(...arguments);
+		this.showPopover = this.showPopover.bind(this);
+		this.showTooltip = this.showTooltip.bind(this);
+		this.onCopy = this.onCopy.bind(this);
+		this.hideTooltip = this.hideTooltip.bind(this);
+		this.closePopover = this.closePopover.bind(this);
 
 		this.state = {
 			showPopover: false,
@@ -51,56 +51,56 @@ class EditorPermalink extends Component {
 	}
 
 	componentWillUnmount() {
-		clearTimeout( this.dismissCopyConfirmation );
+		clearTimeout(this.dismissCopyConfirmation);
 	}
 
 	showPopover() {
-		this.setState( {
-			showPopover: ! this.state.showPopover,
+		this.setState({
+			showPopover: !this.state.showPopover,
 			tooltip: false,
-		} );
+		});
 	}
 
 	showTooltip() {
-		if ( ! this.state.showPopover ) {
-			this.setState( { tooltip: true } );
+		if (!this.state.showPopover) {
+			this.setState({ tooltip: true });
 		}
 	}
 
 	onCopy() {
-		this.setState( {
+		this.setState({
 			showCopyConfirmation: true,
-		} );
+		});
 
-		clearTimeout( this.dismissCopyConfirmation );
-		this.dismissCopyConfirmation = setTimeout( () => {
-			this.setState( {
+		clearTimeout(this.dismissCopyConfirmation);
+		this.dismissCopyConfirmation = setTimeout(() => {
+			this.setState({
 				showCopyConfirmation: false,
-			} );
-		}, 4000 );
+			});
+		}, 4000);
 	}
 
 	hideTooltip() {
-		this.setState( { tooltip: false } );
+		this.setState({ tooltip: false });
 	}
 
 	closePopover() {
-		this.setState( { showPopover: false } );
+		this.setState({ showPopover: false });
 	}
 
 	renderCopyButton() {
 		const { path, slug, translate } = this.props;
 
 		let label;
-		if ( this.state.showCopyConfirmation ) {
-			label = translate( 'Copied!' );
+		if (this.state.showCopyConfirmation) {
+			label = translate('Copied!');
 		} else {
-			label = translate( 'Copy', { context: 'verb' } );
+			label = translate('Copy', { context: 'verb' });
 		}
 
 		return (
-			<ClipboardButton text={ path + slug } onCopy={ this.onCopy } compact>
-				{ label }
+			<ClipboardButton text={path + slug} onCopy={this.onCopy} compact>
+				{label}
 			</ClipboardButton>
 		);
 	}
@@ -109,57 +109,57 @@ class EditorPermalink extends Component {
 		const { translate } = this.props;
 		let tooltipMessage;
 
-		if ( this.props.isEditable ) {
-			tooltipMessage = translate( 'Edit post URL' );
+		if (this.props.isEditable) {
+			tooltipMessage = translate('Edit post URL');
 		} else {
-			tooltipMessage = translate( 'View post URL' );
+			tooltipMessage = translate('View post URL');
 		}
 
 		return (
 			<Fragment>
 				<div
 					className="editor-permalink"
-					onMouseEnter={ this.showTooltip }
-					onMouseLeave={ this.hideTooltip }
+					onMouseEnter={this.showTooltip}
+					onMouseLeave={this.hideTooltip}
 				>
 					<Gridicon
 						className="editor-permalink__toggle"
 						icon="link"
-						onClick={ this.showPopover }
-						ref={ this.permalinkToggleReference }
+						onClick={this.showPopover}
+						ref={this.permalinkToggleReference}
 					/>
 				</div>
 				<Popover
-					isVisible={ this.state.showPopover }
-					onClose={ this.closePopover }
-					position={ 'bottom right' }
-					context={ this.permalinkToggleReference.current }
+					isVisible={this.state.showPopover}
+					onClose={this.closePopover}
+					position={'bottom right'}
+					context={this.permalinkToggleReference.current}
 					className="editor-permalink__popover"
 				>
 					<Slug
-						{ ...pick( this.props, 'path', 'isEditable' ) }
-						onEscEnter={ this.closePopover }
+						{...pick(this.props, 'path', 'isEditable')}
+						onEscEnter={this.closePopover}
 						instanceName="post-popover"
 					/>
-					{ this.renderCopyButton() }
+					{this.renderCopyButton()}
 				</Popover>
 				<Tooltip
-					context={ this.permalinkToggleReference.current }
-					isVisible={ this.state.tooltip }
+					context={this.permalinkToggleReference.current}
+					isVisible={this.state.tooltip}
 					position="bottom"
 				>
-					{ tooltipMessage }
+					{tooltipMessage}
 				</Tooltip>
 			</Fragment>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
 
 	return {
-		slug: getEditedPostSlug( state, siteId, postId ),
+		slug: getEditedPostSlug(state, siteId, postId),
 	};
-} )( localize( EditorPermalink ) );
+})(localize(EditorPermalink));

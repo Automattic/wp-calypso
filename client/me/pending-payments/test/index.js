@@ -9,24 +9,24 @@ import { shallow } from 'enzyme';
  */
 import { PendingPayments, requestId } from '../index';
 
-jest.mock( 'state/data-layer/http-data', () => ( {
-	requestHttpData: x => x,
-} ) );
+jest.mock('state/data-layer/http-data', () => ({
+	requestHttpData: (x) => x,
+}));
 
-describe( 'PendingPayments requestId', () => {
-	test( 'returns the same requestId on multiple calls', () => {
-		const example = requestId( '123' );
+describe('PendingPayments requestId', () => {
+	test('returns the same requestId on multiple calls', () => {
+		const example = requestId('123');
 
-		expect( requestId( '123' ) ).toEqual( example );
-		expect( requestId( 'abc' ) ).not.toEqual( example );
-	} );
-} );
+		expect(requestId('123')).toEqual(example);
+		expect(requestId('abc')).not.toEqual(example);
+	});
+});
 
-describe( 'PendingPayments', () => {
+describe('PendingPayments', () => {
 	const defaultProps = {
 		userId: 1,
-		translate: x => x,
-		showErrorNotice: x => x,
+		translate: (x) => x,
+		showErrorNotice: (x) => x,
 		pendingPayments: [],
 		response: {
 			state: 'uninitialized',
@@ -34,8 +34,8 @@ describe( 'PendingPayments', () => {
 		},
 	};
 
-	describe( 'Loading Placeholder', () => {
-		const wrapper = shallow( <PendingPayments { ...defaultProps } /> );
+	describe('Loading Placeholder', () => {
+		const wrapper = shallow(<PendingPayments {...defaultProps} />);
 
 		const rules = [
 			'Main.pending-payments Connect(MeSidebarNavigation)',
@@ -43,17 +43,15 @@ describe( 'PendingPayments', () => {
 			'Connect(PurchasesSite)[isPlaceholder=true]',
 		];
 
-		rules.forEach( rule => {
-			test( rule, () => {
-				expect( wrapper.find( rule ) ).toHaveLength( 1 );
-			} );
-		} );
-	} );
+		rules.forEach((rule) => {
+			test(rule, () => {
+				expect(wrapper.find(rule)).toHaveLength(1);
+			});
+		});
+	});
 
-	describe( 'Empty placeholder', () => {
-		const wrapper = shallow(
-			<PendingPayments { ...defaultProps } response={ { state: 'success' } } />
-		);
+	describe('Empty placeholder', () => {
+		const wrapper = shallow(<PendingPayments {...defaultProps} response={{ state: 'success' }} />);
 
 		const rules = [
 			'Main.pending-payments Connect(MeSidebarNavigation)',
@@ -61,22 +59,22 @@ describe( 'PendingPayments', () => {
 			'.pending-payments .pending-payments__no-content EmptyContent',
 		];
 
-		rules.forEach( rule => {
-			test( rule, () => {
-				expect( wrapper.find( rule ) ).toHaveLength( 1 );
-			} );
-		} );
-	} );
+		rules.forEach((rule) => {
+			test(rule, () => {
+				expect(wrapper.find(rule)).toHaveLength(1);
+			});
+		});
+	});
 
-	describe( 'Non empty list', () => {
+	describe('Non empty list', () => {
 		const pendingPayments = [
 			{ orderId: '', siteId: '', productName: '', paymentType: '', totalCostDisplay: '' },
 		];
 		const wrapper = shallow(
 			<PendingPayments
-				{ ...defaultProps }
-				response={ { state: 'success' } }
-				pendingPayments={ pendingPayments }
+				{...defaultProps}
+				response={{ state: 'success' }}
+				pendingPayments={pendingPayments}
 			/>
 		);
 
@@ -86,10 +84,10 @@ describe( 'PendingPayments', () => {
 			'Main.pending-payments Connect(PendingListItem)',
 		];
 
-		rules.forEach( rule => {
-			test( rule, () => {
-				expect( wrapper.find( rule ) ).toHaveLength( 1 );
-			} );
-		} );
-	} );
-} );
+		rules.forEach((rule) => {
+			test(rule, () => {
+				expect(wrapper.find(rule)).toHaveLength(1);
+			});
+		});
+	});
+});

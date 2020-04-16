@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' ); // eslint-disable-line
-const path = require( 'path' );
+const fs = require('fs'); // eslint-disable-line
+const path = require('path');
 
 /**
  * Given a module name, returns the package version
@@ -10,8 +10,8 @@ const path = require( 'path' );
  * @param  {string} id Module name
  * @returns {string}    Module version
  */
-function getModuleVersion( id ) {
-	return require( id + '/package.json' ).version;
+function getModuleVersion(id) {
+	return require(id + '/package.json').version;
 }
 
 /**
@@ -22,12 +22,12 @@ function getModuleVersion( id ) {
  * @see https://github.com/babel/babel-loader/blob/501d60d/src/index.js#L85-L92
  * @type {string}
  */
-module.exports = JSON.stringify( {
-	'babel-loader': getModuleVersion( 'babel-loader' ),
-	'babel-core': getModuleVersion( '@babel/core' ),
+module.exports = JSON.stringify({
+	'babel-loader': getModuleVersion('babel-loader'),
+	'babel-core': getModuleVersion('@babel/core'),
 	'babel-plugin-transform-wpcalypso-async': getModuleVersion(
 		'@automattic/babel-plugin-transform-wpcalypso-async'
 	),
-	babelrc: fs.readFileSync( path.resolve( __dirname, '../../../../../babel.config.js' ), 'utf8' ),
+	babelrc: fs.readFileSync(path.resolve(__dirname, '../../../../../babel.config.js'), 'utf8'),
 	env: process.env.BABEL_ENV || process.env.NODE_ENV,
-} );
+});

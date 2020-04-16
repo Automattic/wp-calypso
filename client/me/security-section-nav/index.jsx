@@ -25,72 +25,72 @@ export default class extends React.Component {
 	getNavtabs = () => {
 		const tabs = [
 			{
-				title: i18n.translate( 'Password' ),
+				title: i18n.translate('Password'),
 				path: '/me/security',
 			},
-			config.isEnabled( 'signup/social-management' )
+			config.isEnabled('signup/social-management')
 				? {
-						title: i18n.translate( 'Social Login' ),
+						title: i18n.translate('Social Login'),
 						path: '/me/security/social-login',
 				  }
 				: null,
 			{
-				title: i18n.translate( 'Two-Step Authentication' ),
+				title: i18n.translate('Two-Step Authentication'),
 				path: '/me/security/two-step',
 			},
 			{
-				title: config.isEnabled( 'signup/social-management' )
+				title: config.isEnabled('signup/social-management')
 					? // This was shortened from 'Connected Applications' due to space constraints.
-					  i18n.translate( 'Connected Apps' )
-					: i18n.translate( 'Connected Applications' ),
+					  i18n.translate('Connected Apps')
+					: i18n.translate('Connected Applications'),
 				path: '/me/security/connected-applications',
 			},
 			{
-				title: i18n.translate( 'Account Recovery' ),
+				title: i18n.translate('Account Recovery'),
 				path: '/me/security/account-recovery',
 			},
-		].filter( tab => tab !== null );
+		].filter((tab) => tab !== null);
 
 		return tabs;
 	};
 
 	getFilteredPath = () => {
-		const paramIndex = this.props.path.indexOf( '?' );
-		return paramIndex < 0 ? this.props.path : this.props.path.substring( 0, paramIndex );
+		const paramIndex = this.props.path.indexOf('?');
+		return paramIndex < 0 ? this.props.path : this.props.path.substring(0, paramIndex);
 	};
 
 	getSelectedText = () => {
 		let text = '',
 			filteredPath = this.getFilteredPath(),
-			found = find( this.getNavtabs(), { path: filteredPath } );
+			found = find(this.getNavtabs(), { path: filteredPath });
 
-		if ( 'undefined' !== typeof found ) {
-			text = String( found.title );
+		if ('undefined' !== typeof found) {
+			text = String(found.title);
 		}
 
 		return text;
 	};
 
 	onClick = () => {
-		window.scrollTo( 0, 0 );
+		window.scrollTo(0, 0);
 	};
 
 	render() {
 		return (
-			<SectionNav selectedText={ this.getSelectedText() }>
+			<SectionNav selectedText={this.getSelectedText()}>
 				<NavTabs>
-					{ this.getNavtabs().map( function( tab ) {
+					{this.getNavtabs().map(function (tab) {
 						return (
 							<NavItem
-								key={ tab.path }
-								onClick={ this.onClick }
-								path={ tab.path }
-								selected={ tab.path === this.getFilteredPath() }
+								key={tab.path}
+								onClick={this.onClick}
+								path={tab.path}
+								selected={tab.path === this.getFilteredPath()}
 							>
-								{ tab.title }
+								{tab.title}
 							</NavItem>
 						);
-					}, this ) }
+					}, this)}
 				</NavTabs>
 			</SectionNav>
 		);

@@ -29,65 +29,61 @@ class DiscoverSiteAttribution extends React.Component {
 		post: PropTypes.object.isRequired,
 	};
 
-	onSiteClick = () => recordSiteClick( this.props.siteUrl );
+	onSiteClick = () => recordSiteClick(this.props.siteUrl);
 
-	onFollowToggle = isFollowing => recordFollowToggle( isFollowing, this.props.siteUrl );
+	onFollowToggle = (isFollowing) => recordFollowToggle(isFollowing, this.props.siteUrl);
 
 	render() {
 		const { post, site } = this.props;
-		const attribution = get( post, 'discover_metadata.attribution' );
-		const siteUrl = getSiteUrl( post );
-		const followUrl = getSourceFollowUrl( post );
-		const { blogId: siteId } = getSourceData( post );
-		const siteLinkProps = getLinkProps( siteUrl );
-		const siteClasses = classNames( 'discover-attribution__blog ignore-click' );
+		const attribution = get(post, 'discover_metadata.attribution');
+		const siteUrl = getSiteUrl(post);
+		const followUrl = getSourceFollowUrl(post);
+		const { blogId: siteId } = getSourceData(post);
+		const siteLinkProps = getLinkProps(siteUrl);
+		const siteClasses = classNames('discover-attribution__blog ignore-click');
 
 		let avatarUrl = attribution.avatar_url;
 		// Drop default avatar
-		if ( endsWith( avatarUrl, 'defaultavatar.png' ) ) {
+		if (endsWith(avatarUrl, 'defaultavatar.png')) {
 			avatarUrl = null;
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="discover-attribution is-site">
-				{ avatarUrl && (
+				{avatarUrl && (
 					<img
 						className="gravatar"
-						src={ encodeURI( attribution.avatar_url ) }
+						src={encodeURI(attribution.avatar_url)}
 						alt="Avatar"
 						width="20"
 						height="20"
 					/>
-				) }
-				{ ! avatarUrl && siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
-				{ ! avatarUrl && <SiteIcon site={ site } size={ 20 } /> }
+				)}
+				{!avatarUrl && siteId && !site && <QueryReaderSite siteId={siteId} />}
+				{!avatarUrl && <SiteIcon site={site} size={20} />}
 				<span className="discover-attribution__site-title">
 					<a
-						{ ...siteLinkProps }
-						className={ siteClasses }
-						href={ encodeURI( siteUrl ) }
-						onClick={ this.onSiteClick }
+						{...siteLinkProps}
+						className={siteClasses}
+						href={encodeURI(siteUrl)}
+						onClick={this.onSiteClick}
 					>
-						{ translate( 'visit' ) } <em>{ attribution.blog_name }</em>
+						{translate('visit')} <em>{attribution.blog_name}</em>
 					</a>
 				</span>
-				{ followUrl && (
-					<FollowButton
-						siteUrl={ followUrl }
-						iconSize={ 20 }
-						onFollowToggle={ this.onFollowToggle }
-					/>
-				) }
+				{followUrl && (
+					<FollowButton siteUrl={followUrl} iconSize={20} onFollowToggle={this.onFollowToggle} />
+				)}
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const { blogId: siteId } = getSourceData( ownProps.post );
+export default connect((state, ownProps) => {
+	const { blogId: siteId } = getSourceData(ownProps.post);
 	return {
-		site: getSite( state, siteId ),
+		site: getSite(state, siteId),
 	};
-} )( DiscoverSiteAttribution );
+})(DiscoverSiteAttribution);

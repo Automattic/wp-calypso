@@ -34,65 +34,65 @@ class SecurityKeyForm extends Component {
 		isAuthenticating: false,
 	};
 
-	initiateSecurityKeyAuthentication = event => {
+	initiateSecurityKeyAuthentication = (event) => {
 		event.preventDefault();
 
 		const { onSuccess } = this.props;
-		this.setState( { isAuthenticating: true } );
+		this.setState({ isAuthenticating: true });
 		this.props
 			.loginUserWithSecurityKey()
-			.then( () => onSuccess() )
-			.catch( () => this.setState( { isAuthenticating: false } ) );
+			.then(() => onSuccess())
+			.catch(() => this.setState({ isAuthenticating: false }));
 	};
 
 	render() {
 		const { translate } = this.props;
 
 		return (
-			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
+			<form onSubmit={this.initiateSecurityKeyAuthentication}>
 				<Card compact className="two-factor-authentication__verification-code-form">
-					{ ! this.state.isAuthenticating && (
+					{!this.state.isAuthenticating && (
 						<div>
 							<p>
-								{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
+								{translate('{{strong}}Use your security key to finish logging in.{{/strong}}', {
 									components: {
 										strong: <strong />,
 									},
-								} ) }
+								})}
 							</p>
 							<p>
-								{ translate(
+								{translate(
 									'Insert your security key into your USB port. Then tap the button or gold disc.'
-								) }
+								)}
 							</p>
 						</div>
-					) }
-					{ this.state.isAuthenticating && (
+					)}
+					{this.state.isAuthenticating && (
 						<div className="security-key-form__add-wait-for-key">
 							<Spinner />
 							<p className="security-key-form__add-wait-for-key-heading">
-								{ translate( 'Waiting for security key' ) }
+								{translate('Waiting for security key')}
 							</p>
-							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
+							<p>{translate('Connect and touch your security key to log in.')}</p>
 						</div>
-					) }
+					)}
 					<FormButton
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						primary
-						disabled={ this.state.isAuthenticating }
+						disabled={this.state.isAuthenticating}
 					>
-						{ translate( 'Continue with security key' ) }
+						{translate('Continue with security key')}
 					</FormButton>
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType={ 'webauthn' } />
+				<TwoFactorActions twoFactorAuthType={'webauthn'} />
 			</form>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	formUpdate,
 	loginUserWithSecurityKey,
 	recordTracksEvent,
-} )( localize( SecurityKeyForm ) );
+})(localize(SecurityKeyForm));

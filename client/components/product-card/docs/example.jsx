@@ -22,14 +22,12 @@ const purchase = {
 };
 
 function ProductCardExample() {
-	const [ selectedProductOption, selectProductOption ] = useState(
-		'jetpack_backup_realtime_monthly'
-	);
-	const [ isPlaceholder, setIsPlaceholder ] = useState( false );
+	const [selectedProductOption, selectProductOption] = useState('jetpack_backup_realtime_monthly');
+	const [isPlaceholder, setIsPlaceholder] = useState(false);
 
 	return (
 		<Fragment>
-			<Button compact onClick={ () => setIsPlaceholder( ! isPlaceholder ) }>
+			<Button compact onClick={() => setIsPlaceholder(!isPlaceholder)}>
 				Toggle placeholders
 			</Button>
 
@@ -38,9 +36,9 @@ function ProductCardExample() {
 			<h3>Product Card - default</h3>
 			<ProductCard
 				title="Jetpack Scan"
-				isPlaceholder={ isPlaceholder }
-				billingTimeFrame={ isPlaceholder ? null : 'per year' }
-				fullPrice={ isPlaceholder ? null : 25 }
+				isPlaceholder={isPlaceholder}
+				billingTimeFrame={isPlaceholder ? null : 'per year'}
+				fullPrice={isPlaceholder ? null : 25}
 				description={
 					<Fragment>
 						Automatic scanning and one-click fixes keep your site one step ahead of security
@@ -52,10 +50,10 @@ function ProductCardExample() {
 			<h3>Product Card - with a discounted price range and options</h3>
 			<ProductCard
 				title="Jetpack Backup"
-				isPlaceholder={ isPlaceholder }
-				billingTimeFrame={ isPlaceholder ? null : 'per year' }
-				fullPrice={ isPlaceholder ? null : [ 16, 25 ] }
-				discountedPrice={ isPlaceholder ? null : [ 12, 16 ] }
+				isPlaceholder={isPlaceholder}
+				billingTimeFrame={isPlaceholder ? null : 'per year'}
+				fullPrice={isPlaceholder ? null : [16, 25]}
+				discountedPrice={isPlaceholder ? null : [12, 16]}
 				description={
 					<Fragment>
 						Always-on backups ensure you never lose your site. Choose from real-time or daily
@@ -73,7 +71,7 @@ function ProductCardExample() {
 				/>
 				<ProductCardOptions
 					optionsLabel="Backup options:"
-					options={ [
+					options={[
 						{
 							billingTimeFrame: isPlaceholder ? null : 'per year',
 							discountedPrice: isPlaceholder ? null : 12,
@@ -87,9 +85,9 @@ function ProductCardExample() {
 							slug: 'jetpack_backup_realtime_monthly',
 							title: 'Real-Time Backups',
 						},
-					] }
-					selectedSlug={ selectedProductOption }
-					handleSelect={ slug => selectProductOption( slug ) }
+					]}
+					selectedSlug={selectedProductOption}
+					handleSelect={(slug) => selectProductOption(slug)}
 				/>
 				<ProductCardAction label="Upgrade" />
 			</ProductCard>
@@ -108,8 +106,8 @@ function ProductCardExample() {
 						you’ll get unlimited backup archives
 					</Fragment>
 				}
-				isPlaceholder={ isPlaceholder }
-				purchase={ purchase }
+				isPlaceholder={isPlaceholder}
+				purchase={purchase}
 			>
 				<ProductCardAction
 					intro="Get Real-Time Backups $16 /year"
@@ -130,8 +128,8 @@ function ProductCardExample() {
 					</Fragment>
 				}
 				description="Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives"
-				isPlaceholder={ isPlaceholder }
-				purchase={ purchase }
+				isPlaceholder={isPlaceholder}
+				purchase={purchase}
 			>
 				<ProductCardAction
 					intro="Get Real-Time backups"

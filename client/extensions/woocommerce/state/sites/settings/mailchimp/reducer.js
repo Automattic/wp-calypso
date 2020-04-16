@@ -40,25 +40,25 @@ import {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function settings( state = {}, action ) {
-	switch ( action.type ) {
+function settings(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE:
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
-			return Object.assign( {}, state, action.settings );
+			return Object.assign({}, state, action.settings);
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
 			const data = { mailchimp_lists: action.lists };
-			const listKeys = keys( action.lists );
-			if ( ! state.mailchimp_list && listKeys.length > 0 ) {
+			const listKeys = keys(action.lists);
+			if (!state.mailchimp_list && listKeys.length > 0) {
 				// Just pick first that will be shown to the user in the dropdown
 				// We are setting mailchimp_list just in case user likes it and clicks
 				// Continue without actually sellecting something.
-				data.mailchimp_list = listKeys[ 0 ];
+				data.mailchimp_list = listKeys[0];
 			}
-			return Object.assign( {}, state, data );
+			return Object.assign({}, state, data);
 	}
 
 	return state;
@@ -71,8 +71,8 @@ function settings( state = {}, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function settingsRequest( state = false, { type } ) {
-	switch ( type ) {
+function settingsRequest(state = false, { type }) {
+	switch (type) {
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST:
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE:
@@ -90,8 +90,8 @@ function settingsRequest( state = false, { type } ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function settingsRequestError( state = false, action ) {
-	switch ( action.type ) {
+function settingsRequestError(state = false, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE:
 			const error =
@@ -110,11 +110,11 @@ function settingsRequestError( state = false, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function syncStatus( state = {}, action ) {
-	switch ( action.type ) {
+function syncStatus(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS:
-			return Object.assign( {}, action.syncStatus );
+			return Object.assign({}, action.syncStatus);
 	}
 
 	return state;
@@ -127,8 +127,8 @@ function syncStatus( state = {}, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function syncStatusRequest( state = false, { type } ) {
-	switch ( type ) {
+function syncStatusRequest(state = false, { type }) {
+	switch (type) {
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST:
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE:
@@ -146,8 +146,8 @@ function syncStatusRequest( state = false, { type } ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function syncStatusRequestError( state = false, action ) {
-	switch ( action.type ) {
+function syncStatusRequestError(state = false, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE:
 			const error =
@@ -165,8 +165,8 @@ function syncStatusRequestError( state = false, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function resyncRequest( state = false, { type } ) {
-	switch ( type ) {
+function resyncRequest(state = false, { type }) {
+	switch (type) {
 		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST:
 		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE:
@@ -184,8 +184,8 @@ function resyncRequest( state = false, { type } ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function resyncRequestError( state = false, action ) {
-	switch ( action.type ) {
+function resyncRequestError(state = false, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE:
 			const error =
@@ -203,8 +203,8 @@ function resyncRequestError( state = false, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function apiKeySubmit( state = false, { type } ) {
-	switch ( type ) {
+function apiKeySubmit(state = false, { type }) {
+	switch (type) {
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT:
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE:
@@ -222,8 +222,8 @@ function apiKeySubmit( state = false, { type } ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function apiKeySubmitError( state = false, action ) {
-	switch ( action.type ) {
+function apiKeySubmitError(state = false, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE:
 			const error =
@@ -241,8 +241,8 @@ function apiKeySubmitError( state = false, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function storeInfoSubmit( state = false, { type } ) {
-	switch ( type ) {
+function storeInfoSubmit(state = false, { type }) {
+	switch (type) {
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT:
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE:
@@ -260,8 +260,8 @@ function storeInfoSubmit( state = false, { type } ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function storeInfoSubmitError( state = false, action ) {
-	switch ( action.type ) {
+function storeInfoSubmitError(state = false, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE:
 			const error =
@@ -279,8 +279,8 @@ function storeInfoSubmitError( state = false, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function listsRequest( state = false, { type } ) {
-	switch ( type ) {
+function listsRequest(state = false, { type }) {
+	switch (type) {
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST:
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE:
@@ -298,8 +298,8 @@ function listsRequest( state = false, { type } ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function listsRequestError( state = false, action ) {
-	switch ( action.type ) {
+function listsRequestError(state = false, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE:
 			const error =
@@ -317,8 +317,8 @@ function listsRequestError( state = false, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function newsletterSettingsSubmit( state = false, { type } ) {
-	switch ( type ) {
+function newsletterSettingsSubmit(state = false, { type }) {
+	switch (type) {
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT:
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE:
@@ -336,8 +336,8 @@ function newsletterSettingsSubmit( state = false, { type } ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function newsletterSettingsSubmitError( state = false, action ) {
-	switch ( action.type ) {
+function newsletterSettingsSubmitError(state = false, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE:
 			const error =
@@ -359,8 +359,8 @@ function newsletterSettingsSubmitError( state = false, action ) {
  * @param  {object} action Action
  * @returns {object}        Updated state
  */
-function saveSettings( state = false, { type } ) {
-	switch ( type ) {
+function saveSettings(state = false, { type }) {
+	switch (type) {
 		case WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS:
 			return true;
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
@@ -371,7 +371,7 @@ function saveSettings( state = false, { type } ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	settings,
 	settingsRequest,
 	settingsRequestError,
@@ -389,4 +389,4 @@ export default combineReducers( {
 	newsletterSettingsSubmit,
 	newsletterSettingsSubmitError,
 	saveSettings,
-} );
+});

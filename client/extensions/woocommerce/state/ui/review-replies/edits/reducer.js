@@ -22,13 +22,13 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function currentlyEditingId( state = null, action ) {
-	switch ( action.type ) {
+export function currentlyEditingId(state = null, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT:
-			if ( action.reply && action.reply.id ) {
+			if (action.reply && action.reply.id) {
 				return action.reply.id;
 			}
-			return { placeholder: uniqueId( 'review_reply_' ) };
+			return { placeholder: uniqueId('review_reply_') };
 		case WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT:
 			return null;
 		default:
@@ -44,8 +44,8 @@ export function currentlyEditingId( state = null, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function reviewId( state = null, action ) {
-	switch ( action.type ) {
+export function reviewId(state = null, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT:
 			return action.reviewId;
 		case WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT:
@@ -64,11 +64,11 @@ export function reviewId( state = null, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function changes( state = {}, action ) {
-	switch ( action.type ) {
+export function changes(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT:
-			const reply = omit( action.reply, 'id' );
-			return merge( {}, state, reply );
+			const reply = omit(action.reply, 'id');
+			return merge({}, state, reply);
 		case WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT:
 			return {};
 		default:
@@ -76,8 +76,8 @@ export function changes( state = {}, action ) {
 	}
 }
 
-export default combineReducers( {
+export default combineReducers({
 	changes,
 	currentlyEditingId,
 	reviewId,
-} );
+});

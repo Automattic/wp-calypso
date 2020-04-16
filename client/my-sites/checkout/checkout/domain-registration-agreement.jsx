@@ -19,23 +19,23 @@ import {
 
 class DomainRegistrationAgreement extends React.Component {
 	recordRegistrationAgreementClick = () => {
-		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
+		gaRecordEvent('Upgrades', 'Clicked Registration Agreement Link');
 	};
 
-	renderAgreementLinkForList = ( url, domains ) => {
+	renderAgreementLinkForList = (url, domains) => {
 		return this.props.translate(
 			'View the {{domainRegistrationAgreementLink}}Domain Registration Agreement{{/domainRegistrationAgreementLink}} for %(domainsList)s.',
 			{
 				args: {
-					domainsList: domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
+					domainsList: domains.join(', ').replace(/, ([^,]*)$/, ' and $1'),
 				},
 				components: {
 					domainRegistrationAgreementLink: (
 						<a
-							href={ url }
+							href={url}
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={ this.recordRegistrationAgreementClick }
+							onClick={this.recordRegistrationAgreementClick}
 						/>
 					),
 				},
@@ -43,42 +43,42 @@ class DomainRegistrationAgreement extends React.Component {
 		);
 	};
 
-	renderMultipleAgreements = agreementsList => {
+	renderMultipleAgreements = (agreementsList) => {
 		const preamble = this.props.translate(
 			'You agree to the following domain name registration agreements:'
 		);
 		let key = 0;
 		return (
 			<Fragment>
-				<p>{ preamble }</p>
-				{ map( agreementsList, ( { url, domains } ) => (
-					<p key={ key++ }>{ this.renderAgreementLinkForList( url, domains ) }</p>
-				) ) }
+				<p>{preamble}</p>
+				{map(agreementsList, ({ url, domains }) => (
+					<p key={key++}>{this.renderAgreementLinkForList(url, domains)}</p>
+				))}
 			</Fragment>
 		);
 	};
 
-	renderSingleAgreement = ( { url, domains } ) => {
+	renderSingleAgreement = ({ url, domains }) => {
 		return (
 			<p>
-				{ this.props.translate(
+				{this.props.translate(
 					'You agree to the {{domainRegistrationAgreementLink}}Domain Registration Agreement{{/domainRegistrationAgreementLink}} for %(domainsList)s.',
 					{
 						args: {
-							domainsList: domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
+							domainsList: domains.join(', ').replace(/, ([^,]*)$/, ' and $1'),
 						},
 						components: {
 							domainRegistrationAgreementLink: (
 								<a
-									href={ url }
+									href={url}
 									target="_blank"
 									rel="noopener noreferrer"
-									onClick={ this.recordRegistrationAgreementClick }
+									onClick={this.recordRegistrationAgreementClick}
 								/>
 							),
 						},
 					}
-				) }
+				)}
 			</p>
 		);
 	};
@@ -86,42 +86,42 @@ class DomainRegistrationAgreement extends React.Component {
 	renderAgreements = () => {
 		const agreementsList = this.getDomainsByRegistrationAgreement();
 
-		if ( agreementsList.length > 1 ) {
-			return this.renderMultipleAgreements( agreementsList );
+		if (agreementsList.length > 1) {
+			return this.renderMultipleAgreements(agreementsList);
 		}
 
-		return this.renderSingleAgreement( agreementsList.shift() );
+		return this.renderSingleAgreement(agreementsList.shift());
 	};
 
 	getDomainsByRegistrationAgreement() {
 		const { cart } = this.props;
-		const domainItems = getDomainRegistrations( cart );
-		domainItems.push( ...getDomainTransfers( cart ) );
+		const domainItems = getDomainRegistrations(cart);
+		domainItems.push(...getDomainTransfers(cart));
 		const agreementUrls = [
 			...new Set(
-				map( domainItems, registration =>
-					get( registration, 'extra.domain_registration_agreement_url' )
+				map(domainItems, (registration) =>
+					get(registration, 'extra.domain_registration_agreement_url')
 				)
 			),
 		];
 
 		return reduce(
 			agreementUrls,
-			( domainsByAgreement, url ) => {
+			(domainsByAgreement, url) => {
 				const domainsList = reduce(
 					domainItems,
-					( domains, domainItem ) => {
-						if ( domainItem.extra.domain_registration_agreement_url === url ) {
-							domains.push( domainItem.meta );
+					(domains, domainItem) => {
+						if (domainItem.extra.domain_registration_agreement_url === url) {
+							domains.push(domainItem.meta);
 						}
 						return domains;
 					},
 					[]
 				);
-				domainsByAgreement.push( {
+				domainsByAgreement.push({
 					url,
 					domains: domainsList,
-				} );
+				});
 				return domainsByAgreement;
 			},
 			[]
@@ -130,17 +130,17 @@ class DomainRegistrationAgreement extends React.Component {
 
 	render() {
 		const { cart } = this.props;
-		if ( ! ( hasDomainRegistration( cart ) || hasTransferProduct( cart ) ) ) {
+		if (!(hasDomainRegistration(cart) || hasTransferProduct(cart))) {
 			return null;
 		}
 
 		return (
 			<div className="checkout__domain-registration-agreement-link">
-				<Gridicon icon="info-outline" size={ 18 } />
-				{ this.renderAgreements() }
+				<Gridicon icon="info-outline" size={18} />
+				{this.renderAgreements()}
 			</div>
 		);
 	}
 }
 
-export default localize( DomainRegistrationAgreement );
+export default localize(DomainRegistrationAgreement);

@@ -8,9 +8,9 @@ import React from 'react';
  */
 import './style.scss';
 
-const HrWithText = ( { children } ) => (
+const HrWithText = ({ children }) => (
 	<div className="hr-with-text">
-		<div>{ children }</div>
+		<div>{children}</div>
 	</div>
 );
 

@@ -46,66 +46,61 @@ class EditorDeletePost extends React.Component {
 	sendToTrash = () => {
 		const { siteId, postId, canDelete } = this.props;
 
-		if ( ! canDelete ) {
+		if (!canDelete) {
 			return;
 		}
 
-		if ( this.props.onTrashingPost ) {
+		if (this.props.onTrashingPost) {
 			this.props.onTrashingPost();
 		}
 
-		this.setState( { isTrashing: true } );
+		this.setState({ isTrashing: true });
 
-		this.props.trashPost( siteId, postId );
+		this.props.trashPost(siteId, postId);
 	};
 
 	onSendToTrash = () => {
 		const { translate, postType } = this.props;
 
-		if ( this.state.isTrashing ) {
+		if (this.state.isTrashing) {
 			return;
 		}
 
 		let message;
-		if ( postType === 'page' ) {
-			message = translate( 'Are you sure you want to trash this page?' );
+		if (postType === 'page') {
+			message = translate('Are you sure you want to trash this page?');
 		} else {
-			message = translate( 'Are you sure you want to trash this post?' );
+			message = translate('Are you sure you want to trash this post?');
 		}
 
 		accept(
 			message,
-			accepted => {
-				if ( accepted ) {
+			(accepted) => {
+				if (accepted) {
 					this.sendToTrash();
 				}
 			},
-			translate( 'Move to trash' ),
-			translate( 'Back' )
+			translate('Move to trash'),
+			translate('Back')
 		);
 	};
 
 	render() {
 		const { canDelete, postId, postStatus, translate } = this.props;
-		if ( ! canDelete || ! postId || postStatus === 'trash' ) {
+		if (!canDelete || !postId || postStatus === 'trash') {
 			return null;
 		}
 
-		const classes = classnames( 'editor-delete-post__button', {
+		const classes = classnames('editor-delete-post__button', {
 			'is-trashing': this.state.isTrashing,
-		} );
-		const label = this.state.isTrashing ? translate( 'Trashing…' ) : translate( 'Move to trash' );
+		});
+		const label = this.state.isTrashing ? translate('Trashing…') : translate('Move to trash');
 
 		return (
 			<div className="editor-delete-post">
-				<Button
-					borderless
-					className={ classes }
-					onClick={ this.onSendToTrash }
-					aria-label={ label }
-				>
-					<Gridicon icon="trash" size={ 18 } />
-					{ label }
+				<Button borderless className={classes} onClick={this.onSendToTrash} aria-label={label}>
+					<Gridicon icon="trash" size={18} />
+					{label}
 				</Button>
 			</div>
 		);
@@ -113,21 +108,21 @@ class EditorDeletePost extends React.Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, postId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const post = getEditedPost(state, siteId, postId);
 
-		const userId = getCurrentUserId( state );
-		const isAuthor = ! isNull( userId ) && get( post, [ 'author', 'ID' ], null ) === userId;
+		const userId = getCurrentUserId(state);
+		const isAuthor = !isNull(userId) && get(post, ['author', 'ID'], null) === userId;
 
 		return {
 			siteId,
 			postId,
-			postType: get( post, 'type', null ),
-			postStatus: get( post, 'status', null ),
-			canDelete: canCurrentUser( state, siteId, isAuthor ? 'delete_posts' : 'delete_others_posts' ),
+			postType: get(post, 'type', null),
+			postStatus: get(post, 'status', null),
+			canDelete: canCurrentUser(state, siteId, isAuthor ? 'delete_posts' : 'delete_others_posts'),
 		};
 	},
 	{ trashPost }
-)( localize( EditorDeletePost ) );
+)(localize(EditorDeletePost));

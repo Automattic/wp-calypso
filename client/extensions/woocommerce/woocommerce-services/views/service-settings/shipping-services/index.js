@@ -15,7 +15,7 @@ import FieldError from 'woocommerce/woocommerce-services/components/field-error'
 import FieldDescription from 'woocommerce/woocommerce-services/components/field-description';
 import sanitizeHTML from 'woocommerce/woocommerce-services/lib/utils/sanitize-html';
 
-const ShippingServiceGroups = ( {
+const ShippingServiceGroups = ({
 	title,
 	description,
 	services,
@@ -25,46 +25,44 @@ const ShippingServiceGroups = ( {
 	settingsKey,
 	errors,
 	generalError,
-} ) => {
+}) => {
 	// Some shippers have so many services that it is helpful to organize them
 	// into groups.  This code iterates over the services and extracts the group(s)
 	// it finds.  When rendering, we can then iterate over the group(s).
-	const servicesWithSettings = services.map( svc => Object.assign( {}, svc, settings[ svc.id ] ) );
-	const serviceGroups = groupBy( servicesWithSettings, svc => svc.group );
+	const servicesWithSettings = services.map((svc) => Object.assign({}, svc, settings[svc.id]));
+	const serviceGroups = groupBy(servicesWithSettings, (svc) => svc.group);
 
-	const renderServiceGroup = serviceGroup => {
-		const groupFields = map( serviceGroups[ serviceGroup ], 'id' );
+	const renderServiceGroup = (serviceGroup) => {
+		const groupFields = map(serviceGroups[serviceGroup], 'id');
 		const groupErrors = {};
-		groupFields.forEach( fieldName => {
-			if ( errors[ fieldName ] ) {
-				groupErrors[ fieldName ] = errors[ fieldName ];
+		groupFields.forEach((fieldName) => {
+			if (errors[fieldName]) {
+				groupErrors[fieldName] = errors[fieldName];
 			}
-		} );
+		});
 
 		return (
 			<ShippingServiceGroup
-				key={ serviceGroup }
-				title={ serviceGroups[ serviceGroup ][ 0 ].group_name }
-				deliveryEstimate={ serviceGroups[ serviceGroup ][ 0 ].group_estimate || '' }
-				services={ serviceGroups[ serviceGroup ] }
-				currencySymbol={ currencySymbol }
-				updateValue={ updateValue }
-				settingsKey={ settingsKey }
-				errors={ groupErrors }
+				key={serviceGroup}
+				title={serviceGroups[serviceGroup][0].group_name}
+				deliveryEstimate={serviceGroups[serviceGroup][0].group_estimate || ''}
+				services={serviceGroups[serviceGroup]}
+				currencySymbol={currencySymbol}
+				updateValue={updateValue}
+				settingsKey={settingsKey}
+				errors={groupErrors}
 			/>
 		);
 	};
 
 	return (
 		<div className="shipping-services">
-			<FormLegend dangerouslySetInnerHTML={ sanitizeHTML( title ) } />
-			<FieldDescription text={ description } />
-			<div className={ classNames( 'shipping-services__inner', { 'is-error': generalError } ) }>
-				{ Object.keys( serviceGroups )
-					.sort()
-					.map( renderServiceGroup ) }
+			<FormLegend dangerouslySetInnerHTML={sanitizeHTML(title)} />
+			<FieldDescription text={description} />
+			<div className={classNames('shipping-services__inner', { 'is-error': generalError })}>
+				{Object.keys(serviceGroups).sort().map(renderServiceGroup)}
 			</div>
-			{ generalError ? <FieldError text={ generalError } /> : null }
+			{generalError ? <FieldError text={generalError} /> : null}
 		</div>
 	);
 };

@@ -12,9 +12,9 @@ import { WOOCOMMERCE_UI_ORDERS_SET_QUERY } from 'woocommerce/state/action-types'
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function currentPage( state = 1, action ) {
+export function currentPage(state = 1, action) {
 	const { type, query } = action;
-	switch ( type ) {
+	switch (type) {
 		case WOOCOMMERCE_UI_ORDERS_SET_QUERY:
 			return query && query.page ? query.page : state;
 		default:
@@ -29,9 +29,9 @@ export function currentPage( state = 1, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function currentSearch( state = '', action ) {
+export function currentSearch(state = '', action) {
 	const { type, query } = action;
-	switch ( type ) {
+	switch (type) {
 		case WOOCOMMERCE_UI_ORDERS_SET_QUERY:
 			return query && 'undefined' !== typeof query.search ? query.search : state;
 		default:
@@ -39,7 +39,7 @@ export function currentSearch( state = '', action ) {
 	}
 }
 
-export default combineReducers( {
+export default combineReducers({
 	currentPage,
 	currentSearch,
-} );
+});

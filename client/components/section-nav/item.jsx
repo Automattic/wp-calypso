@@ -28,7 +28,7 @@ class NavItem extends PureComponent {
 		onKeyPress: PropTypes.func,
 		isExternalLink: PropTypes.bool,
 		disabled: PropTypes.bool,
-		count: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
+		count: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
 		compactCount: PropTypes.bool,
 		className: PropTypes.string,
 		preloadSectionName: PropTypes.string,
@@ -37,9 +37,9 @@ class NavItem extends PureComponent {
 	_preloaded = false;
 
 	preload = () => {
-		if ( ! this._preloaded && this.props.preloadSectionName ) {
+		if (!this._preloaded && this.props.preloadSectionName) {
 			this._preloaded = true;
-			preload( this.props.preloadSectionName );
+			preload(this.props.preloadSectionName);
 		}
 	};
 
@@ -49,41 +49,41 @@ class NavItem extends PureComponent {
 			'is-selected': this.props.selected,
 			'is-external': this.props.isExternalLink,
 		};
-		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
-		const itemClassName = classNames( this.props.className, itemClasses );
+		itemClasses['section-nav-' + itemClassPrefix] = true;
+		const itemClassName = classNames(this.props.className, itemClasses);
 
 		let target, onClick;
 
-		if ( this.props.isExternalLink ) {
+		if (this.props.isExternalLink) {
 			target = '_blank';
 		}
 
-		if ( ! this.props.disabled ) {
+		if (!this.props.disabled) {
 			onClick = this.props.onClick;
 		}
 
 		return (
-			<li className={ itemClassName }>
+			<li className={itemClassName}>
 				<a
-					href={ this.props.path }
-					target={ target }
-					className={ 'section-nav-' + itemClassPrefix + '__link' }
-					onClick={ onClick }
-					onMouseEnter={ this.preload }
-					tabIndex={ this.props.tabIndex || 0 }
-					aria-current={ this.props.selected }
-					disabled={ this.props.disabled }
+					href={this.props.path}
+					target={target}
+					className={'section-nav-' + itemClassPrefix + '__link'}
+					onClick={onClick}
+					onMouseEnter={this.preload}
+					tabIndex={this.props.tabIndex || 0}
+					aria-current={this.props.selected}
+					disabled={this.props.disabled}
 					role="menuitem"
-					rel={ this.props.isExternalLink ? 'external' : null }
-					onKeyPress={ this.props.onKeyPress }
+					rel={this.props.isExternalLink ? 'external' : null}
+					onKeyPress={this.props.onKeyPress}
 				>
-					<span className={ 'section-nav-' + itemClassPrefix + '__text' }>
-						{ this.props.children }
-						{ 'number' === typeof this.props.count && (
-							<Count count={ this.props.count } compact={ this.props.compactCount } />
-						) }
+					<span className={'section-nav-' + itemClassPrefix + '__text'}>
+						{this.props.children}
+						{'number' === typeof this.props.count && (
+							<Count count={this.props.count} compact={this.props.compactCount} />
+						)}
 					</span>
-					{ this.props.isExternalLink ? <Gridicon icon="external" size={ 18 } /> : null }
+					{this.props.isExternalLink ? <Gridicon icon="external" size={18} /> : null}
 				</a>
 			</li>
 		);

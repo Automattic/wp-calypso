@@ -14,23 +14,23 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import AccountComponent from 'me/account/main';
 import username from 'lib/username';
 
-export function account( context, next ) {
+export function account(context, next) {
 	let showNoticeInitially = false;
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Account Settings', { textOnly: true } ) ) );
+	context.store.dispatch(setTitle(i18n.translate('Account Settings', { textOnly: true })));
 
 	// Update the url and show the notice after a redirect
-	if ( context.query && context.query.updated === 'success' ) {
+	if (context.query && context.query.updated === 'success') {
 		showNoticeInitially = true;
-		page.replace( context.pathname );
+		page.replace(context.pathname);
 	}
 
-	context.primary = React.createElement( AccountComponent, {
+	context.primary = React.createElement(AccountComponent, {
 		userSettings: userSettings,
 		path: context.path,
 		username: username,
 		showNoticeInitially: showNoticeInitially,
-	} );
+	});
 	next();
 }

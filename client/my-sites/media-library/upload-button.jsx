@@ -38,23 +38,23 @@ export default class extends React.Component {
 	formRef = React.createRef();
 
 	onClick = () => {
-		if ( this.props.onClick ) {
+		if (this.props.onClick) {
 			this.props.onClick();
 		}
-		if ( this.props.href ) {
-			page( this.props.href );
+		if (this.props.href) {
+			page(this.props.href);
 		}
 	};
 
-	uploadFiles = event => {
-		if ( event.target.files && this.props.site ) {
-			MediaActions.clearValidationErrors( this.props.site.ID );
-			MediaActions.add( this.props.site, event.target.files );
+	uploadFiles = (event) => {
+		if (event.target.files && this.props.site) {
+			MediaActions.clearValidationErrors(this.props.site.ID);
+			MediaActions.add(this.props.site, event.target.files);
 		}
 
 		this.formRef.current.reset();
 		this.props.onAddMedia();
-		bumpStat( 'editor_upload_via', 'add_button' );
+		bumpStat('editor_upload_via', 'add_button');
 	};
 
 	/**
@@ -67,28 +67,28 @@ export default class extends React.Component {
 	 * @returns {string} Supported file extensions, as comma-separated string
 	 */
 	getInputAccept = () => {
-		if ( ! isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
+		if (!isSiteAllowedFileTypesToBeTrusted(this.props.site)) {
 			return null;
 		}
-		const allowedFileTypesForSite = getAllowedFileTypesForSite( this.props.site );
+		const allowedFileTypesForSite = getAllowedFileTypesForSite(this.props.site);
 
-		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) )
-			.map( type => `.${ type }` )
+		return uniq(allowedFileTypesForSite.concat(VideoPressFileTypes))
+			.map((type) => `.${type}`)
 			.join();
 	};
 
 	render() {
-		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
+		const classes = classNames('media-library__upload-button', 'button', this.props.className);
 
 		return (
-			<form ref={ this.formRef } className={ classes }>
-				{ this.props.children }
+			<form ref={this.formRef} className={classes}>
+				{this.props.children}
 				<input
 					type="file"
-					accept={ this.getInputAccept() }
+					accept={this.getInputAccept()}
 					multiple
-					onChange={ this.uploadFiles }
-					onClick={ this.onClick }
+					onChange={this.uploadFiles}
+					onClick={this.onClick}
 					className="media-library__upload-button-input"
 				/>
 			</form>

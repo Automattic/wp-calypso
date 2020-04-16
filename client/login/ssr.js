@@ -13,16 +13,15 @@ import { intersection } from 'lodash';
  * @param {object}   context  The entire request context
  * @param {Function} next     Next middleware in the running sequence
  */
-export function setShouldServerSideRenderLogin( context, next ) {
-	const whitelistedQueryKeys = [ 'client_id', 'signup_flow', 'redirect_to' ];
-	const queryKeys = Object.keys( context.query );
+export function setShouldServerSideRenderLogin(context, next) {
+	const whitelistedQueryKeys = ['client_id', 'signup_flow', 'redirect_to'];
+	const queryKeys = Object.keys(context.query);
 
 	// if there are any parameters, they must be ONLY the ones in the whitelist
 	const hasOnlyValidKeys =
-		queryKeys.length === intersection( queryKeys, whitelistedQueryKeys ).length;
+		queryKeys.length === intersection(queryKeys, whitelistedQueryKeys).length;
 
-	context.serverSideRender =
-		hasOnlyValidKeys && isRedirectToValidForSsr( context.query.redirect_to );
+	context.serverSideRender = hasOnlyValidKeys && isRedirectToValidForSsr(context.query.redirect_to);
 
 	next();
 }
@@ -33,14 +32,14 @@ export function setShouldServerSideRenderLogin( context, next ) {
  * @param {string}   redirectToQueryValue The URI-encoded value of the analyzed redirect_to
  * @returns {boolean} If the value of &redirect_to= on the log-in page is compatible with SSR
  */
-function isRedirectToValidForSsr( redirectToQueryValue ) {
-	if ( 'undefined' === typeof redirectToQueryValue ) {
+function isRedirectToValidForSsr(redirectToQueryValue) {
+	if ('undefined' === typeof redirectToQueryValue) {
 		return true;
 	}
 
-	const redirectToDecoded = decodeURIComponent( redirectToQueryValue );
+	const redirectToDecoded = decodeURIComponent(redirectToQueryValue);
 	return (
-		redirectToDecoded.startsWith( 'https://wordpress.com/theme' ) ||
-		redirectToDecoded.startsWith( 'https://wordpress.com/go' )
+		redirectToDecoded.startsWith('https://wordpress.com/theme') ||
+		redirectToDecoded.startsWith('https://wordpress.com/go')
 	);
 }

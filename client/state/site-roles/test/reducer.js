@@ -18,23 +18,23 @@ import {
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'reducer', () => {
-	useSandbox( sandbox => {
-		sandbox.stub( console, 'warn' );
-	} );
+describe('reducer', () => {
+	useSandbox((sandbox) => {
+		sandbox.stub(console, 'warn');
+	});
 
-	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
-	} );
+	test('should include expected keys in return value', () => {
+		expect(reducer(undefined, {})).to.have.keys(['requesting', 'items']);
+	});
 
-	describe( '#requesting()', () => {
-		test( 'should default to an empty object', () => {
-			const state = requesting( undefined, {} );
+	describe('#requesting()', () => {
+		test('should default to an empty object', () => {
+			const state = requesting(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should set that site ID to true if a request is initiated', () => {
+		test('should set that site ID to true if a request is initiated', () => {
 			const state = requesting(
 				{},
 				{
@@ -43,12 +43,12 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				12345678: true,
-			} );
-		} );
+			});
+		});
 
-		test( 'should set that site ID to false if a request finishes succesfully', () => {
+		test('should set that site ID to false if a request finishes succesfully', () => {
 			const state = requesting(
 				{},
 				{
@@ -57,12 +57,12 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				12345678: false,
-			} );
-		} );
+			});
+		});
 
-		test( 'should set that site ID to false if a request finishes unsuccesfully', () => {
+		test('should set that site ID to false if a request finishes unsuccesfully', () => {
 			const state = requesting(
 				{},
 				{
@@ -71,39 +71,39 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				12345678: false,
-			} );
-		} );
+			});
+		});
 
-		test( 'should not persist state', () => {
+		test('should not persist state', () => {
 			const state = requesting(
-				deepFreeze( {
+				deepFreeze({
 					12345678: true,
-				} ),
+				}),
 				{
 					type: SERIALIZE,
 				}
 			);
 
-			expect( state ).to.be.undefined;
-		} );
+			expect(state).to.be.undefined;
+		});
 
-		test( 'should not load persisted state', () => {
+		test('should not load persisted state', () => {
 			const state = requesting(
-				deepFreeze( {
+				deepFreeze({
 					12345678: true,
-				} ),
+				}),
 				{
 					type: DESERIALIZE,
 				}
 			);
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
+			expect(state).to.eql({});
+		});
+	});
 
-	describe( '#items()', () => {
+	describe('#items()', () => {
 		const roles = [
 			{
 				name: 'administrator',
@@ -133,13 +133,13 @@ describe( 'reducer', () => {
 			},
 		];
 
-		test( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
+		test('should default to an empty object', () => {
+			const state = items(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should index roles by site ID', () => {
+		test('should index roles by site ID', () => {
 			const state = items(
 				{},
 				{
@@ -149,17 +149,17 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				12345678: roles,
-			} );
-		} );
+			});
+		});
 
-		test( 'should override previous roles of same site ID', () => {
+		test('should override previous roles of same site ID', () => {
 			const state = items(
-				deepFreeze( {
+				deepFreeze({
 					12345678: roles,
 					87654321: roles,
-				} ),
+				}),
 				{
 					type: SITE_ROLES_RECEIVE,
 					siteId: 87654321,
@@ -167,49 +167,49 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				12345678: roles,
 				87654321: altRoles,
-			} );
-		} );
+			});
+		});
 
-		test( 'should persist state', () => {
+		test('should persist state', () => {
 			const state = items(
-				deepFreeze( {
+				deepFreeze({
 					12345678: roles,
 					87654321: altRoles,
-				} ),
+				}),
 				{
 					type: SERIALIZE,
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				12345678: roles,
 				87654321: altRoles,
-			} );
-		} );
+			});
+		});
 
-		test( 'should load valid persisted state', () => {
+		test('should load valid persisted state', () => {
 			const state = items(
-				deepFreeze( {
+				deepFreeze({
 					12345678: roles,
 					87654321: altRoles,
-				} ),
+				}),
 				{
 					type: DESERIALIZE,
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				12345678: roles,
 				87654321: altRoles,
-			} );
-		} );
+			});
+		});
 
-		test( 'should not load invalid persisted state', () => {
+		test('should not load invalid persisted state', () => {
 			const state = items(
-				deepFreeze( {
+				deepFreeze({
 					1234567: [
 						{
 							name: 'test',
@@ -218,13 +218,13 @@ describe( 'reducer', () => {
 							},
 						},
 					],
-				} ),
+				}),
 				{
 					type: DESERIALIZE,
 				}
 			);
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
-} );
+			expect(state).to.eql({});
+		});
+	});
+});

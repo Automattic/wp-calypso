@@ -40,9 +40,9 @@ class StepSourceSelect extends Component {
 		isLoading: false,
 	};
 
-	onUrlChange = args => {
-		this.setState( { error: null } );
-		this.props.onUrlChange( args );
+	onUrlChange = (args) => {
+		this.setState({ error: null });
+		this.props.onUrlChange(args);
 	};
 
 	handleContinue = () => {
@@ -51,119 +51,119 @@ class StepSourceSelect extends Component {
 			targetSite: { jetpack: isJetpackSite },
 		} = this.props;
 
-		if ( this.state.isLoading ) {
+		if (this.state.isLoading) {
 			return;
 		}
 
-		const validEngines = [ 'wordpress', 'blogger', 'medium', 'wix', 'godaddy', 'squarespace' ];
+		const validEngines = ['wordpress', 'blogger', 'medium', 'wix', 'godaddy', 'squarespace'];
 
-		this.setState( { error: null, isLoading: true }, () => {
+		this.setState({ error: null, isLoading: true }, () => {
 			wpcom
-				.isSiteImportable( this.props.url )
-				.then( result => {
-					const importUrl = `/import/${ this.props.targetSiteSlug }?not-wp=1&engine=${ result.site_engine }&from-site=${ result.site_url }`;
+				.isSiteImportable(this.props.url)
+				.then((result) => {
+					const importUrl = `/import/${this.props.targetSiteSlug}?not-wp=1&engine=${result.site_engine}&from-site=${result.site_url}`;
 
-					this.props.recordTracksEvent( 'calypso_importer_wordpress_enter_url', {
+					this.props.recordTracksEvent('calypso_importer_wordpress_enter_url', {
 						url: result.site_url,
 						engine: result.site_engine,
-						has_jetpack: !! get( result, 'site_meta.jetpack_version', false ),
-						jetpack_version: get( result, 'site_meta.jetpack_version', 'no jetpack' ),
-						is_wpcom: get( result, 'site_meta.wpcom_site', false ),
-					} );
+						has_jetpack: !!get(result, 'site_meta.jetpack_version', false),
+						jetpack_version: get(result, 'site_meta.jetpack_version', 'no jetpack'),
+						is_wpcom: get(result, 'site_meta.wpcom_site', false),
+					});
 
-					switch ( result.site_engine ) {
+					switch (result.site_engine) {
 						case 'wordpress':
-							if ( result.site_meta.wpcom_site ) {
-								return this.setState( {
-									error: translate( 'This site is already hosted on WordPress.com' ),
+							if (result.site_meta.wpcom_site) {
+								return this.setState({
+									error: translate('This site is already hosted on WordPress.com'),
 									isLoading: false,
-								} );
+								});
 							}
 
-							return this.props.onSiteInfoReceived( result, () => {
-								page( `/migrate/choose/${ this.props.targetSiteSlug }` );
-							} );
+							return this.props.onSiteInfoReceived(result, () => {
+								page(`/migrate/choose/${this.props.targetSiteSlug}`);
+							});
 						default:
-							if ( validEngines.indexOf( result.site_engine ) === -1 || isJetpackSite ) {
-								return this.setState( {
-									error: translate( 'This is not a WordPress site' ),
+							if (validEngines.indexOf(result.site_engine) === -1 || isJetpackSite) {
+								return this.setState({
+									error: translate('This is not a WordPress site'),
 									isLoading: false,
-								} );
+								});
 							}
 
-							return redirectTo( importUrl );
+							return redirectTo(importUrl);
 					}
-				} )
-				.catch( error => {
-					switch ( error.code ) {
+				})
+				.catch((error) => {
+					switch (error.code) {
 						case 'rest_invalid_param':
-							return this.setState( {
+							return this.setState({
 								error: translate(
 									"We couldn't reach that site. Please check the URL and try again."
 								),
 								isLoading: false,
-							} );
+							});
 						default:
-							return this.setState( {
-								error: translate( 'Something went wrong. Please check the URL and try again.' ),
+							return this.setState({
+								error: translate('Something went wrong. Please check the URL and try again.'),
 								isLoading: false,
-							} );
+							});
 					}
-				} );
-		} );
+				});
+		});
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_importer_wordpress_source_select_viewed' );
+		this.props.recordTracksEvent('calypso_importer_wordpress_source_select_viewed');
 	}
 
 	render() {
 		const { targetSite, targetSiteSlug, translate } = this.props;
-		const backHref = `/import/${ targetSiteSlug }`;
-		const uploadFileLink = getImportSectionLocation( targetSiteSlug, targetSite.jetpack );
+		const backHref = `/import/${targetSiteSlug}`;
+		const uploadFileLink = getImportSectionLocation(targetSiteSlug, targetSite.jetpack);
 
 		return (
 			<>
-				<HeaderCake backHref={ backHref }>{ translate( 'Import from WordPress' ) }</HeaderCake>
+				<HeaderCake backHref={backHref}>{translate('Import from WordPress')}</HeaderCake>
 
-				{ this.state.error && (
-					<Notice className="migrate__error" showDismiss={ false } status="is-error">
-						{ this.state.error }
+				{this.state.error && (
+					<Notice className="migrate__error" showDismiss={false} status="is-error">
+						{this.state.error}
 					</Notice>
-				) }
+				)}
 
 				<CompactCard>
-					<CardHeading>{ translate( 'What WordPress site do you want to import?' ) }</CardHeading>
+					<CardHeading>{translate('What WordPress site do you want to import?')}</CardHeading>
 					<div className="migrate__explain">
-						{ translate(
+						{translate(
 							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a " +
 								'WordPress export file, you can' +
 								' {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
 							{
 								components: {
-									uploadFileLink: <a className="migrate__import-link" href={ uploadFileLink } />,
+									uploadFileLink: <a className="migrate__import-link" href={uploadFileLink} />,
 								},
 							}
-						) }
+						)}
 					</div>
 				</CompactCard>
 				<SitesBlock
-					sourceSite={ null }
-					loadingSourceSite={ this.state.isLoading }
-					targetSite={ targetSite }
-					onUrlChange={ this.onUrlChange }
-					onSubmit={ this.handleContinue }
-					url={ this.props.url }
+					sourceSite={null}
+					loadingSourceSite={this.state.isLoading}
+					targetSite={targetSite}
+					onUrlChange={this.onUrlChange}
+					onSubmit={this.handleContinue}
+					url={this.props.url}
 					step="sourceSelect"
 				/>
 
 				<Card>
-					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
-						{ translate( 'Continue' ) }
+					<Button busy={this.state.isLoading} onClick={this.handleContinue} primary={true}>
+						{translate('Continue')}
 					</Button>
 				</Card>
 			</>
 		);
 	}
 }
-export default connect( null, { recordTracksEvent } )( localize( StepSourceSelect ) );
+export default connect(null, { recordTracksEvent })(localize(StepSourceSelect));

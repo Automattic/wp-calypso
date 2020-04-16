@@ -18,7 +18,7 @@ import FormButton from 'components/forms/form-button';
  */
 import './style.scss';
 
-function FormTextInputWithAction( {
+function FormTextInputWithAction({
 	className,
 	action,
 	inputRef,
@@ -32,78 +32,78 @@ function FormTextInputWithAction( {
 	isError,
 	isValid,
 	...props
-} ) {
-	const [ focused, setFocused ] = useState( false );
-	const [ value, setValue ] = useState( defaultValue );
+}) {
+	const [focused, setFocused] = useState(false);
+	const [value, setValue] = useState(defaultValue);
 
 	const handleFocus = useCallback(
-		e => {
-			setFocused( true );
-			onFocus( e );
+		(e) => {
+			setFocused(true);
+			onFocus(e);
 		},
-		[ onFocus ]
+		[onFocus]
 	);
 
 	const handleBlur = useCallback(
-		e => {
-			setFocused( false );
-			onBlur( e );
+		(e) => {
+			setFocused(false);
+			onBlur(e);
 		},
-		[ onBlur ]
+		[onBlur]
 	);
 
 	const handleChange = useCallback(
-		e => {
-			setValue( e.target.value );
-			onChange( e.target.value, e );
+		(e) => {
+			setValue(e.target.value);
+			onChange(e.target.value, e);
 		},
-		[ onChange ]
+		[onChange]
 	);
 
 	const handleAction = useCallback(
-		e => {
-			onAction( value, e );
+		(e) => {
+			onAction(value, e);
 		},
-		[ onAction, value ]
+		[onAction, value]
 	);
 
 	const handleKeyDown = useCallback(
-		e => {
-			onKeyDown( e );
-			if ( e.which === 13 && value ) {
-				handleAction( e );
+		(e) => {
+			onKeyDown(e);
+			if (e.which === 13 && value) {
+				handleAction(e);
 			}
 		},
-		[ handleAction, onKeyDown, value ]
+		[handleAction, onKeyDown, value]
 	);
 
 	return (
 		<div
-			className={ classNames( 'form-text-input-with-action', className, {
+			className={classNames('form-text-input-with-action', className, {
 				'is-focused': focused,
 				'is-disabled': disabled,
 				'is-error': isError,
 				'is-valid': isValid,
-			} ) }
+			})}
 			role="group"
 		>
 			<FormTextInput
-				{ ...props }
+				{...props}
 				className="form-text-input-with-action__input"
-				ref={ inputRef }
-				disabled={ disabled }
-				value={ value }
-				onChange={ handleChange }
-				onFocus={ handleFocus }
-				onBlur={ handleBlur }
-				onKeyDown={ handleKeyDown }
+				ref={inputRef}
+				disabled={disabled}
+				value={value}
+				onChange={handleChange}
+				onFocus={handleFocus}
+				onBlur={handleBlur}
+				onKeyDown={handleKeyDown}
 			/>
 			<FormButton
 				className="form-text-input-with-action__button is-compact"
-				disabled={ disabled || ! value }
-				onClick={ handleAction }
+				disabled={disabled || !value}
+				onClick={handleAction}
 			>
-				{ action }
+				{action}
 			</FormButton>
 		</div>
 	);

@@ -59,25 +59,25 @@ class DomainToPlanNudge extends Component {
 	renderDomainToPlanNudge() {
 		const { siteId, translate, discountedRawPrice, rawPrice, userCurrency } = this.props;
 
-		const prices = discountedRawPrice ? [ rawPrice, discountedRawPrice ] : null;
+		const prices = discountedRawPrice ? [rawPrice, discountedRawPrice] : null;
 		return (
 			<Banner
-				callToAction={ translate( 'Upgrade for %s', {
-					args: formatCurrency( discountedRawPrice || rawPrice, userCurrency ),
+				callToAction={translate('Upgrade for %s', {
+					args: formatCurrency(discountedRawPrice || rawPrice, userCurrency),
 					comment: '%s will be replaced by a formatted price, i.e $9.99',
-				} ) }
+				})}
 				event="domain_to_personal_nudge" //actually cta_name
 				dismissPreferenceName="domain-to-plan-nudge"
-				feature={ FEATURE_NO_ADS }
-				href={ `/checkout/${ siteId }/personal` }
-				list={ [
-					translate( 'Remove WordPress.com Ads' ),
-					translate( 'Email & Live Chat Support' ),
-					translate( 'Use with your Current Custom Domain' ),
-				] }
-				plan={ PLAN_PERSONAL }
-				price={ prices }
-				title={ translate( 'Upgrade to a Personal Plan and Save!' ) }
+				feature={FEATURE_NO_ADS}
+				href={`/checkout/${siteId}/personal`}
+				list={[
+					translate('Remove WordPress.com Ads'),
+					translate('Email & Live Chat Support'),
+					translate('Use with your Current Custom Domain'),
+				]}
+				plan={PLAN_PERSONAL}
+				price={prices}
+				title={translate('Upgrade to a Personal Plan and Save!')}
 			/>
 		);
 	}
@@ -87,28 +87,28 @@ class DomainToPlanNudge extends Component {
 
 		return (
 			<div className="domain-to-plan-nudge">
-				<QuerySitePlans siteId={ siteId } />
-				{ this.isSiteEligible() && this.renderDomainToPlanNudge() }
+				<QuerySitePlans siteId={siteId} />
+				{this.isSiteEligible() && this.renderDomainToPlanNudge()}
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, props ) => {
-	const siteId = props.siteId || getSelectedSiteId( state ),
+export default connect((state, props) => {
+	const siteId = props.siteId || getSelectedSiteId(state),
 		productSlug = PLAN_PERSONAL,
-		productId = getPlan( PLAN_PERSONAL ).getProductId();
+		productId = getPlan(PLAN_PERSONAL).getProductId();
 
 	return {
-		isEligible: isEligibleForDomainToPaidPlanUpsell( state, siteId ),
-		discountedRawPrice: getPlanDiscountedRawPrice( state, siteId, productSlug ),
+		isEligible: isEligibleForDomainToPaidPlanUpsell(state, siteId),
+		discountedRawPrice: getPlanDiscountedRawPrice(state, siteId, productSlug),
 		productId,
 		productSlug,
-		rawDiscount: getPlanRawDiscount( state, siteId, productSlug ) || 0,
-		rawPrice: getSitePlanRawPrice( state, siteId, productSlug ),
-		site: getSite( state, siteId ),
+		rawDiscount: getPlanRawDiscount(state, siteId, productSlug) || 0,
+		rawPrice: getSitePlanRawPrice(state, siteId, productSlug),
+		site: getSite(state, siteId),
 		siteId,
-		sitePlans: getPlansBySiteId( state, siteId ),
-		userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
+		sitePlans: getPlansBySiteId(state, siteId),
+		userCurrency: getCurrentUserCurrencyCode(state), //populated by either plans endpoint
 	};
-} )( localize( DomainToPlanNudge ) );
+})(localize(DomainToPlanNudge));

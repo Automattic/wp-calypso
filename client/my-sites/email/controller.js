@@ -13,34 +13,34 @@ import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
 import GSuiteAddUsers from 'my-sites/email/gsuite-add-users';
 
 export default {
-	emailManagementAddGSuiteUsers( pageContext, next ) {
-		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
+	emailManagementAddGSuiteUsers(pageContext, next) {
+		pageContext.primary = <GSuiteAddUsers selectedDomainName={pageContext.params.domain} />;
 		next();
 	},
 
-	emailManagementAddGSuiteUsersLegacyRedirect( pageContext ) {
+	emailManagementAddGSuiteUsersLegacyRedirect(pageContext) {
 		page.redirect(
-			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
+			emailManagementAddGSuiteUsers(pageContext.params.site, pageContext.params.domain)
 		);
 	},
 
-	emailManagementNewGSuiteAccount( pageContext, next ) {
+	emailManagementNewGSuiteAccount(pageContext, next) {
 		pageContext.primary = (
 			<GSuiteAddUsers
-				planType={ pageContext.params.planType }
-				selectedDomainName={ pageContext.params.domain }
+				planType={pageContext.params.planType}
+				selectedDomainName={pageContext.params.domain}
 			/>
 		);
 		next();
 	},
 
-	emailManagementForwarding( pageContext, next ) {
-		pageContext.primary = <EmailForwarding selectedDomainName={ pageContext.params.domain } />;
+	emailManagementForwarding(pageContext, next) {
+		pageContext.primary = <EmailForwarding selectedDomainName={pageContext.params.domain} />;
 		next();
 	},
 
-	emailManagement( pageContext, next ) {
-		pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+	emailManagement(pageContext, next) {
+		pageContext.primary = <EmailManagement selectedDomainName={pageContext.params.domain} />;
 		next();
 	},
 };

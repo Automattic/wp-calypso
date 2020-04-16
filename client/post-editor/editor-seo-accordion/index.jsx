@@ -42,13 +42,13 @@ class EditorSeoAccordion extends Component {
 
 	state = { showPreview: false };
 
-	showPreview = () => this.setState( { showPreview: true } );
-	hidePreview = () => this.setState( { showPreview: false } );
+	showPreview = () => this.setState({ showPreview: true });
+	hidePreview = () => this.setState({ showPreview: false });
 
-	onMetaChange = event => {
-		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
+	onMetaChange = (event) => {
+		this.props.updatePostMetadata(this.props.siteId, this.props.postId, {
 			advanced_seo_description: event.target.value,
-		} );
+		});
 	};
 
 	render() {
@@ -57,41 +57,41 @@ class EditorSeoAccordion extends Component {
 
 		return (
 			<Accordion
-				title={ translate( 'SEO Description' ) }
+				title={translate('SEO Description')}
 				className="editor-seo-accordion"
 				e2eTitle="seo"
 			>
 				<AccordionSection>
 					<EditorDrawerLabel
-						helpText={ translate(
+						helpText={translate(
 							'Craft a description of your post for search engine results. ' +
 								'The post content is used by default.'
-						) }
-						labelText={ translate( 'Meta Description' ) }
+						)}
+						labelText={translate('Meta Description')}
 					/>
 					<CountedTextarea
 						maxLength="300"
-						acceptableLength={ 159 }
-						placeholder={ translate( 'Write a description…' ) }
-						aria-label={ translate( 'Write a description…' ) }
-						value={ metaDescription }
-						onChange={ this.onMetaChange }
+						acceptableLength={159}
+						placeholder={translate('Write a description…')}
+						aria-label={translate('Write a description…')}
+						value={metaDescription}
+						onChange={this.onMetaChange}
 					/>
-					{ isJetpack && (
+					{isJetpack && (
 						<div>
-							<Button className="editor-seo-accordion__preview-button" onClick={ this.showPreview }>
-								{ translate( 'Preview' ) }
+							<Button className="editor-seo-accordion__preview-button" onClick={this.showPreview}>
+								{translate('Preview')}
 							</Button>
 							<WebPreview
-								showPreview={ showPreview }
-								onClose={ this.hidePreview }
-								showDeviceSwitcher={ false }
-								showExternal={ false }
+								showPreview={showPreview}
+								onClose={this.hidePreview}
+								showDeviceSwitcher={false}
+								showExternal={false}
 								defaultViewportDevice="seo"
-								frontPageMetaDescription={ metaDescription }
+								frontPageMetaDescription={metaDescription}
 							/>
 						</div>
-					) }
+					)}
 				</AccordionSection>
 			</Accordion>
 		);
@@ -99,16 +99,16 @@ class EditorSeoAccordion extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, postId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const metaDescription = PostMetadata.metaDescription( post );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const post = getEditedPost(state, siteId, postId);
+		const isJetpack = isJetpackSite(state, siteId);
+		const metaDescription = PostMetadata.metaDescription(post);
 
 		return { siteId, postId, isJetpack, metaDescription };
 	},
 	{
 		updatePostMetadata,
 	}
-)( localize( EditorSeoAccordion ) );
+)(localize(EditorSeoAccordion));

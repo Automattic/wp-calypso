@@ -38,7 +38,7 @@ class GoogleMyBusinessNewAccount extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/google-my-business/select-business-type/${ this.props.siteSlug }` );
+		page.back(`/google-my-business/select-business-type/${this.props.siteSlug}`);
 	};
 
 	trackUseAnotherGoogleAccountClick = () => {
@@ -53,19 +53,19 @@ class GoogleMyBusinessNewAccount extends Component {
 		);
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = (keyringConnection) => {
 		const { siteId } = this.props;
 
-		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
+		this.props.connectGoogleMyBusinessAccount(siteId, keyringConnection.ID).then(() => {
 			this.props.recordTracksEventWithLocationCounts(
 				'calypso_google_my_business_new_account_connect'
 			);
-			page.redirect( `/google-my-business/${ this.props.siteSlug }` );
-		} );
+			page.redirect(`/google-my-business/${this.props.siteSlug}`);
+		});
 	};
 
 	handleNoThanksClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_new_account_no_thanks_button_click' );
+		this.props.recordTracksEvent('calypso_google_my_business_new_account_no_thanks_button_click');
 		this.props.dismissNudge();
 	};
 
@@ -77,55 +77,52 @@ class GoogleMyBusinessNewAccount extends Component {
 			<Main className="gmb-new-account" wideLayout>
 				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={translate('Google My Business')} />
 
-				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+				<HeaderCake isCompact={false} alwaysShowActionText={false} onClick={this.goBack}>
+					{translate('Google My Business')}
 				</HeaderCake>
 
 				<Card>
 					<div className="gmb-new-account__wrapper">
 						<img
-							alt={ translate( 'Local business illustration' ) }
+							alt={translate('Local business illustration')}
 							className="gmb-new-account__illustration"
 							src="/calypso/images/google-my-business/business-local.svg"
 						/>
 
 						<h1 className="gmb-new-account__heading">
-							{ translate( 'It looks like you might be new to Google My Business' ) }
+							{translate('It looks like you might be new to Google My Business')}
 						</h1>
 
 						<p>
-							{ translate(
+							{translate(
 								'Google My Business lists your local business on Google Search and Google Maps. ' +
 									'It works for businesses that have a physical location, or serve a local area.'
-							) }
+							)}
 						</p>
 
 						<div className="gmb-new-account__actions">
 							<Button
-								href={ 'https://business.google.com/create' }
+								href={'https://business.google.com/create'}
 								target="_blank"
-								onClick={ this.trackCreateListingClick }
+								onClick={this.trackCreateListingClick}
 								primary
 							>
-								{ translate( 'Create Listing' ) } <Gridicon icon="external" />
+								{translate('Create Listing')} <Gridicon icon="external" />
 							</Button>
 
 							<KeyringConnectButton
 								serviceId="google_my_business"
-								forceReconnect={ true }
-								onClick={ this.trackUseAnotherGoogleAccountClick }
-								onConnect={ this.handleConnect }
+								forceReconnect={true}
+								onClick={this.trackUseAnotherGoogleAccountClick}
+								onConnect={this.handleConnect}
 							>
-								{ translate( 'Use another Google Account' ) }
+								{translate('Use another Google Account')}
 							</KeyringConnectButton>
 
-							<Button
-								href={ `/marketing/tools/${ siteSlug }` }
-								onClick={ this.handleNoThanksClick }
-							>
-								{ translate( 'No thanks' ) }
+							<Button href={`/marketing/tools/${siteSlug}`} onClick={this.handleNoThanksClick}>
+								{translate('No thanks')}
 							</Button>
 						</div>
 					</div>
@@ -136,17 +133,17 @@ class GoogleMyBusinessNewAccount extends Component {
 }
 
 export default connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	(state) => ({
+		siteId: getSelectedSiteId(state),
+		siteSlug: getSelectedSiteSlug(state),
+	}),
 	{
 		connectGoogleMyBusinessAccount,
 		dismissNudge,
-		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+		recordTracksEvent: withEnhancers(recordTracksEvent, enhanceWithSiteType),
+		recordTracksEventWithLocationCounts: withEnhancers(recordTracksEvent, [
 			enhanceWithLocationCounts,
 			enhanceWithSiteType,
-		] ),
+		]),
 	}
-)( localize( GoogleMyBusinessNewAccount ) );
+)(localize(GoogleMyBusinessNewAccount));

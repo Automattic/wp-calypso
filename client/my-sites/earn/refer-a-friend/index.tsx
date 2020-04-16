@@ -36,54 +36,54 @@ interface ConnectedProps {
 	selectedSiteSlug: SiteSlug;
 	isJetpack: boolean;
 	isAtomicSite: boolean;
-	trackCtaButton: ( feature: string ) => void;
+	trackCtaButton: (feature: string) => void;
 }
 
 const wpcom = wp.undocumented();
 
-const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
+const ReferAFriendSection: FunctionComponent<ConnectedProps> = ({
 	isJetpack,
 	isAtomicSite,
 	trackCtaButton,
-} ) => {
+}) => {
 	const translate = useTranslate();
-	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
+	const [peerReferralLink, setPeerReferralLink] = useState('');
 
-	useEffect( () => {
-		if ( peerReferralLink ) return;
-		wpcom.me().getPeerReferralLink( ( error: string, data: string ) => {
-			setPeerReferralLink( ! error && data ? data : '' );
-		} );
-	}, [ peerReferralLink ] );
+	useEffect(() => {
+		if (peerReferralLink) return;
+		wpcom.me().getPeerReferralLink((error: string, data: string) => {
+			setPeerReferralLink(!error && data ? data : '');
+		});
+	}, [peerReferralLink]);
 
 	const onPeerReferralCtaClick = () => {
-		if ( peerReferralLink ) return;
-		wpcom.me().setPeerReferralLinkEnable( true, ( error: string, data: string ) => {
-			setPeerReferralLink( ! error && data ? data : '' );
-		} );
+		if (peerReferralLink) return;
+		wpcom.me().setPeerReferralLinkEnable(true, (error: string, data: string) => {
+			setPeerReferralLink(!error && data ? data : '');
+		});
 	};
 
 	const getPeerReferralsCard = () => {
-		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
+		const isJetpackNotAtomic = isJetpack && !isAtomicSite;
 
-		if ( isJetpackNotAtomic ) {
+		if (isJetpackNotAtomic) {
 			return;
 		}
 
 		const cta: CtaButton = {
-			text: translate( 'Get shareable link' ) as string,
+			text: translate('Get shareable link') as string,
 			action: () => {
-				trackCtaButton( 'peer-referral-wpcom' );
+				trackCtaButton('peer-referral-wpcom');
 				onPeerReferralCtaClick();
 			},
 		};
 
-		if ( peerReferralLink ) {
-			cta.component = <ClipboardButtonInput value={ peerReferralLink } />;
+		if (peerReferralLink) {
+			cta.component = <ClipboardButtonInput value={peerReferralLink} />;
 		}
 
 		return {
-			title: translate( 'Refer a friend, you’ll both earn credits!' ),
+			title: translate('Refer a friend, you’ll both earn credits!'),
 			body: peerReferralLink
 				? translate(
 						'To earn free credits, share the link below with your friends, family, and website visitors. ' +
@@ -114,7 +114,7 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 
 	const promos: PromoSectionProps = {
 		header: {
-			title: translate( 'Earn and share rewards when you refer friends.' ),
+			title: translate('Earn and share rewards when you refer friends.'),
 			image: {
 				path: earnSectionImage,
 			},
@@ -127,35 +127,35 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 				}
 			),
 		},
-		promos: compact( [ getPeerReferralsCard() ] ),
+		promos: compact([getPeerReferralsCard()]),
 	};
 
 	return (
 		<div className="refer-a-friend__earn-page">
 			<Fragment>
-				<PromoSection { ...promos } />
+				<PromoSection {...promos} />
 			</Fragment>
 		</div>
 	);
 };
 
-export default connect< ConnectedProps, {}, {} >(
-	state => {
-		const selectedSiteSlug = getSelectedSiteSlug( state );
-		const site = getSiteBySlug( state, selectedSiteSlug );
+export default connect<ConnectedProps, {}, {}>(
+	(state) => {
+		const selectedSiteSlug = getSelectedSiteSlug(state);
+		const site = getSiteBySlug(state, selectedSiteSlug);
 		return {
 			siteId: site.ID,
-			isJetpack: isJetpackSite( state, site.ID ),
-			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
+			isJetpack: isJetpackSite(state, site.ID),
+			isAtomicSite: isSiteAutomatedTransfer(state, site.ID),
 		};
 	},
-	dispatch => ( {
-		trackCtaButton: ( feature: string ) =>
+	(dispatch) => ({
+		trackCtaButton: (feature: string) =>
 			dispatch(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
-					bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
+					recordTracksEvent('calypso_earn_page_cta_button_click', { feature }),
+					bumpStat('calypso_earn_page', 'cta-button-' + feature)
 				)
 			),
-	} )
-)( ReferAFriendSection );
+	})
+)(ReferAFriendSection);

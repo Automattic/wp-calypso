@@ -20,10 +20,10 @@ import { getDocumentHeadTitle } from 'state/document-head/selectors';
  */
 import './style.scss';
 
-export default function() {
+export default function () {
 	const translate = useTranslate();
-	const user = useSelector( state => getCurrentUser( state ) );
-	const headerTitle = useSelector( state => getDocumentHeadTitle( state ) );
+	const user = useSelector((state) => getCurrentUser(state));
+	const headerTitle = useSelector((state) => getDocumentHeadTitle(state));
 	return (
 		<Masterbar
 			className="is-jetpack-cloud-masterbar" // eslint-disable-line wpcalypso/jsx-classname-namespace
@@ -31,23 +31,23 @@ export default function() {
 			<Item
 				className="masterbar__item-home"
 				url="/"
-				tooltip={ translate( 'Jetpack Cloud Dashboard', {
+				tooltip={translate('Jetpack Cloud Dashboard', {
 					comment: 'Jetpack Cloud top navigation bar item',
-				} ) }
+				})}
 			>
-				<JetpackLogo size={ 28 } full />
+				<JetpackLogo size={28} full />
 			</Item>
-			<Item className="masterbar__item-title">{ headerTitle }</Item>
+			<Item className="masterbar__item-title">{headerTitle}</Item>
 			<Item
 				tipTarget="me"
 				url="#" // @todo: add a correct URL
 				icon="user-circle"
 				className="masterbar__item-me"
-				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
+				tooltip={translate('Update your profile, personal settings, and more')}
 			>
-				<Gravatar user={ user } alt={ translate( 'My Profile' ) } size={ 18 } />
+				<Gravatar user={user} alt={translate('My Profile')} size={18} />
 				<span className="masterbar__item-me-label">
-					{ translate( 'My Profile', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
+					{translate('My Profile', { context: 'Toolbar, must be shorter than ~12 chars' })}
 				</span>
 			</Item>
 		</Masterbar>

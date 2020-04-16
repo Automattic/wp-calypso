@@ -7,7 +7,7 @@
 					"CTA": {
 						"properties": {
 							"hook": {
-								"type": [ "string", "null" ]
+								"type": ["string", "null"]
 							},
 							"message": {
 								"type": "string"
@@ -30,7 +30,7 @@
 								"type": "string"
 							},
 							"icon": {
-								"type": [ "string", "null" ]
+								"type": ["string", "null"]
 							},
 							"message": {
 								"type": "string"
@@ -42,7 +42,7 @@
 											"type": "string"
 										},
 										"url": {
-											"type": [ "string", "null" ]
+											"type": ["string", "null"]
 										}
 									}
 								},

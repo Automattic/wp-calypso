@@ -30,12 +30,12 @@ class CloneJetpackStep extends Component {
 	};
 
 	selectNew = () => {
-		this.props.submitSignupStep( { stepName: this.props.stepName }, { cloneJetpack: 'new' } );
+		this.props.submitSignupStep({ stepName: this.props.stepName }, { cloneJetpack: 'new' });
 		this.props.goToNextStep();
 	};
 
 	selectMigrate = () => {
-		this.props.submitSignupStep( { stepName: this.props.stepName }, { cloneJetpack: 'migrate' } );
+		this.props.submitSignupStep({ stepName: this.props.stepName }, { cloneJetpack: 'migrate' });
 		this.props.goToNextStep();
 	};
 
@@ -46,24 +46,24 @@ class CloneJetpackStep extends Component {
 			<TileGrid>
 				<Tile
 					className="clone-jetpack__keep"
-					buttonLabel={ 'Keep plan where it is' }
-					description={ translate( 'Your plan would remain on %(originSiteName)s.', {
+					buttonLabel={'Keep plan where it is'}
+					description={translate('Your plan would remain on %(originSiteName)s.', {
 						args: { originSiteName },
-					} ) }
-					image={ '/calypso/images/illustrations/jetpack-connection.svg' }
-					onClick={ this.selectNew }
+					})}
+					image={'/calypso/images/illustrations/jetpack-connection.svg'}
+					onClick={this.selectNew}
 				/>
 				<Tile
 					className="clone-jetpack__migrate"
-					buttonLabel={ 'Migrate Jetpack plan' }
-					description={ translate(
+					buttonLabel={'Migrate Jetpack plan'}
+					description={translate(
 						'Your Jetpack plan would be migrated to the destination site, %(destinationSiteName)s.',
 						{
 							args: { destinationSiteName },
 						}
-					) }
-					image={ '/calypso/images/illustrations/jetpack-connection-migration.svg' }
-					onClick={ this.selectMigrate }
+					)}
+					image={'/calypso/images/illustrations/jetpack-connection-migration.svg'}
+					onClick={this.selectMigrate}
 				/>
 			</TileGrid>
 		);
@@ -72,30 +72,30 @@ class CloneJetpackStep extends Component {
 	render() {
 		const { flowName, stepName, positionInFlow, translate } = this.props;
 
-		const headerText = translate( 'Your Jetpack connection' );
+		const headerText = translate('Your Jetpack connection');
 		const subHeaderText = translate(
 			'What would you like us to do with your Jetpack connection and plan?'
 		);
 
 		return (
 			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				headerText={ headerText }
-				fallbackHeaderText={ headerText }
-				subHeaderText={ subHeaderText }
-				fallbackSubHeaderText={ subHeaderText }
-				positionInFlow={ positionInFlow }
-				stepContent={ this.renderStepContent() }
+				flowName={flowName}
+				stepName={stepName}
+				headerText={headerText}
+				fallbackHeaderText={headerText}
+				subHeaderText={subHeaderText}
+				fallbackSubHeaderText={subHeaderText}
+				positionInFlow={positionInFlow}
+				stepContent={this.renderStepContent()}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		originSiteName: get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' ),
-		destinationSiteName: get( ownProps, [ 'signupDependencies', 'destinationSiteName' ] ),
-	} ),
+	(state, ownProps) => ({
+		originSiteName: get(ownProps, ['signupDependencies', 'originSiteName'], ''),
+		destinationSiteName: get(ownProps, ['signupDependencies', 'destinationSiteName']),
+	}),
 	{ submitSignupStep }
-)( localize( CloneJetpackStep ) );
+)(localize(CloneJetpackStep));

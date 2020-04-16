@@ -21,17 +21,17 @@ export class QuerySiteCommentCounts extends PureComponent {
 		this.request();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.siteId !== prevProps.siteId || this.props.postId !== prevProps.postId ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.siteId !== prevProps.siteId || this.props.postId !== prevProps.postId) {
 			this.request();
 		}
 	}
 
 	request() {
-		if ( ! this.props.siteId ) {
+		if (!this.props.siteId) {
 			return;
 		}
-		this.props.requestCommentCounts( this.props.siteId, this.props.postId );
+		this.props.requestCommentCounts(this.props.siteId, this.props.postId);
 	}
 
 	render() {
@@ -39,4 +39,4 @@ export class QuerySiteCommentCounts extends PureComponent {
 	}
 }
 
-export default connect( null, { requestCommentCounts } )( QuerySiteCommentCounts );
+export default connect(null, { requestCommentCounts })(QuerySiteCommentCounts);

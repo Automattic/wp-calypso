@@ -9,18 +9,18 @@ import { get } from 'lodash';
  */
 import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 
-export const siteRowRenderer = ( {
+export const siteRowRenderer = ({
 	items,
 	rowRendererProps,
 	extraRenderItemProps,
 	measuredRowRenderer,
-} ) => {
-	const site = items[ rowRendererProps.index ];
+}) => {
+	const site = items[rowRendererProps.index];
 
-	const feedUrl = get( site, 'feed_URL' );
-	const feedId = +get( site, 'feed_ID' );
-	const siteId = +get( site, 'blog_ID' );
-	const railcar = get( site, 'railcar' );
+	const feedUrl = get(site, 'feed_URL');
+	const feedId = +get(site, 'feed_ID');
+	const siteId = +get(site, 'blog_ID');
+	const railcar = get(site, 'railcar');
 
 	const props = {
 		url: feedUrl,
@@ -29,5 +29,5 @@ export const siteRowRenderer = ( {
 		railcar,
 		...extraRenderItemProps,
 	};
-	return measuredRowRenderer( ConnectedSubscriptionListItem, props, rowRendererProps );
+	return measuredRowRenderer(ConnectedSubscriptionListItem, props, rowRendererProps);
 };

@@ -27,11 +27,11 @@ export class AddImageDialog extends Component {
 		imageUrl: '',
 	};
 
-	setImageAlt = event => this.setState( { imageAlt: event.target.value } );
+	setImageAlt = (event) => this.setState({ imageAlt: event.target.value });
 
-	setImageTitle = event => this.setState( { imageTitle: event.target.value } );
+	setImageTitle = (event) => this.setState({ imageTitle: event.target.value });
 
-	setImageUrl = event => this.setState( { imageUrl: event.target.value } );
+	setImageUrl = (event) => this.setState({ imageUrl: event.target.value });
 
 	closeDialog = () =>
 		this.setState(
@@ -45,7 +45,7 @@ export class AddImageDialog extends Component {
 
 	insertImgTag = () => {
 		const { imageAlt: alt, imageTitle: title, imageUrl: src } = this.state;
-		this.props.onInsert( { alt, src, title } );
+		this.props.onInsert({ alt, src, title });
 		this.closeDialog();
 	};
 
@@ -56,38 +56,38 @@ export class AddImageDialog extends Component {
 		const buttons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 			},
 			{
 				action: 'add-image',
 				isPrimary: true,
-				label: translate( 'Add Image' ),
+				label: translate('Add Image'),
 				onClick: this.insertImgTag,
 			},
 		];
 
 		return (
 			<Dialog
-				isVisible={ shouldDisplay }
-				buttons={ buttons }
-				onClose={ this.closeDialog }
+				isVisible={shouldDisplay}
+				buttons={buttons}
+				onClose={this.closeDialog}
 				additionalClassNames="comment-html-editor__dialog"
 			>
 				<FormFieldset>
-					<FormLabel htmlFor="image_url">{ translate( 'URL' ) }</FormLabel>
-					<FormTextInput name="image_url" onChange={ this.setImageUrl } value={ imageUrl } />
+					<FormLabel htmlFor="image_url">{translate('URL')}</FormLabel>
+					<FormTextInput name="image_url" onChange={this.setImageUrl} value={imageUrl} />
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="image_title">{ translate( 'Title' ) }</FormLabel>
-					<FormTextInput name="image_title" onChange={ this.setImageTitle } value={ imageTitle } />
+					<FormLabel htmlFor="image_title">{translate('Title')}</FormLabel>
+					<FormTextInput name="image_title" onChange={this.setImageTitle} value={imageTitle} />
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="image_alt">{ translate( 'Alt Text' ) }</FormLabel>
-					<FormTextInput name="image_alt" onChange={ this.setImageAlt } value={ imageAlt } />
+					<FormLabel htmlFor="image_alt">{translate('Alt Text')}</FormLabel>
+					<FormTextInput name="image_alt" onChange={this.setImageAlt} value={imageAlt} />
 				</FormFieldset>
 			</Dialog>
 		);
 	}
 }
 
-export default localize( AddImageDialog );
+export default localize(AddImageDialog);

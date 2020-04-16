@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param {number} connectionId Connection ID
  * @returns {object} post publicize connection
  */
-export default function getPublicizeConnection( state, connectionId ) {
-	return get( state, [ 'sharing', 'publicize', 'connections', connectionId ], null );
+export default function getPublicizeConnection(state, connectionId) {
+	return get(state, ['sharing', 'publicize', 'connections', connectionId], null);
 }

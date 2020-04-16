@@ -13,11 +13,11 @@ import { includes } from 'lodash';
  * @param {string} query.status Comments status.
  * @returns {string} Filter key.
  */
-export const getFiltersKey = ( { order = 'DESC', search, status = 'all' } ) => {
+export const getFiltersKey = ({ order = 'DESC', search, status = 'all' }) => {
 	const caseInsensitiveOrder = order.toUpperCase();
-	const orderFilter = includes( [ 'ASC', 'DESC' ], caseInsensitiveOrder )
+	const orderFilter = includes(['ASC', 'DESC'], caseInsensitiveOrder)
 		? caseInsensitiveOrder
 		: 'DESC';
-	const searchFilter = !! search ? `&s=${ search }` : '';
-	return `${ status }?order=${ orderFilter }${ searchFilter }`;
+	const searchFilter = !!search ? `&s=${search}` : '';
+	return `${status}?order=${orderFilter}${searchFilter}`;
 };

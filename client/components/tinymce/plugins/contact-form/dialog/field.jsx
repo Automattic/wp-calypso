@@ -27,7 +27,7 @@ import getLabel from './locales';
 /**
  *
  */
-const fieldTypes = [ 'checkbox', 'select', 'email', 'name', 'radio', 'text', 'textarea', 'url' ];
+const fieldTypes = ['checkbox', 'select', 'email', 'name', 'radio', 'text', 'textarea', 'url'];
 
 class ContactFormDialogField extends React.PureComponent {
 	static displayName = 'ContactFormDialogField';
@@ -43,104 +43,104 @@ class ContactFormDialogField extends React.PureComponent {
 	};
 
 	renderOptions = () => {
-		if ( this.props.type !== 'radio' && this.props.type !== 'select' ) {
+		if (this.props.type !== 'radio' && this.props.type !== 'select') {
 			return;
 		}
 
 		let { options } = this.props;
-		options = options ? options.split( ',' ) : [];
+		options = options ? options.split(',') : [];
 
-		const optionsValidationError = ! options || options.length === 0;
+		const optionsValidationError = !options || options.length === 0;
 
 		return (
 			<FormFieldset>
-				<FormLabel>{ this.props.translate( 'Options' ) }</FormLabel>
+				<FormLabel>{this.props.translate('Options')}</FormLabel>
 				<TokenField
-					value={ options }
-					onChange={ tokens => this.props.onUpdate( { options: tokens.join() } ) }
+					value={options}
+					onChange={(tokens) => this.props.onUpdate({ options: tokens.join() })}
 				/>
-				{ optionsValidationError && (
+				{optionsValidationError && (
 					<FormTextValidation
-						isError={ true }
-						text={ this.props.translate( 'Options can not be empty.' ) }
+						isError={true}
+						text={this.props.translate('Options can not be empty.')}
 					/>
-				) }
+				)}
 				<FormSettingExplanation>Insert an option and press enter.</FormSettingExplanation>
 			</FormFieldset>
 		);
 	};
 
-	onLabelChange = event => {
-		this.props.onUpdate( { label: event.target.value } );
+	onLabelChange = (event) => {
+		this.props.onUpdate({ label: event.target.value });
 	};
 
 	handleCardOpen = () => {
-		this.props.onUpdate( { isExpanded: true } );
+		this.props.onUpdate({ isExpanded: true });
 	};
 
 	handleCardClose = () => {
-		this.props.onUpdate( { isExpanded: false } );
+		this.props.onUpdate({ isExpanded: false });
 	};
 
 	render() {
-		const fielLabelValidationError = ! this.props.label;
-		const remove = <FieldRemoveButton onRemove={ this.props.onRemove } />;
+		const fielLabelValidationError = !this.props.label;
+		const remove = <FieldRemoveButton onRemove={this.props.onRemove} />;
 
 		return (
 			<FoldableCard
-				header={ <FieldHeader { ...omit( this.props, [ 'onUpdate' ] ) } /> }
-				summary={ remove }
-				expandedSummary={ remove }
-				expanded={ this.props.isExpanded }
-				onClose={ this.handleCardClose }
-				onOpen={ this.handleCardOpen }
-				actionButton={ <FieldEditButton expanded={ false } /> }
-				actionButtonExpanded={ <FieldEditButton expanded={ true } /> }
+				header={<FieldHeader {...omit(this.props, ['onUpdate'])} />}
+				summary={remove}
+				expandedSummary={remove}
+				expanded={this.props.isExpanded}
+				onClose={this.handleCardClose}
+				onOpen={this.handleCardOpen}
+				actionButton={<FieldEditButton expanded={false} />}
+				actionButtonExpanded={<FieldEditButton expanded={true} />}
 			>
 				<FormFieldset>
-					<FormLabel>{ this.props.translate( 'Field Label' ) }</FormLabel>
+					<FormLabel>{this.props.translate('Field Label')}</FormLabel>
 					<FormTextInput
-						value={ this.props.label }
-						onChange={ this.onLabelChange }
-						isError={ fielLabelValidationError }
+						value={this.props.label}
+						onChange={this.onLabelChange}
+						isError={fielLabelValidationError}
 					/>
-					{ fielLabelValidationError && (
+					{fielLabelValidationError && (
 						<FormTextValidation
-							isError={ true }
-							text={ this.props.translate( 'Field Label can not be empty.' ) }
+							isError={true}
+							text={this.props.translate('Field Label can not be empty.')}
 						/>
-					) }
+					)}
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ this.props.translate( 'Field Type' ) }</FormLabel>
-					<SelectDropdown selectedText={ getLabel( this.props.type ) }>
-						{ fieldTypes.map( fieldType => (
+					<FormLabel>{this.props.translate('Field Type')}</FormLabel>
+					<SelectDropdown selectedText={getLabel(this.props.type)}>
+						{fieldTypes.map((fieldType) => (
 							<SelectDropdown.Item
-								key={ 'field-type-' + fieldType }
-								selected={ this.props.type === fieldType }
-								onClick={ () => this.props.onUpdate( { type: fieldType } ) }
+								key={'field-type-' + fieldType}
+								selected={this.props.type === fieldType}
+								onClick={() => this.props.onUpdate({ type: fieldType })}
 							>
-								{ getLabel( fieldType ) }
+								{getLabel(fieldType)}
 							</SelectDropdown.Item>
-						) ) }
+						))}
 					</SelectDropdown>
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>
 						<FormCheckbox
-							checked={ this.props.required }
-							onChange={ () => this.props.onUpdate( { required: ! this.props.required } ) }
+							checked={this.props.required}
+							onChange={() => this.props.onUpdate({ required: !this.props.required })}
 						/>
-						<span>{ this.props.translate( 'Required' ) }</span>
+						<span>{this.props.translate('Required')}</span>
 					</FormLabel>
 				</FormFieldset>
 
-				{ this.renderOptions() }
+				{this.renderOptions()}
 			</FoldableCard>
 		);
 	}
 }
 
-export default localize( ContactFormDialogField );
+export default localize(ContactFormDialogField);

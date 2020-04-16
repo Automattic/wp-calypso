@@ -25,17 +25,17 @@ class AddProfileLinksButtons extends React.Component {
 
 	popoverContext = React.createRef();
 
-	recordClickEvent = action => {
-		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	recordClickEvent = (action) => {
+		this.props.recordGoogleEvent('Me', 'Clicked on ' + action);
 	};
 
 	handleAddWordPressSiteButtonClick = () => {
-		this.recordClickEvent( 'Add a WordPress Site Button' );
+		this.recordClickEvent('Add a WordPress Site Button');
 		this.props.onShowAddWordPress();
 	};
 
 	handleOtherSiteButtonClick = () => {
-		this.recordClickEvent( 'Add Other Site Button' );
+		this.recordClickEvent('Add Other Site Button');
 		this.props.onShowAddOther();
 	};
 
@@ -45,33 +45,33 @@ class AddProfileLinksButtons extends React.Component {
 		return (
 			<Fragment>
 				<Button
-					ref={ this.popoverContext }
+					ref={this.popoverContext}
 					compact
-					disabled={ !! this.props.showingForm }
-					onClick={ this.props.onShowPopoverMenu }
+					disabled={!!this.props.showingForm}
+					onClick={this.props.onShowPopoverMenu}
 				>
 					<Gridicon icon="add-outline" />
-					<span>{ translate( 'Add' ) }</span>
+					<span>{translate('Add')}</span>
 				</Button>
-				{ this.props.showPopoverMenu && (
+				{this.props.showPopoverMenu && (
 					<PopoverMenu
 						isVisible
-						onClose={ this.props.onClosePopoverMenu }
-						context={ this.popoverContext.current }
+						onClose={this.props.onClosePopoverMenu}
+						context={this.popoverContext.current}
 					>
-						<PopoverMenuItem onClick={ this.handleAddWordPressSiteButtonClick }>
-							{ translate( 'Add WordPress Site' ) }
+						<PopoverMenuItem onClick={this.handleAddWordPressSiteButtonClick}>
+							{translate('Add WordPress Site')}
 						</PopoverMenuItem>
-						<PopoverMenuItem onClick={ this.handleOtherSiteButtonClick }>
-							{ translate( 'Add URL' ) }
+						<PopoverMenuItem onClick={this.handleOtherSiteButtonClick}>
+							{translate('Add URL')}
 						</PopoverMenuItem>
 					</PopoverMenu>
-				) }
+				)}
 			</Fragment>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
-} )( localize( AddProfileLinksButtons ) );
+})(localize(AddProfileLinksButtons));

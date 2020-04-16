@@ -18,25 +18,25 @@ class DomainSkipSuggestion extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const buttonContent = translate( 'Skip Purchase' );
+		const buttonContent = translate('Skip Purchase');
 
 		return (
 			<DomainSuggestion
-				buttonContent={ buttonContent }
-				buttonStyles={ { borderless: true } }
+				buttonContent={buttonContent}
+				buttonStyles={{ borderless: true }}
 				extraClasses="is-visible domain-skip-suggestion"
-				hidePrice={ true }
-				onButtonClick={ this.props.onButtonClick }
+				hidePrice={true}
+				onButtonClick={this.props.onButtonClick}
 				showChevron
 				// tracksButtonClickSource={ this.props.tracksButtonClickSource }
 			>
 				<div className="domain-skip-suggestion__domain-description">
-					<h3>{ this.props.selectedSiteSlug }</h3>
+					<h3>{this.props.selectedSiteSlug}</h3>
 					<p>
-						{ translate( 'This is your current free site address.', {
+						{translate('This is your current free site address.', {
 							comment:
 								"Explains that the domain name shown above this sentence is this site's currently active domain, and it is free of cost.",
-						} ) }
+						})}
 					</p>
 				</div>
 			</DomainSuggestion>
@@ -44,4 +44,4 @@ class DomainSkipSuggestion extends React.Component {
 	}
 }
 
-export default localize( DomainSkipSuggestion );
+export default localize(DomainSkipSuggestion);

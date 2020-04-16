@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormTextInput from 'components/forms/form-text-input';
 
-const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) => {
+const JetpackConnectExampleConnect = ({ isLegacy, url, translate, onClick }) => {
 	const contentClassName = classNames(
 		'example-components__content',
 		'example-components__connect-jetpack',
@@ -21,7 +21,7 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 		}
 	);
 	return (
-		<div className="example-components__main" onClick={ onClick }>
+		<div className="example-components__main" onClick={onClick}>
 			<div className="example-components__browser-chrome example-components__site-url-input-container">
 				<div className="example-components__browser-chrome-dots">
 					<div className="example-components__browser-chrome-dot" />
@@ -29,26 +29,26 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 					<div className="example-components__browser-chrome-dot" />
 				</div>
 				<div className="example-components__site-address-container">
-					<Gridicon size={ 24 } icon="globe" />
+					<Gridicon size={24} icon="globe" />
 					<FormTextInput
 						className="example-components__browser-chrome-url"
 						disabled
-						placeholder={ url }
+						placeholder={url}
 					/>
 				</div>
 			</div>
-			<div className={ contentClassName }>
+			<div className={contentClassName}>
 				<div className="example-components__content-wp-admin-masterbar" />
 				<div className="example-components__content-wp-admin-sidebar" />
 				<div className="example-components__content-wp-admin-main">
 					<div className="example-components__content-wp-admin-connect-banner">
-						{ ! isLegacy ? (
+						{!isLegacy ? (
 							<div className="example-components__content-wp-admin-plugin-name" aria-hidden>
-								{ translate( 'Connect Jetpack to WordPress.com' ) }
+								{translate('Connect Jetpack to WordPress.com')}
 							</div>
-						) : null }
+						) : null}
 						<div className="example-components__content-wp-admin-connect-button" aria-hidden>
-							{ translate( 'Set up Jetpack' ) }
+							{translate('Set up Jetpack')}
 						</div>
 					</div>
 				</div>
@@ -69,4 +69,4 @@ JetpackConnectExampleConnect.defaultProps = {
 	url: '',
 };
 
-export default localize( JetpackConnectExampleConnect );
+export default localize(JetpackConnectExampleConnect);

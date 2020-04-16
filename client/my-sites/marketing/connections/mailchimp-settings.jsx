@@ -20,7 +20,7 @@ import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
 import { localizeUrl } from 'lib/i18n-utils';
 
-const MailchimpSettings = ( {
+const MailchimpSettings = ({
 	siteId,
 	keyringConnections,
 	requestSettingsUpdateAction,
@@ -29,9 +29,9 @@ const MailchimpSettings = ( {
 	isJetpack,
 	isJetpackConnectionBroken,
 	translate,
-} ) => {
-	const chooseMailchimpList = event => {
-		if ( event.target.value === '0' ) {
+}) => {
+	const chooseMailchimpList = (event) => {
+		if (event.target.value === '0') {
 			// This means we want to turn off sharing for this site.
 			requestSettingsUpdateAction(
 				siteId,
@@ -39,52 +39,50 @@ const MailchimpSettings = ( {
 					follower_list_id: 0,
 					keyring_id: 0,
 				},
-				translate( 'Subscriber emails will not be saved to Mailchimp any more' )
+				translate('Subscriber emails will not be saved to Mailchimp any more')
 			);
 			return;
 		}
-		const list = mailchimpLists.filter( mcList => mcList.id === event.target.value )[ 0 ];
+		const list = mailchimpLists.filter((mcList) => mcList.id === event.target.value)[0];
 		requestSettingsUpdateAction(
 			siteId,
 			{
 				follower_list_id: event.target.value,
-				keyring_id: keyringConnections[ 0 ].ID,
+				keyring_id: keyringConnections[0].ID,
 			},
-			translate( 'Subscriber emails will be saved to the %s Mailchimp list', { args: list.name } )
+			translate('Subscriber emails will be saved to the %s Mailchimp list', { args: list.name })
 		);
 	};
 	const common = (
 		<div>
-			{ isJetpack && <QueryJetpackConnection siteId={ siteId } /> }
-			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			{isJetpack && <QueryJetpackConnection siteId={siteId} />}
+			{/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */}
 			<div className="sharing-connections__mailchimp-gutenberg_explanation">
 				<p>
-					{ translate(
+					{translate(
 						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
-					) }
+					)}
 					<a
-						href={ localizeUrl( 'https://wordpress.com/support/mailchimp-block/' ) }
+						href={localizeUrl('https://wordpress.com/support/mailchimp-block/')}
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						{ translate( 'Learn more.' ) }
+						{translate('Learn more.')}
 					</a>
 				</p>
 			</div>
 		</div>
 	);
 
-	if ( isJetpackConnectionBroken ) {
+	if (isJetpackConnectionBroken) {
 		return (
 			<div>
 				<Notice
 					status="is-warning"
-					text={ translate(
-						'Jetpack connection for this site is not active. Please reactivate it.'
-					) }
-					showDismiss={ false }
+					text={translate('Jetpack connection for this site is not active. Please reactivate it.')}
+					showDismiss={false}
 				/>
-				{ common }
+				{common}
 			</div>
 		);
 	}
@@ -92,41 +90,41 @@ const MailchimpSettings = ( {
 	/* eslint-disable jsx-a11y/no-onchange */
 	return (
 		<div>
-			<QueryMailchimpLists siteId={ siteId } />
-			<QueryMailchimpSettings siteId={ siteId } />
-			<p>{ translate( 'What Mailchimp list should subscribers be added to?' ) }</p>
-			{ isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
+			<QueryMailchimpLists siteId={siteId} />
+			<QueryMailchimpSettings siteId={siteId} />
+			<p>{translate('What Mailchimp list should subscribers be added to?')}</p>
+			{isArray(mailchimpLists) && mailchimpLists.length === 0 && (
 				<Notice
 					status="is-info"
-					text={ translate(
+					text={translate(
 						"Looks like you've not set up any Mailchimp lists yet. Head to your Mailchimp admin to add a list."
-					) }
-					showDismiss={ false }
+					)}
+					showDismiss={false}
 				>
-					<NoticeAction href="https://login.mailchimp.com" external={ true } />
+					<NoticeAction href="https://login.mailchimp.com" external={true} />
 				</Notice>
-			) }
-			{ mailchimpLists && mailchimpLists.length > 0 && mailchimpListId === 0 && (
+			)}
+			{mailchimpLists && mailchimpLists.length > 0 && mailchimpListId === 0 && (
 				<Notice
 					status="is-warning"
-					text={ translate(
+					text={translate(
 						'Subscribers will not be added to Mailchimp for this site. Please select a list to sign them up for your Mailchimp content'
-					) }
-					showDismiss={ false }
+					)}
+					showDismiss={false}
 				/>
-			) }
-			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
-				<option key="none" value={ 0 }>
-					{ translate( 'Do not save subscribers to Mailchimp for this site' ) }
+			)}
+			<select value={mailchimpListId} onChange={chooseMailchimpList}>
+				<option key="none" value={0}>
+					{translate('Do not save subscribers to Mailchimp for this site')}
 				</option>
-				{ mailchimpLists &&
-					mailchimpLists.map( list => (
-						<option key={ list.id } value={ list.id }>
-							{ list.name }
+				{mailchimpLists &&
+					mailchimpLists.map((list) => (
+						<option key={list.id} value={list.id}>
+							{list.name}
 						</option>
-					) ) }
+					))}
 			</select>
-			{ common }
+			{common}
 		</div>
 	);
 	/* eslint-enable jsx-a11y/no-onchange */
@@ -149,18 +147,18 @@ export const renderMailchimpLogo = () => (
 );
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const isJetpack = isJetpackSite(state, siteId);
 
 		return {
 			siteId,
 			isJetpack,
-			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
-			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
+			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus(state, siteId) === false,
+			mailchimpLists: get(state, ['mailchimp', 'lists', 'items', siteId], null),
 			mailchimpListId: get(
 				state,
-				[ 'mailchimp', 'settings', 'items', siteId, 'follower_list_id' ],
+				['mailchimp', 'settings', 'items', siteId, 'follower_list_id'],
 				0
 			),
 		};
@@ -168,4 +166,4 @@ export default connect(
 	{
 		requestSettingsUpdateAction: requestSettingsUpdate,
 	}
-)( localize( MailchimpSettings ) );
+)(localize(MailchimpSettings));

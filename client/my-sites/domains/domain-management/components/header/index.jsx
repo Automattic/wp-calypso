@@ -17,7 +17,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import './style.scss';
 
-export default function DomainManagementHeader( props ) {
+export default function DomainManagementHeader(props) {
 	const { onClick, backHref, children } = props;
 	const translate = useTranslate();
 
@@ -26,14 +26,14 @@ export default function DomainManagementHeader( props ) {
 		<React.Fragment>
 			<FormattedHeader
 				className="stats__section-header"
-				headerText={ translate( 'Domains' ) }
+				headerText={translate('Domains')}
 				align="left"
 			/>
-			<HeaderCake className="domain-management-header" onClick={ onClick } backHref={ backHref }>
+			<HeaderCake className="domain-management-header" onClick={onClick} backHref={backHref}>
 				<div className="domain-management-header__children">
-					<span className="domain-management-header__title">{ children }</span>
+					<span className="domain-management-header__title">{children}</span>
 				</div>
-				<DocumentHead title={ children } />
+				<DocumentHead title={children} />
 			</HeaderCake>
 		</React.Fragment>
 	);

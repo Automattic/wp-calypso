@@ -28,7 +28,7 @@ class DismissibleCard extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		dismissCard: PropTypes.func,
-		highlight: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
+		highlight: PropTypes.oneOf(['error', 'info', 'success', 'warning']),
 		isDismissed: PropTypes.bool,
 		temporary: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -49,44 +49,44 @@ class DismissibleCard extends Component {
 			hasReceivedPreferences,
 		} = this.props;
 
-		if ( isDismissed || ! hasReceivedPreferences ) {
+		if (isDismissed || !hasReceivedPreferences) {
 			return null;
 		}
 
 		return (
-			<Card className={ className } highlight={ highlight }>
+			<Card className={className} highlight={highlight}>
 				<QueryPreferences />
 				<Gridicon
 					icon="cross"
 					className="dismissible-card__close-icon"
-					onClick={ flow( onClick, dismissCard ) }
+					onClick={flow(onClick, dismissCard)}
 				/>
-				{ this.props.children }
+				{this.props.children}
 			</Card>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
+	(state, ownProps) => {
+		const preference = `${PREFERENCE_PREFIX}${ownProps.preferenceName}`;
 
 		return {
-			isDismissed: getPreference( state, preference ),
-			hasReceivedPreferences: hasReceivedRemotePreferences( state ),
+			isDismissed: getPreference(state, preference),
+			hasReceivedPreferences: hasReceivedRemotePreferences(state),
 		};
 	},
-	( dispatch, ownProps ) =>
+	(dispatch, ownProps) =>
 		bindActionCreators(
 			{
 				dismissCard: () => {
-					const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
-					if ( ownProps.temporary ) {
-						return setPreference( preference, true );
+					const preference = `${PREFERENCE_PREFIX}${ownProps.preferenceName}`;
+					if (ownProps.temporary) {
+						return setPreference(preference, true);
 					}
-					return savePreference( preference, true );
+					return savePreference(preference, true);
 				},
 			},
 			dispatch
 		)
-)( DismissibleCard );
+)(DismissibleCard);

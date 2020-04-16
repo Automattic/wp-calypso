@@ -34,10 +34,10 @@ class ProductFormVariationsRow extends Component {
 		storeIsManagingStock: PropTypes.string,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		const { variation } = props;
-		const image = ( variation && variation.image ) || {};
+		const image = (variation && variation.image) || {};
 
 		this.state = {
 			id: image.id || null,
@@ -49,76 +49,76 @@ class ProductFormVariationsRow extends Component {
 	}
 
 	// TODO: Consildate the following set/toggle functions with a helper (along with the form-details functions).
-	setPrice = e => {
+	setPrice = (e) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
-		editProductVariation( siteId, product, variation, { regular_price: e.target.value } );
+		editProductVariation(siteId, product, variation, { regular_price: e.target.value });
 	};
 
-	setWeight = e => {
+	setWeight = (e) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
-		editProductVariation( siteId, product, variation, { weight: e.target.value } );
+		editProductVariation(siteId, product, variation, { weight: e.target.value });
 	};
 
-	setDimension = e => {
+	setDimension = (e) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
-		const dimensions = { ...variation.dimensions, [ e.target.name ]: e.target.value };
-		editProductVariation( siteId, product, variation, { dimensions } );
+		const dimensions = { ...variation.dimensions, [e.target.name]: e.target.value };
+		editProductVariation(siteId, product, variation, { dimensions });
 	};
 
-	setStockQuantity = e => {
+	setStockQuantity = (e) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
-		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
+		const stock_quantity = Number(e.target.value) >= 0 ? e.target.value : '';
 		const manage_stock = stock_quantity !== '';
-		editProductVariation( siteId, product, variation, { stock_quantity, manage_stock } );
+		editProductVariation(siteId, product, variation, { stock_quantity, manage_stock });
 	};
 
 	showDialog = () => {
 		const { variation, onShowDialog } = this.props;
-		onShowDialog( variation.id );
+		onShowDialog(variation.id);
 	};
 
-	onSelect = files => {
-		const file = head( files );
-		this.setState( {
+	onSelect = (files) => {
+		const file = head(files);
+		this.setState({
 			placeholder: file.preview,
 			transientId: file.ID,
 			isUploading: true,
-		} );
+		});
 		this.props.onUploadStart();
 	};
 
-	onUpload = file => {
+	onUpload = (file) => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		const image = {
 			src: file.URL,
 			id: file.ID,
 		};
-		this.setState( {
+		this.setState({
 			...image,
 			transientId: null,
 			isUploading: false,
-		} );
-		editProductVariation( siteId, product, variation, { image } );
+		});
+		editProductVariation(siteId, product, variation, { image });
 	};
 
 	onError = () => {
-		this.setState( {
+		this.setState({
 			placeholder: null,
 			transientId: null,
 			isUploading: false,
-		} );
+		});
 	};
 
 	removeImage = () => {
 		const { siteId, editProductVariation, product, variation } = this.props;
-		this.setState( {
+		this.setState({
 			placeholder: null,
 			transientId: null,
 			isUploading: false,
 			src: null,
 			id: null,
-		} );
-		editProductVariation( siteId, product, variation, { image: {} } );
+		});
+		editProductVariation(siteId, product, variation, { image: {} });
 	};
 
 	renderImage = () => {
@@ -126,58 +126,58 @@ class ProductFormVariationsRow extends Component {
 		const { translate } = this.props;
 
 		let image = null;
-		if ( src && ! isUploading ) {
+		if (src && !isUploading) {
 			image = (
 				<figure>
 					<MediaImage
-						src={ src }
-						alt={ translate( 'Variation thumbnail' ) }
-						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
+						src={src}
+						alt={translate('Variation thumbnail')}
+						placeholder={placeholder ? <img src={placeholder} alt="" /> : <span />}
 					/>
 				</figure>
 			);
-		} else if ( isUploading ) {
+		} else if (isUploading) {
 			image = (
 				<figure>
-					<img src={ placeholder || '' } alt="" />
+					<img src={placeholder || ''} alt="" />
 					<Spinner />
 				</figure>
 			);
 		}
 
-		const classes = classNames( 'products__product-form-variation-image', {
+		const classes = classNames('products__product-form-variation-image', {
 			preview: null === src,
-			uploader: ! image,
-		} );
+			uploader: !image,
+		});
 
 		const removeButton = image && (
 			<Button
 				compact
-				onClick={ this.removeImage }
-				aria-label={ translate( 'Remove image' ) }
+				onClick={this.removeImage}
+				aria-label={translate('Remove image')}
 				className="products__product-form-variation-image-remove"
 			>
 				<Gridicon
 					icon="cross"
-					size={ 24 }
+					size={24}
 					className="products__product-form-variation-image-remove-icon"
 				/>
 			</Button>
 		);
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<ProductImageUploader
 					compact
-					multiple={ false }
-					onSelect={ this.onSelect }
-					onUpload={ this.onUpload }
-					onError={ this.onError }
-					onFinish={ this.props.onUploadFinish }
+					multiple={false}
+					onSelect={this.onSelect}
+					onUpload={this.onUpload}
+					onError={this.onError}
+					onFinish={this.props.onUploadFinish}
 				>
-					{ image }
+					{image}
 				</ProductImageUploader>
-				{ removeButton }
+				{removeButton}
 			</div>
 		);
 	};
@@ -190,13 +190,13 @@ class ProductFormVariationsRow extends Component {
 			<tr className="products__product-form-variation-row">
 				<td className="products__product-id">
 					<div className="products__product-name-thumb">
-						{ this.renderImage() }
+						{this.renderImage()}
 						<Button
 							borderless
 							className="products__product-name products__variation-settings-link"
-							onClick={ this.showDialog }
+							onClick={this.showDialog}
 						>
-							{ formattedVariationName( variation ) }
+							{formattedVariationName(variation)}
 						</Button>
 					</div>
 				</td>
@@ -204,21 +204,21 @@ class ProductFormVariationsRow extends Component {
 					<div className="products__product-manage-stock">
 						<FormTextInput
 							name="stock_quantity"
-							value={ variation.stock_quantity || '' }
+							value={variation.stock_quantity || ''}
 							type="number"
-							onChange={ this.setStockQuantity }
-							placeholder={ translate( 'Quantity' ) }
-							disabled={ stockDisabled }
+							onChange={this.setStockQuantity}
+							placeholder={translate('Quantity')}
+							disabled={stockDisabled}
 						/>
 					</div>
 				</td>
 				<td>
 					<PriceInput
 						noWrap
-						value={ variation.regular_price || '' }
+						value={variation.regular_price || ''}
 						name="price"
 						placeholder="0.00"
-						onChange={ this.setPrice }
+						onChange={this.setPrice}
 						size="4"
 					/>
 				</td>
@@ -226,12 +226,12 @@ class ProductFormVariationsRow extends Component {
 					<div className="products__product-dimensions-weight">
 						<FormDimensionsInput
 							className="products__product-dimensions-input"
-							dimensions={ variation.dimensions }
-							onChange={ this.setDimension }
+							dimensions={variation.dimensions}
+							onChange={this.setDimension}
 							noWrap
 						/>
 						<div className="products__product-weight-input">
-							<FormWeightInput value={ variation.weight } onChange={ this.setWeight } noWrap />
+							<FormWeightInput value={variation.weight} onChange={this.setWeight} noWrap />
 						</div>
 					</div>
 				</td>
@@ -240,4 +240,4 @@ class ProductFormVariationsRow extends Component {
 	}
 }
 
-export default localize( ProductFormVariationsRow );
+export default localize(ProductFormVariationsRow);

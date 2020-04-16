@@ -11,7 +11,7 @@ import list from './list/reducer';
 
 export default keyedReducer(
 	'siteId',
-	combineReducers( {
+	combineReducers({
 		list,
-	} )
+	})
 );

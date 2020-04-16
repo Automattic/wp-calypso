@@ -16,7 +16,7 @@ import {
 	receiveTags as receiveTagsAction,
 } from 'state/reader/tags/items/actions';
 
-const successfulFollowedTagsResponse = deepFreeze( {
+const successfulFollowedTagsResponse = deepFreeze({
 	tags: [
 		{
 			ID: '307',
@@ -33,9 +33,9 @@ const successfulFollowedTagsResponse = deepFreeze( {
 			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/design/posts',
 		},
 	],
-} );
+});
 
-const successfulSingleTagResponse = deepFreeze( {
+const successfulSingleTagResponse = deepFreeze({
 	tag: {
 		ID: '307',
 		slug: 'chickens',
@@ -43,88 +43,84 @@ const successfulSingleTagResponse = deepFreeze( {
 		display_name: 'chickens',
 		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts',
 	},
-} );
+});
 
 const slug = 'chickens';
 
-describe( 'wpcom-api', () => {
-	describe( 'request tags', () => {
-		describe( '#requestTags', () => {
-			test( 'single tag: should dispatch HTTP request to tag endpoint', () => {
-				const action = requestTagsAction( slug );
+describe('wpcom-api', () => {
+	describe('request tags', () => {
+		describe('#requestTags', () => {
+			test('single tag: should dispatch HTTP request to tag endpoint', () => {
+				const action = requestTagsAction(slug);
 
-				expect( requestTags( action ) ).toMatchObject(
-					http( {
+				expect(requestTags(action)).toMatchObject(
+					http({
 						apiVersion: '1.2',
 						method: 'GET',
-						path: `/read/tags/${ slug }`,
+						path: `/read/tags/${slug}`,
 						onSuccess: action,
 						onFailure: action,
-					} )
+					})
 				);
-			} );
+			});
 
-			test( 'multiple tags: should dispatch HTTP request to tags endpoint', () => {
+			test('multiple tags: should dispatch HTTP request to tags endpoint', () => {
 				const action = requestTagsAction();
 
-				expect( requestTags( action ) ).toMatchObject(
-					http( {
+				expect(requestTags(action)).toMatchObject(
+					http({
 						apiVersion: '1.2',
 						method: 'GET',
 						path: '/read/tags',
 						onSuccess: action,
 						onFailure: action,
-					} )
+					})
 				);
-			} );
-		} );
+			});
+		});
 
-		describe( '#receiveTagsResponse', () => {
-			test( 'single tag: should normalize + dispatch', () => {
-				const action = requestTagsAction( slug );
+		describe('#receiveTagsResponse', () => {
+			test('single tag: should normalize + dispatch', () => {
+				const action = requestTagsAction(slug);
 
-				expect(
-					receiveTagsSuccess( action, fromApi( successfulSingleTagResponse ) )
-				).toMatchObject(
-					receiveTagsAction( {
-						payload: fromApi( successfulSingleTagResponse ),
+				expect(receiveTagsSuccess(action, fromApi(successfulSingleTagResponse))).toMatchObject(
+					receiveTagsAction({
+						payload: fromApi(successfulSingleTagResponse),
 						resetFollowingData: false,
-					} )
+					})
 				);
-			} );
+			});
 
-			test( 'multiple tags: should dispatch the tags', () => {
+			test('multiple tags: should dispatch the tags', () => {
 				const action = requestTagsAction();
 
-				const transformedResponse = map( fromApi( successfulFollowedTagsResponse ), tag => ( {
+				const transformedResponse = map(fromApi(successfulFollowedTagsResponse), (tag) => ({
 					...tag,
 					isFollowing: true,
-				} ) );
+				}));
 
-				expect(
-					receiveTagsSuccess( action, fromApi( successfulFollowedTagsResponse ) )
-				).toMatchObject(
-					receiveTagsAction( {
+				expect(receiveTagsSuccess(action, fromApi(successfulFollowedTagsResponse))).toMatchObject(
+					receiveTagsAction({
 						payload: transformedResponse,
 						resetFollowingData: true,
-					} )
+					})
 				);
-			} );
-		} );
+			});
+		});
 
-		describe( '#receiveTagsError', () => {
-			test( 'should return an error notice', () => {
-				const action = requestTagsAction( slug );
+		describe('#receiveTagsError', () => {
+			test('should return an error notice', () => {
+				const action = requestTagsAction(slug);
 				const error = 'could not find tag(s)';
 
-				expect( receiveTagsError( action, error )[ 0 ] ).toMatchObject( {
+				expect(receiveTagsError(action, error)[0]).toMatchObject({
 					type: NOTICE_CREATE,
-				} );
-			} );
+				});
+			});
 
-			test( 'should not dispatch error notice if the error is a 404', () => {
+			test('should not dispatch error notice if the error is a 404', () => {
 				const action = {
-					...requestTagsAction( slug ),
+					...requestTagsAction(slug),
 					meta: {
 						dataLayer: {
 							headers: { status: 404 },
@@ -133,12 +129,12 @@ describe( 'wpcom-api', () => {
 				};
 				const error = 'could not find tag(s)';
 
-				expect( receiveTagsError( action, error ) ).toMatchObject(
-					receiveTagsAction( {
-						payload: [ { id: slug, slug, error: true } ],
-					} )
+				expect(receiveTagsError(action, error)).toMatchObject(
+					receiveTagsAction({
+						payload: [{ id: slug, slug, error: true }],
+					})
 				);
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

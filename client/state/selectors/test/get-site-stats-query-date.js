@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import { getSiteStatsQueryDate } from 'state/stats/lists/selectors';
 
-describe( 'getSiteStatsQueryDate()', () => {
-	test( 'should return undefined if no request exists', () => {
+describe('getSiteStatsQueryDate()', () => {
+	test('should return undefined if no request exists', () => {
 		const date = getSiteStatsQueryDate(
 			{
 				stats: {
@@ -23,10 +23,10 @@ describe( 'getSiteStatsQueryDate()', () => {
 			{}
 		);
 
-		expect( date ).to.be.undefined;
-	} );
+		expect(date).to.be.undefined;
+	});
 
-	test( 'should return the query date properly', () => {
+	test('should return the query date properly', () => {
 		const today = new Date();
 		const date = getSiteStatsQueryDate(
 			{
@@ -47,6 +47,6 @@ describe( 'getSiteStatsQueryDate()', () => {
 			{ startDate: '2015-06-01', endDate: '2016-06-01' }
 		);
 
-		expect( date ).to.eql( today );
-	} );
-} );
+		expect(date).to.eql(today);
+	});
+});

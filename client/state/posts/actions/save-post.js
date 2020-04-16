@@ -18,32 +18,32 @@ import 'state/posts/init';
  * @param  {object}   post   Post attributes
  * @returns {Function}        Action thunk
  */
-export function savePost( siteId, postId = null, post ) {
-	return dispatch => {
-		dispatch( {
+export function savePost(siteId, postId = null, post) {
+	return (dispatch) => {
+		dispatch({
 			type: POST_SAVE,
 			siteId,
 			postId,
 			post,
-		} );
+		});
 
-		const postHandle = wpcom.site( siteId ).post( postId );
-		const normalizedPost = normalizePostForApi( post );
+		const postHandle = wpcom.site(siteId).post(postId);
+		const normalizedPost = normalizePostForApi(post);
 		const method = postId ? 'update' : 'add';
-		const saveResult = postHandle[ method ]( { apiVersion: '1.2' }, normalizedPost );
+		const saveResult = postHandle[method]({ apiVersion: '1.2' }, normalizedPost);
 
 		saveResult.then(
-			savedPost => {
-				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
-				dispatch( receivePost( savedPost ) );
+			(savedPost) => {
+				dispatch(savePostSuccess(siteId, postId, savedPost, post));
+				dispatch(receivePost(savedPost));
 			},
-			error => {
-				dispatch( {
+			(error) => {
+				dispatch({
 					type: POST_SAVE_FAILURE,
 					siteId,
 					postId,
 					error,
-				} );
+				});
 			}
 		);
 

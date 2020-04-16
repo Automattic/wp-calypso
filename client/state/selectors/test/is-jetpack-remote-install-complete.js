@@ -5,23 +5,23 @@ import isJetpackRemoteInstallComplete from 'state/selectors/is-jetpack-remote-in
 
 const url = 'https://yourgroovydomain.com';
 
-describe( 'isJetpackRemoteInstallComplete()', () => {
-	test( 'should return true if install is complete', () => {
+describe('isJetpackRemoteInstallComplete()', () => {
+	test('should return true if install is complete', () => {
 		const state = {
 			jetpackRemoteInstall: {
 				isComplete: {
-					[ url ]: true,
+					[url]: true,
 				},
 			},
 		};
-		expect( isJetpackRemoteInstallComplete( state, url ) ).toBe( true );
-	} );
-	test( 'should return false if install is not complete', () => {
+		expect(isJetpackRemoteInstallComplete(state, url)).toBe(true);
+	});
+	test('should return false if install is not complete', () => {
 		const state = {
 			jetpackRemoteInstall: {
 				isComplete: {},
 			},
 		};
-		expect( isJetpackRemoteInstallComplete( state, url ) ).toBe( false );
-	} );
-} );
+		expect(isJetpackRemoteInstallComplete(state, url)).toBe(false);
+	});
+});

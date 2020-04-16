@@ -29,108 +29,106 @@ class ProfileLinksAddWordPress extends Component {
 	// code simpler / easier to maintain
 	state = {};
 
-	handleCheckedChanged = event => {
+	handleCheckedChanged = (event) => {
 		const updates = {};
-		updates[ event.target.name ] = event.target.checked;
-		this.setState( updates );
+		updates[event.target.name] = event.target.checked;
+		this.setState(updates);
 	};
 
-	recordClickEvent = action => {
-		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	recordClickEvent = (action) => {
+		this.props.recordGoogleEvent('Me', 'Clicked on ' + action);
 	};
 
-	getClickHandler = action => {
-		return () => this.recordClickEvent( action );
+	getClickHandler = (action) => {
+		return () => this.recordClickEvent(action);
 	};
 
-	handleCancelButtonClick = event => {
-		this.recordClickEvent( 'Cancel Add WordPress Sites Button' );
-		this.onCancel( event );
+	handleCancelButtonClick = (event) => {
+		this.recordClickEvent('Cancel Add WordPress Sites Button');
+		this.onCancel(event);
 	};
 
-	handleJetpackLinkClick = event => {
-		this.recordClickEvent( 'Jetpack Link in Profile Links' );
-		this.onJetpackMe( event );
+	handleJetpackLinkClick = (event) => {
+		this.recordClickEvent('Jetpack Link in Profile Links');
+		this.onJetpackMe(event);
 	};
 
-	handleCreateSiteButtonClick = event => {
-		this.recordClickEvent( 'Create Sites Button in Profile Links' );
-		this.onCreateSite( event );
+	handleCreateSiteButtonClick = (event) => {
+		this.recordClickEvent('Create Sites Button in Profile Links');
+		this.onCreateSite(event);
 	};
 
-	onSelect = ( event, inputName ) => {
+	onSelect = (event, inputName) => {
 		const updates = {};
-		updates[ inputName ] = ! this.state[ inputName ];
-		this.setState( updates );
+		updates[inputName] = !this.state[inputName];
+		this.setState(updates);
 	};
 
 	getCheckedCount() {
 		let checkedCount = 0;
 		let inputName;
-		for ( inputName in this.state ) {
-			if ( this.state[ inputName ] ) {
+		for (inputName in this.state) {
+			if (this.state[inputName]) {
 				checkedCount++;
 			}
 		}
 		return checkedCount;
 	}
 
-	onAddableSubmit = event => {
+	onAddableSubmit = (event) => {
 		event.preventDefault();
 		const { sites } = this.props;
 
 		const links = pickBy(
 			this.state,
-			( inputValue, inputName ) => 'site-' === inputName.substr( 0, 5 ) && inputValue
+			(inputValue, inputName) => 'site-' === inputName.substr(0, 5) && inputValue
 		);
 
-		const profileLinks = map( links, ( inputValue, inputName ) =>
-			parseInt( inputName.substr( 5 ), 10 )
-		)
-			.map( siteId => find( sites, [ 'ID', siteId ] ) )
-			.map( site => ( {
+		const profileLinks = map(links, (inputValue, inputName) => parseInt(inputName.substr(5), 10))
+			.map((siteId) => find(sites, ['ID', siteId]))
+			.map((site) => ({
 				title: site.name,
 				value: site.URL,
-			} ) );
+			}));
 
-		if ( profileLinks.length ) {
-			this.props.addUserProfileLinks( profileLinks );
+		if (profileLinks.length) {
+			this.props.addUserProfileLinks(profileLinks);
 			this.props.onSuccess();
 		}
 	};
 
-	onCancel = event => {
+	onCancel = (event) => {
 		event.preventDefault();
 		this.props.onCancel();
 	};
 
-	onCreateSite = event => {
+	onCreateSite = (event) => {
 		event.preventDefault();
-		window.open( config( 'signup_url' ) + '?ref=me-profile-links' );
+		window.open(config('signup_url') + '?ref=me-profile-links');
 		this.props.onCancel();
 	};
 
-	onJetpackMe = event => {
+	onJetpackMe = (event) => {
 		event.preventDefault();
-		window.open( 'http://jetpack.me/' );
+		window.open('http://jetpack.me/');
 		this.props.onCancel();
 	};
 
 	renderAddableSites() {
-		return this.props.publicSitesNotInProfileLinks.map( site => {
+		return this.props.publicSitesNotInProfileLinks.map((site) => {
 			const inputName = 'site-' + site.ID;
-			const checkedState = this.state[ inputName ];
+			const checkedState = this.state[inputName];
 
 			return (
 				<ProfileLinksAddWordPressSite
-					key={ inputName }
-					site={ site }
-					checked={ checkedState }
-					onChange={ this.handleCheckedChanged }
-					onSelect={ this.onSelect }
+					key={inputName}
+					site={site}
+					checked={checkedState}
+					onChange={this.handleCheckedChanged}
+					onSelect={this.onSelect}
 				/>
 			);
-		} );
+		});
 	}
 
 	renderAddableSitesForm() {
@@ -138,21 +136,21 @@ class ProfileLinksAddWordPress extends Component {
 		const checkedCount = this.getCheckedCount();
 
 		return (
-			<form className="profile-links-add-wordpress" onSubmit={ this.onAddableSubmit }>
-				<p>{ translate( 'Please select one or more sites to add to your profile.' ) }</p>
-				<ul className="profile-links-add-wordpress__list">{ this.renderAddableSites() }</ul>
+			<form className="profile-links-add-wordpress" onSubmit={this.onAddableSubmit}>
+				<p>{translate('Please select one or more sites to add to your profile.')}</p>
+				<ul className="profile-links-add-wordpress__list">{this.renderAddableSites()}</ul>
 				<FormButton
-					disabled={ 0 === checkedCount ? true : false }
-					onClick={ this.getClickHandler( 'Add WordPress Sites Button' ) }
+					disabled={0 === checkedCount ? true : false}
+					onClick={this.getClickHandler('Add WordPress Sites Button')}
 				>
-					{ translate( 'Add Site', 'Add Sites', { count: checkedCount } ) }
+					{translate('Add Site', 'Add Sites', { count: checkedCount })}
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
-					isPrimary={ false }
-					onClick={ this.handleCancelButtonClick }
+					isPrimary={false}
+					onClick={this.handleCancelButtonClick}
 				>
-					{ translate( 'Cancel' ) }
+					{translate('Cancel')}
 				</FormButton>
 			</form>
 		);
@@ -164,7 +162,7 @@ class ProfileLinksAddWordPress extends Component {
 		return (
 			<form>
 				<p>
-					{ translate(
+					{translate(
 						'You have no public sites on WordPress.com yet, but if you like you ' +
 							'can create one now. You may also add self-hosted WordPress ' +
 							'sites here after installing {{jetpackLink}}Jetpack{{/jetpackLink}} on them.',
@@ -174,22 +172,22 @@ class ProfileLinksAddWordPress extends Component {
 									<a
 										href="#"
 										className="profile-links-add-wordpress__jetpack-link"
-										onClick={ this.handleJetpackLinkClick }
+										onClick={this.handleJetpackLinkClick}
 									/>
 								),
 							},
 						}
-					) }
+					)}
 				</p>
-				<FormButton onClick={ this.handleCreateSiteButtonClick }>
-					{ translate( 'Create Site' ) }
+				<FormButton onClick={this.handleCreateSiteButtonClick}>
+					{translate('Create Site')}
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
-					isPrimary={ false }
-					onClick={ this.handleCancelButtonClick }
+					isPrimary={false}
+					onClick={this.handleCancelButtonClick}
 				>
-					{ translate( 'Cancel' ) }
+					{translate('Cancel')}
 				</FormButton>
 			</form>
 		);
@@ -198,30 +196,30 @@ class ProfileLinksAddWordPress extends Component {
 	render() {
 		return (
 			<div>
-				{ 0 === this.props.publicSites.length
+				{0 === this.props.publicSites.length
 					? this.renderInvitationForm()
-					: this.renderAddableSitesForm() }
+					: this.renderAddableSitesForm()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const publicSites = getPublicSites( state );
+	(state) => {
+		const publicSites = getPublicSites(state);
 		const publicSitesNotInProfileLinks = publicSites.filter(
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			site => ! isSiteInProfileLinks( state, site.domain )
+			(site) => !isSiteInProfileLinks(state, site.domain)
 		);
 
 		return {
 			publicSites,
 			publicSitesNotInProfileLinks,
-			sites: getSites( state ),
+			sites: getSites(state),
 		};
 	},
 	{
 		addUserProfileLinks,
 		recordGoogleEvent,
 	}
-)( localize( ProfileLinksAddWordPress ) );
+)(localize(ProfileLinksAddWordPress));

@@ -14,18 +14,18 @@ interface Props {
 	siteId: number;
 }
 
-const QueryJetpackScanHistory = ( { siteId }: Props ) => {
-	const requestingJetpackScanHistory = useSelector( state =>
-		isRequestingJetpackScanHistory( state, siteId )
+const QueryJetpackScanHistory = ({ siteId }: Props) => {
+	const requestingJetpackScanHistory = useSelector((state) =>
+		isRequestingJetpackScanHistory(state, siteId)
 	);
 	const dispatch = useDispatch();
 
-	React.useEffect( () => {
-		if ( requestingJetpackScanHistory ) {
+	React.useEffect(() => {
+		if (requestingJetpackScanHistory) {
 			return;
 		}
-		siteId && dispatch( requestJetpackScanHistory( siteId ) );
-	}, [ dispatch, siteId ] );
+		siteId && dispatch(requestJetpackScanHistory(siteId));
+	}, [dispatch, siteId]);
 
 	return null;
 };

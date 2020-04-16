@@ -15,7 +15,7 @@
 		"esModuleInterop": true,
 		"skipLibCheck": false,
 		"module": "esnext",
-		"typeRoots": [ "./typings", "**/node_modules/@types" ],
-		"types": [ "webpack-env", "calypso-assets" ]
+		"typeRoots": ["./typings", "**/node_modules/@types"],
+		"types": ["webpack-env", "calypso-assets"]
 	}
 }

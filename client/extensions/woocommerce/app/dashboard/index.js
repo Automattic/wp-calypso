@@ -56,11 +56,11 @@ class Dashboard extends Component {
 		hasProducts: PropTypes.bool,
 		isSetupComplete: PropTypes.bool,
 		loading: PropTypes.bool,
-		selectedSite: PropTypes.shape( {
+		selectedSite: PropTypes.shape({
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
 			URL: PropTypes.string.isRequired,
-		} ),
+		}),
 		setStoreAddressDuringInitialSetup: PropTypes.bool,
 		settingsGeneralLoading: PropTypes.bool,
 		setupChoicesLoading: PropTypes.bool,
@@ -75,35 +75,35 @@ class Dashboard extends Component {
 	componentDidMount() {
 		const { siteId } = this.props;
 
-		if ( siteId ) {
+		if (siteId) {
 			this.fetchData();
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const { siteId } = this.props;
 		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
-		if ( siteId && oldSiteId !== siteId ) {
+		if (siteId && oldSiteId !== siteId) {
 			this.fetchData();
 		}
 	}
 
 	fetchData = () => {
 		const { siteId, hasCounts } = this.props;
-		if ( ! hasCounts ) {
-			this.props.fetchCounts( siteId );
+		if (!hasCounts) {
+			this.props.fetchCounts(siteId);
 		}
 	};
 
 	// If the user 1) has set the store address in StoreLocationSetupView
 	// and 2) we have a redirectURL, don't render but go ahead and
 	// redirect (i.e. to the WooCommerce Setup Wizard in wp-admin)
-	shouldComponentUpdate( nextProps, nextState ) {
+	shouldComponentUpdate(nextProps, nextState) {
 		const { setStoreAddressDuringInitialSetup } = nextProps;
 		const { redirectURL } = nextState;
 
-		if ( setStoreAddressDuringInitialSetup && redirectURL ) {
+		if (setStoreAddressDuringInitialSetup && redirectURL) {
 			window.location = redirectURL;
 			return false;
 		}
@@ -114,12 +114,12 @@ class Dashboard extends Component {
 	fetchStoreData = () => {
 		const { finishedInstallOfRequiredPlugins, hasCounts, siteId } = this.props;
 
-		if ( ! finishedInstallOfRequiredPlugins ) {
+		if (!finishedInstallOfRequiredPlugins) {
 			return;
 		}
 
-		if ( ! hasCounts ) {
-			this.props.fetchCounts( siteId );
+		if (!hasCounts) {
+			this.props.fetchCounts(siteId);
 		}
 	};
 
@@ -133,27 +133,27 @@ class Dashboard extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! finishedInstallOfRequiredPlugins ) {
-			return translate( 'Store' );
+		if (!finishedInstallOfRequiredPlugins) {
+			return translate('Store');
 		}
 
-		if ( ! finishedPageSetup && ! hasProducts ) {
-			return translate( 'Setting Up Store Pages' );
+		if (!finishedPageSetup && !hasProducts) {
+			return translate('Setting Up Store Pages');
 		}
 
-		if ( ! setStoreAddressDuringInitialSetup ) {
-			return translate( 'Store Location' );
+		if (!setStoreAddressDuringInitialSetup) {
+			return translate('Store Location');
 		}
 
-		if ( ! finishedInitialSetup ) {
-			return translate( 'Store Setup' );
+		if (!finishedInitialSetup) {
+			return translate('Store Setup');
 		}
 
-		return translate( 'Dashboard' );
+		return translate('Dashboard');
 	};
 
-	onRequestRedirect = redirectURL => {
-		this.setState( { redirectURL } );
+	onRequestRedirect = (redirectURL) => {
+		this.setState({ redirectURL });
 	};
 
 	renderDashboardSetupContent = () => {
@@ -168,75 +168,75 @@ class Dashboard extends Component {
 			storeLocation,
 		} = this.props;
 
-		const adminURL = get( selectedSite, 'options.admin_url', '' );
-		if ( isEmpty( adminURL ) ) {
-			warn( 'options.admin_url unexpectedly empty in renderDashboardSetupContent' );
+		const adminURL = get(selectedSite, 'options.admin_url', '');
+		if (isEmpty(adminURL)) {
+			warn('options.admin_url unexpectedly empty in renderDashboardSetupContent');
 		}
 
-		if ( setupChoicesLoading ) {
+		if (setupChoicesLoading) {
 			// Many of the clauses below depend on setup choices being in the state tree
 			// Show a placeholder while they load
 			return <Placeholder />;
 		}
 
-		if ( ! finishedInstallOfRequiredPlugins ) {
-			return <RequiredPluginsInstallView site={ selectedSite } />;
+		if (!finishedInstallOfRequiredPlugins) {
+			return <RequiredPluginsInstallView site={selectedSite} />;
 		}
 
-		if ( ! finishedPageSetup && ! hasProducts ) {
-			return <RequiredPagesSetupView site={ selectedSite } />;
+		if (!finishedPageSetup && !hasProducts) {
+			return <RequiredPagesSetupView site={selectedSite} />;
 		}
 
-		if ( ! setStoreAddressDuringInitialSetup ) {
+		if (!setStoreAddressDuringInitialSetup) {
 			return (
 				<StoreLocationSetupView
-					adminURL={ adminURL }
-					onRequestRedirect={ this.onRequestRedirect }
-					siteId={ selectedSite.ID }
-					pushDefaultsForCountry={ ! hasProducts }
+					adminURL={adminURL}
+					onRequestRedirect={this.onRequestRedirect}
+					siteId={selectedSite.ID}
+					pushDefaultsForCountry={!hasProducts}
 				/>
 			);
 		}
 
 		// At this point, we don't know what we want to render until
 		// we know the store's country (from settings general)
-		if ( settingsGeneralLoading ) {
+		if (settingsGeneralLoading) {
 			return <Placeholder />;
 		}
 
 		// Not a supported country? Hold off on the setup tasks view until
 		// the country gains support - then the merchant will be able to complete
 		// tasks (or skip them)
-		const storeCountry = get( storeLocation, 'country' );
-		const manageInCalypso = isStoreManagementSupportedInCalypsoForCountry( storeCountry );
-		if ( ! manageInCalypso ) {
-			return <ManageExternalView site={ selectedSite } />;
+		const storeCountry = get(storeLocation, 'country');
+		const manageInCalypso = isStoreManagementSupportedInCalypsoForCountry(storeCountry);
+		if (!manageInCalypso) {
+			return <ManageExternalView site={selectedSite} />;
 		}
 
-		return <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } />;
+		return <SetupTasksView onFinished={this.onStoreSetupFinished} site={selectedSite} />;
 	};
 
 	renderDashboardContent = () => {
 		const { hasOrders, loading, selectedSite, storeLocation } = this.props;
 
-		if ( loading || ! selectedSite ) {
+		if (loading || !selectedSite) {
 			return <Placeholder />;
 		}
 
 		let manageView = null;
-		const storeCountry = get( storeLocation, 'country' );
-		const manageInCalypso = isStoreManagementSupportedInCalypsoForCountry( storeCountry );
-		if ( manageInCalypso ) {
-			if ( hasOrders ) {
-				manageView = <ManageOrdersView site={ selectedSite } />;
+		const storeCountry = get(storeLocation, 'country');
+		const manageInCalypso = isStoreManagementSupportedInCalypsoForCountry(storeCountry);
+		if (manageInCalypso) {
+			if (hasOrders) {
+				manageView = <ManageOrdersView site={selectedSite} />;
 			} else {
-				manageView = <ManageNoOrdersView site={ selectedSite } />;
+				manageView = <ManageNoOrdersView site={selectedSite} />;
 			}
 		} else {
-			manageView = <ManageExternalView site={ selectedSite } />;
+			manageView = <ManageExternalView site={selectedSite} />;
 		}
 
-		return <div>{ manageView }</div>;
+		return <div>{manageView}</div>;
 	};
 
 	render() {
@@ -244,37 +244,37 @@ class Dashboard extends Component {
 		const useWideLayout = isSetupComplete ? true : false;
 
 		return (
-			<Main className={ classNames( 'dashboard', className ) } wideLayout={ useWideLayout }>
-				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
-				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
-				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
+			<Main className={classNames('dashboard', className)} wideLayout={useWideLayout}>
+				<ActionHeader breadcrumbs={this.getBreadcrumb()} />
+				{isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent()}
+				{finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={siteId} />}
 			</Main>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const selectedSite = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const selectedSite = getSelectedSiteWithFallback(state);
 	const siteId = selectedSite ? selectedSite.ID : null;
 
 	// Data from calypso-preferences
-	const setupChoicesLoading = areSetupChoicesLoading( state );
-	const finishedPageSetup = getFinishedPageSetup( state );
-	const setStoreAddressDuringInitialSetup = getSetStoreAddressDuringInitialSetup( state );
-	const isSetupComplete = isStoreSetupComplete( state );
-	const finishedInitialSetup = getFinishedInitialSetup( state );
-	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins( state );
+	const setupChoicesLoading = areSetupChoicesLoading(state);
+	const finishedPageSetup = getFinishedPageSetup(state);
+	const setStoreAddressDuringInitialSetup = getSetStoreAddressDuringInitialSetup(state);
+	const isSetupComplete = isStoreSetupComplete(state);
+	const finishedInitialSetup = getFinishedInitialSetup(state);
+	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins(state);
 
 	// Data from settings/general
-	const settingsGeneralLoading = areSettingsGeneralLoading( state, siteId );
-	const storeLocation = getStoreLocation( state, siteId );
+	const settingsGeneralLoading = areSettingsGeneralLoading(state, siteId);
+	const storeLocation = getStoreLocation(state, siteId);
 
 	// Data from data/counts
-	const hasCounts = areCountsLoaded( state );
-	const hasOrders = getCountNewOrders( state ) > 0;
-	const hasProducts = getCountProducts( state ) > 0;
+	const hasCounts = areCountsLoaded(state);
+	const hasOrders = getCountNewOrders(state) > 0;
+	const hasProducts = getCountProducts(state) > 0;
 
-	const loading = setupChoicesLoading || ! hasCounts || settingsGeneralLoading;
+	const loading = setupChoicesLoading || !hasCounts || settingsGeneralLoading;
 
 	return {
 		finishedInitialSetup,
@@ -294,4 +294,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { fetchCounts } )( localize( Dashboard ) );
+export default connect(mapStateToProps, { fetchCounts })(localize(Dashboard));

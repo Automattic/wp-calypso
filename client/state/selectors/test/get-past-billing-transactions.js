@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 
-describe( 'getPastBillingTransactions()', () => {
-	test( 'should return the past billing transactions', () => {
+describe('getPastBillingTransactions()', () => {
+	test('should return the past billing transactions', () => {
 		const state = {
 			billingTransactions: {
 				items: {
@@ -30,20 +30,20 @@ describe( 'getPastBillingTransactions()', () => {
 				},
 			},
 		};
-		const expected = state.billingTransactions.items.past.map( transaction => {
-			transaction.date = new Date( transaction.date );
+		const expected = state.billingTransactions.items.past.map((transaction) => {
+			transaction.date = new Date(transaction.date);
 			return transaction;
-		} );
-		const output = getPastBillingTransactions( state );
-		expect( output ).to.eql( expected );
-	} );
+		});
+		const output = getPastBillingTransactions(state);
+		expect(output).to.eql(expected);
+	});
 
-	test( 'should return null if billing transactions have not been fetched yet', () => {
-		const output = getPastBillingTransactions( {
+	test('should return null if billing transactions have not been fetched yet', () => {
+		const output = getPastBillingTransactions({
 			billingTransactions: {
 				items: {},
 			},
-		} );
-		expect( output ).to.be.null;
-	} );
-} );
+		});
+		expect(output).to.be.null;
+	});
+});

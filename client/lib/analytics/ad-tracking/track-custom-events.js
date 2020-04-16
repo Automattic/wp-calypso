@@ -13,8 +13,8 @@ import './setup';
  * @param {object} properties - The custom event attributes.
  * @returns {void}
  */
-export function trackCustomFacebookConversionEvent( name, properties ) {
-	window.fbq && window.fbq( 'trackSingleCustom', TRACKING_IDS.facebookInit, name, properties );
+export function trackCustomFacebookConversionEvent(name, properties) {
+	window.fbq && window.fbq('trackSingleCustom', TRACKING_IDS.facebookInit, name, properties);
 }
 
 /**
@@ -23,8 +23,8 @@ export function trackCustomFacebookConversionEvent( name, properties ) {
  * @param {object} properties - The custom event attributes.
  * @returns {void}
  */
-export function trackCustomAdWordsRemarketingEvent( properties ) {
-	debug( 'trackCustomAdWordsRemarketingEvent:', properties );
+export function trackCustomAdWordsRemarketingEvent(properties) {
+	debug('trackCustomAdWordsRemarketingEvent:', properties);
 	// Not sure this is currently serving any purpose and whether we can convert it to use Gtag.
 	// Refactoring the middleware for analytics is outside the scope of this PR so I'll leave the function stub for now.
 	/*

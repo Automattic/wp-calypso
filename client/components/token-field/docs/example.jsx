@@ -79,10 +79,10 @@ class TokenFields extends React.PureComponent {
 
 	state = {
 		tokenSuggestions: suggestions,
-		tokens: Object.freeze( [ 'foo', 'bar' ] ),
+		tokens: Object.freeze(['foo', 'bar']),
 		placeholderTokens: [],
-		disabledTokens: [ 'foo', 'bar' ],
-		statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] ),
+		disabledTokens: ['foo', 'bar'],
+		statusTokens: Object.freeze(['success', 'error', 'validating', 'none']),
 	};
 
 	render() {
@@ -97,10 +97,10 @@ class TokenFields extends React.PureComponent {
 				<Card>
 					<h3>Default TokenField with Suggestions</h3>
 					<TokenField
-						isBorderless={ this.state.isBorderless }
-						suggestions={ this.state.tokenSuggestions }
-						value={ this.state.tokens }
-						onChange={ this._onTokensChange }
+						isBorderless={this.state.isBorderless}
+						suggestions={this.state.tokenSuggestions}
+						value={this.state.tokens}
+						onChange={this._onTokensChange}
 					/>
 				</Card>
 
@@ -108,22 +108,22 @@ class TokenFields extends React.PureComponent {
 					<h3>Borderless Tokens with Statuses</h3>
 					<TokenField
 						isBorderless
-						value={ this._getStatusTokens() }
-						onChange={ this._onStatusTokensChange }
+						value={this._getStatusTokens()}
+						onChange={this._onStatusTokensChange}
 					/>
 				</Card>
 
 				<Card>
 					<h3>Borderless and Disabled TokenField</h3>
-					<TokenField disabled isBorderless value={ this.state.disabledTokens } />
+					<TokenField disabled isBorderless value={this.state.disabledTokens} />
 				</Card>
 
 				<Card>
 					<h3>TokenField with Placeholder Text</h3>
 					<TokenField
 						placeholder="Red, Green, Blue"
-						value={ this.state.placeholderTokens }
-						onChange={ this._onPlaceholderTokensChange }
+						value={this.state.placeholderTokens}
+						onChange={this._onPlaceholderTokensChange}
 					/>
 				</Card>
 			</div>
@@ -131,9 +131,9 @@ class TokenFields extends React.PureComponent {
 	}
 
 	_getStatusTokens = () => {
-		return this.state.statusTokens.map( token => {
+		return this.state.statusTokens.map((token) => {
 			let returnToken;
-			switch ( token ) {
+			switch (token) {
 				case 'error':
 				case 'validating':
 				case 'success':
@@ -148,26 +148,26 @@ class TokenFields extends React.PureComponent {
 			}
 
 			return returnToken;
-		} );
+		});
 	};
 
-	_onStatusTokensChange = value => {
-		const filteredTokens = value.map( token => {
-			if ( 'object' === typeof token ) {
+	_onStatusTokensChange = (value) => {
+		const filteredTokens = value.map((token) => {
+			if ('object' === typeof token) {
 				return token.value;
 			}
 			return token;
-		} );
+		});
 
-		this.setState( { statusTokens: filteredTokens } );
+		this.setState({ statusTokens: filteredTokens });
 	};
 
-	_onTokensChange = value => {
-		this.setState( { tokens: value } );
+	_onTokensChange = (value) => {
+		this.setState({ tokens: value });
 	};
 
-	_onPlaceholderTokensChange = value => {
-		this.setState( { placeholderTokens: value } );
+	_onPlaceholderTokensChange = (value) => {
+		this.setState({ placeholderTokens: value });
 	};
 }
 

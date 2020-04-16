@@ -9,15 +9,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-ellipsis' ),
+const rule = require('../../../lib/rules/i18n-ellipsis'),
 	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-ellipsis', rule, {
+new RuleTester(config).run('i18n-ellipsis', rule, {
 	valid: [
 		{
 			code: "translate( 'Hello World…' );",
@@ -173,27 +173,27 @@ new RuleTester( config ).run( 'i18n-ellipsis', rule, {
 		},
 		{
 			code: "__( '...' );",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 			output: "__( '…' );",
 		},
 		{
 			code: '__( `Template ${ aString }...` );',
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 			output: '__( `Template ${ aString }…` );',
 		},
 		{
 			code: "_x( '...', 'ellipsis' );",
-			errors: [ { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }],
 		},
 		{
 			code: "_n( '...', '...s', 1 );",
-			errors: [ { message: rule.ERROR_MESSAGE }, { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }, { message: rule.ERROR_MESSAGE }],
 			output: "_n( '…', '…s', 1 );",
 		},
 		{
 			code: "_nx( '...', '...s', 2, 'ellipses' );",
-			errors: [ { message: rule.ERROR_MESSAGE }, { message: rule.ERROR_MESSAGE } ],
+			errors: [{ message: rule.ERROR_MESSAGE }, { message: rule.ERROR_MESSAGE }],
 			output: "_nx( '…', '…s', 2, 'ellipses' );",
 		},
 	],
-} );
+});

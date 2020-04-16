@@ -9,12 +9,12 @@ class DomainEmail {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( email, domainId, wpcom ) {
-		if ( ! ( this instanceof DomainEmail ) ) {
-			return new DomainEmail( email, domainId, wpcom );
+	constructor(email, domainId, wpcom) {
+		if (!(this instanceof DomainEmail)) {
+			return new DomainEmail(email, domainId, wpcom);
 		}
 
-		if ( email ) {
+		if (email) {
 			this._email = email;
 		}
 
@@ -31,9 +31,9 @@ class DomainEmail {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	forward( destination, query, fn ) {
+	forward(destination, query, fn) {
 		let body = { destination: destination };
-		return this.wpcom.req.post( this._subpath + this._email, query, body, fn );
+		return this.wpcom.req.post(this._subpath + this._email, query, body, fn);
 	}
 
 	/**
@@ -45,18 +45,18 @@ class DomainEmail {
 	 * @returns {Function} request handler
 	 */
 
-	add( mailbox, destination, query, fn ) {
-		if ( 'function' === typeof query ) {
+	add(mailbox, destination, query, fn) {
+		if ('function' === typeof query) {
 			fn = query;
 			query = {};
 		}
 
 		let body = {
 			mailbox: mailbox,
-			destination: destination
+			destination: destination,
 		};
 
-		return this.wpcom.req.post( this._subpath + 'new', query, body, fn );
+		return this.wpcom.req.post(this._subpath + 'new', query, body, fn);
 	}
 
 	/**
@@ -67,9 +67,9 @@ class DomainEmail {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	delete( mailbox, query, fn ) {
-		return this.wpcom.req.del( this._subpath + mailbox + '/delete', query, fn );
-	};
+	delete(mailbox, query, fn) {
+		return this.wpcom.req.del(this._subpath + mailbox + '/delete', query, fn);
+	}
 }
 
 /**

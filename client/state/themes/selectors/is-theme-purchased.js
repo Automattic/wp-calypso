@@ -20,7 +20,7 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID
  * @returns {boolean}         True if the theme has been purchased for the site
  */
-export function isThemePurchased( state, themeId, siteId ) {
-	const sitePurchases = getSitePurchases( state, siteId );
-	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
+export function isThemePurchased(state, themeId, siteId) {
+	const sitePurchases = getSitePurchases(state, siteId);
+	return some(sitePurchases, { productSlug: 'premium_theme', meta: themeId });
 }

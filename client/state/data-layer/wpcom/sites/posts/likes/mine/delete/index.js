@@ -13,9 +13,9 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export function fromApi( response ) {
-	if ( ! response.success ) {
-		throw new Error( 'Unsuccessful unlike API request' );
+export function fromApi(response) {
+	if (!response.success) {
+		throw new Error('Unsuccessful unlike API request');
 	}
 	return {
 		likeCount: +response.like_count,
@@ -23,16 +23,16 @@ export function fromApi( response ) {
 	};
 }
 
-export const fetch = action => {
+export const fetch = (action) => {
 	const query = {};
-	if ( action.source ) {
+	if (action.source) {
 		query.source = action.source;
 	}
 
 	return http(
 		{
 			method: 'POST',
-			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/mine/delete`,
+			path: `/sites/${action.siteId}/posts/${action.postId}/likes/mine/delete`,
 			apiVersion: '1.1',
 			body: {},
 			query,
@@ -41,20 +41,20 @@ export const fetch = action => {
 	);
 };
 
-export const onSuccess = ( { siteId, postId }, { likeCount, liker } ) =>
-	removeLiker( siteId, postId, likeCount, liker );
+export const onSuccess = ({ siteId, postId }, { likeCount, liker }) =>
+	removeLiker(siteId, postId, likeCount, liker);
 
-export const onError = ( { siteId, postId } ) => bypassDataLayer( like( siteId, postId ) );
+export const onError = ({ siteId, postId }) => bypassDataLayer(like(siteId, postId));
 
-registerHandlers( 'state/data-layer/wpcom/sites/posts/likes/mine/delete/index.js', {
-	[ POST_UNLIKE ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/posts/likes/mine/delete/index.js', {
+	[POST_UNLIKE]: [
+		dispatchRequest({
 			fetch,
 			onSuccess,
 			onError,
 			fromApi,
-		} ),
+		}),
 	],
-} );
+});
 
 export default {};

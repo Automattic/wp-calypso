@@ -41,7 +41,7 @@ import {
 	createSocialAccount as createSocialAccountAction,
 } from 'state/jetpack-connect/actions';
 
-const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
+const debug = debugFactory('calypso:jetpack-connect:authorize-form');
 
 export class JetpackSignup extends Component {
 	static propTypes = {
@@ -55,32 +55,32 @@ export class JetpackSignup extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static initialState = Object.freeze( {
+	static initialState = Object.freeze({
 		isCreatingAccount: false,
 		newUsername: null,
 		bearerToken: null,
-	} );
+	});
 
 	state = this.constructor.initialState;
 
 	resetState() {
-		this.setState( this.constructor.initialState );
+		this.setState(this.constructor.initialState);
 	}
 
 	UNSAFE_componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
-		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {
+		this.props.recordTracksEvent('calypso_jpc_authorize_form_view', {
 			from,
 			site: clientId,
-		} );
+		});
 	}
 
 	componentDidMount() {
 		const { from, clientId } = this.props.authQuery;
-		this.props.recordTracksEvent( 'calypso_jpc_signup_view', {
+		this.props.recordTracksEvent('calypso_jpc_signup_view', {
 			from,
 			site: clientId,
-		} );
+		});
 	}
 
 	isWoo() {
@@ -90,23 +90,23 @@ export class JetpackSignup extends Component {
 
 	getLoginRoute() {
 		const emailAddress = this.props.authQuery.userEmail;
-		return login( {
+		return login({
 			emailAddress,
 			isWoo: this.isWoo(),
 			isJetpack: true,
-			isNative: isEnabled( 'login/native-login-links' ),
+			isNative: isEnabled('login/native-login-links'),
 			locale: this.props.locale,
 			redirectTo: window.location.href,
-		} );
+		});
 	}
 
-	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
-		debug( 'submitting new account', userData );
-		this.setState( { isCreatingAccount: true }, () =>
+	handleSubmitSignup = (_, userData, analyticsData, afterSubmit = noop) => {
+		debug('submitting new account', userData);
+		this.setState({ isCreatingAccount: true }, () =>
 			this.props
-				.createAccount( { ...userData, extra: { ...userData.extra, jpc: true } } )
-				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
-				.finally( afterSubmit )
+				.createAccount({ ...userData, extra: { ...userData.extra, jpc: true } })
+				.then(this.handleUserCreationSuccess, this.handleUserCreationError)
+				.finally(afterSubmit)
 		);
 	};
 
@@ -120,12 +120,12 @@ export class JetpackSignup extends Component {
 	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
 	 *                              So our server doesn't have to request the user profile on its end.
 	 */
-	handleSocialResponse = ( service, access_token, id_token = null ) => {
-		debug( 'submitting new social account' );
-		this.setState( { isCreatingAccount: true }, () =>
+	handleSocialResponse = (service, access_token, id_token = null) => {
+		debug('submitting new social account');
+		this.setState({ isCreatingAccount: true }, () =>
 			this.props
-				.createSocialAccount( { service, access_token, id_token } )
-				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
+				.createSocialAccount({ service, access_token, id_token })
+				.then(this.handleUserCreationSuccess, this.handleUserCreationError)
 		);
 	};
 
@@ -136,12 +136,12 @@ export class JetpackSignup extends Component {
 	 * @param {string} _.username    Username
 	 * @param {string} _.bearerToken Bearer token
 	 */
-	handleUserCreationSuccess = ( { username, bearerToken } ) => {
-		this.setState( {
+	handleUserCreationSuccess = ({ username, bearerToken }) => {
+		this.setState({
 			newUsername: username,
 			bearerToken,
 			isCreatingAccount: false,
-		} );
+		});
 	};
 
 	/**
@@ -149,11 +149,11 @@ export class JetpackSignup extends Component {
 	 *
 	 * @param {?object} error Error result
 	 */
-	handleUserCreationError = error => {
+	handleUserCreationError = (error) => {
 		const { errorNotice, translate, warningNotice } = this.props;
-		debug( 'Signup error: %o', error );
+		debug('Signup error: %o', error);
 		this.resetState();
-		if ( error && 'user_exists' === error.code ) {
+		if (error && 'user_exists' === error.code) {
 			const text =
 				error.data && error.data.email
 					? // translators: email is an email address. eg you@name.com
@@ -167,18 +167,16 @@ export class JetpackSignup extends Component {
 								'Log in to connect it to your Google profile, or choose a different Google profile.'
 					  );
 
-			warningNotice( text, {
-				button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,
-			} );
+			warningNotice(text, {
+				button: <a href={this.getLoginRoute()}>{translate('Log in')}</a>,
+			});
 			return;
 		}
-		if ( get( error, [ 'error' ] ) === 'password_invalid' ) {
-			errorNotice( error.message, { id: 'user-creation-error-password_invalid' } );
+		if (get(error, ['error']) === 'password_invalid') {
+			errorNotice(error.message, { id: 'user-creation-error-password_invalid' });
 			return;
 		}
-		errorNotice(
-			translate( 'There was a problem creating your account. Please contact support.' )
-		);
+		errorNotice(translate('There was a problem creating your account. Please contact support.'));
 	};
 
 	renderLoginUser() {
@@ -187,10 +185,10 @@ export class JetpackSignup extends Component {
 			newUsername &&
 			bearerToken && (
 				<WpcomLoginForm
-					authorization={ 'Bearer ' + bearerToken }
-					emailAddress={ this.props.authQuery.userEmail }
-					log={ newUsername }
-					redirectTo={ addQueryArgs( { auth_approved: true }, window.location.href ) }
+					authorization={'Bearer ' + bearerToken}
+					emailAddress={this.props.authQuery.userEmail}
+					log={newUsername}
+					redirectTo={addQueryArgs({ auth_approved: true }, window.location.href)}
 				/>
 			)
 		);
@@ -198,15 +196,15 @@ export class JetpackSignup extends Component {
 
 	renderLocaleSuggestions() {
 		return this.props.locale ? (
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+			<LocaleSuggestions path={this.props.path} locale={this.props.locale} />
 		) : null;
 	}
 
 	renderFooterLink() {
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
-					{ this.props.translate( 'Already have an account? Sign in' ) }
+				<LoggedOutFormLinkItem href={this.getLoginRoute()}>
+					{this.props.translate('Already have an account? Sign in')}
 				</LoggedOutFormLinkItem>
 				<HelpButton />
 			</LoggedOutFormLinks>
@@ -215,39 +213,36 @@ export class JetpackSignup extends Component {
 	render() {
 		const { isCreatingAccount } = this.state;
 		return (
-			<MainWrapper isWoo={ this.isWoo() }>
+			<MainWrapper isWoo={this.isWoo()}>
 				<div className="jetpack-connect__authorize-form">
-					{ this.renderLocaleSuggestions() }
-					<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
+					{this.renderLocaleSuggestions()}
+					<AuthFormHeader authQuery={this.props.authQuery} isWoo={this.isWoo()} />
 					<SignupForm
-						disabled={ isCreatingAccount }
-						email={ this.props.authQuery.userEmail }
-						footerLink={ this.renderFooterLink() }
-						handleSocialResponse={ this.handleSocialResponse }
-						isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
-						locale={ this.props.locale }
-						redirectToAfterLoginUrl={ addQueryArgs(
-							{ auth_approved: true },
-							window.location.href
-						) }
-						submitButtonText={ this.props.translate( 'Create your account' ) }
-						submitForm={ this.handleSubmitSignup }
-						submitting={ isCreatingAccount }
+						disabled={isCreatingAccount}
+						email={this.props.authQuery.userEmail}
+						footerLink={this.renderFooterLink()}
+						handleSocialResponse={this.handleSocialResponse}
+						isSocialSignupEnabled={isEnabled('signup/social')}
+						locale={this.props.locale}
+						redirectToAfterLoginUrl={addQueryArgs({ auth_approved: true }, window.location.href)}
+						submitButtonText={this.props.translate('Create your account')}
+						submitForm={this.handleSubmitSignup}
+						submitting={isCreatingAccount}
 						suggestedUsername=""
 					/>
-					{ this.renderLoginUser() }
+					{this.renderLoginUser()}
 				</div>
 			</MainWrapper>
 		);
 	}
 }
 
-const connectComponent = connect( null, {
+const connectComponent = connect(null, {
 	createAccount: createAccountAction,
 	createSocialAccount: createSocialAccountAction,
 	errorNotice: errorNoticeAction,
 	recordTracksEvent: recordTracksEventAction,
 	warningNotice: warningNoticeAction,
-} );
+});
 
-export default flowRight( connectComponent, localize )( JetpackSignup );
+export default flowRight(connectComponent, localize)(JetpackSignup);

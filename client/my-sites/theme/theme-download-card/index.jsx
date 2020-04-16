@@ -29,18 +29,18 @@ class ThemeDownloadCard extends React.PureComponent {
 			'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.',
 			{
 				components: {
-					a: <a href={ 'https://wordpress.org' } />,
+					a: <a href={'https://wordpress.org'} />,
 				},
 			}
 		);
 		return (
 			<Card className="theme-download-card">
-				<Gridicon icon="cloud-download" size={ 48 } />
-				<p>{ downloadText }</p>
-				<Button href={ href }>{ translate( 'Download' ) }</Button>
+				<Gridicon icon="cloud-download" size={48} />
+				<p>{downloadText}</p>
+				<Button href={href}>{translate('Download')}</Button>
 			</Card>
 		);
 	}
 }
 
-export default localize( ThemeDownloadCard );
+export default localize(ThemeDownloadCard);

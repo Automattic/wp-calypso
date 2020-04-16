@@ -15,29 +15,29 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const deactivateRewind = action =>
+const deactivateRewind = (action) =>
 	http(
 		{
 			method: 'POST',
-			path: `/activity-log/${ action.siteId }/rewind/deactivate`,
+			path: `/activity-log/${action.siteId}/rewind/deactivate`,
 			apiVersion: '1',
 		},
 		action
 	);
 
-export const deactivateSucceeded = ( { siteId } ) => rewindDeactivateSuccess( siteId );
+export const deactivateSucceeded = ({ siteId }) => rewindDeactivateSuccess(siteId);
 
-export const deactivateFailed = ( { siteId }, { message } ) => [
-	errorNotice( translate( 'Problem deactivating rewind: %(message)s', { args: { message } } ) ),
-	rewindDeactivateFailure( siteId ),
+export const deactivateFailed = ({ siteId }, { message }) => [
+	errorNotice(translate('Problem deactivating rewind: %(message)s', { args: { message } })),
+	rewindDeactivateFailure(siteId),
 ];
 
-registerHandlers( 'state/data-layer/wpcom/activity-log/deactivate/index.js', {
-	[ REWIND_DEACTIVATE_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/activity-log/deactivate/index.js', {
+	[REWIND_DEACTIVATE_REQUEST]: [
+		dispatchRequest({
 			fetch: deactivateRewind,
 			onSuccess: deactivateSucceeded,
 			onError: deactivateFailed,
-		} ),
+		}),
 	],
-} );
+});

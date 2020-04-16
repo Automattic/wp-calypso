@@ -13,17 +13,17 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'state/action-types';
 
-describe( '#account-recovery/isFetchingSettings reducer :', () => {
-	test( 'should set isFetchingSettings flag.', () => {
-		const state = reducer( undefined, {
+describe('#account-recovery/isFetchingSettings reducer :', () => {
+	test('should set isFetchingSettings flag.', () => {
+		const state = reducer(undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH,
-		} );
+		});
 
-		assert.isTrue( state.isFetchingSettings );
-	} );
+		assert.isTrue(state.isFetchingSettings);
+	});
 
-	test( 'should unset isFetchingSettings flag on success.', () => {
-		const state = reducer( undefined, {
+	test('should unset isFetchingSettings flag on success.', () => {
+		const state = reducer(undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 			settings: {
 				email: '',
@@ -31,16 +31,16 @@ describe( '#account-recovery/isFetchingSettings reducer :', () => {
 				phone: {},
 				phone_validated: true,
 			},
-		} );
+		});
 
-		assert.isFalse( state.isFetchingSettings );
-	} );
+		assert.isFalse(state.isFetchingSettings);
+	});
 
-	test( 'should unset isFetchingSettings flag on failure.', () => {
-		const state = reducer( undefined, {
+	test('should unset isFetchingSettings flag on failure.', () => {
+		const state = reducer(undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-		} );
+		});
 
-		assert.isFalse( state.isFetchingSettings );
-	} );
-} );
+		assert.isFalse(state.isFetchingSettings);
+	});
+});

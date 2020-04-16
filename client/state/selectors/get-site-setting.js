@@ -17,6 +17,6 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  * @param  {string} setting Setting name
  * @returns {object}         Site setting
  */
-export default function getSiteSetting( state, siteId, setting ) {
-	return get( getSiteSettings( state, siteId ), [ setting ], null );
+export default function getSiteSetting(state, siteId, setting) {
+	return get(getSiteSettings(state, siteId), [setting], null);
 }

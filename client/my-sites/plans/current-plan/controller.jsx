@@ -11,28 +11,28 @@ import CurrentPlan from './';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isFreePlan } from 'lib/products-values';
 
-export function currentPlan( context, next ) {
+export function currentPlan(context, next) {
 	const state = context.store.getState();
 
-	const selectedSite = getSelectedSite( state );
+	const selectedSite = getSelectedSite(state);
 
-	if ( ! selectedSite ) {
-		page.redirect( '/plans/' );
+	if (!selectedSite) {
+		page.redirect('/plans/');
 
 		return null;
 	}
 
-	if ( isFreePlan( selectedSite.plan ) ) {
-		page.redirect( `/plans/${ selectedSite.slug }` );
+	if (isFreePlan(selectedSite.plan)) {
+		page.redirect(`/plans/${selectedSite.slug}`);
 
 		return null;
 	}
 
 	const product = context.query.product;
-	const requestThankYou = context.query.hasOwnProperty( 'thank-you' );
+	const requestThankYou = context.query.hasOwnProperty('thank-you');
 
 	context.primary = (
-		<CurrentPlan path={ context.path } product={ product } requestThankYou={ requestThankYou } />
+		<CurrentPlan path={context.path} product={product} requestThankYou={requestThankYou} />
 	);
 
 	next();

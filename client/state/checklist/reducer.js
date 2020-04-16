@@ -10,12 +10,12 @@ import {
 } from 'state/action-types';
 import { items as itemSchemas } from './schema';
 
-const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
+const setChecklistTaskCompletion = (state, taskId, completed) => ({
 	...state,
-	tasks: state.tasks?.map( task =>
+	tasks: state.tasks?.map((task) =>
 		task.id === taskId ? { ...task, isCompleted: completed } : task
 	),
-} );
+});
 
 const moduleTaskMap = {
 	'lazy-images': 'jetpack_lazy_images',
@@ -27,34 +27,34 @@ const moduleTaskMap = {
 	videopress: 'jetpack_video_hosting',
 };
 
-const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
-	switch ( action.type ) {
+const items = withSchemaValidation(itemSchemas, (state = {}, action) => {
+	switch (action.type) {
 		case SITE_CHECKLIST_RECEIVE:
 			return action.checklist;
 		case SITE_CHECKLIST_TASK_UPDATE:
-			return setChecklistTaskCompletion( state, action.taskId, true );
+			return setChecklistTaskCompletion(state, action.taskId, true);
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
-			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
-				return setChecklistTaskCompletion( state, moduleTaskMap[ action.moduleSlug ], true );
+			if (moduleTaskMap.hasOwnProperty(action.moduleSlug)) {
+				return setChecklistTaskCompletion(state, moduleTaskMap[action.moduleSlug], true);
 			}
 			break;
 		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
-			if ( action.moduleSlug === 'photon' || action.moduleSlug === 'photon-cdn' ) {
+			if (action.moduleSlug === 'photon' || action.moduleSlug === 'photon-cdn') {
 				// We can't know if the other module is still active, so we don't change
 				// Site Accelerator task completion state.
 				return state;
 			}
 
-			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
-				return setChecklistTaskCompletion( state, moduleTaskMap[ action.moduleSlug ], false );
+			if (moduleTaskMap.hasOwnProperty(action.moduleSlug)) {
+				return setChecklistTaskCompletion(state, moduleTaskMap[action.moduleSlug], false);
 			}
 			break;
 	}
 	return state;
-} );
+});
 
-const reducer = combineReducers( {
+const reducer = combineReducers({
 	items,
-} );
+});
 
-export default keyedReducer( 'siteId', reducer );
+export default keyedReducer('siteId', reducer);

@@ -38,20 +38,20 @@ class SocialLoginActionButton extends Component {
 	refreshUser = () => {
 		user.fetch();
 
-		this.setState( { fetchingUser: true } );
+		this.setState({ fetchingUser: true });
 
-		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
+		user.once('change', () => this.setState({ fetchingUser: false }));
 	};
 
-	handleSocialServiceResponse = response => {
+	handleSocialServiceResponse = (response) => {
 		const { service } = this.props;
 
 		let socialInfo = {
 			service,
 		};
 
-		if ( service === 'google' ) {
-			if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+		if (service === 'google') {
+			if (!response.Zi || !response.Zi.access_token || !response.Zi.id_token) {
 				return;
 			}
 
@@ -62,8 +62,8 @@ class SocialLoginActionButton extends Component {
 			};
 		}
 
-		if ( service === 'apple' ) {
-			if ( ! response.id_token ) {
+		if (service === 'apple') {
+			if (!response.id_token) {
 				return;
 			}
 
@@ -77,12 +77,12 @@ class SocialLoginActionButton extends Component {
 			};
 		}
 
-		return this.props.connectSocialUser( socialInfo ).then( this.refreshUser );
+		return this.props.connectSocialUser(socialInfo).then(this.refreshUser);
 	};
 
 	disconnectFromSocialService = () => {
 		const { service } = this.props;
-		this.props.disconnectSocialUser( service ).then( this.refreshUser );
+		this.props.disconnectSocialUser(service).then(this.refreshUser);
 	};
 
 	render() {
@@ -90,47 +90,47 @@ class SocialLoginActionButton extends Component {
 
 		const { fetchingUser } = this.state;
 
-		const buttonLabel = isConnected ? translate( 'Disconnect' ) : translate( 'Connect' );
+		const buttonLabel = isConnected ? translate('Disconnect') : translate('Connect');
 		const disabled = isUpdatingSocialConnection || fetchingUser;
 
 		const actionButton = (
 			<FormButton
 				className="social-login__button button"
-				disabled={ disabled }
-				compact={ true }
-				isPrimary={ ! isConnected }
-				onClick={ isConnected && this.disconnectFromSocialService }
+				disabled={disabled}
+				compact={true}
+				isPrimary={!isConnected}
+				onClick={isConnected && this.disconnectFromSocialService}
 			>
-				{ buttonLabel }
+				{buttonLabel}
 			</FormButton>
 		);
 
-		if ( isConnected ) {
+		if (isConnected) {
 			return actionButton;
 		}
 
-		if ( service === 'google' ) {
+		if (service === 'google') {
 			return (
 				<GoogleLoginButton
-					clientId={ config( 'google_oauth_client_id' ) }
-					responseHandler={ this.handleSocialServiceResponse }
+					clientId={config('google_oauth_client_id')}
+					responseHandler={this.handleSocialServiceResponse}
 				>
-					{ actionButton }
+					{actionButton}
 				</GoogleLoginButton>
 			);
 		}
 
-		if ( service === 'apple' ) {
-			const uxMode = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : 'popup';
+		if (service === 'apple') {
+			const uxMode = config.isEnabled('sign-in-with-apple/redirect') ? 'redirect' : 'popup';
 			return (
 				<AppleLoginButton
-					clientId={ config( 'apple_oauth_client_id' ) }
-					uxMode={ uxMode }
-					responseHandler={ this.handleSocialServiceResponse }
-					redirectUri={ redirectUri }
-					socialServiceResponse={ this.props.socialServiceResponse }
+					clientId={config('apple_oauth_client_id')}
+					uxMode={uxMode}
+					responseHandler={this.handleSocialServiceResponse}
+					redirectUri={redirectUri}
+					socialServiceResponse={this.props.socialServiceResponse}
 				>
-					{ actionButton }
+					{actionButton}
 				</AppleLoginButton>
 			);
 		}
@@ -140,11 +140,11 @@ class SocialLoginActionButton extends Component {
 }
 
 export default connect(
-	state => ( {
-		isUpdatingSocialConnection: isRequesting( state ),
-	} ),
+	(state) => ({
+		isUpdatingSocialConnection: isRequesting(state),
+	}),
 	{
 		connectSocialUser,
 		disconnectSocialUser,
 	}
-)( localize( SocialLoginActionButton ) );
+)(localize(SocialLoginActionButton));

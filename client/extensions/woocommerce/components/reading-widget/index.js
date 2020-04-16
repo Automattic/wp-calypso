@@ -24,7 +24,7 @@ import { recordTrack } from 'woocommerce/lib/analytics';
 class ReadingWidget extends Component {
 	state = {
 		emailAddress: '',
-		roles: [ 'storeOwner' ],
+		roles: ['storeOwner'],
 		subscriptionFormExpanded: false,
 	};
 
@@ -37,30 +37,30 @@ class ReadingWidget extends Component {
 
 	static defaultProps = {
 		query: { category: 'start-your-store', number: 3 },
-		siteId: config( 'woocommerce_blog_id' ),
+		siteId: config('woocommerce_blog_id'),
 	};
 
 	getRolesAndLabels = () => {
 		const { translate } = this.props;
 
 		return [
-			{ value: 'storeOwner', label: translate( 'Store owner' ) },
-			{ value: 'developer', label: translate( 'Developer' ) },
-			{ value: 'extensionDeveloper', label: translate( 'Extension developer' ) },
-			{ value: 'other', label: translate( 'Other' ) },
+			{ value: 'storeOwner', label: translate('Store owner') },
+			{ value: 'developer', label: translate('Developer') },
+			{ value: 'extensionDeveloper', label: translate('Extension developer') },
+			{ value: 'other', label: translate('Other') },
 		];
 	};
 
 	handleSubscriptionEmailFocus = () => {
-		this.setState( { subscriptionFormExpanded: true } );
+		this.setState({ subscriptionFormExpanded: true });
 	};
 
 	renderHeading = () => {
 		const { text, title } = this.props;
 		return (
 			<div className="reading-widget__heading">
-				<h2>{ title }</h2>
-				<p>{ text }</p>
+				<h2>{title}</h2>
+				<p>{text}</p>
 			</div>
 		);
 	};
@@ -70,72 +70,67 @@ class ReadingWidget extends Component {
 
 		return (
 			<div>
-				<QueryPosts query={ query } siteId={ siteId } />
+				<QueryPosts query={query} siteId={siteId} />
 				<ul className="reading-widget__article-list">
-					{ posts &&
-						posts.map( post => {
+					{posts &&
+						posts.map((post) => {
 							const { date, ID, title, URL } = post;
 							return (
-								<li key={ ID }>
-									<ExternalLink
-										icon={ true }
-										href={ URL }
-										rel="noopener noreferrer"
-										target="_blank"
-									>
-										{ title }
+								<li key={ID}>
+									<ExternalLink icon={true} href={URL} rel="noopener noreferrer" target="_blank">
+										{title}
 									</ExternalLink>
-									<span>{ humanDate( date ) }</span>
+									<span>{humanDate(date)}</span>
 								</li>
 							);
-						} ) }
+						})}
 				</ul>
 			</div>
 		);
 	};
 
-	renderSubscriptionFormExplanation = expanded => {
+	renderSubscriptionFormExplanation = (expanded) => {
 		const { translate } = this.props;
 
 		return (
 			<div className="reading-widget__subscription-form-explanation">
 				<p>
-					{ translate(
+					{translate(
 						'Subscribe to our newsletter and get the latest' + ' news delivered to your inbox'
-					) }
+					)}
 				</p>
-				{ expanded && (
+				{expanded && (
 					<p>
-						{ translate(
+						{translate(
 							'Before you subscribe, please specify your role(s)' +
 								" in eCommerce and we'll send you the most relevant news & info"
-						) }
+						)}
 					</p>
-				) }
+				)}
 			</div>
 		);
 	};
 
 	onEmailFocus = () => {
-		this.setState( {
+		this.setState({
 			subscriptionFormExpanded: true,
-		} );
+		});
 	};
 
-	onEmailChange = e => {
-		this.setState( {
+	onEmailChange = (e) => {
+		this.setState({
 			emailAddress: e.target.value,
-		} );
+		});
 	};
 
-	onRolesChange = e => {
-		this.setState( {
+	onRolesChange = (e) => {
+		this.setState({
 			roles: e.value,
-		} );
+		});
 	};
 
 	isFormSubmittable = () => {
-		const emailValidates = emailValidator.validate( this.state.emailAddress );
+		const emailValidates = emailValidator.validate(this.state.emailAddress);
 		const roleSelected = 0 < this.state.roles.length;
 
 		return emailValidates && roleSelected;
@@ -143,33 +138,33 @@ class ReadingWidget extends Component {
 
 	onSubmit = () => {
 		// TODO Logic for this. Not currently in use.
-		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
+		recordTrack('calypso_woocommerce_dashboard_action_click', {
 			action: 'subscribe',
-		} );
+		});
 	};
 
-	renderSubscriptionFormFields = expanded => {
+	renderSubscriptionFormFields = (expanded) => {
 		const { translate } = this.props;
 		return (
 			<div className="reading-widget__subscription-form-fields">
 				<FormTextInput
-					onChange={ this.onEmailChange }
-					onFocus={ this.onEmailFocus }
-					placeholder={ translate( 'hello@email.com' ) }
-					value={ this.state.emailAddress }
+					onChange={this.onEmailChange}
+					onFocus={this.onEmailFocus}
+					placeholder={translate('hello@email.com')}
+					value={this.state.emailAddress}
 				/>
-				{ expanded && (
+				{expanded && (
 					<MultiCheckbox
-						checked={ this.state.roles }
-						onChange={ this.onRolesChange }
-						options={ this.getRolesAndLabels() }
+						checked={this.state.roles}
+						onChange={this.onRolesChange}
+						options={this.getRolesAndLabels()}
 					/>
-				) }
-				{ expanded && (
-					<Button disabled={ ! this.isFormSubmittable() } onClick={ this.onSubmit }>
-						{ translate( 'Subscribe' ) }
+				)}
+				{expanded && (
+					<Button disabled={!this.isFormSubmittable()} onClick={this.onSubmit}>
+						{translate('Subscribe')}
 					</Button>
-				) }
+				)}
 			</div>
 		);
 	};
@@ -179,8 +174,8 @@ class ReadingWidget extends Component {
 
 		return (
 			<div className="reading-widget__subscription-form">
-				{ this.renderSubscriptionFormExplanation( expanded ) }
-				{ this.renderSubscriptionFormFields( expanded ) }
+				{this.renderSubscriptionFormExplanation(expanded)}
+				{this.renderSubscriptionFormFields(expanded)}
 			</div>
 		);
 	};
@@ -188,18 +183,18 @@ class ReadingWidget extends Component {
 	render = () => {
 		return (
 			<div className="reading-widget__container card">
-				{ this.renderHeading() }
-				{ this.renderArticleList() }
-				{ this.renderSubscriptionForm() }
+				{this.renderHeading()}
+				{this.renderArticleList()}
+				{this.renderSubscriptionForm()}
 			</div>
 		);
 	};
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const siteId = ownProps.siteId ? ownProps.siteId : ReadingWidget.defaultProps.siteId;
 	const query = ownProps.query ? ownProps.query : ReadingWidget.defaultProps.query;
 	return {
-		posts: getPostsForQueryIgnoringPage( state, siteId, query ),
+		posts: getPostsForQueryIgnoringPage(state, siteId, query),
 	};
-} )( localize( ReadingWidget ) );
+})(localize(ReadingWidget));

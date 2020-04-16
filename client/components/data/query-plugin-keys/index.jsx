@@ -14,21 +14,21 @@ import { hasRequested } from 'state/plugins/premium/selectors';
 
 class QueryPluginKeys extends Component {
 	UNSAFE_componentWillMount() {
-		if ( this.props.siteId && ! this.props.hasRequested ) {
-			this.props.fetchInstallInstructions( this.props.siteId );
+		if (this.props.siteId && !this.props.hasRequested) {
+			this.props.fetchInstallInstructions(this.props.siteId);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId === this.props.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.siteId === this.props.siteId) {
 			return;
 		}
-		this.refresh( nextProps.hasRequested, nextProps.siteId );
+		this.refresh(nextProps.hasRequested, nextProps.siteId);
 	}
 
-	refresh( hasRequestedKeys, siteId ) {
-		if ( ! hasRequestedKeys ) {
-			this.props.fetchInstallInstructions( siteId );
+	refresh(hasRequestedKeys, siteId) {
+		if (!hasRequestedKeys) {
+			this.props.fetchInstallInstructions(siteId);
 		}
 	}
 
@@ -48,11 +48,11 @@ QueryPluginKeys.defaultProps = {
 };
 
 export default connect(
-	( state, props ) => {
+	(state, props) => {
 		const siteId = props.siteId;
 		return {
-			hasRequested: hasRequested( state, siteId ),
+			hasRequested: hasRequested(state, siteId),
 		};
 	},
 	{ fetchInstallInstructions }
-)( QueryPluginKeys );
+)(QueryPluginKeys);

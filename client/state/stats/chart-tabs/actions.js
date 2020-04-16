@@ -18,7 +18,7 @@ import 'state/stats/init';
  * @returns {object}  Action object
  */
 
-export function requestChartCounts( { chartTab, date, period, quantity, siteId, statFields } ) {
+export function requestChartCounts({ chartTab, date, period, quantity, siteId, statFields }) {
 	return {
 		type: STATS_CHART_COUNTS_REQUEST,
 		chartTab,
@@ -39,7 +39,7 @@ export function requestChartCounts( { chartTab, date, period, quantity, siteId, 
  * @param  {object}  data   			 Visitor counts API response
  * @returns {object}  Action object
  */
-export function receiveChartCounts( siteId, period, data ) {
+export function receiveChartCounts(siteId, period, data) {
 	return {
 		type: STATS_CHART_COUNTS_RECEIVE,
 		siteId,

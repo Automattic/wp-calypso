@@ -16,7 +16,7 @@ export default class InfoTooltip extends Component {
 		className: PropTypes.string,
 		position: PropTypes.string,
 		anchor: PropTypes.node,
-		maxWidth: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		maxWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 	};
 
 	static defaultProps = {
@@ -24,11 +24,11 @@ export default class InfoTooltip extends Component {
 		maxWidth: 'auto',
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
-		this.openTooltip = this.openTooltip.bind( this );
-		this.closeTooltip = this.closeTooltip.bind( this );
+		this.openTooltip = this.openTooltip.bind(this);
+		this.closeTooltip = this.closeTooltip.bind(this);
 
 		this.state = {
 			showTooltip: false,
@@ -36,37 +36,33 @@ export default class InfoTooltip extends Component {
 	}
 
 	openTooltip() {
-		this.setState( { showTooltip: true } );
+		this.setState({ showTooltip: true });
 	}
 
 	closeTooltip() {
-		this.setState( { showTooltip: false } );
+		this.setState({ showTooltip: false });
 	}
 
 	anchorRef = React.createRef();
 
 	render() {
-		const anchor = this.props.anchor || <Gridicon icon="info-outline" size={ 18 } />;
+		const anchor = this.props.anchor || <Gridicon icon="info-outline" size={18} />;
 
 		return (
-			<span className={ classNames( 'info-tooltip', this.props.className ) }>
-				<span
-					ref={ this.anchorRef }
-					onMouseEnter={ this.openTooltip }
-					onMouseLeave={ this.closeTooltip }
-				>
-					{ anchor }
+			<span className={classNames('info-tooltip', this.props.className)}>
+				<span ref={this.anchorRef} onMouseEnter={this.openTooltip} onMouseLeave={this.closeTooltip}>
+					{anchor}
 				</span>
 				<Tooltip
 					className="info-tooltip__container wcc-root woocommerce"
-					isVisible={ this.state.showTooltip }
+					isVisible={this.state.showTooltip}
 					showOnMobile
-					onClose={ this.closeTooltip }
-					position={ this.props.position }
-					context={ this.anchorRef.current }
+					onClose={this.closeTooltip}
+					position={this.props.position}
+					context={this.anchorRef.current}
 				>
-					<div className="info-tooltip__contents" style={ { maxWidth: this.props.maxWidth } }>
-						{ this.props.children }
+					<div className="info-tooltip__contents" style={{ maxWidth: this.props.maxWidth }}>
+						{this.props.children}
 					</div>
 				</Tooltip>
 			</span>

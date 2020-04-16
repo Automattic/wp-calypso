@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getMediaStorageLimit from 'state/selectors/get-media-storage-limit';
 
-describe( 'getMediaStorageLimit()', () => {
-	test( 'should return null if the site is unknown', () => {
+describe('getMediaStorageLimit()', () => {
+	test('should return null if the site is unknown', () => {
 		const state = {
 			sites: {
 				mediaStorage: {
@@ -20,11 +20,11 @@ describe( 'getMediaStorageLimit()', () => {
 			},
 		};
 
-		expect( getMediaStorageLimit( state ) ).to.be.null;
-		expect( getMediaStorageLimit( state, 123 ) ).to.be.null;
-	} );
+		expect(getMediaStorageLimit(state)).to.be.null;
+		expect(getMediaStorageLimit(state, 123)).to.be.null;
+	});
 
-	test( 'should return null if the limit is unknown', () => {
+	test('should return null if the limit is unknown', () => {
 		const state = {
 			sites: {
 				mediaStorage: {
@@ -35,10 +35,10 @@ describe( 'getMediaStorageLimit()', () => {
 				},
 			},
 		};
-		expect( getMediaStorageLimit( state, 123 ) ).to.be.null;
-	} );
+		expect(getMediaStorageLimit(state, 123)).to.be.null;
+	});
 
-	test( 'should return the limit for a site', () => {
+	test('should return the limit for a site', () => {
 		const max_storage_bytes = 1029384756;
 		const result = getMediaStorageLimit(
 			{
@@ -55,6 +55,6 @@ describe( 'getMediaStorageLimit()', () => {
 			123
 		);
 
-		expect( result ).to.equal( max_storage_bytes );
-	} );
-} );
+		expect(result).to.equal(max_storage_bytes);
+	});
+});

@@ -34,30 +34,30 @@ class NpsSurveyExample extends PureComponent {
 		isBusinessUser: false,
 	};
 
-	handleClose = afterClose => {
-		this.setState( {
+	handleClose = (afterClose) => {
+		this.setState({
 			isClosed: true,
-		} );
+		});
 		afterClose();
 	};
 
-	toggleBusinessUser = event => {
-		this.setState( { isBusinessUser: event.target.checked } );
+	toggleBusinessUser = (event) => {
+		this.setState({ isBusinessUser: event.target.checked });
 	};
 
-	toggleConciergeSessionAvailability = event => {
-		this.setState( { hasAvailableConciergeSession: event.target.checked } );
+	toggleConciergeSessionAvailability = (event) => {
+		this.setState({ hasAvailableConciergeSession: event.target.checked });
 	};
 
 	renderOptions() {
 		return (
-			<div style={ { marginTop: '10px' } }>
-				<label style={ { display: 'block' } }>
-					<input type="checkbox" onClick={ this.toggleBusinessUser } />
+			<div style={{ marginTop: '10px' }}>
+				<label style={{ display: 'block' }}>
+					<input type="checkbox" onClick={this.toggleBusinessUser} />
 					The user subscribes the Business plan.
 				</label>
-				<label style={ { display: 'block' } }>
-					<input type="checkbox" onClick={ this.toggleConciergeSessionAvailability } />
+				<label style={{ display: 'block' }}>
+					<input type="checkbox" onClick={this.toggleConciergeSessionAvailability} />
 					The user is available for concierge sessions.
 				</label>
 			</div>
@@ -67,50 +67,50 @@ class NpsSurveyExample extends PureComponent {
 	render() {
 		return (
 			<div>
-				{ ! this.state.isClosed && (
+				{!this.state.isClosed && (
 					<NpsSurvey
 						name="api-valid-test-survey"
-						onClose={ this.handleClose }
-						translate={ translate }
-						hasAnswered={ this.props.hasAnswered }
-						submitNpsSurvey={ this.props.submitNpsSurvey }
-						submitNpsSurveyWithNoScore={ this.props.submitNpsSurveyWithNoScore }
-						sendNpsSurveyFeedback={ this.props.sendNpsSurveyFeedback }
-						successNotice={ this.props.successNotice }
-						isBusinessUser={ this.state.isBusinessUser }
-						hasAvailableConciergeSession={ this.state.hasAvailableConciergeSession }
-						recordTracksEvent={ noop }
+						onClose={this.handleClose}
+						translate={translate}
+						hasAnswered={this.props.hasAnswered}
+						submitNpsSurvey={this.props.submitNpsSurvey}
+						submitNpsSurveyWithNoScore={this.props.submitNpsSurveyWithNoScore}
+						sendNpsSurveyFeedback={this.props.sendNpsSurveyFeedback}
+						successNotice={this.props.successNotice}
+						isBusinessUser={this.state.isBusinessUser}
+						hasAvailableConciergeSession={this.state.hasAvailableConciergeSession}
+						recordTracksEvent={noop}
 					/>
-				) }
-				{ ! this.state.isClosed && this.renderOptions() }
-				{ this.state.isClosed && this.props.hasAnswered && (
+				)}
+				{!this.state.isClosed && this.renderOptions()}
+				{this.state.isClosed && this.props.hasAnswered && (
 					<div>
 						User closed survey after submitting:
 						<ul>
-							<li>Survey name: { this.props.surveyName }</li>
-							<li>Score: { this.props.surveyScore }</li>
-							<li>Contextual feedback: { this.props.surveyFeedback }</li>
+							<li>Survey name: {this.props.surveyName}</li>
+							<li>Score: {this.props.surveyScore}</li>
+							<li>Contextual feedback: {this.props.surveyFeedback}</li>
 						</ul>
 					</div>
-				) }
-				{ this.state.isClosed && this.props.hasAnsweredWithNoScore && (
+				)}
+				{this.state.isClosed && this.props.hasAnsweredWithNoScore && (
 					<div>User dismissed survey without submitting.</div>
-				) }
-				{ this.state.isClosed && this.props.isSubmitFailure && <div>Error submitting survey.</div> }
+				)}
+				{this.state.isClosed && this.props.isSubmitFailure && <div>Error submitting survey.</div>}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	return {
-		isSubmitted: isNpsSurveySubmitted( state ),
-		isSubmitFailure: isNpsSurveySubmitFailure( state ),
-		hasAnswered: hasAnsweredNpsSurvey( state ),
-		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
-		surveyName: getNpsSurveyName( state ),
-		surveyScore: getNpsSurveyScore( state ),
-		surveyFeedback: getNpsSurveyFeedback( state ),
+		isSubmitted: isNpsSurveySubmitted(state),
+		isSubmitFailure: isNpsSurveySubmitFailure(state),
+		hasAnswered: hasAnsweredNpsSurvey(state),
+		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore(state),
+		surveyName: getNpsSurveyName(state),
+		surveyScore: getNpsSurveyScore(state),
+		surveyFeedback: getNpsSurveyFeedback(state),
 	};
 };
 
@@ -121,7 +121,7 @@ const mapDispatchToProp = {
 	successNotice,
 };
 
-const ConnectedNpsSurveyExample = connect( mapStateToProps, mapDispatchToProp )( NpsSurveyExample );
+const ConnectedNpsSurveyExample = connect(mapStateToProps, mapDispatchToProp)(NpsSurveyExample);
 
 ConnectedNpsSurveyExample.displayName = 'NpsSurvey';
 

@@ -32,71 +32,71 @@ import { closeSupportArticleDialog as closeDialog } from 'state/inline-support-a
 import './style.scss';
 import './content.scss';
 
-export const SupportArticleDialog = ( {
+export const SupportArticleDialog = ({
 	actionIsExternal,
 	actionLabel,
 	actionUrl,
 	closeSupportArticleDialog,
 	post,
 	postId,
-} ) => {
+}) => {
 	const translate = useTranslate();
-	const isLoading = ! post;
+	const isLoading = !post;
 	const postKey = { blogId: SUPPORT_BLOG_ID, postId };
 	const siteId = post?.site_ID;
 
-	useEffect( () => {
+	useEffect(() => {
 		//If a url includes an anchor, let's scroll this into view!
-		if ( typeof window !== 'undefined' && actionUrl.indexOf( '#' ) !== -1 && post?.content ) {
-			setTimeout( () => {
-				const anchorId = actionUrl.split( '#' ).pop();
-				const element = document.getElementById( anchorId );
-				if ( element ) {
+		if (typeof window !== 'undefined' && actionUrl.indexOf('#') !== -1 && post?.content) {
+			setTimeout(() => {
+				const anchorId = actionUrl.split('#').pop();
+				const element = document.getElementById(anchorId);
+				if (element) {
 					element.scrollIntoView();
 				}
-			}, 0 );
+			}, 0);
 		}
-	}, [ actionUrl, post ] );
+	}, [actionUrl, post]);
 
 	return (
 		<Dialog
 			isVisible
 			additionalClassNames="support-article-dialog"
-			buttons={ [
-				<Button onClick={ closeSupportArticleDialog }>
-					{ translate( 'Close', { textOnly: true } ) }
+			buttons={[
+				<Button onClick={closeSupportArticleDialog}>
+					{translate('Close', { textOnly: true })}
 				</Button>,
 				actionUrl && (
 					<Button
-						href={ actionUrl }
-						target={ actionIsExternal ? '_blank' : undefined }
+						href={actionUrl}
+						target={actionIsExternal ? '_blank' : undefined}
 						primary
-						onClick={ () => ( actionIsExternal ? noop() : closeSupportArticleDialog() ) }
+						onClick={() => (actionIsExternal ? noop() : closeSupportArticleDialog())}
 					>
-						{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
+						{actionLabel} {actionIsExternal && <Gridicon icon="external" size={12} />}
 					</Button>
 				),
-			].filter( Boolean ) }
-			onCancel={ closeSupportArticleDialog }
-			onClose={ closeSupportArticleDialog }
+			].filter(Boolean)}
+			onCancel={closeSupportArticleDialog}
+			onClose={closeSupportArticleDialog}
 		>
 			<Emojify>
-				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
-				{ isLoading && <QueryReaderPost postKey={ postKey } /> }
+				{siteId && <QueryReaderSite siteId={+siteId} />}
+				{isLoading && <QueryReaderPost postKey={postKey} />}
 				<article className="support-article-dialog__story">
-					<SupportArticleHeader post={ post } isLoading={ isLoading } />
-					{ isLoading ? (
+					<SupportArticleHeader post={post} isLoading={isLoading} />
+					{isLoading ? (
 						<Placeholders />
 					) : (
 						/*eslint-disable react/no-danger */
 						<EmbedContainer>
 							<div
 								className="support-article-dialog__story-content"
-								dangerouslySetInnerHTML={ { __html: post?.content } }
+								dangerouslySetInnerHTML={{ __html: post?.content }}
 							/>
 						</EmbedContainer>
 						/*eslint-enable react/no-danger */
-					) }
+					)}
 				</article>
 			</Emojify>
 		</Dialog>
@@ -112,16 +112,16 @@ SupportArticleDialog.propTypes = {
 	postId: PropTypes.number,
 };
 
-const mapStateToProps = state => {
-	const postId = getInlineSupportArticlePostId( state );
-	const actionUrl = getInlineSupportArticleActionUrl( state );
-	const actionLabel = getInlineSupportArticleActionLabel( state );
-	const actionIsExternal = getInlineSupportArticleActionIsExternal( state );
-	const post = getPostByKey( state, { blogId: SUPPORT_BLOG_ID, postId } );
+const mapStateToProps = (state) => {
+	const postId = getInlineSupportArticlePostId(state);
+	const actionUrl = getInlineSupportArticleActionUrl(state);
+	const actionLabel = getInlineSupportArticleActionLabel(state);
+	const actionIsExternal = getInlineSupportArticleActionIsExternal(state);
+	const post = getPostByKey(state, { blogId: SUPPORT_BLOG_ID, postId });
 
 	return { post, postId, actionUrl, actionLabel, actionIsExternal };
 };
 
-export default connect( mapStateToProps, { closeSupportArticleDialog: closeDialog } )(
+export default connect(mapStateToProps, { closeSupportArticleDialog: closeDialog })(
 	SupportArticleDialog
 );

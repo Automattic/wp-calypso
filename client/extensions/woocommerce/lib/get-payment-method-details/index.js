@@ -10,6 +10,6 @@ import detailsMappings from './details-mappings';
  * @param {string} methodId Payment method id.
  * @returns {object} Method additional details.
  */
-export default function getPaymentMethodDetails( methodId ) {
-	return detailsMappings[ methodId ] || {};
+export default function getPaymentMethodDetails(methodId) {
+	return detailsMappings[methodId] || {};
 }

@@ -56,42 +56,42 @@ const Followers = localize(
 		fetchNextPage = () => {
 			const actions = 'email' === this.props.type ? EmailFollowersActions : FollowersActions,
 				store = 'email' === this.props.type ? EmailFollowersStore : FollowersStore,
-				paginationData = store.getPaginationData( this.props.fetchOptions ),
+				paginationData = store.getPaginationData(this.props.fetchOptions),
 				analyticsAction =
 					'email' === this.props.type
 						? 'Fetched more email followers with infinite list'
 						: 'Fetched more followers with infinite list';
 
 			let page = this.props.currentPage + 1;
-			if ( paginationData && paginationData.followersCurrentPage ) {
+			if (paginationData && paginationData.followersCurrentPage) {
 				page = paginationData.followersCurrentPage + 1;
 			}
 
-			actions.fetchFollowers( Object.assign( this.props.fetchOptions, { page } ) );
-			gaRecordEvent( 'People', analyticsAction, 'page', page );
+			actions.fetchFollowers(Object.assign(this.props.fetchOptions, { page }));
+			gaRecordEvent('People', analyticsAction, 'page', page);
 		};
 
-		removeFollower( follower ) {
+		removeFollower(follower) {
 			const listType = 'email' === this.props.type ? 'Email Follower' : 'Follower';
-			gaRecordEvent( 'People', 'Clicked Remove Follower Button On' + listType + ' list' );
+			gaRecordEvent('People', 'Clicked Remove Follower Button On' + listType + ' list');
 			accept(
 				<div>
 					<p>
-						{ this.props.translate(
+						{this.props.translate(
 							'Removing followers makes them stop receiving updates from your site. If they choose to, they can still visit your site, and follow it again.'
-						) }
+						)}
 					</p>
 				</div>,
-				accepted => {
-					if ( accepted ) {
+				(accepted) => {
+					if (accepted) {
 						gaRecordEvent(
 							'People',
 							'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 						);
-						( 'email' === this.props.type
-							? EmailFollowersActions
-							: FollowersActions
-						).removeFollower( this.props.site.ID, follower );
+						('email' === this.props.type ? EmailFollowersActions : FollowersActions).removeFollower(
+							this.props.site.ID,
+							follower
+						);
 					} else {
 						gaRecordEvent(
 							'People',
@@ -99,28 +99,28 @@ const Followers = localize(
 						);
 					}
 				},
-				this.props.translate( 'Remove', { context: 'Confirm Remove follower button text.' } )
+				this.props.translate('Remove', { context: 'Confirm Remove follower button text.' })
 			);
 		}
 
-		renderFollower = follower => {
+		renderFollower = (follower) => {
 			const removeFollower = () => {
-				this.removeFollower( follower );
+				this.removeFollower(follower);
 			};
 
 			return (
 				<PeopleListItem
-					key={ follower.ID }
-					user={ follower }
+					key={follower.ID}
+					user={follower}
 					type="follower"
-					site={ this.props.site }
-					isSelectable={ this.state.bulkEditing }
-					onRemove={ removeFollower }
+					site={this.props.site}
+					isSelectable={this.state.bulkEditing}
+					onRemove={removeFollower}
 				/>
 			);
 		};
 
-		getFollowerRef = follower => {
+		getFollowerRef = (follower) => {
 			return 'follower-' + follower.ID;
 		};
 
@@ -128,22 +128,22 @@ const Followers = localize(
 			return (
 				this.props.fetchInitialized &&
 				this.props.fetchOptions.search &&
-				! this.props.followers.length &&
-				! this.props.fetching
+				!this.props.followers.length &&
+				!this.props.fetching
 			);
 		}
 
 		siteHasNoFollowers() {
-			return ! this.props.followers.length && ! this.props.fetching;
+			return !this.props.followers.length && !this.props.fetching;
 		}
 
-		renderInviteFollowersAction( isPrimary = true ) {
+		renderInviteFollowersAction(isPrimary = true) {
 			const { site, translate } = this.props;
 
 			return (
-				<Button primary={ isPrimary } href={ `/people/new/${ site.domain }` }>
+				<Button primary={isPrimary} href={`/people/new/${site.domain}`}>
 					<Gridicon icon="user-add" />
-					<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
+					<span>{translate('Invite', { context: 'Verb. Button to invite more users.' })}</span>
 				</Button>
 			);
 		}
@@ -156,38 +156,36 @@ const Followers = localize(
 		}
 
 		render() {
-			const key = deterministicStringify( omit( this.props.fetchOptions, [ 'max', 'page' ] ) ),
-				listClass = classNames( {
+			const key = deterministicStringify(omit(this.props.fetchOptions, ['max', 'page'])),
+				listClass = classNames({
 					'bulk-editing': this.state.bulkEditing,
 					'people-invites__invites-list': true,
-				} );
+				});
 
-			if ( this.noFollowerSearchResults() ) {
+			if (this.noFollowerSearchResults()) {
 				return (
 					<NoResults
 						image="/calypso/images/people/mystery-person.svg"
-						text={ this.props.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
+						text={this.props.translate('No results found for {{em}}%(searchTerm)s{{/em}}', {
 							args: { searchTerm: this.props.fetchOptions.search },
 							components: { em: <em /> },
-						} ) }
+						})}
 					/>
 				);
 			}
 
 			let emptyTitle;
-			if ( this.siteHasNoFollowers() ) {
-				if ( this.props.fetchOptions && 'email' === this.props.fetchOptions.type ) {
-					emptyTitle = preventWidows(
-						this.props.translate( 'No one is following you by email yet.' )
-					);
+			if (this.siteHasNoFollowers()) {
+				if (this.props.fetchOptions && 'email' === this.props.fetchOptions.type) {
+					emptyTitle = preventWidows(this.props.translate('No one is following you by email yet.'));
 				} else {
-					emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
+					emptyTitle = preventWidows(this.props.translate('No WordPress.com followers yet.'));
 				}
-				return <EmptyContent title={ emptyTitle } action={ this.renderInviteFollowersAction() } />;
+				return <EmptyContent title={emptyTitle} action={this.renderInviteFollowersAction()} />;
 			}
 
 			let headerText;
-			if ( this.props.totalFollowers ) {
+			if (this.props.totalFollowers) {
 				headerText = this.props.translate(
 					'You have %(number)d follower',
 					'You have %(number)d followers',
@@ -197,7 +195,7 @@ const Followers = localize(
 					}
 				);
 
-				if ( this.props.type === 'email' ) {
+				if (this.props.type === 'email') {
 					headerText = this.props.translate(
 						'You have %(number)d follower receiving updates by email',
 						'You have %(number)d followers receiving updates by email',
@@ -210,8 +208,8 @@ const Followers = localize(
 			}
 
 			let followers;
-			if ( this.props.followers.length ) {
-				if ( this.props.fetchOptions.search && this.props.totalFollowers ) {
+			if (this.props.followers.length) {
+				if (this.props.fetchOptions.search && this.props.totalFollowers) {
 					headerText = this.props.translate(
 						'%(numberPeople)d Follower Matching {{em}}"%(searchTerm)s"{{/em}}',
 						'%(numberPeople)d Followers Matching {{em}}"%(searchTerm)s"{{/em}}',
@@ -235,16 +233,16 @@ const Followers = localize(
 
 				followers = (
 					<InfiniteList
-						{ ...infiniteListConditionals }
-						key={ key }
-						items={ this.props.followers }
+						{...infiniteListConditionals}
+						key={key}
+						items={this.props.followers}
 						className="followers-list__infinite is-people"
-						ref={ this.infiniteList }
-						fetchNextPage={ this.fetchNextPage }
-						getItemRef={ this.getFollowerRef }
-						renderLoadingPlaceholders={ this.renderPlaceholders }
-						renderItem={ this.renderFollower }
-						guessedItemHeight={ 126 }
+						ref={this.infiniteList}
+						fetchNextPage={this.fetchNextPage}
+						getItemRef={this.getFollowerRef}
+						renderLoadingPlaceholders={this.renderPlaceholders}
+						renderItem={this.renderFollower}
+						guessedItemHeight={126}
 					/>
 				);
 			} else {
@@ -252,7 +250,7 @@ const Followers = localize(
 			}
 
 			const downloadListLink =
-				this.props.fetchOptions.type === 'email' && !! this.props.site
+				this.props.fetchOptions.type === 'email' && !!this.props.site
 					? 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' +
 					  this.props.site.ID +
 					  '&blog_subscribers=csv&type=email'
@@ -262,25 +260,25 @@ const Followers = localize(
 				<div>
 					<PeopleListSectionHeader
 						isFollower
-						isPlaceholder={ this.props.fetching || this.props.fetchOptions.search }
-						label={ headerText }
-						site={ this.props.site }
+						isPlaceholder={this.props.fetching || this.props.fetchOptions.search}
+						label={headerText}
+						site={this.props.site}
 					>
-						{ downloadListLink && (
-							<Button href={ downloadListLink } compact>
-								{ this.props.translate( 'Download Data as CSV' ) }
+						{downloadListLink && (
+							<Button href={downloadListLink} compact>
+								{this.props.translate('Download Data as CSV')}
 							</Button>
-						) }
+						)}
 					</PeopleListSectionHeader>
-					<Card className={ listClass }>{ followers }</Card>
-					{ this.isLastPage() && <ListEnd /> }
+					<Card className={listClass}>{followers}</Card>
+					{this.isLastPage() && <ListEnd />}
 				</div>
 			);
 		}
 	}
 );
 
-const FollowersList = props => {
+const FollowersList = (props) => {
 	let DataComponent;
 	const fetchOptions = {
 		max: 100,
@@ -289,7 +287,7 @@ const FollowersList = props => {
 		siteId: props.site.ID,
 	};
 
-	if ( 'email' === props.type ) {
+	if ('email' === props.type) {
 		DataComponent = EmailFollowersData;
 		fetchOptions.type = 'email';
 	} else {
@@ -297,7 +295,7 @@ const FollowersList = props => {
 	}
 
 	return (
-		<DataComponent fetchOptions={ fetchOptions } site={ props.site } type={ props.type }>
+		<DataComponent fetchOptions={fetchOptions} site={props.site} type={props.type}>
 			<Followers />
 		</DataComponent>
 	);

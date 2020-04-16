@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import isRequestingSharingButtons from 'state/selectors/is-requesting-sharing-buttons';
 
-describe( 'isRequestingSharingButtons()', () => {
-	test( 'should return false if the site is not attached', () => {
+describe('isRequestingSharingButtons()', () => {
+	test('should return false if the site is not attached', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -19,12 +19,12 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isRequesting = isRequestingSharingButtons( state, 2916285 );
+		const isRequesting = isRequestingSharingButtons(state, 2916285);
 
-		expect( isRequesting ).to.be.false;
-	} );
+		expect(isRequesting).to.be.false;
+	});
 
-	test( 'should return false if the sharing buttons are not being fetched', () => {
+	test('should return false if the sharing buttons are not being fetched', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -34,12 +34,12 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isRequesting = isRequestingSharingButtons( state, 2916284 );
+		const isRequesting = isRequestingSharingButtons(state, 2916284);
 
-		expect( isRequesting ).to.be.false;
-	} );
+		expect(isRequesting).to.be.false;
+	});
 
-	test( 'should return true if the sharing buttons are being fetched', () => {
+	test('should return true if the sharing buttons are being fetched', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -49,8 +49,8 @@ describe( 'isRequestingSharingButtons()', () => {
 				},
 			},
 		};
-		const isRequesting = isRequestingSharingButtons( state, 2916284 );
+		const isRequesting = isRequestingSharingButtons(state, 2916284);
 
-		expect( isRequesting ).to.be.true;
-	} );
-} );
+		expect(isRequesting).to.be.true;
+	});
+});

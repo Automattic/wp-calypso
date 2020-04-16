@@ -27,17 +27,17 @@ import './style.scss';
 
 class ConciergeBanner extends Component {
 	static propTypes = {
-		bannerType: PropTypes.oneOf( [
+		bannerType: PropTypes.oneOf([
 			CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 			CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 			CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
 			CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
-		] ).isRequired,
+		]).isRequired,
 	};
 
 	placeholder() {
 		return (
-			<Card compact={ false }>
+			<Card compact={false}>
 				<div className="concierge-banner__placeholders is-placeholder">
 					<div className="concierge-banner__placeholder-row-container is-placeholder">
 						<div className="concierge-banner__placeholder-row is-placeholder" />
@@ -57,9 +57,9 @@ class ConciergeBanner extends Component {
 
 		let headerText, mainText, buttonText, buttonHref, illustrationUrl;
 
-		switch ( bannerType ) {
+		switch (bannerType) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
-				headerText = translate( 'Your appointment is coming up!' );
+				headerText = translate('Your appointment is coming up!');
 				mainText = translate(
 					'Get ready with your questions for your upcoming Quick Start session appointment.',
 					{
@@ -67,13 +67,13 @@ class ConciergeBanner extends Component {
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
-				buttonText = translate( 'Session dashboard' );
+				buttonText = translate('Session dashboard');
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
 
 			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
-				headerText = translate( 'Looking for Expert Help?' );
+				headerText = translate('Looking for Expert Help?');
 				mainText = translate(
 					'Get 30 minutes dedicated to the success of your site. Schedule your free 1-1 Quick Start Session with a Happiness Engineer!',
 					{
@@ -81,13 +81,13 @@ class ConciergeBanner extends Component {
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
-				buttonText = translate( 'Schedule now' );
+				buttonText = translate('Schedule now');
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
 
 			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
-				headerText = translate( 'Our experts are waiting to help you' );
+				headerText = translate('Our experts are waiting to help you');
 				mainText = translate(
 					'Schedule your 45-minute 1-1 Quick Start Session with a Happiness Engineer!',
 					{
@@ -95,13 +95,13 @@ class ConciergeBanner extends Component {
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
-				buttonText = translate( 'Schedule now' );
+				buttonText = translate('Schedule now');
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
 
 			case CONCIERGE_SUGGEST_PURCHASE_CONCIERGE:
-				headerText = translate( 'Need an expert by your side?' );
+				headerText = translate('Need an expert by your side?');
 				mainText = translate(
 					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these 45 minute calls.',
 					{
@@ -109,7 +109,7 @@ class ConciergeBanner extends Component {
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
 					}
 				);
-				buttonText = translate( 'Learn more' );
+				buttonText = translate('Learn more');
 				buttonHref = '/checkout/offer-quickstart-session';
 				illustrationUrl = '/calypso/images/illustrations/illustration-start.svg';
 				break;
@@ -121,7 +121,7 @@ class ConciergeBanner extends Component {
 	render() {
 		const { bannerType, showPlaceholder } = this.props;
 
-		if ( showPlaceholder ) {
+		if (showPlaceholder) {
 			return this.placeholder();
 		}
 
@@ -133,33 +133,33 @@ class ConciergeBanner extends Component {
 			illustrationUrl,
 		} = this.getBannerContent();
 
-		const className = classnames( 'concierge-banner', {
+		const className = classnames('concierge-banner', {
 			'purchase-concierge': CONCIERGE_SUGGEST_PURCHASE_CONCIERGE === bannerType,
-		} );
+		});
 
 		return (
 			<>
 				<TrackComponentView eventName="calypso_purchases_concierge_banner_view" />
 				<ActionCard
-					headerText={ headerText }
-					mainText={ mainText }
-					buttonText={ buttonText }
-					buttonIcon={ null }
-					buttonPrimary={ true }
-					buttonHref={ buttonHref }
-					buttonTarget={ null }
-					buttonOnClick={ () => {
-						this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click', {
+					headerText={headerText}
+					mainText={mainText}
+					buttonText={buttonText}
+					buttonIcon={null}
+					buttonPrimary={true}
+					buttonHref={buttonHref}
+					buttonTarget={null}
+					buttonOnClick={() => {
+						this.props.recordTracksEvent('calypso_purchases_concierge_banner_click', {
 							referer: '/me/purchases',
-						} );
-					} }
-					compact={ false }
-					illustration={ illustrationUrl }
-					classNames={ className }
+						});
+					}}
+					compact={false}
+					illustration={illustrationUrl}
+					classNames={className}
 				/>
 			</>
 		);
 	}
 }
 
-export default localize( ConciergeBanner );
+export default localize(ConciergeBanner);

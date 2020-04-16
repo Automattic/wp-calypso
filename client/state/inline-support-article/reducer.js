@@ -13,7 +13,7 @@ export default withoutPersistence(
 		},
 		action
 	) => {
-		switch ( action.type ) {
+		switch (action.type) {
 			case SUPPORT_ARTICLE_DIALOG_OPEN: {
 				const { postId, postUrl = null, actionLabel = null, actionUrl = null } = action;
 

@@ -14,7 +14,7 @@ export const CONTACT_DETAILS_FORM_FIELDS = [
 	'fax',
 ];
 
-export const CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES = [ 'GB', 'IE' ];
+export const CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES = ['GB', 'IE'];
 
 // We must exclude country codes that return
 // a localized list of states from the backend:

@@ -37,7 +37,7 @@ class AcceptedFilenames extends Component {
 		isSaving: false,
 	};
 
-	renderToggle = ( fieldName, fieldLabel, parent ) => {
+	renderToggle = (fieldName, fieldLabel, parent) => {
 		const {
 			fields: { pages },
 			isReadOnly,
@@ -47,27 +47,27 @@ class AcceptedFilenames extends Component {
 
 		return (
 			<FormToggle
-				checked={ get( pages, fieldName, false ) }
-				disabled={ isRequesting || isSaving || isReadOnly || ! get( pages, parent, true ) }
-				onChange={ this.handleToggle( fieldName ) }
+				checked={get(pages, fieldName, false)}
+				disabled={isRequesting || isSaving || isReadOnly || !get(pages, parent, true)}
+				onChange={this.handleToggle(fieldName)}
 			>
-				<span>{ fieldLabel }</span>
+				<span>{fieldLabel}</span>
 			</FormToggle>
 		);
 	};
 
-	handleToggle = fieldName => {
+	handleToggle = (fieldName) => {
 		return () => {
 			const { fields, setFieldValue } = this.props;
 			const groupName = 'pages';
-			const groupFields = fields[ groupName ] ? fields[ groupName ] : {};
+			const groupFields = fields[groupName] ? fields[groupName] : {};
 
-			if ( ! ( fieldName in groupFields ) ) {
+			if (!(fieldName in groupFields)) {
 				return;
 			}
 
-			groupFields[ fieldName ] = ! groupFields[ fieldName ];
-			setFieldValue( groupName, groupFields );
+			groupFields[fieldName] = !groupFields[fieldName];
+			setFieldValue(groupName, groupFields);
 		};
 	};
 
@@ -86,85 +86,81 @@ class AcceptedFilenames extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Accepted Filenames & Rejected URIs' ) }>
-					<Button compact primary disabled={ isDisabled } onClick={ handleSubmitForm }>
-						{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+				<SectionHeader label={translate('Accepted Filenames & Rejected URIs')}>
+					<Button compact primary disabled={isDisabled} onClick={handleSubmitForm}>
+						{isSaving ? translate('Saving…') : translate('Save Settings')}
 					</Button>
 				</SectionHeader>
 				<Card>
 					<form>
-						<FormLabel>{ translate( 'Do not cache these page types.' ) }</FormLabel>
+						<FormLabel>{translate('Do not cache these page types.')}</FormLabel>
 
 						<FormSettingExplanation className="wp-super-cache__condition-settings-explanation">
-							{ translate(
+							{translate(
 								' See the {{a}}Conditional Tags{{/a}} ' +
 									'documentation for a complete discussion on each type.',
 								{
 									components: {
 										a: (
 											<ExternalLink
-												icon={ true }
+												icon={true}
 												target="_blank"
 												href="http://codex.wordpress.org/Conditional_Tags"
 											/>
 										),
 									},
 								}
-							) }
+							)}
 						</FormSettingExplanation>
 
 						<FormFieldset>
-							{ this.renderToggle( 'single', translate( 'Single Posts (is_single)' ) ) }
-							{ this.renderToggle( 'pages', translate( 'Pages (is_page)' ) ) }
-							{ this.renderToggle( 'frontpage', translate( 'Front Page (is_front_page)' ) ) }
+							{this.renderToggle('single', translate('Single Posts (is_single)'))}
+							{this.renderToggle('pages', translate('Pages (is_page)'))}
+							{this.renderToggle('frontpage', translate('Front Page (is_front_page)'))}
 							<div className="wp-super-cache__nested-page-types">
-								{ this.renderToggle( 'home', translate( 'Home (is_home)' ), 'frontpage' ) }
+								{this.renderToggle('home', translate('Home (is_home)'), 'frontpage')}
 							</div>
-							{ this.renderToggle( 'archives', translate( 'Archives (is_archive)' ) ) }
+							{this.renderToggle('archives', translate('Archives (is_archive)'))}
 							<div className="wp-super-cache__nested-page-types">
-								{ this.renderToggle( 'tag', translate( 'Tags (is_tag)' ), 'archives' ) }
-								{ this.renderToggle(
-									'category',
-									translate( 'Category (is_category)' ),
-									'archives'
-								) }
+								{this.renderToggle('tag', translate('Tags (is_tag)'), 'archives')}
+								{this.renderToggle('category', translate('Category (is_category)'), 'archives')}
 							</div>
-							{ this.renderToggle( 'feed', translate( 'Feeds (is_feed)' ) ) }
-							{ this.renderToggle( 'search', translate( 'Search Pages (is_search)' ) ) }
-							{ this.renderToggle( 'author', translate( 'Author Pages (is_author)' ) ) }
+							{this.renderToggle('feed', translate('Feeds (is_feed)'))}
+							{this.renderToggle('search', translate('Search Pages (is_search)'))}
+							{this.renderToggle('author', translate('Author Pages (is_author)'))}
 						</FormFieldset>
 
 						<FormFieldset>
 							<FormLabel>
-								{ translate( 'Do not cache pages that contain the following strings:' ) }
+								{translate('Do not cache pages that contain the following strings:')}
 							</FormLabel>
 							<FormTextarea
-								disabled={ isDisabled }
-								onChange={ handleChange( 'cache_rejected_uri' ) }
-								value={ cache_rejected_uri }
+								disabled={isDisabled}
+								onChange={handleChange('cache_rejected_uri')}
+								value={cache_rejected_uri}
 							/>
 							<FormSettingExplanation>
-								{ translate(
+								{translate(
 									'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
 										'if your URLs include year and you dont want to cache last year posts, it’s enough ' +
 										'to specify the year, i.e. ’/2004/’. WP-Cache will search if that string is part ' +
 										'of the URI and if so, it will not cache that page.'
-								) }
+								)}
 							</FormSettingExplanation>
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel>{ translate( 'Whitelisted filenames:' ) }</FormLabel>
+							<FormLabel>{translate('Whitelisted filenames:')}</FormLabel>
 							<FormTextarea
-								disabled={ isDisabled }
-								onChange={ handleChange( 'cache_acceptable_files' ) }
-								value={ cache_acceptable_files }
+								disabled={isDisabled}
+								onChange={handleChange('cache_acceptable_files')}
+								value={cache_acceptable_files}
 							/>
 							<FormSettingExplanation>
-								{ translate(
+								{translate(
 									'Add here those filenames that can be cached, even if they match one of the rejected ' +
 										'substring specified above.'
-								) }
+								)}
 							</FormSettingExplanation>
 						</FormFieldset>
 					</form>
@@ -174,8 +170,8 @@ class AcceptedFilenames extends Component {
 	}
 }
 
-const getFormSettings = settings => {
-	return pick( settings, [ 'cache_acceptable_files', 'cache_rejected_uri', 'pages' ] );
+const getFormSettings = (settings) => {
+	return pick(settings, ['cache_acceptable_files', 'cache_rejected_uri', 'pages']);
 };
 
-export default WrapSettingsForm( getFormSettings )( AcceptedFilenames );
+export default WrapSettingsForm(getFormSettings)(AcceptedFilenames);

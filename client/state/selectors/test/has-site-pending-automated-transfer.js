@@ -8,18 +8,18 @@ import { expect } from 'chai';
  */
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 
-describe( 'hasSitePendingAutomatedTransfer()', () => {
-	test( 'should return null if the specified site was not found in the state', () => {
+describe('hasSitePendingAutomatedTransfer()', () => {
+	test('should return null if the specified site was not found in the state', () => {
 		const state = {
 			sites: {
 				items: {},
 			},
 		};
 
-		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.null;
-	} );
+		expect(hasSitePendingAutomatedTransfer(state, 12345)).to.be.null;
+	});
 
-	test( 'should return false if site is an Atomic one', () => {
+	test('should return false if site is an Atomic one', () => {
 		const state = {
 			sites: {
 				items: {
@@ -33,10 +33,10 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 			},
 		};
 
-		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.false;
-	} );
+		expect(hasSitePendingAutomatedTransfer(state, 12345)).to.be.false;
+	});
 
-	test( 'should return true if site has the has_pending_automated_transfer option set to true', () => {
+	test('should return true if site has the has_pending_automated_transfer option set to true', () => {
 		const state = {
 			sites: {
 				items: {
@@ -49,8 +49,8 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 			},
 		};
 
-		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.true;
-	} );
+		expect(hasSitePendingAutomatedTransfer(state, 12345)).to.be.true;
+	});
 
 	test(
 		'should return false if site has the has_pending_automated_transfer set to false' +
@@ -71,8 +71,8 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 				},
 			};
 
-			expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.false;
-			expect( hasSitePendingAutomatedTransfer( state, 12346 ) ).to.be.false;
+			expect(hasSitePendingAutomatedTransfer(state, 12345)).to.be.false;
+			expect(hasSitePendingAutomatedTransfer(state, 12346)).to.be.false;
 		}
 	);
-} );
+});

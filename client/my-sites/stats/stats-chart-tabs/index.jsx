@@ -31,21 +31,21 @@ import memoizeLast from 'lib/memoize-last';
  */
 import './style.scss';
 
-const ChartTabShape = PropTypes.shape( {
+const ChartTabShape = PropTypes.shape({
 	attr: PropTypes.string,
 	gridicon: PropTypes.string,
 	label: PropTypes.string,
-	legendOptions: PropTypes.arrayOf( PropTypes.string ),
-} );
+	legendOptions: PropTypes.arrayOf(PropTypes.string),
+});
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
-		activeLegend: PropTypes.arrayOf( PropTypes.string ),
+		activeLegend: PropTypes.arrayOf(PropTypes.string),
 		activeTab: ChartTabShape,
-		availableLegend: PropTypes.arrayOf( PropTypes.string ),
-		charts: PropTypes.arrayOf( ChartTabShape ),
+		availableLegend: PropTypes.arrayOf(PropTypes.string),
+		charts: PropTypes.arrayOf(ChartTabShape),
 		counts: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				comments: PropTypes.number,
 				labelDay: PropTypes.string,
 				likes: PropTypes.number,
@@ -53,7 +53,7 @@ class StatModuleChartTabs extends Component {
 				posts: PropTypes.number,
 				visitors: PropTypes.number,
 				views: PropTypes.number,
-			} )
+			})
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
@@ -62,71 +62,68 @@ class StatModuleChartTabs extends Component {
 	intervalId = null;
 
 	componentDidMount() {
-		if ( this.props.query ) {
+		if (this.props.query) {
 			this.startQueryInterval();
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.query && prevProps.queryKey !== this.props.queryKey ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.query && prevProps.queryKey !== this.props.queryKey) {
 			this.startQueryInterval();
 		}
 	}
 
-	onLegendClick = chartItem => {
+	onLegendClick = (chartItem) => {
 		const activeLegend = this.props.activeLegend.slice();
-		const chartIndex = activeLegend.indexOf( chartItem );
+		const chartIndex = activeLegend.indexOf(chartItem);
 		let gaEventAction;
-		if ( -1 === chartIndex ) {
-			activeLegend.push( chartItem );
+		if (-1 === chartIndex) {
+			activeLegend.push(chartItem);
 			gaEventAction = ' on';
 		} else {
-			activeLegend.splice( chartIndex );
+			activeLegend.splice(chartIndex);
 			gaEventAction = ' off';
 		}
-		this.props.recordGoogleEvent(
-			'Stats',
-			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
-		);
-		this.props.onChangeLegend( activeLegend );
+		this.props.recordGoogleEvent('Stats', `Toggled Nested Chart ${chartItem} ${gaEventAction}`);
+		this.props.onChangeLegend(activeLegend);
 	};
 
 	startQueryInterval() {
 		// NOTE: Unpredictable behavior will arise if DEFAULT_HEARTBEAT < request duration!
-		Number.isFinite( this.intervalId ) && clearInterval( this.intervalId );
+		Number.isFinite(this.intervalId) && clearInterval(this.intervalId);
 		this.makeQuery();
-		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
+		this.intervalId = setInterval(this.makeQuery, DEFAULT_HEARTBEAT);
 	}
 
-	makeQuery = () => this.props.requestChartCounts( this.props.query );
+	makeQuery = () => this.props.requestChartCounts(this.props.query);
 
 	render() {
 		const { isActiveTabLoading } = this.props;
-		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
+		const classes = ['stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading }];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
-			<Card key={ this.props.chartData.length } className={ classNames( ...classes ) }>
+			<Card key={this.props.chartData.length} className={classNames(...classes)}>
 				<Legend
-					activeCharts={ this.props.activeLegend }
-					activeTab={ this.props.activeTab }
-					availableCharts={ this.props.availableLegend }
-					clickHandler={ this.onLegendClick }
-					tabs={ this.props.charts }
+					activeCharts={this.props.activeLegend}
+					activeTab={this.props.activeTab}
+					availableCharts={this.props.availableLegend}
+					clickHandler={this.onLegendClick}
+					tabs={this.props.charts}
 				/>
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+				{/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */}
+				<StatsModulePlaceholder className="is-chart" isLoading={isActiveTabLoading} />
 				<Chart
-					barClick={ this.props.barClick }
-					data={ this.props.chartData }
-					loading={ isActiveTabLoading }
+					barClick={this.props.barClick}
+					data={this.props.chartData}
+					loading={isActiveTabLoading}
 				/>
 				<StatTabs
-					data={ this.props.counts }
-					tabs={ this.props.charts }
-					switchTab={ this.props.switchTab }
-					selectedTab={ this.props.chartTab }
-					activeIndex={ this.props.queryDate }
+					data={this.props.counts}
+					tabs={this.props.charts}
+					switchTab={this.props.switchTab}
+					selectedTab={this.props.chartTab}
+					activeIndex={this.props.queryDate}
 					activeKey="period"
 				/>
 			</Card>
@@ -140,31 +137,31 @@ const NO_SITE_STATE = {
 	chartData: [],
 };
 
-const memoizedQuery = memoizeLast( ( chartTab, date, period, quantity, siteId ) => ( {
+const memoizedQuery = memoizeLast((chartTab, date, period, quantity, siteId) => ({
 	chartTab,
 	date,
 	period,
 	quantity,
 	siteId,
 	statFields: QUERY_FIELDS,
-} ) );
+}));
 
 const connectComponent = connect(
-	( state, { activeLegend, period: { period }, chartTab, queryDate } ) => {
-		const siteId = getSelectedSiteId( state );
-		if ( ! siteId ) {
+	(state, { activeLegend, period: { period }, chartTab, queryDate }) => {
+		const siteId = getSelectedSiteId(state);
+		if (!siteId) {
 			return NO_SITE_STATE;
 		}
 
-		const counts = getCountRecords( state, siteId, period );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
-		const loadingTabs = getLoadingTabs( state, siteId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) && chartData.length === 0;
+		const counts = getCountRecords(state, siteId, period);
+		const chartData = buildChartData(activeLegend, chartTab, counts, period, queryDate);
+		const loadingTabs = getLoadingTabs(state, siteId, period);
+		const isActiveTabLoading = loadingTabs.includes(chartTab) && chartData.length === 0;
 		const quantity = 'year' === period ? 10 : 30;
-		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
-		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
-		const query = memoizedQuery( chartTab, date, period, quantity, siteId );
+		const timezoneOffset = getSiteOption(state, siteId, 'gmt_offset') || 0;
+		const date = getQueryDate(queryDate, timezoneOffset, period, quantity);
+		const queryKey = `${date}-${period}-${quantity}-${siteId}`;
+		const query = memoizedQuery(chartTab, date, period, quantity, siteId);
 
 		return {
 			chartData,
@@ -178,4 +175,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
-export default flowRight( localize, connectComponent )( StatModuleChartTabs );
+export default flowRight(localize, connectComponent)(StatModuleChartTabs);

@@ -11,26 +11,26 @@ import debugFactory from 'debug';
  */
 import { recordOriginals, encodeOriginalKey } from './glotpress';
 
-const debug = debugFactory( 'calypso:translation-scanner' );
+const debug = debugFactory('calypso:translation-scanner');
 
 export class TranslationScanner {
-	constructor( install = true ) {
-		Object.assign( this, {
+	constructor(install = true) {
+		Object.assign(this, {
 			installed: false,
 			active: false,
 			pendingOriginals: {},
 			sessionId: null,
 			cookieWatcherInterval: null,
 			previousCookies: null,
-		} );
+		});
 
 		install && this.install();
 	}
 
-	translationFilter( ...args ) {
-		const [ translation, options ] = args;
-		if ( this.active && this.sessionId ) {
-			this.recordOriginal( options.original, options.context || '' );
+	translationFilter(...args) {
+		const [translation, options] = args;
+		if (this.active && this.sessionId) {
+			this.recordOriginal(options.original, options.context || '');
 		}
 
 		return translation;
@@ -40,10 +40,10 @@ export class TranslationScanner {
 		// Watch for cookies changed through browser magic
 		// We could potentially run the filter server-side by pinging the server
 		// for the cookie instead of asking the browser.
-		if ( ! this.installed && typeof document !== 'undefined' ) {
-			debug( 'Installing Translation Scanner' );
-			registerTranslateHook( this.translationFilter.bind( this ) );
-			this.cookieWatcherInterval = setInterval( this.checkCookie.bind( this ), 1000 );
+		if (!this.installed && typeof document !== 'undefined') {
+			debug('Installing Translation Scanner');
+			registerTranslateHook(this.translationFilter.bind(this));
+			this.cookieWatcherInterval = setInterval(this.checkCookie.bind(this), 1000);
 			this.installed = true;
 			this.checkCookie();
 		}
@@ -52,8 +52,8 @@ export class TranslationScanner {
 	}
 
 	uninstall() {
-		debug( 'stopping cookie watcher' );
-		clearInterval( this.cookieWatcherInterval );
+		debug('stopping cookie watcher');
+		clearInterval(this.cookieWatcherInterval);
 		this.cookieWatcherInterval = null;
 		// TODO:
 		// unregisterTranslateHook( this.translationFilter );
@@ -63,55 +63,55 @@ export class TranslationScanner {
 
 	checkCookie() {
 		// client-side rendering only
-		if ( typeof document === 'undefined' ) {
-			debug( 'no document in checkCookie' );
+		if (typeof document === 'undefined') {
+			debug('no document in checkCookie');
 			return;
 		}
 
-		if ( this.previousCookies === document.cookies ) {
+		if (this.previousCookies === document.cookies) {
 			return;
 		}
 
-		const newSessionId = cookie.parse( document.cookie )[ 'gp-record' ];
-		if ( newSessionId !== this.sessionId ) {
-			debug( 'New session Id:', newSessionId );
-			this.setSessionId( newSessionId );
+		const newSessionId = cookie.parse(document.cookie)['gp-record'];
+		if (newSessionId !== this.sessionId) {
+			debug('New session Id:', newSessionId);
+			this.setSessionId(newSessionId);
 		}
 	}
 
-	recordOriginal( original, context = '' ) {
-		this.pendingOriginals[ encodeOriginalKey( { original, context } ) ] = true;
+	recordOriginal(original, context = '') {
+		this.pendingOriginals[encodeOriginalKey({ original, context })] = true;
 		this.sendPendingOriginals();
 	}
 
 	_sendPendingOriginalsImmediately() {
-		const keys = Object.keys( this.pendingOriginals );
-		if ( keys.length ) {
-			debug( `Sending ${ keys.length } originals to GP_Record` );
-			recordOriginals( keys );
+		const keys = Object.keys(this.pendingOriginals);
+		if (keys.length) {
+			debug(`Sending ${keys.length} originals to GP_Record`);
+			recordOriginals(keys);
 			this.pendingOriginals = {};
 		}
 	}
 
-	sendPendingOriginals = debounce( this._sendPendingOriginalsImmediately.bind( this ), 500, {
+	sendPendingOriginals = debounce(this._sendPendingOriginalsImmediately.bind(this), 500, {
 		maxWait: 500,
-	} );
+	});
 
-	setSessionId( newSessionId ) {
+	setSessionId(newSessionId) {
 		this.sessionId = newSessionId;
 
 		newSessionId ? this.start() : this.stop();
 	}
 
 	start() {
-		debug( 'Translation Scanner started' );
+		debug('Translation Scanner started');
 		this.clear();
 		this.active = true;
 		return this;
 	}
 
 	stop() {
-		debug( 'Translation Scanner stopped' );
+		debug('Translation Scanner stopped');
 		this.active = false;
 		return this;
 	}

@@ -3,7 +3,7 @@
  */
 import { zoneFromApi, zonesListFromApi } from '../utils';
 
-test( 'should convert zones list response to a zones list object', () => {
+test('should convert zones list response to a zones list object', () => {
 	const zonesListResponse = {
 		data: [
 			{
@@ -15,17 +15,17 @@ test( 'should convert zones list response to a zones list object', () => {
 		],
 	};
 
-	expect( zonesListFromApi( zonesListResponse ) ).toEqual( {
+	expect(zonesListFromApi(zonesListResponse)).toEqual({
 		23: {
 			id: 23,
 			name: 'Test zone',
 			slug: 'test-zone',
 			description: 'A test zone.',
 		},
-	} );
-} );
+	});
+});
 
-test( 'should convert zone response to a zone object', () => {
+test('should convert zone response to a zone object', () => {
 	const createZoneResponse = {
 		data: {
 			term_id: 43,
@@ -35,10 +35,10 @@ test( 'should convert zone response to a zone object', () => {
 		},
 	};
 
-	expect( zoneFromApi( createZoneResponse ) ).toEqual( {
+	expect(zoneFromApi(createZoneResponse)).toEqual({
 		id: 43,
 		name: 'New zone',
 		slug: 'new-zone',
 		description: 'A new zone',
-	} );
-} );
+	});
+});

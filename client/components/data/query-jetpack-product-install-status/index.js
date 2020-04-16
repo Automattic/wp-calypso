@@ -16,12 +16,12 @@ class QueryJetpackProductInstallStatus extends Component {
 	};
 
 	componentDidMount() {
-		this.props.requestJetpackProductInstallStatus( this.props.siteId );
+		this.props.requestJetpackProductInstallStatus(this.props.siteId);
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId !== this.props.siteId ) {
-			this.props.requestJetpackProductInstallStatus( this.props.siteId );
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId !== this.props.siteId) {
+			this.props.requestJetpackProductInstallStatus(this.props.siteId);
 		}
 	}
 
@@ -30,6 +30,6 @@ class QueryJetpackProductInstallStatus extends Component {
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	requestJetpackProductInstallStatus,
-} )( QueryJetpackProductInstallStatus );
+})(QueryJetpackProductInstallStatus);

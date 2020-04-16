@@ -36,42 +36,42 @@ class SiteRedirectStep extends React.Component {
 	state = { searchQuery: '' };
 
 	render() {
-		const price = get( this.props, 'products.offsite_redirect.cost_display', null );
+		const price = get(this.props, 'products.offsite_redirect.cost_display', null);
 		const { translate } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="site-redirect-step">
-				<form className="site-redirect-step__form card" onSubmit={ this.handleFormSubmit }>
+				<form className="site-redirect-step__form card" onSubmit={this.handleFormSubmit}>
 					<div className="site-redirect-step__domain-description">
 						<p>
-							{ translate( 'Redirect {{strong}}%(domain)s{{/strong}} to this domain', {
+							{translate('Redirect {{strong}}%(domain)s{{/strong}} to this domain', {
 								components: { strong: <strong /> },
 								args: { domain: this.props.selectedSite.slug },
-							} ) }
+							})}
 						</p>
 					</div>
 
-					<DomainProductPrice price={ price } requiresPlan={ false } />
+					<DomainProductPrice price={price} requiresPlan={false} />
 
 					<fieldset>
 						<input
 							className="site-redirect-step__external-domain"
 							type="text"
-							value={ this.state.searchQuery }
-							placeholder={ translate( 'Enter a domain', { textOnly: true } ) }
-							onChange={ this.setSearchQuery }
-							onClick={ this.recordInputFocus }
+							value={this.state.searchQuery}
+							placeholder={translate('Enter a domain', { textOnly: true })}
+							onChange={this.setSearchQuery}
+							onClick={this.recordInputFocus}
 						/>
 						<Button
 							primary
 							className="site-redirect-step__go"
 							type="submit"
-							onClick={ this.recordGoButtonClick }
+							onClick={this.recordGoButtonClick}
 						>
-							{ translate( 'Go', {
+							{translate('Go', {
 								context: 'Upgrades: Label for adding Site Redirect',
-							} ) }
+							})}
 						</Button>
 					</fieldset>
 				</form>
@@ -81,66 +81,64 @@ class SiteRedirectStep extends React.Component {
 	}
 
 	recordInputFocus = () => {
-		this.props.recordInputFocus( this.state.searchQuery );
+		this.props.recordInputFocus(this.state.searchQuery);
 	};
 
 	recordGoButtonClick = () => {
-		this.props.recordGoButtonClick( this.state.searchQuery );
+		this.props.recordGoButtonClick(this.state.searchQuery);
 	};
 
-	setSearchQuery = event => {
-		this.setState( { searchQuery: withoutHttp( event.target.value ) } );
+	setSearchQuery = (event) => {
+		this.setState({ searchQuery: withoutHttp(event.target.value) });
 	};
 
-	handleFormSubmit = event => {
+	handleFormSubmit = (event) => {
 		event.preventDefault();
 
 		const domain = this.state.searchQuery;
 
-		this.props.recordFormSubmit( domain );
+		this.props.recordFormSubmit(domain);
 
-		if ( hasProduct( this.props.cart, 'offsite_redirect' ) ) {
-			this.props.errorNotice(
-				this.getValidationErrorMessage( domain, { code: 'already_in_cart' } )
-			);
+		if (hasProduct(this.props.cart, 'offsite_redirect')) {
+			this.props.errorNotice(this.getValidationErrorMessage(domain, { code: 'already_in_cart' }));
 			return;
 		}
 
 		canRedirect(
 			this.props.selectedSite.ID,
 			domain,
-			function( error ) {
-				if ( error ) {
-					this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
+			function (error) {
+				if (error) {
+					this.props.errorNotice(this.getValidationErrorMessage(domain, error));
 					return;
 				}
 
-				this.addSiteRedirectToCart( domain );
-			}.bind( this )
+				this.addSiteRedirectToCart(domain);
+			}.bind(this)
 		);
 	};
 
-	addSiteRedirectToCart = domain => {
-		addItem( siteRedirect( { domain } ) );
-		page( '/checkout/' + this.props.selectedSite.slug );
+	addSiteRedirectToCart = (domain) => {
+		addItem(siteRedirect({ domain }));
+		page('/checkout/' + this.props.selectedSite.slug);
 	};
 
-	getValidationErrorMessage = ( domain, error ) => {
+	getValidationErrorMessage = (domain, error) => {
 		const { translate } = this.props;
 
-		switch ( error.code ) {
+		switch (error.code) {
 			case 'invalid_domain':
-				return translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
+				return translate('Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain },
-				} );
+				});
 
 			case 'invalid_tld':
-				return translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
+				return translate('Sorry, %(domain)s does not end with a valid domain extension.', {
 					args: { domain: domain },
-				} );
+				});
 
 			case 'empty_query':
-				return translate( 'Please enter a domain name or keyword.' );
+				return translate('Please enter a domain name or keyword.');
 
 			case 'has_subscription':
 				return translate(
@@ -153,14 +151,14 @@ class SiteRedirectStep extends React.Component {
 				);
 
 			default:
-				return translate( 'There is a problem adding Site Redirect that points to %(domain)s.', {
+				return translate('There is a problem adding Site Redirect that points to %(domain)s.', {
 					args: { domain: domain },
-				} );
+				});
 		}
 	};
 }
 
-const recordInputFocus = searchBoxValue =>
+const recordInputFocus = (searchBoxValue) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Focused On Search Box Input in Site Redirect',
@@ -168,7 +166,7 @@ const recordInputFocus = searchBoxValue =>
 		searchBoxValue
 	);
 
-const recordGoButtonClick = searchBoxValue =>
+const recordGoButtonClick = (searchBoxValue) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Clicked "Go" Button in Site Redirect',
@@ -176,7 +174,7 @@ const recordGoButtonClick = searchBoxValue =>
 		searchBoxValue
 	);
 
-const recordFormSubmit = searchBoxValue =>
+const recordFormSubmit = (searchBoxValue) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Submitted Form in Site Redirect',
@@ -184,9 +182,9 @@ const recordFormSubmit = searchBoxValue =>
 		searchBoxValue
 	);
 
-export default connect( null, {
+export default connect(null, {
 	errorNotice,
 	recordInputFocus,
 	recordGoButtonClick,
 	recordFormSubmit,
-} )( localize( SiteRedirectStep ) );
+})(localize(SiteRedirectStep));

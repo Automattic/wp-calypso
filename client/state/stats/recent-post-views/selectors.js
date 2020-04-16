@@ -16,6 +16,6 @@ import 'state/stats/init';
  * @param   {number}  postId   Post ID
  * @returns {?string}          Post views.
  */
-export function getRecentViewsForPost( state, siteId, postId ) {
-	return get( state, [ 'stats', 'recentPostViews', 'items', siteId, postId, 'views' ], null );
+export function getRecentViewsForPost(state, siteId, postId) {
+	return get(state, ['stats', 'recentPostViews', 'items', siteId, postId, 'views'], null);
 }

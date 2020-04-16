@@ -13,7 +13,7 @@ export const updateWcsShippingZoneMethod = (
 	method,
 	successAction,
 	failureAction
-) => ( {
+) => ({
 	type: WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE,
 	siteId,
 	methodId,
@@ -21,9 +21,9 @@ export const updateWcsShippingZoneMethod = (
 	method,
 	successAction,
 	failureAction,
-} );
+});
 
-export const updateField = ( siteId, methodId, path, value ) => ( {
+export const updateField = (siteId, methodId, path, value) => ({
 	type: WOOCOMMERCE_SERVICES_SERVICE_SETTINGS_UPDATE_FIELD,
 	siteId,
 	methodId,
@@ -32,4 +32,4 @@ export const updateField = ( siteId, methodId, path, value ) => ( {
 	methodType: 'wc_services_usps',
 	path,
 	value,
-} );
+});

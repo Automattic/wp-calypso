@@ -15,18 +15,18 @@ import PurchaseDetail from 'components/purchase-detail';
  */
 import premiumThemesImage from 'assets/images/illustrations/themes.svg';
 
-export default localize( ( { selectedSite, translate } ) => {
+export default localize(({ selectedSite, translate }) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src={ premiumThemesImage } /> }
-				title={ translate( 'Try a premium theme' ) }
-				description={ translate(
+				icon={<img alt="" src={premiumThemesImage} />}
+				title={translate('Try a premium theme')}
+				description={translate(
 					'Access hundreds of beautifully designed premium themes at no extra cost.'
-				) }
-				buttonText={ translate( 'Browse premium themes' ) }
-				href={ '/themes/' + selectedSite.slug }
+				)}
+				buttonText={translate('Browse premium themes')}
+				href={'/themes/' + selectedSite.slug}
 			/>
 		</div>
 	);
-} );
+});

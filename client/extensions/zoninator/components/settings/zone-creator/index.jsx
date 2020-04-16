@@ -26,7 +26,7 @@ class ZoneCreator extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	save = ( form, data ) => this.props.addZone( this.props.siteId, this.props.siteSlug, form, data );
+	save = (form, data) => this.props.addZone(this.props.siteId, this.props.siteSlug, form, data);
 
 	render() {
 		const { siteSlug, translate } = this.props;
@@ -38,22 +38,20 @@ class ZoneCreator extends PureComponent {
 					title="WP Zone Manager > New Zone"
 				/>
 
-				<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
-					{ translate( 'Add a zone' ) }
-				</HeaderCake>
+				<HeaderCake backHref={`${settingsPath}/${siteSlug}`}>{translate('Add a zone')}</HeaderCake>
 
-				<ZoneDetailsForm label={ translate( 'New zone' ) } onSubmit={ this.save } />
+				<ZoneDetailsForm label={translate('New zone')} onSubmit={this.save} />
 			</div>
 		);
 	}
 }
 
 const connectComponent = connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	(state) => ({
+		siteId: getSelectedSiteId(state),
+		siteSlug: getSelectedSiteSlug(state),
+	}),
 	{ addZone }
 );
 
-export default flowRight( connectComponent, localize )( ZoneCreator );
+export default flowRight(connectComponent, localize)(ZoneCreator);

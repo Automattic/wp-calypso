@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @param  {number}  siteId - Site ID
  * @returns {?number} site UTC offset
  */
-export default function getSiteGmtOffset( state, siteId ) {
-	const gmt = get( state.siteSettings.items, [ siteId, 'gmt_offset' ], null );
-	return gmt ? Number( gmt ) : gmt;
+export default function getSiteGmtOffset(state, siteId) {
+	const gmt = get(state.siteSettings.items, [siteId, 'gmt_offset'], null);
+	return gmt ? Number(gmt) : gmt;
 }

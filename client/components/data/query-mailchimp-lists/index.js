@@ -12,14 +12,14 @@ import { requestList } from 'state/mailchimp/lists/actions';
 
 class QueryMailchimpLists extends Component {
 	componentDidMount() {
-		if ( this.props.siteId ) {
-			this.props.requestList( this.props.siteId );
+		if (this.props.siteId) {
+			this.props.requestList(this.props.siteId);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.siteId !== prevProps.siteId ) {
-			this.props.requestList( this.props.siteId );
+	componentDidUpdate(prevProps) {
+		if (this.props.siteId !== prevProps.siteId) {
+			this.props.requestList(this.props.siteId);
 		}
 	}
 
@@ -28,4 +28,4 @@ class QueryMailchimpLists extends Component {
 	}
 }
 
-export default connect( null, { requestList } )( QueryMailchimpLists );
+export default connect(null, { requestList })(QueryMailchimpLists);

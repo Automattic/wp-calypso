@@ -6,13 +6,13 @@ import Dispatcher from 'dispatcher';
 let reduxStore = null;
 
 let resolveReduxStorePromise;
-const reduxStorePromise = new Promise( resolve => {
+const reduxStorePromise = new Promise((resolve) => {
 	resolveReduxStorePromise = resolve;
-} );
+});
 
-export function setReduxStore( store ) {
+export function setReduxStore(store) {
 	reduxStore = store;
-	resolveReduxStorePromise( store );
+	resolveReduxStorePromise(store);
 }
 
 /**
@@ -31,7 +31,7 @@ export function getReduxStore() {
  * @returns {object} Redux state
  */
 export function reduxGetState() {
-	if ( ! reduxStore ) {
+	if (!reduxStore) {
 		return;
 	}
 	return reduxStore.getState();
@@ -42,32 +42,32 @@ export function reduxGetState() {
  *
  * @returns {mixed} Result of the dispatch
  */
-export function reduxDispatch( ...args ) {
-	if ( ! reduxStore ) {
+export function reduxDispatch(...args) {
+	if (!reduxStore) {
 		return;
 	}
-	return reduxStore.dispatch( ...args );
+	return reduxStore.dispatch(...args);
 }
 
-function markedFluxAction( action ) {
-	return Object.assign( {}, action, { type: `FLUX_${ action.type }` } );
+function markedFluxAction(action) {
+	return Object.assign({}, action, { type: `FLUX_${action.type}` });
 }
 
 // this is a Map<ActionType:string, transform:action=>action
 const actionsToForward = new Set();
 
-export function registerActionForward( actionName ) {
-	actionsToForward.add( actionName );
+export function registerActionForward(actionName) {
+	actionsToForward.add(actionName);
 }
 
 export function clearActionForwards() {
 	actionsToForward.clear();
 }
 
-function forwardAction( { action = {} } ) {
-	if ( actionsToForward.has( action.type ) ) {
-		reduxDispatch( markedFluxAction( action ) );
+function forwardAction({ action = {} }) {
+	if (actionsToForward.has(action.type)) {
+		reduxDispatch(markedFluxAction(action));
 	}
 }
 
-Dispatcher.register( forwardAction );
+Dispatcher.register(forwardAction);

@@ -29,47 +29,38 @@ const countriesList = [
 	},
 ];
 
-describe( 'FormPhoneInput', () => {
-	describe( 'getValue()', () => {
-		test( 'should set country from props', () => {
+describe('FormPhoneInput', () => {
+	describe('getValue()', () => {
+		test('should set country from props', () => {
 			const phoneComponent = shallow(
-				<FormPhoneInput
-					countriesList={ countriesList }
-					initialCountryCode={ countriesList[ 1 ].code }
-				/>
+				<FormPhoneInput countriesList={countriesList} initialCountryCode={countriesList[1].code} />
 			);
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 1 ]
-			);
-		} );
+			expect(phoneComponent.instance().getValue().countryData).to.deep.equal(countriesList[1]);
+		});
 
-		test( 'should set country to first element when not specified', () => {
-			const phoneComponent = shallow( <FormPhoneInput countriesList={ countriesList } /> );
+		test('should set country to first element when not specified', () => {
+			const phoneComponent = shallow(<FormPhoneInput countriesList={countriesList} />);
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 0 ]
-			);
-		} );
+			expect(phoneComponent.instance().getValue().countryData).to.deep.equal(countriesList[0]);
+		});
 
-		test( 'should update country on change', () => {
-			const phoneComponent = mount( <FormPhoneInput countriesList={ countriesList } /> );
+		test('should update country on change', () => {
+			const phoneComponent = mount(<FormPhoneInput countriesList={countriesList} />);
 
-			phoneComponent.find( 'select' ).simulate( 'change', {
+			phoneComponent.find('select').simulate('change', {
 				target: {
-					value: countriesList[ 1 ].code,
+					value: countriesList[1].code,
 				},
-			} );
+			});
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 1 ]
-			);
-		} );
+			expect(phoneComponent.instance().getValue().countryData).to.deep.equal(countriesList[1]);
+		});
 
-		test( 'should have no country with empty countryList', () => {
-			const phoneComponent = shallow( <FormPhoneInput countriesList={ [] } /> );
+		test('should have no country with empty countryList', () => {
+			const phoneComponent = shallow(<FormPhoneInput countriesList={[]} />);
 
-			expect( phoneComponent.instance().getValue().countryData ).to.equal( undefined );
-		} );
-	} );
-} );
+			expect(phoneComponent.instance().getValue().countryData).to.equal(undefined);
+		});
+	});
+});

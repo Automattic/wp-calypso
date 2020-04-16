@@ -24,20 +24,20 @@ class FollowingManageSearchFollowed extends Component {
 	render() {
 		return (
 			<SearchCard
-				compact={ true }
-				pinned={ false }
+				compact={true}
+				pinned={false}
 				className="following-manage__search-followed"
 				additionalClasses="following-manage__search-followed-input"
-				placeholder={ this.props.translate( 'Search Followed Sites…' ) }
-				onSearch={ this.props.onSearch }
-				initialValue={ this.props.initialValue }
-				delaySearch={ true }
-				delayTimeout={ 100 }
-				hideOpenIcon={ true }
-				disableAutocorrect={ true }
+				placeholder={this.props.translate('Search Followed Sites…')}
+				onSearch={this.props.onSearch}
+				initialValue={this.props.initialValue}
+				delaySearch={true}
+				delayTimeout={100}
+				hideOpenIcon={true}
+				disableAutocorrect={true}
 			/>
 		);
 	}
 }
 
-export default localize( FollowingManageSearchFollowed );
+export default localize(FollowingManageSearchFollowed);

@@ -34,27 +34,27 @@ class ECommerceManageNudge extends Component {
 		this.recordView();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId) {
 			this.recordView();
 		}
 	}
 
 	recordView() {
-		if ( ! this.props.isDismissed ) {
-			this.props.recordTracksEvent( 'calypso_ecommerce_manage_stats_nudge_view' );
+		if (!this.props.isDismissed) {
+			this.props.recordTracksEvent('calypso_ecommerce_manage_stats_nudge_view');
 		}
 	}
 
 	onDismissClick = () => {
-		this.props.recordTracksEvent( 'calypso_ecommerce_manage_stats_nudge_dismiss_icon_click' );
+		this.props.recordTracksEvent('calypso_ecommerce_manage_stats_nudge_dismiss_icon_click');
 		this.props.dismissNudge();
 	};
 
 	render() {
 		const { translate } = this.props;
 
-		if ( this.props.isDismissed ) {
+		if (this.props.isDismissed) {
 			return null;
 		}
 
@@ -64,7 +64,7 @@ class ECommerceManageNudge extends Component {
 				<Gridicon
 					icon="cross"
 					className="ecommerce-manage-nudge__close-icon"
-					onClick={ this.onDismissClick }
+					onClick={this.onDismissClick}
 				/>
 				<div className="ecommerce-manage-nudge__body">
 					<div className="ecommerce-manage-nudge__image-wrapper">
@@ -76,12 +76,12 @@ class ECommerceManageNudge extends Component {
 					</div>
 					<div className="ecommerce-manage-nudge__info">
 						<h3 className="ecommerce-manage-nudge__title">
-							{ translate( 'Start managing your Store.' ) }
+							{translate('Start managing your Store.')}
 						</h3>
 						<p>
-							{ translate(
+							{translate(
 								'To manage your Store powered by WooCommerce click the Store link in the sidebar.'
-							) }
+							)}
 						</p>
 					</div>
 				</div>
@@ -91,11 +91,11 @@ class ECommerceManageNudge extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		isDismissed: isECommerceManageNudgeDismissed( state, ownProps.siteId ),
-	} ),
+	(state, ownProps) => ({
+		isDismissed: isECommerceManageNudgeDismissed(state, ownProps.siteId),
+	}),
 	{
 		dismissNudge,
-		recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
+		recordTracksEvent: withEnhancers(recordTracksEvent, [enhanceWithSiteType]),
 	}
-)( localize( ECommerceManageNudge ) );
+)(localize(ECommerceManageNudge));

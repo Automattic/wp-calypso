@@ -28,10 +28,10 @@ class FormStateSelectFromApi extends Component {
 		country: PropTypes.string.isRequired,
 		isLoaded: PropTypes.bool.isRequired,
 		locationsList: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				code: PropTypes.string.isRequired,
 				name: PropTypes.string.isRequired,
-			} )
+			})
 		),
 		onChange: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -40,31 +40,31 @@ class FormStateSelectFromApi extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.fetchData( this.props );
+		this.fetchData(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.fetchData( newProps );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		if (newProps.siteId !== this.props.siteId) {
+			this.fetchData(newProps);
 		}
 	}
 
-	fetchData = ( { siteId, isLoaded, areSettingsLoaded } ) => {
-		if ( ! siteId ) {
+	fetchData = ({ siteId, isLoaded, areSettingsLoaded }) => {
+		if (!siteId) {
 			return;
 		}
-		if ( ! isLoaded ) {
-			this.props.fetchLocations( siteId );
+		if (!isLoaded) {
+			this.props.fetchLocations(siteId);
 		}
-		if ( ! areSettingsLoaded ) {
-			this.props.fetchSettingsGeneral( siteId );
+		if (!areSettingsLoaded) {
+			this.props.fetchSettingsGeneral(siteId);
 		}
 	};
 
-	renderOption = option => {
+	renderOption = (option) => {
 		return (
-			<option key={ option.code } value={ option.code }>
-				{ option.name }
+			<option key={option.code} value={option.code}>
+				{option.name}
 			</option>
 		);
 	};
@@ -74,7 +74,7 @@ class FormStateSelectFromApi extends Component {
 		return (
 			<FormSelect autoComplete="off" disabled>
 				<option>
-					{ translate( 'N/A', { comment: "The currently-selected country doesn't have states" } ) }
+					{translate('N/A', { comment: "The currently-selected country doesn't have states" })}
 				</option>
 			</FormSelect>
 		);
@@ -82,57 +82,57 @@ class FormStateSelectFromApi extends Component {
 
 	render() {
 		const { country, locationsList, isLoaded, onChange, translate, value } = this.props;
-		let statesLabel = translate( 'State' );
-		if ( 'CA' === country ) {
-			statesLabel = translate( 'Province' );
+		let statesLabel = translate('State');
+		if ('CA' === country) {
+			statesLabel = translate('Province');
 		}
 
 		return (
 			<div>
-				<FormLabel htmlFor="state">{ statesLabel }</FormLabel>
-				{ isLoaded && ! locationsList.length ? (
+				<FormLabel htmlFor="state">{statesLabel}</FormLabel>
+				{isLoaded && !locationsList.length ? (
 					this.renderDisabled()
 				) : (
 					<FormSelect
 						autoComplete="address-level1"
 						id="state"
 						name="state"
-						onChange={ onChange }
-						value={ value }
+						onChange={onChange}
+						value={value}
 					>
 						<option key="default" value="" disabled>
-							{ translate( 'Select State', {
+							{translate('Select State', {
 								comment: 'Label for customer address, state/province dropdown',
-							} ) }
+							})}
 						</option>
-						{ locationsList.map( this.renderOption ) }
+						{locationsList.map(this.renderOption)}
 					</FormSelect>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => {
-		const address = getStoreLocation( state );
-		const areSettingsLoaded = areSettingsGeneralLoaded( state );
+	(state, props) => {
+		const address = getStoreLocation(state);
+		const areSettingsLoaded = areSettingsGeneralLoaded(state);
 
 		let { country, value } = props;
 		// If (state) value or country are empty, use the store's address
 		// Note: We only want to use te store's state if we are using
 		// the store's country, to avoid potential country-state mismatch
-		if ( isEmpty( country ) ) {
+		if (isEmpty(country)) {
 			country = address.country; // use the store's country
-			if ( isEmpty( value ) ) {
+			if (isEmpty(value)) {
 				value = address.state; // use the store's state
 			}
 		}
 
-		const site = getSelectedSiteWithFallback( state );
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site.ID || null;
-		const isLoaded = areLocationsLoaded( state, siteId );
-		const locationsList = getStates( state, country, siteId );
+		const isLoaded = areLocationsLoaded(state, siteId);
+		const locationsList = getStates(state, country, siteId);
 
 		return {
 			areSettingsLoaded,
@@ -143,5 +143,5 @@ export default connect(
 			value,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
-)( localize( FormStateSelectFromApi ) );
+	(dispatch) => bindActionCreators({ fetchLocations, fetchSettingsGeneral }, dispatch)
+)(localize(FormStateSelectFromApi));

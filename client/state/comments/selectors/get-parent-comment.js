@@ -14,8 +14,8 @@ import 'state/comments/init';
  * @param {number} commentId Comment identifier
  * @returns {object} The parent comment
  */
-export const getParentComment = ( state, siteId, postId, commentId ) => {
-	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
-	const parentCommentId = commentsTree[ commentId ]?.data.parent?.ID ?? 0;
-	return commentsTree[ parentCommentId ]?.data ?? {};
+export const getParentComment = (state, siteId, postId, commentId) => {
+	const commentsTree = getPostCommentsTree(state, siteId, postId, 'all');
+	const parentCommentId = commentsTree[commentId]?.data.parent?.ID ?? 0;
+	return commentsTree[parentCommentId]?.data ?? {};
 };

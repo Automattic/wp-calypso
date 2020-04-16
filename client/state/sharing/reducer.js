@@ -7,8 +7,8 @@ import { combineReducers } from 'state/utils';
 import publicize from './publicize/reducer';
 import services from './services/reducer';
 
-export default combineReducers( {
+export default combineReducers({
 	keyring,
 	publicize,
 	services,
-} );
+});

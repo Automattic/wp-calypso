@@ -1,3 +1,3 @@
 export const siteTypeSchema = {
-	type: [ 'string', 'null' ],
+	type: ['string', 'null'],
 };

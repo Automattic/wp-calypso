@@ -8,6 +8,6 @@ import React from 'react';
  */
 import Card from '.';
 
-export default function CompactCard( props ) {
-	return <Card { ...props } compact />;
+export default function CompactCard(props) {
+	return <Card {...props} compact />;
 }

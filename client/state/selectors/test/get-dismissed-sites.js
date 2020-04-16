@@ -3,8 +3,8 @@
  */
 import { getDismissedSites } from 'state/reader/site-dismissals/selectors';
 
-describe( 'getDismissedSites()', () => {
-	test( 'should return an array of dismissed site IDs', () => {
+describe('getDismissedSites()', () => {
+	test('should return an array of dismissed site IDs', () => {
 		const state = {
 			reader: {
 				siteDismissals: {
@@ -16,6 +16,6 @@ describe( 'getDismissedSites()', () => {
 				},
 			},
 		};
-		expect( getDismissedSites( state ) ).toEqual( [ 123, 125 ] );
-	} );
-} );
+		expect(getDismissedSites(state)).toEqual([123, 125]);
+	});
+});

@@ -19,15 +19,15 @@ import SiteIcon from 'blocks/site-icon';
  */
 import './style.scss';
 
-function PostTypeSiteInfo( { site, siteTitle } ) {
-	if ( ! site ) {
+function PostTypeSiteInfo({ site, siteTitle }) {
+	if (!site) {
 		return null;
 	}
 
 	return (
 		<div className="post-type-site-info">
-			<SiteIcon size={ 16 } site={ site } />
-			<div className="post-type-site-info__title">{ siteTitle }</div>
+			<SiteIcon size={16} site={site} />
+			<div className="post-type-site-info__title">{siteTitle}</div>
 		</div>
 	);
 }
@@ -38,12 +38,12 @@ PostTypeSiteInfo.propTypes = {
 	siteTitle: PropTypes.string,
 };
 
-export default connect( ( state, ownProps ) => {
-	const post = getPost( state, ownProps.globalId );
+export default connect((state, ownProps) => {
+	const post = getPost(state, ownProps.globalId);
 	const siteId = post ? post.site_ID : null;
 
 	return {
-		site: siteId ? getSite( state, siteId ) : null,
-		siteTitle: siteId ? getSiteTitle( state, siteId ) : null,
+		site: siteId ? getSite(state, siteId) : null,
+		siteTitle: siteId ? getSiteTitle(state, siteId) : null,
 	};
-} )( localize( PostTypeSiteInfo ) );
+})(localize(PostTypeSiteInfo));

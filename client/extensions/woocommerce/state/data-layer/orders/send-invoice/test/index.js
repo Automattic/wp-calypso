@@ -10,13 +10,13 @@ import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/ac
 import { fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'handlers', () => {
-	describe( '#fetch', () => {
-		test( 'should dispatch a post action to the API via the jetpack proxy for this siteId & orderId', () => {
-			const action = sendOrderInvoice( 123, 74 );
-			const result = fetch( action );
+describe('handlers', () => {
+	describe('#fetch', () => {
+		test('should dispatch a post action to the API via the jetpack proxy for this siteId & orderId', () => {
+			const action = sendOrderInvoice(123, 74);
+			const result = fetch(action);
 
-			expect( result ).to.eql(
+			expect(result).to.eql(
 				http(
 					{
 						method: 'POST',
@@ -34,6 +34,6 @@ describe( 'handlers', () => {
 					action
 				)
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

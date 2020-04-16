@@ -19,5 +19,5 @@ import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/map
  */
 export default compose(
 	seoTitleFromApi,
-	partialRight( get, 'options.advanced_seo_title_formats', {} )
+	partialRight(get, 'options.advanced_seo_title_formats', {})
 );

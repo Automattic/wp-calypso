@@ -5,9 +5,9 @@ module.exports = {
 			{
 				useBuiltIns: 'usage',
 				corejs: 2,
-				exclude: [ 'transform-typeof-symbol' ],
+				exclude: ['transform-typeof-symbol'],
 			},
 		],
 	],
-	plugins: [ '@babel/transform-runtime' ],
+	plugins: ['@babel/transform-runtime'],
 };

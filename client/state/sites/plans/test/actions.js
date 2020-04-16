@@ -4,31 +4,31 @@
 import { fetchSitePlansCompleted, transferPlanOwnership } from '../actions';
 import { SITE_PLANS_FETCH_COMPLETED, SITE_PLAN_OWNERSHIP_TRANSFER } from 'state/action-types';
 
-describe( 'actions', () => {
-	describe( '#fetchSitePlansCompleted()', () => {
-		test( 'should return an action object with an array of plans', () => {
+describe('actions', () => {
+	describe('#fetchSitePlansCompleted()', () => {
+		test('should return an action object with an array of plans', () => {
 			const siteId = 2916284,
-				action = fetchSitePlansCompleted( siteId, {} );
+				action = fetchSitePlansCompleted(siteId, {});
 
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId,
 				plans: [],
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#transferPlanOwnership()', () => {
-		test( 'should return an action object for transferring the plan of a site to a user', () => {
+	describe('#transferPlanOwnership()', () => {
+		test('should return an action object for transferring the plan of a site to a user', () => {
 			const siteId = 2916284;
 			const newOwnerUserId = 123456;
-			const action = transferPlanOwnership( siteId, newOwnerUserId );
+			const action = transferPlanOwnership(siteId, newOwnerUserId);
 
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: SITE_PLAN_OWNERSHIP_TRANSFER,
 				newOwnerUserId,
 				siteId,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

@@ -33,61 +33,61 @@ class Transfer extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 		wapiDomainInfo: PropTypes.object.isRequired,
 	};
 
 	renderSection() {
-		const topLevelOfTld = getTopLevelOfTld( this.props.selectedDomainName );
+		const topLevelOfTld = getTopLevelOfTld(this.props.selectedDomainName);
 		const { locked, transferProhibited } = this.props.wapiDomainInfo.data;
 		const {
 			currentUserCanManage,
 			isPendingIcannVerification,
 			transferAwayEligibleAt,
-		} = getSelectedDomain( this.props );
+		} = getSelectedDomain(this.props);
 		let section = null;
 
-		if ( ! currentUserCanManage ) {
+		if (!currentUserCanManage) {
 			section = NonOwnerCard;
-		} else if ( transferProhibited ) {
+		} else if (transferProhibited) {
 			section = TransferProhibited;
-		} else if ( transferAwayEligibleAt && moment( transferAwayEligibleAt ).isAfter() ) {
+		} else if (transferAwayEligibleAt && moment(transferAwayEligibleAt).isAfter()) {
 			section = TransferLock;
-		} else if ( 'uk' === topLevelOfTld ) {
+		} else if ('uk' === topLevelOfTld) {
 			section = SelectIpsTag;
-		} else if ( isPendingIcannVerification ) {
+		} else if (isPendingIcannVerification) {
 			section = IcannVerification;
-		} else if ( locked ) {
+		} else if (locked) {
 			section = Locked;
 		} else {
 			section = Unlocked;
 		}
 
-		return React.createElement( section, omit( this.props, [ 'children' ] ) );
+		return React.createElement(section, omit(this.props, ['children']));
 	}
 
 	render() {
-		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
+		if (this.isDataLoading()) {
+			return <DomainMainPlaceholder goBack={this.goToEdit} />;
 		}
 
 		return (
 			<Main>
-				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ this.props.translate( 'Transfer Domain' ) }
+				<Header onClick={this.goToEdit} selectedDomainName={this.props.selectedDomainName}>
+					{this.props.translate('Transfer Domain')}
 				</Header>
-				{ this.renderSection() }
+				{this.renderSection()}
 			</Main>
 		);
 	}
 
 	goToEdit = () => {
-		page( domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(domainManagementTransfer(this.props.selectedSite.slug, this.props.selectedDomainName));
 	};
 
 	isDataLoading() {
-		return ! this.props.wapiDomainInfo.hasLoadedFromServer || this.props.isRequestingSiteDomains;
+		return !this.props.wapiDomainInfo.hasLoadedFromServer || this.props.isRequestingSiteDomains;
 	}
 }
 
-export default localize( Transfer );
+export default localize(Transfer);

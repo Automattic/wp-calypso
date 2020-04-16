@@ -15,19 +15,19 @@ import isVipSite from 'state/selectors/is-vip-site';
  * @param {number} siteId Site ID
  * @returns {?boolean} True if the user can participate in the free to paid upsell
  */
-const isEligibleForFreeToPaidUpsell = ( state, siteId ) => {
-	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
-	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
-	const siteIsVipSite = isVipSite( state, siteId );
+const isEligibleForFreeToPaidUpsell = (state, siteId) => {
+	const userCanManageOptions = canCurrentUser(state, siteId, 'manage_options');
+	const siteHasMappedDomain = isMappedDomainSite(state, siteId);
+	const siteIsJetpack = isJetpackSite(state, siteId);
+	const siteIsOnFreePlan = isSiteOnFreePlan(state, siteId);
+	const siteIsVipSite = isVipSite(state, siteId);
 
 	return (
 		userCanManageOptions &&
-		! siteHasMappedDomain &&
+		!siteHasMappedDomain &&
 		siteIsOnFreePlan &&
-		! siteIsVipSite &&
-		! siteIsJetpack
+		!siteIsVipSite &&
+		!siteIsJetpack
 	);
 };
 

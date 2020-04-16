@@ -53,9 +53,9 @@ export class EmbedDialog extends React.Component {
 		/**
 		 * Reset the state to the default state
 		 */
-		this.setState( {
+		this.setState({
 			embedUrl: this.props.embedUrl,
-		} );
+		});
 
 		/**
 		 * Prepare the markup for the new embed URL
@@ -68,30 +68,30 @@ export class EmbedDialog extends React.Component {
 		 *        replacing the old URL. Troubleshooting proved to be very difficult.
 		 *        See `p1507898606000351-slack-delta-samus` for more details.
 		 */
-		this.debouncedFetchEmbedPreviewMarkup = debounce( this.fetchEmbedPreviewMarkup, 500 );
+		this.debouncedFetchEmbedPreviewMarkup = debounce(this.fetchEmbedPreviewMarkup, 500);
 
-		if ( ! this.isURLInCache( this.state.embedUrl ) ) {
-			this.setState( { isLoading: true } );
+		if (!this.isURLInCache(this.state.embedUrl)) {
+			this.setState({ isLoading: true });
 
 			// There is no need to use the debounced function here, since this action is not based on user input
-			this.fetchEmbedPreviewMarkup( this.state.embedUrl );
+			this.fetchEmbedPreviewMarkup(this.state.embedUrl);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps = newProps => {
-		if ( this.state.embedUrl !== newProps.embedUrl ) {
-			this.setState( {
+	UNSAFE_componentWillReceiveProps = (newProps) => {
+		if (this.state.embedUrl !== newProps.embedUrl) {
+			this.setState({
 				embedUrl: newProps.embedUrl,
-			} );
+			});
 		}
 	};
 
-	componentDidUpdate = ( prevProps, prevState ) => {
+	componentDidUpdate = (prevProps, prevState) => {
 		// New URL typed, fetch it from the API
-		if ( this.state.embedUrl !== prevState.embedUrl ) {
-			if ( ! this.isURLInCache( this.state.embedUrl ) ) {
-				this.setState( { isLoading: true } );
-				this.debouncedFetchEmbedPreviewMarkup( this.state.embedUrl );
+		if (this.state.embedUrl !== prevState.embedUrl) {
+			if (!this.isURLInCache(this.state.embedUrl)) {
+				this.setState({ isLoading: true });
+				this.debouncedFetchEmbedPreviewMarkup(this.state.embedUrl);
 				return;
 			}
 
@@ -100,24 +100,24 @@ export class EmbedDialog extends React.Component {
 		}
 	};
 
-	isURLInCache = url => {
-		return !! this.state.previewMarkup[ url ];
+	isURLInCache = (url) => {
+		return !!this.state.previewMarkup[url];
 	};
 
-	parseEmbedEndpointResult = url => ( error, data, headers ) => {
+	parseEmbedEndpointResult = (url) => (error, data, headers) => {
 		let cachedMarkup;
 
-		if ( data && data.result ) {
+		if (data && data.result) {
 			cachedMarkup = data;
 		} else {
-			if ( headers && headers.status === 0 ) {
+			if (headers && headers.status === 0) {
 				error = {
 					error: 'communication_error',
-					message: this.props.translate( 'Connection issue. Please reload the page and try again' ),
+					message: this.props.translate('Connection issue. Please reload the page and try again'),
 				};
-			} else if ( error && ! error.message ) {
-				error.message = this.props.translate( 'Unknown error' );
-			} else if ( data && data.error ) {
+			} else if (error && !error.message) {
+				error.message = this.props.translate('Unknown error');
+			} else if (data && data.error) {
 				error = data.error;
 			}
 
@@ -127,39 +127,39 @@ export class EmbedDialog extends React.Component {
 			};
 		}
 
-		this.setState( {
+		this.setState({
 			isLoading: false,
 			previewMarkup: {
 				...this.state.previewMarkup,
-				[ url ]: cachedMarkup,
+				[url]: cachedMarkup,
 			},
-		} );
+		});
 	};
 
-	fetchEmbedPreviewMarkup = url => {
+	fetchEmbedPreviewMarkup = (url) => {
 		// Use cached data if it's available
-		if ( this.isURLInCache( url ) || url.trim() === '' ) {
-			this.setState( { isLoading: false } );
+		if (this.isURLInCache(url) || url.trim() === '') {
+			this.setState({ isLoading: false });
 			return;
 		}
 
 		// Fetch fresh data from the API
 		wpcom
 			.undocumented()
-			.site( this.props.siteId )
-			.embeds( { embed_url: url }, this.parseEmbedEndpointResult( url ) );
+			.site(this.props.siteId)
+			.embeds({ embed_url: url }, this.parseEmbedEndpointResult(url));
 	};
 
-	onChangeEmbedUrl = event => {
-		this.setState( { embedUrl: event.target.value } );
+	onChangeEmbedUrl = (event) => {
+		this.setState({ embedUrl: event.target.value });
 	};
 
 	onUpdate = () => {
-		this.props.onUpdate( this.state.embedUrl );
+		this.props.onUpdate(this.state.embedUrl);
 	};
 
-	onKeyDownEmbedUrl = event => {
-		if ( 'Enter' !== event.key ) {
+	onKeyDownEmbedUrl = (event) => {
+		if ('Enter' !== event.key) {
 			return;
 		}
 
@@ -167,172 +167,172 @@ export class EmbedDialog extends React.Component {
 		this.onUpdate();
 	};
 
-	getError = errorObj => {
-		switch ( errorObj.error ) {
+	getError = (errorObj) => {
+		switch (errorObj.error) {
 			case 'invalid_embed_url':
-				return this.props.translate( 'The Embed URL parameter must be a valid URL.' );
+				return this.props.translate('The Embed URL parameter must be a valid URL.');
 			default:
 				return errorObj.message;
 		}
 	};
 
 	constrainEmbedDimensions() {
-		if ( ! this.iframe || ! this.viewref ) {
+		if (!this.iframe || !this.viewref) {
 			return;
 		}
 
-		const view = ReactDom.findDOMNode( this.viewref );
-		const iframe = ReactDom.findDOMNode( this.iframe );
-		if ( ! iframe.contentDocument ) {
+		const view = ReactDom.findDOMNode(this.viewref);
+		const iframe = ReactDom.findDOMNode(this.iframe);
+		if (!iframe.contentDocument) {
 			return;
 		}
 
-		const embed = iframe.contentDocument.querySelector( 'iframe' );
+		const embed = iframe.contentDocument.querySelector('iframe');
 
-		if ( ! embed || ! embed.width ) {
+		if (!embed || !embed.width) {
 			return;
 		}
 
-		const width = parseInt( embed.width, 10 );
-		if ( width <= view.clientWidth ) {
+		const width = parseInt(embed.width, 10);
+		if (width <= view.clientWidth) {
 			return;
 		}
 		embed.style.width = view.clientWidth + 'px';
 
-		if ( embed.height ) {
-			const proportion = parseInt( embed.height, 10 ) / width;
-			embed.style.height = Math.round( view.clientWidth * proportion ) + 'px';
+		if (embed.height) {
+			const proportion = parseInt(embed.height, 10) / width;
+			embed.style.height = Math.round(view.clientWidth * proportion) + 'px';
 		}
 	}
 
 	setHtml() {
 		const embedURL = this.state.embedUrl;
-		if ( ! this.iframe || ! this.isURLInCache( embedURL ) ) {
+		if (!this.iframe || !this.isURLInCache(embedURL)) {
 			return;
 		}
 
-		const embedData = this.state.previewMarkup[ embedURL ];
+		const embedData = this.state.previewMarkup[embedURL];
 
-		if ( embedData.isError ) {
+		if (embedData.isError) {
 			return;
 		}
 
-		const iframe = ReactDom.findDOMNode( this.iframe );
+		const iframe = ReactDom.findDOMNode(this.iframe);
 
-		iframe.removeAttribute( 'sandbox' );
+		iframe.removeAttribute('sandbox');
 
-		if ( ! iframe.contentDocument ) {
+		if (!iframe.contentDocument) {
 			return;
 		}
 
-		this.setState( { iframeLoading: true } );
+		this.setState({ iframeLoading: true });
 
-		const content = pick( embedData, [ 'result', 'scripts', 'styles' ] );
+		const content = pick(embedData, ['result', 'scripts', 'styles']);
 
 		content.body = content.result; // generateEmbedFrameMarkup required `body`, which in this call is named `result`
 
-		const markup = generateEmbedFrameMarkup( content );
+		const markup = generateEmbedFrameMarkup(content);
 		iframe.contentDocument.open();
-		iframe.contentDocument.write( markup );
+		iframe.contentDocument.write(markup);
 		iframe.contentDocument.body.style.width = '100%';
 		iframe.contentDocument.body.style.overflow = 'hidden';
 		iframe.contentDocument.close();
 
-		iframe.setAttribute( 'sandbox', 'allow-scripts' );
+		iframe.setAttribute('sandbox', 'allow-scripts');
 
 		this.constrainEmbedDimensions();
 	}
 
 	iframeOnLoad = () => {
-		this.setState( { iframeLoading: false } );
+		this.setState({ iframeLoading: false });
 	};
 
-	handleIframeRef = iframe => {
+	handleIframeRef = (iframe) => {
 		this.iframe = iframe;
 		this.setHtml();
 	};
 
-	handleViewRef = view => {
+	handleViewRef = (view) => {
 		this.viewref = view;
 	};
 
 	render() {
 		const { translate } = this.props;
 		const dialogButtons = [
-			<Button onClick={ this.props.onCancel }>{ translate( 'Cancel' ) }</Button>,
-			<Button primary onClick={ this.onUpdate }>
-				{ translate( 'Update' ) }
+			<Button onClick={this.props.onCancel}>{translate('Cancel')}</Button>,
+			<Button primary onClick={this.onUpdate}>
+				{translate('Update')}
 			</Button>,
 		];
 
 		const isLoading = this.state.isLoading || this.state.iframeLoading;
-		const isURLInCache = this.isURLInCache( this.state.embedUrl );
-		const cachedMarkup = isURLInCache ? this.state.previewMarkup[ this.state.embedUrl ] : null;
+		const isURLInCache = this.isURLInCache(this.state.embedUrl);
+		const cachedMarkup = isURLInCache ? this.state.previewMarkup[this.state.embedUrl] : null;
 		const isError = cachedMarkup && cachedMarkup.isError;
 
-		const statusClassNames = classNames( 'embed__status', {
+		const statusClassNames = classNames('embed__status', {
 			isError,
 			isLoading,
-		} );
+		});
 
-		const previewBlockClassNames = classNames( 'embed__preview', {
+		const previewBlockClassNames = classNames('embed__preview', {
 			isLoading: this.state.iframeLoading,
-		} );
+		});
 
 		return (
 			<Dialog
-				autoFocus={ false }
-				buttons={ dialogButtons }
+				autoFocus={false}
+				buttons={dialogButtons}
 				additionalClassNames="embed__modal"
-				isVisible={ this.props.isVisible }
-				onCancel={ this.props.onCancel }
-				onClose={ this.props.onCancel }
+				isVisible={this.props.isVisible}
+				onCancel={this.props.onCancel}
+				onClose={this.props.onCancel}
 			>
 				<div className="embed__header">
-					<h3 className="embed__title">{ translate( 'Embed URL' ) }</h3>
+					<h3 className="embed__title">{translate('Embed URL')}</h3>
 
 					<FormTextInput
-						autoFocus={ true }
+						autoFocus={true}
 						className="embed__url"
-						defaultValue={ this.props.embedUrl }
-						onChange={ this.onChangeEmbedUrl }
-						onKeyDown={ this.onKeyDownEmbedUrl }
+						defaultValue={this.props.embedUrl}
+						onChange={this.onChangeEmbedUrl}
+						onKeyDown={this.onKeyDownEmbedUrl}
 					/>
 				</div>
 				<div className="embed__preview-container">
-					{ ( isLoading || isError ) && (
-						<div className={ statusClassNames }>
-							{ isLoading && <Spinner /> }
-							{ isError && (
+					{(isLoading || isError) && (
+						<div className={statusClassNames}>
+							{isLoading && <Spinner />}
+							{isError && (
 								<div className="embed__status-error">
-									{ this.getError( cachedMarkup.renderMarkup ) }
+									{this.getError(cachedMarkup.renderMarkup)}
 								</div>
-							) }
+							)}
 						</div>
-					) }
+					)}
 
-					{ ! this.state.isLoading && cachedMarkup && ! isError && (
-						<div ref={ this.handleViewRef } className={ previewBlockClassNames }>
+					{!this.state.isLoading && cachedMarkup && !isError && (
+						<div ref={this.handleViewRef} className={previewBlockClassNames}>
 							<ResizableIframe
-								ref={ this.handleIframeRef }
-								onResize={ this.props.onResize }
-								onLoad={ this.iframeOnLoad }
+								ref={this.handleIframeRef}
+								onResize={this.props.onResize}
+								onLoad={this.iframeOnLoad}
 								frameBorder="0"
 								seamless
 								width="100%"
 							/>
 						</div>
-					) }
+					)}
 				</div>
 			</Dialog>
 		);
 	}
 }
 
-const connectedEmbedDialog = connect( ( state, { siteId } ) => {
+const connectedEmbedDialog = connect((state, { siteId }) => {
 	return {
-		siteId: siteId ? siteId : getSelectedSiteId( state ),
+		siteId: siteId ? siteId : getSelectedSiteId(state),
 	};
-} )( EmbedDialog );
+})(EmbedDialog);
 
-export default localize( connectedEmbedDialog );
+export default localize(connectedEmbedDialog);

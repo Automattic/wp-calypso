@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getSiteIconId from 'state/selectors/get-site-icon-id';
 
-describe( 'getSiteIconId()', () => {
-	test( 'should return null if neither the site nor settings are known', () => {
+describe('getSiteIconId()', () => {
+	test('should return null if neither the site nor settings are known', () => {
 		const id = getSiteIconId(
 			{
 				sites: {
@@ -22,10 +22,10 @@ describe( 'getSiteIconId()', () => {
 			2916284
 		);
 
-		expect( id ).to.be.null;
-	} );
+		expect(id).to.be.null;
+	});
 
-	test( 'should prefer site state', () => {
+	test('should prefer site state', () => {
 		const id = getSiteIconId(
 			{
 				sites: {
@@ -50,10 +50,10 @@ describe( 'getSiteIconId()', () => {
 			2916284
 		);
 
-		expect( id ).to.equal( 42 );
-	} );
+		expect(id).to.equal(42);
+	});
 
-	test( 'should prefer site state, even if unset', () => {
+	test('should prefer site state, even if unset', () => {
 		const id = getSiteIconId(
 			{
 				sites: {
@@ -75,10 +75,10 @@ describe( 'getSiteIconId()', () => {
 			2916284
 		);
 
-		expect( id ).to.be.null;
-	} );
+		expect(id).to.be.null;
+	});
 
-	test( 'should fall back to settings state', () => {
+	test('should fall back to settings state', () => {
 		const id = getSiteIconId(
 			{
 				sites: {
@@ -95,6 +95,6 @@ describe( 'getSiteIconId()', () => {
 			2916284
 		);
 
-		expect( id ).to.equal( 42 );
-	} );
-} );
+		expect(id).to.equal(42);
+	});
+});

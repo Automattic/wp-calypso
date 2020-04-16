@@ -12,19 +12,19 @@ import dompurify from 'dompurify';
  */
 import sanitizeHtml, { ALLOWED_TAGS, ALLOWED_ATTR } from '../sanitize-html';
 
-describe( 'sanitizeHtml', () => {
+describe('sanitizeHtml', () => {
 	const html = `<html><body><a href="#" malformed="attribute">Link</a></body></html>`;
 
-	test( 'should remove any html tags and attributes which are not allowed', () => {
-		expect( sanitizeHtml( html ) ).toEqual( {
+	test('should remove any html tags and attributes which are not allowed', () => {
+		expect(sanitizeHtml(html)).toEqual({
 			__html: '<a href="#">Link</a>',
-		} );
-	} );
+		});
+	});
 
-	test( 'should call dompurify.sanitize with list of allowed tags and attributes', () => {
-		const sanitizeMock = jest.spyOn( dompurify, 'sanitize' );
+	test('should call dompurify.sanitize with list of allowed tags and attributes', () => {
+		const sanitizeMock = jest.spyOn(dompurify, 'sanitize');
 
-		sanitizeHtml( html );
-		expect( sanitizeMock ).toHaveBeenCalledWith( html, { ALLOWED_ATTR, ALLOWED_TAGS } );
-	} );
-} );
+		sanitizeHtml(html);
+		expect(sanitizeMock).toHaveBeenCalledWith(html, { ALLOWED_ATTR, ALLOWED_TAGS });
+	});
+});

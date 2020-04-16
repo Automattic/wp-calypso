@@ -15,7 +15,7 @@ import {
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, redirectWithoutSite, sites, siteSelection } from 'my-sites/controller';
 
-export default function() {
+export default function () {
 	page(
 		'/migrate',
 		ensureFeatureFlag,
@@ -30,10 +30,10 @@ export default function() {
 	page(
 		'/migrate/:site_id',
 		ensureFeatureFlag,
-		setStep( 'input' ),
+		setStep('input'),
 		siteSelection,
 		navigation,
-		redirectWithoutSite( '/migrate' ),
+		redirectWithoutSite('/migrate'),
 		migrateSite,
 		makeLayout,
 		clientRender
@@ -42,10 +42,10 @@ export default function() {
 	page(
 		'/migrate/from/:sourceSiteId/to/:site_id',
 		ensureFeatureFlag,
-		setStep( 'confirm' ),
+		setStep('confirm'),
 		siteSelection,
 		navigation,
-		redirectWithoutSite( '/migrate' ),
+		redirectWithoutSite('/migrate'),
 		migrateSite,
 		makeLayout,
 		clientRender
@@ -54,10 +54,10 @@ export default function() {
 	page(
 		'/migrate/choose/:site_id',
 		ensureFeatureFlag,
-		setStep( 'migrateOrImport' ),
+		setStep('migrateOrImport'),
 		siteSelection,
 		navigation,
-		redirectWithoutSite( '/migrate' ),
+		redirectWithoutSite('/migrate'),
 		migrateSite,
 		makeLayout,
 		clientRender
@@ -66,15 +66,15 @@ export default function() {
 	page(
 		'/migrate/upgrade/from/:sourceSiteId/to/:site_id',
 		ensureFeatureFlag,
-		setStep( 'upgrade' ),
+		setStep('upgrade'),
 		siteSelection,
 		navigation,
-		redirectWithoutSite( '/migrate' ),
+		redirectWithoutSite('/migrate'),
 		migrateSite,
 		makeLayout,
 		clientRender
 	);
 
 	// Fallback to handle /migrate/* routes that aren't previously matched
-	page( '/migrate/*', () => page.redirect( '/migrate' ) );
+	page('/migrate/*', () => page.redirect('/migrate'));
 }

@@ -67,13 +67,13 @@ class EmailManagement extends React.Component {
 	render() {
 		const { canManageSite, selectedDomainName, selectedSiteId } = this.props;
 
-		if ( ! canManageSite ) {
+		if (!canManageSite) {
 			return (
 				<Main>
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						title={this.props.translate('You are not authorized to view this page')}
+						illustration={'/calypso/images/illustrations/illustration-404.svg'}
 					/>
 				</Main>
 			);
@@ -81,20 +81,20 @@ class EmailManagement extends React.Component {
 
 		return (
 			<Main className="email-management" wideLayout>
-				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
-				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				<DocumentHead title={ this.props.translate( 'Email' ) } />
+				{selectedSiteId && <QueryGSuiteUsers siteId={selectedSiteId} />}
+				{selectedSiteId && <QuerySiteDomains siteId={selectedSiteId} />}
+				<DocumentHead title={this.props.translate('Email')} />
 				<SidebarNavigation />
-				{ ! selectedDomainName && (
+				{!selectedDomainName && (
 					<FormattedHeader
 						className="email-management__page-heading"
-						headerText={ this.props.translate( 'Email' ) }
+						headerText={this.props.translate('Email')}
 						align="left"
 					/>
-				) }
+				)}
 
-				{ this.headerOrPlansNavigation() }
-				{ this.content() }
+				{this.headerOrPlansNavigation()}
+				{this.content()}
 			</Main>
 		);
 	}
@@ -102,43 +102,40 @@ class EmailManagement extends React.Component {
 	headerOrPlansNavigation() {
 		const { cart, selectedSiteSlug, selectedDomainName, translate } = this.props;
 
-		if ( selectedDomainName ) {
+		if (selectedDomainName) {
 			return (
-				<Header onClick={ this.goToEditOrList } selectedDomainName={ selectedDomainName }>
-					{ translate( 'Email' ) }
+				<Header onClick={this.goToEditOrList} selectedDomainName={selectedDomainName}>
+					{translate('Email')}
 				</Header>
 			);
 		}
 
 		return (
-			<PlansNavigation
-				cart={ cart }
-				path={ emailManagement( selectedSiteSlug, selectedDomainName ) }
-			/>
+			<PlansNavigation cart={cart} path={emailManagement(selectedSiteSlug, selectedDomainName)} />
 		);
 	}
 
 	content() {
 		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
 
-		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
+		if (!hasGSuiteUsersLoaded || !hasSiteDomainsLoaded) {
 			return <Placeholder />;
 		}
 
-		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
+		const domainList = selectedDomainName ? [getSelectedDomain(this.props)] : domains;
 
-		if ( domainList.some( hasGSuiteWithUs ) ) {
+		if (domainList.some(hasGSuiteWithUs)) {
 			return this.googleAppsUsersCard();
 		}
 
-		if ( hasGSuiteSupportedDomain( domainList ) ) {
+		if (hasGSuiteSupportedDomain(domainList)) {
 			return this.addGSuiteCta();
 		}
 
-		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
+		const emailForwardingDomain = getEligibleEmailForwardingDomain(selectedDomainName, domains);
 
-		if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
-			return this.addEmailForwardingCard( emailForwardingDomain );
+		if (emailForwardingDomain && isGSuiteRestricted() && selectedDomainName) {
+			return this.addEmailForwardingCard(emailForwardingDomain);
 		}
 
 		return this.emptyContent();
@@ -149,23 +146,23 @@ class EmailManagement extends React.Component {
 
 		const defaultEmptyContentProps = {
 			illustration: customDomainImage,
-			action: translate( 'Add a custom domain' ),
+			action: translate('Add a custom domain'),
 			actionURL: '/domains/add/' + selectedSiteSlug,
 		};
 
 		const emptyContentProps = { ...defaultEmptyContentProps, ...this.getEmptyContentProps() };
 
-		return <EmptyContent { ...emptyContentProps } />;
+		return <EmptyContent {...emptyContentProps} />;
 	}
 
 	getEmptyContentProps() {
 		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
 
-		const selectedDomain = getSelectedDomain( this.props );
+		const selectedDomain = getSelectedDomain(this.props);
 
-		if ( selectedDomain && hasGSuiteWithAnotherProvider( selectedDomain ) ) {
+		if (selectedDomain && hasGSuiteWithAnotherProvider(selectedDomain)) {
 			return {
-				title: translate( 'G Suite is not supported on this domain' ),
+				title: translate('G Suite is not supported on this domain'),
 				line: translate(
 					"You're using G Suite with this domain, so you'll use that to create custom email addresses. Visit your G Suite provider to manage your settings."
 				),
@@ -173,22 +170,22 @@ class EmailManagement extends React.Component {
 		}
 
 		const emailForwardingAction = {
-			secondaryAction: translate( 'Add email forwarding' ),
-			secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
+			secondaryAction: translate('Add email forwarding'),
+			secondaryActionURL: emailManagementForwarding(selectedSiteSlug, selectedDomainName),
 		};
 
 		if (
 			selectedDomain &&
-			isMappedDomain( selectedDomain ) &&
-			! isMappedDomainWithWpcomNameservers( selectedDomain )
+			isMappedDomain(selectedDomain) &&
+			!isMappedDomainWithWpcomNameservers(selectedDomain)
 		) {
 			return {
-				title: translate( 'Use the powerful features of G Suite on this domain' ),
+				title: translate('Use the powerful features of G Suite on this domain'),
 				line: translate(
 					'To enable G Suite on %(domain)s, please configure it to use WordPress.com name servers.',
 					{ args: { domain: selectedDomainName } }
 				),
-				action: translate( 'How to change your name servers' ),
+				action: translate('How to change your name servers'),
 				actionURL: localizeUrl(
 					'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
 				),
@@ -197,16 +194,16 @@ class EmailManagement extends React.Component {
 			};
 		}
 
-		if ( selectedDomainName ) {
+		if (selectedDomainName) {
 			return {
-				title: translate( 'G Suite is not supported on this domain' ),
-				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
+				title: translate('G Suite is not supported on this domain'),
+				line: translate('Only domains registered with WordPress.com are eligible for G Suite.'),
 				...emailForwardingAction,
 			};
 		}
 
 		return {
-			title: translate( 'Enable powerful email features.' ),
+			title: translate('Enable powerful email features.'),
 			line: translate(
 				'To set up email forwarding, G Suite, and other email ' +
 					'services for your site, upgrade your site’s web address ' +
@@ -220,34 +217,34 @@ class EmailManagement extends React.Component {
 
 		return (
 			<GSuiteUsersCard
-				domains={ domains }
-				gsuiteUsers={ gsuiteUsers }
-				selectedDomainName={ selectedDomainName }
+				domains={domains}
+				gsuiteUsers={gsuiteUsers}
+				selectedDomainName={selectedDomainName}
 			/>
 		);
 	}
 
 	addGSuiteCta() {
 		const { domains, selectedDomainName } = this.props;
-		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
-		const gsuiteDomainName = getEligibleGSuiteDomain( selectedDomainName, domains );
+		const emailForwardingDomain = getEligibleEmailForwardingDomain(selectedDomainName, domains);
+		const gsuiteDomainName = getEligibleGSuiteDomain(selectedDomainName, domains);
 
 		return (
 			<Fragment>
-				<GSuitePurchaseCta domainName={ gsuiteDomainName } />
+				<GSuitePurchaseCta domainName={gsuiteDomainName} />
 
-				{ emailForwardingDomain && this.addEmailForwardingCard( emailForwardingDomain ) }
+				{emailForwardingDomain && this.addEmailForwardingCard(emailForwardingDomain)}
 			</Fragment>
 		);
 	}
 
-	addEmailForwardingCard( domain ) {
+	addEmailForwardingCard(domain) {
 		const { selectedSiteSlug, translate } = this.props;
 
 		return (
 			<VerticalNav>
-				<VerticalNavItem path={ emailManagementForwarding( selectedSiteSlug, domain ) }>
-					{ translate( 'Email Forwarding' ) }
+				<VerticalNavItem path={emailManagementForwarding(selectedSiteSlug, domain)}>
+					{translate('Email Forwarding')}
 				</VerticalNavItem>
 			</VerticalNav>
 		);
@@ -256,23 +253,23 @@ class EmailManagement extends React.Component {
 	goToEditOrList = () => {
 		const { selectedDomainName, selectedSiteSlug } = this.props;
 
-		if ( selectedDomainName ) {
-			page( domainManagementEdit( selectedSiteSlug, selectedDomainName ) );
+		if (selectedDomainName) {
+			page(domainManagementEdit(selectedSiteSlug, selectedDomainName));
 		} else {
-			page( domainManagementList( selectedSiteSlug ) );
+			page(domainManagementList(selectedSiteSlug));
 		}
 	};
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 	return {
-		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
-		domains: getDomainsBySiteId( state, selectedSiteId ),
-		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
-		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+		canManageSite: canCurrentUser(state, selectedSiteId, 'manage_options'),
+		domains: getDomainsBySiteId(state, selectedSiteId),
+		gsuiteUsers: getGSuiteUsers(state, selectedSiteId),
+		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers(state, selectedSiteId),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains(state, selectedSiteId),
 		selectedSiteId,
-		selectedSiteSlug: getSelectedSiteSlug( state ),
+		selectedSiteSlug: getSelectedSiteSlug(state),
 	};
-}, {} )( localize( EmailManagement ) );
+}, {})(localize(EmailManagement));

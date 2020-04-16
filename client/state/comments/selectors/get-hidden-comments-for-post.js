@@ -13,13 +13,13 @@ import { getPostCommentItems } from 'state/comments/selectors/get-post-comment-i
 import 'state/comments/init';
 
 export const getHiddenCommentsForPost = treeSelect(
-	( state, siteId, postId ) => [
-		getPostCommentItems( state, siteId, postId ),
-		getExpansionsForPost( state, siteId, postId ),
+	(state, siteId, postId) => [
+		getPostCommentItems(state, siteId, postId),
+		getExpansionsForPost(state, siteId, postId),
 	],
-	( [ comments, expanded ] ) => {
-		const commentsById = keyBy( comments, 'ID' );
+	([comments, expanded]) => {
+		const commentsById = keyBy(comments, 'ID');
 
-		return pickBy( commentsById, comment => ! expanded?.[ comment.ID ] );
+		return pickBy(commentsById, (comment) => !expanded?.[comment.ID]);
 	}
 );

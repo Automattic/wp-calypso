@@ -33,9 +33,9 @@ class QueryPostLikes extends Component {
 		this.request();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId || this.props.postId !== nextProps.postId ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId || this.props.postId !== nextProps.postId) {
+			this.request(nextProps);
 		}
 	}
 
@@ -51,23 +51,23 @@ class QueryPostLikes extends Component {
 		} = this.props
 	) => {
 		if (
-			! lastUpdated ||
+			!lastUpdated ||
 			Date.now() - lastUpdated > maxAgeSeconds * 1000 ||
-			( needsLikers && ! hasPostLikes )
+			(needsLikers && !hasPostLikes)
 		) {
-			requestLikes( siteId, postId, maxAgeSeconds );
+			requestLikes(siteId, postId, maxAgeSeconds);
 		}
 	};
 
 	render() {
-		return <Interval period={ this.props.maxAgeSeconds + 1 } onTick={ this.request } />;
+		return <Interval period={this.props.maxAgeSeconds + 1} onTick={this.request} />;
 	}
 }
 
 export default connect(
-	( state, { siteId, postId } ) => ( {
-		lastUpdated: getPostLikeLastUpdated( state, siteId, postId ),
-		hasPostLikes: getPostLikes( state, siteId, postId ) !== null,
-	} ),
+	(state, { siteId, postId }) => ({
+		lastUpdated: getPostLikeLastUpdated(state, siteId, postId),
+		hasPostLikes: getPostLikes(state, siteId, postId) !== null,
+	}),
 	{ requestPostLikes }
-)( QueryPostLikes );
+)(QueryPostLikes);

@@ -26,11 +26,11 @@ export type PostType = 'page' | 'post' | string;
 export type CommentId = number;
 
 // Language stuff
-export type Lazy< T > = () => T;
-export type TimeoutMS = NonUndefined< Parameters< typeof setTimeout >[ 1 ] >;
-export type TimestampMS = ReturnType< typeof Date.now >;
-export type TimerHandle = ReturnType< typeof setTimeout >;
-export type IntervalHandle = ReturnType< typeof setInterval >;
+export type Lazy<T> = () => T;
+export type TimeoutMS = NonUndefined<Parameters<typeof setTimeout>[1]>;
+export type TimestampMS = ReturnType<typeof Date.now>;
+export type TimerHandle = ReturnType<typeof setTimeout>;
+export type IntervalHandle = ReturnType<typeof setInterval>;
 
 /**
  * Calypso application state

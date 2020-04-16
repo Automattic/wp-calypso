@@ -8,4 +8,4 @@ import { get } from 'lodash';
  * @param {number} siteId site ID
  * @returns {object} An object that represents the current status for site rename requests.
  */
-export default ( state, siteId ) => get( state, [ 'siteAddressChange', 'status', siteId ], {} );
+export default (state, siteId) => get(state, ['siteAddressChange', 'status', siteId], {});

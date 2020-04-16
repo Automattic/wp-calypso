@@ -13,10 +13,6 @@ import { get } from 'lodash';
  * @param {string} aggregation - Type of aggregation (e.g. 'daily')
  * @returns {number} the corresponding stats, or null if not found
  */
-export default function getGoogleMyBusinessStats( state, siteId, statType, interval, aggregation ) {
-	return get(
-		state,
-		[ 'googleMyBusiness', siteId, 'stats', statType, interval, aggregation ],
-		null
-	);
+export default function getGoogleMyBusinessStats(state, siteId, statType, interval, aggregation) {
+	return get(state, ['googleMyBusiness', siteId, 'stats', statType, interval, aggregation], null);
 }

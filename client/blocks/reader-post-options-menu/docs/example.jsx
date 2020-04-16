@@ -27,8 +27,8 @@ export default class ReaderPostOptionsMenuExample extends React.Component {
 				<h2>
 					<a href="/devdocs/blocks/reader-post-options-menu">Reader Post Options Menu</a>
 				</h2>
-				<div style={ wrapperStyles }>
-					<ReaderPostOptionsMenu position="bottom left" post={ post } />
+				<div style={wrapperStyles}>
+					<ReaderPostOptionsMenu position="bottom left" post={post} />
 				</div>
 			</div>
 		);

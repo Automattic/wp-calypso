@@ -18,15 +18,14 @@ class PostUnavailable extends React.PureComponent {
 					' ' +
 					'Please request membership to display these posts in Reader.'
 			),
-			default: this.props.translate( 'An error occurred loading this post.' ),
+			default: this.props.translate('An error occurred loading this post.'),
 		};
 	}
 
 	render() {
-		const errorMessage =
-			this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
+		const errorMessage = this.errors[this.props.post.errorCode || 'default'] || this.errors.default;
 
-		if ( this.props.post.statusCode === 404 ) {
+		if (this.props.post.statusCode === 404) {
 			// don't render a card for 404s. These are posts that we once had but were deleted.
 			return null;
 		}
@@ -43,10 +42,10 @@ class PostUnavailable extends React.PureComponent {
 				</div>
 
 				<div className="reader__post-excerpt">
-					<p>{ errorMessage }</p>
-					{ config.isEnabled( 'reader/full-errors' ) ? (
-						<pre>{ JSON.stringify( this.props.post, null, '  ' ) }</pre>
-					) : null }
+					<p>{errorMessage}</p>
+					{config.isEnabled('reader/full-errors') ? (
+						<pre>{JSON.stringify(this.props.post, null, '  ')}</pre>
+					) : null}
 				</div>
 			</Card>
 		);
@@ -54,4 +53,4 @@ class PostUnavailable extends React.PureComponent {
 	}
 }
 
-export default localize( PostUnavailable );
+export default localize(PostUnavailable);

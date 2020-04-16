@@ -15,9 +15,9 @@ import Toggle from 'components/forms/form-toggle';
  */
 import './compact.scss';
 
-const CompactFormToggle = ( { className, children, ...otherProps } ) => (
-	<Toggle { ...otherProps } className={ classNames( className, 'is-compact' ) }>
-		{ children }
+const CompactFormToggle = ({ className, children, ...otherProps }) => (
+	<Toggle {...otherProps} className={classNames(className, 'is-compact')}>
+		{children}
 	</Toggle>
 );
 

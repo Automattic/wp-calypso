@@ -25,8 +25,8 @@ import { getPlanRawPrice } from 'state/plans/selectors';
  * @returns {Array} Purchases
  */
 export const getPurchases = createSelector(
-	state => createPurchasesArray( state.purchases.data ),
-	state => [ state.purchases.data ]
+	(state) => createPurchasesArray(state.purchases.data),
+	(state) => [state.purchases.data]
 );
 
 /**
@@ -36,9 +36,9 @@ export const getPurchases = createSelector(
  * @param   {number} userId      the user id
  * @returns {object} the matching purchases if there are some
  */
-export const getUserPurchases = ( state, userId ) =>
+export const getUserPurchases = (state, userId) =>
 	state.purchases.hasLoadedUserPurchasesFromServer &&
-	getPurchases( state ).filter( purchase => purchase.userId === userId );
+	getPurchases(state).filter((purchase) => purchase.userId === userId);
 
 /**
  * Returns the server error for site or user purchases (if there is one)
@@ -46,7 +46,7 @@ export const getUserPurchases = ( state, userId ) =>
  * @param   {object} state - current state object
  * @returns {object} an error object from the server
  */
-export const getPurchasesError = state => get( state, 'purchases.error', '' );
+export const getPurchasesError = (state) => get(state, 'purchases.error', '');
 
 /**
  * Returns a Purchase object from the state using its id
@@ -55,9 +55,9 @@ export const getPurchasesError = state => get( state, 'purchases.error', '' );
  * @param   {number} purchaseId  the purchase id
  * @returns {object} the matching purchase if there is one
  */
-export const getByPurchaseId = ( state, purchaseId ) =>
-	getPurchases( state )
-		.filter( purchase => purchase.id === purchaseId )
+export const getByPurchaseId = (state, purchaseId) =>
+	getPurchases(state)
+		.filter((purchase) => purchase.id === purchaseId)
 		.shift();
 
 /**
@@ -67,8 +67,8 @@ export const getByPurchaseId = ( state, purchaseId ) =>
  * @param   {number} siteId      the site id
  * @returns {object} the matching purchases if there are some
  */
-export const getSitePurchases = ( state, siteId ) =>
-	getPurchases( state ).filter( purchase => purchase.siteId === siteId );
+export const getSitePurchases = (state, siteId) =>
+	getPurchases(state).filter((purchase) => purchase.siteId === siteId);
 
 /**
  * Whether a site has an active Jetpack backup purchase.
@@ -77,10 +77,10 @@ export const getSitePurchases = ( state, siteId ) =>
  * @param   {number} siteId      the site id
  * @returns {boolean} True if the site has an active Jetpack Backup purchase, false otherwise.
  */
-export const siteHasBackupProductPurchase = ( state, siteId ) => {
+export const siteHasBackupProductPurchase = (state, siteId) => {
 	return some(
-		getSitePurchases( state, siteId ),
-		purchase => purchase.active && isJetpackBackup( purchase )
+		getSitePurchases(state, siteId),
+		(purchase) => purchase.active && isJetpackBackup(purchase)
 	);
 };
 
@@ -95,48 +95,48 @@ export const siteHasBackupProductPurchase = ( state, siteId ) => {
  * @param   {object} subscriptionPurchase  subscription purchase object
  * @returns {object} domain purchase if there is one, null if none found or not a subscription object passed
  */
-export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
+export const getIncludedDomainPurchase = (state, subscriptionPurchase) => {
 	if (
-		! subscriptionPurchase ||
-		! isSubscription( subscriptionPurchase ) ||
-		getIncludedDomainPurchaseAmount( subscriptionPurchase )
+		!subscriptionPurchase ||
+		!isSubscription(subscriptionPurchase) ||
+		getIncludedDomainPurchaseAmount(subscriptionPurchase)
 	) {
 		return null;
 	}
 
 	const { includedDomain } = subscriptionPurchase;
-	const sitePurchases = getSitePurchases( state, subscriptionPurchase.siteId );
+	const sitePurchases = getSitePurchases(state, subscriptionPurchase.siteId);
 	const domainPurchase = find(
 		sitePurchases,
-		purchase =>
-			( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) &&
+		(purchase) =>
+			(isDomainMapping(purchase) || isDomainRegistration(purchase)) &&
 			includedDomain === purchase.meta
 	);
 
 	return domainPurchase;
 };
 
-export const getDowngradePlanFromPurchase = purchase => {
-	const plan = getPlan( purchase.productSlug );
-	if ( ! plan ) {
+export const getDowngradePlanFromPurchase = (purchase) => {
+	const plan = getPlan(purchase.productSlug);
+	if (!plan) {
 		return null;
 	}
 
-	const newPlanKeys = findPlansKeys( {
+	const newPlanKeys = findPlansKeys({
 		group: plan.group,
 		type: TYPE_PERSONAL,
 		term: plan.term,
-	} );
+	});
 
-	return getPlan( newPlanKeys[ 0 ] );
+	return getPlan(newPlanKeys[0]);
 };
 
-export const getDowngradePlanRawPrice = ( state, purchase ) => {
-	const plan = getDowngradePlanFromPurchase( purchase );
-	if ( ! plan ) {
+export const getDowngradePlanRawPrice = (state, purchase) => {
+	const plan = getDowngradePlanFromPurchase(purchase);
+	if (!plan) {
 		return null;
 	}
-	return getPlanRawPrice( state, plan.getProductId() );
+	return getPlanRawPrice(state, plan.getProductId());
 };
 
 /**
@@ -146,12 +146,12 @@ export const getDowngradePlanRawPrice = ( state, purchase ) => {
  * @param   {number}  userId      the user id
  * @returns {boolean} if the user currently has any purchases.
  */
-export const isUserPaid = ( state, userId ) =>
-	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state, userId ).length;
+export const isUserPaid = (state, userId) =>
+	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases(state, userId).length;
 
-export const isFetchingUserPurchases = state => state.purchases.isFetchingUserPurchases;
-export const isFetchingSitePurchases = state => state.purchases.isFetchingSitePurchases;
-export const hasLoadedUserPurchasesFromServer = state =>
+export const isFetchingUserPurchases = (state) => state.purchases.isFetchingUserPurchases;
+export const isFetchingSitePurchases = (state) => state.purchases.isFetchingSitePurchases;
+export const hasLoadedUserPurchasesFromServer = (state) =>
 	state.purchases.hasLoadedUserPurchasesFromServer;
-export const hasLoadedSitePurchasesFromServer = state =>
+export const hasLoadedSitePurchasesFromServer = (state) =>
 	state.purchases.hasLoadedSitePurchasesFromServer;

@@ -28,40 +28,40 @@ class EditorTermSelector extends Component {
 		compact: PropTypes.bool,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.boundOnTermsChange = this.onTermsChange.bind( this );
+	constructor(props) {
+		super(props);
+		this.boundOnTermsChange = this.onTermsChange.bind(this);
 	}
 
-	onAddTerm = term => {
+	onAddTerm = (term) => {
 		const { postId, taxonomyName, siteId } = this.props;
-		this.props.addTermForPost( siteId, taxonomyName, term, postId );
+		this.props.addTermForPost(siteId, taxonomyName, term, postId);
 	};
 
-	onTermsChange( selectedTerm ) {
+	onTermsChange(selectedTerm) {
 		const { postTerms, taxonomyName, siteId, postId } = this.props;
-		const terms = cloneDeep( postTerms ) || {};
+		const terms = cloneDeep(postTerms) || {};
 
 		// map call transforms object returned by API into an array
-		const taxonomyTerms = toArray( terms[ taxonomyName ] );
-		const existingSelectionIndex = findIndex( taxonomyTerms, { ID: selectedTerm.ID } );
-		if ( existingSelectionIndex !== -1 ) {
-			taxonomyTerms.splice( existingSelectionIndex, 1 );
+		const taxonomyTerms = toArray(terms[taxonomyName]);
+		const existingSelectionIndex = findIndex(taxonomyTerms, { ID: selectedTerm.ID });
+		if (existingSelectionIndex !== -1) {
+			taxonomyTerms.splice(existingSelectionIndex, 1);
 		} else {
-			taxonomyTerms.push( selectedTerm );
+			taxonomyTerms.push(selectedTerm);
 		}
 
-		this.props.editPost( siteId, postId, {
+		this.props.editPost(siteId, postId, {
 			terms: {
-				[ taxonomyName ]: taxonomyTerms,
+				[taxonomyName]: taxonomyTerms,
 			},
-		} );
+		});
 	}
 
 	getSelectedTermIds() {
 		const { postTerms, taxonomyName } = this.props;
-		const selectedTerms = postTerms ? postTerms[ taxonomyName ] : [];
-		return map( selectedTerms, 'ID' );
+		const selectedTerms = postTerms ? postTerms[taxonomyName] : [];
+		return map(selectedTerms, 'ID');
 	}
 
 	render() {
@@ -71,29 +71,29 @@ class EditorTermSelector extends Component {
 			<div>
 				<TermTreeSelector
 					analyticsPrefix="Editor"
-					onChange={ this.boundOnTermsChange }
-					selected={ this.getSelectedTermIds() }
-					taxonomy={ taxonomyName }
-					multiple={ true }
-					compact={ compact }
+					onChange={this.boundOnTermsChange}
+					selected={this.getSelectedTermIds()}
+					taxonomy={taxonomyName}
+					multiple={true}
+					compact={compact}
 				/>
-				{ canEditTerms && <AddTerm taxonomy={ taxonomyName } onSuccess={ this.onAddTerm } /> }
+				{canEditTerms && <AddTerm taxonomy={taxonomyName} onSuccess={this.onAddTerm} />}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
 
 		return {
-			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
-			canEditTerms: canCurrentUser( state, siteId, 'manage_categories' ),
+			postTerms: getEditedPostValue(state, siteId, postId, 'terms'),
+			canEditTerms: canCurrentUser(state, siteId, 'manage_categories'),
 			siteId,
 			postId,
 		};
 	},
 	{ editPost, addTermForPost }
-)( EditorTermSelector );
+)(EditorTermSelector);

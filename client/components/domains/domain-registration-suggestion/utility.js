@@ -17,34 +17,34 @@ export const VALID_MATCH_REASONS = [
 	'tld-common',
 ];
 
-function sortMatchReasons( matchReasons ) {
-	return [ ...matchReasons ].sort(
-		( a, b ) => VALID_MATCH_REASONS.indexOf( a ) - VALID_MATCH_REASONS.indexOf( b )
+function sortMatchReasons(matchReasons) {
+	return [...matchReasons].sort(
+		(a, b) => VALID_MATCH_REASONS.indexOf(a) - VALID_MATCH_REASONS.indexOf(b)
 	);
 }
 
-function getMatchReasonPhrasesMap( tld ) {
-	return new Map( [
-		[ 'tld-exact', translate( 'Extension ".%(tld)s" matches your query', { args: { tld } } ) ],
+function getMatchReasonPhrasesMap(tld) {
+	return new Map([
+		['tld-exact', translate('Extension ".%(tld)s" matches your query', { args: { tld } })],
 		[
 			'tld-similar',
-			translate( 'Extension ".%(tld)s" closely matches your query', { args: { tld } } ),
+			translate('Extension ".%(tld)s" closely matches your query', { args: { tld } }),
 		],
-		[ 'exact-match', translate( 'Exact match' ) ],
-		[ 'similar-match', translate( 'Close match' ) ],
+		['exact-match', translate('Exact match')],
+		['similar-match', translate('Close match')],
 		[
 			'tld-common',
 			tld === 'com'
-				? translate( '".com" is the most common extension' )
-				: translate( '".%(tld)s" is a common extension', { args: { tld } } ),
+				? translate('".com" is the most common extension')
+				: translate('".%(tld)s" is a common extension', { args: { tld } }),
 		],
-	] );
+	]);
 }
 
-export function parseMatchReasons( domain, matchReasons ) {
-	const matchReasonsMap = getMatchReasonPhrasesMap( getTld( domain ) );
+export function parseMatchReasons(domain, matchReasons) {
+	const matchReasonsMap = getMatchReasonPhrasesMap(getTld(domain));
 
-	return sortMatchReasons( matchReasons )
-		.filter( matchReason => matchReasonsMap.has( matchReason ) )
-		.map( matchReason => matchReasonsMap.get( matchReason ) );
+	return sortMatchReasons(matchReasons)
+		.filter((matchReason) => matchReasonsMap.has(matchReason))
+		.map((matchReason) => matchReasonsMap.get(matchReason));
 }

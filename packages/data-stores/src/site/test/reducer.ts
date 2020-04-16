@@ -12,7 +12,7 @@
 import { sites } from '../reducer';
 import { SiteDetails, SiteError } from '../types';
 
-describe( 'Site', () => {
+describe('Site', () => {
 	const siteDetailsResponse: SiteDetails = {
 		ID: 12345,
 		name: 'My test site',
@@ -25,35 +25,35 @@ describe( 'Site', () => {
 		message: 'Unknown blog',
 	};
 
-	it( 'returns the correct default state', () => {
-		const state = sites( undefined, { type: 'TEST_ACTION' } );
-		expect( state ).toEqual( {} );
-	} );
+	it('returns the correct default state', () => {
+		const state = sites(undefined, { type: 'TEST_ACTION' });
+		expect(state).toEqual({});
+	});
 
-	it( 'returns site data keyed by id', () => {
-		const state = sites( undefined, {
+	it('returns site data keyed by id', () => {
+		const state = sites(undefined, {
 			type: 'RECEIVE_SITE',
 			siteId: 12345,
 			response: siteDetailsResponse,
-		} );
-		expect( state ).toEqual( {
+		});
+		expect(state).toEqual({
 			12345: siteDetailsResponse,
-		} );
-	} );
+		});
+	});
 
-	it( 'clears data keyed by id, and no other data is affected', () => {
+	it('clears data keyed by id, and no other data is affected', () => {
 		const originalState = {
 			12345: siteDetailsResponse,
 			23456: siteDetailsResponse,
 		};
-		const updatedState = sites( originalState, {
+		const updatedState = sites(originalState, {
 			type: 'RECEIVE_SITE_FAILED',
 			siteId: 23456,
 			response: siteErrorResponse,
-		} );
+		});
 
-		expect( updatedState ).toEqual( {
+		expect(updatedState).toEqual({
 			12345: siteDetailsResponse,
-		} );
-	} );
-} );
+		});
+	});
+});

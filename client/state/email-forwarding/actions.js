@@ -21,14 +21,14 @@ import 'state/data-layer/wpcom/email-forwarding/get';
 import 'state/data-layer/wpcom/email-forwarding/remove';
 import 'state/data-layer/wpcom/email-forwarding/resend-email-verification';
 
-export const getEmailForwards = domainName => {
+export const getEmailForwards = (domainName) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST,
 		domainName,
 	};
 };
 
-export const receiveGetEmailForwardsSuccess = ( domainName, response ) => {
+export const receiveGetEmailForwardsSuccess = (domainName, response) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 		domainName,
@@ -36,7 +36,7 @@ export const receiveGetEmailForwardsSuccess = ( domainName, response ) => {
 	};
 };
 
-export const receiveGetEmailForwardsFailure = ( domainName, error ) => {
+export const receiveGetEmailForwardsFailure = (domainName, error) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST_FAILURE,
 		domainName,
@@ -44,7 +44,7 @@ export const receiveGetEmailForwardsFailure = ( domainName, error ) => {
 	};
 };
 
-export const addEmailForward = ( domainName, mailbox, destination ) => {
+export const addEmailForward = (domainName, mailbox, destination) => {
 	return {
 		type: EMAIL_FORWARDING_ADD_REQUEST,
 		domainName,
@@ -53,7 +53,7 @@ export const addEmailForward = ( domainName, mailbox, destination ) => {
 	};
 };
 
-export const receiveAddEmailForwardSuccess = ( domainName, mailbox, verified ) => {
+export const receiveAddEmailForwardSuccess = (domainName, mailbox, verified) => {
 	return {
 		type: EMAIL_FORWARDING_ADD_REQUEST_SUCCESS,
 		domainName,
@@ -62,7 +62,7 @@ export const receiveAddEmailForwardSuccess = ( domainName, mailbox, verified ) =
 	};
 };
 
-export const receiveAddEmailForwardFailure = ( domainName, mailbox, destination, error ) => {
+export const receiveAddEmailForwardFailure = (domainName, mailbox, destination, error) => {
 	return {
 		type: EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
 		domainName,
@@ -72,7 +72,7 @@ export const receiveAddEmailForwardFailure = ( domainName, mailbox, destination,
 	};
 };
 
-export const removeEmailForward = ( domainName, mailbox ) => {
+export const removeEmailForward = (domainName, mailbox) => {
 	return {
 		type: EMAIL_FORWARDING_REMOVE_REQUEST,
 		domainName,
@@ -80,7 +80,7 @@ export const removeEmailForward = ( domainName, mailbox ) => {
 	};
 };
 
-export const receiveRemoveEmailForwardSuccess = ( domainName, mailbox ) => {
+export const receiveRemoveEmailForwardSuccess = (domainName, mailbox) => {
 	return {
 		type: EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
 		domainName,
@@ -88,7 +88,7 @@ export const receiveRemoveEmailForwardSuccess = ( domainName, mailbox ) => {
 	};
 };
 
-export const receiveRemoveEmailForwardFailure = ( domainName, mailbox, error ) => {
+export const receiveRemoveEmailForwardFailure = (domainName, mailbox, error) => {
 	return {
 		type: EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 		domainName,
@@ -97,7 +97,7 @@ export const receiveRemoveEmailForwardFailure = ( domainName, mailbox, error ) =
 	};
 };
 
-export const resendVerificationEmail = ( domainName, mailbox, destination ) => {
+export const resendVerificationEmail = (domainName, mailbox, destination) => {
 	return {
 		type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST,
 		domainName,
@@ -106,7 +106,7 @@ export const resendVerificationEmail = ( domainName, mailbox, destination ) => {
 	};
 };
 
-export const receiveResendVerificationEmailSuccess = ( domainName, mailbox, destination ) => {
+export const receiveResendVerificationEmailSuccess = (domainName, mailbox, destination) => {
 	return {
 		type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
 		domainName,
@@ -115,12 +115,7 @@ export const receiveResendVerificationEmailSuccess = ( domainName, mailbox, dest
 	};
 };
 
-export const receiveResendVerificationEmailFailure = (
-	domainName,
-	mailbox,
-	destination,
-	error
-) => {
+export const receiveResendVerificationEmailFailure = (domainName, mailbox, destination, error) => {
 	return {
 		type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
 		domainName,

@@ -10,8 +10,8 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'state/action-types';
 
-const isFetchingSettings = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+const isFetchingSettings = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH:
 			return true;
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS:
@@ -21,9 +21,9 @@ const isFetchingSettings = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	settings,
 	isFetchingSettings,
-} );
+});

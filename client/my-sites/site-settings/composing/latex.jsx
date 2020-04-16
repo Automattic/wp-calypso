@@ -45,29 +45,29 @@ class Latex extends Component {
 
 		return (
 			<Card className="composing__card site-settings__card">
-				<QueryJetpackConnection siteId={ selectedSiteId } />
+				<QueryJetpackConnection siteId={selectedSiteId} />
 				<SupportInfo
-					text={ translate(
+					text={translate(
 						'LaTeX is a powerful markup language for writing complex mathematical equations and formulas.'
-					) }
+					)}
 					link="https://jetpack.com/support/beautiful-math/"
 				/>
 				<JetpackModuleToggle
-					siteId={ selectedSiteId }
+					siteId={selectedSiteId}
 					moduleSlug="latex"
-					label={ translate(
+					label={translate(
 						'Use the LaTeX markup language to write mathematical equations and formulas'
-					) }
-					disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
+					)}
+					disabled={isRequestingSettings || isSavingSettings || moduleUnavailable}
 				/>
 			</Card>
 		);
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const siteInDevMode = isJetpackSiteInDevelopmentMode(state, selectedSiteId);
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 		state,
 		selectedSiteId,
@@ -76,7 +76,7 @@ export default connect( state => {
 
 	return {
 		selectedSiteId,
-		afterTheDeadlineModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'latex' ),
+		afterTheDeadlineModuleActive: !!isJetpackModuleActive(state, selectedSiteId, 'latex'),
 		moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 	};
-} )( localize( Latex ) );
+})(localize(Latex));

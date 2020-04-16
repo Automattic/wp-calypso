@@ -7,8 +7,8 @@
  */
 import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 
-describe( 'isSiteComingSoon()', () => {
-	test( 'should return false if neither the site nor settings are known', () => {
+describe('isSiteComingSoon()', () => {
+	test('should return false if neither the site nor settings are known', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -26,10 +26,10 @@ describe( 'isSiteComingSoon()', () => {
 			2916285
 		);
 
-		expect( isComingSoon ).toBe( false );
-	} );
+		expect(isComingSoon).toBe(false);
+	});
 
-	test( 'should prefer site state', () => {
+	test('should prefer site state', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -52,10 +52,10 @@ describe( 'isSiteComingSoon()', () => {
 			2916284
 		);
 
-		expect( isComingSoon ).toBe( true );
-	} );
+		expect(isComingSoon).toBe(true);
+	});
 
-	test( 'should always return false for non-private sites', () => {
+	test('should always return false for non-private sites', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -78,10 +78,10 @@ describe( 'isSiteComingSoon()', () => {
 			2916284
 		);
 
-		expect( isComingSoon ).toBe( false );
-	} );
+		expect(isComingSoon).toBe(false);
+	});
 
-	test( 'should fall back to settings state', () => {
+	test('should fall back to settings state', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -99,10 +99,10 @@ describe( 'isSiteComingSoon()', () => {
 			2916284
 		);
 
-		expect( isComingSoon ).toBe( true );
-	} );
+		expect(isComingSoon).toBe(true);
+	});
 
-	test( 'should return false for public sites', () => {
+	test('should return false for public sites', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -124,10 +124,10 @@ describe( 'isSiteComingSoon()', () => {
 			2916284
 		);
 
-		expect( isComingSoon ).toBe( false );
-	} );
+		expect(isComingSoon).toBe(false);
+	});
 
-	test( 'should return true for coming soon sites', () => {
+	test('should return true for coming soon sites', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -146,6 +146,6 @@ describe( 'isSiteComingSoon()', () => {
 			2916284
 		);
 
-		expect( isComingSoon ).toBe( true );
-	} );
-} );
+		expect(isComingSoon).toBe(true);
+	});
+});

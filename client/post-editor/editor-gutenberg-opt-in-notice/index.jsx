@@ -34,23 +34,23 @@ class EditorGutenbergOptInNotice extends Component {
 		dismissNotice: PropTypes.func,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = { hasOpenedSidebar: false };
 	}
 
-	static getDerivedStateFromProps( props, state ) {
-		if ( ! state.hasOpenedSidebar && props.sidebarOpen ) {
+	static getDerivedStateFromProps(props, state) {
+		if (!state.hasOpenedSidebar && props.sidebarOpen) {
 			return { hasOpenedSidebar: true };
 		}
 		return null;
 	}
 
-	dismissNotice = () => this.props.dismissNotice( 'gutenberg_nudge_notice_dismissed', true );
+	dismissNotice = () => this.props.dismissNotice('gutenberg_nudge_notice_dismissed', true);
 
 	render() {
 		if (
-			! this.props.optInEnabled ||
+			!this.props.optInEnabled ||
 			this.props.noticeDismissed ||
 			this.state.hasOpenedSidebar ||
 			isMobile()
@@ -64,27 +64,24 @@ class EditorGutenbergOptInNotice extends Component {
 			<Notice
 				className="editor-gutenberg-opt-in-notice"
 				status="is-info"
-				onDismissClick={ this.dismissNotice }
-				text={ translate( 'Try the new block editor and level up your layout.' ) }
+				onDismissClick={this.dismissNotice}
+				text={translate('Try the new block editor and level up your layout.')}
 			>
-				<NoticeAction onClick={ showDialog }>{ translate( 'Learn More' ) }</NoticeAction>
+				<NoticeAction onClick={showDialog}>{translate('Learn More')}</NoticeAction>
 			</Notice>
 		);
 	}
 }
 
-const mapStateToProps = state => ( {
-	optInEnabled: isGutenbergOptInEnabled( state, getSelectedSiteId( state ) ),
-	noticeDismissed: getPreference( state, 'gutenberg_nudge_notice_dismissed' ),
-	sidebarOpen: 'open' === getPreference( state, 'editor-sidebar' ),
-} );
+const mapStateToProps = (state) => ({
+	optInEnabled: isGutenbergOptInEnabled(state, getSelectedSiteId(state)),
+	noticeDismissed: getPreference(state, 'gutenberg_nudge_notice_dismissed'),
+	sidebarOpen: 'open' === getPreference(state, 'editor-sidebar'),
+});
 
 const mapDispatchToProps = {
 	showDialog: showGutenbergOptInDialog,
 	dismissNotice: savePreference,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( EditorGutenbergOptInNotice ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(EditorGutenbergOptInNotice));

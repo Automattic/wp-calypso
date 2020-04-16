@@ -12,16 +12,16 @@ export default class MarketingSurvey {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( id, siteId, wpcom ) {
-		if ( ! id ) {
-			throw new TypeError( '`id` survey is not correctly defined' );
+	constructor(id, siteId, wpcom) {
+		if (!id) {
+			throw new TypeError('`id` survey is not correctly defined');
 		}
 
-		if ( ! ( this instanceof MarketingSurvey ) ) {
-			return new MarketingSurvey( id, siteId, wpcom );
+		if (!(this instanceof MarketingSurvey)) {
+			return new MarketingSurvey(id, siteId, wpcom);
 		}
 
-		if ( typeof siteId === 'object' ) {
+		if (typeof siteId === 'object') {
 			this.wpcom = siteId;
 		} else {
 			this._siteId = siteId;
@@ -32,26 +32,18 @@ export default class MarketingSurvey {
 		this._responses = {};
 	}
 
-	setSiteId( siteId ) {
+	setSiteId(siteId) {
 		this._siteId = siteId;
 		return this;
 	}
 
-	addResponse( key, value ) {
-		this._responses = Object.assign(
-			{},
-			this._responses,
-			{ [ key ]: value }
-		);
+	addResponse(key, value) {
+		this._responses = Object.assign({}, this._responses, { [key]: value });
 		return this;
 	}
 
-	addResponses( responses ) {
-		this._responses = Object.assign(
-			{},
-			this._responses,
-			responses
-		);
+	addResponses(responses) {
+		this._responses = Object.assign({}, this._responses, responses);
 		return this;
 	}
 
@@ -63,10 +55,10 @@ export default class MarketingSurvey {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	submit( query = {}, body = {}, fn ) {
+	submit(query = {}, body = {}, fn) {
 		body.survey_id = this._id;
 		body.site_id = body.site_id || this._siteId;
 		body.survey_responses = body.survey_responses || this._responses;
-		return this.wpcom.req.post( `${ root }`, query, body, fn );
+		return this.wpcom.req.post(`${root}`, query, body, fn);
 	}
 }

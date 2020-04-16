@@ -12,10 +12,10 @@ import 'state/themes/init';
  * @param  {object}  query  Theme query object
  * @returns {?number}        Total number of found items
  */
-export function getThemesFoundForQuery( state, siteId, query ) {
-	if ( ! state.themes.queries[ siteId ] ) {
+export function getThemesFoundForQuery(state, siteId, query) {
+	if (!state.themes.queries[siteId]) {
 		return null;
 	}
 
-	return state.themes.queries[ siteId ]?.getFound( query );
+	return state.themes.queries[siteId]?.getFound(query);
 }

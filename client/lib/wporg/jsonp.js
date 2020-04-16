@@ -8,7 +8,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'jsonp' );
+const debug = debugFactory('jsonp');
 import { stringify } from 'qs';
 
 /**
@@ -33,11 +33,11 @@ function noop() {}
  * @param {object} query params
  * @param {Function} optional callback
  */
-function jsonp( url, query, fn ) {
+function jsonp(url, query, fn) {
 	let prefix = '__jp',
 		timeout = 60000,
 		enc = encodeURIComponent,
-		target = document.getElementsByTagName( 'script' )[ 0 ] || document.head,
+		target = document.getElementsByTagName('script')[0] || document.head,
 		script,
 		timer,
 		id;
@@ -45,49 +45,49 @@ function jsonp( url, query, fn ) {
 	// generate a unique id for this request
 	id = prefix + count++;
 
-	if ( timeout ) {
-		timer = setTimeout( function() {
+	if (timeout) {
+		timer = setTimeout(function () {
 			cleanup();
-			if ( fn ) {
-				fn( new Error( 'Timeout' ) );
+			if (fn) {
+				fn(new Error('Timeout'));
 			}
-		}, timeout );
+		}, timeout);
 	}
 
 	function cleanup() {
-		if ( script.parentNode ) {
-			script.parentNode.removeChild( script );
+		if (script.parentNode) {
+			script.parentNode.removeChild(script);
 		}
 
-		window[ id ] = noop;
-		if ( timer ) {
-			clearTimeout( timer );
+		window[id] = noop;
+		if (timer) {
+			clearTimeout(timer);
 		}
 	}
 
 	function cancel() {
-		if ( window[ id ] ) {
+		if (window[id]) {
 			cleanup();
 		}
 	}
 
-	window[ id ] = function( data ) {
-		debug( 'jsonp got', data );
+	window[id] = function (data) {
+		debug('jsonp got', data);
 		cleanup();
-		if ( fn ) {
-			fn( null, data );
+		if (fn) {
+			fn(null, data);
 		}
 	};
 
 	// add qs component
-	url += '=' + enc( id ) + '?' + stringify( query );
+	url += '=' + enc(id) + '?' + stringify(query);
 
-	debug( 'jsonp req "%s"', url );
+	debug('jsonp req "%s"', url);
 
 	// create script
-	script = document.createElement( 'script' );
+	script = document.createElement('script');
 	script.src = url;
-	target.parentNode.insertBefore( script, target );
+	target.parentNode.insertBefore(script, target);
 
 	return cancel;
 }

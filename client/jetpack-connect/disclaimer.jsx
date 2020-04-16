@@ -18,7 +18,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 	};
 
 	handleClickDisclaimer = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
+		this.props.recordTracksEvent('calypso_jpc_disclaimer_link_click');
 	};
 
 	render() {
@@ -28,8 +28,8 @@ class JetpackConnectDisclaimer extends PureComponent {
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				onClick={ this.handleClickDisclaimer }
-				href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
+				onClick={this.handleClickDisclaimer}
+				href={localizeUrl('https://jetpack.com/support/what-data-does-jetpack-sync/')}
 				className="jetpack-connect__sso-actions-modal-link"
 			/>
 		);
@@ -46,10 +46,10 @@ class JetpackConnectDisclaimer extends PureComponent {
 			}
 		);
 
-		return <p className="jetpack-connect__tos-link">{ text }</p>;
+		return <p className="jetpack-connect__tos-link">{text}</p>;
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
-} )( localize( JetpackConnectDisclaimer ) );
+})(localize(JetpackConnectDisclaimer));

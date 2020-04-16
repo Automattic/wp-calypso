@@ -4,6 +4,6 @@
 
 import { get } from 'lodash';
 
-export function getCurrentFlowName( state ) {
-	return get( state, 'signup.flow.currentFlowName', '' );
+export function getCurrentFlowName(state) {
+	return get(state, 'signup.flow.currentFlowName', '');
 }

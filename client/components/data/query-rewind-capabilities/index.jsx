@@ -14,8 +14,8 @@ export class QueryRewindCapabilities extends Component {
 		this.request();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId !== this.props.siteId ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId !== this.props.siteId) {
 			this.request();
 		}
 	}
@@ -23,11 +23,11 @@ export class QueryRewindCapabilities extends Component {
 	request() {
 		const { requestCapabilities, siteId } = this.props;
 
-		if ( ! siteId ) {
+		if (!siteId) {
 			return;
 		}
 
-		requestCapabilities( siteId );
+		requestCapabilities(siteId);
 	}
 
 	render() {
@@ -39,4 +39,4 @@ const mapDispatchToProps = {
 	requestCapabilities: requestRewindCapabilities,
 };
 
-export default connect( null, mapDispatchToProps )( QueryRewindCapabilities );
+export default connect(null, mapDispatchToProps)(QueryRewindCapabilities);

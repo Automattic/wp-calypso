@@ -17,8 +17,8 @@ import { DEFAULT_THEME_QUERY } from './constants';
  * @param  {string}  key   Key to check
  * @returns {boolean}       Whether key value matches default query or is null
  */
-function isDefaultOrNullQueryValue( value, key ) {
-	return value === undefined || value === null || DEFAULT_THEME_QUERY[ key ] === value;
+function isDefaultOrNullQueryValue(value, key) {
+	return value === undefined || value === null || DEFAULT_THEME_QUERY[key] === value;
 }
 
 /**
@@ -32,8 +32,8 @@ export default class ThemeQueryKey extends PaginatedQueryKey {
 	 * @param  {object} query Query object
 	 * @returns {string}       Serialized query
 	 */
-	static stringify( query ) {
-		return super.stringify( omitBy( query, isDefaultOrNullQueryValue ) );
+	static stringify(query) {
+		return super.stringify(omitBy(query, isDefaultOrNullQueryValue));
 	}
 
 	/**
@@ -42,7 +42,7 @@ export default class ThemeQueryKey extends PaginatedQueryKey {
 	 * @param  {string} key Serialized query
 	 * @returns {object}     Query object
 	 */
-	static parse( key ) {
-		return omitBy( super.parse( key ), isDefaultOrNullQueryValue );
+	static parse(key) {
+		return omitBy(super.parse(key), isDefaultOrNullQueryValue);
 	}
 }

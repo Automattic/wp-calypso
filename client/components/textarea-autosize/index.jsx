@@ -18,26 +18,26 @@ export default class TextareaAutosize extends Component {
 	};
 
 	componentDidMount() {
-		autosize( this.refs.textarea );
+		autosize(this.refs.textarea);
 	}
 
 	componentWillUnmount() {
-		autosize.destroy( this.refs.textarea );
+		autosize.destroy(this.refs.textarea);
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.value !== prevProps.value ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.value !== prevProps.value) {
 			this.resize();
 		}
 	}
 
 	resize() {
-		autosize.update( this.refs.textarea );
+		autosize.update(this.refs.textarea);
 	}
 
 	render() {
-		const classes = classnames( 'textarea-autosize', this.props.className );
+		const classes = classnames('textarea-autosize', this.props.className);
 
-		return <textarea ref="textarea" { ...this.props } className={ classes } />;
+		return <textarea ref="textarea" {...this.props} className={classes} />;
 	}
 }

@@ -9,41 +9,41 @@ import {
 
 import { fetchOrderTransaction, setOrderTransaction, setOrderTransactionError } from '../actions';
 
-describe( '/state/order-transactions/actions', () => {
+describe('/state/order-transactions/actions', () => {
 	const orderId = 123;
 
-	describe( 'fetchOrderTransaction()', () => {
-		test( 'should return expected action.', () => {
-			expect( fetchOrderTransaction( orderId ) ).toEqual( {
+	describe('fetchOrderTransaction()', () => {
+		test('should return expected action.', () => {
+			expect(fetchOrderTransaction(orderId)).toEqual({
 				type: ORDER_TRANSACTION_FETCH,
 				orderId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'setOrderTransaction()', () => {
+	describe('setOrderTransaction()', () => {
 		const transaction = {
 			status: 'success',
 		};
-		test( 'should return expected action.', () => {
-			expect( setOrderTransaction( orderId, transaction ) ).toEqual( {
+		test('should return expected action.', () => {
+			expect(setOrderTransaction(orderId, transaction)).toEqual({
 				type: ORDER_TRANSACTION_SET,
 				orderId,
 				transaction,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'setOrderTransactionError()', () => {
-		test( 'should return expected action.', () => {
+	describe('setOrderTransactionError()', () => {
+		test('should return expected action.', () => {
 			const error = {
 				message: 'something goes wrong!',
 			};
-			expect( setOrderTransactionError( orderId, error ) ).toEqual( {
+			expect(setOrderTransactionError(orderId, error)).toEqual({
 				type: ORDER_TRANSACTION_FETCH_ERROR,
 				orderId,
 				error,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

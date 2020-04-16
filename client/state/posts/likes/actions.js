@@ -22,7 +22,7 @@ import 'state/posts/init';
  * @param  {number}   postId Post ID
  * @returns {object}        Action
  */
-export function requestPostLikes( siteId, postId ) {
+export function requestPostLikes(siteId, postId) {
 	return {
 		type: POST_LIKES_REQUEST,
 		siteId,
@@ -37,12 +37,12 @@ export function requestPostLikes( siteId, postId ) {
  * @param {number} postId Post ID
  * @returns {object} The like action
  */
-export const like = ( siteId, postId, { source } = {} ) => ( {
+export const like = (siteId, postId, { source } = {}) => ({
 	type: POST_LIKE,
 	siteId,
 	postId,
 	source,
-} );
+});
 
 /**
  * Create an unlike action for a given site and post
@@ -51,34 +51,34 @@ export const like = ( siteId, postId, { source } = {} ) => ( {
  * @param {number} postId Post ID
  * @returns {object} The unlike action
  */
-export const unlike = ( siteId, postId, { source } = {} ) => ( {
+export const unlike = (siteId, postId, { source } = {}) => ({
 	type: POST_UNLIKE,
 	siteId,
 	postId,
 	source,
-} );
+});
 
-export const receiveLikes = ( siteId, postId, { likes, iLike, found } ) => ( {
+export const receiveLikes = (siteId, postId, { likes, iLike, found }) => ({
 	type: POST_LIKES_RECEIVE,
 	siteId,
 	postId,
 	likes,
 	iLike,
 	found,
-} );
+});
 
-export const addLiker = ( siteId, postId, likeCount, liker ) => ( {
+export const addLiker = (siteId, postId, likeCount, liker) => ({
 	type: POST_LIKES_ADD_LIKER,
 	siteId,
 	postId,
 	likeCount,
 	liker,
-} );
+});
 
-export const removeLiker = ( siteId, postId, likeCount, liker ) => ( {
+export const removeLiker = (siteId, postId, likeCount, liker) => ({
 	type: POST_LIKES_REMOVE_LIKER,
 	siteId,
 	postId,
 	likeCount,
 	liker,
-} );
+});

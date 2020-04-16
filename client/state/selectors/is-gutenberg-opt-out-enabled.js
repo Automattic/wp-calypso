@@ -9,11 +9,11 @@ import { get } from 'lodash';
 import getSelectedEditor from 'state/selectors/get-selected-editor';
 import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
 
-export const isGutenbergOptOutEnabled = ( state, siteId ) => {
+export const isGutenbergOptOutEnabled = (state, siteId) => {
 	return (
-		get( state, [ 'gutenbergOptInOut', siteId, 'optOut' ], false ) &&
-		getSelectedEditor( state, siteId ) !== 'classic' &&
-		! isClassicEditorForced( state, siteId )
+		get(state, ['gutenbergOptInOut', siteId, 'optOut'], false) &&
+		getSelectedEditor(state, siteId) !== 'classic' &&
+		!isClassicEditorForced(state, siteId)
 	);
 };
 

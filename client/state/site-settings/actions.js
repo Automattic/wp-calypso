@@ -24,7 +24,7 @@ import 'state/data-layer/wpcom/sites/homepage';
  * @param  {object} settings The site settings object
  * @returns {object}        Action object
  */
-export function receiveSiteSettings( siteId, settings ) {
+export function receiveSiteSettings(siteId, settings) {
 	return {
 		type: SITE_SETTINGS_RECEIVE,
 		siteId,
@@ -39,7 +39,7 @@ export function receiveSiteSettings( siteId, settings ) {
  * @param  {object} settings The updated site settings
  * @returns {object}        Action object
  */
-export function updateSiteSettings( siteId, settings ) {
+export function updateSiteSettings(siteId, settings) {
 	return {
 		type: SITE_SETTINGS_UPDATE,
 		siteId,
@@ -54,66 +54,66 @@ export function updateSiteSettings( siteId, settings ) {
  * @param  {number} siteId Site ID
  * @returns {Function}      Action thunk
  */
-export function requestSiteSettings( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function requestSiteSettings(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_SETTINGS_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.settings( siteId )
-			.then( ( { name, description, settings } ) => {
+			.settings(siteId)
+			.then(({ name, description, settings }) => {
 				const savedSettings = {
-					...normalizeSettings( settings ),
+					...normalizeSettings(settings),
 					blogname: name,
 					blogdescription: description,
 				};
 
-				dispatch( receiveSiteSettings( siteId, savedSettings ) );
-				dispatch( {
+				dispatch(receiveSiteSettings(siteId, savedSettings));
+				dispatch({
 					type: SITE_SETTINGS_REQUEST_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_SETTINGS_REQUEST_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }
 
-export function saveSiteSettings( siteId, settings ) {
-	return dispatch => {
-		dispatch( {
+export function saveSiteSettings(siteId, settings) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_SETTINGS_SAVE,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.settings( siteId, 'post', settings )
-			.then( body => {
-				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
-				dispatch( {
+			.settings(siteId, 'post', settings)
+			.then((body) => {
+				dispatch(updateSiteSettings(siteId, normalizeSettings(body.updated)));
+				dispatch({
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId,
-				} );
+				});
 
 				return body;
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId,
 					error,
-				} );
+				});
 
 				return error;
-			} );
+			});
 	};
 }

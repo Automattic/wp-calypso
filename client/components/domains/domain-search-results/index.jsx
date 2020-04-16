@@ -40,7 +40,7 @@ class DomainSearchResults extends React.Component {
 		cart: PropTypes.object,
 		products: PropTypes.object,
 		selectedSite: PropTypes.object,
-		availableDomain: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		availableDomain: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 		suggestions: PropTypes.array,
 		isLoadingSuggestions: PropTypes.bool.isRequired,
 		placeholderQuantity: PropTypes.number.isRequired,
@@ -62,7 +62,7 @@ class DomainSearchResults extends React.Component {
 
 	componentDidUpdate() {
 		// If the signup site preview is showing, turn it off when domain search results are visible
-		if ( this.props.isSignupStep && this.props.isSitePreviewVisible ) {
+		if (this.props.isSignupStep && this.props.isSitePreviewVisible) {
 			this.props.hideSitePreview();
 		}
 	}
@@ -77,10 +77,10 @@ class DomainSearchResults extends React.Component {
 			selectedSite,
 			translate,
 		} = this.props;
-		const availabilityElementClasses = classNames( {
+		const availabilityElementClasses = classNames({
 			'domain-search-results__domain-is-available': availableDomain,
-			'domain-search-results__domain-not-available': ! availableDomain,
-		} );
+			'domain-search-results__domain-not-available': !availableDomain,
+		});
 		const suggestions = this.props.suggestions || [];
 		const {
 			MAPPABLE,
@@ -92,7 +92,7 @@ class DomainSearchResults extends React.Component {
 			UNKNOWN,
 		} = domainAvailability;
 
-		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
+		const domain = get(availableDomain, 'domain_name', lastDomainSearched);
 
 		let availabilityElement, offer;
 
@@ -111,19 +111,19 @@ class DomainSearchResults extends React.Component {
 				],
 				lastDomainStatus
 			) &&
-			get( this.props, 'products.domain_map', false )
+			get(this.props, 'products.domain_map', false)
 		) {
 			// eslint-disable-next-line jsx-a11y/anchor-is-valid
-			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
+			const components = { a: <a href="#" onClick={this.handleAddMapping} />, small: <small /> };
 
 			// If the domain is available we shouldn't offer to let people purchase mappings for it.
-			if ( TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE === lastDomainStatus ) {
-				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
+			if (TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE === lastDomainStatus) {
+				if (isDomainMappingFree(selectedSite) || isNextDomainFree(this.props.cart)) {
 					offer = translate(
 						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
 						{ args: { domain }, components }
 					);
-				} else if ( ! domainsWithPlansOnly ) {
+				} else if (!domainsWithPlansOnly) {
 					offer = translate(
 						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
 						{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
@@ -137,63 +137,63 @@ class DomainSearchResults extends React.Component {
 			}
 
 			// Domain Mapping not supported for Store NUX yet.
-			if ( this.props.siteDesignType === DESIGN_TYPE_STORE ) {
+			if (this.props.siteDesignType === DESIGN_TYPE_STORE) {
 				offer = null;
 			}
 
-			let domainUnavailableMessage = includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
-				? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
-						args: { tld: getTld( domain ) },
+			let domainUnavailableMessage = includes([TLD_NOT_SUPPORTED, UNKNOWN], lastDomainStatus)
+				? translate('{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
+						args: { tld: getTld(domain) },
 						components: { strong: <strong /> },
-				  } )
-				: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
+				  })
+				: translate('{{strong}}%(domain)s{{/strong}} is taken.', {
 						args: { domain },
 						components: { strong: <strong /> },
-				  } );
+				  });
 
-			if ( TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus ) {
+			if (TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus) {
 				domainUnavailableMessage = translate(
 					'{{strong}}.%(tld)s{{/strong}} domains are temporarily not offered on WordPress.com. ' +
 						'Please try again later or choose a different extension.',
 					{
-						args: { tld: getTld( domain ) },
+						args: { tld: getTld(domain) },
 						components: { strong: <strong /> },
 					}
 				);
 			}
 
-			if ( this.props.offerUnavailableOption ) {
-				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
+			if (this.props.offerUnavailableOption) {
+				if (this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable) {
 					availabilityElement = (
 						<Card className="domain-search-results__transfer-card" highlight="info">
 							<div className="domain-search-results__transfer-card-copy">
-								<div>{ domainUnavailableMessage }</div>
+								<div>{domainUnavailableMessage}</div>
 								<p>
-									{ translate(
+									{translate(
 										'If you already own this domain you can use it for your WordPress.com site.'
-									) }
+									)}
 								</p>
 							</div>
 							<div className="domain-search-results__transfer-card-link">
-								{ translate( '{{a}}Yes, I own this domain{{/a}}', {
+								{translate('{{a}}Yes, I own this domain{{/a}}', {
 									components: {
 										a: (
 											// eslint-disable-next-line jsx-a11y/anchor-is-valid
 											<a
 												href="#"
-												onClick={ this.props.onClickUseYourDomain }
-												data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+												onClick={this.props.onClickUseYourDomain}
+												data-tracks-button-click-source={this.props.tracksButtonClickSource}
 											/>
 										),
 									},
-								} ) }
+								})}
 							</div>
 						</Card>
 					);
-				} else if ( lastDomainStatus !== MAPPED ) {
+				} else if (lastDomainStatus !== MAPPED) {
 					availabilityElement = (
-						<Notice status="is-warning" showDismiss={ false }>
-							{ domainUnavailableMessage } { offer }
+						<Notice status="is-warning" showDismiss={false}>
+							{domainUnavailableMessage} {offer}
 						</Notice>
 					);
 				}
@@ -202,19 +202,19 @@ class DomainSearchResults extends React.Component {
 
 		return (
 			<div className="domain-search-results__domain-availability">
-				<div className={ availabilityElementClasses }>{ availabilityElement }</div>
+				<div className={availabilityElementClasses}>{availabilityElement}</div>
 			</div>
 		);
 	}
 
 	handleAddMapping = () => {
-		this.props.onAddMapping( this.props.lastDomainSearched );
+		this.props.onAddMapping(this.props.lastDomainSearched);
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function( n ) {
-			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
-		} );
+		return times(this.props.placeholderQuantity, function (n) {
+			return <DomainSuggestion.Placeholder key={'suggestion-' + n} />;
+		});
 	}
 
 	renderDomainSuggestions() {
@@ -224,72 +224,72 @@ class DomainSearchResults extends React.Component {
 		let suggestionElements;
 		let unavailableOffer;
 
-		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
+		if (!this.props.isLoadingSuggestions && this.props.suggestions) {
 			suggestionCount = (
 				<div aria-live="polite">
 					<ScreenReaderText>
-						{ this.props.translate( '%s domains found', { args: this.props.suggestions.length } ) }
+						{this.props.translate('%s domains found', { args: this.props.suggestions.length })}
 					</ScreenReaderText>
 				</div>
 			);
 
 			const regularSuggestions = suggestions.filter(
-				suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+				(suggestion) => !suggestion.isRecommended && !suggestion.isBestAlternative
 			);
-			const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
+			const bestMatchSuggestions = suggestions.filter((suggestion) => suggestion.isRecommended);
 			const bestAlternativeSuggestions = suggestions.filter(
-				suggestion => suggestion.isBestAlternative
+				(suggestion) => suggestion.isBestAlternative
 			);
 			featuredSuggestionElement = (
 				<FeaturedDomainSuggestions
-					cart={ this.props.cart }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					isDomainOnly={ isDomainOnly }
-					fetchAlgo={ this.props.fetchAlgo }
-					isSignupStep={ this.props.isSignupStep }
+					cart={this.props.cart}
+					domainsWithPlansOnly={this.props.domainsWithPlansOnly}
+					isDomainOnly={isDomainOnly}
+					fetchAlgo={this.props.fetchAlgo}
+					isSignupStep={this.props.isSignupStep}
 					key="featured"
-					onButtonClick={ this.props.onClickResult }
-					primarySuggestion={ first( bestMatchSuggestions ) }
-					query={ this.props.lastDomainSearched }
-					railcarId={ this.props.railcarId }
-					secondarySuggestion={ first( bestAlternativeSuggestions ) }
-					selectedSite={ this.props.selectedSite }
-					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
-					unavailableDomains={ this.props.unavailableDomains }
-					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+					onButtonClick={this.props.onClickResult}
+					primarySuggestion={first(bestMatchSuggestions)}
+					query={this.props.lastDomainSearched}
+					railcarId={this.props.railcarId}
+					secondarySuggestion={first(bestAlternativeSuggestions)}
+					selectedSite={this.props.selectedSite}
+					pendingCheckSuggestion={this.props.pendingCheckSuggestion}
+					unavailableDomains={this.props.unavailableDomains}
+					isEligibleVariantForDomainTest={this.props.isEligibleVariantForDomainTest}
 				/>
 			);
 
-			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
-				if ( suggestion.is_placeholder ) {
-					return <DomainSuggestion.Placeholder key={ 'suggestion-' + i } />;
+			suggestionElements = regularSuggestions.map((suggestion, i) => {
+				if (suggestion.is_placeholder) {
+					return <DomainSuggestion.Placeholder key={'suggestion-' + i} />;
 				}
 
 				return (
 					<DomainRegistrationSuggestion
-						isDomainOnly={ isDomainOnly }
-						suggestion={ suggestion }
-						key={ suggestion.domain_name }
-						cart={ this.props.cart }
-						isSignupStep={ this.props.isSignupStep }
-						selectedSite={ this.props.selectedSite }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						railcarId={ this.props.railcarId }
-						uiPosition={ i + 2 }
-						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
-						query={ this.props.lastDomainSearched }
-						onButtonClick={ this.props.onClickResult }
-						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
-						unavailableDomains={ this.props.unavailableDomains }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						isDomainOnly={isDomainOnly}
+						suggestion={suggestion}
+						key={suggestion.domain_name}
+						cart={this.props.cart}
+						isSignupStep={this.props.isSignupStep}
+						selectedSite={this.props.selectedSite}
+						domainsWithPlansOnly={this.props.domainsWithPlansOnly}
+						railcarId={this.props.railcarId}
+						uiPosition={i + 2}
+						fetchAlgo={suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo}
+						query={this.props.lastDomainSearched}
+						onButtonClick={this.props.onClickResult}
+						pendingCheckSuggestion={this.props.pendingCheckSuggestion}
+						unavailableDomains={this.props.unavailableDomains}
+						isEligibleVariantForDomainTest={this.props.isEligibleVariantForDomainTest}
 					/>
 				);
-			} );
+			});
 
-			if ( this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE ) {
+			if (this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE) {
 				unavailableOffer = (
 					<DomainTransferSuggestion
-						onButtonClick={ this.props.onClickUseYourDomain }
+						onButtonClick={this.props.onClickUseYourDomain}
 						tracksButtonClickSource="search-suggestions-bottom"
 					/>
 				);
@@ -301,11 +301,11 @@ class DomainSearchResults extends React.Component {
 
 		return (
 			<div className="domain-search-results__domain-suggestions">
-				{ this.props.children }
-				{ suggestionCount }
-				{ featuredSuggestionElement }
-				{ suggestionElements }
-				{ unavailableOffer }
+				{this.props.children}
+				{suggestionCount}
+				{featuredSuggestionElement}
+				{suggestionElements}
+				{unavailableOffer}
 			</div>
 		);
 	}
@@ -313,19 +313,19 @@ class DomainSearchResults extends React.Component {
 	render() {
 		return (
 			<div className="domain-search-results">
-				{ this.renderDomainAvailability() }
-				{ this.renderDomainSuggestions() }
+				{this.renderDomainAvailability()}
+				{this.renderDomainSuggestions()}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = (state, ownProps) => {
 	return {
 		// Set site design type only if we're in signup
-		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
-		isSitePreviewVisible: ownProps.isSignupStep && isSitePreviewVisible( state ),
+		siteDesignType: ownProps.isSignupStep && getDesignType(state),
+		isSitePreviewVisible: ownProps.isSignupStep && isSitePreviewVisible(state),
 	};
 };
 
-export default connect( mapStateToProps, { hideSitePreview } )( localize( DomainSearchResults ) );
+export default connect(mapStateToProps, { hideSitePreview })(localize(DomainSearchResults));

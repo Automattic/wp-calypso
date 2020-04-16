@@ -33,57 +33,57 @@ class ProfileLinks extends React.Component {
 	};
 
 	showAddWordPress = () => {
-		this.setState( {
+		this.setState({
 			showingForm: 'wordpress',
 			showPopoverMenu: false,
-		} );
+		});
 	};
 
 	showAddOther = () => {
-		this.setState( {
+		this.setState({
 			showingForm: 'other',
 			showPopoverMenu: false,
-		} );
+		});
 	};
 
 	showPopoverMenu = () => {
-		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu,
-		} );
+		this.setState({
+			showPopoverMenu: !this.state.showPopoverMenu,
+		});
 	};
 
 	closePopoverMenu = () => {
-		this.setState( {
+		this.setState({
 			showPopoverMenu: false,
-		} );
+		});
 	};
 
 	hideForms = () => {
-		this.setState( {
+		this.setState({
 			showingForm: null,
-		} );
+		});
 	};
 
-	onRemoveLink = profileLink => {
-		return () => this.props.deleteUserProfileLink( profileLink.link_slug );
+	onRemoveLink = (profileLink) => {
+		return () => this.props.deleteUserProfileLink(profileLink.link_slug);
 	};
 
 	getErrorMessage() {
 		const { errorType, translate } = this.props;
 
-		if ( ! errorType ) {
+		if (!errorType) {
 			return null;
 		}
 
-		if ( errorType === 'duplicate' ) {
-			return translate( 'That link is already in your profile links. No changes were made.' );
+		if (errorType === 'duplicate') {
+			return translate('That link is already in your profile links. No changes were made.');
 		}
-		return translate( 'An unexpected error occurred. Please try again later.' );
+		return translate('An unexpected error occurred. Please try again later.');
 	}
 
 	possiblyRenderError() {
 		const errorMessage = this.getErrorMessage();
-		if ( ! errorMessage ) {
+		if (!errorMessage) {
 			return null;
 		}
 
@@ -91,9 +91,9 @@ class ProfileLinks extends React.Component {
 			<Notice
 				className="profile-links__error"
 				status="is-error"
-				onDismissClick={ this.props.resetUserProfileLinkErrors }
+				onDismissClick={this.props.resetUserProfileLinkErrors}
 			>
-				{ errorMessage }
+				{errorMessage}
 			</Notice>
 		);
 	}
@@ -101,15 +101,15 @@ class ProfileLinks extends React.Component {
 	renderProfileLinksList() {
 		return (
 			<ul className="profile-links__list">
-				{ this.props.profileLinks.map( profileLink => (
+				{this.props.profileLinks.map((profileLink) => (
 					<ProfileLink
-						key={ profileLink.link_slug }
-						title={ profileLink.title }
-						url={ profileLink.value }
-						slug={ profileLink.link_slug }
-						onRemoveLink={ this.onRemoveLink( profileLink ) }
+						key={profileLink.link_slug}
+						title={profileLink.title}
+						url={profileLink.value}
+						slug={profileLink.link_slug}
+						onRemoveLink={this.onRemoveLink(profileLink)}
 					/>
-				) ) }
+				))}
 			</ul>
 		);
 	}
@@ -117,9 +117,9 @@ class ProfileLinks extends React.Component {
 	renderNoProfileLinks() {
 		return (
 			<p className="profile-links__no-links">
-				{ this.props.translate(
+				{this.props.translate(
 					"You have no sites in your profile links. You may add sites if you'd like."
-				) }
+				)}
 			</p>
 		);
 	}
@@ -127,15 +127,15 @@ class ProfileLinks extends React.Component {
 	renderPlaceholders() {
 		return (
 			<ul className="profile-links__list">
-				{ times( 2, index => (
+				{times(2, (index) => (
 					<ProfileLink
 						title="Loading Profile Links"
 						url="http://wordpress.com"
 						slug="A placeholder profile link"
 						isPlaceholder
-						key={ index }
+						key={index}
 					/>
-				) ) }
+				))}
 			</ul>
 		);
 	}
@@ -145,7 +145,7 @@ class ProfileLinks extends React.Component {
 		const countLinks = initialized ? this.props.profileLinks.length : 0;
 		let links;
 
-		if ( ! initialized ) {
+		if (!initialized) {
 			links = this.renderPlaceholders();
 		} else {
 			links = countLinks > 0 ? this.renderProfileLinksList() : this.renderNoProfileLinks();
@@ -153,49 +153,49 @@ class ProfileLinks extends React.Component {
 
 		return (
 			<div>
-				<p>{ this.props.translate( 'Manage which sites appear in your profile.' ) }</p>
+				<p>{this.props.translate('Manage which sites appear in your profile.')}</p>
 
-				{ this.possiblyRenderError() }
-				{ links }
+				{this.possiblyRenderError()}
+				{links}
 			</div>
 		);
 	}
 
 	renderForm() {
-		if ( 'wordpress' === this.state.showingForm ) {
-			return <ProfileLinksAddWordPress onSuccess={ this.hideForms } onCancel={ this.hideForms } />;
+		if ('wordpress' === this.state.showingForm) {
+			return <ProfileLinksAddWordPress onSuccess={this.hideForms} onCancel={this.hideForms} />;
 		}
 
-		return <ProfileLinksAddOther onSuccess={ this.hideForms } onCancel={ this.hideForms } />;
+		return <ProfileLinksAddOther onSuccess={this.hideForms} onCancel={this.hideForms} />;
 	}
 
 	render() {
 		return (
 			<Fragment>
 				<QueryProfileLinks />
-				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
+				<SectionHeader label={this.props.translate('Profile Links')}>
 					<AddProfileLinksButtons
-						showingForm={ this.state.showingForm }
-						onShowAddOther={ this.showAddOther }
-						showPopoverMenu={ this.state.showPopoverMenu }
-						onShowAddWordPress={ this.showAddWordPress }
-						onShowPopoverMenu={ this.showPopoverMenu }
-						onClosePopoverMenu={ this.closePopoverMenu }
+						showingForm={this.state.showingForm}
+						onShowAddOther={this.showAddOther}
+						showPopoverMenu={this.state.showPopoverMenu}
+						onShowAddWordPress={this.showAddWordPress}
+						onShowPopoverMenu={this.showPopoverMenu}
+						onClosePopoverMenu={this.closePopoverMenu}
 					/>
 				</SectionHeader>
-				<Card>{ this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
+				<Card>{this.state.showingForm ? this.renderForm() : this.renderProfileLinks()}</Card>
 			</Fragment>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		profileLinks: getProfileLinks( state ),
-		errorType: getProfileLinksErrorType( state ),
-	} ),
+	(state) => ({
+		profileLinks: getProfileLinks(state),
+		errorType: getProfileLinksErrorType(state),
+	}),
 	{
 		deleteUserProfileLink,
 		resetUserProfileLinkErrors,
 	}
-)( localize( ProfileLinks ) );
+)(localize(ProfileLinks));

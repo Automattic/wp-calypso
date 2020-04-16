@@ -3,8 +3,8 @@
  */
 import isGoogleMyBusinessLocationConnected from '../is-google-my-business-location-connected';
 
-describe( 'isGoogleMyBusinessLocationConnected()', () => {
-	test( 'should return false if location not connected', () => {
+describe('isGoogleMyBusinessLocationConnected()', () => {
+	test('should return false if location not connected', () => {
 		const state = {
 			siteKeyrings: {
 				items: {
@@ -13,10 +13,10 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 			},
 		};
 
-		expect( isGoogleMyBusinessLocationConnected( state, 1234 ) ).toBe( false );
-	} );
+		expect(isGoogleMyBusinessLocationConnected(state, 1234)).toBe(false);
+	});
 
-	test( 'should return true if location is connected', () => {
+	test('should return true if location is connected', () => {
 		const state = {
 			siteKeyrings: {
 				items: {
@@ -42,6 +42,6 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 			},
 		};
 
-		expect( isGoogleMyBusinessLocationConnected( state, 1234 ) ).toBe( true );
-	} );
-} );
+		expect(isGoogleMyBusinessLocationConnected(state, 1234)).toBe(true);
+	});
+});

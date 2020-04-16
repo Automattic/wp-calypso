@@ -15,23 +15,23 @@ import { isRequestingSiteKeyrings, getSiteKeyrings } from 'state/site-keyrings/s
  * @param  {string}  siteId The Site ID
  * @returns {boolean} True if we should show the nudge
  */
-export default function isGoogleMyBusinessStatsNudgeVisible( state, siteId ) {
+export default function isGoogleMyBusinessStatsNudgeVisible(state, siteId) {
 	// We don't want to show the nudge, and then hide it when it's obvious
 	// the site is actually already connected, therefore we must wait for the site
 	// settings to be fetched so we could verify site does not have connection connected
-	if ( getSiteKeyrings( state, siteId ) === null || isRequestingSiteKeyrings( state, siteId ) ) {
+	if (getSiteKeyrings(state, siteId) === null || isRequestingSiteKeyrings(state, siteId)) {
 		return false;
 	}
 
 	// Don't show the nudge if the site is already connected (can be from another admin)
-	const siteKeyrings = state.siteKeyrings.items[ siteId ] ?? [];
+	const siteKeyrings = state.siteKeyrings.items[siteId] ?? [];
 	const googleMyBusinessSiteKeyring = siteKeyrings.find(
-		keyring => keyring.service === 'google_my_business' && !! keyring.external_user_id
+		(keyring) => keyring.service === 'google_my_business' && !!keyring.external_user_id
 	);
 
-	if ( googleMyBusinessSiteKeyring ) {
+	if (googleMyBusinessSiteKeyring) {
 		return false;
 	}
 
-	return isSiteGoogleMyBusinessEligible( state, siteId );
+	return isSiteGoogleMyBusinessEligible(state, siteId);
 }

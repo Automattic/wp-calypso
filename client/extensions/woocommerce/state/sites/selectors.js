@@ -14,10 +14,10 @@ import { getSite } from 'state/sites/selectors';
  * @param {object} state Global state tree
  * @returns {?object} Site
  */
-export function getSelectedSiteWithFallback( state ) {
-	let siteId = getSelectedSiteId( state );
-	if ( ! siteId && 1 === getCurrentUserSiteCount( state ) ) {
-		siteId = getPrimarySiteId( state );
+export function getSelectedSiteWithFallback(state) {
+	let siteId = getSelectedSiteId(state);
+	if (!siteId && 1 === getCurrentUserSiteCount(state)) {
+		siteId = getPrimarySiteId(state);
 	}
-	return getSite( state, siteId );
+	return getSite(state, siteId);
 }

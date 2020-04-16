@@ -15,14 +15,14 @@
  * @param  {object} terms   Terms
  * @returns {string}         Formatted message
  */
-function formatMessage( message, terms ) {
-	return message.replace( /\{\{\s*(.+?)\s*\}\}/g, function( fullMatch, term ) {
-		if ( terms.hasOwnProperty( term ) ) {
-			return terms[ term ];
+function formatMessage(message, terms) {
+	return message.replace(/\{\{\s*(.+?)\s*\}\}/g, function (fullMatch, term) {
+		if (terms.hasOwnProperty(term)) {
+			return terms[term];
 		}
 
 		return fullMatch;
-	} );
+	});
 }
 
 module.exports = formatMessage;

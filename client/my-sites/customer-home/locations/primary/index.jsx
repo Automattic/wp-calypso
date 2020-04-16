@@ -22,29 +22,29 @@ const cardComponents = {
 	'home-task-site-setup-checklist': ChecklistSiteSetup,
 };
 
-const Primary = ( { checklistMode, cards } ) => {
-	if ( ! config.isEnabled( 'home/experimental-layout' ) ) {
+const Primary = ({ checklistMode, cards }) => {
+	if (!config.isEnabled('home/experimental-layout')) {
 		// Always ensure we have primary content.
-		if ( cards && cards.length < 1 ) {
-			cards = [ 'home-primary-quick-links' ];
+		if (cards && cards.length < 1) {
+			cards = ['home-primary-quick-links'];
 		}
 	}
 	return (
 		<>
-			{ cards &&
+			{cards &&
 				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
+					(card, index) =>
+						cardComponents[card] &&
+						React.createElement(cardComponents[card], {
 							key: index,
 							checklistMode: [
 								'home-primary-checklist-site-setup',
 								'home-task-site-setup-checklist',
-							].includes( card )
+							].includes(card)
 								? checklistMode
 								: null,
-						} )
-				) }
+						})
+				)}
 		</>
 	);
 };

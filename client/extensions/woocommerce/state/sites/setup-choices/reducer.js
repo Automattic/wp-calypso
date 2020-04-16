@@ -14,8 +14,8 @@ import {
 
 // TODO: Handle error
 
-export default withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_SETUP_CHOICES_REQUEST: {
 			return LOADING;
 		}
@@ -30,4 +30,4 @@ export default withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});

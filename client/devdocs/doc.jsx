@@ -33,11 +33,11 @@ export default class extends React.Component {
 		this.fetch();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.path !== prevProps.path ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.path !== prevProps.path) {
 			this.fetch();
 		}
-		if ( this.state.body ) {
+		if (this.state.body) {
 			this.setBodyScrollPosition();
 		}
 	}
@@ -47,27 +47,27 @@ export default class extends React.Component {
 	}
 
 	fetch = () => {
-		this.setState( {
+		this.setState({
 			body: '',
 			error: null,
-		} );
+		});
 		this.delayLoadingMessage();
 		DocService.fetch(
 			this.props.path,
-			function( error, body ) {
-				this.setState( {
+			function (error, body) {
+				this.setState({
 					body,
 					error,
-				} );
-			}.bind( this )
+				});
+			}.bind(this)
 		);
 	};
 
 	setBodyScrollPosition = () => {
-		if ( this.props.sectionId ) {
-			const sectionNode = document.getElementById( this.props.sectionId );
+		if (this.props.sectionId) {
+			const sectionNode = document.getElementById(this.props.sectionId);
 
-			if ( sectionNode ) {
+			if (sectionNode) {
 				sectionNode.scrollIntoView();
 			}
 		}
@@ -76,20 +76,20 @@ export default class extends React.Component {
 	delayLoadingMessage = () => {
 		this.clearLoadingMessage();
 		this.timeoutID = setTimeout(
-			function() {
-				if ( ! this.state.body ) {
-					this.setState( {
+			function () {
+				if (!this.state.body) {
+					this.setState({
 						body: 'Loading…',
-					} );
+					});
 				}
-			}.bind( this ),
+			}.bind(this),
 			1000
 		);
 	};
 
 	clearLoadingMessage = () => {
-		if ( 'number' === typeof this.timeoutID ) {
-			window.clearTimeout( this.timeoutID );
+		if ('number' === typeof this.timeoutID) {
+			window.clearTimeout(this.timeoutID);
 			this.timeoutID = null;
 		}
 	};
@@ -100,7 +100,7 @@ export default class extends React.Component {
 		);
 		const { body, error } = this.state;
 
-		if ( ! body || error ) {
+		if (!body || error) {
 			return null;
 		}
 
@@ -108,7 +108,7 @@ export default class extends React.Component {
 			<div className="devdocs__body">
 				<a
 					className="devdocs__doc-edit-link"
-					href={ editURL }
+					href={editURL}
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -117,7 +117,7 @@ export default class extends React.Component {
 				<div
 					className="devdocs__doc-content"
 					//eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, body ) } }
+					dangerouslySetInnerHTML={{ __html: highlight(this.props.term, body) }}
 				/>
 			</div>
 		);
@@ -125,14 +125,14 @@ export default class extends React.Component {
 
 	render() {
 		const { body, error } = this.state;
-		const titleMatches = body && body.length && body.match( /<h1[^>]+>(.+)<\/h1>/ );
-		const title = titleMatches && titleMatches[ 1 ];
+		const titleMatches = body && body.length && body.match(/<h1[^>]+>(.+)<\/h1>/);
+		const title = titleMatches && titleMatches[1];
 
 		return (
 			<div className="devdocs devdocs__doc">
-				{ title ? <DocumentHead title={ title } /> : null }
-				{ this.renderBody() }
-				{ error && <Error /> }
+				{title ? <DocumentHead title={title} /> : null}
+				{this.renderBody()}
+				{error && <Error />}
 			</div>
 		);
 	}

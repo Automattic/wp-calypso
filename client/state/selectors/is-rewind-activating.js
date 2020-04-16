@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param {number|string} siteId the site ID
  * @returns {boolean} true is rewind is currently activating/deactivating
  */
-export default function isRewindActivating( state, siteId ) {
-	return !! get( state.activityLog.activationRequesting, siteId, false );
+export default function isRewindActivating(state, siteId) {
+	return !!get(state.activityLog.activationRequesting, siteId, false);
 }

@@ -43,7 +43,7 @@ export class FeaturedDomainSuggestions extends Component {
 			'pendingCheckSuggestion',
 			'unavailableDomains',
 		];
-		return pick( this.props, childKeys );
+		return pick(this.props, childKeys);
 	}
 
 	getMaxTitleLength() {
@@ -60,44 +60,44 @@ export class FeaturedDomainSuggestions extends Component {
 	getTextSizeClass() {
 		const length = this.getMaxTitleLength();
 		const classNamePrefix = 'featured-domain-suggestions--title-in';
-		if ( length <= 18 ) {
-			return `${ classNamePrefix }-20em`;
+		if (length <= 18) {
+			return `${classNamePrefix}-20em`;
 		}
-		if ( length <= 19 ) {
-			return `${ classNamePrefix }-18em`;
+		if (length <= 19) {
+			return `${classNamePrefix}-18em`;
 		}
-		if ( length <= 22 ) {
-			return `${ classNamePrefix }-16em`;
+		if (length <= 22) {
+			return `${classNamePrefix}-16em`;
 		}
-		if ( length <= 25 ) {
-			return `${ classNamePrefix }-14em`;
+		if (length <= 25) {
+			return `${classNamePrefix}-14em`;
 		}
-		if ( length <= 27 ) {
-			return `${ classNamePrefix }-12em`;
+		if (length <= 27) {
+			return `${classNamePrefix}-12em`;
 		}
-		if ( length <= 33 ) {
-			return `${ classNamePrefix }-10em`;
+		if (length <= 33) {
+			return `${classNamePrefix}-10em`;
 		}
 
 		return 'featured-domain-suggestions--title-causes-overflow';
 	}
 
 	getClassNames() {
-		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
-			'featured-domain-suggestions__is-domain-management': ! this.props.isSignupStep,
+		return classNames('featured-domain-suggestions', this.getTextSizeClass(), {
+			'featured-domain-suggestions__is-domain-management': !this.props.isSignupStep,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
-		} );
+		});
 	}
 
-	getFetchAlgorithm( suggestion ) {
+	getFetchAlgorithm(suggestion) {
 		return suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo;
 	}
 
 	hasMatchReasons() {
 		const { primarySuggestion = {}, secondarySuggestion = {} } = this.props;
 		return (
-			Array.isArray( primarySuggestion.match_reasons ) ||
-			Array.isArray( secondarySuggestion.match_reasons )
+			Array.isArray(primarySuggestion.match_reasons) ||
+			Array.isArray(secondarySuggestion.match_reasons)
 		);
 	}
 
@@ -105,44 +105,44 @@ export class FeaturedDomainSuggestions extends Component {
 		const { primarySuggestion, secondarySuggestion } = this.props;
 		const childProps = this.getChildProps();
 
-		if ( this.props.showPlaceholders ) {
+		if (this.props.showPlaceholders) {
 			return this.renderPlaceholders();
 		}
 
 		return (
-			<div className={ this.getClassNames() }>
-				{ primarySuggestion && (
+			<div className={this.getClassNames()}>
+				{primarySuggestion && (
 					<DomainRegistrationSuggestion
-						suggestion={ primarySuggestion }
+						suggestion={primarySuggestion}
 						isFeatured
-						railcarId={ this.props.railcarId }
-						isSignupStep={ this.props.isSignupStep }
-						uiPosition={ 0 }
-						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
-						buttonStyles={ { primary: true } }
-						{ ...childProps }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						railcarId={this.props.railcarId}
+						isSignupStep={this.props.isSignupStep}
+						uiPosition={0}
+						fetchAlgo={this.getFetchAlgorithm(primarySuggestion)}
+						buttonStyles={{ primary: true }}
+						{...childProps}
+						isEligibleVariantForDomainTest={this.props.isEligibleVariantForDomainTest}
 					/>
-				) }
-				{ secondarySuggestion && (
+				)}
+				{secondarySuggestion && (
 					<DomainRegistrationSuggestion
-						suggestion={ secondarySuggestion }
+						suggestion={secondarySuggestion}
 						isFeatured
-						railcarId={ this.props.railcarId }
-						isSignupStep={ this.props.isSignupStep }
-						uiPosition={ 1 }
-						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
-						{ ...childProps }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						railcarId={this.props.railcarId}
+						isSignupStep={this.props.isSignupStep}
+						uiPosition={1}
+						fetchAlgo={this.getFetchAlgorithm(secondarySuggestion)}
+						{...childProps}
+						isEligibleVariantForDomainTest={this.props.isEligibleVariantForDomainTest}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}
 
 	renderPlaceholders() {
 		return (
-			<div className={ this.getClassNames() }>
+			<div className={this.getClassNames()}>
 				<FeaturedDomainSuggestionsPlaceholder />
 				<FeaturedDomainSuggestionsPlaceholder />
 			</div>
@@ -150,4 +150,4 @@ export class FeaturedDomainSuggestions extends Component {
 	}
 }
 
-export default localize( FeaturedDomainSuggestions );
+export default localize(FeaturedDomainSuggestions);

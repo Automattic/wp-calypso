@@ -21,38 +21,38 @@ import {
 } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
-const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
+const debug = debugFactory('composite-checkout:checkout-payment-methods');
 
-export default function CheckoutPaymentMethods( { summary, isComplete, className } ) {
+export default function CheckoutPaymentMethods({ summary, isComplete, className }) {
 	const localize = useLocalize();
 
 	const paymentMethod = usePaymentMethod();
-	const [ , setPaymentMethod ] = usePaymentMethodId();
-	const onClickPaymentMethod = newMethod => {
-		debug( 'setting payment method to', newMethod );
-		setPaymentMethod( newMethod );
+	const [, setPaymentMethod] = usePaymentMethodId();
+	const onClickPaymentMethod = (newMethod) => {
+		debug('setting payment method to', newMethod);
+		setPaymentMethod(newMethod);
 	};
 	const paymentMethods = useAllPaymentMethods();
 
-	if ( summary && isComplete && paymentMethod ) {
-		debug( 'rendering selected paymentMethod', paymentMethod );
+	if (summary && isComplete && paymentMethod) {
+		debug('rendering selected paymentMethod', paymentMethod);
 		return (
-			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
+			<div className={joinClasses([className, 'checkout-payment-methods'])}>
 				<CheckoutErrorBoundary
-					errorMessage={ localize( 'There was a problem with this payment method.' ) }
+					errorMessage={localize('There was a problem with this payment method.')}
 				>
 					<PaymentMethod
-						{ ...paymentMethod }
-						checked={ true }
+						{...paymentMethod}
+						checked={true}
 						summary
-						ariaLabel={ paymentMethod.getAriaLabel( localize ) }
+						ariaLabel={paymentMethod.getAriaLabel(localize)}
 					/>
 				</CheckoutErrorBoundary>
 			</div>
 		);
 	}
 
-	if ( summary ) {
+	if (summary) {
 		debug(
 			'summary requested, but no complete paymentMethod is selected; isComplete:',
 			isComplete,
@@ -61,26 +61,26 @@ export default function CheckoutPaymentMethods( { summary, isComplete, className
 		);
 		return null;
 	}
-	debug( 'rendering paymentMethods', paymentMethods );
+	debug('rendering paymentMethods', paymentMethods);
 
 	return (
-		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
+		<div className={joinClasses([className, 'checkout-payment-methods'])}>
 			<RadioButtons>
-				{ paymentMethods.map( method => (
+				{paymentMethods.map((method) => (
 					<CheckoutErrorBoundary
-						key={ method.id }
+						key={method.id}
 						errorMessage={
-							localize( 'There was a problem with the payment method:' ) + ' ' + method.id
+							localize('There was a problem with the payment method:') + ' ' + method.id
 						}
 					>
 						<PaymentMethod
-							{ ...method }
-							checked={ paymentMethod?.id === method.id }
-							onClick={ onClickPaymentMethod }
-							ariaLabel={ method.getAriaLabel( localize ) }
+							{...method}
+							checked={paymentMethod?.id === method.id}
+							onClick={onClickPaymentMethod}
+							ariaLabel={method.getAriaLabel(localize)}
 						/>
 					</CheckoutErrorBoundary>
-				) ) }
+				))}
 			</RadioButtons>
 		</div>
 	);
@@ -96,12 +96,10 @@ export function CheckoutPaymentMethodsTitle() {
 	const localize = useLocalize();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	return ! isActive && isComplete
-		? localize( 'Payment method' )
-		: localize( 'Pick a payment method' );
+	return !isActive && isComplete ? localize('Payment method') : localize('Pick a payment method');
 }
 
-function PaymentMethod( {
+function PaymentMethod({
 	id,
 	label,
 	activeContent,
@@ -110,22 +108,22 @@ function PaymentMethod( {
 	onClick,
 	ariaLabel,
 	summary,
-} ) {
-	if ( summary ) {
+}) {
+	if (summary) {
 		return inactiveContent;
 	}
 
 	return (
 		<RadioButton
 			name="paymentMethod"
-			value={ id }
-			id={ id }
-			checked={ checked }
-			onChange={ onClick ? () => onClick( id ) : null }
-			ariaLabel={ ariaLabel }
-			label={ label }
+			value={id}
+			id={id}
+			checked={checked}
+			onChange={onClick ? () => onClick(id) : null}
+			ariaLabel={ariaLabel}
+			label={label}
 		>
-			{ activeContent && activeContent }
+			{activeContent && activeContent}
 		</RadioButton>
 	);
 }

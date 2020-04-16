@@ -18,21 +18,21 @@ const postUrl = localizeUrl(
 
 class SupportArticleDialogExample extends Component {
 	handleClick = () => {
-		this.props.openSupportArticleDialog( { postId, postUrl } );
+		this.props.openSupportArticleDialog({ postId, postUrl });
 	};
 
 	render() {
 		return (
 			<div className="docs__design-assets-group">
-				<Button onClick={ this.handleClick }>Show Support Article</Button>
+				<Button onClick={this.handleClick}>Show Support Article</Button>
 			</div>
 		);
 	}
 }
 
-const ConnectedExample = connect( null, {
+const ConnectedExample = connect(null, {
 	openSupportArticleDialog,
-} )( SupportArticleDialogExample );
+})(SupportArticleDialogExample);
 
 ConnectedExample.displayName = 'SupportArticleDialog';
 

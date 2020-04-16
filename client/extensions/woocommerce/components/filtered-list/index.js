@@ -13,8 +13,8 @@ import classNames from 'classnames';
 import FormTextInput from 'components/forms/form-text-input';
 
 class FilteredList extends Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			filter: '',
 		};
@@ -23,26 +23,26 @@ class FilteredList extends Component {
 	render() {
 		const { items, placeholder, customFilter, filterBy, renderItem, className } = this.props;
 
-		const onFilterChange = event => this.setState( { filter: event.target.value } );
-		const filterFunc = item => {
-			if ( customFilter ) {
-				return customFilter( item, this.state.filter );
+		const onFilterChange = (event) => this.setState({ filter: event.target.value });
+		const filterFunc = (item) => {
+			if (customFilter) {
+				return customFilter(item, this.state.filter);
 			}
 
-			return startsWith( item[ filterBy ].toLowerCase(), this.state.filter.toLowerCase() );
+			return startsWith(item[filterBy].toLowerCase(), this.state.filter.toLowerCase());
 		};
-		const itemsToRender = this.state.filter ? filter( items, filterFunc ) : items;
+		const itemsToRender = this.state.filter ? filter(items, filterFunc) : items;
 
 		return (
 			<div className="filtered-list">
 				<FormTextInput
-					value={ this.state.filter }
-					onChange={ onFilterChange }
-					placeholder={ placeholder }
+					value={this.state.filter}
+					onChange={onFilterChange}
+					placeholder={placeholder}
 				/>
 				<div className="filtered-list__container">
-					<ul className={ classNames( 'filtered-list__list', className ) }>
-						{ itemsToRender.map( renderItem ) }
+					<ul className={classNames('filtered-list__list', className)}>
+						{itemsToRender.map(renderItem)}
 					</ul>
 				</div>
 			</div>

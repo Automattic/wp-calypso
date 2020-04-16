@@ -12,11 +12,11 @@ class PlansSkipButtonExample extends PureComponent {
 	static displayName = 'PlansSkipButton';
 
 	handleClick = () => {
-		console.log( 'PlansSkipButton was clicked' );
+		console.log('PlansSkipButton was clicked');
 	};
 
 	render() {
-		return <PlansSkipButton onClick={ this.handleClick } />;
+		return <PlansSkipButton onClick={this.handleClick} />;
 	}
 }
 

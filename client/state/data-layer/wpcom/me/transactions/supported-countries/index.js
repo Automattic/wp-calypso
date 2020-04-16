@@ -19,7 +19,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param 	{object} action The action to dispatch next
  * @returns {object} WordPress.com API HTTP Request action object
  */
-export const fetchCountriesTransactions = action =>
+export const fetchCountriesTransactions = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -36,10 +36,10 @@ export const fetchCountriesTransactions = action =>
  * @param   {Array}    countries  array of raw device data returned from the endpoint
  * @returns {object}   Redux action
  */
-export const updateCountriesTransactions = ( action, countries ) => ( {
+export const updateCountriesTransactions = (action, countries) => ({
 	type: COUNTRIES_PAYMENTS_UPDATED,
 	countries,
-} );
+});
 
 /**
  * Dispatches a error notice action when the request for the supported countries list fails.
@@ -47,14 +47,14 @@ export const updateCountriesTransactions = ( action, countries ) => ( {
  * @returns {object}            dispatched error notice action
  */
 export const showCountriesTransactionsLoadingError = () =>
-	errorNotice( translate( "We couldn't load the countries list." ) );
+	errorNotice(translate("We couldn't load the countries list."));
 
-export const dispatchCountriesTransactions = dispatchRequest( {
+export const dispatchCountriesTransactions = dispatchRequest({
 	fetch: fetchCountriesTransactions,
 	onSuccess: updateCountriesTransactions,
 	onError: showCountriesTransactionsLoadingError,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/me/transactions/supported-countries/index.js', {
-	[ COUNTRIES_PAYMENTS_FETCH ]: [ dispatchCountriesTransactions ],
-} );
+registerHandlers('state/data-layer/wpcom/me/transactions/supported-countries/index.js', {
+	[COUNTRIES_PAYMENTS_FETCH]: [dispatchCountriesTransactions],
+});

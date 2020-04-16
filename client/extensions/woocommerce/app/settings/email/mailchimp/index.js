@@ -24,24 +24,24 @@ import MailChimpDashboard from './mailchimp_dashboard';
 import QueryMailChimpSettings from 'woocommerce/state/sites/settings/mailchimp/querySettings';
 
 class MailChimp extends React.Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
-			setupWizardStarted: !! props.startWizard,
+			setupWizardStarted: !!props.startWizard,
 			wizardCompleted: false,
 		};
 	}
 
 	startWizard = () => {
-		this.setState( { setupWizardStarted: true } );
+		this.setState({ setupWizardStarted: true });
 	};
 
-	closeWizard = status => {
-		this.setState( { setupWizardStarted: false, wizardCompleted: 'wizard-completed' === status } );
+	closeWizard = (status) => {
+		this.setState({ setupWizardStarted: false, wizardCompleted: 'wizard-completed' === status });
 	};
 
 	closeSetupFinishNotice = () => {
-		this.setState( { wizardCompleted: false } );
+		this.setState({ wizardCompleted: false });
 	};
 
 	render() {
@@ -57,43 +57,43 @@ class MailChimp extends React.Component {
 		} = this.props;
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = isRequestingMailChimpSettings || isRequestingPlugins;
-		const mailChimpIsReady = ! isRequestingData && settings && settings.active_tab === 'sync';
+		const mailChimpIsReady = !isRequestingData && settings && settings.active_tab === 'sync';
 		const gettingStarted =
-			! setupWizardStarted && ! isRequestingData && settings && settings.active_tab !== 'sync';
+			!setupWizardStarted && !isRequestingData && settings && settings.active_tab !== 'sync';
 
 		// TODO Eventually re-implement a new dashboard widget for extension
 		// that accomodates sites without the plugin installed
-		if ( dashboardView || ! hasMailChimp ) {
+		if (dashboardView || !hasMailChimp) {
 			return null;
 		}
 
 		return (
 			<div className="mailchimp">
-				<QueryMailChimpSettings siteId={ siteId } />
-				{ ( isRequestingData || gettingStarted ) && (
+				<QueryMailChimpSettings siteId={siteId} />
+				{(isRequestingData || gettingStarted) && (
 					<MailChimpGettingStarted
-						siteId={ siteId }
-						site={ site }
-						isPlaceholder={ isRequestingData }
-						onClick={ this.startWizard }
+						siteId={siteId}
+						site={site}
+						isPlaceholder={isRequestingData}
+						onClick={this.startWizard}
 					/>
-				) }
-				{ mailChimpIsReady && (
+				)}
+				{mailChimpIsReady && (
 					<MailChimpDashboard
-						siteId={ siteId }
-						wizardCompleted={ this.state.wizardCompleted }
-						onChange={ onChange }
-						onNoticeExit={ this.closeSetupFinishNotice }
+						siteId={siteId}
+						wizardCompleted={this.state.wizardCompleted}
+						onChange={onChange}
+						onNoticeExit={this.closeSetupFinishNotice}
 					/>
-				) }
-				{ setupWizardStarted && (
+				)}
+				{setupWizardStarted && (
 					<MailChimpSetup
-						hasMailChimp={ hasMailChimp }
-						settings={ settings }
-						siteId={ siteId }
-						onClose={ this.closeWizard }
+						hasMailChimp={hasMailChimp}
+						settings={settings}
+						siteId={siteId}
+						onClose={this.closeWizard}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -110,15 +110,15 @@ MailChimp.propTypes = {
 	dashboardView: PropTypes.bool,
 };
 
-function mapStateToProps( state ) {
+function mapStateToProps(state) {
 	const mailChimpId = 'mailchimp-for-woocommerce/mailchimp-woocommerce';
-	const siteId = getSelectedSiteId( state );
-	const isRequestingPlugins = isRequestingForSites( state, [ siteId ] );
-	const isRequestingMailChimpSettings = isRequestingSettings( state, siteId );
-	const sitePlugins = getPlugins( state, [ siteId ] );
-	const mailChimp = filter( sitePlugins, matches( { id: mailChimpId, active: true } ) );
-	const hasMailChimp = !! mailChimp.length;
-	const settings = mailChimpSettings( state, siteId );
+	const siteId = getSelectedSiteId(state);
+	const isRequestingPlugins = isRequestingForSites(state, [siteId]);
+	const isRequestingMailChimpSettings = isRequestingSettings(state, siteId);
+	const sitePlugins = getPlugins(state, [siteId]);
+	const mailChimp = filter(sitePlugins, matches({ id: mailChimpId, active: true }));
+	const hasMailChimp = !!mailChimp.length;
+	const settings = mailChimpSettings(state, siteId);
 	return {
 		siteId,
 		hasMailChimp,
@@ -128,4 +128,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( localize( MailChimp ) );
+export default connect(mapStateToProps)(localize(MailChimp));

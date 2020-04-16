@@ -18,11 +18,11 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { replaceHistory } from 'state/ui/actions';
 
-const fetchGutenbergOptInData = action =>
+const fetchGutenbergOptInData = (action) =>
 	http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/gutenberg`,
+			path: `/sites/${action.siteId}/gutenberg`,
 			apiNamespace: 'wpcom/v3',
 		},
 		action
@@ -31,21 +31,21 @@ const fetchGutenbergOptInData = action =>
 const setGutenbergOptInData = (
 	{ siteId },
 	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
-) => dispatch => {
-	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
-	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
+) => (dispatch) => {
+	dispatch({ type: EDITOR_TYPE_SET, siteId, editor });
+	dispatch({ type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut });
 };
 
-const dispatchFetchGutenbergOptInData = dispatchRequest( {
+const dispatchFetchGutenbergOptInData = dispatchRequest({
 	fetch: fetchGutenbergOptInData,
 	onSuccess: setGutenbergOptInData,
 	onError: noop,
-} );
+});
 
-const updateSelectedEditor = action =>
+const updateSelectedEditor = (action) =>
 	http(
 		{
-			path: `/sites/${ action.siteId }/gutenberg`,
+			path: `/sites/${action.siteId}/gutenberg`,
 			method: 'POST',
 			apiNamespace: 'wpcom/v3',
 			query: {
@@ -60,26 +60,26 @@ const updateSelectedEditor = action =>
 const setSelectedEditorAndRedirect = (
 	{ siteId, redirectUrl },
 	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
-) => dispatch => {
-	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
-	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
+) => (dispatch) => {
+	dispatch({ type: EDITOR_TYPE_SET, siteId, editor });
+	dispatch({ type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut });
 
-	if ( ! redirectUrl ) {
+	if (!redirectUrl) {
 		return;
 	}
-	if ( has( window, 'location.replace' ) && -1 !== redirectUrl.indexOf( 'calypsoify=1' ) ) {
-		return window.location.replace( redirectUrl );
+	if (has(window, 'location.replace') && -1 !== redirectUrl.indexOf('calypsoify=1')) {
+		return window.location.replace(redirectUrl);
 	}
-	dispatch( replaceHistory( redirectUrl ) );
+	dispatch(replaceHistory(redirectUrl));
 };
 
-const dispatchUpdateSelectedEditor = dispatchRequest( {
+const dispatchUpdateSelectedEditor = dispatchRequest({
 	fetch: updateSelectedEditor,
 	onSuccess: setSelectedEditorAndRedirect,
 	onError: noop,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {
-	[ EDITOR_TYPE_REQUEST ]: [ dispatchFetchGutenbergOptInData ],
-	[ EDITOR_TYPE_UPDATE ]: [ dispatchUpdateSelectedEditor ],
-} );
+registerHandlers('state/data-layer/wpcom/sites/gutenberg/index.js', {
+	[EDITOR_TYPE_REQUEST]: [dispatchFetchGutenbergOptInData],
+	[EDITOR_TYPE_UPDATE]: [dispatchUpdateSelectedEditor],
+});

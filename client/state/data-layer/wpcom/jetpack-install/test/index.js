@@ -41,34 +41,32 @@ const TIMEOUT_RESPONSE = {
 	message: 'cURL error 28: Operation timed out after 10000 milliseconds with 0 bytes received',
 };
 
-describe( 'installJetpackPlugin', () => {
-	test( 'should return an http request', () => {
-		const result = installJetpackPlugin( { url, user, password } );
-		expect( result ).toMatchSnapshot();
-	} );
-} );
+describe('installJetpackPlugin', () => {
+	test('should return an http request', () => {
+		const result = installJetpackPlugin({ url, user, password });
+		expect(result).toMatchSnapshot();
+	});
+});
 
-describe( 'handleSuccess', () => {
-	test( 'should return jetpackRemoteInstallComplete', () => {
-		const result = handleSuccess( { url }, SUCCESS_RESPONSE );
-		expect( result ).toEqual( expect.objectContaining( jetpackRemoteInstallComplete( url ) ) );
-	} );
-} );
+describe('handleSuccess', () => {
+	test('should return jetpackRemoteInstallComplete', () => {
+		const result = handleSuccess({ url }, SUCCESS_RESPONSE);
+		expect(result).toEqual(expect.objectContaining(jetpackRemoteInstallComplete(url)));
+	});
+});
 
-describe( 'handleError', () => {
-	test( 'should return JetpackRemoteInstallUpdateError if not timeout error', () => {
-		const result = handleError( INSTALL_ACTION, FAILURE_RESPONSE );
-		expect( result ).toEqual(
-			expect.objectContaining(
-				jetpackRemoteInstallUpdateError( url, 'COULD_NOT_LOGIN', 'extra info' )
-			)
+describe('handleError', () => {
+	test('should return JetpackRemoteInstallUpdateError if not timeout error', () => {
+		const result = handleError(INSTALL_ACTION, FAILURE_RESPONSE);
+		expect(result).toEqual(
+			expect.objectContaining(jetpackRemoteInstallUpdateError(url, 'COULD_NOT_LOGIN', 'extra info'))
 		);
-	} );
+	});
 
-	test( 'should retry on timeout error', () => {
-		const result = handleError( INSTALL_ACTION, TIMEOUT_RESPONSE );
-		expect( result ).toEqual(
-			expect.objectContaining( {
+	test('should retry on timeout error', () => {
+		const result = handleError(INSTALL_ACTION, TIMEOUT_RESPONSE);
+		expect(result).toEqual(
+			expect.objectContaining({
 				type: JETPACK_REMOTE_INSTALL,
 				url,
 				user,
@@ -79,24 +77,24 @@ describe( 'handleError', () => {
 						trackRequest: true,
 					},
 				},
-			} )
+			})
 		);
-	} );
+	});
 
-	test( 'should trigger an error if max num retries reached', () => {
+	test('should trigger an error if max num retries reached', () => {
 		const installAction = {
 			...INSTALL_ACTION,
 			meta: { dataLayer: { retryCount: JETPACK_REMOTE_INSTALL_RETRIES } },
 		};
-		const result = handleError( installAction, TIMEOUT_RESPONSE );
-		expect( result ).toEqual(
-			expect.objectContaining( {
+		const result = handleError(installAction, TIMEOUT_RESPONSE);
+		expect(result).toEqual(
+			expect.objectContaining({
 				type: JETPACK_REMOTE_INSTALL_FAILURE,
 				url,
 				errorCode: 'http_request_failed',
 				errorMessage:
 					'cURL error 28: Operation timed out after 10000 milliseconds with 0 bytes received',
-			} )
+			})
 		);
-	} );
-} );
+	});
+});

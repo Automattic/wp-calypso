@@ -6,12 +6,12 @@
  * @returns {?Array}         Media
  */
 
-export default function getMedia( state, siteId, query ) {
-	const queries = state.media.queries[ siteId ];
+export default function getMedia(state, siteId, query) {
+	const queries = state.media.queries[siteId];
 
-	if ( ! queries ) {
+	if (!queries) {
 		return null;
 	}
 
-	return queries.getItems( query );
+	return queries.getItems(query);
 }

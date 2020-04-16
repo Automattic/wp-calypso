@@ -15,13 +15,13 @@ const registeredNames = new Set();
  * @param {string} id name of handler set
  * @param {object<string, Array<Function>>} handlers set of handlers to inject
  */
-export const registerHandlers = ( id, handlers ) => {
-	if ( registeredNames.has( id ) ) {
+export const registerHandlers = (id, handlers) => {
+	if (registeredNames.has(id)) {
 		return;
 	}
 
-	registeredNames.add( id );
-	registeredHandlers = mergeHandlers( registeredHandlers, handlers );
+	registeredNames.add(id);
+	registeredHandlers = mergeHandlers(registeredHandlers, handlers);
 };
 
 /**
@@ -30,13 +30,13 @@ export const registerHandlers = ( id, handlers ) => {
  * @param {string} actionType requested action type
  * @returns {?Array<Function>} list of handlers for type
  */
-export const getHandlers = actionType => registeredHandlers[ actionType ];
+export const getHandlers = (actionType) => registeredHandlers[actionType];
 
 /**
  * For testing only: reset handlers
  */
 export const testReset = () => {
-	if ( 'test' === process.env.NODE_ENV ) {
+	if ('test' === process.env.NODE_ENV) {
 		registeredHandlers = {};
 		registeredNames.clear();
 	}

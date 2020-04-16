@@ -45,12 +45,12 @@ class AllSites extends Component {
 		onMouseLeave: PropTypes.func,
 	};
 
-	onSelect = event => {
-		this.props.onSelect( event );
+	onSelect = (event) => {
+		this.props.onSelect(event);
 	};
 
 	renderSiteCount() {
-		return <Count count={ this.props.count } />;
+		return <Count count={this.props.count} />;
 	}
 
 	render() {
@@ -66,28 +66,28 @@ class AllSites extends Component {
 		} = this.props;
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
-		const allSitesClass = classNames( {
+		const allSitesClass = classNames({
 			'all-sites': true,
 			'is-selected': isSelected,
 			'is-highlighted': isHighlighted,
-		} );
+		});
 
 		return (
-			<div className={ allSitesClass }>
+			<div className={allSitesClass}>
 				<a
 					className="all-sites__content site__content"
-					href={ href }
-					onMouseEnter={ this.props.onMouseEnter }
-					onMouseLeave={ this.props.onMouseLeave }
-					onClick={ this.onSelect }
+					href={href}
+					onMouseEnter={this.props.onMouseEnter}
+					onMouseLeave={this.props.onMouseLeave}
+					onClick={this.onSelect}
 				>
-					{ showCount && this.renderSiteCount() }
+					{showCount && this.renderSiteCount()}
 					<div className="all-sites__info site__info">
 						<span className="all-sites__title site__title">
-							{ title || translate( 'All My Sites' ) }
+							{title || translate('All My Sites')}
 						</span>
-						{ domain && <span className="all-sites__domain site__domain">{ domain }</span> }
-						<AllSitesIcon sites={ sites } />
+						{domain && <span className="all-sites__domain site__domain">{domain}</span>}
+						<AllSitesIcon sites={sites} />
 					</div>
 				</a>
 			</div>
@@ -95,8 +95,8 @@ class AllSites extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
+export default connect((state, props) => {
 	// If sites or count are not specified as props, fetch the default values from Redux
-	const { sites = getSites( state ), count = getCurrentUserVisibleSiteCount( state ) } = props;
+	const { sites = getSites(state), count = getCurrentUserVisibleSiteCount(state) } = props;
 	return { sites, count };
-} )( localize( AllSites ) );
+})(localize(AllSites));

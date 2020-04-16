@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import getJetpackModules from 'state/selectors/get-jetpack-modules';
 import { moduleData as MODULE_DATA_FIXTURE } from './fixtures/jetpack-modules';
 
-describe( 'getJetpackModules()', () => {
-	test( 'should return data for all modules for a known site', () => {
+describe('getJetpackModules()', () => {
+	test('should return data for all modules for a known site', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -21,11 +21,11 @@ describe( 'getJetpackModules()', () => {
 				},
 			},
 			siteId = 123456;
-		const output = getJetpackModules( stateIn, siteId );
-		expect( output ).to.eql( MODULE_DATA_FIXTURE );
-	} );
+		const output = getJetpackModules(stateIn, siteId);
+		expect(output).to.eql(MODULE_DATA_FIXTURE);
+	});
 
-	test( 'should return null for an unknown site', () => {
+	test('should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -36,7 +36,7 @@ describe( 'getJetpackModules()', () => {
 				},
 			},
 			siteId = 123456;
-		const output = getJetpackModules( stateIn, siteId );
-		expect( output ).to.be.null;
-	} );
-} );
+		const output = getJetpackModules(stateIn, siteId);
+		expect(output).to.be.null;
+	});
+});

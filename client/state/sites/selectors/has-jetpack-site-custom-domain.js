@@ -15,17 +15,17 @@ import isJetpackSite from './is-jetpack-site';
  * @param {number} siteId Site ID
  * @returns {?boolean} Whether site has custom domain
  */
-export default function hasJetpackSiteCustomDomain( state, siteId ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
+export default function hasJetpackSiteCustomDomain(state, siteId) {
+	if (!isJetpackSite(state, siteId)) {
 		return null;
 	}
 
-	const domain = getSiteDomain( state, siteId ),
-		unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+	const domain = getSiteDomain(state, siteId),
+		unmappedUrl = getSiteOption(state, siteId, 'unmapped_url');
 
-	if ( ! domain || ! unmappedUrl ) {
+	if (!domain || !unmappedUrl) {
 		return null;
 	}
 
-	return domain !== withoutHttp( unmappedUrl );
+	return domain !== withoutHttp(unmappedUrl);
 }

@@ -16,15 +16,15 @@ import WpcomChecklist from './wpcom-checklist';
  */
 import './style.scss';
 
-const ChecklistSiteSetup = ( { checklistMode } ) => {
+const ChecklistSiteSetup = ({ checklistMode }) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="checklist-site-setup">
 			<Card className="checklist-site-setup__heading">
-				<CardHeading>{ translate( 'Site Setup List' ) }</CardHeading>
+				<CardHeading>{translate('Site Setup List')}</CardHeading>
 			</Card>
-			<WpcomChecklist displayMode={ checklistMode } />
+			<WpcomChecklist displayMode={checklistMode} />
 		</div>
 	);
 };

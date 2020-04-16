@@ -45,7 +45,7 @@ import debugModule from 'debug';
  */
 import './style.scss';
 
-const debug = debugModule( 'calypso:podcast-image' );
+const debug = debugModule('calypso:podcast-image');
 
 class PodcastCoverImageSetting extends PureComponent {
 	static propTypes = {
@@ -64,98 +64,98 @@ class PodcastCoverImageSetting extends PureComponent {
 		transientMediaId: null,
 	};
 
-	toggleModal = isModalVisible => {
+	toggleModal = (isModalVisible) => {
 		const { isEditingCoverImage } = this.state;
 
-		this.setState( {
+		this.setState({
 			isModalVisible,
 			hasToggledModal: true,
 			isEditingCoverImage: isModalVisible ? isEditingCoverImage : false,
-		} );
+		});
 	};
 
-	showModal = () => this.toggleModal( true );
+	showModal = () => this.toggleModal(true);
 
-	hideModal = () => this.toggleModal( false );
+	hideModal = () => this.toggleModal(false);
 
-	editSelectedMedia = value => {
-		if ( value ) {
-			this.setState( { isEditingCoverImage: true } );
+	editSelectedMedia = (value) => {
+		if (value) {
+			this.setState({ isEditingCoverImage: true });
 			this.props.onEditSelectedMedia();
 		} else {
 			this.hideModal();
 		}
 	};
 
-	uploadCoverImage( blob, fileName ) {
+	uploadCoverImage(blob, fileName) {
 		const { siteId, site } = this.props;
 
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
-		const transientMediaId = uniqueId( 'podcast-cover-image' );
+		const transientMediaId = uniqueId('podcast-cover-image');
 
-		this.setState( { transientMediaId } );
-		this.onUploadStateChange( true );
+		this.setState({ transientMediaId });
+		this.onUploadStateChange(true);
 
 		const checkUploadComplete = () => {
 			// MediaStore tracks pointers from transient media to the persisted
 			// copy, so if our request is for a media which is not transient,
 			// we can assume the upload has finished.
-			const media = MediaStore.get( siteId, transientMediaId );
-			const isUploadInProgress = media && isItemBeingUploaded( media );
-			const isFailedUpload = ! media;
+			const media = MediaStore.get(siteId, transientMediaId);
+			const isUploadInProgress = media && isItemBeingUploaded(media);
+			const isFailedUpload = !media;
 
-			if ( isFailedUpload ) {
-				this.props.deleteMedia( siteId, transientMediaId );
+			if (isFailedUpload) {
+				this.props.deleteMedia(siteId, transientMediaId);
 			} else {
-				this.props.receiveMedia( siteId, media );
+				this.props.receiveMedia(siteId, media);
 			}
 
-			if ( isUploadInProgress ) {
+			if (isUploadInProgress) {
 				return;
 			}
 
-			MediaStore.off( 'change', checkUploadComplete );
+			MediaStore.off('change', checkUploadComplete);
 
-			if ( ! isFailedUpload ) {
-				debug( 'upload media', media );
-				this.props.onSelect( media.ID, media.URL );
+			if (!isFailedUpload) {
+				debug('upload media', media);
+				this.props.onSelect(media.ID, media.URL);
 			}
 
 			// Remove transient image so that new image shows or if failed upload, the prior image
-			this.setState( { transientMediaId: null } );
-			this.onUploadStateChange( false );
+			this.setState({ transientMediaId: null });
+			this.onUploadStateChange(false);
 		};
 
-		MediaStore.on( 'change', checkUploadComplete );
+		MediaStore.on('change', checkUploadComplete);
 
-		MediaActions.add( site, {
+		MediaActions.add(site, {
 			ID: transientMediaId,
 			fileContents: blob,
 			fileName,
-		} );
+		});
 	}
 
-	onUploadStateChange = isUploading => {
-		this.props.onUploadStateChange( isUploading );
-		this.setState( { isUploading } );
+	onUploadStateChange = (isUploading) => {
+		this.props.onUploadStateChange(isUploading);
+		this.setState({ isUploading });
 	};
 
-	setCoverImage = ( error, blob ) => {
-		if ( error || ! blob ) {
+	setCoverImage = (error, blob) => {
+		if (error || !blob) {
 			return;
 		}
 
 		const { siteId } = this.props;
-		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
-		if ( ! selectedItem ) {
+		const selectedItem = head(MediaLibrarySelectedStore.getAll(siteId));
+		if (!selectedItem) {
 			return;
 		}
 
-		debug( 'selectedItem', selectedItem );
+		debug('selectedItem', selectedItem);
 
 		const { crop, transform } = this.props;
-		const isImageEdited = ! isEqual(
+		const isImageEdited = !isEqual(
 			{
 				...crop,
 				...transform,
@@ -170,12 +170,12 @@ class PodcastCoverImageSetting extends PureComponent {
 				scaleY: 1,
 			}
 		);
-		debug( 'isImageEdited', isImageEdited, { crop, transform } );
+		debug('isImageEdited', isImageEdited, { crop, transform });
 
-		if ( isImageEdited ) {
-			this.uploadCoverImage( blob, `cropped-${ selectedItem.file }` );
+		if (isImageEdited) {
+			this.uploadCoverImage(blob, `cropped-${selectedItem.file}`);
 		} else {
-			this.props.onSelect( selectedItem.ID, selectedItem.URL );
+			this.props.onSelect(selectedItem.ID, selectedItem.URL);
 		}
 
 		this.hideModal();
@@ -185,15 +185,15 @@ class PodcastCoverImageSetting extends PureComponent {
 	cancelEditingCoverImage = () => {
 		this.props.onCancelEditingCoverImage();
 		this.props.resetAllImageEditorState();
-		this.setState( { isEditingCoverImage: false } );
+		this.setState({ isEditingCoverImage: false });
 	};
 
-	isParentReady( selectedMedia ) {
-		return ! selectedMedia.some( item => item.external );
+	isParentReady(selectedMedia) {
+		return !selectedMedia.some((item) => item.external);
 	}
 
 	preloadModal() {
-		asyncRequire( 'post-editor/media-modal' );
+		asyncRequire('post-editor/media-modal');
 	}
 
 	renderChangeButton() {
@@ -205,11 +205,11 @@ class PodcastCoverImageSetting extends PureComponent {
 			<Button
 				className="podcast-cover-image-setting__button"
 				compact
-				onClick={ this.showModal }
-				onMouseEnter={ this.preloadModal }
-				disabled={ isDisabled || isUploading }
+				onClick={this.showModal}
+				onMouseEnter={this.preloadModal}
+				disabled={isDisabled || isUploading}
 			>
-				{ isCoverSet ? translate( 'Change' ) : translate( 'Add' ) }
+				{isCoverSet ? translate('Change') : translate('Add')}
 			</Button>
 		);
 	}
@@ -217,33 +217,33 @@ class PodcastCoverImageSetting extends PureComponent {
 	renderCoverPreview() {
 		const { coverImageUrl, siteId, translate, isDisabled } = this.props;
 		const { transientMediaId, isUploading } = this.state;
-		const media = transientMediaId && MediaStore.get( siteId, transientMediaId );
-		const imageUrl = ( media && media.URL ) || coverImageUrl;
-		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
-		const isTransient = !! transientMediaId;
+		const media = transientMediaId && MediaStore.get(siteId, transientMediaId);
+		const imageUrl = (media && media.URL) || coverImageUrl;
+		const imageSrc = imageUrl && resizeImageUrl(imageUrl, 96);
+		const isTransient = !!transientMediaId;
 
-		const classNames = classnames( 'podcast-cover-image-setting__preview', {
-			'is-blank': ! imageSrc,
+		const classNames = classnames('podcast-cover-image-setting__preview', {
+			'is-blank': !imageSrc,
 			'is-transient': isTransient,
 			'is-disabled': isDisabled,
-		} );
+		});
 
 		return (
 			<button
-				className={ classNames }
-				onClick={ this.showModal }
-				onMouseEnter={ this.preloadModal }
+				className={classNames}
+				onClick={this.showModal}
+				onMouseEnter={this.preloadModal}
 				type="button" // default is "submit" which saves settings on click
-				disabled={ isDisabled || isUploading }
+				disabled={isDisabled || isUploading}
 			>
-				{ imageSrc ? (
-					<Image className="podcast-cover-image-setting__img" src={ imageSrc } alt="" />
+				{imageSrc ? (
+					<Image className="podcast-cover-image-setting__img" src={imageSrc} alt="" />
 				) : (
 					<span className="podcast-cover-image-setting__placeholder">
-						{ translate( 'No image set' ) }
+						{translate('No image set')}
 					</span>
-				) }
-				{ isTransient && <Spinner /> }
+				)}
+				{isTransient && <Spinner />}
 			</button>
 		);
 	}
@@ -254,28 +254,28 @@ class PodcastCoverImageSetting extends PureComponent {
 
 		return (
 			hasToggledModal && (
-				<MediaLibrarySelectedData siteId={ siteId }>
+				<MediaLibrarySelectedData siteId={siteId}>
 					<AsyncLoad
 						require="post-editor/media-modal"
-						placeholder={ <EditorMediaModalDialog isVisible /> }
-						siteId={ siteId }
-						onClose={ this.editSelectedMedia }
-						isParentReady={ this.isParentReady }
-						enabledFilters={ [ 'images' ] }
-						{ ...( isEditingCoverImage
+						placeholder={<EditorMediaModalDialog isVisible />}
+						siteId={siteId}
+						onClose={this.editSelectedMedia}
+						isParentReady={this.isParentReady}
+						enabledFilters={['images']}
+						{...(isEditingCoverImage
 							? {
 									imageEditorProps: {
-										allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+										allowedAspectRatios: [AspectRatios.ASPECT_1X1],
 										onDone: this.setCoverImage,
 										onCancel: this.cancelEditingCoverImage,
 									},
 							  }
-							: {} ) }
-						visible={ isModalVisible }
-						labels={ {
-							confirm: translate( 'Continue' ),
-						} }
-						disableLargeImageSources={ true }
+							: {})}
+						visible={isModalVisible}
+						labels={{
+							confirm: translate('Continue'),
+						}}
+						disableLargeImageSources={true}
 						single
 					/>
 				</MediaLibrarySelectedData>
@@ -293,11 +293,11 @@ class PodcastCoverImageSetting extends PureComponent {
 				<Button
 					className="podcast-cover-image-setting__button"
 					compact
-					onClick={ onRemove }
+					onClick={onRemove}
 					scary
-					disabled={ isDisabled || isUploading }
+					disabled={isDisabled || isUploading}
 				>
-					{ translate( 'Remove' ) }
+					{translate('Remove')}
 				</Button>
 			)
 		);
@@ -308,32 +308,32 @@ class PodcastCoverImageSetting extends PureComponent {
 
 		return (
 			<FormFieldset className="podcast-cover-image-setting">
-				<FormLabel>{ translate( 'Cover Image' ) }</FormLabel>
-				{ this.renderCoverPreview() }
-				{ this.renderChangeButton() }
-				{ this.renderRemoveButton() }
-				{ this.renderMediaModal() }
+				<FormLabel>{translate('Cover Image')}</FormLabel>
+				{this.renderCoverPreview()}
+				{this.renderChangeButton()}
+				{this.renderRemoveButton()}
+				{this.renderMediaModal()}
 			</FormFieldset>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
 			siteId,
-			site: getSelectedSite( state ),
-			crop: getImageEditorCrop( state ),
-			transform: getImageEditorTransform( state ),
+			site: getSelectedSite(state),
+			crop: getImageEditorCrop(state),
+			transform: getImageEditorTransform(state),
 		};
 	},
 	{
 		resetAllImageEditorState,
-		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		onCancelEditingCoverImage: partial( setEditorMediaModalView, ModalViews.LIST ),
+		onEditSelectedMedia: partial(setEditorMediaModalView, ModalViews.IMAGE_EDITOR),
+		onCancelEditingCoverImage: partial(setEditorMediaModalView, ModalViews.LIST),
 		receiveMedia,
 		deleteMedia,
 	}
-)( localize( PodcastCoverImageSetting ) );
+)(localize(PodcastCoverImageSetting));

@@ -11,9 +11,9 @@ import { Field } from 'redux-form';
  */
 import FormToggle from 'components/forms/form-toggle/compact';
 
-const ToggleRenderer = ( { input, meta, text, type, ...otherProps } ) => (
-	<FormToggle { ...input } { ...otherProps }>
-		{ text }
+const ToggleRenderer = ({ input, meta, text, type, ...otherProps }) => (
+	<FormToggle {...input} {...otherProps}>
+		{text}
 	</FormToggle>
 );
 
@@ -24,7 +24,7 @@ class ReduxFormToggle extends Component {
 	};
 
 	render() {
-		return <Field component={ ToggleRenderer } type="checkbox" { ...this.props } />;
+		return <Field component={ToggleRenderer} type="checkbox" {...this.props} />;
 	}
 }
 

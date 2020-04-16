@@ -23,63 +23,63 @@ class EditorMediaModalGalleryEdit extends React.Component {
 	};
 
 	static defaultProps = {
-		settings: Object.freeze( {} ),
+		settings: Object.freeze({}),
 		onUpdateSetting: noop,
 	};
 
-	onOrderChanged = order => {
+	onOrderChanged = (order) => {
 		const items = [];
 
-		this.props.settings.items.forEach( ( item, i ) => {
-			items[ order[ i ] ] = item;
-		} );
+		this.props.settings.items.forEach((item, i) => {
+			items[order[i]] = item;
+		});
 
-		this.props.onUpdateSetting( {
+		this.props.onUpdateSetting({
 			items: items,
 			orderBy: null,
-		} );
+		});
 	};
 
 	render() {
 		const { onUpdateSetting, site, settings, translate } = this.props;
 
-		if ( ! site || ! settings.items ) {
+		if (!site || !settings.items) {
 			return null;
 		}
 
 		const orders = {
-			[ translate( 'Reverse order' ) ]: reverse( [ ...settings.items ] ),
-			[ translate( 'Order alphabetically' ) ]: sortBy( settings.items, 'title' ),
-			[ translate( 'Order chronologically' ) ]: sortBy( settings.items, 'date' ),
+			[translate('Reverse order')]: reverse([...settings.items]),
+			[translate('Order alphabetically')]: sortBy(settings.items, 'title'),
+			[translate('Order chronologically')]: sortBy(settings.items, 'date'),
 		};
 
 		return (
 			<div>
 				<EllipsisMenu popoverClassName="gallery__order-popover" position="bottom right">
-					{ map( orders, ( orderedItems, name ) => {
-						const boundAction = () => onUpdateSetting( { items: orderedItems } );
+					{map(orders, (orderedItems, name) => {
+						const boundAction = () => onUpdateSetting({ items: orderedItems });
 						return (
-							<PopoverMenuItem key={ name } onClick={ boundAction }>
-								{ name }
+							<PopoverMenuItem key={name} onClick={boundAction}>
+								{name}
 							</PopoverMenuItem>
 						);
-					} ) }
+					})}
 				</EllipsisMenu>
-				<SortableList onChange={ this.onOrderChanged }>
-					{ settings.items.map( item => {
+				<SortableList onChange={this.onOrderChanged}>
+					{settings.items.map((item) => {
 						return (
 							<EditorMediaModalGalleryEditItem
-								key={ item.ID }
-								site={ site }
-								item={ item }
-								showRemoveButton={ settings.items.length > 1 }
+								key={item.ID}
+								site={site}
+								item={item}
+								showRemoveButton={settings.items.length > 1}
 							/>
 						);
-					} ) }
+					})}
 				</SortableList>
 			</div>
 		);
 	}
 }
 
-export default localize( EditorMediaModalGalleryEdit );
+export default localize(EditorMediaModalGalleryEdit);

@@ -32,55 +32,55 @@ export const initialSiteState = {
  * @param {object} attributes list of attributes and their values
  * @returns {object} the new state
  */
-function updateSiteState( state, siteId, attributes ) {
-	return Object.assign( {}, state, {
-		[ siteId ]: Object.assign( {}, initialSiteState, state[ siteId ], attributes ),
-	} );
+function updateSiteState(state, siteId, attributes) {
+	return Object.assign({}, state, {
+		[siteId]: Object.assign({}, initialSiteState, state[siteId], attributes),
+	});
 }
 
-export function plans( state = {}, action ) {
-	switch ( action.type ) {
+export function plans(state = {}, action) {
+	switch (action.type) {
 		case SITE_PLANS_FETCH:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				error: null,
 				isRequesting: true,
-			} );
+			});
 
 		case SITE_PLANS_FETCH_COMPLETED:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				error: null,
 				hasLoadedFromServer: true,
 				isRequesting: false,
 				data: action.plans,
-			} );
+			});
 
 		case SITE_PLANS_FETCH_FAILED:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				error: action.error,
 				isRequesting: false,
-			} );
+			});
 
 		case SITE_PLANS_REMOVE:
-			return omit( state, action.siteId );
+			return omit(state, action.siteId);
 
 		case SITE_PLANS_TRIAL_CANCEL:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				isRequesting: true,
-			} );
+			});
 
 		case SITE_PLANS_TRIAL_CANCEL_COMPLETED:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				error: null,
 				hasLoadedFromServer: true,
 				isRequesting: false,
 				data: action.plans,
-			} );
+			});
 
 		case SITE_PLANS_TRIAL_CANCEL_FAILED:
-			return updateSiteState( state, action.siteId, {
+			return updateSiteState(state, action.siteId, {
 				error: action.error,
 				isRequesting: false,
-			} );
+			});
 	}
 
 	return state;

@@ -13,33 +13,33 @@ import { setImportingFromSignupFlow, setImportOriginSiteDetails } from 'state/im
 import { decodeURIComponentIfValid } from 'lib/url';
 import { addQueryArgs } from 'lib/route';
 
-export function importSite( context, next ) {
+export function importSite(context, next) {
 	const { query } = context;
-	const argsToExtract = [ 'engine', 'isFromSignup', 'from-site' ];
+	const argsToExtract = ['engine', 'isFromSignup', 'from-site'];
 
 	// Pull supported query arguments into state (& out of the address bar)
-	const extractedArgs = pick( query, argsToExtract );
+	const extractedArgs = pick(query, argsToExtract);
 
-	if ( ! isEmpty( extractedArgs ) ) {
-		const destination = addQueryArgs( omit( query, argsToExtract ), context.pathname );
+	if (!isEmpty(extractedArgs)) {
+		const destination = addQueryArgs(omit(query, argsToExtract), context.pathname);
 
-		page.replace( destination, {
+		page.replace(destination, {
 			engine: query.engine,
 			isFromSignup: query.signup,
-			siteUrl: query[ 'from-site' ],
-		} );
+			siteUrl: query['from-site'],
+		});
 		return;
 	}
 
 	context.store.dispatch(
-		setImportOriginSiteDetails( {
-			siteEngine: get( context, 'state.engine' ),
-			siteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
-		} )
+		setImportOriginSiteDetails({
+			siteEngine: get(context, 'state.engine'),
+			siteUrl: decodeURIComponentIfValid(get(context, 'state.siteUrl')),
+		})
 	);
 
-	if ( get( context, 'state.isFromSignup' ) ) {
-		context.store.dispatch( setImportingFromSignupFlow() );
+	if (get(context, 'state.isFromSignup')) {
+		context.store.dispatch(setImportingFromSignupFlow());
 	}
 
 	context.primary = <SectionImport />;

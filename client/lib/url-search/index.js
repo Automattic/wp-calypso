@@ -11,7 +11,7 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-const debug = debugFactory( 'calypso:url-search' );
+const debug = debugFactory('calypso:url-search');
 
 /**
  * Function for constructing the url to page to. Here are some examples:
@@ -29,21 +29,21 @@ const debug = debugFactory( 'calypso:url-search' );
  *
  * @returns {string} The built search url
  */
-export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
-	const parsedUrl = pick( url.parse( uri, true ), 'pathname', 'hash', 'query' );
+export const buildSearchUrl = ({ uri, search, queryKey = 's' }) => {
+	const parsedUrl = pick(url.parse(uri, true), 'pathname', 'hash', 'query');
 
-	if ( search ) {
-		parsedUrl.query[ queryKey ] = search;
+	if (search) {
+		parsedUrl.query[queryKey] = search;
 	} else {
-		delete parsedUrl.query[ queryKey ];
+		delete parsedUrl.query[queryKey];
 	}
 
-	return url.format( parsedUrl ).replace( /%20/g, '+' );
+	return url.format(parsedUrl).replace(/%20/g, '+');
 };
 
-const UrlSearch = Component =>
+const UrlSearch = (Component) =>
 	class extends React.Component {
-		static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
+		static displayName = `UrlSearch(${Component.displayName || Component.name || ''})`;
 		static defaultProps = {
 			search: '',
 			queryKey: 's',
@@ -53,28 +53,28 @@ const UrlSearch = Component =>
 			searchOpen: false,
 		};
 
-		UNSAFE_componentWillReceiveProps( { search } ) {
-			return ! search && this.setState( { searchOpen: false } );
+		UNSAFE_componentWillReceiveProps({ search }) {
+			return !search && this.setState({ searchOpen: false });
 		}
 
-		doSearch = query => {
-			this.setState( {
+		doSearch = (query) => {
+			this.setState({
 				searchOpen: false !== query,
-			} );
+			});
 
-			const searchURL = buildSearchUrl( {
+			const searchURL = buildSearchUrl({
 				uri: window.location.href,
 				search: query,
 				queryKey: this.props.queryKey,
-			} );
+			});
 
-			debug( 'search for: %s', query );
-			if ( this.props.search && query ) {
-				debug( 'replacing URL: %s', searchURL );
-				page.replace( searchURL );
+			debug('search for: %s', query);
+			if (this.props.search && query) {
+				debug('replacing URL: %s', searchURL);
+				page.replace(searchURL);
 			} else {
-				debug( 'setting URL: %s', searchURL );
-				page( searchURL );
+				debug('setting URL: %s', searchURL);
+				page(searchURL);
 			}
 		};
 
@@ -84,11 +84,7 @@ const UrlSearch = Component =>
 
 		render() {
 			return (
-				<Component
-					{ ...this.props }
-					doSearch={ this.doSearch }
-					getSearchOpen={ this.getSearchOpen }
-				/>
+				<Component {...this.props} doSearch={this.doSearch} getSearchOpen={this.getSearchOpen} />
 			);
 		}
 	};

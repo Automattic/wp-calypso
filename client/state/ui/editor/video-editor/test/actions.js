@@ -14,64 +14,64 @@ import {
 	VIDEO_EDITOR_UPDATE_POSTER,
 } from 'state/action-types';
 
-describe( 'actions', () => {
-	describe( '#updatePoster()', () => {
-		test( 'should return an action object', () => {
+describe('actions', () => {
+	describe('#updatePoster()', () => {
+		test('should return an action object', () => {
 			const videoId = 'dummy-videoId';
 			const params = { atTime: 1 };
-			const action = updatePoster( videoId, params );
+			const action = updatePoster(videoId, params);
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: VIDEO_EDITOR_UPDATE_POSTER,
 				videoId,
 				params,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#setPosterUrl()', () => {
-		test( 'should return an action object', () => {
+	describe('#setPosterUrl()', () => {
+		test('should return an action object', () => {
 			const poster = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
-			const action = setPosterUrl( poster );
+			const action = setPosterUrl(poster);
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: VIDEO_EDITOR_SET_POSTER_URL,
 				posterUrl: poster,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#showError()', () => {
-		test( 'should return an action object', () => {
+	describe('#showError()', () => {
+		test('should return an action object', () => {
 			const action = showError();
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: VIDEO_EDITOR_SHOW_ERROR,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#showUploadProgress()', () => {
-		test( 'should return an action object', () => {
+	describe('#showUploadProgress()', () => {
+		test('should return an action object', () => {
 			const percentage = 50;
-			const action = showUploadProgress( percentage );
+			const action = showUploadProgress(percentage);
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 				percentage,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#updatePosterUploadProgress()', () => {
-		test( 'should return an action object', () => {
+	describe('#updatePosterUploadProgress()', () => {
+		test('should return an action object', () => {
 			const percentage = 50;
-			const action = showUploadProgress( percentage );
+			const action = showUploadProgress(percentage);
 
-			expect( action ).to.eql( {
+			expect(action).to.eql({
 				type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 				percentage,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

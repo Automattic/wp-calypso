@@ -19,7 +19,7 @@ interface LogToLogstashParams {
 	message: string;
 	extra?: any;
 	site_id?: number;
-	[ key: string ]: any;
+	[key: string]: any;
 }
 
 /**
@@ -29,9 +29,9 @@ interface LogToLogstashParams {
  * @param params wpcom log2logstash params.
  * @returns      Action object
  */
-export function logToLogstash( params: LogToLogstashParams ) {
+export function logToLogstash(params: LogToLogstashParams) {
 	return {
 		type: LOGSTASH,
-		params: { params: JSON.stringify( params ) },
+		params: { params: JSON.stringify(params) },
 	};
 }

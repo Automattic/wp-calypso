@@ -4,5 +4,5 @@
  * @returns {boolean} Whether the user agent matches the ones used on the WordPress mobile apps.
  */
 export function isWpMobileApp() {
-	return navigator && /wp-(android|iphone)/.test( navigator.userAgent );
+	return navigator && /wp-(android|iphone)/.test(navigator.userAgent);
 }

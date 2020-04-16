@@ -3,8 +3,8 @@
  */
 import { gdprConsentStatus } from 'lib/domains/constants';
 
-export function getGdprConsentStatus( domainFromApi ) {
-	switch ( domainFromApi.gdpr_consent_status ) {
+export function getGdprConsentStatus(domainFromApi) {
+	switch (domainFromApi.gdpr_consent_status) {
 		case 'NONE':
 			return gdprConsentStatus.NONE;
 		case 'PENDING':

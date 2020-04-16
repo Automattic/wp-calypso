@@ -30,7 +30,7 @@ export default class ActivityListExample extends PureComponent {
 
 		return (
 			<div>
-				<ActivityList logs={ logs } />
+				<ActivityList logs={logs} />
 			</div>
 		);
 	}

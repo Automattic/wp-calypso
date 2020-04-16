@@ -3,21 +3,21 @@
  */
 import { getSiteStyle } from '../selectors';
 
-describe( 'getSiteStyle()', () => {
-	test( 'should return the site style value', () => {
+describe('getSiteStyle()', () => {
+	test('should return the site style value', () => {
 		const siteStyle = 'elegant';
 		expect(
-			getSiteStyle( {
+			getSiteStyle({
 				signup: {
 					steps: {
 						siteStyle,
 					},
 				},
-			} )
-		).toEqual( siteStyle );
-	} );
+			})
+		).toEqual(siteStyle);
+	});
 
-	test( 'should default to an empty string', () => {
-		expect( getSiteStyle( {} ) ).toEqual( '' );
-	} );
-} );
+	test('should default to an empty string', () => {
+		expect(getSiteStyle({})).toEqual('');
+	});
+});

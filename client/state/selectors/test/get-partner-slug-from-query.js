@@ -3,12 +3,12 @@
  */
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 
-describe( '#getPartnerSlugFromQuery', () => {
-	test( 'should return null when no argument', () => {
-		expect( getPartnerSlugFromQuery() ).toBeNull();
-	} );
+describe('#getPartnerSlugFromQuery', () => {
+	test('should return null when no argument', () => {
+		expect(getPartnerSlugFromQuery()).toBeNull();
+	});
 
-	test( 'should return null if no partner_id query present', () => {
+	test('should return null if no partner_id query present', () => {
 		const state = {
 			ui: {
 				route: {
@@ -20,10 +20,10 @@ describe( '#getPartnerSlugFromQuery', () => {
 				},
 			},
 		};
-		expect( getPartnerSlugFromQuery( state ) ).toBeNull();
-	} );
+		expect(getPartnerSlugFromQuery(state)).toBeNull();
+	});
 
-	test( 'should return null when partner_id present but not integer', () => {
+	test('should return null when partner_id present but not integer', () => {
 		const state = {
 			ui: {
 				route: {
@@ -37,10 +37,10 @@ describe( '#getPartnerSlugFromQuery', () => {
 			},
 		};
 
-		expect( getPartnerSlugFromQuery( state ) ).toBeNull();
-	} );
+		expect(getPartnerSlugFromQuery(state)).toBeNull();
+	});
 
-	test( 'should return pressable when partner_id is 49640', () => {
+	test('should return pressable when partner_id is 49640', () => {
 		const state = {
 			ui: {
 				route: {
@@ -54,6 +54,6 @@ describe( '#getPartnerSlugFromQuery', () => {
 			},
 		};
 
-		expect( getPartnerSlugFromQuery( state ) ).toBe( 'pressable' );
-	} );
-} );
+		expect(getPartnerSlugFromQuery(state)).toBe('pressable');
+	});
+});

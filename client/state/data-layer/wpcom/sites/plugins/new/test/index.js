@@ -32,66 +32,64 @@ const ERROR_RESPONSE = {
 	message: 'folder_exists',
 };
 
-jest.mock( 'dispatcher' );
-jest.mock( 'state/sites/selectors' );
+jest.mock('dispatcher');
+jest.mock('state/sites/selectors');
 
-describe( 'uploadPlugin', () => {
-	test( 'should return an http request action', () => {
-		const action = uploadPlugin( { siteId, file: 'xyz' } );
-		expect( action ).toEqual(
-			expect.arrayContaining( [
-				expect.objectContaining( {
-					formData: [ [ 'zip[]', 'xyz' ] ],
+describe('uploadPlugin', () => {
+	test('should return an http request action', () => {
+		const action = uploadPlugin({ siteId, file: 'xyz' });
+		expect(action).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					formData: [['zip[]', 'xyz']],
 					method: 'POST',
-					path: `/sites/${ siteId }/plugins/new`,
-				} ),
-			] )
+					path: `/sites/${siteId}/plugins/new`,
+				}),
+			])
 		);
-	} );
-} );
+	});
+});
 
-describe( 'uploadComplete', () => {
+describe('uploadComplete', () => {
 	const site = {
 		ID: siteId,
 		URL: 'https://wordpress.com',
 	};
 	const getState = jest.fn();
 
-	test( 'should return a plugin upload complete action', () => {
+	test('should return a plugin upload complete action', () => {
 		const dispatch = jest.fn();
-		uploadComplete( { siteId }, SUCCESS_RESPONSE )( dispatch, getState );
-		expect( dispatch ).toHaveBeenCalledWith( completePluginUpload( siteId, pluginId ) );
-	} );
+		uploadComplete({ siteId }, SUCCESS_RESPONSE)(dispatch, getState);
+		expect(dispatch).toHaveBeenCalledWith(completePluginUpload(siteId, pluginId));
+	});
 
-	test( 'should dispatch a receive installed plugin action', () => {
-		Dispatcher.handleServerAction.mockImplementation( () => {} );
-		getSite.mockImplementation( () => site );
+	test('should dispatch a receive installed plugin action', () => {
+		Dispatcher.handleServerAction.mockImplementation(() => {});
+		getSite.mockImplementation(() => site);
 		const dispatch = jest.fn();
 
-		uploadComplete( { siteId }, SUCCESS_RESPONSE )( dispatch, getState );
+		uploadComplete({ siteId }, SUCCESS_RESPONSE)(dispatch, getState);
 
-		expect( Dispatcher.handleServerAction ).toHaveBeenCalledWith( {
+		expect(Dispatcher.handleServerAction).toHaveBeenCalledWith({
 			type: 'RECEIVE_INSTALLED_PLUGIN',
 			action: 'PLUGIN_UPLOAD',
 			site,
 			plugin: SUCCESS_RESPONSE,
 			data: SUCCESS_RESPONSE,
-		} );
-	} );
-} );
+		});
+	});
+});
 
-describe( 'receiveError', () => {
-	test( 'should return a plugin upload error action', () => {
-		const action = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( action ).toEqual(
-			expect.arrayContaining( [ pluginUploadError( siteId, ERROR_RESPONSE ) ] )
-		);
-	} );
-} );
+describe('receiveError', () => {
+	test('should return a plugin upload error action', () => {
+		const action = receiveError({ siteId }, ERROR_RESPONSE);
+		expect(action).toEqual(expect.arrayContaining([pluginUploadError(siteId, ERROR_RESPONSE)]));
+	});
+});
 
-describe( 'updateUploadProgress', () => {
-	test( 'should return a plugin upload progress update action', () => {
-		const action = updateUploadProgress( { siteId }, { loaded: 200, total: 400 } );
-		expect( action ).toEqual( updatePluginUploadProgress( siteId, 50 ) );
-	} );
-} );
+describe('updateUploadProgress', () => {
+	test('should return a plugin upload progress update action', () => {
+		const action = updateUploadProgress({ siteId }, { loaded: 200, total: 400 });
+		expect(action).toEqual(updatePluginUploadProgress(siteId, 50));
+	});
+});

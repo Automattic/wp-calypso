@@ -20,7 +20,7 @@ import 'state/stats/init';
  * @param  {string}   date     The most recent day to include in results (YYYY-MM-DD format)
  * @returns {object}  Action object
  */
-export function requestRecentPostViews( siteId, postIds, num, date ) {
+export function requestRecentPostViews(siteId, postIds, num, date) {
 	return {
 		type: STATS_RECENT_POST_VIEWS_REQUEST,
 		siteId,
@@ -37,7 +37,7 @@ export function requestRecentPostViews( siteId, postIds, num, date ) {
  * @param  {number}  siteId   Site ID
  * @returns {object}  Action object
  */
-export function receiveRecentPostViews( siteId, { date, posts } ) {
+export function receiveRecentPostViews(siteId, { date, posts }) {
 	return {
 		type: STATS_RECENT_POST_VIEWS_RECEIVE,
 		siteId,

@@ -9,16 +9,16 @@ import React from 'react';
  */
 import InfoPopover from 'components/info-popover';
 
-function GSuitePurchaseCtaSkuInfo( { skuName, storageText, storageNoticeText } ) {
+function GSuitePurchaseCtaSkuInfo({ skuName, storageText, storageNoticeText }) {
 	return (
 		<div className="gsuite-purchase-cta__sku-info">
 			<div className="gsuite-purchase-cta__sku-info-name-area">
-				<h3>{ skuName }</h3>
+				<h3>{skuName}</h3>
 			</div>
 
 			<div className="gsuite-purchase-cta__sku-info-storage-area">
-				<h4>{ storageText }</h4>
-				{ storageNoticeText && <InfoPopover>{ storageNoticeText }</InfoPopover> }
+				<h4>{storageText}</h4>
+				{storageNoticeText && <InfoPopover>{storageNoticeText}</InfoPopover>}
 			</div>
 		</div>
 	);

@@ -14,8 +14,8 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
  */
 import './style.scss';
 
-export default function DomainManagementFormFooter( { children } ) {
+export default function DomainManagementFormFooter({ children }) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	return <FormButtonsBar className="domain-management-form-footer">{ children }</FormButtonsBar>;
+	return <FormButtonsBar className="domain-management-form-footer">{children}</FormButtonsBar>;
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }

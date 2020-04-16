@@ -14,7 +14,7 @@ import 'state/posts/init';
  * @param  {object} post   Post attribute updates
  * @returns {object}        Action object
  */
-export function editPost( siteId, postId = null, post ) {
+export function editPost(siteId, postId = null, post) {
 	return {
 		type: POST_EDIT,
 		post,

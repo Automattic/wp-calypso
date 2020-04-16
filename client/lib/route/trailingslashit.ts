@@ -1,1 +1,1 @@
-export default ( path: string ): string => path.replace( /(\/)?$/, '/' );
+export default (path: string): string => path.replace(/(\/)?$/, '/');

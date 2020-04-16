@@ -38,14 +38,14 @@ const user = userFactory();
 /**
  * Module variables
  */
-const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
+const globalKeyBoardShortcutsEnabled = config.isEnabled('keyboard-shortcuts');
 let globalKeyboardShortcuts;
 
-if ( globalKeyBoardShortcutsEnabled ) {
+if (globalKeyBoardShortcutsEnabled) {
 	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
 
-const desktop = config.isEnabled( 'desktop' ) ? require( 'lib/desktop' ).default : null;
+const desktop = config.isEnabled('desktop') ? require('lib/desktop').default : null;
 
 /**
  * Notifies user about the fact that they were automatically logged in
@@ -55,8 +55,8 @@ const desktop = config.isEnabled( 'desktop' ) ? require( 'lib/desktop' ).default
  * @param {object}   action   - the dispatched action
  * @param {Function} getState - redux getState function
  */
-const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState ) => {
-	if ( ! action.query.immediate_login_attempt ) {
+const notifyAboutImmediateLoginLinkEffects = once((dispatch, action, getState) => {
+	if (!action.query.immediate_login_attempt) {
 		return;
 	}
 
@@ -71,23 +71,23 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 	);
 
 	// Redirect to a page without immediate login information in the URL
-	page.replace( createPathWithoutImmediateLoginInformation( action.path, action.query ) );
+	page.replace(createPathWithoutImmediateLoginInformation(action.path, action.query));
 
 	// Only show the message if the user is currently logged in and if the URL
 	// suggests that they were just logged in via an immediate login request.
-	if ( ! action.query.immediate_login_success ) {
+	if (!action.query.immediate_login_success) {
 		return;
 	}
-	const email = getCurrentUserEmail( getState() );
-	if ( ! email ) {
+	const email = getCurrentUserEmail(getState());
+	if (!email) {
 		return;
 	}
 
 	// Let redux process all dispatches that are currently queued and show the message
-	defer( () => {
-		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
-	} );
-} );
+	defer(() => {
+		notices.success(createImmediateLoginMessage(action.query.login_reason, email));
+	});
+});
 
 /**
  * Sets the selectedSite for lib/keyboard-shortcuts/global
@@ -96,10 +96,10 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
  * @param {object}   action   - the dispatched action
  * @param {Function} getState - redux getState function
  */
-const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) => {
+const updatedSelectedSiteForKeyboardShortcuts = (dispatch, action, getState) => {
 	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	globalKeyboardShortcuts.setSelectedSite( selectedSite );
+	const selectedSite = getSelectedSite(state);
+	globalKeyboardShortcuts.setSelectedSite(selectedSite);
 };
 
 /**
@@ -109,10 +109,10 @@ const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) =
  * @param {object}   action   - the dispatched action
  * @param {Function} getState - redux getState function
  */
-const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState ) => {
+const updateNotificationsOpenForKeyboardShortcuts = (dispatch, action, getState) => {
 	// flip the state here, since the reducer hasn't had a chance to update yet
-	const toggledState = ! isNotificationsOpen( getState() );
-	keyboardShortcuts.setNotificationsOpen( toggledState );
+	const toggledState = !isNotificationsOpen(getState());
+	keyboardShortcuts.setNotificationsOpen(toggledState);
 };
 
 /**
@@ -122,45 +122,45 @@ const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState
  * @param {object}   action   - the dispatched action
  * @param {Function} getState - redux getState function
  */
-const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
+const updateSelectedSiteForDesktop = (dispatch, action, getState) => {
 	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	desktop.setSelectedSite( selectedSite );
+	const selectedSite = getSelectedSite(state);
+	desktop.setSelectedSite(selectedSite);
 };
 
-const fetchAutomatedTransferStatusForSelectedSite = ( dispatch, getState ) => {
+const fetchAutomatedTransferStatusForSelectedSite = (dispatch, getState) => {
 	const state = getState();
-	const siteId = getSelectedSiteId( state );
-	const isFetchingATStatus = isFetchingAutomatedTransferStatus( state, siteId );
+	const siteId = getSelectedSiteId(state);
+	const isFetchingATStatus = isFetchingAutomatedTransferStatus(state, siteId);
 
-	if ( ! isFetchingATStatus && hasSitePendingAutomatedTransfer( state, siteId ) ) {
-		dispatch( fetchAutomatedTransferStatus( siteId ) );
+	if (!isFetchingATStatus && hasSitePendingAutomatedTransfer(state, siteId)) {
+		dispatch(fetchAutomatedTransferStatus(siteId));
 	}
 };
 
-const handler = ( dispatch, action, getState ) => {
-	switch ( action.type ) {
+const handler = (dispatch, action, getState) => {
+	switch (action.type) {
 		case ROUTE_SET:
-			return notifyAboutImmediateLoginLinkEffects( dispatch, action, getState );
+			return notifyAboutImmediateLoginLinkEffects(dispatch, action, getState);
 
 		//when the notifications panel is open keyboard events should not fire.
 		case NOTIFICATIONS_PANEL_TOGGLE:
-			return updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
+			return updateNotificationsOpenForKeyboardShortcuts(dispatch, action, getState);
 
 		case SELECTED_SITE_SET:
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 			// Wait a tick for the reducer to update the state tree
-			setTimeout( () => {
-				if ( globalKeyBoardShortcutsEnabled ) {
-					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
+			setTimeout(() => {
+				if (globalKeyBoardShortcutsEnabled) {
+					updatedSelectedSiteForKeyboardShortcuts(dispatch, action, getState);
 				}
-				if ( config.isEnabled( 'desktop' ) ) {
-					updateSelectedSiteForDesktop( dispatch, action, getState );
+				if (config.isEnabled('desktop')) {
+					updateSelectedSiteForDesktop(dispatch, action, getState);
 				}
 
-				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
-			}, 0 );
+				fetchAutomatedTransferStatusForSelectedSite(dispatch, getState);
+			}, 0);
 			return;
 
 		case SITE_DELETE_RECEIVE:
@@ -170,10 +170,10 @@ const handler = ( dispatch, action, getState ) => {
 	}
 };
 
-export const libraryMiddleware = ( { dispatch, getState } ) => next => action => {
-	handler( dispatch, action, getState );
+export const libraryMiddleware = ({ dispatch, getState }) => (next) => (action) => {
+	handler(dispatch, action, getState);
 
-	return next( action );
+	return next(action);
 };
 
 export default libraryMiddleware;

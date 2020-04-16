@@ -41,7 +41,7 @@ import 'state/data-layer/wpcom/sites/rewind/restores';
  * @param  {boolean}          isVpMigrate Whether this is a VaultPress migration.
  * @returns {object}        Action object
  */
-export function activateRewind( siteId, isVpMigrate ) {
+export function activateRewind(siteId, isVpMigrate) {
 	return {
 		type: REWIND_ACTIVATE_REQUEST,
 		siteId,
@@ -49,14 +49,14 @@ export function activateRewind( siteId, isVpMigrate ) {
 	};
 }
 
-export function rewindActivateSuccess( siteId ) {
+export function rewindActivateSuccess(siteId) {
 	return {
 		type: REWIND_ACTIVATE_SUCCESS,
 		siteId,
 	};
 }
 
-export function rewindActivateFailure( siteId ) {
+export function rewindActivateFailure(siteId) {
 	return {
 		type: REWIND_ACTIVATE_FAILURE,
 		siteId,
@@ -69,21 +69,21 @@ export function rewindActivateFailure( siteId ) {
  * @param {string|number} siteId site ID
  * @returns {object} action object
  */
-export function deactivateRewind( siteId ) {
+export function deactivateRewind(siteId) {
 	return {
 		type: REWIND_DEACTIVATE_REQUEST,
 		siteId,
 	};
 }
 
-export function rewindDeactivateSuccess( siteId ) {
+export function rewindDeactivateSuccess(siteId) {
 	return {
 		type: REWIND_DEACTIVATE_SUCCESS,
 		siteId,
 	};
 }
 
-export function rewindDeactivateFailure( siteId ) {
+export function rewindDeactivateFailure(siteId) {
 	return {
 		type: REWIND_DEACTIVATE_FAILURE,
 		siteId,
@@ -97,7 +97,7 @@ export function rewindDeactivateFailure( siteId ) {
  * @param  {number}        activityId Activity ID
  * @returns {object}        action object
  */
-export function rewindRequestRestore( siteId, activityId ) {
+export function rewindRequestRestore(siteId, activityId) {
 	return {
 		type: REWIND_RESTORE_REQUEST,
 		siteId,
@@ -111,7 +111,7 @@ export function rewindRequestRestore( siteId, activityId ) {
  * @param  {string|number} siteId Site ID
  * @returns {object}        action object
  */
-export function rewindRequestDismiss( siteId ) {
+export function rewindRequestDismiss(siteId) {
 	return {
 		type: REWIND_RESTORE_DISMISS,
 		siteId,
@@ -126,7 +126,7 @@ export function rewindRequestDismiss( siteId ) {
  * @param {object} args Additional request params, such as `types`
  * @returns {object} action object
  */
-export function rewindRestore( siteId, timestamp, args ) {
+export function rewindRestore(siteId, timestamp, args) {
 	return {
 		type: REWIND_RESTORE,
 		siteId,
@@ -135,7 +135,7 @@ export function rewindRestore( siteId, timestamp, args ) {
 	};
 }
 
-export function rewindClone( siteId, timestamp, payload ) {
+export function rewindClone(siteId, timestamp, payload) {
 	return {
 		type: REWIND_CLONE,
 		siteId,
@@ -144,7 +144,7 @@ export function rewindClone( siteId, timestamp, payload ) {
 	};
 }
 
-export function dismissRewindRestoreProgress( siteId, restoreId ) {
+export function dismissRewindRestoreProgress(siteId, restoreId) {
 	return {
 		type: REWIND_RESTORE_DISMISS_PROGRESS,
 		siteId,
@@ -152,7 +152,7 @@ export function dismissRewindRestoreProgress( siteId, restoreId ) {
 	};
 }
 
-export function getRewindRestoreProgress( siteId, restoreId ) {
+export function getRewindRestoreProgress(siteId, restoreId) {
 	return {
 		type: REWIND_RESTORE_PROGRESS_REQUEST,
 		siteId,
@@ -160,7 +160,7 @@ export function getRewindRestoreProgress( siteId, restoreId ) {
 	};
 }
 
-export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progress ) {
+export function updateRewindRestoreProgress(siteId, timestamp, restoreId, progress) {
 	return {
 		type: REWIND_RESTORE_UPDATE_PROGRESS,
 		...progress,
@@ -177,7 +177,7 @@ export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progr
  * @param  {number}        rewindId Rewind ID
  * @returns {object}        action object
  */
-export function rewindRequestBackup( siteId, rewindId ) {
+export function rewindRequestBackup(siteId, rewindId) {
 	return {
 		type: REWIND_BACKUP_REQUEST,
 		siteId,
@@ -191,7 +191,7 @@ export function rewindRequestBackup( siteId, rewindId ) {
  * @param  {string|number} siteId Site ID
  * @returns {object}        action object
  */
-export function rewindBackupDismiss( siteId ) {
+export function rewindBackupDismiss(siteId) {
 	return {
 		type: REWIND_BACKUP_DISMISS,
 		siteId,
@@ -206,7 +206,7 @@ export function rewindBackupDismiss( siteId ) {
  * @param  {object}        args     Additional request params, such as `types`
  * @returns {object}                 Action object
  */
-export function rewindBackup( siteId, rewindId, args ) {
+export function rewindBackup(siteId, rewindId, args) {
 	return {
 		type: REWIND_BACKUP,
 		siteId,
@@ -221,7 +221,7 @@ export function rewindBackup( siteId, rewindId, args ) {
  * @param  {string|number} siteId The site ID
  * @returns {object}               Action object
  */
-export function getRewindBackupProgress( siteId ) {
+export function getRewindBackupProgress(siteId) {
 	return {
 		type: REWIND_BACKUP_PROGRESS_REQUEST,
 		siteId,
@@ -236,7 +236,7 @@ export function getRewindBackupProgress( siteId ) {
  * @param  {number}        progress   Number from 0 to 100 that indicates the progress of the backup creation.
  * @returns {object}                   Action object
  */
-export function updateRewindBackupProgress( siteId, downloadId, progress ) {
+export function updateRewindBackupProgress(siteId, downloadId, progress) {
 	return {
 		type: REWIND_BACKUP_UPDATE_PROGRESS,
 		...progress,
@@ -253,7 +253,7 @@ export function updateRewindBackupProgress( siteId, downloadId, progress ) {
  * @param  {object}        error      Info about downloadable backup and error.
  * @returns {object}                   Action object
  */
-export function rewindBackupUpdateError( siteId, downloadId, error ) {
+export function rewindBackupUpdateError(siteId, downloadId, error) {
 	return {
 		type: REWIND_BACKUP_UPDATE_ERROR,
 		siteId,
@@ -269,7 +269,7 @@ export function rewindBackupUpdateError( siteId, downloadId, error ) {
  * @param  {number}        downloadId Id of the backup being dismissed.
  * @returns {object}                   Action object
  */
-export function dismissRewindBackupProgress( siteId, downloadId ) {
+export function dismissRewindBackupProgress(siteId, downloadId) {
 	return {
 		type: REWIND_BACKUP_DISMISS_PROGRESS,
 		siteId,
@@ -277,14 +277,14 @@ export function dismissRewindBackupProgress( siteId, downloadId ) {
 	};
 }
 
-export const setFilter = ( siteId, filter ) => ( {
+export const setFilter = (siteId, filter) => ({
 	type: ACTIVITY_LOG_FILTER_SET,
 	siteId,
 	filter,
-} );
+});
 
-export const updateFilter = ( siteId, filter ) => ( {
+export const updateFilter = (siteId, filter) => ({
 	type: ACTIVITY_LOG_FILTER_UPDATE,
 	siteId,
 	filter,
-} );
+});

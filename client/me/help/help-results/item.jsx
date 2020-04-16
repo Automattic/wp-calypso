@@ -15,12 +15,12 @@ import { localizeUrl } from 'lib/i18n-utils';
 export default class extends React.PureComponent {
 	static displayName = 'HelpResult';
 
-	onClick = event => {
-		if ( this.props.helpLink.disabled ) {
+	onClick = (event) => {
+		if (this.props.helpLink.disabled) {
 			return event.preventDefault();
 		}
 
-		this.props.onClick && this.props.onClick( event, this.props.helpLink );
+		this.props.onClick && this.props.onClick(event, this.props.helpLink);
 	};
 
 	getResultIcon = () => {
@@ -28,12 +28,12 @@ export default class extends React.PureComponent {
 		const iconClass = 'help-result__icon';
 		const iconSize = 24;
 		// By rule, gridicons don't contain logos so we need a special case here
-		if ( iconTypeDescription === 'jetpack' ) {
+		if (iconTypeDescription === 'jetpack') {
 			return (
 				<svg
-					className={ iconClass }
-					height={ iconSize }
-					width={ iconSize }
+					className={iconClass}
+					height={iconSize}
+					width={iconSize}
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 24 24"
 				>
@@ -41,22 +41,22 @@ export default class extends React.PureComponent {
 				</svg>
 			);
 		}
-		return <Gridicon className={ iconClass } icon={ iconTypeDescription } size={ iconSize } />;
+		return <Gridicon className={iconClass} icon={iconTypeDescription} size={iconSize} />;
 	};
 
 	render() {
 		return (
 			<a
 				className="help-result"
-				href={ localizeUrl( this.props.helpLink.link ) }
+				href={localizeUrl(this.props.helpLink.link)}
 				target="__blank"
-				onClick={ this.onClick }
+				onClick={this.onClick}
 			>
 				<CompactCard className="help-result__wrapper">
-					{ this.getResultIcon() }
-					<h2 className="help-result__title">{ decodeEntities( this.props.helpLink.title ) }</h2>
+					{this.getResultIcon()}
+					<h2 className="help-result__title">{decodeEntities(this.props.helpLink.title)}</h2>
 					<p className="help-result__description">
-						{ decodeEntities( this.props.helpLink.description ) }
+						{decodeEntities(this.props.helpLink.description)}
 					</p>
 				</CompactCard>
 			</a>

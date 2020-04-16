@@ -26,7 +26,7 @@ interface Options {
 	delayBetweenWords: number;
 }
 
-const DEFAULT_OPTIONS: Readonly< Options > = {
+const DEFAULT_OPTIONS: Readonly<Options> = {
 	delayBetweenCharacters: 120,
 	delayBetweenWords: 1200,
 };
@@ -42,13 +42,13 @@ const DEFAULT_OPTIONS: Readonly< Options > = {
  * then the next word is spelled out after `delayBetweenWords` passes.
  */
 export default function useTyper(
-	words: Array< string >,
+	words: Array<string>,
 	enabled = true,
-	options?: Partial< Options >
+	options?: Partial<Options>
 ): string {
-	const [ charIndex, setCharIndex ] = useState( 0 );
-	const [ wordIndex, setWordIndex ] = useState( 0 );
-	const [ mode, setMode ] = useState< TyperMode >( 'TYPING' );
+	const [charIndex, setCharIndex] = useState(0);
+	const [wordIndex, setWordIndex] = useState(0);
+	const [mode, setMode] = useState<TyperMode>('TYPING');
 
 	const populatedOptions: Options = { ...DEFAULT_OPTIONS, ...options };
 
@@ -59,21 +59,21 @@ export default function useTyper(
 	useInterval(
 		() => {
 			// disable the animation to save render cycles if it's not needed
-			if ( enabled && words && words.length ) {
+			if (enabled && words && words.length) {
 				// wait extra characters between words to emulate a pause between words without extra logic
 				// `charIndex > word.length` is not a problem for substr :)
 				if (
-					( charIndex - delayInCharacters < words[ wordIndex ].length && mode === 'TYPING' ) ||
-					( charIndex > 0 && mode === 'DELETING' )
+					(charIndex - delayInCharacters < words[wordIndex].length && mode === 'TYPING') ||
+					(charIndex > 0 && mode === 'DELETING')
 				) {
 					const increment = mode === 'TYPING' ? 1 : -1;
-					setCharIndex( charIndex + increment );
-				} else if ( mode === 'TYPING' ) {
+					setCharIndex(charIndex + increment);
+				} else if (mode === 'TYPING') {
 					// start deleting
-					setMode( 'DELETING' );
+					setMode('DELETING');
 				} else {
-					setWordIndex( ( wordIndex + 1 ) % words.length );
-					setMode( 'TYPING' );
+					setWordIndex((wordIndex + 1) % words.length);
+					setMode('TYPING');
 				}
 			}
 		},
@@ -82,8 +82,8 @@ export default function useTyper(
 			: populatedOptions.delayBetweenCharacters / 3
 	);
 
-	if ( words && words.length ) {
-		return words[ wordIndex ].substr( 0, charIndex );
+	if (words && words.length) {
+		return words[wordIndex].substr(0, charIndex);
 	}
 
 	return '';

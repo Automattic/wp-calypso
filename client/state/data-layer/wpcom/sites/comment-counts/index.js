@@ -12,13 +12,13 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchCommentCounts = action => {
+export const fetchCommentCounts = (action) => {
 	const { siteId, postId } = action;
 
 	return http(
 		{
 			method: 'GET',
-			path: `/sites/${ siteId }/comment-counts`,
+			path: `/sites/${siteId}/comment-counts`,
 			apiVersion: '1.0',
 			query: {
 				post_id: postId,
@@ -28,8 +28,8 @@ export const fetchCommentCounts = action => {
 	);
 };
 
-export const updateCommentCounts = ( action, response ) => {
-	const intResponse = mapValues( response, value => parseInt( value ) );
+export const updateCommentCounts = (action, response) => {
+	const intResponse = mapValues(response, (value) => parseInt(value));
 	const {
 		all,
 		approved,
@@ -54,12 +54,12 @@ export const updateCommentCounts = ( action, response ) => {
 	};
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/comment-counts/index.js', {
-	[ COMMENT_COUNTS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/comment-counts/index.js', {
+	[COMMENT_COUNTS_REQUEST]: [
+		dispatchRequest({
 			fetch: fetchCommentCounts,
 			onSuccess: updateCommentCounts,
 			onError: () => {},
-		} ),
+		}),
 	],
-} );
+});

@@ -17,8 +17,8 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const handleSubscribedMembershipsList = dispatchRequest( {
-	fetch: action =>
+export const handleSubscribedMembershipsList = dispatchRequest({
+	fetch: (action) =>
 		http(
 			{
 				method: 'GET',
@@ -26,14 +26,14 @@ export const handleSubscribedMembershipsList = dispatchRequest( {
 			},
 			action
 		),
-	onSuccess: ( action, { subscriptions, total } ) => ( {
+	onSuccess: (action, { subscriptions, total }) => ({
 		type: MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE,
 		subscriptions,
 		total,
-	} ),
+	}),
 	onError: noop,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/sites/memberships/subscriptions/index.js', {
-	[ MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST ]: [ handleSubscribedMembershipsList ],
-} );
+registerHandlers('state/data-layer/wpcom/sites/memberships/subscriptions/index.js', {
+	[MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST]: [handleSubscribedMembershipsList],
+});

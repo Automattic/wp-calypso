@@ -29,8 +29,8 @@ const {
 	hideFrontPageTitle,
 } = window.starterPageTemplatesConfig;
 
-if ( tracksUserData ) {
-	initializeWithIdentity( tracksUserData );
+if (tracksUserData) {
+	initializeWithIdentity(tracksUserData);
 }
 
 const templatesPluginSharedProps = {
@@ -39,48 +39,43 @@ const templatesPluginSharedProps = {
 	theme,
 	vertical,
 	isFrontPage,
-	hidePageTitle: Boolean( isFrontPage && hideFrontPageTitle ),
+	hidePageTitle: Boolean(isFrontPage && hideFrontPageTitle),
 };
 
 // Open plugin only if we are creating new page.
-if ( screenAction === 'add' ) {
-	dispatch( 'automattic/starter-page-layouts' ).setIsOpen( true );
-	registerPlugin( 'page-templates', {
+if (screenAction === 'add') {
+	dispatch('automattic/starter-page-layouts').setIsOpen(true);
+	registerPlugin('page-templates', {
 		render: () => (
-			<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
+			<PageTemplatesPlugin {...templatesPluginSharedProps} shouldPrefetchAssets={false} />
 		),
-	} );
+	});
 }
 
 // Always register ability to open from document sidebar.
-registerPlugin( 'page-templates-sidebar', {
+registerPlugin('page-templates-sidebar', {
 	render: () => {
 		return (
 			<PluginDocumentSettingPanel
 				name="Template Modal Opener"
-				title={ __( 'Page Layout' ) }
+				title={__('Page Layout')}
 				className="page-template-modal__sidebar" // eslint-disable-line wpcalypso/jsx-classname-namespace
 				icon="none"
 			>
-				<SidebarTemplatesPlugin
-					{ ...templatesPluginSharedProps }
-					siteInformation={ siteInformation }
-				/>
+				<SidebarTemplatesPlugin {...templatesPluginSharedProps} siteInformation={siteInformation} />
 			</PluginDocumentSettingPanel>
 		);
 	},
-} );
+});
 
 // Make sidebar plugin open by default.
-const unsubscribe = subscribe( () => {
+const unsubscribe = subscribe(() => {
 	if (
-		! select( 'core/edit-post' ).isEditorPanelOpened(
-			'page-templates-sidebar/Template Modal Opener'
-		)
+		!select('core/edit-post').isEditorPanelOpened('page-templates-sidebar/Template Modal Opener')
 	) {
-		dispatch( 'core/edit-post' ).toggleEditorPanelOpened(
+		dispatch('core/edit-post').toggleEditorPanelOpened(
 			'page-templates-sidebar/Template Modal Opener'
 		);
 	}
 	unsubscribe();
-} );
+});

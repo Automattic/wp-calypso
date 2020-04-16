@@ -73,5 +73,5 @@ export const jetpackUpdated = {
 	author_url: 'http://jetpack.com',
 	network: false,
 	autoupdate: true,
-	log: [ 'Array' ],
+	log: ['Array'],
 };

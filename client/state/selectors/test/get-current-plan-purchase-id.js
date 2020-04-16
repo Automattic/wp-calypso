@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getCurrentPlanPurchaseId from 'state/selectors/get-current-plan-purchase-id';
 
-describe( 'getCurrentPlanPurchaseId()', () => {
-	it( 'should return null if the site is unknown', () => {
+describe('getCurrentPlanPurchaseId()', () => {
+	it('should return null if the site is unknown', () => {
 		const state = {
 			currentUser: {
 				capabilities: {},
@@ -31,11 +31,11 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 			},
 		};
 
-		expect( getCurrentPlanPurchaseId( state ) ).to.be.null;
-		expect( getCurrentPlanPurchaseId( state, 123 ) ).to.be.null;
-	} );
+		expect(getCurrentPlanPurchaseId(state)).to.be.null;
+		expect(getCurrentPlanPurchaseId(state, 123)).to.be.null;
+	});
 
-	it( 'should return null if the current purchase ID is unknown', () => {
+	it('should return null if the current purchase ID is unknown', () => {
 		const siteId = 123;
 		const state = {
 			currentUser: {
@@ -43,7 +43,7 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 			},
 			sites: {
 				plans: {
-					[ siteId ]: {
+					[siteId]: {
 						data: [
 							{
 								currentPlan: false,
@@ -56,15 +56,15 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 					},
 				},
 				items: {
-					[ siteId ]: {},
+					[siteId]: {},
 				},
 			},
 		};
 
-		expect( getCurrentPlanPurchaseId( state, siteId ) ).to.be.null;
-	} );
+		expect(getCurrentPlanPurchaseId(state, siteId)).to.be.null;
+	});
 
-	it( 'should return null if there is no plans data, but there is site plan data', () => {
+	it('should return null if there is no plans data, but there is site plan data', () => {
 		const siteId = 123;
 		const state = {
 			currentUser: {
@@ -72,22 +72,22 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 			},
 			sites: {
 				plans: {
-					[ siteId ]: {
+					[siteId]: {
 						data: [],
 					},
 				},
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						plan: {},
 					},
 				},
 			},
 		};
 
-		expect( getCurrentPlanPurchaseId( state, siteId ) ).to.be.null;
-	} );
+		expect(getCurrentPlanPurchaseId(state, siteId)).to.be.null;
+	});
 
-	it( 'should return the purchase ID for a site', () => {
+	it('should return the purchase ID for a site', () => {
 		const siteId = 123;
 		const purchaseId = 123456;
 		const state = {
@@ -96,7 +96,7 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 			},
 			sites: {
 				plans: {
-					[ siteId ]: {
+					[siteId]: {
 						data: [
 							{
 								currentPlan: true,
@@ -106,13 +106,13 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 					},
 				},
 				items: {
-					[ siteId ]: {
+					[siteId]: {
 						plan: { some: 'plan' },
 					},
 				},
 			},
 		};
 
-		expect( getCurrentPlanPurchaseId( state, siteId ) ).to.equal( purchaseId );
-	} );
-} );
+		expect(getCurrentPlanPurchaseId(state, siteId)).to.equal(purchaseId);
+	});
+});

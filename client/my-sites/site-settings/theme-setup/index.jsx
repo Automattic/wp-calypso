@@ -27,17 +27,17 @@ import { toggleDialog } from 'state/ui/theme-setup/actions';
 import './style.scss';
 
 class ThemeSetup extends Component {
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const { siteIsJetpack, siteId } = this.props;
 
-		if ( siteId !== prevProps.siteId && siteIsJetpack ) {
+		if (siteId !== prevProps.siteId && siteIsJetpack) {
 			this.redirectToGeneral();
 		}
 	}
 
 	redirectToGeneral = () => {
 		const { siteSlug } = this.props;
-		page.redirect( '/settings/general/' + siteSlug );
+		page.redirect('/settings/general/' + siteSlug);
 	};
 
 	render() {
@@ -45,29 +45,29 @@ class ThemeSetup extends Component {
 
 		return (
 			<Main className="theme-setup">
-				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
-				{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
+				{siteId && <QueryActiveTheme siteId={siteId} />}
+				{themeId && <QueryTheme siteId="wpcom" themeId={themeId} />}
 
-				<HeaderCake onClick={ this.redirectToGeneral }>
-					<h1>{ translate( 'Theme Setup' ) }</h1>
+				<HeaderCake onClick={this.redirectToGeneral}>
+					<h1>{translate('Theme Setup')}</h1>
 				</HeaderCake>
 
-				{ siteId && theme ? (
-					<ThemeSetupCard onClick={ this.props.toggleDialog } theme={ theme } />
+				{siteId && theme ? (
+					<ThemeSetupCard onClick={this.props.toggleDialog} theme={theme} />
 				) : (
 					<ThemeSetupPlaceholder />
-				) }
+				)}
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteSlug = getSelectedSiteSlug( state ) || '';
-	const themeId = siteId && getActiveTheme( state, siteId );
-	const theme = themeId && getTheme( state, 'wpcom', themeId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const siteIsJetpack = isJetpackSite(state, siteId);
+	const siteSlug = getSelectedSiteSlug(state) || '';
+	const themeId = siteId && getActiveTheme(state, siteId);
+	const theme = themeId && getTheme(state, 'wpcom', themeId);
 	return {
 		siteId,
 		siteIsJetpack,
@@ -77,4 +77,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { toggleDialog } )( localize( ThemeSetup ) );
+export default connect(mapStateToProps, { toggleDialog })(localize(ThemeSetup));

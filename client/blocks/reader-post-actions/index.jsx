@@ -26,7 +26,7 @@ import ReaderVisitLink from 'blocks/reader-visit-link';
  */
 import './style.scss';
 
-const ReaderPostActions = props => {
+const ReaderPostActions = (props) => {
 	const {
 		post,
 		site,
@@ -43,83 +43,74 @@ const ReaderPostActions = props => {
 	} = props;
 
 	const onEditClick = () => {
-		stats.recordAction( 'edit_post' );
-		stats.recordGaEvent( 'Clicked Edit Post', 'full_post' );
-		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', post );
+		stats.recordAction('edit_post');
+		stats.recordGaEvent('Clicked Edit Post', 'full_post');
+		stats.recordTrackForPost('calypso_reader_edit_post_clicked', post);
 	};
 
 	function onPermalinkVisit() {
-		stats.recordPermalinkClick( 'card', post );
+		stats.recordPermalinkClick('card', post);
 	}
 
-	const listClassnames = classnames( 'reader-post-actions', className );
+	const listClassnames = classnames('reader-post-actions', className);
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
-		<ul className={ listClassnames }>
-			{ showVisit && (
+		<ul className={listClassnames}>
+			{showVisit && (
 				<li className="reader-post-actions__item reader-post-actions__visit">
 					<ReaderVisitLink
-						href={ visitUrl || post.URL }
-						iconSize={ iconSize }
-						onClick={ onPermalinkVisit }
+						href={visitUrl || post.URL}
+						iconSize={iconSize}
+						onClick={onPermalinkVisit}
 					>
-						{ translate( 'Visit' ) }
+						{translate('Visit')}
 					</ReaderVisitLink>
 				</li>
-			) }
-			{ showEdit && site && userCan( 'edit_post', post ) && (
+			)}
+			{showEdit && site && userCan('edit_post', post) && (
 				<li className="reader-post-actions__item">
-					<PostEditButton
-						post={ post }
-						site={ site }
-						onClick={ onEditClick }
-						iconSize={ iconSize }
-					/>
+					<PostEditButton post={post} site={site} onClick={onEditClick} iconSize={iconSize} />
 				</li>
-			) }
-			{ shouldShowShare( post ) && (
+			)}
+			{shouldShowShare(post) && (
 				<li className="reader-post-actions__item">
-					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
+					<ShareButton post={post} position="bottom" tagName="div" iconSize={iconSize} />
 				</li>
-			) }
-			{ shouldShowComments( post ) && (
+			)}
+			{shouldShowComments(post) && (
 				<li className="reader-post-actions__item">
 					<CommentButton
 						key="comment-button"
-						commentCount={ post.discussion.comment_count }
-						onClick={ onCommentClick }
+						commentCount={post.discussion.comment_count}
+						onClick={onCommentClick}
 						tagName="div"
-						size={ iconSize }
+						size={iconSize}
 					/>
 				</li>
-			) }
-			{ shouldShowLikes( post ) && (
+			)}
+			{shouldShowLikes(post) && (
 				<li className="reader-post-actions__item">
 					<LikeButton
 						key="like-button"
-						siteId={ +post.site_ID }
-						postId={ +post.ID }
-						post={ post }
-						site={ site }
-						fullPost={ fullPost }
+						siteId={+post.site_ID}
+						postId={+post.ID}
+						post={post}
+						site={site}
+						fullPost={fullPost}
 						tagName="div"
-						forceCounter={ true }
-						iconSize={ iconSize }
-						showZeroCount={ false }
-						likeSource={ 'reader' }
+						forceCounter={true}
+						iconSize={iconSize}
+						showZeroCount={false}
+						likeSource={'reader'}
 					/>
 				</li>
-			) }
-			{ showMenu && (
+			)}
+			{showMenu && (
 				<li className="reader-post-actions__item">
-					<ReaderPostOptionsMenu
-						className="ignore-click"
-						showFollow={ showMenuFollow }
-						post={ post }
-					/>
+					<ReaderPostOptionsMenu className="ignore-click" showFollow={showMenuFollow} post={post} />
 				</li>
-			) }
+			)}
 		</ul>
 	);
 	/* eslint-enable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
@@ -145,4 +136,4 @@ ReaderPostActions.defaultProps = {
 	showMenuFollow: true,
 };
 
-export default localize( ReaderPostActions );
+export default localize(ReaderPostActions);

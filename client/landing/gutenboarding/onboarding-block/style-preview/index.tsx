@@ -24,85 +24,85 @@ import SignupForm from '../../components/signup-form';
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
-	const { selectedDesign } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { selectedDesign } = useSelect((select) => select(ONBOARD_STORE).getState());
 
-	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+	const [showSignupDialog, setShowSignupDialog] = useState(false);
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+	const currentUser = useSelect((select) => select(USER_STORE).getCurrentUser());
 
-	const hasSelectedDesign = !! selectedDesign;
+	const hasSelectedDesign = !!selectedDesign;
 
 	const { __ } = useI18n();
 	const makePath = usePath();
-	const [ selectedViewport, setSelectedViewport ] = React.useState< T.Viewport >( 'desktop' );
+	const [selectedViewport, setSelectedViewport] = React.useState<T.Viewport>('desktop');
 
-	const { createSite } = useDispatch( ONBOARD_STORE );
+	const { createSite } = useDispatch(ONBOARD_STORE);
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	const handleSignup = () => {
-		setShowSignupDialog( true );
+		setShowSignupDialog(true);
 	};
 
 	const closeAuthDialog = () => {
-		setShowSignupDialog( false );
+		setShowSignupDialog(false);
 	};
 
 	const handleCreateSite = useCallback(
-		( username: string, bearerToken?: string ) => {
-			createSite( username, freeDomainSuggestion, bearerToken );
+		(username: string, bearerToken?: string) => {
+			createSite(username, freeDomainSuggestion, bearerToken);
 		},
-		[ createSite, freeDomainSuggestion ]
+		[createSite, freeDomainSuggestion]
 	);
 
 	return (
 		<div className="gutenboarding-page style-preview">
 			<div className="style-preview__header">
 				<div className="style-preview__titles">
-					<Title>{ __( 'Select your fonts' ) }</Title>
-					<SubTitle>{ __( 'Add some personality to your design.' ) }</SubTitle>
+					<Title>{__('Select your fonts')}</Title>
+					<SubTitle>{__('Add some personality to your design.')}</SubTitle>
 				</div>
-				<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
+				<ViewportSelect selected={selectedViewport} onSelect={setSelectedViewport} />
 				<div className="style-preview__actions">
-					<Link isLink to={ makePath( Step.DesignSelection ) }>
-						{ __( 'Choose another design' ) }
+					<Link isLink to={makePath(Step.DesignSelection)}>
+						{__('Choose another design')}
 					</Link>
-					{ hasSelectedDesign && (
+					{hasSelectedDesign && (
 						<Button
 							className="style-preview__actions-continue-button"
 							isPrimary
 							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
+							onClick={() =>
+								currentUser ? handleCreateSite(currentUser.username) : handleSignup()
 							}
 						>
-							{ __( 'Continue' ) }
+							{__('Continue')}
 						</Button>
-					) }
+					)}
 				</div>
 			</div>
 			<div className="style-preview__content">
 				<FontSelect />
-				<Preview viewport={ selectedViewport } />
+				<Preview viewport={selectedViewport} />
 				<div className="style-preview__actions-mobile">
-					{ hasSelectedDesign && (
+					{hasSelectedDesign && (
 						<Button
 							className="style-preview__actions-mobile-continue-button"
 							isPrimary
 							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
+							onClick={() =>
+								currentUser ? handleCreateSite(currentUser.username) : handleSignup()
 							}
 						>
-							{ __( 'Continue' ) }
+							{__('Continue')}
 						</Button>
-					) }
-					<Link isLink to={ makePath( Step.DesignSelection ) }>
-						{ __( 'Choose another design' ) }
+					)}
+					<Link isLink to={makePath(Step.DesignSelection)}>
+						{__('Choose another design')}
 					</Link>
 				</div>
 			</div>
-			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
+			{showSignupDialog && <SignupForm onRequestClose={closeAuthDialog} />}
 		</div>
 	);
 };

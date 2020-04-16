@@ -12,9 +12,9 @@ import 'state/themes/init';
  * @param {string} filter taxonomy:term string
  * @returns {string} The term part, or full string if term is ambiguous
  */
-export function getThemeFilterTermFromString( state, filter ) {
-	const term = filter.split( ':' )[ 1 ];
-	if ( isAmbiguousThemeFilterTerm( state, term ) ) {
+export function getThemeFilterTermFromString(state, filter) {
+	const term = filter.split(':')[1];
+	if (isAmbiguousThemeFilterTerm(state, term)) {
 		return filter;
 	}
 	return term;

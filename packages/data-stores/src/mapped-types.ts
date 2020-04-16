@@ -17,10 +17,8 @@
  *
  * @template S Selector map, usually from `import * as selectors from './my-store/selectors';`
  */
-export type SelectFromMap< S extends Record< string, ( ...args: any[] ) => any > > = {
-	[ selector in keyof S ]: (
-		...args: TailParameters< S[ selector ] >
-	) => ReturnType< S[ selector ] >;
+export type SelectFromMap<S extends Record<string, (...args: any[]) => any>> = {
+	[selector in keyof S]: (...args: TailParameters<S[selector]>) => ReturnType<S[selector]>;
 };
 
 /**
@@ -28,11 +26,11 @@ export type SelectFromMap< S extends Record< string, ( ...args: any[] ) => any >
  *
  * @template A Selector map, usually from `import * as actions from './my-store/actions';`
  */
-export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any > > = {
-	[ actionCreator in keyof A ]: (
-		...args: Parameters< A[ actionCreator ] >
-	) => A[ actionCreator ] extends ( ...args: any[] ) => Generator
-		? Promise< GeneratorReturnType< A[ actionCreator ] > >
+export type DispatchFromMap<A extends Record<string, (...args: any[]) => any>> = {
+	[actionCreator in keyof A]: (
+		...args: Parameters<A[actionCreator]>
+	) => A[actionCreator] extends (...args: any[]) => Generator
+		? Promise<GeneratorReturnType<A[actionCreator]>>
 		: void;
 };
 
@@ -42,7 +40,7 @@ export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any
  * This is useful for typing some @wordpres/data functions that make a leading
  * `state` argument implicit.
  */
-export type TailParameters< F extends ( head: any, ...tail: any[] ) => any > = F extends (
+export type TailParameters<F extends (head: any, ...tail: any[]) => any> = F extends (
 	head: any,
 	...tail: infer PS
 ) => any
@@ -52,8 +50,8 @@ export type TailParameters< F extends ( head: any, ...tail: any[] ) => any > = F
 /**
  * Obtain the type finally returned by the generator when it's done iterating.
  */
-export type GeneratorReturnType< T extends ( ...args: any[] ) => Generator > = T extends (
+export type GeneratorReturnType<T extends (...args: any[]) => Generator> = T extends (
 	...args: any
-) => Generator< any, infer R, any >
+) => Generator<any, infer R, any>
 	? R
 	: never;

@@ -40,27 +40,27 @@ class AutoRenewDisablingDialog extends Component {
 	getVariation() {
 		const { purchase, isAtomicSite } = this.props;
 
-		if ( isDomainRegistration( purchase ) ) {
+		if (isDomainRegistration(purchase)) {
 			return 'domain';
 		}
 
-		if ( isPlan( purchase ) && isAtomicSite ) {
+		if (isPlan(purchase) && isAtomicSite) {
 			return 'atomic';
 		}
 
-		if ( isPlan( purchase ) ) {
+		if (isPlan(purchase)) {
 			return 'plan';
 		}
 
 		return null;
 	}
 
-	getCopy( variation ) {
+	getCopy(variation) {
 		const { planName, siteDomain, purchase, translate, moment } = this.props;
 
-		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
+		const expiryDate = moment(purchase.expiryDate).format('LL');
 
-		switch ( variation ) {
+		switch (variation) {
 			case 'plan':
 				return translate(
 					'By canceling auto-renewal, your %(planName)s plan for %(siteDomain)s will expire on %(expiryDate)s. ' +
@@ -117,9 +117,9 @@ class AutoRenewDisablingDialog extends Component {
 
 	onClickAtomicFollowUpConfirm = () => {
 		this.props.onConfirm();
-		this.setState( {
+		this.setState({
 			dialogType: DIALOG.SURVEY,
-		} );
+		});
 	};
 
 	closeAndCleanup = () => {
@@ -128,9 +128,9 @@ class AutoRenewDisablingDialog extends Component {
 		// It is intentional that we don't reset `surveyHasShown` flag here.
 		// That state is for preventing the survey from showing excessively.
 		// The current behavior is that it won't show up until this component has been unmounted and then remounted.
-		this.setState( {
+		this.setState({
 			dialogType: DIALOG.GENERAL,
-		} );
+		});
 	};
 
 	renderAtomicFollowUpDialog = () => {
@@ -140,27 +140,27 @@ class AutoRenewDisablingDialog extends Component {
 
 		return (
 			<Dialog
-				isVisible={ isVisible }
+				isVisible={isVisible}
 				additionalClassNames="auto-renew-disabling-dialog atomic-follow-up"
-				onClose={ this.closeAndCleanup }
+				onClose={this.closeAndCleanup}
 			>
 				<p>
-					{ translate(
+					{translate(
 						'Before you continue, we recommend downloading a backup of your site – ' +
 							"that way, you'll have your content to use on any future websites you create."
-					) }
+					)}
 				</p>
 				<ul>
 					<li>
-						<Button href={ exportPath } primary>
-							{ translate( 'Download a current backup' ) }
+						<Button href={exportPath} primary>
+							{translate('Download a current backup')}
 						</Button>
 					</li>
 					<li>
-						<Button onClick={ this.onClickAtomicFollowUpConfirm }>
-							{ translate(
+						<Button onClick={this.onClickAtomicFollowUpConfirm}>
+							{translate(
 								"I don't need a backup OR I already have a backup. Cancel my auto-renewal."
-							) }
+							)}
 						</Button>
 					</li>
 				</ul>
@@ -169,40 +169,40 @@ class AutoRenewDisablingDialog extends Component {
 	};
 
 	onClickGeneralConfirm = () => {
-		if ( 'atomic' === this.getVariation() ) {
-			this.setState( {
+		if ('atomic' === this.getVariation()) {
+			this.setState({
 				dialogType: DIALOG.ATOMIC,
-			} );
+			});
 			return;
 		}
 
 		this.props.onConfirm();
 
-		if ( this.state.surveyHasShown ) {
+		if (this.state.surveyHasShown) {
 			return this.closeAndCleanup();
 		}
 
-		this.setState( {
+		this.setState({
 			dialogType: DIALOG.SURVEY,
 			surveyHasShown: true,
-		} );
+		});
 	};
 
 	renderGeneralDialog = () => {
 		const { isVisible, translate } = this.props;
-		const description = this.getCopy( this.getVariation() );
+		const description = this.getCopy(this.getVariation());
 
 		return (
 			<Dialog
-				isVisible={ isVisible }
+				isVisible={isVisible}
 				additionalClassNames="auto-renew-disabling-dialog"
-				onClose={ this.closeAndCleanup }
+				onClose={this.closeAndCleanup}
 			>
-				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
-				<p>{ description }</p>
-				<Button onClick={ this.closeAndCleanup }>{ translate( "I'll keep it" ) }</Button>
-				<Button onClick={ this.onClickGeneralConfirm } primary>
-					{ translate( 'Confirm cancellation' ) }
+				<h2 className="auto-renew-disabling-dialog__header">{translate('Before you go…')}</h2>
+				<p>{description}</p>
+				<Button onClick={this.closeAndCleanup}>{translate("I'll keep it")}</Button>
+				<Button onClick={this.onClickGeneralConfirm} primary>
+					{translate('Confirm cancellation')}
 				</Button>
 			</Dialog>
 		);
@@ -213,16 +213,16 @@ class AutoRenewDisablingDialog extends Component {
 
 		return (
 			<CancelAutoRenewalForm
-				purchase={ purchase }
-				selectedSite={ selectedSite }
-				isVisible={ isVisible }
-				onClose={ this.closeAndCleanup }
+				purchase={purchase}
+				selectedSite={selectedSite}
+				isVisible={isVisible}
+				onClose={this.closeAndCleanup}
 			/>
 		);
 	};
 
 	render() {
-		switch ( this.state.dialogType ) {
+		switch (this.state.dialogType) {
 			case DIALOG.GENERAL:
 				return this.renderGeneralDialog();
 			case DIALOG.ATOMIC:
@@ -233,7 +233,7 @@ class AutoRenewDisablingDialog extends Component {
 	}
 }
 
-export default connect( ( state, { purchase } ) => ( {
-	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
-	selectedSite: getSite( state, purchase.siteId ),
-} ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );
+export default connect((state, { purchase }) => ({
+	isAtomicSite: isSiteAtomic(state, purchase.siteId),
+	selectedSite: getSite(state, purchase.siteId),
+}))(localize(withLocalizedMoment(AutoRenewDisablingDialog)));

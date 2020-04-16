@@ -15,7 +15,7 @@ import getSiteOptions from 'state/selectors/get-site-options';
  * @param  {number}  siteId Site ID
  * @returns {?string}        WordPress version of selected site
  */
-export default function getWordPressVersion( state, siteId ) {
-	const siteOptions = getSiteOptions( state, siteId );
-	return get( siteOptions, 'software_version' );
+export default function getWordPressVersion(state, siteId) {
+	const siteOptions = getSiteOptions(state, siteId);
+	return get(siteOptions, 'software_version');
 }

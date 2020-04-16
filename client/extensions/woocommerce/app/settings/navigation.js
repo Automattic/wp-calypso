@@ -16,58 +16,58 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 
-export const SettingsNavigation = ( { site, activeSection, translate } ) => {
+export const SettingsNavigation = ({ site, activeSection, translate }) => {
 	const items = [
 		{
 			id: 'payments',
 			path: '/store/settings/payments/:site',
-			title: translate( 'Payments' ),
+			title: translate('Payments'),
 		},
 		{
 			id: 'shipping',
 			path: '/store/settings/shipping/:site',
-			title: translate( 'Shipping' ),
+			title: translate('Shipping'),
 		},
 		{
 			id: 'taxes',
 			path: '/store/settings/taxes/:site',
-			title: translate( 'Taxes' ),
+			title: translate('Taxes'),
 		},
 		{
 			id: 'email',
 			path: '/store/settings/email/:site',
-			title: translate( 'Email' ),
+			title: translate('Email'),
 		},
 	];
 
-	const section = find( items, { id: activeSection } );
+	const section = find(items, { id: activeSection });
 	return (
-		<SectionNav selectedText={ section && section.title }>
+		<SectionNav selectedText={section && section.title}>
 			<NavTabs>
-				{ items.map( ( { id, path, title } ) => {
-					const link = getLink( path, site );
+				{items.map(({ id, path, title }) => {
+					const link = getLink(path, site);
 					return (
-						<NavItem selected={ activeSection === id } key={ id } path={ link }>
-							{ title }
+						<NavItem selected={activeSection === id} key={id} path={link}>
+							{title}
 						</NavItem>
 					);
-				} ) }
+				})}
 			</NavTabs>
 		</SectionNav>
 	);
 };
 
 SettingsNavigation.propTypes = {
-	site: PropTypes.shape( {
+	site: PropTypes.shape({
 		ID: PropTypes.number,
 		slug: PropTypes.string,
-	} ),
+	}),
 	activeSection: PropTypes.string,
 	translate: PropTypes.func,
 };
 
-export default connect( state => {
+export default connect((state) => {
 	return {
-		site: getSelectedSiteWithFallback( state ),
+		site: getSelectedSiteWithFallback(state),
 	};
-} )( localize( SettingsNavigation ) );
+})(localize(SettingsNavigation));

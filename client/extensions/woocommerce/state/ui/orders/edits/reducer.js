@@ -22,13 +22,13 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function currentlyEditingId( state = null, action ) {
-	switch ( action.type ) {
+export function currentlyEditingId(state = null, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_UI_ORDERS_EDIT:
-			if ( action.order && action.order.id ) {
+			if (action.order && action.order.id) {
 				return action.order.id;
 			}
-			return { placeholder: uniqueId( 'order_' ) };
+			return { placeholder: uniqueId('order_') };
 		case WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT:
 			return null;
 		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
@@ -47,11 +47,11 @@ export function currentlyEditingId( state = null, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function changes( state = {}, action ) {
-	switch ( action.type ) {
+export function changes(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_UI_ORDERS_EDIT:
-			const order = omit( action.order, 'id' );
-			return merge( {}, state, order );
+			const order = omit(action.order, 'id');
+			return merge({}, state, order);
 		case WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT:
 			return {};
 		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
@@ -61,7 +61,7 @@ export function changes( state = {}, action ) {
 	}
 }
 
-export default combineReducers( {
+export default combineReducers({
 	changes,
 	currentlyEditingId,
-} );
+});

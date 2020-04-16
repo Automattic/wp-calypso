@@ -15,14 +15,14 @@ import InfoPopover from 'components/info-popover';
  */
 import './label.scss';
 
-export default function EditorDrawerLabel( { children, labelText, helpText } ) {
+export default function EditorDrawerLabel({ children, labelText, helpText }) {
 	return (
 		<label className="editor-drawer__label">
 			<span className="editor-drawer__label-text">
-				{ labelText }
-				{ helpText && <InfoPopover position="top left">{ helpText }</InfoPopover> }
+				{labelText}
+				{helpText && <InfoPopover position="top left">{helpText}</InfoPopover>}
 			</span>
-			{ children }
+			{children}
 		</label>
 	);
 }

@@ -16,7 +16,7 @@ import delegateEventTracking from './tracking/delegate-event-tracking';
 /* eslint-enable import/no-extraneous-dependencies */
 
 // Debugger.
-const debug = debugFactory( 'wpcom-block-editor:tracking' );
+const debug = debugFactory('wpcom-block-editor:tracking');
 
 /**
  * Looks up the block name based on its id.
@@ -24,8 +24,8 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
  * @param {string} blockId Block identifier.
  * @returns {string|null} Block name if it exists. Otherwise, `null`.
  */
-const getTypeForBlockId = blockId => {
-	const block = select( 'core/block-editor' ).getBlock( blockId );
+const getTypeForBlockId = (blockId) => {
+	const block = select('core/block-editor').getBlock(blockId);
 	return block ? block.name : null;
 };
 
@@ -36,11 +36,11 @@ const getTypeForBlockId = blockId => {
  * @param {string|object} block Block object or string identifier.
  * @returns {object} block object or an empty object if not found.
  */
-const ensureBlockObject = block => {
-	if ( typeof block === 'object' ) {
+const ensureBlockObject = (block) => {
+	if (typeof block === 'object') {
 		return block;
 	}
-	return select( 'core/block-editor' ).getBlock( block ) || {};
+	return select('core/block-editor').getBlock(block) || {};
 };
 
 /**
@@ -62,31 +62,31 @@ const ensureBlockObject = block => {
  * @param {object}   parentBlock       parent block. optional.
  * @returns {void}
  */
-function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parentBlock ) {
-	const castBlocks = castArray( blocks );
-	if ( ! castBlocks || ! castBlocks.length ) {
+function trackBlocksHandler(blocks, eventName, propertiesHandler = noop, parentBlock) {
+	const castBlocks = castArray(blocks);
+	if (!castBlocks || !castBlocks.length) {
 		return;
 	}
 
-	castBlocks.forEach( block => {
+	castBlocks.forEach((block) => {
 		// Make this compatible with actions that pass only block id, not objects.
-		block = ensureBlockObject( block );
+		block = ensureBlockObject(block);
 
 		const eventProperties = {
-			...propertiesHandler( block, parentBlock ),
-			inner_block: !! parentBlock,
+			...propertiesHandler(block, parentBlock),
+			inner_block: !!parentBlock,
 		};
 
-		if ( parentBlock ) {
+		if (parentBlock) {
 			eventProperties.parent_block_name = parentBlock.name;
 		}
 
-		tracksRecordEvent( eventName, eventProperties );
+		tracksRecordEvent(eventName, eventProperties);
 
-		if ( block.innerBlocks && block.innerBlocks.length ) {
-			trackBlocksHandler( block.innerBlocks, eventName, propertiesHandler, block );
+		if (block.innerBlocks && block.innerBlocks.length) {
+			trackBlocksHandler(block.innerBlocks, eventName, propertiesHandler, block);
 		}
-	} );
+	});
 }
 
 /**
@@ -103,11 +103,11 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
  * @param {string} eventName event name
  * @returns {Function} track handler
  */
-const getBlocksTracker = eventName => blockIds => {
+const getBlocksTracker = (eventName) => (blockIds) => {
 	// track separately for each block
-	castArray( blockIds ).forEach( blockId => {
-		tracksRecordEvent( eventName, { block_name: getTypeForBlockId( blockId ) } );
-	} );
+	castArray(blockIds).forEach((blockId) => {
+		tracksRecordEvent(eventName, { block_name: getTypeForBlockId(blockId) });
+	});
 };
 
 /**
@@ -116,11 +116,11 @@ const getBlocksTracker = eventName => blockIds => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-const trackBlockInsertion = blocks => {
-	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
+const trackBlockInsertion = (blocks) => {
+	trackBlocksHandler(blocks, 'wpcom_block_inserted', ({ name }) => ({
 		block_name: name,
 		blocks_replaced: false,
-	} ) );
+	}));
 };
 
 /**
@@ -129,10 +129,10 @@ const trackBlockInsertion = blocks => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-const trackBlockRemoval = blocks => {
-	trackBlocksHandler( blocks, 'wpcom_block_deleted', ( { name } ) => ( {
+const trackBlockRemoval = (blocks) => {
+	trackBlocksHandler(blocks, 'wpcom_block_deleted', ({ name }) => ({
 		block_name: name,
-	} ) );
+	}));
 };
 
 /**
@@ -142,11 +142,11 @@ const trackBlockRemoval = blocks => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-const trackBlockReplacement = ( originalBlockIds, blocks ) => {
-	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
+const trackBlockReplacement = (originalBlockIds, blocks) => {
+	trackBlocksHandler(blocks, 'wpcom_block_picker_block_inserted', ({ name }) => ({
 		block_name: name,
 		blocks_replaced: true,
-	} ) );
+	}));
 };
 
 /**
@@ -157,13 +157,13 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
  * @param {object|Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
-const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
-	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
+const trackInnerBlocksReplacement = (rootClientId, blocks) => {
+	trackBlocksHandler(blocks, 'wpcom_block_inserted', ({ name }) => ({
 		block_name: name,
 		blocks_replaced: true,
 		// isInsertingPageTemplate filter is set by Starter Page Templates
-		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
-	} ) );
+		from_template_selector: applyFilters('isInsertingPageTemplate', false),
+	}));
 };
 
 /**
@@ -172,10 +172,10 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
  * @param {string} eventName Name of the track event.
  * @returns {Function} tracker
  */
-const trackGlobalStyles = eventName => options => {
-	tracksRecordEvent( eventName, {
+const trackGlobalStyles = (eventName) => (options) => {
+	tracksRecordEvent(eventName, {
 		...options,
-	} );
+	});
 };
 
 /**
@@ -185,11 +185,11 @@ const trackGlobalStyles = eventName => options => {
  * @param {string} content The error message. Like "Update failed."
  * @param {object} options Optional. Extra data logged with the error in Gutenberg.
  */
-const trackErrorNotices = ( content, options ) =>
-	tracksRecordEvent( 'wpcom_gutenberg_error_notice', {
+const trackErrorNotices = (content, options) =>
+	tracksRecordEvent('wpcom_gutenberg_error_notice', {
 		notice_text: content,
-		notice_options: JSON.stringify( options ), // Returns undefined if options is undefined.
-	} );
+		notice_options: JSON.stringify(options), // Returns undefined if options is undefined.
+	});
 
 /**
  * Tracker can be
@@ -201,19 +201,19 @@ const trackErrorNotices = ( content, options ) =>
 const REDUX_TRACKING = {
 	'jetpack/global-styles': {
 		resetLocalChanges: 'wpcom_global_styles_reset',
-		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
-		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
+		updateOptions: trackGlobalStyles('wpcom_global_styles_update'),
+		publishOptions: trackGlobalStyles('wpcom_global_styles_publish'),
 	},
 	'core/editor': {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
 	},
 	'core/block-editor': {
-		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
-		moveBlocksDown: getBlocksTracker( 'wpcom_block_moved_down' ),
+		moveBlocksUp: getBlocksTracker('wpcom_block_moved_up'),
+		moveBlocksDown: getBlocksTracker('wpcom_block_moved_down'),
 		removeBlocks: trackBlockRemoval,
 		removeBlock: trackBlockRemoval,
-		moveBlockToPosition: getBlocksTracker( 'wpcom_block_moved_via_dragging' ),
+		moveBlockToPosition: getBlocksTracker('wpcom_block_moved_via_dragging'),
 		insertBlock: trackBlockInsertion,
 		insertBlocks: trackBlockInsertion,
 		replaceBlock: trackBlockReplacement,
@@ -231,7 +231,7 @@ const REDUX_TRACKING = {
  *
  * @type {Array}
  */
-const EVENT_TYPES = [ 'keyup', 'click' ];
+const EVENT_TYPES = ['keyup', 'click'];
 
 // Registering tracking handlers.
 if (
@@ -239,43 +239,43 @@ if (
 	undefined === window._currentSiteId ||
 	undefined === window._currentSiteType
 ) {
-	debug( 'Skip: No data available.' );
+	debug('Skip: No data available.');
 } else {
-	debug( 'registering tracking handlers.' );
+	debug('registering tracking handlers.');
 	// Intercept dispatch function and add tracking for actions that need it.
-	use( registry => ( {
-		dispatch: namespace => {
-			const actions = { ...registry.dispatch( namespace ) };
-			const trackers = REDUX_TRACKING[ namespace ];
+	use((registry) => ({
+		dispatch: (namespace) => {
+			const actions = { ...registry.dispatch(namespace) };
+			const trackers = REDUX_TRACKING[namespace];
 
-			if ( trackers ) {
-				Object.keys( trackers ).forEach( actionName => {
-					const originalAction = actions[ actionName ];
-					const tracker = trackers[ actionName ];
-					actions[ actionName ] = ( ...args ) => {
-						debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
-						if ( typeof tracker === 'string' ) {
+			if (trackers) {
+				Object.keys(trackers).forEach((actionName) => {
+					const originalAction = actions[actionName];
+					const tracker = trackers[actionName];
+					actions[actionName] = (...args) => {
+						debug('action "%s" called with %o arguments', actionName, [...args]);
+						if (typeof tracker === 'string') {
 							// Simple track - just based on the event name.
-							tracksRecordEvent( tracker );
-						} else if ( typeof tracker === 'function' ) {
+							tracksRecordEvent(tracker);
+						} else if (typeof tracker === 'function') {
 							// Advanced tracking - call function.
-							tracker( ...args );
+							tracker(...args);
 						}
-						return originalAction( ...args );
+						return originalAction(...args);
 					};
-				} );
+				});
 			}
 			return actions;
 		},
-	} ) );
+	}));
 
 	// Registers Plugin.
-	registerPlugin( 'wpcom-block-editor-tracking', {
+	registerPlugin('wpcom-block-editor-tracking', {
 		render: () => {
-			EVENT_TYPES.forEach( eventType =>
-				document.addEventListener( eventType, delegateEventTracking )
+			EVENT_TYPES.forEach((eventType) =>
+				document.addEventListener(eventType, delegateEventTracking)
 			);
 			return null;
 		},
-	} );
+	});
 }

@@ -40,152 +40,152 @@ class PaymentMethodItem extends Component {
 		cancelEditingPaymentMethod: PropTypes.func.isRequired,
 		closeEditingPaymentMethod: PropTypes.func.isRequired,
 		currentlyEditingId: PropTypes.string,
-		currentlyEditingMethod: PropTypes.shape( {
+		currentlyEditingMethod: PropTypes.shape({
 			id: PropTypes.string,
-		} ),
-		method: PropTypes.shape( {
+		}),
+		method: PropTypes.shape({
 			title: PropTypes.string.isRequired,
 			isSuggested: PropTypes.bool,
 			fees: PropTypes.string,
 			id: PropTypes.string,
 			informationUrl: PropTypes.string,
-		} ),
+		}),
 		onChange: PropTypes.func.isRequired,
 		openPaymentMethodForEdit: PropTypes.func.isRequired,
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			title: PropTypes.string,
-		} ),
+		}),
 	};
 
 	onEditHandler = () => {
 		const { currentlyEditingMethod, method } = this.props;
 		const currentlyEditingId = currentlyEditingMethod && currentlyEditingMethod.id;
-		if ( currentlyEditingId === method.id ) {
-			this.onCancel( method );
+		if (currentlyEditingId === method.id) {
+			this.onCancel(method);
 		} else {
-			this.onEdit( method );
+			this.onEdit(method);
 		}
 	};
 
 	onCancel = () => {
-		this.props.cancelEditingPaymentMethod( this.props.site.ID, this.props.method.id );
+		this.props.cancelEditingPaymentMethod(this.props.site.ID, this.props.method.id);
 	};
 
 	onEdit = () => {
-		this.props.openPaymentMethodForEdit( this.props.site.ID, this.props.method.id );
+		this.props.openPaymentMethodForEdit(this.props.site.ID, this.props.method.id);
 	};
 
-	onEditField = ( field, value ) => {
+	onEditField = (field, value) => {
 		this.props.onChange();
-		this.props.changePaymentMethodField( this.props.site.ID, field, value );
+		this.props.changePaymentMethodField(this.props.site.ID, field, value);
 	};
 
-	onChangeEnabled = e => {
+	onChangeEnabled = (e) => {
 		const { method, site } = this.props;
 
 		this.props.onChange();
 
 		const enabled = 'yes' === e.target.value;
-		this.props.changePaymentMethodEnabled( site.ID, method.id, enabled );
+		this.props.changePaymentMethodEnabled(site.ID, method.id, enabled);
 
-		if ( enabled ) {
-			recordTrack( 'calypso_woocommerce_payment_method_enabled', {
+		if (enabled) {
+			recordTrack('calypso_woocommerce_payment_method_enabled', {
 				payment_method: method.id,
-			} );
+			});
 		} else {
-			recordTrack( 'calypso_woocommerce_payment_method_disabled', {
+			recordTrack('calypso_woocommerce_payment_method_disabled', {
 				payment_method: method.id,
-			} );
+			});
 		}
 	};
 
 	onDone = () => {
 		const { method, site } = this.props;
-		this.props.closeEditingPaymentMethod( site.ID, method.id );
+		this.props.closeEditingPaymentMethod(site.ID, method.id);
 	};
 
 	onDoneAndEnable = () => {
 		const { method, site } = this.props;
-		this.props.closeEditingPaymentMethod( site.ID, method.id );
-		if ( ! method.enabled ) {
+		this.props.closeEditingPaymentMethod(site.ID, method.id);
+		if (!method.enabled) {
 			this.props.onChange();
-			this.props.changePaymentMethodEnabled( site.ID, method.id, true );
-			recordTrack( 'calypso_woocommerce_payment_method_enabled', {
+			this.props.changePaymentMethodEnabled(site.ID, method.id, true);
+			recordTrack('calypso_woocommerce_payment_method_enabled', {
 				payment_method: method.id,
-			} );
+			});
 		}
 	};
 
 	outputEditComponent = () => {
 		const { currentlyEditingMethod, method, site } = this.props;
-		if ( method.id === 'paypal' ) {
+		if (method.id === 'paypal') {
 			return (
 				<PaymentMethodPaypal
-					method={ currentlyEditingMethod }
-					onCancel={ this.onCancel }
-					onEditField={ this.onEditField }
-					onDone={ this.onDone }
+					method={currentlyEditingMethod}
+					onCancel={this.onCancel}
+					onEditField={this.onEditField}
+					onDone={this.onDone}
 				/>
 			);
 		}
-		if ( method.id === 'stripe' ) {
+		if (method.id === 'stripe') {
 			return (
 				<PaymentMethodStripe
-					method={ currentlyEditingMethod }
-					onCancel={ this.onCancel }
-					onEditField={ this.onEditField }
-					onDone={ this.onDoneAndEnable }
-					site={ site }
+					method={currentlyEditingMethod}
+					onCancel={this.onCancel}
+					onEditField={this.onEditField}
+					onDone={this.onDoneAndEnable}
+					site={site}
 				/>
 			);
 		}
-		if ( method.id === 'cheque' ) {
+		if (method.id === 'cheque') {
 			return (
 				<PaymentMethodCheque
-					method={ currentlyEditingMethod }
-					onCancel={ this.onCancel }
-					onEditField={ this.onEditField }
-					onDone={ this.onDone }
+					method={currentlyEditingMethod}
+					onCancel={this.onCancel}
+					onEditField={this.onEditField}
+					onDone={this.onDone}
 				/>
 			);
 		}
 
-		if ( method.id === 'bacs' ) {
+		if (method.id === 'bacs') {
 			return (
 				<PaymentMethodBACS
-					method={ currentlyEditingMethod }
-					onCancel={ this.onCancel }
-					onEditField={ this.onEditField }
-					onDone={ this.onDone }
+					method={currentlyEditingMethod}
+					onCancel={this.onCancel}
+					onEditField={this.onEditField}
+					onDone={this.onDone}
 				/>
 			);
 		}
 
 		return (
 			<PaymentMethodEditDialog
-				method={ currentlyEditingMethod }
-				onCancel={ this.onCancel }
-				onEditField={ this.onEditField }
-				onDone={ this.onDone }
+				method={currentlyEditingMethod}
+				onCancel={this.onCancel}
+				onEditField={this.onEditField}
+				onDone={this.onDone}
 			/>
 		);
 	};
 
-	renderEnabledField = method => {
+	renderEnabledField = (method) => {
 		const { translate } = this.props;
 		let showEnableField = true;
-		if ( method.id === 'stripe' ) {
-			showEnableField = hasStripeKeyPairForMode( method );
+		if (method.id === 'stripe') {
+			showEnableField = hasStripeKeyPairForMode(method);
 		}
 
 		return (
 			showEnableField && (
 				<div>
-					<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
+					<FormLabel>{translate('Enabled')}</FormLabel>
 					<PaymentMethodEditFormToggle
-						checked={ method.enabled }
+						checked={method.enabled}
 						name="enabled"
-						onChange={ this.onChangeEnabled }
+						onChange={this.onChangeEnabled}
 					/>
 				</div>
 			)
@@ -196,59 +196,59 @@ class PaymentMethodItem extends Component {
 		const currentlyEditingId =
 			this.props.currentlyEditingMethod && this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
-		let editButtonText = method.enabled ? translate( 'Manage' ) : translate( 'Set up' );
-		if ( method.id === 'stripe' && hasStripeKeyPairForMode( method ) ) {
-			editButtonText = translate( 'Manage' );
+		let editButtonText = method.enabled ? translate('Manage') : translate('Set up');
+		if (method.id === 'stripe' && hasStripeKeyPairForMode(method)) {
+			editButtonText = translate('Manage');
 		}
-		if ( currentlyEditingId === method.id ) {
-			editButtonText = translate( 'Cancel' );
+		if (currentlyEditingId === method.id) {
+			editButtonText = translate('Cancel');
 		}
 		const methodTitle = 'payments__method-name payments__method-name-' + method.id;
 
 		return (
 			<ListItem>
 				<ListItemField className="payments__method-method-suggested-container">
-					{ method.isSuggested && (
-						<p className="payments__method-suggested">{ translate( 'Suggested Method' ) }</p>
-					) }
-					<p className={ methodTitle }>{ method.title }</p>
+					{method.isSuggested && (
+						<p className="payments__method-suggested">{translate('Suggested Method')}</p>
+					)}
+					<p className={methodTitle}>{method.title}</p>
 				</ListItemField>
 				<ListItemField className="payments__method-method-information-container">
-					{ method.fees && <p className="payments__method-information">{ method.fees }</p> }
-					{ method.informationUrl && (
+					{method.fees && <p className="payments__method-information">{method.fees}</p>}
+					{method.informationUrl && (
 						<p className="payments__method-information">
-							<ExternalLink icon href={ method.informationUrl } target="_blank">
-								{ translate( 'More information' ) }
+							<ExternalLink icon href={method.informationUrl} target="_blank">
+								{translate('More information')}
 							</ExternalLink>
 						</p>
-					) }
+					)}
 				</ListItemField>
 				<ListItemField className="payments__method-enable-container">
 					<FormFieldset className="payments__method-enable">
-						{ this.renderEnabledField( method ) }
+						{this.renderEnabledField(method)}
 					</FormFieldset>
 				</ListItemField>
 				<ListItemField className="payments__method-action-container">
-					<Button compact onClick={ this.onEditHandler }>
-						{ editButtonText }
+					<Button compact onClick={this.onEditHandler}>
+						{editButtonText}
 					</Button>
 				</ListItemField>
-				{ currentlyEditingId === method.id && this.outputEditComponent() }
+				{currentlyEditingId === method.id && this.outputEditComponent()}
 			</ListItem>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const currentlyEditingMethod = getCurrentlyEditingPaymentMethod( state );
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const currentlyEditingMethod = getCurrentlyEditingPaymentMethod(state);
+	const site = getSelectedSiteWithFallback(state);
 	return {
 		currentlyEditingMethod,
 		site,
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			cancelEditingPaymentMethod,
@@ -261,4 +261,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem ) );
+export default localize(connect(mapStateToProps, mapDispatchToProps)(PaymentMethodItem));

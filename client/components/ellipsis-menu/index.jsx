@@ -42,27 +42,27 @@ class EllipsisMenu extends Component {
 
 	popoverContext = React.createRef();
 
-	handleClick = event => {
+	handleClick = (event) => {
 		const { onClick } = this.props;
 		const { isMenuVisible } = this.state;
 
-		onClick( event );
+		onClick(event);
 
-		if ( isMenuVisible ) {
+		if (isMenuVisible) {
 			this.hideMenu();
 		} else {
 			this.showMenu();
 		}
 	};
 
-	hideMenu = () => this.toggleMenu( false );
+	hideMenu = () => this.toggleMenu(false);
 
-	showMenu = () => this.toggleMenu( true );
+	showMenu = () => this.toggleMenu(true);
 
-	toggleMenu( isMenuVisible ) {
-		if ( ! this.props.disabled ) {
-			this.setState( { isMenuVisible } );
-			this.props.onToggle( isMenuVisible );
+	toggleMenu(isMenuVisible) {
+		if (!this.props.disabled) {
+			this.setState({ isMenuVisible });
+			this.props.onToggle(isMenuVisible);
 		}
 	}
 
@@ -77,38 +77,38 @@ class EllipsisMenu extends Component {
 			popoverClassName,
 		} = this.props;
 		const { isMenuVisible } = this.state;
-		const classes = classnames( 'ellipsis-menu', className, {
+		const classes = classnames('ellipsis-menu', className, {
 			'is-menu-visible': isMenuVisible,
 			'is-disabled': disabled,
-		} );
-		const popoverClasses = classnames( 'ellipsis-menu__menu', 'popover', popoverClassName );
+		});
+		const popoverClasses = classnames('ellipsis-menu__menu', 'popover', popoverClassName);
 
 		return (
-			<span className={ classes }>
+			<span className={classes}>
 				<Button
-					ref={ this.popoverContext }
-					onClick={ this.handleClick }
-					title={ toggleTitle || translate( 'Toggle menu' ) }
+					ref={this.popoverContext}
+					onClick={this.handleClick}
+					title={toggleTitle || translate('Toggle menu')}
 					borderless
-					disabled={ disabled }
+					disabled={disabled}
 					className="ellipsis-menu__toggle"
 				>
 					<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" />
 				</Button>
-				{ isMenuVisible && (
+				{isMenuVisible && (
 					<PopoverMenu
 						isVisible
-						onClose={ this.hideMenu }
-						position={ position }
-						context={ this.popoverContext.current }
-						className={ popoverClasses }
+						onClose={this.hideMenu}
+						position={position}
+						context={this.popoverContext.current}
+						className={popoverClasses}
 					>
-						{ children }
+						{children}
 					</PopoverMenu>
-				) }
+				)}
 			</span>
 		);
 	}
 }
 
-export default localize( EllipsisMenu );
+export default localize(EllipsisMenu);

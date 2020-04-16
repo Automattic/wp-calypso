@@ -16,28 +16,28 @@ import SectionHeader from 'components/section-header';
 class Header extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 	};
 
 	render() {
 		const { domain } = this.props;
 
-		if ( ! domain ) {
+		if (!domain) {
 			return null;
 		}
 
-		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
-		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
+		const isJetpackSite = get(this.props, 'selectedSite.jetpack');
+		const isAtomicSite = get(this.props, 'selectedSite.options.is_automated_transfer');
 
-		const renderButton = this.props.selectedSite && ( ! isJetpackSite || isAtomicSite );
+		const renderButton = this.props.selectedSite && (!isJetpackSite || isAtomicSite);
 
 		return (
-			<SectionHeader label={ domain.name }>
-				<DomainPrimaryFlag domain={ domain } />
+			<SectionHeader label={domain.name}>
+				<DomainPrimaryFlag domain={domain} />
 
-				{ renderButton && (
-					<PrimaryDomainButton domain={ domain } selectedSite={ this.props.selectedSite } />
-				) }
+				{renderButton && (
+					<PrimaryDomainButton domain={domain} selectedSite={this.props.selectedSite} />
+				)}
 			</SectionHeader>
 		);
 	}

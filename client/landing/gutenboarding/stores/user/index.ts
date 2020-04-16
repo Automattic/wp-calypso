@@ -8,7 +8,7 @@ import { User } from '@automattic/data-stores';
  */
 import config from '../../../../config';
 
-export const USER_STORE = User.register( {
-	client_id: config( 'wpcom_signup_id' ),
-	client_secret: config( 'wpcom_signup_key' ),
-} );
+export const USER_STORE = User.register({
+	client_id: config('wpcom_signup_id'),
+	client_secret: config('wpcom_signup_key'),
+});

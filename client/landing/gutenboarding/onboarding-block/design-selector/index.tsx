@@ -21,82 +21,76 @@ import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
 
-const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
+const makeOptionId = ({ slug }: Design): string => `design-selector__option-name__${slug}`;
 
 const DesignSelector: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
-	const { setSelectedDesign, setFonts, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setFonts, resetOnboardStore } = useDispatch(ONBOARD_STORE);
 
-	const getDesignUrl = ( design: Design ) => {
+	const getDesignUrl = (design: Design) => {
 		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
 		// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
 		// https://github.com/Automattic/mShots/issues/16
 		// https://github.com/Automattic/wp-calypso/issues/40564
-		if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
-			return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
+		if (!isEnabled('gutenboarding/mshot-preview')) {
+			return `/calypso/page-templates/design-screenshots/${design.slug}_${design.template}_${design.theme}.jpg`;
 		}
 
 		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
-		const previewUrl = addQueryArgs( design.src, {
+		const previewUrl = addQueryArgs(design.src, {
 			font_headings: design.fonts.headings,
 			font_base: design.fonts.base,
-		} );
-		return mshotsUrl + encodeURIComponent( previewUrl );
+		});
+		return mshotsUrl + encodeURIComponent(previewUrl);
 	};
 
 	return (
 		<div className="gutenboarding-page design-selector">
 			<div className="design-selector__header">
 				<div className="design-selector__heading">
-					<Title>{ __( 'Choose a starting design' ) }</Title>
+					<Title>{__('Choose a starting design')}</Title>
 					<SubTitle>
-						{ __(
-							'Get started with one of our top website layouts. You can always change it later'
-						) }
+						{__('Get started with one of our top website layouts. You can always change it later')}
 					</SubTitle>
 				</div>
 				<Link
 					className="design-selector__start-over-button"
-					onClick={ () => resetOnboardStore() }
-					to={ makePath( Step.IntentGathering ) }
+					onClick={() => resetOnboardStore()}
+					to={makePath(Step.IntentGathering)}
 					isLink
 				>
-					{ __( 'Go back' ) }
+					{__('Go back')}
 				</Link>
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
-					{ designs.featured.map( design => (
+					{designs.featured.map((design) => (
 						<button
-							key={ design.slug }
+							key={design.slug}
 							className="design-selector__design-option"
-							onClick={ () => {
-								setSelectedDesign( design );
+							onClick={() => {
+								setSelectedDesign(design);
 
 								// Update fonts to the design defaults
-								setFonts( design.fonts );
+								setFonts(design.fonts);
 
-								if ( isEnabled( 'gutenboarding/style-preview' ) ) {
-									push( makePath( Step.Style ) );
+								if (isEnabled('gutenboarding/style-preview')) {
+									push(makePath(Step.Style));
 								}
-							} }
+							}}
 						>
 							<span className="design-selector__image-frame">
-								<img
-									alt=""
-									aria-labelledby={ makeOptionId( design ) }
-									src={ getDesignUrl( design ) }
-								/>
+								<img alt="" aria-labelledby={makeOptionId(design)} src={getDesignUrl(design)} />
 							</span>
 							<span className="design-selector__option-overlay">
-								<span id={ makeOptionId( design ) } className="design-selector__option-name">
-									{ design.title }
+								<span id={makeOptionId(design)} className="design-selector__option-name">
+									{design.title}
 								</span>
 							</span>
 						</button>
-					) ) }
+					))}
 				</div>
 			</div>
 		</div>

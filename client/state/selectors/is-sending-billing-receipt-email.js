@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {number}  receiptId   The ID of the receipt we're querying
  * @returns {?boolean}            Whether email is being sent for that receipt
  */
-export default function isSendingBillingReceiptEmail( state, receiptId ) {
-	return get( state, [ 'billingTransactions', 'sendingReceiptEmail', receiptId ], null );
+export default function isSendingBillingReceiptEmail(state, receiptId) {
+	return get(state, ['billingTransactions', 'sendingReceiptEmail', receiptId], null);
 }

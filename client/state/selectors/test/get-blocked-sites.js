@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import { getBlockedSites } from 'state/reader/site-blocks/selectors';
 
-describe( 'getBlockedSites()', () => {
-	test( 'should return an array of blocked site IDs', () => {
+describe('getBlockedSites()', () => {
+	test('should return an array of blocked site IDs', () => {
 		const state = {
 			reader: {
 				siteBlocks: {
@@ -21,6 +21,6 @@ describe( 'getBlockedSites()', () => {
 				},
 			},
 		};
-		expect( getBlockedSites( state ) ).to.deep.equal( [ 123, 125 ] );
-	} );
-} );
+		expect(getBlockedSites(state)).to.deep.equal([123, 125]);
+	});
+});

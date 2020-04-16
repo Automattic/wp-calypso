@@ -31,7 +31,7 @@ import { FEATURE_NO_ADS } from 'lib/plans/constants';
  */
 import './style.scss';
 
-export const Sharing = ( {
+export const Sharing = ({
 	contentComponent,
 	path,
 	showButtons,
@@ -41,82 +41,82 @@ export const Sharing = ( {
 	isVip,
 	siteSlug,
 	translate,
-} ) => {
+}) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 	const filters = [];
 
-	filters.push( {
+	filters.push({
 		id: 'marketing-tools',
 		route: '/marketing/tools' + pathSuffix,
-		title: translate( 'Marketing Tools' ),
-	} );
+		title: translate('Marketing Tools'),
+	});
 
 	// Include SEO link if a site is selected and the
 	// required Jetpack module is active
-	if ( showTraffic ) {
-		filters.push( {
+	if (showTraffic) {
+		filters.push({
 			id: 'traffic',
 			route: '/marketing/traffic' + pathSuffix,
-			title: translate( 'Traffic' ),
-		} );
+			title: translate('Traffic'),
+		});
 	}
 
 	// Include Connections link if all sites are selected. Otherwise,
 	// verify that the required Jetpack module is active
-	if ( showConnections ) {
-		filters.push( {
+	if (showConnections) {
+		filters.push({
 			id: 'sharing-connections',
 			route: '/marketing/connections' + pathSuffix,
-			title: translate( 'Connections' ),
-		} );
+			title: translate('Connections'),
+		});
 	}
 
 	// Include Sharing Buttons link if a site is selected and the
 	// required Jetpack module is active
-	if ( showButtons ) {
-		filters.push( {
+	if (showButtons) {
+		filters.push({
 			id: 'sharing-buttons',
 			route: '/marketing/sharing-buttons' + pathSuffix,
-			title: translate( 'Sharing Buttons' ),
-		} );
+			title: translate('Sharing Buttons'),
+		});
 	}
 
-	const selected = find( filters, { route: path } );
+	const selected = find(filters, { route: path });
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
-			<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
-			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
+			<DocumentHead title={translate('Marketing and Integrations')} />
+			{siteId && <QueryJetpackModules siteId={siteId} />}
 			<SidebarNavigation />
 			<FormattedHeader
 				className="marketing__page-heading"
-				headerText={ translate( 'Marketing and Integrations' ) }
+				headerText={translate('Marketing and Integrations')}
 				align="left"
 			/>
-			{ filters.length > 0 && (
-				<SectionNav selectedText={ get( selected, 'title', '' ) }>
+			{filters.length > 0 && (
+				<SectionNav selectedText={get(selected, 'title', '')}>
 					<NavTabs>
-						{ filters.map( ( { id, route, title } ) => (
-							<NavItem key={ id } path={ route } selected={ path === route }>
-								{ title }
+						{filters.map(({ id, route, title }) => (
+							<NavItem key={id} path={route} selected={path === route}>
+								{title}
 							</NavItem>
-						) ) }
+						))}
 					</NavTabs>
 				</SectionNav>
-			) }
-			{ ! isVip && (
+			)}
+			{!isVip && (
 				<UpsellNudge
 					event="sharing_no_ads"
-					feature={ FEATURE_NO_ADS }
-					description={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No Ads with WordPress.com Premium' ) }
+					feature={FEATURE_NO_ADS}
+					description={translate('Prevent ads from showing on your site.')}
+					title={translate('No Ads with WordPress.com Premium')}
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
-					showIcon={ true }
+					showIcon={true}
 				/>
-			) }
-			{ contentComponent }
+			)}
+			{contentComponent}
 		</Main>
 	);
 };
@@ -133,18 +133,18 @@ Sharing.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const isJetpack = isJetpackSite(state, siteId);
+	const canManageOptions = canCurrentUser(state, siteId, 'manage_options');
+	const hasSharedaddy = isJetpackModuleActive(state, siteId, 'sharedaddy');
 
 	return {
-		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
-		showConnections: !! siteId,
-		showTraffic: canManageOptions && !! siteId,
-		isVip: isVipSite( state, siteId ),
+		showButtons: siteId && canManageOptions && (!isJetpack || hasSharedaddy),
+		showConnections: !!siteId,
+		showTraffic: canManageOptions && !!siteId,
+		isVip: isVipSite(state, siteId),
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
+		siteSlug: getSiteSlug(state, siteId),
 	};
-} )( localize( Sharing ) );
+})(localize(Sharing));

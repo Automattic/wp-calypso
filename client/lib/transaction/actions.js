@@ -11,47 +11,47 @@ import {
 } from './action-types';
 import Dispatcher from 'dispatcher';
 
-export function setDomainDetails( domainDetails ) {
-	Dispatcher.handleViewAction( {
+export function setDomainDetails(domainDetails) {
+	Dispatcher.handleViewAction({
 		type: TRANSACTION_DOMAIN_DETAILS_SET,
 		domainDetails,
-	} );
+	});
 }
 
-export function setPayment( payment ) {
-	Dispatcher.handleViewAction( {
+export function setPayment(payment) {
+	Dispatcher.handleViewAction({
 		type: TRANSACTION_PAYMENT_SET,
 		payment,
-	} );
+	});
 }
 
-export function setStripeObject( stripe, stripeConfiguration ) {
-	Dispatcher.handleViewAction( {
+export function setStripeObject(stripe, stripeConfiguration) {
+	Dispatcher.handleViewAction({
 		type: TRANSACTION_STRIPE_SET,
 		stripe,
 		stripeConfiguration,
-	} );
+	});
 }
 
-export function setNewCreditCardDetails( options ) {
+export function setNewCreditCardDetails(options) {
 	const { rawDetails, maskedDetails } = options;
 
-	Dispatcher.handleViewAction( {
+	Dispatcher.handleViewAction({
 		type: TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 		rawDetails,
 		maskedDetails,
-	} );
+	});
 }
 
-export function setTransactionStep( step ) {
-	Dispatcher.handleViewAction( {
+export function setTransactionStep(step) {
+	Dispatcher.handleViewAction({
 		type: TRANSACTION_STEP_SET,
 		step,
-	} );
+	});
 }
 
 export function resetTransaction() {
-	Dispatcher.handleViewAction( {
+	Dispatcher.handleViewAction({
 		type: TRANSACTION_RESET,
-	} );
+	});
 }

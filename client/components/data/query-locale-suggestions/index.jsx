@@ -22,7 +22,7 @@ class QueryLocaleSuggestions extends Component {
 	};
 
 	componentDidMount() {
-		if ( ! this.props.localeSuggestions ) {
+		if (!this.props.localeSuggestions) {
 			this.props.requestLocaleSuggestions();
 		}
 	}
@@ -33,8 +33,8 @@ class QueryLocaleSuggestions extends Component {
 }
 
 export default connect(
-	state => ( {
-		localeSuggestions: getLocaleSuggestions( state ),
-	} ),
+	(state) => ({
+		localeSuggestions: getLocaleSuggestions(state),
+	}),
 	{ requestLocaleSuggestions }
-)( QueryLocaleSuggestions );
+)(QueryLocaleSuggestions);

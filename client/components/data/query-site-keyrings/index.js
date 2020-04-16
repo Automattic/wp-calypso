@@ -23,15 +23,15 @@ class QuerySiteKeyrings extends Component {
 		siteId: null,
 	};
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( ! nextProps.siteId || prevState.siteId === nextProps.siteId ) {
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (!nextProps.siteId || prevState.siteId === nextProps.siteId) {
 			return null;
 		}
 
 		return { siteId: nextProps.siteId };
 	}
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return this.state.siteId !== nextProps.siteId;
 	}
 
@@ -45,8 +45,8 @@ class QuerySiteKeyrings extends Component {
 
 	requestKeyrings() {
 		const { siteId } = this.state;
-		if ( ! this.props.requestingSiteKeyrings && siteId ) {
-			this.props.requestSiteKeyrings( siteId );
+		if (!this.props.requestingSiteKeyrings && siteId) {
+			this.props.requestSiteKeyrings(siteId);
 		}
 	}
 
@@ -56,8 +56,8 @@ class QuerySiteKeyrings extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		requestingSiteKeyrings: isRequestingSiteKeyrings( state, siteId ),
-	} ),
+	(state, { siteId }) => ({
+		requestingSiteKeyrings: isRequestingSiteKeyrings(state, siteId),
+	}),
 	{ requestSiteKeyrings }
-)( QuerySiteKeyrings );
+)(QuerySiteKeyrings);

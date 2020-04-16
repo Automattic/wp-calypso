@@ -29,31 +29,27 @@ class Gap extends React.Component {
 
 	handleClick = () => {
 		const { streamKey, gap } = this.props;
-		this.props.fillGap( { streamKey, gap } );
-		recordAction( 'fill_gap' );
-		recordGaEvent( 'Clicked Fill Gap' );
-		recordTrack( 'calypso_reader_filled_gap', { stream: streamKey } );
+		this.props.fillGap({ streamKey, gap });
+		recordAction('fill_gap');
+		recordGaEvent('Clicked Fill Gap');
+		recordTrack('calypso_reader_filled_gap', { stream: streamKey });
 
-		this.setState( { isFilling: true } );
+		this.setState({ isFilling: true });
 	};
 
 	render() {
-		const classes = classnames( {
+		const classes = classnames({
 			'reader-list-gap': true,
 			'is-filling': this.state.isFilling,
 			'is-selected': this.props.selected,
-		} );
+		});
 		const { translate } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className={ classes }>
-				<button
-					type="button"
-					className="button reader-list-gap__button"
-					onClick={ this.handleClick }
-				>
-					{ translate( 'Load More Posts' ) }
+			<div className={classes}>
+				<button type="button" className="button reader-list-gap__button" onClick={this.handleClick}>
+					{translate('Load More Posts')}
 				</button>
 			</div>
 		);
@@ -61,4 +57,4 @@ class Gap extends React.Component {
 	}
 }
 
-export default localize( connect( null, { fillGap } )( Gap ) );
+export default localize(connect(null, { fillGap })(Gap));

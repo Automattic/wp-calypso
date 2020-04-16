@@ -17,14 +17,14 @@ import {
 	twoStep,
 } from './controller';
 
-export default function() {
-	page( '/me/security', sidebar, password, makeLayout, clientRender );
+export default function () {
+	page('/me/security', sidebar, password, makeLayout, clientRender);
 
-	if ( config.isEnabled( 'signup/social-management' ) ) {
-		page( '/me/security/social-login', sidebar, socialLogin, makeLayout, clientRender );
+	if (config.isEnabled('signup/social-management')) {
+		page('/me/security/social-login', sidebar, socialLogin, makeLayout, clientRender);
 	}
 
-	page( '/me/security/two-step', sidebar, twoStep, makeLayout, clientRender );
+	page('/me/security/two-step', sidebar, twoStep, makeLayout, clientRender);
 
 	page(
 		'/me/security/connected-applications',
@@ -34,5 +34,5 @@ export default function() {
 		clientRender
 	);
 
-	page( '/me/security/account-recovery', sidebar, accountRecovery, makeLayout, clientRender );
+	page('/me/security/account-recovery', sidebar, accountRecovery, makeLayout, clientRender);
 }

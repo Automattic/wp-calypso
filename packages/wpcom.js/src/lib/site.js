@@ -23,7 +23,7 @@ import debugFactory from 'debug';
 /**
  * Module vars
  */
-const debug = debugFactory( 'wpcom:site' );
+const debug = debugFactory('wpcom:site');
 const root = '/sites';
 
 /**
@@ -37,16 +37,16 @@ class Site {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
-	constructor( id, wpcom ) {
-		if ( ! ( this instanceof Site ) ) {
-			return new Site( id, wpcom );
+	constructor(id, wpcom) {
+		if (!(this instanceof Site)) {
+			return new Site(id, wpcom);
 		}
 
 		this.wpcom = wpcom;
 
-		debug( 'set %o site id', id );
-		this._id = encodeURIComponent( id );
-		this.path = `${ root }/${ this._id }`;
+		debug('set %o site id', id);
+		this._id = encodeURIComponent(id);
+		this.path = `${root}/${this._id}`;
 	}
 
 	/**
@@ -56,8 +56,8 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	get( query, fn ) {
-		return this.wpcom.req.get( this.path, query, fn );
+	get(query, fn) {
+		return this.wpcom.req.get(this.path, query, fn);
 	}
 
 	/**
@@ -66,8 +66,8 @@ class Site {
 	 * @param {string} id - post id
 	 * @returns {Post} Post instance
 	 */
-	post( id ) {
-		return new Post( id, this._id, this.wpcom );
+	post(id) {
+		return new Post(id, this._id, this.wpcom);
 	}
 
 	/**
@@ -77,9 +77,9 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	addPost( body, fn ) {
-		const post = new Post( null, this._id, this.wpcom );
-		return post.add( body, fn );
+	addPost(body, fn) {
+		const post = new Post(null, this._id, this.wpcom);
+		return post.add(body, fn);
 	}
 
 	/**
@@ -89,9 +89,9 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	deletePost( id, fn ) {
-		const post = new Post( id, this._id, this.wpcom );
-		return post.delete( fn );
+	deletePost(id, fn) {
+		const post = new Post(id, this._id, this.wpcom);
+		return post.delete(fn);
 	}
 
 	/**
@@ -100,8 +100,8 @@ class Site {
 	 * @param {string} id - post id
 	 * @returns {Media} Media instance
 	 */
-	media( id ) {
-		return new Media( id, this._id, this.wpcom );
+	media(id) {
+		return new Media(id, this._id, this.wpcom);
 	}
 
 	/**
@@ -112,9 +112,9 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	addMediaFiles( query, files, fn ) {
-		const media = new Media( null, this._id, this.wpcom );
-		return media.addFiles( query, files, fn );
+	addMediaFiles(query, files, fn) {
+		const media = new Media(null, this._id, this.wpcom);
+		return media.addFiles(query, files, fn);
 	}
 
 	/**
@@ -125,9 +125,9 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	addMediaUrls( query, files, fn ) {
-		const media = new Media( null, this._id, this.wpcom );
-		return media.addUrls( query, files, fn );
+	addMediaUrls(query, files, fn) {
+		const media = new Media(null, this._id, this.wpcom);
+		return media.addUrls(query, files, fn);
 	}
 
 	/**
@@ -137,9 +137,9 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	deleteMedia( id, fn ) {
-		const media = new Media( id, this._id, this.wpcom );
-		return media.del( fn );
+	deleteMedia(id, fn) {
+		const media = new Media(id, this._id, this.wpcom);
+		return media.del(fn);
 	}
 
 	/**
@@ -148,8 +148,8 @@ class Site {
 	 * @param {string} id - comment id
 	 * @returns {Comment} Comment instance
 	 */
-	comment( id ) {
-		return new Comment( id, null, this._id, this.wpcom );
+	comment(id) {
+		return new Comment(id, null, this._id, this.wpcom);
 	}
 
 	/**
@@ -158,7 +158,7 @@ class Site {
 	 * @returns {Follow} Follow instance
 	 */
 	follow() {
-		return new Follow( this._id, this.wpcom );
+		return new Follow(this._id, this.wpcom);
 	}
 
 	/**
@@ -167,8 +167,8 @@ class Site {
 	 * @param {string} slug - plugin identifier
 	 * @returns {SitePlugin} SitePlugin instance
 	 */
-	plugin( slug ) {
-		return new SitePlugin( slug, this._id, this.wpcom );
+	plugin(slug) {
+		return new SitePlugin(slug, this._id, this.wpcom);
 	}
 
 	/**
@@ -177,8 +177,8 @@ class Site {
 	 * @param {string} slug - plugin identifier
 	 * @returns {SiteWPComPlugin} SiteWPComPlugin instance
 	 */
-	wpcomPlugin( slug ) {
-		return new SiteWPComPlugin( slug, this._id, this.wpcom );
+	wpcomPlugin(slug) {
+		return new SiteWPComPlugin(slug, this._id, this.wpcom);
 	}
 
 	/**
@@ -188,8 +188,8 @@ class Site {
 	 * @param {string} [slug] - category slug
 	 * @returns {Category} Category instance
 	 */
-	category( slug ) {
-		return new Category( slug, this._id, this.wpcom );
+	category(slug) {
+		return new Category(slug, this._id, this.wpcom);
 	}
 
 	/**
@@ -198,8 +198,8 @@ class Site {
 	 * @param {string} [slug] - tag slug
 	 * @returns {Tag} Tag instance
 	 */
-	tag( slug ) {
-		return new Tag( slug, this._id, this.wpcom );
+	tag(slug) {
+		return new Tag(slug, this._id, this.wpcom);
 	}
 
 	/**
@@ -208,8 +208,8 @@ class Site {
 	 * @param {string} [slug] - taxonomy slug
 	 * @returns {SiteTaxonomy} SiteTaxonomy instance
 	 */
-	taxonomy( slug ) {
-		return new SiteTaxonomy( slug, this._id, this.wpcom );
+	taxonomy(slug) {
+		return new SiteTaxonomy(slug, this._id, this.wpcom);
 	}
 
 	/**
@@ -218,7 +218,7 @@ class Site {
 	 * @returns {SiteCreditVouchers} SiteCreditVouchers instance
 	 */
 	creditVouchers() {
-		return new SiteCreditVouchers( this._id, this.wpcom );
+		return new SiteCreditVouchers(this._id, this.wpcom);
 	}
 
 	/**
@@ -227,8 +227,8 @@ class Site {
 	 * @param {string} [slug] - post type slug
 	 * @returns {SitePostType} SitePostType instance
 	 */
-	postType( slug ) {
-		return new SitePostType( slug, this._id, this.wpcom );
+	postType(slug) {
+		return new SitePostType(slug, this._id, this.wpcom);
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Site {
 	 * @returns {SiteSettings} SiteSettings instance
 	 */
 	settings() {
-		return new SiteSettings( this._id, this.wpcom );
+		return new SiteSettings(this._id, this.wpcom);
 	}
 
 	/**
@@ -246,7 +246,7 @@ class Site {
 	 * @returns {SiteDomain} SiteDomain instance
 	 */
 	domain() {
-		return new SiteDomain( this._id, this.wpcom );
+		return new SiteDomain(this._id, this.wpcom);
 	}
 
 	/**
@@ -265,13 +265,13 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	postCounts( type = 'post', query, fn ) {
-		if ( 'function' === typeof query ) {
+	postCounts(type = 'post', query, fn) {
+		if ('function' === typeof query) {
 			fn = query;
 			query = {};
 		}
 
-		return this.wpcom.req.get( `${ this.path }/post-counts/${ type }`, query, fn );
+		return this.wpcom.req.get(`${this.path}/post-counts/${type}`, query, fn);
 	}
 
 	/**
@@ -284,12 +284,12 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	renderShortcode( url, query, fn ) {
-		if ( 'string' !== typeof url ) {
-			throw new TypeError( 'expected a url String' );
+	renderShortcode(url, query, fn) {
+		if ('string' !== typeof url) {
+			throw new TypeError('expected a url String');
 		}
 
-		if ( 'function' === typeof query ) {
+		if ('function' === typeof query) {
 			fn = query;
 			query = {};
 		}
@@ -297,7 +297,7 @@ class Site {
 		query = query || {};
 		query.shortcode = url;
 
-		return this.wpcom.req.get( `${ this.path }/shortcodes/render`, query, fn );
+		return this.wpcom.req.get(`${this.path}/shortcodes/render`, query, fn);
 	}
 
 	/**
@@ -310,12 +310,12 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	renderEmbed( url, query, fn ) {
-		if ( 'string' !== typeof url ) {
-			throw new TypeError( 'expected an embed String' );
+	renderEmbed(url, query, fn) {
+		if ('string' !== typeof url) {
+			throw new TypeError('expected an embed String');
 		}
 
-		if ( 'function' === typeof query ) {
+		if ('function' === typeof query) {
 			fn = query;
 			query = {};
 		}
@@ -323,7 +323,7 @@ class Site {
 		query = query || {};
 		query.embed_url = url;
 
-		return this.wpcom.req.get( `${ this.path }/embeds/render`, query, fn );
+		return this.wpcom.req.get(`${this.path}/embeds/render`, query, fn);
 	}
 
 	/**
@@ -333,9 +333,9 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsReferrersSpamNew( domain, fn ) {
-		const path = `${ this.path }/stats/referrers/spam/new`;
-		return this.wpcom.req.post( path, { domain }, null, fn );
+	statsReferrersSpamNew(domain, fn) {
+		const path = `${this.path}/stats/referrers/spam/new`;
+		return this.wpcom.req.post(path, { domain }, null, fn);
 	}
 
 	/**
@@ -345,9 +345,9 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsReferrersSpamDelete( domain, fn ) {
-		const path = `${ this.path }/stats/referrers/spam/delete`;
-		return this.wpcom.req.post( path, { domain }, null, fn );
+	statsReferrersSpamDelete(domain, fn) {
+		const path = `${this.path}/stats/referrers/spam/delete`;
+		return this.wpcom.req.post(path, { domain }, null, fn);
 	}
 
 	/**
@@ -358,15 +358,15 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsVideo( videoId, query, fn ) {
-		const path = `${ this.path }/stats/video/${ videoId }`;
+	statsVideo(videoId, query, fn) {
+		const path = `${this.path}/stats/video/${videoId}`;
 
-		if ( 'function' === typeof query ) {
+		if ('function' === typeof query) {
 			fn = query;
 			query = {};
 		}
 
-		return this.wpcom.req.get( path, query, fn );
+		return this.wpcom.req.get(path, query, fn);
 	}
 
 	/**
@@ -377,15 +377,15 @@ class Site {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsPostViews( postId, query, fn ) {
-		const path = `${ this.path }/stats/post/${ postId }`;
+	statsPostViews(postId, query, fn) {
+		const path = `${this.path}/stats/post/${postId}`;
 
-		if ( 'function' === typeof query ) {
+		if ('function' === typeof query) {
 			fn = query;
 			query = {};
 		}
 
-		return this.wpcom.req.get( path, query, fn );
+		return this.wpcom.req.get(path, query, fn);
 	}
 
 	/**
@@ -401,13 +401,13 @@ class Site {
 	 * @returns {SiteWordAds} SiteWordAds instance
 	 */
 	wordAds() {
-		return new SiteWordAds( this._id, this.wpcom );
+		return new SiteWordAds(this._id, this.wpcom);
 	}
 }
 
 // add methods in runtime
-runtimeBuilder( Site, siteGetMethods, ( methodParams, ctx ) => {
-	return `/sites/${ ctx._id }/${ methodParams.subpath }`;
-} );
+runtimeBuilder(Site, siteGetMethods, (methodParams, ctx) => {
+	return `/sites/${ctx._id}/${methodParams.subpath}`;
+});
 
 export default Site;

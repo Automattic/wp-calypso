@@ -14,25 +14,25 @@ import { getSectionName } from 'state/ui/selectors';
  * @param {int} siteId The site id, if no siteId is present primary siteId will be used
  * @returns {Array} of groups for site Id
  */
-export default ( state, siteId ) => {
+export default (state, siteId) => {
 	const groups = [];
 
 	// For Jetpack Connect we need to direct chat users to the JPOP group, to account for cases
 	// when the user does not have a site yet, or their primary site is not a Jetpack site.
-	if ( isEnabled( 'jetpack/happychat' ) && getSectionName( state ) === 'jetpack-connect' ) {
-		groups.push( HAPPYCHAT_GROUP_JPOP );
+	if (isEnabled('jetpack/happychat') && getSectionName(state) === 'jetpack-connect') {
+		groups.push(HAPPYCHAT_GROUP_JPOP);
 		return groups;
 	}
 
-	const siteDetails = getSite( state, siteId );
+	const siteDetails = getSite(state, siteId);
 
-	if ( isATEnabled( siteDetails ) ) {
+	if (isATEnabled(siteDetails)) {
 		// AT sites should go to WP.com even though they are jetpack also
-		groups.push( HAPPYCHAT_GROUP_WPCOM );
-	} else if ( isJetpackSite( state, siteId ) ) {
-		groups.push( HAPPYCHAT_GROUP_JPOP );
+		groups.push(HAPPYCHAT_GROUP_WPCOM);
+	} else if (isJetpackSite(state, siteId)) {
+		groups.push(HAPPYCHAT_GROUP_JPOP);
 	} else {
-		groups.push( HAPPYCHAT_GROUP_WPCOM );
+		groups.push(HAPPYCHAT_GROUP_WPCOM);
 	}
 	return groups;
 };

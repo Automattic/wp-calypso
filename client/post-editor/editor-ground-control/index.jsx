@@ -66,21 +66,21 @@ export class EditorGroundControl extends React.Component {
 	};
 
 	getPreviewLabel() {
-		return this.props.translate( 'Preview' );
+		return this.props.translate('Preview');
 	}
 
 	getVerificationNoticeLabel() {
 		const { translate, publishButtonStatus } = this.props;
 
-		switch ( publishButtonStatus ) {
+		switch (publishButtonStatus) {
 			case 'update':
-				return translate( 'To update, check your email and confirm your address.' );
+				return translate('To update, check your email and confirm your address.');
 			case 'schedule':
-				return translate( 'To schedule, check your email and confirm your address.' );
+				return translate('To schedule, check your email and confirm your address.');
 			case 'publish':
-				return translate( 'To publish, check your email and confirm your address.' );
+				return translate('To publish, check your email and confirm your address.');
 			case 'requestReview':
-				return translate( 'To submit for review, check your email and confirm your address.' );
+				return translate('To submit for review, check your email and confirm your address.');
 			default:
 				return null;
 		}
@@ -89,19 +89,19 @@ export class EditorGroundControl extends React.Component {
 	isPreviewEnabled() {
 		return (
 			this.props.hasContent &&
-			! ( this.props.isNew && ! this.props.isDirty ) &&
-			! this.props.isSaveBlocked
+			!(this.props.isNew && !this.props.isDirty) &&
+			!this.props.isSaveBlocked
 		);
 	}
 
-	onPreviewButtonClick = event => {
-		if ( this.isPreviewEnabled() ) {
-			this.props.onPreview( event );
+	onPreviewButtonClick = (event) => {
+		if (this.isPreviewEnabled()) {
+			this.props.onPreview(event);
 		}
 	};
 
 	renderGroundControlActionButtons() {
-		if ( this.props.confirmationSidebarStatus === 'open' ) {
+		if (this.props.confirmationSidebarStatus === 'open') {
 			return;
 		}
 
@@ -110,27 +110,27 @@ export class EditorGroundControl extends React.Component {
 				<Button
 					borderless
 					className="editor-ground-control__toggle-sidebar"
-					onClick={ this.props.toggleSidebar }
+					onClick={this.props.toggleSidebar}
 				>
 					<Gridicon icon="cog" />
 				</Button>
 				<Button
 					className="editor-ground-control__preview-button"
-					disabled={ ! this.isPreviewEnabled() }
-					onClick={ this.onPreviewButtonClick }
+					disabled={!this.isPreviewEnabled()}
+					onClick={this.onPreviewButtonClick}
 				>
-					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
+					<span className="editor-ground-control__button-label">{this.getPreviewLabel()}</span>
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
-						onSave={ this.props.onSave }
-						onPublish={ this.props.onPublish }
-						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
-						isSaving={ this.props.isSaving }
-						isPublishing={ this.props.isPublishing }
-						isSaveBlocked={ this.props.isSaveBlocked }
-						hasContent={ this.props.hasContent }
-						needsVerification={ this.props.userNeedsVerification }
+						onSave={this.props.onSave}
+						onPublish={this.props.onPublish}
+						isConfirmationSidebarEnabled={this.props.isConfirmationSidebarEnabled}
+						isSaving={this.props.isSaving}
+						isPublishing={this.props.isPublishing}
+						isSaveBlocked={this.props.isSaveBlocked}
+						hasContent={this.props.hasContent}
+						needsVerification={this.props.userNeedsVerification}
 					/>
 				</div>
 			</div>
@@ -142,7 +142,7 @@ export class EditorGroundControl extends React.Component {
 		// find the last non-editor path in routeHistory, default to "all posts"
 		const lastNonEditorPath = findLast(
 			this.props.routeHistory,
-			( { path } ) => '/block-editor' !== path && ! path.match( editorPathRegex )
+			({ path }) => '/block-editor' !== path && !path.match(editorPathRegex)
 		);
 		return lastNonEditorPath ? lastNonEditorPath.path : this.props.allPostsUrl;
 	}
@@ -150,7 +150,7 @@ export class EditorGroundControl extends React.Component {
 	onCloseButtonClick = () => {
 		this.props.recordCloseButtonClick();
 		this.props.pauseEditorTour();
-		page.show( this.getCloseButtonPath() );
+		page.show(this.getCloseButtonPath());
 	};
 
 	render() {
@@ -169,65 +169,65 @@ export class EditorGroundControl extends React.Component {
 				<Button
 					borderless
 					className="editor-ground-control__back"
-					href={ '' }
-					onClick={ this.onCloseButtonClick }
-					aria-label={ translate( 'Close' ) }
+					href={''}
+					onClick={this.onCloseButtonClick}
+					aria-label={translate('Close')}
 				>
-					{ translate( 'Close' ) }
+					{translate('Close')}
 				</Button>
 				<Site
 					compact
-					site={ this.props.site }
-					onSelect={ this.props.recordSiteButtonClick }
-					indicator={ false }
+					site={this.props.site}
+					onSelect={this.props.recordSiteButtonClick}
+					indicator={false}
 				/>
 				<Drafts />
-				{ userNeedsVerification && (
+				{userNeedsVerification && (
 					<button
 						className="editor-ground-control__email-verification-notice"
-						onClick={ this.props.onMoreInfoAboutEmailVerify }
+						onClick={this.props.onMoreInfoAboutEmailVerify}
 					>
 						<Gridicon
 							icon="info"
 							className="editor-ground-control__email-verification-notice-icon"
 						/>
-						{ this.getVerificationNoticeLabel() }{ ' ' }
+						{this.getVerificationNoticeLabel()}{' '}
 						<span className="editor-ground-control__email-verification-notice-more">
-							{ translate( 'Learn More' ) }
+							{translate('Learn More')}
 						</span>
 					</button>
-				) }
+				)}
 				<QuickSaveButtons
-					isSaving={ isSaving }
-					isSaveBlocked={ isSaveBlocked }
-					isDirty={ isDirty }
-					hasContent={ hasContent }
-					onSave={ onSave }
+					isSaving={isSaving}
+					isSaveBlocked={isSaveBlocked}
+					isDirty={isDirty}
+					hasContent={hasContent}
+					onSave={onSave}
 				/>
-				{ this.renderGroundControlActionButtons() }
+				{this.renderGroundControlActionButtons()}
 			</Card>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	const siteId = get( ownProps, 'site.ID', null );
+const mapStateToProps = (state, ownProps) => {
+	const siteId = get(ownProps, 'site.ID', null);
 
 	return {
-		publishButtonStatus: getEditorPublishButtonStatus( state ),
-		routeHistory: getRouteHistory( state ),
+		publishButtonStatus: getEditorPublishButtonStatus(state),
+		routeHistory: getRouteHistory(state),
 		// do not allow publish for unverified e-mails, but allow if the site is VIP, or if the site is unlaunched
 		userNeedsVerification:
-			! isCurrentUserEmailVerified( state ) &&
-			! isVipSite( state, siteId ) &&
-			! isUnlaunchedSite( state, siteId ),
+			!isCurrentUserEmailVerified(state) &&
+			!isVipSite(state, siteId) &&
+			!isUnlaunchedSite(state, siteId),
 	};
 };
 
 const mapDispatchToProps = {
-	recordSiteButtonClick: () => recordTracksEvent( 'calypso_editor_site_button_click' ),
-	recordCloseButtonClick: () => recordTracksEvent( 'calypso_editor_close_button_click' ),
+	recordSiteButtonClick: () => recordTracksEvent('calypso_editor_site_button_click'),
+	recordCloseButtonClick: () => recordTracksEvent('calypso_editor_close_button_click'),
 	pauseEditorTour: () => pauseGuidedTour(),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorGroundControl ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(EditorGroundControl));

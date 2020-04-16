@@ -32,15 +32,15 @@ class PostsMain extends React.Component {
 		const { siteId, statusSlug, author } = this.props;
 		let analyticsPath = '/posts';
 
-		if ( author ) {
+		if (author) {
 			analyticsPath += '/my';
 		}
 
-		if ( statusSlug ) {
-			analyticsPath += `/${ statusSlug }`;
+		if (statusSlug) {
+			analyticsPath += `/${statusSlug}`;
 		}
 
-		if ( siteId ) {
+		if (siteId) {
 			analyticsPath += '/:site';
 		}
 
@@ -50,8 +50,8 @@ class PostsMain extends React.Component {
 	getAnalyticsTitle() {
 		const { statusSlug } = this.props;
 
-		if ( statusSlug ) {
-			return 'Blog Posts > ' + titlecase( statusSlug );
+		if (statusSlug) {
+			return 'Blog Posts > ' + titlecase(statusSlug);
 		}
 
 		return 'Blog Posts > Published';
@@ -59,48 +59,48 @@ class PostsMain extends React.Component {
 
 	render() {
 		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
-		const status = mapPostStatus( statusSlug );
+		const status = mapPostStatus(statusSlug);
 		const query = {
 			author,
 			category,
 			number: 20, // max supported by /me/posts endpoint for all-sites mode
 			order: status === 'future' ? 'ASC' : 'DESC',
 			search,
-			site_visibility: ! siteId ? 'visible' : undefined,
+			site_visibility: !siteId ? 'visible' : undefined,
 			// When searching, search across all statuses so the user can
 			// always find what they are looking for, regardless of what tab
 			// the search was initiated from. Use POST_STATUSES rather than
 			// "any" to do this, since the latter excludes trashed posts.
-			status: search ? POST_STATUSES.join( ',' ) : status,
+			status: search ? POST_STATUSES.join(',') : status,
 			tag,
 			type: 'post',
 		};
 		// Since searches are across all statuses, the status needs to be shown
 		// next to each post.
-		const showPublishedStatus = Boolean( query.search );
+		const showPublishedStatus = Boolean(query.search);
 
 		return (
 			<Main wideLayout className="posts">
-				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
-				<DocumentHead title={ translate( 'Posts' ) } />
+				<PageViewTracker path={this.getAnalyticsPath()} title={this.getAnalyticsTitle()} />
+				<DocumentHead title={translate('Posts')} />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="posts__page-heading"
-					headerText={ translate( 'Posts' ) }
+					headerText={translate('Posts')}
 					align="left"
 				/>
-				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
-				{ siteId && <PostTypeBulkEditBar /> }
+				<PostTypeFilter query={query} siteId={siteId} statusSlug={statusSlug} />
+				{siteId && <PostTypeBulkEditBar />}
 				<PostTypeList
-					query={ query }
-					showPublishedStatus={ showPublishedStatus }
-					scrollContainer={ document.body }
+					query={query}
+					showPublishedStatus={showPublishedStatus}
+					scrollContainer={document.body}
 				/>
 			</Main>
 		);
 	}
 }
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( PostsMain ) );
+export default connect((state) => ({
+	siteId: getSelectedSiteId(state),
+}))(localize(PostsMain));

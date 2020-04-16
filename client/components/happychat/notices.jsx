@@ -32,17 +32,17 @@ export class Notices extends Component {
 	statusNotice() {
 		const { isServerReachable, connectionStatus, chatStatus, translate } = this.props;
 
-		if ( ! isServerReachable ) {
+		if (!isServerReachable) {
 			return translate(
 				"We're having trouble connecting to chat. Please check your internet connection while we try to reconnect…"
 			);
 		}
 
-		switch ( connectionStatus ) {
+		switch (connectionStatus) {
 			case HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED:
-				return translate( 'Waiting to connect you with a Happiness Engineer…' );
+				return translate('Waiting to connect you with a Happiness Engineer…');
 			case HAPPYCHAT_CONNECTION_STATUS_CONNECTING:
-				return translate( 'Connecting you with a Happiness Engineer…' );
+				return translate('Connecting you with a Happiness Engineer…');
 			case HAPPYCHAT_CONNECTION_STATUS_RECONNECTING:
 			case HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED:
 				return translate(
@@ -60,29 +60,29 @@ export class Notices extends Component {
 		}
 
 		const noticeText = {
-			[ HAPPYCHAT_CHAT_STATUS_ABANDONED ]: translate(
+			[HAPPYCHAT_CHAT_STATUS_ABANDONED]: translate(
 				"We're having some connection trouble on our end, please bear with us."
 			),
-			[ HAPPYCHAT_CHAT_STATUS_ASSIGNING ]: translate( 'Connecting you with a Happiness Engineer…' ),
-			[ HAPPYCHAT_CHAT_STATUS_PENDING ]: translate(
+			[HAPPYCHAT_CHAT_STATUS_ASSIGNING]: translate('Connecting you with a Happiness Engineer…'),
+			[HAPPYCHAT_CHAT_STATUS_PENDING]: translate(
 				"Sorry, we couldn't connect you with a Happiness Engineer. Please check back later."
 			),
-			[ HAPPYCHAT_CHAT_STATUS_MISSED ]: translate(
+			[HAPPYCHAT_CHAT_STATUS_MISSED]: translate(
 				'Sorry, we missed you! All our Happiness Engineers are currently busy. Please check back later.'
 			),
 		};
 
-		return get( noticeText, chatStatus, null );
+		return get(noticeText, chatStatus, null);
 	}
 
 	render() {
 		const noticeText = this.statusNotice();
 
-		if ( noticeText == null ) {
+		if (noticeText == null) {
 			return null;
 		}
 
-		return <div className="happychat__notice">{ noticeText }</div>;
+		return <div className="happychat__notice">{noticeText}</div>;
 	}
 }
 

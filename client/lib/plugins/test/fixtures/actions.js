@@ -54,14 +54,14 @@ export default {
 		type: 'UPDATE_PLUGIN',
 		action: 'UPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ], // hello dolly
+		plugin: plugins[2], // hello dolly
 	},
 
 	updatedPlugin: {
 		type: 'RECEIVE_UPDATED_PLUGIN',
 		action: 'UPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ],
+		plugin: plugins[2],
 		data: updatePluginData,
 		error: null,
 	},
@@ -70,14 +70,14 @@ export default {
 		type: 'REMOVE_PLUGINS_UPDATE_INFO',
 		action: 'REMOVE_PLUGINS_UPDATE_INFO',
 		site: site,
-		plugin: plugins[ 2 ],
+		plugin: plugins[2],
 	},
 
 	updatedPluginError: {
 		type: 'RECEIVE_UPDATED_PLUGIN',
 		action: 'UPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ],
+		plugin: plugins[2],
 		data: {},
 		error: {
 			error: 'unauthorized_full_access',
@@ -91,14 +91,14 @@ export default {
 		type: 'REMOVE_PLUGIN',
 		action: 'REMOVE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ],
+		plugin: plugins[2],
 	},
 
 	removedPluginError: {
 		type: 'RECEIVE_REMOVE_PLUGIN',
 		action: 'REMOVE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ],
+		plugin: plugins[2],
 		data: null,
 		error: { error: 'not allowed' },
 	},
@@ -108,7 +108,7 @@ export default {
 		type: 'RECEIVE_REMOVE_PLUGIN',
 		action: 'REMOVE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ],
+		plugin: plugins[2],
 	},
 
 	// Activate
@@ -116,14 +116,14 @@ export default {
 		type: 'ACTIVATE_PLUGIN',
 		action: 'ACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 	},
 
 	activatedPlugin: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
 		action: 'ACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: {
 			active: true,
 			author: 'Automattic',
@@ -144,7 +144,7 @@ export default {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
 		action: 'ACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: null,
 		error: {
 			error: 'unauthorized_full_access',
@@ -157,7 +157,7 @@ export default {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
 		action: 'ACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: [],
 		error: null,
 	},
@@ -166,7 +166,7 @@ export default {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
 		action: 'ACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: null,
 		error: {
 			error: 'activation_error',
@@ -178,14 +178,14 @@ export default {
 		type: 'DEACTIVATE_PLUGIN',
 		action: 'DEACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 	},
 
 	deactivatedPlugin: {
 		type: 'RECEIVE_DEACTIVATED_PLUGIN',
 		action: 'DEACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: {
 			active: false,
 			author: 'Automattic',
@@ -206,7 +206,7 @@ export default {
 		type: 'RECEIVE_DEACTIVATED_PLUGIN',
 		action: 'DEACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: null,
 		error: {
 			error: 'unauthorized_full_access',
@@ -218,7 +218,7 @@ export default {
 	deactivatedPluginErrorAlreadyNotActive: {
 		type: 'RECEIVE_DEACTIVATED_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: null,
 		error: {
 			error: 'deactivation_error',
@@ -230,14 +230,14 @@ export default {
 		type: 'ENABLE_AUTOUPDATE_PLUGIN',
 		action: 'ENABLE_AUTOUPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 	},
 
 	enabledAutoupdatePlugin: {
 		type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
 		action: 'ENABLE_AUTOUPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: {
 			active: false,
 			author: 'Automattic',
@@ -258,7 +258,7 @@ export default {
 		type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
 		action: 'ENABLE_AUTOUPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: null,
 		error: {
 			error: 'unauthorized_full_access',
@@ -271,14 +271,14 @@ export default {
 		type: 'DISABLE_AUTOUPDATE_PLUGIN',
 		action: 'DISABLE_AUTOUPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 	},
 
 	disabledAutoupdatePlugin: {
 		type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
 		action: 'DISABLE_AUTOUPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: {
 			active: false,
 			author: 'Automattic',
@@ -299,7 +299,7 @@ export default {
 		type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
 		action: 'DISABLE_AUTOUPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ], // developer
+		plugin: plugins[1], // developer
 		data: null,
 		error: {
 			error: 'unauthorized_full_access',
@@ -310,6 +310,6 @@ export default {
 
 	removeErrorNotices: {
 		type: 'REMOVE_PLUGINS_NOTICES',
-		logs: [ 'error' ],
+		logs: ['error'],
 	},
 };

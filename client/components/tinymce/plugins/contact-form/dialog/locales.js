@@ -2,31 +2,31 @@ import i18n from 'i18n-calypso';
 
 const labels = {
 	name() {
-		return i18n.translate( 'Name' );
+		return i18n.translate('Name');
 	},
 	email() {
-		return i18n.translate( 'Email Address' );
+		return i18n.translate('Email Address');
 	},
 	checkbox() {
-		return i18n.translate( 'Checkbox' );
+		return i18n.translate('Checkbox');
 	},
 	select() {
-		return i18n.translate( 'Dropdown' );
+		return i18n.translate('Dropdown');
 	},
 	radio() {
-		return i18n.translate( 'Radio Button' );
+		return i18n.translate('Radio Button');
 	},
 	text() {
-		return i18n.translate( 'Text' );
+		return i18n.translate('Text');
 	},
 	textarea() {
-		return i18n.translate( 'Text Area' );
+		return i18n.translate('Text Area');
 	},
 	url() {
-		return i18n.translate( 'Web Address' );
+		return i18n.translate('Web Address');
 	},
 };
 
-export default function( type ) {
-	return labels.hasOwnProperty( type ) ? labels[ type ].call() : null;
+export default function (type) {
+	return labels.hasOwnProperty(type) ? labels[type].call() : null;
 }

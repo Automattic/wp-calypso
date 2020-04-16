@@ -34,74 +34,74 @@ class Transfer extends React.PureComponent {
 
 		let transferNotice;
 		let cancelNavItem;
-		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
+		if (domain.transferStatus === transferStatus.PENDING_REGISTRY) {
 			transferNotice = (
-				<Notice status={ 'is-warning' } showDismiss={ false }>
-					{ translate(
+				<Notice status={'is-warning'} showDismiss={false}>
+					{translate(
 						'This transfer has been started and is waiting for authorization from your current provider. ' +
 							'If you need to cancel the transfer, please contact them for assistance.'
-					) }
+					)}
 				</Notice>
 			);
 
-			if ( domain.transferEndDate ) {
+			if (domain.transferEndDate) {
 				transferNotice = (
-					<Notice status={ 'is-warning' } showDismiss={ false }>
-						{ translate(
+					<Notice status={'is-warning'} showDismiss={false}>
+						{translate(
 							'This transfer has been started and is waiting for authorization from your current provider. ' +
 								'It should complete by %(transferFinishDate)s. ' +
 								'If you need to cancel the transfer, please contact them for assistance.',
 							{
 								args: {
-									transferFinishDate: moment( domain.transferEndDate ).format( 'LL' ),
+									transferFinishDate: moment(domain.transferEndDate).format('LL'),
 								},
 							}
-						) }
+						)}
 					</Notice>
 				);
 			}
-		} else if ( domain.transferStatus === transferStatus.CANCELLED ) {
+		} else if (domain.transferStatus === transferStatus.CANCELLED) {
 			transferNotice = (
-				<Notice status={ 'is-error' } showDismiss={ false }>
-					{ translate( 'The transfer has failed. {{a}}Learn more{{/a}}.', {
+				<Notice status={'is-error'} showDismiss={false}>
+					{translate('The transfer has failed. {{a}}Learn more{{/a}}.', {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl(
+									href={localizeUrl(
 										'https://wordpress.com/support/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers'
-									) }
+									)}
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
 							),
 						},
-					} ) }
+					})}
 				</Notice>
 			);
 
 			cancelNavItem = (
 				<VerticalNav>
-					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
-						{ translate( 'Cancel Transfer' ) }
+					<VerticalNavItem path={cancelPurchaseLink(selectedSite.slug, domain.subscriptionId)}>
+						{translate('Cancel Transfer')}
 					</VerticalNavItem>
 				</VerticalNav>
 			);
 		} else {
 			cancelNavItem = (
 				<VerticalNav>
-					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
-						{ translate( 'Cancel Transfer' ) }
+					<VerticalNavItem path={cancelPurchaseLink(selectedSite.slug, domain.subscriptionId)}>
+						{translate('Cancel Transfer')}
 					</VerticalNavItem>
 				</VerticalNav>
 			);
 		}
 
-		if ( domain.transferStatus === transferStatus.PENDING_START ) {
+		if (domain.transferStatus === transferStatus.PENDING_START) {
 			transferNotice = (
-				<Card compact={ false } highlight={ 'warning' }>
+				<Card compact={false} highlight={'warning'}>
 					<div>
 						<h2 className="edit__transfer-text-fail">
-							{ translate(
+							{translate(
 								'Important: Finish Moving {{strong}}%(domain)s{{/strong}} to WordPress.com',
 								{
 									components: {
@@ -109,10 +109,10 @@ class Transfer extends React.PureComponent {
 									},
 									args: { domain: domain.name },
 								}
-							) }
+							)}
 						</h2>
 						<p>
-							{ translate(
+							{translate(
 								'Start the transfer to get your domain {{strong}}%(domain)s{{/strong}} moved to WordPress.com. ' +
 									'Your domain will stay at your current provider until the transfer is complete.',
 								{
@@ -121,12 +121,12 @@ class Transfer extends React.PureComponent {
 									},
 									args: { domain: domain.name },
 								}
-							) }
+							)}
 						</p>
 					</div>
 					<div>
-						<Button className="edit__transfer-button-fail" onClick={ this.startTransfer }>
-							{ translate( 'Start Transfer' ) }
+						<Button className="edit__transfer-button-fail" onClick={this.startTransfer}>
+							{translate('Start Transfer')}
 						</Button>
 					</div>
 				</Card>
@@ -136,11 +136,11 @@ class Transfer extends React.PureComponent {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="domain-details-card">
-				{ this.renderInboundTransferEmailNotice() }
-				{ transferNotice }
-				<Header domain={ domain } />
-				{ content }
-				{ cancelNavItem }
+				{this.renderInboundTransferEmailNotice()}
+				{transferNotice}
+				<Header domain={domain} />
+				{content}
+				{cancelNavItem}
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -148,27 +148,27 @@ class Transfer extends React.PureComponent {
 
 	renderInboundTransferEmailNotice = () => {
 		const domain = this.props.domain;
-		const isPendingVerification = transferStatus.PENDING_OWNER === get( domain, 'transferStatus' );
+		const isPendingVerification = transferStatus.PENDING_OWNER === get(domain, 'transferStatus');
 
-		if ( ! isPendingVerification ) {
+		if (!isPendingVerification) {
 			return null;
 		}
 
 		return (
 			<InboundTransferEmailVerificationCard
-				domain={ domain }
-				selectedSiteSlug={ this.props.selectedSite.slug }
+				domain={domain}
+				selectedSiteSlug={this.props.selectedSite.slug}
 			/>
 		);
 	};
 
 	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
+		this.props.recordPaymentSettingsClick(this.props.domain);
 	};
 
 	startTransfer = () => {
 		const { domain, selectedSite } = this.props;
-		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
+		page(domainManagementTransferInPrecheck(selectedSite.slug, domain.name));
 	};
 
 	getDomainDetailsCard() {
@@ -176,24 +176,24 @@ class Transfer extends React.PureComponent {
 
 		return (
 			<Card>
-				<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
-					{ translate( 'Incoming Domain Transfer' ) }
+				<Property label={translate('Type', { context: 'A type of domain.' })}>
+					{translate('Incoming Domain Transfer')}
 				</Property>
 
 				<SubscriptionSettings
-					type={ domain.type }
-					subscriptionId={ domain.subscriptionId }
-					siteSlug={ selectedSite.slug }
-					onClick={ this.handlePaymentSettingsClick }
+					type={domain.type}
+					subscriptionId={domain.subscriptionId}
+					siteSlug={selectedSite.slug}
+					onClick={this.handlePaymentSettingsClick}
 				/>
 			</Card>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	errorNotice,
 	fetchSiteDomains,
 	recordPaymentSettingsClick,
 	successNotice,
-} )( localize( withLocalizedMoment( Transfer ) ) );
+})(localize(withLocalizedMoment(Transfer)));

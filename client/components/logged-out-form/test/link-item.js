@@ -9,21 +9,21 @@ import { shallow } from 'enzyme';
  */
 import LoggedOutFormLinkItem from '../link-item';
 
-describe( 'LoggedOutFormLinkItem', () => {
-	test( 'should render an <a> element', () => {
+describe('LoggedOutFormLinkItem', () => {
+	test('should render an <a> element', () => {
 		const wrapper = shallow(
 			<LoggedOutFormLinkItem href="http://example.com">Example text here</LoggedOutFormLinkItem>
 		);
 
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.type() ).toBe( 'a' );
-	} );
+		expect(wrapper).toMatchSnapshot();
+		expect(wrapper.type()).toBe('a');
+	});
 
-	test( 'should include own class and append passed class', () => {
+	test('should include own class and append passed class', () => {
 		const testClass = 'test-classname';
-		const wrapper = shallow( <LoggedOutFormLinkItem className={ testClass } /> );
+		const wrapper = shallow(<LoggedOutFormLinkItem className={testClass} />);
 
-		expect( wrapper.hasClass( testClass ) ).toBe( true );
-		expect( wrapper.hasClass( 'logged-out-form__link-item' ) ).toBe( true );
-	} );
-} );
+		expect(wrapper.hasClass(testClass)).toBe(true);
+		expect(wrapper.hasClass('logged-out-form__link-item')).toBe(true);
+	});
+});

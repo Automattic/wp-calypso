@@ -13,8 +13,8 @@ import {
 	WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchTaxSettings = siteId => ( dispatch, getState ) => {
-	if ( areTaxSettingsLoaded( getState(), siteId ) || areTaxSettingsLoading( getState(), siteId ) ) {
+export const fetchTaxSettings = (siteId) => (dispatch, getState) => {
+	if (areTaxSettingsLoaded(getState(), siteId) || areTaxSettingsLoading(getState(), siteId)) {
 		return;
 	}
 
@@ -23,23 +23,23 @@ export const fetchTaxSettings = siteId => ( dispatch, getState ) => {
 		siteId,
 	};
 
-	dispatch( getAction );
+	dispatch(getAction);
 
-	return request( siteId )
-		.get( 'settings/tax' )
-		.then( data => {
-			dispatch( {
+	return request(siteId)
+		.get('settings/tax')
+		.then((data) => {
+			dispatch({
 				type: WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS,
 				siteId,
 				data,
-			} );
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, getAction, err ) );
-		} );
+			});
+		})
+		.catch((err) => {
+			dispatch(setError(siteId, getAction, err));
+		});
 };
 
-const updateTaxSettingsSuccess = ( siteId, data ) => {
+const updateTaxSettingsSuccess = (siteId, data) => {
 	return {
 		type: WOOCOMMERCE_SETTINGS_TAX_BATCH_REQUEST_SUCCESS,
 		siteId,
@@ -53,17 +53,17 @@ export const updateTaxSettings = (
 	shippingIsTaxFree,
 	successAction,
 	failureAction
-) => ( dispatch, getState ) => {
+) => (dispatch, getState) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 	const updateAction = {
 		type: WOOCOMMERCE_SETTINGS_TAX_BATCH_REQUEST,
 		siteId,
 	};
 
-	dispatch( updateAction );
+	dispatch(updateAction);
 
 	const update = [
 		{
@@ -75,18 +75,18 @@ export const updateTaxSettings = (
 			value: shippingIsTaxFree ? 'zero-rate' : '',
 		},
 	];
-	return request( siteId )
-		.post( 'settings/tax/batch', { update } )
-		.then( data => {
-			dispatch( updateTaxSettingsSuccess( siteId, data ) );
-			if ( successAction ) {
-				dispatch( successAction( data ) );
+	return request(siteId)
+		.post('settings/tax/batch', { update })
+		.then((data) => {
+			dispatch(updateTaxSettingsSuccess(siteId, data));
+			if (successAction) {
+				dispatch(successAction(data));
 			}
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, updateAction, err ) );
-			if ( failureAction ) {
-				dispatch( failureAction( err ) );
+		})
+		.catch((err) => {
+			dispatch(setError(siteId, updateAction, err));
+			if (failureAction) {
+				dispatch(failureAction(err));
 			}
-		} );
+		});
 };

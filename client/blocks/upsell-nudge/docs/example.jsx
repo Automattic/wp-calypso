@@ -14,7 +14,7 @@ const UpsellNudgeExample = () => (
 			href="#"
 			callToAction="Upgrade"
 			title="Free domain with a plan! This is a regular nudge with an icon."
-			showIcon={ true }
+			showIcon={true}
 		/>
 		<UpsellNudge
 			href="#"

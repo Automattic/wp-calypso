@@ -20,12 +20,12 @@ class PostBlocked extends React.Component {
 	};
 
 	unblock = () => {
-		this.props.bumpStat( 'reader_actions', 'unblocked_blog' );
-		this.props.recordGoogleEvent( 'reader_actions', 'Clicked Unblock Site' );
-		recordReaderTrack( 'calypso_reader_unblock_site', {
+		this.props.bumpStat('reader_actions', 'unblocked_blog');
+		this.props.recordGoogleEvent('reader_actions', 'Clicked Unblock Site');
+		recordReaderTrack('calypso_reader_unblock_site', {
 			blog_id: this.props.post.site_ID,
-		} );
-		this.props.unblockSite( this.props.post.site_ID );
+		});
+		this.props.unblockSite(this.props.post.site_ID);
 	};
 
 	render() {
@@ -35,11 +35,11 @@ class PostBlocked extends React.Component {
 		return (
 			<Card className="reader-post-card is-blocked">
 				<p className="reader-post-card__blocked-description">
-					{ translate( 'You have blocked %(site_name)s.', {
+					{translate('You have blocked %(site_name)s.', {
 						args: { site_name: post.site_name },
-					} ) }
-					<button onClick={ this.unblock } className="reader-post-card__blocked-undo">
-						{ translate( 'Undo?' ) }
+					})}
+					<button onClick={this.unblock} className="reader-post-card__blocked-undo">
+						{translate('Undo?')}
 					</button>
 				</p>
 			</Card>
@@ -48,8 +48,8 @@ class PostBlocked extends React.Component {
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
 	bumpStat,
 	unblockSite,
-} )( localize( PostBlocked ) );
+})(localize(PostBlocked));

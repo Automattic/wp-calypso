@@ -18,55 +18,55 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case SITE_MONITOR_SETTINGS_RECEIVE: {
 			const { siteId, settings } = action;
 
 			return {
 				...state,
-				[ siteId ]: settings,
+				[siteId]: settings,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 export const requesting = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case SITE_MONITOR_SETTINGS_REQUEST:
-				return stubTrue( state, action );
+				return stubTrue(state, action);
 			case SITE_MONITOR_SETTINGS_REQUEST_SUCCESS:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 			case SITE_MONITOR_SETTINGS_REQUEST_FAILURE:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 		}
 
 		return state;
-	} )
+	})
 );
 
 export const updating = keyedReducer(
 	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = {}, action) => {
+		switch (action.type) {
 			case SITE_MONITOR_SETTINGS_UPDATE:
-				return stubTrue( state, action );
+				return stubTrue(state, action);
 			case SITE_MONITOR_SETTINGS_UPDATE_SUCCESS:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 			case SITE_MONITOR_SETTINGS_UPDATE_FAILURE:
-				return stubFalse( state, action );
+				return stubFalse(state, action);
 		}
 
 		return state;
-	} )
+	})
 );
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
 	updating,
-} );
+});

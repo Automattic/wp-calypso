@@ -18,8 +18,8 @@ import {
 } from 'state/happychat/constants';
 import { combineReducers } from 'state/utils';
 
-const error = ( state = null, action ) => {
-	switch ( action.type ) {
+const error = (state = null, action) => {
+	switch (action.type) {
 		case HAPPYCHAT_IO_RECEIVE_INIT:
 			return null;
 		case HAPPYCHAT_IO_RECEIVE_DISCONNECT:
@@ -36,8 +36,8 @@ const error = ( state = null, action ) => {
  * @returns {object}        Updated state
  *
  */
-const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => {
-	switch ( action.type ) {
+const status = (state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action) => {
+	switch (action.type) {
 		case HAPPYCHAT_IO_INIT:
 			return HAPPYCHAT_CONNECTION_STATUS_CONNECTING;
 		case HAPPYCHAT_IO_RECEIVE_INIT:
@@ -57,8 +57,8 @@ const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => 
  * @param  {object}  action Action playload
  * @returns {boolean}        Updated happychat status
  */
-const isAvailable = ( state = false, action ) => {
-	switch ( action.type ) {
+const isAvailable = (state = false, action) => {
+	switch (action.type) {
 		case HAPPYCHAT_IO_RECEIVE_ACCEPT:
 			return action.isAvailable;
 	}
@@ -73,17 +73,17 @@ const isAvailable = ( state = false, action ) => {
  * @param  {object}  action Action playload
  * @returns {boolean}        Updated happychat status
  */
-export const localizedSupport = ( state = false, action ) => {
-	switch ( action.type ) {
+export const localizedSupport = (state = false, action) => {
+	switch (action.type) {
 		case HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT:
 			return action.isAvailable;
 	}
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	error,
 	isAvailable,
 	localizedSupport,
 	status,
-} );
+});

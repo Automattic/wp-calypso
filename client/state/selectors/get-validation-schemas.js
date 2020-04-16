@@ -9,6 +9,6 @@ import { get } from 'lodash';
  * @param  {object}  state Global state tree
  * @returns {object|null} Validation JSON Schemas by tld
  */
-export default function getValidationSchemas( state ) {
-	return get( state, 'domains.management.validationSchemas', {} );
+export default function getValidationSchemas(state) {
+	return get(state, 'domains.management.validationSchemas', {});
 }

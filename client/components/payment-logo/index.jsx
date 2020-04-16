@@ -54,18 +54,18 @@ const ALT_TEXT = {
 	placeholder: '',
 	unionpay: 'UnionPay',
 	visa: 'Visa',
-	wechat: i18n.translate( 'WeChat Pay', {
+	wechat: i18n.translate('WeChat Pay', {
 		comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
-	} ),
+	}),
 	sofort: 'Sofort',
 };
 
-export const POSSIBLE_TYPES = keys( ALT_TEXT );
+export const POSSIBLE_TYPES = keys(ALT_TEXT);
 
 class PaymentLogo extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
-		type: PropTypes.oneOf( POSSIBLE_TYPES ),
+		type: PropTypes.oneOf(POSSIBLE_TYPES),
 		altText: PropTypes.string,
 		isCompact: PropTypes.bool,
 	};
@@ -75,22 +75,18 @@ class PaymentLogo extends React.Component {
 
 		const classes = classNames(
 			'payment-logo',
-			`is-${ type }`,
+			`is-${type}`,
 			{ 'is-compact': isCompact },
 			className
 		);
 
 		// Credit card images have been migrated to Webpack, while the remaining
 		// images are still referenced in the stylesheets (they’re still to be migrated)
-		const logoPath = LOGO_PATHS[ type ];
-		const logoStyle = logoPath ? { backgroundImage: `url(${ logoPath })` } : undefined;
+		const logoPath = LOGO_PATHS[type];
+		const logoStyle = logoPath ? { backgroundImage: `url(${logoPath})` } : undefined;
 
 		return (
-			<div
-				className={ classes }
-				style={ logoStyle }
-				aria-label={ altText || ALT_TEXT[ type ] || '' }
-			/>
+			<div className={classes} style={logoStyle} aria-label={altText || ALT_TEXT[type] || ''} />
 		);
 	}
 }

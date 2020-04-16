@@ -22,25 +22,25 @@ import { billingHistory } from 'me/purchases/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { StripeHookProvider } from 'lib/stripe';
 
-function AddCreditCard( props ) {
-	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
-	const goToBillingHistory = () => page( billingHistory );
+function AddCreditCard(props) {
+	const createAddCardToken = (...args) => createCardToken('card_add', ...args);
+	const goToBillingHistory = () => page(billingHistory);
 	const recordFormSubmitEvent = () =>
-		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
+		analytics.tracks.recordEvent('calypso_add_credit_card_form_submit');
 
 	return (
 		<Main>
 			<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
-			<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
+			<DocumentHead title={concatTitle(titles.purchases, titles.addCreditCard)} />
 
-			<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+			<HeaderCake onClick={goToBillingHistory}>{titles.addCreditCard}</HeaderCake>
+			<StripeHookProvider configurationArgs={{ needs_intent: true }}>
 				<CreditCardForm
-					createCardToken={ createAddCardToken }
-					recordFormSubmitEvent={ recordFormSubmitEvent }
-					saveStoredCard={ props.addStoredCard }
-					successCallback={ goToBillingHistory }
-					showUsedForExistingPurchasesInfo={ true }
+					createCardToken={createAddCardToken}
+					recordFormSubmitEvent={recordFormSubmitEvent}
+					saveStoredCard={props.addStoredCard}
+					successCallback={goToBillingHistory}
+					showUsedForExistingPurchasesInfo={true}
 				/>
 			</StripeHookProvider>
 		</Main>
@@ -55,4 +55,4 @@ const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect( null, mapDispatchToProps )( AddCreditCard );
+export default connect(null, mapDispatchToProps)(AddCreditCard);

@@ -31,8 +31,8 @@ const darkColorSchemeLogo = (
 	</g>
 );
 
-function JetpackInmotionLogo( { darkColorScheme } ) {
-	if ( darkColorScheme ) {
+function JetpackInmotionLogo({ darkColorScheme }) {
+	if (darkColorScheme) {
 		return darkColorSchemeLogo;
 	}
 

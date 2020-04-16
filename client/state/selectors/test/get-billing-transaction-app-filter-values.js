@@ -3,7 +3,7 @@
  */
 import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
 
-describe( 'getBillingTransactionAppFilterValues()', () => {
+describe('getBillingTransactionAppFilterValues()', () => {
 	const state = {
 		billingTransactions: {
 			items: {
@@ -31,9 +31,9 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 		},
 	};
 
-	test( 'returns transaction app filter values with counts', () => {
-		const result = getBillingTransactionAppFilterValues( state, 'past' );
-		expect( result ).toEqual( [
+	test('returns transaction app filter values with counts', () => {
+		const result = getBillingTransactionAppFilterValues(state, 'past');
+		expect(result).toEqual([
 			{
 				title: 'service 1',
 				value: 'service 1',
@@ -49,10 +49,10 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				value: 'service 3',
 				count: 1,
 			},
-		] );
-	} );
+		]);
+	});
 
-	test( 'returns an empty array when there are no transactions', () => {
+	test('returns an empty array when there are no transactions', () => {
 		const result = getBillingTransactionAppFilterValues(
 			{
 				billingTransactions: {
@@ -61,6 +61,6 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			},
 			'past'
 		);
-		expect( result ).toEqual( [] );
-	} );
-} );
+		expect(result).toEqual([]);
+	});
+});

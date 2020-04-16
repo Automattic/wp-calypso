@@ -14,9 +14,9 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID for which to buy the theme
  * @returns {?string}         Theme purchase URL
  */
-export function getThemePurchaseUrl( state, themeId, siteId ) {
-	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, themeId ) ) {
+export function getThemePurchaseUrl(state, themeId, siteId) {
+	if (isJetpackSite(state, siteId) || !isThemePremium(state, themeId)) {
 		return null;
 	}
-	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ themeId }`;
+	return `/checkout/${getSiteSlug(state, siteId)}/theme:${themeId}`;
 }

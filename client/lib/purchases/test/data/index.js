@@ -20,17 +20,17 @@ const DOMAIN_PURCHASE_PENDING_TRANSFER = {
 	pendingTransfer: true,
 };
 
-const DOMAIN_PURCHASE_EXPIRED = Object.assign( {}, DOMAIN_PURCHASE, {
+const DOMAIN_PURCHASE_EXPIRED = Object.assign({}, DOMAIN_PURCHASE, {
 	expiryStatus: 'expired',
 	id: 10002,
 	isCancelable: false,
 	isRefundable: false,
-} );
+});
 
-const DOMAIN_PURCHASE_INCLUDED_IN_PLAN = Object.assign( {}, DOMAIN_PURCHASE, {
+const DOMAIN_PURCHASE_INCLUDED_IN_PLAN = Object.assign({}, DOMAIN_PURCHASE, {
 	id: 10004,
 	expiryStatus: 'included',
-} );
+});
 
 const DOMAIN_MAPPING_PURCHASE = {
 	expiryStatus: 'active',
@@ -42,11 +42,11 @@ const DOMAIN_MAPPING_PURCHASE = {
 	isCancelable: true,
 };
 
-const DOMAIN_MAPPING_PURCHASE_EXPIRED = Object.assign( {}, DOMAIN_MAPPING_PURCHASE, {
+const DOMAIN_MAPPING_PURCHASE_EXPIRED = Object.assign({}, DOMAIN_MAPPING_PURCHASE, {
 	expiryStatus: 'expired',
 	id: 20002,
 	isCancelable: false,
-} );
+});
 
 const SITE_REDIRECT_PURCHASE = {
 	expiryStatus: 'active',
@@ -58,10 +58,10 @@ const SITE_REDIRECT_PURCHASE = {
 	isCancelable: false,
 };
 
-const SITE_REDIRECT_PURCHASE_EXPIRED = Object.assign( {}, SITE_REDIRECT_PURCHASE, {
+const SITE_REDIRECT_PURCHASE_EXPIRED = Object.assign({}, SITE_REDIRECT_PURCHASE, {
 	expiryStatus: 'expired',
 	id: 30002,
-} );
+});
 
 const PLAN_PURCHASE = {
 	canDisableAutoRenew: true,

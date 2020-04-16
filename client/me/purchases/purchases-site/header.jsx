@@ -42,8 +42,8 @@ class PurchaseSiteHeader extends Component {
 						<Gridicon icon="notice" />
 					</div>
 					<div className="site__info">
-						<div className="site__title">{ name }</div>
-						<div className="site__domain">{ domain }</div>
+						<div className="site__title">{name}</div>
+						<div className="site__domain">{domain}</div>
 					</div>
 				</div>
 			</div>
@@ -55,23 +55,23 @@ class PurchaseSiteHeader extends Component {
 		const { isPlaceholder, siteId, site, name, domain } = this.props;
 		let header;
 
-		if ( isPlaceholder ) {
+		if (isPlaceholder) {
 			header = <SitePlaceholder />;
-		} else if ( site ) {
-			header = <Site isCompact site={ site } indicator={ false } />;
+		} else if (site) {
+			header = <Site isCompact site={site} indicator={false} />;
 		} else {
-			header = this.renderFauxSite( name, domain );
+			header = this.renderFauxSite(name, domain);
 		}
 
 		return (
 			<CompactCard className="purchases-site__header">
-				<QuerySites siteId={ siteId } />
-				{ header }
+				<QuerySites siteId={siteId} />
+				{header}
 			</CompactCard>
 		);
 	}
 }
 
-export default connect( ( state, { siteId } ) => ( {
-	site: getSite( state, siteId ),
-} ) )( PurchaseSiteHeader );
+export default connect((state, { siteId }) => ({
+	site: getSite(state, siteId),
+}))(PurchaseSiteHeader);

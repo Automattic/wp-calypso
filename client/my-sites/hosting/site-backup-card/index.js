@@ -20,73 +20,70 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  */
 import './style.scss';
 
-const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) => {
+const SiteBackupCard = ({ disabled, lastGoodBackup, requestBackups, siteId }) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const hasRetrievedLastBackup = lastGoodBackup !== null;
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [isLoading, setIsLoading] = useState(false);
 
-	useEffect( () => {
-		const shouldRequestLastBackup = ! disabled && ! hasRetrievedLastBackup && ! isLoading;
-		if ( shouldRequestLastBackup ) {
-			requestBackups( siteId );
-			setIsLoading( true );
+	useEffect(() => {
+		const shouldRequestLastBackup = !disabled && !hasRetrievedLastBackup && !isLoading;
+		if (shouldRequestLastBackup) {
+			requestBackups(siteId);
+			setIsLoading(true);
 		}
-	}, [ disabled, hasRetrievedLastBackup, isLoading, lastGoodBackup, requestBackups, siteId ] );
+	}, [disabled, hasRetrievedLastBackup, isLoading, lastGoodBackup, requestBackups, siteId]);
 
-	useEffect( () => {
-		if ( hasRetrievedLastBackup ) {
-			setIsLoading( false );
+	useEffect(() => {
+		if (hasRetrievedLastBackup) {
+			setIsLoading(false);
 		}
-	}, [ hasRetrievedLastBackup ] );
+	}, [hasRetrievedLastBackup]);
 
 	const lastGoodBackupTime = lastGoodBackup
-		? moment
-				.utc( lastGoodBackup.last_updated, 'YYYY-MM-DD hh:mma' )
-				.local()
-				.format( 'LLL' )
+		? moment.utc(lastGoodBackup.last_updated, 'YYYY-MM-DD hh:mma').local().format('LLL')
 		: null;
 
 	return (
 		<Card className="site-backup-card">
-			<CardHeading>{ translate( 'Site backup' ) }</CardHeading>
-			{ hasRetrievedLastBackup && lastGoodBackup && ! isLoading && ! disabled && (
+			<CardHeading>{translate('Site backup')}</CardHeading>
+			{hasRetrievedLastBackup && lastGoodBackup && !isLoading && !disabled && (
 				<>
 					<p className="site-backup-card__date">
-						{ translate( 'Last backup was on:' ) }
-						<strong>{ lastGoodBackupTime }</strong>
+						{translate('Last backup was on:')}
+						<strong>{lastGoodBackupTime}</strong>
 					</p>
 					<p className="site-backup-card__warning">
-						{ translate(
+						{translate(
 							"If you restore your site using this backup, you'll lose any changes made after that date."
-						) }
+						)}
 					</p>
 				</>
-			) }
-			{ ( ( hasRetrievedLastBackup && ! lastGoodBackup && ! isLoading ) || disabled ) && (
-				<div>{ translate( 'There are no recent backups for your site.' ) }</div>
-			) }
-			{ isLoading && ! hasRetrievedLastBackup && (
+			)}
+			{((hasRetrievedLastBackup && !lastGoodBackup && !isLoading) || disabled) && (
+				<div>{translate('There are no recent backups for your site.')}</div>
+			)}
+			{isLoading && !hasRetrievedLastBackup && (
 				<>
 					<div className="site-backup-card__placeholder"></div>
 					<div className="site-backup-card__placeholder"></div>
 					<div className="site-backup-card__placeholder is-large"></div>
 				</>
-			) }
+			)}
 		</Card>
 	);
 };
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 		return {
-			lastGoodBackup: getLastGoodRewindBackup( state, siteId ),
+			lastGoodBackup: getLastGoodRewindBackup(state, siteId),
 			siteId,
 		};
 	},
 	{
 		requestBackups: requestRewindBackups,
 	}
-)( SiteBackupCard );
+)(SiteBackupCard);

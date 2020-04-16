@@ -10,34 +10,34 @@ import React from 'react';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 
-const FeaturedAsset = ( {
+const FeaturedAsset = ({
 	canonicalMedia,
 	postUrl,
 	allowVideoPlaying,
 	onVideoThumbnailClick,
 	isVideoExpanded,
-} ) => {
-	if ( ! canonicalMedia ) {
+}) => {
+	if (!canonicalMedia) {
 		return null;
 	}
 
-	if ( canonicalMedia.mediaType === 'video' ) {
+	if (canonicalMedia.mediaType === 'video') {
 		return (
 			<ReaderFeaturedVideo
-				{ ...canonicalMedia }
-				videoEmbed={ canonicalMedia }
-				allowPlaying={ allowVideoPlaying }
-				onThumbnailClick={ onVideoThumbnailClick }
-				isExpanded={ isVideoExpanded }
+				{...canonicalMedia}
+				videoEmbed={canonicalMedia}
+				allowPlaying={allowVideoPlaying}
+				onThumbnailClick={onVideoThumbnailClick}
+				isExpanded={isVideoExpanded}
 			/>
 		);
 	}
 
 	return (
 		<ReaderFeaturedImage
-			imageUrl={ canonicalMedia.src }
-			href={ postUrl }
-			fetched={ canonicalMedia.fetched }
+			imageUrl={canonicalMedia.src}
+			href={postUrl}
+			fetched={canonicalMedia.fetched}
 		/>
 	);
 };

@@ -33,18 +33,18 @@ import { getStatsPathForTab } from 'lib/route';
  */
 import './style.scss';
 
-export const requestId = userId => `pending-payments:${ userId }`;
+export const requestId = (userId) => `pending-payments:${userId}`;
 
-const requestPendingPayments = userId => {
+const requestPendingPayments = (userId) => {
 	return requestHttpData(
-		requestId( userId ),
-		http( {
+		requestId(userId),
+		http({
 			path: '/me/pending-payments',
 			apiVersion: '1',
 			method: 'GET',
-		} ),
+		}),
 		{
-			fromApi: () => pending => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
+			fromApi: () => (pending) => [[requestId(userId), convertToCamelCase(pending)]],
 			freshness: -Infinity,
 		}
 	);
@@ -52,17 +52,17 @@ const requestPendingPayments = userId => {
 
 export class PendingPayments extends Component {
 	componentDidMount = () => {
-		requestPendingPayments( this.props.userId );
+		requestPendingPayments(this.props.userId);
 	};
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const prevResponse = prevProps.response;
 
 		const { showErrorNotice, response, translate } = this.props;
 
 		// Only show once when changing from non failure to failure
-		if ( prevResponse && prevResponse.state !== 'failure' && response.state === 'failure' ) {
-			showErrorNotice( translate( "We've encountered a problem. Please try again later." ) );
+		if (prevResponse && prevResponse.state !== 'failure' && response.state === 'failure') {
+			showErrorNotice(translate("We've encountered a problem. Please try again later."));
 		}
 	}
 
@@ -71,40 +71,40 @@ export class PendingPayments extends Component {
 
 		let content;
 
-		if ( response.state !== 'success' ) {
+		if (response.state !== 'success') {
 			// intentionally includes error states
-			content = <PurchasesSite isPlaceholder={ true } />;
-		} else if ( pendingPayments.length === 0 ) {
+			content = <PurchasesSite isPlaceholder={true} />;
+		} else if (pendingPayments.length === 0) {
 			content = (
 				<CompactCard className="pending-payments__no-content">
 					<EmptyContent
-						title={ translate( 'Looking to upgrade?' ) }
-						line={ translate(
+						title={translate('Looking to upgrade?')}
+						line={translate(
 							'Our plans give your site the power to thrive. Find the plan that works for you.'
-						) }
-						action={ translate( 'Upgrade now' ) }
-						actionURL={ '/plans' }
-						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+						)}
+						action={translate('Upgrade now')}
+						actionURL={'/plans'}
+						illustration={'/calypso/images/illustrations/illustration-nosites.svg'}
 					/>
 				</CompactCard>
 			);
-		} else if ( pendingPayments.length > 0 ) {
+		} else if (pendingPayments.length > 0) {
 			content = (
 				<React.Fragment>
 					<Banner
-						callToAction={ translate( 'Back to My Sites' ) }
-						description={ translate(
+						callToAction={translate('Back to My Sites')}
+						description={translate(
 							'Your payment initiation has been confirmed. We are currently waiting for the funds to clear, this transfer process can take up to one week to complete.'
-						) }
+						)}
 						event="pending-payment-confirmation"
 						icon="star"
-						href={ getStatsPathForTab( 'day', siteSlug ) }
-						title={ translate( 'Thank you! Your payment is being processed.' ) }
+						href={getStatsPathForTab('day', siteSlug)}
+						title={translate('Thank you! Your payment is being processed.')}
 					/>
 					<div>
-						{ pendingPayments.map( purchase => (
-							<PendingListItem key={ purchase.orderId } { ...purchase } />
-						) ) }
+						{pendingPayments.map((purchase) => (
+							<PendingListItem key={purchase.orderId} {...purchase} />
+						))}
 					</div>
 				</React.Fragment>
 			);
@@ -115,7 +115,7 @@ export class PendingPayments extends Component {
 				<PageViewTracker path="/me/purchases/pending" title="Pending Payments" />
 				<MeSidebarNavigation />
 				<PurchasesHeader section="pending" />
-				{ content }
+				{content}
 			</Main>
 		);
 	}
@@ -129,22 +129,20 @@ PendingPayments.propTypes = {
 };
 
 export default connect(
-	state => {
-		const userId = getCurrentUserId( state );
-		const response = getHttpData( requestId( userId ) );
-		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
+	(state) => {
+		const userId = getCurrentUserId(state);
+		const response = getHttpData(requestId(userId));
+		const siteId = getSelectedSiteId(state) || getPrimarySiteId(state);
 
 		return {
 			userId,
-			pendingPayments: Object.values( response.data || [] ),
+			pendingPayments: Object.values(response.data || []),
 			response: response,
-			siteSlug: getSiteSlug( state, siteId ),
+			siteSlug: getSiteSlug(state, siteId),
 		};
 	},
-	dispatch => ( {
-		showErrorNotice: ( error, options ) =>
-			dispatch(
-				errorNotice( error, Object.assign( {}, options, { id: 'pending-payments-tab' } ) )
-			),
-	} )
-)( localize( PendingPayments ) );
+	(dispatch) => ({
+		showErrorNotice: (error, options) =>
+			dispatch(errorNotice(error, Object.assign({}, options, { id: 'pending-payments-tab' }))),
+	})
+)(localize(PendingPayments));

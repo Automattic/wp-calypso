@@ -24,17 +24,17 @@ const cardComponents = {
 	'home-section-learn-grow': LearnGrow,
 };
 
-const Secondary = ( { cards } ) => {
+const Secondary = ({ cards }) => {
 	return (
 		<>
-			{ cards &&
+			{cards &&
 				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
+					(card, index) =>
+						cardComponents[card] &&
+						React.createElement(cardComponents[card], {
 							key: index,
-						} )
-				) }
+						})
+				)}
 		</>
 	);
 };

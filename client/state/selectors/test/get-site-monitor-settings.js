@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import getSiteMonitorSettings from 'state/selectors/get-site-monitor-settings';
 
-describe( 'getSiteMonitorSettings()', () => {
+describe('getSiteMonitorSettings()', () => {
 	const siteId = 2916284;
 	const settings = {
 		email_notifications: true,
@@ -16,21 +16,21 @@ describe( 'getSiteMonitorSettings()', () => {
 		wp_note_notifications: true,
 	};
 
-	test( 'should return monitor settings for a known site', () => {
+	test('should return monitor settings for a known site', () => {
 		const state = {
 			sites: {
 				monitor: {
 					items: {
-						[ siteId ]: settings,
+						[siteId]: settings,
 					},
 				},
 			},
 		};
-		const output = getSiteMonitorSettings( state, siteId );
-		expect( output ).to.eql( settings );
-	} );
+		const output = getSiteMonitorSettings(state, siteId);
+		expect(output).to.eql(settings);
+	});
 
-	test( 'should return null for an unknown site', () => {
+	test('should return null for an unknown site', () => {
 		const state = {
 			sites: {
 				monitor: {
@@ -40,7 +40,7 @@ describe( 'getSiteMonitorSettings()', () => {
 				},
 			},
 		};
-		const output = getSiteMonitorSettings( state, siteId );
-		expect( output ).to.be.null;
-	} );
-} );
+		const output = getSiteMonitorSettings(state, siteId);
+		expect(output).to.be.null;
+	});
+});

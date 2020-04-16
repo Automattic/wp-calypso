@@ -19,7 +19,7 @@ class Card extends PureComponent {
 		tagName: PropTypes.elementType,
 		target: PropTypes.string,
 		compact: PropTypes.bool,
-		highlight: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
+		highlight: PropTypes.oneOf(['error', 'info', 'success', 'warning']),
 	};
 
 	render() {
@@ -48,19 +48,16 @@ class Card extends PureComponent {
 		);
 
 		return href ? (
-			<a { ...props } href={ href } target={ target } className={ elementClass }>
-				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
-				{ children }
+			<a {...props} href={href} target={target} className={elementClass}>
+				<Gridicon className="card__link-indicator" icon={target ? 'external' : 'chevron-right'} />
+				{children}
 			</a>
 		) : (
-			<TagName { ...props } className={ elementClass }>
-				{ displayAsLink && (
-					<Gridicon
-						className="card__link-indicator"
-						icon={ target ? 'external' : 'chevron-right' }
-					/>
-				) }
-				{ children }
+			<TagName {...props} className={elementClass}>
+				{displayAsLink && (
+					<Gridicon className="card__link-indicator" icon={target ? 'external' : 'chevron-right'} />
+				)}
+				{children}
 			</TagName>
 		);
 	}

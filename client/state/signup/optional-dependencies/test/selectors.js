@@ -8,18 +8,18 @@ import { expect } from 'chai';
  */
 import { getSuggestedUsername } from '../selectors';
 
-describe( 'selectors', () => {
-	test( 'should return string if no username suggestions', () => {
-		expect( getSuggestedUsername( { signup: undefined } ) ).to.be.eql( '' );
-	} );
+describe('selectors', () => {
+	test('should return string if no username suggestions', () => {
+		expect(getSuggestedUsername({ signup: undefined })).to.be.eql('');
+	});
 
-	test( 'should return suggestedUsername', () => {
+	test('should return suggestedUsername', () => {
 		expect(
-			getSuggestedUsername( {
+			getSuggestedUsername({
 				signup: {
 					optionalDependencies: { suggestedUsername: 'testUsernameSuggestion' },
 				},
-			} )
-		).to.be.eql( 'testUsernameSuggestion' );
-	} );
-} );
+			})
+		).to.be.eql('testUsernameSuggestion');
+	});
+});

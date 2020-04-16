@@ -14,5 +14,5 @@ export default {
 	name: 'simplePaymentsTour',
 	version: '20170816',
 	path: '/post/',
-	when: and( isDesktop, isNotNewUser, isCurrentUserEmailVerified ),
+	when: and(isDesktop, isNotNewUser, isCurrentUserEmailVerified),
 };

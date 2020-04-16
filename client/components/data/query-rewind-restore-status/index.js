@@ -19,14 +19,14 @@ class QueryRewindRestoreStatus extends Component {
 
 	query = () => {
 		const { restoreId, siteId } = this.props;
-		if ( siteId && restoreId ) {
-			this.props.getRewindRestoreProgress( siteId, restoreId );
+		if (siteId && restoreId) {
+			this.props.getRewindRestoreProgress(siteId, restoreId);
 		}
 	};
 
 	render() {
-		return <Interval onTick={ this.query } period={ EVERY_SECOND } />;
+		return <Interval onTick={this.query} period={EVERY_SECOND} />;
 	}
 }
 
-export default connect( null, { getRewindRestoreProgress } )( QueryRewindRestoreStatus );
+export default connect(null, { getRewindRestoreProgress })(QueryRewindRestoreStatus);

@@ -23,7 +23,7 @@ class ActivityLogBanner extends Component {
 		icon: PropTypes.string,
 		isDismissable: PropTypes.bool.isRequired,
 		onDismissClick: PropTypes.func,
-		status: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
+		status: PropTypes.oneOf(['error', 'info', 'success', 'warning']),
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -38,11 +38,11 @@ class ActivityLogBanner extends Component {
 	getIcon() {
 		// Allow an icon prop to override auto-icon (even null!)
 		const { icon } = this.props;
-		if ( typeof icon !== 'undefined' ) {
+		if (typeof icon !== 'undefined') {
 			return icon;
 		}
 
-		switch ( this.props.status ) {
+		switch (this.props.status) {
 			case 'error':
 			case 'warning':
 				return 'notice-outline';
@@ -63,25 +63,25 @@ class ActivityLogBanner extends Component {
 		const icon = this.getIcon();
 
 		return (
-			<Card className="activity-log-banner" highlight={ status }>
-				{ icon && (
+			<Card className="activity-log-banner" highlight={status}>
+				{icon && (
 					<div className="activity-log-banner__icon">
-						<Gridicon icon={ icon } size={ 24 } />
+						<Gridicon icon={icon} size={24} />
 					</div>
-				) }
+				)}
 				<div className="activity-log-banner__content">
-					{ title && <h2 className="activity-log-banner__title">{ title }</h2> }
-					{ children && <div className="activity-log-banner__body">{ children }</div> }
+					{title && <h2 className="activity-log-banner__title">{title}</h2>}
+					{children && <div className="activity-log-banner__body">{children}</div>}
 				</div>
-				{ isDismissable && (
-					<button className="activity-log-banner__dismiss" onClick={ onDismissClick } type="button">
-						<ScreenReaderText>{ translate( 'Dismiss' ) }</ScreenReaderText>
-						<Gridicon icon="cross" size={ 24 } />
+				{isDismissable && (
+					<button className="activity-log-banner__dismiss" onClick={onDismissClick} type="button">
+						<ScreenReaderText>{translate('Dismiss')}</ScreenReaderText>
+						<Gridicon icon="cross" size={24} />
 					</button>
-				) }
+				)}
 			</Card>
 		);
 	}
 }
 
-export default localize( ActivityLogBanner );
+export default localize(ActivityLogBanner);

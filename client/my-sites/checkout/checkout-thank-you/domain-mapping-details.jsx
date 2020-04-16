@@ -15,7 +15,7 @@ import { isBusiness } from 'lib/products-values';
 import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const DomainMappingDetails = ( {
+const DomainMappingDetails = ({
 	domain,
 	isBusinessPlan,
 	isSubdomainMapping,
@@ -23,13 +23,13 @@ const DomainMappingDetails = ( {
 	registrarSupportUrl,
 	selectedSiteDomain,
 	translate,
-} ) => {
-	if ( isSubdomainMapping && isRootDomainWithUs ) {
+}) => {
+	if (isSubdomainMapping && isRootDomainWithUs) {
 		return null;
 	}
 
 	const registrarSupportLink = registrarSupportUrl ? (
-		<a target="_blank" rel="noopener noreferrer" href={ registrarSupportUrl } />
+		<a target="_blank" rel="noopener noreferrer" href={registrarSupportUrl} />
 	) : (
 		<span />
 	);
@@ -37,7 +37,7 @@ const DomainMappingDetails = ( {
 	let instructions = (
 		<div>
 			<p>
-				{ translate(
+				{translate(
 					'To point your domain at your WordPress.com site, log in to your ' +
 						"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
 						'(where you purchased the domain), and update your name servers to:',
@@ -46,7 +46,7 @@ const DomainMappingDetails = ( {
 							registrarSupportLink: registrarSupportLink,
 						},
 					}
-				) }
+				)}
 			</p>
 			<ul className="checkout-thank-you__domain-mapping-details-nameservers">
 				<li>ns1.wordpress.com</li>
@@ -56,11 +56,11 @@ const DomainMappingDetails = ( {
 		</div>
 	);
 
-	if ( isSubdomainMapping ) {
+	if (isSubdomainMapping) {
 		instructions = (
 			<div>
 				<p>
-					{ translate(
+					{translate(
 						'To point your domain at your WordPress.com site, log in to your ' +
 							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
 							'(where you purchased the domain), and edit the DNS records to add a CNAME record:',
@@ -69,22 +69,22 @@ const DomainMappingDetails = ( {
 								registrarSupportLink: registrarSupportLink,
 							},
 						}
-					) }
+					)}
 				</p>
 				<ul className="checkout-thank-you__domain-mapping-details-nameservers">
 					<li>
-						{ domain }. IN CNAME { selectedSiteDomain }.
+						{domain}. IN CNAME {selectedSiteDomain}.
 					</li>
 				</ul>
 			</div>
 		);
 	}
 
-	if ( isSubdomainMapping && isBusinessPlan ) {
+	if (isSubdomainMapping && isBusinessPlan) {
 		instructions = (
 			<div>
 				<p>
-					{ translate(
+					{translate(
 						'To point your domain at your WordPress.com site, log in to your ' +
 							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
 							'(where you purchased the domain), and edit the DNS records to add these NS records:',
@@ -93,12 +93,12 @@ const DomainMappingDetails = ( {
 								registrarSupportLink: registrarSupportLink,
 							},
 						}
-					) }
+					)}
 				</p>
 				<ul className="checkout-thank-you__domain-mapping-details-nameservers">
-					<li>{ domain }. IN NS ns1.wordpress.com.</li>
-					<li>{ domain }. IN NS ns2.wordpress.com.</li>
-					<li>{ domain }. IN NS ns3.wordpress.com.</li>
+					<li>{domain}. IN NS ns1.wordpress.com.</li>
+					<li>{domain}. IN NS ns2.wordpress.com.</li>
+					<li>{domain}. IN NS ns3.wordpress.com.</li>
 				</ul>
 			</div>
 		);
@@ -106,8 +106,8 @@ const DomainMappingDetails = ( {
 
 	const description = (
 		<div>
-			{ instructions }
-			<p>{ translate( 'If you already did this, no further action is required.' ) }</p>
+			{instructions}
+			<p>{translate('If you already did this, no further action is required.')}</p>
 		</div>
 	);
 
@@ -115,9 +115,9 @@ const DomainMappingDetails = ( {
 		<div className="checkout-thank-you__domain-mapping-details">
 			<PurchaseDetail
 				icon="cog"
-				description={ description }
-				buttonText={ translate( 'Learn more' ) }
-				href={ isSubdomainMapping ? MAP_SUBDOMAIN : MAP_EXISTING_DOMAIN }
+				description={description}
+				buttonText={translate('Learn more')}
+				href={isSubdomainMapping ? MAP_SUBDOMAIN : MAP_EXISTING_DOMAIN}
 				target="_blank"
 				rel="noopener noreferrer"
 				isRequired
@@ -126,13 +126,13 @@ const DomainMappingDetails = ( {
 	);
 };
 
-const mapStateToProps = ( state, { domain } ) => {
-	const selectedSite = getSelectedSite( state );
+const mapStateToProps = (state, { domain }) => {
+	const selectedSite = getSelectedSite(state);
 	return {
-		isBusinessPlan: isBusiness( selectedSite.plan ),
-		isSubdomainMapping: isSubdomain( domain ),
+		isBusinessPlan: isBusiness(selectedSite.plan),
+		isSubdomainMapping: isSubdomain(domain),
 		selectedSiteDomain: selectedSite.domain,
 	};
 };
 
-export default connect( mapStateToProps )( localize( DomainMappingDetails ) );
+export default connect(mapStateToProps)(localize(DomainMappingDetails));

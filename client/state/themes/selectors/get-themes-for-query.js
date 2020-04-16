@@ -21,14 +21,14 @@ import 'state/themes/init';
  * @returns {?Array}         Themes for the theme query
  */
 export const getThemesForQuery = createSelector(
-	( state, siteId, query ) => {
-		const manager = state.themes.queries[ siteId ];
-		if ( ! manager ) {
+	(state, siteId, query) => {
+		const manager = state.themes.queries[siteId];
+		if (!manager) {
 			return null;
 		}
 
-		const themes = manager.getItems( query );
-		if ( ! themes ) {
+		const themes = manager.getItems(query);
+		if (!themes) {
 			return null;
 		}
 
@@ -37,14 +37,14 @@ export const getThemesForQuery = createSelector(
 		// request's `found` value) but the items haven't been received. While
 		// we could impose this on the developer to accommodate, instead we
 		// simply return null when any `undefined` entries exist in the set.
-		if ( includes( themes, undefined ) ) {
+		if (includes(themes, undefined)) {
 			return null;
 		}
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
 		// over different pages) which we need to remove manually here for now.
-		return uniq( themes );
+		return uniq(themes);
 	},
-	state => state.themes.queries,
-	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
+	(state) => state.themes.queries,
+	(state, siteId, query) => getSerializedThemesQuery(query, siteId)
 );

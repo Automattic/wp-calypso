@@ -18,7 +18,7 @@ import 'state/comments/init';
  * @param {number} commentId Comment identifier
  * @returns {object} The requested comment
  */
-export function getSiteComment( state, siteId, commentId ) {
-	const comments = getSiteComments( state, siteId );
-	return find( comments, { ID: commentId } );
+export function getSiteComment(state, siteId, commentId) {
+	const comments = getSiteComments(state, siteId);
+	return find(comments, { ID: commentId });
 }

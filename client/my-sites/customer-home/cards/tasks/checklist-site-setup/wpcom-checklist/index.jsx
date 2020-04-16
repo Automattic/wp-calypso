@@ -19,10 +19,10 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 class WpcomChecklist extends Component {
 	static propTypes = {
-		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio', 'store' ] ),
+		designType: PropTypes.oneOf(['blog', 'page', 'portfolio', 'store']),
 		siteId: PropTypes.number,
 		taskStatuses: PropTypes.object,
-		viewMode: PropTypes.oneOf( [ 'checklist' ] ),
+		viewMode: PropTypes.oneOf(['checklist']),
 	};
 
 	static defaultProps = {
@@ -32,7 +32,7 @@ class WpcomChecklist extends Component {
 	render() {
 		const { shouldRender, ...ownProps } = this.props;
 
-		if ( ! shouldRender ) {
+		if (!shouldRender) {
 			return null;
 		}
 
@@ -40,46 +40,46 @@ class WpcomChecklist extends Component {
 		return (
 			<AsyncLoad
 				require="my-sites/customer-home/cards/tasks/checklist-site-setup/wpcom-checklist/component.jsx"
-				{ ...ownProps }
+				{...ownProps}
 			/>
 		);
 	}
 }
 
-function shouldChecklistRender( viewMode, isEligibleForChecklist, taskList ) {
+function shouldChecklistRender(viewMode, isEligibleForChecklist, taskList) {
 	// Render nothing if not eligible for checklist. Exception: checklist mode.
-	if ( ! isEligibleForChecklist && viewMode !== 'checklist' ) {
+	if (!isEligibleForChecklist && viewMode !== 'checklist') {
 		return false;
 	}
 
 	// Render nothing if all tasks are completed. Exception: checklist mode.
-	if ( ! taskList.getFirstIncompleteTask && viewMode !== 'checklist' ) {
+	if (!taskList.getFirstIncompleteTask && viewMode !== 'checklist') {
 		return false;
 	}
 
 	return true;
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
-	const designType = getSiteOption( state, siteId, 'design_type' );
-	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
-	const siteChecklist = getSiteChecklist( state, siteId );
-	const siteSegment = get( siteChecklist, 'segment' );
-	const siteVerticals = get( siteChecklist, 'vertical' );
-	const taskStatuses = get( siteChecklist, 'tasks' );
-	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
-	const taskList = getTaskList( {
+export default connect((state, ownProps) => {
+	const siteId = getSelectedSiteId(state);
+	const designType = getSiteOption(state, siteId, 'design_type');
+	const isEligibleForChecklist = isEligibleForDotcomChecklist(state, siteId);
+	const siteChecklist = getSiteChecklist(state, siteId);
+	const siteSegment = get(siteChecklist, 'segment');
+	const siteVerticals = get(siteChecklist, 'vertical');
+	const taskStatuses = get(siteChecklist, 'tasks');
+	const siteIsUnlaunched = isUnlaunchedSite(state, siteId);
+	const taskList = getTaskList({
 		taskStatuses,
 		designType,
 		siteIsUnlaunched,
 		siteSegment,
 		siteVerticals,
-	} );
+	});
 
 	const { viewMode } = ownProps;
 
 	return {
-		shouldRender: shouldChecklistRender( viewMode, isEligibleForChecklist, taskList, siteId ),
+		shouldRender: shouldChecklistRender(viewMode, isEligibleForChecklist, taskList, siteId),
 	};
-} )( WpcomChecklist );
+})(WpcomChecklist);

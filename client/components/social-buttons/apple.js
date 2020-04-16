@@ -34,7 +34,7 @@ class AppleLoginButton extends Component {
 		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
-		uxMode: PropTypes.oneOf( [ 'redirect', 'popup' ] ),
+		uxMode: PropTypes.oneOf(['redirect', 'popup']),
 		socialServiceResponse: PropTypes.object,
 	};
 
@@ -47,26 +47,26 @@ class AppleLoginButton extends Component {
 	appleClient = null;
 
 	componentDidMount() {
-		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
+		if (!config.isEnabled('sign-in-with-apple')) {
 			return;
 		}
 
-		if ( this.props.uxMode === 'redirect' ) {
+		if (this.props.uxMode === 'redirect') {
 			this.props.socialServiceResponse &&
-				this.handleSocialResponseFromRedirect( this.props.socialServiceResponse );
+				this.handleSocialResponseFromRedirect(this.props.socialServiceResponse);
 			this.loadAppleClient();
 		}
 	}
 
-	handleSocialResponseFromRedirect( socialServiceResponse ) {
-		if ( socialServiceResponse.client_id !== config( 'apple_oauth_client_id' ) ) {
+	handleSocialResponseFromRedirect(socialServiceResponse) {
+		if (socialServiceResponse.client_id !== config('apple_oauth_client_id')) {
 			return;
 		}
 
-		const storedOauth2State = window.sessionStorage.getItem( 'siwa_state' );
-		window.sessionStorage.removeItem( 'siwa_state' );
+		const storedOauth2State = window.sessionStorage.getItem('siwa_state');
+		window.sessionStorage.removeItem('siwa_state');
 
-		if ( socialServiceResponse.state !== storedOauth2State ) {
+		if (socialServiceResponse.state !== storedOauth2State) {
 			return;
 		}
 
@@ -74,99 +74,99 @@ class AppleLoginButton extends Component {
 			email: socialServiceResponse.user_email,
 			name: socialServiceResponse.user_name,
 		};
-		this.props.responseHandler( {
+		this.props.responseHandler({
 			id_token: socialServiceResponse.id_token,
 			user: user,
-		} );
+		});
 	}
 
 	async loadAppleClient() {
-		if ( this.appleClient ) {
+		if (this.appleClient) {
 			return this.appleClient;
 		}
 
-		if ( ! window.AppleID ) {
-			await loadScript( appleClientUrl );
+		if (!window.AppleID) {
+			await loadScript(appleClientUrl);
 		}
 
-		const oauth2State = String( Math.floor( Math.random() * 10e9 ) );
-		window.sessionStorage.setItem( 'siwa_state', oauth2State );
+		const oauth2State = String(Math.floor(Math.random() * 10e9));
+		window.sessionStorage.setItem('siwa_state', oauth2State);
 
-		window.AppleID.auth.init( {
+		window.AppleID.auth.init({
 			clientId: this.props.clientId,
 			scope: this.props.scope,
 			redirectURI: this.props.redirectUri,
 			state: oauth2State,
-		} );
+		});
 
 		this.appleClient = window.AppleID;
 
 		return this.appleClient;
 	}
 
-	handleClick = event => {
+	handleClick = (event) => {
 		event.preventDefault();
 
-		if ( this.props.onClick ) {
-			this.props.onClick( event );
+		if (this.props.onClick) {
+			this.props.onClick(event);
 		}
 
-		if ( this.props.uxMode === 'popup' ) {
-			requestExternalAccess( connectUrlPopupFLow, this.props.responseHandler );
+		if (this.props.uxMode === 'popup') {
+			requestExternalAccess(connectUrlPopupFLow, this.props.responseHandler);
 			return;
 		}
 
-		if ( this.props.uxMode === 'redirect' ) {
-			this.loadAppleClient().then( AppleID => AppleID.auth.signIn() );
+		if (this.props.uxMode === 'redirect') {
+			this.loadAppleClient().then((AppleID) => AppleID.auth.signIn());
 			return;
 		}
 	};
 
 	render() {
-		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
+		if (!config.isEnabled('sign-in-with-apple')) {
 			return null;
 		}
 
 		const { children, isFormDisabled: isDisabled } = this.props;
 		let customButton = null;
 
-		if ( children ) {
+		if (children) {
 			const childProps = {
-				className: classNames( { disabled: isDisabled } ),
+				className: classNames({ disabled: isDisabled }),
 				onClick: this.handleClick,
 			};
 
-			customButton = React.cloneElement( children, childProps );
+			customButton = React.cloneElement(children, childProps);
 		}
 
 		return (
 			<Fragment>
-				{ customButton ? (
+				{customButton ? (
 					customButton
 				) : (
 					<button
-						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-						onClick={ this.handleClick }
+						className={classNames('social-buttons__button button', { disabled: isDisabled })}
+						onClick={this.handleClick}
 					>
-						<AppleIcon isDisabled={ isDisabled } />
+						<AppleIcon isDisabled={isDisabled} />
 
 						<span className="social-buttons__service-name">
-							{ this.props.translate( 'Continue with %(service)s', {
+							{this.props.translate('Continue with %(service)s', {
 								args: { service: 'Apple' },
 								comment:
 									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-							} ) }
+							})}
 						</span>
 					</button>
-				) }
+				)}
 			</Fragment>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		isFormDisabled: isFormDisabled( state ),
-	} ),
+	(state) => ({
+		isFormDisabled: isFormDisabled(state),
+	}),
 	null
-)( localize( AppleLoginButton ) );
+)(localize(AppleLoginButton));

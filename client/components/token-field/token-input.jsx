@@ -25,36 +25,35 @@ class TokenInput extends React.PureComponent {
 	};
 
 	componentDidUpdate() {
-		if ( this.props.hasFocus ) {
+		if (this.props.hasFocus) {
 			this.textInput.focus();
 		}
 	}
 
 	render() {
 		const { placeholder, value } = this.props;
-		const size =
-			( ( value.length === 0 && placeholder && placeholder.length ) || value.length ) + 1;
+		const size = ((value.length === 0 && placeholder && placeholder.length) || value.length) + 1;
 
 		return (
 			<input
 				className="token-field__input"
-				onChange={ this.onChange }
-				ref={ this.setTextInput }
-				size={ size }
+				onChange={this.onChange}
+				ref={this.setTextInput}
+				size={size}
 				type="text"
-				{ ...omit( this.props, [ 'hasFocus', 'onChange' ] ) }
+				{...omit(this.props, ['hasFocus', 'onChange'])}
 			/>
 		);
 	}
 
-	setTextInput = input => {
+	setTextInput = (input) => {
 		this.textInput = input;
 	};
 
-	onChange = event => {
-		this.props.onChange( {
+	onChange = (event) => {
+		this.props.onChange({
 			value: event.target.value,
-		} );
+		});
 	};
 }
 

@@ -10,8 +10,8 @@ import {
 import { combineReducers, keyedReducer } from 'state/utils';
 import historyReducer from './history/reducer';
 
-export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
-	switch ( type ) {
+export const requestStatus = keyedReducer('siteId', (state, { type }) => {
+	switch (type) {
 		case JETPACK_SCAN_REQUEST:
 			return 'pending';
 
@@ -23,19 +23,19 @@ export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	}
 
 	return state;
-} );
+});
 
-export const scan = keyedReducer( 'siteId', ( state, { type, payload } ) => {
-	switch ( type ) {
+export const scan = keyedReducer('siteId', (state, { type, payload }) => {
+	switch (type) {
 		case JETPACK_SCAN_UPDATE:
 			return payload;
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requestStatus,
 	scan,
 	history: historyReducer,
-} );
+});

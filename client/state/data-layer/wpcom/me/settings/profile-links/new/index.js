@@ -20,7 +20,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const addUserProfileLinks = action =>
+export const addUserProfileLinks = (action) =>
 	http(
 		{
 			apiVersion: '1.2',
@@ -43,15 +43,15 @@ export const addUserProfileLinks = action =>
  * @param   {Array}  data   Response from the endpoint
  * @returns {object} Dispatched user profile links add action
  */
-export const handleAddSuccess = ( action, data ) => {
-	const actions = [ addUserProfileLinksSuccess( action.profileLinks ) ];
+export const handleAddSuccess = (action, data) => {
+	const actions = [addUserProfileLinksSuccess(action.profileLinks)];
 
-	if ( data.duplicate ) {
-		actions.push( addUserProfileLinksDuplicate( data.duplicate ) );
-	} else if ( data.malformed ) {
-		actions.push( addUserProfileLinksMalformed( data.malformed ) );
+	if (data.duplicate) {
+		actions.push(addUserProfileLinksDuplicate(data.duplicate));
+	} else if (data.malformed) {
+		actions.push(addUserProfileLinksMalformed(data.malformed));
 	} else {
-		actions.push( receiveUserProfileLinks( data.profile_links ) );
+		actions.push(receiveUserProfileLinks(data.profile_links));
 	}
 
 	return actions;
@@ -64,15 +64,15 @@ export const handleAddSuccess = ( action, data ) => {
  * @param   {object} error  Error returned
  * @returns {object} Dispatched user profile links add error action
  */
-export const handleAddError = ( { profileLinks }, error ) =>
-	addUserProfileLinksError( profileLinks, error );
+export const handleAddError = ({ profileLinks }, error) =>
+	addUserProfileLinksError(profileLinks, error);
 
-registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/new/index.js', {
-	[ USER_PROFILE_LINKS_ADD ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/settings/profile-links/new/index.js', {
+	[USER_PROFILE_LINKS_ADD]: [
+		dispatchRequest({
 			fetch: addUserProfileLinks,
 			onSuccess: handleAddSuccess,
 			onError: handleAddError,
-		} ),
+		}),
 	],
-} );
+});

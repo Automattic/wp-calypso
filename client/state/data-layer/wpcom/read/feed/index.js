@@ -21,11 +21,11 @@ import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/p
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export function fromApi( apiResponse ) {
-	const feeds = map( apiResponse.feeds, feed => ( {
+export function fromApi(apiResponse) {
+	const feeds = map(apiResponse.feeds, (feed) => ({
 		...feed,
 		feed_URL: feed.subscribe_URL,
-	} ) );
+	}));
 
 	const total = apiResponse.total > 200 ? 200 : apiResponse.total;
 
@@ -35,8 +35,8 @@ export function fromApi( apiResponse ) {
 	};
 }
 
-export function requestReadFeedSearch( action ) {
-	if ( ! ( action.payload && action.payload.query ) ) {
+export function requestReadFeedSearch(action) {
+	if (!(action.payload && action.payload.query)) {
 		return;
 	}
 
@@ -57,54 +57,54 @@ export function requestReadFeedSearch( action ) {
 	);
 }
 
-export function receiveReadFeedSearchSuccess( action, data ) {
+export function receiveReadFeedSearchSuccess(action, data) {
 	const { feeds, total } = data;
-	return receiveFeedSearch( queryKey( action.payload ), feeds, total );
+	return receiveFeedSearch(queryKey(action.payload), feeds, total);
 }
 
-export function receiveReadFeedSearchError( action ) {
-	const errorText = translate( 'Could not get results for query: %(query)s', {
-		args: { query: truncate( action.payload.query, { length: 50 } ) },
-	} );
+export function receiveReadFeedSearchError(action) {
+	const errorText = translate('Could not get results for query: %(query)s', {
+		args: { query: truncate(action.payload.query, { length: 50 }) },
+	});
 
-	return errorNotice( errorText );
+	return errorNotice(errorText);
 }
 
-export function requestReadFeed( action ) {
+export function requestReadFeed(action) {
 	return http(
 		{
 			apiVersion: '1.1',
 			method: 'GET',
-			path: `/read/feed/${ encodeURIComponent( action.payload.ID ) }`,
+			path: `/read/feed/${encodeURIComponent(action.payload.ID)}`,
 			retryPolicy: noRetry(),
 		},
 		action
 	);
 }
 
-export function receiveReadFeedSuccess( action, response ) {
-	return receiveReaderFeedRequestSuccess( response );
+export function receiveReadFeedSuccess(action, response) {
+	return receiveReaderFeedRequestSuccess(response);
 }
 
-export function receiveReadFeedError( action, response ) {
-	return receiveReaderFeedRequestFailure( action.payload.ID, response );
+export function receiveReadFeedError(action, response) {
+	return receiveReaderFeedRequestFailure(action.payload.ID, response);
 }
 
-registerHandlers( 'state/data-layer/wpcom/read/feed/index.js', {
-	[ READER_FEED_SEARCH_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/read/feed/index.js', {
+	[READER_FEED_SEARCH_REQUEST]: [
+		dispatchRequest({
 			fetch: requestReadFeedSearch,
 			onSuccess: receiveReadFeedSearchSuccess,
 			onError: receiveReadFeedSearchError,
 			fromApi,
-		} ),
+		}),
 	],
 
-	[ READER_FEED_REQUEST ]: [
-		dispatchRequest( {
+	[READER_FEED_REQUEST]: [
+		dispatchRequest({
 			fetch: requestReadFeed,
 			onSuccess: receiveReadFeedSuccess,
 			onError: receiveReadFeedError,
-		} ),
+		}),
 	],
-} );
+});

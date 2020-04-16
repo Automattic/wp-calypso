@@ -8,17 +8,17 @@ import { expect } from 'chai';
  */
 import isConnectedSecondaryNetworkSite from 'state/selectors/is-connected-secondary-network-site';
 
-describe( 'isConnectedSecondaryNetworkSite()', () => {
-	test( 'should return false if no sites exist in state', () => {
+describe('isConnectedSecondaryNetworkSite()', () => {
+	test('should return false if no sites exist in state', () => {
 		const state = {
 			sites: {
 				items: {},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 1 ) ).be.false;
-	} );
+		expect(isConnectedSecondaryNetworkSite(state, 1)).be.false;
+	});
 
-	test( 'should return false if site with id equal to siteId is not found', () => {
+	test('should return false if site with id equal to siteId is not found', () => {
 		const state = {
 			sites: {
 				items: {
@@ -34,10 +34,10 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
-	} );
+		expect(isConnectedSecondaryNetworkSite(state, 2)).be.false;
+	});
 
-	test( 'should return false if some is not yet loaded and with the loaded ones no conclusion can be taken', () => {
+	test('should return false if some is not yet loaded and with the loaded ones no conclusion can be taken', () => {
 		const state = {
 			sites: {
 				items: {
@@ -54,10 +54,10 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
-	} );
+		expect(isConnectedSecondaryNetworkSite(state, 2)).be.false;
+	});
 
-	test( 'should return false if site with id equal to siteId is a secondary site but the main site is not part of the state', () => {
+	test('should return false if site with id equal to siteId is a secondary site but the main site is not part of the state', () => {
 		const state = {
 			sites: {
 				items: {
@@ -73,10 +73,10 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
-	} );
+		expect(isConnectedSecondaryNetworkSite(state, 2)).be.false;
+	});
 
-	test( 'should return false if site with id equal to siteId is not a secondary network site', () => {
+	test('should return false if site with id equal to siteId is not a secondary network site', () => {
 		const state = {
 			sites: {
 				items: {
@@ -92,10 +92,10 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 1 ) ).be.false;
-	} );
+		expect(isConnectedSecondaryNetworkSite(state, 1)).be.false;
+	});
 
-	test( 'should return true if site with id equal to siteId is a connected secondary network site', () => {
+	test('should return true if site with id equal to siteId is a connected secondary network site', () => {
 		const state = {
 			sites: {
 				items: {
@@ -120,6 +120,6 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 				},
 			},
 		};
-		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.true;
-	} );
-} );
+		expect(isConnectedSecondaryNetworkSite(state, 2)).be.true;
+	});
+});

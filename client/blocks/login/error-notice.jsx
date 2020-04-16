@@ -27,23 +27,23 @@ class ErrorNotice extends Component {
 		twoFactorAuthRequestError: PropTypes.object,
 	};
 
-	componentDidUpdate( prevProps ) {
-		const receiveNewError = key => this.props[ key ] !== prevProps[ key ];
+	componentDidUpdate(prevProps) {
+		const receiveNewError = (key) => this.props[key] !== prevProps[key];
 
 		if (
-			receiveNewError( 'createAccountError' ) ||
-			receiveNewError( 'requestAccountError' ) ||
-			receiveNewError( 'requestError' ) ||
-			receiveNewError( 'twoFactorAuthRequestError' )
+			receiveNewError('createAccountError') ||
+			receiveNewError('requestAccountError') ||
+			receiveNewError('requestError') ||
+			receiveNewError('twoFactorAuthRequestError')
 		) {
-			window.scrollTo( 0, 0 );
+			window.scrollTo(0, 0);
 		}
 	}
 
 	getCreateAccountError() {
 		const { createAccountError } = this.props;
 
-		if ( createAccountError && createAccountError.code !== 'unknown_user' ) {
+		if (createAccountError && createAccountError.code !== 'unknown_user') {
 			return createAccountError;
 		}
 
@@ -64,7 +64,7 @@ class ErrorNotice extends Component {
 	render() {
 		const error = this.getError();
 
-		if ( ! error || ( error.field && error.field !== 'global' ) || ! error.message ) {
+		if (!error || (error.field && error.field !== 'global') || !error.message) {
 			return null;
 		}
 
@@ -72,14 +72,14 @@ class ErrorNotice extends Component {
 		 * The user_exists error is caught in SocialLoginForm.
 		 * The relevant messages are displayed inline in LoginForm.
 		 */
-		if ( error.code === 'user_exists' ) {
+		if (error.code === 'user_exists') {
 			return null;
 		}
 
 		let message = error.message;
 
 		// Account closed error from the API contains HTML, so set a custom message for that case
-		if ( error.code === 'deleted_user' ) {
+		if (error.code === 'deleted_user') {
 			message = this.props.translate(
 				'This account has been closed. ' +
 					'If you believe your account was closed in error, please {{a}}contact us{{/a}}.',
@@ -87,7 +87,7 @@ class ErrorNotice extends Component {
 					components: {
 						a: (
 							<a
-								href={ config( 'login_url' ) + '?action=recovery' }
+								href={config('login_url') + '?action=recovery'}
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
@@ -98,16 +98,16 @@ class ErrorNotice extends Component {
 		}
 
 		return (
-			<Notice status="is-error" showDismiss={ false }>
-				{ message }
+			<Notice status="is-error" showDismiss={false}>
+				{message}
 			</Notice>
 		);
 	}
 }
 
-export default connect( state => ( {
-	createAccountError: getCreateSocialAccountError( state ),
-	requestAccountError: getRequestSocialAccountError( state ),
-	requestError: getRequestError( state ),
-	twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
-} ) )( localize( ErrorNotice ) );
+export default connect((state) => ({
+	createAccountError: getCreateSocialAccountError(state),
+	requestAccountError: getRequestSocialAccountError(state),
+	requestError: getRequestError(state),
+	twoFactorAuthRequestError: getTwoFactorAuthRequestError(state),
+}))(localize(ErrorNotice));

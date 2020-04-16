@@ -3,8 +3,8 @@
  */
 import { isSiteBlocked } from 'state/reader/site-blocks/selectors';
 
-describe( 'isSiteBlocked()', () => {
-	test( 'should return true if the specified site is blocked', () => {
+describe('isSiteBlocked()', () => {
+	test('should return true if the specified site is blocked', () => {
 		const state = {
 			reader: {
 				siteBlocks: {
@@ -15,8 +15,8 @@ describe( 'isSiteBlocked()', () => {
 				},
 			},
 		};
-		expect( isSiteBlocked( state, 123 ) ).toBe( true );
-		expect( isSiteBlocked( state, 124 ) ).toBe( false );
-		expect( isSiteBlocked( state, 125 ) ).toBe( false );
-	} );
-} );
+		expect(isSiteBlocked(state, 123)).toBe(true);
+		expect(isSiteBlocked(state, 124)).toBe(false);
+		expect(isSiteBlocked(state, 125)).toBe(false);
+	});
+});

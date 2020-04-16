@@ -18,17 +18,17 @@ import { getSelectedSite } from 'state/ui/selectors';
  */
 import './style.scss';
 
-function MySitesSidebarNavigation( { site } ) {
+function MySitesSidebarNavigation({ site }) {
 	const translate = useTranslate();
-	const currentSiteTitle = site ? site.title : translate( 'All Sites' );
+	const currentSiteTitle = site ? site.title : translate('All Sites');
 
 	return (
-		<SidebarNavigation sectionTitle={ currentSiteTitle }>
-			{ site && <SiteIcon site={ site } /> }
+		<SidebarNavigation sectionTitle={currentSiteTitle}>
+			{site && <SiteIcon site={site} />}
 		</SidebarNavigation>
 	);
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-} ) )( MySitesSidebarNavigation );
+export default connect((state) => ({
+	site: getSelectedSite(state),
+}))(MySitesSidebarNavigation);

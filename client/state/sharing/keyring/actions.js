@@ -17,29 +17,29 @@ import {
  *
  * @returns {Function} Action thunk
  */
-export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
-	return dispatch => {
-		dispatch( {
+export function requestKeyringConnections(forceExternalUsersRefetch = false) {
+	return (dispatch) => {
+		dispatch({
 			type: KEYRING_CONNECTIONS_REQUEST,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.mekeyringConnections( forceExternalUsersRefetch )
-			.then( ( { connections } ) => {
-				dispatch( {
+			.mekeyringConnections(forceExternalUsersRefetch)
+			.then(({ connections }) => {
+				dispatch({
 					type: KEYRING_CONNECTIONS_RECEIVE,
 					connections,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: KEYRING_CONNECTIONS_REQUEST_SUCCESS,
-				} );
-			} )
-			.catch( error =>
-				dispatch( {
+				});
+			})
+			.catch((error) =>
+				dispatch({
 					type: KEYRING_CONNECTIONS_REQUEST_FAILURE,
 					error,
-				} )
+				})
 			);
 	};
 }
@@ -50,7 +50,7 @@ export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
  * @param  {object}   connection Keyring connection to be removed.
  * @returns {Function}            Action thunk
  */
-export function deleteKeyringConnection( connection ) {
+export function deleteKeyringConnection(connection) {
 	return {
 		type: KEYRING_CONNECTION_DELETE,
 		connection,
@@ -65,22 +65,22 @@ export function deleteKeyringConnection( connection ) {
  * @param  {string} connection.label   Name of the service that was connected.
  * @returns {Function}                  Action thunk
  */
-export function deleteStoredKeyringConnection( connection ) {
-	return dispatch =>
+export function deleteStoredKeyringConnection(connection) {
+	return (dispatch) =>
 		wpcom
 			.undocumented()
-			.deletekeyringConnection( connection.ID )
-			.then( () => dispatch( deleteKeyringConnection( connection ) ) )
-			.catch( error => {
-				if ( error && 404 === error.statusCode ) {
+			.deletekeyringConnection(connection.ID)
+			.then(() => dispatch(deleteKeyringConnection(connection)))
+			.catch((error) => {
+				if (error && 404 === error.statusCode) {
 					// If the connection cannot be found, we infer that it must have been deleted since the original
 					// connections were retrieved, so pass along the cached connection.
-					dispatch( deleteKeyringConnection( connection ) );
+					dispatch(deleteKeyringConnection(connection));
 				}
 
-				dispatch( {
+				dispatch({
 					type: KEYRING_CONNECTION_DELETE_FAILURE,
 					error: { ...error, label: connection.label },
-				} );
-			} );
+				});
+			});
 }

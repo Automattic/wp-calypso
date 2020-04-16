@@ -12,14 +12,14 @@ import { isEcommercePlan, isBusinessPlan } from 'lib/plans';
  * @param {number} siteId Site ID
  * @returns {boolean} Whether site is on an atomic paid plan
  */
-const isSiteOnAtomicPlan = ( state, siteId ) => {
-	const currentPlan = getCurrentPlan( state, siteId );
+const isSiteOnAtomicPlan = (state, siteId) => {
+	const currentPlan = getCurrentPlan(state, siteId);
 
-	if ( ! currentPlan ) {
+	if (!currentPlan) {
 		return false;
 	}
 
-	return isEcommercePlan( currentPlan.productSlug ) || isBusinessPlan( currentPlan.productSlug );
+	return isEcommercePlan(currentPlan.productSlug) || isBusinessPlan(currentPlan.productSlug);
 };
 
 export default isSiteOnAtomicPlan;

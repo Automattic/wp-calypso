@@ -15,9 +15,9 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID
  * @returns {boolean}         True if the premium theme is available for the given site
  */
-export function isPremiumThemeAvailable( state, themeId, siteId ) {
+export function isPremiumThemeAvailable(state, themeId, siteId) {
 	return (
-		isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		isThemePurchased(state, themeId, siteId) ||
+		hasFeature(state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES)
 	);
 }

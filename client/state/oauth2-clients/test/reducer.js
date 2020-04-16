@@ -9,27 +9,27 @@ import { pick } from 'lodash';
 import reducer, { initialClientsData } from '../reducer';
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'state/action-types';
 
-describe( 'reducer', () => {
+describe('reducer', () => {
 	// Uses default data but reduces the size of this data set for tests
-	const initialState = pick( initialClientsData, [ 930, 973 ] );
+	const initialState = pick(initialClientsData, [930, 973]);
 
-	test( 'should return the current state for an unknown action type', () => {
-		const newState = reducer( initialState, { type: 'BUY_BURGER' } );
+	test('should return the current state for an unknown action type', () => {
+		const newState = reducer(initialState, { type: 'BUY_BURGER' });
 
-		expect( newState ).toBe( initialState );
-	} );
+		expect(newState).toBe(initialState);
+	});
 
-	test( 'should return updated state with updated data when client data was fetched successful', () => {
-		const newState = reducer( initialState, {
+	test('should return updated state with updated data when client data was fetched successful', () => {
+		const newState = reducer(initialState, {
 			type: OAUTH2_CLIENT_DATA_RECEIVE,
 			data: {
 				id: 930,
 				title: 'Vaultpress Pro',
 				url: 'https://vaultpress.pro/',
 			},
-		} );
+		});
 
-		expect( newState ).toEqual( {
+		expect(newState).toEqual({
 			930: {
 				id: 930,
 				name: 'vaultpress',
@@ -43,11 +43,11 @@ describe( 'reducer', () => {
 				title: 'Akismet',
 				icon: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
 			},
-		} );
-	} );
+		});
+	});
 
-	test( 'should return updated state with new data when client data was fetched successful', () => {
-		const newState = reducer( initialState, {
+	test('should return updated state with new data when client data was fetched successful', () => {
+		const newState = reducer(initialState, {
 			type: OAUTH2_CLIENT_DATA_RECEIVE,
 			data: {
 				id: 2665,
@@ -56,9 +56,9 @@ describe( 'reducer', () => {
 				icon:
 					'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
 			},
-		} );
+		});
 
-		expect( newState ).toEqual( {
+		expect(newState).toEqual({
 			930: {
 				id: 930,
 				name: 'vaultpress',
@@ -78,6 +78,6 @@ describe( 'reducer', () => {
 				icon:
 					'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

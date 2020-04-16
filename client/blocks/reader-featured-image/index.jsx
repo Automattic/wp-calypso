@@ -17,7 +17,7 @@ import resizeImageUrl from 'lib/resize-image-url';
  */
 import './style.scss';
 
-const ReaderFeaturedImage = ( {
+const ReaderFeaturedImage = ({
 	imageUrl,
 	imageWidth,
 	href,
@@ -25,26 +25,26 @@ const ReaderFeaturedImage = ( {
 	onClick,
 	className,
 	fetched,
-} ) => {
-	if ( imageUrl === undefined ) {
+}) => {
+	if (imageUrl === undefined) {
 		return null;
 	}
 
 	// Don't resize image if it was already fetched.
-	const resizedUrl = fetched ? imageUrl : resizeImageUrl( imageUrl, { w: imageWidth } );
+	const resizedUrl = fetched ? imageUrl : resizeImageUrl(imageUrl, { w: imageWidth });
 
 	const featuredImageStyle = {
-		backgroundImage: 'url(' + cssSafeUrl( resizedUrl ) + ')',
+		backgroundImage: 'url(' + cssSafeUrl(resizedUrl) + ')',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
 		backgroundPosition: 'center center',
 	};
 
-	const classNames = classnames( className, 'reader-featured-image' );
+	const classNames = classnames(className, 'reader-featured-image');
 
 	return (
-		<a className={ classNames } href={ href } style={ featuredImageStyle } onClick={ onClick }>
-			{ children }
+		<a className={classNames} href={href} style={featuredImageStyle} onClick={onClick}>
+			{children}
 		</a>
 	);
 };

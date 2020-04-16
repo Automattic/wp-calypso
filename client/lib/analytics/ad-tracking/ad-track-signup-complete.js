@@ -34,25 +34,25 @@ import './setup';
  * @param {boolean} isNewUserSite Whether the signup is new user with a new site created
  * @returns {void}
  */
-export async function adTrackSignupComplete( { isNewUserSite } ) {
+export async function adTrackSignupComplete({ isNewUserSite }) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'adTrackSignupComplete: [Skipping] ad tracking is disallowed' );
+	if (!isAdTrackingAllowed()) {
+		debug('adTrackSignupComplete: [Skipping] ad tracking is disallowed');
 		return;
 	}
 
 	await loadTrackingScripts();
 
 	// Record all signups up in DCM Floodlight (deprecated Floodlight pixels)
-	if ( isFloodlightEnabled ) {
-		debug( 'adTrackSignupComplete: Floodlight:' );
-		recordParamsInFloodlightGtag( { send_to: 'DC-6355556/wordp0/signu0+unique' } );
+	if (isFloodlightEnabled) {
+		debug('adTrackSignupComplete: Floodlight:');
+		recordParamsInFloodlightGtag({ send_to: 'DC-6355556/wordp0/signu0+unique' });
 	}
 
 	// Track new user conversions by generating a synthetic cart and treating it like an order.
 
-	if ( ! isNewUserSite ) {
+	if (!isNewUserSite) {
 		// only for new users with a new site created
 		return;
 	}
@@ -77,12 +77,12 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 	// Prepare a few more variables.
 
 	const currentUser = getCurrentUser();
-	const syntheticOrderId = 's_' + uuid().replace( /-/g, '' ); // 35-byte signup tracking ID.
-	const usdCost = costToUSD( syntheticCart.total_cost, syntheticCart.currency );
+	const syntheticOrderId = 's_' + uuid().replace(/-/g, ''); // 35-byte signup tracking ID.
+	const usdCost = costToUSD(syntheticCart.total_cost, syntheticCart.currency);
 
 	// Google Ads Gtag
 
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if (isWpcomGoogleAdsGtagEnabled) {
 		const params = [
 			'event',
 			'conversion',
@@ -93,79 +93,79 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 				transaction_id: syntheticOrderId,
 			},
 		];
-		debug( 'recordSignup: [Google Ads Gtag]', params );
-		window.gtag( ...params );
+		debug('recordSignup: [Google Ads Gtag]', params);
+		window.gtag(...params);
 	}
 
 	// Bing
 
-	if ( isBingEnabled ) {
-		if ( null !== usdCost ) {
+	if (isBingEnabled) {
+		if (null !== usdCost) {
 			const params = {
 				ec: 'signup',
 				gv: usdCost,
 			};
-			debug( 'recordSignup: [Bing]', params );
-			window.uetq.push( params );
+			debug('recordSignup: [Bing]', params);
+			window.uetq.push(params);
 		} else {
-			debug( 'recordSignup: [Bing] currency not supported, dropping WPCom pixel' );
+			debug('recordSignup: [Bing] currency not supported, dropping WPCom pixel');
 		}
 	}
 
 	// Facebook
 
-	if ( isFacebookEnabled ) {
+	if (isFacebookEnabled) {
 		const params = [
 			'trackSingle',
 			TRACKING_IDS.facebookInit,
 			'Subscribe',
 			{
-				product_slug: syntheticCart.products.map( product => product.product_slug ).join( ', ' ),
+				product_slug: syntheticCart.products.map((product) => product.product_slug).join(', '),
 				value: syntheticCart.total_cost,
 				currency: syntheticCart.currency,
 				user_id: currentUser ? currentUser.hashedPii.ID : 0,
 				order_id: syntheticOrderId,
 			},
 		];
-		debug( 'recordSignup: [Facebook]', params );
-		window.fbq( ...params );
+		debug('recordSignup: [Facebook]', params);
+		window.fbq(...params);
 	}
 
 	// DCM Floodlight
 
-	if ( isFloodlightEnabled ) {
-		debug( 'recordSignup: [Floodlight]' );
-		recordParamsInFloodlightGtag( {
+	if (isFloodlightEnabled) {
+		debug('recordSignup: [Floodlight]');
+		recordParamsInFloodlightGtag({
 			send_to: 'DC-6355556/wordp0/signu1+unique',
-		} );
+		});
 	}
 
 	// Quantcast
 
-	if ( isQuantcastEnabled ) {
+	if (isQuantcastEnabled) {
 		const params = {
 			qacct: TRACKING_IDS.quantcast,
 			labels:
 				'_fp.event.WordPress Signup,_fp.pcat.' +
-				syntheticCart.products.map( product => product.product_slug ).join( ' ' ),
+				syntheticCart.products.map((product) => product.product_slug).join(' '),
 			orderid: syntheticOrderId,
 			revenue: usdCost,
 			event: 'refresh',
 		};
-		debug( 'recordSignup: [Quantcast]', params );
-		window._qevents.push( params );
+		debug('recordSignup: [Quantcast]', params);
+		window._qevents.push(params);
 	}
 
 	// Icon Media
 
-	if ( isIconMediaEnabled ) {
-		debug( 'recordSignup: [Icon Media]', ICON_MEDIA_SIGNUP_PIXEL_URL );
+	if (isIconMediaEnabled) {
+		debug('recordSignup: [Icon Media]', ICON_MEDIA_SIGNUP_PIXEL_URL);
 		new window.Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
 	}
 
 	// Pinterest
 
-	if ( isPinterestEnabled ) {
+	if (isPinterestEnabled) {
 		const params = [
 			'track',
 			'signup',
@@ -174,17 +174,17 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 				currency: syntheticCart.currency,
 			},
 		];
-		debug( 'recordSignup: [Pinterest]', params );
-		window.pintrk( ...params );
+		debug('recordSignup: [Pinterest]', params);
+		window.pintrk(...params);
 	}
 
 	// Twitter
 
-	if ( isTwitterEnabled ) {
-		const params = [ 'track', 'Signup', {} ];
-		debug( 'recordSignup: [Twitter]', params );
-		window.twq( ...params );
+	if (isTwitterEnabled) {
+		const params = ['track', 'Signup', {}];
+		debug('recordSignup: [Twitter]', params);
+		window.twq(...params);
 	}
 
-	debug( 'recordSignup: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug('recordSignup: dataLayer:', JSON.stringify(window.dataLayer, null, 2));
 }

@@ -6,7 +6,7 @@
 		"methodType": "offline"
 	},
 	"cod": {
-		"fields": [ "title", "instructions" ],
+		"fields": ["title", "instructions"],
 		"methodType": "offline"
 	},
 	"paypal": {

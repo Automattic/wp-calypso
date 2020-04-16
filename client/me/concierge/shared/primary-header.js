@@ -24,27 +24,25 @@ class PrimaryHeader extends Component {
 					displayAt="2020-04-09 00:00Z"
 					closesAt="2020-04-12 06:00Z"
 					reopensAt="2020-04-13 06:00Z"
-					holidayName={ easterHolidayName }
+					holidayName={easterHolidayName}
 				/>
 				<Card>
 					<img
 						className="shared__info-illustration"
 						alt="support session signup form header"
-						src={ '/calypso/images/illustrations/illustration-start.svg' }
+						src={'/calypso/images/illustrations/illustration-start.svg'}
 					/>
 					<FormattedHeader
-						headerText={ translate( 'WordPress.com Quick Start Session Scheduler' ) }
-						subHeaderText={ translate(
-							'Use the tool below to book your in-depth support session.'
-						) }
+						headerText={translate('WordPress.com Quick Start Session Scheduler')}
+						subHeaderText={translate('Use the tool below to book your in-depth support session.')}
 					/>
 					<ExternalLink
 						className="shared__info-link"
-						icon={ false }
-						href={ CONCIERGE_SUPPORT }
+						icon={false}
+						href={CONCIERGE_SUPPORT}
 						target="_blank"
 					>
-						{ translate( 'Learn more' ) }
+						{translate('Learn more')}
 					</ExternalLink>
 				</Card>
 			</Fragment>
@@ -52,4 +50,4 @@ class PrimaryHeader extends Component {
 	}
 }
 
-export default localize( PrimaryHeader );
+export default localize(PrimaryHeader);

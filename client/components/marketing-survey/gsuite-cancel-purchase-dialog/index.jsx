@@ -30,8 +30,8 @@ import wpcom from 'lib/wp';
 import './style.scss';
 
 class GSuiteCancelPurchaseDialog extends Component {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = this.initialState;
 	}
 
@@ -45,58 +45,58 @@ class GSuiteCancelPurchaseDialog extends Component {
 	}
 
 	resetState = () => {
-		this.setState( this.initialState );
+		this.setState(this.initialState);
 	};
 
 	nextStepButtonClick = () => {
 		const { step } = this.state;
-		const nextStep = steps.nextStep( step );
+		const nextStep = steps.nextStep(step);
 
-		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_next_step_click', {
+		this.props.recordTracksEvent('calypso_purchases_gsuite_remove_purchase_next_step_click', {
 			step,
 			next_step: nextStep,
-		} );
-		this.setState( { step: nextStep } );
+		});
+		this.setState({ step: nextStep });
 	};
 
 	previousStepButtonClick = () => {
 		const { step } = this.state;
-		const prevStep = steps.previousStep( step );
+		const prevStep = steps.previousStep(step);
 
-		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_prev_step_click', {
+		this.props.recordTracksEvent('calypso_purchases_gsuite_remove_purchase_prev_step_click', {
 			step,
 			prev_step: prevStep,
-		} );
-		this.setState( { step: prevStep } );
+		});
+		this.setState({ step: prevStep });
 	};
 
-	cancelButtonClick = closeDialog => {
-		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_keep_it_click' );
+	cancelButtonClick = (closeDialog) => {
+		this.props.recordTracksEvent('calypso_purchases_gsuite_remove_purchase_keep_it_click');
 		closeDialog();
 		this.resetState();
 	};
 
-	removeButtonClick = async closeDialog => {
-		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_click' );
+	removeButtonClick = async (closeDialog) => {
+		this.props.recordTracksEvent('calypso_purchases_gsuite_remove_purchase_click');
 
-		this.setState( {
+		this.setState({
 			isRemoving: true,
-		} );
+		});
 		await this.saveSurveyResults();
 		const success = await this.removePurchase();
-		if ( success ) {
+		if (success) {
 			closeDialog();
 			this.resetState();
-			page( purchasesRoot );
+			page(purchasesRoot);
 		} else {
-			this.setState( { isRemoving: false } );
+			this.setState({ isRemoving: false });
 		}
 	};
 
 	saveSurveyResults = async () => {
 		const { purchase } = this.props;
 		const { surveyAnswerId, surveyAnswerText } = this.state;
-		const survey = wpcom.marketing().survey( 'calypso-gsuite-remove-purchase', purchase.siteId );
+		const survey = wpcom.marketing().survey('calypso-gsuite-remove-purchase', purchase.siteId);
 		const surveyData = {
 			'why-cancel': {
 				response: surveyAnswerId,
@@ -104,35 +104,35 @@ class GSuiteCancelPurchaseDialog extends Component {
 			},
 			type: 'remove',
 		};
-		survey.addResponses( enrichedSurveyData( surveyData, purchase ) );
+		survey.addResponses(enrichedSurveyData(surveyData, purchase));
 
 		const response = await survey.submit();
-		if ( ! response.success ) {
-			notices.error( response.err );
+		if (!response.success) {
+			notices.error(response.err);
 		}
 	};
 
 	removePurchase = async () => {
 		const { domain, productName, purchase, translate, userId } = this.props;
 
-		await this.props.removePurchase( purchase.id, userId );
+		await this.props.removePurchase(purchase.id, userId);
 
 		const { purchasesError } = this.props;
 
-		if ( purchasesError ) {
-			notices.error( purchasesError );
+		if (purchasesError) {
+			notices.error(purchasesError);
 			return false;
 		}
 
 		notices.success(
-			translate( '%(productName)s was removed from {{domain/}}.', {
+			translate('%(productName)s was removed from {{domain/}}.', {
 				args: {
 					productName,
 				},
 				components: {
-					domain: <em>{ domain }</em>,
+					domain: <em>{domain}</em>,
 				},
-			} ),
+			}),
 			{
 				persistent: true,
 			}
@@ -141,8 +141,8 @@ class GSuiteCancelPurchaseDialog extends Component {
 		return true;
 	};
 
-	onSurveyAnswerChange = ( surveyAnswerId, surveyAnswerText ) => {
-		if ( surveyAnswerId !== this.state.surveyAnswerId ) {
+	onSurveyAnswerChange = (surveyAnswerId, surveyAnswerText) => {
+		if (surveyAnswerId !== this.state.surveyAnswerId) {
 			this.props.recordTracksEvent(
 				'calypso_purchases_gsuite_remove_purchase_survey_answer_change',
 				{
@@ -151,28 +151,28 @@ class GSuiteCancelPurchaseDialog extends Component {
 			);
 		}
 
-		this.setState( {
+		this.setState({
 			surveyAnswerId,
 			surveyAnswerText,
-		} );
+		});
 	};
 
 	getStepButtons = () => {
 		const { translate } = this.props;
 		const { step, surveyAnswerId, isRemoving } = this.state;
-		if ( steps.GSUITE_INITIAL_STEP === step ) {
+		if (steps.GSUITE_INITIAL_STEP === step) {
 			return [
 				{
 					action: 'cancel',
 					disabled: isRemoving,
 					isPrimary: true,
-					label: translate( "I'll Keep It" ),
+					label: translate("I'll Keep It"),
 					onClick: this.cancelButtonClick,
 				},
 				{
 					action: 'next',
 					disabled: isRemoving,
-					label: translate( 'Next Step' ),
+					label: translate('Next Step'),
 					onClick: this.nextStepButtonClick,
 				},
 			];
@@ -181,23 +181,23 @@ class GSuiteCancelPurchaseDialog extends Component {
 			{
 				action: 'cancel',
 				disabled: isRemoving,
-				label: translate( "I'll Keep It" ),
+				label: translate("I'll Keep It"),
 				onClick: this.cancelButtonClick,
 			},
 			{
 				action: 'prev',
 				disabled: isRemoving,
-				label: translate( 'Previous Step' ),
+				label: translate('Previous Step'),
 				onClick: this.previousStepButtonClick,
 			},
 			{
 				action: 'remove',
 				// used to get a busy button
-				additionalClassNames: isRemoving ? [ 'is-busy' ] : undefined,
+				additionalClassNames: isRemoving ? ['is-busy'] : undefined,
 				// don't allow the user to complete the survey without an selection
 				disabled: isRemoving || null === surveyAnswerId,
 				isPrimary: true,
-				label: isRemoving ? translate( 'Removing…' ) : translate( 'Remove Now' ),
+				label: isRemoving ? translate('Removing…') : translate('Remove Now'),
 				onClick: this.removeButtonClick,
 			},
 		];
@@ -210,21 +210,21 @@ class GSuiteCancelPurchaseDialog extends Component {
 			// By checking isVisible here we prevent rendering a "reset" dialog state before it closes
 			isVisible && (
 				<Dialog
-					buttons={ this.getStepButtons() }
+					buttons={this.getStepButtons()}
 					className="gsuite-cancel-purchase-dialog__dialog"
-					isVisible={ isVisible }
-					onClose={ onClose }
+					isVisible={isVisible}
+					onClose={onClose}
 				>
-					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
-						<GSuiteCancellationFeatures purchase={ purchase } />
+					{steps.GSUITE_INITIAL_STEP === this.state.step ? (
+						<GSuiteCancellationFeatures purchase={purchase} />
 					) : (
 						<GSuiteCancellationSurvey
-							disabled={ isRemoving }
-							onSurveyAnswerChange={ this.onSurveyAnswerChange }
-							surveyAnswerId={ surveyAnswerId }
-							surveyAnswerText={ surveyAnswerText }
+							disabled={isRemoving}
+							onSurveyAnswerChange={this.onSurveyAnswerChange}
+							surveyAnswerId={surveyAnswerId}
+							surveyAnswerText={surveyAnswerText}
 						/>
-					) }
+					)}
 				</Dialog>
 			)
 		);
@@ -243,16 +243,16 @@ GSuiteCancelPurchaseDialog.propTypes = {
 };
 
 export default connect(
-	( state, { purchase } ) => {
+	(state, { purchase }) => {
 		return {
-			productName: getName( purchase ),
-			domain: purchaseType( purchase ),
-			purchasesError: getPurchasesError( state ),
-			userId: getCurrentUserId( state ),
+			productName: getName(purchase),
+			domain: purchaseType(purchase),
+			purchasesError: getPurchasesError(state),
+			userId: getCurrentUserId(state),
 		};
 	},
 	{
 		recordTracksEvent,
 		removePurchase,
 	}
-)( localize( GSuiteCancelPurchaseDialog ) );
+)(localize(GSuiteCancelPurchaseDialog));

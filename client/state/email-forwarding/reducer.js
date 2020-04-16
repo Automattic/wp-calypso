@@ -28,8 +28,8 @@ import {
 } from 'state/action-types';
 import { forwardsSchema, mxSchema, typeSchema } from './schema';
 
-export const requestingReducer = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requestingReducer = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case EMAIL_FORWARDING_REQUEST:
 			return true;
 		case EMAIL_FORWARDING_REQUEST_SUCCESS:
@@ -39,14 +39,14 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	}
 
 	return state;
-} );
+});
 
-const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) => {
+const handleCreateRequest = (forwards, { domainName, mailbox, destination }) => {
 	return orderBy(
 		[
-			...( forwards || [] ),
+			...(forwards || []),
 			{
-				email: `${ mailbox }@${ domainName }`,
+				email: `${mailbox}@${domainName}`,
 				mailbox,
 				domain: domainName,
 				forward_address: destination,
@@ -54,14 +54,14 @@ const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) =
 				temporary: true,
 			},
 		],
-		[ 'mailbox' ],
-		[ 'asc' ]
+		['mailbox'],
+		['asc']
 	);
 };
 
-const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
-	return ( forwards || [] ).map( forward => {
-		if ( forward.mailbox === mailbox ) {
+const handleCreateRequestSuccess = (forwards, { mailbox, verified }) => {
+	return (forwards || []).map((forward) => {
+		if (forward.mailbox === mailbox) {
 			return {
 				...forward,
 				active: verified,
@@ -69,33 +69,33 @@ const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
 			};
 		}
 		return forward;
-	} );
+	});
 };
 
-const handleCreateRequestFailure = ( forwards, { mailbox } ) => {
-	return ( forwards || [] ).filter(
-		forward => forward.mailbox !== mailbox || forward.temporary !== true
+const handleCreateRequestFailure = (forwards, { mailbox }) => {
+	return (forwards || []).filter(
+		(forward) => forward.mailbox !== mailbox || forward.temporary !== true
 	);
 };
 
-const handleRemoveRequestSuccess = ( forwards, { mailbox } ) => {
-	return ( forwards || [] ).filter( forward => mailbox !== forward.mailbox );
+const handleRemoveRequestSuccess = (forwards, { mailbox }) => {
+	return (forwards || []).filter((forward) => mailbox !== forward.mailbox);
 };
 
-const changeMailBoxTemporary = temporary => ( forwards, { mailbox } ) => {
-	return ( forwards || [] ).map( forward => {
-		if ( mailbox === forward.mailbox ) {
+const changeMailBoxTemporary = (temporary) => (forwards, { mailbox }) => {
+	return (forwards || []).map((forward) => {
+		if (mailbox === forward.mailbox) {
 			return {
 				...forward,
 				temporary,
 			};
 		}
 		return forward;
-	} );
+	});
 };
 
-export const typeReducer = withSchemaValidation( typeSchema, ( state = null, action ) => {
-	switch ( action.type ) {
+export const typeReducer = withSchemaValidation(typeSchema, (state = null, action) => {
+	switch (action.type) {
 		case EMAIL_FORWARDING_REQUEST:
 			return null;
 		case EMAIL_FORWARDING_REQUEST_FAILURE:
@@ -109,10 +109,10 @@ export const typeReducer = withSchemaValidation( typeSchema, ( state = null, act
 	}
 
 	return state;
-} );
+});
 
-export const mxServersReducer = withSchemaValidation( mxSchema, ( state = null, action ) => {
-	switch ( action.type ) {
+export const mxServersReducer = withSchemaValidation(mxSchema, (state = null, action) => {
+	switch (action.type) {
 		case EMAIL_FORWARDING_REQUEST:
 			return null;
 		case EMAIL_FORWARDING_REQUEST_FAILURE:
@@ -126,10 +126,10 @@ export const mxServersReducer = withSchemaValidation( mxSchema, ( state = null, 
 	}
 
 	return state;
-} );
+});
 
-export const forwardsReducer = withSchemaValidation( forwardsSchema, ( state = null, action ) => {
-	switch ( action.type ) {
+export const forwardsReducer = withSchemaValidation(forwardsSchema, (state = null, action) => {
+	switch (action.type) {
 		case EMAIL_FORWARDING_REQUEST:
 			return null;
 		case EMAIL_FORWARDING_REQUEST_FAILURE:
@@ -141,30 +141,30 @@ export const forwardsReducer = withSchemaValidation( forwardsSchema, ( state = n
 			return forwards || [];
 		}
 		case EMAIL_FORWARDING_ADD_REQUEST:
-			return handleCreateRequest( state, action );
+			return handleCreateRequest(state, action);
 		case EMAIL_FORWARDING_ADD_REQUEST_SUCCESS:
-			return handleCreateRequestSuccess( state, action );
+			return handleCreateRequestSuccess(state, action);
 		case EMAIL_FORWARDING_ADD_REQUEST_FAILURE:
-			return handleCreateRequestFailure( state, action );
+			return handleCreateRequestFailure(state, action);
 		case EMAIL_FORWARDING_REMOVE_REQUEST:
-			return changeMailBoxTemporary( true )( state, action );
+			return changeMailBoxTemporary(true)(state, action);
 		case EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS:
-			return handleRemoveRequestSuccess( state, action );
+			return handleRemoveRequestSuccess(state, action);
 		case EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE:
-			return changeMailBoxTemporary( false )( state, action );
+			return changeMailBoxTemporary(false)(state, action);
 		case EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST:
-			return changeMailBoxTemporary( true )( state, action );
+			return changeMailBoxTemporary(true)(state, action);
 		case EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS:
-			return changeMailBoxTemporary( false )( state, action );
+			return changeMailBoxTemporary(false)(state, action);
 		case EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE:
-			return changeMailBoxTemporary( false )( state, action );
+			return changeMailBoxTemporary(false)(state, action);
 	}
 
 	return state;
-} );
+});
 
-export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requestErrorReducer = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case EMAIL_FORWARDING_REQUEST:
 			return false;
 		case EMAIL_FORWARDING_REQUEST_SUCCESS:
@@ -178,15 +178,15 @@ export const requestErrorReducer = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+});
 
 export default keyedReducer(
 	'domainName',
-	combineReducers( {
+	combineReducers({
 		forwards: forwardsReducer,
 		mxServers: mxServersReducer,
 		requesting: requestingReducer,
 		requestError: requestErrorReducer,
 		type: typeReducer,
-	} )
+	})
 );

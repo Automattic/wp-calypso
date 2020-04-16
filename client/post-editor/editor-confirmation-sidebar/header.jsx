@@ -20,7 +20,7 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 
 		return (
 			<div className="editor-confirmation-sidebar__header">
-				{ translate(
+				{translate(
 					'{{strong}}Almost there!{{/strong}} ' +
 						'Double-check your settings, then ' +
 						'press the "Publish!" button.',
@@ -32,7 +32,7 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 							strong: <strong />,
 						},
 					}
-				) }
+				)}
 			</div>
 		);
 	}
@@ -42,7 +42,7 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 
 		return (
 			<div className="editor-confirmation-sidebar__header">
-				{ translate(
+				{translate(
 					'{{strong}}Almost there!{{/strong}} ' +
 						'Double-check your settings below, then ' +
 						'press the "Schedule!" button.',
@@ -54,15 +54,15 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 							strong: <strong />,
 						},
 					}
-				) }
+				)}
 			</div>
 		);
 	}
 
 	render() {
-		const isScheduled = utils.isFutureDated( this.props.post );
+		const isScheduled = utils.isFutureDated(this.props.post);
 
-		if ( isScheduled ) {
+		if (isScheduled) {
 			return this.renderScheduleHeader();
 		}
 
@@ -70,4 +70,4 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 	}
 }
 
-export default localize( EditorConfirmationSidebarHeader );
+export default localize(EditorConfirmationSidebarHeader);

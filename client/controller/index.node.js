@@ -15,9 +15,9 @@ import LayoutLoggedOut from 'layout/logged-out';
  */
 export { setSection, setUpLocale } from './shared.js';
 
-const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
-	<ReduxProvider store={ store }>
-		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+const ReduxWrappedLoggedOutLayout = ({ store, primary, secondary, redirectUri }) => (
+	<ReduxProvider store={store}>
+		<LayoutLoggedOut primary={primary} secondary={secondary} redirectUri={redirectUri} />
 	</ReduxProvider>
 );
 
@@ -28,12 +28,12 @@ const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri }
  * Produce a `LayoutLoggedOut` element in `context.layout`, using
  * `context.primary` and `context.secondary` to populate it.
  */
-export const makeLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
+export const makeLayout = makeLayoutMiddleware(ReduxWrappedLoggedOutLayout);
 
-export function redirectLoggedIn( { isLoggedIn, res }, next ) {
+export function redirectLoggedIn({ isLoggedIn, res }, next) {
 	// TODO: Make it work also for development env
-	if ( isLoggedIn ) {
-		res.redirect( '/' );
+	if (isLoggedIn) {
+		res.redirect('/');
 		return;
 	}
 

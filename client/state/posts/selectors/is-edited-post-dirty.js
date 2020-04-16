@@ -30,45 +30,45 @@ import 'state/posts/init';
  * @returns {boolean}        Whether dirty fields exist
  */
 export const isEditedPostDirty = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
-		const edits = getPostEdits( state, siteId, postId );
+	(state, siteId, postId) => {
+		const post = getSitePost(state, siteId, postId);
+		const edits = getPostEdits(state, siteId, postId);
 
-		const editsDirty = some( edits, ( value, key ) => {
-			if ( key === 'type' ) {
+		const editsDirty = some(edits, (value, key) => {
+			if (key === 'type') {
 				return false;
 			}
 
-			if ( post ) {
-				switch ( key ) {
+			if (post) {
+				switch (key) {
 					case 'author': {
-						return ! isAuthorEqual( value, post.author );
+						return !isAuthorEqual(value, post.author);
 					}
 					case 'date': {
-						return ! isDateEqual( value, post.date );
+						return !isDateEqual(value, post.date);
 					}
 					case 'discussion': {
-						return ! isDiscussionEqual( value, post.discussion );
+						return !isDiscussionEqual(value, post.discussion);
 					}
 					case 'featured_image': {
-						return value !== getFeaturedImageId( post );
+						return value !== getFeaturedImageId(post);
 					}
 					case 'metadata': {
-						return ! areAllMetadataEditsApplied( value, post.metadata );
+						return !areAllMetadataEditsApplied(value, post.metadata);
 					}
 					case 'parent': {
-						return get( post, 'parent.ID', 0 ) !== value;
+						return get(post, 'parent.ID', 0) !== value;
 					}
 				}
-				return post[ key ] !== value;
+				return post[key] !== value;
 			}
 
-			return ! ( key in DEFAULT_NEW_POST_VALUES ) || value !== DEFAULT_NEW_POST_VALUES[ key ];
-		} );
+			return !(key in DEFAULT_NEW_POST_VALUES) || value !== DEFAULT_NEW_POST_VALUES[key];
+		});
 
 		const { initial, current } = state.ui.editor.rawContent;
 		const rawContentDirty = initial !== current;
 		return editsDirty || rawContentDirty;
 	},
-	state => [ state.posts.queries, state.posts.edits, state.ui.editor.rawContent ]
+	(state) => [state.posts.queries, state.posts.edits, state.ui.editor.rawContent]
 );

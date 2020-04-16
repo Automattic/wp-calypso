@@ -39,7 +39,7 @@ class StatsBanners extends Component {
 		slug: PropTypes.string.isRequired,
 	};
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return (
 			this.props.isGSuiteStatsNudgeVisible !== nextProps.isGSuiteStatsNudgeVisible ||
 			this.props.isUpworkStatsNudgeVisible !== nextProps.isUpworkStatsNudgeVisible ||
@@ -51,11 +51,11 @@ class StatsBanners extends Component {
 	}
 
 	renderBanner() {
-		if ( this.showUpworkBanner() ) {
+		if (this.showUpworkBanner()) {
 			return this.renderUpworkBanner();
-		} else if ( this.showGSuiteBanner() ) {
+		} else if (this.showGSuiteBanner()) {
 			return this.renderGSuiteBanner();
-		} else if ( this.showGoogleMyBusinessBanner() ) {
+		} else if (this.showGoogleMyBusinessBanner()) {
 			return this.renderGoogleMyBusinessBanner();
 		}
 	}
@@ -65,10 +65,10 @@ class StatsBanners extends Component {
 
 		return (
 			<GoogleMyBusinessStatsNudge
-				siteSlug={ slug }
-				siteId={ siteId }
-				visible={ isGoogleMyBusinessStatsNudgeVisible }
-				primaryButton={ primaryButton }
+				siteSlug={slug}
+				siteId={siteId}
+				visible={isGoogleMyBusinessStatsNudgeVisible}
+				primaryButton={primaryButton}
 			/>
 		);
 	}
@@ -78,10 +78,10 @@ class StatsBanners extends Component {
 
 		return (
 			<GSuiteStatsNudge
-				siteSlug={ slug }
-				siteId={ siteId }
-				domainSlug={ gsuiteDomainName }
-				primaryButton={ primaryButton }
+				siteSlug={slug}
+				siteId={siteId}
+				domainSlug={gsuiteDomainName}
+				primaryButton={primaryButton}
 			/>
 		);
 	}
@@ -89,13 +89,11 @@ class StatsBanners extends Component {
 	renderUpworkBanner() {
 		const { siteId, slug, primaryButton } = this.props;
 
-		return <UpworkStatsNudge siteSlug={ slug } siteId={ siteId } primaryButton={ primaryButton } />;
+		return <UpworkStatsNudge siteSlug={slug} siteId={siteId} primaryButton={primaryButton} />;
 	}
 
 	showGoogleMyBusinessBanner() {
-		return (
-			config.isEnabled( 'google-my-business' ) && this.props.isGoogleMyBusinessStatsNudgeVisible
-		);
+		return config.isEnabled('google-my-business') && this.props.isGoogleMyBusinessStatsNudgeVisible;
 	}
 
 	showGSuiteBanner() {
@@ -104,7 +102,7 @@ class StatsBanners extends Component {
 
 	showUpworkBanner() {
 		return (
-			abtest( 'builderReferralStatsNudge' ) === 'builderReferralBanner' &&
+			abtest('builderReferralStatsNudge') === 'builderReferralBanner' &&
 			this.props.isUpworkStatsNudgeVisible
 		);
 	}
@@ -112,39 +110,39 @@ class StatsBanners extends Component {
 	render() {
 		const { gsuiteDomainName, isAllowedToManageSite, planSlug, siteId, domains } = this.props;
 
-		if ( isEmpty( domains ) ) {
+		if (isEmpty(domains)) {
 			return null;
 		}
 
 		return (
 			<Fragment>
-				{ gsuiteDomainName && isAllowedToManageSite && (
-					<QueryEmailForwards domainName={ gsuiteDomainName } />
-				) }
+				{gsuiteDomainName && isAllowedToManageSite && (
+					<QueryEmailForwards domainName={gsuiteDomainName} />
+				)}
 
-				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
+				{siteId && <QuerySiteDomains siteId={siteId} />}
 
-				{ isEcommercePlan( planSlug ) && <ECommerceManageNudge siteId={ siteId } /> }
+				{isEcommercePlan(planSlug) && <ECommerceManageNudge siteId={siteId} />}
 
-				{ this.renderBanner() }
+				{this.renderBanner()}
 			</Fragment>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const domains = getDomainsBySiteId( state, ownProps.siteId );
+export default connect((state, ownProps) => {
+	const domains = getDomainsBySiteId(state, ownProps.siteId);
 
 	return {
 		domains,
-		gsuiteDomainName: getEligibleGSuiteDomain( null, domains ),
-		isAllowedToManageSite: canCurrentUser( state, ownProps.siteId, 'manage_options' ),
+		gsuiteDomainName: getEligibleGSuiteDomain(null, domains),
+		isAllowedToManageSite: canCurrentUser(state, ownProps.siteId, 'manage_options'),
 		isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
 			state,
 			ownProps.siteId
 		),
 		isGSuiteStatsNudgeVisible: false,
-		isUpworkStatsNudgeVisible: ! isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
-		planSlug: getSitePlanSlug( state, ownProps.siteId ),
+		isUpworkStatsNudgeVisible: !isUpworkStatsNudgeDismissed(state, ownProps.siteId),
+		planSlug: getSitePlanSlug(state, ownProps.siteId),
 	};
-} )( localize( StatsBanners ) );
+})(localize(StatsBanners));

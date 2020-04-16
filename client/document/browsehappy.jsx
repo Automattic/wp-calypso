@@ -10,18 +10,14 @@ import Head from 'components/head';
 import EmptyContent from 'components/empty-content';
 import { chunkCssLinks } from './utils';
 
-function Browsehappy( { faviconURL, entrypoint, dashboardUrl } ) {
+function Browsehappy({ faviconURL, entrypoint, dashboardUrl }) {
 	return (
 		<html lang="en">
-			<Head
-				title="Unsupported Browser — WordPress.com"
-				faviconURL={ faviconURL }
-				cdn={ '//s1.wp.com' }
-			>
-				{ chunkCssLinks( entrypoint ) }
+			<Head title="Unsupported Browser — WordPress.com" faviconURL={faviconURL} cdn={'//s1.wp.com'}>
+				{chunkCssLinks(entrypoint)}
 			</Head>
 			<body>
-				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }
+				{/* eslint-disable wpcalypso/jsx-classname-namespace*/}
 				<div id="wpcom" className="wpcom-site">
 					<div className="layout has-no-sidebar">
 						<div className="layout__content" id="content">
@@ -30,9 +26,9 @@ function Browsehappy( { faviconURL, entrypoint, dashboardUrl } ) {
 									<EmptyContent
 										illustration="/calypso/images/drake/drake-browser.svg"
 										title="Unsupported Browser"
-										line={ [
+										line={[
 											'Unfortunately this page cannot be used by your browser. You can either ',
-											<a key="dashboard-link" href={ dashboardUrl }>
+											<a key="dashboard-link" href={dashboardUrl}>
 												use the classic WordPress dashboard
 											</a>,
 											', or ',
@@ -40,14 +36,14 @@ function Browsehappy( { faviconURL, entrypoint, dashboardUrl } ) {
 												upgrade your browser
 											</a>,
 											'.',
-										] }
+										]}
 									/>
 								</main>
 							</div>
 						</div>
 					</div>
 				</div>
-				{ /* eslint-enable wpcalypso/jsx-classname-namespace*/ }
+				{/* eslint-enable wpcalypso/jsx-classname-namespace*/}
 			</body>
 		</html>
 	);

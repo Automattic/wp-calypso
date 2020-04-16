@@ -36,53 +36,53 @@ class StepImportOrMigrate extends Component {
 		chosenImportType: null,
 	};
 
-	chooseImportType = type => {
-		this.setState( { chosenImportType: type } );
+	chooseImportType = (type) => {
+		this.setState({ chosenImportType: type });
 	};
 
-	onJetpackSelect = event => {
+	onJetpackSelect = (event) => {
 		const { isTargetSiteAtomic } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {
+		this.props.recordTracksEvent('calypso_importer_wordpress_select', {
 			is_atomic: isTargetSiteAtomic,
 			migration_type: 'migration',
-		} );
+		});
 
-		this.props.onJetpackSelect( event );
+		this.props.onJetpackSelect(event);
 	};
 
 	handleImportRedirect = () => {
 		const { isTargetSiteAtomic, targetSiteSlug } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {
+		this.props.recordTracksEvent('calypso_importer_wordpress_select', {
 			is_atomic: isTargetSiteAtomic,
 			migration_type: 'content',
-		} );
+		});
 
-		const destinationURL = getImportSectionLocation( targetSiteSlug, isTargetSiteAtomic );
+		const destinationURL = getImportSectionLocation(targetSiteSlug, isTargetSiteAtomic);
 
-		if ( isTargetSiteAtomic ) {
+		if (isTargetSiteAtomic) {
 			window.location.href = destinationURL;
 		} else {
-			redirectTo( destinationURL );
+			redirectTo(destinationURL);
 		}
 	};
 
 	isTargetSitePlanCompatible = () => {
 		const { targetSite } = this.props;
-		const planSlug = get( targetSite, 'plan.product_slug' );
+		const planSlug = get(targetSite, 'plan.product_slug');
 
-		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
+		return planSlug && planHasFeature(planSlug, FEATURE_UPLOAD_THEMES_PLUGINS);
 	};
 
 	getJetpackOrUpgradeMessage = () => {
 		const { sourceSiteInfo, sourceHasJetpack, isTargetSiteAtomic, translate } = this.props;
 
-		if ( ! sourceHasJetpack ) {
-			const sourceSiteDomain = get( sourceSiteInfo, 'site_url', '' );
+		if (!sourceHasJetpack) {
+			const sourceSiteDomain = get(sourceSiteInfo, 'site_url', '');
 			return (
 				<p>
-					{ translate(
+					{translate(
 						'You need to have Jetpack installed on your site to' +
 							' be able to import everything.' +
 							' {{jetpackInstallLink}}Install' +
@@ -90,22 +90,22 @@ class StepImportOrMigrate extends Component {
 						{
 							components: {
 								jetpackInstallLink: (
-									<a href={ `https://wordpress.com/jetpack/connect/?url=${ sourceSiteDomain }` } />
+									<a href={`https://wordpress.com/jetpack/connect/?url=${sourceSiteDomain}`} />
 								),
 							},
 						}
-					) }
+					)}
 				</p>
 			);
 		}
 
-		if ( ! isTargetSiteAtomic ) {
-			return <p>{ translate( 'Import your entire site with the Business Plan.' ) }</p>;
+		if (!isTargetSiteAtomic) {
+			return <p>{translate('Import your entire site with the Business Plan.')}</p>;
 		}
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_importer_wordpress_type_viewed' );
+		this.props.recordTracksEvent('calypso_importer_wordpress_type_viewed');
 	}
 
 	render() {
@@ -117,32 +117,32 @@ class StepImportOrMigrate extends Component {
 			sourceSiteInfo,
 			translate,
 		} = this.props;
-		const backHref = `/migrate/${ targetSiteSlug }`;
+		const backHref = `/migrate/${targetSiteSlug}`;
 
 		const everythingLabels = [];
-		if ( ! this.isTargetSitePlanCompatible() ) {
-			everythingLabels.push( translate( 'Upgrade' ) );
+		if (!this.isTargetSitePlanCompatible()) {
+			everythingLabels.push(translate('Upgrade'));
 		}
 
 		return (
 			<>
-				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
+				<HeaderCake backHref={backHref}>Import from WordPress</HeaderCake>
 
 				<SitesBlock
-					sourceSite={ sourceSite }
-					sourceSiteInfo={ sourceSiteInfo }
-					targetSite={ targetSite }
+					sourceSite={sourceSite}
+					sourceSiteInfo={sourceSiteInfo}
+					targetSite={targetSite}
 				/>
 
 				<CompactCard>
-					<CardHeading>{ translate( 'What do you want to import?' ) }</CardHeading>
+					<CardHeading>{translate('What do you want to import?')}</CardHeading>
 
-					{ this.getJetpackOrUpgradeMessage() }
+					{this.getJetpackOrUpgradeMessage()}
 					<ImportTypeChoice
-						onChange={ this.chooseImportType }
-						radioOptions={ {
+						onChange={this.chooseImportType}
+						radioOptions={{
 							everything: {
-								title: translate( 'Everything' ),
+								title: translate('Everything'),
 								labels: everythingLabels,
 								description: translate(
 									"All your site's content, themes, plugins, users and settings"
@@ -151,26 +151,26 @@ class StepImportOrMigrate extends Component {
 							},
 							'content-only': {
 								key: 'content-only',
-								title: translate( 'Content only' ),
-								description: translate( 'Import posts, pages, comments, and media.' ),
+								title: translate('Content only'),
+								description: translate('Import posts, pages, comments, and media.'),
 								enabled: true,
 							},
-						} }
+						}}
 					/>
 					<div className="migrate__buttons-wrapper">
-						{ this.state.chosenImportType === 'everything' ? (
-							<Button primary onClick={ this.onJetpackSelect }>
-								{ translate( 'Continue' ) }
+						{this.state.chosenImportType === 'everything' ? (
+							<Button primary onClick={this.onJetpackSelect}>
+								{translate('Continue')}
 							</Button>
-						) : null }
-						{ this.state.chosenImportType === 'content-only' ? (
-							<Button primary onClick={ this.handleImportRedirect }>
-								{ translate( 'Continue' ) }
+						) : null}
+						{this.state.chosenImportType === 'content-only' ? (
+							<Button primary onClick={this.handleImportRedirect}>
+								{translate('Continue')}
 							</Button>
-						) : null }
+						) : null}
 
-						<Button className="migrate__cancel" href={ backHref }>
-							{ translate( 'Cancel' ) }
+						<Button className="migrate__cancel" href={backHref}>
+							{translate('Cancel')}
 						</Button>
 					</div>
 				</CompactCard>
@@ -179,4 +179,4 @@ class StepImportOrMigrate extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( StepImportOrMigrate ) );
+export default connect(null, { recordTracksEvent })(localize(StepImportOrMigrate));

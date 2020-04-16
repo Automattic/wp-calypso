@@ -6,8 +6,8 @@ import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_DESIGN_TYPE_SET } from 'state/actio
 import { withSchemaValidation } from 'state/utils';
 import { designTypeSchema } from './schema';
 
-export default withSchemaValidation( designTypeSchema, ( state = '', action ) => {
-	switch ( action.type ) {
+export default withSchemaValidation(designTypeSchema, (state = '', action) => {
+	switch (action.type) {
 		case SIGNUP_STEPS_DESIGN_TYPE_SET: {
 			return action.designType;
 		}
@@ -17,4 +17,4 @@ export default withSchemaValidation( designTypeSchema, ( state = '', action ) =>
 	}
 
 	return state;
-} );
+});

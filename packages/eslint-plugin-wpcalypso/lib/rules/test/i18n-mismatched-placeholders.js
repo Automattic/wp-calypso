@@ -9,15 +9,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-mismatched-placeholders' ),
+const rule = require('../../../lib/rules/i18n-mismatched-placeholders'),
 	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-mismatched-placeholders', rule, {
+new RuleTester(config).run('i18n-mismatched-placeholders', rule, {
 	valid: [
 		{
 			code: "translate( 'Hello %s' );",
@@ -61,4 +61,4 @@ new RuleTester( config ).run( 'i18n-mismatched-placeholders', rule, {
 			],
 		},
 	],
-} );
+});

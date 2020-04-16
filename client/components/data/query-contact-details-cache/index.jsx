@@ -17,7 +17,7 @@ import { requestContactDetailsCache } from 'state/domains/management/actions';
 
 class QueryContactDetailsCache extends Component {
 	UNSAFE_componentWillMount() {
-		if ( this.props.isRequesting || ! isEmpty( this.props.contactDetailsCache ) ) {
+		if (this.props.isRequesting || !isEmpty(this.props.contactDetailsCache)) {
 			return;
 		}
 		this.props.requestContactDetailsCache();
@@ -34,9 +34,9 @@ QueryContactDetailsCache.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		contactDetailsCache: getContactDetailsCache( state ),
-		isRequesting: isRequestingContactDetailsCache( state ),
-	} ),
+	(state) => ({
+		contactDetailsCache: getContactDetailsCache(state),
+		isRequesting: isRequestingContactDetailsCache(state),
+	}),
 	{ requestContactDetailsCache }
-)( QueryContactDetailsCache );
+)(QueryContactDetailsCache);

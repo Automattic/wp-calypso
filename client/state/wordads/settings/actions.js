@@ -18,7 +18,7 @@ import 'state/data-layer/wpcom/wordads/settings';
  * @param   {number} siteId Site ID
  * @returns {object}        Action object
  */
-export function requestWordadsSettings( siteId ) {
+export function requestWordadsSettings(siteId) {
 	return {
 		type: WORDADS_SETTINGS_REQUEST,
 		siteId,
@@ -32,7 +32,7 @@ export function requestWordadsSettings( siteId ) {
  * @param   {object} settings The received WordAds settings
  * @returns {object}          Action object
  */
-export function receiveWordadsSettings( siteId, settings ) {
+export function receiveWordadsSettings(siteId, settings) {
 	return {
 		type: WORDADS_SETTINGS_RECEIVE,
 		siteId,
@@ -47,7 +47,7 @@ export function receiveWordadsSettings( siteId, settings ) {
  * @param   {object} settings The new WordAds settings
  * @returns {object}          Action object
  */
-export function saveWordadsSettings( siteId, settings ) {
+export function saveWordadsSettings(siteId, settings) {
 	return {
 		type: WORDADS_SETTINGS_SAVE,
 		siteId,
@@ -61,7 +61,7 @@ export function saveWordadsSettings( siteId, settings ) {
  * @param   {number} siteId   Site ID
  * @returns {object}          Action object
  */
-export function saveWordadsSettingsSuccess( siteId ) {
+export function saveWordadsSettingsSuccess(siteId) {
 	return {
 		type: WORDADS_SETTINGS_SAVE_SUCCESS,
 		siteId,
@@ -74,7 +74,7 @@ export function saveWordadsSettingsSuccess( siteId ) {
  * @param   {number} siteId   Site ID
  * @returns {object}          Action object
  */
-export function saveWordadsSettingsFailure( siteId ) {
+export function saveWordadsSettingsFailure(siteId) {
 	return {
 		type: WORDADS_SETTINGS_SAVE_FAILURE,
 		siteId,
@@ -88,7 +88,7 @@ export function saveWordadsSettingsFailure( siteId ) {
  * @param   {object} settings The updated WordAds settings
  * @returns {object}          Action object
  */
-export function updateWordadsSettings( siteId, settings ) {
+export function updateWordadsSettings(siteId, settings) {
 	return {
 		type: WORDADS_SETTINGS_UPDATE,
 		siteId,

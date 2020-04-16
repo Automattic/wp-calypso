@@ -25,31 +25,31 @@ class Notices extends Component {
 	exportNotice() {
 		const { exportDidComplete, exportDidFail, exportDownloadURL, translate } = this.props;
 
-		if ( exportDidComplete ) {
+		if (exportDidComplete) {
 			return (
 				<Notice
 					status="is-success"
-					showDismiss={ false }
-					text={ translate(
+					showDismiss={false}
+					text={translate(
 						'Your export was successful! ' + 'A download link has also been sent to your email.'
-					) }
+					)}
 				>
-					<NoticeAction href={ exportDownloadURL }>{ translate( 'Download' ) }</NoticeAction>
+					<NoticeAction href={exportDownloadURL}>{translate('Download')}</NoticeAction>
 				</Notice>
 			);
 		}
-		if ( exportDidFail ) {
+		if (exportDidFail) {
 			return (
 				<Notice
 					status="is-error"
-					showDismiss={ false }
-					text={ translate(
+					showDismiss={false}
+					text={translate(
 						'There was a problem preparing your ' +
 							'export file. Please check your connection and try ' +
 							'again, or contact support.'
-					) }
+					)}
 				>
-					<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Get Help' ) }</NoticeAction>
+					<NoticeAction href={CALYPSO_CONTACT}>{translate('Get Help')}</NoticeAction>
 				</Notice>
 			);
 		}
@@ -60,21 +60,21 @@ class Notices extends Component {
 	render() {
 		return (
 			<div>
-				{ this.exportNotice() }
-				{ this.props.isGuidedTransferAwaitingPurchase && <CompletePurchaseNotice /> }
+				{this.exportNotice()}
+				{this.props.isGuidedTransferAwaitingPurchase && <CompletePurchaseNotice />}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => ( {
-	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
-	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
+const mapStateToProps = (state) => ({
+	exportDidComplete: getExportingState(state, getSelectedSiteId(state)) === States.COMPLETE,
+	exportDidFail: getExportingState(state, getSelectedSiteId(state)) === States.FAILED,
 	exportDownloadURL: state.exporter.downloadURL,
 	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase(
 		state,
-		getSelectedSiteId( state )
+		getSelectedSiteId(state)
 	),
-} );
+});
 
-export default connect( mapStateToProps )( localize( Notices ) );
+export default connect(mapStateToProps)(localize(Notices));

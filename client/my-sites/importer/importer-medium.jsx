@@ -15,12 +15,12 @@ class ImporterMedium extends React.PureComponent {
 	static displayName = 'ImporterMedium';
 
 	render() {
-		const importerData = importerConfig( {
+		const importerData = importerConfig({
 			siteTitle: this.props.siteTitle,
-		} ).medium;
+		}).medium;
 
-		return <FileImporter importerData={ importerData } { ...this.props } />;
+		return <FileImporter importerData={importerData} {...this.props} />;
 	}
 }
 
-export default localize( ImporterMedium );
+export default localize(ImporterMedium);

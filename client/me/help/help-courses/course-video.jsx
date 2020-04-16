@@ -9,7 +9,7 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 
-export default localize( props => {
+export default localize((props) => {
 	const { youtubeId } = props;
 
 	return (
@@ -17,10 +17,10 @@ export default localize( props => {
 			<div className="help-courses__course-video-embed">
 				<iframe
 					className="help-courses__course-video-embed-iframe"
-					src={ `https://www.youtube.com/embed/${ youtubeId }?rel=0&showinfo=0` }
+					src={`https://www.youtube.com/embed/${youtubeId}?rel=0&showinfo=0`}
 					allowFullScreen
 				/>
 			</div>
 		</div>
 	);
-} );
+});

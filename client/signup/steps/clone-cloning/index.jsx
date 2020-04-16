@@ -31,7 +31,7 @@ class CloneCloningStep extends Component {
 	goToActivityLog = () => {
 		const { originSiteSlug } = this.props;
 
-		page.redirect( `/activity-log/${ originSiteSlug }` );
+		page.redirect(`/activity-log/${originSiteSlug}`);
 	};
 
 	renderStepContent = () => {
@@ -121,14 +121,14 @@ class CloneCloningStep extends Component {
 					</g>
 				</svg>
 				<p className="clone-cloning__description">
-					{ translate(
+					{translate(
 						'Alrighty, Jetpack is cloning your site. You will be notified when the ' +
 							'clone process is finished or you can watch the progress in ' +
 							'real-time on the Activity Log.'
-					) }
+					)}
 				</p>
-				<Button primary className="clone-cloning__button" onClick={ this.goToActivityLog }>
-					{ translate( 'To the Activity Log!' ) }
+				<Button primary className="clone-cloning__button" onClick={this.goToActivityLog}>
+					{translate('To the Activity Log!')}
 				</Button>
 			</Card>
 		);
@@ -137,29 +137,29 @@ class CloneCloningStep extends Component {
 	render() {
 		const { flowName, stepName, positionInFlow, originSiteName, translate } = this.props;
 
-		const headerText = translate( "We're cloning %(originSiteName)s — sit tight!", {
+		const headerText = translate("We're cloning %(originSiteName)s — sit tight!", {
 			args: { originSiteName },
-		} );
+		});
 
 		return (
 			<StepWrapper
 				className="clone-cloning"
-				flowName={ flowName }
-				stepName={ stepName }
-				headerText={ headerText }
-				fallbackHeaderText={ headerText }
-				subHeaderText={ '' }
-				fallbackSubHeaderText={ '' }
-				positionInFlow={ positionInFlow }
-				stepContent={ this.renderStepContent() }
+				flowName={flowName}
+				stepName={stepName}
+				headerText={headerText}
+				fallbackHeaderText={headerText}
+				subHeaderText={''}
+				fallbackSubHeaderText={''}
+				positionInFlow={positionInFlow}
+				stepContent={this.renderStepContent()}
 			/>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	return {
-		originSiteName: get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' ),
-		originSiteSlug: get( ownProps, [ 'signupDependencies', 'originSiteSlug' ], '' ),
+		originSiteName: get(ownProps, ['signupDependencies', 'originSiteName'], ''),
+		originSiteSlug: get(ownProps, ['signupDependencies', 'originSiteSlug'], ''),
 	};
-} )( localize( CloneCloningStep ) );
+})(localize(CloneCloningStep));

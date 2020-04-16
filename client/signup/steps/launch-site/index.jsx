@@ -16,7 +16,7 @@ class LaunchSiteComponent extends Component {
 			{ stepName },
 			{ isPreLaunch: this.props.flowName === 'frankenflow' }
 		);
-		this.props.goToNextStep( flowName );
+		this.props.goToNextStep(flowName);
 	}
 
 	render() {
@@ -24,4 +24,4 @@ class LaunchSiteComponent extends Component {
 	}
 }
 
-export default connect( null, { submitSignupStep } )( LaunchSiteComponent );
+export default connect(null, { submitSignupStep })(LaunchSiteComponent);

@@ -22,7 +22,7 @@ export default class PopoverMenuItem extends Component {
 		focusOnHover: PropTypes.bool,
 		onMouseOver: PropTypes.func,
 		isExternalLink: PropTypes.bool,
-		itemComponent: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
+		itemComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 	};
 
 	static defaultProps = {
@@ -32,10 +32,10 @@ export default class PopoverMenuItem extends Component {
 		itemComponent: 'button',
 	};
 
-	handleMouseOver = event => {
+	handleMouseOver = (event) => {
 		const { focusOnHover } = this.props;
 
-		if ( focusOnHover ) {
+		if (focusOnHover) {
 			event.target.focus();
 		}
 
@@ -53,28 +53,28 @@ export default class PopoverMenuItem extends Component {
 			'className',
 			'itemComponent'
 		);
-		const classes = classnames( 'popover__menu-item', className, {
+		const classes = classnames('popover__menu-item', className, {
 			'is-selected': isSelected,
-		} );
+		});
 
 		let ItemComponent = this.props.itemComponent;
-		if ( isExternalLink && href ) {
+		if (isExternalLink && href) {
 			ItemComponent = ExternalLink;
 			itemProps.icon = true;
-		} else if ( href ) {
+		} else if (href) {
 			ItemComponent = 'a';
 		}
 
 		return (
 			<ItemComponent
 				role="menuitem"
-				onMouseOver={ this.handleMouseOver }
+				onMouseOver={this.handleMouseOver}
 				tabIndex="-1"
-				className={ classes }
-				{ ...itemProps }
+				className={classes}
+				{...itemProps}
 			>
-				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-				{ children }
+				{icon && <Gridicon icon={icon} size={18} />}
+				{children}
 			</ItemComponent>
 		);
 	}

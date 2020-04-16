@@ -36,38 +36,38 @@ const demoThemes = [
 export default class extends React.Component {
 	static displayName = 'ThemesListExample';
 
-	getActionLabel = theme => {
+	getActionLabel = (theme) => {
 		return theme.actionLabel;
 	};
 
-	getButtonOptions = themeId => {
+	getButtonOptions = (themeId) => {
 		return {
 			action1: {
 				label: 'Menu Item 1',
-				action: function() {
-					console.log( `Menu Item 1 for theme ${ themeId } selected` );
+				action: function () {
+					console.log(`Menu Item 1 for theme ${themeId} selected`);
 				},
 			},
 			action2: {
 				label: 'Menu Item 2',
-				action: function() {
-					console.log( `Menu Item 2 for theme ${ themeId } selected` );
+				action: function () {
+					console.log(`Menu Item 2 for theme ${themeId} selected`);
 				},
 			},
 		};
 	};
 
-	themeScreenshotClick = ( themeId, index ) => {
-		console.log( `Theme ${ themeId } at ${ index } clicked` );
+	themeScreenshotClick = (themeId, index) => {
+		console.log(`Theme ${themeId} at ${index} clicked`);
 	};
 
 	render() {
 		return (
 			<ThemesList
-				themes={ demoThemes }
-				getButtonOptions={ this.getButtonOptions }
-				getActionLabel={ this.getActionLabel }
-				onScreenshotClick={ this.themeScreenshotClick }
+				themes={demoThemes}
+				getButtonOptions={this.getButtonOptions}
+				getActionLabel={this.getActionLabel}
+				onScreenshotClick={this.themeScreenshotClick}
 			/>
 		);
 	}

@@ -15,8 +15,8 @@ export default class extends React.Component {
 	render() {
 		return (
 			<legend>
-				{ this.props.label }
-				<PreviewRequired { ...this.props } />
+				{this.props.label}
+				<PreviewRequired {...this.props} />
 			</legend>
 		);
 	}

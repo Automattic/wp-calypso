@@ -47,16 +47,16 @@ const statusMapping = {
  * @returns {Array} list of hold constants associated with issues listed in API response
  *
  */
-export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
+export const eligibilityHoldsFromApi = ({ errors = [] }, options = {}) =>
 	errors
-		.map( ( { code } ) => {
+		.map(({ code }) => {
 			//differentiate on the client between a launched private site vs an unlaunched site
-			if ( options.sitePrivateUnlaunched && code === 'site_private' ) {
+			if (options.sitePrivateUnlaunched && code === 'site_private') {
 				return eligibilityHolds.SITE_UNLAUNCHED;
 			}
-			return get( statusMapping, code, '' );
-		} )
-		.filter( identity );
+			return get(statusMapping, code, '');
+		})
+		.filter(identity);
 
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
@@ -65,14 +65,14 @@ export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
  * @param {object} response.warnings Lists of warnings by type, { plugins, themes }
  * @returns {Array} flat list of warnings with { name, description, supportUrl }
  */
-const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
-	Object.keys( warnings )
-		.reduce( ( list, type ) => list.concat( warnings[ type ] ), [] ) // combine plugin and theme warnings into one list
-		.map( ( { description, name, support_url } ) => ( {
+const eligibilityWarningsFromApi = ({ warnings = {} }) =>
+	Object.keys(warnings)
+		.reduce((list, type) => list.concat(warnings[type]), []) // combine plugin and theme warnings into one list
+		.map(({ description, name, support_url }) => ({
 			name,
 			description,
 			supportUrl: support_url,
-		} ) );
+		}));
 
 /**
  * Maps from API response to internal representation of automated transfer eligibility data
@@ -81,11 +81,11 @@ const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
  * @param {object} options object
  * @returns {object} Calypso eligibility information
  */
-const fromApi = ( data, options = {} ) => ( {
+const fromApi = (data, options = {}) => ({
 	lastUpdate: Date.now(),
-	eligibilityHolds: eligibilityHoldsFromApi( data, options ),
-	eligibilityWarnings: eligibilityWarningsFromApi( data ),
-} );
+	eligibilityHolds: eligibilityHoldsFromApi(data, options),
+	eligibilityWarnings: eligibilityWarningsFromApi(data),
+});
 
 /**
  * Build track events for eligibility status
@@ -93,25 +93,25 @@ const fromApi = ( data, options = {} ) => ( {
  * @param {object} data eligibility data from the api
  * @returns {object} An analytics event object
  */
-const trackEligibility = data => {
-	const isEligible = get( data, 'is_eligible', false );
-	const pluginWarnings = get( data, 'warnings.plugins', [] );
-	const widgetWarnings = get( data, 'warnings.widgets', [] );
-	const hasEligibilityWarnings = ! ( isEmpty( pluginWarnings ) && isEmpty( widgetWarnings ) );
+const trackEligibility = (data) => {
+	const isEligible = get(data, 'is_eligible', false);
+	const pluginWarnings = get(data, 'warnings.plugins', []);
+	const widgetWarnings = get(data, 'warnings.widgets', []);
+	const hasEligibilityWarnings = !(isEmpty(pluginWarnings) && isEmpty(widgetWarnings));
 
 	const eventProps = {
 		has_warnings: hasEligibilityWarnings,
-		plugins: map( pluginWarnings, 'id' ).join( ',' ),
-		widgets: map( widgetWarnings, 'id' ).join( ',' ),
+		plugins: map(pluginWarnings, 'id').join(','),
+		widgets: map(widgetWarnings, 'id').join(','),
 	};
 
-	if ( isEligible ) {
-		return recordTracksEvent( 'calypso_automated_transfer_eligibility_eligible', eventProps );
+	if (isEligible) {
+		return recordTracksEvent('calypso_automated_transfer_eligibility_eligible', eventProps);
 	}
 
 	// add holds to event props if the transfer is ineligible
-	eventProps.holds = eligibilityHoldsFromApi( data ).join( ',' );
-	return recordTracksEvent( 'calypso_automated_transfer_eligibility_ineligible', eventProps );
+	eventProps.holds = eligibilityHoldsFromApi(data).join(',');
+	return recordTracksEvent('calypso_automated_transfer_eligibility_ineligible', eventProps);
 };
 
 /**
@@ -121,35 +121,32 @@ const trackEligibility = data => {
  *
  * @returns {object} action
  */
-export const requestAutomatedTransferEligibility = action =>
+export const requestAutomatedTransferEligibility = (action) =>
 	http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/automated-transfers/eligibility`,
+			path: `/sites/${action.siteId}/automated-transfers/eligibility`,
 			apiVersion: '1',
 		},
 		action
 	);
 
-export const updateAutomatedTransferEligibility = ( { siteId }, data ) => (
-	dispatch,
-	getState
-) => {
-	const siteIsUnlaunched = isUnlaunchedSite( getState(), siteId );
+export const updateAutomatedTransferEligibility = ({ siteId }, data) => (dispatch, getState) => {
+	const siteIsUnlaunched = isUnlaunchedSite(getState(), siteId);
 	dispatch(
 		withAnalytics(
-			trackEligibility( data ),
-			updateEligibility( siteId, fromApi( data, { sitePrivateUnlaunched: siteIsUnlaunched } ) )
+			trackEligibility(data),
+			updateEligibility(siteId, fromApi(data, { sitePrivateUnlaunched: siteIsUnlaunched }))
 		)
 	);
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
-	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
+	[AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST]: [
+		dispatchRequest({
 			fetch: requestAutomatedTransferEligibility,
 			onSuccess: updateAutomatedTransferEligibility,
 			onError: () => {}, // noop
-		} ),
+		}),
 	],
-} );
+});

@@ -22,15 +22,9 @@ interface Props {
 	type: RewindFlowNoticeLevel;
 }
 
-const RewindFlowNotice: FunctionComponent< Props > = ( {
-	gridicon,
-	link,
-	message,
-	title,
-	type,
-} ) => {
+const RewindFlowNotice: FunctionComponent<Props> = ({ gridicon, link, message, title, type }) => {
 	const getTitleClassName = () => {
-		switch ( type ) {
+		switch (type) {
 			case RewindFlowNoticeLevel.NOTICE:
 				return 'rewind-flow-notice__title-notice';
 			case RewindFlowNoticeLevel.WARNING:
@@ -42,23 +36,23 @@ const RewindFlowNotice: FunctionComponent< Props > = ( {
 	};
 
 	const renderLink = () => (
-		<a className={ getTitleClassName() } href={ link } target="_blank" rel="noopener noreferrer">
-			<Gridicon icon={ gridicon } />
-			{ title }
+		<a className={getTitleClassName()} href={link} target="_blank" rel="noopener noreferrer">
+			<Gridicon icon={gridicon} />
+			{title}
 		</a>
 	);
 
 	const renderNonLink = () => (
-		<div className={ getTitleClassName() }>
-			<Gridicon icon={ gridicon } />
-			<h4>{ title }</h4>
+		<div className={getTitleClassName()}>
+			<Gridicon icon={gridicon} />
+			<h4>{title}</h4>
 		</div>
 	);
 
 	return (
 		<div className="rewind-flow-notice">
-			{ link ? renderLink() : renderNonLink() }
-			{ message && <p>{ message }</p> }
+			{link ? renderLink() : renderNonLink()}
+			{message && <p>{message}</p>}
 		</div>
 	);
 };

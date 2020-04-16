@@ -22,32 +22,30 @@ import DocumentHead from 'components/data/document-head';
  */
 import './style.scss';
 
-const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {
+const Taxonomies = ({ translate, labels, postType, site, taxonomy }) => {
 	const goBack = () => {
-		page( '/settings/writing/' + site.slug );
+		page('/settings/writing/' + site.slug);
 	};
 
 	return (
 		<div className="main main-column" role="main">
-			<DocumentHead
-				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
-			/>
-			<HeaderCake onClick={ goBack }>
-				<h1>{ labels.name }</h1>
+			<DocumentHead title={translate('Manage %(taxonomy)s', { args: { taxonomy: labels.name } })} />
+			<HeaderCake onClick={goBack}>
+				<h1>{labels.name}</h1>
 			</HeaderCake>
-			<TaxonomyManager taxonomy={ taxonomy } postType={ postType } />
+			<TaxonomyManager taxonomy={taxonomy} postType={postType} />
 		</div>
 	);
 };
 
 export default localize(
-	connect( ( state, { taxonomy, postType } ) => {
-		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
-		const labels = get( getPostTypeTaxonomy( state, siteId, postType, taxonomy ), 'labels', {} );
+	connect((state, { taxonomy, postType }) => {
+		const siteId = getSelectedSiteId(state);
+		const site = getSelectedSite(state);
+		const labels = get(getPostTypeTaxonomy(state, siteId, postType, taxonomy), 'labels', {});
 		return {
 			site,
 			labels,
 		};
-	} )( Taxonomies )
+	})(Taxonomies)
 );

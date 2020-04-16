@@ -10,26 +10,26 @@ import PropTypes from 'prop-types';
 import PriceInput from 'woocommerce/components/price-input';
 import FormField from './form-field';
 
-const CurrencyField = props => {
+const CurrencyField = (props) => {
 	const { fieldName, explanationText, placeholderText, value, edit, currency } = props;
 	const renderedValue = 'undefined' !== typeof value && null !== value ? value : '';
 
-	const onChange = e => {
+	const onChange = (e) => {
 		const newValue = e.target.value;
-		edit( fieldName, String( newValue ) );
+		edit(fieldName, String(newValue));
 	};
 
 	return (
-		<FormField { ...props }>
+		<FormField {...props}>
 			<PriceInput
 				noWrap
 				size="4"
-				id={ fieldName + '-label' }
-				aria-describedby={ explanationText && fieldName + '-description' }
-				currency={ currency }
-				value={ renderedValue }
-				placeholder={ placeholderText }
-				onChange={ onChange }
+				id={fieldName + '-label'}
+				aria-describedby={explanationText && fieldName + '-description'}
+				currency={currency}
+				value={renderedValue}
+				placeholder={placeholderText}
+				onChange={onChange}
 			/>
 		</FormField>
 	);

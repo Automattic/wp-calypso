@@ -21,7 +21,7 @@ import 'state/themes/init';
  * @param  {string}  themeId Theme ID
  * @returns {?object}         Theme object
  */
-export function getCanonicalTheme( state, siteId, themeId ) {
-	const source = find( [ 'wpcom', 'wporg', siteId ], s => getTheme( state, s, themeId ) );
-	return getTheme( state, source, themeId );
+export function getCanonicalTheme(state, siteId, themeId) {
+	const source = find(['wpcom', 'wporg', siteId], (s) => getTheme(state, s, themeId));
+	return getTheme(state, source, themeId);
 }

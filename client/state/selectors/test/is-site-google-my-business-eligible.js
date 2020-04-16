@@ -26,12 +26,12 @@ import {
 } from 'lib/plans/constants';
 import selectors from 'state/sites/selectors';
 
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock('state/sites/selectors', () => ({
 	getSitePlanSlug: jest.fn(),
-} ) );
+}));
 
-describe( 'siteHasEligibleWpcomPlan()', () => {
-	test( 'should return true if site has eligible WP.com plan', () => {
+describe('siteHasEligibleWpcomPlan()', () => {
+	test('should return true if site has eligible WP.com plan', () => {
 		const plans = [
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
@@ -40,14 +40,14 @@ describe( 'siteHasEligibleWpcomPlan()', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 		];
 
-		plans.forEach( plan => {
-			selectors.getSitePlanSlug.mockImplementation( () => plan );
+		plans.forEach((plan) => {
+			selectors.getSitePlanSlug.mockImplementation(() => plan);
 
-			expect( siteHasEligibleWpcomPlan() ).toBe( true );
-		} );
-	} );
+			expect(siteHasEligibleWpcomPlan()).toBe(true);
+		});
+	});
 
-	test( 'should return false if site does not have an eligible WP.com plan', () => {
+	test('should return false if site does not have an eligible WP.com plan', () => {
 		const plans = [
 			PLAN_FREE,
 			PLAN_BLOGGER,
@@ -65,10 +65,10 @@ describe( 'siteHasEligibleWpcomPlan()', () => {
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 		];
 
-		plans.forEach( plan => {
-			selectors.getSitePlanSlug.mockImplementation( () => plan );
+		plans.forEach((plan) => {
+			selectors.getSitePlanSlug.mockImplementation(() => plan);
 
-			expect( siteHasEligibleWpcomPlan() ).toBe( false );
-		} );
-	} );
-} );
+			expect(siteHasEligibleWpcomPlan()).toBe(false);
+		});
+	});
+});

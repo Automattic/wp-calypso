@@ -23,7 +23,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 /**
  * Module variables
  */
-const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
+const debug = debugFactory('calypso:analytics:PageViewTracker');
 
 export class PageViewTracker extends React.Component {
 	static displayName = 'PageViewTracker';
@@ -43,16 +43,16 @@ export class PageViewTracker extends React.Component {
 	};
 
 	componentDidMount() {
-		debug( 'Component has mounted.' );
+		debug('Component has mounted.');
 		this.queuePageView();
 	}
 
 	componentWillUnmount() {
-		debug( 'Component has unmounted.' );
-		clearTimeout( this.state.timer );
+		debug('Component has unmounted.');
+		clearTimeout(this.state.timer);
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
 			prevProps.path !== this.props.path ||
 			prevProps.selectedSiteId !== this.props.selectedSiteId
@@ -71,19 +71,19 @@ export class PageViewTracker extends React.Component {
 			properties,
 		} = this.props;
 
-		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
+		debug(`Queuing Page View: "${title}" at "${path}" with ${delay}ms delay`);
 
-		if ( ! hasSelectedSiteLoaded || this.state.timer ) {
+		if (!hasSelectedSiteLoaded || this.state.timer) {
 			return;
 		}
 
-		if ( ! delay ) {
-			return recorder( path, title, 'default', properties );
+		if (!delay) {
+			return recorder(path, title, 'default', properties);
 		}
 
-		this.setState( {
-			timer: setTimeout( () => recorder( path, title ), delay ),
-		} );
+		this.setState({
+			timer: setTimeout(() => recorder(path, title), delay),
+		});
 	};
 
 	render() {
@@ -91,15 +91,15 @@ export class PageViewTracker extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
+const mapStateToProps = (state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const selectedSiteSlug = getSiteSlug(state, selectedSiteId);
 	const currentSlug =
-		typeof window === 'undefined' ? '' : getSiteFragment( get( window, 'location.pathname', '' ) );
+		typeof window === 'undefined' ? '' : getSiteFragment(get(window, 'location.pathname', ''));
 
 	const hasSelectedSiteLoaded =
-		! currentSlug ||
-		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
+		!currentSlug ||
+		(isNumber(currentSlug) && currentSlug === selectedSiteId) ||
 		currentSlug === selectedSiteSlug;
 
 	return {
@@ -109,7 +109,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+	recorder: withEnhancers(recordPageView, [enhanceWithSiteType]),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );
+export default connect(mapStateToProps, mapDispatchToProps)(PageViewTracker);

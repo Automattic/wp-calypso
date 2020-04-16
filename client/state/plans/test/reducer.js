@@ -22,176 +22,176 @@ import plansReducer, {
 import { WPCOM_RESPONSE } from './fixture';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'reducer', () => {
+describe('reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox((newSandbox) => {
 		sandbox = newSandbox;
 		// mute off console warn
-		sandbox.stub( console, 'warn' );
-	} );
+		sandbox.stub(console, 'warn');
+	});
 
-	test( 'should export expected reducer keys', () => {
-		expect( plansReducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'error' ] );
-	} );
+	test('should export expected reducer keys', () => {
+		expect(plansReducer(undefined, {})).to.have.keys(['items', 'requesting', 'error']);
+	});
 
-	describe( '#items()', () => {
-		test( 'should default to an empty Array', () => {
-			expect( itemsReducer( undefined, [] ) ).to.eql( [] );
-		} );
+	describe('#items()', () => {
+		test('should default to an empty Array', () => {
+			expect(itemsReducer(undefined, [])).to.eql([]);
+		});
 
-		test( 'should index items state', () => {
+		test('should index items state', () => {
 			const initialState = undefined;
 			const plans = WPCOM_RESPONSE;
-			const action = plansReceiveAction( plans );
+			const action = plansReceiveAction(plans);
 			const expectedState = plans;
-			deepFreeze( expectedState );
+			deepFreeze(expectedState);
 
-			const newState = itemsReducer( initialState, action );
+			const newState = itemsReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
+			expect(newState).to.eql(expectedState);
+		});
 
-		test( 'should override plans', () => {
+		test('should override plans', () => {
 			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
-			const action = plansReceiveAction( plans );
+			const action = plansReceiveAction(plans);
 			const expectedState = plans;
 
-			deepFreeze( initialState );
-			deepFreeze( expectedState );
+			deepFreeze(initialState);
+			deepFreeze(expectedState);
 
-			const newState = itemsReducer( initialState, action );
+			const newState = itemsReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
+			expect(newState).to.eql(expectedState);
+		});
 
-		test( 'should persist state', () => {
+		test('should persist state', () => {
 			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
 			const action = { type: 'SERIALIZE' };
 			const expectedState = plans;
 
-			deepFreeze( initialState );
-			deepFreeze( expectedState );
+			deepFreeze(initialState);
+			deepFreeze(expectedState);
 
-			const newState = itemsReducer( initialState, action );
+			const newState = itemsReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
+			expect(newState).to.eql(expectedState);
+		});
 
-		test( 'should load persisted state', () => {
+		test('should load persisted state', () => {
 			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
 			const action = { type: 'DESERIALIZE' };
 			const expectedState = plans;
-			deepFreeze( initialState );
-			deepFreeze( expectedState );
+			deepFreeze(initialState);
+			deepFreeze(expectedState);
 
-			const newState = itemsReducer( initialState, action );
+			const newState = itemsReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
+			expect(newState).to.eql(expectedState);
+		});
 
-		test( 'should not load invalid persisted state', () => {
+		test('should not load invalid persisted state', () => {
 			// product_id should be `Number`
-			const plans = [ { product_id: '234234' } ];
+			const plans = [{ product_id: '234234' }];
 			const initialState = plans;
 			const action = { type: 'DESERIALIZE' };
-			deepFreeze( initialState );
+			deepFreeze(initialState);
 			const expectedState = [];
-			deepFreeze( expectedState );
+			deepFreeze(expectedState);
 
-			const newState = itemsReducer( initialState, action );
+			const newState = itemsReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
-	} );
+			expect(newState).to.eql(expectedState);
+		});
+	});
 
-	describe( '#requesting()', () => {
-		test( 'should return FALSE when initial state is undefined and action is unknown', () => {
-			expect( requestReducer( undefined, {} ) ).to.eql( false );
-		} );
+	describe('#requesting()', () => {
+		test('should return FALSE when initial state is undefined and action is unknown', () => {
+			expect(requestReducer(undefined, {})).to.eql(false);
+		});
 
-		test( 'should return TRUE when initial state is undefined and action is REQUEST', () => {
+		test('should return TRUE when initial state is undefined and action is REQUEST', () => {
 			const initialState = undefined;
 			const action = requestPlans();
 			const expectedState = true;
-			deepFreeze( expectedState );
+			deepFreeze(expectedState);
 
-			const newState = requestReducer( initialState, action );
+			const newState = requestReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
+			expect(newState).to.eql(expectedState);
+		});
 
-		test( 'should update `requesting` state on SUCCESS', () => {
+		test('should update `requesting` state on SUCCESS', () => {
 			const initialState = true;
 			const action = plansRequestSuccessAction();
 			const expectedState = false;
 
-			deepFreeze( initialState );
-			deepFreeze( expectedState );
+			deepFreeze(initialState);
+			deepFreeze(expectedState);
 
-			const newState = requestReducer( initialState, action );
+			const newState = requestReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
+			expect(newState).to.eql(expectedState);
+		});
 
-		test( 'should update `requesting` state on FAILURE', () => {
+		test('should update `requesting` state on FAILURE', () => {
 			const initialState = true;
 			const action = plansRequestFailureAction();
 			const expectedState = false;
 
-			deepFreeze( initialState );
-			deepFreeze( expectedState );
+			deepFreeze(initialState);
+			deepFreeze(expectedState);
 
-			const newState = requestReducer( initialState, action );
+			const newState = requestReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
-	} );
+			expect(newState).to.eql(expectedState);
+		});
+	});
 
-	describe( '#errors()', () => {
-		test( 'should return FALSE when initial state is undefined and action is unknown', () => {
-			expect( errorReducer( undefined, {} ) ).to.eql( false );
-		} );
+	describe('#errors()', () => {
+		test('should return FALSE when initial state is undefined and action is unknown', () => {
+			expect(errorReducer(undefined, {})).to.eql(false);
+		});
 
-		test( 'should set `error` state to TRUE on FAILURE', () => {
+		test('should set `error` state to TRUE on FAILURE', () => {
 			const initialState = undefined;
 			const action = plansRequestFailureAction();
 			const expectedState = true;
 
-			deepFreeze( expectedState );
+			deepFreeze(expectedState);
 
-			const newState = errorReducer( initialState, action );
+			const newState = errorReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
+			expect(newState).to.eql(expectedState);
+		});
 
-		test( 'should set `error` state to FALSE on REQUEST', () => {
+		test('should set `error` state to FALSE on REQUEST', () => {
 			const initialState = true;
 			const action = requestPlans();
 			const expectedState = false;
 
-			deepFreeze( initialState );
-			deepFreeze( expectedState );
+			deepFreeze(initialState);
+			deepFreeze(expectedState);
 
-			const newState = errorReducer( initialState, action );
+			const newState = errorReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
+			expect(newState).to.eql(expectedState);
+		});
 
-		test( 'should set `error` state to FALSE on SUCCESS', () => {
+		test('should set `error` state to FALSE on SUCCESS', () => {
 			const initialState = true;
 			const action = plansRequestSuccessAction();
 			const expectedState = false;
 
-			deepFreeze( initialState );
-			deepFreeze( expectedState );
+			deepFreeze(initialState);
+			deepFreeze(expectedState);
 
-			const newState = errorReducer( initialState, action );
+			const newState = errorReducer(initialState, action);
 
-			expect( newState ).to.eql( expectedState );
-		} );
-	} );
-} );
+			expect(newState).to.eql(expectedState);
+		});
+	});
+});

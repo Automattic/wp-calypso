@@ -22,29 +22,29 @@ import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-d
  * @param  {Array}  domains - list of domain objects
  * @returns {boolean} true if the nudge should be visible
  */
-export default function isGSuiteStatsNudgeVisible( state, siteId, domains ) {
-	if ( isGSuiteStatsNudgeDismissed( state, siteId ) ) {
+export default function isGSuiteStatsNudgeVisible(state, siteId, domains) {
+	if (isGSuiteStatsNudgeDismissed(state, siteId)) {
 		return false;
 	}
 
-	const eligibleDomain = getEligibleGSuiteDomain( null, domains );
+	const eligibleDomain = getEligibleGSuiteDomain(null, domains);
 
-	if ( ! eligibleDomain ) {
+	if (!eligibleDomain) {
 		return false;
 	}
 
-	const emailForwardingType = getEmailForwardingType( state, eligibleDomain );
+	const emailForwardingType = getEmailForwardingType(state, eligibleDomain);
 
-	if ( emailForwardingType !== null && emailForwardingType !== 'forward' ) {
+	if (emailForwardingType !== null && emailForwardingType !== 'forward') {
 		return false;
 	}
 
-	const forwards = getEmailForwards( state, eligibleDomain );
+	const forwards = getEmailForwards(state, eligibleDomain);
 
 	// Prevents the nudge from appearing until the list of email forwards has loaded to avoid flickering
-	if ( forwards === null ) {
+	if (forwards === null) {
 		return false;
 	}
 
-	return isEmpty( forwards );
+	return isEmpty(forwards);
 }

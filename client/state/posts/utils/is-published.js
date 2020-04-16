@@ -5,8 +5,8 @@ import { isBackDatedPublished } from 'state/posts/utils/is-back-dated-published'
 
 // Return published status of a post. Optionally, the `status` can be overridden
 // with a custom value: what would the post status be if a `status` edit was applied?
-export function isPublished( post, status ) {
-	if ( ! post ) {
+export function isPublished(post, status) {
+	if (!post) {
 		return false;
 	}
 
@@ -15,6 +15,6 @@ export function isPublished( post, status ) {
 	return (
 		effectiveStatus === 'publish' ||
 		effectiveStatus === 'private' ||
-		isBackDatedPublished( post, status )
+		isBackDatedPublished(post, status)
 	);
 }

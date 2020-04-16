@@ -24,9 +24,9 @@ function MockupChromeMobile() {
 	return (
 		<div className="signup-site-preview__chrome-mobile">
 			<span className="signup-site-preview__chrome-label">
-				{ translate( 'Phone Preview', {
+				{translate('Phone Preview', {
 					comment: 'Label for a phone-sized preview of a website',
-				} ) }
+				})}
 			</span>
 		</div>
 	);
@@ -42,7 +42,7 @@ function MockupChromeDesktop() {
 					<rect x="28" width="10" height="10" rx="5" />
 				</g>
 			</svg>
-			<span className="signup-site-preview__chrome-label">{ translate( 'Website Preview' ) }</span>
+			<span className="signup-site-preview__chrome-label">{translate('Website Preview')}</span>
 		</div>
 	);
 }
@@ -52,7 +52,7 @@ export class SignupSitePreview extends Component {
 		className: PropTypes.string,
 		cssUrl: PropTypes.string,
 		// The viewport device to show initially
-		defaultViewportDevice: PropTypes.oneOf( [ 'desktop', 'phone' ] ),
+		defaultViewportDevice: PropTypes.oneOf(['desktop', 'phone']),
 		fontUrl: PropTypes.string,
 		gutenbergStylesUrl: PropTypes.string,
 		isRtl: PropTypes.bool,
@@ -76,34 +76,34 @@ export class SignupSitePreview extends Component {
 		scrolling: true,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			isLoaded: false,
 			wrapperHeight: 800,
 		};
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
 			this.props.cssUrl !== prevProps.cssUrl ||
 			this.props.fontUrl !== prevProps.fontUrl ||
 			this.props.langSlug !== prevProps.langSlug
 		) {
-			this.setIsLoaded( false );
+			this.setIsLoaded(false);
 		}
 	}
 
-	setIsLoaded = isLoaded => this.setState( { isLoaded } );
-	setWrapperHeight = wrapperHeight => this.setState( { wrapperHeight } );
+	setIsLoaded = (isLoaded) => this.setState({ isLoaded });
+	setWrapperHeight = (wrapperHeight) => this.setState({ wrapperHeight });
 
 	render() {
 		const { isDesktop, isPhone, screenshotUrl } = this.props;
-		const className = classNames( this.props.className, 'signup-site-preview__wrapper', {
+		const className = classNames(this.props.className, 'signup-site-preview__wrapper', {
 			'is-desktop': isDesktop,
 			'is-phone': isPhone,
-		} );
-		const usingScreenshot = !! screenshotUrl;
+		});
+		const usingScreenshot = !!screenshotUrl;
 		const wrapperHeightStyle = {
 			height: usingScreenshot ? 'auto' : this.state.wrapperHeight,
 		};
@@ -111,25 +111,22 @@ export class SignupSitePreview extends Component {
 		const chrome = isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop />;
 
 		return (
-			<div className={ className } style={ this.props.resize ? wrapperHeightStyle : null }>
+			<div className={className} style={this.props.resize ? wrapperHeightStyle : null}>
 				<div className="signup-site-preview__iframe-wrapper">
-					{ chrome }
+					{chrome}
 
-					{ ! usingScreenshot && this.state.isLoading && <Spinner size={ isPhone ? 20 : 40 } /> }
-					{ ! usingScreenshot && (
+					{!usingScreenshot && this.state.isLoading && <Spinner size={isPhone ? 20 : 40} />}
+					{!usingScreenshot && (
 						<SignupSitePreviewIframe
-							{ ...this.props }
-							setIsLoaded={ this.setIsLoaded }
-							setWrapperHeight={ this.setWrapperHeight }
+							{...this.props}
+							setIsLoaded={this.setIsLoaded}
+							setWrapperHeight={this.setWrapperHeight}
 						/>
-					) }
+					)}
 
-					{ usingScreenshot && (
-						<SignupSitePreviewScreenshot
-							{ ...this.props }
-							setWrapperHeight={ this.setWrapperHeight }
-						/>
-					) }
+					{usingScreenshot && (
+						<SignupSitePreviewScreenshot {...this.props} setWrapperHeight={this.setWrapperHeight} />
+					)}
 				</div>
 			</div>
 		);
@@ -137,10 +134,10 @@ export class SignupSitePreview extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
+	(state, ownProps) => ({
 		isDesktop: 'desktop' === ownProps.defaultViewportDevice,
 		isPhone: 'phone' === ownProps.defaultViewportDevice,
-		screenshotUrl: getSiteVerticalPreviewScreenshot( state, ownProps.defaultViewportDevice ),
-	} ),
+		screenshotUrl: getSiteVerticalPreviewScreenshot(state, ownProps.defaultViewportDevice),
+	}),
 	null
-)( localize( SignupSitePreview ) );
+)(localize(SignupSitePreview));

@@ -19,24 +19,24 @@ import 'state/comments/init';
  * @param {Date} date Date to count comments for
  * @returns {number} total comments count in state
  */
-export function getPostCommentsCountAtDate( state, siteId, postId, date ) {
+export function getPostCommentsCountAtDate(state, siteId, postId, date) {
 	// Check the provided date
-	if ( ! isDate( date ) ) {
+	if (!isDate(date)) {
 		return 0;
 	}
 
-	const stateKey = getStateKey( siteId, postId );
-	const postComments = state.comments.items?.[ stateKey ];
+	const stateKey = getStateKey(siteId, postId);
+	const postComments = state.comments.items?.[stateKey];
 
-	if ( ! postComments ) {
+	if (!postComments) {
 		return 0;
 	}
 
 	// Count post comments with the specified date
 	const dateTimestamp = date.getTime() / 1000;
-	const postCommentsAtDate = filter( postComments, postComment => {
-		return Date.parse( postComment.date ) / 1000 === dateTimestamp;
-	} );
+	const postCommentsAtDate = filter(postComments, (postComment) => {
+		return Date.parse(postComment.date) / 1000 === dateTimestamp;
+	});
 
-	return size( postCommentsAtDate );
+	return size(postCommentsAtDate);
 }

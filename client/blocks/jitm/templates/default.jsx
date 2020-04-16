@@ -9,7 +9,7 @@ import { get } from 'lodash';
  */
 import Banner from 'components/banner';
 
-export default function DefaultTemplate( {
+export default function DefaultTemplate({
 	id,
 	CTA,
 	message,
@@ -20,26 +20,26 @@ export default function DefaultTemplate( {
 	trackImpression,
 	onClick,
 	onDismiss,
-} ) {
-	const isJetpack = icon && icon.indexOf( 'jetpack' ) !== -1;
+}) {
+	const isJetpack = icon && icon.indexOf('jetpack') !== -1;
 
 	return (
 		<>
-			{ trackImpression && trackImpression() }
+			{trackImpression && trackImpression()}
 			<Banner
-				callToAction={ CTA.message }
-				title={ message }
-				description={ description }
+				callToAction={CTA.message}
+				title={message}
+				description={description}
 				disableHref
-				dismissPreferenceName={ featureClass }
-				dismissTemporary={ true }
-				onDismiss={ onDismiss }
-				onClick={ onClick }
-				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
-				href={ CTA.link }
-				jetpack={ isJetpack }
-				horizontal={ isJetpack }
-				target={ '_blank' }
+				dismissPreferenceName={featureClass}
+				dismissTemporary={true}
+				onDismiss={onDismiss}
+				onClick={onClick}
+				event={get(tracks, ['click', 'name']) || `jitm_nudge_click_${id}`}
+				href={CTA.link}
+				jetpack={isJetpack}
+				horizontal={isJetpack}
+				target={'_blank'}
 			/>
 		</>
 	);

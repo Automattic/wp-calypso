@@ -22,7 +22,7 @@ import { addQueryArgs } from 'lib/route';
  * @param  {object} state Global state tree
  * @returns {?number}      Current editor post ID
  */
-export function getEditorPostId( state ) {
+export function getEditorPostId(state) {
 	return state.ui.editor.postId;
 }
 
@@ -32,8 +32,8 @@ export function getEditorPostId( state ) {
  * @param  {object}  state Global state tree
  * @returns {boolean}       Whether editing new post in editor
  */
-export function isEditorNewPost( state ) {
-	return ! getEditorPostId( state );
+export function isEditorNewPost(state) {
+	return !getEditorPostId(state);
 }
 
 /**
@@ -45,12 +45,12 @@ export function isEditorNewPost( state ) {
  * @param  {string} type        Post type
  * @returns {string}             Editor URL path
  */
-export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
+export function getEditorDuplicatePostPath(state, siteId, postId, type = 'post') {
 	return addQueryArgs(
 		{
 			'jetpack-copy': postId,
 		},
-		getEditorUrl( state, siteId, null, type )
+		getEditorUrl(state, siteId, null, type)
 	);
 }
 
@@ -62,9 +62,9 @@ export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post'
  * @param  {number} type        Post type
  * @returns {string}             Editor URL path
  */
-export function getEditorNewPostPath( state, siteId, type = 'post' ) {
+export function getEditorNewPostPath(state, siteId, type = 'post') {
 	let path;
-	switch ( type ) {
+	switch (type) {
 		case 'post':
 			path = '/post';
 			break;
@@ -72,15 +72,15 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 			path = '/page';
 			break;
 		default:
-			path = `/edit/${ type }`;
+			path = `/edit/${type}`;
 			break;
 	}
 
-	const siteSlug = getSiteSlug( state, siteId );
-	if ( siteSlug ) {
-		path += `/${ siteSlug }`;
+	const siteSlug = getSiteSlug(state, siteId);
+	if (siteSlug) {
+		path += `/${siteSlug}`;
 	} else {
-		path += `/${ siteId }`;
+		path += `/${siteId}`;
 	}
 
 	return path;
@@ -95,16 +95,16 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
  * @param  {string} defaultType Fallback post type if post not found
  * @returns {string}             Editor URL path
  */
-export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
-	if ( ! siteId ) {
+export function getEditorPath(state, siteId, postId, defaultType = 'post') {
+	if (!siteId) {
 		return '/post';
 	}
-	const editedPost = getEditedPost( state, siteId, postId );
-	const type = get( editedPost, 'type', defaultType );
-	let path = getEditorNewPostPath( state, siteId, type );
+	const editedPost = getEditedPost(state, siteId, postId);
+	const type = get(editedPost, 'type', defaultType);
+	let path = getEditorNewPostPath(state, siteId, type);
 
-	if ( postId ) {
-		path += `/${ postId }`;
+	if (postId) {
+		path += `/${postId}`;
 	}
 
 	return path;
@@ -117,89 +117,89 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
  * @param  {number}  siteId    Site ID
  * @returns {boolean}           Whether or not the sidebar is enabled
  */
-export function isConfirmationSidebarEnabled( state, siteId ) {
-	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
+export function isConfirmationSidebarEnabled(state, siteId) {
+	return getPreference(state, 'editorConfirmationDisabledSites').indexOf(siteId) === -1;
 }
 
 /*
  * Returns whether editor save is currently blocked for some reason identified by `key`.
  * If `key` is not specified, returns whether save is blocked for any reason.
  */
-export function isEditorSaveBlocked( state, key ) {
+export function isEditorSaveBlocked(state, key) {
 	const { saveBlockers } = state.ui.editor;
 
-	if ( ! key ) {
-		return !! saveBlockers.length;
+	if (!key) {
+		return !!saveBlockers.length;
 	}
 
-	return includes( saveBlockers, key );
+	return includes(saveBlockers, key);
 }
 
-export function getEditorPostPreviewUrl( state ) {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const site = getSite( state, siteId );
-	const post = getSitePost( state, siteId, postId );
-	return getPreviewURL( site, post, state.ui.editor.autosavePreviewUrl );
+export function getEditorPostPreviewUrl(state) {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const site = getSite(state, siteId);
+	const post = getSitePost(state, siteId, postId);
+	return getPreviewURL(site, post, state.ui.editor.autosavePreviewUrl);
 }
 
-export function isEditorAutosaving( state ) {
+export function isEditorAutosaving(state) {
 	return state.ui.editor.isAutosaving;
 }
 
-export function isEditorLoading( state ) {
+export function isEditorLoading(state) {
 	return state.ui.editor.isLoading;
 }
 
-export function isEditorIframeLoaded( state ) {
+export function isEditorIframeLoaded(state) {
 	return state.ui.editor.isIframeLoaded;
 }
 
-export function getEditorPublishButtonStatus( state ) {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const currentPost = getSitePost( state, siteId, postId );
-	const editedPost = getEditedPost( state, siteId, postId );
-	const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+export function getEditorPublishButtonStatus(state) {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const currentPost = getSitePost(state, siteId, postId);
+	const editedPost = getEditedPost(state, siteId, postId);
+	const canUserPublishPosts = canCurrentUser(state, siteId, 'publish_posts');
 
 	// Return `null` (means "unknown") if the site or the post to edit is not available.
 	// Typically happens when async-loading them is in progress.
-	if ( ! siteId || ! editedPost ) {
+	if (!siteId || !editedPost) {
 		return null;
 	}
 
 	if (
-		( isPublished( currentPost ) &&
-			! isBackDatedPublished( currentPost ) &&
-			! isFutureDated( editedPost ) ) ||
-		( currentPost && currentPost.status === 'future' && isFutureDated( editedPost ) )
+		(isPublished(currentPost) &&
+			!isBackDatedPublished(currentPost) &&
+			!isFutureDated(editedPost)) ||
+		(currentPost && currentPost.status === 'future' && isFutureDated(editedPost))
 	) {
 		return 'update';
 	}
 
-	if ( isFutureDated( editedPost ) ) {
+	if (isFutureDated(editedPost)) {
 		return 'schedule';
 	}
 
-	if ( canUserPublishPosts ) {
+	if (canUserPublishPosts) {
 		return 'publish';
 	}
 
-	if ( currentPost && currentPost.status === 'pending' ) {
+	if (currentPost && currentPost.status === 'pending') {
 		return 'update';
 	}
 
 	return 'requestReview';
 }
 
-export function getEditorInitialRawContent( state ) {
+export function getEditorInitialRawContent(state) {
 	return state.ui.editor.rawContent.initial;
 }
 
-export function getEditorRawContent( state ) {
+export function getEditorRawContent(state) {
 	return state.ui.editor.rawContent.current;
 }
 
-export function getEditorLoadingError( state ) {
+export function getEditorLoadingError(state) {
 	return state.ui.editor.loadingError;
 }

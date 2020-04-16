@@ -34,11 +34,11 @@ class EditorStatusLabel extends React.Component {
 
 	componentDidMount() {
 		// update the `currentTime` every minute
-		this.currentTimeTimer = setInterval( this.updateCurrentTime, 60000 );
+		this.currentTimeTimer = setInterval(this.updateCurrentTime, 60000);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.post !== this.props.post ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.post !== this.props.post) {
 			// the post has been updated, so update the current time so that
 			// it will be the most up-to-date when re-rendering
 			this.updateCurrentTime();
@@ -46,98 +46,98 @@ class EditorStatusLabel extends React.Component {
 	}
 
 	componentWillUnmount() {
-		clearInterval( this.currentTimeTimer );
+		clearInterval(this.currentTimeTimer);
 	}
 
 	render() {
-		if ( ! this.props.post && ! this.props.isNew ) {
+		if (!this.props.post && !this.props.isNew) {
 			return <EditorStatusLabelPlaceholder className="editor-status-label" />;
 		}
 
 		const className = classNames(
 			'editor-status-label',
 			'is-plain',
-			'is-' + get( this.props.post, 'status', 'draft' )
+			'is-' + get(this.props.post, 'status', 'draft')
 		);
 
-		return <span className={ className }>{ this.renderLabel() }</span>;
+		return <span className={className}>{this.renderLabel()}</span>;
 	}
 
 	renderLabel() {
 		const { isNew, post, translate, moment } = this.props;
 
-		if ( isNew ) {
-			return translate( 'New Draft' );
+		if (isNew) {
+			return translate('New Draft');
 		}
 
-		let editedTime = moment( postUtils.getEditedTime( post ) );
+		let editedTime = moment(postUtils.getEditedTime(post));
 
 		// prevent JP sites from showing a draft as saved in the future
-		if ( 'draft' === post.status && editedTime.isAfter( this.state.currentTime ) ) {
-			editedTime = moment( this.state.currentTime );
+		if ('draft' === post.status && editedTime.isAfter(this.state.currentTime)) {
+			editedTime = moment(this.state.currentTime);
 		}
 
-		const timeFromNow = editedTime.from( this.state.currentTime );
+		const timeFromNow = editedTime.from(this.state.currentTime);
 
-		switch ( post.status ) {
+		switch (post.status) {
 			case 'publish':
-				return translate( '{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
+				return translate('{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
-				} );
+				});
 			case 'private':
-				return translate( '{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s', {
+				return translate('{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
-				} );
+				});
 			case 'draft':
-				return translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
+				return translate('{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
-				} );
+				});
 			case 'pending':
-				return translate( '{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s', {
+				return translate('{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
-				} );
+				});
 			case 'future':
-				return translate( '{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
+				return translate('{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
-				} );
+				});
 			case 'trash':
-				return translate( '{{strong}}Trashed{{/strong}}', {
+				return translate('{{strong}}Trashed{{/strong}}', {
 					components: {
 						strong: <strong />,
 					},
-				} );
+				});
 		}
 
 		return '';
 	}
 
 	updateCurrentTime = () => {
-		this.setState( {
+		this.setState({
 			currentTime: Date.now(),
-		} );
+		});
 	};
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const post = getSitePost( state, siteId, postId );
-	const isNew = isEditorNewPost( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const post = getSitePost(state, siteId, postId);
+	const isNew = isEditorNewPost(state);
 
 	return { isNew, post };
-} )( localize( withLocalizedMoment( EditorStatusLabel ) ) );
+})(localize(withLocalizedMoment(EditorStatusLabel)));

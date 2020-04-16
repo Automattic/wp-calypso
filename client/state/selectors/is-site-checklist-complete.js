@@ -13,19 +13,19 @@ import { getSiteFrontPage } from 'state/sites/selectors';
  * @param  {number}  siteId Site ID
  * @returns {string} null if there's no data yet, false if the tasklist is incomplete, true if it's complete.
  */
-export default function isSiteChecklistComplete( state, siteId ) {
-	const siteChecklist = getSiteChecklist( state, siteId );
+export default function isSiteChecklistComplete(state, siteId) {
+	const siteChecklist = getSiteChecklist(state, siteId);
 
 	if (
-		isSiteChecklistLoading( state, siteId ) ||
+		isSiteChecklistLoading(state, siteId) ||
 		null === siteChecklist ||
-		! Array.isArray( siteChecklist.tasks )
+		!Array.isArray(siteChecklist.tasks)
 	) {
 		return null;
 	}
 
 	// True if a static page has been set as the front page, false otherwise.
-	const hasFrontPageSet = !! getSiteFrontPage( state, siteId );
+	const hasFrontPageSet = !!getSiteFrontPage(state, siteId);
 
 	/**
 		If a task is completed, it's because:
@@ -37,18 +37,18 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		@param   {object}  task The task that we'll check to see if it's completed.
 		@returns {boolean}      Whether the task is considered to be completed or not.
 	*/
-	const isTaskComplete = task => {
-		if ( task.isCompleted ) {
+	const isTaskComplete = (task) => {
+		if (task.isCompleted) {
 			return true;
 		}
 
-		if ( 'front_page_updated' === task.id && ! hasFrontPageSet ) {
+		if ('front_page_updated' === task.id && !hasFrontPageSet) {
 			return true;
 		}
 
 		return false;
 	};
 
-	const taskList = getSiteTaskList( state, siteId );
-	return taskList.getAll().every( isTaskComplete );
+	const taskList = getSiteTaskList(state, siteId);
+	return taskList.getAll().every(isTaskComplete);
 }

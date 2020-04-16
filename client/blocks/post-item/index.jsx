@@ -44,32 +44,32 @@ import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import './style.scss';
 
 function preloadEditor() {
-	preload( 'post-editor' );
+	preload('post-editor');
 }
 
 class PostItem extends React.Component {
-	clickHandler = clickTarget => () => {
-		this.props.bumpStat( 'calypso_post_item_click', clickTarget );
+	clickHandler = (clickTarget) => () => {
+		this.props.bumpStat('calypso_post_item_click', clickTarget);
 	};
 
-	toggleCurrentPostSelection = event => {
-		this.props.togglePostSelection( this.props.globalId );
+	toggleCurrentPostSelection = (event) => {
+		this.props.togglePostSelection(this.props.globalId);
 		event.stopPropagation();
 	};
 
 	inAllSitesModeWithMultipleUsers() {
 		return (
 			this.props.isAllSitesModeSelected &&
-			! this.props.allSitesSingleUser &&
-			! this.props.singleUserQuery
+			!this.props.allSitesSingleUser &&
+			!this.props.singleUserQuery
 		);
 	}
 
 	inSingleSiteModeWithMultipleUsers() {
 		return (
-			! this.props.isAllSitesModeSelected &&
-			! this.props.singleUserSite &&
-			! this.props.singleUserQuery
+			!this.props.isAllSitesModeSelected &&
+			!this.props.singleUserSite &&
+			!this.props.singleUserQuery
 		);
 	}
 
@@ -78,21 +78,21 @@ class PostItem extends React.Component {
 	}
 
 	maybeScrollIntoView() {
-		const element = ReactDom.findDOMNode( this );
+		const element = ReactDom.findDOMNode(this);
 		const viewportBottom = document.documentElement.clientHeight + window.scrollY;
 		const distanceFromBottom = viewportBottom - element.offsetTop;
 
-		if ( distanceFromBottom < 250 ) {
-			const desiredOffset = window.scrollY + ( 250 - distanceFromBottom );
+		if (distanceFromBottom < 250) {
+			const desiredOffset = window.scrollY + (250 - distanceFromBottom);
 
-			window.scrollTo( 0, desiredOffset );
+			window.scrollTo(0, desiredOffset);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const { hasExpandedContent } = this.props;
 
-		if ( ! prevProps.hasExpandedContent && hasExpandedContent ) {
+		if (!prevProps.hasExpandedContent && hasExpandedContent) {
 			this.maybeScrollIntoView();
 		}
 	}
@@ -102,10 +102,10 @@ class PostItem extends React.Component {
 		return (
 			multiSelectEnabled && (
 				//eslint-disable-next-line
-				<div className="post-item__select" onClick={ this.toggleCurrentPostSelection }>
+				<div className="post-item__select" onClick={this.toggleCurrentPostSelection}>
 					<FormInputCheckbox
-						checked={ isCurrentPostSelected }
-						onClick={ this.toggleCurrentPostSelection }
+						checked={isCurrentPostSelected}
+						onClick={this.toggleCurrentPostSelection}
 					/>
 				</div>
 			)
@@ -115,16 +115,16 @@ class PostItem extends React.Component {
 	renderExpandedContent() {
 		const { post, hasExpandedContent } = this.props;
 
-		if ( ! post || ! hasExpandedContent ) {
+		if (!post || !hasExpandedContent) {
 			return null;
 		}
 
 		return (
 			<PostShare
-				post={ post }
-				siteId={ post.site_ID }
-				showClose={ true }
-				onClose={ this.props.hideActiveSharePanel }
+				post={post}
+				siteId={post.site_ID}
+				showClose={true}
+				onClose={this.props.hideActiveSharePanel}
 			/>
 		);
 	}
@@ -147,94 +147,85 @@ class PostItem extends React.Component {
 		const ICON_SIZE = 12;
 
 		const title = post ? post.title : null;
-		const isPlaceholder = ! globalId;
+		const isPlaceholder = !globalId;
 		const isTrashed = post && 'trash' === post.status;
 		const enabledPostLink = isPlaceholder || multiSelectEnabled || isTrashed ? null : postUrl;
 
-		const panelClasses = classnames( 'post-item__panel', className, {
-			'is-untitled': ! title,
+		const panelClasses = classnames('post-item__panel', className, {
+			'is-untitled': !title,
 			'is-placeholder': isPlaceholder,
-		} );
+		});
 
 		const isAuthorVisible = this.hasMultipleUsers() && post && post.author;
 
-		const rootClasses = classnames( 'post-item', {
-			'is-expanded': !! hasExpandedContent,
-		} );
+		const rootClasses = classnames('post-item', {
+			'is-expanded': !!hasExpandedContent,
+		});
 
 		return (
-			<div className={ rootClasses } ref={ this.setDomNode }>
-				<div className={ panelClasses }>
-					{ this.renderSelectionCheckbox() }
+			<div className={rootClasses} ref={this.setDomNode}>
+				<div className={panelClasses}>
+					{this.renderSelectionCheckbox()}
 					<div className="post-item__detail">
 						<div className="post-item__info">
-							{ isAllSitesModeSelected && (
-								<a href={ enabledPostLink } className="post-item__site-info-link">
-									<PostTypeSiteInfo globalId={ globalId } />
+							{isAllSitesModeSelected && (
+								<a href={enabledPostLink} className="post-item__site-info-link">
+									<PostTypeSiteInfo globalId={globalId} />
 								</a>
-							) }
-							{ isAuthorVisible && (
-								<a href={ enabledPostLink } className="post-item__post-author-link">
-									<PostTypePostAuthor globalId={ globalId } />
+							)}
+							{isAuthorVisible && (
+								<a href={enabledPostLink} className="post-item__post-author-link">
+									<PostTypePostAuthor globalId={globalId} />
 								</a>
-							) }
+							)}
 						</div>
 						<h1 //eslint-disable-line
 							className="post-item__title"
-							onClick={ this.clickHandler( 'title' ) }
-							onMouseOver={ preloadEditor }
+							onClick={this.clickHandler('title')}
+							onMouseOver={preloadEditor}
 						>
-							{ ! externalPostLink && (
-								<a
-									href={ enabledPostLink }
-									className="post-item__title-link"
-									data-e2e-title={ title }
-								>
-									{ title || translate( 'Untitled' ) }
+							{!externalPostLink && (
+								<a href={enabledPostLink} className="post-item__title-link" data-e2e-title={title}>
+									{title || translate('Untitled')}
 								</a>
-							) }
-							{ ! isPlaceholder && externalPostLink && (
+							)}
+							{!isPlaceholder && externalPostLink && (
 								<ExternalLink
-									icon={ true }
-									href={ multiSelectEnabled ? null : postUrl }
+									icon={true}
+									href={multiSelectEnabled ? null : postUrl}
 									target="_blank"
 									className="post-item__title-link"
 								>
-									{ title || translate( 'Untitled' ) }
+									{title || translate('Untitled')}
 								</ExternalLink>
-							) }
+							)}
 						</h1>
 						<div className="post-item__meta">
 							<span className="post-item__meta-time-status">
-								{ post && (
+								{post && (
 									<PostRelativeTimeStatus
-										post={ post }
-										link={ enabledPostLink }
-										target={ null }
-										gridiconSize={ ICON_SIZE }
-										includeBasicStatus={ true }
-										showPublishedStatus={ showPublishedStatus }
+										post={post}
+										link={enabledPostLink}
+										target={null}
+										gridiconSize={ICON_SIZE}
+										includeBasicStatus={true}
+										showPublishedStatus={showPublishedStatus}
 									/>
-								) }
+								)}
 							</span>
-							<PostActionCounts globalId={ globalId } />
+							<PostActionCounts globalId={globalId} />
 						</div>
 					</div>
-					<PostTypeListPostThumbnail
-						globalId={ globalId }
-						onClick={ this.clickHandler( 'image' ) }
-					/>
-					{ ! multiSelectEnabled && ! isTypeWpBlock && (
-						<PostActionsEllipsisMenu globalId={ globalId } />
-					) }
-					{ ! multiSelectEnabled && isTypeWpBlock && (
-						<PostActionsEllipsisMenu globalId={ globalId } includeDefaultActions={ false }>
+					<PostTypeListPostThumbnail globalId={globalId} onClick={this.clickHandler('image')} />
+					{!multiSelectEnabled && !isTypeWpBlock && <PostActionsEllipsisMenu globalId={globalId} />}
+					{!multiSelectEnabled && isTypeWpBlock && (
+						<PostActionsEllipsisMenu globalId={globalId} includeDefaultActions={false}>
 							<PostActionsEllipsisMenuEdit key="edit" />
 							<PostActionsEllipsisMenuTrash key="trash" />
 						</PostActionsEllipsisMenu>
-					) }
+					)}
 				</div>
-				{ hasExpandedContent && this.renderExpandedContent() }
+				{hasExpandedContent && this.renderExpandedContent()}
 			</div>
 		);
 	}
@@ -259,30 +250,30 @@ PostItem.propTypes = {
 };
 
 export default connect(
-	( state, { globalId } ) => {
-		const post = getNormalizedPost( state, globalId );
-		if ( ! post ) {
+	(state, { globalId }) => {
+		const post = getNormalizedPost(state, globalId);
+		if (!post) {
 			return {};
 		}
 
 		const siteId = post.site_ID;
 
 		// Avoid rendering an external link while loading.
-		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
-		const postUrl = externalPostLink ? post.URL : getEditorUrl( state, siteId, post.ID, post.type );
+		const externalPostLink = false === canCurrentUserEditPost(state, globalId);
+		const postUrl = externalPostLink ? post.URL : getEditorUrl(state, siteId, post.ID, post.type);
 
-		const hasExpandedContent = isSharePanelOpen( state, globalId ) || false;
+		const hasExpandedContent = isSharePanelOpen(state, globalId) || false;
 
 		return {
 			post,
 			externalPostLink,
 			postUrl,
-			isAllSitesModeSelected: getSelectedSiteId( state ) === null,
-			allSitesSingleUser: areAllSitesSingleUser( state ),
-			singleUserSite: isSingleUserSite( state, siteId ),
+			isAllSitesModeSelected: getSelectedSiteId(state) === null,
+			allSitesSingleUser: areAllSitesSingleUser(state),
+			singleUserSite: isSingleUserSite(state, siteId),
 			hasExpandedContent,
-			isCurrentPostSelected: isPostSelected( state, globalId ),
-			multiSelectEnabled: isMultiSelectEnabled( state ),
+			isCurrentPostSelected: isPostSelected(state, globalId),
+			multiSelectEnabled: isMultiSelectEnabled(state),
 			isTypeWpBlock: 'wp_block' === post.type,
 		};
 	},
@@ -291,4 +282,4 @@ export default connect(
 		hideActiveSharePanel,
 		togglePostSelection,
 	}
-)( localize( PostItem ) );
+)(localize(PostItem));

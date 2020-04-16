@@ -11,7 +11,7 @@
 			"type": "number"
 		},
 		"next_appointment": {
-			"type": [ "object", "null" ],
+			"type": ["object", "null"],
 			"properties": {
 				"begin_timestamp": { "type": "number" },
 				"end_timestamp": { "type": "number" },

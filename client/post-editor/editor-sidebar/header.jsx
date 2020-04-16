@@ -15,15 +15,15 @@ import { Button } from '@automattic/components';
 import EditorPostType from 'post-editor/editor-post-type';
 import { closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
 
-const EditorSidebarHeader = ( { closeSidebar, translate } ) => (
+const EditorSidebarHeader = ({ closeSidebar, translate }) => (
 	<div className="editor-sidebar__header">
 		<EditorPostType isSettings />
 		<Button
 			compact
 			borderless
 			className="editor-sidebar__back"
-			onClick={ closeSidebar }
-			title={ translate( 'Close sidebar' ) }
+			onClick={closeSidebar}
+			title={translate('Close sidebar')}
 		>
 			<Gridicon icon="cross" />
 		</Button>
@@ -37,7 +37,7 @@ EditorSidebarHeader.propTypes = {
 
 export default flow(
 	localize,
-	connect( null, {
+	connect(null, {
 		closeSidebar: closeEditorSidebar,
-	} )
-)( EditorSidebarHeader );
+	})
+)(EditorSidebarHeader);

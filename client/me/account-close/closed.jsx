@@ -27,16 +27,16 @@ class AccountSettingsClosedComponent extends Component {
 	render() {
 		const { isUserAccountClosed, previousRoute, translate } = this.props;
 
-		if ( previousRoute !== '/me/account/close' ) {
-			page( '/me/account/close' );
+		if (previousRoute !== '/me/account/close') {
+			page('/me/account/close');
 		}
 
-		if ( ! isUserAccountClosed ) {
+		if (!isUserAccountClosed) {
 			return (
 				<div className="account-close__spinner">
-					<Spinner size={ 32 } />
+					<Spinner size={32} />
 					<p className="account-close__spinner-text">
-						{ translate( 'Your account is being deleted' ) }
+						{translate('Your account is being deleted')}
 					</p>
 				</div>
 			);
@@ -44,18 +44,18 @@ class AccountSettingsClosedComponent extends Component {
 
 		return (
 			<EmptyContent
-				title={ translate( 'Your account has been closed' ) }
-				line={ translate( 'Thanks for flying with WordPress.com' ) }
-				secondaryAction={ translate( 'Return to WordPress.com' ) }
-				secondaryActionCallback={ this.onClick }
+				title={translate('Your account has been closed')}
+				line={translate('Thanks for flying with WordPress.com')}
+				secondaryAction={translate('Return to WordPress.com')}
+				secondaryActionCallback={this.onClick}
 			/>
 		);
 	}
 }
 
-export default connect( state => {
+export default connect((state) => {
 	return {
-		previousRoute: getPreviousRoute( state ),
-		isUserAccountClosed: isAccountClosed( state ),
+		previousRoute: getPreviousRoute(state),
+		isUserAccountClosed: isAccountClosed(state),
 	};
-} )( localize( AccountSettingsClosedComponent ) );
+})(localize(AccountSettingsClosedComponent));

@@ -1,5 +1,5 @@
 export const geoLocationSchema = {
-	type: [ 'object', 'null' ],
+	type: ['object', 'null'],
 	properties: {
 		city: { type: 'string' },
 		country_long: { type: 'string' },
@@ -9,11 +9,11 @@ export const geoLocationSchema = {
 };
 
 export const isEligibleSchema = {
-	type: [ 'boolean', 'null' ],
+	type: ['boolean', 'null'],
 };
 
 export const isPresalesPrecancellationEligible = {
-	type: [ 'object', 'null' ],
+	type: ['object', 'null'],
 	properties: {
 		precancellation: { type: 'boolean' },
 		presale: { type: 'boolean' },

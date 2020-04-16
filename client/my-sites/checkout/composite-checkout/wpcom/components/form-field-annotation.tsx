@@ -29,7 +29,7 @@ type FormFieldAnnotationProps = {
 	formFieldId: string;
 };
 
-const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
+const FormFieldAnnotation: FunctionComponent<FormFieldAnnotationProps> = ({
 	formFieldId,
 	labelText,
 	labelId,
@@ -40,23 +40,23 @@ const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
 	isDisabled,
 	className,
 	children,
-} ) => {
+}) => {
 	const isErrorWithDefault: boolean = isError === undefined ? false : isError;
 	const isDisabledWithDefault: boolean = isDisabled === undefined ? false : isDisabled;
 
 	return (
-		<div className={ className }>
-			<Label htmlFor={ formFieldId } id={ labelId } isDisabled={ isDisabledWithDefault }>
-				{ labelText }
+		<div className={className}>
+			<Label htmlFor={formFieldId} id={labelId} isDisabled={isDisabledWithDefault}>
+				{labelText}
 			</Label>
-			<FormFieldWrapper data-testid={ `${ className }_wrapper` } isError={ isErrorWithDefault }>
-				{ children }
+			<FormFieldWrapper data-testid={`${className}_wrapper`} isError={isErrorWithDefault}>
+				{children}
 			</FormFieldWrapper>
 			<RenderedDescription
-				descriptionText={ normalDescription }
-				descriptionId={ descriptionId }
-				isError={ isError }
-				errorMessage={ errorDescription }
+				descriptionText={normalDescription}
+				descriptionId={descriptionId}
+				isError={isError}
+				errorMessage={errorDescription}
 			/>
 		</div>
 	);
@@ -67,15 +67,15 @@ type LabelProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
-const Label = styled.label< LabelProps >`
+const Label = styled.label<LabelProps>`
 	display: block;
-	color: ${props => props.theme.colors.textColor};
-	font-weight: ${props => props.theme.weights.bold};
+	color: ${(props) => props.theme.colors.textColor};
+	font-weight: ${(props) => props.theme.weights.bold};
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${props => ( props.isDisabled ? 'default' : 'pointer' )};
+		cursor: ${(props) => (props.isDisabled ? 'default' : 'pointer')};
 	}
 `;
 
@@ -84,17 +84,17 @@ type FormFieldWrapperProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
-const FormFieldWrapper = styled.div< FormFieldWrapperProps >`
+const FormFieldWrapper = styled.div<FormFieldWrapperProps>`
 	select {
 		width: 100%;
 	}
 `;
 
-function RenderedDescription( { descriptionText, descriptionId, isError, errorMessage } ) {
-	if ( descriptionText || isError ) {
+function RenderedDescription({ descriptionText, descriptionId, isError, errorMessage }) {
+	if (descriptionText || isError) {
 		return (
-			<Description isError={ isError } id={ descriptionId }>
-				{ isError ? errorMessage : descriptionText }
+			<Description isError={isError} id={descriptionId}>
+				{isError ? errorMessage : descriptionText}
 			</Description>
 		);
 	}
@@ -106,9 +106,9 @@ type DescriptionProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
-const Description = styled.p< DescriptionProps >`
+const Description = styled.p<DescriptionProps>`
 	margin: 8px 0 0 0;
-	color: ${props =>
+	color: ${(props) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight};
 	font-style: italic;
 	font-size: 14px;

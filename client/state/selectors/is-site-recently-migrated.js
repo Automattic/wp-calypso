@@ -16,9 +16,9 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param {object} siteId Site ID
  * @returns {boolean} True if site has recently been the target of a migration
  */
-export default function isSiteRecentlyMigrated( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	const siteMigrationMeta = get( site, 'site_migration', {} );
+export default function isSiteRecentlyMigrated(state, siteId) {
+	const site = getRawSite(state, siteId);
+	const siteMigrationMeta = get(site, 'site_migration', {});
 
-	return !! get( siteMigrationMeta, 'recent_migration', false );
+	return !!get(siteMigrationMeta, 'recent_migration', false);
 }

@@ -15,19 +15,19 @@ import {
 import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
-export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = [], action) => {
+	switch (action.type) {
 		case APPLICATION_PASSWORD_DELETE_SUCCESS:
-			return reject( state, { ID: action.appPasswordId } );
+			return reject(state, { ID: action.appPasswordId });
 		case APPLICATION_PASSWORDS_RECEIVE:
 			return action.appPasswords;
 		default:
 			return state;
 	}
-} );
+});
 
-export const newPassword = ( state = null, action ) => {
-	switch ( action.type ) {
+export const newPassword = (state = null, action) => {
+	switch (action.type) {
 		case APPLICATION_PASSWORD_CREATE_SUCCESS:
 			return action.appPassword;
 		case APPLICATION_PASSWORD_NEW_CLEAR:
@@ -37,7 +37,7 @@ export const newPassword = ( state = null, action ) => {
 	}
 };
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	newPassword,
-} );
+});

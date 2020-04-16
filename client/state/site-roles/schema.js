@@ -15,7 +15,7 @@ export const siteRolesSchema = {
 						},
 					},
 				},
-				required: [ 'name', 'display_name', 'capabilities' ],
+				required: ['name', 'display_name', 'capabilities'],
 			},
 		},
 	},

@@ -6,8 +6,8 @@ import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_TYPE_SET } from 'state/action-
 import { withSchemaValidation } from 'state/utils';
 import { siteTypeSchema } from './schema';
 
-export default withSchemaValidation( siteTypeSchema, ( state = '', action ) => {
-	switch ( action.type ) {
+export default withSchemaValidation(siteTypeSchema, (state = '', action) => {
+	switch (action.type) {
 		case SIGNUP_STEPS_SITE_TYPE_SET: {
 			return action.siteType;
 		}
@@ -17,4 +17,4 @@ export default withSchemaValidation( siteTypeSchema, ( state = '', action ) => {
 	}
 
 	return state;
-} );
+});

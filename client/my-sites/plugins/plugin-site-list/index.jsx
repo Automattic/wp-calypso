@@ -30,52 +30,52 @@ export class PluginSiteList extends Component {
 		title: PropTypes.string,
 	};
 
-	getSecondaryPluginSites( site, secondarySites ) {
+	getSecondaryPluginSites(site, secondarySites) {
 		const secondaryPluginSites = site.plugin
-			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
+			? PluginsStore.getSites(secondarySites, this.props.plugin.slug)
 			: secondarySites;
-		return compact( secondaryPluginSites );
+		return compact(secondaryPluginSites);
 	}
 
-	renderPluginSite( { site, secondarySites } ) {
+	renderPluginSite({ site, secondarySites }) {
 		return (
 			<PluginSite
-				key={ 'pluginSite' + site.ID }
-				site={ site }
-				secondarySites={ this.getSecondaryPluginSites( site, secondarySites ) }
-				plugin={ this.props.plugin }
-				wporg={ this.props.wporg }
-				notices={ this.props.notices }
+				key={'pluginSite' + site.ID}
+				site={site}
+				secondarySites={this.getSecondaryPluginSites(site, secondarySites)}
+				plugin={this.props.plugin}
+				wporg={this.props.wporg}
+				notices={this.props.notices}
 			/>
 		);
 	}
 
 	render() {
-		if ( ! this.props.sites || this.props.sites.length === 0 ) {
+		if (!this.props.sites || this.props.sites.length === 0) {
 			return null;
 		}
-		const classes = classNames( 'plugin-site-list', this.props.className ),
-			pluginSites = this.props.sitesWithSecondarySites.map( this.renderPluginSite, this );
+		const classes = classNames('plugin-site-list', this.props.className),
+			pluginSites = this.props.sitesWithSecondarySites.map(this.renderPluginSite, this);
 
 		return (
-			<div className={ classes }>
-				<SectionHeader label={ this.props.title } />
-				{ pluginSites }
+			<div className={classes}>
+				<SectionHeader label={this.props.title} />
+				{pluginSites}
 			</div>
 		);
 	}
 }
 
 // TODO: make this memoized after sites-list is removed and `sites` comes from Redux
-function getSitesWithSecondarySites( state, sites ) {
+function getSitesWithSecondarySites(state, sites) {
 	return sites
-		.filter( site => ! isConnectedSecondaryNetworkSite( state, site.ID ) )
-		.map( site => ( {
+		.filter((site) => !isConnectedSecondaryNetworkSite(state, site.ID))
+		.map((site) => ({
 			site,
-			secondarySites: getNetworkSites( state, site.ID ),
-		} ) );
+			secondarySites: getNetworkSites(state, site.ID),
+		}));
 }
 
-export default connect( ( state, props ) => ( {
-	sitesWithSecondarySites: getSitesWithSecondarySites( state, props.sites ),
-} ) )( PluginSiteList );
+export default connect((state, props) => ({
+	sitesWithSecondarySites: getSitesWithSecondarySites(state, props.sites),
+}))(PluginSiteList);

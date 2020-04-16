@@ -23,12 +23,12 @@ export default class AuthorCompactProfileExample extends React.Component {
 		return (
 			<Card>
 				<AuthorCompactProfile
-					author={ author }
-					siteName={ 'Bananas' }
-					siteUrl={ 'http://wpcalypso.wordpress.com' }
-					followCount={ 123 }
-					feedId={ 1 }
-					siteId={ null }
+					author={author}
+					siteName={'Bananas'}
+					siteUrl={'http://wpcalypso.wordpress.com'}
+					followCount={123}
+					feedId={1}
+					siteId={null}
 				/>
 			</Card>
 		);

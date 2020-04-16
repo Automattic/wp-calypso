@@ -25,23 +25,19 @@ export default function getJetpackSiteUpdateFilesDisabledReasons(
 	siteId,
 	action = 'modifyFiles'
 ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
+	if (!isJetpackSite(state, siteId)) {
 		return null;
 	}
 
-	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
+	const fileModDisabled = getSiteOption(state, siteId, 'file_mod_disabled');
 
 	return compact(
-		fileModDisabled.map( clue => {
-			if (
-				action === 'modifyFiles' ||
-				action === 'autoupdateFiles' ||
-				action === 'autoupdateCore'
-			) {
-				if ( clue === 'has_no_file_system_write_access' ) {
-					return i18n.translate( 'The file permissions on this host prevent editing files.' );
+		fileModDisabled.map((clue) => {
+			if (action === 'modifyFiles' || action === 'autoupdateFiles' || action === 'autoupdateCore') {
+				if (clue === 'has_no_file_system_write_access') {
+					return i18n.translate('The file permissions on this host prevent editing files.');
 				}
-				if ( clue === 'disallow_file_mods' ) {
+				if (clue === 'disallow_file_mods') {
 					return i18n.translate(
 						'File modifications are explicitly disabled by a site administrator.'
 					);
@@ -49,18 +45,16 @@ export default function getJetpackSiteUpdateFilesDisabledReasons(
 			}
 
 			if (
-				( action === 'autoupdateFiles' || action === 'autoupdateCore' ) &&
+				(action === 'autoupdateFiles' || action === 'autoupdateCore') &&
 				clue === 'automatic_updater_disabled'
 			) {
-				return i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' );
+				return i18n.translate('Any autoupdates are explicitly disabled by a site administrator.');
 			}
 
-			if ( action === 'autoupdateCore' && clue === 'wp_auto_update_core_disabled' ) {
-				return i18n.translate(
-					'Core autoupdates are explicitly disabled by a site administrator.'
-				);
+			if (action === 'autoupdateCore' && clue === 'wp_auto_update_core_disabled') {
+				return i18n.translate('Core autoupdates are explicitly disabled by a site administrator.');
 			}
 			return null;
-		} )
+		})
 	);
 }

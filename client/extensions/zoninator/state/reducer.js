@@ -9,9 +9,9 @@ import zones from './zones/reducer';
 
 export default withStorageKey(
 	'zoninator',
-	combineReducers( {
+	combineReducers({
 		feeds,
 		locks,
 		zones,
-	} )
+	})
 );

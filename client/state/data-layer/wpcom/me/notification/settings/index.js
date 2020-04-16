@@ -20,7 +20,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object}   action   Redux action
  * @returns {object}            http action
  */
-export const requestNotificationSettings = action =>
+export const requestNotificationSettings = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -37,7 +37,7 @@ export const requestNotificationSettings = action =>
  * @param   {object}   settings  raw notification settings object returned by the endpoint
  * @returns {object}             notification settings update action
  */
-export const updateSettings = ( action, settings ) => updateNotificationSettings( settings );
+export const updateSettings = (action, settings) => updateNotificationSettings(settings);
 
 /**
  * Returns an error notice action when the request fails
@@ -45,14 +45,14 @@ export const updateSettings = ( action, settings ) => updateNotificationSettings
  * @returns {object}   error notice action
  */
 export const handleError = () =>
-	errorNotice( translate( "We couldn't load your notification settings, please try again." ) );
+	errorNotice(translate("We couldn't load your notification settings, please try again."));
 
-registerHandlers( 'state/data-layer/wpcom/me/notification/settings/index.js', {
-	[ NOTIFICATION_SETTINGS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/notification/settings/index.js', {
+	[NOTIFICATION_SETTINGS_REQUEST]: [
+		dispatchRequest({
 			fetch: requestNotificationSettings,
 			onSuccess: updateSettings,
 			onError: handleError,
-		} ),
+		}),
 	],
-} );
+});

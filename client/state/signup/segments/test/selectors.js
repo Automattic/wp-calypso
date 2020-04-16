@@ -3,13 +3,13 @@
  */
 import { getSegments } from '../selectors';
 
-describe( 'state/signup/segments/selectors', () => {
-	describe( 'getSegments()', () => {
-		test( 'should default to null.', () => {
-			expect( getSegments( {}, 'aaa' ) ).toBeNull();
-		} );
+describe('state/signup/segments/selectors', () => {
+	describe('getSegments()', () => {
+		test('should default to null.', () => {
+			expect(getSegments({}, 'aaa')).toBeNull();
+		});
 
-		test( 'should return the stored segments data.', () => {
+		test('should return the stored segments data.', () => {
 			const state = {
 				signup: {
 					segments: [
@@ -22,7 +22,7 @@ describe( 'state/signup/segments/selectors', () => {
 					],
 				},
 			};
-			expect( getSegments( state ) ).toEqual( state.signup.segments );
-		} );
-	} );
-} );
+			expect(getSegments(state)).toEqual(state.signup.segments);
+		});
+	});
+});

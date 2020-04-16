@@ -17,7 +17,7 @@ import 'state/data-layer/wpcom/jetpack-install';
  * @param {string} password - password for remote site login
  * @returns {object} action object
  */
-export const jetpackRemoteInstall = ( url, user, password ) => ( {
+export const jetpackRemoteInstall = (url, user, password) => ({
 	type: JETPACK_REMOTE_INSTALL,
 	url,
 	user,
@@ -27,7 +27,7 @@ export const jetpackRemoteInstall = ( url, user, password ) => ( {
 			trackRequest: true,
 		},
 	},
-} );
+});
 
 /**
  * Update local state with an error received from remote jetpack
@@ -38,12 +38,12 @@ export const jetpackRemoteInstall = ( url, user, password ) => ( {
  * @param {string} errorMessage - additional error info
  * @returns {object} action object
  */
-export const jetpackRemoteInstallUpdateError = ( url, errorCode, errorMessage ) => ( {
+export const jetpackRemoteInstallUpdateError = (url, errorCode, errorMessage) => ({
 	type: JETPACK_REMOTE_INSTALL_FAILURE,
 	url,
 	errorCode,
 	errorMessage,
-} );
+});
 
 /**
  * Mark a jetpack remote installation complete in local state.
@@ -51,7 +51,7 @@ export const jetpackRemoteInstallUpdateError = ( url, errorCode, errorMessage ) 
  * @param {string} url - the remote site url
  * @returns {object} action object
  */
-export const jetpackRemoteInstallComplete = url => ( {
+export const jetpackRemoteInstallComplete = (url) => ({
 	type: JETPACK_REMOTE_INSTALL_SUCCESS,
 	url,
-} );
+});

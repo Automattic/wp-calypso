@@ -13,144 +13,130 @@ import moment from 'moment';
 import { EditorNotice } from '../';
 import Notice from 'components/notice';
 
-describe( 'EditorNotice', () => {
-	test( 'should not render a notice if no message is specified', () => {
-		const wrapper = shallow( <EditorNotice moment={ moment } /> );
+describe('EditorNotice', () => {
+	test('should not render a notice if no message is specified', () => {
+		const wrapper = shallow(<EditorNotice moment={moment} />);
 
-		chaiExpect( wrapper ).to.not.have.descendants( Notice );
-	} );
+		chaiExpect(wrapper).to.not.have.descendants(Notice);
+	});
 
-	test( 'should display a no content error message if recognized', () => {
+	test('should display a no content error message if recognized', () => {
 		const wrapper = shallow(
 			<EditorNotice
-				translate={ translate }
-				moment={ moment }
+				translate={translate}
+				moment={moment}
 				status="is-error"
 				message="publishFailure"
-				error={ new Error( 'NO_CONTENT' ) }
+				error={new Error('NO_CONTENT')}
 			/>
 		);
 
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'text' )
-			.equal( "You haven't written anything yet!" );
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-error' );
-		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
-	} );
+		chaiExpect(wrapper.find(Notice))
+			.to.have.prop('text')
+			.equal("You haven't written anything yet!");
+		chaiExpect(wrapper.find(Notice)).to.have.prop('status').equal('is-error');
+		chaiExpect(wrapper.find(Notice)).to.have.prop('showDismiss').be.true;
+	});
 
-	test( 'should display a fallback error message', () => {
+	test('should display a fallback error message', () => {
 		const wrapper = shallow(
 			<EditorNotice
-				translate={ translate }
-				moment={ moment }
+				translate={translate}
+				moment={moment}
 				type="post"
 				status="is-error"
 				message="publishFailure"
-				error={ new Error() }
+				error={new Error()}
 			/>
 		);
 
-		chaiExpect( wrapper ).to.have.descendants( Notice );
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'text' )
-			.equal( 'Publishing of post failed.' );
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-error' );
-		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
-	} );
+		chaiExpect(wrapper).to.have.descendants(Notice);
+		chaiExpect(wrapper.find(Notice)).to.have.prop('text').equal('Publishing of post failed.');
+		chaiExpect(wrapper.find(Notice)).to.have.prop('status').equal('is-error');
+		chaiExpect(wrapper.find(Notice)).to.have.prop('showDismiss').be.true;
+	});
 
-	test( 'should display publish success for page', () => {
+	test('should display publish success for page', () => {
 		const wrapper = shallow(
 			<EditorNotice
-				translate={ translate }
-				moment={ moment }
+				translate={translate}
+				moment={moment}
 				message="published"
 				status="is-success"
 				type="page"
-				site={ {
+				site={{
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
 					slug: 'example.wordpress.com',
-				} }
+				}}
 			/>
 		);
 
-		expect( wrapper ).toMatchSnapshot();
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-success' );
-	} );
+		expect(wrapper).toMatchSnapshot();
+		chaiExpect(wrapper.find(Notice)).to.have.prop('status').equal('is-success');
+	});
 
-	test( 'should display publish success for post', () => {
+	test('should display publish success for post', () => {
 		const wrapper = shallow(
 			<EditorNotice
-				translate={ translate }
-				moment={ moment }
+				translate={translate}
+				moment={moment}
 				message="published"
 				status="is-success"
 				type="post"
-				site={ {
+				site={{
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
 					slug: 'example.wordpress.com',
-				} }
+				}}
 			/>
 		);
 
-		expect( wrapper ).toMatchSnapshot();
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-success' );
-	} );
+		expect(wrapper).toMatchSnapshot();
+		chaiExpect(wrapper.find(Notice)).to.have.prop('status').equal('is-success');
+	});
 
-	test( 'should display publish success for custom post type', () => {
+	test('should display publish success for custom post type', () => {
 		const wrapper = shallow(
 			<EditorNotice
-				translate={ translate }
-				moment={ moment }
+				translate={translate}
+				moment={moment}
 				message="published"
 				status="is-success"
 				type="jetpack-testimonial"
-				site={ {
+				site={{
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
 					slug: 'example.wordpress.com',
-				} }
+				}}
 			/>
 		);
 
-		expect( wrapper ).toMatchSnapshot();
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-success' );
-	} );
+		expect(wrapper).toMatchSnapshot();
+		chaiExpect(wrapper.find(Notice)).to.have.prop('status').equal('is-success');
+	});
 
-	test( 'should display custom post type view label', () => {
+	test('should display custom post type view label', () => {
 		const wrapper = shallow(
 			<EditorNotice
-				translate={ translate }
-				moment={ moment }
+				translate={translate}
+				moment={moment}
 				type="jetpack-portfolio"
-				typeObject={ {
+				typeObject={{
 					labels: {
 						view_item: 'View Project',
 					},
-				} }
+				}}
 				message="view"
 				status="is-success"
-				site={ {
+				site={{
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
-				} }
+				}}
 			/>
 		);
 
-		expect( wrapper ).toMatchSnapshot();
-		chaiExpect( wrapper.find( Notice ) )
-			.to.have.prop( 'status' )
-			.equal( 'is-success' );
-	} );
-} );
+		expect(wrapper).toMatchSnapshot();
+		chaiExpect(wrapper.find(Notice)).to.have.prop('status').equal('is-success');
+	});
+});

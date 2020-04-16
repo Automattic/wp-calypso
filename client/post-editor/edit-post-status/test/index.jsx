@@ -15,31 +15,28 @@ import React from 'react';
  */
 import { EditPostStatus } from '../';
 
-describe( 'EditPostStatus', () => {
-	test( 'should hide sticky option for password protected posts', () => {
+describe('EditPostStatus', () => {
+	test('should hide sticky option for password protected posts', () => {
 		const wrapper = shallow(
-			<EditPostStatus post={ { type: 'post', status: 'draft', password: 'password' } } />
+			<EditPostStatus post={{ type: 'post', status: 'draft', password: 'password' }} />
 		);
 
-		expect( wrapper.find( '.edit-post-status__sticky' ) ).to.have.lengthOf( 0 );
-	} );
+		expect(wrapper.find('.edit-post-status__sticky')).to.have.lengthOf(0);
+	});
 
-	test( 'should hide sticky option for private posts', () => {
+	test('should hide sticky option for private posts', () => {
 		const wrapper = shallow(
-			<EditPostStatus post={ { type: 'post', status: 'private', password: '' } } />
+			<EditPostStatus post={{ type: 'post', status: 'private', password: '' }} />
 		);
 
-		expect( wrapper.find( '.edit-post-status__sticky' ) ).to.have.lengthOf( 0 );
-	} );
+		expect(wrapper.find('.edit-post-status__sticky')).to.have.lengthOf(0);
+	});
 
-	test( 'should show sticky option for published posts', () => {
+	test('should show sticky option for published posts', () => {
 		const wrapper = shallow(
-			<EditPostStatus
-				post={ { type: 'post', status: 'published', password: '' } }
-				translate={ noop }
-			/>
+			<EditPostStatus post={{ type: 'post', status: 'published', password: '' }} translate={noop} />
 		);
 
-		expect( wrapper.find( '.edit-post-status__sticky' ) ).to.have.lengthOf( 1 );
-	} );
-} );
+		expect(wrapper.find('.edit-post-status__sticky')).to.have.lengthOf(1);
+	});
+});

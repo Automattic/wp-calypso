@@ -36,11 +36,11 @@ let directlyPromise;
  * @returns {object} The default configuration options
  */
 function getDefaultOptions() {
-	const ids = config( 'directly_rtm_widget_ids' );
-	const env = config( 'directly_rtm_widget_environment' );
+	const ids = config('directly_rtm_widget_ids');
+	const env = config('directly_rtm_widget_environment');
 
 	return {
-		id: ids[ env ],
+		id: ids[env],
 		displayAskQuestion: false,
 	};
 }
@@ -55,12 +55,12 @@ function configureGlobals() {
 	// This snippet is pasted from Directly's setup code.
 	window.DirectlyRTM =
 		window.DirectlyRTM ||
-		function() {
-			( window.DirectlyRTM.cq = window.DirectlyRTM.cq || [] ).push( arguments );
+		function () {
+			(window.DirectlyRTM.cq = window.DirectlyRTM.cq || []).push(arguments);
 		};
 	// Since we can only configure once per pageload, this library only provides a
 	// single global configuration.
-	window.DirectlyRTM( 'config', getDefaultOptions() );
+	window.DirectlyRTM('config', getDefaultOptions());
 }
 
 /**
@@ -74,13 +74,13 @@ function configureGlobals() {
  * @see https://cloudup.com/cySVQ9R_O6S for the standard setup instructions we've modified
  */
 function insertDOM() {
-	if ( null !== document.getElementById( 'directlyRTMScript' ) ) {
+	if (null !== document.getElementById('directlyRTMScript')) {
 		return;
 	}
-	const d = document.createElement( 'div' );
+	const d = document.createElement('div');
 	d.id = 'directlyRTMScript';
 	d.src = DIRECTLY_ASSETS_BASE_URL;
-	document.body.appendChild( d );
+	document.body.appendChild(d);
 }
 
 /**
@@ -89,8 +89,8 @@ function insertDOM() {
  *
  * @returns {Promise} Promise that resolves after initialization and command execution
  */
-function execute( ...args ) {
-	return initialize().then( () => window.DirectlyRTM( ...args ) );
+function execute(...args) {
+	return initialize().then(() => window.DirectlyRTM(...args));
 }
 
 /**
@@ -99,14 +99,14 @@ function execute( ...args ) {
  * @returns {Promise} Promise that resolves after the script loads or fails
  */
 function loadDirectlyScript() {
-	return new Promise( ( resolve, reject ) => {
-		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
-			if ( error ) {
-				return reject( new Error( `Failed to load script "${ error.src }".` ) );
+	return new Promise((resolve, reject) => {
+		loadScript(DIRECTLY_RTM_SCRIPT_URL, function (error) {
+			if (error) {
+				return reject(new Error(`Failed to load script "${error.src}".`));
 			}
 			resolve();
-		} );
-	} );
+		});
+	});
 }
 
 /**
@@ -116,24 +116,24 @@ function loadDirectlyScript() {
  * @returns {Promise} Promise that resolves after initialization completes or fails
  */
 export function initialize() {
-	if ( directlyPromise instanceof Promise ) {
+	if (directlyPromise instanceof Promise) {
 		return directlyPromise;
 	}
 
 	directlyPromise = wpcom
 		.undocumented()
 		.getDirectlyConfiguration()
-		.then( ( { isAvailable } ) => {
-			if ( ! isAvailable ) {
+		.then(({ isAvailable }) => {
+			if (!isAvailable) {
 				return Promise.reject(
-					new Error( 'Directly Real-Time Messaging is not available at this time.' )
+					new Error('Directly Real-Time Messaging is not available at this time.')
 				);
 			}
 
 			configureGlobals();
 			insertDOM();
 			return loadDirectlyScript();
-		} );
+		});
 
 	return directlyPromise;
 }
@@ -146,7 +146,7 @@ export function initialize() {
  * @param {string} email - The question asker's email address
  * @returns {Promise} Promise that resolves after initialization completes
  */
-export function askQuestion( questionText, name, email ) {
+export function askQuestion(questionText, name, email) {
 	// There's a bug that happens when you "askQuestion" and the widget is showing the minimized
 	// bubble with an expert avatar in it (indicating an active chat session). In this case,
 	// the widget throws errors and becomes unusable.
@@ -155,7 +155,7 @@ export function askQuestion( questionText, name, email ) {
 	// appears to be on their end. Their suggested stopgap is to "nagivate" out of the
 	// active chat before the "askQuestion" fires, hence the solution here. Note that
 	// "navigate" is an undocumented API, so you won't see it in the config guide.
-	return execute( 'navigate', '/ask' ).then( () =>
-		execute( 'askQuestion', { questionText, name, email } )
+	return execute('navigate', '/ask').then(() =>
+		execute('askQuestion', { questionText, name, email })
 	);
 }

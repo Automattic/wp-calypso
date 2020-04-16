@@ -7,9 +7,9 @@ class Domains {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( wpcom ) {
-		if ( ! ( this instanceof Domains ) ) {
-			return new Domains( wpcom );
+	constructor(wpcom) {
+		if (!(this instanceof Domains)) {
+			return new Domains(wpcom);
 		}
 		this.wpcom = wpcom;
 	}
@@ -22,11 +22,11 @@ class Domains {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	suggestions( query, fn ) {
-		if ( 'string' === typeof query ) {
+	suggestions(query, fn) {
+		if ('string' === typeof query) {
 			query = { query: query };
 		}
-		return this.wpcom.req.get( root + 'suggestions', query, fn );
+		return this.wpcom.req.get(root + 'suggestions', query, fn);
 	}
 
 	/**
@@ -36,8 +36,8 @@ class Domains {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	suggestionsExamples( query, fn ) {
-		return this.wpcom.req.get( root + 'suggestions/examples', query, fn );
+	suggestionsExamples(query, fn) {
+		return this.wpcom.req.get(root + 'suggestions/examples', query, fn);
 	}
 
 	/**
@@ -47,8 +47,8 @@ class Domains {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	supportedCountries( query, fn ) {
-		return this.wpcom.req.get( root + 'supported-countries', query, fn );
+	supportedCountries(query, fn) {
+		return this.wpcom.req.get(root + 'supported-countries', query, fn);
 	}
 
 	/**
@@ -59,13 +59,13 @@ class Domains {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	supportedStates( countryCode, query, fn ) {
+	supportedStates(countryCode, query, fn) {
 		var path = root + 'supported-states/' + countryCode;
-		return this.wpcom.req.get( path, query, fn );
+		return this.wpcom.req.get(path, query, fn);
 	}
 }
 
 /**
-* Expose `Domains` module
-*/
+ * Expose `Domains` module
+ */
 export default Domains;

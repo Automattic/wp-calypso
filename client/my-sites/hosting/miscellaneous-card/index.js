@@ -22,92 +22,92 @@ import { isAtomicClearCacheEnabled } from 'state/selectors/is-atomic-clear-cache
  */
 import './style.scss';
 
-const MiscellaneousCard = ( {
+const MiscellaneousCard = ({
 	disabled,
 	clearAtomicWordPressCache,
 	isClearCacheEnabled,
 	isClearingCache,
 	siteId,
 	translate,
-} ) => {
-	const [ showDialog, setShowDialog ] = useState( false );
-	const [ reason, setReason ] = useState( '' );
+}) => {
+	const [showDialog, setShowDialog] = useState(false);
+	const [reason, setReason] = useState('');
 
 	const clearCache = () => {
-		clearAtomicWordPressCache( siteId, reason );
-		setShowDialog( false );
-		setReason( '' );
+		clearAtomicWordPressCache(siteId, reason);
+		setShowDialog(false);
+		setReason('');
 	};
 
 	const showConfirmationDialog = () => {
-		setShowDialog( true );
+		setShowDialog(true);
 	};
 
 	const closeConfirmationDialog = () => {
-		setShowDialog( false );
+		setShowDialog(false);
 	};
 
-	const onReasonChange = event => {
-		setReason( event.target.value );
+	const onReasonChange = (event) => {
+		setReason(event.target.value);
 	};
 
 	const getClearCacheContent = () => {
-		const clearCacheText = translate( 'Clear Cache' );
-		const clearCacheDisabled = ! reason || reason.length < 3;
+		const clearCacheText = translate('Clear Cache');
+		const clearCacheDisabled = !reason || reason.length < 3;
 		const deleteButtons = [
-			<Button onClick={ closeConfirmationDialog }>{ translate( 'Cancel' ) }</Button>,
-			<Button primary scary disabled={ clearCacheDisabled } onClick={ clearCache }>
-				{ clearCacheText }
+			<Button onClick={closeConfirmationDialog}>{translate('Cancel')}</Button>,
+			<Button primary scary disabled={clearCacheDisabled} onClick={clearCache}>
+				{clearCacheText}
 			</Button>,
 		];
 
 		return (
 			<div>
 				<p>
-					{ translate( '{{strong}}Warning!{{/strong}}', {
+					{translate('{{strong}}Warning!{{/strong}}', {
 						components: {
 							strong: <strong />,
 						},
-					} ) }
+					})}
 				</p>
 				<p>
-					{ translate(
+					{translate(
 						'Clearing the cache on your site may make it unresponsive while the cache is rebuilding. ' +
 							'Please use this feature responsibly.'
-					) }
+					)}
 				</p>
 				<Button
-					onClick={ showConfirmationDialog }
-					busy={ isClearingCache }
-					disabled={ disabled || isClearingCache }
+					onClick={showConfirmationDialog}
+					busy={isClearingCache}
+					disabled={disabled || isClearingCache}
 				>
-					<span>{ clearCacheText }</span>
+					<span>{clearCacheText}</span>
 				</Button>
 
 				<Dialog
-					isVisible={ showDialog }
-					buttons={ deleteButtons }
+					isVisible={showDialog}
+					buttons={deleteButtons}
 					className="miscellaneous-card__confirm-dialog"
 				>
-					<h1 className="miscellaneous-card__confirm-header">{ clearCacheText }</h1>
+					<h1 className="miscellaneous-card__confirm-header">{clearCacheText}</h1>
 					<FormLabel
 						htmlFor="confirmDomainChangeInput"
 						className="miscellaneous-card__confirm-label"
 					>
-						<p>{ translate( "Please let us know why you are clearing your site's cache." ) }</p>
+						<p>{translate("Please let us know why you are clearing your site's cache.")}</p>
 						<p>
-							{ translate(
+							{translate(
 								'We use this information to audit plugins and give valuable feedback to plugin developers. ' +
 									'It is our way of giving back to the community and helping people learn more about WordPress.'
-							) }
+							)}
 						</p>
 					</FormLabel>
 
 					<input
 						autoCapitalize="off"
 						type="text"
-						onChange={ onReasonChange }
-						value={ reason }
+						onChange={onReasonChange}
+						value={reason}
 						aria-required="true"
 						id="confirmDomainChangeInput"
 					/>
@@ -116,30 +116,30 @@ const MiscellaneousCard = ( {
 		);
 	};
 
-	if ( ! isClearCacheEnabled ) {
+	if (!isClearCacheEnabled) {
 		return null;
 	}
 
 	return (
 		<Card className="miscellaneous-card">
-			<MaterialIcon icon="settings" size={ 32 } />
-			<CardHeading>{ translate( 'Miscellaneous' ) }</CardHeading>
-			{ getClearCacheContent() }
+			<MaterialIcon icon="settings" size={32} />
+			<CardHeading>{translate('Miscellaneous')}</CardHeading>
+			{getClearCacheContent()}
 		</Card>
 	);
 };
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			isClearCacheEnabled: isAtomicClearCacheEnabled( state, siteId ),
-			isClearingCache: getRequest( state, clearWordPressCache( siteId ) )?.isLoading ?? false,
+			isClearCacheEnabled: isAtomicClearCacheEnabled(state, siteId),
+			isClearingCache: getRequest(state, clearWordPressCache(siteId))?.isLoading ?? false,
 			siteId,
 		};
 	},
 	{
 		clearAtomicWordPressCache: clearWordPressCache,
 	}
-)( localize( MiscellaneousCard ) );
+)(localize(MiscellaneousCard));

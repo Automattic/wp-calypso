@@ -19,7 +19,7 @@ import { isMonthly } from 'lib/plans/constants';
 import { getPlanClass, planLevelsMatch } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-const PlanFeaturesActions = ( {
+const PlanFeaturesActions = ({
 	availableForPurchase = true,
 	canPurchase,
 	className,
@@ -42,7 +42,7 @@ const PlanFeaturesActions = ( {
 	recordTracksEvent: trackTracksEvent,
 	translate,
 	...props
-} ) => {
+}) => {
 	let upgradeButton;
 
 	const classes = classNames(
@@ -50,87 +50,87 @@ const PlanFeaturesActions = ( {
 		{
 			'is-current': current,
 			'is-primary': selectedPlan
-				? planLevelsMatch( selectedPlan, planType )
-				: ( primaryUpgrade && ! isPlaceholder ) || isPopular,
+				? planLevelsMatch(selectedPlan, planType)
+				: (primaryUpgrade && !isPlaceholder) || isPopular,
 		},
 		className
 	);
 
-	if ( current && ! isInSignup ) {
+	if (current && !isInSignup) {
 		upgradeButton = (
-			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				{ canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' ) }
+			<Button className={classes} href={manageHref} disabled={!manageHref}>
+				{canPurchase ? translate('Manage plan') : translate('View plan')}
 			</Button>
 		);
-	} else if ( availableForPurchase || isPlaceholder ) {
+	} else if (availableForPurchase || isPlaceholder) {
 		let buttonText = freePlan
-			? translate( 'Select Free', { context: 'button' } )
-			: translate( 'Upgrade', { context: 'verb' } );
-		if ( isLandingPage ) {
-			buttonText = translate( 'Select', { context: 'button' } );
+			? translate('Select Free', { context: 'button' })
+			: translate('Upgrade', { context: 'verb' });
+		if (isLandingPage) {
+			buttonText = translate('Select', { context: 'button' });
 		}
-		if ( isLaunchPage ) {
-			if ( freePlan ) {
-				buttonText = translate( 'Keep this plan', {
+		if (isLaunchPage) {
+			if (freePlan) {
+				buttonText = translate('Keep this plan', {
 					comment:
 						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-				} );
+				});
 			} else {
-				buttonText = translate( 'Select %(plan)s', {
+				buttonText = translate('Select %(plan)s', {
 					args: {
 						plan: planName,
 					},
 					context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
 					comment:
 						'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-				} );
+				});
 			}
-		} else if ( isInSignup ) {
+		} else if (isInSignup) {
 			buttonText = isEligibleForPlanStepTest
 				? 'Get started'
-				: translate( 'Start with %(plan)s', {
+				: translate('Start with %(plan)s', {
 						args: {
 							plan: planName,
 						},
-				  } );
+				  });
 		}
 
 		if (
-			isMonthly( currentSitePlanSlug ) &&
-			getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
+			isMonthly(currentSitePlanSlug) &&
+			getPlanClass(planType) === getPlanClass(currentSitePlanSlug)
 		) {
-			buttonText = translate( 'Upgrade to Yearly' );
+			buttonText = translate('Upgrade to Yearly');
 		}
 
 		const handleUpgradeButtonClick = () => {
-			if ( isPlaceholder ) {
+			if (isPlaceholder) {
 				return;
 			}
 
-			trackTracksEvent( 'calypso_plan_features_upgrade_click', {
+			trackTracksEvent('calypso_plan_features_upgrade_click', {
 				current_plan: currentSitePlanSlug,
 				upgrading_to: planType,
-			} );
+			});
 
 			onUpgradeClick();
 		};
 
 		upgradeButton = (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ props.buttonText || buttonText }
+			<Button className={classes} onClick={handleUpgradeButtonClick} disabled={isPlaceholder}>
+				{props.buttonText || buttonText}
 			</Button>
 		);
-	} else if ( ! availableForPurchase && forceDisplayButton ) {
+	} else if (!availableForPurchase && forceDisplayButton) {
 		upgradeButton = (
-			<Button className={ classes } disabled={ true }>
-				{ props.buttonText }
+			<Button className={classes} disabled={true}>
+				{props.buttonText}
 			</Button>
 		);
 	}
 
 	return (
 		<div className="plan-features__actions">
-			<div className="plan-features__actions-buttons">{ upgradeButton }</div>
+			<div className="plan-features__actions-buttons">{upgradeButton}</div>
 		</div>
 	);
 };
@@ -154,15 +154,15 @@ PlanFeaturesActions.propTypes = {
 };
 
 export default connect(
-	( state, { isInSignup } ) => {
-		if ( isInSignup ) {
+	(state, { isInSignup }) => {
+		if (isInSignup) {
 			return { currentSitePlanSlug: null };
 		}
 
-		const selectedSiteId = getSelectedSiteId( state );
-		const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-		const currentSitePlanSlug = get( currentSitePlan, 'productSlug', null );
+		const selectedSiteId = getSelectedSiteId(state);
+		const currentSitePlan = getCurrentPlan(state, selectedSiteId);
+		const currentSitePlanSlug = get(currentSitePlan, 'productSlug', null);
 		return { currentSitePlanSlug };
 	},
 	{ recordTracksEvent }
-)( localize( PlanFeaturesActions ) );
+)(localize(PlanFeaturesActions));

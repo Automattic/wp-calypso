@@ -40,30 +40,30 @@ class PasswordlessSignupForm extends Component {
 		errorMessages: null,
 	};
 
-	submitTracksEvent = ( isSuccessful, props ) => {
+	submitTracksEvent = (isSuccessful, props) => {
 		const tracksEventName = isSuccessful
 			? 'calypso_signup_actions_onboarding_passwordless_login_success'
 			: 'calypso_signup_actions_onboarding_passwordless_login_error';
-		this.props.recordTracksEvent( tracksEventName, {
+		this.props.recordTracksEvent(tracksEventName, {
 			...props,
-		} );
+		});
 	};
 
-	onFormSubmit = async event => {
+	onFormSubmit = async (event) => {
 		event.preventDefault();
 
-		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
-			this.setState( {
-				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
+		if (!this.state.email || !emailValidator.validate(this.state.email)) {
+			this.setState({
+				errorMessages: [this.props.translate('Please provide a valid email address.')],
 				isSubmitting: false,
-			} );
-			this.submitTracksEvent( false, { action_message: 'Please provide a valid email address.' } );
+			});
+			this.submitTracksEvent(false, { action_message: 'Please provide a valid email address.' });
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			isSubmitting: true,
-		} );
+		});
 
 		// Save form state in a format that is compatible with the standard SignupForm used in the user step.
 		const form = {
@@ -74,24 +74,24 @@ class PasswordlessSignupForm extends Component {
 			password: '',
 		};
 
-		this.props.saveSignupStep( {
+		this.props.saveSignupStep({
 			stepName: this.props.stepName,
 			form,
-		} );
+		});
 
 		const isRecaptchaLoaded = typeof this.props.recaptchaClientId === 'number';
 
 		let recaptchaToken = undefined;
 		let recaptchaError = undefined;
 
-		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
-			if ( isRecaptchaLoaded ) {
+		if (flows.getFlow(this.props.flowName)?.showRecaptcha) {
+			if (isRecaptchaLoaded) {
 				recaptchaToken = await recordGoogleRecaptchaAction(
 					this.props.recaptchaClientId,
 					'calypso/signup/formSubmit'
 				);
 
-				if ( ! recaptchaToken ) {
+				if (!recaptchaToken) {
 					recaptchaError = 'recaptcha_failed';
 				}
 			} else {
@@ -112,33 +112,32 @@ class PasswordlessSignupForm extends Component {
 				},
 				null
 			);
-			this.createAccountCallback( null, response );
-		} catch ( err ) {
-			this.createAccountCallback( err );
+			this.createAccountCallback(null, response);
+		} catch (err) {
+			this.createAccountCallback(err);
 		}
 	};
 
-	createAccountCallback = ( error, response ) => {
-		if ( error ) {
-			const errorMessage = this.getErrorMessage( error );
-			this.setState( {
-				errorMessages: [ errorMessage ],
+	createAccountCallback = (error, response) => {
+		if (error) {
+			const errorMessage = this.getErrorMessage(error);
+			this.setState({
+				errorMessages: [errorMessage],
 				isSubmitting: false,
-			} );
-			this.submitTracksEvent( false, { action_message: error.message } );
+			});
+			this.submitTracksEvent(false, { action_message: error.message });
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			errorMessages: null,
 			isSubmitting: false,
-		} );
+		});
 
 		const username =
-			( response && response.signup_sandbox_username ) || ( response && response.username );
+			(response && response.signup_sandbox_username) || (response && response.username);
 
-		const userId =
-			( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
+		const userId = (response && response.signup_sandbox_user_id) || (response && response.user_id);
 
 		const userData = {
 			ID: userId,
@@ -146,40 +145,40 @@ class PasswordlessSignupForm extends Component {
 			email: this.state.email,
 		};
 
-		recordRegistration( {
+		recordRegistration({
 			userData,
 			flow: this.props.flowName,
 			type: 'passwordless',
-		} );
+		});
 
-		this.submitStep( {
+		this.submitStep({
 			username,
 			bearer_token: response.bearer_token,
-		} );
+		});
 	};
 
-	getErrorMessage( errorObj = { error: null, message: null } ) {
+	getErrorMessage(errorObj = { error: null, message: null }) {
 		const { translate } = this.props;
 
-		switch ( errorObj.error ) {
+		switch (errorObj.error) {
 			case 'already_taken':
 			case 'already_active':
 			case 'email_exists':
 				return (
 					<>
-						{ translate( 'An account with this email address already exists.' ) }
+						{translate('An account with this email address already exists.')}
 						&nbsp;
-						{ translate( 'If this is you {{a}}log in now{{/a}}.', {
+						{translate('If this is you {{a}}log in now{{/a}}.', {
 							components: {
 								a: (
 									<a
-										href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
+										href={`${this.props.logInUrl}&email_address=${encodeURIComponent(
 											this.state.email
-										) }` }
+										)}`}
 									/>
 								),
 							},
-						} ) }
+						})}
 					</>
 				);
 			default:
@@ -189,7 +188,7 @@ class PasswordlessSignupForm extends Component {
 		}
 	}
 
-	submitStep = data => {
+	submitStep = (data) => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
 		submitCreateAccountStep(
 			{
@@ -202,23 +201,23 @@ class PasswordlessSignupForm extends Component {
 			},
 			data
 		);
-		this.submitTracksEvent( true, { action_message: 'Successful login', username: data.username } );
+		this.submitTracksEvent(true, { action_message: 'Successful login', username: data.username });
 		goToNextStep();
 	};
 
-	onInputChange = ( { target: { value } } ) =>
-		this.setState( {
+	onInputChange = ({ target: { value } }) =>
+		this.setState({
 			email: value,
 			errorMessages: null,
-			isEmailAddressValid: emailValidator.validate( value ),
-		} );
+			isEmailAddressValid: emailValidator.validate(value),
+		});
 
 	renderNotice() {
 		return (
-			<Notice showDismiss={ false } status="is-error">
-				{ this.props.translate(
+			<Notice showDismiss={false} status="is-error">
+				{this.props.translate(
 					'Your account has already been created. You can change your email, username, and password later.'
-				) }
+				)}
 			</Notice>
 		);
 	}
@@ -229,32 +228,32 @@ class PasswordlessSignupForm extends Component {
 
 	formFooter() {
 		const { isSubmitting, isEmailAddressValid } = this.state;
-		if ( this.userCreationComplete() ) {
+		if (this.userCreationComplete()) {
 			return (
 				<LoggedOutFormFooter>
-					<Button primary onClick={ () => this.props.goToNextStep() }>
-						{ this.props.translate( 'Continue' ) }
+					<Button primary onClick={() => this.props.goToNextStep()}>
+						{this.props.translate('Continue')}
 					</Button>
 				</LoggedOutFormFooter>
 			);
 		}
 		const submitButtonText = isSubmitting
-			? this.props.translate( 'Creating Your Account…' )
-			: this.props.translate( 'Create your account' );
+			? this.props.translate('Creating Your Account…')
+			: this.props.translate('Create your account');
 		return (
 			<LoggedOutFormFooter>
 				<Button
 					type="submit"
 					primary
-					busy={ isSubmitting }
+					busy={isSubmitting}
 					disabled={
 						isSubmitting ||
-						! isEmailAddressValid ||
-						!! this.props.disabled ||
-						!! this.props.disableSubmitButton
+						!isEmailAddressValid ||
+						!!this.props.disabled ||
+						!!this.props.disableSubmitButton
 					}
 				>
-					{ submitButtonText }
+					{submitButtonText}
 				</Button>
 			</LoggedOutFormFooter>
 		);
@@ -266,28 +265,28 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
-				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
-					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="email">{ translate( 'Enter your email address' ) }</FormLabel>
+				<LoggedOutForm onSubmit={this.onFormSubmit} noValidate>
+					<ValidationFieldset errorMessages={errorMessages}>
+						<FormLabel htmlFor="email">{translate('Enter your email address')}</FormLabel>
 						<FormTextInput
-							autoCapitalize={ 'off' }
+							autoCapitalize={'off'}
 							className="signup-form__passwordless-email"
 							type="email"
 							name="email"
-							value={ this.state.email }
-							onChange={ this.onInputChange }
-							disabled={ isSubmitting || !! this.props.disabled }
+							value={this.state.email}
+							onChange={this.onInputChange}
+							disabled={isSubmitting || !!this.props.disabled}
 						/>
 					</ValidationFieldset>
-					{ this.props.renderTerms() }
-					{ this.formFooter() }
+					{this.props.renderTerms()}
+					{this.formFooter()}
 				</LoggedOutForm>
 			</div>
 		);
 	}
 }
-export default connect( null, {
+export default connect(null, {
 	recordTracksEvent,
 	saveSignupStep,
 	submitCreateAccountStep: submitSignupStep,
-} )( localize( PasswordlessSignupForm ) );
+})(localize(PasswordlessSignupForm));

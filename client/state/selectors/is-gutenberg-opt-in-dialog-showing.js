@@ -4,6 +4,6 @@
 
 import { get } from 'lodash';
 
-export default function isGutenbergOptInDialogShowing( state ) {
-	return get( state, 'ui.gutenbergOptInDialog.isShowing', false );
+export default function isGutenbergOptInDialogShowing(state) {
+	return get(state, 'ui.gutenbergOptInDialog.isShowing', false);
 }

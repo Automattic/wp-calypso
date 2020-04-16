@@ -12,13 +12,13 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class FollowingManageEmptyContent extends React.Component {
 	componentDidMount() {
-		recordTrack( 'calypso_reader_empty_manage_following_loaded' );
+		recordTrack('calypso_reader_empty_manage_following_loaded');
 	}
 
 	recordAction = () => {
-		recordAction( 'clicked_discover_on_empty_manage_following' );
-		recordGaEvent( 'Clicked Discover on EmptyContent in Manage Following' );
-		recordTrack( 'calypso_reader_discover_on_empty_manage_following_clicked' );
+		recordAction('clicked_discover_on_empty_manage_following');
+		recordGaEvent('Clicked Discover on EmptyContent in Manage Following');
+		recordTrack('calypso_reader_discover_on_empty_manage_following_clicked');
 	};
 
 	render() {
@@ -26,25 +26,25 @@ class FollowingManageEmptyContent extends React.Component {
 		const action = (
 			<a
 				className="empty-content__action button is-primary"
-				onClick={ this.recordAction }
+				onClick={this.recordAction}
 				href="/discover"
 			>
-				{ this.props.translate( 'Explore' ) }
+				{this.props.translate('Explore')}
 			</a>
 		);
 
 		return (
 			<EmptyContent
 				className="following-manage__empty"
-				action={ action }
-				title={ this.props.translate( "You haven't followed any sites yet" ) }
-				line={ this.props.translate( 'Search for a site above or explore Discover.' ) }
-				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
-				illustrationWidth={ 400 }
+				action={action}
+				title={this.props.translate("You haven't followed any sites yet")}
+				line={this.props.translate('Search for a site above or explore Discover.')}
+				illustration={'/calypso/images/illustrations/illustration-empty-results.svg'}
+				illustrationWidth={400}
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default localize( FollowingManageEmptyContent );
+export default localize(FollowingManageEmptyContent);

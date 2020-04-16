@@ -19,17 +19,17 @@ class TeamList extends React.Component {
 			order: 'ASC',
 			order_by: 'display_name',
 			search: this.props.search ? '*' + this.props.search + '*' : null,
-			search_columns: [ 'display_name', 'user_login' ],
+			search_columns: ['display_name', 'user_login'],
 		};
 
-		Object.freeze( fetchOptions );
+		Object.freeze(fetchOptions);
 
 		return (
-			<SiteUsersFetcher fetchOptions={ fetchOptions }>
-				<Team { ...this.props } />
+			<SiteUsersFetcher fetchOptions={fetchOptions}>
+				<Team {...this.props} />
 			</SiteUsersFetcher>
 		);
 	}
 }
 
-export default localize( TeamList );
+export default localize(TeamList);

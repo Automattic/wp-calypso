@@ -44,11 +44,11 @@ class CloneDestinationStep extends Component {
 		},
 	};
 
-	handleFieldChange = ( { target: { name, value } } ) =>
-		this.setState( {
-			form: Object.assign( {}, this.state.form, { [ name ]: value } ),
-			formErrors: { ...this.state.formErrors, [ name ]: false },
-		} );
+	handleFieldChange = ({ target: { name, value } }) =>
+		this.setState({
+			form: Object.assign({}, this.state.form, { [name]: value }),
+			formErrors: { ...this.state.formErrors, [name]: false },
+		});
 
 	goToNextStep = () => {
 		const { translate } = this.props;
@@ -57,15 +57,15 @@ class CloneDestinationStep extends Component {
 		} = this.state;
 
 		const errors = Object.assign(
-			! destinationSiteName && {
-				destinationSiteName: translate( 'Please provide a name for your site.' ),
+			!destinationSiteName && {
+				destinationSiteName: translate('Please provide a name for your site.'),
 			},
-			! destinationSiteUrl && {
-				destinationSiteUrl: translate( 'Please provide the destination URL.' ),
+			!destinationSiteUrl && {
+				destinationSiteUrl: translate('Please provide the destination URL.'),
 			}
 		);
 
-		if ( isEmpty( errors ) ) {
+		if (isEmpty(errors)) {
 			this.props.submitSignupStep(
 				{ stepName: this.props.stepName },
 				{ destinationSiteName, destinationSiteUrl }
@@ -73,7 +73,7 @@ class CloneDestinationStep extends Component {
 
 			this.props.goToNextStep();
 		} else {
-			this.setState( { formErrors: errors } );
+			this.setState({ formErrors: errors });
 		}
 	};
 
@@ -168,41 +168,41 @@ class CloneDestinationStep extends Component {
 				<FormLabel className="clone-destination__label">Destination site title</FormLabel>
 				<FormTextInput
 					name="destinationSiteName"
-					onChange={ this.handleFieldChange }
-					isError={ !! formErrors.destinationSiteName }
+					onChange={this.handleFieldChange}
+					isError={!!formErrors.destinationSiteName}
 				/>
-				{ formErrors.destinationSiteName && (
-					<FormInputValidation isError={ true } text={ formErrors.destinationSiteName } />
-				) }
+				{formErrors.destinationSiteName && (
+					<FormInputValidation isError={true} text={formErrors.destinationSiteName} />
+				)}
 
 				<FormLabel className="clone-destination__label">Destination site URL</FormLabel>
 				<FormTextInput
 					name="destinationSiteUrl"
-					onChange={ this.handleFieldChange }
-					isError={ !! formErrors.destinationSiteUrl }
+					onChange={this.handleFieldChange}
+					isError={!!formErrors.destinationSiteUrl}
 				/>
-				{ formErrors.destinationSiteUrl && (
-					<FormInputValidation isError={ true } text={ formErrors.destinationSiteUrl } />
-				) }
+				{formErrors.destinationSiteUrl && (
+					<FormInputValidation isError={true} text={formErrors.destinationSiteUrl} />
+				)}
 
 				<p className="clone-destination__tos">
-					{ translate( 'By continuing, you agree to our {{TOS /}}', {
+					{translate('By continuing, you agree to our {{TOS /}}', {
 						components: {
 							TOS: (
 								<ExternalLink
 									className="clone-destination__tos-link"
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									href={localizeUrl('https://wordpress.com/tos/')}
 									target="_blank"
 								>
-									{ translate( 'Terms of Service.' ) }
+									{translate('Terms of Service.')}
 								</ExternalLink>
 							),
 						},
-					} ) }
+					})}
 				</p>
 
-				<Button primary className="clone-destination__button" onClick={ this.goToNextStep }>
-					{ translate( 'Continue' ) }
+				<Button primary className="clone-destination__button" onClick={this.goToNextStep}>
+					{translate('Continue')}
 				</Button>
 			</Card>
 		);
@@ -211,7 +211,7 @@ class CloneDestinationStep extends Component {
 	render() {
 		const { flowName, stepName, positionInFlow, translate } = this.props;
 
-		const headerText = translate( 'Getting started' );
+		const headerText = translate('Getting started');
 		const subHeaderText = translate(
 			"Let's get started. What would you like to name your destination site and where is it located?"
 		);
@@ -219,17 +219,17 @@ class CloneDestinationStep extends Component {
 		return (
 			<StepWrapper
 				className="clone-destination"
-				flowName={ flowName }
-				stepName={ stepName }
-				headerText={ headerText }
-				fallbackHeaderText={ headerText }
-				subHeaderText={ subHeaderText }
-				fallbackSubHeaderText={ subHeaderText }
-				positionInFlow={ positionInFlow }
-				stepContent={ this.renderStepContent() }
+				flowName={flowName}
+				stepName={stepName}
+				headerText={headerText}
+				fallbackHeaderText={headerText}
+				subHeaderText={subHeaderText}
+				fallbackSubHeaderText={subHeaderText}
+				positionInFlow={positionInFlow}
+				stepContent={this.renderStepContent()}
 			/>
 		);
 	}
 }
 
-export default connect( null, { submitSignupStep } )( localize( CloneDestinationStep ) );
+export default connect(null, { submitSignupStep })(localize(CloneDestinationStep));

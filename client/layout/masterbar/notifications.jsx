@@ -35,43 +35,43 @@ class MasterbarItemNotifications extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.setState( {
+		this.setState({
 			newNote: this.props.hasUnseenNotifications,
-		} );
+		});
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { isNotificationsOpen: isOpen, recordOpening } = nextProps;
 
-		if ( ! this.props.isNotificationsOpen && isOpen ) {
-			recordOpening( {
-				unread_notifications: store.get( 'wpnotes_unseen_count' ),
-			} );
-			this.setNotesIndicator( 0 );
+		if (!this.props.isNotificationsOpen && isOpen) {
+			recordOpening({
+				unread_notifications: store.get('wpnotes_unseen_count'),
+			});
+			this.setNotesIndicator(0);
 		}
 
 		// focus on main window if we just closed the notes panel
-		if ( this.props.isNotificationsOpen && ! isOpen ) {
+		if (this.props.isNotificationsOpen && !isOpen) {
 			this.notificationLink.current.blur();
 			window.focus();
 		}
 	}
 
-	checkToggleNotes = ( event, forceToggle ) => {
+	checkToggleNotes = (event, forceToggle) => {
 		const target = event ? event.target : false;
 		const notificationNode = this.notificationLink.current;
 
-		if ( target && notificationNode.contains( target ) ) {
+		if (target && notificationNode.contains(target)) {
 			return;
 		}
 
-		if ( this.props.isNotificationsOpen || forceToggle === true ) {
-			this.toggleNotesFrame( event );
+		if (this.props.isNotificationsOpen || forceToggle === true) {
+			this.toggleNotesFrame(event);
 		}
 	};
 
-	toggleNotesFrame = event => {
-		if ( event ) {
+	toggleNotesFrame = (event) => {
+		if (event) {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
 		}
@@ -87,73 +87,71 @@ class MasterbarItemNotifications extends Component {
 	 *
 	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator = currentUnseenCount => {
-		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
+	setNotesIndicator = (currentUnseenCount) => {
+		const existingUnseenCount = store.get('wpnotes_unseen_count');
 		let newAnimationState = this.state.animationState;
 
-		if ( 0 === currentUnseenCount ) {
+		if (0 === currentUnseenCount) {
 			// If we don't have new notes at load-time, remove the `-1` "init" status
 			newAnimationState = 0;
-		} else if ( currentUnseenCount > existingUnseenCount ) {
+		} else if (currentUnseenCount > existingUnseenCount) {
 			// Animate the indicator bubble by swapping CSS classes through the animation state
 			// Note that we could have an animation state of `-1` indicating the initial load
-			newAnimationState = 1 - Math.abs( this.state.animationState );
+			newAnimationState = 1 - Math.abs(this.state.animationState);
 		}
 
-		store.set( 'wpnotes_unseen_count', currentUnseenCount );
+		store.set('wpnotes_unseen_count', currentUnseenCount);
 
-		this.setState( {
+		this.setState({
 			newNote: currentUnseenCount > 0,
 			animationState: newAnimationState,
-		} );
+		});
 	};
 
 	render() {
-		const classes = classNames( this.props.className, {
+		const classes = classNames(this.props.className, {
 			'is-active': this.props.isNotificationsOpen,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
-		} );
+		});
 
 		return (
-			<div className="masterbar__notifications" ref={ this.notificationLink }>
+			<div className="masterbar__notifications" ref={this.notificationLink}>
 				<MasterbarItem
 					url="/notifications"
 					icon="bell"
-					onClick={ this.toggleNotesFrame }
-					isActive={ this.props.isActive }
-					tooltip={ this.props.tooltip }
-					className={ classes }
+					onClick={this.toggleNotesFrame}
+					isActive={this.props.isActive}
+					tooltip={this.props.tooltip}
+					className={classes}
 				>
-					{ this.props.children }
+					{this.props.children}
 					<span
 						className="masterbar__notifications-bubble"
-						key={
-							'notification-indicator-animation-state-' + Math.abs( this.state.animationState )
-						}
+						key={'notification-indicator-animation-state-' + Math.abs(this.state.animationState)}
 					/>
 				</MasterbarItem>
 				<AsyncLoad
 					require="../../../apps/notifications/index.jsx"
-					isShowing={ this.props.isNotificationsOpen }
-					checkToggle={ this.checkToggleNotes }
-					setIndicator={ this.setNotesIndicator }
-					placeholder={ null }
+					isShowing={this.props.isNotificationsOpen}
+					checkToggle={this.checkToggleNotes}
+					setIndicator={this.setNotesIndicator}
+					placeholder={null}
 				/>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	return {
-		isNotificationsOpen: isNotificationsOpen( state ),
-		hasUnseenNotifications: hasUnseenNotifications( state ),
+		isNotificationsOpen: isNotificationsOpen(state),
+		hasUnseenNotifications: hasUnseenNotifications(state),
 	};
 };
 const mapDispatchToProps = {
 	toggleNotificationsPanel,
-	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
+	recordOpening: partial(recordTracksEvent, 'calypso_notification_open'),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );
+export default connect(mapStateToProps, mapDispatchToProps)(MasterbarItemNotifications);

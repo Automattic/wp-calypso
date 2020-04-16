@@ -18,7 +18,7 @@ export const settings = {
 export const normalizedSettings = {
 	...settings,
 	12345678: {
-		...settings[ 12345678 ],
+		...settings[12345678],
 		wp_mobile_excerpt: false,
 		wp_mobile_featured_images: true,
 	},

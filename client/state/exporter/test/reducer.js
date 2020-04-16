@@ -15,9 +15,9 @@ import {
 	EXPORT_POST_TYPE_FIELD_SET,
 } from 'state/action-types';
 
-describe( 'reducer', () => {
-	describe( 'selectedAdvancedSettings', () => {
-		test( 'should set post category', () => {
+describe('reducer', () => {
+	describe('selectedAdvancedSettings', () => {
+		test('should set post category', () => {
 			const state = selectedAdvancedSettings(
 				{},
 				{
@@ -28,15 +28,15 @@ describe( 'reducer', () => {
 					value: 1,
 				}
 			);
-			expect( state ).to.deep.equal( {
+			expect(state).to.deep.equal({
 				2916284: {
 					post: { category: 1 },
 					page: {},
 				},
-			} );
-		} );
+			});
+		});
 
-		test( 'should set page author', () => {
+		test('should set page author', () => {
 			const state = selectedAdvancedSettings(
 				{},
 				{
@@ -47,43 +47,43 @@ describe( 'reducer', () => {
 					value: 95752520,
 				}
 			);
-			expect( state ).to.deep.equal( {
+			expect(state).to.deep.equal({
 				2916284: {
 					post: {},
 					page: { author: 95752520 },
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#fetchingAdvancedSettings()', () => {
-		test( 'should index fetching status by site ID', () => {
-			const state = fetchingAdvancedSettings( null, {
+	describe('#fetchingAdvancedSettings()', () => {
+		test('should index fetching status by site ID', () => {
+			const state = fetchingAdvancedSettings(null, {
 				type: EXPORT_ADVANCED_SETTINGS_FETCH,
 				siteId: 100658273,
-			} );
-			expect( state ).to.eql( { 100658273: true } );
-		} );
+			});
+			expect(state).to.eql({ 100658273: true });
+		});
 
-		test( 'should reset fetching status after receive', () => {
-			const state = fetchingAdvancedSettings( null, {
+		test('should reset fetching status after receive', () => {
+			const state = fetchingAdvancedSettings(null, {
 				type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 				siteId: 100658273,
 				advancedSettings: {},
-			} );
-			expect( state ).to.eql( { 100658273: false } );
-		} );
+			});
+			expect(state).to.eql({ 100658273: false });
+		});
 
-		test( 'should reset fetching status after fail', () => {
-			const state = fetchingAdvancedSettings( null, {
+		test('should reset fetching status after fail', () => {
+			const state = fetchingAdvancedSettings(null, {
 				type: EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 				siteId: 100658273,
 				advancedSettings: {},
-			} );
-			expect( state ).to.eql( { 100658273: false } );
-		} );
+			});
+			expect(state).to.eql({ 100658273: false });
+		});
 
-		test( 'should not replace fetching status with other site', () => {
+		test('should not replace fetching status with other site', () => {
 			const state = fetchingAdvancedSettings(
 				{
 					100658273: true,
@@ -93,53 +93,53 @@ describe( 'reducer', () => {
 					siteId: 12345,
 				}
 			);
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				100658273: true,
 				12345: true,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#advancedSettings()', () => {
-		test( 'should index settings by site ID', () => {
-			const state = advancedSettings( null, {
+	describe('#advancedSettings()', () => {
+		test('should index settings by site ID', () => {
+			const state = advancedSettings(null, {
 				type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 				siteId: 100658273,
 				advancedSettings: SAMPLE_ADVANCED_SETTINGS,
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				100658273: SAMPLE_ADVANCED_SETTINGS,
-			} );
-		} );
+			});
+		});
 
-		test( 'should replace known settings for site', () => {
+		test('should replace known settings for site', () => {
 			let state = { 100658273: SAMPLE_ADVANCED_SETTINGS };
 
-			state = advancedSettings( state, {
+			state = advancedSettings(state, {
 				type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 				siteId: 100658273,
 				advancedSettings: SAMPLE_ADVANCED_SETTINGS_EMPTY,
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				100658273: SAMPLE_ADVANCED_SETTINGS_EMPTY,
-			} );
-		} );
+			});
+		});
 
-		test( 'should not replace known settings with other sites', () => {
+		test('should not replace known settings with other sites', () => {
 			let state = { 100658273: SAMPLE_ADVANCED_SETTINGS };
 
-			state = advancedSettings( state, {
+			state = advancedSettings(state, {
 				type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 				siteId: 12345,
 				advancedSettings: SAMPLE_ADVANCED_SETTINGS_EMPTY,
-			} );
+			});
 
-			expect( state ).to.eql( {
+			expect(state).to.eql({
 				100658273: SAMPLE_ADVANCED_SETTINGS,
 				12345: SAMPLE_ADVANCED_SETTINGS_EMPTY,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

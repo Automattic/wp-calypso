@@ -14,24 +14,24 @@ import { requestStatus } from '../../../state/status/actions';
 
 class QueryStatus extends Component {
 	UNSAFE_componentWillMount() {
-		this.requestStatus( this.props );
+		this.requestStatus(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId } = this.props;
 
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
+		if (!nextProps.siteId || siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.requestStatus( nextProps );
+		this.requestStatus(nextProps);
 	}
 
-	requestStatus( props ) {
+	requestStatus(props) {
 		const { requestingStatus, siteId } = props;
 
-		if ( ! requestingStatus && siteId ) {
-			props.requestStatus( siteId );
+		if (!requestingStatus && siteId) {
+			props.requestStatus(siteId);
 		}
 	}
 
@@ -47,10 +47,10 @@ QueryStatus.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	(state, { siteId }) => {
 		return {
-			requestingStatus: isRequestingStatus( state, siteId ),
+			requestingStatus: isRequestingStatus(state, siteId),
 		};
 	},
 	{ requestStatus }
-)( QueryStatus );
+)(QueryStatus);

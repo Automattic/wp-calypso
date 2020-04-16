@@ -7,11 +7,11 @@ import {
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:transaction-endpoint' );
+const debug = debugFactory('calypso:transaction-endpoint');
 
 export type WPCOMTransactionEndpoint = (
 	_: WPCOMTransactionEndpointRequestPayload
-) => Promise< WPCOMTransactionEndpointResponse >;
+) => Promise<WPCOMTransactionEndpointResponse>;
 
 // Request payload as expected by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
@@ -70,7 +70,7 @@ export type WPCOMTransactionEndpointDomainDetails = {
 
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
-export function createTransactionEndpointCartFromLineItems( {
+export function createTransactionEndpointCartFromLineItems({
 	siteId,
 	couponId,
 	country,
@@ -84,15 +84,15 @@ export function createTransactionEndpointCartFromLineItems( {
 	postalCode: string;
 	subdivisionCode?: string;
 	items: WPCOMCartItem[];
-} ): WPCOMTransactionEndpointCart {
-	debug( 'creating cart from items', items );
+}): WPCOMTransactionEndpointCart {
+	debug('creating cart from items', items);
 
 	const currency: string = items.reduce(
-		( firstValue: string, item ) => firstValue || item.amount.currency,
+		(firstValue: string, item) => firstValue || item.amount.currency,
 		''
 	);
 
-	const convertItem = ( item: WPCOMCartItem ) => {
+	const convertItem = (item: WPCOMCartItem) => {
 		return {
 			product_id: item.wpcom_meta?.product_id,
 			meta: item.wpcom_meta?.meta,
@@ -111,8 +111,8 @@ export function createTransactionEndpointCartFromLineItems( {
 		temporary: false,
 		extra: [],
 		products: items
-			.filter( product => ! getNonProductWPCOMCartItemTypes().includes( product.type ) )
-			.map( convertItem ),
+			.filter((product) => !getNonProductWPCOMCartItemTypes().includes(product.type))
+			.map(convertItem),
 		tax: {
 			location: {
 				country_code: country,
@@ -123,7 +123,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	};
 }
 
-export function createTransactionEndpointRequestPayloadFromLineItems( {
+export function createTransactionEndpointRequestPayloadFromLineItems({
 	siteId,
 	couponId,
 	country,
@@ -149,16 +149,16 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	paymentPartnerProcessorId: string;
 	storedDetailsId: string;
 	name: string;
-} ): WPCOMTransactionEndpointRequestPayload {
+}): WPCOMTransactionEndpointRequestPayload {
 	return {
-		cart: createTransactionEndpointCartFromLineItems( {
+		cart: createTransactionEndpointCartFromLineItems({
 			siteId,
-			couponId: couponId || getCouponIdFromProducts( items ),
+			couponId: couponId || getCouponIdFromProducts(items),
 			country,
 			postalCode,
 			subdivisionCode,
-			items: items.filter( item => item.type !== 'tax' ),
-		} ),
+			items: items.filter((item) => item.type !== 'tax'),
+		}),
 		domainDetails,
 		payment: {
 			paymentMethod: paymentMethodType,
@@ -173,8 +173,8 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	};
 }
 
-function getCouponIdFromProducts( items: WPCOMCartItem[] ): string | undefined {
-	const couponItem = items.find( item => item.type === 'coupon' );
+function getCouponIdFromProducts(items: WPCOMCartItem[]): string | undefined {
+	const couponItem = items.find((item) => item.type === 'coupon');
 	return couponItem?.wpcom_meta?.couponCode;
 }
 

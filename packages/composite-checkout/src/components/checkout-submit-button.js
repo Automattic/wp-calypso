@@ -9,18 +9,16 @@ import React from 'react';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod } from '../public-api';
 
-export default function CheckoutSubmitButton( { className, disabled } ) {
+export default function CheckoutSubmitButton({ className, disabled }) {
 	const paymentMethod = usePaymentMethod();
-	if ( ! paymentMethod ) {
+	if (!paymentMethod) {
 		return null;
 	}
 	const { submitButton } = paymentMethod;
 
 	// We clone the element to add the disabled prop
-	const clonedSubmitButton = React.cloneElement( submitButton, { disabled } );
+	const clonedSubmitButton = React.cloneElement(submitButton, { disabled });
 	return (
-		<div className={ joinClasses( [ className, 'checkout-submit-button' ] ) }>
-			{ clonedSubmitButton }
-		</div>
+		<div className={joinClasses([className, 'checkout-submit-button'])}>{clonedSubmitButton}</div>
 	);
 }

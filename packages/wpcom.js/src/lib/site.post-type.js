@@ -10,24 +10,24 @@ export default class SitePostType {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
-	constructor( postType, siteId, wpcom ) {
-		if ( ! siteId ) {
-			throw new TypeError( '`siteId` is not correctly defined' );
+	constructor(postType, siteId, wpcom) {
+		if (!siteId) {
+			throw new TypeError('`siteId` is not correctly defined');
 		}
 
-		if ( ! postType ) {
-			throw new TypeError( '`postType` is not correctly defined' );
+		if (!postType) {
+			throw new TypeError('`postType` is not correctly defined');
 		}
 
-		if ( ! ( this instanceof SitePostType ) ) {
-			return new SitePostType( postType, siteId, wpcom );
+		if (!(this instanceof SitePostType)) {
+			return new SitePostType(postType, siteId, wpcom);
 		}
 
 		this.wpcom = wpcom;
 
-		this._siteId = encodeURIComponent( siteId );
-		this._postType = encodeURIComponent( postType );
-		this._rootPath = `/sites/${ this._siteId }/post-types/${ this._postType }`;
+		this._siteId = encodeURIComponent(siteId);
+		this._postType = encodeURIComponent(postType);
+		this._rootPath = `/sites/${this._siteId}/post-types/${this._postType}`;
 	}
 
 	/**
@@ -37,8 +37,8 @@ export default class SitePostType {
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
-	taxonomiesList( query, fn ) {
-		const termsPath = `${ this._rootPath }/taxonomies`;
-		return this.wpcom.req.get( termsPath, query, fn );
+	taxonomiesList(query, fn) {
+		const termsPath = `${this._rootPath}/taxonomies`;
+		return this.wpcom.req.get(termsPath, query, fn);
 	}
 }

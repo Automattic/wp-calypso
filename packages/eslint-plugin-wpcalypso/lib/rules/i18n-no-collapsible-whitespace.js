@@ -9,51 +9,51 @@
 // Helper Functions
 //------------------------------------------------------------------------------
 
-const getCallee = require( '../util/get-callee' ),
-	getTextContentFromNode = require( '../util/get-text-content-from-node' );
+const getCallee = require('../util/get-callee'),
+	getTextContentFromNode = require('../util/get-text-content-from-node');
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = (module.exports = function (context) {
 	return {
-		CallExpression: function( node ) {
-			if ( 'translate' !== getCallee( node ).name ) {
+		CallExpression: function (node) {
+			if ('translate' !== getCallee(node).name) {
 				return;
 			}
 
-			node.arguments.forEach( function( arg ) {
-				const string = getTextContentFromNode( arg );
+			node.arguments.forEach(function (arg) {
+				const string = getTextContentFromNode(arg);
 				let problem, problemString, problemsByCharCode;
 
-				if ( ! string ) {
+				if (!string) {
 					return;
 				}
 
-				const collapsibleWhitespace = string.match( /(\n|\t|\r|(?: {2}))/ );
+				const collapsibleWhitespace = string.match(/(\n|\t|\r|(?: {2}))/);
 
-				if ( collapsibleWhitespace ) {
+				if (collapsibleWhitespace) {
 					problemsByCharCode = {
 						9: '\\t',
 						10: '\\n',
 						13: '\\r',
 						32: 'consecutive spaces',
 					};
-					problem = problemsByCharCode[ collapsibleWhitespace[ 0 ].charCodeAt( 0 ) ];
-					problemString = problem ? ` (${ problem })` : '';
-					context.report( {
+					problem = problemsByCharCode[collapsibleWhitespace[0].charCodeAt(0)];
+					problemString = problem ? ` (${problem})` : '';
+					context.report({
 						node: arg,
 						message: rule.ERROR_MESSAGE,
 						data: {
 							problem: problemString,
 						},
-					} );
+					});
 				}
-			} );
+			});
 		},
 	};
-} );
+});
 
 rule.ERROR_MESSAGE = 'Translations should not contain collapsible whitespace{{problem}}';
 

@@ -15,7 +15,7 @@ import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 /**
  * Module variables
  */
-const debug = debugFactory( 'calypso:analytics:TrackComponentView' );
+const debug = debugFactory('calypso:analytics:TrackComponentView');
 
 class TrackComponentView extends Component {
 	static propTypes = {
@@ -31,17 +31,17 @@ class TrackComponentView extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		debug( 'Component will mount.' );
+		debug('Component will mount.');
 		const { eventName, eventProperties } = this.props;
-		if ( eventName ) {
-			debug( `Recording Tracks event "${ eventName }".` );
-			this.props.recordTracksEvent( eventName, eventProperties );
+		if (eventName) {
+			debug(`Recording Tracks event "${eventName}".`);
+			this.props.recordTracksEvent(eventName, eventProperties);
 		}
 
 		const { statGroup, statName } = this.props;
-		if ( statGroup ) {
-			debug( `Bumping stat "${ statName }".` );
-			this.props.bumpStat( statGroup, statName );
+		if (statGroup) {
+			debug(`Bumping stat "${statName}".`);
+			this.props.bumpStat(statGroup, statName);
 		}
 	}
 
@@ -50,4 +50,4 @@ class TrackComponentView extends Component {
 	}
 }
 
-export default connect( null, { bumpStat, recordTracksEvent } )( TrackComponentView );
+export default connect(null, { bumpStat, recordTracksEvent })(TrackComponentView);

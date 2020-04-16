@@ -13,155 +13,155 @@ import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
 
-function ValidationError( code ) {
+function ValidationError(code) {
 	this.code = code;
 	this.message = code;
 }
 
-inherits( ValidationError, Error );
+inherits(ValidationError, Error);
 
-function checkAuthCode( domainName, authCode, onComplete ) {
-	if ( ! domainName || ! authCode ) {
-		onComplete( null, { success: false } );
+function checkAuthCode(domainName, authCode, onComplete) {
+	if (!domainName || !authCode) {
+		onComplete(null, { success: false });
 		return;
 	}
 
-	wpcom.undocumented().checkAuthCode( domainName, authCode, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( { error: serverError.error, message: serverError.message } );
+	wpcom.undocumented().checkAuthCode(domainName, authCode, function (serverError, result) {
+		if (serverError) {
+			onComplete({ error: serverError.error, message: serverError.message });
 			return;
 		}
 
-		onComplete( null, result );
-	} );
+		onComplete(null, result);
+	});
 }
 
-function checkDomainAvailability( params, onComplete ) {
+function checkDomainAvailability(params, onComplete) {
 	const { domainName, blogId } = params;
-	const isCartPreCheck = get( params, 'isCartPreCheck', false );
-	if ( ! domainName ) {
-		onComplete( null, { status: domainAvailability.EMPTY_QUERY } );
+	const isCartPreCheck = get(params, 'isCartPreCheck', false);
+	if (!domainName) {
+		onComplete(null, { status: domainAvailability.EMPTY_QUERY });
 		return;
 	}
 
 	wpcom
 		.undocumented()
-		.isDomainAvailable( domainName, blogId, isCartPreCheck, function( serverError, result ) {
-			if ( serverError ) {
-				onComplete( serverError.error );
+		.isDomainAvailable(domainName, blogId, isCartPreCheck, function (serverError, result) {
+			if (serverError) {
+				onComplete(serverError.error);
 				return;
 			}
 
-			onComplete( null, result );
-		} );
+			onComplete(null, result);
+		});
 }
 
-function checkInboundTransferStatus( domainName, onComplete ) {
-	if ( ! domainName ) {
-		onComplete( null );
+function checkInboundTransferStatus(domainName, onComplete) {
+	if (!domainName) {
+		onComplete(null);
 		return;
 	}
 
-	wpcom.undocumented().getInboundTransferStatus( domainName, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
+	wpcom.undocumented().getInboundTransferStatus(domainName, function (serverError, result) {
+		if (serverError) {
+			onComplete(serverError.error);
 			return;
 		}
 
-		onComplete( null, result );
-	} );
+		onComplete(null, result);
+	});
 }
 
-function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
-	if ( ! domainName || ! siteId ) {
-		onComplete( null );
+function startInboundTransfer(siteId, domainName, authCode, onComplete) {
+	if (!domainName || !siteId) {
+		onComplete(null);
 		return;
 	}
 
 	wpcom
 		.undocumented()
-		.startInboundTransfer( siteId, domainName, authCode, function( serverError, result ) {
-			if ( serverError ) {
-				onComplete( serverError.error );
+		.startInboundTransfer(siteId, domainName, authCode, function (serverError, result) {
+			if (serverError) {
+				onComplete(serverError.error);
 				return;
 			}
 
-			onComplete( null, result );
-		} );
+			onComplete(null, result);
+		});
 }
 
-function resendInboundTransferEmail( domainName, onComplete ) {
-	if ( ! domainName ) {
-		onComplete( null );
+function resendInboundTransferEmail(domainName, onComplete) {
+	if (!domainName) {
+		onComplete(null);
 		return;
 	}
 
-	wpcom.undocumented().resendInboundTransferEmail( domainName, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError );
+	wpcom.undocumented().resendInboundTransferEmail(domainName, function (serverError, result) {
+		if (serverError) {
+			onComplete(serverError);
 			return;
 		}
 
-		onComplete( null, result );
-	} );
+		onComplete(null, result);
+	});
 }
 
-function canRedirect( siteId, domainName, onComplete ) {
-	if ( ! domainName ) {
-		onComplete( new ValidationError( 'empty_query' ) );
+function canRedirect(siteId, domainName, onComplete) {
+	if (!domainName) {
+		onComplete(new ValidationError('empty_query'));
 		return;
 	}
 
-	if ( ! domainName.match( /^https?:\/\//i ) ) {
+	if (!domainName.match(/^https?:\/\//i)) {
 		domainName = 'http://' + domainName;
 	}
 
-	if ( includes( domainName, '@' ) ) {
-		onComplete( new ValidationError( 'invalid_domain' ) );
+	if (includes(domainName, '@')) {
+		onComplete(new ValidationError('invalid_domain'));
 		return;
 	}
 
-	wpcom.undocumented().canRedirect( siteId, domainName, function( serverError, data ) {
-		if ( serverError ) {
-			onComplete( new ValidationError( serverError.error ) );
-		} else if ( ! data.can_redirect ) {
-			onComplete( new ValidationError( 'cannot_redirect' ) );
+	wpcom.undocumented().canRedirect(siteId, domainName, function (serverError, data) {
+		if (serverError) {
+			onComplete(new ValidationError(serverError.error));
+		} else if (!data.can_redirect) {
+			onComplete(new ValidationError('cannot_redirect'));
 		} else {
-			onComplete( null );
+			onComplete(null);
 		}
-	} );
+	});
 }
 
-function getPrimaryDomain( siteId, onComplete ) {
+function getPrimaryDomain(siteId, onComplete) {
 	wpcom
-		.site( siteId )
+		.site(siteId)
 		.domain()
-		.getPrimary( function( serverError, data ) {
-			onComplete( serverError, data );
-		} );
+		.getPrimary(function (serverError, data) {
+			onComplete(serverError, data);
+		});
 }
 
-function getFixedDomainSearch( domainName ) {
+function getFixedDomainSearch(domainName) {
 	return domainName
 		.trim()
 		.toLowerCase()
-		.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
-		.replace( /^www[0-9]?\./, '' )
-		.replace( /\/$/, '' )
-		.replace( /_/g, '-' );
+		.replace(/^(https?:\/\/)?(www[0-9]?\.)?/, '')
+		.replace(/^www[0-9]?\./, '')
+		.replace(/\/$/, '')
+		.replace(/_/g, '-');
 }
 
-function isSubdomain( domainName ) {
-	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
+function isSubdomain(domainName) {
+	return domainName.match(/\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/);
 }
 
-function isHstsRequired( productSlug, productsList ) {
-	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
+function isHstsRequired(productSlug, productsList) {
+	const product = find(productsList, ['product_slug', productSlug]) || {};
 
-	return get( product, 'is_hsts_required', false );
+	return get(product, 'is_hsts_required', false);
 }
 
-function isMappedDomain( domain ) {
+function isMappedDomain(domain) {
 	return domain.type === domainTypes.MAPPED;
 }
 
@@ -171,38 +171,38 @@ function isMappedDomain( domain ) {
  * @param {object} domain - domain object
  * @returns {boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
  */
-function isMappedDomainWithWpcomNameservers( domain ) {
-	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false );
+function isMappedDomainWithWpcomNameservers(domain) {
+	return isMappedDomain(domain) && get(domain, 'hasWpcomNameservers', false);
 }
 
-function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
-	return find( domains, domain => {
-		if ( domain.name !== selectedDomainName ) {
+function getSelectedDomain({ domains, selectedDomainName, isTransfer }) {
+	return find(domains, (domain) => {
+		if (domain.name !== selectedDomainName) {
 			return false;
 		}
 
-		if ( isTransfer && domain.type === domainTypes.TRANSFER ) {
+		if (isTransfer && domain.type === domainTypes.TRANSFER) {
 			return true;
 		}
 
 		return domain.type !== domainTypes.TRANSFER;
-	} );
+	});
 }
 
-function isRegisteredDomain( domain ) {
+function isRegisteredDomain(domain) {
 	return domain.type === domainTypes.REGISTERED;
 }
 
-function getRegisteredDomains( domains ) {
-	return domains.filter( isRegisteredDomain );
+function getRegisteredDomains(domains) {
+	return domains.filter(isRegisteredDomain);
 }
 
-function getMappedDomains( domains ) {
-	return domains.filter( isMappedDomain );
+function getMappedDomains(domains) {
+	return domains.filter(isMappedDomain);
 }
 
-function hasMappedDomain( domains ) {
-	return getMappedDomains( domains ).length > 0;
+function hasMappedDomain(domains) {
+	return getMappedDomains(domains).length > 0;
 }
 
 /**
@@ -216,103 +216,103 @@ function hasMappedDomain( domains ) {
  * @param {string}     domainName     The domain name parse the tld from
  * @returns {string}                   The TLD or an empty string
  */
-function getTld( domainName ) {
-	const lastIndexOfDot = domainName.lastIndexOf( '.' );
+function getTld(domainName) {
+	const lastIndexOfDot = domainName.lastIndexOf('.');
 
-	if ( lastIndexOfDot === -1 ) {
+	if (lastIndexOfDot === -1) {
 		return '';
 	}
 
-	let tld = parseDomainAgainstTldList( domainName, wpcomMultiLevelTlds );
+	let tld = parseDomainAgainstTldList(domainName, wpcomMultiLevelTlds);
 
-	if ( ! tld ) {
-		tld = domainName.substring( lastIndexOfDot + 1 );
+	if (!tld) {
+		tld = domainName.substring(lastIndexOfDot + 1);
 	}
 
 	return tld;
 }
 
-function getTopLevelOfTld( domainName ) {
-	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
+function getTopLevelOfTld(domainName) {
+	return domainName.substring(domainName.lastIndexOf('.') + 1);
 }
 
-function getDomainProductSlug( domain ) {
-	const tld = getTld( domain );
-	const tldSlug = replace( tld, /\./g, 'dot' );
+function getDomainProductSlug(domain) {
+	const tld = getTld(domain);
+	const tldSlug = replace(tld, /\./g, 'dot');
 
-	if ( includes( [ 'com', 'net', 'org' ], tldSlug ) ) {
+	if (includes(['com', 'net', 'org'], tldSlug)) {
 		return 'domain_reg';
 	}
 
-	return `dot${ tldSlug }_domain`;
+	return `dot${tldSlug}_domain`;
 }
 
-function getUnformattedDomainPrice( slug, productsList ) {
-	let price = get( productsList, [ slug, 'cost' ], null );
+function getUnformattedDomainPrice(slug, productsList) {
+	let price = get(productsList, [slug, 'cost'], null);
 
-	if ( price ) {
-		price += get( productsList, [ 'domain_map', 'cost' ], 0 );
+	if (price) {
+		price += get(productsList, ['domain_map', 'cost'], 0);
 	}
 
 	return price;
 }
 
-function getDomainPrice( slug, productsList, currencyCode, stripZeros = false ) {
-	let price = getUnformattedDomainPrice( slug, productsList );
+function getDomainPrice(slug, productsList, currencyCode, stripZeros = false) {
+	let price = getUnformattedDomainPrice(slug, productsList);
 
-	if ( price ) {
-		price = formatCurrency( price, currencyCode, { stripZeros } );
+	if (price) {
+		price = formatCurrency(price, currencyCode, { stripZeros });
 	}
 
 	return price;
 }
 
-function getUnformattedDomainSalePrice( slug, productsList ) {
-	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
+function getUnformattedDomainSalePrice(slug, productsList) {
+	const saleCost = get(productsList, [slug, 'sale_cost'], null);
 	const couponValidForNewDomainPurchase = get(
 		productsList,
-		[ slug, 'sale_coupon', 'allowed_for_new_purchases' ],
+		[slug, 'sale_coupon', 'allowed_for_new_purchases'],
 		null
 	);
 
-	if ( ! saleCost || ! couponValidForNewDomainPurchase ) {
+	if (!saleCost || !couponValidForNewDomainPurchase) {
 		return null;
 	}
 
 	return saleCost;
 }
 
-function getDomainSalePrice( slug, productsList, currencyCode, stripZeros = false ) {
-	let saleCost = getUnformattedDomainSalePrice( slug, productsList );
+function getDomainSalePrice(slug, productsList, currencyCode, stripZeros = false) {
+	let saleCost = getUnformattedDomainSalePrice(slug, productsList);
 
-	if ( saleCost ) {
-		saleCost = formatCurrency( saleCost, currencyCode, { stripZeros } );
+	if (saleCost) {
+		saleCost = formatCurrency(saleCost, currencyCode, { stripZeros });
 	}
 
 	return saleCost;
 }
 
-function getDomainTransferSalePrice( slug, productsList, currencyCode ) {
-	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
+function getDomainTransferSalePrice(slug, productsList, currencyCode) {
+	const saleCost = get(productsList, [slug, 'sale_cost'], null);
 	const couponValidForDomainTransfer = get(
 		productsList,
-		[ slug, 'sale_coupon', 'allowed_for_domain_transfers' ],
+		[slug, 'sale_coupon', 'allowed_for_domain_transfers'],
 		null
 	);
 
-	if ( ! saleCost || ! couponValidForDomainTransfer ) {
+	if (!saleCost || !couponValidForDomainTransfer) {
 		return null;
 	}
 
-	return formatCurrency( saleCost, currencyCode );
+	return formatCurrency(saleCost, currencyCode);
 }
 
-function getAvailableTlds( query = {} ) {
-	return wpcom.undocumented().getAvailableTlds( query );
+function getAvailableTlds(query = {}) {
+	return wpcom.undocumented().getAvailableTlds(query);
 }
 
-function getDomainTypeText( domain = {} ) {
-	switch ( domain.type ) {
+function getDomainTypeText(domain = {}) {
+	switch (domain.type) {
 		case domainTypes.MAPPED:
 			return 'Mapped Domain';
 
@@ -340,30 +340,30 @@ function getDomainTypeText( domain = {} ) {
  * @param {integer} minLength Minimum search string length
  * @returns {string} Cleaned search string
  */
-function getDomainSuggestionSearch( search, minLength = 2 ) {
-	const cleanedSearch = getFixedDomainSearch( search );
+function getDomainSuggestionSearch(search, minLength = 2) {
+	const cleanedSearch = getFixedDomainSearch(search);
 
 	// Ignore any searches that are too short
-	if ( cleanedSearch.length < minLength ) {
+	if (cleanedSearch.length < minLength) {
 		return '';
 	}
 
 	// Ignore any searches for generic URL prefixes
 	// getFixedDomainSearch will already have stripped http(s):// and www.
-	const ignoreList = [ 'www', 'http', 'https' ];
-	if ( includes( ignoreList, cleanedSearch ) ) {
+	const ignoreList = ['www', 'http', 'https'];
+	if (includes(ignoreList, cleanedSearch)) {
 		return '';
 	}
 
 	return cleanedSearch;
 }
 
-function resendIcannVerification( domainName, onComplete ) {
-	return wpcom.undocumented().resendIcannVerification( domainName, onComplete );
+function resendIcannVerification(domainName, onComplete) {
+	return wpcom.undocumented().resendIcannVerification(domainName, onComplete);
 }
 
-function requestGdprConsentManagementLink( domainName, onComplete ) {
-	return wpcom.undocumented().requestGdprConsentManagementLink( domainName, onComplete );
+function requestGdprConsentManagementLink(domainName, onComplete) {
+	return wpcom.undocumented().requestGdprConsentManagementLink(domainName, onComplete);
 }
 
 export {

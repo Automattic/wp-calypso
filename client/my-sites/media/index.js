@@ -12,8 +12,8 @@ import mediaController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { getSiteFragment } from 'lib/route';
 
-export default function() {
-	page( '/media', siteSelection, sites, makeLayout, clientRender );
+export default function () {
+	page('/media', siteSelection, sites, makeLayout, clientRender);
 
 	page(
 		'/media/:filter(this-post|images|documents|videos|audio)?/:domain',
@@ -33,13 +33,13 @@ export default function() {
 		clientRender
 	);
 
-	page( '/media/*', ( { path } ) => {
-		const siteFragment = getSiteFragment( path );
+	page('/media/*', ({ path }) => {
+		const siteFragment = getSiteFragment(path);
 
-		if ( siteFragment ) {
-			return page.redirect( `/media/${ siteFragment }` );
+		if (siteFragment) {
+			return page.redirect(`/media/${siteFragment}`);
 		}
 
-		return page.redirect( '/media' );
-	} );
+		return page.redirect('/media');
+	});
 }

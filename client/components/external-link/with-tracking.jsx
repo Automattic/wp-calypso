@@ -16,9 +16,9 @@ class ExternalLinkWithTracking extends Component {
 		return () => {
 			const { onClick, tracksEventName, tracksEventProps } = this.props;
 
-			this.props.recordTracksEvent( tracksEventName, tracksEventProps );
+			this.props.recordTracksEvent(tracksEventName, tracksEventProps);
 
-			if ( onClick ) {
+			if (onClick) {
 				onClick();
 			}
 		};
@@ -33,7 +33,7 @@ class ExternalLinkWithTracking extends Component {
 			...props
 		} = this.props;
 
-		return <ExternalLink onClick={ this.handleClickEvent() } { ...props } />;
+		return <ExternalLink onClick={this.handleClickEvent()} {...props} />;
 	}
 }
 
@@ -53,4 +53,4 @@ ExternalLinkWithTracking.propTypes = {
 	recordTracksEvent: PropTypes.func.isRequired,
 };
 
-export default connect( null, { recordTracksEvent } )( ExternalLinkWithTracking );
+export default connect(null, { recordTracksEvent })(ExternalLinkWithTracking);

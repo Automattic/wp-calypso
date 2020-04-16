@@ -9,15 +9,15 @@ import { every, isString, pickBy } from 'lodash';
  * @param  {object} post Raw post object
  * @returns {object}      Normalized post object
  */
-export function normalizeTermsForApi( post ) {
-	if ( ! post || ! post.terms ) {
+export function normalizeTermsForApi(post) {
+	if (!post || !post.terms) {
 		return post;
 	}
 
 	return {
 		...post,
-		terms: pickBy( post.terms, terms => {
-			return terms.length && every( terms, isString );
-		} ),
+		terms: pickBy(post.terms, (terms) => {
+			return terms.length && every(terms, isString);
+		}),
 	};
 }

@@ -25,17 +25,17 @@ import { stripHTML, decodeEntities } from 'lib/formatting';
 
 class ReviewCard extends Component {
 	static propTypes = {
-		review: PropTypes.shape( {
+		review: PropTypes.shape({
 			status: PropTypes.string,
 			avatar_urls: PropTypes.object,
 			name: PropTypes.string,
-			product: PropTypes.shape( {
+			product: PropTypes.shape({
 				image: PropTypes.string,
-			} ),
+			}),
 			date_created_gmt: PropTypes.string,
 			review: PropTypes.string,
 			rating: PropTypes.number,
-		} ).isRequired,
+		}).isRequired,
 		currentStatus: PropTypes.string.isRequired,
 	};
 
@@ -44,7 +44,7 @@ class ReviewCard extends Component {
 	};
 
 	toggleExpanded = () => {
-		this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
+		this.setState(({ isExpanded }) => ({ isExpanded: !isExpanded }));
 	};
 
 	renderToggle() {
@@ -54,9 +54,9 @@ class ReviewCard extends Component {
 			<Button
 				borderless
 				className="reviews__action-collapse"
-				aria-label={ isExpanded ? translate( 'Collapse review' ) : translate( 'Expand review' ) }
-				aria-expanded={ isExpanded }
-				onClick={ this.toggleExpanded }
+				aria-label={isExpanded ? translate('Collapse review') : translate('Expand review')}
+				aria-expanded={isExpanded}
+				onClick={this.toggleExpanded}
 			>
 				<Gridicon icon="chevron-down" />
 			</Button>
@@ -66,14 +66,14 @@ class ReviewCard extends Component {
 	renderActionsBar() {
 		const { review, currentStatus, siteId } = this.props;
 		return (
-			<div className={ classNames( 'reviews__header' ) }>
+			<div className={classNames('reviews__header')}>
 				<ReviewActionsBar
-					siteId={ siteId }
-					review={ review }
-					currentStatus={ currentStatus }
-					toggleExpanded={ this.toggleExpanded }
+					siteId={siteId}
+					review={review}
+					currentStatus={currentStatus}
+					toggleExpanded={this.toggleExpanded}
 				/>
-				{ this.renderToggle() }
+				{this.renderToggle()}
 			</div>
 		);
 	}
@@ -81,26 +81,26 @@ class ReviewCard extends Component {
 	renderPreview() {
 		const { review } = this.props;
 		return (
-			<div className={ classNames( 'reviews__header', 'is-preview' ) }>
+			<div className={classNames('reviews__header', 'is-preview')}>
 				<div className="reviews__header-content">
 					<div className="reviews__author-gravatar">
-						<Gravatar object={ review } forType="review" />
+						<Gravatar object={review} forType="review" />
 					</div>
 					<div className="reviews__info">
 						<div className="reviews__author-name">
-							{ review.name }
-							{ review.verified && <Gridicon icon="checkmark-circle" size={ 18 } /> }
+							{review.name}
+							{review.verified && <Gridicon icon="checkmark-circle" size={18} />}
 						</div>
-						<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
+						<div className="reviews__date">{humanDate(review.date_created_gmt + 'Z')}</div>
 					</div>
 					<AutoDirection>
-						<div className="reviews__content">{ decodeEntities( stripHTML( review.review ) ) }</div>
+						<div className="reviews__content">{decodeEntities(stripHTML(review.review))}</div>
 					</AutoDirection>
 					<div className="reviews__rating">
-						<Rating rating={ review.rating * 20 } size={ 18 } />
+						<Rating rating={review.rating * 20} size={18} />
 					</div>
 				</div>
-				{ this.renderToggle() }
+				{this.renderToggle()}
 			</div>
 		);
 	}
@@ -110,38 +110,36 @@ class ReviewCard extends Component {
 		return (
 			<div className="reviews__expanded-card">
 				<div className="reviews__product-name">
-					{ translate( 'Review for {{productLink}}%(productName)s{{/productLink}}.', {
+					{translate('Review for {{productLink}}%(productName)s{{/productLink}}.', {
 						args: {
 							productName: review.product.name,
 						},
 						components: {
-							productLink: (
-								<a href={ getLink( `/store/product/:site/${ review.product.id }`, site ) } />
-							),
+							productLink: <a href={getLink(`/store/product/:site/${review.product.id}`, site)} />,
 						},
-					} ) }
+					})}
 				</div>
 				<div className="reviews__expanded-card-details-wrap">
 					<div className="reviews__expanded-card-details">
 						<div className="reviews__author-gravatar">
-							<Gravatar object={ review } forType="review" />
+							<Gravatar object={review} forType="review" />
 						</div>
 
 						<div className="reviews__info">
 							<div className="reviews__author-name">
-								{ review.name }
-								{ review.verified && (
+								{review.name}
+								{review.verified && (
 									<span className="reviews__verified-label">
-										<Gridicon icon="checkmark-circle" size={ 18 } />
-										<span>{ translate( 'Verified buyer' ) }</span>
+										<Gridicon icon="checkmark-circle" size={18} />
+										<span>{translate('Verified buyer')}</span>
 									</span>
-								) }
+								)}
 							</div>
-							<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
+							<div className="reviews__date">{humanDate(review.date_created_gmt + 'Z')}</div>
 						</div>
 
 						<div className="reviews__rating">
-							<Rating rating={ review.rating * 20 } size={ 18 } />
+							<Rating rating={review.rating * 20} size={18} />
 						</div>
 					</div>
 
@@ -149,14 +147,14 @@ class ReviewCard extends Component {
 						<Emojify>
 							<div
 								className="reviews__content"
-								dangerouslySetInnerHTML={ { __html: review.review } } //eslint-disable-line react/no-danger
+								dangerouslySetInnerHTML={{ __html: review.review }} //eslint-disable-line react/no-danger
 								// Also used in `comments/comment/comment-content.jsx` to set the rendered content correctly
 							/>
 						</Emojify>
 					</AutoDirection>
 				</div>
 
-				<ReviewReplies review={ review } />
+				<ReviewReplies review={review} />
 			</div>
 		);
 	}
@@ -165,25 +163,25 @@ class ReviewCard extends Component {
 		const { review } = this.props;
 		const { isExpanded } = this.state;
 
-		const classes = classNames( 'reviews__card', {
+		const classes = classNames('reviews__card', {
 			'is-approved': 'approved' === review.status,
 			'is-unapproved': 'pending' === review.status,
 			'is-expanded': isExpanded,
-			'is-collapsed': ! isExpanded,
-		} );
+			'is-collapsed': !isExpanded,
+		});
 
 		return (
-			<Card className={ classes }>
-				{ ( isExpanded && this.renderActionsBar() ) || this.renderPreview() }
-				{ isExpanded && this.renderExpandedCard() }
+			<Card className={classes}>
+				{(isExpanded && this.renderActionsBar()) || this.renderPreview()}
+				{isExpanded && this.renderExpandedCard()}
 			</Card>
 		);
 	}
 }
 
-export default connect( state => {
-	const site = getSelectedSiteWithFallback( state );
+export default connect((state) => {
+	const site = getSelectedSiteWithFallback(state);
 	return {
 		site,
 	};
-} )( localize( ReviewCard ) );
+})(localize(ReviewCard));

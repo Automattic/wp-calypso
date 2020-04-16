@@ -4,9 +4,9 @@
 import deepFreeze from 'deep-freeze';
 import { cloneDeepWith } from 'lodash';
 
-const queryManagerSchema = deepFreeze( {
+const queryManagerSchema = deepFreeze({
 	additionalProperties: false,
-	required: [ 'data', 'options' ],
+	required: ['data', 'options'],
 	type: 'object',
 	properties: {
 		data: {
@@ -20,7 +20,7 @@ const queryManagerSchema = deepFreeze( {
 					patternProperties: {
 						// Stringified query objects are the keys
 						'^\\[.*\\]$': {
-							required: [ 'itemKeys' ],
+							required: ['itemKeys'],
 							type: 'object',
 							properties: {
 								itemKeys: {
@@ -29,7 +29,7 @@ const queryManagerSchema = deepFreeze( {
 										// Typical valid object keys
 										// `null` is important for PagingQueryManager
 										// It fills array with undefined (matches null)
-										type: [ 'integer', 'null', 'string' ],
+										type: ['integer', 'null', 'string'],
 									},
 								},
 								found: {
@@ -43,14 +43,14 @@ const queryManagerSchema = deepFreeze( {
 		},
 		options: {
 			additionalProperties: true,
-			required: [ 'itemKey' ],
+			required: ['itemKey'],
 			type: 'object',
 			properties: {
 				itemKey: { type: 'string' },
 			},
 		},
 	},
-} );
+});
 
 /**
  * Get a queryManagerSchema with a customized items schema
@@ -58,12 +58,12 @@ const queryManagerSchema = deepFreeze( {
  * @param  {object} itemsSchema Schema that will be used for the items
  * @returns {object}            Customized schema
  */
-export function withItemsSchema( itemsSchema ) {
-	return cloneDeepWith( queryManagerSchema, value => {
-		if ( value === queryManagerSchema.properties.data.properties.items ) {
+export function withItemsSchema(itemsSchema) {
+	return cloneDeepWith(queryManagerSchema, (value) => {
+		if (value === queryManagerSchema.properties.data.properties.items) {
 			return itemsSchema;
 		}
-	} );
+	});
 }
 
 export default queryManagerSchema;

@@ -47,15 +47,15 @@ class AreUsersPresent extends Component {
 	};
 
 	notifyValue() {
-		this.props.onChange( this.props.users.length > 0 );
+		this.props.onChange(this.props.users.length > 0);
 	}
 
 	componentDidMount() {
 		this.notifyValue();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.users.length !== this.props.users.length ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.users.length !== this.props.users.length) {
 			this.notifyValue();
 		}
 	}
@@ -85,12 +85,12 @@ class IsRebrandCitiesSite extends Component {
 			// By setting a search without * wildcards, we can ensure that only users
 			// on the site with an exactly-matching username will be passed through,
 			search: REBRAND_CITIES_ACCOUNT_USERNAME,
-			search_columns: [ 'display_name', 'user_login' ],
+			search_columns: ['display_name', 'user_login'],
 		};
 
 		return (
-			<SiteUsersFetcher fetchOptions={ siteUsersFetchOptions }>
-				<AreUsersPresent onChange={ onChange } />
+			<SiteUsersFetcher fetchOptions={siteUsersFetchOptions}>
+				<AreUsersPresent onChange={onChange} />
 			</SiteUsersFetcher>
 		);
 	}

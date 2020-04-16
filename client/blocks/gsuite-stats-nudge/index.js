@@ -38,40 +38,40 @@ class GSuiteStatsNudge extends Component {
 		this.recordView();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId) {
 			this.recordView();
 		}
 	}
 
 	recordView() {
-		if ( this.isVisible() ) {
-			this.props.recordTracksEvent( 'calypso_gsuite_stats_nudge_view' );
+		if (this.isVisible()) {
+			this.props.recordTracksEvent('calypso_gsuite_stats_nudge_view');
 		}
 	}
 
-	recordClick = eventName => {
-		this.props.recordTracksEvent( eventName );
+	recordClick = (eventName) => {
+		this.props.recordTracksEvent(eventName);
 	};
 
 	onDismissClick = () => {
-		this.recordClick( 'calypso_gsuite_stats_nudge_dismiss_icon_click' );
+		this.recordClick('calypso_gsuite_stats_nudge_dismiss_icon_click');
 		this.props.dismissNudge();
 	};
 
 	onStartNowClick = () => {
-		this.recordClick( 'calypso_gsuite_stats_nudge_start_now_button_click' );
+		this.recordClick('calypso_gsuite_stats_nudge_start_now_button_click');
 	};
 
 	isVisible() {
-		return ! this.props.isDismissed;
+		return !this.props.isDismissed;
 	}
 
 	render() {
 		const { domainSlug, siteSlug, translate } = this.props;
-		const url = emailManagement( siteSlug );
+		const url = emailManagement(siteSlug);
 
-		if ( ! this.isVisible() ) {
+		if (!this.isVisible()) {
 			return null;
 		}
 
@@ -82,12 +82,12 @@ class GSuiteStatsNudge extends Component {
 				<Gridicon
 					icon="cross"
 					className="gsuite-stats-nudge__close-icon"
-					onClick={ this.onDismissClick }
+					onClick={this.onDismissClick}
 				/>
 
 				<SectionHeader
 					className="gsuite-stats-nudge__header"
-					label={ translate( 'Recommendations from WordPress.com' ) }
+					label={translate('Recommendations from WordPress.com')}
 				/>
 
 				<div className="gsuite-stats-nudge__body">
@@ -95,36 +95,32 @@ class GSuiteStatsNudge extends Component {
 						<img
 							className="gsuite-stats-nudge__image"
 							src="/calypso/images/g-suite/g-suite-stats-banner-illustration.svg"
-							alt={ translate( 'Get G Suite' ) }
+							alt={translate('Get G Suite')}
 						/>
 					</div>
 
 					<div className="gsuite-stats-nudge__info">
 						<h1 className="gsuite-stats-nudge__title">
-							{ translate( 'Get custom email addresses with %(domain)s', {
-								args: { domain: domainSlug }
-							} ) }
+							{translate('Get custom email addresses with %(domain)s', {
+								args: { domain: domainSlug },
+							})}
 						</h1>
 
 						{
 							<p>
-								{ translate(
+								{translate(
 									"An email address like {{strong}}contact@%(domain)s{{/strong}} looks pro and helps customers trust you. We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.",
 									{
 										args: { domain: domainSlug },
 										components: { strong: <strong /> },
 									}
-								) }
+								)}
 							</p>
 						}
 
 						<div className="gsuite-stats-nudge__button-row">
-							<Button
-								href={ url }
-								primary={ this.props.primaryButton }
-								onClick={ this.onStartNowClick }
-							>
-								{ translate( 'Get G Suite' ) }
+							<Button href={url} primary={this.props.primaryButton} onClick={this.onStartNowClick}>
+								{translate('Get G Suite')}
 							</Button>
 						</div>
 					</div>
@@ -135,11 +131,11 @@ class GSuiteStatsNudge extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		isDismissed: isGSuiteStatsNudgeDismissed( state, ownProps.siteId ),
-	} ),
+	(state, ownProps) => ({
+		isDismissed: isGSuiteStatsNudgeDismissed(state, ownProps.siteId),
+	}),
 	{
 		dismissNudge,
-		recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
+		recordTracksEvent: withEnhancers(recordTracksEvent, [enhanceWithSiteType]),
 	}
-)( localize( GSuiteStatsNudge ) );
+)(localize(GSuiteStatsNudge));

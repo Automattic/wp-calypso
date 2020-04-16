@@ -28,37 +28,37 @@ class FollowingIntro extends React.Component {
 		this.recordRenderTrack();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.isNewReader !== prevProps.isNewReader ) {
+	componentDidUpdate(prevProps) {
+		if (this.props.isNewReader !== prevProps.isNewReader) {
 			this.recordRenderTrack();
 		}
 	}
 
-	recordRenderTrack = ( props = this.props ) => {
-		if ( props.isNewReader === true ) {
-			recordTrack( 'calypso_reader_following_intro_render' );
+	recordRenderTrack = (props = this.props) => {
+		if (props.isNewReader === true) {
+			recordTrack('calypso_reader_following_intro_render');
 		}
 	};
 
 	render() {
 		const { isNewReader, translate, dismiss, isNewUser } = this.props;
 
-		if ( ! isNewReader || ! isNewUser ) {
+		if (!isNewReader || !isNewUser) {
 			return null;
 		}
 
-		const linkElement = <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />;
+		const linkElement = <a onClick={this.props.handleManageLinkClick} href="/following/manage" />;
 
 		return (
 			<header
 				className="following__intro"
-				style={ { backgroundImage: 'url(' + cssSafeUrl( readerBackground ) + ')' } }
+				style={{ backgroundImage: 'url(' + cssSafeUrl(readerBackground) + ')' }}
 			>
 				<QueryPreferences />
 				<div className="following__intro-header">
 					<div className="following__intro-copy">
 						<span>
-							{ translate(
+							{translate(
 								'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. ' +
 									'{{link}}Follow your favorite sites{{/link}} and their latest ' +
 									'posts will appear here. {{span}}Read, like, and comment in a ' +
@@ -70,21 +70,21 @@ class FollowingIntro extends React.Component {
 										span: <span className="following__intro-copy-hidden" />,
 									},
 								}
-							) }
+							)}
 						</span>
 					</div>
-					<img className="following__intro-character" src={ readerImage } alt="" />
+					<img className="following__intro-character" src={readerImage} alt="" />
 
 					<button
 						className="following__intro-close"
-						onClick={ dismiss }
-						title={ translate( 'Close' ) }
-						aria-label={ translate( 'Close' ) }
+						onClick={dismiss}
+						title={translate('Close')}
+						aria-label={translate('Close')}
 					>
 						<Gridicon
 							icon="cross-circle"
 							className="following__intro-close-icon"
-							title={ translate( 'Close' ) }
+							title={translate('Close')}
 						/>
 						<span className="following__intro-close-icon-bg" />
 					</button>
@@ -95,24 +95,24 @@ class FollowingIntro extends React.Component {
 }
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			isNewReader: getPreference( state, 'is_new_reader' ),
-			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS * 2 )( state ),
+			isNewReader: getPreference(state, 'is_new_reader'),
+			isNewUser: isUserNewerThan(WEEK_IN_MILLISECONDS * 2)(state),
 		};
 	},
-	dispatch =>
+	(dispatch) =>
 		bindActionCreators(
 			{
 				dismiss: () => {
-					recordTrack( 'calypso_reader_following_intro_dismiss' );
-					return savePreference( 'is_new_reader', false );
+					recordTrack('calypso_reader_following_intro_dismiss');
+					return savePreference('is_new_reader', false);
 				},
 				handleManageLinkClick: () => {
-					recordTrack( 'calypso_reader_following_intro_link_clicked' );
-					return savePreference( 'is_new_reader', false );
+					recordTrack('calypso_reader_following_intro_link_clicked');
+					return savePreference('is_new_reader', false);
 				},
 			},
 			dispatch
 		)
-)( localize( FollowingIntro ) );
+)(localize(FollowingIntro));

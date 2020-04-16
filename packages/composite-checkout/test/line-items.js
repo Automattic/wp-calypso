@@ -15,42 +15,42 @@ import { LineItemsProvider, useLineItems } from '../src/lib/line-items';
 /* eslint-disable no-console */
 const original = console.error;
 
-describe( 'useLineItems', function() {
-	beforeEach( () => {
+describe('useLineItems', function () {
+	beforeEach(() => {
 		console.error = jest.fn();
-	} );
+	});
 
-	afterEach( () => {
+	afterEach(() => {
 		console.error = original;
-	} );
+	});
 
-	it( 'throws if outside of a CheckoutProvider', function() {
+	it('throws if outside of a CheckoutProvider', function () {
 		const ThingWithHook = () => {
-			const [ items, total ] = useLineItems();
+			const [items, total] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
-						<span key={ item.id }>{ item.label }</span>
-					) ) }
-					<span key={ total.id }>{ total.label }</span>
+					{items.map((item) => (
+						<span key={item.id}>{item.label}</span>
+					))}
+					<span key={total.id}>{total.label}</span>
 				</div>
 			);
 		};
-		expect( () => render( <ThingWithHook /> ) ).toThrow( /CheckoutProvider/ );
-	} );
+		expect(() => render(<ThingWithHook />)).toThrow(/CheckoutProvider/);
+	});
 
-	it( 'does not throw if there are no items', function() {
+	it('does not throw if there are no items', function () {
 		const ThingWithHook = () => {
-			const [ items, total ] = useLineItems();
+			const [items, total] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
-						<span data-testid={ item.id } key={ item.id }>
-							{ item.label }
+					{items.map((item) => (
+						<span data-testid={item.id} key={item.id}>
+							{item.label}
 						</span>
-					) ) }
-					<span data-testid="total" key={ total.id }>
-						{ total.label }
+					))}
+					<span data-testid="total" key={total.id}>
+						{total.label}
 					</span>
 				</div>
 			);
@@ -58,43 +58,43 @@ describe( 'useLineItems', function() {
 		const renderThing = () =>
 			render(
 				<LineItemsProvider
-					total={ {
+					total={{
 						id: 'total',
 						label: 'total',
 						amount: { value: 40, currency: 'USD', displayValue: '40' },
-					} }
-					items={ [] }
+					}}
+					items={[]}
 				>
 					<ThingWithHook />
 				</LineItemsProvider>
 			);
-		expect( renderThing ).not.toThrow( /CheckoutProvider/ );
-	} );
+		expect(renderThing).not.toThrow(/CheckoutProvider/);
+	});
 
-	it( 'returns the items list', function() {
+	it('returns the items list', function () {
 		const ThingWithHook = () => {
-			const [ items, total ] = useLineItems();
+			const [items, total] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
-						<span data-testid={ item.id } key={ item.id }>
-							{ item.label }
+					{items.map((item) => (
+						<span data-testid={item.id} key={item.id}>
+							{item.label}
 						</span>
-					) ) }
-					<span data-testid="total" key={ total.id }>
-						{ total.label }
+					))}
+					<span data-testid="total" key={total.id}>
+						{total.label}
 					</span>
 				</div>
 			);
 		};
 		const { getByTestId } = render(
 			<LineItemsProvider
-				total={ {
+				total={{
 					id: 'total',
 					label: 'total',
 					amount: { value: 40, currency: 'USD', displayValue: '40' },
-				} }
-				items={ [
+				}}
+				items={[
 					{
 						id: 'one',
 						label: 'thing1',
@@ -105,39 +105,39 @@ describe( 'useLineItems', function() {
 						label: 'thing2',
 						amount: { value: 20, currency: 'USD', displayValue: '20' },
 					},
-				] }
+				]}
 			>
 				<ThingWithHook />
 			</LineItemsProvider>
 		);
-		expect( getByTestId( 'one' ) ).toHaveTextContent( 'thing1' );
-		expect( getByTestId( 'two' ) ).toHaveTextContent( 'thing2' );
-	} );
+		expect(getByTestId('one')).toHaveTextContent('thing1');
+		expect(getByTestId('two')).toHaveTextContent('thing2');
+	});
 
-	it( 'returns the total', function() {
+	it('returns the total', function () {
 		const ThingWithHook = () => {
-			const [ items, total ] = useLineItems();
+			const [items, total] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
-						<span data-testid={ item.id } key={ item.id }>
-							{ item.label }
+					{items.map((item) => (
+						<span data-testid={item.id} key={item.id}>
+							{item.label}
 						</span>
-					) ) }
-					<span data-testid="total" key={ total.id }>
-						{ total.label }
+					))}
+					<span data-testid="total" key={total.id}>
+						{total.label}
 					</span>
 				</div>
 			);
 		};
 		const { getByTestId } = render(
 			<LineItemsProvider
-				total={ {
+				total={{
 					id: 'total',
 					label: 'total',
 					amount: { value: 40, currency: 'USD', displayValue: '40' },
-				} }
-				items={ [
+				}}
+				items={[
 					{
 						id: 'one',
 						label: 'thing1',
@@ -148,12 +148,12 @@ describe( 'useLineItems', function() {
 						label: 'thing2',
 						amount: { value: 20, currency: 'USD', displayValue: '20' },
 					},
-				] }
+				]}
 			>
 				<ThingWithHook />
 			</LineItemsProvider>
 		);
-		expect( getByTestId( 'total' ) ).toHaveTextContent( 'total' );
-	} );
-} );
+		expect(getByTestId('total')).toHaveTextContent('total');
+	});
+});
 /* eslint-enable no-console */

@@ -37,24 +37,24 @@ class SiteBlockList extends Component {
 	fetchNextPage = () => {
 		const { currentPage, lastPage } = this.props;
 
-		if ( currentPage === lastPage ) {
+		if (currentPage === lastPage) {
 			return;
 		}
 
-		this.props.requestSiteBlocks( { page: currentPage + 1 } );
+		this.props.requestSiteBlocks({ page: currentPage + 1 });
 	};
 
 	renderPlaceholders() {
-		return times( 2, i => (
-			<SiteBlockListItemPlaceholder key={ 'site-block-list-item-placeholder-' + i } />
-		) );
+		return times(2, (i) => (
+			<SiteBlockListItemPlaceholder key={'site-block-list-item-placeholder-' + i} />
+		));
 	}
 
-	renderItem( siteId ) {
-		return <SiteBlockListItem key={ 'site-block-list-item-' + siteId } siteId={ siteId } />;
+	renderItem(siteId) {
+		return <SiteBlockListItem key={'site-block-list-item-' + siteId} siteId={siteId} />;
 	}
 
-	getItemRef = siteId => {
+	getItemRef = (siteId) => {
 		return 'site-block-' + siteId;
 	};
 
@@ -66,34 +66,34 @@ class SiteBlockList extends Component {
 			<Main className="site-blocks">
 				<QuerySiteBlocks />
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
-				<DocumentHead title={ translate( 'Blocked Sites' ) } />
+				<DocumentHead title={translate('Blocked Sites')} />
 				<MeSidebarNavigation />
-				<SectionHeader label={ translate( 'Blocked Sites' ) } />
+				<SectionHeader label={translate('Blocked Sites')} />
 				<Card className="site-blocks__intro">
 					<p>
-						{ translate(
+						{translate(
 							'Blocked sites will not appear in your Reader and will not be recommended to you.'
-						) }{ ' ' }
-						<a href={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }>
-							{ translate( 'Learn more' ) }
+						)}{' '}
+						<a href={localizeUrl('https://wordpress.com/support/reader/#blocking-sites')}>
+							{translate('Learn more')}
 						</a>
 					</p>
 
-					{ hasNoBlocks && <p>{ translate( "You haven't blocked any sites yet." ) }</p> }
+					{hasNoBlocks && <p>{translate("You haven't blocked any sites yet.")}</p>}
 
-					{ ! hasNoBlocks && (
+					{!hasNoBlocks && (
 						<InfiniteList
-							items={ this.props.blockedSites }
+							items={this.props.blockedSites}
 							className="site-blocks__list"
-							fetchNextPage={ this.fetchNextPage }
-							renderLoadingPlaceholders={ this.renderPlaceholders }
-							renderItem={ this.renderItem }
-							fetchingNextPage={ this.props.isFetching }
-							lastPage={ currentPage === lastPage }
-							guessedItemHeight={ 100 }
-							getItemRef={ this.getItemRef }
+							fetchNextPage={this.fetchNextPage}
+							renderLoadingPlaceholders={this.renderPlaceholders}
+							renderItem={this.renderItem}
+							fetchingNextPage={this.props.isFetching}
+							lastPage={currentPage === lastPage}
+							guessedItemHeight={100}
+							getItemRef={this.getItemRef}
 						/>
-					) }
+					)}
 				</Card>
 			</Main>
 		);
@@ -101,13 +101,13 @@ class SiteBlockList extends Component {
 }
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			blockedSites: getBlockedSites( state ),
-			currentPage: getSiteBlocksCurrentPage( state ),
-			lastPage: getSiteBlocksLastPage( state ),
-			isFetching: isFetchingSiteBlocks( state ),
+			blockedSites: getBlockedSites(state),
+			currentPage: getSiteBlocksCurrentPage(state),
+			lastPage: getSiteBlocksLastPage(state),
+			isFetching: isFetchingSiteBlocks(state),
 		};
 	},
 	{ requestSiteBlocks }
-)( localize( SiteBlockList ) );
+)(localize(SiteBlockList));

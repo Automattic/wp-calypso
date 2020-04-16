@@ -26,38 +26,38 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @param  {object}  media Item to consider
 	 * @returns {boolean}       Whether media item matches query
 	 */
-	static matches( query, media ) {
-		return every( { ...this.DefaultQuery, ...query }, ( value, key ) => {
-			switch ( key ) {
+	static matches(query, media) {
+		return every({ ...this.DefaultQuery, ...query }, (value, key) => {
+			switch (key) {
 				case 'search':
-					if ( ! value ) {
+					if (!value) {
 						return true;
 					}
 
-					return media.title && includes( media.title.toLowerCase(), value.toLowerCase() );
+					return media.title && includes(media.title.toLowerCase(), value.toLowerCase());
 
 				case 'mime_type':
-					if ( ! value ) {
+					if (!value) {
 						return true;
 					}
 
 					// See: https://developer.wordpress.org/reference/functions/wp_post_mime_type_where/
 					return new RegExp(
-						`^${ value
+						`^${value
 							// Replace wildcard-only, wildcard group, and empty
 							// group with wildcard pattern matching
-							.replace( /(^%|(\/)%?)$/, '$2.+' )
+							.replace(/(^%|(\/)%?)$/, '$2.+')
 							// Split subgroup and group to filter
-							.split( '/' )
+							.split('/')
 							// Remove invalid characters
-							.map( group => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
+							.map((group) => group.replace(/[^-*.+a-zA-Z0-9]/g, ''))
 							// If no group, append wildcard match
-							.concat( '.+' )
+							.concat('.+')
 							// Take only subgroup and group
-							.slice( 0, 2 )
+							.slice(0, 2)
 							// Finally, merge back into string
-							.join( '/' ) }$`
-					).test( media.mime_type );
+							.join('/')}$`
+					).test(media.mime_type);
 
 				case 'post_ID':
 					// Note that documentation specifies that query value of 0
@@ -68,13 +68,13 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 
 				case 'after':
 				case 'before':
-					const queryDate = moment( value, moment.ISO_8601 );
-					const comparison = /after$/.test( key ) ? 'isAfter' : 'isBefore';
-					return queryDate.isValid() && moment( media.date )[ comparison ]( queryDate );
+					const queryDate = moment(value, moment.ISO_8601);
+					const comparison = /after$/.test(key) ? 'isAfter' : 'isBefore';
+					return queryDate.isValid() && moment(media.date)[comparison](queryDate);
 			}
 
 			return true;
-		} );
+		});
 	}
 
 	/**
@@ -87,25 +87,25 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @returns {number}        0 if equal, less than 0 if mediaA is first,
 	 *                         greater than 0 if mediaB is first.
 	 */
-	static compare( query, mediaA, mediaB ) {
+	static compare(query, mediaA, mediaB) {
 		let order;
 
-		switch ( query.order_by ) {
+		switch (query.order_by) {
 			case 'ID':
 				order = mediaA.ID - mediaB.ID;
 				break;
 
 			case 'title':
-				order = mediaA.title.localeCompare( mediaB.title );
+				order = mediaA.title.localeCompare(mediaB.title);
 				break;
 
 			case 'date':
 			default:
-				order = moment( mediaA.date ).diff( mediaB.date );
+				order = moment(mediaA.date).diff(mediaB.date);
 		}
 
 		// Default to descending order, opposite sign of ordered result
-		if ( ! query.order || /^desc$/i.test( query.order ) ) {
+		if (!query.order || /^desc$/i.test(query.order)) {
 			order *= -1;
 		}
 

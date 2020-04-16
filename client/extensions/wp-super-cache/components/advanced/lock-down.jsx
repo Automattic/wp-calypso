@@ -18,14 +18,14 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import WrapSettingsForm from '../wrap-settings-form';
 import Notice from 'components/notice';
 
-const LockDown = ( {
+const LockDown = ({
 	fields: { cache_lock_down },
 	handleAutosavingToggle,
 	isReadOnly,
 	isRequesting,
 	isSaving,
 	translate,
-} ) => {
+}) => {
 	const lockdownCodeSnippet = translate(
 		"if ( defined( 'WPLOCKDOWN' ) && constant( 'WPLOCKDOWN' ) ) { echo " +
 			'"Sorry. My blog is locked down. Updates will appear shortly"; }'
@@ -33,52 +33,52 @@ const LockDown = ( {
 
 	return (
 		<div>
-			<SectionHeader label={ translate( 'Lock Down' ) } />
+			<SectionHeader label={translate('Lock Down')} />
 			<Card>
 				<form>
 					<FormFieldset>
 						<FormToggle
-							checked={ !! cache_lock_down }
-							disabled={ isRequesting || isSaving || isReadOnly }
-							onChange={ handleAutosavingToggle( 'cache_lock_down' ) }
+							checked={!!cache_lock_down}
+							disabled={isRequesting || isSaving || isReadOnly}
+							onChange={handleAutosavingToggle('cache_lock_down')}
 						>
 							<span>
-								{ translate(
+								{translate(
 									'Enable lock down to prepare your server for an expected spike in traffic.'
-								) }
+								)}
 							</span>
 						</FormToggle>
 					</FormFieldset>
 
 					<div className="wp-super-cache__lock-down-container">
 						<FormSettingExplanation className="wp-super-cache__lock-down-explanation">
-							{ translate(
+							{translate(
 								'When this is enabled, new comments on a post will not refresh the cached static files.'
-							) }
+							)}
 						</FormSettingExplanation>
 
 						<FormSettingExplanation className="wp-super-cache__lock-down-explanation">
-							{ translate(
+							{translate(
 								'Developers: Make your plugin lock down compatible by checking the "WPLOCKDOWN" ' +
 									'constant. The following code will make sure your plugin respects the WPLOCKDOWN setting.'
-							) }
+							)}
 						</FormSettingExplanation>
 
 						<FormSettingExplanation className="wp-super-cache__lock-down-code-block">
 							<ClipboardButton
 								className="wp-super-cache__lock-down-code-block-button"
-								text={ lockdownCodeSnippet }
+								text={lockdownCodeSnippet}
 							>
 								<Gridicon icon="clipboard" />
 							</ClipboardButton>
 							<span className="wp-super-cache__lock-down-code-block-snippet">
-								{ lockdownCodeSnippet }
+								{lockdownCodeSnippet}
 							</span>
 						</FormSettingExplanation>
 
 						<Notice
 							isCompact
-							status={ cache_lock_down ? 'is-warning' : 'is-info' }
+							status={cache_lock_down ? 'is-warning' : 'is-info'}
 							text={
 								cache_lock_down
 									? translate(
@@ -98,8 +98,8 @@ const LockDown = ( {
 	);
 };
 
-const getFormSettings = settings => {
-	return pick( settings, [ 'cache_lock_down' ] );
+const getFormSettings = (settings) => {
+	return pick(settings, ['cache_lock_down']);
 };
 
-export default WrapSettingsForm( getFormSettings )( LockDown );
+export default WrapSettingsForm(getFormSettings)(LockDown);

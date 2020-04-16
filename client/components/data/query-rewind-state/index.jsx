@@ -14,8 +14,8 @@ export class QueryRewindState extends Component {
 		this.request();
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId !== this.props.siteId ) {
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId !== this.props.siteId) {
 			this.request();
 		}
 	}
@@ -23,11 +23,11 @@ export class QueryRewindState extends Component {
 	request() {
 		const { requestState, siteId } = this.props;
 
-		if ( ! siteId ) {
+		if (!siteId) {
 			return;
 		}
 
-		requestState( siteId );
+		requestState(siteId);
 	}
 
 	render() {
@@ -39,4 +39,4 @@ const mapDispatchToProps = {
 	requestState: requestRewindState,
 };
 
-export default connect( null, mapDispatchToProps )( QueryRewindState );
+export default connect(null, mapDispatchToProps)(QueryRewindState);

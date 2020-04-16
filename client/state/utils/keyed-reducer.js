@@ -61,40 +61,40 @@ import { SerializationResult } from 'state/serialization-result';
  * @param {Function} reducer applied to referenced item in state map
  * @returns {Function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = ( keyPath, reducer ) => {
+export const keyedReducer = (keyPath, reducer) => {
 	// some keys are invalid
-	if ( 'string' !== typeof keyPath ) {
+	if ('string' !== typeof keyPath) {
 		throw new TypeError(
-			'Key name passed into '`keyedReducer`` must be a string but I detected a ${ typeof keyName }`
+			'Key name passed into '`keyedReducer`` must be a string but I detected a ${typeof keyName}`
 		);
 	}
 
-	if ( ! keyPath.length ) {
+	if (!keyPath.length) {
 		throw new TypeError(
 			'Key name passed into `keyedReducer` must have a non-zero length but I detected an empty string'
 		);
 	}
 
-	if ( 'function' !== typeof reducer ) {
+	if ('function' !== typeof reducer) {
 		throw new TypeError(
-			'Reducer passed into '`keyedReducer`` must be a function but I detected a ${ typeof reducer }`
+			'Reducer passed into '`keyedReducer`` must be a function but I detected a ${typeof reducer}`
 		);
 	}
 
-	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
+	const initialState = reducer(undefined, { type: '@@calypso/INIT' });
 
-	return ( state = {}, action ) => {
-		if ( action.type === SERIALIZE ) {
+	return (state = {}, action) => {
+		if (action.type === SERIALIZE) {
 			const serialized = reduce(
 				state,
-				( result, itemValue, itemKey ) => {
-					const serializedValue = reducer( itemValue, action );
-					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {
-						if ( ! result ) {
+				(result, itemValue, itemKey) => {
+					const serializedValue = reducer(itemValue, action);
+					if (serializedValue !== undefined && !isEqual(serializedValue, initialState)) {
+						if (!result) {
 							// instantiate the result object only when it's going to have at least one property
 							result = new SerializationResult();
 						}
-						result.addRootResult( itemKey, serializedValue );
+						result.addRootResult(itemKey, serializedValue);
 					}
 					return result;
 				},
@@ -103,43 +103,43 @@ export const keyedReducer = ( keyPath, reducer ) => {
 			return serialized;
 		}
 
-		if ( action.type === DESERIALIZE ) {
+		if (action.type === DESERIALIZE) {
 			return omitBy(
-				mapValues( state, item => reducer( item, action ) ),
-				a => a === undefined || isEqual( a, initialState )
+				mapValues(state, (item) => reducer(item, action)),
+				(a) => a === undefined || isEqual(a, initialState)
 			);
 		}
 
 		// don't allow coercion of key name: null => 0
-		const itemKey = get( action, keyPath, undefined );
+		const itemKey = get(action, keyPath, undefined);
 
 		// if the action doesn't contain a valid reference
 		// then return without any updates
-		if ( null === itemKey || undefined === itemKey ) {
+		if (null === itemKey || undefined === itemKey) {
 			return state;
 		}
 
 		// pass the old sub-state from that item into the reducer
 		// we need this to update state and also to compare if
 		// we had any changes, thus the initialState
-		const oldItemState = state[ itemKey ];
-		const newItemState = reducer( oldItemState, action );
+		const oldItemState = state[itemKey];
+		const newItemState = reducer(oldItemState, action);
 
 		// and do nothing if the new sub-state matches the old sub-state
-		if ( newItemState === oldItemState ) {
+		if (newItemState === oldItemState) {
 			return state;
 		}
 
 		// remove key from state if setting to undefined or back to initial state
 		// if it didn't exist anyway, then do nothing.
-		if ( undefined === newItemState || isEqual( newItemState, initialState ) ) {
-			return state.hasOwnProperty( itemKey ) ? omit( state, itemKey ) : state;
+		if (undefined === newItemState || isEqual(newItemState, initialState)) {
+			return state.hasOwnProperty(itemKey) ? omit(state, itemKey) : state;
 		}
 
 		// otherwise immutably update the super-state
 		return {
 			...state,
-			[ itemKey ]: newItemState,
+			[itemKey]: newItemState,
 		};
 	};
 };

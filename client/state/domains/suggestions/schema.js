@@ -7,7 +7,7 @@ export const itemsSchema = {
 			type: 'array',
 			items: {
 				type: 'object',
-				required: [ 'domain_name' ],
+				required: ['domain_name'],
 				properties: {
 					domain_name: { type: 'string' },
 					cost: { type: 'string' },

@@ -31,7 +31,7 @@ export class RegionAddressFieldsets extends Component {
 		contactDetailsErrors: PropTypes.shape(
 			Object.assign(
 				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
+				...CONTACT_DETAILS_FORM_FIELDS.map((field) => ({ [field]: PropTypes.string }))
 			)
 		),
 	};
@@ -44,24 +44,24 @@ export class RegionAddressFieldsets extends Component {
 		hasCountryStates: false,
 	};
 
-	inputRefCallback( input ) {
+	inputRefCallback(input) {
 		input && input.focus();
 	}
 
 	getRegionAddressFieldset() {
 		const { countryCode, hasCountryStates } = this.props;
 
-		if ( ! hasCountryStates ) {
-			if ( includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ) {
-				return <EuAddressFieldset { ...this.props } />;
+		if (!hasCountryStates) {
+			if (includes(CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode)) {
+				return <EuAddressFieldset {...this.props} />;
 			}
 
-			if ( includes( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ) {
-				return <UkAddressFieldset { ...this.props } />;
+			if (includes(CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode)) {
+				return <UkAddressFieldset {...this.props} />;
 			}
 		}
 
-		return <UsAddressFieldset { ...this.props } />;
+		return <UsAddressFieldset {...this.props} />;
 	}
 
 	render() {
@@ -71,28 +71,28 @@ export class RegionAddressFieldsets extends Component {
 			<div>
 				<div>
 					<Input
-						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
-						label={ translate( 'Address' ) }
-						maxLength={ 40 }
-						{ ...getFieldProps( 'address-1', {
+						ref={shouldAutoFocusAddressField ? this.inputRefCallback : noop}
+						label={translate('Address')}
+						maxLength={40}
+						{...getFieldProps('address-1', {
 							customErrorMessage: this.props.contactDetailsErrors?.address1,
-						} ) }
+						})}
 					/>
 
 					<HiddenInput
-						label={ translate( 'Address Line 2' ) }
-						text={ translate( '+ Add Address Line 2' ) }
-						maxLength={ 40 }
-						{ ...getFieldProps( 'address-2', {
+						label={translate('Address Line 2')}
+						text={translate('+ Add Address Line 2')}
+						maxLength={40}
+						{...getFieldProps('address-2', {
 							needsChildRef: true,
 							customErrorMessage: this.props.contactDetailsErrors?.address2,
-						} ) }
+						})}
 					/>
 				</div>
-				{ this.getRegionAddressFieldset() }
+				{this.getRegionAddressFieldset()}
 			</div>
 		);
 	}
 }
 
-export default localize( RegionAddressFieldsets );
+export default localize(RegionAddressFieldsets);

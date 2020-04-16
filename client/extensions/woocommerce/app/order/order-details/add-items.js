@@ -15,7 +15,7 @@ import OrderProductDialog from './product-dialog';
 
 class OrderAddItems extends Component {
 	static propTypes = {
-		orderId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.object ] ).isRequired,
+		orderId: PropTypes.oneOfType([PropTypes.number, PropTypes.object]).isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -23,36 +23,36 @@ class OrderAddItems extends Component {
 		showDialog: false,
 	};
 
-	toggleDialog = type => () => {
-		this.setState( { showDialog: type } );
+	toggleDialog = (type) => () => {
+		this.setState({ showDialog: type });
 	};
 
 	render() {
 		const { orderId, translate } = this.props;
-		const isNewOrder = isObject( orderId );
+		const isNewOrder = isObject(orderId);
 		return (
 			<div className="order-details__actions">
 				<Button
-					borderless={ ! isNewOrder }
-					primary={ isNewOrder }
-					onClick={ this.toggleDialog( 'product' ) }
+					borderless={!isNewOrder}
+					primary={isNewOrder}
+					onClick={this.toggleDialog('product')}
 				>
-					{ translate( 'Add product' ) }
+					{translate('Add product')}
 				</Button>
-				<Button borderless onClick={ this.toggleDialog( 'fee' ) }>
-					{ translate( 'Add fee' ) }
+				<Button borderless onClick={this.toggleDialog('fee')}>
+					{translate('Add fee')}
 				</Button>
 				<OrderFeeDialog
-					isVisible={ 'fee' === this.state.showDialog }
-					closeDialog={ this.toggleDialog( false ) }
+					isVisible={'fee' === this.state.showDialog}
+					closeDialog={this.toggleDialog(false)}
 				/>
 				<OrderProductDialog
-					isVisible={ 'product' === this.state.showDialog }
-					closeDialog={ this.toggleDialog( false ) }
+					isVisible={'product' === this.state.showDialog}
+					closeDialog={this.toggleDialog(false)}
 				/>
 			</div>
 		);
 	}
 }
 
-export default localize( OrderAddItems );
+export default localize(OrderAddItems);

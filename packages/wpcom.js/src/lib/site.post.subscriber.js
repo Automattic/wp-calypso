@@ -7,17 +7,17 @@ class SitePostSubscriber {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
-	constructor( id, sid, wpcom ) {
-		if ( ! sid ) {
-			throw new Error( '`side id` is not correctly defined' );
+	constructor(id, sid, wpcom) {
+		if (!sid) {
+			throw new Error('`side id` is not correctly defined');
 		}
 
-		if ( ! id ) {
-			throw new Error( '`post id` is not correctly defined' );
+		if (!id) {
+			throw new Error('`post id` is not correctly defined');
 		}
 
-		if ( ! ( this instanceof SitePostSubscriber ) ) {
-			return new SitePostSubscriber( id, sid, wpcom );
+		if (!(this instanceof SitePostSubscriber)) {
+			return new SitePostSubscriber(id, sid, wpcom);
 		}
 
 		this.wpcom = wpcom;
@@ -44,8 +44,8 @@ class SitePostSubscriber {
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
-	mine( query, fn ) {
-		return this.wpcom.req.get( `${this.path}/mine`, query, fn );
+	mine(query, fn) {
+		return this.wpcom.req.get(`${this.path}/mine`, query, fn);
 	}
 
 	/**
@@ -65,8 +65,8 @@ class SitePostSubscriber {
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
-	add( query, fn ) {
-		return this.wpcom.req.put( `${this.path}/new`, query, null, fn );
+	add(query, fn) {
+		return this.wpcom.req.put(`${this.path}/new`, query, null, fn);
 	}
 
 	/**
@@ -86,8 +86,8 @@ class SitePostSubscriber {
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
-	del( query, fn ) {
-		return this.wpcom.req.del( `${this.path}/mine/delete`, query, fn );
+	del(query, fn) {
+		return this.wpcom.req.del(`${this.path}/mine/delete`, query, fn);
 	}
 }
 

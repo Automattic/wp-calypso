@@ -7,8 +7,8 @@ import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'state/happychat/con
 import { userState } from 'state/selectors/test/fixtures/user-state';
 import getGroups from '../get-groups';
 
-describe( 'selectors', () => {
-	describe( '#getGroups()', () => {
+describe('selectors', () => {
+	describe('#getGroups()', () => {
 		let _window; // Keep a copy of the original window if any
 		const uiState = {
 			ui: {
@@ -18,16 +18,16 @@ describe( 'selectors', () => {
 			},
 		};
 
-		beforeEach( () => {
+		beforeEach(() => {
 			_window = global.window;
 			global.window = {};
-		} );
+		});
 
-		afterEach( () => {
+		afterEach(() => {
 			global.window = _window;
-		} );
+		});
 
-		test( 'should return default group for no sites', () => {
+		test('should return default group for no sites', () => {
 			const siteId = 1;
 			const state = {
 				...uiState,
@@ -37,10 +37,10 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).toMatchObject( [ HAPPYCHAT_GROUP_WPCOM ] );
-		} );
+			expect(getGroups(state, siteId)).toMatchObject([HAPPYCHAT_GROUP_WPCOM]);
+		});
 
-		test( 'should return default group for no siteId', () => {
+		test('should return default group for no siteId', () => {
 			const siteId = undefined;
 			const state = {
 				...uiState,
@@ -52,10 +52,10 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).toMatchObject( [ HAPPYCHAT_GROUP_WPCOM ] );
-		} );
+			expect(getGroups(state, siteId)).toMatchObject([HAPPYCHAT_GROUP_WPCOM]);
+		});
 
-		test( 'should return JPOP group for jetpack paid sites', () => {
+		test('should return JPOP group for jetpack paid sites', () => {
 			const siteId = 1;
 			const state = {
 				...uiState,
@@ -63,14 +63,14 @@ describe( 'selectors', () => {
 				currentUser: {
 					id: 1,
 					capabilities: {
-						[ siteId ]: {
+						[siteId]: {
 							manage_options: true,
 						},
 					},
 				},
 				sites: {
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							jetpack: true,
 							plan: {
 								product_id: 2005,
@@ -81,27 +81,27 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
-		} );
+			expect(getGroups(state, siteId)).toMatchObject([HAPPYCHAT_GROUP_JPOP]);
+		});
 
-		test( 'should return WPCOM for AT sites group for jetpack site', () => {
+		test('should return WPCOM for AT sites group for jetpack site', () => {
 			const siteId = 1;
 
-			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( plan => {
+			[PLAN_BUSINESS, PLAN_ECOMMERCE].forEach((plan) => {
 				const state = {
 					...uiState,
 					...userState,
 					currentUser: {
 						id: 1,
 						capabilities: {
-							[ siteId ]: {
+							[siteId]: {
 								manage_options: true,
 							},
 						},
 					},
 					sites: {
 						items: {
-							[ siteId ]: {
+							[siteId]: {
 								jetpack: true,
 								options: { is_automated_transfer: true },
 								plan: { product_slug: plan },
@@ -110,12 +110,12 @@ describe( 'selectors', () => {
 					},
 				};
 
-				expect( getGroups( state, siteId ) ).toMatchObject( [ HAPPYCHAT_GROUP_WPCOM ] );
-			} );
-		} );
+				expect(getGroups(state, siteId)).toMatchObject([HAPPYCHAT_GROUP_WPCOM]);
+			});
+		});
 
-		if ( isEnabled( 'jetpack/happychat' ) ) {
-			test( 'should return JPOP group if within the jetpack-connect section', () => {
+		if (isEnabled('jetpack/happychat')) {
+			test('should return JPOP group if within the jetpack-connect section', () => {
 				const state = {
 					...userState,
 					sites: {
@@ -130,10 +130,10 @@ describe( 'selectors', () => {
 					},
 				};
 
-				expect( getGroups( state ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
-			} );
+				expect(getGroups(state)).toMatchObject([HAPPYCHAT_GROUP_JPOP]);
+			});
 		} else {
-			test.skip( 'should not return JPOP group if within the jetpack-connect section' );
+			test.skip('should not return JPOP group if within the jetpack-connect section');
 		}
-	} );
-} );
+	});
+});

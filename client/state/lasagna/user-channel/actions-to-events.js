@@ -12,30 +12,30 @@ import { socket } from '../socket';
 
 let channel = null;
 
-const debug = debugFactory( 'lasagna:channel:user:wpcom' );
+const debug = debugFactory('lasagna:channel:user:wpcom');
 
-const joinChannel = store => {
-	if ( ! socket || channel ) {
+const joinChannel = (store) => {
+	if (!socket || channel) {
 		return;
 	}
 
-	const userId = getCurrentUserId( store.getState() );
+	const userId = getCurrentUserId(store.getState());
 
-	if ( ! userId ) {
+	if (!userId) {
 		return;
 	}
 
-	channel = socket.channel( `user:wpcom:${ userId }` );
+	channel = socket.channel(`user:wpcom:${userId}`);
 	// registerEventHandlers here
 
 	channel
 		.join()
-		.receive( 'ok', () => debug( 'channel join ok' ) )
-		.receive( 'error', ( { reason } ) => {
-			debug( 'channel join error', reason );
+		.receive('ok', () => debug('channel join ok'))
+		.receive('error', ({ reason }) => {
+			debug('channel join error', reason);
 			channel.leave();
 			channel = null;
-		} );
+		});
 };
 
 const leaveChannel = () => {
@@ -43,10 +43,10 @@ const leaveChannel = () => {
 	channel = null;
 };
 
-export default store => next => action => {
-	switch ( action.type ) {
+export default (store) => (next) => (action) => {
+	switch (action.type) {
 		case LASAGNA_SOCKET_CONNECTED: {
-			joinChannel( store );
+			joinChannel(store);
 			break;
 		}
 
@@ -55,5 +55,5 @@ export default store => next => action => {
 			break;
 	}
 
-	return next( action );
+	return next(action);
 };

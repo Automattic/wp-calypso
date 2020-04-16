@@ -21,12 +21,12 @@ const EXTENDED_EMAIL_FORWARDING_LIMIT = 100;
  * @returns {boolean} True if site has a plan with extended email forwarding limit
  */
 export const siteHasEligibleWpcomPlan = createSelector(
-	( state, siteId ) => {
-		const slug = getSitePlanSlug( state, siteId );
+	(state, siteId) => {
+		const slug = getSitePlanSlug(state, siteId);
 
-		return planHasFeature( slug, FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT );
+		return planHasFeature(slug, FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT);
 	},
-	( state, siteId ) => [ getSitePlanSlug( state, siteId ) ]
+	(state, siteId) => [getSitePlanSlug(state, siteId)]
 );
 
 /**
@@ -36,8 +36,8 @@ export const siteHasEligibleWpcomPlan = createSelector(
  * @param  {string} siteId The Site ID
  * @returns {number} the number of email forwards to allow
  */
-export default function getEmailForwardingLImit( state, siteId ) {
-	return siteHasEligibleWpcomPlan( state, siteId )
+export default function getEmailForwardingLImit(state, siteId) {
+	return siteHasEligibleWpcomPlan(state, siteId)
 		? EXTENDED_EMAIL_FORWARDING_LIMIT
 		: DEFAULT_EMAIL_FORWARDING_LIMT;
 }

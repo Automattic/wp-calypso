@@ -11,11 +11,11 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 
-const DashboardWidgetRow = props => {
+const DashboardWidgetRow = (props) => {
 	const { children, className } = props;
-	const classes = classNames( 'dashboard-widget__row', className );
+	const classes = classNames('dashboard-widget__row', className);
 
-	return <div className={ classes }>{ children }</div>;
+	return <div className={classes}>{children}</div>;
 };
 
 DashboardWidgetRow.propTypes = {

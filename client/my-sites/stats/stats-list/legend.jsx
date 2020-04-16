@@ -22,10 +22,10 @@ export default class extends React.PureComponent {
 
 		let valueSpan;
 
-		if ( value ) {
+		if (value) {
 			valueSpan = (
 				<span className="module-content-list-item-right">
-					<span className="module-content-list-item-value">{ value }</span>
+					<span className="module-content-list-item-value">{value}</span>
 				</span>
 			);
 		}
@@ -34,8 +34,8 @@ export default class extends React.PureComponent {
 			<ul className="module-content-list module-content-list-legend">
 				<li className="module-content-list-item">
 					<span className="module-content-list-item-wrapper">
-						{ valueSpan }
-						<span className="module-content-list-item-label">{ label }</span>
+						{valueSpan}
+						<span className="module-content-list-item-label">{label}</span>
 					</span>
 				</li>
 			</ul>

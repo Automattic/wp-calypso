@@ -9,11 +9,11 @@ import deepFreeze from 'deep-freeze';
 import getWordPressVersion from '../get-wordpress-version';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
-describe( 'getSelectedSiteWordPressVersion()', () => {
-	test( 'should return correct version value.', () => {
+describe('getSelectedSiteWordPressVersion()', () => {
+	test('should return correct version value.', () => {
 		const wpVersion = '5.0-RC3-43969';
 
-		const state = deepFreeze( {
+		const state = deepFreeze({
 			...userState,
 			sites: {
 				items: {
@@ -30,12 +30,12 @@ describe( 'getSelectedSiteWordPressVersion()', () => {
 			ui: {
 				selectedSiteId: 2916284,
 			},
-		} );
+		});
 
-		expect( getWordPressVersion( state, 2916284 ) ).toEqual( wpVersion );
-	} );
-	test( 'should return undefined when no version is set.', () => {
-		const state = deepFreeze( {
+		expect(getWordPressVersion(state, 2916284)).toEqual(wpVersion);
+	});
+	test('should return undefined when no version is set.', () => {
+		const state = deepFreeze({
 			...userState,
 			sites: {
 				items: {
@@ -49,8 +49,8 @@ describe( 'getSelectedSiteWordPressVersion()', () => {
 			ui: {
 				selectedSiteId: 2916284,
 			},
-		} );
+		});
 
-		expect( getWordPressVersion( state, 2916284 ) ).toBe( undefined );
-	} );
-} );
+		expect(getWordPressVersion(state, 2916284)).toBe(undefined);
+	});
+});

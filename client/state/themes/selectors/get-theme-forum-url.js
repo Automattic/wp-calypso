@@ -15,14 +15,14 @@ import 'state/themes/init';
  * @param  {string}  themeId Theme ID
  * @returns {?string}         Theme forum URL
  */
-export function getThemeForumUrl( state, themeId ) {
-	if ( isThemePremium( state, themeId ) ) {
+export function getThemeForumUrl(state, themeId) {
+	if (isThemePremium(state, themeId)) {
 		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
 	}
-	if ( isWpcomTheme( state, themeId ) ) {
+	if (isWpcomTheme(state, themeId)) {
 		return '//en.forums.wordpress.com/forum/themes';
 	}
-	if ( isWporgTheme( state, themeId ) ) {
+	if (isWporgTheme(state, themeId)) {
 		return '//wordpress.org/support/theme/' + themeId;
 	}
 	return null;

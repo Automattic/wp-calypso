@@ -10,24 +10,24 @@ import { identity } from 'lodash';
  */
 import { RegistrantExtraInfoCaForm } from '../ca-form';
 
-jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
-jest.mock( 'lib/analytics', () => {} );
+jest.mock('store', () => ({ get: () => {}, set: () => {} }));
+jest.mock('lib/analytics', () => {});
 
 const mockProps = {
 	translate: identity,
 	updateContactDetailsCache: identity,
 	userWpcomLang: 'EN',
-	getFieldProps: () => ( {} ),
+	getFieldProps: () => ({}),
 };
 
-describe( 'ca-form', () => {
-	test( 'should render without errors when extra is empty', () => {
+describe('ca-form', () => {
+	test('should render without errors when extra is empty', () => {
 		const testProps = {
 			...mockProps,
 			contactDetails: {},
 			ccTldDetails: {},
 		};
 
-		shallow( <RegistrantExtraInfoCaForm { ...testProps } /> );
-	} );
-} );
+		shallow(<RegistrantExtraInfoCaForm {...testProps} />);
+	});
+});

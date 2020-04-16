@@ -9,6 +9,6 @@ import { get } from 'lodash';
  * @param {object} state - global redux state
  * @returns {string} current state value
  */
-export default function getCurrentLocaleSlug( state ) {
-	return get( state, 'ui.language.localeSlug', null );
+export default function getCurrentLocaleSlug(state) {
+	return get(state, 'ui.language.localeSlug', null);
 }

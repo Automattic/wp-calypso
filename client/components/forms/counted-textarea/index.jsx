@@ -40,43 +40,43 @@ export class CountedTextarea extends React.Component {
 
 	renderCountPanel = () => {
 		let length = this.props.value.length;
-		if ( ! length && this.props.countPlaceholderLength ) {
+		if (!length && this.props.countPlaceholderLength) {
 			length = this.props.placeholder.length;
 		}
 
 		let panelText;
-		if ( this.props.showRemainingCharacters && this.props.acceptableLength ) {
-			panelText = this.props.translate( '%d character remaining', '%d characters remaining', {
+		if (this.props.showRemainingCharacters && this.props.acceptableLength) {
+			panelText = this.props.translate('%d character remaining', '%d characters remaining', {
 				context: 'Input length',
-				args: [ this.props.acceptableLength - length ],
+				args: [this.props.acceptableLength - length],
 				count: this.props.acceptableLength - length,
-			} );
+			});
 		} else {
-			panelText = this.props.translate( '%d character', '%d characters', {
+			panelText = this.props.translate('%d character', '%d characters', {
 				context: 'Input length',
-				args: [ length ],
+				args: [length],
 				count: length,
-			} );
+			});
 		}
 
 		return (
 			<div className="counted-textarea__count-panel">
-				{ panelText }
-				{ this.props.children }
+				{panelText}
+				{this.props.children}
 			</div>
 		);
 	};
 
 	render() {
-		const classes = classNames( 'counted-textarea', this.props.className, {
+		const classes = classNames('counted-textarea', this.props.className, {
 			'is-exceeding-acceptable-length':
 				this.props.acceptableLength && this.props.value.length > this.props.acceptableLength,
-		} );
+		});
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<FormTextarea
-					{ ...omit(
+					{...omit(
 						this.props,
 						'className',
 						'acceptableLength',
@@ -86,13 +86,13 @@ export class CountedTextarea extends React.Component {
 						'moment',
 						'numberFormat',
 						'translate'
-					) }
+					)}
 					className="counted-textarea__input"
 				/>
-				{ this.renderCountPanel() }
+				{this.renderCountPanel()}
 			</div>
 		);
 	}
 }
 
-export default localize( CountedTextarea );
+export default localize(CountedTextarea);

@@ -28,39 +28,39 @@ import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 class ShippingSettingsSaveButton extends Component {
 	static propTypes = {
 		onSaveSuccess: PropTypes.func.isRequired,
-		toSave: PropTypes.shape( {
+		toSave: PropTypes.shape({
 			units: PropTypes.bool,
 			shipping: PropTypes.bool,
-		} ),
+		}),
 	};
 
-	onSaveSuccess = dispatch => {
+	onSaveSuccess = (dispatch) => {
 		const { translate } = this.props;
 
-		this.props.onSaveSuccess( 'shipping' );
+		this.props.onSaveSuccess('shipping');
 
 		dispatch(
-			successNotice( translate( 'Shipping settings saved' ), {
+			successNotice(translate('Shipping settings saved'), {
 				duration: 4000,
-			} )
+			})
 		);
 	};
 
 	saveUnits = () => {
 		const { translate, site } = this.props;
 
-		const unitsSaveSuccessNotice = dispatch => {
-			this.props.onSaveSuccess( 'units' );
+		const unitsSaveSuccessNotice = (dispatch) => {
+			this.props.onSaveSuccess('units');
 
 			dispatch(
-				successNotice( translate( 'Units settings saved' ), {
+				successNotice(translate('Units settings saved'), {
 					duration: 4000,
-				} )
+				})
 			);
 		};
 
 		const unitsSaveFailureNotice = errorNotice(
-			translate( 'There was a problem saving units settings. Please try again.' )
+			translate('There was a problem saving units settings. Please try again.')
 		);
 
 		this.props.saveWeightAndDimensionsUnits(
@@ -72,16 +72,16 @@ class ShippingSettingsSaveButton extends Component {
 
 	saveShippingSettings = () => {
 		const { translate, wcsEnabled } = this.props;
-		if ( ! wcsEnabled ) {
+		if (!wcsEnabled) {
 			return;
 		}
 
 		const failureAction = errorNotice(
-			translate( 'There was a problem saving the shipping settings. Please try again.' )
+			translate('There was a problem saving the shipping settings. Please try again.')
 		);
 
 		const noLabelsPaymentAction = errorNotice(
-			translate( 'A payment method is required to print shipping labels.' ),
+			translate('A payment method is required to print shipping labels.'),
 			{
 				duration: 4000,
 			}
@@ -97,11 +97,11 @@ class ShippingSettingsSaveButton extends Component {
 	save = () => {
 		const { toSave } = this.props;
 
-		if ( toSave.shipping ) {
+		if (toSave.shipping) {
 			this.saveShippingSettings();
 		}
 
-		if ( toSave.units ) {
+		if (toSave.units) {
 			this.saveUnits();
 		}
 	};
@@ -109,47 +109,47 @@ class ShippingSettingsSaveButton extends Component {
 	redirect = () => {
 		const { site } = this.props;
 		this.save();
-		page.redirect( getLink( '/store/:site', site ) );
+		page.redirect(getLink('/store/:site', site));
 	};
 
 	render() {
 		const { wcsEnabled, translate, loading, site, finishedInitialSetup, isSaving } = this.props;
 
-		if ( loading || ! site ) {
+		if (loading || !site) {
 			return null;
 		}
 
-		if ( finishedInitialSetup ) {
+		if (finishedInitialSetup) {
 			return (
-				<Button onClick={ this.save } primary busy={ isSaving } disabled={ isSaving }>
-					{ translate( 'Save' ) }
+				<Button onClick={this.save} primary busy={isSaving} disabled={isSaving}>
+					{translate('Save')}
 				</Button>
 			);
 		}
-		const label = wcsEnabled ? translate( 'Save & finish' ) : translate( "I'm Finished" );
+		const label = wcsEnabled ? translate('Save & finish') : translate("I'm Finished");
 		return (
-			<Button onClick={ this.redirect } primary busy={ isSaving } disabled={ isSaving }>
-				{ label }
+			<Button onClick={this.redirect} primary busy={isSaving} disabled={isSaving}>
+				{label}
 			</Button>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
-	const wcsEnabled = isWcsEnabled( state, site.ID );
-	const loading = areSetupChoicesLoading( state );
-	const finishedInitialSetup = getFinishedInitialSetup( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
+	const wcsEnabled = isWcsEnabled(state, site.ID);
+	const loading = areSetupChoicesLoading(state);
+	const finishedInitialSetup = getFinishedInitialSetup(state);
 	return {
 		site,
 		wcsEnabled,
 		finishedInitialSetup,
 		loading,
-		isSaving: Boolean( getActionList( state ) ),
+		isSaving: Boolean(getActionList(state)),
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			createWcsShippingSaveActionList,
@@ -159,7 +159,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ShippingSettingsSaveButton ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(ShippingSettingsSaveButton));

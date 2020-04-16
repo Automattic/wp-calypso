@@ -18,7 +18,7 @@ import { JetpackSignup } from '../signup.js';
 
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
-const DEFAULT_PROPS = deepFreeze( {
+const DEFAULT_PROPS = deepFreeze({
 	authorizationData: {
 		authorizeError: false,
 		authorizeSuccess: false,
@@ -33,46 +33,46 @@ const DEFAULT_PROPS = deepFreeze( {
 		blogname: 'Example Blog',
 		clientId: CLIENT_ID,
 		from: 'banner-44-slide-1-dashboard',
-		homeUrl: `http://${ SITE_SLUG }`,
+		homeUrl: `http://${SITE_SLUG}`,
 		jpVersion: '5.4',
 		nonce: 'fooBarNonce',
-		redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
-		redirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
+		redirectAfterAuth: `http://${SITE_SLUG}/wp-admin/admin.php?page=jetpack`,
+		redirectUri: `http://${SITE_SLUG}/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${SITE_SLUG}%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
 		scope: 'administrator:fooBarBaz',
 		secret: 'fooBarSecret',
-		site: `http://${ SITE_SLUG }`,
+		site: `http://${SITE_SLUG}`,
 		siteIcon: '',
-		siteUrl: `http://${ SITE_SLUG }`,
+		siteUrl: `http://${SITE_SLUG}`,
 		state: '1',
-		userEmail: `email@${ SITE_SLUG }`,
+		userEmail: `email@${SITE_SLUG}`,
 	},
 	createAccount: noop,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
 	translate: identity,
-} );
+});
 
-describe( 'JetpackSignup', () => {
-	test( 'should render', () => {
-		const wrapper = shallow( <JetpackSignup { ...DEFAULT_PROPS } /> );
+describe('JetpackSignup', () => {
+	test('should render', () => {
+		const wrapper = shallow(<JetpackSignup {...DEFAULT_PROPS} />);
 
-		expect( wrapper ).toMatchSnapshot();
-	} );
+		expect(wrapper).toMatchSnapshot();
+	});
 
-	test( 'should render with locale suggestions', () => {
+	test('should render with locale suggestions', () => {
 		const wrapper = shallow(
 			<JetpackSignup
-				{ ...DEFAULT_PROPS }
-				authorizationData={ {
+				{...DEFAULT_PROPS}
+				authorizationData={{
 					...DEFAULT_PROPS.authorizationData,
 					locale: 'es',
-				} }
+				}}
 				locale="es"
 				path="/jetpack/connect/authorize/es"
 			/>
 		);
 
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
-	} );
-} );
+		expect(wrapper).toMatchSnapshot();
+		expect(wrapper.find(LocaleSuggestions)).toHaveLength(1);
+	});
+});

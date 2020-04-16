@@ -22,26 +22,26 @@ import InProgressCard from './guided-transfer-card/in-progress';
 class ExporterContainer extends Component {
 	render() {
 		const { siteId, isJetpack, isTransferInProgress } = this.props;
-		const showGuidedTransferOptions = config.isEnabled( 'manage/export/guided-transfer' );
+		const showGuidedTransferOptions = config.isEnabled('manage/export/guided-transfer');
 
 		return (
 			<div className="exporter">
-				{ showGuidedTransferOptions && <QuerySiteGuidedTransfer siteId={ siteId } /> }
+				{showGuidedTransferOptions && <QuerySiteGuidedTransfer siteId={siteId} />}
 
 				<Notices />
-				{ showGuidedTransferOptions && isTransferInProgress && <InProgressCard /> }
-				<ExportCard siteId={ siteId } />
-				{ ! isJetpack && <ExportMediaCard siteId={ siteId } /> }
-				{ showGuidedTransferOptions && ! isTransferInProgress && <GuidedTransferCard /> }
+				{showGuidedTransferOptions && isTransferInProgress && <InProgressCard />}
+				<ExportCard siteId={siteId} />
+				{!isJetpack && <ExportMediaCard siteId={siteId} />}
+				{showGuidedTransferOptions && !isTransferInProgress && <GuidedTransferCard />}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	siteId: getSelectedSiteId( state ),
-	isJetpack: isJetpackSite( state, siteId ),
-	isTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
-} );
+const mapStateToProps = (state, { siteId }) => ({
+	siteId: getSelectedSiteId(state),
+	isJetpack: isJetpackSite(state, siteId),
+	isTransferInProgress: isGuidedTransferInProgress(state, getSelectedSiteId(state)),
+});
 
-export default connect( mapStateToProps )( ExporterContainer );
+export default connect(mapStateToProps)(ExporterContainer);

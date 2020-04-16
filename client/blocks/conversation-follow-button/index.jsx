@@ -25,7 +25,7 @@ class ConversationFollowButtonContainer extends Component {
 		siteId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
 		onFollowToggle: PropTypes.func,
-		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
+		tagName: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 		post: PropTypes.object, // for stats only
 		followSource: PropTypes.string,
 	};
@@ -34,49 +34,46 @@ class ConversationFollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = isRequestingFollow => {
+	handleFollowToggle = (isRequestingFollow) => {
 		const { siteId, postId, post, followSource } = this.props;
 
-		const tracksProperties = assign( getTracksPropertiesForPost( post ), {
+		const tracksProperties = assign(getTracksPropertiesForPost(post), {
 			follow_source: followSource,
-		} );
+		});
 
-		if ( isRequestingFollow ) {
-			this.props.recordTracksEvent(
-				'calypso_reader_conversations_post_followed',
-				tracksProperties
-			);
-			this.props.followConversation( { siteId, postId } );
+		if (isRequestingFollow) {
+			this.props.recordTracksEvent('calypso_reader_conversations_post_followed', tracksProperties);
+			this.props.followConversation({ siteId, postId });
 		} else {
-			this.props.recordTracksEvent( 'calypso_reader_conversations_post_muted', tracksProperties );
-			this.props.muteConversation( { siteId, postId } );
+			this.props.recordTracksEvent('calypso_reader_conversations_post_muted', tracksProperties);
+			this.props.muteConversation({ siteId, postId });
 		}
 
-		this.props.onFollowToggle( isRequestingFollow );
+		this.props.onFollowToggle(isRequestingFollow);
 	};
 
 	render() {
 		return (
 			<ConversationFollowButton
-				isFollowing={ this.props.isFollowing }
-				onFollowToggle={ this.handleFollowToggle }
-				className={ this.props.className }
-				tagName={ this.props.tagName }
+				isFollowing={this.props.isFollowing}
+				onFollowToggle={this.handleFollowToggle}
+				className={this.props.className}
+				tagName={this.props.tagName}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		isFollowing: isFollowingReaderConversation( state, {
+	(state, ownProps) => ({
+		isFollowing: isFollowingReaderConversation(state, {
 			siteId: ownProps.siteId,
 			postId: ownProps.postId,
-		} ),
-	} ),
+		}),
+	}),
 	{
 		followConversation,
 		muteConversation,
 		recordTracksEvent,
 	}
-)( ConversationFollowButtonContainer );
+)(ConversationFollowButtonContainer);

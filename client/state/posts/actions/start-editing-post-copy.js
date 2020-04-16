@@ -17,15 +17,15 @@ import {
 
 import 'state/posts/init';
 
-export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
-	dispatch( startEditingPost( siteId, null ) );
+export const startEditingPostCopy = (siteId, postToCopyId) => (dispatch) => {
+	dispatch(startEditingPost(siteId, null));
 
 	wpcom
-		.site( siteId )
-		.post( postToCopyId )
-		.get( { context: 'edit' } )
-		.then( postToCopy => {
-			const postAttributes = pick( postToCopy, [
+		.site(siteId)
+		.post(postToCopyId)
+		.get({ context: 'edit' })
+		.then((postToCopy) => {
+			const postAttributes = pick(postToCopy, [
 				'canonical_image',
 				'content',
 				'excerpt',
@@ -33,10 +33,10 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
 				'post_thumbnail',
 				'terms',
 				'type',
-			] );
+			]);
 
-			postAttributes.title = decodeEntities( postToCopy.title );
-			postAttributes.featured_image = getFeaturedImageId( postToCopy );
+			postAttributes.title = decodeEntities(postToCopy.title);
+			postAttributes.featured_image = getFeaturedImageId(postToCopy);
 
 			/**
 			 * A post metadata whitelist for the `updatePostMetadata()` action.
@@ -46,29 +46,29 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
 			 *
 			 * @see https://github.com/Automattic/wp-calypso/issues/14840
 			 */
-			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude', 'geo_address', 'geo_public' ];
+			const metadataWhitelist = ['geo_latitude', 'geo_longitude', 'geo_address', 'geo_public'];
 
 			// Filter the post metadata to include only the ones we want to copy,
 			// use only the `key` and `value` properties (and, most importantly exclude `id`),
 			// and add an `operation` field to the copied values.
 			const copiedMetadata = reduce(
 				postToCopy.metadata,
-				( copiedMeta, { key, value } ) => {
-					if ( includes( metadataWhitelist, key ) ) {
-						copiedMeta.push( { key, value, operation: 'update' } );
+				(copiedMeta, { key, value }) => {
+					if (includes(metadataWhitelist, key)) {
+						copiedMeta.push({ key, value, operation: 'update' });
 					}
 					return copiedMeta;
 				},
 				[]
 			);
 
-			if ( copiedMetadata.length > 0 ) {
+			if (copiedMetadata.length > 0) {
 				postAttributes.metadata = copiedMetadata;
 			}
 
-			dispatch( startEditingNewPost( siteId, postAttributes ) );
-		} )
-		.catch( error => {
-			dispatch( editorSetLoadingError( error ) );
-		} );
+			dispatch(startEditingNewPost(siteId, postAttributes));
+		})
+		.catch((error) => {
+			dispatch(editorSetLoadingError(error));
+		});
 };

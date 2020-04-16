@@ -39,29 +39,29 @@ export class LinkedinSharePreview extends PureComponent {
 						<div className="linkedin-share-preview__profile-picture-part">
 							<img
 								className="linkedin-share-preview__profile-picture"
-								src={ externalProfilePicture }
+								src={externalProfilePicture}
 							/>
 						</div>
 						<div className="linkedin-share-preview__profile-line-part">
 							<div className="linkedin-share-preview__profile-line">
-								<a className="linkedin-share-preview__profile-name" href={ externalProfileUrl }>
-									{ externalDisplay }
+								<a className="linkedin-share-preview__profile-name" href={externalProfileUrl}>
+									{externalDisplay}
 								</a>
 							</div>
 						</div>
 					</div>
 					<div className="linkedin-share-preview__body">
-						{ imageUrl && (
+						{imageUrl && (
 							<div className="linkedin-share-preview__image-wrapper">
-								<a href={ articleUrl }>
-									<img className="linkedin-share-preview__image" src={ imageUrl } />
+								<a href={articleUrl}>
+									<img className="linkedin-share-preview__image" src={imageUrl} />
 								</a>
 							</div>
-						) }
+						)}
 						<div className="linkedin-share-preview__message-part">
-							<a className="linkedin-share-preview__message-link" href={ articleUrl }>
-								<div className="linkedin-share-preview__message">{ message }</div>
-								<div className="linkedin-share-preview__site-url">{ siteDomain }</div>
+							<a className="linkedin-share-preview__message-link" href={articleUrl}>
+								<div className="linkedin-share-preview__message">{message}</div>
+								<div className="linkedin-share-preview__site-url">{siteDomain}</div>
 							</a>
 						</div>
 					</div>
@@ -71,4 +71,4 @@ export class LinkedinSharePreview extends PureComponent {
 	}
 }
 
-export default localize( LinkedinSharePreview );
+export default localize(LinkedinSharePreview);

@@ -13,7 +13,7 @@ import {
 	isGSuiteRestricted,
 } from 'lib/gsuite';
 
-jest.mock( 'lib/user/', () => {
+jest.mock('lib/user/', () => {
 	return () => {
 		return {
 			get: () => {
@@ -21,67 +21,67 @@ jest.mock( 'lib/user/', () => {
 			},
 		};
 	};
-} );
+});
 
-describe( 'index', () => {
-	describe( '#canDomainAddGSuite', () => {
-		test( 'returns true when domain is valid', () => {
-			expect( canDomainAddGSuite( 'foobar.blog' ) ).toEqual( true );
-		} );
+describe('index', () => {
+	describe('#canDomainAddGSuite', () => {
+		test('returns true when domain is valid', () => {
+			expect(canDomainAddGSuite('foobar.blog')).toEqual(true);
+		});
 
-		test( 'returns false when domain is invalid', () => {
-			expect( canDomainAddGSuite( 'foobar.wpcomstaging.com' ) ).toEqual( false );
-		} );
-	} );
+		test('returns false when domain is invalid', () => {
+			expect(canDomainAddGSuite('foobar.wpcomstaging.com')).toEqual(false);
+		});
+	});
 
-	describe( '#getAnnualPrice', () => {
-		test( 'returns default value when no parameter provided', () => {
-			expect( getAnnualPrice() ).toEqual( '-' );
-		} );
+	describe('#getAnnualPrice', () => {
+		test('returns default value when no parameter provided', () => {
+			expect(getAnnualPrice()).toEqual('-');
+		});
 
-		test( 'returns default value when only default value provided', () => {
-			expect( getAnnualPrice( null, null, '' ) ).toEqual( '' );
-		} );
+		test('returns default value when only default value provided', () => {
+			expect(getAnnualPrice(null, null, '')).toEqual('');
+		});
 
-		test( 'returns valid monthly price when cost is integer', () => {
-			expect( getAnnualPrice( 120, 'EUR' ) ).toEqual( '€120' );
-		} );
+		test('returns valid monthly price when cost is integer', () => {
+			expect(getAnnualPrice(120, 'EUR')).toEqual('€120');
+		});
 
-		test( 'returns valid monthly price when cost is float', () => {
-			expect( getAnnualPrice( 99.99, 'USD' ) ).toEqual( '$99.99' );
-		} );
-	} );
+		test('returns valid monthly price when cost is float', () => {
+			expect(getAnnualPrice(99.99, 'USD')).toEqual('$99.99');
+		});
+	});
 
-	describe( '#getMonthlyPrice', () => {
-		test( 'returns default value when no parameter provided', () => {
-			expect( getMonthlyPrice() ).toEqual( '-' );
-		} );
+	describe('#getMonthlyPrice', () => {
+		test('returns default value when no parameter provided', () => {
+			expect(getMonthlyPrice()).toEqual('-');
+		});
 
-		test( 'returns default value when only default value provided', () => {
-			expect( getMonthlyPrice( null, null, '/' ) ).toEqual( '/' );
-		} );
+		test('returns default value when only default value provided', () => {
+			expect(getMonthlyPrice(null, null, '/')).toEqual('/');
+		});
 
-		test( 'returns valid monthly price when cost is integer', () => {
-			expect( getMonthlyPrice( 120, 'EUR' ) ).toEqual( '€10' );
-		} );
+		test('returns valid monthly price when cost is integer', () => {
+			expect(getMonthlyPrice(120, 'EUR')).toEqual('€10');
+		});
 
-		test( 'returns valid monthly price when cost is float', () => {
-			expect( getMonthlyPrice( 99.99, 'USD' ) ).toEqual( '$8.40' );
-		} );
-	} );
+		test('returns valid monthly price when cost is float', () => {
+			expect(getMonthlyPrice(99.99, 'USD')).toEqual('$8.40');
+		});
+	});
 
-	describe( '#getEligibleGSuiteDomain', () => {
-		test( 'Returns empty string if selected domain and domains are empty', () => {
-			expect( getEligibleGSuiteDomain( '', [] ) ).toEqual( '' );
-		} );
+	describe('#getEligibleGSuiteDomain', () => {
+		test('Returns empty string if selected domain and domains are empty', () => {
+			expect(getEligibleGSuiteDomain('', [])).toEqual('');
+		});
 
-		test( 'Returns empty string if selected domain is invalid and domains are empty', () => {
-			expect( getEligibleGSuiteDomain( 'invalid-domain.wpcomstaging.com', [] ) ).toEqual( '' );
-		} );
+		test('Returns empty string if selected domain is invalid and domains are empty', () => {
+			expect(getEligibleGSuiteDomain('invalid-domain.wpcomstaging.com', [])).toEqual('');
+		});
 
-		test( 'Returns selected domain if selected domain is valid and domains are empty', () => {
-			expect( getEligibleGSuiteDomain( 'valid-domain.blog', [] ) ).toEqual( 'valid-domain.blog' );
-		} );
+		test('Returns selected domain if selected domain is valid and domains are empty', () => {
+			expect(getEligibleGSuiteDomain('valid-domain.blog', [])).toEqual('valid-domain.blog');
+		});
 
 		const domains = [
 			{
@@ -115,45 +115,45 @@ describe( 'index', () => {
 			},
 		];
 
-		test( 'Returns selected domain if selected domain is valid', () => {
-			expect( getEligibleGSuiteDomain( 'selected-valid-domain.blog', domains ) ).toEqual(
+		test('Returns selected domain if selected domain is valid', () => {
+			expect(getEligibleGSuiteDomain('selected-valid-domain.blog', domains)).toEqual(
 				'selected-valid-domain.blog'
 			);
-		} );
+		});
 
-		test( 'Returns primary domain if no selected domain', () => {
-			expect( getEligibleGSuiteDomain( '', domains ) ).toEqual( 'primary-domain.blog' );
-		} );
+		test('Returns primary domain if no selected domain', () => {
+			expect(getEligibleGSuiteDomain('', domains)).toEqual('primary-domain.blog');
+		});
 
-		test( 'Returns first non-primary domain if no selected domain and no primary domain in domains', () => {
-			const domainsWithoutPrimaryDomain = domains.slice( 0, -1 );
+		test('Returns first non-primary domain if no selected domain and no primary domain in domains', () => {
+			const domainsWithoutPrimaryDomain = domains.slice(0, -1);
 
-			expect( getEligibleGSuiteDomain( '', domainsWithoutPrimaryDomain ) ).toEqual(
+			expect(getEligibleGSuiteDomain('', domainsWithoutPrimaryDomain)).toEqual(
 				'mapped-domain-with-wpcom-nameservers.blog'
 			);
-		} );
+		});
 
-		test( 'Returns empty string if no selected domain and no valid domain in domains', () => {
-			const domainsWithoutValidDomain = domains.slice( 0, -3 );
+		test('Returns empty string if no selected domain and no valid domain in domains', () => {
+			const domainsWithoutValidDomain = domains.slice(0, -3);
 
-			expect( getEligibleGSuiteDomain( '', domainsWithoutValidDomain ) ).toEqual( '' );
-		} );
-	} );
+			expect(getEligibleGSuiteDomain('', domainsWithoutValidDomain)).toEqual('');
+		});
+	});
 
-	describe( '#getGSuiteSupportedDomains', () => {
-		test( 'returns empty array if give empty array', () => {
-			expect( getGSuiteSupportedDomains( [] ) ).toEqual( [] );
-		} );
+	describe('#getGSuiteSupportedDomains', () => {
+		test('returns empty array if give empty array', () => {
+			expect(getGSuiteSupportedDomains([])).toEqual([]);
+		});
 
-		test( 'returns empty array if domain is invalid', () => {
+		test('returns empty array if domain is invalid', () => {
 			expect(
-				getGSuiteSupportedDomains( [
+				getGSuiteSupportedDomains([
 					{ name: 'foo.wpcomstaging.com', type: 'REGISTERED', googleAppsSubscription: {} },
-				] )
-			).toEqual( [] );
-		} );
+				])
+			).toEqual([]);
+		});
 
-		test( 'returns domain object if domain is valid, type of registered, and wpcom nameservers', () => {
+		test('returns domain object if domain is valid, type of registered, and wpcom nameservers', () => {
 			const registered = {
 				name: 'foo.blog',
 				type: 'REGISTERED',
@@ -161,16 +161,16 @@ describe( 'index', () => {
 				googleAppsSubscription: {},
 			};
 
-			expect( getGSuiteSupportedDomains( [ registered ] ) ).toEqual( [ registered ] );
-		} );
+			expect(getGSuiteSupportedDomains([registered])).toEqual([registered]);
+		});
 
-		test( 'returns empty array if domain is valid and type of mapped without our nameservers', () => {
+		test('returns empty array if domain is valid and type of mapped without our nameservers', () => {
 			const mapped = { name: 'foo.blog', type: 'MAPPED', googleAppsSubscription: {} };
 
-			expect( getGSuiteSupportedDomains( [ mapped ] ) ).toEqual( [] );
-		} );
+			expect(getGSuiteSupportedDomains([mapped])).toEqual([]);
+		});
 
-		test( 'returns domain object if domain is valid and type of mapped with our nameservers', () => {
+		test('returns domain object if domain is valid and type of mapped with our nameservers', () => {
 			const mapped = {
 				name: 'foo.blog',
 				type: 'MAPPED',
@@ -178,80 +178,78 @@ describe( 'index', () => {
 				hasWpcomNameservers: true,
 			};
 
-			expect( getGSuiteSupportedDomains( [ mapped ] ) ).toEqual( [ mapped ] );
-		} );
+			expect(getGSuiteSupportedDomains([mapped])).toEqual([mapped]);
+		});
 
-		test( 'returns empty array if domain is valid and type of site redirected', () => {
+		test('returns empty array if domain is valid and type of site redirected', () => {
 			const siteRedirect = { name: 'foo.blog', type: 'SITE_REDIRECT', googleAppsSubscription: {} };
 
-			expect( getGSuiteSupportedDomains( [ siteRedirect ] ) ).toEqual( [] );
-		} );
-	} );
+			expect(getGSuiteSupportedDomains([siteRedirect])).toEqual([]);
+		});
+	});
 
-	describe( '#hasGSuiteWithUs', () => {
-		test( 'returns true if googleAppsSubscription has a value for status', () => {
-			expect( hasGSuiteWithUs( { googleAppsSubscription: { status: 'blah' } } ) ).toEqual( true );
-		} );
+	describe('#hasGSuiteWithUs', () => {
+		test('returns true if googleAppsSubscription has a value for status', () => {
+			expect(hasGSuiteWithUs({ googleAppsSubscription: { status: 'blah' } })).toEqual(true);
+		});
 
-		test( 'returns true if googleAppsSubscription has no_subscription for status', () => {
+		test('returns true if googleAppsSubscription has no_subscription for status', () => {
+			expect(hasGSuiteWithUs({ googleAppsSubscription: { status: 'no_subscription' } })).toEqual(
+				false
+			);
+		});
+	});
+
+	describe('#hasGSuiteSupportedDomain', () => {
+		test('returns false if passed an empty array', () => {
+			expect(hasGSuiteSupportedDomain([])).toEqual(false);
+		});
+
+		test('returns false if passed an array with invalid domains', () => {
 			expect(
-				hasGSuiteWithUs( { googleAppsSubscription: { status: 'no_subscription' } } )
-			).toEqual( false );
-		} );
-	} );
-
-	describe( '#hasGSuiteSupportedDomain', () => {
-		test( 'returns false if passed an empty array', () => {
-			expect( hasGSuiteSupportedDomain( [] ) ).toEqual( false );
-		} );
-
-		test( 'returns false if passed an array with invalid domains', () => {
-			expect(
-				hasGSuiteSupportedDomain( [
+				hasGSuiteSupportedDomain([
 					{ name: 'foo.wpcomstaging.com', type: 'REGISTERED', googleAppsSubscription: {} },
-				] )
-			).toEqual( false );
-		} );
+				])
+			).toEqual(false);
+		});
 
-		test( 'returns false if passed an array with valid domains and no nameservers', () => {
+		test('returns false if passed an array with valid domains and no nameservers', () => {
 			expect(
-				hasGSuiteSupportedDomain( [
-					{ name: 'foo.blog', type: 'MAPPED', googleAppsSubscription: {} },
-				] )
-			).toEqual( false );
-		} );
+				hasGSuiteSupportedDomain([{ name: 'foo.blog', type: 'MAPPED', googleAppsSubscription: {} }])
+			).toEqual(false);
+		});
 
-		test( 'returns true if passed an array with valid domains and our nameservers', () => {
+		test('returns true if passed an array with valid domains and our nameservers', () => {
 			expect(
-				hasGSuiteSupportedDomain( [
+				hasGSuiteSupportedDomain([
 					{
 						name: 'foo.blog',
 						type: 'MAPPED',
 						googleAppsSubscription: {},
 						hasWpcomNameservers: true,
 					},
-				] )
-			).toEqual( true );
-		} );
-	} );
+				])
+			).toEqual(true);
+		});
+	});
 
-	describe( '#hasPendingGSuiteUsers', () => {
-		test( 'returns false if googleAppsSubscription.pendingUsers has an empty array', () => {
-			expect( hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [] } } ) ).toEqual(
+	describe('#hasPendingGSuiteUsers', () => {
+		test('returns false if googleAppsSubscription.pendingUsers has an empty array', () => {
+			expect(hasPendingGSuiteUsers({ googleAppsSubscription: { pendingUsers: [] } })).toEqual(
 				false
 			);
-		} );
+		});
 
-		test( 'returns true if googleAppsSubscription.pendingUsers has an non-empty array', () => {
-			expect(
-				hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [ 'foo' ] } } )
-			).toEqual( true );
-		} );
-	} );
+		test('returns true if googleAppsSubscription.pendingUsers has an non-empty array', () => {
+			expect(hasPendingGSuiteUsers({ googleAppsSubscription: { pendingUsers: ['foo'] } })).toEqual(
+				true
+			);
+		});
+	});
 
-	describe( '#isGSuiteRestricted', () => {
-		test( 'returns false if user is not G Suite restricted', () => {
-			expect( isGSuiteRestricted() ).toEqual( false );
-		} );
-	} );
-} );
+	describe('#isGSuiteRestricted', () => {
+		test('returns false if user is not G Suite restricted', () => {
+			expect(isGSuiteRestricted()).toEqual(false);
+		});
+	});
+});

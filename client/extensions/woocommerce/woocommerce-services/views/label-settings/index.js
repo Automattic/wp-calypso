@@ -30,29 +30,29 @@ import {
 
 class AccountSettingsRootView extends Component {
 	componentWillUnmount() {
-		this.props.restorePristineSettings( this.props.siteId );
+		this.props.restorePristineSettings(this.props.siteId);
 	}
 
-	setValue = ( key, value ) => {
+	setValue = (key, value) => {
 		this.props.onChange();
-		this.props.setFormDataValue( this.props.siteId, key, value );
+		this.props.setFormDataValue(this.props.siteId, key, value);
 	};
 
 	onEnabledToggle = () => {
 		this.props.onChange();
-		this.props.setFormDataValue( this.props.siteId, 'enabled', ! this.props.labelsEnabled );
+		this.props.setFormDataValue(this.props.siteId, 'enabled', !this.props.labelsEnabled);
 	};
 
 	renderContent = () => {
 		const { isFetchError, siteId, translate } = this.props;
 
-		if ( isFetchError ) {
+		if (isFetchError) {
 			return (
-				<p>{ translate( 'Unable to get your settings. Please refresh the page to try again.' ) }</p>
+				<p>{translate('Unable to get your settings. Please refresh the page to try again.')}</p>
 			);
 		}
 
-		return <LabelSettings siteId={ siteId } setValue={ this.setValue } />;
+		return <LabelSettings siteId={siteId} setValue={this.setValue} />;
 	};
 
 	render() {
@@ -65,33 +65,33 @@ class AccountSettingsRootView extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! formMeta ) {
-			return <QueryLabelSettings siteId={ siteId } />;
+		if (!formMeta) {
+			return <QueryLabelSettings siteId={siteId} />;
 		}
 
 		//hide the toggle when the enabled flag is not present (older version of WCS) and respect the setting otherwise.
-		const renderToggle = isBoolean( labelsEnabled );
-		const hidden = isBoolean( labelsEnabled ) && ! labelsEnabled;
+		const renderToggle = isBoolean(labelsEnabled);
+		const hidden = isBoolean(labelsEnabled) && !labelsEnabled;
 
 		return (
 			<div>
-				<QueryLabelSettings siteId={ siteId } />
+				<QueryLabelSettings siteId={siteId} />
 				<ExtendedHeader
-					label={ translate( 'Shipping labels' ) }
-					description={ translate(
+					label={translate('Shipping labels')}
+					description={translate(
 						'Print shipping labels yourself and save a trip to the post office.'
-					) }
+					)}
 				>
-					{ renderToggle && (
+					{renderToggle && (
 						<FormToggle
-							checked={ labelsEnabled }
-							onChange={ this.onEnabledToggle }
-							disabled={ Boolean( ! canManagePayments && ! canEditSettings ) }
+							checked={labelsEnabled}
+							onChange={this.onEnabledToggle}
+							disabled={Boolean(!canManagePayments && !canEditSettings)}
 						/>
-					) }
+					)}
 				</ExtendedHeader>
-				<Card className={ classNames( 'label-settings__labels-container', { hidden } ) }>
-					{ this.renderContent() }
+				<Card className={classNames('label-settings__labels-container', { hidden })}>
+					{this.renderContent()}
 				</Card>
 			</div>
 		);
@@ -103,18 +103,18 @@ AccountSettingsRootView.propTypes = {
 	submit: PropTypes.func,
 };
 
-function mapStateToProps( state ) {
+function mapStateToProps(state) {
 	return {
-		siteId: getSelectedSiteId( state ),
-		formMeta: getLabelSettingsFormMeta( state ),
-		labelsEnabled: areLabelsEnabled( state ),
-		isFetchError: areSettingsErrored( state ),
-		canManagePayments: userCanManagePayments( state ),
-		canEditSettings: userCanEditSettings( state ),
+		siteId: getSelectedSiteId(state),
+		formMeta: getLabelSettingsFormMeta(state),
+		labelsEnabled: areLabelsEnabled(state),
+		isFetchError: areSettingsErrored(state),
+		canManagePayments: userCanManagePayments(state),
+		canEditSettings: userCanEditSettings(state),
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			setFormDataValue,
@@ -124,7 +124,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AccountSettingsRootView ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(AccountSettingsRootView));

@@ -18,8 +18,8 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  * @param  {object} action Action payload
  * @returns {boolean}        Updated state
  */
-export const requesting = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const requesting = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case BILLING_TRANSACTION_REQUEST:
 			return true;
 		case BILLING_TRANSACTION_REQUEST_FAILURE:
@@ -29,7 +29,7 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated error state after an action has been dispatched.
@@ -39,8 +39,8 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  * @param  {object} action Action payload
  * @returns {boolean}        Updated state
  */
-export const error = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const error = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case BILLING_TRANSACTION_REQUEST_FAILURE:
 			return true;
 		case BILLING_TRANSACTION_REQUEST_SUCCESS:
@@ -50,7 +50,7 @@ export const error = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated data state after an action has been dispatched.
@@ -60,8 +60,8 @@ export const error = withoutPersistence( ( state = false, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const data = withoutPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
+export const data = withoutPersistence((state = null, action) => {
+	switch (action.type) {
 		case BILLING_TRANSACTION_RECEIVE: {
 			const { receipt } = action;
 			return receipt;
@@ -69,13 +69,13 @@ export const data = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+});
 
 export default keyedReducer(
 	'transactionId',
-	combineReducers( {
+	combineReducers({
 		requesting,
 		error,
 		data,
-	} )
+	})
 );

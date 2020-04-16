@@ -29,9 +29,9 @@ export function getDefaultPaymentMethodStep() {
 		className: 'checkout__payment-methods-step',
 		hasStepNumber: true,
 		titleContent: <CheckoutPaymentMethodsTitle />,
-		activeStepContent: <CheckoutPaymentMethods isComplete={ false } />,
+		activeStepContent: <CheckoutPaymentMethods isComplete={false} />,
 		incompleteStepContent: null,
-		completeStepContent: <CheckoutPaymentMethods summary isComplete={ true } />,
+		completeStepContent: <CheckoutPaymentMethods summary isComplete={true} />,
 		isEditableCallback: () => true,
 		// These cannot be translated because they are not inside a component and
 		// we don't know if they are being created by the package or the host page.
@@ -50,7 +50,7 @@ export function getDefaultOrderReviewStep() {
 		activeStepContent: <CheckoutReviewOrder />,
 		incompleteStepContent: null,
 		completeStepContent: null,
-		isCompleteCallback: ( { activeStep } ) => {
+		isCompleteCallback: ({ activeStep }) => {
 			const isActive = activeStep.id === 'order-review';
 			return isActive;
 		},

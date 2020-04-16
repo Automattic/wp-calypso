@@ -15,7 +15,7 @@ import FollowListSite from './site.js';
  * @api public
  */
 function FollowList() {
-	if ( ! ( this instanceof FollowList ) ) {
+	if (!(this instanceof FollowList)) {
 		return new FollowList();
 	}
 	this.data = [];
@@ -24,17 +24,17 @@ function FollowList() {
 /**
  * Adds a new follower object to the data store
  */
-FollowList.prototype.add = function( object ) {
-	let site = this.siteExists( object.site_id );
-	if ( ! site ) {
-		site = new FollowListSite( object );
-		this.data.push( site );
+FollowList.prototype.add = function (object) {
+	let site = this.siteExists(object.site_id);
+	if (!site) {
+		site = new FollowListSite(object);
+		this.data.push(site);
 	}
 	return site;
 };
 
-FollowList.prototype.siteExists = function( site_id ) {
-	return find( this.data, { site_id } ) || false;
+FollowList.prototype.siteExists = function (site_id) {
+	return find(this.data, { site_id }) || false;
 };
 
 export default FollowList;

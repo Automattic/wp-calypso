@@ -14,11 +14,11 @@ import getSiteOption from './get-site-option';
  * @param  {?string} path   Admin screen path
  * @returns {?string}        Admin URL
  */
-export default function getSiteAdminUrl( state, siteId, path = '' ) {
-	const adminUrl = getSiteOption( state, siteId, 'admin_url' );
-	if ( ! adminUrl ) {
+export default function getSiteAdminUrl(state, siteId, path = '') {
+	const adminUrl = getSiteOption(state, siteId, 'admin_url');
+	if (!adminUrl) {
 		return null;
 	}
 
-	return adminUrl + path.replace( /^\//, '' );
+	return adminUrl + path.replace(/^\//, '');
 }

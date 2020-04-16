@@ -21,19 +21,19 @@ export default class GoogleIcon extends PureComponent {
 	};
 
 	render() {
-		const props = omit( this.props, [ 'isDisabled' ] );
+		const props = omit(this.props, ['isDisabled']);
 
 		return (
 			<svg
-				className={ classNames( 'social-icons social-icons__google', {
-					'social-icons--enabled': ! this.props.isDisabled,
-					'social-icons--disabled': !! this.props.isDisabled,
-				} ) }
+				className={classNames('social-icons social-icons__google', {
+					'social-icons--enabled': !this.props.isDisabled,
+					'social-icons--disabled': !!this.props.isDisabled,
+				})}
 				width="20"
 				height="20"
 				viewBox="0 0 20 20"
 				xmlns="http://www.w3.org/2000/svg"
-				{ ...props }
+				{...props}
 			>
 				<g fill="none" fillRule="evenodd">
 					<path

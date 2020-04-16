@@ -36,14 +36,14 @@ import refunds from './refunds/reducer';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isDeleting( state = {}, action ) {
-	switch ( action.type ) {
+export function isDeleting(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_DELETE:
 		case WOOCOMMERCE_ORDER_DELETE_FAILURE:
 		case WOOCOMMERCE_ORDER_DELETE_SUCCESS:
-			return Object.assign( {}, state, {
-				[ action.orderId ]: WOOCOMMERCE_ORDER_DELETE === action.type,
-			} );
+			return Object.assign({}, state, {
+				[action.orderId]: WOOCOMMERCE_ORDER_DELETE === action.type,
+			});
 		default:
 			return state;
 	}
@@ -58,14 +58,14 @@ export function isDeleting( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isLoading( state = {}, action ) {
-	switch ( action.type ) {
+export function isLoading(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_REQUEST:
 		case WOOCOMMERCE_ORDER_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDER_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.orderId ]: WOOCOMMERCE_ORDER_REQUEST === action.type,
-			} );
+			return Object.assign({}, state, {
+				[action.orderId]: WOOCOMMERCE_ORDER_REQUEST === action.type,
+			});
 		default:
 			return state;
 	}
@@ -80,13 +80,13 @@ export function isLoading( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isQueryLoading( state = {}, action ) {
-	switch ( action.type ) {
+export function isQueryLoading(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDERS_REQUEST:
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDERS_REQUEST_FAILURE:
-			const query = getSerializedOrdersQuery( action.query );
-			return Object.assign( {}, state, { [ query ]: WOOCOMMERCE_ORDERS_REQUEST === action.type } );
+			const query = getSerializedOrdersQuery(action.query);
+			return Object.assign({}, state, { [query]: WOOCOMMERCE_ORDERS_REQUEST === action.type });
 		default:
 			return state;
 	}
@@ -101,15 +101,15 @@ export function isQueryLoading( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function isUpdating( state = {}, action ) {
-	const orderId = isFinite( action.orderId ) ? action.orderId : JSON.stringify( action.orderId );
-	switch ( action.type ) {
+export function isUpdating(state = {}, action) {
+	const orderId = isFinite(action.orderId) ? action.orderId : JSON.stringify(action.orderId);
+	switch (action.type) {
 		case WOOCOMMERCE_ORDER_UPDATE:
 		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
 		case WOOCOMMERCE_ORDER_UPDATE_FAILURE:
-			return Object.assign( {}, state, {
-				[ orderId ]: WOOCOMMERCE_ORDER_UPDATE === action.type,
-			} );
+			return Object.assign({}, state, {
+				[orderId]: WOOCOMMERCE_ORDER_UPDATE === action.type,
+			});
 		default:
 			return state;
 	}
@@ -122,16 +122,16 @@ export function isUpdating( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function items( state = {}, action ) {
+export function items(state = {}, action) {
 	let orders;
-	switch ( action.type ) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-			orders = keyBy( action.orders, 'id' );
-			return Object.assign( {}, state, orders );
+			orders = keyBy(action.orders, 'id');
+			return Object.assign({}, state, orders);
 		case WOOCOMMERCE_ORDER_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
-			orders = { [ action.order.id ]: action.order };
-			return Object.assign( {}, state, orders );
+			orders = { [action.order.id]: action.order };
+			return Object.assign({}, state, orders);
 		default:
 			return state;
 	}
@@ -145,12 +145,12 @@ export function items( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function queries( state = {}, action ) {
-	switch ( action.type ) {
+export function queries(state = {}, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-			const idList = action.orders.map( order => order.id );
-			const query = getSerializedOrdersQuery( action.query );
-			return Object.assign( {}, state, { [ query ]: idList } );
+			const idList = action.orders.map((order) => order.id);
+			const query = getSerializedOrdersQuery(action.query);
+			return Object.assign({}, state, { [query]: idList });
 		default:
 			return state;
 	}
@@ -163,17 +163,17 @@ export function queries( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function total( state = 1, action ) {
-	switch ( action.type ) {
+export function total(state = 1, action) {
+	switch (action.type) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-			const query = getSerializedOrdersQuery( omit( action.query, 'page' ) );
-			return Object.assign( {}, state, { [ query ]: action.total } );
+			const query = getSerializedOrdersQuery(omit(action.query, 'page'));
+			return Object.assign({}, state, { [query]: action.total });
 		default:
 			return state;
 	}
 }
 
-export default combineReducers( {
+export default combineReducers({
 	invoice,
 	isDeleting,
 	isQueryLoading,
@@ -184,4 +184,4 @@ export default combineReducers( {
 	refunds,
 	total,
 	notes,
-} );
+});

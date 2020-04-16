@@ -13,37 +13,37 @@ import createSelector from 'lib/create-selector';
 
 export const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
-function getContactPage( posts ) {
+function getContactPage(posts) {
 	return get(
 		find(
 			posts,
-			post =>
+			(post) =>
 				post.type === 'page' &&
-				( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
-					post.slug === 'contact' )
+				(some(post.metadata, { key: '_headstart_post', value: '_hs_contact_page' }) ||
+					post.slug === 'contact')
 		),
 		'ID',
 		null
 	);
 }
 
-function getPageEditorUrl( state, siteId, pageId ) {
-	if ( ! pageId ) {
+function getPageEditorUrl(state, siteId, pageId) {
+	if (!pageId) {
 		return null;
 	}
 
-	return getEditorUrl( state, siteId, pageId, 'page' );
+	return getEditorUrl(state, siteId, pageId, 'page');
 }
 
 export default createSelector(
-	( state, siteId ) => {
-		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
-		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
-		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
-		const frontPageUrl = getFrontPageEditorUrl( state, siteId );
+	(state, siteId) => {
+		const posts = getPostsForQuery(state, siteId, FIRST_TEN_SITE_POSTS_QUERY);
+		const firstPostID = get(find(posts, { type: 'post' }), [0, 'ID']);
+		const contactPageUrl = getPageEditorUrl(state, siteId, getContactPage(posts));
+		const frontPageUrl = getFrontPageEditorUrl(state, siteId);
 
 		return {
-			post_published: getPageEditorUrl( state, siteId, firstPostID ),
+			post_published: getPageEditorUrl(state, siteId, firstPostID),
 			contact_page_updated: contactPageUrl,
 			about_text_updated: frontPageUrl,
 			front_page_updated: frontPageUrl,
@@ -54,5 +54,5 @@ export default createSelector(
 			product_list_added: frontPageUrl,
 		};
 	},
-	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
+	(state, siteId) => [getPostsForQuery(state, siteId, FIRST_TEN_SITE_POSTS_QUERY)]
 );

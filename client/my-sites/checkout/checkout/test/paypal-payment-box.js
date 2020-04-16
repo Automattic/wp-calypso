@@ -37,28 +37,28 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 
-jest.mock( 'lib/cart-values', () => ( {
-	isPaymentMethodEnabled: jest.fn( false ),
-	paymentMethodName: jest.fn( false ),
+jest.mock('lib/cart-values', () => ({
+	isPaymentMethodEnabled: jest.fn(false),
+	paymentMethodName: jest.fn(false),
 	cartItems: {
-		hasRenewableSubscription: jest.fn( false ),
-		hasRenewalItem: jest.fn( false ),
+		hasRenewableSubscription: jest.fn(false),
+		hasRenewalItem: jest.fn(false),
 	},
 	getTaxPostalCode: () => '12345',
-} ) );
+}));
 
 const defaultProps = {
 	cart: {},
 	translate: identity,
 };
 
-describe( 'PaypalPaymentBox', () => {
-	test( 'should not blow up and have proper CSS class', () => {
-		const wrapper = shallow( <PaypalPaymentBox { ...defaultProps } /> );
-		expect( wrapper.find( '.checkout__payment-box-sections' ) ).toHaveLength( 1 );
-		expect( wrapper.find( '.checkout__payment-box-actions' ) ).toHaveLength( 1 );
-		expect( wrapper.find( CheckoutTerms ) ).toHaveLength( 1 );
-	} );
+describe('PaypalPaymentBox', () => {
+	test('should not blow up and have proper CSS class', () => {
+		const wrapper = shallow(<PaypalPaymentBox {...defaultProps} />);
+		expect(wrapper.find('.checkout__payment-box-sections')).toHaveLength(1);
+		expect(wrapper.find('.checkout__payment-box-actions')).toHaveLength(1);
+		expect(wrapper.find(CheckoutTerms)).toHaveLength(1);
+	});
 
 	const eligiblePlans = [
 		PLAN_BUSINESS_MONTHLY,
@@ -68,33 +68,33 @@ describe( 'PaypalPaymentBox', () => {
 		PLAN_ECOMMERCE_2_YEARS,
 	];
 
-	eligiblePlans.forEach( product_slug => {
-		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
+	eligiblePlans.forEach((product_slug) => {
+		test('should render PaymentChatButton if any WP.com business plan is in the cart', () => {
 			const props = {
 				...defaultProps,
 				presaleChatAvailable: true,
 				cart: {
-					products: [ { product_slug } ],
+					products: [{ product_slug }],
 				},
 			};
-			const wrapper = shallow( <PaypalPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 1 );
-		} );
-	} );
+			const wrapper = shallow(<PaypalPaymentBox {...props} />);
+			expect(wrapper.find(PaymentChatButton)).toHaveLength(1);
+		});
+	});
 
-	eligiblePlans.forEach( product_slug => {
-		test( 'should not render PaymentChatButton if presaleChatAvailable is false', () => {
+	eligiblePlans.forEach((product_slug) => {
+		test('should not render PaymentChatButton if presaleChatAvailable is false', () => {
 			const props = {
 				...defaultProps,
 				presaleChatAvailable: false,
 				cart: {
-					products: [ { product_slug } ],
+					products: [{ product_slug }],
 				},
 			};
-			const wrapper = shallow( <PaypalPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
-		} );
-	} );
+			const wrapper = shallow(<PaypalPaymentBox {...props} />);
+			expect(wrapper.find(PaymentChatButton)).toHaveLength(0);
+		});
+	});
 
 	const otherPlans = [
 		PLAN_PREMIUM,
@@ -113,16 +113,16 @@ describe( 'PaypalPaymentBox', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	];
 
-	otherPlans.forEach( product_slug => {
-		test( 'should not render PaymentChatButton if only non-business plan products are in the cart', () => {
+	otherPlans.forEach((product_slug) => {
+		test('should not render PaymentChatButton if only non-business plan products are in the cart', () => {
 			const props = {
 				...defaultProps,
 				cart: {
-					products: [ { product_slug } ],
+					products: [{ product_slug }],
 				},
 			};
-			const wrapper = shallow( <PaypalPaymentBox { ...props } /> );
-			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
-		} );
-	} );
-} );
+			const wrapper = shallow(<PaypalPaymentBox {...props} />);
+			expect(wrapper.find(PaymentChatButton)).toHaveLength(0);
+		});
+	});
+});

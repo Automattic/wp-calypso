@@ -14,6 +14,6 @@ import 'state/comments/init';
  * @param  {number}  options.postId  The ID of the post we're querying
  * @returns {number|string}	commentId 	Can be a string if the comment is a placeholder
  */
-export function getActiveReplyCommentId( { state, siteId, postId } ) {
-	return state.comments.activeReplies[ getStateKey( siteId, postId ) ] ?? null;
+export function getActiveReplyCommentId({ state, siteId, postId }) {
+	return state.comments.activeReplies[getStateKey(siteId, postId)] ?? null;
 }

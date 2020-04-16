@@ -40,47 +40,47 @@ class EditorLocationSearch extends React.Component {
 		this.mounted = false;
 	}
 
-	geocode = address => {
+	geocode = (address) => {
 		const { onError } = this.props;
 
-		if ( ! this.hasTrackedStats ) {
-			this.props.recordEditorStat( 'location_search' );
-			this.props.recordEditorEvent( 'Location Searched' );
+		if (!this.hasTrackedStats) {
+			this.props.recordEditorStat('location_search');
+			this.props.recordEditorEvent('Location Searched');
 			this.hasTrackedStats = true;
 		}
 
 		// If the address query matches value in props, we want to just display, not search, so we return
 		// no results in that case.
-		if ( ! address || address === this.props.value ) {
-			this.setState( {
+		if (!address || address === this.props.value) {
+			this.setState({
 				results: [],
-			} );
+			});
 
 			return;
 		}
 
-		geocode( address )
-			.then( results => {
-				if ( ! this.mounted ) {
+		geocode(address)
+			.then((results) => {
+				if (!this.mounted) {
 					return;
 				}
 
-				this.setState( { results } );
-			} )
-			.catch( onError )
-			.then( () => {
-				if ( ! this.mounted ) {
+				this.setState({ results });
+			})
+			.catch(onError)
+			.then(() => {
+				if (!this.mounted) {
 					return;
 				}
 
-				this.setState( {
+				this.setState({
 					isSearching: false,
-				} );
-			} );
+				});
+			});
 
-		this.setState( {
+		this.setState({
 			isSearching: true,
-		} );
+		});
 	};
 
 	render() {
@@ -93,28 +93,28 @@ class EditorLocationSearch extends React.Component {
 		return (
 			<div className="editor-location__search">
 				<SearchCard
-					onSearch={ this.geocode }
-					searching={ isSearching }
+					onSearch={this.geocode}
+					searching={isSearching}
 					delaySearch
 					compact
-					value={ value }
-					initialValue={ value }
+					value={value}
+					initialValue={value}
 				/>
 				<ul className="editor-location__search-results">
-					{ results.map( result => {
+					{results.map((result) => {
 						return (
-							<li key={ result.formatted_address }>
+							<li key={result.formatted_address}>
 								<EditorLocationSearchResult
-									result={ result }
-									onClick={ this.props.onSelect.bind( null, result ) }
+									result={result}
+									onClick={this.props.onSelect.bind(null, result)}
 								/>
 							</li>
 						);
-					} ) }
+					})}
 				</ul>
 			</div>
 		);
 	}
 }
 
-export default connect( null, { recordEditorStat, recordEditorEvent } )( EditorLocationSearch );
+export default connect(null, { recordEditorStat, recordEditorEvent })(EditorLocationSearch);

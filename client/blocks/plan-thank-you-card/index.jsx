@@ -27,45 +27,45 @@ import './style.scss';
 class PlanThankYouCard extends Component {
 	getPlanClass() {
 		const { plan } = this.props;
-		if ( ! plan || ! plan.productSlug ) {
+		if (!plan || !plan.productSlug) {
 			return '';
 		}
 
-		return getPlanClass( plan.productSlug );
+		return getPlanClass(plan.productSlug);
 	}
 
 	renderPlanName() {
 		const { plan, translate } = this.props;
-		if ( ! plan ) {
+		if (!plan) {
 			return '';
 		}
 
-		return translate( '%(planName)s Plan', {
-			args: { planName: getPlan( plan.productSlug ).getTitle() },
-		} );
+		return translate('%(planName)s Plan', {
+			args: { planName: getPlan(plan.productSlug).getTitle() },
+		});
 	}
 
 	renderPlanPrice() {
 		const { plan } = this.props;
-		if ( ! plan || ! plan.rawPrice || ! plan.currencyCode ) {
+		if (!plan || !plan.rawPrice || !plan.currencyCode) {
 			return '';
 		}
 
-		return formatCurrency( plan.rawPrice, plan.currencyCode );
+		return formatCurrency(plan.rawPrice, plan.currencyCode);
 	}
 
 	renderPlanIcon() {
 		const { plan } = this.props;
-		if ( ! plan || ! plan.productSlug ) {
+		if (!plan || !plan.productSlug) {
 			return null;
 		}
 
-		return <ProductIcon slug={ plan.productSlug } />;
+		return <ProductIcon slug={plan.productSlug} />;
 	}
 
 	renderAction() {
 		const { action } = this.props;
-		if ( action ) {
+		if (action) {
 			return action;
 		}
 
@@ -74,34 +74,34 @@ class PlanThankYouCard extends Component {
 
 	renderDescription() {
 		const { description, translate } = this.props;
-		if ( description ) {
+		if (description) {
 			return description;
 		}
 
-		return translate( "Now that we've taken care of the plan, it's time to see your new site." );
+		return translate("Now that we've taken care of the plan, it's time to see your new site.");
 	}
 
 	renderHeading() {
 		const { heading, translate } = this.props;
-		if ( heading ) {
+		if (heading) {
 			return heading;
 		}
 
-		return translate( 'Thank you for your purchase!' );
+		return translate('Thank you for your purchase!');
 	}
 
 	renderButtonText() {
 		const { buttonText, translate } = this.props;
-		if ( buttonText ) {
+		if (buttonText) {
 			return buttonText;
 		}
 
-		return translate( 'Visit Your Site' );
+		return translate('Visit Your Site');
 	}
 
 	getButtonUrl() {
 		const { buttonUrl, siteUrl } = this.props;
-		if ( buttonUrl ) {
+		if (buttonUrl) {
 			return buttonUrl;
 		}
 
@@ -113,20 +113,20 @@ class PlanThankYouCard extends Component {
 		const description = this.renderDescription();
 
 		return (
-			<div className={ classnames( 'plan-thank-you-card', this.getPlanClass() ) }>
-				<QuerySites siteId={ siteId } />
-				<QuerySitePlans siteId={ siteId } />
+			<div className={classnames('plan-thank-you-card', this.getPlanClass())}>
+				<QuerySites siteId={siteId} />
+				<QuerySitePlans siteId={siteId} />
 
 				<ThankYouCard
-					name={ this.renderPlanName() }
-					price={ this.renderPlanPrice() }
-					heading={ this.renderHeading() }
-					description={ 'string' === typeof description ? description : null }
-					descriptionWithHTML={ 'object' === typeof description ? description : null }
-					buttonUrl={ this.getButtonUrl() }
-					buttonText={ this.renderButtonText() }
-					icon={ this.renderPlanIcon() }
-					action={ this.renderAction() }
+					name={this.renderPlanName()}
+					price={this.renderPlanPrice()}
+					heading={this.renderHeading()}
+					description={'string' === typeof description ? description : null}
+					descriptionWithHTML={'object' === typeof description ? description : null}
+					buttonUrl={this.getButtonUrl()}
+					buttonText={this.renderButtonText()}
+					icon={this.renderPlanIcon()}
+					action={this.renderAction()}
 				/>
 			</div>
 		);
@@ -141,7 +141,7 @@ PlanThankYouCard.propTypes = {
 	 * Description can be either a string or object to allow either a bare
 	 * string or a description that contains HTML and other components.
 	 **/
-	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+	description: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 	heading: PropTypes.string,
 	plan: PropTypes.object,
 	siteId: PropTypes.number.isRequired,
@@ -149,12 +149,12 @@ PlanThankYouCard.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, ownProps ) => {
-	const site = getRawSite( state, ownProps.siteId );
-	const plan = getCurrentPlan( state, ownProps.siteId );
+export default connect((state, ownProps) => {
+	const site = getRawSite(state, ownProps.siteId);
+	const plan = getCurrentPlan(state, ownProps.siteId);
 
 	return {
 		plan,
 		siteUrl: site && site.URL,
 	};
-} )( localize( PlanThankYouCard ) );
+})(localize(PlanThankYouCard));

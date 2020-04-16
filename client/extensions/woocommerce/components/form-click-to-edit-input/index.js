@@ -40,28 +40,28 @@ class FormClickToEditInput extends Component {
 
 	editStart = () => {
 		const { value } = this.props;
-		this.setState( {
+		this.setState({
 			isEditing: true,
 			value,
-		} );
+		});
 	};
 
 	editEnd = () => {
 		const { onChange } = this.props;
-		if ( this.props.value !== this.state.value ) {
-			onChange( this.state.value );
+		if (this.props.value !== this.state.value) {
+			onChange(this.state.value);
 		}
 
-		this.setState( {
+		this.setState({
 			isEditing: false,
 			value: '',
-		} );
+		});
 	};
 
-	onInputChange = e => {
-		this.setState( {
+	onInputChange = (e) => {
+		this.setState({
 			value: e.target.value,
-		} );
+		});
 	};
 
 	renderInput() {
@@ -73,14 +73,14 @@ class FormClickToEditInput extends Component {
 		return (
 			<span className="form-click-to-edit-input__wrapper editing">
 				<FormTextInput
-					{ ...omit( props, [ 'updateAriaLabel', 'editAriaLabel' ] ) }
-					onBlur={ this.editEnd }
+					{...omit(props, ['updateAriaLabel', 'editAriaLabel'])}
+					onBlur={this.editEnd}
 					className="form-click-to-edit-input__input"
 				/>
 				<Button
 					borderless
-					onClick={ this.editEnd ? this.editEnd : undefined }
-					aria-label={ this.props.updateAriaLabel }
+					onClick={this.editEnd ? this.editEnd : undefined}
+					aria-label={this.props.updateAriaLabel}
 				>
 					<Gridicon icon="checkmark" />
 				</Button>
@@ -90,26 +90,26 @@ class FormClickToEditInput extends Component {
 
 	renderText() {
 		const { value, placeholder, disabled, editAriaLabel } = this.props;
-		const classes = classNames( 'form-click-to-edit-input__wrapper', {
-			'is-empty': ! value,
+		const classes = classNames('form-click-to-edit-input__wrapper', {
+			'is-empty': !value,
 			'has-value': value,
-		} );
+		});
 		// Accessible labeled button provided. Clickable text is optional and not the only way to activate edit.
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
 		return (
-			<span className={ classes }>
+			<span className={classes}>
 				<span
 					className="form-click-to-edit-input__text"
-					onClick={ ! disabled && this.editStart ? this.editStart : undefined }
+					onClick={!disabled && this.editStart ? this.editStart : undefined}
 				>
-					{ value || placeholder }
+					{value || placeholder}
 				</span>
 
-				{ ! disabled && (
-					<Button borderless onClick={ this.editStart } aria-label={ editAriaLabel }>
+				{!disabled && (
+					<Button borderless onClick={this.editStart} aria-label={editAriaLabel}>
 						<Gridicon icon="pencil" />
 					</Button>
-				) }
+				)}
 			</span>
 		);
 		/* eslint-enable jsx-a11y/click-events-have-key-events */
@@ -118,7 +118,7 @@ class FormClickToEditInput extends Component {
 	render() {
 		const { isEditing } = this.state;
 
-		if ( isEditing ) {
+		if (isEditing) {
 			return this.renderInput();
 		}
 

@@ -10,13 +10,13 @@ import ImagePreloader from 'components/image-preloader';
 import MediaFile, { MediaFileProps } from './media-file';
 import { RenderedComponent } from './proxied-image';
 
-const MediaImage: React.FC< MediaFileProps > = function MediaImage( props: MediaFileProps ) {
+const MediaImage: React.FC<MediaFileProps> = function MediaImage(props: MediaFileProps) {
 	let component: RenderedComponent = props.component;
-	if ( component === 'img' && props.placeholder ) {
+	if (component === 'img' && props.placeholder) {
 		component = ImagePreloader;
 	}
 
-	return <MediaFile { ...props } component={ component } />;
+	return <MediaFile {...props} component={component} />;
 };
 
 MediaImage.defaultProps = {

@@ -14,27 +14,27 @@ import { isRequestingTermsForQuery } from 'state/terms/selectors';
 
 class QueryTerms extends Component {
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.taxonomy === nextProps.taxonomy &&
-			isShallowEqual( this.props.query, nextProps.query )
+			isShallowEqual(this.props.query, nextProps.query)
 		) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( props.requesting || ! props.siteId ) {
+	request(props) {
+		if (props.requesting || !props.siteId) {
 			return;
 		}
 
-		props.requestSiteTerms( props.siteId, props.taxonomy, props.query );
+		props.requestSiteTerms(props.siteId, props.taxonomy, props.query);
 	}
 
 	shouldComponentUpdate() {
@@ -59,7 +59,7 @@ QueryTerms.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
 			requesting: isRequestingTermsForQuery(
 				state,
@@ -72,4 +72,4 @@ export default connect(
 	{
 		requestSiteTerms,
 	}
-)( QueryTerms );
+)(QueryTerms);

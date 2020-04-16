@@ -9,30 +9,30 @@ import {
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 } from 'state/jetpack-connect/action-types';
 
-describe( '#jetpackConnectSite()', () => {
-	test( 'should default to an empty object', () => {
-		const state = jetpackConnectSite( undefined, {} );
+describe('#jetpackConnectSite()', () => {
+	test('should default to an empty object', () => {
+		const state = jetpackConnectSite(undefined, {});
 
-		expect( state ).toEqual( {} );
-	} );
+		expect(state).toEqual({});
+	});
 
-	test( 'should add the url and mark it as currently fetching', () => {
-		const state = jetpackConnectSite( undefined, {
+	test('should add the url and mark it as currently fetching', () => {
+		const state = jetpackConnectSite(undefined, {
 			type: JETPACK_CONNECT_CHECK_URL,
 			url: 'https://example.wordpress.com',
-		} );
+		});
 
-		expect( state ).toMatchObject( {
+		expect(state).toMatchObject({
 			url: 'https://example.wordpress.com',
 			isFetching: true,
 			isFetched: false,
 			isDismissed: false,
 			installConfirmedByUser: null,
 			data: {},
-		} );
-	} );
+		});
+	});
 
-	test( 'should mark the url as fetched if it is the current one', () => {
+	test('should mark the url as fetched if it is the current one', () => {
 		const data = {
 			exists: true,
 			isWordPress: true,
@@ -49,14 +49,14 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).toMatchObject( {
+		expect(state).toMatchObject({
 			isFetching: false,
 			isFetched: true,
 			data: data,
-		} );
-	} );
+		});
+	});
 
-	test( 'should not mark the url as fetched if it is not the current one', () => {
+	test('should not mark the url as fetched if it is not the current one', () => {
 		const data = {
 			exists: true,
 			isWordPress: true,
@@ -73,11 +73,11 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).toEqual( { url: 'https://automattic.com' } );
-		expect( state ).not.toHaveProperty( 'isFetched' );
-	} );
+		expect(state).toEqual({ url: 'https://automattic.com' });
+		expect(state).not.toHaveProperty('isFetched');
+	});
 
-	test( 'should mark the url as dismissed if it is the current one', () => {
+	test('should mark the url as dismissed if it is the current one', () => {
 		const state = jetpackConnectSite(
 			{ url: 'https://example.wordpress.com' },
 			{
@@ -86,13 +86,13 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).toMatchObject( {
+		expect(state).toMatchObject({
 			installConfirmedByUser: null,
 			isDismissed: true,
-		} );
-	} );
+		});
+	});
 
-	test( 'should not mark the url as dismissed if it is not the current one', () => {
+	test('should not mark the url as dismissed if it is not the current one', () => {
 		const state = jetpackConnectSite(
 			{ url: 'https://automattic.com' },
 			{
@@ -101,10 +101,10 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).toEqual( { url: 'https://automattic.com' } );
-	} );
+		expect(state).toEqual({ url: 'https://automattic.com' });
+	});
 
-	test( 'should set the jetpack confirmed status to the new one', () => {
+	test('should set the jetpack confirmed status to the new one', () => {
 		const state = jetpackConnectSite(
 			{ url: 'https://example.wordpress.com' },
 			{
@@ -113,6 +113,6 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).toMatchObject( { installConfirmedByUser: true } );
-	} );
-} );
+		expect(state).toMatchObject({ installConfirmedByUser: true });
+	});
+});

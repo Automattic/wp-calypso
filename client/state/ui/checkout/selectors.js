@@ -1,3 +1,3 @@
-export function isShowingCartOnMobile( state ) {
+export function isShowingCartOnMobile(state) {
 	return state.ui.checkout.isShowingCartOnMobile;
 }

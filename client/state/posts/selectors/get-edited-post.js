@@ -17,14 +17,14 @@ import 'state/posts/init';
  * @returns {object}        Post object with revisions
  */
 export const getEditedPost = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
-		const edits = getPostEdits( state, siteId, postId );
-		if ( ! edits ) {
+	(state, siteId, postId) => {
+		const post = getSitePost(state, siteId, postId);
+		const edits = getPostEdits(state, siteId, postId);
+		if (!edits) {
 			return post;
 		}
 
-		return applyPostEdits( post, edits );
+		return applyPostEdits(post, edits);
 	},
-	state => [ state.posts.queries, state.posts.edits ]
+	(state) => [state.posts.queries, state.posts.edits]
 );

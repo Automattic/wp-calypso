@@ -17,36 +17,36 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const getGSuiteUsers = action => {
+export const getGSuiteUsers = (action) => {
 	return http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/google-apps`,
+			path: `/sites/${action.siteId}/google-apps`,
 		},
 		action
 	);
 };
 
-export const getGSuiteUsersFailure = ( action, error ) => {
+export const getGSuiteUsersFailure = (action, error) => {
 	return [
-		errorNotice( translate( 'Failed to retrieve G Suite Users' ) ),
-		receiveGetGSuiteUsersFailure( action.siteId, error ),
+		errorNotice(translate('Failed to retrieve G Suite Users')),
+		receiveGetGSuiteUsersFailure(action.siteId, error),
 	];
 };
 
-export const getGSuiteUsersSuccess = ( action, response ) => {
-	if ( response ) {
-		return receiveGetGSuiteUsersSuccess( action.siteId, response );
+export const getGSuiteUsersSuccess = (action, response) => {
+	if (response) {
+		return receiveGetGSuiteUsersSuccess(action.siteId, response);
 	}
-	return getGSuiteUsersFailure( action, { message: 'No response.' } );
+	return getGSuiteUsersFailure(action, { message: 'No response.' });
 };
 
-registerHandlers( 'state/data-layer/wpcom/gsuite-users/index.js', {
-	[ GSUITE_USERS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/gsuite-users/index.js', {
+	[GSUITE_USERS_REQUEST]: [
+		dispatchRequest({
 			fetch: getGSuiteUsers,
 			onSuccess: getGSuiteUsersSuccess,
 			onError: getGSuiteUsersFailure,
-		} ),
+		}),
 	],
-} );
+});

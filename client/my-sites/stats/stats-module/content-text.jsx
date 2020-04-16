@@ -15,8 +15,8 @@ export default class extends React.Component {
 
 	render() {
 		return (
-			<div className={ classNames( 'module-content-text', this.props.className ) }>
-				{ this.props.children }
+			<div className={classNames('module-content-text', this.props.className)}>
+				{this.props.children}
 			</div>
 		);
 	}

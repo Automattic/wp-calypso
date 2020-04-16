@@ -19,63 +19,63 @@ class DomainConnectDnsRecord extends Component {
 		dnsRecord: PropTypes.object,
 	};
 
-	getName = record => {
+	getName = (record) => {
 		const { name, service, protocol, type } = record;
 		const { domain } = this.props;
-		const isRoot = name === `${ domain }.`;
+		const isRoot = name === `${domain}.`;
 
-		if ( 'SRV' === type ) {
-			return `${ service }.${ protocol }.${ isRoot ? '' : name + '.' }${ domain }`;
+		if ('SRV' === type) {
+			return `${service}.${protocol}.${isRoot ? '' : name + '.'}${domain}`;
 		}
 
-		if ( endsWith( name, '.' ) ) {
-			return name.slice( 0, -1 );
+		if (endsWith(name, '.')) {
+			return name.slice(0, -1);
 		}
 
-		return name ? `${ name }.${ domain }` : domain;
+		return name ? `${name}.${domain}` : domain;
 	};
 
-	trimDot( str ) {
-		return typeof str === 'string' ? str.replace( /\.$/, '' ) : str;
+	trimDot(str) {
+		return typeof str === 'string' ? str.replace(/\.$/, '') : str;
 	}
 
-	handledBy = record => {
+	handledBy = (record) => {
 		const { translate } = this.props;
 		const { type, aux, port, service, weight, protocol } = record;
-		const data = this.trimDot( record.data );
-		const target = this.trimDot( record.target );
+		const data = this.trimDot(record.data);
+		const target = this.trimDot(record.target);
 
-		if ( record.protected_field ) {
-			if ( 'MX' === type ) {
-				return translate( 'Mail handled by WordPress.com email forwarding' );
+		if (record.protected_field) {
+			if ('MX' === type) {
+				return translate('Mail handled by WordPress.com email forwarding');
 			}
 
-			return translate( 'Handled by WordPress.com' );
+			return translate('Handled by WordPress.com');
 		}
 
-		switch ( type ) {
+		switch (type) {
 			case 'A':
 			case 'AAAA':
-				return translate( 'Points to %(data)s', {
+				return translate('Points to %(data)s', {
 					args: {
 						data,
 					},
-				} );
+				});
 
 			case 'CNAME':
-				return translate( 'Alias of %(data)s', {
+				return translate('Alias of %(data)s', {
 					args: {
 						data,
 					},
-				} );
+				});
 
 			case 'MX':
-				return translate( 'Mail handled by %(data)s with priority %(aux)s', {
+				return translate('Mail handled by %(data)s with priority %(aux)s', {
 					args: {
 						data,
 						aux,
 					},
-				} );
+				});
 
 			case 'SRV':
 				return translate(
@@ -102,12 +102,12 @@ class DomainConnectDnsRecord extends Component {
 
 		return (
 			<DnsRecordsListItem
-				type={ record.type }
-				name={ this.getName( record ) }
-				content={ this.handledBy( record ) }
+				type={record.type}
+				name={this.getName(record)}
+				content={this.handledBy(record)}
 			/>
 		);
 	}
 }
 
-export default localize( DomainConnectDnsRecord );
+export default localize(DomainConnectDnsRecord);

@@ -52,12 +52,12 @@ class StatsAllTime extends Component {
 			viewsBestDayTotal,
 			query,
 		} = this.props;
-		const isLoading = requesting && ! views;
+		const isLoading = requesting && !views;
 
 		let bestDay;
 
-		if ( viewsBestDay && ! isLoading ) {
-			bestDay = this.props.moment( viewsBestDay ).format( 'LL' );
+		if (viewsBestDay && !isLoading) {
+			bestDay = this.props.moment(viewsBestDay).format('LL');
 		}
 
 		const classes = {
@@ -66,40 +66,40 @@ class StatsAllTime extends Component {
 
 		return (
 			<div>
-				{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ query } /> }
-				<SectionHeader label={ translate( 'All-time posts, views, and visitors' ) } />
-				<Card className={ classNames( 'stats-module', 'all-time', classes ) }>
+				{siteId && <QuerySiteStats siteId={siteId} statType="stats" query={query} />}
+				<SectionHeader label={translate('All-time posts, views, and visitors')} />
+				<Card className={classNames('stats-module', 'all-time', classes)}>
 					<StatsTabs borderless>
 						<StatsTab
 							gridicon="posts"
-							label={ translate( 'Posts' ) }
-							loading={ isLoading }
-							value={ posts }
+							label={translate('Posts')}
+							loading={isLoading}
+							value={posts}
 							compact
 						/>
 						<StatsTab
 							gridicon="visible"
-							label={ translate( 'Views' ) }
-							loading={ isLoading }
-							value={ views }
+							label={translate('Views')}
+							loading={isLoading}
+							value={views}
 							compact
 						/>
 						<StatsTab
 							gridicon="user"
-							label={ translate( 'Visitors' ) }
-							loading={ isLoading }
-							value={ visitors }
+							label={translate('Visitors')}
+							loading={isLoading}
+							value={visitors}
 							compact
 						/>
 						<StatsTab
 							className="all-time__is-best"
 							gridicon="trophy"
-							label={ translate( 'Best Views Ever' ) }
-							loading={ isLoading }
-							value={ viewsBestDayTotal }
+							label={translate('Best Views Ever')}
+							loading={isLoading}
+							value={viewsBestDayTotal}
 							compact
 						>
-							<span className="all-time__best-day">{ bestDay }</span>
+							<span className="all-time__best-day">{bestDay}</span>
 						</StatsTab>
 					</StatsTabs>
 				</Card>
@@ -108,22 +108,22 @@ class StatsAllTime extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
 	const query = {};
-	const allTimeData = getSiteStatsNormalizedData( state, siteId, 'stats', query ) || {};
-	const allTimeStats = pick( allTimeData, [
+	const allTimeData = getSiteStatsNormalizedData(state, siteId, 'stats', query) || {};
+	const allTimeStats = pick(allTimeData, [
 		'posts',
 		'views',
 		'visitors',
 		'viewsBestDay',
 		'viewsBestDayTotal',
-	] );
+	]);
 
 	return {
-		requesting: isRequestingSiteStatsForQuery( state, siteId, 'stats', query ),
+		requesting: isRequestingSiteStatsForQuery(state, siteId, 'stats', query),
 		query,
 		siteId,
 		...allTimeStats,
 	};
-} )( localize( withLocalizedMoment( StatsAllTime ) ) );
+})(localize(withLocalizedMoment(StatsAllTime)));

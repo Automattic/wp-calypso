@@ -11,19 +11,19 @@ import { localize } from 'i18n-calypso';
  */
 import { Input } from 'my-sites/domains/components/form';
 
-const UkAddressFieldset = props => {
+const UkAddressFieldset = (props) => {
 	const { getFieldProps, translate, contactDetailsErrors } = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields uk-address-fieldset">
 			<Input
-				label={ translate( 'City' ) }
-				{ ...getFieldProps( 'city', { customErrorMessage: contactDetailsErrors?.city } ) }
+				label={translate('City')}
+				{...getFieldProps('city', { customErrorMessage: contactDetailsErrors?.city })}
 			/>
 			<Input
-				label={ translate( 'Postal Code' ) }
-				{ ...getFieldProps( 'postal-code', {
+				label={translate('Postal Code')}
+				{...getFieldProps('postal-code', {
 					customErrorMessage: contactDetailsErrors?.postalCode,
-				} ) }
+				})}
 			/>
 		</div>
 	);
@@ -39,4 +39,4 @@ UkAddressFieldset.defaultProps = {
 	getFieldProps: noop,
 	translate: identity,
 };
-export default localize( UkAddressFieldset );
+export default localize(UkAddressFieldset);

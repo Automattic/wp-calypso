@@ -46,7 +46,7 @@ class PushNotificationSettings extends React.Component {
 				version="1.1"
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				{ /* Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch */ }
+				{/* Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch */}
 				<title>address-bar</title>
 				<desc>Created with Sketch.</desc>
 				<defs>
@@ -307,7 +307,7 @@ class PushNotificationSettings extends React.Component {
 				version="1.1"
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				{ /* Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch */ }
+				{/* Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch */}
 				<title>always-allow</title>
 				<desc>Created with Sketch.</desc>
 				<defs>
@@ -518,10 +518,10 @@ class PushNotificationSettings extends React.Component {
 											fontWeight="normal"
 										>
 											<tspan x="91" y="148" fill="#3D596D">
-												{ this.props.translate( 'Notifications: Ask by default', {
+												{this.props.translate('Notifications: Ask by default', {
 													comment:
 														'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".',
-												} ) }
+												})}
 											</tspan>
 										</text>
 										<g
@@ -579,10 +579,10 @@ class PushNotificationSettings extends React.Component {
 												fill="#3D596D"
 											>
 												<tspan x="26.434555" y="20.1594203">
-													{ this.props.translate( 'Always allow on this site', {
+													{this.props.translate('Always allow on this site', {
 														comment:
 															'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".',
-													} ) }
+													})}
 												</tspan>
 											</text>
 											<rect
@@ -613,27 +613,27 @@ class PushNotificationSettings extends React.Component {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<Dialog
-				isVisible={ this.props.showDialog }
+				isVisible={this.props.showDialog}
 				className="notification-settings-push-notification-settings__instruction-dialog"
-				onClose={ this.props.toggleUnblockInstructions }
+				onClose={this.props.toggleUnblockInstructions}
 			>
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
 						<div className="notification-settings-push-notification-settings__instruction-title">
-							{ this.props.translate( 'Enable Browser Notifications' ) }
+							{this.props.translate('Enable Browser Notifications')}
 						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
 								<SvgAddressBar />
 							</div>
-							<p>{ this.props.translate( 'Click the lock icon in your address bar.' ) }</p>
+							<p>{this.props.translate('Click the lock icon in your address bar.')}</p>
 						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
 								<SvgAlwaysAllow />
 							</div>
 							<p>
-								{ this.props.translate(
+								{this.props.translate(
 									'Click {{strong}}Notifications{{/strong}} and choose {{em}}Always allow{{/em}}.',
 									{
 										components: {
@@ -641,24 +641,24 @@ class PushNotificationSettings extends React.Component {
 											em: <em />,
 										},
 									}
-								) }
+								)}
 							</p>
 						</div>
 					</div>
 					<Notice
 						className="push-notification-settings__instruction-refresh-notice"
-						showDismiss={ false }
-						text={ this.props.translate(
+						showDismiss={false}
+						text={this.props.translate(
 							"Once you've allowed notifications, you may need to refresh your browser."
-						) }
+						)}
 					/>
 				</div>
 				<button
 					className="notification-settings-push-notification-settings__instruction-dismiss"
-					onClick={ this.props.toggleUnblockInstructions }
+					onClick={this.props.toggleUnblockInstructions}
 				>
-					<Gridicon icon="cross" size={ 24 } />
-					<ScreenReaderText>{ this.props.translate( 'Dismiss' ) }</ScreenReaderText>
+					<Gridicon icon="cross" size={24} />
+					<ScreenReaderText>{this.props.translate('Dismiss')}</ScreenReaderText>
 				</button>
 			</Dialog>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -675,80 +675,80 @@ class PushNotificationSettings extends React.Component {
 			stateClass,
 			stateText;
 
-		if ( ! this.props.apiReady ) {
+		if (!this.props.apiReady) {
 			return null;
 		}
 
-		switch ( this.props.status ) {
+		switch (this.props.status) {
 			case 'disabling':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
 				buttonPrimary = true;
-				buttonText = this.props.translate( 'Enable' );
+				buttonText = this.props.translate('Enable');
 				stateClass = { 'is-disabled': true };
-				stateText = this.props.translate( 'Disabled' );
+				stateText = this.props.translate('Disabled');
 				break;
 			case 'enabling':
 				buttonClass = { 'is-disable': true };
 				buttonDisabled = true;
 				buttonPrimary = false;
-				buttonText = this.props.translate( 'Disable' );
+				buttonText = this.props.translate('Disable');
 				stateClass = { 'is-enabled': true };
-				stateText = this.props.translate( 'Enabled' );
+				stateText = this.props.translate('Enabled');
 				break;
 			case 'unsubscribed':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = false;
 				buttonPrimary = true;
-				buttonText = this.props.translate( 'Enable' );
+				buttonText = this.props.translate('Enable');
 				stateClass = { 'is-disabled': true };
-				stateText = this.props.translate( 'Disabled' );
+				stateText = this.props.translate('Disabled');
 				break;
 			case 'subscribed':
 				buttonClass = { 'is-disable': true };
 				buttonDisabled = false;
 				buttonPrimary = false;
-				buttonText = this.props.translate( 'Disable' );
+				buttonText = this.props.translate('Disable');
 				stateClass = { 'is-enabled': true };
-				stateText = this.props.translate( 'Enabled' );
+				stateText = this.props.translate('Enabled');
 				break;
 			case 'denied':
 				blockedInstruction = this.getBlockedInstruction();
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
 				buttonPrimary = true;
-				buttonText = this.props.translate( 'Enable' );
+				buttonText = this.props.translate('Enable');
 				stateClass = { 'is-disabled': true };
-				stateText = this.props.translate( 'Disabled' );
+				stateText = this.props.translate('Disabled');
 
 				deniedText = (
 					/* eslint-disable wpcalypso/jsx-classname-namespace */
 					<Notice
 						className="notification-settings-push-notification-settings__instruction"
-						showDismiss={ false }
+						showDismiss={false}
 						text={
 							<div>
 								<div>
-									{ this.props.translate(
+									{this.props.translate(
 										'Your browser is currently set to block notifications from WordPress.com.'
-									) }
+									)}
 								</div>
 								<div>
-									{ this.props.translate(
+									{this.props.translate(
 										'{{instructionsButton}}View Instructions to Enable{{/instructionsButton}}',
 										{
 											components: {
 												instructionsButton: (
 													<Button
 														className="is-link"
-														onClick={ this.props.toggleUnblockInstructions }
+														onClick={this.props.toggleUnblockInstructions}
 													/>
 												),
 											},
 										}
-									) }
+									)}
 								</div>
-								{ blockedInstruction }
+								{blockedInstruction}
 							</div>
 						}
 					/>
@@ -765,40 +765,40 @@ class PushNotificationSettings extends React.Component {
 			<Card className="notification-settings-push-notification-settings__settings">
 				<h2 className="notification-settings-push-notification-settings__settings-heading">
 					<Gridicon
-						size={ 24 }
+						size={24}
 						className="notification-settings-push-notification-settings__settings-icon"
 						icon="bell"
 					/>
-					{ this.props.translate( 'Browser Notifications' ) }
+					{this.props.translate('Browser Notifications')}
 					<small
-						className={ classNames(
+						className={classNames(
 							'notification-settings-push-notification-settings__settings-state',
 							stateClass
-						) }
+						)}
 					>
-						{ stateText }
+						{stateText}
 					</small>
 				</h2>
 
 				<p className="notification-settings-push-notification-settings__settings-description">
-					{ this.props.translate(
+					{this.props.translate(
 						'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com.'
-					) }
+					)}
 				</p>
 
 				<Button
-					className={ classNames(
+					className={classNames(
 						'notification-settings-push-notification-settings__settings-button',
 						buttonClass
-					) }
-					disabled={ buttonDisabled }
-					primary={ buttonPrimary }
-					onClick={ this.clickHandler }
+					)}
+					disabled={buttonDisabled}
+					primary={buttonPrimary}
+					onClick={this.clickHandler}
 				>
-					{ buttonText }
+					{buttonText}
 				</Button>
 
-				{ deniedText }
+				{deniedText}
 			</Card>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
@@ -806,16 +806,16 @@ class PushNotificationSettings extends React.Component {
 }
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			apiReady: isApiReady( state ),
-			isEnabled: isEnabled( state ),
-			showDialog: isShowingUnblockInstructions( state ),
-			status: getStatus( state ),
+			apiReady: isApiReady(state),
+			isEnabled: isEnabled(state),
+			showDialog: isShowingUnblockInstructions(state),
+			status: getStatus(state),
 		};
 	},
 	{
 		toggleEnabled,
 		toggleUnblockInstructions,
 	}
-)( localize( PushNotificationSettings ) );
+)(localize(PushNotificationSettings));

@@ -9,8 +9,8 @@ import React from 'react';
  */
 import ExternalLink from 'components/external-link';
 
-const SupportArticleHeader = ( { post, isLoading } ) =>
-	isLoading || ! post ? (
+const SupportArticleHeader = ({ post, isLoading }) =>
+	isLoading || !post ? (
 		<div className="support-article-dialog__header is-placeholder">
 			<h1 className="support-article-dialog__header-title is-placeholder">Post loading…</h1>
 		</div>
@@ -19,11 +19,11 @@ const SupportArticleHeader = ( { post, isLoading } ) =>
 			<h1 className="support-article-dialog__header-title">
 				<ExternalLink
 					className="support-article-dialog__header-title-link"
-					href={ post.URL }
+					href={post.URL}
 					target="_blank"
-					icon={ false }
+					icon={false}
 				>
-					{ post.title }
+					{post.title}
 				</ExternalLink>
 			</h1>
 		</div>

@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {object}  mediaId Media ID
  * @returns {bool}            True if the media is being requested
  */
-export default function isRequestingMediaItem( state, siteId, mediaId ) {
-	return get( state.media.mediaItemRequests, [ siteId, mediaId ], false );
+export default function isRequestingMediaItem(state, siteId, mediaId) {
+	return get(state.media.mediaItemRequests, [siteId, mediaId], false);
 }

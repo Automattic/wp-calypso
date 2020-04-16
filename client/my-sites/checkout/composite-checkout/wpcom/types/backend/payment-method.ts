@@ -107,8 +107,8 @@ export interface WPCOMBillingWebPayment {
  *
  * @returns Typed payment method slug
  */
-export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodClass {
-	switch ( slug ) {
+export function readWPCOMPaymentMethodClass(slug: string): WPCOMPaymentMethodClass {
+	switch (slug) {
 		case 'WPCOM_Billing_WPCOM':
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
@@ -128,7 +128,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodC
 			return { name: slug };
 	}
 
-	throw new Error( `Unrecognized payment method class name: "${ slug }"` );
+	throw new Error(`Unrecognized payment method class name: "${slug}"`);
 }
 
 /**
@@ -140,7 +140,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodC
 export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 	paymentMethod: WPCOMPaymentMethodClass
 ): CheckoutPaymentMethodSlug {
-	switch ( paymentMethod.name ) {
+	switch (paymentMethod.name) {
 		case 'WPCOM_Billing_WPCOM':
 			return 'free-purchase';
 		case 'WPCOM_Billing_Ebanx':
@@ -180,10 +180,10 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 	paymentMethod: CheckoutPaymentMethodSlug
 ): WPCOMPaymentMethodClass | null {
 	// existing cards have unique paymentMethodIds
-	if ( paymentMethod.startsWith( 'existingCard' ) ) {
+	if (paymentMethod.startsWith('existingCard')) {
 		paymentMethod = 'card';
 	}
-	switch ( paymentMethod ) {
+	switch (paymentMethod) {
 		case 'ebanx':
 			return { name: 'WPCOM_Billing_Ebanx' };
 		case 'brazil-tef':

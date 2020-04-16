@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import dropZone from '../reducer';
 import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( 'should show DropZone', () => {
+describe('reducer', () => {
+	test('should show DropZone', () => {
 		expect(
 			dropZone(
 				{},
@@ -19,10 +19,10 @@ describe( 'reducer', () => {
 					dropZoneName: 'testZone',
 				}
 			)
-		).to.be.eql( { isVisible: { testZone: true } } );
-	} );
+		).to.be.eql({ isVisible: { testZone: true } });
+	});
 
-	test( 'should hide DropZone', () => {
+	test('should hide DropZone', () => {
 		expect(
 			dropZone(
 				{ isVisible: { testZone: false } },
@@ -31,6 +31,6 @@ describe( 'reducer', () => {
 					dropZoneName: 'testZone',
 				}
 			)
-		).to.be.eql( { isVisible: { testZone: false } } );
-	} );
-} );
+		).to.be.eql({ isVisible: { testZone: false } });
+	});
+});

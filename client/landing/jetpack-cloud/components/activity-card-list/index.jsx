@@ -31,9 +31,9 @@ class ActivityCardList extends Component {
 		showPagination: true,
 	};
 
-	changePage = pageNumber => {
-		this.props.selectPage( this.props.siteId, pageNumber );
-		window.scrollTo( 0, 0 );
+	changePage = (pageNumber) => {
+		this.props.selectPage(this.props.siteId, pageNumber);
+		window.scrollTo(0, 0);
 	};
 
 	render() {
@@ -50,80 +50,77 @@ class ActivityCardList extends Component {
 		} = this.props;
 		const { page: requestedPage } = filter;
 
-		const actualPage = Math.max(
-			1,
-			Math.min( requestedPage, Math.ceil( logs.length / pageSize ) )
-		);
-		const theseLogs = logs.slice( ( actualPage - 1 ) * pageSize, actualPage * pageSize );
+		const actualPage = Math.max(1, Math.min(requestedPage, Math.ceil(logs.length / pageSize)));
+		const theseLogs = logs.slice((actualPage - 1) * pageSize, actualPage * pageSize);
 
-		const cards = theseLogs.map( activity => (
+		const cards = theseLogs.map((activity) => (
 			<ActivityCard
-				{ ...{
+				{...{
 					key: activity.activityId,
 					moment,
 					activity,
 					allowRestore,
 					siteSlug,
-				} }
+				}}
 			/>
-		) );
+		));
 
 		return (
 			<div className="activity-card-list">
-				<QueryRewindCapabilities siteId={ siteId } />
-				<QueryRewindState siteId={ siteId } />
-				{ showFilter && (
+				<QueryRewindCapabilities siteId={siteId} />
+				<QueryRewindState siteId={siteId} />
+				{showFilter && (
 					<Filterbar
-						{ ...{
+						{...{
 							siteId,
 							filter,
 							isLoading: false,
 							isVisible: true,
-						} }
+						}}
 					/>
-				) }
-				{ showPagination && (
+				)}
+				{showPagination && (
 					<Pagination
-						compact={ isMobile() }
+						compact={isMobile()}
 						className="activity-card-list__pagination-top"
 						key="activity-card-list__pagination-top"
-						nextLabel={ 'Older' }
-						page={ actualPage }
-						pageClick={ this.changePage }
-						perPage={ pageSize }
-						prevLabel={ 'Newer' }
-						total={ logs.length }
+						nextLabel={'Older'}
+						page={actualPage}
+						pageClick={this.changePage}
+						perPage={pageSize}
+						prevLabel={'Newer'}
+						total={logs.length}
 					/>
-				) }
-				{ cards }
-				{ showPagination && (
+				)}
+				{cards}
+				{showPagination && (
 					<Pagination
-						compact={ isMobile() }
+						compact={isMobile()}
 						className="activity-card-list__pagination-bottom"
 						key="activity-card-list__pagination-bottom"
-						nextLabel={ 'Older' }
-						page={ actualPage }
-						pageClick={ this.changePage }
-						perPage={ pageSize }
-						prevLabel={ 'Newer' }
-						total={ logs.length }
+						nextLabel={'Older'}
+						page={actualPage}
+						pageClick={this.changePage}
+						perPage={pageSize}
+						prevLabel={'Newer'}
+						total={logs.length}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const filter = getActivityLogFilter( state, siteId );
-	const rewind = getRewindState( state, siteId );
-	const siteCapabilities = getRewindCapabilities( state, siteId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const filter = getActivityLogFilter(state, siteId);
+	const rewind = getRewindState(state, siteId);
+	const siteCapabilities = getRewindCapabilities(state, siteId);
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const allowRestore =
 		'active' === rewind.state &&
-		! ( 'queued' === restoreStatus || 'running' === restoreStatus ) &&
-		siteCapabilities.includes( 'restore' );
+		!('queued' === restoreStatus || 'running' === restoreStatus) &&
+		siteCapabilities.includes('restore');
 
 	return {
 		siteId,
@@ -133,11 +130,8 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
-} );
+const mapDispatchToProps = (dispatch) => ({
+	selectPage: (siteId, pageNumber) => dispatch(updateFilter(siteId, { page: pageNumber })),
+});
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( withLocalizedMoment( ActivityCardList ) );
+export default connect(mapStateToProps, mapDispatchToProps)(withLocalizedMoment(ActivityCardList));

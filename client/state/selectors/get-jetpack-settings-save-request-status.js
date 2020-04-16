@@ -17,6 +17,6 @@ import { saveJetpackSettings } from 'state/jetpack/settings/actions';
  * @param  {object}  settings  The settings we're updating
  * @returns {string}            The request status (pending, success or error)
  */
-export default function getJetpackSettingsSaveRequestStatus( state, siteId, settings ) {
-	return get( getRequest( state, saveJetpackSettings( siteId, settings ) ), 'status' );
+export default function getJetpackSettingsSaveRequestStatus(state, siteId, settings) {
+	return get(getRequest(state, saveJetpackSettings(siteId, settings)), 'status');
 }

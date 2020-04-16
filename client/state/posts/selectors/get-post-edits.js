@@ -20,13 +20,13 @@ import 'state/posts/init';
  * @returns {object}        Post revisions
  */
 export const getPostEdits = createSelector(
-	( state, siteId, postId ) => {
-		const postEditsLog = get( state.posts.edits, [ siteId, postId || '' ] );
-		if ( ! postEditsLog ) {
+	(state, siteId, postId) => {
+		const postEditsLog = get(state.posts.edits, [siteId, postId || '']);
+		if (!postEditsLog) {
 			return null;
 		}
 
-		return normalizePostForEditing( mergePostEdits( ...postEditsLog ) );
+		return normalizePostForEditing(mergePostEdits(...postEditsLog));
 	},
-	state => [ state.posts.edits ]
+	(state) => [state.posts.edits]
 );

@@ -23,20 +23,20 @@ class NewCardForm extends Component {
 		selected: PropTypes.bool,
 	};
 
-	getErrorMessage = fieldName => {
+	getErrorMessage = (fieldName) => {
 		const { transaction } = this.props;
-		return transaction.step.name === INPUT_VALIDATION && transaction.errors[ fieldName ];
+		return transaction.step.name === INPUT_VALIDATION && transaction.errors[fieldName];
 	};
 
 	getFields = () => {
 		return (
 			<CreditCardFormFields
-				card={ this.props.transaction.newCardFormFields }
-				countriesList={ this.props.countriesList }
-				isNewTransaction={ !! this.props.transaction }
+				card={this.props.transaction.newCardFormFields}
+				countriesList={this.props.countriesList}
+				isNewTransaction={!!this.props.transaction}
 				eventFormName="Checkout Form"
-				onFieldChange={ this.handleFieldChange }
-				getErrorMessage={ this.getErrorMessage }
+				onFieldChange={this.handleFieldChange}
+				getErrorMessage={this.getErrorMessage}
 			/>
 		);
 	};
@@ -47,34 +47,32 @@ class NewCardForm extends Component {
 		return (
 			<div className="checkout__new-card">
 				<button type="button" className="checkout__new-card-toggle">
-					{ translate( '+ Use a New Credit/Debit Card' ) }
+					{translate('+ Use a New Credit/Debit Card')}
 				</button>
 
 				<div className="checkout__new-card-fields">
-					{ hasStoredCards ? (
-						<h6 className="checkout__new-card-header">
-							{ translate( 'Use New Credit/Debit Card' ) }:
-						</h6>
-					) : null }
+					{hasStoredCards ? (
+						<h6 className="checkout__new-card-header">{translate('Use New Credit/Debit Card')}:</h6>
+					) : null}
 
-					{ ( selected || ! hasStoredCards ) && this.getFields() }
+					{(selected || !hasStoredCards) && this.getFields()}
 				</div>
 			</div>
 		);
 	}
 
-	handleFieldChange = ( rawDetails, maskedDetails ) => {
+	handleFieldChange = (rawDetails, maskedDetails) => {
 		// Because SecurePaymentForm::setInitialPaymentDetails() initializes
 		// the payment details via a defer() call, this must be deferred as
 		// well (to ensure that we only try to update credit card details after
 		// the credit card data has been set up). If the defer() call is ever
 		// removed from SecurePaymentForm::setInitialPaymentDetails(), it can
 		// likely be removed here too.
-		defer( setNewCreditCardDetails, {
+		defer(setNewCreditCardDetails, {
 			rawDetails: rawDetails,
 			maskedDetails: maskedDetails,
-		} );
+		});
 	};
 }
 
-export default localize( NewCardForm );
+export default localize(NewCardForm);

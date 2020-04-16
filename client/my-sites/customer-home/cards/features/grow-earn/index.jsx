@@ -24,33 +24,33 @@ import { getSiteOption } from 'state/sites/selectors';
  */
 import './style.scss';
 
-export const GrowEarn = ( { siteSlug, expandToolsAndTrack } ) => {
+export const GrowEarn = ({ siteSlug, expandToolsAndTrack }) => {
 	const translate = useTranslate();
 
 	return (
 		<Card className="grow-earn">
-			<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
+			<CardHeading>{translate('Grow & Earn')}</CardHeading>
 			<h6 className="grow-earn__card-subheader customer-home__card-subheader">
-				{ translate( 'Grow your audience and earn money' ) }
+				{translate('Grow your audience and earn money')}
 			</h6>
 			<VerticalNav>
 				<VerticalNavItem
-					path={ `/marketing/connections/${ siteSlug }` }
-					onClick={ () => expandToolsAndTrack( 'earn', 'share_site' ) }
+					path={`/marketing/connections/${siteSlug}`}
+					onClick={() => expandToolsAndTrack('earn', 'share_site')}
 				>
-					{ translate( 'Share my site' ) }
+					{translate('Share my site')}
 				</VerticalNavItem>
 				<VerticalNavItem
-					path={ `/marketing/tools/${ siteSlug }` }
-					onClick={ () => expandToolsAndTrack( 'earn', 'grow_audience' ) }
+					path={`/marketing/tools/${siteSlug}`}
+					onClick={() => expandToolsAndTrack('earn', 'grow_audience')}
 				>
-					{ translate( 'Grow my audience' ) }
+					{translate('Grow my audience')}
 				</VerticalNavItem>
 				<VerticalNavItem
-					path={ `/earn/${ siteSlug }` }
-					onClick={ () => expandToolsAndTrack( 'earn', 'money' ) }
+					path={`/earn/${siteSlug}`}
+					onClick={() => expandToolsAndTrack('earn', 'money')}
 				>
-					{ translate( 'Earn money' ) }
+					{translate('Earn money')}
 				</VerticalNavItem>
 			</VerticalNav>
 		</Card>
@@ -58,33 +58,33 @@ export const GrowEarn = ( { siteSlug, expandToolsAndTrack } ) => {
 };
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-		const pageOnFront = 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const isClassicEditor = getSelectedEditor(state, siteId) === 'classic';
+		const pageOnFront = 'page' === getSiteOption(state, siteId, 'show_on_front');
 		return {
-			siteSlug: getSelectedSiteSlug( state ),
-			isStaticHomePage: ! isClassicEditor && pageOnFront,
+			siteSlug: getSelectedSiteSlug(state),
+			isStaticHomePage: !isClassicEditor && pageOnFront,
 		};
 	},
-	dispatch => ( {
-		trackAction: ( section, action, isStaticHomePage ) =>
+	(dispatch) => ({
+		trackAction: (section, action, isStaticHomePage) =>
 			dispatch(
 				composeAnalytics(
-					recordTracksEvent( `calypso_customer_home_${ section }_${ action }_click`, {
+					recordTracksEvent(`calypso_customer_home_${section}_${action}_click`, {
 						is_static_home_page: isStaticHomePage,
-					} ),
-					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
+					}),
+					bumpStat('calypso_customer_home', `${section}_${action}`)
 				)
 			),
-		expandToolsSection: () => dispatch( expandSection( SIDEBAR_SECTION_TOOLS ) ),
-	} ),
-	( stateProps, dispatchProps, ownProps ) => ( {
+		expandToolsSection: () => dispatch(expandSection(SIDEBAR_SECTION_TOOLS)),
+	}),
+	(stateProps, dispatchProps, ownProps) => ({
 		...ownProps,
 		...stateProps,
-		expandToolsAndTrack: ( section, action ) => {
+		expandToolsAndTrack: (section, action) => {
 			dispatchProps.expandToolsSection();
-			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage );
+			dispatchProps.trackAction(section, action, stateProps.isStaticHomePage);
 		},
-	} )
-)( GrowEarn );
+	})
+)(GrowEarn);

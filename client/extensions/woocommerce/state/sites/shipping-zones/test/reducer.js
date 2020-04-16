@@ -13,19 +13,19 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
-describe( 'reducer', () => {
-	test( 'should mark the shipping zones tree as being "loading"', () => {
+describe('reducer', () => {
+	test('should mark the shipping zones tree as being "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 			siteId,
 		};
 
-		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].shippingZones ).to.eql( LOADING );
-	} );
+		const newSiteData = reducer({}, action);
+		expect(newSiteData[siteId].shippingZones).to.eql(LOADING);
+	});
 
-	test( 'should store data from the action', () => {
+	test('should store data from the action', () => {
 		const siteId = 123;
 		const zones = [
 			{ id: 0, name: 'Rest of the World (this name will be overwritten)' },
@@ -36,11 +36,11 @@ describe( 'reducer', () => {
 			siteId,
 			data: zones,
 		};
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].shippingZones ).to.eql( [
+		const newState = reducer({}, action);
+		expect(newState[siteId]).to.exist;
+		expect(newState[siteId].shippingZones).to.eql([
 			{ id: 0, name: 'Locations not covered by your other zones' },
 			{ id: 1, name: 'USA' },
-		] );
-	} );
-} );
+		]);
+	});
+});

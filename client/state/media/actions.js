@@ -36,11 +36,11 @@ import 'state/data-layer/wpcom/sites/media';
  * @param  {object}         query  Query Object
  * @returns {object}                Action object
  */
-export function receiveMedia( siteId, media, found, query ) {
+export function receiveMedia(siteId, media, found, query) {
 	return {
 		type: MEDIA_RECEIVE,
 		siteId,
-		media: castArray( media ),
+		media: castArray(media),
 		found,
 		query,
 	};
@@ -54,7 +54,7 @@ export function receiveMedia( siteId, media, found, query ) {
  * @param  {object} query  Query object
  * @returns {object}        Action object
  */
-export function requestMedia( siteId, query ) {
+export function requestMedia(siteId, query) {
 	return {
 		type: MEDIA_REQUEST,
 		siteId,
@@ -70,7 +70,7 @@ export function requestMedia( siteId, query ) {
  * @param  {object} query  Query object
  * @returns {object}        Action object
  */
-export function requestingMedia( siteId, query ) {
+export function requestingMedia(siteId, query) {
 	return {
 		type: MEDIA_REQUESTING,
 		siteId,
@@ -87,7 +87,7 @@ export function requestingMedia( siteId, query ) {
  * @param  {object} error  Error object
  * @returns {object}        Action object
  */
-export function failMediaRequest( siteId, query, error = null ) {
+export function failMediaRequest(siteId, query, error = null) {
 	return {
 		type: MEDIA_REQUEST_FAILURE,
 		siteId,
@@ -104,7 +104,7 @@ export function failMediaRequest( siteId, query, error = null ) {
  * @param  {object} query  Query object
  * @returns {object}        Action object
  */
-export function successMediaRequest( siteId, query ) {
+export function successMediaRequest(siteId, query) {
 	return {
 		type: MEDIA_REQUEST_SUCCESS,
 		siteId,
@@ -120,7 +120,7 @@ export function successMediaRequest( siteId, query ) {
  * @param  {number} mediaId Media ID
  * @returns {object}         Action object
  */
-export function requestMediaItem( siteId, mediaId ) {
+export function requestMediaItem(siteId, mediaId) {
 	return {
 		type: MEDIA_ITEM_REQUEST,
 		siteId,
@@ -136,7 +136,7 @@ export function requestMediaItem( siteId, mediaId ) {
  * @param  {number} mediaId Media ID
  * @returns {object}         Action object
  */
-export function requestingMediaItem( siteId, mediaId ) {
+export function requestingMediaItem(siteId, mediaId) {
 	return {
 		type: MEDIA_ITEM_REQUESTING,
 		siteId,
@@ -153,7 +153,7 @@ export function requestingMediaItem( siteId, mediaId ) {
  * @param  {object} error   Error object
  * @returns {object}         Action object
  */
-export function failMediaItemRequest( siteId, mediaId, error = null ) {
+export function failMediaItemRequest(siteId, mediaId, error = null) {
 	return {
 		type: MEDIA_ITEM_REQUEST_FAILURE,
 		siteId,
@@ -170,7 +170,7 @@ export function failMediaItemRequest( siteId, mediaId, error = null ) {
  * @param  {number} mediaId Media ID
  * @returns {object}         Action object
  */
-export function successMediaItemRequest( siteId, mediaId ) {
+export function successMediaItemRequest(siteId, mediaId) {
 	return {
 		type: MEDIA_ITEM_REQUEST_SUCCESS,
 		siteId,
@@ -186,7 +186,7 @@ export function successMediaItemRequest( siteId, mediaId ) {
  * @param  {object}  transientMedia Fake incomplete media item, used before media is sent to the server
  * @returns {object}                Action object
  */
-export function createMediaItem( site, transientMedia ) {
+export function createMediaItem(site, transientMedia) {
 	return {
 		type: MEDIA_ITEM_CREATE,
 		site,
@@ -206,10 +206,10 @@ export function createMediaItem( site, transientMedia ) {
  * @param  {(Array|number)} mediaIds ID(s) of media to be deleted
  * @returns {object}                  Action object
  */
-export function deleteMedia( siteId, mediaIds ) {
+export function deleteMedia(siteId, mediaIds) {
 	return {
 		type: MEDIA_DELETE,
-		mediaIds: castArray( mediaIds ),
+		mediaIds: castArray(mediaIds),
 		siteId,
 	};
 }
@@ -220,7 +220,7 @@ export function deleteMedia( siteId, mediaIds ) {
  * @param   {number} siteId Site ID
  * @returns {object}        Action object
  */
-export function changeMediaSource( siteId ) {
+export function changeMediaSource(siteId) {
 	return {
 		type: MEDIA_SOURCE_CHANGE,
 		siteId,
@@ -234,7 +234,7 @@ export function changeMediaSource( siteId ) {
  * @param  {string}  errorType Error type
  * @returns {object}           Action object
  */
-export function clearMediaErrors( siteId, errorType ) {
+export function clearMediaErrors(siteId, errorType) {
 	return {
 		type: MEDIA_ERRORS_CLEAR,
 		siteId,
@@ -249,7 +249,7 @@ export function clearMediaErrors( siteId, errorType ) {
  * @param  {number}  mediaId Media ID
  * @returns {object}         Action object
  */
-export function clearMediaItemErrors( siteId, mediaId ) {
+export function clearMediaItemErrors(siteId, mediaId) {
 	return {
 		type: MEDIA_ITEM_ERRORS_CLEAR,
 		siteId,

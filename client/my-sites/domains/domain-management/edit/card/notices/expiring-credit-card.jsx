@@ -12,28 +12,28 @@ import { shouldRenderExpiringCreditCard, creditCardHasAlreadyExpired } from 'lib
 import { getEditCardDetailsPath } from 'me/purchases/utils';
 import { type as domainTypes } from 'lib/domains/constants';
 
-function ExpiringCreditCard( props ) {
+function ExpiringCreditCard(props) {
 	const { selectedSite, purchase, domain } = props;
 	const translate = useTranslate();
 
-	if ( ! selectedSite || ! purchase ) {
+	if (!selectedSite || !purchase) {
 		return null;
 	}
 
-	if ( ! shouldRenderExpiringCreditCard( purchase ) ) {
+	if (!shouldRenderExpiringCreditCard(purchase)) {
 		return null;
 	}
 
-	const editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
+	const editCardDetailsPath = getEditCardDetailsPath(selectedSite.slug, purchase);
 
 	let messageText;
 
-	if ( domain.type === domainTypes.MAPPED ) {
-		if ( domain.bundledPlanSubscriptionId ) {
+	if (domain.type === domainTypes.MAPPED) {
+		if (domain.bundledPlanSubscriptionId) {
 			return null;
 		}
 
-		if ( creditCardHasAlreadyExpired( purchase ) ) {
+		if (creditCardHasAlreadyExpired(purchase)) {
 			messageText = translate(
 				'Your credit card {{strong}}has expired before your domain mapping renewal date{{/strong}}. Please update your payment information on your account to avoid any disruptions to your service. Turn off auto-renew if you don’t want to see this message anymore.',
 				{
@@ -52,8 +52,8 @@ function ExpiringCreditCard( props ) {
 				}
 			);
 		}
-	} else if ( domain.type === domainTypes.REGISTERED ) {
-		if ( creditCardHasAlreadyExpired( purchase ) ) {
+	} else if (domain.type === domainTypes.REGISTERED) {
+		if (creditCardHasAlreadyExpired(purchase)) {
 			messageText = translate(
 				'Your credit card {{strong}}has expired before your domain renewal date{{/strong}}. Please update your payment information on your account to avoid any disruptions to your service. Turn off auto-renew if you don’t want to see this message anymore.',
 				{
@@ -76,9 +76,9 @@ function ExpiringCreditCard( props ) {
 
 	return (
 		<div>
-			<p>{ messageText }</p>
-			<Button primary={ true } href={ editCardDetailsPath }>
-				{ translate( 'Add a new credit card' ) }
+			<p>{messageText}</p>
+			<Button primary={true} href={editCardDetailsPath}>
+				{translate('Add a new credit card')}
 			</Button>
 		</div>
 	);

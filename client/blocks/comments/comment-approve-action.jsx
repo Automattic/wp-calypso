@@ -14,17 +14,17 @@ import classnames from 'classnames';
  */
 import './comment-approve-action.scss';
 
-const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
+const CommentApproveAction = ({ translate, status, approveComment, unapproveComment }) => {
 	const isApproved = status === 'approved';
-	const buttonStyle = classnames( 'comments__comment-actions-approve', {
+	const buttonStyle = classnames('comments__comment-actions-approve', {
 		'is-approved': isApproved,
-	} );
+	});
 
 	return (
-		<button className={ buttonStyle } onClick={ ! isApproved ? approveComment : unapproveComment }>
-			<Gridicon icon="checkmark" size={ 18 } />
+		<button className={buttonStyle} onClick={!isApproved ? approveComment : unapproveComment}>
+			<Gridicon icon="checkmark" size={18} />
 			<span className="comments__comment-actions-like-label">
-				{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
+				{isApproved ? translate('Approved') : translate('Approve')}
 			</span>
 		</button>
 	);
@@ -42,4 +42,4 @@ CommentApproveAction.defaultProps = {
 	unapproveComment: noop,
 };
 
-export default localize( CommentApproveAction );
+export default localize(CommentApproveAction);

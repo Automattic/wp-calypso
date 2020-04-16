@@ -22,7 +22,7 @@ export default class AsyncLoad extends Component {
 	};
 
 	constructor() {
-		super( ...arguments );
+		super(...arguments);
 
 		this.state = {
 			require: null,
@@ -35,16 +35,16 @@ export default class AsyncLoad extends Component {
 		this.require();
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.mounted && this.props.require !== nextProps.require ) {
-			this.setState( { component: null } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.mounted && this.props.require !== nextProps.require) {
+			this.setState({ component: null });
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		// Our Babel transform will hoist the require function in the rendering
 		// component, so we can compare the reference with confidence
-		if ( this.props.require !== prevProps.require ) {
+		if (this.props.require !== prevProps.require) {
 			this.require();
 		}
 	}
@@ -56,18 +56,18 @@ export default class AsyncLoad extends Component {
 	require() {
 		const requireFunction = this.props.require;
 
-		requireFunction( component => {
-			if ( this.mounted && this.props.require === requireFunction ) {
-				this.setState( { component } );
+		requireFunction((component) => {
+			if (this.mounted && this.props.require === requireFunction) {
+				this.setState({ component });
 			}
-		} );
+		});
 	}
 
 	render() {
-		if ( this.state.component ) {
-			const props = omit( this.props, [ 'placeholder', 'require' ] );
+		if (this.state.component) {
+			const props = omit(this.props, ['placeholder', 'require']);
 
-			return <this.state.component { ...props } />;
+			return <this.state.component {...props} />;
 		}
 
 		return this.props.placeholder;

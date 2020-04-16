@@ -10,34 +10,34 @@ import {
 	SITE_ROLES_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-export function requestSiteRoles( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function requestSiteRoles(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_ROLES_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.site( siteId )
+			.site(siteId)
 			.getRoles()
-			.then( ( { roles } ) => {
-				dispatch( {
+			.then(({ roles }) => {
+				dispatch({
 					type: SITE_ROLES_REQUEST_SUCCESS,
 					siteId,
-				} );
+				});
 
-				dispatch( {
+				dispatch({
 					type: SITE_ROLES_RECEIVE,
 					siteId,
 					roles,
-				} );
-			} )
-			.catch( () => {
-				dispatch( {
+				});
+			})
+			.catch(() => {
+				dispatch({
 					type: SITE_ROLES_REQUEST_FAILURE,
 					siteId,
-				} );
-			} );
+				});
+			});
 	};
 }

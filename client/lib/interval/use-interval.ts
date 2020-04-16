@@ -18,22 +18,22 @@ import { TimeoutMS } from 'types';
 
 type Callback = () => void;
 
-export function useInterval( callback: Callback, delay: TimeoutMS ) {
-	const savedCallback = useRef< Callback >();
+export function useInterval(callback: Callback, delay: TimeoutMS) {
+	const savedCallback = useRef<Callback>();
 
 	// Remember the latest callback.
-	useEffect( () => {
+	useEffect(() => {
 		savedCallback.current = callback;
-	}, [ callback ] );
+	}, [callback]);
 
 	// Set up the interval.
-	useEffect( () => {
+	useEffect(() => {
 		function tick() {
-			( savedCallback.current as /* savedCallback ref should never be `undefined` */ Callback )();
+			(savedCallback.current as /* savedCallback ref should never be `undefined` */ Callback)();
 		}
-		if ( delay !== null ) {
-			const id = setInterval( tick, delay );
-			return () => clearInterval( id );
+		if (delay !== null) {
+			const id = setInterval(tick, delay);
+			return () => clearInterval(id);
 		}
-	}, [ delay ] );
+	}, [delay]);
 }

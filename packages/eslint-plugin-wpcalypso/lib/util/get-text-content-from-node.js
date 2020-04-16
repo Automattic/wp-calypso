@@ -17,7 +17,7 @@
  * @param  {object} node    A Literal, TemplateLiteral or BinaryExpression (+) node
  * @returns {string|boolean}   The concatenated string or the value false.
  */
-function getTextContentFromNode( node ) {
+function getTextContentFromNode(node) {
 	// We need to handle two cases:
 	// TemplateLiteral quasis =>  node.value.raw
 	// Literal strings => node.value
@@ -25,26 +25,26 @@ function getTextContentFromNode( node ) {
 	// we don't support expressions in literals.
 	let left, right;
 
-	if ( node.type === 'BinaryExpression' && node.operator === '+' ) {
-		left = getTextContentFromNode( node.left );
-		right = getTextContentFromNode( node.right );
-		if ( left === false || right === false ) {
+	if (node.type === 'BinaryExpression' && node.operator === '+') {
+		left = getTextContentFromNode(node.left);
+		right = getTextContentFromNode(node.right);
+		if (left === false || right === false) {
 			return false;
 		}
 		return left + right;
 	}
 
-	if ( node.type === 'Literal' && 'string' === typeof node.value ) {
+	if (node.type === 'Literal' && 'string' === typeof node.value) {
 		return node.value;
 	}
 
 	// template literals are specced at https://github.com/babel/babylon/blob/master/ast/spec.md
-	if ( node.type === 'TemplateLiteral' ) {
+	if (node.type === 'TemplateLiteral') {
 		return node.quasis
-			.map( function( quasis ) {
+			.map(function (quasis) {
 				return quasis.value.raw;
-			} )
-			.join( '' );
+			})
+			.join('');
 	}
 
 	return false;

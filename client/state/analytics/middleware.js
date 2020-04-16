@@ -23,60 +23,60 @@ import {
 } from 'state/action-types';
 
 const eventServices = {
-	ga: ( { category, action, label, value } ) => gaRecordEvent( category, action, label, value ),
-	tracks: ( { name, properties } ) => analytics.tracks.recordEvent( name, properties ),
-	fb: ( { name, properties } ) => trackCustomFacebookConversionEvent( name, properties ),
-	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
+	ga: ({ category, action, label, value }) => gaRecordEvent(category, action, label, value),
+	tracks: ({ name, properties }) => analytics.tracks.recordEvent(name, properties),
+	fb: ({ name, properties }) => trackCustomFacebookConversionEvent(name, properties),
+	adwords: ({ properties }) => trackCustomAdWordsRemarketingEvent(properties),
 };
 
 const pageViewServices = {
-	ga: ( { url, title } ) => gaRecordPageView( url, title ),
-	default: ( { url, title, ...params } ) => analytics.pageView.record( url, title, params ),
+	ga: ({ url, title }) => gaRecordPageView(url, title),
+	default: ({ url, title, ...params }) => analytics.pageView.record(url, title, params),
 };
 
-const loadTrackingTool = trackingTool => {
-	if ( trackingTool === 'HotJar' ) {
+const loadTrackingTool = (trackingTool) => {
+	if (trackingTool === 'HotJar') {
 		addHotJarScript();
 	}
 };
 
-const statBump = ( { group, name } ) => bumpStat( group, name );
+const statBump = ({ group, name }) => bumpStat(group, name);
 
-const dispatcher = action => {
+const dispatcher = (action) => {
 	const analyticsMeta = action.meta.analytics;
-	analyticsMeta.forEach( ( { type, payload } ) => {
+	analyticsMeta.forEach(({ type, payload }) => {
 		const { service = 'default', ...params } = payload;
 
-		switch ( type ) {
+		switch (type) {
 			case ANALYTICS_EVENT_RECORD:
-				return invoke( eventServices, service, params );
+				return invoke(eventServices, service, params);
 
 			case ANALYTICS_PAGE_VIEW_RECORD:
-				return invoke( pageViewServices, service, params );
+				return invoke(pageViewServices, service, params);
 
 			case ANALYTICS_STAT_BUMP:
-				return statBump( params );
+				return statBump(params);
 		}
-	} );
+	});
 };
 
-export const analyticsMiddleware = () => next => action => {
-	switch ( action.type ) {
+export const analyticsMiddleware = () => (next) => (action) => {
+	switch (action.type) {
 		case ANALYTICS_TRACKING_ON:
-			loadTrackingTool( action.trackingTool );
+			loadTrackingTool(action.trackingTool);
 			return;
 
 		case ANALYTICS_TRACKS_OPT_OUT:
-			analytics.tracks.setOptOut( action.isOptingOut );
+			analytics.tracks.setOptOut(action.isOptingOut);
 			return;
 
 		default:
-			if ( has( action, 'meta.analytics' ) ) {
-				dispatcher( action );
+			if (has(action, 'meta.analytics')) {
+				dispatcher(action);
 			}
 	}
 
-	return next( action );
+	return next(action);
 };
 
 export default analyticsMiddleware;

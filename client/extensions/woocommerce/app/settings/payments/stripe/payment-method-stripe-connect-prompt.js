@@ -26,28 +26,28 @@ class StripeConnectPrompt extends Component {
 		return (
 			<div className="stripe__connect-prompt">
 				<p>
-					{ translate(
+					{translate(
 						'To start accepting payments with Stripe, you need to connect ' +
 							'your WordPress.com account to a Stripe account.'
-					) }
+					)}
 				</p>
 				<FormFieldset>
 					<FormLabel>
 						<FormRadio
-							value={ isCreateSelected }
-							checked={ isCreateSelected }
-							onChange={ onSelectCreate }
+							value={isCreateSelected}
+							checked={isCreateSelected}
+							onChange={onSelectCreate}
 						/>
-						<span>{ translate( 'Create a new Stripe account' ) }</span>
+						<span>{translate('Create a new Stripe account')}</span>
 					</FormLabel>
 
 					<FormLabel>
 						<FormRadio
-							value={ ! isCreateSelected }
-							checked={ ! isCreateSelected }
-							onChange={ onSelectConnect }
+							value={!isCreateSelected}
+							checked={!isCreateSelected}
+							onChange={onSelectConnect}
 						/>
-						<span>{ translate( 'I already have a Stripe account' ) }</span>
+						<span>{translate('I already have a Stripe account')}</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>
@@ -55,4 +55,4 @@ class StripeConnectPrompt extends Component {
 	}
 }
 
-export default localize( StripeConnectPrompt );
+export default localize(StripeConnectPrompt);

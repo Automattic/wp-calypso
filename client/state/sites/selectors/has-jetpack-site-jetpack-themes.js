@@ -12,11 +12,11 @@ import isJetpackSite from './is-jetpack-site';
  * @param {number} siteId Site ID
  * @returns {?boolean} true if the site has Jetpack themes management
  */
-export default function hasJetpackSiteJetpackThemes( state, siteId ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
+export default function hasJetpackSiteJetpackThemes(state, siteId) {
+	if (!isJetpackSite(state, siteId)) {
 		return null;
 	}
 
-	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	return versionCompare( siteJetpackVersion, '3.7-beta' ) >= 0;
+	const siteJetpackVersion = getSiteOption(state, siteId, 'jetpack_version');
+	return versionCompare(siteJetpackVersion, '3.7-beta') >= 0;
 }

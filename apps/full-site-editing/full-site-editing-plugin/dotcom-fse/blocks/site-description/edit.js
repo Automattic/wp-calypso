@@ -31,7 +31,7 @@ import { PanelBody } from '@wordpress/components';
  */
 import { withSiteOptions } from '../../lib';
 
-function SiteDescriptionEdit( {
+function SiteDescriptionEdit({
 	attributes,
 	backgroundColor,
 	className,
@@ -43,7 +43,7 @@ function SiteDescriptionEdit( {
 	setTextColor,
 	siteDescription,
 	textColor,
-} ) {
+}) {
 	const { customFontSize, textAlign } = attributes;
 
 	const actualFontSize = customFontSize || fontSize.size;
@@ -54,87 +54,87 @@ function SiteDescriptionEdit( {
 		<Fragment>
 			<BlockControls>
 				<AlignmentToolbar
-					value={ textAlign }
-					onChange={ nextAlign => {
-						setAttributes( { textAlign: nextAlign } );
-					} }
+					value={textAlign}
+					onChange={(nextAlign) => {
+						setAttributes({ textAlign: nextAlign });
+					}}
 				/>
 			</BlockControls>
 			<InspectorControls>
-				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
-					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
+				<PanelBody className="blocks-font-size" title={__('Text Settings')}>
+					<FontSizePicker onChange={setFontSize} value={actualFontSize} />
 				</PanelBody>
 				<PanelColorSettings
-					title={ __( 'Color Settings' ) }
-					initialOpen={ false }
-					colorSettings={ [
+					title={__('Color Settings')}
+					initialOpen={false}
+					colorSettings={[
 						{
 							value: backgroundColor.color,
 							onChange: setBackgroundColor,
-							label: __( 'Background Color' ),
+							label: __('Background Color'),
 						},
 						{
 							value: textColor.color,
 							onChange: setTextColor,
-							label: __( 'Text Color' ),
+							label: __('Text Color'),
 						},
-					] }
+					]}
 				>
 					<ContrastChecker
-						{ ...{
+						{...{
 							textColor: textColor.color,
 							backgroundColor: backgroundColor.color,
-						} }
-						fontSize={ actualFontSize }
+						}}
+						fontSize={actualFontSize}
 					/>
 				</PanelColorSettings>
 			</InspectorControls>
 			<RichText
-				allowedFormats={ [] }
-				aria-label={ __( 'Site Description' ) }
-				className={ classNames( 'site-description', className, {
+				allowedFormats={[]}
+				aria-label={__('Site Description')}
+				className={classNames('site-description', className, {
 					'has-text-color': textColor.color,
 					'has-background': backgroundColor.color,
-					[ `has-text-align-${ textAlign }` ]: textAlign,
-					[ backgroundColor.class ]: backgroundColor.class,
-					[ textColor.class ]: textColor.class,
-					[ fontSize.class ]: ! customFontSize && fontSize.class,
-				} ) }
+					[`has-text-align-${textAlign}`]: textAlign,
+					[backgroundColor.class]: backgroundColor.class,
+					[textColor.class]: textColor.class,
+					[fontSize.class]: !customFontSize && fontSize.class,
+				})}
 				identifier="content"
-				onChange={ updateValue }
-				onReplace={ insertDefaultBlock }
-				onSplit={ noop }
-				placeholder={ __( 'Add a Site Description' ) }
-				style={ {
+				onChange={updateValue}
+				onReplace={insertDefaultBlock}
+				onSplit={noop}
+				placeholder={__('Add a Site Description')}
+				style={{
 					backgroundColor: backgroundColor.color,
 					color: textColor.color,
 					fontSize: actualFontSize ? actualFontSize + 'px' : undefined,
-				} }
+				}}
 				tagName="p"
-				value={ value }
+				value={value}
 			/>
 		</Fragment>
 	);
 }
 
-export default compose( [
-	withColors( 'backgroundColor', { textColor: 'color' } ),
-	withFontSizes( 'fontSize' ),
-	withSelect( ( select, { clientId } ) => {
-		const { getBlockIndex, getBlockRootClientId, getTemplateLock } = select( 'core/block-editor' );
-		const rootClientId = getBlockRootClientId( clientId );
+export default compose([
+	withColors('backgroundColor', { textColor: 'color' }),
+	withFontSizes('fontSize'),
+	withSelect((select, { clientId }) => {
+		const { getBlockIndex, getBlockRootClientId, getTemplateLock } = select('core/block-editor');
+		const rootClientId = getBlockRootClientId(clientId);
 
 		return {
-			blockIndex: getBlockIndex( clientId, rootClientId ),
-			isLocked: !! getTemplateLock( rootClientId ),
+			blockIndex: getBlockIndex(clientId, rootClientId),
+			isLocked: !!getTemplateLock(rootClientId),
 			rootClientId,
 		};
-	} ),
-	withDispatch( ( dispatch, { blockIndex, rootClientId } ) => ( {
+	}),
+	withDispatch((dispatch, { blockIndex, rootClientId }) => ({
 		insertDefaultBlock: () =>
-			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 ),
-	} ) ),
-	withSiteOptions( {
-		siteDescription: { optionName: 'description', defaultValue: __( 'Site description loading…' ) },
-	} ),
-] )( SiteDescriptionEdit );
+			dispatch('core/block-editor').insertDefaultBlock({}, rootClientId, blockIndex + 1),
+	})),
+	withSiteOptions({
+		siteDescription: { optionName: 'description', defaultValue: __('Site description loading…') },
+	}),
+])(SiteDescriptionEdit);

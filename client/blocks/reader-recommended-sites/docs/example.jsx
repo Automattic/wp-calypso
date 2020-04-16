@@ -22,7 +22,7 @@ export default class ReaderRecommendedSitesExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				<ReaderRecommendedSites sites={ [ sites.longreads, sites.wordpress ] } />
+				<ReaderRecommendedSites sites={[sites.longreads, sites.wordpress]} />
 			</Card>
 		);
 	}

@@ -1,14 +1,14 @@
-function translatableStringChecker( props, propName, componentName ) {
+function translatableStringChecker(props, propName, componentName) {
 	componentName = componentName || 'ANONYMOUS';
 
-	const value = props[ propName ];
-	if ( value !== undefined && value !== null ) {
-		if ( 'string' === typeof value ) {
+	const value = props[propName];
+	if (value !== undefined && value !== null) {
+		if ('string' === typeof value) {
 			return null;
 		}
 
 		// Translator Jumpstart old-style
-		if ( 'object' === typeof value && 'data' === value.type ) {
+		if ('object' === typeof value && 'data' === value.type) {
 			return null;
 		}
 
@@ -16,9 +16,9 @@ function translatableStringChecker( props, propName, componentName ) {
 		if (
 			'object' === typeof value &&
 			'function' === typeof value.type &&
-			( 'Translatable' === value.type.name ||
+			('Translatable' === value.type.name ||
 				// Accept HOC wrappings (e.g. `localize( Translatable )`)
-				String( value.type.displayName ).match( /\(Translatable\)/ ) )
+				String(value.type.displayName).match(/\(Translatable\)/))
 		) {
 			return null;
 		}
@@ -34,29 +34,29 @@ function translatableStringChecker( props, propName, componentName ) {
 	return null;
 }
 
-function createChainableTypeChecker( validate ) {
-	function checkType( isRequired, props, propName, componentName, location ) {
+function createChainableTypeChecker(validate) {
+	function checkType(isRequired, props, propName, componentName, location) {
 		componentName = componentName || 'ANONYMOUS';
-		if ( props[ propName ] === undefined ) {
-			if ( isRequired ) {
+		if (props[propName] === undefined) {
+			if (isRequired) {
 				return new Error(
 					'Required ' +
 						location +
 						' `' +
 						propName +
 						'` was not specified in ' +
-						( '`' + componentName + '`.' )
+						('`' + componentName + '`.')
 				);
 			}
 			return null;
 		}
-		return validate( props, propName, componentName, location );
+		return validate(props, propName, componentName, location);
 	}
 
-	const chainedCheckType = checkType.bind( null, false );
-	chainedCheckType.isRequired = checkType.bind( null, true );
+	const chainedCheckType = checkType.bind(null, false);
+	chainedCheckType.isRequired = checkType.bind(null, true);
 
 	return chainedCheckType;
 }
 
-export default createChainableTypeChecker( translatableStringChecker );
+export default createChainableTypeChecker(translatableStringChecker);

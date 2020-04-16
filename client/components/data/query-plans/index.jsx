@@ -14,7 +14,7 @@ import { requestPlans } from 'state/plans/actions';
 
 class QueryPlans extends Component {
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.requestingPlans ) {
+		if (!this.props.requestingPlans) {
 			this.props.requestPlans();
 		}
 	}
@@ -34,10 +34,10 @@ QueryPlans.defaultProps = {
 };
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			requestingPlans: isRequestingPlans( state ),
+			requestingPlans: isRequestingPlans(state),
 		};
 	},
 	{ requestPlans }
-)( QueryPlans );
+)(QueryPlans);

@@ -20,8 +20,8 @@ import 'state/posts/init';
  * @param  {string}  postType Post type
  * @returns {boolean}          Whether request is in progress
  */
-export function isRequestingPostCounts( state, siteId, postType ) {
-	return get( state.posts.counts.requesting, [ siteId, postType ], false );
+export function isRequestingPostCounts(state, siteId, postType) {
+	return get(state.posts.counts.requesting, [siteId, postType], false);
 }
 
 /**
@@ -32,8 +32,8 @@ export function isRequestingPostCounts( state, siteId, postType ) {
  * @param  {string} postType Post type
  * @returns {object}          Post counts, keyed by status
  */
-export function getAllPostCounts( state, siteId, postType ) {
-	return get( state.posts.counts.counts, [ siteId, postType, 'all' ], null );
+export function getAllPostCounts(state, siteId, postType) {
+	return get(state.posts.counts.counts, [siteId, postType, 'all'], null);
 }
 
 /**
@@ -46,13 +46,13 @@ export function getAllPostCounts( state, siteId, postType ) {
  * @param  {string} status   Post status
  * @returns {number}          Post count
  */
-export function getAllPostCount( state, siteId, postType, status ) {
-	const counts = getAllPostCounts( state, siteId, postType );
-	if ( ! counts ) {
+export function getAllPostCount(state, siteId, postType, status) {
+	const counts = getAllPostCounts(state, siteId, postType);
+	if (!counts) {
 		return null;
 	}
 
-	return counts[ status ] || 0;
+	return counts[status] || 0;
 }
 
 /**
@@ -63,8 +63,8 @@ export function getAllPostCount( state, siteId, postType, status ) {
  * @param  {string} postType Post type
  * @returns {object}          Post counts, keyed by status
  */
-export function getMyPostCounts( state, siteId, postType ) {
-	return get( state.posts.counts.counts, [ siteId, postType, 'mine' ], null );
+export function getMyPostCounts(state, siteId, postType) {
+	return get(state.posts.counts.counts, [siteId, postType, 'mine'], null);
 }
 
 /**
@@ -77,13 +77,13 @@ export function getMyPostCounts( state, siteId, postType ) {
  * @param  {string} status   Post status
  * @returns {number}          Post count
  */
-export function getMyPostCount( state, siteId, postType, status ) {
-	const counts = getMyPostCounts( state, siteId, postType );
-	if ( ! counts ) {
+export function getMyPostCount(state, siteId, postType, status) {
+	const counts = getMyPostCounts(state, siteId, postType);
+	if (!counts) {
 		return null;
 	}
 
-	return counts[ status ] || 0;
+	return counts[status] || 0;
 }
 
 /**
@@ -96,19 +96,14 @@ export function getMyPostCount( state, siteId, postType, status ) {
  * @param  {Function} countSelector Selector from which to retrieve raw counts
  * @returns {number}                 Normalized post counts
  */
-export function getNormalizedPostCounts(
-	state,
-	siteId,
-	postType,
-	countSelector = getAllPostCounts
-) {
-	const counts = countSelector( state, siteId, postType );
+export function getNormalizedPostCounts(state, siteId, postType, countSelector = getAllPostCounts) {
+	const counts = countSelector(state, siteId, postType);
 
-	return POST_STATUSES.reduce( ( memo, status ) => {
-		const count = get( counts, status, 0 );
+	return POST_STATUSES.reduce((memo, status) => {
+		const count = get(counts, status, 0);
 
 		let key;
-		switch ( status ) {
+		switch (status) {
 			case 'publish':
 			case 'private':
 				key = 'publish';
@@ -125,9 +120,9 @@ export function getNormalizedPostCounts(
 
 		return {
 			...memo,
-			[ key ]: ( memo[ key ] || 0 ) + count,
+			[key]: (memo[key] || 0) + count,
 		};
-	}, {} );
+	}, {});
 }
 
 /**
@@ -139,6 +134,6 @@ export function getNormalizedPostCounts(
  * @param  {string} postType Post type
  * @returns {number}          Normalized post counts
  */
-export function getNormalizedMyPostCounts( state, siteId, postType ) {
-	return getNormalizedPostCounts( state, siteId, postType, getMyPostCounts );
+export function getNormalizedMyPostCounts(state, siteId, postType) {
+	return getNormalizedPostCounts(state, siteId, postType, getMyPostCounts);
 }

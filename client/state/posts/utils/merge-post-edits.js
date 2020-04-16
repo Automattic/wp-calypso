@@ -3,11 +3,11 @@
  */
 import { cloneDeep, concat, find, isString, mergeWith, reduce, reject } from 'lodash';
 
-function mergeMetadataEdits( edits, nextEdits ) {
+function mergeMetadataEdits(edits, nextEdits) {
 	// remove existing edits that get updated in `nextEdits`
-	const newEdits = reject( edits, edit => find( nextEdits, { key: edit.key } ) );
+	const newEdits = reject(edits, (edit) => find(nextEdits, { key: edit.key }));
 	// append the new edits at the end
-	return concat( newEdits, nextEdits );
+	return concat(newEdits, nextEdits);
 }
 
 /**
@@ -20,31 +20,31 @@ function mergeMetadataEdits( edits, nextEdits ) {
  * @param  {Array<object>} postEditsLog Edits objects to be merged
  * @returns {object?}                    Merged edits object with changes from all sources
  */
-export const mergePostEdits = ( ...postEditsLog ) =>
+export const mergePostEdits = (...postEditsLog) =>
 	reduce(
 		postEditsLog,
-		( mergedEdits, nextEdits ) => {
+		(mergedEdits, nextEdits) => {
 			// filter out save markers
-			if ( isString( nextEdits ) ) {
+			if (isString(nextEdits)) {
 				return mergedEdits;
 			}
 
 			// return the input object if it's the first one to merge (optimization that avoids cloning)
-			if ( mergedEdits === null ) {
+			if (mergedEdits === null) {
 				return nextEdits;
 			}
 
 			// proceed to do the merge
 			return mergeWith(
-				cloneDeep( mergedEdits ),
+				cloneDeep(mergedEdits),
 				nextEdits,
-				( objValue, srcValue, key, obj, src, stack ) => {
-					if ( key === 'metadata' && stack.size === 0 ) {
+				(objValue, srcValue, key, obj, src, stack) => {
+					if (key === 'metadata' && stack.size === 0) {
 						// merge metadata specially
-						return mergeMetadataEdits( objValue, srcValue );
+						return mergeMetadataEdits(objValue, srcValue);
 					}
 
-					if ( Array.isArray( srcValue ) ) {
+					if (Array.isArray(srcValue)) {
 						return srcValue;
 					}
 				}

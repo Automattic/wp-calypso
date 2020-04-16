@@ -17,27 +17,27 @@ import 'state/posts/init';
  * @param   {object}  [options] Special options. See wp-calypso#14456
  * @returns {?string}           Post preview URL
  */
-export function getPostPreviewUrl( state, siteId, postId, options = false ) {
+export function getPostPreviewUrl(state, siteId, postId, options = false) {
 	const rawPost = options.__forceUseRawPost;
-	const shouldUseRawPost = !! rawPost;
+	const shouldUseRawPost = !!rawPost;
 
-	const post = shouldUseRawPost ? rawPost : getSitePost( state, siteId, postId );
+	const post = shouldUseRawPost ? rawPost : getSitePost(state, siteId, postId);
 
-	if ( ! post ) {
+	if (!post) {
 		return null;
 	}
 
 	const { URL: url, status } = post;
-	if ( ! url || status === 'trash' ) {
+	if (!url || status === 'trash') {
 		return null;
 	}
 
-	if ( post.preview_URL ) {
+	if (post.preview_URL) {
 		return post.preview_URL;
 	}
 
 	let previewUrl = url;
-	if ( 'publish' !== status ) {
+	if ('publish' !== status) {
 		previewUrl = addQueryArgs(
 			{
 				preview: true,
@@ -47,10 +47,10 @@ export function getPostPreviewUrl( state, siteId, postId, options = false ) {
 	}
 
 	// Support mapped domains https
-	const site = getSite( state, siteId );
-	if ( site && site.options ) {
+	const site = getSite(state, siteId);
+	if (site && site.options) {
 		const { is_mapped_domain, unmapped_url } = site.options;
-		previewUrl = is_mapped_domain ? previewUrl.replace( site.URL, unmapped_url ) : previewUrl;
+		previewUrl = is_mapped_domain ? previewUrl.replace(site.URL, unmapped_url) : previewUrl;
 	}
 
 	return previewUrl;

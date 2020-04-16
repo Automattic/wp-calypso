@@ -20,8 +20,8 @@ const initialState = {
 	},
 };
 
-describe( 'reducer', () => {
-	test( 'should store the current query for more than one site', () => {
+describe('reducer', () => {
+	test('should store the current query for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 234,
@@ -29,9 +29,9 @@ describe( 'reducer', () => {
 				search: 'test',
 			},
 		};
-		const originalState = deepFreeze( initialState );
-		const newState = reducer( originalState, action );
-		expect( newState ).to.eql( {
+		const originalState = deepFreeze(initialState);
+		const newState = reducer(originalState, action);
+		expect(newState).to.eql({
 			123: {
 				edits: { currentlyEditingId: 1, changes: { first_name: 'Joan' } },
 				list: { currentPage: 3, currentSearch: '' },
@@ -40,10 +40,10 @@ describe( 'reducer', () => {
 				edits: { currentlyEditingId: null, changes: {} },
 				list: { currentPage: 1, currentSearch: 'test' },
 			},
-		} );
-	} );
+		});
+	});
 
-	test( 'should track the order edits for more than one site', () => {
+	test('should track the order edits for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 234,
@@ -52,9 +52,9 @@ describe( 'reducer', () => {
 				first_name: 'Fiona',
 			},
 		};
-		const originalState = deepFreeze( initialState );
-		const newState = reducer( originalState, action );
-		expect( newState ).to.eql( {
+		const originalState = deepFreeze(initialState);
+		const newState = reducer(originalState, action);
+		expect(newState).to.eql({
 			123: {
 				edits: { currentlyEditingId: 1, changes: { first_name: 'Joan' } },
 				list: { currentPage: 3, currentSearch: '' },
@@ -63,6 +63,6 @@ describe( 'reducer', () => {
 				edits: { currentlyEditingId: 2, changes: { first_name: 'Fiona' } },
 				list: { currentPage: 1, currentSearch: '' },
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

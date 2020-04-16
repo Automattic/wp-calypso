@@ -1,4 +1,4 @@
 module.exports = {
-	php: require( './php' ),
-	pot: require( './pot' ),
+	php: require('./php'),
+	pot: require('./pot'),
 };

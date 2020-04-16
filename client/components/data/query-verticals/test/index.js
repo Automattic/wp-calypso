@@ -9,41 +9,41 @@ import { shallow } from 'enzyme';
  */
 import { QueryVerticals } from '../';
 
-describe( 'QueryVerticals', () => {
-	test( 'should mount as an empty object', () => {
-		const wrapped = shallow( <QueryVerticals /> );
+describe('QueryVerticals', () => {
+	test('should mount as an empty object', () => {
+		const wrapped = shallow(<QueryVerticals />);
 
-		expect( wrapped ).toEqual( {} );
-	} );
+		expect(wrapped).toEqual({});
+	});
 
-	test( 'should call request on mount.', () => {
+	test('should call request on mount.', () => {
 		const requestVerticals = jest.fn();
 
-		shallow( <QueryVerticals requestVerticals={ requestVerticals } searchTerm="Foo" /> );
+		shallow(<QueryVerticals requestVerticals={requestVerticals} searchTerm="Foo" />);
 
-		expect( requestVerticals ).toHaveBeenCalled();
-	} );
+		expect(requestVerticals).toHaveBeenCalled();
+	});
 
-	test( 'should not call request on mount if no search term is given.', () => {
+	test('should not call request on mount if no search term is given.', () => {
 		const requestVerticals = jest.fn();
 
-		shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
+		shallow(<QueryVerticals requestVerticals={requestVerticals} />);
 
-		expect( requestVerticals ).not.toHaveBeenCalled();
-	} );
+		expect(requestVerticals).not.toHaveBeenCalled();
+	});
 
-	test( 'should not call request on mount if a matching fetched result is found in state.', () => {
+	test('should not call request on mount if a matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
-		shallow( <QueryVerticals requestVerticals={ requestVerticals } isFetched={ true } /> );
+		shallow(<QueryVerticals requestVerticals={requestVerticals} isFetched={true} />);
 
-		expect( requestVerticals ).not.toHaveBeenCalled();
-	} );
+		expect(requestVerticals).not.toHaveBeenCalled();
+	});
 
-	test( 'should call request on update if no matching fetched result is found in state.', () => {
+	test('should call request on update if no matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
-		const wrapped = shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
+		const wrapped = shallow(<QueryVerticals requestVerticals={requestVerticals} />);
 
 		const updatedProps = {
 			siteType: '',
@@ -52,19 +52,19 @@ describe( 'QueryVerticals', () => {
 			isFetched: false,
 		};
 
-		wrapped.setProps( updatedProps );
+		wrapped.setProps(updatedProps);
 
-		expect( requestVerticals ).toHaveBeenCalledWith(
+		expect(requestVerticals).toHaveBeenCalledWith(
 			updatedProps.searchTerm,
 			updatedProps.siteType,
 			updatedProps.limit
 		);
-	} );
+	});
 
-	test( 'should not call request on update if a matching fetched result is found in state.', () => {
+	test('should not call request on update if a matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
-		const wrapped = shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
+		const wrapped = shallow(<QueryVerticals requestVerticals={requestVerticals} />);
 
 		const updatedProps = {
 			searchTerm: 'Foo',
@@ -72,82 +72,82 @@ describe( 'QueryVerticals', () => {
 			isFetched: true,
 		};
 
-		wrapped.setProps( updatedProps );
+		wrapped.setProps(updatedProps);
 
-		expect( requestVerticals ).not.toHaveBeenCalled();
-	} );
+		expect(requestVerticals).not.toHaveBeenCalled();
+	});
 
-	test( 'should create a debounce-wrapped function if debounce time is more than 0 on mount.', () => {
+	test('should create a debounce-wrapped function if debounce time is more than 0 on mount.', () => {
 		const requestVerticals = jest.fn();
 		const debounceFunc = jest.fn();
 		const debounceTime = 100;
 
 		shallow(
 			<QueryVerticals
-				requestVerticals={ requestVerticals }
-				debounceFunc={ debounceFunc }
-				debounceTime={ debounceTime }
+				requestVerticals={requestVerticals}
+				debounceFunc={debounceFunc}
+				debounceTime={debounceTime}
 			/>
 		);
 
-		expect( debounceFunc ).toHaveBeenCalledWith( requestVerticals, debounceTime );
-	} );
+		expect(debounceFunc).toHaveBeenCalledWith(requestVerticals, debounceTime);
+	});
 
-	test( 'should not create a debounce-wrapped function if debounce time is 0.', () => {
+	test('should not create a debounce-wrapped function if debounce time is 0.', () => {
 		const requestVerticals = jest.fn();
 		const debounceFunc = jest.fn();
 
 		shallow(
 			<QueryVerticals
-				requestVerticals={ requestVerticals }
-				debounceFunc={ debounceFunc }
-				debounceTime={ 0 }
+				requestVerticals={requestVerticals}
+				debounceFunc={debounceFunc}
+				debounceTime={0}
 			/>
 		);
 
-		expect( debounceFunc ).not.toHaveBeenCalled();
-	} );
+		expect(debounceFunc).not.toHaveBeenCalled();
+	});
 
-	test( 'should update the debounced function if the debounce time has changed.', () => {
+	test('should update the debounced function if the debounce time has changed.', () => {
 		const requestVerticals = jest.fn();
 		const debounceFunc = jest.fn();
 
 		const wrapped = shallow(
 			<QueryVerticals
-				requestVerticals={ requestVerticals }
-				debounceFunc={ debounceFunc }
-				debounceTime={ 100 }
+				requestVerticals={requestVerticals}
+				debounceFunc={debounceFunc}
+				debounceTime={100}
 			/>
 		);
 
 		const updatedDebounceTime = 200;
 
-		wrapped.setProps( {
+		wrapped.setProps({
 			debounceTime: updatedDebounceTime,
-		} );
+		});
 
-		expect( debounceFunc ).toHaveBeenCalledWith( requestVerticals, updatedDebounceTime );
-	} );
+		expect(debounceFunc).toHaveBeenCalledWith(requestVerticals, updatedDebounceTime);
+	});
 
-	test( 'should not update the debounced function if the debounce time keeps the same.', () => {
+	test('should not update the debounced function if the debounce time keeps the same.', () => {
 		const requestVerticals = jest.fn();
 		const debounceFunc = jest.fn();
 		const debounceTime = 100;
 
 		const wrapped = shallow(
 			<QueryVerticals
-				requestVerticals={ requestVerticals }
-				debounceFunc={ debounceFunc }
-				debounceTime={ debounceTime }
+				requestVerticals={requestVerticals}
+				debounceFunc={debounceFunc}
+				debounceTime={debounceTime}
 			/>
 		);
 
 		debounceFunc.mockClear();
 
-		wrapped.setProps( {
+		wrapped.setProps({
 			debounceTime,
-		} );
+		});
 
-		expect( debounceFunc ).not.toHaveBeenCalled();
-	} );
-} );
+		expect(debounceFunc).not.toHaveBeenCalled();
+	});
+});

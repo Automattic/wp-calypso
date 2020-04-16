@@ -21,21 +21,21 @@ const PromoCardExample = () => {
 		path: referralImage,
 		alt: 'Using Props',
 	};
-	const clicked = () => alert( 'Clicked!' );
+	const clicked = () => alert('Clicked!');
 	return (
 		<div className="design-assets__group">
 			<div>
-				<PromoCard title="Under-used Feature" image={ img } isPrimary={ false }>
+				<PromoCard title="Under-used Feature" image={img} isPrimary={false}>
 					<p>
 						This is a description of the action. It gives a bit more detail and explains what we are
 						inviting the user to do.
 					</p>
 					<PromoCardCta
-						cta={ {
+						cta={{
 							feature: FEATURE_MEMBERSHIPS,
 							upgradeButton: { text: 'Upgrade!', action: clicked },
 							defaultButton: { text: 'Memberships', action: clicked },
-						} }
+						}}
 						learnMoreLink="/learn-more"
 					/>
 				</PromoCard>

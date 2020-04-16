@@ -11,29 +11,29 @@ import sinon from 'sinon';
 import createSelector from '../';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'index', () => {
+describe('index', () => {
 	let selector, getSitePosts;
 
-	useSandbox( sandbox => {
-		sandbox.stub( console, 'warn' );
-		selector = sandbox.spy( ( state, siteId ) => {
-			return filter( state.posts, { site_ID: siteId } );
-		} );
-	} );
+	useSandbox((sandbox) => {
+		sandbox.stub(console, 'warn');
+		selector = sandbox.spy((state, siteId) => {
+			return filter(state.posts, { site_ID: siteId });
+		});
+	});
 
-	beforeAll( () => {
-		getSitePosts = createSelector( selector, state => state.posts );
-	} );
+	beforeAll(() => {
+		getSitePosts = createSelector(selector, (state) => state.posts);
+	});
 
-	beforeEach( () => {
+	beforeEach(() => {
 		getSitePosts.memoizedSelector.cache.clear();
-	} );
+	});
 
-	test( 'should expose its memoized function', () => {
-		expect( getSitePosts.memoizedSelector ).to.be.a( 'function' );
-	} );
+	test('should expose its memoized function', () => {
+		expect(getSitePosts.memoizedSelector).to.be.a('function');
+	});
 
-	test( 'should create a function which returns the expected value when called', () => {
+	test('should create a function which returns the expected value when called', () => {
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -45,17 +45,17 @@ describe( 'index', () => {
 			},
 		};
 
-		expect( getSitePosts( state, 2916284 ) ).to.eql( [
+		expect(getSitePosts(state, 2916284)).to.eql([
 			{
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Hello World',
 			},
-		] );
-	} );
+		]);
+	});
 
-	test( 'should cache the result of a selector function', () => {
+	test('should cache the result of a selector function', () => {
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -67,29 +67,29 @@ describe( 'index', () => {
 			},
 		};
 
-		getSitePosts( state, 2916284 );
-		getSitePosts( state, 2916284 );
+		getSitePosts(state, 2916284);
+		getSitePosts(state, 2916284);
 
-		expect( selector ).to.have.been.calledOnce;
-	} );
+		expect(selector).to.have.been.calledOnce;
+	});
 
-	test( 'should warn against complex arguments in development mode', () => {
+	test('should warn against complex arguments in development mode', () => {
 		const state = { posts: {} };
 
-		getSitePosts( state, 1 );
-		getSitePosts( state, '' );
-		getSitePosts( state, 'foo' );
-		getSitePosts( state, true );
-		getSitePosts( state, null );
-		getSitePosts( state, undefined );
-		getSitePosts( state, {} );
-		getSitePosts( state, [] );
-		getSitePosts( state, 1, [] );
+		getSitePosts(state, 1);
+		getSitePosts(state, '');
+		getSitePosts(state, 'foo');
+		getSitePosts(state, true);
+		getSitePosts(state, null);
+		getSitePosts(state, undefined);
+		getSitePosts(state, {});
+		getSitePosts(state, []);
+		getSitePosts(state, 1, []);
 
-		expect( console.warn ).to.have.been.calledThrice;
-	} );
+		expect(console.warn).to.have.been.calledThrice;
+	});
 
-	test( 'should return the expected value of differing arguments', () => {
+	test('should return the expected value of differing arguments', () => {
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -107,22 +107,22 @@ describe( 'index', () => {
 			},
 		};
 
-		getSitePosts( state, 2916284 );
-		const sitePosts = getSitePosts( state, 38303081 );
-		getSitePosts( state, 2916284 );
+		getSitePosts(state, 2916284);
+		const sitePosts = getSitePosts(state, 38303081);
+		getSitePosts(state, 2916284);
 
-		expect( sitePosts ).to.eql( [
+		expect(sitePosts).to.eql([
 			{
 				ID: 413,
 				site_ID: 38303081,
 				global_ID: '6c831c187ffef321eb43a67761a525a3',
 				title: 'Ribs & Chicken',
 			},
-		] );
-		expect( selector ).to.have.been.calledTwice;
-	} );
+		]);
+		expect(selector).to.have.been.calledTwice;
+	});
 
-	test( 'should bust the cache when watched state changes', () => {
+	test('should bust the cache when watched state changes', () => {
 		const currentState = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -134,7 +134,7 @@ describe( 'index', () => {
 			},
 		};
 
-		getSitePosts( currentState, 2916284 );
+		getSitePosts(currentState, 2916284);
 
 		const nextState = {
 			posts: {
@@ -153,19 +153,19 @@ describe( 'index', () => {
 			},
 		};
 
-		expect( getSitePosts( nextState, 2916284 ) ).to.eql( [
+		expect(getSitePosts(nextState, 2916284)).to.eql([
 			{
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Hello World',
 			},
-		] );
-		expect( selector ).to.have.been.calledTwice;
-	} );
+		]);
+		expect(selector).to.have.been.calledTwice;
+	});
 
-	test( 'should accept an array of dependent state values', () => {
-		const getSitePostsWithArrayDependants = createSelector( selector, state => [ state.posts ] );
+	test('should accept an array of dependent state values', () => {
+		const getSitePostsWithArrayDependants = createSelector(selector, (state) => [state.posts]);
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -177,15 +177,15 @@ describe( 'index', () => {
 			},
 		};
 
-		getSitePostsWithArrayDependants( state, 2916284 );
-		getSitePostsWithArrayDependants( state, 2916284 );
+		getSitePostsWithArrayDependants(state, 2916284);
+		getSitePostsWithArrayDependants(state, 2916284);
 
-		expect( selector ).to.have.been.calledOnce;
-	} );
+		expect(selector).to.have.been.calledOnce;
+	});
 
-	test( 'should accept an array of dependent selectors', () => {
-		const getPosts = state => state.posts;
-		const getSitePostsWithArrayDependants = createSelector( selector, [ getPosts ] );
+	test('should accept an array of dependent selectors', () => {
+		const getPosts = (state) => state.posts;
+		const getSitePostsWithArrayDependants = createSelector(selector, [getPosts]);
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -199,16 +199,16 @@ describe( 'index', () => {
 
 		const nextState = { posts: {} };
 
-		getSitePostsWithArrayDependants( state, 2916284 );
-		getSitePostsWithArrayDependants( state, 2916284 );
-		getSitePostsWithArrayDependants( nextState, 2916284 );
-		getSitePostsWithArrayDependants( nextState, 2916284 );
+		getSitePostsWithArrayDependants(state, 2916284);
+		getSitePostsWithArrayDependants(state, 2916284);
+		getSitePostsWithArrayDependants(nextState, 2916284);
+		getSitePostsWithArrayDependants(nextState, 2916284);
 
-		expect( selector ).to.have.been.calledTwice;
-	} );
+		expect(selector).to.have.been.calledTwice;
+	});
 
-	test( 'should default to watching entire state, returning cached result if no changes', () => {
-		const getSitePostsWithDefaultGetDependants = createSelector( selector );
+	test('should default to watching entire state, returning cached result if no changes', () => {
+		const getSitePostsWithDefaultGetDependants = createSelector(selector);
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -220,14 +220,14 @@ describe( 'index', () => {
 			},
 		};
 
-		getSitePostsWithDefaultGetDependants( state, 2916284 );
-		getSitePostsWithDefaultGetDependants( state, 2916284 );
+		getSitePostsWithDefaultGetDependants(state, 2916284);
+		getSitePostsWithDefaultGetDependants(state, 2916284);
 
-		expect( selector ).to.have.been.calledOnce;
-	} );
+		expect(selector).to.have.been.calledOnce;
+	});
 
-	test( 'should default to watching entire state, busting if state has changed', () => {
-		const getSitePostsWithDefaultGetDependants = createSelector( selector );
+	test('should default to watching entire state, busting if state has changed', () => {
+		const getSitePostsWithDefaultGetDependants = createSelector(selector);
 		const currentState = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -239,7 +239,7 @@ describe( 'index', () => {
 			},
 		};
 
-		getSitePostsWithDefaultGetDependants( currentState, 2916284 );
+		getSitePostsWithDefaultGetDependants(currentState, 2916284);
 
 		const nextState = {
 			posts: {
@@ -258,42 +258,42 @@ describe( 'index', () => {
 			},
 		};
 
-		getSitePostsWithDefaultGetDependants( nextState, 2916284 );
+		getSitePostsWithDefaultGetDependants(nextState, 2916284);
 
-		expect( selector ).to.have.been.calledTwice;
-	} );
+		expect(selector).to.have.been.calledTwice;
+	});
 
-	test( 'should accept an optional custom cache key generating function', () => {
+	test('should accept an optional custom cache key generating function', () => {
 		const getSitePostsWithCustomGetCacheKey = createSelector(
 			selector,
-			state => state.posts,
-			( state, siteId ) => `CUSTOM${ siteId }`
+			(state) => state.posts,
+			(state, siteId) => `CUSTOM${siteId}`
 		);
 
-		getSitePostsWithCustomGetCacheKey( { posts: {} }, 2916284 );
+		getSitePostsWithCustomGetCacheKey({ posts: {} }, 2916284);
 
-		expect( getSitePostsWithCustomGetCacheKey.memoizedSelector.cache.has( 'CUSTOM2916284' ) ).to.be
+		expect(getSitePostsWithCustomGetCacheKey.memoizedSelector.cache.has('CUSTOM2916284')).to.be
 			.true;
-	} );
+	});
 
-	test( 'should call dependant state getter with arguments', () => {
+	test('should call dependant state getter with arguments', () => {
 		const getDeps = sinon.spy();
-		const memoizedSelector = createSelector( () => null, getDeps );
+		const memoizedSelector = createSelector(() => null, getDeps);
 		const state = {};
 
-		memoizedSelector( state, 1, 2, 3 );
+		memoizedSelector(state, 1, 2, 3);
 
-		expect( getDeps ).to.have.been.calledWithExactly( state, 1, 2, 3 );
-	} );
+		expect(getDeps).to.have.been.calledWithExactly(state, 1, 2, 3);
+	});
 
-	test( 'should handle an array of selectors instead of a dependant state getter', () => {
+	test('should handle an array of selectors instead of a dependant state getter', () => {
 		const getPosts = sinon.spy();
 		const getQuuxs = sinon.spy();
-		const memoizedSelector = createSelector( () => null, [ getPosts, getQuuxs ] );
+		const memoizedSelector = createSelector(() => null, [getPosts, getQuuxs]);
 		const state = {};
 
-		memoizedSelector( state, 1, 2, 3 );
-		expect( getPosts ).to.have.been.calledWithExactly( state, 1, 2, 3 );
-		expect( getQuuxs ).to.have.been.calledWithExactly( state, 1, 2, 3 );
-	} );
-} );
+		memoizedSelector(state, 1, 2, 3);
+		expect(getPosts).to.have.been.calledWithExactly(state, 1, 2, 3);
+		expect(getQuuxs).to.have.been.calledWithExactly(state, 1, 2, 3);
+	});
+});

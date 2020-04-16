@@ -17,25 +17,25 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class DisconnectSiteLink extends PureComponent {
 	handleClick = () => {
-		this.props.recordTracksEvent( 'calypso_jetpack_disconnect_start' );
+		this.props.recordTracksEvent('calypso_jetpack_disconnect_start');
 	};
 
 	render() {
 		const { isAutomatedTransfer, siteId, siteSlug, translate } = this.props;
 
-		if ( ! siteId || isAutomatedTransfer ) {
+		if (!siteId || isAutomatedTransfer) {
 			return null;
 		}
 
 		return (
 			<div className="manage-connection__disconnect-link">
 				<SiteToolsLink
-					href={ '/settings/disconnect-site/' + siteSlug }
-					onClick={ this.handleClick }
-					title={ translate( 'Disconnect from WordPress.com' ) }
-					description={ translate(
+					href={'/settings/disconnect-site/' + siteSlug}
+					onClick={this.handleClick}
+					title={translate('Disconnect from WordPress.com')}
+					description={translate(
 						'Your site will no longer send data to WordPress.com and Jetpack features will stop working.'
-					) }
+					)}
 					isWarning
 				/>
 			</div>
@@ -44,14 +44,14 @@ class DisconnectSiteLink extends PureComponent {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+			isAutomatedTransfer: isSiteAutomatedTransfer(state, siteId),
 			siteId,
-			siteSlug: getSiteSlug( state, siteId ),
+			siteSlug: getSiteSlug(state, siteId),
 		};
 	},
 	{ recordTracksEvent }
-)( localize( DisconnectSiteLink ) );
+)(localize(DisconnectSiteLink));

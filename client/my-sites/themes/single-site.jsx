@@ -16,35 +16,35 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isThemeActive } from 'state/themes/selectors';
 
-const SingleSiteThemeShowcaseWithOptions = props => {
+const SingleSiteThemeShowcaseWithOptions = (props) => {
 	const { isJetpack, siteId, translate } = props;
 
 	// If we've only just switched from single to multi-site, there's a chance
 	// this component is still being rendered with site unset, so we need to guard
 	// against that case.
-	if ( ! siteId ) {
+	if (!siteId) {
 		return <Main className="themes" />;
 	}
 
-	if ( isJetpack ) {
+	if (isJetpack) {
 		return (
 			<SingleSiteThemeShowcaseJetpack
-				{ ...props }
-				siteId={ siteId }
+				{...props}
+				siteId={siteId}
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
 				source="showcase"
-				listLabel={ translate( 'Uploaded themes' ) }
-				placeholderCount={ 5 }
+				listLabel={translate('Uploaded themes')}
+				placeholderCount={5}
 			/>
 		);
 	}
 
 	return (
 		<SingleSiteThemeShowcaseWpcom
-			{ ...props }
+			{...props}
 			origin="wpcom"
-			siteId={ siteId }
+			siteId={siteId}
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
 			source="showcase"
@@ -52,12 +52,12 @@ const SingleSiteThemeShowcaseWithOptions = props => {
 	);
 };
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 	return {
 		siteId: selectedSiteId,
-		isJetpack: isJetpackSite( state, selectedSiteId ),
-		getScreenshotOption: themeId =>
-			isThemeActive( state, themeId, selectedSiteId ) ? 'customize' : 'info',
+		isJetpack: isJetpackSite(state, selectedSiteId),
+		getScreenshotOption: (themeId) =>
+			isThemeActive(state, themeId, selectedSiteId) ? 'customize' : 'info',
 	};
-} )( localize( SingleSiteThemeShowcaseWithOptions ) );
+})(localize(SingleSiteThemeShowcaseWithOptions));

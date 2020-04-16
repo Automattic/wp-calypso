@@ -27,11 +27,11 @@ class EditorMediaModalGalleryEditItem extends Component {
 
 	renderCaption = () => {
 		const { site, item, canUserUploadFiles } = this.props;
-		if ( ! canUserUploadFiles ) {
+		if (!canUserUploadFiles) {
 			return;
 		}
 
-		return <EditorMediaModalGalleryCaption siteId={ site.ID } item={ item } />;
+		return <EditorMediaModalGalleryCaption siteId={site.ID} item={item} />;
 	};
 
 	render() {
@@ -39,20 +39,20 @@ class EditorMediaModalGalleryEditItem extends Component {
 
 		return (
 			<div className="editor-media-modal-gallery__edit-item">
-				<MediaLibraryListItem media={ item } scale={ 1 } photon={ false } />
-				{ this.renderCaption() }
-				{ showRemoveButton && (
-					<EditorMediaModalGalleryRemoveButton siteId={ site.ID } itemId={ item.ID } />
-				) }
+				<MediaLibraryListItem media={item} scale={1} photon={false} />
+				{this.renderCaption()}
+				{showRemoveButton && (
+					<EditorMediaModalGalleryRemoveButton siteId={site.ID} itemId={item.ID} />
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { site = {} } ) => {
-	const canUserUploadFiles = canCurrentUser( state, site.ID, 'upload_files' );
+export default connect((state, { site = {} }) => {
+	const canUserUploadFiles = canCurrentUser(state, site.ID, 'upload_files');
 
 	return {
 		canUserUploadFiles,
 	};
-} )( EditorMediaModalGalleryEditItem );
+})(EditorMediaModalGalleryEditItem);

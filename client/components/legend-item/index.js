@@ -32,11 +32,11 @@ class LegendItem extends Component {
 	};
 
 	handleMouseOver = () => {
-		this.props.onMouseOver( this.props.seriesIndex );
+		this.props.onMouseOver(this.props.seriesIndex);
 	};
 
 	handleMouseOut = () => {
-		this.props.onMouseOut( this.props.seriesIndex );
+		this.props.onMouseOut(this.props.seriesIndex);
 	};
 
 	renderValueAndPercent() {
@@ -44,16 +44,16 @@ class LegendItem extends Component {
 
 		let valueString = '';
 
-		if ( value && percent ) {
-			valueString = `${ value } (${ percent }%)`;
-		} else if ( value ) {
+		if (value && percent) {
+			valueString = `${value} (${percent}%)`;
+		} else if (value) {
 			valueString = value;
-		} else if ( percent ) {
-			valueString = `${ percent }%`;
+		} else if (percent) {
+			valueString = `${percent}%`;
 		}
 
 		return valueString.length > 0 ? (
-			<div className={ 'legend-item__detail-value' }>{ valueString }</div>
+			<div className={'legend-item__detail-value'}>{valueString}</div>
 		) : null;
 	}
 
@@ -64,30 +64,28 @@ class LegendItem extends Component {
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			<div
 				className="legend-item"
-				onMouseOver={ this.handleMouseOver }
-				onMouseOut={ this.handleMouseOut }
+				onMouseOver={this.handleMouseOver}
+				onMouseOut={this.handleMouseOut}
 			>
 				<div className="legend-item__title">
 					<svg
-						className={ 'legend-item__title-sample-drawing' }
-						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
+						className={'legend-item__title-sample-drawing'}
+						viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
 					>
 						<circle
-							className={ circleClassName }
-							cx={ SVG_SIZE / 2 }
-							cy={ SVG_SIZE / 2 }
-							r={ SVG_SIZE / 2 }
+							className={circleClassName}
+							cx={SVG_SIZE / 2}
+							cy={SVG_SIZE / 2}
+							r={SVG_SIZE / 2}
 						/>
 					</svg>
 
-					<div className={ 'legend-item__title-name' }>{ name }</div>
+					<div className={'legend-item__title-name'}>{name}</div>
 				</div>
 
 				<div className="legend-item__detail">
-					{ this.renderValueAndPercent() }
-					{ description && (
-						<div className={ 'legend-item__detail-description' }>{ description }</div>
-					) }
+					{this.renderValueAndPercent()}
+					{description && <div className={'legend-item__detail-description'}>{description}</div>}
 				</div>
 			</div>
 		);

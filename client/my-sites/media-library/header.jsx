@@ -44,67 +44,67 @@ class MediaLibraryHeader extends React.Component {
 		isMoreOptionsVisible: false,
 	};
 
-	setMoreOptionsContext = component => {
-		if ( ! component ) {
+	setMoreOptionsContext = (component) => {
+		if (!component) {
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			moreOptionsContext: component,
-		} );
+		});
 	};
 
-	toggleAddViaUrl = state => {
-		this.setState( {
+	toggleAddViaUrl = (state) => {
+		this.setState({
 			addingViaUrl: state,
 			isMoreOptionsVisible: false,
-		} );
+		});
 	};
 
-	toggleMoreOptions = state => {
-		this.setState( {
+	toggleMoreOptions = (state) => {
+		this.setState({
 			isMoreOptionsVisible: state,
-		} );
+		});
 	};
 
 	renderUploadButtons = () => {
 		const { site, filter, onAddMedia } = this.props;
 
-		if ( ! userCan( 'upload_files', site ) ) {
+		if (!userCan('upload_files', site)) {
 			return;
 		}
 
 		return (
 			<ButtonGroup className="media-library__upload-buttons">
 				<UploadButton
-					site={ site }
-					filter={ filter }
-					onAddMedia={ onAddMedia }
+					site={site}
+					filter={filter}
+					onAddMedia={onAddMedia}
 					className="media-library__upload-button button is-compact"
 				>
 					<Gridicon icon="add-image" />
 					<span className="media-library__upload-button-label">
-						{ this.props.translate( 'Add new', { context: 'Media upload' } ) }
+						{this.props.translate('Add new', { context: 'Media upload' })}
 					</span>
 				</UploadButton>
 				<Button
 					compact
-					ref={ this.setMoreOptionsContext }
-					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
+					ref={this.setMoreOptionsContext}
+					onClick={this.toggleMoreOptions.bind(this, !this.state.isMoreOptionsVisible)}
 					className="button media-library__upload-more"
 					data-tip-target="media-library-upload-more"
 				>
-					<ScreenReaderText>{ this.props.translate( 'More Options' ) }</ScreenReaderText>
-					<Gridicon icon="chevron-down" size={ 18 } />
+					<ScreenReaderText>{this.props.translate('More Options')}</ScreenReaderText>
+					<Gridicon icon="chevron-down" size={18} />
 					<PopoverMenu
-						context={ this.state.moreOptionsContext }
-						isVisible={ this.state.isMoreOptionsVisible }
-						onClose={ this.toggleMoreOptions.bind( this, false ) }
+						context={this.state.moreOptionsContext}
+						isVisible={this.state.isMoreOptionsVisible}
+						onClose={this.toggleMoreOptions.bind(this, false)}
 						position="bottom right"
 						className="is-dialog-visible media-library__header-popover"
 					>
-						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
-							{ this.props.translate( 'Add via URL', { context: 'Media upload' } ) }
+						<PopoverMenuItem onClick={this.toggleAddViaUrl.bind(this, true)}>
+							{this.props.translate('Add via URL', { context: 'Media upload' })}
 						</PopoverMenuItem>
 					</PopoverMenu>
 				</Button>
@@ -115,12 +115,12 @@ class MediaLibraryHeader extends React.Component {
 	render() {
 		const { site, onAddMedia } = this.props;
 
-		if ( this.state.addingViaUrl ) {
+		if (this.state.addingViaUrl) {
 			return (
 				<MediaLibraryUploadUrl
-					site={ site }
-					onAddMedia={ onAddMedia }
-					onClose={ this.toggleAddViaUrl.bind( this, false ) }
+					site={site}
+					onAddMedia={onAddMedia}
+					onClose={this.toggleAddViaUrl.bind(this, false)}
 					className="media-library__header"
 				/>
 			);
@@ -128,23 +128,23 @@ class MediaLibraryHeader extends React.Component {
 
 		const card = (
 			<Card className="media-library__header">
-				{ this.renderUploadButtons() }
+				{this.renderUploadButtons()}
 				<MediaModalSecondaryActions
-					selectedItems={ this.props.selectedItems }
-					onViewDetails={ this.props.onViewDetails }
-					onDelete={ this.props.onDeleteItem }
-					site={ this.props.site }
-					view={ 'LIST' }
+					selectedItems={this.props.selectedItems}
+					onViewDetails={this.props.onViewDetails}
+					onDelete={this.props.onDeleteItem}
+					site={this.props.site}
+					view={'LIST'}
 				/>
-				<MediaLibraryScale onChange={ this.props.onMediaScaleChange } />
+				<MediaLibraryScale onChange={this.props.onMediaScaleChange} />
 			</Card>
 		);
 
-		if ( this.props.sticky ) {
-			return <StickyPanel minLimit={ 660 }>{ card }</StickyPanel>;
+		if (this.props.sticky) {
+			return <StickyPanel minLimit={660}>{card}</StickyPanel>;
 		}
 		return card;
 	}
 }
 
-export default localize( MediaLibraryHeader );
+export default localize(MediaLibraryHeader);

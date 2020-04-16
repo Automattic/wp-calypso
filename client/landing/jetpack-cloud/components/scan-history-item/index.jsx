@@ -23,39 +23,33 @@ class ScanHistoryItem extends Component {
 		object: PropTypes.object,
 	};
 
-	entryActionClassNames( entry ) {
+	entryActionClassNames(entry) {
 		return {
 			'is-fixed': entry.action === 'fixed',
 			'is-ignored': entry.action === 'ignored',
 		};
 	}
 
-	renderEntryHeader( entry ) {
+	renderEntryHeader(entry) {
 		return (
 			<>
 				<div className="scan-history-item__subheader">
 					<span className="scan-history-item__date">
-						{ translate( 'Threat found on %s', { args: entry.detectionDate } ) }
+						{translate('Threat found on %s', { args: entry.detectionDate })}
 					</span>
 					<span className="scan-history-item__date-separator"></span>
 					<span
-						className={ classnames(
-							'scan-history-item__date',
-							this.entryActionClassNames( entry )
-						) }
+						className={classnames('scan-history-item__date', this.entryActionClassNames(entry))}
 					>
-						{ translate( 'Threat %(action)s on %(actionDate)s', {
+						{translate('Threat %(action)s on %(actionDate)s', {
 							args: { action: entry.action, actionDate: entry.actionDate },
-						} ) }
+						})}
 					</span>
 				</div>
 				<Badge
-					className={ classnames(
-						'scan-history-item__badge',
-						this.entryActionClassNames( entry )
-					) }
+					className={classnames('scan-history-item__badge', this.entryActionClassNames(entry))}
 				>
-					<small>{ entry.action }</small>
+					<small>{entry.action}</small>
 				</Badge>
 			</>
 		);
@@ -66,16 +60,16 @@ class ScanHistoryItem extends Component {
 
 		return (
 			<LogItem
-				className={ classnames( 'scan-history-item', this.entryActionClassNames( entry ) ) }
-				header={ entry.title }
-				subheader={ this.renderEntryHeader( entry ) }
-				key={ entry.id }
+				className={classnames('scan-history-item', this.entryActionClassNames(entry))}
+				header={entry.title}
+				subheader={this.renderEntryHeader(entry)}
+				key={entry.id}
 			>
 				<ThreatDescription
-					action={ entry.action }
-					details={ entry.description.details }
-					fix={ entry.description.fix }
-					problem={ entry.description.problem }
+					action={entry.action}
+					details={entry.description.details}
+					fix={entry.description.fix}
+					problem={entry.description.problem}
 				/>
 			</LogItem>
 		);

@@ -13,13 +13,13 @@ import { isJetpackSite } from 'state/sites/selectors';
  * @returns {?object}        WordAds settings
  */
 export const getWordadsSettings = createSelector(
-	( state, siteId ) => {
-		const settings = state.wordads.settings.items[ siteId ];
-		if ( ! settings ) {
+	(state, siteId) => {
+		const settings = state.wordads.settings.items[siteId];
+		if (!settings) {
 			return null;
 		}
 
-		const siteIsJetpack = isJetpackSite( state, siteId );
+		const siteIsJetpack = isJetpackSite(state, siteId);
 		const normalizedSettings = {
 			us_checked: 'yes' === settings.us_resident,
 			// JP doesn't matter, force yes to make things easier
@@ -31,7 +31,7 @@ export const getWordadsSettings = createSelector(
 			...normalizedSettings,
 		};
 	},
-	( state, siteId ) => [ state.wordads.settings.items[ siteId ] ]
+	(state, siteId) => [state.wordads.settings.items[siteId]]
 );
 
 export default getWordadsSettings;

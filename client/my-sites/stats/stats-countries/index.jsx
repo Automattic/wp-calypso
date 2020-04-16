@@ -32,18 +32,18 @@ class StatCountries extends Component {
 
 		return (
 			<StatsModule
-				query={ query }
+				query={query}
 				path="countryviews"
-				period={ period }
-				showSummaryLink={ ! summary }
-				summary={ summary }
-				moduleStrings={ moduleStrings.countries }
+				period={period}
+				showSummaryLink={!summary}
+				summary={summary}
+				moduleStrings={moduleStrings.countries}
 				statType="statsCountryViews"
 			>
-				<Geochart query={ query } />
+				<Geochart query={query} />
 			</StatsModule>
 		);
 	}
 }
 
-export default localize( StatCountries );
+export default localize(StatCountries);

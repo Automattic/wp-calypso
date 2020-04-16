@@ -17,9 +17,9 @@ import { DEFAULT_TERM_QUERY } from './constants';
  * @param  {string}  key   Key to check
  * @returns {boolean}       Whether key value matches default query or is null
  */
-function isDefaultOrNullQueryValue( value, key ) {
+function isDefaultOrNullQueryValue(value, key) {
 	return (
-		null == value || DEFAULT_TERM_QUERY[ key ] === value // Double-equals null checks undefined, null
+		null == value || DEFAULT_TERM_QUERY[key] === value // Double-equals null checks undefined, null
 	);
 }
 
@@ -34,8 +34,8 @@ export default class TermQueryKey extends PaginatedQueryKey {
 	 * @param  {object} query Query object
 	 * @returns {string}       Serialized query
 	 */
-	static stringify( query ) {
-		return super.stringify( omitBy( query, isDefaultOrNullQueryValue ) );
+	static stringify(query) {
+		return super.stringify(omitBy(query, isDefaultOrNullQueryValue));
 	}
 
 	/**
@@ -44,7 +44,7 @@ export default class TermQueryKey extends PaginatedQueryKey {
 	 * @param  {string} key Serialized query
 	 * @returns {object}     Query object
 	 */
-	static parse( key ) {
-		return omitBy( super.parse( key ), isDefaultOrNullQueryValue );
+	static parse(key) {
+		return omitBy(super.parse(key), isDefaultOrNullQueryValue);
 	}
 }

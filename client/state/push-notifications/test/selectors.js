@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { getStatus } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#getStatus()', () => {
-		test( 'should return unknown if API is not ready', () => {
+describe('selectors', () => {
+	describe('#getStatus()', () => {
+		test('should return unknown if API is not ready', () => {
 			const mockState = {
 				pushNotifications: {
 					system: {
@@ -18,10 +18,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'unknown' );
-		} );
+			expect(getStatus(mockState)).to.eql('unknown');
+		});
 
-		test( 'should return denied if blocked & API is ready', () => {
+		test('should return denied if blocked & API is ready', () => {
 			const mockState = {
 				pushNotifications: {
 					system: {
@@ -30,10 +30,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'denied' );
-		} );
+			expect(getStatus(mockState)).to.eql('denied');
+		});
 
-		test( 'should return subscribed if enabled and wpcomSubscription.ID is truthy', () => {
+		test('should return subscribed if enabled and wpcomSubscription.ID is truthy', () => {
 			const mockState = {
 				pushNotifications: {
 					settings: {
@@ -48,10 +48,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'subscribed' );
-		} );
+			expect(getStatus(mockState)).to.eql('subscribed');
+		});
 
-		test( 'should return enabling if enabled and wpcomSubscription is null', () => {
+		test('should return enabling if enabled and wpcomSubscription is null', () => {
 			const mockState = {
 				pushNotifications: {
 					settings: {
@@ -63,10 +63,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'enabling' );
-		} );
+			expect(getStatus(mockState)).to.eql('enabling');
+		});
 
-		test( 'should return enabling if enabled and wpcomSubscription is false', () => {
+		test('should return enabling if enabled and wpcomSubscription is false', () => {
 			const mockState = {
 				pushNotifications: {
 					settings: {
@@ -79,10 +79,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'enabling' );
-		} );
+			expect(getStatus(mockState)).to.eql('enabling');
+		});
 
-		test( 'should return disabling if not enabled and wpcomSubscription is present', () => {
+		test('should return disabling if not enabled and wpcomSubscription is present', () => {
 			const mockState = {
 				pushNotifications: {
 					settings: {
@@ -97,10 +97,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'disabling' );
-		} );
+			expect(getStatus(mockState)).to.eql('disabling');
+		});
 
-		test( 'should return unsubscribed if not enabled and wpcomSubscription is null', () => {
+		test('should return unsubscribed if not enabled and wpcomSubscription is null', () => {
 			const mockState = {
 				pushNotifications: {
 					settings: {
@@ -112,10 +112,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'unsubscribed' );
-		} );
+			expect(getStatus(mockState)).to.eql('unsubscribed');
+		});
 
-		test( 'should return unsubscribed if not enabled and wpcomSubscription is false', () => {
+		test('should return unsubscribed if not enabled and wpcomSubscription is false', () => {
 			const mockState = {
 				pushNotifications: {
 					settings: {
@@ -128,7 +128,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'unsubscribed' );
-		} );
-	} );
-} );
+			expect(getStatus(mockState)).to.eql('unsubscribed');
+		});
+	});
+});

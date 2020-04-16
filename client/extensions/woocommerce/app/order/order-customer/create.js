@@ -28,23 +28,23 @@ import SectionHeader from 'components/section-header';
 class OrderCustomerInfo extends Component {
 	static propTypes = {
 		countries: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				code: PropTypes.string.isRequired,
 				name: PropTypes.string.isRequired,
 				states: PropTypes.arrayOf(
-					PropTypes.shape( {
+					PropTypes.shape({
 						code: PropTypes.string.isRequired,
 						name: PropTypes.string.isRequired,
-					} )
+					})
 				),
-			} )
+			})
 		),
 		editOrder: PropTypes.func.isRequired,
 		loadedLocations: PropTypes.bool,
-		orderId: PropTypes.oneOfType( [
+		orderId: PropTypes.oneOfType([
 			PropTypes.number, // A number indicates an existing order
-			PropTypes.shape( { id: PropTypes.string } ), // Placeholders have format { id: 'order_1' }
-		] ).isRequired,
+			PropTypes.shape({ id: PropTypes.string }), // Placeholders have format { id: 'order_1' }
+		]).isRequired,
 		siteId: PropTypes.number.isRequired,
 	};
 
@@ -55,35 +55,35 @@ class OrderCustomerInfo extends Component {
 	maybeFetchLocations = () => {
 		const { loadedLocations, siteId } = this.props;
 
-		if ( siteId && ! loadedLocations ) {
-			this.props.fetchLocations( siteId );
+		if (siteId && !loadedLocations) {
+			this.props.fetchLocations(siteId);
 		}
 	};
 
 	componentDidMount = () => {
-		this.maybeFetchLocations( this.props );
+		this.maybeFetchLocations(this.props);
 	};
 
 	componentDidUpdate = () => {
-		this.maybeFetchLocations( this.props );
+		this.maybeFetchLocations(this.props);
 	};
 
-	updateAddress = ( type = 'billing' ) => {
+	updateAddress = (type = 'billing') => {
 		const { siteId, order } = this.props;
-		return address => {
+		return (address) => {
 			const { copyToShipping = false, ...newAddress } = address;
-			if ( siteId ) {
-				this.props.editOrder( siteId, { id: order.id, [ type ]: newAddress } );
-				if ( copyToShipping && 'billing' === type ) {
-					this.props.editOrder( siteId, { id: order.id, shipping: newAddress } );
+			if (siteId) {
+				this.props.editOrder(siteId, { id: order.id, [type]: newAddress });
+				if (copyToShipping && 'billing' === type) {
+					this.props.editOrder(siteId, { id: order.id, shipping: newAddress });
 				}
 			}
 		};
 	};
 
-	toggleDialog = type => {
+	toggleDialog = (type) => {
 		return () => {
-			this.setState( { showDialog: type } );
+			this.setState({ showDialog: type });
 		};
 	};
 
@@ -92,85 +92,81 @@ class OrderCustomerInfo extends Component {
 		return [
 			<CustomerAddressDialog
 				key="dialog-billing"
-				address={ billing }
-				closeDialog={ this.toggleDialog( false ) }
+				address={billing}
+				closeDialog={this.toggleDialog(false)}
 				isBilling
-				isVisible={ 'billing' === this.state.showDialog }
-				updateAddress={ this.updateAddress( 'billing' ) }
+				isVisible={'billing' === this.state.showDialog}
+				updateAddress={this.updateAddress('billing')}
 			/>,
 			<CustomerAddressDialog
 				key="dialog-shipping"
-				address={ shipping }
-				closeDialog={ this.toggleDialog( false ) }
-				isVisible={ 'shipping' === this.state.showDialog }
-				updateAddress={ this.updateAddress( 'shipping' ) }
+				address={shipping}
+				closeDialog={this.toggleDialog(false)}
+				isVisible={'shipping' === this.state.showDialog}
+				updateAddress={this.updateAddress('shipping')}
 			/>,
 		];
 	};
 
-	renderBilling = ( address = {} ) => {
+	renderBilling = (address = {}) => {
 		const { countries, loadedLocations, translate } = this.props;
-		if ( ! loadedLocations ) {
+		if (!loadedLocations) {
 			return null;
 		}
 
-		if ( every( address, isEmpty ) ) {
+		if (every(address, isEmpty)) {
 			return (
-				<Button
-					className="order-customer__add-link"
-					onClick={ this.toggleDialog( 'billing' ) }
-					primary
-				>
-					{ translate( 'Add billing address' ) }
+				<Button className="order-customer__add-link" onClick={this.toggleDialog('billing')} primary>
+					{translate('Add billing address')}
 				</Button>
 			);
 		}
 		return (
 			<Fragment>
-				<h4>{ translate( 'Address' ) }</h4>
+				<h4>{translate('Address')}</h4>
 				<div className="order-customer__billing-address">
-					<p>{ `${ address.first_name } ${ address.last_name }` }</p>
-					<AddressView address={ getAddressViewFormat( address ) } countries={ countries } />
+					<p>{`${address.first_name} ${address.last_name}`}</p>
+					<AddressView address={getAddressViewFormat(address)} countries={countries} />
 				</div>
 
-				<h4>{ translate( 'Email' ) }</h4>
-				<p>{ address.email }</p>
+				<h4>{translate('Email')}</h4>
+				<p>{address.email}</p>
 
-				<h4>{ translate( 'Phone' ) }</h4>
-				<div className="order-customer__billing-phone">{ address.phone }</div>
-				<Button className="order-customer__add-link" onClick={ this.toggleDialog( 'billing' ) }>
-					{ translate( 'Edit Address' ) }
+				<h4>{translate('Phone')}</h4>
+				<div className="order-customer__billing-phone">{address.phone}</div>
+				<Button className="order-customer__add-link" onClick={this.toggleDialog('billing')}>
+					{translate('Edit Address')}
 				</Button>
 			</Fragment>
 		);
 	};
 
-	renderShipping = ( address = {} ) => {
+	renderShipping = (address = {}) => {
 		const { countries, loadedLocations, translate } = this.props;
-		if ( ! loadedLocations ) {
+		if (!loadedLocations) {
 			return null;
 		}
 
-		if ( every( address, isEmpty ) ) {
+		if (every(address, isEmpty)) {
 			return (
 				<Button
 					className="order-customer__add-link"
-					onClick={ this.toggleDialog( 'shipping' ) }
+					onClick={this.toggleDialog('shipping')}
 					primary
 				>
-					{ translate( 'Add shipping address' ) }
+					{translate('Add shipping address')}
 				</Button>
 			);
 		}
 		return (
 			<Fragment>
-				<h4>{ translate( 'Address' ) }</h4>
+				<h4>{translate('Address')}</h4>
 				<div className="order-customer__shipping-address">
-					<p>{ `${ address.first_name } ${ address.last_name }` }</p>
-					<AddressView address={ getAddressViewFormat( address ) } countries={ countries } />
+					<p>{`${address.first_name} ${address.last_name}`}</p>
+					<AddressView address={getAddressViewFormat(address)} countries={countries} />
 				</div>
-				<Button className="order-customer__add-link" onClick={ this.toggleDialog( 'shipping' ) }>
-					{ translate( 'Edit Address' ) }
+				<Button className="order-customer__add-link" onClick={this.toggleDialog('shipping')}>
+					{translate('Edit Address')}
 				</Button>
 			</Fragment>
 		);
@@ -178,43 +174,39 @@ class OrderCustomerInfo extends Component {
 
 	render() {
 		const { orderId, order = {}, translate } = this.props;
-		if ( ! orderId ) {
+		if (!orderId) {
 			return null;
 		}
 
 		return (
 			<div className="order-customer__create order-customer">
-				<SectionHeader label={ translate( 'Customer information' ) } />
+				<SectionHeader label={translate('Customer information')} />
 				<Card>
 					<div className="order-customer__container">
 						<div className="order-customer__billing">
-							<h3 className="order-customer__billing-details">
-								{ translate( 'Billing details' ) }
-							</h3>
-							{ this.renderBilling( order.billing ) }
+							<h3 className="order-customer__billing-details">{translate('Billing details')}</h3>
+							{this.renderBilling(order.billing)}
 						</div>
 
 						<div className="order-customer__shipping">
-							<h3 className="order-customer__shipping-details">
-								{ translate( 'Shipping details' ) }
-							</h3>
-							{ this.renderShipping( order.shipping ) }
+							<h3 className="order-customer__shipping-details">{translate('Shipping details')}</h3>
+							{this.renderShipping(order.shipping)}
 						</div>
 					</div>
 				</Card>
-				{ this.renderDialogs() }
+				{this.renderDialogs()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const order = getOrderWithEdits( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const order = getOrderWithEdits(state);
 
-		const loadedLocations = areLocationsLoaded( state, siteId );
-		const countries = getAllCountries( state, siteId );
+		const loadedLocations = areLocationsLoaded(state, siteId);
+		const countries = getAllCountries(state, siteId);
 
 		return {
 			countries,
@@ -223,5 +215,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder, fetchLocations }, dispatch )
-)( localize( OrderCustomerInfo ) );
+	(dispatch) => bindActionCreators({ editOrder, fetchLocations }, dispatch)
+)(localize(OrderCustomerInfo));

@@ -33,9 +33,9 @@ class Cards extends React.Component {
 				<Card
 					tagName="button"
 					displayAsLink
-					onClick={ function() {
-						alert( 'Thank you for clicking me!' );
-					} }
+					onClick={function () {
+						alert('Thank you for clicking me!');
+					}}
 				>
 					I am a clickable button that looks like a link
 				</Card>

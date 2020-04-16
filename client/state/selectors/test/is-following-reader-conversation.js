@@ -3,8 +3,8 @@
  */
 import { isFollowingReaderConversation } from 'state/reader/conversations/selectors';
 
-describe( 'isFollowingReaderConversation()', () => {
-	test( 'should return true for a known followed post', () => {
+describe('isFollowingReaderConversation()', () => {
+	test('should return true for a known followed post', () => {
 		const prevState = {
 			reader: {
 				conversations: {
@@ -14,11 +14,11 @@ describe( 'isFollowingReaderConversation()', () => {
 				},
 			},
 		};
-		const nextState = isFollowingReaderConversation( prevState, { siteId: 123, postId: 456 } );
-		expect( nextState ).toEqual( true );
-	} );
+		const nextState = isFollowingReaderConversation(prevState, { siteId: 123, postId: 456 });
+		expect(nextState).toEqual(true);
+	});
 
-	test( 'should return false for a muted post', () => {
+	test('should return false for a muted post', () => {
 		const prevState = {
 			reader: {
 				conversations: {
@@ -28,11 +28,11 @@ describe( 'isFollowingReaderConversation()', () => {
 				},
 			},
 		};
-		const nextState = isFollowingReaderConversation( prevState, { siteId: 123, postId: 456 } );
-		expect( nextState ).toEqual( false );
-	} );
+		const nextState = isFollowingReaderConversation(prevState, { siteId: 123, postId: 456 });
+		expect(nextState).toEqual(false);
+	});
 
-	test( 'should return false for an unknown post', () => {
+	test('should return false for an unknown post', () => {
 		const prevState = {
 			reader: {
 				conversations: {
@@ -42,7 +42,7 @@ describe( 'isFollowingReaderConversation()', () => {
 				},
 			},
 		};
-		const nextState = isFollowingReaderConversation( prevState, { siteId: 234, postId: 456 } );
-		expect( nextState ).toEqual( false );
-	} );
-} );
+		const nextState = isFollowingReaderConversation(prevState, { siteId: 234, postId: 456 });
+		expect(nextState).toEqual(false);
+	});
+});

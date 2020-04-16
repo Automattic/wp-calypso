@@ -44,42 +44,41 @@ export class PlanStorage extends Component {
 			siteSlug,
 		} = this.props;
 
-		if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
+		if ((jetpackSite && !atomicSite) || !canViewBar || !sitePlanSlug) {
 			return null;
 		}
 
-		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
+		if (planHasFeature(sitePlanSlug, FEATURE_UNLIMITED_STORAGE)) {
 			return null;
 		}
 
-		const planHasTopStorageSpace =
-			isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
+		const planHasTopStorageSpace = isBusinessPlan(sitePlanSlug) || isEcommercePlan(sitePlanSlug);
 
 		return (
-			<div className={ classNames( className, 'plan-storage' ) }>
-				<QueryMediaStorage siteId={ siteId } />
+			<div className={classNames(className, 'plan-storage')}>
+				<QueryMediaStorage siteId={siteId} />
 				<PlanStorageBar
-					siteSlug={ siteSlug }
-					sitePlanSlug={ sitePlanSlug }
-					mediaStorage={ this.props.mediaStorage }
-					displayUpgradeLink={ canUserUpgrade && ! planHasTopStorageSpace }
+					siteSlug={siteSlug}
+					sitePlanSlug={sitePlanSlug}
+					mediaStorage={this.props.mediaStorage}
+					displayUpgradeLink={canUserUpgrade && !planHasTopStorageSpace}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</PlanStorageBar>
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect((state, ownProps) => {
 	const { siteId } = ownProps;
 	return {
-		mediaStorage: getMediaStorage( state, siteId ),
-		jetpackSite: isJetpackSite( state, siteId ),
-		atomicSite: isAtomicSite( state, siteId ),
-		sitePlanSlug: getSitePlanSlug( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
-		canViewBar: canCurrentUser( state, siteId, 'publish_posts' ),
+		mediaStorage: getMediaStorage(state, siteId),
+		jetpackSite: isJetpackSite(state, siteId),
+		atomicSite: isAtomicSite(state, siteId),
+		sitePlanSlug: getSitePlanSlug(state, siteId),
+		siteSlug: getSiteSlug(state, siteId),
+		canUserUpgrade: canCurrentUser(state, siteId, 'manage_options'),
+		canViewBar: canCurrentUser(state, siteId, 'publish_posts'),
 	};
-} )( PlanStorage );
+})(PlanStorage);

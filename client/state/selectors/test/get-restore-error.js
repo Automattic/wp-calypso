@@ -10,8 +10,8 @@ import getRestoreError from 'state/selectors/get-restore-error';
 
 const SITE_ID = 1234;
 
-describe( 'getRestoreError()', () => {
-	test( 'should return null if no error exists for a site', () => {
+describe('getRestoreError()', () => {
+	test('should return null if no error exists for a site', () => {
 		const result = getRestoreError(
 			{
 				activityLog: {
@@ -20,10 +20,10 @@ describe( 'getRestoreError()', () => {
 			},
 			SITE_ID
 		);
-		expect( result ).to.be.null;
-	} );
+		expect(result).to.be.null;
+	});
 
-	test( 'should return an existing error for a site', () => {
+	test('should return an existing error for a site', () => {
 		const error = {
 			error: 'error',
 			message: 'Error.',
@@ -33,12 +33,12 @@ describe( 'getRestoreError()', () => {
 			{
 				activityLog: {
 					restoreError: {
-						[ SITE_ID ]: error,
+						[SITE_ID]: error,
 					},
 				},
 			},
 			SITE_ID
 		);
-		expect( result ).to.deep.equal( error );
-	} );
-} );
+		expect(result).to.deep.equal(error);
+	});
+});

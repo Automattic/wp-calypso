@@ -42,17 +42,17 @@ class Protect extends Component {
 
 	handleAddToWhitelist = () => {
 		const { setFieldValue } = this.props;
-		let whitelist = trimEnd( this.getProtectWhitelist() );
+		let whitelist = trimEnd(this.getProtectWhitelist());
 
-		if ( whitelist.length ) {
+		if (whitelist.length) {
 			whitelist += '\n';
 		}
 
-		setFieldValue( 'jetpack_protect_global_whitelist', whitelist + this.getIpAddress() );
+		setFieldValue('jetpack_protect_global_whitelist', whitelist + this.getIpAddress());
 	};
 
 	getIpAddress() {
-		if ( window.app && window.app.clientIp ) {
+		if (window.app && window.app.clientIp) {
 			return window.app.clientIp;
 		}
 
@@ -66,22 +66,22 @@ class Protect extends Component {
 
 	isIpAddressWhitelisted() {
 		const ipAddress = this.getIpAddress();
-		if ( ! ipAddress ) {
+		if (!ipAddress) {
 			return false;
 		}
 
-		const whitelist = this.getProtectWhitelist().split( '\n' );
+		const whitelist = this.getProtectWhitelist().split('\n');
 
 		return (
-			includes( whitelist, ipAddress ) ||
-			some( whitelist, entry => {
-				if ( entry.indexOf( '-' ) < 0 ) {
+			includes(whitelist, ipAddress) ||
+			some(whitelist, (entry) => {
+				if (entry.indexOf('-') < 0) {
 					return false;
 				}
 
-				const range = entry.split( '-' ).map( trim );
-				return includes( range, ipAddress );
-			} )
+				const range = entry.split('-').map(trim);
+				return includes(range, ipAddress);
+			})
 		);
 	}
 
@@ -99,73 +99,73 @@ class Protect extends Component {
 		const ipAddress = this.getIpAddress();
 		const isIpWhitelisted = this.isIpAddressWhitelisted();
 		const disabled =
-			isRequestingSettings || isSavingSettings || protectModuleUnavailable || ! protectModuleActive;
+			isRequestingSettings || isSavingSettings || protectModuleUnavailable || !protectModuleActive;
 		const protectToggle = (
 			<JetpackModuleToggle
-				siteId={ selectedSiteId }
+				siteId={selectedSiteId}
 				moduleSlug="protect"
-				label={ translate( 'Prevent and block malicious login attempts' ) }
-				disabled={ isRequestingSettings || isSavingSettings || protectModuleUnavailable }
+				label={translate('Prevent and block malicious login attempts')}
+				disabled={isRequestingSettings || isSavingSettings || protectModuleUnavailable}
 			/>
 		);
 
 		return (
 			<FoldableCard
 				className="protect__foldable-card site-settings__foldable-card"
-				header={ protectToggle }
+				header={protectToggle}
 			>
-				<QueryJetpackConnection siteId={ selectedSiteId } />
+				<QueryJetpackConnection siteId={selectedSiteId} />
 
 				<FormFieldset>
 					<div className="protect__module-settings site-settings__child-settings">
 						<SupportInfo
-							text={ translate(
+							text={translate(
 								'Protects your site from traditional and distributed brute force login attacks.'
-							) }
+							)}
 							link="https://jetpack.com/support/protect/"
 						/>
 						<p>
-							{ translate( 'Your current IP address: {{strong}}%(IP)s{{/strong}}{{br/}}', {
+							{translate('Your current IP address: {{strong}}%(IP)s{{/strong}}{{br/}}', {
 								args: {
-									IP: ipAddress || translate( 'Unknown IP address' ),
+									IP: ipAddress || translate('Unknown IP address'),
 								},
 								components: {
 									strong: <strong />,
 									br: <br />,
 								},
-							} ) }
+							})}
 
-							{ ipAddress && (
+							{ipAddress && (
 								<Button
 									className="protect__add-to-whitelist site-settings__add-to-whitelist"
-									onClick={ this.handleAddToWhitelist }
-									disabled={ disabled || isIpWhitelisted }
+									onClick={this.handleAddToWhitelist}
+									disabled={disabled || isIpWhitelisted}
 									compact
 								>
-									{ isIpWhitelisted
-										? translate( 'Already in whitelist' )
-										: translate( 'Add to whitelist' ) }
+									{isIpWhitelisted
+										? translate('Already in whitelist')
+										: translate('Add to whitelist')}
 								</Button>
-							) }
+							)}
 						</p>
 
 						<FormLabel htmlFor="jetpack_protect_global_whitelist">
-							{ translate( 'Whitelisted IP addresses' ) }
+							{translate('Whitelisted IP addresses')}
 						</FormLabel>
 						<FormTextarea
 							id="jetpack_protect_global_whitelist"
-							value={ this.getProtectWhitelist() }
-							onChange={ onChangeField( 'jetpack_protect_global_whitelist' ) }
-							disabled={ disabled }
-							placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
+							value={this.getProtectWhitelist()}
+							onChange={onChangeField('jetpack_protect_global_whitelist')}
+							disabled={disabled}
+							placeholder={translate('Example: 12.12.12.1-12.12.12.100')}
 						/>
 						<FormSettingExplanation>
-							{ translate(
+							{translate(
 								'You may whitelist an IP address or series of addresses preventing them from ' +
 									'ever being blocked by Jetpack. IPv4 and IPv6 are acceptable. ' +
 									'To specify a range, enter the low value and high value separated by a dash. ' +
 									'Example: 12.12.12.1-12.12.12.100'
-							) }
+							)}
 						</FormSettingExplanation>
 					</div>
 				</FormFieldset>
@@ -174,9 +174,9 @@ class Protect extends Component {
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const siteInDevMode = isJetpackSiteInDevelopmentMode(state, selectedSiteId);
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 		state,
 		selectedSiteId,
@@ -185,7 +185,7 @@ export default connect( state => {
 
 	return {
 		selectedSiteId,
-		protectModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'protect' ),
+		protectModuleActive: !!isJetpackModuleActive(state, selectedSiteId, 'protect'),
 		protectModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 	};
-} )( localize( Protect ) );
+})(localize(Protect));

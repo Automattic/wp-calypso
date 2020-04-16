@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {object}  savedAuthor     author property returned from API POST
  * @returns {boolean}                 are the locally edited and saved values equal?
  */
-export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
-	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
+export function isAuthorEqual(localAuthorEdit, savedAuthor) {
+	return get(localAuthorEdit, 'ID') === get(savedAuthor, 'ID');
 }

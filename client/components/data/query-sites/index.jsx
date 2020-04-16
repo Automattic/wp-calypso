@@ -13,74 +13,74 @@ import { requestSites, requestSite } from 'state/sites/actions';
 import { getPreference } from 'state/preferences/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
-const getRecentSites = state => getPreference( state, 'recentSites' );
+const getRecentSites = (state) => getPreference(state, 'recentSites');
 
-const requestAll = () => ( dispatch, getState ) => {
-	if ( ! isRequestingSites( getState() ) ) {
-		dispatch( requestSites() );
+const requestAll = () => (dispatch, getState) => {
+	if (!isRequestingSites(getState())) {
+		dispatch(requestSites());
 	}
 };
 
 function QueryAll() {
 	const dispatch = useDispatch();
 
-	useEffect( () => {
-		dispatch( requestAll() );
-	}, [ dispatch ] );
+	useEffect(() => {
+		dispatch(requestAll());
+	}, [dispatch]);
 
 	return null;
 }
 
-const requestSingle = siteId => ( dispatch, getState ) => {
-	if ( siteId && ! isRequestingSite( getState(), siteId ) ) {
-		dispatch( requestSite( siteId ) );
+const requestSingle = (siteId) => (dispatch, getState) => {
+	if (siteId && !isRequestingSite(getState(), siteId)) {
+		dispatch(requestSite(siteId));
 	}
 };
 
-function QuerySingle( { siteId } ) {
+function QuerySingle({ siteId }) {
 	const dispatch = useDispatch();
 
-	useEffect( () => {
-		if ( siteId ) {
-			dispatch( requestSingle( siteId ) );
+	useEffect(() => {
+		if (siteId) {
+			dispatch(requestSingle(siteId));
 		}
-	}, [ dispatch, siteId ] );
+	}, [dispatch, siteId]);
 
 	return null;
 }
 
-const requestPrimaryAndRecent = siteIds => ( dispatch, getState ) => {
+const requestPrimaryAndRecent = (siteIds) => (dispatch, getState) => {
 	const state = getState();
-	if ( hasAllSitesList( state ) ) {
+	if (hasAllSitesList(state)) {
 		return;
 	}
 
-	siteIds.forEach( siteId => dispatch( requestSingle( siteId ) ) );
+	siteIds.forEach((siteId) => dispatch(requestSingle(siteId)));
 };
 
 function QueryPrimaryAndRecent() {
-	const primarySiteId = useSelector( getPrimarySiteId );
+	const primarySiteId = useSelector(getPrimarySiteId);
 	// This should return the same reference every time, so we can compare by reference.
-	const recentSiteIds = useSelector( getRecentSites );
+	const recentSiteIds = useSelector(getRecentSites);
 	const dispatch = useDispatch();
 
-	useEffect( () => {
-		const siteIds = [ ...( primarySiteId ? [ primarySiteId ] : [] ), ...( recentSiteIds ?? [] ) ];
+	useEffect(() => {
+		const siteIds = [...(primarySiteId ? [primarySiteId] : []), ...(recentSiteIds ?? [])];
 
-		if ( siteIds && siteIds.length ) {
-			dispatch( requestPrimaryAndRecent( siteIds ) );
+		if (siteIds && siteIds.length) {
+			dispatch(requestPrimaryAndRecent(siteIds));
 		}
-	}, [ dispatch, primarySiteId, recentSiteIds ] );
+	}, [dispatch, primarySiteId, recentSiteIds]);
 
 	return null;
 }
 
-export default function QuerySites( { siteId, allSites = false, primaryAndRecent = false } ) {
+export default function QuerySites({ siteId, allSites = false, primaryAndRecent = false }) {
 	return (
 		<Fragment>
-			{ allSites && <QueryAll /> }
-			{ siteId && <QuerySingle siteId={ siteId } /> }
-			{ primaryAndRecent && <QueryPrimaryAndRecent /> }
+			{allSites && <QueryAll />}
+			{siteId && <QuerySingle siteId={siteId} />}
+			{primaryAndRecent && <QueryPrimaryAndRecent />}
 		</Fragment>
 	);
 }
@@ -88,9 +88,9 @@ export default function QuerySites( { siteId, allSites = false, primaryAndRecent
 QuerySites.propTypes = {
 	allSites: PropTypes.bool,
 	primaryAndRecent: PropTypes.bool,
-	siteId: PropTypes.oneOfType( [
+	siteId: PropTypes.oneOfType([
 		PropTypes.number,
 		// The actions and selectors we use also work with site slugs.
 		PropTypes.string,
-	] ),
+	]),
 };

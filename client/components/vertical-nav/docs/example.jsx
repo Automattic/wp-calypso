@@ -14,7 +14,7 @@ VerticalNav.displayName = 'VerticalNav';
 VerticalNavItem.displayName = 'VerticalNavItem';
 VerticalNavExample.displayName = 'VerticalNav';
 
-function VerticalNavExample( props ) {
+function VerticalNavExample(props) {
 	return props.exampleCode;
 }
 
@@ -27,7 +27,7 @@ VerticalNavExample.defaultProps = {
 			<VerticalNavItem path="https://google.com" external key="1">
 				Google
 			</VerticalNavItem>
-			<VerticalNavItem path="/posts" onClick={ noop } key="2">
+			<VerticalNavItem path="/posts" onClick={noop} key="2">
 				Posts
 			</VerticalNavItem>
 			<VerticalNavItem isPlaceholder key="3" />

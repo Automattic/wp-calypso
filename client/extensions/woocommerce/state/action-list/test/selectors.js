@@ -15,9 +15,9 @@ import {
 } from '../selectors';
 import * as fxt from './fixtures';
 
-describe( 'selectors', () => {
-	describe( 'getActionList', () => {
-		test( 'should access an existing action list', () => {
+describe('selectors', () => {
+	describe('getActionList', () => {
+		test('should access an existing action list', () => {
 			const actionList = {
 				prevSteps: [
 					{
@@ -27,24 +27,24 @@ describe( 'selectors', () => {
 					},
 				],
 				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-				nextSteps: [ { description: fxt.stepC.description } ],
+				nextSteps: [{ description: fxt.stepC.description }],
 			};
 
 			const rootState = {};
-			set( rootState, 'extensions.woocommerce.actionList', actionList );
+			set(rootState, 'extensions.woocommerce.actionList', actionList);
 
-			expect( getActionList( rootState ) ).to.equal( actionList );
-		} );
+			expect(getActionList(rootState)).to.equal(actionList);
+		});
 
-		test( 'should return null if there is no action list', () => {
+		test('should return null if there is no action list', () => {
 			const rootState = { extensions: { woocommerce: {} } };
 
-			expect( getActionList( rootState ) ).to.equal( null );
-		} );
-	} );
+			expect(getActionList(rootState)).to.equal(null);
+		});
+	});
 
-	describe( 'getCurrentStepIndex', () => {
-		test( 'should return the currently running step in the action list', () => {
+	describe('getCurrentStepIndex', () => {
+		test('should return the currently running step in the action list', () => {
 			const actionList = {
 				prevSteps: [
 					{
@@ -54,13 +54,13 @@ describe( 'selectors', () => {
 					},
 				],
 				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-				nextSteps: [ { description: fxt.stepC.description } ],
+				nextSteps: [{ description: fxt.stepC.description }],
 			};
 
-			expect( getCurrentStepIndex( actionList ) ).to.equal( 2 );
-		} );
+			expect(getCurrentStepIndex(actionList)).to.equal(2);
+		});
 
-		test( 'should return the last run step in the action list if there is no current step', () => {
+		test('should return the last run step in the action list if there is no current step', () => {
 			const actionList = {
 				prevSteps: [
 					{
@@ -75,13 +75,13 @@ describe( 'selectors', () => {
 					},
 				],
 				currentStep: null,
-				nextSteps: [ { description: fxt.stepC.description } ],
+				nextSteps: [{ description: fxt.stepC.description }],
 			};
 
-			expect( getCurrentStepIndex( actionList ) ).to.equal( 2 );
-		} );
+			expect(getCurrentStepIndex(actionList)).to.equal(2);
+		});
 
-		test( 'should return zero if no steps have been started', () => {
+		test('should return zero if no steps have been started', () => {
 			const actionList = {
 				nextSteps: [
 					{ description: fxt.stepA.description },
@@ -90,12 +90,12 @@ describe( 'selectors', () => {
 				],
 			};
 
-			expect( getCurrentStepIndex( actionList ) ).to.equal( 0 );
-		} );
-	} );
+			expect(getCurrentStepIndex(actionList)).to.equal(0);
+		});
+	});
 
-	describe( 'getTotalStepCount', () => {
-		test( 'should return a count of all previous, current, and next steps', () => {
+	describe('getTotalStepCount', () => {
+		test('should return a count of all previous, current, and next steps', () => {
 			const actionList = {
 				prevSteps: [
 					{
@@ -105,25 +105,25 @@ describe( 'selectors', () => {
 					},
 				],
 				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-				nextSteps: [ { description: fxt.stepC.description } ],
+				nextSteps: [{ description: fxt.stepC.description }],
 			};
 
-			expect( getTotalStepCount( actionList ) ).to.equal( 3 );
-		} );
+			expect(getTotalStepCount(actionList)).to.equal(3);
+		});
 
-		test( 'should handle an empty prevSteps list', () => {
+		test('should handle an empty prevSteps list', () => {
 			const actionList = {
 				prevSteps: [],
 				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-				nextSteps: [ { description: fxt.stepC.description } ],
+				nextSteps: [{ description: fxt.stepC.description }],
 			};
 
-			expect( getTotalStepCount( actionList ) ).to.equal( 2 );
-		} );
-	} );
+			expect(getTotalStepCount(actionList)).to.equal(2);
+		});
+	});
 
-	describe( 'getStepCountRemaining', () => {
-		test( 'should return array length if no steps have been started', () => {
+	describe('getStepCountRemaining', () => {
+		test('should return array length if no steps have been started', () => {
 			const actionList = {
 				nextSteps: [
 					{ description: fxt.stepA.description },
@@ -132,23 +132,20 @@ describe( 'selectors', () => {
 				],
 			};
 
-			expect( getStepCountRemaining( actionList ) ).to.equal( 3 );
-		} );
+			expect(getStepCountRemaining(actionList)).to.equal(3);
+		});
 
-		test( 'should return array length if no steps have been yet completed', () => {
+		test('should return array length if no steps have been yet completed', () => {
 			const actionList = {
 				prevSteps: [],
 				currentStep: { description: fxt.stepA.description, startTime: fxt.time.stepAStart },
-				nextSteps: [
-					{ description: fxt.stepB.description },
-					{ description: fxt.stepC.description },
-				],
+				nextSteps: [{ description: fxt.stepB.description }, { description: fxt.stepC.description }],
 			};
 
-			expect( getStepCountRemaining( actionList ) ).to.equal( 3 );
-		} );
+			expect(getStepCountRemaining(actionList)).to.equal(3);
+		});
 
-		test( 'should return zero if all steps are completed', () => {
+		test('should return zero if all steps are completed', () => {
 			const actionList = {
 				prevSteps: [
 					{
@@ -171,7 +168,7 @@ describe( 'selectors', () => {
 				nextSteps: [],
 			};
 
-			expect( getStepCountRemaining( actionList ) ).to.equal( 0 );
-		} );
-	} );
-} );
+			expect(getStepCountRemaining(actionList)).to.equal(0);
+		});
+	});
+});

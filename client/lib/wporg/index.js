@@ -12,7 +12,7 @@ import { stringify as stringifyQs } from 'qs';
 import jsonp from './jsonp';
 import { languages } from 'languages';
 
-const debug = debugFactory( 'wporg' );
+const debug = debugFactory('wporg');
 
 /**
  * Constants
@@ -26,42 +26,42 @@ const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
 
 function getWporgLocaleCode() {
 	const currentLocaleCode = i18n.getLocaleSlug();
-	let wpOrgLocaleCode = find( languages, { langSlug: currentLocaleCode } ).wpLocale;
+	let wpOrgLocaleCode = find(languages, { langSlug: currentLocaleCode }).wpLocale;
 
-	if ( wpOrgLocaleCode === '' ) {
+	if (wpOrgLocaleCode === '') {
 		wpOrgLocaleCode = currentLocaleCode;
 	}
 
 	return wpOrgLocaleCode;
 }
 
-async function pluginRequest( url, body ) {
+async function pluginRequest(url, body) {
 	try {
-		const response = await fetch( url, {
+		const response = await fetch(url, {
 			method: 'POST',
 			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
 			body,
-		} );
+		});
 
-		if ( response.ok ) {
-			return [ null, await response.json() ];
+		if (response.ok) {
+			return [null, await response.json()];
 		}
-		return [ new Error( await response.body ), null ];
-	} catch ( error ) {
-		return [ error, null ];
+		return [new Error(await response.body), null];
+	} catch (error) {
+		return [error, null];
 	}
 }
 
-async function themeRequest( url, query ) {
-	const response = await fetch( `${ url }?${ stringifyQs( query ) }`, {
+async function themeRequest(url, query) {
+	const response = await fetch(`${url}?${stringifyQs(query)}`, {
 		method: 'GET',
 		headers: { Accept: 'application/json' },
-	} );
+	});
 
-	if ( response.ok ) {
+	if (response.ok) {
 		return await response.json();
 	}
-	throw new Error( await response.body );
+	throw new Error(await response.body);
 }
 
 /**
@@ -70,36 +70,36 @@ async function themeRequest( url, query ) {
  * @param {string} pluginSlug The plugin identifier.
  * @returns {Promise} Promise with the plugins details.
  */
-export function fetchPluginInformation( pluginSlug ) {
+export function fetchPluginInformation(pluginSlug) {
 	const query = {
 		fields: 'icons,banners,compatibility,ratings,-contributors',
 		locale: getWporgLocaleCode(),
 	};
 
-	pluginSlug = pluginSlug.replace( new RegExp( '.php$' ), '' );
+	pluginSlug = pluginSlug.replace(new RegExp('.php$'), '');
 
 	const baseUrl = 'https://api.wordpress.org/plugins/info/1.0/' + pluginSlug + '.jsonp';
 
-	return new Promise( ( resolve, reject ) => {
-		jsonp( baseUrl, query, function( error, data ) {
-			if ( error ) {
-				debug( 'error downloading plugin details from .org: %s', error );
-				reject( error );
+	return new Promise((resolve, reject) => {
+		jsonp(baseUrl, query, function (error, data) {
+			if (error) {
+				debug('error downloading plugin details from .org: %s', error);
+				reject(error);
 				return;
 			}
 
-			if ( ! data || ! data.slug ) {
-				debug( 'unrecognized format fetching plugin details from .org: %s', data );
-				reject( new Error( 'Unrecognized response format' ) );
+			if (!data || !data.slug) {
+				debug('unrecognized format fetching plugin details from .org: %s', data);
+				reject(new Error('Unrecognized response format'));
 				return;
 			}
 
-			resolve( data );
-		} );
-	} );
+			resolve(data);
+		});
+	});
 }
 
-export function fetchPluginsList( options, callback ) {
+export function fetchPluginsList(options, callback) {
 	let payload;
 	// default variables;
 	const page = options.page || DEFAULT_FIRST_PAGE;
@@ -116,15 +116,15 @@ export function fetchPluginsList( options, callback ) {
 		'&request[fields][compatibility]=1&request[fields][tested]=0' +
 		'&request[fields][requires]=0&request[fields][sections]=0';
 
-	if ( search ) {
+	if (search) {
 		payload += '&request[search]=' + search;
 	} else {
 		payload += '&request[browse]=' + category;
 	}
 
-	pluginRequest( WPORG_PLUGINS_LIST, encodeURI( payload ) ).then( ( [ err, data ] ) => {
-		callback( err, data );
-	} );
+	pluginRequest(WPORG_PLUGINS_LIST, encodeURI(payload)).then(([err, data]) => {
+		callback(err, data);
+	});
 }
 
 /**
@@ -135,7 +135,7 @@ export function fetchPluginsList( options, callback ) {
  * @param {string}     themeId  The theme identifier.
  * @returns {Promise.<object>}  A promise that returns a `theme` object
  */
-export function fetchThemeInformation( themeId ) {
+export function fetchThemeInformation(themeId) {
 	const query = {
 		action: 'theme_information',
 		// Return an `author` object containing `user_nicename` and `display_name` attrs.
@@ -144,7 +144,7 @@ export function fetchThemeInformation( themeId ) {
 		'request[slug]': themeId,
 	};
 
-	return themeRequest( WPORG_THEMES_ENDPOINT, query );
+	return themeRequest(WPORG_THEMES_ENDPOINT, query);
 }
 
 /**
@@ -156,7 +156,7 @@ export function fetchThemeInformation( themeId ) {
  * @param  {number}        options.page    Which page of matching themes to return
  * @returns {Promise.<object>}             A promise that returns an object containing a `themes` array and an `info` object
  */
-export function fetchThemesList( options = {} ) {
+export function fetchThemesList(options = {}) {
 	const { search, page, number } = options;
 	const query = {
 		action: 'query_themes',
@@ -168,5 +168,5 @@ export function fetchThemesList( options = {} ) {
 		'request[per_page]:': number,
 	};
 
-	return themeRequest( WPORG_THEMES_ENDPOINT, query );
+	return themeRequest(WPORG_THEMES_ENDPOINT, query);
 }

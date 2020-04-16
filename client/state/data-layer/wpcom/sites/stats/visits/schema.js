@@ -9,7 +9,7 @@ export default {
 			items: {
 				type: 'array',
 				items: {
-					type: [ 'integer', 'string', 'array' ],
+					type: ['integer', 'string', 'array'],
 				},
 			},
 		},

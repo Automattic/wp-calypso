@@ -5,6 +5,6 @@
  * @param   {object}  state   Global state tree
  * @returns {object}         Billing transactions
  */
-export default function getBillingTransactions( state ) {
+export default function getBillingTransactions(state) {
 	return state.billingTransactions.items;
 }

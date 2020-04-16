@@ -33,5 +33,5 @@ export const commentsTree = {
 			date: '2016-04-18T14:59:22+00:00',
 		},
 	},
-	children: [ 1, 2, 3 ],
+	children: [1, 2, 3],
 };

@@ -16,28 +16,28 @@ import { purchasesRoot } from 'me/purchases/paths';
  */
 import './style.scss';
 
-function DeleteSiteWarningDialog( { isVisible, onClose } ) {
+function DeleteSiteWarningDialog({ isVisible, onClose }) {
 	const translate = useTranslate();
 	const buttons = [
-		{ action: 'dismiss', label: translate( 'Dismiss' ) },
-		<Button primary href={ purchasesRoot }>
-			{ translate( 'Manage purchases', { context: 'button label' } ) }
+		{ action: 'dismiss', label: translate('Dismiss') },
+		<Button primary href={purchasesRoot}>
+			{translate('Manage purchases', { context: 'button label' })}
 		</Button>,
 	];
 
 	return (
 		<Dialog
-			isVisible={ isVisible }
-			buttons={ buttons }
-			onClose={ onClose }
+			isVisible={isVisible}
+			buttons={buttons}
+			onClose={onClose}
 			className="delete-site-warning-dialog"
 		>
-			<h1>{ translate( 'Premium Upgrades' ) }</h1>
+			<h1>{translate('Premium Upgrades')}</h1>
 			<p>
-				{ translate(
+				{translate(
 					'You have active premium upgrades on your site. ' +
 						'Please cancel your upgrades prior to deleting your site.'
-				) }
+				)}
 			</p>
 		</Dialog>
 	);

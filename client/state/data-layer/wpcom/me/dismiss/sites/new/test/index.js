@@ -5,11 +5,11 @@ import { requestSiteDismiss, receiveSiteDismiss, fromApi, receiveSiteDismissErro
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dismissSite } from 'state/reader/site-dismissals/actions';
 
-describe( 'site-dismissals', () => {
-	describe( 'requestSiteDismiss', () => {
-		test( 'should dispatch an http request', () => {
-			const action = dismissSite( 123 );
-			expect( requestSiteDismiss( action ) ).toEqual(
+describe('site-dismissals', () => {
+	describe('requestSiteDismiss', () => {
+		test('should dispatch an http request', () => {
+			const action = dismissSite(123);
+			expect(requestSiteDismiss(action)).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -20,39 +20,39 @@ describe( 'site-dismissals', () => {
 					action
 				)
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'receiveSiteDismiss', () => {
-		test( 'should return a success notice', () => {
-			expect( receiveSiteDismiss() ).toEqual(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
+	describe('receiveSiteDismiss', () => {
+		test('should return a success notice', () => {
+			expect(receiveSiteDismiss()).toEqual(
+				expect.objectContaining({
+					notice: expect.objectContaining({
 						status: 'is-success',
-					} ),
-				} )
+					}),
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( 'fromApi', () => {
-		it( 'should throw an error for an unsuccessful dismissal', () => {
-			expect( () => fromApi( { success: false } ) ).toThrow();
-		} );
-		it( 'should return original response for a successful dismissal', () => {
-			expect( fromApi( { success: true } ) ).toEqual( { success: true } );
-		} );
-	} );
+	describe('fromApi', () => {
+		it('should throw an error for an unsuccessful dismissal', () => {
+			expect(() => fromApi({ success: false })).toThrow();
+		});
+		it('should return original response for a successful dismissal', () => {
+			expect(fromApi({ success: true })).toEqual({ success: true });
+		});
+	});
 
-	describe( 'receiveSiteDismissError', () => {
-		test( 'should return an error notice', () => {
-			expect( receiveSiteDismissError() ).toEqual(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
+	describe('receiveSiteDismissError', () => {
+		test('should return an error notice', () => {
+			expect(receiveSiteDismissError()).toEqual(
+				expect.objectContaining({
+					notice: expect.objectContaining({
 						status: 'is-error',
-					} ),
-				} )
+					}),
+				})
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

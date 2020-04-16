@@ -35,11 +35,11 @@ class QueryMedia extends Component {
 		this.request();
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
 			this.props.siteId === prevProps.siteId &&
 			this.props.mediaId === prevProps.mediaId &&
-			isShallowEqual( this.props.query, prevProps.query )
+			isShallowEqual(this.props.query, prevProps.query)
 		) {
 			return;
 		}
@@ -49,11 +49,11 @@ class QueryMedia extends Component {
 
 	request() {
 		const { siteId, mediaId, query } = this.props;
-		const single = !! mediaId;
-		if ( single ) {
-			this.props.requestMediaItem( siteId, mediaId );
+		const single = !!mediaId;
+		if (single) {
+			this.props.requestMediaItem(siteId, mediaId);
 		} else {
-			this.props.requestMedia( siteId, query );
+			this.props.requestMedia(siteId, query);
 		}
 	}
 
@@ -62,4 +62,4 @@ class QueryMedia extends Component {
 	}
 }
 
-export default connect( null, mapDispatchToProps )( QueryMedia );
+export default connect(null, mapDispatchToProps)(QueryMedia);

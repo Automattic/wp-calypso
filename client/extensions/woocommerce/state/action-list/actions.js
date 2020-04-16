@@ -16,7 +16,7 @@ import {
  * @param {object} actionList The current action list.
  * @returns {object} action
  */
-export function actionListStepNext( actionList ) {
+export function actionListStepNext(actionList) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
 		actionList,
@@ -40,7 +40,7 @@ export function actionListClear() {
  * @param {object} actionList The current actionList
  * @returns {object} action
  */
-export function actionListAnnotate( actionList ) {
+export function actionListAnnotate(actionList) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_ANNOTATE,
 		actionList,
@@ -53,7 +53,7 @@ export function actionListAnnotate( actionList ) {
  * @param {object} actionList The current action list.
  * @returns {object} action
  */
-export function actionListStepSuccess( actionList ) {
+export function actionListStepSuccess(actionList) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
 		actionList,
@@ -67,7 +67,7 @@ export function actionListStepSuccess( actionList ) {
  * @param {object} error The error from the failure.
  * @returns {object} action
  */
-export function actionListStepFailure( actionList, error ) {
+export function actionListStepFailure(actionList, error) {
 	return {
 		type: WOOCOMMERCE_ACTION_LIST_STEP_FAILURE,
 		actionList,

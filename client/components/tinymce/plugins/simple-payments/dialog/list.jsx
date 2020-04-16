@@ -43,30 +43,30 @@ class ProductList extends Component {
 			onTrashClick,
 		} = this.props;
 
-		if ( ! paymentButtons ) {
+		if (!paymentButtons) {
 			// Render 2 placeholder items
-			return range( 2 ).map( i => <ProductListItemPlaceholder key={ i } /> );
+			return range(2).map((i) => <ProductListItemPlaceholder key={i} />);
 		}
 
-		return paymentButtons.map( ( { ID: paymentId, title, price, currency, featuredImageId } ) => (
+		return paymentButtons.map(({ ID: paymentId, title, price, currency, featuredImageId }) => (
 			<ProductListItem
-				key={ paymentId }
-				siteId={ siteId }
-				paymentId={ paymentId }
-				isSelected={ selectedPaymentId === paymentId }
-				title={ title }
-				price={ price }
-				currency={ currency }
-				featuredImageId={ featuredImageId }
-				onSelectedChange={ onSelectedChange }
-				onEditClick={ onEditClick }
-				onTrashClick={ onTrashClick }
+				key={paymentId}
+				siteId={siteId}
+				paymentId={paymentId}
+				isSelected={selectedPaymentId === paymentId}
+				title={title}
+				price={price}
+				currency={currency}
+				featuredImageId={featuredImageId}
+				onSelectedChange={onSelectedChange}
+				onEditClick={onEditClick}
+				onTrashClick={onTrashClick}
 			/>
-		) );
+		));
 	}
 
 	render() {
-		return <div className="editor-simple-payments-modal__list">{ this.renderListItems() }</div>;
+		return <div className="editor-simple-payments-modal__list">{this.renderListItems()}</div>;
 	}
 }
 

@@ -28,14 +28,14 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/reader/action-types';
  */
 export const items = keyedReducer(
 	'queryKey',
-	withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = null, action) => {
+		switch (action.type) {
 			case READER_FEED_SEARCH_RECEIVE:
-				return uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' );
+				return uniqBy((state || []).concat(action.payload.feeds), 'feed_URL');
 		}
 
 		return state;
-	} )
+	})
 );
 
 /**
@@ -59,17 +59,17 @@ export const items = keyedReducer(
  */
 export const total = keyedReducer(
 	'queryKey',
-	withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
+	withoutPersistence((state = null, action) => {
+		switch (action.type) {
 			case READER_FEED_SEARCH_RECEIVE:
 				return action.payload.total;
 		}
 
 		return state;
-	} )
+	})
 );
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	total,
-} );
+});

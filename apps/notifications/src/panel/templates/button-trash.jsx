@@ -13,16 +13,16 @@ import { trashNote } from '../flux/note-actions';
 import ActionButton from './action-button';
 import { keys } from '../helpers/input';
 
-const TrashButton = ( { note, translate } ) => (
+const TrashButton = ({ note, translate }) => (
 	<ActionButton
-		{ ...{
+		{...{
 			icon: 'trash',
 			isActive: false,
 			hotkey: keys.KEY_T,
-			onToggle: () => trashNote( note ),
-			text: translate( 'Trash', { context: 'verb: imperative' } ),
-			title: translate( 'Trash comment', { context: 'verb: imperative' } ),
-		} }
+			onToggle: () => trashNote(note),
+			text: translate('Trash', { context: 'verb: imperative' }),
+			title: translate('Trash comment', { context: 'verb: imperative' }),
+		}}
 	/>
 );
 
@@ -31,4 +31,4 @@ TrashButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( TrashButton );
+export default localize(TrashButton);

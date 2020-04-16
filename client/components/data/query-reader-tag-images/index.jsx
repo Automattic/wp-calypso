@@ -15,19 +15,19 @@ import { requestTagImages } from 'state/reader/tags/images/actions';
 
 class QueryReaderTagImages extends Component {
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.shouldRequestTagImages || ! this.props.tag ) {
+		if (!this.props.shouldRequestTagImages || !this.props.tag) {
 			return;
 		}
 
-		this.props.requestTagImages( this.props.tag );
+		this.props.requestTagImages(this.props.tag);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldRequestTagImages ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!nextProps.shouldRequestTagImages) {
 			return;
 		}
 
-		this.props.requestTagImages( nextProps.tag );
+		this.props.requestTagImages(nextProps.tag);
 	}
 
 	render() {
@@ -45,12 +45,12 @@ QueryReaderTagImages.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		return {
-			shouldRequestTagImages: shouldRequestTagImages( state, ownProps.tag ),
+			shouldRequestTagImages: shouldRequestTagImages(state, ownProps.tag),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				requestTagImages,
@@ -58,4 +58,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( QueryReaderTagImages );
+)(QueryReaderTagImages);

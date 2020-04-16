@@ -25,7 +25,7 @@ import PostCommentFormTextarea from './form-textarea';
 import './comment-edit-form.scss';
 
 class PostCommentForm extends Component {
-	constructor( props ) {
+	constructor(props) {
 		super();
 
 		this.state = {
@@ -34,27 +34,27 @@ class PostCommentForm extends Component {
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.setState( {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.setState({
 			commentText: nextProps.commentText || '',
-		} );
+		});
 	}
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 		this.submit();
 	};
 
-	handleKeyDown = event => {
+	handleKeyDown = (event) => {
 		// Use Ctrl+Enter to submit comment
-		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
+		if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
 			event.preventDefault();
 			this.submit();
 		}
 
 		// Use ESC to remove the erroneous comment placeholder and just start over
-		if ( event.keyCode === 27 ) {
-			if ( this.props.placeholderId ) {
+		if (event.keyCode === 27) {
+			if (this.props.placeholderId) {
 				// remove the comment
 				this.props.deleteComment(
 					this.props.post.site_ID,
@@ -65,16 +65,16 @@ class PostCommentForm extends Component {
 		}
 	};
 
-	handleFocus = () => this.setState( { haveFocus: true } );
+	handleFocus = () => this.setState({ haveFocus: true });
 
-	handleTextChange = event => {
+	handleTextChange = (event) => {
 		const commentText = event.target.value;
 
-		this.setState( { commentText } );
+		this.setState({ commentText });
 	};
 
 	resetCommentText = () => {
-		this.setState( { commentText: '' } );
+		this.setState({ commentText: '' });
 	};
 
 	hasCommentText = () => {
@@ -85,15 +85,15 @@ class PostCommentForm extends Component {
 		const post = this.props.post;
 		const commentText = this.state.commentText.trim();
 
-		if ( ! commentText ) {
+		if (!commentText) {
 			this.resetCommentText(); // Clean up any newlines
 			return false;
 		}
 
-		this.props.editComment( post.site_ID, post.ID, this.props.commentId, { content: commentText } );
+		this.props.editComment(post.site_ID, post.ID, this.props.commentId, { content: commentText });
 
-		recordAction( 'edited_comment' );
-		recordGaEvent( 'Clicked Edit Comment Button' );
+		recordAction('edited_comment');
+		recordGaEvent('Clicked Edit Comment Button');
 
 		this.resetCommentText();
 
@@ -107,75 +107,68 @@ class PostCommentForm extends Component {
 		const error = this.props.error;
 		let message;
 
-		if ( ! error ) {
+		if (!error) {
 			return null;
 		}
 
-		switch ( error.error ) {
+		switch (error.error) {
 			case 'comment_duplicate':
-				message = translate(
-					"Duplicate comment detected. It looks like you've already said that!"
-				);
+				message = translate("Duplicate comment detected. It looks like you've already said that!");
 				break;
 
 			default:
-				message = translate( 'Sorry - there was a problem posting your comment.' );
+				message = translate('Sorry - there was a problem posting your comment.');
 				break;
 		}
 
 		return (
-			<Notice
-				text={ message }
-				className="comments__notice"
-				showDismiss={ false }
-				status="is-error"
-			/>
+			<Notice text={message} className="comments__notice" showDismiss={false} status="is-error" />
 		);
 	}
 
 	render() {
-		const buttonClasses = classNames( {
+		const buttonClasses = classNames({
 			'is-active': this.hasCommentText(),
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
-		} );
+		});
 
-		const expandingAreaClasses = classNames( {
+		const expandingAreaClasses = classNames({
 			focused: this.state.haveFocus,
 			'expanding-area': true,
-		} );
+		});
 
-		const isReply = !! this.props.parentCommentId;
+		const isReply = !!this.props.parentCommentId;
 
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__edit-form">
 				<fieldset>
-					<div className={ expandingAreaClasses }>
+					<div className={expandingAreaClasses}>
 						<pre>
-							<span>{ this.state.commentText }</span>
+							<span>{this.state.commentText}</span>
 							<br />
 						</pre>
 						<AutoDirection>
 							<PostCommentFormTextarea
-								value={ this.state.commentText }
-								onKeyUp={ this.handleKeyUp }
-								onKeyDown={ this.handleKeyDown }
-								onFocus={ this.handleFocus }
-								onBlur={ this.handleBlur }
-								onChange={ this.handleTextChange }
-								enableAutoFocus={ isReply }
+								value={this.state.commentText}
+								onKeyUp={this.handleKeyUp}
+								onKeyDown={this.handleKeyDown}
+								onFocus={this.handleFocus}
+								onBlur={this.handleBlur}
+								onChange={this.handleTextChange}
+								enableAutoFocus={isReply}
 							/>
 						</AutoDirection>
 					</div>
 					<button
-						className={ buttonClasses }
-						disabled={ this.state.commentText.length === 0 }
-						onClick={ this.handleSubmit }
+						className={buttonClasses}
+						disabled={this.state.commentText.length === 0}
+						onClick={this.handleSubmit}
 					>
-						{ translate( 'Send' ) }
+						{translate('Send')}
 					</button>
-					{ this.renderError() }
+					{this.renderError()}
 				</fieldset>
 			</form>
 		);
@@ -196,6 +189,6 @@ PostCommentForm.defaultProps = {
 	onCommentSubmit: noop,
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators( { editComment }, dispatch );
+const mapDispatchToProps = (dispatch) => bindActionCreators({ editComment }, dispatch);
 
-export default connect( null, mapDispatchToProps )( PostCommentForm );
+export default connect(null, mapDispatchToProps)(PostCommentForm);

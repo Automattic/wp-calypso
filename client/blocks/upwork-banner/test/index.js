@@ -11,16 +11,16 @@ import renderer from 'react-test-renderer';
 import { createReduxStore } from 'state';
 import UpworkBanner from '../';
 
-describe( 'UpworkBanner', () => {
-	test( 'renders correctly', () => {
+describe('UpworkBanner', () => {
+	test('renders correctly', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(
-				<Provider store={ store }>
-					<UpworkBanner location={ 'foo' } />
+				<Provider store={store}>
+					<UpworkBanner location={'foo'} />
 				</Provider>
 			)
 			.toJSON();
-		expect( tree ).toMatchSnapshot();
-	} );
-} );
+		expect(tree).toMatchSnapshot();
+	});
+});

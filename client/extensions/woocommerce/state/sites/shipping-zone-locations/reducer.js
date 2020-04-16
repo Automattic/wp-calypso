@@ -11,39 +11,39 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 import { withoutPersistence } from 'state/utils';
 
-function handleLocationsRequest( state, { zoneId } ) {
+function handleLocationsRequest(state, { zoneId }) {
 	return {
 		...state,
-		[ zoneId ]: LOADING,
+		[zoneId]: LOADING,
 	};
 }
 
-function handleLocationsRequestSuccess( state, { data, zoneId } ) {
+function handleLocationsRequestSuccess(state, { data, zoneId }) {
 	const locations = {
 		continent: [],
 		country: [],
 		state: [],
 		postcode: [],
 	};
-	data.forEach( ( { type, code } ) => locations[ type ].push( code ) );
+	data.forEach(({ type, code }) => locations[type].push(code));
 	return {
 		...state,
-		[ zoneId ]: locations,
+		[zoneId]: locations,
 	};
 }
 
-function handleLocationsUpdated( state, { data, originatingAction: { zoneId } } ) {
-	return handleLocationsRequestSuccess( state, { data, zoneId } );
+function handleLocationsUpdated(state, { data, originatingAction: { zoneId } }) {
+	return handleLocationsRequestSuccess(state, { data, zoneId });
 }
 
-function handleZoneUpdated( state, { data, originatingAction: { zone } } ) {
-	if ( 'number' === typeof zone.id ) {
+function handleZoneUpdated(state, { data, originatingAction: { zone } }) {
+	if ('number' === typeof zone.id) {
 		return state;
 	}
 
 	return {
 		...state,
-		[ data.id ]: {
+		[data.id]: {
 			continent: [],
 			country: [],
 			state: [],
@@ -52,28 +52,28 @@ function handleZoneUpdated( state, { data, originatingAction: { zone } } ) {
 	};
 }
 
-function handleZoneDeleted( state, { originatingAction: { zone } } ) {
+function handleZoneDeleted(state, { originatingAction: { zone } }) {
 	const newState = { ...state };
-	delete newState[ zone.id ];
+	delete newState[zone.id];
 	return newState;
 }
 
-export default withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST:
-			return handleLocationsRequest( state, action );
+			return handleLocationsRequest(state, action);
 
 		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS:
-			return handleLocationsRequestSuccess( state, action );
+			return handleLocationsRequestSuccess(state, action);
 
 		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED:
-			return handleLocationsUpdated( state, action );
+			return handleLocationsUpdated(state, action);
 
 		case WOOCOMMERCE_SHIPPING_ZONE_UPDATED:
-			return handleZoneUpdated( state, action );
+			return handleZoneUpdated(state, action);
 
 		case WOOCOMMERCE_SHIPPING_ZONE_DELETED:
-			return handleZoneDeleted( state, action );
+			return handleZoneDeleted(state, action);
 	}
 	return state;
-} );
+});

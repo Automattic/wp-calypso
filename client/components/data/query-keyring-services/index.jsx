@@ -14,7 +14,7 @@ import { requestKeyringServices } from 'state/sharing/services/actions';
 
 class QueryKeyringServices extends Component {
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.isRequesting ) {
+		if (!this.props.isRequesting) {
 			this.props.requestKeyringServices();
 		}
 	}
@@ -30,8 +30,8 @@ QueryKeyringServices.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		isRequesting: isKeyringServicesFetching( state ),
-	} ),
+	(state) => ({
+		isRequesting: isKeyringServicesFetching(state),
+	}),
 	{ requestKeyringServices }
-)( QueryKeyringServices );
+)(QueryKeyringServices);

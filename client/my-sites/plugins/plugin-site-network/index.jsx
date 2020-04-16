@@ -44,10 +44,10 @@ class PluginSiteNetwork extends React.Component {
 
 		return (
 			<PluginInstallButton
-				isEmbed={ true }
-				selectedSite={ this.props.site }
-				plugin={ this.props.plugin }
-				isInstalling={ installInProgress }
+				isEmbed={true}
+				selectedSite={this.props.site}
+				plugin={this.props.plugin}
+				isInstalling={installInProgress}
 			/>
 		);
 	};
@@ -56,14 +56,14 @@ class PluginSiteNetwork extends React.Component {
 		return (
 			<div className="plugin-site-network__header">
 				<AllSites
-					sites={ this.props.secondarySites }
-					count={ this.props.secondarySites.length }
-					domain={ this.props.site.domain }
-					title={ this.props.translate( "%(mainSiteName)s's Network", {
+					sites={this.props.secondarySites}
+					count={this.props.secondarySites.length}
+					domain={this.props.site.domain}
+					title={this.props.translate("%(mainSiteName)s's Network", {
 						args: {
 							mainSiteName: this.props.site.name,
 						},
-					} ) }
+					})}
 				/>
 			</div>
 		);
@@ -74,8 +74,8 @@ class PluginSiteNetwork extends React.Component {
 			<FoldableCard
 				compact
 				className="plugin-site-network"
-				header={ this.renderMultisiteHeader() }
-				actionButton={ this.renderInstallButton() }
+				header={this.renderMultisiteHeader()}
+				actionButton={this.renderInstallButton()}
 			/>
 		);
 	};
@@ -84,11 +84,11 @@ class PluginSiteNetwork extends React.Component {
 		return (
 			<div className="plugin-site-network__actions">
 				<PluginAutoupdateToggle
-					site={ this.props.site }
-					plugin={ this.props.site.plugin }
-					wporg={ true }
+					site={this.props.site}
+					plugin={this.props.site.plugin}
+					wporg={true}
 				/>
-				<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
+				<PluginRemoveButton plugin={this.props.site.plugin} site={this.props.site} />
 			</div>
 		);
 	};
@@ -100,28 +100,28 @@ class PluginSiteNetwork extends React.Component {
 				compact
 				clickableHeader
 				className="plugin-site-network"
-				header={ this.renderMultisiteHeader() }
+				header={this.renderMultisiteHeader()}
 				summary={
 					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						notices={ this.props.notices }
-						expanded={ false }
+						site={this.props.site}
+						plugin={this.props.plugin}
+						notices={this.props.notices}
+						expanded={false}
 					/>
 				}
 				expandedSummary={
 					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						notices={ this.props.notices }
-						expanded={ true }
+						site={this.props.site}
+						plugin={this.props.plugin}
+						notices={this.props.notices}
+						expanded={true}
 					/>
 				}
 			>
 				<div>
-					{ this.renderPluginActions() }
+					{this.renderPluginActions()}
 					<div className="plugin-site__secondary-sites">
-						{ this.props.secondarySites.map( this.renderSecondarySite ) }
+						{this.props.secondarySites.map(this.renderSecondarySite)}
 					</div>
 				</div>
 			</FoldableCard>
@@ -129,32 +129,32 @@ class PluginSiteNetwork extends React.Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
-	renderSecondarySite = site => {
+	renderSecondarySite = (site) => {
 		return (
 			<CompactCard
 				className="plugin-site-network__secondary-site"
-				key={ 'secondary-site-' + site.ID }
+				key={'secondary-site-' + site.ID}
 			>
-				<Site site={ site } indicator={ false } />
-				{ this.renderSecondarySiteActions( site ) }
+				<Site site={site} indicator={false} />
+				{this.renderSecondarySiteActions(site)}
 			</CompactCard>
 		);
 	};
 
-	renderSecondarySiteActions = site => {
+	renderSecondarySiteActions = (site) => {
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
-				<PluginActivateToggle site={ site } plugin={ site.plugin } />
+				<PluginActivateToggle site={site} plugin={site.plugin} />
 			</div>
 		);
 	};
 
 	render() {
-		if ( ! this.props.site || ! this.props.plugin ) {
+		if (!this.props.site || !this.props.plugin) {
 			return null;
 		}
 
-		if ( ! this.props.site.plugin ) {
+		if (!this.props.site.plugin) {
 			return this.renderInstallPlugin();
 		}
 
@@ -162,4 +162,4 @@ class PluginSiteNetwork extends React.Component {
 	}
 }
 
-export default localize( PluginSiteNetwork );
+export default localize(PluginSiteNetwork);

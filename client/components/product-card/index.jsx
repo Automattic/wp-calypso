@@ -18,7 +18,7 @@ import ProductCardPriceGroup from './price-group';
  */
 import './style.scss';
 
-function ProductCard( {
+function ProductCard({
 	billingTimeFrame,
 	children,
 	currencyCode,
@@ -29,43 +29,43 @@ function ProductCard( {
 	purchase,
 	subtitle,
 	title,
-} ) {
-	const hasPriceGroup = ! purchase && !! currencyCode && !! billingTimeFrame;
-	const cardClassNames = classNames( 'product-card', {
+}) {
+	const hasPriceGroup = !purchase && !!currencyCode && !!billingTimeFrame;
+	const cardClassNames = classNames('product-card', {
 		'is-placeholder': isPlaceholder,
-		'is-purchased': !! purchase,
+		'is-purchased': !!purchase,
 		'has-secondary-header': subtitle || hasPriceGroup,
-	} );
+	});
 
 	return (
-		<Card className={ cardClassNames }>
+		<Card className={cardClassNames}>
 			<div className="product-card__header">
-				{ title && (
+				{title && (
 					<div className="product-card__header-primary">
-						{ purchase && <Gridicon icon="checkmark" size={ 18 } /> }
-						<h3 className="product-card__title">{ title }</h3>
+						{purchase && <Gridicon icon="checkmark" size={18} />}
+						<h3 className="product-card__title">{title}</h3>
 					</div>
-				) }
+				)}
 			</div>
-			{ description && (
+			{description && (
 				<div className="product-card__description">
-					<p>{ description }</p>
+					<p>{description}</p>
 				</div>
-			) }
-			{ children }
-			{ ( subtitle || hasPriceGroup ) && (
+			)}
+			{children}
+			{(subtitle || hasPriceGroup) && (
 				<div className="product-card__secondary">
-					{ subtitle && <div className="product-card__subtitle">{ subtitle }</div> }
-					{ ! subtitle && hasPriceGroup && (
+					{subtitle && <div className="product-card__subtitle">{subtitle}</div>}
+					{!subtitle && hasPriceGroup && (
 						<ProductCardPriceGroup
-							billingTimeFrame={ billingTimeFrame }
-							currencyCode={ currencyCode }
-							discountedPrice={ discountedPrice }
-							fullPrice={ fullPrice }
+							billingTimeFrame={billingTimeFrame}
+							currencyCode={currencyCode}
+							discountedPrice={discountedPrice}
+							fullPrice={fullPrice}
 						/>
-					) }
+					)}
 				</div>
-			) }
+			)}
 		</Card>
 	);
 }
@@ -73,16 +73,13 @@ function ProductCard( {
 ProductCard.propTypes = {
 	billingTimeFrame: PropTypes.string,
 	currencyCode: PropTypes.string,
-	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
-	discountedPrice: PropTypes.oneOfType( [
-		PropTypes.number,
-		PropTypes.arrayOf( PropTypes.number ),
-	] ),
-	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+	description: PropTypes.oneOfType([PropTypes.string, PropTypes.element, PropTypes.node]),
+	discountedPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
+	fullPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
-	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	subtitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element, PropTypes.node]),
+	title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 };
 
-export default localize( ProductCard );
+export default localize(ProductCard);

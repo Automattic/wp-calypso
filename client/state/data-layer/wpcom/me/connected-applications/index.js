@@ -15,7 +15,7 @@ import { receiveConnectedApplications } from 'state/connected-applications/actio
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const apiTransformer = data => data.connected_applications;
+export const apiTransformer = (data) => data.connected_applications;
 
 /**
  * Dispatches a request to fetch connected applications of the current user
@@ -23,7 +23,7 @@ export const apiTransformer = data => data.connected_applications;
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const requestConnectedApplications = action =>
+export const requestConnectedApplications = (action) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -40,15 +40,15 @@ export const requestConnectedApplications = action =>
  * @param   {object} apps   Connected applications
  * @returns {object} Dispatched user connected applications receive action
  */
-export const handleRequestSuccess = ( action, apps ) => receiveConnectedApplications( apps );
+export const handleRequestSuccess = (action, apps) => receiveConnectedApplications(apps);
 
-registerHandlers( 'state/data-layer/wpcom/me/connected-applications/index.js', {
-	[ CONNECTED_APPLICATIONS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/me/connected-applications/index.js', {
+	[CONNECTED_APPLICATIONS_REQUEST]: [
+		dispatchRequest({
 			fetch: requestConnectedApplications,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
-			fromApi: makeJsonSchemaParser( schema, apiTransformer, {} ),
-		} ),
+			fromApi: makeJsonSchemaParser(schema, apiTransformer, {}),
+		}),
 	],
-} );
+});

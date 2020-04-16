@@ -22,7 +22,7 @@ export default function getGoogleMyBusinessStatsError(
 ) {
 	return get(
 		state,
-		[ 'googleMyBusiness', siteId, 'statsError', statType, interval, aggregation ],
+		['googleMyBusiness', siteId, 'statsError', statType, interval, aggregation],
 		null
 	);
 }

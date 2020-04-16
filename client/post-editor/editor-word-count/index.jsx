@@ -27,9 +27,9 @@ export class EditorWordCount extends Component {
 	};
 
 	getSelectedTextCount() {
-		const selectedText = countWords( this.props.selectedText );
+		const selectedText = countWords(this.props.selectedText);
 
-		if ( ! selectedText ) {
+		if (!selectedText) {
 			return null;
 		}
 
@@ -50,7 +50,7 @@ export class EditorWordCount extends Component {
 	}
 
 	render() {
-		switch ( this.props.localeSlug ) {
+		switch (this.props.localeSlug) {
 			case 'ja':
 			case 'th':
 			case 'zh-cn':
@@ -65,23 +65,23 @@ export class EditorWordCount extends Component {
 				return null;
 		}
 
-		const wordCount = countWords( this.props.rawContent );
+		const wordCount = countWords(this.props.rawContent);
 
 		return (
 			<div className="editor-word-count">
 				<span className="editor-word-count__is-selected-text">
-					<strong>{ this.getSelectedTextCount() }</strong>
+					<strong>{this.getSelectedTextCount()}</strong>
 				</span>
-				{ this.props.translate( '%d word', '%d words', {
+				{this.props.translate('%d word', '%d words', {
 					count: wordCount,
-					args: [ wordCount ],
-				} ) }
+					args: [wordCount],
+				})}
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	localeSlug: getCurrentUserLocale( state ) || 'en',
-	rawContent: getEditorRawContent( state ),
-} ) )( localize( EditorWordCount ) );
+export default connect((state) => ({
+	localeSlug: getCurrentUserLocale(state) || 'en',
+	rawContent: getEditorRawContent(state),
+}))(localize(EditorWordCount));

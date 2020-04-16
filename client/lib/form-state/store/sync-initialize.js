@@ -11,22 +11,22 @@ import FormStateStore from '../';
 
 const { createInitialFormState, createNullFieldValues, initializeFields } = FormStateStore;
 
-function syncInitialize( { fieldNames } ) {
+function syncInitialize({ fieldNames }) {
 	return {
 		initialize() {
 			return { type: 'INITIALIZE' };
 		},
 
-		reduce( state, action ) {
+		reduce(state, action) {
 			let next;
 
-			switch ( action.type ) {
+			switch (action.type) {
 				case 'INITIALIZE':
-					next = createNullFieldValues( fieldNames );
-					next = createInitialFormState( next );
+					next = createNullFieldValues(fieldNames);
+					next = createInitialFormState(next);
 					next = initializeFields(
 						next,
-						mapValues( fieldNames, () => '' )
+						mapValues(fieldNames, () => '')
 					);
 					break;
 

@@ -22,15 +22,15 @@ class ProductFormVariationsCard extends Component {
 	};
 
 	static propTypes = {
-		site: PropTypes.shape( {
+		site: PropTypes.shape({
 			URL: PropTypes.string,
-		} ),
+		}),
 		siteId: PropTypes.number,
-		product: PropTypes.shape( {
+		product: PropTypes.shape({
 			type: PropTypes.string,
 			name: PropTypes.string,
 			attributes: PropTypes.array,
-		} ),
+		}),
 		variations: PropTypes.array,
 		editProduct: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
@@ -58,7 +58,7 @@ class ProductFormVariationsCard extends Component {
 	handleToggle = () => {
 		const type = this.props.product.type || 'simple';
 
-		if ( 'variable' !== type ) {
+		if ('variable' !== type) {
 			this.setProductTypeVariable();
 		} else {
 			this.setProductTypeSimple();
@@ -67,26 +67,26 @@ class ProductFormVariationsCard extends Component {
 
 	setProductTypeVariable() {
 		const { siteId, product, editProduct } = this.props;
-		const attributes = ( product.attributes && [ ...product.attributes ] ) || [];
+		const attributes = (product.attributes && [...product.attributes]) || [];
 		const productData = { ...product };
-		const simpleProduct = [ ...this.state.simpleProduct ];
+		const simpleProduct = [...this.state.simpleProduct];
 
-		this.simpleFields.forEach( function( field ) {
-			if ( product[ field ] ) {
-				simpleProduct[ field ] = product[ field ];
-				productData[ field ] = null;
+		this.simpleFields.forEach(function (field) {
+			if (product[field]) {
+				simpleProduct[field] = product[field];
+				productData[field] = null;
 			}
-		} );
-		this.state.variationAttributes.forEach( function( attribute ) {
-			attributes.push( attribute );
-		} );
+		});
+		this.state.variationAttributes.forEach(function (attribute) {
+			attributes.push(attribute);
+		});
 
-		this.setState( { simpleProduct, variationAttributes: [] } );
-		editProduct( siteId, product, {
+		this.setState({ simpleProduct, variationAttributes: [] });
+		editProduct(siteId, product, {
 			...productData,
 			type: 'variable',
 			attributes,
-		} );
+		});
 	}
 
 	setProductTypeSimple() {
@@ -94,23 +94,23 @@ class ProductFormVariationsCard extends Component {
 		const productData = { ...product };
 		const simpleProduct = this.state.simpleProduct;
 
-		this.simpleFields.forEach( function( field ) {
-			if ( simpleProduct[ field ] ) {
-				productData[ field ] = simpleProduct[ field ];
+		this.simpleFields.forEach(function (field) {
+			if (simpleProduct[field]) {
+				productData[field] = simpleProduct[field];
 			}
-		} );
+		});
 		const variationAttributes =
-			( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
+			(product.attributes && product.attributes.filter((attribute) => attribute.variation)) || [];
 		const attributes =
-			( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) ||
+			(product.attributes && product.attributes.filter((attribute) => !attribute.variation)) ||
 			null;
 
-		this.setState( { variationAttributes, simpleProduct: [] } );
-		editProduct( siteId, product, {
+		this.setState({ variationAttributes, simpleProduct: [] });
+		editProduct(siteId, product, {
 			...productData,
 			type: 'simple',
 			attributes,
-		} );
+		});
 	}
 
 	render() {
@@ -121,7 +121,7 @@ class ProductFormVariationsCard extends Component {
 			'%(productName)s has variations, like size and color.',
 			{
 				args: {
-					productName: ( product && product.name ) || translate( 'This product' ),
+					productName: (product && product.name) || translate('This product'),
 				},
 			}
 		);
@@ -135,51 +135,47 @@ class ProductFormVariationsCard extends Component {
 				expanded
 				className="products__variation-card"
 				header={
-					<FormToggle onChange={ this.handleToggle } checked={ 'variable' === type }>
-						{ variationToggleDescription }
+					<FormToggle onChange={this.handleToggle} checked={'variable' === type}>
+						{variationToggleDescription}
 					</FormToggle>
 				}
 			>
-				{ 'variable' === type && (
+				{'variable' === type && (
 					<div>
 						<ProductVariationTypesForm
-							siteId={ siteId }
-							product={ product }
-							editProductAttribute={ editProductAttribute }
+							siteId={siteId}
+							product={product}
+							editProductAttribute={editProductAttribute}
 						/>
 						<ProductFormVariationsTable
-							siteId={ siteId }
-							product={ product }
-							variations={ variations }
-							editProductVariation={ editProductVariation }
-							onUploadStart={ this.props.onUploadStart }
-							onUploadFinish={ this.props.onUploadFinish }
-							storeIsManagingStock={ storeIsManagingStock }
+							siteId={siteId}
+							product={product}
+							variations={variations}
+							editProductVariation={editProductVariation}
+							onUploadStart={this.props.onUploadStart}
+							onUploadFinish={this.props.onUploadFinish}
+							storeIsManagingStock={storeIsManagingStock}
 						/>
-						{ variations && variations.length && 'no' === storeIsManagingStock && (
+						{variations && variations.length && 'no' === storeIsManagingStock && (
 							<FormSettingExplanation>
-								{ translate(
+								{translate(
 									'Inventory management has been disabled for this store. ' +
 										'You can enable it under your {{managementLink}}inventory settings{{/managementLink}}.',
 									{
 										components: {
 											managementLink: (
-												<a
-													href={ inventorySettingsUrl }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
+												<a href={inventorySettingsUrl} target="_blank" rel="noopener noreferrer" />
 											),
 										},
 									}
-								) }
+								)}
 							</FormSettingExplanation>
-						) }
+						)}
 					</div>
-				) }
+				)}
 			</FoldableCard>
 		);
 	}
 }
 
-export default localize( ProductFormVariationsCard );
+export default localize(ProductFormVariationsCard);

@@ -26,9 +26,9 @@ const streams = {
 
 class NotificationSettingsForm extends PureComponent {
 	static propTypes = {
-		blogId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+		blogId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 		devices: PropTypes.array,
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		settingKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
 		settings: PropTypes.object.isRequired,
 		onToggle: PropTypes.func.isRequired,
 	};
@@ -36,13 +36,13 @@ class NotificationSettingsForm extends PureComponent {
 	state = { selectedStream: streams.TIMELINE };
 
 	getSelectedStreamSettings = () => {
-		if ( isNaN( this.state.selectedStream ) ) {
-			return get( this.props.settings, this.state.selectedStream );
+		if (isNaN(this.state.selectedStream)) {
+			return get(this.props.settings, this.state.selectedStream);
 		}
 
-		return find( get( this.props.settings, 'devices' ), {
-			device_id: parseInt( this.state.selectedStream, 10 ),
-		} );
+		return find(get(this.props.settings, 'devices'), {
+			device_id: parseInt(this.state.selectedStream, 10),
+		});
 	};
 
 	render() {
@@ -51,46 +51,46 @@ class NotificationSettingsForm extends PureComponent {
 		return (
 			<div className="notification-settings-form">
 				<StreamSelector
-					selectedStream={ this.state.selectedStream }
-					onChange={ selectedStream => this.setState( { selectedStream } ) }
-					settings={ selectedStreamSettings }
+					selectedStream={this.state.selectedStream}
+					onChange={(selectedStream) => this.setState({ selectedStream })}
+					settings={selectedStreamSettings}
 				/>
 				<div className="notification-settings-form__streams">
-					<Labels settingKeys={ this.props.settingKeys } />
+					<Labels settingKeys={this.props.settingKeys} />
 					<Stream
-						key={ streams.TIMELINE }
-						blogId={ this.props.blogId }
-						stream={ streams.TIMELINE }
-						settingKeys={ this.props.settingKeys }
-						settings={ get( this.props.settings, streams.TIMELINE ) }
-						onToggle={ this.props.onToggle }
+						key={streams.TIMELINE}
+						blogId={this.props.blogId}
+						stream={streams.TIMELINE}
+						settingKeys={this.props.settingKeys}
+						settings={get(this.props.settings, streams.TIMELINE)}
+						onToggle={this.props.onToggle}
 					/>
 					<Stream
-						key={ streams.EMAIL }
-						blogId={ this.props.blogId }
-						stream={ streams.EMAIL }
-						settingKeys={ this.props.settingKeys }
-						settings={ get( this.props.settings, streams.EMAIL ) }
-						onToggle={ this.props.onToggle }
+						key={streams.EMAIL}
+						blogId={this.props.blogId}
+						stream={streams.EMAIL}
+						settingKeys={this.props.settingKeys}
+						settings={get(this.props.settings, streams.EMAIL)}
+						onToggle={this.props.onToggle}
 					/>
-					{ this.props.devices && this.props.devices.length > 0 && (
+					{this.props.devices && this.props.devices.length > 0 && (
 						<Stream
-							key={ streams.DEVICES }
-							blogId={ this.props.blogId }
-							devices={ this.props.devices }
-							settingKeys={ this.props.settingKeys }
-							settings={ get( this.props.settings, streams.DEVICES ) }
-							onToggle={ this.props.onToggle }
+							key={streams.DEVICES}
+							blogId={this.props.blogId}
+							devices={this.props.devices}
+							settingKeys={this.props.settingKeys}
+							settings={get(this.props.settings, streams.DEVICES)}
+							onToggle={this.props.onToggle}
 						/>
-					) }
+					)}
 					<Stream
-						key={ 'selected-stream' }
-						className={ 'selected-stream' }
-						blogId={ this.props.blogId }
-						stream={ this.state.selectedStream }
-						settingKeys={ this.props.settingKeys }
-						settings={ selectedStreamSettings }
-						onToggle={ this.props.onToggle }
+						key={'selected-stream'}
+						className={'selected-stream'}
+						blogId={this.props.blogId}
+						stream={this.state.selectedStream}
+						settingKeys={this.props.settingKeys}
+						settings={selectedStreamSettings}
+						onToggle={this.props.onToggle}
 					/>
 				</div>
 			</div>
@@ -98,6 +98,6 @@ class NotificationSettingsForm extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
-	devices: getUserDevices( state ),
-} ) )( NotificationSettingsForm );
+export default connect((state) => ({
+	devices: getUserDevices(state),
+}))(NotificationSettingsForm);

@@ -18,14 +18,14 @@ import TranslatableString from 'components/translatable/proptype';
  */
 import './style.scss';
 
-function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
+function SidebarNavigation({ sectionTitle, children, toggleSidebar }) {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<header className="current-section">
-			<button onClick={ toggleSidebar }>
+			<button onClick={toggleSidebar}>
 				<Gridicon icon="menu" />
-				{ children }
-				<h1 className="current-section__site-title">{ sectionTitle }</h1>
+				{children}
+				<h1 className="current-section__site-title">{sectionTitle}</h1>
 			</button>
 		</header>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -37,9 +37,6 @@ SidebarNavigation.propTypes = {
 	toggleSidebar: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{
-		toggleSidebar: () => setLayoutFocus( 'sidebar' ),
-	}
-)( SidebarNavigation );
+export default connect(null, {
+	toggleSidebar: () => setLayoutFocus('sidebar'),
+})(SidebarNavigation);

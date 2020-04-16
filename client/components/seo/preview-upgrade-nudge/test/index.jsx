@@ -1,24 +1,24 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock('lib/abtest', () => ({
 	abtest: () => '',
-} ) );
+}));
 
-jest.mock( 'lib/analytics/index', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
-jest.mock( 'components/banner', () => 'Banner' );
+jest.mock('lib/analytics/index', () => ({}));
+jest.mock('lib/analytics/page-view-tracker', () => 'PageViewTracker');
+jest.mock('lib/analytics/track-component-view', () => 'TrackComponentView');
+jest.mock('components/banner', () => 'Banner');
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+jest.mock('i18n-calypso', () => ({
+	localize: (Comp) => (props) => (
 		<Comp
-			{ ...props }
-			translate={ function( x ) {
+			{...props}
+			translate={function (x) {
 				return x;
-			} }
+			}}
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
-} ) );
+	numberFormat: (x) => x,
+	translate: (x) => x,
+}));
 
 /**
  * External dependencies
@@ -50,44 +50,44 @@ import {
 import { SeoPreviewNudge } from '../index';
 
 const props = {
-	translate: x => x,
+	translate: (x) => x,
 };
 
-describe( 'SeoPreviewNudge basic tests', () => {
-	test( 'should not blow up', () => {
-		const comp = shallow( <SeoPreviewNudge { ...props } /> );
-		expect( comp.find( '.preview-upgrade-nudge' ).length ).toBe( 1 );
-	} );
+describe('SeoPreviewNudge basic tests', () => {
+	test('should not blow up', () => {
+		const comp = shallow(<SeoPreviewNudge {...props} />);
+		expect(comp.find('.preview-upgrade-nudge').length).toBe(1);
+	});
 
-	test( 'should track view', () => {
-		const comp = shallow( <SeoPreviewNudge { ...props } /> );
-		expect( comp.find( 'TrackComponentView' ).length ).toBe( 1 );
-		expect( comp.find( 'TrackComponentView' ).props().eventName ).toBe(
+	test('should track view', () => {
+		const comp = shallow(<SeoPreviewNudge {...props} />);
+		expect(comp.find('TrackComponentView').length).toBe(1);
+		expect(comp.find('TrackComponentView').props().eventName).toBe(
 			'calypso_seo_preview_upgrade_nudge_impression'
 		);
-	} );
-} );
+	});
+});
 
-describe( 'Upsell Banner should get appropriate plan constant', () => {
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
-		test( `Business 1 year for (${ product_slug })`, () => {
+describe('Upsell Banner should get appropriate plan constant', () => {
+	[PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM].forEach((product_slug) => {
+		test(`Business 1 year for (${product_slug})`, () => {
 			const comp = shallow(
-				<SeoPreviewNudge { ...props } isJetpack={ false } site={ { plan: { product_slug } } } />
+				<SeoPreviewNudge {...props} isJetpack={false} site={{ plan: { product_slug } }} />
 			);
-			expect( comp.find( 'Banner' ).length ).toBe( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS );
-		} );
-	} );
+			expect(comp.find('Banner').length).toBe(1);
+			expect(comp.find('Banner').props().plan).toBe(PLAN_BUSINESS);
+		});
+	});
 
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
-		test( `Business 2 year for (${ product_slug })`, () => {
+	[PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS].forEach((product_slug) => {
+		test(`Business 2 year for (${product_slug})`, () => {
 			const comp = shallow(
-				<SeoPreviewNudge { ...props } isJetpack={ false } site={ { plan: { product_slug } } } />
+				<SeoPreviewNudge {...props} isJetpack={false} site={{ plan: { product_slug } }} />
 			);
-			expect( comp.find( 'Banner' ).length ).toBe( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
-		} );
-	} );
+			expect(comp.find('Banner').length).toBe(1);
+			expect(comp.find('Banner').props().plan).toBe(PLAN_BUSINESS_2_YEARS);
+		});
+	});
 
 	[
 		PLAN_JETPACK_FREE,
@@ -96,13 +96,13 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		PLAN_JETPACK_PREMIUM,
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( product_slug => {
-		test( `Jetpack Business for (${ product_slug })`, () => {
+	].forEach((product_slug) => {
+		test(`Jetpack Business for (${product_slug})`, () => {
 			const comp = shallow(
-				<SeoPreviewNudge { ...props } isJetpack={ true } site={ { plan: { product_slug } } } />
+				<SeoPreviewNudge {...props} isJetpack={true} site={{ plan: { product_slug } }} />
 			);
-			expect( comp.find( 'Banner' ).length ).toBe( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_JETPACK_BUSINESS );
-		} );
-	} );
-} );
+			expect(comp.find('Banner').length).toBe(1);
+			expect(comp.find('Banner').props().plan).toBe(PLAN_JETPACK_BUSINESS);
+		});
+	});
+});

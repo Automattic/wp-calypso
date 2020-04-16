@@ -14,14 +14,14 @@ import { retrieveSignupDestination } from 'signup/utils';
  * @param {object} cart object
  * @returns {boolean} True if current user is able to see the checklist after checkout
  */
-export default function isEligibleForSignupDestination( state, siteId, cart ) {
-	if ( hasGoogleApps( cart ) ) {
-		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
+export default function isEligibleForSignupDestination(state, siteId, cart) {
+	if (hasGoogleApps(cart)) {
+		const domainReceiptId = get(getGoogleApps(cart), '[0].extra.receipt_for_domain', 0);
 
-		if ( ! domainReceiptId ) {
+		if (!domainReceiptId) {
 			return false;
 		}
 	}
 
-	return Boolean( retrieveSignupDestination() );
+	return Boolean(retrieveSignupDestination());
 }

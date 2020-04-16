@@ -55,7 +55,7 @@ import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
 /**
  * Module variables
  */
-const debug = debugFactory( 'calypso:checkout:payment' );
+const debug = debugFactory('calypso:checkout:payment');
 
 export class SecurePaymentForm extends Component {
 	static propTypes = {
@@ -72,8 +72,8 @@ export class SecurePaymentForm extends Component {
 		this.setInitialPaymentDetails();
 	}
 
-	async componentDidUpdate( prevProps ) {
-		if ( this.getVisiblePaymentBox( prevProps ) !== this.getVisiblePaymentBox( this.props ) ) {
+	async componentDidUpdate(prevProps) {
+		if (this.getVisiblePaymentBox(prevProps) !== this.getVisiblePaymentBox(this.props)) {
 			this.setInitialPaymentDetails();
 		}
 
@@ -81,17 +81,17 @@ export class SecurePaymentForm extends Component {
 		const prevStep = prevProps.transaction.step,
 			nextStep = this.props.transaction.step;
 
-		if ( ! isEqual( prevStep, nextStep ) ) {
-			await this.handleTransactionStep( this.props );
+		if (!isEqual(prevStep, nextStep)) {
+			await this.handleTransactionStep(this.props);
 		}
 	}
 
 	setInitialPaymentDetails() {
 		let newPayment;
 
-		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
+		const visiblePaymentBox = this.getVisiblePaymentBox(this.props);
 
-		switch ( visiblePaymentBox ) {
+		switch (visiblePaymentBox) {
 			case 'credits':
 			case 'free-trial':
 			case 'free-cart':
@@ -108,9 +108,9 @@ export class SecurePaymentForm extends Component {
 				// example, if the user already has entered information on the
 				// new card form and is now switching back to it after visiting
 				// another payment method).
-				if ( this.getInitialCard() ) {
-					newPayment = storedCardPayment( this.getInitialCard() );
-				} else if ( ! get( this.props.transaction, 'payment.newCardDetails', null ) ) {
+				if (this.getInitialCard()) {
+					newPayment = storedCardPayment(this.getInitialCard());
+				} else if (!get(this.props.transaction, 'payment.newCardDetails', null)) {
 					newPayment = newStripeCardPayment();
 				}
 				break;
@@ -121,66 +121,66 @@ export class SecurePaymentForm extends Component {
 				break;
 		}
 
-		if ( newPayment ) {
+		if (newPayment) {
 			// We need to defer this because this is mounted after `setDomainDetails`
 			// is called.
 			// Note: If this defer() is ever able to be removed, the corresponding
 			// defer() in NewCardForm::handleFieldChange() can likely be removed too.
-			defer( function() {
-				setPayment( newPayment );
-			} );
+			defer(function () {
+				setPayment(newPayment);
+			});
 		}
 	}
 
-	getVisiblePaymentBox( { cart, paymentMethods } ) {
+	getVisiblePaymentBox({ cart, paymentMethods }) {
 		let i;
 
-		if ( isPaidForFullyInCredits( cart ) ) {
+		if (isPaidForFullyInCredits(cart)) {
 			return 'credits';
-		} else if ( isFree( cart ) ) {
+		} else if (isFree(cart)) {
 			return 'free-cart';
-		} else if ( hasFreeTrial( cart ) ) {
+		} else if (hasFreeTrial(cart)) {
 			return 'free-trial';
-		} else if ( this.state && this.state.userSelectedPaymentBox ) {
+		} else if (this.state && this.state.userSelectedPaymentBox) {
 			return this.state.userSelectedPaymentBox;
 		}
 
-		for ( i = 0; i < paymentMethods.length; i++ ) {
-			if ( isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
-				return paymentMethods[ i ];
+		for (i = 0; i < paymentMethods.length; i++) {
+			if (isPaymentMethodEnabled(cart, get(paymentMethods, [i]))) {
+				return paymentMethods[i];
 			}
 		}
 
 		return null;
 	}
 
-	handlePaymentBoxSubmit = event => {
-		gaRecordEvent( 'Upgrades', 'Submitted Checkout Form' );
+	handlePaymentBoxSubmit = (event) => {
+		gaRecordEvent('Upgrades', 'Submitted Checkout Form');
 
-		this.submitTransaction( event );
+		this.submitTransaction(event);
 	};
 
 	getInitialCard() {
-		return this.props.cards[ 0 ];
+		return this.props.cards[0];
 	}
 
-	selectPaymentBox = paymentBox => {
-		this.setState( {
+	selectPaymentBox = (paymentBox) => {
+		this.setState({
 			userSelectedPaymentBox: paymentBox,
-		} );
+		});
 	};
 
-	async submitTransaction( event ) {
+	async submitTransaction(event) {
 		event && event.preventDefault();
 
 		const { cart, transaction } = this.props;
 
-		const origin = getLocationOrigin( window.location );
+		const origin = getLocationOrigin(window.location);
 		const successUrl = origin + this.props.redirectTo();
-		const cancelUrl = origin + '/checkout/' + get( this.props.selectedSite, 'slug', 'no-site' );
+		const cancelUrl = origin + '/checkout/' + get(this.props.selectedSite, 'slug', 'no-site');
 
-		const cardDetailsCountry = get( transaction, 'payment.newCardDetails.country', null );
-		if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetailsCountry ) ) {
+		const cardDetailsCountry = get(transaction, 'payment.newCardDetails.country', null);
+		if (isEbanxCreditCardProcessingEnabledForCountry(cardDetailsCountry)) {
 			transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
@@ -197,70 +197,70 @@ export class SecurePaymentForm extends Component {
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
 			// like the `TransactionStepsMixin` are called with every step.
-			step => defer( () => setTransactionStep( step ) )
+			(step) => defer(() => setTransactionStep(step))
 		);
 	}
 
-	async maybeSetSiteToPublic( { cart } ) {
+	async maybeSetSiteToPublic({ cart }) {
 		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
 
-		if ( isJetpack || ! siteIsPrivate ) {
+		if (isJetpack || !siteIsPrivate) {
 			return;
 		}
 
-		const productsInCart = get( cart, 'products', [] );
+		const productsInCart = get(cart, 'products', []);
 
 		if (
-			! find( productsInCart, ( { product_slug = '' } ) => {
-				return isWpComEcommercePlan( product_slug );
-			} )
+			!find(productsInCart, ({ product_slug = '' }) => {
+				return isWpComEcommercePlan(product_slug);
+			})
 		) {
 			return;
 		}
 
-		if ( 'variant' !== abtest( 'ATPrivacy' ) ) {
+		if ('variant' !== abtest('ATPrivacy')) {
 			// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-			debug( 'Setting site to public because it is an Atomic plan' );
-			const response = await this.props.saveSiteSettings( selectedSiteId, {
+			debug('Setting site to public because it is an Atomic plan');
+			const response = await this.props.saveSiteSettings(selectedSiteId, {
 				blog_public: 1,
-			} );
+			});
 
-			if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
+			if (!get(response, ['updated', 'blog_public'])) {
 				throw 'Invalid response';
 			}
 		}
 	}
 
-	async handleTransactionStep( { cart, selectedSite, transaction } ) {
+	async handleTransactionStep({ cart, selectedSite, transaction }) {
 		const step = transaction.step;
 
-		debug( 'transaction step: ' + step.name );
+		debug('transaction step: ' + step.name);
 
-		this.displayNotices( cart, step );
-		recordTransactionAnalytics( cart, step, transaction?.payment?.paymentMethod );
+		this.displayNotices(cart, step);
+		recordTransactionAnalytics(cart, step, transaction?.payment?.paymentMethod);
 
-		await this.finishIfLastStep( cart, selectedSite, step );
+		await this.finishIfLastStep(cart, selectedSite, step);
 	}
 
-	displayNotices( cart, step ) {
-		if ( step.error && step.name !== INPUT_VALIDATION ) {
-			displayError( step.error );
+	displayNotices(cart, step) {
+		if (step.error && step.name !== INPUT_VALIDATION) {
+			displayError(step.error);
 			return;
 		}
 
-		if ( step.name === RECEIVED_WPCOM_RESPONSE ) {
+		if (step.name === RECEIVED_WPCOM_RESPONSE) {
 			clear();
 		}
 	}
 
-	async finishIfLastStep( cart, selectedSite, step ) {
-		if ( ! step.last || step.error ) {
+	async finishIfLastStep(cart, selectedSite, step) {
+		if (!step.last || step.error) {
 			return;
 		}
 
 		try {
-			await this.maybeSetSiteToPublic( { cart } );
-		} catch ( e ) {
+			await this.maybeSetSiteToPublic({ cart });
+		} catch (e) {
 			const message = this.props.translate(
 				'There was a problem completing the checkout. {{a}}Contact support{{/a}}.',
 				{
@@ -270,31 +270,31 @@ export class SecurePaymentForm extends Component {
 				}
 			);
 
-			debug( 'Error setting site to public', e );
-			notices.error( message );
+			debug('Error setting site to public', e);
+			notices.error(message);
 
 			return;
 		}
 
-		if ( step.data.redirect_url ) {
-			this.props.handleCheckoutExternalRedirect( step.data.redirect_url );
+		if (step.data.redirect_url) {
+			this.props.handleCheckoutExternalRedirect(step.data.redirect_url);
 		} else {
-			defer( () => {
+			defer(() => {
 				// The Thank You page throws a rendering error if this is not in a defer.
 				this.props.handleCheckoutCompleteRedirect();
-			} );
+			});
 		}
 	}
 
 	renderCreditsPaymentBox() {
 		return (
 			<CreditsPaymentBox
-				cart={ this.props.cart }
-				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step }
-				presaleChatAvailable={ this.props.presaleChatAvailable }
+				cart={this.props.cart}
+				onSubmit={this.handlePaymentBoxSubmit}
+				transactionStep={this.props.transaction.step}
+				presaleChatAvailable={this.props.presaleChatAvailable}
 			>
-				{ this.props.children }
+				{this.props.children}
 			</CreditsPaymentBox>
 		);
 	}
@@ -302,9 +302,9 @@ export class SecurePaymentForm extends Component {
 	renderFreeTrialConfirmationBox() {
 		return (
 			<FreeTrialConfirmationBox
-				cart={ this.props.cart }
-				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step }
+				cart={this.props.cart}
+				onSubmit={this.handlePaymentBoxSubmit}
+				transactionStep={this.props.transaction.step}
 			/>
 		);
 	}
@@ -312,11 +312,11 @@ export class SecurePaymentForm extends Component {
 	renderFreeCartPaymentBox() {
 		return (
 			<FreeCartPaymentBox
-				cart={ this.props.cart }
-				onSubmit={ this.handlePaymentBoxSubmit }
-				products={ this.props.products }
-				selectedSite={ this.props.selectedSite }
-				transactionStep={ this.props.transaction.step }
+				cart={this.props.cart}
+				onSubmit={this.handlePaymentBoxSubmit}
+				products={this.props.products}
+				selectedSite={this.props.selectedSite}
+				transactionStep={this.props.transaction.step}
 			/>
 		);
 	}
@@ -325,25 +325,25 @@ export class SecurePaymentForm extends Component {
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
+				cart={this.props.cart}
+				paymentMethods={this.props.paymentMethods}
 				currentPaymentMethod="credit-card"
-				onSelectPaymentMethod={ this.selectPaymentBox }
+				onSelectPaymentMethod={this.selectPaymentBox}
 			>
 				<QueryPaymentCountries />
 				<CreditCardPaymentBox
-					translate={ this.props.translate }
-					cards={ this.props.cards }
-					transaction={ this.props.transaction }
-					cart={ this.props.cart }
-					countriesList={ this.props.countriesList }
-					initialCard={ this.getInitialCard() }
-					selectedSite={ this.props.selectedSite }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
+					translate={this.props.translate}
+					cards={this.props.cards}
+					transaction={this.props.transaction}
+					cart={this.props.cart}
+					countriesList={this.props.countriesList}
+					initialCard={this.getInitialCard()}
+					selectedSite={this.props.selectedSite}
+					onSubmit={this.handlePaymentBoxSubmit}
+					transactionStep={this.props.transaction.step}
+					presaleChatAvailable={this.props.presaleChatAvailable}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</CreditCardPaymentBox>
 			</PaymentBox>
 		);
@@ -353,24 +353,24 @@ export class SecurePaymentForm extends Component {
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
+				cart={this.props.cart}
+				paymentMethods={this.props.paymentMethods}
 				currentPaymentMethod="credit-card"
-				onSelectPaymentMethod={ this.selectPaymentBox }
+				onSelectPaymentMethod={this.selectPaymentBox}
 			>
 				<QueryPaymentCountries />
 				<StripeElementsPaymentBox
-					translate={ this.props.translate }
-					cards={ this.props.cards }
-					transaction={ this.props.transaction }
-					cart={ this.props.cart }
-					countriesList={ this.props.countriesList }
-					initialCard={ this.getInitialCard() }
-					selectedSite={ this.props.selectedSite }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
+					translate={this.props.translate}
+					cards={this.props.cards}
+					transaction={this.props.transaction}
+					cart={this.props.cart}
+					countriesList={this.props.countriesList}
+					initialCard={this.getInitialCard()}
+					selectedSite={this.props.selectedSite}
+					onSubmit={this.handlePaymentBoxSubmit}
+					presaleChatAvailable={this.props.presaleChatAvailable}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</StripeElementsPaymentBox>
 			</PaymentBox>
 		);
@@ -380,46 +380,46 @@ export class SecurePaymentForm extends Component {
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
+				cart={this.props.cart}
+				paymentMethods={this.props.paymentMethods}
 				currentPaymentMethod="paypal"
-				onSelectPaymentMethod={ this.selectPaymentBox }
+				onSelectPaymentMethod={this.selectPaymentBox}
 			>
 				<QueryPaymentCountries />
 				<PayPalPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					countriesList={ this.props.countriesList }
-					selectedSite={ this.props.selectedSite }
-					redirectTo={ this.props.redirectTo }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
+					cart={this.props.cart}
+					transaction={this.props.transaction}
+					countriesList={this.props.countriesList}
+					selectedSite={this.props.selectedSite}
+					redirectTo={this.props.redirectTo}
+					presaleChatAvailable={this.props.presaleChatAvailable}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</PayPalPaymentBox>
 			</PaymentBox>
 		);
 	}
 
-	renderRedirectPaymentBox( paymentType ) {
+	renderRedirectPaymentBox(paymentType) {
 		return (
 			<PaymentBox
 				classSet="redirect-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod={ paymentType }
-				onSelectPaymentMethod={ this.selectPaymentBox }
+				cart={this.props.cart}
+				paymentMethods={this.props.paymentMethods}
+				currentPaymentMethod={paymentType}
+				onSelectPaymentMethod={this.selectPaymentBox}
 			>
 				<QueryPaymentCountries />
 				<RedirectPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					countriesList={ this.props.countriesList }
-					selectedSite={ this.props.selectedSite }
-					paymentType={ paymentType }
-					redirectTo={ this.props.redirectTo }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
+					cart={this.props.cart}
+					transaction={this.props.transaction}
+					countriesList={this.props.countriesList}
+					selectedSite={this.props.selectedSite}
+					paymentType={paymentType}
+					redirectTo={this.props.redirectTo}
+					presaleChatAvailable={this.props.presaleChatAvailable}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</RedirectPaymentBox>
 			</PaymentBox>
 		);
@@ -429,20 +429,20 @@ export class SecurePaymentForm extends Component {
 		return (
 			<PaymentBox
 				classSet="wechat-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod={ 'wechat' }
-				onSelectPaymentMethod={ this.selectPaymentBox }
+				cart={this.props.cart}
+				paymentMethods={this.props.paymentMethods}
+				currentPaymentMethod={'wechat'}
+				onSelectPaymentMethod={this.selectPaymentBox}
 			>
 				<QueryPaymentCountries />
 				<WechatPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					selectedSite={ this.props.selectedSite }
-					redirectTo={ this.props.redirectTo }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
+					cart={this.props.cart}
+					transaction={this.props.transaction}
+					selectedSite={this.props.selectedSite}
+					redirectTo={this.props.redirectTo}
+					presaleChatAvailable={this.props.presaleChatAvailable}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</WechatPaymentBox>
 			</PaymentBox>
 		);
@@ -452,27 +452,27 @@ export class SecurePaymentForm extends Component {
 		return (
 			<PaymentBox
 				classSet="web-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
+				cart={this.props.cart}
+				paymentMethods={this.props.paymentMethods}
 				currentPaymentMethod="web-payment"
-				onSelectPaymentMethod={ this.selectPaymentBox }
+				onSelectPaymentMethod={this.selectPaymentBox}
 			>
 				<WebPaymentBox
-					cart={ this.props.cart }
-					countriesList={ this.props.countriesList }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
+					cart={this.props.cart}
+					countriesList={this.props.countriesList}
+					onSubmit={this.handlePaymentBoxSubmit}
+					presaleChatAvailable={this.props.presaleChatAvailable}
 				>
-					{ this.props.children }
+					{this.props.children}
 				</WebPaymentBox>
 			</PaymentBox>
 		);
 	}
 
-	renderPaymentBox = visiblePaymentBox => {
-		debug( 'getting %o payment box ...', visiblePaymentBox );
+	renderPaymentBox = (visiblePaymentBox) => {
+		debug('getting %o payment box ...', visiblePaymentBox);
 
-		switch ( visiblePaymentBox ) {
+		switch (visiblePaymentBox) {
 			case 'credits':
 				return this.renderCreditsPaymentBox();
 
@@ -485,23 +485,23 @@ export class SecurePaymentForm extends Component {
 			case 'credit-card':
 				return (
 					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderStripeElementsPaymentBox() }
+						{this.renderGreatChoiceHeader()}
+						{this.renderStripeElementsPaymentBox()}
 					</div>
 				);
 
 			case 'paypal':
 				return (
 					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderPayPalPaymentBox() }
+						{this.renderGreatChoiceHeader()}
+						{this.renderPayPalPaymentBox()}
 					</div>
 				);
 			case 'wechat':
 				return (
 					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderWechatPaymentBox() }
+						{this.renderGreatChoiceHeader()}
+						{this.renderWechatPaymentBox()}
 					</div>
 				);
 			case 'alipay':
@@ -516,67 +516,65 @@ export class SecurePaymentForm extends Component {
 			case 'sofort':
 				return (
 					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderRedirectPaymentBox( visiblePaymentBox ) }
+						{this.renderGreatChoiceHeader()}
+						{this.renderRedirectPaymentBox(visiblePaymentBox)}
 					</div>
 				);
 			case 'web-payment':
 				return (
 					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderWebPaymentBox() }
+						{this.renderGreatChoiceHeader()}
+						{this.renderWebPaymentBox()}
 					</div>
 				);
 			default:
-				debug( 'WARN: %o payment unknown', visiblePaymentBox );
+				debug('WARN: %o payment unknown', visiblePaymentBox);
 				return null;
 		}
 	};
 
 	renderGreatChoiceHeader() {
 		const { translate } = this.props;
-		const headerText = translate( 'Great choice! How would you like to pay?' );
+		const headerText = translate('Great choice! How would you like to pay?');
 
-		this.props.setHeaderText( headerText );
+		this.props.setHeaderText(headerText);
 	}
 
 	render() {
-		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
+		const visiblePaymentBox = this.getVisiblePaymentBox(this.props);
 
-		if ( visiblePaymentBox === null ) {
-			debug( 'empty content' );
+		if (visiblePaymentBox === null) {
+			debug('empty content');
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
-					title={ this.props.translate( 'Checkout is not available' ) }
-					line={ this.props.translate(
-						"We're hard at work on the issue. Please check back shortly."
-					) }
-					action={ this.props.translate( 'Back to Plans' ) }
-					actionURL={ '/plans/' + this.props.selectedSite.slug }
+					title={this.props.translate('Checkout is not available')}
+					line={this.props.translate("We're hard at work on the issue. Please check back shortly.")}
+					action={this.props.translate('Back to Plans')}
+					actionURL={'/plans/' + this.props.selectedSite.slug}
 				/>
 			);
 		}
 
 		return (
 			<div className="checkout__secure-payment-form">
-				{ this.renderPaymentBox( visiblePaymentBox ) }
+				{this.renderPaymentBox(visiblePaymentBox)}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
+	(state) => {
+		const selectedSiteId = getSelectedSiteId(state);
 
 		return {
-			countriesList: getCountries( state, 'payments' ),
-			isJetpack: isJetpackSite( state, selectedSiteId ),
-			presaleChatAvailable: isPresalesChatAvailable( state ),
+			countriesList: getCountries(state, 'payments'),
+			isJetpack: isJetpackSite(state, selectedSiteId),
+			presaleChatAvailable: isPresalesChatAvailable(state),
 			selectedSiteId,
-			siteIsPrivate: isPrivateSite( state, selectedSiteId ),
+			siteIsPrivate: isPrivateSite(state, selectedSiteId),
 		};
 	},
 	{ saveSiteSettings }
-)( localize( SecurePaymentForm ) );
+)(localize(SecurePaymentForm));

@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getRawOffsets from 'state/selectors/get-raw-offsets';
 
-describe( 'getRawOffsets()', () => {
-	test( "should return null if `timezones` aren't synced", () => {
+describe('getRawOffsets()', () => {
+	test("should return null if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
@@ -18,12 +18,12 @@ describe( 'getRawOffsets()', () => {
 			},
 		};
 
-		const manualUTCOffsets = getRawOffsets( state );
+		const manualUTCOffsets = getRawOffsets(state);
 
-		expect( manualUTCOffsets ).to.eql( {} );
-	} );
+		expect(manualUTCOffsets).to.eql({});
+	});
 
-	test( 'should return raw offsets data', () => {
+	test('should return raw offsets data', () => {
 		const state = {
 			timezones: {
 				rawOffsets: {
@@ -36,12 +36,12 @@ describe( 'getRawOffsets()', () => {
 			},
 		};
 
-		const offsets = getRawOffsets( state );
+		const offsets = getRawOffsets(state);
 
-		expect( offsets ).to.eql( {
+		expect(offsets).to.eql({
 			'UTC+0': 'UTC',
 			'UTC-12': 'UTC-12',
 			'UTC-11.5': 'UTC-11:30',
-		} );
-	} );
-} );
+		});
+	});
+});

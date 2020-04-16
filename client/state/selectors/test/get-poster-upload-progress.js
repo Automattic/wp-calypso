@@ -8,10 +8,10 @@ import { expect } from 'chai';
  */
 import getPosterUploadProgress from 'state/selectors/get-poster-upload-progress';
 
-describe( 'getPosterUploadProgress()', () => {
-	test( 'should return the upload progress', () => {
+describe('getPosterUploadProgress()', () => {
+	test('should return the upload progress', () => {
 		const percentage = 50;
-		const uploadProgress = getPosterUploadProgress( {
+		const uploadProgress = getPosterUploadProgress({
 			ui: {
 				editor: {
 					videoEditor: {
@@ -19,8 +19,8 @@ describe( 'getPosterUploadProgress()', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		expect( uploadProgress ).to.eql( percentage );
-	} );
-} );
+		expect(uploadProgress).to.eql(percentage);
+	});
+});

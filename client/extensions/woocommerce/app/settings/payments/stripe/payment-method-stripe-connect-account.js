@@ -15,14 +15,14 @@ import resizeImageUrl from 'lib/resize-image-url';
 
 class StripeConnectAccount extends Component {
 	static propTypes = {
-		stripeConnectAccount: PropTypes.shape( {
+		stripeConnectAccount: PropTypes.shape({
 			displayName: PropTypes.string,
 			email: PropTypes.string,
 			firstName: PropTypes.string,
 			isActivated: PropTypes.bool,
 			lastName: PropTypes.string,
 			logo: PropTypes.string,
-		} ),
+		}),
 		isDeauthorizing: PropTypes.bool.isRequired,
 		onDeauthorize: PropTypes.func.isRequired,
 	};
@@ -33,34 +33,34 @@ class StripeConnectAccount extends Component {
 
 		let image = null;
 
-		if ( ! isEmpty( logo ) ) {
+		if (!isEmpty(logo)) {
 			image = (
 				<Image
-					src={ resizeImageUrl( logo, { w: 40, h: 40 } ) }
+					src={resizeImageUrl(logo, { w: 40, h: 40 })}
 					className="stripe__connect-account-logo"
 				/>
 			);
 		}
 
-		return <div className="stripe__connect-account-logo-container">{ image }</div>;
+		return <div className="stripe__connect-account-logo-container">{image}</div>;
 	};
 
 	renderNameAndEmail = () => {
 		const { stripeConnectAccount } = this.props;
 		const { displayName, email, firstName, lastName } = stripeConnectAccount;
-		const name = ! isEmpty( displayName ) ? displayName : `${ firstName } ${ lastName }`;
+		const name = !isEmpty(displayName) ? displayName : `${firstName} ${lastName}`;
 
 		return (
 			<div className="stripe__connect-account-details">
 				<span className="stripe__connect-account-name">
-					<span className="stripe__connect-account-name">{ name }</span>
-					<span className="stripe__connect-account-email">{ email }</span>
+					<span className="stripe__connect-account-name">{name}</span>
+					<span className="stripe__connect-account-email">{email}</span>
 				</span>
 			</div>
 		);
 	};
 
-	onDeauthorize = event => {
+	onDeauthorize = (event) => {
 		event.preventDefault();
 		this.props.onDeauthorize();
 	};
@@ -72,40 +72,40 @@ class StripeConnectAccount extends Component {
 		let status = null;
 		let deauthorize = null;
 
-		if ( isActivated ) {
+		if (isActivated) {
 			status = (
 				<span className="stripe__connect-account-status account-activated">
-					{ translate( 'Activated' ) }
+					{translate('Activated')}
 				</span>
 			);
 		} else {
 			status = (
 				<span className="stripe__connect-account-status account-not-activated">
-					{ translate( 'Check email to activate account' ) }
+					{translate('Check email to activate account')}
 				</span>
 			);
 		}
 
-		if ( isDeauthorizing ) {
+		if (isDeauthorizing) {
 			deauthorize = (
-				<span className="stripe__connect-account-disconnect">{ translate( 'Disconnecting' ) }</span>
+				<span className="stripe__connect-account-disconnect">{translate('Disconnecting')}</span>
 			);
 		} else {
 			deauthorize = (
 				<Button
 					borderless
 					className="stripe__connect-account-disconnect"
-					onClick={ this.onDeauthorize }
+					onClick={this.onDeauthorize}
 				>
-					{ translate( 'Disconnect' ) }
+					{translate('Disconnect')}
 				</Button>
 			);
 		}
 
 		return (
 			<div>
-				{ status }
-				{ deauthorize }
+				{status}
+				{deauthorize}
 			</div>
 		);
 	};
@@ -115,12 +115,12 @@ class StripeConnectAccount extends Component {
 
 		return (
 			<div className="stripe__connect-account">
-				<h3 className="stripe__connect-account-heading">{ translate( 'Stripe account' ) }</h3>
+				<h3 className="stripe__connect-account-heading">{translate('Stripe account')}</h3>
 				<div className="stripe__connect-account-body">
-					{ this.renderLogo() }
+					{this.renderLogo()}
 					<div className="stripe__connect-account-details">
-						{ this.renderNameAndEmail() }
-						{ this.renderStatus() }
+						{this.renderNameAndEmail()}
+						{this.renderStatus()}
 					</div>
 				</div>
 			</div>
@@ -128,4 +128,4 @@ class StripeConnectAccount extends Component {
 	};
 }
 
-export default localize( StripeConnectAccount );
+export default localize(StripeConnectAccount);

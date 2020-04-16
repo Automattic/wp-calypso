@@ -32,40 +32,40 @@ export default class Select extends PureComponent {
 	};
 
 	recordFieldClick = () => {
-		if ( this.props.eventFormName ) {
-			gaRecordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Field`, this.props.name );
+		if (this.props.eventFormName) {
+			gaRecordEvent('Upgrades', `Clicked ${this.props.eventFormName} Field`, this.props.name);
 		}
 	};
 
 	render() {
-		const classes = classNames( this.props.additionalClasses, this.props.name );
+		const classes = classNames(this.props.additionalClasses, this.props.name);
 
-		const validationId = `validation-field-${ this.props.name }`;
+		const validationId = `validation-field-${this.props.name}`;
 
 		return (
-			<div className={ classes }>
-				<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+			<div className={classes}>
+				<FormLabel htmlFor={this.props.name}>{this.props.label}</FormLabel>
 				<FormSelect
-					aria-invalid={ this.props.isError }
-					aria-describedby={ validationId }
-					name={ this.props.name }
-					id={ this.props.name }
-					value={ this.props.value }
-					disabled={ this.props.disabled }
-					inputRef={ this.props.inputRef }
-					onChange={ this.props.onChange }
-					onClick={ this.recordFieldClick }
-					isError={ this.props.isError }
+					aria-invalid={this.props.isError}
+					aria-describedby={validationId}
+					name={this.props.name}
+					id={this.props.name}
+					value={this.props.value}
+					disabled={this.props.disabled}
+					inputRef={this.props.inputRef}
+					onChange={this.props.onChange}
+					onClick={this.recordFieldClick}
+					isError={this.props.isError}
 				>
-					{ this.props.options.map( option => (
-						<option key={ option.value } value={ option.value } disabled={ option.disabled }>
-							{ option.label }
+					{this.props.options.map((option) => (
+						<option key={option.value} value={option.value} disabled={option.disabled}>
+							{option.label}
 						</option>
-					) ) }
+					))}
 				</FormSelect>
-				{ this.props.errorMessage && (
-					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />
-				) }
+				{this.props.errorMessage && (
+					<FormInputValidation id={validationId} text={this.props.errorMessage} isError />
+				)}
 			</div>
 		);
 	}

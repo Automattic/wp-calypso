@@ -10,9 +10,9 @@ import { POST_EDIT } from 'state/action-types';
 
 import 'state/posts/init';
 
-export function deletePostMetadata( siteId, postId = null, metaKeys ) {
-	if ( ! Array.isArray( metaKeys ) ) {
-		metaKeys = [ metaKeys ];
+export function deletePostMetadata(siteId, postId = null, metaKeys) {
+	if (!Array.isArray(metaKeys)) {
+		metaKeys = [metaKeys];
 	}
 
 	return {
@@ -20,7 +20,7 @@ export function deletePostMetadata( siteId, postId = null, metaKeys ) {
 		siteId,
 		postId,
 		post: {
-			metadata: map( metaKeys, key => ( { key, operation: 'delete' } ) ),
+			metadata: map(metaKeys, (key) => ({ key, operation: 'delete' })),
 		},
 	};
 }

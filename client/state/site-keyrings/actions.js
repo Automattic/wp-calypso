@@ -25,136 +25,136 @@ import {
  * @param  {number} siteId Site ID
  * @returns {Function}      Action thunk
  */
-export function requestSiteKeyrings( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function requestSiteKeyrings(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_KEYRINGS_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.getSiteKeyrings( siteId )
-			.then( keyrings => {
-				dispatch( {
+			.getSiteKeyrings(siteId)
+			.then((keyrings) => {
+				dispatch({
 					type: SITE_KEYRINGS_REQUEST_SUCCESS,
 					siteId,
 					keyrings,
-				} );
+				});
 
 				return keyrings;
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_KEYRINGS_REQUEST_FAILURE,
 					siteId,
 					error,
-				} );
+				});
 
-				return Promise.reject( error );
-			} );
+				return Promise.reject(error);
+			});
 	};
 }
 
-export function createSiteKeyring( siteId, keyring ) {
-	return dispatch => {
-		dispatch( {
+export function createSiteKeyring(siteId, keyring) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_KEYRINGS_SAVE,
 			siteId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.createSiteKeyring( siteId, keyring )
-			.then( body => {
-				dispatch( {
+			.createSiteKeyring(siteId, keyring)
+			.then((body) => {
+				dispatch({
 					type: SITE_KEYRINGS_SAVE_SUCCESS,
 					siteId,
 					keyring,
-				} );
+				});
 
 				return body;
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_KEYRINGS_SAVE_FAILURE,
 					siteId,
 					error,
-				} );
+				});
 
-				return Promise.reject( error );
-			} );
+				return Promise.reject(error);
+			});
 	};
 }
 
-export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
-	return dispatch => {
-		dispatch( {
+export function updateSiteKeyring(siteId, keyringId, externalUserId) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_KEYRINGS_UPDATE,
 			siteId,
 			keyringId,
 			externalUserId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.updateSiteKeyring( siteId, keyringId, externalUserId )
-			.then( body => {
-				dispatch( {
+			.updateSiteKeyring(siteId, keyringId, externalUserId)
+			.then((body) => {
+				dispatch({
 					type: SITE_KEYRINGS_UPDATE_SUCCESS,
 					siteId,
 					keyringId,
 					externalUserId,
-				} );
+				});
 
 				return body;
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_KEYRINGS_UPDATE_FAILURE,
 					siteId,
 					keyringId,
 					externalUserId,
 					error,
-				} );
+				});
 
-				return Promise.reject( error );
-			} );
+				return Promise.reject(error);
+			});
 	};
 }
 
-export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
-	return dispatch => {
-		dispatch( {
+export function deleteSiteKeyring(siteId, keyringId, externalUserId = null) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_KEYRINGS_DELETE,
 			siteId,
 			keyringId,
 			externalUserId,
-		} );
+		});
 
 		return wpcom
 			.undocumented()
-			.deleteSiteKeyring( siteId, keyringId, externalUserId )
-			.then( body => {
-				dispatch( {
+			.deleteSiteKeyring(siteId, keyringId, externalUserId)
+			.then((body) => {
+				dispatch({
 					type: SITE_KEYRINGS_DELETE_SUCCESS,
 					siteId,
 					keyringId,
 					externalUserId,
-				} );
+				});
 
 				return body;
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_KEYRINGS_DELETE_FAILURE,
 					error,
 					siteId,
 					keyringId,
 					externalUserId,
-				} );
+				});
 
-				return Promise.reject( error );
-			} );
+				return Promise.reject(error);
+			});
 	};
 }

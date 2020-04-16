@@ -10,7 +10,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 registerHandlers(
 	'state/data-layer/wpcom/sites/comments/likes/index.js',
-	mergeHandlers( mine, newLike )
+	mergeHandlers(mine, newLike)
 );
 
 export default {};

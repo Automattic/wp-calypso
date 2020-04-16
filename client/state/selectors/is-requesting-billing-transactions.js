@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {object}   state  Global state tree
  * @returns {boolean}         Whether the billing transactions are being requested
  */
-export default function isRequestingBillingTransactions( state ) {
-	return get( state, 'billingTransactions.requesting', false );
+export default function isRequestingBillingTransactions(state) {
+	return get(state, 'billingTransactions.requesting', false);
 }

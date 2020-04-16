@@ -36,61 +36,59 @@ class Desktop extends React.Component {
 		} = this.props;
 
 		return (
-			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' } className={ classNames( 'is-desktop' ) }>
-				<Head title="WordPress.com" faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-					{ chunkCssLinks( entrypoint, isRTL ) }
+			<html lang={lang} dir={isRTL ? 'rtl' : 'ltr'} className={classNames('is-desktop')}>
+				<Head title="WordPress.com" faviconURL={faviconURL} cdn={'//s1.wp.com'}>
+					{chunkCssLinks(entrypoint, isRTL)}
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
-				<body className={ classNames( { rtl: isRTL } ) }>
-					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
+				<body className={classNames({ rtl: isRTL })}>
+					{/* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */}
 					<div id="wpcom" className="wpcom-site">
 						<div className="layout">
 							<div className="masterbar" />
 							<div className="layout__content">
-								<WordPressLogo size={ 72 } className="wpcom-site__logo" />
-								{ hasSecondary && (
+								<WordPressLogo size={72} className="wpcom-site__logo" />
+								{hasSecondary && (
 									<Fragment>
 										<div className="layout__secondary" />
 										<ul className="sidebar" />
 									</Fragment>
-								) }
+								)}
 							</div>
 						</div>
 					</div>
-					{ badge && (
-						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
-							{ abTestHelper && <TestHelper /> }
-							{ branchName && (
-								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
-							) }
-							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
+					{badge && (
+						<EnvironmentBadge badge={badge} feedbackURL={feedbackURL}>
+							{abTestHelper && <TestHelper />}
+							{branchName && <Branch branchName={branchName} commitChecksum={commitChecksum} />}
+							{devDocs && <DevDocsLink url={devDocsURL} />}
 						</EnvironmentBadge>
-					) }
+					)}
 
-					{ app && (
+					{app && (
 						<script
 							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var app = ' + jsonStringifyForHtml( app ),
-							} }
+							dangerouslySetInnerHTML={{
+								__html: 'var app = ' + jsonStringifyForHtml(app),
+							}}
 						/>
-					) }
-					{ clientData && (
+					)}
+					{clientData && (
 						<script
 							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: `var configData = ${ jsonStringifyForHtml( clientData ) };`,
-							} }
+							dangerouslySetInnerHTML={{
+								__html: `var configData = ${jsonStringifyForHtml(clientData)};`,
+							}}
 						/>
-					) }
+					)}
 
-					{ entrypoint.js.map( asset => (
-						<script key={ asset } src={ asset } />
-					) ) }
+					{entrypoint.js.map((asset) => (
+						<script key={asset} src={asset} />
+					))}
 					<script src="/desktop/desktop-app.js" />
-					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
+					{i18nLocaleScript && <script src={i18nLocaleScript} />}
 					<script type="text/javascript">startApp();</script>
-					{ /* eslint-enable wpcalypso/jsx-classname-namespace, react/no-danger */ }
+					{/* eslint-enable wpcalypso/jsx-classname-namespace, react/no-danger */}
 				</body>
 			</html>
 		);

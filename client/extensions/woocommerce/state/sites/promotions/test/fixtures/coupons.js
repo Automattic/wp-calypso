@@ -14,7 +14,7 @@ export const coupon2 = {
 	discount_type: 'fixed_product',
 	date_created_gmt: '2017-10-08T07:07:23',
 	date_expires_gmt: '2017-11-09T08:08:24',
-	product_ids: [ 1 ],
+	product_ids: [1],
 };
 
 export const coupon3 = {
@@ -24,5 +24,5 @@ export const coupon3 = {
 	discount_type: 'fixed_cart',
 	date_created_gmt: '2017-10-08T07:07:23',
 	date_expires_gmt: '2017-11-09T08:08:24',
-	product_categories: [ 22 ],
+	product_categories: [22],
 };

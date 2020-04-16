@@ -12,14 +12,14 @@ import schema from './watermark-schema';
 
 export const watermarks = keyedReducer(
 	'streamKey',
-	withSchemaValidation( schema, ( state = {}, action ) => {
-		switch ( action.type ) {
+	withSchemaValidation(schema, (state = {}, action) => {
+		switch (action.type) {
 			case READER_VIEW_STREAM:
-				return max( [ +state, +action.mark ] );
+				return max([+state, +action.mark]);
 		}
 
 		return state;
-	} )
+	})
 );
 
 watermarks.hasCustomPersistence = true;

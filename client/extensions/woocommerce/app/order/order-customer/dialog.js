@@ -48,7 +48,7 @@ const defaultAddress = {
 
 class CustomerAddressDialog extends Component {
 	static propTypes = {
-		address: PropTypes.shape( {
+		address: PropTypes.shape({
 			address_1: PropTypes.string,
 			address_2: PropTypes.string,
 			city: PropTypes.string,
@@ -59,20 +59,20 @@ class CustomerAddressDialog extends Component {
 			first_name: PropTypes.string,
 			last_name: PropTypes.string,
 			phone: PropTypes.string,
-		} ),
+		}),
 		areLocationsLoaded: PropTypes.bool,
 		closeDialog: PropTypes.func,
 		countries: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				code: PropTypes.string.isRequired,
 				name: PropTypes.string.isRequired,
 				states: PropTypes.arrayOf(
-					PropTypes.shape( {
+					PropTypes.shape({
 						code: PropTypes.string.isRequired,
 						name: PropTypes.string.isRequired,
-					} )
+					})
 				),
-			} )
+			})
 		),
 		countriesList: PropTypes.array.isRequired,
 		isBilling: PropTypes.bool,
@@ -94,8 +94,8 @@ class CustomerAddressDialog extends Component {
 	maybeFetchLocations() {
 		const { siteId } = this.props;
 
-		if ( siteId && ! this.props.areLocationsLoaded ) {
-			this.props.fetchLocations( siteId );
+		if (siteId && !this.props.areLocationsLoaded) {
+			this.props.fetchLocations(siteId);
 		}
 	}
 
@@ -105,18 +105,18 @@ class CustomerAddressDialog extends Component {
 	}
 
 	UNSAFE_componentWillMount() {
-		this.fetchData( this.props );
+		this.fetchData(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.fetchData( newProps );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		if (newProps.siteId !== this.props.siteId) {
+			this.fetchData(newProps);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		// Modal was just opened
-		if ( this.props.isVisible && ! prevProps.isVisible ) {
+		if (this.props.isVisible && !prevProps.isVisible) {
 			this.initializeState();
 		}
 		this.maybeFetchLocations();
@@ -130,24 +130,24 @@ class CustomerAddressDialog extends Component {
 			state: defaultState,
 			...this.props.address,
 		};
-		this.setState( {
+		this.setState({
 			address,
 			phoneCountry: address.country || defaultCountry,
 			emailValidMessage: false,
-		} );
+		});
 	};
 
-	fetchData = ( { siteId, areSettingsLoaded } ) => {
-		if ( ! siteId ) {
+	fetchData = ({ siteId, areSettingsLoaded }) => {
+		if (!siteId) {
 			return;
 		}
-		if ( ! areSettingsLoaded ) {
-			this.props.fetchSettingsGeneral( siteId );
+		if (!areSettingsLoaded) {
+			this.props.fetchSettingsGeneral(siteId);
 		}
 	};
 
 	updateAddress = () => {
-		this.props.updateAddress( this.state.address );
+		this.props.updateAddress(this.state.address);
 		this.props.closeDialog();
 	};
 
@@ -155,66 +155,66 @@ class CustomerAddressDialog extends Component {
 		this.props.closeDialog();
 	};
 
-	onPhoneChange = phone => {
-		this.setState( prevState => {
+	onPhoneChange = (phone) => {
+		this.setState((prevState) => {
 			const { address } = prevState;
 			const newState = { ...address, phone: phone.value };
 			return { address: newState, phoneCountry: phone.countryCode };
-		} );
+		});
 	};
 
-	onChange = event => {
+	onChange = (event) => {
 		const value = event.target.value;
 		let name = event.target.name;
-		if ( 'street' === name ) {
+		if ('street' === name) {
 			name = 'address_1';
-		} else if ( 'street2' === name ) {
+		} else if ('street2' === name) {
 			name = 'address_2';
 		}
-		this.setState( prevState => {
+		this.setState((prevState) => {
 			const { address } = prevState;
-			const newState = { address: { ...address, [ name ]: value } };
+			const newState = { address: { ...address, [name]: value } };
 
 			// Users of AddressView isEditable must always update the state prop
 			// passed to AddressView in the event of country changes
-			if ( 'country' === name ) {
-				const countryData = find( this.props.countries, { code: value } );
-				if ( ! isEmpty( countryData.states ) ) {
-					newState.address.state = countryData.states[ 0 ].code;
+			if ('country' === name) {
+				const countryData = find(this.props.countries, { code: value });
+				if (!isEmpty(countryData.states)) {
+					newState.address.state = countryData.states[0].code;
 				} else {
 					newState.address.state = '';
 				}
 			}
 
 			return newState;
-		} );
+		});
 	};
 
-	validateEmail = event => {
+	validateEmail = (event) => {
 		const { translate } = this.props;
-		if ( ! emailValidator.validate( event.target.value ) ) {
-			this.setState( {
-				emailValidMessage: translate( 'Please enter a valid email address.' ),
-			} );
+		if (!emailValidator.validate(event.target.value)) {
+			this.setState({
+				emailValidMessage: translate('Please enter a valid email address.'),
+			});
 		} else {
-			this.setState( {
+			this.setState({
 				emailValidMessage: false,
-			} );
+			});
 		}
 	};
 
 	toggleShipping = () => {
-		this.setState( prevState => {
+		this.setState((prevState) => {
 			const { address } = prevState;
-			const newState = { ...address, copyToShipping: ! prevState.address.copyToShipping };
+			const newState = { ...address, copyToShipping: !prevState.address.copyToShipping };
 			return { address: newState };
-		} );
+		});
 	};
 
 	renderBillingFields = () => {
 		const { isBilling, translate } = this.props;
 		const { address, emailValidMessage } = this.state;
-		if ( ! isBilling ) {
+		if (!isBilling) {
 			return null;
 		}
 		return (
@@ -222,31 +222,31 @@ class CustomerAddressDialog extends Component {
 				<FormFieldset>
 					<QueryPaymentCountries />
 					<FormPhoneMediaInput
-						label={ translate( 'Phone number' ) }
-						onChange={ this.onPhoneChange }
-						countryCode={ this.state.phoneCountry }
-						countriesList={ this.props.countriesList }
-						value={ get( address, 'phone', '' ) }
+						label={translate('Phone number')}
+						onChange={this.onPhoneChange}
+						countryCode={this.state.phoneCountry}
+						countriesList={this.props.countriesList}
+						value={get(address, 'phone', '')}
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="email">{ translate( 'Email address' ) }</FormLabel>
+					<FormLabel htmlFor="email">{translate('Email address')}</FormLabel>
 					<FormTextInput
 						id="email"
 						name="email"
-						value={ get( address, 'email', '' ) }
-						onChange={ this.onChange }
-						onBlur={ this.validateEmail }
+						value={get(address, 'email', '')}
+						onChange={this.onChange}
+						onBlur={this.validateEmail}
 					/>
-					{ emailValidMessage && <FormInputValidation text={ emailValidMessage } isError /> }
+					{emailValidMessage && <FormInputValidation text={emailValidMessage} isError />}
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
 						<FormCheckbox
-							checked={ get( address, 'copyToShipping', false ) }
-							onChange={ this.toggleShipping }
+							checked={get(address, 'copyToShipping', false)}
+							onChange={this.toggleShipping}
 						/>
-						<span>{ translate( 'Copy changes to shipping' ) }</span>
+						<span>{translate('Copy changes to shipping')}</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>
@@ -256,55 +256,55 @@ class CustomerAddressDialog extends Component {
 	render() {
 		const { countries, isBilling, isVisible, translate } = this.props;
 		const { address, emailValidMessage } = this.state;
-		if ( ! address || isEmpty( countries ) ) {
+		if (!address || isEmpty(countries)) {
 			return null;
 		}
 
 		const dialogButtons = [
-			<Button onClick={ this.closeDialog }>{ translate( 'Close' ) }</Button>,
-			<Button primary onClick={ this.updateAddress } disabled={ !! emailValidMessage }>
-				{ translate( 'Save' ) }
+			<Button onClick={this.closeDialog}>{translate('Close')}</Button>,
+			<Button primary onClick={this.updateAddress} disabled={!!emailValidMessage}>
+				{translate('Save')}
 			</Button>,
 		];
 
 		return (
 			<Dialog
-				isVisible={ isVisible }
-				onClose={ this.closeDialog }
+				isVisible={isVisible}
+				onClose={this.closeDialog}
 				className="order-customer__dialog woocommerce"
-				buttons={ dialogButtons }
+				buttons={dialogButtons}
 			>
 				<FormFieldset>
 					<FormLegend className="order-customer__billing-details">
-						{ isBilling ? translate( 'Billing details' ) : translate( 'Shipping details' ) }
+						{isBilling ? translate('Billing details') : translate('Shipping details')}
 					</FormLegend>
 					<div className="order-customer__fieldset">
 						<div className="order-customer__field">
-							<FormLabel htmlFor="first_name">{ translate( 'First name' ) }</FormLabel>
+							<FormLabel htmlFor="first_name">{translate('First name')}</FormLabel>
 							<FormTextInput
 								id="first_name"
 								name="first_name"
-								value={ get( address, 'first_name', '' ) }
-								onChange={ this.onChange }
+								value={get(address, 'first_name', '')}
+								onChange={this.onChange}
 							/>
 						</div>
 						<div className="order-customer__field">
-							<FormLabel htmlFor="last_name">{ translate( 'Last name' ) }</FormLabel>
+							<FormLabel htmlFor="last_name">{translate('Last name')}</FormLabel>
 							<FormTextInput
 								id="last_name"
 								name="last_name"
-								value={ get( address, 'last_name', '' ) }
-								onChange={ this.onChange }
+								value={get(address, 'last_name', '')}
+								onChange={this.onChange}
 							/>
 						</div>
 					</div>
 					<AddressView
-						address={ getAddressViewFormat( address ) }
-						countries={ countries }
+						address={getAddressViewFormat(address)}
+						countries={countries}
 						isEditable
-						onChange={ this.onChange }
+						onChange={this.onChange}
 					/>
-					{ this.renderBillingFields() }
+					{this.renderBillingFields()}
 				</FormFieldset>
 			</Dialog>
 		);
@@ -312,20 +312,20 @@ class CustomerAddressDialog extends Component {
 }
 
 export default connect(
-	state => {
-		const address = getStoreLocation( state );
-		const locationsLoaded = areLocationsLoaded( state );
-		const areSettingsLoaded = areSettingsGeneralLoaded( state );
-		const countries = getAllCountries( state );
+	(state) => {
+		const address = getStoreLocation(state);
+		const locationsLoaded = areLocationsLoaded(state);
+		const areSettingsLoaded = areSettingsGeneralLoaded(state);
+		const countries = getAllCountries(state);
 
 		return {
 			areLocationsLoaded: locationsLoaded,
 			areSettingsLoaded,
 			countries,
-			countriesList: getCountries( state, 'payments' ),
+			countriesList: getCountries(state, 'payments'),
 			defaultCountry: address.country,
 			defaultState: address.state,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
-)( localize( CustomerAddressDialog ) );
+	(dispatch) => bindActionCreators({ fetchLocations, fetchSettingsGeneral }, dispatch)
+)(localize(CustomerAddressDialog));

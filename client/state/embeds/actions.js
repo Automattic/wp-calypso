@@ -12,7 +12,7 @@ import 'state/data-layer/wpcom/sites/embeds';
  * @param   {string} url    Embed URL
  * @returns {object}        Action object
  */
-export function requestEmbed( siteId, url ) {
+export function requestEmbed(siteId, url) {
 	return {
 		type: EMBED_REQUEST,
 		siteId,
@@ -29,7 +29,7 @@ export function requestEmbed( siteId, url ) {
  * @param   {object} embed  Embed data
  * @returns {object}        Action object
  */
-export function receiveEmbed( siteId, url, embed ) {
+export function receiveEmbed(siteId, url, embed) {
 	return {
 		type: EMBED_RECEIVE,
 		siteId,
@@ -45,7 +45,7 @@ export function receiveEmbed( siteId, url, embed ) {
  * @param   {number} siteId Site ID
  * @returns {object}        Action object
  */
-export function requestEmbeds( siteId ) {
+export function requestEmbeds(siteId) {
 	return {
 		type: EMBEDS_REQUEST,
 		siteId,
@@ -60,7 +60,7 @@ export function requestEmbeds( siteId ) {
  * @param   {Array}  embeds Embed items
  * @returns {object}        Action object
  */
-export function receiveEmbeds( siteId, embeds ) {
+export function receiveEmbeds(siteId, embeds) {
 	return {
 		type: EMBEDS_RECEIVE,
 		siteId,

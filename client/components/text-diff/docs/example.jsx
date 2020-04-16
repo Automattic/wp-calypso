@@ -22,7 +22,7 @@ export default function TextDiffExample() {
 
 	return (
 		<h2>
-			<TextDiff operations={ operations } />
+			<TextDiff operations={operations} />
 		</h2>
 	);
 }

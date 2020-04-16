@@ -14,10 +14,10 @@ class Skeleton extends Component {
 		const { translate } = this.props;
 		return (
 			<div>
-				<CompactCard> { translate( 'Loading…' ) } </CompactCard>
+				<CompactCard> {translate('Loading…')} </CompactCard>
 			</div>
 		);
 	}
 }
 
-export default localize( Skeleton );
+export default localize(Skeleton);

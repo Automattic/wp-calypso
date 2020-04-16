@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {number}  siteId  The ID of the site we're querying
  * @returns {?object}         Modules data
  */
-export default function getJetpackModules( state, siteId ) {
-	return get( state.jetpack.modules.items, [ siteId ], null );
+export default function getJetpackModules(state, siteId) {
+	return get(state.jetpack.modules.items, [siteId], null);
 }

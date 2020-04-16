@@ -12,7 +12,7 @@ import {
 	CONNECTED_APPLICATIONS_RECEIVE,
 } from 'state/action-types';
 
-describe( 'reducer', () => {
+describe('reducer', () => {
 	const app1 = {
 		ID: '12345678',
 		URL: 'http://wordpress.com',
@@ -42,7 +42,7 @@ describe( 'reducer', () => {
 		ID: '23456789',
 	};
 
-	const apps = [ app1, app2 ];
+	const apps = [app1, app2];
 	const otherApps = [
 		{
 			...app1,
@@ -50,46 +50,46 @@ describe( 'reducer', () => {
 		},
 	];
 
-	test( 'should default to null', () => {
-		const state = reducer( undefined, {} );
-		expect( state ).toBeNull();
-	} );
+	test('should default to null', () => {
+		const state = reducer(undefined, {});
+		expect(state).toBeNull();
+	});
 
-	test( 'should set connected applications to empty array when user has no connected applications', () => {
-		const state = reducer( undefined, {
+	test('should set connected applications to empty array when user has no connected applications', () => {
+		const state = reducer(undefined, {
 			type: CONNECTED_APPLICATIONS_RECEIVE,
 			apps: [],
-		} );
+		});
 
-		expect( state ).toEqual( [] );
-	} );
+		expect(state).toEqual([]);
+	});
 
-	test( 'should add connected applications to the initial state', () => {
-		const state = reducer( [], {
+	test('should add connected applications to the initial state', () => {
+		const state = reducer([], {
 			type: CONNECTED_APPLICATIONS_RECEIVE,
 			apps,
-		} );
+		});
 
-		expect( state ).toEqual( apps );
-	} );
+		expect(state).toEqual(apps);
+	});
 
-	test( 'should overwrite previous connected applications in state', () => {
-		const state = deepFreeze( apps );
-		const newState = reducer( state, {
+	test('should overwrite previous connected applications in state', () => {
+		const state = deepFreeze(apps);
+		const newState = reducer(state, {
 			type: CONNECTED_APPLICATIONS_RECEIVE,
 			apps: otherApps,
-		} );
+		});
 
-		expect( newState ).toEqual( otherApps );
-	} );
+		expect(newState).toEqual(otherApps);
+	});
 
-	test( 'should delete connected applications by ID from state', () => {
-		const state = deepFreeze( apps );
-		const newState = reducer( state, {
+	test('should delete connected applications by ID from state', () => {
+		const state = deepFreeze(apps);
+		const newState = reducer(state, {
 			type: CONNECTED_APPLICATION_DELETE_SUCCESS,
 			appId: app1.ID,
-		} );
+		});
 
-		expect( newState ).toEqual( [ app2 ] );
-	} );
-} );
+		expect(newState).toEqual([app2]);
+	});
+});

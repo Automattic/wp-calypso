@@ -25,16 +25,16 @@ import { itemsSchema } from './schema';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
+export function requesting(state = {}, action) {
+	switch (action.type) {
 		case POST_TYPES_TAXONOMIES_REQUEST:
 		case POST_TYPES_TAXONOMIES_REQUEST_SUCCESS:
 		case POST_TYPES_TAXONOMIES_REQUEST_FAILURE:
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.postType ]: POST_TYPES_TAXONOMIES_REQUEST === action.type,
+			return merge({}, state, {
+				[action.siteId]: {
+					[action.postType]: POST_TYPES_TAXONOMIES_REQUEST === action.type,
 				},
-			} );
+			});
 	}
 
 	return state;
@@ -48,23 +48,23 @@ export function requesting( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case POST_TYPES_TAXONOMIES_RECEIVE:
 			return {
 				...state,
-				[ action.siteId ]: {
-					...state[ action.siteId ],
-					[ action.postType ]: action.taxonomies,
+				[action.siteId]: {
+					...state[action.siteId],
+					[action.postType]: action.taxonomies,
 				},
 			};
 
 		default:
 			return state;
 	}
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	items,
-} );
+});

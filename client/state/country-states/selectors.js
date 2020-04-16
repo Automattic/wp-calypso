@@ -13,8 +13,8 @@ import { get } from 'lodash';
  * @returns {?Array}             States objects, if known.
  */
 
-export function getCountryStates( state, countryCode ) {
-	return get( state.countryStates, [ 'items', countryCode.toLowerCase() ], null );
+export function getCountryStates(state, countryCode) {
+	return get(state.countryStates, ['items', countryCode.toLowerCase()], null);
 }
 
 /**
@@ -25,6 +25,6 @@ export function getCountryStates( state, countryCode ) {
  * @param  {string}  countryCode Country code to check.
  * @returns {boolean}             Whether a request is in progress
  */
-export function isCountryStatesFetching( state, countryCode ) {
-	return get( state.countryStates, [ 'isFetching', countryCode.toLowerCase() ], false );
+export function isCountryStatesFetching(state, countryCode) {
+	return get(state.countryStates, ['isFetching', countryCode.toLowerCase()], false);
 }

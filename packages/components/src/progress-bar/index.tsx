@@ -29,7 +29,7 @@ interface State {
 	allTimeMax: number;
 }
 
-export default class ProgressBar extends React.PureComponent< Props, State > {
+export default class ProgressBar extends React.PureComponent<Props, State> {
 	static defaultProps = {
 		total: 100,
 		compact: false,
@@ -37,9 +37,9 @@ export default class ProgressBar extends React.PureComponent< Props, State > {
 		canGoBackwards: false,
 	};
 
-	static getDerivedStateFromProps( props: Props, state: State ) {
+	static getDerivedStateFromProps(props: Props, state: State) {
 		return {
-			allTimeMax: Math.max( state.allTimeMax, props.value ),
+			allTimeMax: Math.max(state.allTimeMax, props.value),
 		};
 	}
 
@@ -49,42 +49,41 @@ export default class ProgressBar extends React.PureComponent< Props, State > {
 
 	getCompletionPercentage() {
 		const percentage = Math.ceil(
-			( ( this.props.canGoBackwards ? this.props.value : this.state.allTimeMax ) /
-				this.props.total ) *
+			((this.props.canGoBackwards ? this.props.value : this.state.allTimeMax) / this.props.total) *
 				100
 		);
 
 		// The percentage should not be allowed to be more than 100
-		return Math.min( percentage, 100 );
+		return Math.min(percentage, 100);
 	}
 
 	renderBar() {
 		const { color, title, total, value } = this.props;
 
 		const styles: React.CSSProperties = { width: this.getCompletionPercentage() + '%' };
-		if ( color ) {
+		if (color) {
 			styles.backgroundColor = color;
 		}
 
 		return (
 			<div
-				aria-valuemax={ total }
-				aria-valuemin={ 0 }
-				aria-valuenow={ value }
+				aria-valuemax={total}
+				aria-valuemin={0}
+				aria-valuenow={value}
 				className="progress-bar__progress"
 				role="progressbar"
-				style={ styles }
+				style={styles}
 			>
-				{ title && <ScreenReaderText>{ title }</ScreenReaderText> }
+				{title && <ScreenReaderText>{title}</ScreenReaderText>}
 			</div>
 		);
 	}
 
 	render() {
-		const classes = classnames( this.props.className, 'progress-bar', {
+		const classes = classnames(this.props.className, 'progress-bar', {
 			'is-compact': this.props.compact,
 			'is-pulsing': this.props.isPulsing,
-		} );
-		return <div className={ classes }>{ this.renderBar() }</div>;
+		});
+		return <div className={classes}>{this.renderBar()}</div>;
 	}
 }

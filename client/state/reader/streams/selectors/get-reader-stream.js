@@ -10,8 +10,8 @@ const emptyStream = {
 	isRequesting: false,
 };
 
-function getStream( state, streamKey ) {
-	return state.reader.streams[ streamKey ] || emptyStream;
+function getStream(state, streamKey) {
+	return state.reader.streams[streamKey] || emptyStream;
 }
 
 export default getStream;

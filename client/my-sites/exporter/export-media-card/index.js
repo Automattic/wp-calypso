@@ -28,30 +28,30 @@ class ExportMediaCard extends Component {
 
 		const exportMediaButton = (
 			<Button
-				href={ mediaExportUrl }
+				href={mediaExportUrl}
 				className="export-media-card__download"
-				disabled={ ! mediaExportUrl }
-				onClick={ recordMediaExportClick }
+				disabled={!mediaExportUrl}
+				onClick={recordMediaExportClick}
 			>
-				{ translate( 'Download' ) }
+				{translate('Download')}
 			</Button>
 		);
 
 		return (
 			<div className="export-media-card">
-				<QueryMediaExport siteId={ siteId } />
+				<QueryMediaExport siteId={siteId} />
 				<FoldableCard
 					header={
 						<div>
-							<h1 className="export-media-card__title">{ translate( 'Export media library' ) }</h1>
+							<h1 className="export-media-card__title">{translate('Export media library')}</h1>
 							<h2 className="export-media-card__subtitle">
-								{ translate(
+								{translate(
 									'Download all the media library files (images, videos, audio and documents) from your site.'
-								) }
+								)}
 							</h2>
 						</div>
 					}
-					summary={ exportMediaButton }
+					summary={exportMediaButton}
 				/>
 			</div>
 		);
@@ -59,10 +59,10 @@ class ExportMediaCard extends Component {
 }
 
 export default connect(
-	state => ( {
-		mediaExportUrl: getMediaExportUrl( state ),
-	} ),
+	(state) => ({
+		mediaExportUrl: getMediaExportUrl(state),
+	}),
 	{
-		recordMediaExportClick: () => recordTracksEvent( 'calypso_export_media_download_button_click' ),
+		recordMediaExportClick: () => recordTracksEvent('calypso_export_media_download_button_click'),
 	}
-)( localize( ExportMediaCard ) );
+)(localize(ExportMediaCard));

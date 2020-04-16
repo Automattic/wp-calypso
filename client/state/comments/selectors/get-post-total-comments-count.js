@@ -11,6 +11,6 @@ import 'state/comments/init';
  * @param {number} postId site identification
  * @returns {number} total comments count on the server. if not found, assume infinity
  */
-export function getPostTotalCommentsCount( state, siteId, postId ) {
-	return state.comments.totalCommentsCount[ `${ siteId }-${ postId }` ];
+export function getPostTotalCommentsCount(state, siteId, postId) {
+	return state.comments.totalCommentsCount[`${siteId}-${postId}`];
 }

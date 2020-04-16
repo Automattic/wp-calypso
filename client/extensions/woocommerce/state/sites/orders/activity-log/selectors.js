@@ -68,20 +68,17 @@ export const EVENT_TYPES = {
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the activity log for a given order has been successfully loaded from the server.
  */
-export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const notesLoaded = areOrderNotesLoaded( state, orderId, siteId );
-	if ( ! notesLoaded ) {
+export const isActivityLogLoaded = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const notesLoaded = areOrderNotesLoaded(state, orderId, siteId);
+	if (!notesLoaded) {
 		return false;
 	}
 
-	if (
-		! plugins.isWcsEnabled( state, siteId ) ||
-		areShippingLabelsErrored( state, orderId, siteId )
-	) {
+	if (!plugins.isWcsEnabled(state, siteId) || areShippingLabelsErrored(state, orderId, siteId)) {
 		return true;
 	}
 
-	return areShippingLabelsLoaded( state, orderId, siteId );
+	return areShippingLabelsLoaded(state, orderId, siteId);
 };
 
 /**
@@ -90,20 +87,17 @@ export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId(
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the activity log for a given order is currently being retrieved from the server.
  */
-export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const notesLoading = areOrderNotesLoading( state, orderId, siteId );
-	if ( notesLoading ) {
+export const isActivityLogLoading = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const notesLoading = areOrderNotesLoading(state, orderId, siteId);
+	if (notesLoading) {
 		return true;
 	}
 
-	if (
-		! plugins.isWcsEnabled( state, siteId ) ||
-		areShippingLabelsErrored( state, orderId, siteId )
-	) {
+	if (!plugins.isWcsEnabled(state, siteId) || areShippingLabelsErrored(state, orderId, siteId)) {
 		return false;
 	}
 
-	return areShippingLabelsLoading( state, orderId, siteId );
+	return areShippingLabelsLoading(state, orderId, siteId);
 };
 
 /**
@@ -115,83 +109,83 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
  * - {number} key A unique ID for the event. The combination of "type + key" must be unique in the whole list.
  * - {number} timestamp The time of the event.
  */
-export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const order = getOrder( state, orderId, siteId );
-	const events = getOrderNotes( state, orderId, siteId ).map( note => ( {
+export const getActivityLogEvents = (state, orderId, siteId = getSelectedSiteId(state)) => {
+	const order = getOrder(state, orderId, siteId);
+	const events = getOrderNotes(state, orderId, siteId).map((note) => ({
 		key: note.id,
 		type: note.customer_note ? EVENT_TYPES.CUSTOMER_NOTE : EVENT_TYPES.INTERNAL_NOTE,
-		timestamp: new Date( note.date_created_gmt + 'Z' ).getTime(),
+		timestamp: new Date(note.date_created_gmt + 'Z').getTime(),
 		content: note.note,
-	} ) );
+	}));
 
-	getOrderRefunds( state, orderId, siteId ).forEach( refund => {
-		events.push( {
+	getOrderRefunds(state, orderId, siteId).forEach((refund) => {
+		events.push({
 			key: refund.id,
 			type: EVENT_TYPES.REFUND_NOTE,
-			timestamp: new Date( refund.date_created_gmt + 'Z' ).getTime(),
+			timestamp: new Date(refund.date_created_gmt + 'Z').getTime(),
 			amount: refund.amount,
 			reason: refund.reason,
 			currency: order.currency,
-		} );
-	} );
+		});
+	});
 
-	if ( plugins.isWcsEnabled( state, siteId ) ) {
-		const labels = getLabels( state, orderId, siteId );
+	if (plugins.isWcsEnabled(state, siteId)) {
+		const labels = getLabels(state, orderId, siteId);
 		const renderableLabels = filter(
 			labels,
-			label => -1 !== [ 'PURCHASED', 'ANONYMIZED', 'PURCHASE_IN_PROGRESS' ].indexOf( label.status )
+			(label) => -1 !== ['PURCHASED', 'ANONYMIZED', 'PURCHASE_IN_PROGRESS'].indexOf(label.status)
 		);
 
-		renderableLabels.forEach( ( label, index, allLabels ) => {
+		renderableLabels.forEach((label, index, allLabels) => {
 			const labelIndex = allLabels.length - 1 - index;
-			if ( label.refund ) {
-				switch ( label.refund.status ) {
+			if (label.refund) {
+				switch (label.refund.status) {
 					case 'complete':
-						events.push( {
+						events.push({
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_COMPLETED,
 							timestamp: label.refund.refund_date,
 							serviceName: label.service_name,
 							labelIndex,
-							amount: parseFloat( label.refund.amount ) || label.refundable_amount,
+							amount: parseFloat(label.refund.amount) || label.refundable_amount,
 							currency: label.currency,
-						} );
+						});
 						break;
 					case 'rejected':
-						events.push( {
+						events.push({
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REJECTED,
 							timestamp: label.refund.refund_date,
 							serviceName: label.service_name,
 							labelIndex,
-						} );
+						});
 						break;
 					default:
 						// Only render the "refund requested" event if the refund hasn't yet completed/rejected
-						events.push( {
+						events.push({
 							key: label.label_id,
 							type: EVENT_TYPES.LABEL_REFUND_REQUESTED,
 							timestamp: label.refund.request_date,
 							serviceName: label.service_name,
 							labelIndex,
-							amount: parseFloat( label.refund.amount ) || label.refundable_amount,
+							amount: parseFloat(label.refund.amount) || label.refundable_amount,
 							currency: label.currency,
-						} );
+						});
 				}
 			}
 
-			if ( 'PURCHASE_IN_PROGRESS' === label.status ) {
-				return events.push( {
+			if ('PURCHASE_IN_PROGRESS' === label.status) {
+				return events.push({
 					key: label.label_id,
 					type: EVENT_TYPES.LABEL_PURCHASING,
 					labelIndex,
 					labelId: label.label_id,
 					serviceName: label.service_name,
 					carrierId: label.carrier_id,
-				} );
+				});
 			}
 
-			events.push( {
+			events.push({
 				key: label.label_id,
 				type: EVENT_TYPES.LABEL_PURCHASED,
 				timestamp: label.created_date,
@@ -213,9 +207,9 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				anonymized: 'ANONYMIZED' === label.status,
 				// If there's a refund in progress or completed, the Reprint/Refund buttons or the tracking number must *not* be shown
 				showDetails:
-					! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
-			} );
-		} );
+					!label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
+			});
+		});
 	}
 
 	return events;

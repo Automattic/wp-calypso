@@ -39,68 +39,68 @@ export class AddLinkDialog extends Component {
 		selectedPost: { id: null, url: null },
 	};
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		this.setState( {
-			linkUrl: this.inferUrl( newProps.selectedText ),
+	UNSAFE_componentWillReceiveProps(newProps) {
+		this.setState({
+			linkUrl: this.inferUrl(newProps.selectedText),
 			linkText: newProps.selectedText,
-		} );
+		});
 	}
 
 	correctUrl() {
 		const url = this.state.linkUrl.trim();
-		if ( REGEXP_EMAIL.test( url ) ) {
-			return `mailto:${ url }`;
+		if (REGEXP_EMAIL.test(url)) {
+			return `mailto:${url}`;
 		}
-		if ( ! REGEXP_STANDALONE_URL.test( url ) ) {
-			return `http://${ url }`;
+		if (!REGEXP_STANDALONE_URL.test(url)) {
+			return `http://${url}`;
 		}
 		return url;
 	}
 
-	inferUrl( selectedText ) {
-		if ( REGEXP_EMAIL.test( selectedText ) ) {
+	inferUrl(selectedText) {
+		if (REGEXP_EMAIL.test(selectedText)) {
 			return 'mailto:' + selectedText;
-		} else if ( REGEXP_URL.test( selectedText ) ) {
-			return selectedText.replace( /&amp;|&#0?38;/gi, '&' );
+		} else if (REGEXP_URL.test(selectedText)) {
+			return selectedText.replace(/&amp;|&#0?38;/gi, '&');
 		}
 		return '';
 	}
 
-	bindLinkUrlRef = input => {
+	bindLinkUrlRef = (input) => {
 		this.linkUrl = input;
 	};
 
-	setLinkUrl = event => {
+	setLinkUrl = (event) => {
 		const { selectedPost } = this.state;
-		this.setState( {
+		this.setState({
 			linkUrl: event.target.value,
 			selectedPost:
 				selectedPost.url === event.target.value ? selectedPost : { id: null, url: null },
-		} );
+		});
 	};
 
-	setLinkText = event => {
-		this.setState( { linkText: event.target.value } );
+	setLinkText = (event) => {
+		this.setState({ linkText: event.target.value });
 	};
 
-	setLinkNewTab = event => {
-		this.setState( { linkNewTab: event.target.checked } );
+	setLinkNewTab = (event) => {
+		this.setState({ linkNewTab: event.target.checked });
 	};
 
-	onSelectPost = post => {
-		this.setState( {
+	onSelectPost = (post) => {
+		this.setState({
 			linkUrl: post.URL,
 			selectedPost: { id: post.ID, url: post.URL },
-		} );
+		});
 	};
 
 	onCloseDialog = () => {
-		this.setState( {
+		this.setState({
 			linkNewTab: false,
 			linkText: '',
 			linkUrl: '',
 			selectedPost: { id: null, url: null },
-		} );
+		});
 		this.props.onClose();
 	};
 
@@ -123,67 +123,63 @@ export class AddLinkDialog extends Component {
 		const buttons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 			},
 			{
 				action: 'add-link',
 				isPrimary: true,
-				label: translate( 'Add Link' ),
+				label: translate('Add Link'),
 				onClick: this.onInsertLink,
 			},
 		];
 
 		return (
 			<Dialog
-				isVisible={ shouldDisplay }
-				buttons={ buttons }
-				onClose={ this.onCloseDialog }
+				isVisible={shouldDisplay}
+				buttons={buttons}
+				onClose={this.onCloseDialog}
 				additionalClassNames="editor-html-toolbar__dialog"
 			>
 				<FormFieldset>
-					<FormLabel htmlFor="link_url">{ translate( 'URL' ) }</FormLabel>
+					<FormLabel htmlFor="link_url">{translate('URL')}</FormLabel>
 					<FormTextInput
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						id="link_url"
 						name="link_url"
-						onChange={ this.setLinkUrl }
-						ref={ this.bindLinkUrlRef }
-						value={ linkUrl }
+						onChange={this.setLinkUrl}
+						ref={this.bindLinkUrlRef}
+						value={linkUrl}
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="link_text">{ translate( 'Link Text' ) }</FormLabel>
+					<FormLabel htmlFor="link_text">{translate('Link Text')}</FormLabel>
 					<FormTextInput
 						id="link_text"
 						name="link_text"
-						onChange={ this.setLinkText }
-						value={ linkText }
+						onChange={this.setLinkText}
+						value={linkText}
 					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<FormCheckbox
-							checked={ linkNewTab }
-							name="link_new_tab"
-							onChange={ this.setLinkNewTab }
-						/>
-						<span>{ translate( 'Open link in a new window/tab' ) }</span>
+						<FormCheckbox checked={linkNewTab} name="link_new_tab" onChange={this.setLinkNewTab} />
+						<span>{translate('Open link in a new window/tab')}</span>
 					</FormLabel>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<span>{ translate( 'Link to existing content' ) }</span>
+						<span>{translate('Link to existing content')}</span>
 					</FormLabel>
 					<PostSelector
-						emptyMessage={ translate( 'No posts found' ) }
-						onChange={ this.onSelectPost }
+						emptyMessage={translate('No posts found')}
+						onChange={this.onSelectPost}
 						order="DESC"
 						orderBy="date"
-						selected={ selectedPost.id }
+						selected={selectedPost.id}
 						showTypeLabels
-						siteId={ siteId }
+						siteId={siteId}
 						type="any"
-						excludePrivateTypes={ true }
+						excludePrivateTypes={true}
 					/>
 				</FormFieldset>
 			</Dialog>
@@ -191,6 +187,6 @@ export class AddLinkDialog extends Component {
 	}
 }
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( AddLinkDialog ) );
+export default connect((state) => ({
+	siteId: getSelectedSiteId(state),
+}))(localize(AddLinkDialog));

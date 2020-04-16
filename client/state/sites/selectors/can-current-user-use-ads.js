@@ -12,10 +12,10 @@ import getSite from './get-site';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable
  */
-export default function canCurrentUserUseAds( state, siteId = null ) {
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export default function canCurrentUserUseAds(state, siteId = null) {
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
-	const site = getSite( state, siteId );
-	return site && !! canAccessWordads( site );
+	const site = getSite(state, siteId);
+	return site && !!canAccessWordads(site);
 }

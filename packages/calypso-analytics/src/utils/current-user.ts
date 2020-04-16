@@ -43,23 +43,23 @@ export function getCurrentUser(): CurrentUser {
  * @returns Current user.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function setCurrentUser( currentUser: SetCurrentUserParams ): CurrentUser | undefined {
+export function setCurrentUser(currentUser: SetCurrentUserParams): CurrentUser | undefined {
 	if (
-		! currentUser.ID ||
-		isNaN( parseInt( currentUser.ID, 10 ) ) ||
-		! currentUser.username ||
-		! currentUser.email
+		!currentUser.ID ||
+		isNaN(parseInt(currentUser.ID, 10)) ||
+		!currentUser.username ||
+		!currentUser.email
 	) {
 		return; // Invalid user data.
 	}
 	_currentUser = {
-		ID: parseInt( currentUser.ID, 10 ),
+		ID: parseInt(currentUser.ID, 10),
 		username: currentUser.username,
 		email: currentUser.email,
 		hashedPii: {
-			ID: hashPii( currentUser.ID ),
-			username: hashPii( currentUser.username.toLowerCase().replace( /\s/g, '' ) ),
-			email: hashPii( currentUser.email.toLowerCase().replace( /\s/g, '' ) ),
+			ID: hashPii(currentUser.ID),
+			username: hashPii(currentUser.username.toLowerCase().replace(/\s/g, '')),
+			email: hashPii(currentUser.email.toLowerCase().replace(/\s/g, '')),
 		},
 	};
 	return _currentUser;

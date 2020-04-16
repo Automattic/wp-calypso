@@ -10,11 +10,11 @@ class ContactFormViewPreviewRequired extends React.Component {
 	static displayName = 'ContactFormViewPreviewRequired';
 
 	render() {
-		if ( this.props.required ) {
+		if (this.props.required) {
 			return (
 				<em>
 					&nbsp;(
-					{ this.props.translate( 'required' ) })
+					{this.props.translate('required')})
 				</em>
 			);
 		}
@@ -23,4 +23,4 @@ class ContactFormViewPreviewRequired extends React.Component {
 	}
 }
 
-export default localize( ContactFormViewPreviewRequired );
+export default localize(ContactFormViewPreviewRequired);

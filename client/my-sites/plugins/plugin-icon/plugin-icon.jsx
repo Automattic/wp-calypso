@@ -12,23 +12,23 @@ import Gridicon from 'components/gridicon';
  */
 import './style.scss';
 
-const PluginIcon = ( { className, image, isPlaceholder } ) => {
+const PluginIcon = ({ className, image, isPlaceholder }) => {
 	const classes = classNames(
 		{
 			'plugin-icon': true,
 			'is-placeholder': isPlaceholder,
-			'is-fallback': ! image,
+			'is-fallback': !image,
 		},
 		className
 	);
 
 	return (
-		<div className={ classes }>
-			{ isPlaceholder || ! image ? (
+		<div className={classes}>
+			{isPlaceholder || !image ? (
 				<Gridicon icon="plugins" />
 			) : (
-				<img className="plugin-icon__img" src={ image } />
-			) }
+				<img className="plugin-icon__img" src={image} />
+			)}
 		</div>
 	);
 };

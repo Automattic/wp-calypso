@@ -16,7 +16,7 @@ const REGEXP_SERIALIZED_QUERY = /^(?:(\d+):)?(.*)$/;
 // Used for client-side filtering of results from Jetpack sites. Note that Jetpack sites
 // only return the 'feature' taxonomy (in the guise of an array called `tags` which
 // we normalize to taxonomies.theme_feature to be consistent with results from WPCOM.)
-const SEARCH_TAXONOMIES = [ 'feature' ];
+const SEARCH_TAXONOMIES = ['feature'];
 
 export const oldShowcaseUrl = '//wordpress.com/themes/';
 
@@ -30,9 +30,9 @@ export const oldShowcaseUrl = '//wordpress.com/themes/';
  * @param  {object} theme Theme object
  * @returns {boolean}      True if the theme is premium
  */
-export function isPremium( theme ) {
-	const themeStylesheet = get( theme, 'stylesheet', false );
-	return themeStylesheet && startsWith( themeStylesheet, 'premium/' );
+export function isPremium(theme) {
+	const themeStylesheet = get(theme, 'stylesheet', false);
+	return themeStylesheet && startsWith(themeStylesheet, 'premium/');
 }
 
 /**
@@ -41,16 +41,16 @@ export function isPremium( theme ) {
  * @param  {object} theme  Theme object
  * @returns {object}        Normalized theme object
  */
-export function normalizeJetpackTheme( theme = {} ) {
-	if ( ! theme.tags ) {
+export function normalizeJetpackTheme(theme = {}) {
+	if (!theme.tags) {
 		return theme;
 	}
 
 	return {
-		...omit( theme, 'tags' ),
+		...omit(theme, 'tags'),
 		taxonomies: {
 			// Map slugs only since JP sites give us no names
-			theme_feature: map( theme.tags, slug => ( { slug } ) ),
+			theme_feature: map(theme.tags, (slug) => ({ slug })),
 		},
 	};
 }
@@ -61,14 +61,14 @@ export function normalizeJetpackTheme( theme = {} ) {
  * @param  {object} theme  Theme object
  * @returns {object}        Normalized theme object
  */
-export function normalizeWpcomTheme( theme ) {
+export function normalizeWpcomTheme(theme) {
 	const attributesMap = {
 		description_long: 'descriptionLong',
 		support_documentation: 'supportDocumentation',
 		download_uri: 'download',
 	};
 
-	return mapKeys( theme, ( value, key ) => get( attributesMap, key, key ) );
+	return mapKeys(theme, (value, key) => get(attributesMap, key, key));
 }
 
 /**
@@ -77,7 +77,7 @@ export function normalizeWpcomTheme( theme ) {
  * @param  {object} theme  Theme object
  * @returns {object}        Normalized theme object
  */
-export function normalizeWporgTheme( theme ) {
+export function normalizeWporgTheme(theme) {
 	const attributesMap = {
 		slug: 'id',
 		preview_url: 'demo_uri',
@@ -85,28 +85,28 @@ export function normalizeWporgTheme( theme ) {
 		download_link: 'download',
 	};
 
-	const normalizedTheme = mapKeys( omit( theme, [ 'sections', 'author' ] ), ( value, key ) =>
-		get( attributesMap, key, key )
+	const normalizedTheme = mapKeys(omit(theme, ['sections', 'author']), (value, key) =>
+		get(attributesMap, key, key)
 	);
 
-	const description = get( theme, [ 'sections', 'description' ] );
-	if ( description ) {
+	const description = get(theme, ['sections', 'description']);
+	if (description) {
 		normalizedTheme.description = description;
 	}
 
-	const author = get( theme, [ 'author', 'display_name' ] );
-	if ( author ) {
+	const author = get(theme, ['author', 'display_name']);
+	if (author) {
 		normalizedTheme.author = author;
 	}
 
-	if ( ! normalizedTheme.tags ) {
+	if (!normalizedTheme.tags) {
 		return normalizedTheme;
 	}
 
 	return {
-		...omit( normalizedTheme, 'tags' ),
+		...omit(normalizedTheme, 'tags'),
 		taxonomies: {
-			theme_feature: map( normalizedTheme.tags, ( name, slug ) => ( { name, slug } ) ),
+			theme_feature: map(normalizedTheme.tags, (name, slug) => ({ name, slug })),
 		},
 	};
 }
@@ -117,9 +117,9 @@ export function normalizeWporgTheme( theme ) {
  * @param  {string}  stylesheet Theme stylesheet
  * @returns {?string}            Theme ID
  */
-export function getThemeIdFromStylesheet( stylesheet ) {
-	const [ , slug ] = split( stylesheet, '/', 2 );
-	if ( ! slug ) {
+export function getThemeIdFromStylesheet(stylesheet) {
+	const [, slug] = split(stylesheet, '/', 2);
+	if (!slug) {
 		return stylesheet;
 	}
 	return slug;
@@ -132,8 +132,8 @@ export function getThemeIdFromStylesheet( stylesheet ) {
  * @param  {object} query Themes query
  * @returns {object}       Normalized themes query
  */
-export function getNormalizedThemesQuery( query ) {
-	return omitBy( query, ( value, key ) => DEFAULT_THEME_QUERY[ key ] === value );
+export function getNormalizedThemesQuery(query) {
+	return omitBy(query, (value, key) => DEFAULT_THEME_QUERY[key] === value);
 }
 
 /**
@@ -143,12 +143,12 @@ export function getNormalizedThemesQuery( query ) {
  * @param  {number} siteId Optional site ID
  * @returns {string}        Serialized themes query
  */
-export function getSerializedThemesQuery( query = {}, siteId ) {
-	const normalizedQuery = getNormalizedThemesQuery( query );
-	const serializedQuery = JSON.stringify( normalizedQuery );
+export function getSerializedThemesQuery(query = {}, siteId) {
+	const normalizedQuery = getNormalizedThemesQuery(query);
+	const serializedQuery = JSON.stringify(normalizedQuery);
 
-	if ( siteId ) {
-		return [ siteId, serializedQuery ].join( ':' );
+	if (siteId) {
+		return [siteId, serializedQuery].join(':');
 	}
 
 	return serializedQuery;
@@ -161,15 +161,15 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
  * @param  {string} serializedQuery Serialized themes query
  * @returns {object}                 Deserialized themes query details
  */
-export function getDeserializedThemesQueryDetails( serializedQuery ) {
+export function getDeserializedThemesQueryDetails(serializedQuery) {
 	let siteId, query;
 
-	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
-	if ( matches ) {
-		siteId = Number( matches[ 1 ] ) || undefined;
+	const matches = serializedQuery.match(REGEXP_SERIALIZED_QUERY);
+	if (matches) {
+		siteId = Number(matches[1]) || undefined;
 		try {
-			query = JSON.parse( matches[ 2 ] );
-		} catch ( error ) {}
+			query = JSON.parse(matches[2]);
+		} catch (error) {}
 	}
 
 	return { siteId, query };
@@ -182,8 +182,8 @@ export function getDeserializedThemesQueryDetails( serializedQuery ) {
  * @param  {number} siteId Optional site ID
  * @returns {string}        Serialized themes query
  */
-export function getSerializedThemesQueryWithoutPage( query, siteId ) {
-	return getSerializedThemesQuery( omit( query, 'page' ), siteId );
+export function getSerializedThemesQueryWithoutPage(query, siteId) {
+	return getSerializedThemesQuery(omit(query, 'page'), siteId);
 }
 
 /**
@@ -199,8 +199,8 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  * @param  {object} theme Theme object
  * @returns {boolean}      Whether theme is a wpcom theme
  */
-export function isThemeFromWpcom( theme ) {
-	return includes( theme.theme_uri, 'wordpress.com' );
+export function isThemeFromWpcom(theme) {
+	return includes(theme.theme_uri, 'wordpress.com');
 }
 
 /**
@@ -210,12 +210,12 @@ export function isThemeFromWpcom( theme ) {
  * @param  {object}  theme Item to consider
  * @returns {boolean}       Whether theme matches query
  */
-export function isThemeMatchingQuery( query, theme ) {
+export function isThemeMatchingQuery(query, theme) {
 	const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };
-	return every( queryWithDefaults, ( value, key ) => {
-		switch ( key ) {
+	return every(queryWithDefaults, (value, key) => {
+		switch (key) {
 			case 'search': {
-				if ( ! value ) {
+				if (!value) {
 					return true;
 				}
 
@@ -223,36 +223,36 @@ export function isThemeMatchingQuery( query, theme ) {
 
 				const foundInTaxonomies = some(
 					SEARCH_TAXONOMIES,
-					taxonomy =>
+					(taxonomy) =>
 						theme.taxonomies &&
 						some(
-							theme.taxonomies[ 'theme_' + taxonomy ],
-							( { name } ) => name && includes( name.toLowerCase(), search )
+							theme.taxonomies['theme_' + taxonomy],
+							({ name }) => name && includes(name.toLowerCase(), search)
 						)
 				);
 
 				return (
 					foundInTaxonomies ||
-					( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
-					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
-					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
-					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
+					(theme.id && includes(theme.id.toLowerCase(), search)) ||
+					(theme.name && includes(theme.name.toLowerCase(), search)) ||
+					(theme.author && includes(theme.author.toLowerCase(), search)) ||
+					(theme.descriptionLong && includes(theme.descriptionLong.toLowerCase(), search))
 				);
 			}
 			case 'filter': {
-				if ( ! value ) {
+				if (!value) {
 					return true;
 				}
 
 				// TODO: Change filters object shape to be more like post's terms, i.e.
 				// { color: 'blue,red', feature: 'post-slider' }
-				const filters = value.split( ',' );
-				return every( filters, f => some( theme.taxonomies, terms => some( terms, { slug: f } ) ) );
+				const filters = value.split(',');
+				return every(filters, (f) => some(theme.taxonomies, (terms) => some(terms, { slug: f })));
 			}
 		}
 
 		return true;
-	} );
+	});
 }
 
 /**
@@ -262,7 +262,7 @@ export function isThemeMatchingQuery( query, theme ) {
  * @param  {string} taxonomy The taxonomy items to get.
  * @returns {Array}           An array of theme taxonomy slugs.
  */
-export function getThemeTaxonomySlugs( theme, taxonomy ) {
-	const items = get( theme, [ 'taxonomies', taxonomy ], [] );
-	return items.map( ( { slug } ) => slug );
+export function getThemeTaxonomySlugs(theme, taxonomy) {
+	const items = get(theme, ['taxonomies', taxonomy], []);
+	return items.map(({ slug }) => slug);
 }

@@ -37,16 +37,16 @@ const BLACKLISTED_SECTIONS = [
 	'checkout-thank-you', // thank you page
 ];
 
-const debug = debugFactory( 'calypso:guided-tours' );
+const debug = debugFactory('calypso:guided-tours');
 
-const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );
+const mappable = (x) => (!Array.isArray(x) ? [x] : x);
 
-const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
-	mappable( tourMeta.path ).map( path => ( {
+const relevantFeatures = flatMap(GuidedToursConfig, (tourMeta, key) =>
+	mappable(tourMeta.path).map((path) => ({
 		tour: key,
 		when: tourMeta.when,
 		path,
-	} ) )
+	}))
 );
 
 /*
@@ -55,62 +55,62 @@ const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
  * tour.
  */
 const getToursFromFeaturesReached = createSelector(
-	state =>
+	(state) =>
 		uniq(
-			getActionLog( state )
-				.filter( ( { type } ) => type === ROUTE_SET )
-				.reduceRight( ( allTours, { path: triggerPath } ) => {
+			getActionLog(state)
+				.filter(({ type }) => type === ROUTE_SET)
+				.reduceRight((allTours, { path: triggerPath }) => {
 					const newTours = relevantFeatures
-						.filter( ( { path: featurePath } ) => startsWith( triggerPath, featurePath ) )
-						.map( feature => feature.tour );
+						.filter(({ path: featurePath }) => startsWith(triggerPath, featurePath))
+						.map((feature) => feature.tour);
 
-					return newTours ? [ ...allTours, ...newTours ] : allTours;
-				}, [] )
+					return newTours ? [...allTours, ...newTours] : allTours;
+				}, [])
 		),
-	[ getActionLog ]
+	[getActionLog]
 );
 
 /*
  * Returns the names of the tours that the user has previously seen, both
  * recently and in the past.
  */
-const getToursSeen = createSelector( state => uniq( map( getToursHistory( state ), 'tourName' ) ), [
+const getToursSeen = createSelector((state) => uniq(map(getToursHistory(state), 'tourName')), [
 	getToursHistory,
-] );
+]);
 
 /*
  * Returns the name and timestamp of the tour requested via the URL's query
  * arguments, if the tour exists. Returns `undefined` otherwise.
  */
 const getTourFromQuery = createSelector(
-	state => {
-		const initial = getInitialQueryArguments( state );
-		const current = getCurrentQueryArguments( state );
-		const tourProps = [ 'tour', '_timestamp' ];
+	(state) => {
+		const initial = getInitialQueryArguments(state);
+		const current = getCurrentQueryArguments(state);
+		const tourProps = ['tour', '_timestamp'];
 		const { tour, _timestamp } =
-			current && current.tour ? pick( current, tourProps ) : pick( initial, tourProps );
+			current && current.tour ? pick(current, tourProps) : pick(initial, tourProps);
 
-		if ( tour && find( relevantFeatures, { tour } ) ) {
+		if (tour && find(relevantFeatures, { tour })) {
 			return { tour, _timestamp };
 		}
 	},
-	[ getInitialQueryArguments, getCurrentQueryArguments ]
+	[getInitialQueryArguments, getCurrentQueryArguments]
 );
 
 /*
  * Returns true if `tour` has been seen in the current Calypso session, false
  * otherwise.
  */
-const hasJustSeenTour = ( state, { tour, _timestamp } ) =>
-	getToursHistory( state ).some( entry => entry.tourName === tour && entry.timestamp > _timestamp );
+const hasJustSeenTour = (state, { tour, _timestamp }) =>
+	getToursHistory(state).some((entry) => entry.tourName === tour && entry.timestamp > _timestamp);
 
 /*
  * Returns the name of the tour requested via URL query arguments if it hasn't
  * "just" been seen (i.e., in the current Calypso session).
  */
-const findRequestedTour = state => {
-	const requestedTour = getTourFromQuery( state );
-	if ( requestedTour && ! hasJustSeenTour( state, requestedTour ) ) {
+const findRequestedTour = (state) => {
+	const requestedTour = getTourFromQuery(state);
+	if (requestedTour && !hasJustSeenTour(state, requestedTour)) {
 		return requestedTour.tour;
 	}
 };
@@ -120,66 +120,65 @@ const findRequestedTour = state => {
  * tour hasn't been ruled out (e.g. if it has already been seen, or if the
  * "when" isn't right).
  */
-const findTriggeredTour = state => {
-	if ( ! preferencesLastFetchedTimestamp( state ) ) {
-		debug( 'No fresh user preferences, bailing.' );
+const findTriggeredTour = (state) => {
+	if (!preferencesLastFetchedTimestamp(state)) {
+		debug('No fresh user preferences, bailing.');
 		return;
 	}
 
-	const toursFromTriggers = uniq( [
-		...getToursFromFeaturesReached( state ),
+	const toursFromTriggers = uniq([
+		...getToursFromFeaturesReached(state),
 		// Right now, only one source from which to derive tours, but we may
 		// have more later. Examples:
 		// ...getToursFromPurchases( state ),
 		// ...getToursFromFirstActions( state ),
-	] );
+	]);
 
-	const toursToDismiss = uniq( [
+	const toursToDismiss = uniq([
 		// Same idea here.
-		...getToursSeen( state ),
-	] );
+		...getToursSeen(state),
+	]);
 
-	const newTours = difference( toursFromTriggers, toursToDismiss );
-	return find( newTours, tour => {
-		const { when = constant( true ) } = find( relevantFeatures, { tour } );
-		return when( state );
-	} );
+	const newTours = difference(toursFromTriggers, toursToDismiss);
+	return find(newTours, (tour) => {
+		const { when = constant(true) } = find(relevantFeatures, { tour });
+		return when(state);
+	});
 };
 
-const isSectionBlacklisted = state => includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
+const isSectionBlacklisted = (state) => includes(BLACKLISTED_SECTIONS, getSectionName(state));
 
 export const hasTourJustBeenVisible = createSelector(
-	( state, now = Date.now() ) => {
-		const last = findLast( getActionLog( state ), {
+	(state, now = Date.now()) => {
+		const last = findLast(getActionLog(state), {
 			type: GUIDED_TOUR_UPDATE,
 			shouldShow: false,
-		} );
+		});
 		// threshold is one minute
 		return last && now - last.timestamp < 60000;
 	},
-	[ getActionLog ]
+	[getActionLog]
 );
 
-const shouldBailAllTours = state => isSectionBlacklisted( state );
+const shouldBailAllTours = (state) => isSectionBlacklisted(state);
 
-const shouldBailNewTours = state => hasTourJustBeenVisible( state );
+const shouldBailNewTours = (state) => hasTourJustBeenVisible(state);
 
 export const findEligibleTour = createSelector(
-	state => {
-		if ( shouldBailAllTours( state ) ) {
+	(state) => {
+		if (shouldBailAllTours(state)) {
 			return;
 		}
 
 		return (
-			findOngoingTour( state ) ||
-			( ! shouldBailNewTours( state ) &&
-				( findRequestedTour( state ) || findTriggeredTour( state ) ) ) ||
+			findOngoingTour(state) ||
+			(!shouldBailNewTours(state) && (findRequestedTour(state) || findTriggeredTour(state))) ||
 			undefined
 		);
 	},
 	// Though other state selectors are used in `findEligibleTour`'s body,
 	// we're intentionally reducing the list of dependants to the following:
-	[ getActionLog, getToursHistory ]
+	[getActionLog, getToursHistory]
 );
 
 /**
@@ -192,27 +191,27 @@ export const findEligibleTour = createSelector(
  * @param  {object}  state Global state tree
  * @returns {object}        Current Guided Tours state
  */
-const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
+const getRawGuidedTourState = (state) => get(state, 'ui.guidedTour', false);
 
 export const getGuidedTourState = createSelector(
-	state => {
+	(state) => {
 		const emptyState = { shouldShow: false };
-		const tourState = getRawGuidedTourState( state );
-		const tour = findEligibleTour( state );
-		const isGutenberg = getSectionGroup( state ) === 'gutenberg';
-		const shouldShow = !! tour && ! isGutenberg;
-		const isPaused = !! tourState.isPaused;
+		const tourState = getRawGuidedTourState(state);
+		const tour = findEligibleTour(state);
+		const isGutenberg = getSectionGroup(state) === 'gutenberg';
+		const shouldShow = !!tour && !isGutenberg;
+		const isPaused = !!tourState.isPaused;
 
 		debug(
 			'tours: reached',
-			getToursFromFeaturesReached( state ),
+			getToursFromFeaturesReached(state),
 			'seen',
-			getToursSeen( state ),
+			getToursSeen(state),
 			'found',
 			tour
 		);
 
-		if ( ! tour ) {
+		if (!tour) {
 			return { ...tourState, ...emptyState };
 		}
 
@@ -223,5 +222,5 @@ export const getGuidedTourState = createSelector(
 			isPaused,
 		};
 	},
-	[ getRawGuidedTourState, getActionLog, preferencesLastFetchedTimestamp ]
+	[getRawGuidedTourState, getActionLog, preferencesLastFetchedTimestamp]
 );

@@ -69,29 +69,29 @@ class DisconnectJetpack extends PureComponent {
 		);
 	};
 
-	getIcon( icon ) {
-		return { components: { icon: <Gridicon icon={ icon } /> } };
+	getIcon(icon) {
+		return { components: { icon: <Gridicon icon={icon} /> } };
 	}
 
 	planFeatures() {
 		const { plan, translate } = this.props;
 		const features = [];
-		switch ( plan ) {
+		switch (plan) {
 			case 'is-free-plan':
 				features.push(
 					translate(
 						'{{icon/}} Site stats, related content, and sharing tools',
-						this.getIcon( 'stats-alt' )
+						this.getIcon('stats-alt')
 					)
 				);
 				features.push(
 					translate(
 						'{{icon/}} Brute force attack protection and downtime monitoring',
-						this.getIcon( 'lock' )
+						this.getIcon('lock')
 					)
 				);
 				features.push(
-					translate( '{{icon/}} Unlimited, high-speed image hosting', this.getIcon( 'image' ) )
+					translate('{{icon/}} Unlimited, high-speed image hosting', this.getIcon('image'))
 				);
 				break;
 
@@ -99,30 +99,30 @@ class DisconnectJetpack extends PureComponent {
 				features.push(
 					translate(
 						'{{icon/}} Daily automated backups (unlimited storage)',
-						this.getIcon( 'history' )
+						this.getIcon('history')
 					)
 				);
 				features.push(
-					translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
+					translate('{{icon/}} Priority WordPress and security support', this.getIcon('chat'))
 				);
-				features.push( translate( '{{icon/}} Spam filtering', this.getIcon( 'spam' ) ) );
+				features.push(translate('{{icon/}} Spam filtering', this.getIcon('spam')));
 				break;
 
 			case 'is-premium-plan':
 				features.push(
 					translate(
 						'{{icon/}} Daily automated backups (unlimited storage)',
-						this.getIcon( 'history' )
+						this.getIcon('history')
 					)
 				);
 				features.push(
-					translate( '{{icon/}} Daily automated malware scanning', this.getIcon( 'spam' ) )
+					translate('{{icon/}} Daily automated malware scanning', this.getIcon('spam'))
 				);
 				features.push(
-					translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
+					translate('{{icon/}} Priority WordPress and security support', this.getIcon('chat'))
 				);
 				features.push(
-					translate( '{{icon/}} 13GB of high-speed video hosting', this.getIcon( 'video' ) )
+					translate('{{icon/}} 13GB of high-speed video hosting', this.getIcon('video'))
 				);
 				break;
 
@@ -130,32 +130,32 @@ class DisconnectJetpack extends PureComponent {
 				features.push(
 					translate(
 						'{{icon/}} Daily automated backups (unlimited storage)',
-						this.getIcon( 'history' )
+						this.getIcon('history')
 					)
 				);
 				features.push(
 					translate(
 						'{{icon/}} Daily automated malware scanning with automated resolution',
-						this.getIcon( 'spam' )
+						this.getIcon('spam')
 					)
 				);
 				features.push(
-					translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
+					translate('{{icon/}} Priority WordPress and security support', this.getIcon('chat'))
 				);
 				features.push(
-					translate( '{{icon/}} Unlimited high-speed video hosting', this.getIcon( 'video' ) )
+					translate('{{icon/}} Unlimited high-speed video hosting', this.getIcon('video'))
 				);
-				features.push( translate( '{{icon/}} SEO preview tools', this.getIcon( 'globe' ) ) );
+				features.push(translate('{{icon/}} SEO preview tools', this.getIcon('globe')));
 				break;
 		}
 
-		return features.map( ( freature, index ) => {
+		return features.map((freature, index) => {
 			return (
-				<div key={ 'disconnect-jetpack__feature-' + index } className="disconnect-jetpack__feature">
-					{ freature }
+				<div key={'disconnect-jetpack__feature-' + index} className="disconnect-jetpack__feature">
+					{freature}
 				</div>
 			);
-		} );
+		});
 	}
 
 	disconnectJetpack = () => {
@@ -175,37 +175,37 @@ class DisconnectJetpack extends PureComponent {
 
 		onDisconnectClick();
 
-		recordTracksEvent( 'calypso_jetpack_disconnect_confirm' );
-		recordGoogleEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
+		recordTracksEvent('calypso_jetpack_disconnect_confirm');
+		recordGoogleEvent('Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog');
 
 		const { notice } = showInfoNotice(
-			translate( 'Disconnecting %(siteName)s.', { args: { siteName: siteTitle } } ),
+			translate('Disconnecting %(siteName)s.', { args: { siteName: siteTitle } }),
 			{
 				isPersistent: true,
 				showDismiss: false,
 			}
 		);
 
-		disconnectSite( siteId ).then(
+		disconnectSite(siteId).then(
 			() => {
 				this.props.setAllSitesSelected();
-				removeInfoNotice( notice.noticeId );
+				removeInfoNotice(notice.noticeId);
 				showSuccessNotice(
-					translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: siteTitle } } )
+					translate('Successfully disconnected %(siteName)s.', { args: { siteName: siteTitle } })
 				);
-				recordGoogleEvent( 'Jetpack', 'Successfully Disconnected' );
+				recordGoogleEvent('Jetpack', 'Successfully Disconnected');
 			},
 			() => {
-				removeInfoNotice( notice.noticeId );
+				removeInfoNotice(notice.noticeId);
 				showErrorNotice(
-					translate( '%(siteName)s failed to disconnect', { args: { siteName: siteTitle } } )
+					translate('%(siteName)s failed to disconnect', { args: { siteName: siteTitle } })
 				);
-				recordGoogleEvent( 'Jetpack', 'Failed Disconnected Site' );
+				recordGoogleEvent('Jetpack', 'Failed Disconnected Site');
 			}
 		);
 	};
 
-	handleTryRewind = () => this.props.trackTryRewind( this.props.siteSlug );
+	handleTryRewind = () => this.props.trackTryRewind(this.props.siteSlug);
 
 	render() {
 		const {
@@ -219,18 +219,18 @@ class DisconnectJetpack extends PureComponent {
 			siteId,
 			rewindState,
 		} = this.props;
-		if ( isBroken ) {
+		if (isBroken) {
 			return (
 				<Card className="disconnect-jetpack">
-					{ showTitle && <h1>{ translate( 'Disconnect Jetpack' ) }</h1> }
+					{showTitle && <h1>{translate('Disconnect Jetpack')}</h1>}
 					<p className="disconnect-jetpack__highlight">
-						{ translate( 'WordPress.com has not been able to reach %(siteSlug)s for a while.', {
+						{translate('WordPress.com has not been able to reach %(siteSlug)s for a while.', {
 							args: { siteSlug },
-						} ) }
+						})}
 					</p>
 					<div className="disconnect-jetpack__button-wrap">
-						<Button primary scary onClick={ this.disconnectJetpack }>
-							{ translate( 'Remove Site' ) }
+						<Button primary scary onClick={this.disconnectJetpack}>
+							{translate('Remove Site')}
 						</Button>
 					</div>
 				</Card>
@@ -239,37 +239,37 @@ class DisconnectJetpack extends PureComponent {
 
 		return [
 			<Card key="disconnect-jetpack" className="disconnect-jetpack__block">
-				{ siteId && <QueryRewindState siteId={ siteId } /> }
-				{ showTitle && (
+				{siteId && <QueryRewindState siteId={siteId} />}
+				{showTitle && (
 					<h1 className="disconnect-jetpack__header">
-						{ translate( 'Disconnect from WordPress.com?' ) }
+						{translate('Disconnect from WordPress.com?')}
 					</h1>
-				) }
+				)}
 				<p className="disconnect-jetpack__highlight">
-					{ translate(
+					{translate(
 						'By disconnecting %(siteSlug)s from WordPress.com you will no longer have access to the following:',
 						{ args: { siteSlug } }
-					) }
+					)}
 				</p>
 
-				{ this.planFeatures() }
+				{this.planFeatures()}
 
 				<div className="disconnect-jetpack__button-wrap">
-					<Button href={ stayConnectedHref } onClick={ onStayConnectedClick }>
-						{ translate( 'Stay connected' ) }
+					<Button href={stayConnectedHref} onClick={onStayConnectedClick}>
+						{translate('Stay connected')}
 					</Button>
-					<Button primary scary href={ disconnectHref } onClick={ this.disconnectJetpack }>
-						{ translate( 'Disconnect', {
+					<Button primary scary href={disconnectHref} onClick={this.disconnectJetpack}>
+						{translate('Disconnect', {
 							context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
-						} ) }
+						})}
 					</Button>
 				</div>
 				<a
-					onClick={ this.trackReadMoreClick }
+					onClick={this.trackReadMoreClick}
 					className="disconnect-jetpack__more-info-link"
 					href="https://jetpack.com/features/"
 				>
-					{ translate( 'Read more about Jetpack benefits' ) }
+					{translate('Read more about Jetpack benefits')}
 				</a>
 			</Card>,
 			'active' === rewindState && (
@@ -278,13 +278,13 @@ class DisconnectJetpack extends PureComponent {
 					className="disconnect-jetpack__try-rewind disconnect-jetpack__block"
 				>
 					<p className="disconnect-jetpack__highlight">
-						{ translate( 'Experiencing connection issues? Try to go back and restore your site.' ) }
+						{translate('Experiencing connection issues? Try to go back and restore your site.')}
 					</p>
 					<div className="disconnect-jetpack__try-rewind-button-wrap">
-						<Button onClick={ this.handleTryRewind }>{ translate( 'Restore site' ) }</Button>
-						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
-							<Gridicon icon="chat" size={ 18 } />
-							{ translate( 'Get help' ) }
+						<Button onClick={this.handleTryRewind}>{translate('Restore site')}</Button>
+						<HappychatButton borderless={false} onClick={this.props.trackTryRewindHelp} primary>
+							<Gridicon icon="chat" size={18} />
+							{translate('Get help')}
 						</HappychatButton>
 					</div>
 				</Card>
@@ -294,14 +294,14 @@ class DisconnectJetpack extends PureComponent {
 }
 
 export default connect(
-	( state, { siteId } ) => {
-		const planSlug = getSitePlanSlug( state, siteId );
-		const planClass = planSlug ? getPlanClass( planSlug ) : 'is-free-plan';
-		const rewindState = getRewindState( state, siteId );
+	(state, { siteId }) => {
+		const planSlug = getSitePlanSlug(state, siteId);
+		const planClass = planSlug ? getPlanClass(planSlug) : 'is-free-plan';
+		const rewindState = getRewindState(state, siteId);
 		return {
 			plan: planClass,
-			siteSlug: getSiteSlug( state, siteId ),
-			siteTitle: getSiteTitle( state, siteId ),
+			siteSlug: getSiteSlug(state, siteId),
+			siteTitle: getSiteTitle(state, siteId),
 			rewindState: rewindState.state,
 		};
 	},
@@ -314,12 +314,11 @@ export default connect(
 		errorNotice,
 		infoNotice,
 		removeNotice,
-		trackTryRewind: siteSlug =>
+		trackTryRewind: (siteSlug) =>
 			withAnalytics(
-				recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind' ),
-				navigate( `/activity-log/${ siteSlug }` )
+				recordTracksEventAction('calypso_disconnect_jetpack_try_rewind'),
+				navigate(`/activity-log/${siteSlug}`)
 			),
-		trackTryRewindHelp: () =>
-			recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind_help' ),
+		trackTryRewindHelp: () => recordTracksEventAction('calypso_disconnect_jetpack_try_rewind_help'),
 	}
-)( localize( DisconnectJetpack ) );
+)(localize(DisconnectJetpack));

@@ -8,11 +8,11 @@ import { REWIND_BACKUPS_REQUEST } from 'state/action-types';
 import { setRewindBackups } from 'state/rewind/backups/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
-export const fetchBackups = action => {
+export const fetchBackups = (action) => {
 	return http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/rewind/backups`,
+			path: `/sites/${action.siteId}/rewind/backups`,
 			apiNamespace: 'wpcom/v2',
 			retryPolicy: noRetry(),
 		},
@@ -20,16 +20,16 @@ export const fetchBackups = action => {
 	);
 };
 
-export const setBackups = ( { siteId }, backups ) => setRewindBackups( siteId, backups );
+export const setBackups = ({ siteId }, backups) => setRewindBackups(siteId, backups);
 
-export const resetBackups = ( { siteId } ) => setRewindBackups( siteId, [] );
+export const resetBackups = ({ siteId }) => setRewindBackups(siteId, []);
 
-registerHandlers( 'state/data-layer/wpcom/sites/rewind/backups/index.js', {
-	[ REWIND_BACKUPS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/rewind/backups/index.js', {
+	[REWIND_BACKUPS_REQUEST]: [
+		dispatchRequest({
 			fetch: fetchBackups,
 			onSuccess: setBackups,
 			onError: resetBackups,
-		} ),
+		}),
 	],
-} );
+});

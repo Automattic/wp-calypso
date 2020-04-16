@@ -14,12 +14,12 @@ import { Dialog, Button } from '@automattic/components';
  */
 import './privacy-policy-dialog.scss';
 
-export default function PrivacyPolicyDialog( { title, content, onClose } ) {
+export default function PrivacyPolicyDialog({ title, content, onClose }) {
 	const translate = useTranslate();
 
 	const buttons = [
-		<Button primary onClick={ onClose }>
-			{ translate( 'Close' ) }
+		<Button primary onClick={onClose}>
+			{translate('Close')}
 		</Button>,
 	];
 
@@ -27,16 +27,16 @@ export default function PrivacyPolicyDialog( { title, content, onClose } ) {
 	// It's gotten from the privacy-policy WP REST API.
 	/* eslint-disable react/no-danger */
 	return (
-		<Dialog isVisible buttons={ buttons } additionalClassNames="privacy-policy-banner__dialog">
+		<Dialog isVisible buttons={buttons} additionalClassNames="privacy-policy-banner__dialog">
 			<div className="privacy-policy-banner__dialog-header">
 				<div className="privacy-policy-banner__dialog-header-text">
-					<h1>{ title }</h1>
+					<h1>{title}</h1>
 				</div>
 			</div>
 
 			<div
 				className="privacy-policy-banner__dialog-body"
-				dangerouslySetInnerHTML={ { __html: content } }
+				dangerouslySetInnerHTML={{ __html: content }}
 			/>
 		</Dialog>
 	);

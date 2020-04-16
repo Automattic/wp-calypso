@@ -21,21 +21,21 @@ class QueryShortcode extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId || this.props.shortcode !== nextProps.shortcode ) {
-			this.request( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId !== nextProps.siteId || this.props.shortcode !== nextProps.shortcode) {
+			this.request(nextProps);
 		}
 	}
 
-	request( props ) {
-		if ( props.requestingShortcode ) {
+	request(props) {
+		if (props.requestingShortcode) {
 			return;
 		}
 
-		props.fetchShortcode( props.siteId, props.shortcode );
+		props.fetchShortcode(props.siteId, props.shortcode);
 	}
 
 	render() {
@@ -44,8 +44,8 @@ class QueryShortcode extends Component {
 }
 
 export default connect(
-	( state, { siteId, shortcode } ) => ( {
-		requestingShortcode: isRequestingShortcode( state, siteId, shortcode ),
-	} ),
+	(state, { siteId, shortcode }) => ({
+		requestingShortcode: isRequestingShortcode(state, siteId, shortcode),
+	}),
 	{ fetchShortcode }
-)( QueryShortcode );
+)(QueryShortcode);

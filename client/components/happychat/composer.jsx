@@ -19,8 +19,8 @@ import scrollbleed from './scrollbleed';
 import './composer.scss';
 
 const sendThrottledTyping = throttle(
-	( onSendTyping, msg ) => {
-		onSendTyping( msg );
+	(onSendTyping, msg) => {
+		onSendTyping(msg);
 	},
 	1000,
 	{ leading: true, trailing: false }
@@ -30,9 +30,9 @@ const sendThrottledTyping = throttle(
  * Renders a textarea to be used to comopose a message for the chat.
  */
 // eslint-disable-next-line react/prefer-es6-class
-export const Composer = createReactClass( {
+export const Composer = createReactClass({
 	displayName: 'Composer',
-	mixins: [ scrollbleed ],
+	mixins: [scrollbleed],
 
 	propTypes: {
 		disabled: PropTypes.bool,
@@ -45,17 +45,17 @@ export const Composer = createReactClass( {
 		translate: PropTypes.func, // localize HOC
 	},
 
-	onChange( event ) {
+	onChange(event) {
 		const { onSendTyping, onSendNotTyping, onSetCurrentMessage } = this.props;
 
-		const msg = get( event, 'target.value' );
-		onSetCurrentMessage( msg );
-		isEmpty( msg ) ? onSendNotTyping() : sendThrottledTyping( onSendTyping, msg );
+		const msg = get(event, 'target.value');
+		onSetCurrentMessage(msg);
+		isEmpty(msg) ? onSendNotTyping() : sendThrottledTyping(onSendTyping, msg);
 	},
 
-	onKeyDown( event ) {
+	onKeyDown(event) {
 		const RETURN_KEYCODE = 13;
-		if ( get( event, 'which' ) === RETURN_KEYCODE ) {
+		if (get(event, 'which') === RETURN_KEYCODE) {
 			event.preventDefault();
 			this.sendMessage();
 		}
@@ -63,41 +63,41 @@ export const Composer = createReactClass( {
 
 	sendMessage() {
 		const { message, onSendMessage, onSendNotTyping } = this.props;
-		if ( ! isEmpty( message ) ) {
-			onSendMessage( message );
+		if (!isEmpty(message)) {
+			onSendMessage(message);
 			onSendNotTyping();
 		}
 	},
 
 	render() {
 		const { disabled, message, onFocus, translate } = this.props;
-		const composerClasses = classNames( 'happychat__composer', {
+		const composerClasses = classNames('happychat__composer', {
 			'is-disabled': disabled,
-		} );
+		});
 		return (
 			<div
-				className={ composerClasses }
-				onMouseEnter={ this.scrollbleedLock }
-				onMouseLeave={ this.scrollbleedUnlock }
+				className={composerClasses}
+				onMouseEnter={this.scrollbleedLock}
+				onMouseLeave={this.scrollbleedUnlock}
 			>
 				<div className="happychat__message">
 					<textarea
 						aria-label="Enter your support request"
-						ref={ this.setScrollbleedTarget }
-						onFocus={ onFocus }
+						ref={this.setScrollbleedTarget}
+						onFocus={onFocus}
 						type="text"
-						placeholder={ translate( 'Type a message…' ) }
-						onChange={ this.onChange }
-						onKeyDown={ this.onKeyDown }
-						disabled={ disabled }
-						value={ message }
+						placeholder={translate('Type a message…')}
+						onChange={this.onChange}
+						onKeyDown={this.onKeyDown}
+						disabled={disabled}
+						value={message}
 					/>
 				</div>
 				<Button
 					primary
 					className="happychat__submit"
-					disabled={ disabled }
-					onClick={ this.sendMessage }
+					disabled={disabled}
+					onClick={this.sendMessage}
 				>
 					<svg viewBox="0 0 24 24" width="24" height="24">
 						<path d="M2 21l21-9L2 3v7l15 2-15 2z" />
@@ -106,4 +106,4 @@ export const Composer = createReactClass( {
 			</div>
 		);
 	},
-} );
+});

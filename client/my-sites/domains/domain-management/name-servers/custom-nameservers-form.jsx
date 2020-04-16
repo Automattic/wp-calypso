@@ -27,7 +27,7 @@ class CustomNameserversForm extends React.PureComponent {
 		nameservers: PropTypes.array,
 		onChange: PropTypes.func.isRequired,
 		onSubmit: PropTypes.func.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 		submitDisabled: PropTypes.bool.isRequired,
 	};
 
@@ -36,95 +36,91 @@ class CustomNameserversForm extends React.PureComponent {
 
 		return (
 			<div className="name-servers__custom-nameservers-form-explanation">
-				{ translate( 'Not sure what name servers to use?' ) }{ ' ' }
+				{translate('Not sure what name servers to use?')}{' '}
 				<a
-					href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+					href={CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={ this.handleLookUpClick }
+					onClick={this.handleLookUpClick}
 				>
-					{ translate( 'Look up the name servers for popular hosts.' ) }
+					{translate('Look up the name servers for popular hosts.')}
 				</a>
 			</div>
 		);
 	}
 
 	handleLookUpClick = () => {
-		this.props.customNameServersLookUpClick( this.props.selectedDomainName );
+		this.props.customNameServersLookUpClick(this.props.selectedDomainName);
 	};
 
 	rows() {
 		// Remove the empty values from the end, and add one empty one
 		const { translate } = this.props;
-		const nameservers = dropRightWhile( this.props.nameservers, negate( identity ) );
+		const nameservers = dropRightWhile(this.props.nameservers, negate(identity));
 
-		if ( nameservers.length < MAX_NAMESERVER_LENGTH ) {
-			nameservers.push( '' );
+		if (nameservers.length < MAX_NAMESERVER_LENGTH) {
+			nameservers.push('');
 		}
 
-		while ( nameservers.length < MIN_NAMESERVER_LENGTH ) {
+		while (nameservers.length < MIN_NAMESERVER_LENGTH) {
 			// Ensure there are at least 2 fields at all times
-			nameservers.push( '' );
+			nameservers.push('');
 		}
 
-		return nameservers.map( ( nameserver, index ) => {
+		return nameservers.map((nameserver, index) => {
 			let placeholder;
-			if ( index < MIN_NAMESERVER_LENGTH ) {
-				placeholder = translate( 'eg. ns%(index)d.example.com', { args: { index: index + 1 } } );
+			if (index < MIN_NAMESERVER_LENGTH) {
+				placeholder = translate('eg. ns%(index)d.example.com', { args: { index: index + 1 } });
 			} else {
-				placeholder = translate( 'eg. ns%(index)d.example.com (optional)', {
+				placeholder = translate('eg. ns%(index)d.example.com (optional)', {
 					args: { index: index + 1 },
-				} );
+				});
 			}
 
 			return (
 				<CustomNameserversRow
-					key={ index }
-					index={ index }
-					placeholder={ placeholder }
-					nameserver={ nameserver }
-					selectedDomainName={ this.props.selectedDomainName }
-					onChange={ this.handleChange }
-					onRemove={ this.handleRemove }
+					key={index}
+					index={index}
+					placeholder={placeholder}
+					nameserver={nameserver}
+					selectedDomainName={this.props.selectedDomainName}
+					onChange={this.handleChange}
+					onRemove={this.handleRemove}
 				/>
 			);
-		} );
+		});
 	}
 
-	handleRemove = index => {
-		this.props.onChange( remove( this.props.nameservers, index ) );
+	handleRemove = (index) => {
+		this.props.onChange(remove(this.props.nameservers, index));
 	};
 
-	handleChange = ( nameserver, index ) => {
-		this.props.onChange( change( this.props.nameservers, index, nameserver ) );
+	handleChange = (nameserver, index) => {
+		this.props.onChange(change(this.props.nameservers, index, nameserver));
 	};
 
 	render() {
 		const { translate } = this.props;
 
-		if ( ! this.props.nameservers ) {
+		if (!this.props.nameservers) {
 			return null;
 		}
 
 		return (
 			<Card compact className="name-servers__custom-nameservers-form">
-				<strong>{ translate( 'Use custom name servers:' ) }</strong>
+				<strong>{translate('Use custom name servers:')}</strong>
 
 				<form>
-					{ this.rows() }
-					{ this.popularHostsMessage() }
+					{this.rows()}
+					{this.popularHostsMessage()}
 
 					<FormFooter>
-						<FormButton
-							isPrimary
-							onClick={ this.handleSubmit }
-							disabled={ this.props.submitDisabled }
-						>
-							{ translate( 'Save custom name servers' ) }
+						<FormButton isPrimary onClick={this.handleSubmit} disabled={this.props.submitDisabled}>
+							{translate('Save custom name servers')}
 						</FormButton>
 
-						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
-							{ translate( 'Reset to defaults' ) }
+						<FormButton type="button" isPrimary={false} onClick={this.handleReset}>
+							{translate('Reset to defaults')}
 						</FormButton>
 					</FormFooter>
 				</form>
@@ -132,24 +128,24 @@ class CustomNameserversForm extends React.PureComponent {
 		);
 	}
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 
-		this.props.saveCustomNameServersClick( this.props.selectedDomainName );
+		this.props.saveCustomNameServersClick(this.props.selectedDomainName);
 
 		this.props.onSubmit();
 	};
 
-	handleReset = event => {
+	handleReset = (event) => {
 		event.preventDefault();
 
-		this.props.resetToDefaultsClick( this.props.selectedDomainName );
+		this.props.resetToDefaultsClick(this.props.selectedDomainName);
 
 		this.props.onReset();
 	};
 }
 
-const customNameServersLookUpClick = domainName =>
+const customNameServersLookUpClick = (domainName) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -157,12 +153,12 @@ const customNameServersLookUpClick = domainName =>
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_name_servers_wpcom_name_servers_look_up_click', {
+		recordTracksEvent('calypso_domain_management_name_servers_wpcom_name_servers_look_up_click', {
 			domain_name: domainName,
-		} )
+		})
 	);
 
-const saveCustomNameServersClick = domainName =>
+const saveCustomNameServersClick = (domainName) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -170,12 +166,12 @@ const saveCustomNameServersClick = domainName =>
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_name_servers_save_custom_name_servers_click', {
+		recordTracksEvent('calypso_domain_management_name_servers_save_custom_name_servers_click', {
 			domain_name: domainName,
-		} )
+		})
 	);
 
-const resetToDefaultsClick = domainName =>
+const resetToDefaultsClick = (domainName) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -183,13 +179,13 @@ const resetToDefaultsClick = domainName =>
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_name_servers_reset_to_defaults_click', {
+		recordTracksEvent('calypso_domain_management_name_servers_reset_to_defaults_click', {
 			domain_name: domainName,
-		} )
+		})
 	);
 
-export default connect( null, {
+export default connect(null, {
 	customNameServersLookUpClick,
 	resetToDefaultsClick,
 	saveCustomNameServersClick,
-} )( localize( CustomNameserversForm ) );
+})(localize(CustomNameserversForm));

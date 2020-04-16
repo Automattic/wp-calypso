@@ -66,33 +66,33 @@ class CurrentPlan extends Component {
 	};
 
 	componentDidMount() {
-		if ( typeof window !== 'undefined' ) {
-			window.scrollTo( 0, 0 );
+		if (typeof window !== 'undefined') {
+			window.scrollTo(0, 0);
 		}
 	}
 
 	isLoading() {
 		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
 
-		return ! selectedSite || isRequestingPlans;
+		return !selectedSite || isRequestingPlans;
 	}
 
 	renderThankYou() {
 		const { currentPlan, product } = this.props;
 
-		if ( startsWith( product, 'jetpack_backup' ) ) {
+		if (startsWith(product, 'jetpack_backup')) {
 			return <BackupProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_scan' ) ) {
+		if (startsWith(product, 'jetpack_scan')) {
 			return <ScanProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_search' ) ) {
+		if (startsWith(product, 'jetpack_search')) {
 			return <SearchProductThankYou />;
 		}
 
-		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
+		if (!currentPlan || isFreePlan(currentPlan) || isFreeJetpackPlan(currentPlan)) {
 			return <FreePlanThankYou />;
 		}
 
@@ -115,42 +115,42 @@ class CurrentPlan extends Component {
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
 
-		const planConstObj = getPlan( currentPlanSlug ),
-			planFeaturesHeader = translate( '%(planName)s plan features', {
+		const planConstObj = getPlan(currentPlanSlug),
+			planFeaturesHeader = translate('%(planName)s plan features', {
 				args: { planName: planConstObj.getTitle() },
-			} );
+			});
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 		return (
 			<Main className="current-plan" wideLayout>
 				<SidebarNavigation />
-				<DocumentHead title={ translate( 'My Plan' ) } />
+				<DocumentHead title={translate('My Plan')} />
 				<FormattedHeader
 					className="current-plan__page-heading"
-					headerText={ translate( 'Plans' ) }
+					headerText={translate('Plans')}
 					align="left"
 				/>
-				<QuerySites siteId={ selectedSiteId } />
-				<QuerySitePlans siteId={ selectedSiteId } />
-				<QuerySitePurchases siteId={ selectedSiteId } />
-				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				<QuerySites siteId={selectedSiteId} />
+				<QuerySitePlans siteId={selectedSiteId} />
+				<QuerySitePurchases siteId={selectedSiteId} />
+				{shouldQuerySiteDomains && <QuerySiteDomains siteId={selectedSiteId} />}
 
 				<Dialog
 					baseClassName="current-plan__dialog dialog__content dialog__backdrop"
-					isVisible={ showThankYou }
+					isVisible={showThankYou}
 				>
-					{ this.renderThankYou() }
+					{this.renderThankYou()}
 				</Dialog>
 
-				<PlansNavigation path={ path } />
+				<PlansNavigation path={path} />
 
-				{ showDomainWarnings && (
+				{showDomainWarnings && (
 					<DomainWarnings
-						domains={ domains }
+						domains={domains}
 						position="current-plan"
-						selectedSite={ selectedSite }
-						ruleWhiteList={ [
+						selectedSite={selectedSite}
+						ruleWhiteList={[
 							'newDomainsWithPrimary',
 							'newDomains',
 							'unverifiedDomainsCanManage',
@@ -158,61 +158,61 @@ class CurrentPlan extends Component {
 							'unverifiedDomainsCannotManage',
 							'wrongNSMappedDomains',
 							'newTransfersWrongNS',
-						] }
+						]}
 					/>
-				) }
+				)}
 
 				<PurchasesListing />
 
-				{ showJetpackChecklist && (
+				{showJetpackChecklist && (
 					<Fragment>
-						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+						<QueryJetpackPlugins siteIds={[selectedSiteId]} />
 						<JetpackChecklist />
 					</Fragment>
-				) }
+				)}
 
 				<div
-					className={ classNames( 'current-plan__header-text current-plan__text', {
+					className={classNames('current-plan__header-text current-plan__text', {
 						'is-placeholder': { isLoading },
-					} ) }
+					})}
 				>
-					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+					<h1 className="current-plan__header-heading">{planFeaturesHeader}</h1>
 				</div>
 
 				<AsyncLoad
 					require="blocks/product-purchase-features-list"
-					placeholder={ null }
-					plan={ currentPlanSlug }
-					isPlaceholder={ isLoading }
+					placeholder={null}
+					plan={currentPlanSlug}
+					isPlaceholder={isLoading}
 				/>
 
-				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
+				<TrackComponentView eventName={'calypso_plans_my_plan_view'} />
 			</Main>
 		);
 	}
 }
 
-export default connect( ( state, { requestThankYou } ) => {
-	const selectedSite = getSelectedSite( state );
-	const selectedSiteId = getSelectedSiteId( state );
-	const domains = getDomainsBySiteId( state, selectedSiteId );
+export default connect((state, { requestThankYou }) => {
+	const selectedSite = getSelectedSite(state);
+	const selectedSiteId = getSelectedSiteId(state);
+	const domains = getDomainsBySiteId(state, selectedSiteId);
 
-	const isJetpack = isJetpackSite( state, selectedSiteId );
-	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
+	const isJetpack = isJetpackSite(state, selectedSiteId);
+	const isAutomatedTransfer = isSiteAutomatedTransfer(state, selectedSiteId);
 
 	const isJetpackNotAtomic = false === isAutomatedTransfer && isJetpack;
 
-	const currentPlan = getCurrentPlan( state, selectedSiteId );
+	const currentPlan = getCurrentPlan(state, selectedSiteId);
 
 	return {
 		currentPlan,
 		domains,
-		hasDomainsLoaded: !! domains,
-		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		hasDomainsLoaded: !!domains,
+		isRequestingSitePlans: isRequestingSitePlans(state, selectedSiteId),
 		selectedSite,
 		selectedSiteId,
-		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
+		shouldShowDomainWarnings: !isJetpack || isAutomatedTransfer,
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 	};
-} )( localize( CurrentPlan ) );
+})(localize(CurrentPlan));

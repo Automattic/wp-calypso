@@ -21,17 +21,17 @@ import 'state/posts/init';
  * @returns {boolean}        Whether post is published
  */
 export const isPostPublished = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
+	(state, siteId, postId) => {
+		const post = getSitePost(state, siteId, postId);
 
-		if ( ! post ) {
+		if (!post) {
 			return null;
 		}
 
 		return (
-			includes( [ 'publish', 'private' ], post.status ) ||
-			( post.status === 'future' && new Date( post.date ) < new Date() )
+			includes(['publish', 'private'], post.status) ||
+			(post.status === 'future' && new Date(post.date) < new Date())
 		);
 	},
-	state => state.posts.queries
+	(state) => state.posts.queries
 );

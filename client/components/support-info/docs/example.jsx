@@ -17,6 +17,6 @@ export default class extends React.PureComponent {
 			link: 'https://www.lipsum.com/',
 			privacyLink: 'https://www.lipsum.com/#privacy',
 		};
-		return <SupportInfo { ...support } />;
+		return <SupportInfo {...support} />;
 	}
 }

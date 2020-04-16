@@ -9,13 +9,13 @@ import React from 'react';
  */
 import CelebrateNotice from '../celebrate-notice';
 
-const CelebrateSiteSetupComplete = ( { displayChecklist } ) => {
+const CelebrateSiteSetupComplete = ({ displayChecklist }) => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
 			dismissalPreferenceName="home-notice-site-setup-complete"
-			displayChecklist={ displayChecklist }
-			message={ translate( "You've completed each item in your checklist." ) }
+			displayChecklist={displayChecklist}
+			message={translate("You've completed each item in your checklist.")}
 		/>
 	);
 };

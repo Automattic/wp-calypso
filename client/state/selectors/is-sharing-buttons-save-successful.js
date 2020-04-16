@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether the request is successful or not
  */
-export default function isSharingButtonsSaveSuccessful( state, siteId ) {
-	return get( state.sites.sharingButtons.saveRequests, [ siteId, 'status' ] ) === 'success';
+export default function isSharingButtonsSaveSuccessful(state, siteId) {
+	return get(state.sites.sharingButtons.saveRequests, [siteId, 'status']) === 'success';
 }

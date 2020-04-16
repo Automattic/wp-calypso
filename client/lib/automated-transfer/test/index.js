@@ -1,17 +1,17 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock('lib/abtest', () => ({
 	abtest: () => '',
-} ) );
+}));
 
-jest.mock( 'config', () => {
+jest.mock('config', () => {
 	const defaultExport = jest.fn();
 	defaultExport.isEnabled = jest.fn();
 	defaultExport.default = jest.fn();
 	return defaultExport;
-} );
+});
 
-jest.mock( 'lib/site/utils', () => ( {
+jest.mock('lib/site/utils', () => ({
 	userCan: jest.fn(),
-} ) );
+}));
 
 /**
  * External dependencies
@@ -42,8 +42,8 @@ import {
  */
 import { isATEnabled } from '../index';
 
-const config = require( 'config' );
-const utils = require( 'lib/site/utils' );
+const config = require('config');
+const utils = require('lib/site/utils');
 
 const site = {
 	options: {
@@ -60,49 +60,49 @@ const site_at = {
 	},
 };
 
-describe( 'isATEnabled basic tests', () => {
+describe('isATEnabled basic tests', () => {
 	let beforeWindow;
-	beforeAll( function() {
+	beforeAll(function () {
 		beforeWindow = global.window;
 		global.window = {};
-	} );
+	});
 
-	afterAll( function() {
+	afterAll(function () {
 		global.window = beforeWindow;
-	} );
+	});
 
-	beforeEach( () => {
-		config.mockImplementation( () => 'some_env' );
-		config.isEnabled.mockImplementation( () => true );
-		utils.userCan.mockImplementation( () => true );
-	} );
+	beforeEach(() => {
+		config.mockImplementation(() => 'some_env');
+		config.isEnabled.mockImplementation(() => true);
+		utils.userCan.mockImplementation(() => true);
+	});
 
-	test( 'should not blow up', () => {
-		assert.equal( isATEnabled( site ), false );
-	} );
+	test('should not blow up', () => {
+		assert.equal(isATEnabled(site), false);
+	});
 
-	test( 'should return false if window is undefined', () => {
+	test('should return false if window is undefined', () => {
 		delete global.window;
-		assert.equal( isATEnabled( site_at ), false );
+		assert.equal(isATEnabled(site_at), false);
 		global.window = {};
-	} );
+	});
 
-	test( 'should return true if AT option is enabled', () => {
-		assert.equal( isATEnabled( site_at ), true );
-	} );
+	test('should return true if AT option is enabled', () => {
+		assert.equal(isATEnabled(site_at), true);
+	});
 
-	test( 'should return false if AT feature is disabled', () => {
-		config.isEnabled.mockImplementation( () => false );
-		assert.equal( isATEnabled( site ), false );
-	} );
+	test('should return false if AT feature is disabled', () => {
+		config.isEnabled.mockImplementation(() => false);
+		assert.equal(isATEnabled(site), false);
+	});
 
-	test( 'should return true if env is wpcalypso', () => {
-		config.mockImplementation( () => 'wpcalypso' );
-		config.isEnabled.mockImplementation( () => true );
-		assert.equal( isATEnabled( site ), true );
-	} );
+	test('should return true if env is wpcalypso', () => {
+		config.mockImplementation(() => 'wpcalypso');
+		config.isEnabled.mockImplementation(() => true);
+		assert.equal(isATEnabled(site), true);
+	});
 
-	test( 'should return false if site does not have a business or ecommerce plan', () => {
+	test('should return false if site does not have a business or ecommerce plan', () => {
 		const plans = [
 			PLAN_FREE,
 			PLAN_PREMIUM,
@@ -119,28 +119,28 @@ describe( 'isATEnabled basic tests', () => {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 		];
 
-		plans.forEach( product_slug => {
+		plans.forEach((product_slug) => {
 			const mySite = {
 				...site,
 				plan: { product_slug },
 			};
-			assert.equal( isATEnabled( mySite ), false );
-		} );
-	} );
+			assert.equal(isATEnabled(mySite), false);
+		});
+	});
 
-	test( "should return false if user can't manage site", () => {
-		utils.userCan.mockImplementation( () => false );
-		assert.equal( isATEnabled( site ), false );
-	} );
+	test("should return false if user can't manage site", () => {
+		utils.userCan.mockImplementation(() => false);
+		assert.equal(isATEnabled(site), false);
+	});
 
-	test( 'should return true otherwise', () => {
-		const plans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ];
-		plans.forEach( product_slug => {
+	test('should return true otherwise', () => {
+		const plans = [PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS];
+		plans.forEach((product_slug) => {
 			const mySite = {
 				...site,
 				plan: { product_slug },
 			};
-			assert.equal( isATEnabled( mySite ), true );
-		} );
-	} );
-} );
+			assert.equal(isATEnabled(mySite), true);
+		});
+	});
+});

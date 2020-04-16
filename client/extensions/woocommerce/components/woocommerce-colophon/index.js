@@ -17,22 +17,22 @@ class WooCommerceColophon extends React.Component {
 	static displayName = 'WooCommerceColophon';
 
 	onClick = () => {
-		this.props.recordTracksEvent( 'calypso_store_woocommercecolophon_click' );
+		this.props.recordTracksEvent('calypso_store_woocommercecolophon_click');
 	};
 
 	render() {
 		return (
 			<div className="woocommerce-colophon">
-				<ExternalLink icon={ false } onClick={ this.onClick } href="https://woocommerce.com">
-					{ this.props.translate( 'Powered by {{WooCommerceLogo /}}', {
+				<ExternalLink icon={false} onClick={this.onClick} href="https://woocommerce.com">
+					{this.props.translate('Powered by {{WooCommerceLogo /}}', {
 						components: {
-							WooCommerceLogo: <WooCommerceLogo height={ 32 } width={ 120 } />,
+							WooCommerceLogo: <WooCommerceLogo height={32} width={120} />,
 						},
-					} ) }
+					})}
 				</ExternalLink>
 			</div>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( WooCommerceColophon ) );
+export default connect(null, { recordTracksEvent })(localize(WooCommerceColophon));

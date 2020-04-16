@@ -11,150 +11,150 @@ import * as cartValues from '../index';
 import * as cartItems from '../cart-items';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
-describe( 'index', () => {
+describe('index', () => {
 	const TEST_BLOG_ID = 1;
 	let DOMAIN_REGISTRATION_PRODUCT, FR_DOMAIN_REGISTRATION_PRODUCT, PREMIUM_PRODUCT, THEME_PRODUCT;
 
-	beforeAll( () => {
-		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( {
+	beforeAll(() => {
+		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration({
 			productSlug: 'dotcom_domain',
 			domain: 'testdomain.com',
-		} );
-		FR_DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( {
+		});
+		FR_DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration({
 			productSlug: 'dotfr_domain',
 			domain: 'testdomain.fr',
-		} );
-		PREMIUM_PRODUCT = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } );
-		THEME_PRODUCT = cartItems.themeItem( 'mood' );
-	} );
+		});
+		PREMIUM_PRODUCT = cartItems.premiumPlan('value_bundle', { isFreeTrial: false });
+		THEME_PRODUCT = cartItems.themeItem('mood');
+	});
 
-	describe( 'cart change functions', () => {
-		describe( 'flow( changeFunctions... )', () => {
-			test( 'should combine multiple cart operations into a single step', () => {
+	describe('cart change functions', () => {
+		describe('flow( changeFunctions... )', () => {
+			test('should combine multiple cart operations into a single step', () => {
 				const addTwo = flow(
-					cartItems.addCartItem( PREMIUM_PRODUCT ),
-					cartItems.addCartItem( DOMAIN_REGISTRATION_PRODUCT )
+					cartItems.addCartItem(PREMIUM_PRODUCT),
+					cartItems.addCartItem(DOMAIN_REGISTRATION_PRODUCT)
 				);
 
-				const newCart = addTwo( cartValues.emptyCart( TEST_BLOG_ID ) );
-				assert( cartItems.hasProduct( newCart, 'value_bundle' ) );
-				assert( cartItems.hasProduct( newCart, 'dotcom_domain' ) );
-			} );
-		} );
+				const newCart = addTwo(cartValues.emptyCart(TEST_BLOG_ID));
+				assert(cartItems.hasProduct(newCart, 'value_bundle'));
+				assert(cartItems.hasProduct(newCart, 'dotcom_domain'));
+			});
+		});
 
-		describe( 'cartItems.addCartItem( cartItem )', () => {
-			test( 'should add the cartItem to the products array', () => {
-				const initialCart = cartValues.emptyCart( TEST_BLOG_ID ),
-					newCart = cartItems.addCartItem( PREMIUM_PRODUCT )( initialCart ),
+		describe('cartItems.addCartItem( cartItem )', () => {
+			test('should add the cartItem to the products array', () => {
+				const initialCart = cartValues.emptyCart(TEST_BLOG_ID),
+					newCart = cartItems.addCartItem(PREMIUM_PRODUCT)(initialCart),
 					expectedCart = {
 						blog_id: TEST_BLOG_ID,
-						products: [ PREMIUM_PRODUCT ],
+						products: [PREMIUM_PRODUCT],
 					};
 
-				assert.deepEqual( newCart, expectedCart );
-			} );
-		} );
+				assert.deepEqual(newCart, expectedCart);
+			});
+		});
 
-		describe( 'cartItems.remove( cartItem )', () => {
-			test( 'should remove the cartItem from the products array', () => {
+		describe('cartItems.remove( cartItem )', () => {
+			test('should remove the cartItem from the products array', () => {
 				const initialCart = {
 					blog_id: TEST_BLOG_ID,
-					products: [ PREMIUM_PRODUCT, DOMAIN_REGISTRATION_PRODUCT ],
+					products: [PREMIUM_PRODUCT, DOMAIN_REGISTRATION_PRODUCT],
 				};
-				const newCart = cartItems.remove( initialCart.products[ 0 ] )( initialCart );
+				const newCart = cartItems.remove(initialCart.products[0])(initialCart);
 				const expectedCart = {
 					blog_id: TEST_BLOG_ID,
-					products: [ DOMAIN_REGISTRATION_PRODUCT ],
+					products: [DOMAIN_REGISTRATION_PRODUCT],
 				};
 
-				assert.deepEqual( newCart, expectedCart );
-			} );
-		} );
-	} );
+				assert.deepEqual(newCart, expectedCart);
+			});
+		});
+	});
 
-	describe( 'cartItems.hasProduct( cart, productSlug )', () => {
-		test( 'should return a boolean that says whether the product is in the cart items', () => {
+	describe('cartItems.hasProduct( cart, productSlug )', () => {
+		test('should return a boolean that says whether the product is in the cart items', () => {
 			const cartWithPremium = {
 				blog_id: TEST_BLOG_ID,
-				products: [ PREMIUM_PRODUCT ],
+				products: [PREMIUM_PRODUCT],
 			};
-			assert( cartItems.hasProduct( cartWithPremium, 'value_bundle' ) );
+			assert(cartItems.hasProduct(cartWithPremium, 'value_bundle'));
 
 			const cartWithoutPremium = {
 				blog_id: TEST_BLOG_ID,
-				products: [ DOMAIN_REGISTRATION_PRODUCT ],
+				products: [DOMAIN_REGISTRATION_PRODUCT],
 			};
-			assert( ! cartItems.hasProduct( cartWithoutPremium, PREMIUM_PRODUCT ) );
-		} );
-	} );
+			assert(!cartItems.hasProduct(cartWithoutPremium, PREMIUM_PRODUCT));
+		});
+	});
 
-	describe( 'cartItems.hasTld( cart, tld )', () => {
-		test( 'should return a boolean that says whether a domain with the tld is in the cart items', () => {
+	describe('cartItems.hasTld( cart, tld )', () => {
+		test('should return a boolean that says whether a domain with the tld is in the cart items', () => {
 			const cartWithFrTld = {
 					blog_id: TEST_BLOG_ID,
-					products: [ FR_DOMAIN_REGISTRATION_PRODUCT ],
+					products: [FR_DOMAIN_REGISTRATION_PRODUCT],
 				},
 				cartWithoutFrTld = {
 					blog_id: TEST_BLOG_ID,
-					products: [ DOMAIN_REGISTRATION_PRODUCT ],
+					products: [DOMAIN_REGISTRATION_PRODUCT],
 				};
 
-			assert( cartItems.hasTld( cartWithFrTld, 'fr' ) );
-			assert( ! cartItems.hasTld( cartWithoutFrTld, 'fr' ) );
-		} );
-	} );
+			assert(cartItems.hasTld(cartWithFrTld, 'fr'));
+			assert(!cartItems.hasTld(cartWithoutFrTld, 'fr'));
+		});
+	});
 
-	describe( 'cartItems.hasOnlyProductsOf( cart, productSlug )', () => {
-		test( 'should return a boolean that says whether only products of productSlug are in the cart items', () => {
+	describe('cartItems.hasOnlyProductsOf( cart, productSlug )', () => {
+		test('should return a boolean that says whether only products of productSlug are in the cart items', () => {
 			const cartWithMultipleProductSlugs = {
 				blog_id: TEST_BLOG_ID,
-				products: [ PREMIUM_PRODUCT, THEME_PRODUCT ],
+				products: [PREMIUM_PRODUCT, THEME_PRODUCT],
 			};
 
-			assert( ! cartItems.hasOnlyProductsOf( cartWithMultipleProductSlugs, 'premium_theme' ) );
+			assert(!cartItems.hasOnlyProductsOf(cartWithMultipleProductSlugs, 'premium_theme'));
 
 			const cartWithSameProductSlugs = {
 				blog_id: TEST_BLOG_ID,
-				products: [ THEME_PRODUCT, THEME_PRODUCT ],
+				products: [THEME_PRODUCT, THEME_PRODUCT],
 			};
 
-			assert( cartItems.hasOnlyProductsOf( cartWithSameProductSlugs, 'premium_theme' ) );
+			assert(cartItems.hasOnlyProductsOf(cartWithSameProductSlugs, 'premium_theme'));
 
 			const emptyCart = {};
-			assert( ! cartItems.hasOnlyProductsOf( emptyCart, 'premium_theme' ) );
-		} );
-	} );
+			assert(!cartItems.hasOnlyProductsOf(emptyCart, 'premium_theme'));
+		});
+	});
 
-	describe( 'emptyCart( siteID )', () => {
-		describe( 'returns a cart that', () => {
-			test( 'should have the provided blog_id', () => {
-				assert.equal( TEST_BLOG_ID, cartValues.emptyCart( TEST_BLOG_ID ).blog_id );
-			} );
+	describe('emptyCart( siteID )', () => {
+		describe('returns a cart that', () => {
+			test('should have the provided blog_id', () => {
+				assert.equal(TEST_BLOG_ID, cartValues.emptyCart(TEST_BLOG_ID).blog_id);
+			});
 
-			test( 'should have no products', () => {
-				assert.equal( 0, cartValues.emptyCart( TEST_BLOG_ID ).products.length );
-			} );
-		} );
-	} );
+			test('should have no products', () => {
+				assert.equal(0, cartValues.emptyCart(TEST_BLOG_ID).products.length);
+			});
+		});
+	});
 
-	describe( 'setTaxCountryCode( countryCode )', () => {
-		test( 'should set the country code', () => {
+	describe('setTaxCountryCode( countryCode )', () => {
+		test('should set the country code', () => {
 			const initialCart = cartValues.emptyCart(),
-				newCart = cartValues.setTaxCountryCode( 'TEST' )( initialCart );
+				newCart = cartValues.setTaxCountryCode('TEST')(initialCart);
 
-			assert.equal( 'TEST', newCart.tax.location.country_code );
-		} );
+			assert.equal('TEST', newCart.tax.location.country_code);
+		});
 
-		test( 'should clear the countryCode', () => {
+		test('should clear the countryCode', () => {
 			const initialCart = cartValues.emptyCart(),
-				newCart = cartValues.setTaxCountryCode( null )( initialCart );
+				newCart = cartValues.setTaxCountryCode(null)(initialCart);
 
-			assert.equal( null, newCart.tax.location.country_code );
-		} );
+			assert.equal(null, newCart.tax.location.country_code);
+		});
 
-		test( 'should preserve other values', () => {
+		test('should preserve other values', () => {
 			const initialCart = {
 					other: 1,
 					tax: {
@@ -166,7 +166,7 @@ describe( 'index', () => {
 						},
 					},
 				},
-				newCart = cartValues.setTaxCountryCode( 'RU' )( initialCart ),
+				newCart = cartValues.setTaxCountryCode('RU')(initialCart),
 				expectedCart = {
 					other: 1,
 					tax: {
@@ -179,26 +179,26 @@ describe( 'index', () => {
 					},
 				};
 
-			assert.deepEqual( newCart, expectedCart );
-		} );
-	} );
+			assert.deepEqual(newCart, expectedCart);
+		});
+	});
 
-	describe( 'setTaxPostalCode( postalCode )', () => {
-		test( 'should set the postal code', () => {
+	describe('setTaxPostalCode( postalCode )', () => {
+		test('should set the postal code', () => {
 			const initialCart = cartValues.emptyCart(),
-				newCart = cartValues.setTaxPostalCode( 'TEST' )( initialCart );
+				newCart = cartValues.setTaxPostalCode('TEST')(initialCart);
 
-			assert.equal( 'TEST', newCart.tax.location.postal_code );
-		} );
+			assert.equal('TEST', newCart.tax.location.postal_code);
+		});
 
-		test( 'should clear the postal code', () => {
+		test('should clear the postal code', () => {
 			const initialCart = { tax: { location: { postal_code: '4321' } } },
-				newCart = cartValues.setTaxPostalCode( null )( initialCart );
+				newCart = cartValues.setTaxPostalCode(null)(initialCart);
 
-			assert.equal( null, newCart.tax.location.postal_code );
-		} );
+			assert.equal(null, newCart.tax.location.postal_code);
+		});
 
-		test( 'should preserve other values', () => {
+		test('should preserve other values', () => {
 			const initialCart = {
 					other: 1,
 					tax: {
@@ -210,7 +210,7 @@ describe( 'index', () => {
 						},
 					},
 				},
-				newCart = cartValues.setTaxPostalCode( '99999' )( initialCart ),
+				newCart = cartValues.setTaxPostalCode('99999')(initialCart),
 				expectedCart = {
 					other: 1,
 					tax: {
@@ -223,22 +223,22 @@ describe( 'index', () => {
 					},
 				};
 
-			assert.deepEqual( newCart, expectedCart );
-		} );
-	} );
-} );
+			assert.deepEqual(newCart, expectedCart);
+		});
+	});
+});
 
-describe( 'hasPendingPayment()', () => {
-	test( 'return true if cart shows pending payment', () => {
-		expect( cartValues.hasPendingPayment( { has_pending_payment: true } ) );
-	} );
-	test( 'return false if cart shows no pending payments', () => {
-		expect( cartValues.hasPendingPayment( { has_pending_payment: false } ) ).toBe( false );
-	} );
-	test( 'return false if has_pending_payment is not set', () => {
-		expect( cartValues.hasPendingPayment( { has_pending_payment: null } ) ).toBe( false );
-		expect( cartValues.hasPendingPayment( {} ) ).toBe( false );
-		expect( cartValues.hasPendingPayment( null ) ).toBe( false );
-		expect( cartValues.hasPendingPayment( undefined ) ).toBe( false );
-	} );
-} );
+describe('hasPendingPayment()', () => {
+	test('return true if cart shows pending payment', () => {
+		expect(cartValues.hasPendingPayment({ has_pending_payment: true }));
+	});
+	test('return false if cart shows no pending payments', () => {
+		expect(cartValues.hasPendingPayment({ has_pending_payment: false })).toBe(false);
+	});
+	test('return false if has_pending_payment is not set', () => {
+		expect(cartValues.hasPendingPayment({ has_pending_payment: null })).toBe(false);
+		expect(cartValues.hasPendingPayment({})).toBe(false);
+		expect(cartValues.hasPendingPayment(null)).toBe(false);
+		expect(cartValues.hasPendingPayment(undefined)).toBe(false);
+	});
+});

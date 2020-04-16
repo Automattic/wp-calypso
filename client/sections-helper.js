@@ -15,35 +15,35 @@
 import { find } from 'lodash';
 
 let sections = null;
-export function receiveSections( s ) {
+export function receiveSections(s) {
 	sections = s;
 }
 
 export function getSections() {
-	if ( ! sections ) {
-		throw new Error( 'sections-helper has not been initialized yet' );
+	if (!sections) {
+		throw new Error('sections-helper has not been initialized yet');
 	}
 	return sections;
 }
 
-export function preload( sectionName ) {
-	const section = find( sections, { name: sectionName } );
+export function preload(sectionName) {
+	const section = find(sections, { name: sectionName });
 
-	if ( section ) {
+	if (section) {
 		section.load();
 	}
 }
 
-export function load( sectionName, moduleName ) {
-	const section = find( sections, { name: sectionName, module: moduleName } );
+export function load(sectionName, moduleName) {
+	const section = find(sections, { name: sectionName, module: moduleName });
 
-	if ( ! section ) {
+	if (!section) {
 		return Promise.reject(
-			`Attempting to load non-existent section: ${ sectionName } (module=${ moduleName })`
+			`Attempting to load non-existent section: ${sectionName} (module=${moduleName})`
 		);
 	}
 
 	// section.load() loads the module synchronously (using require()) in environments without
 	// code splitting. The return value must be explicitly resolved to Promise.
-	return Promise.resolve( section.load() );
+	return Promise.resolve(section.load());
 }

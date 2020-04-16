@@ -4,9 +4,9 @@
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {null} null
  */
-export default function Users( wpcom ) {
-	if ( ! ( this instanceof Users ) ) {
-		return new Users( wpcom );
+export default function Users(wpcom) {
+	if (!(this instanceof Users)) {
+		return new Users(wpcom);
 	}
 
 	this.wpcom = wpcom;
@@ -19,6 +19,6 @@ export default function Users( wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Users.prototype.suggest = function( query, fn ) {
-	return this.wpcom.req.get( '/users/suggest', query, fn );
+Users.prototype.suggest = function (query, fn) {
+	return this.wpcom.req.get('/users/suggest', query, fn);
 };

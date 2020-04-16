@@ -20,35 +20,35 @@ import './style.scss';
 const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
 
-function transformData( data ) {
-	const sortedData = sortBy( data, datum => datum.value )
+function transformData(data) {
+	const sortedData = sortBy(data, (datum) => datum.value)
 		.reverse()
-		.map( ( datum, index ) => ( {
+		.map((datum, index) => ({
 			...datum,
 			sectionNum: index % NUM_COLOR_SECTIONS,
-		} ) );
+		}));
 
 	const arcs = d3Pie()
-		.startAngle( -Math.PI )
-		.value( datum => datum.value )( sortedData );
+		.startAngle(-Math.PI)
+		.value((datum) => datum.value)(sortedData);
 
 	const arcGen = d3Arc()
-		.innerRadius( 0 )
-		.outerRadius( SVG_SIZE / 2 );
+		.innerRadius(0)
+		.outerRadius(SVG_SIZE / 2);
 
-	const paths = arcs.map( arc => arcGen( arc ) );
+	const paths = arcs.map((arc) => arcGen(arc));
 
-	return sortedData.map( ( datum, index ) => ( {
+	return sortedData.map((datum, index) => ({
 		...datum,
-		path: paths[ index ],
-	} ) );
+		path: paths[index],
+	}));
 }
 
 class PieChart extends Component {
 	static propTypes = {
-		data: PropTypes.arrayOf( DataType ).isRequired,
+		data: PropTypes.arrayOf(DataType).isRequired,
 		translate: PropTypes.func.isRequired,
-		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
+		title: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 	};
 
 	state = {
@@ -56,12 +56,12 @@ class PieChart extends Component {
 		dataTotal: 0,
 	};
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( nextProps.data !== prevState.data ) {
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (nextProps.data !== prevState.data) {
 			return {
 				data: nextProps.data,
-				dataTotal: sumBy( nextProps.data, datum => datum.value ),
-				transformedData: transformData( nextProps.data ),
+				dataTotal: sumBy(nextProps.data, (datum) => datum.value),
+				transformedData: transformData(nextProps.data),
 			};
 		}
 
@@ -71,21 +71,19 @@ class PieChart extends Component {
 	renderPieChart() {
 		const { transformedData } = this.state;
 
-		return transformedData.map( datum => {
+		return transformedData.map((datum) => {
 			return (
 				<path
-					className={ `pie-chart__chart-section-${ datum.sectionNum }` }
-					key={ datum.name }
-					d={ datum.path }
+					className={`pie-chart__chart-section-${datum.sectionNum}`}
+					key={datum.name}
+					d={datum.path}
 				/>
 			);
-		} );
+		});
 	}
 
 	renderEmptyChart() {
-		return (
-			<circle cx={ 0 } cy={ 0 } r={ SVG_SIZE / 2 } className="pie-chart__chart-drawing-empty" />
-		);
+		return <circle cx={0} cy={0} r={SVG_SIZE / 2} className="pie-chart__chart-drawing-empty" />;
 	}
 
 	render() {
@@ -96,22 +94,22 @@ class PieChart extends Component {
 			<div className="pie-chart">
 				<svg
 					className="pie-chart__chart-drawing"
-					viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
-					preserveAspectRatio={ 'xMidYMid meet' }
+					viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
+					preserveAspectRatio={'xMidYMid meet'}
 				>
-					<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
-						{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
+					<g transform={`translate(${SVG_SIZE / 2}, ${SVG_SIZE / 2})`}>
+						{dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart()}
 					</g>
 				</svg>
 
-				{ title && (
+				{title && (
 					<h2 className="pie-chart__title">
-						{ 'string' === typeof title ? title : title( translate, dataTotal ) }
+						{'string' === typeof title ? title : title(translate, dataTotal)}
 					</h2>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default localize( PieChart );
+export default localize(PieChart);

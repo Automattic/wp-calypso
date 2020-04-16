@@ -30,7 +30,7 @@ class DomainConnectAuthorizeDescription extends Component {
 	render() {
 		const { dnsTemplateError, isPlaceholder, providerId, translate } = this.props;
 
-		if ( isPlaceholder ) {
+		if (isPlaceholder) {
 			return this.placeholder();
 		}
 
@@ -73,16 +73,16 @@ class DomainConnectAuthorizeDescription extends Component {
 			),
 		};
 
-		if ( templateDescription[ providerId ] ) {
-			return <p>{ templateDescription[ providerId ] }</p>;
+		if (templateDescription[providerId]) {
+			return <p>{templateDescription[providerId]}</p>;
 		}
 
-		if ( dnsTemplateError ) {
-			return <p>{ templateDescription[ 'template-error' ] }</p>;
+		if (dnsTemplateError) {
+			return <p>{templateDescription['template-error']}</p>;
 		}
 
 		return null;
 	}
 }
 
-export default localize( DomainConnectAuthorizeDescription );
+export default localize(DomainConnectAuthorizeDescription);

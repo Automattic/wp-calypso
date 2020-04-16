@@ -35,7 +35,7 @@ export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 
 export const NEW_PLANS = [];
-export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
+export const BEST_VALUE_PLANS = [PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY];
 export const JETPACK_PLANS = [
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -188,16 +188,16 @@ export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 export const TYPE_ECOMMERCE = 'TYPE_ECOMMERCE';
 
-export function isMonthly( plan ) {
-	return plan === PLAN_BUSINESS_MONTHLY || JETPACK_MONTHLY_PLANS.includes( plan );
+export function isMonthly(plan) {
+	return plan === PLAN_BUSINESS_MONTHLY || JETPACK_MONTHLY_PLANS.includes(plan);
 }
 
-export function isNew( plan ) {
-	return NEW_PLANS.includes( plan );
+export function isNew(plan) {
+	return NEW_PLANS.includes(plan);
 }
 
-export function isBestValue( plan ) {
-	return BEST_VALUE_PLANS.includes( plan );
+export function isBestValue(plan) {
+	return BEST_VALUE_PLANS.includes(plan);
 }
 
 /**
@@ -206,8 +206,8 @@ export function isBestValue( plan ) {
  * @param {string} term TERM_ constant
  * @returns {number} Term duration
  */
-export function getTermDuration( term ) {
-	switch ( term ) {
+export function getTermDuration(term) {
+	switch (term) {
 		case TERM_MONTHLY:
 			return PLAN_MONTHLY_PERIOD;
 
@@ -218,7 +218,7 @@ export function getTermDuration( term ) {
 			return PLAN_BIENNIAL_PERIOD;
 	}
 
-	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` ); // eslint-disable-line no-console
+	if (process.env.NODE_ENV === 'development') {
+		console.error(`Unexpected argument ${term}, expected one of TERM_ constants`); // eslint-disable-line no-console
 	}
 }

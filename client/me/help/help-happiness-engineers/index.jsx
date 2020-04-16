@@ -15,10 +15,10 @@ import HappinessEngineersTray from 'components/happiness-engineers-tray';
  */
 import './style.scss';
 
-function HelpHappinessEngineers( { translate } ) {
+function HelpHappinessEngineers({ translate }) {
 	return (
 		<div className="help-happiness-engineers">
-			{ translate(
+			{translate(
 				'{{headline}}We care about your happiness!{{/headline}}' +
 					"{{p}}They don't call us Happiness Engineers for nothing. " +
 					"If you need help, we're here for you!{{/p}}",
@@ -28,10 +28,10 @@ function HelpHappinessEngineers( { translate } ) {
 						p: <p className="help-happiness-engineers__description" />,
 					},
 				}
-			) }
+			)}
 			<HappinessEngineersTray />
 		</div>
 	);
 }
 
-export default localize( HelpHappinessEngineers );
+export default localize(HelpHappinessEngineers);

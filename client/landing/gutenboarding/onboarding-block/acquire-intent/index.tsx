@@ -18,27 +18,27 @@ import './style.scss';
 
 const AcquireIntent: FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical, siteTitle } = useSelect((select) => select(STORE_KEY).getState());
 	const makePath = usePath();
 
 	return (
 		<div className="gutenboarding-page acquire-intent">
 			<div className="acquire-intent__questions">
 				<VerticalSelect />
-				{ /* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */ }
-				<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } />
+				{/* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */}
+				<SiteTitle isVisible={!!(siteVertical || siteTitle)} />
 				<div
-					className={ classnames( 'acquire-intent__footer', {
-						'acquire-intent__footer--hidden': ! siteVertical,
-					} ) }
+					className={classnames('acquire-intent__footer', {
+						'acquire-intent__footer--hidden': !siteVertical,
+					})}
 				>
 					<Link
 						className="acquire-intent__question-skip"
 						isPrimary
-						to={ siteVertical && makePath( Step.DesignSelection ) }
+						to={siteVertical && makePath(Step.DesignSelection)}
 					>
-						{ /* @TODO: add transitions and correct action */ }
-						{ siteTitle ? __( 'Choose a design' ) : __( 'Donʼt know yet' ) }
+						{/* @TODO: add transitions and correct action */}
+						{siteTitle ? __('Choose a design') : __('Donʼt know yet')}
 					</Link>
 				</div>
 			</div>

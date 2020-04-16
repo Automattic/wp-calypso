@@ -43,49 +43,49 @@ class SiteVerification extends Component {
 	};
 
 	state = {
-		...this.stateForSite( this.props.site ),
+		...this.stateForSite(this.props.site),
 		dirtyFields: new Set(),
 		invalidatedSiteObject: this.props.site,
 	};
 
 	UNSAFE_componentWillMount() {
-		this.changeGoogleCode = this.handleVerificationCodeChange( 'googleCode' );
-		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
-		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
-		this.changeYandexCode = this.handleVerificationCodeChange( 'yandexCode' );
+		this.changeGoogleCode = this.handleVerificationCodeChange('googleCode');
+		this.changeBingCode = this.handleVerificationCodeChange('bingCode');
+		this.changePinterestCode = this.handleVerificationCodeChange('pinterestCode');
+		this.changeYandexCode = this.handleVerificationCodeChange('yandexCode');
 	}
 
 	componentDidMount() {
 		this.refreshSite();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId: prevSiteId, translate } = this.props;
 		const { site: nextSite, siteId: nextSiteId } = nextProps;
 		const { dirtyFields } = this.state;
 
 		// save success
-		if ( this.state.isSubmittingForm && nextProps.isSaveSuccess ) {
+		if (this.state.isSubmittingForm && nextProps.isSaveSuccess) {
 			this.props.markSaved();
-			this.props.requestSiteSettings( nextProps.siteId );
+			this.props.requestSiteSettings(nextProps.siteId);
 			this.refreshSite();
-			this.setState( {
+			this.setState({
 				isSubmittingForm: false,
 				dirtyFields: new Set(),
-			} );
+			});
 		}
 
 		// save error
-		if ( this.state.isSubmittingForm && nextProps.saveError ) {
-			this.setState( { isSubmittingForm: false } );
-			notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
+		if (this.state.isSubmittingForm && nextProps.saveError) {
+			this.setState({ isSubmittingForm: false });
+			notices.error(translate('There was a problem saving your changes. Please, try again.'));
 		}
 
 		// if we are changing sites, everything goes
-		if ( prevSiteId !== nextSiteId ) {
+		if (prevSiteId !== nextSiteId) {
 			return this.setState(
 				{
-					...this.stateForSite( nextSite ),
+					...this.stateForSite(nextSite),
 					invalidatedSiteObject: nextSite,
 					dirtyFields: new Set(),
 				},
@@ -94,124 +94,124 @@ class SiteVerification extends Component {
 		}
 
 		let nextState = {
-			...this.stateForSite( nextProps.site ),
+			...this.stateForSite(nextProps.site),
 		};
 
 		// Don't update state for fields the user has edited
-		nextState = omit( nextState, [ ...dirtyFields ] );
+		nextState = omit(nextState, [...dirtyFields]);
 
-		this.setState( {
+		this.setState({
 			...nextState,
-		} );
+		});
 	}
 
-	stateForSite( site ) {
+	stateForSite(site) {
 		return {
-			googleCode: get( site, 'options.verification_services_codes.google', '' ),
-			bingCode: get( site, 'options.verification_services_codes.bing', '' ),
-			pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
-			yandexCode: get( site, 'options.verification_services_codes.yandex', '' ),
-			isFetchingSettings: get( site, 'fetchingSettings', false ),
+			googleCode: get(site, 'options.verification_services_codes.google', ''),
+			bingCode: get(site, 'options.verification_services_codes.bing', ''),
+			pinterestCode: get(site, 'options.verification_services_codes.pinterest', ''),
+			yandexCode: get(site, 'options.verification_services_codes.yandex', ''),
+			isFetchingSettings: get(site, 'fetchingSettings', false),
 		};
 	}
 
 	refreshSite() {
 		const { site, siteId } = this.props;
 
-		if ( site ) {
+		if (site) {
 			this.setState(
 				{
 					invalidatedSiteObject: site,
 				},
-				() => this.props.requestSite( siteId )
+				() => this.props.requestSite(siteId)
 			);
 		}
 	}
 
-	getMetaTag( serviceName = '', content = '' ) {
-		if ( ! content ) {
+	getMetaTag(serviceName = '', content = '') {
+		if (!content) {
 			return '';
 		}
 
-		if ( includes( content, '<meta' ) ) {
+		if (includes(content, '<meta')) {
 			// We were passed a meta tag already!
 			return content;
 		}
 
-		return `<meta name="${ get(
+		return `<meta name="${get(
 			SiteVerification.serviceIds,
 			serviceName,
 			''
-		) }" content="${ content }" />`;
+		)}" content="${content}" />`;
 	}
 
-	isValidCode( serviceName = '', content = '' ) {
-		if ( ! content.length ) {
+	isValidCode(serviceName = '', content = '') {
+		if (!content.length) {
 			return true;
 		}
 
-		content = this.getMetaTag( serviceName, content );
+		content = this.getMetaTag(serviceName, content);
 
-		return includes( content, SiteVerification.serviceIds[ serviceName ] );
+		return includes(content, SiteVerification.serviceIds[serviceName]);
 	}
 
-	hasError( service ) {
+	hasError(service) {
 		const { invalidCodes = [] } = this.state;
 
-		return includes( invalidCodes, service );
+		return includes(invalidCodes, service);
 	}
 
-	handleVerificationCodeChange( serviceCode ) {
-		return event => {
-			if ( ! this.state.hasOwnProperty( serviceCode ) ) {
+	handleVerificationCodeChange(serviceCode) {
+		return (event) => {
+			if (!this.state.hasOwnProperty(serviceCode)) {
 				return;
 			}
 
 			// Show an error if the user types into the field
-			if ( event.target.value.length === 1 ) {
-				this.setState( {
+			if (event.target.value.length === 1) {
+				this.setState({
 					showPasteError: true,
-					invalidCodes: [ serviceCode.replace( 'Code', '' ) ],
-				} );
+					invalidCodes: [serviceCode.replace('Code', '')],
+				});
 				return;
 			}
 
-			const dirtyFields = new Set( this.state.dirtyFields );
-			dirtyFields.add( serviceCode );
+			const dirtyFields = new Set(this.state.dirtyFields);
+			dirtyFields.add(serviceCode);
 
-			this.setState( {
+			this.setState({
 				invalidCodes: [],
 				showPasteError: false,
-				[ serviceCode ]: event.target.value,
+				[serviceCode]: event.target.value,
 				dirtyFields,
-			} );
+			});
 		};
 	}
 
-	getVerificationError( isPasteError ) {
+	getVerificationError(isPasteError) {
 		const { translate } = this.props;
 
 		return (
 			<FormInputValidation
-				isError={ true }
+				isError={true}
 				text={
 					isPasteError
-						? translate( 'Verification code should be copied and pasted into this field.' )
-						: translate( 'Invalid site verification tag.' )
+						? translate('Verification code should be copied and pasted into this field.')
+						: translate('Invalid site verification tag.')
 				}
 			/>
 		);
 	}
 
-	handleFormSubmit = event => {
+	handleFormSubmit = (event) => {
 		const { path, siteId, translate, trackSiteVerificationUpdated } = this.props;
 		const { dirtyFields } = this.state;
 
-		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
+		if (!event.isDefaultPrevented() && event.nativeEvent) {
 			event.preventDefault();
 		}
 
-		notices.clearNotices( 'notices' );
+		notices.clearNotices('notices');
 
 		const verificationCodes = {
 			google: this.state.googleCode,
@@ -220,42 +220,42 @@ class SiteVerification extends Component {
 			yandex: this.state.yandexCode,
 		};
 
-		const filteredCodes = pickBy( verificationCodes, isString );
+		const filteredCodes = pickBy(verificationCodes, isString);
 		const invalidCodes = Object.keys(
-			pickBy( filteredCodes, ( name, content ) => ! this.isValidCode( content, name ) )
+			pickBy(filteredCodes, (name, content) => !this.isValidCode(content, name))
 		);
 
-		this.setState( { invalidCodes } );
-		if ( invalidCodes.length > 0 ) {
-			notices.error( translate( 'Invalid site verification tag entered.' ) );
+		this.setState({ invalidCodes });
+		if (invalidCodes.length > 0) {
+			notices.error(translate('Invalid site verification tag entered.'));
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			isSubmittingForm: true,
-		} );
+		});
 
 		const updatedOptions = {
 			verification_services_codes: filteredCodes,
 		};
 
-		this.props.saveSiteSettings( siteId, updatedOptions );
-		this.props.trackFormSubmitted( { path } );
+		this.props.saveSiteSettings(siteId, updatedOptions);
+		this.props.trackFormSubmitted({ path });
 
-		if ( dirtyFields.has( 'googleCode' ) ) {
-			trackSiteVerificationUpdated( 'google', path );
+		if (dirtyFields.has('googleCode')) {
+			trackSiteVerificationUpdated('google', path);
 		}
 
-		if ( dirtyFields.has( 'bingCode' ) ) {
-			trackSiteVerificationUpdated( 'bing', path );
+		if (dirtyFields.has('bingCode')) {
+			trackSiteVerificationUpdated('bing', path);
 		}
 
-		if ( dirtyFields.has( 'pinterestCode' ) ) {
-			trackSiteVerificationUpdated( 'pinterest', path );
+		if (dirtyFields.has('pinterestCode')) {
+			trackSiteVerificationUpdated('pinterest', path);
 		}
 
-		if ( dirtyFields.has( 'yandexCode' ) ) {
-			trackSiteVerificationUpdated( 'yandex', path );
+		if (dirtyFields.has('yandexCode')) {
+			trackSiteVerificationUpdated('yandex', path);
 		}
 	};
 
@@ -270,48 +270,48 @@ class SiteVerification extends Component {
 		const isDisabled = isSubmittingForm || isFetchingSettings;
 		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled =
-			isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
+			isDisabled || isSubmittingForm || (!showPasteError && invalidCodes.length > 0);
 		const placeholderTagContent = '1234';
 
 		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
-		googleCode = this.getMetaTag( 'google', googleCode || '' );
-		bingCode = this.getMetaTag( 'bing', bingCode || '' );
-		pinterestCode = this.getMetaTag( 'pinterest', pinterestCode || '' );
-		yandexCode = this.getMetaTag( 'yandex', yandexCode || '' );
+		googleCode = this.getMetaTag('google', googleCode || '');
+		bingCode = this.getMetaTag('bing', bingCode || '');
+		pinterestCode = this.getMetaTag('pinterest', pinterestCode || '');
+		yandexCode = this.getMetaTag('yandex', yandexCode || '');
 
 		return (
 			<div className="seo-settings__site-verification">
-				<QuerySiteSettings siteId={ siteId } />
-				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				<QuerySiteSettings siteId={siteId} />
+				{siteIsJetpack && <QueryJetpackModules siteId={siteId} />}
 
 				<SettingsSectionHeader
-					disabled={ isSaveDisabled || isVerificationDisabled }
-					isSaving={ isSubmittingForm }
-					onButtonClick={ this.handleFormSubmit }
+					disabled={isSaveDisabled || isVerificationDisabled}
+					isSaving={isSubmittingForm}
+					onButtonClick={this.handleFormSubmit}
 					showButton
-					title={ translate( 'Site Verification Services' ) }
+					title={translate('Site Verification Services')}
 				/>
 				<Card>
-					{ siteIsJetpack && (
+					{siteIsJetpack && (
 						<FormFieldset>
 							<SupportInfo
-								text={ translate(
+								text={translate(
 									'Provides the necessary hidden tags needed to verify your WordPress site with various services.'
-								) }
+								)}
 								link="https://jetpack.com/support/site-verification-tools/"
 							/>
 							<JetpackModuleToggle
-								siteId={ siteId }
+								siteId={siteId}
 								moduleSlug="verification-tools"
-								label={ translate( 'Verify site ownership with third-party services' ) }
-								disabled={ isDisabled }
+								label={translate('Verify site ownership with third-party services')}
+								disabled={isDisabled}
 							/>
 						</FormFieldset>
-					) }
+					)}
 
 					<p>
-						{ translate(
+						{translate(
 							'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
 								' for your site to be indexed by search engines. To use these advanced search engine tools' +
 								' and verify your site with a service, paste the HTML Tag code below. Read the' +
@@ -323,103 +323,103 @@ class SiteVerification extends Component {
 									b: <strong />,
 									support: (
 										<ExternalLink
-											icon={ true }
+											icon={true}
 											target="_blank"
 											href="https://wordpress.com/support/webmaster-tools/"
 										/>
 									),
 									google: (
 										<ExternalLink
-											icon={ true }
+											icon={true}
 											target="_blank"
 											href="https://www.google.com/webmasters/tools/"
 										/>
 									),
 									bing: (
 										<ExternalLink
-											icon={ true }
+											icon={true}
 											target="_blank"
 											href="https://www.bing.com/webmaster/"
 										/>
 									),
 									pinterest: (
 										<ExternalLink
-											icon={ true }
+											icon={true}
 											target="_blank"
 											href="https://pinterest.com/website/verify/"
 										/>
 									),
 									yandex: (
 										<ExternalLink
-											icon={ true }
+											icon={true}
 											target="_blank"
 											href="https://webmaster.yandex.com/sites/"
 										/>
 									),
 								},
 							}
-						) }
+						)}
 					</p>
-					<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
+					<form onChange={this.props.markChanged} className="seo-settings__seo-form">
 						<FormFieldset>
 							<FormInput
-								prefix={ translate( 'Google' ) }
+								prefix={translate('Google')}
 								name="verification_code_google"
 								type="text"
-								value={ googleCode }
+								value={googleCode}
 								id="verification_code_google"
 								spellCheck="false"
-								disabled={ isVerificationDisabled }
-								isError={ this.hasError( 'google' ) }
-								placeholder={ this.getMetaTag( 'google', placeholderTagContent ) }
-								onChange={ this.changeGoogleCode }
+								disabled={isVerificationDisabled}
+								isError={this.hasError('google')}
+								placeholder={this.getMetaTag('google', placeholderTagContent)}
+								onChange={this.changeGoogleCode}
 							/>
-							{ this.hasError( 'google' ) && this.getVerificationError( showPasteError ) }
+							{this.hasError('google') && this.getVerificationError(showPasteError)}
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ translate( 'Bing' ) }
+								prefix={translate('Bing')}
 								name="verification_code_bing"
 								type="text"
-								value={ bingCode }
+								value={bingCode}
 								id="verification_code_bing"
 								spellCheck="false"
-								disabled={ isVerificationDisabled }
-								isError={ this.hasError( 'bing' ) }
-								placeholder={ this.getMetaTag( 'bing', placeholderTagContent ) }
-								onChange={ this.changeBingCode }
+								disabled={isVerificationDisabled}
+								isError={this.hasError('bing')}
+								placeholder={this.getMetaTag('bing', placeholderTagContent)}
+								onChange={this.changeBingCode}
 							/>
-							{ this.hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
+							{this.hasError('bing') && this.getVerificationError(showPasteError)}
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ translate( 'Pinterest' ) }
+								prefix={translate('Pinterest')}
 								name="verification_code_pinterest"
 								type="text"
-								value={ pinterestCode }
+								value={pinterestCode}
 								id="verification_code_pinterest"
 								spellCheck="false"
-								disabled={ isVerificationDisabled }
-								isError={ this.hasError( 'pinterest' ) }
-								placeholder={ this.getMetaTag( 'pinterest', placeholderTagContent ) }
-								onChange={ this.changePinterestCode }
+								disabled={isVerificationDisabled}
+								isError={this.hasError('pinterest')}
+								placeholder={this.getMetaTag('pinterest', placeholderTagContent)}
+								onChange={this.changePinterestCode}
 							/>
-							{ this.hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
+							{this.hasError('pinterest') && this.getVerificationError(showPasteError)}
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ translate( 'Yandex' ) }
+								prefix={translate('Yandex')}
 								name="verification_code_yandex"
 								type="text"
-								value={ yandexCode }
+								value={yandexCode}
 								id="verification_code_yandex"
 								spellCheck="false"
-								disabled={ isVerificationDisabled }
-								isError={ this.hasError( 'yandex' ) }
-								placeholder={ this.getMetaTag( 'yandex', placeholderTagContent ) }
-								onChange={ this.changeYandexCode }
+								disabled={isVerificationDisabled}
+								isError={this.hasError('yandex')}
+								placeholder={this.getMetaTag('yandex', placeholderTagContent)}
+								onChange={this.changeYandexCode}
 							/>
-							{ this.hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
+							{this.hasError('yandex') && this.getVerificationError(showPasteError)}
 						</FormFieldset>
 					</form>
 				</Card>
@@ -429,31 +429,31 @@ class SiteVerification extends Component {
 }
 
 export default connect(
-	state => {
-		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const site = getSelectedSite(state);
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
-			isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
-			saveError: getSiteSettingsSaveError( state, siteId ),
+			isSaveSuccess: isSiteSettingsSaveSuccessful(state, siteId),
+			isVerificationToolsActive: isJetpackModuleActive(state, siteId, 'verification-tools'),
+			saveError: getSiteSettingsSaveError(state, siteId),
 			site,
 			siteId,
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			path: getCurrentRouteParameterized( state, siteId ),
+			siteIsJetpack: isJetpackSite(state, siteId),
+			path: getCurrentRouteParameterized(state, siteId),
 		};
 	},
 	{
 		requestSite,
 		requestSiteSettings,
 		saveSiteSettings,
-		trackSiteVerificationUpdated: ( service, path ) =>
-			recordTracksEvent( 'calypso_seo_tools_site_verification_updated', {
+		trackSiteVerificationUpdated: (service, path) =>
+			recordTracksEvent('calypso_seo_tools_site_verification_updated', {
 				service,
 				path,
-			} ),
-		trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
+			}),
+		trackFormSubmitted: partial(recordTracksEvent, 'calypso_seo_settings_form_submit'),
 	},
 	undefined,
 	{ pure: false } // defaults to true, but this component has internal state
-)( protectForm( localize( SiteVerification ) ) );
+)(protectForm(localize(SiteVerification)));

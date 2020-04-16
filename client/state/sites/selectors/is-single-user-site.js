@@ -16,6 +16,6 @@ import getSite from './get-site';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is a single user site
  */
-export default function isSingleUserSite( state, siteId ) {
-	return get( getSite( state, siteId ), 'single_user_site', null );
+export default function isSingleUserSite(state, siteId) {
+	return get(getSite(state, siteId), 'single_user_site', null);
 }

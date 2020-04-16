@@ -20,7 +20,7 @@ import 'state/stats/init';
  * @param  {Array}  stats  The received stats
  * @returns {object}        Action object
  */
-export function receivePostStats( siteId, postId, stats ) {
+export function receivePostStats(siteId, postId, stats) {
 	return {
 		type: POST_STATS_RECEIVE,
 		siteId,
@@ -38,35 +38,35 @@ export function receivePostStats( siteId, postId, stats ) {
  * @param  {string} fields Stat Fields to fetch
  * @returns {Function}      Action thunk
  */
-export function requestPostStats( siteId, postId, fields = [] ) {
-	return dispatch => {
-		dispatch( {
+export function requestPostStats(siteId, postId, fields = []) {
+	return (dispatch) => {
+		dispatch({
 			type: POST_STATS_REQUEST,
 			postId,
 			siteId,
 			fields,
-		} );
+		});
 
 		return wpcom
-			.site( siteId )
-			.statsPostViews( postId, { fields: fields.join() } )
-			.then( stats => {
-				dispatch( receivePostStats( siteId, postId, stats ) );
-				dispatch( {
+			.site(siteId)
+			.statsPostViews(postId, { fields: fields.join() })
+			.then((stats) => {
+				dispatch(receivePostStats(siteId, postId, stats));
+				dispatch({
 					type: POST_STATS_REQUEST_SUCCESS,
 					siteId,
 					postId,
 					fields,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: POST_STATS_REQUEST_FAILURE,
 					siteId,
 					postId,
 					fields,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

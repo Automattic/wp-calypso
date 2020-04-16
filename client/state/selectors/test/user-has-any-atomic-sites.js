@@ -3,18 +3,18 @@
  */
 import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
 
-describe( 'userHasAnyAtomicSites()', () => {
-	test( 'should return false if no sites in state', () => {
+describe('userHasAnyAtomicSites()', () => {
+	test('should return false if no sites in state', () => {
 		const state = {
 			sites: {
 				items: {},
 			},
 		};
 
-		expect( userHasAnyAtomicSites( state ) ).toBe( false );
-	} );
+		expect(userHasAnyAtomicSites(state)).toBe(false);
+	});
 
-	test( 'should return false if no sites are Atomic', () => {
+	test('should return false if no sites are Atomic', () => {
 		const state = {
 			sites: {
 				items: {
@@ -36,10 +36,10 @@ describe( 'userHasAnyAtomicSites()', () => {
 			},
 		};
 
-		expect( userHasAnyAtomicSites( state ) ).toBe( false );
-	} );
+		expect(userHasAnyAtomicSites(state)).toBe(false);
+	});
 
-	test( 'should return true if at least one site is Atomic', () => {
+	test('should return true if at least one site is Atomic', () => {
 		const state = {
 			sites: {
 				items: {
@@ -61,6 +61,6 @@ describe( 'userHasAnyAtomicSites()', () => {
 			},
 		};
 
-		expect( userHasAnyAtomicSites( state ) ).toBe( true );
-	} );
-} );
+		expect(userHasAnyAtomicSites(state)).toBe(true);
+	});
+});

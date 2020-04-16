@@ -19,7 +19,7 @@ export class NavButton extends Component {
 		navigate: PropTypes.func.isRequired,
 	};
 
-	navigate = event => {
+	navigate = (event) => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -31,11 +31,11 @@ export class NavButton extends Component {
 
 		return (
 			<button
-				className={ classNames( className, { disabled: ! isEnabled } ) }
-				disabled={ ! isEnabled }
-				onClick={ isEnabled ? this.navigate : noop }
+				className={classNames(className, { disabled: !isEnabled })}
+				disabled={!isEnabled}
+				onClick={isEnabled ? this.navigate : noop}
 			>
-				<Gridicon icon={ iconName } size={ 18 } />
+				<Gridicon icon={iconName} size={18} />
 			</button>
 		);
 	}

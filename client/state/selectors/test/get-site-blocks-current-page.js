@@ -3,8 +3,8 @@
  */
 import { getSiteBlocksCurrentPage } from 'state/reader/site-blocks/selectors';
 
-describe( 'getSiteBlocksCurrentPage()', () => {
-	test( 'should return the current page', () => {
+describe('getSiteBlocksCurrentPage()', () => {
+	test('should return the current page', () => {
 		const prevState = {
 			reader: {
 				siteBlocks: {
@@ -12,11 +12,11 @@ describe( 'getSiteBlocksCurrentPage()', () => {
 				},
 			},
 		};
-		const nextState = getSiteBlocksCurrentPage( prevState );
-		expect( nextState ).toEqual( 4 );
-	} );
+		const nextState = getSiteBlocksCurrentPage(prevState);
+		expect(nextState).toEqual(4);
+	});
 
-	test( 'should return 1 if there is no current page', () => {
+	test('should return 1 if there is no current page', () => {
 		const prevState = {
 			reader: {
 				siteBlocks: {
@@ -24,7 +24,7 @@ describe( 'getSiteBlocksCurrentPage()', () => {
 				},
 			},
 		};
-		const nextState = getSiteBlocksCurrentPage( prevState );
-		expect( nextState ).toEqual( 1 );
-	} );
-} );
+		const nextState = getSiteBlocksCurrentPage(prevState);
+		expect(nextState).toEqual(1);
+	});
+});

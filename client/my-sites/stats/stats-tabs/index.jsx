@@ -43,38 +43,37 @@ export default class extends React.Component {
 		} = this.props;
 		let statsTabs;
 
-		if ( data && ! children ) {
-			const activeData = find( data, { [ activeKey ]: activeIndex } );
+		if (data && !children) {
+			const activeData = find(data, { [activeKey]: activeIndex });
 
-			statsTabs = tabs.map( tab => {
-				const hasData =
-					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
+			statsTabs = tabs.map((tab) => {
+				const hasData = activeData && activeData[tab.attr] >= 0 && activeData[tab.attr] !== null;
 
 				const tabOptions = {
 					attr: tab.attr,
 					gridicon: tab.gridicon,
 					className: tab.className,
 					label: tab.label,
-					loading: ! hasData,
+					loading: !hasData,
 					selected: selectedTab === tab.attr,
 					tabClick: switchTab,
-					value: hasData ? activeData[ tab.attr ] : null,
+					value: hasData ? activeData[tab.attr] : null,
 					format: tab.format,
 				};
 
-				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;
-			} );
+				return <StatTab key={tabOptions.attr} {...tabOptions} />;
+			});
 		}
 
 		return (
 			<ul
-				className={ classNames(
+				className={classNames(
 					'stats-tabs',
-					{ 'is-enabled': !! data },
+					{ 'is-enabled': !!data },
 					{ 'is-borderless': borderless }
-				) }
+				)}
 			>
-				{ statsTabs || children }
+				{statsTabs || children}
 			</ul>
 		);
 	}

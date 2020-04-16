@@ -23,15 +23,15 @@ class StatsError extends React.PureComponent {
 	render() {
 		const { children, className, message, translate } = this.props;
 		const displayedMessage =
-			message || translate( "Some stats didn't load in time. Please try again later." );
+			message || translate("Some stats didn't load in time. Please try again later.");
 
 		return (
-			<div className={ classNames( 'module-content-text', 'is-error', className ) }>
-				<p key="primary">{ displayedMessage }</p>
-				{ children }
+			<div className={classNames('module-content-text', 'is-error', className)}>
+				<p key="primary">{displayedMessage}</p>
+				{children}
 			</div>
 		);
 	}
 }
 
-export default localize( StatsError );
+export default localize(StatsError);

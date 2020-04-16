@@ -30,7 +30,7 @@ import { PanelBody } from '@wordpress/components';
  */
 import { withSiteOptions } from '../../lib';
 
-function SiteTitleEdit( {
+function SiteTitleEdit({
 	attributes,
 	className,
 	fontSize,
@@ -40,7 +40,7 @@ function SiteTitleEdit( {
 	setTextColor,
 	siteTitle,
 	textColor,
-} ) {
+}) {
 	const { customFontSize, textAlign } = attributes;
 
 	const actualFontSize = customFontSize || fontSize.size;
@@ -51,71 +51,71 @@ function SiteTitleEdit( {
 		<Fragment>
 			<BlockControls>
 				<AlignmentToolbar
-					value={ textAlign }
-					onChange={ nextAlign => {
-						setAttributes( { textAlign: nextAlign } );
-					} }
+					value={textAlign}
+					onChange={(nextAlign) => {
+						setAttributes({ textAlign: nextAlign });
+					}}
 				/>
 			</BlockControls>
 			<InspectorControls>
-				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
-					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
+				<PanelBody className="blocks-font-size" title={__('Text Settings')}>
+					<FontSizePicker onChange={setFontSize} value={actualFontSize} />
 				</PanelBody>
 				<PanelColorSettings
-					title={ __( 'Color Settings' ) }
-					initialOpen={ false }
-					colorSettings={ [
+					title={__('Color Settings')}
+					initialOpen={false}
+					colorSettings={[
 						{
 							value: textColor.color,
 							onChange: setTextColor,
-							label: __( 'Text Color' ),
+							label: __('Text Color'),
 						},
-					] }
+					]}
 				/>
 			</InspectorControls>
 			<RichText
-				allowedFormats={ [] }
-				aria-label={ __( 'Site Title' ) }
-				className={ classNames( 'site-title', className, {
+				allowedFormats={[]}
+				aria-label={__('Site Title')}
+				className={classNames('site-title', className, {
 					'has-text-color': textColor.color,
-					[ `has-text-align-${ textAlign }` ]: textAlign,
-					[ textColor.class ]: textColor.class,
-					[ fontSize.class ]: ! customFontSize && fontSize.class,
-				} ) }
+					[`has-text-align-${textAlign}`]: textAlign,
+					[textColor.class]: textColor.class,
+					[fontSize.class]: !customFontSize && fontSize.class,
+				})}
 				identifier="content"
-				onChange={ updateValue }
-				onReplace={ insertDefaultBlock }
-				onSplit={ noop }
-				placeholder={ __( 'Add a Site Title' ) }
-				style={ {
+				onChange={updateValue}
+				onReplace={insertDefaultBlock}
+				onSplit={noop}
+				placeholder={__('Add a Site Title')}
+				style={{
 					color: textColor.color,
 					fontSize: actualFontSize ? actualFontSize + 'px' : undefined,
-				} }
+				}}
 				tagName="h1"
-				value={ value }
+				value={value}
 			/>
 		</Fragment>
 	);
 }
 
-export default compose( [
-	withColors( { textColor: 'color' } ),
-	withFontSizes( 'fontSize' ),
-	withSelect( ( select, { clientId } ) => {
-		const { getBlockIndex, getBlockRootClientId, getTemplateLock } = select( 'core/block-editor' );
-		const rootClientId = getBlockRootClientId( clientId );
+export default compose([
+	withColors({ textColor: 'color' }),
+	withFontSizes('fontSize'),
+	withSelect((select, { clientId }) => {
+		const { getBlockIndex, getBlockRootClientId, getTemplateLock } = select('core/block-editor');
+		const rootClientId = getBlockRootClientId(clientId);
 
 		return {
-			blockIndex: getBlockIndex( clientId, rootClientId ),
-			isLocked: !! getTemplateLock( rootClientId ),
+			blockIndex: getBlockIndex(clientId, rootClientId),
+			isLocked: !!getTemplateLock(rootClientId),
 			rootClientId,
 		};
-	} ),
-	withDispatch( ( dispatch, { blockIndex, rootClientId } ) => ( {
+	}),
+	withDispatch((dispatch, { blockIndex, rootClientId }) => ({
 		insertDefaultBlock: () =>
-			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 ),
-	} ) ),
-	withSiteOptions( {
-		siteTitle: { optionName: 'title', defaultValue: __( 'Site title loading…' ) },
-	} ),
-] )( SiteTitleEdit );
+			dispatch('core/block-editor').insertDefaultBlock({}, rootClientId, blockIndex + 1),
+	})),
+	withSiteOptions({
+		siteTitle: { optionName: 'title', defaultValue: __('Site title loading…') },
+	}),
+])(SiteTitleEdit);

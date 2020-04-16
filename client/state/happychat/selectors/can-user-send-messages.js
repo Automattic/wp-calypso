@@ -25,9 +25,9 @@ import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-c
  * @param {object} state - global redux state
  * @returns {boolean} Whether the user is able to send messages
  */
-export default state =>
-	isHappychatClientConnected( state ) &&
-	! includes(
+export default (state) =>
+	isHappychatClientConnected(state) &&
+	!includes(
 		[
 			HAPPYCHAT_CHAT_STATUS_BLOCKED,
 			HAPPYCHAT_CHAT_STATUS_DEFAULT,
@@ -35,5 +35,5 @@ export default state =>
 			HAPPYCHAT_CHAT_STATUS_MISSED,
 			HAPPYCHAT_CHAT_STATUS_ABANDONED,
 		],
-		getHappychatChatStatus( state )
+		getHappychatChatStatus(state)
 	);

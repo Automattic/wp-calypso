@@ -17,7 +17,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 import { getRemovableConnections } from 'state/sharing/publicize/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 
-const SharingServiceAction = ( {
+const SharingServiceAction = ({
 	isConnecting,
 	isDisconnecting,
 	isRefreshing,
@@ -28,91 +28,91 @@ const SharingServiceAction = ( {
 	translate,
 	recordTracksEvent,
 	path,
-} ) => {
+}) => {
 	let warning = false,
 		label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
-	const onClick = event => {
+	const onClick = (event) => {
 		event.stopPropagation();
 		onAction();
 	};
 
-	if ( 'unknown' === status ) {
-		label = translate( 'Loading…', { context: 'Sharing: Publicize status pending button label' } );
-	} else if ( isDisconnecting ) {
-		label = translate( 'Disconnecting…', {
+	if ('unknown' === status) {
+		label = translate('Loading…', { context: 'Sharing: Publicize status pending button label' });
+	} else if (isDisconnecting) {
+		label = translate('Disconnecting…', {
 			context: 'Sharing: Publicize disconnect pending button label',
-		} );
-	} else if ( isRefreshing ) {
-		label = translate( 'Reconnecting…', {
+		});
+	} else if (isRefreshing) {
+		label = translate('Reconnecting…', {
 			context: 'Sharing: Publicize reconnect pending button label',
-		} );
+		});
 		warning = true;
-	} else if ( isConnecting ) {
-		label = translate( 'Connecting…', {
+	} else if (isConnecting) {
+		label = translate('Connecting…', {
 			context: 'Sharing: Publicize connect pending button label',
-		} );
-	} else if ( 'connected' === status || 'must-disconnect' === status ) {
-		if ( removableConnections.length > 1 ) {
-			label = translate( 'Disconnect All', {
+		});
+	} else if ('connected' === status || 'must-disconnect' === status) {
+		if (removableConnections.length > 1) {
+			label = translate('Disconnect All', {
 				context: 'Sharing: Publicize disconnect button label',
-			} );
+			});
 		} else {
-			label = translate( 'Disconnect', { context: 'Sharing: Publicize disconnect button label' } );
+			label = translate('Disconnect', { context: 'Sharing: Publicize disconnect button label' });
 		}
-		if ( 'must-disconnect' === status ) {
+		if ('must-disconnect' === status) {
 			warning = true;
 		}
-	} else if ( 'reconnect' === status ) {
-		label = translate( 'Reconnect', {
+	} else if ('reconnect' === status) {
+		label = translate('Reconnect', {
 			context: 'Sharing: Publicize reconnect pending button label',
-		} );
+		});
 		warning = true;
 	} else {
-		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
+		label = translate('Connect', { context: 'Sharing: Publicize connect pending button label' });
 	}
 
-	if ( 'google_plus' === service.ID && 1 > removableConnections.length ) {
-		label = translate( 'Unavailable', {
+	if ('google_plus' === service.ID && 1 > removableConnections.length) {
+		label = translate('Unavailable', {
 			context: 'Sharing: Publicize connect unavailable button label',
-		} );
+		});
 		return (
-			<Button compact disabled={ true }>
-				{ label }
+			<Button compact disabled={true}>
+				{label}
 			</Button>
 		);
 	}
 
-	if ( 'mailchimp' === service.ID && status === 'not-connected' ) {
+	if ('mailchimp' === service.ID && status === 'not-connected') {
 		return (
 			<div>
 				<Button
 					className="connections__signup"
 					compact
 					href="https://public-api.wordpress.com/rest/v1.1/sharing/mailchimp/signup"
-					onClick={ () => {
-						recordTracksEvent( 'calypso_connections_signup_button_click', {
+					onClick={() => {
+						recordTracksEvent('calypso_connections_signup_button_click', {
 							service: 'mailchimp',
 							path,
-						} );
+						});
 						return true;
-					} }
+					}}
 					target="_blank"
-					disabled={ isPending }
+					disabled={isPending}
 				>
-					{ translate( 'Sign up' ) }
+					{translate('Sign up')}
 				</Button>
-				<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
-					{ label }
+				<Button scary={warning} compact onClick={onClick} disabled={isPending}>
+					{label}
 				</Button>
 			</div>
 		);
 	}
 
 	return (
-		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
-			{ label }
+		<Button scary={warning} compact onClick={onClick} disabled={isPending}>
+			{label}
 		</Button>
 	);
 };
@@ -122,7 +122,7 @@ SharingServiceAction.propTypes = {
 	isDisconnecting: PropTypes.bool,
 	isRefreshing: PropTypes.bool,
 	onAction: PropTypes.func,
-	removableConnections: PropTypes.arrayOf( PropTypes.object ),
+	removableConnections: PropTypes.arrayOf(PropTypes.object),
 	service: PropTypes.object.isRequired,
 	status: PropTypes.string,
 	translate: PropTypes.func,
@@ -140,13 +140,13 @@ SharingServiceAction.defaultProps = {
 };
 
 export default connect(
-	( state, { service } ) => {
-		const siteId = getSelectedSiteId( state );
+	(state, { service }) => {
+		const siteId = getSelectedSiteId(state);
 
 		return {
-			removableConnections: getRemovableConnections( state, service.ID ),
-			path: getCurrentRouteParameterized( state, siteId ),
+			removableConnections: getRemovableConnections(state, service.ID),
+			path: getCurrentRouteParameterized(state, siteId),
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( localize( SharingServiceAction ) );
+)(localize(SharingServiceAction));

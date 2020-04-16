@@ -19,25 +19,25 @@ class LocaleSuggestionsListItem extends Component {
 		path: PropTypes.string.isRequired,
 	};
 
-	handleLocaleSuggestionClick = event => {
+	handleLocaleSuggestionClick = (event) => {
 		const { locale, onLocaleSuggestionClick, path } = this.props;
 
-		if ( this.hasLocaleDirectionChanged( locale ) ) {
+		if (this.hasLocaleDirectionChanged(locale)) {
 			event.preventDefault();
 
 			window.location = path;
 		}
 
-		if ( onLocaleSuggestionClick ) {
+		if (onLocaleSuggestionClick) {
 			onLocaleSuggestionClick();
 		}
 
 		// TODO: record analytics event here
 	};
 
-	hasLocaleDirectionChanged( locale ) {
-		const localeData = assign( {}, getLanguage( locale.locale ) ),
-			currentLocaleData = assign( {}, getLanguage( getLocaleSlug() ) );
+	hasLocaleDirectionChanged(locale) {
+		const localeData = assign({}, getLanguage(locale.locale)),
+			currentLocaleData = assign({}, getLanguage(getLocaleSlug()));
 
 		return localeData.rtl !== currentLocaleData.rtl;
 	}
@@ -47,14 +47,14 @@ class LocaleSuggestionsListItem extends Component {
 
 		return (
 			<div className="locale-suggestions__list-item" dir="auto">
-				{ locale.availability_text }
+				{locale.availability_text}
 
 				<a
-					href={ path }
-					onClick={ this.handleLocaleSuggestionClick }
+					href={path}
+					onClick={this.handleLocaleSuggestionClick}
 					className="locale-suggestions__locale-link"
 				>
-					{ locale.name }
+					{locale.name}
 				</a>
 			</div>
 		);

@@ -32,26 +32,26 @@ export default class EditorDrawerWell extends Component {
 
 	render() {
 		const { empty, onClick, disabled, icon, label, children, isHidden } = this.props;
-		const classes = classNames( 'editor-drawer-well', {
+		const classes = classNames('editor-drawer-well', {
 			'is-empty': empty,
 			'is-hidden': isHidden,
-		} );
+		});
 
 		return (
-			<div className={ classes }>
-				<div className="editor-drawer-well__content">{ children }</div>
-				{ empty && (
+			<div className={classes}>
+				<div className="editor-drawer-well__content">{children}</div>
+				{empty && (
 					<button
 						type="button"
-						onClick={ onClick }
-						disabled={ disabled }
+						onClick={onClick}
+						disabled={disabled}
 						className="editor-drawer-well__placeholder"
 					>
-						{ icon && <Gridicon icon={ icon } className="editor-drawer-well__icon" /> }
-						<span className="editor-drawer-well__button button is-compact">{ label }</span>
+						{icon && <Gridicon icon={icon} className="editor-drawer-well__icon" />}
+						<span className="editor-drawer-well__button button is-compact">{label}</span>
 					</button>
-				) }
-				{ this.props.customDropZone }
+				)}
+				{this.props.customDropZone}
 			</div>
 		);
 	}

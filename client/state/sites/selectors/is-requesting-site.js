@@ -6,6 +6,6 @@
  * @param  {(number|string)}  siteId Site ID or slug
  * @returns {boolean}          Whether request is in progress
  */
-export default function isRequestingSite( state, siteId ) {
-	return !! state.sites.requesting[ siteId ];
+export default function isRequestingSite(state, siteId) {
+	return !!state.sites.requesting[siteId];
 }

@@ -16,12 +16,12 @@ import { LOADING } from 'woocommerce/state/constants';
 
 const siteId = 123;
 
-const getState = ( shippingClasses = initialShippingClasses ) => {
+const getState = (shippingClasses = initialShippingClasses) => {
 	return {
 		extensions: {
 			woocommerce: {
 				sites: {
-					[ siteId ]: {
+					[siteId]: {
 						shippingClasses,
 					},
 				},
@@ -30,76 +30,76 @@ const getState = ( shippingClasses = initialShippingClasses ) => {
 	};
 };
 
-describe( 'Shipping classes selectors', () => {
+describe('Shipping classes selectors', () => {
 	/**
 	 * areShippingClassesLoaded
 	 */
-	test( 'areShippingClassesLoaded when nothing has been loaded yet', () => {
-		const state = getState( false );
-		const result = areShippingClassesLoaded( state, siteId );
+	test('areShippingClassesLoaded when nothing has been loaded yet', () => {
+		const state = getState(false);
+		const result = areShippingClassesLoaded(state, siteId);
 
-		expect( result ).to.equal( false );
-	} );
+		expect(result).to.equal(false);
+	});
 
-	test( 'areShippingClassesLoaded while classes are being loaded', () => {
-		const state = getState( LOADING );
-		const result = areShippingClassesLoaded( state, siteId );
+	test('areShippingClassesLoaded while classes are being loaded', () => {
+		const state = getState(LOADING);
+		const result = areShippingClassesLoaded(state, siteId);
 
-		expect( result ).to.equal( false );
-	} );
+		expect(result).to.equal(false);
+	});
 
-	test( 'areShippingClassesLoaded when they are really loaded', () => {
+	test('areShippingClassesLoaded when they are really loaded', () => {
 		const state = getState();
-		const result = areShippingClassesLoaded( state, siteId );
+		const result = areShippingClassesLoaded(state, siteId);
 
-		expect( result ).to.equal( true );
-	} );
+		expect(result).to.equal(true);
+	});
 
 	/**
 	 * areShippingClassesLoading
 	 */
-	test( 'areShippingClassesLoading when nothing has been loaded yet.', () => {
-		const state = getState( false );
-		const result = areShippingClassesLoading( state, siteId );
+	test('areShippingClassesLoading when nothing has been loaded yet.', () => {
+		const state = getState(false);
+		const result = areShippingClassesLoading(state, siteId);
 
-		expect( result ).to.equal( false );
-	} );
+		expect(result).to.equal(false);
+	});
 
-	test( 'areShippingClassesLoading while classes are being loaded.', () => {
-		const state = getState( LOADING );
-		const result = areShippingClassesLoading( state, siteId );
+	test('areShippingClassesLoading while classes are being loaded.', () => {
+		const state = getState(LOADING);
+		const result = areShippingClassesLoading(state, siteId);
 
-		expect( result ).to.equal( true );
-	} );
+		expect(result).to.equal(true);
+	});
 
-	test( 'areShippingClassesLoading when they are really loaded', () => {
+	test('areShippingClassesLoading when they are really loaded', () => {
 		const state = getState();
-		const result = areShippingClassesLoading( state, siteId );
+		const result = areShippingClassesLoading(state, siteId);
 
-		expect( result ).to.equal( false );
-	} );
+		expect(result).to.equal(false);
+	});
 
 	/**
 	 * getShippingClassOptions
 	 */
-	test( 'getShippingClassOptions when nothing has been loaded yet.', () => {
-		const state = getState( false );
-		const result = getShippingClassOptions( state, siteId );
+	test('getShippingClassOptions when nothing has been loaded yet.', () => {
+		const state = getState(false);
+		const result = getShippingClassOptions(state, siteId);
 
-		expect( result ).to.be.an( 'array' ).that.is.empty;
-	} );
+		expect(result).to.be.an('array').that.is.empty;
+	});
 
-	test( 'getShippingClassOptions while classes are being loaded.', () => {
-		const state = getState( LOADING );
-		const result = getShippingClassOptions( state, siteId );
+	test('getShippingClassOptions while classes are being loaded.', () => {
+		const state = getState(LOADING);
+		const result = getShippingClassOptions(state, siteId);
 
-		expect( result ).to.be.an( 'array' ).that.is.empty;
-	} );
+		expect(result).to.be.an('array').that.is.empty;
+	});
 
-	test( 'getShippingClassOptions when they are really loaded', () => {
+	test('getShippingClassOptions when they are really loaded', () => {
 		const state = getState();
-		const result = getShippingClassOptions( state, siteId );
+		const result = getShippingClassOptions(state, siteId);
 
-		expect( result ).to.equal( initialShippingClasses );
-	} );
-} );
+		expect(result).to.equal(initialShippingClasses);
+	});
+});

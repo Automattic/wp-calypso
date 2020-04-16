@@ -14,17 +14,17 @@ import Wizard from 'components/wizard/docs/example';
 import ReadmeViewer from 'components/readme-viewer';
 
 class WizardComponent extends Component {
-	backToComponents = () => page( '/devdocs/design/' );
+	backToComponents = () => page('/devdocs/design/');
 
 	render() {
 		const { stepName } = this.props;
 
 		return (
 			<Main className="wizard-component">
-				<HeaderCake onClick={ this.backToComponents } backText="All Components">
+				<HeaderCake onClick={this.backToComponents} backText="All Components">
 					Wizard
 				</HeaderCake>
-				<Wizard stepName={ stepName } />
+				<Wizard stepName={stepName} />
 				<ReadmeViewer section="design" readmeFilePath="/client/components/wizard/README.md" />
 			</Main>
 		);

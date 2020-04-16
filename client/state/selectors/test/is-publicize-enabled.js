@@ -8,16 +8,16 @@ import { expect } from 'chai';
  */
 import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
 
-describe( 'isPublicizeEnabled()', () => {
+describe('isPublicizeEnabled()', () => {
 	const siteId = 2916284;
 	const postType = 'post';
 
-	test( 'should return false when Publicize is permanently disabled', () => {
+	test('should return false when Publicize is permanently disabled', () => {
 		const result = isPublicizeEnabled(
 			{
 				sites: {
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							ID: siteId,
 							options: {
 								publicize_permanently_disabled: true,
@@ -30,15 +30,15 @@ describe( 'isPublicizeEnabled()', () => {
 			postType
 		);
 
-		expect( result ).to.be.false;
-	} );
+		expect(result).to.be.false;
+	});
 
-	test( 'should return false for jetpack site with Publicize disabled', () => {
+	test('should return false for jetpack site with Publicize disabled', () => {
 		const result = isPublicizeEnabled(
 			{
 				sites: {
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							ID: siteId,
 							jetpack: true,
 							options: {
@@ -52,19 +52,19 @@ describe( 'isPublicizeEnabled()', () => {
 			postType
 		);
 
-		expect( result ).to.be.false;
-	} );
+		expect(result).to.be.false;
+	});
 
-	test( 'should return true for jetpack site with Publicize enabled', () => {
+	test('should return true for jetpack site with Publicize enabled', () => {
 		const result = isPublicizeEnabled(
 			{
 				sites: {
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							ID: siteId,
 							jetpack: true,
 							options: {
-								active_modules: [ 'publicize' ],
+								active_modules: ['publicize'],
 							},
 						},
 					},
@@ -74,15 +74,15 @@ describe( 'isPublicizeEnabled()', () => {
 			postType
 		);
 
-		expect( result ).to.be.true;
-	} );
+		expect(result).to.be.true;
+	});
 
-	test( 'should return true for regular site and post type', () => {
+	test('should return true for regular site and post type', () => {
 		const result = isPublicizeEnabled(
 			{
 				sites: {
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							ID: siteId,
 						},
 					},
@@ -92,6 +92,6 @@ describe( 'isPublicizeEnabled()', () => {
 			postType
 		);
 
-		expect( result ).to.be.true;
-	} );
-} );
+		expect(result).to.be.true;
+	});
+});

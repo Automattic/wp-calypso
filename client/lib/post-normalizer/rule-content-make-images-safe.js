@@ -17,18 +17,18 @@ const TRANSPARENT_GIF =
 /**
  * @param {Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
  */
-const removeUnwantedAttributes = node => {
-	if ( ! node || ! node.hasAttributes() ) {
+const removeUnwantedAttributes = (node) => {
+	if (!node || !node.hasAttributes()) {
 		return;
 	}
 
-	const inlineEventHandlerAttributes = filter( node.attributes, attr =>
-		startsWith( attr.name, 'on' )
+	const inlineEventHandlerAttributes = filter(node.attributes, (attr) =>
+		startsWith(attr.name, 'on')
 	);
-	inlineEventHandlerAttributes.forEach( a => node.removeAttribute( a.name ) );
+	inlineEventHandlerAttributes.forEach((a) => node.removeAttribute(a.name));
 
 	// always remove srcset because they are very difficult to make safe and may not be worth the trouble
-	node.removeAttribute( 'srcset' );
+	node.removeAttribute('srcset');
 };
 
 /** Checks whether or not imageUrl should be removed from the dom
@@ -36,8 +36,8 @@ const removeUnwantedAttributes = node => {
  * @param {string} imageUrl - the url of the image
  * @returns {boolean} whether or not it should be removed from the dom
  */
-const imageShouldBeRemovedFromContent = imageUrl => {
-	if ( ! imageUrl ) {
+const imageShouldBeRemovedFromContent = (imageUrl) => {
+	if (!imageUrl) {
 		return;
 	}
 
@@ -52,51 +52,51 @@ const imageShouldBeRemovedFromContent = imageUrl => {
 		'pixel.wp.com',
 	];
 
-	return some( bannedUrlParts, part => includes( imageUrl.toLowerCase(), part ) );
+	return some(bannedUrlParts, (part) => includes(imageUrl.toLowerCase(), part));
 };
 
-function makeImageSafe( post, image, maxWidth ) {
-	let imgSource = image.getAttribute( 'src' );
-	const parsedImgSrc = url.parse( imgSource, false, true );
+function makeImageSafe(post, image, maxWidth) {
+	let imgSource = image.getAttribute('src');
+	const parsedImgSrc = url.parse(imgSource, false, true);
 	const hostName = parsedImgSrc.hostname;
 
 	// if imgSource is relative, prepend post domain so it isn't relative to calypso
-	if ( ! hostName ) {
-		imgSource = url.resolve( post.URL, imgSource );
+	if (!hostName) {
+		imgSource = url.resolve(post.URL, imgSource);
 	}
 
 	let safeSource = maxWidth
-		? maxWidthPhotonishURL( safeImageURL( imgSource ), maxWidth )
-		: safeImageURL( imgSource );
+		? maxWidthPhotonishURL(safeImageURL(imgSource), maxWidth)
+		: safeImageURL(imgSource);
 
 	// allow https sources through even if we can't make them 'safe'
 	// helps images that use querystring params and are from secure sources
-	if ( ! safeSource && startsWith( imgSource, 'https://' ) ) {
+	if (!safeSource && startsWith(imgSource, 'https://')) {
 		safeSource = imgSource;
 	}
 
-	removeUnwantedAttributes( image );
+	removeUnwantedAttributes(image);
 
 	// trickery to remove it from the dom / not load the image
 	// TODO: test if this is necessary
-	if ( ! safeSource || imageShouldBeRemovedFromContent( imgSource ) ) {
-		image.parentNode.removeChild( image );
+	if (!safeSource || imageShouldBeRemovedFromContent(imgSource)) {
+		image.parentNode.removeChild(image);
 		// fun fact: removing the node from the DOM will not prevent it from loading. You actually have to
 		// change out the src to change what loads. The following is a 1x1 transparent gif as a data URL
-		image.setAttribute( 'src', TRANSPARENT_GIF );
+		image.setAttribute('src', TRANSPARENT_GIF);
 		return;
 	}
 
-	image.setAttribute( 'src', safeSource );
+	image.setAttribute('src', safeSource);
 }
 
-const makeImagesSafe = maxWidth => ( post, dom ) => {
-	if ( ! dom ) {
-		throw new Error( 'this transform must be used as part of withContentDOM' );
+const makeImagesSafe = (maxWidth) => (post, dom) => {
+	if (!dom) {
+		throw new Error('this transform must be used as part of withContentDOM');
 	}
 
-	const images = dom.querySelectorAll( 'img[src]' );
-	forEach( images, image => makeImageSafe( post, image, maxWidth ) );
+	const images = dom.querySelectorAll('img[src]');
+	forEach(images, (image) => makeImageSafe(post, image, maxWidth));
 
 	return post;
 };

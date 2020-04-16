@@ -31,7 +31,7 @@ export const StatsTourMeta = {
 export const TestTourMeta = {
 	name: 'test',
 	version: 'test',
-	path: [ '/test', '/foo' ],
+	path: ['/test', '/foo'],
 	when: stubTrue,
 };
 

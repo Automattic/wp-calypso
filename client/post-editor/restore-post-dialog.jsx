@@ -35,28 +35,28 @@ class EditorRestorePostDialog extends Component {
 	getStrings = () => {
 		const { isAutosave, postType, translate } = this.props;
 		const isPage = postType === 'page';
-		if ( isAutosave ) {
-			if ( isPage ) {
+		if (isAutosave) {
+			if (isPage) {
 				return {
-					dialogTitle: translate( 'Saved Draft' ),
-					dialogContent: translate( 'A more recent revision of this page exists. Restore?' ),
+					dialogTitle: translate('Saved Draft'),
+					dialogContent: translate('A more recent revision of this page exists. Restore?'),
 				};
 			}
 			return {
-				dialogTitle: translate( 'Saved Draft' ),
-				dialogContent: translate( 'A more recent revision of this post exists. Restore?' ),
+				dialogTitle: translate('Saved Draft'),
+				dialogContent: translate('A more recent revision of this post exists. Restore?'),
 			};
 		}
-		if ( isPage ) {
+		if (isPage) {
 			return {
-				dialogTitle: translate( 'Deleted Page' ),
+				dialogTitle: translate('Deleted Page'),
 				dialogContent: translate(
 					'This page has been sent to the trash. Restore it to continue writing.'
 				),
 			};
 		}
 		return {
-			dialogTitle: translate( 'Deleted Post' ),
+			dialogTitle: translate('Deleted Post'),
 			dialogContent: translate(
 				'This post has been sent to the trash. Restore it to continue writing.'
 			),
@@ -68,26 +68,26 @@ class EditorRestorePostDialog extends Component {
 		const strings = this.getStrings();
 
 		const dialogButtons = [
-			<FormButton key="restore" isPrimary={ true } onClick={ onRestore }>
-				{ translate( 'Restore' ) }
+			<FormButton key="restore" isPrimary={true} onClick={onRestore}>
+				{translate('Restore')}
 			</FormButton>,
-			<FormButton key="back" isPrimary={ false } onClick={ onClose }>
-				{ translate( "Don't restore" ) }
+			<FormButton key="back" isPrimary={false} onClick={onClose}>
+				{translate("Don't restore")}
 			</FormButton>,
 		];
 
 		return (
-			<Dialog isVisible={ true } buttons={ dialogButtons }>
-				<h1>{ strings.dialogTitle }</h1>
-				<p>{ strings.dialogContent }</p>
+			<Dialog isVisible={true} buttons={dialogButtons}>
+				<h1>{strings.dialogTitle}</h1>
+				<p>{strings.dialogContent}</p>
 			</Dialog>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const postId = getEditorPostId(state);
+	const postType = getEditedPostValue(state, siteId, postId, 'type');
 	return { postType };
-} )( localize( EditorRestorePostDialog ) );
+})(localize(EditorRestorePostDialog));

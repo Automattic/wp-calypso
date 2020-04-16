@@ -23,63 +23,59 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 export class LabelItem extends Component {
-	renderRefund = label => {
+	renderRefund = (label) => {
 		const { orderId, siteId, translate } = this.props;
 
 		const today = new Date();
-		const thirtyDaysAgo = new Date().setDate( today.getDate() - 30 );
+		const thirtyDaysAgo = new Date().setDate(today.getDate() - 30);
 		if (
 			label.anonymized ||
 			label.usedDate ||
-			( label.createdDate && label.createdDate < thirtyDaysAgo )
+			(label.createdDate && label.createdDate < thirtyDaysAgo)
 		) {
 			return null;
 		}
 
 		const openDialog = () => {
-			this.props.openRefundDialog( orderId, siteId, label.labelId );
+			this.props.openRefundDialog(orderId, siteId, label.labelId);
 		};
 
 		return (
-			<PopoverMenuItem onClick={ openDialog } icon="refund">
-				{ translate( 'Request refund' ) }
+			<PopoverMenuItem onClick={openDialog} icon="refund">
+				{translate('Request refund')}
 			</PopoverMenuItem>
 		);
 	};
 
-	renderReprint = label => {
+	renderReprint = (label) => {
 		const todayTime = new Date().getTime();
-		if (
-			label.anonymized ||
-			label.usedDate ||
-			( label.expiryDate && label.expiryDate < todayTime )
-		) {
+		if (label.anonymized || label.usedDate || (label.expiryDate && label.expiryDate < todayTime)) {
 			return null;
 		}
 
 		const { orderId, siteId, translate } = this.props;
 
 		const openDialog = () => {
-			this.props.openReprintDialog( orderId, siteId, label.labelId );
+			this.props.openReprintDialog(orderId, siteId, label.labelId);
 		};
 
 		return (
-			<PopoverMenuItem onClick={ openDialog } icon="print">
-				{ translate( 'Reprint' ) }
+			<PopoverMenuItem onClick={openDialog} icon="print">
+				{translate('Reprint')}
 			</PopoverMenuItem>
 		);
 	};
 
-	renderLabelDetails = label => {
+	renderLabelDetails = (label) => {
 		const { orderId, siteId, translate } = this.props;
 
 		const openDialog = () => {
-			this.props.openDetailsDialog( orderId, siteId, label.labelId );
+			this.props.openDetailsDialog(orderId, siteId, label.labelId);
 		};
 
 		return (
-			<PopoverMenuItem onClick={ openDialog } icon="info-outline">
-				{ translate( 'View details' ) }
+			<PopoverMenuItem onClick={openDialog} icon="info-outline">
+				{translate('View details')}
 			</PopoverMenuItem>
 		);
 	};
@@ -101,48 +97,48 @@ export class LabelItem extends Component {
 		return (
 			<div className="shipping-label__item">
 				<p className="shipping-label__item-detail">
-					{ translate( '%(service)s label (#%(labelIndex)d)', {
+					{translate('%(service)s label (#%(labelIndex)d)', {
 						args: {
 							service: label.serviceName,
 							labelIndex: label.labelIndex + 1,
 						},
-					} ) }
-					{ label.showDetails && (
+					})}
+					{label.showDetails && (
 						<span>
 							<EllipsisMenu position="bottom left">
-								{ this.renderLabelDetails( label ) }
-								{ this.renderRefund( label ) }
-								{ this.renderReprint( label ) }
+								{this.renderLabelDetails(label)}
+								{this.renderRefund(label)}
+								{this.renderReprint(label)}
 							</EllipsisMenu>
 							<DetailsDialog
-								siteId={ siteId }
-								orderId={ orderId }
-								labelIndex={ labelIndex }
-								serviceName={ serviceName }
-								packageName={ packageName }
-								productNames={ productNames }
-								receiptId={ receiptId }
-								labelId={ labelId }
+								siteId={siteId}
+								orderId={orderId}
+								labelIndex={labelIndex}
+								serviceName={serviceName}
+								packageName={packageName}
+								productNames={productNames}
+								receiptId={receiptId}
+								labelId={labelId}
 							/>
 							<RefundDialog
-								siteId={ siteId }
-								orderId={ orderId }
-								createdDate={ createdDate }
-								refundableAmount={ refundableAmount }
-								currency={ currency }
-								labelId={ labelId }
+								siteId={siteId}
+								orderId={orderId}
+								createdDate={createdDate}
+								refundableAmount={refundableAmount}
+								currency={currency}
+								labelId={labelId}
 							/>
-							<ReprintDialog siteId={ siteId } orderId={ orderId } labelId={ labelId } />
+							<ReprintDialog siteId={siteId} orderId={orderId} labelId={labelId} />
 						</span>
-					) }
+					)}
 				</p>
-				{ label.showDetails && (
+				{label.showDetails && (
 					<p className="shipping-label__item-tracking">
-						{ translate( 'Tracking #: {{trackingLink/}}', {
-							components: { trackingLink: <TrackingLink { ...label } /> },
-						} ) }
+						{translate('Tracking #: {{trackingLink/}}', {
+							components: { trackingLink: <TrackingLink {...label} /> },
+						})}
 					</p>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -157,8 +153,8 @@ LabelItem.propTypes = {
 	openDetailsDialog: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
+const mapDispatchToProps = (dispatch) => {
+	return bindActionCreators({ openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch);
 };
 
-export default connect( null, mapDispatchToProps )( localize( LabelItem ) );
+export default connect(null, mapDispatchToProps)(localize(LabelItem));

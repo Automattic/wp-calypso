@@ -48,17 +48,17 @@ class EditorMediaModalDetailBase extends React.Component {
 	}
 
 	preloadImages = () => {
-		filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
-			const src = url( image, {
-				photon: this.props.site && ! this.props.site.is_private,
-			} );
+		filterItemsByMimePrefix(this.props.items, 'image').forEach(function (image) {
+			const src = url(image, {
+				photon: this.props.site && !this.props.site.is_private,
+			});
 
-			preloadImage( src );
-		}, this );
+			preloadImage(src);
+		}, this);
 	};
 
-	incrementIndex = increment => {
-		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
+	incrementIndex = (increment) => {
+		this.props.onSelectedIndexChange(this.props.selectedIndex + increment);
 	};
 
 	render() {
@@ -74,24 +74,24 @@ class EditorMediaModalDetailBase extends React.Component {
 			translate,
 		} = this.props;
 
-		const item = items[ selectedIndex ];
-		const mimePrefix = getMimePrefix( item );
+		const item = items[selectedIndex];
+		const mimePrefix = getMimePrefix(item);
 
 		return (
 			<div className="editor-media-modal-detail">
 				<HeaderCake
-					onClick={ onReturnToList }
-					backText={ backButtonText ? backButtonText : translate( 'Media Library' ) }
+					onClick={onReturnToList}
+					backText={backButtonText ? backButtonText : translate('Media Library')}
 				/>
 				<DetailItem
-					site={ site }
-					item={ item }
-					hasPreviousItem={ selectedIndex - 1 >= 0 }
-					hasNextItem={ selectedIndex + 1 < items.length }
-					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
-					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
-					onRestore={ onRestoreItem }
-					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+					site={site}
+					item={item}
+					hasPreviousItem={selectedIndex - 1 >= 0}
+					hasNextItem={selectedIndex + 1 < items.length}
+					onShowPreviousItem={this.incrementIndex.bind(this, -1)}
+					onShowNextItem={this.incrementIndex.bind(this, 1)}
+					onRestore={onRestoreItem}
+					onEdit={'video' === mimePrefix ? onEditVideoItem : onEditImageItem}
 				/>
 			</div>
 		);
@@ -99,7 +99,7 @@ class EditorMediaModalDetailBase extends React.Component {
 }
 
 // Don't move `localize()` to the default export (below)! See comment there.
-export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
+export const EditorMediaModalDetail = localize(EditorMediaModalDetailBase);
 
 // The default export is only used by the post editor, which displays the image or
 // video editor depending on Redux state, which is set by the actions below.
@@ -108,8 +108,8 @@ export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
 // component state there to conditionally display the image/video editor.
 // (This is also the reason why we're `localize()`ing the named export.)
 // TODO: Fix this mess, rely on Redux state everywhere.
-export default connect( null, {
-	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-} )( EditorMediaModalDetail );
+export default connect(null, {
+	onReturnToList: partial(setEditorMediaModalView, ModalViews.LIST),
+	onEditImageItem: partial(setEditorMediaModalView, ModalViews.IMAGE_EDITOR),
+	onEditVideoItem: partial(setEditorMediaModalView, ModalViews.VIDEO_EDITOR),
+})(EditorMediaModalDetail);

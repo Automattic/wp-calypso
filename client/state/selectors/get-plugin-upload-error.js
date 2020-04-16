@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param {number} siteId the site ID
  * @returns {?object} Error from upload, if any
  */
-export default function getPluginUploadError( state, siteId ) {
-	return get( state.plugins.upload.uploadError, siteId, null );
+export default function getPluginUploadError(state, siteId) {
+	return get(state.plugins.upload.uploadError, siteId, null);
 }

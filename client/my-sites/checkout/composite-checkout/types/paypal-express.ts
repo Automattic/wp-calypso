@@ -17,7 +17,7 @@ import {
 
 export type PayPalExpressEndpoint = (
 	_: PayPalExpressEndpointRequestPayload
-) => Promise< PayPalExpressEndpointResponse >;
+) => Promise<PayPalExpressEndpointResponse>;
 
 export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
@@ -28,7 +28,7 @@ export type PayPalExpressEndpointRequestPayload = {
 	postalCode: string;
 };
 
-export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
+export function createPayPalExpressEndpointRequestPayloadFromLineItems({
 	debug,
 	successUrl,
 	cancelUrl,
@@ -40,7 +40,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	domainDetails,
 	items,
 }: {
-	debug: ( _0: string, _1: any ) => void;
+	debug: (_0: string, _1: any) => void;
 	successUrl: string;
 	cancelUrl: string;
 	siteId: string;
@@ -50,19 +50,19 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	subdivisionCode: string;
 	domainDetails: WPCOMTransactionEndpointDomainDetails;
 	items: WPCOMCartItem[];
-} ): PayPalExpressEndpointRequestPayload {
+}): PayPalExpressEndpointRequestPayload {
 	return {
 		successUrl,
 		cancelUrl,
-		cart: createTransactionEndpointCartFromLineItems( {
+		cart: createTransactionEndpointCartFromLineItems({
 			debug,
 			siteId,
 			couponId,
 			country,
 			postalCode,
 			subdivisionCode,
-			items: items.filter( item => ! getNonProductWPCOMCartItemTypes().includes( item.type ) ),
-		} ),
+			items: items.filter((item) => !getNonProductWPCOMCartItemTypes().includes(item.type)),
+		}),
 		country,
 		postalCode,
 		domainDetails,

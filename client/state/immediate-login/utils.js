@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
  * @param {object} query - query parameters
  * @returns {string}      - the URL without related params
  */
-export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
+export const createPathWithoutImmediateLoginInformation = (path, query) => {
 	const relatedParamNames = [
 		'immediate_login_attempt',
 		'immediate_login_success',
@@ -19,10 +19,10 @@ export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
 		'login_email',
 		'login_locale',
 	];
-	const newQuery = Object.keys( query )
-		.filter( k => relatedParamNames.indexOf( k ) === -1 )
-		.map( k => `${ encodeURIComponent( k ) }=${ encodeURIComponent( query[ k ] ) }` );
-	return path + ( newQuery.length ? '?' + newQuery.join( '&' ) : '' );
+	const newQuery = Object.keys(query)
+		.filter((k) => relatedParamNames.indexOf(k) === -1)
+		.map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(query[k])}`);
+	return path + (newQuery.length ? '?' + newQuery.join('&') : '');
 };
 
 /**
@@ -32,11 +32,11 @@ export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
  * @param {string}  email        - Email of currently logged in user
  * @returns {string}              - Message to show to user
  */
-export const createImmediateLoginMessage = ( loginReason, email ) => {
+export const createImmediateLoginMessage = (loginReason, email) => {
 	// It's possible to vary the message based on login reason, but currently
 	// the default message is used in all cases. (Since the user reached this
 	// page via one click from an email, the expectation is that it's the
 	// responsibility of the email and the page to make clear to the user why
 	// they're actually here, not this message.)
-	return translate( "You're logged in as %(email)s.", { args: { email } } );
+	return translate("You're logged in as %(email)s.", { args: { email } });
 };

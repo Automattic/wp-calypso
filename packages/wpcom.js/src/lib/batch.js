@@ -5,9 +5,9 @@ class Batch {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
-	constructor( wpcom ) {
-		if ( ! ( this instanceof Batch ) ) {
-			return new Batch( wpcom );
+	constructor(wpcom) {
+		if (!(this instanceof Batch)) {
+			return new Batch(wpcom);
 		}
 
 		this.wpcom = wpcom;
@@ -20,8 +20,8 @@ class Batch {
 	 * @param {string} url - endpoint url
 	 * @returns {Batch} batch instance
 	 */
-	add( url ) {
-		this.urls.push( url );
+	add(url) {
+		this.urls.push(url);
 		return this;
 	}
 
@@ -32,18 +32,18 @@ class Batch {
 	 * @param {Function} fn - callback
 	 * @returns {Promise} Promise
 	 */
-	run( query = {}, fn ) {
-		if ( 'function' === typeof query ) {
+	run(query = {}, fn) {
+		if ('function' === typeof query) {
 			fn = query;
-			query = {}
+			query = {};
 		}
 
 		// add urls to query object
 		query.urls = this.urls;
 
-		return this.wpcom.req.get( '/batch', query, fn );
+		return this.wpcom.req.get('/batch', query, fn);
 	}
-};
+}
 
 /**
  * Expose `Batch` module

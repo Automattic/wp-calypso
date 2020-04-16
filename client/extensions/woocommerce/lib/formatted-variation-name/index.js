@@ -12,6 +12,6 @@ import { map } from 'lodash';
  * @returns {string} Formatted variation name.
  */
 
-export default function formattedVariationName( { attributes }, fallbackName = '' ) {
-	return map( attributes, 'option' ).join( ' - ' ) || fallbackName;
+export default function formattedVariationName({ attributes }, fallbackName = '') {
+	return map(attributes, 'option').join(' - ') || fallbackName;
 }

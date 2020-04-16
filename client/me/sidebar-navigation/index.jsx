@@ -17,16 +17,16 @@ import { getCurrentUser } from 'state/current-user/selectors';
  */
 import './style.scss';
 
-function MeSidebarNavigation( { currentUser } ) {
+function MeSidebarNavigation({ currentUser }) {
 	const translate = useTranslate();
 
 	return (
-		<SidebarNavigation sectionTitle={ translate( 'Me' ) }>
-			<Gravatar user={ currentUser } size={ 30 } imgSize={ 400 } />
+		<SidebarNavigation sectionTitle={translate('Me')}>
+			<Gravatar user={currentUser} size={30} imgSize={400} />
 		</SidebarNavigation>
 	);
 }
 
-export default connect( state => ( {
-	currentUser: getCurrentUser( state ),
-} ) )( MeSidebarNavigation );
+export default connect((state) => ({
+	currentUser: getCurrentUser(state),
+}))(MeSidebarNavigation);

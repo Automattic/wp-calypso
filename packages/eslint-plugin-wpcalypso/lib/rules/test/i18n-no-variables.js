@@ -9,15 +9,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-no-variables' ),
+const rule = require('../../../lib/rules/i18n-no-variables'),
 	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-no-variables', rule, {
+new RuleTester(config).run('i18n-no-variables', rule, {
 	valid: [
 		{
 			code: "translate( 'Hello World' );",
@@ -119,4 +119,4 @@ new RuleTester( config ).run( 'i18n-no-variables', rule, {
 			],
 		},
 	],
-} );
+});

@@ -43,144 +43,144 @@ import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 
-const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
+const debug = debugFactory('calypso:my-sites:upgrades:checkout:domain-details');
 const wpcom = wp.undocumented();
 
 export class DomainDetailsForm extends PureComponent {
-	constructor( props ) {
-		super( props );
-		const steps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
-		debug( 'steps:', steps );
+	constructor(props) {
+		super(props);
+		const steps = ['mainForm', ...this.getTldsWithAdditionalForm()];
+		debug('steps:', steps);
 		this.state = {
 			steps,
-			currentStep: first( steps ),
+			currentStep: first(steps),
 		};
 	}
 
 	componentDidMount() {
-		if ( this.props.recordTracksEvent ) {
-			this.props.recordTracksEvent( 'calypso_checkout_domain_contact_information_view' );
+		if (this.props.recordTracksEvent) {
+			this.props.recordTracksEvent('calypso_checkout_domain_contact_information_view');
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( ! isEqual( prevProps.cart, this.props.cart ) ) {
+	componentDidUpdate(prevProps) {
+		if (!isEqual(prevProps.cart, this.props.cart)) {
 			this.validateSteps();
 		}
 	}
 
 	validateSteps() {
-		const updatedSteps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
+		const updatedSteps = ['mainForm', ...this.getTldsWithAdditionalForm()];
 		const newState = {
 			steps: updatedSteps,
 		};
-		if ( updatedSteps.indexOf( this.state.currentStep ) < 0 ) {
-			debug( 'Switching to step: mainForm' );
+		if (updatedSteps.indexOf(this.state.currentStep) < 0) {
+			debug('Switching to step: mainForm');
 			newState.currentStep = 'mainForm';
 		}
-		this.setState( newState );
+		this.setState(newState);
 	}
 
-	addAlternateEmailToValidationHandler = ( fieldValues, validationHandler ) => ( error, data ) => {
-		if ( this.needsAlternateEmailForGSuite() ) {
+	addAlternateEmailToValidationHandler = (fieldValues, validationHandler) => (error, data) => {
+		if (this.needsAlternateEmailForGSuite()) {
 			let message = null;
-			if ( ! emailValidator.validate( fieldValues.alternateEmail ) ) {
-				message = this.props.translate( 'Please provide a valid email address.' );
-			} else if ( hasInvalidAlternateEmailDomain( this.props.cart, this.props.contactDetails ) ) {
+			if (!emailValidator.validate(fieldValues.alternateEmail)) {
+				message = this.props.translate('Please provide a valid email address.');
+			} else if (hasInvalidAlternateEmailDomain(this.props.cart, this.props.contactDetails)) {
 				message = this.props.translate(
 					'Please provide an email address that does not use the same domain than the G Suite account being purchased.'
 				);
 			}
-			if ( null !== message ) {
-				data = merge( data, { success: false, messages: { alternateEmail: [ message ] } } );
+			if (null !== message) {
+				data = merge(data, { success: false, messages: { alternateEmail: [message] } });
 			}
 		}
-		validationHandler( error, data );
+		validationHandler(error, data);
 	};
 
-	validate = ( fieldValues, onComplete ) => {
-		const validationHandler = ( error, data ) => {
-			const messages = ( data && data.messages ) || {};
-			onComplete( error, messages );
+	validate = (fieldValues, onComplete) => {
+		const validationHandler = (error, data) => {
+			const messages = (data && data.messages) || {};
+			onComplete(error, messages);
 		};
 
-		if ( this.needsOnlyGoogleAppsDetails() ) {
+		if (this.needsOnlyGoogleAppsDetails()) {
 			wpcom.validateGoogleAppsContactInformation(
 				fieldValues,
-				this.addAlternateEmailToValidationHandler( fieldValues, validationHandler )
+				this.addAlternateEmailToValidationHandler(fieldValues, validationHandler)
 			);
 			return;
 		}
 
-		wpcom.validateDomainContactInformation( fieldValues, this.getDomainNames(), validationHandler );
+		wpcom.validateDomainContactInformation(fieldValues, this.getDomainNames(), validationHandler);
 	};
 
 	hasAnotherStep() {
-		return this.state.currentStep !== last( this.state.steps );
+		return this.state.currentStep !== last(this.state.steps);
 	}
 
 	switchToNextStep() {
-		const newStep = this.state.steps[ indexOf( this.state.steps, this.state.currentStep ) + 1 ];
-		debug( 'Switching to step: ' + newStep );
-		this.setState( { currentStep: newStep } );
+		const newStep = this.state.steps[indexOf(this.state.steps, this.state.currentStep) + 1];
+		debug('Switching to step: ' + newStep);
+		this.setState({ currentStep: newStep });
 	}
 
 	getDomainNames = () =>
 		map(
-			[ ...getDomainRegistrations( this.props.cart ), ...getDomainTransfers( this.props.cart ) ],
+			[...getDomainRegistrations(this.props.cart), ...getDomainTransfers(this.props.cart)],
 			'meta'
 		);
 
 	needsAlternateEmailForGSuite() {
 		return (
 			this.needsOnlyGoogleAppsDetails() &&
-			needsExplicitAlternateEmailForGSuite( this.props.cart, this.props.contactDetails )
+			needsExplicitAlternateEmailForGSuite(this.props.cart, this.props.contactDetails)
 		);
 	}
 
 	needsOnlyGoogleAppsDetails() {
 		return (
-			hasGoogleApps( this.props.cart ) &&
-			! hasDomainRegistration( this.props.cart ) &&
-			! hasTransferProduct( this.props.cart )
+			hasGoogleApps(this.props.cart) &&
+			!hasDomainRegistration(this.props.cart) &&
+			!hasTransferProduct(this.props.cart)
 		);
 	}
 
 	getNumberOfDomainRegistrations() {
-		return getDomainRegistrations( this.props.cart ).length;
+		return getDomainRegistrations(this.props.cart).length;
 	}
 
 	getTldsWithAdditionalForm() {
-		if ( ! config.isEnabled( 'domains/cctlds' ) ) {
+		if (!config.isEnabled('domains/cctlds')) {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
-		return intersection( getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
+		return intersection(getTlds(this.props.cart), tldsWithAdditionalDetailsForms);
 	}
 
 	needsFax() {
-		return this.props.contactDetails.countryCode === 'NL' && hasTld( this.props.cart, 'nl' );
+		return this.props.contactDetails.countryCode === 'NL' && hasTld(this.props.cart, 'nl');
 	}
 
 	renderSubmitButton() {
 		return (
 			<FormButton
 				className="checkout__domain-details-form-submit-button"
-				onClick={ this.handleSubmitButtonClick }
+				onClick={this.handleSubmitButtonClick}
 			>
-				{ this.props.translate( 'Continue' ) }
+				{this.props.translate('Continue')}
 			</FormButton>
 		);
 	}
 
-	handleContactDetailsChange = newContactDetailsValues => {
-		this.props.updateContactDetailsCache( newContactDetailsValues );
+	handleContactDetailsChange = (newContactDetailsValues) => {
+		this.props.updateContactDetailsCache(newContactDetailsValues);
 	};
 
 	renderDomainContactDetailsFields() {
 		const { contactDetails, translate, userCountryCode } = this.props;
 		const labelTexts = {
-			submitButton: translate( 'Continue' ),
+			submitButton: translate('Continue'),
 			organization: translate(
 				'Registering this domain for a company? + Add Organization Name',
 				'Registering these domains for a company? + Add Organization Name',
@@ -191,37 +191,37 @@ export class DomainDetailsForm extends PureComponent {
 		};
 		return (
 			<ContactDetailsFormFields
-				userCountryCode={ userCountryCode }
-				contactDetails={ contactDetails }
-				needsFax={ this.needsFax() }
-				needsOnlyGoogleAppsDetails={ this.needsOnlyGoogleAppsDetails() }
-				needsAlternateEmailForGSuite={ this.needsAlternateEmailForGSuite() }
-				onContactDetailsChange={ this.handleContactDetailsChange }
-				onSubmit={ this.handleSubmitButtonClick }
+				userCountryCode={userCountryCode}
+				contactDetails={contactDetails}
+				needsFax={this.needsFax()}
+				needsOnlyGoogleAppsDetails={this.needsOnlyGoogleAppsDetails()}
+				needsAlternateEmailForGSuite={this.needsAlternateEmailForGSuite()}
+				onContactDetailsChange={this.handleContactDetailsChange}
+				onSubmit={this.handleSubmitButtonClick}
 				eventFormName="Checkout Form"
-				onValidate={ this.validate }
-				labelTexts={ labelTexts }
+				onValidate={this.validate}
+				labelTexts={labelTexts}
 			/>
 		);
 	}
 
 	renderDetailsForm() {
-		return <form>{ this.renderDomainContactDetailsFields() }</form>;
+		return <form>{this.renderDomainContactDetailsFields()}</form>;
 	}
 
-	renderExtraDetailsForm( tld ) {
+	renderExtraDetailsForm(tld) {
 		return (
-			<ExtraInfoForm tld={ tld } getDomainNames={ this.getDomainNames }>
-				{ this.renderSubmitButton() }
+			<ExtraInfoForm tld={tld} getDomainNames={this.getDomainNames}>
+				{this.renderSubmitButton()}
 			</ExtraInfoForm>
 		);
 	}
 
-	handleSubmitButtonClick = event => {
-		if ( event && event.preventDefault ) {
+	handleSubmitButtonClick = (event) => {
+		if (event && event.preventDefault) {
 			event.preventDefault();
 		}
-		if ( this.hasAnotherStep() ) {
+		if (this.hasAnotherStep()) {
 			return this.switchToNextStep();
 		}
 		this.finish();
@@ -229,49 +229,49 @@ export class DomainDetailsForm extends PureComponent {
 
 	finish() {
 		const allFieldValues = this.props.contactDetails;
-		debug( 'finish: allFieldValues:', allFieldValues );
-		setDomainDetails( allFieldValues );
-		addGoogleAppsRegistrationData( allFieldValues );
+		debug('finish: allFieldValues:', allFieldValues);
+		setDomainDetails(allFieldValues);
+		addGoogleAppsRegistrationData(allFieldValues);
 	}
 
 	renderCurrentForm() {
 		const { currentStep } = this.state;
-		return includes( tldsWithAdditionalDetailsForms, currentStep )
-			? this.renderExtraDetailsForm( this.state.currentStep )
+		return includes(tldsWithAdditionalDetailsForms, currentStep)
+			? this.renderExtraDetailsForm(this.state.currentStep)
 			: this.renderDetailsForm();
 	}
 
 	render() {
-		const classSet = classNames( {
+		const classSet = classNames({
 			'domain-details': true,
 			selected: true,
-		} );
+		});
 
 		const hasDomainProduct =
-			hasDomainRegistration( this.props.cart ) || hasTransferProduct( this.props.cart );
+			hasDomainRegistration(this.props.cart) || hasTransferProduct(this.props.cart);
 		const hasSomeDomainsWithPrivacy =
-			hasDomainProduct && hasSomeDomainProductsWithPrivacySupport( this.props.cart );
+			hasDomainProduct && hasSomeDomainProductsWithPrivacySupport(this.props.cart);
 		const hasAllDomainsWithPrivacy =
-			hasDomainProduct && hasAllDomainProductsWithPrivacySupport( this.props.cart );
+			hasDomainProduct && hasAllDomainProductsWithPrivacySupport(this.props.cart);
 
 		let title;
 		let message;
 		// TODO: gather up tld specific stuff
-		if ( this.state.currentStep === 'fr' ) {
-			title = this.props.translate( '.FR Registration' );
-		} else if ( this.needsOnlyGoogleAppsDetails() ) {
-			title = this.props.translate( 'G Suite Account Information' );
+		if (this.state.currentStep === 'fr') {
+			title = this.props.translate('.FR Registration');
+		} else if (this.needsOnlyGoogleAppsDetails()) {
+			title = this.props.translate('G Suite Account Information');
 		} else {
-			title = this.props.translate( 'Domain Contact Information' );
-			if ( hasDomainProduct ) {
-				if ( hasSomeDomainsWithPrivacy ) {
-					if ( hasAllDomainsWithPrivacy ) {
+			title = this.props.translate('Domain Contact Information');
+			if (hasDomainProduct) {
+				if (hasSomeDomainsWithPrivacy) {
+					if (hasAllDomainsWithPrivacy) {
 						message = this.props.translate(
 							'We have pre-filled the required contact information from your WordPress.com account. Privacy ' +
 								'Protection is included to help protect your personal information. {{a}}Learn more{{/a}}',
 							{
 								components: {
-									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+									a: <a href={PUBLIC_VS_PRIVATE} target="_blank" rel="noopener noreferrer" />,
 								},
 							}
 						);
@@ -281,7 +281,7 @@ export class DomainDetailsForm extends PureComponent {
 								'Protection is included for all eligible domains to help protect your personal information. {{a}}Learn more{{/a}}',
 							{
 								components: {
-									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+									a: <a href={PUBLIC_VS_PRIVATE} target="_blank" rel="noopener noreferrer" />,
 								},
 							}
 						);
@@ -297,10 +297,10 @@ export class DomainDetailsForm extends PureComponent {
 
 		return (
 			<div>
-				<QueryTldValidationSchemas tlds={ this.getTldsWithAdditionalForm() } />
-				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
-					{ message && <p>{ message }</p> }
-					{ this.renderCurrentForm() }
+				<QueryTldValidationSchemas tlds={this.getTldsWithAdditionalForm()} />
+				<PaymentBox currentPage={this.state.currentStep} classSet={classSet} title={title}>
+					{message && <p>{message}</p>}
+					{this.renderCurrentForm()}
 				</PaymentBox>
 			</div>
 		);
@@ -312,17 +312,17 @@ export class DomainDetailsFormContainer extends PureComponent {
 		return (
 			<div>
 				<QueryContactDetailsCache />
-				{ this.props.contactDetails ? (
-					<DomainDetailsForm { ...this.props } />
+				{this.props.contactDetails ? (
+					<DomainDetailsForm {...this.props} />
 				) : (
 					<SecurePaymentFormPlaceholder />
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
+export default connect((state) => ({ contactDetails: getContactDetailsCache(state) }), {
 	recordTracksEvent,
 	updateContactDetailsCache,
-} )( localize( DomainDetailsFormContainer ) );
+})(localize(DomainDetailsFormContainer));

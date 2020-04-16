@@ -17,12 +17,12 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is a Domain-only site
  */
-export default function isDomainOnlySite( state, siteId ) {
-	const site = getRawSite( state, siteId );
+export default function isDomainOnlySite(state, siteId) {
+	const site = getRawSite(state, siteId);
 
-	if ( ! site ) {
+	if (!site) {
 		return null;
 	}
 
-	return get( site, 'options.is_domain_only', false );
+	return get(site, 'options.is_domain_only', false);
 }

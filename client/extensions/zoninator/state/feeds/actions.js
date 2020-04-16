@@ -16,11 +16,11 @@ import {
  * @param  {number} zoneId Zone ID
  * @returns {Action}        Action object
  */
-export const requestFeed = ( siteId, zoneId ) => ( {
+export const requestFeed = (siteId, zoneId) => ({
 	type: ZONINATOR_REQUEST_FEED,
 	siteId,
 	zoneId,
-} );
+});
 
 /**
  * Returns an action object to indicate that an error was received when fetching a feed.
@@ -29,11 +29,11 @@ export const requestFeed = ( siteId, zoneId ) => ( {
  * @param  {number} zoneId Zone ID
  * @returns {Action}        Action object
  */
-export const requestFeedError = ( siteId, zoneId ) => ( {
+export const requestFeedError = (siteId, zoneId) => ({
 	type: ZONINATOR_REQUEST_FEED_ERROR,
 	siteId,
 	zoneId,
-} );
+});
 
 /**
  * Returns an action object to indicate that the feed should be saved.
@@ -44,13 +44,13 @@ export const requestFeedError = ( siteId, zoneId ) => ( {
  * @param  {Array}  posts   Feed posts
  * @returns {object}         Action object
  */
-export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
+export const saveFeed = (siteId, zoneId, form, posts) => ({
 	type: ZONINATOR_SAVE_FEED,
 	siteId,
 	zoneId,
 	form,
 	posts,
-} );
+});
 
 /**
  * Returns an action object to indicate that a feed should be updated.
@@ -60,9 +60,9 @@ export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
  * @param  {Array}  posts   Feed posts
  * @returns {object}         Action object
  */
-export const updateFeed = ( siteId, zoneId, posts ) => ( {
+export const updateFeed = (siteId, zoneId, posts) => ({
 	type: ZONINATOR_UPDATE_FEED,
 	siteId,
 	zoneId,
 	posts,
-} );
+});

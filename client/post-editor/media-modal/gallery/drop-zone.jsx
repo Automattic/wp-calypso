@@ -28,15 +28,15 @@ export default class extends React.Component {
 
 	filterDroppedImagesSelected = () => {
 		const { site } = this.props;
-		if ( ! site ) {
+		if (!site) {
 			return;
 		}
 
-		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
-		const filteredItems = filterItemsByMimePrefix( selectedItems, 'image' );
+		const selectedItems = MediaLibrarySelectedStore.getAll(site.ID);
+		const filteredItems = filterItemsByMimePrefix(selectedItems, 'image');
 
-		if ( ! isEqual( selectedItems, filteredItems ) ) {
-			MediaActions.setLibrarySelectedItems( site.ID, filteredItems );
+		if (!isEqual(selectedItems, filteredItems)) {
+			MediaActions.setLibrarySelectedItems(site.ID, filteredItems);
 			this.props.onInvalidItemAdded();
 		}
 	};
@@ -44,9 +44,9 @@ export default class extends React.Component {
 	render() {
 		return (
 			<MediaLibraryDropZone
-				site={ this.props.site }
-				onAddMedia={ this.filterDroppedImagesSelected }
-				fullScreen={ false }
+				site={this.props.site}
+				onAddMedia={this.filterDroppedImagesSelected}
+				fullScreen={false}
 			/>
 		);
 	}

@@ -9,18 +9,18 @@ import { expect } from 'chai';
 import getVisibleSites from 'state/selectors/get-visible-sites';
 import { userState } from './fixtures/user-state';
 
-describe( 'getVisibleSites()', () => {
-	test( 'should return an empty array if no sites in state', () => {
+describe('getVisibleSites()', () => {
+	test('should return an empty array if no sites in state', () => {
 		const state = {
 			sites: {
 				items: {},
 			},
 		};
-		const sites = getVisibleSites( state );
-		expect( sites ).to.eql( [] );
-	} );
+		const sites = getVisibleSites(state);
+		expect(sites).to.eql([]);
+	});
 
-	test( 'should return the visibles sites in state', () => {
+	test('should return the visibles sites in state', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -49,8 +49,8 @@ describe( 'getVisibleSites()', () => {
 				items: {},
 			},
 		};
-		const sites = getVisibleSites( state );
-		expect( sites ).to.eql( [
+		const sites = getVisibleSites(state);
+		expect(sites).to.eql([
 			{
 				ID: 2916284,
 				visible: true,
@@ -66,6 +66,6 @@ describe( 'getVisibleSites()', () => {
 					unmapped_url: 'http://example.com',
 				},
 			},
-		] );
-	} );
-} );
+		]);
+	});
+});

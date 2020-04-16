@@ -3,20 +3,20 @@
  */
 import { type as domainTypes } from 'lib/domains/constants';
 
-export function getDomainType( domainFromApi ) {
-	if ( domainFromApi.type === 'redirect' ) {
+export function getDomainType(domainFromApi) {
+	if (domainFromApi.type === 'redirect') {
 		return domainTypes.SITE_REDIRECT;
 	}
 
-	if ( domainFromApi.type === 'transfer' ) {
+	if (domainFromApi.type === 'transfer') {
 		return domainTypes.TRANSFER;
 	}
 
-	if ( domainFromApi.wpcom_domain ) {
+	if (domainFromApi.wpcom_domain) {
 		return domainTypes.WPCOM;
 	}
 
-	if ( domainFromApi.has_registration ) {
+	if (domainFromApi.has_registration) {
 		return domainTypes.REGISTERED;
 	}
 

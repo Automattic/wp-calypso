@@ -11,18 +11,18 @@ import {
 	JETPACK_SCAN_REQUEST_FAILURE,
 } from 'state/action-types';
 
-const fetchStatus = action => {
+const fetchStatus = (action) => {
 	return http(
 		{
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
-			path: `/sites/${ action.siteId }/scan`,
+			path: `/sites/${action.siteId}/scan`,
 		},
 		action
 	);
 };
 
-const onFetchStatusSuccess = ( action, scanStatus ) => {
+const onFetchStatusSuccess = (action, scanStatus) => {
 	return [
 		{
 			type: JETPACK_SCAN_REQUEST_SUCCESS,
@@ -36,7 +36,7 @@ const onFetchStatusSuccess = ( action, scanStatus ) => {
 	];
 };
 
-const onFetchStatusFailure = ( ...response ) => {
+const onFetchStatusFailure = (...response) => {
 	return [
 		{
 			type: JETPACK_SCAN_REQUEST_FAILURE,
@@ -45,12 +45,12 @@ const onFetchStatusFailure = ( ...response ) => {
 	];
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/scan', {
-	[ JETPACK_SCAN_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/scan', {
+	[JETPACK_SCAN_REQUEST]: [
+		dispatchRequest({
 			fetch: fetchStatus,
 			onSuccess: onFetchStatusSuccess,
 			onError: onFetchStatusFailure,
-		} ),
+		}),
 	],
-} );
+});

@@ -58,43 +58,43 @@ export class EditorPublishButton extends Component {
 	};
 
 	trackClick() {
-		const events = postUtils.isPage( this.props.currentPost ) ? PAGE_EVENTS : POST_EVENTS;
-		this.props.recordEditorEvent( events[ this.props.publishButtonStatus ] );
-		this.props.recordEditorEvent( 'Clicked Primary Button' );
+		const events = postUtils.isPage(this.props.currentPost) ? PAGE_EVENTS : POST_EVENTS;
+		this.props.recordEditorEvent(events[this.props.publishButtonStatus]);
+		this.props.recordEditorEvent('Clicked Primary Button');
 	}
 
 	getButtonLabel() {
 		const { translate } = this.props;
 
-		switch ( this.props.publishButtonStatus ) {
+		switch (this.props.publishButtonStatus) {
 			case 'update':
-				return translate( 'Update' );
+				return translate('Update');
 			case 'schedule':
-				if ( this.props.isConfirmationSidebarEnabled ) {
-					return translate( 'Schedule…', {
+				if (this.props.isConfirmationSidebarEnabled) {
+					return translate('Schedule…', {
 						comment: 'Button label on the editor sidebar - a confirmation step will follow',
-					} );
+					});
 				}
 
-				return translate( 'Schedule' );
+				return translate('Schedule');
 			case 'publish':
-				if ( ! this.props.isConfirmationSidebarEnabled ) {
-					return translate( 'Publish' );
+				if (!this.props.isConfirmationSidebarEnabled) {
+					return translate('Publish');
 				}
 
-				if ( this.props.isPublishing ) {
-					return translate( 'Publishing…', {
+				if (this.props.isPublishing) {
+					return translate('Publishing…', {
 						comment: 'Button label on the editor sidebar while publishing is in progress',
-					} );
+					});
 				}
 
-				return translate( 'Publish…', {
+				return translate('Publish…', {
 					comment: 'Button label on the editor sidebar - a confirmation step will follow',
-				} );
+				});
 			case 'requestReview':
-				return translate( 'Submit for Review' );
+				return translate('Submit for Review');
 			default:
-				return translate( 'Loading…' );
+				return translate('Loading…');
 		}
 	}
 
@@ -102,33 +102,33 @@ export class EditorPublishButton extends Component {
 		this.trackClick();
 
 		if (
-			postUtils.isPublished( this.props.currentPost ) &&
-			! postUtils.isBackDatedPublished( this.props.currentPost )
+			postUtils.isPublished(this.props.currentPost) &&
+			!postUtils.isBackDatedPublished(this.props.currentPost)
 		) {
 			return this.props.onSave();
 		}
 
-		if ( this.props.canUserPublishPosts ) {
+		if (this.props.canUserPublishPosts) {
 			return this.props.onPublish();
 		}
 
-		return this.props.onSave( 'pending' );
+		return this.props.onSave('pending');
 	};
 
 	isBusy() {
 		return (
 			this.props.isPublishing ||
-			( postUtils.isPublished( this.props.currentPost ) && this.props.isSaving )
+			(postUtils.isPublished(this.props.currentPost) && this.props.isSaving)
 		);
 	}
 
 	isEnabled() {
 		return (
-			! this.props.isPublishing &&
-			! this.props.isSaveBlocked &&
+			!this.props.isPublishing &&
+			!this.props.isSaveBlocked &&
 			this.props.hasContent &&
-			! this.props.needsVerification &&
-			! this.props.isPasswordProtectedWithInvalidPassword
+			!this.props.needsVerification &&
+			!this.props.isPasswordProtectedWithInvalidPassword
 		);
 	}
 
@@ -137,28 +137,28 @@ export class EditorPublishButton extends Component {
 			<Button
 				className="editor-publish-button"
 				primary
-				busy={ this.isBusy() }
-				onClick={ this.onClick }
-				disabled={ ! this.isEnabled() }
-				tabIndex={ this.props.tabIndex }
+				busy={this.isBusy()}
+				onClick={this.onClick}
+				disabled={!this.isEnabled()}
+				tabIndex={this.props.tabIndex}
 				data-tip-target="editor-publish-button"
 			>
-				{ this.getButtonLabel() }
+				{this.getButtonLabel()}
 			</Button>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const currentPost = getSitePost( state, siteId, postId );
-		const publishButtonStatus = getEditorPublishButtonStatus( state );
-		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const currentPost = getSitePost(state, siteId, postId);
+		const publishButtonStatus = getEditorPublishButtonStatus(state);
+		const canUserPublishPosts = canCurrentUser(state, siteId, 'publish_posts');
 		const isPasswordProtectedWithInvalidPassword =
-			isEditedPostPasswordProtected( state, siteId, postId ) &&
-			! isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId );
+			isEditedPostPasswordProtected(state, siteId, postId) &&
+			!isEditedPostPasswordProtectedWithValidPassword(state, siteId, postId);
 
 		return {
 			currentPost,
@@ -168,4 +168,4 @@ export default connect(
 		};
 	},
 	{ recordEditorEvent }
-)( localize( EditorPublishButton ) );
+)(localize(EditorPublishButton));

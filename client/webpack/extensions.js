@@ -5,8 +5,8 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
-const path = require( 'path' );
+const fs = require('fs');
+const path = require('path');
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -21,15 +21,14 @@ const path = require( 'path' );
  *
  * @returns {object} a mapping of extension name to path
  */
-function getAliasesForExtensions( { extensionsDirectory } ) {
+function getAliasesForExtensions({ extensionsDirectory }) {
 	const extensionsNames = fs
-		.readdirSync( extensionsDirectory )
-		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
+		.readdirSync(extensionsDirectory)
+		.filter((filename) => filename.indexOf('.') === -1); // heuristic for finding directories
 
 	const aliasesMap = {};
 	extensionsNames.forEach(
-		extensionName =>
-			( aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName ) )
+		(extensionName) => (aliasesMap[extensionName] = path.join(extensionsDirectory, extensionName))
 	);
 	return aliasesMap;
 }

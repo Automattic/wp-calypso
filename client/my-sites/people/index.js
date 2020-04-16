@@ -10,7 +10,7 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import peopleController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	page(
 		'/people/:filter(team|followers|email-followers|viewers)',
 		siteSelection,
@@ -29,7 +29,7 @@ export default function() {
 		clientRender
 	);
 
-	page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
+	page('/people/invites', siteSelection, sites, makeLayout, clientRender);
 
 	page(
 		'/people/invites/:site_id',
@@ -82,5 +82,5 @@ export default function() {
 	);
 
 	// Anything else is unexpected and should be redirected to the default people management URL: /people/team
-	page( '/people/(.*)?', siteSelection, peopleController.redirectToTeam, makeLayout, clientRender );
+	page('/people/(.*)?', siteSelection, peopleController.redirectToTeam, makeLayout, clientRender);
 }

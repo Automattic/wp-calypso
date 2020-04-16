@@ -19,56 +19,56 @@ import ReviewReplyCreate from './review-reply-create';
 class ReviewReplies extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
-		review: PropTypes.shape( {
+		review: PropTypes.shape({
 			status: PropTypes.string,
 			name: PropTypes.string,
 			id: PropTypes.number,
-		} ).isRequired,
+		}).isRequired,
 	};
 
 	componentDidMount() {
 		const { siteId, review } = this.props;
-		if ( siteId ) {
-			this.props.fetchReviewReplies( siteId, review.id );
+		if (siteId) {
+			this.props.fetchReviewReplies(siteId, review.id);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { siteId, review } = this.props;
 		const newSiteId = newProps.siteId || null;
 		const oldSiteId = siteId || null;
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchReviewReplies( newSiteId, review.id );
+		if (oldSiteId !== newSiteId) {
+			this.props.fetchReviewReplies(newSiteId, review.id);
 		}
 	}
 
-	renderReply = ( reply, i ) => {
+	renderReply = (reply, i) => {
 		const { siteId, review } = this.props;
-		return <ReviewReply siteId={ siteId } key={ i } reviewId={ review.id } replyId={ reply.id } />;
+		return <ReviewReply siteId={siteId} key={i} reviewId={review.id} replyId={reply.id} />;
 	};
 
 	render() {
 		const { siteId, replies, review } = this.props;
-		const repliesOutput = replies.map( this.renderReply );
+		const repliesOutput = replies.map(this.renderReply);
 		return (
 			<div className="reviews__replies">
-				{ repliesOutput }
+				{repliesOutput}
 
-				<ReviewReplyCreate siteId={ siteId } review={ review } />
+				<ReviewReplyCreate siteId={siteId} review={review} />
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => {
-		const site = getSelectedSiteWithFallback( state );
+	(state, props) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site ? site.ID : false;
-		const replies = getReviewReplies( state, props.review.id ) || [];
+		const replies = getReviewReplies(state, props.review.id) || [];
 		return {
 			siteId,
 			replies,
 		};
 	},
-	dispatch => bindActionCreators( { fetchReviewReplies }, dispatch )
-)( localize( ReviewReplies ) );
+	(dispatch) => bindActionCreators({ fetchReviewReplies }, dispatch)
+)(localize(ReviewReplies));

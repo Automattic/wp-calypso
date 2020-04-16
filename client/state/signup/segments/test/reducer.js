@@ -4,19 +4,19 @@
 import reducer from '../reducer';
 import { SIGNUP_SEGMENTS_SET } from 'state/action-types';
 
-describe( 'state/signup/segments/reducer', () => {
-	test( 'should default to `null`', () => {
-		expect( reducer( undefined, {} ) ).toEqual( null );
-	} );
+describe('state/signup/segments/reducer', () => {
+	test('should default to `null`', () => {
+		expect(reducer(undefined, {})).toEqual(null);
+	});
 
-	test( 'should return segments', () => {
-		const segments = [ { id: 0 }, { id: 1 } ];
+	test('should return segments', () => {
+		const segments = [{ id: 0 }, { id: 1 }];
 
 		expect(
-			reducer( undefined, {
+			reducer(undefined, {
 				type: SIGNUP_SEGMENTS_SET,
 				segments,
-			} )
-		).toEqual( segments );
-	} );
-} );
+			})
+		).toEqual(segments);
+	});
+});

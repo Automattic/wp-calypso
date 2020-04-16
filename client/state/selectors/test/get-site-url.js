@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getSiteUrl from 'state/selectors/get-site-url';
 
-describe( 'getSiteUrl()', () => {
-	test( 'should return null if the site is unknown', () => {
+describe('getSiteUrl()', () => {
+	test('should return null if the site is unknown', () => {
 		const state = {
 			sites: {
 				items: {
@@ -18,11 +18,11 @@ describe( 'getSiteUrl()', () => {
 			},
 		};
 
-		expect( getSiteUrl( state ) ).to.be.null;
-		expect( getSiteUrl( state, 123 ) ).to.be.null;
-	} );
+		expect(getSiteUrl(state)).to.be.null;
+		expect(getSiteUrl(state, 123)).to.be.null;
+	});
 
-	test( 'should return null if the Url is unknown', () => {
+	test('should return null if the Url is unknown', () => {
 		const state = {
 			sites: {
 				items: {
@@ -31,10 +31,10 @@ describe( 'getSiteUrl()', () => {
 				},
 			},
 		};
-		expect( getSiteUrl( state, 123 ) ).to.be.null;
-	} );
+		expect(getSiteUrl(state, 123)).to.be.null;
+	});
 
-	test( 'should return the Url for a site', () => {
+	test('should return the Url for a site', () => {
 		const URL = 'https://wordpress.com';
 		const result = getSiteUrl(
 			{
@@ -49,6 +49,6 @@ describe( 'getSiteUrl()', () => {
 			123
 		);
 
-		expect( result ).to.equal( URL );
-	} );
-} );
+		expect(result).to.equal(URL);
+	});
+});

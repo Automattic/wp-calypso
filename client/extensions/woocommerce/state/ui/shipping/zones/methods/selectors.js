@@ -35,37 +35,37 @@ import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/
 import getDefaultSettingsValues from 'woocommerce/woocommerce-services/lib/get-default-settings-values';
 
 const getShippingZone = createSelector(
-	( state, zoneId, siteId ) => {
-		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+	(state, zoneId, siteId) => {
+		if (!areShippingZonesLoaded(state, siteId)) {
 			return null;
 		}
-		if ( null === zoneId ) {
-			return getCurrentlyEditingShippingZone( state, siteId );
+		if (null === zoneId) {
+			return getCurrentlyEditingShippingZone(state, siteId);
 		}
-		return find( getAPIShippingZones( state, siteId ), { id: zoneId } );
+		return find(getAPIShippingZones(state, siteId), { id: zoneId });
 	},
-	( state, zoneId, siteId ) => {
-		const loaded = areShippingZonesLoaded( state, siteId );
+	(state, zoneId, siteId) => {
+		const loaded = areShippingZonesLoaded(state, siteId);
 		return [
 			loaded,
-			loaded && getCurrentlyEditingShippingZone( state, siteId ),
-			loaded && getAPIShippingZones( state, siteId ),
+			loaded && getCurrentlyEditingShippingZone(state, siteId),
+			loaded && getAPIShippingZones(state, siteId),
 		];
 	},
-	( state, zoneId, siteId ) => {
-		if ( ! isNumber( zoneId ) ) {
-			return `i${ zoneId.index }${ siteId }`;
+	(state, zoneId, siteId) => {
+		if (!isNumber(zoneId)) {
+			return `i${zoneId.index}${siteId}`;
 		}
 
-		return `${ zoneId }${ siteId }`;
+		return `${zoneId}${siteId}`;
 	}
 );
 
-const getShippingZoneMethodsEdits = ( state, zoneId, siteId ) => {
-	const zonesEdits = getShippingZonesEdits( state, siteId );
-	if ( zonesEdits ) {
-		const zoneEdits = find( zonesEdits[ getBucket( { id: zoneId } ) ], { id: zoneId } );
-		if ( zoneEdits && ! isEmpty( zoneEdits.methods ) ) {
+const getShippingZoneMethodsEdits = (state, zoneId, siteId) => {
+	const zonesEdits = getShippingZonesEdits(state, siteId);
+	if (zonesEdits) {
+		const zoneEdits = find(zonesEdits[getBucket({ id: zoneId })], { id: zoneId });
+		if (zoneEdits && !isEmpty(zoneEdits.methods)) {
 			return zoneEdits.methods;
 		}
 	}
@@ -77,65 +77,65 @@ const getShippingZoneMethodsEdits = ( state, zoneId, siteId ) => {
 	};
 };
 
-const sortShippingZoneMethods = ( state, siteId, methods ) => {
-	return methods.sort( ( a, b ) => {
-		const aId = isNil( a._originalId ) ? a.id : a._originalId;
-		const bId = isNil( b._originalId ) ? b.id : b._originalId;
+const sortShippingZoneMethods = (state, siteId, methods) => {
+	return methods.sort((a, b) => {
+		const aId = isNil(a._originalId) ? a.id : a._originalId;
+		const bId = isNil(b._originalId) ? b.id : b._originalId;
 
-		if ( isNumber( aId ) ) {
+		if (isNumber(aId)) {
 			// Both IDs are numbers (come from the server), so compare their "order" property
-			if ( isNumber( bId ) ) {
+			if (isNumber(bId)) {
 				return (
-					getShippingZoneMethod( state, aId, siteId ).order -
-					getShippingZoneMethod( state, bId, siteId ).order
+					getShippingZoneMethod(state, aId, siteId).order -
+					getShippingZoneMethod(state, bId, siteId).order
 				);
 			}
 			// "a" is a pre-existing method (numeric ID) so it comes first than the newly created (object ID) "b"
 			return -1;
 		}
 
-		if ( isNumber( bId ) ) {
+		if (isNumber(bId)) {
 			// "b" is a pre-existing method (numeric ID) so it comes first than the newly created (object ID) "a"
 			return 1;
 		}
 		// Both IDs are "Object IDs", just compare their indices
 		return aId.index - bId.index;
-	} );
+	});
 };
 
-const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
-	const methodIds = [ ...( zone.methodIds || [] ) ];
-	const edits = getShippingZoneMethodsEdits( state, zone.id, siteId );
-	const { creates, updates, deletes } = mergeMethodEdits( edits, extraEdits );
+const overlayShippingZoneMethods = (state, zone, siteId, extraEdits) => {
+	const methodIds = [...(zone.methodIds || [])];
+	const edits = getShippingZoneMethodsEdits(state, zone.id, siteId);
+	const { creates, updates, deletes } = mergeMethodEdits(edits, extraEdits);
 
 	// Overlay the current edits on top of (a copy of) the wc-api zone methods
-	pullAll( methodIds, map( deletes, 'id' ) );
-	const methods = methodIds.map( methodId => getShippingZoneMethod( state, methodId, siteId ) );
-	updates.forEach( update => {
-		const index = methodIds.indexOf( update.id );
-		if ( -1 === index ) {
+	pullAll(methodIds, map(deletes, 'id'));
+	const methods = methodIds.map((methodId) => getShippingZoneMethod(state, methodId, siteId));
+	updates.forEach((update) => {
+		const index = methodIds.indexOf(update.id);
+		if (-1 === index) {
 			return;
 		}
-		methods[ index ] = { ...methods[ index ], ...update };
-	} );
+		methods[index] = { ...methods[index], ...update };
+	});
 
 	// Compute the "enabled" prop for all the methods. If a method hasn't been explicitly disabled (enabled===false), then it's enabled
-	const allMethods = [ ...methods, ...creates ].map( method => {
+	const allMethods = [...methods, ...creates].map((method) => {
 		let enabled = method.enabled;
-		if ( isNil( enabled ) && 'number' === typeof method._originalId ) {
+		if (isNil(enabled) && 'number' === typeof method._originalId) {
 			// If the "enabled" prop hasn't been modified, use the value from the original method
-			enabled = getShippingZoneMethod( state, method._originalId, siteId ).enabled;
+			enabled = getShippingZoneMethod(state, method._originalId, siteId).enabled;
 		}
 
-		const defaultValues = startsWith( method.methodType, 'wc_services' )
+		const defaultValues = startsWith(method.methodType, 'wc_services')
 			? getDefaultSettingsValues(
-					getShippingMethodSchema( state, method.methodType, siteId ).formSchema
+					getShippingMethodSchema(state, method.methodType, siteId).formSchema
 			  )
 			: {};
 
-		return merge( {}, defaultValues, method, { enabled: false !== enabled } );
-	} );
-	return sortShippingZoneMethods( state, siteId, allMethods );
+		return merge({}, defaultValues, method, { enabled: false !== enabled });
+	});
+	return sortShippingZoneMethods(state, siteId, allMethods);
 };
 
 /**
@@ -146,28 +146,28 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
  * an empty Array
  */
 export const getShippingZoneMethods = createSelector(
-	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
-		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+	(state, zoneId, siteId = getSelectedSiteId(state)) => {
+		if (!areShippingZonesLoaded(state, siteId)) {
 			return [];
 		}
-		const zone = getShippingZone( state, zoneId, siteId ) || { id: zoneId, methodIds: [] };
+		const zone = getShippingZone(state, zoneId, siteId) || { id: zoneId, methodIds: [] };
 
-		return overlayShippingZoneMethods( state, zone, siteId );
+		return overlayShippingZoneMethods(state, zone, siteId);
 	},
-	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
-		const loaded = areShippingZonesLoaded( state, siteId );
+	(state, zoneId, siteId = getSelectedSiteId(state)) => {
+		const loaded = areShippingZonesLoaded(state, siteId);
 		return [
 			loaded,
-			loaded && getShippingZone( state, siteId ),
-			loaded && getShippingZonesEdits( state, siteId ),
+			loaded && getShippingZone(state, siteId),
+			loaded && getShippingZonesEdits(state, siteId),
 		];
 	},
-	( state, zoneId, siteId ) => {
-		if ( ! isNumber( zoneId ) ) {
-			return `i${ zoneId.index }${ siteId }`;
+	(state, zoneId, siteId) => {
+		if (!isNumber(zoneId)) {
+			return `i${zoneId.index}${siteId}`;
 		}
 
-		return `${ zoneId }${ siteId }`;
+		return `${zoneId}${siteId}`;
 	}
 );
 
@@ -179,23 +179,22 @@ export const getShippingZoneMethods = createSelector(
  * an empty Array
  */
 export const getCurrentlyEditingShippingZoneMethods = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+	(state, siteId = getSelectedSiteId(state)) => {
+		if (!areShippingZonesLoaded(state, siteId)) {
 			return [];
 		}
-		const zone = getCurrentlyEditingShippingZone( state, siteId );
-		if ( ! zone ) {
+		const zone = getCurrentlyEditingShippingZone(state, siteId);
+		if (!zone) {
 			return [];
 		}
 
-		const currentMethodEdits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges
-			.methods;
-		return overlayShippingZoneMethods( state, zone, siteId, currentMethodEdits );
+		const currentMethodEdits = getShippingZonesEdits(state, siteId).currentlyEditingChanges.methods;
+		return overlayShippingZoneMethods(state, zone, siteId, currentMethodEdits);
 	},
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const loaded = areShippingZonesLoaded( state, siteId );
-		const zone = loaded && getCurrentlyEditingShippingZone( state, siteId );
-		return [ loaded, zone, zone && getShippingZonesEdits( state, siteId ) ];
+	(state, siteId = getSelectedSiteId(state)) => {
+		const loaded = areShippingZonesLoaded(state, siteId);
+		const zone = loaded && getCurrentlyEditingShippingZone(state, siteId);
+		return [loaded, zone, zone && getShippingZonesEdits(state, siteId)];
 	}
 );
 
@@ -204,42 +203,39 @@ export const getCurrentlyEditingShippingZoneMethods = createSelector(
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object|null} The currently open shipping method or null
  */
-export const getCurrentlyOpenShippingZoneMethod = (
-	state,
-	siteId = getSelectedSiteId( state )
-) => {
-	if ( ! areShippingZonesLoaded( state, siteId ) ) {
+export const getCurrentlyOpenShippingZoneMethod = (state, siteId = getSelectedSiteId(state)) => {
+	if (!areShippingZonesLoaded(state, siteId)) {
 		return null;
 	}
-	const zone = getCurrentlyEditingShippingZone( state, siteId );
-	if ( ! zone || ! zone.methods || ! zone.methods.currentlyEditingId ) {
+	const zone = getCurrentlyEditingShippingZone(state, siteId);
+	if (!zone || !zone.methods || !zone.methods.currentlyEditingId) {
 		return null;
 	}
 
 	const { methodType } = zone.methods.currentlyEditingChanges;
-	const defaultValues = startsWith( methodType, 'wc_services' )
-		? getDefaultSettingsValues( getShippingMethodSchema( state, methodType, siteId ).formSchema )
+	const defaultValues = startsWith(methodType, 'wc_services')
+		? getDefaultSettingsValues(getShippingMethodSchema(state, methodType, siteId).formSchema)
 		: {};
 
-	if ( zone.methods.currentlyEditingNew ) {
-		return merge( {}, defaultValues, zone.methods.currentlyEditingChanges, {
+	if (zone.methods.currentlyEditingNew) {
+		return merge({}, defaultValues, zone.methods.currentlyEditingChanges, {
 			enabled: false !== zone.methods.currentlyEditingChanges.enabled,
-		} );
+		});
 	}
 
-	const methods = getCurrentlyEditingShippingZoneMethods( state );
-	const openMethod = find( methods, { id: zone.methods.currentlyEditingId } );
-	if ( ! openMethod ) {
+	const methods = getCurrentlyEditingShippingZoneMethods(state);
+	const openMethod = find(methods, { id: zone.methods.currentlyEditingId });
+	if (!openMethod) {
 		return null;
 	}
 
-	const enabled = isNil( zone.methods.currentlyEditingChanges.enabled )
+	const enabled = isNil(zone.methods.currentlyEditingChanges.enabled)
 		? false !== openMethod.enabled
 		: false !== zone.methods.currentlyEditingChanges.enabled;
 
 	// Overwrites the default behavior of `merge` while ignoring arrays and focusing on objects.
-	const customizer = ( objValue, srcValue ) => {
-		if ( isArray( objValue ) ) {
+	const customizer = (objValue, srcValue) => {
+		if (isArray(objValue)) {
 			return srcValue;
 		}
 	};
@@ -276,16 +272,13 @@ export const getCurrentlyOpenShippingZoneMethod = (
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the opened method is new or not
  */
-export const isCurrentlyOpenShippingZoneMethodNew = (
-	state,
-	siteId = getSelectedSiteId( state )
-) => {
-	if ( ! areShippingZonesLoaded( state, siteId ) ) {
+export const isCurrentlyOpenShippingZoneMethodNew = (state, siteId = getSelectedSiteId(state)) => {
+	if (!areShippingZonesLoaded(state, siteId)) {
 		return false;
 	}
 
-	const zone = getCurrentlyEditingShippingZone( state, siteId );
-	if ( ! zone || ! zone.methods || ! zone.methods.currentlyEditingId ) {
+	const zone = getCurrentlyEditingShippingZone(state, siteId);
+	if (!zone || !zone.methods || !zone.methods.currentlyEditingId) {
 		return false;
 	}
 
@@ -301,40 +294,40 @@ export const isCurrentlyOpenShippingZoneMethodNew = (
 export const getNewMethodTypeOptions = (
 	state,
 	zoneId = null,
-	siteId = getSelectedSiteId( state )
+	siteId = getSelectedSiteId(state)
 ) => {
 	const options = [];
 	const currentMethods =
 		null === zoneId
-			? getCurrentlyEditingShippingZoneMethods( state, siteId )
-			: getShippingZoneMethods( state, zoneId, siteId );
+			? getCurrentlyEditingShippingZoneMethods(state, siteId)
+			: getShippingZoneMethods(state, zoneId, siteId);
 
-	const currentMethodTypes = map( currentMethods, 'methodType' );
+	const currentMethodTypes = map(currentMethods, 'methodType');
 	const allMethods = intersection(
-		Object.keys( builtInShippingMethods ),
-		map( getShippingMethods( state, siteId ), 'id' )
+		Object.keys(builtInShippingMethods),
+		map(getShippingMethods(state, siteId), 'id')
 	);
-	allMethods.forEach( methodType => {
+	allMethods.forEach((methodType) => {
 		// A user can add as many "Local Pickup" and Live Rates methods as he wants for a given zone
 		if (
 			'local_pickup' === methodType ||
-			startsWith( methodType, 'wc_services' ) ||
-			-1 === currentMethodTypes.indexOf( methodType )
+			startsWith(methodType, 'wc_services') ||
+			-1 === currentMethodTypes.indexOf(methodType)
 		) {
-			options.push( methodType );
+			options.push(methodType);
 		}
-	} );
+	});
 
 	//if a method is open and its type has been changed, put the original type back on the list
-	const openMethod = getCurrentlyOpenShippingZoneMethod( state, siteId );
-	if ( openMethod ) {
-		const originalMethod = find( currentMethods, { id: openMethod.id } );
+	const openMethod = getCurrentlyOpenShippingZoneMethod(state, siteId);
+	if (openMethod) {
+		const originalMethod = find(currentMethods, { id: openMethod.id });
 		if (
 			originalMethod &&
 			openMethod.methodType !== originalMethod.methodType &&
-			-1 === options.indexOf( originalMethod.methodType )
+			-1 === options.indexOf(originalMethod.methodType)
 		) {
-			options.push( originalMethod.methodType );
+			options.push(originalMethod.methodType);
 		}
 	}
 
@@ -353,10 +346,10 @@ export const getMethodTypeChangeOptions = (
 	state,
 	currentMethodType,
 	zoneId = null,
-	siteId = getSelectedSiteId( state )
+	siteId = getSelectedSiteId(state)
 ) => {
-	const options = getNewMethodTypeOptions( state, zoneId, siteId );
-	return -1 === options.indexOf( currentMethodType )
-		? [ ...options, currentMethodType ].sort()
+	const options = getNewMethodTypeOptions(state, zoneId, siteId);
+	return -1 === options.indexOf(currentMethodType)
+		? [...options, currentMethodType].sort()
 		: options;
 };

@@ -27,12 +27,12 @@ import './style.scss';
 
 class JetpackCredentials extends Component {
 	isSectionHighlighted() {
-		if ( ! window.location.hash ) {
+		if (!window.location.hash) {
 			return false;
 		}
 
-		const hash = window.location.hash.substring( 1 );
-		if ( 'credentials' === hash ) {
+		const hash = window.location.hash.substring(1);
+		if ('credentials' === hash) {
 			return true;
 		}
 		return false;
@@ -45,52 +45,47 @@ class JetpackCredentials extends Component {
 			this.isSectionHighlighted() && 'is-highlighted'
 		);
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
-		const hasCredentials = some( credentials, { role: 'main' } );
+		const hasCredentials = some(credentials, { role: 'main' });
 
 		return (
-			<div className={ classes }>
-				<QueryRewindState siteId={ siteId } />
-				<SettingsSectionHeader title={ translate( 'Backups and security scans' ) }>
-					{ hasAuthorized && (
-						<Notice
-							icon="checkmark"
-							isCompact
-							status="is-success"
-							text={ translate( 'Connected' ) }
-						/>
-					) }
+			<div className={classes}>
+				<QueryRewindState siteId={siteId} />
+				<SettingsSectionHeader title={translate('Backups and security scans')}>
+					{hasAuthorized && (
+						<Notice icon="checkmark" isCompact status="is-success" text={translate('Connected')} />
+					)}
 				</SettingsSectionHeader>
-				{ hasCredentials ? (
-					<CredentialsConfigured siteId={ siteId } />
+				{hasCredentials ? (
+					<CredentialsConfigured siteId={siteId} />
 				) : (
 					<CompactCard>
 						<RewindCredentialsForm
-							{ ...{
+							{...{
 								allowCancel: false,
 								role: 'main',
 								siteId,
-							} }
+							}}
 						/>
 					</CompactCard>
-				) }
-				{ hasCredentials && (
-					<CompactCard href={ `/activity-log/${ siteSlug }` }>
-						{ translate( "View your site's backups and activity" ) }
+				)}
+				{hasCredentials && (
+					<CompactCard href={`/activity-log/${siteSlug}`}>
+						{translate("View your site's backups and activity")}
 					</CompactCard>
-				) }
+				)}
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const { credentials, state: rewindState } = getRewindState( state, siteId );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
+	const { credentials, state: rewindState } = getRewindState(state, siteId);
 
 	return {
 		credentials,
 		rewindState,
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
+		siteSlug: getSiteSlug(state, siteId),
 	};
-} )( localize( JetpackCredentials ) );
+})(localize(JetpackCredentials));

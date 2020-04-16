@@ -137,8 +137,8 @@ const darkColorSchemeLogo = (
 	</g>
 );
 
-function JetpackEuroDNSLogo( { darkColorScheme } ) {
-	if ( darkColorScheme ) {
+function JetpackEuroDNSLogo({ darkColorScheme }) {
+	if (darkColorScheme) {
 		return darkColorSchemeLogo;
 	}
 

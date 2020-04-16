@@ -3,6 +3,6 @@
  */
 import { createContext } from 'react';
 
-const LineItemsContext = createContext( {} );
+const LineItemsContext = createContext({});
 
 export default LineItemsContext;

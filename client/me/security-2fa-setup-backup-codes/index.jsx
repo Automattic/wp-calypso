@@ -27,24 +27,24 @@ class Security2faSetupBackupCodes extends React.Component {
 	};
 
 	componentDidMount() {
-		twoStepAuthorization.backupCodes( this.onRequestComplete );
+		twoStepAuthorization.backupCodes(this.onRequestComplete);
 	}
 
-	getClickHandler = action => {
-		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	getClickHandler = (action) => {
+		return () => this.props.recordGoogleEvent('Me', 'Clicked on ' + action);
 	};
 
-	onRequestComplete = ( error, data ) => {
-		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
-			} );
+	onRequestComplete = (error, data) => {
+		if (error) {
+			this.setState({
+				lastError: this.props.translate('Unable to obtain backup codes. Please try again later.'),
+			});
 			return;
 		}
 
-		this.setState( {
+		this.setState({
 			backupCodes: data.codes,
-		} );
+		});
 	};
 
 	onFinished = () => {
@@ -52,7 +52,7 @@ class Security2faSetupBackupCodes extends React.Component {
 	};
 
 	possiblyRenderError() {
-		if ( ! this.state.lastError ) {
+		if (!this.state.lastError) {
 			return;
 		}
 
@@ -62,26 +62,26 @@ class Security2faSetupBackupCodes extends React.Component {
 				components: {
 					supportLink: (
 						<a
-							href={ CALYPSO_CONTACT }
-							onClick={ this.getClickHandler( 'No Backup Codes Contact Support Link' ) }
+							href={CALYPSO_CONTACT}
+							onClick={this.getClickHandler('No Backup Codes Contact Support Link')}
 						/>
 					),
 				},
 			}
 		);
 
-		return <Notice showDismiss={ false } status="is-error" text={ errorMessage } />;
+		return <Notice showDismiss={false} status="is-error" text={errorMessage} />;
 	}
 
 	renderList() {
-		if ( this.state.lastError ) {
+		if (this.state.lastError) {
 			return null;
 		}
 
 		return (
 			<Security2faBackupCodesList
-				backupCodes={ this.state.backupCodes }
-				onNextStep={ this.onFinished }
+				backupCodes={this.state.backupCodes}
+				onNextStep={this.onFinished}
 				showList
 			/>
 		);
@@ -90,22 +90,22 @@ class Security2faSetupBackupCodes extends React.Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 3 } />
+				<Security2faProgress step={3} />
 				<p>
-					{ this.props.translate(
+					{this.props.translate(
 						'Backup codes let you access your account if your phone is ' +
 							'lost, stolen, or if you run it through the washing ' +
 							"machine and the bag of rice trick doesn't work."
-					) }
+					)}
 				</p>
 
-				{ this.possiblyRenderError() }
-				{ this.renderList() }
+				{this.possiblyRenderError()}
+				{this.renderList()}
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	recordGoogleEvent,
-} )( localize( Security2faSetupBackupCodes ) );
+})(localize(Security2faSetupBackupCodes));

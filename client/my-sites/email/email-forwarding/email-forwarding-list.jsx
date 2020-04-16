@@ -18,14 +18,11 @@ class EmailForwardingList extends React.Component {
 		const { emailForwards } = this.props;
 		return (
 			<ul className="email-forwarding__list">
-				{ emailForwards.map( emailForwardingItem => {
+				{emailForwards.map((emailForwardingItem) => {
 					return (
-						<EmailForwardingItem
-							key={ emailForwardingItem.email }
-							emailData={ emailForwardingItem }
-						/>
+						<EmailForwardingItem key={emailForwardingItem.email} emailData={emailForwardingItem} />
 					);
-				} ) }
+				})}
 			</ul>
 		);
 	}

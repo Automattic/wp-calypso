@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getPostRevisionsComparisons from 'state/selectors/get-post-revisions-comparisons';
 
-describe( 'getPostRevisionsComparisons', () => {
-	test( 'should return an empty object if there are no revisions in the state for `siteId, postId`', () => {
+describe('getPostRevisionsComparisons', () => {
+	test('should return an empty object if there are no revisions in the state for `siteId, postId`', () => {
 		expect(
 			getPostRevisionsComparisons(
 				{
@@ -26,10 +26,10 @@ describe( 'getPostRevisionsComparisons', () => {
 				12345678,
 				10
 			)
-		).to.eql( {} );
-	} );
+		).to.eql({});
+	});
 
-	test( 'should return a map of revision id to its valid (sequential) comparisons for `siteId, postId`', () => {
+	test('should return a map of revision id to its valid (sequential) comparisons for `siteId, postId`', () => {
 		const selection = getPostRevisionsComparisons(
 			{
 				posts: {
@@ -39,8 +39,8 @@ describe( 'getPostRevisionsComparisons', () => {
 								10: {
 									'0:13': {
 										diff: {
-											post_content: [ { op: 'add', value: 'older content' } ],
-											post_title: [ { op: 'add', value: 'post title' } ],
+											post_content: [{ op: 'add', value: 'older content' }],
+											post_title: [{ op: 'add', value: 'post title' }],
 											totals: { add: 4 },
 										},
 										from: 0,
@@ -52,7 +52,7 @@ describe( 'getPostRevisionsComparisons', () => {
 												{ op: 'copy', value: 'post title' },
 												{ op: 'add', value: '\n\nand newer' },
 											],
-											post_title: [ { op: 'copy', value: 'post title' } ],
+											post_title: [{ op: 'copy', value: 'post title' }],
 											totals: { add: 2 },
 										},
 										from: 13,
@@ -88,11 +88,11 @@ describe( 'getPostRevisionsComparisons', () => {
 			10
 		);
 
-		expect( selection ).to.eql( {
+		expect(selection).to.eql({
 			13: {
 				diff: {
-					post_content: [ { op: 'add', value: 'older content' } ],
-					post_title: [ { op: 'add', value: 'post title' } ],
+					post_content: [{ op: 'add', value: 'older content' }],
+					post_title: [{ op: 'add', value: 'post title' }],
 					totals: { add: 4 },
 				},
 				nextRevisionId: 22,
@@ -104,12 +104,12 @@ describe( 'getPostRevisionsComparisons', () => {
 						{ op: 'copy', value: 'post title' },
 						{ op: 'add', value: '\n\nand newer' },
 					],
-					post_title: [ { op: 'copy', value: 'post title' } ],
+					post_title: [{ op: 'copy', value: 'post title' }],
 					totals: { add: 2 },
 				},
 				nextRevisionId: undefined,
 				prevRevisionId: 13,
 			},
-		} );
-	} );
-} );
+		});
+	});
+});

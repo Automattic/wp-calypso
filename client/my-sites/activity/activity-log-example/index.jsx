@@ -25,33 +25,33 @@ class ActivityLogExample extends Component {
 
 		const exampleContents = [
 			{
-				activityTs: new Date( '2018-06-28T18:38:00.000Z' ).getTime(),
-				activityDescription: [ translate( 'My journey through Asia' ) ],
+				activityTs: new Date('2018-06-28T18:38:00.000Z').getTime(),
+				activityDescription: [translate('My journey through Asia')],
 				activityIcon: 'posts',
 				activityStatus: 'success',
-				activityTitle: translate( 'Post published' ),
+				activityTitle: translate('Post published'),
 				actorName: 'Maria',
 				actorRole: 'administrator',
 			},
 			{
-				activityTs: new Date( '2018-06-28T15:10:00.000Z' ).getTime(),
-				activityDescription: [ translate( 'Lovely summer photos' ) ],
+				activityTs: new Date('2018-06-28T15:10:00.000Z').getTime(),
+				activityDescription: [translate('Lovely summer photos')],
 				activityIcon: 'comment',
 				activityStatus: 'warning',
-				activityTitle: translate( 'Comment waiting approval' ),
+				activityTitle: translate('Comment waiting approval'),
 				actorName: 'Filippa',
 			},
 			{
-				activityTs: new Date( '2018-06-28T00:20:00.000Z' ).getTime(),
-				activityDescription: [ translate( 'My journey through Asia' ) ],
+				activityTs: new Date('2018-06-28T00:20:00.000Z').getTime(),
+				activityDescription: [translate('My journey through Asia')],
 				activityIcon: 'posts',
-				activityTitle: translate( 'Post draft modified' ),
+				activityTitle: translate('Post draft modified'),
 				actorName: 'Vincent',
 				actorRole: 'administrator',
 			},
 		];
 
-		const exampleItems = exampleContents.map( example => {
+		const exampleItems = exampleContents.map((example) => {
 			return Object.assign(
 				{
 					activityMeta: {},
@@ -61,34 +61,34 @@ class ActivityLogExample extends Component {
 				},
 				example
 			);
-		} );
+		});
 
 		return (
 			<div className="activity-log-example">
-				{ isIntroDismissed && (
+				{isIntroDismissed && (
 					<FormattedHeader
-						headerText={ translate( 'Welcome to Activity' ) }
-						subHeaderText={ translate( 'All of your site activity will appear here.' ) }
+						headerText={translate('Welcome to Activity')}
+						subHeaderText={translate('All of your site activity will appear here.')}
 					/>
-				) }
+				)}
 				<FeatureExample role="presentation">
-					{ exampleItems.map( log => (
+					{exampleItems.map((log) => (
 						<ActivityLogItem
-							key={ log.activityTs }
-							activity={ log }
-							disableRestore={ true }
-							disableBackup={ true }
-							siteId={ siteId }
+							key={log.activityTs}
+							activity={log}
+							disableRestore={true}
+							disableBackup={true}
+							siteId={siteId}
 						/>
-					) ) }
+					))}
 				</FeatureExample>
-				{ siteIsOnFreePlan && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
+				{siteIsOnFreePlan && !isIntroDismissed && <UpgradeBanner siteId={siteId} />}
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { siteId } ) => ( {
+export default connect((state, { siteId }) => ({
 	siteId,
-	isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
-} ) )( localize( ActivityLogExample ) );
+	isIntroDismissed: getPreference(state, 'dismissible-card-activity-introduction-banner'),
+}))(localize(ActivityLogExample));

@@ -9,9 +9,9 @@ import { expect } from 'chai';
 import { States } from '../constants.js';
 import { isExporting, isDateRangeValid } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#isExporting()', () => {
-		test( 'should return false if state is not known', () => {
+describe('selectors', () => {
+	describe('#isExporting()', () => {
+		test('should return false if state is not known', () => {
 			const exporting = isExporting(
 				{
 					exporter: {
@@ -21,10 +21,10 @@ describe( 'selectors', () => {
 				100658273
 			);
 
-			expect( exporting ).to.eql( false );
-		} );
+			expect(exporting).to.eql(false);
+		});
 
-		test( "should return false if an export hasn't started yet", () => {
+		test("should return false if an export hasn't started yet", () => {
 			const exporting = isExporting(
 				{
 					exporter: {
@@ -36,10 +36,10 @@ describe( 'selectors', () => {
 				100658273
 			);
 
-			expect( exporting ).to.eql( false );
-		} );
+			expect(exporting).to.eql(false);
+		});
 
-		test( 'should return true if an export is in progress', () => {
+		test('should return true if an export is in progress', () => {
 			const exporting = isExporting(
 				{
 					exporter: {
@@ -51,10 +51,10 @@ describe( 'selectors', () => {
 				100658273
 			);
 
-			expect( exporting ).to.eql( true );
-		} );
+			expect(exporting).to.eql(true);
+		});
 
-		test( 'should return invalid date if start date is after end date', () => {
+		test('should return invalid date if start date is after end date', () => {
 			const state = {
 				exporter: {
 					selectedAdvancedSettings: {
@@ -67,11 +67,11 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( false );
-			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
-		} );
+			expect(isDateRangeValid(state, 100658273, 'post')).to.equal(false);
+			expect(isDateRangeValid(state, 100658273, 'page')).to.equal(true);
+		});
 
-		test( 'should return valid date if end date is after start date', () => {
+		test('should return valid date if end date is after start date', () => {
 			const state = {
 				exporter: {
 					selectedAdvancedSettings: {
@@ -84,11 +84,11 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( true );
-			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
-		} );
+			expect(isDateRangeValid(state, 100658273, 'post')).to.equal(true);
+			expect(isDateRangeValid(state, 100658273, 'page')).to.equal(true);
+		});
 
-		test( 'should return valid date if end date is the same as start date', () => {
+		test('should return valid date if end date is the same as start date', () => {
 			const state = {
 				exporter: {
 					selectedAdvancedSettings: {
@@ -101,8 +101,8 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDateRangeValid( state, 100658273, 'post' ) ).to.equal( true );
-			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
-		} );
-	} );
-} );
+			expect(isDateRangeValid(state, 100658273, 'post')).to.equal(true);
+			expect(isDateRangeValid(state, 100658273, 'page')).to.equal(true);
+		});
+	});
+});

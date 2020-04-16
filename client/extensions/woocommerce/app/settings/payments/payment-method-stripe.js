@@ -31,7 +31,7 @@ import PaymentMethodStripeSetupDialog from './stripe/payment-method-stripe-setup
 
 class PaymentMethodStripe extends Component {
 	static propTypes = {
-		stripeConnectAccount: PropTypes.shape( {
+		stripeConnectAccount: PropTypes.shape({
 			connectedUserID: PropTypes.string,
 			displayName: PropTypes.string,
 			email: PropTypes.string,
@@ -39,18 +39,18 @@ class PaymentMethodStripe extends Component {
 			isActivated: PropTypes.bool,
 			lastName: PropTypes.string,
 			logo: PropTypes.string,
-		} ),
-		method: PropTypes.shape( {
-			settings: PropTypes.shape( {
-				payment_request: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
-				capture: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
-				secret_key: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
-				publishable_key: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
-				testmode: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
-				test_publishable_key: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
-				test_secret_key: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
-			} ),
-		} ),
+		}),
+		method: PropTypes.shape({
+			settings: PropTypes.shape({
+				payment_request: PropTypes.shape({ value: PropTypes.string.isRequired }).isRequired,
+				capture: PropTypes.shape({ value: PropTypes.string.isRequired }).isRequired,
+				secret_key: PropTypes.shape({ value: PropTypes.string.isRequired }).isRequired,
+				publishable_key: PropTypes.shape({ value: PropTypes.string.isRequired }).isRequired,
+				testmode: PropTypes.shape({ value: PropTypes.string.isRequired }).isRequired,
+				test_publishable_key: PropTypes.shape({ value: PropTypes.string.isRequired }).isRequired,
+				test_secret_key: PropTypes.shape({ value: PropTypes.string.isRequired }).isRequired,
+			}),
+		}),
 		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
 		onDone: PropTypes.func.isRequired,
@@ -58,10 +58,10 @@ class PaymentMethodStripe extends Component {
 		domain: PropTypes.string.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
-			hadKeysAtStart: hasStripeKeyPairForMode( props.method ),
+			hadKeysAtStart: hasStripeKeyPairForMode(props.method),
 			userRequestedConnectFlow: false,
 			userRequestedKeyFlow: false,
 		};
@@ -69,44 +69,44 @@ class PaymentMethodStripe extends Component {
 
 	componentDidMount() {
 		const { siteId } = this.props;
-		if ( siteId && ! hasOAuthParamsInLocation() ) {
-			this.props.fetchAccountDetails( siteId );
+		if (siteId && !hasOAuthParamsInLocation()) {
+			this.props.fetchAccountDetails(siteId);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId;
 
-		if ( siteId !== newSiteId && ! hasOAuthParamsInLocation() ) {
-			this.props.fetchAccountDetails( newSiteId );
+		if (siteId !== newSiteId && !hasOAuthParamsInLocation()) {
+			this.props.fetchAccountDetails(newSiteId);
 		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 	// Misc helpers
 
-	onEditFieldHandler = e => {
+	onEditFieldHandler = (e) => {
 		// Limit the statement descriptor field to 22 characters
 		// since that is all Stripe will accept
-		if ( e.target && 'statement_descriptor' === e.target.name ) {
-			if ( 22 < e.target.value.length ) {
+		if (e.target && 'statement_descriptor' === e.target.name) {
+			if (22 < e.target.value.length) {
 				return;
 			}
 		}
 		// All others may continue
-		this.props.onEditField( e.target.name, e.target.value );
+		this.props.onEditField(e.target.name, e.target.value);
 	};
 
 	////////////////////////////////////////////////////////////////////////////
 	// Dialog action button methods, including the links that let the user force a flow
 
 	onUserRequestsKeyFlow = () => {
-		this.setState( { userRequestedKeyFlow: true, userRequestedConnectFlow: false } );
+		this.setState({ userRequestedKeyFlow: true, userRequestedConnectFlow: false });
 	};
 
 	onUserRequestsConnectFlow = () => {
-		this.setState( { userRequestedKeyFlow: false, userRequestedConnectFlow: true } );
+		this.setState({ userRequestedKeyFlow: false, userRequestedConnectFlow: true });
 	};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -123,88 +123,86 @@ class PaymentMethodStripe extends Component {
 
 		let dialog = 'key-based';
 
-		if ( connectFlowsEnabled ) {
+		if (connectFlowsEnabled) {
 			// No keys at start and user hasn't asked for key flow explicitly?
 			// Give them the stripe connect setup flow
-			if ( ! this.state.hadKeysAtStart && ! this.state.userRequestedKeyFlow ) {
+			if (!this.state.hadKeysAtStart && !this.state.userRequestedKeyFlow) {
 				dialog = 'setup';
 			}
 
 			// If the user has requested connect flow, show that setup dialog
 			// (and allow them to request key flow instead)
-			if ( this.state.userRequestedConnectFlow ) {
+			if (this.state.userRequestedConnectFlow) {
 				dialog = 'setup';
 			}
 
 			// If we have a Stripe Connect connected user, let them manage their connected account
-			if ( connectedUserID ) {
+			if (connectedUserID) {
 				dialog = 'connected';
 			}
 
 			// But if we are still waiting for account details to arrive, well then you get a placeholder
-			if ( isRequesting ) {
+			if (isRequesting) {
 				dialog = 'placeholder';
 			}
 
 			// In the middle of OAuth?
-			if ( hasOAuthParamsInLocation() ) {
+			if (hasOAuthParamsInLocation()) {
 				dialog = 'oauth';
 			}
 		}
 
 		// Now, render the appropriate dialog
-		if ( 'setup' === dialog ) {
+		if ('setup' === dialog) {
 			return (
 				<PaymentMethodStripeSetupDialog
-					onCancel={ onCancel }
-					onUserRequestsKeyFlow={ this.onUserRequestsKeyFlow }
+					onCancel={onCancel}
+					onUserRequestsKeyFlow={this.onUserRequestsKeyFlow}
 				/>
 			);
-		} else if ( 'connected' === dialog ) {
+		} else if ('connected' === dialog) {
 			return (
 				<PaymentMethodStripeConnectedDialog
-					domain={ domain }
-					method={ method }
-					onCancel={ onCancel }
-					onDone={ onDone }
-					onEditField={ this.onEditFieldHandler }
-					stripeConnectAccount={ stripeConnectAccount }
+					domain={domain}
+					method={method}
+					onCancel={onCancel}
+					onDone={onDone}
+					onEditField={this.onEditFieldHandler}
+					stripeConnectAccount={stripeConnectAccount}
 				/>
 			);
-		} else if ( 'oauth' === dialog ) {
+		} else if ('oauth' === dialog) {
 			return (
 				<PaymentMethodStripeCompleteOAuthDialog
-					oauthCode={ oauthParams.code }
-					oauthState={ oauthParams.state }
-					onCancel={ onCancel }
+					oauthCode={oauthParams.code}
+					oauthState={oauthParams.state}
+					onCancel={onCancel}
 				/>
 			);
-		} else if ( 'placeholder' === dialog ) {
+		} else if ('placeholder' === dialog) {
 			return <PaymentMethodStripePlaceholderDialog />;
 		}
 
 		// Key-based dialog by default
 		return (
 			<PaymentMethodStripeKeyBasedDialog
-				domain={ domain }
-				method={ method }
-				onCancel={ onCancel }
-				onDone={ onDone }
-				onEditField={ this.onEditFieldHandler }
-				onUserRequestsConnectFlow={
-					connectFlowsEnabled ? this.onUserRequestsConnectFlow : undefined
-				}
+				domain={domain}
+				method={method}
+				onCancel={onCancel}
+				onDone={onDone}
+				onEditField={this.onEditFieldHandler}
+				onUserRequestsConnectFlow={connectFlowsEnabled ? this.onUserRequestsConnectFlow : undefined}
 			/>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
+function mapStateToProps(state) {
+	const site = getSelectedSiteWithFallback(state);
 	const siteId = site.ID || false;
 	const domain = site.domain || '';
-	const isRequesting = getIsRequesting( state, siteId );
-	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
+	const isRequesting = getIsRequesting(state, siteId);
+	const stripeConnectAccount = getStripeConnectAccount(state, siteId);
 	return {
 		domain,
 		isRequesting,
@@ -213,7 +211,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			fetchAccountDetails,
@@ -222,4 +220,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripe ) );
+export default localize(connect(mapStateToProps, mapDispatchToProps)(PaymentMethodStripe));

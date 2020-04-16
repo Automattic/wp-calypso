@@ -17,8 +17,8 @@ const icon = (
 	</svg>
 );
 
-const WpcomColophon = ( { className } ) => (
-	<div className={ classNames( 'wpcom-colophon', className ) }>{ icon }</div>
+const WpcomColophon = ({ className }) => (
+	<div className={classNames('wpcom-colophon', className)}>{icon}</div>
 );
 
 export default WpcomColophon;

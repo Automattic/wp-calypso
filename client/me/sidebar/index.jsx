@@ -45,8 +45,8 @@ const user = userFactory();
 
 class MeSidebar extends React.Component {
 	onNavigate = () => {
-		this.props.setNextLayoutFocus( 'content' );
-		window.scrollTo( 0, 0 );
+		this.props.setNextLayoutFocus('content');
+		window.scrollTo(0, 0);
 	};
 
 	onSignOut = async () => {
@@ -57,25 +57,25 @@ class MeSidebar extends React.Component {
 
 		let redirectTo = null;
 
-		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
+		if (isEnLocale && !config.isEnabled('desktop')) {
 			redirectTo = '/?apppromo';
 		}
 
-		if ( config.isEnabled( 'login/wp-login' ) ) {
+		if (config.isEnabled('login/wp-login')) {
 			try {
-				const { redirect_to } = await this.props.logoutUser( redirectTo );
+				const { redirect_to } = await this.props.logoutUser(redirectTo);
 				await user.clear();
 				window.location.href = redirect_to || '/';
 			} catch {
 				// The logout endpoint might fail if the nonce has expired.
 				// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-				userUtilities.logout( redirectTo );
+				userUtilities.logout(redirectTo);
 			}
 		} else {
-			userUtilities.logout( redirectTo );
+			userUtilities.logout(redirectTo);
 		}
 
-		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
+		this.props.recordGoogleEvent('Me', 'Clicked on Sidebar Sign Out Link');
 	};
 
 	render() {
@@ -91,16 +91,16 @@ class MeSidebar extends React.Component {
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',
 			'/help/contact': 'help',
-			[ purchasesRoot ]: 'purchases',
-			[ billingHistory ]: 'purchases',
-			[ addCreditCard ]: 'purchases',
-			[ upcomingCharges ]: 'purchases',
-			[ pendingPayments ]: 'purchases',
-			[ myMemberships ]: 'purchases',
+			[purchasesRoot]: 'purchases',
+			[billingHistory]: 'purchases',
+			[addCreditCard]: 'purchases',
+			[upcomingCharges]: 'purchases',
+			[pendingPayments]: 'purchases',
+			[myMemberships]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
 		};
-		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
+		const filteredPath = context.path.replace(/\/\d+$/, ''); // Remove ID from end of path
 		let selected;
 
 		/*
@@ -109,112 +109,110 @@ class MeSidebar extends React.Component {
 		 * Most routes within /me follow the pattern of `/me/{selected}`. But, there are a few unique cases.
 		 * filterMap is an object that maps those special cases to the correct selected value.
 		 */
-		if ( filterMap[ filteredPath ] ) {
-			selected = filterMap[ filteredPath ];
+		if (filterMap[filteredPath]) {
+			selected = filterMap[filteredPath];
 		} else {
-			selected = context.path.split( '/' ).pop();
+			selected = context.path.split('/').pop();
 		}
 
 		return (
 			<Sidebar>
 				<SidebarRegion>
-					<ProfileGravatar inSidebar user={ this.props.currentUser } />
+					<ProfileGravatar inSidebar user={this.props.currentUser} />
 
 					<div className="sidebar__me-signout">
 						<Button
 							compact
 							className="sidebar__me-signout-button"
-							onClick={ this.onSignOut }
-							title={ translate( 'Log out of WordPress.com' ) }
+							onClick={this.onSignOut}
+							title={translate('Log out of WordPress.com')}
 						>
-							{ translate( 'Log out' ) }
+							{translate('Log out')}
 						</Button>
 					</div>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
+						<SidebarHeading>{translate('Profile')}</SidebarHeading>
 						<ul>
 							<SidebarItem
-								selected={ selected === 'profile' }
+								selected={selected === 'profile'}
 								link={
-									config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
+									config.isEnabled('me/my-profile') ? '/me' : '//wordpress.com/me/public-profile'
 								}
-								label={ translate( 'My Profile' ) }
+								label={translate('My Profile')}
 								materialIcon="person"
-								onNavigate={ this.onNavigate }
+								onNavigate={this.onNavigate}
 							/>
 
 							<SidebarItem
-								selected={ selected === 'account' }
-								link={
-									config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
-								}
-								label={ translate( 'Account Settings' ) }
+								selected={selected === 'account'}
+								link={config.isEnabled('me/account') ? '/me/account' : '//wordpress.com/me/account'}
+								label={translate('Account Settings')}
 								materialIcon="settings"
-								onNavigate={ this.onNavigate }
+								onNavigate={this.onNavigate}
 								preloadSectionName="account"
 							/>
 
 							<SidebarItem
-								selected={ selected === 'purchases' }
-								link={ purchasesRoot }
-								label={ translate( 'Manage Purchases' ) }
+								selected={selected === 'purchases'}
+								link={purchasesRoot}
+								label={translate('Manage Purchases')}
 								materialIcon="credit_card"
-								onNavigate={ this.onNavigate }
+								onNavigate={this.onNavigate}
 								preloadSectionName="purchases"
 							/>
 
 							<SidebarItem
-								selected={ selected === 'security' }
-								link={ '/me/security' }
-								label={ translate( 'Security' ) }
+								selected={selected === 'security'}
+								link={'/me/security'}
+								label={translate('Security')}
 								materialIcon="lock"
-								onNavigate={ this.onNavigate }
+								onNavigate={this.onNavigate}
 								preloadSectionName="security"
 							/>
 
 							<SidebarItem
-								selected={ selected === 'privacy' }
-								link={ '/me/privacy' }
-								label={ translate( 'Privacy' ) }
+								selected={selected === 'privacy'}
+								link={'/me/privacy'}
+								label={translate('Privacy')}
 								materialIcon="visibility"
-								onNavigate={ this.onNavigate }
+								onNavigate={this.onNavigate}
 								preloadSectionName="privacy"
 							/>
 
 							<SidebarItem
-								selected={ selected === 'notifications' }
+								selected={selected === 'notifications'}
 								link={
-									config.isEnabled( 'me/notifications' )
+									config.isEnabled('me/notifications')
 										? '/me/notifications'
 										: '//wordpress.com/me/notifications'
 								}
-								label={ translate( 'Notification Settings' ) }
+								label={translate('Notification Settings')}
 								materialIcon="notifications"
-								onNavigate={ this.onNavigate }
+								onNavigate={this.onNavigate}
 								preloadSectionName="notification-settings"
 							/>
 
 							<SidebarItem
-								selected={ selected === 'site-blocks' }
-								link={ '/me/site-blocks' }
-								label={ translate( 'Blocked Sites' ) }
+								selected={selected === 'site-blocks'}
+								link={'/me/site-blocks'}
+								label={translate('Blocked Sites')}
 								materialIcon="block"
-								onNavigate={ this.onNavigate }
+								onNavigate={this.onNavigate}
 								preloadSectionName="site-blocks"
 							/>
 						</ul>
 					</SidebarMenu>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
+						<SidebarHeading>{translate('Special')}</SidebarHeading>
 						<ul>
 							<SidebarItem
-								selected={ selected === 'get-apps' }
-								link={ '/me/get-apps' }
-								label={ translate( 'Get Apps' ) }
+								selected={selected === 'get-apps'}
+								link={'/me/get-apps'}
+								label={translate('Get Apps')}
 								icon="my-sites"
-								onNavigate={ this.onNavigate }
+								onNavigate={this.onNavigate}
 							/>
 						</ul>
 					</SidebarMenu>
@@ -228,9 +226,9 @@ class MeSidebar extends React.Component {
 const enhance = flow(
 	localize,
 	connect(
-		state => ( {
-			currentUser: getCurrentUser( state ),
-		} ),
+		(state) => ({
+			currentUser: getCurrentUser(state),
+		}),
 		{
 			logoutUser,
 			recordGoogleEvent,
@@ -239,4 +237,4 @@ const enhance = flow(
 	)
 );
 
-export default enhance( MeSidebar );
+export default enhance(MeSidebar);

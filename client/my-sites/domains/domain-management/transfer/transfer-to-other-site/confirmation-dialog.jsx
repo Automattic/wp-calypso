@@ -24,8 +24,8 @@ class TransferConfirmationDialog extends React.PureComponent {
 		onClose: PropTypes.func.isRequired,
 	};
 
-	onConfirm = closeDialog => {
-		this.props.onConfirmTransfer( this.props.targetSite, closeDialog );
+	onConfirm = (closeDialog) => {
+		this.props.onConfirmTransfer(this.props.targetSite, closeDialog);
 	};
 
 	render() {
@@ -33,38 +33,38 @@ class TransferConfirmationDialog extends React.PureComponent {
 		const buttons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' ),
+				label: translate('Cancel'),
 				disabled: this.props.disableDialogButtons,
 			},
 			{
 				action: 'confirm',
-				label: translate( 'Confirm Transfer' ),
+				label: translate('Confirm Transfer'),
 				onClick: this.onConfirm,
 				disabled: this.props.disableDialogButtons,
 				isPrimary: true,
 			},
 		];
 
-		const targetSiteTitle = get( this.props.targetSite, 'title', '' );
+		const targetSiteTitle = get(this.props.targetSite, 'title', '');
 
 		return (
-			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } onClose={ this.props.onClose }>
-				<h1>{ translate( 'Confirm Transfer' ) }</h1>
+			<Dialog isVisible={this.props.isVisible} buttons={buttons} onClose={this.props.onClose}>
+				<h1>{translate('Confirm Transfer')}</h1>
 				<p>
-					{ translate(
+					{translate(
 						'Do you want to transfer {{strong}}%(domainName)s{{/strong}} ' +
 							'to site {{strong}}%(targetSiteTitle)s{{/strong}}?',
 						{
 							args: { domainName, targetSiteTitle },
 							components: { strong: <strong /> },
 						}
-					) }
+					)}
 				</p>
 			</Dialog>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => ( {
-	targetSite: getSite( state, ownProps.targetSiteId ),
-} ) )( localize( TransferConfirmationDialog ) );
+export default connect((state, ownProps) => ({
+	targetSite: getSite(state, ownProps.targetSiteId),
+}))(localize(TransferConfirmationDialog));

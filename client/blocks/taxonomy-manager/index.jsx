@@ -44,34 +44,34 @@ export class TaxonomyManager extends Component {
 	};
 
 	closeTermFormDialog = () => {
-		this.setState( { termFormDialogOpened: false } );
+		this.setState({ termFormDialogOpened: false });
 	};
 
 	newTerm = () => {
 		const { taxonomy } = this.props;
-		this.props.recordGoogleEvent( 'Taxonomy Manager', `Clicked Add ${ taxonomy }` );
-		this.props.bumpStat( 'taxonomy_manager', `clicked_add_${ taxonomy }` );
-		this.setState( {
+		this.props.recordGoogleEvent('Taxonomy Manager', `Clicked Add ${taxonomy}`);
+		this.props.bumpStat('taxonomy_manager', `clicked_add_${taxonomy}`);
+		this.setState({
 			termFormDialogOpened: true,
 			selectedTerm: undefined,
-		} );
+		});
 	};
 
-	editTerm = term => {
+	editTerm = (term) => {
 		const { taxonomy } = this.props;
-		this.props.recordGoogleEvent( 'Taxonomy Manager', `Clicked Edit ${ taxonomy }` );
-		this.props.bumpStat( 'taxonomy_manager', `clicked_edit_${ taxonomy }` );
-		this.setState( {
+		this.props.recordGoogleEvent('Taxonomy Manager', `Clicked Edit ${taxonomy}`);
+		this.props.bumpStat('taxonomy_manager', `clicked_edit_${taxonomy}`);
+		this.setState({
 			termFormDialogOpened: true,
 			selectedTerm: term,
-		} );
+		});
 	};
 
-	onSearch = searchTerm => {
-		if ( searchTerm !== this.state.search ) {
-			this.setState( {
+	onSearch = (searchTerm) => {
+		if (searchTerm !== this.state.search) {
+			this.setState({
 				search: searchTerm,
-			} );
+			});
 		}
 	};
 
@@ -79,29 +79,29 @@ export class TaxonomyManager extends Component {
 		const { search } = this.state;
 		const { siteId, postType, labels, taxonomy } = this.props;
 		const query = {};
-		if ( search && search.length ) {
+		if (search && search.length) {
 			query.search = search;
 		}
 
 		return (
 			<div>
-				{ siteId && <QueryTaxonomies { ...{ siteId, postType } } /> }
+				{siteId && <QueryTaxonomies {...{ siteId, postType }} />}
 				<div className="taxonomy-manager__header">
-					<SearchCard onSearch={ this.onSearch } delaySearch />
+					<SearchCard onSearch={this.onSearch} delaySearch />
 					<div className="taxonomy-manager__actions">
-						<Button compact primary onClick={ this.newTerm }>
-							{ labels.add_new_item }
+						<Button compact primary onClick={this.newTerm}>
+							{labels.add_new_item}
 						</Button>
 					</div>
 				</div>
-				<TermsList query={ query } taxonomy={ taxonomy } onTermClick={ this.editTerm } />
+				<TermsList query={query} taxonomy={taxonomy} onTermClick={this.editTerm} />
 				<TermFormDialog
-					showDialog={ this.state.termFormDialogOpened }
-					onClose={ this.closeTermFormDialog }
-					taxonomy={ this.props.taxonomy }
-					postType={ this.props.postType }
-					searchTerm={ search }
-					term={ this.state.selectedTerm }
+					showDialog={this.state.termFormDialogOpened}
+					onClose={this.closeTermFormDialog}
+					taxonomy={this.props.taxonomy}
+					postType={this.props.postType}
+					searchTerm={search}
+					term={this.state.selectedTerm}
 					showDescriptionInput
 				/>
 			</div>
@@ -110,11 +110,11 @@ export class TaxonomyManager extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { taxonomy, postType } = ownProps;
-		const siteId = getSelectedSiteId( state );
-		const labels = get( getPostTypeTaxonomy( state, siteId, postType, taxonomy ), 'labels', {} );
+		const siteId = getSelectedSiteId(state);
+		const labels = get(getPostTypeTaxonomy(state, siteId, postType, taxonomy), 'labels', {});
 		return { labels, siteId };
 	},
 	{ recordGoogleEvent, bumpStat }
-)( TaxonomyManager );
+)(TaxonomyManager);

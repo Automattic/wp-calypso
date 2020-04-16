@@ -24,7 +24,7 @@ class StatsOverviewPlaceholder extends React.Component {
 	render() {
 		let icon;
 
-		if ( ! this.props.insights ) {
+		if (!this.props.insights) {
 			icon = (
 				<div className="module-header__site-icon">
 					<img width="24" height="24" />
@@ -37,39 +37,39 @@ class StatsOverviewPlaceholder extends React.Component {
 				<div className="module-header">
 					<h3 className="module-header-title">
 						<a href="#" className="module-header__link">
-							{ icon }
+							{icon}
 							<span className="module-header__right-icon">
 								<Gridicon icon="stats" />
 							</span>
-							<span>{ this.props.translate( 'Loading Stats' ) }</span>
+							<span>{this.props.translate('Loading Stats')}</span>
 						</a>
 					</h3>
 				</div>
 
 				<StatsTabs>
 					<StatsTab
-						isLoading={ true }
+						isLoading={true}
 						gridicon="visible"
-						label={ this.props.translate( 'Views', { context: 'noun' } ) }
-						value={ null }
+						label={this.props.translate('Views', { context: 'noun' })}
+						value={null}
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading={true}
 						gridicon="user"
-						label={ this.props.translate( 'Visitors', { context: 'noun' } ) }
-						value={ null }
+						label={this.props.translate('Visitors', { context: 'noun' })}
+						value={null}
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading={true}
 						gridicon="star"
-						label={ this.props.translate( 'Likes', { context: 'noun' } ) }
-						value={ null }
+						label={this.props.translate('Likes', { context: 'noun' })}
+						value={null}
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading={true}
 						gridicon="comment"
-						label={ this.props.translate( 'Comments', { context: 'noun' } ) }
-						value={ null }
+						label={this.props.translate('Comments', { context: 'noun' })}
+						value={null}
 					/>
 				</StatsTabs>
 			</Card>
@@ -77,4 +77,4 @@ class StatsOverviewPlaceholder extends React.Component {
 	}
 }
 
-export default localize( StatsOverviewPlaceholder );
+export default localize(StatsOverviewPlaceholder);

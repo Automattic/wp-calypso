@@ -26,21 +26,21 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  */
 import './style.scss';
 
-const SiteSettingsComponent = ( { siteId, translate } ) => {
+const SiteSettingsComponent = ({ siteId, translate }) => {
 	return (
 		<Main className="site-settings">
-			<JetpackBackupCredsBanner event={ 'settings-backup-credentials' } />
-			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<JetpackBackupCredsBanner event={'settings-backup-credentials'} />
+			<DocumentHead title={translate('Site Settings')} />
 			<QueryProductsList />
-			<QuerySitePurchases siteId={ siteId } />
+			<QuerySitePurchases siteId={siteId} />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
 				className="site-settings__page-heading"
-				headerText={ translate( 'Settings' ) }
+				headerText={translate('Settings')}
 				align="left"
 			/>
-			<SiteSettingsNavigation section={ 'general' } />
+			<SiteSettingsNavigation section={'general'} />
 			<GeneralSettings />
 		</Main>
 	);
@@ -51,6 +51,6 @@ SiteSettingsComponent.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( SiteSettingsComponent ) );
+export default connect((state) => ({
+	siteId: getSelectedSiteId(state),
+}))(localize(SiteSettingsComponent));

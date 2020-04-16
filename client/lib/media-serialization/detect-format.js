@@ -13,26 +13,26 @@ import { getMimePrefix } from 'lib/media/utils';
 /**
  * Module variables
  */
-const VALID_SHORTCODE_TYPES = [ 'closed', 'self-closing', 'single' ];
+const VALID_SHORTCODE_TYPES = ['closed', 'self-closing', 'single'];
 
-export default function( node ) {
-	if ( 'string' === typeof node ) {
+export default function (node) {
+	if ('string' === typeof node) {
 		return Formats.STRING;
 	}
 
-	if ( 'object' === typeof node && 'string' === typeof node.nodeName ) {
+	if ('object' === typeof node && 'string' === typeof node.nodeName) {
 		return Formats.DOM;
 	}
 
-	if ( node && node.tag && includes( VALID_SHORTCODE_TYPES, node.type ) ) {
+	if (node && node.tag && includes(VALID_SHORTCODE_TYPES, node.type)) {
 		return Formats.SHORTCODE;
 	}
 
-	if ( node && node.type && includes( MediaTypes, node.type ) ) {
+	if (node && node.type && includes(MediaTypes, node.type)) {
 		return Formats.OBJECT;
 	}
 
-	if ( getMimePrefix( node ) ) {
+	if (getMimePrefix(node)) {
 		return Formats.API;
 	}
 

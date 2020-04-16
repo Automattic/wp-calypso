@@ -16,16 +16,16 @@ export default class extends React.PureComponent {
 		blogdescription: '',
 	};
 
-	handleChange = ( { blogname, blogdescription } ) => {
-		this.setState( { blogname, blogdescription } );
+	handleChange = ({ blogname, blogdescription }) => {
+		this.setState({ blogname, blogdescription });
 	};
 
 	render() {
 		return (
 			<SiteTitleControl
-				blogname={ this.state.blogname }
-				blogdescription={ this.state.blogdescription }
-				onChange={ this.handleChange }
+				blogname={this.state.blogname}
+				blogdescription={this.state.blogdescription}
+				onChange={this.handleChange}
 			/>
 		);
 	}

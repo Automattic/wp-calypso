@@ -8,18 +8,18 @@ import { camelCase } from 'lodash';
  */
 import sortProducts from 'lib/products-values/sort';
 
-function createPurchaseObject( purchase ) {
+function createPurchaseObject(purchase) {
 	const object = {
-		id: Number( purchase.ID ),
-		active: Boolean( purchase.active ),
-		amount: Number( purchase.amount ),
-		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
+		id: Number(purchase.ID),
+		active: Boolean(purchase.active),
+		amount: Number(purchase.amount),
+		attachedToPurchaseId: Number(purchase.attached_to_purchase_id),
 		mostRecentRenewDate: purchase.most_recent_renew_date,
-		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
-		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
+		canDisableAutoRenew: Boolean(purchase.can_disable_auto_renew),
+		canExplicitRenew: Boolean(purchase.can_explicit_renew),
 		costToUnbundle: purchase.cost_to_unbundle
-			? Number( purchase.cost_to_unbundle )
-			: Number( purchase.amount ),
+			? Number(purchase.cost_to_unbundle)
+			: Number(purchase.amount),
 		costToUnbundleText: purchase.cost_to_unbundle_display
 			? purchase.cost_to_unbundle_display
 			: purchase.price_text,
@@ -31,15 +31,15 @@ function createPurchaseObject( purchase ) {
 		error: null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
-		expiryStatus: camelCase( purchase.expiry_status ),
+		expiryStatus: camelCase(purchase.expiry_status),
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
-		isCancelable: Boolean( purchase.is_cancelable ),
-		isDomainRegistration: Boolean( purchase.is_domain_registration ),
-		isRechargeable: Boolean( purchase.is_rechargable ),
-		isRefundable: Boolean( purchase.is_refundable ),
-		isRenewable: Boolean( purchase.is_renewable ),
-		isRenewal: Boolean( purchase.is_renewal ),
+		isCancelable: Boolean(purchase.is_cancelable),
+		isDomainRegistration: Boolean(purchase.is_domain_registration),
+		isRechargeable: Boolean(purchase.is_rechargable),
+		isRefundable: Boolean(purchase.is_refundable),
+		isRenewable: Boolean(purchase.is_renewable),
+		isRenewal: Boolean(purchase.is_renewal),
 		meta: purchase.meta,
 		priceText: purchase.price_text,
 		partnerName: purchase.partner_name,
@@ -51,29 +51,29 @@ function createPurchaseObject( purchase ) {
 			countryCode: purchase.payment_country_code,
 			countryName: purchase.payment_country_name,
 		},
-		pendingTransfer: Boolean( purchase.pending_transfer ),
-		productId: Number( purchase.product_id ),
+		pendingTransfer: Boolean(purchase.pending_transfer),
+		productId: Number(purchase.product_id),
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
-		refundAmount: Number( purchase.refund_amount ),
+		refundAmount: Number(purchase.refund_amount),
 		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,
 		saleAmount: purchase.sale_amount,
-		siteId: Number( purchase.blog_id ),
+		siteId: Number(purchase.blog_id),
 		siteName: purchase.blogname,
 		subscribedDate: purchase.subscribed_date,
 		subscriptionStatus: purchase.subscription_status,
 		tagLine: purchase.tag_line,
 		taxAmount: purchase.tax_amount,
 		taxText: purchase.tax_text,
-		userId: Number( purchase.user_id ),
+		userId: Number(purchase.user_id),
 	};
 
-	if ( 'credit_card' === purchase.payment_type ) {
+	if ('credit_card' === purchase.payment_type) {
 		object.payment.creditCard = {
-			id: Number( purchase.payment_card_id ),
+			id: Number(purchase.payment_card_id),
 			type: purchase.payment_card_type,
 			processor: purchase.payment_card_processor,
 			number: purchase.payment_details,
@@ -81,17 +81,17 @@ function createPurchaseObject( purchase ) {
 		};
 	}
 
-	if ( 'paypal_direct' === purchase.payment_type ) {
+	if ('paypal_direct' === purchase.payment_type) {
 		object.payment.expiryDate = purchase.payment_expiry;
 	}
 
 	return object;
 }
 
-export function createPurchasesArray( dataTransferObject ) {
-	if ( ! Array.isArray( dataTransferObject ) ) {
+export function createPurchasesArray(dataTransferObject) {
+	if (!Array.isArray(dataTransferObject)) {
 		return [];
 	}
 
-	return sortProducts( dataTransferObject.map( createPurchaseObject ) );
+	return sortProducts(dataTransferObject.map(createPurchaseObject));
 }

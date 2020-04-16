@@ -19,14 +19,14 @@ import { itemsSchema } from './schema';
  * @param {object} action - plans action
  * @returns {object} updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = [], action) => {
+	switch (action.type) {
 		case PLANS_RECEIVE:
-			return action.plans.slice( 0 );
+			return action.plans.slice(0);
 	}
 
 	return state;
-} );
+});
 
 /**
  * `Reducer` function which handles request/response actions
@@ -36,8 +36,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
  * @param {object} action - plans action
  * @returns {object} updated state
  */
-export const requesting = ( state = false, action ) => {
-	switch ( action.type ) {
+export const requesting = (state = false, action) => {
+	switch (action.type) {
 		case PLANS_REQUEST:
 		case PLANS_REQUEST_SUCCESS:
 		case PLANS_REQUEST_FAILURE:
@@ -54,8 +54,8 @@ export const requesting = ( state = false, action ) => {
  * @param {object} action - plans action
  * @returns {object} updated state
  */
-export const error = ( state = false, action ) => {
-	switch ( action.type ) {
+export const error = (state = false, action) => {
+	switch (action.type) {
 		case PLANS_REQUEST:
 		case PLANS_REQUEST_SUCCESS:
 			return false;
@@ -67,8 +67,8 @@ export const error = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
 	error,
-} );
+});

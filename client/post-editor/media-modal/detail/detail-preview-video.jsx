@@ -23,16 +23,16 @@ export default class extends React.Component {
 	};
 
 	render() {
-		if ( isVideoPressItem( this.props.item ) ) {
-			return <EditorMediaModalDetailItemVideoPress { ...this.props } />;
+		if (isVideoPressItem(this.props.item)) {
+			return <EditorMediaModalDetailItemVideoPress {...this.props} />;
 		}
 
 		const { className, ...props } = this.props;
 		return (
 			<EditorMediaModalDetailPreviewMediaFile
 				component="video"
-				className={ classNames( className, 'is-video' ) }
-				{ ...props }
+				className={classNames(className, 'is-video')}
+				{...props}
 			/>
 		);
 	}

@@ -13,30 +13,30 @@ import React from 'react';
  * `div.layout` has the advantage of being maintained by React, where class names can be
  * specified declaratively and the DOM diffing and patching is done by React itself.
  */
-const addBodyClass = toClass => value => () => {
+const addBodyClass = (toClass) => (value) => () => {
 	// if value is empty-ish, don't add any CSS classes
-	if ( ! value ) {
+	if (!value) {
 		return;
 	}
 
 	// convert the value (section or group name) to a CSS class name
-	const className = toClass( value );
+	const className = toClass(value);
 
 	// add the CSS class to body when performing the effect
-	document.body.classList.add( className );
+	document.body.classList.add(className);
 
 	// remove the CSS class from body in the effect cleanup function
-	return () => document.body.classList.remove( className );
+	return () => document.body.classList.remove(className);
 };
 
 // two effect creators for groups and sections
-const addGroupClass = addBodyClass( g => `is-group-${ g }` );
-const addSectionClass = addBodyClass( s => `is-section-${ s }` );
+const addGroupClass = addBodyClass((g) => `is-group-${g}`);
+const addSectionClass = addBodyClass((s) => `is-section-${s}`);
 
-export default function BodySectionCssClass( { group, section, bodyClass } ) {
-	React.useEffect( addGroupClass( group ), [ group ] );
-	React.useEffect( addSectionClass( section ), [ section ] );
-	React.useEffect( () => bodyClass && document.body.classList.add( bodyClass ) );
+export default function BodySectionCssClass({ group, section, bodyClass }) {
+	React.useEffect(addGroupClass(group), [group]);
+	React.useEffect(addSectionClass(section), [section]);
+	React.useEffect(() => bodyClass && document.body.classList.add(bodyClass));
 
 	return null;
 }

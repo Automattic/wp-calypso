@@ -14,10 +14,10 @@ import { requestWhois } from 'state/domains/management/actions';
 
 class QueryWhois extends Component {
 	UNSAFE_componentWillMount() {
-		if ( this.props.isRequesting ) {
+		if (this.props.isRequesting) {
 			return;
 		}
-		this.props.requestWhois( this.props.domain );
+		this.props.requestWhois(this.props.domain);
 	}
 
 	render() {
@@ -32,6 +32,6 @@ QueryWhois.propTypes = {
 };
 
 export default connect(
-	( state, { domain } ) => ( { isRequesting: isRequestingWhois( state, domain ) } ),
+	(state, { domain }) => ({ isRequesting: isRequestingWhois(state, domain) }),
 	{ requestWhois }
-)( QueryWhois );
+)(QueryWhois);

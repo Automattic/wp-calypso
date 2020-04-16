@@ -37,7 +37,7 @@ class CalendarStep extends Component {
 		scheduleId: PropTypes.number.isRequired,
 	};
 
-	onSubmit = timestamp => {
+	onSubmit = (timestamp) => {
 		const { currentUserId, signupForm, site, scheduleId } = this.props;
 		const meta = {
 			firstname: signupForm.firstname,
@@ -48,20 +48,20 @@ class CalendarStep extends Component {
 			phoneNumber: signupForm.phoneNumber,
 		};
 
-		this.props.bookConciergeAppointment( scheduleId, timestamp, currentUserId, site.ID, meta );
+		this.props.bookConciergeAppointment(scheduleId, timestamp, currentUserId, site.ID, meta);
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_concierge_book_calendar_step' );
+		this.props.recordTracksEvent('calypso_concierge_book_calendar_step');
 	}
 
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
+	UNSAFE_componentWillUpdate(nextProps) {
+		if (nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED) {
 			// go to confirmation page if booking was successfull
 			this.props.onComplete();
-		} else if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
+		} else if (nextProps.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR) {
 			// request new available times
-			this.props.requestConciergeInitial( this.props.scheduleId );
+			this.props.requestConciergeInitial(this.props.scheduleId);
 		}
 	}
 
@@ -78,18 +78,18 @@ class CalendarStep extends Component {
 
 		return (
 			<div>
-				<HeaderCake onClick={ onBack }>{ translate( 'Choose Session' ) }</HeaderCake>
-				<CompactCard>{ translate( 'Please select a day to have your session.' ) }</CompactCard>
+				<HeaderCake onClick={onBack}>{translate('Choose Session')}</HeaderCake>
+				<CompactCard>{translate('Please select a day to have your session.')}</CompactCard>
 
 				<AvailableTimePicker
-					actionText={ translate( 'Book this session' ) }
-					availableTimes={ availableTimes }
-					appointmentTimespan={ appointmentTimespan }
-					currentUserLocale={ currentUserLocale }
-					disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
-					onSubmit={ this.onSubmit }
-					site={ site }
-					timezone={ signupForm.timezone }
+					actionText={translate('Book this session')}
+					availableTimes={availableTimes}
+					appointmentTimespan={appointmentTimespan}
+					currentUserLocale={currentUserLocale}
+					disabled={signupForm.status === CONCIERGE_STATUS_BOOKING}
+					onSubmit={this.onSubmit}
+					site={site}
+					timezone={signupForm.timezone}
 				/>
 			</div>
 		);
@@ -97,12 +97,12 @@ class CalendarStep extends Component {
 }
 
 export default connect(
-	state => ( {
-		appointmentTimespan: getConciergeAppointmentTimespan( state ),
-		signupForm: getConciergeSignupForm( state ),
-		scheduleId: getConciergeScheduleId( state ),
-		currentUserId: getCurrentUserId( state ),
-		currentUserLocale: getCurrentUserLocale( state ),
-	} ),
+	(state) => ({
+		appointmentTimespan: getConciergeAppointmentTimespan(state),
+		signupForm: getConciergeSignupForm(state),
+		scheduleId: getConciergeScheduleId(state),
+		currentUserId: getCurrentUserId(state),
+		currentUserLocale: getCurrentUserLocale(state),
+	}),
 	{ bookConciergeAppointment, recordTracksEvent, requestConciergeInitial }
-)( localize( CalendarStep ) );
+)(localize(CalendarStep));

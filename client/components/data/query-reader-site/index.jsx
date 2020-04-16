@@ -15,17 +15,17 @@ import { requestSite } from 'state/reader/sites/actions';
 
 class QueryReaderSite extends Component {
 	UNSAFE_componentWillMount() {
-		if ( this.props.shouldSiteBeFetched ) {
-			this.props.requestSite( this.props.siteId );
+		if (this.props.shouldSiteBeFetched) {
+			this.props.requestSite(this.props.siteId);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldSiteBeFetched || this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!nextProps.shouldSiteBeFetched || this.props.siteId === nextProps.siteId) {
 			return;
 		}
 
-		nextProps.requestSite( nextProps.siteId );
+		nextProps.requestSite(nextProps.siteId);
 	}
 
 	render() {
@@ -44,13 +44,13 @@ QueryReaderSite.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { siteId } = ownProps;
 		return {
-			shouldSiteBeFetched: shouldSiteBeFetched( state, siteId ),
+			shouldSiteBeFetched: shouldSiteBeFetched(state, siteId),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				requestSite,
@@ -58,4 +58,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( QueryReaderSite );
+)(QueryReaderSite);

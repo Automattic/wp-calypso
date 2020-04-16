@@ -23,15 +23,15 @@ import { getInitialState } from './get-initial-state';
  * @param {Function} reducer original reducer
  * @returns {Function} wrapped reducer
  */
-export const withoutPersistence = reducer => {
-	const wrappedReducer = ( state, action ) => {
-		switch ( action.type ) {
+export const withoutPersistence = (reducer) => {
+	const wrappedReducer = (state, action) => {
+		switch (action.type) {
 			case SERIALIZE:
 				return undefined;
 			case DESERIALIZE:
-				return getInitialState( reducer );
+				return getInitialState(reducer);
 			default:
-				return reducer( state, action );
+				return reducer(state, action);
 		}
 	};
 	wrappedReducer.hasCustomPersistence = true;

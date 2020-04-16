@@ -21,7 +21,7 @@ import {
  * @param {object} action Redux action
  * @returns {object} original action
  */
-export const requestPlans = action =>
+export const requestPlans = (action) =>
 	http(
 		{
 			apiVersion: '1.5',
@@ -38,9 +38,9 @@ export const requestPlans = action =>
  * @param {Array} plans raw data from plans API
  * @returns {Array<object>} Redux actions
  */
-export const receivePlans = ( action, plans ) => [
+export const receivePlans = (action, plans) => [
 	plansRequestSuccessAction(),
-	plansReceiveAction( plans ),
+	plansReceiveAction(plans),
 ];
 
 /**
@@ -50,15 +50,15 @@ export const receivePlans = ( action, plans ) => [
  * @param {object} rawError raw error from HTTP request
  * @returns {object} Redux action
  */
-export const receiveError = ( action, rawError ) =>
-	plansRequestFailureAction( rawError instanceof Error ? rawError.message : rawError );
+export const receiveError = (action, rawError) =>
+	plansRequestFailureAction(rawError instanceof Error ? rawError.message : rawError);
 
-export const dispatchPlansRequest = dispatchRequest( {
+export const dispatchPlansRequest = dispatchRequest({
 	fetch: requestPlans,
 	onSuccess: receivePlans,
 	onError: receiveError,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/plans', {
-	[ PLANS_REQUEST ]: [ dispatchPlansRequest ],
-} );
+registerHandlers('state/data-layer/wpcom/plans', {
+	[PLANS_REQUEST]: [dispatchPlansRequest],
+});

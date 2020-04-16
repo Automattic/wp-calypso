@@ -24,37 +24,37 @@ import QuerySettingsGeneral from 'woocommerce/components/query-settings-general'
 class PriceInput extends Component {
 	static propTypes = {
 		currency: PropTypes.string,
-		currencySetting: PropTypes.shape( {
+		currencySetting: PropTypes.shape({
 			value: PropTypes.string,
-		} ),
-		initialValue: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		}),
+		initialValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		name: PropTypes.string,
-		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			value: props.value,
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( { value } ) {
-		this.setState( { value } );
+	UNSAFE_componentWillReceiveProps({ value }) {
+		this.setState({ value });
 	}
 
 	resetToInitial = () => {
 		const { initialValue, name = '' } = this.props;
-		this.setState( { value: initialValue }, () => {
+		this.setState({ value: initialValue }, () => {
 			// All uses of onChange expect an event object of this shape
-			this.props.onChange( {
+			this.props.onChange({
 				target: {
 					name,
 					value: initialValue.toString(),
 				},
-			} );
-		} );
+			});
+		});
 	};
 
 	render() {
@@ -68,19 +68,19 @@ class PriceInput extends Component {
 			...props
 		} = this.props;
 
-		const displayCurrency = ! currency && currencySetting ? currencySetting.value : currency;
-		const currencyObject = getCurrencyObject( value, displayCurrency );
+		const displayCurrency = !currency && currencySetting ? currencySetting.value : currency;
+		const currencyObject = getCurrencyObject(value, displayCurrency);
 		let resetButton;
-		if ( initialValue ) {
-			if ( initialValue === this.state.value ) {
+		if (initialValue) {
+			if (initialValue === this.state.value) {
 				resetButton = <span />;
 			} else {
 				resetButton = (
 					<Button
-						onClick={ this.resetToInitial }
+						onClick={this.resetToInitial}
 						compact
 						borderless
-						aria-label={ translate( 'Reset to %(value)s', { args: { value: initialValue } } ) }
+						aria-label={translate('Reset to %(value)s', { args: { value: initialValue } })}
 					>
 						<Gridicon icon="refresh" />
 					</Button>
@@ -88,32 +88,32 @@ class PriceInput extends Component {
 			}
 		}
 
-		const classes = classNames( 'price-input', { 'has-reset': !! initialValue } );
+		const classes = classNames('price-input', { 'has-reset': !!initialValue });
 		return (
-			<div className={ classes }>
-				<QuerySettingsGeneral siteId={ siteId } />
-				{ currencyObject ? (
+			<div className={classes}>
+				<QuerySettingsGeneral siteId={siteId} />
+				{currencyObject ? (
 					<FormCurrencyInput
-						currencySymbolPrefix={ currencyObject.symbol }
-						currencySymbolSuffix={ resetButton }
-						value={ this.state.value }
-						{ ...omit( props, [ 'dispatch', 'moment', 'numberFormat' ] ) }
+						currencySymbolPrefix={currencyObject.symbol}
+						currencySymbolSuffix={resetButton}
+						value={this.state.value}
+						{...omit(props, ['dispatch', 'moment', 'numberFormat'])}
 					/>
 				) : (
-					<FormTextInput value={ this.state.value } { ...omit( props, [ 'noWrap', 'min' ] ) } />
-				) }
+					<FormTextInput value={this.state.value} {...omit(props, ['noWrap', 'min'])} />
+				)}
 			</div>
 		);
 	}
 }
 
-function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const currencySetting = getPaymentCurrencySettings( state );
+function mapStateToProps(state) {
+	const siteId = getSelectedSiteId(state);
+	const currencySetting = getPaymentCurrencySettings(state);
 	return {
 		siteId,
 		currencySetting,
 	};
 }
 
-export default connect( mapStateToProps )( localize( PriceInput ) );
+export default connect(mapStateToProps)(localize(PriceInput));

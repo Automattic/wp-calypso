@@ -29,15 +29,11 @@ const ReaderFeaturedVideo = () => (
 	<div className="reader-featured-video-example design-assets__group">
 		<div>
 			<h3>With play button</h3>
-			<ReaderFeaturedVideoBlock { ...exampleVideo } videoEmbed={ exampleVideo } />
+			<ReaderFeaturedVideoBlock {...exampleVideo} videoEmbed={exampleVideo} />
 		</div>
 		<div>
 			<h3>Without play button</h3>
-			<ReaderFeaturedVideoBlock
-				{ ...exampleVideo }
-				videoEmbed={ exampleVideo }
-				allowPlaying={ false }
-			/>
+			<ReaderFeaturedVideoBlock {...exampleVideo} videoEmbed={exampleVideo} allowPlaying={false} />
 		</div>
 	</div>
 );

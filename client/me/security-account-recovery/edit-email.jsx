@@ -41,8 +41,8 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 
 	renderValidation = () => {
 		let validation = null;
-		if ( this.state.validation ) {
-			validation = <FormInputValidation isError text={ this.state.validation } />;
+		if (this.state.validation) {
+			validation = <FormInputValidation isError text={this.state.validation} />;
 		}
 		return validation;
 	};
@@ -51,65 +51,65 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		let explanation = null,
 			text;
 
-		if ( this.props.primaryEmail ) {
-			text = this.props.translate( 'Your primary email address is {{email/}}', {
+		if (this.props.primaryEmail) {
+			text = this.props.translate('Your primary email address is {{email/}}', {
 				components: {
-					email: <strong>{ this.props.primaryEmail }</strong>,
+					email: <strong>{this.props.primaryEmail}</strong>,
 				},
-			} );
+			});
 
-			explanation = <FormSettingExplanation>{ text }</FormSettingExplanation>;
+			explanation = <FormSettingExplanation>{text}</FormSettingExplanation>;
 		}
 		return explanation;
 	};
 
 	render() {
 		return (
-			<div className={ this.props.className }>
+			<div className={this.props.className}>
 				<FormFieldset>
 					<FormTextInput
-						isError={ this.state.isInvalid }
-						onKeyUp={ this.onKeyUp }
+						isError={this.state.isInvalid}
+						onKeyUp={this.onKeyUp}
 						name="email"
 						ref="email"
-						value={ this.state.email }
-						onChange={ this.handleChange }
+						value={this.state.email}
+						onChange={this.handleChange}
 					/>
 
-					{ this.renderValidation() }
-					{ this.renderExplanation() }
+					{this.renderValidation()}
+					{this.renderExplanation()}
 				</FormFieldset>
 
 				<Buttons
-					isSavable={ this.isSavable() }
-					isDeletable={ !! this.props.storedEmail }
-					saveText={ this.props.translate( 'Save Email' ) }
-					onSave={ this.onSave }
-					onDelete={ this.onDelete }
-					onCancel={ this.onCancel }
+					isSavable={this.isSavable()}
+					isDeletable={!!this.props.storedEmail}
+					saveText={this.props.translate('Save Email')}
+					onSave={this.onSave}
+					onDelete={this.onDelete}
+					onCancel={this.onCancel}
 				/>
 			</div>
 		);
 	}
 
 	focusInput = () => {
-		ReactDom.findDOMNode( this.refs.email ).focus();
+		ReactDom.findDOMNode(this.refs.email).focus();
 	};
 
 	isSavable = () => {
-		if ( ! this.state.email ) {
+		if (!this.state.email) {
 			return false;
 		}
 
-		if ( this.state.email === this.props.storedEmail ) {
+		if (this.state.email === this.props.storedEmail) {
 			return false;
 		}
 
 		return true;
 	};
 
-	onKeyUp = event => {
-		if ( event.key === 'Enter' ) {
+	onKeyUp = (event) => {
+		if (event.key === 'Enter') {
 			this.onSave();
 		}
 	};
@@ -117,28 +117,28 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 	onSave = () => {
 		const email = this.state.email;
 
-		if ( ! this.isSavable() ) {
+		if (!this.isSavable()) {
 			return;
 		}
 
-		if ( this.props.primaryEmail && email === this.props.primaryEmail ) {
-			this.setState( {
+		if (this.props.primaryEmail && email === this.props.primaryEmail) {
+			this.setState({
 				validation: this.props.translate(
 					'You have entered your primary email address. Please enter a different email address.'
 				),
-			} );
+			});
 			return;
 		}
 
-		if ( ! emailValidator.validate( email ) ) {
-			this.setState( {
-				validation: this.props.translate( 'Please enter a valid email address.' ),
-			} );
+		if (!emailValidator.validate(email)) {
+			this.setState({
+				validation: this.props.translate('Please enter a valid email address.'),
+			});
 			return;
 		}
 
-		this.setState( { validation: null } );
-		this.props.onSave( email );
+		this.setState({ validation: null });
+		this.props.onSave(email);
 	};
 
 	onCancel = () => {
@@ -149,10 +149,10 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		this.props.onDelete();
 	};
 
-	handleChange = e => {
+	handleChange = (e) => {
 		const { name, value } = e.currentTarget;
-		this.setState( { [ name ]: value } );
+		this.setState({ [name]: value });
 	};
 }
 
-export default localize( SecurityAccountRecoveryRecoveryEmailEdit );
+export default localize(SecurityAccountRecoveryRecoveryEmailEdit);

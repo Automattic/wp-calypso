@@ -11,4 +11,4 @@ import 'state/reader/init';
  * @returns {number} the paging offset
  */
 
-export default ( state, seed ) => state.reader.recommendedSites.pagingOffset[ seed ];
+export default (state, seed) => state.reader.recommendedSites.pagingOffset[seed];

@@ -14,33 +14,33 @@ import 'state/posts/init';
  * @param  {number}   postId Post ID
  * @returns {Function}        Action thunk
  */
-export function requestSitePost( siteId, postId ) {
-	return dispatch => {
-		dispatch( {
+export function requestSitePost(siteId, postId) {
+	return (dispatch) => {
+		dispatch({
 			type: POST_REQUEST,
 			siteId,
 			postId,
-		} );
+		});
 
 		return wpcom
-			.site( siteId )
-			.post( postId )
+			.site(siteId)
+			.post(postId)
 			.get()
-			.then( post => {
-				dispatch( receivePost( post ) );
-				dispatch( {
+			.then((post) => {
+				dispatch(receivePost(post));
+				dispatch({
 					type: POST_REQUEST_SUCCESS,
 					siteId,
 					postId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: POST_REQUEST_FAILURE,
 					siteId,
 					postId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }

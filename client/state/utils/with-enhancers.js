@@ -9,25 +9,18 @@
  * @see client/state/analytics/actions/enhanceWithSiteType for an example
  * @see client/state/extendAction for a simpler alternative
  */
-export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
-	dispatch,
-	getState
-) => {
-	const action = actionCreator( ...args );
+export const withEnhancers = (actionCreator, enhancers) => (...args) => (dispatch, getState) => {
+	const action = actionCreator(...args);
 
-	if ( ! Array.isArray( enhancers ) ) {
-		enhancers = [ enhancers ];
+	if (!Array.isArray(enhancers)) {
+		enhancers = [enhancers];
 	}
 
-	if ( typeof action === 'function' ) {
-		const newDispatch = actionValue =>
-			dispatch(
-				enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue )
-			);
-		return action( newDispatch, getState );
+	if (typeof action === 'function') {
+		const newDispatch = (actionValue) =>
+			dispatch(enhancers.reduce((result, enhancer) => enhancer(result, getState), actionValue));
+		return action(newDispatch, getState);
 	}
 
-	return dispatch(
-		enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), action )
-	);
+	return dispatch(enhancers.reduce((result, enhancer) => enhancer(result, getState), action));
 };

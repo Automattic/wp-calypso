@@ -17,21 +17,21 @@ export default class extends React.PureComponent {
 		rangeValue: 24,
 	};
 
-	onChange = event => {
-		this.setState( {
+	onChange = (event) => {
+		this.setState({
 			rangeValue: event.target.value,
-		} );
+		});
 	};
 
 	render() {
 		return (
 			<FormRange
-				minContent={ <Gridicon icon="minus-small" /> }
-				maxContent={ <Gridicon icon="plus-small" /> }
+				minContent={<Gridicon icon="minus-small" />}
+				maxContent={<Gridicon icon="plus-small" />}
 				max="100"
-				value={ this.state.rangeValue }
-				onChange={ this.onChange }
-				showValueLabel={ true }
+				value={this.state.rangeValue}
+				onChange={this.onChange}
+				showValueLabel={true}
 			/>
 		);
 	}

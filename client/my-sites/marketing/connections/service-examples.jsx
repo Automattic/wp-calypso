@@ -48,14 +48,14 @@ class SharingServiceExamples extends Component {
 	};
 
 	static defaultProps = {
-		site: Object.freeze( {} ),
+		site: Object.freeze({}),
 		translate: identity,
 	};
 
 	getSharingButtonsLink() {
 		return this.props.site
 			? '/sharing/buttons/' + this.props.site.slug
-			: localizeUrl( 'https://wordpress.com/support/sharing/' );
+			: localizeUrl('https://wordpress.com/support/sharing/');
 	}
 
 	bandpage() {
@@ -63,16 +63,14 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/bandpage-widget.png',
-					alt: this.props.translate( 'Add a BandPage widget', { textOnly: true } ),
+					alt: this.props.translate('Add a BandPage widget', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'Add a {{link}}BandPage widget{{/link}} to display your music, photos, videos bio, and event listings.',
 					{
 						components: {
 							link: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/support/widgets/bandpage-widget/' ) }
-								/>
+								<a href={localizeUrl('https://wordpress.com/support/widgets/bandpage-widget/')} />
 							),
 						},
 					}
@@ -108,9 +106,9 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/facebook-profile.png',
-					alt: this.props.translate( 'Share posts to your Facebook page', {
+					alt: this.props.translate('Share posts to your Facebook page', {
 						textOnly: true,
-					} ),
+					}),
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page.',
@@ -124,13 +122,13 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/facebook-sharing.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
+					alt: this.props.translate('Add a sharing button', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their friends.',
 					{
 						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
+							link: <a href={this.getSharingButtonsLink()} />,
 						},
 					}
 				),
@@ -143,7 +141,7 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/google-my-business/stats-screenshot-cropped.png',
-					alt: this.props.translate( 'Manage Google My Business locations', { textOnly: true } ),
+					alt: this.props.translate('Manage Google My Business locations', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to view stats and other useful information from your ' +
@@ -163,7 +161,7 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/instagram-widget.png',
-					alt: this.props.translate( 'Add an Instagram widget', { textOnly: true } ),
+					alt: this.props.translate('Add an Instagram widget', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'Add an {{link}}Instagram widget{{/link}} to display your latest photos.',
@@ -171,9 +169,7 @@ class SharingServiceExamples extends Component {
 						components: {
 							link: (
 								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/instagram/instagram-widget/'
-									) }
+									href={localizeUrl('https://wordpress.com/support/instagram/instagram-widget/')}
 								/>
 							),
 						},
@@ -188,9 +184,9 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/linkedin-publicize.png',
-					alt: this.props.translate( 'Share posts with your LinkedIn connections', {
+					alt: this.props.translate('Share posts with your LinkedIn connections', {
 						textOnly: true,
-					} ),
+					}),
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to automatically share posts with your LinkedIn connections.',
@@ -204,13 +200,13 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/linkedin-sharing.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
+					alt: this.props.translate('Add a sharing button', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their connections.',
 					{
 						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
+							link: <a href={this.getSharingButtonsLink()} />,
 						},
 					}
 				),
@@ -223,7 +219,7 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/tumblr-publicize.png',
-					alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } ),
+					alt: this.props.translate('Share posts to your Tumblr blog', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to automatically share posts to your Tumblr blog.',
@@ -237,13 +233,13 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/tumblr-sharing.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
+					alt: this.props.translate('Add a sharing button', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their followers.',
 					{
 						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
+							link: <a href={this.getSharingButtonsLink()} />,
 						},
 					}
 				),
@@ -256,7 +252,7 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/twitter-publicize.png',
-					alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } ),
+					alt: this.props.translate('Share posts to your Twitter followers', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to automatically share posts with your Twitter followers.',
@@ -270,7 +266,7 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/twitter-timeline.png',
-					alt: this.props.translate( 'Add a Twitter Timeline Widget', { textOnly: true } ),
+					alt: this.props.translate('Add a Twitter Timeline Widget', { textOnly: true }),
 				},
 				label: this.props.translate(
 					'Add a {{link}}Twitter Timeline Widget{{/link}} to display your latest tweets on your site.',
@@ -278,9 +274,9 @@ class SharingServiceExamples extends Component {
 						components: {
 							link: (
 								<a
-									href={ localizeUrl(
+									href={localizeUrl(
 										'https://wordpress.com/support/widgets/twitter-timeline-widget/'
-									) }
+									)}
 								/>
 							),
 						},
@@ -295,17 +291,15 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/mailchimp-screenshot.png',
-					alt: this.props.translate( 'Add subscribers to Mailchimp', { textOnly: true } ),
+					alt: this.props.translate('Add subscribers to Mailchimp', { textOnly: true }),
 				},
-				label: this.props.translate(
-					'Enable site visitors to sign up for your Mailchimp content.'
-				),
+				label: this.props.translate('Enable site visitors to sign up for your Mailchimp content.'),
 			},
 		];
 	}
 
 	render() {
-		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
+		if (!includes(SERVICES_WHITELIST, this.props.service.ID)) {
 			/**
 			 * TODO: Refactoring this line has to be tackled in a seperate diff.
 			 * Touching this changes services-group.jsx which changes service.jsx
@@ -315,11 +309,11 @@ class SharingServiceExamples extends Component {
 			return <div className="sharing-service-examples" />;
 		}
 
-		if ( 'google_plus' === this.props.service.ID ) {
+		if ('google_plus' === this.props.service.ID) {
 			return <GooglePlusDeprication />;
 		}
 
-		const examples = this[ this.props.service.ID ]();
+		const examples = this[this.props.service.ID]();
 
 		return (
 			/**
@@ -329,19 +323,19 @@ class SharingServiceExamples extends Component {
 			 */
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="sharing-service-examples">
-				{ examples.map( ( example, index ) => (
+				{examples.map((example, index) => (
 					<ServiceExample
-						key={ index }
-						image={ example.image }
-						label={ example.label }
-						single={ 1 === examples.length }
+						key={index}
+						image={example.image}
+						label={example.label}
+						single={1 === examples.length}
 					/>
-				) ) }
+				))}
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-} ) )( localize( SharingServiceExamples ) );
+export default connect((state) => ({
+	site: getSelectedSite(state),
+}))(localize(SharingServiceExamples));

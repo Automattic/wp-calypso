@@ -32,23 +32,23 @@ import CheckoutTerms from './checkout-terms';
 import { withStripeProps } from 'lib/stripe';
 import { setStripeObject } from 'lib/transaction/actions';
 
-function isFormSubmitting( transactionStep ) {
-	if ( ! transactionStep ) {
+function isFormSubmitting(transactionStep) {
+	if (!transactionStep) {
 		return false;
 	}
-	switch ( transactionStep.name ) {
+	switch (transactionStep.name) {
 		case BEFORE_SUBMIT:
 			return false;
 
 		case INPUT_VALIDATION:
-			if ( transactionStep.error ) {
+			if (transactionStep.error) {
 				return false;
 			}
 			return true;
 
 		case RECEIVED_PAYMENT_KEY_RESPONSE:
 		case RECEIVED_AUTHORIZATION_RESPONSE:
-			if ( transactionStep.error ) {
+			if (transactionStep.error) {
 				return false;
 			}
 			return true;
@@ -60,7 +60,7 @@ function isFormSubmitting( transactionStep ) {
 			return true;
 
 		case RECEIVED_WPCOM_RESPONSE:
-			if ( transactionStep.error || ! transactionStep.data.success ) {
+			if (transactionStep.error || !transactionStep.data.success) {
 				return false;
 			}
 			return true;
@@ -92,8 +92,8 @@ class CreditCardPaymentBox extends React.Component {
 		onSubmit: noop,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			progress: 0,
 			previousCart: null,
@@ -101,15 +101,15 @@ class CreditCardPaymentBox extends React.Component {
 		this.timer = null;
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
-			! isFormSubmitting( prevProps.transactionStep ) &&
-			isFormSubmitting( this.props.transactionStep )
+			!isFormSubmitting(prevProps.transactionStep) &&
+			isFormSubmitting(this.props.transactionStep)
 		) {
-			this.timer = setInterval( this.tick, 100 );
+			this.timer = setInterval(this.tick, 100);
 		}
 
-		if ( this.props.transactionStep.error ) {
+		if (this.props.transactionStep.error) {
 			this.clearTickInterval();
 		}
 	}
@@ -119,70 +119,66 @@ class CreditCardPaymentBox extends React.Component {
 	}
 
 	clearTickInterval() {
-		clearInterval( this.timer );
+		clearInterval(this.timer);
 		this.timer = null;
 	}
 
 	tick = () => {
 		// increase the progress of the progress bar by 0.5% of the remaining progress each tick
-		const progress = this.state.progress + ( 1 / 200 ) * ( 100 - this.state.progress );
+		const progress = this.state.progress + (1 / 200) * (100 - this.state.progress);
 
-		this.setState( { progress } );
+		this.setState({ progress });
 	};
 
 	progressBar = () => {
 		return (
 			<div className="checkout__credit-card-payment-box-progress-bar">
-				{ this.props.translate( 'Processing payment…' ) }
-				<ProgressBar value={ Math.round( this.state.progress ) } isPulsing />
+				{this.props.translate('Processing payment…')}
+				<ProgressBar value={Math.round(this.state.progress)} isPulsing />
 			</div>
 		);
 	};
 
 	paymentButtons = () => {
 		const { cart, transactionStep, translate, presaleChatAvailable } = this.props,
-			hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
-				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
+			hasBusinessPlanInCart = some(cart.products, ({ product_slug }) =>
+				overSome(isWpComBusinessPlan, isWpComEcommercePlan)(product_slug)
 			),
 			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';
 
 		return (
-			<div className={ paymentButtonClasses }>
-				<PayButton cart={ cart } transactionStep={ transactionStep } />
+			<div className={paymentButtonClasses}>
+				<PayButton cart={cart} transactionStep={transactionStep} />
 
 				<div className="checkout__secure-payment">
 					<div className="checkout__secure-payment-content">
 						<Gridicon icon="lock" />
-						{ translate( 'Secure Payment' ) }
+						{translate('Secure Payment')}
 					</div>
 				</div>
 
-				{ showPaymentChatButton && (
-					<PaymentChatButton
-						paymentType="credits"
-						cart={ cart }
-						transactionStep={ transactionStep }
-					/>
-				) }
+				{showPaymentChatButton && (
+					<PaymentChatButton paymentType="credits" cart={cart} transactionStep={transactionStep} />
+				)}
 			</div>
 		);
 	};
 
-	submit = event => {
+	submit = (event) => {
 		event.preventDefault();
 
-		if ( this.props.stripe ) {
-			setStripeObject( this.props.stripe, this.props.stripeConfiguration );
+		if (this.props.stripe) {
+			setStripeObject(this.props.stripe, this.props.stripeConfiguration);
 		}
 
-		this.setState( {
+		this.setState({
 			progress: 0,
-		} );
+		});
 
 		// setStripeObject uses Flux Dispatcher so they are deferred. This
 		// defers the submit so it will occur after they take effect.
-		setTimeout( () => this.props.onSubmit(), 0 );
+		setTimeout(() => this.props.onSubmit(), 0);
 	};
 
 	render = () => {
@@ -200,31 +196,31 @@ class CreditCardPaymentBox extends React.Component {
 
 		return (
 			<React.Fragment>
-				<form autoComplete="off" onSubmit={ this.submit }>
+				<form autoComplete="off" onSubmit={this.submit}>
 					<CreditCardSelector
-						cards={ cards }
-						countriesList={ countriesList }
-						initialCard={ initialCard }
-						transaction={ transaction }
-						stripe={ stripe }
-						isStripeLoading={ isStripeLoading }
-						stripeLoadingError={ stripeLoadingError }
-						translate={ translate }
+						cards={cards}
+						countriesList={countriesList}
+						initialCard={initialCard}
+						transaction={transaction}
+						stripe={stripe}
+						isStripeLoading={isStripeLoading}
+						stripeLoadingError={stripeLoadingError}
+						translate={translate}
 					/>
 
-					{ this.props.children }
+					{this.props.children}
 
-					<RecentRenewals cart={ cart } />
+					<RecentRenewals cart={cart} />
 
-					<CheckoutTerms cart={ cart } />
+					<CheckoutTerms cart={cart} />
 
 					<div className="checkout__payment-box-actions">
-						{ isFormSubmitting( this.props.transactionStep )
+						{isFormSubmitting(this.props.transactionStep)
 							? this.progressBar()
-							: this.paymentButtons() }
+							: this.paymentButtons()}
 					</div>
 				</form>
-				<CartCoupon cart={ cart } />
+				<CartCoupon cart={cart} />
 				<CartToggle />
 			</React.Fragment>
 		);
@@ -233,5 +229,5 @@ class CreditCardPaymentBox extends React.Component {
 
 export { CreditCardPaymentBox };
 
-const InjectedStripeCreditCardPaymentBox = withStripeProps( CreditCardPaymentBox );
+const InjectedStripeCreditCardPaymentBox = withStripeProps(CreditCardPaymentBox);
 export default InjectedStripeCreditCardPaymentBox;

@@ -8,38 +8,38 @@ import { expect } from 'chai';
  */
 import isRequestingSiteConnectionStatus from 'state/selectors/is-requesting-site-connection-status';
 
-describe( 'isRequestingSiteConnectionStatus()', () => {
+describe('isRequestingSiteConnectionStatus()', () => {
 	const siteId = 2916284;
 
-	test( 'should return true if connection status is currently being requested for that site', () => {
+	test('should return true if connection status is currently being requested for that site', () => {
 		const state = {
 			sites: {
 				connection: {
 					requesting: {
-						[ siteId ]: true,
+						[siteId]: true,
 					},
 				},
 			},
 		};
-		const output = isRequestingSiteConnectionStatus( state, siteId );
-		expect( output ).to.be.true;
-	} );
+		const output = isRequestingSiteConnectionStatus(state, siteId);
+		expect(output).to.be.true;
+	});
 
-	test( 'should return false if connection status is currently not being requested for that site', () => {
+	test('should return false if connection status is currently not being requested for that site', () => {
 		const state = {
 			sites: {
 				connection: {
 					requesting: {
-						[ siteId ]: false,
+						[siteId]: false,
 					},
 				},
 			},
 		};
-		const output = isRequestingSiteConnectionStatus( state, siteId );
-		expect( output ).to.be.false;
-	} );
+		const output = isRequestingSiteConnectionStatus(state, siteId);
+		expect(output).to.be.false;
+	});
 
-	test( 'should return false if connection status has never been requested for that site', () => {
+	test('should return false if connection status has never been requested for that site', () => {
 		const state = {
 			sites: {
 				connection: {
@@ -49,7 +49,7 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 				},
 			},
 		};
-		const output = isRequestingSiteConnectionStatus( state, siteId );
-		expect( output ).to.be.false;
-	} );
-} );
+		const output = isRequestingSiteConnectionStatus(state, siteId);
+		expect(output).to.be.false;
+	});
+});

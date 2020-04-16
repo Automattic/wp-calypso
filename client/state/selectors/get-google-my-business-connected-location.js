@@ -16,10 +16,10 @@ import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business
  * @param  {object} siteId The site ID
  * @returns {object}        A connected GMB location
  */
-export default function getGoogleMyBusinessConnectedLocation( state, siteId ) {
+export default function getGoogleMyBusinessConnectedLocation(state, siteId) {
 	return last(
-		filter( getGoogleMyBusinessLocations( state, siteId ), {
+		filter(getGoogleMyBusinessLocations(state, siteId), {
 			isConnected: true,
-		} )
+		})
 	);
 }

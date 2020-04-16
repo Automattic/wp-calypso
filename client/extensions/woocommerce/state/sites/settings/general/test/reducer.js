@@ -14,9 +14,9 @@ import {
 import { ERROR, LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
-describe( 'reducer', () => {
-	describe( 'generalRequest', () => {
-		test( 'should mark the settings general tree as "loading" if no settings are loaded', () => {
+describe('reducer', () => {
+	describe('generalRequest', () => {
+		test('should mark the settings general tree as "loading" if no settings are loaded', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
@@ -24,10 +24,10 @@ describe( 'reducer', () => {
 				meta: { dataLayer: { doBypass: true } },
 			};
 
-			const newSiteData = reducer( {}, action );
-			expect( newSiteData[ siteId ].settings.general ).to.eql( LOADING );
-		} );
-		test( 'should do nothing if settings are already loaded', () => {
+			const newSiteData = reducer({}, action);
+			expect(newSiteData[siteId].settings.general).to.eql(LOADING);
+		});
+		test('should do nothing if settings are already loaded', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
@@ -54,38 +54,38 @@ describe( 'reducer', () => {
 					},
 				},
 			};
-			const newSiteData = reducer( state, action );
-			expect( newSiteData[ siteId ].settings.general ).to.eql( data );
-		} );
-		test( 'should store data from the action', () => {
+			const newSiteData = reducer(state, action);
+			expect(newSiteData[siteId].settings.general).to.eql(data);
+		});
+		test('should store data from the action', () => {
 			const siteId = 123;
-			const settings = [ {}, {} ];
+			const settings = [{}, {}];
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				data: settings,
 			};
-			const newState = reducer( {}, action );
-			expect( newState[ siteId ] ).to.exist;
-			expect( newState[ siteId ].settings ).to.exist;
-			expect( newState[ siteId ].settings.general ).to.deep.equal( settings );
-		} );
-		test( 'should handle error from the action', () => {
+			const newState = reducer({}, action);
+			expect(newState[siteId]).to.exist;
+			expect(newState[siteId].settings).to.exist;
+			expect(newState[siteId].settings.general).to.deep.equal(settings);
+		});
+		test('should handle error from the action', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				error: 'rest_no_route',
 			};
-			const newState = reducer( {}, action );
-			expect( newState[ siteId ] ).to.exist;
-			expect( newState[ siteId ].settings ).to.exist;
-			expect( newState[ siteId ].settings.general ).to.eql( ERROR );
-		} );
-	} );
+			const newState = reducer({}, action);
+			expect(newState[siteId]).to.exist;
+			expect(newState[siteId].settings).to.exist;
+			expect(newState[siteId].settings.general).to.eql(ERROR);
+		});
+	});
 
-	describe( 'settings batch', () => {
-		test( 'should merge data from the action', () => {
+	describe('settings batch', () => {
+		test('should merge data from the action', () => {
 			const siteId = 123;
 			const emptyState = {
 				123: {
@@ -112,19 +112,19 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 				siteId,
-				data: { update: [ streetSetting, citySetting ] },
+				data: { update: [streetSetting, citySetting] },
 			};
-			const updatedSettings = [ updatedStreetSetting, citySetting ];
+			const updatedSettings = [updatedStreetSetting, citySetting];
 			const updateAction = {
 				type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 				siteId,
-				data: { update: [ updatedStreetSetting ] },
+				data: { update: [updatedStreetSetting] },
 			};
-			const state = reducer( emptyState, action );
-			const updatedState = reducer( state, updateAction );
-			expect( updatedState[ siteId ] ).to.exist;
-			expect( updatedState[ siteId ].settings ).to.exist;
-			expect( updatedState[ siteId ].settings.general ).to.deep.equal( updatedSettings );
-		} );
-	} );
-} );
+			const state = reducer(emptyState, action);
+			const updatedState = reducer(state, updateAction);
+			expect(updatedState[siteId]).to.exist;
+			expect(updatedState[siteId].settings).to.exist;
+			expect(updatedState[siteId].settings.general).to.deep.equal(updatedSettings);
+		});
+	});
+});

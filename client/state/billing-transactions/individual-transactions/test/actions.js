@@ -11,11 +11,11 @@ import {
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
-describe( 'actions', () => {
-	describe( '#requestBillingTransaction', () => {
+describe('actions', () => {
+	describe('#requestBillingTransaction', () => {
 		const transactionId = 12345678;
 
-		describe( 'success', () => {
+		describe('success', () => {
 			const receiptData = {
 				id: '18689989',
 				service: 'Store Services',
@@ -56,72 +56,72 @@ describe( 'actions', () => {
 				],
 			};
 
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
 					.persist()
-					.get( '/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display' )
-					.reply( 200, receiptData );
-			} );
+					.get('/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display')
+					.reply(200, receiptData);
+			});
 
-			test( 'should dispatch request action', () => {
+			test('should dispatch request action', () => {
 				const dispatch = jest.fn();
-				requestBillingTransaction( transactionId )( dispatch );
+				requestBillingTransaction(transactionId)(dispatch);
 
-				expect( dispatch ).toHaveBeenCalledWith( {
+				expect(dispatch).toHaveBeenCalledWith({
 					type: BILLING_TRANSACTION_REQUEST,
 					transactionId,
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch success action', () => {
+			test('should dispatch success action', () => {
 				const dispatch = jest.fn();
-				return requestBillingTransaction( transactionId )( dispatch ).then( () => {
-					expect( dispatch ).toHaveBeenCalledWith( {
+				return requestBillingTransaction(transactionId)(dispatch).then(() => {
+					expect(dispatch).toHaveBeenCalledWith({
 						type: BILLING_TRANSACTION_REQUEST_SUCCESS,
 						transactionId,
-					} );
+					});
 
-					expect( dispatch ).toHaveBeenCalledWith( {
+					expect(dispatch).toHaveBeenCalledWith({
 						type: BILLING_TRANSACTION_RECEIVE,
 						transactionId,
 						receipt: receiptData,
-					} );
-				} );
-			} );
-		} );
+					});
+				});
+			});
+		});
 
-		describe( 'failure', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
+		describe('failure', () => {
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
 					.persist()
-					.get( '/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display' )
-					.reply( 403, {
+					.get('/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display')
+					.reply(403, {
 						error: 'authorization_required',
-					} );
-			} );
+					});
+			});
 
-			test( 'should dispatch failure action', () => {
+			test('should dispatch failure action', () => {
 				const dispatch = jest.fn();
-				return requestBillingTransaction( transactionId )( dispatch ).then( () => {
-					const actionArgument = dispatch.mock.calls[ 1 ][ 0 ];
-					expect( actionArgument ).toMatchObject( {
+				return requestBillingTransaction(transactionId)(dispatch).then(() => {
+					const actionArgument = dispatch.mock.calls[1][0];
+					expect(actionArgument).toMatchObject({
 						type: BILLING_TRANSACTION_REQUEST_FAILURE,
 						transactionId,
-					} );
-					expect( actionArgument.error ).toMatchObject( {
+					});
+					expect(actionArgument.error).toMatchObject({
 						error: 'authorization_required',
-					} );
-				} );
-			} );
-		} );
-	} );
+					});
+				});
+			});
+		});
+	});
 
-	test( '#clearBillingTransactionError', () => {
+	test('#clearBillingTransactionError', () => {
 		const transactionId = 12345678;
-		const action = clearBillingTransactionError( transactionId );
-		expect( action ).toEqual( {
+		const action = clearBillingTransactionError(transactionId);
+		expect(action).toEqual({
 			type: BILLING_TRANSACTION_ERROR_CLEAR,
 			transactionId,
-		} );
-	} );
-} );
+		});
+	});
+});

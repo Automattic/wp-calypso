@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { isSiteWordadsUnsafe } from '../selectors';
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	const state = {
 		wordads: {
 			status: {
@@ -20,15 +20,15 @@ describe( 'selectors', () => {
 			},
 		},
 	};
-	describe( '#isSiteWordadsUnsafe()', () => {
-		test( 'should return status value for a given site ID', () => {
-			expect( isSiteWordadsUnsafe( state, 2916284 ) ).to.eql( 'mature' );
-		} );
-		test( 'should return false when sticker absent', () => {
-			expect( isSiteWordadsUnsafe( state, 77203074 ) ).to.eql( false );
-		} );
-		test( 'should return false when site absent', () => {
-			expect( isSiteWordadsUnsafe( state, 123 ) ).to.eql( false );
-		} );
-	} );
-} );
+	describe('#isSiteWordadsUnsafe()', () => {
+		test('should return status value for a given site ID', () => {
+			expect(isSiteWordadsUnsafe(state, 2916284)).to.eql('mature');
+		});
+		test('should return false when sticker absent', () => {
+			expect(isSiteWordadsUnsafe(state, 77203074)).to.eql(false);
+		});
+		test('should return false when site absent', () => {
+			expect(isSiteWordadsUnsafe(state, 123)).to.eql(false);
+		});
+	});
+});

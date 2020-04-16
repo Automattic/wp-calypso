@@ -17,13 +17,13 @@ const ConversationCaterpillarExample = () => {
 		<div className="design-assets__group">
 			<Card>
 				<ConversationCaterpillar
-					comments={ comments }
-					blogId={ 123 }
-					postId={ 12 }
-					commentsTree={ commentsTree }
-					commentCount={ size( comments ) }
-					commentsToShow={ {} }
-					expandComments={ () => {} }
+					comments={comments}
+					blogId={123}
+					postId={12}
+					commentsTree={commentsTree}
+					commentCount={size(comments)}
+					commentsToShow={{}}
+					expandComments={() => {}}
 				/>
 			</Card>
 		</div>

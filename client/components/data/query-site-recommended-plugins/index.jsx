@@ -16,12 +16,12 @@ class QuerySiteRecommendedPlugins extends Component {
 	};
 
 	componentDidMount() {
-		this.props.fetchRecommendedPlugins( this.props.siteId );
+		this.props.fetchRecommendedPlugins(this.props.siteId);
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId !== this.props.siteId ) {
-			this.props.fetchRecommendedPlugins( this.props.siteId );
+	componentDidUpdate(prevProps) {
+		if (prevProps.siteId !== this.props.siteId) {
+			this.props.fetchRecommendedPlugins(this.props.siteId);
 		}
 	}
 
@@ -30,6 +30,6 @@ class QuerySiteRecommendedPlugins extends Component {
 	}
 }
 
-export default connect( null, {
+export default connect(null, {
 	fetchRecommendedPlugins,
-} )( QuerySiteRecommendedPlugins );
+})(QuerySiteRecommendedPlugins);

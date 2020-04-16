@@ -50,23 +50,23 @@ class RequestLoginEmailForm extends React.Component {
 		usernameOrEmail: this.props.userEmail || '',
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.requestError && nextProps.requestError ) {
-			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!this.props.requestError && nextProps.requestError) {
+			defer(() => this.usernameOrEmail && this.usernameOrEmail.focus());
 		}
 	}
 
-	onUsernameOrEmailFieldChange = event => {
-		this.setState( {
+	onUsernameOrEmailFieldChange = (event) => {
+		this.setState({
 			usernameOrEmail: event.target.value,
-		} );
+		});
 
-		if ( this.props.requestError ) {
+		if (this.props.requestError) {
 			this.props.hideMagicLoginRequestNotice();
 		}
 	};
 
-	saveUsernameOrEmailRef = input => {
+	saveUsernameOrEmailRef = (input) => {
 		this.usernameOrEmail = input;
 	};
 
@@ -74,23 +74,23 @@ class RequestLoginEmailForm extends React.Component {
 		this.props.hideMagicLoginRequestNotice();
 	};
 
-	onSubmit = event => {
+	onSubmit = (event) => {
 		event.preventDefault();
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 
-		if ( ! usernameOrEmail.length ) {
+		if (!usernameOrEmail.length) {
 			return;
 		}
 
-		this.props.sendEmailLogin( usernameOrEmail, {
+		this.props.sendEmailLogin(usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
-		} );
+		});
 	};
 
 	getUsernameOrEmailFromState() {
-		return get( this, 'state.usernameOrEmail', '' );
+		return get(this, 'state.usernameOrEmail', '');
 	}
 
 	render() {
@@ -105,66 +105,65 @@ class RequestLoginEmailForm extends React.Component {
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 
-		if ( showCheckYourEmail ) {
-			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
-			return <EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />;
+		if (showCheckYourEmail) {
+			const emailAddress = usernameOrEmail.indexOf('@') > 0 ? usernameOrEmail : null;
+			return <EmailedLoginLinkSuccessfully emailAddress={emailAddress} />;
 		}
 
-		const submitEnabled =
-			usernameOrEmail.length && ! isFetching && ! emailRequested && ! requestError;
+		const submitEnabled = usernameOrEmail.length && !isFetching && !emailRequested && !requestError;
 
 		const errorText =
 			typeof requestError === 'string' && requestError.length
 				? requestError
-				: translate( 'Unable to complete request' );
+				: translate('Unable to complete request');
 
 		return (
 			<div className="magic-login__form">
-				<h1 className="magic-login__form-header">{ translate( 'Email me a login link.' ) }</h1>
-				{ requestError && (
+				<h1 className="magic-login__form-header">{translate('Email me a login link.')}</h1>
+				{requestError && (
 					<Notice
-						duration={ 10000 }
-						text={ errorText }
+						duration={10000}
+						text={errorText}
 						className="magic-login__request-login-email-form-notice"
-						showDismiss={ true }
-						onDismissClick={ this.onNoticeDismiss }
+						showDismiss={true}
+						onDismissClick={this.onNoticeDismiss}
 						status="is-error"
 					/>
-				) }
-				{ currentUser && currentUser.username && (
+				)}
+				{currentUser && currentUser.username && (
 					<p>
-						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
+						{translate('NOTE: You are already logged in as user: %(user)s', {
 							args: {
 								user: currentUser.username,
 							},
-						} ) }
+						})}
 					</p>
-				) }
-				<LoggedOutForm onSubmit={ this.onSubmit }>
+				)}
+				<LoggedOutForm onSubmit={this.onSubmit}>
 					<p>
-						{ translate(
+						{translate(
 							'Get a link sent to the email address associated ' +
 								'with your account to log in instantly without your password.'
-						) }
+						)}
 					</p>
 					<label htmlFor="usernameOrEmail" className="magic-login__form-label">
-						{ this.props.translate( 'Email Address' ) }
+						{this.props.translate('Email Address')}
 					</label>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
 							autoCapitalize="off"
 							autoFocus="true"
-							disabled={ isFetching || emailRequested }
-							value={ usernameOrEmail }
+							disabled={isFetching || emailRequested}
+							value={usernameOrEmail}
 							name="usernameOrEmail"
 							type="text"
-							ref={ this.saveUsernameOrEmailRef }
-							onChange={ this.onUsernameOrEmailFieldChange }
+							ref={this.saveUsernameOrEmailRef}
+							onChange={this.onUsernameOrEmailFieldChange}
 						/>
 
 						<div className="magic-login__form-action">
-							<FormButton primary disabled={ ! submitEnabled }>
-								{ translate( 'Request Email' ) }
+							<FormButton primary disabled={!submitEnabled}>
+								{translate('Request Email')}
 							</FormButton>
 						</div>
 					</FormFieldset>
@@ -174,17 +173,17 @@ class RequestLoginEmailForm extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = (state) => {
 	return {
-		currentUser: getCurrentUser( state ),
-		isFetching: isFetchingMagicLoginEmail( state ),
-		redirectTo: getRedirectToOriginal( state ),
-		requestError: getMagicLoginRequestEmailError( state ),
-		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
-		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
+		currentUser: getCurrentUser(state),
+		isFetching: isFetchingMagicLoginEmail(state),
+		redirectTo: getRedirectToOriginal(state),
+		requestError: getMagicLoginRequestEmailError(state),
+		showCheckYourEmail: getMagicLoginCurrentView(state) === CHECK_YOUR_EMAIL_PAGE,
+		emailRequested: getMagicLoginRequestedEmailSuccessfully(state),
 		userEmail:
-			getInitialQueryArguments( state ).email_address ||
-			getCurrentQueryArguments( state ).email_address,
+			getInitialQueryArguments(state).email_address ||
+			getCurrentQueryArguments(state).email_address,
 	};
 };
 
@@ -194,4 +193,4 @@ const mapDispatch = {
 	recordTracksEvent,
 };
 
-export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );
+export default connect(mapState, mapDispatch)(localize(RequestLoginEmailForm));

@@ -24,7 +24,7 @@ import 'state/data-layer/wpcom/me/settings/profile-links/new';
  *
  * @returns {object} Action object
  */
-export const requestUserProfileLinks = () => ( { type: USER_PROFILE_LINKS_REQUEST } );
+export const requestUserProfileLinks = () => ({ type: USER_PROFILE_LINKS_REQUEST });
 
 /**
  * Returns an action object to signal the addition of user profile links.
@@ -32,10 +32,10 @@ export const requestUserProfileLinks = () => ( { type: USER_PROFILE_LINKS_REQUES
  * @param  {Array}  profileLinks Array containing the profile links of the current user.
  * @returns {object}              Action object
  */
-export const receiveUserProfileLinks = profileLinks => ( {
+export const receiveUserProfileLinks = (profileLinks) => ({
 	type: USER_PROFILE_LINKS_RECEIVE,
 	profileLinks,
-} );
+});
 
 /**
  * Returns an action object to signal a request for addition of user profile links.
@@ -43,10 +43,10 @@ export const receiveUserProfileLinks = profileLinks => ( {
  * @param  {Array}  profileLinks Array containing the new profile links.
  * @returns {object}              Action object
  */
-export const addUserProfileLinks = profileLinks => ( {
+export const addUserProfileLinks = (profileLinks) => ({
 	type: USER_PROFILE_LINKS_ADD,
 	profileLinks,
-} );
+});
 
 /**
  * Returns an action object to signal that adding user profile links was successful.
@@ -54,10 +54,10 @@ export const addUserProfileLinks = profileLinks => ( {
  * @param  {Array}  profileLinks Array containing the new profile links.
  * @returns {object}              Action object
  */
-export const addUserProfileLinksSuccess = profileLinks => ( {
+export const addUserProfileLinksSuccess = (profileLinks) => ({
 	type: USER_PROFILE_LINKS_ADD_SUCCESS,
 	profileLinks,
-} );
+});
 
 /**
  * Returns an action object to signal that adding user profile links was not successful.
@@ -66,11 +66,11 @@ export const addUserProfileLinksSuccess = profileLinks => ( {
  * @param  {object} error        Error received
  * @returns {object}              Action object
  */
-export const addUserProfileLinksError = ( profileLinks, error ) => ( {
+export const addUserProfileLinksError = (profileLinks, error) => ({
 	type: USER_PROFILE_LINKS_ADD_FAILURE,
 	profileLinks,
 	error,
-} );
+});
 
 /**
  * Returns an action object to signal that some user profile links are duplicate, thus were not added.
@@ -78,10 +78,10 @@ export const addUserProfileLinksError = ( profileLinks, error ) => ( {
  * @param  {Array}  profileLinks Array containing the duplicate profile links.
  * @returns {object}              Action object
  */
-export const addUserProfileLinksDuplicate = profileLinks => ( {
+export const addUserProfileLinksDuplicate = (profileLinks) => ({
 	type: USER_PROFILE_LINKS_ADD_DUPLICATE,
 	profileLinks,
-} );
+});
 
 /**
  * Returns an action object to signal that some user profile links are malformed, thus were not added.
@@ -89,19 +89,19 @@ export const addUserProfileLinksDuplicate = profileLinks => ( {
  * @param  {Array}  profileLinks Array containing the malformed profile links.
  * @returns {object}              Action object
  */
-export const addUserProfileLinksMalformed = profileLinks => ( {
+export const addUserProfileLinksMalformed = (profileLinks) => ({
 	type: USER_PROFILE_LINKS_ADD_MALFORMED,
 	profileLinks,
-} );
+});
 
 /**
  * Returns an action object to signal cleanup of all user profile links errors.
  *
  * @returns {object} Action object
  */
-export const resetUserProfileLinkErrors = () => ( {
+export const resetUserProfileLinkErrors = () => ({
 	type: USER_PROFILE_LINKS_RESET_ERRORS,
-} );
+});
 
 /**
  * Returns an action object to signal a request for the deletion of a user profile link.
@@ -109,10 +109,10 @@ export const resetUserProfileLinkErrors = () => ( {
  * @param  {string} linkSlug Slug of the user profile link to delete.
  * @returns {object}          Action object
  */
-export const deleteUserProfileLink = linkSlug => ( {
+export const deleteUserProfileLink = (linkSlug) => ({
 	type: USER_PROFILE_LINKS_DELETE,
 	linkSlug,
-} );
+});
 
 /**
  * Returns an action object to signal that request for the deletion of a user profile link was successful.
@@ -120,10 +120,10 @@ export const deleteUserProfileLink = linkSlug => ( {
  * @param  {string} linkSlug Slug of the user profile link to delete.
  * @returns {object}          Action object
  */
-export const deleteUserProfileLinkSuccess = linkSlug => ( {
+export const deleteUserProfileLinkSuccess = (linkSlug) => ({
 	type: USER_PROFILE_LINKS_DELETE_SUCCESS,
 	linkSlug,
-} );
+});
 
 /**
  * Returns an action object to signal that request for the deletion of a user profile link was not successful.
@@ -132,8 +132,8 @@ export const deleteUserProfileLinkSuccess = linkSlug => ( {
  * @param  {object} error    Error received
  * @returns {object}          Action object
  */
-export const deleteUserProfileLinkError = ( linkSlug, error ) => ( {
+export const deleteUserProfileLinkError = (linkSlug, error) => ({
 	type: USER_PROFILE_LINKS_DELETE_FAILURE,
 	linkSlug,
 	error,
-} );
+});

@@ -39,67 +39,67 @@ export interface ActionsConfig extends WpcomClientCredentials {
 	loadCookiesAfterLogin?: boolean;
 }
 
-export function createActions( {
+export function createActions({
 	client_id,
 	client_secret,
 	loadCookiesAfterLogin = true,
-}: ActionsConfig ) {
+}: ActionsConfig) {
 	const reset = () =>
-		( {
+		({
 			type: 'RESET_LOGIN_FLOW' as const,
-		} as const );
+		} as const);
 
-	const receiveAuthOptions = ( response: AuthOptionsSuccessResponse, usernameOrEmail: string ) =>
-		( {
+	const receiveAuthOptions = (response: AuthOptionsSuccessResponse, usernameOrEmail: string) =>
+		({
 			type: 'RECEIVE_AUTH_OPTIONS',
 			response,
 			usernameOrEmail,
-		} as const );
+		} as const);
 
-	const receiveAuthOptionsFailed = ( response: AuthOptionsErrorResponse ) =>
-		( {
+	const receiveAuthOptionsFailed = (response: AuthOptionsErrorResponse) =>
+		({
 			type: 'RECEIVE_AUTH_OPTIONS_FAILED',
 			response,
-		} as const );
+		} as const);
 
-	const receiveSendLoginEmail = ( response: SendLoginEmailSuccessResponse ) =>
-		( {
+	const receiveSendLoginEmail = (response: SendLoginEmailSuccessResponse) =>
+		({
 			type: 'RECEIVE_SEND_LOGIN_EMAIL',
 			response,
-		} as const );
+		} as const);
 
-	const receiveSendLoginEmailFailed = ( response: SendLoginEmailErrorResponse ) =>
-		( {
+	const receiveSendLoginEmailFailed = (response: SendLoginEmailErrorResponse) =>
+		({
 			type: 'RECEIVE_SEND_LOGIN_EMAIL_FAILED',
 			response,
-		} as const );
+		} as const);
 
 	const clearErrors = () =>
-		( {
+		({
 			type: 'CLEAR_ERRORS',
-		} as const );
+		} as const);
 
-	const startPollingTask = ( pollingTaskId: number ) =>
-		( {
+	const startPollingTask = (pollingTaskId: number) =>
+		({
 			type: 'START_POLLING_TASK',
 			pollingTaskId,
-		} as const );
+		} as const);
 
-	function* submitUsernameOrEmail( usernameOrEmail: string ) {
+	function* submitUsernameOrEmail(usernameOrEmail: string) {
 		yield clearErrors();
-		const escaped = encodeURIComponent( usernameOrEmail );
+		const escaped = encodeURIComponent(usernameOrEmail);
 
 		try {
-			const authOptions = yield wpcomRequest( {
-				path: `/users/${ escaped }/auth-options`,
+			const authOptions = yield wpcomRequest({
+				path: `/users/${escaped}/auth-options`,
 				apiVersion: '1.1',
-			} );
+			});
 
-			yield receiveAuthOptions( authOptions, usernameOrEmail );
+			yield receiveAuthOptions(authOptions, usernameOrEmail);
 
-			if ( authOptions.passwordless ) {
+			if (authOptions.passwordless) {
 				try {
-					const emailResponse = yield wpcomRequest( {
+					const emailResponse = yield wpcomRequest({
 						path: `/auth/send-login-email`,
 						apiVersion: '1.2',
 						method: 'post',
@@ -113,139 +113,139 @@ export function createActions( {
 							client_id,
 							client_secret,
 						},
-					} );
+					});
 
-					yield receiveSendLoginEmail( emailResponse );
-				} catch ( err ) {
-					yield receiveSendLoginEmailFailed( err );
+					yield receiveSendLoginEmail(emailResponse);
+				} catch (err) {
+					yield receiveSendLoginEmailFailed(err);
 				}
 			}
-		} catch ( err ) {
-			yield receiveAuthOptionsFailed( err );
+		} catch (err) {
+			yield receiveAuthOptionsFailed(err);
 		}
 	}
 
-	const receiveWpLogin = ( response: WpLoginSuccessResponse ) =>
-		( {
+	const receiveWpLogin = (response: WpLoginSuccessResponse) =>
+		({
 			type: 'RECEIVE_WP_LOGIN',
 			response,
-		} as const );
+		} as const);
 
-	const receiveWpLoginFailed = ( response: WpLoginErrorResponse ) =>
-		( {
+	const receiveWpLoginFailed = (response: WpLoginErrorResponse) =>
+		({
 			type: 'RECEIVE_WP_LOGIN_FAILED',
 			response,
-		} as const );
+		} as const);
 
-	function* submitPassword( password: string ) {
+	function* submitPassword(password: string) {
 		yield clearErrors();
-		const username = yield select( STORE_KEY, 'getUsernameOrEmail' );
+		const username = yield select(STORE_KEY, 'getUsernameOrEmail');
 
 		try {
-			const loginResponse = yield* wpLogin( 'login-endpoint', {
+			const loginResponse = yield* wpLogin('login-endpoint', {
 				remember_me: true,
 				username,
 				password,
-			} );
+			});
 
-			if ( ! loginResponse.success ) {
-				yield receiveWpLoginFailed( loginResponse );
-			} else if ( loginResponse.data.two_step_notification_sent ) {
-				yield receiveWpLogin( loginResponse );
+			if (!loginResponse.success) {
+				yield receiveWpLoginFailed(loginResponse);
+			} else if (loginResponse.data.two_step_notification_sent) {
+				yield receiveWpLogin(loginResponse);
 
-				const twoFactorResponse = yield* handle2fa( loginResponse.data );
-				if ( twoFactorResponse.success ) {
-					yield* handleSuccessfulLogin( twoFactorResponse );
-				} else if ( twoFactorResponse.success === false ) {
-					yield receiveWpLoginFailed( twoFactorResponse );
+				const twoFactorResponse = yield* handle2fa(loginResponse.data);
+				if (twoFactorResponse.success) {
+					yield* handleSuccessfulLogin(twoFactorResponse);
+				} else if (twoFactorResponse.success === false) {
+					yield receiveWpLoginFailed(twoFactorResponse);
 				} else {
 					// If success is undefined then 2fa polling was canceled
 				}
 			} else {
-				yield* handleSuccessfulLogin( loginResponse );
+				yield* handleSuccessfulLogin(loginResponse);
 			}
-		} catch ( e ) {
+		} catch (e) {
 			const error = {
 				code: e.name,
 				message: e.message,
 			};
 
-			yield receiveWpLoginFailed( {
+			yield receiveWpLoginFailed({
 				success: false,
-				data: { errors: [ error ] },
-			} );
+				data: { errors: [error] },
+			});
 		}
 	}
 
-	function* handleSuccessfulLogin( response: WpLoginSuccessResponse ) {
-		if ( loadCookiesAfterLogin ) {
+	function* handleSuccessfulLogin(response: WpLoginSuccessResponse) {
+		if (loadCookiesAfterLogin) {
 			yield reloadProxy();
 			// Need to rerequest access after the proxy is reloaded
 			yield requestAllBlogsAccess();
 		}
 
-		if ( response.data.two_step_notification_sent === undefined ) {
-			yield remoteLoginUser( response.data.token_links );
+		if (response.data.two_step_notification_sent === undefined) {
+			yield remoteLoginUser(response.data.token_links);
 		}
 
-		yield receiveWpLogin( response );
+		yield receiveWpLogin(response);
 	}
 
 	function* handle2fa(
-		loginResponseData: Exclude< WpLoginSuccessResponse[ 'data' ], LoginCompleteData >
+		loginResponseData: Exclude<WpLoginSuccessResponse['data'], LoginCompleteData>
 	) {
-		switch ( loginResponseData.two_step_notification_sent ) {
+		switch (loginResponseData.two_step_notification_sent) {
 			case 'push':
-				return yield* handlePush2fa( loginResponseData );
+				return yield* handlePush2fa(loginResponseData);
 		}
 	}
 
-	function* handlePush2fa( {
+	function* handlePush2fa({
 		user_id,
 		push_web_token,
 		two_step_nonce_push,
-	}: PushNotificationSentData ) {
+	}: PushNotificationSentData) {
 		let two_step_nonce = two_step_nonce_push;
 
 		const pollingTaskId = getNextTaskId();
-		yield startPollingTask( pollingTaskId );
+		yield startPollingTask(pollingTaskId);
 
-		while ( true ) {
-			const currentPollingTaskId = yield select( STORE_KEY, 'getPollingTaskId' );
+		while (true) {
+			const currentPollingTaskId = yield select(STORE_KEY, 'getPollingTaskId');
 
-			if ( currentPollingTaskId !== pollingTaskId ) {
+			if (currentPollingTaskId !== pollingTaskId) {
 				// Polling has been canceled, either by `reset()` or by a subsequent call to log in
 				return { success: undefined, canceled: true };
 			}
 
 			try {
-				const response: WpLoginResponse = yield* wpLogin( 'two-step-authentication-endpoint', {
+				const response: WpLoginResponse = yield* wpLogin('two-step-authentication-endpoint', {
 					remember_me: true,
 					auth_type: 'push',
 					user_id,
 					two_step_nonce,
 					two_step_push_token: push_web_token,
-				} );
+				});
 
-				if ( response.success || ! response.data.two_step_nonce ) {
+				if (response.success || !response.data.two_step_nonce) {
 					return response;
 				}
 
 				two_step_nonce = response.data.two_step_nonce;
-			} catch ( e ) {
+			} catch (e) {
 				// Ignore network errors, they may continue
 			}
 
-			yield wait( POLL_APP_PUSH_INTERVAL_SECONDS * 1000 );
+			yield wait(POLL_APP_PUSH_INTERVAL_SECONDS * 1000);
 		}
 	}
 
 	type WpLoginAction = 'two-step-authentication-endpoint' | 'login-endpoint';
 
-	function* wpLogin( action: WpLoginAction, body: object ) {
+	function* wpLogin(action: WpLoginAction, body: object) {
 		const response = yield fetchAndParse(
 			// TODO Wrap this in `localizeUrl` from lib/i18n-utils
-			'https://wordpress.com/wp-login.php?action=' + encodeURIComponent( action ),
+			'https://wordpress.com/wp-login.php?action=' + encodeURIComponent(action),
 			{
 				credentials: 'include',
 				method: 'POST',
@@ -253,11 +253,11 @@ export function createActions( {
 					Accept: 'application/json',
 					'Content-Type': 'application/x-www-form-urlencoded',
 				},
-				body: stringify( {
+				body: stringify({
 					client_id,
 					client_secret,
 					...body,
-				} ),
+				}),
 			}
 		);
 
@@ -279,19 +279,19 @@ export function createActions( {
 	};
 }
 
-type ActionCreators = ReturnType< typeof createActions >;
+type ActionCreators = ReturnType<typeof createActions>;
 
 export type Action =
 	| ReturnType<
-			| ActionCreators[ 'reset' ]
-			| ActionCreators[ 'clearErrors' ]
-			| ActionCreators[ 'receiveAuthOptions' ]
-			| ActionCreators[ 'receiveAuthOptionsFailed' ]
-			| ActionCreators[ 'receiveWpLogin' ]
-			| ActionCreators[ 'receiveWpLoginFailed' ]
-			| ActionCreators[ 'receiveSendLoginEmail' ]
-			| ActionCreators[ 'receiveSendLoginEmailFailed' ]
-			| ActionCreators[ 'startPollingTask' ]
+			| ActionCreators['reset']
+			| ActionCreators['clearErrors']
+			| ActionCreators['receiveAuthOptions']
+			| ActionCreators['receiveAuthOptionsFailed']
+			| ActionCreators['receiveWpLogin']
+			| ActionCreators['receiveWpLoginFailed']
+			| ActionCreators['receiveSendLoginEmail']
+			| ActionCreators['receiveSendLoginEmailFailed']
+			| ActionCreators['startPollingTask']
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

@@ -53,18 +53,18 @@ class ReviewsList extends Component {
 		};
 
 		const updatedStateQuery = { page: 1, search: '' };
-		if ( productId ) {
+		if (productId) {
 			query.product = productId;
 			updatedStateQuery.product = productId;
 		}
 
-		this.props.updateCurrentReviewsQuery( this.props.siteId, updatedStateQuery );
-		if ( siteId ) {
-			this.props.fetchReviews( siteId, query );
+		this.props.updateCurrentReviewsQuery(this.props.siteId, updatedStateQuery);
+		if (siteId) {
+			this.props.fetchReviews(siteId, query);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { currentPage, currentSearch, currentStatus, siteId, productId } = this.props;
 
 		const hasAnythingChanged =
@@ -73,7 +73,7 @@ class ReviewsList extends Component {
 			newProps.currentStatus !== currentStatus ||
 			newProps.productId !== productId ||
 			newProps.siteId !== siteId;
-		if ( ! newProps.siteId || ! hasAnythingChanged ) {
+		if (!newProps.siteId || !hasAnythingChanged) {
 			return;
 		}
 
@@ -83,78 +83,78 @@ class ReviewsList extends Component {
 			status: newProps.currentStatus,
 		};
 
-		if ( newProps.currentSearch !== currentSearch ) {
+		if (newProps.currentSearch !== currentSearch) {
 			const updatedStateQuery = { page: 1, status: 'any' };
-			if ( productId ) {
+			if (productId) {
 				updatedStateQuery.product = productId;
 			}
-			this.props.updateCurrentReviewsQuery( siteId, updatedStateQuery );
+			this.props.updateCurrentReviewsQuery(siteId, updatedStateQuery);
 			query.page = 1;
 			query.status = 'any';
-		} else if ( newProps.currentStatus !== currentStatus ) {
+		} else if (newProps.currentStatus !== currentStatus) {
 			const updatedStateQuery = { page: 1, search: '' };
-			if ( productId ) {
+			if (productId) {
 				updatedStateQuery.product = productId;
 			}
-			this.props.updateCurrentReviewsQuery( siteId, updatedStateQuery );
+			this.props.updateCurrentReviewsQuery(siteId, updatedStateQuery);
 			query.page = 1;
 			query.search = '';
 		}
 
-		if ( '' !== query.search ) {
+		if ('' !== query.search) {
 			query.status = 'any';
 		}
 
-		if ( productId ) {
+		if (productId) {
 			query.product = productId;
 		}
 
-		this.props.fetchReviews( newProps.siteId, query );
+		this.props.fetchReviews(newProps.siteId, query);
 	}
 
 	renderPlaceholders = () => {
-		return range( 5 ).map( i => {
+		return range(5).map((i) => {
 			return (
-				<Card key={ i } className="reviews__card">
+				<Card key={i} className="reviews__card">
 					<div className="reviews__placeholder" />
 				</Card>
 			);
-		} );
+		});
 	};
 
 	renderNoContent = () => {
 		const { currentSearch, currentStatus, translate } = this.props;
-		let emptyMessage = translate( 'No pending reviews.' );
-		let lineMessage = translate( 'Your queue is clear.' );
-		if ( currentSearch ) {
-			emptyMessage = translate( 'There are no reviews matching your search.' );
+		let emptyMessage = translate('No pending reviews.');
+		let lineMessage = translate('Your queue is clear.');
+		if (currentSearch) {
+			emptyMessage = translate('There are no reviews matching your search.');
 			lineMessage = '';
-		} else if ( 'approved' === currentStatus ) {
-			emptyMessage = translate( 'No approved reviews.' );
-		} else if ( 'spam' === currentStatus ) {
-			emptyMessage = translate( 'No spam reviews.' );
-		} else if ( 'trash' === currentStatus ) {
-			emptyMessage = translate( 'No deleted reviews.' );
+		} else if ('approved' === currentStatus) {
+			emptyMessage = translate('No approved reviews.');
+		} else if ('spam' === currentStatus) {
+			emptyMessage = translate('No spam reviews.');
+		} else if ('trash' === currentStatus) {
+			emptyMessage = translate('No deleted reviews.');
 		}
 
 		return (
 			<EmptyContent
-				title={ emptyMessage }
+				title={emptyMessage}
 				illustration="/calypso/images/comments/illustration_comments_gray.svg"
-				illustrationWidth={ 150 }
-				line={ lineMessage }
+				illustrationWidth={150}
+				line={lineMessage}
 			/>
 		);
 	};
 
-	renderReview = ( review, i ) => {
+	renderReview = (review, i) => {
 		const { siteId } = this.props;
 		return (
 			<ReviewCard
-				key={ i }
-				siteId={ siteId }
-				review={ review }
-				currentStatus={ this.props.currentStatus }
+				key={i}
+				siteId={siteId}
+				review={review}
+				currentStatus={this.props.currentStatus}
 			/>
 		);
 	};
@@ -163,23 +163,23 @@ class ReviewsList extends Component {
 		const { reviews, reviewsLoaded } = this.props;
 		return (
 			<div className="reviews__list">
-				{ ! reviewsLoaded ? this.renderPlaceholders() : reviews.map( this.renderReview ) }
+				{!reviewsLoaded ? this.renderPlaceholders() : reviews.map(this.renderReview)}
 			</div>
 		);
 	};
 
-	onPageClick = nextPage => {
+	onPageClick = (nextPage) => {
 		const { productId } = this.props;
 		const updatedStateQuery = {
 			page: nextPage,
 			status: this.props.currentStatus,
 		};
 
-		if ( productId ) {
+		if (productId) {
 			updatedStateQuery.product = productId;
 		}
 
-		this.props.updateCurrentReviewsQuery( this.props.siteId, updatedStateQuery );
+		this.props.updateCurrentReviewsQuery(this.props.siteId, updatedStateQuery);
 	};
 
 	render() {
@@ -187,29 +187,24 @@ class ReviewsList extends Component {
 
 		return (
 			<div className="reviews__container">
-				<ReviewsFilterNav productId={ productId } status={ currentStatus } />
+				<ReviewsFilterNav productId={productId} status={currentStatus} />
 
-				{ ! reviewsLoaded || ( reviews && reviews.length )
+				{!reviewsLoaded || (reviews && reviews.length)
 					? this.renderReviews()
-					: this.renderNoContent() }
+					: this.renderNoContent()}
 
-				<Pagination
-					page={ currentPage }
-					perPage={ 10 }
-					total={ total }
-					pageClick={ this.onPageClick }
-				/>
+				<Pagination page={currentPage} perPage={10} total={total} pageClick={this.onPageClick} />
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => {
-		const site = getSelectedSiteWithFallback( state );
+	(state, props) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site ? site.ID : false;
-		const currentPage = getReviewsCurrentPage( state, siteId );
-		const currentSearch = getReviewsCurrentSearch( state, siteId );
+		const currentPage = getReviewsCurrentPage(state, siteId);
+		const currentSearch = getReviewsCurrentSearch(state, siteId);
 		const currentStatus = props.currentStatus || 'pending';
 
 		const query = {
@@ -218,18 +213,18 @@ export default connect(
 			status: currentStatus,
 		};
 
-		if ( '' !== currentSearch ) {
+		if ('' !== currentSearch) {
 			query.status = 'any';
 		}
 
-		if ( props.productId ) {
+		if (props.productId) {
 			query.product = props.productId;
 		}
 
-		const reviews = getReviews( state, query, siteId ) || [];
-		const reviewsLoading = areReviewsLoading( state, query, siteId );
-		const reviewsLoaded = areReviewsLoaded( state, query, siteId );
-		const total = getTotalReviews( state, query, siteId );
+		const reviews = getReviews(state, query, siteId) || [];
+		const reviewsLoading = areReviewsLoading(state, query, siteId);
+		const reviewsLoaded = areReviewsLoaded(state, query, siteId);
+		const total = getTotalReviews(state, query, siteId);
 
 		return {
 			currentPage,
@@ -242,5 +237,5 @@ export default connect(
 			total,
 		};
 	},
-	dispatch => bindActionCreators( { fetchReviews, updateCurrentReviewsQuery }, dispatch )
-)( localize( ReviewsList ) );
+	(dispatch) => bindActionCreators({ fetchReviews, updateCurrentReviewsQuery }, dispatch)
+)(localize(ReviewsList));

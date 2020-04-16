@@ -17,6 +17,6 @@ import 'state/data-layer/wpcom/sites/scan';
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {?boolean}          Whether the connection data is being requested
  */
-export default function isRequestingJetpackScan( state, siteId ) {
-	return get( state.jetpackScan.requestStatus, [ siteId ], false ) === 'pending';
+export default function isRequestingJetpackScan(state, siteId) {
+	return get(state.jetpackScan.requestStatus, [siteId], false) === 'pending';
 }

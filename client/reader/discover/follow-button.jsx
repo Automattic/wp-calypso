@@ -18,40 +18,40 @@ class DiscoverFollowButton extends React.Component {
 		followUrl: PropTypes.string.isRequired,
 	};
 
-	recordFollowToggle = isFollowing => {
-		recordFollowToggle( isFollowing, this.props.siteUrl );
+	recordFollowToggle = (isFollowing) => {
+		recordFollowToggle(isFollowing, this.props.siteUrl);
 	};
 
 	render() {
-		if ( ! this.props.followUrl ) {
+		if (!this.props.followUrl) {
 			return null;
 		}
 
-		const followLabel = this.props.translate( 'Follow %(siteName)s', {
+		const followLabel = this.props.translate('Follow %(siteName)s', {
 			args: {
 				siteName: this.props.siteName,
 			},
-		} );
-		const followingLabel = this.props.translate( 'Following %(siteName)s', {
+		});
+		const followingLabel = this.props.translate('Following %(siteName)s', {
 			args: {
 				siteName: this.props.siteName,
 			},
-		} );
+		});
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FollowButton
 				className="is-discover"
-				siteUrl={ this.props.followUrl }
-				iconSize={ 20 }
-				onFollowToggle={ this.recordFollowToggle }
-				followLabel={ followLabel }
-				followingLabel={ followingLabel }
-				followSource={ DISCOVER_POST }
+				siteUrl={this.props.followUrl}
+				iconSize={20}
+				onFollowToggle={this.recordFollowToggle}
+				followLabel={followLabel}
+				followingLabel={followingLabel}
+				followSource={DISCOVER_POST}
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default localize( DiscoverFollowButton );
+export default localize(DiscoverFollowButton);

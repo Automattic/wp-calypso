@@ -84,14 +84,14 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	componentDidMount() {
-		this.pinToolbarOnScroll = throttle( this.pinToolbarOnScroll, 50 );
-		this.hideToolbarFadeOnFullScroll = throttle( this.hideToolbarFadeOnFullScroll, 200 );
-		this.onWindowResize = throttle( this.onWindowResize, 400 );
+		this.pinToolbarOnScroll = throttle(this.pinToolbarOnScroll, 50);
+		this.hideToolbarFadeOnFullScroll = throttle(this.hideToolbarFadeOnFullScroll, 200);
+		this.onWindowResize = throttle(this.onWindowResize, 400);
 
-		window.addEventListener( 'scroll', this.pinToolbarOnScroll );
-		window.addEventListener( 'resize', this.onWindowResize );
-		this.buttons.addEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
-		document.addEventListener( 'click', this.clickOutsideInsertContentMenu );
+		window.addEventListener('scroll', this.pinToolbarOnScroll);
+		window.addEventListener('resize', this.onWindowResize);
+		this.buttons.addEventListener('scroll', this.hideToolbarFadeOnFullScroll);
+		document.addEventListener('click', this.clickOutsideInsertContentMenu);
 
 		this.toggleToolbarScrollableOnResize();
 	}
@@ -100,17 +100,17 @@ export class EditorHtmlToolbar extends Component {
 		this.pinToolbarOnScroll.cancel();
 		this.onWindowResize.cancel();
 		this.hideToolbarFadeOnFullScroll.cancel();
-		window.removeEventListener( 'scroll', this.pinToolbarOnScroll );
-		window.removeEventListener( 'resize', this.onWindowResize );
-		this.buttons.removeEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
-		document.removeEventListener( 'click', this.clickOutsideInsertContentMenu );
+		window.removeEventListener('scroll', this.pinToolbarOnScroll);
+		window.removeEventListener('resize', this.onWindowResize);
+		this.buttons.removeEventListener('scroll', this.hideToolbarFadeOnFullScroll);
+		document.removeEventListener('click', this.clickOutsideInsertContentMenu);
 	}
 
-	bindButtonsRef = div => {
+	bindButtonsRef = (div) => {
 		this.buttons = div;
 	};
 
-	bindInsertContentButtonsRef = div => {
+	bindInsertContentButtonsRef = (div) => {
 		this.insertContentButtons = div;
 	};
 
@@ -120,49 +120,46 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	pinToolbarOnScroll = () => {
-		if ( isWithinBreakpoint( '<660px' ) ) {
+		if (isWithinBreakpoint('<660px')) {
 			return;
 		}
 
 		const { offsetTop } = this.props.content;
 		const { isPinned } = this.state;
 
-		if ( isPinned && window.pageYOffset < offsetTop - TOOLBAR_HEIGHT ) {
-			this.setState( { isPinned: false } );
-		} else if ( ! isPinned && window.pageYOffset > offsetTop - TOOLBAR_HEIGHT ) {
-			this.setState( { isPinned: true } );
+		if (isPinned && window.pageYOffset < offsetTop - TOOLBAR_HEIGHT) {
+			this.setState({ isPinned: false });
+		} else if (!isPinned && window.pageYOffset > offsetTop - TOOLBAR_HEIGHT) {
+			this.setState({ isPinned: true });
 		}
 	};
 
 	disablePinOnSmallScreens = () => {
-		if ( this.state.isPinned && isWithinBreakpoint( '<660px' ) ) {
-			this.setState( { isPinned: false } );
+		if (this.state.isPinned && isWithinBreakpoint('<660px')) {
+			this.setState({ isPinned: false });
 		}
 	};
 
 	toggleToolbarScrollableOnResize = () => {
 		const isScrollable = this.buttons.scrollWidth > this.buttons.clientWidth;
-		if ( isScrollable !== this.state.isScrollable ) {
-			this.setState( { isScrollable } );
+		if (isScrollable !== this.state.isScrollable) {
+			this.setState({ isScrollable });
 		}
 	};
 
-	hideToolbarFadeOnFullScroll = event => {
+	hideToolbarFadeOnFullScroll = (event) => {
 		const { scrollLeft, scrollWidth, clientWidth } = event.target;
 		// 10 is bit of tolerance in case the scroll stops some pixels short of the toolbar width
 		const isScrolledFull = scrollLeft >= scrollWidth - clientWidth - 10;
 
-		if ( isScrolledFull !== this.state.isScrolledFull ) {
-			this.setState( { isScrolledFull } );
+		if (isScrolledFull !== this.state.isScrolledFull) {
+			this.setState({ isScrolledFull });
 		}
 	};
 
-	clickOutsideInsertContentMenu = event => {
-		if (
-			this.state.showInsertContentMenu &&
-			! this.insertContentButtons.contains( event.target )
-		) {
-			this.setState( { showInsertContentMenu: false } );
+	clickOutsideInsertContentMenu = (event) => {
+		if (this.state.showInsertContentMenu && !this.insertContentButtons.contains(event.target)) {
+			this.setState({ showInsertContentMenu: false });
 		}
 	};
 
@@ -171,45 +168,45 @@ export class EditorHtmlToolbar extends Component {
 			content: { selectionEnd, selectionStart, value },
 		} = this.props;
 		return {
-			before: value.substring( 0, selectionStart ),
-			inner: value.substring( selectionStart, selectionEnd ),
-			after: value.substring( selectionEnd, value.length ),
+			before: value.substring(0, selectionStart),
+			inner: value.substring(selectionStart, selectionEnd),
+			after: value.substring(selectionEnd, value.length),
 		};
 	}
 
-	setCursorPosition( previousSelectionEnd, insertedContentLength ) {
+	setCursorPosition(previousSelectionEnd, insertedContentLength) {
 		this.props.content.selectionEnd = this.props.content.selectionStart =
 			previousSelectionEnd + insertedContentLength;
 	}
 
-	updateEditorContent = ( before, newContent, after ) => {
+	updateEditorContent = (before, newContent, after) => {
 		// Browser is Firefox
-		if ( Env.gecko ) {
+		if (Env.gecko) {
 			// In Firefox, execCommand( 'insertText' ), needed to preserve the undo stack,
 			// always moves the cursor to the end of the content.
 			// A workaround involving manually setting the cursor position and inserting the editor content
 			// is needed to put the cursor back to the correct position.
-			return this.updateEditorContentFirefox( before, newContent, after );
+			return this.updateEditorContentFirefox(before, newContent, after);
 		}
 
 		// Browser is Internet Explorer 11
-		if ( 11 === Env.ie ) {
+		if (11 === Env.ie) {
 			// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
 			// Using the previous version of replacing the entire content value instead.
-			return this.updateEditorContentIE11( before, newContent, after );
+			return this.updateEditorContentIE11(before, newContent, after);
 		}
 
-		return this.insertEditorContent( before, newContent, after );
+		return this.insertEditorContent(before, newContent, after);
 	};
 
-	insertEditorContent( before, newContent, after ) {
+	insertEditorContent(before, newContent, after) {
 		const { content, onToolbarChangeContent } = this.props;
 		content.focus();
-		document.execCommand( 'insertText', false, newContent );
-		onToolbarChangeContent( before + newContent + after );
+		document.execCommand('insertText', false, newContent);
+		onToolbarChangeContent(before + newContent + after);
 	}
 
-	updateEditorContentFirefox( before, newContent, after ) {
+	updateEditorContentFirefox(before, newContent, after) {
 		const fullContent = before + newContent + after;
 		const {
 			content,
@@ -218,264 +215,260 @@ export class EditorHtmlToolbar extends Component {
 		} = this.props;
 		this.props.content.value = fullContent;
 		content.focus();
-		document.execCommand( 'insertText', false, newContent );
-		onToolbarChangeContent( fullContent );
-		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
+		document.execCommand('insertText', false, newContent);
+		onToolbarChangeContent(fullContent);
+		this.setCursorPosition(selectionEnd, fullContent.length - value.length);
 		this.props.content.focus();
 	}
 
-	updateEditorContentIE11( before, newContent, after ) {
+	updateEditorContentIE11(before, newContent, after) {
 		const fullContent = before + newContent + after;
 		const {
 			content: { selectionEnd, value },
 			onToolbarChangeContent,
 		} = this.props;
 		this.props.content.value = fullContent;
-		onToolbarChangeContent( fullContent );
-		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
+		onToolbarChangeContent(fullContent);
+		this.setCursorPosition(selectionEnd, fullContent.length - value.length);
 	}
 
-	attributesToString = ( attributes = {} ) =>
+	attributesToString = (attributes = {}) =>
 		reduce(
 			attributes,
-			( attributesString, attributeValue, attributeName ) =>
+			(attributesString, attributeValue, attributeName) =>
 				attributeValue
-					? attributesString + ` ${ attributeName }="${ attributeValue }"`
+					? attributesString + ` ${attributeName}="${attributeValue}"`
 					: attributesString,
 			''
 		);
 
-	openHtmlTag = ( { name, attributes = {}, options = {} } ) =>
-		( options.paragraph ? '\n' : '' ) +
-		( options.indent ? '\t' : '' ) +
-		`<${ name }${ this.attributesToString( attributes ) }>` +
-		( options.paragraph ? '\n' : '' );
+	openHtmlTag = ({ name, attributes = {}, options = {} }) =>
+		(options.paragraph ? '\n' : '') +
+		(options.indent ? '\t' : '') +
+		`<${name}${this.attributesToString(attributes)}>` +
+		(options.paragraph ? '\n' : '');
 
-	closeHtmlTag = ( { name, options = {} } ) =>
-		`</${ name }>` + ( options.newLineAfter ? '\n' : '' ) + ( options.paragraph ? '\n\n' : '' );
+	closeHtmlTag = ({ name, options = {} }) =>
+		`</${name}>` + (options.newLineAfter ? '\n' : '') + (options.paragraph ? '\n\n' : '');
 
-	insertHtmlTagOpen( tag ) {
+	insertHtmlTagOpen(tag) {
 		const { openTags } = this.state;
 		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent( before, this.openHtmlTag( tag ), after );
-		this.setState( { openTags: openTags.concat( tag.name ) } );
+		this.updateEditorContent(before, this.openHtmlTag(tag), after);
+		this.setState({ openTags: openTags.concat(tag.name) });
 	}
 
-	insertHtmlTagClose( tag ) {
+	insertHtmlTagClose(tag) {
 		const { openTags } = this.state;
 		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent( before, this.closeHtmlTag( tag ), after );
-		this.setState( { openTags: openTags.filter( openTag => openTag !== tag.name ) } );
+		this.updateEditorContent(before, this.closeHtmlTag(tag), after);
+		this.setState({ openTags: openTags.filter((openTag) => openTag !== tag.name) });
 	}
 
-	insertHtmlTagOpenClose( tag ) {
+	insertHtmlTagOpenClose(tag) {
 		const { before, inner, after } = this.splitEditorContent();
-		this.updateEditorContent(
-			before,
-			this.openHtmlTag( tag ) + inner + this.closeHtmlTag( tag ),
-			after
-		);
+		this.updateEditorContent(before, this.openHtmlTag(tag) + inner + this.closeHtmlTag(tag), after);
 	}
 
-	insertHtmlTagSelfClosed( tag ) {
+	insertHtmlTagSelfClosed(tag) {
 		const { before, inner, after } = this.splitEditorContent();
-		const selfClosedTag = `<${ tag.name }${ this.attributesToString( tag.attributes ) } />`;
+		const selfClosedTag = `<${tag.name}${this.attributesToString(tag.attributes)} />`;
 		const content =
 			tag.options && tag.options.paragraph ? '\n' + selfClosedTag + '\n\n' : selfClosedTag;
-		this.updateEditorContent( before, inner + content, after );
+		this.updateEditorContent(before, inner + content, after);
 	}
 
-	insertHtmlTagWithText( tag ) {
+	insertHtmlTagWithText(tag) {
 		const { before, after } = this.splitEditorContent();
 		this.updateEditorContent(
 			before,
-			this.openHtmlTag( tag ) + tag.options.text + this.closeHtmlTag( tag ),
+			this.openHtmlTag(tag) + tag.options.text + this.closeHtmlTag(tag),
 			after
 		);
 	}
 
-	insertCustomContent( content, options = {} ) {
+	insertCustomContent(content, options = {}) {
 		const { before, inner, after } = this.splitEditorContent();
 		const paragraph = options.paragraph ? '\n' : '';
-		this.updateEditorContent( before, inner + paragraph + content + paragraph + paragraph, after );
+		this.updateEditorContent(before, inner + paragraph + content + paragraph + paragraph, after);
 	}
 
-	insertHtmlTag( tag ) {
+	insertHtmlTag(tag) {
 		const {
 			content: { selectionEnd, selectionStart },
 		} = this.props;
-		if ( selectionEnd === selectionStart ) {
-			this.isTagOpen( tag.name ) ? this.insertHtmlTagClose( tag ) : this.insertHtmlTagOpen( tag );
+		if (selectionEnd === selectionStart) {
+			this.isTagOpen(tag.name) ? this.insertHtmlTagClose(tag) : this.insertHtmlTagOpen(tag);
 		} else {
-			this.insertHtmlTagOpenClose( tag );
+			this.insertHtmlTagOpenClose(tag);
 		}
 	}
 
 	onClickBold = () => {
-		this.insertHtmlTag( { name: 'strong' } );
+		this.insertHtmlTag({ name: 'strong' });
 	};
 
 	onClickItalic = () => {
-		this.insertHtmlTag( { name: 'em' } );
+		this.insertHtmlTag({ name: 'em' });
 	};
 
-	onClickLink = ( attributes, text ) => {
-		if ( text ) {
-			this.insertHtmlTagWithText( { name: 'a', attributes, options: { text } } );
+	onClickLink = (attributes, text) => {
+		if (text) {
+			this.insertHtmlTagWithText({ name: 'a', attributes, options: { text } });
 		} else {
-			this.insertHtmlTagOpenClose( { name: 'a', attributes } );
+			this.insertHtmlTagOpenClose({ name: 'a', attributes });
 			// Move the cursor inside <a></a>
-			this.setCursorPosition( this.props.content.selectionEnd, -4 );
+			this.setCursorPosition(this.props.content.selectionEnd, -4);
 		}
 	};
 
 	onClickQuote = () => {
-		this.insertHtmlTag( { name: 'blockquote', options: { paragraph: true } } );
+		this.insertHtmlTag({ name: 'blockquote', options: { paragraph: true } });
 	};
 
 	onClickDelete = () => {
 		const datetime = this.props.moment().format();
-		this.insertHtmlTag( { name: 'del', attributes: { datetime } } );
+		this.insertHtmlTag({ name: 'del', attributes: { datetime } });
 	};
 
 	onClickInsert = () => {
 		const datetime = this.props.moment().format();
-		this.insertHtmlTag( { name: 'ins', attributes: { datetime } } );
+		this.insertHtmlTag({ name: 'ins', attributes: { datetime } });
 	};
 
-	onClickImage = attributes => {
-		this.insertHtmlTagSelfClosed( { name: 'img', attributes } );
+	onClickImage = (attributes) => {
+		this.insertHtmlTagSelfClosed({ name: 'img', attributes });
 	};
 
 	onClickUnorderedList = () => {
-		this.insertHtmlTag( { name: 'ul', options: { paragraph: true } } );
+		this.insertHtmlTag({ name: 'ul', options: { paragraph: true } });
 	};
 
 	onClickOrderedList = () => {
-		this.insertHtmlTag( { name: 'ol', options: { paragraph: true } } );
+		this.insertHtmlTag({ name: 'ol', options: { paragraph: true } });
 	};
 
 	onClickListItem = () => {
-		this.insertHtmlTag( { name: 'li', options: { indent: true, newLineAfter: true } } );
+		this.insertHtmlTag({ name: 'li', options: { indent: true, newLineAfter: true } });
 	};
 
 	onClickCode = () => {
-		this.insertHtmlTag( { name: 'code' } );
+		this.insertHtmlTag({ name: 'code' });
 	};
 
 	onClickMore = () => {
-		this.insertCustomContent( '<!--more-->', { paragraph: true } );
+		this.insertCustomContent('<!--more-->', { paragraph: true });
 	};
 
 	onClickCloseTags = () => {
 		const closedTags = reduce(
 			this.state.openTags,
-			( tags, openTag ) => this.closeHtmlTag( { name: openTag } ) + tags,
+			(tags, openTag) => this.closeHtmlTag({ name: openTag }) + tags,
 			''
 		);
-		this.insertCustomContent( closedTags );
-		this.setState( { openTags: [] } );
+		this.insertCustomContent(closedTags);
+		this.setState({ openTags: [] });
 	};
 
-	onInsertMedia = media => {
-		this.insertCustomContent( media );
+	onInsertMedia = (media) => {
+		this.insertCustomContent(media);
 	};
 
 	onInsertContactForm = () => {
-		this.insertCustomContent( serializeContactForm( this.props.contactForm ), { paragraph: true } );
+		this.insertCustomContent(serializeContactForm(this.props.contactForm), { paragraph: true });
 		this.closeContactFormDialog();
 	};
 
 	openImageDialog = () => {
-		this.setState( { showImageDialog: true } );
+		this.setState({ showImageDialog: true });
 	};
 
 	closeImageDialog = () => {
-		this.setState( { showImageDialog: false } );
+		this.setState({ showImageDialog: false });
 	};
 
 	openLinkDialog = () => {
 		const { inner: selectedText } = this.splitEditorContent();
-		this.setState( {
+		this.setState({
 			selectedText,
 			showLinkDialog: true,
-		} );
+		});
 	};
 
 	closeLinkDialog = () => {
-		this.setState( { showLinkDialog: false } );
+		this.setState({ showLinkDialog: false });
 	};
 
 	toggleInsertContentMenu = () => {
-		this.setState( { showInsertContentMenu: ! this.state.showInsertContentMenu } );
+		this.setState({ showInsertContentMenu: !this.state.showInsertContentMenu });
 	};
 
 	openContactFormDialog = () => {
-		this.setState( {
+		this.setState({
 			contactFormDialogTab: 'fields',
 			showContactFormDialog: true,
 			showInsertContentMenu: false,
-		} );
+		});
 	};
 
 	toggleContactFormDialogTab = () => {
-		this.setState( {
+		this.setState({
 			contactFormDialogTab: 'fields' === this.state.contactFormDialogTab ? 'settings' : 'fields',
-		} );
+		});
 	};
 
 	closeContactFormDialog = () => {
-		this.setState( { showContactFormDialog: false } );
+		this.setState({ showContactFormDialog: false });
 	};
 
 	openMediaModal = () => {
-		this.setState( {
+		this.setState({
 			showInsertContentMenu: false,
 			showMediaModal: true,
 			source: '',
-		} );
+		});
 	};
 
 	openGoogleModal = () => {
-		this.setState( {
+		this.setState({
 			showInsertContentMenu: false,
 			showMediaModal: true,
 			source: 'google_photos',
-		} );
+		});
 	};
 
 	openPexelsModal = () => {
-		this.setState( {
+		this.setState({
 			showInsertContentMenu: false,
 			showMediaModal: true,
 			source: 'pexels',
-		} );
+		});
 	};
 
 	closeMediaModal = () => {
-		this.setState( { showMediaModal: false } );
+		this.setState({ showMediaModal: false });
 	};
 
 	openSimplePaymentsDialog = () => {
-		this.setState( {
+		this.setState({
 			simplePaymentsDialogTab: 'addNew',
 			showSimplePaymentsDialog: true,
 			showInsertContentMenu: false,
-		} );
+		});
 	};
 
 	closeSimplePaymentsDialog = () => {
-		this.setState( { showSimplePaymentsDialog: false } );
+		this.setState({ showSimplePaymentsDialog: false });
 	};
 
-	changeSimplePaymentsDialogTab = tab => {
-		this.setState( {
+	changeSimplePaymentsDialogTab = (tab) => {
+		this.setState({
 			simplePaymentsDialogTab: tab,
-		} );
+		});
 	};
 
-	insertSimplePayment = productData => {
-		this.insertCustomContent( serializeSimplePayment( productData ), { paragraph: true } );
+	insertSimplePayment = (productData) => {
+		this.insertCustomContent(serializeSimplePayment(productData), { paragraph: true });
 		this.closeSimplePaymentsDialog();
 	};
 
@@ -483,80 +476,77 @@ export class EditorHtmlToolbar extends Component {
 		const { mediaValidationErrors, site } = this.props;
 		// Find selected images. Non-images will still be uploaded, but not
 		// inserted directly into the post contents.
-		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
-		const isSingleImage =
-			1 === selectedItems.length && 'image' === getMimePrefix( selectedItems[ 0 ] );
+		const selectedItems = MediaLibrarySelectedStore.getAll(site.ID);
+		const isSingleImage = 1 === selectedItems.length && 'image' === getMimePrefix(selectedItems[0]);
 
-		if ( isSingleImage && isEmpty( mediaValidationErrors ) ) {
+		if (isSingleImage && isEmpty(mediaValidationErrors)) {
 			// For single image upload, insert into post content, blocking save
 			// until the image has finished upload
-			if ( selectedItems[ 0 ].transient ) {
-				this.props.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+			if (selectedItems[0].transient) {
+				this.props.blockSave('MEDIA_MODAL_TRANSIENT_INSERT');
 			}
 
-			this.onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
-			MediaActions.setLibrarySelectedItems( site.ID, [] );
+			this.onInsertMedia(markup.get(site, selectedItems[0]));
+			MediaActions.setLibrarySelectedItems(site.ID, []);
 		} else {
 			// In all other cases, show the media modal list view
 			this.openMediaModal();
 		}
 	};
 
-	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+	isTagOpen = (tag) => -1 !== this.state.openTags.indexOf(tag);
 
 	renderAddEverythingDropdown = () => {
 		const { translate, canUserUploadFiles } = this.props;
 
-		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown', {
+		const insertContentClasses = classNames('editor-html-toolbar__insert-content-dropdown', {
 			'is-visible': this.state.showInsertContentMenu,
-		} );
+		});
 
 		return (
-			<div className={ insertContentClasses }>
+			<div className={insertContentClasses}>
 				<button
 					className="editor-html-toolbar__insert-content-dropdown-item"
-					onClick={ this.openMediaModal }
+					onClick={this.openMediaModal}
 				>
 					<Gridicon icon="image" />
-					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
+					<span data-e2e-insert-type="media">{translate('Media')}</span>
 				</button>
 
-				{ config.isEnabled( 'external-media/google-photos' ) && canUserUploadFiles && (
+				{config.isEnabled('external-media/google-photos') && canUserUploadFiles && (
 					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
-						onClick={ this.openGoogleModal }
+						onClick={this.openGoogleModal}
 					>
 						<Gridicon icon="shutter" />
-						<span data-e2e-insert-type="google-media">
-							{ translate( 'Google Photos library' ) }
-						</span>
+						<span data-e2e-insert-type="google-media">{translate('Google Photos library')}</span>
 					</button>
-				) }
+				)}
 
-				{ config.isEnabled( 'external-media/free-photo-library' ) && canUserUploadFiles && (
+				{config.isEnabled('external-media/free-photo-library') && canUserUploadFiles && (
 					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
-						onClick={ this.openPexelsModal }
+						onClick={this.openPexelsModal}
 					>
 						<Gridicon icon="image-multiple" />
-						<span data-e2e-insert-type="pexels">{ translate( 'Free photo library' ) }</span>
+						<span data-e2e-insert-type="pexels">{translate('Free photo library')}</span>
 					</button>
-				) }
+				)}
 
 				<button
 					className="editor-html-toolbar__insert-content-dropdown-item"
-					onClick={ this.openContactFormDialog }
+					onClick={this.openContactFormDialog}
 				>
 					<Gridicon icon="mention" />
-					<span data-e2e-insert-type="contact-form">{ translate( 'Contact form' ) }</span>
+					<span data-e2e-insert-type="contact-form">{translate('Contact form')}</span>
 				</button>
 
 				<button
 					className="editor-html-toolbar__insert-content-dropdown-item"
-					onClick={ this.openSimplePaymentsDialog }
+					onClick={this.openSimplePaymentsDialog}
 				>
 					<Gridicon icon="money" />
-					<span data-e2e-insert-type="payment-button">{ translate( 'Payment button' ) }</span>
+					<span data-e2e-insert-type="payment-button">{translate('Payment button')}</span>
 				</button>
 			</div>
 		);
@@ -565,12 +555,12 @@ export class EditorHtmlToolbar extends Component {
 	render() {
 		const { site, translate } = this.props;
 
-		const classes = classNames( 'editor-html-toolbar', {
+		const classes = classNames('editor-html-toolbar', {
 			'is-pinned': this.state.isPinned,
 			'is-scrollable': this.state.isScrollable,
 			'is-scrolled-full': this.state.isScrolledFull,
 			'has-active-drop-zone': this.props.isDropZoneVisible,
-		} );
+		});
 
 		const buttons = {
 			strong: {
@@ -614,108 +604,108 @@ export class EditorHtmlToolbar extends Component {
 				onClick: this.onClickMore,
 			},
 			'close-tags': {
-				disabled: ! this.state.openTags.length,
-				label: translate( 'close tags' ),
+				disabled: !this.state.openTags.length,
+				label: translate('close tags'),
 				onClick: this.onClickCloseTags,
 			},
 		};
 
 		return (
-			<div className={ classes }>
+			<div className={classes}>
 				<div className="editor-html-toolbar__wrapper">
 					<div className="editor-html-toolbar__wrapper-buttons">
-						<div className="editor-html-toolbar__buttons" ref={ this.bindButtonsRef }>
+						<div className="editor-html-toolbar__buttons" ref={this.bindButtonsRef}>
 							<div
 								className="editor-html-toolbar__button-insert-content"
-								ref={ this.bindInsertContentButtonsRef }
+								ref={this.bindInsertContentButtonsRef}
 							>
 								<Button
 									borderless
 									className="editor-html-toolbar__button-insert-content-dropdown"
 									compact
-									onClick={ this.toggleInsertContentMenu }
+									onClick={this.toggleInsertContentMenu}
 								>
 									<Gridicon icon="add-outline" />
-									<span>{ translate( 'Add' ) }</span>
+									<span>{translate('Add')}</span>
 								</Button>
 							</div>
-							{ map( buttons, ( { disabled, label, onClick }, tag ) => (
+							{map(buttons, ({ disabled, label, onClick }, tag) => (
 								<Button
 									borderless
-									className={ `editor-html-toolbar__button-${ tag } ${
-										this.isTagOpen( tag ) ? 'is-tag-open' : ''
-									}` }
+									className={`editor-html-toolbar__button-${tag} ${
+										this.isTagOpen(tag) ? 'is-tag-open' : ''
+									}`}
 									compact
-									disabled={ disabled }
-									key={ tag }
-									onClick={ onClick }
+									disabled={disabled}
+									key={tag}
+									onClick={onClick}
 								>
-									{ label || tag }
+									{label || tag}
 								</Button>
-							) ) }
+							))}
 						</div>
 
-						{ this.renderAddEverythingDropdown() }
+						{this.renderAddEverythingDropdown()}
 					</div>
 				</div>
 
 				<AddImageDialog
-					onClose={ this.closeImageDialog }
-					onInsert={ this.onClickImage }
-					shouldDisplay={ this.state.showImageDialog }
+					onClose={this.closeImageDialog}
+					onInsert={this.onClickImage}
+					shouldDisplay={this.state.showImageDialog}
 				/>
 
 				<AddLinkDialog
-					onClose={ this.closeLinkDialog }
-					onInsert={ this.onClickLink }
-					selectedText={ this.state.selectedText }
-					shouldDisplay={ this.state.showLinkDialog }
+					onClose={this.closeLinkDialog}
+					onInsert={this.onClickLink}
+					selectedText={this.state.selectedText}
+					shouldDisplay={this.state.showLinkDialog}
 				/>
 
 				<ContactFormDialog
-					activeTab={ this.state.contactFormDialogTab }
-					isEdit={ false }
-					onChangeTabs={ this.toggleContactFormDialogTab }
-					onClose={ this.closeContactFormDialog }
-					onFieldAdd={ this.props.fieldAdd }
-					onFieldRemove={ this.props.fieldRemove }
-					onFieldUpdate={ this.props.fieldUpdate }
-					onInsert={ this.onInsertContactForm }
-					onSettingsUpdate={ this.props.settingsUpdate }
-					showDialog={ this.state.showContactFormDialog }
+					activeTab={this.state.contactFormDialogTab}
+					isEdit={false}
+					onChangeTabs={this.toggleContactFormDialogTab}
+					onClose={this.closeContactFormDialog}
+					onFieldAdd={this.props.fieldAdd}
+					onFieldRemove={this.props.fieldRemove}
+					onFieldUpdate={this.props.fieldUpdate}
+					onInsert={this.onInsertContactForm}
+					onSettingsUpdate={this.props.settingsUpdate}
+					showDialog={this.state.showContactFormDialog}
 				/>
 
 				<EditorMediaModal
-					onClose={ this.closeMediaModal }
-					onInsertMedia={ this.onInsertMedia }
-					visible={ this.state.showMediaModal }
-					source={ this.state.source }
+					onClose={this.closeMediaModal}
+					onInsertMedia={this.onInsertMedia}
+					visible={this.state.showMediaModal}
+					source={this.state.source}
 				/>
 
-				<MediaLibraryDropZone onAddMedia={ this.onFilesDrop } site={ site } fullScreen={ false } />
+				<MediaLibraryDropZone onAddMedia={this.onFilesDrop} site={site} fullScreen={false} />
 
 				<SimplePaymentsDialog
-					showDialog={ this.state.showSimplePaymentsDialog }
-					activeTab={ this.state.simplePaymentsDialogTab }
-					isEdit={ false }
-					onClose={ this.closeSimplePaymentsDialog }
-					onChangeTabs={ this.changeSimplePaymentsDialogTab }
-					onInsert={ this.insertSimplePayment }
+					showDialog={this.state.showSimplePaymentsDialog}
+					activeTab={this.state.simplePaymentsDialogTab}
+					isEdit={false}
+					onClose={this.closeSimplePaymentsDialog}
+					onChangeTabs={this.changeSimplePaymentsDialogTab}
+					onInsert={this.insertSimplePayment}
 				/>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const site = getSelectedSite( state );
+const mapStateToProps = (state) => {
+	const site = getSelectedSite(state);
 
 	return {
-		contactForm: get( state, 'ui.editor.contactForm', {} ),
-		isDropZoneVisible: isDropZoneVisible( state ),
+		contactForm: get(state, 'ui.editor.contactForm', {}),
+		isDropZoneVisible: isDropZoneVisible(state),
 		site,
-		canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
-		mediaValidationErrors: getMediaErrors( state, site?.ID ),
+		canUserUploadFiles: canCurrentUser(state, getSelectedSiteId(state), 'upload_files'),
+		mediaValidationErrors: getMediaErrors(state, site?.ID),
 	};
 };
 
@@ -730,4 +720,4 @@ const mapDispatchToProps = {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( withLocalizedMoment( EditorHtmlToolbar ) ) );
+)(localize(withLocalizedMoment(EditorHtmlToolbar)));

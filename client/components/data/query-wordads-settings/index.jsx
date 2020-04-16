@@ -9,12 +9,12 @@ import { useDispatch } from 'react-redux';
  */
 import { requestWordadsSettings } from 'state/wordads/settings/actions';
 
-export default function QueryWordadsSettings( { siteId } ) {
+export default function QueryWordadsSettings({ siteId }) {
 	const dispatch = useDispatch();
 
-	React.useEffect( () => {
-		dispatch( requestWordadsSettings( siteId ) );
-	}, [ dispatch, siteId ] );
+	React.useEffect(() => {
+		dispatch(requestWordadsSettings(siteId));
+	}, [dispatch, siteId]);
 
 	return null;
 }

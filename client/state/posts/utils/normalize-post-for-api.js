@@ -8,7 +8,7 @@ import { flow } from 'lodash';
  */
 import { normalizeTermsForApi } from 'state/posts/utils/normalize-terms-for-api';
 
-const normalizeApiFlow = flow( [ normalizeTermsForApi ] );
+const normalizeApiFlow = flow([normalizeTermsForApi]);
 
 /**
  * Returns a normalized post object for sending to the API
@@ -16,10 +16,10 @@ const normalizeApiFlow = flow( [ normalizeTermsForApi ] );
  * @param  {object} post Raw post object
  * @returns {object}      Normalized post object
  */
-export function normalizePostForApi( post ) {
-	if ( ! post ) {
+export function normalizePostForApi(post) {
+	if (!post) {
 		return null;
 	}
 
-	return normalizeApiFlow( post );
+	return normalizeApiFlow(post);
 }

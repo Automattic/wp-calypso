@@ -31,17 +31,17 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 
 		const { adminEmail } = domain;
 
-		if ( ! adminEmail ) {
+		if (!adminEmail) {
 			return (
 				<Card highlight="info">
 					<div>
 						<h1 className="inbound-transfer-verification__heading">
-							{ translate( 'The authorization email will be sent shortly.' ) }
+							{translate('The authorization email will be sent shortly.')}
 						</h1>
-						{ translate(
+						{translate(
 							"We'll let you know which mailbox to check as soon as the email is sent. " +
 								'Check again in a few minutes.'
-						) }
+						)}
 					</div>
 				</Card>
 			);
@@ -49,10 +49,10 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 
 		return (
 			<EmailVerificationCard
-				contactEmail={ adminEmail }
-				errorMessage={ translate( 'Unable to resend domain transfer email.' ) }
-				headerText={ translate( 'Important: Confirm the transfer to proceed.' ) }
-				verificationExplanation={ translate(
+				contactEmail={adminEmail}
+				errorMessage={translate('Unable to resend domain transfer email.')}
+				headerText={translate('Important: Confirm the transfer to proceed.')}
+				verificationExplanation={translate(
 					'We sent an email to confirm the transfer of {{strong}}%(domain)s{{/strong}}. ' +
 						'Open the email, click the link, and enter your domain authorization code to start the process. ' +
 						'Please confirm in 5 days or the transfer will be canceled. ' +
@@ -64,7 +64,7 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 						components: {
 							learnMoreLink: (
 								<a
-									href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+									href={INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS}
 									rel="noopener noreferrer"
 									target="_blank"
 								/>
@@ -72,13 +72,13 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 							strong: <strong />,
 						},
 					}
-				) }
-				resendVerification={ resendInboundTransferEmail }
-				selectedDomainName={ domain.name }
-				selectedSiteSlug={ selectedSiteSlug }
+				)}
+				resendVerification={resendInboundTransferEmail}
+				selectedDomainName={domain.name}
+				selectedSiteSlug={selectedSiteSlug}
 			/>
 		);
 	}
 }
 
-export default localize( InboundTransferEmailVerificationCard );
+export default localize(InboundTransferEmailVerificationCard);

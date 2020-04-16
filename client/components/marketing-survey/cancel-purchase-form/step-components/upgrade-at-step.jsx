@@ -29,21 +29,21 @@ export class UpgradeATStep extends Component {
 	};
 
 	onClick = () => {
-		this.props.recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
+		this.props.recordTracksEvent('calypso_cancellation_upgrade_at_step_upgrade_click');
 	};
 
 	render() {
 		const { translate, selectedSite } = this.props;
-		const href = `/checkout/${ selectedSite.slug }/business?coupon=BIZC25`;
+		const href = `/checkout/${selectedSite.slug}/business?coupon=BIZC25`;
 
 		return (
 			<div>
 				<FormSectionHeading>
-					{ translate( 'New! Install Custom Plugins and Themes' ) }
+					{translate('New! Install Custom Plugins and Themes')}
 				</FormSectionHeading>
 				<FormFieldset>
 					<p>
-						{ translate(
+						{translate(
 							'Did you know that you can now use third-party plugins and themes on the WordPress.com Business plan? ' +
 								'Claim a 25% discount when you upgrade your site today - {{b}}enter the code BIZC25 at checkout{{/b}}.',
 							{
@@ -51,10 +51,10 @@ export class UpgradeATStep extends Component {
 									b: <strong />,
 								},
 							}
-						) }
+						)}
 					</p>
-					<Button primary href={ href } onClick={ this.onClick }>
-						{ translate( 'Upgrade My Site' ) }
+					<Button primary href={href} onClick={this.onClick}>
+						{translate('Upgrade My Site')}
 					</Button>
 				</FormFieldset>
 			</div>
@@ -62,9 +62,9 @@ export class UpgradeATStep extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	selectedSite: getSelectedSite( state ),
-} );
+const mapStateToProps = (state) => ({
+	selectedSite: getSelectedSite(state),
+});
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeATStep ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(UpgradeATStep));

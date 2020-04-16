@@ -50,8 +50,8 @@ class ImageEditor extends React.Component {
 		onCancel: PropTypes.func,
 		onReset: PropTypes.func,
 		className: PropTypes.string,
-		defaultAspectRatio: PropTypes.oneOf( AspectRatiosValues ),
-		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( AspectRatiosValues ) ),
+		defaultAspectRatio: PropTypes.oneOf(AspectRatiosValues),
+		allowedAspectRatios: PropTypes.arrayOf(PropTypes.oneOf(AspectRatiosValues)),
 
 		// Redux props
 		site: PropTypes.object,
@@ -80,20 +80,20 @@ class ImageEditor extends React.Component {
 
 	editCanvasRef = React.createRef();
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { media: currentMedia } = this.props;
 
-		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
+		if (newProps.media && !isEqual(newProps.media, currentMedia)) {
 			this.props.resetAllImageEditorState();
 
-			this.updateFileInfo( newProps.media );
+			this.updateFileInfo(newProps.media);
 
 			this.setDefaultAspectRatio();
 		}
 	}
 
 	componentDidMount() {
-		this.updateFileInfo( this.props.media );
+		this.updateFileInfo(this.props.media);
 
 		this.setDefaultAspectRatio();
 	}
@@ -102,11 +102,11 @@ class ImageEditor extends React.Component {
 		const { defaultAspectRatio, allowedAspectRatios } = this.props;
 
 		this.props.setImageEditorDefaultAspectRatio(
-			getDefaultAspectRatio( defaultAspectRatio, allowedAspectRatios )
+			getDefaultAspectRatio(defaultAspectRatio, allowedAspectRatios)
 		);
 	};
 
-	updateFileInfo = media => {
+	updateFileInfo = (media) => {
 		const { site } = this.props;
 
 		let src,
@@ -114,48 +114,48 @@ class ImageEditor extends React.Component {
 			mimeType = 'image/png',
 			title = 'default';
 
-		if ( media ) {
+		if (media) {
 			src =
 				media.src ||
-				url( media, {
-					photon: site && ! site.is_private,
-				} );
+				url(media, {
+					photon: site && !site.is_private,
+				});
 
-			fileName = media.file || path.basename( src );
+			fileName = media.file || path.basename(src);
 
-			mimeType = getMimeType( media ) || mimeType;
+			mimeType = getMimeType(media) || mimeType;
 
 			title = media.title || title;
 		}
 
 		this.props.resetImageEditorState();
-		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
+		this.props.setImageEditorFileInfo(src, fileName, mimeType, title);
 	};
 
-	convertBlobToImage = blob => {
+	convertBlobToImage = (blob) => {
 		const { onDone } = this.props;
 
 		// Create a new image from the canvas blob
-		const transientImage = document.createElement( 'img' );
-		const transientImageUrl = URL.createObjectURL( blob );
+		const transientImage = document.createElement('img');
+		const transientImageUrl = URL.createObjectURL(blob);
 		const imageProperties = this.getImageEditorProps();
 
 		// Onload, extend imageProperties with the height and width
 		// of the newly edited image
 		transientImage.onload = () => {
-			URL.revokeObjectURL( transientImageUrl );
+			URL.revokeObjectURL(transientImageUrl);
 
-			onDone( null, blob, {
+			onDone(null, blob, {
 				...imageProperties,
 				width: transientImage.width,
 				height: transientImage.height,
-			} );
+			});
 		};
 
 		// onerror, we send the image properties
 		// without the transient image's dimensions
 		transientImage.onerror = () => {
-			onDone( null, blob, imageProperties );
+			onDone(null, blob, imageProperties);
 		};
 
 		transientImage.src = transientImageUrl;
@@ -164,22 +164,22 @@ class ImageEditor extends React.Component {
 	onDone = () => {
 		const { isImageLoaded, onDone } = this.props;
 
-		if ( ! isImageLoaded ) {
-			onDone( new Error( 'Image not loaded yet.' ), null, this.getImageEditorProps() );
+		if (!isImageLoaded) {
+			onDone(new Error('Image not loaded yet.'), null, this.getImageEditorProps());
 			return;
 		}
 
-		this.editCanvasRef.current.toBlob( this.convertBlobToImage );
+		this.editCanvasRef.current.toBlob(this.convertBlobToImage);
 	};
 
 	onCancel = () => {
-		this.props.onCancel( this.getImageEditorProps() );
+		this.props.onCancel(this.getImageEditorProps());
 	};
 
 	onReset = () => {
 		this.props.resetImageEditorState();
 
-		this.props.onReset( this.getImageEditorProps() );
+		this.props.onReset(this.getImageEditorProps());
 	};
 
 	getImageEditorProps = () => {
@@ -194,29 +194,29 @@ class ImageEditor extends React.Component {
 			resetAllImageEditorState: this.props.resetAllImageEditorState,
 		};
 
-		if ( media && media.ID ) {
+		if (media && media.ID) {
 			imageProperties.ID = media.ID;
 		}
 
 		return imageProperties;
 	};
 
-	showNotice = ( noticeText, noticeStatus = 'is-info' ) => {
-		this.setState( {
+	showNotice = (noticeText, noticeStatus = 'is-info') => {
+		this.setState({
 			noticeText,
 			noticeStatus,
-		} );
+		});
 	};
 
 	clearNoticeState = () => {
-		this.setState( {
+		this.setState({
 			noticeText: null,
 			noticeStatus: 'is-info',
-		} );
+		});
 	};
 
 	renderNotice = () => {
-		if ( ! this.state.noticeText ) {
+		if (!this.state.noticeText) {
 			return null;
 		}
 
@@ -224,11 +224,11 @@ class ImageEditor extends React.Component {
 
 		return (
 			<Notice
-				status={ this.state.noticeStatus }
-				showDismiss={ showDismiss }
-				text={ this.state.noticeText }
-				isCompact={ false }
-				onDismissClick={ this.clearNoticeState }
+				status={this.state.noticeStatus}
+				showDismiss={showDismiss}
+				text={this.state.noticeText}
+				isCompact={false}
+				onDismissClick={this.clearNoticeState}
 				className="image-editor__notice"
 			/>
 		);
@@ -249,50 +249,50 @@ class ImageEditor extends React.Component {
 
 		const { noticeText } = this.state;
 
-		const classes = classNames( 'image-editor', className );
+		const classes = classNames('image-editor', className);
 
 		return (
-			<div className={ classes }>
-				<CloseOnEscape onEscape={ this.onCancel } />
-				<QuerySites siteId={ siteId } />
+			<div className={classes}>
+				<CloseOnEscape onEscape={this.onCancel} />
+				<QuerySites siteId={siteId} />
 
 				<figure>
 					<div className="image-editor__content">
-						<ImageEditorCanvas ref={ this.editCanvasRef } onLoadError={ this.onLoadCanvasError } />
+						<ImageEditorCanvas ref={this.editCanvasRef} onLoadError={this.onLoadCanvasError} />
 						<ImageEditorToolbar
-							onShowNotice={ this.showNotice }
-							allowedAspectRatios={ allowedAspectRatios }
+							onShowNotice={this.showNotice}
+							allowedAspectRatios={allowedAspectRatios}
 						/>
 						<ImageEditorButtons
-							onCancel={ this.props.onCancel && this.onCancel }
-							onDone={ this.onDone }
-							onReset={ this.onReset }
-							doneButtonText={ this.props.doneButtonText }
+							onCancel={this.props.onCancel && this.onCancel}
+							onDone={this.onDone}
+							onReset={this.onReset}
+							doneButtonText={this.props.doneButtonText}
 						/>
 					</div>
 				</figure>
 
-				{ noticeText && this.renderNotice() }
+				{noticeText && this.renderNotice()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		let siteId = ownProps.siteId;
 
-		if ( ! siteId ) {
-			siteId = getSelectedSiteId( state );
+		if (!siteId) {
+			siteId = getSelectedSiteId(state);
 		}
 
 		return {
-			...getImageEditorFileInfo( state ),
-			site: getSite( state, siteId ),
-			isImageLoaded: isImageEditorImageLoaded( state ),
+			...getImageEditorFileInfo(state),
+			site: getSite(state, siteId),
+			isImageLoaded: isImageEditorImageLoaded(state),
 		};
 	},
-	( dispatch, ownProp ) => {
+	(dispatch, ownProp) => {
 		const defaultAspectRatio = getDefaultAspectRatio(
 			ownProp.defaultAspectRatio,
 			ownProp.allowedAspectRatios
@@ -306,10 +306,10 @@ export default connect(
 			{
 				setImageEditorFileInfo,
 				setImageEditorDefaultAspectRatio,
-				resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
-				resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData ),
+				resetImageEditorState: partial(resetImageEditorState, resetActionsAdditionalData),
+				resetAllImageEditorState: partial(resetAllImageEditorState, resetActionsAdditionalData),
 			},
 			dispatch
 		);
 	}
-)( localize( ImageEditor ) );
+)(localize(ImageEditor));

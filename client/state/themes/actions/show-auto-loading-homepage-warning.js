@@ -5,7 +5,7 @@ import { THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING } from 'state/themes/action-ty
 
 import 'state/themes/init';
 
-export function showAutoLoadingHomepageWarning( themeId ) {
+export function showAutoLoadingHomepageWarning(themeId) {
 	return {
 		type: THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 		themeId,

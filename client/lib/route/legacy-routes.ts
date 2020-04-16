@@ -16,18 +16,18 @@ import { isEnabled } from 'config';
 interface LegacyRoute {
 	match: RegExp;
 	noMatch?: RegExp;
-	predicate?: ( path: URLString ) => boolean;
+	predicate?: (path: URLString) => boolean;
 }
 
 const legacyRoutes: LegacyRoute[] = [
 	{ match: /.php$/ },
-	{ match: /^\/?$/, predicate: () => ! isEnabled( 'reader' ) },
+	{ match: /^\/?$/, predicate: () => !isEnabled('reader') },
 	{ match: /^\/manage/ },
 	{ match: /^\/plans/ },
 	{
 		match: /^\/me/,
 		noMatch: /^\/me\/(billing|next)/,
-		predicate: () => ! isEnabled( 'me/my-profile' ),
+		predicate: () => !isEnabled('me/my-profile'),
 	},
 ];
 
@@ -37,9 +37,9 @@ const legacyRoutes: LegacyRoute[] = [
  * @param path The path to check
  * @returns True if legacy path, false otherwise
  */
-export function isLegacyRoute( path: URLString ): boolean {
+export function isLegacyRoute(path: URLString): boolean {
 	return legacyRoutes.some(
-		( { match, noMatch = { test: () => false }, predicate = () => true } ) =>
-			predicate( path ) && match.test( path ) && ! noMatch.test( path )
+		({ match, noMatch = { test: () => false }, predicate = () => true }) =>
+			predicate(path) && match.test(path) && !noMatch.test(path)
 	);
 }

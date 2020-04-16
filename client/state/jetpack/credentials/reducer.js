@@ -12,17 +12,17 @@ import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation(
 	itemsSchema,
-	keyedReducer( 'siteId', ( state, { type, credentials } ) => {
-		if ( JETPACK_CREDENTIALS_STORE === type ) {
+	keyedReducer('siteId', (state, { type, credentials }) => {
+		if (JETPACK_CREDENTIALS_STORE === type) {
 			return 'object' === typeof credentials ? credentials : {};
 		}
 
 		return state;
-	} )
+	})
 );
 
-export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
-	switch ( type ) {
+export const requestStatus = keyedReducer('siteId', (state, { type }) => {
+	switch (type) {
 		case JETPACK_CREDENTIALS_UPDATE:
 			return 'pending';
 
@@ -34,9 +34,9 @@ export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	}
 
 	return state;
-} );
+});
 
-export const reducer = combineReducers( {
+export const reducer = combineReducers({
 	items,
 	requestStatus,
-} );
+});

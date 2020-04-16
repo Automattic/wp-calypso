@@ -14,11 +14,11 @@ import edit from './edit';
 import './style.scss';
 import './site-logo';
 
-if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
-	registerBlockType( 'a8c/template', {
-		title: __( 'Template Part' ),
+if ('wp_template_part' !== fullSiteEditing.editorPostType) {
+	registerBlockType('a8c/template', {
+		title: __('Template Part'),
 		__experimentalDisplayName: 'label',
-		description: __( 'Display a Template Part.' ),
+		description: __('Display a Template Part.'),
 		icon: 'layout',
 		category: 'layout',
 		attributes: {
@@ -38,23 +38,18 @@ if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 		getEditWrapperProps() {
 			return { 'data-align': 'full' };
 		},
-	} );
+	});
 }
 
-const addFSETemplateClassname = createHigherOrderComponent( BlockListBlock => {
-	return props => {
-		if ( props.name !== 'a8c/template' ) {
-			return <BlockListBlock { ...props } />;
+const addFSETemplateClassname = createHigherOrderComponent((BlockListBlock) => {
+	return (props) => {
+		if (props.name !== 'a8c/template') {
+			return <BlockListBlock {...props} />;
 		}
 
-		return <BlockListBlock { ...props } className="template__block-container" />;
+		return <BlockListBlock {...props} className="template__block-container" />;
 	};
-}, 'addFSETemplateClassname' );
+}, 'addFSETemplateClassname');
 
 // Must be 9 or this breaks on Simple Sites
-addFilter(
-	'editor.BlockListBlock',
-	'full-site-editing/blocks/template',
-	addFSETemplateClassname,
-	9
-);
+addFilter('editor.BlockListBlock', 'full-site-editing/blocks/template', addFSETemplateClassname, 9);

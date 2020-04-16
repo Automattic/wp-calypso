@@ -27,12 +27,12 @@ class SubscriptionSettings extends React.Component {
 	};
 
 	getLink() {
-		switch ( this.props.type ) {
+		switch (this.props.type) {
 			case domainTypes.MAPPED:
 			case domainTypes.REGISTERED:
 			case domainTypes.SITE_REDIRECT:
 			case domainTypes.TRANSFER:
-				return managePurchase( this.props.siteSlug, this.props.subscriptionId );
+				return managePurchase(this.props.siteSlug, this.props.subscriptionId);
 
 			default:
 				return purchasesRoot;
@@ -42,15 +42,15 @@ class SubscriptionSettings extends React.Component {
 	render() {
 		return (
 			<Button
-				compact={ this.props.compact }
+				compact={this.props.compact}
 				className="subscription-settings"
-				href={ this.getLink() }
-				onClick={ this.props.onClick }
+				href={this.getLink()}
+				onClick={this.props.onClick}
 			>
-				{ this.props.translate( 'Go to payment settings' ) }
+				{this.props.translate('Go to payment settings')}
 			</Button>
 		);
 	}
 }
 
-export default localize( SubscriptionSettings );
+export default localize(SubscriptionSettings);

@@ -1,4 +1,3 @@
-
 /**
  * SiteCreditVouchers methods
  *
@@ -7,13 +6,13 @@
  * @returns {null} null
  */
 class SiteCreditVouchers {
-	constructor( sid, wpcom ) {
-		if ( ! sid ) {
-			throw new Error( '`site id` is not correctly defined' );
+	constructor(sid, wpcom) {
+		if (!sid) {
+			throw new Error('`site id` is not correctly defined');
 		}
 
-		if ( ! ( this instanceof SiteCreditVouchers ) ) {
-			return new SiteCreditVouchers( sid, wpcom );
+		if (!(this instanceof SiteCreditVouchers)) {
+			return new SiteCreditVouchers(sid, wpcom);
 		}
 
 		this.wpcom = wpcom;
@@ -28,9 +27,9 @@ class SiteCreditVouchers {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	list( query = {}, fn ) {
+	list(query = {}, fn) {
 		query.apiNamespace = 'wpcom/v2';
-		return this.wpcom.req.get( this.path, query, fn );
+		return this.wpcom.req.get(this.path, query, fn);
 	}
 
 	/**
@@ -41,9 +40,9 @@ class SiteCreditVouchers {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	get( serviceType, query = {}, fn ) {
+	get(serviceType, query = {}, fn) {
 		query.apiNamespace = 'wpcom/v2';
-		return this.wpcom.req.get( `${ this.path }/${ serviceType }`, query, fn );
+		return this.wpcom.req.get(`${this.path}/${serviceType}`, query, fn);
 	}
 
 	/**
@@ -54,9 +53,9 @@ class SiteCreditVouchers {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	assign( serviceType, query = {}, fn ) {
+	assign(serviceType, query = {}, fn) {
 		query.apiNamespace = 'wpcom/v2';
-		return this.wpcom.req.post( `${ this.path }/${ serviceType}/assign`, query, {}, fn );
+		return this.wpcom.req.post(`${this.path}/${serviceType}/assign`, query, {}, fn);
 	}
 }
 

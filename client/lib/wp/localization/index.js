@@ -19,7 +19,7 @@ let locale;
  *
  * @param {string} localeToSet Locale to set
  */
-export function setLocale( localeToSet ) {
+export function setLocale(localeToSet) {
 	locale = localeToSet;
 }
 
@@ -39,24 +39,24 @@ export function getLocale() {
  * @param  {object} params Original parameters
  * @returns {object}        Revised parameters, if non-default locale
  */
-export function addLocaleQueryParam( params ) {
-	if ( ! locale || 'en' === locale ) {
+export function addLocaleQueryParam(params) {
+	if (!locale || 'en' === locale) {
 		return params;
 	}
 
 	let localeQueryParam;
-	const query = parse( params.query );
+	const query = parse(params.query);
 
-	if ( params.apiNamespace ) {
+	if (params.apiNamespace) {
 		// v2 api request
 		localeQueryParam = { _locale: locale };
 	} else {
 		localeQueryParam = { locale };
 	}
 
-	return Object.assign( params, {
-		query: stringify( Object.assign( query, localeQueryParam ) ),
-	} );
+	return Object.assign(params, {
+		query: stringify(Object.assign(query, localeQueryParam)),
+	});
 }
 
 /**
@@ -67,15 +67,15 @@ export function addLocaleQueryParam( params ) {
  * @param {object} wpcom Original WPCOM instance
  * @returns {object} Modified WPCOM instance with localization helpers
  */
-export function injectLocalization( wpcom ) {
-	const originalRequest = wpcom.request.bind( wpcom );
-	return Object.assign( wpcom, {
+export function injectLocalization(wpcom) {
+	const originalRequest = wpcom.request.bind(wpcom);
+	return Object.assign(wpcom, {
 		localized: true,
 
-		request: function( params, callback ) {
-			return originalRequest( addLocaleQueryParam( params ), callback );
+		request: function (params, callback) {
+			return originalRequest(addLocaleQueryParam(params), callback);
 		},
-	} );
+	});
 }
 
 /**
@@ -84,14 +84,14 @@ export function injectLocalization( wpcom ) {
  *
  * @param {object} store Redux store instance
  */
-export function bindState( store ) {
+export function bindState(store) {
 	function setLocaleFromState() {
 		const state = store.getState();
-		const localeVariant = getCurrentLocaleVariant( state );
-		const localeSlug = getCurrentLocaleSlug( state );
-		setLocale( localeVariant || localeSlug );
+		const localeVariant = getCurrentLocaleVariant(state);
+		const localeSlug = getCurrentLocaleSlug(state);
+		setLocale(localeVariant || localeSlug);
 	}
 
-	store.subscribe( setLocaleFromState );
+	store.subscribe(setLocaleFromState);
 	setLocaleFromState();
 }

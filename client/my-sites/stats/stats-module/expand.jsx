@@ -17,16 +17,16 @@ class StatsModuleExpand extends PureComponent {
 	};
 
 	render() {
-		if ( ! this.props.href ) {
+		if (!this.props.href) {
 			return null;
 		}
 
 		return (
 			<div className="stats-module__expand">
-				<a href={ this.props.href }>
-					{ this.props.translate( 'View All', {
+				<a href={this.props.href}>
+					{this.props.translate('View All', {
 						context: 'Stats: Button label to expand a panel',
-					} ) }
+					})}
 					<span className="stats-module__expand-right" />
 				</a>
 			</div>
@@ -34,4 +34,4 @@ class StatsModuleExpand extends PureComponent {
 	}
 }
 
-export default localize( StatsModuleExpand );
+export default localize(StatsModuleExpand);

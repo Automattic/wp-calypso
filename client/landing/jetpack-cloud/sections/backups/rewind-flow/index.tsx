@@ -31,33 +31,31 @@ interface Props {
 	purpose: RewindFlowPurpose;
 }
 
-const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) => {
+const BackupRewindFlow: FunctionComponent<Props> = ({ rewindId, purpose }) => {
 	const applySiteOffset = useApplySiteOffset();
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( state => ( siteId !== null ? getSiteSlug( state, siteId ) : '' ) );
+	const siteId = useSelector(getSelectedSiteId);
+	const siteSlug = useSelector((state) => (siteId !== null ? getSiteSlug(state, siteId) : ''));
 
-	const backupDisplayDate = applySiteOffset( moment( parseFloat( rewindId ) * 1000 ) )?.format(
-		'LLL'
-	);
+	const backupDisplayDate = applySiteOffset(moment(parseFloat(rewindId) * 1000))?.format('LLL');
 
 	const render = () => {
-		if ( siteId && rewindId && backupDisplayDate ) {
+		if (siteId && rewindId && backupDisplayDate) {
 			return purpose === RewindFlowPurpose.RESTORE ? (
 				<BackupRestoreFlow
-					backupDisplayDate={ backupDisplayDate }
-					rewindId={ rewindId }
-					siteId={ siteId }
-					siteSlug={ siteSlug }
+					backupDisplayDate={backupDisplayDate}
+					rewindId={rewindId}
+					siteId={siteId}
+					siteSlug={siteSlug}
 				/>
 			) : (
 				<BackupDownloadFlow
-					backupDisplayDate={ backupDisplayDate }
-					rewindId={ rewindId }
-					siteId={ siteId }
-					siteSlug={ siteSlug }
+					backupDisplayDate={backupDisplayDate}
+					rewindId={rewindId}
+					siteId={siteId}
+					siteSlug={siteSlug}
 				/>
 			);
 		}
@@ -68,12 +66,10 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	return (
 		<Main className="rewind-flow">
 			<DocumentHead
-				title={
-					purpose === RewindFlowPurpose.RESTORE ? translate( 'Restore' ) : translate( 'Download' )
-				}
+				title={purpose === RewindFlowPurpose.RESTORE ? translate('Restore') : translate('Download')}
 			/>
 			<SidebarNavigation />
-			<Card>{ render() }</Card>
+			<Card>{render()}</Card>
 		</Main>
 	);
 };

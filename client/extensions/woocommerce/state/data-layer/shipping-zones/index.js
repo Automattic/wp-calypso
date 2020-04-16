@@ -20,52 +20,52 @@ import {
 } from 'woocommerce/state/action-types';
 
 export default {
-	[ WOOCOMMERCE_SHIPPING_ZONE_CREATE ]: [
-		( store, action ) => {
+	[WOOCOMMERCE_SHIPPING_ZONE_CREATE]: [
+		(store, action) => {
 			const { siteId, zone, successAction, failureAction } = action;
-			const apiZone = omit( zone, 'id' );
+			const apiZone = omit(zone, 'id');
 
-			const updatedAction = ( dispatch, getState, { data } ) => {
-				dispatch( shippingZoneUpdated( siteId, data, action ) );
+			const updatedAction = (dispatch, getState, { data }) => {
+				dispatch(shippingZoneUpdated(siteId, data, action));
 
 				const props = { sentData: zone, receivedData: data };
-				dispatchWithProps( dispatch, getState, successAction, props );
+				dispatchWithProps(dispatch, getState, successAction, props);
 			};
 
-			store.dispatch( post( siteId, 'shipping/zones', apiZone, updatedAction, failureAction ) );
+			store.dispatch(post(siteId, 'shipping/zones', apiZone, updatedAction, failureAction));
 		},
 	],
 
-	[ WOOCOMMERCE_SHIPPING_ZONE_UPDATE ]: [
-		( store, action ) => {
+	[WOOCOMMERCE_SHIPPING_ZONE_UPDATE]: [
+		(store, action) => {
 			const { siteId, zone, successAction, failureAction } = action;
 
-			const updatedAction = ( dispatch, getState, { data } ) => {
-				dispatch( shippingZoneUpdated( siteId, data, action ) );
+			const updatedAction = (dispatch, getState, { data }) => {
+				dispatch(shippingZoneUpdated(siteId, data, action));
 
 				const props = { sentData: zone, receivedData: data };
-				dispatchWithProps( dispatch, getState, successAction, props );
+				dispatchWithProps(dispatch, getState, successAction, props);
 			};
 
 			store.dispatch(
-				put( siteId, 'shipping/zones/' + zone.id, omit( zone, 'id' ), updatedAction, failureAction )
+				put(siteId, 'shipping/zones/' + zone.id, omit(zone, 'id'), updatedAction, failureAction)
 			);
 		},
 	],
 
-	[ WOOCOMMERCE_SHIPPING_ZONE_DELETE ]: [
-		( store, action ) => {
+	[WOOCOMMERCE_SHIPPING_ZONE_DELETE]: [
+		(store, action) => {
 			const { siteId, zone, successAction, failureAction } = action;
 
-			const deletedAction = ( dispatch, getState, { data } ) => {
-				dispatch( shippingZoneDeleted( siteId, action ) );
+			const deletedAction = (dispatch, getState, { data }) => {
+				dispatch(shippingZoneDeleted(siteId, action));
 
 				const props = { sentData: zone, receivedData: data };
-				dispatchWithProps( dispatch, getState, successAction, props );
+				dispatchWithProps(dispatch, getState, successAction, props);
 			};
 
 			store.dispatch(
-				del( siteId, 'shipping/zones/' + zone.id + '?force=true', deletedAction, failureAction )
+				del(siteId, 'shipping/zones/' + zone.id + '?force=true', deletedAction, failureAction)
 			);
 		},
 	],

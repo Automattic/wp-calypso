@@ -14,9 +14,9 @@ class Domain {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( id, wpcom ) {
-		if ( ! ( this instanceof Domain ) ) {
-			return new Domain( id, wpcom );
+	constructor(id, wpcom) {
+		if (!(this instanceof Domain)) {
+			return new Domain(id, wpcom);
 		}
 		this._id = id;
 		this.wpcom = wpcom;
@@ -29,8 +29,8 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	status( query, fn ) {
-		return this.wpcom.req.get( root + this._id + '/status', query, fn );
+	status(query, fn) {
+		return this.wpcom.req.get(root + this._id + '/status', query, fn);
 	}
 
 	/**
@@ -40,8 +40,8 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	isAvailable( query, fn ) {
-		return this.wpcom.req.get( root + this._id + '/is-available', query, fn );
+	isAvailable(query, fn) {
+		return this.wpcom.req.get(root + this._id + '/is-available', query, fn);
 	}
 
 	/**
@@ -52,8 +52,8 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	isMappable( query, fn ) {
-		return this.wpcom.req.get( root + this._id + '/is-mappable', query, fn );
+	isMappable(query, fn) {
+		return this.wpcom.req.get(root + this._id + '/is-mappable', query, fn);
 	}
 
 	/**
@@ -64,9 +64,9 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	canRedirect( siteId, query, fn ) {
+	canRedirect(siteId, query, fn) {
 		var path = root + siteId + '/' + this._id + '/can-redirect';
-		return this.wpcom.req.get( path, query, fn );
+		return this.wpcom.req.get(path, query, fn);
 	}
 
 	/**
@@ -76,8 +76,8 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	emailForwards( query, fn ) {
-		return this.wpcom.req.get( root + this._id + '/email', query, fn );
+	emailForwards(query, fn) {
+		return this.wpcom.req.get(root + this._id + '/email', query, fn);
 	}
 
 	/**
@@ -87,8 +87,8 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	nameserversList( query, fn ) {
-		return this.wpcom.req.get( root + this._id + '/nameservers', query, fn );
+	nameserversList(query, fn) {
+		return this.wpcom.req.get(root + this._id + '/nameservers', query, fn);
 	}
 
 	/**
@@ -99,9 +99,9 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	updateNameservers( nameservers, query, fn ) {
+	updateNameservers(nameservers, query, fn) {
 		let body = { nameservers: nameservers };
-		return this.wpcom.req.post( root + this._id + '/nameservers', query, body, fn );
+		return this.wpcom.req.post(root + this._id + '/nameservers', query, body, fn);
 	}
 
 	/**
@@ -111,8 +111,8 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	dnsList( query, fn ) {
-		return this.wpcom.req.get( root + this._id + '/dns', query, fn );
+	dnsList(query, fn) {
+		return this.wpcom.req.get(root + this._id + '/dns', query, fn);
 	}
 
 	/**
@@ -122,8 +122,8 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	googleAppsList( query, fn ) {
-		return this.wpcom.req.get( root + this._id + '/google-apps', query, fn );
+	googleAppsList(query, fn) {
+		return this.wpcom.req.get(root + this._id + '/google-apps', query, fn);
 	}
 
 	/**
@@ -133,8 +133,8 @@ class Domain {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	resendICANN( query, fn ) {
-		return this.wpcom.req.post( root + this._id + '/resend-icann', query, fn );
+	resendICANN(query, fn) {
+		return this.wpcom.req.post(root + this._id + '/resend-icann', query, fn);
 	}
 
 	/**
@@ -143,8 +143,8 @@ class Domain {
 	 * @param {string} [email] - email identifier
 	 * @returns {DomainEmail} DomainEmail instance
 	 */
-	email( email ) {
-		return new DomainEmail( email, this._id, this.wpcom );
+	email(email) {
+		return new DomainEmail(email, this._id, this.wpcom);
 	}
 
 	/**
@@ -153,7 +153,7 @@ class Domain {
 	 * @returns {DomainDns} DomainDns instance
 	 */
 	dns() {
-		return new DomainDns( this._id, this.wpcom );
+		return new DomainDns(this._id, this.wpcom);
 	}
 }
 

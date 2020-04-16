@@ -10,7 +10,7 @@ import hasPendingCommentRequests from 'state/selectors/has-pending-comment-reque
 import { COMMENTS_CHANGE_STATUS } from 'state/action-types';
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 
-const actionKey = getRequestKey( {
+const actionKey = getRequestKey({
 	type: COMMENTS_CHANGE_STATUS,
 	commentId: 1,
 	status: 'approved',
@@ -19,8 +19,8 @@ const actionKey = getRequestKey( {
 			trackRequest: true,
 		},
 	},
-} );
-const actionKey2 = getRequestKey( {
+});
+const actionKey2 = getRequestKey({
 	type: COMMENTS_CHANGE_STATUS,
 	commentId: 2,
 	status: 'approved',
@@ -29,37 +29,37 @@ const actionKey2 = getRequestKey( {
 			trackRequest: true,
 		},
 	},
-} );
+});
 
-describe( 'hasPendingCommentRequests()', () => {
-	test( 'should return true if we have pending actions', () => {
-		const state = deepFreeze( {
-			ui: { comments: { pendingActions: [ actionKey, actionKey2 ] } },
+describe('hasPendingCommentRequests()', () => {
+	test('should return true if we have pending actions', () => {
+		const state = deepFreeze({
+			ui: { comments: { pendingActions: [actionKey, actionKey2] } },
 			dataRequests: {
-				[ actionKey ]: { status: 'success' },
-				[ actionKey2 ]: { status: 'pending' },
+				[actionKey]: { status: 'success' },
+				[actionKey2]: { status: 'pending' },
 			},
-		} );
-		expect( hasPendingCommentRequests( state ) ).toEqual( true );
-	} );
-	test( 'should return false if do not have pending actions', () => {
-		const state = deepFreeze( {
-			ui: { comments: { pendingActions: [ actionKey, actionKey2 ] } },
+		});
+		expect(hasPendingCommentRequests(state)).toEqual(true);
+	});
+	test('should return false if do not have pending actions', () => {
+		const state = deepFreeze({
+			ui: { comments: { pendingActions: [actionKey, actionKey2] } },
 			dataRequests: {
-				[ actionKey ]: { status: 'success' },
-				[ actionKey2 ]: { status: 'success' },
+				[actionKey]: { status: 'success' },
+				[actionKey2]: { status: 'success' },
 			},
-		} );
-		expect( hasPendingCommentRequests( state ) ).toEqual( false );
-	} );
-	test( 'only checks against actions we track in ui state', () => {
-		const state = deepFreeze( {
-			ui: { comments: { pendingActions: [ actionKey ] } },
+		});
+		expect(hasPendingCommentRequests(state)).toEqual(false);
+	});
+	test('only checks against actions we track in ui state', () => {
+		const state = deepFreeze({
+			ui: { comments: { pendingActions: [actionKey] } },
 			dataRequests: {
-				[ actionKey ]: { status: 'success' },
-				[ actionKey2 ]: { status: 'pending' },
+				[actionKey]: { status: 'success' },
+				[actionKey2]: { status: 'pending' },
 			},
-		} );
-		expect( hasPendingCommentRequests( state ) ).toEqual( false );
-	} );
-} );
+		});
+		expect(hasPendingCommentRequests(state)).toEqual(false);
+	});
+});

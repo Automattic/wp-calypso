@@ -16,9 +16,9 @@ import {
 	scanHistory,
 } from 'landing/jetpack-cloud/sections/scan/controller';
 
-export default function() {
-	if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
-		page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
+export default function () {
+	if (config.isEnabled('jetpack-cloud/scan')) {
+		page('/scan', siteSelection, sites, navigation, makeLayout, clientRender);
 		page(
 			'/scan/:site',
 			siteSelection,
@@ -29,7 +29,7 @@ export default function() {
 			clientRender
 		);
 
-		if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
+		if (config.isEnabled('jetpack-cloud/scan-history')) {
 			page(
 				'/scan/history/:site/:filter?',
 				siteSelection,

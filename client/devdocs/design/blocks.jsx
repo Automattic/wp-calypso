@@ -91,52 +91,48 @@ export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
 	state = { filter: '' };
 
-	onSearch = term => {
-		this.setState( { filter: trim( term || '' ).toLowerCase() } );
+	onSearch = (term) => {
+		this.setState({ filter: trim(term || '').toLowerCase() });
 	};
 
 	backToComponents = () => {
-		page( '/devdocs/blocks/' );
+		page('/devdocs/blocks/');
 	};
 
 	render() {
-		const className = classnames( 'devdocs', 'devdocs__blocks', {
+		const className = classnames('devdocs', 'devdocs__blocks', {
 			'is-single': this.props.component,
-			'is-list': ! this.props.component,
-		} );
+			'is-list': !this.props.component,
+		});
 
 		return (
-			<Main className={ className }>
+			<Main className={className}>
 				<DocumentHead title="Blocks" />
 
-				{ this.props.component ? (
+				{this.props.component ? (
 					<React.Fragment>
-						<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
-							{ slugToCamelCase( this.props.component ) }
+						<HeaderCake onClick={this.backToComponents} backText="All Blocks">
+							{slugToCamelCase(this.props.component)}
 						</HeaderCake>
-						{ isEnabled( 'devdocs/color-scheme-picker' ) && (
+						{isEnabled('devdocs/color-scheme-picker') && (
 							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-						) }
+						)}
 					</React.Fragment>
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/blocks/README.md" />
 						<SearchCard
-							onSearch={ this.onSearch }
-							initialValue={ this.state.filter }
+							onSearch={this.onSearch}
+							initialValue={this.state.filter}
 							placeholder="Search blocks…"
 							analyticsGroup="Docs"
 						/>
 					</div>
-				) }
-				<Collection
-					component={ this.props.component }
-					filter={ this.state.filter }
-					section="blocks"
-				>
-					{ isEnabled( 'devdocs/color-scheme-picker' ) && (
+				)}
+				<Collection component={this.props.component} filter={this.state.filter} section="blocks">
+					{isEnabled('devdocs/color-scheme-picker') && (
 						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					) }
+					)}
 					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />
 					<CalendarButton readmeFilePath="calendar-button" />
@@ -186,7 +182,7 @@ export default class AppComponents extends React.Component {
 					<DailyPostButton readmeFilePath="daily-post-button" />
 					<PostLikes readmeFilePath="post-likes" />
 					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />
-					{ isEnabled( 'nps-survey/devdocs' ) && <NpsSurvey readmeFilePath="nps-survey" /> }
+					{isEnabled('nps-survey/devdocs') && <NpsSurvey readmeFilePath="nps-survey" />}
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />
@@ -197,9 +193,9 @@ export default class AppComponents extends React.Component {
 					<PostComment />
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
-					{ isEnabled( 'reader/user-mention-suggestions' ) && (
+					{isEnabled('reader/user-mention-suggestions') && (
 						<UserMentions readmeFilePath="user-mentions" />
-					) }
+					)}
 					<SupportArticleDialog />
 					<ImageSelector readmeFilePath="image-selector" />
 					<UpsellNudge />

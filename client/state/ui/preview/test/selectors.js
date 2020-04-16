@@ -8,11 +8,11 @@ import { expect } from 'chai';
  */
 import { getPreviewSiteId } from '../selectors';
 
-describe( 'getPreviewSiteId', () => {
+describe('getPreviewSiteId', () => {
 	const currentPreviewSiteId = 123;
 	const selectedSiteId = 456;
 
-	test( 'should return the selected site id when not in "All My Sites" mode', () => {
+	test('should return the selected site id when not in "All My Sites" mode', () => {
 		const state = {
 			ui: {
 				preview: {
@@ -22,10 +22,10 @@ describe( 'getPreviewSiteId', () => {
 			},
 		};
 
-		expect( getPreviewSiteId( state ) ).to.eql( selectedSiteId );
-	} );
+		expect(getPreviewSiteId(state)).to.eql(selectedSiteId);
+	});
 
-	test( 'should return the current preview site id when in "All My Sites" mode', () => {
+	test('should return the current preview site id when in "All My Sites" mode', () => {
 		const state = {
 			ui: {
 				preview: {
@@ -35,10 +35,10 @@ describe( 'getPreviewSiteId', () => {
 			},
 		};
 
-		expect( getPreviewSiteId( state ) ).to.eql( currentPreviewSiteId );
-	} );
+		expect(getPreviewSiteId(state)).to.eql(currentPreviewSiteId);
+	});
 
-	test( 'should return null when in "All My Sites" mode and the current preview site id is unset', () => {
+	test('should return null when in "All My Sites" mode and the current preview site id is unset', () => {
 		const state = {
 			ui: {
 				preview: {
@@ -48,6 +48,6 @@ describe( 'getPreviewSiteId', () => {
 			},
 		};
 
-		expect( getPreviewSiteId( state ) ).to.eql( null );
-	} );
-} );
+		expect(getPreviewSiteId(state)).to.eql(null);
+	});
+});

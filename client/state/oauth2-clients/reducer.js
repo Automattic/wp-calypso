@@ -48,13 +48,13 @@ export const initialClientsData = {
 	},
 };
 
-export default function oauth2Clients( state = initialClientsData, action ) {
-	switch ( action.type ) {
+export default function oauth2Clients(state = initialClientsData, action) {
+	switch (action.type) {
 		case OAUTH2_CLIENT_DATA_RECEIVE:
 			return {
 				...state,
-				[ action.data.id ]: {
-					...state[ action.data.id ],
+				[action.data.id]: {
+					...state[action.data.id],
 					...action.data,
 				},
 			};

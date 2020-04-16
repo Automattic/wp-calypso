@@ -19,19 +19,19 @@ class QueryMailChimpLists extends Component {
 	};
 
 	componentDidMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId) {
 			return;
 		}
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( ! props.isRequesting && props.siteId ) {
-			props.requestLists( props.siteId );
+	request(props) {
+		if (!props.isRequesting && props.siteId) {
+			props.requestLists(props.siteId);
 		}
 	}
 
@@ -41,8 +41,8 @@ class QueryMailChimpLists extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		isRequesting: isRequestingLists( state, siteId ),
-	} ),
+	(state, { siteId }) => ({
+		isRequesting: isRequestingLists(state, siteId),
+	}),
 	{ requestLists }
-)( QueryMailChimpLists );
+)(QueryMailChimpLists);

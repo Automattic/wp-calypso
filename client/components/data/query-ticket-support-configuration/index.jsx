@@ -14,7 +14,7 @@ import { isRequestingTicketSupportConfiguration } from 'state/help/ticket/select
 
 class QueryTicketSupportConfiguration extends Component {
 	UNSAFE_componentWillMount() {
-		if ( ! this.props.isRequesting ) {
+		if (!this.props.isRequesting) {
 			this.props.ticketSupportConfigurationRequest();
 		}
 	}
@@ -25,8 +25,8 @@ class QueryTicketSupportConfiguration extends Component {
 }
 
 export default connect(
-	state => ( {
-		isRequesting: isRequestingTicketSupportConfiguration( state ),
-	} ),
+	(state) => ({
+		isRequesting: isRequestingTicketSupportConfiguration(state),
+	}),
 	{ ticketSupportConfigurationRequest }
-)( QueryTicketSupportConfiguration );
+)(QueryTicketSupportConfiguration);

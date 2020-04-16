@@ -1,5 +1,5 @@
 export const remoteValuesSchema = {
-	type: [ 'null', 'object' ],
+	type: ['null', 'object'],
 	patternProperties: {
 		'^dismissible-card-.+$': {
 			type: 'boolean',
@@ -8,7 +8,7 @@ export const remoteValuesSchema = {
 	properties: {
 		'editor-mode': {
 			type: 'string',
-			enum: [ 'html', 'tinymce' ],
+			enum: ['html', 'tinymce'],
 		},
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean',
@@ -21,9 +21,9 @@ export const remoteValuesSchema = {
 					type: 'object',
 					properties: {
 						dismissedAt: { type: 'number', minimum: 0 },
-						type: { type: 'string', enum: [ 'dismiss' ] },
+						type: { type: 'string', enum: ['dismiss'] },
 					},
-					required: [ 'dismissedAt', 'type' ],
+					required: ['dismissedAt', 'type'],
 				},
 			},
 		},
@@ -36,7 +36,7 @@ export const remoteValuesSchema = {
 					timestamp: { type: 'number', minimum: 0 },
 					finished: { type: 'boolean' },
 				},
-				required: [ 'tourName', 'timestamp', 'finished' ],
+				required: ['tourName', 'timestamp', 'finished'],
 				additionalProperties: false,
 			},
 		},
@@ -74,7 +74,7 @@ export const remoteValuesSchema = {
 		},
 		'store-dashboardStatsWidgetUnit': {
 			type: 'string',
-			enum: [ 'day', 'week', 'month' ],
+			enum: ['day', 'week', 'month'],
 		},
 		'upwork-dismissible-banner': {
 			type: 'object',
@@ -84,9 +84,9 @@ export const remoteValuesSchema = {
 					type: 'object',
 					properties: {
 						dismissedAt: { type: 'number', minimum: 0 },
-						type: { type: 'string', enum: [ 'dismiss' ] },
+						type: { type: 'string', enum: ['dismiss'] },
 					},
-					required: [ 'dismissedAt', 'type' ],
+					required: ['dismissedAt', 'type'],
 				},
 			},
 		},

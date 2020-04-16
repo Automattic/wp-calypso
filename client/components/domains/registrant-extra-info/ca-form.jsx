@@ -42,132 +42,130 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		const { translate } = props;
 		const legalTypes = {
-			CCT: translate( 'Canadian Citizen' ),
-			CCO: translate( 'Canadian Corporation' ),
-			RES: translate( 'Permanent Resident' ),
-			GOV: translate( 'Government' ),
-			EDU: translate( 'Educational Institution' ),
-			ASS: translate( 'Unincorporated Association', {
+			CCT: translate('Canadian Citizen'),
+			CCO: translate('Canadian Corporation'),
+			RES: translate('Permanent Resident'),
+			GOV: translate('Government'),
+			EDU: translate('Educational Institution'),
+			ASS: translate('Unincorporated Association', {
 				comment:
 					'Refers to Canadian legal concept -- encompasses entities ' +
 					'like religious congregations, social clubs, community groups, etc',
-			} ),
-			HOP: translate( 'Hospital' ),
-			PRT: translate( 'Partnership' ),
-			TDM: translate( 'Trademark Owner' ),
-			TRD: translate( 'Trade Union' ),
-			PLT: translate( 'Political Party' ),
-			LAM: translate( 'Library, Archive, or Museum' ),
-			TRS: translate( 'Trust', {
+			}),
+			HOP: translate('Hospital'),
+			PRT: translate('Partnership'),
+			TDM: translate('Trademark Owner'),
+			TRD: translate('Trade Union'),
+			PLT: translate('Political Party'),
+			LAM: translate('Library, Archive, or Museum'),
+			TRS: translate('Trust', {
 				comment: 'Refers to the legal concept of trust (noun)',
-			} ),
-			ABO: translate( 'Aboriginal Peoples', {
+			}),
+			ABO: translate('Aboriginal Peoples', {
 				comment: 'Refers to indigenous peoples, specifically of Canada.',
-			} ),
-			INB: translate( 'Indian Band', {
+			}),
+			INB: translate('Indian Band', {
 				comment:
 					'Refers to Canadian legal concept -- Indian meaning the ' +
 					'indigeonous people of North America and band meaning a small ' +
 					'group or community',
-			} ),
-			LGR: translate( 'Legal Representative' ),
-			OMK: translate( 'Official Mark', {
+			}),
+			LGR: translate('Legal Representative'),
+			OMK: translate('Official Mark', {
 				comment: 'Refers to a Canadian legal concept -- similar to a trademark',
-			} ),
-			MAJ: translate( 'Her Majesty the Queen' ),
+			}),
+			MAJ: translate('Her Majesty the Queen'),
 		};
-		const legalTypeOptions = map( legalTypes, ( text, optionValue ) => (
-			<option value={ optionValue } key={ optionValue }>
-				{ text }
+		const legalTypeOptions = map(legalTypes, (text, optionValue) => (
+			<option value={optionValue} key={optionValue}>
+				{text}
 			</option>
-		) );
+		));
 
 		this.legalTypeOptions = legalTypeOptions;
 		this.state = {
 			errorMessages: {},
 		};
-		this.validateContactDetails = debounce( this.validateContactDetails, 333 );
+		this.validateContactDetails = debounce(this.validateContactDetails, 333);
 	}
 
 	componentDidMount() {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
-			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.ccTldDetails )
+			['lang', 'legalType', 'ciraAgreementAccepted'],
+			keys(this.props.ccTldDetails)
 		);
 
 		// Bail early as we already have the details from a previous purchase.
-		if ( isEmpty( neededRequiredDetails ) ) {
+		if (isEmpty(neededRequiredDetails)) {
 			return;
 		}
 
 		// Set the lang to FR if user languages is French, otherwise leave EN
-		if ( this.props.userWpcomLang.match( /^fr-?/i ) ) {
+		if (this.props.userWpcomLang.match(/^fr-?/i)) {
 			defaultValues.lang = 'FR';
 		}
 
 		const payload = {
 			extra: {
-				ca: pick( defaultValues, neededRequiredDetails ),
+				ca: pick(defaultValues, neededRequiredDetails),
 			},
 		};
 
-		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+		this.props.updateContactDetailsCache(payload);
+		this.props.onContactDetailsChange?.(payload);
 	}
 
-	validateContactDetails = contactDetails => {
+	validateContactDetails = (contactDetails) => {
 		wpcom.validateDomainContactInformation(
 			contactDetails,
 			this.props.getDomainNames(),
-			( error, data ) => {
-				this.setState( {
-					errorMessages: ( data && data.messages ) || {},
-				} );
+			(error, data) => {
+				this.setState({
+					errorMessages: (data && data.messages) || {},
+				});
 			}
 		);
 	};
 
-	handleChangeEvent = event => {
+	handleChangeEvent = (event) => {
 		const { value, name, checked, type, id } = event.target;
 		const newContactDetails = {};
 
-		if ( name === 'organization' ) {
-			newContactDetails[ name ] = value;
-			this.validateContactDetails( {
+		if (name === 'organization') {
+			newContactDetails[name] = value;
+			this.validateContactDetails({
 				...this.props.contactDetails,
-				[ name ]: value,
-			} );
+				[name]: value,
+			});
 		} else {
 			newContactDetails.extra = {
-				ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
+				ca: { [camelCase(id)]: type === 'checkbox' ? checked : value },
 			};
 		}
 
-		this.props.updateContactDetailsCache( { ...newContactDetails } );
-		this.props.onContactDetailsChange?.( { ...newContactDetails } );
+		this.props.updateContactDetailsCache({ ...newContactDetails });
+		this.props.onContactDetailsChange?.({ ...newContactDetails });
 	};
 
 	needsOrganization() {
-		return get( this.props.ccTldDetails, 'legalType' ) === 'CCO';
+		return get(this.props.ccTldDetails, 'legalType') === 'CCO';
 	}
 
 	organizationFieldIsValid() {
-		return isEmpty( this.getOrganizationErrorMessage() );
+		return isEmpty(this.getOrganizationErrorMessage());
 	}
 
 	getOrganizationErrorMessage() {
 		let message =
 			this.props.contactDetailsValidationErrors?.organization ||
-			( this.state.errorMessages.organization || [] ).join( '\n' );
-		if ( this.needsOrganization() && isEmpty( this.props.contactDetails.organization ) ) {
-			message = this.props.translate(
-				'An organization name is required for Canadian corporations'
-			);
+			(this.state.errorMessages.organization || []).join('\n');
+		if (this.needsOrganization() && isEmpty(this.props.contactDetails.organization)) {
+			message = this.props.translate('An organization name is required for Canadian corporations');
 		}
 		return message;
 	}
@@ -175,8 +173,8 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	renderOrganizationField() {
 		const { translate, contactDetails } = this.props;
 		const label = {
-			label: translate( 'Organization' ),
-			...( this.needsOrganization() ? {} : { labelProps: { optional: true } } ),
+			label: translate('Organization'),
+			...(this.needsOrganization() ? {} : { labelProps: { optional: true } }),
 		};
 
 		return (
@@ -184,11 +182,11 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 				<Input
 					name="organization"
 					className="registrant-extra-info__organization"
-					value={ contactDetails.organization || '' }
-					isError={ ! this.organizationFieldIsValid() }
-					errorMessage={ this.getOrganizationErrorMessage() }
-					{ ...label }
-					onChange={ this.handleChangeEvent }
+					value={contactDetails.organization || ''}
+					isError={!this.organizationFieldIsValid()}
+					errorMessage={this.getOrganizationErrorMessage()}
+					{...label}
+					onChange={this.handleChangeEvent}
 				/>
 			</FormFieldset>
 		);
@@ -202,63 +200,63 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		};
 
 		const formIsValid = ciraAgreementAccepted && this.organizationFieldIsValid();
-		const validatingSubmitButton = formIsValid ? children : disableSubmitButton( children );
+		const validatingSubmitButton = formIsValid ? children : disableSubmitButton(children);
 
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
-					{ translate( 'Almost done! We need some extra details to register your %(tld)s domain.', {
+					{translate('Almost done! We need some extra details to register your %(tld)s domain.', {
 						args: { tld: '.ca' },
-					} ) }
+					})}
 				</p>
 				<FormFieldset>
 					<FormLabel htmlFor="legal-type">
-						{ translate( 'Choose the option that best describes your Canadian presence:' ) }
+						{translate('Choose the option that best describes your Canadian presence:')}
 					</FormLabel>
 					<FormSelect
 						id="legal-type"
-						value={ legalType }
+						value={legalType}
 						className="registrant-extra-info__form-legal-type"
-						onChange={ this.handleChangeEvent }
+						onChange={this.handleChangeEvent}
 					>
-						{ this.legalTypeOptions }
+						{this.legalTypeOptions}
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="legal-type">{ translate( 'CIRA Agreement' ) }</FormLabel>
+					<FormLabel htmlFor="legal-type">{translate('CIRA Agreement')}</FormLabel>
 					<FormLabel>
 						<FormCheckbox
 							id="cira-agreement-accepted"
-							checked={ ciraAgreementAccepted }
-							onChange={ this.handleChangeEvent }
+							checked={ciraAgreementAccepted}
+							onChange={this.handleChangeEvent}
 						/>
 						<span>
-							{ translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}', {
+							{translate('I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}', {
 								components: {
-									a: <a target="_blank" rel="noopener noreferrer" href={ ciraAgreementUrl } />,
+									a: <a target="_blank" rel="noopener noreferrer" href={ciraAgreementUrl} />,
 								},
-							} ) }
+							})}
 						</span>
-						{ ciraAgreementAccepted || (
-							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
-						) }
+						{ciraAgreementAccepted || (
+							<FormInputValidation text={translate('Required')} isError={true} />
+						)}
 					</FormLabel>
 				</FormFieldset>
-				{ this.renderOrganizationField() }
-				{ validatingSubmitButton }
+				{this.renderOrganizationField()}
+				{validatingSubmitButton}
 			</form>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const contactDetails = getContactDetailsCache( state );
+	(state) => {
+		const contactDetails = getContactDetailsCache(state);
 		return {
 			contactDetails,
-			ccTldDetails: get( contactDetails, 'extra.ca', {} ),
-			userWpcomLang: getCurrentUserLocale( state ),
+			ccTldDetails: get(contactDetails, 'extra.ca', {}),
+			userWpcomLang: getCurrentUserLocale(state),
 		};
 	},
 	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoCaForm ) );
+)(localize(RegistrantExtraInfoCaForm));

@@ -15,7 +15,7 @@ const ReaderAuthorLinkExample = () => {
 
 	return (
 		<Card>
-			<ReaderAuthorLink author={ author }>Author site</ReaderAuthorLink>
+			<ReaderAuthorLink author={author}>Author site</ReaderAuthorLink>
 		</Card>
 	);
 };

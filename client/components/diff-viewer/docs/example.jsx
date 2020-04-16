@@ -10,7 +10,7 @@ import DiffViewer from '../index';
 
 DiffViewer.displayName = 'DiffViewer';
 
-const DiffViewerExample = ( { exampleCode } ) => exampleCode;
+const DiffViewerExample = ({ exampleCode }) => exampleCode;
 
 DiffViewerExample.displayName = 'DiffViewer';
 

@@ -14,7 +14,7 @@ import AsyncLoad from 'components/async-load';
 class MySitesNavigation extends React.Component {
 	static displayName = 'MySitesNavigation';
 
-	preventPickerDefault = event => {
+	preventPickerDefault = (event) => {
 		event.preventDefault();
 		event.stopPropagation();
 	};
@@ -26,20 +26,20 @@ class MySitesNavigation extends React.Component {
 			siteBasePath: this.props.siteBasePath,
 		};
 
-		const asyncSidebar = config.isEnabled( 'jetpack-cloud' ) ? (
-			<AsyncLoad require="landing/jetpack-cloud/components/sidebar" { ...asyncProps } />
+		const asyncSidebar = config.isEnabled('jetpack-cloud') ? (
+			<AsyncLoad require="landing/jetpack-cloud/components/sidebar" {...asyncProps} />
 		) : (
-			<AsyncLoad require="my-sites/sidebar" { ...asyncProps } />
+			<AsyncLoad require="my-sites/sidebar" {...asyncProps} />
 		);
 
 		return (
 			<div>
 				<SitePicker
-					allSitesPath={ this.props.allSitesPath }
-					siteBasePath={ this.props.siteBasePath }
-					onClose={ this.preventPickerDefault }
+					allSitesPath={this.props.allSitesPath}
+					siteBasePath={this.props.siteBasePath}
+					onClose={this.preventPickerDefault}
 				/>
-				{ asyncSidebar }
+				{asyncSidebar}
 			</div>
 		);
 	}

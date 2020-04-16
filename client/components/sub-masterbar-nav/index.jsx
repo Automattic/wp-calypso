@@ -17,16 +17,16 @@ import Dropdown from './dropdown';
  */
 import './style.scss';
 
-const OptionShape = PropTypes.shape( {
+const OptionShape = PropTypes.shape({
 	label: PropTypes.string.isRequired,
 	uri: PropTypes.string.isRequired,
 	icon: PropTypes.string,
-} );
+});
 
 export default class SubMasterbarNav extends Component {
 	static propTypes = {
 		fallback: OptionShape,
-		options: PropTypes.arrayOf( OptionShape ),
+		options: PropTypes.arrayOf(OptionShape),
 		uri: PropTypes.string.isRequired,
 	};
 
@@ -38,15 +38,15 @@ export default class SubMasterbarNav extends Component {
 		return (
 			<div className="sub-masterbar-nav">
 				<Dropdown
-					selected={ this.getSelected() || this.props.fallback }
-					options={ this.props.options }
+					selected={this.getSelected() || this.props.fallback}
+					options={this.props.options}
 				/>
-				<Navbar selected={ this.getSelected() } options={ this.props.options } />
+				<Navbar selected={this.getSelected()} options={this.props.options} />
 			</div>
 		);
 	}
 
 	getSelected() {
-		return find( this.props.options, option => option.uri === this.props.uri );
+		return find(this.props.options, (option) => option.uri === this.props.uri);
 	}
 }

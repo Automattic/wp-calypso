@@ -26,46 +26,46 @@ class MediaLibraryListNoResults extends React.Component {
 	getLabel = () => {
 		let label;
 
-		switch ( this.props.filter ) {
+		switch (this.props.filter) {
 			case 'images':
-				label = this.props.translate( 'No images match your search for {{searchTerm/}}.', {
+				label = this.props.translate('No images match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>,
+						searchTerm: <em>{this.props.search}</em>,
 					},
 					context: 'Media no search results',
-				} );
+				});
 				break;
 			case 'videos':
-				label = this.props.translate( 'No videos match your search for {{searchTerm/}}.', {
+				label = this.props.translate('No videos match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>,
+						searchTerm: <em>{this.props.search}</em>,
 					},
 					context: 'Media no search results',
-				} );
+				});
 				break;
 			case 'audio':
-				label = this.props.translate( 'No audio files match your search for {{searchTerm/}}.', {
+				label = this.props.translate('No audio files match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>,
+						searchTerm: <em>{this.props.search}</em>,
 					},
 					context: 'Media no search results',
-				} );
+				});
 				break;
 			case 'documents':
-				label = this.props.translate( 'No documents match your search for {{searchTerm/}}.', {
+				label = this.props.translate('No documents match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>,
+						searchTerm: <em>{this.props.search}</em>,
 					},
 					context: 'Media no search results',
-				} );
+				});
 				break;
 			default:
-				label = this.props.translate( 'No media files match your search for {{searchTerm/}}.', {
+				label = this.props.translate('No media files match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>,
+						searchTerm: <em>{this.props.search}</em>,
 					},
 					context: 'Media no search results',
-				} );
+				});
 				break;
 		}
 
@@ -74,9 +74,9 @@ class MediaLibraryListNoResults extends React.Component {
 
 	render() {
 		return (
-			<NoResults text={ this.getLabel() } image="/calypso/images/pages/illustration-pages.svg" />
+			<NoResults text={this.getLabel()} image="/calypso/images/pages/illustration-pages.svg" />
 		);
 	}
 }
 
-export default localize( MediaLibraryListNoResults );
+export default localize(MediaLibraryListNoResults);

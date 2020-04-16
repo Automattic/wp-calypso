@@ -10,6 +10,6 @@ import 'state/themes/init';
  * @param  {number}  siteId  Site ID
  * @returns {boolean}         True if theme activation is ongoing
  */
-export function isActivatingTheme( state, siteId ) {
-	return state.themes.activationRequests[ siteId ] ?? false;
+export function isActivatingTheme(state, siteId) {
+	return state.themes.activationRequests[siteId] ?? false;
 }

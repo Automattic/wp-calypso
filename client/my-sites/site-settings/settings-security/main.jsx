@@ -27,52 +27,52 @@ import { getSitePurchases } from 'state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const SiteSettingsSecurity = ( {
+const SiteSettingsSecurity = ({
 	rewindState,
 	sitePurchases,
 	site,
 	siteId,
 	siteIsJetpack,
 	translate,
-} ) => {
-	if ( ! siteIsJetpack ) {
+}) => {
+	if (!siteIsJetpack) {
 		return (
 			<JetpackManageErrorPage
-				action={ translate( 'Manage general settings for %(site)s', {
+				action={translate('Manage general settings for %(site)s', {
 					args: { site: site.name },
-				} ) }
-				actionURL={ '/settings/general/' + site.slug }
-				title={ translate( 'No security configuration is required.' ) }
-				line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
+				})}
+				actionURL={'/settings/general/' + site.slug}
+				title={translate('No security configuration is required.')}
+				line={translate('Security management is automatic for WordPress.com sites.')}
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}
 
-	const credentials = find( rewindState.credentials, { role: 'main' } );
+	const credentials = find(rewindState.credentials, { role: 'main' });
 	const isManaged = credentials && credentials.type && 'managed' === credentials.type;
 
-	const isRewindActive = [ 'awaitingCredentials', 'provisioning', 'active' ].includes(
+	const isRewindActive = ['awaitingCredentials', 'provisioning', 'active'].includes(
 		rewindState.state
 	);
-	const hasScanProduct = sitePurchases.some( p => p.productSlug.includes( 'jetpack_scan' ) );
+	const hasScanProduct = sitePurchases.some((p) => p.productSlug.includes('jetpack_scan'));
 
-	const showCredentials = ! isManaged && ( isRewindActive || hasScanProduct );
+	const showCredentials = !isManaged && (isRewindActive || hasScanProduct);
 
 	return (
 		<Main className="settings-security site-settings">
-			<QueryRewindState siteId={ siteId } />
-			<QuerySitePurchases siteId={ siteId } />
-			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<QueryRewindState siteId={siteId} />
+			<QuerySitePurchases siteId={siteId} />
+			<DocumentHead title={translate('Site Settings')} />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
 				className="settings-security__page-heading"
-				headerText={ translate( 'Settings' ) }
+				headerText={translate('Settings')}
 				align="left"
 			/>
-			<SiteSettingsNavigation site={ site } section="security" />
-			{ showCredentials && <JetpackCredentials /> }
+			<SiteSettingsNavigation site={site} section="security" />
+			{showCredentials && <JetpackCredentials />}
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
@@ -87,17 +87,17 @@ SiteSettingsSecurity.propTypes = {
 	siteIsJetpack: PropTypes.bool,
 };
 
-export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	const rewindState = getRewindState( state, siteId );
-	const sitePurchases = getSitePurchases( state, siteId );
+export default connect((state) => {
+	const site = getSelectedSite(state);
+	const siteId = getSelectedSiteId(state);
+	const rewindState = getRewindState(state, siteId);
+	const sitePurchases = getSitePurchases(state, siteId);
 
 	return {
 		rewindState,
 		sitePurchases,
 		site,
 		siteId,
-		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteIsJetpack: isJetpackSite(state, siteId),
 	};
-} )( localize( SiteSettingsSecurity ) );
+})(localize(SiteSettingsSecurity));

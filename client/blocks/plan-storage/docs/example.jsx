@@ -21,7 +21,7 @@ import {
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-const PlanStorageExample = ( { siteId, siteSlug } ) => {
+const PlanStorageExample = ({ siteId, siteSlug }) => {
 	const mediaStorage = {
 		red: {
 			storage_used_bytes: 11362335981,
@@ -37,73 +37,73 @@ const PlanStorageExample = ( { siteId, siteSlug } ) => {
 		},
 	};
 
-	if ( ! siteSlug ) {
+	if (!siteSlug) {
 		return null;
 	}
 
 	return (
 		<div>
-			<div style={ { marginBottom: 16 } }>
-				<PlanStorage siteId={ siteId } />
+			<div style={{ marginBottom: 16 }}>
+				<PlanStorage siteId={siteId} />
 			</div>
 
-			<div style={ { marginBottom: 16 } }>
+			<div style={{ marginBottom: 16 }}>
 				<PlanStorageBar
-					siteSlug={ siteSlug }
-					sitePlanSlug={ PLAN_FREE }
-					mediaStorage={ mediaStorage.green }
+					siteSlug={siteSlug}
+					sitePlanSlug={PLAN_FREE}
+					mediaStorage={mediaStorage.green}
 				/>
 			</div>
-			<div style={ { marginBottom: 16, maxWidth: '400px' } }>
+			<div style={{ marginBottom: 16, maxWidth: '400px' }}>
 				<PlanStorageBar
-					siteSlug={ siteSlug }
-					sitePlanSlug={ PLAN_PERSONAL }
-					mediaStorage={ mediaStorage.yellow }
-				/>
-			</div>
-
-			<div style={ { marginBottom: 16, maxWidth: '300px' } }>
-				<PlanStorageBar
-					siteSlug={ siteSlug }
-					sitePlanSlug={ PLAN_PREMIUM }
-					mediaStorage={ mediaStorage.red }
+					siteSlug={siteSlug}
+					sitePlanSlug={PLAN_PERSONAL}
+					mediaStorage={mediaStorage.yellow}
 				/>
 			</div>
 
-			<div style={ { marginBottom: 16 } }>
-				<span style={ { fontSize: 12, color: 'grey' } }>
+			<div style={{ marginBottom: 16, maxWidth: '300px' }}>
+				<PlanStorageBar
+					siteSlug={siteSlug}
+					sitePlanSlug={PLAN_PREMIUM}
+					mediaStorage={mediaStorage.red}
+				/>
+			</div>
+
+			<div style={{ marginBottom: 16 }}>
+				<span style={{ fontSize: 12, color: 'grey' }}>
 					Business plans have unlimited storage, so PlanStorage will not be rendered.
 				</span>
 				<PlanStorageBar
-					siteSlug={ siteSlug }
-					sitePlanSlug={ PLAN_BUSINESS }
-					mediaStorage={ mediaStorage.red }
+					siteSlug={siteSlug}
+					sitePlanSlug={PLAN_BUSINESS}
+					mediaStorage={mediaStorage.red}
 				/>
 			</div>
 
-			<div style={ { marginBottom: 16 } }>
-				<span style={ { fontSize: 12, color: 'grey' } }>
+			<div style={{ marginBottom: 16 }}>
+				<span style={{ fontSize: 12, color: 'grey' }}>
 					Ecommerce plans have unlimited storage, so PlanStorage will not be rendered.
 				</span>
 				<PlanStorageBar
-					siteSlug={ siteSlug }
-					sitePlanSlug={ PLAN_ECOMMERCE }
-					mediaStorage={ mediaStorage.red }
+					siteSlug={siteSlug}
+					sitePlanSlug={PLAN_ECOMMERCE}
+					mediaStorage={mediaStorage.red}
 				/>
 			</div>
 		</div>
 	);
 };
 
-const ConnectedPlanStorageExample = connect( state => {
-	const siteId = get( getCurrentUser( state ), 'primary_blog', null );
-	const siteSlug = getSiteSlug( state, siteId );
+const ConnectedPlanStorageExample = connect((state) => {
+	const siteId = get(getCurrentUser(state), 'primary_blog', null);
+	const siteSlug = getSiteSlug(state, siteId);
 
 	return {
 		siteId,
 		siteSlug,
 	};
-} )( PlanStorageExample );
+})(PlanStorageExample);
 
 ConnectedPlanStorageExample.displayName = 'PlanStorage';
 

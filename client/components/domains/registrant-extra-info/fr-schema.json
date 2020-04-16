@@ -22,7 +22,7 @@
 								"properties": {
 									"registrantType": {
 										"type": "string",
-										"enum": [ "organization" ]
+										"enum": ["organization"]
 									}
 								}
 							}
@@ -39,7 +39,7 @@
 		{ "$ref": "#/definitions/organizationIsRequiredWhenRegistrantTypeIsOrganization" },
 		{
 			"type": "object",
-			"required": [ "extra" ],
+			"required": ["extra"],
 			"properties": {
 				"organization": {
 					"type": "string",
@@ -63,7 +63,7 @@
 								},
 								"registrantType": {
 									"type": "string",
-									"enum": [ "individual", "organization" ]
+									"enum": ["individual", "organization"]
 								},
 								"registrantVatId": {
 									"type": "string",
@@ -102,10 +102,10 @@
 								"trademarkNumber": {
 									"pattern": "^[0-9]*$",
 									"maxLength": 9,
-									"oneOf": [ { "minLength": 9 }, { "$ref": "#/definitions/empty" } ]
+									"oneOf": [{ "minLength": 9 }, { "$ref": "#/definitions/empty" }]
 								}
 							},
-							"required": [ "registrantType" ]
+							"required": ["registrantType"]
 						}
 					}
 				}

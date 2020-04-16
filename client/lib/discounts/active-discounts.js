@@ -16,8 +16,8 @@ import {
 export default [
 	{
 		name: 'simple_payments_wpcom',
-		startsAt: new Date( 2018, 6, 9, 0, 0, 0 ),
-		endsAt: new Date( 2018, 8, 9, 23, 59, 59 ),
+		startsAt: new Date(2018, 6, 9, 0, 0, 0),
+		endsAt: new Date(2018, 8, 9, 23, 59, 59),
 		plansPageNoticeText:
 			'Upgrade to a Premium or Business plan today and start collecting payments with the Simple Payments button!',
 		targetPlans: [
@@ -27,8 +27,8 @@ export default [
 	},
 	{
 		name: 'simple_payments_jetpack',
-		startsAt: new Date( 2018, 6, 9, 0, 0, 0 ),
-		endsAt: new Date( 2018, 8, 9, 23, 59, 59 ),
+		startsAt: new Date(2018, 6, 9, 0, 0, 0),
+		endsAt: new Date(2018, 8, 9, 23, 59, 59),
 		plansPageNoticeText:
 			'Upgrade to a Premium or Professional plan today and start collecting payments with the Simple Payments button!',
 		targetPlans: [
@@ -38,8 +38,8 @@ export default [
 	},
 	{
 		name: 'renewing_plan',
-		startsAt: new Date( 2018, 6, 11, 0, 0, 0 ),
-		endsAt: new Date( 2018, 6, 16, 23, 59, 59 ),
+		startsAt: new Date(2018, 6, 11, 0, 0, 0),
+		endsAt: new Date(2018, 6, 16, 23, 59, 59),
 		plansPageNoticeText:
 			'Enter coupon code YOURGIFT30 during checkout to redeem your 30% off discount!',
 		targetPlans: [
@@ -55,8 +55,8 @@ export default [
 	},
 	{
 		name: 'sale_wpsave20',
-		startsAt: new Date( 2019, 1, 1, 0, 0, 0 ),
-		endsAt: new Date( 2099, 1, 1, 0, 0, 0 ), //evergreen
+		startsAt: new Date(2019, 1, 1, 0, 0, 0),
+		endsAt: new Date(2099, 1, 1, 0, 0, 0), //evergreen
 		plansPageNoticeText: 'Enter coupon code “WPSAVE20” at checkout to claim your 20% discount',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_WPCOM },
@@ -67,8 +67,8 @@ export default [
 	},
 	{
 		name: 'sale_wpsave20_jp',
-		startsAt: new Date( 2019, 1, 1, 0, 0, 0 ),
-		endsAt: new Date( 2099, 1, 1, 0, 0, 0 ), //evergreen
+		startsAt: new Date(2019, 1, 1, 0, 0, 0),
+		endsAt: new Date(2099, 1, 1, 0, 0, 0), //evergreen
 		plansPageNoticeText: 'Enter coupon code “JPSALE20” at checkout to claim your 20% discount',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_JETPACK },
@@ -78,8 +78,8 @@ export default [
 	},
 	{
 		name: 'sale_julybusiness40',
-		startsAt: new Date( '2019-07-22 00:00:00' ),
-		endsAt: new Date( '2019-07-25 23:59:59' ),
+		startsAt: new Date('2019-07-22 00:00:00'),
+		endsAt: new Date('2019-07-25 23:59:59'),
 		plansPageNoticeText:
 			'Enter coupon code "JULYBUSINESS40" at checkout to save 40% on a Business plan site upgrade',
 		targetPlans: [
@@ -91,19 +91,19 @@ export default [
 	},
 	{
 		name: 'plans_no_tabs',
-		startsAt: new Date( 2018, 2, 7, 0, 0, 0 ),
-		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
+		startsAt: new Date(2018, 2, 7, 0, 0, 0),
+		endsAt: new Date(2120, 9, 26, 0, 0, 0),
 	},
 	// NOTE: These two (new_plans and default_plans_tab_business) should remain at the bottom.
 	// It's a temporary hack and will be removed shortly.
 	{
 		name: 'new_plans',
-		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
-		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
+		startsAt: new Date(2018, 9, 25, 0, 0, 1),
+		endsAt: new Date(2120, 9, 26, 0, 0, 0),
 	},
 	{
 		name: 'default_plans_tab_business',
-		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
-		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
+		startsAt: new Date(2018, 9, 25, 0, 0, 1),
+		endsAt: new Date(2120, 9, 26, 0, 0, 0),
 	},
 ];

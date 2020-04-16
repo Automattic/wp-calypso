@@ -4,7 +4,7 @@
 
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:followers-actions' );
+const debug = debugFactory('calypso:followers-actions');
 
 /**
  * Internal dependencies
@@ -20,37 +20,37 @@ import {
 } from 'state/action-types';
 
 export default {
-	fetchFollowers( query, silentUpdate = false ) {
-		return dispatch => {
+	fetchFollowers(query, silentUpdate = false) {
+		return (dispatch) => {
 			// TODO: Componentes should not fetch if already fetching
-			debug( 'fetching followers', query );
-			if ( ! silentUpdate ) {
-				dispatch( {
+			debug('fetching followers', query);
+			if (!silentUpdate) {
+				dispatch({
 					type: FOLLOWERS_REQUEST,
 					query,
-				} );
+				});
 			}
 			wpcom
-				.site( query.siteId )
-				.statsFollowers( query )
-				.then( data => dispatch( { type: FOLLOWERS_RECEIVE, query, data } ) )
-				.catch( error => dispatch( { type: FOLLOWERS_REQUEST_ERROR, query, error } ) );
+				.site(query.siteId)
+				.statsFollowers(query)
+				.then((data) => dispatch({ type: FOLLOWERS_RECEIVE, query, data }))
+				.catch((error) => dispatch({ type: FOLLOWERS_REQUEST_ERROR, query, error }));
 		};
 	},
-	removeFollower( siteId, follower ) {
-		return dispatch => {
-			debug( 'removing follower', follower, siteId );
-			dispatch( {
+	removeFollower(siteId, follower) {
+		return (dispatch) => {
+			debug('removing follower', follower, siteId);
+			dispatch({
 				type: FOLLOWER_REMOVE_REQUEST,
 				siteId: siteId,
 				follower: follower,
-			} );
+			});
 			wpcom
 				.undocumented()
-				.site( siteId )
-				.removeFollower( follower.ID )
-				.then( data => dispatch( { type: FOLLOWER_REMOVE_SUCCESS, siteId, follower, data } ) )
-				.catch( error => dispatch( { type: FOLLOWER_REMOVE_ERROR, siteId, follower, error } ) );
+				.site(siteId)
+				.removeFollower(follower.ID)
+				.then((data) => dispatch({ type: FOLLOWER_REMOVE_SUCCESS, siteId, follower, data }))
+				.catch((error) => dispatch({ type: FOLLOWER_REMOVE_ERROR, siteId, follower, error }));
 		};
 	},
 };

@@ -49,26 +49,26 @@ class LinkDialog extends React.Component {
 		firstLoad: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.visible && ! this.props.visible ) {
-			this.setState( this.getState() );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.visible && !this.props.visible) {
+			this.setState(this.getState());
 		}
 	}
 
 	getLink = () => {
 		const { editor } = this.props;
 
-		return editor.dom.getParent( editor.selection.getNode(), 'a' );
+		return editor.dom.getParent(editor.selection.getNode(), 'a');
 	};
 
 	getCorrectedUrl = () => {
 		const url = this.state.url.trim();
 
-		if ( REGEXP_EMAIL.test( url ) ) {
+		if (REGEXP_EMAIL.test(url)) {
 			return 'mailto:' + url;
 		}
 
-		if ( ! REGEXP_STANDALONE_URL.test( url ) ) {
+		if (!REGEXP_STANDALONE_URL.test(url)) {
 			return 'http://' + url;
 		}
 
@@ -80,11 +80,11 @@ class LinkDialog extends React.Component {
 
 		editor.focus();
 
-		if ( tinymce.isIE ) {
-			editor.selection.moveToBookmark( editor.windowManager.bookmark );
+		if (tinymce.isIE) {
+			editor.selection.moveToBookmark(editor.windowManager.bookmark);
 		}
 
-		if ( ! this.state.url ) {
+		if (!this.state.url) {
 			this.removeLink();
 			return;
 		}
@@ -96,48 +96,45 @@ class LinkDialog extends React.Component {
 			target: this.state.newWindow ? '_blank' : '',
 		};
 
-		if ( link ) {
-			if ( linkText ) {
-				if ( 'innerText' in link ) {
+		if (link) {
+			if (linkText) {
+				if ('innerText' in link) {
 					link.innerText = linkText;
 				} else {
 					link.textContent = linkText;
 				}
 			}
 
-			editor.dom.setAttribs( link, attrs );
-		} else if ( linkText ) {
-			linkText = editor.dom.encode( linkText );
-			editor.selection.setNode( editor.dom.create( 'a', attrs, linkText ) );
+			editor.dom.setAttribs(link, attrs);
+		} else if (linkText) {
+			linkText = editor.dom.encode(linkText);
+			editor.selection.setNode(editor.dom.create('a', attrs, linkText));
 		} else {
-			editor.execCommand( 'mceInsertLink', false, attrs );
+			editor.execCommand('mceInsertLink', false, attrs);
 		}
 
 		this.closeDialog();
 	};
 
-	hasSelectedText = linkNode => {
+	hasSelectedText = (linkNode) => {
 		const { editor } = this.props;
 		const html = editor.selection.getContent();
 		let nodes;
 
 		// Partial html and not a fully selected anchor element
-		if (
-			/</.test( html ) &&
-			( ! /^<a [^>]+>[^<]+<\/a>$/.test( html ) || html.indexOf( 'href=' ) === -1 )
-		) {
+		if (/</.test(html) && (!/^<a [^>]+>[^<]+<\/a>$/.test(html) || html.indexOf('href=') === -1)) {
 			return false;
 		}
 
-		if ( linkNode ) {
+		if (linkNode) {
 			nodes = linkNode.childNodes;
 
-			if ( nodes.length === 0 ) {
+			if (nodes.length === 0) {
 				return false;
 			}
 
-			for ( let i = nodes.length - 1; i >= 0; i-- ) {
-				if ( nodes[ i ].nodeType !== 3 ) {
+			for (let i = nodes.length - 1; i >= 0; i--) {
+				if (nodes[i].nodeType !== 3) {
 					return false;
 				}
 			}
@@ -151,22 +148,21 @@ class LinkDialog extends React.Component {
 		let parsedImage;
 		let knownImage;
 
-		if ( REGEXP_EMAIL.test( selectedText ) ) {
+		if (REGEXP_EMAIL.test(selectedText)) {
 			return 'mailto:' + selectedText;
-		} else if ( REGEXP_URL.test( selectedText ) ) {
-			return selectedText.replace( /&amp;|&#0?38;/gi, '&' );
+		} else if (REGEXP_URL.test(selectedText)) {
+			return selectedText.replace(/&amp;|&#0?38;/gi, '&');
 		}
 
 		const selectedNode = this.props.editor.selection.getNode();
-		if ( selectedNode && 'IMG' === selectedNode.nodeName ) {
-			parsedImage = deserialize( selectedNode );
-			if ( this.props.site && parsedImage.media.ID ) {
-				knownImage =
-					MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
-				return mediaUrl( knownImage, {
+		if (selectedNode && 'IMG' === selectedNode.nodeName) {
+			parsedImage = deserialize(selectedNode);
+			if (this.props.site && parsedImage.media.ID) {
+				knownImage = MediaStore.get(this.props.site.ID, parsedImage.media.ID) || parsedImage.media;
+				return mediaUrl(knownImage, {
 					size: 'full',
-				} );
-			} else if ( parsedImage.media.URL ) {
+				});
+			} else if (parsedImage.media.URL) {
 				return parsedImage.media.URL;
 			}
 		}
@@ -175,8 +171,8 @@ class LinkDialog extends React.Component {
 	getState = () => {
 		const { editor } = this.props;
 		const selectedNode = editor.selection.getNode();
-		const linkNode = editor.dom.getParent( selectedNode, 'a[href]' );
-		const onlyText = this.hasSelectedText( linkNode );
+		const linkNode = editor.dom.getParent(selectedNode, 'a[href]');
+		const onlyText = this.hasSelectedText(linkNode);
 		const nextState = {
 			isNew: true,
 			newWindow: false,
@@ -186,20 +182,20 @@ class LinkDialog extends React.Component {
 			isUserDefinedLinkText: false,
 		};
 
-		if ( linkNode ) {
+		if (linkNode) {
 			nextState.linkText = linkNode.innerText || linkNode.textContent;
-			nextState.url = editor.dom.getAttrib( linkNode, 'href' );
-			nextState.newWindow = '_blank' === editor.dom.getAttrib( linkNode, 'target' );
+			nextState.url = editor.dom.getAttrib(linkNode, 'href');
+			nextState.newWindow = '_blank' === editor.dom.getAttrib(linkNode, 'target');
 			nextState.isNew = false;
-		} else if ( onlyText ) {
-			nextState.linkText = editor.selection.getContent( { format: 'text' } );
+		} else if (onlyText) {
+			nextState.linkText = editor.selection.getContent({ format: 'text' });
 		}
 
-		if ( ! linkNode ) {
+		if (!linkNode) {
 			nextState.url = this.getInferredUrl() || '';
 		}
 
-		if ( ! this.hasSelectedText( linkNode ) ) {
+		if (!this.hasSelectedText(linkNode)) {
 			nextState.showLinkText = false;
 		}
 
@@ -210,56 +206,56 @@ class LinkDialog extends React.Component {
 		this.props.onClose();
 	};
 
-	setUrl = event => {
-		this.setState( { url: event.target.value } );
+	setUrl = (event) => {
+		this.setState({ url: event.target.value });
 	};
 
-	setLinkText = event => {
-		this.setState( {
+	setLinkText = (event) => {
+		this.setState({
 			linkText: event.target.value,
 			isUserDefinedLinkText: true,
-		} );
+		});
 	};
 
-	setNewWindow = event => {
-		this.setState( { newWindow: event.target.checked } );
+	setNewWindow = (event) => {
+		this.setState({ newWindow: event.target.checked });
 	};
 
-	onInputKeyDown = event => {
-		if ( event.key === 'Enter' ) {
+	onInputKeyDown = (event) => {
+		if (event.key === 'Enter') {
 			event.preventDefault();
 			this.updateEditor();
 		}
 	};
 
 	removeLink = () => {
-		this.props.editor.execCommand( 'unlink' );
+		this.props.editor.execCommand('unlink');
 		this.closeDialog();
 	};
 
 	getButtons = () => {
 		let buttonText;
 
-		if ( this.state.isNew ) {
-			buttonText = this.props.translate( 'Add Link' );
+		if (this.state.isNew) {
+			buttonText = this.props.translate('Add Link');
 		} else {
-			buttonText = this.props.translate( 'Save' );
+			buttonText = this.props.translate('Save');
 		}
 
 		const buttons = [
-			<FormButton key="save" onClick={ this.updateEditor }>
-				{ buttonText }
+			<FormButton key="save" onClick={this.updateEditor}>
+				{buttonText}
 			</FormButton>,
-			<FormButton key="cancel" isPrimary={ false } onClick={ this.closeDialog }>
-				{ this.props.translate( 'Cancel' ) }
+			<FormButton key="cancel" isPrimary={false} onClick={this.closeDialog}>
+				{this.props.translate('Cancel')}
 			</FormButton>,
 		];
 
-		if ( this.state.url && ! this.state.isNew ) {
+		if (this.state.url && !this.state.isNew) {
 			buttons.push(
-				<button className={ 'wplink__remove-link' } onClick={ this.removeLink }>
+				<button className={'wplink__remove-link'} onClick={this.removeLink}>
 					<Gridicon icon="link-break" />
-					{ this.props.translate( 'Remove' ) }
+					{this.props.translate('Remove')}
 				</button>
 			);
 		}
@@ -267,32 +263,32 @@ class LinkDialog extends React.Component {
 		return buttons;
 	};
 
-	setExistingContent = post => {
+	setExistingContent = (post) => {
 		const state = { url: post.URL };
 		const shouldSetLinkText =
-			! this.state.isUserDefinedLinkText &&
-			! this.props.editor.selection.getContent() &&
-			! this.getLink();
+			!this.state.isUserDefinedLinkText &&
+			!this.props.editor.selection.getContent() &&
+			!this.getLink();
 
-		if ( shouldSetLinkText ) {
-			Object.assign( state, {
-				linkText: decodeEntities( post.title ),
-			} );
+		if (shouldSetLinkText) {
+			Object.assign(state, {
+				linkText: decodeEntities(post.title),
+			});
 		}
 
-		this.props.recordEditorStat( 'link-existing-content' );
-		this.props.recordEditorEvent( 'Set link to existing content' );
+		this.props.recordEditorStat('link-existing-content');
+		this.props.recordEditorEvent('Set link to existing content');
 
-		this.setState( state );
+		this.setState(state);
 	};
 
 	getSelectedPostId = () => {
-		if ( ! this.state.url || ! this.props.sitePosts ) {
+		if (!this.state.url || !this.props.sitePosts) {
 			return;
 		}
 
-		const selectedPost = find( this.props.sitePosts, { URL: this.state.url } );
-		if ( selectedPost ) {
+		const selectedPost = find(this.props.sitePosts, { URL: this.state.url });
+		if (selectedPost) {
 			return selectedPost.ID;
 		}
 	};
@@ -303,58 +299,58 @@ class LinkDialog extends React.Component {
 	render() {
 		return (
 			<Dialog
-				isVisible={ this.props.visible }
-				onClose={ this.closeDialog }
-				buttons={ this.getButtons() }
-				autoFocus={ false }
+				isVisible={this.props.visible}
+				onClose={this.closeDialog}
+				buttons={this.getButtons()}
+				autoFocus={false}
 				additionalClassNames="wplink__dialog"
 			>
 				<FormFieldset>
 					<FormLabel>
-						<span>{ this.props.translate( 'URL' ) }</span>
+						<span>{this.props.translate('URL')}</span>
 						<FormTextInput
 							// eslint-disable-next-line react/no-string-refs
 							ref="url"
-							autoFocus={ true }
-							onChange={ this.setUrl }
-							value={ this.state.url }
-							onKeyDown={ this.onInputKeyDown }
+							autoFocus={true}
+							onChange={this.setUrl}
+							value={this.state.url}
+							onKeyDown={this.onInputKeyDown}
 						/>
 					</FormLabel>
-					{ this.state.showLinkText ? (
+					{this.state.showLinkText ? (
 						<FormLabel>
-							<span>{ this.props.translate( 'Link Text' ) }</span>
+							<span>{this.props.translate('Link Text')}</span>
 							<FormTextInput
-								onChange={ this.setLinkText }
-								value={ this.state.linkText }
-								onKeyDown={ this.onInputKeyDown }
+								onChange={this.setLinkText}
+								value={this.state.linkText}
+								onKeyDown={this.onInputKeyDown}
 							/>
 						</FormLabel>
-					) : null }
+					) : null}
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<FormCheckbox onChange={ this.setNewWindow } checked={ this.state.newWindow } />
-						<span>{ this.props.translate( 'Open link in a new window/tab' ) }</span>
+						<FormCheckbox onChange={this.setNewWindow} checked={this.state.newWindow} />
+						<span>{this.props.translate('Open link in a new window/tab')}</span>
 					</FormLabel>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<span>{ this.props.translate( 'Link to existing content' ) }</span>
-						{ this.props.site && (
+						<span>{this.props.translate('Link to existing content')}</span>
+						{this.props.site && (
 							<PostSelector
-								siteId={ this.props.site.ID }
+								siteId={this.props.site.ID}
 								type="any"
-								excludePrivateTypes={ true }
+								excludePrivateTypes={true}
 								status="publish"
 								orderBy="date"
 								order="DESC"
-								selected={ this.getSelectedPostId() }
-								onChange={ this.setExistingContent }
-								suppressFirstPageLoad={ ! this.props.firstLoad }
-								emptyMessage={ this.props.translate( 'No posts found' ) }
+								selected={this.getSelectedPostId()}
+								onChange={this.setExistingContent}
+								suppressFirstPageLoad={!this.props.firstLoad}
+								emptyMessage={this.props.translate('No posts found')}
 							/>
-						) }
+						)}
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>
@@ -364,12 +360,12 @@ class LinkDialog extends React.Component {
 }
 
 export default connect(
-	state => {
-		const selectedSite = getSelectedSite( state );
+	(state) => {
+		const selectedSite = getSelectedSite(state);
 		return {
 			site: selectedSite,
-			sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null,
+			sitePosts: selectedSite ? getSitePosts(state, selectedSite.ID) : null,
 		};
 	},
 	{ recordEditorEvent, recordEditorStat }
-)( localize( LinkDialog ) );
+)(localize(LinkDialog));

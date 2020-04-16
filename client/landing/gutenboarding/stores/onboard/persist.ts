@@ -8,31 +8,31 @@ const STORAGE_KEY = 'WP_ONBOARD';
 const STORAGE_TS_KEY = 'WP_ONBOARD_TS';
 
 // A plain object fallback if localStorage is not available
-const objStore: { [ key: string ]: string } = {};
+const objStore: { [key: string]: string } = {};
 
-const objStorage: Pick< Storage, 'getItem' | 'setItem' | 'removeItem' > = {
-	getItem( key ) {
-		if ( objStore.hasOwnProperty( key ) ) {
-			return objStore[ key ];
+const objStorage: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> = {
+	getItem(key) {
+		if (objStore.hasOwnProperty(key)) {
+			return objStore[key];
 		}
 
 		return null;
 	},
-	setItem( key, value ) {
-		objStore[ key ] = String( value );
+	setItem(key, value) {
+		objStore[key] = String(value);
 	},
-	removeItem( key ) {
-		delete objStore[ key ];
+	removeItem(key) {
+		delete objStore[key];
 	},
 };
 
 // Make sure localStorage support exists
 const localStorageSupport = (): boolean => {
 	try {
-		window.localStorage.setItem( 'WP_ONBOARD_TEST', '1' );
-		window.localStorage.removeItem( 'WP_ONBOARD_TEST' );
+		window.localStorage.setItem('WP_ONBOARD_TEST', '1');
+		window.localStorage.removeItem('WP_ONBOARD_TEST');
 		return true;
-	} catch ( e ) {
+	} catch (e) {
 		return false;
 	}
 };
@@ -41,33 +41,33 @@ const localStorageSupport = (): boolean => {
 const storageHandler = localStorageSupport() ? window.localStorage : objStorage;
 
 // Persisted data expires after seven days
-const isNotExpired = ( timestampStr: string ): boolean => {
-	const timestamp = Number( timestampStr );
-	return Boolean( timestamp ) && timestamp + PERSISTENCE_INTERVAL > Date.now();
+const isNotExpired = (timestampStr: string): boolean => {
+	const timestamp = Number(timestampStr);
+	return Boolean(timestamp) && timestamp + PERSISTENCE_INTERVAL > Date.now();
 };
 
 // Check for "fresh" query param
 const hasFreshParam = (): boolean => {
-	return new URLSearchParams( window.location.search ).has( 'fresh' );
+	return new URLSearchParams(window.location.search).has('fresh');
 };
 
 // Handle data expiration by providing a storage object override to the @wp/data persistence plugin.
-const storage: Pick< Storage, 'getItem' | 'setItem' > = {
-	getItem( key ) {
-		const timestamp = storageHandler.getItem( STORAGE_TS_KEY );
+const storage: Pick<Storage, 'getItem' | 'setItem'> = {
+	getItem(key) {
+		const timestamp = storageHandler.getItem(STORAGE_TS_KEY);
 
-		if ( timestamp && isNotExpired( timestamp ) && ! hasFreshParam() ) {
-			return storageHandler.getItem( key );
+		if (timestamp && isNotExpired(timestamp) && !hasFreshParam()) {
+			return storageHandler.getItem(key);
 		}
 
-		storageHandler.removeItem( STORAGE_KEY );
-		storageHandler.removeItem( STORAGE_TS_KEY );
+		storageHandler.removeItem(STORAGE_KEY);
+		storageHandler.removeItem(STORAGE_TS_KEY);
 
 		return null;
 	},
-	setItem( key, value ) {
-		storageHandler.setItem( STORAGE_TS_KEY, JSON.stringify( Date.now() ) );
-		storageHandler.setItem( key, value );
+	setItem(key, value) {
+		storageHandler.setItem(STORAGE_TS_KEY, JSON.stringify(Date.now()));
+		storageHandler.setItem(key, value);
 	},
 };
 

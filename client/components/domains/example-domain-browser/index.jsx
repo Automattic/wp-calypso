@@ -9,9 +9,9 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-export default function ExampleDomainBrowser( { className } ) {
+export default function ExampleDomainBrowser({ className }) {
 	return (
-		<div className={ classNames( 'example-domain-browser', className ) }>
+		<div className={classNames('example-domain-browser', className)}>
 			<svg width="295" height="102" viewBox="0 0 295 102" xmlns="http://www.w3.org/2000/svg">
 				<title>Example Browser</title>
 				<g fill="none" fillRule="evenodd">

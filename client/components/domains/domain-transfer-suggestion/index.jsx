@@ -22,32 +22,32 @@ class DomainTransferSuggestion extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const buttonContent = translate( 'Use a domain I own', {
+		const buttonContent = translate('Use a domain I own', {
 			context: 'Domain transfer or mapping suggestion button',
-		} );
+		});
 
 		return (
 			<DomainSuggestion
-				buttonContent={ buttonContent }
-				buttonStyles={ { borderless: true } }
+				buttonContent={buttonContent}
+				buttonStyles={{ borderless: true }}
 				extraClasses="is-visible domain-transfer-suggestion"
-				hidePrice={ true }
-				onButtonClick={ this.props.onButtonClick }
+				hidePrice={true}
+				onButtonClick={this.props.onButtonClick}
 				showChevron
-				tracksButtonClickSource={ this.props.tracksButtonClickSource }
+				tracksButtonClickSource={this.props.tracksButtonClickSource}
 			>
 				<div className="domain-transfer-suggestion__domain-description">
 					<h3>
-						{ translate( 'Already own a domain?', {
+						{translate('Already own a domain?', {
 							context: 'Upgrades: Register domain header',
 							comment: 'Asks if you already own a domain name.',
-						} ) }
+						})}
 					</h3>
 					<p>
-						{ translate( "You can use it as your site's address.", {
+						{translate("You can use it as your site's address.", {
 							context: 'Upgrades: Register domain description',
 							comment: 'Explains how you could use an existing domain name with your site.',
-						} ) }
+						})}
 					</p>
 				</div>
 			</DomainSuggestion>
@@ -55,4 +55,4 @@ class DomainTransferSuggestion extends React.Component {
 	}
 }
 
-export default localize( DomainTransferSuggestion );
+export default localize(DomainTransferSuggestion);

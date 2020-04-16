@@ -23,21 +23,21 @@ import {
 } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import { EDITOR_PASTE_EVENT } from 'state/action-types';
 
-jest.mock( 'layout/guided-tours/config', () => {
-	return require( 'state/ui/guided-tours/test/fixtures/config' );
-} );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('layout/guided-tours/config', () => {
+	return require('state/ui/guided-tours/test/fixtures/config');
+});
+jest.mock('lib/user', () => () => {});
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
-describe( 'selectors', () => {
+describe('selectors', () => {
 	let hasUserClicked;
 
-	beforeAll( () => {
-		hasUserClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
-	} );
+	beforeAll(() => {
+		hasUserClicked = hasAnalyticsEventFired('calypso_themeshowcase_theme_click');
+	});
 
-	describe( '#isUserNewerThan', () => {
+	describe('#isUserNewerThan', () => {
 		const oldUser = {
 			currentUser: {
 				id: 73705554,
@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 					73705554: {
 						ID: 73705554,
 						login: 'testonesite2016',
-						date: moment().subtract( 8, 'days' ),
+						date: moment().subtract(8, 'days'),
 					},
 				},
 			},
@@ -64,17 +64,17 @@ describe( 'selectors', () => {
 			},
 		};
 
-		test( 'should return false for users registered before a week ago', () => {
-			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( oldUser ) ).to.be.false;
-		} );
+		test('should return false for users registered before a week ago', () => {
+			expect(isUserNewerThan(WEEK_IN_MILLISECONDS)(oldUser)).to.be.false;
+		});
 
-		test( 'should return true for users registered in the last week', () => {
-			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( newUser ) ).to.be.true;
-		} );
-	} );
+		test('should return true for users registered in the last week', () => {
+			expect(isUserNewerThan(WEEK_IN_MILLISECONDS)(newUser)).to.be.true;
+		});
+	});
 
-	describe( '#hasUserRegisteredBefore', () => {
-		const cutoff = new Date( '2015-10-18T17:14:52+00:00' );
+	describe('#hasUserRegisteredBefore', () => {
+		const cutoff = new Date('2015-10-18T17:14:52+00:00');
 
 		const oldUser = {
 			currentUser: {
@@ -98,35 +98,35 @@ describe( 'selectors', () => {
 			},
 		};
 
-		test( 'should return true for users registered before the cut-off date', () => {
-			expect( hasUserRegisteredBefore( cutoff )( oldUser ) ).to.be.true;
-		} );
+		test('should return true for users registered before the cut-off date', () => {
+			expect(hasUserRegisteredBefore(cutoff)(oldUser)).to.be.true;
+		});
 
-		test( 'should return false for users registered after the cut-off date', () => {
-			expect( hasUserRegisteredBefore( cutoff )( newUser ) ).to.be.false;
-		} );
-	} );
+		test('should return false for users registered after the cut-off date', () => {
+			expect(hasUserRegisteredBefore(cutoff)(newUser)).to.be.false;
+		});
+	});
 
-	describe( '#hasUserPastedContentFromGoogleDocs', () => {
-		test( 'should return false when no actions', () => {
+	describe('#hasUserPastedContentFromGoogleDocs', () => {
+		test('should return false when no actions', () => {
 			const state = {
 				ui: {
 					actionLog: [],
 				},
 			};
-			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
-		} );
+			expect(hasUserPastedFromGoogleDocs(state)).to.be.false;
+		});
 
-		test( 'should return false when last action is not the paste event', () => {
+		test('should return false when last action is not the paste event', () => {
 			const state = {
 				ui: {
-					actionLog: [ { type: EDITOR_PASTE_EVENT }, { type: 'NO_PASTE_EVENT' } ],
+					actionLog: [{ type: EDITOR_PASTE_EVENT }, { type: 'NO_PASTE_EVENT' }],
 				},
 			};
-			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
-		} );
+			expect(hasUserPastedFromGoogleDocs(state)).to.be.false;
+		});
 
-		test( 'should return true when last action is the paste event & the source is Google Docs', () => {
+		test('should return true when last action is the paste event & the source is Google Docs', () => {
 			const state = {
 				ui: {
 					actionLog: [
@@ -135,10 +135,10 @@ describe( 'selectors', () => {
 					],
 				},
 			};
-			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.true;
-		} );
+			expect(hasUserPastedFromGoogleDocs(state)).to.be.true;
+		});
 
-		test( 'should return false when last action is the paste event & the source is not Google Docs', () => {
+		test('should return false when last action is the paste event & the source is not Google Docs', () => {
 			const state = {
 				ui: {
 					actionLog: [
@@ -147,20 +147,20 @@ describe( 'selectors', () => {
 					],
 				},
 			};
-			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
-		} );
-	} );
+			expect(hasUserPastedFromGoogleDocs(state)).to.be.false;
+		});
+	});
 
-	describe( '#hasAnalyticsEventFired', () => {
-		test( 'should return false when no actions', () => {
+	describe('#hasAnalyticsEventFired', () => {
+		test('should return false when no actions', () => {
 			const state = {
 				ui: {
 					actionLog: [],
 				},
 			};
-			expect( hasUserClicked( state ) ).to.be.false;
-		} );
-		test( 'should return true when matching action', () => {
+			expect(hasUserClicked(state)).to.be.false;
+		});
+		test('should return true when matching action', () => {
 			const state = {
 				ui: {
 					actionLog: [
@@ -182,9 +182,9 @@ describe( 'selectors', () => {
 					],
 				},
 			};
-			expect( hasUserClicked( state ) ).to.be.true;
-		} );
-		test( 'should return false when mis-matching event', () => {
+			expect(hasUserClicked(state)).to.be.true;
+		});
+		test('should return false when mis-matching event', () => {
 			const state = {
 				ui: {
 					actionLog: [
@@ -206,7 +206,7 @@ describe( 'selectors', () => {
 					],
 				},
 			};
-			expect( hasUserClicked( state ) ).to.be.false;
-		} );
-	} );
-} );
+			expect(hasUserClicked(state)).to.be.false;
+		});
+	});
+});

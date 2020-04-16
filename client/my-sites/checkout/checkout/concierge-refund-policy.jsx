@@ -16,7 +16,7 @@ class ConciergeRefundPolicy extends React.Component {
 	static displayName = 'RegistrationRefundPolicy';
 
 	recordRefundsSupportClick = () => {
-		gaRecordEvent( 'Upgrades', 'Clicked Refund Support Link' );
+		gaRecordEvent('Upgrades', 'Clicked Refund Support Link');
 	};
 
 	renderPolicy = () => {
@@ -26,10 +26,10 @@ class ConciergeRefundPolicy extends React.Component {
 				components: {
 					refundsSupportPage: (
 						<a
-							href={ REFUNDS }
+							href={REFUNDS}
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={ this.recordRefundsSupportClick }
+							onClick={this.recordRefundsSupportClick}
 						/>
 					),
 				},
@@ -40,17 +40,17 @@ class ConciergeRefundPolicy extends React.Component {
 	};
 
 	render() {
-		if ( ! hasConciergeSession( this.props.cart ) ) {
+		if (!hasConciergeSession(this.props.cart)) {
 			return null;
 		}
 
 		return (
 			<div className="checkout__concierge-refund-policy">
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>{ this.renderPolicy() }</p>
+				<Gridicon icon="info-outline" size={18} />
+				<p>{this.renderPolicy()}</p>
 			</div>
 		);
 	}
 }
 
-export default localize( ConciergeRefundPolicy );
+export default localize(ConciergeRefundPolicy);

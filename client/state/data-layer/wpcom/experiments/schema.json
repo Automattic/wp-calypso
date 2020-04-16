@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"type": "object",
-	"required": [ "variations", "ttl" ],
+	"required": ["variations", "ttl"],
 	"properties": {
 		"variations": {
 			"type": "object"

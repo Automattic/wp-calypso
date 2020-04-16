@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 
-describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
-	test( 'should return null if the site modules are not known', () => {
+describe('isJetpackModuleUnavailableInDevelopmentMode()', () => {
+	test('should return null if the site modules are not known', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -23,10 +23,10 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 			12345678,
 			'module-a'
 		);
-		expect( unavailable ).to.be.null;
-	} );
+		expect(unavailable).to.be.null;
+	});
 
-	test( 'should return true for a module that requires connection', () => {
+	test('should return true for a module that requires connection', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -47,10 +47,10 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 			12345678,
 			'module-a'
 		);
-		expect( unavailable ).to.be.true;
-	} );
+		expect(unavailable).to.be.true;
+	});
 
-	test( 'should return false for a module that does not require connection', () => {
+	test('should return false for a module that does not require connection', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -71,10 +71,10 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 			12345678,
 			'module-a'
 		);
-		expect( unavailable ).to.be.false;
-	} );
+		expect(unavailable).to.be.false;
+	});
 
-	test( 'should return false for a module that does not specify whether it requires connection', () => {
+	test('should return false for a module that does not specify whether it requires connection', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -94,6 +94,6 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 			12345678,
 			'module-a'
 		);
-		expect( unavailable ).to.be.false;
-	} );
-} );
+		expect(unavailable).to.be.false;
+	});
+});

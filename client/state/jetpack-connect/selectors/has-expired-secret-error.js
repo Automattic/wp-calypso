@@ -16,11 +16,11 @@ import 'state/jetpack-connect/init';
  * @param  {object}  state Global state tree
  * @returns {boolean}       True if there's an xmlrpc error otherwise false
  */
-export const hasExpiredSecretError = function( state ) {
-	const authorizeData = getAuthorizationData( state );
+export const hasExpiredSecretError = function (state) {
+	const authorizeData = getAuthorizationData(state);
 
 	return (
-		!! get( authorizeData, 'authorizationCode', false ) &&
-		includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'verify_secrets_expired' )
+		!!get(authorizeData, 'authorizationCode', false) &&
+		includes(get(authorizeData, ['authorizeError', 'message']), 'verify_secrets_expired')
 	);
 };

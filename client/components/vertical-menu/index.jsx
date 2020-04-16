@@ -15,7 +15,7 @@ export class VerticalMenu extends PureComponent {
 	static propTypes = {
 		onClick: PropTypes.func,
 		initalItemIndex: PropTypes.number,
-		children: PropTypes.arrayOf( PropTypes.element ),
+		children: PropTypes.arrayOf(PropTypes.element),
 	};
 
 	static defaultProps = {
@@ -23,17 +23,17 @@ export class VerticalMenu extends PureComponent {
 		onClick: identity,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			selectedIndex: props.initialItemIndex,
 		};
 	}
 
-	select = ( selectedIndex, ...args ) => {
+	select = (selectedIndex, ...args) => {
 		const { onClick } = this.props;
-		this.setState( { selectedIndex }, partial( onClick, ...args ) );
+		this.setState({ selectedIndex }, partial(onClick, ...args));
 	};
 
 	render() {
@@ -42,12 +42,12 @@ export class VerticalMenu extends PureComponent {
 
 		return (
 			<div className="vertical-menu">
-				{ React.Children.map( children, ( Item, index ) =>
-					React.cloneElement( Item, {
+				{React.Children.map(children, (Item, index) =>
+					React.cloneElement(Item, {
 						isSelected: index === selectedIndex,
-						onClick: partial( this.select, index ),
-					} )
-				) }
+						onClick: partial(this.select, index),
+					})
+				)}
 			</div>
 		);
 	}

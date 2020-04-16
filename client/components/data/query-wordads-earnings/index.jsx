@@ -22,12 +22,12 @@ class QueryWordadsEarnings extends Component {
 	};
 
 	componentDidMount() {
-		this.props.requestWordadsEarnings( this.props.siteId );
+		this.props.requestWordadsEarnings(this.props.siteId);
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.siteId !== prevProps.siteId ) {
-			this.props.requestWordadsEarnings( this.props.siteId );
+	componentDidUpdate(prevProps) {
+		if (this.props.siteId !== prevProps.siteId) {
+			this.props.requestWordadsEarnings(this.props.siteId);
 		}
 	}
 
@@ -36,4 +36,4 @@ class QueryWordadsEarnings extends Component {
 	}
 }
 
-export default connect( null, { requestWordadsEarnings } )( QueryWordadsEarnings );
+export default connect(null, { requestWordadsEarnings })(QueryWordadsEarnings);

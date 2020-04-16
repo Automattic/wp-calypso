@@ -14,10 +14,10 @@ class Skeleton extends Component {
 		const { translate } = this.props;
 		return (
 			<div>
-				<CompactCard> { translate( 'Cancelling your Quick Start session…' ) } </CompactCard>
+				<CompactCard> {translate('Cancelling your Quick Start session…')} </CompactCard>
 			</div>
 		);
 	}
 }
 
-export default localize( Skeleton );
+export default localize(Skeleton);

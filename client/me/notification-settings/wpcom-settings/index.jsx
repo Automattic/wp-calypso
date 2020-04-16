@@ -60,12 +60,12 @@ class WPCOMNotifications extends React.Component {
 		this.props.fetchSettings();
 	}
 
-	toggleSetting = setting => {
-		this.props.toggleWPcomEmailSetting( setting );
+	toggleSetting = (setting) => {
+		this.props.toggleWPcomEmailSetting(setting);
 	};
 
 	saveSettings = () => {
-		this.props.saveSettings( 'wpcom', this.props.settings );
+		this.props.saveSettings('wpcom', this.props.settings);
 	};
 
 	renderWpcomPreferences = () => {
@@ -74,106 +74,102 @@ class WPCOMNotifications extends React.Component {
 		return (
 			<div>
 				<p>
-					{ translate(
+					{translate(
 						"We'll always send important emails regarding your account, security, " +
 							'privacy, and purchase transactions, but you can get some helpful extras, too.'
-					) }
+					)}
 				</p>
 
-				<FormSectionHeading>
-					{ this.props.translate( 'Email from WordPress.com' ) }
-				</FormSectionHeading>
+				<FormSectionHeading>{this.props.translate('Email from WordPress.com')}</FormSectionHeading>
 
 				<EmailCategory
-					name={ options.marketing }
-					isEnabled={ get( settings, options.marketing ) }
-					title={ translate( 'Suggestions' ) }
-					description={ translate( 'Tips for getting the most out of WordPress.com.' ) }
+					name={options.marketing}
+					isEnabled={get(settings, options.marketing)}
+					title={translate('Suggestions')}
+					description={translate('Tips for getting the most out of WordPress.com.')}
 				/>
 
 				<EmailCategory
-					name={ options.research }
-					isEnabled={ get( settings, options.research ) }
-					title={ translate( 'Research' ) }
-					description={ translate(
+					name={options.research}
+					isEnabled={get(settings, options.research)}
+					title={translate('Research')}
+					description={translate(
 						'Opportunities to participate in WordPress.com research and surveys.'
-					) }
+					)}
 				/>
 
 				<EmailCategory
-					name={ options.community }
-					isEnabled={ get( settings, options.community ) }
-					title={ translate( 'Community' ) }
-					description={ translate(
+					name={options.community}
+					isEnabled={get(settings, options.community)}
+					title={translate('Community')}
+					description={translate(
 						'Information on WordPress.com courses and events (online and in-person).'
-					) }
+					)}
 				/>
 
 				<EmailCategory
-					name={ options.promotion }
-					isEnabled={ get( settings, options.promotion ) }
-					title={ translate( 'Promotions' ) }
-					description={ translate( 'Promotions and deals on upgrades.' ) }
+					name={options.promotion}
+					isEnabled={get(settings, options.promotion)}
+					title={translate('Promotions')}
+					description={translate('Promotions and deals on upgrades.')}
 				/>
 
 				<EmailCategory
-					name={ options.news }
-					isEnabled={ get( settings, options.news ) }
-					title={ translate( 'Newsletter' ) }
-					description={ translate( 'WordPress.com news, announcements, and product spotlights.' ) }
+					name={options.news}
+					isEnabled={get(settings, options.news)}
+					title={translate('Newsletter')}
+					description={translate('WordPress.com news, announcements, and product spotlights.')}
 				/>
 
 				<EmailCategory
-					name={ options.digest }
-					isEnabled={ get( settings, options.digest ) }
-					title={ translate( 'Digests' ) }
-					description={ translate(
+					name={options.digest}
+					isEnabled={get(settings, options.digest)}
+					title={translate('Digests')}
+					description={translate(
 						'Popular content from the blogs you follow, and reports on ' +
 							'your own site and its performance.'
-					) }
+					)}
 				/>
 
-				{ this.props.hasJetpackSites ? (
+				{this.props.hasJetpackSites ? (
 					<>
-						<FormSectionHeading>
-							{ this.props.translate( 'Email from Jetpack' ) }
-						</FormSectionHeading>
+						<FormSectionHeading>{this.props.translate('Email from Jetpack')}</FormSectionHeading>
 
 						<EmailCategory
-							name={ options.jetpack_marketing }
-							isEnabled={ get( settings, options.jetpack_marketing ) }
-							title={ translate( 'Suggestions' ) }
-							description={ translate( 'Tips for getting the most out of Jetpack.' ) }
+							name={options.jetpack_marketing}
+							isEnabled={get(settings, options.jetpack_marketing)}
+							title={translate('Suggestions')}
+							description={translate('Tips for getting the most out of Jetpack.')}
 						/>
 
 						<EmailCategory
-							name={ options.jetpack_research }
-							isEnabled={ get( settings, options.jetpack_research ) }
-							title={ translate( 'Research' ) }
-							description={ translate(
+							name={options.jetpack_research}
+							isEnabled={get(settings, options.jetpack_research)}
+							title={translate('Research')}
+							description={translate(
 								'Opportunities to participate in Jetpack research and surveys.'
-							) }
+							)}
 						/>
 
 						<EmailCategory
-							name={ options.jetpack_promotion }
-							isEnabled={ get( settings, options.jetpack_promotion ) }
-							title={ translate( 'Promotions' ) }
-							description={ translate( 'Promotions and deals on upgrades.' ) }
+							name={options.jetpack_promotion}
+							isEnabled={get(settings, options.jetpack_promotion)}
+							title={translate('Promotions')}
+							description={translate('Promotions and deals on upgrades.')}
 						/>
 
 						<EmailCategory
-							name={ options.jetpack_news }
-							isEnabled={ get( settings, options.jetpack_news ) }
-							title={ translate( 'Newsletter' ) }
-							description={ translate( 'Jetpack news, announcements, and product spotlights.' ) }
+							name={options.jetpack_news}
+							isEnabled={get(settings, options.jetpack_news)}
+							title={translate('Newsletter')}
+							description={translate('Jetpack news, announcements, and product spotlights.')}
 						/>
 					</>
 				) : (
 					''
-				) }
+				)}
 
-				<ActionButtons onSave={ this.saveSettings } disabled={ ! this.props.hasUnsavedChanges } />
+				<ActionButtons onSave={this.saveSettings} disabled={!this.props.hasUnsavedChanges} />
 			</div>
 		);
 	};
@@ -190,12 +186,12 @@ class WPCOMNotifications extends React.Component {
 					title="Me > Notifications > Updates from WordPress.com"
 				/>
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 
-				<Navigation path={ this.props.path } />
+				<Navigation path={this.props.path} />
 
 				<Card>
-					{ this.props.settings ? this.renderWpcomPreferences() : this.renderPlaceholder() }
+					{this.props.settings ? this.renderWpcomPreferences() : this.renderPlaceholder()}
 				</Card>
 			</Main>
 		);
@@ -203,10 +199,10 @@ class WPCOMNotifications extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		settings: getNotificationSettings( state, 'wpcom' ),
-		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'wpcom' ),
-		hasJetpackSites: hasJetpackSites( state ),
-	} ),
+	(state) => ({
+		settings: getNotificationSettings(state, 'wpcom'),
+		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges(state, 'wpcom'),
+		hasJetpackSites: hasJetpackSites(state),
+	}),
 	{ fetchSettings, toggleWPcomEmailSetting, saveSettings }
-)( localize( WPCOMNotifications ) );
+)(localize(WPCOMNotifications));

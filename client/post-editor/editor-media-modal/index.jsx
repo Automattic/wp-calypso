@@ -31,18 +31,18 @@ class EditorMediaModal extends Component {
 		onClose: () => {},
 	};
 
-	insertMedia( { type, items, settings } ) {
+	insertMedia({ type, items, settings }) {
 		const { site } = this.props;
 		let media, stat;
 
-		const getItemMarkup = partial( markup.get, site );
+		const getItemMarkup = partial(markup.get, site);
 
-		switch ( type ) {
+		switch (type) {
 			case 'gallery':
-				if ( 'individual' === get( settings, 'type' ) ) {
-					media = map( settings.items, getItemMarkup ).join( '' );
+				if ('individual' === get(settings, 'type')) {
+					media = map(settings.items, getItemMarkup).join('');
 				} else {
-					media = generateGalleryShortcode( settings );
+					media = generateGalleryShortcode(settings);
 				}
 
 				stat = 'insert_gallery';
@@ -50,32 +50,32 @@ class EditorMediaModal extends Component {
 
 			case 'media':
 			default:
-				media = map( items, getItemMarkup ).join( '' );
+				media = map(items, getItemMarkup).join('');
 				stat = 'insert_item';
 		}
 
-		if ( some( items, 'transient' ) ) {
-			this.props.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+		if (some(items, 'transient')) {
+			this.props.blockSave('MEDIA_MODAL_TRANSIENT_INSERT');
 		}
 
-		if ( media ) {
-			this.props.onInsertMedia( media );
+		if (media) {
+			this.props.onInsertMedia(media);
 
-			if ( stat ) {
-				this.props.bumpStat( 'editor_media_actions', stat );
+			if (stat) {
+				this.props.bumpStat('editor_media_actions', stat);
 			}
 		}
 
 		this.props.onClose();
 	}
 
-	onClose = value => {
-		if ( value ) {
+	onClose = (value) => {
+		if (value) {
 			// `isGutenberg` means that the Media Modal has been opened by a Gutenberg media block,
 			// as opposed to the Classic editor or the Classic block in Gutenberg.
 			// This is needed because `insertMedia` returns the media markup, used by TinyMCE,
 			// while `onClose` returns the media object, used by Gutenberg media blocks.
-			return this.props.isGutenberg ? this.props.onClose( value ) : this.insertMedia( value );
+			return this.props.isGutenberg ? this.props.onClose(value) : this.insertMedia(value);
 		}
 		this.props.onClose();
 	};
@@ -84,19 +84,19 @@ class EditorMediaModal extends Component {
 		const { site } = this.props;
 
 		return (
-			<MediaLibrarySelectedData siteId={ get( site, 'ID' ) }>
-				<MediaModal { ...this.props } onClose={ this.onClose } />
+			<MediaLibrarySelectedData siteId={get(site, 'ID')}>
+				<MediaModal {...this.props} onClose={this.onClose} />
 			</MediaLibrarySelectedData>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		site: getSelectedSite( state ),
-	} ),
+	(state) => ({
+		site: getSelectedSite(state),
+	}),
 	{
 		blockSave,
 		bumpStat,
 	}
-)( EditorMediaModal );
+)(EditorMediaModal);

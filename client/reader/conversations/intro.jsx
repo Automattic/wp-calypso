@@ -25,7 +25,7 @@ import charactersImage from 'assets/images/reader/reader-conversations-character
  */
 import './intro.scss';
 
-const getPreferenceName = isInternal =>
+const getPreferenceName = (isInternal) =>
 	isInternal ? 'has_used_reader_conversations_a8c' : 'has_used_reader_conversations';
 
 class ConversationsIntro extends React.Component {
@@ -41,7 +41,7 @@ class ConversationsIntro extends React.Component {
 		this.maybeRecordRenderTrack();
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if (
 			this.props.hasUsedConversations !== prevProps.hasUsedConversations ||
 			this.props.isInternal !== prevProps.isInternal
@@ -50,20 +50,20 @@ class ConversationsIntro extends React.Component {
 		}
 	}
 
-	maybeRecordRenderTrack = ( props = this.props ) => {
-		if ( props.hasUsedConversations !== true ) {
-			recordTrack( 'calypso_reader_conversations_intro_render' );
+	maybeRecordRenderTrack = (props = this.props) => {
+		if (props.hasUsedConversations !== true) {
+			recordTrack('calypso_reader_conversations_intro_render');
 		}
 	};
 
 	dismiss = () => {
-		this.props.dismiss( this.props.isInternal );
+		this.props.dismiss(this.props.isInternal);
 	};
 
 	render() {
 		const { hasUsedConversations, translate, isInternal } = this.props;
 
-		if ( hasUsedConversations ) {
+		if (hasUsedConversations) {
 			return null;
 		}
 
@@ -73,7 +73,7 @@ class ConversationsIntro extends React.Component {
 				<div className="conversations__intro-header">
 					<div className="conversations__intro-copy">
 						<span>
-							{ isInternal
+							{isInternal
 								? translate(
 										'{{strong}}Welcome to A8C Conversations{{/strong}}, where you can read ' +
 											'and reply to all your P2 conversations in one place. ' +
@@ -97,21 +97,21 @@ class ConversationsIntro extends React.Component {
 												strong: <strong />,
 											},
 										}
-								  ) }
+								  )}
 						</span>
 					</div>
-					<img className="conversations__intro-character" src={ charactersImage } alt="" />
+					<img className="conversations__intro-character" src={charactersImage} alt="" />
 
 					<button
 						className="conversations__intro-close"
-						onClick={ this.dismiss }
-						title={ translate( 'Close' ) }
-						aria-label={ translate( 'Close' ) }
+						onClick={this.dismiss}
+						title={translate('Close')}
+						aria-label={translate('Close')}
 					>
 						<Gridicon
 							icon="cross-circle"
 							className="conversations__intro-close-icon"
-							title={ translate( 'Close' ) }
+							title={translate('Close')}
 						/>
 					</button>
 				</div>
@@ -121,17 +121,17 @@ class ConversationsIntro extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const preferenceName = getPreferenceName( ownProps.isInternal );
+	(state, ownProps) => {
+		const preferenceName = getPreferenceName(ownProps.isInternal);
 		return {
-			hasUsedConversations: getPreference( state, preferenceName ),
+			hasUsedConversations: getPreference(state, preferenceName),
 		};
 	},
 	{
-		dismiss: isInternal => {
-			recordTrack( 'calypso_reader_conversations_intro_dismiss' );
-			const preferenceName = getPreferenceName( isInternal );
-			return savePreference( preferenceName, true );
+		dismiss: (isInternal) => {
+			recordTrack('calypso_reader_conversations_intro_dismiss');
+			const preferenceName = getPreferenceName(isInternal);
+			return savePreference(preferenceName, true);
 		},
 	}
-)( localize( ConversationsIntro ) );
+)(localize(ConversationsIntro));

@@ -30,76 +30,76 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import './subscription.scss';
 
 class Subscription extends React.Component {
-	stopSubscription = () => this.props.requestSubscriptionStop( this.props.subscription.ID );
+	stopSubscription = () => this.props.requestSubscriptionStop(this.props.subscription.ID);
 
 	render() {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
 		return (
 			<Main className="memberships__subscription">
-				<DocumentHead title={ translate( 'Other Sites' ) } />
+				<DocumentHead title={translate('Other Sites')} />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />
-				<PurchasesHeader section={ 'memberships' } />
-				<HeaderCake backHref={ purchasesRoot + '/other' }>
-					{ subscription ? subscription.title : translate( 'All subscriptions' ) }
+				<PurchasesHeader section={'memberships'} />
+				<HeaderCake backHref={purchasesRoot + '/other'}>
+					{subscription ? subscription.title : translate('All subscriptions')}
 				</HeaderCake>
-				{ stoppingStatus === 'start' && (
+				{stoppingStatus === 'start' && (
 					<Notice
 						status="is-info"
-						isLoading={ true }
-						text={ translate( 'Stopping this subscription' ) }
+						isLoading={true}
+						text={translate('Stopping this subscription')}
 					/>
-				) }
-				{ stoppingStatus === 'fail' && (
+				)}
+				{stoppingStatus === 'fail' && (
 					<Notice
 						status="is-error"
-						text={ translate( 'There was a problem while stopping your subscription' ) }
+						text={translate('There was a problem while stopping your subscription')}
 					/>
-				) }
-				{ stoppingStatus === 'success' && (
+				)}
+				{stoppingStatus === 'success' && (
 					<Notice
 						status="is-success"
-						text={ translate( 'This subscription has been stopped. You will not be charged.' ) }
+						text={translate('This subscription has been stopped. You will not be charged.')}
 					/>
-				) }
+				)}
 
-				{ subscription && (
+				{subscription && (
 					<div>
 						<Card className="memberships__subscription-meta">
-							<Site siteId={ parseInt( subscription.site_id ) } href={ subscription.site_url } />
-							<div className="memberships__subscription-title">{ subscription.title }</div>
+							<Site siteId={parseInt(subscription.site_id)} href={subscription.site_url} />
+							<div className="memberships__subscription-title">{subscription.title}</div>
 							<Fragment>
 								<ul className="memberships__subscription-inner-meta">
 									<li>
 										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Price' ) }
+											{translate('Price')}
 										</em>
 										<span className="memberships__subscription-inner-detail">
-											{ formatCurrency( subscription.renewal_price, subscription.currency ) }
+											{formatCurrency(subscription.renewal_price, subscription.currency)}
 										</span>
 									</li>
 									<li>
 										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Renew interval' ) }
+											{translate('Renew interval')}
 										</em>
 										<span className="memberships__subscription-inner-detail">
-											{ subscription.renew_interval }
+											{subscription.renew_interval}
 										</span>
 									</li>
 									<li>
 										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Subscribed On' ) }
+											{translate('Subscribed On')}
 										</em>
 										<span className="memberships__subscription-inner-detail">
-											{ moment( subscription.start_date ).format( 'll' ) }
+											{moment(subscription.start_date).format('ll')}
 										</span>
 									</li>
 									<li>
 										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Renews on' ) }
+											{translate('Renews on')}
 										</em>
 										<span className="memberships__subscription-inner-detail">
-											{ moment( subscription.end_date ).format( 'll' ) }
+											{moment(subscription.end_date).format('ll')}
 										</span>
 									</li>
 								</ul>
@@ -108,33 +108,33 @@ class Subscription extends React.Component {
 						<CompactCard
 							tagName="button"
 							className="memberships__subscription-remove"
-							onClick={ this.stopSubscription }
+							onClick={this.stopSubscription}
 						>
 							<Gridicon icon="trash" />
-							{ translate( 'Stop %s subscription.', { args: subscription.title } ) }
+							{translate('Stop %s subscription.', { args: subscription.title })}
 						</CompactCard>
 					</div>
-				) }
+				)}
 			</Main>
 		);
 	}
 }
 
-const getSubscription = ( state, subscriptionId ) =>
-	get( state, 'memberships.subscriptions.items', [] )
-		.filter( sub => sub.ID === subscriptionId )
+const getSubscription = (state, subscriptionId) =>
+	get(state, 'memberships.subscriptions.items', [])
+		.filter((sub) => sub.ID === subscriptionId)
 		.pop();
 
 export default connect(
-	( state, props ) => ( {
-		subscription: getSubscription( state, props.subscriptionId ),
+	(state, props) => ({
+		subscription: getSubscription(state, props.subscriptionId),
 		stoppingStatus: get(
 			state,
-			[ 'memberships', 'subscriptions', 'stoppingSubscription', props.subscriptionId ],
+			['memberships', 'subscriptions', 'stoppingSubscription', props.subscriptionId],
 			false
 		),
-	} ),
+	}),
 	{
 		requestSubscriptionStop,
 	}
-)( localize( withLocalizedMoment( Subscription ) ) );
+)(localize(withLocalizedMoment(Subscription)));

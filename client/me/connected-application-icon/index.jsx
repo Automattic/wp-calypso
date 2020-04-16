@@ -25,8 +25,8 @@ export default class extends React.Component {
 		return (
 			<PluginIcon
 				className="connected-application-icon"
-				image={ this.props.image }
-				size={ this.props.size }
+				image={this.props.image}
+				size={this.props.size}
 			/>
 		);
 	}

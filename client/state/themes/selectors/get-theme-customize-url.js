@@ -15,21 +15,21 @@ import 'state/themes/init';
  * @param  {?number}  siteId  Site ID to open the customizer for
  * @returns {?string}          Customizer URL
  */
-export function getThemeCustomizeUrl( state, themeId, siteId ) {
-	const customizerUrl = getCustomizerUrl( state, siteId );
+export function getThemeCustomizeUrl(state, themeId, siteId) {
+	const customizerUrl = getCustomizerUrl(state, siteId);
 
-	if ( ! ( siteId && themeId ) || isThemeActive( state, themeId, siteId ) ) {
+	if (!(siteId && themeId) || isThemeActive(state, themeId, siteId)) {
 		return customizerUrl;
 	}
 
-	const separator = typeof customizerUrl === 'string' && customizerUrl.includes( '?' ) ? '&' : '?';
+	const separator = typeof customizerUrl === 'string' && customizerUrl.includes('?') ? '&' : '?';
 	let identifier;
 
-	if ( isJetpackSite( state, siteId ) ) {
+	if (isJetpackSite(state, siteId)) {
 		identifier = themeId;
 	} else {
-		const theme = getTheme( state, 'wpcom', themeId );
-		if ( ! theme ) {
+		const theme = getTheme(state, 'wpcom', themeId);
+		if (!theme) {
 			return customizerUrl;
 		}
 		identifier = theme.stylesheet;

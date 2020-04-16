@@ -15,22 +15,22 @@ import isRequestingBillingTransaction from 'state/selectors/is-requesting-billin
 import { requestBillingTransaction } from 'state/billing-transactions/individual-transactions/actions';
 
 class QueryBillingTransaction extends Component {
-	fetch( props ) {
+	fetch(props) {
 		const { transaction, transactionId, requestingBillingTransaction } = props;
 
-		if ( transaction || requestingBillingTransaction ) {
+		if (transaction || requestingBillingTransaction) {
 			return;
 		}
 
-		props.requestBillingTransaction( transactionId );
+		props.requestBillingTransaction(transactionId);
 	}
 
 	componentDidMount() {
-		this.fetch( this.props );
+		this.fetch(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.fetch( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.fetch(nextProps);
 	}
 
 	render() {
@@ -43,11 +43,11 @@ QueryBillingTransaction.propTypes = {
 };
 
 export default connect(
-	( state, { transactionId } ) => ( {
-		transaction: getPastBillingTransaction( state, transactionId ),
-		requestingBillingTransaction: isRequestingBillingTransaction( state, transactionId ),
-	} ),
+	(state, { transactionId }) => ({
+		transaction: getPastBillingTransaction(state, transactionId),
+		requestingBillingTransaction: isRequestingBillingTransaction(state, transactionId),
+	}),
 	{
 		requestBillingTransaction,
 	}
-)( QueryBillingTransaction );
+)(QueryBillingTransaction);

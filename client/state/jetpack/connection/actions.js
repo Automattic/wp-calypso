@@ -21,96 +21,96 @@ import wp from 'lib/wp';
 
 import 'state/data-layer/wpcom/jetpack/connection/owner';
 
-export const requestJetpackConnectionStatus = siteId => {
-	return dispatch => {
-		dispatch( {
+export const requestJetpackConnectionStatus = (siteId) => {
+	return (dispatch) => {
+		dispatch({
 			type: JETPACK_CONNECTION_STATUS_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wp
 			.undocumented()
-			.getJetpackConnectionStatus( siteId )
-			.then( response => {
-				dispatch( {
+			.getJetpackConnectionStatus(siteId)
+			.then((response) => {
+				dispatch({
 					type: JETPACK_CONNECTION_STATUS_RECEIVE,
 					siteId,
 					status: response.data,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
 					siteId,
 					error: error.message,
-				} );
-			} );
+				});
+			});
 	};
 };
 
-export const requestJetpackUserConnectionData = siteId => {
-	return dispatch => {
-		dispatch( {
+export const requestJetpackUserConnectionData = (siteId) => {
+	return (dispatch) => {
+		dispatch({
 			type: JETPACK_USER_CONNECTION_DATA_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wp
 			.undocumented()
-			.getJetpackUserConnectionData( siteId )
-			.then( response => {
-				dispatch( {
+			.getJetpackUserConnectionData(siteId)
+			.then((response) => {
+				dispatch({
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
 					siteId,
 					data: response.data.currentUser,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 					siteId,
 					error: error.message,
-				} );
-			} );
+				});
+			});
 	};
 };
 
-export const disconnect = siteId => {
-	return dispatch => {
-		dispatch( {
+export const disconnect = (siteId) => {
+	return (dispatch) => {
+		dispatch({
 			type: JETPACK_DISCONNECT_REQUEST,
 			siteId,
-		} );
+		});
 
 		return wp
 			.undocumented()
-			.disconnectJetpack( siteId )
-			.then( response => {
-				dispatch( {
+			.disconnectJetpack(siteId)
+			.then((response) => {
+				dispatch({
 					type: JETPACK_DISCONNECT_RECEIVE,
 					siteId,
 					status: response,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: JETPACK_DISCONNECT_REQUEST_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: JETPACK_DISCONNECT_REQUEST_FAILURE,
 					siteId,
 					error: error.message,
-				} );
-			} );
+				});
+			});
 	};
 };
 
@@ -122,7 +122,7 @@ export const disconnect = siteId => {
  * @param {string} newOwnerWpcomDisplayName display name for UI messages
  * @returns {object} action object
  */
-export const changeOwner = ( siteId, newOwnerWporgId, newOwnerWpcomDisplayName ) => {
+export const changeOwner = (siteId, newOwnerWporgId, newOwnerWpcomDisplayName) => {
 	return {
 		type: JETPACK_USER_CONNECTION_CHANGE_OWNER,
 		siteId,

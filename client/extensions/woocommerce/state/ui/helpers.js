@@ -11,9 +11,9 @@ import { isObject } from 'lodash';
  * @param {Array} bucketEdits Array of creates or updates.
  * @returns {object} Index for the next entry.
  */
-export function nextBucketIndex( bucketEdits ) {
+export function nextBucketIndex(bucketEdits) {
 	return {
-		index: ( bucketEdits || [] ).length,
+		index: (bucketEdits || []).length,
 	};
 }
 
@@ -23,6 +23,6 @@ export function nextBucketIndex( bucketEdits ) {
  * @param {object} object Data object such as product or variation.
  * @returns {string} 'updates' for existing objects, 'creates' for new objects.
  */
-export function getBucket( object ) {
-	return ( object && ! isObject( object.id ) && 'updates' ) || 'creates';
+export function getBucket(object) {
+	return (object && !isObject(object.id) && 'updates') || 'creates';
 }

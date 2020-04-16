@@ -29,12 +29,12 @@ export class RemoveButton extends React.Component {
 		const { onRemove, translate } = this.props;
 
 		return (
-			<Button onClick={ onRemove } compact className="remove-button">
-				<ScreenReaderText>{ translate( 'Remove' ) }</ScreenReaderText>
-				<Gridicon icon="cross" size={ 24 } className="remove-button__icon" />
+			<Button onClick={onRemove} compact className="remove-button">
+				<ScreenReaderText>{translate('Remove')}</ScreenReaderText>
+				<Gridicon icon="cross" size={24} className="remove-button__icon" />
 			</Button>
 		);
 	}
 }
 
-export default localize( RemoveButton );
+export default localize(RemoveButton);

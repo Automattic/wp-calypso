@@ -31,21 +31,21 @@ const originalCountryStates = [
 	{ code: 'CO', name: 'Colorado' },
 ];
 
-describe( 'reducer', () => {
-	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
+describe('reducer', () => {
+	useSandbox((sandbox) => sandbox.stub(console, 'warn'));
 
-	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
-	} );
+	test('should include expected keys in return value', () => {
+		expect(reducer(undefined, {})).to.have.keys(['items', 'isFetching']);
+	});
 
-	describe( '#statesList()', () => {
-		test( 'should default to empty object', () => {
-			const state = items( undefined, {} );
+	describe('#statesList()', () => {
+		test('should default to empty object', () => {
+			const state = items(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should store the states list received', () => {
+		test('should store the states list received', () => {
 			const state = items(
 				{},
 				{
@@ -55,76 +55,76 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.us ).to.eql( originalCountryStates );
-		} );
+			expect(state.us).to.eql(originalCountryStates);
+		});
 
-		describe( 'persistence', () => {
-			test( 'persists state', () => {
-				const original = deepFreeze( { us: originalCountryStates } ),
-					state = items( original, { type: SERIALIZE } );
-				expect( state ).to.eql( original );
-			} );
+		describe('persistence', () => {
+			test('persists state', () => {
+				const original = deepFreeze({ us: originalCountryStates }),
+					state = items(original, { type: SERIALIZE });
+				expect(state).to.eql(original);
+			});
 
-			test( 'loads valid persisted state', () => {
-				const original = deepFreeze( { us: originalCountryStates } ),
-					state = items( original, { type: DESERIALIZE } );
+			test('loads valid persisted state', () => {
+				const original = deepFreeze({ us: originalCountryStates }),
+					state = items(original, { type: DESERIALIZE });
 
-				expect( state ).to.eql( original );
-			} );
+				expect(state).to.eql(original);
+			});
 
-			test( 'loads default state when schema does not match', () => {
-				const original = deepFreeze( {
+			test('loads default state when schema does not match', () => {
+				const original = deepFreeze({
 					AL: 'Alabama',
 					AK: 'Alaska',
 					AS: 'American Samoa',
-				} );
-				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
-			} );
-		} );
-	} );
+				});
+				const state = items(original, { type: DESERIALIZE });
+				expect(state).to.eql({});
+			});
+		});
+	});
 
-	describe( '#isFetching()', () => {
-		test( 'should default to empty object', () => {
-			const state = isFetching( undefined, {} );
+	describe('#isFetching()', () => {
+		test('should default to empty object', () => {
+			const state = isFetching(undefined, {});
 
-			expect( state ).to.eql( {} );
-		} );
+			expect(state).to.eql({});
+		});
 
-		test( 'should be true after a request begins', () => {
-			const state = isFetching( false, {
+		test('should be true after a request begins', () => {
+			const state = isFetching(false, {
 				type: COUNTRY_STATES_REQUEST,
 				countryCode: 'us',
-			} );
-			expect( state.us ).to.eql( true );
-		} );
+			});
+			expect(state.us).to.eql(true);
+		});
 
-		test( 'should be false when a request completes', () => {
-			const state = isFetching( true, {
+		test('should be false when a request completes', () => {
+			const state = isFetching(true, {
 				type: COUNTRY_STATES_REQUEST_SUCCESS,
 				countryCode: 'ca',
-			} );
-			expect( state.ca ).to.eql( false );
-		} );
+			});
+			expect(state.ca).to.eql(false);
+		});
 
-		test( 'should be false when a request fails', () => {
-			const state = isFetching( true, {
+		test('should be false when a request fails', () => {
+			const state = isFetching(true, {
 				type: COUNTRY_STATES_REQUEST_FAILURE,
 				countryCode: 'de',
-			} );
-			expect( state.de ).to.eql( false );
-		} );
+			});
+			expect(state.de).to.eql(false);
+		});
 
-		test( 'should never persist state', () => {
-			const state = isFetching( true, { type: SERIALIZE } );
+		test('should never persist state', () => {
+			const state = isFetching(true, { type: SERIALIZE });
 
-			expect( state ).to.be.undefined;
-		} );
+			expect(state).to.be.undefined;
+		});
 
-		test( 'should never load persisted state', () => {
-			const state = isFetching( true, { type: DESERIALIZE } );
+		test('should never load persisted state', () => {
+			const state = isFetching(true, { type: DESERIALIZE });
 
-			expect( state ).to.eql( {} );
-		} );
-	} );
-} );
+			expect(state).to.eql({});
+		});
+	});
+});

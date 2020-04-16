@@ -5,8 +5,8 @@
 import { withoutPersistence } from 'state/utils';
 import { USER_DEVICES_ADD } from 'state/action-types';
 
-export default withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export default withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case USER_DEVICES_ADD: {
 			const { devices } = action;
 			return { ...state, ...devices };
@@ -14,4 +14,4 @@ export default withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});

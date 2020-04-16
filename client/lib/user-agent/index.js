@@ -22,4 +22,4 @@ import UserAgent from 'express-useragent';
 	Note: we also import this lib server-side in server/boot/index.js
  */
 
-export default UserAgent.parse( navigator.userAgent );
+export default UserAgent.parse(navigator.userAgent);

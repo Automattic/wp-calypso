@@ -25,31 +25,31 @@ export default class LinkQuit extends Component {
 
 	static contextTypes = contextTypes;
 
-	constructor( props, context ) {
-		super( props, context );
+	constructor(props, context) {
+		super(props, context);
 	}
 
-	onClick = event => {
-		this.props.onClick && this.props.onClick( event );
+	onClick = (event) => {
+		this.props.onClick && this.props.onClick(event);
 		const { quit, tour, tourVersion, step, isLastStep } = this.context;
-		quit( { tour, tourVersion, step, isLastStep } );
+		quit({ tour, tourVersion, step, isLastStep });
 	};
 
 	render() {
 		const { children, primary, subtle, href, target } = this.props;
-		const classes = classNames( 'guided-tours__button-link', {
+		const classes = classNames('guided-tours__button-link', {
 			'guided-tours__subtle-button': subtle,
-		} );
+		});
 
 		return (
 			<Button
-				className={ classes }
-				onClick={ this.onClick }
-				primary={ primary }
-				href={ href }
-				target={ target }
+				className={classes}
+				onClick={this.onClick}
+				primary={primary}
+				href={href}
+				target={target}
 			>
-				{ children || translate( 'Quit' ) }
+				{children || translate('Quit')}
 			</Button>
 		);
 	}

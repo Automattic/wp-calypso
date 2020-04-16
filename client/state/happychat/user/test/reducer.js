@@ -9,15 +9,15 @@ import { expect } from 'chai';
 import { HAPPYCHAT_IO_RECEIVE_INIT, DESERIALIZE } from 'state/action-types';
 import { geoLocation } from '../reducer';
 
-describe( '#geoLocation()', () => {
-	test( 'should default to null', () => {
-		const state = geoLocation( undefined, {} );
+describe('#geoLocation()', () => {
+	test('should default to null', () => {
+		const state = geoLocation(undefined, {});
 
-		expect( state ).to.be.null;
-	} );
+		expect(state).to.be.null;
+	});
 
-	test( 'should set the current user geolocation', () => {
-		const state = geoLocation( null, {
+	test('should set the current user geolocation', () => {
+		const state = geoLocation(null, {
 			type: HAPPYCHAT_IO_RECEIVE_INIT,
 			user: {
 				geoLocation: {
@@ -25,12 +25,12 @@ describe( '#geoLocation()', () => {
 					city: 'Timisoara',
 				},
 			},
-		} );
+		});
 
-		expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
-	} );
+		expect(state).to.eql({ country_long: 'Romania', city: 'Timisoara' });
+	});
 
-	test( 'deserializes correctly', () => {
+	test('deserializes correctly', () => {
 		const state = geoLocation(
 			{ country_long: 'Romania', city: 'Timisoara' },
 			{
@@ -38,6 +38,6 @@ describe( '#geoLocation()', () => {
 			}
 		);
 
-		expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
-	} );
-} );
+		expect(state).to.eql({ country_long: 'Romania', city: 'Timisoara' });
+	});
+});

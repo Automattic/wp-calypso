@@ -8,5 +8,5 @@ const reducers = {
 	status,
 };
 
-const reducer = combineReducers( reducers );
-export default keyedReducer( 'siteId', reducer );
+const reducer = combineReducers(reducers);
+export default keyedReducer('siteId', reducer);

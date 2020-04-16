@@ -20,22 +20,22 @@ import {
 	isDateRangeValid as isExportDateRangeValid,
 } from 'state/exporter/selectors';
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = (state, ownProps) => {
 	const siteId = state.ui.selectedSiteId;
 
 	return {
 		siteId,
 
-		isDateValid: isExportDateRangeValid( state, siteId, ownProps.postType ),
+		isDateValid: isExportDateRangeValid(state, siteId, ownProps.postType),
 
 		// Disable options when this post type is not selected
-		isEnabled: getSelectedPostType( state ) === ownProps.postType,
+		isEnabled: getSelectedPostType(state) === ownProps.postType,
 	};
 };
 
-const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	onSelect: () => dispatch( setPostType( ownProps.postType ) ),
-} );
+const mapDispatchToProps = (dispatch, ownProps) => ({
+	onSelect: () => dispatch(setPostType(ownProps.postType)),
+});
 
 /**
  * Displays a list of select menus with a radio option legend
@@ -55,10 +55,10 @@ class PostTypeOptions extends React.PureComponent {
 	render() {
 		const { description, legend, isDateValid, isEnabled, onSelect, postType, siteId } = this.props;
 
-		const fields = [ 'author', 'status', 'start_date', 'end_date', 'category' ];
+		const fields = ['author', 'status', 'start_date', 'end_date', 'category'];
 
-		const setRef = fieldName => c => {
-			if ( fieldName === 'start_date' ) {
+		const setRef = (fieldName) => (c) => {
+			if (fieldName === 'start_date') {
 				this._startDate = c;
 			}
 		};
@@ -66,40 +66,36 @@ class PostTypeOptions extends React.PureComponent {
 		return (
 			<div className="export-card__option-fieldset">
 				<Label>
-					<FormRadio checked={ isEnabled } onChange={ onSelect } />
-					<span>{ legend }</span>
+					<FormRadio checked={isEnabled} onChange={onSelect} />
+					<span>{legend}</span>
 				</Label>
 
-				{ description && (
-					<p className="export-card__option-fieldset-description">{ description }</p>
-				) }
+				{description && <p className="export-card__option-fieldset-description">{description}</p>}
 
 				<div className="export-card__option-fieldset-fields">
-					{ fields.map( fieldName => (
+					{fields.map((fieldName) => (
 						<Select
-							key={ fieldName }
-							ref={ setRef( fieldName ) }
-							siteId={ siteId }
-							postType={ postType }
-							fieldName={ fieldName }
-							isEnabled={ isEnabled }
-							isError={
-								( fieldName === 'start_date' || fieldName === 'end_date' ) && ! isDateValid
-							}
+							key={fieldName}
+							ref={setRef(fieldName)}
+							siteId={siteId}
+							postType={postType}
+							fieldName={fieldName}
+							isEnabled={isEnabled}
+							isError={(fieldName === 'start_date' || fieldName === 'end_date') && !isDateValid}
 						/>
-					) ) }
+					))}
 				</div>
 
 				<Tooltip
-					context={ this._startDate }
+					context={this._startDate}
 					status="error"
-					isVisible={ isEnabled && ! this.props.isDateValid }
+					isVisible={isEnabled && !this.props.isDateValid}
 				>
-					{ this.props.translate( 'Selected start date is later than the end date' ) }
+					{this.props.translate('Selected start date is later than the end date')}
 				</Tooltip>
 			</div>
 		);
 	}
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PostTypeOptions ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(PostTypeOptions));

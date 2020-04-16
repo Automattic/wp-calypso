@@ -20,7 +20,7 @@ import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-const debug = debugFactory( 'calypso:me:security:password' );
+const debug = debugFactory('calypso:me:security:password');
 
 /**
  * Style dependencies
@@ -35,11 +35,11 @@ class Security extends React.Component {
 	};
 
 	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
+		debug(this.constructor.displayName + ' React component is mounted.');
 	}
 
 	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
+		debug(this.constructor.displayName + ' React component is unmounting.');
 	}
 
 	render() {
@@ -48,26 +48,26 @@ class Security extends React.Component {
 		return (
 			<Main className="security">
 				<PageViewTracker path="/me/security" title="Me > Password" />
-				<DocumentHead title={ translate( 'Password' ) } />
+				<DocumentHead title={translate('Password')} />
 				<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
+				<SecuritySectionNav path={this.props.path} />
 
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 				<Card className="me-security-settings security__settings">
 					<p>
-						{ translate(
+						{translate(
 							'To update your password enter a new one below. ' +
 								'Strong passwords have at least six characters, and use upper and lower case letters, numbers, and symbols like ! ” ? $ % ^ & ).'
-						) }
+						)}
 					</p>
 
 					<AccountPassword
-						accountPasswordData={ this.props.accountPasswordData }
+						accountPasswordData={this.props.accountPasswordData}
 						autocomplete="new-password"
 						// Hint to LastPass not to attempt autofill
 						data-lpignore="true"
-						userSettings={ this.props.userSettings }
+						userSettings={this.props.userSettings}
 					/>
 				</Card>
 			</Main>
@@ -75,4 +75,4 @@ class Security extends React.Component {
 	}
 }
 
-export default localize( Security );
+export default localize(Security);

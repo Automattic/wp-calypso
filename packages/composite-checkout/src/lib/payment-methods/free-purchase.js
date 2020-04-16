@@ -19,37 +19,37 @@ import {
 import { sprintf, useLocalize } from '../localize';
 import { useFormStatus } from '../form-status';
 
-const debug = debugFactory( 'composite-checkout:free-purchase-payment-method' );
+const debug = debugFactory('composite-checkout:free-purchase-payment-method');
 
-export function createFreePaymentMethod( { registerStore, submitTransaction } ) {
+export function createFreePaymentMethod({ registerStore, submitTransaction }) {
 	const actions = {
-		*beginFreeTransaction( payload ) {
+		*beginFreeTransaction(payload) {
 			let response;
 			try {
 				response = yield {
 					type: 'FREE_TRANSACTION_BEGIN',
 					payload,
 				};
-				debug( 'free transaction complete', response );
-			} catch ( error ) {
-				debug( 'free transaction had an error', error );
+				debug('free transaction complete', response);
+			} catch (error) {
+				debug('free transaction had an error', error);
 				return { type: 'FREE_PURCHASE_TRANSACTION_ERROR', payload: error };
 			}
-			debug( 'free transaction requires is successful' );
+			debug('free transaction requires is successful');
 			return { type: 'FREE_PURCHASE_TRANSACTION_END', payload: response };
 		},
 	};
 
 	const selectors = {
-		getTransactionError( state ) {
+		getTransactionError(state) {
 			return state.transactionError;
 		},
-		getTransactionStatus( state ) {
+		getTransactionStatus(state) {
 			return state.transactionStatus;
 		},
 	};
 
-	registerStore( 'free-purchase', {
+	registerStore('free-purchase', {
 		reducer(
 			state = {
 				transactionStatus: null,
@@ -57,7 +57,7 @@ export function createFreePaymentMethod( { registerStore, submitTransaction } ) 
 			},
 			action
 		) {
-			switch ( action.type ) {
+			switch (action.type) {
 				case 'FREE_PURCHASE_TRANSACTION_END':
 					return {
 						...state,
@@ -75,18 +75,18 @@ export function createFreePaymentMethod( { registerStore, submitTransaction } ) 
 		actions,
 		selectors,
 		controls: {
-			FREE_TRANSACTION_BEGIN( action ) {
-				return submitTransaction( action.payload );
+			FREE_TRANSACTION_BEGIN(action) {
+				return submitTransaction(action.payload);
 			},
 		},
-	} );
+	});
 
 	return {
 		id: 'free-purchase',
 		label: <FreePurchaseLabel />,
 		submitButton: <FreePurchaseSubmitButton />,
 		inactiveContent: <FreePurchaseSummary />,
-		getAriaLabel: localize => localize( 'Free' ),
+		getAriaLabel: (localize) => localize('Free'),
 	};
 }
 
@@ -95,31 +95,29 @@ function FreePurchaseLabel() {
 
 	return (
 		<React.Fragment>
-			<div>{ localize( 'Free Purchase' ) }</div>
+			<div>{localize('Free Purchase')}</div>
 		</React.Fragment>
 	);
 }
 
-function FreePurchaseSubmitButton( { disabled } ) {
+function FreePurchaseSubmitButton({ disabled }) {
 	const localize = useLocalize();
-	const { beginFreeTransaction } = useDispatch( 'free-purchase' );
-	const [ items, total ] = useLineItems();
-	const transactionStatus = useSelect( select => select( 'free-purchase' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'free-purchase' ).getTransactionError() );
+	const { beginFreeTransaction } = useDispatch('free-purchase');
+	const [items, total] = useLineItems();
+	const transactionStatus = useSelect((select) => select('free-purchase').getTransactionStatus());
+	const transactionError = useSelect((select) => select('free-purchase').getTransactionError());
 	const { showErrorMessage } = useMessages();
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
 
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			onEvent( { type: 'FREE_PURCHASE_TRANSACTION_ERROR', payload: transactionError || '' } );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
+	useEffect(() => {
+		if (transactionStatus === 'error') {
+			onEvent({ type: 'FREE_PURCHASE_TRANSACTION_ERROR', payload: transactionError || '' });
+			showErrorMessage(transactionError || localize('An error occurred during the transaction'));
 			setFormReady();
 		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'free transaction is complete' );
+		if (transactionStatus === 'complete') {
+			debug('free transaction is complete');
 			setFormComplete();
 		}
 	}, [
@@ -130,36 +128,36 @@ function FreePurchaseSubmitButton( { disabled } ) {
 		transactionStatus,
 		transactionError,
 		localize,
-	] );
+	]);
 
 	const onClick = () => {
 		setFormSubmitting();
-		onEvent( { type: 'FREE_TRANSACTION_BEGIN' } );
-		beginFreeTransaction( {
+		onEvent({ type: 'FREE_TRANSACTION_BEGIN' });
+		beginFreeTransaction({
 			items,
-		} );
+		});
 	};
 	const buttonString =
 		formStatus === 'submitting'
-			? localize( 'Processing...' )
+			? localize('Processing...')
 			: sprintf(
-					localize( 'Complete Checkout' ),
-					renderDisplayValueMarkdown( total.amount.displayValue )
+					localize('Complete Checkout'),
+					renderDisplayValueMarkdown(total.amount.displayValue)
 			  );
 	return (
 		<Button
-			disabled={ disabled }
-			onClick={ onClick }
-			buttonState={ disabled ? 'disabled' : 'primary' }
-			isBusy={ 'submitting' === formStatus }
+			disabled={disabled}
+			onClick={onClick}
+			buttonState={disabled ? 'disabled' : 'primary'}
+			isBusy={'submitting' === formStatus}
 			fullWidth
 		>
-			{ buttonString }
+			{buttonString}
 		</Button>
 	);
 }
 
 function FreePurchaseSummary() {
 	const localize = useLocalize();
-	return <div>{ localize( 'Free Purchase' ) }</div>;
+	return <div>{localize('Free Purchase')}</div>;
 }

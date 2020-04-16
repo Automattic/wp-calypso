@@ -16,22 +16,22 @@ import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/u
 
 class QueryReaderRelatedPosts extends Component {
 	UNSAFE_componentWillMount() {
-		if ( this.props.shouldFetch ) {
-			this.props.requestRelatedPosts( this.props.siteId, this.props.postId, this.props.scope );
+		if (this.props.shouldFetch) {
+			this.props.requestRelatedPosts(this.props.siteId, this.props.postId, this.props.scope);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (
-			! nextProps.shouldFetch ||
-			( this.props.siteId === nextProps.siteId &&
+			!nextProps.shouldFetch ||
+			(this.props.siteId === nextProps.siteId &&
 				this.props.postId === nextProps.postId &&
-				this.props.scope === nextProps.scope )
+				this.props.scope === nextProps.scope)
 		) {
 			return;
 		}
 
-		nextProps.requestRelatedPosts( nextProps.siteId, nextProps.postId, nextProps.scope );
+		nextProps.requestRelatedPosts(nextProps.siteId, nextProps.postId, nextProps.scope);
 	}
 
 	render() {
@@ -42,7 +42,7 @@ class QueryReaderRelatedPosts extends Component {
 QueryReaderRelatedPosts.propTypes = {
 	siteId: PropTypes.number,
 	postId: PropTypes.number,
-	scope: PropTypes.oneOf( [ SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER ] ),
+	scope: PropTypes.oneOf([SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER]),
 	shouldFetch: PropTypes.bool,
 	requestRelatedPosts: PropTypes.func,
 };
@@ -53,13 +53,13 @@ QueryReaderRelatedPosts.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { siteId, postId, scope } = ownProps;
 		return {
-			shouldFetch: shouldFetchRelated( state, siteId, postId, scope ),
+			shouldFetch: shouldFetchRelated(state, siteId, postId, scope),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				requestRelatedPosts,
@@ -67,12 +67,12 @@ export default connect(
 			dispatch
 		);
 	}
-)( QueryReaderRelatedPosts );
+)(QueryReaderRelatedPosts);
 
-export function QueryReaderRelatedPostsSameSite( props ) {
-	return <QueryReaderRelatedPosts scope={ SCOPE_SAME } { ...props } />;
+export function QueryReaderRelatedPostsSameSite(props) {
+	return <QueryReaderRelatedPosts scope={SCOPE_SAME} {...props} />;
 }
 
-export function QueryReaderRelatedPostsOtherSites( props ) {
-	return <QueryReaderRelatedPosts scope={ SCOPE_OTHER } { ...props } />;
+export function QueryReaderRelatedPostsOtherSites(props) {
+	return <QueryReaderRelatedPosts scope={SCOPE_OTHER} {...props} />;
 }

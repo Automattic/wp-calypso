@@ -7,27 +7,27 @@
 import $ from 'jquery';
 
 function addSwitchToClassicButton() {
-	if ( ! wpcomGutenberg?.switchToClassic?.isVisible ) {
+	if (!wpcomGutenberg?.switchToClassic?.isVisible) {
 		return;
 	}
 
-	$( '#editor' ).on( 'click', '.edit-post-more-menu .components-button', () => {
+	$('#editor').on('click', '.edit-post-more-menu .components-button', () => {
 		// We need to wait a few ms until the menu content is rendered
-		setTimeout( () => {
+		setTimeout(() => {
 			//role may be 'menu' or 'group', depending on the Gutenberg version
-			$( '.edit-post-more-menu__content .components-menu-group:last-child > div[role]' ).append( `
+			$('.edit-post-more-menu__content .components-menu-group:last-child > div[role]').append(`
 					<a
-						href="${ wpcomGutenberg.switchToClassic.url }" target="_top" role="menuitem"
-						aria-label="${ wpcomGutenberg.switchToClassic.label }"
+						href="${wpcomGutenberg.switchToClassic.url}" target="_top" role="menuitem"
+						aria-label="${wpcomGutenberg.switchToClassic.label}"
 						class="components-button components-menu-item__button"
 					>
-						${ wpcomGutenberg.switchToClassic.label }
+						${wpcomGutenberg.switchToClassic.label}
 					</a>
-				` );
-		}, 0 );
-	} );
+				`);
+		}, 0);
+	});
 }
 
-$( () => {
+$(() => {
 	addSwitchToClassicButton();
-} );
+});

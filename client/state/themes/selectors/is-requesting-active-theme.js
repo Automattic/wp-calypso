@@ -11,6 +11,6 @@ import 'state/themes/init';
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether request is in progress
  */
-export function isRequestingActiveTheme( state, siteId ) {
-	return state.themes.activeThemeRequests[ siteId ] ?? false;
+export function isRequestingActiveTheme(state, siteId) {
+	return state.themes.activeThemeRequests[siteId] ?? false;
 }

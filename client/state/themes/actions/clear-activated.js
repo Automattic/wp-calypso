@@ -12,7 +12,7 @@ import 'state/themes/init';
  * @param  {number}   siteId    Site ID
  * @returns {object}        Action object
  */
-export function clearActivated( siteId ) {
+export function clearActivated(siteId) {
 	return {
 		type: THEME_CLEAR_ACTIVATED,
 		siteId,

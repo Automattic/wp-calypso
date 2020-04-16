@@ -17,20 +17,20 @@ import TranslatableString from 'components/translatable/proptype';
  */
 import './style.scss';
 
-const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
+const FormRadioWithThumbnail = ({ label, thumbnail, ...otherProps }) => {
 	const { cssClass, cssColor, imageUrl } = thumbnail;
 
 	return (
 		<div className="form-radio-with-thumbnail">
 			<FormLabel>
 				<div
-					className={ classnames( 'form-radio-with-thumbnail__thumbnail', cssClass ) }
-					style={ { backgroundColor: cssColor } }
+					className={classnames('form-radio-with-thumbnail__thumbnail', cssClass)}
+					style={{ backgroundColor: cssColor }}
 				>
-					{ imageUrl && <img src={ imageUrl } alt={ label } /> }
+					{imageUrl && <img src={imageUrl} alt={label} />}
 				</div>
-				<FormRadio { ...otherProps } />
-				<span>{ label }</span>
+				<FormRadio {...otherProps} />
+				<span>{label}</span>
 			</FormLabel>
 		</div>
 	);

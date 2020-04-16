@@ -12,8 +12,8 @@ import { getPostCommentItems } from 'state/comments/selectors/get-post-comment-i
 import 'state/comments/init';
 
 export const getDateSortedPostComments = treeSelect(
-	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
-	( [ comments ] ) => {
-		return sortBy( comments, comment => new Date( comment.date ) );
+	(state, siteId, postId) => [getPostCommentItems(state, siteId, postId)],
+	([comments]) => {
+		return sortBy(comments, (comment) => new Date(comment.date));
 	}
 );

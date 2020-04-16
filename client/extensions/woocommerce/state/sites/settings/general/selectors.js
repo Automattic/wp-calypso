@@ -10,8 +10,8 @@ import { find, get, isArray } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING, ERROR } from 'woocommerce/state/constants';
 
-const getRawGeneralSettings = ( state, siteId ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'general' ] );
+const getRawGeneralSettings = (state, siteId) => {
+	return get(state, ['extensions', 'woocommerce', 'sites', siteId, 'settings', 'general']);
 };
 
 /**
@@ -19,8 +19,8 @@ const getRawGeneralSettings = ( state, siteId ) => {
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the general settings list has been successfully loaded from the server
  */
-export const areSettingsGeneralLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getRawGeneralSettings( state, siteId ) );
+export const areSettingsGeneralLoaded = (state, siteId = getSelectedSiteId(state)) => {
+	return isArray(getRawGeneralSettings(state, siteId));
 };
 
 /**
@@ -28,8 +28,8 @@ export const areSettingsGeneralLoaded = ( state, siteId = getSelectedSiteId( sta
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the general settings list is currently being retrieved from the server
  */
-export const areSettingsGeneralLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getRawGeneralSettings( state, siteId );
+export const areSettingsGeneralLoading = (state, siteId = getSelectedSiteId(state)) => {
+	return LOADING === getRawGeneralSettings(state, siteId);
 };
 
 /**
@@ -37,8 +37,8 @@ export const areSettingsGeneralLoading = ( state, siteId = getSelectedSiteId( st
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether there has been an error fetching the general settings list from the server
  */
-export const areSettingsGeneralLoadError = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return ERROR === getRawGeneralSettings( state, siteId );
+export const areSettingsGeneralLoadError = (state, siteId = getSelectedSiteId(state)) => {
+	return ERROR === getRawGeneralSettings(state, siteId);
 };
 
 /**
@@ -48,9 +48,9 @@ export const areSettingsGeneralLoadError = ( state, siteId = getSelectedSiteId( 
  * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
  * @returns {object} Payment Currency Settings
  */
-export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( state ) ) {
-	const generalSettings = getRawGeneralSettings( state, siteId );
-	const currency = find( generalSettings, item => item.id === 'woocommerce_currency' );
+export function getPaymentCurrencySettings(state, siteId = getSelectedSiteId(state)) {
+	const generalSettings = getRawGeneralSettings(state, siteId);
+	const currency = find(generalSettings, (item) => item.id === 'woocommerce_currency');
 	return currency || {};
 }
 
@@ -61,13 +61,13 @@ export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( s
  * @param {number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
  * @returns {object} Value of the "Shipping location(s)" Setting
  */
-export function getShipToCountrySetting( state, siteId = getSelectedSiteId( state ) ) {
-	const generalSettings = getRawGeneralSettings( state, siteId );
-	const setting = find( generalSettings, item => item.id === 'woocommerce_ship_to_countries' );
+export function getShipToCountrySetting(state, siteId = getSelectedSiteId(state)) {
+	const generalSettings = getRawGeneralSettings(state, siteId);
+	const setting = find(generalSettings, (item) => item.id === 'woocommerce_ship_to_countries');
 	return setting || {};
 }
 
-export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getStoreLocation = (state, siteId = getSelectedSiteId(state)) => {
 	const defaultLocation = {
 		street: '',
 		street2: '',
@@ -77,11 +77,11 @@ export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) =
 		country: 'US',
 	};
 
-	if ( ! areSettingsGeneralLoaded( state, siteId ) ) {
+	if (!areSettingsGeneralLoaded(state, siteId)) {
 		return defaultLocation;
 	}
 
-	const generalSettings = getRawGeneralSettings( state, siteId );
+	const generalSettings = getRawGeneralSettings(state, siteId);
 
 	const settingsMap = {
 		street: 'woocommerce_store_address',
@@ -93,17 +93,17 @@ export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) =
 
 	const address = defaultLocation;
 
-	for ( const addressKey in settingsMap ) {
-		const setting = find( generalSettings, { id: settingsMap[ addressKey ] } );
-		address[ addressKey ] = setting ? setting.value : '';
+	for (const addressKey in settingsMap) {
+		const setting = find(generalSettings, { id: settingsMap[addressKey] });
+		address[addressKey] = setting ? setting.value : '';
 	}
 
 	// WooCommerce uses country to hold both country and state (e.g. US:CT)
 	// let's fix that here
-	if ( address.country && address.country.indexOf( ':' ) ) {
-		const parts = address.country.split( ':' );
-		address.country = parts[ 0 ];
-		address.state = parts[ 1 ];
+	if (address.country && address.country.indexOf(':')) {
+		const parts = address.country.split(':');
+		address.country = parts[0];
+		address.state = parts[1];
 	} else {
 		address.state = '';
 	}
@@ -111,13 +111,13 @@ export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) =
 	return address;
 };
 
-export const areTaxCalculationsEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const generalSettings = getRawGeneralSettings( state, siteId );
-	const taxesEnabled = find( generalSettings, { id: 'woocommerce_calc_taxes' } );
-	if ( ! taxesEnabled ) {
+export const areTaxCalculationsEnabled = (state, siteId = getSelectedSiteId(state)) => {
+	const generalSettings = getRawGeneralSettings(state, siteId);
+	const taxesEnabled = find(generalSettings, { id: 'woocommerce_calc_taxes' });
+	if (!taxesEnabled) {
 		return null;
 	}
-	if ( ! ( 'value' in taxesEnabled ) ) {
+	if (!('value' in taxesEnabled)) {
 		return null;
 	}
 	return 'yes' === taxesEnabled.value;

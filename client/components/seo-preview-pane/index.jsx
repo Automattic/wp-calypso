@@ -33,149 +33,146 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import './style.scss';
 
 const PREVIEW_IMAGE_WIDTH = 512;
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
+const hasSupportingPlan = overSome(isBusiness, isEnterprise, isJetpackPremium, isEcommerce);
 
-const largeBlavatar = site => {
-	const siteIcon = get( site, 'icon.img' );
-	if ( ! siteIcon ) {
+const largeBlavatar = (site) => {
+	const siteIcon = get(site, 'icon.img');
+	if (!siteIcon) {
 		return null;
 	}
 
-	return `${ siteIcon }?s=${ PREVIEW_IMAGE_WIDTH }`;
+	return `${siteIcon}?s=${PREVIEW_IMAGE_WIDTH}`;
 };
 
-const getPostImage = post => {
-	if ( ! post ) {
+const getPostImage = (post) => {
+	if (!post) {
 		return null;
 	}
 
 	// Use the featured image if one was set
-	if ( post.featured_image ) {
+	if (post.featured_image) {
 		return post.featured_image;
 	}
 
 	// Otherwise we'll look for a large enough image in the post
 	const content = post.content;
-	if ( ! content ) {
+	if (!content) {
 		return null;
 	}
 
-	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
+	const imgElements = parseHtml(content).querySelectorAll('img');
 	const imageUrl = get(
-		find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
+		find(imgElements, ({ width }) => width >= PREVIEW_IMAGE_WIDTH),
 		'src',
 		null
 	);
 
-	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
+	return imageUrl ? `${imageUrl}?s=${PREVIEW_IMAGE_WIDTH}` : null;
 };
 
-const getSeoExcerptForPost = post => {
-	if ( ! post ) {
+const getSeoExcerptForPost = (post) => {
+	if (!post) {
 		return null;
 	}
 
 	return formatExcerpt(
-		find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], identity )
+		find([PostMetadata.metaDescription(post), post.excerpt, post.content], identity)
 	);
 };
 
-const getSeoExcerptForSite = site => {
-	if ( ! site ) {
+const getSeoExcerptForSite = (site) => {
+	if (!site) {
 		return null;
 	}
 
 	return formatExcerpt(
-		find(
-			[ get( site, 'options.advanced_seo_front_page_description' ), site.description ],
-			identity
-		)
+		find([get(site, 'options.advanced_seo_front_page_description'), site.description], identity)
 	);
 };
 
-const ComingSoonMessage = translate => (
-	<div className="seo-preview-pane__message">{ translate( 'Coming Soon!' ) }</div>
+const ComingSoonMessage = (translate) => (
+	<div className="seo-preview-pane__message">{translate('Coming Soon!')}</div>
 );
 
-const ReaderPost = ( site, post, frontPageMetaDescription ) => {
+const ReaderPost = (site, post, frontPageMetaDescription) => {
 	return (
 		<ReaderPreview
-			site={ site }
-			post={ post }
-			postExcerpt={ formatExcerpt(
-				frontPageMetaDescription || get( post, 'excerpt', false ) || get( post, 'content', false )
-			) }
-			postImage={ getPostImage( post ) }
+			site={site}
+			post={post}
+			postExcerpt={formatExcerpt(
+				frontPageMetaDescription || get(post, 'excerpt', false) || get(post, 'content', false)
+			)}
+			postImage={getPostImage(post)}
 		/>
 	);
 };
 
-const GoogleSite = ( site, frontPageMetaDescription ) => (
+const GoogleSite = (site, frontPageMetaDescription) => (
 	<SearchPreview
-		title={ site.name }
-		url={ site.URL }
-		snippet={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
+		title={site.name}
+		url={site.URL}
+		snippet={frontPageMetaDescription || getSeoExcerptForSite(site)}
 	/>
 );
 
-const GooglePost = ( site, post, frontPageMetaDescription ) => (
+const GooglePost = (site, post, frontPageMetaDescription) => (
 	<SearchPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
-		snippet={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
+		title={get(post, 'seoTitle', '')}
+		url={get(post, 'URL', '')}
+		snippet={frontPageMetaDescription || getSeoExcerptForPost(post)}
 	/>
 );
 
-const FacebookSite = ( site, frontPageMetaDescription ) => (
+const FacebookSite = (site, frontPageMetaDescription) => (
 	<FacebookPreview
-		title={ site.name }
-		url={ site.URL }
+		title={site.name}
+		url={site.URL}
 		type="website"
-		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
-		image={ largeBlavatar( site ) }
+		description={frontPageMetaDescription || getSeoExcerptForSite(site)}
+		image={largeBlavatar(site)}
 	/>
 );
 
-const FacebookPost = ( site, post, frontPageMetaDescription ) => (
+const FacebookPost = (site, post, frontPageMetaDescription) => (
 	<FacebookPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
+		title={get(post, 'seoTitle', '')}
+		url={get(post, 'URL', '')}
 		type="article"
-		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
-		image={ getPostImage( post ) }
-		author={ get( post, 'author.name', '' ) }
+		description={frontPageMetaDescription || getSeoExcerptForPost(post)}
+		image={getPostImage(post)}
+		author={get(post, 'author.name', '')}
 	/>
 );
 
-const TwitterSite = ( site, frontPageMetaDescription ) => (
+const TwitterSite = (site, frontPageMetaDescription) => (
 	<TwitterPreview
-		title={ site.name }
-		url={ site.URL }
+		title={site.name}
+		url={site.URL}
 		type="summary"
-		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
-		image={ largeBlavatar( site ) }
+		description={frontPageMetaDescription || getSeoExcerptForSite(site)}
+		image={largeBlavatar(site)}
 	/>
 );
 
-const TwitterPost = ( site, post, frontPageMetaDescription ) => (
+const TwitterPost = (site, post, frontPageMetaDescription) => (
 	<TwitterPreview
-		title={ get( post, 'seoTitle', '' ) }
-		url={ get( post, 'URL', '' ) }
+		title={get(post, 'seoTitle', '')}
+		url={get(post, 'URL', '')}
 		type="large_image_summary"
-		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
-		image={ getPostImage( post ) }
+		description={frontPageMetaDescription || getSeoExcerptForPost(post)}
+		image={getPostImage(post)}
 	/>
 );
 
 export class SeoPreviewPane extends PureComponent {
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			selectedService: props.post ? 'wordpress' : 'google',
 		};
 
-		this.selectPreview = this.selectPreview.bind( this );
+		this.selectPreview = this.selectPreview.bind(this);
 	}
 
 	componentDidMount() {
@@ -183,14 +180,14 @@ export class SeoPreviewPane extends PureComponent {
 		const { trackPreviewService } = this.props;
 		const { selectedService } = this.state;
 
-		trackPreviewService( selectedService );
+		trackPreviewService(selectedService);
 	}
 
-	selectPreview( selectedService ) {
-		this.setState( { selectedService } );
+	selectPreview(selectedService) {
+		this.setState({ selectedService });
 
 		const { trackPreviewService } = this.props;
-		trackPreviewService( selectedService );
+		trackPreviewService(selectedService);
 	}
 
 	render() {
@@ -198,55 +195,55 @@ export class SeoPreviewPane extends PureComponent {
 
 		const { selectedService } = this.state;
 
-		const services = compact( [ post && 'wordpress', 'google', 'facebook', 'twitter' ] );
+		const services = compact([post && 'wordpress', 'google', 'facebook', 'twitter']);
 
-		if ( showNudge ) {
-			return <SeoPreviewUpgradeNudge { ...{ site } } />;
+		if (showNudge) {
+			return <SeoPreviewUpgradeNudge {...{ site }} />;
 		}
 
 		return (
 			<div className="seo-preview-pane">
 				<div className="seo-preview-pane__sidebar">
 					<div className="seo-preview-pane__explanation">
-						<h1 className="seo-preview-pane__title">{ translate( 'External previews' ) }</h1>
+						<h1 className="seo-preview-pane__title">{translate('External previews')}</h1>
 						<p className="seo-preview-pane__description">
-							{ translate(
+							{translate(
 								"Below you'll find previews that " +
 									'represent how your post will look ' +
 									"when it's found or shared across a " +
 									'variety of networks.'
-							) }
+							)}
 						</p>
 					</div>
-					<VerticalMenu onClick={ this.selectPreview }>
-						{ services.map( service => (
-							<SocialItem { ...{ key: service, service } } />
-						) ) }
+					<VerticalMenu onClick={this.selectPreview}>
+						{services.map((service) => (
+							<SocialItem {...{ key: service, service }} />
+						))}
 					</VerticalMenu>
 				</div>
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
-						{ post &&
+						{post &&
 							get(
 								{
-									wordpress: ReaderPost( site, post, frontPageMetaDescription ),
-									facebook: FacebookPost( site, post, frontPageMetaDescription ),
-									google: GooglePost( site, post, frontPageMetaDescription ),
-									twitter: TwitterPost( site, post, frontPageMetaDescription ),
+									wordpress: ReaderPost(site, post, frontPageMetaDescription),
+									facebook: FacebookPost(site, post, frontPageMetaDescription),
+									google: GooglePost(site, post, frontPageMetaDescription),
+									twitter: TwitterPost(site, post, frontPageMetaDescription),
 								},
 								selectedService,
-								ComingSoonMessage( translate )
-							) }
-						{ ! post &&
+								ComingSoonMessage(translate)
+							)}
+						{!post &&
 							get(
 								{
-									facebook: FacebookSite( site, frontPageMetaDescription ),
-									google: GoogleSite( site, frontPageMetaDescription ),
-									twitter: TwitterSite( site, frontPageMetaDescription ),
+									facebook: FacebookSite(site, frontPageMetaDescription),
+									google: GoogleSite(site, frontPageMetaDescription),
+									twitter: TwitterSite(site, frontPageMetaDescription),
 								},
 								selectedService,
-								ComingSoonMessage( translate )
-							) }
+								ComingSoonMessage(translate)
+							)}
 					</div>
 				</div>
 			</div>
@@ -254,27 +251,27 @@ export class SeoPreviewPane extends PureComponent {
 	}
 }
 
-const mapStateToProps = ( state, { overridePost } ) => {
-	const site = getSelectedSite( state );
-	const post = overridePost || getSitePost( state, site.ID, getEditorPostId( state ) );
-	const isEditorShowing = [ 'gutenberg-editor', 'post-editor' ].includes( getSectionName( state ) );
+const mapStateToProps = (state, { overridePost }) => {
+	const site = getSelectedSite(state);
+	const post = overridePost || getSitePost(state, site.ID, getEditorPostId(state));
+	const isEditorShowing = ['gutenberg-editor', 'post-editor'].includes(getSectionName(state));
 
 	return {
 		site: {
 			...site,
-			name: getSeoTitle( state, 'frontPage', { site } ),
+			name: getSeoTitle(state, 'frontPage', { site }),
 		},
 		post: isEditorShowing && {
 			...post,
-			seoTitle: getSeoTitle( state, 'posts', { site, post } ),
+			seoTitle: getSeoTitle(state, 'posts', { site, post }),
 		},
-		showNudge: site && site.plan && ! hasSupportingPlan( site.plan ),
+		showNudge: site && site.plan && !hasSupportingPlan(site.plan),
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	trackPreviewService: service =>
-		dispatch( recordTracksEvent( 'calypso_seo_tools_social_preview', { service } ) ),
-} );
+const mapDispatchToProps = (dispatch) => ({
+	trackPreviewService: (service) =>
+		dispatch(recordTracksEvent('calypso_seo_tools_social_preview', { service })),
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SeoPreviewPane ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(SeoPreviewPane));

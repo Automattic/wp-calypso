@@ -11,17 +11,17 @@ import { localize } from 'i18n-calypso';
  */
 import { Button, Dialog } from '@automattic/components';
 
-const DeleteZoneDialog = ( { onCancel, onConfirm, translate, zoneName } ) => {
+const DeleteZoneDialog = ({ onCancel, onConfirm, translate, zoneName }) => {
 	const buttons = [
-		<Button onClick={ onCancel }>{ translate( 'Cancel' ) }</Button>,
-		<Button primary scary onClick={ onConfirm }>
-			{ translate( 'Delete' ) }
+		<Button onClick={onCancel}>{translate('Cancel')}</Button>,
+		<Button primary scary onClick={onConfirm}>
+			{translate('Delete')}
 		</Button>,
 	];
 
 	return (
-		<Dialog isVisible buttons={ buttons } onClose={ onCancel }>
-			{ translate(
+		<Dialog isVisible buttons={buttons} onClose={onCancel}>
+			{translate(
 				'Are you sure you want to remove {{strong}}zone "%(zone)s"{{/strong}} from the site?{{br/}}' +
 					'{{em}}This action cannot be reversed once completed.{{/em}}',
 				{
@@ -34,7 +34,7 @@ const DeleteZoneDialog = ( { onCancel, onConfirm, translate, zoneName } ) => {
 						strong: <strong />,
 					},
 				}
-			) }
+			)}
 		</Dialog>
 	);
 };
@@ -50,4 +50,4 @@ DeleteZoneDialog.defaultProps = {
 	zoneName: '',
 };
 
-export default localize( DeleteZoneDialog );
+export default localize(DeleteZoneDialog);

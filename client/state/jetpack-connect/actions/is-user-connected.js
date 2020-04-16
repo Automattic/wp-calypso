@@ -18,51 +18,51 @@ import 'state/jetpack-connect/init';
 /**
  * Module constants
  */
-const debug = debugFactory( 'calypso:jetpack-connect:actions' );
+const debug = debugFactory('calypso:jetpack-connect:actions');
 
-export function isUserConnected( siteId, siteIsOnSitesList ) {
+export function isUserConnected(siteId, siteIsOnSitesList) {
 	let accessibleSite;
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_REQUEST,
 			siteId,
-		} );
-		debug( 'checking that site is accessible', siteId );
+		});
+		debug('checking that site is accessible', siteId);
 		return wpcom
-			.site( siteId )
+			.site(siteId)
 			.get()
-			.then( site => {
+			.then((site) => {
 				accessibleSite = site;
-				debug( 'site is accessible! checking that user is connected', siteId );
-				return wpcom.undocumented().jetpackIsUserConnected( siteId );
-			} )
-			.then( () => {
-				debug( 'user is connected to site.', accessibleSite );
-				dispatch( {
+				debug('site is accessible! checking that user is connected', siteId);
+				return wpcom.undocumented().jetpackIsUserConnected(siteId);
+			})
+			.then(() => {
+				debug('user is connected to site.', accessibleSite);
+				dispatch({
 					type: SITE_REQUEST_SUCCESS,
 					siteId,
-				} );
-				dispatch( {
+				});
+				dispatch({
 					type: JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-				} );
-				if ( ! siteIsOnSitesList ) {
-					debug( 'adding site to sites list' );
-					dispatch( receiveSite( omit( accessibleSite, '_headers' ) ) );
+				});
+				if (!siteIsOnSitesList) {
+					debug('adding site to sites list');
+					dispatch(receiveSite(omit(accessibleSite, '_headers')));
 				} else {
-					debug( 'site is already on sites list' );
+					debug('site is already on sites list');
 				}
-			} )
-			.catch( error => {
-				dispatch( {
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_REQUEST_FAILURE,
 					siteId,
 					error,
-				} );
-				debug( 'user is not connected from', error );
-				if ( siteIsOnSitesList ) {
-					debug( 'removing site from sites list', siteId );
-					dispatch( withoutNotice( receiveDeletedSite )( siteId ) );
+				});
+				debug('user is not connected from', error);
+				if (siteIsOnSitesList) {
+					debug('removing site from sites list', siteId);
+					dispatch(withoutNotice(receiveDeletedSite)(siteId));
 				}
-			} );
+			});
 	};
 }

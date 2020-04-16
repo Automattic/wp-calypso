@@ -11,18 +11,18 @@ import classNames from 'classnames';
 import Gridicon from './gridicons';
 import HotkeyContainer from './container-hotkey';
 
-const ActionButton = ( { isActive, hotkey, icon, onToggle, text, title } ) => (
-	<HotkeyContainer shortcuts={ hotkey ? [ { hotkey, action: onToggle } ] : null }>
+const ActionButton = ({ isActive, hotkey, icon, onToggle, text, title }) => (
+	<HotkeyContainer shortcuts={hotkey ? [{ hotkey, action: onToggle }] : null}>
 		<button
-			className={ classNames( 'wpnc__action-link', {
+			className={classNames('wpnc__action-link', {
 				'active-action': isActive,
-				'inactive-action': ! isActive,
-			} ) }
-			title={ title }
-			onClick={ onToggle }
+				'inactive-action': !isActive,
+			})}
+			title={title}
+			onClick={onToggle}
 		>
-			<Gridicon icon={ icon } size={ 24 } />
-			<p>{ text }</p>
+			<Gridicon icon={icon} size={24} />
+			<p>{text}</p>
 		</button>
 	</HotkeyContainer>
 );

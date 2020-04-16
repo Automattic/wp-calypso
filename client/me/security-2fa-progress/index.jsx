@@ -5,7 +5,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-progress' );
+const debug = debugFactory('calypso:me:security:2fa-progress');
 import ProgressItem from './progress-item';
 
 /**
@@ -17,15 +17,15 @@ class Security2faProgress extends React.Component {
 	static displayName = 'Security2faProgress';
 
 	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
+		debug(this.constructor.displayName + ' React component is mounted.');
 	}
 
 	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
+		debug(this.constructor.displayName + ' React component will unmount.');
 	}
 
-	stepClass = step => {
-		const currentStep = parseInt( this.props.step, 10 );
+	stepClass = (step) => {
+		const currentStep = parseInt(this.props.step, 10);
 
 		return {
 			isHighlighted: step === currentStep,
@@ -38,21 +38,21 @@ class Security2faProgress extends React.Component {
 			<div className="security-2fa-progress__container">
 				<div className="security-2fa-progress__inner-container">
 					<ProgressItem
-						label={ this.props.translate( 'Enter Phone Number' ) }
+						label={this.props.translate('Enter Phone Number')}
 						icon="phone"
-						step={ this.stepClass( 1 ) }
+						step={this.stepClass(1)}
 					/>
 
 					<ProgressItem
-						label={ this.props.translate( 'Verify Code' ) }
+						label={this.props.translate('Verify Code')}
 						icon="lock"
-						step={ this.stepClass( 2 ) }
+						step={this.stepClass(2)}
 					/>
 
 					<ProgressItem
-						label={ this.props.translate( 'Generate Backup Codes' ) }
+						label={this.props.translate('Generate Backup Codes')}
 						icon="sync"
-						step={ this.stepClass( 3 ) }
+						step={this.stepClass(3)}
 					/>
 				</div>
 			</div>
@@ -60,4 +60,4 @@ class Security2faProgress extends React.Component {
 	}
 }
 
-export default localize( Security2faProgress );
+export default localize(Security2faProgress);

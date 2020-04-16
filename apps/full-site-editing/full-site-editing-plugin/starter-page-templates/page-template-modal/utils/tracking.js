@@ -13,9 +13,9 @@ let tracksIdentity = null;
  * @param {number} identity.blogid Blog ID.
  * @returns {void}
  */
-export const initializeWithIdentity = identity => {
+export const initializeWithIdentity = (identity) => {
 	tracksIdentity = identity;
-	window._tkq.push( [ 'identifyUser', identity.userid, identity.username ] );
+	window._tkq.push(['identifyUser', identity.userid, identity.username]);
 };
 
 /**
@@ -26,11 +26,11 @@ export const initializeWithIdentity = identity => {
  * @param {string} source Source triggering the view.
  * @returns {void}
  */
-export const trackView = ( segment_id, vertical_id, source ) => {
-	if ( ! tracksIdentity ) {
+export const trackView = (segment_id, vertical_id, source) => {
+	if (!tracksIdentity) {
 		return;
 	}
-	window._tkq.push( [
+	window._tkq.push([
 		'recordEvent',
 		'a8c_full_site_editing_template_selector_view',
 		{
@@ -39,7 +39,7 @@ export const trackView = ( segment_id, vertical_id, source ) => {
 			vertical_id,
 			source,
 		},
-	] );
+	]);
 };
 
 /**
@@ -49,11 +49,11 @@ export const trackView = ( segment_id, vertical_id, source ) => {
  * @param {string} vertical_id Vertical ID.
  * @returns {void}
  */
-export const trackDismiss = ( segment_id, vertical_id ) => {
-	if ( ! tracksIdentity ) {
+export const trackDismiss = (segment_id, vertical_id) => {
+	if (!tracksIdentity) {
 		return;
 	}
-	window._tkq.push( [
+	window._tkq.push([
 		'recordEvent',
 		'a8c_full_site_editing_template_selector_dismiss',
 		{
@@ -61,7 +61,7 @@ export const trackDismiss = ( segment_id, vertical_id ) => {
 			segment_id,
 			vertical_id,
 		},
-	] );
+	]);
 };
 
 /**
@@ -72,11 +72,11 @@ export const trackDismiss = ( segment_id, vertical_id ) => {
  * @param {string} template Template slug.
  * @returns {void}
  */
-export const trackSelection = ( segment_id, vertical_id, template ) => {
-	if ( ! tracksIdentity ) {
+export const trackSelection = (segment_id, vertical_id, template) => {
+	if (!tracksIdentity) {
 		return;
 	}
-	window._tkq.push( [
+	window._tkq.push([
 		'recordEvent',
 		'a8c_full_site_editing_template_selector_template_selected',
 		{
@@ -85,5 +85,5 @@ export const trackSelection = ( segment_id, vertical_id, template ) => {
 			vertical_id,
 			template,
 		},
-	] );
+	]);
 };

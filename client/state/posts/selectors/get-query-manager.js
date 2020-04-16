@@ -11,9 +11,9 @@ import 'state/posts/init';
  * @param   {?number} siteId Site ID, or `null` for all-sites queries
  * @returns {object}         Posts query manager
  */
-export function getQueryManager( state, siteId ) {
-	if ( ! siteId ) {
+export function getQueryManager(state, siteId) {
+	if (!siteId) {
 		return state.posts.allSitesQueries;
 	}
-	return state.posts.queries[ siteId ] || null;
+	return state.posts.queries[siteId] || null;
 }

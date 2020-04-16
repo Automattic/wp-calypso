@@ -12,18 +12,18 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection as setSectionAction } from 'state/ui/actions';
 import { setLocale } from 'state/ui/language/actions';
 
-export function makeLayoutMiddleware( LayoutComponent ) {
-	return ( context, next ) => {
+export function makeLayoutMiddleware(LayoutComponent) {
+	return (context, next) => {
 		const { store, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
-		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
+		if (!context.isServerSide || !getCurrentUser(context.store.getState())) {
 			context.layout = (
 				<LayoutComponent
-					store={ store }
-					primary={ primary }
-					secondary={ secondary }
-					redirectUri={ context.originalUrl }
+					store={store}
+					primary={primary}
+					secondary={secondary}
+					redirectUri={context.originalUrl}
 				/>
 			);
 		}
@@ -31,22 +31,22 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 	};
 }
 
-export function setSection( section ) {
-	return ( context, next = noop ) => {
-		context.store.dispatch( setSectionAction( section ) );
+export function setSection(section) {
+	return (context, next = noop) => {
+		context.store.dispatch(setSectionAction(section));
 		next();
 	};
 }
 
-export function setUpLocale( context, next ) {
-	const currentUser = getCurrentUser( context.store.getState() );
+export function setUpLocale(context, next) {
+	const currentUser = getCurrentUser(context.store.getState());
 
-	if ( context.params.lang ) {
+	if (context.params.lang) {
 		context.lang = context.params.lang;
-	} else if ( currentUser ) {
+	} else if (currentUser) {
 		context.lang = currentUser.localeSlug;
 	}
 
-	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
+	context.store.dispatch(setLocale(context.lang || config('i18n_default_locale_slug')));
 	next();
 }

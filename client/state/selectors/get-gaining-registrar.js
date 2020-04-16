@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {string}  domain      Domain
  * @returns {object}              Registrar object/record
  */
-export default function getGainingRegistrar( state, domain ) {
-	return get( state.domains.transfer, [ 'items', domain, 'selectedRegistrar' ], {} );
+export default function getGainingRegistrar(state, domain) {
+	return get(state.domains.transfer, ['items', domain, 'selectedRegistrar'], {});
 }

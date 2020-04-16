@@ -4,10 +4,10 @@
 import React from 'react';
 import classnames from 'classnames';
 
-const ActionPanelLink = ( { children, href, className } ) => {
+const ActionPanelLink = ({ children, href, className }) => {
 	return (
-		<a href={ href } className={ classnames( 'action-panel__body-text-link', className ) }>
-			{ children }
+		<a href={href} className={classnames('action-panel__body-text-link', className)}>
+			{children}
 		</a>
 	);
 };

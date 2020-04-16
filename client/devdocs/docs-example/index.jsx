@@ -9,24 +9,24 @@ import React from 'react';
  */
 import { Button } from '@automattic/components';
 
-const DocsExampleToggle = ( { onClick, text } ) => <Button onClick={ onClick }>{ text }</Button>;
+const DocsExampleToggle = ({ onClick, text }) => <Button onClick={onClick}>{text}</Button>;
 
 DocsExampleToggle.propTypes = {
 	onClick: PropTypes.func.isRequired,
 	text: PropTypes.string.isRequired,
 };
 
-const DocsExample = ( { children, toggleHandler, toggleText } ) => {
+const DocsExample = ({ children, toggleHandler, toggleText }) => {
 	return (
 		<section className="docs-example">
 			<header className="docs-example__header">
-				{ toggleHandler && toggleText && (
+				{toggleHandler && toggleText && (
 					<span className="docs-example__toggle">
-						<DocsExampleToggle onClick={ toggleHandler } text={ toggleText } />
+						<DocsExampleToggle onClick={toggleHandler} text={toggleText} />
 					</span>
-				) }
+				)}
 			</header>
-			<div className="docs-example__main">{ children }</div>
+			<div className="docs-example__main">{children}</div>
 		</section>
 	);
 };

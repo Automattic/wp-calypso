@@ -63,22 +63,19 @@ const verticals = [
 	'Church',
 ];
 
-function isVerticalInList( vertical ) {
-	const sanitizedVerticals = verticals.map( dasherize );
-	vertical = dasherize( vertical );
-	return verticals.includes( vertical ) || sanitizedVerticals.includes( vertical );
+function isVerticalInList(vertical) {
+	const sanitizedVerticals = verticals.map(dasherize);
+	vertical = dasherize(vertical);
+	return verticals.includes(vertical) || sanitizedVerticals.includes(vertical);
 }
 
-function dasherize( string ) {
-	return string
-		.toLowerCase()
-		.replace( / /g, '-' )
-		.replace( /-+/, '-' );
+function dasherize(string) {
+	return string.toLowerCase().replace(/ /g, '-').replace(/-+/, '-');
 }
 
-export function isValidLandingPageVertical( vertical ) {
-	if ( ! vertical || vertical === '' ) {
+export function isValidLandingPageVertical(vertical) {
+	if (!vertical || vertical === '') {
 		return false;
 	}
-	return isVerticalInList( vertical );
+	return isVerticalInList(vertical);
 }

@@ -30,7 +30,7 @@ import {
  * @param {object|Function} [failureAction] Action with extra props { error }
  * @returns {object} Action object
  */
-export function createProduct( siteId, product, successAction, failureAction ) {
+export function createProduct(siteId, product, successAction, failureAction) {
 	const action = {
 		type: WOOCOMMERCE_PRODUCT_CREATE,
 		siteId,
@@ -51,7 +51,7 @@ export function createProduct( siteId, product, successAction, failureAction ) {
  * @param {object|Function} [failureAction] Action with extra props { error }
  * @returns {object} Action object
  */
-export function updateProduct( siteId, product, successAction, failureAction ) {
+export function updateProduct(siteId, product, successAction, failureAction) {
 	const action = {
 		type: WOOCOMMERCE_PRODUCT_UPDATE,
 		siteId,
@@ -73,7 +73,7 @@ export function updateProduct( siteId, product, successAction, failureAction ) {
  * @param {object} originatingAction The action which precipitated this update.
  * @returns {object} Action object
  */
-export function productUpdated( siteId, data, originatingAction ) {
+export function productUpdated(siteId, data, originatingAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_UPDATED,
 		siteId,
@@ -93,13 +93,13 @@ export function productUpdated( siteId, data, originatingAction ) {
  * @param {string} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @returns {object} Action object
  */
-export const deleteProduct = ( siteId, productId, successAction = null, failureAction = null ) => (
+export const deleteProduct = (siteId, productId, successAction = null, failureAction = null) => (
 	dispatch,
 	getState
 ) => {
 	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
 
 	const deleteAction = {
@@ -108,27 +108,27 @@ export const deleteProduct = ( siteId, productId, successAction = null, failureA
 		productId,
 	};
 
-	dispatch( deleteAction );
+	dispatch(deleteAction);
 
 	// ?force=true deletes a product instead of trashing
 	// In v1, we don't have trash management. Later we can trash instead.
-	return request( siteId )
-		.del( `products/${ productId }?force=true` )
-		.then( data => {
-			dispatch( deleteProductSuccess( siteId, data ) );
-			if ( successAction ) {
-				dispatch( successAction( data ) );
+	return request(siteId)
+		.del(`products/${productId}?force=true`)
+		.then((data) => {
+			dispatch(deleteProductSuccess(siteId, data));
+			if (successAction) {
+				dispatch(successAction(data));
 			}
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, deleteAction, err ) );
-			if ( failureAction ) {
-				dispatch( failureAction( err ) );
+		})
+		.catch((err) => {
+			dispatch(setError(siteId, deleteAction, err));
+			if (failureAction) {
+				dispatch(failureAction(err));
 			}
-		} );
+		});
 };
 
-function deleteProductSuccess( siteId, data ) {
+function deleteProductSuccess(siteId, data) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 		siteId,
@@ -136,7 +136,7 @@ function deleteProductSuccess( siteId, data ) {
 	};
 }
 
-export function fetchProduct( siteId, productId, successAction, failureAction ) {
+export function fetchProduct(siteId, productId, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_REQUEST,
 		siteId,
@@ -146,7 +146,7 @@ export function fetchProduct( siteId, productId, successAction, failureAction ) 
 	};
 }
 
-export function fetchProducts( siteId, params, successAction, failureAction ) {
+export function fetchProducts(siteId, params, successAction, failureAction) {
 	return {
 		type: WOOCOMMERCE_PRODUCTS_REQUEST,
 		siteId,
@@ -156,7 +156,7 @@ export function fetchProducts( siteId, params, successAction, failureAction ) {
 	};
 }
 
-export function fetchProductsFailure( siteId, params ) {
+export function fetchProductsFailure(siteId, params) {
 	return {
 		type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 		siteId,
@@ -164,9 +164,9 @@ export function fetchProductsFailure( siteId, params ) {
 	};
 }
 
-export function productsUpdated( siteId, params, products, totalPages, totalProducts ) {
+export function productsUpdated(siteId, params, products, totalPages, totalProducts) {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( ! isArray( products ) ) {
+	if (!isArray(products)) {
 		return {
 			type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 			siteId,
@@ -175,7 +175,7 @@ export function productsUpdated( siteId, params, products, totalPages, totalProd
 		};
 	}
 
-	const normalizedQuery = getNormalizedProductsQuery( params );
+	const normalizedQuery = getNormalizedProductsQuery(params);
 	return {
 		type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 		siteId,

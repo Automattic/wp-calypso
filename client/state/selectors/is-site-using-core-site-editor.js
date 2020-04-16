@@ -15,7 +15,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param {object} siteId Site ID
  * @returns {boolean} True if the site is using core Site Editor, otherwise false
  */
-export default function isSiteUsingCoreSiteEditor( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	return get( site, 'is_core_site_editor_enabled', false );
+export default function isSiteUsingCoreSiteEditor(state, siteId) {
+	const site = getRawSite(state, siteId);
+	return get(site, 'is_core_site_editor_enabled', false);
 }

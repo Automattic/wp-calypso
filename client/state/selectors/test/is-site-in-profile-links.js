@@ -3,7 +3,7 @@
  */
 import isSiteInProfileLinks from 'state/selectors/is-site-in-profile-links';
 
-describe( 'isSiteInProfileLinks()', () => {
+describe('isSiteInProfileLinks()', () => {
 	const profileLinks = [
 		{
 			link_slug: 'wordpress-org',
@@ -12,33 +12,33 @@ describe( 'isSiteInProfileLinks()', () => {
 		},
 	];
 
-	test( 'should return null if profile links have not been received yet', () => {
+	test('should return null if profile links have not been received yet', () => {
 		const state = {
 			userProfileLinks: {
 				items: null,
 			},
 		};
 
-		expect( isSiteInProfileLinks( state, 'wordpress.org' ) ).toEqual( null );
-	} );
+		expect(isSiteInProfileLinks(state, 'wordpress.org')).toEqual(null);
+	});
 
-	test( 'should return false if site is not in profile links', () => {
+	test('should return false if site is not in profile links', () => {
 		const state = {
 			userProfileLinks: {
 				items: profileLinks,
 			},
 		};
 
-		expect( isSiteInProfileLinks( state, 'wordpress.com' ) ).toBe( false );
-	} );
+		expect(isSiteInProfileLinks(state, 'wordpress.com')).toBe(false);
+	});
 
-	test( 'should return true if site is in profile links', () => {
+	test('should return true if site is in profile links', () => {
 		const state = {
 			userProfileLinks: {
 				items: profileLinks,
 			},
 		};
 
-		expect( isSiteInProfileLinks( state, 'wordpress.org' ) ).toBe( true );
-	} );
-} );
+		expect(isSiteInProfileLinks(state, 'wordpress.org')).toBe(true);
+	});
+});

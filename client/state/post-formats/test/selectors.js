@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import { isRequestingPostFormats, getPostFormats } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( '#isRequestingPostFormats()', () => {
-		test( 'should return false if the site has never been fetched', () => {
+describe('selectors', () => {
+	describe('#isRequestingPostFormats()', () => {
+		test('should return false if the site has never been fetched', () => {
 			const isRequesting = isRequestingPostFormats(
 				{
 					postFormats: {
@@ -20,10 +20,10 @@ describe( 'selectors', () => {
 				12345678
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return false if the site is not fetching', () => {
+		test('should return false if the site is not fetching', () => {
 			const isRequesting = isRequestingPostFormats(
 				{
 					postFormats: {
@@ -35,10 +35,10 @@ describe( 'selectors', () => {
 				12345678
 			);
 
-			expect( isRequesting ).to.be.false;
-		} );
+			expect(isRequesting).to.be.false;
+		});
 
-		test( 'should return true if the site is fetching', () => {
+		test('should return true if the site is fetching', () => {
 			const isRequesting = isRequestingPostFormats(
 				{
 					postFormats: {
@@ -50,12 +50,12 @@ describe( 'selectors', () => {
 				12345678
 			);
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+			expect(isRequesting).to.be.true;
+		});
+	});
 
-	describe( '#getPostFormats()', () => {
-		test( 'should return null if the site has never been fetched', () => {
+	describe('#getPostFormats()', () => {
+		test('should return null if the site has never been fetched', () => {
 			const postFormats = getPostFormats(
 				{
 					postFormats: {
@@ -65,10 +65,10 @@ describe( 'selectors', () => {
 				12345678
 			);
 
-			expect( postFormats ).to.be.null;
-		} );
+			expect(postFormats).to.be.null;
+		});
 
-		test( 'should return the post formats for a site', () => {
+		test('should return the post formats for a site', () => {
 			const postFormats = getPostFormats(
 				{
 					postFormats: {
@@ -83,10 +83,10 @@ describe( 'selectors', () => {
 				12345678
 			);
 
-			expect( postFormats ).to.eql( {
+			expect(postFormats).to.eql({
 				image: 'Image',
 				link: 'Link',
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

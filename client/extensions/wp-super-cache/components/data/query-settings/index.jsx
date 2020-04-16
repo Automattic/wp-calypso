@@ -14,24 +14,24 @@ import { requestSettings } from '../../../state/settings/actions';
 
 class QuerySettings extends Component {
 	UNSAFE_componentWillMount() {
-		this.requestSettings( this.props );
+		this.requestSettings(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		const { siteId } = this.props;
 
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
+		if (!nextProps.siteId || siteId === nextProps.siteId) {
 			return;
 		}
 
-		this.requestSettings( nextProps );
+		this.requestSettings(nextProps);
 	}
 
-	requestSettings( props ) {
+	requestSettings(props) {
 		const { requestingSettings, siteId } = props;
 
-		if ( ! requestingSettings && siteId ) {
-			props.requestSettings( siteId );
+		if (!requestingSettings && siteId) {
+			props.requestSettings(siteId);
 		}
 	}
 
@@ -47,10 +47,10 @@ QuerySettings.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	(state, { siteId }) => {
 		return {
-			requestingSettings: isRequestingSettings( state, siteId ),
+			requestingSettings: isRequestingSettings(state, siteId),
 		};
 	},
 	{ requestSettings }
-)( QuerySettings );
+)(QuerySettings);

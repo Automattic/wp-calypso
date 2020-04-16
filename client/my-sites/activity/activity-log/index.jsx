@@ -83,13 +83,13 @@ const PAGE_SIZE = 20;
 
 class ActivityLog extends Component {
 	static propTypes = {
-		restoreProgress: PropTypes.shape( {
+		restoreProgress: PropTypes.shape({
 			errorCode: PropTypes.string.isRequired,
 			failureReason: PropTypes.string.isRequired,
 			message: PropTypes.string.isRequired,
 			percent: PropTypes.number.isRequired,
 			restoreId: PropTypes.number,
-			status: PropTypes.oneOf( [
+			status: PropTypes.oneOf([
 				'finished',
 				'queued',
 				'running',
@@ -100,15 +100,15 @@ class ActivityLog extends Component {
 				// 'fail',
 				// 'success',
 				// 'success-with-errors',
-			] ).isRequired,
+			]).isRequired,
 			rewindId: PropTypes.string.isRequired,
-		} ),
+		}),
 		backupProgress: PropTypes.object,
 		changePeriod: PropTypes.func,
-		requestedRestore: PropTypes.shape( {
+		requestedRestore: PropTypes.shape({
 			rewindId: PropTypes.string.isRequired,
 			activityTs: PropTypes.number.isRequired,
-		} ),
+		}),
 		requestedRestoreId: PropTypes.string,
 		rewindRequestDismiss: PropTypes.func.isRequired,
 		rewindRestore: PropTypes.func.isRequired,
@@ -123,19 +123,19 @@ class ActivityLog extends Component {
 	};
 
 	componentDidMount() {
-		window.scrollTo( 0, 0 );
-		this.findExistingRewind( this.props );
+		window.scrollTo(0, 0);
+		this.findExistingRewind(this.props);
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( ! prevProps.rewindState.rewind && this.props.rewindState.rewind ) {
-			this.findExistingRewind( this.props );
+	componentDidUpdate(prevProps) {
+		if (!prevProps.rewindState.rewind && this.props.rewindState.rewind) {
+			this.findExistingRewind(this.props);
 		}
 	}
 
-	findExistingRewind = ( { siteId, rewindState } ) => {
-		if ( rewindState.rewind && rewindState.rewind.restoreId ) {
-			this.props.getRewindRestoreProgress( siteId, rewindState.rewind.restoreId );
+	findExistingRewind = ({ siteId, rewindState }) => {
+		if (rewindState.rewind && rewindState.rewind.restoreId) {
+			this.props.getRewindRestoreProgress(siteId, rewindState.rewind.restoreId);
 		}
 	};
 
@@ -144,14 +144,14 @@ class ActivityLog extends Component {
 	 *
 	 * @param {string} type Type of dialog to close.
 	 */
-	handleCloseDialog = type => {
+	handleCloseDialog = (type) => {
 		const { siteId } = this.props;
-		switch ( type ) {
+		switch (type) {
 			case 'restore':
-				this.props.rewindRequestDismiss( siteId );
+				this.props.rewindRequestDismiss(siteId);
 				break;
 			case 'backup':
-				this.props.dismissBackup( siteId );
+				this.props.dismissBackup(siteId);
 				break;
 		}
 	};
@@ -163,15 +163,15 @@ class ActivityLog extends Component {
 	 * @param   {object} date Moment to adjust.
 	 * @returns {object}      Moment adjusted for site timezone or gmtOffset.
 	 */
-	applySiteOffset = date => {
+	applySiteOffset = (date) => {
 		const { timezone, gmtOffset } = this.props;
-		return applySiteOffset( date, { timezone, gmtOffset } );
+		return applySiteOffset(date, { timezone, gmtOffset });
 	};
 
-	changePage = pageNumber => {
-		analytics.tracks.recordEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
-		this.props.selectPage( this.props.siteId, pageNumber );
-		window.scrollTo( 0, 0 );
+	changePage = (pageNumber) => {
+		analytics.tracks.recordEvent('calypso_activitylog_change_page', { page: pageNumber });
+		this.props.selectPage(this.props.siteId, pageNumber);
+		window.scrollTo(0, 0);
 	};
 
 	/**
@@ -182,30 +182,30 @@ class ActivityLog extends Component {
 	renderActionProgress() {
 		const { siteId, restoreProgress, backupProgress } = this.props;
 
-		if ( ! restoreProgress && ! backupProgress ) {
+		if (!restoreProgress && !backupProgress) {
 			return null;
 		}
 
 		const cards = [];
 
-		if ( restoreProgress ) {
+		if (restoreProgress) {
 			cards.push(
 				'finished' === restoreProgress.status
-					? this.getEndBanner( siteId, restoreProgress )
-					: this.getProgressBanner( siteId, restoreProgress, 'restore' )
+					? this.getEndBanner(siteId, restoreProgress)
+					: this.getProgressBanner(siteId, restoreProgress, 'restore')
 			);
 		}
 
-		if ( backupProgress ) {
-			if ( 0 <= backupProgress.progress ) {
-				cards.push( this.getProgressBanner( siteId, backupProgress, 'backup' ) );
+		if (backupProgress) {
+			if (0 <= backupProgress.progress) {
+				cards.push(this.getProgressBanner(siteId, backupProgress, 'backup'));
 			} else if (
-				! isEmpty( backupProgress.url ) &&
-				Date.now() < Date.parse( backupProgress.validUntil )
+				!isEmpty(backupProgress.url) &&
+				Date.now() < Date.parse(backupProgress.validUntil)
 			) {
-				cards.push( this.getEndBanner( siteId, backupProgress ) );
-			} else if ( ! isEmpty( backupProgress.backupError ) ) {
-				cards.push( this.getEndBanner( siteId, backupProgress ) );
+				cards.push(this.getEndBanner(siteId, backupProgress));
+			} else if (!isEmpty(backupProgress.backupError)) {
+				cards.push(this.getEndBanner(siteId, backupProgress));
 			}
 		}
 
@@ -220,7 +220,7 @@ class ActivityLog extends Component {
 	 * @param   {string}  action         Action type. Allows to set the right text without waiting for data.
 	 * @returns {object}                 Card showing progress.
 	 */
-	getProgressBanner( siteId, actionProgress, action ) {
+	getProgressBanner(siteId, actionProgress, action) {
 		const {
 			percent,
 			progress,
@@ -233,16 +233,16 @@ class ActivityLog extends Component {
 		} = actionProgress;
 		return (
 			<ProgressBanner
-				key={ `progress-${ restoreId || downloadId }` }
-				applySiteOffset={ this.applySiteOffset }
-				percent={ percent || progress }
-				restoreId={ restoreId }
-				downloadId={ downloadId }
-				siteId={ siteId }
-				status={ status }
-				timestamp={ timestamp || rewindId }
-				action={ action }
-				context={ context }
+				key={`progress-${restoreId || downloadId}`}
+				applySiteOffset={this.applySiteOffset}
+				percent={percent || progress}
+				restoreId={restoreId}
+				downloadId={downloadId}
+				siteId={siteId}
+				status={status}
+				timestamp={timestamp || rewindId}
+				action={action}
+				context={context}
 			/>
 		);
 	}
@@ -254,7 +254,7 @@ class ActivityLog extends Component {
 	 * @param   {object}  progress Last status of operation.
 	 * @returns {object}           Card showing success or error.
 	 */
-	getEndBanner( siteId, progress ) {
+	getEndBanner(siteId, progress) {
 		const {
 			errorCode,
 			backupError,
@@ -270,35 +270,35 @@ class ActivityLog extends Component {
 		} = progress;
 		const requestedRestoreId = this.props.requestedRestoreId || rewindId;
 		return (
-			<div key={ `end-banner-${ restoreId || downloadId }` }>
-				{ errorCode || backupError ? (
+			<div key={`end-banner-${restoreId || downloadId}`}>
+				{errorCode || backupError ? (
 					<ErrorBanner
-						key={ `error-${ restoreId || downloadId }` }
-						errorCode={ errorCode || backupError }
-						downloadId={ downloadId }
-						requestedRestoreId={ requestedRestoreId }
-						failureReason={ failureReason }
-						createBackup={ this.props.createBackup }
-						rewindRestore={ this.props.rewindRestore }
-						closeDialog={ this.handleCloseDialog }
-						siteId={ siteId }
-						siteTitle={ siteTitle }
-						timestamp={ timestamp }
-						context={ context }
+						key={`error-${restoreId || downloadId}`}
+						errorCode={errorCode || backupError}
+						downloadId={downloadId}
+						requestedRestoreId={requestedRestoreId}
+						failureReason={failureReason}
+						createBackup={this.props.createBackup}
+						rewindRestore={this.props.rewindRestore}
+						closeDialog={this.handleCloseDialog}
+						siteId={siteId}
+						siteTitle={siteTitle}
+						timestamp={timestamp}
+						context={context}
 					/>
 				) : (
 					<SuccessBanner
-						key={ `success-${ restoreId || downloadId }` }
-						applySiteOffset={ this.applySiteOffset }
-						siteId={ siteId }
-						timestamp={ rewindId }
-						downloadId={ downloadId }
-						restoreId={ restoreId }
-						backupUrl={ url }
-						downloadCount={ downloadCount }
-						context={ context }
+						key={`success-${restoreId || downloadId}`}
+						applySiteOffset={this.applySiteOffset}
+						siteId={siteId}
+						timestamp={rewindId}
+						downloadId={downloadId}
+						restoreId={restoreId}
+						backupUrl={url}
+						downloadCount={downloadCount}
+						context={context}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}
@@ -306,15 +306,15 @@ class ActivityLog extends Component {
 	renderErrorMessage() {
 		const { rewindState, translate } = this.props;
 
-		if ( ! rewindState.rewind || rewindState.rewind.status !== 'failed' ) {
+		if (!rewindState.rewind || rewindState.rewind.status !== 'failed') {
 			return null;
 		}
 
 		return (
-			<ActivityLogBanner status="error" icon={ null }>
-				{ translate( 'Something happened and we were unable to restore your site.' ) }
+			<ActivityLogBanner status="error" icon={null}>
+				{translate('Something happened and we were unable to restore your site.')}
 				<br />
-				{ translate( 'Please try again or contact support.' ) }
+				{translate('Please try again or contact support.')}
 			</ActivityLogBanner>
 		);
 	}
@@ -322,18 +322,18 @@ class ActivityLog extends Component {
 	renderNoLogsContent() {
 		const { filter, logLoadingState, siteId, translate, siteHasNoLog, slug } = this.props;
 
-		const isFilterEmpty = isEqual( emptyFilter, filter );
+		const isFilterEmpty = isEqual(emptyFilter, filter);
 
-		if ( logLoadingState === 'success' ) {
+		if (logLoadingState === 'success') {
 			return isFilterEmpty ? (
-				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteHasNoLog } />
+				<ActivityLogExample siteId={siteId} siteIsOnFreePlan={siteHasNoLog} />
 			) : (
 				<Fragment>
 					<EmptyContent
-						title={ translate( 'No matching events found.' ) }
-						line={ translate( 'Try adjusting your date range or activity type filters' ) }
-						action={ translate( 'Remove all filters' ) }
-						actionURL={ '/activity-log/' + slug }
+						title={translate('No matching events found.')}
+						line={translate('Try adjusting your date range or activity type filters')}
+						action={translate('Remove all filters')}
+						actionURL={'/activity-log/' + slug}
 					/>
 				</Fragment>
 			);
@@ -345,14 +345,14 @@ class ActivityLog extends Component {
 				<div className="activity-log__time-period is-loading">
 					<span />
 				</div>
-				{ [ 1, 2, 3 ].map( i => (
-					<div key={ i } className="activity-log-item is-loading">
+				{[1, 2, 3].map((i) => (
+					<div key={i} className="activity-log-item is-loading">
 						<div className="activity-log-item__type">
 							<div className="activity-log-item__activity-icon" />
 						</div>
 						<div className="card foldable-card activity-log-item__card" />
 					</div>
-				) ) }
+				))}
 			</section>
 		);
 	}
@@ -374,38 +374,35 @@ class ActivityLog extends Component {
 		} = this.props;
 
 		const disableRestore =
-			! enableRewind ||
-			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			!enableRewind ||
+			includes(['queued', 'running'], get(this.props, ['restoreProgress', 'status'])) ||
 			'active' !== rewindState.state;
-		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
+		const disableBackup = 0 <= get(this.props, ['backupProgress', 'progress'], -Infinity);
 
-		const actualPage = Math.max(
-			1,
-			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
-		);
-		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
+		const actualPage = Math.max(1, Math.min(requestedPage, Math.ceil(logs.length / PAGE_SIZE)));
+		const theseLogs = logs.slice((actualPage - 1) * PAGE_SIZE, actualPage * PAGE_SIZE);
 
-		const timePeriod = ( () => {
-			const today = this.applySiteOffset( moment() );
+		const timePeriod = (() => {
+			const today = this.applySiteOffset(moment());
 			let last = null;
 
-			return ( { rewindId } ) => {
-				const ts = this.applySiteOffset( moment( rewindId * 1000 ) );
+			return ({ rewindId }) => {
+				const ts = this.applySiteOffset(moment(rewindId * 1000));
 
-				if ( null === last || ! ts.isSame( last, 'day' ) ) {
+				if (null === last || !ts.isSame(last, 'day')) {
 					last = ts;
 					return (
-						<h2 className="activity-log__time-period" key={ `time-period-${ ts }` }>
-							{ ts.isSame( today, 'day' )
-								? ts.format( translate( 'LL[ — Today]', { context: 'moment format string' } ) )
-								: ts.format( 'LL' ) }
+						<h2 className="activity-log__time-period" key={`time-period-${ts}`}>
+							{ts.isSame(today, 'day')
+								? ts.format(translate('LL[ — Today]', { context: 'moment format string' }))
+								: ts.format('LL')}
 						</h2>
 					);
 				}
 
 				return null;
 			};
-		} )();
+		})();
 
 		const provisioningText = supportsRealtimeBackup
 			? translate(
@@ -419,120 +416,118 @@ class ActivityLog extends Component {
 
 		return (
 			<div>
-				{ siteId && 'active' === rewindState.state && (
-					<QueryRewindBackupStatus siteId={ siteId } />
-				) }
-				<QuerySiteSettings siteId={ siteId } />
-				<QuerySitePurchases siteId={ siteId } />
+				{siteId && 'active' === rewindState.state && <QueryRewindBackupStatus siteId={siteId} />}
+				<QuerySiteSettings siteId={siteId} />
+				<QuerySitePurchases siteId={siteId} />
 
 				<SidebarNavigation />
 
-				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
+				<JetpackBackupCredsBanner event={'activity-backup-credentials'} />
 
 				<FormattedHeader
 					className="activity-log__page-heading"
-					headerText={ translate( 'Activity' ) }
-					subHeaderText={ translate(
+					headerText={translate('Activity')}
+					subHeaderText={translate(
 						"Keep tabs on all your site's activity — plugin and theme updates, user logins, " +
 							'setting modifications, and more.'
-					) }
+					)}
 					align="left"
 				/>
 
-				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
-				{ siteId && 'unavailable' === rewindState.state && (
-					<RewindUnavailabilityNotice siteId={ siteId } />
-				) }
-				{ 'provisioning' === rewindState.state && (
+				{siteId && isJetpack && !isAtomic && <RewindAlerts siteId={siteId} />}
+				{siteId && 'unavailable' === rewindState.state && (
+					<RewindUnavailabilityNotice siteId={siteId} />
+				)}
+				{'provisioning' === rewindState.state && (
 					<Banner
 						icon="history"
 						disableHref
-						title={ translate( 'Your backup is underway' ) }
-						description={ provisioningText }
+						title={translate('Your backup is underway')}
+						description={provisioningText}
 					/>
-				) }
-				<IntroBanner siteId={ siteId } />
-				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
-				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
-				{ this.renderErrorMessage() }
-				{ this.renderActionProgress() }
-				{ this.renderFilterbar() }
-				{ isEmpty( logs ) ? (
+				)}
+				<IntroBanner siteId={siteId} />
+				{siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={siteId} />}
+				{siteId && isJetpack && <ActivityLogTasklist siteId={siteId} />}
+				{this.renderErrorMessage()}
+				{this.renderActionProgress()}
+				{this.renderFilterbar()}
+				{isEmpty(logs) ? (
 					this.renderNoLogsContent()
 				) : (
 					<div>
 						<Pagination
-							compact={ isMobile() }
+							compact={isMobile()}
 							className="activity-log__pagination"
 							key="activity-list-pagination-top"
-							nextLabel={ translate( 'Older' ) }
-							page={ actualPage }
-							pageClick={ this.changePage }
-							perPage={ PAGE_SIZE }
-							prevLabel={ translate( 'Newer' ) }
-							total={ logs.length }
+							nextLabel={translate('Older')}
+							page={actualPage}
+							pageClick={this.changePage}
+							perPage={PAGE_SIZE}
+							prevLabel={translate('Newer')}
+							total={logs.length}
 						/>
 						<section className="activity-log__wrapper">
-							{ siteHasNoLog && <div className="activity-log__fader" /> }
-							{ theseLogs.map( log =>
+							{siteHasNoLog && <div className="activity-log__fader" />}
+							{theseLogs.map((log) =>
 								log.isAggregate ? (
-									<Fragment key={ log.activityId }>
-										{ timePeriod( log ) }
+									<Fragment key={log.activityId}>
+										{timePeriod(log)}
 										<ActivityLogAggregatedItem
-											key={ log.activityId }
-											activity={ log }
-											disableRestore={ disableRestore }
-											disableBackup={ disableBackup }
-											siteId={ siteId }
-											rewindState={ rewindState.state }
+											key={log.activityId}
+											activity={log}
+											disableRestore={disableRestore}
+											disableBackup={disableBackup}
+											siteId={siteId}
+											rewindState={rewindState.state}
 										/>
 									</Fragment>
 								) : (
-									<Fragment key={ log.activityId }>
-										{ timePeriod( log ) }
+									<Fragment key={log.activityId}>
+										{timePeriod(log)}
 										<ActivityLogItem
-											key={ log.activityId }
-											activity={ log }
-											disableRestore={ disableRestore }
-											disableBackup={ disableBackup }
-											siteId={ siteId }
+											key={log.activityId}
+											activity={log}
+											disableRestore={disableRestore}
+											disableBackup={disableBackup}
+											siteId={siteId}
 										/>
 									</Fragment>
 								)
-							) }
+							)}
 						</section>
-						{ siteHasNoLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
+						{siteHasNoLog && !isIntroDismissed && <UpgradeBanner siteId={siteId} />}
 						<Pagination
-							compact={ isMobile() }
+							compact={isMobile()}
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
-							nextLabel={ translate( 'Older' ) }
-							page={ actualPage }
-							pageClick={ this.changePage }
-							perPage={ PAGE_SIZE }
-							prevLabel={ translate( 'Newer' ) }
-							total={ logs.length }
+							nextLabel={translate('Older')}
+							page={actualPage}
+							pageClick={this.changePage}
+							perPage={PAGE_SIZE}
+							prevLabel={translate('Newer')}
+							total={logs.length}
 						/>
 					</div>
-				) }
+				)}
 			</div>
 		);
 	}
 
 	renderFilterbar() {
 		const { siteId, filter, logs, siteHasNoLog, logLoadingState } = this.props;
-		const isFilterEmpty = isEqual( emptyFilter, filter );
+		const isFilterEmpty = isEqual(emptyFilter, filter);
 
-		if ( siteHasNoLog ) {
+		if (siteHasNoLog) {
 			return null;
 		}
 
 		return (
 			<Filterbar
-				siteId={ siteId }
-				filter={ filter }
-				isLoading={ logLoadingState !== 'success' }
-				isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
+				siteId={siteId}
+				filter={filter}
+				isLoading={logLoadingState !== 'success'}
+				isVisible={!(isEmpty(logs) && isFilterEmpty)}
 			/>
 		);
 	}
@@ -540,14 +535,14 @@ class ActivityLog extends Component {
 	render() {
 		const { canViewActivityLog, siteId, translate } = this.props;
 
-		if ( false === canViewActivityLog ) {
+		if (false === canViewActivityLog) {
 			return (
 				<Main>
-					<QuerySitePurchases siteId={ siteId } />
+					<QuerySitePurchases siteId={siteId} />
 					<SidebarNavigation />
 					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						title={translate('You are not authorized to view this page')}
+						illustration={'/calypso/images/illustrations/illustration-404.svg'}
 					/>
 				</Main>
 			);
@@ -555,21 +550,21 @@ class ActivityLog extends Component {
 
 		const { context, rewindState } = this.props;
 
-		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
+		const rewindNoThanks = get(context, 'query.rewind-redirect', '');
 		const rewindIsNotReady =
-			includes( [ 'uninitialized', 'awaitingCredentials' ], rewindState.state ) ||
+			includes(['uninitialized', 'awaitingCredentials'], rewindState.state) ||
 			'vp_can_transfer' === rewindState.reason;
 
 		return (
 			<Main wideLayout>
-				<QuerySitePurchases siteId={ siteId } />
+				<QuerySitePurchases siteId={siteId} />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
-				<DocumentHead title={ translate( 'Activity' ) } />
-				{ siteId && <QueryRewindState siteId={ siteId } /> }
-				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
-				{ '' !== rewindNoThanks && rewindIsNotReady
-					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
-					: this.getActivityLog() }
+				<DocumentHead title={translate('Activity')} />
+				{siteId && <QueryRewindState siteId={siteId} />}
+				{siteId && <QueryJetpackPlugins siteIds={[siteId]} />}
+				{'' !== rewindNoThanks && rewindIsNotReady
+					? siteId && <ActivityLogSwitch siteId={siteId} redirect={rewindNoThanks} />
+					: this.getActivityLog()}
 				<JetpackColophon />
 			</Main>
 		);
@@ -579,76 +574,75 @@ class ActivityLog extends Component {
 const emptyList = [];
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const gmtOffset = getSiteGmtOffset( state, siteId );
-		const timezone = getSiteTimezoneValue( state, siteId );
-		const requestedRestoreId = getRequestedRewind( state, siteId );
-		const requestedBackupId = getRequestedBackup( state, siteId );
-		const rewindState = getRewindState( state, siteId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const gmtOffset = getSiteGmtOffset(state, siteId);
+		const timezone = getSiteTimezoneValue(state, siteId);
+		const requestedRestoreId = getRequestedRewind(state, siteId);
+		const requestedBackupId = getRequestedBackup(state, siteId);
+		const rewindState = getRewindState(state, siteId);
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
-		const filter = getActivityLogFilter( state, siteId );
-		const logs = siteId && requestActivityLogs( siteId, filter );
+		const filter = getActivityLogFilter(state, siteId);
+		const logs = siteId && requestActivityLogs(siteId, filter);
 		const siteIsOnFreePlan =
-			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
-			! isVipSite( state, siteId );
-		const siteHasNoLog = siteIsOnFreePlan && ! siteHasBackupProductPurchase( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
+			isFreePlan(get(getCurrentPlan(state, siteId), 'productSlug')) && !isVipSite(state, siteId);
+		const siteHasNoLog = siteIsOnFreePlan && !siteHasBackupProductPurchase(state, siteId);
+		const isJetpack = isJetpackSite(state, siteId);
 
 		return {
-			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
+			canViewActivityLog: canCurrentUser(state, siteId, 'manage_options'),
 			gmtOffset,
 			enableRewind:
 				'active' === rewindState.state &&
-				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
+				!('queued' === restoreStatus || 'running' === restoreStatus),
 			filter,
-			isAtomic: isAtomicSite( state, siteId ),
+			isAtomic: isAtomicSite(state, siteId),
 			isJetpack,
-			logs: ( siteId && logs.data ) || emptyList,
+			logs: (siteId && logs.data) || emptyList,
 			logLoadingState: logs && logs.state,
-			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
+			requestedRestore: find(logs, { activityId: requestedRestoreId }),
 			requestedRestoreId,
-			requestedBackup: find( logs, { activityId: requestedBackupId } ),
+			requestedBackup: find(logs, { activityId: requestedBackupId }),
 			requestedBackupId,
-			restoreProgress: getRestoreProgress( state, siteId ),
-			backupProgress: getBackupProgress( state, siteId ),
+			restoreProgress: getRestoreProgress(state, siteId),
+			backupProgress: getBackupProgress(state, siteId),
 			rewindState,
 			siteId,
-			siteTitle: getSiteTitle( state, siteId ),
-			slug: getSiteSlug( state, siteId ),
+			siteTitle: getSiteTitle(state, siteId),
+			slug: getSiteSlug(state, siteId),
 			timezone,
 			siteHasNoLog,
-			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
-			supportsRealtimeBackup: siteSupportsRealtimeBackup( state, siteId ),
+			isIntroDismissed: getPreference(state, 'dismissible-card-activity-introduction-banner'),
+			supportsRealtimeBackup: siteSupportsRealtimeBackup(state, siteId),
 		};
 	},
 	{
-		changePeriod: ( { date, direction } ) =>
-			recordTracksEvent( 'calypso_activitylog_monthpicker_change', {
+		changePeriod: ({ date, direction }) =>
+			recordTracksEvent('calypso_activitylog_monthpicker_change', {
 				date: date.utc().toISOString(),
 				direction,
-			} ),
-		createBackup: ( siteId, actionId ) =>
+			}),
+		createBackup: (siteId, actionId) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
-				rewindBackup( siteId, actionId )
+				recordTracksEvent('calypso_activitylog_backup_confirm', { action_id: actionId }),
+				rewindBackup(siteId, actionId)
 			),
-		dismissBackup: siteId =>
+		dismissBackup: (siteId) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
-				rewindBackupDismiss( siteId )
+				recordTracksEvent('calypso_activitylog_backup_cancel'),
+				rewindBackupDismiss(siteId)
 			),
 		getRewindRestoreProgress,
-		rewindRequestDismiss: siteId =>
+		rewindRequestDismiss: (siteId) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
-				rewindRequestDismiss( siteId )
+				recordTracksEvent('calypso_activitylog_restore_cancel'),
+				rewindRequestDismiss(siteId)
 			),
-		rewindRestore: ( siteId, actionId ) =>
+		rewindRestore: (siteId, actionId) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
-				rewindRestore( siteId, actionId )
+				recordTracksEvent('calypso_activitylog_restore_confirm', { action_id: actionId }),
+				rewindRestore(siteId, actionId)
 			),
-		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
+		selectPage: (siteId, pageNumber) => updateFilter(siteId, { page: pageNumber }),
 	}
-)( localize( withLocalizedMoment( ActivityLog ) ) );
+)(localize(withLocalizedMoment(ActivityLog)));

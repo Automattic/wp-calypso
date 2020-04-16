@@ -9,15 +9,15 @@
 // Constants
 //------------------------------------------------------------------------------
 
-const VALID_SIZES = [ 12, 18, 24, 36, 48, 54, 72 ];
+const VALID_SIZES = [12, 18, 24, 36, 48, 54, 72];
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = (module.exports = function (context) {
 	return {
-		JSXAttribute: function( node ) {
+		JSXAttribute: function (node) {
 			if (
 				'size' !== node.name.name ||
 				'JSXOpeningElement' !== node.parent.type ||
@@ -28,14 +28,13 @@ const rule = ( module.exports = function( context ) {
 				return;
 			}
 
-			if ( ! VALID_SIZES.includes( node.value.expression.value ) ) {
-				context.report( node, rule.ERROR_MESSAGE );
+			if (!VALID_SIZES.includes(node.value.expression.value)) {
+				context.report(node, rule.ERROR_MESSAGE);
 			}
 		},
 	};
-} );
+});
 
-rule.ERROR_MESSAGE =
-	'Gridicon size should be one of recommended sizes: ' + VALID_SIZES.join( ', ' );
+rule.ERROR_MESSAGE = 'Gridicon size should be one of recommended sizes: ' + VALID_SIZES.join(', ');
 
 rule.schema = [];

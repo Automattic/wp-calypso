@@ -16,7 +16,7 @@ import {
  * @param  {string} title Document title
  * @returns {object}       Action object
  */
-export function setDocumentHeadTitle( title ) {
+export function setDocumentHeadTitle(title) {
 	return {
 		type: DOCUMENT_HEAD_TITLE_SET,
 		title,
@@ -30,7 +30,7 @@ export function setDocumentHeadTitle( title ) {
  * @param  {number} count Unread count
  * @returns {object}       Action object
  */
-export function setDocumentHeadUnreadCount( count ) {
+export function setDocumentHeadUnreadCount(count) {
 	return {
 		type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
 		count,
@@ -44,7 +44,7 @@ export function setDocumentHeadUnreadCount( count ) {
  * @param  {object} link Link object
  * @returns {object}      Action object
  */
-export function setDocumentHeadLink( link ) {
+export function setDocumentHeadLink(link) {
 	return {
 		type: DOCUMENT_HEAD_LINK_SET,
 		link,
@@ -58,7 +58,7 @@ export function setDocumentHeadLink( link ) {
  * @param  {object} meta Meta object
  * @returns {object}      Action object
  */
-export function setDocumentHeadMeta( meta ) {
+export function setDocumentHeadMeta(meta) {
 	return {
 		type: DOCUMENT_HEAD_META_SET,
 		meta,

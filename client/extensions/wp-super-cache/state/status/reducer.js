@@ -17,28 +17,28 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated requesting state
  */
-const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_RECEIVE_STATUS: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: false };
+			return { ...state, [siteId]: false };
 		}
 		case WP_SUPER_CACHE_REQUEST_STATUS: {
 			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
+			return { ...state, [siteId]: true };
 		}
 		case WP_SUPER_CACHE_REQUEST_STATUS_FAILURE: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Tracks the status for a particular site.
@@ -47,19 +47,19 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated status
  */
-const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_RECEIVE_STATUS:
 			return {
 				...state,
-				[ action.siteId ]: action.status,
+				[action.siteId]: action.status,
 			};
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
-} );
+});

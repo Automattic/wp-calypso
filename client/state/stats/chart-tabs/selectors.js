@@ -20,8 +20,8 @@ const EMPTY_RESULT = [];
  * @param   {string}  period   Type of duration to include in the query (such as daily)
  * @returns {Array}            Array of count objects
  */
-export function getCountRecords( state, siteId, period ) {
-	return get( state, [ 'stats', 'chartTabs', 'counts', siteId, period ], EMPTY_RESULT );
+export function getCountRecords(state, siteId, period) {
+	return get(state, ['stats', 'chartTabs', 'counts', siteId, period], EMPTY_RESULT);
 }
 
 /**
@@ -32,8 +32,8 @@ export function getCountRecords( state, siteId, period ) {
  * @param   {string}  period   Type of duration to include in the query (such as daily)
  * @returns {Array}          	 Array of stat types as strings
  */
-export function getLoadingTabs( state, siteId, period ) {
-	return QUERY_FIELDS.filter( type =>
-		get( state, [ 'stats', 'chartTabs', 'isLoading', siteId, period, type ] )
+export function getLoadingTabs(state, siteId, period) {
+	return QUERY_FIELDS.filter((type) =>
+		get(state, ['stats', 'chartTabs', 'isLoading', siteId, period, type])
 	);
 }

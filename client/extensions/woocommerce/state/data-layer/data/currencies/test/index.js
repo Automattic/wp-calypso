@@ -10,13 +10,13 @@ import { fetchCurrencies } from 'woocommerce/state/sites/data/currencies/actions
 import { fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'handlers', () => {
-	describe( '#fetch', () => {
-		test( 'should dispatch a get action for the currencies', () => {
-			const action = fetchCurrencies( 123 );
-			const result = fetch( action );
+describe('handlers', () => {
+	describe('#fetch', () => {
+		test('should dispatch a get action for the currencies', () => {
+			const action = fetchCurrencies(123);
+			const result = fetch(action);
 
-			expect( result ).to.eql(
+			expect(result).to.eql(
 				http(
 					{
 						method: 'GET',
@@ -31,6 +31,6 @@ describe( 'handlers', () => {
 					action
 				)
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

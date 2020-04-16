@@ -27,22 +27,22 @@ export default class Delta extends Component {
 
 	render() {
 		const { className, icon, iconSize, suffix, value } = this.props;
-		const deltaClasses = classnames( 'delta', className );
-		const undefinedIncrease = includes( className, 'is-undefined-increase' );
+		const deltaClasses = classnames('delta', className);
+		const undefinedIncrease = includes(className, 'is-undefined-increase');
 		let deltaIcon;
-		if ( icon ) {
+		if (icon) {
 			deltaIcon = icon;
 		} else {
 			deltaIcon =
-				includes( className, 'is-increase' ) || undefinedIncrease ? 'arrow-up' : 'arrow-down';
-			deltaIcon = includes( className, 'is-neutral' ) ? 'minus-small' : deltaIcon;
+				includes(className, 'is-increase') || undefinedIncrease ? 'arrow-up' : 'arrow-down';
+			deltaIcon = includes(className, 'is-neutral') ? 'minus-small' : deltaIcon;
 		}
 		return (
-			<div className={ deltaClasses }>
-				<Gridicon className="delta__icon" icon={ deltaIcon } size={ iconSize } />
+			<div className={deltaClasses}>
+				<Gridicon className="delta__icon" icon={deltaIcon} size={iconSize} />
 				<span className="delta__labels">
-					{ ! undefinedIncrease && <span className="delta__value">{ value }</span> }
-					{ suffix && <span className="delta__suffix">{ suffix }</span> }
+					{!undefinedIncrease && <span className="delta__value">{value}</span>}
+					{suffix && <span className="delta__suffix">{suffix}</span>}
 				</span>
 			</div>
 		);

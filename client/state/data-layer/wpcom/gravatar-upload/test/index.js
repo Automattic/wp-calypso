@@ -13,17 +13,17 @@ import {
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( '#uploadGravatar()', () => {
-	test( 'dispatches an HTTP request to the gravatar upload endpoint', () => {
+describe('#uploadGravatar()', () => {
+	test('dispatches an HTTP request to the gravatar upload endpoint', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			file: 'file',
 			email: 'email',
 		};
 
-		const result = uploadGravatar( action );
+		const result = uploadGravatar(action);
 
-		expect( result ).toEqual(
+		expect(result).toEqual(
 			http(
 				{
 					apiNamespace: 'wpcom/v2',
@@ -31,41 +31,41 @@ describe( '#uploadGravatar()', () => {
 					body: {},
 					path: '/gravatar-upload',
 					formData: [
-						[ 'account', 'email' ],
-						[ 'filedata', 'file' ],
+						['account', 'email'],
+						['filedata', 'file'],
 					],
 				},
 				action
 			)
 		);
-	} );
-} );
+	});
+});
 
-describe( '#announceSuccess()', () => {
+describe('#announceSuccess()', () => {
 	let oFormData, oFileReader;
 	const noop = () => {};
 	const tempImageSrc = 'tempImageSrc';
 
-	beforeAll( () => {
+	beforeAll(() => {
 		oFormData = global.FormData;
 		oFileReader = global.FileReader;
-		global.FormData = jest.fn( () => ( {
+		global.FormData = jest.fn(() => ({
 			append: noop,
-		} ) );
-		global.FileReader = jest.fn( () => ( {
+		}));
+		global.FileReader = jest.fn(() => ({
 			readAsDataURL: noop,
-			addEventListener: function( event, callback ) {
+			addEventListener: function (event, callback) {
 				this.result = tempImageSrc;
 				callback();
 			},
-		} ) );
-	} );
-	afterAll( () => {
+		}));
+	});
+	afterAll(() => {
 		global.FormData = oFormData;
 		global.FileReader = oFileReader;
-	} );
+	});
 
-	test( 'dispatches a success action when the file is read', () => {
+	test('dispatches a success action when the file is read', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			file: 'file',
@@ -73,13 +73,13 @@ describe( '#announceSuccess()', () => {
 		};
 		const dispatch = jest.fn();
 
-		announceSuccess( action, noop, { success: true } )( dispatch );
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( { type: GRAVATAR_UPLOAD_REQUEST_SUCCESS } )
+		announceSuccess(action, noop, { success: true })(dispatch);
+		expect(dispatch).toHaveBeenCalledWith(
+			expect.objectContaining({ type: GRAVATAR_UPLOAD_REQUEST_SUCCESS })
 		);
-	} );
+	});
 
-	test( 'dispatches a upload received action with the image data when the file is read', () => {
+	test('dispatches a upload received action with the image data when the file is read', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			file: 'file',
@@ -87,18 +87,18 @@ describe( '#announceSuccess()', () => {
 		};
 		const dispatch = jest.fn();
 
-		announceSuccess( action, noop, { success: true } )( dispatch );
-		expect( dispatch ).toHaveBeenCalledWith( {
+		announceSuccess(action, noop, { success: true })(dispatch);
+		expect(dispatch).toHaveBeenCalledWith({
 			type: GRAVATAR_UPLOAD_RECEIVE,
 			src: 'tempImageSrc',
-		} );
-	} );
-} );
+		});
+	});
+});
 
-describe( '#announceFailure()', () => {
-	test( 'should dispatch an error notice', () => {
+describe('#announceFailure()', () => {
+	test('should dispatch an error notice', () => {
 		const result = announceFailure();
 
-		expect( result.type ).toEqual( GRAVATAR_UPLOAD_REQUEST_FAILURE );
-	} );
-} );
+		expect(result.type).toEqual(GRAVATAR_UPLOAD_REQUEST_FAILURE);
+	});
+});

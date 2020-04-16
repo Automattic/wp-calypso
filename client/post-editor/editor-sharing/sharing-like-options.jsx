@@ -30,7 +30,7 @@ class SharingLikeOptions extends React.Component {
 	};
 
 	renderSharingButtonField() {
-		if ( ! this.props.isSharingButtonsEnabled ) {
+		if (!this.props.isSharingButtonsEnabled) {
 			return;
 		}
 
@@ -38,16 +38,16 @@ class SharingLikeOptions extends React.Component {
 			<label>
 				<FormCheckbox
 					name="sharing_enabled"
-					checked={ this.props.isShowingSharingButtons }
-					onChange={ this.onChange }
+					checked={this.props.isShowingSharingButtons}
+					onChange={this.onChange}
 				/>
-				<span>{ this.props.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
+				<span>{this.props.translate('Show Sharing Buttons', { context: 'Post Editor' })}</span>
 			</label>
 		);
 	}
 
 	renderLikesButtonField() {
-		if ( ! this.props.isLikesEnabled ) {
+		if (!this.props.isLikesEnabled) {
 			return;
 		}
 
@@ -55,68 +55,68 @@ class SharingLikeOptions extends React.Component {
 			<label>
 				<FormCheckbox
 					name="likes_enabled"
-					checked={ this.props.isShowingLikeButton }
-					onChange={ this.onChange }
+					checked={this.props.isShowingLikeButton}
+					onChange={this.onChange}
 				/>
-				<span>{ this.props.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
+				<span>{this.props.translate('Show Like Button', { context: 'Post Editor' })}</span>
 			</label>
 		);
 	}
 
-	onChange = event => {
-		this.props.editPost( this.props.siteId, this.props.postId, {
-			[ event.target.name ]: event.target.checked,
-		} );
+	onChange = (event) => {
+		this.props.editPost(this.props.siteId, this.props.postId, {
+			[event.target.name]: event.target.checked,
+		});
 
-		this.recordStats( event );
+		this.recordStats(event);
 	};
 
-	recordStats( event ) {
+	recordStats(event) {
 		let mcStat = event.target.name,
 			eventStat = 'sharing_enabled' === event.target.name ? 'Sharing Buttons' : 'Like Button';
 
 		mcStat += event.target.checked ? '_enabled' : '_disabled';
 		eventStat += event.target.checked ? ' Enabled' : ' Disabled';
 
-		this.props.recordEditorStat( mcStat );
-		this.props.recordEditorEvent( eventStat );
+		this.props.recordEditorStat(mcStat);
+		this.props.recordEditorEvent(eventStat);
 	}
 
 	render() {
-		if ( ! this.props.isSharingButtonsEnabled && ! this.props.isLikesEnabled ) {
+		if (!this.props.isSharingButtonsEnabled && !this.props.isLikesEnabled) {
 			return null;
 		}
 
 		return (
 			<EditorFieldset
 				className="editor-sharing__sharing-like-options"
-				legend={ this.props.translate( 'Sharing Buttons & Likes' ) }
+				legend={this.props.translate('Sharing Buttons & Likes')}
 			>
-				{ this.renderSharingButtonField() }
-				{ this.renderLikesButtonField() }
+				{this.renderSharingButtonField()}
+				{this.renderLikesButtonField()}
 			</EditorFieldset>
 		);
 	}
 }
 
-function isShowingSharingButtons( site, post, isNew ) {
-	if ( post && 'sharing_enabled' in post ) {
+function isShowingSharingButtons(site, post, isNew) {
+	if (post && 'sharing_enabled' in post) {
 		return post.sharing_enabled;
 	}
 
-	if ( site && isNew ) {
+	if (site && isNew) {
 		return site.options.default_sharing_status;
 	}
 
 	return true;
 }
 
-function isShowingLikeButton( site, post, isNew ) {
-	if ( post && 'likes_enabled' in post ) {
+function isShowingLikeButton(site, post, isNew) {
+	if (post && 'likes_enabled' in post) {
 		return post.likes_enabled;
 	}
 
-	if ( site && isNew ) {
+	if (site && isNew) {
 		return site.options.default_likes_enabled;
 	}
 
@@ -124,21 +124,21 @@ function isShowingLikeButton( site, post, isNew ) {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const site = getSite( state, siteId );
-		const postId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, postId );
-		const isNew = isEditorNewPost( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const site = getSite(state, siteId);
+		const postId = getEditorPostId(state);
+		const post = getEditedPost(state, siteId, postId);
+		const isNew = isEditorNewPost(state);
 
 		return {
 			siteId,
 			postId,
-			isSharingButtonsEnabled: false !== isJetpackModuleActive( state, siteId, 'sharedaddy' ),
-			isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
-			isShowingSharingButtons: isShowingSharingButtons( site, post, isNew ),
-			isShowingLikeButton: isShowingLikeButton( site, post, isNew ),
+			isSharingButtonsEnabled: false !== isJetpackModuleActive(state, siteId, 'sharedaddy'),
+			isLikesEnabled: false !== isJetpackModuleActive(state, siteId, 'likes'),
+			isShowingSharingButtons: isShowingSharingButtons(site, post, isNew),
+			isShowingLikeButton: isShowingLikeButton(site, post, isNew),
 		};
 	},
 	{ editPost, recordEditorStat, recordEditorEvent }
-)( localize( SharingLikeOptions ) );
+)(localize(SharingLikeOptions));

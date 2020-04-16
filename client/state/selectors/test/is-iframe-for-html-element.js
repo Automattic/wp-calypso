@@ -3,8 +3,8 @@
  */
 import isIframeForHtmlElement from '../is-iframe-for-html-element';
 
-describe( 'isIframeForHtmlElement()', () => {
-	test( 'should be true when in `gutenberg-editor` section with a siteId', () => {
+describe('isIframeForHtmlElement()', () => {
+	test('should be true when in `gutenberg-editor` section with a siteId', () => {
 		const state = {
 			ui: {
 				section: {
@@ -13,10 +13,10 @@ describe( 'isIframeForHtmlElement()', () => {
 				selectedSiteId: 1701,
 			},
 		};
-		expect( isIframeForHtmlElement( state ) ).toBe( true );
-	} );
+		expect(isIframeForHtmlElement(state)).toBe(true);
+	});
 
-	test( 'should be false when in `gutenberg-editor` section without a siteId', () => {
+	test('should be false when in `gutenberg-editor` section without a siteId', () => {
 		const state = {
 			ui: {
 				section: {
@@ -24,10 +24,10 @@ describe( 'isIframeForHtmlElement()', () => {
 				},
 			},
 		};
-		expect( isIframeForHtmlElement( state ) ).toBe( false );
-	} );
+		expect(isIframeForHtmlElement(state)).toBe(false);
+	});
 
-	test( 'should be false when in other section', () => {
+	test('should be false when in other section', () => {
 		const state = {
 			ui: {
 				section: {
@@ -36,6 +36,6 @@ describe( 'isIframeForHtmlElement()', () => {
 				selectedSiteId: 1701,
 			},
 		};
-		expect( isIframeForHtmlElement( state ) ).toBe( false );
-	} );
-} );
+		expect(isIframeForHtmlElement(state)).toBe(false);
+	});
+});

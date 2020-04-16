@@ -28,4 +28,4 @@ export class PlanTestimonials extends Component {
 	}
 }
 
-export default localize( PlanTestimonials );
+export default localize(PlanTestimonials);

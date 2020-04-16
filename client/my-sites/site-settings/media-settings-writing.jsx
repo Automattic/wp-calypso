@@ -48,50 +48,48 @@ class MediaSettingsWriting extends Component {
 			siteId,
 			translate,
 		} = this.props;
-		const labelClassName = isSavingSettings || ! carouselActive ? 'is-disabled' : null;
+		const labelClassName = isSavingSettings || !carouselActive ? 'is-disabled' : null;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
 				<Card>
-					<QueryJetpackConnection siteId={ selectedSiteId } />
+					<QueryJetpackConnection siteId={selectedSiteId} />
 
-					<FormFieldset className={ 'site-settings__formfieldset' }>
+					<FormFieldset className={'site-settings__formfieldset'}>
 						<SupportInfo
-							text={ translate( 'Gorgeous full-screen photo browsing experience.' ) }
+							text={translate('Gorgeous full-screen photo browsing experience.')}
 							link="https://jetpack.com/support/carousel/"
 						/>
 						<JetpackModuleToggle
-							siteId={ siteId }
+							siteId={siteId}
 							moduleSlug="carousel"
-							label={ translate(
-								'Transform standard image galleries into full-screen slideshows'
-							) }
-							disabled={ isRequestingOrSaving }
+							label={translate('Transform standard image galleries into full-screen slideshows')}
+							disabled={isRequestingOrSaving}
 						/>
 						<div className="site-settings__child-settings">
 							<CompactFormToggle
-								checked={ fields.carousel_display_exif || false }
-								disabled={ isRequestingOrSaving || ! carouselActive }
-								onChange={ handleAutosavingToggle( 'carousel_display_exif' ) }
+								checked={fields.carousel_display_exif || false}
+								disabled={isRequestingOrSaving || !carouselActive}
+								onChange={handleAutosavingToggle('carousel_display_exif')}
 							>
-								{ translate( 'Show photo metadata in carousel, when available' ) }
+								{translate('Show photo metadata in carousel, when available')}
 							</CompactFormToggle>
-							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
-								{ translate( 'Background Color' ) }
+							<FormLabel className={labelClassName} htmlFor="carousel_background_color">
+								{translate('Background Color')}
 							</FormLabel>
 							<FormSelect
 								name="carousel_background_color"
 								id="carousel_background_color"
-								value={ fields.carousel_background_color || 'black' }
-								onChange={ onChangeField( 'carousel_background_color' ) }
-								disabled={ isRequestingOrSaving || ! carouselActive }
+								value={fields.carousel_background_color || 'black'}
+								onChange={onChangeField('carousel_background_color')}
+								disabled={isRequestingOrSaving || !carouselActive}
 							>
 								<option value="black" key="carousel_background_color_black">
-									{ translate( 'Black' ) }
+									{translate('Black')}
 								</option>
 								<option value="white" key="carousel_background_color_white">
-									{ translate( 'White' ) }
+									{translate('White')}
 								</option>
 							</FormSelect>
 						</div>
@@ -102,12 +100,12 @@ class MediaSettingsWriting extends Component {
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
 
 	return {
-		carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
+		carouselActive: !!isJetpackModuleActive(state, selectedSiteId, 'carousel'),
 		selectedSiteId,
-		siteSlug: getSiteSlug( state, selectedSiteId ),
+		siteSlug: getSiteSlug(state, selectedSiteId),
 	};
-} )( localize( MediaSettingsWriting ) );
+})(localize(MediaSettingsWriting));

@@ -18,28 +18,28 @@ import createSelector from 'lib/create-selector';
  * @returns {Array|object|null}     Array of Simple Payment objects or an object if `simplePaymentId` specified.
  */
 export default createSelector(
-	( state, siteId, membershipsId = null ) => {
-		if ( ! siteId ) {
+	(state, siteId, membershipsId = null) => {
+		if (!siteId) {
 			return null;
 		}
 
-		const membershipsProducts = state.memberships.productList.items[ siteId ] ?? null;
+		const membershipsProducts = state.memberships.productList.items[siteId] ?? null;
 
-		if ( ! membershipsProducts ) {
+		if (!membershipsProducts) {
 			return null;
 		}
 
-		if ( ! membershipsId ) {
-			return orderBy( membershipsProducts, 'ID', 'desc' );
+		if (!membershipsId) {
+			return orderBy(membershipsProducts, 'ID', 'desc');
 		}
 
-		const membershipProduct = find( membershipsProducts, product => product.ID === membershipsId );
+		const membershipProduct = find(membershipsProducts, (product) => product.ID === membershipsId);
 
-		if ( ! membershipProduct ) {
+		if (!membershipProduct) {
 			return null;
 		}
 
 		return membershipProduct;
 	},
-	state => state.memberships.productList.items
+	(state) => state.memberships.productList.items
 );

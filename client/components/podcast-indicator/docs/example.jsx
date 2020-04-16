@@ -13,7 +13,7 @@ class PodcastIndicatorExample extends React.PureComponent {
 	static displayName = 'PodcastIndicator';
 
 	render() {
-		return <PodcastIndicator size={ 24 } tooltipType="episode" />;
+		return <PodcastIndicator size={24} tooltipType="episode" />;
 	}
 }
 

@@ -27,9 +27,9 @@ class PressThis extends Component {
 		site: PropTypes.object,
 	};
 
-	recordEvent( eventAction ) {
+	recordEvent(eventAction) {
 		return () => {
-			this.props.recordGoogleEvent( 'Site Settings', eventAction );
+			this.props.recordGoogleEvent('Site Settings', eventAction);
 		};
 	}
 
@@ -40,36 +40,36 @@ class PressThis extends Component {
 			<div className="press-this">
 				<Card className="site-settings">
 					<p>
-						{ translate(
+						{translate(
 							'Press This is a bookmarklet: a little app that runs in your browser and lets you grab bits of the web.'
-						) }
+						)}
 					</p>
 					<p>
-						{ translate(
+						{translate(
 							'Use Press This to clip text, images and videos from any web page. ' +
 								'Then edit and add more straight from Press This before you save or publish it in a post on your site.'
-						) }
+						)}
 					</p>
 					<p>
-						{ translate(
+						{translate(
 							'Drag-and-drop the following link to your bookmarks bar or right click it and add it to your favorites ' +
 								'for a posting shortcut.'
-						) }
+						)}
 					</p>
-					{ site && (
+					{site && (
 						<p className="press-this__link-container">
 							<PressThisLink
-								site={ site }
-								onClick={ this.recordEvent( 'Clicked Press This Button' ) }
-								onDragStart={ this.recordEvent( 'Dragged Press This Button' ) }
+								site={site}
+								onClick={this.recordEvent('Clicked Press This Button')}
+								onDragStart={this.recordEvent('Dragged Press This Button')}
 							>
 								<Gridicon icon="create" />
 								<span>
-									{ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+									{translate('Press This', { context: 'name of browser bookmarklet tool' })}
 								</span>
 							</PressThisLink>
 						</p>
-					) }
+					)}
 				</Card>
 			</div>
 		);
@@ -77,10 +77,10 @@ class PressThis extends Component {
 }
 
 export default connect(
-	state => ( {
-		site: getSelectedSite( state ),
-	} ),
+	(state) => ({
+		site: getSelectedSite(state),
+	}),
 	{
 		recordGoogleEvent,
 	}
-)( localize( PressThis ) );
+)(localize(PressThis));

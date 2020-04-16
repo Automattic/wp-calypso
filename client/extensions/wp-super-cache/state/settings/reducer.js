@@ -25,14 +25,14 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated requesting state
  */
-const requesting = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const requesting = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_REQUEST_SETTINGS: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: true,
+				[siteId]: true,
 			};
 		}
 		case WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE: {
@@ -40,7 +40,7 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS: {
@@ -48,13 +48,13 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated saving state after an action has been dispatched.
@@ -64,14 +64,14 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated saving state
  */
-const saveStatus = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+const saveStatus = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_SAVE_SETTINGS: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					saving: true,
 					status: 'pending',
 					error: false,
@@ -83,7 +83,7 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					saving: false,
 					status: 'success',
 					error: false,
@@ -95,7 +95,7 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: {
+				[siteId]: {
 					saving: false,
 					status: 'error',
 					error,
@@ -105,7 +105,7 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+});
 
 /**
  * Returns the updated restoring state after an action has been dispatched.
@@ -115,14 +115,14 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated restoring state
  */
-export const restoring = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
+export const restoring = withoutPersistence((state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_RESTORE_SETTINGS: {
 			const { siteId } = action;
 
 			return {
 				...state,
-				[ siteId ]: true,
+				[siteId]: true,
 			};
 		}
 		case WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE: {
@@ -130,7 +130,7 @@ export const restoring = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 		case WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS: {
@@ -138,13 +138,13 @@ export const restoring = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: false,
+				[siteId]: false,
 			};
 		}
 	}
 
 	return state;
-} );
+});
 
 /**
  * Tracks the settings for a particular site.
@@ -153,14 +153,14 @@ export const restoring = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated settings
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case WP_SUPER_CACHE_RECEIVE_SETTINGS: {
 			const { siteId, settings } = action;
 
 			return {
 				...state,
-				[ siteId ]: settings,
+				[siteId]: settings,
 			};
 		}
 		case WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS: {
@@ -168,8 +168,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 
 			return {
 				...state,
-				[ siteId ]: {
-					...state[ siteId ],
+				[siteId]: {
+					...state[siteId],
 					is_preloading: preloading,
 				},
 			};
@@ -177,11 +177,11 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
 	restoring,
 	saveStatus,
-} );
+});

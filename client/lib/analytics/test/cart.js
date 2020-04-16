@@ -5,7 +5,7 @@ import analytics from 'lib/analytics';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { recordEvents } from 'lib/analytics/cart';
 
-jest.mock( 'lib/analytics', () => ( {
+jest.mock('lib/analytics', () => ({
 	__esModule: true,
 	default: {
 		tracks: {
@@ -13,8 +13,8 @@ jest.mock( 'lib/analytics', () => ( {
 		},
 		recordAddToCart: jest.fn(),
 	},
-} ) );
-jest.mock( 'lib/cart-values/cart-items', () => ( { getAllCartItems: jest.fn() } ) );
+}));
+jest.mock('lib/cart-values/cart-items', () => ({ getAllCartItems: jest.fn() }));
 
 const previousCart = {};
 const nextCart = {};
@@ -47,72 +47,72 @@ const privateRegNoExtra = {
 	product_name: 'Private Registration',
 };
 
-describe( 'recordEvents', () => {
-	beforeEach( () => {
+describe('recordEvents', () => {
+	beforeEach(() => {
 		jest.clearAllMocks();
-	} );
+	});
 
-	it( 'does not record events when no items are added or removed', () => {
-		getAllCartItems.mockImplementation( getMockCartItems( [ domainReg ], [ domainReg ] ) );
+	it('does not record events when no items are added or removed', () => {
+		getAllCartItems.mockImplementation(getMockCartItems([domainReg], [domainReg]));
 
-		recordEvents( previousCart, nextCart );
+		recordEvents(previousCart, nextCart);
 
-		expect( analytics.tracks.recordEvent ).not.toHaveBeenCalled();
-		expect( analytics.recordAddToCart ).not.toHaveBeenCalled();
-	} );
+		expect(analytics.tracks.recordEvent).not.toHaveBeenCalled();
+		expect(analytics.recordAddToCart).not.toHaveBeenCalled();
+	});
 
-	it( 'records an add event when an item is added', () => {
-		getAllCartItems.mockImplementation( getMockCartItems( [], [ domainReg ] ) );
+	it('records an add event when an item is added', () => {
+		getAllCartItems.mockImplementation(getMockCartItems([], [domainReg]));
 
-		recordEvents( previousCart, nextCart );
+		recordEvents(previousCart, nextCart);
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect(analytics.tracks.recordEvent).toHaveBeenCalledTimes(1);
+		expect(analytics.tracks.recordEvent).toHaveBeenCalledWith(
 			'calypso_cart_product_add',
 			domainRegNoExtra
 		);
-		expect( analytics.recordAddToCart ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.recordAddToCart ).toHaveBeenCalledWith( { cartItem: domainReg } );
-	} );
+		expect(analytics.recordAddToCart).toHaveBeenCalledTimes(1);
+		expect(analytics.recordAddToCart).toHaveBeenCalledWith({ cartItem: domainReg });
+	});
 
-	it( 'records a remove event when an item is removed', () => {
-		getAllCartItems.mockImplementation( getMockCartItems( [ domainReg ], [] ) );
+	it('records a remove event when an item is removed', () => {
+		getAllCartItems.mockImplementation(getMockCartItems([domainReg], []));
 
-		recordEvents( previousCart, nextCart );
+		recordEvents(previousCart, nextCart);
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect(analytics.tracks.recordEvent).toHaveBeenCalledTimes(1);
+		expect(analytics.tracks.recordEvent).toHaveBeenCalledWith(
 			'calypso_cart_product_remove',
 			domainRegNoExtra
 		);
-		expect( analytics.recordAddToCart ).not.toHaveBeenCalled();
-	} );
+		expect(analytics.recordAddToCart).not.toHaveBeenCalled();
+	});
 
-	it( 'records an add and a remove event when items are added and removed', () => {
-		getAllCartItems.mockImplementation( getMockCartItems( [ domainReg ], [ privateReg ] ) );
+	it('records an add and a remove event when items are added and removed', () => {
+		getAllCartItems.mockImplementation(getMockCartItems([domainReg], [privateReg]));
 
-		recordEvents( previousCart, nextCart );
+		recordEvents(previousCart, nextCart);
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 2 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect(analytics.tracks.recordEvent).toHaveBeenCalledTimes(2);
+		expect(analytics.tracks.recordEvent).toHaveBeenCalledWith(
 			'calypso_cart_product_remove',
 			domainRegNoExtra
 		);
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect(analytics.tracks.recordEvent).toHaveBeenCalledWith(
 			'calypso_cart_product_add',
 			privateRegNoExtra
 		);
-		expect( analytics.recordAddToCart ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.recordAddToCart ).toHaveBeenCalledWith( { cartItem: privateReg } );
-	} );
-} );
+		expect(analytics.recordAddToCart).toHaveBeenCalledTimes(1);
+		expect(analytics.recordAddToCart).toHaveBeenCalledWith({ cartItem: privateReg });
+	});
+});
 
-function getMockCartItems( previousCartItems, nextCartItems ) {
-	return cart => {
-		if ( cart === previousCart ) {
+function getMockCartItems(previousCartItems, nextCartItems) {
+	return (cart) => {
+		if (cart === previousCart) {
 			return previousCartItems;
 		}
-		if ( cart === nextCart ) {
+		if (cart === nextCart) {
 			return nextCartItems;
 		}
 	};

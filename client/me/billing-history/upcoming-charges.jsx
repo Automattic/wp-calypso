@@ -21,17 +21,17 @@ import QueryBillingTransactions from 'components/data/query-billing-transactions
  */
 import './style.scss';
 
-const UpcomingCharges = ( { translate } ) => (
+const UpcomingCharges = ({ translate }) => (
 	<Main>
-		<DocumentHead title={ translate( 'Upcoming Charges' ) } />
+		<DocumentHead title={translate('Upcoming Charges')} />
 		<PageViewTracker path="/me/purchases/upcoming" title="Me > Upcoming Charges" />
 		<MeSidebarNavigation />
 		<QueryBillingTransactions />
-		<PurchasesHeader section={ 'upcoming' } />
+		<PurchasesHeader section={'upcoming'} />
 		<Card className="billing-history__upcoming-charges">
 			<UpcomingChargesTable />
 		</Card>
 	</Main>
 );
 
-export default localize( UpcomingCharges );
+export default localize(UpcomingCharges);

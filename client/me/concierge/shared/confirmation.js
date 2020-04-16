@@ -23,12 +23,12 @@ class Confirmation extends Component {
 			<Card className="shared__confirmation">
 				<img
 					className="shared__confirmation-illustration"
-					src={ '/calypso/images/illustrations/support.svg' }
+					src={'/calypso/images/illustrations/support.svg'}
 				/>
 
-				<FormattedHeader headerText={ title } subHeaderText={ description } />
+				<FormattedHeader headerText={title} subHeaderText={description} />
 
-				{ children }
+				{children}
 			</Card>
 		);
 	}

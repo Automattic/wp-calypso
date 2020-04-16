@@ -35,9 +35,9 @@ class Checklist extends PureComponent {
 		this.notifyCompletion();
 	}
 
-	UNSAFE_componentWillReceiveProps( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
-			this.setState( { expandedTaskIndex: undefined } );
+	UNSAFE_componentWillReceiveProps({ siteId }) {
+		if (siteId !== this.props.siteId) {
+			this.setState({ expandedTaskIndex: undefined });
 		}
 	}
 
@@ -46,71 +46,69 @@ class Checklist extends PureComponent {
 	}
 
 	notifyCompletion() {
-		if ( 'function' === typeof this.props.updateCompletion ) {
-			const [ complete, total ] = this.calculateCompletion();
-			this.props.updateCompletion( { complete: complete >= total } );
+		if ('function' === typeof this.props.updateCompletion) {
+			const [complete, total] = this.calculateCompletion();
+			this.props.updateCompletion({ complete: complete >= total });
 		}
 	}
 
 	calculateCompletion() {
 		const { children } = this.props;
-		const childrenArray = Children.toArray( children ).filter( Boolean );
+		const childrenArray = Children.toArray(children).filter(Boolean);
 		const completedCount = childrenArray.reduce(
-			( count, task ) => ( true === task.props.completed ? count + 1 : count ),
+			(count, task) => (true === task.props.completed ? count + 1 : count),
 			0
 		);
 		const total = childrenArray.length;
-		return [ completedCount, total ];
+		return [completedCount, total];
 	}
 
 	getExpandedTaskIndex() {
-		if ( this.state.expandedTaskIndex !== undefined ) {
+		if (this.state.expandedTaskIndex !== undefined) {
 			return this.state.expandedTaskIndex;
 		}
 
 		// If the user hasn't expanded any task, return the
 		// first task that hasn't been completed yet.
-		return Children.toArray( this.props.children ).findIndex(
-			task => task && ! task.props.completed && ! task.props.inProgress
+		return Children.toArray(this.props.children).findIndex(
+			(task) => task && !task.props.completed && !task.props.inProgress
 		);
 	}
 
-	setExpandedTask = newExpandedTaskIndex =>
-		void this.setState( ( { expandedTaskIndex } ) => {
-			if ( newExpandedTaskIndex === expandedTaskIndex ) {
+	setExpandedTask = (newExpandedTaskIndex) =>
+		void this.setState(({ expandedTaskIndex }) => {
+			if (newExpandedTaskIndex === expandedTaskIndex) {
 				return { expandedTaskIndex: null }; // Collapse
 			}
 
-			if ( isFunction( this.props.onExpandTask ) ) {
-				this.props.onExpandTask(
-					Children.toArray( this.props.children )[ newExpandedTaskIndex ].props
-				);
+			if (isFunction(this.props.onExpandTask)) {
+				this.props.onExpandTask(Children.toArray(this.props.children)[newExpandedTaskIndex].props);
 			}
 
 			return { expandedTaskIndex: newExpandedTaskIndex }; // Expand
-		} );
+		});
 
 	renderChecklistHeader = () => {
 		return (
 			<Card compact className="checklist__header">
-				<h2>{ this.props.translate( 'Your setup list' ) }</h2>
+				<h2>{this.props.translate('Your setup list')}</h2>
 			</Card>
 		);
 	};
 
 	render() {
 		const { showChecklistHeader, checklistFooter } = this.props;
-		const [ completed, total ] = this.calculateCompletion();
+		const [completed, total] = this.calculateCompletion();
 
-		if ( this.props.isPlaceholder ) {
+		if (this.props.isPlaceholder) {
 			return (
-				<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
-					{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
+				<div className={classNames('checklist', 'is-expanded', 'is-placeholder')}>
+					{showChecklistHeader && completed !== total && this.renderChecklistHeader()}
 
 					<div className="checklist__tasks">
-						{ times( total, index => (
-							<TaskPlaceholder key={ index } />
-						) ) }
+						{times(total, (index) => (
+							<TaskPlaceholder key={index} />
+						))}
 					</div>
 				</div>
 			);
@@ -119,37 +117,37 @@ class Checklist extends PureComponent {
 		let skippedChildren = 0;
 
 		return (
-			<div className={ classNames( 'checklist', this.props.className ) }>
-				{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
+			<div className={classNames('checklist', this.props.className)}>
+				{showChecklistHeader && completed !== total && this.renderChecklistHeader()}
 
 				<div className="checklist__tasks">
-					{ Children.map( this.props.children, ( child, index ) => {
-						if ( ! child ) {
+					{Children.map(this.props.children, (child, index) => {
+						if (!child) {
 							skippedChildren += 1;
 							return child;
 						}
 
 						const realIndex = index - skippedChildren;
 
-						return cloneElement( child, {
+						return cloneElement(child, {
 							collapsed: realIndex !== this.getExpandedTaskIndex(),
-							onTaskClick: () => this.setExpandedTask( realIndex ),
-						} );
-					} ) }
+							onTaskClick: () => this.setExpandedTask(realIndex),
+						});
+					})}
 
-					{ checklistFooter }
+					{checklistFooter}
 
-					{ completed > 0 && completed < total && (
+					{completed > 0 && completed < total && (
 						<div className="checklist__tasks-completed-title">
-							{ this.props.translate( 'Completed' ) }
+							{this.props.translate('Completed')}
 						</div>
-					) }
+					)}
 				</div>
 			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( Checklist ) );
+export default connect((state) => ({
+	siteId: getSelectedSiteId(state),
+}))(localize(Checklist));

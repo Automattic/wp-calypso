@@ -8,9 +8,9 @@ import { reducer as credentials } from './credentials/reducer';
 import { reducer as modules } from './modules/reducer';
 import { settingsReducer as settings } from './settings/reducer';
 
-export default combineReducers( {
+export default combineReducers({
 	connection,
 	credentials,
 	modules,
 	settings,
-} );
+});

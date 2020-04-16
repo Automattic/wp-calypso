@@ -16,9 +16,9 @@ import TipInfo from 'components/purchase-detail/tip-info';
 export default class Feature extends PureComponent {
 	static propTypes = {
 		buttonText: PropTypes.string,
-		description: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string, PropTypes.object ] ),
+		description: PropTypes.oneOfType([PropTypes.array, PropTypes.string, PropTypes.object]),
 		href: PropTypes.string,
-		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		icon: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 		isPlaceholder: PropTypes.bool,
 		isRequired: PropTypes.bool,
 		isSubmitting: PropTypes.bool,
@@ -46,33 +46,33 @@ export default class Feature extends PureComponent {
 			rel,
 		} = this.props;
 
-		if ( ! buttonText && ! isPlaceholder ) {
+		if (!buttonText && !isPlaceholder) {
 			return null;
 		}
 
 		return (
 			<Button
-				disabled={ isSubmitting }
-				href={ href }
-				onClick={ onClick }
-				primary={ primaryButton }
-				target={ target }
-				rel={ rel }
+				disabled={isSubmitting}
+				href={href}
+				onClick={onClick}
+				primary={primaryButton}
+				target={target}
+				rel={rel}
 			>
-				{ buttonText }
+				{buttonText}
 			</Button>
 		);
 	}
 
 	renderBody() {
-		if ( this.props.body ) {
-			return <div className="feature-upsell__feature-body">{ this.props.body }</div>;
+		if (this.props.body) {
+			return <div className="feature-upsell__feature-body">{this.props.body}</div>;
 		}
 
 		return (
 			<div className="feature-upsell__feature-body">
-				{ this.renderPurchaseButton() }
-				{ this.props.info && <TipInfo info={ this.props.info } /> }
+				{this.renderPurchaseButton()}
+				{this.props.info && <TipInfo info={this.props.info} />}
 			</div>
 		);
 	}
@@ -80,14 +80,14 @@ export default class Feature extends PureComponent {
 	renderIcon() {
 		const { icon, isRequired } = this.props;
 
-		if ( ! icon ) {
+		if (!icon) {
 			return null;
 		}
 
 		return (
 			<div className="feature-upsell__feature-icon">
-				{ typeof icon === 'string' ? <Gridicon icon={ icon } /> : icon }
-				{ isRequired && <Gridicon className="feature-upsell__feature-notice-icon" icon="notice" /> }
+				{typeof icon === 'string' ? <Gridicon icon={icon} /> : icon}
+				{isRequired && <Gridicon className="feature-upsell__feature-notice-icon" icon="notice" />}
 			</div>
 		);
 	}
@@ -96,13 +96,13 @@ export default class Feature extends PureComponent {
 		const { id, title, description } = this.props;
 
 		return (
-			<div className="feature-upsell__feature" id={ id }>
+			<div className="feature-upsell__feature" id={id}>
 				<div className="feature-upsell__feature-content">
-					<div className="feature-upsell__feature-image">{ this.renderIcon() }</div>
+					<div className="feature-upsell__feature-image">{this.renderIcon()}</div>
 					<div className="feature-upsell__feature-text">
-						<h3 className="feature-upsell__feature-title">{ title }</h3>
-						<div className="feature-upsell__feature-description">{ description }</div>
-						{ this.renderBody() }
+						<h3 className="feature-upsell__feature-title">{title}</h3>
+						<div className="feature-upsell__feature-description">{description}</div>
+						{this.renderBody()}
 					</div>
 				</div>
 			</div>

@@ -14,9 +14,9 @@ import { Dialog } from '@automattic/components';
  */
 import './dialog.scss';
 
-export default ( { additionalClassNames, ...props } ) => (
+export default ({ additionalClassNames, ...props }) => (
 	<Dialog
-		additionalClassNames={ classNames( 'editor-media-modal', additionalClassNames ) }
-		{ ...props }
+		additionalClassNames={classNames('editor-media-modal', additionalClassNames)}
+		{...props}
 	/>
 );

@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-const connectUserMentions = WrappedComponent => {
+const connectUserMentions = (WrappedComponent) => {
 	class connectUserMentionsFetcher extends React.PureComponent {
 		static propTypes = {
 			siteId: PropTypes.number,
@@ -24,19 +24,19 @@ const connectUserMentions = WrappedComponent => {
 		render() {
 			return (
 				<Fragment>
-					{ !! this.props.siteId && <QueryUsersSuggestions siteId={ this.props.siteId } /> }
-					<WrappedComponent { ...this.props } />
+					{!!this.props.siteId && <QueryUsersSuggestions siteId={this.props.siteId} />}
+					<WrappedComponent {...this.props} />
 				</Fragment>
 			);
 		}
 	}
 
-	return connect( ( state, ownProps ) => {
+	return connect((state, ownProps) => {
 		return {
 			siteId: ownProps.siteId,
-			suggestions: getUserSuggestions( state, ownProps.siteId ),
+			suggestions: getUserSuggestions(state, ownProps.siteId),
 		};
-	} )( connectUserMentionsFetcher );
+	})(connectUserMentionsFetcher);
 };
 
 export default connectUserMentions;

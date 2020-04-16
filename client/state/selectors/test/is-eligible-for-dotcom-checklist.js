@@ -3,18 +3,18 @@
  */
 import isEligibleForDotcomChecklist from '../is-eligible-for-dotcom-checklist';
 
-describe( 'isEligibleForDotcomChecklist()', () => {
-	test( 'should return false for simple sites without a created_at option', () => {
+describe('isEligibleForDotcomChecklist()', () => {
+	test('should return false for simple sites without a created_at option', () => {
 		const state = { sites: { items: { 99: { options: {} } } } };
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
-	} );
+		expect(isEligibleForDotcomChecklist(state, 99)).toBe(false);
+	});
 
-	test( 'should return false for unresolved sites', () => {
-		expect( isEligibleForDotcomChecklist( { sites: [] }, 99 ) ).toBe( false );
-	} );
+	test('should return false for unresolved sites', () => {
+		expect(isEligibleForDotcomChecklist({ sites: [] }, 99)).toBe(false);
+	});
 
-	test( 'should return false for old sites', () => {
+	test('should return false for old sites', () => {
 		const state = {
 			sites: {
 				items: {
@@ -27,10 +27,10 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
-	} );
+		expect(isEligibleForDotcomChecklist(state, 99)).toBe(false);
+	});
 
-	test( 'should return true for recent simple sites', () => {
+	test('should return true for recent simple sites', () => {
 		const state = {
 			sites: {
 				items: {
@@ -43,10 +43,10 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( true );
-	} );
+		expect(isEligibleForDotcomChecklist(state, 99)).toBe(true);
+	});
 
-	test( 'should return false for recent AT sites, because the checklist is not fully supported', () => {
+	test('should return false for recent AT sites, because the checklist is not fully supported', () => {
 		const state = {
 			sites: {
 				items: {
@@ -60,10 +60,10 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
-	} );
+		expect(isEligibleForDotcomChecklist(state, 99)).toBe(false);
+	});
 
-	test( 'should return false for AT sites without a created_at option', () => {
+	test('should return false for AT sites without a created_at option', () => {
 		const state = {
 			sites: {
 				items: {
@@ -76,10 +76,10 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
-	} );
+		expect(isEligibleForDotcomChecklist(state, 99)).toBe(false);
+	});
 
-	test( 'should return false for recent non-atomic jetpack sites', () => {
+	test('should return false for recent non-atomic jetpack sites', () => {
 		const state = {
 			sites: {
 				items: {
@@ -93,10 +93,10 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
-	} );
+		expect(isEligibleForDotcomChecklist(state, 99)).toBe(false);
+	});
 
-	test( 'should return false for recent AT non-store sites', () => {
+	test('should return false for recent AT non-store sites', () => {
 		const state = {
 			sites: {
 				items: {
@@ -111,10 +111,10 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
-	} );
+		expect(isEligibleForDotcomChecklist(state, 99)).toBe(false);
+	});
 
-	test( 'should return false for recent AT store sites', () => {
+	test('should return false for recent AT store sites', () => {
 		const state = {
 			sites: {
 				items: {
@@ -130,6 +130,6 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
-	} );
-} );
+		expect(isEligibleForDotcomChecklist(state, 99)).toBe(false);
+	});
+});

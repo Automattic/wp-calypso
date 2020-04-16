@@ -18,7 +18,7 @@ import PublishConfirmation from './publish-confirmation';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const Composing = ( {
+const Composing = ({
 	eventTracker,
 	fields,
 	handleSelect,
@@ -29,7 +29,7 @@ const Composing = ( {
 	setFieldValue,
 	siteIsJetpack,
 	updateFields,
-} ) => {
+}) => {
 	const CardComponent = siteIsJetpack ? CompactCard : Card;
 
 	return (
@@ -37,39 +37,39 @@ const Composing = ( {
 			<CardComponent className="composing__card site-settings">
 				<PublishConfirmation />
 				<DefaultPostFormat
-					eventTracker={ eventTracker }
-					fields={ fields }
-					isRequestingSettings={ isRequestingSettings }
-					isSavingSettings={ isSavingSettings }
-					onChangeField={ onChangeField }
+					eventTracker={eventTracker}
+					fields={fields}
+					isRequestingSettings={isRequestingSettings}
+					isSavingSettings={isSavingSettings}
+					onChangeField={onChangeField}
 				/>
 			</CardComponent>
 
-			{ siteIsJetpack && (
+			{siteIsJetpack && (
 				<Fragment>
 					<Latex
-						fields={ fields }
-						handleToggle={ handleToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						setFieldValue={ setFieldValue }
+						fields={fields}
+						handleToggle={handleToggle}
+						isRequestingSettings={isRequestingSettings}
+						isSavingSettings={isSavingSettings}
+						setFieldValue={setFieldValue}
 					/>
 					<Shortcodes
-						fields={ fields }
-						handleToggle={ handleToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						setFieldValue={ setFieldValue }
+						fields={fields}
+						handleToggle={handleToggle}
+						isRequestingSettings={isRequestingSettings}
+						isSavingSettings={isSavingSettings}
+						setFieldValue={setFieldValue}
 					/>
 				</Fragment>
-			) }
+			)}
 
 			<DateTimeFormat
-				fields={ fields }
-				handleSelect={ handleSelect }
-				isRequestingSettings={ isRequestingSettings }
-				isSavingSettings={ isSavingSettings }
-				updateFields={ updateFields }
+				fields={fields}
+				handleSelect={handleSelect}
+				isRequestingSettings={isRequestingSettings}
+				isSavingSettings={isSavingSettings}
+				updateFields={updateFields}
 			/>
 		</Fragment>
 	);
@@ -93,6 +93,6 @@ Composing.propTypes = {
 	updateFields: PropTypes.func.isRequired,
 };
 
-export default connect( state => ( {
-	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-} ) )( Composing );
+export default connect((state) => ({
+	siteIsJetpack: isJetpackSite(state, getSelectedSiteId(state)),
+}))(Composing);

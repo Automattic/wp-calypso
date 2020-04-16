@@ -10,14 +10,14 @@ import { getSerializedQuery } from 'state/followers/utils';
  * @param  {object} query Query paramaters by which the followers were fetched
  * @returns {object}       List of followers keyed by follower id
  */
-export function getFollowersForQuery( state, query ) {
-	const serializedQuery = getSerializedQuery( query );
-	if ( ! state.followers.queries[ serializedQuery ] ) {
+export function getFollowersForQuery(state, query) {
+	const serializedQuery = getSerializedQuery(query);
+	if (!state.followers.queries[serializedQuery]) {
 		return null;
 	}
-	return state.followers.queries[ serializedQuery ]
-		.map( Id => {
-			return state.followers.items[ Id ];
-		} )
-		.filter( Boolean );
+	return state.followers.queries[serializedQuery]
+		.map((Id) => {
+			return state.followers.items[Id];
+		})
+		.filter(Boolean);
 }

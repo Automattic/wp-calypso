@@ -49,13 +49,13 @@ class MediaLibraryScale extends Component {
 	};
 
 	constructor() {
-		super( ...arguments );
+		super(...arguments);
 
-		this.onScaleChange = this.onScaleChange.bind( this );
-		this.savePreference = this.savePreference.bind( this );
-		this.debouncedSavePreference = debounce( this.savePreference, 1000 );
-		this.setScaleToMobileGrid = this.setScale.bind( this, SCALE_TOUCH_GRID );
-		this.setScaleToMobileFull = this.setScale.bind( this, 1 );
+		this.onScaleChange = this.onScaleChange.bind(this);
+		this.savePreference = this.savePreference.bind(this);
+		this.debouncedSavePreference = debounce(this.savePreference, 1000);
+		this.setScaleToMobileGrid = this.setScale.bind(this, SCALE_TOUCH_GRID);
+		this.setScaleToMobileFull = this.setScale.bind(this, 1);
 
 		this.state = {};
 	}
@@ -64,33 +64,33 @@ class MediaLibraryScale extends Component {
 		this.debouncedSavePreference.cancel();
 	}
 
-	savePreference( value ) {
-		this.props.saveMediaScalePreference( value );
+	savePreference(value) {
+		this.props.saveMediaScalePreference(value);
 	}
 
-	setScale( value ) {
-		if ( value === this.props.scale ) {
+	setScale(value) {
+		if (value === this.props.scale) {
 			return;
 		}
 
-		this.props.onChange( value );
-		this.props.setMediaScalePreference( value );
-		this.debouncedSavePreference( value );
+		this.props.onChange(value);
+		this.props.setMediaScalePreference(value);
+		this.debouncedSavePreference(value);
 	}
 
-	onScaleChange( event ) {
-		const sliderPosition = parseInt( event.target.value, 10 );
-		const scaleIndex = ( sliderPosition * SCALE_CHOICES.length ) / SLIDER_STEPS;
-		const scale = SCALE_CHOICES[ Math.floor( scaleIndex ) ];
+	onScaleChange(event) {
+		const sliderPosition = parseInt(event.target.value, 10);
+		const scaleIndex = (sliderPosition * SCALE_CHOICES.length) / SLIDER_STEPS;
+		const scale = SCALE_CHOICES[Math.floor(scaleIndex)];
 
-		this.setState( { sliderPosition } );
-		this.setScale( scale );
+		this.setState({ sliderPosition });
+		this.setScale(scale);
 	}
 
 	getSliderPosition() {
 		// As part of the smooth motion of the slider, the user can move it
 		// between two snap points, and we want to remember this.
-		if ( this.state.hasOwnProperty( 'sliderPosition' ) ) {
+		if (this.state.hasOwnProperty('sliderPosition')) {
 			return this.state.sliderPosition;
 		}
 
@@ -99,12 +99,12 @@ class MediaLibraryScale extends Component {
 		// Map the media scale index back to a slider position as follows:
 		// index 0 -> position 0
 		// index SCALE_CHOICES.length - 1 -> position SLIDER_STEPS - 1
-		const scaleIndex = SCALE_CHOICES.indexOf( scale );
-		if ( -1 === scaleIndex ) {
+		const scaleIndex = SCALE_CHOICES.indexOf(scale);
+		if (-1 === scaleIndex) {
 			return 0;
 		}
 
-		return Math.floor( ( scaleIndex * ( SLIDER_STEPS - 1 ) ) / ( SCALE_CHOICES.length - 1 ) );
+		return Math.floor((scaleIndex * (SLIDER_STEPS - 1)) / (SCALE_CHOICES.length - 1));
 	}
 
 	render() {
@@ -114,28 +114,28 @@ class MediaLibraryScale extends Component {
 			<div className="media-library__scale">
 				<SegmentedControl className="media-library__scale-toggle" compact>
 					<SegmentedControl.Item
-						selected={ 1 !== scale }
-						onClick={ this.setScaleToMobileGrid }
-						title={ translate( 'Grid' ) }
+						selected={1 !== scale}
+						onClick={this.setScaleToMobileGrid}
+						title={translate('Grid')}
 					>
-						<Gridicon icon="grid" size={ 18 } />
+						<Gridicon icon="grid" size={18} />
 					</SegmentedControl.Item>
 					<SegmentedControl.Item
-						selected={ 1 === scale }
-						onClick={ this.setScaleToMobileFull }
-						title={ translate( 'List' ) }
+						selected={1 === scale}
+						onClick={this.setScaleToMobileFull}
+						title={translate('List')}
 					>
-						<Gridicon icon="menu" size={ 18 } />
+						<Gridicon icon="menu" size={18} />
 					</SegmentedControl.Item>
 				</SegmentedControl>
 				<FormRange
 					step="1"
 					min="0"
-					max={ SLIDER_STEPS - 1 }
-					minContent={ <Gridicon icon="image" size={ 12 } /> }
-					maxContent={ <Gridicon icon="image" size={ 24 } /> }
-					value={ this.getSliderPosition() }
-					onChange={ this.onScaleChange }
+					max={SLIDER_STEPS - 1}
+					minContent={<Gridicon icon="image" size={12} />}
+					maxContent={<Gridicon icon="image" size={24} />}
+					value={this.getSliderPosition()}
+					onChange={this.onScaleChange}
 					className="media-library__scale-range"
 				/>
 			</div>
@@ -144,11 +144,11 @@ class MediaLibraryScale extends Component {
 }
 
 export default connect(
-	state => ( {
-		scale: getPreference( state, 'mediaScale' ),
-	} ),
+	(state) => ({
+		scale: getPreference(state, 'mediaScale'),
+	}),
 	{
-		setMediaScalePreference: partial( setPreference, 'mediaScale' ),
-		saveMediaScalePreference: partial( savePreference, 'mediaScale' ),
+		setMediaScalePreference: partial(setPreference, 'mediaScale'),
+		saveMediaScalePreference: partial(savePreference, 'mediaScale'),
 	}
-)( localize( MediaLibraryScale ) );
+)(localize(MediaLibraryScale));

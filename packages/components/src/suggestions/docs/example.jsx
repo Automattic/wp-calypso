@@ -9,37 +9,37 @@ import React, { useCallback, useMemo, useState } from 'react';
 import Suggestions from '..';
 
 export default function SuggestionsExample() {
-	const [ query, setQuery ] = useState( '' );
-	const updateInput = useCallback( e => setQuery( e.target.value ), [ setQuery ] );
+	const [query, setQuery] = useState('');
+	const updateInput = useCallback((e) => setQuery(e.target.value), [setQuery]);
 
-	const suggestions = useMemo( () => {
-		if ( ! query ) {
+	const suggestions = useMemo(() => {
+		if (!query) {
 			return [];
 		}
-		const allSuggestions = [ 'Foo', 'Bar', 'Baz' ].map( s => ( { label: s } ) );
-		const r = new RegExp( query, 'i' );
-		return allSuggestions.filter( ( { label } ) => r.test( label ) );
-	}, [ query ] );
+		const allSuggestions = ['Foo', 'Bar', 'Baz'].map((s) => ({ label: s }));
+		const r = new RegExp(query, 'i');
+		return allSuggestions.filter(({ label }) => r.test(label));
+	}, [query]);
 
 	return (
 		<div className="docs__suggestions-container">
 			<div>
 				<input
 					type="text"
-					value={ query }
-					onChange={ updateInput }
+					value={query}
+					onChange={updateInput}
 					autoComplete="off"
 					autoCorrect="off"
 					autoCapitalize="off"
-					spellCheck={ false }
+					spellCheck={false}
 					placeholder="Type Foo, Bar or Baz…"
 				/>
 				<p>
 					<span role="img" aria-label="Warning">
 						⚠️
 					</span>
-					The above input is for demonstration. It is not part of the{ ' ' }
-					<code>{ '<Suggestions />' }</code> component.
+					The above input is for demonstration. It is not part of the{' '}
+					<code>{'<Suggestions />'}</code> component.
 				</p>
 				<p>
 					<span role="img" aria-label="Tip">
@@ -49,12 +49,12 @@ export default function SuggestionsExample() {
 				</p>
 			</div>
 			<Suggestions
-				query={ query }
-				suggestions={ suggestions }
-				suggest={ ( ...args ) => {
+				query={query}
+				suggestions={suggestions}
+				suggest={(...args) => {
 					// eslint-disable-next-line no-console
-					console.log( 'Suggest callback invoked with args: %o', args );
-				} }
+					console.log('Suggest callback invoked with args: %o', args);
+				}}
 			/>
 		</div>
 	);

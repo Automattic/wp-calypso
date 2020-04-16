@@ -15,13 +15,13 @@ import { setPostTypeFieldValue } from 'state/exporter/actions';
 import { localize } from 'i18n-calypso';
 
 class Select extends Component {
-	constructor( props ) {
-		super( props );
-		this.setValue = this.setValue.bind( this );
+	constructor(props) {
+		super(props);
+		this.setValue = this.setValue.bind(this);
 	}
 
-	setValue( e ) {
-		this.props.setValue( e.target.value );
+	setValue(e) {
+		this.props.setValue(e.target.value);
 	}
 
 	render() {
@@ -29,8 +29,8 @@ class Select extends Component {
 
 		const fieldsForPostType = get(
 			{
-				post: [ 'author', 'status', 'start_date', 'end_date', 'category' ],
-				page: [ 'author', 'status', 'start_date', 'end_date' ],
+				post: ['author', 'status', 'start_date', 'end_date', 'category'],
+				page: ['author', 'status', 'start_date', 'end_date'],
 			},
 			postType,
 			[]
@@ -38,63 +38,63 @@ class Select extends Component {
 
 		const label = get(
 			{
-				author: this.props.translate( 'Author…' ),
-				status: this.props.translate( 'Status…' ),
-				start_date: this.props.translate( 'Start Date…' ),
-				end_date: this.props.translate( 'End Date…' ),
-				category: this.props.translate( 'Category…' ),
+				author: this.props.translate('Author…'),
+				status: this.props.translate('Status…'),
+				start_date: this.props.translate('Start Date…'),
+				end_date: this.props.translate('End Date…'),
+				category: this.props.translate('Category…'),
 			},
 			fieldName,
 			''
 		);
 
-		if ( fieldsForPostType.indexOf( this.props.fieldName ) < 0 ) {
+		if (fieldsForPostType.indexOf(this.props.fieldName) < 0) {
 			return null;
 		}
 
 		const options =
 			this.props.options &&
-			this.props.options.map( ( option, i ) => {
+			this.props.options.map((option, i) => {
 				return (
-					<option key={ i } value={ option.value }>
-						{ option.label }
+					<option key={i} value={option.value}>
+						{option.label}
 					</option>
 				);
-			} );
+			});
 		return (
 			<FormSelect
-				className={ shouldShowPlaceholders ? 'export-card__placeholder-select' : '' }
-				disabled={ shouldShowPlaceholders || ! isEnabled }
-				isError={ isEnabled && isError }
-				onChange={ this.setValue }
-				value={ value || '' }
+				className={shouldShowPlaceholders ? 'export-card__placeholder-select' : ''}
+				disabled={shouldShowPlaceholders || !isEnabled}
+				isError={isEnabled && isError}
+				onChange={this.setValue}
+				value={value || ''}
 			>
-				<option value="">{ label }</option>
-				{ options }
+				<option value="">{label}</option>
+				{options}
 			</FormSelect>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = (state, ownProps) => {
 	const { siteId, postType, fieldName } = ownProps;
 
-	const options = getPostTypeFieldOptions( state, siteId, postType, fieldName );
-	const value = getPostTypeFieldValue( state, siteId, postType, fieldName );
+	const options = getPostTypeFieldOptions(state, siteId, postType, fieldName);
+	const value = getPostTypeFieldValue(state, siteId, postType, fieldName);
 
 	return {
-		shouldShowPlaceholders: ! options,
+		shouldShowPlaceholders: !options,
 		options,
 		value,
 	};
 };
 
-const mapDispatchToProps = ( dispatch, ownProps ) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
 	const { siteId, postType, fieldName } = ownProps;
 
 	return {
-		setValue: value => dispatch( setPostTypeFieldValue( siteId, postType, fieldName, value ) ),
+		setValue: (value) => dispatch(setPostTypeFieldValue(siteId, postType, fieldName, value)),
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Select ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(Select));

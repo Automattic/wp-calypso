@@ -17,11 +17,11 @@ import {
 	isTheme,
 } from 'lib/products-values';
 
-export function cancellationEffectHeadline( purchase, translate ) {
+export function cancellationEffectHeadline(purchase, translate) {
 	const { domain } = purchase;
-	const purchaseName = getName( purchase );
+	const purchaseName = getName(purchase);
 
-	if ( isRefundable( purchase ) ) {
+	if (isRefundable(purchase)) {
 		return translate(
 			'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? ',
 			{
@@ -50,10 +50,10 @@ export function cancellationEffectHeadline( purchase, translate ) {
 	);
 }
 
-function refundableCancellationEffectDetail( purchase, translate, overrides ) {
+function refundableCancellationEffectDetail(purchase, translate, overrides) {
 	const refundText = overrides.refundText || purchase.refundText;
 
-	if ( isTheme( purchase ) ) {
+	if (isTheme(purchase)) {
 		return translate(
 			"Your site's appearance will revert to its previously selected theme and you will be refunded %(cost)s.",
 			{
@@ -64,7 +64,7 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 		);
 	}
 
-	if ( isGoogleApps( purchase ) ) {
+	if (isGoogleApps(purchase)) {
 		return translate(
 			'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
 				'You will be able to manage your G Suite billing directly through Google.',
@@ -76,7 +76,7 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 		);
 	}
 
-	if ( isJetpackPlan( purchase ) ) {
+	if (isJetpackPlan(purchase)) {
 		return translate(
 			'All plan features - spam filtering, backups, and security screening - will be removed from your site ' +
 				'and you will be refunded %(cost)s.',
@@ -88,7 +88,7 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 		);
 	}
 
-	if ( isDotComPlan( purchase ) ) {
+	if (isDotComPlan(purchase)) {
 		return translate(
 			'All plan features and custom changes will be removed from your site and you will be refunded %(cost)s.',
 			{
@@ -99,17 +99,17 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 		);
 	}
 
-	return translate( 'You will be refunded %(cost)s.', {
+	return translate('You will be refunded %(cost)s.', {
 		args: {
 			cost: refundText,
 		},
-	} );
+	});
 }
 
-function nonrefundableCancellationEffectDetail( purchase, translate ) {
-	const subscriptionEndDate = getSubscriptionEndDate( purchase );
+function nonrefundableCancellationEffectDetail(purchase, translate) {
+	const subscriptionEndDate = getSubscriptionEndDate(purchase);
 
-	if ( isGoogleApps( purchase ) ) {
+	if (isGoogleApps(purchase)) {
 		return translate(
 			'Your G Suite account remains active until it expires on %(subscriptionEndDate)s.',
 			{
@@ -120,7 +120,7 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 		);
 	}
 
-	if ( isDomainMapping( purchase ) ) {
+	if (isDomainMapping(purchase)) {
 		return translate(
 			'Your domain mapping remains active until it expires on %(subscriptionEndDate)s.',
 			{
@@ -131,7 +131,7 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 		);
 	}
 
-	if ( isPlan( purchase ) ) {
+	if (isPlan(purchase)) {
 		return translate(
 			"Your plan's features remain active until your subscription expires on %(subscriptionEndDate)s.",
 			{
@@ -145,9 +145,9 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 	return '';
 }
 
-export function cancellationEffectDetail( purchase, translate, overrides = {} ) {
-	if ( isRefundable( purchase ) ) {
-		return refundableCancellationEffectDetail( purchase, translate, overrides );
+export function cancellationEffectDetail(purchase, translate, overrides = {}) {
+	if (isRefundable(purchase)) {
+		return refundableCancellationEffectDetail(purchase, translate, overrides);
 	}
-	return nonrefundableCancellationEffectDetail( purchase, translate );
+	return nonrefundableCancellationEffectDetail(purchase, translate);
 }

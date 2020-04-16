@@ -16,12 +16,12 @@ import {
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'actions', () => {
+describe('actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox((sandbox) => (spy = sandbox.spy()));
 
-	describe( '#requestSiteRoles()', () => {
-		describe( 'success', () => {
+	describe('#requestSiteRoles()', () => {
+		describe('success', () => {
 			const roles = [
 				{
 					name: 'administrator',
@@ -42,10 +42,10 @@ describe( 'actions', () => {
 			];
 			const siteId = 12345678;
 
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
 					.persist()
-					.get( '/rest/v1.1/sites/' + siteId + '/roles' )
+					.get('/rest/v1.1/sites/' + siteId + '/roles')
 					.reply(
 						200,
 						{
@@ -55,42 +55,42 @@ describe( 'actions', () => {
 							'Content-Type': 'application/json',
 						}
 					);
-			} );
+			});
 
-			test( 'should return a request action object when called', () => {
-				requestSiteRoles( siteId )( spy );
+			test('should return a request action object when called', () => {
+				requestSiteRoles(siteId)(spy);
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					type: SITE_ROLES_REQUEST,
 					siteId,
-				} );
-			} );
+				});
+			});
 
-			test( 'should return a receive action when request successfully completes', () => {
-				return requestSiteRoles( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+			test('should return a receive action when request successfully completes', () => {
+				return requestSiteRoles(siteId)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: SITE_ROLES_REQUEST_SUCCESS,
 						siteId,
-					} );
+					});
 
-					expect( spy ).to.have.been.calledWith( {
+					expect(spy).to.have.been.calledWith({
 						type: SITE_ROLES_RECEIVE,
 						siteId,
 						roles,
-					} );
-				} );
-			} );
-		} );
+					});
+				});
+			});
+		});
 
-		describe( 'failure', () => {
+		describe('failure', () => {
 			const error = 'unauthorized';
 			const message = 'User cannot view roles for specified site';
 			const siteId = 87654321;
 
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
 					.persist()
-					.get( '/rest/v1.1/sites/' + siteId + '/roles' )
+					.get('/rest/v1.1/sites/' + siteId + '/roles')
 					.reply(
 						403,
 						{
@@ -101,16 +101,16 @@ describe( 'actions', () => {
 							'Content-Type': 'application/json',
 						}
 					);
-			} );
+			});
 
-			test( 'should return a receive action when an error occurs', () => {
-				return requestSiteRoles( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+			test('should return a receive action when an error occurs', () => {
+				return requestSiteRoles(siteId)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: SITE_ROLES_REQUEST_FAILURE,
 						siteId,
-					} );
-				} );
-			} );
-		} );
-	} );
-} );
+					});
+				});
+			});
+		});
+	});
+});

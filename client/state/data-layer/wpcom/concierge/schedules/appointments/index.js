@@ -11,7 +11,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 registerHandlers(
 	'state/data-layer/wpcom/concierge/schedules/appointments/index.js',
-	mergeHandlers( bookHandlers, cancelHandlers, detailHandlers, rescheduleHandlers )
+	mergeHandlers(bookHandlers, cancelHandlers, detailHandlers, rescheduleHandlers)
 );
 
 export default {};

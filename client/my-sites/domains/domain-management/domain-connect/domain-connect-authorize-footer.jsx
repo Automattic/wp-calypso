@@ -18,7 +18,7 @@ class DomainConnectAuthorizeFooter extends Component {
 		isPlaceholder: PropTypes.bool,
 		onClose: PropTypes.func,
 		onConfirm: PropTypes.func,
-		showAction: PropTypes.oneOf( Object.keys( actionType ) ),
+		showAction: PropTypes.oneOf(Object.keys(actionType)),
 	};
 
 	static defaultProps = {
@@ -39,13 +39,13 @@ class DomainConnectAuthorizeFooter extends Component {
 		const notReadyToSubmit =
 			actionType.READY_TO_SUBMIT !== showAction || actionType.REDIRECTING === showAction;
 
-		const confirm = translate( 'Confirm' );
-		const cancel = translate( 'Cancel' );
+		const confirm = translate('Confirm');
+		const cancel = translate('Cancel');
 
 		return (
 			<div>
 				<p>
-					{ translate(
+					{translate(
 						"When you're ready to proceed, click %(confirm)s. If this isn't what you meant to do, " +
 							"click %(cancel)s and we won't make any changes.",
 						{
@@ -54,24 +54,24 @@ class DomainConnectAuthorizeFooter extends Component {
 								cancel: cancel,
 							},
 						}
-					) }
+					)}
 				</p>
 				<Button
-					busy={ notReadyToSubmit }
+					busy={notReadyToSubmit}
 					className="domain-connect__button"
-					disabled={ notReadyToSubmit }
-					onClick={ onConfirm }
+					disabled={notReadyToSubmit}
+					onClick={onConfirm}
 					primary
 				>
-					<Gridicon icon="checkmark" /> { confirm }
+					<Gridicon icon="checkmark" /> {confirm}
 				</Button>
 				<Button
-					busy={ notReadyToSubmit }
+					busy={notReadyToSubmit}
 					className="domain-connect__button"
-					disabled={ notReadyToSubmit }
-					onClick={ onClose }
+					disabled={notReadyToSubmit}
+					onClick={onClose}
 				>
-					<Gridicon icon="cross" /> { cancel }
+					<Gridicon icon="cross" /> {cancel}
 				</Button>
 			</div>
 		);
@@ -81,14 +81,14 @@ class DomainConnectAuthorizeFooter extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Button className="domain-connect__button" onClick={ this.props.onClose }>
-				{ translate( 'Close' ) }
+			<Button className="domain-connect__button" onClick={this.props.onClose}>
+				{translate('Close')}
 			</Button>
 		);
 	};
 
 	renderAction = () => {
-		switch ( this.props.showAction ) {
+		switch (this.props.showAction) {
 			case actionType.READY_TO_SUBMIT:
 			case actionType.SUBMITTING:
 			case actionType.REDIRECTING:
@@ -101,7 +101,7 @@ class DomainConnectAuthorizeFooter extends Component {
 	render() {
 		const { isPlaceholder } = this.props;
 
-		if ( isPlaceholder ) {
+		if (isPlaceholder) {
 			return this.placeholder();
 		}
 
@@ -109,4 +109,4 @@ class DomainConnectAuthorizeFooter extends Component {
 	}
 }
 
-export default localize( DomainConnectAuthorizeFooter );
+export default localize(DomainConnectAuthorizeFooter);

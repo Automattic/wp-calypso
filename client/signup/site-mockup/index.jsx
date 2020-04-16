@@ -35,24 +35,24 @@ import QueryVerticals from 'components/data/query-verticals';
  */
 import './style.scss';
 
-function SiteMockupHelpTip( { siteType } ) {
-	const helpTipCopy = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupHelpTipCopy' ) || '';
+function SiteMockupHelpTip({ siteType }) {
+	const helpTipCopy = getSiteTypePropertyValue('slug', siteType, 'siteMockupHelpTipCopy') || '';
 
 	return (
 		<div className="site-mockup__help-tip">
-			<p>{ helpTipCopy }</p>
+			<p>{helpTipCopy}</p>
 			<Gridicon icon="chevron-down" />
 		</div>
 	);
 }
 
-function SiteMockupHelpTipBottom( { siteType } ) {
+function SiteMockupHelpTipBottom({ siteType }) {
 	const helpTipCopy =
-		getSiteTypePropertyValue( 'slug', siteType, 'siteMockupHelpTipCopyBottom' ) || '';
+		getSiteTypePropertyValue('slug', siteType, 'siteMockupHelpTipCopyBottom') || '';
 	return (
 		<div className="site-mockup__help-tip">
 			<Gridicon icon="chevron-up" />
-			<p>{ helpTipCopy }</p>
+			<p>{helpTipCopy}</p>
 		</div>
 	);
 }
@@ -79,7 +79,7 @@ class SiteMockups extends Component {
 		verticalPreviewStyles: '',
 	};
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		// Debouncing updates to the preview content
 		// prevents the flashing effect.
 		if (
@@ -93,16 +93,16 @@ class SiteMockups extends Component {
 		return true;
 	}
 
-	updateDebounced = debounce( () => {
+	updateDebounced = debounce(() => {
 		this.forceUpdate();
-		if ( this.props.verticalPreviewContent || this.props.verticalPreviewScreenshot ) {
-			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
+		if (this.props.verticalPreviewContent || this.props.verticalPreviewScreenshot) {
+			this.props.recordTracksEvent('calypso_signup_site_preview_mockup_rendered', {
 				site_type: this.props.siteType,
 				vertical_slug: this.props.verticalSlug,
 				site_style: this.props.siteStyle || 'default',
-			} );
+			});
 		}
-	}, 777 );
+	}, 777);
 
 	/**
 	 * Returns site preview content block interpolated with markup that allows
@@ -111,16 +111,16 @@ class SiteMockups extends Component {
 	 * @param {string} content Content to format
 	 * @returns {string} Formatted content
 	 */
-	getContent( content = '' ) {
-		if ( 'string' !== typeof content ) {
+	getContent(content = '') {
+		if ('string' !== typeof content) {
 			return content;
 		}
 
-		return Object.keys( this.getPreviewParams() ).reduce(
-			( currContent, paramName ) =>
+		return Object.keys(this.getPreviewParams()).reduce(
+			(currContent, paramName) =>
 				currContent.replace(
-					new RegExp( '{{' + paramName + '}}', 'gi' ),
-					`<span class="${ getPreviewParamClass( paramName ) }"></span>`
+					new RegExp('{{' + paramName + '}}', 'gi'),
+					`<span class="${getPreviewParamClass(paramName)}"></span>`
 				),
 			content
 		);
@@ -130,18 +130,18 @@ class SiteMockups extends Component {
 		const { title: CompanyName, siteVerticalName } = this.props;
 		return {
 			CompanyName,
-			Address: translate( 'Your Address' ),
-			Phone: translate( 'Your Phone Number' ),
+			Address: translate('Your Address'),
+			Phone: translate('Your Phone Number'),
 			Vertical: siteVerticalName || '',
 		};
 	}
 
-	handlePreviewClick = size =>
-		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
+	handlePreviewClick = (size) =>
+		this.props.recordTracksEvent('calypso_signup_site_preview_mockup_clicked', {
 			size,
 			vertical_slug: this.props.verticalSlug,
 			site_style: this.props.siteStyle || 'default',
-		} );
+		});
 
 	render() {
 		const {
@@ -158,19 +158,19 @@ class SiteMockups extends Component {
 			verticalPreviewStyles,
 		} = this.props;
 
-		const siteMockupClasses = classNames( 'site-mockup__wrap', {
-			'is-empty': isEmpty( verticalPreviewContent ) && ! verticalPreviewScreenshot,
-		} );
+		const siteMockupClasses = classNames('site-mockup__wrap', {
+			'is-empty': isEmpty(verticalPreviewContent) && !verticalPreviewScreenshot,
+		});
 		const langSlug = getLocaleSlug();
-		const language = getLanguage( langSlug );
+		const language = getLanguage(langSlug);
 		const isRtl = language && language.rtl;
 		const otherProps = {
 			fontUrl,
-			cssUrl: getThemeCssUri( themeSlug, isRtl ),
+			cssUrl: getThemeCssUri(themeSlug, isRtl),
 			content: {
 				title,
-				tagline: translate( 'You’ll be able to customize this to your needs.' ),
-				body: this.getContent( verticalPreviewContent ),
+				tagline: translate('You’ll be able to customize this to your needs.'),
+				body: this.getContent(verticalPreviewContent),
 				params: this.getPreviewParams(),
 			},
 			gutenbergStylesUrl: verticalPreviewStyles,
@@ -181,44 +181,44 @@ class SiteMockups extends Component {
 		};
 
 		return (
-			<div className={ siteMockupClasses }>
-				{ shouldShowHelpTip && <SiteMockupHelpTip siteType={ siteType } /> }
+			<div className={siteMockupClasses}>
+				{shouldShowHelpTip && <SiteMockupHelpTip siteType={siteType} />}
 				<div className="site-mockup__devices">
 					<SignupSitePreview
 						defaultViewportDevice="desktop"
-						resize={ true }
-						scrolling={ false }
-						{ ...otherProps }
+						resize={true}
+						scrolling={false}
+						{...otherProps}
 					/>
-					<SignupSitePreview defaultViewportDevice="phone" { ...otherProps } />
+					<SignupSitePreview defaultViewportDevice="phone" {...otherProps} />
 				</div>
-				{ shouldShowHelpTip && <SiteMockupHelpTipBottom siteType={ siteType } /> }
-				{ shouldFetchVerticalData && (
-					<QueryVerticals searchTerm={ siteVerticalName } siteType={ siteType } />
-				) }
+				{shouldShowHelpTip && <SiteMockupHelpTipBottom siteType={siteType} />}
+				{shouldFetchVerticalData && (
+					<QueryVerticals searchTerm={siteVerticalName} siteType={siteType} />
+				)}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteStyle = getSiteStyle( state );
-		const siteType = getSiteType( state );
-		const themeSlug = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
-		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
-		const verticalPreviewContent = getSiteVerticalPreview( state );
-		const shouldFetchVerticalData = ! verticalPreviewContent;
+	(state, ownProps) => {
+		const siteStyle = getSiteStyle(state);
+		const siteType = getSiteType(state);
+		const themeSlug = getSiteTypePropertyValue('slug', siteType, 'theme');
+		const titleFallback = getSiteTypePropertyValue('slug', siteType, 'siteMockupTitleFallback');
+		const verticalPreviewContent = getSiteVerticalPreview(state);
+		const shouldFetchVerticalData = !verticalPreviewContent;
 		return {
-			title: getSiteTitle( state ) || titleFallback,
+			title: getSiteTitle(state) || titleFallback,
 			siteStyle,
 			siteType,
 			verticalPreviewContent,
 			// Used to determine whether content has changed, choose any screenshot
-			verticalPreviewScreenshot: getSiteVerticalPreviewScreenshot( state, 'desktop' ),
-			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
-			siteVerticalName: getSiteVerticalName( state ),
-			verticalSlug: getSiteVerticalSlug( state ),
+			verticalPreviewScreenshot: getSiteVerticalPreviewScreenshot(state, 'desktop'),
+			verticalPreviewStyles: getSiteVerticalPreviewStyles(state),
+			siteVerticalName: getSiteVerticalName(state),
+			verticalSlug: getSiteVerticalSlug(state),
 			shouldShowHelpTip:
 				'site-topic-with-preview' === ownProps.stepName ||
 				'site-title-with-preview' === ownProps.stepName,
@@ -230,4 +230,4 @@ export default connect(
 	{
 		recordTracksEvent,
 	}
-)( SiteMockups );
+)(SiteMockups);

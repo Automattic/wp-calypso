@@ -30,47 +30,44 @@ class ColorSchemePicker extends PureComponent {
 		saveColorSchemePreference: PropTypes.func,
 	};
 
-	handleColorSchemeSelection = event => {
+	handleColorSchemeSelection = (event) => {
 		const { temporarySelection, onSelection, saveColorSchemePreference } = this.props;
 		const { value } = event.currentTarget;
-		if ( temporarySelection ) {
-			onSelection( value );
+		if (temporarySelection) {
+			onSelection(value);
 		}
-		saveColorSchemePreference( value, temporarySelection );
+		saveColorSchemePreference(value, temporarySelection);
 	};
 
 	render() {
-		const colorSchemesData = getColorSchemesData( translate );
-		const checkedColorScheme = find( colorSchemesData, [
-			'value',
-			this.props.colorSchemePreference,
-		] )
+		const colorSchemesData = getColorSchemesData(translate);
+		const checkedColorScheme = find(colorSchemesData, ['value', this.props.colorSchemePreference])
 			? this.props.colorSchemePreference
-			: colorSchemesData[ 0 ].value;
+			: colorSchemesData[0].value;
 		return (
 			<div className="color-scheme-picker">
 				<QueryPreferences />
 				<FormRadiosBar
 					isThumbnail
-					checked={ checkedColorScheme }
-					onChange={ this.handleColorSchemeSelection }
-					items={ colorSchemesData }
+					checked={checkedColorScheme}
+					onChange={this.handleColorSchemeSelection}
+					items={colorSchemesData}
 				/>
 			</div>
 		);
 	}
 }
 
-const saveColorSchemePreference = ( preference, temporarySelection ) =>
+const saveColorSchemePreference = (preference, temporarySelection) =>
 	temporarySelection
-		? setPreference( 'colorScheme', preference )
-		: savePreference( 'colorScheme', preference );
+		? setPreference('colorScheme', preference)
+		: savePreference('colorScheme', preference);
 
 export default connect(
-	state => {
+	(state) => {
 		return {
-			colorSchemePreference: getPreference( state, 'colorScheme' ),
+			colorSchemePreference: getPreference(state, 'colorScheme'),
 		};
 	},
 	{ saveColorSchemePreference }
-)( ColorSchemePicker );
+)(ColorSchemePicker);

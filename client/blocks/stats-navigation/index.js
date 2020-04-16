@@ -27,19 +27,19 @@ import './style.scss';
 
 class StatsNavigation extends Component {
 	static propTypes = {
-		interval: PropTypes.oneOf( intervalConstants.map( i => i.value ) ),
+		interval: PropTypes.oneOf(intervalConstants.map((i) => i.value)),
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
-		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
+		selectedItem: PropTypes.oneOf(Object.keys(navItems)).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 	};
 
-	isValidItem = item => {
+	isValidItem = (item) => {
 		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
-		switch ( item ) {
+		switch (item) {
 			case 'wordads':
 				return isWordAds;
 
@@ -47,11 +47,11 @@ class StatsNavigation extends Component {
 				return isStore;
 
 			case 'googleMyBusiness':
-				if ( 'undefined' === typeof siteId ) {
+				if ('undefined' === typeof siteId) {
 					return false;
 				}
 
-				return config.isEnabled( 'google-my-business' ) && isGoogleMyBusinessLocationConnected;
+				return config.isEnabled('google-my-business') && isGoogleMyBusinessLocationConnected;
 
 			default:
 				return true;
@@ -60,53 +60,47 @@ class StatsNavigation extends Component {
 
 	render() {
 		const { slug, selectedItem, interval } = this.props;
-		const { label, showIntervals, path } = navItems[ selectedItem ];
-		const slugPath = slug ? `/${ slug }` : '';
-		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
+		const { label, showIntervals, path } = navItems[selectedItem];
+		const slugPath = slug ? `/${slug}` : '';
+		const pathTemplate = `${path}/{{ interval }}${slugPath}`;
 		return (
 			<div className="stats-navigation">
-				<SectionNav selectedText={ label }>
-					<NavTabs label={ 'Stats' } selectedText={ label }>
-						{ Object.keys( navItems )
-							.filter( this.isValidItem )
-							.map( item => {
-								const navItem = navItems[ item ];
-								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+				<SectionNav selectedText={label}>
+					<NavTabs label={'Stats'} selectedText={label}>
+						{Object.keys(navItems)
+							.filter(this.isValidItem)
+							.map((item) => {
+								const navItem = navItems[item];
+								const intervalPath = navItem.showIntervals ? `/${interval || 'day'}` : '';
+								const itemPath = `${navItem.path}${intervalPath}${slugPath}`;
 								const className = 'stats-navigation__' + item;
 								return (
 									<NavItem
-										className={ className }
-										key={ item }
-										path={ itemPath }
-										selected={ selectedItem === item }
+										className={className}
+										key={item}
+										path={itemPath}
+										selected={selectedItem === item}
 									>
-										{ navItem.label }
+										{navItem.label}
 									</NavItem>
 								);
-							} ) }
+							})}
 					</NavTabs>
-					{ showIntervals && <Intervals selected={ interval } pathTemplate={ pathTemplate } /> }
+					{showIntervals && <Intervals selected={interval} pathTemplate={pathTemplate} />}
 					<FollowersCount />
 				</SectionNav>
-				{ showIntervals && (
-					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
-				) }
+				{showIntervals && <Intervals selected={interval} pathTemplate={pathTemplate} standalone />}
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
+export default connect((state, { siteId }) => {
 	return {
-		isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
-			state,
-			siteId
-		),
-		isStore: isSiteStore( state, siteId ),
+		isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(state, siteId),
+		isStore: isSiteStore(state, siteId),
 		isWordAds:
-			getSiteOption( state, siteId, 'wordads' ) &&
-			canCurrentUser( state, siteId, 'manage_options' ),
+			getSiteOption(state, siteId, 'wordads') && canCurrentUser(state, siteId, 'manage_options'),
 		siteId,
 	};
-} )( StatsNavigation );
+})(StatsNavigation);

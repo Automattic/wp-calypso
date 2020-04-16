@@ -14,31 +14,31 @@ interface Props {
 	errorNotifications: ReactNode;
 }
 
-const EnterUsernameOrEmailForm = ( props: Props ) => {
+const EnterUsernameOrEmailForm = (props: Props) => {
 	const { __ } = useI18n();
 
-	const [ usernameOrEmailVal, setUsernameOrEmailVal ] = useState( '' );
-	const { submitUsernameOrEmail } = useDispatch( AUTH_STORE );
+	const [usernameOrEmailVal, setUsernameOrEmailVal] = useState('');
+	const { submitUsernameOrEmail } = useDispatch(AUTH_STORE);
 
-	const onSubmitUsernameOrEmail = ( event: React.FormEvent< HTMLFormElement > ) => {
+	const onSubmitUsernameOrEmail = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		submitUsernameOrEmail( usernameOrEmailVal );
+		submitUsernameOrEmail(usernameOrEmailVal);
 	};
 
 	return (
-		<form onSubmit={ onSubmitUsernameOrEmail }>
+		<form onSubmit={onSubmitUsernameOrEmail}>
 			<TextControl
-				label={ __( 'Email Address or Username' ) }
-				value={ usernameOrEmailVal }
+				label={__('Email Address or Username')}
+				value={usernameOrEmailVal}
 				// todo loading state
-				onChange={ setUsernameOrEmailVal }
+				onChange={setUsernameOrEmailVal}
 				required
 			/>
-			{ props.errorNotifications }
+			{props.errorNotifications}
 			<div>
-				{ props.tos }
+				{props.tos}
 
-				<ModalSubmitButton>{ __( 'Login' ) }</ModalSubmitButton>
+				<ModalSubmitButton>{__('Login')}</ModalSubmitButton>
 			</div>
 		</form>
 	);

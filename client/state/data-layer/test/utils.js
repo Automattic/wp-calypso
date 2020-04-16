@@ -8,16 +8,16 @@ import { kebabCase } from 'lodash';
  */
 import { bypassDataLayer, convertKeysBy, convertToCamelCase, convertToSnakeCase } from '../utils';
 
-describe( 'Data Layer', () => {
-	describe( '#local', () => {
-		test( 'should wrap an action with the bypass flag', () => {
+describe('Data Layer', () => {
+	describe('#local', () => {
+		test('should wrap an action with the bypass flag', () => {
 			const action = { type: 'ADD_SPLINE', id: 42 };
-			const localAction = bypassDataLayer( action );
+			const localAction = bypassDataLayer(action);
 
-			expect( localAction ).toHaveProperty( 'meta.dataLayer.doBypass', true );
-		} );
+			expect(localAction).toHaveProperty('meta.dataLayer.doBypass', true);
+		});
 
-		test( 'should not destroy existing meta', () => {
+		test('should not destroy existing meta', () => {
 			const action = {
 				type: 'SHAVE_THE_WHALES',
 				meta: {
@@ -27,14 +27,14 @@ describe( 'Data Layer', () => {
 					},
 				},
 			};
-			const localAction = bypassDataLayer( action );
+			const localAction = bypassDataLayer(action);
 
-			expect( localAction ).toHaveProperty( 'meta.oceanName', 'ARCTIC' );
-			expect( localAction ).toHaveProperty( 'meta.dataLayer.forceRefresh', true );
-		} );
-	} );
+			expect(localAction).toHaveProperty('meta.oceanName', 'ARCTIC');
+			expect(localAction).toHaveProperty('meta.dataLayer.forceRefresh', true);
+		});
+	});
 
-	describe( '#convertToCamelCase', () => {
+	describe('#convertToCamelCase', () => {
 		const snakeObject = {
 			primitive_value: 'string_const',
 			'value_with.dot_key': null,
@@ -49,7 +49,7 @@ describe( 'Data Layer', () => {
 					second_second: 4,
 				},
 			],
-			another_array: [ 1, 2, { third_first: 1 } ],
+			another_array: [1, 2, { third_first: 1 }],
 			object_value: {
 				obj_foo: {
 					obj_foo: null,
@@ -60,7 +60,7 @@ describe( 'Data Layer', () => {
 			},
 		};
 
-		expect( convertToCamelCase( snakeObject ) ).toEqual( {
+		expect(convertToCamelCase(snakeObject)).toEqual({
 			primitiveValue: 'string_const',
 			valueWithDotKey: null,
 			valueWithBracketKey: null,
@@ -74,7 +74,7 @@ describe( 'Data Layer', () => {
 					secondSecond: 4,
 				},
 			],
-			anotherArray: [ 1, 2, { thirdFirst: 1 } ],
+			anotherArray: [1, 2, { thirdFirst: 1 }],
 			objectValue: {
 				objFoo: {
 					objFoo: null,
@@ -83,10 +83,10 @@ describe( 'Data Layer', () => {
 					objBar: null,
 				},
 			},
-		} );
-	} );
+		});
+	});
 
-	describe( '#convertKeysBy', () => {
+	describe('#convertKeysBy', () => {
 		const snakeObject = {
 			primitive_value: 'string_const',
 			array_value: [
@@ -131,18 +131,16 @@ describe( 'Data Layer', () => {
 			},
 		};
 
-		test( 'lodash native backwards/cross compatiblity', () => {
-			expect( convertKeysBy( snakeObject, kebabCase ) ).toEqual(
-				convertKeysBy( camelObject, kebabCase )
-			);
-		} );
+		test('lodash native backwards/cross compatiblity', () => {
+			expect(convertKeysBy(snakeObject, kebabCase)).toEqual(convertKeysBy(camelObject, kebabCase));
+		});
 
-		describe( '#convertToCamelCase', () => {
-			expect( convertToCamelCase( snakeObject ) ).toEqual( camelObject );
-		} );
+		describe('#convertToCamelCase', () => {
+			expect(convertToCamelCase(snakeObject)).toEqual(camelObject);
+		});
 
-		describe( '#convertToSnakeCase', () => {
-			expect( convertToSnakeCase( camelObject ) ).toEqual( snakeObject );
-		} );
-	} );
-} );
+		describe('#convertToSnakeCase', () => {
+			expect(convertToSnakeCase(camelObject)).toEqual(snakeObject);
+		});
+	});
+});

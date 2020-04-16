@@ -7,8 +7,8 @@
  * @returns {boolean}        Whether a request is in progress
  */
 
-export function isRequestingPageTemplates( state, siteId ) {
-	return !! state.pageTemplates.requesting[ siteId ];
+export function isRequestingPageTemplates(state, siteId) {
+	return !!state.pageTemplates.requesting[siteId];
 }
 
 /**
@@ -19,6 +19,6 @@ export function isRequestingPageTemplates( state, siteId ) {
  * @param  {number} siteId Site ID
  * @returns {?Array}        Page template objects, if known
  */
-export function getPageTemplates( state, siteId ) {
-	return state.pageTemplates.items[ siteId ] || null;
+export function getPageTemplates(state, siteId) {
+	return state.pageTemplates.items[siteId] || null;
 }

@@ -43,17 +43,17 @@ export default class TermTreeSelector extends React.Component {
 		search: '',
 	};
 
-	onSearch = searchTerm => {
-		if ( searchTerm !== this.state.search ) {
-			this.setState( {
+	onSearch = (searchTerm) => {
+		if (searchTerm !== this.state.search) {
+			this.setState({
 				search: searchTerm,
-			} );
+			});
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( { search: '' } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.taxonomy !== this.props.taxonomy) {
+			this.setState({ search: '' });
 		}
 	}
 
@@ -74,31 +74,31 @@ export default class TermTreeSelector extends React.Component {
 
 		const { search } = this.state;
 		const query = {};
-		if ( search && search.length ) {
+		if (search && search.length) {
 			query.search = search;
 		}
 
 		return (
 			<div>
 				<TermTreeSelectorTerms
-					taxonomy={ taxonomy }
-					onSearch={ this.onSearch }
-					onChange={ onChange }
-					query={ query }
-					selected={ selected }
-					createLink={ createLink }
-					multiple={ multiple }
-					height={ height }
-					compact={ compact }
-					podcastingCategoryId={ podcastingCategoryId }
+					taxonomy={taxonomy}
+					onSearch={this.onSearch}
+					onChange={onChange}
+					query={query}
+					selected={selected}
+					createLink={createLink}
+					multiple={multiple}
+					height={height}
+					compact={compact}
+					podcastingCategoryId={podcastingCategoryId}
 				/>
-				{ addTerm && (
+				{addTerm && (
 					<TermSelectorAddTerm
-						taxonomy={ taxonomy }
-						postType={ postType }
-						onSuccess={ onAddTermSuccess }
+						taxonomy={taxonomy}
+						postType={postType}
+						onSuccess={onAddTermSuccess}
 					/>
-				) }
+				)}
 			</div>
 		);
 	}

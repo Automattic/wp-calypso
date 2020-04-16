@@ -9,46 +9,46 @@ import { getHelpSelectedSite } from 'state/help/selectors';
 import getSkills from 'state/happychat/selectors/get-skills';
 
 // Promise based interface for wpcom.request
-const request = ( ...args ) =>
-	new Promise( ( resolve, reject ) => {
-		wpcom.request( ...args, ( error, response ) => {
-			if ( error ) {
-				return reject( error );
+const request = (...args) =>
+	new Promise((resolve, reject) => {
+		wpcom.request(...args, (error, response) => {
+			if (error) {
+				return reject(error);
 			}
-			resolve( response );
-		} );
-	} );
+			resolve(response);
+		});
+	});
 
-const sign = payload =>
-	request( {
+const sign = (payload) =>
+	request({
 		method: 'POST',
 		path: '/jwt/sign',
-		body: { payload: JSON.stringify( payload ) },
-	} );
+		body: { payload: JSON.stringify(payload) },
+	});
 
 const startSession = () =>
-	request( {
+	request({
 		method: 'POST',
 		path: '/happychat/session',
-	} );
+	});
 
-export const getHappychatAuth = state => () => {
-	const url = config( 'happychat_url' );
+export const getHappychatAuth = (state) => () => {
+	const url = config('happychat_url');
 
-	const locale = getCurrentUserLocale( state );
+	const locale = getCurrentUserLocale(state);
 
-	let groups = getGroups( state );
-	let skills = getSkills( state );
-	const selectedSite = getHelpSelectedSite( state );
+	let groups = getGroups(state);
+	let skills = getSkills(state);
+	const selectedSite = getHelpSelectedSite(state);
 
-	if ( selectedSite && selectedSite.ID ) {
-		groups = getGroups( state, selectedSite.ID );
-		skills = getSkills( state, selectedSite.ID );
+	if (selectedSite && selectedSite.ID) {
+		groups = getGroups(state, selectedSite.ID);
+		skills = getSkills(state, selectedSite.ID);
 	}
 
-	const user = getCurrentUser( state );
+	const user = getCurrentUser(state);
 
-	if ( ! user ) {
+	if (!user) {
 		return Promise.reject(
 			'Failed to start an authenticated Happychat session: No current user found'
 		);
@@ -62,10 +62,10 @@ export const getHappychatAuth = state => () => {
 	};
 
 	return startSession()
-		.then( ( { session_id, geo_location } ) => {
+		.then(({ session_id, geo_location }) => {
 			happychatUser.geoLocation = geo_location;
-			return sign( { user, session_id } );
-		} )
-		.then( ( { jwt } ) => ( { url, user: { jwt, ...happychatUser } } ) )
-		.catch( e => Promise.reject( 'Failed to start an authenticated Happychat session: ' + e ) );
+			return sign({ user, session_id });
+		})
+		.then(({ jwt }) => ({ url, user: { jwt, ...happychatUser } }))
+		.catch((e) => Promise.reject('Failed to start an authenticated Happychat session: ' + e));
 };

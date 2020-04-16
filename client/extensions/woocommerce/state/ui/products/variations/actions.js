@@ -17,7 +17,7 @@ import {
  * @param {object} data The fields to be edited and values for them.
  * @returns {object} the action to be dispatched.
  */
-export function editProductVariation( siteId, product, variation, data ) {
+export function editProductVariation(siteId, product, variation, data) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
 		siteId,
@@ -33,7 +33,7 @@ export function editProductVariation( siteId, product, variation, data ) {
  * @param {number} siteId The site for which to clear all product variation edits.
  * @returns {object} action
  */
-export function clearProductVariationEdits( siteId ) {
+export function clearProductVariationEdits(siteId) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR,
 		siteId,

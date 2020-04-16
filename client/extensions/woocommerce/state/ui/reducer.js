@@ -12,7 +12,7 @@ import reviewReplies from './review-replies/reducer';
 import shipping from './shipping/reducer';
 import { combineReducers } from 'state/utils';
 
-export default combineReducers( {
+export default combineReducers({
 	orders,
 	payments,
 	products,
@@ -21,4 +21,4 @@ export default combineReducers( {
 	reviews,
 	reviewReplies,
 	shipping,
-} );
+});

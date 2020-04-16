@@ -22,21 +22,21 @@ import { isAutomatticTeamMember } from 'reader/lib/teams';
  */
 import './style.scss';
 
-const BlogStickers = ( { blogId, teams, stickers } ) => {
-	const isTeamMember = isAutomatticTeamMember( teams );
-	if ( teams && ! isTeamMember ) {
+const BlogStickers = ({ blogId, teams, stickers }) => {
+	const isTeamMember = isAutomatticTeamMember(teams);
+	if (teams && !isTeamMember) {
 		return null;
 	}
 
 	return (
 		<div className="blog-stickers">
-			<QueryBlogStickers blogId={ blogId } />
-			{ isTeamMember && stickers && stickers.length > 0 && (
+			<QueryBlogStickers blogId={blogId} />
+			{isTeamMember && stickers && stickers.length > 0 && (
 				<InfoPopover>
-					<BlogStickersList stickers={ stickers } />
+					<BlogStickersList stickers={stickers} />
 				</InfoPopover>
-			) }
-			{ ! teams && <QueryReaderTeams /> }
+			)}
+			{!teams && <QueryReaderTeams />}
 		</div>
 	);
 };
@@ -45,7 +45,7 @@ BlogStickers.propTypes = {
 	blogId: PropTypes.number.isRequired,
 };
 
-export default connect( ( state, { blogId } ) => ( {
-	teams: getReaderTeams( state ),
-	stickers: getBlogStickers( state, blogId ),
-} ) )( BlogStickers );
+export default connect((state, { blogId }) => ({
+	teams: getReaderTeams(state),
+	stickers: getBlogStickers(state, blogId),
+}))(BlogStickers);

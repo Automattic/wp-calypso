@@ -10,6 +10,6 @@ import 'state/themes/init';
  *
  * @returns {boolean} whether the recommended themes list is loading
  */
-export function areRecommendedThemesLoading( state ) {
+export function areRecommendedThemesLoading(state) {
 	return state.themes.recommendedThemes.isLoading;
 }

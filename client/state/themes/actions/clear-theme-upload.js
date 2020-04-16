@@ -13,7 +13,7 @@ import 'state/themes/init';
  *
  * @returns {object} the action object to dispatch
  */
-export function clearThemeUpload( siteId ) {
+export function clearThemeUpload(siteId) {
 	return {
 		type: THEME_UPLOAD_CLEAR,
 		siteId,

@@ -3,8 +3,8 @@
  */
 import { get, includes, replace } from 'lodash';
 
-function defaultFormatter( postalCode, delimiter, partLength ) {
-	return postalCode.substring( 0, partLength ) + delimiter + postalCode.substring( partLength );
+function defaultFormatter(postalCode, delimiter, partLength) {
+	return postalCode.substring(0, partLength) + delimiter + postalCode.substring(partLength);
 }
 
 /**
@@ -14,80 +14,80 @@ function defaultFormatter( postalCode, delimiter, partLength ) {
  * @param {string} countryCode user selected country
  * @returns {string} formatted postal code
  */
-export function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
-	if ( ! countryCode ) {
+export function tryToGuessPostalCodeFormat(postalCode, countryCode) {
+	if (!countryCode) {
 		return postalCode;
 	}
 
 	const twoPartPostalCodes = {
 		BR: {
-			length: [ 8 ],
+			length: [8],
 			delimiter: '-',
 			partLength: 5,
 		},
 		CA: {
-			length: [ 6 ],
+			length: [6],
 			delimiter: ' ',
 			partLength: 3,
 		},
 		GB: {
-			length: [ 5, 6, 7 ],
+			length: [5, 6, 7],
 			delimiter: ' ',
-			formatter: ( postalCodeInput, delimiter ) => {
+			formatter: (postalCodeInput, delimiter) => {
 				return (
-					postalCodeInput.substring( 0, postalCodeInput.length - 3 ) +
+					postalCodeInput.substring(0, postalCodeInput.length - 3) +
 					delimiter +
-					postalCodeInput.substring( postalCodeInput.length - 3 )
+					postalCodeInput.substring(postalCodeInput.length - 3)
 				);
 			},
 		},
 		IE: {
-			length: [ 7 ],
+			length: [7],
 			delimiter: ' ',
 			partLength: 3,
 		},
 		JP: {
-			length: [ 7 ],
+			length: [7],
 			delimiter: '-',
 			partLength: 3,
 		},
 		KY: {
-			length: [ 7 ],
+			length: [7],
 			delimiter: '-',
 			partLength: 3,
 		},
 		NL: {
-			length: [ 6 ],
+			length: [6],
 			delimiter: ' ',
 			partLength: 4,
 		},
 		PL: {
-			length: [ 5 ],
+			length: [5],
 			delimiter: '-',
 			partLength: 2,
 		},
 		PT: {
-			length: [ 7 ],
+			length: [7],
 			delimiter: '-',
 			partLength: 4,
 		},
 		SE: {
-			length: [ 5 ],
+			length: [5],
 			delimiter: ' ',
 			partLength: 3,
 		},
 	};
 
-	const countryCodeData = get( twoPartPostalCodes, countryCode, false );
-	if ( ! countryCodeData ) {
+	const countryCodeData = get(twoPartPostalCodes, countryCode, false);
+	if (!countryCodeData) {
 		return postalCode;
 	}
 
-	const postalCodeWithoutDelimeters = replace( postalCode, /[\s-]/g, '' );
+	const postalCodeWithoutDelimeters = replace(postalCode, /[\s-]/g, '');
 
-	if ( includes( countryCodeData.length, postalCodeWithoutDelimeters.length ) ) {
-		if ( countryCodeData.formatter ) {
-			return countryCodeData.formatter( postalCodeWithoutDelimeters, countryCodeData.delimiter );
+	if (includes(countryCodeData.length, postalCodeWithoutDelimeters.length)) {
+		if (countryCodeData.formatter) {
+			return countryCodeData.formatter(postalCodeWithoutDelimeters, countryCodeData.delimiter);
 		}
 
 		return defaultFormatter(
@@ -104,16 +104,16 @@ export const postalCodePatterns = {
 	US: /^\d{5}$/,
 };
 
-export function isValidPostalCode( postalCode, countryCode = 'US' ) {
+export function isValidPostalCode(postalCode, countryCode = 'US') {
 	// TODO - every other country
-	if ( ! postalCode ) {
+	if (!postalCode) {
 		return false;
 	}
 
-	const pattern = postalCodePatterns[ countryCode ];
-	if ( ! pattern ) {
+	const pattern = postalCodePatterns[countryCode];
+	if (!pattern) {
 		return true;
 	}
 
-	return pattern.test( postalCode );
+	return pattern.test(postalCode);
 }

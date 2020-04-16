@@ -11,5 +11,5 @@ import { get } from 'lodash';
  * @param  {number}  id      ID of the transaction
  * @returns {boolean}         True if transaction failed to fetch, false otherwise
  */
-export default ( state, id ) =>
-	get( state, [ 'billingTransactions', 'individualTransactions', id, 'error' ], false );
+export default (state, id) =>
+	get(state, ['billingTransactions', 'individualTransactions', id, 'error'], false);

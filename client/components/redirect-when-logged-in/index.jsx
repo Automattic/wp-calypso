@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-const debug = debugFactory( 'calypso:redirect-when-logged-in' );
+const debug = debugFactory('calypso:redirect-when-logged-in');
 
 class RedirectWhenLoggedIn extends React.Component {
 	static propTypes = {
@@ -24,33 +24,33 @@ class RedirectWhenLoggedIn extends React.Component {
 	};
 
 	doTheRedirect() {
-		debug( this.props.replaceCurrentLocation ? 'replace' : 'assign', this.props.redirectTo );
+		debug(this.props.replaceCurrentLocation ? 'replace' : 'assign', this.props.redirectTo);
 		this.props.replaceCurrentLocation
-			? window.location.replace( this.props.redirectTo )
-			: window.location.assign( this.props.redirectTo );
+			? window.location.replace(this.props.redirectTo)
+			: window.location.assign(this.props.redirectTo);
 	}
 
-	isUserLoggedIn( user ) {
+	isUserLoggedIn(user) {
 		const { waitForEmailAddress, waitForUserId } = this.props;
 
-		if ( ! ( user && user.email && user.ID ) ) {
+		if (!(user && user.email && user.ID)) {
 			return false;
 		}
 
-		if ( waitForEmailAddress && waitForEmailAddress !== user.email ) {
+		if (waitForEmailAddress && waitForEmailAddress !== user.email) {
 			return false;
 		}
 
-		if ( waitForUserId && waitForUserId !== user.ID ) {
+		if (waitForUserId && waitForUserId !== user.ID) {
 			return false;
 		}
 
 		return true;
 	}
 
-	storageEventHandler = e => {
-		if ( e.key === 'wpcom_user_id' && e.newValue != null ) {
-			debug( 'detected change of wpcom_user_id, redirecting' );
+	storageEventHandler = (e) => {
+		if (e.key === 'wpcom_user_id' && e.newValue != null) {
+			debug('detected change of wpcom_user_id, redirecting');
 			this.doTheRedirect();
 		}
 	};
@@ -58,23 +58,23 @@ class RedirectWhenLoggedIn extends React.Component {
 	componentDidMount() {
 		const { currentUser, delayAtMount } = this.props;
 
-		if ( this.isUserLoggedIn( currentUser ) ) {
-			if ( delayAtMount ) {
-				setTimeout( () => {
+		if (this.isUserLoggedIn(currentUser)) {
+			if (delayAtMount) {
+				setTimeout(() => {
 					this.doTheRedirect();
-				}, delayAtMount );
+				}, delayAtMount);
 				return;
 			}
 			this.doTheRedirect();
 			return;
 		}
-		debug( 'adding storage event listener' );
-		window.addEventListener( 'storage', this.storageEventHandler );
+		debug('adding storage event listener');
+		window.addEventListener('storage', this.storageEventHandler);
 	}
 
 	componentWillUnmount() {
-		debug( 'removing storage event listener' );
-		window.removeEventListener( 'storage', this.storageEventHandler );
+		debug('removing storage event listener');
+		window.removeEventListener('storage', this.storageEventHandler);
 	}
 
 	render() {
@@ -82,10 +82,10 @@ class RedirectWhenLoggedIn extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = (state) => {
 	return {
-		currentUser: getCurrentUser( state ),
+		currentUser: getCurrentUser(state),
 	};
 };
 
-export default connect( mapState )( RedirectWhenLoggedIn );
+export default connect(mapState)(RedirectWhenLoggedIn);

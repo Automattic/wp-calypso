@@ -13,15 +13,15 @@ import isCurrentPlanPaid from './is-current-plan-paid';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable
  */
-export default function canCurrentUserUpgradeSite( state, siteId = null ) {
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export default function canCurrentUserUpgradeSite(state, siteId = null) {
+	if (!siteId) {
+		siteId = getSelectedSiteId(state);
 	}
-	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	if ( ! canUserManageOptions ) {
+	const canUserManageOptions = canCurrentUser(state, siteId, 'manage_options');
+	if (!canUserManageOptions) {
 		return false;
 	}
 
-	const isPaid = isCurrentPlanPaid( state, siteId );
-	return ! isPaid || isCurrentUserCurrentPlanOwner( state, siteId );
+	const isPaid = isCurrentPlanPaid(state, siteId);
+	return !isPaid || isCurrentUserCurrentPlanOwner(state, siteId);
 }

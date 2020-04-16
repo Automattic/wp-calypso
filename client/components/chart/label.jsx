@@ -14,13 +14,13 @@ export default class ChartLabel extends React.PureComponent {
 
 	render() {
 		const labelStyle = {
-			[ this.props.isRtl ? 'right' : 'left' ]: this.props.x + 'px',
+			[this.props.isRtl ? 'right' : 'left']: this.props.x + 'px',
 			width: this.props.width + 'px',
 		};
 
 		return (
-			<div className="chart__x-axis-label" style={ labelStyle }>
-				{ this.props.label }
+			<div className="chart__x-axis-label" style={labelStyle}>
+				{this.props.label}
 			</div>
 		);
 	}

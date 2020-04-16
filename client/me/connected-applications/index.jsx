@@ -37,8 +37,8 @@ class ConnectedApplications extends PureComponent {
 
 		return (
 			<EmptyContent
-				title={ translate( "You haven't connected any apps yet." ) }
-				line={ translate( 'You can get started with the {{link}}WordPress mobile apps!{{/link}}', {
+				title={translate("You haven't connected any apps yet.")}
+				line={translate('You can get started with the {{link}}WordPress mobile apps!{{/link}}', {
 					components: {
 						link: (
 							<a
@@ -49,7 +49,7 @@ class ConnectedApplications extends PureComponent {
 							/>
 						),
 					},
-				} ) }
+				})}
 			/>
 		);
 	}
@@ -57,32 +57,32 @@ class ConnectedApplications extends PureComponent {
 	renderPlaceholders() {
 		const { translate } = this.props;
 
-		return times( 5, index => (
+		return times(5, (index) => (
 			<ConnectedAppItem
-				connection={ {
+				connection={{
 					ID: index,
-					title: translate( 'Loading Connected Applications' ),
-				} }
-				key={ index }
+					title: translate('Loading Connected Applications'),
+				}}
+				key={index}
 				isPlaceholder
 			/>
-		) );
+		));
 	}
 
 	renderConnectedApps() {
 		const { apps } = this.props;
 
-		if ( apps === null ) {
+		if (apps === null) {
 			return this.renderPlaceholders();
 		}
 
-		if ( ! apps.length ) {
+		if (!apps.length) {
 			return this.renderEmptyContent();
 		}
 
-		return apps.map( connection => (
-			<ConnectedAppItem connection={ connection } key={ connection.ID } />
-		) );
+		return apps.map((connection) => (
+			<ConnectedAppItem connection={connection} key={connection.ID} />
+		));
 	}
 
 	renderConnectedAppsList() {
@@ -90,9 +90,9 @@ class ConnectedApplications extends PureComponent {
 
 		return (
 			<Fragment>
-				<SecuritySectionNav path={ path } />
+				<SecuritySectionNav path={path} />
 
-				{ this.renderConnectedApps() }
+				{this.renderConnectedApps()}
 			</Fragment>
 		);
 	}
@@ -108,17 +108,17 @@ class ConnectedApplications extends PureComponent {
 					path="/me/security/connected-applications"
 					title="Me > Connected Applications"
 				/>
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 				<MeSidebarNavigation />
 
-				<DocumentHead title={ translate( 'Connected Applications' ) } />
+				<DocumentHead title={translate('Connected Applications')} />
 
-				{ this.renderConnectedAppsList() }
+				{this.renderConnectedAppsList()}
 			</Main>
 		);
 	}
 }
 
-export default connect( state => ( {
-	apps: getConnectedApplications( state ),
-} ) )( localize( ConnectedApplications ) );
+export default connect((state) => ({
+	apps: getConnectedApplications(state),
+}))(localize(ConnectedApplications));

@@ -30,8 +30,8 @@ export const templatesFixture = [
 	},
 ];
 
-export const blocksByTemplatesFixture = templatesFixture.reduce( ( acc, curr ) => {
-	acc[ curr.slug ] = range( 4 ).map( () => {
+export const blocksByTemplatesFixture = templatesFixture.reduce((acc, curr) => {
+	acc[curr.slug] = range(4).map(() => {
 		return {
 			clientId: uniqueId(),
 			name: 'core/paragraph',
@@ -51,8 +51,8 @@ export const blocksByTemplatesFixture = templatesFixture.reduce( ( acc, curr ) =
 			originalContent:
 				'<p style="text-align:left;">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>',
 		};
-	} );
+	});
 	return acc;
-}, {} );
+}, {});
 
-export const blocksFixture = toArray( blocksByTemplatesFixture );
+export const blocksFixture = toArray(blocksByTemplatesFixture);

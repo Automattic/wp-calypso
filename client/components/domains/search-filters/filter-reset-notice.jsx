@@ -14,13 +14,13 @@ import { Card } from '@automattic/components';
 export class FilterResetNotice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool.isRequired,
-		lastFilters: PropTypes.shape( {
+		lastFilters: PropTypes.shape({
 			includeDashes: PropTypes.bool,
 			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
-			tlds: PropTypes.arrayOf( PropTypes.string ),
-		} ).isRequired,
-		suggestions: PropTypes.arrayOf( PropTypes.object ),
+			tlds: PropTypes.arrayOf(PropTypes.string),
+		}).isRequired,
+		suggestions: PropTypes.arrayOf(PropTypes.object),
 	};
 
 	hasActiveFilters() {
@@ -32,7 +32,7 @@ export class FilterResetNotice extends Component {
 
 	hasTooFewSuggestions() {
 		const { suggestions } = this.props;
-		return Array.isArray( suggestions ) && suggestions.length < 10;
+		return Array.isArray(suggestions) && suggestions.length < 10;
 	}
 
 	onReset = () => {
@@ -41,20 +41,20 @@ export class FilterResetNotice extends Component {
 
 	render() {
 		return (
-			config.isEnabled( 'domains/kracken-ui/pagination' ) &&
+			config.isEnabled('domains/kracken-ui/pagination') &&
 			this.hasActiveFilters() &&
 			this.hasTooFewSuggestions() && (
 				<Card
-					className={ this.props.className }
-					disabled={ this.props.isLoading }
-					onClick={ this.onReset }
+					className={this.props.className}
+					disabled={this.props.isLoading}
+					onClick={this.onReset}
 					tagName="button"
 				>
-					{ this.props.translate( 'Click here to disable filters for more results' ) }
+					{this.props.translate('Click here to disable filters for more results')}
 				</Card>
 			)
 		);
 	}
 }
 
-export default localize( FilterResetNotice );
+export default localize(FilterResetNotice);

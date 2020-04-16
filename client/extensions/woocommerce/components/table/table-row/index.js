@@ -12,33 +12,33 @@ import page from 'page';
  */
 import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
 
-const TableRow = ( { className, isHeader, href, children, ...props } ) => {
-	const rowClasses = classnames( 'table-row', className, {
+const TableRow = ({ className, isHeader, href, children, ...props }) => {
+	const rowClasses = classnames('table-row', className, {
 		'is-header': isHeader,
-	} );
+	});
 
-	if ( ! href ) {
+	if (!href) {
 		return (
-			<tr className={ rowClasses } { ...props }>
-				{ children }
+			<tr className={rowClasses} {...props}>
+				{children}
 			</tr>
 		);
 	}
 
 	const goToHref = () => {
-		page( href );
+		page(href);
 	};
 
 	return (
 		<tr
-			className={ rowClasses + ' has-action' }
+			className={rowClasses + ' has-action'}
 			role="button"
 			tabIndex="0"
-			onClick={ goToHref }
-			onKeyDown={ getKeyboardHandler( goToHref ) }
-			{ ...props }
+			onClick={goToHref}
+			onKeyDown={getKeyboardHandler(goToHref)}
+			{...props}
 		>
-			{ children }
+			{children}
 		</tr>
 	);
 };

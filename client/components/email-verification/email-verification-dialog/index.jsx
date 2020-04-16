@@ -27,12 +27,12 @@ class VerifyEmailDialog extends Component {
 			'sent' === this.props.emailVerificationStatus ||
 			'error' === this.props.emailVerificationStatus
 		) {
-			return this.props.translate( 'Email Sent' );
+			return this.props.translate('Email Sent');
 		}
-		if ( 'requesting' === this.props.emailVerificationStatus ) {
+		if ('requesting' === this.props.emailVerificationStatus) {
 			return <Spinner className="email-verification-dialog__confirmation-dialog-spinner" />;
 		}
-		return this.props.translate( 'Resend Email' );
+		return this.props.translate('Resend Email');
 	}
 
 	handleClose = () => {
@@ -44,24 +44,21 @@ class VerifyEmailDialog extends Component {
 		return [
 			<Button
 				key="resend"
-				primary={ false }
-				disabled={ includes(
-					[ 'requesting', 'sent', 'error' ],
-					this.props.emailVerificationStatus
-				) }
-				onClick={ this.props.verifyEmail }
+				primary={false}
+				disabled={includes(['requesting', 'sent', 'error'], this.props.emailVerificationStatus)}
+				onClick={this.props.verifyEmail}
 			>
-				{ this.getResendButtonLabel() }
+				{this.getResendButtonLabel()}
 			</Button>,
-			<Button key="close" primary={ true } onClick={ this.handleClose }>
-				{ this.props.translate( 'OK' ) }
+			<Button key="close" primary={true} onClick={this.handleClose}>
+				{this.props.translate('OK')}
 			</Button>,
 		];
 	}
 
 	render() {
 		const strings = {
-			confirmHeading: this.props.translate( 'Please verify your email address:' ),
+			confirmHeading: this.props.translate('Please verify your email address:'),
 
 			confirmExplanation: this.props.translate(
 				'When you first signed up for a WordPress.com account we sent you an email. ' +
@@ -91,21 +88,21 @@ class VerifyEmailDialog extends Component {
 
 		return (
 			<Dialog
-				isVisible={ true }
-				buttons={ this.getDialogButtons() }
+				isVisible={true}
+				buttons={this.getDialogButtons()}
 				additionalClassNames="email-verification-dialog__confirmation-dialog is-narrow"
 			>
 				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">
-					{ strings.confirmHeading }
+					{strings.confirmHeading}
 				</h1>
 				<p className="email-verification-dialog__confirmation-dialog-email">
-					{ strings.confirmEmail }
+					{strings.confirmEmail}
 				</p>
 				<p className="email-verification-dialog__confirmation-dialog-explanation">
-					{ strings.confirmExplanation }
+					{strings.confirmExplanation}
 				</p>
 				<p className="email-verification-dialog__confirmation-dialog-reasoning">
-					{ strings.confirmReasoning }
+					{strings.confirmReasoning}
 				</p>
 			</Dialog>
 		);
@@ -125,12 +122,12 @@ VerifyEmailDialog.defaultProps = {
 };
 
 export default connect(
-	state => ( {
-		email: getCurrentUserEmail( state ),
-		emailVerificationStatus: get( state, 'currentUser.emailVerification.status' ),
-	} ),
+	(state) => ({
+		email: getCurrentUserEmail(state),
+		emailVerificationStatus: get(state, 'currentUser.emailVerification.status'),
+	}),
 	{
 		verifyEmail,
 		resetVerifyEmailState,
 	}
-)( localize( VerifyEmailDialog ) );
+)(localize(VerifyEmailDialog));

@@ -13,25 +13,25 @@ import { flatMap, map } from 'lodash';
  */
 const JQUERY_URL = 'https://s0.wp.com/wp-includes/js/jquery/jquery.js';
 
-export default function generateEmbedFrameMarkup( { body, scripts, styles } = {} ) {
-	if ( ! body && ! scripts && ! styles ) {
+export default function generateEmbedFrameMarkup({ body, scripts, styles } = {}) {
+	if (!body && !scripts && !styles) {
 		return '';
 	}
 
 	return renderToStaticMarkup(
 		<html>
 			<head>
-				{ map( styles, ( { media, src }, key ) => (
-					<link key={ key } rel="stylesheet" media={ media } href={ src } />
-				) ) }
-				<style dangerouslySetInnerHTML={ { __html: 'a { cursor: default; }' } } />
+				{map(styles, ({ media, src }, key) => (
+					<link key={key} rel="stylesheet" media={media} href={src} />
+				))}
+				<style dangerouslySetInnerHTML={{ __html: 'a { cursor: default; }' }} />
 			</head>
-			<body style={ { margin: 0 } }>
-				<div dangerouslySetInnerHTML={ { __html: body } } />
-				{ /* Many embed/shortcode scripts assume jQuery is already defined */ }
-				<script src={ JQUERY_URL } />
+			<body style={{ margin: 0 }}>
+				<div dangerouslySetInnerHTML={{ __html: body }} />
+				{/* Many embed/shortcode scripts assume jQuery is already defined */}
+				<script src={JQUERY_URL} />
 				<script
-					dangerouslySetInnerHTML={ {
+					dangerouslySetInnerHTML={{
 						__html: `
 					[ 'click', 'dragstart' ].forEach( function( type ) {
 						document.addEventListener( type, function( event ) {
@@ -40,21 +40,21 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 						}, true );
 					} );
 				`,
-					} }
+					}}
 				/>
-				{ flatMap( scripts, ( { extra, src }, key ) => {
+				{flatMap(scripts, ({ extra, src }, key) => {
 					return [
 						extra ? (
 							<script
-								key={ key + '-extra' }
-								dangerouslySetInnerHTML={ {
+								key={key + '-extra'}
+								dangerouslySetInnerHTML={{
 									__html: extra,
-								} }
+								}}
 							/>
 						) : null,
-						<script key={ key } src={ src } />,
+						<script key={key} src={src} />,
 					];
-				} ) }
+				})}
 			</body>
 		</html>
 	);

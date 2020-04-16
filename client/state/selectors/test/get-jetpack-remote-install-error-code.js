@@ -5,23 +5,23 @@ import getJetpackRemoteInstallErrorCode from 'state/selectors/get-jetpack-remote
 
 const url = 'https://yourgroovydomain.com';
 
-describe( 'getJetpackRemoteInstallError()', () => {
-	test( 'should return null if no errors', () => {
+describe('getJetpackRemoteInstallError()', () => {
+	test('should return null if no errors', () => {
 		const state = {
 			jetpackRemoteInstall: {
 				errorCode: {},
 			},
 		};
-		expect( getJetpackRemoteInstallErrorCode( state, url ) ).toBeNull();
-	} );
-	test( 'should return any existing error', () => {
+		expect(getJetpackRemoteInstallErrorCode(state, url)).toBeNull();
+	});
+	test('should return any existing error', () => {
 		const state = {
 			jetpackRemoteInstall: {
 				errorCode: {
-					[ url ]: 'SOME_ERROR',
+					[url]: 'SOME_ERROR',
 				},
 			},
 		};
-		expect( getJetpackRemoteInstallErrorCode( state, url ) ).toBe( 'SOME_ERROR' );
-	} );
-} );
+		expect(getJetpackRemoteInstallErrorCode(state, url)).toBe('SOME_ERROR');
+	});
+});

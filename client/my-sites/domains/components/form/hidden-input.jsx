@@ -10,15 +10,15 @@ import { isEmpty } from 'lodash';
 import Input from './input';
 
 export class HiddenInput extends PureComponent {
-	constructor( props, context ) {
-		super( props, context );
+	constructor(props, context) {
+		super(props, context);
 		this.state = {
-			toggled: ! isEmpty( props.value ),
+			toggled: !isEmpty(props.value),
 		};
 		this.inputField = null;
 	}
 
-	handleClick = event => {
+	handleClick = (event) => {
 		event.preventDefault();
 
 		this.setState(
@@ -31,22 +31,22 @@ export class HiddenInput extends PureComponent {
 		);
 	};
 
-	assignInputFieldRef = input => {
+	assignInputFieldRef = (input) => {
 		this.inputField = input;
-		if ( this.props.inputRef ) {
-			this.props.inputRef( input );
+		if (this.props.inputRef) {
+			this.props.inputRef(input);
 		}
 	};
 
 	render() {
-		if ( this.state.toggled ) {
-			return <Input ref={ this.assignInputFieldRef } { ...this.props } />;
+		if (this.state.toggled) {
+			return <Input ref={this.assignInputFieldRef} {...this.props} />;
 		}
 
 		return (
 			<div className="form__hidden-input">
-				<a href="" onClick={ this.handleClick }>
-					{ this.props.text }
+				<a href="" onClick={this.handleClick}>
+					{this.props.text}
 				</a>
 			</div>
 		);

@@ -16,8 +16,8 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @param {object} siteId Site ID
  * @returns {string} The status of the site's migration
  */
-export default function getSiteMigrationStatus( state, siteId ) {
-	const site = getRawSite( state, siteId );
+export default function getSiteMigrationStatus(state, siteId) {
+	const site = getRawSite(state, siteId);
 
-	return get( site, 'site_migration.status', 'inactive' );
+	return get(site, 'site_migration.status', 'inactive');
 }

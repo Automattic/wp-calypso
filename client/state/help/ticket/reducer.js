@@ -10,8 +10,8 @@ import {
 	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
 
-const isRequesting = ( state = false, action ) => {
-	switch ( action.type ) {
+const isRequesting = (state = false, action) => {
+	switch (action.type) {
 		case HELP_TICKET_CONFIGURATION_REQUEST:
 			return true;
 		case HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS:
@@ -23,8 +23,8 @@ const isRequesting = ( state = false, action ) => {
 	return state;
 };
 
-const isUserEligible = ( state = false, action ) => {
-	switch ( action.type ) {
+const isUserEligible = (state = false, action) => {
+	switch (action.type) {
 		case HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS: {
 			const { configuration } = action;
 			return configuration.is_user_eligible;
@@ -34,8 +34,8 @@ const isUserEligible = ( state = false, action ) => {
 	return state;
 };
 
-const isReady = ( state = false, action ) => {
-	switch ( action.type ) {
+const isReady = (state = false, action) => {
+	switch (action.type) {
 		case HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS:
 			return true;
 	}
@@ -43,8 +43,8 @@ const isReady = ( state = false, action ) => {
 	return state;
 };
 
-const requestError = ( state = null, action ) => {
-	switch ( action.type ) {
+const requestError = (state = null, action) => {
+	switch (action.type) {
 		case HELP_TICKET_CONFIGURATION_REQUEST:
 			return null;
 		case HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS:
@@ -60,9 +60,9 @@ const requestError = ( state = null, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducers({
 	isReady,
 	isRequesting,
 	isUserEligible,
 	requestError,
-} );
+});

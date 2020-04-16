@@ -12,9 +12,9 @@ import { GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL } from 'state/action-types';
  * @param  {string} interval 'week' | 'month' | 'quarter'
  * @returns {object} Action object
  */
-export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval ) => ( {
+export const changeGoogleMyBusinessStatsInterval = (siteId, statType, interval) => ({
 	type: GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,
 	siteId,
 	statType,
 	interval,
-} );
+});

@@ -18,7 +18,7 @@ import QueryPostFormats from 'components/data/query-post-formats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 
-const DefaultPostFormat = ( {
+const DefaultPostFormat = ({
 	fields,
 	onChangeField,
 	eventTracker,
@@ -27,29 +27,29 @@ const DefaultPostFormat = ( {
 	postFormats,
 	siteId,
 	translate,
-} ) => {
+}) => {
 	return (
 		<FormFieldset>
-			{ siteId && <QueryPostFormats siteId={ siteId } /> }
+			{siteId && <QueryPostFormats siteId={siteId} />}
 
-			<FormLabel htmlFor="default_post_format">{ translate( 'Default Post Format' ) }</FormLabel>
+			<FormLabel htmlFor="default_post_format">{translate('Default Post Format')}</FormLabel>
 			<FormSelect
 				name="default_post_format"
 				id="default_post_format"
-				value={ fields.default_post_format }
-				onChange={ onChangeField( 'default_post_format' ) }
-				disabled={ isRequestingSettings || isSavingSettings }
-				onClick={ eventTracker( 'Selected Default Post Format' ) }
+				value={fields.default_post_format}
+				onChange={onChangeField('default_post_format')}
+				disabled={isRequestingSettings || isSavingSettings}
+				onClick={eventTracker('Selected Default Post Format')}
 			>
-				<option value="0">{ translate( 'Standard', { context: 'Post format' } ) }</option>
-				{ postFormats &&
-					map( postFormats, ( label, slug ) => {
+				<option value="0">{translate('Standard', { context: 'Post format' })}</option>
+				{postFormats &&
+					map(postFormats, (label, slug) => {
 						return (
-							<option key={ slug } value={ slug }>
-								{ label }
+							<option key={slug} value={slug}>
+								{label}
 							</option>
 						);
-					} ) }
+					})}
 			</FormSelect>
 		</FormFieldset>
 	);
@@ -69,11 +69,11 @@ DefaultPostFormat.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
 
 	return {
 		siteId,
-		postFormats: getPostFormats( state, siteId ),
+		postFormats: getPostFormats(state, siteId),
 	};
-} )( localize( DefaultPostFormat ) );
+})(localize(DefaultPostFormat));

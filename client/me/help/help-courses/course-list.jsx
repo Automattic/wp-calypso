@@ -17,9 +17,9 @@ class CourseList extends Component {
 
 		return (
 			<div className="help-courses__course-list">
-				{ courses.map( ( course, key ) => {
-					return <Course { ...course } key={ key } isBusinessPlanUser={ isBusinessPlanUser } />;
-				} ) }
+				{courses.map((course, key) => {
+					return <Course {...course} key={key} isBusinessPlanUser={isBusinessPlanUser} />;
+				})}
 			</div>
 		);
 	}
@@ -29,4 +29,4 @@ export const CourseListPlaceholder = () => {
 	return <Card className="help-courses__course-list is-placeholder" />;
 };
 
-export default localize( CourseList );
+export default localize(CourseList);

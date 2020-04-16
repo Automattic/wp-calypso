@@ -12,13 +12,13 @@ import { localize } from 'i18n-calypso';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
-const HistoryButton = ( { translate, selectHistory } ) => (
+const HistoryButton = ({ translate, selectHistory }) => (
 	<div className="editor-ground-control__history">
 		<button
 			className="editor-ground-control__history-button button is-link"
-			onClick={ selectHistory }
+			onClick={selectHistory}
 		>
-			{ translate( 'History' ) }
+			{translate('History')}
 		</button>
 	</div>
 );
@@ -31,8 +31,8 @@ HistoryButton.propTypes = {
 // Action creator to call openPostRevisionsDialog wrapped with analytics call
 const selectHistory = () =>
 	withAnalytics(
-		recordTracksEvent( 'calypso_editor_history_button_click' ),
+		recordTracksEvent('calypso_editor_history_button_click'),
 		openPostRevisionsDialog()
 	);
 
-export default connect( null, { selectHistory } )( localize( HistoryButton ) );
+export default connect(null, { selectHistory })(localize(HistoryButton));

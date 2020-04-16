@@ -20,24 +20,24 @@ class LegendItemPlaceholder extends Component {
 				<div className="legend-item__placeholder-title">
 					<svg
 						className="legend-item__placeholder-title-sample-drawing"
-						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
+						viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
 					>
 						<circle
 							className="legend-item__placeholder-title-circle"
-							cx={ SVG_SIZE / 2 }
-							cy={ SVG_SIZE / 2 }
-							r={ SVG_SIZE / 2 }
+							cx={SVG_SIZE / 2}
+							cy={SVG_SIZE / 2}
+							r={SVG_SIZE / 2}
 						/>
 					</svg>
 
-					<div className={ 'legend-item__placeholder-title-name' }>{ name }</div>
+					<div className={'legend-item__placeholder-title-name'}>{name}</div>
 				</div>
 
 				<div className="legend-item__placeholder-detail">
-					<div className={ 'legend-item__placeholder-detail-value' }>{ '100 (100%)' }</div>
-					{ description && (
-						<div className={ 'legend-item__placeholder-detail-description' }>{ description }</div>
-					) }
+					<div className={'legend-item__placeholder-detail-value'}>{'100 (100%)'}</div>
+					{description && (
+						<div className={'legend-item__placeholder-detail-description'}>{description}</div>
+					)}
 				</div>
 			</div>
 		);

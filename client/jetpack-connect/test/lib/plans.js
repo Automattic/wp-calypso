@@ -22,7 +22,7 @@ export const SITE_ID = 1234567;
 export const SITE_SLUG = 'an.example.site';
 export const BASE_PLANS_PATH = '/jetpack/connect/plans';
 
-export const SITE_PLAN_FREE = deepFreeze( {
+export const SITE_PLAN_FREE = deepFreeze({
 	product_id: 2002,
 	product_slug: PLAN_JETPACK_FREE,
 	product_name_short: 'Free',
@@ -30,9 +30,9 @@ export const SITE_PLAN_FREE = deepFreeze( {
 	expired: false,
 	user_is_owner: false,
 	is_free: true,
-} );
+});
 
-export const SITE_PLAN_PERSONAL = deepFreeze( {
+export const SITE_PLAN_PERSONAL = deepFreeze({
 	product_id: 2005,
 	product_slug: PLAN_JETPACK_PERSONAL,
 	product_name_short: 'Premium',
@@ -40,9 +40,9 @@ export const SITE_PLAN_PERSONAL = deepFreeze( {
 	expired: false,
 	user_is_owner: false,
 	is_free: true,
-} );
+});
 
-export const SITE_PLAN_PREMIUM = deepFreeze( {
+export const SITE_PLAN_PREMIUM = deepFreeze({
 	product_id: 2000,
 	product_slug: PLAN_JETPACK_PREMIUM,
 	product_name_short: 'Personal',
@@ -50,9 +50,9 @@ export const SITE_PLAN_PREMIUM = deepFreeze( {
 	expired: false,
 	user_is_owner: false,
 	is_free: true,
-} );
+});
 
-export const SITE_PLAN_PRO = deepFreeze( {
+export const SITE_PLAN_PRO = deepFreeze({
 	product_id: 2001,
 	product_slug: PLAN_JETPACK_BUSINESS,
 	product_name_short: 'Professional',
@@ -60,17 +60,17 @@ export const SITE_PLAN_PRO = deepFreeze( {
 	expired: false,
 	user_is_owner: false,
 	is_free: true,
-} );
+});
 
-export const CONTEXT = deepFreeze( {
-	canonicalPath: `${ BASE_PLANS_PATH }/${ SITE_SLUG }`,
-	path: `${ BASE_PLANS_PATH }/${ SITE_SLUG }`,
+export const CONTEXT = deepFreeze({
+	canonicalPath: `${BASE_PLANS_PATH}/${SITE_SLUG}`,
+	path: `${BASE_PLANS_PATH}/${SITE_SLUG}`,
 	title: 'WordPress.com',
-	state: { path: `${ BASE_PLANS_PATH }/${ SITE_SLUG }` },
+	state: { path: `${BASE_PLANS_PATH}/${SITE_SLUG}` },
 	querystring: '',
-	pathname: `${ BASE_PLANS_PATH }/${ SITE_SLUG }`,
+	pathname: `${BASE_PLANS_PATH}/${SITE_SLUG}`,
 	params: {
-		0: `${ BASE_PLANS_PATH }/${ SITE_SLUG }`,
+		0: `${BASE_PLANS_PATH}/${SITE_SLUG}`,
 		site: SITE_SLUG,
 	},
 	hash: {},
@@ -78,20 +78,20 @@ export const CONTEXT = deepFreeze( {
 	store: {},
 	query: {},
 	prevPath: false,
-} );
+});
 
-export const TRANSACTION = deepFreeze( {
+export const TRANSACTION = deepFreeze({
 	errors: {},
 	newCardFormFields: {},
 	newCardRawDetails: {},
 	step: { name: 'before-submit' },
 	domainDetails: null,
-} );
+});
 
-export const SELECTED_SITE = deepFreeze( {
+export const SELECTED_SITE = deepFreeze({
 	ID: SITE_ID,
 	name: 'Test Site',
-	URL: `http://${ SITE_SLUG }`,
+	URL: `http://${SITE_SLUG}`,
 	jetpack: true,
 	visible: true,
 	is_private: false,
@@ -100,10 +100,10 @@ export const SELECTED_SITE = deepFreeze( {
 		gmt_offset: 0,
 		videopress_enabled: false,
 		upgraded_filetypes_enabled: true,
-		admin_url: `http://${ SITE_SLUG }/wp-admin/`,
+		admin_url: `http://${SITE_SLUG}/wp-admin/`,
 		is_mapped_domain: true,
 		is_redirect: false,
-		unmapped_url: `http://${ SITE_SLUG }`,
+		unmapped_url: `http://${SITE_SLUG}`,
 		permalink_structure: '/%year%/%monthnum%/%day%/%postname%/',
 		default_post_format: 'standard',
 		allowed_file_types: [
@@ -139,7 +139,7 @@ export const SELECTED_SITE = deepFreeze( {
 		is_automated_transfer: false,
 		is_wpforteams_site: false,
 		jetpack_version: '5.4',
-		main_network_site: `http://${ SITE_SLUG }`,
+		main_network_site: `http://${SITE_SLUG}`,
 		active_modules: [
 			'contact-form',
 			'custom-content-types',
@@ -203,9 +203,9 @@ export const SELECTED_SITE = deepFreeze( {
 	isMainNetworkSite: true,
 	isSecondaryNetworkSite: false,
 	isSiteUpgradeable: true,
-} );
+});
 
-export const CART = deepFreeze( {
+export const CART = deepFreeze({
 	blog_id: SITE_ID,
 	cart_key: '' + SITE_ID,
 	coupon: '',
@@ -218,13 +218,13 @@ export const CART = deepFreeze( {
 	total_cost_display: '€0',
 	temporary: false,
 	credits: 0,
-	allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express', 'WPCOM_Billing_Stripe_Source_Ideal' ],
+	allowed_payment_methods: ['WPCOM_Billing_PayPal_Express', 'WPCOM_Billing_Stripe_Source_Ideal'],
 	create_new_blog: false,
 	messages: { errors: [], success: [] },
 	client_metadata: { last_server_response_date: '2017-10-19T11:45:21.862Z' },
 	hasLoadedFromServer: true,
 	hasPendingServerUpdates: false,
-} );
+});
 
 export const PLANS_SLUG = '*';
 

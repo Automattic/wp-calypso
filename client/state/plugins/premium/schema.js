@@ -5,12 +5,12 @@ export const pluginInstructionSchema = {
 		'^[0-9]+$': {
 			type: 'array',
 			items: {
-				required: [ 'slug' ],
+				required: ['slug'],
 				properties: {
 					name: { type: 'string' },
 					slug: { type: 'string' },
 					status: { type: 'string' },
-					error: { type: [ 'object', 'string', 'null' ] },
+					error: { type: ['object', 'string', 'null'] },
 
 					/* Invalidate state if the key has been persisted */
 					key: {

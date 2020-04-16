@@ -28,35 +28,35 @@ export class HelpSearch extends React.PureComponent {
 		searchQuery: '',
 	};
 
-	onSearch = searchQuery => {
-		this.setState( {
+	onSearch = (searchQuery) => {
+		this.setState({
 			searchQuery,
-		} );
-		this.props.recordTracksEvent( 'calypso_help_search', { query: searchQuery } );
+		});
+		this.props.recordTracksEvent('calypso_help_search', { query: searchQuery });
 	};
 
 	displaySearchResults = () => {
 		const { searchQuery } = this.state;
 		const { helpLinks, translate } = this.props;
 
-		if ( isEmpty( searchQuery ) ) {
+		if (isEmpty(searchQuery)) {
 			return null;
 		}
 
-		if ( isEmpty( helpLinks ) ) {
+		if (isEmpty(helpLinks)) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="help-results__placeholder">
 					<HelpResults
 						header="Dummy documentation header"
-						helpLinks={ [
+						helpLinks={[
 							{
 								title: '',
 								description: '',
 								link: '#',
 								disabled: true,
 							},
-						] }
+						]}
 						footer="Dummy documentation footer"
 						iconTypeDescription=""
 						searchLink="#"
@@ -66,47 +66,47 @@ export class HelpSearch extends React.PureComponent {
 		}
 
 		if (
-			isEmpty( helpLinks.wordpress_support_links ) &&
-			isEmpty( helpLinks.wordpress_forum_links ) &&
-			isEmpty( helpLinks.wordpress_forum_links_localized ) &&
-			isEmpty( helpLinks.jetpack_support_links )
+			isEmpty(helpLinks.wordpress_support_links) &&
+			isEmpty(helpLinks.wordpress_forum_links) &&
+			isEmpty(helpLinks.wordpress_forum_links_localized) &&
+			isEmpty(helpLinks.jetpack_support_links)
 		) {
 			return (
 				<CompactCard className="help-search__no-results">
 					<NoResults
-						text={ translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', {
+						text={translate('No results found for {{em}}%(searchQuery)s{{/em}}', {
 							args: { searchQuery },
 							components: { em: <em /> },
-						} ) }
+						})}
 					/>
 				</CompactCard>
 			);
 		}
 
 		const forumBaseUrl = helpLinks.wordpress_forum_links_localized
-			? localizeUrl( 'https://en.forums.wordpress.com/' )
+			? localizeUrl('https://en.forums.wordpress.com/')
 			: 'https://en.forums.wordpress.com/';
 
 		return (
 			<div>
 				<HelpResults
-					footer={ translate( 'See more from WordPress.com Documentation…' ) }
-					header={ translate( 'WordPress.com Documentation' ) }
-					helpLinks={ helpLinks.wordpress_support_links }
+					footer={translate('See more from WordPress.com Documentation…')}
+					header={translate('WordPress.com Documentation')}
+					helpLinks={helpLinks.wordpress_support_links}
 					iconTypeDescription="book"
-					searchLink={ 'https://wordpress.com/support?s=' + searchQuery }
+					searchLink={'https://wordpress.com/support?s=' + searchQuery}
 				/>
 				<HelpResults
-					footer={ translate( 'See more from Community Forum…' ) }
-					header={ translate( 'Community Answers' ) }
-					helpLinks={ helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links }
+					footer={translate('See more from Community Forum…')}
+					header={translate('Community Answers')}
+					helpLinks={helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links}
 					iconTypeDescription="comment"
-					searchLink={ `${ forumBaseUrl }/search/${ searchQuery }` }
+					searchLink={`${forumBaseUrl}/search/${searchQuery}`}
 				/>
 				<HelpResults
-					footer={ translate( 'See more from Jetpack Documentation…' ) }
-					header={ translate( 'Jetpack Documentation' ) }
-					helpLinks={ helpLinks.jetpack_support_links }
+					footer={translate('See more from Jetpack Documentation…')}
+					header={translate('Jetpack Documentation')}
+					helpLinks={helpLinks.jetpack_support_links}
 					iconTypeDescription="jetpack"
 					searchLink="https://jetpack.me/support/"
 				/>
@@ -119,25 +119,25 @@ export class HelpSearch extends React.PureComponent {
 
 		return (
 			<div className="help-search">
-				<QueryHelpLinks query={ searchQuery } />
+				<QueryHelpLinks query={searchQuery} />
 				<SearchCard
 					analyticsGroup="Help"
-					delaySearch={ true }
+					delaySearch={true}
 					initialValue=""
-					onSearch={ this.onSearch }
-					placeholder={ this.props.translate( 'How can we help?' ) }
+					onSearch={this.onSearch}
+					placeholder={this.props.translate('How can we help?')}
 				/>
-				{ this.displaySearchResults() }
+				{this.displaySearchResults()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		helpLinks: getHelpLinks( state ),
-	} ),
+	(state) => ({
+		helpLinks: getHelpLinks(state),
+	}),
 	{
 		recordTracksEvent,
 	}
-)( localize( HelpSearch ) );
+)(localize(HelpSearch));

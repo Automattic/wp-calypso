@@ -7,69 +7,69 @@ var pluginsInstallCalls = 0,
 	lastRequestParams = null,
 	deactivatedCallbacks = false,
 	wpcomPluginMock = {
-		deactivate: function( callback ) {
+		deactivate: function (callback) {
 			pluginsDeactivateCalls++;
 			callback();
 		},
 
-		delete: function( site, plugin, callback ) {
+		delete: function (site, plugin, callback) {
 			pluginsRemoveCalls++;
 			callback();
 		},
 	},
 	pluginMock = {
-		activate: function( callback ) {
+		activate: function (callback) {
 			pluginsActivateCalls++;
 			callback();
 		},
 
-		deactivate: function( callback ) {
+		deactivate: function (callback) {
 			pluginsDeactivateCalls++;
 			callback();
 		},
 
-		enableAutoupdate: function( callback ) {
+		enableAutoupdate: function (callback) {
 			pluginsAutoupdateCalls++;
 			callback();
 		},
 
-		disableAutoupdate: function( callback ) {
+		disableAutoupdate: function (callback) {
 			pluginsDisableAutoupdateCalls++;
 			callback();
 		},
 
-		delete: function( site, plugin, callback ) {
+		delete: function (site, plugin, callback) {
 			pluginsRemoveCalls++;
 			callback();
 		},
 
-		install: function( callback ) {
+		install: function (callback) {
 			pluginsInstallCalls++;
 
-			if ( ! deactivatedCallbacks ) {
-				callback( null, {
+			if (!deactivatedCallbacks) {
+				callback(null, {
 					code: 200,
-					headers: [ { name: 'Content-Type', value: 'application/json' } ],
+					headers: [{ name: 'Content-Type', value: 'application/json' }],
 					body: {},
-				} );
+				});
 			}
 		},
 	},
 	siteMock = {
-		plugin: function() {
+		plugin: function () {
 			return pluginMock;
 		},
 
-		wpcomPlugin: function() {
+		wpcomPlugin: function () {
 			return wpcomPluginMock;
 		},
 	},
 	mock = {
-		site: function() {
+		site: function () {
 			return siteMock;
 		},
 
-		reset: function() {
+		reset: function () {
 			pluginsAutoupdateCalls = 0;
 			pluginsActivateCalls = 0;
 			pluginsInstallCalls = 0;
@@ -80,7 +80,7 @@ var pluginsInstallCalls = 0,
 			lastRequestParams = null;
 		},
 
-		getActivity: function() {
+		getActivity: function () {
 			return {
 				pluginsAutoupdateCalls: pluginsAutoupdateCalls,
 				pluginsInstallCalls: pluginsInstallCalls,
@@ -92,7 +92,7 @@ var pluginsInstallCalls = 0,
 			};
 		},
 
-		undocumented: function() {
+		undocumented: function () {
 			return mock;
 		},
 	};

@@ -13,7 +13,7 @@ import './style.scss';
 
 export default class Badge extends React.Component {
 	static propTypes = {
-		type: PropTypes.oneOf( [ 'warning', 'success', 'info', 'info-blue', 'error' ] ).isRequired,
+		type: PropTypes.oneOf(['warning', 'success', 'info', 'info-blue', 'error']).isRequired,
 	};
 
 	static defaultProps = {
@@ -23,9 +23,7 @@ export default class Badge extends React.Component {
 	render() {
 		const { className, type } = this.props;
 		return (
-			<div className={ classNames( `badge badge--${ type }`, className ) }>
-				{ this.props.children }
-			</div>
+			<div className={classNames(`badge badge--${type}`, className)}>{this.props.children}</div>
 		);
 	}
 }

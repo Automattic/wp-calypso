@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import isRequestingMediaItem from 'state/selectors/is-requesting-media-item';
 
-describe( 'isRequestingMediaItem()', () => {
+describe('isRequestingMediaItem()', () => {
 	const state = {
 		media: {
 			mediaItemRequests: {
@@ -19,21 +19,21 @@ describe( 'isRequestingMediaItem()', () => {
 		},
 	};
 
-	test( 'should return false if the site is not attached', () => {
-		const isRequesting = isRequestingMediaItem( state, 2916285, 10 );
+	test('should return false if the site is not attached', () => {
+		const isRequesting = isRequestingMediaItem(state, 2916285, 10);
 
-		expect( isRequesting ).to.be.false;
-	} );
+		expect(isRequesting).to.be.false;
+	});
 
-	test( 'should return false if media are not being requested', () => {
-		const isRequesting = isRequestingMediaItem( state, 2916284, 20 );
+	test('should return false if media are not being requested', () => {
+		const isRequesting = isRequestingMediaItem(state, 2916284, 20);
 
-		expect( isRequesting ).to.be.false;
-	} );
+		expect(isRequesting).to.be.false;
+	});
 
-	test( 'should return true if media are being requested', () => {
-		const isRequesting = isRequestingMediaItem( state, 2916284, 10 );
+	test('should return true if media are being requested', () => {
+		const isRequesting = isRequestingMediaItem(state, 2916284, 10);
 
-		expect( isRequesting ).to.be.true;
-	} );
-} );
+		expect(isRequesting).to.be.true;
+	});
+});

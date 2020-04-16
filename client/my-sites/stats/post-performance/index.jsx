@@ -46,7 +46,7 @@ class StatsPostPerformance extends Component {
 
 		const tabs = [
 			{
-				label: translate( 'Views' ),
+				label: translate('Views'),
 				gridicon: 'visible',
 				value: viewCount,
 				className: tabClassName,
@@ -54,7 +54,7 @@ class StatsPostPerformance extends Component {
 				compact: true,
 			},
 			{
-				label: translate( 'Likes' ),
+				label: translate('Likes'),
 				gridicon: 'star',
 				value: post ? post.like_count : null,
 				className: tabClassName,
@@ -62,7 +62,7 @@ class StatsPostPerformance extends Component {
 				compact: true,
 			},
 			{
-				label: translate( 'Comments' ),
+				label: translate('Comments'),
 				gridicon: 'comment',
 				value: post ? post.discussion.comment_count : null,
 				className: tabClassName,
@@ -71,28 +71,28 @@ class StatsPostPerformance extends Component {
 			},
 		];
 
-		return tabs.map( function( tabOptions ) {
-			return <StatsTab { ...tabOptions } key={ tabOptions.gridicon } />;
-		} );
+		return tabs.map(function (tabOptions) {
+			return <StatsTab {...tabOptions} key={tabOptions.gridicon} />;
+		});
 	}
 
 	recordClickOnNewPostButton = () => {
-		this.props.recordTracksEvent( 'calypso_stats_new_post_click' );
+		this.props.recordTracksEvent('calypso_stats_new_post_click');
 	};
 
 	render() {
 		const { query, post, isRequesting, translate, moment, slug, siteId } = this.props;
-		const loading = ! siteId || isRequesting;
-		const postTime = post ? moment( post.date ) : moment();
-		const cardClass = classNames( 'stats-module', 'stats-post-performance', 'is-site-overview' );
+		const loading = !siteId || isRequesting;
+		const postTime = post ? moment(post.date) : moment();
+		const cardClass = classNames('stats-module', 'stats-post-performance', 'is-site-overview');
 
 		const newPostUrl = slug ? '/post/' + slug : '/post';
 		const summaryUrl = slug && post ? '/stats/post/' + post.ID + '/' + slug : undefined;
 		let postTitle;
 
-		if ( post ) {
-			if ( ! post.title ) {
-				postTitle = translate( '(no title)' );
+		if (post) {
+			if (!post.title) {
+				postTitle = translate('(no title)');
 			} else {
 				postTitle = post.title;
 			}
@@ -101,46 +101,44 @@ class StatsPostPerformance extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
-				{ siteId && post && (
-					<QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } />
-				) }
-				<SectionHeader label={ translate( 'Latest Post Summary' ) } href={ summaryUrl } />
-				<Card className={ cardClass }>
-					<StatsModulePlaceholder isLoading={ loading && ! post } />
-					{ post ? (
+				{siteId && <QueryPosts siteId={siteId} query={query} />}
+				{siteId && post && <QueryPostStats siteId={siteId} postId={post.ID} fields={['views']} />}
+				<SectionHeader label={translate('Latest Post Summary')} href={summaryUrl} />
+				<Card className={cardClass}>
+					<StatsModulePlaceholder isLoading={loading && !post} />
+					{post ? (
 						<div className="module-content-text">
 							<p>
-								{ translate(
+								{translate(
 									"It's been %(timeLapsed)s since {{href}}{{postTitle/}}{{/href}} was published. Here's how the post has performed so far\u2026",
 									{
 										args: {
-											timeLapsed: postTime.fromNow( true ),
+											timeLapsed: postTime.fromNow(true),
 										},
 										components: {
-											href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
-											postTitle: <Emojify tagName="span">{ postTitle }</Emojify>,
+											href: <a href={post.URL} target="_blank" rel="noopener noreferrer" />,
+											postTitle: <Emojify tagName="span">{postTitle}</Emojify>,
 										},
 										context:
 											'Stats: Sentence showing how much time has passed since the last post, and how the stats are',
 									}
-								) }
+								)}
 							</p>
 						</div>
-					) : null }
-					{ ! loading && ! post ? (
+					) : null}
+					{!loading && !post ? (
 						<div className="module-content-text is-empty-message is-error">
 							<p className="stats-post-performance__no-posts-message">
-								{ translate( "You haven't published any posts yet." ) }
+								{translate("You haven't published any posts yet.")}
 							</p>
 							<div className="stats-post-performance__start-post">
-								<Button primary href={ newPostUrl } onClick={ this.recordClickOnNewPostButton }>
-									{ translate( 'Start a Post' ) }
+								<Button primary href={newPostUrl} onClick={this.recordClickOnNewPostButton}>
+									{translate('Start a Post')}
 								</Button>
 							</div>
 						</div>
-					) : null }
-					{ post ? <StatsTabs compact>{ this.buildTabs() }</StatsTabs> : null }
+					) : null}
+					{post ? <StatsTabs compact>{this.buildTabs()}</StatsTabs> : null}
 				</Card>
 			</div>
 		);
@@ -149,16 +147,16 @@ class StatsPostPerformance extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
 		const query = { status: 'publish', number: 1 };
-		const posts = siteId ? getPostsForQuery( state, siteId, query ) : null;
-		const post = posts && posts.length ? posts[ 0 ] : null;
-		const viewCount = post && siteId ? getPostStat( state, siteId, post.ID, 'views' ) : null;
-		const isRequesting = isRequestingPostsForQuery( state, siteId, query );
+		const posts = siteId ? getPostsForQuery(state, siteId, query) : null;
+		const post = posts && posts.length ? posts[0] : null;
+		const viewCount = post && siteId ? getPostStat(state, siteId, post.ID, 'views') : null;
+		const isRequesting = isRequestingPostsForQuery(state, siteId, query);
 
 		return {
-			slug: getSelectedSiteSlug( state ),
+			slug: getSelectedSiteSlug(state),
 			isRequesting,
 			post,
 			query,
@@ -169,4 +167,4 @@ const connectComponent = connect(
 	{ recordTracksEvent }
 );
 
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostPerformance );
+export default flowRight(connectComponent, localize, withLocalizedMoment)(StatsPostPerformance);

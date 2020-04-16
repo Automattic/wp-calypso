@@ -20,8 +20,8 @@ import './style.scss';
 
 class ReaderLandingStep extends Component {
 	handleButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_signup_reader_landing_cta' );
-		this.props.submitSignupStep( { stepName: this.props.stepName } );
+		this.props.recordTracksEvent('calypso_signup_reader_landing_cta');
+		this.props.submitSignupStep({ stepName: this.props.stepName });
 		this.props.goToNextStep();
 	};
 
@@ -31,20 +31,18 @@ class ReaderLandingStep extends Component {
 		return (
 			<div className="reader-landing">
 				<StepWrapper
-					flowName={ flowName }
-					stepName={ stepName }
-					positionInFlow={ positionInFlow }
-					headerText={ translate( 'Keep track of all your favorite sites in one place' ) }
-					subHeaderText={ translate(
+					flowName={flowName}
+					stepName={stepName}
+					positionInFlow={positionInFlow}
+					headerText={translate('Keep track of all your favorite sites in one place')}
+					subHeaderText={translate(
 						'Read posts from all the sites you follow, find great new reads, and stay up-to-date on comments and replies in one convenient place: the WordPress.com Reader.'
-					) }
-					stepContent={ <ReaderLandingStepContent onButtonClick={ this.handleButtonClick } /> }
+					)}
+					stepContent={<ReaderLandingStepContent onButtonClick={this.handleButtonClick} />}
 				/>
 			</div>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent, submitSignupStep } )(
-	localize( ReaderLandingStep )
-);
+export default connect(null, { recordTracksEvent, submitSignupStep })(localize(ReaderLandingStep));

@@ -13,44 +13,44 @@ import { __ } from '@wordpress/i18n';
  */
 import './gutenboarding-editor-overrides.scss';
 
-domReady( () => {
+domReady(() => {
 	calypsoifyGutenberg.isGutenboarding && updateEditor();
 	// Hook fallback incase setGutenboardingStatus runs after initial dom render.
-	window.wp.hooks.addAction( 'setGutenboardingStatus', 'a8c-gutenboarding', isGutenboarding => {
+	window.wp.hooks.addAction('setGutenboardingStatus', 'a8c-gutenboarding', (isGutenboarding) => {
 		isGutenboarding && updateEditor();
-	} );
-} );
+	});
+});
 
 function updateEditor() {
-	const body = document.querySelector( 'body' );
-	body.classList.add( 'gutenboarding-editor-overrides' );
+	const body = document.querySelector('body');
+	body.classList.add('gutenboarding-editor-overrides');
 
 	updateSettingsBar();
 }
 
 function updateSettingsBar() {
-	const awaitSettingsBar = setInterval( () => {
-		const settingsBar = document.querySelector( '.edit-post-header__settings' );
-		if ( ! settingsBar ) {
+	const awaitSettingsBar = setInterval(() => {
+		const settingsBar = document.querySelector('.edit-post-header__settings');
+		if (!settingsBar) {
 			return;
 		}
-		clearInterval( awaitSettingsBar );
+		clearInterval(awaitSettingsBar);
 
 		// 'Update'/'Publish' primary button to become 'Save' tertiary button.
-		const saveButton = settingsBar.querySelector( '.editor-post-publish-button' );
-		saveButton && ( saveButton.innerText = __( 'Save' ) );
+		const saveButton = settingsBar.querySelector('.editor-post-publish-button');
+		saveButton && (saveButton.innerText = __('Save'));
 
 		// Wrap 'Launch' button link to frankenflow.
-		const launchLink = document.createElement( 'a' );
+		const launchLink = document.createElement('a');
 		launchLink.href = calypsoifyGutenberg.frankenflowUrl;
 		launchLink.target = '_top';
 		launchLink.className =
 			'gutenboarding-editor-overrides__launch-button components-button is-primary';
-		const textContent = document.createTextNode( __( 'Launch' ) );
-		launchLink.appendChild( textContent );
+		const textContent = document.createTextNode(__('Launch'));
+		launchLink.appendChild(textContent);
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
-		settingsBar.prepend( launchLink );
-		settingsBar.prepend( saveButton );
-	} );
+		settingsBar.prepend(launchLink);
+		settingsBar.prepend(saveButton);
+	});
 }

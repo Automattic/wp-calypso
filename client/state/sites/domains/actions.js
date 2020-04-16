@@ -27,7 +27,7 @@ import 'state/data-layer/wpcom/domains/privacy/index.js';
 /**
  * Module vars
  */
-const debug = debugFactory( 'calypso:state:sites:domains:actions' );
+const debug = debugFactory('calypso:state:sites:domains:actions');
 const wpcom = wp.undocumented();
 
 /**
@@ -41,14 +41,14 @@ const wpcom = wp.undocumented();
  * @param {object} domains - domains array gotten from WP REST-API response
  * @returns {object} the action object
  */
-export const domainsReceiveAction = ( siteId, domains ) => {
+export const domainsReceiveAction = (siteId, domains) => {
 	const action = {
 		type: SITE_DOMAINS_RECEIVE,
 		siteId,
-		domains: map( domains, createSiteDomainObject ),
+		domains: map(domains, createSiteDomainObject),
 	};
 
-	debug( 'returning action: %o', action );
+	debug('returning action: %o', action);
 	return action;
 };
 
@@ -60,13 +60,13 @@ export const domainsReceiveAction = ( siteId, domains ) => {
  * @param {number} siteId - side identifier
  * @returns {object} siteId - action object
  */
-export const domainsRequestAction = siteId => {
+export const domainsRequestAction = (siteId) => {
 	const action = {
 		type: SITE_DOMAINS_REQUEST,
 		siteId,
 	};
 
-	debug( 'returning action: %o', action );
+	debug('returning action: %o', action);
 	return action;
 };
 
@@ -78,13 +78,13 @@ export const domainsRequestAction = siteId => {
  * @param {number} siteId - side identifier
  * @returns {object} siteId - action object
  */
-export const domainsRequestSuccessAction = siteId => {
+export const domainsRequestSuccessAction = (siteId) => {
 	const action = {
 		type: SITE_DOMAINS_REQUEST_SUCCESS,
 		siteId,
 	};
 
-	debug( 'returning action: %o', action );
+	debug('returning action: %o', action);
 	return action;
 };
 
@@ -97,14 +97,14 @@ export const domainsRequestSuccessAction = siteId => {
  * @param {object} error - error message according to REST-API error response
  * @returns {object} action object
  */
-export const domainsRequestFailureAction = ( siteId, error ) => {
+export const domainsRequestFailureAction = (siteId, error) => {
 	const action = {
 		type: SITE_DOMAINS_REQUEST_FAILURE,
 		siteId,
 		error,
 	};
 
-	debug( 'returning action: %o', action );
+	debug('returning action: %o', action);
 	return action;
 };
 
@@ -114,19 +114,19 @@ export const domainsRequestFailureAction = ( siteId, error ) => {
  * @param {number} siteId - identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
-export function fetchSiteDomains( siteId ) {
-	return dispatch => {
-		dispatch( domainsRequestAction( siteId ) );
+export function fetchSiteDomains(siteId) {
+	return (dispatch) => {
+		dispatch(domainsRequestAction(siteId));
 
 		return wpcom
-			.site( siteId )
+			.site(siteId)
 			.domains()
-			.then( data => {
+			.then((data) => {
 				const { domains = [] } = data;
-				dispatch( domainsRequestSuccessAction( siteId ) );
-				dispatch( domainsReceiveAction( siteId, domains ) );
-			} )
-			.catch( error => {
+				dispatch(domainsRequestSuccessAction(siteId));
+				dispatch(domainsReceiveAction(siteId, domains));
+			})
+			.catch((error) => {
 				const message =
 					error instanceof Error
 						? error.message
@@ -134,12 +134,12 @@ export function fetchSiteDomains( siteId ) {
 								'There was a problem fetching site domains. Please try again later or contact support.'
 						  );
 
-				dispatch( domainsRequestFailureAction( siteId, message ) );
-			} );
+				dispatch(domainsRequestFailureAction(siteId, message));
+			});
 	};
 }
 
-export function enableDomainPrivacy( siteId, domain ) {
+export function enableDomainPrivacy(siteId, domain) {
 	return {
 		type: DOMAIN_PRIVACY_ENABLE,
 		siteId,
@@ -147,7 +147,7 @@ export function enableDomainPrivacy( siteId, domain ) {
 	};
 }
 
-export function disableDomainPrivacy( siteId, domain ) {
+export function disableDomainPrivacy(siteId, domain) {
 	return {
 		type: DOMAIN_PRIVACY_DISABLE,
 		siteId,
@@ -155,21 +155,21 @@ export function disableDomainPrivacy( siteId, domain ) {
 	};
 }
 
-export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch => {
-	debug( 'setPrimaryDomain', siteId, domainName );
-	return wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
-		if ( error ) {
-			return onComplete( error, data );
+export const setPrimaryDomain = (siteId, domainName, onComplete = noop) => (dispatch) => {
+	debug('setPrimaryDomain', siteId, domainName);
+	return wpcom.setPrimaryDomain(siteId, domainName, (error, data) => {
+		if (error) {
+			return onComplete(error, data);
 		}
 
-		return dispatch( fetchSiteDomains( siteId ) ).then( () => {
-			onComplete( null, data );
-			dispatch( requestSite( siteId ) );
-		} );
-	} );
+		return dispatch(fetchSiteDomains(siteId)).then(() => {
+			onComplete(null, data);
+			dispatch(requestSite(siteId));
+		});
+	});
 };
 
-export function discloseDomainContactInfo( siteId, domain ) {
+export function discloseDomainContactInfo(siteId, domain) {
 	return {
 		type: DOMAIN_CONTACT_INFO_DISCLOSE,
 		siteId,
@@ -177,7 +177,7 @@ export function discloseDomainContactInfo( siteId, domain ) {
 	};
 }
 
-export function redactDomainContactInfo( siteId, domain ) {
+export function redactDomainContactInfo(siteId, domain) {
 	return {
 		type: DOMAIN_CONTACT_INFO_REDACT,
 		siteId,

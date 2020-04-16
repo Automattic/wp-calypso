@@ -23,22 +23,22 @@ class RecoveryPhoneValidationNotice extends Component {
 		};
 	}
 
-	onSubmit( event ) {
+	onSubmit(event) {
 		event.preventDefault();
 	}
 
-	onValidate = event => {
+	onValidate = (event) => {
 		event.preventDefault();
 
-		this.props.onValidate( this.state.candidateCode );
+		this.props.onValidate(this.state.candidateCode);
 	};
 
-	onChange = event => {
+	onChange = (event) => {
 		event.preventDefault();
 
-		this.setState( {
+		this.setState({
 			candidateCode: event.target.value,
-		} );
+		});
 	};
 
 	render() {
@@ -46,39 +46,39 @@ class RecoveryPhoneValidationNotice extends Component {
 
 		const { candidateCode } = this.state;
 
-		const validateButtonText = isValidating ? translate( 'Validating' ) : translate( 'Validate' );
+		const validateButtonText = isValidating ? translate('Validating') : translate('Validate');
 
 		return (
-			<form onSubmit={ this.onSubmit }>
-				{ ! hasSent && (
+			<form onSubmit={this.onSubmit}>
+				{!hasSent && (
 					<Notice
 						className="security-account-recovery__validation-notice"
 						status="is-warning"
-						text={ translate(
+						text={translate(
 							'Please validate your recovery SMS number. Check your phone for a validation code.'
-						) }
-						showDismiss={ false }
+						)}
+						showDismiss={false}
 					>
-						<NoticeAction href="#" onClick={ this.props.onResend }>
-							{ translate( 'Resend' ) }
+						<NoticeAction href="#" onClick={this.props.onResend}>
+							{translate('Resend')}
 						</NoticeAction>
 					</Notice>
-				) }
+				)}
 
 				<FormLabel className="security-account-recovery__recovery-phone-validation-label">
-					{ translate( 'Enter the code you receive via SMS:' ) }
+					{translate('Enter the code you receive via SMS:')}
 				</FormLabel>
 
 				<FormVerificationCodeInput
-					disabled={ isValidating }
-					method={ 'sms' }
-					onChange={ this.onChange }
-					value={ candidateCode }
+					disabled={isValidating}
+					method={'sms'}
+					onChange={this.onChange}
+					value={candidateCode}
 				/>
 
 				<FormButtonsBar className="security-account-recovery__recovery-phone-validation-buttons">
-					<FormButton isPrimary={ true } disabled={ isValidating } onClick={ this.onValidate }>
-						{ validateButtonText }
+					<FormButton isPrimary={true} disabled={isValidating} onClick={this.onValidate}>
+						{validateButtonText}
 					</FormButton>
 				</FormButtonsBar>
 			</form>
@@ -86,4 +86,4 @@ class RecoveryPhoneValidationNotice extends Component {
 	}
 }
 
-export default localize( RecoveryPhoneValidationNotice );
+export default localize(RecoveryPhoneValidationNotice);

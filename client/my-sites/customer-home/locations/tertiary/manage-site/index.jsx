@@ -22,33 +22,33 @@ const cardComponents = {
 	'home-action-wp-for-teams-quick-links': WpForTeamsQuickLinks,
 };
 
-const ManageSite = ( { cards } ) => {
+const ManageSite = ({ cards }) => {
 	const translate = useTranslate();
 
 	return (
 		<>
 			<h2 className="manage-site__heading customer-home__section-heading">
-				{ translate( 'Manage your site' ) }
+				{translate('Manage your site')}
 			</h2>
-			{ cards &&
+			{cards &&
 				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
+					(card, index) =>
+						cardComponents[card] &&
+						React.createElement(cardComponents[card], {
 							key: index,
-						} )
-				) }
+						})
+				)}
 		</>
 	);
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const layout = getHomeLayout( state, siteId );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const layout = getHomeLayout(state, siteId);
 
 	return {
-		cards: layout?.[ 'tertiary.manage-site' ] ?? [],
+		cards: layout?.['tertiary.manage-site'] ?? [],
 	};
 };
 
-export default connect( mapStateToProps )( ManageSite );
+export default connect(mapStateToProps)(ManageSite);

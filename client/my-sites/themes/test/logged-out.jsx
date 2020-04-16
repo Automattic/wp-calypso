@@ -15,13 +15,13 @@ import { THEMES_REQUEST_FAILURE } from 'state/themes/action-types';
 import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
-jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
-jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
+jest.mock('lib/abtest', () => ({ abtest: () => {} }));
+jest.mock('lib/analytics', () => ({}));
+jest.mock('lib/analytics/page-view-tracker', () => require('components/empty-component'));
+jest.mock('my-sites/themes/theme-preview', () => require('components/empty-component'));
 
-describe( 'logged-out', () => {
-	describe( 'when calling renderToString()', () => {
+describe('logged-out', () => {
+	describe('when calling renderToString()', () => {
 		const themes = [
 			{
 				author: 'AudioTheme',
@@ -80,59 +80,59 @@ describe( 'logged-out', () => {
 		];
 		let layout, store, initialState;
 
-		beforeAll( () => {
+		beforeAll(() => {
 			store = createReduxStore();
-			setStore( store );
+			setStore(store);
 			// Preserve initial theme state by deep cloning it.
-			initialState = JSON.parse( JSON.stringify( store.getState().themes ) );
-		} );
+			initialState = JSON.parse(JSON.stringify(store.getState().themes));
+		});
 
-		beforeEach( () => {
+		beforeEach(() => {
 			// Ensure initial theme state at the beginning of every test.
 			store.getState().themes = initialState;
 			layout = (
-				<ReduxProvider store={ store }>
+				<ReduxProvider store={store}>
 					<LoggedOutShowcase />
 				</ReduxProvider>
 			);
-		} );
+		});
 
-		test( 'renders without error when no themes are present', () => {
+		test('renders without error when no themes are present', () => {
 			let markup;
-			expect( () => {
-				markup = renderToString( layout );
-			} ).not.toThrow();
+			expect(() => {
+				markup = renderToString(layout);
+			}).not.toThrow();
 			// Should show a "No themes found" message
-			expect( markup.includes( 'empty-content' ) ).toBeTruthy();
-		} );
+			expect(markup.includes('empty-content')).toBeTruthy();
+		});
 
-		test( 'renders without error when themes are present', () => {
-			store.dispatch( receiveThemes( themes, 'wpcom', DEFAULT_THEME_QUERY, themes.length ) );
+		test('renders without error when themes are present', () => {
+			store.dispatch(receiveThemes(themes, 'wpcom', DEFAULT_THEME_QUERY, themes.length));
 
 			let markup;
-			expect( () => {
-				markup = renderToString( layout );
-			} ).not.toThrow();
+			expect(() => {
+				markup = renderToString(layout);
+			}).not.toThrow();
 			// All 5 themes should appear...
-			expect( markup.match( /theme__content/g ).length ).toBe( 5 );
+			expect(markup.match(/theme__content/g).length).toBe(5);
 			// .. and no empty content placeholders should appear
-			expect( markup.includes( 'empty-content' ) ).toBeFalsy();
-		} );
+			expect(markup.includes('empty-content')).toBeFalsy();
+		});
 
-		test( 'renders without error when theme fetch fails', () => {
-			store.dispatch( {
+		test('renders without error when theme fetch fails', () => {
+			store.dispatch({
 				type: THEMES_REQUEST_FAILURE,
 				siteId: 'wpcom',
 				query: {},
 				error: 'Error',
-			} );
+			});
 
 			let markup;
-			expect( () => {
-				markup = renderToString( layout );
-			} ).not.toThrow();
+			expect(() => {
+				markup = renderToString(layout);
+			}).not.toThrow();
 			// Should show a "No themes found" message
-			expect( markup.includes( 'empty-content' ) ).toBeTruthy();
-		} );
-	} );
-} );
+			expect(markup.includes('empty-content')).toBeTruthy();
+		});
+	});
+});

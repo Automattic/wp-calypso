@@ -8,16 +8,16 @@ import { expect } from 'chai';
  */
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
-describe( 'getPrimarySiteId()', () => {
-	test( 'should return null if there is no current user', () => {
-		const siteId = getPrimarySiteId( {
+describe('getPrimarySiteId()', () => {
+	test('should return null if there is no current user', () => {
+		const siteId = getPrimarySiteId({
 			currentUser: {},
-		} );
-		expect( siteId ).to.be.null;
-	} );
+		});
+		expect(siteId).to.be.null;
+	});
 
-	test( "should return current user's primary site's ID", () => {
-		const siteId = getPrimarySiteId( {
+	test("should return current user's primary site's ID", () => {
+		const siteId = getPrimarySiteId({
 			currentUser: {
 				id: 12345678,
 			},
@@ -28,7 +28,7 @@ describe( 'getPrimarySiteId()', () => {
 					},
 				},
 			},
-		} );
-		expect( siteId ).to.equal( 7654321 );
-	} );
-} );
+		});
+		expect(siteId).to.equal(7654321);
+	});
+});

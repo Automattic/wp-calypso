@@ -25,21 +25,21 @@ import './setup';
  * @param {object} cartItem - The item added to the cart
  * @returns {void}
  */
-export async function recordAddToCart( cartItem ) {
+export async function recordAddToCart(cartItem) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordAddToCart: [Skipping] ad tracking is not allowed' );
+	if (!isAdTrackingAllowed()) {
+		debug('recordAddToCart: [Skipping] ad tracking is not allowed');
 		return;
 	}
 
 	await loadTrackingScripts();
 
-	debug( 'recordAddToCart:', cartItem );
+	debug('recordAddToCart:', cartItem);
 
 	// Google Ads Gtag
 
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if (isWpcomGoogleAdsGtagEnabled) {
 		const params = [
 			'event',
 			'conversion',
@@ -47,13 +47,13 @@ export async function recordAddToCart( cartItem ) {
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagAddToCart,
 			},
 		];
-		debug( 'recordAddToCart: [Google Ads Gtag] WPCom', params );
-		window.gtag( ...params );
+		debug('recordAddToCart: [Google Ads Gtag] WPCom', params);
+		window.gtag(...params);
 	}
 
 	// Facebook
 
-	if ( isFacebookEnabled ) {
+	if (isFacebookEnabled) {
 		// Fire both WP and JP pixels.
 
 		// WP
@@ -63,11 +63,11 @@ export async function recordAddToCart( cartItem ) {
 			'AddToCart',
 			{
 				product_slug: cartItem.product_slug,
-				free_trial: Boolean( cartItem.free_trial ),
+				free_trial: Boolean(cartItem.free_trial),
 			},
 		];
-		debug( 'recordAddToCart: [Facebook]', params );
-		window.fbq( ...params );
+		debug('recordAddToCart: [Facebook]', params);
+		window.fbq(...params);
 
 		// Jetpack
 		params = [
@@ -76,50 +76,50 @@ export async function recordAddToCart( cartItem ) {
 			'AddToCart',
 			{
 				product_slug: cartItem.product_slug,
-				free_trial: Boolean( cartItem.free_trial ),
+				free_trial: Boolean(cartItem.free_trial),
 			},
 		];
-		debug( 'recordAddToCart: [Jetpack]', params );
-		window.fbq( ...params );
+		debug('recordAddToCart: [Jetpack]', params);
+		window.fbq(...params);
 	}
 
 	// Bing
 
-	if ( isBingEnabled ) {
+	if (isBingEnabled) {
 		const params = {
 			ec: 'addtocart',
 			el: cartItem.product_slug,
 		};
-		debug( 'recordAddToCart: [Bing]', params );
-		window.uetq.push( params );
+		debug('recordAddToCart: [Bing]', params);
+		window.uetq.push(params);
 	}
 
 	// DCM Floodlight
 
-	if ( isFloodlightEnabled ) {
-		debug( 'recordAddToCart: [Floodlight]' );
-		recordParamsInFloodlightGtag( {
+	if (isFloodlightEnabled) {
+		debug('recordAddToCart: [Floodlight]');
+		recordParamsInFloodlightGtag({
 			u2: cartItem.product_name,
 			send_to: 'DC-6355556/wordp0/addto0+standard',
-		} );
+		});
 	}
 
 	// Criteo
 
-	if ( isCriteoEnabled ) {
+	if (isCriteoEnabled) {
 		const params = [
 			'viewItem',
 			{
 				item: cartItem.product_id,
 			},
 		];
-		debug( 'recordAddToCart: [Criteo]', params );
-		recordInCriteo( ...params );
+		debug('recordAddToCart: [Criteo]', params);
+		recordInCriteo(...params);
 	}
 
 	// Pinterest
 
-	if ( isPinterestEnabled ) {
+	if (isPinterestEnabled) {
 		const params = [
 			'track',
 			'addtocart',
@@ -134,9 +134,9 @@ export async function recordAddToCart( cartItem ) {
 				],
 			},
 		];
-		debug( 'recordAddToCart: [Pinterest]', params );
-		window.pintrk( ...params );
+		debug('recordAddToCart: [Pinterest]', params);
+		window.pintrk(...params);
 	}
 
-	debug( 'recordAddToCart: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug('recordAddToCart: dataLayer:', JSON.stringify(window.dataLayer, null, 2));
 }

@@ -8,9 +8,9 @@ class DomainDns {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( domainId, wpcom ) {
-		if ( ! ( this instanceof DomainDns ) ) {
-			return new DomainDns( domainId, wpcom );
+	constructor(domainId, wpcom) {
+		if (!(this instanceof DomainDns)) {
+			return new DomainDns(domainId, wpcom);
 		}
 
 		this._domain = domainId;
@@ -26,13 +26,13 @@ class DomainDns {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	add( record, query, fn ) {
-		if ( 'function' === typeof query ) {
+	add(record, query, fn) {
+		if ('function' === typeof query) {
 			fn = query;
 			query = {};
 		}
 
-		return this.wpcom.req.post( this._subpath + '/add', query, record, fn );
+		return this.wpcom.req.post(this._subpath + '/add', query, record, fn);
 	}
 
 	/**
@@ -43,9 +43,9 @@ class DomainDns {
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	delete( record, query, fn ) {
-		return this.wpcom.req.post( this._subpath + '/delete', query, record, fn );
-	};
+	delete(record, query, fn) {
+		return this.wpcom.req.post(this._subpath + '/delete', query, record, fn);
+	}
 }
 
 /**

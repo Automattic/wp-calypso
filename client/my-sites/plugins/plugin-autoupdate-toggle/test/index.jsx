@@ -17,44 +17,42 @@ import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
 import { PluginAutoUpdateToggle } from 'my-sites/plugins/plugin-autoupdate-toggle';
 
-jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
-	require( './mocks/plugin-action' )
-);
-jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
-jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
+jest.mock('my-sites/plugins/plugin-action/plugin-action', () => require('./mocks/plugin-action'));
+jest.mock('lib/plugins/actions', () => require('./mocks/actions'));
+jest.mock('query', () => require('component-query'), { virtual: true });
 
-describe( 'PluginAutoupdateToggle', () => {
+describe('PluginAutoupdateToggle', () => {
 	const mockedProps = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
 		translate: spy(),
 	};
 
-	afterEach( () => {
+	afterEach(() => {
 		mockedActions.togglePluginAutoUpdate.resetHistory();
 		mockedProps.recordGoogleEvent.resetHistory();
-	} );
+	});
 
-	test( 'should render the component', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
+	test('should render the component', () => {
+		const wrapper = mount(<PluginAutoUpdateToggle {...mockedProps} {...fixtures} />);
 
-		expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
-	} );
+		expect(wrapper.find('.plugin-action')).to.have.lengthOf(1);
+	});
 
-	test( 'should register an event when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
+	test('should register an event when the subcomponent action is executed', () => {
+		const wrapper = mount(<PluginAutoUpdateToggle {...mockedProps} {...fixtures} />);
 
-		wrapper.simulate( 'click' );
+		wrapper.simulate('click');
 
-		expect( mockedProps.recordGoogleEvent.called ).to.equal( true );
-		expect( mockedProps.recordTracksEvent.called ).to.equal( true );
-	} );
+		expect(mockedProps.recordGoogleEvent.called).to.equal(true);
+		expect(mockedProps.recordTracksEvent.called).to.equal(true);
+	});
 
-	test( 'should call an action when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
+	test('should call an action when the subcomponent action is executed', () => {
+		const wrapper = mount(<PluginAutoUpdateToggle {...mockedProps} {...fixtures} />);
 
-		wrapper.simulate( 'click' );
+		wrapper.simulate('click');
 
-		expect( mockedActions.togglePluginAutoUpdate.called ).to.equal( true );
-	} );
-} );
+		expect(mockedActions.togglePluginAutoUpdate.called).to.equal(true);
+	});
+});

@@ -41,7 +41,7 @@ export class JetpackConnectNotices extends Component {
 		// instead of showing a notice.
 		onActionClick: PropTypes.func,
 		onTerminalError: PropTypes.func,
-		noticeType: PropTypes.oneOf( [
+		noticeType: PropTypes.oneOf([
 			ALREADY_CONNECTED,
 			ALREADY_CONNECTED_BY_OTHER_USER,
 			ALREADY_OWNED,
@@ -64,7 +64,7 @@ export class JetpackConnectNotices extends Component {
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 			XMLRPC_ERROR,
-		] ).isRequired,
+		]).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
 	};
@@ -75,16 +75,16 @@ export class JetpackConnectNotices extends Component {
 		const noticeValues = {
 			icon: 'notice',
 			status: 'is-error',
-			text: translate( "That's not a valid url." ),
+			text: translate("That's not a valid url."),
 			showDismiss: false,
 		};
 
-		if ( onDismissClick ) {
+		if (onDismissClick) {
 			noticeValues.onDismissClick = onDismissClick;
 			noticeValues.showDismiss = true;
 		}
 
-		switch ( noticeType ) {
+		switch (noticeType) {
 			case NOT_EXISTS:
 				return noticeValues;
 
@@ -102,12 +102,12 @@ export class JetpackConnectNotices extends Component {
 			case IS_DOT_COM:
 				noticeValues.status = 'is-success';
 				noticeValues.icon = 'plugins';
-				noticeValues.text = translate( 'Good news! WordPress.com sites already have Jetpack.' );
+				noticeValues.text = translate('Good news! WordPress.com sites already have Jetpack.');
 				return noticeValues;
 
 			case NOT_WORDPRESS:
 				noticeValues.icon = 'block';
-				noticeValues.text = translate( "That's not a WordPress site." );
+				noticeValues.text = translate("That's not a WordPress site.");
 				return noticeValues;
 
 			case NOT_ACTIVE_JETPACK:
@@ -116,18 +116,18 @@ export class JetpackConnectNotices extends Component {
 
 			case OUTDATED_JETPACK:
 				noticeValues.icon = 'block';
-				noticeValues.text = translate( 'You must update Jetpack before connecting.' );
+				noticeValues.text = translate('You must update Jetpack before connecting.');
 				return noticeValues;
 
 			case JETPACK_IS_DISCONNECTED:
 				noticeValues.icon = 'link-break';
-				noticeValues.text = translate( 'Jetpack is currently disconnected.' );
+				noticeValues.text = translate('Jetpack is currently disconnected.');
 				return noticeValues;
 
 			case JETPACK_IS_VALID:
 				noticeValues.status = 'is-success';
 				noticeValues.icon = 'plugins';
-				noticeValues.text = translate( 'Jetpack is connected.' );
+				noticeValues.text = translate('Jetpack is connected.');
 				return noticeValues;
 
 			case NOT_JETPACK:
@@ -135,15 +135,13 @@ export class JetpackConnectNotices extends Component {
 				return null;
 
 			case WORDPRESS_DOT_COM:
-				noticeValues.text = translate( "Oops, that's us." );
+				noticeValues.text = translate("Oops, that's us.");
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'status';
 				return noticeValues;
 
 			case RETRYING_AUTH:
-				noticeValues.text = translate(
-					'Error authorizing. Page is refreshing for another attempt.'
-				);
+				noticeValues.text = translate('Error authorizing. Page is refreshing for another attempt.');
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
 				noticeValues.userCanRetry = true;
@@ -159,7 +157,7 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case SECRET_EXPIRED:
-				noticeValues.text = translate( "Oops, that took a while. You'll have to try again." );
+				noticeValues.text = translate("Oops, that took a while. You'll have to try again.");
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';
 				return noticeValues;
@@ -202,7 +200,7 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case XMLRPC_ERROR:
-				noticeValues.text = translate( 'We had trouble connecting.' );
+				noticeValues.text = translate('We had trouble connecting.');
 				return noticeValues;
 
 			case INVALID_CREDENTIALS:
@@ -218,51 +216,51 @@ export class JetpackConnectNotices extends Component {
 	getNoticeActionText() {
 		const { noticeType, translate } = this.props;
 
-		switch ( noticeType ) {
+		switch (noticeType) {
 			case XMLRPC_ERROR:
-				return translate( 'Try again' );
+				return translate('Try again');
 		}
 
 		return null;
 	}
 
 	componentDidUpdate() {
-		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
-			this.props.onTerminalError( this.props.noticeType );
+		if (this.errorIsTerminal() && this.props.onTerminalError) {
+			this.props.onTerminalError(this.props.noticeType);
 		}
 	}
 
 	componentDidMount() {
-		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
-			this.props.onTerminalError( this.props.noticeType );
+		if (this.errorIsTerminal() && this.props.onTerminalError) {
+			this.props.onTerminalError(this.props.noticeType);
 		}
 	}
 
 	errorIsTerminal() {
 		const notice = this.getNoticeValues();
-		return notice && ! notice.userCanRetry;
+		return notice && !notice.userCanRetry;
 	}
 
 	renderNoticeAction() {
 		const { onActionClick } = this.props;
 		const noticeActionText = this.getNoticeActionText();
 
-		if ( ! onActionClick || ! noticeActionText ) {
+		if (!onActionClick || !noticeActionText) {
 			return null;
 		}
 
-		return <NoticeAction onClick={ onActionClick }>{ noticeActionText }</NoticeAction>;
+		return <NoticeAction onClick={onActionClick}>{noticeActionText}</NoticeAction>;
 	}
 
 	render() {
 		const noticeValues = this.getNoticeValues();
-		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
+		if (this.errorIsTerminal() && this.props.onTerminalError) {
 			return null;
 		}
-		if ( noticeValues ) {
+		if (noticeValues) {
 			return (
 				<div className="jetpack-connect__notices-container">
-					<Notice { ...noticeValues }>{ this.renderNoticeAction() }</Notice>
+					<Notice {...noticeValues}>{this.renderNoticeAction()}</Notice>
 				</div>
 			);
 		}
@@ -270,4 +268,4 @@ export class JetpackConnectNotices extends Component {
 	}
 }
 
-export default localize( JetpackConnectNotices );
+export default localize(JetpackConnectNotices);

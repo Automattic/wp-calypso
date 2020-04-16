@@ -40,24 +40,24 @@ export class GSuiteNudge extends React.Component {
 		this.props.handleCheckoutCompleteRedirect();
 	};
 
-	handleAddEmailClick = cartItems => {
+	handleAddEmailClick = (cartItems) => {
 		const { siteSlug, receiptId } = this.props;
 		this.removePlanFromCart();
 
 		addItems(
 			// add `receipt_for_domain` to cartItem extras
-			cartItems.map( item => ( {
+			cartItems.map((item) => ({
 				...item,
 				extra: { ...item.extra, receipt_for_domain: receiptId },
-			} ) )
+			}))
 		);
 
-		page( `/checkout/${ siteSlug }` );
+		page(`/checkout/${siteSlug}`);
 	};
 
 	removePlanFromCart() {
-		const items = getAllCartItems( this.props.cart );
-		items.filter( isDotComPlan ).forEach( item => removeItem( item, false ) );
+		const items = getAllCartItems(this.props.cart);
+		items.filter(isDotComPlan).forEach((item) => removeItem(item, false));
 	}
 
 	render() {
@@ -72,34 +72,34 @@ export class GSuiteNudge extends React.Component {
 							: '/checkout/:site/with-gsuite/:domain'
 					}
 					title="G Suite Upsell"
-					properties={ { site: siteSlug, domain, ...( receiptId && { receipt_id: receiptId } ) } }
+					properties={{ site: siteSlug, domain, ...(receiptId && { receipt_id: receiptId }) }}
 				/>
 				<DocumentHead
-					title={ translate( 'Add G Suite < %(siteTitle)s', {
+					title={translate('Add G Suite < %(siteTitle)s', {
 						args: { siteTitle },
-					} ) }
+					})}
 				/>
-				<QuerySites siteId={ selectedSiteId } />
+				<QuerySites siteId={selectedSiteId} />
 				<GSuiteUpsellCard
-					domain={ this.props.domain }
-					productSlug={ GSUITE_BASIC_SLUG }
-					onSkipClick={ this.handleSkipClick }
-					onAddEmailClick={ this.handleAddEmailClick }
+					domain={this.props.domain}
+					productSlug={GSUITE_BASIC_SLUG}
+					onSkipClick={this.handleSkipClick}
+					onAddEmailClick={this.handleAddEmailClick}
 				/>
 			</Main>
 		);
 	}
 }
 
-export default connect( ( state, props ) => {
+export default connect((state, props) => {
 	const { receiptId, selectedSiteId: siteId } = props;
-	const purchases = get( getReceiptById( state, receiptId ), 'data.purchases', [] );
+	const purchases = get(getReceiptById(state, receiptId), 'data.purchases', []);
 	const isEligibleForChecklist =
-		some( compact( purchases ), isDotComPlan ) && isEligibleForDotcomChecklist( state, siteId );
+		some(compact(purchases), isDotComPlan) && isEligibleForDotcomChecklist(state, siteId);
 
 	return {
-		siteSlug: getSiteSlug( state, props.selectedSiteId ),
-		siteTitle: getSiteTitle( state, props.selectedSiteId ),
+		siteSlug: getSiteSlug(state, props.selectedSiteId),
+		siteTitle: getSiteTitle(state, props.selectedSiteId),
 		isEligibleForChecklist,
 	};
-} )( localize( GSuiteNudge ) );
+})(localize(GSuiteNudge));

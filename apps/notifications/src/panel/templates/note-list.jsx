@@ -53,29 +53,29 @@ export class NoteList extends React.Component {
 		this.props.global.updateUndoBar = this.updateUndoBar;
 		this.props.global.resetUndoBar = this.resetUndoBar;
 
-		if ( 'function' === typeof this.props.storeVisibilityUpdater ) {
-			this.props.storeVisibilityUpdater( this.ensureSelectedNoteVisibility );
+		if ('function' === typeof this.props.storeVisibilityUpdater) {
+			this.props.storeVisibilityUpdater(this.ensureSelectedNoteVisibility);
 		}
 	}
 
 	componentDidMount() {
-		ReactDOM.findDOMNode( this.scrollableContainer ).addEventListener( 'scroll', this.onScroll );
+		ReactDOM.findDOMNode(this.scrollableContainer).addEventListener('scroll', this.onScroll);
 	}
 
 	componentWillUnmount() {
-		ReactDOM.findDOMNode( this.scrollableContainer ).removeEventListener( 'scroll', this.onScroll );
+		ReactDOM.findDOMNode(this.scrollableContainer).removeEventListener('scroll', this.onScroll);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.isPanelOpen && ! nextProps.isPanelOpen ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.isPanelOpen && !nextProps.isPanelOpen) {
 			// scroll to top, from toggling frame
-			this.setState( { lastSelectedIndex: 0, scrollY: 0 } );
+			this.setState({ lastSelectedIndex: 0, scrollY: 0 });
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( this.noteList && ! this.props.isLoading ) {
-			const element = ReactDOM.findDOMNode( this.scrollableContainer );
+	componentDidUpdate(prevProps) {
+		if (this.noteList && !this.props.isLoading) {
+			const element = ReactDOM.findDOMNode(this.scrollableContainer);
 			if (
 				element.clientHeight > 0 &&
 				element.scrollTop + element.clientHeight >= this.noteList.clientHeight - 300
@@ -84,53 +84,53 @@ export class NoteList extends React.Component {
 			}
 		}
 
-		if ( prevProps.selectedNoteId !== this.props.selectedNoteId ) {
+		if (prevProps.selectedNoteId !== this.props.selectedNoteId) {
 			this.ensureSelectedNoteVisibility();
 		}
 	}
 
 	onScroll = () => {
-		if ( this.isScrolling ) {
+		if (this.isScrolling) {
 			return;
 		}
 
 		this.isScrolling = true;
 
-		requestAnimationFrame( () => ( this.isScrolling = false ) );
+		requestAnimationFrame(() => (this.isScrolling = false));
 
-		const element = ReactDOM.findDOMNode( this.scrollableContainer );
-		if ( ! this.state.scrolling || this.state.scrollY !== element.scrollTop ) {
+		const element = ReactDOM.findDOMNode(this.scrollableContainer);
+		if (!this.state.scrolling || this.state.scrollY !== element.scrollTop) {
 			// only set state and trigger render if something has changed
-			this.setState( {
+			this.setState({
 				scrolling: true,
 				scrollY: element.scrollTop,
-			} );
+			});
 		}
 
-		clearTimeout( this.scrollTimeout );
-		this.scrollTimeout = setTimeout( this.onScrollEnd, this.props.scrollTimeout );
+		clearTimeout(this.scrollTimeout);
+		this.scrollTimeout = setTimeout(this.onScrollEnd, this.props.scrollTimeout);
 	};
 
 	onScrollEnd = () => {
-		this.setState( { scrolling: false } );
+		this.setState({ scrolling: false });
 	};
 
-	updateStatusBar = ( message, classList, delay ) => {
-		this.setState( {
+	updateStatusBar = (message, classList, delay) => {
+		this.setState({
 			statusClasses: classList,
 			statusMessage: message,
 			statusTimeout: delay,
-		} );
+		});
 	};
 
 	resetStatusBar = () => {
-		this.setState( {
+		this.setState({
 			statusClasses: [],
 			statusMessage: '',
-		} );
+		});
 	};
 
-	updateUndoBar = ( action, note ) => {
+	updateUndoBar = (action, note) => {
 		this.setState(
 			{
 				undoAction: action,
@@ -138,7 +138,7 @@ export class NoteList extends React.Component {
 			},
 			() => {
 				/* Jump-start the undo bar if it hasn't updated yet */
-				if ( this.startUndoSequence ) {
+				if (this.startUndoSequence) {
 					this.startUndoSequence();
 				}
 			}
@@ -146,20 +146,20 @@ export class NoteList extends React.Component {
 	};
 
 	resetUndoBar = () => {
-		this.setState( {
+		this.setState({
 			undoAction: null,
 			undoNote: null,
-		} );
+		});
 	};
 
 	ensureSelectedNoteVisibility = () => {
 		let scrollTarget = null;
 		const selectedNote = this.props.selectedNote;
-		const noteElement = this.noteElements[ selectedNote ];
+		const noteElement = this.noteElements[selectedNote];
 		let listElement = null;
 		let topPadding;
 
-		if ( null === selectedNote || ! noteElement ) {
+		if (null === selectedNote || !noteElement) {
 			scrollTarget = this.state.scrollY + 1;
 		} else {
 			/* DOM element for the list */
@@ -168,150 +168,150 @@ export class NoteList extends React.Component {
 
 			const yOffset = listElement.parentNode.scrollTop;
 
-			if ( noteElement.offsetTop - yOffset <= topPadding ) {
+			if (noteElement.offsetTop - yOffset <= topPadding) {
 				/* Scroll up if note is above viewport */
 				scrollTarget = noteElement.offsetTop - topPadding;
-			} else if ( yOffset + this.props.height <= noteElement.offsetTop + topPadding ) {
+			} else if (yOffset + this.props.height <= noteElement.offsetTop + topPadding) {
 				/* Scroll down if note is below viewport */
 				scrollTarget = noteElement.offsetTop + noteElement.offsetHeight - this.props.height;
 			}
 		}
 
-		if ( scrollTarget !== null && listElement ) {
+		if (scrollTarget !== null && listElement) {
 			listElement.parentNode.scrollTop = scrollTarget;
 		}
 	};
 
-	storeNote = noteId => ref => {
-		if ( ref ) {
-			this.noteElements[ noteId ] = ref;
+	storeNote = (noteId) => (ref) => {
+		if (ref) {
+			this.noteElements[noteId] = ref;
 		} else {
-			delete this.noteElements[ noteId ];
+			delete this.noteElements[noteId];
 		}
 	};
 
-	storeNoteList = ref => {
+	storeNoteList = (ref) => {
 		this.noteList = ref;
 	};
 
-	storeScrollableContainer = ref => {
+	storeScrollableContainer = (ref) => {
 		this.scrollableContainer = ref;
 	};
 
-	storeUndoActImmediately = actImmediately => {
+	storeUndoActImmediately = (actImmediately) => {
 		this.undoActImmediately = actImmediately;
 	};
 
-	storeUndoBar = ref => {
+	storeUndoBar = (ref) => {
 		this.undoBar = ref;
 	};
 
-	storeUndoStartSequence = startSequence => {
+	storeUndoStartSequence = (startSequence) => {
 		this.startUndoSequence = startSequence;
 	};
 
 	render() {
 		const groupTitles = [
-			this.props.translate( 'Today', {
+			this.props.translate('Today', {
 				comment: 'heading for a list of notifications from today',
-			} ),
-			this.props.translate( 'Yesterday', {
+			}),
+			this.props.translate('Yesterday', {
 				comment: 'heading for a list of notifications from yesterday',
-			} ),
-			this.props.translate( 'Older than 2 days', {
+			}),
+			this.props.translate('Older than 2 days', {
 				comment: 'heading for a list of notifications that are more than 2 days old',
-			} ),
-			this.props.translate( 'Older than a week', {
+			}),
+			this.props.translate('Older than a week', {
 				comment: 'heading for a list of notifications that are more than a week old',
-			} ),
-			this.props.translate( 'Older than a month', {
+			}),
+			this.props.translate('Older than a month', {
 				comment: 'heading for a list of notifications that are more than a month old',
-			} ),
+			}),
 		];
 
 		// create groups of (before, after) times for grouping notes
-		const now = new Date().setHours( 0, 0, 0, 0 );
+		const now = new Date().setHours(0, 0, 0, 0);
 		const timeBoundaries = [
 			Infinity,
 			now,
-			new Date( now - DAY_MILLISECONDS ),
-			new Date( now - DAY_MILLISECONDS * 6 ),
-			new Date( now - DAY_MILLISECONDS * 30 ),
+			new Date(now - DAY_MILLISECONDS),
+			new Date(now - DAY_MILLISECONDS * 6),
+			new Date(now - DAY_MILLISECONDS * 30),
 			-Infinity,
 		];
-		const timeGroups = zip( timeBoundaries.slice( 0, -1 ), timeBoundaries.slice( 1 ) );
+		const timeGroups = zip(timeBoundaries.slice(0, -1), timeBoundaries.slice(1));
 
-		const createNoteComponent = note => {
-			if ( this.state.undoNote && note.id === this.state.undoNote.id ) {
+		const createNoteComponent = (note) => {
+			if (this.state.undoNote && note.id === this.state.undoNote.id) {
 				return (
 					<UndoListItem
-						ref={ this.storeUndoBar }
-						storeImmediateActor={ this.storeUndoActImmediately }
-						storeStartSequence={ this.storeUndoStartSequence }
-						key={ 'undo-' + this.state.undoAction + '-' + note.id }
-						action={ this.state.undoAction }
-						note={ this.state.undoNote }
-						global={ this.props.global }
+						ref={this.storeUndoBar}
+						storeImmediateActor={this.storeUndoActImmediately}
+						storeStartSequence={this.storeUndoStartSequence}
+						key={'undo-' + this.state.undoAction + '-' + note.id}
+						action={this.state.undoAction}
+						note={this.state.undoNote}
+						global={this.props.global}
 					/>
 				);
 			}
 
 			/* Only show the note if it's not in the list of hidden notes */
-			if ( ! this.props.isNoteHidden( note.id ) ) {
+			if (!this.props.isNoteHidden(note.id)) {
 				return (
 					<Note
-						note={ note }
-						ref={ this.storeNote( note.id ) }
-						key={ 'note-' + note.id }
-						detailView={ false }
-						client={ this.props.client }
-						global={ this.props.global }
-						currentNote={ this.props.selectedNoteId }
-						selectedNote={ this.props.selectedNote }
+						note={note}
+						ref={this.storeNote(note.id)}
+						key={'note-' + note.id}
+						detailView={false}
+						client={this.props.client}
+						global={this.props.global}
+						currentNote={this.props.selectedNoteId}
+						selectedNote={this.props.selectedNote}
 					/>
 				);
 			}
 		};
 
 		// Create new groups of messages by time periods
-		const noteGroups = groupBy( this.props.notes, ( { timestamp } ) => {
-			const time = new Date( timestamp );
-			return findIndex( timeGroups, ( [ after, before ] ) => before < time && time <= after );
-		} );
+		const noteGroups = groupBy(this.props.notes, ({ timestamp }) => {
+			const time = new Date(timestamp);
+			return findIndex(timeGroups, ([after, before]) => before < time && time <= after);
+		});
 
-		let [ notes ] = reduce(
+		let [notes] = reduce(
 			noteGroups,
-			( [ list, isFirst ], group, index ) => {
-				const title = groupTitles[ index ];
-				const header = <ListHeader { ...{ key: title, title, isFirst } } />;
+			([list, isFirst], group, index) => {
+				const title = groupTitles[index];
+				const header = <ListHeader {...{ key: title, title, isFirst }} />;
 
-				return [ [ ...list, header, ...group.map( createNoteComponent ) ], false ];
+				return [[...list, header, ...group.map(createNoteComponent)], false];
 			},
-			[ [], true ]
+			[[], true]
 		);
 
 		const emptyNoteList = 0 === notes.length;
 
-		var filter = Filters[ this.props.filterName ]();
+		var filter = Filters[this.props.filterName]();
 		var loadingIndicatorVisibility = { opacity: 0 };
-		if ( this.props.isLoading ) {
+		if (this.props.isLoading) {
 			loadingIndicatorVisibility.opacity = 1;
-			if ( emptyNoteList ) {
+			if (emptyNoteList) {
 				loadingIndicatorVisibility.height = this.props.height - TITLE_OFFSET + 'px';
 			}
-		} else if ( ! this.props.initialLoad && emptyNoteList && filter.emptyMessage ) {
+		} else if (!this.props.initialLoad && emptyNoteList && filter.emptyMessage) {
 			notes = (
 				<EmptyMessage
-					emptyMessage={ filter.emptyMessage }
-					height={ this.props.height }
-					linkMessage={ filter.emptyLinkMessage }
-					link={ filter.emptyLink }
-					name={ filter.name }
-					showing={ this.props.isPanelOpen }
+					emptyMessage={filter.emptyMessage}
+					height={this.props.height}
+					linkMessage={filter.emptyLinkMessage}
+					link={filter.emptyLink}
+					name={filter.name}
+					showing={this.props.isPanelOpen}
 				/>
 			);
 		} else if (
-			! this.props.selectedNoteId &&
+			!this.props.selectedNoteId &&
 			notes.length > 0 &&
 			notes.length * 90 > this.props.height
 		) {
@@ -319,40 +319,40 @@ export class NoteList extends React.Component {
 			// we are executing this pre-render
 			notes.push(
 				<div key="done-message" className="wpnc__done-message">
-					{ this.props.translate( 'The End', {
+					{this.props.translate('The End', {
 						comment: 'message when end of notifications list reached',
-					} ) }
+					})}
 				</div>
 			);
 		}
 
-		const classes = classNames( 'wpnc__note-list', {
-			'disable-sticky': !! window.chrome || !! window.electron, // position: sticky doesn't work in Chrome – `window.chrome` does not exist in electron
-			'is-note-open': !! this.props.selectedNoteId,
-		} );
+		const classes = classNames('wpnc__note-list', {
+			'disable-sticky': !!window.chrome || !!window.electron, // position: sticky doesn't work in Chrome – `window.chrome` does not exist in electron
+			'is-note-open': !!this.props.selectedNoteId,
+		});
 
-		const listViewClasses = classNames( 'wpnc__list-view', {
-			wpnc__current: !! this.props.selectedNoteId,
+		const listViewClasses = classNames('wpnc__list-view', {
+			wpnc__current: !!this.props.selectedNoteId,
 			'is-empty-list': emptyNoteList,
-		} );
+		});
 
 		return (
-			<div className={ classes }>
-				<FilterBar controller={ this.props.filterController } />
-				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
-					<ol ref={ this.storeNoteList } className="wpnc__notes">
+			<div className={classes}>
+				<FilterBar controller={this.props.filterController} />
+				<div ref={this.storeScrollableContainer} className={listViewClasses}>
+					<ol ref={this.storeNoteList} className="wpnc__notes">
 						<StatusBar
-							statusClasses={ this.state.statusClasses }
-							statusMessage={ this.state.statusMessage }
-							statusTimeout={ this.state.statusTimeout }
-							statusReset={ this.resetStatusBar }
+							statusClasses={this.state.statusClasses}
+							statusMessage={this.state.statusMessage}
+							statusTimeout={this.state.statusTimeout}
+							statusReset={this.resetStatusBar}
 						/>
-						{ notes }
-						{ this.props.isLoading && (
-							<div style={ loadingIndicatorVisibility } className="wpnc__loading-indicator">
+						{notes}
+						{this.props.isLoading && (
+							<div style={loadingIndicatorVisibility} className="wpnc__loading-indicator">
 								<Spinner />
 							</div>
-						) }
+						)}
 					</ol>
 				</div>
 			</div>
@@ -360,18 +360,18 @@ export class NoteList extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	isLoading: getIsLoading( state ),
-	isNoteHidden: noteId => getIsNoteHidden( state, noteId ),
-	isPanelOpen: getIsPanelOpen( state ),
-	selectedNoteId: getSelectedNoteId( state ),
-	filterName: getFilterName( state ),
-} );
+const mapStateToProps = (state) => ({
+	isLoading: getIsLoading(state),
+	isNoteHidden: (noteId) => getIsNoteHidden(state, noteId),
+	isPanelOpen: getIsPanelOpen(state),
+	selectedNoteId: getSelectedNoteId(state),
+	filterName: getFilterName(state),
+});
 
 const mapDispatchToProps = {
 	selectNote: actions.ui.selectNote,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(
-	localize( NoteList )
+export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(
+	localize(NoteList)
 );

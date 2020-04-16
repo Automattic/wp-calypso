@@ -29,45 +29,45 @@ const initialDomainState = {
  * @param {object} [data] Domain name servers data.
  * @returns {object} New state
  */
-function updateState( state, domainName, data ) {
+function updateState(state, domainName, data) {
 	const command = {
-		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data ),
+		[domainName]: {
+			$set: Object.assign({}, state[domainName] || initialDomainState, data),
 		},
 	};
 
-	return update( state, command );
+	return update(state, command);
 }
 
-function reducer( state, payload ) {
+function reducer(state, payload) {
 	const { action } = payload;
 
-	switch ( action.type ) {
+	switch (action.type) {
 		case NAMESERVERS_FETCH:
-			state = updateState( state, action.domainName, {
+			state = updateState(state, action.domainName, {
 				isFetching: true,
 				error: false,
-			} );
+			});
 			break;
 		case NAMESERVERS_FETCH_FAILED:
-			state = updateState( state, action.domainName, {
+			state = updateState(state, action.domainName, {
 				isFetching: false,
 				error: true,
-			} );
+			});
 			break;
 		case NAMESERVERS_FETCH_COMPLETED:
-			state = updateState( state, action.domainName, {
+			state = updateState(state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,
 				list: action.nameservers,
-			} );
+			});
 			break;
 		case NAMESERVERS_UPDATE_COMPLETED:
-			state = updateState( state, action.domainName, {
+			state = updateState(state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,
 				list: action.nameservers,
-			} );
+			});
 			break;
 	}
 

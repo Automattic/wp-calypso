@@ -47,16 +47,16 @@ class App extends Component {
 	};
 
 	componentDidMount() {
-		this.fetchData( this.props );
+		this.fetchData(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( this.props.children !== newProps.children ) {
-			window.scrollTo( 0, 0 );
+	UNSAFE_componentWillReceiveProps(newProps) {
+		if (this.props.children !== newProps.children) {
+			window.scrollTo(0, 0);
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const { allRequiredPluginsActive, pluginsLoaded, siteId } = this.props;
 		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
@@ -66,16 +66,16 @@ class App extends Component {
 			prevProps.allRequiredPluginsActive !== allRequiredPluginsActive ||
 			prevProps.pluginsLoaded !== pluginsLoaded
 		) {
-			this.fetchData( this.props );
+			this.fetchData(this.props);
 		}
 	}
 
-	fetchData( { siteId } ) {
-		if ( ! siteId ) {
+	fetchData({ siteId }) {
+		if (!siteId) {
 			return;
 		}
 
-		this.props.fetchSetupChoices( siteId );
+		this.props.fetchSetupChoices(siteId);
 	}
 
 	redirect() {
@@ -84,7 +84,7 @@ class App extends Component {
 
 	renderPlaceholder() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		if ( this.props.isDashboard ) {
+		if (this.props.isDashboard) {
 			return (
 				<Main className="dashboard" wideLayout>
 					<Placeholder />
@@ -108,16 +108,16 @@ class App extends Component {
 			isSetupComplete,
 			pluginsLoaded,
 		} = this.props;
-		if ( ! pluginsLoaded ) {
+		if (!pluginsLoaded) {
 			return this.renderPlaceholder();
 		}
 
 		// Pass through to the dashboard when setup isn't completed
-		if ( isDashboard && ! isSetupComplete ) {
+		if (isDashboard && !isSetupComplete) {
 			return children;
 		}
 
-		if ( pluginsLoaded && ! allRequiredPluginsActive ) {
+		if (pluginsLoaded && !allRequiredPluginsActive) {
 			return <RequiredPluginsInstallView fixMode skipConfirmation />;
 		}
 
@@ -134,49 +134,49 @@ class App extends Component {
 			siteId,
 			translate,
 		} = this.props;
-		if ( ! siteId ) {
+		if (!siteId) {
 			return null;
 		}
 
 		if (
-			! isAtomicSite &&
-			! hasPendingAutomatedTransfer &&
-			! config.isEnabled( 'woocommerce/store-on-non-atomic-sites' )
+			!isAtomicSite &&
+			!hasPendingAutomatedTransfer &&
+			!config.isEnabled('woocommerce/store-on-non-atomic-sites')
 		) {
 			this.redirect();
 			return null;
 		}
 
-		if ( ! canUserManageOptions ) {
+		if (!canUserManageOptions) {
 			this.redirect();
 			return null;
 		}
 
-		const documentTitle = this.props.documentTitle || translate( 'Store' );
+		const documentTitle = this.props.documentTitle || translate('Store');
 
 		const className = 'woocommerce';
 		return (
-			<div className={ className }>
-				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
-				<DocumentHead title={ documentTitle } />
-				<QueryJetpackPlugins siteIds={ [ siteId ] } />
-				{ this.maybeRenderChildren() }
+			<div className={className}>
+				<PageViewTracker path={analyticsPath} title={analyticsTitle} />
+				<DocumentHead title={documentTitle} />
+				<QueryJetpackPlugins siteIds={[siteId]} />
+				{this.maybeRenderChildren()}
 				<WooCommerceColophon />
 			</div>
 		);
 	};
 }
 
-function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const isAtomicSite = !! isSiteAutomatedTransfer( state, siteId );
-	const hasPendingAutomatedTransfer = !! hasSitePendingAutomatedTransfer( state, siteId );
+function mapStateToProps(state) {
+	const siteId = getSelectedSiteId(state);
+	const canUserManageOptions = canCurrentUser(state, siteId, 'manage_options');
+	const isAtomicSite = !!isSiteAutomatedTransfer(state, siteId);
+	const hasPendingAutomatedTransfer = !!hasSitePendingAutomatedTransfer(state, siteId);
 
-	const pluginsLoaded = arePluginsLoaded( state, siteId );
-	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
+	const pluginsLoaded = arePluginsLoaded(state, siteId);
+	const allRequiredPluginsActive = areAllRequiredPluginsActive(state, siteId);
 
-	const isSetupComplete = isStoreSetupComplete( state, siteId );
+	const isSetupComplete = isStoreSetupComplete(state, siteId);
 
 	return {
 		allRequiredPluginsActive,
@@ -185,9 +185,9 @@ function mapStateToProps( state ) {
 		isSetupComplete,
 		hasPendingAutomatedTransfer: siteId ? hasPendingAutomatedTransfer : false,
 		pluginsLoaded,
-		siteHomeUrl: getSiteHomeUrl( state, siteId ),
+		siteHomeUrl: getSiteHomeUrl(state, siteId),
 		siteId,
 	};
 }
 
-export default connect( mapStateToProps, { fetchSetupChoices } )( localize( App ) );
+export default connect(mapStateToProps, { fetchSetupChoices })(localize(App));

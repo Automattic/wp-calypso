@@ -21,14 +21,14 @@ export default class EditorMediaModalGalleryPreviewShortcode extends React.Compo
 
 	state = {
 		isLoading: true,
-		shortcode: generateGalleryShortcode( this.props.settings ),
+		shortcode: generateGalleryShortcode(this.props.settings),
 	};
 
 	isMounted = false;
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		const shortcode = generateGalleryShortcode( nextProps.settings );
-		if ( prevState.shortcode === shortcode ) {
+	static getDerivedStateFromProps(nextProps, prevState) {
+		const shortcode = generateGalleryShortcode(nextProps.settings);
+		if (prevState.shortcode === shortcode) {
 			return null;
 		}
 
@@ -44,24 +44,24 @@ export default class EditorMediaModalGalleryPreviewShortcode extends React.Compo
 	}
 
 	setLoaded = () => {
-		if ( ! this.isMounted ) {
+		if (!this.isMounted) {
 			return;
 		}
 
-		this.setState( { isLoading: false } );
+		this.setState({ isLoading: false });
 	};
 
 	render() {
 		const { siteId, settings } = this.props;
 		const { isLoading, shortcode } = this.state;
-		const classes = classNames( 'editor-media-modal-gallery__preview-shortcode', {
-			'is-loading': isLoading || some( settings.items, 'transient' ),
-		} );
+		const classes = classNames('editor-media-modal-gallery__preview-shortcode', {
+			'is-loading': isLoading || some(settings.items, 'transient'),
+		});
 
 		return (
-			<div className={ classes }>
-				<GalleryShortcode siteId={ siteId } onLoad={ this.setLoaded }>
-					{ shortcode }
+			<div className={classes}>
+				<GalleryShortcode siteId={siteId} onLoad={this.setLoaded}>
+					{shortcode}
 				</GalleryShortcode>
 			</div>
 		);

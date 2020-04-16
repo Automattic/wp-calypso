@@ -23,31 +23,27 @@ class PostActionsEllipsisMenuComments extends PureComponent {
 	render() {
 		const { bumpStat, isModuleActive, postId, siteSlug, status, translate } = this.props;
 
-		if ( ! isModuleActive || 'publish' !== status ) {
+		if (!isModuleActive || 'publish' !== status) {
 			return null;
 		}
 
 		return (
-			<PopoverMenuItem
-				href={ `/comments/all/${ siteSlug }/${ postId }` }
-				icon="chat"
-				onClick={ bumpStat }
-			>
-				{ translate( 'Comments', { context: 'noun' } ) }
+			<PopoverMenuItem href={`/comments/all/${siteSlug}/${postId}`} icon="chat" onClick={bumpStat}>
+				{translate('Comments', { context: 'noun' })}
 			</PopoverMenuItem>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { globalId } ) => {
-	const post = getNormalizedPost( state, globalId );
+const mapStateToProps = (state, { globalId }) => {
+	const post = getNormalizedPost(state, globalId);
 	const postId = post && post.ID;
 	const siteId = post && post.site_ID;
 
 	return {
-		isModuleActive: false !== isJetpackModuleActive( state, post.site_ID, 'comments' ),
+		isModuleActive: false !== isJetpackModuleActive(state, post.site_ID, 'comments'),
 		postId,
-		siteSlug: getSiteSlug( state, siteId ),
+		siteSlug: getSiteSlug(state, siteId),
 		status: post.status,
 		type: post.type,
 	};
@@ -55,18 +51,18 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 const mapDispatchToProps = { bumpAnalyticsStat, recordTracksEvent };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
 	const bumpStat = bumpStatGenerator(
 		stateProps.type,
 		'comments',
 		dispatchProps.bumpAnalyticsStat,
 		dispatchProps.recordTracksEvent
 	);
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+	return Object.assign({}, ownProps, stateProps, dispatchProps, { bumpStat });
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( PostActionsEllipsisMenuComments ) );
+)(localize(PostActionsEllipsisMenuComments));

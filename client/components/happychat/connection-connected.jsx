@@ -13,10 +13,10 @@ import { initConnection } from 'state/happychat/connection/actions';
 import { HappychatConnection } from 'components/happychat/connection';
 
 export default connect(
-	state => ( {
-		getAuth: getHappychatAuth( state ),
-		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
-		isHappychatEnabled: config.isEnabled( 'happychat' ),
-	} ),
+	(state) => ({
+		getAuth: getHappychatAuth(state),
+		isConnectionUninitialized: isHappychatConnectionUninitialized(state),
+		isHappychatEnabled: config.isEnabled('happychat'),
+	}),
 	{ initConnection }
-)( HappychatConnection );
+)(HappychatConnection);

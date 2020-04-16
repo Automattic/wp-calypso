@@ -28,18 +28,18 @@ import { logToLogstash } from 'state/logstash/actions';
 import stateCache from 'server/state-cache';
 import { getNormalizedPath } from 'server/isomorphic-routing';
 
-const debug = debugFactory( 'calypso:server-render' );
+const debug = debugFactory('calypso:server-render');
 const HOUR_IN_MS = 3600000;
-const markupCache = new Lru( {
+const markupCache = new Lru({
 	max: 3000,
 	maxAge: HOUR_IN_MS,
-} );
+});
 
-function bumpStat( group, name ) {
-	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
+function bumpStat(group, name) {
+	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${group}=${name}&t=${Math.random()}`;
 
-	if ( process.env.NODE_ENV === 'production' ) {
-		superagent.get( statUrl ).end();
+	if (process.env.NODE_ENV === 'production') {
+		superagent.get(statUrl).end();
 	}
 }
 
@@ -50,9 +50,9 @@ function bumpStat( group, name ) {
  * @param {object} props - Properties which got passed to the JSX template
  * @returns {string} Rendered markup
  */
-export function renderJsx( view, props ) {
-	const requireComponent = require.context( 'document', true, /\.jsx$/ );
-	const component = requireComponent( './' + view + '.jsx' ).default;
+export function renderJsx(view, props) {
+	const requireComponent = require.context('document', true, /\.jsx$/);
+	const component = requireComponent('./' + view + '.jsx').default;
 	const doctype = `<!DOCTYPE html><!--
 	<3
 	             _
@@ -65,7 +65,7 @@ export function renderJsx( view, props ) {
 	to join the fun, visit: https://automattic.com/work-with-us/
 
 -->`;
-	return doctype + ReactDomServer.renderToStaticMarkup( React.createElement( component, props ) );
+	return doctype + ReactDomServer.renderToStaticMarkup(React.createElement(component, props));
 }
 
 /**
@@ -77,72 +77,72 @@ export function renderJsx( view, props ) {
  * @param {object} req - Request object
  * @returns {string} The rendered Layout
  */
-export function render( element, key = JSON.stringify( element ), req ) {
+export function render(element, key = JSON.stringify(element), req) {
 	try {
 		const startTime = Date.now();
-		debug( 'cache access for key', key );
+		debug('cache access for key', key);
 
-		let renderedLayout = markupCache.get( key );
-		if ( ! renderedLayout ) {
-			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
-			debug( 'cache miss for key', key );
+		let renderedLayout = markupCache.get(key);
+		if (!renderedLayout) {
+			bumpStat('calypso-ssr', 'loggedout-design-cache-miss');
+			debug('cache miss for key', key);
 			if (
-				( config.isEnabled( 'ssr/sample-log-cache-misses' ) && Math.random() < 0.001 ) ||
-				config.isEnabled( 'ssr/always-log-cache-misses' )
+				(config.isEnabled('ssr/sample-log-cache-misses') && Math.random() < 0.001) ||
+				config.isEnabled('ssr/always-log-cache-misses')
 			) {
 				// Log 0.1% of cache misses
 				req.context.store.dispatch(
-					logToLogstash( {
+					logToLogstash({
 						feature: 'calypso_ssr',
 						message: 'render cache miss',
 						extra: {
 							key,
 							'existing-keys': markupCache.keys,
-							'user-agent': get( req.headers, 'user-agent', '' ),
+							'user-agent': get(req.headers, 'user-agent', ''),
 							path: req.context.path,
 						},
-					} )
+					})
 				);
 			}
-			renderedLayout = ReactDomServer.renderToString( element );
-			markupCache.set( key, renderedLayout );
+			renderedLayout = ReactDomServer.renderToString(element);
+			markupCache.set(key, renderedLayout);
 		}
 		const rtsTimeMs = Date.now() - startTime;
-		debug( 'Server render time (ms)', rtsTimeMs );
+		debug('Server render time (ms)', rtsTimeMs);
 
-		if ( rtsTimeMs > 100 ) {
+		if (rtsTimeMs > 100) {
 			// Server renders should probably never take longer than 100ms
-			bumpStat( 'calypso-ssr', 'over-100ms-rendertostring' );
+			bumpStat('calypso-ssr', 'over-100ms-rendertostring');
 		}
 
 		return renderedLayout;
-	} catch ( ex ) {
-		if ( process.env.NODE_ENV === 'development' ) {
+	} catch (ex) {
+		if (process.env.NODE_ENV === 'development') {
 			throw ex;
 		}
 	}
 	//todo: render an error?
 }
 
-export function attachI18n( context ) {
-	if ( ! isDefaultLocale( context.lang ) ) {
-		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+export function attachI18n(context) {
+	if (!isDefaultLocale(context.lang)) {
+		const langFileName = getCurrentLocaleVariant(context.store.getState()) || context.lang;
 
-		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js', context.languageRevisions );
+		context.i18nLocaleScript = getLanguageFileUrl(langFileName, 'js', context.languageRevisions);
 	}
 
-	if ( context.store ) {
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+	if (context.store) {
+		context.lang = getCurrentLocaleSlug(context.store.getState()) || context.lang;
 
-		const isLocaleRTL = isLocaleRtl( context.lang );
+		const isLocaleRTL = isLocaleRtl(context.lang);
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }
 
-export function attachHead( context ) {
-	const title = getDocumentHeadFormattedTitle( context.store.getState() );
-	const metas = getDocumentHeadMeta( context.store.getState() );
-	const links = getDocumentHeadLink( context.store.getState() );
+export function attachHead(context) {
+	const title = getDocumentHeadFormattedTitle(context.store.getState());
+	const metas = getDocumentHeadMeta(context.store.getState());
+	const links = getDocumentHeadLink(context.store.getState());
 	context.head = {
 		title,
 		metas,
@@ -150,61 +150,57 @@ export function attachHead( context ) {
 	};
 }
 
-export function attachBuildTimestamp( context ) {
+export function attachBuildTimestamp(context) {
 	try {
 		context.buildTimestamp = BUILD_TIMESTAMP;
-	} catch ( e ) {
+	} catch (e) {
 		context.buildTimestamp = null;
-		debug( 'BUILD_TIMESTAMP is not defined for wp-desktop builds and is expected to fail here.' );
+		debug('BUILD_TIMESTAMP is not defined for wp-desktop builds and is expected to fail here.');
 	}
 }
 
-export function serverRender( req, res ) {
+export function serverRender(req, res) {
 	const context = req.context;
 
 	let cacheKey = false;
 
-	attachI18n( context );
+	attachI18n(context);
 
-	if ( shouldServerSideRender( context ) ) {
-		cacheKey = getNormalizedPath( context.pathname, context.query );
-		context.renderedLayout = render(
-			context.layout,
-			req.error ? req.error.message : cacheKey,
-			req
-		);
+	if (shouldServerSideRender(context)) {
+		cacheKey = getNormalizedPath(context.pathname, context.query);
+		context.renderedLayout = render(context.layout, req.error ? req.error.message : cacheKey, req);
 	}
 
-	if ( context.store ) {
-		attachHead( context );
+	if (context.store) {
+		attachHead(context);
 
-		const cacheableReduxSubtrees = [ 'documentHead' ];
-		const isomorphicSubtrees = isSectionIsomorphic( context.store.getState() )
-			? [ 'themes', 'ui' ]
+		const cacheableReduxSubtrees = ['documentHead'];
+		const isomorphicSubtrees = isSectionIsomorphic(context.store.getState())
+			? ['themes', 'ui']
 			: [];
 
-		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
+		const reduxSubtrees = [...cacheableReduxSubtrees, ...isomorphicSubtrees];
 
 		// Send state to client
-		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+		context.initialReduxState = pick(context.store.getState(), reduxSubtrees);
 
 		// And cache on the server, too.
-		if ( cacheKey ) {
-			const cacheableInitialState = pick( context.store.getState(), cacheableReduxSubtrees );
-			const serverState = initialReducer( cacheableInitialState, { type: SERIALIZE } );
-			stateCache.set( cacheKey, serverState );
+		if (cacheKey) {
+			const cacheableInitialState = pick(context.store.getState(), cacheableReduxSubtrees);
+			const serverState = initialReducer(cacheableInitialState, { type: SERIALIZE });
+			stateCache.set(cacheKey, serverState);
 		}
 	}
 	context.clientData = config.clientData;
 
-	attachBuildTimestamp( context );
+	attachBuildTimestamp(context);
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		res.send( renderJsx( 'desktop', context ) );
+	if (config.isEnabled('desktop')) {
+		res.send(renderJsx('desktop', context));
 		return;
 	}
 
-	res.send( renderJsx( 'index', context ) );
+	res.send(renderJsx('index', context));
 }
 
 /**
@@ -219,8 +215,8 @@ export function serverRender( req, res ) {
  * @param {object}   context  The entire request context
  * @param {Function} next     As all middlewares, will call next in the sequence
  */
-export function setShouldServerSideRender( context, next ) {
-	context.serverSideRender = Object.keys( context.query ).length === 0; // no SSR when we have query args
+export function setShouldServerSideRender(context, next) {
+	context.serverSideRender = Object.keys(context.query).length === 0; // no SSR when we have query args
 
 	next();
 }
@@ -244,11 +240,11 @@ export function setShouldServerSideRender( context, next ) {
  *
  * @returns {boolean} True if all the app-level criteria are fulfilled.
  */
-function isServerSideRenderCompatible( context ) {
+function isServerSideRenderCompatible(context) {
 	return Boolean(
-		isSectionIsomorphic( context.store.getState() ) &&
-		! context.user && // logged out only
-			isDefaultLocale( context.lang ) &&
+		isSectionIsomorphic(context.store.getState()) &&
+		!context.user && // logged out only
+			isDefaultLocale(context.lang) &&
 			context.layout
 	);
 }
@@ -261,10 +257,10 @@ function isServerSideRenderCompatible( context ) {
  * @param {object}   context The currently built context
  * @returns {boolean} if the current page/request should return a SSR response
  */
-export function shouldServerSideRender( context ) {
+export function shouldServerSideRender(context) {
 	return Boolean(
-		config.isEnabled( 'server-side-rendering' ) &&
-			isServerSideRenderCompatible( context ) &&
+		config.isEnabled('server-side-rendering') &&
+			isServerSideRenderCompatible(context) &&
 			context.serverSideRender === true
 	);
 }

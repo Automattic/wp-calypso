@@ -26,9 +26,9 @@ import './style.scss';
 export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
 		initialValue: PropTypes.string,
-		plans: PropTypes.arrayOf( PropTypes.oneOf( Object.keys( PLANS_LIST ) ) ),
+		plans: PropTypes.arrayOf(PropTypes.oneOf(Object.keys(PLANS_LIST))),
 		cart: PropTypes.object,
-		currencyCode: PropTypes.oneOf( Object.keys( CURRENCIES ) ).isRequired,
+		currencyCode: PropTypes.oneOf(Object.keys(CURRENCIES)).isRequired,
 		onChange: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 
@@ -43,60 +43,53 @@ export class SubscriptionLengthPicker extends React.Component {
 	render() {
 		const { productsWithPrices, translate, shouldShowTax } = this.props;
 		const hasDiscount = productsWithPrices.some(
-			( { priceFullBeforeDiscount, priceFinal } ) => priceFinal !== priceFullBeforeDiscount
+			({ priceFullBeforeDiscount, priceFinal }) => priceFinal !== priceFullBeforeDiscount
 		);
 
 		return (
 			<div className="subscription-length-picker">
-				{ ! productsWithPrices.length && (
+				{!productsWithPrices.length && (
 					<React.Fragment>
 						<QueryPlans />
 						<QueryProductsList />
 					</React.Fragment>
-				) }
+				)}
 
 				<div className="subscription-length-picker__header">
-					{ translate( 'Choose the length of your subscription', {
+					{translate('Choose the length of your subscription', {
 						comment:
 							'We offer a way to change billing term from default bill every 1 year to something ' +
 							'else like bill once every 2 years - this is related header.',
-					} ) }
+					})}
 				</div>
 
 				<div className="subscription-length-picker__options">
-					{ productsWithPrices.map(
-						( {
-							plan,
-							planSlug,
-							priceFull,
-							priceFullBeforeDiscount,
-							priceFinal,
-							priceMonthly,
-						} ) => {
+					{productsWithPrices.map(
+						({ plan, planSlug, priceFull, priceFullBeforeDiscount, priceFinal, priceMonthly }) => {
 							const price = priceFinal || priceFull;
 							return (
-								<div className="subscription-length-picker__option-container" key={ planSlug }>
+								<div className="subscription-length-picker__option-container" key={planSlug}>
 									<SubscriptionLengthOption
-										type={ hasDiscount ? 'upgrade' : 'new-sale' }
-										term={ plan.term }
-										checked={ planSlug === this.props.initialValue }
-										price={ myFormatCurrency( price, this.props.currencyCode ) }
-										priceBeforeDiscount={ myFormatCurrency(
+										type={hasDiscount ? 'upgrade' : 'new-sale'}
+										term={plan.term}
+										checked={planSlug === this.props.initialValue}
+										price={myFormatCurrency(price, this.props.currencyCode)}
+										priceBeforeDiscount={myFormatCurrency(
 											priceFullBeforeDiscount,
 											this.props.currencyCode
-										) }
-										pricePerMonth={ myFormatCurrency( priceMonthly, this.props.currencyCode ) }
-										savePercent={ Math.round(
-											100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
-										) }
-										value={ planSlug }
-										onCheck={ this.props.onChange }
-										shouldShowTax={ shouldShowTax }
+										)}
+										pricePerMonth={myFormatCurrency(priceMonthly, this.props.currencyCode)}
+										savePercent={Math.round(
+											100 * (1 - priceMonthly / this.getHighestMonthlyPrice())
+										)}
+										value={planSlug}
+										onCheck={this.props.onChange}
+										shouldShowTax={shouldShowTax}
 									/>
 								</div>
 							);
 						}
-					) }
+					)}
 				</div>
 			</div>
 		);
@@ -104,23 +97,23 @@ export class SubscriptionLengthPicker extends React.Component {
 
 	getHighestMonthlyPrice() {
 		return Math.max(
-			...this.props.productsWithPrices.map( ( { priceMonthly } ) => Number( priceMonthly ) )
+			...this.props.productsWithPrices.map(({ priceMonthly }) => Number(priceMonthly))
 		);
 	}
 }
 
-export function myFormatCurrency( price, code, options = {} ) {
-	const precision = CURRENCIES[ code ].precision;
-	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
+export function myFormatCurrency(price, code, options = {}) {
+	const precision = CURRENCIES[code].precision;
+	const EPSILON = Math.pow(10, -precision) - 0.000000001;
 
-	const hasCents = Math.abs( price % 1 ) >= EPSILON;
-	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
+	const hasCents = Math.abs(price % 1) >= EPSILON;
+	return formatCurrency(price, code, hasCents ? options : { ...options, precision: 0 });
 }
 
-export const mapStateToProps = ( state, { plans, cart } ) => {
-	const selectedSiteId = getSelectedSiteId( state );
+export const mapStateToProps = (state, { plans, cart }) => {
+	const selectedSiteId = getSelectedSiteId(state);
 	return {
-		currencyCode: getCurrentUserCurrencyCode( state ),
+		currencyCode: getCurrentUserCurrencyCode(state),
 		productsWithPrices: computeProductsWithPrices(
 			state,
 			selectedSiteId,
@@ -131,4 +124,4 @@ export const mapStateToProps = ( state, { plans, cart } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( SubscriptionLengthPicker ) );
+export default connect(mapStateToProps)(localize(SubscriptionLengthPicker));

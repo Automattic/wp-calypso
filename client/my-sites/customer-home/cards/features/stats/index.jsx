@@ -21,7 +21,7 @@ import config from 'config';
  */
 import './style.scss';
 
-export const Stats = ( {
+export const Stats = ({
 	hideStats,
 	insightsData,
 	insightsStatsQuery,
@@ -32,84 +32,80 @@ export const Stats = ( {
 	trafficData,
 	trafficStatsType,
 	trafficStatsQuery,
-} ) => {
+}) => {
 	const translate = useTranslate();
 
-	if ( hideStats ) {
+	if (hideStats) {
 		return null;
 	}
 
 	return (
 		<>
-			{ config.isEnabled( 'home/experimental-layout' ) && (
+			{config.isEnabled('home/experimental-layout') && (
 				<h2 className="stats__heading customer-home__section-heading">
-					{ translate( 'Stats at a glance' ) }
+					{translate('Stats at a glance')}
 				</h2>
-			) }
+			)}
 			<Card className="stats">
-				{ siteId && (
+				{siteId && (
 					<>
-						<QuerySiteStats
-							siteId={ siteId }
-							statType={ trafficStatsType }
-							query={ trafficStatsQuery }
-						/>
-						{ showInsights && (
+						<QuerySiteStats siteId={siteId} statType={trafficStatsType} query={trafficStatsQuery} />
+						{showInsights && (
 							<QuerySiteStats
-								siteId={ siteId }
-								statType={ insightsStatsType }
-								query={ insightsStatsQuery }
+								siteId={siteId}
+								statType={insightsStatsType}
+								query={insightsStatsQuery}
 							/>
-						) }
+						)}
 					</>
-				) }
+				)}
 				<CardHeading>
-					{ config.isEnabled( 'home/experimental-layout' )
-						? translate( 'Page views' )
-						: translate( 'Stats at a glance' ) }
+					{config.isEnabled('home/experimental-layout')
+						? translate('Page views')
+						: translate('Stats at a glance')}
 				</CardHeading>
-				<h6 className="stats__subheader">{ translate( 'Your site in the last week.' ) }</h6>
+				<h6 className="stats__subheader">{translate('Your site in the last week.')}</h6>
 				<div className="stats__data">
-					{ ! showInsights && (
+					{!showInsights && (
 						<>
 							<div className="stats__data-item">
 								<div className="stats__data-value">
-									{ trafficData?.views ? numberFormat( trafficData.views ) : '-' }
+									{trafficData?.views ? numberFormat(trafficData.views) : '-'}
 								</div>
-								<div className="stats__data-label">{ translate( 'Views' ) }</div>
+								<div className="stats__data-label">{translate('Views')}</div>
 							</div>
 							<div className="stats__data-item">
 								<div className="stats__data-value">
-									{ trafficData?.visitors ? numberFormat( trafficData.visitors ) : '-' }
+									{trafficData?.visitors ? numberFormat(trafficData.visitors) : '-'}
 								</div>
-								<div className="stats__data-label">{ translate( 'Visitors' ) }</div>
+								<div className="stats__data-label">{translate('Visitors')}</div>
 							</div>
 						</>
-					) }
-					{ showInsights && (
+					)}
+					{showInsights && (
 						<>
 							<div className="stats__data-item">
-								<div className="stats__data-value">{ insightsData?.day ?? '-' }</div>
-								<div className="stats__data-label">{ translate( 'Most popular day' ) }</div>
+								<div className="stats__data-value">{insightsData?.day ?? '-'}</div>
+								<div className="stats__data-label">{translate('Most popular day')}</div>
 							</div>
 							<div className="stats__data-item">
-								<div className="stats__data-value">{ insightsData?.hour ?? '-' }</div>
-								<div className="stats__data-label">{ translate( 'Most popular hour' ) }</div>
+								<div className="stats__data-value">{insightsData?.hour ?? '-'}</div>
+								<div className="stats__data-label">{translate('Most popular hour')}</div>
 							</div>
 						</>
-					) }
+					)}
 				</div>
-				<a href={ `/stats/day/${ siteSlug }` }>{ translate( 'See all stats' ) }</a>
+				<a href={`/stats/day/${siteSlug}`}>{translate('See all stats')}</a>
 			</Card>
 		</>
 	);
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isStatsModuleActive = isJetpackModuleActive( state, siteId, 'stats' );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
+	const siteSlug = getSelectedSiteSlug(state);
+	const isJetpack = isJetpackSite(state, siteId);
+	const isStatsModuleActive = isJetpackModuleActive(state, siteId, 'stats');
 
 	const trafficStatsType = 'statsVisits';
 	const trafficStatsQuery = {
@@ -123,7 +119,7 @@ const mapStateToProps = state => {
 		trafficStatsType,
 		trafficStatsQuery
 	);
-	const trafficData = trafficStats && trafficStats.length ? trafficStats[ 0 ] : null;
+	const trafficData = trafficStats && trafficStats.length ? trafficStats[0] : null;
 
 	const showInsights = trafficData && trafficData.views < 10;
 
@@ -136,8 +132,7 @@ const mapStateToProps = state => {
 		insightsStatsQuery
 	);
 
-	const hideStats =
-		( isJetpack && ! isStatsModuleActive ) || ( showInsights && ! insightsData?.percent );
+	const hideStats = (isJetpack && !isStatsModuleActive) || (showInsights && !insightsData?.percent);
 
 	return {
 		hideStats,
@@ -153,4 +148,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( Stats );
+export default connect(mapStateToProps)(Stats);

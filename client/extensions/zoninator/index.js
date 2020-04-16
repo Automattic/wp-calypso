@@ -21,19 +21,19 @@ import reducer from './state/reducer';
  */
 import './style.scss';
 
-export default async function( _, addReducer ) {
-	await addReducer( [ 'extensions', 'zoninator' ], reducer );
+export default async function (_, addReducer) {
+	await addReducer(['extensions', 'zoninator'], reducer);
 	installActionHandlers();
 
-	page( '/extensions/zoninator', siteSelection, sites, makeLayout, clientRender );
-	page( '/extensions/zoninator/new', siteSelection, sites, makeLayout, clientRender );
-	page( '/extensions/zoninator/zone', siteSelection, sites, makeLayout, clientRender );
+	page('/extensions/zoninator', siteSelection, sites, makeLayout, clientRender);
+	page('/extensions/zoninator/new', siteSelection, sites, makeLayout, clientRender);
+	page('/extensions/zoninator/zone', siteSelection, sites, makeLayout, clientRender);
 
 	page(
 		'/extensions/zoninator/:site',
 		siteSelection,
 		navigation,
-		renderTab( ZonesDashboard ),
+		renderTab(ZonesDashboard),
 		makeLayout,
 		clientRender
 	);
@@ -41,7 +41,7 @@ export default async function( _, addReducer ) {
 		'/extensions/zoninator/new/:site',
 		siteSelection,
 		navigation,
-		renderTab( ZoneCreator ),
+		renderTab(ZoneCreator),
 		makeLayout,
 		clientRender
 	);
@@ -49,7 +49,7 @@ export default async function( _, addReducer ) {
 		'/extensions/zoninator/zone/:site/:zone',
 		siteSelection,
 		navigation,
-		renderTab( Zone ),
+		renderTab(Zone),
 		makeLayout,
 		clientRender
 	);

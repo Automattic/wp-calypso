@@ -14,17 +14,17 @@ export default class TestStep extends React.Component {
 		return (
 			<span>
 				<StepWrapper
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					positionInFlow={ this.props.positionInFlow }
+					flowName={this.props.flowName}
+					stepName={this.props.stepName}
+					positionInFlow={this.props.positionInFlow}
 					headerText="This is a test step"
 					subHeaderText="Go ahead and click the button to continue. It'll blow your mind!"
-					goToNextStep={ this.props.goToNextStep }
+					goToNextStep={this.props.goToNextStep}
 				/>
 				<SubmitStepButton
 					buttonText="Click to continue"
-					goToNextStep={ this.props.goToNextStep }
-					stepName={ this.props.stepName }
+					goToNextStep={this.props.goToNextStep}
+					stepName={this.props.stepName}
 				/>
 			</span>
 		);

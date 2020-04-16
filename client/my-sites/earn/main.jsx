@@ -38,8 +38,8 @@ class EarningsMain extends Component {
 	};
 
 	getSelectedText() {
-		const selected = find( this.getFilters(), { path: this.props.path } );
-		if ( selected ) {
+		const selected = find(this.getFilters(), { path: this.props.path });
+		if (selected) {
 			return selected.title;
 		}
 
@@ -51,40 +51,40 @@ class EarningsMain extends Component {
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
 
-		if ( canAccessAds( this.props.site ) ) {
-			tabs.push( {
-				title: translate( 'Earnings' ),
+		if (canAccessAds(this.props.site)) {
+			tabs.push({
+				title: translate('Earnings'),
 				path: '/earn/ads-earnings' + pathSuffix,
 				id: 'ads-earnings',
-			} );
-			tabs.push( {
-				title: translate( 'Settings' ),
+			});
+			tabs.push({
+				title: translate('Settings'),
 				path: '/earn/ads-settings' + pathSuffix,
 				id: 'ads-settings',
-			} );
+			});
 		}
 
 		return tabs;
 	}
 
-	getComponent( section ) {
-		switch ( section ) {
+	getComponent(section) {
+		switch (section) {
 			case 'ads-earnings':
 				return (
-					<AdsWrapper section={ this.props.section }>
-						<WordAdsEarnings site={ this.props.site } />
+					<AdsWrapper section={this.props.section}>
+						<WordAdsEarnings site={this.props.site} />
 					</AdsWrapper>
 				);
 			case 'ads-settings':
 				return (
-					<AdsWrapper section={ this.props.section }>
+					<AdsWrapper section={this.props.section}>
 						<AdsSettings />
 					</AdsWrapper>
 				);
 			case 'payments':
-				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
+				return <MembershipsSection section={this.props.section} query={this.props.query} />;
 			case 'payments-plans':
-				return <MembershipsProductsSection section={ this.props.section } />;
+				return <MembershipsProductsSection section={this.props.section} />;
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
@@ -96,7 +96,7 @@ class EarningsMain extends Component {
 
 	handleDismissWordAdsError = () => {
 		const { siteId } = this.props;
-		this.props.dismissWordAdsError( siteId );
+		this.props.dismissWordAdsError(siteId);
 	};
 
 	/**
@@ -107,9 +107,9 @@ class EarningsMain extends Component {
 	 */
 	getCurrentPath = () => {
 		let currentPath = this.props.path;
-		const queryStartPosition = currentPath.indexOf( '?' );
-		if ( queryStartPosition > -1 ) {
-			currentPath = currentPath.substring( 0, queryStartPosition );
+		const queryStartPosition = currentPath.indexOf('?');
+		if (queryStartPosition > -1) {
+			currentPath = currentPath.substring(0, queryStartPosition);
 		}
 		return currentPath;
 	};
@@ -122,16 +122,16 @@ class EarningsMain extends Component {
 	getHeaderText = () => {
 		const { translate } = this.props;
 
-		switch ( this.props.section ) {
+		switch (this.props.section) {
 			case 'payments':
-				return translate( 'Recurring Payments' );
+				return translate('Recurring Payments');
 
 			case 'ads-earnings':
 			case 'ads-settings':
-				return translate( 'Ads' );
+				return translate('Ads');
 
 			case 'refer-a-friend':
-				return translate( 'Refer-a-Friend Program' );
+				return translate('Refer-a-Friend Program');
 
 			default:
 				return '';
@@ -143,32 +143,32 @@ class EarningsMain extends Component {
 	 *
 	 * @returns {string} Path to Earn home. Has site slug append if it exists.
 	 */
-	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
+	goBack = () => (this.props.siteSlug ? '/earn/' + this.props.siteSlug : '');
 
 	getHeaderCake = () => {
 		const headerText = this.getHeaderText();
-		return headerText && <HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>;
+		return headerText && <HeaderCake backHref={this.goBack()}>{headerText}</HeaderCake>;
 	};
 
-	getSectionNav = section => {
+	getSectionNav = (section) => {
 		const currentPath = this.getCurrentPath();
 
 		return (
-			! section.startsWith( 'payments' ) &&
-			! section.startsWith( 'refer-a-friend' ) && (
-				<SectionNav selectedText={ this.getSelectedText() }>
+			!section.startsWith('payments') &&
+			!section.startsWith('refer-a-friend') && (
+				<SectionNav selectedText={this.getSelectedText()}>
 					<NavTabs>
-						{ this.getFilters().map( filterItem => {
+						{this.getFilters().map((filterItem) => {
 							return (
 								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === currentPath }
+									key={filterItem.id}
+									path={filterItem.path}
+									selected={filterItem.path === currentPath}
 								>
-									{ filterItem.title }
+									{filterItem.title}
 								</NavItem>
 							);
-						} ) }
+						})}
 					</NavTabs>
 				</SectionNav>
 			)
@@ -177,39 +177,39 @@ class EarningsMain extends Component {
 
 	render() {
 		const { adsProgramName, section, translate } = this.props;
-		const component = this.getComponent( this.props.section );
+		const component = this.getComponent(this.props.section);
 
 		const layoutTitles = {
-			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
-			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-			payments: translate( 'Recurring Payments' ),
-			'payments-plans': translate( 'Recurring Payments plans' ),
-			'refer-a-friend': translate( 'Refer-a-Friend Program' ),
+			earnings: translate('%(wordads)s Earnings', { args: { wordads: adsProgramName } }),
+			settings: translate('%(wordads)s Settings', { args: { wordads: adsProgramName } }),
+			payments: translate('Recurring Payments'),
+			'payments-plans': translate('Recurring Payments plans'),
+			'refer-a-friend': translate('Refer-a-Friend Program'),
 		};
 
 		return (
 			<Main className="earn is-wide-layout">
 				<PageViewTracker
-					path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
-					title={ `${ adsProgramName } ${ capitalize( section ) }` }
+					path={section ? `/earn/${section}/:site` : `/earn/:site`}
+					title={`${adsProgramName} ${capitalize(section)}`}
 				/>
-				<DocumentHead title={ layoutTitles[ section ] } />
+				<DocumentHead title={layoutTitles[section]} />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="earn__page-header"
-					headerText={ translate( 'Earn' ) }
+					headerText={translate('Earn')}
 					align="left"
 				/>
-				{ this.getHeaderCake() }
-				{ section && this.getSectionNav( section ) }
-				{ component }
+				{this.getHeaderCake()}
+				{section && this.getSectionNav(section)}
+				{component}
 			</Main>
 		);
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-	siteId: getSelectedSiteId( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( EarningsMain ) );
+export default connect((state) => ({
+	site: getSelectedSite(state),
+	siteId: getSelectedSiteId(state),
+	siteSlug: getSelectedSiteSlug(state),
+}))(localize(EarningsMain));

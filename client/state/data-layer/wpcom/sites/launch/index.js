@@ -16,32 +16,29 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { requestSiteChecklist } from 'state/checklist/actions';
 import { requestEligibility } from 'state/automated-transfer/actions';
 
-const handleLaunchSiteRequest = dispatchRequest( {
-	fetch: action => [
-		infoNotice( translate( 'Launching your site…' ), { duration: 1000 } ),
+const handleLaunchSiteRequest = dispatchRequest({
+	fetch: (action) => [
+		infoNotice(translate('Launching your site…'), { duration: 1000 }),
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ action.siteId }/launch`,
+				path: `/sites/${action.siteId}/launch`,
 			},
 			action
 		),
 	],
-	onSuccess: ( action, data ) => [
-		receiveSite( data ),
-		updateSiteSettings( data.ID, data.options ),
-		requestSiteChecklist( data.ID ),
-		requestEligibility( data.ID ),
-		successNotice(
-			translate( 'Your site has been launched; now you can share it with the world!' ),
-			{
-				duration: 5000,
-			}
-		),
+	onSuccess: (action, data) => [
+		receiveSite(data),
+		updateSiteSettings(data.ID, data.options),
+		requestSiteChecklist(data.ID),
+		requestEligibility(data.ID),
+		successNotice(translate('Your site has been launched; now you can share it with the world!'), {
+			duration: 5000,
+		}),
 	],
-	onError: ( action, data ) => errorNotice( data.message, { duration: 5000 } ),
-} );
+	onError: (action, data) => errorNotice(data.message, { duration: 5000 }),
+});
 
-registerHandlers( 'state/data-layer/wpcom/sites/launch/index.js', {
-	[ SITE_LAUNCH ]: [ handleLaunchSiteRequest ],
-} );
+registerHandlers('state/data-layer/wpcom/sites/launch/index.js', {
+	[SITE_LAUNCH]: [handleLaunchSiteRequest],
+});

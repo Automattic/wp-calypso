@@ -11,8 +11,8 @@ import debugFactory from 'debug';
  */
 import validationSchema from './fr-schema';
 
-const validate = validatorFactory( validationSchema, { greedy: true } );
-const debug = debugFactory( 'calypso:components:domains:registrant-extra-info:validation' );
+const validate = validatorFactory(validationSchema, { greedy: true });
+const debug = debugFactory('calypso:components:domains:registrant-extra-info:validation');
 
 // is-my-json-valid uses customized messages, but the actual rule name seems
 // more intuitive
@@ -48,10 +48,10 @@ const reverseMessageMap = {
 	'is more than maximum': 'maximum', // also might be exclusiveMinimum
 };
 
-function ruleNameFromMessage( message ) {
+function ruleNameFromMessage(message) {
 	return (
-		reverseMessageMap[ message ] ||
-		( isString( message ) && message.match( /^must be (.*) format$/ ) && 'format' ) ||
+		reverseMessageMap[message] ||
+		(isString(message) && message.match(/^must be (.*) format$/) && 'format') ||
 		message
 	);
 }
@@ -59,18 +59,16 @@ function ruleNameFromMessage( message ) {
 /*
  * @returns errors by field, like: { 'extra.fr.field: name, errors: [ string ] }
  */
-export default function validateContactDetails( contactDetails ) {
+export default function validateContactDetails(contactDetails) {
 	// Populate validate.errors
-	validate( contactDetails );
-	validate.errors && debug( validate.errors );
+	validate(contactDetails);
+	validate.errors && debug(validate.errors);
 
 	return reduce(
 		validate.errors,
-		( accumulatedErrors, { field, message } ) => {
+		(accumulatedErrors, { field, message }) => {
 			// Drop 'data.' prefix
-			const path = String( field )
-				.split( '.' )
-				.slice( 1 );
+			const path = String(field).split('.').slice(1);
 
 			// In order to capture the relationship between the organization
 			// and extra.fr.individualType fields, the rule ends up in the root
@@ -78,11 +76,11 @@ export default function validateContactDetails( contactDetails ) {
 			// We've only got one such case at the moment, so we can insert this
 			// hack, but if we need to tell multiple such rules apart, we're
 			// going to need to add a some magic to map schemas to fields
-			const correctedPath = isEmpty( path ) ? [ 'organization' ] : path;
+			const correctedPath = isEmpty(path) ? ['organization'] : path;
 
-			const appendThisMessage = before => [ ...( before || [] ), ruleNameFromMessage( message ) ];
+			const appendThisMessage = (before) => [...(before || []), ruleNameFromMessage(message)];
 
-			return update( accumulatedErrors, correctedPath, appendThisMessage );
+			return update(accumulatedErrors, correctedPath, appendThisMessage);
 		},
 		{}
 	);

@@ -23,7 +23,7 @@ class ManageConsent extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
 	};
 
 	state = {
@@ -35,54 +35,54 @@ class ManageConsent extends React.Component {
 	render() {
 		const { translate } = this.props;
 
-		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToContactsPrivacy } />;
+		if (this.isDataLoading()) {
+			return <DomainMainPlaceholder goBack={this.goToContactsPrivacy} />;
 		}
 
 		return (
 			<Main className="manage-consent">
 				<Header
-					onClick={ this.goToContactsPrivacy }
-					selectedDomainName={ this.props.selectedDomainName }
+					onClick={this.goToContactsPrivacy}
+					selectedDomainName={this.props.selectedDomainName}
 				>
-					{ translate( 'Manage Consent for Personal Data Use' ) }
+					{translate('Manage Consent for Personal Data Use')}
 				</Header>
-				{ this.state.error && (
-					<Notice status="is-error" icon="notice" onDismissClick={ this.dismissError }>
-						{ translate(
+				{this.state.error && (
+					<Notice status="is-error" icon="notice" onDismissClick={this.dismissError}>
+						{translate(
 							'An error occured while sending you the Personal Data Consent Link. ' +
 								'If the issue persists please contact our support staff.'
-						) }
+						)}
 					</Notice>
-				) }
-				{ this.state.success && (
-					<Notice status="is-success" icon="checkmark" showDismiss={ false }>
-						{ translate(
+				)}
+				{this.state.success && (
+					<Notice status="is-success" icon="checkmark" showDismiss={false}>
+						{translate(
 							'Personal Data Consent Link was successfully sent to the domain owner email.'
-						) }
+						)}
 					</Notice>
-				) }
+				)}
 				<div>
-					<SectionHeader label={ translate( 'Manage Consent for Personal Data Use' ) } />
+					<SectionHeader label={translate('Manage Consent for Personal Data Use')} />
 					<Card>
 						<div>
 							<p>
-								{ translate(
+								{translate(
 									'You can view or change your consent for how we use or share personally identifiable data related to your domain registration at any time.'
-								) }
+								)}
 							</p>
 							<p>
-								{ translate(
+								{translate(
 									'Click the button below to receive an email with a unique link to manage your consent options. Please note that this email will be sent to the registrant contact email address, which may be different than your WordPress.com account email address.'
-								) }
+								)}
 							</p>
 							<Button
 								className="manage-consent__action-button"
-								onClick={ this.requestConsentManagementLink }
+								onClick={this.requestConsentManagementLink}
 								primary
-								disabled={ this.state.submitting }
+								disabled={this.state.submitting}
 							>
-								{ translate( 'Request Consent Management Email' ) }
+								{translate('Request Consent Management Email')}
 							</Button>
 						</div>
 					</Card>
@@ -92,29 +92,29 @@ class ManageConsent extends React.Component {
 	}
 
 	isDataLoading = () => {
-		return ! getSelectedDomain( this.props );
+		return !getSelectedDomain(this.props);
 	};
 
 	dismissError = () => {
-		this.setState( { error: null } );
+		this.setState({ error: null });
 	};
 
 	requestConsentManagementLink = () => {
-		this.setState( { submitting: true } );
-		requestGdprConsentManagementLink( this.props.selectedDomainName, error => {
-			if ( error ) {
-				this.setState( { error: error.message, success: false, submitting: false } );
+		this.setState({ submitting: true });
+		requestGdprConsentManagementLink(this.props.selectedDomainName, (error) => {
+			if (error) {
+				this.setState({ error: error.message, success: false, submitting: false });
 			} else {
-				this.setState( { error: null, success: true, submitting: false } );
+				this.setState({ error: null, success: true, submitting: false });
 			}
-		} );
+		});
 	};
 
 	goToContactsPrivacy = () => {
 		page(
-			domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName )
+			domainManagementContactsPrivacy(this.props.selectedSite.slug, this.props.selectedDomainName)
 		);
 	};
 }
 
-export default localize( ManageConsent );
+export default localize(ManageConsent);

@@ -50,86 +50,81 @@ export class SiteNotice extends React.Component {
 
 	static defaultProps = {};
 
-	getSiteRedirectNotice( site ) {
-		if ( ! site || this.props.isDomainOnly ) {
+	getSiteRedirectNotice(site) {
+		if (!site || this.props.isDomainOnly) {
 			return null;
 		}
-		if ( ! ( site.options && site.options.is_redirect ) ) {
+		if (!(site.options && site.options.is_redirect)) {
 			return null;
 		}
-		const { hostname } = url.parse( site.URL );
+		const { hostname } = url.parse(site.URL);
 		const { translate } = this.props;
 
 		return (
 			<Notice
 				icon="info-outline"
 				isCompact
-				showDismiss={ false }
-				text={ translate( 'Redirects to {{a}}%(url)s{{/a}}', {
+				showDismiss={false}
+				text={translate('Redirects to {{a}}%(url)s{{/a}}', {
 					args: { url: hostname },
-					components: { a: <a href={ site.URL } /> },
-				} ) }
+					components: { a: <a href={site.URL} /> },
+				})}
 			>
-				<NoticeAction href={ domainManagementList( site.domain ) }>
-					{ translate( 'Edit' ) }
-				</NoticeAction>
+				<NoticeAction href={domainManagementList(site.domain)}>{translate('Edit')}</NoticeAction>
 			</Notice>
 		);
 	}
 
 	domainCreditNotice() {
-		if ( ! this.props.hasDomainCredit || ! this.props.canManageOptions ) {
+		if (!this.props.hasDomainCredit || !this.props.canManageOptions) {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (isEnabled('signup/wpforteams') && this.props.isSiteWPForTeams) {
 			return null;
 		}
 
 		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		const { translate } = this.props;
-		const noticeText = preventWidows( translate( 'Free domain available' ) );
-		const ctaText = translate( 'Claim' );
+		const noticeText = preventWidows(translate('Free domain available'));
+		const ctaText = translate('Claim');
 
 		return (
 			<UpsellNudge
-				callToAction={ ctaText }
+				callToAction={ctaText}
 				compact
-				event={ eventName }
-				forceHref={ true }
-				forceDisplay={ true }
-				href={ `/domains/add/${ this.props.site.slug }` }
-				title={ noticeText }
+				event={eventName}
+				forceHref={true}
+				forceDisplay={true}
+				href={`/domains/add/${this.props.site.slug}`}
+				title={noticeText}
 				tracksClickName="calypso_domain_credit_reminder_click"
-				tracksClickProperties={ eventProperties }
-				tracksImpressionName={ eventName }
-				tracksImpressionProperties={ eventProperties }
+				tracksClickProperties={eventProperties}
+				tracksImpressionName={eventName}
+				tracksImpressionProperties={eventProperties}
 			/>
 		);
 	}
 
 	domainUpsellNudge() {
-		if ( ! this.props.isPlanOwner || this.props.domainUpsellNudgeDismissedDate ) {
+		if (!this.props.isPlanOwner || this.props.domainUpsellNudgeDismissedDate) {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (isEnabled('signup/wpforteams') && this.props.isSiteWPForTeams) {
 			return null;
 		}
 
 		const eligibleDomains = reject(
 			this.props.domains,
-			domain =>
+			(domain) =>
 				domain.isWPCOMDomain ||
-				domain.name.endsWith( '.wpcomstaging.com' ) ||
-				( domain.registrationDate &&
-					moment( domain.registrationDate )
-						.add( 7, 'days' )
-						.isAfter() )
+				domain.name.endsWith('.wpcomstaging.com') ||
+				(domain.registrationDate && moment(domain.registrationDate).add(7, 'days').isAfter())
 		);
 
-		if ( eligibleDomains.length !== 1 ) {
+		if (eligibleDomains.length !== 1) {
 			return null;
 		}
 
@@ -137,78 +132,78 @@ export class SiteNotice extends React.Component {
 
 		const priceAndSaleInfo = transform(
 			productsList,
-			function( result, value, key ) {
-				if ( value.is_domain_registration && value.available ) {
-					const regularPrice = getUnformattedDomainPrice( key, productsList );
-					const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
-					result.minRegularPrice = Math.min( minRegularPrice, regularPrice );
+			function (result, value, key) {
+				if (value.is_domain_registration && value.available) {
+					const regularPrice = getUnformattedDomainPrice(key, productsList);
+					const minRegularPrice = get(result, 'minRegularPrice', regularPrice);
+					result.minRegularPrice = Math.min(minRegularPrice, regularPrice);
 
-					const salePrice = getUnformattedDomainSalePrice( key, productsList );
-					if ( salePrice ) {
-						const minSalePrice = get( result, 'minSalePrice', salePrice );
-						result.minSalePrice = Math.min( minSalePrice, salePrice );
-						result.saleTlds.push( value.tld );
+					const salePrice = getUnformattedDomainSalePrice(key, productsList);
+					if (salePrice) {
+						const minSalePrice = get(result, 'minSalePrice', salePrice);
+						result.minSalePrice = Math.min(minSalePrice, salePrice);
+						result.saleTlds.push(value.tld);
 					}
 				}
 			},
 			{ saleTlds: [] }
 		);
 
-		if ( ! priceAndSaleInfo.minSalePrice && ! priceAndSaleInfo.minRegularPrice ) {
+		if (!priceAndSaleInfo.minSalePrice && !priceAndSaleInfo.minRegularPrice) {
 			return null;
 		}
 
 		let noticeText;
 
-		if ( priceAndSaleInfo.minSalePrice ) {
-			if ( get( priceAndSaleInfo, 'saleTlds.length', 0 ) === 1 ) {
-				noticeText = translate( 'Get a %(tld)s domain for just %(salePrice)s for a limited time', {
+		if (priceAndSaleInfo.minSalePrice) {
+			if (get(priceAndSaleInfo, 'saleTlds.length', 0) === 1) {
+				noticeText = translate('Get a %(tld)s domain for just %(salePrice)s for a limited time', {
 					args: {
-						tld: priceAndSaleInfo.saleTlds[ 0 ],
-						salePrice: formatCurrency( priceAndSaleInfo.minSalePrice, currencyCode ),
+						tld: priceAndSaleInfo.saleTlds[0],
+						salePrice: formatCurrency(priceAndSaleInfo.minSalePrice, currencyCode),
 					},
-				} );
+				});
 			} else {
-				noticeText = translate( 'Domains on sale starting at %(minSalePrice)s', {
+				noticeText = translate('Domains on sale starting at %(minSalePrice)s', {
 					args: {
-						minSalePrice: formatCurrency( priceAndSaleInfo.minSalePrice, currencyCode ),
+						minSalePrice: formatCurrency(priceAndSaleInfo.minSalePrice, currencyCode),
 					},
-				} );
+				});
 			}
 		} else {
-			noticeText = translate( 'Add another domain from %(minDomainPrice)s', {
+			noticeText = translate('Add another domain from %(minDomainPrice)s', {
 				args: {
-					minDomainPrice: formatCurrency( priceAndSaleInfo.minRegularPrice, currencyCode ),
+					minDomainPrice: formatCurrency(priceAndSaleInfo.minRegularPrice, currencyCode),
 				},
-			} );
+			});
 		}
 
 		return (
 			<UpsellNudge
-				callToAction={ translate( 'Add' ) }
+				callToAction={translate('Add')}
 				compact
-				href={ `/domains/add/${ site.slug }` }
-				onDismissClick={ this.props.clickDomainUpsellDismiss }
+				href={`/domains/add/${site.slug}`}
+				onDismissClick={this.props.clickDomainUpsellDismiss}
 				dismissPreferenceName="calypso_upgrade_nudge_cta_click"
 				event="calypso_upgrade_nudge_impression"
-				forceDisplay={ true }
-				title={ preventWidows( noticeText ) }
+				forceDisplay={true}
+				title={preventWidows(noticeText)}
 				tracksClickName="calypso_upgrade_nudge_cta_click"
-				tracksClickProperties={ { cta_name: 'domain-upsell-nudge' } }
+				tracksClickProperties={{ cta_name: 'domain-upsell-nudge' }}
 				tracksImpressionName="calypso_upgrade_nudge_impression"
-				tracksImpressionProperties={ { cta_name: 'domain-upsell-nudge' } }
+				tracksImpressionProperties={{ cta_name: 'domain-upsell-nudge' }}
 				tracksDismissName="calypso_upgrade_nudge_cta_click"
-				tracksDismissProperties={ { cta_name: 'domain-upsell-nudge-dismiss' } }
+				tracksDismissProperties={{ cta_name: 'domain-upsell-nudge-dismiss' }}
 			/>
 		);
 	}
 
 	activeDiscountNotice() {
-		if ( ! this.props.activeDiscount ) {
+		if (!this.props.activeDiscount) {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (isEnabled('signup/wpforteams') && this.props.isSiteWPForTeams) {
 			return null;
 		}
 
@@ -216,11 +211,11 @@ export class SiteNotice extends React.Component {
 		const { nudgeText, nudgeEndsTodayText, ctaText, name } = activeDiscount;
 
 		const bannerText =
-			nudgeEndsTodayText && this.promotionEndsToday( activeDiscount )
+			nudgeEndsTodayText && this.promotionEndsToday(activeDiscount)
 				? nudgeEndsTodayText
 				: nudgeText;
 
-		if ( ! bannerText ) {
+		if (!bannerText) {
 			return null;
 		}
 
@@ -228,102 +223,102 @@ export class SiteNotice extends React.Component {
 		return (
 			<UpsellNudge
 				event="calypso_upgrade_nudge_impression"
-				forceDisplay={ true }
+				forceDisplay={true}
 				tracksClickName="calypso_upgrade_nudge_cta_click"
-				tracksClickProperties={ eventProperties }
+				tracksClickProperties={eventProperties}
 				tracksImpressionName="calypso_upgrade_nudge_impression"
-				tracksImpressionProperties={ eventProperties }
-				callToAction={ ctaText || 'Upgrade' }
-				href={ `/plans/${ site.slug }?discount=${ name }` }
-				title={ bannerText }
+				tracksImpressionProperties={eventProperties}
+				callToAction={ctaText || 'Upgrade'}
+				href={`/plans/${site.slug}?discount=${name}`}
+				title={bannerText}
 			/>
 		);
 	}
 
-	promotionEndsToday( { endsAt } ) {
+	promotionEndsToday({ endsAt }) {
 		const now = new Date();
 		const format = 'YYYYMMDD';
-		return moment( now ).format( format ) === moment( endsAt ).format( format );
+		return moment(now).format(format) === moment(endsAt).format(format);
 	}
 
 	render() {
 		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
-		if ( ! site || isMigrationInProgress ) {
+		if (!site || isMigrationInProgress) {
 			return <div className="current-site__notices" />;
 		}
 
 		const discountOrFreeToPaid = this.activeDiscountNotice();
-		const siteRedirectNotice = this.getSiteRedirectNotice( site );
+		const siteRedirectNotice = this.getSiteRedirectNotice(site);
 		const domainCreditNotice = this.domainCreditNotice();
 
 		const showJitms =
-			! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) &&
-			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
+			!(isEnabled('signup/wpforteams') && this.props.isSiteWPForTeams) &&
+			(discountOrFreeToPaid || config.isEnabled('jitms'));
 
 		return (
 			<div className="current-site__notices">
 				<QueryProductsList />
 				<QueryActivePromotions />
-				{ siteRedirectNotice }
-				{ showJitms && (
+				{siteRedirectNotice}
+				{showJitms && (
 					<AsyncLoad
 						require="blocks/jitm"
-						messagePath={ messagePath }
+						messagePath={messagePath}
 						template="sidebar-banner"
-						placeholder={ null }
+						placeholder={null}
 					/>
-				) }
-				<QuerySitePlans siteId={ site.ID } />
-				{ ! hasJITM && domainCreditNotice }
-				{ ! ( hasJITM || discountOrFreeToPaid || domainCreditNotice ) && this.domainUpsellNudge() }
+				)}
+				<QuerySitePlans siteId={site.ID} />
+				{!hasJITM && domainCreditNotice}
+				{!(hasJITM || discountOrFreeToPaid || domainCreditNotice) && this.domainUpsellNudge()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
-		const sectionName = getSectionName( state );
-		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
+		const sectionName = getSectionName(state);
+		const messagePath = `calypso:${sectionName}:sidebar_notice`;
 
 		const isMigrationInProgress =
-			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
+			isSiteMigrationInProgress(state, siteId) || isSiteMigrationActiveRoute(state);
 
 		return {
-			isDomainOnly: isDomainOnlySite( state, siteId ),
-			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
-			activeDiscount: getActiveDiscount( state ),
-			hasDomainCredit: hasDomainCredit( state, siteId ),
-			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-			productsList: getProductsList( state ),
-			domains: getDomainsBySiteId( state, siteId ),
-			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
-			currencyCode: getCurrentUserCurrencyCode( state ),
-			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
-			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+			isDomainOnly: isDomainOnlySite(state, siteId),
+			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell(state, siteId),
+			activeDiscount: getActiveDiscount(state),
+			hasDomainCredit: hasDomainCredit(state, siteId),
+			canManageOptions: canCurrentUser(state, siteId, 'manage_options'),
+			productsList: getProductsList(state),
+			domains: getDomainsBySiteId(state, siteId),
+			isPlanOwner: isCurrentUserCurrentPlanOwner(state, siteId),
+			currencyCode: getCurrentUserCurrencyCode(state),
+			domainUpsellNudgeDismissedDate: getPreference(state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY),
+			isSiteWPForTeams: isSiteWPForTeams(state, siteId),
 			isMigrationInProgress,
-			hasJITM: getTopJITM( state, messagePath ),
+			hasJITM: getTopJITM(state, messagePath),
 			messagePath,
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return {
 			clickClaimDomainNotice: () =>
 				dispatch(
-					recordTracksEvent( 'calypso_domain_credit_reminder_click', {
+					recordTracksEvent('calypso_domain_credit_reminder_click', {
 						cta_name: 'current_site_domain_notice',
-					} )
+					})
 				),
 			clickDomainUpsellGo: () =>
 				dispatch(
-					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+					recordTracksEvent('calypso_upgrade_nudge_cta_click', {
 						cta_name: 'domain-upsell-nudge',
-					} )
+					})
 				),
 			clickDomainUpsellDismiss: () => {
-				dispatch( savePreference( DOMAIN_UPSELL_NUDGE_DISMISS_KEY, new Date().toISOString() ) );
+				dispatch(savePreference(DOMAIN_UPSELL_NUDGE_DISMISS_KEY, new Date().toISOString()));
 			},
 		};
 	}
-)( localize( SiteNotice ) );
+)(localize(SiteNotice));

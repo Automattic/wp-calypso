@@ -11,54 +11,54 @@ import { countDiffWords, countWords } from '../';
 // Adapted from TinyMCE word count tests:
 // https://github.com/tinymce/tinymce/blob/4.2.6/tests/plugins/wordcount.js
 
-describe( 'index', () => {
-	describe( '#wordCount', () => {
-		test( 'should return 0 for blank content', () => {
-			expect( countWords( '' ) ).to.equal( 0 );
-		} );
+describe('index', () => {
+	describe('#wordCount', () => {
+		test('should return 0 for blank content', () => {
+			expect(countWords('')).to.equal(0);
+		});
 
-		test( 'should strip HTML tags and count words for a simple sentence', () => {
-			expect( countWords( '<p>My sentence is this.</p>' ) ).to.equal( 4 );
-		} );
+		test('should strip HTML tags and count words for a simple sentence', () => {
+			expect(countWords('<p>My sentence is this.</p>')).to.equal(4);
+		});
 
-		test( 'should not count dashes', () => {
-			expect( countWords( '<p>Something -- ok</p>' ) ).to.equal( 2 );
-		} );
+		test('should not count dashes', () => {
+			expect(countWords('<p>Something -- ok</p>')).to.equal(2);
+		});
 
-		test( 'should not count asterisks or other non-word characters', () => {
-			expect( countWords( '<p>* something\n\u00b7 something else</p>' ) ).to.equal( 3 );
-		} );
+		test('should not count asterisks or other non-word characters', () => {
+			expect(countWords('<p>* something\n\u00b7 something else</p>')).to.equal(3);
+		});
 
-		test( 'should not count numbers', () => {
-			expect( countWords( '<p>Something 123 ok</p>' ) ).to.equal( 2 );
-		} );
+		test('should not count numbers', () => {
+			expect(countWords('<p>Something 123 ok</p>')).to.equal(2);
+		});
 
-		test( 'should not count HTML entities', () => {
+		test('should not count HTML entities', () => {
 			expect(
-				countWords( "<p>It&rsquo;s my life &ndash; &#8211; &#x2013; don't you forget.</p>" )
-			).to.equal( 6 );
-		} );
+				countWords("<p>It&rsquo;s my life &ndash; &#8211; &#x2013; don't you forget.</p>")
+			).to.equal(6);
+		});
 
-		test( 'should count hyphenated words as one word', () => {
-			expect( countWords( '<p>Hello some-word here.</p>' ) ).to.equal( 3 );
-		} );
+		test('should count hyphenated words as one word', () => {
+			expect(countWords('<p>Hello some-word here.</p>')).to.equal(3);
+		});
 
-		test( 'should count words between blocks as two words', () => {
-			expect( countWords( '<p>Hello</p><p>world</p>' ) ).to.equal( 2 );
-		} );
-	} );
+		test('should count words between blocks as two words', () => {
+			expect(countWords('<p>Hello</p><p>world</p>')).to.equal(2);
+		});
+	});
 
-	describe( '#countDiffWords', () => {
-		test( 'should return (0, 0) if input is empty', () => {
-			expect( countDiffWords( [] ) ).to.eql( {
+	describe('#countDiffWords', () => {
+		test('should return (0, 0) if input is empty', () => {
+			expect(countDiffWords([])).to.eql({
 				added: 0,
 				removed: 0,
-			} );
-		} );
+			});
+		});
 
-		test( 'should count words in each change', () => {
+		test('should count words in each change', () => {
 			expect(
-				countDiffWords( [
+				countDiffWords([
 					{
 						value: 'Hello World',
 						removed: true,
@@ -67,16 +67,16 @@ describe( 'index', () => {
 						value: 'Goodbye Continent',
 						added: true,
 					},
-				] )
-			).to.eql( {
+				])
+			).to.eql({
 				added: 2,
 				removed: 2,
-			} );
-		} );
+			});
+		});
 
-		test( 'should accumulate additions and deletions', () => {
+		test('should accumulate additions and deletions', () => {
 			expect(
-				countDiffWords( [
+				countDiffWords([
 					{
 						value: 'Hello',
 						removed: true,
@@ -93,11 +93,11 @@ describe( 'index', () => {
 						value: 'Continent',
 						added: true,
 					},
-				] )
-			).to.eql( {
+				])
+			).to.eql({
 				added: 2,
 				removed: 2,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

@@ -8,6 +8,6 @@ export function supportsCssCustomProperties() {
 		typeof window !== 'undefined' &&
 		window.CSS &&
 		window.CSS.supports &&
-		( window.CSS.supports( '--a', 0 ) || window.CSS.supports( 'color', 'var(--a)' ) )
+		(window.CSS.supports('--a', 0) || window.CSS.supports('color', 'var(--a)'))
 	);
 }

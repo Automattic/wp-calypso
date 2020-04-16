@@ -14,26 +14,26 @@ import { isBlogger, isGoogleApps } from 'lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 
-const BloggerPlanDetails = ( { selectedSite, sitePlans, purchases } ) => {
-	const plan = find( sitePlans.data, isBlogger );
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+const BloggerPlanDetails = ({ selectedSite, sitePlans, purchases }) => {
+	const plan = find(sitePlans.data, isBlogger);
+	const googleAppsWasPurchased = purchases.some(isGoogleApps);
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{googleAppsWasPurchased && <GoogleAppsDetails isRequired />}
 
 			<CustomDomainPurchaseDetail
-				onlyBlogDomain={ true }
-				selectedSite={ selectedSite }
-				hasDomainCredit={ plan && plan.hasDomainCredit }
+				onlyBlogDomain={true}
+				selectedSite={selectedSite}
+				hasDomainCredit={plan && plan.hasDomainCredit}
 			/>
 		</div>
 	);
 };
 
 BloggerPlanDetails.propTypes = {
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
+	selectedSite: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
 	sitePlans: PropTypes.object.isRequired,
 };
 
-export default localize( BloggerPlanDetails );
+export default localize(BloggerPlanDetails);

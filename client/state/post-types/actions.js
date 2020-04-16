@@ -14,7 +14,7 @@ import 'state/data-layer/wpcom/sites/post-types';
  * @param  {Array}  types  Post types received
  * @returns {object}        Action object
  */
-export function receivePostTypes( siteId, types ) {
+export function receivePostTypes(siteId, types) {
 	return {
 		type: POST_TYPES_RECEIVE,
 		siteId,
@@ -28,7 +28,7 @@ export function receivePostTypes( siteId, types ) {
  * @param  {number} siteId Site ID
  * @returns {object}        Action object
  */
-export function requestPostTypes( siteId ) {
+export function requestPostTypes(siteId) {
 	return {
 		type: POST_TYPES_REQUEST,
 		siteId,

@@ -49,23 +49,23 @@ const suggestions = [
 class TokenFieldWrapper extends React.Component {
 	state = {
 		tokenSuggestions: suggestions,
-		tokens: Object.freeze( [ 'foo', 'bar' ] ),
+		tokens: Object.freeze(['foo', 'bar']),
 	};
 
 	render() {
 		return (
 			<TokenField
-				suggestions={ this.state.tokenSuggestions }
-				value={ this.state.tokens }
-				displayTransform={ unescapeAndFormatSpaces }
-				onChange={ this._onTokensChange }
+				suggestions={this.state.tokenSuggestions}
+				value={this.state.tokens}
+				displayTransform={unescapeAndFormatSpaces}
+				onChange={this._onTokensChange}
 				ref="tokenField"
 			/>
 		);
 	}
 
-	_onTokensChange = value => {
-		this.setState( { tokens: value } );
+	_onTokensChange = (value) => {
+		this.setState({ tokens: value });
 	};
 }
 

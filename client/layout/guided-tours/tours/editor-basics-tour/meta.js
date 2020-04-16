@@ -13,6 +13,6 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 export default {
 	name: 'editorBasicsTour',
 	version: '20170503',
-	path: [ '/post/', '/page/' ],
-	when: and( isDesktop, isNewUser, isCurrentUserEmailVerified ),
+	path: ['/post/', '/page/'],
+	when: and(isDesktop, isNewUser, isCurrentUserEmailVerified),
 };

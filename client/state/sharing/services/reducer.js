@@ -11,18 +11,18 @@ import { combineReducers, withSchemaValidation, withoutPersistence } from 'state
 import { itemSchema } from './schema';
 
 // Stores the list of available keyring services
-export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemSchema, (state = {}, action) => {
+	switch (action.type) {
 		case KEYRING_SERVICES_RECEIVE:
 			return action.services;
 	}
 
 	return state;
-} );
+});
 
 // Tracks fetching state for keyring services
-export const isFetching = withoutPersistence( ( state = false, action ) => {
-	switch ( action.type ) {
+export const isFetching = withoutPersistence((state = false, action) => {
+	switch (action.type) {
 		case KEYRING_SERVICES_REQUEST:
 			return true;
 		case KEYRING_SERVICES_REQUEST_SUCCESS:
@@ -32,9 +32,9 @@ export const isFetching = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+});
 
-export default combineReducers( {
+export default combineReducers({
 	isFetching,
 	items,
-} );
+});

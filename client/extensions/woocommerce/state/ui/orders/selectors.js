@@ -17,10 +17,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number|object} The ID of the current order (or object placeholder, if a new order)
  */
-export const getCurrentlyEditingOrderId = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getCurrentlyEditingOrderId = (state, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'edits', 'currentlyEditingId' ],
+		['extensions', 'woocommerce', 'ui', 'orders', siteId, 'edits', 'currentlyEditingId'],
 		null
 	);
 };
@@ -30,10 +30,10 @@ export const getCurrentlyEditingOrderId = ( state, siteId = getSelectedSiteId( s
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {number} The current page being shown to the user. Defaults to 1.
  */
-export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getOrdersCurrentPage = (state, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentPage' ],
+		['extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentPage'],
 		1
 	);
 };
@@ -43,10 +43,10 @@ export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state )
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {string} The current search term being shown to the user. Defaults to "".
  */
-export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getOrdersCurrentSearch = (state, siteId = getSelectedSiteId(state)) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentSearch' ],
+		['extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentSearch'],
 		''
 	);
 };
@@ -58,7 +58,7 @@ export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state
  */
 export const getDefaultEmptyOrder = () => {
 	const currency = 'USD';
-	const zero = getCurrencyFormatString( 0, currency );
+	const zero = getCurrencyFormatString(0, currency);
 
 	return {
 		status: 'pending',
@@ -74,7 +74,7 @@ export const getDefaultEmptyOrder = () => {
 		billing: {},
 		shipping: {},
 		payment_method: 'calypso_manual',
-		payment_method_title: translate( 'Manual Payment' ),
+		payment_method_title: translate('Manual Payment'),
 		line_items: [],
 		tax_lines: [],
 		shipping_lines: [],
@@ -89,12 +89,8 @@ export const getDefaultEmptyOrder = () => {
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object} The local edits made to the current order
  */
-export const getOrderEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get(
-		state,
-		[ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'edits', 'changes' ],
-		{}
-	);
+export const getOrderEdits = (state, siteId = getSelectedSiteId(state)) => {
+	return get(state, ['extensions', 'woocommerce', 'ui', 'orders', siteId, 'edits', 'changes'], {});
 };
 
 /**
@@ -102,23 +98,23 @@ export const getOrderEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {object} The order merged with changes, or just the changes if a newly created order
  */
-export const getOrderWithEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const orderId = getCurrentlyEditingOrderId( state, siteId );
-	const orderEdits = getOrderEdits( state, siteId );
+export const getOrderWithEdits = (state, siteId = getSelectedSiteId(state)) => {
+	const orderId = getCurrentlyEditingOrderId(state, siteId);
+	const orderEdits = getOrderEdits(state, siteId);
 
 	// If there is no existing order, the edits are returned as the entire order.
-	if ( isObject( orderId ) ) {
+	if (isObject(orderId)) {
 		const emptyOrder = getDefaultEmptyOrder();
 		return { ...emptyOrder, ...orderEdits, id: orderId };
 	}
 
-	const order = getOrder( state, orderId, siteId );
+	const order = getOrder(state, orderId, siteId);
 	// We haven't synced the order yet, so return with just the changes.
-	if ( ! order ) {
+	if (!order) {
 		return orderEdits;
 	}
 
-	return merge( {}, order, orderEdits );
+	return merge({}, order, orderEdits);
 };
 
 /**
@@ -126,6 +122,6 @@ export const getOrderWithEdits = ( state, siteId = getSelectedSiteId( state ) ) 
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} True if there is an order ID tracked as "editing"
  */
-export const isCurrentlyEditingOrder = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return !! getCurrentlyEditingOrderId( state, siteId );
+export const isCurrentlyEditingOrder = (state, siteId = getSelectedSiteId(state)) => {
+	return !!getCurrentlyEditingOrderId(state, siteId);
 };

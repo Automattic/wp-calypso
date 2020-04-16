@@ -9,10 +9,10 @@ import installed from './installed/reducer';
 import upload from './upload/reducer';
 import recommended from './recommended/reducer';
 
-export default combineReducers( {
+export default combineReducers({
 	wporg,
 	premium,
 	installed,
 	upload,
 	recommended,
-} );
+});

@@ -36,7 +36,7 @@ import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants
  * @param  {number} siteId  ID of deleted site
  * @returns {object}         Action object
  */
-export function receiveDeletedSite( siteId ) {
+export function receiveDeletedSite(siteId) {
 	return {
 		type: SITE_DELETE_RECEIVE,
 		siteId,
@@ -50,7 +50,7 @@ export function receiveDeletedSite( siteId ) {
  * @param  {object} site Site received
  * @returns {object}      Action object
  */
-export function receiveSite( site ) {
+export function receiveSite(site) {
 	return {
 		type: SITE_RECEIVE,
 		site,
@@ -64,7 +64,7 @@ export function receiveSite( site ) {
  * @param  {object[]} sites Sites received
  * @returns {object}         Action object
  */
-export function receiveSites( sites ) {
+export function receiveSites(sites) {
 	return {
 		type: SITES_RECEIVE,
 		sites,
@@ -77,34 +77,34 @@ export function receiveSites( sites ) {
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
-	return dispatch => {
-		dispatch( {
+	return (dispatch) => {
+		dispatch({
 			type: SITES_REQUEST,
-		} );
+		});
 
 		return wpcom
 			.me()
-			.sites( {
+			.sites({
 				apiVersion: '1.2',
 				site_visibility: 'all',
 				include_domain_only: true,
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,
 				options: SITE_REQUEST_OPTIONS,
-				filters: config( 'site_filter' ).join( ',' ),
-			} )
-			.then( response => {
-				dispatch( receiveSites( response.sites ) );
-				dispatch( {
+				filters: config('site_filter').join(','),
+			})
+			.then((response) => {
+				dispatch(receiveSites(response.sites));
+				dispatch({
 					type: SITES_REQUEST_SUCCESS,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITES_REQUEST_FAILURE,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }
 
@@ -115,42 +115,42 @@ export function requestSites() {
  * @param  {number}   siteFragment Site ID or slug
  * @returns {Function}              Action thunk
  */
-export function requestSite( siteFragment ) {
-	return dispatch => {
-		dispatch( {
+export function requestSite(siteFragment) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_REQUEST,
 			siteId: siteFragment,
-		} );
+		});
 
 		return wpcom
-			.site( siteFragment )
-			.get( {
+			.site(siteFragment)
+			.get({
 				apiVersion: '1.2',
-			} )
-			.then( site => {
+			})
+			.then((site) => {
 				// If we can't manage the site, don't add it to state.
-				if ( ! ( site && site.capabilities ) ) {
-					return dispatch( {
+				if (!(site && site.capabilities)) {
+					return dispatch({
 						type: SITE_REQUEST_FAILURE,
 						siteId: siteFragment,
-						error: i18n.translate( 'No access to manage the site' ),
-					} );
+						error: i18n.translate('No access to manage the site'),
+					});
 				}
 
-				dispatch( receiveSite( omit( site, '_headers' ) ) );
+				dispatch(receiveSite(omit(site, '_headers')));
 
-				dispatch( {
+				dispatch({
 					type: SITE_REQUEST_SUCCESS,
 					siteId: siteFragment,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_REQUEST_FAILURE,
 					siteId: siteFragment,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }
 
@@ -161,36 +161,36 @@ export function requestSite( siteFragment ) {
  * @param  {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */
-export function deleteSite( siteId ) {
-	return dispatch => {
-		dispatch( {
+export function deleteSite(siteId) {
+	return (dispatch) => {
+		dispatch({
 			type: SITE_DELETE,
 			siteId,
-		} );
+		});
 		return wpcom
 			.undocumented()
-			.deleteSite( siteId )
-			.then( () => {
-				dispatch( receiveDeletedSite( siteId ) );
-				dispatch( {
+			.deleteSite(siteId)
+			.then(() => {
+				dispatch(receiveDeletedSite(siteId));
+				dispatch({
 					type: SITE_DELETE_SUCCESS,
 					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
+				});
+			})
+			.catch((error) => {
+				dispatch({
 					type: SITE_DELETE_FAILURE,
 					siteId,
 					error,
-				} );
-			} );
+				});
+			});
 	};
 }
 
-export const sitePluginUpdated = siteId => ( {
+export const sitePluginUpdated = (siteId) => ({
 	type: SITE_PLUGIN_UPDATED,
 	siteId,
-} );
+});
 
 /**
  * Returns an action object to be used to update the site front page options.
@@ -202,11 +202,11 @@ export const sitePluginUpdated = siteId => ( {
  * @param  {number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
  * @returns {object} Action object
  */
-export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
+export const updateSiteFrontPage = (siteId, frontPageOptions) => ({
 	type: SITE_FRONT_PAGE_UPDATE,
 	siteId,
 	frontPageOptions,
-} );
+});
 
 /**
  * Returns an action object to be used to update the site migration status.
@@ -216,9 +216,9 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
  * @param {string} lastModified Optional timestamp from the migration DB record
  * @returns {object} Action object
  */
-export const updateSiteMigrationMeta = ( siteId, migrationStatus, lastModified = null ) => ( {
+export const updateSiteMigrationMeta = (siteId, migrationStatus, lastModified = null) => ({
 	siteId,
 	type: SITE_MIGRATION_STATUS_UPDATE,
 	migrationStatus,
 	lastModified,
-} );
+});

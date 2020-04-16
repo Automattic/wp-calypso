@@ -12,27 +12,27 @@ import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import CelebrateNotice from '../celebrate-notice';
 
-const CelebrateSiteCreation = ( { checklistMode, displayChecklist, siteHasPaidPlan } ) => {
+const CelebrateSiteCreation = ({ checklistMode, displayChecklist, siteHasPaidPlan }) => {
 	const translate = useTranslate();
 	const message = siteHasPaidPlan
-		? translate( 'Thank you for your purchase!' )
-		: translate( 'Your site has been created!' );
+		? translate('Thank you for your purchase!')
+		: translate('Your site has been created!');
 
 	return (
 		<CelebrateNotice
-			checklistMode={ checklistMode }
+			checklistMode={checklistMode}
 			dismissalPreferenceName="home-notice-site-created"
-			displayChecklist={ displayChecklist }
-			message={ message }
+			displayChecklist={displayChecklist}
+			message={message}
 		/>
 	);
 };
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
 	return {
-		siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
+		siteHasPaidPlan: isSiteOnPaidPlan(state, siteId),
 	};
 };
 
-export default connect( mapStateToProps )( CelebrateSiteCreation );
+export default connect(mapStateToProps)(CelebrateSiteCreation);

@@ -10,51 +10,51 @@ import {
 	SET_FILTER,
 } from '../action-types';
 
-export const closePanel = () => ( {
+export const closePanel = () => ({
 	type: CLOSE_PANEL,
-} );
+});
 
-export const loadNotes = () => ( {
+export const loadNotes = () => ({
 	type: NOTES_LOADING,
-} );
+});
 
-export const loadedNotes = () => ( {
+export const loadedNotes = () => ({
 	type: NOTES_LOADED,
-} );
+});
 
-export const selectNote = noteId => ( {
+export const selectNote = (noteId) => ({
 	type: SELECT_NOTE,
 	noteId,
-} );
+});
 
-export const setLayout = layout => ( {
+export const setLayout = (layout) => ({
 	type: SET_LAYOUT,
 	layout,
-} );
+});
 
-export const undoAction = noteId => ( {
+export const undoAction = (noteId) => ({
 	type: UNDO_ACTION,
 	noteId,
-} );
+});
 
-export const unselectNote = () => selectNote( null );
+export const unselectNote = () => selectNote(null);
 
-export const viewSettings = () => ( {
+export const viewSettings = () => ({
 	type: VIEW_SETTINGS,
-} );
+});
 
-export const setFilter = filterName => ( {
+export const setFilter = (filterName) => ({
 	type: SET_FILTER,
 	filterName,
-} );
+});
 
-export const editComment = ( siteId, postId, commentId, href ) => ( {
+export const editComment = (siteId, postId, commentId, href) => ({
 	type: EDIT_COMMENT,
 	siteId,
 	postId,
 	commentId,
 	href,
-} );
+});
 
 export default {
 	closePanel,

@@ -37,7 +37,7 @@ class StepUpgrade extends Component {
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_site_migration_business_viewed' );
+		this.props.recordTracksEvent('calypso_site_migration_business_viewed');
 	}
 
 	render() {
@@ -53,85 +53,78 @@ class StepUpgrade extends Component {
 			themes,
 			translate,
 		} = this.props;
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
-		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
+		const sourceSiteDomain = get(sourceSite, 'domain');
+		const targetSiteDomain = get(targetSite, 'domain');
+		const backHref = `/migrate/from/${sourceSiteSlug}/to/${targetSiteSlug}`;
 
 		return (
 			<>
 				<QueryPlans />
-				<HeaderCake backHref={ backHref }>{ translate( 'Import Everything' ) }</HeaderCake>
+				<HeaderCake backHref={backHref}>{translate('Import Everything')}</HeaderCake>
 
 				<CompactCard>
 					<CardHeading>
-						{ translate( 'A Business Plan is required to import everything.' ) }
+						{translate('A Business Plan is required to import everything.')}
 					</CardHeading>
 					<div>
-						{ translate(
+						{translate(
 							'To import your themes, plugins, users, and settings from %(sourceSiteDomain)s we need to upgrade your WordPress.com site.',
 							{
 								args: { sourceSiteDomain },
 							}
-						) }
+						)}
 					</div>
 					<div className="migrate__plan-upsell">
-						{ /** The child elements here are in reverse order due to having flex-direction: row-reverse in CSS */ }
+						{/** The child elements here are in reverse order due to having flex-direction: row-reverse in CSS */}
 						<div className="migrate__plan-upsell-plugins">
-							<h4 className="migrate__plan-feature-header">
-								{ translate( 'Your active plugins' ) }
-							</h4>
-							{ plugins.slice( 0, 2 ).map( ( plugin, index ) => (
-								<div className="migrate__plan-upsell-item" key={ index }>
-									<Gridicon size={ 18 } icon="checkmark" />
-									<div className="migrate__plan-upsell-item-label">{ plugin.name }</div>
+							<h4 className="migrate__plan-feature-header">{translate('Your active plugins')}</h4>
+							{plugins.slice(0, 2).map((plugin, index) => (
+								<div className="migrate__plan-upsell-item" key={index}>
+									<Gridicon size={18} icon="checkmark" />
+									<div className="migrate__plan-upsell-item-label">{plugin.name}</div>
 								</div>
-							) ) }
-							{ plugins.length > 2 && (
+							))}
+							{plugins.length > 2 && (
 								<div className="migrate__plan-upsell-item">
-									<Gridicon size={ 18 } icon="plus" />
+									<Gridicon size={18} icon="plus" />
 									<div className="migrate__plan-upsell-item-label">
-										{ translate( '%(number)d more', { args: { number: plugins.length - 2 } } ) }
+										{translate('%(number)d more', { args: { number: plugins.length - 2 } })}
 									</div>
 								</div>
-							) }
+							)}
 						</div>
 						<div className="migrate__plan-upsell-themes">
-							<h4 className="migrate__plan-feature-header">
-								{ translate( 'Your custom themes' ) }
-							</h4>
-							{ themes.slice( 0, 2 ).map( ( theme, index ) => (
-								<div className="migrate__plan-upsell-item" key={ index }>
-									<Gridicon size={ 18 } icon="checkmark" />
-									<div className="migrate__plan-upsell-item-label">{ theme.name }</div>
+							<h4 className="migrate__plan-feature-header">{translate('Your custom themes')}</h4>
+							{themes.slice(0, 2).map((theme, index) => (
+								<div className="migrate__plan-upsell-item" key={index}>
+									<Gridicon size={18} icon="checkmark" />
+									<div className="migrate__plan-upsell-item-label">{theme.name}</div>
 								</div>
-							) ) }
-							{ themes.length > 2 && (
+							))}
+							{themes.length > 2 && (
 								<div className="migrate__plan-upsell-item">
-									<Gridicon size={ 18 } icon="plus" />
+									<Gridicon size={18} icon="plus" />
 									<div className="migrate__plan-upsell-item-label">
-										{ translate( '%(number)d more', { args: { number: themes.length - 2 } } ) }
+										{translate('%(number)d more', { args: { number: themes.length - 2 } })}
 									</div>
 								</div>
-							) }
+							)}
 						</div>
 						<div className="migrate__plan-upsell-container">
 							<div className="migrate__plan-upsell-icon">
 								<ProductIcon slug="business-bundle" />
 							</div>
 							<div className="migrate__plan-upsell-info">
-								<div className="migrate__plan-name">{ translate( 'WordPress.com Business' ) }</div>
+								<div className="migrate__plan-name">{translate('WordPress.com Business')}</div>
 								<div className="migrate__plan-price">
-									<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
+									<PlanPrice rawPrice={planPrice} currencyCode={currency} />
 								</div>
-								<div className="migrate__plan-billing-time-frame">{ billingTimeFrame }</div>
+								<div className="migrate__plan-billing-time-frame">{billingTimeFrame}</div>
 							</div>
 						</div>
 					</div>
-					<MigrateButton
-						onClick={ this.props.startMigration }
-						targetSiteDomain={ targetSiteDomain }
-					>
-						{ translate( 'Upgrade and import' ) }
+					<MigrateButton onClick={this.props.startMigration} targetSiteDomain={targetSiteDomain}>
+						{translate('Upgrade and import')}
 					</MigrateButton>
 				</CompactCard>
 			</>
@@ -140,15 +133,15 @@ class StepUpgrade extends Component {
 }
 
 export default connect(
-	state => {
-		const plan = getPlan( PLAN_BUSINESS );
+	(state) => {
+		const plan = getPlan(PLAN_BUSINESS);
 		const planId = plan.getProductId();
 
 		return {
 			billingTimeFrame: plan.getBillingTimeFrame(),
-			currency: getCurrentUserCurrencyCode( state ),
-			planPrice: getPlanRawPrice( state, planId, true ),
+			currency: getCurrentUserCurrencyCode(state),
+			planPrice: getPlanRawPrice(state, planId, true),
 		};
 	},
 	{ recordTracksEvent }
-)( localize( StepUpgrade ) );
+)(localize(StepUpgrade));

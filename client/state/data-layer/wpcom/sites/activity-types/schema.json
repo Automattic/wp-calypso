@@ -1,6 +1,6 @@
 {
 	"type": "object",
-	"required": [ "groups" ],
+	"required": ["groups"],
 	"properties": {
 		"groups": {
 			"type": "object",
@@ -21,7 +21,7 @@
 	"definitions": {
 		"group": {
 			"type": "object",
-			"required": [ "name", "count" ],
+			"required": ["name", "count"],
 			"properties": {
 				"name": { "type": "string" },
 				"count": { "type": "integer" }

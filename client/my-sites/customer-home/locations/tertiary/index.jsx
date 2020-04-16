@@ -12,17 +12,17 @@ const cardComponents = {
 	'home-section-manage-site': ManageSite,
 };
 
-const Tertiary = ( { cards } ) => {
+const Tertiary = ({ cards }) => {
 	return (
 		<>
-			{ cards &&
+			{cards &&
 				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
+					(card, index) =>
+						cardComponents[card] &&
+						React.createElement(cardComponents[card], {
 							key: index,
-						} )
-				) }
+						})
+				)}
 		</>
 	);
 };

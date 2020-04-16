@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * @param {number} postId Post ID
  * @returns {boolean} true if publicize scheduling share action for a post has failed
  */
-export default function isSchedulingPublicizeShareActionError( state, siteId, postId ) {
+export default function isSchedulingPublicizeShareActionError(state, siteId, postId) {
 	return (
 		get(
 			state,

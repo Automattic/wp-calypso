@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getPostRevision from 'state/selectors/get-post-revision';
 
-describe( 'getPostRevision', () => {
-	test( 'should return `null` if there is no revision in the state for `siteId, postId`', () => {
+describe('getPostRevision', () => {
+	test('should return `null` if there is no revision in the state for `siteId, postId`', () => {
 		expect(
 			getPostRevision(
 				{
@@ -30,9 +30,9 @@ describe( 'getPostRevision', () => {
 				7979
 			)
 		).to.be.null;
-	} );
+	});
 
-	test( 'should return a post revision', () => {
+	test('should return a post revision', () => {
 		expect(
 			getPostRevision(
 				{
@@ -58,10 +58,10 @@ describe( 'getPostRevision', () => {
 				10,
 				11
 			)
-		).to.eql( {
+		).to.eql({
 			id: 11,
 			post_author: 9090,
 			post_title: 'Badman <img onerror= />',
-		} );
-	} );
-} );
+		});
+	});
+});

@@ -36,40 +36,40 @@ class TwoFactorActions extends Component {
 		twoFactorAuthType: PropTypes.string.isRequired,
 	};
 
-	sendSmsCode = event => {
+	sendSmsCode = (event) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
+		this.props.recordTracksEvent('calypso_login_two_factor_switch_to_sms_link_click');
 
 		page(
-			login( {
+			login({
 				isNative: true,
 				twoFactorAuthType: 'sms',
 				isJetpack: this.props.isJetpack,
 				isGutenboarding: this.props.isGutenboarding,
-			} )
+			})
 		);
 
 		this.props.sendSmsCode();
 	};
 
-	recordAuthenticatorLinkClick = event => {
+	recordAuthenticatorLinkClick = (event) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
+		this.props.recordTracksEvent('calypso_login_two_factor_switch_to_authenticator_link_click');
 
 		page(
-			login( {
+			login({
 				isNative: true,
 				twoFactorAuthType: 'authenticator',
 				isJetpack: this.props.isJetpack,
 				isGutenboarding: this.props.isGutenboarding,
-			} )
+			})
 		);
 	};
-	recordSecurityKey = event => {
+	recordSecurityKey = (event) => {
 		event.preventDefault();
-		page( login( { isNative: true, twoFactorAuthType: 'webauthn' } ) );
+		page(login({ isNative: true, twoFactorAuthType: 'webauthn' }));
 	};
 
 	render() {
@@ -86,42 +86,42 @@ class TwoFactorActions extends Component {
 			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
 		const isSecurityKeyAvailable = isSecurityKeySupported && twoFactorAuthType !== 'webauthn';
 
-		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
+		if (!isSmsAvailable && !isAuthenticatorAvailable && !isSecurityKeyAvailable) {
 			return null;
 		}
 
 		return (
 			<Card className="two-factor-authentication__actions">
-				{ isSecurityKeyAvailable && (
-					<Button data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>
-						{ translate( 'Continue with your security\u00A0key' ) }
+				{isSecurityKeyAvailable && (
+					<Button data-e2e-link="2fa-security-key-link" onClick={this.recordSecurityKey}>
+						{translate('Continue with your security\u00A0key')}
 					</Button>
-				) }
+				)}
 
-				{ isSmsAvailable && (
-					<Button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
-						{ translate( 'Send code via\u00A0text\u00A0message' ) }
+				{isSmsAvailable && (
+					<Button data-e2e-link="2fa-sms-link" onClick={this.sendSmsCode}>
+						{translate('Send code via\u00A0text\u00A0message')}
 					</Button>
-				) }
+				)}
 
-				{ isAuthenticatorAvailable && (
-					<Button data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
-						{ translate( 'Continue with your authenticator\u00A0app' ) }
+				{isAuthenticatorAvailable && (
+					<Button data-e2e-link="2fa-otp-link" onClick={this.recordAuthenticatorLinkClick}>
+						{translate('Continue with your authenticator\u00A0app')}
 					</Button>
-				) }
+				)}
 			</Card>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
-		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
-		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-	} ),
+	(state) => ({
+		isAuthenticatorSupported: isTwoFactorAuthTypeSupported(state, 'authenticator'),
+		isSmsSupported: isTwoFactorAuthTypeSupported(state, 'sms'),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported(state, 'webauthn'),
+	}),
 	{
 		recordTracksEvent,
 		sendSmsCode,
 	}
-)( localize( TwoFactorActions ) );
+)(localize(TwoFactorActions));

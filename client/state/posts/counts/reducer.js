@@ -29,16 +29,16 @@ import { countsSchema } from './schema';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
+export function requesting(state = {}, action) {
+	switch (action.type) {
 		case POST_COUNTS_REQUEST:
 		case POST_COUNTS_REQUEST_SUCCESS:
 		case POST_COUNTS_REQUEST_FAILURE:
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.postType ]: POST_COUNTS_REQUEST === action.type,
+			return merge({}, state, {
+				[action.siteId]: {
+					[action.postType]: POST_COUNTS_REQUEST === action.type,
 				},
-			} );
+			});
 	}
 
 	return state;
@@ -53,7 +53,7 @@ export function requesting( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const counts = ( () => {
+export const counts = (() => {
 	let currentUserId;
 	let postStatuses = {};
 
@@ -64,8 +64,8 @@ export const counts = ( () => {
 	 * @param  {number} postId Post ID
 	 * @returns {string}        Serialized key
 	 */
-	function getPostStatusKey( siteId, postId ) {
-		return [ siteId, postId ].join();
+	function getPostStatusKey(siteId, postId) {
+		return [siteId, postId].join();
 	}
 
 	/**
@@ -78,63 +78,60 @@ export const counts = ( () => {
 	 * @param  {string} status Post status
 	 * @returns {object}        Updated state
 	 */
-	function transitionPostStateToStatus( state, siteId, postId, status ) {
-		const postStatusKey = getPostStatusKey( siteId, postId );
-		const postStatus = postStatuses[ postStatusKey ];
-		if ( ! postStatus ) {
+	function transitionPostStateToStatus(state, siteId, postId, status) {
+		const postStatusKey = getPostStatusKey(siteId, postId);
+		const postStatus = postStatuses[postStatusKey];
+		if (!postStatus) {
 			return state;
 		}
 
 		// Determine which count subkeys need to be updated, depending on
 		// whether the current user authored the post
-		const subKeys = [ 'all' ];
-		if ( postStatus.authorId === currentUserId ) {
-			subKeys.push( 'mine' );
+		const subKeys = ['all'];
+		if (postStatus.authorId === currentUserId) {
+			subKeys.push('mine');
 		}
 
-		const revisions = subKeys.reduce( ( memo, subKey ) => {
-			const subKeyCounts = get( state, [ siteId, postStatus.type, subKey ], {} );
+		const revisions = subKeys.reduce((memo, subKey) => {
+			const subKeyCounts = get(state, [siteId, postStatus.type, subKey], {});
 
-			memo[ subKey ] = {};
+			memo[subKey] = {};
 
 			// Decrement count from the current status before transitioning
-			memo[ subKey ][ postStatus.status ] = Math.max(
-				( subKeyCounts[ postStatus.status ] || 0 ) - 1,
-				0
-			);
+			memo[subKey][postStatus.status] = Math.max((subKeyCounts[postStatus.status] || 0) - 1, 0);
 
 			// So long as we're not trashing an already trashed post or page,
 			// increment the count for the transitioned status
-			if ( 'deleted' !== status ) {
-				memo[ subKey ][ status ] = ( subKeyCounts[ status ] || 0 ) + 1;
+			if ('deleted' !== status) {
+				memo[subKey][status] = (subKeyCounts[status] || 0) + 1;
 			}
 
 			return memo;
-		}, {} );
+		}, {});
 
-		if ( 'deleted' === status ) {
+		if ('deleted' === status) {
 			// If post is permanently deleted, omit from tracked statuses
-			postStatuses = omit( postStatuses, postStatusKey );
+			postStatuses = omit(postStatuses, postStatusKey);
 		} else {
 			// Otherwise, update object to reflect new status
 			postStatus.status = status;
 		}
 
 		// Ensure that `all` and `mine` keys are always present
-		merge( revisions, {
+		merge(revisions, {
 			all: {},
 			mine: {},
-		} );
+		});
 
-		return merge( {}, state, {
-			[ siteId ]: {
-				[ postStatus.type ]: revisions,
+		return merge({}, state, {
+			[siteId]: {
+				[postStatus.type]: revisions,
 			},
-		} );
+		});
 	}
 
-	return withSchemaValidation( countsSchema, ( state = {}, action ) => {
-		switch ( action.type ) {
+	return withSchemaValidation(countsSchema, (state = {}, action) => {
+		switch (action.type) {
 			case POST_COUNTS_RESET_INTERNAL_STATE: {
 				currentUserId = undefined;
 				postStatuses = {};
@@ -147,47 +144,47 @@ export const counts = ( () => {
 				return state;
 			}
 			case POSTS_RECEIVE: {
-				action.posts.forEach( post => {
-					const postStatusKey = getPostStatusKey( post.site_ID, post.ID );
-					const postStatus = postStatuses[ postStatusKey ];
+				action.posts.forEach((post) => {
+					const postStatusKey = getPostStatusKey(post.site_ID, post.ID);
+					const postStatus = postStatuses[postStatusKey];
 
 					// If the post is known to us and the status has changed,
 					// update state to reflect change
-					if ( postStatus && post.status !== postStatus.status ) {
-						state = transitionPostStateToStatus( state, post.site_ID, post.ID, post.status );
+					if (postStatus && post.status !== postStatus.status) {
+						state = transitionPostStateToStatus(state, post.site_ID, post.ID, post.status);
 					}
 
-					postStatuses[ postStatusKey ] = pick( post, 'type', 'status' );
-					postStatuses[ postStatusKey ].authorId = get( post.author, 'ID' );
-				} );
+					postStatuses[postStatusKey] = pick(post, 'type', 'status');
+					postStatuses[postStatusKey].authorId = get(post.author, 'ID');
+				});
 
 				return state;
 			}
 			case POST_SAVE: {
 				const { siteId, postId, post } = action;
-				if ( ! post.status ) {
+				if (!post.status) {
 					return state;
 				}
 
-				return transitionPostStateToStatus( state, siteId, postId, post.status );
+				return transitionPostStateToStatus(state, siteId, postId, post.status);
 			}
 			case POST_DELETE: {
-				return transitionPostStateToStatus( state, action.siteId, action.postId, 'deleted' );
+				return transitionPostStateToStatus(state, action.siteId, action.postId, 'deleted');
 			}
 			case POST_COUNTS_RECEIVE: {
-				return merge( {}, state, {
-					[ action.siteId ]: {
-						[ action.postType ]: action.counts,
+				return merge({}, state, {
+					[action.siteId]: {
+						[action.postType]: action.counts,
 					},
-				} );
+				});
 			}
 		}
 
 		return state;
-	} );
-} )();
+	});
+})();
 
-export default combineReducers( {
+export default combineReducers({
 	requesting,
 	counts,
-} );
+});

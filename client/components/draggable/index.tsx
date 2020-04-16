@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 
 interface Props {
-	onDrag: ( x: number, y: number ) => void;
+	onDrag: (x: number, y: number) => void;
 	onStop: () => void;
 	width: number;
 	height: number;
@@ -30,7 +30,7 @@ interface State {
 
 interface MinimalTouchList {
 	readonly length: number;
-	[ index: number ]: HasPageCoords;
+	[index: number]: HasPageCoords;
 }
 interface HasTouches {
 	readonly touches: MinimalTouchList;
@@ -46,19 +46,19 @@ interface HasPageCoords {
  * @param event Event (Mouse or Touch)
  * @returns      True if the event has touches
  */
-function isEventWithTouches( event: HasTouches | HasPageCoords ): event is HasTouches {
+function isEventWithTouches(event: HasTouches | HasPageCoords): event is HasTouches {
 	return (
-		( ! ( event as HasPageCoords ).pageX || ! ( event as HasPageCoords ).pageY ) &&
-		!! ( ( event as HasTouches ).touches && ( event as HasTouches ).touches.length )
+		(!(event as HasPageCoords).pageX || !(event as HasPageCoords).pageY) &&
+		!!((event as HasTouches).touches && (event as HasTouches).touches.length)
 	);
 }
 
 type DivProps = Omit<
-	React.ComponentPropsWithoutRef< 'div' >,
+	React.ComponentPropsWithoutRef<'div'>,
 	'style' | 'onMouseDown' | 'onTouchStart'
 >;
 
-export default class Draggable extends Component< Props & DivProps, State > {
+export default class Draggable extends Component<Props & DivProps, State> {
 	static defaultProps = {
 		onDrag: () => {},
 		onStop: () => {},
@@ -76,12 +76,12 @@ export default class Draggable extends Component< Props & DivProps, State > {
 	};
 
 	dragging: boolean = false;
-	frameRequestId: ReturnType< typeof requestAnimationFrame > | null = null;
+	frameRequestId: ReturnType<typeof requestAnimationFrame> | null = null;
 	relativePos: { x: number; y: number } | null = null;
 	mousePos: { x: number; y: number } | null = null;
 
-	static getDerivedStateFromProps( props: Draggable[ 'props' ], state: State ) {
-		if ( state.x !== props.x || state.y !== props.y ) {
+	static getDerivedStateFromProps(props: Draggable['props'], state: State) {
+		if (state.x !== props.x || state.y !== props.y) {
 			return {
 				x: props.x,
 				y: props.y,
@@ -96,18 +96,18 @@ export default class Draggable extends Component< Props & DivProps, State > {
 	}
 
 	cancelRaf() {
-		if ( this.frameRequestId ) {
-			cancelAnimationFrame( this.frameRequestId );
+		if (this.frameRequestId) {
+			cancelAnimationFrame(this.frameRequestId);
 			this.frameRequestId = null;
 		}
 	}
 
 	draggingStartedHandler = (
-		event: React.TouchEvent< HTMLDivElement > | React.MouseEvent< HTMLDivElement >
+		event: React.TouchEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>
 	) => {
 		this.dragging = true;
 
-		const coords = isEventWithTouches( event ) ? event.touches[ 0 ] : event;
+		const coords = isEventWithTouches(event) ? event.touches[0] : event;
 
 		this.relativePos = {
 			x: coords.pageX - this.state.x,
@@ -115,15 +115,15 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		};
 
 		this.cancelRaf();
-		this.frameRequestId = requestAnimationFrame( this.update );
+		this.frameRequestId = requestAnimationFrame(this.update);
 	};
 
-	draggingHandler = ( event: TouchEvent | MouseEvent ) => {
-		const coords = isEventWithTouches( event ) ? event.touches[ 0 ] : event;
+	draggingHandler = (event: TouchEvent | MouseEvent) => {
+		const coords = isEventWithTouches(event) ? event.touches[0] : event;
 
 		// draggingStartedHandler populates `relativePos` and it should not be undefined.
-		const x = coords.pageX - ( this.relativePos as NonNullable< Draggable[ 'relativePos' ] > ).x;
-		const y = coords.pageY - ( this.relativePos as NonNullable< Draggable[ 'relativePos' ] > ).y;
+		const x = coords.pageX - (this.relativePos as NonNullable<Draggable['relativePos']>).x;
+		const y = coords.pageY - (this.relativePos as NonNullable<Draggable['relativePos']>).y;
 
 		this.mousePos = { x, y };
 	};
@@ -138,55 +138,55 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		this.props.onStop();
 	};
 
-	onTouchStartHandler: React.TouchEventHandler< HTMLDivElement > = event => {
+	onTouchStartHandler: React.TouchEventHandler<HTMLDivElement> = (event) => {
 		event.preventDefault();
 
 		// Call draggingStartedHandler first
-		this.draggingStartedHandler( event );
-		document.addEventListener( 'touchmove', this.draggingHandler );
-		document.addEventListener( 'touchend', this.draggingEndedHandler );
+		this.draggingStartedHandler(event);
+		document.addEventListener('touchmove', this.draggingHandler);
+		document.addEventListener('touchend', this.draggingEndedHandler);
 	};
 
-	onMouseDownHandler: React.MouseEventHandler< HTMLDivElement > = event => {
+	onMouseDownHandler: React.MouseEventHandler<HTMLDivElement> = (event) => {
 		event.preventDefault();
 
 		// Call draggingStartedHandler first
-		this.draggingStartedHandler( event );
-		document.addEventListener( 'mousemove', this.draggingHandler );
-		document.addEventListener( 'mouseup', this.draggingEndedHandler );
+		this.draggingStartedHandler(event);
+		document.addEventListener('mousemove', this.draggingHandler);
+		document.addEventListener('mouseup', this.draggingEndedHandler);
 	};
 
 	update = () => {
-		if ( ! this.mousePos ) {
-			this.frameRequestId = requestAnimationFrame( this.update );
+		if (!this.mousePos) {
+			this.frameRequestId = requestAnimationFrame(this.update);
 			return;
 		}
 
 		const { bounds } = this.props;
 		let { x, y } = this.mousePos;
-		if ( bounds ) {
-			x = Math.max( bounds.left, Math.min( bounds.right - this.props.width, x ) );
-			y = Math.max( bounds.top, Math.min( bounds.bottom - this.props.height, y ) );
+		if (bounds) {
+			x = Math.max(bounds.left, Math.min(bounds.right - this.props.width, x));
+			y = Math.max(bounds.top, Math.min(bounds.bottom - this.props.height, y));
 		}
 
-		if ( this.dragging ) {
-			this.frameRequestId = requestAnimationFrame( this.update );
+		if (this.dragging) {
+			this.frameRequestId = requestAnimationFrame(this.update);
 		}
 
-		this.props.onDrag( x, y );
+		this.props.onDrag(x, y);
 
-		if ( this.props.controlled ) {
+		if (this.props.controlled) {
 			return;
 		}
 
-		this.setState( { x, y } );
+		this.setState({ x, y });
 	};
 
 	removeListeners() {
-		document.removeEventListener( 'mousemove', this.draggingHandler );
-		document.removeEventListener( 'mouseup', this.draggingEndedHandler );
-		document.removeEventListener( 'touchmove', this.draggingHandler );
-		document.removeEventListener( 'touchend', this.draggingEndedHandler );
+		document.removeEventListener('mousemove', this.draggingHandler);
+		document.removeEventListener('mouseup', this.draggingEndedHandler);
+		document.removeEventListener('touchmove', this.draggingHandler);
+		document.removeEventListener('touchend', this.draggingEndedHandler);
 	}
 
 	render() {
@@ -196,7 +196,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 			transform: 'translate(' + this.state.x + 'px, ' + this.state.y + 'px)',
 		};
 
-		if ( this.props.width || this.props.height ) {
+		if (this.props.width || this.props.height) {
 			style.width = this.props.width + 'px';
 			style.height = this.props.height + 'px';
 		}
@@ -204,10 +204,10 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		return (
 			// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 			<div
-				{ ...divProps }
-				style={ style }
-				onMouseDown={ this.onMouseDownHandler }
-				onTouchStart={ this.onTouchStartHandler }
+				{...divProps}
+				style={style}
+				onMouseDown={this.onMouseDownHandler}
+				onTouchStart={this.onTouchStartHandler}
 			/>
 		);
 	}

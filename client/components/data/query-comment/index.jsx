@@ -26,18 +26,18 @@ export class QueryComment extends Component {
 		this.request();
 	}
 
-	componentDidUpdate( { siteId, commentId } ) {
-		if ( siteId !== this.props.siteId || commentId !== this.props.commentId ) {
+	componentDidUpdate({ siteId, commentId }) {
+		if (siteId !== this.props.siteId || commentId !== this.props.commentId) {
 			this.request();
 		}
 	}
 
 	request() {
 		const { siteId, commentId, forceWpcom } = this.props;
-		if ( siteId && commentId ) {
+		if (siteId && commentId) {
 			const query = forceWpcom ? { force: 'wpcom' } : {};
 
-			this.props.requestComment( { siteId, commentId, query } );
+			this.props.requestComment({ siteId, commentId, query });
 		}
 	}
 
@@ -46,4 +46,4 @@ export class QueryComment extends Component {
 	}
 }
 
-export default connect( null, { requestComment } )( QueryComment );
+export default connect(null, { requestComment })(QueryComment);

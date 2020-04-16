@@ -19,19 +19,19 @@ class QueryMailChimpSettings extends Component {
 	};
 
 	componentDidMount() {
-		this.request( this.props );
+		this.request(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.siteId === nextProps.siteId) {
 			return;
 		}
-		this.request( nextProps );
+		this.request(nextProps);
 	}
 
-	request( props ) {
-		if ( ! props.isRequesting && props.siteId ) {
-			props.requestSettings( props.siteId );
+	request(props) {
+		if (!props.isRequesting && props.siteId) {
+			props.requestSettings(props.siteId);
 		}
 	}
 
@@ -41,8 +41,8 @@ class QueryMailChimpSettings extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		isRequesting: isRequestingSettings( state, siteId ),
-	} ),
+	(state, { siteId }) => ({
+		isRequesting: isRequestingSettings(state, siteId),
+	}),
 	{ requestSettings }
-)( QueryMailChimpSettings );
+)(QueryMailChimpSettings);

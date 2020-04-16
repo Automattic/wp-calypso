@@ -23,37 +23,37 @@ export default class NumberInput extends Component {
 		text: this.props.value,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.state.focused && nextProps.value !== this.props.value ) {
-			this.setState( { text: nextProps.value } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!this.state.focused && nextProps.value !== this.props.value) {
+			this.setState({ text: nextProps.value });
 		}
 	}
 
-	handleChange = event => {
-		this.setState( { text: event.target.value } );
-		this.props.onChange( event );
+	handleChange = (event) => {
+		this.setState({ text: event.target.value });
+		this.props.onChange(event);
 	};
 
-	handleBlur = event => {
-		this.setState( {
+	handleBlur = (event) => {
+		this.setState({
 			focused: false,
 			text: this.props.value,
-		} );
-		this.props.onChange( event );
+		});
+		this.props.onChange(event);
 	};
 
 	handleFocus = () => {
-		this.setState( { focused: true } );
+		this.setState({ focused: true });
 	};
 
 	render() {
 		return (
 			<FormTextInput
-				{ ...this.props }
-				value={ this.state.text }
-				onChange={ this.handleChange }
-				onBlur={ this.handleBlur }
-				onFocus={ this.handleFocus }
+				{...this.props}
+				value={this.state.text}
+				onChange={this.handleChange}
+				onBlur={this.handleBlur}
+				onFocus={this.handleFocus}
 			/>
 		);
 	}

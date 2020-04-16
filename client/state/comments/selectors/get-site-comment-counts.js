@@ -11,9 +11,9 @@ import 'state/comments/init';
  * @param {number} [postId] Post identifier
  * @returns {object} The requested comment counts
  */
-export function getSiteCommentCounts( state, siteId, postId ) {
-	if ( postId ) {
-		return state.comments.counts[ siteId ]?.[ postId ] ?? null;
+export function getSiteCommentCounts(state, siteId, postId) {
+	if (postId) {
+		return state.comments.counts[siteId]?.[postId] ?? null;
 	}
-	return state.comments.counts[ siteId ]?.site ?? null;
+	return state.comments.counts[siteId]?.site ?? null;
 }

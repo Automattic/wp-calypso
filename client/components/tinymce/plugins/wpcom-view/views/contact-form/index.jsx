@@ -11,21 +11,21 @@ import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-u
 import { next } from 'lib/shortcode';
 import renderField from './preview-fields';
 
-const ContactForm = localize( ( { content, translate } ) => {
-	const { fields } = deserialize( content );
+const ContactForm = localize(({ content, translate }) => {
+	const { fields } = deserialize(content);
 
 	return (
 		<div className="wpview-content wpview-type-contact-form">
-			{ [].concat( fields ).map( renderField ) }
-			<button disabled>{ translate( 'Submit' ) }</button>
+			{[].concat(fields).map(renderField)}
+			<button disabled>{translate('Submit')}</button>
 		</div>
 	);
-} );
+});
 
-export function match( content ) {
-	const m = next( 'contact-form', content );
+export function match(content) {
+	const m = next('contact-form', content);
 
-	if ( m ) {
+	if (m) {
 		return {
 			index: m.index,
 			content: m.content,
@@ -36,12 +36,12 @@ export function match( content ) {
 	}
 }
 
-export function serialize( content ) {
-	return encodeURIComponent( content );
+export function serialize(content) {
+	return encodeURIComponent(content);
 }
 
-export function edit( editor, content ) {
-	editor.execCommand( 'wpcomContactForm', content );
+export function edit(editor, content) {
+	editor.execCommand('wpcomContactForm', content);
 }
 
 export function getComponent() {

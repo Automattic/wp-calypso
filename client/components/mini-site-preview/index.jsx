@@ -10,14 +10,14 @@ import classnames from 'classnames';
  */
 import './style.scss';
 
-const MiniSitePreview = ( { className, imageSrc } ) =>
+const MiniSitePreview = ({ className, imageSrc }) =>
 	imageSrc ? (
-		<div className={ classnames( 'mini-site-preview', className ) }>
+		<div className={classnames('mini-site-preview', className)}>
 			<div className="mini-site-preview__browser-chrome">
 				<span>● ● ●</span>
 			</div>
 			<div className="mini-site-preview__image">
-				<img className="mini-site-preview__favicon" src={ imageSrc } alt="Site favicon" />
+				<img className="mini-site-preview__favicon" src={imageSrc} alt="Site favicon" />
 			</div>
 		</div>
 	) : null;

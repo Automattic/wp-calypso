@@ -33,7 +33,7 @@ export default class extends React.Component {
 	};
 
 	getHighestQualityThumbnail = () => {
-		if ( this.props.media.thumbnails ) {
+		if (this.props.media.thumbnails) {
 			return (
 				this.props.media.thumbnails.fmt_hd ||
 				this.props.media.thumbnails.fmt_dvd ||
@@ -45,26 +45,26 @@ export default class extends React.Component {
 	render() {
 		const thumbnail = this.getHighestQualityThumbnail();
 
-		if ( thumbnail ) {
+		if (thumbnail) {
 			// Non MEDIA_IMAGE_THUMBNAIL video media is accessible via Photon
 			const url =
 				this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL
 					? thumbnail
-					: photon( thumbnail, { width: this.props.maxImageWidth } );
+					: photon(thumbnail, { width: this.props.maxImageWidth });
 
-			return <MediaFile src={ url } component={ ListItemVideo } placeholder={ ListItemVideo } />;
+			return <MediaFile src={url} component={ListItemVideo} placeholder={ListItemVideo} />;
 		}
-		return <ListItemFileDetails { ...this.props } icon="video-camera" />;
+		return <ListItemFileDetails {...this.props} icon="video-camera" />;
 	}
 }
 
-function ListItemVideo( { src } ) {
+function ListItemVideo({ src }) {
 	const style = {};
-	if ( src ) {
+	if (src) {
 		style.backgroundImage = 'url(' + src + ')';
 	}
 	return (
-		<div className="media-library__list-item-video" style={ style }>
+		<div className="media-library__list-item-video" style={style}>
 			<span className="media-library__list-item-icon media-library__list-item-centered">
 				<Gridicon icon="video-camera" />
 			</span>

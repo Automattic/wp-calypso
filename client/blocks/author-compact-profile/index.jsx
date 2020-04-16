@@ -52,61 +52,61 @@ class AuthorCompactProfile extends React.Component {
 			post,
 		} = this.props;
 
-		if ( ! author ) {
+		if (!author) {
 			return <AuthorCompactProfilePlaceholder />;
 		}
 
-		const hasAuthorName = has( author, 'name' );
+		const hasAuthorName = has(author, 'name');
 		const hasMatchingAuthorAndSiteNames =
-			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
-		const classes = classnames( {
+			hasAuthorName && areEqualIgnoringWhitespaceAndCase(siteName, author.name);
+		const classes = classnames({
 			'author-compact-profile': true,
-			'has-author-link': ! hasMatchingAuthorAndSiteNames,
-			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar ),
-		} );
-		const streamUrl = getStreamUrl( feedId, siteId );
+			'has-author-link': !hasMatchingAuthorAndSiteNames,
+			'has-author-icon': siteIcon || feedIcon || (author && author.has_avatar),
+		});
+		const streamUrl = getStreamUrl(feedId, siteId);
 
 		// If we have a feed URL, use that for the follow button in preference to the site URL
 		const followUrl = feedUrl || siteUrl;
 
 		return (
-			<div className={ classes }>
-				<a href={ streamUrl } className="author-compact-profile__avatar-link">
-					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
+			<div className={classes}>
+				<a href={streamUrl} className="author-compact-profile__avatar-link">
+					<ReaderAvatar siteIcon={siteIcon} feedIcon={feedIcon} author={author} />
 				</a>
-				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && (
-					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
-						{ author.name }
+				{hasAuthorName && !hasMatchingAuthorAndSiteNames && (
+					<ReaderAuthorLink author={author} siteUrl={streamUrl} post={post}>
+						{author.name}
 					</ReaderAuthorLink>
-				) }
-				{ siteName && (
+				)}
+				{siteName && (
 					<ReaderSiteStreamLink
 						className="author-compact-profile__site-link"
-						feedId={ feedId }
-						siteId={ siteId }
-						post={ post }
+						feedId={feedId}
+						siteId={siteId}
+						post={post}
 					>
-						{ siteName }
+						{siteName}
 					</ReaderSiteStreamLink>
-				) }
+				)}
 
 				<div className="author-compact-profile__follow">
-					{ followCount ? (
+					{followCount ? (
 						<div className="author-compact-profile__follow-count">
-							{ this.props.translate( '%(followCount)s follower', '%(followCount)s followers', {
+							{this.props.translate('%(followCount)s follower', '%(followCount)s followers', {
 								count: followCount,
 								args: {
-									followCount: numberFormat( followCount ),
+									followCount: numberFormat(followCount),
 								},
-							} ) }
+							})}
 						</div>
-					) : null }
+					) : null}
 
-					{ followUrl && <ReaderFollowButton siteUrl={ followUrl } /> }
+					{followUrl && <ReaderFollowButton siteUrl={followUrl} />}
 				</div>
 			</div>
 		);
 	}
 }
 
-export default localize( AuthorCompactProfile );
+export default localize(AuthorCompactProfile);

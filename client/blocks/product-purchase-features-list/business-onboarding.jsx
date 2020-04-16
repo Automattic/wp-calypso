@@ -16,13 +16,13 @@ import PurchaseDetail from 'components/purchase-detail';
  */
 import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
 
-export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) => {
+export default localize(({ isWpcomPlan, translate, link, onClick = noop }) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src={ conciergeImage } /> }
-				title={ translate( 'Quick Start session' ) }
-				description={ translate(
+				icon={<img alt="" src={conciergeImage} />}
+				title={translate('Quick Start session')}
+				description={translate(
 					'Schedule a one-on-one orientation session to set up your site ' +
 						'and learn more about %(serviceName)s.',
 					{
@@ -30,11 +30,11 @@ export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) =>
 							serviceName: isWpcomPlan ? 'WordPress.com' : 'Jetpack',
 						},
 					}
-				) }
-				buttonText={ translate( 'Schedule a session' ) }
-				href={ link }
-				onClick={ onClick }
+				)}
+				buttonText={translate('Schedule a session')}
+				href={link}
+				onClick={onClick}
 			/>
 		</div>
 	);
-} );
+});

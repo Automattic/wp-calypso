@@ -18,83 +18,83 @@ import TimeZone from 'components/timezone';
 import { translate } from 'i18n-calypso';
 
 const fields = [
-	{ name: 'store_name', label: translate( 'Store Name' ) },
-	{ name: 'store_phone', label: translate( 'Phone' ) },
-	{ name: 'admin_email', label: translate( 'Admin Email' ) },
+	{ name: 'store_name', label: translate('Store Name') },
+	{ name: 'store_phone', label: translate('Phone') },
+	{ name: 'admin_email', label: translate('Admin Email') },
 ];
 
-const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
-	const onTimezoneSelect = value => {
+const StoreInfo = ({ storeData = {}, onChange, validateFields }) => {
+	const onTimezoneSelect = (value) => {
 		const e = {
 			target: {
 				name: 'store_timezone',
 				value,
 			},
 		};
-		onChange( e );
+		onChange(e);
 	};
 
-	const selectLanguage = e => {
+	const selectLanguage = (e) => {
 		const event = {
 			target: {
 				name: 'store_locale',
 				value: e.target.value,
 			},
 		};
-		onChange( event );
+		onChange(event);
 	};
 
-	const isError = name => {
-		if ( name === 'store_phone' ) {
-			return validateFields && ! ( storeData.name && storeData[ name ].length >= 6 );
+	const isError = (name) => {
+		if (name === 'store_phone') {
+			return validateFields && !(storeData.name && storeData[name].length >= 6);
 		}
-		return validateFields && ! storeData[ name ];
+		return validateFields && !storeData[name];
 	};
 
 	return (
 		<div className="setup-steps__store-info-field">
 			<p>
-				{ translate(
+				{translate(
 					'Mailchimp needs to know some basic information about your store ' +
 						'to provide you with the best experience. Note that every field is required.'
-				) }
+				)}
 			</p>
 			<SettingsPaymentsLocationCurrency />
-			{ fields.map( ( item, index ) => {
-				const error = isError( item.name );
+			{fields.map((item, index) => {
+				const error = isError(item.name);
 				const errorMsg =
 					item.name === 'store_phone'
-						? translate( 'number needs at least 6 digits' )
-						: translate( 'field is required' );
+						? translate('number needs at least 6 digits')
+						: translate('field is required');
 				return (
-					<FormFieldset key={ index }>
+					<FormFieldset key={index}>
 						<div>
-							<FormLabel>{ item.label }</FormLabel>
+							<FormLabel>{item.label}</FormLabel>
 							<FormTextInput
-								name={ item.name }
-								isError={ error }
-								onChange={ onChange }
-								value={ storeData[ item.name ] || '' }
+								name={item.name}
+								isError={error}
+								onChange={onChange}
+								value={storeData[item.name] || ''}
 							/>
-							{ error && <FormInputValidation isError text={ errorMsg } /> }
+							{error && <FormInputValidation isError text={errorMsg} />}
 						</div>
 					</FormFieldset>
 				);
-			} ) }
+			})}
 			<FormFieldset>
 				<FormLabel>
-					{ translate( 'Locale' ) }
+					{translate('Locale')}
 					<LanguagePicker
-						languages={ languages }
+						languages={languages}
 						valueKey="langSlug"
-						value={ storeData.store_locale }
-						onChange={ selectLanguage }
+						value={storeData.store_locale}
+						onChange={selectLanguage}
 					/>
 				</FormLabel>
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel>{ translate( 'Store Timezone' ) }</FormLabel>
-				<TimeZone selectedZone={ storeData.store_timezone } onSelect={ onTimezoneSelect } />
+				<FormLabel>{translate('Store Timezone')}</FormLabel>
+				<TimeZone selectedZone={storeData.store_timezone} onSelect={onTimezoneSelect} />
 			</FormFieldset>
 		</div>
 	);

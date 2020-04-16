@@ -21,7 +21,7 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 		],
 	},
 	MX: {
-		fields: [ 'phone-number', 'postal-code' ],
+		fields: ['phone-number', 'postal-code'],
 	},
 	IN: {
 		fields: [
@@ -37,7 +37,7 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 		],
 	},
 	ID: {
-		fields: [ 'name', 'nik' ],
+		fields: ['name', 'nik'],
 	},
 };
 

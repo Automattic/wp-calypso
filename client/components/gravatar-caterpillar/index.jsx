@@ -23,7 +23,7 @@ class GravatarCaterpillar extends React.Component {
 	render() {
 		const { users, onClick, maxGravatarsToDisplay } = this.props;
 
-		if ( size( users ) < 1 ) {
+		if (size(users) < 1) {
 			return null;
 		}
 
@@ -31,14 +31,14 @@ class GravatarCaterpillar extends React.Component {
 
 		// Only display authors with a gravatar, and only display each author once
 		const displayedUsers = takeRight(
-			filter( uniqBy( users, 'avatar_URL' ), 'avatar_URL' ),
+			filter(uniqBy(users, 'avatar_URL'), 'avatar_URL'),
 			maxGravatarsToDisplay
 		);
-		const displayedUsersCount = size( displayedUsers );
+		const displayedUsersCount = size(displayedUsers);
 
 		return (
-			<div className="gravatar-caterpillar" onClick={ onClick } aria-hidden="true">
-				{ map( displayedUsers, ( user, index ) => {
+			<div className="gravatar-caterpillar" onClick={onClick} aria-hidden="true">
+				{map(displayedUsers, (user, index) => {
 					let gravClasses = 'gravatar-caterpillar__gravatar';
 					// If we have more than x gravs,
 					// add a additional class so we can hide some on small screens
@@ -49,10 +49,8 @@ class GravatarCaterpillar extends React.Component {
 						gravClasses += ' is-hidden-on-small-screens';
 					}
 
-					return (
-						<Gravatar className={ gravClasses } key={ user.email } user={ user } size={ 32 } />
-					);
-				} ) }
+					return <Gravatar className={gravClasses} key={user.email} user={user} size={32} />;
+				})}
 			</div>
 		);
 	}

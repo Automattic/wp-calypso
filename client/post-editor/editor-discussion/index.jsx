@@ -27,11 +27,11 @@ import { getEditedPost } from 'state/posts/selectors';
  */
 import './style.scss';
 
-function booleanToStatus( bool ) {
+function booleanToStatus(bool) {
 	return bool ? 'open' : 'closed';
 }
 
-function statusToBoolean( status ) {
+function statusToBoolean(status) {
 	return 'open' === status;
 }
 
@@ -53,36 +53,36 @@ export class EditorDiscussion extends React.Component {
 	};
 
 	getDiscussionSetting() {
-		if ( this.props.post && this.props.post.discussion ) {
+		if (this.props.post && this.props.post.discussion) {
 			return this.props.post.discussion;
 		}
 
-		if ( this.props.site && this.props.isNew && this.props.post ) {
+		if (this.props.site && this.props.isNew && this.props.post) {
 			const { site } = this.props;
 			const isPage = this.props.post.type === 'page';
-			const defaultCommentStatus = get( site, 'options.default_comment_status', false );
-			const defaultPingStatus = get( site, 'options.default_ping_status', false );
+			const defaultCommentStatus = get(site, 'options.default_comment_status', false);
+			const defaultPingStatus = get(site, 'options.default_ping_status', false);
 
 			return {
-				comment_status: isPage ? 'closed' : booleanToStatus( defaultCommentStatus ),
-				ping_status: isPage ? 'closed' : booleanToStatus( defaultPingStatus ),
+				comment_status: isPage ? 'closed' : booleanToStatus(defaultCommentStatus),
+				ping_status: isPage ? 'closed' : booleanToStatus(defaultPingStatus),
 			};
 		}
 
 		return {};
 	}
 
-	onChange = event => {
-		const discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' );
-		const newStatus = booleanToStatus( event.target.checked );
+	onChange = (event) => {
+		const discussion = pick(this.getDiscussionSetting(), 'comment_status', 'ping_status');
+		const newStatus = booleanToStatus(event.target.checked);
 		const discussionType = event.target.name;
 		let statName, gaEvent;
 
-		discussion[ discussionType ] = newStatus;
+		discussion[discussionType] = newStatus;
 
 		// There are other ways to construct these strings, but keeping them exactly as they are
 		// displayed in mc/ga aids in discovery via grok
-		if ( 'comment_status' === discussionType ) {
+		if ('comment_status' === discussionType) {
 			statName = event.target.checked
 				? 'advanced_comments_open_enabled'
 				: 'advanced_comments_open_disabled';
@@ -94,56 +94,56 @@ export class EditorDiscussion extends React.Component {
 			gaEvent = 'Trackback status changed';
 		}
 
-		this.props.recordEditorStat( statName );
-		this.props.recordEditorEvent( gaEvent, newStatus );
+		this.props.recordEditorStat(statName);
+		this.props.recordEditorEvent(gaEvent, newStatus);
 
-		const siteId = get( this.props.site, 'ID', null );
-		const postId = get( this.props.post, 'ID', null );
-		this.props.editPost( siteId, postId, { discussion } );
+		const siteId = get(this.props.site, 'ID', null);
+		const postId = get(this.props.post, 'ID', null);
+		this.props.editPost(siteId, postId, { discussion });
 	};
 
 	render() {
 		const discussion = this.getDiscussionSetting();
 
 		return (
-			<EditorFieldset legend={ this.props.translate( 'Discussion' ) }>
+			<EditorFieldset legend={this.props.translate('Discussion')}>
 				<label>
 					<FormCheckbox
 						name="comment_status"
-						checked={ statusToBoolean( discussion.comment_status ) }
-						disabled={ ! this.props.post }
-						onChange={ this.onChange }
+						checked={statusToBoolean(discussion.comment_status)}
+						disabled={!this.props.post}
+						onChange={this.onChange}
 					/>
 					<span>
-						{ this.props.translate( 'Allow comments' ) }
+						{this.props.translate('Allow comments')}
 						<InfoPopover
 							position="top right"
 							className="editor-discussion__info-bubble"
 							gaEventCategory="Editor"
 							popoverName="CommentStatus"
 						>
-							{ this.props.translate(
+							{this.props.translate(
 								'Provide a comment section to give readers the ability to respond.'
-							) }
+							)}
 						</InfoPopover>
 					</span>
 				</label>
 				<label>
 					<FormCheckbox
 						name="ping_status"
-						checked={ statusToBoolean( discussion.ping_status ) }
-						disabled={ ! this.props.post }
-						onChange={ this.onChange }
+						checked={statusToBoolean(discussion.ping_status)}
+						disabled={!this.props.post}
+						onChange={this.onChange}
 					/>
 					<span>
-						{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }
+						{this.props.translate('Allow Pingbacks & Trackbacks')}
 						<InfoPopover
 							position="top right"
 							className="editor-discussion__info-bubble"
 							gaEventCategory="Editor"
 							popoverName="PingStatus"
 						>
-							{ this.props.translate(
+							{this.props.translate(
 								'{{pingbacksLink}}Pingbacks{{/pingbacksLink}} and {{trackbacksLink}}trackbacks{{/trackbacksLink}} ' +
 									'are automated comments you will receive when others create links to your post elsewhere.',
 								{
@@ -164,7 +164,7 @@ export class EditorDiscussion extends React.Component {
 										),
 									},
 								}
-							) }
+							)}
 						</InfoPopover>
 					</span>
 				</label>
@@ -174,14 +174,14 @@ export class EditorDiscussion extends React.Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const isNew = isEditorNewPost( state );
-		const site = getSite( state, siteId );
-		const post = getEditedPost( state, siteId, postId );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const isNew = isEditorNewPost(state);
+		const site = getSite(state, siteId);
+		const post = getEditedPost(state, siteId, postId);
 
 		return { site, post, isNew };
 	},
 	{ editPost, recordEditorStat, recordEditorEvent }
-)( localize( EditorDiscussion ) );
+)(localize(EditorDiscussion));

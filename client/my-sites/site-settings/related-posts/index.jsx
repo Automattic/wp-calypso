@@ -22,58 +22,58 @@ import SettingsSectionHeader from 'my-sites/site-settings/settings-section-heade
  */
 import './style.scss';
 
-const RelatedPosts = ( {
+const RelatedPosts = ({
 	fields,
 	handleAutosavingToggle,
 	isRequestingSettings,
 	isSavingSettings,
 	translate,
-} ) => {
+}) => {
 	return (
 		<div>
-			<SettingsSectionHeader title={ translate( 'Related Posts' ) } />
+			<SettingsSectionHeader title={translate('Related Posts')} />
 
 			<Card className="related-posts__card site-settings__traffic-settings">
 				<FormFieldset>
 					<SupportInfo
-						text={ translate(
+						text={translate(
 							'The feature helps visitors find more of your content by displaying related posts at the bottom of each post.'
-						) }
+						)}
 						link="https://jetpack.com/support/related-posts/"
 					/>
 
 					<CompactFormToggle
-						checked={ !! fields.jetpack_relatedposts_enabled }
-						disabled={ isRequestingSettings || isSavingSettings }
-						onChange={ handleAutosavingToggle( 'jetpack_relatedposts_enabled' ) }
+						checked={!!fields.jetpack_relatedposts_enabled}
+						disabled={isRequestingSettings || isSavingSettings}
+						onChange={handleAutosavingToggle('jetpack_relatedposts_enabled')}
 					>
-						{ translate( 'Show related content after posts' ) }
+						{translate('Show related content after posts')}
 					</CompactFormToggle>
 
 					<div className="related-posts__module-settings site-settings__child-settings">
 						<CompactFormToggle
-							checked={ !! fields.jetpack_relatedposts_show_headline }
+							checked={!!fields.jetpack_relatedposts_show_headline}
 							disabled={
-								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+								isRequestingSettings || isSavingSettings || !fields.jetpack_relatedposts_enabled
 							}
-							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_headline' ) }
+							onChange={handleAutosavingToggle('jetpack_relatedposts_show_headline')}
 						>
-							{ translate( 'Highlight related content with a heading' ) }
+							{translate('Highlight related content with a heading')}
 						</CompactFormToggle>
 
 						<CompactFormToggle
-							checked={ !! fields.jetpack_relatedposts_show_thumbnails }
+							checked={!!fields.jetpack_relatedposts_show_thumbnails}
 							disabled={
-								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+								isRequestingSettings || isSavingSettings || !fields.jetpack_relatedposts_enabled
 							}
-							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_thumbnails' ) }
+							onChange={handleAutosavingToggle('jetpack_relatedposts_show_thumbnails')}
 						>
-							{ translate( 'Show a thumbnail image where available' ) }
+							{translate('Show a thumbnail image where available')}
 						</CompactFormToggle>
 					</div>
 
 					<FormSettingExplanation>
-						{ translate(
+						{translate(
 							"These settings won't apply to {{a}}related posts added using the block editor{{/a}}.",
 							{
 								components: {
@@ -86,12 +86,12 @@ const RelatedPosts = ( {
 									),
 								},
 							}
-						) }
+						)}
 					</FormSettingExplanation>
 
 					<RelatedContentPreview
-						showHeadline={ fields.jetpack_relatedposts_show_headline }
-						showThumbnails={ fields.jetpack_relatedposts_show_thumbnails }
+						showHeadline={fields.jetpack_relatedposts_show_headline}
+						showThumbnails={fields.jetpack_relatedposts_show_thumbnails}
 					/>
 				</FormFieldset>
 			</Card>
@@ -113,4 +113,4 @@ RelatedPosts.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default localize( RelatedPosts );
+export default localize(RelatedPosts);

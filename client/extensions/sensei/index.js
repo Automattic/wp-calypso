@@ -14,7 +14,7 @@ import { Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import { makeLayout, render as clientRender } from 'controller';
 
-const render = ( context, next ) => {
+const render = (context, next) => {
 	context.primary = (
 		<Main className="sensei__main">
 			<SectionHeader label="Sensei LMS" />
@@ -27,6 +27,6 @@ const render = ( context, next ) => {
 	next();
 };
 
-export default function() {
-	page( '/extensions/sensei/:site?', siteSelection, navigation, render, makeLayout, clientRender );
+export default function () {
+	page('/extensions/sensei/:site?', siteSelection, navigation, render, makeLayout, clientRender);
 }

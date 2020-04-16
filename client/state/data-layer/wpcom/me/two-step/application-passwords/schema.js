@@ -10,7 +10,7 @@ export default {
 					generated: { type: 'string' },
 					name: { type: 'string' },
 				},
-				required: [ 'ID', 'generated', 'name' ],
+				required: ['ID', 'generated', 'name'],
 				additionalProperties: false,
 			},
 		},

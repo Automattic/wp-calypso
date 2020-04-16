@@ -29,29 +29,29 @@ export const initialState = {
 	currentlyEditingId: null,
 };
 
-function handleZoneAdd( state ) {
-	const id = nextBucketIndex( state.creates );
+function handleZoneAdd(state) {
+	const id = nextBucketIndex(state.creates);
 	// The action of "adding" a zone must not alter the edits, since the user can cancel the zone edit later
-	return handleZoneOpen( state, { id } );
+	return handleZoneOpen(state, { id });
 }
 
-function handleZoneCancel( state ) {
+function handleZoneCancel(state) {
 	// "Canceling" editing a zone is equivalent at "closing" it without any changes
-	return handleZoneClose( {
+	return handleZoneClose({
 		...state,
 		currentlyEditingChanges: {},
-	} );
+	});
 }
 
-function handleZoneClose( state ) {
+function handleZoneClose(state) {
 	const { currentlyEditingChanges, currentlyEditingId } = state;
-	if ( null === currentlyEditingId ) {
+	if (null === currentlyEditingId) {
 		return state;
 	}
 	if (
-		isEmpty( omit( currentlyEditingChanges, 'methods', 'locations' ) ) &&
-		every( currentlyEditingChanges.methods, isEmpty ) &&
-		( ! currentlyEditingChanges.locations || currentlyEditingChanges.locations.pristine )
+		isEmpty(omit(currentlyEditingChanges, 'methods', 'locations')) &&
+		every(currentlyEditingChanges.methods, isEmpty) &&
+		(!currentlyEditingChanges.locations || currentlyEditingChanges.locations.pristine)
 	) {
 		// Nothing to save, no need to go through the rest of the algorithm
 		return {
@@ -60,35 +60,35 @@ function handleZoneClose( state ) {
 		};
 	}
 
-	const bucket = getBucket( { id: currentlyEditingId } );
+	const bucket = getBucket({ id: currentlyEditingId });
 	let found = false;
-	const newBucket = state[ bucket ].map( zone => {
-		if ( isEqual( currentlyEditingId, zone.id ) ) {
+	const newBucket = state[bucket].map((zone) => {
+		if (isEqual(currentlyEditingId, zone.id)) {
 			found = true;
 			// If edits for the zone were already in the expected bucket, just update them
 			return {
 				...zone,
 				...currentlyEditingChanges,
-				methods: mergeMethodEdits( zone.methods, currentlyEditingChanges.methods ),
+				methods: mergeMethodEdits(zone.methods, currentlyEditingChanges.methods),
 			};
 		}
 		return zone;
-	} );
+	});
 
-	if ( ! found ) {
+	if (!found) {
 		// If edits for the zone were *not* in the bucket yet, add them
-		newBucket.push( { id: currentlyEditingId, ...currentlyEditingChanges } );
+		newBucket.push({ id: currentlyEditingId, ...currentlyEditingChanges });
 	}
 
 	return {
 		...state,
 		currentlyEditingId: null,
-		[ bucket ]: newBucket,
+		[bucket]: newBucket,
 	};
 }
 
-function handleZoneEditName( state, { name } ) {
-	if ( null === state.currentlyEditingId ) {
+function handleZoneEditName(state, { name }) {
+	if (null === state.currentlyEditingId) {
 		return state;
 	}
 	return {
@@ -100,7 +100,7 @@ function handleZoneEditName( state, { name } ) {
 	};
 }
 
-function handleZoneOpen( state, { id } ) {
+function handleZoneOpen(state, { id }) {
 	return {
 		...state,
 		currentlyEditingId: id,
@@ -112,37 +112,37 @@ function handleZoneOpen( state, { id } ) {
 	};
 }
 
-function handleZoneRemove( state, { id } ) {
+function handleZoneRemove(state, { id }) {
 	const newState = {
 		...state,
 		currentlyEditingId: null,
 	};
 
-	const bucket = getBucket( { id } );
-	if ( 'updates' === bucket ) {
+	const bucket = getBucket({ id });
+	if ('updates' === bucket) {
 		// We only need to add it to the list of "zones to delete" if the zone was already present in the server
-		newState.deletes = [ ...state.deletes, { id } ];
+		newState.deletes = [...state.deletes, { id }];
 	}
 	// In any case, remove the zone edits from the bucket where they were
-	newState[ bucket ] = reject( state[ bucket ], { id } );
+	newState[bucket] = reject(state[bucket], { id });
 
 	return newState;
 }
 
-function handleZoneUpdated( state, { data, originatingAction: { zone } } ) {
-	if ( zone.id !== state.currentlyEditingId ) {
+function handleZoneUpdated(state, { data, originatingAction: { zone } }) {
+	if (zone.id !== state.currentlyEditingId) {
 		return state;
 	}
 
 	return {
 		...state,
 		currentlyEditingId: data.id,
-		currentlyEditingChanges: pick( state.currentlyEditingChanges, 'locations', 'methods' ),
+		currentlyEditingChanges: pick(state.currentlyEditingChanges, 'locations', 'methods'),
 	};
 }
 
-function handleZoneDeleted( state, { originatingAction: { zone } } ) {
-	if ( zone.id !== state.currentlyEditingId ) {
+function handleZoneDeleted(state, { originatingAction: { zone } }) {
+	if (zone.id !== state.currentlyEditingId) {
 		return state;
 	}
 
@@ -152,8 +152,8 @@ function handleZoneDeleted( state, { originatingAction: { zone } } ) {
 	};
 }
 
-function handleZoneLocationsUpdated( state, { originatingAction: { zoneId } } ) {
-	if ( zoneId !== state.currentlyEditingId ) {
+function handleZoneLocationsUpdated(state, { originatingAction: { zoneId } }) {
+	if (zoneId !== state.currentlyEditingId) {
 		return state;
 	}
 
@@ -166,51 +166,51 @@ function handleZoneLocationsUpdated( state, { originatingAction: { zoneId } } ) 
 	};
 }
 
-export default ( state = initialState, action ) => {
+export default (state = initialState, action) => {
 	let newState = state;
-	switch ( action.type ) {
+	switch (action.type) {
 		case WOOCOMMERCE_SHIPPING_ZONE_ADD:
-			newState = handleZoneAdd( state, action );
+			newState = handleZoneAdd(state, action);
 			break;
 
 		case WOOCOMMERCE_SHIPPING_ZONE_CANCEL:
-			newState = handleZoneCancel( state, action );
+			newState = handleZoneCancel(state, action);
 			break;
 
 		case WOOCOMMERCE_SHIPPING_ZONE_CLOSE:
-			newState = handleZoneClose( state, action );
+			newState = handleZoneClose(state, action);
 			break;
 
 		case WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME:
-			newState = handleZoneEditName( state, action );
+			newState = handleZoneEditName(state, action);
 			break;
 
 		case WOOCOMMERCE_SHIPPING_ZONE_OPEN:
-			newState = handleZoneOpen( state, action );
+			newState = handleZoneOpen(state, action);
 			break;
 
 		case WOOCOMMERCE_SHIPPING_ZONE_REMOVE:
-			newState = handleZoneRemove( state, action );
+			newState = handleZoneRemove(state, action);
 			break;
 
 		case WOOCOMMERCE_SHIPPING_ZONE_UPDATED:
-			newState = handleZoneUpdated( state, action );
+			newState = handleZoneUpdated(state, action);
 			break;
 
 		case WOOCOMMERCE_SHIPPING_ZONE_DELETED:
-			newState = handleZoneDeleted( state, action );
+			newState = handleZoneDeleted(state, action);
 			break;
 
 		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED:
-			newState = handleZoneLocationsUpdated( state, action );
+			newState = handleZoneLocationsUpdated(state, action);
 			break;
 	}
 
-	if ( null !== newState.currentlyEditingId ) {
+	if (null !== newState.currentlyEditingId) {
 		const methodsState = newState.currentlyEditingChanges.methods;
-		const newMethodsState = methodsReducer( methodsState, action );
+		const newMethodsState = methodsReducer(methodsState, action);
 		const locationsState = newState.currentlyEditingChanges.locations;
-		const newLocationsState = locationsReducer( locationsState, action );
+		const newLocationsState = locationsReducer(locationsState, action);
 		return {
 			...newState,
 			currentlyEditingChanges: {

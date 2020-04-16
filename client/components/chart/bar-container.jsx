@@ -25,22 +25,22 @@ export default class ChartBarContainer extends React.PureComponent {
 		return (
 			<>
 				<div className="chart__bars">
-					{ this.props.data.map( ( item, index ) => (
+					{this.props.data.map((item, index) => (
 						<Bar
-							index={ index }
-							key={ index }
-							isTouch={ this.props.isTouch }
-							className={ item.className }
-							clickHandler={ this.props.barClick }
-							data={ item }
-							max={ this.props.yAxisMax }
-							count={ this.props.data.length }
-							chartWidth={ this.props.chartWidth }
-							setTooltip={ this.props.setTooltip }
+							index={index}
+							key={index}
+							isTouch={this.props.isTouch}
+							className={item.className}
+							clickHandler={this.props.barClick}
+							data={item}
+							max={this.props.yAxisMax}
+							count={this.props.data.length}
+							chartWidth={this.props.chartWidth}
+							setTooltip={this.props.setTooltip}
 						/>
-					) ) }
+					))}
 				</div>
-				<XAxis data={ this.props.data } labelWidth={ 42 } isRtl={ this.props.isRtl } />
+				<XAxis data={this.props.data} labelWidth={42} isRtl={this.props.isRtl} />
 			</>
 		);
 	}

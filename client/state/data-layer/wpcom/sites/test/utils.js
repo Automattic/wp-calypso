@@ -22,14 +22,14 @@ import {
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
-describe( 'utility functions', () => {
+describe('utility functions', () => {
 	useFakeTimers();
 
-	describe( '#createPlaceholderComment()', () => {
-		test( 'should return a comment placeholder', () => {
-			const placeholder = createPlaceholderComment( 'comment text', 1, 2 );
+	describe('#createPlaceholderComment()', () => {
+		test('should return a comment placeholder', () => {
+			const placeholder = createPlaceholderComment('comment text', 1, 2);
 
-			expect( placeholder ).to.eql( {
+			expect(placeholder).to.eql({
 				ID: 'placeholder-0',
 				content: 'comment text',
 				date: '1970-01-01T00:00:00.000Z',
@@ -39,11 +39,11 @@ describe( 'utility functions', () => {
 				post: { ID: 1 },
 				status: 'pending',
 				type: 'comment',
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#dispatchNewCommentRequest()', () => {
+	describe('#dispatchNewCommentRequest()', () => {
 		const action = {
 			type: 'DUMMY',
 			siteId: 2916284,
@@ -62,31 +62,31 @@ describe( 'utility functions', () => {
 			type: 'comment',
 		};
 
-		test( 'should dispatch a http request action to the specified path', () => {
-			const result = dispatchNewCommentRequest( action, '/sites/foo/comments' );
+		test('should dispatch a http request action to the specified path', () => {
+			const result = dispatchNewCommentRequest(action, '/sites/foo/comments');
 
-			expect( result[ 0 ] ).to.eql( {
+			expect(result[0]).to.eql({
 				type: COMMENTS_RECEIVE,
 				siteId: 2916284,
 				postId: 1010,
 				skipSort: false,
-				comments: [ placeholder ],
-			} );
-			expect( result[ 1 ] ).to.eql(
-				http( {
+				comments: [placeholder],
+			});
+			expect(result[1]).to.eql(
+				http({
 					apiVersion: '1.1',
 					method: 'POST',
 					path: '/sites/foo/comments',
 					body: { content: 'comment text' },
 					onSuccess: { ...action, placeholderId: placeholder.ID },
 					onFailure: { ...action, placeholderId: placeholder.ID },
-				} )
+				})
 			);
-		} );
-	} );
+		});
+	});
 
-	describe( '#updatePlaceholderComment()', () => {
-		test( 'should remove the placeholder comment', () => {
+	describe('#updatePlaceholderComment()', () => {
+		test('should remove the placeholder comment', () => {
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
@@ -95,16 +95,16 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			const result = updatePlaceholderComment( action, comment );
+			const result = updatePlaceholderComment(action, comment);
 
-			expect( result ).to.have.length( 3 );
-			expect( result[ 0 ].type ).to.eql( COMMENTS_DELETE );
-			expect( result[ 0 ].siteId ).to.eql( 2916284 );
-			expect( result[ 0 ].postId ).to.eql( 1010 );
-			expect( result[ 0 ].commentId ).to.eql( 'placeholder-id' );
-		} );
+			expect(result).to.have.length(3);
+			expect(result[0].type).to.eql(COMMENTS_DELETE);
+			expect(result[0].siteId).to.eql(2916284);
+			expect(result[0].postId).to.eql(1010);
+			expect(result[0].commentId).to.eql('placeholder-id');
+		});
 
-		test( 'should dispatch a comments receive action', () => {
+		test('should dispatch a comments receive action', () => {
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
@@ -113,20 +113,20 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			const result = updatePlaceholderComment( action, comment );
+			const result = updatePlaceholderComment(action, comment);
 
-			expect( result ).to.have.length( 3 );
-			expect( result[ 1 ] ).to.eql( {
+			expect(result).to.have.length(3);
+			expect(result[1]).to.eql({
 				type: COMMENTS_RECEIVE,
 				siteId: 2916284,
 				postId: 1010,
-				comments: [ { ID: 1, content: 'this is the content' } ],
+				comments: [{ ID: 1, content: 'this is the content' }],
 				skipSort: false,
 				meta: { comment: { context: 'add' } },
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a comments count increment action', () => {
+		test('should dispatch a comments count increment action', () => {
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
@@ -135,17 +135,17 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			const result = updatePlaceholderComment( action, comment );
+			const result = updatePlaceholderComment(action, comment);
 
-			expect( result ).to.have.length( 3 );
-			expect( result[ 2 ] ).to.eql( {
+			expect(result).to.have.length(3);
+			expect(result[2]).to.eql({
 				type: COMMENTS_COUNT_INCREMENT,
 				siteId: 2916284,
 				postId: 1010,
-			} );
-		} );
+			});
+		});
 
-		test( 'should request a fresh copy of a comments page when the query object is filled', () => {
+		test('should request a fresh copy of a comments page when the query object is filled', () => {
 			const result = updatePlaceholderComment(
 				{
 					siteId: 12345678,
@@ -163,8 +163,8 @@ describe( 'utility functions', () => {
 				},
 				{ ID: 1, content: 'this is the content' }
 			);
-			expect( result ).to.have.length( 4 );
-			expect( result[ result.length - 1 ] ).to.eql( {
+			expect(result).to.have.length(4);
+			expect(result[result.length - 1]).to.eql({
 				type: 'COMMENTS_LIST_REQUEST',
 				query: {
 					listType: 'site',
@@ -174,28 +174,28 @@ describe( 'utility functions', () => {
 					status: 'all',
 					type: 'any',
 				},
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#handleWriteCommentFailure()', () => {
-		test( 'should dispatch an error notice', () => {
+	describe('#handleWriteCommentFailure()', () => {
+		test('should dispatch an error notice', () => {
 			const dispatch = spy();
-			const getState = () => ( {
+			const getState = () => ({
 				posts: {
 					queries: {},
 				},
-			} );
+			});
 
-			handleWriteCommentFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
+			handleWriteCommentFailure({ siteId: 2916284, postId: 1010 })(dispatch, getState);
 
-			expect( dispatch ).to.have.been.calledWithMatch( {
+			expect(dispatch).to.have.been.calledWithMatch({
 				type: NOTICE_CREATE,
 				notice: {
 					status: 'is-error',
 					text: 'Could not add a reply to this post',
 				},
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

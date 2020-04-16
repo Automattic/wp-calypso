@@ -38,38 +38,38 @@ class StatsViews extends Component {
 		chartOption: 'total',
 	};
 
-	toggleViews = option => {
-		this.setState( {
+	toggleViews = (option) => {
+		this.setState({
 			chartOption: option.value,
-		} );
+		});
 	};
 
 	render() {
 		const { query, siteId, statType, viewData, translate, siteSlug } = this.props;
 		const monthViewOptions = [
-			{ value: 'total', label: translate( 'Months and Years' ) },
-			{ value: 'average', label: translate( 'Average per Day' ) },
+			{ value: 'total', label: translate('Months and Years') },
+			{ value: 'average', label: translate('Average per Day') },
 		];
 
 		return (
 			<div>
-				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				<Card className={ classNames( 'stats-views', { 'is-loading': ! viewData } ) }>
-					<StatsModulePlaceholder isLoading={ ! viewData } />
-					{ viewData && (
+				{siteId && <QuerySiteStats statType={statType} siteId={siteId} query={query} />}
+				<Card className={classNames('stats-views', { 'is-loading': !viewData })}>
+					<StatsModulePlaceholder isLoading={!viewData} />
+					{viewData && (
 						<SimplifiedSegmentedControl
 							className="stats-views__month-control"
-							options={ monthViewOptions }
-							onSelect={ this.toggleViews }
+							options={monthViewOptions}
+							onSelect={this.toggleViews}
 							compact
 						/>
-					) }
-					<Months dataKey={ this.state.chartOption } data={ viewData } siteSlug={ siteSlug } />
+					)}
+					<Months dataKey={this.state.chartOption} data={viewData} siteSlug={siteSlug} />
 					<div className="stats-views__key-container">
 						<span className="stats-views__key-label">
-							{ translate( 'Fewer Views', {
+							{translate('Fewer Views', {
 								context: 'Legend label in stats all time views table',
-							} ) }
+							})}
 						</span>
 						<ul className="stats-views__key">
 							<li className="stats-views__key-item level-1" />
@@ -79,9 +79,9 @@ class StatsViews extends Component {
 							<li className="stats-views__key-item level-5" />
 						</ul>
 						<span className="stats-views__key-label">
-							{ translate( 'More Views', {
+							{translate('More Views', {
 								context: 'Legend label in stats all time views table',
-							} ) }
+							})}
 						</span>
 					</div>
 				</Card>
@@ -90,16 +90,16 @@ class StatsViews extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect((state) => {
 	const query = { quantity: -1, stat_fields: 'views' };
 	const statType = 'statsVisits';
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId(state);
 
 	return {
-		viewData: getSiteStatsViewSummary( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
+		viewData: getSiteStatsViewSummary(state, siteId),
+		siteSlug: getSelectedSiteSlug(state),
 		query,
 		statType,
 		siteId,
 	};
-} )( localize( StatsViews ) );
+})(localize(StatsViews));

@@ -31,17 +31,17 @@ class AuthorMappingPane extends React.PureComponent {
 		onStartImport: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
 		sourceAuthors: PropTypes.arrayOf(
-			PropTypes.shape( {
+			PropTypes.shape({
 				id: PropTypes.string.isRequired,
 				name: PropTypes.string.isRequired,
-			} ).isRequired
+			}).isRequired
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,
 		targetTitle: PropTypes.string.isRequired,
 		sourceType: PropTypes.string,
 	};
 
-	getFetchOptions = ( options = {} ) => {
+	getFetchOptions = (options = {}) => {
 		return Object.assign(
 			{
 				number: 50,
@@ -53,8 +53,8 @@ class AuthorMappingPane extends React.PureComponent {
 		);
 	};
 
-	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle, sourceType ) => {
-		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
+	getMappingDescription = (numSourceUsers, numTargetUsers, targetTitle, sourceType) => {
+		if (numTargetUsers === 1 && numSourceUsers === 1) {
 			return this.props.translate(
 				'There is one author on your %(sourceType)s site. ' +
 					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
@@ -70,7 +70,7 @@ class AuthorMappingPane extends React.PureComponent {
 					},
 				}
 			);
-		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
+		} else if (numTargetUsers === 1 && numSourceUsers > 1) {
 			return this.props.translate(
 				'There are multiple authors on your %(sourceType)s site. ' +
 					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
@@ -87,7 +87,7 @@ class AuthorMappingPane extends React.PureComponent {
 					},
 				}
 			);
-		} else if ( numTargetUsers > 1 && numSourceUsers === 1 ) {
+		} else if (numTargetUsers > 1 && numSourceUsers === 1) {
 			return this.props.translate(
 				'There are multiple authors on your site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
@@ -103,7 +103,7 @@ class AuthorMappingPane extends React.PureComponent {
 					},
 				}
 			);
-		} else if ( numTargetUsers > 1 && numSourceUsers > 1 ) {
+		} else if (numTargetUsers > 1 && numSourceUsers > 1) {
 			return this.props.translate(
 				'There are multiple authors on your %(sourceType)s site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
@@ -123,8 +123,8 @@ class AuthorMappingPane extends React.PureComponent {
 	};
 
 	getUserCount = () => {
-		const fetchOptions = this.getFetchOptions( 50 );
-		const { totalUsers } = UsersStore.getPaginationData( fetchOptions );
+		const fetchOptions = this.getFetchOptions(50);
+		const { totalUsers } = UsersStore.getPaginationData(fetchOptions);
 
 		return totalUsers;
 	};
@@ -142,7 +142,7 @@ class AuthorMappingPane extends React.PureComponent {
 			importerStatus,
 			site,
 		} = this.props;
-		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
+		const canStartImport = hasSingleAuthor || sourceAuthors.some((author) => author.mappedTo);
 		const targetUserCount = this.getUserCount();
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
@@ -153,27 +153,27 @@ class AuthorMappingPane extends React.PureComponent {
 
 		return (
 			<div className="importer__mapping-pane">
-				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) } />
-				<div className="importer__mapping-description">{ mappingDescription }</div>
+				<SiteUsersFetcher fetchOptions={this.getFetchOptions({ number: 50 })} />
+				<div className="importer__mapping-description">{mappingDescription}</div>
 				<div className="importer__mapping-header">
-					<span className="importer__mapping-source-title">{ sourceTitle }</span>
-					<span className="importer__mapping-target-title">{ targetTitle }</span>
+					<span className="importer__mapping-source-title">{sourceTitle}</span>
+					<span className="importer__mapping-target-title">{targetTitle}</span>
 				</div>
-				{ sourceAuthors.map( author => {
+				{sourceAuthors.map((author) => {
 					return (
 						<AuthorMapping
-							hasSingleAuthor={ hasSingleAuthor }
-							key={ 'author-mapping-' + author.id }
-							onSelect={ e => onMap( author, e ) }
-							siteId={ siteId }
-							sourceAuthor={ author }
+							hasSingleAuthor={hasSingleAuthor}
+							key={'author-mapping-' + author.id}
+							onSelect={(e) => onMap(author, e)}
+							siteId={siteId}
+							sourceAuthor={author}
 						/>
 					);
-				} ) }
+				})}
 				<ImporterActionButtonContainer>
-					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
-					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
-						{ this.props.translate( 'Start import' ) }
+					<ImporterCloseButton importerStatus={importerStatus} site={site} isEnabled />
+					<ImporterActionButton primary disabled={!canStartImport} onClick={onStartImport}>
+						{this.props.translate('Start import')}
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</div>
@@ -181,4 +181,4 @@ class AuthorMappingPane extends React.PureComponent {
 	}
 }
 
-export default localize( AuthorMappingPane );
+export default localize(AuthorMappingPane);

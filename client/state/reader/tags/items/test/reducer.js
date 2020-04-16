@@ -11,9 +11,9 @@ import { receiveUnfollowTag, receiveTags } from '../actions';
 import { items } from '../reducer';
 
 // helpers
-const keyById = tags => keyBy( tags, 'id' );
-const unfollow = tag => ( { ...tag, isFollowing: false } );
-const follow = tag => ( { ...tag, isFollowing: true } );
+const keyById = (tags) => keyBy(tags, 'id');
+const unfollow = (tag) => ({ ...tag, isFollowing: false });
+const follow = (tag) => ({ ...tag, isFollowing: true });
 
 const TAG1 = {
 	id: '307',
@@ -31,53 +31,53 @@ const TAG2 = {
 	url: '/tags/design',
 };
 
-describe( 'reducer', () => {
-	describe( '#items()', () => {
-		test( 'should default to an null', () => {
-			const state = items( undefined, {} );
-			expect( state ).to.eql( null );
-		} );
+describe('reducer', () => {
+	describe('#items()', () => {
+		test('should default to an null', () => {
+			const state = items(undefined, {});
+			expect(state).to.eql(null);
+		});
 
-		test( 'should add single tag in the payload to state', () => {
+		test('should add single tag in the payload to state', () => {
 			const prevState = {};
-			const action = receiveTags( { payload: [ TAG1 ] } );
+			const action = receiveTags({ payload: [TAG1] });
 
-			const state = items( prevState, action );
-			expect( state ).to.eql( { [ TAG1.id ]: TAG1 } );
-		} );
+			const state = items(prevState, action);
+			expect(state).to.eql({ [TAG1.id]: TAG1 });
+		});
 
-		test( 'should add multiple tags in the payload to state', () => {
+		test('should add multiple tags in the payload to state', () => {
 			const prevState = {};
-			const action = receiveTags( { payload: [ TAG1, TAG2 ] } );
+			const action = receiveTags({ payload: [TAG1, TAG2] });
 
-			const state = items( prevState, action );
-			expect( state ).to.eql( keyById( [ TAG1, TAG2 ] ) );
-		} );
+			const state = items(prevState, action);
+			expect(state).to.eql(keyById([TAG1, TAG2]));
+		});
 
-		test( 'should update tags that have changed', () => {
-			const prevState = keyById( [ TAG1, TAG2 ] );
-			const action = receiveTags( {
-				payload: [ { ...TAG1, title: 'NotChickens' } ],
-			} );
+		test('should update tags that have changed', () => {
+			const prevState = keyById([TAG1, TAG2]);
+			const action = receiveTags({
+				payload: [{ ...TAG1, title: 'NotChickens' }],
+			});
 
-			const state = items( prevState, action );
-			expect( state ).to.eql( keyById( [ { ...TAG1, title: 'NotChickens' }, TAG2 ] ) );
-		} );
+			const state = items(prevState, action);
+			expect(state).to.eql(keyById([{ ...TAG1, title: 'NotChickens' }, TAG2]));
+		});
 
-		test( 'should unfollow a tag if requested to do so', () => {
-			const prevState = keyById( [ TAG1, TAG2 ] );
-			const action = receiveUnfollowTag( { payload: TAG1.id } );
-			const state = items( prevState, action );
+		test('should unfollow a tag if requested to do so', () => {
+			const prevState = keyById([TAG1, TAG2]);
+			const action = receiveUnfollowTag({ payload: TAG1.id });
+			const state = items(prevState, action);
 
-			expect( state ).to.eql( keyById( [ unfollow( TAG1 ), TAG2 ] ) );
-		} );
+			expect(state).to.eql(keyById([unfollow(TAG1), TAG2]));
+		});
 
-		test( 'should mark everything as unfollowed if requested to do so', () => {
-			const prevState = keyById( [ follow( TAG1 ), follow( TAG2 ) ] );
-			const action = receiveTags( { payload: [], resetFollowingData: true } );
-			const state = items( prevState, action );
+		test('should mark everything as unfollowed if requested to do so', () => {
+			const prevState = keyById([follow(TAG1), follow(TAG2)]);
+			const action = receiveTags({ payload: [], resetFollowingData: true });
+			const state = items(prevState, action);
 
-			expect( state ).to.eql( keyById( [ unfollow( TAG1 ), unfollow( TAG2 ) ] ) );
-		} );
-	} );
-} );
+			expect(state).to.eql(keyById([unfollow(TAG1), unfollow(TAG2)]));
+		});
+	});
+});

@@ -21,7 +21,7 @@ export default class PostEditButtonExample extends React.PureComponent {
 				<h2>
 					<a href="/devdocs/design/edit-button">Post Edit Button</a>
 				</h2>
-				<PostEditButton post={ post } site={ site } />
+				<PostEditButton post={post} site={site} />
 			</div>
 		);
 	}

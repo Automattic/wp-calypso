@@ -8,11 +8,11 @@ import { expect } from 'chai';
  */
 import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
 
-describe( '#isMappedDomainSite()', () => {
+describe('#isMappedDomainSite()', () => {
 	const siteId = 77203074;
 	const sites = {
 		items: {
-			[ siteId ]: {
+			[siteId]: {
 				ID: siteId,
 				URL: 'https://example.wordpress.com',
 				options: {
@@ -22,14 +22,14 @@ describe( '#isMappedDomainSite()', () => {
 		},
 		domains: {
 			items: {
-				[ siteId ]: {
+				[siteId]: {
 					isWPCOMDomain: true,
 				},
 			},
 		},
 	};
 
-	test( 'should return null if the site is unknown', () => {
+	test('should return null if the site is unknown', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
@@ -40,10 +40,10 @@ describe( '#isMappedDomainSite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.null;
-	} );
+		expect(result).to.be.null;
+	});
 
-	test( 'should return null if no domain is found', () => {
+	test('should return null if no domain is found', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
@@ -56,16 +56,16 @@ describe( '#isMappedDomainSite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.null;
-	} );
+		expect(result).to.be.null;
+	});
 
-	test( 'it should return false if the site does not have the mapped domain option set to true', () => {
+	test('it should return false if the site does not have the mapped domain option set to true', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
 					...sites,
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							ID: siteId,
 							URL: 'https://example.wordpress.com',
 							options: {
@@ -78,16 +78,16 @@ describe( '#isMappedDomainSite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.false;
-	} );
+		expect(result).to.be.false;
+	});
 
-	test( 'it should return false if the site has the mapped domain option set to true', () => {
+	test('it should return false if the site has the mapped domain option set to true', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
 					...sites,
 					items: {
-						[ siteId ]: {
+						[siteId]: {
 							ID: siteId,
 							URL: 'https://example.wordpress.com',
 							options: {
@@ -100,6 +100,6 @@ describe( '#isMappedDomainSite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.true;
-	} );
-} );
+		expect(result).to.be.true;
+	});
+});

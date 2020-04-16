@@ -9,14 +9,14 @@ import React from 'react';
  */
 import CelebrateNotice from '../celebrate-notice';
 
-const CelebrateSiteLaunch = ( { checklistMode, displayChecklist } ) => {
+const CelebrateSiteLaunch = ({ checklistMode, displayChecklist }) => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
-			checklistMode={ checklistMode }
+			checklistMode={checklistMode}
 			dismissalPreferenceName="home-notice-site-launched"
-			displayChecklist={ displayChecklist }
-			message={ translate( 'You launched your site!' ) }
+			displayChecklist={displayChecklist}
+			message={translate('You launched your site!')}
 		/>
 	);
 };

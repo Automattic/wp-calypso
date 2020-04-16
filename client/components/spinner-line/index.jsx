@@ -13,9 +13,9 @@ import './style.scss';
 
 export default class SpinnerLine extends PureComponent {
 	render() {
-		const classes = classnames( 'spinner-line', this.props.className );
+		const classes = classnames('spinner-line', this.props.className);
 
-		return <hr className={ classes } />;
+		return <hr className={classes} />;
 	}
 }
 

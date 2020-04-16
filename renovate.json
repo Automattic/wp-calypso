@@ -1,16 +1,16 @@
 {
-	"extends": [ "config:base", "default:pinDigestsDisabled" ],
+	"extends": ["config:base", "default:pinDigestsDisabled"],
 	"packageRules": [
 		{
-			"paths": [ "packages/**" ],
-			"packagePatterns": [ "*" ],
+			"paths": ["packages/**"],
+			"packagePatterns": ["*"],
 			"rangeStrategy": "replace"
 		},
 		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
 			"prPriority": 2,
-			"reviewers": [ "team:@Automattic/cylon", "team:@Automattic/ganon", "team:@Automattic/luna" ]
+			"reviewers": ["team:@Automattic/cylon", "team:@Automattic/ganon", "team:@Automattic/luna"]
 		},
 		{
 			"extends": "monorepo:babel",
@@ -25,7 +25,7 @@
 			"prPriority": 1
 		},
 		{
-			"packagePatterns": [ "^redux$", "^react-redux$" ],
+			"packagePatterns": ["^redux$", "^react-redux$"],
 			"prPriority": 1
 		},
 		{
@@ -34,11 +34,11 @@
 		},
 		{
 			"groupName": "Type definitions",
-			"packagePatterns": [ "^@types/" ],
+			"packagePatterns": ["^@types/"],
 			"prPriority": 1
 		},
 		{
-			"packagePatterns": [ "^webpack" ],
+			"packagePatterns": ["^webpack"],
 			"prPriority": 1
 		},
 		{
@@ -50,16 +50,16 @@
 			"prPriority": 1
 		},
 		{
-			"paths": [ "apps/full-site-editing/package.json" ],
+			"paths": ["apps/full-site-editing/package.json"],
 			"packageName": "newspack-blocks",
-			"reviewers": [ "team:@Automattic/create", "team:@Automattic/ajax" ],
+			"reviewers": ["team:@Automattic/create", "team:@Automattic/ajax"],
 			"groupName": "Newspack Blog Posts Block Update"
 		}
 	],
-	"postUpdateOptions": [ "yarnDedupeHighest" ],
+	"postUpdateOptions": ["yarnDedupeHighest"],
 	"statusCheckVerify": true,
-	"ignoreDeps": [ "jquery" ],
-	"labels": [ "Framework", "[Type] Task" ],
+	"ignoreDeps": ["jquery"],
+	"labels": ["Framework", "[Type] Task"],
 	"lockFileMaintenance": {
 		"enabled": true,
 		"schedule": "every weekday"

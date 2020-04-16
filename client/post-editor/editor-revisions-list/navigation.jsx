@@ -11,20 +11,20 @@ import Gridicon from 'components/gridicon';
 import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 
-const EditorRevisionsListNavigation = ( {
+const EditorRevisionsListNavigation = ({
 	nextIsDisabled,
 	prevIsDisabled,
 	selectNextRevision,
 	selectPreviousRevision,
-} ) => {
+}) => {
 	return (
 		<ButtonGroup className="editor-revisions-list__navigation">
 			<Button
 				compact
 				className="editor-revisions-list__prev-button"
 				type="button"
-				onClick={ selectPreviousRevision }
-				disabled={ prevIsDisabled }
+				onClick={selectPreviousRevision}
+				disabled={prevIsDisabled}
 			>
 				<Gridicon icon="chevron-down" />
 			</Button>
@@ -32,8 +32,8 @@ const EditorRevisionsListNavigation = ( {
 				compact
 				className="editor-revisions-list__next-button"
 				type="button"
-				onClick={ selectNextRevision }
-				disabled={ nextIsDisabled }
+				onClick={selectNextRevision}
+				disabled={nextIsDisabled}
 			>
 				<Gridicon icon="chevron-up" />
 			</Button>

@@ -15,17 +15,17 @@ import { requestFeed } from 'state/reader/feeds/actions';
 
 class QueryReaderFeed extends Component {
 	UNSAFE_componentWillMount() {
-		if ( this.props.shouldFeedBeFetched ) {
-			this.props.requestFeed( this.props.feedId );
+		if (this.props.shouldFeedBeFetched) {
+			this.props.requestFeed(this.props.feedId);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldFeedBeFetched || this.props.feedId === nextProps.feedId ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (!nextProps.shouldFeedBeFetched || this.props.feedId === nextProps.feedId) {
 			return;
 		}
 
-		nextProps.requestFeed( nextProps.feedId );
+		nextProps.requestFeed(nextProps.feedId);
 	}
 
 	render() {
@@ -44,13 +44,13 @@ QueryReaderFeed.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	(state, ownProps) => {
 		const { feedId } = ownProps;
 		return {
-			shouldFeedBeFetched: shouldFeedBeFetched( state, feedId ),
+			shouldFeedBeFetched: shouldFeedBeFetched(state, feedId),
 		};
 	},
-	dispatch => {
+	(dispatch) => {
 		return bindActionCreators(
 			{
 				requestFeed,
@@ -58,4 +58,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( QueryReaderFeed );
+)(QueryReaderFeed);

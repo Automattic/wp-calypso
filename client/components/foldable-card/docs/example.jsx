@@ -72,9 +72,9 @@ export default class FoldableCardExample extends PureComponent {
 							</div>
 						}
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						summary={ <button className="button">Update</button> }
+						summary={<button className="button">Update</button>}
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						expandedSummary={ <button className="button">Update</button> }
+						expandedSummary={<button className="button">Update</button>}
 						screenReaderText="More"
 					>
 						Nothing to see here. Keep walking!
@@ -107,15 +107,15 @@ export default class FoldableCardExample extends PureComponent {
 				<div>
 					<FoldableCard
 						header="This card includes click, open and close actions. Check your console!"
-						onClick={ function() {
-							console.log( 'Clicked!' );
-						} }
-						onClose={ function() {
-							console.log( 'Closed!' );
-						} }
-						onOpen={ function() {
-							console.log( 'Opened!' );
-						} }
+						onClick={function () {
+							console.log('Clicked!');
+						}}
+						onClose={function () {
+							console.log('Closed!');
+						}}
+						onOpen={function () {
+							console.log('Opened!');
+						}}
 					>
 						Nothing to see here. Keep walking!
 					</FoldableCard>
@@ -124,9 +124,9 @@ export default class FoldableCardExample extends PureComponent {
 		),
 	};
 
-	handleClick = () => console.log( 'Clicked!' );
-	handleClose = () => console.log( 'Closed!' );
-	handleOpen = () => console.log( 'Opened!' );
+	handleClick = () => console.log('Clicked!');
+	handleClose = () => console.log('Closed!');
+	handleOpen = () => console.log('Opened!');
 
 	render() {
 		return this.props.exampleCode;

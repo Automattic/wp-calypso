@@ -12,12 +12,12 @@
 import { getSite } from '../resolvers';
 import { register } from '../';
 
-beforeAll( () => {
-	register( { client_id: '', client_secret: '' } );
-} );
+beforeAll(() => {
+	register({ client_id: '', client_secret: '' });
+});
 
-describe( 'getSite', () => {
-	it( 'should return a receiveExistingSite action object on success', async () => {
+describe('getSite', () => {
+	it('should return a receiveExistingSite action object on success', async () => {
 		const siteId = 123456;
 		const apiResponse = {
 			ID: 1,
@@ -26,25 +26,25 @@ describe( 'getSite', () => {
 			URL: 'http://mytestsite12345.wordpress.com',
 		};
 
-		const generator = getSite( siteId );
+		const generator = getSite(siteId);
 
-		expect( generator.next().value ).toEqual( {
+		expect(generator.next().value).toEqual({
 			type: 'WPCOM_REQUEST',
-			request: expect.objectContaining( {
-				path: `/sites/${ siteId }`,
-			} ),
-		} );
+			request: expect.objectContaining({
+				path: `/sites/${siteId}`,
+			}),
+		});
 
-		expect( await generator.next( apiResponse ).value ).toEqual( {
+		expect(await generator.next(apiResponse).value).toEqual({
 			type: 'RECEIVE_SITE',
 			siteId,
 			response: apiResponse,
-		} );
+		});
 
-		expect( generator.next().done ).toBe( true );
-	} );
+		expect(generator.next().done).toBe(true);
+	});
 
-	it( 'should return a receiveExistingSiteFailed action object on fail', async () => {
+	it('should return a receiveExistingSiteFailed action object on fail', async () => {
 		const siteId = 12345;
 		const apiResponse = {
 			status: 404,
@@ -52,21 +52,21 @@ describe( 'getSite', () => {
 			message: 'Unknown blog',
 		};
 
-		const generator = getSite( siteId );
+		const generator = getSite(siteId);
 
-		expect( generator.next().value ).toEqual( {
+		expect(generator.next().value).toEqual({
 			type: 'WPCOM_REQUEST',
-			request: expect.objectContaining( {
-				path: `/sites/${ siteId }`,
-			} ),
-		} );
+			request: expect.objectContaining({
+				path: `/sites/${siteId}`,
+			}),
+		});
 
-		expect( await generator.throw( apiResponse ).value ).toEqual( {
+		expect(await generator.throw(apiResponse).value).toEqual({
 			type: 'RECEIVE_SITE_FAILED',
 			siteId,
 			response: undefined,
-		} );
+		});
 
-		expect( generator.next().done ).toBe( true );
-	} );
-} );
+		expect(generator.next().done).toBe(true);
+	});
+});

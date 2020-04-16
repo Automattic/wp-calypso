@@ -15,16 +15,16 @@ import {
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
-describe( 'actions', () => {
-	describe( '#fetchShippingZones()', () => {
+describe('actions', () => {
+	describe('#fetchShippingZones()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/shipping/zones&_via_calypso&_method=get', json: true } )
-				.reply( 200, {
+				.get('/rest/v1.1/jetpack-blogs/123/rest-api/')
+				.query({ path: '/wc/v3/shipping/zones&_via_calypso&_method=get', json: true })
+				.reply(200, {
 					data: [
 						{
 							id: 0,
@@ -32,26 +32,26 @@ describe( 'actions', () => {
 							order: 0,
 						},
 					],
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
+		test('should dispatch an action', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			fetchShippingZones( siteId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			fetchShippingZones(siteId)(dispatch, getState);
+			expect(dispatch).to.have.been.calledWith({
 				type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 				siteId,
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch a success action with shipping zone information when request completes', () => {
-			const getState = () => ( {} );
+		test('should dispatch a success action with shipping zone information when request completes', () => {
+			const getState = () => ({});
 			const dispatch = spy();
-			const response = fetchShippingZones( siteId )( dispatch, getState );
+			const response = fetchShippingZones(siteId)(dispatch, getState);
 
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
+			return response.then(() => {
+				expect(dispatch).to.have.been.calledWith({
 					type: WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 					siteId,
 					data: [
@@ -61,25 +61,25 @@ describe( 'actions', () => {
 							order: 0,
 						},
 					],
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should not dispatch if shipping zones are already loading for this site', () => {
-			const getState = () => ( {
+		test('should not dispatch if shipping zones are already loading for this site', () => {
+			const getState = () => ({
 				extensions: {
 					woocommerce: {
 						sites: {
-							[ siteId ]: {
+							[siteId]: {
 								shippingZones: LOADING,
 							},
 						},
 					},
 				},
-			} );
+			});
 			const dispatch = spy();
-			fetchShippingZones( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.been.called;
-		} );
-	} );
-} );
+			fetchShippingZones(siteId)(dispatch, getState);
+			expect(dispatch).to.not.have.been.called;
+		});
+	});
+});

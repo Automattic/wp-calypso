@@ -9,15 +9,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-no-placeholders-only' ),
+const rule = require('../../../lib/rules/i18n-no-placeholders-only'),
 	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-no-placeholders-only', rule, {
+new RuleTester(config).run('i18n-no-placeholders-only', rule, {
 	valid: [
 		{
 			code: "translate( 'Hello %s' );",
@@ -70,4 +70,4 @@ new RuleTester( config ).run( 'i18n-no-placeholders-only', rule, {
 			],
 		},
 	],
-} );
+});

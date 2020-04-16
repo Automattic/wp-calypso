@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {string}  domain      Domain to query details
  * @returns {object}              Contact details
  */
-export default function getWhois( state, domain ) {
-	return get( state, [ 'domains', 'management', 'items', domain ], false );
+export default function getWhois(state, domain) {
+	return get(state, ['domains', 'management', 'items', domain], false);
 }

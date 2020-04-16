@@ -29,15 +29,15 @@ class People extends React.Component {
 	renderPeopleList() {
 		const { site, search, filter, translate } = this.props;
 
-		switch ( filter ) {
+		switch (filter) {
 			case 'team':
-				return <TeamList site={ site } search={ search } />;
+				return <TeamList site={site} search={search} />;
 			case 'followers':
-				return <FollowersList site={ site } />;
+				return <FollowersList site={site} />;
 			case 'email-followers':
-				return <FollowersList site={ site } search={ search } type="email" />;
+				return <FollowersList site={site} search={search} type="email" />;
 			case 'viewers':
-				return <ViewersList site={ site } label={ translate( 'Viewers' ) } />;
+				return <ViewersList site={site} label={translate('Viewers')} />;
 			default:
 				return null;
 		}
@@ -55,59 +55,56 @@ class People extends React.Component {
 			translate,
 		} = this.props;
 
-		if ( siteId && ! canViewPeople ) {
+		if (siteId && !canViewPeople) {
 			return (
 				<Main>
 					<PageViewTracker
-						path={ `/people/${ filter }/:site` }
-						title={ `People > ${ titlecase( filter ) }` }
+						path={`/people/${filter}/:site`}
+						title={`People > ${titlecase(filter)}`}
 					/>
 					<SidebarNavigation />
 					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						title={translate('You are not authorized to view this page')}
+						illustration={'/calypso/images/illustrations/illustration-404.svg'}
 					/>
 				</Main>
 			);
 		}
 		return (
 			<Main>
-				<PageViewTracker
-					path={ `/people/${ filter }/:site` }
-					title={ `People > ${ titlecase( filter ) }` }
-				/>
+				<PageViewTracker path={`/people/${filter}/:site`} title={`People > ${titlecase(filter)}`} />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="people__page-heading"
-					headerText={ translate( 'People' ) }
+					headerText={translate('People')}
 					align="left"
 				/>
 				<div>
 					{
 						<PeopleSectionNav
-							isJetpack={ isJetpack }
-							isPrivate={ isPrivate }
-							canViewPeople={ canViewPeople }
-							search={ search }
-							filter={ filter }
-							site={ site }
+							isJetpack={isJetpack}
+							isPrivate={isPrivate}
+							canViewPeople={canViewPeople}
+							search={search}
+							filter={filter}
+							site={site}
 						/>
 					}
 					<PeopleNotices />
-					{ this.renderPeopleList() }
+					{this.renderPeopleList()}
 				</div>
 			</Main>
 		);
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state) => {
+	const siteId = getSelectedSiteId(state);
 	return {
 		siteId,
-		site: getSelectedSite( state ),
-		isJetpack: isJetpackSite( state, siteId ),
-		isPrivate: isPrivateSite( state, siteId ),
-		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+		site: getSelectedSite(state),
+		isJetpack: isJetpackSite(state, siteId),
+		isPrivate: isPrivateSite(state, siteId),
+		canViewPeople: canCurrentUser(state, siteId, 'list_users'),
 	};
-} )( localize( People ) );
+})(localize(People));

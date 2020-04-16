@@ -4,17 +4,17 @@
 import { fetchSiteProductsCompleted } from '../actions';
 import { SITE_PRODUCTS_FETCH_COMPLETED } from 'state/action-types';
 
-describe( 'actions', () => {
-	describe( '#fetchSiteProductsCompleted()', () => {
-		test( 'should return an action object with an array of products', () => {
+describe('actions', () => {
+	describe('#fetchSiteProductsCompleted()', () => {
+		test('should return an action object with an array of products', () => {
 			const siteId = 2916284,
-				action = fetchSiteProductsCompleted( siteId, {} );
+				action = fetchSiteProductsCompleted(siteId, {});
 
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: SITE_PRODUCTS_FETCH_COMPLETED,
 				siteId,
 				products: {},
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

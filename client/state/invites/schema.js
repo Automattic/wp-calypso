@@ -7,12 +7,12 @@ const invitesArraySchema = {
 			role: { type: 'string' },
 			isPending: { type: 'boolean' },
 			inviteDate: { type: 'string' },
-			acceptedDate: { anyOf: [ { type: 'string' }, { enum: [ null ] } ] },
+			acceptedDate: { anyOf: [{ type: 'string' }, { enum: [null] }] },
 			user: {
 				type: 'object',
 				properties: {
 					login: { type: 'string' },
-					email: { anyOf: [ { type: 'string' }, { enum: [ false ] } ] },
+					email: { anyOf: [{ type: 'string' }, { enum: [false] }] },
 					name: { type: 'string' },
 					avatar_URL: { type: 'string' },
 				},
@@ -42,7 +42,7 @@ export const inviteItemsSchema = {
 				pending: invitesArraySchema,
 				accepted: invitesArraySchema,
 			},
-			required: [ 'pending', 'accepted' ],
+			required: ['pending', 'accepted'],
 			additionalProperties: false,
 		},
 	},

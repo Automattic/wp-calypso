@@ -23,11 +23,11 @@ class QueryReaderRecommendedSites extends Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		this.props.requestRecommendedSites( { seed: this.props.seed, offset: this.props.offset } );
+		this.props.requestRecommendedSites({ seed: this.props.seed, offset: this.props.offset });
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.props.requestRecommendedSites( { seed: nextProps.seed, offset: nextProps.offset } );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.props.requestRecommendedSites({ seed: nextProps.seed, offset: nextProps.offset });
 	}
 
 	render() {
@@ -35,4 +35,4 @@ class QueryReaderRecommendedSites extends Component {
 	}
 }
 
-export default connect( null, { requestRecommendedSites } )( QueryReaderRecommendedSites );
+export default connect(null, { requestRecommendedSites })(QueryReaderRecommendedSites);

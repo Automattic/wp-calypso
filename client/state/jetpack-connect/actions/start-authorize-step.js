@@ -5,7 +5,7 @@ import { JETPACK_CONNECT_QUERY_SET } from 'state/jetpack-connect/action-types';
 
 import 'state/jetpack-connect/init';
 
-export function startAuthorizeStep( clientId ) {
+export function startAuthorizeStep(clientId) {
 	return {
 		type: JETPACK_CONNECT_QUERY_SET,
 		clientId,

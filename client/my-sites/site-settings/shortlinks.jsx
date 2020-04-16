@@ -45,22 +45,22 @@ class Shortlinks extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<SettingsSectionHeader title={ translate( 'WP.me Shortlinks' ) } />
+				<SettingsSectionHeader title={translate('WP.me Shortlinks')} />
 
 				<Card className="shortlinks__card site-settings site-settings__traffic-settings">
 					<FormFieldset>
 						<SupportInfo
-							text={ translate(
+							text={translate(
 								'Generates shorter links so you can have more space to write on social media sites.'
-							) }
+							)}
 							link="https://jetpack.com/support/shortlinks/"
 						/>
 
 						<JetpackModuleToggle
-							siteId={ selectedSiteId }
+							siteId={selectedSiteId}
 							moduleSlug="shortlinks"
-							label={ translate( 'Generate shortened URLs for simpler sharing.' ) }
-							disabled={ formPending }
+							label={translate('Generate shortened URLs for simpler sharing.')}
+							disabled={formPending}
 						/>
 					</FormFieldset>
 				</Card>
@@ -70,9 +70,9 @@ class Shortlinks extends Component {
 	}
 }
 
-export default connect( state => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+export default connect((state) => {
+	const selectedSiteId = getSelectedSiteId(state);
+	const siteInDevMode = isJetpackSiteInDevelopmentMode(state, selectedSiteId);
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 		state,
 		selectedSiteId,
@@ -81,7 +81,7 @@ export default connect( state => {
 
 	return {
 		selectedSiteId,
-		shortlinksModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'shortlinks' ),
+		shortlinksModuleActive: !!isJetpackModuleActive(state, selectedSiteId, 'shortlinks'),
 		moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 	};
-} )( localize( Shortlinks ) );
+})(localize(Shortlinks));

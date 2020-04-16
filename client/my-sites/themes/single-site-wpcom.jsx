@@ -24,7 +24,7 @@ import ThemeShowcase from './theme-showcase';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 
-const ConnectedSingleSiteWpcom = connectOptions( props => {
+const ConnectedSingleSiteWpcom = connectOptions((props) => {
 	const {
 		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
@@ -35,33 +35,31 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 		isJetpack,
 	} = props;
 
-	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes && ! isVip;
-	const bannerLocationBelowSearch = ! isJetpack;
+	const displayUpsellBanner = !requestingSitePlans && !hasUnlimitedPremiumThemes && !isVip;
+	const bannerLocationBelowSearch = !isJetpack;
 
-	const upsellUrl = `/plans/${ siteSlug }`;
+	const upsellUrl = `/plans/${siteSlug}`;
 	let upsellBanner = null;
-	if ( displayUpsellBanner ) {
-		if ( bannerLocationBelowSearch ) {
+	if (displayUpsellBanner) {
+		if (bannerLocationBelowSearch) {
 			upsellBanner = (
 				<Banner
-					plan={ PLAN_PREMIUM }
+					plan={PLAN_PREMIUM}
 					customerType="business"
 					className="themes__showcase-banner"
-					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
+					title={translate('Unlock ALL premium themes with our Premium and Business plans!')}
 					event="themes_plans_free_personal"
-					forceHref={ true }
+					forceHref={true}
 				/>
 			);
 		} else {
 			upsellBanner = (
 				<Banner
-					plan={ PLAN_PREMIUM }
-					title={ translate(
-						'Access all our premium themes with our Premium and Business plans!'
-					) }
-					description={ translate(
+					plan={PLAN_PREMIUM}
+					title={translate('Access all our premium themes with our Premium and Business plans!')}
+					description={translate(
 						'Get advanced customization, more storage space, and video support along with all your new themes.'
-					) }
+					)}
 					event="themes_plans_free_personal"
 				/>
 			);
@@ -72,31 +70,31 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 			<SidebarNavigation />
 			<FormattedHeader
 				className="themes__page-heading"
-				headerText={ translate( 'Themes' ) }
+				headerText={translate('Themes')}
 				align="left"
 			/>
-			<CurrentTheme siteId={ siteId } />
-			{ bannerLocationBelowSearch ? null : upsellBanner }
+			<CurrentTheme siteId={siteId} />
+			{bannerLocationBelowSearch ? null : upsellBanner}
 
 			<ThemeShowcase
-				{ ...props }
-				upsellUrl={ upsellUrl }
-				upsellBanner={ bannerLocationBelowSearch ? upsellBanner : null }
-				siteId={ siteId }
+				{...props}
+				upsellUrl={upsellUrl}
+				upsellBanner={bannerLocationBelowSearch ? upsellBanner : null}
+				siteId={siteId}
 			>
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<ThanksModal source={ 'list' } />
-				<AutoLoadingHomepageModal source={ 'list' } />
+				{siteId && <QuerySitePlans siteId={siteId} />}
+				{siteId && <QuerySitePurchases siteId={siteId} />}
+				<ThanksModal source={'list'} />
+				<AutoLoadingHomepageModal source={'list'} />
 			</ThemeShowcase>
 		</Main>
 	);
-} );
+});
 
-export default connect( ( state, { siteId } ) => ( {
-	isJetpack: isJetpackSite( state, siteId ),
-	isVip: isVipSite( state, siteId ),
-	siteSlug: getSiteSlug( state, siteId ),
-	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-	requestingSitePlans: isRequestingSitePlans( state, siteId ),
-} ) )( ConnectedSingleSiteWpcom );
+export default connect((state, { siteId }) => ({
+	isJetpack: isJetpackSite(state, siteId),
+	isVip: isVipSite(state, siteId),
+	siteSlug: getSiteSlug(state, siteId),
+	hasUnlimitedPremiumThemes: hasFeature(state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES),
+	requestingSitePlans: isRequestingSitePlans(state, siteId),
+}))(ConnectedSingleSiteWpcom);

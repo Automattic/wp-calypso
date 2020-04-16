@@ -16,14 +16,14 @@ import {
 } from '../selectors';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
-describe( 'selectors', () => {
-	beforeEach( () => {
+describe('selectors', () => {
+	beforeEach(() => {
 		getSiteStatsPostStreakData.clearCache();
 		getSiteStatsNormalizedData.clearCache();
-	} );
+	});
 
-	describe( 'isRequestingSiteStatsForQuery()', () => {
-		test( 'should return false if no request exists', () => {
+	describe('isRequestingSiteStatsForQuery()', () => {
+		test('should return false if no request exists', () => {
 			const requesting = isRequestingSiteStatsForQuery(
 				{
 					stats: {
@@ -37,10 +37,10 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( requesting ).to.be.false;
-		} );
+			expect(requesting).to.be.false;
+		});
 
-		test( 'should return false if query is not requesting', () => {
+		test('should return false if query is not requesting', () => {
 			const requesting = isRequestingSiteStatsForQuery(
 				{
 					stats: {
@@ -60,10 +60,10 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( requesting ).to.be.false;
-		} );
+			expect(requesting).to.be.false;
+		});
 
-		test( 'should return true if query is in progress', () => {
+		test('should return true if query is in progress', () => {
 			const requesting = isRequestingSiteStatsForQuery(
 				{
 					stats: {
@@ -83,12 +83,12 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( requesting ).to.be.true;
-		} );
-	} );
+			expect(requesting).to.be.true;
+		});
+	});
 
-	describe( 'hasSiteStatsQueryFailed()', () => {
-		test( 'should return false if no request exists', () => {
+	describe('hasSiteStatsQueryFailed()', () => {
+		test('should return false if no request exists', () => {
 			const hasFailed = hasSiteStatsQueryFailed(
 				{
 					stats: {
@@ -102,10 +102,10 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( hasFailed ).to.be.false;
-		} );
+			expect(hasFailed).to.be.false;
+		});
 
-		test( 'should return false if the request status is success', () => {
+		test('should return false if the request status is success', () => {
 			const hasFailed = hasSiteStatsQueryFailed(
 				{
 					stats: {
@@ -128,10 +128,10 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( hasFailed ).to.be.false;
-		} );
+			expect(hasFailed).to.be.false;
+		});
 
-		test( 'should return true if the request status is error', () => {
+		test('should return true if the request status is error', () => {
 			const hasFailed = hasSiteStatsQueryFailed(
 				{
 					stats: {
@@ -154,12 +154,12 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( hasFailed ).to.be.true;
-		} );
-	} );
+			expect(hasFailed).to.be.true;
+		});
+	});
 
-	describe( 'getSiteStatsForQuery()', () => {
-		test( 'should return null if no matching query results exist', () => {
+	describe('getSiteStatsForQuery()', () => {
+		test('should return null if no matching query results exist', () => {
 			const stats = getSiteStatsForQuery(
 				{
 					stats: {
@@ -173,10 +173,10 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.be.null;
-		} );
+			expect(stats).to.be.null;
+		});
 
-		test( 'should return matching stats', () => {
+		test('should return matching stats', () => {
 			const stats = getSiteStatsForQuery(
 				{
 					stats: {
@@ -200,16 +200,16 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( stats ).to.eql( {
+			expect(stats).to.eql({
 				1461889800: 1,
 				1461972600: 1,
 				1462059000: 1,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'getSiteStatsPostStreakData()', () => {
-		test( 'should return an empty object if no matching query results exist', () => {
+	describe('getSiteStatsPostStreakData()', () => {
+		test('should return an empty object if no matching query results exist', () => {
 			const stats = getSiteStatsPostStreakData(
 				{
 					stats: {
@@ -222,10 +222,10 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.eql( {} );
-		} );
+			expect(stats).to.eql({});
+		});
 
-		test( 'should return properly formatted data if matching data for query exists', () => {
+		test('should return properly formatted data if matching data for query exists', () => {
 			const stats = getSiteStatsPostStreakData(
 				{
 					stats: {
@@ -251,13 +251,13 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( stats ).to.eql( {
+			expect(stats).to.eql({
 				'2016-04-29': 2,
 				'2016-04-30': 1,
-			} );
-		} );
+			});
+		});
 
-		test( 'should handle malformed data if matching data for query exists', () => {
+		test('should handle malformed data if matching data for query exists', () => {
 			const stats = getSiteStatsPostStreakData(
 				{
 					stats: {
@@ -267,7 +267,7 @@ describe( 'selectors', () => {
 									statsStreak: {
 										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
 											streak: {},
-											data: [ 1461889800 ],
+											data: [1461889800],
 										},
 									},
 								},
@@ -279,17 +279,17 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( stats ).to.eql( {} );
-		} );
+			expect(stats).to.eql({});
+		});
 
-		test( 'should return post streak data based on the GMT offset of the current site', () => {
+		test('should return post streak data based on the GMT offset of the current site', () => {
 			const state = {
 				stats: {
 					lists: {
 						items: {
 							2916284: {
 								statsStreak: {
-									[ '[["endDate","2016-06-01"],["gmtOffset",-10],["startDate","2015-06-01"]]' ]: {
+									['[["endDate","2016-06-01"],["gmtOffset",-10],["startDate","2015-06-01"]]']: {
 										streak: {},
 										data: {
 											1461889800: 1, // 2016-04-29 00:30:00 (UTC)
@@ -297,7 +297,7 @@ describe( 'selectors', () => {
 											1462059000: 1, // 2016-04-30 23:30:00 (UTC)
 										},
 									},
-									[ '[["endDate","2016-06-01"],["gmtOffset",0],["startDate","2015-06-01"]]' ]: {
+									['[["endDate","2016-06-01"],["gmtOffset",0],["startDate","2015-06-01"]]']: {
 										streak: {},
 										data: {
 											1461889800: 1, // 2016-04-29 00:30:00 (UTC)
@@ -305,7 +305,7 @@ describe( 'selectors', () => {
 											1462059000: 1, // 2016-04-30 23:30:00 (UTC)
 										},
 									},
-									[ '[["endDate","2016-06-01"],["gmtOffset",10],["startDate","2015-06-01"]]' ]: {
+									['[["endDate","2016-06-01"],["gmtOffset",10],["startDate","2015-06-01"]]']: {
 										streak: {},
 										data: {
 											1461889800: 1, // 2016-04-29 00:30:00 (UTC)
@@ -320,45 +320,45 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const stats1 = getSiteStatsPostStreakData( state, 2916284, {
+			const stats1 = getSiteStatsPostStreakData(state, 2916284, {
 				startDate: '2015-06-01',
 				endDate: '2016-06-01',
 				gmtOffset: -10,
-			} );
+			});
 
-			const stats2 = getSiteStatsPostStreakData( state, 2916284, {
+			const stats2 = getSiteStatsPostStreakData(state, 2916284, {
 				startDate: '2015-06-01',
 				endDate: '2016-06-01',
 				gmtOffset: 0,
-			} );
+			});
 
-			const stats3 = getSiteStatsPostStreakData( state, 2916284, {
+			const stats3 = getSiteStatsPostStreakData(state, 2916284, {
 				startDate: '2015-06-01',
 				endDate: '2016-06-01',
 				gmtOffset: 10,
-			} );
+			});
 
-			expect( stats1 ).to.eql( {
+			expect(stats1).to.eql({
 				'2016-04-28': 1,
 				'2016-04-29': 1,
 				'2016-04-30': 1,
-			} );
+			});
 
-			expect( stats2 ).to.eql( {
+			expect(stats2).to.eql({
 				'2016-04-29': 2,
 				'2016-04-30': 1,
-			} );
+			});
 
-			expect( stats3 ).to.eql( {
+			expect(stats3).to.eql({
 				'2016-04-29': 1,
 				'2016-04-30': 1,
 				'2016-05-01': 1,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'getSiteStatsNormalizedData()', () => {
-		test( 'should return null if no matching query results exist', () => {
+	describe('getSiteStatsNormalizedData()', () => {
+		test('should return null if no matching query results exist', () => {
 			const stats = getSiteStatsNormalizedData(
 				{
 					...userState,
@@ -376,10 +376,10 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.be.null;
-		} );
+			expect(stats).to.be.null;
+		});
 
-		test( 'should return API payload data, if no normalizer exists', () => {
+		test('should return API payload data, if no normalizer exists', () => {
 			const stats = getSiteStatsNormalizedData(
 				{
 					...userState,
@@ -405,12 +405,12 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.eql( {
+			expect(stats).to.eql({
 				bestPostTitleEver: 'Chicken and Ribs',
-			} );
-		} );
+			});
+		});
 
-		test( 'should return normalized data, if normalizer exists', () => {
+		test('should return normalized data, if normalizer exists', () => {
 			const stats = getSiteStatsNormalizedData(
 				{
 					...userState,
@@ -442,18 +442,18 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.eql( {
+			expect(stats).to.eql({
 				posts: 2,
 				views: 300,
 				visitors: 400,
 				viewsBestDay: '2010-09-29',
 				viewsBestDayTotal: 100,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'getSiteStatsCSVData()', () => {
-		test( 'should return an empty array if no matching query results exist', () => {
+	describe('getSiteStatsCSVData()', () => {
+		test('should return an empty array if no matching query results exist', () => {
 			const stats = getSiteStatsCSVData(
 				{
 					...userState,
@@ -471,10 +471,10 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.eql( [] );
-		} );
+			expect(stats).to.eql([]);
+		});
 
-		test( 'should return normalized data, if normalizer exists', () => {
+		test('should return normalized data, if normalizer exists', () => {
 			const stats = getSiteStatsCSVData(
 				{
 					...userState,
@@ -525,7 +525,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( stats ).to.eql( [ [ '"United States"', 1 ] ] );
-		} );
-	} );
-} );
+			expect(stats).to.eql([['"United States"', 1]]);
+		});
+	});
+});

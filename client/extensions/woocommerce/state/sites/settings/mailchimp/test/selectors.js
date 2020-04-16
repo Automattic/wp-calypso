@@ -96,7 +96,7 @@ const emailState = {
 	},
 };
 
-const loadingSettings = Object.assign( {}, emailState, {
+const loadingSettings = Object.assign({}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -104,9 +104,9 @@ const loadingSettings = Object.assign( {}, emailState, {
 			},
 		},
 	},
-} );
+});
 
-const submittingApiKey = Object.assign( {}, emailState, {
+const submittingApiKey = Object.assign({}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -114,9 +114,9 @@ const submittingApiKey = Object.assign( {}, emailState, {
 			},
 		},
 	},
-} );
+});
 
-const invalidKey = Object.assign( {}, emailState, {
+const invalidKey = Object.assign({}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -124,9 +124,9 @@ const invalidKey = Object.assign( {}, emailState, {
 			},
 		},
 	},
-} );
+});
 
-const mailChimpNoSync = Object.assign( {}, emailState, {
+const mailChimpNoSync = Object.assign({}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -134,9 +134,9 @@ const mailChimpNoSync = Object.assign( {}, emailState, {
 			},
 		},
 	},
-} );
+});
 
-const mailChimpSaveSettings = Object.assign( {}, emailState, {
+const mailChimpSaveSettings = Object.assign({}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -144,9 +144,9 @@ const mailChimpSaveSettings = Object.assign( {}, emailState, {
 			},
 		},
 	},
-} );
+});
 
-const submitStoreInfoState = Object.assign( {}, emailState, {
+const submitStoreInfoState = Object.assign({}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
@@ -154,110 +154,110 @@ const submitStoreInfoState = Object.assign( {}, emailState, {
 			},
 		},
 	},
-} );
+});
 
-describe( 'selectors', () => {
-	describe( '#isRequestingSettings', () => {
-		test( 'should be false when woocommerce state is not available.', () => {
-			expect( isRequestingSettings( {}, 123 ) ).to.be.false;
-		} );
+describe('selectors', () => {
+	describe('#isRequestingSettings', () => {
+		test('should be false when woocommerce state is not available.', () => {
+			expect(isRequestingSettings({}, 123)).to.be.false;
+		});
 
-		test( 'should be false when woocommerce state is loaded and there is no active request.', () => {
-			expect( isRequestingSettings( emailState, 123 ) ).to.be.false;
-		} );
+		test('should be false when woocommerce state is loaded and there is no active request.', () => {
+			expect(isRequestingSettings(emailState, 123)).to.be.false;
+		});
 
-		test( 'should be true when settings settings are currently being fetched.', () => {
-			expect( isRequestingSettings( loadingSettings, 123 ) ).to.be.true;
-		} );
-	} );
+		test('should be true when settings settings are currently being fetched.', () => {
+			expect(isRequestingSettings(loadingSettings, 123)).to.be.true;
+		});
+	});
 
-	describe( '#mailChimpSettings', () => {
-		test( 'should be empty when woocommerce state is not available.', () => {
-			expect( mailChimpSettings( {}, 123 ) ).to.be.deep.equal( {} );
-		} );
+	describe('#mailChimpSettings', () => {
+		test('should be empty when woocommerce state is not available.', () => {
+			expect(mailChimpSettings({}, 123)).to.be.deep.equal({});
+		});
 
-		test( 'should return settings if they are stored in state.', () => {
-			expect( mailChimpSettings( emailState, 123 ) ).to.be.deep.equal( settings );
-		} );
-	} );
+		test('should return settings if they are stored in state.', () => {
+			expect(mailChimpSettings(emailState, 123)).to.be.deep.equal(settings);
+		});
+	});
 
-	describe( '#requestingSettingsError', () => {
-		test( 'should be null when woocommerce state is not available.', () => {
-			expect( requestingSettingsError( {}, 123 ) ).to.be.null;
-		} );
+	describe('#requestingSettingsError', () => {
+		test('should be null when woocommerce state is not available.', () => {
+			expect(requestingSettingsError({}, 123)).to.be.null;
+		});
 
-		test( 'should be false if settings are stored in the state.', () => {
-			expect( requestingSettingsError( emailState, 123 ) ).to.be.false;
-		} );
-	} );
+		test('should be false if settings are stored in the state.', () => {
+			expect(requestingSettingsError(emailState, 123)).to.be.false;
+		});
+	});
 
-	describe( '#isSubmittingApiKey', () => {
-		test( 'should be false when woocommerce state is not available.', () => {
-			expect( isSubmittingApiKey( {}, 123 ) ).to.be.false;
-		} );
+	describe('#isSubmittingApiKey', () => {
+		test('should be false when woocommerce state is not available.', () => {
+			expect(isSubmittingApiKey({}, 123)).to.be.false;
+		});
 
-		test( 'should be false when woocommerce state is loaded and there is no active request.', () => {
-			expect( isSubmittingApiKey( emailState, 123 ) ).to.be.false;
-		} );
+		test('should be false when woocommerce state is loaded and there is no active request.', () => {
+			expect(isSubmittingApiKey(emailState, 123)).to.be.false;
+		});
 
-		test( 'should be true when key is being submited.', () => {
-			expect( isSubmittingApiKey( submittingApiKey, 123 ) ).to.be.true;
-		} );
-	} );
+		test('should be true when key is being submited.', () => {
+			expect(isSubmittingApiKey(submittingApiKey, 123)).to.be.true;
+		});
+	});
 
-	describe( '#isApiKeyCorrect', () => {
-		test( 'should be true when woocommerce state is not available.', () => {
-			expect( isApiKeyCorrect( {}, 123 ) ).to.be.true;
-		} );
+	describe('#isApiKeyCorrect', () => {
+		test('should be true when woocommerce state is not available.', () => {
+			expect(isApiKeyCorrect({}, 123)).to.be.true;
+		});
 
-		test( 'should be true when mailchimp has valid connection with server.', () => {
-			expect( isApiKeyCorrect( emailState, 123 ) ).to.be.true;
-		} );
+		test('should be true when mailchimp has valid connection with server.', () => {
+			expect(isApiKeyCorrect(emailState, 123)).to.be.true;
+		});
 
-		test( 'should be false after invalid key submit', () => {
-			expect( isApiKeyCorrect( invalidKey, 123 ) ).to.be.false;
-		} );
-	} );
+		test('should be false after invalid key submit', () => {
+			expect(isApiKeyCorrect(invalidKey, 123)).to.be.false;
+		});
+	});
 
-	describe( '#hasMailChimpConnection', () => {
-		test( 'should be false when woocommerce state is not available.', () => {
-			expect( hasMailChimpConnection( {}, 123 ) ).to.be.false;
-		} );
+	describe('#hasMailChimpConnection', () => {
+		test('should be false when woocommerce state is not available.', () => {
+			expect(hasMailChimpConnection({}, 123)).to.be.false;
+		});
 
-		test( 'should be true when mailchimp has valid connection with server.', () => {
-			expect( hasMailChimpConnection( emailState, 123 ) ).to.be.true;
-		} );
+		test('should be true when mailchimp has valid connection with server.', () => {
+			expect(hasMailChimpConnection(emailState, 123)).to.be.true;
+		});
 
-		test( 'should be false after invalid key submit', () => {
-			expect( hasMailChimpConnection( mailChimpNoSync, 123 ) ).to.be.false;
-		} );
-	} );
+		test('should be false after invalid key submit', () => {
+			expect(hasMailChimpConnection(mailChimpNoSync, 123)).to.be.false;
+		});
+	});
 
-	describe( '#isSavingSettings', () => {
-		test( 'should be false when woocommerce state is not available.', () => {
-			expect( isSavingMailChimpSettings( {}, 123 ) ).to.be.false;
-		} );
+	describe('#isSavingSettings', () => {
+		test('should be false when woocommerce state is not available.', () => {
+			expect(isSavingMailChimpSettings({}, 123)).to.be.false;
+		});
 
-		test( 'should be true when user reqested Save action.', () => {
-			expect( isSavingMailChimpSettings( mailChimpSaveSettings, 123 ) ).to.be.true;
-		} );
+		test('should be true when user reqested Save action.', () => {
+			expect(isSavingMailChimpSettings(mailChimpSaveSettings, 123)).to.be.true;
+		});
 
-		test( 'should be false when user has not requested Save action', () => {
-			expect( isSavingMailChimpSettings( emailState, 123 ) ).to.be.false;
-		} );
-	} );
+		test('should be false when user has not requested Save action', () => {
+			expect(isSavingMailChimpSettings(emailState, 123)).to.be.false;
+		});
+	});
 
-	describe( '#isSubmittingStoreInfo', () => {
-		test( 'should be false when woocommerce state is not available.', () => {
-			expect( isSubmittingStoreInfo( {}, 123 ) ).to.be.false;
-		} );
+	describe('#isSubmittingStoreInfo', () => {
+		test('should be false when woocommerce state is not available.', () => {
+			expect(isSubmittingStoreInfo({}, 123)).to.be.false;
+		});
 
-		test( 'should be true when mailchimp has valid connection with server.', () => {
-			expect( isSubmittingStoreInfo( submitStoreInfoState, 123 ) ).to.be.true;
-		} );
+		test('should be true when mailchimp has valid connection with server.', () => {
+			expect(isSubmittingStoreInfo(submitStoreInfoState, 123)).to.be.true;
+		});
 
-		test( 'should be false when store infor submit is not pending', () => {
-			expect( isSubmittingStoreInfo( emailState, 123 ) ).to.be.false;
-		} );
-	} );
-} );
+		test('should be false when store infor submit is not pending', () => {
+			expect(isSubmittingStoreInfo(emailState, 123)).to.be.false;
+		});
+	});
+});

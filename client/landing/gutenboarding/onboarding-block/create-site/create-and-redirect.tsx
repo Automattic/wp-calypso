@@ -14,23 +14,23 @@ import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion'
 import { Step, usePath } from '../../path';
 
 const CreateAndRedirect = () => {
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { siteTitle, siteVertical } = useSelect((select) => select(ONBOARD_STORE).getState());
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+	const currentUser = useSelect((select) => select(USER_STORE).getCurrentUser());
 	const makePath = usePath();
-	const { createSite } = useDispatch( ONBOARD_STORE );
+	const { createSite } = useDispatch(ONBOARD_STORE);
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
-	useEffect( () => {
+	useEffect(() => {
 		// If there's no site title don't wait for a free domain suggestion, there won't be one
-		if ( currentUser && ( ! siteTitle || freeDomainSuggestion ) ) {
-			createSite( currentUser.username, freeDomainSuggestion );
+		if (currentUser && (!siteTitle || freeDomainSuggestion)) {
+			createSite(currentUser.username, freeDomainSuggestion);
 		}
-	}, [ createSite, currentUser, freeDomainSuggestion, siteTitle ] );
+	}, [createSite, currentUser, freeDomainSuggestion, siteTitle]);
 
-	if ( ! siteVertical ) {
-		return <Redirect to={ makePath( Step.IntentGathering ) } />;
+	if (!siteVertical) {
+		return <Redirect to={makePath(Step.IntentGathering)} />;
 	}
 
 	return null;

@@ -16,7 +16,7 @@ import { CreditCardForm } from '../';
 import { getParamsForApi } from '../helpers';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 
-describe( 'Credit Card Form', () => {
+describe('Credit Card Form', () => {
 	const defaultProps = {
 		translate: identity,
 		countriesList: [],
@@ -25,20 +25,20 @@ describe( 'Credit Card Form', () => {
 		successCallback: noop,
 	};
 
-	test( 'does not blow up with default props', () => {
-		const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
-		expect( wrapper ).toHaveLength( 1 );
-	} );
+	test('does not blow up with default props', () => {
+		const wrapper = shallow(<CreditCardForm {...defaultProps} />);
+		expect(wrapper).toHaveLength(1);
+	});
 
-	test( 'renders CreditCardFormFields', () => {
-		const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
-		expect( wrapper.find( CreditCardFormFields ) ).toHaveLength( 1 );
-	} );
+	test('renders CreditCardFormFields', () => {
+		const wrapper = shallow(<CreditCardForm {...defaultProps} />);
+		expect(wrapper.find(CreditCardFormFields)).toHaveLength(1);
+	});
 
-	test( 'renders CreditCardFormFields with appropriate fields', () => {
-		const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
-		const child = wrapper.find( CreditCardFormFields );
-		expect( child.prop( 'card' ) ).toEqual( {
+	test('renders CreditCardFormFields with appropriate fields', () => {
+		const wrapper = shallow(<CreditCardForm {...defaultProps} />);
+		const child = wrapper.find(CreditCardFormFields);
+		expect(child.prop('card')).toEqual({
 			'address-1': '',
 			'address-2': '',
 			brand: '',
@@ -53,29 +53,29 @@ describe( 'Credit Card Form', () => {
 			'postal-code': '',
 			state: '',
 			'street-number': '',
-		} );
-	} );
+		});
+	});
 
-	test( 'has getErrorMessage return no errors for an empty field', () => {
+	test('has getErrorMessage return no errors for an empty field', () => {
 		const initialValues = { number: '' };
 		const props = { ...defaultProps, initialValues };
-		const wrapper = shallow( <CreditCardForm { ...props } /> );
-		const child = wrapper.find( CreditCardFormFields );
-		const getErrorMessage = child.prop( 'getErrorMessage' );
-		expect( getErrorMessage( 'number' ) ).toEqual( '' );
-	} );
+		const wrapper = shallow(<CreditCardForm {...props} />);
+		const child = wrapper.find(CreditCardFormFields);
+		const getErrorMessage = child.prop('getErrorMessage');
+		expect(getErrorMessage('number')).toEqual('');
+	});
 
-	test( 'has getErrorMessage return the correct errors', () => {
+	test('has getErrorMessage return the correct errors', () => {
 		const initialValues = { number: '234' };
 		const props = { ...defaultProps, initialValues };
-		const wrapper = shallow( <CreditCardForm { ...props } /> );
-		const child = wrapper.find( CreditCardFormFields );
-		const getErrorMessage = child.prop( 'getErrorMessage' );
-		expect( getErrorMessage( 'number' )[ 0 ] ).toMatch( /invalid/ );
-	} );
+		const wrapper = shallow(<CreditCardForm {...props} />);
+		const child = wrapper.find(CreditCardFormFields);
+		const getErrorMessage = child.prop('getErrorMessage');
+		expect(getErrorMessage('number')[0]).toMatch(/invalid/);
+	});
 
-	describe( 'getParamsForApi()', () => {
-		test( 'should return expected api params from form credit card values', () => {
+	describe('getParamsForApi()', () => {
+		test('should return expected api params from form credit card values', () => {
 			expect(
 				getParamsForApi(
 					{
@@ -93,7 +93,7 @@ describe( 'Credit Card Form', () => {
 					},
 					{}
 				)
-			).toEqual( {
+			).toEqual({
 				country: 'AU',
 				zip: '33333',
 				month: '02',
@@ -108,7 +108,7 @@ describe( 'Credit Card Form', () => {
 				phone_number: '+31222222',
 				paygate_token: {},
 				payment_partner: '',
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

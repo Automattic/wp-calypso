@@ -46,34 +46,34 @@ class EmailForwarding extends Component {
 		const { selectedDomainName, translate } = this.props;
 		return (
 			<Main>
-				<QueryEmailForwards domainName={ selectedDomainName } />
-				<Header onClick={ this.goToEditEmail } selectedDomainName={ selectedDomainName }>
-					{ translate( 'Email Forwarding' ) }
+				<QueryEmailForwards domainName={selectedDomainName} />
+				<Header onClick={this.goToEditEmail} selectedDomainName={selectedDomainName}>
+					{translate('Email Forwarding')}
 				</Header>
-				{ this.renderContent() }
+				{this.renderContent()}
 			</Main>
 		);
 	}
 
 	renderContent() {
 		const { emailForwardingType, selectedDomainName, siteSlug } = this.props;
-		switch ( emailForwardingType ) {
+		switch (emailForwardingType) {
 			case 'forward':
 				return this.renderForwards();
 
 			case 'custom':
 				return (
 					<EmailForwardingCustomMxList
-						selectedDomainName={ selectedDomainName }
-						siteSlug={ siteSlug }
+						selectedDomainName={selectedDomainName}
+						siteSlug={siteSlug}
 					/>
 				);
 
 			case 'google-apps':
 				return (
 					<EmailForwardingGSuiteDetails
-						selectedDomainName={ selectedDomainName }
-						siteSlug={ siteSlug }
+						selectedDomainName={selectedDomainName}
+						siteSlug={siteSlug}
 					/>
 				);
 
@@ -89,31 +89,31 @@ class EmailForwarding extends Component {
 		const { emailForwards, emailForwardingLimit, selectedDomainName } = this.props;
 		return (
 			<Card className="email-forwarding__card">
-				<EmailForwardingDetails selectedDomainName={ selectedDomainName } />
+				<EmailForwardingDetails selectedDomainName={selectedDomainName} />
 
-				<EmailForwardingList emailForwards={ emailForwards } />
+				<EmailForwardingList emailForwards={emailForwards} />
 
 				<EmailForwardingAddNew
-					emailForwards={ emailForwards }
-					emailForwardingLimit={ emailForwardingLimit }
-					selectedDomainName={ selectedDomainName }
+					emailForwards={emailForwards}
+					emailForwardingLimit={emailForwardingLimit}
+					selectedDomainName={selectedDomainName}
 				/>
 			</Card>
 		);
 	}
 
 	goToEditEmail = () => {
-		page( emailManagement( this.props.siteSlug, this.props.selectedDomainName ) );
+		page(emailManagement(this.props.siteSlug, this.props.selectedDomainName));
 	};
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect((state, ownProps) => {
+	const siteId = getSelectedSiteId(state);
 	const { selectedDomainName } = ownProps;
 	return {
-		emailForwards: getEmailForwards( state, selectedDomainName ),
-		emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
-		emailForwardingType: getEmailForwardingType( state, selectedDomainName ),
-		siteSlug: getSelectedSiteSlug( state ),
+		emailForwards: getEmailForwards(state, selectedDomainName),
+		emailForwardingLimit: getEmailForwardingLimit(state, siteId),
+		emailForwardingType: getEmailForwardingType(state, selectedDomainName),
+		siteSlug: getSelectedSiteSlug(state),
 	};
-} )( localize( EmailForwarding ) );
+})(localize(EmailForwarding));

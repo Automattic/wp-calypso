@@ -53,95 +53,95 @@ class SiteSettingsPerformance extends Component {
 
 		return (
 			<Main className="settings-performance site-settings site-settings__performance-settings">
-				<DocumentHead title={ translate( 'Site Settings' ) } />
+				<DocumentHead title={translate('Site Settings')} />
 				<JetpackDevModeNotice />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="settings-performance__page-heading"
-					headerText={ translate( 'Settings' ) }
+					headerText={translate('Settings')}
 					align="left"
 				/>
-				<SiteSettingsNavigation site={ site } section="performance" />
+				<SiteSettingsNavigation site={site} section="performance" />
 
 				<Search
-					handleAutosavingToggle={ handleAutosavingToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
+					handleAutosavingToggle={handleAutosavingToggle}
+					isSavingSettings={isSavingSettings}
+					isRequestingSettings={isRequestingSettings}
+					fields={fields}
 				/>
 
-				{ siteIsJetpack && (
+				{siteIsJetpack && (
 					<Fragment>
-						<QueryJetpackModules siteId={ siteId } />
+						<QueryJetpackModules siteId={siteId} />
 
-						<SettingsSectionHeader title={ translate( 'Performance & speed' ) } />
+						<SettingsSectionHeader title={translate('Performance & speed')} />
 
-						{ siteIsAtomicPrivate ? (
+						{siteIsAtomicPrivate ? (
 							<EligibilityWarnings
-								isEligible={ true }
-								backUrl={ `/settings/performance/${ siteSlug }` }
-								eligibilityData={ {
-									eligibilityHolds: [ siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC' ],
-								} }
+								isEligible={true}
+								backUrl={`/settings/performance/${siteSlug}`}
+								eligibilityData={{
+									eligibilityHolds: [siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC'],
+								}}
 							/>
 						) : (
 							<>
 								<SpeedUpYourSite
-									isSavingSettings={ isSavingSettings }
-									isRequestingSettings={ isRequestingSettings }
-									submitForm={ submitForm }
-									updateFields={ updateFields }
+									isSavingSettings={isSavingSettings}
+									isRequestingSettings={isRequestingSettings}
+									submitForm={submitForm}
+									updateFields={updateFields}
 								/>
 
-								<SettingsSectionHeader title={ translate( 'Media' ) } />
+								<SettingsSectionHeader title={translate('Media')} />
 
 								<MediaSettingsPerformance
-									siteId={ siteId }
-									handleAutosavingToggle={ handleAutosavingToggle }
-									onChangeField={ onChangeField }
-									isSavingSettings={ isSavingSettings }
-									isRequestingSettings={ isRequestingSettings }
-									fields={ fields }
+									siteId={siteId}
+									handleAutosavingToggle={handleAutosavingToggle}
+									onChangeField={onChangeField}
+									isSavingSettings={isSavingSettings}
+									isRequestingSettings={isRequestingSettings}
+									fields={fields}
 								/>
 							</>
-						) }
+						)}
 					</Fragment>
-				) }
+				)}
 
-				{ siteIsJetpack ? (
+				{siteIsJetpack ? (
 					<AmpJetpack />
 				) : (
 					<AmpWpcom
-						submitForm={ submitForm }
-						trackEvent={ trackEvent }
-						updateFields={ updateFields }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
+						submitForm={submitForm}
+						trackEvent={trackEvent}
+						updateFields={updateFields}
+						isSavingSettings={isSavingSettings}
+						isRequestingSettings={isRequestingSettings}
+						fields={fields}
 					/>
-				) }
+				)}
 			</Main>
 		);
 	}
 }
 
-const connectComponent = connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	const siteIsJetpack = isJetpackSite( state, siteId );
+const connectComponent = connect((state) => {
+	const site = getSelectedSite(state);
+	const siteId = getSelectedSiteId(state);
+	const siteIsJetpack = isJetpackSite(state, siteId);
 	const siteIsAtomicPrivate =
-		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
+		isSiteAutomatedTransfer(state, siteId) && isPrivateSite(state, siteId);
 
 	return {
 		site,
 		siteIsJetpack,
 		siteIsAtomicPrivate,
-		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
+		siteIsUnlaunched: isUnlaunchedSite(state, siteId),
+		siteSlug: getSiteSlug(state, siteId),
 	};
-} );
+});
 
-const getFormSettings = partialRight( pick, [
+const getFormSettings = partialRight(pick, [
 	'amp_is_enabled',
 	'amp_is_supported',
 	'jetpack_search_enabled',
@@ -149,10 +149,10 @@ const getFormSettings = partialRight( pick, [
 	'lazy-images',
 	'photon',
 	'photon-cdn',
-] );
+]);
 
 export default flowRight(
 	connectComponent,
 	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsPerformance );
+	wrapSettingsForm(getFormSettings)
+)(SiteSettingsPerformance);

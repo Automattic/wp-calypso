@@ -18,28 +18,28 @@ import { editPost } from 'state/posts/actions';
 
 class EditorExcerpt extends React.Component {
 	recordExcerptChangeStats = () => {
-		this.props.recordEditorStat( 'excerpt_changed' );
-		this.props.recordEditorEvent( 'Changed Excerpt' );
+		this.props.recordEditorStat('excerpt_changed');
+		this.props.recordEditorEvent('Changed Excerpt');
 	};
 
-	onExcerptChange = event => {
+	onExcerptChange = (event) => {
 		const excerpt = event.target.value;
-		this.props.editPost( this.props.siteId, this.props.postId, { excerpt } );
+		this.props.editPost(this.props.siteId, this.props.postId, { excerpt });
 	};
 
 	render() {
 		const { excerpt, translate } = this.props;
-		const placeholder = translate( 'Write an excerpt…' );
+		const placeholder = translate('Write an excerpt…');
 
 		return (
-			<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
+			<TrackInputChanges onNewValue={this.recordExcerptChangeStats}>
 				<FormTextarea
 					id="excerpt"
 					name="excerpt"
-					onChange={ this.onExcerptChange }
-					value={ excerpt }
-					placeholder={ placeholder }
-					aria-label={ placeholder }
+					onChange={this.onExcerptChange}
+					value={excerpt}
+					placeholder={placeholder}
+					aria-label={placeholder}
 				/>
 			</TrackInputChanges>
 		);
@@ -47,12 +47,12 @@ class EditorExcerpt extends React.Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const excerpt = getEditedPostValue( state, siteId, postId, 'excerpt' );
+	(state) => {
+		const siteId = getSelectedSiteId(state);
+		const postId = getEditorPostId(state);
+		const excerpt = getEditedPostValue(state, siteId, postId, 'excerpt');
 
 		return { siteId, postId, excerpt };
 	},
 	{ editPost, recordEditorStat, recordEditorEvent }
-)( localize( EditorExcerpt ) );
+)(localize(EditorExcerpt));

@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import reducer from '../reducer';
 import { SIGNUP_STEPS_USER_EXPERIENCE_SET } from 'state/action-types';
 
-describe( 'reducer', () => {
-	test( "should add the user's experience level", () => {
+describe('reducer', () => {
+	test("should add the user's experience level", () => {
 		expect(
 			reducer(
 				{},
@@ -19,6 +19,6 @@ describe( 'reducer', () => {
 					userExperience: 5,
 				}
 			)
-		).to.be.eql( 5 );
-	} );
-} );
+		).to.be.eql(5);
+	});
+});

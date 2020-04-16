@@ -9,20 +9,20 @@ import { localize } from 'i18n-calypso';
  */
 import ThankYou from './thank-you';
 
-const SearchProductThankYou = ( { translate } ) => (
+const SearchProductThankYou = ({ translate }) => (
 	<ThankYou
 		illustration="/calypso/images/illustrations/thankYou.svg"
 		showSearchRedirects
-		title={ translate( 'Welcome to Jetpack Search!' ) }
+		title={translate('Welcome to Jetpack Search!')}
 	>
-		<p>{ translate( 'We are currently indexing your site.' ) }</p>
+		<p>{translate('We are currently indexing your site.')}</p>
 		<p>
-			{ translate(
+			{translate(
 				'In the meantime, we have configured Jetpack Search on your site — ' +
 					'you should try customizing it in your traditional WordPress dashboard.'
-			) }
+			)}
 		</p>
 	</ThankYou>
 );
 
-export default localize( SearchProductThankYou );
+export default localize(SearchProductThankYou);

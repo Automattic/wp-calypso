@@ -37,47 +37,47 @@ class PostActionsEllipsisMenuView extends Component {
 		previewUrl: '',
 	};
 
-	previewPost = event => {
+	previewPost = (event) => {
 		const { isPreviewable, previewUrl, siteId } = this.props;
 		this.props.bumpStat();
-		if ( ! isPreviewable ) {
+		if (!isPreviewable) {
 			// The default action for the link is to open the previewUrl with a target of _blank.
 			// This default action is canceled below for previewable sites.
 			// Returning early maintains this behavior for non-previewable sites.
 			return;
 		}
 
-		this.props.setAllSitesPreviewSiteId( siteId );
-		this.props.setPreviewUrl( previewUrl );
-		this.props.setLayoutFocus( 'preview' );
+		this.props.setAllSitesPreviewSiteId(siteId);
+		this.props.setPreviewUrl(previewUrl);
+		this.props.setLayoutFocus('preview');
 		event.preventDefault();
 	};
 
 	render() {
 		const { translate, status, previewUrl, isPreviewable } = this.props;
-		if ( ! previewUrl ) {
+		if (!previewUrl) {
 			return null;
 		}
 
 		return (
 			<PopoverMenuItem
-				href={ previewUrl }
-				onClick={ this.previewPost }
-				icon={ ! isPreviewable ? 'external' : 'visible' }
+				href={previewUrl}
+				onClick={this.previewPost}
+				icon={!isPreviewable ? 'external' : 'visible'}
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ includes( [ 'publish', 'private' ], status )
-					? translate( 'View', { context: 'verb' } )
-					: translate( 'Preview', { context: 'verb' } ) }
+				{includes(['publish', 'private'], status)
+					? translate('View', { context: 'verb' })
+					: translate('Preview', { context: 'verb' })}
 			</PopoverMenuItem>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
+const mapStateToProps = (state, { globalId }) => {
+	const post = getPost(state, globalId);
+	if (!post) {
 		return {};
 	}
 
@@ -85,8 +85,8 @@ const mapStateToProps = ( state, { globalId } ) => {
 		siteId: post.site_ID,
 		status: post.status,
 		type: post.type,
-		isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
-		previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
+		isPreviewable: false !== isSitePreviewable(state, post.site_ID),
+		previewUrl: getPostPreviewUrl(state, post.site_ID, post.ID),
 	};
 };
 
@@ -97,13 +97,13 @@ const mapDispatchToProps = {
 	bumpAnalyticsStat,
 };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator( stateProps.type, 'view', dispatchProps.bumpAnalyticsStat );
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+	const bumpStat = bumpStatGenerator(stateProps.type, 'view', dispatchProps.bumpAnalyticsStat);
+	return Object.assign({}, ownProps, stateProps, dispatchProps, { bumpStat });
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( PostActionsEllipsisMenuView ) );
+)(localize(PostActionsEllipsisMenuView));

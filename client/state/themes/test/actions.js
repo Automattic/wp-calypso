@@ -63,26 +63,26 @@ import {
 import useNock from 'test/helpers/use-nock';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock('lib/user', () => () => {});
 
-describe( 'actions', () => {
+describe('actions', () => {
 	const spy = sinon.spy();
 
-	function isEqualFunction( f1, f2 ) {
+	function isEqualFunction(f1, f2) {
 		// TODO: Also compare params!
 		return f1.toString() === f2.toString();
 	}
 
-	function matchFunction( fn ) {
-		return sinon.match( value => isEqualFunction( value, fn ) );
+	function matchFunction(fn) {
+		return sinon.match((value) => isEqualFunction(value, fn));
 	}
 
-	beforeEach( () => {
+	beforeEach(() => {
 		spy.resetHistory();
-	} );
+	});
 
-	describe( '#receiveTheme()', () => {
-		const getState = () => ( {
+	describe('#receiveTheme()', () => {
+		const getState = () => ({
 			themes: {
 				queries: {
 					wpcom: new ThemeQueryManager(),
@@ -91,24 +91,24 @@ describe( 'actions', () => {
 			sites: {
 				items: {},
 			},
-		} );
+		});
 
-		test( 'should dispatch THEMES_REQUEST_SUCCESS action', () => {
+		test('should dispatch THEMES_REQUEST_SUCCESS action', () => {
 			const theme = { id: 'twentysixteen', name: 'Twenty Sixteen' };
-			receiveTheme( theme, 'wpcom' )( spy, getState );
+			receiveTheme(theme, 'wpcom')(spy, getState);
 
-			expect( spy ).to.have.been.calledWith( {
+			expect(spy).to.have.been.calledWith({
 				type: THEMES_REQUEST_SUCCESS,
-				themes: [ { id: 'twentysixteen', name: 'Twenty Sixteen' } ],
+				themes: [{ id: 'twentysixteen', name: 'Twenty Sixteen' }],
 				siteId: 'wpcom',
 				query: undefined,
 				found: undefined,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#receiveThemes()', () => {
-		const getState = () => ( {
+	describe('#receiveThemes()', () => {
+		const getState = () => ({
 			themes: {
 				queries: {
 					wpcom: new ThemeQueryManager(),
@@ -122,124 +122,124 @@ describe( 'actions', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		describe( 'with a wpcom site', () => {
+		describe('with a wpcom site', () => {
 			const themes = [
 				{ id: 'twentysixteen', name: 'Twenty Sixteen' },
 				{ id: 'mood', name: 'Mood' },
 			];
 			const query = { search: 'Automattic' };
 
-			test( 'should dispatch themes request success action', () => {
-				receiveThemes( themes, 'wpcom', query, 4 )( spy, getState );
-				expect( spy ).to.have.been.calledWith( {
+			test('should dispatch themes request success action', () => {
+				receiveThemes(themes, 'wpcom', query, 4)(spy, getState);
+				expect(spy).to.have.been.calledWith({
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 'wpcom',
 					query,
 					found: 4,
 					themes,
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		describe( 'with a Jetpack site', () => {
+		describe('with a Jetpack site', () => {
 			const themes = [
 				{ id: 'twentysixteen', name: 'Twenty Sixteen' },
 				{ id: 'mood', name: 'Mood' },
 			];
 
-			test( 'should dispatch themes request success action', () => {
-				receiveThemes( themes, 77203074, {} )( spy, getState );
-				expect( spy ).to.have.been.calledWith( {
+			test('should dispatch themes request success action', () => {
+				receiveThemes(themes, 77203074, {})(spy, getState);
+				expect(spy).to.have.been.calledWith({
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 77203074,
 					query: {},
 					found: 2,
 					themes,
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#requestThemes()', () => {
-		describe( 'with a wpcom site', () => {
+	describe('#requestThemes()', () => {
+		describe('with a wpcom site', () => {
 			let nockScope;
-			useNock( nock => {
-				nockScope = nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.2/themes' )
-					.reply( 200, {
+			useNock((nock) => {
+				nockScope = nock('https://public-api.wordpress.com:443')
+					.get('/rest/v1.2/themes')
+					.reply(200, {
 						found: 2,
 						themes: [
 							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
 							{ ID: 'mood', name: 'Mood' },
 						],
-					} );
-			} );
+					});
+			});
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 'wpcom' )( spy );
+			test('should dispatch fetch action when thunk triggered', () => {
+				requestThemes('wpcom')(spy);
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					type: THEMES_REQUEST,
 					siteId: 'wpcom',
 					query: {},
-				} );
-				expect( nockScope.isDone() ).to.be.true;
-			} );
-		} );
+				});
+				expect(nockScope.isDone()).to.be.true;
+			});
+		});
 
-		describe( 'with a Jetpack site', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1/sites/77203074/themes' )
-					.reply( 200, {
+		describe('with a Jetpack site', () => {
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
+					.get('/rest/v1/sites/77203074/themes')
+					.reply(200, {
 						// The endpoint doesn't return `found` for Jetpack sites
 						themes: [
 							{ ID: 'twentyfifteen', name: 'Twenty Fifteen' },
 							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
 						],
-					} )
-					.get( '/rest/v1/sites/1916284/themes' )
-					.reply( 403, {
+					})
+					.get('/rest/v1/sites/1916284/themes')
+					.reply(403, {
 						error: 'authorization_required',
 						message: 'User cannot access this private blog.',
-					} );
-			} );
+					});
+			});
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 77203074 )( spy );
+			test('should dispatch fetch action when thunk triggered', () => {
+				requestThemes(77203074)(spy);
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					type: THEMES_REQUEST,
 					siteId: 77203074,
 					query: {},
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch fail action when request fails', () => {
-				return requestThemes( 1916284 )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+			test('should dispatch fail action when request fails', () => {
+				return requestThemes(1916284)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: THEMES_REQUEST_FAILURE,
 						siteId: 1916284,
 						query: {},
-						error: sinon.match( { message: 'User cannot access this private blog.' } ),
-					} );
-				} );
-			} );
-		} );
+						error: sinon.match({ message: 'User cannot access this private blog.' }),
+					});
+				});
+			});
+		});
 
-		describe( 'with the WP.org API', () => {
-			useNock( nock => {
-				nock( 'https://api.wordpress.org' )
+		describe('with the WP.org API', () => {
+			useNock((nock) => {
+				nock('https://api.wordpress.org')
 					.persist()
-					.defaultReplyHeaders( {
+					.defaultReplyHeaders({
 						'Content-Type': 'application/json',
-					} )
+					})
 					.get(
 						'/themes/info/1.1/?action=query_themes&request%5Bfields%5D%5Bextended_author%5D=true'
 					)
-					.reply( 200, {
+					.reply(200, {
 						info: { page: 1, pages: 123, results: 2452 },
 						themes: [
 							{ slug: 'bizprime', name: 'bizprime' },
@@ -247,185 +247,185 @@ describe( 'actions', () => {
 							{ slug: 'cassions', name: 'Cassions' },
 							{ slug: 'intentionally-blank', name: 'Intentionally Blank' },
 						],
-					} );
-			} );
+					});
+			});
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 'wporg' )( spy );
+			test('should dispatch fetch action when thunk triggered', () => {
+				requestThemes('wporg')(spy);
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					type: THEMES_REQUEST,
 					siteId: 'wporg',
 					query: {},
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#requestTheme()', () => {
-		describe( 'with a wpcom site', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
+	describe('#requestTheme()', () => {
+		describe('with a wpcom site', () => {
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
 					.persist()
-					.get( '/rest/v1.2/themes/twentysixteen' )
-					.reply( 200, { id: 'twentysixteen', name: 'Twenty Sixteen' } )
-					.get( '/rest/v1.2/themes/twentyumpteen' )
-					.reply( 404, {
+					.get('/rest/v1.2/themes/twentysixteen')
+					.reply(200, { id: 'twentysixteen', name: 'Twenty Sixteen' })
+					.get('/rest/v1.2/themes/twentyumpteen')
+					.reply(404, {
 						error: 'unknown_theme',
 						message: 'Unknown theme',
-					} );
-			} );
+					});
+			});
 
-			test( 'should dispatch request action when thunk triggered', () => {
-				requestTheme( 'twentysixteen', 'wpcom' )( spy );
+			test('should dispatch request action when thunk triggered', () => {
+				requestTheme('twentysixteen', 'wpcom')(spy);
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_REQUEST,
 					siteId: 'wpcom',
 					themeId: 'twentysixteen',
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch themes request success action when request completes', () => {
+			test('should dispatch themes request success action when request completes', () => {
 				return requestTheme(
 					'twentysixteen',
 					'wpcom'
-				)( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: THEME_REQUEST_SUCCESS,
 						siteId: 'wpcom',
 						themeId: 'twentysixteen',
-					} );
-				} );
-			} );
+					});
+				});
+			});
 
-			test( 'should dispatch fail action when request fails', () => {
+			test('should dispatch fail action when request fails', () => {
 				return requestTheme(
 					'twentyumpteen',
 					'wpcom'
-				)( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: THEME_REQUEST_FAILURE,
 						siteId: 'wpcom',
 						themeId: 'twentyumpteen',
-						error: sinon.match( { message: 'Unknown theme' } ),
-					} );
-				} );
-			} );
-		} );
+						error: sinon.match({ message: 'Unknown theme' }),
+					});
+				});
+			});
+		});
 
-		describe( 'with a Jetpack site', () => {
+		describe('with a Jetpack site', () => {
 			// see lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
+			useNock((nock) => {
+				nock('https://public-api.wordpress.com:443')
 					.persist()
-					.post( '/rest/v1.1/sites/77203074/themes', { themes: 'twentyfifteen' } )
-					.reply( 200, { themes: [ { id: 'twentyfifteen', name: 'Twenty Fifteen' } ] } )
-					.post( '/rest/v1.1/sites/77203074/themes', { themes: 'twentyumpteen' } )
-					.reply( 404, {
+					.post('/rest/v1.1/sites/77203074/themes', { themes: 'twentyfifteen' })
+					.reply(200, { themes: [{ id: 'twentyfifteen', name: 'Twenty Fifteen' }] })
+					.post('/rest/v1.1/sites/77203074/themes', { themes: 'twentyumpteen' })
+					.reply(404, {
 						error: 'unknown_theme',
 						message: 'Unknown theme',
-					} );
-			} );
+					});
+			});
 
-			test( 'should dispatch request action when thunk triggered', () => {
-				requestTheme( 'twentyfifteen', 77203074 )( spy );
+			test('should dispatch request action when thunk triggered', () => {
+				requestTheme('twentyfifteen', 77203074)(spy);
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_REQUEST,
 					siteId: 77203074,
 					themeId: 'twentyfifteen',
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch themes request success action when request completes', () => {
+			test('should dispatch themes request success action when request completes', () => {
 				return requestTheme(
 					'twentyfifteen',
 					77203074
-				)( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: THEME_REQUEST_SUCCESS,
 						siteId: 77203074,
 						themeId: 'twentyfifteen',
-					} );
-				} );
-			} );
+					});
+				});
+			});
 
-			test( 'should dispatch fail action when request fails', () => {
+			test('should dispatch fail action when request fails', () => {
 				return requestTheme(
 					'twentyumpteen',
 					77203074
-				)( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: THEME_REQUEST_FAILURE,
 						siteId: 77203074,
 						themeId: 'twentyumpteen',
-						error: sinon.match( { message: 'Unknown theme' } ),
-					} );
-				} );
-			} );
-		} );
+						error: sinon.match({ message: 'Unknown theme' }),
+					});
+				});
+			});
+		});
 
-		describe( 'with the WP.org API', () => {
-			useNock( nock => {
-				nock( 'https://api.wordpress.org' )
+		describe('with the WP.org API', () => {
+			useNock((nock) => {
+				nock('https://api.wordpress.org')
 					.persist()
-					.defaultReplyHeaders( {
+					.defaultReplyHeaders({
 						'Content-Type': 'application/json',
-					} )
+					})
 					.get(
 						'/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
 							'&request%5Bslug%5D=twentyseventeen'
 					)
-					.reply( 200, { slug: 'twentyseventeen', name: 'Twenty Seventeen' } )
+					.reply(200, { slug: 'twentyseventeen', name: 'Twenty Seventeen' })
 					.get(
 						'/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
 							'&request%5Bslug%5D=twentyumpteen'
 					)
-					.reply( 200, 'false' );
-			} );
+					.reply(200, 'false');
+			});
 
-			test( 'should dispatch request action when thunk triggered', () => {
-				requestTheme( 'twentyseventeen', 'wporg' )( spy );
+			test('should dispatch request action when thunk triggered', () => {
+				requestTheme('twentyseventeen', 'wporg')(spy);
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_REQUEST,
 					siteId: 'wporg',
 					themeId: 'twentyseventeen',
-				} );
-			} );
+				});
+			});
 
-			test( 'should dispatch themes request success action when request completes', () => {
+			test('should dispatch themes request success action when request completes', () => {
 				return requestTheme(
 					'twentyseventeen',
 					'wporg'
-				)( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: THEME_REQUEST_SUCCESS,
 						siteId: 'wporg',
 						themeId: 'twentyseventeen',
-					} );
-				} );
-			} );
+					});
+				});
+			});
 
-			test( 'should dispatch fail action when request fails', () => {
+			test('should dispatch fail action when request fails', () => {
 				return requestTheme(
 					'twentyumpteen',
 					'wporg'
-				)( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+				)(spy).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: THEME_REQUEST_FAILURE,
 						siteId: 'wporg',
 						themeId: 'twentyumpteen',
-						error: sinon.match( 'not found' ),
-					} );
-				} );
-			} );
-		} );
-	} );
+						error: sinon.match('not found'),
+					});
+				});
+			});
+		});
+	});
 
-	describe( '#themeActivated()', () => {
-		test( 'should return an action object', () => {
+	describe('#themeActivated()', () => {
+		test('should return an action object', () => {
 			const expectedActivationSuccess = {
 				meta: {
 					analytics: [
@@ -451,7 +451,7 @@ describe( 'actions', () => {
 				siteId: 2211667,
 			};
 
-			const fakeGetState = () => ( {
+			const fakeGetState = () => ({
 				themes: {
 					activeThemes: {
 						2211667: 'twentyfifteen',
@@ -462,24 +462,24 @@ describe( 'actions', () => {
 						},
 					},
 				},
-			} );
+			});
 
-			themeActivated( 'pub/twentysixteen', 2211667 )( spy, fakeGetState );
-			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
-		} );
-	} );
+			themeActivated('pub/twentysixteen', 2211667)(spy, fakeGetState);
+			expect(spy).to.have.been.calledWith(expectedActivationSuccess);
+		});
+	});
 
-	describe( '#clearActivated()', () => {
-		test( 'should return an action object', () => {
-			const action = clearActivated( 22116677 );
-			expect( action ).to.eql( {
+	describe('#clearActivated()', () => {
+		test('should return an action object', () => {
+			const action = clearActivated(22116677);
+			expect(action).to.eql({
 				type: THEME_CLEAR_ACTIVATED,
 				siteId: 22116677,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( '#activateTheme()', () => {
+	describe('#activateTheme()', () => {
 		const trackingData = {
 			theme: 'twentysixteen',
 			previous_theme: 'twentyfifteen',
@@ -488,41 +488,41 @@ describe( 'actions', () => {
 			search_term: 'simple, white',
 		};
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'twentysixteen' } )
-				.reply( 200, { id: 'karuna', version: '1.0.3' } )
-				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'badTheme' } )
-				.reply( 404, {
+				.post('/rest/v1.1/sites/2211667/themes/mine', { theme: 'twentysixteen' })
+				.reply(200, { id: 'karuna', version: '1.0.3' })
+				.post('/rest/v1.1/sites/2211667/themes/mine', { theme: 'badTheme' })
+				.reply(404, {
 					error: 'theme_not_found',
 					message: 'The specified theme was not found',
-				} );
-		} );
+				});
+		});
 
-		test( 'should dispatch request action when thunk is triggered', () => {
-			activateTheme( 'twentysixteen', 2211667 )( spy );
+		test('should dispatch request action when thunk is triggered', () => {
+			activateTheme('twentysixteen', 2211667)(spy);
 
-			expect( spy ).to.have.been.calledWith( {
+			expect(spy).to.have.been.calledWith({
 				type: THEME_ACTIVATE,
 				siteId: 2211667,
 				themeId: 'twentysixteen',
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch theme activation success thunk when request completes', () => {
+		test('should dispatch theme activation success thunk when request completes', () => {
 			return activateTheme(
 				'twentysixteen',
 				2211667,
 				trackingData
-			)( spy ).then( () => {
-				expect( spy.secondCall.args[ 0 ].name ).to.equal( 'themeActivatedThunk' );
-			} );
-		} );
+			)(spy).then(() => {
+				expect(spy.secondCall.args[0].name).to.equal('themeActivatedThunk');
+			});
+		});
 
-		test( 'should dispatch theme activation failure action when request completes', () => {
+		test('should dispatch theme activation failure action when request completes', () => {
 			const themeActivationFailure = {
-				error: sinon.match( { message: 'The specified theme was not found' } ),
+				error: sinon.match({ message: 'The specified theme was not found' }),
 				siteId: 2211667,
 				themeId: 'badTheme',
 				type: THEME_ACTIVATE_FAILURE,
@@ -532,49 +532,49 @@ describe( 'actions', () => {
 				'badTheme',
 				2211667,
 				trackingData
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( themeActivationFailure );
-			} );
-		} );
-	} );
+			)(spy).then(() => {
+				expect(spy).to.have.been.calledWith(themeActivationFailure);
+			});
+		});
+	});
 
-	describe( '#installAndActivateTheme', () => {
+	describe('#installAndActivateTheme', () => {
 		const stub = sinon.stub();
 		stub.returns(
-			new Promise( res => {
+			new Promise((res) => {
 				res();
-			} )
+			})
 		);
 
-		test( 'should dispatch installTheme() and activateTheme()', () => {
-			return new Promise( done => {
+		test('should dispatch installTheme() and activateTheme()', () => {
+			return new Promise((done) => {
 				installAndActivateTheme(
 					'karuna-wpcom',
 					2211667
-				)( stub ).then( () => {
-					expect( stub ).to.have.been.calledWith(
-						matchFunction( installTheme( 'karuna-wpcom', 2211667 ) )
+				)(stub).then(() => {
+					expect(stub).to.have.been.calledWith(
+						matchFunction(installTheme('karuna-wpcom', 2211667))
 					);
-					expect( stub ).to.have.been.calledWith(
-						matchFunction( activateTheme( 'karuna-wpcom', 2211667 ) )
+					expect(stub).to.have.been.calledWith(
+						matchFunction(activateTheme('karuna-wpcom', 2211667))
 					);
 					done();
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#activate', () => {
+	describe('#activate', () => {
 		const stub = sinon.stub();
 		stub.returns(
-			new Promise( res => {
+			new Promise((res) => {
 				res();
-			} )
+			})
 		);
 
-		describe( 'on a WordPress.com site', () => {
+		describe('on a WordPress.com site', () => {
 			stub.resetHistory();
-			const fakeGetState = () => ( {
+			const fakeGetState = () => ({
 				sites: {
 					items: {
 						77203074: {
@@ -587,23 +587,21 @@ describe( 'actions', () => {
 						wpcom: new ThemeQueryManager(),
 					},
 				},
-			} );
-			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
-				return new Promise( done => {
-					activate( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
-						expect( stub ).to.have.been.calledWith(
-							matchFunction( activateTheme( 'karuna', 77203074 ) )
-						);
-						expect( stub ).to.not.have.been.calledWith(
-							matchFunction( installAndActivateTheme( 'karuna-wpcom', 77203074 ) )
+			});
+			test('should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
+				return new Promise((done) => {
+					activate('karuna', 77203074)(stub, fakeGetState).then(() => {
+						expect(stub).to.have.been.calledWith(matchFunction(activateTheme('karuna', 77203074)));
+						expect(stub).to.not.have.been.calledWith(
+							matchFunction(installAndActivateTheme('karuna-wpcom', 77203074))
 						);
 						done();
-					} );
-				} );
-			} );
-		} );
+					});
+				});
+			});
+		});
 
-		describe( 'on a Jetpack site', () => {
+		describe('on a Jetpack site', () => {
 			const sitesState = {
 				sites: {
 					items: {
@@ -613,59 +611,55 @@ describe( 'actions', () => {
 					},
 				},
 			};
-			describe( 'if the theme is already installed', () => {
+			describe('if the theme is already installed', () => {
 				stub.resetHistory();
-				const fakeGetState = () => ( {
+				const fakeGetState = () => ({
 					...sitesState,
 					themes: {
 						queries: {
-							2211667: new ThemeQueryManager( {
+							2211667: new ThemeQueryManager({
 								items: { karuna: {} },
-							} ),
+							}),
 						},
 					},
-				} );
-				test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
-					return new Promise( done => {
-						activate( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
-							expect( stub ).to.have.been.calledWith(
-								matchFunction( activateTheme( 'karuna', 2211667 ) )
-							);
-							expect( stub ).to.not.have.been.calledWith(
-								matchFunction( installAndActivateTheme( 'karuna-wpcom', 2211667 ) )
+				});
+				test('should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
+					return new Promise((done) => {
+						activate('karuna', 2211667)(stub, fakeGetState).then(() => {
+							expect(stub).to.have.been.calledWith(matchFunction(activateTheme('karuna', 2211667)));
+							expect(stub).to.not.have.been.calledWith(
+								matchFunction(installAndActivateTheme('karuna-wpcom', 2211667))
 							);
 							done();
-						} );
-					} );
-				} );
-			} );
+						});
+					});
+				});
+			});
 
-			describe( "if the theme isn't installed", () => {
+			describe("if the theme isn't installed", () => {
 				stub.resetHistory();
-				const fakeGetState = () => ( {
+				const fakeGetState = () => ({
 					...sitesState,
 					themes: {
 						queries: {},
 					},
-				} );
-				test( 'should dispatch (only) installAndActivateTheme() and pass the suffixed themeId', () => {
-					return new Promise( done => {
-						activate( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
-							expect( stub ).to.not.have.been.calledWith(
-								matchFunction( activate( 'karuna', 2211667 ) )
-							);
-							expect( stub ).to.have.been.calledWith(
-								matchFunction( installAndActivateTheme( 'karuna-wpcom', 2211667 ) )
+				});
+				test('should dispatch (only) installAndActivateTheme() and pass the suffixed themeId', () => {
+					return new Promise((done) => {
+						activate('karuna', 2211667)(stub, fakeGetState).then(() => {
+							expect(stub).to.not.have.been.calledWith(matchFunction(activate('karuna', 2211667)));
+							expect(stub).to.have.been.calledWith(
+								matchFunction(installAndActivateTheme('karuna-wpcom', 2211667))
 							);
 							done();
-						} );
-					} );
-				} );
-			} );
-		} );
-	} );
+						});
+					});
+				});
+			});
+		});
+	});
 
-	describe( '#requestActiveTheme', () => {
+	describe('#requestActiveTheme', () => {
 		const successResponse = {
 			id: 'rebalance',
 			screenshot:
@@ -709,7 +703,7 @@ describe( 'actions', () => {
 			message: 'Unknown blog',
 		};
 
-		const fakeGetState = () => ( {
+		const fakeGetState = () => ({
 			sites: {
 				items: {
 					77203074: {
@@ -717,201 +711,201 @@ describe( 'actions', () => {
 					},
 				},
 			},
-		} );
+		});
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.get( '/rest/v1.1/sites/2211667/themes/mine' )
-				.reply( 200, successResponse )
-				.get( '/rest/v1.1/sites/77203074/themes/mine' )
-				.reply( 200, successResponse )
-				.get( '/rest/v1.1/sites/666/themes/mine' )
-				.reply( 404, failureResponse );
-		} );
+				.get('/rest/v1.1/sites/2211667/themes/mine')
+				.reply(200, successResponse)
+				.get('/rest/v1.1/sites/77203074/themes/mine')
+				.reply(200, successResponse)
+				.get('/rest/v1.1/sites/666/themes/mine')
+				.reply(404, failureResponse);
+		});
 
-		test( 'should dispatch active theme request action when triggered', () => {
-			requestActiveTheme( 2211667 )( spy );
+		test('should dispatch active theme request action when triggered', () => {
+			requestActiveTheme(2211667)(spy);
 
-			expect( spy ).to.have.been.calledWith( {
+			expect(spy).to.have.been.calledWith({
 				type: ACTIVE_THEME_REQUEST,
 				siteId: 2211667,
-			} );
-		} );
+			});
+		});
 
-		describe( 'when request completes successfully', () => {
-			test( 'should dispatch active theme request success action', () => {
-				return requestActiveTheme( 2211667 )( spy, fakeGetState ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+		describe('when request completes successfully', () => {
+			test('should dispatch active theme request success action', () => {
+				return requestActiveTheme(2211667)(spy, fakeGetState).then(() => {
+					expect(spy).to.have.been.calledWith({
 						type: ACTIVE_THEME_REQUEST_SUCCESS,
 						siteId: 2211667,
 						theme: successResponse,
-					} );
-				} );
-			} );
-		} );
+					});
+				});
+			});
+		});
 
-		test( 'should dispatch active theme request failure action when request completes', () => {
-			return requestActiveTheme( 666 )( spy, fakeGetState ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+		test('should dispatch active theme request failure action when request completes', () => {
+			return requestActiveTheme(666)(spy, fakeGetState).then(() => {
+				expect(spy).to.have.been.calledWith({
 					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId: 666,
-					error: sinon.match( { message: 'Unknown blog' } ),
-				} );
-			} );
-		} );
-	} );
+					error: sinon.match({ message: 'Unknown blog' }),
+				});
+			});
+		});
+	});
 
-	describe( '#pollThemeTransferStatus', () => {
+	describe('#pollThemeTransferStatus', () => {
 		const siteId = '2211667';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/1` )
-				.reply( 200, { status: 'complete', message: 'all done', uploaded_theme_slug: 'mood' } )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/2` )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
+				.get(`/rest/v1.1/sites/${siteId}/automated-transfers/status/1`)
+				.reply(200, { status: 'complete', message: 'all done', uploaded_theme_slug: 'mood' })
+				.get(`/rest/v1.1/sites/${siteId}/automated-transfers/status/2`)
 				.thrice()
-				.reply( 200, { status: 'stuck', message: 'jammed' } )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/3` )
+				.reply(200, { status: 'stuck', message: 'jammed' })
+				.get(`/rest/v1.1/sites/${siteId}/automated-transfers/status/3`)
 				.twice()
-				.reply( 200, { status: 'progress', message: 'in progress' } )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/3` )
-				.reply( 200, { status: 'complete', message: 'all done', uploaded_theme_slug: 'mood' } )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/4` )
-				.reply( 400, 'something wrong' );
-		} );
+				.reply(200, { status: 'progress', message: 'in progress' })
+				.get(`/rest/v1.1/sites/${siteId}/automated-transfers/status/3`)
+				.reply(200, { status: 'complete', message: 'all done', uploaded_theme_slug: 'mood' })
+				.get(`/rest/v1.1/sites/${siteId}/automated-transfers/status/4`)
+				.reply(400, 'something wrong');
+		});
 
-		test( 'should dispatch success on status complete', () => {
+		test('should dispatch success on status complete', () => {
 			return pollThemeTransferStatus(
 				siteId,
 				1,
 				'themes'
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			)(spy).then(() => {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId,
 					transferId: 1,
 					status: 'complete',
 					message: 'all done',
 					themeId: 'mood',
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should time-out if status never complete', () => {
+		test('should time-out if status never complete', () => {
 			return pollThemeTransferStatus(
 				siteId,
 				2,
 				'themes',
 				10,
 				25
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			)(spy).then(() => {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_TRANSFER_STATUS_FAILURE,
 					siteId,
 					transferId: 2,
 					error: 'client timeout',
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should dispatch status update', () => {
+		test('should dispatch status update', () => {
 			return pollThemeTransferStatus(
 				siteId,
 				3,
 				'themes',
 				20
-			)( spy ).then( () => {
+			)(spy).then(() => {
 				// Two 'progress' then a 'complete'
-				expect( spy ).to.have.callCount( 4 );
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.callCount(4);
+				expect(spy).to.have.been.calledWith({
 					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId: siteId,
 					transferId: 3,
 					status: 'progress',
 					message: 'in progress',
 					themeId: undefined,
-				} );
-				expect( spy ).to.have.been.calledWith( {
+				});
+				expect(spy).to.have.been.calledWith({
 					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId: siteId,
 					transferId: 3,
 					status: 'complete',
 					message: 'all done',
 					themeId: 'mood',
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should dispatch failure on receipt of error', () => {
+		test('should dispatch failure on receipt of error', () => {
 			return pollThemeTransferStatus(
 				siteId,
 				4,
 				'themes'
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
+			)(spy).then(() => {
+				expect(spy).to.have.been.calledWithMatch({
 					type: THEME_TRANSFER_STATUS_FAILURE,
 					siteId,
 					transferId: 4,
-				} );
-				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
-			} );
-		} );
-	} );
+				});
+				expect(spy).to.have.been.calledWith(sinon.match.has('error', sinon.match.truthy));
+			});
+		});
+	});
 
-	describe( '#initiateThemeTransfer', () => {
+	describe('#initiateThemeTransfer', () => {
 		const siteId = '2211667';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
-				.reply( 200, { success: true, status: 'progress', transfer_id: 1 } )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
-				.reply( 400, 'some problem' );
-		} );
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
+				.post(`/rest/v1.1/sites/${siteId}/automated-transfers/initiate`)
+				.reply(200, { success: true, status: 'progress', transfer_id: 1 })
+				.get(`/rest/v1.1/sites/${siteId}/automated-transfers/initiate`)
+				.reply(400, 'some problem');
+		});
 
-		test( 'should dispatch success', () => {
-			return initiateThemeTransfer( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledThrice;
+		test('should dispatch success', () => {
+			return initiateThemeTransfer(siteId)(spy).then(() => {
+				expect(spy).to.have.been.calledThrice;
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					meta: sinon.match.object,
 					type: THEME_TRANSFER_INITIATE_REQUEST,
 					siteId,
-				} );
+				});
 
-				expect( spy ).to.have.been.calledWith( {
+				expect(spy).to.have.been.calledWith({
 					meta: sinon.match.object,
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
 					transferId: 1,
-				} );
+				});
 
-				expect( spy ).to.have.been.calledWith( sinon.match.func );
-			} );
-		} );
+				expect(spy).to.have.been.calledWith(sinon.match.func);
+			});
+		});
 
-		test( 'should dispatch failure on error', () => {
-			return initiateThemeTransfer( siteId )( spy ).catch( () => {
-				expect( spy ).to.have.been.calledOnce;
+		test('should dispatch failure on error', () => {
+			return initiateThemeTransfer(siteId)(spy).catch(() => {
+				expect(spy).to.have.been.calledOnce;
 
-				expect( spy ).to.have.been.calledWithMatch( {
+				expect(spy).to.have.been.calledWithMatch({
 					type: THEME_TRANSFER_INITIATE_FAILURE,
 					siteId,
-				} );
-				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
-			} );
-		} );
-	} );
+				});
+				expect(spy).to.have.been.calledWith(sinon.match.has('error', sinon.match.truthy));
+			});
+		});
+	});
 
-	describe( '#installTheme', () => {
-		const getState = () => ( {
+	describe('#installTheme', () => {
+		const getState = () => ({
 			themes: {
 				queries: {
 					wpcom: new ThemeQueryManager(),
 				},
 			},
-		} );
+		});
 
 		const successResponse = {
 			id: 'karuna-wpcom',
@@ -948,135 +942,135 @@ describe( 'actions', () => {
 			message: 'The theme is already installed',
 		};
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
 				.persist()
-				.post( '/rest/v1.1/sites/2211667/themes/karuna-wpcom/install' )
-				.reply( 200, successResponse )
-				.post( '/rest/v1.1/sites/2211667/themes/typist-wpcom/install' )
-				.reply( 400, downloadFailureResponse )
-				.post( '/rest/v1.1/sites/2211667/themes/pinboard-wpcom/install' )
-				.reply( 400, alreadyInstalledFailureResponse );
-		} );
+				.post('/rest/v1.1/sites/2211667/themes/karuna-wpcom/install')
+				.reply(200, successResponse)
+				.post('/rest/v1.1/sites/2211667/themes/typist-wpcom/install')
+				.reply(400, downloadFailureResponse)
+				.post('/rest/v1.1/sites/2211667/themes/pinboard-wpcom/install')
+				.reply(400, alreadyInstalledFailureResponse);
+		});
 
-		test( 'should dispatch install theme request action when triggered', () => {
-			installTheme( 'karuna-wpcom', 2211667 )( spy, getState );
+		test('should dispatch install theme request action when triggered', () => {
+			installTheme('karuna-wpcom', 2211667)(spy, getState);
 
-			expect( spy ).to.have.been.calledWith( {
+			expect(spy).to.have.been.calledWith({
 				type: THEME_INSTALL,
 				siteId: 2211667,
 				themeId: 'karuna-wpcom',
-			} );
-		} );
+			});
+		});
 
-		test( 'should dispatch wpcom theme install request success action when request completes', () => {
-			return installTheme( 'karuna-wpcom', 2211667 )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+		test('should dispatch wpcom theme install request success action when request completes', () => {
+			return installTheme('karuna-wpcom', 2211667)(spy, getState).then(() => {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_INSTALL_SUCCESS,
 					siteId: 2211667,
 					themeId: 'karuna-wpcom',
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return installTheme( 'typist-wpcom', 2211667 )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+		test('should dispatch wpcom theme install request failure action when theme was not found', () => {
+			return installTheme('typist-wpcom', 2211667)(spy, getState).then(() => {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
 					themeId: 'typist-wpcom',
-					error: sinon.match( { message: 'Problem downloading theme' } ),
-				} );
-			} );
-		} );
+					error: sinon.match({ message: 'Problem downloading theme' }),
+				});
+			});
+		});
 
-		test( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return installTheme( 'pinboard-wpcom', 2211667 )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+		test('should dispatch wpcom theme install request failure action when theme is already installed', () => {
+			return installTheme('pinboard-wpcom', 2211667)(spy, getState).then(() => {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
 					themeId: 'pinboard-wpcom',
-					error: sinon.match( { message: 'The theme is already installed' } ),
-				} );
-			} );
-		} );
-	} );
+					error: sinon.match({ message: 'The theme is already installed' }),
+				});
+			});
+		});
+	});
 
-	describe( 'deleteTheme', () => {
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/sites/2211667/themes/karuna/delete' )
-				.reply( 200, { id: 'karuna', name: 'Karuna' } )
-				.post( '/rest/v1.1/sites/2211667/themes/blahblah/delete' )
-				.reply( 404, { code: 'unknown_theme' } );
-		} );
+	describe('deleteTheme', () => {
+		useNock((nock) => {
+			nock('https://public-api.wordpress.com:443')
+				.post('/rest/v1.1/sites/2211667/themes/karuna/delete')
+				.reply(200, { id: 'karuna', name: 'Karuna' })
+				.post('/rest/v1.1/sites/2211667/themes/blahblah/delete')
+				.reply(404, { code: 'unknown_theme' });
+		});
 
-		test( 'should dispatch success action on success response', () => {
+		test('should dispatch success action on success response', () => {
 			return deleteTheme(
 				'karuna',
 				2211667
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			)(spy).then(() => {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_DELETE_SUCCESS,
 					siteId: 2211667,
 					themeId: 'karuna',
 					themeName: 'Karuna',
-				} );
-			} );
-		} );
+				});
+			});
+		});
 
-		test( 'should dispatch failure action on error response', () => {
+		test('should dispatch failure action on error response', () => {
 			return deleteTheme(
 				'blahblah',
 				2211667
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			)(spy).then(() => {
+				expect(spy).to.have.been.calledWith({
 					type: THEME_DELETE_FAILURE,
 					siteId: 2211667,
 					themeId: 'blahblah',
 					error: sinon.match.truthy,
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#installAndTryAndCustomizeTheme', () => {
+	describe('#installAndTryAndCustomizeTheme', () => {
 		const stub = sinon.stub();
 		stub.returns(
-			new Promise( res => {
+			new Promise((res) => {
 				res();
-			} )
+			})
 		);
 
-		test( 'should dispatch installTheme(), and tryAndCustomizeTheme()', () => {
-			return new Promise( done => {
+		test('should dispatch installTheme(), and tryAndCustomizeTheme()', () => {
+			return new Promise((done) => {
 				installAndTryAndCustomizeTheme(
 					'karuna-wpcom',
 					2211667
-				)( stub ).then( () => {
-					expect( stub ).to.have.been.calledWith(
-						matchFunction( installTheme( 'karuna-wpcom', 2211667 ) )
+				)(stub).then(() => {
+					expect(stub).to.have.been.calledWith(
+						matchFunction(installTheme('karuna-wpcom', 2211667))
 					);
-					expect( stub ).to.have.been.calledWith(
-						matchFunction( tryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) )
+					expect(stub).to.have.been.calledWith(
+						matchFunction(tryAndCustomizeTheme('karuna-wpcom', 2211667))
 					);
 					done();
-				} );
-			} );
-		} );
-	} );
+				});
+			});
+		});
+	});
 
-	describe( '#tryAndCustomize', () => {
+	describe('#tryAndCustomize', () => {
 		const stub = sinon.stub();
 		stub.returns(
-			new Promise( res => {
+			new Promise((res) => {
 				res();
-			} )
+			})
 		);
 
-		describe( 'on a WordPress.com site', () => {
+		describe('on a WordPress.com site', () => {
 			stub.resetHistory();
-			const fakeGetState = () => ( {
+			const fakeGetState = () => ({
 				sites: {
 					items: {
 						77203074: {
@@ -1084,23 +1078,23 @@ describe( 'actions', () => {
 						},
 					},
 				},
-			} );
-			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
-				return new Promise( done => {
-					tryAndCustomize( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
-						expect( stub ).to.have.been.calledWith(
-							matchFunction( tryAndCustomizeTheme( 'karuna', 77203074 ) )
+			});
+			test('should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
+				return new Promise((done) => {
+					tryAndCustomize('karuna', 77203074)(stub, fakeGetState).then(() => {
+						expect(stub).to.have.been.calledWith(
+							matchFunction(tryAndCustomizeTheme('karuna', 77203074))
 						);
-						expect( stub ).to.not.have.been.calledWith(
-							matchFunction( installAndTryAndCustomizeTheme( 'karuna-wpcom', 77203074 ) )
+						expect(stub).to.not.have.been.calledWith(
+							matchFunction(installAndTryAndCustomizeTheme('karuna-wpcom', 77203074))
 						);
 						done();
-					} );
-				} );
-			} );
-		} );
+					});
+				});
+			});
+		});
 
-		describe( 'on a Jetpack site', () => {
+		describe('on a Jetpack site', () => {
 			const sitesState = {
 				sites: {
 					items: {
@@ -1110,80 +1104,80 @@ describe( 'actions', () => {
 					},
 				},
 			};
-			describe( 'if the theme is already installed', () => {
+			describe('if the theme is already installed', () => {
 				stub.resetHistory();
-				const fakeGetState = () => ( {
+				const fakeGetState = () => ({
 					...sitesState,
 					themes: {
 						queries: {
-							2211667: new ThemeQueryManager( {
+							2211667: new ThemeQueryManager({
 								items: { karuna: {} },
-							} ),
+							}),
 						},
 					},
-				} );
-				test( 'should dispatch (only) tryAndCustomizeTheme() and pass the unsuffixed themeId', () => {
-					return new Promise( done => {
-						tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
-							expect( stub ).to.have.been.calledWith(
-								matchFunction( tryAndCustomizeTheme( 'karuna', 2211667 ) )
+				});
+				test('should dispatch (only) tryAndCustomizeTheme() and pass the unsuffixed themeId', () => {
+					return new Promise((done) => {
+						tryAndCustomize('karuna', 2211667)(stub, fakeGetState).then(() => {
+							expect(stub).to.have.been.calledWith(
+								matchFunction(tryAndCustomizeTheme('karuna', 2211667))
 							);
-							expect( stub ).to.not.have.been.calledWith(
-								matchFunction( installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) )
+							expect(stub).to.not.have.been.calledWith(
+								matchFunction(installAndTryAndCustomizeTheme('karuna-wpcom', 2211667))
 							);
 							done();
-						} );
-					} );
-				} );
-			} );
+						});
+					});
+				});
+			});
 
-			describe( "if the theme isn't installed", () => {
+			describe("if the theme isn't installed", () => {
 				stub.resetHistory();
-				const fakeGetState = () => ( {
+				const fakeGetState = () => ({
 					...sitesState,
 					themes: {
 						queries: {},
 					},
-				} );
-				test( 'should dispatch (only) installAndTryAndCustomizeTheme() and pass the suffixed themeId', () => {
-					return new Promise( done => {
-						tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
-							expect( stub ).to.not.have.been.calledWith(
-								matchFunction( tryAndCustomize( 'karuna', 2211667 ) )
+				});
+				test('should dispatch (only) installAndTryAndCustomizeTheme() and pass the suffixed themeId', () => {
+					return new Promise((done) => {
+						tryAndCustomize('karuna', 2211667)(stub, fakeGetState).then(() => {
+							expect(stub).to.not.have.been.calledWith(
+								matchFunction(tryAndCustomize('karuna', 2211667))
 							);
-							expect( stub ).to.have.been.calledWith(
-								matchFunction( installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) )
+							expect(stub).to.have.been.calledWith(
+								matchFunction(installAndTryAndCustomizeTheme('karuna-wpcom', 2211667))
 							);
 							done();
-						} );
-					} );
-				} );
-			} );
-		} );
-	} );
+						});
+					});
+				});
+			});
+		});
+	});
 
-	describe( '#requestThemeFilters', () => {
-		test( 'should return THEME_FILTERS_REQUEST action', () => {
+	describe('#requestThemeFilters', () => {
+		test('should return THEME_FILTERS_REQUEST action', () => {
 			const action = requestThemeFilters();
-			expect( action ).to.deep.equal( { type: THEME_FILTERS_REQUEST } );
-		} );
-	} );
+			expect(action).to.deep.equal({ type: THEME_FILTERS_REQUEST });
+		});
+	});
 
-	describe( '#getRecommendedThemes()', () => {
-		test( 'should dispatch fetch action', () => {
-			getRecommendedThemes()( spy );
-			expect( spy ).to.have.been.calledWith( { type: RECOMMENDED_THEMES_FETCH } );
-		} );
-	} );
+	describe('#getRecommendedThemes()', () => {
+		test('should dispatch fetch action', () => {
+			getRecommendedThemes()(spy);
+			expect(spy).to.have.been.calledWith({ type: RECOMMENDED_THEMES_FETCH });
+		});
+	});
 
-	describe( '#receiveRecommendedThemes()', () => {
+	describe('#receiveRecommendedThemes()', () => {
 		const themes = [];
-		test( 'should dispatch success action with themes as payload', () => {
-			receiveRecommendedThemes( themes )( spy );
-			expect( spy ).to.have.been.calledWith( {
+		test('should dispatch success action with themes as payload', () => {
+			receiveRecommendedThemes(themes)(spy);
+			expect(spy).to.have.been.calledWith({
 				type: RECOMMENDED_THEMES_SUCCESS,
 				payload: themes,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

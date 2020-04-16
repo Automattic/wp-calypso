@@ -15,12 +15,12 @@ import getPreviousQuery from 'state/selectors/get-previous-query';
  * @returns {string} previous route value
  */
 
-export const getPreviousRoute = state => {
-	const previousPath = getPreviousPath( state );
-	const previousQuery = getPreviousQuery( state );
+export const getPreviousRoute = (state) => {
+	const previousPath = getPreviousPath(state);
+	const previousQuery = getPreviousQuery(state);
 	let query = '';
-	if ( previousQuery ) {
-		query = '?' + stringify( previousQuery );
+	if (previousQuery) {
+		query = '?' + stringify(previousQuery);
 	}
 	return previousPath + query;
 };

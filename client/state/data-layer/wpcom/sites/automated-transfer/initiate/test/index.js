@@ -35,88 +35,88 @@ const INITIATE_FAILURE_RESPONSE = {
 	transfer_id: 0,
 };
 
-describe( 'initiateTransferWithPluginZip', () => {
-	test( 'should dispatch an http request', () => {
-		const result = initiateTransferWithPluginZip( { siteId, pluginZip: 'foo' } );
-		expect( result[ 1 ] ).toEqual(
+describe('initiateTransferWithPluginZip', () => {
+	test('should dispatch an http request', () => {
+		const result = initiateTransferWithPluginZip({ siteId, pluginZip: 'foo' });
+		expect(result[1]).toEqual(
 			http(
 				{
 					method: 'POST',
-					path: `/sites/${ siteId }/automated-transfers/initiate`,
+					path: `/sites/${siteId}/automated-transfers/initiate`,
 					apiVersion: '1',
-					formData: [ [ 'plugin_zip', 'foo' ] ],
+					formData: [['plugin_zip', 'foo']],
 				},
 				{ siteId, pluginZip: 'foo' }
 			)
 		);
-	} );
+	});
 
-	test( 'should dispatch a tracks call', () => {
-		const result = initiateTransferWithPluginZip( { siteId, pluginZip: 'foo' } );
-		expect( result[ 0 ] ).toEqual(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_transfer', {
+	test('should dispatch a tracks call', () => {
+		const result = initiateTransferWithPluginZip({ siteId, pluginZip: 'foo' });
+		expect(result[0]).toEqual(
+			recordTracksEvent('calypso_automated_transfer_inititate_transfer', {
 				context: 'plugin_upload',
-			} )
+			})
 		);
-	} );
-} );
+	});
+});
 
-describe( 'receiveResponse', () => {
-	test( 'should dispatch a status request', () => {
-		const result = receiveResponse( { siteId }, INITIATE_SUCCESS_RESPONSE );
-		expect( result[ 1 ] ).toEqual( fetchAutomatedTransferStatus( siteId ) );
-	} );
+describe('receiveResponse', () => {
+	test('should dispatch a status request', () => {
+		const result = receiveResponse({ siteId }, INITIATE_SUCCESS_RESPONSE);
+		expect(result[1]).toEqual(fetchAutomatedTransferStatus(siteId));
+	});
 
-	test( 'should dispatch a tracks call', () => {
-		const result = receiveResponse( { siteId }, INITIATE_SUCCESS_RESPONSE );
-		expect( result[ 0 ] ).toEqual(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_success', {
+	test('should dispatch a tracks call', () => {
+		const result = receiveResponse({ siteId }, INITIATE_SUCCESS_RESPONSE);
+		expect(result[0]).toEqual(
+			recordTracksEvent('calypso_automated_transfer_inititate_success', {
 				context: 'plugin_upload',
-			} )
+			})
 		);
-	} );
+	});
 
-	test( 'should dispatch error notice on unsuccessful initiation', () => {
-		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
-		expect( result[ 1 ].notice.text ).toBe( 'The uploaded file is not a valid plugin.' );
-	} );
+	test('should dispatch error notice on unsuccessful initiation', () => {
+		const result = receiveResponse({ siteId }, INITIATE_FAILURE_RESPONSE);
+		expect(result[1].notice.text).toBe('The uploaded file is not a valid plugin.');
+	});
 
-	test( 'should dispatch a tracks call on unsuccessful initiation', () => {
-		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
-		expect( result[ 0 ] ).toEqual(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+	test('should dispatch a tracks call on unsuccessful initiation', () => {
+		const result = receiveResponse({ siteId }, INITIATE_FAILURE_RESPONSE);
+		expect(result[0]).toEqual(
+			recordTracksEvent('calypso_automated_transfer_inititate_failure', {
 				context: 'plugin_upload',
 				error: 'api_success_false',
-			} )
+			})
 		);
-	} );
-} );
+	});
+});
 
-describe( 'receiveError', () => {
-	test( 'should dispatch a plugin upload error', () => {
-		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result[ 2 ] ).toEqual( pluginUploadError( siteId, ERROR_RESPONSE ) );
-	} );
+describe('receiveError', () => {
+	test('should dispatch a plugin upload error', () => {
+		const result = receiveError({ siteId }, ERROR_RESPONSE);
+		expect(result[2]).toEqual(pluginUploadError(siteId, ERROR_RESPONSE));
+	});
 
-	test( 'should dispatch an error notice', () => {
-		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result[ 1 ].notice.text ).toBe( 'The uploaded file is not a valid zip.' );
-	} );
+	test('should dispatch an error notice', () => {
+		const result = receiveError({ siteId }, ERROR_RESPONSE);
+		expect(result[1].notice.text).toBe('The uploaded file is not a valid zip.');
+	});
 
-	test( 'should dispatch a tracks call', () => {
-		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result[ 0 ] ).toEqual(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+	test('should dispatch a tracks call', () => {
+		const result = receiveError({ siteId }, ERROR_RESPONSE);
+		expect(result[0]).toEqual(
+			recordTracksEvent('calypso_automated_transfer_inititate_failure', {
 				context: 'plugin_upload',
 				error: 'invalid_input',
-			} )
+			})
 		);
-	} );
-} );
+	});
+});
 
-describe( 'updateUploadProgress', () => {
-	test( 'should dispatch plugin upload progress update', () => {
-		const result = updateUploadProgress( { siteId }, { loaded: 200, total: 400 } );
-		expect( result ).toEqual( updatePluginUploadProgress( siteId, 50 ) );
-	} );
-} );
+describe('updateUploadProgress', () => {
+	test('should dispatch plugin upload progress update', () => {
+		const result = updateUploadProgress({ siteId }, { loaded: 200, total: 400 });
+		expect(result).toEqual(updatePluginUploadProgress(siteId, 50));
+	});
+});

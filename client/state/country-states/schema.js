@@ -14,7 +14,7 @@ export const itemSchema = {
 						type: 'string',
 					},
 				},
-				required: [ 'code', 'name' ],
+				required: ['code', 'name'],
 			},
 		},
 	},

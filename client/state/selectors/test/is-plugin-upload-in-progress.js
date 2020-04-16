@@ -10,8 +10,8 @@ import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progre
 
 const siteId = 77203074;
 
-describe( 'isPluginUploadInProgress', () => {
-	test( 'should return false by default', () => {
+describe('isPluginUploadInProgress', () => {
+	test('should return false by default', () => {
 		const state = {
 			plugins: {
 				upload: {
@@ -19,30 +19,30 @@ describe( 'isPluginUploadInProgress', () => {
 				},
 			},
 		};
-		expect( isPluginUploadInProgress( state, siteId ) ).to.be.false;
-	} );
+		expect(isPluginUploadInProgress(state, siteId)).to.be.false;
+	});
 
-	test( 'should return current value for site', () => {
+	test('should return current value for site', () => {
 		const stateFalse = {
 			plugins: {
 				upload: {
 					inProgress: {
-						[ siteId ]: false,
+						[siteId]: false,
 					},
 				},
 			},
 		};
-		expect( isPluginUploadInProgress( stateFalse, siteId ) ).to.be.false;
+		expect(isPluginUploadInProgress(stateFalse, siteId)).to.be.false;
 
 		const stateTrue = {
 			plugins: {
 				upload: {
 					inProgress: {
-						[ siteId ]: true,
+						[siteId]: true,
 					},
 				},
 			},
 		};
-		expect( isPluginUploadInProgress( stateTrue, siteId ) ).to.be.true;
-	} );
-} );
+		expect(isPluginUploadInProgress(stateTrue, siteId)).to.be.true;
+	});
+});

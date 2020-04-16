@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is an Automated Transfer site
  */
-export default function isSiteAutomatedTransfer( state, siteId ) {
-	return get( state, [ 'sites', 'items', siteId, 'options', 'is_automated_transfer' ], null );
+export default function isSiteAutomatedTransfer(state, siteId) {
+	return get(state, ['sites', 'items', siteId, 'options', 'is_automated_transfer'], null);
 }

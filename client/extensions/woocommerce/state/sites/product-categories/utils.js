@@ -18,8 +18,8 @@ export const DEFAULT_QUERY = {
  * @param  {object} query Product categories query
  * @returns {object}       Normalized query
  */
-export function getNormalizedProductCategoriesQuery( query ) {
-	return omitBy( query, ( value, key ) => DEFAULT_QUERY[ key ] === value );
+export function getNormalizedProductCategoriesQuery(query) {
+	return omitBy(query, (value, key) => DEFAULT_QUERY[key] === value);
 }
 
 /**
@@ -28,9 +28,9 @@ export function getNormalizedProductCategoriesQuery( query ) {
  * @param  {object} query  Product categories query
  * @returns {string}        Serialized query
  */
-export function getSerializedProductCategoriesQuery( query = {} ) {
-	const normalizedQuery = getNormalizedProductCategoriesQuery( query );
-	const serializedQuery = JSON.stringify( normalizedQuery );
+export function getSerializedProductCategoriesQuery(query = {}) {
+	const normalizedQuery = getNormalizedProductCategoriesQuery(query);
+	const serializedQuery = JSON.stringify(normalizedQuery);
 
 	return serializedQuery;
 }

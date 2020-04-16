@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {number}   siteId Site ID
  * @returns {?string}       The import engine used for importing the site
  */
-export default function getSiteImportEngine( state, siteId ) {
-	return get( state, [ 'sites', 'items', siteId, 'options', 'import_engine' ], null );
+export default function getSiteImportEngine(state, siteId) {
+	return get(state, ['sites', 'items', siteId, 'options', 'import_engine'], null);
 }

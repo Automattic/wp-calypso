@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether site's sharing buttons are being saved
  */
-export default function isSavingSharingButtons( state, siteId ) {
-	return get( state.sites.sharingButtons.saveRequests, [ siteId, 'saving' ], false );
+export default function isSavingSharingButtons(state, siteId) {
+	return get(state.sites.sharingButtons.saveRequests, [siteId, 'saving'], false);
 }

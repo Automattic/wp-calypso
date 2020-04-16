@@ -40,18 +40,18 @@ class ToolsMenu extends PureComponent {
 	getPluginItem() {
 		const { canManagePlugins, isAtomicSite, translate } = this.props;
 
-		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (config.isEnabled('signup/wpforteams') && this.props.isSiteWPForTeams) {
 			return {};
 		}
 
 		return {
 			name: 'plugins',
-			label: translate( 'Plugins' ),
+			label: translate('Plugins'),
 			capability: 'manage_options',
-			queryable: ! config.isEnabled( 'calypsoify/plugins' ) || ! isAtomicSite,
+			queryable: !config.isEnabled('calypsoify/plugins') || !isAtomicSite,
 			config: 'manage/plugins',
 			link: '/plugins',
-			paths: [ '/extensions', '/plugins' ],
+			paths: ['/extensions', '/plugins'],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
 			showOnAllMySites: canManagePlugins,
 		};
@@ -60,15 +60,15 @@ class ToolsMenu extends PureComponent {
 	getImportItem() {
 		const { isJetpack, isAtomicSite, translate } = this.props;
 
-		const migrateEnabled = config.isEnabled( 'tools/migrate' );
+		const migrateEnabled = config.isEnabled('tools/migrate');
 
 		return {
 			name: 'import',
-			label: translate( 'Import' ),
+			label: translate('Import'),
 			capability: 'manage_options',
-			queryable: ! isJetpack || ( isAtomicSite && migrateEnabled ),
+			queryable: !isJetpack || (isAtomicSite && migrateEnabled),
 			link: '/import',
-			paths: [ '/import', '/migrate' ],
+			paths: ['/import', '/migrate'],
 			wpAdminLink: 'import.php',
 		};
 	}
@@ -78,81 +78,81 @@ class ToolsMenu extends PureComponent {
 
 		return {
 			name: 'export',
-			label: translate( 'Export' ),
+			label: translate('Export'),
 			capability: 'manage_options',
-			queryable: ! isJetpack,
+			queryable: !isJetpack,
 			link: '/export',
-			paths: [ '/export' ],
+			paths: ['/export'],
 			wpAdminLink: 'export.php',
 		};
 	}
 
-	onNavigate = postType => () => {
-		if ( ! includes( [ 'post', 'page' ], postType ) ) {
-			bumpStat( 'calypso_publish_menu_click', postType );
+	onNavigate = (postType) => () => {
+		if (!includes(['post', 'page'], postType)) {
+			bumpStat('calypso_publish_menu_click', postType);
 		}
-		this.props.recordTracksEvent( 'calypso_mysites_tools_sidebar_item_clicked', {
+		this.props.recordTracksEvent('calypso_mysites_tools_sidebar_item_clicked', {
 			menu_item: postType,
-		} );
+		});
 		this.props.onNavigate();
 	};
 
-	expandToolsSection = () => this.props.expandSection( SIDEBAR_SECTION_TOOLS );
+	expandToolsSection = () => this.props.expandSection(SIDEBAR_SECTION_TOOLS);
 
-	renderMenuItem( menuItem ) {
+	renderMenuItem(menuItem) {
 		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
 
-		if ( siteId && ! canCurrentUser( menuItem.capability ) ) {
+		if (siteId && !canCurrentUser(menuItem.capability)) {
 			return null;
 		}
 
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
-		const isEnabled = ! menuItem.config || config.isEnabled( menuItem.config );
-		if ( ! siteId && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
+		const isEnabled = !menuItem.config || config.isEnabled(menuItem.config);
+		if (!siteId && (!isEnabled || !menuItem.showOnAllMySites)) {
 			return null;
 		}
 
 		let link;
-		if ( ( ! isEnabled || ! menuItem.queryable ) && siteAdminUrl ) {
+		if ((!isEnabled || !menuItem.queryable) && siteAdminUrl) {
 			link = siteAdminUrl + menuItem.wpAdminLink;
 		} else {
-			link = compact( [ menuItem.link, this.props.siteSlug ] ).join( '/' );
+			link = compact([menuItem.link, this.props.siteSlug]).join('/');
 		}
 
 		return (
 			<SidebarItem
-				key={ menuItem.name }
-				label={ menuItem.label }
-				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
-				link={ link }
-				onNavigate={ this.onNavigate( menuItem.name ) }
-				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
-				tipTarget={ `side-menu-${ menuItem.name }` }
-				expandSection={ this.expandToolsSection }
+				key={menuItem.name}
+				label={menuItem.label}
+				selected={itemLinkMatches(menuItem.paths || menuItem.link, this.props.path)}
+				link={link}
+				onNavigate={this.onNavigate(menuItem.name)}
+				postType={menuItem.name === 'plugins' ? null : menuItem.name}
+				tipTarget={`side-menu-${menuItem.name}`}
+				expandSection={this.expandToolsSection}
 			/>
 		);
 	}
 
 	render() {
-		const menuItems = [ this.getPluginItem(), this.getImportItem(), this.getExportItem() ];
+		const menuItems = [this.getPluginItem(), this.getImportItem(), this.getExportItem()];
 
-		return <ul>{ menuItems.map( this.renderMenuItem, this ) }</ul>;
+		return <ul>{menuItems.map(this.renderMenuItem, this)}</ul>;
 	}
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		canManagePlugins: canCurrentUserManagePlugins( state ),
+	(state, { siteId }) => ({
+		canManagePlugins: canCurrentUserManagePlugins(state),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
-		isJetpack: isJetpackSite( state, siteId ),
+		canCurrentUser: partial(canCurrentUserStateSelector, state, siteId),
+		isJetpack: isJetpackSite(state, siteId),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
-	} ),
+		siteAdminUrl: getSiteAdminUrl(state, siteId),
+		siteSlug: getSiteSlug(state, siteId),
+		isSiteWPForTeams: isSiteWPForTeams(state, siteId),
+	}),
 	{ expandSection, recordTracksEvent },
 	null,
-	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
-)( localize( ToolsMenu ) );
+	{ areStatePropsEqual: compareProps({ ignore: ['canCurrentUser'] }) }
+)(localize(ToolsMenu));

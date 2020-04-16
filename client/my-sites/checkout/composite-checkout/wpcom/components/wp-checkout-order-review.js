@@ -13,7 +13,7 @@ import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 
-export default function WPCheckoutOrderReview( {
+export default function WPCheckoutOrderReview({
 	className,
 	removeItem,
 	removeCoupon,
@@ -23,33 +23,33 @@ export default function WPCheckoutOrderReview( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-} ) {
-	const [ items, total ] = useLineItems();
+}) {
+	const [items, total] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const isPurchaseFree = total.amount.value === 0;
 
 	return (
-		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
+		<div className={joinClasses([className, 'checkout-review-order'])}>
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
-					items={ items }
-					removeItem={ removeItem }
-					removeCoupon={ removeCoupon }
-					variantRequestStatus={ variantRequestStatus }
-					variantSelectOverride={ variantSelectOverride }
-					getItemVariants={ getItemVariants }
-					onChangePlanLength={ onChangePlanLength }
+					items={items}
+					removeItem={removeItem}
+					removeCoupon={removeCoupon}
+					variantRequestStatus={variantRequestStatus}
+					variantSelectOverride={variantSelectOverride}
+					getItemVariants={getItemVariants}
+					onChangePlanLength={onChangePlanLength}
 				/>
 			</WPOrderReviewSection>
 
-			{ ! isPurchaseFree && (
+			{!isPurchaseFree && (
 				<CouponField
 					id="order-review-coupon"
-					disabled={ formStatus !== 'ready' }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
+					disabled={formStatus !== 'ready'}
+					couponStatus={couponStatus}
+					couponFieldStateProps={couponFieldStateProps}
 				/>
-			) }
+			)}
 		</div>
 	);
 }
@@ -63,8 +63,8 @@ WPCheckoutOrderReview.propTypes = {
 	onChangePlanLength: PropTypes.func,
 };
 
-const CouponField = styled( Coupon )`
+const CouponField = styled(Coupon)`
 	margin: 24px 30px 24px 0;
 	padding-bottom: 24px;
-	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
+	border-bottom: 1px solid ${(props) => props.theme.colors.borderColorLight};
 `;

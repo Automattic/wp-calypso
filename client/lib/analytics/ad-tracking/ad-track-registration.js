@@ -21,8 +21,8 @@ import './setup';
 export async function adTrackRegistration() {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'adTrackRegistration: [Skipping] ad tracking is not allowed' );
+	if (!isAdTrackingAllowed()) {
+		debug('adTrackRegistration: [Skipping] ad tracking is not allowed');
 		return;
 	}
 
@@ -30,7 +30,7 @@ export async function adTrackRegistration() {
 
 	// Google Ads Gtag
 
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if (isWpcomGoogleAdsGtagEnabled) {
 		const params = [
 			'event',
 			'conversion',
@@ -38,44 +38,44 @@ export async function adTrackRegistration() {
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagRegistration,
 			},
 		];
-		debug( 'adTrackRegistration: [Google Ads Gtag]', params );
-		window.gtag( ...params );
+		debug('adTrackRegistration: [Google Ads Gtag]', params);
+		window.gtag(...params);
 	}
 
 	// Facebook
 
-	if ( isFacebookEnabled ) {
-		const params = [ 'trackSingle', TRACKING_IDS.facebookInit, 'Lead' ];
-		debug( 'adTrackRegistration: [Facebook]', params );
-		window.fbq( ...params );
+	if (isFacebookEnabled) {
+		const params = ['trackSingle', TRACKING_IDS.facebookInit, 'Lead'];
+		debug('adTrackRegistration: [Facebook]', params);
+		window.fbq(...params);
 	}
 
 	// Bing
 
-	if ( isBingEnabled ) {
+	if (isBingEnabled) {
 		const params = {
 			ec: 'registration',
 		};
-		debug( 'adTrackRegistration: [Bing]', params );
-		window.uetq.push( params );
+		debug('adTrackRegistration: [Bing]', params);
+		window.uetq.push(params);
 	}
 
 	// DCM Floodlight
 
-	if ( isFloodlightEnabled ) {
-		debug( 'adTrackRegistration: [Floodlight]' );
-		recordParamsInFloodlightGtag( {
+	if (isFloodlightEnabled) {
+		debug('adTrackRegistration: [Floodlight]');
+		recordParamsInFloodlightGtag({
 			send_to: 'DC-6355556/wordp0/regis0+unique',
-		} );
+		});
 	}
 
 	// Pinterest
 
-	if ( isPinterestEnabled ) {
-		const params = [ 'track', 'lead' ];
-		debug( 'adTrackRegistration: [Pinterest]', params );
-		window.pintrk( ...params );
+	if (isPinterestEnabled) {
+		const params = ['track', 'lead'];
+		debug('adTrackRegistration: [Pinterest]', params);
+		window.pintrk(...params);
 	}
 
-	debug( 'adTrackRegistration: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug('adTrackRegistration: dataLayer:', JSON.stringify(window.dataLayer, null, 2));
 }

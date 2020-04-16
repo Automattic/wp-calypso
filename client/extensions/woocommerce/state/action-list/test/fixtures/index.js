@@ -20,9 +20,9 @@ export const time = {
 
 export const stepA = {
 	description: 'Do Step A',
-	onStep: ( dispatch, actionList ) => {
-		dispatch( { type: '%% action a %%' } );
-		dispatch( actionListStepSuccess( actionList ) );
+	onStep: (dispatch, actionList) => {
+		dispatch({ type: '%% action a %%' });
+		dispatch(actionListStepSuccess(actionList));
 	},
 };
 export const stepAStarted = { ...stepA, startTime: time.stepAStart };
@@ -30,9 +30,9 @@ export const stepASuccessful = { ...stepAStarted, endTime: time.stepAEnd };
 
 export const stepB = {
 	description: 'Do Step B',
-	onStep: ( dispatch, actionList ) => {
-		dispatch( { type: '%% action b %%' } );
-		dispatch( actionListStepSuccess( actionList ) );
+	onStep: (dispatch, actionList) => {
+		dispatch({ type: '%% action b %%' });
+		dispatch(actionListStepSuccess(actionList));
 	},
 };
 export const stepBStarted = { ...stepB, startTime: time.stepBStart };
@@ -40,9 +40,9 @@ export const stepBSuccessful = { ...stepBStarted, endTime: time.stepBEnd };
 
 export const stepC = {
 	description: 'Do Step C',
-	onStep: ( dispatch, actionList ) => {
-		dispatch( { type: '%% action c %%' } );
-		dispatch( actionListStepSuccess( actionList ) );
+	onStep: (dispatch, actionList) => {
+		dispatch({ type: '%% action c %%' });
+		dispatch(actionListStepSuccess(actionList));
 	},
 };
 export const stepCStarted = { ...stepC, startTime: time.stepCStart };
@@ -51,9 +51,9 @@ export const stepCSuccessful = { ...stepCStarted, endTime: time.stepCEnd };
 export const stepEError = { message: 'Bad error message. Very bad.' };
 export const stepE = {
 	description: 'Do Error Step',
-	onStep: ( dispatch, actionList ) => {
-		dispatch( { type: '%% error action %%' } );
-		dispatch( actionListStepFailure( actionList, stepEError ) );
+	onStep: (dispatch, actionList) => {
+		dispatch({ type: '%% error action %%' });
+		dispatch(actionListStepFailure(actionList, stepEError));
 	},
 };
 export const stepEStarted = { ...stepE, startTime: time.stepEStart };

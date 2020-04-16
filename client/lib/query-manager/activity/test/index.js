@@ -12,11 +12,11 @@ import ActivityQueryManager from '..';
  * Module constants
  */
 const DEFAULT_ACTIVITY_DATE = '2014-09-14T00:30:00+02:00';
-const DEFAULT_ACTIVITY_TS = Date.parse( DEFAULT_ACTIVITY_DATE );
+const DEFAULT_ACTIVITY_TS = Date.parse(DEFAULT_ACTIVITY_DATE);
 
-const makeComparator = query => ( a, b ) => ActivityQueryManager.compare( query, a, b );
+const makeComparator = (query) => (a, b) => ActivityQueryManager.compare(query, a, b);
 
-const DEFAULT_ACTIVITY = deepFreeze( {
+const DEFAULT_ACTIVITY = deepFreeze({
 	activityDate: DEFAULT_ACTIVITY_DATE,
 	activityGroup: 'plugin',
 	activityIcon: 'plugins',
@@ -29,12 +29,12 @@ const DEFAULT_ACTIVITY = deepFreeze( {
 	actorRemoteId: 345,
 	actorRole: 'administrator',
 	actorWpcomId: 678,
-} );
+});
 
-describe( 'ActivityQueryManager', () => {
-	describe( '#matches()', () => {
-		describe( 'query.dateStart', () => {
-			test( 'should return true if activity is at the specified time', () => {
+describe('ActivityQueryManager', () => {
+	describe('#matches()', () => {
+		describe('query.dateStart', () => {
+			test('should return true if activity is at the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS,
@@ -42,10 +42,10 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return true if activity is after the specified time', () => {
+			test('should return true if activity is after the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS - 1,
@@ -53,10 +53,10 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false if activity is before the specified time', () => {
+			test('should return false if activity is before the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS + 1,
@@ -64,12 +64,12 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
-		} );
+				expect(isMatch).toBe(false);
+			});
+		});
 
-		describe( 'query.dateEnd', () => {
-			test( 'should return true if activity is at the specified time', () => {
+		describe('query.dateEnd', () => {
+			test('should return true if activity is at the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS,
@@ -77,10 +77,10 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false if activity is after the specified time', () => {
+			test('should return false if activity is after the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
@@ -88,10 +88,10 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return true if activity is before the specified time', () => {
+			test('should return true if activity is before the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 1,
@@ -99,12 +99,12 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
-		} );
+				expect(isMatch).toBe(true);
+			});
+		});
 
-		describe( 'date range query', () => {
-			test( 'should return true if activity is within a range of dates', () => {
+		describe('date range query', () => {
+			test('should return true if activity is within a range of dates', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 1,
@@ -113,10 +113,10 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( true );
-			} );
+				expect(isMatch).toBe(true);
+			});
 
-			test( 'should return false if activity is before a range of dates', () => {
+			test('should return false if activity is before a range of dates', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 2,
@@ -125,10 +125,10 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should return false if activity is after a range of dates', () => {
+			test('should return false if activity is after a range of dates', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
@@ -137,10 +137,10 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
+				expect(isMatch).toBe(false);
+			});
 
-			test( 'should be impossible to match if dateStart is after dateEnd', () => {
+			test('should be impossible to match if dateStart is after dateEnd', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
@@ -149,28 +149,28 @@ describe( 'ActivityQueryManager', () => {
 					DEFAULT_ACTIVITY
 				);
 
-				expect( isMatch ).toBe( false );
-			} );
-		} );
-	} );
+				expect(isMatch).toBe(false);
+			});
+		});
+	});
 
-	describe( '#compare()', () => {
-		test( 'should sort by timestamp descending', () => {
-			const sortFunc = makeComparator( {} );
+	describe('#compare()', () => {
+		test('should sort by timestamp descending', () => {
+			const sortFunc = makeComparator({});
 			const activityA = { activityId: 'a', activityTs: 100000 };
 			const activityB = { activityId: 'b', activityTs: 200000 };
 
-			expect( [ activityA, activityB ].sort( sortFunc ) ).toEqual( [ activityB, activityA ] );
-		} );
+			expect([activityA, activityB].sort(sortFunc)).toEqual([activityB, activityA]);
+		});
 
-		test( 'should include simultaneous events (in any order, sort is unstable)', () => {
-			const sortFunc = makeComparator( {} );
+		test('should include simultaneous events (in any order, sort is unstable)', () => {
+			const sortFunc = makeComparator({});
 			const activityA = { activityId: 'a', activityTs: 100000 };
 			const activityB = { activityId: 'b', activityTs: 100000 };
 
-			expect( [ activityA, activityB ].sort( sortFunc ) ).toEqual(
-				expect.arrayContaining( [ activityA, activityB ] )
+			expect([activityA, activityB].sort(sortFunc)).toEqual(
+				expect.arrayContaining([activityA, activityB])
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

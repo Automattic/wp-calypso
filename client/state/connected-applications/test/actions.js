@@ -14,19 +14,19 @@ import {
 	CONNECTED_APPLICATIONS_REQUEST,
 } from 'state/action-types';
 
-describe( 'actions', () => {
-	describe( 'requestConnectedApplications()', () => {
-		test( 'should return a connected applications request action object', () => {
+describe('actions', () => {
+	describe('requestConnectedApplications()', () => {
+		test('should return a connected applications request action object', () => {
 			const action = requestConnectedApplications();
 
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: CONNECTED_APPLICATIONS_REQUEST,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'receiveConnectedApplications()', () => {
-		test( 'should return a connected applications receive action object', () => {
+	describe('receiveConnectedApplications()', () => {
+		test('should return a connected applications receive action object', () => {
 			const apps = [
 				{
 					ID: '12345678',
@@ -53,36 +53,36 @@ describe( 'actions', () => {
 					title: 'WordPress',
 				},
 			];
-			const action = receiveConnectedApplications( apps );
+			const action = receiveConnectedApplications(apps);
 
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: CONNECTED_APPLICATIONS_RECEIVE,
 				apps,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'deleteConnectedApplication()', () => {
-		test( 'should return a connected application delete action object', () => {
+	describe('deleteConnectedApplication()', () => {
+		test('should return a connected application delete action object', () => {
 			const appId = '12345678';
-			const action = deleteConnectedApplication( appId );
+			const action = deleteConnectedApplication(appId);
 
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: CONNECTED_APPLICATION_DELETE,
 				appId,
-			} );
-		} );
-	} );
+			});
+		});
+	});
 
-	describe( 'deleteConnectedApplicationSuccess()', () => {
-		test( 'should return a connected application delete success action object', () => {
+	describe('deleteConnectedApplicationSuccess()', () => {
+		test('should return a connected application delete success action object', () => {
 			const appId = '12345678';
-			const action = deleteConnectedApplicationSuccess( appId );
+			const action = deleteConnectedApplicationSuccess(appId);
 
-			expect( action ).toEqual( {
+			expect(action).toEqual({
 				type: CONNECTED_APPLICATION_DELETE_SUCCESS,
 				appId,
-			} );
-		} );
-	} );
-} );
+			});
+		});
+	});
+});

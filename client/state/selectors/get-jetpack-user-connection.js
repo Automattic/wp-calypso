@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {number}  siteId      The ID of the site we're querying
  * @returns {?object}             User connection data
  */
-export default function getJetpackUserConnection( state, siteId ) {
-	return get( state.jetpack.connection.dataItems, [ siteId ], null );
+export default function getJetpackUserConnection(state, siteId) {
+	return get(state.jetpack.connection.dataItems, [siteId], null);
 }

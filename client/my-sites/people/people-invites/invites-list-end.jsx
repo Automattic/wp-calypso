@@ -23,14 +23,14 @@ class InvitesListEnd extends React.PureComponent {
 		found: PropTypes.number,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.bumpedStat = false;
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.found > nextProps.shown && ! this.bumpedStat ) {
-			this.props.bumpStat( 'calypso_people_invite_list', 'displayed_max' );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (nextProps.found > nextProps.shown && !this.bumpedStat) {
+			this.props.bumpStat('calypso_people_invite_list', 'displayed_max');
 			this.bumpedStat = true;
 		}
 	}
@@ -40,21 +40,21 @@ class InvitesListEnd extends React.PureComponent {
 
 		return (
 			<React.Fragment>
-				{ shown < found && (
+				{shown < found && (
 					<div className="people-invites__max-items-notice">
-						{ translate(
+						{translate(
 							'Showing %(shown)d invite of %(found)d.',
 							'Showing %(shown)d invites of %(found)d.',
 							{ args: { shown, found } }
-						) }
+						)}
 						<br />
-						{ translate( 'To view more invites, clear some of your existing invites first.' ) }
+						{translate('To view more invites, clear some of your existing invites first.')}
 					</div>
-				) }
+				)}
 				<ListEnd />
 			</React.Fragment>
 		);
 	}
 }
 
-export default connect( null, { bumpStat } )( localize( InvitesListEnd ) );
+export default connect(null, { bumpStat })(localize(InvitesListEnd));

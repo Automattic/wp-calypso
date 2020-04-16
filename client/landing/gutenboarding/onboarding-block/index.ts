@@ -11,7 +11,7 @@ import edit from './edit';
 
 export const name = 'automattic/onboarding';
 
-export const settings: BlockConfiguration< Attributes > = {
+export const settings: BlockConfiguration<Attributes> = {
 	title: 'WordPress.com onboarding block',
 	category: 'layout',
 	description: '',
@@ -22,7 +22,7 @@ export const settings: BlockConfiguration< Attributes > = {
 		},
 	},
 	supports: {
-		align: [ 'full' ],
+		align: ['full'],
 		html: false,
 		inserter: false,
 		multiple: false,

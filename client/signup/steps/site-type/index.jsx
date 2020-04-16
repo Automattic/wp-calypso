@@ -25,48 +25,48 @@ const siteTypeToFlowname = {
 
 class SiteType extends Component {
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep({ stepName: this.props.stepName });
 	}
 
 	handleImportFlowClick = () => {
-		this.props.recordTracksEvent( 'calypso_signup_import_cta_click', {
+		this.props.recordTracksEvent('calypso_signup_import_cta_click', {
 			flow: this.props.flowName,
 			step: this.props.stepName,
-		} );
-		this.submitStep( 'import' );
+		});
+		this.submitStep('import');
 	};
 
-	submitStep = siteTypeValue => {
+	submitStep = (siteTypeValue) => {
 		const { stepName } = this.props;
 
-		this.props.submitSiteType( siteTypeValue, stepName );
+		this.props.submitSiteType(siteTypeValue, stepName);
 
 		// Modify the flowname if the site type matches an override.
 		let flowName;
-		if ( 'import-onboarding' === this.props.flowName ) {
-			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
+		if ('import-onboarding' === this.props.flowName) {
+			flowName = siteTypeToFlowname[siteTypeValue] || 'onboarding';
 		} else if (
-			( 'design-first' === this.props.flowName ||
-				'ecommerce-design-first' === this.props.flowName ) &&
+			('design-first' === this.props.flowName ||
+				'ecommerce-design-first' === this.props.flowName) &&
 			'site-type-with-theme' === stepName
 		) {
 			flowName = 'online-store' === siteTypeValue ? 'ecommerce-design-first' : this.props.flowName;
 		} else {
-			flowName = siteTypeToFlowname[ siteTypeValue ] || this.props.flowName;
+			flowName = siteTypeToFlowname[siteTypeValue] || this.props.flowName;
 		}
 
-		this.props.goToNextStep( flowName );
+		this.props.goToNextStep(flowName);
 	};
 
 	renderImportButton() {
-		if ( ! isEnabled( 'signup/import' ) ) {
+		if (!isEnabled('signup/import')) {
 			return null;
 		}
 
 		return (
 			<div className="site-type__import-button">
-				<Button borderless onClick={ this.handleImportFlowClick }>
-					{ this.props.translate( 'Already have a website? Import your content here.' ) }
+				<Button borderless onClick={this.handleImportFlowClick}>
+					{this.props.translate('Already have a website? Import your content here.')}
 				</Button>
 			</div>
 		);
@@ -78,11 +78,11 @@ class SiteType extends Component {
 		return (
 			<Fragment>
 				<SiteTypeForm
-					goToNextStep={ this.props.goToNextStep }
-					submitForm={ this.submitStep }
-					siteType={ siteType }
+					goToNextStep={this.props.goToNextStep}
+					submitForm={this.submitStep}
+					siteType={siteType}
 				/>
-				{ this.renderImportButton() }
+				{this.renderImportButton()}
 			</Fragment>
 		);
 	}
@@ -96,33 +96,33 @@ class SiteType extends Component {
 			hasInitializedSitesBackUrl,
 		} = this.props;
 
-		const headerText = translate( 'What kind of site are you building?' );
+		const headerText = translate('What kind of site are you building?');
 		const subHeaderText = translate(
 			'This is just a starting point. You can add or change features later.'
 		);
 
 		return (
 			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ headerText }
-				fallbackHeaderText={ headerText }
-				subHeaderText={ subHeaderText }
-				fallbackSubHeaderText={ subHeaderText }
-				stepContent={ this.renderStepContent() }
-				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
-				backUrl={ hasInitializedSitesBackUrl }
-				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
+				flowName={flowName}
+				stepName={stepName}
+				positionInFlow={positionInFlow}
+				headerText={headerText}
+				fallbackHeaderText={headerText}
+				subHeaderText={subHeaderText}
+				fallbackSubHeaderText={subHeaderText}
+				stepContent={this.renderStepContent()}
+				allowBackFirstStep={!!hasInitializedSitesBackUrl}
+				backUrl={hasInitializedSitesBackUrl}
+				backLabelText={hasInitializedSitesBackUrl ? translate('Back to My Sites') : null}
 			/>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		siteType: getSiteType( state ) || 'blog',
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-	} ),
+	(state) => ({
+		siteType: getSiteType(state) || 'blog',
+		hasInitializedSitesBackUrl: hasInitializedSites(state) ? '/sites/' : false,
+	}),
 	{ recordTracksEvent, saveSignupStep, submitSiteType }
-)( localize( SiteType ) );
+)(localize(SiteType));

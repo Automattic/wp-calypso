@@ -31,14 +31,14 @@ class PluginEligibility extends Component {
 	getBackUrl = () => {
 		const { pluginSlug, siteSlug } = this.props;
 
-		return `/plugins/${ pluginSlug }/${ siteSlug }`;
+		return `/plugins/${pluginSlug}/${siteSlug}`;
 	};
 
-	goBack = () => this.props.navigateTo( this.getBackUrl() );
+	goBack = () => this.props.navigateTo(this.getBackUrl());
 
 	pluginTransferInitiate = () => {
 		// Use theme transfer action until we introduce generic ones that will handle both plugins and themes
-		this.props.initiateTransfer( this.props.siteId, null, this.props.pluginSlug );
+		this.props.initiateTransfer(this.props.siteId, null, this.props.pluginSlug);
 		this.goBack();
 	};
 
@@ -48,25 +48,22 @@ class PluginEligibility extends Component {
 		return (
 			<MainComponent>
 				<PageViewTracker path="/plugins/:plugin/eligibility/:site" title="Plugins > Eligibility" />
-				<HeaderCake isCompact={ true } onClick={ this.goBack }>
-					{ translate( 'Install plugin' ) }
+				<HeaderCake isCompact={true} onClick={this.goBack}>
+					{translate('Install plugin')}
 				</HeaderCake>
-				<EligibilityWarnings
-					onProceed={ this.pluginTransferInitiate }
-					backUrl={ this.getBackUrl() }
-				/>
+				<EligibilityWarnings onProceed={this.pluginTransferInitiate} backUrl={this.getBackUrl()} />
 			</MainComponent>
 		);
 	}
 }
 
 // It was 2:45AM, I wanted to deploy, and @dmsnell made me do it... props to @dmsnell :)
-const withNavigation = WrappedComponent => props => (
-	<WrappedComponent { ...{ ...props, navigateTo: page } } />
+const withNavigation = (WrappedComponent) => (props) => (
+	<WrappedComponent {...{ ...props, navigateTo: page }} />
 );
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
+const mapStateToProps = (state) => {
+	const siteId = getSelectedSiteId(state);
 
 	return {
 		siteId,
@@ -80,4 +77,4 @@ const mapDispatchToProps = {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( withNavigation( localize( PluginEligibility ) ) );
+)(withNavigation(localize(PluginEligibility)));

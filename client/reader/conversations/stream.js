@@ -17,23 +17,23 @@ import ConversationsEmptyContent from 'blocks/conversations/empty';
  */
 import './stream.scss';
 
-export default function( props ) {
-	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
+export default function (props) {
+	const isInternal = get(props, 'store.id') === 'conversations-a8c';
 	const emptyContent = <ConversationsEmptyContent />;
-	const intro = <ConversationsIntro isInternal={ isInternal } />;
+	const intro = <ConversationsIntro isInternal={isInternal} />;
 	return (
 		<Stream
 			key="conversations"
-			streamKey={ props.streamKey }
-			shouldCombineCards={ false }
+			streamKey={props.streamKey}
+			shouldCombineCards={false}
 			className="conversations__stream"
 			followSource="conversations"
-			useCompactCards={ true }
-			trackScrollPage={ props.trackScrollPage }
-			emptyContent={ emptyContent }
-			intro={ intro }
+			useCompactCards={true}
+			trackScrollPage={props.trackScrollPage}
+			emptyContent={emptyContent}
+			intro={intro}
 		>
-			<DocumentHead title={ props.title } />
+			<DocumentHead title={props.title} />
 		</Stream>
 	);
 }

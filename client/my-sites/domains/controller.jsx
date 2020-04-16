@@ -36,54 +36,54 @@ import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { isGSuiteRestricted } from 'lib/gsuite';
 
-const domainsAddHeader = ( context, next ) => {
+const domainsAddHeader = (context, next) => {
 	context.getSiteSelectionHeaderText = () => {
-		return translate( 'Select a site to add a domain' );
+		return translate('Select a site to add a domain');
 	};
 
 	next();
 };
 
-const domainsAddRedirectHeader = ( context, next ) => {
+const domainsAddRedirectHeader = (context, next) => {
 	context.getSiteSelectionHeaderText = () => {
-		return translate( 'Select a site to add Site Redirect' );
+		return translate('Select a site to add Site Redirect');
 	};
 
 	next();
 };
 
-const redirectToDomainSearchSuggestion = context => {
+const redirectToDomainSearchSuggestion = (context) => {
 	return page.redirect(
-		`/domains/add/${ context.params.domain }?suggestion=${ context.params.suggestion }`
+		`/domains/add/${context.params.domain}?suggestion=${context.params.suggestion}`
 	);
 };
 
-const domainSearch = ( context, next ) => {
+const domainSearch = (context, next) => {
 	// Scroll to the top
-	if ( typeof window !== 'undefined' ) {
-		window.scrollTo( 0, 0 );
+	if (typeof window !== 'undefined') {
+		window.scrollTo(0, 0);
 	}
 
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
-			<DocumentHead title={ translate( 'Domain Search' ) } />
+			<DocumentHead title={translate('Domain Search')} />
 			<CartData>
-				<DomainSearch basePath={ sectionify( context.path ) } context={ context } />
+				<DomainSearch basePath={sectionify(context.path)} context={context} />
 			</CartData>
 		</Main>
 	);
 	next();
 };
 
-const siteRedirect = ( context, next ) => {
+const siteRedirect = (context, next) => {
 	context.primary = (
 		<Main>
 			<PageViewTracker
 				path="/domains/add/site-redirect/:site"
 				title="Domain Search > Site Redirect"
 			/>
-			<DocumentHead title={ translate( 'Redirect a Site' ) } />
+			<DocumentHead title={translate('Redirect a Site')} />
 			<CartData>
 				<SiteRedirect />
 			</CartData>
@@ -92,35 +92,32 @@ const siteRedirect = ( context, next ) => {
 	next();
 };
 
-const mapDomain = ( context, next ) => {
+const mapDomain = (context, next) => {
 	context.primary = (
 		<Main wideLayout>
-			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
-			<DocumentHead title={ translate( 'Map a Domain' ) } />
+			<PageViewTracker path={domainMapping(':site')} title="Domain Search > Domain Mapping" />
+			<DocumentHead title={translate('Map a Domain')} />
 			<CartData>
-				<MapDomain initialQuery={ context.query.initialQuery } />
+				<MapDomain initialQuery={context.query.initialQuery} />
 			</CartData>
 		</Main>
 	);
 	next();
 };
 
-const transferDomain = ( context, next ) => {
+const transferDomain = (context, next) => {
 	const useStandardBack =
 		context.query.useStandardBack === 'true' || context.query.useStandardBack === '1';
 
 	context.primary = (
 		<Main wideLayout>
-			<PageViewTracker
-				path={ domainTransferIn( ':site' ) }
-				title="Domain Search > Domain Transfer"
-			/>
-			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
+			<PageViewTracker path={domainTransferIn(':site')} title="Domain Search > Domain Transfer" />
+			<DocumentHead title={translate('Transfer a Domain')} />
 			<CartData>
 				<TransferDomain
-					basePath={ sectionify( context.path ) }
-					initialQuery={ context.query.initialQuery }
-					useStandardBack={ useStandardBack }
+					basePath={sectionify(context.path)}
+					initialQuery={context.query.initialQuery}
+					useStandardBack={useStandardBack}
 				/>
 			</CartData>
 		</Main>
@@ -128,27 +125,27 @@ const transferDomain = ( context, next ) => {
 	next();
 };
 
-const useYourDomain = ( context, next ) => {
+const useYourDomain = (context, next) => {
 	const handleGoBack = () => {
-		let path = `/domains/add/${ context.params.site }`;
-		if ( context.query.initialQuery ) {
-			path += `?suggestion=${ context.query.initialQuery }`;
+		let path = `/domains/add/${context.params.site}`;
+		if (context.query.initialQuery) {
+			path += `?suggestion=${context.query.initialQuery}`;
 		}
 
-		page( path );
+		page(path);
 	};
 	context.primary = (
 		<Main>
 			<PageViewTracker
-				path={ domainUseYourDomain( ':site' ) }
+				path={domainUseYourDomain(':site')}
 				title="Domain Search > Use Your Own Domain"
 			/>
-			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
+			<DocumentHead title={translate('Use Your Own Domain')} />
 			<CartData>
 				<UseYourDomainStep
-					basePath={ sectionify( context.path ) }
-					initialQuery={ context.query.initialQuery }
-					goBack={ handleGoBack }
+					basePath={sectionify(context.path)}
+					initialQuery={context.query.initialQuery}
+					goBack={handleGoBack}
 				/>
 			</CartData>
 		</Main>
@@ -156,27 +153,23 @@ const useYourDomain = ( context, next ) => {
 	next();
 };
 
-const transferDomainPrecheck = ( context, next ) => {
+const transferDomainPrecheck = (context, next) => {
 	const state = context.store.getState();
-	const siteSlug = getSelectedSiteSlug( state ) || '';
-	const domain = get( context, 'params.domain', '' );
+	const siteSlug = getSelectedSiteSlug(state) || '';
+	const domain = get(context, 'params.domain', '');
 
 	const handleGoBack = () => {
-		page( domainManagementTransferIn( siteSlug, domain ) );
+		page(domainManagementTransferIn(siteSlug, domain));
 	};
 	context.primary = (
 		<Main>
 			<PageViewTracker
-				path={ domainManagementTransferInPrecheck( ':site', ':domain' ) }
+				path={domainManagementTransferInPrecheck(':site', ':domain')}
 				title="My Sites > Domains > Selected Domain"
 			/>
 			<CartData>
 				<div>
-					<TransferDomainStep
-						forcePrecheck={ true }
-						initialQuery={ domain }
-						goBack={ handleGoBack }
-					/>
+					<TransferDomainStep forcePrecheck={true} initialQuery={domain} goBack={handleGoBack} />
 				</div>
 			</CartData>
 		</Main>
@@ -184,8 +177,8 @@ const transferDomainPrecheck = ( context, next ) => {
 	next();
 };
 
-const googleAppsWithRegistration = ( context, next ) => {
-	if ( ! isGSuiteRestricted() ) {
+const googleAppsWithRegistration = (context, next) => {
+	if (!isGSuiteRestricted()) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
@@ -193,12 +186,12 @@ const googleAppsWithRegistration = ( context, next ) => {
 					title="Domain Search > Domain Registration > Google Apps"
 				/>
 				<DocumentHead
-					title={ translate( 'Register %(domain)s', {
+					title={translate('Register %(domain)s', {
 						args: { domain: context.params.registerDomain },
-					} ) }
+					})}
 				/>
 				<CartData>
-					<GSuiteUpgrade domain={ context.params.registerDomain } />
+					<GSuiteUpgrade domain={context.params.registerDomain} />
 				</CartData>
 			</Main>
 		);
@@ -207,32 +200,32 @@ const googleAppsWithRegistration = ( context, next ) => {
 	next();
 };
 
-const redirectIfNoSite = redirectTo => {
-	return ( context, next ) => {
+const redirectIfNoSite = (redirectTo) => {
+	return (context, next) => {
 		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const sites = getSites( state );
-		const siteIds = map( sites, 'ID' );
+		const siteId = getSelectedSiteId(state);
+		const sites = getSites(state);
+		const siteIds = map(sites, 'ID');
 
-		if ( ! includes( siteIds, siteId ) ) {
-			const user = getCurrentUser( state );
-			const visibleSiteCount = get( user, 'visible_site_count', 0 );
+		if (!includes(siteIds, siteId)) {
+			const user = getCurrentUser(state);
+			const visibleSiteCount = get(user, 'visible_site_count', 0);
 			//if only one site navigate to stats to avoid redirect loop
 			const redirect = visibleSiteCount > 1 ? redirectTo : '/stats';
-			return page.redirect( redirect );
+			return page.redirect(redirect);
 		}
 		next();
 	};
 };
 
 const redirectToUseYourDomainIfVipSite = () => {
-	return ( context, next ) => {
+	return (context, next) => {
 		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
+		const selectedSite = getSelectedSite(state);
 
-		if ( selectedSite && selectedSite.is_vip ) {
+		if (selectedSite && selectedSite.is_vip) {
 			return page.redirect(
-				domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
+				domainUseYourDomain(selectedSite.slug, get(context, 'params.suggestion', ''))
 			);
 		}
 
@@ -240,23 +233,23 @@ const redirectToUseYourDomainIfVipSite = () => {
 	};
 };
 
-const jetpackNoDomainsWarning = ( context, next ) => {
+const jetpackNoDomainsWarning = (context, next) => {
 	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
+	const selectedSite = getSelectedSite(state);
 
-	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
+	if (selectedSite && selectedSite.jetpack && !isATEnabled(selectedSite)) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
-					path={ context.path.indexOf( '/domains/add' ) === 0 ? '/domains/add' : '/domains/manage' }
+					path={context.path.indexOf('/domains/add') === 0 ? '/domains/add' : '/domains/manage'}
 					title="My Sites > Domains > No Domains On Jetpack"
 				/>
-				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
+				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={selectedSite.ID} />
 			</Main>
 		);
 
-		makeLayout( context, noop );
-		clientRender( context );
+		makeLayout(context, noop);
+		clientRender(context);
 	} else {
 		next();
 	}

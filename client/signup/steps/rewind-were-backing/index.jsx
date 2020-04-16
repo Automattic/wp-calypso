@@ -37,22 +37,22 @@ class RewindWereBacking extends Component {
 		return (
 			<Card className="rewind-were-backing__card rewind-switch__card rewind-switch__content">
 				<h3 className="rewind-were-backing__title rewind-switch__heading">
-					{ translate( 'Your site is set up and ready!' ) }
+					{translate('Your site is set up and ready!')}
 				</h3>
 				<img src="/calypso/images/illustrations/thankYou.svg" alt="" />
 				<p className="rewind-were-backing__description rewind-switch__description">
-					{ get( dependencyStore, 'rewindconfig', false ) &&
+					{get(dependencyStore, 'rewindconfig', false) &&
 						translate(
 							'Your site is being backed up because it is set up with ' +
 								'Jetpack Premium at no additional cost to you.'
-						) + ' ' }
-					{ translate(
+						) + ' '}
+					{translate(
 						'Finish setting up Jetpack and your site is ready to be ' +
 							'transformed into the site of your dreams.'
-					) }
+					)}
 				</p>
-				<Button primary href={ `/activity-log/${ siteSlug }` }>
-					{ translate( 'View your activity' ) }
+				<Button primary href={`/activity-log/${siteSlug}`}>
+					{translate('View your activity')}
 				</Button>
 			</Card>
 		);
@@ -61,22 +61,22 @@ class RewindWereBacking extends Component {
 	render() {
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				stepContent={ this.stepContent() }
-				hideFormattedHeader={ true }
-				hideSkip={ true }
-				hideBack={ true }
+				flowName={this.props.flowName}
+				stepName={this.props.stepName}
+				positionInFlow={this.props.positionInFlow}
+				stepContent={this.stepContent()}
+				hideFormattedHeader={true}
+				hideSkip={true}
+				hideBack={true}
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], 0 ),
-		dependencyStore: getSignupDependencyStore( state ),
-	} ),
+	(state, ownProps) => ({
+		siteSlug: get(ownProps, ['initialContext', 'query', 'siteSlug'], 0),
+		dependencyStore: getSignupDependencyStore(state),
+	}),
 	null
-)( localize( RewindWereBacking ) );
+)(localize(RewindWereBacking));

@@ -40,19 +40,19 @@ import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
-const updateQueryArg = params =>
-	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
+const updateQueryArg = (params) =>
+	page.replace(addQueryArgs(params, window.location.pathname + window.location.search));
 
-const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+const pickSort = (sort) => (sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE);
 
-const SpacerDiv = withDimensions( ( { width, height } ) => (
+const SpacerDiv = withDimensions(({ width, height }) => (
 	<div
-		style={ {
-			width: `${ width }px`,
-			height: `${ height }px`,
-		} }
+		style={{
+			width: `${width}px`,
+			height: `${height}px`,
+		}}
 	/>
-) );
+));
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -60,190 +60,177 @@ class SearchStream extends React.Component {
 		streamKey: PropTypes.string,
 	};
 
-	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
+	getTitle = (props = this.props) => props.query || props.translate('Search');
 
 	state = {
 		selected: SEARCH_TYPES.POSTS,
 	};
 
-	updateQuery = newValue => {
+	updateQuery = (newValue) => {
 		this.scrollToTop();
-		const trimmedValue = trim( newValue ).substring( 0, 1024 );
+		const trimmedValue = trim(newValue).substring(0, 1024);
 		if (
-			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
+			(trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query) ||
 			newValue === ''
 		) {
-			updateQueryArg( { q: newValue } );
+			updateQueryArg({ q: newValue });
 		}
 	};
 
 	scrollToTop = () => {
-		window.scrollTo( 0, 0 );
+		window.scrollTo(0, 0);
 	};
 
 	useRelevanceSort = () => {
 		const sort = 'relevance';
-		recordAction( 'search_page_clicked_relevance_sort' );
-		recordTrack( 'calypso_reader_clicked_search_sort', {
+		recordAction('search_page_clicked_relevance_sort');
+		recordTrack('calypso_reader_clicked_search_sort', {
 			query: this.props.query,
 			sort,
-		} );
-		updateQueryArg( { sort } );
+		});
+		updateQueryArg({ sort });
 	};
 
 	useDateSort = () => {
 		const sort = 'date';
-		recordAction( 'search_page_clicked_date_sort' );
-		recordTrack( 'calypso_reader_clicked_search_sort', {
+		recordAction('search_page_clicked_date_sort');
+		recordTrack('calypso_reader_clicked_search_sort', {
 			query: this.props.query,
 			sort,
-		} );
-		updateQueryArg( { sort } );
+		});
+		updateQueryArg({ sort });
 	};
 
-	handleFixedAreaMounted = ref => ( this.fixedAreaRef = ref );
+	handleFixedAreaMounted = (ref) => (this.fixedAreaRef = ref);
 
-	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
+	handleSearchTypeSelection = (searchType) => updateQueryArg({ show: searchType });
 
 	render() {
 		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
-		const showFollowByUrl = resemblesUrl( query );
-		const queryWithoutProtocol = withoutHttp( query );
+		const showFollowByUrl = resemblesUrl(query);
+		const queryWithoutProtocol = withoutHttp(query);
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
-		if ( ! searchPlaceholderText ) {
+		if (!searchPlaceholderText) {
 			searchPlaceholderText = getSearchPlaceholderText();
 		}
 
-		const documentTitle = translate( '%s ‹ Reader', {
+		const documentTitle = translate('%s ‹ Reader', {
 			args: this.getTitle(),
 			comment: '%s is the section name. For example: "My Likes"',
-		} );
+		});
 
-		const TEXT_RELEVANCE_SORT = translate( 'Relevance', {
+		const TEXT_RELEVANCE_SORT = translate('Relevance', {
 			comment: 'A sort order, showing the most relevant posts first.',
-		} );
+		});
 
-		const TEXT_DATE_SORT = translate( 'Date', {
+		const TEXT_DATE_SORT = translate('Date', {
 			comment: 'A sort order, showing the most recent posts first.',
-		} );
+		});
 
-		const searchStreamResultsClasses = classnames( 'search-stream__results', {
-			'is-two-columns': !! query,
-		} );
+		const searchStreamResultsClasses = classnames('search-stream__results', {
+			'is-two-columns': !!query,
+		});
 
-		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
+		const singleColumnResultsClasses = classnames('search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
-		} );
+		});
 		const suggestionList = initial(
-			flatMap( suggestions, suggestion => [
+			flatMap(suggestions, (suggestion) => [
 				<Suggestion
-					suggestion={ suggestion.text }
+					suggestion={suggestion.text}
 					source="search"
-					sort={ sortOrder === 'date' ? sortOrder : undefined }
-					railcar={ suggestion.railcar }
+					sort={sortOrder === 'date' ? sortOrder : undefined}
+					railcar={suggestion.railcar}
 				/>,
 				', ',
-			] )
+			])
 		);
 
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<div>
-				<DocumentHead title={ documentTitle } />
+				<DocumentHead title={documentTitle} />
 				<div
 					className="search-stream__fixed-area"
-					style={ { width: this.props.width } }
-					ref={ this.handleFixedAreaMounted }
+					style={{ width: this.props.width }}
+					ref={this.handleFixedAreaMounted}
 				>
 					<MobileBackToSidebar>
-						<h1>{ translate( 'Streams' ) }</h1>
+						<h1>{translate('Streams')}</h1>
 					</MobileBackToSidebar>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
-							onSearch={ this.updateQuery }
-							onSearchClose={ this.scrollToTop }
-							autoFocus={ this.props.autoFocusInput }
-							delaySearch={ true }
-							delayTimeout={ 500 }
-							placeholder={ searchPlaceholderText }
-							initialValue={ query || '' }
-							value={ query || '' }
+							onSearch={this.updateQuery}
+							onSearchClose={this.scrollToTop}
+							autoFocus={this.props.autoFocusInput}
+							delaySearch={true}
+							delayTimeout={500}
+							placeholder={searchPlaceholderText}
+							initialValue={query || ''}
+							value={query || ''}
 						/>
-						{ query && (
+						{query && (
 							<SegmentedControl compact className="search-stream__sort-picker">
 								<SegmentedControl.Item
-									selected={ sortOrder !== 'date' }
-									onClick={ this.useRelevanceSort }
+									selected={sortOrder !== 'date'}
+									onClick={this.useRelevanceSort}
 								>
-									{ TEXT_RELEVANCE_SORT }
+									{TEXT_RELEVANCE_SORT}
 								</SegmentedControl.Item>
-								<SegmentedControl.Item
-									selected={ sortOrder === 'date' }
-									onClick={ this.useDateSort }
-								>
-									{ TEXT_DATE_SORT }
+								<SegmentedControl.Item selected={sortOrder === 'date'} onClick={this.useDateSort}>
+									{TEXT_DATE_SORT}
 								</SegmentedControl.Item>
 							</SegmentedControl>
-						) }
+						)}
 					</CompactCard>
-					{ showFollowByUrl && (
+					{showFollowByUrl && (
 						<div className="search-stream__url-follow">
 							<FollowButton
-								followLabel={ translate( 'Follow %s', {
+								followLabel={translate('Follow %s', {
 									args: queryWithoutProtocol,
 									comment: '%s is the name of the site being followed. For example: "Discover"',
-								} ) }
-								followingLabel={ translate( 'Following %s', {
+								})}
+								followingLabel={translate('Following %s', {
 									args: queryWithoutProtocol,
 									comment: '%s is the name of the site being followed. For example: "Discover"',
-								} ) }
-								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
-								followSource={ SEARCH_RESULTS_URL_INPUT }
+								})}
+								siteUrl={addSchemeIfMissing(readerAliasedFollowFeedUrl, 'http')}
+								followSource={SEARCH_RESULTS_URL_INPUT}
 							/>
 						</div>
-					) }
-					{ query && (
+					)}
+					{query && (
 						<SearchStreamHeader
-							selected={ searchType }
-							onSelection={ this.handleSearchTypeSelection }
-							wideDisplay={ wideDisplay }
+							selected={searchType}
+							onSelection={this.handleSearchTypeSelection}
+							wideDisplay={wideDisplay}
 						/>
-					) }
-					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
+					)}
+					{!query && <BlankSuggestions suggestions={suggestionList} />}
 				</div>
-				<SpacerDiv domTarget={ this.fixedAreaRef } />
-				{ wideDisplay && (
-					<div className={ searchStreamResultsClasses }>
+				<SpacerDiv domTarget={this.fixedAreaRef} />
+				{wideDisplay && (
+					<div className={searchStreamResultsClasses}>
 						<div className="search-stream__post-results">
-							<PostResults { ...this.props } />
+							<PostResults {...this.props} />
 						</div>
-						{ query && (
+						{query && (
 							<div className="search-stream__site-results">
-								<SiteResults
-									query={ query }
-									sort={ pickSort( sortOrder ) }
-									showLastUpdatedDate={ false }
-								/>
+								<SiteResults query={query} sort={pickSort(sortOrder)} showLastUpdatedDate={false} />
 							</div>
-						) }
+						)}
 					</div>
-				) }
-				{ ! wideDisplay && (
-					<div className={ singleColumnResultsClasses }>
-						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) && (
-							<PostResults { ...this.props } />
-						) ) || (
-							<SiteResults
-								query={ query }
-								sort={ pickSort( sortOrder ) }
-								showLastUpdatedDate={ true }
-							/>
-						) }
+				)}
+				{!wideDisplay && (
+					<div className={singleColumnResultsClasses}>
+						{((searchType === SEARCH_TYPES.POSTS || !query) && <PostResults {...this.props} />) || (
+							<SiteResults query={query} sort={pickSort(sortOrder)} showLastUpdatedDate={true} />
+						)}
 					</div>
-				) }
+				)}
 			</div>
 		);
 		/* eslint-enable jsx-a11y/no-autofocus */
@@ -252,14 +239,14 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = Component => props => (
+const wrapWithMain = (Component) => (props) => (
 	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
-		<Component { ...props } />
+		<Component {...props} />
 	</ReaderMain>
 );
 /* eslint-enable */
 
-export default connect( ( state, ownProps ) => ( {
+export default connect((state, ownProps) => ({
 	readerAliasedFollowFeedUrl:
-		ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
-} ) )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
+		ownProps.query && getReaderAliasedFollowFeedUrl(state, ownProps.query),
+}))(localize(SuggestionProvider(wrapWithMain(withDimensions(SearchStream)))));

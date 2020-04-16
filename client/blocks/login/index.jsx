@@ -87,20 +87,20 @@ class Login extends Component {
 	};
 
 	componentDidMount() {
-		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
+		if (!this.props.twoFactorEnabled && this.props.twoFactorAuthType) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isNative: true, isJetpack: this.props.isJetpack } ) );
+			page(login({ isNative: true, isJetpack: this.props.isJetpack }));
 		}
 
-		window.scrollTo( 0, 0 );
+		window.scrollTo(0, 0);
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		const hasNotice = this.props.requestNotice !== prevProps.requestNotice;
 		const isNewPage = this.props.twoFactorAuthType !== prevProps.twoFactorAuthType;
 
-		if ( isNewPage || hasNotice ) {
-			window.scrollTo( 0, 0 );
+		if (isNewPage || hasNotice) {
+			window.scrollTo(0, 0);
 		}
 	}
 
@@ -118,21 +118,21 @@ class Login extends Component {
 		} = this.props;
 
 		return (
-			! twoStepNonce &&
-			! socialConnect &&
-			! privateSite &&
-			! oauth2Client &&
-			! ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) &&
-			! isJetpack &&
-			! fromSite &&
-			! twoFactorEnabled &&
+			!twoStepNonce &&
+			!socialConnect &&
+			!privateSite &&
+			!oauth2Client &&
+			!(config.isEnabled('jetpack/connect/woocommerce') && isJetpackWooCommerceFlow) &&
+			!isJetpack &&
+			!fromSite &&
+			!twoFactorEnabled &&
 			currentUser &&
-			! this.state.continueAsAnotherUser
+			!this.state.continueAsAnotherUser
 		);
 	};
 
 	handleValidLogin = () => {
-		if ( this.props.twoFactorEnabled ) {
+		if (this.props.twoFactorEnabled) {
 			let defaultAuthType;
 			if (
 				this.state.isBrowserSupported &&
@@ -141,23 +141,23 @@ class Login extends Component {
 			) {
 				defaultAuthType = 'webauthn';
 			} else {
-				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
+				defaultAuthType = this.props.twoFactorNotificationSent.replace('none', 'authenticator');
 			}
 			page(
-				login( {
+				login({
 					isNative: true,
 					isJetpack: this.props.isJetpack,
 					isGutenboarding: this.props.isGutenboarding,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: defaultAuthType,
-				} )
+				})
 			);
-		} else if ( this.props.isLinking ) {
+		} else if (this.props.isLinking) {
 			page(
-				login( {
+				login({
 					isNative: true,
 					socialConnect: true,
-				} )
+				})
 			);
 		} else {
 			this.rebootAfterLogin();
@@ -165,12 +165,12 @@ class Login extends Component {
 	};
 
 	handleValid2FACode = () => {
-		if ( this.props.isLinking ) {
+		if (this.props.isLinking) {
 			page(
-				login( {
+				login({
 					isNative: true,
 					socialConnect: true,
-				} )
+				})
 			);
 		} else {
 			this.rebootAfterLogin();
@@ -178,14 +178,14 @@ class Login extends Component {
 	};
 
 	handleContinueAsAnotherUser = () => {
-		this.setState( { continueAsAnotherUser: true } );
+		this.setState({ continueAsAnotherUser: true });
 	};
 
 	rebootAfterLogin = async () => {
-		this.props.recordTracksEvent( 'calypso_login_success', {
+		this.props.recordTracksEvent('calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
 			social_service_connected: this.props.socialConnect,
-		} );
+		});
 
 		// Redirects to / if no redirect url is available
 		const url = this.props.redirectTo || '/';
@@ -193,7 +193,7 @@ class Login extends Component {
 		// User data is persisted in localstorage at `lib/user/user` line 157.
 		// Only clear the data if a user is currently set, otherwise keep the
 		// logged out state around so that it can be used in signup.
-		if ( user.get() ) {
+		if (user.get()) {
 			await user.clear();
 		}
 
@@ -216,38 +216,38 @@ class Login extends Component {
 			fromSite,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account' );
+		let headerText = translate('Log in to your account');
 		let preHeader = null;
 		let postHeader = null;
 
-		if ( isManualRenewalImmediateLoginAttempt ) {
-			headerText = translate( 'Log in to update your payment details and renew your subscription' );
+		if (isManualRenewalImmediateLoginAttempt) {
+			headerText = translate('Log in to update your payment details and renew your subscription');
 		}
 
-		if ( twoStepNonce ) {
-			headerText = translate( 'Two-Step Authentication' );
-		} else if ( socialConnect ) {
-			headerText = translate( 'Connect your %(service)s account', {
+		if (twoStepNonce) {
+			headerText = translate('Two-Step Authentication');
+		} else if (socialConnect) {
+			headerText = translate('Connect your %(service)s account', {
 				args: {
-					service: capitalize( linkingSocialService ),
+					service: capitalize(linkingSocialService),
 				},
-			} );
-		} else if ( privateSite ) {
-			headerText = translate( 'This is a private WordPress.com site' );
-		} else if ( oauth2Client ) {
-			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
+			});
+		} else if (privateSite) {
+			headerText = translate('This is a private WordPress.com site');
+		} else if (oauth2Client) {
+			headerText = translate('Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
 					clientTitle: oauth2Client.title,
 				},
 				comment:
 					"'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')",
-			} );
+			});
 
-			if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
-				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
+			if (isWooOAuth2Client(oauth2Client) && !wccomFrom) {
+				preHeader = <Gridicon icon="my-sites" size={72} />;
 				postHeader = (
 					<p>
-						{ translate(
+						{translate(
 							'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}',
 							{
 								components: {
@@ -261,91 +261,91 @@ class Login extends Component {
 									br: <br />,
 								},
 							}
-						) }
+						)}
 					</p>
 				);
 			}
 
 			if (
-				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-				isWooOAuth2Client( oauth2Client ) &&
+				config.isEnabled('woocommerce/onboarding-oauth') &&
+				isWooOAuth2Client(oauth2Client) &&
 				wccomFrom
 			) {
 				preHeader = (
 					<Fragment>
-						{ 'cart' === wccomFrom ? (
+						{'cart' === wccomFrom ? (
 							<WooCommerceConnectCartHeader />
 						) : (
 							<div className="login__woocommerce-wrapper">
-								<div className={ classNames( 'login__woocommerce-logo' ) }>
-									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
+								<div className={classNames('login__woocommerce-logo')}>
+									<svg width={200} viewBox={'0 0 1270 170'}>
 										<AsyncLoad
 											require="components/jetpack-header/woocommerce"
-											darkColorScheme={ false }
-											placeholder={ null }
+											darkColorScheme={false}
+											placeholder={null}
 										/>
 									</svg>
 								</div>
 							</div>
-						) }
+						)}
 					</Fragment>
 				);
-				headerText = translate( 'Log in with a WordPress.com account' );
+				headerText = translate('Log in with a WordPress.com account');
 				postHeader = (
 					<p className="login__header-subtitle">
-						{ translate(
+						{translate(
 							'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
-						) }
+						)}
 					</p>
 				);
 			}
 
-			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				headerText = translate( 'Sign in to %(clientTitle)s', {
+			if (isCrowdsignalOAuth2Client(oauth2Client)) {
+				headerText = translate('Sign in to %(clientTitle)s', {
 					args: {
 						clientTitle: oauth2Client.title,
 					},
-				} );
+				});
 			}
-		} else if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
-			headerText = translate( 'Log in to your WordPress.com account' );
+		} else if (config.isEnabled('jetpack/connect/woocommerce') && isJetpackWooCommerceFlow) {
+			headerText = translate('Log in to your WordPress.com account');
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
 						require="components/jetpack-header"
-						placeholder={ null }
-						partnerSlug={ this.props.partnerSlug }
+						placeholder={null}
+						partnerSlug={this.props.partnerSlug}
 						isWoo
-						width={ 200 }
+						width={200}
 						lightColorScheme
 					/>
 				</div>
 			);
 			postHeader = (
 				<p className="login__header-subtitle">
-					{ translate(
+					{translate(
 						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
-					) }
+					)}
 				</p>
 			);
-		} else if ( isJetpack ) {
-			headerText = translate( 'Log in or create a WordPress.com account to set up Jetpack' );
+		} else if (isJetpack) {
+			headerText = translate('Log in or create a WordPress.com account to set up Jetpack');
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
 						require="components/jetpack-header"
-						placeholder={ null }
-						partnerSlug={ this.props.partnerSlug }
+						placeholder={null}
+						partnerSlug={this.props.partnerSlug}
 						darkColorScheme
 					/>
 				</div>
 			);
-		} else if ( fromSite ) {
+		} else if (fromSite) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
-			postHeader = <VisitSite siteSlug={ fromSite } />;
+			postHeader = <VisitSite siteSlug={fromSite} />;
 		}
 
-		if ( isGutenboarding ) {
+		if (isGutenboarding) {
 			preHeader = (
 				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg
@@ -365,9 +365,9 @@ class Login extends Component {
 
 		return (
 			<div className="login__form-header-wrapper">
-				{ preHeader }
-				<div className="login__form-header">{ headerText }</div>
-				{ postHeader }
+				{preHeader}
+				<div className="login__form-header">{headerText}</div>
+				{postHeader}
 			</div>
 		);
 	}
@@ -375,13 +375,13 @@ class Login extends Component {
 	renderNotice() {
 		const { requestNotice } = this.props;
 
-		if ( ! requestNotice ) {
+		if (!requestNotice) {
 			return null;
 		}
 
 		return (
-			<Notice status={ requestNotice.status } showDismiss={ false }>
-				{ requestNotice.message }
+			<Notice status={requestNotice.status} showDismiss={false}>
+				{requestNotice.message}
 			</Notice>
 		);
 	}
@@ -402,111 +402,108 @@ class Login extends Component {
 			locale,
 		} = this.props;
 
-		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported ) {
+		if (twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported) {
 			return (
 				<div>
-					<SecurityKeyForm twoFactorAuthType="webauthn" onSuccess={ this.handleValid2FACode } />
+					<SecurityKeyForm twoFactorAuthType="webauthn" onSuccess={this.handleValid2FACode} />
 				</div>
 			);
 		}
 
 		let poller;
-		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
-			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
+		if (twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push') {
+			poller = <PushNotificationApprovalPoller onSuccess={this.rebootAfterLogin} />;
 		}
 
-		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
+		if (twoFactorEnabled && includes(['authenticator', 'sms', 'backup'], twoFactorAuthType)) {
 			return (
 				<div>
-					{ poller }
+					{poller}
 					<VerificationCodeForm
-						isJetpack={ isJetpack }
-						isGutenboarding={ isGutenboarding }
-						onSuccess={ this.handleValid2FACode }
-						twoFactorAuthType={ twoFactorAuthType }
+						isJetpack={isJetpack}
+						isGutenboarding={isGutenboarding}
+						onSuccess={this.handleValid2FACode}
+						twoFactorAuthType={twoFactorAuthType}
 					/>
 				</div>
 			);
 		}
 
-		if ( twoFactorEnabled && twoFactorAuthType === 'push' ) {
+		if (twoFactorEnabled && twoFactorAuthType === 'push') {
 			return (
 				<div>
-					{ poller }
+					{poller}
 					<WaitingTwoFactorNotificationApproval
-						isJetpack={ isJetpack }
-						isGutenboarding={ isGutenboarding }
+						isJetpack={isJetpack}
+						isGutenboarding={isGutenboarding}
 					/>
 				</div>
 			);
 		}
 
-		if ( socialConnect ) {
+		if (socialConnect) {
 			return (
-				<AsyncLoad
-					require="blocks/login/social-connect-prompt"
-					onSuccess={ this.handleValidLogin }
-				/>
+				<AsyncLoad require="blocks/login/social-connect-prompt" onSuccess={this.handleValidLogin} />
 			);
 		}
 
-		if ( this.showContinueAsUser() ) {
+		if (this.showContinueAsUser()) {
 			// someone is already logged in, offer to proceed to the app without a new login
-			return <ContinueAsUser onChangeAccount={ this.handleContinueAsAnotherUser } />;
+			return <ContinueAsUser onChangeAccount={this.handleContinueAsAnotherUser} />;
 		}
 
 		return (
 			<LoginForm
-				disableAutoFocus={ disableAutoFocus }
-				onSuccess={ this.handleValidLogin }
-				privateSite={ privateSite }
-				socialService={ socialService }
-				socialServiceResponse={ socialServiceResponse }
-				domain={ domain }
-				isJetpack={ isJetpack }
-				isGutenboarding={ isGutenboarding }
-				locale={ locale }
+				disableAutoFocus={disableAutoFocus}
+				onSuccess={this.handleValidLogin}
+				privateSite={privateSite}
+				socialService={socialService}
+				socialServiceResponse={socialServiceResponse}
+				domain={domain}
+				isJetpack={isJetpack}
+				isGutenboarding={isGutenboarding}
+				locale={locale}
 			/>
 		);
 	}
 
 	renderFooter() {
-		return ! this.showContinueAsUser() && this.props.footer;
+		return !this.showContinueAsUser() && this.props.footer;
 	}
 
 	render() {
 		const { isJetpack } = this.props;
 		return (
-			<div className={ classNames( 'login', { 'is-jetpack': isJetpack } ) }>
-				{ this.renderHeader() }
+			<div className={classNames('login', { 'is-jetpack': isJetpack })}>
+				{this.renderHeader()}
 
 				<ErrorNotice />
 
-				{ this.renderNotice() }
+				{this.renderNotice()}
 
-				{ this.renderContent() }
-				{ this.renderFooter() }
+				{this.renderContent()}
+				{this.renderFooter()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		currentUser: getCurrentUser( state ),
-		redirectTo: getRedirectToSanitized( state ),
-		requestNotice: getRequestNotice( state ),
-		twoFactorEnabled: isTwoFactorEnabled( state ),
-		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-		oauth2Client: getCurrentOAuth2Client( state ),
-		isLinking: getSocialAccountIsLinking( state ),
-		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
-		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-		linkingSocialService: getSocialAccountLinkService( state ),
-		partnerSlug: getPartnerSlugFromQuery( state ),
+	(state) => ({
+		currentUser: getCurrentUser(state),
+		redirectTo: getRedirectToSanitized(state),
+		requestNotice: getRequestNotice(state),
+		twoFactorEnabled: isTwoFactorEnabled(state),
+		twoFactorNotificationSent: getTwoFactorNotificationSent(state),
+		oauth2Client: getCurrentOAuth2Client(state),
+		isLinking: getSocialAccountIsLinking(state),
+		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted(state),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported(state, 'webauthn'),
+		linkingSocialService: getSocialAccountLinkService(state),
+		partnerSlug: getPartnerSlugFromQuery(state),
 		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-	} ),
+			'woocommerce-onboarding' === get(getCurrentQueryArguments(state), 'from'),
+		wccomFrom: get(getCurrentQueryArguments(state), 'wccom-from'),
+	}),
 	{ recordTracksEvent }
-)( localize( Login ) );
+)(localize(Login));

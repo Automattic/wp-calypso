@@ -11,11 +11,11 @@ import stats from './stats/reducer';
 
 export default withStorageKey(
 	'wp-super-cache',
-	combineReducers( {
+	combineReducers({
 		cache,
 		plugins,
 		status,
 		settings,
 		stats,
-	} )
+	})
 );

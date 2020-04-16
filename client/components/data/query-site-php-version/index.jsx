@@ -9,11 +9,11 @@ import { useDispatch } from 'react-redux';
  */
 import { getAtomicPhpVersion } from 'state/hosting/actions';
 
-export default function QuerySitePhpVersion( { siteId } ) {
+export default function QuerySitePhpVersion({ siteId }) {
 	const dispatch = useDispatch();
-	React.useEffect( () => {
-		dispatch( getAtomicPhpVersion( siteId ) );
-	}, [ dispatch, siteId ] );
+	React.useEffect(() => {
+		dispatch(getAtomicPhpVersion(siteId));
+	}, [dispatch, siteId]);
 
 	return null;
 }

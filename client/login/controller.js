@@ -18,7 +18,7 @@ import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
-const enhanceContextWithLogin = context => {
+const enhanceContextWithLogin = (context) => {
 	const {
 		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
 		path,
@@ -33,78 +33,78 @@ const enhanceContextWithLogin = context => {
 
 	context.primary = (
 		<WPLogin
-			isJetpack={ isJetpack === 'jetpack' }
-			isGutenboarding={ isGutenboarding === GUTENBOARDING_BASE_NAME }
-			path={ path }
-			twoFactorAuthType={ twoFactorAuthType }
-			socialService={ socialService }
-			socialServiceResponse={ socialServiceResponse }
-			socialConnect={ flow === 'social-connect' }
-			privateSite={ flow === 'private-site' }
-			domain={ ( query && query.domain ) || null }
-			fromSite={ ( query && query.site ) || null }
-			signupUrl={ ( query && query.signup_url ) || null }
+			isJetpack={isJetpack === 'jetpack'}
+			isGutenboarding={isGutenboarding === GUTENBOARDING_BASE_NAME}
+			path={path}
+			twoFactorAuthType={twoFactorAuthType}
+			socialService={socialService}
+			socialServiceResponse={socialServiceResponse}
+			socialConnect={flow === 'social-connect'}
+			privateSite={flow === 'private-site'}
+			domain={(query && query.domain) || null}
+			fromSite={(query && query.site) || null}
+			signupUrl={(query && query.signup_url) || null}
 		/>
 	);
 };
 
-export async function login( context, next ) {
+export async function login(context, next) {
 	const {
 		query: { client_id, redirect_to },
 	} = context;
 
 	// Remove id_token from the address bar and push social connect args into the state instead
-	if ( context.hash && context.hash.client_id ) {
-		page.replace( context.path, context.hash );
+	if (context.hash && context.hash.client_id) {
+		page.replace(context.path, context.hash);
 
 		return;
 	}
 
-	if ( client_id ) {
-		if ( ! redirect_to ) {
-			const error = new Error( 'The `redirect_to` query parameter is missing.' );
+	if (client_id) {
+		if (!redirect_to) {
+			const error = new Error('The `redirect_to` query parameter is missing.');
 			error.status = 401;
-			return next( error );
+			return next(error);
 		}
 
-		const parsedRedirectUrl = parseUrl( redirect_to );
-		const redirectQueryString = parse( parsedRedirectUrl.query );
+		const parsedRedirectUrl = parseUrl(redirect_to);
+		const redirectQueryString = parse(parsedRedirectUrl.query);
 
-		if ( client_id !== redirectQueryString.client_id ) {
+		if (client_id !== redirectQueryString.client_id) {
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
 			error.status = 401;
-			return next( error );
+			return next(error);
 		}
 
 		try {
-			await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
-		} catch ( error ) {
-			return next( error );
+			await context.store.dispatch(fetchOAuth2ClientData(client_id));
+		} catch (error) {
+			return next(error);
 		}
 	}
 
-	enhanceContextWithLogin( context );
+	enhanceContextWithLogin(context);
 
 	next();
 }
 
-export function magicLogin( context, next ) {
+export function magicLogin(context, next) {
 	const { path } = context;
 
-	context.primary = <MagicLogin path={ path } />;
+	context.primary = <MagicLogin path={path} />;
 
 	next();
 }
 
-export function magicLoginUse( context, next ) {
+export function magicLoginUse(context, next) {
 	/**
 	 * Pull the query arguments out of the URL & into the state.
 	 * It unclutters the address bar & will keep tokens out of tracking pixels.
 	 */
-	if ( context.querystring ) {
-		page.replace( context.pathname, context.query );
+	if (context.querystring) {
+		page.replace(context.pathname, context.query);
 
 		return;
 	}
@@ -114,41 +114,38 @@ export function magicLoginUse( context, next ) {
 	const { client_id, email, token } = previousQuery;
 
 	context.primary = (
-		<HandleEmailedLinkForm clientId={ client_id } emailAddress={ email } token={ token } />
+		<HandleEmailedLinkForm clientId={client_id} emailAddress={email} token={token} />
 	);
 
 	next();
 }
 
-export function redirectDefaultLocale( context, next ) {
+export function redirectDefaultLocale(context, next) {
 	// Only handle simple routes
-	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
+	if (context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en') {
 		return next();
 	}
 
 	// Do not redirect if user bootrapping is disabled
-	if (
-		! getCurrentUser( context.store.getState() ) &&
-		! config.isEnabled( 'wpcom-user-bootstrap' )
-	) {
+	if (!getCurrentUser(context.store.getState()) && !config.isEnabled('wpcom-user-bootstrap')) {
 		return next();
 	}
 
 	// Do not redirect if user is logged in and the locale is different than english
 	// so we force the page to display in english
-	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
-	if ( currentUserLocale && currentUserLocale !== 'en' ) {
+	const currentUserLocale = getCurrentUserLocale(context.store.getState());
+	if (currentUserLocale && currentUserLocale !== 'en') {
 		return next();
 	}
 
-	if ( context.params.isJetpack === 'jetpack' ) {
-		context.redirect( '/log-in/jetpack' );
+	if (context.params.isJetpack === 'jetpack') {
+		context.redirect('/log-in/jetpack');
 	} else {
-		context.redirect( '/log-in' );
+		context.redirect('/log-in');
 	}
 }
 
-export function redirectJetpack( context, next ) {
+export function redirectJetpack(context, next) {
 	const { isJetpack } = context.params;
 	const { redirect_to } = context.query;
 
@@ -160,8 +157,8 @@ export function redirectJetpack( context, next ) {
 	 * because the iOS app relies on seeing a request to /log-in$ to show its
 	 * native credentials form.
 	 */
-	if ( isJetpack !== 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
-		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
+	if (isJetpack !== 'jetpack' && includes(redirect_to, 'jetpack/connect')) {
+		return context.redirect(context.path.replace('log-in', 'log-in/jetpack'));
 	}
 	next();
 }

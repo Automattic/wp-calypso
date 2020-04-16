@@ -30,37 +30,37 @@ class PostSuggestions extends Component {
 
 	suggestionsRef = React.createRef();
 
-	handleKeyEvent = event => this.suggestionsRef.current.handleKeyEvent( event );
+	handleKeyEvent = (event) => this.suggestionsRef.current.handleKeyEvent(event);
 
-	suggest = ( { postId } ) => this.props.suggest( find( this.props.posts, { ID: postId } ) );
+	suggest = ({ postId }) => this.props.suggest(find(this.props.posts, { ID: postId }));
 
 	render() {
 		const { exclude, posts, search, siteId } = this.props;
-		const suggestions = map( posts, post => ( { label: post.title, postId: post.ID } ) );
+		const suggestions = map(posts, (post) => ({ label: post.title, postId: post.ID }));
 
 		return (
 			<Fragment>
-				<QueryPosts siteId={ siteId } query={ { search, exclude } } />
+				<QueryPosts siteId={siteId} query={{ search, exclude }} />
 				<Suggestions
-					ref={ this.suggestionsRef }
-					query={ search }
-					suggestions={ suggestions }
-					suggest={ this.suggest }
+					ref={this.suggestionsRef}
+					query={search}
+					suggestions={suggestions}
+					suggest={this.suggest}
 				/>
 			</Fragment>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { exclude, search } ) => {
-	const siteId = getSelectedSiteId( state );
+const mapStateToProps = (state, { exclude, search }) => {
+	const siteId = getSelectedSiteId(state);
 
 	return {
-		posts: getPostsForQuery( state, siteId, { search, exclude } ) || [],
+		posts: getPostsForQuery(state, siteId, { search, exclude }) || [],
 		siteId,
 	};
 };
 
-const connectComponent = connect( mapStateToProps, null, null, { forwardRef: true } );
+const connectComponent = connect(mapStateToProps, null, null, { forwardRef: true });
 
-export default connectComponent( PostSuggestions );
+export default connectComponent(PostSuggestions);

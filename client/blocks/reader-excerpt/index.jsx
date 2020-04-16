@@ -15,11 +15,11 @@ import Emojify from 'components/emojify';
  */
 import './style.scss';
 
-const ReaderExcerpt = ( { post, isDiscover } ) => {
+const ReaderExcerpt = ({ post, isDiscover }) => {
 	let excerpt = post.better_excerpt || post.excerpt;
 
 	// Force post.excerpt for Discover only
-	if ( isDiscover ) {
+	if (isDiscover) {
 		excerpt = post.excerpt;
 	}
 
@@ -28,7 +28,7 @@ const ReaderExcerpt = ( { post, isDiscover } ) => {
 			<Emojify>
 				<div
 					className="reader-excerpt__content reader-excerpt"
-					dangerouslySetInnerHTML={ { __html: excerpt } } // eslint-disable-line react/no-danger
+					dangerouslySetInnerHTML={{ __html: excerpt }} // eslint-disable-line react/no-danger
 				/>
 			</Emojify>
 		</AutoDirection>

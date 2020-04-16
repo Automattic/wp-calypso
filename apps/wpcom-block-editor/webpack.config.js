@@ -7,9 +7,9 @@
  * External dependencies
  */
 // eslint-disable-next-line import/no-extraneous-dependencies
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
-const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
-const path = require( 'path' );
+const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
+const getBaseWebpackConfig = require('@automattic/calypso-build/webpack.config.js');
+const path = require('path');
 
 /**
  * Internal variables
@@ -37,41 +37,41 @@ function getWebpackConfig(
 	env = {},
 	{
 		entry = {
-			'default.editor': path.join( __dirname, 'src', 'default', 'editor' ),
-			'default.view': path.join( __dirname, 'src', 'default', 'view' ),
-			'wpcom.editor': path.join( __dirname, 'src', 'wpcom', 'editor' ),
-			'calypso.editor': path.join( __dirname, 'src', 'calypso', 'editor' ),
-			'calypso.tinymce': path.join( __dirname, 'src', 'calypso', 'tinymce' ),
+			'default.editor': path.join(__dirname, 'src', 'default', 'editor'),
+			'default.view': path.join(__dirname, 'src', 'default', 'view'),
+			'wpcom.editor': path.join(__dirname, 'src', 'wpcom', 'editor'),
+			'calypso.editor': path.join(__dirname, 'src', 'calypso', 'editor'),
+			'calypso.tinymce': path.join(__dirname, 'src', 'calypso', 'tinymce'),
 		},
-		'output-path': outputPath = path.join( __dirname, 'dist' ),
+		'output-path': outputPath = path.join(__dirname, 'dist'),
 		'output-filename': outputFilename = isDevelopment ? '[name].js' : '[name].min.js',
 	}
 ) {
-	const webpackConfig = getBaseWebpackConfig( env, {
+	const webpackConfig = getBaseWebpackConfig(env, {
 		entry,
 		'output-filename': outputFilename,
 		'output-path': outputPath,
-	} );
+	});
 
 	return {
 		...webpackConfig,
 		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
 		plugins: [
 			...webpackConfig.plugins.filter(
-				plugin => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
+				(plugin) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
-			new DependencyExtractionWebpackPlugin( {
-				requestToExternal( request ) {
-					if ( request === 'tinymce/tinymce' ) {
+			new DependencyExtractionWebpackPlugin({
+				requestToExternal(request) {
+					if (request === 'tinymce/tinymce') {
 						return 'tinymce';
 					}
 				},
-				requestToHandle( request ) {
-					if ( request === 'tinymce/tinymce' ) {
+				requestToHandle(request) {
+					if (request === 'tinymce/tinymce') {
 						return 'wp-tinymce';
 					}
 				},
-			} ),
+			}),
 		],
 	};
 }

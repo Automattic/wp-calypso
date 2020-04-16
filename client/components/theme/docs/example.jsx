@@ -20,25 +20,25 @@ const ThemeExample = () => {
 	return (
 		<div>
 			<Theme
-				theme={ theme }
-				buttonContents={ {
+				theme={theme}
+				buttonContents={{
 					action1: {
 						label: 'Menu Item 1',
-						action: function() {
-							console.log( 'Menu Item 1 selected' );
+						action: function () {
+							console.log('Menu Item 1 selected');
 						},
 					},
 					action2: {
 						label: 'Menu Item 2',
-						action: function() {
-							console.log( 'Menu Item 2 selected' );
+						action: function () {
+							console.log('Menu Item 2 selected');
 						},
 					},
-				} }
+				}}
 				actionLabel="Click Action"
-				onScreenshotClick={ function() {
-					console.log( 'onScreenshotClick triggered' );
-				} }
+				onScreenshotClick={function () {
+					console.log('onScreenshotClick triggered');
+				}}
 			/>
 		</div>
 	);

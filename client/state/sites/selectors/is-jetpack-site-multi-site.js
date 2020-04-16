@@ -12,10 +12,10 @@ import isJetpackSite from './is-jetpack-site';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        true if the site is multi-site
  */
-export default function isJetpackSiteMultiSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
+export default function isJetpackSiteMultiSite(state, siteId) {
+	const site = getRawSite(state, siteId);
 
-	if ( ! site || ! isJetpackSite( state, siteId ) ) {
+	if (!site || !isJetpackSite(state, siteId)) {
 		return null;
 	}
 

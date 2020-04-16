@@ -11,8 +11,8 @@ import getSiteBySlug from './get-site-by-slug';
  * @param  {string}  url   Site URL
  * @returns {?object}       Site object
  */
-export default function getSiteByUrl( state, url ) {
-	const slug = urlToSlug( url );
+export default function getSiteByUrl(state, url) {
+	const slug = urlToSlug(url);
 
-	return getSiteBySlug( state, slug );
+	return getSiteBySlug(state, slug);
 }

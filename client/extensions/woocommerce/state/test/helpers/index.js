@@ -4,7 +4,7 @@
 
 import { mapValues } from 'lodash';
 
-export const createState = ( { ui, site } ) => {
+export const createState = ({ ui, site }) => {
 	return {
 		extensions: {
 			woocommerce: {
@@ -12,7 +12,7 @@ export const createState = ( { ui, site } ) => {
 					123: site,
 				},
 				ui: {
-					...mapValues( ui, branch => ( { 123: branch } ) ),
+					...mapValues(ui, (branch) => ({ 123: branch })),
 				},
 			},
 		},

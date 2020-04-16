@@ -16,14 +16,14 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const GoogleAppsDetails = props => {
+const GoogleAppsDetails = (props) => {
 	props.dismissNudge();
 
 	return (
 		<PurchaseDetail
 			icon="mail"
-			title={ i18n.translate( 'Check your email to finish setting up your G Suite account' ) }
-			description={ i18n.translate(
+			title={i18n.translate('Check your email to finish setting up your G Suite account')}
+			description={i18n.translate(
 				'We emailed you at {{strong}}%(email)s{{/strong}} with login information ' +
 					'so you can start using new professional email addresses and other G Suite apps. ' +
 					'If you can’t find it, try searching “G Suite” in your email inbox. {{link}}Learn more about G Suite{{/link}}',
@@ -33,7 +33,7 @@ const GoogleAppsDetails = props => {
 						link: (
 							<a
 								className="checkout-thank-you__gsuite-support-link"
-								href={ GOOGLE_APPS_LEARNING_CENTER }
+								href={GOOGLE_APPS_LEARNING_CENTER}
 								rel="noopener noreferrer"
 								target="_blank"
 							/>
@@ -43,13 +43,13 @@ const GoogleAppsDetails = props => {
 						email: user.get().email,
 					},
 				}
-			) }
-			requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
+			)}
+			requiredText={i18n.translate('Almost done! One step remaining…')}
 			isRequired
 		/>
 	);
 };
 
-export default connect( null, {
+export default connect(null, {
 	dismissNudge,
-} )( GoogleAppsDetails );
+})(GoogleAppsDetails);

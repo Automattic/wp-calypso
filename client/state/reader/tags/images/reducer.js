@@ -16,17 +16,17 @@ import { combineReducers } from 'state/utils';
  * @param  {object} action Action payload
  * @returns {Array}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
+export function items(state = {}, action) {
+	switch (action.type) {
 		case READER_TAG_IMAGES_RECEIVE:
 			let images = action.images;
-			if ( state[ action.tag ] ) {
-				images = state[ action.tag ].concat( action.images );
+			if (state[action.tag]) {
+				images = state[action.tag].concat(action.images);
 			}
 
 			return {
 				...state,
-				[ action.tag ]: images,
+				[action.tag]: images,
 			};
 	}
 
@@ -41,20 +41,20 @@ export function items( state = {}, action ) {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
+export function requesting(state = {}, action) {
+	switch (action.type) {
 		case READER_TAG_IMAGES_REQUEST:
 		case READER_TAG_IMAGES_REQUEST_SUCCESS:
 		case READER_TAG_IMAGES_REQUEST_FAILURE:
 			return {
 				...state,
-				[ action.tag ]: action.type === READER_TAG_IMAGES_REQUEST,
+				[action.tag]: action.type === READER_TAG_IMAGES_REQUEST,
 			};
 	}
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	requesting,
-} );
+});

@@ -7,18 +7,18 @@ import {
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
 } from 'state/action-types';
 
-describe( 'Domain Validation Schemas Actions', () => {
-	test( '#requestValidationSchemas()', () => {
-		expect( requestValidationSchemas( [ 'uk' ] ) ).toEqual( {
+describe('Domain Validation Schemas Actions', () => {
+	test('#requestValidationSchemas()', () => {
+		expect(requestValidationSchemas(['uk'])).toEqual({
 			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
-			tlds: [ 'uk' ],
-		} );
-	} );
+			tlds: ['uk'],
+		});
+	});
 
-	test( '#addValidationSchemas()', () => {
-		expect( addValidationSchemas( { uk: {} } ) ).toEqual( {
+	test('#addValidationSchemas()', () => {
+		expect(addValidationSchemas({ uk: {} })).toEqual({
 			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
 			schemas: { uk: {} },
-		} );
-	} );
-} );
+		});
+	});
+});

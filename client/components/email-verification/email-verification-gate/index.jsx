@@ -35,33 +35,33 @@ export class EmailVerificationGate extends React.Component {
 		noticeStatus: '',
 	};
 
-	handleFocus = e => {
+	handleFocus = (e) => {
 		e.target.blur();
 	};
 
 	render() {
-		if ( this.props.needsVerification ) {
+		if (this.props.needsVerification) {
 			return (
-				<div tabIndex="-1" className="email-verification-gate" onFocus={ this.handleFocus }>
+				<div tabIndex="-1" className="email-verification-gate" onFocus={this.handleFocus}>
 					<EmailUnverifiedNotice
-						userEmail={ this.props.userEmail }
-						noticeText={ this.props.noticeText }
-						noticeStatus={ this.props.noticeStatus }
+						userEmail={this.props.userEmail}
+						noticeText={this.props.noticeText}
+						noticeStatus={this.props.noticeStatus}
 					/>
-					<div className="email-verification-gate__content">{ this.props.children }</div>
+					<div className="email-verification-gate__content">{this.props.children}</div>
 				</div>
 			);
 		}
 
-		return <div>{ this.props.children }</div>;
+		return <div>{this.props.children}</div>;
 	}
 }
 
-export default connect( ( state, { allowUnlaunched } ) => {
-	const userEmail = getCurrentUserEmail( state );
+export default connect((state, { allowUnlaunched }) => {
+	const userEmail = getCurrentUserEmail(state);
 	const needsVerification =
-		! isCurrentUserEmailVerified( state ) &&
-		! ( allowUnlaunched && isUnlaunchedSite( state, getSelectedSiteId( state ) ) );
+		!isCurrentUserEmailVerified(state) &&
+		!(allowUnlaunched && isUnlaunchedSite(state, getSelectedSiteId(state)));
 
 	return { userEmail, needsVerification };
-} )( EmailVerificationGate );
+})(EmailVerificationGate);

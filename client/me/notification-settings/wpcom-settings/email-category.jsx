@@ -23,20 +23,20 @@ class EmailCategory extends React.Component {
 	};
 
 	toggleSetting = () => {
-		this.props.toggleWPcomEmailSetting( this.props.name );
+		this.props.toggleWPcomEmailSetting(this.props.name);
 	};
 
 	render() {
 		return (
 			<FormFieldset>
-				<FormLegend>{ this.props.title }</FormLegend>
+				<FormLegend>{this.props.title}</FormLegend>
 				<FormLabel>
-					<FormCheckbox checked={ this.props.isEnabled } onChange={ this.toggleSetting } />
-					<span>{ this.props.description }</span>
+					<FormCheckbox checked={this.props.isEnabled} onChange={this.toggleSetting} />
+					<span>{this.props.description}</span>
 				</FormLabel>
 			</FormFieldset>
 		);
 	}
 }
 
-export default connect( null, { toggleWPcomEmailSetting } )( EmailCategory );
+export default connect(null, { toggleWPcomEmailSetting })(EmailCategory);

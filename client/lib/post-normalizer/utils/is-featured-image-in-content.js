@@ -10,11 +10,11 @@ import url from 'url';
 import { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
 import { thumbIsLikelyImage } from 'lib/post-normalizer/utils/thumb-is-likely-image';
 
-function getPathname( uri ) {
-	const parsedUrl = url.parse( uri );
+function getPathname(uri) {
+	const parsedUrl = url.parse(uri);
 	const path = parsedUrl.pathname;
-	if ( isPhotonHost( parsedUrl.hostname ) ) {
-		return path.substring( path.indexOf( '/', 1 ) );
+	if (isPhotonHost(parsedUrl.hostname)) {
+		return path.substring(path.indexOf('/', 1));
 	}
 	return path;
 }
@@ -25,17 +25,17 @@ function getPathname( uri ) {
  * @returns {boolean|number} false if featuredImage is not within content content_images.
  *   otherwise returns the index of the dupe in post.images.
  */
-export function isFeaturedImageInContent( post ) {
-	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
-		const featuredImagePath = getPathname( post.post_thumbnail.URL );
+export function isFeaturedImageInContent(post) {
+	if (thumbIsLikelyImage(post.post_thumbnail)) {
+		const featuredImagePath = getPathname(post.post_thumbnail.URL);
 
 		const indexOfContentImage = findIndex(
 			post.images,
-			img => getPathname( img.src ) === featuredImagePath,
+			(img) => getPathname(img.src) === featuredImagePath,
 			1
 		); // skip first element in post.images because it is always the featuredImage
 
-		if ( indexOfContentImage > 0 ) {
+		if (indexOfContentImage > 0) {
 			return indexOfContentImage;
 		}
 	}

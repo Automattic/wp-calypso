@@ -29,13 +29,13 @@ class ProductSearch extends Component {
 	static propTypes = {
 		singular: PropTypes.bool,
 		showRegularPrice: PropTypes.bool,
-		value: PropTypes.oneOfType( [ PropTypes.array, PropTypes.number ] ),
+		value: PropTypes.oneOfType([PropTypes.array, PropTypes.number]),
 		onChange: PropTypes.func.isRequired,
 		products: PropTypes.array,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = {
 			searchFilter: '',
 		};
@@ -44,17 +44,17 @@ class ProductSearch extends Component {
 	componentDidMount() {
 		const { siteId, query } = this.props;
 
-		if ( siteId ) {
-			this.props.fetchProducts( siteId, query );
+		if (siteId) {
+			this.props.fetchProducts(siteId, query);
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps(newProps) {
 		const { siteId: oldSiteId } = this.props;
 		const { siteId: newSiteId, query } = newProps;
 
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchProducts( newSiteId, query );
+		if (oldSiteId !== newSiteId) {
+			this.props.fetchProducts(newSiteId, query);
 		}
 	}
 
@@ -62,55 +62,53 @@ class ProductSearch extends Component {
 		const { value, products } = this.props;
 		const { searchFilter } = this.state;
 
-		if ( 0 === searchFilter.length ) {
+		if (0 === searchFilter.length) {
 			return products;
 		}
 
 		return (
 			products &&
-			products.filter( product => {
+			products.filter((product) => {
 				return (
-					productContainsString( product, searchFilter ) ||
-					isProductSelected( value, product.id ) ||
-					areVariationsSelected( value, product )
+					productContainsString(product, searchFilter) ||
+					isProductSelected(value, product.id) ||
+					areVariationsSelected(value, product)
 				);
-			} )
+			})
 		);
 	}
 
-	onSearch = searchFilter => {
-		this.setState( { searchFilter } );
+	onSearch = (searchFilter) => {
+		this.setState({ searchFilter });
 	};
 
-	onProductCheckbox = productId => {
+	onProductCheckbox = (productId) => {
 		const { value } = this.props;
-		const selected = isProductSelected( value, productId );
-		const newValue = selected
-			? removeProductId( value, productId )
-			: addProductId( value, productId );
-		this.props.onChange( newValue );
+		const selected = isProductSelected(value, productId);
+		const newValue = selected ? removeProductId(value, productId) : addProductId(value, productId);
+		this.props.onChange(newValue);
 	};
 
-	onProductRadio = ( productId, parentId ) => {
-		this.props.onChange( productId, parentId );
+	onProductRadio = (productId, parentId) => {
+		this.props.onChange(productId, parentId);
 	};
 
 	renderSearch = () => {
-		return <Search value={ this.state.searchFilter } onSearch={ this.onSearch } />;
+		return <Search value={this.state.searchFilter} onSearch={this.onSearch} />;
 	};
 
 	renderNoProducts = () => {
 		const { translate, site } = this.props;
-		const text = translate( "You don't have any products yet – {{a}}Add a product{{/a}}", {
+		const text = translate("You don't have any products yet – {{a}}Add a product{{/a}}", {
 			components: {
-				a: <a href={ getLink( '/store/product/:site/', site ) } />,
+				a: <a href={getLink('/store/product/:site/', site)} />,
 			},
-		} );
+		});
 		return (
 			<div className="product-search__list">
 				<div className="product-search__row is-empty">
 					<div className="product-search__row-item">
-						<NoResults text={ text } image="/calypso/images/pages/illustration-pages.svg" />
+						<NoResults text={text} image="/calypso/images/pages/illustration-pages.svg" />
 					</div>
 				</div>
 			</div>
@@ -133,48 +131,48 @@ class ProductSearch extends Component {
 
 	renderList = () => {
 		const { isLoading, products, singular, value, showRegularPrice } = this.props;
-		if ( isLoading ) {
+		if (isLoading) {
 			return this.renderPlaceholder();
 		}
-		if ( ! products.length ) {
+		if (!products.length) {
 			return this.renderNoProducts();
 		}
 
 		const filteredProducts = this.getFilteredProducts() || [];
-		const renderFunc = product => {
+		const renderFunc = (product) => {
 			const onChange = singular ? this.onProductRadio : this.onProductCheckbox;
 			return (
 				<ProductSearchRow
-					key={ product.id }
-					onChange={ onChange }
-					product={ product }
-					singular={ singular }
-					showRegularPrice={ showRegularPrice }
-					value={ value }
+					key={product.id}
+					onChange={onChange}
+					product={product}
+					singular={singular}
+					showRegularPrice={showRegularPrice}
+					value={value}
 				/>
 			);
 		};
 
-		return <div className="product-search__list">{ filteredProducts.map( renderFunc ) }</div>;
+		return <div className="product-search__list">{filteredProducts.map(renderFunc)}</div>;
 	};
 
 	render() {
 		return (
 			<div className="product-search">
-				{ this.renderSearch() }
-				{ this.renderList() }
+				{this.renderSearch()}
+				{this.renderList()}
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
-		const site = getSelectedSiteWithFallback( state );
+	(state) => {
+		const site = getSelectedSiteWithFallback(state);
 		const siteId = site ? site.ID : null;
 		const query = { per_page: 50, offset: 0 };
-		const products = getAllProducts( state, siteId );
-		const isLoading = areProductsLoading( state, query, siteId );
+		const products = getAllProducts(state, siteId);
+		const isLoading = areProductsLoading(state, query, siteId);
 
 		return {
 			isLoading,
@@ -184,5 +182,5 @@ export default connect(
 			products,
 		};
 	},
-	dispatch => bindActionCreators( { fetchProducts }, dispatch )
-)( localize( ProductSearch ) );
+	(dispatch) => bindActionCreators({ fetchProducts }, dispatch)
+)(localize(ProductSearch));

@@ -27,30 +27,30 @@ class Shipping extends Component {
 	};
 
 	onChangeUnits = () => {
-		this.setState( { pristine: Object.assign( {}, this.state.pristine, { units: false } ) } );
+		this.setState({ pristine: Object.assign({}, this.state.pristine, { units: false }) });
 	};
 
 	onChangeShipping = () => {
-		this.setState( { pristine: Object.assign( {}, this.state.pristine, { shipping: false } ) } );
+		this.setState({ pristine: Object.assign({}, this.state.pristine, { shipping: false }) });
 	};
 
-	onSaveSuccess = option => {
-		this.setState( { pristine: Object.assign( {}, this.state.pristine, { [ option ]: true } ) } );
+	onSaveSuccess = (option) => {
+		this.setState({ pristine: Object.assign({}, this.state.pristine, { [option]: true }) });
 	};
 
 	render = () => {
 		const { className, wcsEnabled } = this.props;
 		const { pristine } = this.state;
-		const toSave = { units: ! pristine.units, shipping: ! pristine.shipping };
+		const toSave = { units: !pristine.units, shipping: !pristine.shipping };
 
 		return (
-			<Main className={ classNames( 'shipping', className ) } wideLayout>
-				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } toSave={ toSave } />
-				<ShippingOrigin onChange={ this.onChangeUnits } />
+			<Main className={classNames('shipping', className)} wideLayout>
+				<ShippingHeader onSaveSuccess={this.onSaveSuccess} toSave={toSave} />
+				<ShippingOrigin onChange={this.onChangeUnits} />
 				<ShippingZoneList />
-				{ wcsEnabled && <LabelSettings onChange={ this.onChangeShipping } /> }
-				{ wcsEnabled && <Packages onChange={ this.onChangeShipping } /> }
-				<ProtectFormGuard isChanged={ ! every( this.state.pristine ) } />
+				{wcsEnabled && <LabelSettings onChange={this.onChangeShipping} />}
+				{wcsEnabled && <Packages onChange={this.onChangeShipping} />}
+				<ProtectFormGuard isChanged={!every(this.state.pristine)} />
 			</Main>
 		);
 	};
@@ -60,9 +60,9 @@ Shipping.propTypes = {
 	className: PropTypes.string,
 };
 
-export default connect( state => {
-	const site = getSelectedSite( state );
+export default connect((state) => {
+	const site = getSelectedSite(state);
 	return {
-		wcsEnabled: isWcsEnabled( state, site.ID ),
+		wcsEnabled: isWcsEnabled(state, site.ID),
 	};
-} )( Shipping );
+})(Shipping);

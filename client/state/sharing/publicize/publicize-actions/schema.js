@@ -3,7 +3,7 @@ export const publicizeActionsSchema = {
 	patternProperties: {
 		'^\\d+$': {
 			type: 'object',
-			required: [ 'ID', 'connection_id', 'status' ],
+			required: ['ID', 'connection_id', 'status'],
 			properties: {
 				ID: { type: 'string' },
 				connection_id: { type: 'integer' },

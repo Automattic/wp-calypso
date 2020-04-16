@@ -11,13 +11,13 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-registerBlockType( 'a8c/site-title', {
-	title: __( 'Site Title' ),
-	description: __( 'Your site title.' ),
+registerBlockType('a8c/site-title', {
+	title: __('Site Title'),
+	description: __('Your site title.'),
 	icon: 'layout',
 	category: 'layout',
 	supports: {
-		align: [ 'wide', 'full' ],
+		align: ['wide', 'full'],
 		html: false,
 		multiple: false,
 		reusable: false,
@@ -47,4 +47,4 @@ registerBlockType( 'a8c/site-title', {
 	},
 	edit,
 	save: () => null,
-} );
+});

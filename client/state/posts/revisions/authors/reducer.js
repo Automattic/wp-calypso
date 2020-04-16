@@ -17,16 +17,16 @@ import { POST_REVISION_AUTHORS_RECEIVE } from 'state/action-types';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
+export function items(state = {}, action) {
+	switch (action.type) {
 		case POST_REVISION_AUTHORS_RECEIVE:
 			return reduce(
 				action.users,
-				( newState, user ) => {
-					if ( newState === state ) {
+				(newState, user) => {
+					if (newState === state) {
 						newState = { ...state };
 					}
-					newState[ user.ID ] = user;
+					newState[user.ID] = user;
 					return newState;
 				},
 				state
@@ -36,6 +36,6 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	items,
-} );
+});

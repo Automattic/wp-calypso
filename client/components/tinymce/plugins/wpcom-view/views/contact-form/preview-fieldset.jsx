@@ -10,8 +10,8 @@ export default class extends React.Component {
 
 	render() {
 		return (
-			<fieldset { ...omit( this.props, 'className' ) } className="wpview-type-contact-form-field">
-				{ this.props.children }
+			<fieldset {...omit(this.props, 'className')} className="wpview-type-contact-form-field">
+				{this.props.children}
 			</fieldset>
 		);
 	}

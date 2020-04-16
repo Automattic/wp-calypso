@@ -17,7 +17,7 @@ export default class DevdocsAsyncLoad extends React.PureComponent {
 	};
 	static propTypes = {
 		placeholderCount: PropTypes.number,
-		require: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ).isRequired,
+		require: PropTypes.oneOfType([PropTypes.func, PropTypes.string]).isRequired,
 	};
 
 	render() {
@@ -30,9 +30,9 @@ export default class DevdocsAsyncLoad extends React.PureComponent {
 
 		return (
 			<AsyncLoad
-				placeholder={ <Placeholder count={ placeholders } /> }
-				require={ require }
-				{ ...otherProps }
+				placeholder={<Placeholder count={placeholders} />}
+				require={require}
+				{...otherProps}
 			/>
 		);
 	}

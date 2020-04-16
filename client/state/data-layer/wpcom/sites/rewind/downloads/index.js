@@ -29,24 +29,24 @@ const recentRequests = new Map();
  *
  * @param {object} action Redux action
  */
-const fetchProgress = action => {
+const fetchProgress = (action) => {
 	const { downloadId, siteId } = action;
-	const key = `${ siteId }-${ downloadId }`;
+	const key = `${siteId}-${downloadId}`;
 
-	const lastUpdate = recentRequests.get( key ) || -Infinity;
+	const lastUpdate = recentRequests.get(key) || -Infinity;
 	const now = Date.now();
 
-	if ( now - lastUpdate < POLL_INTERVAL ) {
+	if (now - lastUpdate < POLL_INTERVAL) {
 		return;
 	}
 
-	recentRequests.set( key, now );
+	recentRequests.set(key, now);
 
 	return http(
 		{
 			method: 'GET',
 			apiNamespace: 'wpcom/v2',
-			path: `/sites/${ action.siteId }/rewind/downloads`,
+			path: `/sites/${action.siteId}/rewind/downloads`,
 		},
 		action
 	);
@@ -58,7 +58,7 @@ const fetchProgress = action => {
  * @param   {object} data The data received from API response.
  * @returns {object}      Parsed response data.
  */
-const fromApi = data => ( {
+const fromApi = (data) => ({
 	backupPoint: data.backupPoint,
 	downloadId: +data.downloadId,
 	progress: +data.progress,
@@ -68,7 +68,7 @@ const fromApi = data => ( {
 	validUntil: data.validUntil,
 	url: data.url,
 	error: data.error,
-} );
+});
 
 /**
  * When requesting the status of a backup creation, an array with a single element is returned.
@@ -79,16 +79,16 @@ const fromApi = data => ( {
  * @param {number}   siteId   Id of the site for the one we're creating a backup.
  * @param {object}   apiData  Data returned by a successful response.
  */
-export const updateProgress = ( { siteId }, apiData ) => {
-	const [ latestDownloadableBackup ] = apiData;
-	if ( isEmpty( latestDownloadableBackup ) ) {
+export const updateProgress = ({ siteId }, apiData) => {
+	const [latestDownloadableBackup] = apiData;
+	if (isEmpty(latestDownloadableBackup)) {
 		return;
 	}
 
-	const data = fromApi( latestDownloadableBackup );
-	return get( data, [ 'error' ], false )
-		? rewindBackupUpdateError( siteId, data.downloadId, data )
-		: updateRewindBackupProgress( siteId, data.downloadId, data );
+	const data = fromApi(latestDownloadableBackup);
+	return get(data, ['error'], false)
+		? rewindBackupUpdateError(siteId, data.downloadId, data)
+		: updateRewindBackupProgress(siteId, data.downloadId, data);
 };
 
 /**
@@ -98,7 +98,7 @@ export const updateProgress = ( { siteId }, apiData ) => {
  */
 export const announceError = () =>
 	errorNotice(
-		translate( "Hmm, we can't update the status of your backup. Please refresh this page." )
+		translate("Hmm, we can't update the status of your backup. Please refresh this page.")
 	);
 
 /**
@@ -108,12 +108,12 @@ export const announceError = () =>
  * @param   {object}   action   Changeset to update state.
  * @returns {object}          The dispatched action.
  */
-export const dismissBackup = action =>
+export const dismissBackup = (action) =>
 	http(
 		{
 			method: 'POST',
 			apiNamespace: 'wpcom/v2',
-			path: `/sites/${ action.siteId }/rewind/downloads/${ action.downloadId }`,
+			path: `/sites/${action.siteId}/rewind/downloads/${action.downloadId}`,
 			body: {
 				dismissed: true,
 			},
@@ -128,9 +128,9 @@ export const dismissBackup = action =>
  * @param {object}   action   Changeset to update state.
  * @param {object}     data     Description of request result.
  */
-export const backupSilentlyDismissed = ( action, data ) =>
-	! data.dismissed
-		? errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) )
+export const backupSilentlyDismissed = (action, data) =>
+	!data.dismissed
+		? errorNotice(translate('Dismissing backup failed. Please reload and try again.'))
 		: null;
 
 /**
@@ -139,7 +139,7 @@ export const backupSilentlyDismissed = ( action, data ) =>
  * @returns {Function} The dispatched action.
  */
 export const backupDismissFailed = () =>
-	errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) );
+	errorNotice(translate('Dismissing backup failed. Please reload and try again.'));
 
 /**
  * Parse and merge response data for backup dismiss result with defaults.
@@ -147,25 +147,25 @@ export const backupDismissFailed = () =>
  * @param   {object} data   The data received from API response.
  * @returns {object} Parsed response data.
  */
-const fromBackupDismiss = data => ( {
+const fromBackupDismiss = (data) => ({
 	downloadId: +data.download_id,
 	dismissed: data.is_dismissed,
-} );
+});
 
-registerHandlers( 'state/data-layer/wpcom/sites/rewind/downloads', {
-	[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
-		dispatchRequest( {
+registerHandlers('state/data-layer/wpcom/sites/rewind/downloads', {
+	[REWIND_BACKUP_PROGRESS_REQUEST]: [
+		dispatchRequest({
 			fetch: fetchProgress,
 			onSuccess: updateProgress,
 			onError: announceError,
-		} ),
+		}),
 	],
-	[ REWIND_BACKUP_DISMISS_PROGRESS ]: [
-		dispatchRequest( {
+	[REWIND_BACKUP_DISMISS_PROGRESS]: [
+		dispatchRequest({
 			fetch: dismissBackup,
 			onSuccess: backupSilentlyDismissed,
 			onError: backupDismissFailed,
 			fromApi: fromBackupDismiss,
-		} ),
+		}),
 	],
-} );
+});

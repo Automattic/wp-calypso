@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import getJetpackModulesRequiringConnection from 'state/selectors/get-jetpack-modules-requiring-connection';
 
-describe( 'getJetpackModulesRequiringConnection()', () => {
-	test( 'should return null if the site has never been fetched', () => {
+describe('getJetpackModulesRequiringConnection()', () => {
+	test('should return null if the site has never been fetched', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -18,11 +18,11 @@ describe( 'getJetpackModulesRequiringConnection()', () => {
 			},
 		};
 
-		const modules = getJetpackModulesRequiringConnection( stateTree, 12345678 );
-		expect( modules ).to.be.null;
-	} );
+		const modules = getJetpackModulesRequiringConnection(stateTree, 12345678);
+		expect(modules).to.be.null;
+	});
 
-	test( 'should return the modules that require connection for a known site', () => {
+	test('should return the modules that require connection for a known site', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -45,7 +45,7 @@ describe( 'getJetpackModulesRequiringConnection()', () => {
 			},
 		};
 
-		const modules = getJetpackModulesRequiringConnection( stateTree, 12345678 );
-		expect( modules ).to.eql( [ 'module-a' ] );
-	} );
-} );
+		const modules = getJetpackModulesRequiringConnection(stateTree, 12345678);
+		expect(modules).to.eql(['module-a']);
+	});
+});

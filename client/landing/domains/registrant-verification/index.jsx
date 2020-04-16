@@ -30,19 +30,19 @@ class RegistrantVerificationPage extends Component {
 		error: false,
 	};
 
-	constructor( props ) {
-		super( props );
+	constructor(props) {
+		super(props);
 		this.state = this.getLoadingState();
 	}
 
 	UNSAFE_componentWillMount() {
 		const { domain, email, token } = this.props;
-		wpcom.domainsVerifyRegistrantEmail( domain, email, token ).then(
-			response => {
-				this.setState( this.getVerificationSuccessState( get( response, 'domains', [ domain ] ) ) );
+		wpcom.domainsVerifyRegistrantEmail(domain, email, token).then(
+			(response) => {
+				this.setState(this.getVerificationSuccessState(get(response, 'domains', [domain])));
 			},
-			error => {
-				this.setErrorState( error );
+			(error) => {
+				this.setErrorState(error);
 			}
 		);
 	}
@@ -51,7 +51,7 @@ class RegistrantVerificationPage extends Component {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
-			title: translate( 'Verifying your contact information…' ),
+			title: translate('Verifying your contact information…'),
 			message: 'Loading…',
 			actionTitle: null,
 			actionCallback: null,
@@ -59,13 +59,13 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getVerificationSuccessState = domains => {
+	getVerificationSuccessState = (domains) => {
 		const { translate } = this.props;
 
-		const verifiedDomains = join( domains, ', ' );
+		const verifiedDomains = join(domains, ', ');
 
 		return {
-			title: translate( 'Success!' ),
+			title: translate('Success!'),
 			message: translate(
 				'Thank your for verifying your contact information for:{{br /}}{{strong}}%(domain)s{{/strong}}.',
 				{
@@ -80,7 +80,7 @@ class RegistrantVerificationPage extends Component {
 			),
 			actionTitle: null,
 			actionCallback: null,
-			footer: translate( 'All done. You can close this window now.' ),
+			footer: translate('All done. You can close this window now.'),
 			isLoading: false,
 		};
 	};
@@ -97,7 +97,7 @@ class RegistrantVerificationPage extends Component {
 					},
 				}
 			),
-			actionTitle: translate( 'Resend Email' ),
+			actionTitle: translate('Resend Email'),
 			actionCallback: this.resendEmail,
 		};
 	};
@@ -121,7 +121,7 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getKeySystemsErrorState = errorMessage => {
+	getKeySystemsErrorState = (errorMessage) => {
 		if (
 			'Invalid attribute value; Contact verification already confirmed, nothing to do' ===
 			errorMessage
@@ -129,7 +129,7 @@ class RegistrantVerificationPage extends Component {
 			const { domain, email, translate } = this.props;
 
 			return {
-				title: translate( 'Already verified.' ),
+				title: translate('Already verified.'),
 				message: translate(
 					"You've already verified {{strong}}%(email)s{{/strong}} for:{{br /}}{{strong}}%(domain)s{{/strong}}.",
 					{
@@ -143,7 +143,7 @@ class RegistrantVerificationPage extends Component {
 						},
 					}
 				),
-				footer: translate( 'All done. You can close this window now.' ),
+				footer: translate('All done. You can close this window now.'),
 			};
 		}
 	};
@@ -152,7 +152,7 @@ class RegistrantVerificationPage extends Component {
 		const { translate } = this.props;
 
 		return {
-			message: translate( "Sorry, we weren't able to re-send the email." ),
+			message: translate("Sorry, we weren't able to re-send the email."),
 		};
 	};
 
@@ -162,15 +162,15 @@ class RegistrantVerificationPage extends Component {
 			"If you're having trouble verifying your contact information, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.",
 			{
 				components: {
-					a: <a href={ CALYPSO_CONTACT } />,
+					a: <a href={CALYPSO_CONTACT} />,
 					strong: <strong />,
 				},
 			}
 		);
 
 		return {
-			title: translate( 'Uh oh!' ),
-			message: translate( 'Hmm. Something went wrong.' ),
+			title: translate('Uh oh!'),
+			message: translate('Hmm. Something went wrong.'),
 			messageAlignCenter: true,
 			actionTitle: null,
 			actionCallback: null,
@@ -179,21 +179,21 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getRunningMaintenanceErrorState = error => {
+	getRunningMaintenanceErrorState = (error) => {
 		const { translate } = this.props;
 
-		const message = getMaintenanceMessageFromError( error, translate );
+		const message = getMaintenanceMessageFromError(error, translate);
 
 		return {
-			title: translate( 'Domain maintenance in progress' ),
+			title: translate('Domain maintenance in progress'),
 			message: message,
 		};
 	};
 
-	setErrorState = error => {
+	setErrorState = (error) => {
 		let errorState;
 
-		switch ( error.error ) {
+		switch (error.error) {
 			case 'email_mismatch':
 				errorState = this.getEmailMismatchState();
 				break;
@@ -203,7 +203,7 @@ class RegistrantVerificationPage extends Component {
 				break;
 
 			case 'KS_RAM_error':
-				errorState = this.getKeySystemsErrorState( error.message );
+				errorState = this.getKeySystemsErrorState(error.message);
 				break;
 
 			case 'resend_email_failed':
@@ -212,35 +212,35 @@ class RegistrantVerificationPage extends Component {
 
 			case 'domain_registration_unavailable':
 			case 'tld-in-maintenance':
-				errorState = this.getRunningMaintenanceErrorState( error );
+				errorState = this.getRunningMaintenanceErrorState(error);
 				break;
 		}
 
-		this.setState( {
+		this.setState({
 			...this.getDefaultErrorState(),
 			...errorState,
-		} );
+		});
 	};
 
 	resendEmail = () => {
 		const { domain, translate } = this.props;
 
-		this.setState( this.getLoadingState() );
+		this.setState(this.getLoadingState());
 
-		wpcom.resendIcannVerification( domain, error => {
-			if ( error ) {
-				this.setErrorState( { error: 'resend_email_failed' } );
+		wpcom.resendIcannVerification(domain, (error) => {
+			if (error) {
+				this.setErrorState({ error: 'resend_email_failed' });
 			} else {
-				this.setState( {
-					title: translate( 'Email sent!' ),
-					message: translate( 'Check your email.' ),
+				this.setState({
+					title: translate('Email sent!'),
+					message: translate('Check your email.'),
 					actionTitle: null,
 					actionCallback: null,
-					footer: translate( "That's all for now. We'll see you again soon." ),
+					footer: translate("That's all for now. We'll see you again soon."),
 					isLoading: false,
-				} );
+				});
 			}
-		} );
+		});
 	};
 
 	render() {
@@ -248,19 +248,19 @@ class RegistrantVerificationPage extends Component {
 
 		return (
 			<div className="registrant-verification">
-				<DomainsLandingHeader title={ translate( 'Domain Contact Verification' ) } />
+				<DomainsLandingHeader title={translate('Domain Contact Verification')} />
 				<DomainsLandingContentCard
-					title={ this.state.title }
-					message={ this.state.message }
-					messageAlignCenter={ this.state.messageAlignCenter }
-					actionTitle={ this.state.actionTitle }
-					actionCallback={ this.state.actionCallback }
-					footer={ this.state.footer }
-					isLoading={ this.state.isLoading }
+					title={this.state.title}
+					message={this.state.message}
+					messageAlignCenter={this.state.messageAlignCenter}
+					actionTitle={this.state.actionTitle}
+					actionCallback={this.state.actionCallback}
+					footer={this.state.footer}
+					isLoading={this.state.isLoading}
 				/>
 			</div>
 		);
 	}
 }
 
-export default localize( RegistrantVerificationPage );
+export default localize(RegistrantVerificationPage);

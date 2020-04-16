@@ -20,34 +20,34 @@ import PurchaseDetail from 'components/purchase-detail';
  */
 import adsRemovedImage from 'assets/images/illustrations/ads-removed.svg';
 
-const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
-	const plan = find( sitePlans.data, isPersonal );
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+const PersonalPlanDetails = ({ translate, selectedSite, sitePlans, purchases }) => {
+	const plan = find(sitePlans.data, isPersonal);
+	const googleAppsWasPurchased = purchases.some(isGoogleApps);
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{googleAppsWasPurchased && <GoogleAppsDetails isRequired />}
 
 			<CustomDomainPurchaseDetail
-				selectedSite={ selectedSite }
-				hasDomainCredit={ plan && plan.hasDomainCredit }
+				selectedSite={selectedSite}
+				hasDomainCredit={plan && plan.hasDomainCredit}
 			/>
 
 			<PurchaseDetail
-				icon={ <img alt="" src={ adsRemovedImage } /> }
-				title={ translate( 'Advertising Removed' ) }
-				description={ translate(
+				icon={<img alt="" src={adsRemovedImage} />}
+				title={translate('Advertising Removed')}
+				description={translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +
 						'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
-				) }
+				)}
 			/>
 		</div>
 	);
 };
 
 PersonalPlanDetails.propTypes = {
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
+	selectedSite: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
 	sitePlans: PropTypes.object.isRequired,
 };
 
-export default localize( PersonalPlanDetails );
+export default localize(PersonalPlanDetails);

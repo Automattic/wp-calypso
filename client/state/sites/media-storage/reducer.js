@@ -23,19 +23,16 @@ import { itemsSchema } from './schema';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
+export const items = withSchemaValidation(itemsSchema, (state = {}, action) => {
+	switch (action.type) {
 		case SITE_MEDIA_STORAGE_RECEIVE:
-			const mediaStorage = pick( action.mediaStorage, [
-				'max_storage_bytes',
-				'storage_used_bytes',
-			] );
-			return Object.assign( {}, state, {
-				[ action.siteId ]: mediaStorage,
-			} );
+			const mediaStorage = pick(action.mediaStorage, ['max_storage_bytes', 'storage_used_bytes']);
+			return Object.assign({}, state, {
+				[action.siteId]: mediaStorage,
+			});
 	}
 	return state;
-} );
+});
 
 /**
  * Tracks media-storage fetching state, indexed by site ID.
@@ -44,19 +41,19 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export function fetchingItems( state = {}, action ) {
-	switch ( action.type ) {
+export function fetchingItems(state = {}, action) {
+	switch (action.type) {
 		case SITE_MEDIA_STORAGE_REQUEST:
 		case SITE_MEDIA_STORAGE_REQUEST_SUCCESS:
 		case SITE_MEDIA_STORAGE_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.type === SITE_MEDIA_STORAGE_REQUEST,
-			} );
+			return Object.assign({}, state, {
+				[action.siteId]: action.type === SITE_MEDIA_STORAGE_REQUEST,
+			});
 	}
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducers({
 	items,
 	fetchingItems,
-} );
+});

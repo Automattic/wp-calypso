@@ -10,10 +10,10 @@ import {
 import { jetpackAuthAttemptsSchema } from './schema';
 import { keyedReducer, withSchemaValidation } from 'state/utils';
 
-export function authAttempts( state = undefined, { type, attemptNumber } ) {
-	switch ( type ) {
+export function authAttempts(state = undefined, { type, attemptNumber }) {
+	switch (type) {
 		case JETPACK_CONNECT_RETRY_AUTH:
-			if ( ! state || isStale( state.timestamp, AUTH_ATTEMPS_TTL ) ) {
+			if (!state || isStale(state.timestamp, AUTH_ATTEMPS_TTL)) {
 				return {
 					attempt: 0,
 					timestamp: Date.now(),
@@ -32,7 +32,7 @@ export function authAttempts( state = undefined, { type, attemptNumber } ) {
 
 export const reducer = withSchemaValidation(
 	jetpackAuthAttemptsSchema,
-	keyedReducer( 'slug', authAttempts )
+	keyedReducer('slug', authAttempts)
 );
 
 export default reducer;

@@ -17,10 +17,10 @@ const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
  * @param  {number}  siteId The Id of the site
  * @returns {number}  Timestamp marking the last time the nudge was dismissed
  */
-const getLastDismissTime = ( state, siteId ) => {
-	const preference = getPreference( state, 'gsuite-dismissible-nudge' ) || {};
-	const sitePreference = preference[ siteId ] || [];
-	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
+const getLastDismissTime = (state, siteId) => {
+	const preference = getPreference(state, 'gsuite-dismissible-nudge') || {};
+	const sitePreference = preference[siteId] || [];
+	const lastEvent = last(sitePreference.filter((event) => 'dismiss' === event.type));
 
 	return lastEvent ? lastEvent.dismissedAt : 0;
 };
@@ -36,11 +36,11 @@ const getLastDismissTime = ( state, siteId ) => {
  * @param  {number}  siteId The Id of the site
  * @returns {boolean} True if the nudge has been dismissed
  */
-export default function isGSuiteStatsNudgeDismissed( state, siteId ) {
-	const lastDismissTime = getLastDismissTime( state, siteId );
+export default function isGSuiteStatsNudgeDismissed(state, siteId) {
+	const lastDismissTime = getLastDismissTime(state, siteId);
 
 	// Return false if it has never been dismissed
-	if ( lastDismissTime === 0 ) {
+	if (lastDismissTime === 0) {
 		return false;
 	}
 

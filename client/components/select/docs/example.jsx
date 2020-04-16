@@ -31,7 +31,7 @@ class Selects extends React.PureComponent {
 						<option>suitcase</option>
 					</select>
 					with
-					<select className="is-compact" defaultValue={ 10 }>
+					<select className="is-compact" defaultValue={10}>
 						<option>5</option>
 						<option>10</option>
 						<option>15</option>

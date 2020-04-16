@@ -9,19 +9,19 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/import-docblock' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require('../../../lib/rules/import-docblock'),
+	RuleTester = require('eslint').RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( {
+new RuleTester({
 	parserOptions: {
 		ecmaVersion: 6,
 		sourceType: 'module',
 	},
-} ).run( 'import-docblock', rule, {
+}).run('import-docblock', rule, {
 	valid: [
 		{
 			code: `/**
@@ -37,7 +37,7 @@ import eslint from \'eslint\';`,
 		},
 		{
 			code: `/**
- * External dependencies${ ' ' }
+ * External dependencies${' '}
  */
 import eslint from \'eslint\';`,
 		},
@@ -53,4 +53,4 @@ import eslint from \'eslint\';`,
 			],
 		},
 	],
-} );
+});

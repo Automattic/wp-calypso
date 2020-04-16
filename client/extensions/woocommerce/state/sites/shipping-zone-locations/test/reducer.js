@@ -13,8 +13,8 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
-describe( 'reducer', () => {
-	test( 'should mark the zone locations entry as being "loading"', () => {
+describe('reducer', () => {
+	test('should mark the zone locations entry as being "loading"', () => {
 		const siteId = 123;
 		const zoneId = 7;
 		const action = {
@@ -23,11 +23,11 @@ describe( 'reducer', () => {
 			zoneId,
 		};
 
-		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].shippingZoneLocations[ zoneId ] ).to.eql( LOADING );
-	} );
+		const newSiteData = reducer({}, action);
+		expect(newSiteData[siteId].shippingZoneLocations[zoneId]).to.eql(LOADING);
+	});
 
-	test( 'should store data from the action', () => {
+	test('should store data from the action', () => {
 		const locations = [
 			{ type: 'country', code: 'US' },
 			{ type: 'country', code: 'CA' },
@@ -45,12 +45,12 @@ describe( 'reducer', () => {
 			zoneId,
 			data: locations,
 		};
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ].shippingZoneLocations[ zoneId ] ).to.deep.equal( {
-			continent: [ 'EU' ],
-			country: [ 'US', 'CA' ],
-			state: [ 'US:CA', 'US:UT' ],
-			postcode: [ '123*', '68000...68999' ],
-		} );
-	} );
-} );
+		const newState = reducer({}, action);
+		expect(newState[siteId].shippingZoneLocations[zoneId]).to.deep.equal({
+			continent: ['EU'],
+			country: ['US', 'CA'],
+			state: ['US:CA', 'US:UT'],
+			postcode: ['123*', '68000...68999'],
+		});
+	});
+});

@@ -12,24 +12,24 @@ import './style.scss';
 
 class ButtonGroup extends PureComponent {
 	static propTypes = {
-		children( props ) {
+		children(props) {
 			let error = null;
-			React.Children.forEach( props.children, child => {
-				if ( child && ( ! child.props || child.props.type !== 'button' ) ) {
-					error = new Error( 'All children elements should be a Button.' );
+			React.Children.forEach(props.children, (child) => {
+				if (child && (!child.props || child.props.type !== 'button')) {
+					error = new Error('All children elements should be a Button.');
 				}
-			} );
+			});
 			return error;
 		},
 	};
 
 	render() {
-		const buttonGroupClasses = classNames( 'button-group', this.props.className, {
+		const buttonGroupClasses = classNames('button-group', this.props.className, {
 			'is-busy': this.props.busy,
 			'is-primary': this.props.primary,
-		} );
+		});
 
-		return <span className={ buttonGroupClasses }>{ this.props.children }</span>;
+		return <span className={buttonGroupClasses}>{this.props.children}</span>;
 	}
 }
 

@@ -12,11 +12,11 @@ import { connect } from 'react-redux';
 import QueryTheme from 'components/data/query-theme';
 import { isWpcomTheme, isWporgTheme } from 'state/themes/selectors';
 
-const QueryCanonicalTheme = ( { siteId, themeId, isWpcom, isWporg } ) => (
+const QueryCanonicalTheme = ({ siteId, themeId, isWpcom, isWporg }) => (
 	<Fragment>
-		<QueryTheme themeId={ themeId } siteId="wpcom" />
-		{ ! isWpcom && <QueryTheme themeId={ themeId } siteId="wporg" /> }
-		{ ! isWpcom && ! isWporg && siteId && <QueryTheme themeId={ themeId } siteId={ siteId } /> }
+		<QueryTheme themeId={themeId} siteId="wpcom" />
+		{!isWpcom && <QueryTheme themeId={themeId} siteId="wporg" />}
+		{!isWpcom && !isWporg && siteId && <QueryTheme themeId={themeId} siteId={siteId} />}
 	</Fragment>
 );
 
@@ -28,7 +28,7 @@ QueryCanonicalTheme.propTypes = {
 	isWporg: PropTypes.bool.isRequired,
 };
 
-export default connect( ( state, { themeId } ) => ( {
-	isWpcom: isWpcomTheme( state, themeId ),
-	isWporg: isWporgTheme( state, themeId ),
-} ) )( QueryCanonicalTheme );
+export default connect((state, { themeId }) => ({
+	isWpcom: isWpcomTheme(state, themeId),
+	isWporg: isWporgTheme(state, themeId),
+}))(QueryCanonicalTheme);

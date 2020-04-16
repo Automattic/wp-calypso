@@ -4,7 +4,6 @@
 const root = '/sites';
 
 class SitePlugin {
-
 	/**
 	 * `SitePlugin` constructor.
 	 *
@@ -13,21 +12,21 @@ class SitePlugin {
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
-	constructor( slug, sid, wpcom ) {
-		if ( ! ( this instanceof SitePlugin ) ) {
-			return new SitePlugin( slug, sid, wpcom );
+	constructor(slug, sid, wpcom) {
+		if (!(this instanceof SitePlugin)) {
+			return new SitePlugin(slug, sid, wpcom);
 		}
 
-		if ( ! slug ) {
-			throw new Error( '`slug` is not correctly defined' );
+		if (!slug) {
+			throw new Error('`slug` is not correctly defined');
 		}
 
-		this._slug = encodeURIComponent( slug );
+		this._slug = encodeURIComponent(slug);
 		this._sid = sid;
 		this.wpcom = wpcom;
 
-		const path = `${root}/${ this._sid }/plugins`;
-		this.pluginPath = `${ path }/${ this._slug }`;
+		const path = `${root}/${this._sid}/plugins`;
+		this.pluginPath = `${path}/${this._slug}`;
 	}
 
 	/**
@@ -37,8 +36,8 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	get( query, fn ) {
-		return this.wpcom.req.get( this.pluginPath, query, fn );
+	get(query, fn) {
+		return this.wpcom.req.get(this.pluginPath, query, fn);
 	}
 
 	/**
@@ -49,9 +48,9 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	update( query, body, fn ) {
-		return this.wpcom.req.put( this.pluginPath, query, body, fn );
-	};
+	update(query, body, fn) {
+		return this.wpcom.req.put(this.pluginPath, query, body, fn);
+	}
 
 	/**
 	 * Update the plugin version
@@ -60,9 +59,9 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	updateVersion( query, fn ) {
-		return this.wpcom.req.put( `${ this.pluginPath }/update`, query, fn );
-	};
+	updateVersion(query, fn) {
+		return this.wpcom.req.put(`${this.pluginPath}/update`, query, fn);
+	}
 
 	/**
 	 * Install the plugin
@@ -71,9 +70,9 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	install( query, fn ) {
-		return this.wpcom.req.put( `${ this.pluginPath }/install`, query, fn );
-	};
+	install(query, fn) {
+		return this.wpcom.req.put(`${this.pluginPath}/install`, query, fn);
+	}
 
 	/**
 	 * Delete the plugin
@@ -82,9 +81,9 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	delete( query, fn ) {
-		return this.wpcom.req.put( `${ this.pluginPath }/delete`, query, fn );
-	};
+	delete(query, fn) {
+		return this.wpcom.req.put(`${this.pluginPath}/delete`, query, fn);
+	}
 
 	/**
 	 * Activate the plugin
@@ -94,9 +93,9 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	activate( query, fn ) {
-		return this.update( query, { active: true }, fn );
-	};
+	activate(query, fn) {
+		return this.update(query, { active: true }, fn);
+	}
 
 	/**
 	 * Deactivate the plugin
@@ -106,8 +105,8 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	deactivate( query, fn ) {
-		return this.update( query, { active: false }, fn );
+	deactivate(query, fn) {
+		return this.update(query, { active: false }, fn);
 	}
 
 	/**
@@ -118,8 +117,8 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	enableAutoupdate( query, fn ) {
-		return this.update( query, { autoupdate: true }, fn );
+	enableAutoupdate(query, fn) {
+		return this.update(query, { autoupdate: true }, fn);
 	}
 
 	/**
@@ -130,9 +129,9 @@ class SitePlugin {
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
-	disableAutoupdate( query, fn ) {
-		return this.update( query, { autoupdate: false }, fn );
-	};
+	disableAutoupdate(query, fn) {
+		return this.update(query, { autoupdate: false }, fn);
+	}
 }
 
 /**

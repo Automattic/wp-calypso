@@ -32,10 +32,10 @@ class ModerateComment extends Component {
 	};
 
 	componentDidMount() {
-		this.moderate( this.props );
+		this.moderate(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
@@ -45,20 +45,20 @@ class ModerateComment extends Component {
 			return;
 		}
 
-		this.moderate( nextProps );
+		this.moderate(nextProps);
 	}
 
-	showNotice( status ) {
+	showNotice(status) {
 		const { translate } = this.props;
 
-		this.props.removeNotice( 'comment-notice' );
+		this.props.removeNotice('comment-notice');
 
 		const message = get(
 			{
-				approved: translate( 'Comment approved.' ),
-				unapproved: translate( 'Comment unapproved.' ),
-				spam: translate( 'Comment marked as spam.' ),
-				trash: translate( 'Comment moved to trash.' ),
+				approved: translate('Comment approved.'),
+				unapproved: translate('Comment unapproved.'),
+				spam: translate('Comment marked as spam.'),
+				trash: translate('Comment moved to trash.'),
 			},
 			status
 		);
@@ -68,15 +68,15 @@ class ModerateComment extends Component {
 			isPersistent: true,
 		};
 
-		this.props.successNotice( message, noticeOptions );
+		this.props.successNotice(message, noticeOptions);
 	}
 
-	moderate( { siteId, postId, commentId, newStatus, currentStatus, updateCommentStatus } ) {
+	moderate({ siteId, postId, commentId, newStatus, currentStatus, updateCommentStatus }) {
 		if (
-			! siteId ||
-			! postId ||
-			! commentId ||
-			! newStatus ||
+			!siteId ||
+			!postId ||
+			!commentId ||
+			!newStatus ||
 			newStatus === currentStatus ||
 			'edit' === newStatus ||
 			'delete' === newStatus
@@ -85,7 +85,7 @@ class ModerateComment extends Component {
 		}
 
 		updateCommentStatus();
-		this.showNotice( newStatus );
+		this.showNotice(newStatus);
 	}
 
 	render() {
@@ -93,29 +93,29 @@ class ModerateComment extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, commentId } ) => {
-	const comment = getSiteComment( state, siteId, commentId );
+const mapStateToProps = (state, { siteId, commentId }) => {
+	const comment = getSiteComment(state, siteId, commentId);
 
 	return {
-		currentStatus: get( comment, 'status' ),
+		currentStatus: get(comment, 'status'),
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, newStatus } ) => ( {
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
-	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+const mapDispatchToProps = (dispatch, { siteId, postId, commentId, newStatus }) => ({
+	removeNotice: (noticeId) => dispatch(removeNotice(noticeId)),
+	successNotice: (text, options) => dispatch(successNotice(text, options)),
 	updateCommentStatus: () =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_change_status_from_email', {
+					recordTracksEvent('calypso_comment_management_change_status_from_email', {
 						status: newStatus,
-					} ),
-					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + newStatus )
+					}),
+					bumpStat('calypso_comment_management', 'comment_status_changed_to_' + newStatus)
 				),
-				changeCommentStatus( siteId, postId, commentId, newStatus )
+				changeCommentStatus(siteId, postId, commentId, newStatus)
 			)
 		),
-} );
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ModerateComment ) );
+export default connect(mapStateToProps, mapDispatchToProps)(localize(ModerateComment));

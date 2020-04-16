@@ -17,19 +17,19 @@ import {
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 class QueryPackages extends Component {
-	fetch( props ) {
+	fetch(props) {
 		const { siteId, loaded, fetching, error } = props;
-		if ( ! loaded && ! fetching && ! error ) {
-			this.props.fetchSettings( siteId );
+		if (!loaded && !fetching && !error) {
+			this.props.fetchSettings(siteId);
 		}
 	}
 
 	UNSAFE_componentWillMount() {
-		this.fetch( this.props );
+		this.fetch(this.props);
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.fetch( nextProps );
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		this.fetch(nextProps);
 	}
 
 	render() {
@@ -42,16 +42,16 @@ QueryPackages.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		loaded: isLoaded( state ),
-		fetching: isFetching( state ),
-		error: isFetchError( state ),
-	} ),
-	dispatch =>
+	(state) => ({
+		loaded: isLoaded(state),
+		fetching: isFetching(state),
+		error: isFetchError(state),
+	}),
+	(dispatch) =>
 		bindActionCreators(
 			{
 				fetchSettings,
 			},
 			dispatch
 		)
-)( QueryPackages );
+)(QueryPackages);
