@@ -36,6 +36,10 @@ class ActivityCard extends Component {
 		};
 	}
 
+	static defaultProps = {
+		summarize: false,
+	};
+
 	popoverContext = React.createRef();
 
 	togglePopoverMenu = () => this.setState( { showPopoverMenu: ! this.state.showPopoverMenu } );
@@ -49,7 +53,7 @@ class ActivityCard extends Component {
 		page.redirect( backupDetailPath( this.props.siteSlug, this.props.activity.rewindId ) );
 
 	render() {
-		const { activity, allowRestore, className, gmtOffset, timezone, translate } = this.props;
+		const { activity, allowRestore, className, gmtOffset, summarize, timezone, translate } = this.props;
 
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
@@ -58,10 +62,17 @@ class ActivityCard extends Component {
 
 		return (
 			<div className={ classnames( className, 'activity-card' ) }>
-				<div className="activity-card__time">
-					<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
-					<div className="activity-card__time-text">{ backupTimeDisplay }</div>
-				</div>
+				{ ! summarize && (
+					<div className="activity-card__time">
+						<img
+							src={ cloudIcon }
+							className="activity-card__time-icon"
+							role="presentation"
+							alt=""
+						/>
+						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
+					</div>
+				) }
 				<Card>
 					<ActivityActor
 						{ ...{
@@ -75,53 +86,55 @@ class ActivityCard extends Component {
 						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
-					<div className="activity-card__activity-actions">
-						<Button
-							compact
-							borderless
-							className="activity-card__detail-button"
-							onClick={ this.triggerDetails }
-						>
-							{ translate( 'See content' ) }
-							<Gridicon icon="chevron-down" />
-						</Button>
-						<Button
-							compact
-							borderless
-							className="activity-card__actions-button"
-							onClick={ this.togglePopoverMenu }
-							ref={ this.popoverContext }
-						>
-							{ translate( 'Actions' ) }
-							<Gridicon icon="add" className="activity-card__actions-icon" />
-						</Button>
-
-						<PopoverMenu
-							context={ this.popoverContext.current }
-							isVisible={ this.state.showPopoverMenu }
-							onClose={ this.closePopoverMenu }
-							className="activity-card__popover"
-						>
-							<Button onClick={ this.triggerRestore } className="activity-card__restore-button">
-								{ translate( 'Restore to this point' ) }
+					{ ! summarize && (
+						<div className="activity-card__activity-actions">
+							<Button
+								compact
+								borderless
+								className="activity-card__detail-button"
+								onClick={ this.triggerDetails }
+							>
+								{ translate( 'See content' ) }
+								<Gridicon icon="chevron-down" />
 							</Button>
 							<Button
-								borderless
 								compact
-								isPrimary={ false }
-								onClick={ this.triggerDownload }
-								className="activity-card__download-button"
+								borderless
+								className="activity-card__actions-button"
+								onClick={ this.togglePopoverMenu }
+								ref={ this.popoverContext }
 							>
-								<img
-									src={ downloadIcon }
-									className="activity-card__download-icon"
-									role="presentation"
-									alt=""
-								/>
-								{ translate( 'Download backup' ) }
+								{ translate( 'Actions' ) }
+								<Gridicon icon="add" className="activity-card__actions-icon" />
 							</Button>
-						</PopoverMenu>
-					</div>
+
+							<PopoverMenu
+								context={ this.popoverContext.current }
+								isVisible={ this.state.showPopoverMenu }
+								onClose={ this.closePopoverMenu }
+								className="activity-card__popover"
+							>
+								<Button onClick={ this.triggerRestore } className="activity-card__restore-button">
+									{ translate( 'Restore to this point' ) }
+								</Button>
+								<Button
+									borderless
+									compact
+									isPrimary={ false }
+									onClick={ this.triggerDownload }
+									className="activity-card__download-button"
+								>
+									<img
+										src={ downloadIcon }
+										className="activity-card__download-icon"
+										role="presentation"
+										alt=""
+									/>
+									{ translate( 'Download backup' ) }
+								</Button>
+							</PopoverMenu>
+						</div>
+					) }
 				</Card>
 			</div>
 		);
