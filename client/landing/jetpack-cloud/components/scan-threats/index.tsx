@@ -49,11 +49,10 @@ const ScanThreats = ( { site, threats }: Props ) => {
 		dispatch(
 			recordTracksEvent( `calypso_scan_all_threats_dialog_open`, {
 				site_id: site.ID,
-				numberOfThreats: threats.length,
 			} )
 		);
 		setShowFixAllThreatsDialog( true );
-	}, [ dispatch, site, threats ] );
+	}, [ dispatch, site ] );
 
 	const openDialog = React.useCallback(
 		( action: ThreatAction, threat: Threat ) => {
@@ -64,7 +63,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 			dispatch(
 				recordTracksEvent( eventName, {
 					site_id: site.ID,
-					threat_id: threat.id,
+					threat_signature: threat.signature,
 				} )
 			);
 			setSelectedThreat( threat );
@@ -84,7 +83,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 		dispatch(
 			recordTracksEvent( eventName, {
 				site_id: site.ID,
-				threat_id: selectedThreat.id,
+				threat_signature: selectedThreat.signature,
 			} )
 		);
 		const actionCreator = actionToPerform === 'fix' ? fixThreatAlert : ignoreThreatAlert;
@@ -97,6 +96,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 		dispatch(
 			recordTracksEvent( `calypso_scan_all_threats_fix`, {
 				site_id: site.ID,
+				numberOfThreats: threats.length,
 			} )
 		);
 		threats.forEach( ( threat ) => {
