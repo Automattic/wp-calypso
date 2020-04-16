@@ -27,7 +27,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
-import { isCompleteAndValid, prepareDomainContactDetails } from '../types';
+import { isCompleteAndValid } from '../types';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
 
 const ContactFormTitle = () => {
@@ -112,10 +112,9 @@ export default function WPCheckout( {
 		if ( isDomainFieldsVisible ) {
 			const hasValidationErrors = await domainContactValidationCallback(
 				activePaymentMethod.id,
-				prepareDomainContactDetails( contactInfo ),
+				contactInfo,
 				[ domainName ],
-				applyDomainContactValidationResults,
-				contactInfo
+				applyDomainContactValidationResults
 			);
 			return ! hasValidationErrors;
 		}

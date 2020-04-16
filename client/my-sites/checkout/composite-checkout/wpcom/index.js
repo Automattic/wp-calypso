@@ -17,6 +17,8 @@ import {
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
+	prepareDomainContactValidationRequest,
+	formatDomainContactValidationResponse,
 	isCompleteAndValid,
 	areRequiredFieldsNotEmpty,
 } from './types';
@@ -37,6 +39,8 @@ export {
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
+	prepareDomainContactValidationRequest,
+	formatDomainContactValidationResponse,
 	areDomainsInLineItems,
 	isCompleteAndValid,
 	areRequiredFieldsNotEmpty,
