@@ -1,8 +1,16 @@
-.theme-jetpack-cloud .main,
-.color-scheme.is-jetpack-cloud .main {
-	box-sizing: border-box;
-	padding-left: 16px;
-	padding-right: 16px;
+.theme-jetpack-cloud,
+.color-scheme.is-jetpack-cloud {
+
+	.main {
+		box-sizing: border-box;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.current-section {
+		margin-left: -16px;
+		margin-right: -16px;
+	}
 }
 
 .theme-jetpack-cloud .main,
