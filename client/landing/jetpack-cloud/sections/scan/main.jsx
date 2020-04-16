@@ -19,7 +19,7 @@ import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import getJetpackScanState from 'state/selectors/get-jetpack-scan-state';
+import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
@@ -146,7 +146,7 @@ class ScanPage extends Component {
 export default connect( state => {
 	const site = getSelectedSite( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const scanState = getJetpackScanState( state, site.ID );
+	const scanState = getSiteScanState( state, site.ID );
 
 	// TODO: Get threats from actual API.
 	const threats = [
