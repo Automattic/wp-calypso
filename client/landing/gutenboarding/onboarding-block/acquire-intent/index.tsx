@@ -41,14 +41,14 @@ const AcquireIntent: FunctionComponent = () => {
 		>
 			{ displayVerticalSelect && <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } /> }
 			{ /* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */ }
-			{ isSiteTitleActive && (
-				<Arrow
-					className="acquire-intent__mobile-back-arrow"
-					onClick={ () => setIsSiteTitleActive( false ) }
-				/>
-			) }
 			{ displaySiteTitle && (
 				<>
+					{ isMobile && (
+						<Arrow
+							className="acquire-intent__mobile-back-arrow"
+							onClick={ () => setIsSiteTitleActive( false ) }
+						/>
+					) }
 					<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } />
 					<div
 						className={ classnames( 'acquire-intent__footer', {
