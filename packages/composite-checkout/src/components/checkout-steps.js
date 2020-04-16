@@ -388,26 +388,29 @@ const ContainerUI = styled.div`
 const MainContentUI = styled.div`
 	display: flex;
 	flex-direction: column;
+	width: 100%;
 
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		margin: 32px auto;
+		max-width: 556px;
 	}
 
 	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
 		align-items: flex-start;
-		width: 882px;
 		flex-direction: row;
+		max-width: none;
+		width: 882px;
 	}
 `;
 
 const CheckoutSummaryUI = styled.div`
 	background: ${props => props.theme.colors.surface};
+	box-sizing: border-box;
 	padding: 16px;
+	width: 100%;
 
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${props => props.theme.colors.borderColorLight};
-		box-sizing: border-box;
-		max-width: 556px;
 	}
 
 	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
@@ -428,8 +431,6 @@ const CheckoutStepsWrapperUI = styled.div`
 
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${props => props.theme.colors.borderColorLight};
-		box-sizing: border-box;
-		max-width: 556px;
 	}
 
 	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
