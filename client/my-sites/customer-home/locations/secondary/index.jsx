@@ -50,7 +50,7 @@ const Secondary = ( { cards } ) => {
 
 					skipEducationalCard = true;
 					return (
-						<DotPager>
+						<DotPager key={ card }>
 							{ educationalCards.map( educationalCard =>
 								React.createElement( cardComponents[ educationalCard ], {
 									key: educationalCard,
