@@ -47,6 +47,7 @@ export const createSiteDomainObject = domain => {
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
+		isLocked: Boolean( domain.is_locked ),
 		isRenewable: Boolean( domain.is_renewable ),
 		isRedeemable: Boolean( domain.is_redeemable ),
 		isEligibleForInboundTransfer: Boolean( domain.is_eligible_for_inbound_transfer ),
