@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile
     - name: Build FSE
-      run: npx lerna run build --scope='@automattic/full-site-editing' --stream
+      run: cd apps/full-site-editing && yarn build
     - name: Upload build artifact
       uses: actions/upload-artifact@v1
       with:
