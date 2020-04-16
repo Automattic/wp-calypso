@@ -35,6 +35,7 @@ export const UpsellNudge = ( {
 	href,
 	plan,
 	planHasFeature,
+	disableHref,
 	forceDisplay,
 	...props
 } ) => {
@@ -64,7 +65,7 @@ export const UpsellNudge = ( {
 		<Banner
 			{ ...props }
 			showIcon={ showIcon }
-			disableHref={ ! canManageSite }
+			disableHref={ disableHref }
 			className={ classes }
 			href={ href }
 		/>
