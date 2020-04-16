@@ -6,7 +6,7 @@
  */
 
 $markup = '
-<!-- wp:cover {"url":"https://dotcompatterns.files.wordpress.com/2020/04/louis-hansel-shotsoflouis-d0ueoxdvj5i-unsplash.jpg","id":181,"dimRatio":20,"customOverlayColor":"#000000","focalPoint":{"x":0.5,"y":"0.70"},"minHeight":620,"align":"full"} -->
+<!-- wp:cover {"url":"%1$s","id":181,"dimRatio":20,"customOverlayColor":"#000000","focalPoint":{"x":0.5,"y":"0.70"},"minHeight":620,"align":"full"} -->
 <div class="wp-block-cover alignfull has-background-dim-20 has-background-dim" style="background-image:url(%1$s);background-color:#000000;background-position:50% 70%;min-height:620px">
    <div class="wp-block-cover__inner-container">
       <!-- wp:jetpack/layout-grid {"addGutterEnds":false,"column1DesktopSpan":10,"column1DesktopOffset":1,"column1TabletSpan":8,"column1MobileSpan":4,"column2DesktopOffset":1,"className":"column1-desktop-grid__span-10 column1-desktop-grid__start-2 column1-desktop-grid__row-1 column1-tablet-grid__span-8 column1-tablet-grid__row-1 column1-mobile-grid__span-4 column1-mobile-grid__row-1"} -->
@@ -42,7 +42,7 @@ return array(
 		$markup,
 		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/04/louis-hansel-shotsoflouis-d0ueoxdvj5i-unsplash.jpg' ),
 		esc_html__( 'Get it delivered', 'full-site-editing' ),
-		esc_html__( 'If you can’t come to us, we’ll go to you.', 'full-site-editing' ),
+		esc_html__( 'If you can&#8217;t come to us, we&#8217;ll go to you.', 'full-site-editing' ),
 		esc_html__( 'Order now', 'full-site-editing' )
 	),
 );
