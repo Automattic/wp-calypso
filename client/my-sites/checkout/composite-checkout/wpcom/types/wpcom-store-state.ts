@@ -290,14 +290,23 @@ function touchField( oldData: ManagedValue ): ManagedValue {
 	return { ...oldData, isTouched: true };
 }
 
-function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedValue {
+function touchIfDifferent( newValue: undefined | string, oldData: ManagedValue ): ManagedValue {
+	if ( newValue === undefined ) {
+		return oldData;
+	}
 	return newValue === oldData.value
 		? oldData
 		: { ...oldData, value: newValue, isTouched: true, errors: [] };
 }
 
-function setValueUnlessTouched( newValue: string | null, oldData: ManagedValue ): ManagedValue {
-	return oldData.isTouched ? oldData : { ...oldData, value: newValue || '', errors: [] };
+function setValueUnlessTouched(
+	newValue: undefined | null | string,
+	oldData: ManagedValue
+): ManagedValue {
+	if ( newValue === undefined || newValue === null ) {
+		return oldData;
+	}
+	return oldData.isTouched ? oldData : { ...oldData, value: newValue, errors: [] };
 }
 
 function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
