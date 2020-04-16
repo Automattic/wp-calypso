@@ -56,12 +56,7 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	const customerType = plan === PLAN_BUSINESS || PLAN_ECOMMERCE ? 'business' : 'personal';
-
-	const link =
-		href && site
-			? href
-			: addQueryArgs( { feature, customerType }, `/plans/${ site.slug }?${ plan }` );
+	const link = href && site ? href : addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
 
 	return <Banner { ...props } showIcon={ showIcon } className={ classes } href={ link } />;
 };
