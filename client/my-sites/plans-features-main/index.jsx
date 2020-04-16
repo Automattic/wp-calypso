@@ -49,6 +49,10 @@ import {
 	getPopularPlanSpec,
 	isFreePlan,
 	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
 	planMatches,
 	plansLink,
 } from 'lib/plans';
@@ -67,9 +71,9 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import PlanTestimonials from '../plan-testimonials';
 
@@ -110,6 +114,14 @@ export class PlansFeaturesMain extends Component {
 		return true;
 	}
 
+	isDisplayingPlansNeededForFeature() {
+		const { selectedFeature, selectedPlan, previousRoute } = this.props;
+
+		if ( selectedFeature && selectedPlan && ! previousRoute.startsWith( '/plans/' ) ) {
+			return true;
+		}
+	}
+
 	getPlanFeatures() {
 		const {
 			basePlansPath,
@@ -136,6 +148,28 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const availablePlans = this.isDisplayingPlansNeededForFeature()
+			? visiblePlans.filter( plan => {
+					if ( isEcommercePlan( selectedPlan ) ) {
+						return isEcommercePlan( plan );
+					}
+					if ( isBusinessPlan( selectedPlan ) ) {
+						return isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+					if ( isPremiumPlan( selectedPlan ) ) {
+						return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+
+					if ( isPersonalPlan( selectedPlan ) ) {
+						return (
+							isPersonalPlan( plan ) ||
+							isPremiumPlan( plan ) ||
+							isBusinessPlan( plan ) ||
+							isEcommercePlan( plan )
+						);
+					}
+			  } )
+			: visiblePlans;
 
 		return (
 			<div
@@ -150,16 +184,7 @@ export class PlansFeaturesMain extends Component {
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
 				{ customHeader }
-				{ this.isJetpackBackupAvailable() && (
-					<FormattedHeader
-						headerText={ translate( 'Plans' ) }
-						subHeaderText={ translate(
-							'Get everything your site needs, in one package — so you can focus on your business.'
-						) }
-						compactOnMobile
-						isSecondary
-					/>
-				) }
+				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
@@ -173,7 +198,7 @@ export class PlansFeaturesMain extends Component {
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }
-					visiblePlans={ visiblePlans }
+					visiblePlans={ availablePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
@@ -276,13 +301,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
-		const {
-			displayJetpackPlans,
-			customerType,
-			currentQueryArgs,
-			plansWithScroll,
-			withWPPlanTabs,
-		} = this.props;
+		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( type => planMatches( plan, { type } ) ).length > 0;
@@ -307,14 +326,6 @@ export class PlansFeaturesMain extends Component {
 			return plans.filter( plan =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
 			);
-		}
-
-		if (
-			customerType !== 'personal' &&
-			currentQueryArgs &&
-			( 'business-bundle' in currentQueryArgs || 'ecommerce-bundle' in currentQueryArgs )
-		) {
-			return plans.filter( plan => isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] ) );
 		}
 
 		if ( customerType === 'personal' ) {
@@ -434,6 +445,9 @@ export class PlansFeaturesMain extends Component {
 
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs } = this.props;
+		if ( this.isDisplayingPlansNeededForFeature() ) {
+			return null;
+		}
 		if ( displayJetpackPlans ) {
 			return this.getIntervalTypeToggle();
 		}
@@ -441,6 +455,37 @@ export class PlansFeaturesMain extends Component {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
+	}
+
+	renderSecondaryFormattedHeader() {
+		const { siteSlug, translate } = this.props;
+		let headerText;
+		let subHeaderText;
+		if ( this.isDisplayingPlansNeededForFeature() ) {
+			headerText = translate( 'Upgrade plans to access this feature and more' );
+			subHeaderText = (
+				<Button
+					className="plans-features-main__view-all-plans is-link"
+					href={ `/plans/${ siteSlug }` }
+				>
+					{ translate( 'View all plans' ) }
+				</Button>
+			);
+		}
+		if ( this.isJetpackBackupAvailable() ) {
+			headerText = translate( 'Plans' );
+			subHeaderText = translate(
+				'Get everything your site needs, in one package — so you can focus on your business.'
+			);
+		}
+		return (
+			<FormattedHeader
+				headerText={ headerText }
+				subHeaderText={ subHeaderText }
+				compactOnMobile
+				isSecondary
+			/>
+		);
 	}
 
 	renderProductsSelector() {
@@ -569,7 +614,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			currentQueryArgs: getCurrentQueryArguments( state ),
+			previousRoute: getPreviousRoute( state ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
