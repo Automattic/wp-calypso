@@ -274,7 +274,7 @@ class DomainSearchResults extends React.Component {
 						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-' + ( i + 2 ) }
 						uiPosition={ i + 2 }
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
