@@ -71,7 +71,7 @@ const InserterMenuTrackingEvent = function() {
 	useEffect( () => {
 		// Skip whether isn't the 7.8.1 version.
 		if ( plugingVersion && plugingVersion !== '7.8.1' ) {
-			return null;
+			return;
 		}
 
 		if ( ! searchTerm || searchTerm.length < 3 ) {
