@@ -60,7 +60,6 @@ const AcquireIntent: FunctionComponent = () => {
 							isPrimary
 							to={ siteVertical && makePath( Step.DesignSelection ) }
 						>
-							{ /* @TODO: add transitions and correct action */ }
 							{ siteTitle ? __( 'Choose a design' ) : __( 'Donʼt know yet' ) }
 						</Link>
 					</div>
