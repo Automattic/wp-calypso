@@ -51,7 +51,7 @@ export function getLanguageFilePathUrl() {
  * @returns {string} The internal base file path for language files.
  */
 export function getLanguagesInternalBasePath() {
-	if ( typeof window === 'undefined' || ! window.__requireChunkCallback__ ) {
+	if ( typeof window === 'undefined' || ! window?.__requireChunkCallback__ ) {
 		return '/calypso/evergreen/languages';
 	}
 
