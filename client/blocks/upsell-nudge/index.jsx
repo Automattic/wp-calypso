@@ -56,7 +56,7 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	const link = href && site ? href : addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
+	const link = href ? href : addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
 
 	return <Banner { ...props } showIcon={ showIcon } className={ classes } href={ link } />;
 };
