@@ -422,7 +422,7 @@ const mapState = state => {
 	return {
 		isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
 		isPrivateAtomic: isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId ),
-		url: getSelectedSite( state ).URL,
+		url: getSelectedSite( state )?.URL,
 	};
 };
 
