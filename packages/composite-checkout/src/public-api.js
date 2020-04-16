@@ -41,7 +41,7 @@ import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
 import CheckoutOrderSummaryStep, {
 	CheckoutOrderSummary,
-	CheckoutOrderSummaryTitle,
+	CheckoutOrderSummaryStepTitle,
 } from './components/checkout-order-summary';
 import {
 	getDefaultOrderSummary,
@@ -57,7 +57,7 @@ export {
 	CheckoutModal,
 	CheckoutOrderSummaryStep,
 	CheckoutOrderSummary,
-	CheckoutOrderSummaryTitle,
+	CheckoutOrderSummaryStepTitle,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,

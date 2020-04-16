@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CheckoutOrderSummaryStep, {
-	CheckoutOrderSummaryTitle,
+	CheckoutOrderSummaryStepTitle,
 	CheckoutOrderSummary,
 } from './checkout-order-summary';
 import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review-order';
@@ -26,7 +26,7 @@ export function getDefaultOrderSummaryStep() {
 		id: 'order-summary-step',
 		className: 'checkout__order-summary-step',
 		hasStepNumber: false,
-		titleContent: <CheckoutOrderSummaryTitle />,
+		titleContent: <CheckoutOrderSummaryStepTitle />,
 		activeStepContent: null,
 		incompleteStepContent: null,
 		completeStepContent: <CheckoutOrderSummaryStep />,

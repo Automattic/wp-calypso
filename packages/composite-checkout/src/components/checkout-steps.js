@@ -406,11 +406,11 @@ const MainContentUI = styled.div`
 const CheckoutSummaryUI = styled.div`
 	background: ${props => props.theme.colors.surface};
 	box-sizing: border-box;
-	padding: 16px;
 	width: 100%;
 
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${props => props.theme.colors.borderColorLight};
+		border-bottom: none 0;
 	}
 
 	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
