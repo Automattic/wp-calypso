@@ -283,7 +283,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async toggleSidebar( open = true ) {
-		const sidebarSelector = '.edit-post-sidebar-header';
+		const sidebarSelector = '.interface-complementary-area-header';
 		const sidebarOpen = await driverHelper.isElementPresent(
 			this.driver,
 			By.css( sidebarSelector )
