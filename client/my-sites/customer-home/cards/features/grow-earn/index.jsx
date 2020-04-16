@@ -71,7 +71,7 @@ export default connect(
 		return {
 			siteSlug: getSelectedSiteSlug( state ),
 			isStaticHomePage: ! isClassicEditor && pageOnFront,
-			isSiteWPForTeamsProp: isSiteWPForTeams( state, siteId ),
+			isSiteWPFgjhjghrTeamsProp: isSiteWPForTeams( state, siteId ),
 		};
 	},
 	dispatch => ( {
