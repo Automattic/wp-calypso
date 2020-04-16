@@ -72,17 +72,13 @@ export function CheckoutOrderSummary() {
 			<CheckoutSummaryAmountWrapper>
 				{ taxes.map( tax => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
-						<CheckoutSummaryLabel>{ tax.label }</CheckoutSummaryLabel>
-						<CheckoutSummaryAmount>
-							{ renderDisplayValueMarkdown( tax.amount.displayValue ) }
-						</CheckoutSummaryAmount>
+						<span>{ tax.label }</span>
+						<span>{ renderDisplayValueMarkdown( tax.amount.displayValue ) }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
 				<CheckoutSummaryTotal>
-					<CheckoutSummaryLabel>{ translate( 'Total' ) }</CheckoutSummaryLabel>
-					<CheckoutSummaryAmount>
-						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
-					</CheckoutSummaryAmount>
+					<span>{ translate( 'Total' ) }</span>
+					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
 		</>
@@ -99,10 +95,6 @@ const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
 	padding: 16px;
 `;
-
-const CheckoutSummaryLabel = styled.span``;
-
-const CheckoutSummaryAmount = styled.span``;
 
 const CheckoutSummaryLineItem = styled.div`
 	display: flex;
