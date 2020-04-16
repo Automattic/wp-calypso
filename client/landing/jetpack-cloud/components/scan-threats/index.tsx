@@ -56,8 +56,12 @@ const ScanThreats = ( { site, threats }: Props ) => {
 
 	const openDialog = React.useCallback(
 		( action: ThreatAction, threat: Threat ) => {
+			const eventName =
+				action === 'fix'
+					? 'calypso_scan_fix_threat_dialog_open'
+					: 'calypso_scan_ignore_threat_dialog_open';
 			dispatch(
-				recordTracksEvent( `calypso_scan_${ action }_threat_dialog_open`, {
+				recordTracksEvent( eventName, {
 					site_id: site.ID,
 					threat_id: threat.id,
 				} )
@@ -74,8 +78,10 @@ const ScanThreats = ( { site, threats }: Props ) => {
 	}, [] );
 
 	const confirmAction = React.useCallback( () => {
+		const eventName =
+			actionToPerform === 'fix' ? 'calypso_scan_threat_fix' : 'calypso_scan_threat_ignore';
 		dispatch(
-			recordTracksEvent( `calypso_scan_threat_${ actionToPerform }`, {
+			recordTracksEvent( eventName, {
 				site_id: site.ID,
 				threat_id: selectedThreat.id,
 			} )
