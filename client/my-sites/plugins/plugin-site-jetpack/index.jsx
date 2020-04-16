@@ -83,14 +83,7 @@ class PluginSiteJetpack extends React.Component {
 
 		const showAutoManagedMessage = this.props.isAutoManaged;
 
-		const actionLinks = this.props.site.plugin.action_links;
-		let settingsLink;
-
-		if ( actionLinks ) {
-			if ( actionLinks.Settings ) {
-				settingsLink = actionLinks.Settings;
-			}
-		}
+		const settingsLink = this.props?.site?.plugin?.action_links?.Settings ?? null;
 
 		return (
 			<FoldableCard
