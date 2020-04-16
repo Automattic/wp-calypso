@@ -437,166 +437,40 @@ export function formatDomainContactValidationResponse(
 	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
 	return {
-        firstName: response.messages ?.firstName,
-        lastName
-:
-    response.messages ?
-.
-    lastName,
-        organization
-:
-    response.messages ?
-.
-    organization,
-        email
-:
-    response.messages ?
-.
-    email,
-        alternateEmail
-:
-    response.messages ?
-.
-    alternateEmail,
-        phone
-:
-    response.messages ?
-.
-    phone,
-        phoneNumberCountry
-:
-    response.messages ?
-.
-    phoneNumberCountry,
-        address1
-:
-    response.messages ?
-.
-    address1,
-        address2
-:
-    response.messages ?
-.
-    address2,
-        city
-:
-    response.messages ?
-.
-    city,
-        state
-:
-    response.messages ?
-.
-    state,
-        postalCode
-:
-    response.messages ?
-.
-    postalCode,
-        countryCode
-:
-    response.messages ?
-.
-    countryCode,
-        fax
-:
-    response.messages ?
-.
-    fax,
-        vatId
-:
-    response.messages ?
-.
-    vatId,
-        tldExtraFields
-:
-    {
-        ca: {
-            lang: response.messages ?
-        .
-            extra ?
-        .
-            ca ?
-        .
-            lang,
-                legalType
-        :
-            response.messages ?
-        .
-            extra ?
-        .
-            ca ?
-        .
-            legalType,
-                ciraAgreementAccepted
-        :
-            response.messages ?
-        .
-            extra ?
-        .
-            ca ?
-        .
-            ciraAgreementAccepted,
-        }
-    ,
-        uk: {
-            registrantType: response.messages ?
-        .
-            extra ?
-        .
-            uk ?
-        .
-            registrantType,
-                registrationNumber
-        :
-            response.messages ?
-        .
-            extra ?
-        .
-            uk ?
-        .
-            registrationNumber,
-                tradingName
-        :
-            response.messages ?
-        .
-            extra ?
-        .
-            uk ?
-        .
-            tradingName,
-        }
-    ,
-        fr: {
-            registrantType: response.messages ?
-        .
-            extra ?
-        .
-            fr ?
-        .
-            registrantType,
-                trademarkNumber
-        :
-            response.messages ?
-        .
-            extra ?
-        .
-            fr ?
-        .
-            trademarkNumber,
-                sirenSirat
-        :
-            response.messages ?
-        .
-            extra ?
-        .
-            fr ?
-        .
-            sirenSirat,
-        }
-    ,
-    }
-} };
+		firstName: response.messages?.firstName,
+		lastName: response.messages?.lastName,
+		organization: response.messages?.organization,
+		email: response.messages?.email,
+		alternateEmail: response.messages?.alternateEmail,
+		phone: response.messages?.phone,
+		phoneNumberCountry: response.messages?.phoneNumberCountry,
+		address1: response.messages?.address1,
+		address2: response.messages?.address2,
+		city: response.messages?.city,
+		state: response.messages?.state,
+		postalCode: response.messages?.postalCode,
+		countryCode: response.messages?.countryCode,
+		fax: response.messages?.fax,
+		vatId: response.messages?.vatId,
+		tldExtraFields: {
+			ca: {
+				lang: response.messages?.extra?.ca?.lang,
+				legalType: response.messages?.extra?.ca?.legalType,
+				ciraAgreementAccepted: response.messages?.extra?.ca?.ciraAgreementAccepted,
+			},
+			uk: {
+				registrantType: response.messages?.extra?.uk?.registrantType,
+				registrationNumber: response.messages?.extra?.uk?.registrationNumber,
+				tradingName: response.messages?.extra?.uk?.tradingName,
+			},
+			fr: {
+				registrantType: response.messages?.extra?.fr?.registrantType,
+				trademarkNumber: response.messages?.extra?.fr?.trademarkNumber,
+				sirenSirat: response.messages?.extra?.fr?.sirenSirat,
+			},
+		},
+	};
+}
 
 function prepareManagedContactDetailsUpdate(
 	rawFields: DomainContactDetails
