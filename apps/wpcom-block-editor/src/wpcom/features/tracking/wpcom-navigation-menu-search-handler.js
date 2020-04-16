@@ -7,7 +7,7 @@ import { debounce } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@wordpress/block-editor';
 
@@ -31,18 +31,48 @@ const InserterMenuTrackingEvent = function() {
 			return;
 		}
 
-		const eventProperties = { search_term, context: 'inserter_menu' };
+		const eventProperties = {
+			search_term,
+			context: 'inserter_menu',
+			selected_block: selectedBlock ? selectedBlock.name : null,
+		};
 
-		/*
-		 * Populate event properties with `selected_block`
-		 * if there is a selected block in the editor.
-		 */
-		if ( selectedBlock ) {
-			eventProperties.selected_block = selectedBlock.name;
+		tracksRecordEvent( 'wpcom_block_picker_search_term', eventProperties );
+	}, 500 );
+
+	/*
+	 * Hacky temporal solution to detect no-results search result.
+	 * Unfortunately, __experimentalInserterMenuExtension has a bug
+	 * in the 7.8.1 core version.
+	 * The `hasItems` property is always true so it isn't possible
+	 * to rely on this value.
+	 *
+	 * @TODO: The following is a temporary solution and it should be removed
+	 *   and replaced by the usage of the `hasItems` property,
+	 *   once a new version of core is available in dotcom.
+	 */
+	useEffect( () => {
+		if ( ! searchTerm || searchTerm.length < 3 ) {
+			return;
 		}
 
-		tracksRecordEvent( 'wpcom_block_picker_search_term', { ...eventProperties } );
-	}, 500 );
+		const eventProperties = {
+			search_term: searchTerm,
+			context: 'inserter_menu',
+			selected_block: selectedBlock ? selectedBlock.name : null,
+		};
+
+		const hasResultsEl = document.querySelectorAll( '.block-editor-inserter__results' );
+		const hasNoResultsEl =
+			document.querySelectorAll( '.block-editor-inserter__no-results' ).length !== 0;
+
+		if (
+			hasNoResultsEl ||
+			( hasResultsEl && hasResultsEl[ 0 ] && hasResultsEl[ 0 ].children.length === 0 )
+		) {
+			tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
+		}
+	}, [ searchTerm ] );
 
 	return (
 		<InserterMenuExtension>
