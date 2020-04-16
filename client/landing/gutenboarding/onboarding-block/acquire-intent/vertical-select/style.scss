@@ -1,7 +1,19 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../../variables.scss';
 
 // Restyle `<Suggestion />` component
 .vertical-select {
+	transition: flex-grow $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	display: flex;
+	flex-direction: column;
+	&--with-suggestions {
+		flex-grow: 1;
+	}
+
+	@include break-small {
+		display: block;
+	}
+
 	.suggestions__category-heading {
 		display: none;
 	}
@@ -28,7 +40,8 @@
 .vertical-select__suggestions-wrapper {
 	position: relative;
 	display: block;
-	padding-right: 15px; // prevent arrow overflow on mobile
+	padding-right: 20px; // prevent arrow overflow on mobile
+	flex: 1;
 
 	@include break-small {
 		display: inline;
@@ -37,12 +50,21 @@
 }
 
 .vertical-select__suggestions {
-	width: 250px;
-	max-height: 400px;
-	overflow: auto;
 	position: absolute;
 	left: -16px;
 	margin-top: 20px;
+	min-height: 100px;
+    max-height: calc( 100% - 50px );
+	overflow: auto;
+
+	@include break-small {
+		width: 250px;
+		max-height: 400px;
+	}
+}
+
+.vertical-select__input-wrapper {
+	position: relative;
 }
 
 .vertical-select__placeholder {
@@ -57,7 +79,7 @@
 
 .vertical-select__arrow {
 	position: absolute;
-	bottom: 12px;
+	bottom: 8px;
 	margin-left: 15px;
 
 	@include break-small {

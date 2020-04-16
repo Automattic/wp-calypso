@@ -2,9 +2,6 @@
 @import '../../mixins';
 @import '../../variables.scss';
 
-$acquire-intent-transition-duration: 200ms;
-$acquire-intent-transition-algorithm: ease-in-out;
-
 .acquire-intent {
 	@include onboarding-heading-text-mobile;
 	background-color: var( --contrastColor );

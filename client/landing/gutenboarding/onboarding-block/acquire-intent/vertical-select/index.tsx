@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { remove } from 'lodash';
+import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { ENTER, TAB } from '@wordpress/keycodes';
@@ -204,9 +205,10 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 							onBlur={ handleBlur }
 						/>
 						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
+						{ showArrow && (
+							<Arrow className="vertical-select__arrow" onClick={ handleArrowClick } />
+						) }
 					</span>
-					{ /* us visibility to keep the layout fixed with and without the arrow */ }
-					{ showArrow && <Arrow className="vertical-select__arrow" onClick={ handleArrowClick } /> }
 					<div className="vertical-select__suggestions">
 						{ !! verticals.length && (
 							<Suggestions
@@ -223,7 +225,15 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 		}
 	);
 
-	return <form className="vertical-select">{ madlib }</form>;
+	return (
+		<form
+			className={ classnames( 'vertical-select', {
+				'vertical-select--with-suggestions': !! suggestions.length && isMobile,
+			} ) }
+		>
+			{ madlib }
+		</form>
+	);
 };
 
 export default VerticalSelect;
