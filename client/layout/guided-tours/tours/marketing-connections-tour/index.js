@@ -30,7 +30,10 @@ export const marketingConnectionsTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Link href={ localizeUrl( 'https://wordpress.com/support/publicize/' ) }>
+						<Link
+							supportArticleId={ 4789 }
+							href={ localizeUrl( 'https://wordpress.com/support/publicize/' ) }
+						>
 							{ translate( 'Learn more' ) }
 						</Link>
 						<Quit primary>{ translate( 'Got it' ) }</Quit>
