@@ -96,7 +96,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 					'Please review them below and take action. We are {{a}}here to help{{/a}} if you need us.',
 					{
 						components: {
-							a: <a href={ `https://jetpack.com/contact-support/?site=${ site.URL }` } />,
+							a: <a href={ `https://jetpack.com/contact-support/?url=${ site.URL }` } />,
 						},
 						comment: 'The {{a}} tag is a link that goes to a contact support page.',
 					}

@@ -178,7 +178,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</h3>
 			<Button
 				className="rewind-flow__primary-button"
-				href={ `https://jetpack.com/contact-support/?site=${ siteUrl }&scan-state=error` }
+				href={ `https://jetpack.com/contact-support/?url=${ siteUrl }&scan-state=error` }
 				primary
 				rel="noopener noreferrer"
 				target="_blank"

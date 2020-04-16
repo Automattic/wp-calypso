@@ -142,7 +142,7 @@ class DailyBackupStatus extends Component {
 					</p>
 					<Button
 						className="daily-backup-status__support-button"
-						href={ `https://jetpack.com/contact-support/?site=${ siteUrl }` }
+						href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
 						target="_blank"
 						rel="noopener noreferrer"
 						isPrimary={ false }
@@ -173,7 +173,7 @@ class DailyBackupStatus extends Component {
 
 				<Button
 					className="daily-backup-status__support-button"
-					href={ `https://jetpack.com/contact-support/?site=${ siteUrl }` }
+					href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }
@@ -224,7 +224,7 @@ class DailyBackupStatus extends Component {
 
 				<Button
 					className="daily-backup-status__support-button"
-					href={ `https://jetpack.com/contact-support/?site=${ siteUrl }` }
+					href={ `https://jetpack.com/contact-support/?url=${ siteUrl }` }
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }
