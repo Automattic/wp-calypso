@@ -101,7 +101,7 @@ class ActivityCard extends Component {
 								borderless
 								compact
 								isPrimary={ false }
-								onClick={ backupDownloadPath( siteSlug, activity.rewindId ) }
+								href={ backupDownloadPath( siteSlug, activity.rewindId ) }
 								className="activity-card__download-button"
 							>
 								<img
