@@ -15,6 +15,7 @@ CircleCI generates notifications panel build artifacts on every commit that it p
 Alternatively you can manually build the app with `lerna` and copy the built files to your sandbox.
 
 ```bash
+# Builds files and places them in `apps/notifications/dist`
 cd apps/notifications
 yarn build
 ```
