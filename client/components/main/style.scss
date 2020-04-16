@@ -19,6 +19,6 @@
 }
 
 // Use Recoleta on all page headings
-.main .formatted-header__title {
+.main > .formatted-header .formatted-header__title {
 	font-family: 'Recoleta', $serif;
 }
