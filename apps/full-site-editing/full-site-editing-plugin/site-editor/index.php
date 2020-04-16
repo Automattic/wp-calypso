@@ -28,22 +28,6 @@ function initialize_site_editor() {
 
 	// Force enable required Gutenberg experiments if they are not already active.
 	add_filter( 'pre_option_gutenberg-experiments', __NAMESPACE__ . '\enable_site_editor_experiment' );
-	// Add top level Site Editor menu item.
-	add_action( 'admin_menu', __NAMESPACE__ . '\add_site_editor_menu_item' );
-}
-
-/**
- * Add top level Site Editor menu item.
- */
-function add_site_editor_menu_item() {
-	add_menu_page(
-		__( 'Site Editor (beta)', 'full-site-editing' ),
-		__( 'Site Editor (beta)', 'full-site-editing' ),
-		'edit_theme_options',
-		'gutenberg-edit-site',
-		'gutenberg_edit_site_page',
-		'dashicons-edit'
-	);
 }
 
 /**
