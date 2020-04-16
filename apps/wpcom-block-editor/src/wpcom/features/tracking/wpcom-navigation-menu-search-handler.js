@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * WordPress dependencies
@@ -17,6 +18,9 @@ import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@w
  * Internal dependencies
  */
 import tracksRecordEvent from './track-record-event';
+
+// let's remove this line once the core version updates.
+const debug = debugFactory( 'wpcom-block-editor:tracking:inserter-menu' );
 
 const InserterMenuTrackingEvent = function() {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
@@ -50,7 +54,10 @@ const InserterMenuTrackingEvent = function() {
 			return null;
 		}
 
-		if ( ! has_items ) {
+		// let's remove this line once the core version updates.
+		debug( '%o: tracking with Slot parameter', plugingVersion );
+
+		if ( has_items ) {
 			return;
 		}
 
@@ -73,6 +80,8 @@ const InserterMenuTrackingEvent = function() {
 		if ( plugingVersion && plugingVersion !== '7.8.1' ) {
 			return;
 		}
+		// let's remove this line once the core version updates.
+		debug( '%o: tracking inspecting DOM tree', plugingVersion );
 
 		if ( ! searchTerm || searchTerm.length < 3 ) {
 			return;
