@@ -12,7 +12,10 @@ import { Card } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { RewindFlowPurpose } from './types';
-import { useApplySiteOffset } from 'landing/jetpack-cloud/components/site-offset';
+import {
+	applySiteOffsetType,
+	useApplySiteOffset,
+} from 'landing/jetpack-cloud/components/site-offset';
 import BackupDownloadFlow from './download';
 import BackupRestoreFlow from './restore';
 import DocumentHead from 'components/data/document-head';
@@ -39,11 +42,10 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( state => ( siteId !== null ? getSiteSlug( state, siteId ) : '' ) );
 
-	const backupDisplayDate = applySiteOffset( moment( parseFloat( rewindId ) * 1000 ) )?.format(
-		'LLL'
-	);
-
-	const render = () => {
+	const render = ( loadedApplySiteOffset: applySiteOffsetType ) => {
+		const backupDisplayDate = loadedApplySiteOffset(
+			moment( parseFloat( rewindId ) * 1000 )
+		)?.format( 'LLL' );
 		if ( siteId && rewindId && backupDisplayDate ) {
 			return purpose === RewindFlowPurpose.RESTORE ? (
 				<BackupRestoreFlow
@@ -73,7 +75,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 				}
 			/>
 			<SidebarNavigation />
-			<Card>{ render() }</Card>
+			<Card>{ applySiteOffset && render( applySiteOffset ) }</Card>
 		</Main>
 	);
 };

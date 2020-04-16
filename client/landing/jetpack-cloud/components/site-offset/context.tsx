@@ -16,9 +16,10 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
 
-type contextType = ( input: MomentInput ) => Moment | null;
+export type contextTypeLoaded = ( input: MomentInput ) => Moment;
+export type contextType = contextTypeLoaded | null;
 
-const SiteOffsetContext = React.createContext< contextType >( () => null );
+const SiteOffsetContext = React.createContext< contextType >( null );
 
 interface Props {
 	site: string;
@@ -34,15 +35,16 @@ const SiteOffsetProvider: FunctionComponent< Props > = ( { children, site } ) =>
 	);
 
 	const value = useCallback(
-		( input: MomentInput ) =>
-			gmtOffset || timezone ? applySiteOffset( input, { gmtOffset, timezone } ) : null,
+		( input: MomentInput ) => applySiteOffset( input, { gmtOffset, timezone } ),
 		[ gmtOffset, timezone ]
 	);
 
 	return (
 		<>
 			<QuerySiteSettings siteId={ siteId } />
-			<SiteOffsetContext.Provider value={ value }>{ children }</SiteOffsetContext.Provider>
+			<SiteOffsetContext.Provider value={ gmtOffset !== null || timezone !== null ? value : null }>
+				{ children }
+			</SiteOffsetContext.Provider>
 		</>
 	);
 };
