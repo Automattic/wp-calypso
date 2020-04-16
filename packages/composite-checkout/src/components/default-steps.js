@@ -17,7 +17,6 @@ export function getDefaultOrderSummary() {
 	return {
 		id: 'order-summary',
 		className: 'checkout__order-summary',
-		titleContent: <CheckoutOrderSummaryTitle />,
 		summaryContent: <CheckoutOrderSummary />,
 	};
 }

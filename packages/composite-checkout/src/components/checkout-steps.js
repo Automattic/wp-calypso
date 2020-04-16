@@ -85,12 +85,9 @@ function DefaultCheckoutSteps() {
 	const reviewOrderStep = getDefaultOrderReviewStep();
 	return (
 		<React.Fragment>
-			<CheckoutSummary
-				titleContent={ orderSummary.titleContent }
-				summaryContent={ orderSummary.summaryContent }
-				stepId={ 'order-summary' }
-				className={ orderSummary.className }
-			/>
+			<CheckoutSummary className={ orderSummary.className }>
+				{ orderSummary.summaryContent }
+			</CheckoutSummary>
 			<CheckoutSteps>
 				<CheckoutStepBody
 					activeStepContent={ orderSummaryStep.activeStepContent }
@@ -397,6 +394,7 @@ const MainContentUI = styled.div`
 	}
 
 	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
+		align-items: flex-start;
 		width: 882px;
 		flex-direction: row;
 	}
@@ -404,6 +402,7 @@ const MainContentUI = styled.div`
 
 const CheckoutSummaryUI = styled.div`
 	background: ${props => props.theme.colors.surface};
+	padding: 16px;
 
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${props => props.theme.colors.borderColorLight};
