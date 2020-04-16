@@ -51,7 +51,7 @@ export function getLanguageFilePathUrl() {
  * @returns {string} The internal base file path for language files.
  */
 export function getLanguagesInternalBasePath() {
-	if ( ! window || ! window.__requireChunkCallback__ ) {
+	if ( typeof window === 'undefined' || ! window.__requireChunkCallback__ ) {
 		return '/calypso/evergreen/languages';
 	}
 
@@ -130,13 +130,22 @@ export function getLanguageFile( targetLocaleSlug ) {
  * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
  *
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} fileType The desired file type, js or json. Default to json.
  * @param {object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
  *
  * @returns {string} A language manifest file URL.
  */
-export function getLanguageManifestFileUrl( localeSlug, languageRevisions = {} ) {
+export function getLanguageManifestFileUrl(
+	localeSlug,
+	fileType = 'json',
+	languageRevisions = {}
+) {
+	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+		fileType = 'json';
+	}
+
 	const revision = languageRevisions[ localeSlug ];
-	const fileUrl = `${ getLanguagesInternalBasePath() }/${ localeSlug }-language-manifest.json`;
+	const fileUrl = `${ getLanguagesInternalBasePath() }/${ localeSlug }-language-manifest.${ fileType }`;
 
 	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
 }
@@ -149,7 +158,15 @@ export function getLanguageManifestFileUrl( localeSlug, languageRevisions = {} )
  * @returns {Promise} Language manifest json content
  */
 export function getLanguageManifestFile( targetLocaleSlug ) {
-	const url = getLanguageManifestFileUrl( targetLocaleSlug, window.languageRevisions || {} );
+	if ( window?.i18nLanguageManifest ) {
+		return Promise.resolve( window.i18nLanguageManifest );
+	}
+
+	const url = getLanguageManifestFileUrl(
+		targetLocaleSlug,
+		'json',
+		window.languageRevisions || {}
+	);
 
 	return getFile( url );
 }
@@ -160,13 +177,23 @@ export function getLanguageManifestFile( targetLocaleSlug ) {
  *
  * @param {string} chunkId A chunk id. e.g. chunk-abc.min
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} fileType The desired file type, js or json. Default to json.
  * @param {object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
  *
  * @returns {string} A translation chunk file URL.
  */
-export function getTranslationChunkFileUrl( chunkId, localeSlug, languageRevisions = {} ) {
+export function getTranslationChunkFileUrl(
+	chunkId,
+	localeSlug,
+	fileType = 'json',
+	languageRevisions = {}
+) {
+	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+		fileType = 'json';
+	}
+
 	const revision = languageRevisions[ localeSlug ];
-	const fileUrl = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json`;
+	const fileUrl = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.${ fileType }`;
 
 	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
 }
@@ -180,9 +207,14 @@ export function getTranslationChunkFileUrl( chunkId, localeSlug, languageRevisio
  * @returns {Promise} Translation chunk json content
  */
 export function getTranslationChunkFile( chunkId, targetLocaleSlug ) {
+	if ( window?.i18nTranslationChunks?.[ chunkId ] ) {
+		return Promise.resolve( window.i18nTranslationChunks[ chunkId ] );
+	}
+
 	const url = getTranslationChunkFileUrl(
 		chunkId,
 		targetLocaleSlug,
+		'json',
 		window.languageRevisions || {}
 	);
 
@@ -206,10 +238,8 @@ export default function switchLocale( localeSlug ) {
 
 	lastRequestedLocale = localeSlug;
 
+	// Todo: Handle switch locale with translation chunks
 	if ( config.isEnabled( 'use-translation-chunks' ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
-		setLocaleInDOM();
-
 		return;
 	}
 

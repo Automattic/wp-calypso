@@ -16,10 +16,10 @@ import {
 } from 'lib/i18n-utils/switch-locale';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
-const setupTranslationChunks = async ( localeSlug ) => {
+const setupTranslationChunks = async ( localeSlug, reduxStore ) => {
 	const { translatedChunks, locale } = await getLanguageManifestFile( localeSlug );
 
-	i18n.setLocale( locale );
+	reduxStore.dispatch( setLocaleRawData( locale ) );
 
 	const loadedTranslationChunks = {};
 	const loadTranslationForChunkIfNeeded = ( chunkId ) => {
@@ -70,7 +70,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		const localeSlug = userLocaleSlug || pathLocaleSlug;
 
 		if ( localeSlug ) {
-			setupTranslationChunks( localeSlug );
+			setupTranslationChunks( localeSlug, reduxStore );
 		}
 	}
 
