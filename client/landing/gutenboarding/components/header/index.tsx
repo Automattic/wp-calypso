@@ -185,6 +185,8 @@ const Header: FunctionComponent = () => {
 				return;
 			}
 			resetOnboardStore();
+			// TODO: remove this :)
+			console.log( 'Call `calypso_signup_complete` here?' );
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
 	}, [ domain, newSite, resetOnboardStore, isRedirecting ] );
