@@ -18,11 +18,14 @@ import './style.scss';
 
 export const DotPagerControls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 	const translate = useTranslate();
+	if ( numberOfPages < 2 ) {
+		return null;
+	}
 	const canGoBack = currentPage > 0;
 	const canGoForward = currentPage < numberOfPages - 1;
 	return (
 		<ul className="dot-pager__controls" aria-label={ translate( 'Pager controls' ) }>
-			<li>
+			<li key="dot-pager-prev">
 				<button
 					className="dot-pager__prev"
 					disabled={ ! canGoBack }
@@ -33,9 +36,9 @@ export const DotPagerControls = ( { currentPage, numberOfPages, setCurrentPage }
 				</button>
 			</li>
 			{ times( numberOfPages, page => (
-				<li key={ page } aria-current={ page === currentPage ? 'page' : undefined }>
+				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
-						key={ page }
+						key={ page.toString() }
 						className={ page === currentPage ? 'dot-pager__current' : undefined }
 						disabled={ page === currentPage }
 						aria-label={ translate( 'Page %(page)d of %(numberOfPages)d', {
@@ -45,7 +48,7 @@ export const DotPagerControls = ( { currentPage, numberOfPages, setCurrentPage }
 					/>
 				</li>
 			) ) }
-			<li>
+			<li key="dot-pager-next">
 				<button
 					className="dot-pager__next"
 					disabled={ ! canGoForward }
