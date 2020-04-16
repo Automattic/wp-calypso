@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
+	CheckoutSummary,
 	CheckoutSteps,
 	CheckoutStep,
 	CheckoutStepBody,
@@ -18,6 +19,7 @@ import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
+	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -258,6 +260,7 @@ function ContactForm( { summary } ) {
 	);
 }
 
+const orderSummary = getDefaultOrderSummary();
 const orderSummaryStep = getDefaultOrderSummaryStep();
 const paymentMethodStep = getDefaultPaymentMethodStep();
 const reviewOrderStep = getDefaultOrderReviewStep();
@@ -394,6 +397,12 @@ function MyCheckoutBody() {
 
 	return (
 		<Checkout>
+			<CheckoutSummary
+				titleContent={ orderSummary.titleContent }
+				summaryContent={ orderSummary.summaryContent }
+				stepId={ 'order-summary' }
+				className={ orderSummary.className }
+			/>
 			<CheckoutSteps>
 				<CheckoutStepBody
 					activeStepContent={ orderSummaryStep.activeStepContent }

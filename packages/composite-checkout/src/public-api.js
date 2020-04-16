@@ -7,6 +7,7 @@ import {
 	Checkout,
 	CheckoutStep,
 	CheckoutStepBody,
+	CheckoutSummary,
 	useIsStepActive,
 	useIsStepComplete,
 } from './components/checkout-steps';
@@ -38,10 +39,12 @@ import {
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
-import CheckoutOrderSummary, {
+import CheckoutOrderSummaryStep, {
+	CheckoutOrderSummary,
 	CheckoutOrderSummaryTitle,
 } from './components/checkout-order-summary';
 import {
+	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	getDefaultOrderReviewStep,
@@ -52,6 +55,7 @@ import { useFormStatus } from './lib/form-status';
 export {
 	Checkout,
 	CheckoutModal,
+	CheckoutOrderSummaryStep,
 	CheckoutOrderSummary,
 	CheckoutOrderSummaryTitle,
 	CheckoutPaymentMethods,
@@ -59,6 +63,7 @@ export {
 	CheckoutStep,
 	CheckoutStepBody,
 	CheckoutSteps,
+	CheckoutSummary,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
@@ -71,6 +76,7 @@ export {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
+	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,

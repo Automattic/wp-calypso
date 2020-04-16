@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import { useLineItems, useTotal, renderDisplayValueMarkdown } from '../public-api';
 import { useLocalize } from '../lib/localize';
 
-export default function CheckoutOrderSummary() {
+export default function CheckoutOrderSummaryStep() {
 	const [ items ] = useLineItems();
 
 	return (
@@ -32,6 +32,10 @@ const ProductListItem = styled.li`
 	padding: 0;
 	list-style-type: none;
 `;
+
+export function CheckoutOrderSummary() {
+	return <CheckoutOrderSummaryTitle />;
+}
 
 export function CheckoutOrderSummaryTitle() {
 	const localize = useLocalize();

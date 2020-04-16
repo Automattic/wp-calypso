@@ -20,6 +20,7 @@ import { CheckIcon } from './shared-icons';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import {
 	getDefaultOrderReviewStep,
+	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	usePaymentMethod,
@@ -78,11 +79,18 @@ export function Checkout( { children, className } ) {
 }
 
 function DefaultCheckoutSteps() {
+	const orderSummary = getDefaultOrderSummary();
 	const orderSummaryStep = getDefaultOrderSummaryStep();
 	const paymentMethodStep = getDefaultPaymentMethodStep();
 	const reviewOrderStep = getDefaultOrderReviewStep();
 	return (
 		<React.Fragment>
+			<CheckoutSummary
+				titleContent={ orderSummary.titleContent }
+				summaryContent={ orderSummary.summaryContent }
+				stepId={ 'order-summary' }
+				className={ orderSummary.className }
+			/>
 			<CheckoutSteps>
 				<CheckoutStepBody
 					activeStepContent={ orderSummaryStep.activeStepContent }
@@ -93,7 +101,7 @@ function DefaultCheckoutSteps() {
 					isStepComplete={ true }
 					stepNumber={ 1 }
 					totalSteps={ 1 }
-					stepId={ 'order-summary' }
+					stepId={ 'order-summary-step' }
 					className={ orderSummaryStep.className }
 				/>
 				<CheckoutStep
@@ -113,6 +121,14 @@ function DefaultCheckoutSteps() {
 				/>
 			</CheckoutSteps>
 		</React.Fragment>
+	);
+}
+
+export function CheckoutSummary( { children, className } ) {
+	return (
+		<CheckoutSummaryUI className={ joinClasses( [ className, 'checkout__summary-wrapper' ] ) }>
+			{ children }
+		</CheckoutSummaryUI>
 	);
 }
 
@@ -374,19 +390,52 @@ const ContainerUI = styled.div`
 
 const MainContentUI = styled.div`
 	display: flex;
+	flex-direction: column;
+
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		margin: 32px auto;
+	}
+
+	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
+		width: 882px;
+		flex-direction: row;
+	}
+`;
+
+const CheckoutSummaryUI = styled.div`
+	background: ${props => props.theme.colors.surface};
+
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${props => props.theme.colors.borderColorLight};
+		box-sizing: border-box;
+		max-width: 556px;
+	}
+
+	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
+		border: 1px solid ${props => props.theme.colors.borderColorLight};
+		box-sizing: border-box;
+		margin-left: 16px;
+		margin-right: 0;
+		order: 2;
+		width: 326px;
+	}
 `;
 
 const CheckoutStepsWrapperUI = styled.div`
 	background: ${props => props.theme.colors.surface};
-	width: 100%;
 	box-sizing: border-box;
-	margin-bottom: ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
+	margin-bottom: ${props => ( props.isLastStepActive ? '100px' : 0 )};
+	width: 100%;
 
-	@media ( ${( props ) => props.theme.breakpoints.tabletUp} ) {
-		border: 1px solid ${( props ) => props.theme.colors.borderColorLight};
-		margin: 32px auto;
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${props => props.theme.colors.borderColorLight};
 		box-sizing: border-box;
 		max-width: 556px;
+	}
+
+	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
+		width: 556px;
+		order: 1;
 	}
 `;
 
