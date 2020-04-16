@@ -9,9 +9,9 @@ const driver = driverManager.startBrowser();
 let accountName = 'defaultUser';
 
 // Look for command line arguments
-if ( process.argv.length > 1 ) {
-	accountName = process.argv[ 2 ];
+if (process.argv.length > 1) {
+	accountName = process.argv[2];
 }
 
-const loginFlow = new LoginFlow( driver, accountName );
+const loginFlow = new LoginFlow(driver, accountName);
 loginFlow.login();

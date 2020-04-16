@@ -11,41 +11,39 @@ let file;
 let xvfb;
 let ffVideo;
 
-function createDir( dir ) {
-	dir = path.resolve( dir );
-	if ( fs.existsSync( dir ) ) return dir;
+function createDir(dir) {
+	dir = path.resolve(dir);
+	if (fs.existsSync(dir)) return dir;
 	try {
-		fs.mkdirSync( dir );
+		fs.mkdirSync(dir);
 		return dir;
-	} catch ( error ) {
-		if ( error.code === 'ENOENT' ) {
-			return createDir( path.dirname( dir ) ) && createDir( dir );
+	} catch (error) {
+		if (error.code === 'ENOENT') {
+			return createDir(path.dirname(dir)) && createDir(dir);
 		}
 		throw error;
 	}
 }
 
 function isVideoEnabled() {
-	const video = config.has( 'useTestVideo' )
-		? config.get( 'useTestVideo' )
-		: process.env.TEST_VIDEO;
+	const video = config.has('useTestVideo') ? config.get('useTestVideo') : process.env.TEST_VIDEO;
 	return video === 'true';
 }
 
 function getFreeDisplay() {
-	let i = 99 + Math.round( Math.random() * 100 );
-	while ( fs.existsSync( `/tmp/.X${ i }-lock` ) ) {
+	let i = 99 + Math.round(Math.random() * 100);
+	while (fs.existsSync(`/tmp/.X${i}-lock`)) {
 		i++;
 	}
 	global.displayNum = i;
 }
 
 export function startDisplay() {
-	if ( ! isVideoEnabled() ) {
+	if (!isVideoEnabled()) {
 		return;
 	}
 	getFreeDisplay();
-	xvfb = child_process.spawn( 'Xvfb', [
+	xvfb = child_process.spawn('Xvfb', [
 		'-ac',
 		':' + global.displayNum,
 		'-screen',
@@ -53,27 +51,24 @@ export function startDisplay() {
 		'1440x1000x24',
 		'+extension',
 		'RANDR',
-	] );
+	]);
 }
 
 export function stopDisplay() {
-	if ( isVideoEnabled() && xvfb ) {
+	if (isVideoEnabled() && xvfb) {
 		xvfb.kill();
 	}
 }
 
 export function startVideo() {
-	if ( ! isVideoEnabled() ) {
+	if (!isVideoEnabled()) {
 		return;
 	}
-	const dateTime = new Date()
-		.toISOString()
-		.split( '.' )[ 0 ]
-		.replace( /:/g, '-' );
-	const fileName = `${ global.displayNum }-${ dateTime }.mpg`;
-	file = path.resolve( path.join( './screenshots/videos', fileName ) );
-	createDir( path.dirname( file ) );
-	ffVideo = child_process.spawn( ffmpeg.path, [
+	const dateTime = new Date().toISOString().split('.')[0].replace(/:/g, '-');
+	const fileName = `${global.displayNum}-${dateTime}.mpg`;
+	file = path.resolve(path.join('./screenshots/videos', fileName));
+	createDir(path.dirname(file));
+	ffVideo = child_process.spawn(ffmpeg.path, [
 		'-f',
 		'x11grab',
 		'-video_size',
@@ -87,35 +82,32 @@ export function startVideo() {
 		'-loglevel',
 		'error',
 		file,
-	] );
+	]);
 }
 
-export function stopVideo( currentTest = null ) {
-	if ( ! isVideoEnabled() ) {
+export function stopVideo(currentTest = null) {
+	if (!isVideoEnabled()) {
 		return;
 	}
-	if ( currentTest && ffVideo ) {
-		const currentTestName = currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-		const dateTime = new Date()
-			.toISOString()
-			.split( '.' )[ 0 ]
-			.replace( /:/g, '-' );
-		const fileName = `${ currentTestName }-${ dateTime }.mpg`;
-		const newFile = path.resolve( path.join( './screenshots/videos', fileName ) );
+	if (currentTest && ffVideo) {
+		const currentTestName = currentTest.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+		const dateTime = new Date().toISOString().split('.')[0].replace(/:/g, '-');
+		const fileName = `${currentTestName}-${dateTime}.mpg`;
+		const newFile = path.resolve(path.join('./screenshots/videos', fileName));
 		ffVideo.kill();
 
-		fs.rename( file, newFile, function( err ) {
-			if ( err ) {
-				console.log( 'Screencast Video:' + file );
+		fs.rename(file, newFile, function (err) {
+			if (err) {
+				console.log('Screencast Video:' + file);
 			}
-			console.log( 'Screencast Video:' + newFile );
-		} );
-	} else if ( ffVideo && ! ffVideo.killed ) {
+			console.log('Screencast Video:' + newFile);
+		});
+	} else if (ffVideo && !ffVideo.killed) {
 		ffVideo.kill();
-		fs.unlink( file, function( err ) {
-			if ( err ) {
-				console.log( 'Deleting of file for passed test failed.' );
+		fs.unlink(file, function (err) {
+			if (err) {
+				console.log('Deleting of file for passed test failed.');
 			}
-		} );
+		});
 	}
 }

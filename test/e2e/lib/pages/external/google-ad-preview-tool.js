@@ -10,14 +10,14 @@ import AsyncBaseContainer from '../../async-base-container';
 import * as driverManager from '../../driver-manager';
 
 export default class GoogleAdPreviewTool extends AsyncBaseContainer {
-	constructor( driver, url ) {
-		super( driver, by.css( '.adt-root' ), url );
+	constructor(driver, url) {
+		super(driver, by.css('.adt-root'), url);
 	}
 
-	static getURL( screenSize, domain, location, query ) {
-		if ( screenSize === 'mobile' ) {
+	static getURL(screenSize, domain, location, query) {
+		if (screenSize === 'mobile') {
 			screenSize = 30001;
-		} else if ( screenSize === 'tablet' ) {
+		} else if (screenSize === 'tablet') {
 			screenSize = 30002;
 		} else {
 			screenSize = 30000;
@@ -32,26 +32,26 @@ export default class GoogleAdPreviewTool extends AsyncBaseContainer {
 			'&device=' +
 			screenSize +
 			'&st=' +
-			escape( query ) +
+			escape(query) +
 			'&domain=' +
 			domain;
 		return url;
 	}
 
 	async getSearchPageUrl() {
-		const selector = by.css( 'iframe.iframe-preview' );
+		const selector = by.css('iframe.iframe-preview');
 		await this.driver.wait(
-			until.elementLocated( selector ),
+			until.elementLocated(selector),
 			this.explicitWaitMS,
 			'Could not locate the search results'
 		);
-		const iframe = await this.driver.findElement( selector );
+		const iframe = await this.driver.findElement(selector);
 		await this.driver.wait(
-			until.elementIsVisible( iframe ),
+			until.elementIsVisible(iframe),
 			this.explicitWaitMS,
 			'Could not see search results'
 		);
 
-		return await iframe.getAttribute( 'src' );
+		return await iframe.getAttribute('src');
 	}
 }

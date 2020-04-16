@@ -10,12 +10,12 @@ import config from 'config';
 import AsyncBaseContainer from '../async-base-container';
 
 export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
-	constructor( driver ) {
+	constructor(driver) {
 		super(
 			driver,
-			By.css( '.transfer-domain-step__precheck' ),
+			By.css('.transfer-domain-step__precheck'),
 			null,
-			config.get( 'explicitWaitMS' ) * 3
+			config.get('explicitWaitMS') * 3
 		);
 	}
 }

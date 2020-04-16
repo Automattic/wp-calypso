@@ -11,34 +11,34 @@ import AsyncBaseContainer from '../async-base-container';
 import ViewPagePage from '../../lib/pages/view-page-page.js';
 import * as driverHelper from '../driver-helper.js';
 
-const explicitWaitMS = config.get( 'explicitWaitMS' );
-const previewWindowMainSelector = By.css( '#main' );
+const explicitWaitMS = config.get('explicitWaitMS');
+const previewWindowMainSelector = By.css('#main');
 
 export default class PagePreviewExternalComponent extends AsyncBaseContainer {
-	constructor( driver ) {
-		PagePreviewExternalComponent.switchToWindow( driver );
-		super( driver, previewWindowMainSelector );
+	constructor(driver) {
+		PagePreviewExternalComponent.switchToWindow(driver);
+		super(driver, previewWindowMainSelector);
 	}
 
 	async pageTitle() {
-		this.viewPagePage = await ViewPagePage.Expect( this.driver );
+		this.viewPagePage = await ViewPagePage.Expect(this.driver);
 		return await this.viewPagePage.pageTitle();
 	}
 
 	async pageContent() {
-		this.viewPagePage = await ViewPagePage.Expect( this.driver );
+		this.viewPagePage = await ViewPagePage.Expect(this.driver);
 		return await this.viewPagePage.pageContent();
 	}
 
-	async imageDisplayed( fileDetails ) {
-		this.viewPagePage = await ViewPagePage.Expect( this.driver );
-		return await this.viewPagePage.imageDisplayed( fileDetails );
+	async imageDisplayed(fileDetails) {
+		this.viewPagePage = await ViewPagePage.Expect(this.driver);
+		return await this.viewPagePage.imageDisplayed(fileDetails);
 	}
 
 	async close() {
 		this.driver.close();
 		const handles = await this.driver.getAllWindowHandles();
-		this.driver.switchTo().window( handles[ 0 ] );
+		this.driver.switchTo().window(handles[0]);
 	}
 
 	async isDisplayed() {
@@ -49,9 +49,9 @@ export default class PagePreviewExternalComponent extends AsyncBaseContainer {
 		);
 	}
 
-	static async switchToWindow( driver ) {
+	static async switchToWindow(driver) {
 		const handles = await driver.getAllWindowHandles();
-		await driver.switchTo().window( handles[ 1 ] );
+		await driver.switchTo().window(handles[1]);
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
 			previewWindowMainSelector,

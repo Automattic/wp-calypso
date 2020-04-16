@@ -12,12 +12,12 @@ import * as slackNotifier from '../slack-notifier';
 import AsyncBaseContainer from '../async-base-container';
 
 export default class CustomizerPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		const expectedElementSelector = by.css( '.is-section-customize' );
-		super( driver, expectedElementSelector );
-		this.metaiFrameElementSelector = by.css( 'iframe.is-iframe-loaded' );
-		this.reloadCustomizerSelector = by.css( '.empty-content__action.button' );
-		this.saveSelector = by.css( '#save' );
+	constructor(driver) {
+		const expectedElementSelector = by.css('.is-section-customize');
+		super(driver, expectedElementSelector);
+		this.metaiFrameElementSelector = by.css('iframe.is-iframe-loaded');
+		this.reloadCustomizerSelector = by.css('.empty-content__action.button');
+		this.saveSelector = by.css('#save');
 		this.shortSleepMS = 1000;
 	}
 
@@ -28,31 +28,29 @@ export default class CustomizerPage extends AsyncBaseContainer {
 	async waitForCustomizer() {
 		const self = this;
 		await self.driver
-			.wait( until.elementLocated( this.metaiFrameElementSelector ), this.explicitWaitMS * 2 )
+			.wait(until.elementLocated(this.metaiFrameElementSelector), this.explicitWaitMS * 2)
 			.then(
-				function() {},
-				async function( error ) {
-					const message = `Found issue on customizer page: '${ error }' - Clicking try again button now.`;
-					slackNotifier.warn( message );
+				function () {},
+				async function (error) {
+					const message = `Found issue on customizer page: '${error}' - Clicking try again button now.`;
+					slackNotifier.warn(message);
 					await self.driver
-						.wait( async function() {
+						.wait(async function () {
 							return await driverHelper.isElementPresent(
 								self.driver,
 								self.reloadCustomizerSelector
 							);
-						}, self.explicitWaitMS )
+						}, self.explicitWaitMS)
 						.then(
-							async function() {
+							async function () {
 								await driverHelper.clickWhenClickable(
 									self.driver,
 									self.reloadCustomizerSelector,
 									self.explicitWaitMS
 								);
 							},
-							function( err ) {
-								console.log(
-									`Could not locate reload button to click in the customizer: '${ err }'`
-								);
+							function (err) {
+								console.log(`Could not locate reload button to click in the customizer: '${err}'`);
 							}
 						);
 				}
@@ -65,23 +63,23 @@ export default class CustomizerPage extends AsyncBaseContainer {
 		const self = this;
 		await self._ensureMetaViewOnMobile();
 		await self._switchToMetaiFrame();
-		await self.driver.sleep( self.shortSleepMS );
-		await driverHelper.clickWhenClickable( self.driver, by.css( '.customize-controls-close' ) );
+		await self.driver.sleep(self.shortSleepMS);
+		await driverHelper.clickWhenClickable(self.driver, by.css('.customize-controls-close'));
 		return await self._switchToDefaultContent();
 	}
 
 	async _ensureMetaViewOnMobile() {
 		const driver = this.driver;
-		if ( driverManager.currentScreenSize() === 'mobile' ) {
+		if (driverManager.currentScreenSize() === 'mobile') {
 			await this._switchToMetaiFrame();
 			const previewDisplayed = await driverHelper.isElementPresent(
 				driver,
-				by.css( 'div.preview-desktop.preview-only' )
+				by.css('div.preview-desktop.preview-only')
 			);
-			if ( previewDisplayed === true ) {
+			if (previewDisplayed === true) {
 				await driverHelper.clickWhenClickable(
 					driver,
-					by.css( 'button.customize-controls-preview-toggle' )
+					by.css('button.customize-controls-preview-toggle')
 				);
 			}
 			return await this._switchToDefaultContent();
@@ -91,12 +89,12 @@ export default class CustomizerPage extends AsyncBaseContainer {
 	async _switchToMetaiFrame() {
 		await this._switchToDefaultContent();
 		await this.driver.wait(
-			until.ableToSwitchToFrame( this.metaiFrameElementSelector ),
+			until.ableToSwitchToFrame(this.metaiFrameElementSelector),
 			this.explicitWaitMS,
 			'Can not switch to the meta iFrame on customizer'
 		);
 		return await this.driver.wait(
-			until.elementLocated( this.saveSelector ),
+			until.elementLocated(this.saveSelector),
 			this.explicitWaitMS,
 			'Could not locate the save option on customizer'
 		);

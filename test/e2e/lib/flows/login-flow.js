@@ -27,67 +27,67 @@ import PagesPage from '../pages/pages-page';
 const host = dataHelper.getJetpackHost();
 
 export default class LoginFlow {
-	constructor( driver, accountOrFeatures ) {
+	constructor(driver, accountOrFeatures) {
 		this.driver = driver;
-		if ( host !== 'WPCOM' && ! accountOrFeatures ) {
+		if (host !== 'WPCOM' && !accountOrFeatures) {
 			accountOrFeatures = 'jetpackUser' + host;
 		}
 		accountOrFeatures = accountOrFeatures || 'defaultUser';
-		if ( typeof accountOrFeatures === 'string' ) {
-			const legacyConfig = dataHelper.getAccountConfig( accountOrFeatures );
-			if ( ! legacyConfig ) {
-				throw new Error( `Account key '${ accountOrFeatures }' not found in the configuration` );
+		if (typeof accountOrFeatures === 'string') {
+			const legacyConfig = dataHelper.getAccountConfig(accountOrFeatures);
+			if (!legacyConfig) {
+				throw new Error(`Account key '${accountOrFeatures}' not found in the configuration`);
 			}
 
 			this.account = {
-				email: legacyConfig[ 0 ],
-				username: legacyConfig[ 0 ],
-				password: legacyConfig[ 1 ],
-				loginURL: legacyConfig[ 2 ],
+				email: legacyConfig[0],
+				username: legacyConfig[0],
+				password: legacyConfig[1],
+				loginURL: legacyConfig[2],
 				legacyAccountName: accountOrFeatures,
 			};
 		} else {
-			this.account = dataHelper.pickRandomAccountWithFeatures( accountOrFeatures );
-			if ( ! this.account ) {
+			this.account = dataHelper.pickRandomAccountWithFeatures(accountOrFeatures);
+			if (!this.account) {
 				throw new Error(
-					`Could not find any account matching features '${ accountOrFeatures.toString() }'`
+					`Could not find any account matching features '${accountOrFeatures.toString()}'`
 				);
 			}
 		}
 	}
 
-	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
-		await driverManager.ensureNotLoggedIn( this.driver );
+	async login({ emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {}) {
+		await driverManager.ensureNotLoggedIn(this.driver);
 
 		if (
-			! useFreshLogin &&
-			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
+			!useFreshLogin &&
+			(await loginCookieHelper.useLoginCookies(this.driver, this.account.username))
 		) {
-			console.log( 'Reusing login cookie for ' + this.account.username );
+			console.log('Reusing login cookie for ' + this.account.username);
 			await this.driver.navigate().refresh();
-			const continueSelector = By.css( 'div.continue-as-user a' );
-			if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, continueSelector );
+			const continueSelector = By.css('div.continue-as-user a');
+			if (await driverHelper.isElementPresent(this.driver, continueSelector)) {
+				await driverHelper.clickWhenClickable(this.driver, continueSelector);
 			}
 			return;
 		}
 
-		console.log( 'Logging in as ' + this.account.username );
+		console.log('Logging in as ' + this.account.username);
 
 		let loginURL = this.account.loginURL,
 			loginPage;
 
-		if ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) {
-			loginURL = `http://${ dataHelper.getJetpackSiteName() }/wp-admin`;
+		if (host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser') {
+			loginURL = `http://${dataHelper.getJetpackSiteName()}/wp-admin`;
 		}
 
-		if ( jetpackSSO ) {
-			loginPage = await WPAdminLoginPage.Visit( this.driver, loginURL );
+		if (jetpackSSO) {
+			loginPage = await WPAdminLoginPage.Visit(this.driver, loginURL);
 			return await loginPage.logonSSO();
 		}
-		loginPage = await LoginPage.Visit( this.driver );
+		loginPage = await LoginPage.Visit(this.driver);
 
-		if ( emailSSO ) {
+		if (emailSSO) {
 			return await loginPage.login(
 				this.account.email || this.account.username,
 				this.account.password,
@@ -95,8 +95,8 @@ export default class LoginFlow {
 			);
 		}
 
-		await loginPage.login( this.account.email || this.account.username, this.account.password );
-		return await loginCookieHelper.saveLogin( this.driver, this.account.username );
+		await loginPage.login(this.account.email || this.account.username, this.account.password);
+		return await loginCookieHelper.saveLogin(this.driver, this.account.username);
 	}
 
 	async loginAndStartNewPost(
@@ -104,33 +104,30 @@ export default class LoginFlow {
 		usingGutenberg = false,
 		{ useFreshLogin = false } = {}
 	) {
-		if (
-			siteURL ||
-			( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' )
-		) {
+		if (siteURL || (host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser')) {
 			siteURL = siteURL || dataHelper.getJetpackSiteName();
 		}
 
-		await this.login( { useFreshLogin: useFreshLogin } );
+		await this.login({ useFreshLogin: useFreshLogin });
 
 		await this.checkForDevDocsAndRedirectToReader();
 
-		await ReaderPage.Expect( this.driver );
-		await NavBarComponent.Expect( this.driver );
+		await ReaderPage.Expect(this.driver);
+		await NavBarComponent.Expect(this.driver);
 
-		const navbarComponent = await NavBarComponent.Expect( this.driver );
-		await navbarComponent.clickCreateNewPost( { siteURL: siteURL } );
+		const navbarComponent = await NavBarComponent.Expect(this.driver);
+		await navbarComponent.clickCreateNewPost({ siteURL: siteURL });
 
-		if ( usingGutenberg ) {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		if (usingGutenberg) {
+			const gEditorComponent = await GutenbergEditorComponent.Expect(this.driver);
 			await gEditorComponent.initEditor();
 		}
 
-		if ( ! usingGutenberg ) {
-			this.editorPage = await EditorPage.Expect( this.driver );
+		if (!usingGutenberg) {
+			this.editorPage = await EditorPage.Expect(this.driver);
 
 			const urlDisplayed = await this.driver.getCurrentUrl();
-			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
+			return await this.editorPage.setABTestControlGroupsInLocalStorage(urlDisplayed);
 		}
 	}
 
@@ -139,68 +136,68 @@ export default class LoginFlow {
 		usingGutenberg = false,
 		{ useFreshLogin = false, dismissPageTemplateSelector = true } = {}
 	) {
-		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
+		if (site || (host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser')) {
 			site = site || dataHelper.getJetpackSiteName();
 		}
 
-		await this.loginAndSelectMySite( site, { useFreshLogin: useFreshLogin } );
+		await this.loginAndSelectMySite(site, { useFreshLogin: useFreshLogin });
 
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
+		const sidebarComponent = await SidebarComponent.Expect(this.driver);
 		await sidebarComponent.selectPages();
 
-		const pagesPage = await PagesPage.Expect( this.driver );
+		const pagesPage = await PagesPage.Expect(this.driver);
 		await pagesPage.selectAddNewPage();
 
-		if ( usingGutenberg ) {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.initEditor( { dismissPageTemplateSelector } );
+		if (usingGutenberg) {
+			const gEditorComponent = await GutenbergEditorComponent.Expect(this.driver);
+			await gEditorComponent.initEditor({ dismissPageTemplateSelector });
 		}
 
-		if ( ! usingGutenberg ) {
-			this.editorPage = await EditorPage.Expect( this.driver );
+		if (!usingGutenberg) {
+			this.editorPage = await EditorPage.Expect(this.driver);
 
 			const urlDisplayed = await this.driver.getCurrentUrl();
-			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
+			return await this.editorPage.setABTestControlGroupsInLocalStorage(urlDisplayed);
 		}
 	}
 
 	async loginAndSelectDomains() {
 		await this.loginAndSelectMySite();
 
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect(this.driver);
 		return await sideBarComponent.selectDomains();
 	}
 
 	async loginAndSelectPeople() {
 		await this.loginAndSelectMySite();
 
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect(this.driver);
 		return await sideBarComponent.selectPeople();
 	}
 
 	async checkForDevDocsAndRedirectToReader() {
 		const urlDisplayed = await this.driver.getCurrentUrl();
 		//make sure we navigate to root, in development environments we open devdocs
-		if ( urlDisplayed.indexOf( 'calypso.localhost:3000' !== -1 ) ) {
-			return await ReaderPage.Visit( this.driver );
+		if (urlDisplayed.indexOf('calypso.localhost:3000' !== -1)) {
+			return await ReaderPage.Visit(this.driver);
 		}
 	}
 
-	async loginAndSelectMySite( site = null, { useFreshLogin = false } = {} ) {
-		await this.login( { useFreshLogin: useFreshLogin } );
+	async loginAndSelectMySite(site = null, { useFreshLogin = false } = {}) {
+		await this.login({ useFreshLogin: useFreshLogin });
 
 		await this.checkForDevDocsAndRedirectToReader();
 
-		await ReaderPage.Expect( this.driver );
+		await ReaderPage.Expect(this.driver);
 
-		const navbarComponent = await NavBarComponent.Expect( this.driver );
+		const navbarComponent = await NavBarComponent.Expect(this.driver);
 		await navbarComponent.clickMySites();
 
-		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
+		if (site || (host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser')) {
 			const siteURL = site || dataHelper.getJetpackSiteName();
-			const sideBarComponent = await SidebarComponent.Expect( this.driver );
+			const sideBarComponent = await SidebarComponent.Expect(this.driver);
 			await sideBarComponent.selectSiteSwitcher();
-			await sideBarComponent.searchForSite( siteURL );
+			await sideBarComponent.searchForSite(siteURL);
 		}
 	}
 
@@ -208,42 +205,42 @@ export default class LoginFlow {
 		await this.loginAndSelectMySite();
 
 		// visit stats, as home does not have an all sites option
-		await StatsPage.Visit( this.driver );
+		await StatsPage.Visit(this.driver);
 
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect(this.driver);
 		await sideBarComponent.selectSiteSwitcher();
 		return await sideBarComponent.selectAllSites();
 	}
 
 	async loginAndSelectThemes() {
 		await this.loginAndSelectMySite();
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect(this.driver);
 		return await sideBarComponent.selectThemes();
 	}
 
 	async loginAndSelectManagePlugins() {
 		await this.loginAndSelectPlugins();
 
-		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
+		const pluginsBrowserPage = await PluginsBrowserPage.Expect(this.driver);
 		return await pluginsBrowserPage.selectManagePlugins();
 	}
 
 	async loginAndSelectPlugins() {
 		await this.loginAndSelectMySite();
 
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect(this.driver);
 		return await sideBarComponent.selectPlugins();
 	}
 
 	async loginAndSelectSettings() {
 		await this.loginAndSelectMySite();
 
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect(this.driver);
 		return await sideBarComponent.selectSettings();
 	}
 
 	async loginUsingExistingForm() {
-		const loginPage = await LoginPage.Expect( this.driver );
+		const loginPage = await LoginPage.Expect(this.driver);
 		return await loginPage.login(
 			this.account.email || this.account.username,
 			this.account.password
@@ -252,14 +249,14 @@ export default class LoginFlow {
 
 	async loginAndOpenWooStore() {
 		await this.loginAndSelectMySite();
-		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
+		this.sideBarComponent = await SidebarComponent.Expect(this.driver);
 		await this.sideBarComponent.selectStoreOption();
-		return await StoreDashboardPage.Expect( this.driver );
+		return await StoreDashboardPage.Expect(this.driver);
 	}
 
 	end() {
-		if ( typeof this.account !== 'string' ) {
-			dataHelper.releaseAccount( this.account );
+		if (typeof this.account !== 'string') {
+			dataHelper.releaseAccount(this.account);
 		}
 	}
 }

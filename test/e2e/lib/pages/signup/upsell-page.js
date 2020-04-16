@@ -10,8 +10,8 @@ import * as driverHelper from '../../driver-helper.js';
 import AsyncBaseContainer from '../../async-base-container';
 
 export default class UpsellPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		super( driver, By.css( '.concierge-quickstart-session, .plan-upgrade-upsell' ) );
+	constructor(driver) {
+		super(driver, By.css('.concierge-quickstart-session, .plan-upgrade-upsell'));
 	}
 
 	async declineOffer() {

@@ -14,8 +14,8 @@ import * as driverManager from '../../driver-manager';
 const screenSize = driverManager.currentScreenSize();
 
 export default class JetpackAddNewSitePage extends AsyncBaseContainer {
-	constructor( driver, url = dataHelper.getCalypsoURL( 'jetpack/new', 'ref=calypso-selector' ) ) {
-		super( driver, By.css( '.jetpack-new-site__main' ), url );
+	constructor(driver, url = dataHelper.getCalypsoURL('jetpack/new', 'ref=calypso-selector')) {
+		super(driver, By.css('.jetpack-new-site__main'), url);
 	}
 
 	async _postInit() {
@@ -26,8 +26,8 @@ export default class JetpackAddNewSitePage extends AsyncBaseContainer {
 	async createNewWordPressDotComSite() {
 		const wpComButtonSelector =
 			screenSize === 'mobile'
-				? By.css( '.jetpack-new-site__mobile-wpcom-site a.button' )
-				: By.css( '.jetpack-new-site__wpcom-site a.button' );
-		return await driverHelper.clickWhenClickable( this.driver, wpComButtonSelector );
+				? By.css('.jetpack-new-site__mobile-wpcom-site a.button')
+				: By.css('.jetpack-new-site__wpcom-site a.button');
+		return await driverHelper.clickWhenClickable(this.driver, wpComButtonSelector);
 	}
 }

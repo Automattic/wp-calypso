@@ -22,7 +22,7 @@ import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
 import NoticesComponent from '../components/notices-component';
 
 export default class JetpackConnectFlow {
-	constructor( driver, account, template ) {
+	constructor(driver, account, template) {
 		this.driver = driver;
 		this.account = account;
 		this.template = template;
@@ -33,7 +33,7 @@ export default class JetpackConnectFlow {
 
 		const wporgCreator = await WporgCreatorPage.Visit(
 			this.driver,
-			WporgCreatorPage._getCreatorURL( this.template )
+			WporgCreatorPage._getCreatorURL(this.template)
 		);
 		await wporgCreator.waitForWpadmin();
 		this.url = await wporgCreator.getUrl();
@@ -42,57 +42,57 @@ export default class JetpackConnectFlow {
 	}
 
 	async connectFromCalypso() {
-		await driverManager.ensureNotLoggedIn( this.driver );
+		await driverManager.ensureNotLoggedIn(this.driver);
 		await this.createJNSite();
-		const loginFlow = new LoginFlow( this.driver, this.account );
+		const loginFlow = new LoginFlow(this.driver, this.account);
 		await loginFlow.loginAndSelectMySite();
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
-		await sidebarComponent.addNewSite( this.driver );
-		const addNewSitePage = await AddNewSitePage.Expect( this.driver );
-		await addNewSitePage.addSiteUrl( this.url );
+		const sidebarComponent = await SidebarComponent.Expect(this.driver);
+		await sidebarComponent.addNewSite(this.driver);
+		const addNewSitePage = await AddNewSitePage.Expect(this.driver);
+		await addNewSitePage.addSiteUrl(this.url);
 
-		const connectPage = await JetpackConnectPage.Expect( this.driver );
+		const connectPage = await JetpackConnectPage.Expect(this.driver);
 		await connectPage.waitToDisappear();
 
-		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
+		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect(this.driver);
 		await jetpackAuthorizePage.waitToDisappear();
 
-		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
+		const pickAPlanPage = await PickAPlanPage.Expect(this.driver);
 		return await pickAPlanPage.selectFreePlanJetpack();
 	}
 
 	async connectFromWPAdmin() {
-		await driverManager.ensureNotLoggedIn( this.driver );
+		await driverManager.ensureNotLoggedIn(this.driver);
 		await this.createJNSite();
-		await WPAdminSidebar.refreshIfJNError( this.driver );
-		const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
+		await WPAdminSidebar.refreshIfJNError(this.driver);
+		const wpAdminSidebar = await WPAdminSidebar.Expect(this.driver);
 		await wpAdminSidebar.selectJetpack();
-		await driverHelper.refreshIfJNError( this.driver );
-		const wpAdminJetpack = await WPAdminJetpackPage.Expect( this.driver );
+		await driverHelper.refreshIfJNError(this.driver);
+		const wpAdminJetpack = await WPAdminJetpackPage.Expect(this.driver);
 		await wpAdminJetpack.connectWordPressCom();
-		const loginFlow = new LoginFlow( this.driver, this.account );
+		const loginFlow = new LoginFlow(this.driver, this.account);
 		await loginFlow.loginUsingExistingForm();
-		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
+		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect(this.driver);
 		await jetpackAuthorizePage.approveConnection();
 		await jetpackAuthorizePage.waitToDisappear();
-		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
+		const pickAPlanPage = await PickAPlanPage.Expect(this.driver);
 		return await pickAPlanPage.selectFreePlanJetpack();
 	}
 
-	async removeSites( timeout = config.get( 'mochaTimeoutMS' ) ) {
+	async removeSites(timeout = config.get('mochaTimeoutMS')) {
 		const timeStarted = Date.now();
-		await new LoginFlow( this.driver, this.account ).loginAndSelectMySite();
+		await new LoginFlow(this.driver, this.account).loginAndSelectMySite();
 
 		const removeSites = async () => {
-			const sidebarComponent = await SidebarComponent.Expect( this.driver );
+			const sidebarComponent = await SidebarComponent.Expect(this.driver);
 			const siteRemoved = await sidebarComponent.removeBrokenSite();
-			if ( ! siteRemoved || Date.now() - timeStarted > 0.8 * timeout ) {
+			if (!siteRemoved || Date.now() - timeStarted > 0.8 * timeout) {
 				// 80% of timeout
 				// no sites left to remove or removeSites taking too long
 				return;
 			}
 			// seems like it is not waiting for this
-			const noticesComponent = await NoticesComponent.Expect( this.driver );
+			const noticesComponent = await NoticesComponent.Expect(this.driver);
 			await noticesComponent.dismissNotice();
 			return await removeSites();
 		};
@@ -100,20 +100,20 @@ export default class JetpackConnectFlow {
 		return await removeSites();
 	}
 
-	async disconnectFromWPAdmin( account ) {
+	async disconnectFromWPAdmin(account) {
 		// 'Login into wporg site'
-		const user = dataHelper.getAccountConfig( account );
-		await driverManager.clearCookiesAndDeleteLocalStorage( this.driver );
-		const loginPage = await WPAdminLogonPage.Visit( this.driver, user[ 2 ] );
-		await loginPage.login( user[ 0 ], user[ 1 ] );
+		const user = dataHelper.getAccountConfig(account);
+		await driverManager.clearCookiesAndDeleteLocalStorage(this.driver);
+		const loginPage = await WPAdminLogonPage.Visit(this.driver, user[2]);
+		await loginPage.login(user[0], user[1]);
 
 		// 'Can navigate to the Jetpack dashboard'
-		const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
+		const wpAdminSidebar = await WPAdminSidebar.Expect(this.driver);
 		await wpAdminSidebar.selectJetpack();
 
 		// 'Can disconnect site if connected'
-		const wpAdminJetpack = await WPAdminJetpackPage.Expect( this.driver );
-		if ( ! ( await wpAdminJetpack.atAGlanceDisplayed() ) ) return;
+		const wpAdminJetpack = await WPAdminJetpackPage.Expect(this.driver);
+		if (!(await wpAdminJetpack.atAGlanceDisplayed())) return;
 		return await wpAdminJetpack.disconnectSite();
 	}
 }

@@ -11,20 +11,20 @@ import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper';
 
 export default class CommentsPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		super( driver, By.css( '.comments' ) );
+	constructor(driver) {
+		super(driver, By.css('.comments'));
 	}
 
 	async waitForComments() {
 		const driver = this.driver;
-		const resultsLoadingSelector = By.css( '.comment .is-placeholder' );
+		const resultsLoadingSelector = By.css('.comment .is-placeholder');
 		return await driver.wait(
-			function() {
+			function () {
 				return driverHelper
-					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function( present ) {
-						return ! present;
-					} );
+					.isElementPresent(driver, resultsLoadingSelector)
+					.then(function (present) {
+						return !present;
+					});
 			},
 			this.explicitWaitMS,
 			'The comments placeholder element was still present when it should have disappeared by now.'

@@ -10,24 +10,24 @@ import assert from 'assert';
 import AsyncBaseContainer from '../async-base-container';
 
 export default class LandingPage extends AsyncBaseContainer {
-	constructor( driver, url ) {
-		super( driver, by.css( 'header.masterbar' ), url );
+	constructor(driver, url) {
+		super(driver, by.css('header.masterbar'), url);
 	}
 
 	checkURL() {
-		this.driver.getCurrentUrl().then( currentUrl => {
+		this.driver.getCurrentUrl().then((currentUrl) => {
 			assert.strictEqual(
 				true,
-				currentUrl.includes( 'wordpress.com' ),
-				`The current url: '${ currentUrl }' does not include 'wordpress.com'`
+				currentUrl.includes('wordpress.com'),
+				`The current url: '${currentUrl}' does not include 'wordpress.com'`
 			);
-		} );
+		});
 	}
 
-	checkLocalizedString( targetString ) {
+	checkLocalizedString(targetString) {
 		this.waitForPage();
 		return assert(
-			this.driver.findElement( by.linkText( targetString ) ),
+			this.driver.findElement(by.linkText(targetString)),
 			'The landing page does not have the expected localized string "' + targetString + '"'
 		);
 	}

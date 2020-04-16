@@ -10,12 +10,12 @@ import request from 'request-promise';
 //  * @param {string} bearerToken user bearer token to be used with the API
 //  * @returns {boolean} true if token approved
 //  */
-export const approvePushToken = async ( pushToken, bearerToken ) => {
-	const responseString = await request( {
+export const approvePushToken = async (pushToken, bearerToken) => {
+	const responseString = await request({
 		url: 'https://public-api.wordpress.com/rest/v1.1/me/two-step/push-authentication',
 		method: 'POST',
 		headers: {
-			Authorization: `Bearer ${ bearerToken }`,
+			Authorization: `Bearer ${bearerToken}`,
 			'Content-Type': 'application/x-www-form-urlencoded',
 			Accept: 'application/json',
 		},
@@ -23,11 +23,11 @@ export const approvePushToken = async ( pushToken, bearerToken ) => {
 			action: 'authorize_login',
 			push_token: pushToken,
 		},
-	} );
-	const res = JSON.parse( responseString );
-	if ( ! res.success ) {
+	});
+	const res = JSON.parse(responseString);
+	if (!res.success) {
 		throw new Error(
-			`Failed to authnticate via supplied push token ${ pushToken } got ${ responseString }`
+			`Failed to authnticate via supplied push token ${pushToken} got ${responseString}`
 		);
 	}
 	return true;
@@ -41,14 +41,14 @@ export const approvePushToken = async ( pushToken, bearerToken ) => {
  * @param {Function} callback a function to call with a matching appData pair's value when filter matches
  * @returns {Function} a funciton that can be used as a notifications callback
  */
-function filterPushDataKey( filter, addPersistentId, callback ) {
-	return function pushDataFilter( notification ) {
-		addPersistentId( notification.persistentId );
+function filterPushDataKey(filter, addPersistentId, callback) {
+	return function pushDataFilter(notification) {
+		addPersistentId(notification.persistentId);
 
-		const appData = notification.appData.find( data => data.key === filter );
+		const appData = notification.appData.find((data) => data.key === filter);
 
-		if ( appData ) {
-			callback( appData.value );
+		if (appData) {
+			callback(appData.value);
 		}
 	};
 }
@@ -59,15 +59,15 @@ function filterPushDataKey( filter, addPersistentId, callback ) {
  * @param {object} pushConfig GCM keys and tokens
  * @param {Function} callback a function to call when we get a push token
  */
-export const subscribeToPush = ( pushConfig, callback ) => {
+export const subscribeToPush = (pushConfig, callback) => {
 	const persistentIds = [];
 	let connection;
 	listen(
 		pushConfig,
 		filterPushDataKey(
 			'push_auth_token',
-			id => persistentIds.push( id ),
-			pushToken => {
+			(id) => persistentIds.push(id),
+			(pushToken) => {
 				connection.close();
 				// we're connecting again to complete a login and mark that way that we saw those notifications persistentIds
 				let markPersistentConnection;
@@ -78,10 +78,10 @@ export const subscribeToPush = ( pushConfig, callback ) => {
 					},
 					() => {},
 					() => markPersistentConnection.close()
-				).then( conn => ( markPersistentConnection = conn ) );
+				).then((conn) => (markPersistentConnection = conn));
 
-				callback( pushToken );
+				callback(pushToken);
 			}
 		)
-	).then( conn => ( connection = conn ) );
+	).then((conn) => (connection = conn));
 };

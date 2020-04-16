@@ -10,14 +10,14 @@ import AsyncBaseContainer from '../async-base-container';
 import * as DriverHelper from '../driver-helper.js';
 
 export default class ImporterPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		super( driver, By.css( '.importer__section-header' ) );
+	constructor(driver) {
+		super(driver, By.css('.importer__section-header'));
 	}
 
-	async importerIsDisplayed( importerClass ) {
+	async importerIsDisplayed(importerClass) {
 		return await DriverHelper.isElementPresent(
 			this.driver,
-			By.css( `.importer__file-importer-card .${ importerClass }` )
+			By.css(`.importer__file-importer-card .${importerClass}`)
 		);
 	}
 }
