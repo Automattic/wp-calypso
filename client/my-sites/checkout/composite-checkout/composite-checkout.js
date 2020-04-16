@@ -283,7 +283,7 @@ export default function CompositeCheckout( {
 	const renderDomainContactFields = (
 		contactDetails,
 		contactDetailsErrors,
-		updateContactDetails,
+		updateDomainContactFields,
 		shouldShowContactDetailsValidationErrors,
 		isDisabled
 	) => {
@@ -296,7 +296,7 @@ export default function CompositeCheckout( {
 					contactDetailsErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					onContactDetailsChange={ updateContactDetails }
+					onContactDetailsChange={ updateDomainContactFields }
 					shouldForceRenderOnPropChange={ true }
 					getIsFieldDisabled={ getIsFieldDisabled }
 				/>
