@@ -744,11 +744,10 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getHiddenFeatures: () => [
-			constants.FEATURE_GOOGLE_MY_BUSINESS,
-			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
-			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -812,7 +811,6 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 		getHiddenFeatures: () => [
-			constants.FEATURE_GOOGLE_MY_BUSINESS,
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_SCAN_DAILY,
