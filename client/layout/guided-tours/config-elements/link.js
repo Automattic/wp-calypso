@@ -20,7 +20,7 @@ class Link extends Component {
 	render() {
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
-			<div className="guided-tours__external-link">
+			<div className="config-elements__link guided-tours__external-link">
 				{ ! this.props.supportArticleId && (
 					<ExternalLink target="_blank" icon={ true } href={ this.props.href }>
 						{ this.props.children }
