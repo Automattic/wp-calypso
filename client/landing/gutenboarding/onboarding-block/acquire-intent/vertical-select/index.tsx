@@ -125,13 +125,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 
 		setSuggestions( newSuggestions );
 	};
-	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
-		const input = e.currentTarget.innerText.trim();
-		if ( ! input.length ) {
-			resetSiteVertical();
-		}
-		updateSuggestions( input );
-	};
 
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
@@ -146,6 +139,24 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
 			handleSelect( vertical );
 		}
+	};
+
+	const handleArrowClick = () => {
+		handleBlur();
+		onNext();
+	};
+
+	const handleSuggestAction = ( vertical: SiteVertical ) => {
+		handleSelect( vertical );
+		onNext();
+	};
+
+	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
+		const input = e.currentTarget.innerText.trim();
+		if ( ! input.length ) {
+			resetSiteVertical();
+		}
+		updateSuggestions( input );
 	};
 
 	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
@@ -163,11 +174,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			e.preventDefault();
 			handleBlur();
 		}
-	};
-
-	const handleArrowClick = () => {
-		handleBlur();
-		onNext();
 	};
 
 	React.useEffect( () => {
@@ -215,7 +221,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 								ref={ suggestionRef }
 								query={ inputText }
 								suggestions={ suggestions }
-								suggest={ handleSelect }
+								suggest={ handleSuggestAction }
 								title={ __( 'Suggestions' ) }
 							/>
 						) }
