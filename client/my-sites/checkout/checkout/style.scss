@@ -467,18 +467,28 @@
 	// -----------------------------------
 	.redirect-payment-box,
 	.wechat-payment-box {
-		.checkout__payment-box-section {
-			.checkout__checkout-field {
-				padding: 0 15px 15px;
-			}
+		 .checkout__payment-box-section {
+			 .checkout__checkout-field {
+				 padding: 0 15px 15px;
+			 }
 
-			.checkout__country-payment-fields {
-				.checkout__checkout-field {
-					padding-left: 0;
-					flex-basis: calc( 100% - 30px );
-				}
-			}
-		}
+			 .checkout__country-payment-fields {
+				 .checkout__checkout-field {
+					 padding-left: 0;
+					 flex-basis: calc( 100% - 30px );
+				 }
+				 .checkout__checkout-field.pan, .checkout__checkout-field.gstin {
+					 flex-basis: calc( 50% - 30px );
+					 .form-label {
+						 max-height: 21px;
+					 }
+				 }
+
+				 .checkout__pan-number-popover svg {
+					 max-height: 16px;
+				 }
+			 }
+		 }
 	}
 
 	// Credits Payment Box
