@@ -24,7 +24,9 @@ const InserterMenuTrackingEvent = function() {
 		selectedBlock: select( 'core/block-editor' ).getSelectedBlock(),
 	} ) );
 
-	const debouncedSetFilterValue = debounce( search_term => {
+	const plugingVersion = window.wpcomGutenberg ? window.wpcomGutenberg.pluginVersion : null;
+
+	const debouncedSetFilterValue = debounce( ( search_term, has_items ) => {
 		setSearchTerm( search_term );
 
 		if ( search_term.length < 3 ) {
@@ -38,6 +40,21 @@ const InserterMenuTrackingEvent = function() {
 		};
 
 		tracksRecordEvent( 'wpcom_block_picker_search_term', eventProperties );
+
+		/*
+		 * Let's delegate registering no-results search event
+		 * to the temporary solution below if the core version
+		 * is equal to 7.8.1.
+		 */
+		if ( plugingVersion && plugingVersion === '7.8.1' ) {
+			return null;
+		}
+
+		if ( ! has_items ) {
+			return;
+		}
+
+		tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
 	}, 500 );
 
 	/*
@@ -52,6 +69,11 @@ const InserterMenuTrackingEvent = function() {
 	 *   once a new version of core is available in dotcom.
 	 */
 	useEffect( () => {
+		// Skip whether isn't the 7.8.1 version.
+		if ( plugingVersion && plugingVersion !== '7.8.1' ) {
+			return null;
+		}
+
 		if ( ! searchTerm || searchTerm.length < 3 ) {
 			return;
 		}
@@ -76,9 +98,9 @@ const InserterMenuTrackingEvent = function() {
 
 	return (
 		<InserterMenuExtension>
-			{ ( { filterValue } ) => {
+			{ ( { filterValue, hasItems } ) => {
 				if ( searchTerm !== filterValue ) {
-					debouncedSetFilterValue( filterValue );
+					debouncedSetFilterValue( filterValue, hasItems );
 				}
 
 				return null;
