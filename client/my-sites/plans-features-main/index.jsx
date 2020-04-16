@@ -56,6 +56,7 @@ import {
 	planMatches,
 	plansLink,
 } from 'lib/plans';
+import { isValidFeatureKey } from 'lib/plans/features-list';
 import { Button } from '@automattic/components';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
@@ -117,7 +118,11 @@ export class PlansFeaturesMain extends Component {
 	isDisplayingPlansNeededForFeature() {
 		const { selectedFeature, selectedPlan, previousRoute } = this.props;
 
-		if ( selectedFeature && selectedPlan && ! previousRoute.startsWith( '/plans/' ) ) {
+		if (
+			isValidFeatureKey( selectedFeature ) &&
+			getPlan( selectedPlan ) &&
+			! previousRoute.startsWith( '/plans/' )
+		) {
 			return true;
 		}
 	}
@@ -460,6 +465,12 @@ export class PlansFeaturesMain extends Component {
 		const { siteSlug, translate } = this.props;
 		let headerText;
 		let subHeaderText;
+		if ( this.isJetpackBackupAvailable() ) {
+			headerText = translate( 'Plans' );
+			subHeaderText = translate(
+				'Get everything your site needs, in one package — so you can focus on your business.'
+			);
+		}
 		if ( this.isDisplayingPlansNeededForFeature() ) {
 			headerText = translate( 'Upgrade plans to access this feature and more' );
 			subHeaderText = (
@@ -469,12 +480,6 @@ export class PlansFeaturesMain extends Component {
 				>
 					{ translate( 'View all plans' ) }
 				</Button>
-			);
-		}
-		if ( this.isJetpackBackupAvailable() ) {
-			headerText = translate( 'Plans' );
-			subHeaderText = translate(
-				'Get everything your site needs, in one package — so you can focus on your business.'
 			);
 		}
 		return (
