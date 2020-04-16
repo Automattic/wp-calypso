@@ -405,6 +405,7 @@ const MainContentUI = styled.div`
 
 const CheckoutSummaryUI = styled.div`
 	background: ${props => props.theme.colors.surface};
+	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
 	box-sizing: border-box;
 	width: 100%;
 

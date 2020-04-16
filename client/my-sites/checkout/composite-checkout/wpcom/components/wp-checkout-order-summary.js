@@ -16,38 +16,23 @@ export default function WPCheckoutOrderSummary() {
 	const total = useTotal();
 
 	return (
-		<CheckoutSummaryWrapper className="components__checkout-order-summary">
+		<>
 			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryAmountWrapper>
 				{ taxes.map( tax => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
-						<CheckoutSummaryLabel>{ tax.label }</CheckoutSummaryLabel>
-						<CheckoutSummaryAmount>
-							{ renderDisplayValueMarkdown( tax.amount.displayValue ) }
-						</CheckoutSummaryAmount>
+						<span>{ tax.label }</span>
+						<span>{ renderDisplayValueMarkdown( tax.amount.displayValue ) }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
 				<CheckoutSummaryTotal>
-					<CheckoutSummaryLabel>{ translate( 'Total' ) }</CheckoutSummaryLabel>
-					<CheckoutSummaryAmount>
-						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
-					</CheckoutSummaryAmount>
+					<span>{ translate( 'Total' ) }</span>
+					<span>{ renderDisplayValueMarkdown( total.amount.displayValue ) }</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-		</CheckoutSummaryWrapper>
+		</>
 	);
 }
-
-const CheckoutSummaryWrapper = styled.div`
-	background: ${props => props.theme.colors.surface};
-	border: 1px solid ${props => props.theme.colors.borderColorLight};
-
-	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
-		float: right;
-		margin-left: 16px;
-		width: 326px;
-	}
-`;
 
 const CheckoutSummaryTitle = styled.h2`
 	color: ${props => props.theme.colors.textColor};
@@ -59,10 +44,6 @@ const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
 	padding: 16px;
 `;
-
-const CheckoutSummaryLabel = styled.span``;
-
-const CheckoutSummaryAmount = styled.span``;
 
 const CheckoutSummaryLineItem = styled.div`
 	display: flex;
