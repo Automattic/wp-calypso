@@ -304,7 +304,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			}
 			return await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css( ".edit-post-sidebar-header__small button[aria-label='Close settings']" )
+				By.css( ".interface-complementary-area-header__small button[aria-label='Close settings']" )
 			);
 		}
 	}
