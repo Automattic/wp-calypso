@@ -176,7 +176,7 @@ class DailyBackupStatus extends Component {
 	}
 
 	renderNoBackupOnDate() {
-		const { translate, selectedDate, onDateChange } = this.props;
+		const { translate, selectedDate, siteSlug } = this.props;
 
 		const displayDate = selectedDate.format( 'll' );
 		const nextDate = selectedDate.clone().add( 1, 'days' );
@@ -323,6 +323,9 @@ const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug 
 				href={ backupDownloadPath( siteSlug, rewindId ) }
 				disabled={ disabledDownload }
 				isPrimary={ false }
+				onClick={ event => {
+					disabledDownload && event.preventDefault();
+				} }
 			>
 				{ translate( 'Download backup' ) }
 			</Button>
@@ -330,6 +333,9 @@ const ActionButtons = ( { disabledDownload, disabledRestore, rewindId, siteSlug 
 				className="daily-backup-status__restore-button"
 				href={ backupRestorePath( siteSlug, rewindId ) }
 				disabled={ disabledRestore }
+				onClick={ event => {
+					disabledRestore && event.preventDefault();
+				} }
 			>
 				{ translate( 'Restore to this point' ) }
 			</Button>
