@@ -3,6 +3,7 @@ import * as types from '../../action-types';
 import getIsNoteRead from '../../selectors/get-is-note-read';
 import getNote from '../../selectors/get-note';
 
+import store from '../../../flux/store';
 import { markReadStatus } from '../../../rest-client/wpcom';
 import { bumpStat } from '../../../rest-client/bump-stat';
 
@@ -29,6 +30,7 @@ export const markAsRead = ( { getState }, { noteId } ) => {
 	}
 
 	// If the note hasn't yet been marked as read then mark it
+	store.get( 'global' ).client.readNote( noteId );
 	try {
 		localStorage.setItem( `note_read_status_${ noteId }`, '1' );
 	} catch ( e ) {}
