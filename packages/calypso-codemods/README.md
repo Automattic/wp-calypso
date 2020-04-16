@@ -8,7 +8,7 @@ Code modification scripts, also known as codemods, are transformation scripts th
 
 Install calypso-codemods using `npm` or `yarn`:
 ```
-npm install -g calypso-codemods
+yarn global add calypso-codemods
 ```
 
 Now you can run codemods using the following cli:
@@ -108,6 +108,6 @@ in order to easily add tests for a new transform, follow these steps:
 test_folder(__dirname);
 ```
 3. add any input files to the folder that you wish to be tested
-4. run `npm test` or `yarn test`. if the tests fail, its usually because a snapshot would be modified and behavior has changed. If you've verified that the updated snapshots look correct, then you can update the snapshots with: `yarn test -- -u`.
+4. run `yarn test` or `yarn test`. if the tests fail, its usually because a snapshot would be modified and behavior has changed. If you've verified that the updated snapshots look correct, then you can update the snapshots with: `yarn test -- -u`.
 
 5. make sure to commit any modified snapshots and include it in your pull request

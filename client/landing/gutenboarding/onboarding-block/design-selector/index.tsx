@@ -63,7 +63,7 @@ const DesignSelector: React.FunctionComponent = () => {
 					to={ makePath( Step.IntentGathering ) }
 					isLink
 				>
-					{ __( 'Start over' ) }
+					{ __( 'Go back' ) }
 				</Link>
 			</div>
 			<div className="design-selector__design-grid">

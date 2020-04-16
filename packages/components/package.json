@@ -41,7 +41,7 @@
 	},
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__components*\"",
-		"prepublish": "check-npm-client && npm run clean",
+		"prepublish": "check-npm-client && yarn run clean",
 		"prepare": "check-npm-client && transpile && tsc && copy-assets"
 	}
 }

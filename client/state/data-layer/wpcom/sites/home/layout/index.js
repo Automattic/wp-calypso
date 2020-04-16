@@ -6,6 +6,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { HOME_LAYOUT_REQUEST } from 'state/action-types';
 import { setHomeLayout } from 'state/home/actions';
+import config from 'config';
 
 const requestLayout = action => {
 	return http(
@@ -13,6 +14,7 @@ const requestLayout = action => {
 			method: 'GET',
 			path: `/sites/${ action.siteId }/home/layout`,
 			apiNamespace: 'wpcom/v2',
+			...( config.isEnabled( 'home/experimental-layout' ) && { query: { experimental: true } } ),
 		},
 		action
 	);

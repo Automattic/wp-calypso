@@ -48,6 +48,11 @@
 	}
 }
 
+.scan__is-loading {
+	height: 300px;
+	@include placeholder( --color-neutral-10 );
+}
+
 .scan__header {
 	color: var( --studio-black );
 	font-size: 28px;

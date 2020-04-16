@@ -23,6 +23,7 @@ import PhpMyAdminCard from './phpmyadmin-card';
 import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
 import SiteBackupCard from './site-backup-card';
+import MiscellaneousCard from './miscellaneous-card';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
@@ -161,7 +162,8 @@ class Hosting extends Component {
 						<div className="hosting__layout-col">
 							<SFTPCard disabled={ isDisabled } />
 							<PhpMyAdminCard disabled={ isDisabled } />
-							{ <PhpVersionCard disabled={ isDisabled } /> }
+							<PhpVersionCard disabled={ isDisabled } />
+							<MiscellaneousCard disabled={ isDisabled } />
 						</div>
 						<div className="hosting__layout-col">
 							<SiteBackupCard disabled={ isDisabled } />

@@ -145,6 +145,13 @@ export class CountrySpecificPaymentFields extends Component {
 					} ),
 				} ) }
 
+				{ this.createField( 'gstin', Input, {
+					placeholder: ' ',
+					label: translate( 'GSTIN (optional)', {
+						comment: 'India PAN number ',
+					} ),
+				} ) }
+
 				{ this.createField( 'phone-number', FormPhoneMediaInput, {
 					onChange: this.handlePhoneFieldChange,
 					countriesList,

@@ -8,7 +8,7 @@
 	"private": true,
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && npm run clean",
+		"prepublish": "check-npm-client && yarn run clean",
 		"prepare": "check-npm-client && run-s build:modules build:bundle",
 		"build:modules": "check-npm-client && transpile",
 		"build:bundle": "check-npm-client && webpack --display errors-only"
