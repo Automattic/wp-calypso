@@ -39,7 +39,7 @@ const Secondary = ( { cards } ) => {
 	let skipEducationalCard = false;
 	return (
 		<>
-			{ cards.map( ( card, index ) => {
+			{ cards.map( card => {
 				if ( ! cardComponents[ card ] ) {
 					return null;
 				}
@@ -52,13 +52,15 @@ const Secondary = ( { cards } ) => {
 					return (
 						<DotPager>
 							{ educationalCards.map( educationalCard =>
-								React.createElement( cardComponents[ educationalCard ] )
+								React.createElement( cardComponents[ educationalCard ], {
+									key: educationalCard,
+								} )
 							) }
 						</DotPager>
 					);
 				}
 				return React.createElement( cardComponents[ card ], {
-					key: index,
+					key: card,
 				} );
 			} ) }
 		</>
