@@ -25,14 +25,14 @@ interface Props {
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
-	siteSlug: string;
+	siteUrl: string;
 }
 
 const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	backupDisplayDate,
 	rewindId,
 	siteId,
-	siteSlug,
+	siteUrl,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -170,7 +170,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			</h3>
 			<Button
 				className="rewind-flow__primary-button"
-				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				href={ `https://jetpack.com/contact-support/?site=${ siteUrl }&scan-state=error` }
 				primary
 				rel="noopener noreferrer"
 				target="_blank"

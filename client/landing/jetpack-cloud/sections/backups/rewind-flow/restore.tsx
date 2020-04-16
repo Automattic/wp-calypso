@@ -15,7 +15,6 @@ import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
 import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'state/selectors/get-rewind-state';
-import getSiteUrl from 'state/selectors/get-site-url';
 import Gridicon from 'components/gridicon';
 import ProgressBar from './progress-bar';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -27,7 +26,7 @@ interface Props {
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
-	siteSlug: string;
+	siteUrl: string;
 }
 
 //todo: move to dedicated types file
@@ -42,7 +41,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	backupDisplayDate,
 	rewindId,
 	siteId,
-	siteSlug,
+	siteUrl
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -50,15 +49,14 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
-	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
-	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
+	const rewindState = useSelector( state => getRewindState( state, siteId ) ) as RewindState;
 
 	const loading = rewindState.state === 'uninitialized';
 
-	const inProgressRewindStatus = useSelector( ( state ) =>
+	const inProgressRewindStatus = useSelector( state =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
-	const inProgressRewindPercentComplete = useSelector( ( state ) =>
+	const inProgressRewindPercentComplete = useSelector( state =>
 		getInProgressRewindPercentComplete( state, siteId, rewindId )
 	);
 
@@ -83,11 +81,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore. ',
 					{
 						args: {
-							backupDisplayDate,
+							backupDisplayDate
 						},
 						components: {
-							strong: <strong />,
-						},
+							strong: <strong />
+						}
 					}
 				) }
 			</p>
@@ -102,7 +100,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				className="rewind-flow__primary-button"
 				primary
 				onClick={ onConfirm }
-				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
+				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
 			>
 				{ translate( 'Confirm restore' ) }
 			</Button>
@@ -121,11 +119,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
-							backupDisplayDate,
+							backupDisplayDate
 						},
 						components: {
-							strong: <strong />,
-						},
+							strong: <strong />
+						}
 					}
 				) }
 			</p>
@@ -153,11 +151,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					'All of your selected files are now restored back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
-							backupDisplayDate,
+							backupDisplayDate
 						},
 						components: {
-							strong: <strong />,
-						},
+							strong: <strong />
+						}
 					}
 				) }
 			</p>
@@ -180,13 +178,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</h3>
 			<Button
 				className="rewind-flow__primary-button"
-				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				href={ `https://jetpack.com/contact-support/?site=${ siteUrl }&scan-state=error` }
 				primary
 				rel="noopener noreferrer"
 				target="_blank"
 			>
 				{ translate( 'Contact Support {{externalIcon/}}', {
-					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> }
 				} ) }
 			</Button>
 		</>

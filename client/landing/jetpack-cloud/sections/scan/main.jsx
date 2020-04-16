@@ -19,6 +19,7 @@ import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
 import { withLocalizedMoment } from 'components/localized-moment';
 
@@ -68,7 +69,7 @@ class ScanPage extends Component {
 	}
 
 	renderScanError() {
-		const { siteSlug } = this.props;
+		const { siteUrl } = this.props;
 
 		return (
 			<>
@@ -83,7 +84,7 @@ class ScanPage extends Component {
 					primary
 					target="_blank"
 					rel="noopener noreferrer"
-					href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+					href={ `https://jetpack.com/contact-support/?site=${ siteUrl }&scan-state=error` }
 					className="scan__button"
 				>
 					{ translate( 'Contact Support {{externalIcon/}}', {
@@ -141,6 +142,7 @@ class ScanPage extends Component {
 
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
+	const siteUrl = getSiteUrl( state, site.ID );
 	const siteSlug = getSelectedSiteSlug( state );
 	const scanState = getSiteScanState( state, site.ID );
 	const lastScanTimestamp = Date.now() - 5700000; // 1h 35m.
@@ -148,6 +150,7 @@ export default connect( ( state ) => {
 
 	return {
 		site,
+		siteUrl,
 		siteSlug,
 		scanState,
 		lastScanTimestamp,

@@ -10,11 +10,11 @@ import { useSelector } from 'react-redux';
  */
 import { Card } from '@automattic/components';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import getSiteUrl from 'state/sites/selectors/get-site-url';
 import { RewindFlowPurpose } from './types';
 import {
 	applySiteOffsetType,
-	useApplySiteOffset,
+	useApplySiteOffset
 } from 'landing/jetpack-cloud/components/site-offset';
 import BackupDownloadFlow from './download';
 import BackupRestoreFlow from './restore';
@@ -40,9 +40,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) =>
-		siteId !== null ? getSiteSlug( state, siteId ) : ''
-	);
+	const siteUrl = useSelector( state => ( siteId && getSiteUrl( state, siteId ) ) || '' );
 
 	const render = ( loadedApplySiteOffset: applySiteOffsetType ) => {
 		const backupDisplayDate = loadedApplySiteOffset(
@@ -54,14 +52,14 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 					backupDisplayDate={ backupDisplayDate }
 					rewindId={ rewindId }
 					siteId={ siteId }
-					siteSlug={ siteSlug }
+					siteUrl={ siteUrl }
 				/>
 			) : (
 				<BackupDownloadFlow
 					backupDisplayDate={ backupDisplayDate }
 					rewindId={ rewindId }
 					siteId={ siteId }
-					siteSlug={ siteSlug }
+					siteUrl={ siteUrl }
 				/>
 			);
 		}

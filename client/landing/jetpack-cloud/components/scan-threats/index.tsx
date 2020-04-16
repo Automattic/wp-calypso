@@ -27,6 +27,7 @@ interface Props {
 	site: {
 		ID: number;
 		name: string;
+		URL: string;
 	};
 	threats: Array< Threat >;
 }
@@ -94,7 +95,9 @@ const ScanThreats = ( { site, threats }: Props ) => {
 				{ translate(
 					'Please review them below and take action. We are {{a}}here to help{{/a}} if you need us.',
 					{
-						components: { a: <a href="https://jetpack.com/contact-support/" /> },
+						components: {
+							a: <a href={ `https://jetpack.com/contact-support/?site=${ site.URL }` } />,
+						},
 						comment: 'The {{a}} tag is a link that goes to a contact support page.',
 					}
 				) }
