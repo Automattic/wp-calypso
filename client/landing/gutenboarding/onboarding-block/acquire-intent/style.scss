@@ -7,12 +7,12 @@
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
 	tab-size: 4;
-	min-height: calc( 100vh - #{$gutenboarding-header-height} );
+	position: fixed;
+	min-height: calc( 100% - #{$gutenboarding-header-height} );
+	width: 100%;
 	display: flex;
-	flex: 1;
     flex-direction: column;
     justify-content: space-between;
-	height: 100%;
 	margin: 0 -20px;
 	padding: 20px;
 	transition: color $acquire-intent-transition-duration
