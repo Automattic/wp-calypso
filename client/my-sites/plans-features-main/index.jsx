@@ -142,7 +142,6 @@ export class PlansFeaturesMain extends Component {
 			redirectTo,
 			siteId,
 			plansWithScroll,
-			translate,
 			customHeader,
 		} = this.props;
 
