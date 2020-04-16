@@ -12,7 +12,7 @@ Calypso is [broken up into sections](https://github.com/Automattic/wp-calypso/bl
 This can take a long time and slow down incremental builds as your work. To speed things up,
 you can choose to build and run specific sections of Calypso using the `SECTION_LIMIT` environment variable.
 
-For instance, `SECTION_LIMIT=reader,login npm start` would start Calypso and only build the `reader` and `login` sections.
+For instance, `SECTION_LIMIT=reader,login yarn start` would start Calypso and only build the `reader` and `login` sections.
 
 To find all available sections in the main entry point, you can refer to the [sections.js file](https://github.com/Automattic/wp-calypso/blob/master/client/sections.js). Note that the other entry points are likely to register and handle additional sections.
 

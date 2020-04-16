@@ -5,9 +5,9 @@ The Calypso build has two outputs: **evergreen**, for browsers that are always k
 
 ## Build
 
-Running `npm run start-fallback` will do the "fallback" build of all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly.
+Running `yarn start-fallback` will do the "fallback" build of all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly.
 
-You may need to run `npm run clean` between evergreen and fallback debug sessions.
+You may need to run `yarn clean` between evergreen and fallback debug sessions.
 
 ## Debugging with Internet Explorer
 
@@ -31,4 +31,4 @@ The VM's network uses NAT mode by default, which means the host machine is acces
 
 ### 3. View in IE
 
-Run `npm run start-fallback` on the host machine. Open Internet Explorer in the your VM (you'll need to search using the Start menu because Edge is the default browser) and navigate to `calypso.localhost:3000`.
+Run `yarn start-fallback` on the host machine. Open Internet Explorer in the your VM (you'll need to search using the Start menu because Edge is the default browser) and navigate to `calypso.localhost:3000`.
