@@ -12,6 +12,7 @@ import GrowEarn from 'my-sites/customer-home/cards/features/grow-earn';
 import LaunchSite from 'my-sites/customer-home/cards/features/launch-site';
 import Stats from 'my-sites/customer-home/cards/features/stats';
 import Support from 'my-sites/customer-home/cards/features/support';
+import LearnGrow from './learn-grow';
 
 const cardComponents = {
 	'home-action-launch-site': LaunchSite,
@@ -20,6 +21,7 @@ const cardComponents = {
 	'home-feature-grow-and-earn': GrowEarn,
 	'home-feature-stats': Stats,
 	'home-feature-support': Support,
+	'home-section-learn-grow': LearnGrow,
 };
 
 const Secondary = ( { cards } ) => {
