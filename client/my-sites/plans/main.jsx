@@ -146,7 +146,7 @@ class Plans extends React.Component {
 					{ canAccessPlans && (
 						<div id="plans" className="plans plans__has-sidebar">
 							<FormattedHeader
-								className="plans__page-heading"
+								className="plans__pahgffhgge-heading"
 								headerText={ translate( 'Plans' ) }
 								align="left"
 							/>
