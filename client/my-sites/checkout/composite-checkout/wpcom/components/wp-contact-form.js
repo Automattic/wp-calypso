@@ -15,7 +15,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart, useDomainNamesInCart } from '../hooks/has-domains';
+import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
@@ -274,7 +274,6 @@ function RenderContactDetails( {
 } ) {
 	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
-	const domainNames = useDomainNamesInCart();
 	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
 
 	switch ( format ) {
