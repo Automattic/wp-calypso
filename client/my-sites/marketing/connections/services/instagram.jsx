@@ -29,9 +29,6 @@ export class Instagram extends SharingService {
 
 	/**
 	 * Deletes the passed connections.
-	 *
-	 * @param {Array} connections Optional. Connections to be deleted.
-	 *                            Default: All connections for this service.
 	 */
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
@@ -40,11 +37,7 @@ export class Instagram extends SharingService {
 
 	renderLogo = () => (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<SocialLogo
-			icon="instagram"
-			size={ 48 }
-			className="sharing-service__logo"
-		/>
+		<SocialLogo icon="instagram" size={ 48 } className="sharing-service__logo" />
 	);
 
 	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
