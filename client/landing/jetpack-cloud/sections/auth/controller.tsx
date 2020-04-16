@@ -3,6 +3,7 @@
  */
 import { stringify } from 'qs';
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -30,11 +31,14 @@ export const connect: PageJS.Callback = ( context, next ) => {
 			client_id: config( 'oauth_client_id' ),
 			redirect_uri: redirectUri,
 			scope: 'global',
-			blog_id: 0,
+			type: 'jetpack-cloud',
+			cobrand: 1,
 		};
 
 		context.primary = <Connect authUrl={ `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }` } />;
 	}
+	// TODO: jetpack cloud needs oauth, give up otherwise
+
 	next();
 };
 
@@ -52,11 +56,12 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 	context.primary = <GetToken />;
 
 	// Fetch user and redirect to / on success.
-	const user = userFactory();
-	user.fetching = false;
-	user.fetch();
-	user.on( 'change', function() {
-		window.location = '/';
-	} );
+	userFactory()
+		.initialize()
+		.then( () => {
+			// debug( `Starting ${ appName }. Let's do this.` );
+			page( '/' );
+		} );
+
 	next();
 };

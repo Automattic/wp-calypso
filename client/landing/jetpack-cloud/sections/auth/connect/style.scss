@@ -1,0 +1,14 @@
+.connect.main {
+	margin: auto;
+}
+
+.connect__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	& > * {
+		margin-bottom: 32px;
+	}
+}
