@@ -90,7 +90,6 @@ export default function CompositeCheckout( {
 	purchaseId,
 	cart,
 	couponCode: couponCodeFromUrl,
-	isComingFromUpsell,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -99,7 +98,6 @@ export default function CompositeCheckout( {
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
-	const hideNudge = isComingFromUpsell;
 
 	const getThankYouUrl = useGetThankYouUrl( {
 		siteSlug,
@@ -110,7 +108,6 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
-		hideNudge,
 	} );
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
