@@ -194,11 +194,18 @@ Then, each bundle contains features for different types of pages. For example, t
 
 To manually build the package, execute the command below passing the directory where the distributable files will be generated:
 
-```
-npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=/path-to-folder
-```
+```sh
+cd apps/wpcom-block-editor
 
-_Wonky double `--` is needed for first skipping Lerna args and then NPM args to reach Webpack._
+# Watch for changes:
+yarn build --watch
+
+# Production build:
+yarn build
+
+# Change output directory (default is ./dist)
+yarn build --output-path=/path-to-folder
+```
 
 ### Automatic
 
