@@ -59,18 +59,20 @@ export function Checkout( { children, className } ) {
 
 	return (
 		<ContainerUI className={ joinClasses( [ className, 'composite-checkout' ] ) }>
-			<CheckoutStepDataContext.Provider
-				value={ {
-					activeStepNumber: actualActiveStepNumber,
-					stepCompleteStatus,
-					totalSteps,
-					setActiveStepNumber,
-					setStepCompleteStatus,
-					setTotalSteps,
-				} }
-			>
-				{ children || getDefaultCheckoutSteps() }
-			</CheckoutStepDataContext.Provider>
+			<MainContentUI className={ joinClasses( [ className, 'checkout__content' ] ) }>
+				<CheckoutStepDataContext.Provider
+					value={ {
+						activeStepNumber: actualActiveStepNumber,
+						stepCompleteStatus,
+						totalSteps,
+						setActiveStepNumber,
+						setStepCompleteStatus,
+						setTotalSteps,
+					} }
+				>
+					{ children || getDefaultCheckoutSteps() }
+				</CheckoutStepDataContext.Provider>
+			</MainContentUI>
 		</ContainerUI>
 	);
 }
@@ -81,19 +83,19 @@ function DefaultCheckoutSteps() {
 	const reviewOrderStep = getDefaultOrderReviewStep();
 	return (
 		<React.Fragment>
-			<CheckoutStepBody
-				activeStepContent={ orderSummaryStep.activeStepContent }
-				completeStepContent={ orderSummaryStep.completeStepContent }
-				titleContent={ orderSummaryStep.titleContent }
-				errorMessage={ 'There was an error with this step.' }
-				isStepActive={ false }
-				isStepComplete={ true }
-				stepNumber={ 1 }
-				totalSteps={ 1 }
-				stepId={ 'order-summary' }
-				className={ orderSummaryStep.className }
-			/>
 			<CheckoutSteps>
+				<CheckoutStepBody
+					activeStepContent={ orderSummaryStep.activeStepContent }
+					completeStepContent={ orderSummaryStep.completeStepContent }
+					titleContent={ orderSummaryStep.titleContent }
+					errorMessage={ 'There was an error with this step.' }
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					totalSteps={ 1 }
+					stepId={ 'order-summary' }
+					className={ orderSummaryStep.className }
+				/>
 				<CheckoutStep
 					stepId="review-order-step"
 					isCompleteCallback={ () => true }
@@ -120,7 +122,9 @@ export function CheckoutSteps( { children, className } ) {
 
 	let stepNumber = 0;
 	let nextStepNumber = 1;
-	const steps = React.Children.toArray( children ).filter( ( child ) => child );
+	const componentChildren = React.Children.toArray( children ).filter( child => child );
+	const nonSteps = componentChildren.filter( child => child.type?.name !== 'CheckoutStep' );
+	const steps = componentChildren.filter( child => child.type?.name === 'CheckoutStep' );
 	const totalSteps = steps.length;
 	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
 		CheckoutStepDataContext
@@ -141,10 +145,11 @@ export function CheckoutSteps( { children, className } ) {
 	);
 
 	return (
-		<MainContentUI
-			className={ joinClasses( [ className, 'checkout__content' ] ) }
+		<CheckoutStepsWrapperUI
+			className={ joinClasses( [ className, 'checkout__steps-wrapper' ] ) }
 			isLastStepActive={ ! isThereAnotherNumberedStep }
 		>
+			{ nonSteps }
 			{ steps.map( child => {
 				stepNumber = nextStepNumber;
 				nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
@@ -172,7 +177,7 @@ export function CheckoutSteps( { children, className } ) {
 					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
 				</CheckoutErrorBoundary>
 			</SubmitButtonWrapperUI>
-		</MainContentUI>
+		</CheckoutStepsWrapperUI>
 	);
 }
 
@@ -368,7 +373,11 @@ const ContainerUI = styled.div`
 `;
 
 const MainContentUI = styled.div`
-	background: ${( props ) => props.theme.colors.surface};
+	display: flex;
+`;
+
+const CheckoutStepsWrapperUI = styled.div`
+	background: ${props => props.theme.colors.surface};
 	width: 100%;
 	box-sizing: border-box;
 	margin-bottom: ${( props ) => ( props.isLastStepActive ? '100px' : 0) };
