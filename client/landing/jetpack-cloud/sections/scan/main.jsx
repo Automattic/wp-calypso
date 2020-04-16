@@ -116,7 +116,7 @@ class ScanPage extends Component {
 
 	render() {
 		return (
-			<Main wideLayout className="scan__main">
+			<Main className="scan__main">
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<div className="scan__content">{ this.renderScanState() }</div>
