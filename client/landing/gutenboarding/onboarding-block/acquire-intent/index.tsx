@@ -16,6 +16,7 @@ import Link from '../../components/link';
 import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import Arrow from './arrow';
+import { useTrackStep } from '../../analytics';
 
 /**
  * Style dependencies
@@ -26,6 +27,7 @@ const AcquireIntent: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { siteVertical, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const makePath = usePath();
+	useTrackStep( 'IntentGathering' );
 
 	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
 	const isMobile = useViewportMatch( 'small', '<' );

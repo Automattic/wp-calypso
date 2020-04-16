@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
@@ -20,8 +20,10 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import SignupForm from '../../components/signup-form';
+import { recordEnterStep, recordLeaveStep } from '../../analytics';
 
 import './style.scss';
+import { useOnUnmount } from 'landing/gutenboarding/hooks/use-on-unmount';
 
 const StylePreview: React.FunctionComponent = () => {
 	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
@@ -40,11 +42,22 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
+	useEffect( () => {
+		recordEnterStep( 'Style' );
+	}, [] );
+
+	useOnUnmount( () => {
+		if ( ! showSignupDialog ) {
+			recordLeaveStep( 'Style' );
+		}
+	}, [ showSignupDialog ] );
+
 	const handleSignup = () => {
 		setShowSignupDialog( true );
 	};
 
 	const closeAuthDialog = () => {
+		recordEnterStep( 'Style' );
 		setShowSignupDialog( false );
 	};
 

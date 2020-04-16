@@ -8,8 +8,6 @@ import { Popover, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import React, { useRef, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
@@ -22,9 +20,12 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
+<<<<<<< HEAD
 import GUTENARDING_BASE_NAME from './basename.json';
 import { recordOnboardingStart } from './lib/analytics';
 
+=======
+>>>>>>> WIP add tracks analytics to gutenboarding steps
 registerBlockType( name, settings );
 
 interface BlockListProps extends OriginalBlockList.Props {
@@ -74,14 +75,6 @@ export function Gutenboard() {
 	// which would collide with the routing done inside of the block
 	// (and would lead to weird mounting/unmounting behavior).
 	const onboardingBlock = useRef( createBlock( name, {} ) );
-
-	const {
-		location: { pathname },
-	} = useHistory();
-
-	useEffect( () => {
-		recordTracksPageViewWithPageParams( `/${ GUTENARDING_BASE_NAME }${ pathname }` );
-	}, [ pathname ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (

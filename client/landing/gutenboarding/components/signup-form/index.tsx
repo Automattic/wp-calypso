@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -20,6 +20,7 @@ import GUTENBOARDING_BASE_NAME from '../../basename.json';
 import { trackEventWithFlow } from '../../lib/analytics';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
+import { useTrackStep } from '../../analytics';
 
 interface Props {
 	onRequestClose: () => void;
@@ -42,11 +43,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		onRequestClose();
 	};
 
-	useEffect( () => {
-		trackEventWithFlow( 'calypso_signup_step_enter', {
-			step: 'account_creation',
-		} );
-	}, [] );
+	useTrackStep( 'Signup' );
 
 	const lang = useLangRouteParam();
 

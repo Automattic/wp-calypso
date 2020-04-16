@@ -16,7 +16,7 @@ import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import Link from '../../components/link';
 import { SubTitle, Title } from '../../components/titles';
-
+import { useTrackStep } from '../../analytics';
 import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
@@ -24,6 +24,8 @@ type Design = import('../../stores/onboard/types').Design;
 const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
 const DesignSelector: React.FunctionComponent = () => {
+	useTrackStep( 'DesignSelection' );
+
 	const { __ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
