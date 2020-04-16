@@ -28,7 +28,7 @@ const InserterMenuTrackingEvent = function() {
 		selectedBlock: select( 'core/block-editor' ).getSelectedBlock(),
 	} ) );
 
-	const plugingVersion = window.wpcomGutenberg ? window.wpcomGutenberg.pluginVersion : null;
+	const pluginVersion = window.wpcomGutenberg ? window.wpcomGutenberg.pluginVersion : null;
 
 	const debouncedSetFilterValue = debounce( ( search_term, has_items ) => {
 		setSearchTerm( search_term );
