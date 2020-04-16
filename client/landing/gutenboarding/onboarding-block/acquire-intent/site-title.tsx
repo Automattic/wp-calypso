@@ -50,6 +50,15 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
 		}
 	}, [ siteVertical, isVisible, inputRef ] );
 
+	// fix to adjust container height when iOS virtual keyboard pops up
+	const [ isFocused, setIsFocused ] = React.useState( false );
+	React.useEffect( () => {
+		document.documentElement.style.setProperty(
+			'--siteTitleActualHeight',
+			`${ window.innerHeight }px`
+		);
+	}, [ isFocused ] );
+
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'Itʼs called <Input />' );
 	const madlib = createInterpolateElement( madlibTemplate, {
@@ -66,6 +75,8 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
 					className="madlib__input"
 					onKeyDown={ handleKeyDown }
 					onKeyUp={ handleKeyUp }
+					onFocus={ () => setIsFocused( true ) }
+					onBlur={ () => setIsFocused( false ) }
 				/>
 			</span>
 		),

@@ -36,7 +36,8 @@ const AcquireIntent: FunctionComponent = () => {
 	return (
 		<div
 			className={ classnames( 'gutenboarding-page acquire-intent', {
-				'acquire-intent--mobile-vertical-step': ! isSiteTitleActive,
+				'acquire-intent--mobile-vertical-step': ! isSiteTitleActive && isMobile,
+				'acquire-intent--mobile-site-title-step': isSiteTitleActive && isMobile,
 			} ) }
 		>
 			{ displayVerticalSelect && <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } /> }
