@@ -460,7 +460,7 @@ export class SharingService extends Component {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<SocialLogo
-				icon={ replace( this.props.service.ID, '_', '-' ) }
+				icon={ replace( this.props.service.ID, /_/g, '-' ) }
 				size={ 48 }
 				className="sharing-service__logo"
 			/>
@@ -602,11 +602,11 @@ export class SharingService extends Component {
 /**
  * Connect a SharingService component to a Redux store.
  *
- * @param  {component} sharingService     A SharingService component
+ * @param  {Component} sharingService     A SharingService component
  * @param  {Function}  mapStateToProps    Optional. A function to pick props from the state.
  *                                        It should return a plain object, which will be merged into the component's props.
  * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
- * @returns {component} A highter-order service component
+ * @returns {Component} A highter-order service component
  */
 export function connectFor( sharingService, mapStateToProps, mapDispatchToProps = {} ) {
 	return connect(

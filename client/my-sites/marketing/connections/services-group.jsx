@@ -55,9 +55,7 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 			<ul className="sharing-services-group__services">
 				{ services.length
 					? services.map( service => {
-							const Component = Components.hasOwnProperty( service.ID )
-								? Components[ service.ID ]
-								: Service;
+							const Component = Components[ service.ID.replace( /-/g, '_' ) ] || Service;
 
 							if ( service.warnings ) {
 								return (

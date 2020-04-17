@@ -39,7 +39,7 @@
 		}
 	}
 
-	&.instagram {
+	&.instagram-basic-display {
 		h2,
 		.sharing-service__logo {
 			color: var( --color-instagram );
@@ -275,7 +275,7 @@
 @include sharing-service( 'google_plus', var( --color-google-plus ));
 @include sharing-service( 'tumblr', var( --color-tumblr ));
 @include sharing-service( 'linkedin', var( --color-linkedin ));
-@include sharing-service( 'instagram', var( --color-instagram ));
+@include sharing-service( 'instagram-basic-display', var( --color-instagram ));
 
 .sharing-service__name {
 	clear: none;
@@ -919,7 +919,7 @@
 @include sharing-button-service( 'twitter', var( --color-twitter ));
 @include sharing-button-service( 'press-this', var( --color-wordpress-com ));
 @include sharing-button-service( 'google-plus-1', var( --color-google-plus ));
-@include sharing-button-service( 'instagram', var( --color-instagram ));
+@include sharing-button-service( 'instagram-basic-display', var( --color-instagram ));
 @include sharing-button-service( 'linkedin', var( --color-linkedin ));
 @include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ));
 @include sharing-button-service( 'tumblr', var( --color-tumblr ));
