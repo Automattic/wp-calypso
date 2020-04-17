@@ -15,7 +15,7 @@ import './style.scss';
 export interface Props {
 	children?: ReactNode;
 	className?: string;
-	header: string;
+	header: string | {} | React.ReactNodeArray | null;
 	subheader?: string | ReactNode;
 	highlight?: 'info' | 'success' | 'warning' | 'error';
 	tag?: string;

@@ -50,7 +50,7 @@ class ThreatItem extends Component< Props > {
 		);
 	}
 
-	getDetailType( threat: object ) {
+	getDetailType( threat: Threat ) {
 		if ( threat.hasOwnProperty( 'diff' ) ) {
 			return 'core';
 		}
@@ -61,7 +61,8 @@ class ThreatItem extends Component< Props > {
 
 		if ( threat.hasOwnProperty( 'extension' ) ) {
 			// 'plugin' or 'theme'
-			return threat.extension.type;
+			const { extension = { type: 'unknown' } } = threat;
+			return extension;
 		}
 
 		if ( threat.hasOwnProperty( 'rows' ) ) {
@@ -75,7 +76,7 @@ class ThreatItem extends Component< Props > {
 		return 'none';
 	}
 
-	getSubtitle( threat ) {
+	getSubtitle( threat: Threat ) {
 		switch ( this.getDetailType( threat ) ) {
 			case 'core':
 				return translate( 'Vulnerability found in WordPress' );
@@ -102,25 +103,25 @@ class ThreatItem extends Component< Props > {
 		}
 	}
 
-	getTitle( threat: object ) {
+	getTitle( threat: Threat ): string | {} | React.ReactNodeArray | null {
 		// This should be temprary since this data should be coming from the api
 		// and not something that we should change to accompadate the results.
-		const { filename, extension } = threat;
+		const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
 
-		const basename = s => s.replace( /.*\//, '' );
+		const basename = filename ? filename.replace( /.*\//, '' ) : '';
 
 		switch ( this.getDetailType( threat ) ) {
 			case 'core':
 				return translate( 'Infected core file: {{filename/}} ', {
 					components: {
-						filename: <code className="threat-item__alert-filename">{ basename( filename ) }</code>,
+						filename: <code className="threat-item__alert-filename">{ basename }</code>,
 					},
 				} );
 
 			case 'file':
 				return translate( 'The file {{filename/}} contains a malicious code pattern.', {
 					components: {
-						filename: <code className="threat-item__alert-filename">{ basename( filename ) }</code>,
+						filename: <code className="threat-item__alert-filename">{ basename }</code>,
 					},
 				} );
 
@@ -141,6 +142,9 @@ class ThreatItem extends Component< Props > {
 				} );
 
 			case 'database':
+				if ( ! threat.rows ) {
+					return null;
+				}
 				return translate( 'Database %(threatCount)d threat', 'Database %(threatCount)d threats', {
 					count: Object.keys( threat.rows ).length,
 					args: {
@@ -154,14 +158,14 @@ class ThreatItem extends Component< Props > {
 		}
 	}
 
-	getThreatFix( threat ) {
+	getThreatFix( threat: Threat ): JSX.Element {
 		switch ( this.getDetailType( threat ) ) {
 			case 'database':
 				return <>TODO:FIX THIS CASE></>;
 			default:
 				return (
 					<>
-						<p className="threat-description__section-text">{ threat.description }</p>
+						<p className="threat-item__section-text">{ threat.description }</p>
 						{ threat.filename ? (
 							<>
 								<p>
@@ -170,17 +174,15 @@ class ThreatItem extends Component< Props > {
 											'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
 										components: {
 											threatSignature: (
-												<span className="threat-description__alert-signature">
-													{ threat.signature }
-												</span>
+												<span className="threat-item__alert-signature">{ threat.signature }</span>
 											),
 										},
 									} ) }
 								</p>
-								<pre className="threat-description__alert-filename">{ threat.filename }</pre>
+								<pre className="threat-item__alert-filename">{ threat.filename }</pre>
 							</>
 						) : (
-							<p className="threat-description__section-text">{ threat.signature }</p>
+							<p className="threat-item__section-text">{ threat.signature }</p>
 						) }
 						{ threat.context && <MarkedLines context={ threat.context } /> }
 						{ threat.diff && <DiffViewer diff={ threat.diff } /> }

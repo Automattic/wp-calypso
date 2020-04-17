@@ -1,21 +1,22 @@
-/**
- * External dependencies
- */
-import { ReactNode } from 'react';
-
 export type ThreatAction = 'fix' | 'ignore';
+
+export type Extension = {
+	slug: string;
+	version: string;
+	type: 'plugin' | 'theme';
+};
 
 export type Threat = {
 	id: number;
-	title: string;
-	details: string;
-	action: null | 'fixed' | 'ignored';
+	signature: string;
+	description: string;
+	action?: 'fixed' | 'ignored';
 	detectionDate: string;
 	actionDate: string;
-	description: {
-		title: string;
-		problem: string | ReactNode;
-		fix: string | ReactNode;
-		details: string | ReactNode;
-	};
+	fixable?: boolean;
+	filename?: string;
+	extension?: Extension;
+	rows?: number;
+	diff?: string;
+	context?: object;
 };
