@@ -3,23 +3,24 @@
 }
 
 .activity-card .activity-log-item__actor {
-    margin-left: 0;
-    display: flex;
-    align-items: center;
+	margin-left: 0;
+	display: flex;
+	align-items: center;
 }
 
 .activity-card .button.is-borderless.is-primary {
-    float: none;
-    display: inline-block;
+	float: none;
+	display: inline-block;
 }
 
 .activity-card__time {
 	margin: 1.5rem 0 0.5rem;
 }
 
-.activity-card__time-icon {
+.activity-card__time-icon.gridicon {
 	width: 1.1rem;
 	height: 1.1rem;
+	fill: var( --color-neutral-40 );
 }
 
 .activity-card__time-text {
@@ -63,7 +64,7 @@
 .activity-card__detail-button.button.is-borderless.is-primary {
 	color: #3d444a;
 	font-size: 0.9rem;
-	font-weight: normal;
+	font-weight: 400;
 	margin-left: 0;
 }
 

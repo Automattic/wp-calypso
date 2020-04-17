@@ -31,7 +31,7 @@
 		content: '';
 		position: absolute;
 		// center on the icons ( .5px is half the width )
-		left: calc( 0.55rem - 0.5px );
+		left: 0.55rem;
 		width: 1px;
 	}
 
@@ -41,6 +41,12 @@
 		z-index: -2;
 		// background: var( --color-neutral-10 );
 		background: red;
+	}
+}
+
+.activity-card-list {
+	.activity-card .gridicon {
+		background: var( --color-surface-backdrop );
 	}
 }
 

@@ -27,7 +27,6 @@ import {
  */
 import './style.scss';
 import downloadIcon from './download-icon.svg';
-import cloudIcon from './cloud-icon.svg';
 
 class ActivityCard extends Component {
 	constructor() {
@@ -60,7 +59,7 @@ class ActivityCard extends Component {
 		return (
 			<div className={ classnames( className, 'activity-card' ) }>
 				<div className="activity-card__time">
-					<img src={ cloudIcon } className="activity-card__time-icon" role="presentation" alt="" />
+					<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
 					<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 				</div>
 				<Card>
