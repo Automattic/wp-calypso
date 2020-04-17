@@ -35,7 +35,6 @@
 		&[disabled],
 		&:disabled {
 			color: var( --studio-gray-10 );
-			background: none;
 			border-color: var( --color-gray-10 );
 			background: var( --studio-white );
 		}
@@ -168,8 +167,7 @@
 
 	h2 {
 		font-size: 22px;
-		font-style: normal;
-		font-weight: 600;
+		font-weight: 700;
 		line-height: 32px;
 
 		@include breakpoint( '>660px' ) {
@@ -180,21 +178,17 @@
 
 	h3 {
 		font-size: 16px;
-		font-style: normal;
-		font-weight: bold;
+		font-weight: 700;
 		line-height: 23px;
 
 		@include breakpoint( '>660px' ) {
 			font-size: 18px;
-			font-weight: 600;
 			line-height: 23px;
 		}
 	}
 
 	p {
 		font-size: 16px;
-		font-style: normal;
-		font-weight: normal;
 		line-height: 24px;
 
 		@include breakpoint( '>660px' ) {
@@ -205,8 +199,6 @@
 
 	a {
 		font-size: 16px;
-		font-style: normal;
-		font-weight: normal;
 		line-height: 24px;
 
 		@include breakpoint( '>660px' ) {
