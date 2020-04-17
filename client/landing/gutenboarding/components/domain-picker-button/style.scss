@@ -9,15 +9,22 @@
 		height: auto; // prevent clipping when there are 2 lines
 		text-align: left;
 	}
+
 	&__label {
 		word-break: break-word;
 	}
+
 	.dashicon {
 		margin-left: 0.5em;
 		margin-top: 2px;
 		transition: transform 100ms ease-in-out;
 	}
+
 	&.is-open .dashicon {
 		transform: rotate( 180deg );
+	}
+
+	&.is-modal-open {
+		display: none; // Hide domain picker button when modal is open
 	}
 }

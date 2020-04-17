@@ -63,6 +63,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				aria-pressed={ isDomainPopoverVisible }
 				className={ classnames( 'domain-picker-button', className, {
 					'is-open': isDomainPopoverVisible,
+					'is-modal-open': isDomainModalVisible,
 				} ) }
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 				ref={ buttonRef }
