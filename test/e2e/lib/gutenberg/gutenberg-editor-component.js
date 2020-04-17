@@ -283,7 +283,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async toggleSidebar( open = true ) {
-		const sidebarSelector = '.edit-post-sidebar-header';
+		// @TODO: Remove .edit-post-* selector in favor of .interface-* selector when Gutenberg 7.9 is deployed.
+		const sidebarSelector = '.edit-post-sidebar-header, .interface-complementary-area-header';
 		const sidebarOpen = await driverHelper.isElementPresent(
 			this.driver,
 			By.css( sidebarSelector )
@@ -302,9 +303,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( ".edit-post-sidebar__panel-tabs button[aria-label='Close settings']" )
 				);
 			}
+			// @TODO: Remove .edit-post-* selector in favor of .interface-* selector when Gutenberg 7.9 is deployed.
 			return await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css( ".edit-post-sidebar-header__small button[aria-label='Close settings']" )
+				By.css(
+					".interface-complementary-area-header__small button[aria-label='Close settings'], .edit-post-sidebar-header__small button[aria-label='Close settings']"
+				)
 			);
 		}
 	}
