@@ -1096,11 +1096,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function () {
-			// Skipping if IE11 due to JS errors caused by missing DOMRect polyfill.
-			// See https://github.com/Automattic/wp-calypso/issues/40502
-			if ( dataHelper.getTargetType() === 'IE11' ) {
-				return this.skip();
-			}
 			const myHomePage = await MyHomePage.Expect( this.driver );
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
