@@ -30,9 +30,9 @@
 	&::before {
 		content: '';
 		position: absolute;
-		// center on the icons ( 1px is half the width )
-		left: calc( 0.55rem - 1px );
-		width: 2px;
+		// center on the icons ( .5px is half the width )
+		left: calc( 0.55rem - 0.5px );
+		width: 1px;
 	}
 
 	&::before {
@@ -41,5 +41,33 @@
 		z-index: -2;
 		// background: var( --color-neutral-10 );
 		background: red;
+	}
+}
+
+.activity-card-list__primary-card {
+	.card {
+		padding-left: 21px; // reduce standard 24px padding by 3
+		border-left: 3px solid var( --color-primary-40 );
+	}
+}
+
+.activity-card-list__secondary-card {
+	transform: translate( 32px, 0 );
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		// center on the icons ( 1px is half the width )
+		left: calc( -32px + 0.55rem + 0.5px );
+		height: 1px;
+	}
+
+	&::before {
+		top: 50%;
+		width: 100%;
+		z-index: -2;
+		// background: var( --color-neutral-10 );
+		background: blue;
 	}
 }
