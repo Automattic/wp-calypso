@@ -362,7 +362,7 @@ class DailyBackupStatus extends Component {
 			<div className="daily-backup-status">
 				<Card className="daily-backup-status__success">
 					{ this.renderBackupStatus( backup ) }
-					{ hasRealtimeBackups && this.renderRealtimeDetails( backup ) }
+					{ hasRealtimeBackups && backup && this.renderRealtimeDetails( backup ) }
 				</Card>
 			</div>
 		);
