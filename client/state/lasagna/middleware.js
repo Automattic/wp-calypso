@@ -28,20 +28,24 @@ const combineMiddleware = ( ...m ) => {
  * @param store middleware store
  */
 const connectMiddleware = store => next => action => {
-	// bail unless this is a section set with the section definition
-	if ( action.type !== 'SECTION_SET' || ! action.section ) {
+	// bail unless this is a route set
+	if ( action.type !== 'ROUTE_SET' ) {
 		return next( action );
 	}
 
+	// we match the ROUTE_SET path because SECTION_SET can fire all over
+	// the place on hard loads of full post views and conversations
+	const readerPathRegex = RegExp( '^/read$|^/read/' );
+
 	// connect if we are going to the reader without a socket
-	if ( ! socket && ! socketConnecting && action.section.name === 'reader' ) {
+	if ( ! socket && ! socketConnecting && readerPathRegex.test( action.path ) ) {
 		socketConnecting = true;
 		socketConnect( store, getCurrentUserLasagnaJwt( store.getState() ) );
 		socketConnecting = false;
 	}
 
 	// disconnect if we are leaving the reader with a socket
-	else if ( socket && action.section.name !== 'reader' ) {
+	else if ( socket && ! readerPathRegex.test( action.path ) ) {
 		socketDisconnect( store );
 	}
 
