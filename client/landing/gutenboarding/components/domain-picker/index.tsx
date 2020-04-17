@@ -20,7 +20,6 @@ import {
 	getPaidDomainSuggestions,
 	getRecommendedDomainSuggestion,
 } from '../../utils/domain-suggestions';
-import CloseButton from '../close-button';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 
@@ -93,13 +92,6 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
 							<p>{ __( 'Free for the first year with any paid plan' ) }</p>
 						</div>
-						<CloseButton
-							onClose={ onClose }
-							// removing from tab flow as discussed in p1586489720342200-slack-gutenboarding
-							// @wordpress/popover finds and focuses on the first found focusable element which will be TextControl
-							// footer-button serve the same purpose and also ESC key in closing the popover
-							tabIndex={ -1 }
-						/>
 					</div>
 					<div className="domain-picker__search">
 						<SearchIcon />
