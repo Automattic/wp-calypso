@@ -8,13 +8,13 @@ import React from 'react';
  */
 import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg-compact';
 import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-library-compact';
-import MultiCard from 'my-sites/customer-home/cards/education/multicard';
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
 import GrowEarn from 'my-sites/customer-home/cards/features/grow-earn';
 import LaunchSite from 'my-sites/customer-home/cards/features/launch-site';
 import Stats from 'my-sites/customer-home/cards/features/stats';
 import Support from 'my-sites/customer-home/cards/features/support';
 import LearnGrow from './learn-grow';
+import DotPager from 'components/dot-pager';
 
 const cardComponents = {
 	'home-action-launch-site': LaunchSite,
@@ -36,7 +36,7 @@ const Secondary = ( { cards } ) => {
 		'home-education-free-photo-library',
 	];
 	const educationalCards = cards.filter( card => allPossibleEducationalCards.includes( card ) );
-	const multiCards = [];
+	let skipEducationalCard = false;
 
 	return (
 		<>
@@ -45,18 +45,25 @@ const Secondary = ( { cards } ) => {
 					return null;
 				}
 				if ( educationalCards.includes( card ) ) {
-					multiCards.push(
-						React.createElement( cardComponents[ card ], {
-							key: card,
-						} )
+					if ( skipEducationalCard ) {
+						return null;
+					}
+
+					skipEducationalCard = true;
+					return (
+						<DotPager key={ card }>
+							{ educationalCards.map( educationalCard =>
+								React.createElement( cardComponents[ educationalCard ], {
+									key: educationalCard,
+								} )
+							) }
+						</DotPager>
 					);
-					return null;
 				}
 				return React.createElement( cardComponents[ card ], {
 					key: card,
 				} );
 			} ) }
-			<MultiCard cards={ multiCards } />
 		</>
 	);
 };
