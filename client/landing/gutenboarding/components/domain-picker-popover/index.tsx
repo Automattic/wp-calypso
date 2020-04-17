@@ -24,7 +24,6 @@ import './style.scss';
 
 // TODO: Extend popover props?
 interface Props extends DomainPickerProps {
-	onClose?: () => void;
 	onMoreOptions?: () => void;
 }
 
@@ -32,7 +31,6 @@ const DomainPickerPopover: FunctionComponent< Props > = ( {
 	showDomainConnectButton,
 	showDomainCategories,
 	onDomainSelect,
-	onDomainConfirm,
 	onMoreOptions,
 	onClose,
 	currentDomain,
@@ -57,7 +55,7 @@ const DomainPickerPopover: FunctionComponent< Props > = ( {
 					showDomainCategories={ showDomainCategories }
 					currentDomain={ currentDomain }
 					onDomainSelect={ onDomainSelect }
-					onDomainConfirm={ onDomainConfirm }
+					onClose={ onClose }
 				/>
 				{ config.isEnabled( 'gutenboarding/domain-picker-modal' ) && (
 					<Button

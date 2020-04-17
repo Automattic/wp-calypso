@@ -20,7 +20,7 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends DomainPickerProps, Button.BaseProps {
+interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
 }
@@ -29,7 +29,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	children,
 	className,
 	onDomainSelect,
-	onDomainConfirm,
 	currentDomain,
 	...buttonProps
 } ) => {
@@ -77,7 +76,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 					showDomainCategories={ false }
 					currentDomain={ currentDomain }
 					onDomainSelect={ onDomainSelect }
-					onDomainConfirm={ onDomainConfirm }
 					onMoreOptions={ handleMoreOptions }
 					onClose={ handlePopoverClose }
 				/>
@@ -88,7 +86,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 					showDomainCategories
 					currentDomain={ currentDomain }
 					onDomainSelect={ onDomainSelect }
-					onDomainConfirm={ onDomainConfirm }
 					onClose={ handleModalClose }
 				/>
 			) }

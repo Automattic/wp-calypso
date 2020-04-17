@@ -17,14 +17,13 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends DomainPickerProps {
-	onClose?: () => void;
-}
+// TODO: Extend modal props?
+// interface Props extends DomainPickerProps {
+// }
 
-const DomainPickerModal: FunctionComponent< Props > = ( {
+const DomainPickerModal: FunctionComponent< DomainPickerProps > = ( {
 	currentDomain,
 	onDomainSelect,
-	onDomainConfirm,
 	onClose,
 } ) => {
 	return (
@@ -38,7 +37,6 @@ const DomainPickerModal: FunctionComponent< Props > = ( {
 				showDomainCategories
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
-				onDomainConfirm={ onDomainConfirm }
 			/>
 			<CloseButton className="domain-picker-modal__close-button" onClick={ onClose } />
 		</Modal>

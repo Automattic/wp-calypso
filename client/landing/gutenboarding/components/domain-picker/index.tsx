@@ -43,9 +43,9 @@ export interface Props {
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 
 	/**
-	 * Callback that will be invoked when confirm button is clicked
+	 * Callback that will be invoked when close button is clicked
 	 */
-	onDomainConfirm: ( domainSuggestion: DomainSuggestion ) => void;
+	onClose: () => void;
 
 	/**
 	 * Additional parameters for the domain suggestions query.
@@ -76,7 +76,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainConnectButton,
 	showDomainCategories,
 	onDomainSelect,
-	onDomainConfirm,
+	onClose,
 	currentDomain,
 } ) => {
 	const { __, i18nLocale } = useI18n();
@@ -100,7 +100,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				className="domain-picker__confirm-button"
 				isPrimary
 				disabled={ ! hasSuggestions }
-				onClick={ onDomainConfirm }
+				onClick={ onClose }
 				{ ...props }
 			>
 				{ __( 'Confirm' ) }
