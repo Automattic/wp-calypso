@@ -52,7 +52,7 @@ export const QuickLinks = ( {
 
 	const quickLinks = (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className="quick-links__boxes">
+		<div className="quick-links-compact__boxes">
 			{ isStaticHomePage ? (
 				<ActionBox
 					onClick={ editHomepageAction }

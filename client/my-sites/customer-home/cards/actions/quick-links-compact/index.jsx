@@ -27,7 +27,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import ActionBox from './action-box';
+import ActionBox from '../quick-links/action-box';
 
 /**
  * Image dependencies
