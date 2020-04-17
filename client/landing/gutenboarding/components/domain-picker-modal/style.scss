@@ -9,7 +9,7 @@
 	// This positions the domain picker modal
 	// right below the gutenboarding header,
 	// keeping the header clickable.
-	top: 64px;
+	top: $gutenboarding-header-height;
 	left: 0;
 
 	// Using min-height lets the overlay cover
@@ -20,7 +20,7 @@
 	// than the viewport height, it will expand taller
 	// than the provided min-height, triggering
 	// the appearance of the <body> element's scrollbar.
-	min-height: calc( 100vh - 64px );
+	min-height: calc( 100vh - $gutenboarding-header-height );
 	width: 100%;
 
 	background: var( --studio-white );
@@ -28,8 +28,25 @@
 
 .domain-picker-modal {
 
+
 	.domain-picker__panel-row-main {
-		padding: 64px 88px;
+
+		// Replace domain picker's padding with onboarding block margins
+		padding: 0;
+
+		// Increase specificity to override margin: 0 from .components-panel__row
+		&.components-panel__row {
+			@include onboarding-block-margin;
+		}
+	}
+
+	.domain-picker__header {
+		@include onboarding-heading-padding;
+		margin-bottom: 27px; // Maintain the same 27px bottom margin as in the original domain picker
+
+		@include break-mobile {
+			margin-bottom: 27px;
+		}
 	}
 
 	.domain-picker__header-title {
