@@ -9,6 +9,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import CustomerHome from './main';
+import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUserUseCustomerHome, getSitePlan } from 'state/sites/selectors';
 import isRecentlyMigratedSite from 'state/selectors/is-site-recently-migrated';
@@ -19,7 +20,7 @@ export default async function ( context, next ) {
 	const siteId = await getSelectedSiteId( state );
 	const plan = await getSitePlan( state, siteId );
 
-	if ( ! plan.is_free && [ 'Business', 'eCommerce' ].includes( plan.product_name_short ) ) {
+	if ( isBusinessPlan( plan.product_slug ) || isEcommercePlan( plan.product_slug ) ) {
 		await context.store.addReducer( [ 'concierge' ], reducer );
 	}
 
