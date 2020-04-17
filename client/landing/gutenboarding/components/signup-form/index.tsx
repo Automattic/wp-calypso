@@ -64,10 +64,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		} );
 
 		if ( success ) {
-			closeModal();
 			trackEventWithFlow( 'calypso_signup_step_leave', {
 				step: 'account_creation',
 			} );
+			clearErrors();
 		}
 	};
 
