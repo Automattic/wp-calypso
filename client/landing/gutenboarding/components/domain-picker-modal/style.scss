@@ -31,3 +31,10 @@
 		display: none;
 	}
 }
+
+.domain-picker-modal__close-button {
+	// Temporarily place this here so there is a way to close this modal.
+	position: absolute;
+	top: 0;
+	left: 0;
+}

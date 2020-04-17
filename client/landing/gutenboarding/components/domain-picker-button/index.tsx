@@ -48,7 +48,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 
 	const handleModalClose = () => {
 		setDomainModalVisibility( false );
-		setDomainPopoverVisibility( true );
 	};
 
 	const handleMoreOptions = () => {
