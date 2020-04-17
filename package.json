@@ -317,7 +317,7 @@
 		"readline-sync": "1.4.10",
 		"replace": "1.1.5",
 		"rimraf": "3.0.0",
-		"sinon": "7.5.0",
+		"sinon": "9.0.2",
 		"sinon-chai": "3.3.0",
 		"socket.io": "2.3.0",
 		"source-map": "0.7.3",
