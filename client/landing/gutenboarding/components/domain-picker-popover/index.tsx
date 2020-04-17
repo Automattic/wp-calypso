@@ -44,7 +44,7 @@ const DomainPickerPopover: React.FunctionComponent< Props > = ( { onMoreOptions,
 				expandOnMobile={ true }
 			>
 				<DomainPicker { ...props } />
-				<div class="domain-picker-popover__addons">
+				<div className="domain-picker-popover__addons">
 					{ config.isEnabled( 'gutenboarding/domain-picker-modal' ) && (
 						<Button
 							className="domain-picker-popover__more-button"
