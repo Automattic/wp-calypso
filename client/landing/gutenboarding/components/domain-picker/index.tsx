@@ -166,7 +166,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				</PanelRow>
 				<PanelRow className="domain-picker__panel-row-footer">
 					<div className="domain-picker__footer">
-						<div></div>
 						<ConfirmButton />
 					</div>
 				</PanelRow>

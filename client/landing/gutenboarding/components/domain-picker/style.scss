@@ -89,8 +89,7 @@ $domain-picker__suggestion-item-height: 24px;
 
 .domain-picker__footer {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	justify-content: flex-end;
 }
 
 .domain-picker__suggestion-item-group {
