@@ -22,6 +22,7 @@ interface Props {
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string;
+	uiAlgo: string;
 	uiPosition: number;
 }
 
@@ -31,6 +32,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	isSelected = false,
 	onSelect,
 	railcarId,
+	uiAlgo,
 	uiPosition,
 } ) => {
 	const { __ } = useI18n();
@@ -53,6 +55,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				query: domainSearch,
 				railcarId,
 				result: isRecommended ? domain + '#recommended' : domain,
+				uiAlgo,
 				uiPosition,
 			} );
 			setPreviousDomain( domain );
@@ -66,6 +69,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		previousDomain,
 		previousRailcarId,
 		railcarId,
+		uiAlgo,
 		uiPosition,
 	] );
 

@@ -54,6 +54,11 @@ export interface Props {
 	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
 
 	currentDomain?: DomainSuggestion;
+
+	/**
+	 * String denoting where the UI is displayed, e.g. `/gutenboarding/domain-popover`
+	 */
+	uiAlgo: string;
 }
 
 const SearchIcon = () => (
@@ -79,6 +84,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onDomainSelect,
 	onClose,
 	currentDomain,
+	uiAlgo,
 } ) => {
 	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
@@ -150,6 +156,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
 									onSelect={ onDomainSelect }
 									railcarId={ `${ railcarId }0` }
+									uiAlgo={ uiAlgo }
 									uiPosition={ 0 }
 								/>
 							) : (
@@ -167,6 +174,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										onSelect={ onDomainSelect }
 										key={ suggestion.domain_name }
 										railcarId={ `${ railcarId }${ i + 1 }` }
+										uiAlgo={ uiAlgo }
 										uiPosition={ i + 1 }
 									/>
 								) )

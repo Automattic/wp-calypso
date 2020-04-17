@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import { Props as DomainPickerProps } from '../domain-picker';
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
+import { FLOW_ID } from '../../constants';
 
 /**
  * Style dependencies
@@ -79,6 +80,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onDomainSelect={ onDomainSelect }
 				onMoreOptions={ handleMoreOptions }
 				onClose={ handlePopoverClose }
+				uiAlgo={ `/${ FLOW_ID }/domain-popover` }
 			/>
 			<DomainPickerModal
 				isOpen={ isDomainModalVisible }
@@ -87,6 +89,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
 				onClose={ handleModalClose }
+				uiAlgo={ `/${ FLOW_ID }/domain-popover` }
 			/>
 		</>
 	);

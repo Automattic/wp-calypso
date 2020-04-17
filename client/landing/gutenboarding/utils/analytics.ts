@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid';
 
 interface TrainTracksRenderProps {
 	railcarId: string;
+	uiAlgo: string;
 	uiPosition: number;
 	fetchAlgo: string;
 	result: string;
@@ -19,6 +20,7 @@ interface TrainTracksInteractProps {
 
 export function recordTrainTracksRender( {
 	railcarId,
+	uiAlgo,
 	uiPosition,
 	fetchAlgo,
 	result,
@@ -26,6 +28,7 @@ export function recordTrainTracksRender( {
 }: TrainTracksRenderProps ) {
 	recordTracksEvent( 'calypso_traintracks_render', {
 		railcar: railcarId,
+		ui_algo: uiAlgo,
 		ui_position: uiPosition,
 		fetch_algo: fetchAlgo,
 		rec_result: result,
