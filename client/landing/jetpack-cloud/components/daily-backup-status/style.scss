@@ -6,13 +6,13 @@
 .daily-backup-status__status-icon.gridicon {
 	width: 3rem;
 	height: 3rem;
-	fill: rgb( 47, 180, 31 );
+	fill: var( --color-primary-30 );
 }
 
 .daily-backup-status__gridicon-error-state.gridicon {
 	width: 3rem;
 	height: 3rem;
-	fill: rgb( 214, 54, 56 );
+	fill: var( --color-scary-50 );
 }
 
 .daily-backup-status__gridicon-no-backup {
@@ -47,7 +47,7 @@
 .daily-backup-status__failed-message {
 	font-size: 1.4rem;
 	font-weight: 500;
-	color: rgb( 214, 54, 56 );
+	color: var( --color-scary-50 );
 	margin-bottom: 0.5rem;
 	margin-top: -0.5rem;
 }

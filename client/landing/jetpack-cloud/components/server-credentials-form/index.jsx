@@ -163,7 +163,7 @@ const ServerCredentialsForm = ( {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<FormFieldset className="server-credentials-form__buttons">
+			<FormFieldset className="dialog__action-buttons server-credentials-form__buttons">
 				<Button
 					disabled={ formIsSubmitting }
 					onClick={ onCancel }
