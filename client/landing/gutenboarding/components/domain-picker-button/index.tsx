@@ -13,6 +13,7 @@ import { Props as DomainPickerProps } from '../domain-picker';
 import DomainPickerPopover from '../domain-picker-popover';
 import DomainPickerModal from '../domain-picker-modal';
 import { FLOW_ID } from '../../constants';
+import { recordTrainTracksEvent } from '../../utils/analytics';
 
 /**
  * Style dependencies
@@ -55,6 +56,10 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		setDomainModalVisibility( true );
 	};
 
+	const recordAnalytics = ( type: string, payload: any ) => {
+		recordTrainTracksEvent( type, `/${ FLOW_ID }/domain-popover`, payload );
+	};
+
 	return (
 		<>
 			<Button
@@ -80,7 +85,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onDomainSelect={ onDomainSelect }
 				onMoreOptions={ handleMoreOptions }
 				onClose={ handlePopoverClose }
-				uiAlgo={ `/${ FLOW_ID }/domain-popover` }
+				recordAnalytics={ recordAnalytics }
 			/>
 			<DomainPickerModal
 				isOpen={ isDomainModalVisible }
@@ -89,7 +94,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
 				onClose={ handleModalClose }
-				uiAlgo={ `/${ FLOW_ID }/domain-popover` }
+				recordAnalytics={ recordAnalytics }
 			/>
 		</>
 	);

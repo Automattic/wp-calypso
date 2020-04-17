@@ -13,7 +13,6 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { recordTrainTracksRender, recordTrainTracksInteract } from '../../utils/analytics';
 import { DOMAIN_SUGGESTION_VENDOR, FLOW_ID } from '../../constants';
 
 interface Props {
@@ -22,7 +21,7 @@ interface Props {
 	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 	railcarId: string | undefined;
-	uiAlgo?: string;
+	recordAnalytics: ( type: string, payload: object ) => void;
 	uiPosition: number;
 }
 
@@ -32,7 +31,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	isSelected = false,
 	onSelect,
 	railcarId,
-	uiAlgo,
+	recordAnalytics,
 	uiPosition,
 } ) => {
 	const { __ } = useI18n();
@@ -51,12 +50,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		// Only record TrainTracks render event when the domain name and railcarId change.
 		// This effectively records the render event only once for each set of search results.
 		if ( domain !== previousDomain && previousRailcarId !== railcarId && railcarId ) {
-			recordTrainTracksRender( {
+			recordAnalytics( 'render', {
 				fetchAlgo,
 				query: domainSearch,
 				railcarId,
 				result: isRecommended ? domain + '#recommended' : domain,
-				uiAlgo,
 				uiPosition,
 			} );
 			setPreviousDomain( domain );
@@ -70,13 +68,14 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		previousDomain,
 		previousRailcarId,
 		railcarId,
-		uiAlgo,
 		uiPosition,
+		recordAnalytics,
 	] );
 
 	const onDomainSelect = () => {
-		if ( railcarId ) {
-			recordTrainTracksInteract( { action: 'domain_selected', railcarId } );
+		// Use previousRailcarId to make sure the select action matches the last rendered railcarId.
+		if ( previousRailcarId ) {
+			recordAnalytics( 'interact', { action: 'domain_selected', railcarId: previousRailcarId } );
 		}
 		onSelect( suggestion );
 	};
