@@ -95,21 +95,21 @@ class ScanPage extends Component {
 	}
 
 	renderScanState() {
-		const { site } = this.props;
-		if ( ! this.props.scanState ) {
+		const { site, scanState } = this.props;
+		if ( ! scanState ) {
 			return <div className="scan__is-loading" />;
 		}
 
-		const status = this.props.scanState.status;
+		const status = scanState.state;
 		if ( status === 'scanning' ) {
 			return this.renderScanning();
 		}
 
-		if ( status !== 'done' ) {
+		if ( status !== 'done' && status !== 'idle' ) {
 			return this.renderScanError();
 		}
 
-		const threats = this.props.scanState.threats;
+		const threats = scanState.threats;
 		if ( threats && threats.length ) {
 			return <ScanThreats className="scan__threats" threats={ threats } site={ site } />;
 		}
@@ -143,42 +143,6 @@ export default connect( state => {
 	const site = getSelectedSite( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const scanState = getSiteScanState( state, site.ID );
-
-	// TODO: Get threats from actual API.
-	const threats = [
-		{
-			id: 1,
-			title: 'Infected core file: index.php',
-			action: null,
-			detectionDate: '23 September, 2019',
-			actionDate: null,
-			description: {
-				title: 'Unexpected string was found in: /htdocs/wp-admin/index.php',
-				problem:
-					'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
-				fix:
-					'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.',
-				details: 'This threat was found in the file: /htdocs/index.php',
-			},
-		},
-		{
-			id: 2,
-			title: 'Infected Plugin: Contact Form 7',
-			action: null,
-			detectionDate: '17 September, 2019',
-			actionDate: null,
-			description: {
-				title:
-					'Unexpected file baaaaaad--file.php contains malicious code and is not part of the Plugin',
-				problem:
-					'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
-				fix:
-					'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.',
-				details: 'This threat was found in the file: /htdocs/sx--a4bp.php',
-			},
-		},
-	];
-
 	const lastScanTimestamp = Date.now() - 5700000; // 1h 35m.
 	const nextScanTimestamp = Date.now() + 5700000;
 
@@ -188,6 +152,5 @@ export default connect( state => {
 		scanState,
 		lastScanTimestamp,
 		nextScanTimestamp,
-		threats,
 	};
 } )( withLocalizedMoment( ScanPage ) );
