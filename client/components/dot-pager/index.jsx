@@ -5,6 +5,7 @@ import React, { Children, useState } from 'react';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import Gridicon from 'components/gridicon';
  */
 import './style.scss';
 
-export const DotPagerControls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
+const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 	const translate = useTranslate();
 	if ( numberOfPages < 2 ) {
 		return null;
@@ -27,7 +28,7 @@ export const DotPagerControls = ( { currentPage, numberOfPages, setCurrentPage }
 		<ul className="dot-pager__controls" aria-label={ translate( 'Pager controls' ) }>
 			<li key="dot-pager-prev">
 				<button
-					className="dot-pager__prev"
+					className="dot-pager__control-prev"
 					disabled={ ! canGoBack }
 					aria-label={ translate( 'Previous' ) }
 					onClick={ () => setCurrentPage( currentPage - 1 ) }
@@ -39,7 +40,7 @@ export const DotPagerControls = ( { currentPage, numberOfPages, setCurrentPage }
 				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
 						key={ page.toString() }
-						className={ page === currentPage ? 'dot-pager__current' : undefined }
+						className={ classnames( { 'dot-pager__control-current': page === currentPage } ) }
 						disabled={ page === currentPage }
 						aria-label={ translate( 'Page %(page)d of %(numberOfPages)d', {
 							args: { page: page + 1, numberOfPages },
@@ -50,7 +51,7 @@ export const DotPagerControls = ( { currentPage, numberOfPages, setCurrentPage }
 			) ) }
 			<li key="dot-pager-next">
 				<button
-					className="dot-pager__next"
+					className="dot-pager__control-next"
 					disabled={ ! canGoForward }
 					aria-label={ translate( 'Next' ) }
 					onClick={ () => setCurrentPage( currentPage + 1 ) }
@@ -66,8 +67,21 @@ export const DotPager = ( { children } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	return (
 		<Card>
-			{ children[ currentPage ] }
-			<DotPagerControls
+			<div className="dot-pager__pages">
+				{ Children.map( children, ( child, index ) => (
+					<div
+						className={ classnames( 'dot-pager__page', {
+							'is-current': index === currentPage,
+							'is-prev': index < currentPage,
+							'is-next': index > currentPage,
+						} ) }
+						key={ `page-${ index }` }
+					>
+						{ child }
+					</div>
+				) ) }
+			</div>
+			<Controls
 				currentPage={ currentPage }
 				numberOfPages={ Children.count( children ) }
 				setCurrentPage={ setCurrentPage }

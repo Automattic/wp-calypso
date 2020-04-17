@@ -37,6 +37,7 @@ const Secondary = ( { cards } ) => {
 	];
 	const educationalCards = cards.filter( card => allPossibleEducationalCards.includes( card ) );
 	let skipEducationalCard = false;
+
 	return (
 		<>
 			{ cards.map( card => {
