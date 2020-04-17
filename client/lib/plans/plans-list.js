@@ -84,10 +84,11 @@ const getPlanPersonalDetails = () => ( {
 				'Get access to high-quality email and live chat support.',
 			plansDescriptionHeadingComponent
 		),
-	getShortDescription: () => i18n.translate(
-		'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
-			'Get access to high-quality email and live chat support.'
-	),
+	getShortDescription: () =>
+		i18n.translate(
+			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
+				'Get access to high-quality email and live chat support.'
+		),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		constants.FEATURE_CUSTOM_DOMAIN,
@@ -134,11 +135,12 @@ const getPlanEcommerceDetails = () => ( {
 			plansDescriptionHeadingComponent
 		);
 	},
-	getShortDescription: () => i18n.translate(
-		'Sell products or services with this powerful, ' +
-			'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
-			'so it’ll grow with you as your business grows.'
-	),
+	getShortDescription: () =>
+		i18n.translate(
+			'Sell products or services with this powerful, ' +
+				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
+				'so it’ll grow with you as your business grows.'
+		),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
@@ -218,11 +220,12 @@ const getPlanPremiumDetails = () => ( {
 				' and the ability to monetize your site with ads.',
 			plansDescriptionHeadingComponent
 		),
-	getShortDescription: () => i18n.translate(
-		'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
-			' Google Analytics support,' +
-			' and the ability to monetize your site with ads.'
-	),
+	getShortDescription: () =>
+		i18n.translate(
+			'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+				' Google Analytics support,' +
+				' and the ability to monetize your site with ads.'
+		),
 	getPlanCompareFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
@@ -281,10 +284,11 @@ const getPlanBusinessDetails = () => ( {
 				' 200 GB storage, and the ability to remove WordPress.com branding.',
 			plansDescriptionHeadingComponent
 		),
-	getShortDescription: () => i18n.translate(
-		'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
-			' 200 GB storage, and the ability to remove WordPress.com branding.'
-	),
+	getShortDescription: () =>
+		i18n.translate(
+			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
+				' 200 GB storage, and the ability to remove WordPress.com branding.'
+		),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
