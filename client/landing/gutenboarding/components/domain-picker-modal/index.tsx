@@ -14,7 +14,13 @@ import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
  */
 import './style.scss';
 
-const DomainPickerModal: React.FunctionComponent< DomainPickerProps > = props => {
+interface Props extends DomainPickerProps {
+	isOpen: boolean;
+	onMoreOptions?: () => void;
+}
+
+const DomainPickerModal: React.FunctionComponent< Props > = ( { isOpen, ...props } ) => {
+	if ( ! isOpen ) return null;
 	return (
 		<Modal isOpen className="domain-picker-modal" overlayClassName="domain-picker-modal-overlay">
 			<DomainPicker showDomainConnectButton showDomainCategories { ...props } />

@@ -23,15 +23,26 @@ import CloseButton from '../close-button';
 import './style.scss';
 
 interface Props extends DomainPickerProps {
+	isOpen: boolean;
 	onMoreOptions?: () => void;
 }
 
-const DomainPickerPopover: React.FunctionComponent< Props > = ( { onMoreOptions, ...props } ) => {
+const DomainPickerPopover: React.FunctionComponent< Props > = ( {
+	isOpen,
+	onMoreOptions,
+	...props
+} ) => {
 	const { __ } = useI18n();
 	const onClose = props.onClose;
 
 	// Popover expands at medium viewport width
 	const isMobile = useViewportMatch( 'medium', '<' );
+
+	// Don't render popover when isOpen is false.
+	// We need this component to be hot because useViewportMatch
+	// returns false on initial mount before returning true,
+	// causing search input to be automatically focused.
+	if ( ! isOpen ) return null;
 
 	return (
 		<div className="domain-picker-popover">

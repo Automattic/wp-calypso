@@ -71,25 +71,23 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<span className="domain-picker-button__label">{ children }</span>
 				<Dashicon icon="arrow-down-alt2" size={ 16 } />
 			</Button>
-			{ isDomainPopoverVisible && (
-				<DomainPickerPopover
-					showDomainConnectButton={ false }
-					showDomainCategories={ false }
-					currentDomain={ currentDomain }
-					onDomainSelect={ onDomainSelect }
-					onMoreOptions={ handleMoreOptions }
-					onClose={ handlePopoverClose }
-				/>
-			) }
-			{ isDomainModalVisible && (
-				<DomainPickerModal
-					showDomainConnectButton
-					showDomainCategories
-					currentDomain={ currentDomain }
-					onDomainSelect={ onDomainSelect }
-					onClose={ handleModalClose }
-				/>
-			) }
+			<DomainPickerPopover
+				isOpen={ isDomainPopoverVisible }
+				showDomainConnectButton={ false }
+				showDomainCategories={ false }
+				currentDomain={ currentDomain }
+				onDomainSelect={ onDomainSelect }
+				onMoreOptions={ handleMoreOptions }
+				onClose={ handlePopoverClose }
+			/>
+			<DomainPickerModal
+				isOpen={ isDomainModalVisible }
+				showDomainConnectButton
+				showDomainCategories
+				currentDomain={ currentDomain }
+				onDomainSelect={ onDomainSelect }
+				onClose={ handleModalClose }
+			/>
 		</>
 	);
 };
