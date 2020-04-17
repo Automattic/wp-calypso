@@ -10,8 +10,8 @@ import { useTranslate } from 'i18n-calypso';
  */
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
 import Support from 'my-sites/customer-home/cards/features/support';
-import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
-import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
+import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links-compact';
+import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links-compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 

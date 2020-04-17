@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import config from 'config';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -63,7 +64,11 @@ const Home = ( {
 	}
 
 	return (
-		<Main className="customer-home__main is-wide-layout">
+		<Main
+			className={ classnames( 'customer-home__main', 'is-wide-layout', {
+				'is-experimental': config.isEnabled( 'home/experimental-layout' ),
+			} ) }
+		>
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }

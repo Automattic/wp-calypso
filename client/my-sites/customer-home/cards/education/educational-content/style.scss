@@ -1,0 +1,23 @@
+.educational-content {
+	display: flex;
+
+	.educational-content__wrapper {
+		flex: 60%;
+	}
+
+	.educational-content__illustration {
+		flex: 40%;
+		margin-left: 16px;
+		text-align: center;
+	}
+
+	h3 {
+		font-weight: 700;
+		margin-bottom: 16px;
+	}
+
+	.inline-support-link {
+		display: block;
+		margin-bottom: 2px;
+	}
+}

@@ -19,11 +19,6 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/a
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { getSiteOption } from 'state/sites/selectors';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 export const GrowEarn = ( { siteSlug, expandToolsAndTrack } ) => {
 	const translate = useTranslate();
 

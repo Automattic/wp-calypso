@@ -45,7 +45,9 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 			<div className={ classnames( 'go-mobile__row', { 'has-2-cols': showOnlyOneBadge } ) }>
 				<div className="go-mobile__title">
 					<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
-					<h6 className="go-mobile__subheader">{ translate( 'Make updates on the go' ) }</h6>
+					<h6 className="go-mobile__subheader customer-home__card-subheader">
+						{ translate( 'Make updates on the go' ) }
+					</h6>
 				</div>
 				<div className="go-mobile__app-badges">
 					{ showIosBadge && (
