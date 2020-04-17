@@ -30,7 +30,6 @@ import { usePath, useCurrentStep, Step } from '../../path';
 import wp from '../../../../lib/wp';
 import { recordOnboardingComplete } from '../../utils/analytics';
 
-
 const wpcom = wp.undocumented();
 
 interface Cart {
@@ -192,11 +191,12 @@ const Header: FunctionComponent = () => {
 				isNewUser: !! newUser,
 			} );
 
+			setIsRedirecting( true );
 			resetOnboardStore();
 
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
-	}, [ domain, newSite, resetOnboardStore, isRedirecting ] );
+	}, [ domain, newSite, newUser, resetOnboardStore, isRedirecting ] );
 
 	return (
 		<div

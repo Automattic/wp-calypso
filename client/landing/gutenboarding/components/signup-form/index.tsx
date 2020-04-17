@@ -19,7 +19,6 @@ import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
 import { trackEventWithFlow } from '../../utils/analytics';
 
-
 import { localizeUrl } from '../../../../lib/i18n-utils';
 
 interface Props {
