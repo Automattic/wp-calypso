@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { READER_FULL_VIEW_POST_KEY_SET, SERIALIZE } from 'state/reader/action-types';
+import { READER_FULL_VIEW_POST_KEY_SET } from 'state/reader/action-types';
+import { SERIALIZE } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 /**
