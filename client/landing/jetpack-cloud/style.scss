@@ -37,6 +37,42 @@
 
 		&:active {
 			background: var( --color-primary-50 );
+	.button.is-scary {
+		color: var( --color-scary-60 );
+		border-color: var( --color-scary-50 );
+
+		&:hover,
+		&:focus {
+			background: var( --color-scary-0 );
+		}
+
+		&:active {
+			background: var( --color-scary-5 );
+			border-color: var( --color-scary-40 );
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var( --studio-gray-10 );
+			background: none;
+			border-color: var( --color-gray-10 );
+		}
+	}
+
+	.button.is-primary.is-scary {
+		color: var( --studio-white );
+		background: var( --color-scary-50 );
+		border-color: var( --color-scary-50 );
+
+		&:hover,
+		&:focus {
+			background: var( --color-scary-40 );
+			border-color: var( --color-scary-40 );
+		}
+
+		&:active {
+			background: var( --color-scary-60 );
+			border-color: var( --color-scary-60 );
 		}
 
 		&[disabled],
@@ -87,4 +123,18 @@
 			color: var( --studio-gray-10 );
 		}
 	}
+
+	.button.is-borderless.is-primary.is-scary {
+		color: var( --color-scary-50 );
+
+		&:hover,
+		&:focus {
+			color: var( --color-scary-40 );
+		}
+
+		&:active {
+			color: var( --color-scary-60 );
+		}
+	}
+}
 }
