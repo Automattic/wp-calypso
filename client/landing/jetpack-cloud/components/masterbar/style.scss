@@ -1,38 +1,42 @@
-// Masterbar - home link
 .masterbar.is-jetpack-cloud-masterbar {
 	justify-content: space-between;
 
+	.masterbar__item-home {
+		width: 200px;
+		padding: 0;
+		border-right: 1px solid var( --color-masterbar-border );
+
+		@include breakpoint( '>660px' ) {
+			width: $sidebar-width-min;
+		}
+
+		@include breakpoint( '>960px' ) {
+			width: $sidebar-width-max;
+		}
+
+		.masterbar__item-content {
+			display: flex;
+			justify-content: center;
+			width: 100%;
+			padding: 0 16px;
+			color: var( --color-masterbar-text );
+
+			svg {
+				fill: var( --color-black );
+			}
+		}
+	}
+
 	.masterbar__item-title {
-		padding-left: 16px;
-		font-size: 20px;
+		padding-left: 32px;
+		font-size: 18px;
 		color: var( --color-gray-70 );
 		flex: 1 0 auto;
 		text-transform: none;
 		font-weight: 500;
-	}
-}
 
-.is-jetpack-cloud-masterbar .masterbar__item-home {
-	padding: 0;
-	border-right: 1px solid var( --color-masterbar-border );
-	width: 200px;
-	@include breakpoint( '>660px' ) {
-		width: $sidebar-width-min;
-	}
-
-	@include breakpoint( '>960px' ) {
-		width: $sidebar-width-max;
-	}
-
-	.masterbar__item-content {
-		display: flex;
-		justify-content: center;
-		width: 100%;
-		padding: 0 16px;
-		color: var( --color-masterbar-text );
-
-		svg {
-			fill: var( --color-black );
+		.masterbar__item-content {
+			margin-top: 2px;
 		}
 	}
 }
