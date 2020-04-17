@@ -6,6 +6,8 @@ export type Extension = {
 	type: 'plugin' | 'theme';
 };
 
+export type ThreatType = 'core' | 'file' | 'plugin' | 'theme' | 'database' | 'none' | string;
+
 export type Threat = {
 	id: number;
 	signature: string;
