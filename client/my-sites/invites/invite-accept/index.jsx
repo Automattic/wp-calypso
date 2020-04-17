@@ -132,14 +132,8 @@ class InviteAccept extends React.Component {
 		}
 		debug( 'Rendering invite' );
 
-		let redirectTo = getRedirectAfterAccept( invite );
-
-		if ( isWPForTeamsSite ) {
-			redirectTo = `https://${ invite.site.domain }`;
-		}
-
 		const props = {
-			redirectTo,
+			redirectTo: getRedirectAfterAccept( invite, isWPForTeamsSite ),
 			invite: invite,
 			decline: this.decline,
 			signInLink: this.signInLink(),

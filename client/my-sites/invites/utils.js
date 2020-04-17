@@ -151,7 +151,11 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 	}
 }
 
-export function getRedirectAfterAccept( invite ) {
+export function getRedirectAfterAccept( invite, isWPForTeamsSite = false ) {
+	if ( isWPForTeamsSite ) {
+		return `https://${ invite.site.domain }`;
+	}
+
 	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
 

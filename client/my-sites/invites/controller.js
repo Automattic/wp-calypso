@@ -59,11 +59,7 @@ export function acceptInvite( context, next ) {
 				const siteId = acceptedInvite.site.ID;
 				const isWPForTeamsSite = isSiteWPForTeams( context.store.getState(), siteId );
 
-				let redirect = getRedirectAfterAccept( acceptedInvite );
-
-				if ( isWPForTeamsSite ) {
-					redirect = `https://${ acceptedInvite.site.domain }`;
-				}
+				const redirect = getRedirectAfterAccept( acceptedInvite, isWPForTeamsSite );
 
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
