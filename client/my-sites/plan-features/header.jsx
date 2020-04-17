@@ -90,7 +90,6 @@ export class PlanFeaturesHeader extends Component {
 			selectedPlan,
 			title,
 			audience,
-			isEligibleForPlanStepTest,
 			translate,
 		} = this.props;
 
@@ -104,12 +103,7 @@ export class PlanFeaturesHeader extends Component {
 					{ planLevelsMatch( selectedPlan, planType ) && (
 						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
 					) }
-					{ popular && ! selectedPlan && ! isEligibleForPlanStepTest && (
-						<PlanPill>{ translate( 'Popular' ) }</PlanPill>
-					) }
-					{ popular && ! selectedPlan && isEligibleForPlanStepTest && (
-						<PlanPill>{ translate( 'Most popular' ) }</PlanPill>
-					) }
+					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
 					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
 					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
@@ -174,7 +168,6 @@ export class PlanFeaturesHeader extends Component {
 			hideMonthly,
 			isInSignup,
 			plansWithScroll,
-			isEligibleForPlanStepTest,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -184,11 +177,8 @@ export class PlanFeaturesHeader extends Component {
 		} );
 
 		if ( isInSignup || plansWithScroll ) {
-			const classes = classNames( 'plan-features__header-billing-info', {
-				'plan-features__header-billing-info-plan-step-test': isEligibleForPlanStepTest,
-			} );
 			return (
-				<div className={ classes }>
+				<div className={ 'plan-features__header-billing-info' }>
 					<span>{ billingTimeFrame }</span>
 				</div>
 			);
@@ -267,7 +257,7 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup, plansWithScroll, isEligibleForPlanStepTest } = this.props;
+		const { currencyCode, isInSignup, plansWithScroll } = this.props;
 		const displayFlatPrice = isInSignup && ! plansWithScroll;
 
 		if ( fullPrice && discountedPrice ) {
@@ -297,7 +287,6 @@ export class PlanFeaturesHeader extends Component {
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
 				isInSignup={ displayFlatPrice }
-				isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 			/>
 		);
 	}

@@ -106,15 +106,6 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	planStepCopyUpdates: {
-		datestamp: '20200326',
-		variations: {
-			variantCopyUpdates: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	ATPrivacy: {
 		datestamp: '20200331',
 		variations: {
