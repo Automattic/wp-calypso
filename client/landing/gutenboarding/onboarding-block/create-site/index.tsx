@@ -11,6 +11,7 @@ import { Icon } from '@wordpress/components';
  */
 import CreateAndRedirect from './create-and-redirect';
 import { useNewQueryParam } from '../../path';
+import { useTrackStep } from 'landing/gutenboarding/analytics';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -26,6 +27,8 @@ const CreateSite: FunctionComponent< {} > = () => {
 		__( 'Getting your domain' ),
 		__( 'Applying design' ),
 	];
+
+	useTrackStep( 'CreateSite' );
 
 	return (
 		<div className="gutenboarding-page create-site__background">
