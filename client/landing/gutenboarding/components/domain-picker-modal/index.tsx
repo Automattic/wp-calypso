@@ -8,7 +8,6 @@ import Modal from 'react-modal';
  * Internal dependencies
  */
 import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
-import CloseButton from '../close-button';
 
 /**
  * Style dependencies
@@ -37,8 +36,8 @@ const DomainPickerModal: FunctionComponent< DomainPickerProps > = ( {
 				showDomainCategories
 				currentDomain={ currentDomain }
 				onDomainSelect={ onDomainSelect }
+				onClose={ onClose }
 			/>
-			<CloseButton className="domain-picker-modal__close-button" onClick={ onClose } />
 		</Modal>
 	);
 };
