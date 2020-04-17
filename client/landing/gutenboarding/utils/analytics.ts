@@ -39,10 +39,9 @@ export function recordOnboardingStart( ref = '' ): void {
  *
  * @param {object} params A set of params to pass to analytics for signup completion
  */
-export function recordOnboardingComplete( { isNewUser = false, isNewSite = true, hasCartItems = false } ): void {
+export function recordOnboardingComplete( { isNewUser = false, isNewSite = true} ): void {
 	trackEventWithFlow( 'calypso_signup_complete', {
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
-		has_cart_items: hasCartItems,
 	} );
 }

@@ -28,6 +28,8 @@ import {
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
 import wp from '../../../../lib/wp';
+import { recordOnboardingComplete } from '../../utils/analytics';
+
 
 const wpcom = wp.undocumented();
 
@@ -184,9 +186,14 @@ const Header: FunctionComponent = () => {
 				go();
 				return;
 			}
+
+			recordOnboardingComplete( {
+				isNewSite: !! newSite,
+				isNewUser: !! newUser,
+			} );
+
 			resetOnboardStore();
-			// TODO: remove this :)
-			console.log( 'Call `calypso_signup_complete` here?' );
+
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
 	}, [ domain, newSite, resetOnboardStore, isRedirecting ] );
