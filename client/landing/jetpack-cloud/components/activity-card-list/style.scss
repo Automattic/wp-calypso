@@ -44,7 +44,7 @@
 }
 
 .activity-card-list {
-	.activity-card .gridicon {
+	.activity-card .activity-card__time-icon.gridicon {
 		background: var( --color-surface-backdrop );
 	}
 }
@@ -57,14 +57,21 @@
 }
 
 .activity-card-list__secondary-card {
-	transform: translate( 32px, 0 );
+	width: calc( 100% - 32px - 16px );
+
+	.activity-card__time,
+	.card {
+		transform: translateX( 32px );
+		// width: calc( auto - 32px );
+	}
+
 	position: relative;
 
 	&::before {
 		content: '';
 		position: absolute;
 		// center on the icons ( 1px is half the width )
-		left: calc( -32px + 0.55rem + 0.5px );
+		left: calc( 0.55rem + 0.5px );
 		height: 1px;
 	}
 
@@ -73,5 +80,23 @@
 		width: 100%;
 		z-index: -2;
 		background: var( --color-neutral-5 );
+	}
+
+	// draw over the line that goes off the screen
+	&:last-of-type {
+		&::after {
+			content: '';
+			position: absolute;
+			// center on the icons ( .5px is half the width )
+			left: 0.55rem;
+			width: 1px;
+		}
+
+		&::after {
+			top: calc( 50% + 1px );
+			height: 100%;
+			z-index: -1;
+			background: var( --color-surface-backdrop );
+		}
 	}
 }
